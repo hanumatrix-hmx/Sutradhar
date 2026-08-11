@@ -285,7 +285,11 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
       description:
         'Capture an LLM-optimized snapshot of the active page. Returns `interactiveElements`: a compact listing ' +
         'of every interactive element stamped with a numeric [#id] (e.g. `[#7] button "Search"`), plus `pageText` ' +
-        '(visible body text). Use the [#id] as the `target` argument to browser.click / browser.type to act on an element.',
+        '(visible body text). Use the [#id] as the `target` argument to browser.click / browser.type to act on an element. ' +
+        'Caution: the [#id] is a snapshot of the DOM at the moment this ran — if the page re-renders afterward (a React/' +
+        'Vue update, a list re-sorting) before you act on it, the id can point at nothing or the wrong element. For pages ' +
+        'that update frequently, prefer browser.ax_snapshot + browser.click_by_role/click_by_text/type_by_label instead, ' +
+        'which re-resolve the real element at the moment they run rather than trusting a stored id.',
       inputSchema: {
         sessionId: z.string(),
         tabId: z.string().optional(),
