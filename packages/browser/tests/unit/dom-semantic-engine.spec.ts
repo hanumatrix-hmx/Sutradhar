@@ -16,7 +16,7 @@ function node(overrides: Partial<SemanticNode>): SemanticNode {
   };
 }
 
-describe('@pinchtab/browser formatGraphForLlm', () => {
+describe('@sutradhar/browser formatGraphForLlm', () => {
   it('reports a header count that matches the number of listed elements', () => {
     const nodes: SemanticNode[] = [
       node({ id: 1, tagName: 'INPUT', accessibleName: 'Username' }),

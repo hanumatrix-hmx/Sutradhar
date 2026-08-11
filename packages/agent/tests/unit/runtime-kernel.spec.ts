@@ -10,7 +10,7 @@ import {
   BrowserService,
   MemoryService,
 } from '../../src/kernel/runtime-services.js';
-import { EventBus } from '@pinchtab/events';
+import { EventBus } from '@sutradhar/events';
 
 describe('Engineering Iteration 7 — Runtime Kernel Unit Tests', () => {
   let kernel: RuntimeKernel;

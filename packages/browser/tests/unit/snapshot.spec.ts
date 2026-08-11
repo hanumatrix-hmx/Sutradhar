@@ -9,9 +9,9 @@ import {
   RawElementNode,
   createBrowserElementDto,
 } from '../../src/index.js';
-import { createSessionId, createTabId } from '@pinchtab/contracts';
+import { createSessionId, createTabId } from '@sutradhar/contracts';
 
-describe('@pinchtab/browser Snapshot Engine', () => {
+describe('@sutradhar/browser Snapshot Engine', () => {
   it('should transform RawElementNode into BrowserElementDto', () => {
     const raw: RawElementNode = {
       tagName: 'BUTTON',

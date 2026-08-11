@@ -2,7 +2,7 @@
  * @file packages/frontend/src/runtime/browser/adapters/browserTransport.ts
  * @description Transport abstraction for the frontend→backend bridge.
  *
- * The HTTP transport performs REAL fetches to the PinchTab backend and throws on
+ * The HTTP transport performs REAL fetches to the Sutradhar backend and throws on
  * any failure (network error or non-2xx response). It NEVER silently returns a
  * fake object — callers must know when the backend is unreachable so the UI can
  * show a real error instead of fabricated state.
@@ -44,7 +44,7 @@ export class BackendTransportError extends Error {
  *   1. explicit argument
  *   2. VITE_API_BASE_URL (Vite env, injected at build/dev time)
  *   3. same origin as the page (when served by the backend in production)
- *   4. http://localhost:8081 (the default PinchTab server port)
+ *   4. http://localhost:8081 (the default Sutradhar server port)
  *
  * In dev, prefer setting the Vite proxy (see vite.config.ts) and leaving this
  * unset so requests go to same-origin and are proxied to the backend.

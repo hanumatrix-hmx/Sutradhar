@@ -1,24 +1,24 @@
 /**
  * @file packages/sdk/tests/unit/plugin-sdk.spec.ts
- * @description Unit test suite for @pinchtab/sdk verifying plugin lifecycle, sandboxing, dependency resolution, upgrading, and marketplace registry.
+ * @description Unit test suite for @sutradhar/sdk verifying plugin lifecycle, sandboxing, dependency resolution, upgrading, and marketplace registry.
  */
 
 import {
   PluginManager,
   PluginSandbox,
   MarketplaceRegistry,
-  IPinchTabPlugin,
+  ISutradharPlugin,
   PluginContext,
 } from '../../src/index.js';
 
-class DummySkillPlugin implements IPinchTabPlugin {
+class DummySkillPlugin implements ISutradharPlugin {
   public state: any = 'UNINSTALLED';
 
   public manifest = {
     id: 'plugin-dummy-skill',
     name: 'Dummy Skill Plugin',
     version: '1.0.0',
-    author: 'PinchTab Team',
+    author: 'Sutradhar Team',
     description: 'A test skill plugin',
     type: 'skill' as const,
     permissions: ['network' as const],
@@ -34,14 +34,14 @@ class DummySkillPlugin implements IPinchTabPlugin {
   public async unload(): Promise<void> {}
 }
 
-class DummyDependentPlugin implements IPinchTabPlugin {
+class DummyDependentPlugin implements ISutradharPlugin {
   public state: any = 'UNINSTALLED';
 
   public manifest = {
     id: 'plugin-dependent',
     name: 'Dependent Plugin',
     version: '1.0.0',
-    author: 'PinchTab Team',
+    author: 'Sutradhar Team',
     description: 'Requires dummy skill',
     type: 'action' as const,
     permissions: ['browser' as const],
@@ -56,7 +56,7 @@ class DummyDependentPlugin implements IPinchTabPlugin {
   public async unload(): Promise<void> {}
 }
 
-describe('@pinchtab/sdk Platform SDK Suite', () => {
+describe('@sutradhar/sdk Platform SDK Suite', () => {
   let manager: PluginManager;
   let registry: MarketplaceRegistry;
 
@@ -133,7 +133,7 @@ describe('@pinchtab/sdk Platform SDK Suite', () => {
     const plugin = new DummySkillPlugin();
     registry.registerPluginEntry({
       manifest: plugin.manifest,
-      downloadUrl: 'https://marketplace.pinchtab.io/plugins/dummy.zip',
+      downloadUrl: 'https://marketplace.sutradhar.io/plugins/dummy.zip',
       publishedAt: new Date().toISOString(),
       isVerified: true,
     });

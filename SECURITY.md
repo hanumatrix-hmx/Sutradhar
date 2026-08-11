@@ -1,6 +1,6 @@
 # Security defaults
 
-PinchTab gives an MCP client or an autonomous agent real control over a real browser —
+Sutradhar gives an MCP client or an autonomous agent real control over a real browser —
 navigation, form-filling, file upload/download, JS evaluation, cookie/localStorage access. That
 is a privileged operator control surface, not something to expose to untrusted callers or the
 public internet. This document lists what's enforced by default today and what's opt-in.
@@ -24,17 +24,17 @@ public internet. This document lists what's enforced by default today and what's
   `packages/browser/src/actions/browser-action-engine.ts`).
 - **Uploads** (`browser.upload_file`) are unrestricted by default — uploading an arbitrary local
   file the caller specifies is the intended feature. Set `allowedUploadRoots` on
-  `PinchTabRuntime`/`BrowserActionEngine` if the calling LLM might act on untrusted page content
+  `SutradharRuntime`/`BrowserActionEngine` if the calling LLM might act on untrusted page content
   (prompt injection) telling it to upload something sensitive.
 
 ## Navigation
 
 - Unrestricted by default — most callers legitimately need to browse the real internet.
-- Set `restrictNavigationToLocal: true` on `PinchTabRuntime` to reject any navigation target
+- Set `restrictNavigationToLocal: true` on `SutradharRuntime` to reject any navigation target
   that isn't localhost, a private/loopback IP range, or a `file:`/`about:`/`data:` URL. Intended
   for sandboxed or testing deployments where real-internet navigation would be a mistake, not a
   feature — this mirrors the "restrict browsing to locally hosted websites" default the real
-  `pinchtab/pinchtab` project (a separate, unrelated Go project of the same name) ships with.
+  `sutradhar/sutradhar` project (a separate, unrelated Go project of the same name) ships with.
 
 ## What's explicitly NOT built in
 
@@ -42,7 +42,7 @@ public internet. This document lists what's enforced by default today and what's
   or otherwise tries to defeat bot detection. If you need that, it needs a clear, legitimate use
   case behind it — this isn't something to add reflexively.
 - **No authentication layer** on either server — see "Network exposure" above.
-- **No multi-tenant isolation.** One `PinchTabRuntime`/`BrowserSessionManager` instance is meant
+- **No multi-tenant isolation.** One `SutradharRuntime`/`BrowserSessionManager` instance is meant
   for one trust domain. Don't share a single running instance across callers who shouldn't be
   able to see each other's sessions, cookies, or downloaded files.
 

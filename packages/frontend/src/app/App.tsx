@@ -66,15 +66,15 @@ class GlobalErrorBoundary extends React.Component<{ children: React.ReactNode },
             variant="primary"
             onClick={() => {
               try {
-                localStorage.removeItem('pinchtab_llm_config_v1');
-                localStorage.removeItem('pinchtab_settings_v1');
+                localStorage.removeItem('sutradhar_llm_config_v1');
+                localStorage.removeItem('sutradhar_settings_v1');
               } catch {
                 // Ignore storage errors
               }
               window.location.assign('/');
             }}
           >
-            <IconRefresh size={14} /> Reset & Reload PinchTab Workspace
+            <IconRefresh size={14} /> Reset & Reload Sutradhar Workspace
           </Button>
         </div>
       );

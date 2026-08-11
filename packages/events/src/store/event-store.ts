@@ -3,7 +3,7 @@
  * @description In-memory EventStore for event persistence, correlation filtering, and replay.
  */
 
-import { IDomainEvent, Timestamp } from '@pinchtab/contracts';
+import { IDomainEvent, Timestamp } from '@sutradhar/contracts';
 
 export interface EventStoreFilterOptions {
   readonly type?: string;

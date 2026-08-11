@@ -4,7 +4,7 @@
  */
 
 import { TaskGraph, TaskNode } from './task-graph-models.js';
-import { StructuredLogger } from '@pinchtab/observability';
+import { StructuredLogger } from '@sutradhar/observability';
 
 export interface GraphExecutionResult {
   readonly graphId: string;

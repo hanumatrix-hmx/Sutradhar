@@ -7,13 +7,13 @@
  */
 
 import { runAgentLoop } from '../../src/core/agent-loop.js';
-import { createAgentId, createSessionId } from '@pinchtab/contracts';
+import { createAgentId, createSessionId } from '@sutradhar/contracts';
 
 function stubLlmProvider() {
   return { providerId: 'stub', generateCompletion: vi.fn(), generateStream: vi.fn() } as any;
 }
 
-describe('@pinchtab/agent runAgentLoop bootstrap failure path', () => {
+describe('@sutradhar/agent runAgentLoop bootstrap failure path', () => {
   it('closes an owned session it just created if the resulting tab has no live Page', async () => {
     const fakeTab = { isActive: true, page: undefined };
     const fakeSession = { id: createSessionId('sess_1'), getTabs: () => [fakeTab] };

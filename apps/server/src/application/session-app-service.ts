@@ -3,10 +3,10 @@
  * @description Application service for browser session use cases, hiding browser internals from HTTP controllers.
  */
 
-import { SessionId, BrowserSessionDto } from '@pinchtab/contracts';
-import { BrowserSessionManager } from '@pinchtab/browser';
-import { SessionRepository } from '@pinchtab/storage';
-import { StructuredLogger } from '@pinchtab/observability';
+import { SessionId, BrowserSessionDto } from '@sutradhar/contracts';
+import { BrowserSessionManager } from '@sutradhar/browser';
+import { SessionRepository } from '@sutradhar/storage';
+import { StructuredLogger } from '@sutradhar/observability';
 
 export interface CreateSessionCommand {
   readonly isIncognito?: boolean;

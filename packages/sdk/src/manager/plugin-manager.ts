@@ -3,12 +3,12 @@
  * @description PluginManager coordinating plugin lifecycles, dependency resolution, upgrading, and uninstallation.
  */
 
-import { IPinchTabPlugin, PluginContext, HostCapabilities } from '../types/plugin-types.js';
+import { ISutradharPlugin, PluginContext, HostCapabilities } from '../types/plugin-types.js';
 import { PluginSandbox } from '../sandbox/plugin-sandbox.js';
 import { PluginManifestValidator } from '../manifest/plugin-manifest.js';
 
 export class PluginManager {
-  private readonly plugins = new Map<string, IPinchTabPlugin>();
+  private readonly plugins = new Map<string, ISutradharPlugin>();
   private readonly sandboxes = new Map<string, PluginSandbox>();
   /**
    * Optional host that supplies real capabilities to plugins via PluginContext.host. When
@@ -22,7 +22,7 @@ export class PluginManager {
     this.capabilitiesProvider = fn;
   }
 
-  public async installPlugin(plugin: IPinchTabPlugin): Promise<void> {
+  public async installPlugin(plugin: ISutradharPlugin): Promise<void> {
     const validation = PluginManifestValidator.validate(plugin.manifest);
     if (!validation.isValid) {
       throw new Error(
@@ -86,7 +86,7 @@ export class PluginManager {
     plugin.state = 'DISABLED';
   }
 
-  public async upgradePlugin(updatedPlugin: IPinchTabPlugin): Promise<void> {
+  public async upgradePlugin(updatedPlugin: ISutradharPlugin): Promise<void> {
     const pluginId = updatedPlugin.manifest.id;
     if (this.plugins.has(pluginId)) {
       await this.disablePlugin(pluginId);
@@ -111,7 +111,7 @@ export class PluginManager {
     this.sandboxes.delete(pluginId);
   }
 
-  public getPlugin(pluginId: string): IPinchTabPlugin | undefined {
+  public getPlugin(pluginId: string): ISutradharPlugin | undefined {
     return this.plugins.get(pluginId);
   }
 
@@ -119,7 +119,7 @@ export class PluginManager {
     return this.sandboxes.get(pluginId);
   }
 
-  public listPlugins(): readonly IPinchTabPlugin[] {
+  public listPlugins(): readonly ISutradharPlugin[] {
     return Array.from(this.plugins.values());
   }
 }

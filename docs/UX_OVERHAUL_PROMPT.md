@@ -1,6 +1,6 @@
-# PinchTab Frontend UI/UX Overhaul — Master Prompt
+# Sutradhar Frontend UI/UX Overhaul — Master Prompt
 
-> **Purpose**: This is the standing instruction set for the PinchTab frontend
+> **Purpose**: This is the standing instruction set for the Sutradhar frontend
 > rework. The backend (real ReAct agent loop, real browser sessions, real
 > LLM providers) works; the frontend experience around it is currently
 > unusable and visually dated. This document is the single source of truth
@@ -15,7 +15,7 @@
 
 ## 1. Mission
 
-Turn PinchTab into a tool a user can actually operate — create a goal, watch
+Turn Sutradhar into a tool a user can actually operate — create a goal, watch
 the agent work live, intervene, get the answer, and **come back days later
 and still find every execution** — wrapped in a modern, futuristic Soft-UI
 shell: floating soft panels, inset/raised surfaces, smooth spring motion.
@@ -50,7 +50,7 @@ they can be added later.
 - Backend auto-detects the LLM provider from server env; frontend Settings
   provider selection never reaches the backend.
 - Persistence today: sessions live only in browser `localStorage`.
-  Backend has `LocalFileStorage` (`@pinchtab/storage`) exposed via
+  Backend has `LocalFileStorage` (`@sutradhar/storage`) exposed via
   `POST/GET /api/v1/storage/files` (list only — **no GET-by-key yet**).
 - Build: `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm dev`.
   Hexagonal rules in `.ai/architecture-rules.md` apply.
@@ -497,7 +497,7 @@ frontend 29/29, agent 30/30, browser 21/21, server 28/28 green.
 
 Delivered:
 
-- **Canonical run record**: `RunRecordDto` in `@pinchtab/contracts`
+- **Canonical run record**: `RunRecordDto` in `@sutradhar/contracts`
   (`dto/run-dto.ts`) — single schema, server is source of truth
   (runId, sessionId?, goal, status, startedAt/endedAt/durationMs,
   provider?, model?, steps, answer?, summary?, error?, result?).

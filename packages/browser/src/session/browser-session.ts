@@ -3,9 +3,9 @@
  * @description Domain class and interface for managing browser sessions and multi-tab lifecycles.
  */
 
-import { SessionId, TabId, createTabId, BrowserSessionDto } from '@pinchtab/contracts';
-import { EventBus } from '@pinchtab/events';
-import { StructuredLogger } from '@pinchtab/observability';
+import { SessionId, TabId, createTabId, BrowserSessionDto } from '@sutradhar/contracts';
+import { EventBus } from '@sutradhar/events';
+import { StructuredLogger } from '@sutradhar/observability';
 import { Browser as PuppeteerBrowser, Page } from 'puppeteer-core';
 import { IBrowserInstance } from '../launcher/browser-launcher.js';
 import { BrowserTab, IBrowserTab } from './browser-tab.js';

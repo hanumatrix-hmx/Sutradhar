@@ -3,9 +3,9 @@
  * @description Unit test suite verifying confidence-aware execution, CandidateMatchResult ranking, and threshold rules.
  */
 
-import { SemanticElementGraph, SemanticNode } from '@pinchtab/browser';
+import { SemanticElementGraph, SemanticNode } from '@sutradhar/browser';
 import { RecoveryEngine } from '../../src/recovery/recovery-engine.js';
-import { ExecutionVerifier } from '@pinchtab/browser';
+import { ExecutionVerifier } from '@sutradhar/browser';
 
 describe('Engineering Iteration 2 — Confidence-Aware Execution Unit Tests', () => {
   it('should rank exact accessible name matches with high confidence >= 0.90', () => {

@@ -4,9 +4,9 @@
  */
 
 import { WorkflowGraph, WORKFLOW_VERSION } from '../../src/index.js';
-import { createWorkflowId } from '@pinchtab/contracts';
+import { createWorkflowId } from '@sutradhar/contracts';
 
-describe('@pinchtab/workflow Engine Shell & Node Graph', () => {
+describe('@sutradhar/workflow Engine Shell & Node Graph', () => {
   it('should export correct package version constant', () => {
     expect(WORKFLOW_VERSION).toBe('0.1.0');
   });

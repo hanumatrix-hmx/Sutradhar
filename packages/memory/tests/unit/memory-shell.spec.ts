@@ -4,9 +4,9 @@
  */
 
 import { MEMORY_VERSION, MemoryTier, IMemoryStore } from '../../src/index.js';
-import { createMemoryId, MemoryRecordDto } from '@pinchtab/contracts';
+import { createMemoryId, MemoryRecordDto } from '@sutradhar/contracts';
 
-describe('@pinchtab/memory Shell & Interfaces', () => {
+describe('@sutradhar/memory Shell & Interfaces', () => {
   it('should export correct package version constant', () => {
     expect(MEMORY_VERSION).toBe('0.1.0');
   });

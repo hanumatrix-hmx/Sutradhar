@@ -3,7 +3,7 @@
  * @description Evidence factors, penalty models, and DecisionEvidence recommendations for Decision Evidence Engine.
  */
 
-import { ElementCandidate } from '@pinchtab/browser';
+import { ElementCandidate } from '@sutradhar/browser';
 
 export type EvidenceFactorType =
   | 'semantic_similarity'

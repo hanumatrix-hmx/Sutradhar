@@ -12,16 +12,16 @@ Last Updated: 2026-07-28
 
 ## Stable Bounded Context Identifiers (`CTX-xxx`)
 
-- **`CTX-001` (Foundational Context)**: `@pinchtab/contracts`, `@pinchtab/capability`, `@pinchtab/utils`, `@pinchtab/config`, `@pinchtab/observability`, `@pinchtab/events`.
-- **`CTX-002` (Core Domain Context)**: `@pinchtab/agent`, `@pinchtab/browser`, `@pinchtab/llm`, `@pinchtab/memory`, `@pinchtab/knowledge`, `@pinchtab/prompt`, `@pinchtab/workflow`.
-- **`CTX-003` (Governance Context)**: `@pinchtab/policy`.
-- **`CTX-004` (Infrastructure Context)**: `@pinchtab/tools`, `@pinchtab/storage`, `@pinchtab/queue`, `@pinchtab/registry`, `@pinchtab/plugin`.
-- **`CTX-005` (Orchestration & Runtime Context)**: `@pinchtab/orchestrator`, `@pinchtab/runtime`.
-- **`CTX-006` (Presentation Context)**: `@pinchtab/ui`, `@pinchtab/sdk`.
+- **`CTX-001` (Foundational Context)**: `@sutradhar/contracts`, `@sutradhar/capability`, `@sutradhar/utils`, `@sutradhar/config`, `@sutradhar/observability`, `@sutradhar/events`.
+- **`CTX-002` (Core Domain Context)**: `@sutradhar/agent`, `@sutradhar/browser`, `@sutradhar/llm`, `@sutradhar/memory`, `@sutradhar/knowledge`, `@sutradhar/prompt`, `@sutradhar/workflow`.
+- **`CTX-003` (Governance Context)**: `@sutradhar/policy`.
+- **`CTX-004` (Infrastructure Context)**: `@sutradhar/tools`, `@sutradhar/storage`, `@sutradhar/queue`, `@sutradhar/registry`, `@sutradhar/plugin`.
+- **`CTX-005` (Orchestration & Runtime Context)**: `@sutradhar/orchestrator`, `@sutradhar/runtime`.
+- **`CTX-006` (Presentation Context)**: `@sutradhar/ui`, `@sutradhar/sdk`.
 - **`CTX-007` (Application Context)**: `apps/server`, `apps/web`.
 
 ## Layer Isolation Invariants
 
 1. `CTX-001` packages MUST NOT import from any higher-numbered context (`CTX-002` through `CTX-007`).
-2. `CTX-002` domain packages MUST depend strictly on interfaces in `CTX-001` (`@pinchtab/contracts`) and NEVER directly import infrastructure adapters in `CTX-004`.
+2. `CTX-002` domain packages MUST depend strictly on interfaces in `CTX-001` (`@sutradhar/contracts`) and NEVER directly import infrastructure adapters in `CTX-004`.
 3. `CTX-007` applications MUST NOT execute direct database or vector store queries; all operations must pass through domain repositories.

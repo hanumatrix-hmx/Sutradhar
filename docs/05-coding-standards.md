@@ -6,8 +6,8 @@ Last Reviewed: 2026-07-28
 Related ADRs:
   - 0001-monorepo
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/utils'
+  - '@sutradhar/contracts'
+  - '@sutradhar/utils'
 ---
 
 # Coding Standards & Best Practices

@@ -2,13 +2,13 @@
  * @file packages/sdk/src/loader/plugin-loader.ts
  * @description Real plugin loader — the piece that was missing.
  *
- * Goes from "a plugin directory on disk" to "a running IPinchTabPlugin instance" by:
- *   1. Reading `pinchtab-plugin.json` (the manifest) from a plugin directory.
+ * Goes from "a plugin directory on disk" to "a running ISutradharPlugin instance" by:
+ *   1. Reading `sutradhar-plugin.json` (the manifest) from a plugin directory.
  *   2. Validating the manifest.
  *   3. Verifying the manifest signature (real ed25519, or skipped when unsigned & allowed).
  *   4. Dynamically `import()`ing the entrypoint module.
  *   5. Instantiating the plugin (the module's default export must be a constructor of
- *      IPinchTabPlugin, or the module must default-export an IPinchTabPlugin instance).
+ *      ISutradharPlugin, or the module must default-export an ISutradharPlugin instance).
  *   6. Installing + initializing it via the existing PluginManager.
  *
  * This closes the gap the deep-dive identified: PluginManager previously required a
@@ -20,7 +20,7 @@ import { isAbsolute, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { PluginManifest } from '../manifest/plugin-manifest.js';
 import { PluginManifestValidator } from '../manifest/plugin-manifest.js';
-import type { IPinchTabPlugin } from '../types/plugin-types.js';
+import type { ISutradharPlugin } from '../types/plugin-types.js';
 import { verifyManifestSignature, type TrustedKey } from './signature-verifier.js';
 
 /** Result of loading a single plugin from disk. */
@@ -32,19 +32,19 @@ export interface LoadResult {
   error?: string;
 }
 
-/** A factory that produces an IPinchTabPlugin. The entrypoint module's default export. */
+/** A factory that produces an ISutradharPlugin. The entrypoint module's default export. */
 export type PluginModule =
   | { default: NewablePlugin }
-  | { default: IPinchTabPlugin }
+  | { default: ISutradharPlugin }
   | NewablePlugin
-  | IPinchTabPlugin;
+  | ISutradharPlugin;
 
-/** A constructor returning an IPinchTabPlugin. */
-export type NewablePlugin = new () => IPinchTabPlugin;
+/** A constructor returning an ISutradharPlugin. */
+export type NewablePlugin = new () => ISutradharPlugin;
 
 /** Options for {@link PluginLoader}. */
 export interface PluginLoaderOptions {
-  /** Manifest file name within each plugin directory. Default `pinchtab-plugin.json`. */
+  /** Manifest file name within each plugin directory. Default `sutradhar-plugin.json`. */
   manifestFileName?: string;
   /**
    * Whether to allow loading plugins with no signature (local dev / self-authored plugins).
@@ -77,13 +77,13 @@ export class PluginLoader {
   private readonly trustedKeys: readonly TrustedKey[];
 
   public constructor(options: PluginLoaderOptions = {}) {
-    this.manifestFileName = options.manifestFileName ?? 'pinchtab-plugin.json';
+    this.manifestFileName = options.manifestFileName ?? 'sutradhar-plugin.json';
     this.allowUnsigned = options.allowUnsigned ?? true;
     this.trustedKeys = options.trustedKeys ?? [];
   }
 
   /**
-   * Load a single plugin from a directory containing `pinchtab-plugin.json`.
+   * Load a single plugin from a directory containing `sutradhar-plugin.json`.
    * Resolves the entrypoint relative to the manifest directory.
    */
   public async load(pluginDir: string, manager: PluginManagerLike): Promise<LoadResult> {
@@ -156,7 +156,7 @@ export class PluginLoader {
     return manifest;
   }
 
-  private async instantiate(manifest: PluginManifest, dir: string): Promise<IPinchTabPlugin> {
+  private async instantiate(manifest: PluginManifest, dir: string): Promise<ISutradharPlugin> {
     // Resolve entrypoint relative to the plugin directory (allow absolute paths too).
     const entryPath = isAbsolute(manifest.entrypoint)
       ? manifest.entrypoint
@@ -182,8 +182,8 @@ export class PluginLoader {
     return plugin;
   }
 
-  /** Accept several common module shapes and return an IPinchTabPlugin instance. */
-  private extractPlugin(mod: PluginModule): IPinchTabPlugin {
+  /** Accept several common module shapes and return an ISutradharPlugin instance. */
+  private extractPlugin(mod: PluginModule): ISutradharPlugin {
     const candidate = (mod as { default?: unknown }).default ?? mod;
     if (this.isPlugin(candidate)) return candidate;
     if (typeof candidate === 'function') {
@@ -191,19 +191,19 @@ export class PluginLoader {
       if (this.isPlugin(constructed)) return constructed;
     }
     throw new Error(
-      "entrypoint must default-export an IPinchTabPlugin instance or a constructor that produces one",
+      "entrypoint must default-export an ISutradharPlugin instance or a constructor that produces one",
     );
   }
 
-  private isPlugin(v: unknown): v is IPinchTabPlugin {
+  private isPlugin(v: unknown): v is ISutradharPlugin {
     return (
       !!v &&
       typeof v === 'object' &&
-      typeof (v as IPinchTabPlugin).initialize === 'function' &&
-      typeof (v as IPinchTabPlugin).enable === 'function' &&
-      typeof (v as IPinchTabPlugin).disable === 'function' &&
-      typeof (v as IPinchTabPlugin).unload === 'function' &&
-      !!(v as IPinchTabPlugin).manifest
+      typeof (v as ISutradharPlugin).initialize === 'function' &&
+      typeof (v as ISutradharPlugin).enable === 'function' &&
+      typeof (v as ISutradharPlugin).disable === 'function' &&
+      typeof (v as ISutradharPlugin).unload === 'function' &&
+      !!(v as ISutradharPlugin).manifest
     );
   }
 
@@ -217,6 +217,6 @@ export class PluginLoader {
  * loader is testable with a stub and so future host integrations can supply their own.
  */
 export interface PluginManagerLike {
-  installPlugin(plugin: IPinchTabPlugin): Promise<void>;
+  installPlugin(plugin: ISutradharPlugin): Promise<void>;
   initializePlugin(pluginId: string): Promise<void>;
 }

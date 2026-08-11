@@ -6,8 +6,8 @@ Last Reviewed: 2026-07-28
 Related ADRs:
   - 0001-monorepo
 Related Packages:
-  - '@pinchtab/config'
-  - '@pinchtab/observability'
+  - '@sutradhar/config'
+  - '@sutradhar/observability'
 ---
 
 # Tech Stack & Decision Rationale
@@ -18,7 +18,7 @@ Related Packages:
 - **Monorepo Manager**: pnpm Workspaces, Turborepo v2 (`turbo`).
 - **Backend API**: Fastify (REST, WebSocket, Server-Sent Events).
 - **Frontend App**: Next.js (App Router), React, TailwindCSS, shadcn/ui.
-- **Browser Automation**: PinchTab API, Chrome DevTools Protocol (CDP), Playwright.
+- **Browser Automation**: Sutradhar API, Chrome DevTools Protocol (CDP), Playwright.
 - **LLM Integrations**: OpenRouter Gateway, Ollama (Local), OpenAI SDK, Anthropic SDK.
 - **Database & Storage**: Drizzle ORM / SQLite (Local), PostgreSQL (Enterprise), Redis (Cache/Events).
 - **Vector Search**: Qdrant / SQLite-vector hybrid search engine.

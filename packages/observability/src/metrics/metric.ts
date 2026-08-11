@@ -3,7 +3,7 @@
  * @description In-memory metric primitives (Counter, Gauge, Histogram).
  */
 
-import { Timestamp } from '@pinchtab/contracts';
+import { Timestamp } from '@sutradhar/contracts';
 
 export type MetricType = 'counter' | 'gauge' | 'histogram';
 

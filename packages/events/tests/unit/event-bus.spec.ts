@@ -4,9 +4,9 @@
  */
 
 import { EventBus, EVENTS_VERSION } from '../../src/index.js';
-import { createSessionId } from '@pinchtab/contracts';
+import { createSessionId } from '@sutradhar/contracts';
 
-describe('@pinchtab/events EventBus', () => {
+describe('@sutradhar/events EventBus', () => {
   it('should export correct package version constant', () => {
     expect(EVENTS_VERSION).toBe('0.1.0');
   });

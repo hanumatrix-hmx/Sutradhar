@@ -5,7 +5,7 @@
 
 import { describe, it, expect } from 'vitest';
 
-describe('@pinchtab/frontend Milestone 2 — Design System Component Library', () => {
+describe('@sutradhar/frontend Milestone 2 — Design System Component Library', () => {
   const PRIMITIVE_COMPONENTS = [
     'Button',
     'Input',

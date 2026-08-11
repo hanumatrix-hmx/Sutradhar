@@ -1,6 +1,6 @@
 /**
  * @file packages/observability/tests/unit/studio.spec.ts
- * @description Unit test suite verifying PinchTab Studio modules (replay, decision diff, failure lab, dataset recorder, profiler).
+ * @description Unit test suite verifying Sutradhar Studio modules (replay, decision diff, failure lab, dataset recorder, profiler).
  */
 
 import {
@@ -11,7 +11,7 @@ import {
   DatasetRecorder,
 } from '../../src/index.js';
 
-describe('@pinchtab/observability PinchTab Studio Engineering Suite', () => {
+describe('@sutradhar/observability Sutradhar Studio Engineering Suite', () => {
   let inspector: ExecutionInspector;
 
   beforeEach(() => {

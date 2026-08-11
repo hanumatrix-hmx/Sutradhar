@@ -1,6 +1,6 @@
 /**
  * @file apps/server/tests/benchmark/stabilization.spec.ts
- * @description Automated continuous acceptance gate for PinchTab Engineering Stabilization Program.
+ * @description Automated continuous acceptance gate for Sutradhar Engineering Stabilization Program.
  */
 
 import {
@@ -9,7 +9,7 @@ import {
 } from '../../src/eval/stabilization-benchmark-suite.js';
 import { StabilizationReportGenerator } from '../../src/eval/stabilization-report-generator.js';
 
-describe('PinchTab Engineering Stabilization Program Test Suite', () => {
+describe('Sutradhar Engineering Stabilization Program Test Suite', () => {
   it('should generate 120 stabilization benchmark tasks across 8 core categories', () => {
     const tasks = StabilizationBenchmarkSuite.getStabilizationTasks();
     expect(tasks.length).toBe(120);

@@ -11,8 +11,8 @@
  * cheap enough to run on every goal start with no extra infra.
  */
 
-import { LocalFileStorage } from '@pinchtab/storage';
-import { StructuredLogger } from '@pinchtab/observability';
+import { LocalFileStorage } from '@sutradhar/storage';
+import { StructuredLogger } from '@sutradhar/observability';
 
 export interface RunMemoryRecord {
   readonly goalId: string;

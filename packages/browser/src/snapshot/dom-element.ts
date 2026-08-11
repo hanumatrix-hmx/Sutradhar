@@ -3,7 +3,7 @@
  * @description Raw element node definitions and DTO conversion utilities for DOM snapshotting.
  */
 
-import { BrowserElementDto } from '@pinchtab/contracts';
+import { BrowserElementDto } from '@sutradhar/contracts';
 
 export interface RawElementNode {
   readonly tagName: string;

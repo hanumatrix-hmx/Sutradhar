@@ -1,6 +1,6 @@
 /**
  * @file apps/server/src/controllers/studio-controller.ts
- * @description REST API Gateway controller exposing PinchTab Studio endpoints for replay, diffing, chaos testing, and profiling.
+ * @description REST API Gateway controller exposing Sutradhar Studio endpoints for replay, diffing, chaos testing, and profiling.
  */
 
 import {
@@ -9,7 +9,7 @@ import {
   DecisionDiffer,
   FailureLab,
   DatasetRecorder,
-} from '@pinchtab/observability';
+} from '@sutradhar/observability';
 
 export class StudioController {
   private readonly inspector = new ExecutionInspector();
@@ -17,7 +17,7 @@ export class StudioController {
   public constructor() {
     this.inspector.setGoalInspection({
       goalId: 'goal_studio_101',
-      text: 'PinchTab Studio Benchmark Session',
+      text: 'Sutradhar Studio Benchmark Session',
       priority: 10,
       status: 'COMPLETED',
       childGoalIds: [],

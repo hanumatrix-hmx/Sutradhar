@@ -8,9 +8,9 @@ Review Frequency: Quarterly
 Related ADRs:
   - 0003-provider-contract
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/browser'
-  - '@pinchtab/llm'
+  - '@sutradhar/contracts'
+  - '@sutradhar/browser'
+  - '@sutradhar/llm'
 ---
 
 # Provider Implementation Guide
@@ -18,7 +18,7 @@ Related Packages:
 ## 1. Step-by-Step Guide for New LLM Providers
 
 1. **Locate Target Package**: Open `packages/llm/src/providers/`.
-2. **Implement Contract**: Create a new class implementing `ILLMProvider` exported from `@pinchtab/contracts`.
-3. **Normalize DTOs**: Map third-party API request and response formats to canonical `@pinchtab/contracts` DTOs (`CompletionRequestDto`, `CompletionResponseDto`).
-4. **Register Provider**: Register the provider implementation in `@pinchtab/registry` during system bootstrapping.
+2. **Implement Contract**: Create a new class implementing `ILLMProvider` exported from `@sutradhar/contracts`.
+3. **Normalize DTOs**: Map third-party API request and response formats to canonical `@sutradhar/contracts` DTOs (`CompletionRequestDto`, `CompletionResponseDto`).
+4. **Register Provider**: Register the provider implementation in `@sutradhar/registry` during system bootstrapping.
 5. **Add Unit Tests**: Provide mock API tests verifying streaming and tool calling behavior.

@@ -6,9 +6,9 @@ Last Reviewed: 2026-07-28
 Related ADRs:
   - 0001-monorepo
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/orchestrator'
-  - '@pinchtab/runtime'
+  - '@sutradhar/contracts'
+  - '@sutradhar/orchestrator'
+  - '@sutradhar/runtime'
 ---
 
 # Folder Structure & Monorepo Map
@@ -29,7 +29,7 @@ Related Packages:
 │   ├── observability/        # Structured Pino logger, OpenTelemetry, Metrics
 │   ├── events/               # EventBus interfaces, EventEmitter2, Redis streams
 │   ├── agent/                # Agent entities, goals, states, execution policies
-│   ├── browser/              # BrowserSession/Tab domain entities & PinchTab/CDP providers
+│   ├── browser/              # BrowserSession/Tab domain entities & Sutradhar/CDP providers
 │   ├── llm/                  # Model/Completion domain entities & OpenRouter/Ollama providers
 │   ├── memory/               # Working, Short-term, Episodic, Semantic memory stores
 │   ├── knowledge/            # Ingested docs, chunks, vector/graph indexes

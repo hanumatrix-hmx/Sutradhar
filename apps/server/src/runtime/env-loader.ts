@@ -4,7 +4,7 @@
  *
  * Loads a `.env` file from the server's working directory (or repo root) into
  * `process.env` on startup, but never overwrites variables that are already set.
- * This lets you drop `OPENROUTER_API_KEY=...`, `PINCHTAB_MODEL=...`, etc. into a
+ * This lets you drop `OPENROUTER_API_KEY=...`, `SUTRADHAR_MODEL=...`, etc. into a
  * repo-root `.env` and have them just work when the server boots.
  */
 

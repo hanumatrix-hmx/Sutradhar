@@ -10,17 +10,17 @@ Bounded Context: CTX-001 (Foundational Context)
 Depends on ADRs:
   - 0001-monorepo
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/utils'
+  - '@sutradhar/contracts'
+  - '@sutradhar/utils'
 ---
 
-# @pinchtab/observability
+# @sutradhar/observability
 
-> Structured JSON logging, metrics aggregation, and OpenTelemetry context tracing engine for PinchTab.
+> Structured JSON logging, metrics aggregation, and OpenTelemetry context tracing engine for Sutradhar.
 
 ## Package Architectural Invariants
 
-1. **Foundational Layer Boundary (`CTX-001`)**: Depends strictly on `@pinchtab/contracts` and `@pinchtab/utils`. Must NEVER import from domain, infrastructure, or application packages (`packages/browser`, `packages/orchestrator`, `apps/*`).
+1. **Foundational Layer Boundary (`CTX-001`)**: Depends strictly on `@sutradhar/contracts` and `@sutradhar/utils`. Must NEVER import from domain, infrastructure, or application packages (`packages/browser`, `packages/orchestrator`, `apps/*`).
 2. **Zero External Runtime NPM Dependencies**: Core logger and metrics engine are implemented using pure TypeScript without bloated external logger libraries.
 3. **Structured JSON Output**: All log entries conform to standardized JSON schema with trace IDs, correlation IDs, timestamps, and contextual attributes.
 

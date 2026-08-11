@@ -4,7 +4,7 @@
  */
 
 import { InMemoryEventStore } from '../../src/index.js';
-import { createDomainEvent, createSessionId } from '@pinchtab/contracts';
+import { createDomainEvent, createSessionId } from '@sutradhar/contracts';
 
 describe('InMemoryEventStore', () => {
   it('should append and retrieve events by type and correlationId', async () => {

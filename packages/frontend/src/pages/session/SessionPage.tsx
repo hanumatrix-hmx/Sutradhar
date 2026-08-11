@@ -494,12 +494,12 @@ ${session.timeline.map((t) => `- **[${t.timestamp}]** *[${t.category.toUpperCase
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `pinchtab_research_${session.id}.md`;
+    a.download = `sutradhar_research_${session.id}.md`;
     a.click();
     URL.revokeObjectURL(url);
     addToast({
       title: 'Exported Research Report',
-      message: `Downloaded pinchtab_research_${session.id}.md`,
+      message: `Downloaded sutradhar_research_${session.id}.md`,
       type: 'success',
     });
   };

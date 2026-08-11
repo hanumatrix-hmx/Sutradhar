@@ -1,5 +1,5 @@
 // Engine attach-mode smoke test: launch a REAL Chrome with --remote-debugging-port, then
-// use PinchTabRuntime.attach() to drive it via CDP. Proves the extension-path architecture
+// use SutradharRuntime.attach() to drive it via CDP. Proves the extension-path architecture
 // works before any MV3/UI work. Run directly (no pipe).
 //
 //   node packages/capability-runtime/scripts/smoke-attach.mjs
@@ -8,7 +8,7 @@ import { spawn } from 'node:child_process';
 import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { PinchTabRuntime } from '../dist/index.js';
+import { SutradharRuntime } from '../dist/index.js';
 
 const log = (m) => console.log(`[${new Date().toISOString().slice(11, 23)}] ${m}`);
 const watchdog = setTimeout(() => {
@@ -21,7 +21,7 @@ const PORT = 9333; // avoid 9222 in case something else is on it
 const endpoint = `http://127.0.0.1:${PORT}`;
 
 // Use a throwaway user-data-dir so we don't touch the user's real profile during the test.
-const profileDir = mkdtempSync(join(tmpdir(), 'pinchtab-attach-test-'));
+const profileDir = mkdtempSync(join(tmpdir(), 'sutradhar-attach-test-'));
 log(`spawning Chrome (headless, --remote-debugging-port=${PORT}, profile=${profileDir}) ...`);
 const chrome = spawn(CHROME, [
   `--headless=new`,
@@ -46,7 +46,7 @@ for (let i = 0; i < 40; i++) {
 if (!up) { console.error('❌ Chrome CDP endpoint never came up'); process.exit(1); }
 log('CDP endpoint is up.');
 
-const runtime = new PinchTabRuntime();
+const runtime = new SutradharRuntime();
 let sessionId;
 try {
   log('[1] attach() to external Chrome ...');
@@ -69,7 +69,7 @@ try {
   const png = (await runtime.screenshot(sessionId)).base64;
   log(`    base64 length=${png.length} (~${Math.round((png.length * 0.75) / 1024)} KB)`);
 
-  log('✅ ENGINE ATTACH MODE WORKS — PinchTab drove an external Chrome over CDP.');
+  log('✅ ENGINE ATTACH MODE WORKS — Sutradhar drove an external Chrome over CDP.');
 } catch (e) {
   console.error('\n❌ ATTACH TEST FAILED: ' + (e?.message || e));
   console.error(e);

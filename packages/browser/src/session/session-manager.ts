@@ -3,9 +3,9 @@
  * @description Centralized BrowserSessionManager orchestrating multi-session lifecycles and event bus integration.
  */
 
-import { SessionId, createSessionId } from '@pinchtab/contracts';
-import { EventBus, type SubscriptionToken } from '@pinchtab/events';
-import { StructuredLogger } from '@pinchtab/observability';
+import { SessionId, createSessionId } from '@sutradhar/contracts';
+import { EventBus, type SubscriptionToken } from '@sutradhar/events';
+import { StructuredLogger } from '@sutradhar/observability';
 import { BrowserLauncher } from '../launcher/browser-launcher.js';
 import type { BrowserLaunchOptions } from '../launcher/browser-options.js';
 import { BrowserSession, IBrowserSession } from './browser-session.js';

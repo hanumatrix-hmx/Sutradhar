@@ -1,6 +1,6 @@
 /**
  * @file apps/server/src/eval/benchmark-dataset.ts
- * @description Benchmark Dataset containing 100+ browser tasks across 15 categories for PinchTab evaluation.
+ * @description Benchmark Dataset containing 100+ browser tasks across 15 categories for Sutradhar evaluation.
  */
 
 export type BenchmarkCategory =
@@ -148,10 +148,10 @@ export const BENCHMARK_DATASET: readonly BenchmarkTask[] = [
   {
     id: 'srch_03',
     category: 'Search',
-    title: 'Search GitHub for PinchTab',
-    goal: 'Search GitHub for PinchTab repository',
+    title: 'Search GitHub for Sutradhar',
+    goal: 'Search GitHub for Sutradhar repository',
     targetUrl: 'https://github.com',
-    expectedSubstring: 'PinchTab',
+    expectedSubstring: 'Sutradhar',
     capabilityRequired: 'Browser',
   },
   {
@@ -884,9 +884,9 @@ export const BENCHMARK_DATASET: readonly BenchmarkTask[] = [
     id: 'wf_03',
     category: 'MultiStepWorkflows',
     title: 'Search GitHub and Summarize README',
-    goal: 'Search GitHub for PinchTab, read README, write summary file artifact',
+    goal: 'Search GitHub for Sutradhar, read README, write summary file artifact',
     targetUrl: 'https://github.com',
-    expectedSubstring: 'PinchTab',
+    expectedSubstring: 'Sutradhar',
     capabilityRequired: 'Browser',
   },
   {

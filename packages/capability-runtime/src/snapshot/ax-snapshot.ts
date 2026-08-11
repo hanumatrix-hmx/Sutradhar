@@ -1,7 +1,7 @@
 /**
  * @file packages/capability-runtime/src/snapshot/ax-snapshot.ts
  * @description Accessibility-tree-based page snapshot — an ADDITIVE alternative to
- * `PinchTabRuntime.snapshot()`'s `data-pt-node-id` DOM-attribute grounding, not a replacement.
+ * `SutradharRuntime.snapshot()`'s `data-sd-node-id` DOM-attribute grounding, not a replacement.
  *
  * The existing snapshot()/click(nodeId) workflow stamps an attribute onto elements at
  * snapshot time and resolves it by that stamp later — if the DOM re-renders between snapshot
@@ -17,7 +17,7 @@
  * roles too, not just explicit role="..." attributes).
  */
 // A minimal duck-typed view of Puppeteer's Page — capability-runtime doesn't depend on
-// puppeteer-core directly (that's @pinchtab/browser's job); this avoids adding it just for a
+// puppeteer-core directly (that's @sutradhar/browser's job); this avoids adding it just for a
 // type annotation when the actual `page` object always comes from `requirePage()`.
 interface PageLike {
   accessibility: { snapshot(options?: { interestingOnly?: boolean }): Promise<unknown> };

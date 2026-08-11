@@ -11,23 +11,23 @@ Depends on ADRs:
   - 0001-monorepo
   - 0003-provider-contract
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/capability'
-  - '@pinchtab/utils'
-  - '@pinchtab/config'
-  - '@pinchtab/observability'
-  - '@pinchtab/events'
+  - '@sutradhar/contracts'
+  - '@sutradhar/capability'
+  - '@sutradhar/utils'
+  - '@sutradhar/config'
+  - '@sutradhar/observability'
+  - '@sutradhar/events'
 ---
 
-# @pinchtab/llm
+# @sutradhar/llm
 
-> Unified LLM provider gateway interface, OpenRouter/Ollama provider adapters, streaming pipeline, and prompt engineering engine for PinchTab.
+> Unified LLM provider gateway interface, OpenRouter/Ollama provider adapters, streaming pipeline, and prompt engineering engine for Sutradhar.
 
 ## Package Architectural Invariants
 
 1. **Core Domain Isolation (`CTX-002`)**: Depends on foundational infrastructure packages (`CTX-001`). Must NEVER import from application or presentation packages (`apps/server`, `apps/web`).
 2. **Provider Contract Neutrality**: Unified `ILlmProvider` interface abstracts vendor-specific API differences (OpenRouter, Ollama, OpenAI) behind canonical DTOs (`CompletionRequestDto`, `CompletionResponseDto`).
-3. **Resilient Rate Limiting & Retry**: Interacts with `@pinchtab/utils` for exponential backoff retries and token bucket throttling.
+3. **Resilient Rate Limiting & Retry**: Interacts with `@sutradhar/utils` for exponential backoff retries and token bucket throttling.
 
 ## Sub-Module Layout
 

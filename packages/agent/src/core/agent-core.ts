@@ -7,11 +7,11 @@
  * skill call here anymore; every decision is made by the model.
  */
 
-import { AgentId, createAgentId, AgentGoalDto, GoalId } from '@pinchtab/contracts';
-import { EventBus } from '@pinchtab/events';
-import { StructuredLogger } from '@pinchtab/observability';
-import { ILlmProvider } from '@pinchtab/llm';
-import { BrowserSessionManager } from '@pinchtab/browser';
+import { AgentId, createAgentId, AgentGoalDto, GoalId } from '@sutradhar/contracts';
+import { EventBus } from '@sutradhar/events';
+import { StructuredLogger } from '@sutradhar/observability';
+import { ILlmProvider } from '@sutradhar/llm';
+import { BrowserSessionManager } from '@sutradhar/browser';
 import { AgentOptions } from './agent-options.js';
 import { AgentState, AgentStateMachine } from './agent-state.js';
 import { runAgentLoop, AgentLoopStep } from './agent-loop.js';

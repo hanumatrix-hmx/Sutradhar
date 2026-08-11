@@ -5,17 +5,17 @@
 
 import { GoalPlanner } from '../../src/planner/goal-planner.js';
 import { PromptCompiler } from '../../src/planner/prompt-compiler.js';
-import { createGoalId, createAgentId } from '@pinchtab/contracts';
-import { ILlmProvider } from '@pinchtab/llm';
+import { createGoalId, createAgentId } from '@sutradhar/contracts';
+import { ILlmProvider } from '@sutradhar/llm';
 
-describe('@pinchtab/agent Goal Planner & Prompt Compiler', () => {
+describe('@sutradhar/agent Goal Planner & Prompt Compiler', () => {
   it('should compile prompt messages with goal and system instructions', async () => {
     const compiler = new PromptCompiler();
     const messages = await compiler.compilePrompt('Search Wikipedia for Alan Turing');
 
     expect(messages.length).toBe(2);
     expect(messages[0]?.role).toBe('system');
-    expect(messages[0]?.content).toContain('PinchTab Browser Agent');
+    expect(messages[0]?.content).toContain('Sutradhar Browser Agent');
     expect(messages[1]?.role).toBe('user');
     expect(messages[1]?.content).toContain('Search Wikipedia for Alan Turing');
   });

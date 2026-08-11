@@ -58,7 +58,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onOpenNewSessionModal }) => 
             What should the agent do?
           </h1>
           <p className="pt-page__subtitle" style={{ marginBottom: 'var(--pt-space-6)' }}>
-            Describe the goal — PinchTab opens a browser, works through it, and brings you the answer.
+            Describe the goal — Sutradhar opens a browser, works through it, and brings you the answer.
           </p>
 
           <div

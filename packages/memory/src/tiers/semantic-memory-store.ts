@@ -3,7 +3,7 @@
  * @description SemanticMemoryStore implementation for vector embedding search and cosine similarity retrieval.
  */
 
-import { MemorySearchQueryDto, MemorySearchResultDto } from '@pinchtab/contracts';
+import { MemorySearchQueryDto, MemorySearchResultDto } from '@sutradhar/contracts';
 import { BaseMemoryStore } from './base-tier-store.js';
 import { MemoryTier } from '../store/memory-tier.js';
 import { cosineSimilarity } from '../vector/cosine-similarity.js';

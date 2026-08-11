@@ -4,12 +4,12 @@
  *
  * These intentionally break what would otherwise be a circular dependency
  * (memory ↔ agent). They are structurally compatible with the canonical types
- * defined in @pinchtab/browser (PageType) and @pinchtab/agent (DecisionEvidence),
+ * defined in @sutradhar/browser (PageType) and @sutradhar/agent (DecisionEvidence),
  * so values of those types flow in without any cast, but this package no longer
  * imports those packages to compile.
  */
 
-/** Structural mirror of @pinchtab/browser PageType. */
+/** Structural mirror of @sutradhar/browser PageType. */
 export type PageType =
   | 'Authentication'
   | 'Search'

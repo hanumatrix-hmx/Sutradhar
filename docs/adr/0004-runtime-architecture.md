@@ -8,8 +8,8 @@ Owner: Principal Software Architect
 Date: 2026-07-28
 Superseded Versions: None
 Related Packages:
-  - '@pinchtab/orchestrator'
-  - '@pinchtab/runtime'
+  - '@sutradhar/orchestrator'
+  - '@sutradhar/runtime'
 ---
 
 # ADR 0004: Decoupled Cognitive Orchestrator & Execution Lifecycle Runtime
@@ -25,8 +25,8 @@ Managing autonomous AI agents requires two distinct responsibilities:
 
 We decide to split these responsibilities into two separate dedicated packages:
 
-- `@pinchtab/orchestrator`: Provider-independent cognitive engines (`Planner`, `Reasoner`, `Executor`, `Verifier`).
-- `@pinchtab/runtime`: Lifecycle managers (`AgentRuntime`, `BrowserRuntime`, `WorkflowRuntime`).
+- `@sutradhar/orchestrator`: Provider-independent cognitive engines (`Planner`, `Reasoner`, `Executor`, `Verifier`).
+- `@sutradhar/runtime`: Lifecycle managers (`AgentRuntime`, `BrowserRuntime`, `WorkflowRuntime`).
 
 ## 3. Alternatives Considered
 

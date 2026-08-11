@@ -1,9 +1,9 @@
-# @pinchtab/sdk
+# @sutradhar/sdk
 
-The plugin/extension SDK for PinchTab. Two layers:
+The plugin/extension SDK for Sutradhar. Two layers:
 
-- **Author plugins** — the `IPinchTabPlugin` contract, manifest schema, and the host
-  capability API a plugin uses to contribute to PinchTab.
+- **Author plugins** — the `ISutradharPlugin` contract, manifest schema, and the host
+  capability API a plugin uses to contribute to Sutradhar.
 - **Host plugins** — load plugins from disk, manage their lifecycle, verify signatures, and
   consume the providers they register.
 
@@ -31,7 +31,7 @@ correct). The following are now **real and verified end-to-end**:
 ## Quick start: host plugins
 
 ```ts
-import { PluginManager, PluginLoader, PluginHost } from '@pinchtab/sdk';
+import { PluginManager, PluginLoader, PluginHost } from '@sutradhar/sdk';
 
 const manager = new PluginManager();
 const host = new PluginHost({ manager });
@@ -49,11 +49,11 @@ To load every plugin under a directory: `await loader.loadAll('./plugins', manag
 
 ## Author a plugin
 
-A plugin is a directory containing a manifest (`pinchtab-plugin.json`) and an entrypoint
+A plugin is a directory containing a manifest (`sutradhar-plugin.json`) and an entrypoint
 (referenced by the manifest). The entrypoint default-exports a constructor of
-`IPinchTabPlugin`.
+`ISutradharPlugin`.
 
-### `pinchtab-plugin.json`
+### `sutradhar-plugin.json`
 
 ```json
 {
@@ -86,7 +86,7 @@ A plugin is a directory containing a manifest (`pinchtab-plugin.json`) and an en
 ```js
 export class MyProviderPlugin {
   constructor() {
-    this.manifest = { /* must match pinchtab-plugin.json, esp. id */ };
+    this.manifest = { /* must match sutradhar-plugin.json, esp. id */ };
     this.state = 'UNINSTALLED';
   }
   async initialize(context) {
@@ -112,7 +112,7 @@ To ship a signed plugin (so a host requiring signatures will accept it):
 
 ```js
 import { generateKeyPairSync, sign } from 'node:crypto';
-import { signedPayload } from '@pinchtab/sdk';
+import { signedPayload } from '@sutradhar/sdk';
 
 const { publicKey, privateKey } = generateKeyPairSync('ed25519');
 // payload = manifest JSON with `signature` removed, stable key order
@@ -147,7 +147,7 @@ These are the remaining gaps to a full plugin platform, in priority order:
    `llm_provider`s via the host.
 3. **Marketplace transport** — HTTP discovery + download + integrity check over the existing
    `MarketplaceRegistry` (GitHub-repo-backed index, free).
-4. **Persistence** — store install/enable state in `@pinchtab/storage` so it survives restarts.
+4. **Persistence** — store install/enable state in `@sutradhar/storage` so it survives restarts.
 5. **More extension points** — define per-type contracts for `skill`, `memory_provider`,
    `vector_store`, etc. (today only `llm_provider` does something).
 6. **Semver ranges** for `runtimeCompatibility` and `dependencies.minVersion`.

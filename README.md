@@ -1,4 +1,4 @@
-# PinchTab — Enterprise AI Browser Runtime Platform
+# Sutradhar — Enterprise AI Browser Runtime Platform
 
 > An enterprise-grade platform enabling autonomous AI agents to execute browser-based tasks with persistent memory, multi-tier reasoning, dynamic LLM provider selection, sandboxed tool execution, and real-time web-based inspection.
 
@@ -6,7 +6,7 @@
 
 ## 🌟 Key Capabilities
 
-- **Universal Browser Control**: Native integration with PinchTab, Playwright, Chrome DevTools Protocol (CDP), and cloud browser providers.
+- **Universal Browser Control**: Native integration with Sutradhar, Playwright, Chrome DevTools Protocol (CDP), and cloud browser providers.
 - **Dynamic LLM Orchestration**: Unified gateway supporting OpenRouter (200+ cloud models), Ollama (local LLMs), OpenAI, and Anthropic with automatic failover and capability matching.
 - **Multi-Tier Memory Engine**: Working memory context buffer, episodic action traces, procedural skill scripts, and semantic fact knowledge base.
 - **Deterministic Workflows & Tools**: Extensible tool execution system (Browser, Shell, Filesystem, HTTP) guarded by strict security policies and visual DAG workflow graphs.
@@ -16,7 +16,7 @@
 
 ## 🏗️ Architecture & Monorepo Structure
 
-PinchTab is a pnpm-workspace monorepo. The list below reflects what **actually
+Sutradhar is a pnpm-workspace monorepo. The list below reflects what **actually
 exists and builds** — earlier versions of this file listed many aspirational
 packages that were never implemented; those have been removed.
 
@@ -32,7 +32,7 @@ packages/
 ├── events/                    # Typed EventBus (in-process; EventStore hooks)
 ├── capability/                # Capability matrix declarations
 ├── browser/                   # REAL browser automation: Puppeteer launcher, 19-action
-│                              #   engine, DOM semantic engine (data-pt-node-id grounding),
+│                              #   engine, DOM semantic engine (data-sd-node-id grounding),
 │                              #   snapshot generator, stealth, verifier, skills
 ├── llm/                       # REAL LLM gateway: OpenAiCompatibleAdapter (works with
 │                              #   OpenRouter, Ollama, any /v1/chat/completions endpoint),
@@ -87,10 +87,10 @@ node node_modules/typescript/bin/tsc -p packages/<pkg>/tsconfig.json --noEmit
 ```bash
 # 1. Backend (REST API + browser + agent runtime) on :8081
 node apps/server/dist/runtime/bootstrap.js        # after `pnpm build`
-#   or for dev: pnpm --filter @pinchtab/server exec tsc -w
+#   or for dev: pnpm --filter @sutradhar/server exec tsc -w
 
 # 2. Frontend (Vite dev server on :3000, proxies /api → :8081)
-pnpm --filter @pinchtab/frontend dev
+pnpm --filter @sutradhar/frontend dev
 
 # 3. CLI demo (one-shot real agent run, no UI)
 node --experimental-strip-types scripts/run-agent.ts "your goal here"

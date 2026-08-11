@@ -1,9 +1,9 @@
 {
-  "name": "@pinchtab/observability",
+  "name": "@sutradhar/observability",
   "version": "0.1.0",
   "type": "module",
   "private": true,
-  "description": "Structured logging, metrics collection, and OpenTelemetry tracing engine for PinchTab",
+  "description": "Structured logging, metrics collection, and OpenTelemetry tracing engine for Sutradhar",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -27,8 +27,8 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@pinchtab/contracts": "workspace:*",
-    "@pinchtab/utils": "workspace:*"
+    "@sutradhar/contracts": "workspace:*",
+    "@sutradhar/utils": "workspace:*"
   },
   "devDependencies": {
     "typescript": "5.4.2"

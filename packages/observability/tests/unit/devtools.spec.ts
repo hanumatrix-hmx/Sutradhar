@@ -5,7 +5,7 @@
 
 import { ExecutionInspector, TraceExporter } from '../../src/devtools/index.js';
 
-describe('@pinchtab/observability DevTools & Execution Inspector', () => {
+describe('@sutradhar/observability DevTools & Execution Inspector', () => {
   let inspector: ExecutionInspector;
 
   beforeEach(() => {

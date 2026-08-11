@@ -1,14 +1,14 @@
-# PinchTab Architecture
+# Sutradhar Architecture
 
 ## Overview
 
-PinchTab is a browser automation and AI-powered tab management application built as a monorepo with multiple packages.
+Sutradhar is a browser automation and AI-powered tab management application built as a monorepo with multiple packages.
 
 ## Architecture Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        PinchTab Monorepo                         │
+│                        Sutradhar Monorepo                         │
 ├─────────────────────────────────────────────────────────────────┤
 │  packages/                                                       │
 │  ├── frontend/          # Next.js + React + Tailwind + shadcn/ui │

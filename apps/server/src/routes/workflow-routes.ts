@@ -3,7 +3,7 @@
  * @description Thin HTTP route controller delegating exclusively to WorkflowApplicationService.
  */
 
-import { WorkflowNodeDto } from '@pinchtab/workflow';
+import { WorkflowNodeDto } from '@sutradhar/workflow';
 import { WorkflowApplicationService } from '../application/workflow-app-service.js';
 import { ApiRouter } from '../gateway/api-router.js';
 

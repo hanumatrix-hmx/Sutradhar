@@ -5,7 +5,7 @@
  * either of these on its own and should stop burning its step budget trying.
  */
 
-import type { IBrowserTab } from '@pinchtab/browser';
+import type { IBrowserTab } from '@sutradhar/browser';
 
 export type BlockReason = 'captcha' | 'auth_wall';
 

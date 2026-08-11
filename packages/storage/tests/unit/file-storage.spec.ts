@@ -7,7 +7,7 @@ import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { LocalFileStorage, STORAGE_VERSION } from '../../src/index.js';
 
-describe('@pinchtab/storage Abstraction & File Store', () => {
+describe('@sutradhar/storage Abstraction & File Store', () => {
   const testDir = path.join(process.cwd(), '.test-storage-temp');
 
   afterAll(async () => {
@@ -26,14 +26,14 @@ describe('@pinchtab/storage Abstraction & File Store', () => {
     const storage = new LocalFileStorage({ baseDir: testDir });
     const key = 'artifacts/session_1/screenshot.txt';
 
-    const pathWritten = await storage.writeFile(key, 'Hello PinchTab Storage');
+    const pathWritten = await storage.writeFile(key, 'Hello Sutradhar Storage');
     expect(pathWritten).toContain('screenshot.txt');
 
     const exists = await storage.exists(key);
     expect(exists).toBe(true);
 
     const buffer = await storage.readFile(key);
-    expect(buffer.toString('utf-8')).toBe('Hello PinchTab Storage');
+    expect(buffer.toString('utf-8')).toBe('Hello Sutradhar Storage');
 
     const fileList = await storage.listFiles();
     expect(fileList.length).toBeGreaterThanOrEqual(1);

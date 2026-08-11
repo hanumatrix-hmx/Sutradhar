@@ -11,9 +11,9 @@ Related ADRs:
   - 0005-tool-system
   - 0006-memory
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/orchestrator'
-  - '@pinchtab/runtime'
+  - '@sutradhar/contracts'
+  - '@sutradhar/orchestrator'
+  - '@sutradhar/runtime'
 ---
 
 # Development Roadmap & Epics

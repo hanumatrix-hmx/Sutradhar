@@ -1,14 +1,14 @@
 {
-  "name": "@pinchtab/mcp-server",
+  "name": "@sutradhar/mcp-server",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Model Context Protocol server exposing PinchTab's browser engine and autonomous agent as tools for AI clients (Claude Desktop, ZCode, Cline, etc.).",
+  "description": "Model Context Protocol server exposing Sutradhar's browser engine and autonomous agent as tools for AI clients (Claude Desktop, ZCode, Cline, etc.).",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "pinchtab-mcp": "./dist/cli.js"
+    "sutradhar-mcp": "./dist/cli.js"
   },
   "exports": {
     ".": {
@@ -26,14 +26,14 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.30.0",
-    "@pinchtab/agent": "workspace:*",
-    "@pinchtab/browser": "workspace:*",
-    "@pinchtab/capability-runtime": "workspace:*",
-    "@pinchtab/config": "workspace:*",
-    "@pinchtab/contracts": "workspace:*",
-    "@pinchtab/events": "workspace:*",
-    "@pinchtab/llm": "workspace:*",
-    "@pinchtab/observability": "workspace:*",
+    "@sutradhar/agent": "workspace:*",
+    "@sutradhar/browser": "workspace:*",
+    "@sutradhar/capability-runtime": "workspace:*",
+    "@sutradhar/config": "workspace:*",
+    "@sutradhar/contracts": "workspace:*",
+    "@sutradhar/events": "workspace:*",
+    "@sutradhar/llm": "workspace:*",
+    "@sutradhar/observability": "workspace:*",
     "zod": "^3.25.76"
   },
   "devDependencies": {

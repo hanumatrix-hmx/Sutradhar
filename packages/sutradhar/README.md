@@ -1,14 +1,14 @@
-# pinchtab
+# sutradhar
 
 Embeddable AI browser automation SDK. Drive a real Chrome/Edge with a **Puppeteer-style
 API**, with semantic DOM snapshots built for AI agents.
 
 ```bash
-npm install pinchtab
+npm install sutradhar
 ```
 
 ```ts
-import { launch } from 'pinchtab';
+import { launch } from 'sutradhar';
 
 const browser = await launch();
 const page = await browser.newPage();
@@ -24,8 +24,8 @@ await browser.close();
 
 ## Why
 
-PinchTab is an AI browser runtime. This package is its embedding SDK — a thin, familiar
-Puppeteer-style surface over the same proven engine that powers the PinchTab MCP server and
+Sutradhar is an AI browser runtime. This package is its embedding SDK — a thin, familiar
+Puppeteer-style surface over the same proven engine that powers the Sutradhar MCP server and
 REST API. Use it when you want to drive a real browser **from your own Node code** (scraping,
 testing, RPA, agent tooling) instead of through an MCP client.
 
@@ -38,7 +38,7 @@ Interactive elements (4):
 ```
 
 Use that `[#id]` as the selector for `page.click('4')` or `page.type('4', '...')`. It resolves
-to `[data-pt-node-id="4"]` under the hood. This is the same grounding scheme PinchTab's
+to `[data-sd-node-id="4"]` under the hood. This is the same grounding scheme Sutradhar's
 autonomous agent uses.
 
 ## API
@@ -63,7 +63,7 @@ executable if auto-detection fails.
 | `newPage(url?)` | `Promise<Page>` | Open a new tab. |
 | `pages()` | `Page[]` | All tabs, as `Page` handles. |
 | `close()` | `Promise<void>` | Close every tab and release the browser. |
-| `sessionId` | `string` | The underlying PinchTab session id. |
+| `sessionId` | `string` | The underlying Sutradhar session id. |
 
 ### `Page`
 
@@ -85,7 +85,7 @@ executable if auto-detection fails.
 ## Full example: search and extract
 
 ```ts
-import { launch } from 'pinchtab';
+import { launch } from 'sutradhar';
 
 const browser = await launch();
 const page = await browser.newPage();
@@ -105,14 +105,14 @@ await browser.close();
 ## How it works
 
 ```
-your app ──▶ pinchtab (this package)
+your app ──▶ sutradhar (this package)
                 │
-                └─▶ @pinchtab/capability-runtime  (the substrate façade)
-                        └─▶ @pinchtab/browser       (Puppeteer-core + DOM semantic engine)
+                └─▶ @sutradhar/capability-runtime  (the substrate façade)
+                        └─▶ @sutradhar/browser       (Puppeteer-core + DOM semantic engine)
 ```
 
-`pinchtab` is a thin, familiar wrapper. The actual engine is `@pinchtab/capability-runtime`,
-which is the single substrate every PinchTab integration surface (MCP server, this SDK,
+`sutradhar` is a thin, familiar wrapper. The actual engine is `@sutradhar/capability-runtime`,
+which is the single substrate every Sutradhar integration surface (MCP server, this SDK,
 future plugins/extension) shares — so behavior is identical across all of them.
 
 ## Requirements
@@ -125,12 +125,12 @@ future plugins/extension) shares — so behavior is identical across all of them
 This package is publish-ready in shape but currently `private: true` (not yet on npm). When
 ready to publish:
 
-1. **Create the `@pinchtab` npm org** (or just publish the unscoped `pinchtab` name).
-2. The `workspace:*` dependency on `@pinchtab/capability-runtime` must be rewritten to a real
-   version range at publish time — either publish the `@pinchtab/*` packages first (contracts,
+1. **Create the `@sutradhar` npm org** (or just publish the unscoped `sutradhar` name).
+2. The `workspace:*` dependency on `@sutradhar/capability-runtime` must be rewritten to a real
+   version range at publish time — either publish the `@sutradhar/*` packages first (contracts,
    utils, observability, events, browser, capability-runtime) and let them resolve from the
-   registry, or bundle them into this package via a build step (tsup/esbuild) so `pinchtab`
-   has zero `@pinchtab/*` runtime deps.
+   registry, or bundle them into this package via a build step (tsup/esbuild) so `sutradhar`
+   has zero `@sutradhar/*` runtime deps.
 3. Remove `"private": true`.
 4. `npm publish` (scoped packages need `--access public`, already set in `publishConfig`).
 

@@ -5,7 +5,7 @@
 
 import { PageType, DecisionEvidenceLike } from './episodic-types.js';
 import { Episode, EpisodeFilter, EpisodeOutcome } from './episode-model.js';
-import { StructuredLogger } from '@pinchtab/observability';
+import { StructuredLogger } from '@sutradhar/observability';
 
 export interface IEpisodicMemoryManager {
   createEpisode(goal: string, pageType: PageType, taskGraphId: string): Episode;

@@ -1,9 +1,9 @@
 {
-  "name": "@pinchtab/capability-runtime",
+  "name": "@sutradhar/capability-runtime",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Framework-agnostic high-level façade over the PinchTab browser engine. The single entry point every integration surface (MCP server, npm SDK, plugins, extension) calls.",
+  "description": "Framework-agnostic high-level façade over the Sutradhar browser engine. The single entry point every integration surface (MCP server, npm SDK, plugins, extension) calls.",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,11 +22,11 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@pinchtab/contracts": "workspace:*",
-    "@pinchtab/utils": "workspace:*",
-    "@pinchtab/observability": "workspace:*",
-    "@pinchtab/events": "workspace:*",
-    "@pinchtab/browser": "workspace:*",
+    "@sutradhar/contracts": "workspace:*",
+    "@sutradhar/utils": "workspace:*",
+    "@sutradhar/observability": "workspace:*",
+    "@sutradhar/events": "workspace:*",
+    "@sutradhar/browser": "workspace:*",
     "pixelmatch": "^7.2.0",
     "pngjs": "^7.0.0"
   },

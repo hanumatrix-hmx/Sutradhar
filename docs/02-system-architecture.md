@@ -8,9 +8,9 @@ Related ADRs:
   - 0003-provider-contract
   - 0004-runtime-architecture
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/orchestrator'
-  - '@pinchtab/runtime'
+  - '@sutradhar/contracts'
+  - '@sutradhar/orchestrator'
+  - '@sutradhar/runtime'
 ---
 
 # System Architecture & Bounded Contexts
@@ -28,18 +28,18 @@ The system is designed as a strict Hexagonal Architecture split into 7 distinct 
                ▼                              ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                    BOUNDED CONTEXTS                         │
-│ 1. Foundational Context    (@pinchtab/contracts, utils, etc)│
-│ 2. Core Domain Context     (@pinchtab/agent, browser, llm)  │
-│ 3. Governance Context      (@pinchtab/policy)               │
-│ 4. Infrastructure Context  (@pinchtab/tools, storage, etc)  │
-│ 5. Memory & Workflow       (@pinchtab/memory, workflow)     │
-│ 6. Orchestration Context   (@pinchtab/orchestrator, runtime)│
-│ 7. Presentation Context    (@pinchtab/ui, sdk)              │
+│ 1. Foundational Context    (@sutradhar/contracts, utils, etc)│
+│ 2. Core Domain Context     (@sutradhar/agent, browser, llm)  │
+│ 3. Governance Context      (@sutradhar/policy)               │
+│ 4. Infrastructure Context  (@sutradhar/tools, storage, etc)  │
+│ 5. Memory & Workflow       (@sutradhar/memory, workflow)     │
+│ 6. Orchestration Context   (@sutradhar/orchestrator, runtime)│
+│ 7. Presentation Context    (@sutradhar/ui, sdk)              │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ## 2. Layering & Dependency Rules
 
-1. **Strict Hexagonal Boundaries**: Domain logic (`@pinchtab/agent`, `@pinchtab/browser`) relies strictly on contracts in `@pinchtab/contracts` and never imports directly from infrastructure implementations or presentation apps.
+1. **Strict Hexagonal Boundaries**: Domain logic (`@sutradhar/agent`, `@sutradhar/browser`) relies strictly on contracts in `@sutradhar/contracts` and never imports directly from infrastructure implementations or presentation apps.
 2. **Dependency Direction**: Lower-level packages NEVER import from higher-level packages. Dependencies flow unidirectionally downwards.
-3. **Provider Isolation**: Third-party SDKs (PinchTab, Playwright, OpenRouter, Ollama) are encapsulated within adapter implementations in their respective provider packages.
+3. **Provider Isolation**: Third-party SDKs (Sutradhar, Playwright, OpenRouter, Ollama) are encapsulated within adapter implementations in their respective provider packages.

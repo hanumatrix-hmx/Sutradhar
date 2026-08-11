@@ -3,7 +3,7 @@
  * @description System prompt compiler compiling DOM snapshot context, memory context, and goal prompts.
  */
 
-import { CompletionMessageDto } from '@pinchtab/contracts';
+import { CompletionMessageDto } from '@sutradhar/contracts';
 
 export interface PromptCompilerContext {
   readonly agentName: string;
@@ -20,7 +20,7 @@ export class PromptCompiler {
     context: Partial<PromptCompilerContext> = {},
   ): Promise<CompletionMessageDto[]> {
     const fullContext: PromptCompilerContext = {
-      agentName: context.agentName ?? 'PinchTab Browser Agent',
+      agentName: context.agentName ?? 'Sutradhar Browser Agent',
       agentRole: context.agentRole ?? 'General Assistant',
       ...context,
     };

@@ -1,11 +1,11 @@
-// Measures the actual token cost of PinchTabRuntime.snapshot()'s output — the thing an LLM
+// Measures the actual token cost of SutradharRuntime.snapshot()'s output — the thing an LLM
 // actually reads on every step of an agent loop — against a few representative real pages.
-// Real PinchTab publishes ~800 tokens/page as a design target; this establishes our own number
+// Real Sutradhar publishes ~800 tokens/page as a design target; this establishes our own number
 // so we're not flying blind on it. No tokenizer package is installed in this repo, so token
 // count is the standard ~4-chars-per-token English-text approximation (used by OpenAI/Anthropic
 // docs for rough budgeting) — reported alongside raw character/byte counts so the estimate's
 // basis is transparent, not hidden behind a single "precise-looking" number.
-import { PinchTabRuntime } from '../../packages/capability-runtime/dist/index.js';
+import { SutradharRuntime } from '../../packages/capability-runtime/dist/index.js';
 
 const HEADLESS = process.env.HEADFUL !== '1';
 const CHARS_PER_TOKEN = 4;
@@ -22,7 +22,7 @@ function approxTokens(str) {
 }
 
 async function main() {
-  const runtime = new PinchTabRuntime({ logger: { info() {}, warn() {}, error() {}, debug() {} } });
+  const runtime = new SutradharRuntime({ logger: { info() {}, warn() {}, error() {}, debug() {} } });
   const { sessionId } = await runtime.launch({ headless: HEADLESS });
   const results = [];
   try {

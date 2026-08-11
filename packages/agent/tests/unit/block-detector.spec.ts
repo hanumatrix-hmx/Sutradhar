@@ -4,7 +4,7 @@
  */
 
 import { detectBlock } from '../../src/core/block-detector.js';
-import type { IBrowserTab } from '@pinchtab/browser';
+import type { IBrowserTab } from '@sutradhar/browser';
 
 function mockTab(evaluateResult: unknown): IBrowserTab {
   return {
@@ -12,7 +12,7 @@ function mockTab(evaluateResult: unknown): IBrowserTab {
   } as unknown as IBrowserTab;
 }
 
-describe('@pinchtab/agent detectBlock', () => {
+describe('@sutradhar/agent detectBlock', () => {
   it('returns "captcha" when the page evaluate reports a captcha marker', async () => {
     const tab = mockTab('captcha');
     expect(await detectBlock(tab)).toBe('captcha');

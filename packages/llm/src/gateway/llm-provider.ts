@@ -3,8 +3,8 @@
  * @description Universal ILlmProvider contract interface for multi-vendor LLM gateway integrations.
  */
 
-import { CapabilityMatrix } from '@pinchtab/capability';
-import { CompletionRequestDto, CompletionResponseDto, StreamChunkDto } from '@pinchtab/contracts';
+import { CapabilityMatrix } from '@sutradhar/capability';
+import { CompletionRequestDto, CompletionResponseDto, StreamChunkDto } from '@sutradhar/contracts';
 
 export interface ILlmProvider {
   readonly providerId: string;

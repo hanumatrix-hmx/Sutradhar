@@ -1,6 +1,6 @@
 /**
  * @file packages/agent/src/kernel/runtime-services.ts
- * @description RuntimeService implementations wrapping core PinchTab platform components.
+ * @description RuntimeService implementations wrapping core Sutradhar platform components.
  */
 
 import { IRuntimeService, ServiceHealth, ServiceState } from './kernel-types.js';
@@ -8,8 +8,8 @@ import { GoalPlanner } from '../planner/goal-planner.js';
 import { RecoveryEngine } from '../recovery/recovery-engine.js';
 import { DecisionEvidenceEngine } from '../evidence/decision-evidence-engine.js';
 import { TaskGraphEngine } from '../graph/task-graph-engine.js';
-import { DOMSemanticEngine, BrowserActionEngine, PageUnderstandingEngine } from '@pinchtab/browser';
-import { EpisodicMemoryManager } from '@pinchtab/memory';
+import { DOMSemanticEngine, BrowserActionEngine, PageUnderstandingEngine } from '@sutradhar/browser';
+import { EpisodicMemoryManager } from '@sutradhar/memory';
 
 export abstract class BaseRuntimeService implements IRuntimeService {
   public readonly serviceId: string;

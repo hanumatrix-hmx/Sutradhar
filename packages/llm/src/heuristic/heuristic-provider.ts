@@ -9,13 +9,13 @@
  * both unreachable.
  */
 
-import { CapabilityMatrix, CapabilityDeclaration } from '@pinchtab/capability';
+import { CapabilityMatrix, CapabilityDeclaration } from '@sutradhar/capability';
 import {
   CompletionRequestDto,
   CompletionResponseDto,
   StreamChunkDto,
   createModelId,
-} from '@pinchtab/contracts';
+} from '@sutradhar/contracts';
 import { ILlmProvider } from '../gateway/llm-provider.js';
 
 export class HeuristicLlmProvider implements ILlmProvider {

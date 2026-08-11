@@ -38,40 +38,40 @@ importers:
 
   apps/server:
     dependencies:
-      '@pinchtab/agent':
+      '@sutradhar/agent':
         specifier: workspace:*
         version: link:../../packages/agent
-      '@pinchtab/browser':
+      '@sutradhar/browser':
         specifier: workspace:*
         version: link:../../packages/browser
-      '@pinchtab/capability':
+      '@sutradhar/capability':
         specifier: workspace:*
         version: link:../../packages/capability
-      '@pinchtab/config':
+      '@sutradhar/config':
         specifier: workspace:*
         version: link:../../packages/config
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
-      '@pinchtab/events':
+      '@sutradhar/events':
         specifier: workspace:*
         version: link:../../packages/events
-      '@pinchtab/llm':
+      '@sutradhar/llm':
         specifier: workspace:*
         version: link:../../packages/llm
-      '@pinchtab/memory':
+      '@sutradhar/memory':
         specifier: workspace:*
         version: link:../../packages/memory
-      '@pinchtab/observability':
+      '@sutradhar/observability':
         specifier: workspace:*
         version: link:../../packages/observability
-      '@pinchtab/storage':
+      '@sutradhar/storage':
         specifier: workspace:*
         version: link:../../packages/storage
-      '@pinchtab/utils':
+      '@sutradhar/utils':
         specifier: workspace:*
         version: link:../../packages/utils
-      '@pinchtab/workflow':
+      '@sutradhar/workflow':
         specifier: workspace:*
         version: link:../../packages/workflow
     devDependencies:
@@ -81,34 +81,34 @@ importers:
 
   packages/agent:
     dependencies:
-      '@pinchtab/browser':
+      '@sutradhar/browser':
         specifier: workspace:*
         version: link:../browser
-      '@pinchtab/capability':
+      '@sutradhar/capability':
         specifier: workspace:*
         version: link:../capability
-      '@pinchtab/config':
+      '@sutradhar/config':
         specifier: workspace:*
         version: link:../config
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@pinchtab/events':
+      '@sutradhar/events':
         specifier: workspace:*
         version: link:../events
-      '@pinchtab/llm':
+      '@sutradhar/llm':
         specifier: workspace:*
         version: link:../llm
-      '@pinchtab/memory':
+      '@sutradhar/memory':
         specifier: workspace:*
         version: link:../memory
-      '@pinchtab/observability':
+      '@sutradhar/observability':
         specifier: workspace:*
         version: link:../observability
-      '@pinchtab/storage':
+      '@sutradhar/storage':
         specifier: workspace:*
         version: link:../storage
-      '@pinchtab/utils':
+      '@sutradhar/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:
@@ -118,22 +118,22 @@ importers:
 
   packages/browser:
     dependencies:
-      '@pinchtab/capability':
+      '@sutradhar/capability':
         specifier: workspace:*
         version: link:../capability
-      '@pinchtab/config':
+      '@sutradhar/config':
         specifier: workspace:*
         version: link:../config
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@pinchtab/events':
+      '@sutradhar/events':
         specifier: workspace:*
         version: link:../events
-      '@pinchtab/observability':
+      '@sutradhar/observability':
         specifier: workspace:*
         version: link:../observability
-      '@pinchtab/utils':
+      '@sutradhar/utils':
         specifier: workspace:*
         version: link:../utils
       puppeteer-core:
@@ -146,7 +146,7 @@ importers:
 
   packages/capability:
     dependencies:
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../contracts
     devDependencies:
@@ -156,19 +156,19 @@ importers:
 
   packages/capability-runtime:
     dependencies:
-      '@pinchtab/browser':
+      '@sutradhar/browser':
         specifier: workspace:*
         version: link:../browser
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@pinchtab/events':
+      '@sutradhar/events':
         specifier: workspace:*
         version: link:../events
-      '@pinchtab/observability':
+      '@sutradhar/observability':
         specifier: workspace:*
         version: link:../observability
-      '@pinchtab/utils':
+      '@sutradhar/utils':
         specifier: workspace:*
         version: link:../utils
       pixelmatch:
@@ -187,16 +187,16 @@ importers:
 
   packages/cli:
     dependencies:
-      '@pinchtab/browser':
+      '@sutradhar/browser':
         specifier: workspace:*
         version: link:../browser
-      '@pinchtab/capability-runtime':
+      '@sutradhar/capability-runtime':
         specifier: workspace:*
         version: link:../capability-runtime
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@pinchtab/observability':
+      '@sutradhar/observability':
         specifier: workspace:*
         version: link:../observability
     devDependencies:
@@ -209,10 +209,10 @@ importers:
 
   packages/config:
     dependencies:
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@pinchtab/utils':
+      '@sutradhar/utils':
         specifier: workspace:*
         version: link:../utils
       zod:
@@ -240,13 +240,13 @@ importers:
 
   packages/events:
     dependencies:
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@pinchtab/observability':
+      '@sutradhar/observability':
         specifier: workspace:*
         version: link:../observability
-      '@pinchtab/utils':
+      '@sutradhar/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:
@@ -256,10 +256,10 @@ importers:
 
   packages/frontend:
     dependencies:
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@pinchtab/sdk':
+      '@sutradhar/sdk':
         specifier: workspace:*
         version: link:../sdk
       react:
@@ -293,22 +293,22 @@ importers:
 
   packages/llm:
     dependencies:
-      '@pinchtab/capability':
+      '@sutradhar/capability':
         specifier: workspace:*
         version: link:../capability
-      '@pinchtab/config':
+      '@sutradhar/config':
         specifier: workspace:*
         version: link:../config
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@pinchtab/events':
+      '@sutradhar/events':
         specifier: workspace:*
         version: link:../events
-      '@pinchtab/observability':
+      '@sutradhar/observability':
         specifier: workspace:*
         version: link:../observability
-      '@pinchtab/utils':
+      '@sutradhar/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:
@@ -321,28 +321,28 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: 1.30.0
         version: 1.30.0(zod@3.25.76)
-      '@pinchtab/agent':
+      '@sutradhar/agent':
         specifier: workspace:*
         version: link:../agent
-      '@pinchtab/browser':
+      '@sutradhar/browser':
         specifier: workspace:*
         version: link:../browser
-      '@pinchtab/capability-runtime':
+      '@sutradhar/capability-runtime':
         specifier: workspace:*
         version: link:../capability-runtime
-      '@pinchtab/config':
+      '@sutradhar/config':
         specifier: workspace:*
         version: link:../config
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@pinchtab/events':
+      '@sutradhar/events':
         specifier: workspace:*
         version: link:../events
-      '@pinchtab/llm':
+      '@sutradhar/llm':
         specifier: workspace:*
         version: link:../llm
-      '@pinchtab/observability':
+      '@sutradhar/observability':
         specifier: workspace:*
         version: link:../observability
       zod:
@@ -358,22 +358,22 @@ importers:
 
   packages/memory:
     dependencies:
-      '@pinchtab/capability':
+      '@sutradhar/capability':
         specifier: workspace:*
         version: link:../capability
-      '@pinchtab/config':
+      '@sutradhar/config':
         specifier: workspace:*
         version: link:../config
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@pinchtab/events':
+      '@sutradhar/events':
         specifier: workspace:*
         version: link:../events
-      '@pinchtab/observability':
+      '@sutradhar/observability':
         specifier: workspace:*
         version: link:../observability
-      '@pinchtab/utils':
+      '@sutradhar/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:
@@ -383,10 +383,10 @@ importers:
 
   packages/observability:
     dependencies:
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@pinchtab/utils':
+      '@sutradhar/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:
@@ -394,9 +394,9 @@ importers:
         specifier: 5.4.2
         version: 5.4.2
 
-  packages/pinchtab:
+  packages/sutradhar:
     dependencies:
-      '@pinchtab/capability-runtime':
+      '@sutradhar/capability-runtime':
         specifier: workspace:*
         version: link:../capability-runtime
       puppeteer-core:
@@ -412,10 +412,10 @@ importers:
 
   packages/sdk:
     dependencies:
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@pinchtab/observability':
+      '@sutradhar/observability':
         specifier: workspace:*
         version: link:../observability
     devDependencies:
@@ -428,22 +428,22 @@ importers:
 
   packages/storage:
     dependencies:
-      '@pinchtab/capability':
+      '@sutradhar/capability':
         specifier: workspace:*
         version: link:../capability
-      '@pinchtab/config':
+      '@sutradhar/config':
         specifier: workspace:*
         version: link:../config
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@pinchtab/events':
+      '@sutradhar/events':
         specifier: workspace:*
         version: link:../events
-      '@pinchtab/observability':
+      '@sutradhar/observability':
         specifier: workspace:*
         version: link:../observability
-      '@pinchtab/utils':
+      '@sutradhar/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:
@@ -453,7 +453,7 @@ importers:
 
   packages/utils:
     dependencies:
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../contracts
     devDependencies:
@@ -463,34 +463,34 @@ importers:
 
   packages/workflow:
     dependencies:
-      '@pinchtab/agent':
+      '@sutradhar/agent':
         specifier: workspace:*
         version: link:../agent
-      '@pinchtab/browser':
+      '@sutradhar/browser':
         specifier: workspace:*
         version: link:../browser
-      '@pinchtab/capability':
+      '@sutradhar/capability':
         specifier: workspace:*
         version: link:../capability
-      '@pinchtab/config':
+      '@sutradhar/config':
         specifier: workspace:*
         version: link:../config
-      '@pinchtab/contracts':
+      '@sutradhar/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@pinchtab/events':
+      '@sutradhar/events':
         specifier: workspace:*
         version: link:../events
-      '@pinchtab/llm':
+      '@sutradhar/llm':
         specifier: workspace:*
         version: link:../llm
-      '@pinchtab/memory':
+      '@sutradhar/memory':
         specifier: workspace:*
         version: link:../memory
-      '@pinchtab/observability':
+      '@sutradhar/observability':
         specifier: workspace:*
         version: link:../observability
-      '@pinchtab/utils':
+      '@sutradhar/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:

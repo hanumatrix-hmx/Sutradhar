@@ -3,7 +3,7 @@
  * @description Standardized LogEntry interface for structured JSON telemetry.
  */
 
-import { Timestamp } from '@pinchtab/contracts';
+import { Timestamp } from '@sutradhar/contracts';
 import { LogLevel } from './log-level.js';
 
 export interface LogEntry {

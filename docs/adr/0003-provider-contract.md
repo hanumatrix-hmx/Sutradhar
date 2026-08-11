@@ -8,23 +8,23 @@ Owner: Principal Software Architect
 Date: 2026-07-28
 Superseded Versions: None
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/llm'
-  - '@pinchtab/browser'
+  - '@sutradhar/contracts'
+  - '@sutradhar/llm'
+  - '@sutradhar/browser'
 ---
 
 # ADR 0003: Hexagonal Provider Abstraction Layer & Canonical DTOs
 
 ## 1. Context
 
-The platform integrates heterogeneous external providers (OpenRouter cloud gateway, local Ollama server, direct OpenAI/Anthropic APIs, PinchTab, CDP). Leaking vendor-specific request/response formats into core reasoning engines causes tight coupling and fragile code.
+The platform integrates heterogeneous external providers (OpenRouter cloud gateway, local Ollama server, direct OpenAI/Anthropic APIs, Sutradhar, CDP). Leaking vendor-specific request/response formats into core reasoning engines causes tight coupling and fragile code.
 
 ## 2. Decision
 
-We decide to establish a **Hexagonal Provider Abstraction Layer** using pure TypeScript contracts in `@pinchtab/contracts`.
+We decide to establish a **Hexagonal Provider Abstraction Layer** using pure TypeScript contracts in `@sutradhar/contracts`.
 
 - Business logic depends strictly on contracts (`ILLMProvider`, `IBrowserProvider`, `IMemoryProvider`).
-- Every provider adapter maps vendor payload formats to canonical `@pinchtab/contracts` DTOs (`CompletionRequestDto`, `CompletionResponseDto`, `BrowserSnapshotDto`).
+- Every provider adapter maps vendor payload formats to canonical `@sutradhar/contracts` DTOs (`CompletionRequestDto`, `CompletionResponseDto`, `BrowserSnapshotDto`).
 - Dynamic model discovery exposes unified `CapabilityMatrix` declarations.
 
 ## 3. Alternatives Considered

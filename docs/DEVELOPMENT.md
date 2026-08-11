@@ -1,4 +1,4 @@
-# PinchTab Development Setup
+# Sutradhar Development Setup
 
 ## Prerequisites
 
@@ -13,7 +13,7 @@
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd PinchTab
+cd Sutradhar
 
 # Install dependencies
 pnpm install
@@ -90,7 +90,7 @@ See `.env.example` for all required variables. Key variables:
 
 ```bash
 # Database
-DATABASE_URL="postgresql://user:pass@localhost:5432/pinchtab"
+DATABASE_URL="postgresql://user:pass@localhost:5432/sutradhar"
 REDIS_URL="redis://localhost:6379"
 
 # Vector Database
@@ -116,7 +116,7 @@ NEXT_PUBLIC_WS_URL="ws://localhost:4000"
 ## Project Structure
 
 ```
-PinchTab/
+Sutradhar/
 ├── .github/workflows/     # GitHub Actions CI/CD
 ├── .husky/                # Git hooks
 ├── .vscode/               # VS Code settings
@@ -154,14 +154,14 @@ This project uses **pnpm** with workspaces. Never use npm or yarn.
 
 ```bash
 # Add dependency to a package
-pnpm --filter @pinchtab/frontend add <package>
-pnpm --filter @pinchtab/backend add -D <package>
+pnpm --filter @sutradhar/frontend add <package>
+pnpm --filter @sutradhar/backend add -D <package>
 
 # Add to all packages
 pnpm add -w <package>
 
 # Run command in specific package
-pnpm --filter @pinchtab/frontend <command>
+pnpm --filter @sutradhar/frontend <command>
 
 # Run command in all packages
 pnpm -r <command>
@@ -173,7 +173,7 @@ All packages use strict TypeScript configuration from `packages/configs/tsconfig
 
 ```json
 {
-  "extends": "@pinchtab/configs/tsconfig/base.json"
+  "extends": "@sutradhar/configs/tsconfig/base.json"
 }
 ```
 
@@ -181,7 +181,7 @@ Package-specific configs extend the base:
 
 ```json
 {
-  "extends": "@pinchtab/configs/tsconfig/nextjs.json"
+  "extends": "@sutradhar/configs/tsconfig/nextjs.json"
 }
 ```
 
@@ -191,7 +191,7 @@ All packages use shared ESLint config from `packages/configs/eslint`:
 
 ```json
 {
-  "extends": ["@pinchtab/configs/eslint/base"],
+  "extends": ["@sutradhar/configs/eslint/base"],
   "rules": { }
 }
 ```
@@ -294,7 +294,7 @@ pnpm db:studio
 
 ```bash
 # Create migration
-pnpm --filter @pinchtab/backend db:migrate:create <name>
+pnpm --filter @sutradhar/backend db:migrate:create <name>
 
 # Apply migrations
 pnpm db:migrate
@@ -328,7 +328,7 @@ pnpm test:integration
 
 ```bash
 # Install browsers
-pnpm --filter @pinchtab/frontend exec playwright install
+pnpm --filter @sutradhar/frontend exec playwright install
 
 # Run E2E tests
 pnpm test:e2e
@@ -348,7 +348,7 @@ pnpm build
 ### Production Build
 
 ```bash
-pnpm build -- --filter=@pinchtab/frontend --filter=@pinchtab/backend
+pnpm build -- --filter=@sutradhar/frontend --filter=@sutradhar/backend
 ```
 
 ### Desktop Build

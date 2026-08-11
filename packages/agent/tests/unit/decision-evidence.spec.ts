@@ -4,7 +4,7 @@
  */
 
 import { DecisionEvidenceEngine } from '../../src/evidence/decision-evidence-engine.js';
-import { SemanticElementGraph, SemanticNode } from '@pinchtab/browser';
+import { SemanticElementGraph, SemanticNode } from '@sutradhar/browser';
 
 describe('Engineering Iteration 3 — Decision Evidence Engine Unit Tests', () => {
   let engine: DecisionEvidenceEngine;

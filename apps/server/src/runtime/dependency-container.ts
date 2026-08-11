@@ -3,20 +3,20 @@
  * @description Single Composition Root instantiating all platform dependencies across Epics 1 through 6.
  */
 
-import { ConfigurationProvider, EnvironmentConfigurationProvider } from '@pinchtab/config';
-import { StructuredLogger } from '@pinchtab/observability';
-import { EventBus } from '@pinchtab/events';
+import { ConfigurationProvider, EnvironmentConfigurationProvider } from '@sutradhar/config';
+import { StructuredLogger } from '@sutradhar/observability';
+import { EventBus } from '@sutradhar/events';
 import {
   LocalFileStorage,
   SqliteClient,
   SessionRepository,
   EventRepository,
-} from '@pinchtab/storage';
-import { BrowserSessionManager, BrowserLauncher } from '@pinchtab/browser';
-import { OpenRouterAdapter, OllamaAdapter } from '@pinchtab/llm';
-import { MultiTierMemoryManager } from '@pinchtab/memory';
-import { AgentCore } from '@pinchtab/agent';
-import { WorkflowRunner } from '@pinchtab/workflow';
+} from '@sutradhar/storage';
+import { BrowserSessionManager, BrowserLauncher } from '@sutradhar/browser';
+import { OpenRouterAdapter, OllamaAdapter } from '@sutradhar/llm';
+import { MultiTierMemoryManager } from '@sutradhar/memory';
+import { AgentCore } from '@sutradhar/agent';
+import { WorkflowRunner } from '@sutradhar/workflow';
 import { ServerApp } from '../gateway/server-app.js';
 import { SessionApplicationService } from '../application/session-app-service.js';
 import { AgentApplicationService } from '../application/agent-app-service.js';
@@ -83,8 +83,8 @@ export class DependencyContainer {
     // A caller that never explicitly closes a session (crashed client, forgotten cleanup)
     // otherwise leaks its Chrome process for the life of this long-running server process —
     // mirrors the same default the MCP server applies in packages/mcp-server/src/server.ts.
-    const idleTimeoutMs = process.env.PINCHTAB_IDLE_TIMEOUT_MS
-      ? Number(process.env.PINCHTAB_IDLE_TIMEOUT_MS)
+    const idleTimeoutMs = process.env.SUTRADHAR_IDLE_TIMEOUT_MS
+      ? Number(process.env.SUTRADHAR_IDLE_TIMEOUT_MS)
       : 30 * 60 * 1000;
     this.sessionManager = new BrowserSessionManager(
       this.browserLauncher,
@@ -99,17 +99,17 @@ export class DependencyContainer {
     this.ollamaAdapter = new OllamaAdapter({ logger: this.logger });
 
     // Runtime-reconfigurable LLM provider service. Initial config from env vars
-    // (OPENROUTER_API_KEY, PINCHTAB_MODEL, etc.) for backward compatibility.
+    // (OPENROUTER_API_KEY, SUTRADHAR_MODEL, etc.) for backward compatibility.
     // Frontend can update this at runtime via POST /api/v1/llm/config.
     const initialProviderMode = process.env.OPENROUTER_API_KEY ? 'openrouter' : 'ollama';
     this.llmConfigService = new LlmConfigService(
       {
         providerMode: initialProviderMode as 'openrouter' | 'ollama',
         openrouterApiKey: process.env.OPENROUTER_API_KEY,
-        openrouterModel: process.env.PINCHTAB_MODEL,
-        openrouterBaseUrl: process.env.PINCHTAB_LLM_BASE ?? 'https://openrouter.ai/api/v1',
+        openrouterModel: process.env.SUTRADHAR_MODEL,
+        openrouterBaseUrl: process.env.SUTRADHAR_LLM_BASE ?? 'https://openrouter.ai/api/v1',
         ollamaEndpoint: 'http://localhost:11434',
-        ollamaModel: process.env.PINCHTAB_MODEL ?? 'qwen3.5:9b',
+        ollamaModel: process.env.SUTRADHAR_MODEL ?? 'qwen3.5:9b',
       },
       this.logger,
     );

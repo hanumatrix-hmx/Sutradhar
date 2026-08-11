@@ -3,14 +3,14 @@
  * @description Application service for multi-agent DAG workflow orchestration use cases.
  */
 
-import { createWorkflowId } from '@pinchtab/contracts';
+import { createWorkflowId } from '@sutradhar/contracts';
 import {
   WorkflowRunner,
   WorkflowGraph,
   WorkflowNodeDto,
   WorkflowExecutionResultDto,
-} from '@pinchtab/workflow';
-import { StructuredLogger } from '@pinchtab/observability';
+} from '@sutradhar/workflow';
+import { StructuredLogger } from '@sutradhar/observability';
 
 export interface ExecuteWorkflowCommand {
   readonly name?: string;

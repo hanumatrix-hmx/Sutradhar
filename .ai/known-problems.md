@@ -24,7 +24,7 @@ Last Updated: 2026-08-09
     `qwen3.5:9b` performs well (verified: returns "23 June 1912" correctly).
     On tasks requiring precise element targeting the model can loop, and its
     `<think>` block can consume a small `maxTokens` budget leaving empty content.
-  - **Mitigation**: Set `PINCHTAB_MODEL` (or `OPENROUTER_API_KEY`) to use a
+  - **Mitigation**: Set `SUTRADHAR_MODEL` (or `OPENROUTER_API_KEY`) to use a
     stronger model. The loop uses a generous `maxTokensPerTurn` (768). The
     default test suite tolerates honest empty-content outcomes from the real
     model rather than asserting fake fixed strings.

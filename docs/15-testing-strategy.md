@@ -8,8 +8,8 @@ Review Frequency: Quarterly
 Related ADRs:
   - 0001-monorepo
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/orchestrator'
+  - '@sutradhar/contracts'
+  - '@sutradhar/orchestrator'
 ---
 
 # Testing Strategy & Quality Assurance
@@ -24,5 +24,5 @@ Related Packages:
 
 ## 2. Quality Enforcement
 
-- **Contract Tests**: Verify that every provider adapter fulfills `@pinchtab/contracts` behavior without breaking.
-- **Coverage Budgets**: Core domain logic packages (`@pinchtab/orchestrator`, `@pinchtab/agent`, `@pinchtab/memory`) MUST maintain >90% branch coverage.
+- **Contract Tests**: Verify that every provider adapter fulfills `@sutradhar/contracts` behavior without breaking.
+- **Coverage Budgets**: Core domain logic packages (`@sutradhar/orchestrator`, `@sutradhar/agent`, `@sutradhar/memory`) MUST maintain >90% branch coverage.

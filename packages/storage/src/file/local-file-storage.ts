@@ -5,7 +5,7 @@
 
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import { StructuredLogger } from '@pinchtab/observability';
+import { StructuredLogger } from '@sutradhar/observability';
 import { IFileStorage } from './storage-interfaces.js';
 
 export interface LocalFileStorageOptions {
@@ -18,7 +18,7 @@ export class LocalFileStorage implements IFileStorage {
   private readonly logger: StructuredLogger;
 
   public constructor(options: LocalFileStorageOptions = {}) {
-    this.baseDir = options.baseDir ?? path.join(process.cwd(), '.pinchtab-storage');
+    this.baseDir = options.baseDir ?? path.join(process.cwd(), '.sutradhar-storage');
     this.logger = options.logger ?? new StructuredLogger({ minLevel: 'info' });
   }
 

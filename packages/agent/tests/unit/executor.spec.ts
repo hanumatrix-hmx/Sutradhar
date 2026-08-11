@@ -4,12 +4,12 @@
  */
 
 import { StepExecutor, ReflectionEngine } from '../../src/index.js';
-import { createAgentId, createTaskId, createStepId, AgentStepDto } from '@pinchtab/contracts';
-import { EventBus } from '@pinchtab/events';
-import { BrowserSession } from '@pinchtab/browser';
-import { createSessionId } from '@pinchtab/contracts';
+import { createAgentId, createTaskId, createStepId, AgentStepDto } from '@sutradhar/contracts';
+import { EventBus } from '@sutradhar/events';
+import { BrowserSession } from '@sutradhar/browser';
+import { createSessionId } from '@sutradhar/contracts';
 
-describe('@pinchtab/agent Task Step Executor & Reflection Engine', () => {
+describe('@sutradhar/agent Task Step Executor & Reflection Engine', () => {
   it('should evaluate step success and detect stuck state loops in ReflectionEngine', () => {
     const engine = new ReflectionEngine();
 
@@ -44,14 +44,14 @@ describe('@pinchtab/agent Task Step Executor & Reflection Engine', () => {
 
     const executor = new StepExecutor(bus);
     const session = new BrowserSession(createSessionId('sess_99'));
-    await session.createTab('https://pinchtab.dev');
+    await session.createTab('https://sutradhar.dev');
 
     const step: AgentStepDto = {
       id: createStepId('step_100'),
       stepNumber: 1,
       reasoning: 'Navigate to docs',
       actionName: 'navigate',
-      actionPayload: { url: 'https://pinchtab.dev/docs' },
+      actionPayload: { url: 'https://sutradhar.dev/docs' },
       isVerified: false,
       timestamp: new Date().toISOString(),
     };
@@ -64,7 +64,7 @@ describe('@pinchtab/agent Task Step Executor & Reflection Engine', () => {
     );
 
     expect(completed.isVerified).toBe(true);
-    expect(completed.observation).toContain('succeeded on https://pinchtab.dev/docs');
+    expect(completed.observation).toContain('succeeded on https://sutradhar.dev/docs');
     expect(executedSteps.length).toBe(1);
   });
 });

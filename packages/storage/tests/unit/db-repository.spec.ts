@@ -10,9 +10,9 @@ import {
   createCorrelationId,
   BrowserSessionDto,
   IDomainEvent,
-} from '@pinchtab/contracts';
+} from '@sutradhar/contracts';
 
-describe('@pinchtab/storage Database & Repository Layer', () => {
+describe('@sutradhar/storage Database & Repository Layer', () => {
   it('should initialize SqliteClient and execute queries', async () => {
     const client = new SqliteClient(':memory:');
     const result = await client.execute('CREATE TABLE IF NOT EXISTS test (id TEXT)');

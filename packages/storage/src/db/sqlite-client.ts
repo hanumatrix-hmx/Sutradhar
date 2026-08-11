@@ -3,8 +3,8 @@
  * @description SQLite database client abstraction fulfilling ADR-0007 (SQLite Storage).
  */
 
-import { StructuredLogger } from '@pinchtab/observability';
-import { Mutex } from '@pinchtab/utils';
+import { StructuredLogger } from '@sutradhar/observability';
+import { Mutex } from '@sutradhar/utils';
 
 export interface ISqliteClient {
   query<T>(sql: string, params?: readonly unknown[]): Promise<readonly T[]>;

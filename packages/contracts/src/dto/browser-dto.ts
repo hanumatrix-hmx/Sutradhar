@@ -63,7 +63,7 @@ export interface BrowserActionDto {
     | 'pressKey'
     | 'evaluate'
     | 'screenshot';
-  /** Stable per-snapshot element id stamped as data-pt-node-id on the live DOM. */
+  /** Stable per-snapshot element id stamped as data-sd-node-id on the live DOM. */
   readonly targetElementId?: number;
   /** Free-form CSS selector (used when the action is built directly, not from a snapshot id). */
   readonly targetSelector?: string;

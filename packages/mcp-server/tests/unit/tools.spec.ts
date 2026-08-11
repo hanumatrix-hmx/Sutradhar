@@ -5,7 +5,7 @@
  */
 
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { PinchTabRuntime } from '@pinchtab/capability-runtime';
+import { SutradharRuntime } from '@sutradhar/capability-runtime';
 import { registerTools } from '../../src/tools.js';
 
 /** A minimal in-memory McpServer double that just records what was registered. */
@@ -81,10 +81,10 @@ const EXPECTED_BROWSER_TOOLS = [
   'browser.close_tab',
 ];
 
-describe('@pinchtab/mcp-server registerTools', () => {
+describe('@sutradhar/mcp-server registerTools', () => {
   it('registers every expected browser.* tool exactly once, and nothing extra', () => {
     const { server, tools } = createMockServer();
-    const runtime = new PinchTabRuntime();
+    const runtime = new SutradharRuntime();
 
     registerTools(server, { runtime });
 
@@ -96,7 +96,7 @@ describe('@pinchtab/mcp-server registerTools', () => {
 
   it('does not register agent.runGoal when no agent handle is provided', () => {
     const { server, tools } = createMockServer();
-    const runtime = new PinchTabRuntime();
+    const runtime = new SutradharRuntime();
 
     registerTools(server, { runtime });
 
@@ -105,7 +105,7 @@ describe('@pinchtab/mcp-server registerTools', () => {
 
   it('registers agent.runGoal when an agent handle is provided', () => {
     const { server, tools } = createMockServer();
-    const runtime = new PinchTabRuntime();
+    const runtime = new SutradharRuntime();
     const agentCore = { executeGoal: vi.fn() } as any;
 
     registerTools(server, { runtime, agent: { agentCore } });
@@ -115,7 +115,7 @@ describe('@pinchtab/mcp-server registerTools', () => {
 
   it('every registered tool has a non-empty description and an inputSchema object', () => {
     const { server, tools } = createMockServer();
-    const runtime = new PinchTabRuntime();
+    const runtime = new SutradharRuntime();
     registerTools(server, { runtime });
 
     for (const [name, { config }] of tools) {
@@ -126,7 +126,7 @@ describe('@pinchtab/mcp-server registerTools', () => {
 
   it('a tool handler returns the isError contract when the underlying runtime call throws', async () => {
     const { server, tools } = createMockServer();
-    const runtime = new PinchTabRuntime();
+    const runtime = new SutradharRuntime();
     vi.spyOn(runtime, 'click').mockRejectedValue(new Error('boom'));
 
     registerTools(server, { runtime });
@@ -138,7 +138,7 @@ describe('@pinchtab/mcp-server registerTools', () => {
 
   it('a tool handler returns JSON success content when the underlying runtime call resolves', async () => {
     const { server, tools } = createMockServer();
-    const runtime = new PinchTabRuntime();
+    const runtime = new SutradharRuntime();
     vi.spyOn(runtime, 'click').mockResolvedValue({
       success: true,
       actionType: 'click',
@@ -155,7 +155,7 @@ describe('@pinchtab/mcp-server registerTools', () => {
 
   it('browser.launch surfaces a clear error when no real browser is available', async () => {
     const { server, tools } = createMockServer();
-    const runtime = new PinchTabRuntime();
+    const runtime = new SutradharRuntime();
     vi.spyOn(runtime, 'launch').mockResolvedValue({
       sessionId: 's1',
       activeTabId: 't1',
@@ -171,7 +171,7 @@ describe('@pinchtab/mcp-server registerTools', () => {
 
   it('browser.screenshot returns inline image content, not JSON text', async () => {
     const { server, tools } = createMockServer();
-    const runtime = new PinchTabRuntime();
+    const runtime = new SutradharRuntime();
     vi.spyOn(runtime, 'screenshot').mockResolvedValue({ base64: 'ZmFrZQ==' });
 
     registerTools(server, { runtime });
@@ -183,7 +183,7 @@ describe('@pinchtab/mcp-server registerTools', () => {
 
   it('errorResult appends a remediation hint for well-known error patterns (thrown-exception path)', async () => {
     const { server, tools } = createMockServer();
-    const runtime = new PinchTabRuntime();
+    const runtime = new SutradharRuntime();
     vi.spyOn(runtime, 'click').mockRejectedValue(
       new Error('No visible element found for selector: #missing'),
     );
@@ -197,11 +197,11 @@ describe('@pinchtab/mcp-server registerTools', () => {
   });
 
   it('jsonResult appends a remediation hint on the common in-band {success:false, error} action-failure path', async () => {
-    // The much more common case: PinchTabRuntime's action wrappers resolve (don't throw) with
+    // The much more common case: SutradharRuntime's action wrappers resolve (don't throw) with
     // success:false on a routine action failure — this must get a hint too, not just the
     // rarer thrown-exception path errorResult covers.
     const { server, tools } = createMockServer();
-    const runtime = new PinchTabRuntime();
+    const runtime = new SutradharRuntime();
     vi.spyOn(runtime, 'click').mockResolvedValue({
       success: false,
       actionType: 'click',
@@ -220,7 +220,7 @@ describe('@pinchtab/mcp-server registerTools', () => {
 
   it('browser.health reports Chrome availability without launching a session', async () => {
     const { server, tools } = createMockServer();
-    const runtime = new PinchTabRuntime();
+    const runtime = new SutradharRuntime();
     vi.spyOn(runtime, 'checkHealth').mockReturnValue({ hasChrome: true, executablePath: '/usr/bin/google-chrome' });
 
     registerTools(server, { runtime });
@@ -233,7 +233,7 @@ describe('@pinchtab/mcp-server registerTools', () => {
 
   it('browser.shutdown_all calls runtime.shutdownAll', async () => {
     const { server, tools } = createMockServer();
-    const runtime = new PinchTabRuntime();
+    const runtime = new SutradharRuntime();
     const spy = vi.spyOn(runtime, 'shutdownAll').mockResolvedValue(undefined);
 
     registerTools(server, { runtime });
@@ -245,7 +245,7 @@ describe('@pinchtab/mcp-server registerTools', () => {
 
   it("agent.runGoal surfaces a session:blocked event fired during the run", async () => {
     const { server, tools } = createMockServer();
-    const runtime = new PinchTabRuntime();
+    const runtime = new SutradharRuntime();
     const agentCore = {
       executeGoal: vi.fn().mockImplementation(async (_goal: string, _sessionId: unknown, options: any) => {
         // Simulate the agent loop publishing session:blocked mid-run, on the SAME bus
@@ -276,7 +276,7 @@ describe('@pinchtab/mcp-server registerTools', () => {
 
   it('agent.runGoal never leaks a session:blocked event from a DIFFERENT (unrelated) goalId into its response', async () => {
     const { server, tools } = createMockServer();
-    const runtime = new PinchTabRuntime();
+    const runtime = new SutradharRuntime();
     const agentCore = {
       executeGoal: vi.fn().mockImplementation(async () => {
         // Simulate an unrelated concurrent run's block event landing on the shared bus while

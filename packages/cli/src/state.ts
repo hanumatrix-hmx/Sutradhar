@@ -1,8 +1,8 @@
 /**
  * @file packages/cli/src/state.ts
  * @description Persists the "current session" across separate CLI process invocations. Each
- * `pinchtab <verb>` call is its own short-lived Node process — there's no long-running daemon
- * (unlike the real pinchtab/pinchtab Go project's server/bridge model) — so continuity comes
+ * `sutradhar <verb>` call is its own short-lived Node process — there's no long-running daemon
+ * (unlike the real sutradhar/sutradhar Go project's server/bridge model) — so continuity comes
  * from writing the live session's CDP wsEndpoint to disk after `nav`, then every subsequent
  * command `attach()`-ing back to that same wsEndpoint before doing anything else.
  */
@@ -19,7 +19,7 @@ export interface CliState {
   lastUrl?: string;
 }
 
-const STATE_DIR = path.join(os.homedir(), '.pinchtab-cli');
+const STATE_DIR = path.join(os.homedir(), '.sutradhar-cli');
 const STATE_FILE = path.join(STATE_DIR, 'state.json');
 
 export async function readState(): Promise<CliState | undefined> {

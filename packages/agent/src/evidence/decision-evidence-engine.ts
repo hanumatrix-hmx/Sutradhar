@@ -3,7 +3,7 @@
  * @description DecisionEvidenceEngine aggregating positive evidence, applying penalties, and recommending actions consuming PageModel context.
  */
 
-import { CandidateMatchResult, PageModel } from '@pinchtab/browser';
+import { CandidateMatchResult, PageModel } from '@sutradhar/browser';
 import {
   DecisionEvidence,
   DecisionRecommendation,

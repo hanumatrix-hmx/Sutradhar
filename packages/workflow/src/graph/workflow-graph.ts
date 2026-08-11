@@ -3,7 +3,7 @@
  * @description WorkflowGraph class managing node topology and DAG graph validation.
  */
 
-import { WorkflowId } from '@pinchtab/contracts';
+import { WorkflowId } from '@sutradhar/contracts';
 import { WorkflowNodeDto } from './workflow-node.js';
 
 export interface IWorkflowGraph {

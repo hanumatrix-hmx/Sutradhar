@@ -3,9 +3,9 @@
  * @description Application service for autonomous agent use cases.
  */
 
-import { AgentGoalDto } from '@pinchtab/contracts';
-import { AgentCore } from '@pinchtab/agent';
-import { StructuredLogger } from '@pinchtab/observability';
+import { AgentGoalDto } from '@sutradhar/contracts';
+import { AgentCore } from '@sutradhar/agent';
+import { StructuredLogger } from '@sutradhar/observability';
 
 export interface ExecuteGoalCommand {
   readonly goal: string;

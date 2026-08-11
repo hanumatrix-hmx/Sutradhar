@@ -3,7 +3,7 @@
  * @description Thin HTTP route controller delegating exclusively to MemoryApplicationService.
  */
 
-import { MemoryRecordDto, MemorySearchQueryDto } from '@pinchtab/contracts';
+import { MemoryRecordDto, MemorySearchQueryDto } from '@sutradhar/contracts';
 import { MemoryApplicationService } from '../application/memory-app-service.js';
 import { ApiRouter } from '../gateway/api-router.js';
 

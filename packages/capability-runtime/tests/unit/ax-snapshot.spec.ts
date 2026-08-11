@@ -15,7 +15,7 @@ function mockPage(tree: unknown, url = 'https://example.com', title = 'Example')
   };
 }
 
-describe('@pinchtab/capability-runtime buildAxSnapshot', () => {
+describe('@sutradhar/capability-runtime buildAxSnapshot', () => {
   it('flattens interesting roles (button/link/textbox/...) from a nested tree', async () => {
     const tree = {
       role: 'RootWebArea',

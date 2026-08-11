@@ -8,15 +8,15 @@
 import * as os from 'node:os';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import { LocalFileStorage } from '@pinchtab/storage';
+import { LocalFileStorage } from '@sutradhar/storage';
 import { CrossRunMemory } from '../../src/core/cross-run-memory.js';
 
 function makeMemory(): CrossRunMemory {
-  const baseDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pinchtab-cross-run-memory-'));
+  const baseDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sutradhar-cross-run-memory-'));
   return new CrossRunMemory({ storage: new LocalFileStorage({ baseDir }) });
 }
 
-describe('@pinchtab/agent CrossRunMemory', () => {
+describe('@sutradhar/agent CrossRunMemory', () => {
   it('returns no relevant runs when nothing has been recorded yet', async () => {
     const memory = makeMemory();
     const relevant = await memory.getRelevantRuns('book a flight to Paris');
@@ -78,7 +78,7 @@ describe('@pinchtab/agent CrossRunMemory', () => {
   it('never throws when recording fails (best-effort)', async () => {
     // Point storage at a location that cannot be written to (a file, not a directory, as the
     // base dir) so writeFile's mkdir/writeFile calls fail — recordRun must swallow it.
-    const baseDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pinchtab-cross-run-memory-'));
+    const baseDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sutradhar-cross-run-memory-'));
     const blockingFile = path.join(baseDir, 'blocked');
     fs.writeFileSync(blockingFile, 'not a directory');
     const memory = new CrossRunMemory({ storage: new LocalFileStorage({ baseDir: blockingFile }) });
@@ -95,7 +95,7 @@ describe('@pinchtab/agent CrossRunMemory', () => {
   });
 
   it('prunes the oldest runs once the stored count exceeds the cap by the margin', async () => {
-    const baseDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pinchtab-cross-run-memory-'));
+    const baseDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sutradhar-cross-run-memory-'));
     const storage = new LocalFileStorage({ baseDir });
     const memory = new CrossRunMemory({ storage });
 

@@ -5,7 +5,7 @@
 
 import puppeteer, { Browser as PuppeteerBrowser, BrowserContext, Page } from 'puppeteer-core';
 import * as fs from 'node:fs';
-import { StructuredLogger } from '@pinchtab/observability';
+import { StructuredLogger } from '@sutradhar/observability';
 import { BrowserLaunchOptions, DEFAULT_LAUNCH_ARGS } from './browser-options.js';
 
 export interface IBrowserInstance {

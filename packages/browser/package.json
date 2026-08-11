@@ -1,9 +1,9 @@
 {
-  "name": "@pinchtab/browser",
+  "name": "@sutradhar/browser",
   "version": "0.1.0",
   "type": "module",
   "private": true,
-  "description": "Headless browser automation engine, stealth launch wrapper, and DOM snapshot generator for PinchTab",
+  "description": "Headless browser automation engine, stealth launch wrapper, and DOM snapshot generator for Sutradhar",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -27,12 +27,12 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@pinchtab/contracts": "workspace:*",
-    "@pinchtab/capability": "workspace:*",
-    "@pinchtab/utils": "workspace:*",
-    "@pinchtab/config": "workspace:*",
-    "@pinchtab/observability": "workspace:*",
-    "@pinchtab/events": "workspace:*",
+    "@sutradhar/contracts": "workspace:*",
+    "@sutradhar/capability": "workspace:*",
+    "@sutradhar/utils": "workspace:*",
+    "@sutradhar/config": "workspace:*",
+    "@sutradhar/observability": "workspace:*",
+    "@sutradhar/events": "workspace:*",
     "puppeteer-core": "^25.5.0"
   },
   "devDependencies": {

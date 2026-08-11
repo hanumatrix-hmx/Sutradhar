@@ -22,7 +22,7 @@ vi.mock('node:fs', async (importOriginal) => {
   return { ...actual, default: { ...actual.default, existsSync: existsSyncMock }, existsSync: existsSyncMock };
 });
 
-describe('@pinchtab/browser BrowserLauncher', () => {
+describe('@sutradhar/browser BrowserLauncher', () => {
   it('should export correct package version constant', () => {
     expect(BROWSER_VERSION).toBe('0.1.0');
   });

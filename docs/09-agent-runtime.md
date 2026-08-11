@@ -8,9 +8,9 @@ Review Frequency: Quarterly
 Related ADRs:
   - 0004-runtime-architecture
 Related Packages:
-  - '@pinchtab/agent'
-  - '@pinchtab/orchestrator'
-  - '@pinchtab/runtime'
+  - '@sutradhar/agent'
+  - '@sutradhar/orchestrator'
+  - '@sutradhar/runtime'
 ---
 
 # Agent Runtime & Cognitive Loop Architecture

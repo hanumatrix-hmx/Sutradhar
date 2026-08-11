@@ -3,7 +3,7 @@
  * @description DOMSemanticEngine analyzing page DOM and producing structured
  * SemanticElementGraph instances.
  *
- * Each interactive element is stamped with a durable `data-pt-node-id` attribute
+ * Each interactive element is stamped with a durable `data-sd-node-id` attribute
  * on the live DOM so that an agent (human or LLM) can later target it by id via
  * {@link selectorForNodeId}. This closes the "node id → element" loop that the
  * previous implementation lacked.
@@ -27,18 +27,18 @@ import { IBrowserTab } from '../session/browser-tab.js';
 import { SemanticElementGraph } from './semantic-element-graph.js';
 
 /** The data attribute stamped on elements to map node ids back to DOM nodes. */
-export const PT_NODE_ID_ATTR = 'data-pt-node-id';
+export const SD_NODE_ID_ATTR = 'data-sd-node-id';
 
 /**
- * Stamped on every interactive element alongside {@link PT_NODE_ID_ATTR}, and mirrored onto
+ * Stamped on every interactive element alongside {@link SD_NODE_ID_ATTR}, and mirrored onto
  * each frame's `document.documentElement` as that frame's "current generation". Lets an
  * action verify a node id it's about to act on actually belongs to the most recent snapshot
  * rather than an older one whose ids may since have been reassigned to different elements.
  */
-export const PT_GENERATION_ATTR = 'data-pt-gen';
+export const SD_GENERATION_ATTR = 'data-sd-gen';
 
 /** The attribute on `document.documentElement` holding the page's current stamp generation. */
-export const PT_CURRENT_GENERATION_ATTR = 'data-pt-current-gen';
+export const SD_CURRENT_GENERATION_ATTR = 'data-sd-current-gen';
 
 /** ARIA/tag combination treated as "interactive" for both scraping and the LLM-facing listing. */
 const INTERACTIVE_SELECTOR =
@@ -65,7 +65,7 @@ const MAX_FRAMES = 20;
 
 /** Returns the CSS selector that uniquely targets the element stamped with `nodeId`. */
 export function selectorForNodeId(nodeId: number): string {
-  return `[${PT_NODE_ID_ATTR}="${nodeId}"]`;
+  return `[${SD_NODE_ID_ATTR}="${nodeId}"]`;
 }
 
 export interface IDOMSemanticEngine {
@@ -95,9 +95,9 @@ export class DOMSemanticEngine implements IDOMSemanticEngine {
       for (const frame of frames) {
         try {
           const frameNodes = await frame.evaluate(scrapeFrame, {
-            attrName: PT_NODE_ID_ATTR,
-            genAttr: PT_GENERATION_ATTR,
-            currentGenAttr: PT_CURRENT_GENERATION_ATTR,
+            attrName: SD_NODE_ID_ATTR,
+            genAttr: SD_GENERATION_ATTR,
+            currentGenAttr: SD_CURRENT_GENERATION_ATTR,
             selector: INTERACTIVE_SELECTOR,
             generation,
             startId: nextId,

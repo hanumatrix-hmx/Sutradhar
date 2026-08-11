@@ -13,7 +13,7 @@ Upcoming Checkpoint: first-run state + health chip + honest settings + shortcuts
 Phase 5 (Multi-day history) is DONE 2026-08-09 and verified live. Delivered
 (for context — do not redo):
 
-- Canonical `RunRecordDto` in `@pinchtab/contracts` (`dto/run-dto.ts`);
+- Canonical `RunRecordDto` in `@sutradhar/contracts` (`dto/run-dto.ts`);
   server is the single source of truth.
 - `RunRepository` (`apps/server/src/application/run-repository.ts`): one
   JSON per run at `runs/<runId>.json` on `LocalFileStorage`; write at
@@ -70,5 +70,5 @@ lifecycle §6 items 1–2; E1–E3 in §3; backend ask §8.1). Steps:
 - Server e2e TEST 2 (live github.com + local LLM) can time out under
   concurrent benchmark load; re-run `tests/integration/e2e.spec.ts` alone
   before treating it as a real failure.
-- Seed data in `.pinchtab-storage/runs/` (the `sess_p5_smoke` run) — leave
+- Seed data in `.sutradhar-storage/runs/` (the `sess_p5_smoke` run) — leave
   in place; useful for History regression checks during Phase 6.

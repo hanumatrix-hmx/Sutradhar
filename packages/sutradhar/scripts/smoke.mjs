@@ -1,6 +1,6 @@
-// Puppeteer-style API smoke test for the `pinchtab` package.
+// Puppeteer-style API smoke test for the `sutradhar` package.
 // Exercises the USER-FACING API (launch/Browser/Page), not internals.
-// Run directly (no pipe): node packages/pinchtab/scripts/smoke.mjs
+// Run directly (no pipe): node packages/sutradhar/scripts/smoke.mjs
 
 import { launch } from '../dist/index.js';
 
@@ -45,7 +45,7 @@ try {
   const pages = browser.pages();
   log('    page count=' + pages.length);
 
-  log('✅ pinchtab Puppeteer-style API works end-to-end.');
+  log('✅ sutradhar Puppeteer-style API works end-to-end.');
 } catch (e) {
   console.error('\n❌ SMOKE TEST FAILED: ' + (e?.message || e));
   console.error(e);

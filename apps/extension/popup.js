@@ -1,4 +1,4 @@
-// PinchTab popup script — goal submission + settings UI.
+// Sutradhar popup script — goal submission + settings UI.
 // Talks to the background service worker via chrome.runtime.sendMessage.
 
 const $ = (id) => document.getElementById(id);

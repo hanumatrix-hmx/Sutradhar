@@ -8,10 +8,10 @@
  * than fabricate a response.
  */
 
-import { CapabilityMatrix } from '@pinchtab/capability';
-import { CompletionRequestDto, CompletionResponseDto, StreamChunkDto } from '@pinchtab/contracts';
-import { RateLimiter } from '@pinchtab/utils';
-import { StructuredLogger } from '@pinchtab/observability';
+import { CapabilityMatrix } from '@sutradhar/capability';
+import { CompletionRequestDto, CompletionResponseDto, StreamChunkDto } from '@sutradhar/contracts';
+import { RateLimiter } from '@sutradhar/utils';
+import { StructuredLogger } from '@sutradhar/observability';
 import { ILlmProvider } from './llm-provider.js';
 import { OpenAiCompatibleAdapter } from './openai-compatible-adapter.js';
 

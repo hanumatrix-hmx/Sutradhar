@@ -3,10 +3,10 @@
  * @description StepExecutor dispatching browser action commands and recording verified observations.
  */
 
-import { AgentStepDto, AgentId, TaskId } from '@pinchtab/contracts';
-import { IBrowserSession } from '@pinchtab/browser';
-import { EventBus } from '@pinchtab/events';
-import { StructuredLogger } from '@pinchtab/observability';
+import { AgentStepDto, AgentId, TaskId } from '@sutradhar/contracts';
+import { IBrowserSession } from '@sutradhar/browser';
+import { EventBus } from '@sutradhar/events';
+import { StructuredLogger } from '@sutradhar/observability';
 import { ReflectionEngine } from './reflection-engine.js';
 
 export interface IStepExecutor {

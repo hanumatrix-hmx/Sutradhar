@@ -1,7 +1,7 @@
 // Live smoke test for Wave 12: keyboard modifiers, multi-select, viewport resize, clipboard,
 // timezone/locale/color-scheme emulation, file-chooser upload trigger, and shadow-DOM text
 // verification — all against real Chrome.
-import { PinchTabRuntime } from '../dist/index.js';
+import { SutradharRuntime } from '../dist/index.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,7 +14,7 @@ fs.mkdirSync(scratchDir, { recursive: true });
 const uploadFilePath = path.join(scratchDir, 'upload-me.txt');
 fs.writeFileSync(uploadFilePath, 'wave 12 upload test');
 
-const runtime = new PinchTabRuntime({ allowedDownloadRoots: [scratchDir] });
+const runtime = new SutradharRuntime({ allowedDownloadRoots: [scratchDir] });
 let sessionId;
 
 try {
@@ -62,10 +62,10 @@ try {
   // ── 4. Clipboard ─────────────────────────────────────────────────────────
   log('[4] clipboard...');
   await runtime.grantPermissions(sessionId, 'https://example.com', ['clipboard-read', 'clipboard-write']);
-  await runtime.setClipboard(sessionId, 'pinchtab wave 12');
+  await runtime.setClipboard(sessionId, 'sutradhar wave 12');
   const clip = await runtime.getClipboard(sessionId);
   log('    clip=' + clip);
-  if (clip !== 'pinchtab wave 12') throw new Error('expected clipboard round-trip to match, got ' + clip);
+  if (clip !== 'sutradhar wave 12') throw new Error('expected clipboard round-trip to match, got ' + clip);
 
   // ── 5. Timezone/locale/color-scheme emulation ───────────────────────────
   log('[5] emulation (timezone/locale/color-scheme)...');

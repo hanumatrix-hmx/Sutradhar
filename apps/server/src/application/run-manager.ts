@@ -20,10 +20,10 @@
  * that executed before Stop.
  */
 
-import { AgentGoalDto, AgentStepTraceDto, RunRecordDto, createGoalId } from '@pinchtab/contracts';
-import { AgentCore, AgentLoopStep } from '@pinchtab/agent';
-import { FallbackLlmProvider } from '@pinchtab/llm';
-import { StructuredLogger } from '@pinchtab/observability';
+import { AgentGoalDto, AgentStepTraceDto, RunRecordDto, createGoalId } from '@sutradhar/contracts';
+import { AgentCore, AgentLoopStep } from '@sutradhar/agent';
+import { FallbackLlmProvider } from '@sutradhar/llm';
+import { StructuredLogger } from '@sutradhar/observability';
 import { RunRepository } from './run-repository.js';
 
 /** One SSE frame for a run: real lifecycle data, ordered and replayable. */

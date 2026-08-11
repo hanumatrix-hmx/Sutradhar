@@ -10,16 +10,16 @@ Bounded Context: CTX-001 (Foundational Context)
 Depends on ADRs:
   - 0001-monorepo
 Related Packages:
-  - '@pinchtab/contracts'
+  - '@sutradhar/contracts'
 ---
 
-# @pinchtab/utils
+# @sutradhar/utils
 
-> Pure TypeScript async control limiters, cryptographic helpers, string sanitizers, and DOM formatting utilities for PinchTab.
+> Pure TypeScript async control limiters, cryptographic helpers, string sanitizers, and DOM formatting utilities for Sutradhar.
 
 ## Package Architectural Invariants
 
-1. **Foundational Layer Boundary (`CTX-001`)**: Depends strictly on `@pinchtab/contracts`. Must NEVER import from domain, infrastructure, or application packages (`packages/browser`, `packages/orchestrator`, `apps/*`).
+1. **Foundational Layer Boundary (`CTX-001`)**: Depends strictly on `@sutradhar/contracts`. Must NEVER import from domain, infrastructure, or application packages (`packages/browser`, `packages/orchestrator`, `apps/*`).
 2. **Zero External Runtime NPM Dependencies**: Implemented using pure Web API / Node.js standard library primitives with zero external runtime npm packages.
 3. **No Blocking Operations**: Asynchronous synchronization primitives (Mutex, Semaphore, RateLimiter) MUST NEVER block main looper or event dispatching threads.
 

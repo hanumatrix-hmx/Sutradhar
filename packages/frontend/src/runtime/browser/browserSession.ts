@@ -23,7 +23,7 @@ export class BrowserSession {
 
   public constructor(
     public readonly sessionId: string,
-    initialUrl = 'https://github.com/pinchtab/pinchtab',
+    initialUrl = 'https://github.com/sutradhar/sutradhar',
     adapter?: IBrowserAdapter,
   ) {
     this.runtime = new BrowserRuntime(sessionId, adapter);
@@ -31,7 +31,7 @@ export class BrowserSession {
     const initialTab: TabSnapshot = {
       id: `tab_${sessionId}_1`,
       url: initialUrl,
-      title: 'PinchTab Autonomous Browser Agent Platform',
+      title: 'Sutradhar Autonomous Browser Agent Platform',
       active: true,
       loading: false,
       canGoBack: false,

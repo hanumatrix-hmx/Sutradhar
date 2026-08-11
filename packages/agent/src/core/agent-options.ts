@@ -3,11 +3,11 @@
  * @description Configuration options and dependencies for AgentCore instances.
  */
 
-import { AgentId } from '@pinchtab/contracts';
-import { EventBus } from '@pinchtab/events';
-import { StructuredLogger } from '@pinchtab/observability';
-import { ILlmProvider } from '@pinchtab/llm';
-import { BrowserSessionManager } from '@pinchtab/browser';
+import { AgentId } from '@sutradhar/contracts';
+import { EventBus } from '@sutradhar/events';
+import { StructuredLogger } from '@sutradhar/observability';
+import { ILlmProvider } from '@sutradhar/llm';
+import { BrowserSessionManager } from '@sutradhar/browser';
 
 export interface AgentOptions {
   readonly agentId?: AgentId;

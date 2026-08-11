@@ -11,7 +11,7 @@ import { BrowserCapabilityAPI } from '../../src/runtime/browser/browserCapabilit
 import { MockBrowserAdapter } from '../_mocks/MockBrowserAdapter.js';
 import { isBackendReachable } from '../_helpers/live-stack.js';
 
-describe('@pinchtab/frontend Milestone 4 — Browser Runtime Engine & Manager', () => {
+describe('@sutradhar/frontend Milestone 4 — Browser Runtime Engine & Manager', () => {
   it('1. should launch, report status, and shutdown BrowserRuntime', async () => {
     const runtime = new BrowserRuntime('test_sess_1');
     expect(runtime.status).toBe('stopped');

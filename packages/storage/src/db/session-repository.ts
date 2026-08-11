@@ -3,9 +3,9 @@
  * @description Session repository implementation for persisting BrowserSessionDto records.
  */
 
-import { SessionId, BrowserSessionDto } from '@pinchtab/contracts';
-import { Mutex } from '@pinchtab/utils';
-import { StructuredLogger } from '@pinchtab/observability';
+import { SessionId, BrowserSessionDto } from '@sutradhar/contracts';
+import { Mutex } from '@sutradhar/utils';
+import { StructuredLogger } from '@sutradhar/observability';
 import { ISqliteClient } from './sqlite-client.js';
 
 export interface ISessionRepository {

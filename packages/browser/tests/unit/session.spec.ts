@@ -4,11 +4,11 @@
  */
 
 import { BrowserSessionManager, BrowserSession, BrowserTab, BrowserLauncher } from '../../src/index.js';
-import { EventBus } from '@pinchtab/events';
-import { createSessionId, createTabId } from '@pinchtab/contracts';
+import { EventBus } from '@sutradhar/events';
+import { createSessionId, createTabId } from '@sutradhar/contracts';
 import type { Page } from 'puppeteer-core';
 
-describe('@pinchtab/browser Session Management & Tab Lifecycle', () => {
+describe('@sutradhar/browser Session Management & Tab Lifecycle', () => {
   it('should create and navigate browser tabs', async () => {
     const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example');
 
@@ -16,8 +16,8 @@ describe('@pinchtab/browser Session Management & Tab Lifecycle', () => {
     expect(tab.url).toBe('https://example.com');
     expect(tab.isActive).toBe(true);
 
-    const navResult = await tab.navigate('https://pinchtab.dev');
-    expect(navResult.url).toBe('https://pinchtab.dev');
+    const navResult = await tab.navigate('https://sutradhar.dev');
+    expect(navResult.url).toBe('https://sutradhar.dev');
 
     // This tab has no live Puppeteer page (mock/no-Chrome bookkeeping-only tab) — every
     // action except 'navigate' must report failure rather than fabricating success.

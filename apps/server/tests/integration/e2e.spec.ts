@@ -1,17 +1,17 @@
 /**
  * @file apps/server/tests/integration/e2e.spec.ts
- * @description Real end-to-end integration tests validating the complete PinchTab platform runtime.
+ * @description Real end-to-end integration tests validating the complete Sutradhar platform runtime.
  */
 
-import { PinchTabRuntime } from '../../src/runtime/bootstrap.js';
-import { createMemoryId } from '@pinchtab/contracts';
+import { SutradharRuntime } from '../../src/runtime/bootstrap.js';
+import { createMemoryId } from '@sutradhar/contracts';
 import { isLiveStackAvailable } from '../_helpers/live-stack.js';
 
-describe('PinchTab Phase 7 Runtime Integration & End-to-End Test Suite', () => {
-  let runtime: PinchTabRuntime;
+describe('Sutradhar Phase 7 Runtime Integration & End-to-End Test Suite', () => {
+  let runtime: SutradharRuntime;
 
   beforeAll(async () => {
-    runtime = new PinchTabRuntime();
+    runtime = new SutradharRuntime();
     await runtime.start();
   });
 
@@ -106,12 +106,12 @@ describe('PinchTab Phase 7 Runtime Integration & End-to-End Test Suite', () => {
 
     // 1. Run complete multi-step workflow
     const wfResult = await runtime.container.workflowAppService.executeWorkflow({
-      name: 'Search PinchTab and Store README Summary',
+      name: 'Search Sutradhar and Store README Summary',
       nodes: [
         { id: 'start', name: 'Start Execution', type: 'start', nextNodes: ['search_github'] },
         {
           id: 'search_github',
-          name: 'Search GitHub for PinchTab',
+          name: 'Search GitHub for Sutradhar',
           type: 'task',
           nextNodes: ['read_readme'],
         },
@@ -124,21 +124,21 @@ describe('PinchTab Phase 7 Runtime Integration & End-to-End Test Suite', () => {
 
     // 2. Persist execution summary file artifact
     const fileResult = await runtime.container.storageAppService.storeFile({
-      key: 'summaries/pinchtab-readme-summary.json',
+      key: 'summaries/sutradhar-readme-summary.json',
       content: JSON.stringify({
-        summary: 'PinchTab platform foundation complete',
+        summary: 'Sutradhar platform foundation complete',
         executionId: wfResult.executionId,
       }),
     });
 
-    expect(fileResult.path).toContain('pinchtab-readme-summary.json');
+    expect(fileResult.path).toContain('sutradhar-readme-summary.json');
 
     // 3. Store summary in episodic memory tier
     const memId = createMemoryId('mem_summary_1');
     await runtime.container.memoryAppService.storeRecord({
       id: memId,
       tier: 'episodic',
-      content: 'PinchTab repository README summarized and stored successfully',
+      content: 'Sutradhar repository README summarized and stored successfully',
       metadata: { fileKey: fileResult.key },
       timestamp: new Date().toISOString(),
     });
@@ -150,7 +150,7 @@ describe('PinchTab Phase 7 Runtime Integration & End-to-End Test Suite', () => {
 
     expect(memoryHits.length).toBeGreaterThanOrEqual(1);
     expect(memoryHits[0]?.record.metadata['fileKey']).toBe(
-      'summaries/pinchtab-readme-summary.json',
+      'summaries/sutradhar-readme-summary.json',
     );
   }, 300000);
 });

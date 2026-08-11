@@ -1,6 +1,6 @@
 /**
  * @file packages/observability/src/index.ts
- * @description Package entry point for @pinchtab/observability.
+ * @description Package entry point for @sutradhar/observability.
  */
 
 export const OBSERVABILITY_VERSION = '0.1.0';

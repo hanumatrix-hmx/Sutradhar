@@ -1,18 +1,18 @@
 /**
  * @file packages/capability-runtime/src/types.ts
- * @description Public option and result types for the PinchTab capability runtime façade.
+ * @description Public option and result types for the Sutradhar capability runtime façade.
  *
  * These types are intentionally framework-agnostic — no HTTP, no MCP, no extension
  * glue. They describe the high-level browser verbs that every integration surface
- * (MCP server, npm SDK, plugins, extension) calls through {@link PinchTabRuntime}.
+ * (MCP server, npm SDK, plugins, extension) calls through {@link SutradharRuntime}.
  */
 
-import type { ActionHistoryEntry, BrowserLaunchOptions, VerificationResultDto } from '@pinchtab/browser';
-import type { SessionId, TabId } from '@pinchtab/contracts';
+import type { ActionHistoryEntry, BrowserLaunchOptions, VerificationResultDto } from '@sutradhar/browser';
+import type { SessionId, TabId } from '@sutradhar/contracts';
 
-/** Options for {@link PinchTabRuntime.launch}. */
+/** Options for {@link SutradharRuntime.launch}. */
 export interface LaunchOptions {
-  /** Reuse an existing caller-owned session id; omit to let PinchTab mint one. */
+  /** Reuse an existing caller-owned session id; omit to let Sutradhar mint one. */
   sessionId?: string;
   /** Open a fresh tab and navigate here immediately after launch. */
   initialUrl?: string;
@@ -21,7 +21,7 @@ export interface LaunchOptions {
   /** Forwarded to the underlying browser launcher. */
   launch?: BrowserLaunchOptions;
   /**
-   * Launch using a named, persistent profile created via `PinchTabRuntime`'s `ProfileManager`
+   * Launch using a named, persistent profile created via `SutradharRuntime`'s `ProfileManager`
    * (cookies/history/localStorage survive across separate launches) instead of a fresh,
    * throwaway userDataDir. Resolves to that profile's userDataDir and merges it into `launch` —
    * throws if the name doesn't exist. Takes precedence over an explicit `launch.userDataDir` if
@@ -30,7 +30,7 @@ export interface LaunchOptions {
   profileName?: string;
 }
 
-/** Result of {@link PinchTabRuntime.launch}. */
+/** Result of {@link SutradharRuntime.launch}. */
 export interface LaunchResult {
   sessionId: string;
   activeTabId?: string;
@@ -38,7 +38,7 @@ export interface LaunchResult {
   hasRealBrowser: boolean;
 }
 
-/** Options for {@link PinchTabRuntime.attach} — connect to an external browser over CDP. */
+/** Options for {@link SutradharRuntime.attach} — connect to an external browser over CDP. */
 export interface AttachOptions {
   /**
    * CDP endpoint of the external browser. Either a raw WebSocket URL
@@ -47,18 +47,18 @@ export interface AttachOptions {
    * `--remote-debugging-port=9222`, or by the browser extension via `chrome.debugger`.
    */
   endpoint: string;
-  /** Reuse an existing caller-owned session id; omit to let PinchTab mint one. */
+  /** Reuse an existing caller-owned session id; omit to let Sutradhar mint one. */
   sessionId?: string;
 }
 
-/** Result of {@link PinchTabRuntime.navigate}. */
+/** Result of {@link SutradharRuntime.navigate}. */
 export interface NavigateResult {
   tabId: string;
   url: string;
   title: string;
 }
 
-/** Result of {@link PinchTabRuntime.screenshot}. */
+/** Result of {@link SutradharRuntime.screenshot}. */
 export interface ScreenshotResult {
   /** Base64-encoded PNG bytes, WITHOUT the `data:image/png;base64,` prefix. */
   base64: string;
@@ -78,7 +78,7 @@ export interface SnapshotResult {
   pageText: string;
 }
 
-/** Result of {@link PinchTabRuntime.click} and {@link PinchTabRuntime.type}. */
+/** Result of {@link SutradharRuntime.click} and {@link SutradharRuntime.type}. */
 export interface ActionResult {
   success: boolean;
   actionType: string;
@@ -94,13 +94,13 @@ export interface ActionResult {
   failureScreenshot?: string;
 }
 
-/** Result of {@link PinchTabRuntime.exportPdf}. */
+/** Result of {@link SutradharRuntime.exportPdf}. */
 export interface PdfResult {
   /** Base64-encoded PDF bytes, WITHOUT the `data:application/pdf;base64,` prefix. */
   base64: string;
 }
 
-/** Result of {@link PinchTabRuntime.downloadFile}. */
+/** Result of {@link SutradharRuntime.downloadFile}. */
 export interface DownloadResult {
   filename: string;
   path: string;
@@ -109,7 +109,7 @@ export interface DownloadResult {
 
 export { type ActionHistoryEntry };
 
-/** A row in {@link PinchTabRuntime.listTabs}. */
+/** A row in {@link SutradharRuntime.listTabs}. */
 export interface TabInfo {
   id: string;
   url: string;
@@ -131,7 +131,7 @@ export type ElementTarget = string;
 /** Internal helper: convert a snapshot node id (number) or selector string to a CSS selector. */
 export function normalizeTarget(target: ElementTarget): string {
   // A pure-numeric target is interpreted as a pt-node-id stamped by the DOM semantic engine.
-  return /^\d+$/.test(target.trim()) ? `[data-pt-node-id="${target.trim()}"]` : target;
+  return /^\d+$/.test(target.trim()) ? `[data-sd-node-id="${target.trim()}"]` : target;
 }
 
 export { type SessionId, type TabId };

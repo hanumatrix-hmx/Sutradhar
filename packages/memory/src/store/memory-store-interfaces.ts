@@ -8,7 +8,7 @@ import {
   MemoryRecordDto,
   MemorySearchQueryDto,
   MemorySearchResultDto,
-} from '@pinchtab/contracts';
+} from '@sutradhar/contracts';
 import { MemoryTier } from './memory-tier.js';
 
 export interface IMemoryStore {

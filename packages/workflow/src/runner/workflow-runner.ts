@@ -3,9 +3,9 @@
  * @description WorkflowRunner service executing DAG node graphs, handling state transitions, and event publishing.
  */
 
-import { EventBus } from '@pinchtab/events';
-import { StructuredLogger } from '@pinchtab/observability';
-import { IAgentCore, AgentCore } from '@pinchtab/agent';
+import { EventBus } from '@sutradhar/events';
+import { StructuredLogger } from '@sutradhar/observability';
+import { IAgentCore, AgentCore } from '@sutradhar/agent';
 import { WorkflowGraph } from '../graph/workflow-graph.js';
 import { WorkflowNodeDto } from '../graph/workflow-node.js';
 import { WorkflowExecutionResultDto, WorkflowRunnerOptions } from './workflow-runner-options.js';

@@ -1,4 +1,4 @@
-# PinchTab Frontend Testing Strategy
+# Sutradhar Frontend Testing Strategy
 
 ## Testing Pyramid
 

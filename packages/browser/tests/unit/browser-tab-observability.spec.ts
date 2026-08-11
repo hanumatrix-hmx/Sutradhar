@@ -5,8 +5,8 @@
  */
 
 import { BrowserTab, RouteRule } from '../../src/index.js';
-import { createTabId, createSessionId } from '@pinchtab/contracts';
-import { EventBus } from '@pinchtab/events';
+import { createTabId, createSessionId } from '@sutradhar/contracts';
+import { EventBus } from '@sutradhar/events';
 import type { Page } from 'puppeteer-core';
 
 /** A mock Puppeteer Page whose `.on(event, handler)` calls are captured so tests can fire
@@ -26,7 +26,7 @@ function mockPage(overrides: Partial<Record<string, any>> = {}) {
   return { page: page as unknown as Page, handlers, raw: page };
 }
 
-describe('@pinchtab/browser BrowserTab dialog handling', () => {
+describe('@sutradhar/browser BrowserTab dialog handling', () => {
   it('exposes a pending dialog and reports it via getPendingDialog', () => {
     const { page, handlers } = mockPage();
     const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
@@ -109,7 +109,7 @@ describe('@pinchtab/browser BrowserTab dialog handling', () => {
   });
 });
 
-describe('@pinchtab/browser BrowserTab console/error/network capture', () => {
+describe('@sutradhar/browser BrowserTab console/error/network capture', () => {
   it('captures console messages and returns them via getConsoleLogs', () => {
     const { page, handlers } = mockPage();
     const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
@@ -167,7 +167,7 @@ describe('@pinchtab/browser BrowserTab console/error/network capture', () => {
   });
 });
 
-describe('@pinchtab/browser BrowserTab network route rules', () => {
+describe('@sutradhar/browser BrowserTab network route rules', () => {
   it('enables request interception on the first addRoute call', async () => {
     const { page } = mockPage();
     const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);

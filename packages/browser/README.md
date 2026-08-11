@@ -12,17 +12,17 @@ Depends on ADRs:
   - 0002-browser-control
   - 0005-stealth-evasion
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/capability'
-  - '@pinchtab/utils'
-  - '@pinchtab/config'
-  - '@pinchtab/observability'
-  - '@pinchtab/events'
+  - '@sutradhar/contracts'
+  - '@sutradhar/capability'
+  - '@sutradhar/utils'
+  - '@sutradhar/config'
+  - '@sutradhar/observability'
+  - '@sutradhar/events'
 ---
 
-# @pinchtab/browser
+# @sutradhar/browser
 
-> Headless browser automation wrapper engine, stealth launcher, session pool manager, and semantic DOM snapshot generator for PinchTab.
+> Headless browser automation wrapper engine, stealth launcher, session pool manager, and semantic DOM snapshot generator for Sutradhar.
 
 ## Package Architectural Invariants
 

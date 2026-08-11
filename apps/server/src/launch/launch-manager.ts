@@ -105,7 +105,7 @@ export class LaunchManager {
 
   public static generateReleaseCandidateReport(): Version1ReleaseCandidateReport {
     return {
-      platformName: 'PinchTab Autonomous Browser Agent Platform',
+      platformName: 'Sutradhar Autonomous Browser Agent Platform',
       releaseVersion: 'v1.0.0-GA',
       overallStatus: 'READY_FOR_GA',
       releaseChecklist: [

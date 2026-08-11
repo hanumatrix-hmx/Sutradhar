@@ -5,7 +5,7 @@
 
 import { ServerApp, ApiRouter, MockApiResponse, SERVER_VERSION } from '../../src/index.js';
 
-describe('@pinchtab/server REST API Gateway & Server Shell', () => {
+describe('@sutradhar/server REST API Gateway & Server Shell', () => {
   it('should export correct package version constant', () => {
     expect(SERVER_VERSION).toBe('0.1.0');
   });
@@ -32,7 +32,7 @@ describe('@pinchtab/server REST API Gateway & Server Shell', () => {
 
     const body = res.body as Record<string, unknown>;
     expect(body.status).toBe('ok');
-    expect(body.service).toBe('@pinchtab/server');
+    expect(body.service).toBe('@sutradhar/server');
 
     await app.stop();
     expect(app.isServerRunning).toBe(false);

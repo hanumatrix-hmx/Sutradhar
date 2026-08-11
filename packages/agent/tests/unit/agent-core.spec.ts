@@ -12,10 +12,10 @@
 
 import { describe, it, expect } from 'vitest';
 import { AgentStateMachine, AgentCore, AGENT_VERSION } from '../../src/index.js';
-import { EventBus } from '@pinchtab/events';
-import { createAgentId } from '@pinchtab/contracts';
+import { EventBus } from '@sutradhar/events';
+import { createAgentId } from '@sutradhar/contracts';
 
-describe('@pinchtab/agent Execution Core & State Machine', () => {
+describe('@sutradhar/agent Execution Core & State Machine', () => {
   it('should export correct package version constant', () => {
     expect(AGENT_VERSION).toBe('0.1.0');
   });

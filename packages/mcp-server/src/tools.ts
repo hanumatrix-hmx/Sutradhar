@@ -1,20 +1,20 @@
 /**
  * @file packages/mcp-server/src/tools.ts
- * @description Tool definitions that expose PinchTab's browser engine (and, optionally,
+ * @description Tool definitions that expose Sutradhar's browser engine (and, optionally,
  * its autonomous agent) to MCP-compatible AI clients.
  *
  * Two categories:
  *   1. Browser tools  — the host AI is the brain; it calls launch/snapshot/click/type/...
  *      and reasons over the returned DOM listing. This is the primary, always-available surface.
- *   2. agent.runGoal  — PinchTab's own loop is the brain. Only registered when an AgentCore
+ *   2. agent.runGoal  — Sutradhar's own loop is the brain. Only registered when an AgentCore
  *      is supplied, which in turn requires an LLM provider (Ollama/OpenRouter) to be configured.
  */
 
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { PinchTabRuntime } from '@pinchtab/capability-runtime';
-import type { AgentCore } from '@pinchtab/agent';
-import { createGoalId } from '@pinchtab/contracts';
+import type { SutradharRuntime } from '@sutradhar/capability-runtime';
+import type { AgentCore } from '@sutradhar/agent';
+import { createGoalId } from '@sutradhar/contracts';
 
 /** Shape of the agent core passed to {@link registerTools}, if autonomous mode is enabled. */
 export interface AgentHandle {
@@ -23,7 +23,7 @@ export interface AgentHandle {
 
 /** Options for {@link registerTools}. */
 export interface RegisterToolsOptions {
-  runtime: PinchTabRuntime;
+  runtime: SutradharRuntime;
   /** Provide this to also register the `agent.runGoal` autonomous-agent tool. */
   agent?: AgentHandle;
 }
@@ -35,7 +35,7 @@ export interface RegisterToolsOptions {
 /**
  * One-line remediation hints appended to well-known error patterns — most tool errors are
  * just Puppeteer's/the action engine's raw message forwarded verbatim, which is often
- * missing the PinchTab-specific fix (e.g. "re-snapshot" isn't something Puppeteer's own
+ * missing the Sutradhar-specific fix (e.g. "re-snapshot" isn't something Puppeteer's own
  * error text would ever say). Matched by substring against the lowercased message; first
  * match wins. Deliberately short and generic — this is a hint, not a diagnosis.
  */
@@ -66,7 +66,7 @@ function errorResult(message: string) {
 
 /**
  * Serialize a plain object as JSON text content. Most action tools (browser.click,
- * browser.type, ...) never throw for a routine action failure — `PinchTabRuntime`'s action
+ * browser.type, ...) never throw for a routine action failure — `SutradharRuntime`'s action
  * wrappers resolve with `{success:false, error: "..."}` rather than rejecting, so that
  * result flows through here, not through `errorResult`. Enrich `.error` the same way so the
  * hint actually reaches the common case, not just the rarer thrown-exception path.
@@ -90,7 +90,7 @@ function jsonResult(value: unknown) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Register all PinchTab browser tools (and, if an agent is provided, the
+ * Register all Sutradhar browser tools (and, if an agent is provided, the
  * `agent.runGoal` tool) onto an {@link McpServer}.
  */
 export function registerTools(server: McpServer, options: RegisterToolsOptions): void {
@@ -155,7 +155,7 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
       description:
         "Attach to the user's REAL browser over the Chrome DevTools Protocol, instead of launching a new one. " +
         'Lets the agent operate on sites behind the user\'s SSO/2FA (the use case headless Chrome cannot reach). ' +
-        'The user exposes their browser by launching Chrome with --remote-debugging-port, or via the PinchTab extension. ' +
+        'The user exposes their browser by launching Chrome with --remote-debugging-port, or via the Sutradhar extension. ' +
         'endpoint is an http discovery URL (e.g. http://127.0.0.1:9222) or a ws:// URL.',
       inputSchema: {
         endpoint: z
@@ -350,7 +350,7 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
 
   // ── Interaction ──────────────────────────────────────────────────────────
   const targetDesc =
-    'A CSS selector OR a numeric [#id] from browser.snapshot (e.g. "7" resolves to [data-pt-node-id="7"]).';
+    'A CSS selector OR a numeric [#id] from browser.snapshot (e.g. "7" resolves to [data-sd-node-id="7"]).';
 
   server.registerTool(
     'browser.click',
@@ -1337,7 +1337,7 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
       'agent.runGoal',
       {
         description:
-          'Hand control to PinchTab\'s OWN autonomous agent loop. It will reason over the page, navigate, click, ' +
+          'Hand control to Sutradhar\'s OWN autonomous agent loop. It will reason over the page, navigate, click, ' +
           'type, and extract data to achieve the natural-language goal, then return a final answer/summary. ' +
           'Prefer this for multi-step objectives; use the browser.* tools when you want to drive the page yourself. ' +
           'Requires an LLM provider (Ollama or OpenRouter) to be configured.',

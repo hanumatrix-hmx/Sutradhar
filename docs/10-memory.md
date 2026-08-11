@@ -8,15 +8,15 @@ Review Frequency: Quarterly
 Related ADRs:
   - 0006-memory
 Related Packages:
-  - '@pinchtab/memory'
-  - '@pinchtab/knowledge'
+  - '@sutradhar/memory'
+  - '@sutradhar/knowledge'
 ---
 
 # Multi-Tier Memory Specification
 
 ## 1. Overview
 
-PinchTab implements a 4-tier memory architecture to manage short-term execution buffers alongside long-term semantic knowledge.
+Sutradhar implements a 4-tier memory architecture to manage short-term execution buffers alongside long-term semantic knowledge.
 
 ## 2. Memory Tiers
 

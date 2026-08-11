@@ -6,7 +6,7 @@
  */
 
 import { BrowserActionEngine, IBrowserTab } from '../../src/index.js';
-import { createTabId } from '@pinchtab/contracts';
+import { createTabId } from '@sutradhar/contracts';
 import type { Page, Frame, ElementHandle } from 'puppeteer-core';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -61,7 +61,7 @@ function mockHandle(overrides: Partial<Record<'click' | 'hover' | 'type' | 'sele
   };
 }
 
-describe('@pinchtab/browser BrowserActionEngine click occlusion detection', () => {
+describe('@sutradhar/browser BrowserActionEngine click occlusion detection', () => {
   it('reports success:false when the target element is occluded at its click point', async () => {
     const handle = mockHandle();
     handle.evaluate
@@ -402,7 +402,7 @@ describe('@pinchtab/browser BrowserActionEngine click occlusion detection', () =
   });
 });
 
-describe('@pinchtab/browser BrowserActionEngine ExecutionVerifier wiring', () => {
+describe('@sutradhar/browser BrowserActionEngine ExecutionVerifier wiring', () => {
   it('attaches a verification result to a successful action, verified true with no spec', async () => {
     const page = {
       frames: vi.fn().mockReturnValue([]),
@@ -475,7 +475,7 @@ describe('@pinchtab/browser BrowserActionEngine ExecutionVerifier wiring', () =>
   });
 });
 
-describe('@pinchtab/browser BrowserActionEngine node-id staleness guard', () => {
+describe('@sutradhar/browser BrowserActionEngine node-id staleness guard', () => {
   it('rejects a click on a selector stamped with an older generation than the page currently has', async () => {
     const handle = mockHandle();
     handle.evaluate.mockResolvedValueOnce(true); // assertNotStale: IS stale
@@ -484,7 +484,7 @@ describe('@pinchtab/browser BrowserActionEngine node-id staleness guard', () => 
     const engine = new BrowserActionEngine();
     const result = await engine.executeAction(mockTab(page), {
       actionType: 'click',
-      selector: '[data-pt-node-id="7"]',
+      selector: '[data-sd-node-id="7"]',
       maxRetries: 0,
     });
 
@@ -509,7 +509,7 @@ describe('@pinchtab/browser BrowserActionEngine node-id staleness guard', () => 
   });
 });
 
-describe('@pinchtab/browser BrowserActionEngine duplicate-action guard', () => {
+describe('@sutradhar/browser BrowserActionEngine duplicate-action guard', () => {
   it('rejects an immediate repeat click on the same target, without re-dispatching', async () => {
     const handle = mockHandle();
     handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true);
@@ -564,7 +564,7 @@ describe('@pinchtab/browser BrowserActionEngine duplicate-action guard', () => {
   });
 });
 
-describe('@pinchtab/browser BrowserActionEngine context-destroyed diagnosis beyond click', () => {
+describe('@sutradhar/browser BrowserActionEngine context-destroyed diagnosis beyond click', () => {
   it('rethrows a clear "page navigated away" diagnosis when type hits an execution-context-destroyed error', async () => {
     const handle = mockHandle();
     handle.evaluate.mockResolvedValueOnce(false); // assertNotStale: not stale
@@ -605,7 +605,7 @@ describe('@pinchtab/browser BrowserActionEngine context-destroyed diagnosis beyo
   });
 });
 
-describe('@pinchtab/browser BrowserActionEngine keyboard modifiers', () => {
+describe('@sutradhar/browser BrowserActionEngine keyboard modifiers', () => {
   it('presses and releases modifiers around press_key, in reverse order on release', async () => {
     const order: string[] = [];
     const page = {
@@ -670,7 +670,7 @@ describe('@pinchtab/browser BrowserActionEngine keyboard modifiers', () => {
   });
 });
 
-describe('@pinchtab/browser BrowserActionEngine multi-select', () => {
+describe('@sutradhar/browser BrowserActionEngine multi-select', () => {
   it('selects multiple values when `values` is given', async () => {
     const handle = mockHandle();
     handle.evaluate.mockResolvedValue(false); // assertNotStale
@@ -709,7 +709,7 @@ describe('@pinchtab/browser BrowserActionEngine multi-select', () => {
   });
 });
 
-describe('@pinchtab/browser BrowserActionEngine per-tab action concurrency guard', () => {
+describe('@sutradhar/browser BrowserActionEngine per-tab action concurrency guard', () => {
   it('serializes two concurrent actions against the same tab instead of interleaving them', async () => {
     const order: string[] = [];
     let resolveFirst!: () => void;
@@ -769,7 +769,7 @@ describe('@pinchtab/browser BrowserActionEngine per-tab action concurrency guard
   });
 });
 
-describe('@pinchtab/browser BrowserActionEngine cross-frame element resolution', () => {
+describe('@sutradhar/browser BrowserActionEngine cross-frame element resolution', () => {
   it('resolves and clicks an element that only exists in a nested iframe, not the main frame', async () => {
     const handle = mockHandle();
     handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true);
@@ -921,7 +921,7 @@ describe('@pinchtab/browser BrowserActionEngine cross-frame element resolution',
   });
 });
 
-describe('@pinchtab/browser BrowserActionEngine right-click (button-aware)', () => {
+describe('@sutradhar/browser BrowserActionEngine right-click (button-aware)', () => {
   it('listens for contextmenu (not click) delivery and reports success on a clean right-click', async () => {
     const handle = mockHandle();
     handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true); // not stale, isHit, marker, delivered=true
@@ -963,7 +963,7 @@ describe('@pinchtab/browser BrowserActionEngine right-click (button-aware)', () 
   });
 });
 
-describe('@pinchtab/browser BrowserActionEngine drag_and_drop', () => {
+describe('@sutradhar/browser BrowserActionEngine drag_and_drop', () => {
   it('resolves both source and target handles and calls drag then drop', async () => {
     const source = mockHandle();
     const target = mockHandle();
@@ -1021,7 +1021,7 @@ describe('@pinchtab/browser BrowserActionEngine drag_and_drop', () => {
   });
 });
 
-describe('@pinchtab/browser BrowserActionEngine touch_tap', () => {
+describe('@sutradhar/browser BrowserActionEngine touch_tap', () => {
   it('taps the resolved element', async () => {
     const handle = mockHandle();
     (handle as any).tap = vi.fn().mockResolvedValue(undefined);
@@ -1040,7 +1040,7 @@ describe('@pinchtab/browser BrowserActionEngine touch_tap', () => {
   });
 });
 
-describe('@pinchtab/browser BrowserActionEngine action-history recording', () => {
+describe('@sutradhar/browser BrowserActionEngine action-history recording', () => {
   it('records a successful action into the tab history', async () => {
     const page = { frames: vi.fn().mockReturnValue([]), evaluate: vi.fn().mockResolvedValue(undefined) } as unknown as Page;
     const engine = new BrowserActionEngine();
@@ -1070,7 +1070,7 @@ describe('@pinchtab/browser BrowserActionEngine action-history recording', () =>
   });
 });
 
-describe('@pinchtab/browser BrowserActionEngine screenshot-on-failure', () => {
+describe('@sutradhar/browser BrowserActionEngine screenshot-on-failure', () => {
   it('attaches a base64 screenshot to a failed action result when the page is still alive', async () => {
     const page = singleFramePage(() => Promise.reject(new Error('boom')));
     (page as any).screenshot = vi.fn().mockResolvedValue('ZmFrZS1wbmc=');
@@ -1102,7 +1102,7 @@ describe('@pinchtab/browser BrowserActionEngine screenshot-on-failure', () => {
   });
 });
 
-describe('@pinchtab/browser BrowserActionEngine download_file', () => {
+describe('@sutradhar/browser BrowserActionEngine download_file', () => {
   function mockCdpClient() {
     const handlers = new Map<string, (evt: any) => void>();
     return {
@@ -1228,7 +1228,7 @@ describe('@pinchtab/browser BrowserActionEngine download_file', () => {
   });
 });
 
-describe('@pinchtab/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success)', () => {
+describe('@sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success)', () => {
   const noPageTab = (): IBrowserTab => mockTab(undefined as unknown as Page);
 
   it.each([
@@ -1257,9 +1257,9 @@ describe('@pinchtab/browser BrowserActionEngine actions fail loudly with no live
   });
 });
 
-describe('@pinchtab/browser BrowserActionEngine tab-lifecycle actions are session-level, not engine-level', () => {
+describe('@sutradhar/browser BrowserActionEngine tab-lifecycle actions are session-level, not engine-level', () => {
   // 'switch_tab'/'open_new_tab'/'close_tab' were removed from the ActionType union — tab
-  // bookkeeping is a session-level concern (PinchTabRuntime.focusTab/createTab/closeTab, or
+  // bookkeeping is a session-level concern (SutradharRuntime.focusTab/createTab/closeTab, or
   // the browser.focus_tab/new_tab/close_tab MCP tools), not something BrowserActionEngine can
   // do correctly on its own (no session context). A caller that bypasses the type system and
   // passes one of these strings anyway still gets an honest "unsupported" error, never a

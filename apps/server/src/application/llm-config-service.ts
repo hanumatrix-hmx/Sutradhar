@@ -13,8 +13,8 @@ import {
   OllamaAdapter,
   HeuristicLlmProvider,
   ILlmProvider,
-} from '@pinchtab/llm';
-import { StructuredLogger } from '@pinchtab/observability';
+} from '@sutradhar/llm';
+import { StructuredLogger } from '@sutradhar/observability';
 
 export interface LlmRuntimeConfig {
   readonly providerMode: 'heuristic' | 'openrouter' | 'ollama';

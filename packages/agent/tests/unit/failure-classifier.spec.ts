@@ -6,7 +6,7 @@
 
 import { classifyFailure } from '../../src/core/failure-classifier.js';
 
-describe('@pinchtab/agent classifyFailure', () => {
+describe('@sutradhar/agent classifyFailure', () => {
   it('classifies an occlusion error as element_disappeared', () => {
     expect(classifyFailure('Element matching "#btn" is occluded by another element')).toBe(
       'element_disappeared',

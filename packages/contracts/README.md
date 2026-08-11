@@ -12,13 +12,13 @@ Depends on ADRs:
   - 0003-provider-contract
 ---
 
-# @pinchtab/contracts
+# @sutradhar/contracts
 
-> Canonical TypeScript DTOs, domain primitives, error definitions, and event schemas for the PinchTab Platform.
+> Canonical TypeScript DTOs, domain primitives, error definitions, and event schemas for the Sutradhar Platform.
 
 ## Package Architectural Invariants
 
-1. **Zero External Runtime Dependencies**: `@pinchtab/contracts` contains pure TypeScript types and zero external runtime dependencies.
+1. **Zero External Runtime Dependencies**: `@sutradhar/contracts` contains pure TypeScript types and zero external runtime dependencies.
 2. **Foundational Layer Boundary (`CTX-001`)**: Lower-level foundation package. Must NEVER import from domain, infrastructure, or application packages (`packages/browser`, `packages/orchestrator`, `apps/*`).
 3. **Immutability**: Shared contract interfaces are the sole source of truth across all system packages.
 

@@ -3,13 +3,13 @@
  * @description RecoveryEngine providing automated candidate fallback and recovery heuristics consuming DecisionEvidence context.
  */
 
-import { StructuredLogger } from '@pinchtab/observability';
+import { StructuredLogger } from '@sutradhar/observability';
 import {
   BrowserActionEngine,
   DOMSemanticEngine,
   IBrowserTab,
   BrowserSkillsLibrary,
-} from '@pinchtab/browser';
+} from '@sutradhar/browser';
 import { DecisionEvidence } from '../evidence/evidence-types.js';
 
 export type FailureReason =

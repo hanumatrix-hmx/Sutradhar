@@ -1,6 +1,6 @@
 /**
  * @file packages/frontend/src/runtime/api/client.ts
- * @description Typed REST client for the PinchTab backend.
+ * @description Typed REST client for the Sutradhar backend.
  *
  * This is the ONLY frontend module that talks to the backend. All calls are
  * real fetches; there are no mock fallbacks. Errors throw BackendTransportError,

@@ -18,7 +18,7 @@ function makeSolidPng(width: number, height: number, [r, g, b]: [number, number,
   return PNG.sync.write(png).toString('base64');
 }
 
-describe('@pinchtab/capability-runtime compareScreenshots', () => {
+describe('@sutradhar/capability-runtime compareScreenshots', () => {
   it('reports zero diff for two identical images', () => {
     const a = makeSolidPng(10, 10, [255, 0, 0]);
     const b = makeSolidPng(10, 10, [255, 0, 0]);

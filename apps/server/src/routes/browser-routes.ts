@@ -8,7 +8,7 @@
  * are no canned/mock fallbacks — a missing page yields a 503, not a fake PNG.
  */
 
-import { createSessionId, createTabId, SessionId, TabId } from '@pinchtab/contracts';
+import { createSessionId, createTabId, SessionId, TabId } from '@sutradhar/contracts';
 import { ApiRouter, ApiResponse } from '../gateway/api-router.js';
 import {
   BrowserSessionManager,
@@ -16,7 +16,7 @@ import {
   IBrowserTab,
   DOMSemanticEngine,
   formatGraphForLlm,
-} from '@pinchtab/browser';
+} from '@sutradhar/browser';
 
 /**
  * Resolves a tab for a request: the explicit tabId if given, else the session's

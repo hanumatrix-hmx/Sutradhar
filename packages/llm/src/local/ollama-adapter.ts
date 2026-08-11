@@ -7,14 +7,14 @@
  * running Ollama daemon; if Ollama is not running, calls fail loudly.
  */
 
-import { CapabilityMatrix } from '@pinchtab/capability';
+import { CapabilityMatrix } from '@sutradhar/capability';
 import {
   CompletionRequestDto,
   CompletionResponseDto,
   StreamChunkDto,
   ModelDiscoveryDto,
   createModelId,
-} from '@pinchtab/contracts';
+} from '@sutradhar/contracts';
 import { ILlmProvider } from '../gateway/llm-provider.js';
 import { OpenAiCompatibleAdapter } from '../gateway/openai-compatible-adapter.js';
 import { OllamaAdapterOptions, DEFAULT_OLLAMA_OPTIONS } from './ollama-options.js';

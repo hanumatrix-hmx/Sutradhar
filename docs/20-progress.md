@@ -11,7 +11,7 @@ Depends on ADRs:
 References ADRs:
   - 0001-monorepo
 Related Packages:
-  - '@pinchtab/contracts'
+  - '@sutradhar/contracts'
 ---
 
 # Development Progress Log

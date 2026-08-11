@@ -10,18 +10,18 @@ Bounded Context: CTX-001 (Foundational Context)
 Depends on ADRs:
   - 0001-monorepo
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/utils'
-  - '@pinchtab/observability'
+  - '@sutradhar/contracts'
+  - '@sutradhar/utils'
+  - '@sutradhar/observability'
 ---
 
-# @pinchtab/events
+# @sutradhar/events
 
-> Strongly typed EventBus, handler registry, and event replay store for PinchTab.
+> Strongly typed EventBus, handler registry, and event replay store for Sutradhar.
 
 ## Package Architectural Invariants
 
-1. **Foundational Layer Boundary (`CTX-001`)**: Depends strictly on `@pinchtab/contracts`, `@pinchtab/utils`, and `@pinchtab/observability`. Must NEVER import from domain, infrastructure, or application packages (`packages/browser`, `packages/orchestrator`, `apps/*`).
+1. **Foundational Layer Boundary (`CTX-001`)**: Depends strictly on `@sutradhar/contracts`, `@sutradhar/utils`, and `@sutradhar/observability`. Must NEVER import from domain, infrastructure, or application packages (`packages/browser`, `packages/orchestrator`, `apps/*`).
 2. **Zero External Runtime NPM Dependencies**: EventBus and subscriber dispatching are implemented in pure TypeScript.
 3. **Error Isolation**: An unhandled exception in an event subscriber MUST NEVER crash the EventBus or prevent other subscribers from receiving the event.
 

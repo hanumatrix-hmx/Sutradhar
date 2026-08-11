@@ -3,7 +3,7 @@
  * @description SnapshotGenerator service creating BrowserSnapshotDto with interactive element filtering and semantic tree building.
  */
 
-import { SessionId, TabId, BrowserSnapshotDto, BrowserElementDto } from '@pinchtab/contracts';
+import { SessionId, TabId, BrowserSnapshotDto, BrowserElementDto } from '@sutradhar/contracts';
 import { RawElementNode, createBrowserElementDto } from './dom-element.js';
 import { SemanticTreeBuilder } from './semantic-tree-builder.js';
 

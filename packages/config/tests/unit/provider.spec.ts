@@ -12,7 +12,7 @@ describe('ConfigurationProvider & Secret Masking', () => {
       return {
         NODE_ENV: 'test',
         PORT: 5050,
-        PINCHTAB_OPENROUTER_API_KEY: 'sk-or-v1-abcdef1234567890ghijkl',
+        SUTRADHAR_OPENROUTER_API_KEY: 'sk-or-v1-abcdef1234567890ghijkl',
       };
     }
   }
@@ -23,13 +23,13 @@ describe('ConfigurationProvider & Secret Masking', () => {
 
     expect(config.NODE_ENV).toBe('test');
     expect(config.PORT).toBe(5050);
-    expect(config.PINCHTAB_OPENROUTER_API_KEY).toBe('sk-or-v1-abcdef1234567890ghijkl');
+    expect(config.SUTRADHAR_OPENROUTER_API_KEY).toBe('sk-or-v1-abcdef1234567890ghijkl');
   });
 
   it('should retrieve and mask secrets correctly', () => {
     const provider = new ConfigurationProvider([new MockConfigSource()]);
-    const secret = provider.getSecret('PINCHTAB_OPENROUTER_API_KEY');
-    const masked = provider.getMaskedSecret('PINCHTAB_OPENROUTER_API_KEY');
+    const secret = provider.getSecret('SUTRADHAR_OPENROUTER_API_KEY');
+    const masked = provider.getMaskedSecret('SUTRADHAR_OPENROUTER_API_KEY');
 
     expect(secret).toBe('sk-or-v1-abcdef1234567890ghijkl');
     expect(masked).not.toBe(secret);

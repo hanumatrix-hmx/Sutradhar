@@ -8,7 +8,7 @@ Review Frequency: Quarterly
 Related ADRs:
   - 0001-monorepo
 Related Packages:
-  - '@pinchtab/contracts'
+  - '@sutradhar/contracts'
   - 'apps/server'
 ---
 

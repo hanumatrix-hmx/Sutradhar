@@ -1,6 +1,6 @@
 /**
  * @file packages/agent/src/index.ts
- * @description Package entry point for @pinchtab/agent.
+ * @description Package entry point for @sutradhar/agent.
  */
 
 export const AGENT_VERSION = '0.1.0';

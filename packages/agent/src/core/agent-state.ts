@@ -3,9 +3,9 @@
  * @description AgentState type definitions and AgentStateMachine transition validation engine.
  */
 
-import { AgentId } from '@pinchtab/contracts';
-import { EventBus } from '@pinchtab/events';
-import { StructuredLogger } from '@pinchtab/observability';
+import { AgentId } from '@sutradhar/contracts';
+import { EventBus } from '@sutradhar/events';
+import { StructuredLogger } from '@sutradhar/observability';
 
 export type AgentState =
   | 'idle'

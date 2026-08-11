@@ -1,6 +1,6 @@
 /**
  * @file packages/memory/src/index.ts
- * @description Package entry point for @pinchtab/memory.
+ * @description Package entry point for @sutradhar/memory.
  */
 
 export const MEMORY_VERSION = '0.1.0';

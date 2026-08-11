@@ -13,7 +13,7 @@ Owner: Principal Software Architect
 
 ### 1. Browser Providers (`packages/browser`)
 
-- **PinchTab**: Primary browser automation server & WebSocket bridge.
+- **Sutradhar**: Primary browser automation server & WebSocket bridge.
 - **CDP (Chrome DevTools Protocol)**: Direct lightweight Chrome protocol client.
 - **Playwright**: Local headless browser automation runner.
 - **Cloud Remote**: External cloud browser service adapter (e.g. Browserbase).

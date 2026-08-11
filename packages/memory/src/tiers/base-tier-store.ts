@@ -8,8 +8,8 @@ import {
   MemoryRecordDto,
   MemorySearchQueryDto,
   MemorySearchResultDto,
-} from '@pinchtab/contracts';
-import { Mutex } from '@pinchtab/utils';
+} from '@sutradhar/contracts';
+import { Mutex } from '@sutradhar/utils';
 import { IMemoryStore } from '../store/memory-store-interfaces.js';
 import { MemoryTier } from '../store/memory-tier.js';
 

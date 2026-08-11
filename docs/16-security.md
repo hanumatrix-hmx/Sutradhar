@@ -11,16 +11,16 @@ Depends on ADRs:
 References ADRs:
   - 0001-monorepo
 Related Packages:
-  - '@pinchtab/policy'
-  - '@pinchtab/config'
-  - '@pinchtab/tools'
+  - '@sutradhar/policy'
+  - '@sutradhar/config'
+  - '@sutradhar/tools'
 ---
 
 # Security Architecture & Threat Model
 
 ## 1. Executive Summary
 
-This document specifies the security architecture, threat model, and defense mechanisms for the PinchTab AI Browser Runtime Platform.
+This document specifies the security architecture, threat model, and defense mechanisms for the Sutradhar AI Browser Runtime Platform.
 
 ---
 
@@ -29,9 +29,9 @@ This document specifies the security architecture, threat model, and defense mec
 1. **Indirect Prompt Injection**: Untrusted web page text containing malicious LLM instructions targeting agent context.
    - _Defense_: `packages/browser` prunes untrusted HTML and `packages/policy` sanitizes text inputs before injecting into Working Memory.
 2. **Tool Execution Escalation**: Unauthorized tool calls trying to access local filesystems or execute shell commands.
-   - _Defense_: All tool actions pass through `@pinchtab/policy` guardrails enforcing strict path constraints and permission masks.
+   - _Defense_: All tool actions pass through `@sutradhar/policy` guardrails enforcing strict path constraints and permission masks.
 3. **Secret & Credential Exposure**: API keys or session cookies leaking into logs or client UI views.
-   - _Defense_: `@pinchtab/config` loads secrets into encrypted memory; `@pinchtab/observability` automatically redacts sensitive patterns in Pino logs.
+   - _Defense_: `@sutradhar/config` loads secrets into encrypted memory; `@sutradhar/observability` automatically redacts sensitive patterns in Pino logs.
 
 ---
 

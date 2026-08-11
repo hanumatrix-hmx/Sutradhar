@@ -11,16 +11,16 @@ Depends on ADRs:
   - 0001-monorepo
   - 0003-provider-contract
 Related Packages:
-  - '@pinchtab/contracts'
+  - '@sutradhar/contracts'
 ---
 
-# @pinchtab/capability
+# @sutradhar/capability
 
-> Standardized capability discovery, requirement matching, and capability matrix engine for PinchTab.
+> Standardized capability discovery, requirement matching, and capability matrix engine for Sutradhar.
 
 ## Package Architectural Invariants
 
-1. **Foundational Layer Boundary (`CTX-001`)**: Depends strictly on `@pinchtab/contracts`. Must NEVER import from domain, infrastructure, or application packages (`packages/browser`, `packages/orchestrator`, `apps/*`).
+1. **Foundational Layer Boundary (`CTX-001`)**: Depends strictly on `@sutradhar/contracts`. Must NEVER import from domain, infrastructure, or application packages (`packages/browser`, `packages/orchestrator`, `apps/*`).
 2. **Zero External Runtime NPM Dependencies**: Implemented using pure TypeScript and workspace contract primitives.
 3. **Feature Discovery**: Standardizes feature detection across LLM models, browser instances, tools, and agents to eliminate hardcoded capability assumptions.
 

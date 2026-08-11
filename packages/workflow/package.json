@@ -1,9 +1,9 @@
 {
-  "name": "@pinchtab/workflow",
+  "name": "@sutradhar/workflow",
   "version": "0.1.0",
   "type": "module",
   "private": true,
-  "description": "Multi-agent workflow orchestration, DAG node graphs, step routing, and task graph execution engine for PinchTab",
+  "description": "Multi-agent workflow orchestration, DAG node graphs, step routing, and task graph execution engine for Sutradhar",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -27,16 +27,16 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@pinchtab/contracts": "workspace:*",
-    "@pinchtab/capability": "workspace:*",
-    "@pinchtab/utils": "workspace:*",
-    "@pinchtab/config": "workspace:*",
-    "@pinchtab/observability": "workspace:*",
-    "@pinchtab/events": "workspace:*",
-    "@pinchtab/browser": "workspace:*",
-    "@pinchtab/llm": "workspace:*",
-    "@pinchtab/memory": "workspace:*",
-    "@pinchtab/agent": "workspace:*"
+    "@sutradhar/contracts": "workspace:*",
+    "@sutradhar/capability": "workspace:*",
+    "@sutradhar/utils": "workspace:*",
+    "@sutradhar/config": "workspace:*",
+    "@sutradhar/observability": "workspace:*",
+    "@sutradhar/events": "workspace:*",
+    "@sutradhar/browser": "workspace:*",
+    "@sutradhar/llm": "workspace:*",
+    "@sutradhar/memory": "workspace:*",
+    "@sutradhar/agent": "workspace:*"
   },
   "devDependencies": {
     "typescript": "5.4.2"

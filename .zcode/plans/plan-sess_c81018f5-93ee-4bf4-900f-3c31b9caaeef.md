@@ -17,7 +17,7 @@
 
 ### A. Make the transport honest + `.env` support
 1. **Rewrite `HttpBrowserTransport.send()`** to `throw` on network error or non-2xx (with the body text in the message). Remove all the silent-fallback `console.log` instrumentation. Default base URL → `http://localhost:8081` (the real server port). Keep `VITE_API_BASE_URL` override.
-2. **Add `.env` loading to the server**: read `.env` at repo root on boot (small parser, no dep) so `OPENROUTER_API_KEY`, `PINCHTAB_MODEL`, etc. just work. Create a `.env.example` (no secrets).
+2. **Add `.env` loading to the server**: read `.env` at repo root on boot (small parser, no dep) so `OPENROUTER_API_KEY`, `SUTRADHAR_MODEL`, etc. just work. Create a `.env.example` (no secrets).
 
 ### B. Remove mock fallbacks (backend honesty)
 3. **Backend `browser-routes.ts`**:
@@ -39,7 +39,7 @@
 
 ### E. Dev ergonomics
 11. **Vite dev proxy**: add `server.proxy['/api'] → http://localhost:8081` so dev mode (Vite 3000) hits the backend transparently (no CORS friction, correct base URL).
-12. **One-command dev**: document `pnpm --filter @pinchtab/server dev` + `pnpm --filter @pinchtab/frontend dev` (or add a root `concurrently` script).
+12. **One-command dev**: document `pnpm --filter @sutradhar/server dev` + `pnpm --filter @sutradhar/frontend dev` (or add a root `concurrently` script).
 
 ### F. Cleanup (#4)
 13. **Fix frontend pre-existing type errors** (the 14 errors from earlier: `TextArea` re-export, `BadgeVariant 'info'`, `ProgressProps`, unused imports, `import.meta.env` typing) so the frontend typechecks clean too.

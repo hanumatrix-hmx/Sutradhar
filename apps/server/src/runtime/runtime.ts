@@ -1,12 +1,12 @@
 /**
  * @file apps/server/src/runtime/runtime.ts
- * @description Executable runtime entrypoint for PinchTab platform.
+ * @description Executable runtime entrypoint for Sutradhar platform.
  */
 
-import { PinchTabRuntime } from './bootstrap.js';
+import { SutradharRuntime } from './bootstrap.js';
 
 export async function main(): Promise<void> {
-  const runtime = new PinchTabRuntime();
+  const runtime = new SutradharRuntime();
   await runtime.start();
 
   // SIGTERM is what container orchestrators (Docker/Kubernetes/systemd/PM2) actually send for

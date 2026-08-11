@@ -8,18 +8,18 @@ Review Frequency: Quarterly
 Related ADRs:
   - 0003-provider-contract
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/browser'
-  - '@pinchtab/llm'
-  - '@pinchtab/storage'
-  - '@pinchtab/config'
+  - '@sutradhar/contracts'
+  - '@sutradhar/browser'
+  - '@sutradhar/llm'
+  - '@sutradhar/storage'
+  - '@sutradhar/config'
 ---
 
 # Provider Contracts Specification
 
 ## 1. Executive Summary
 
-This document defines the core interfaces for all infrastructure provider adapters in the system. The platform strictly enforces Hexagonal Architecture; business logic in `@pinchtab/orchestrator` and `@pinchtab/runtime` NEVER interacts directly with vendor SDKs (such as Playwright, OpenRouter, or Redis). All interactions occur strictly through pure TypeScript contracts exported by `@pinchtab/contracts`.
+This document defines the core interfaces for all infrastructure provider adapters in the system. The platform strictly enforces Hexagonal Architecture; business logic in `@sutradhar/orchestrator` and `@sutradhar/runtime` NEVER interacts directly with vendor SDKs (such as Playwright, OpenRouter, or Redis). All interactions occur strictly through pure TypeScript contracts exported by `@sutradhar/contracts`.
 
 ---
 
@@ -33,7 +33,7 @@ import {
   BrowserSnapshotDto,
   BrowserActionDto,
   BrowserActionResultDto,
-} from '@pinchtab/contracts';
+} from '@sutradhar/contracts';
 
 export interface IBrowserProvider {
   createSession(options: CreateSessionOptions): Promise<BrowserSessionDto>;
@@ -59,7 +59,7 @@ import {
   CompletionResponseDto,
   StreamChunkDto,
   ModelDiscoveryDto,
-} from '@pinchtab/contracts';
+} from '@sutradhar/contracts';
 
 export interface ILLMProvider {
   readonly providerId: string;
@@ -74,7 +74,7 @@ export interface ILLMProvider {
 ## 4. Memory Provider Contract (`IMemoryProvider`)
 
 ```typescript
-import { MemoryRecordDto, MemorySearchQueryDto, MemorySearchResultDto } from '@pinchtab/contracts';
+import { MemoryRecordDto, MemorySearchQueryDto, MemorySearchResultDto } from '@sutradhar/contracts';
 
 export interface IMemoryProvider {
   storeMemory(record: MemoryRecordDto): Promise<void>;

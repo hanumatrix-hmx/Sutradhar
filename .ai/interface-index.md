@@ -9,7 +9,7 @@ Owner: Principal Software Architect
 
 # Core TypeScript Interfaces Index
 
-## Key Provider & Engine Contracts (`@pinchtab/contracts`)
+## Key Provider & Engine Contracts (`@sutradhar/contracts`)
 
 - `IBrowserProvider`: Browser session/tab management and DOM snapshot extraction.
 - `ILLMProvider`: Dynamic model discovery and streaming/non-streaming completions.

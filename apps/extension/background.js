@@ -1,9 +1,9 @@
-// PinchTab background service worker.
+// Sutradhar background service worker.
 //
 // Two responsibilities:
-//   1. Connection state — track whether the PinchTab server is reachable and expose it to
+//   1. Connection state — track whether the Sutradhar server is reachable and expose it to
 //      the popup. Settings (server URL + remote-debugging port) live in chrome.storage.
-//   2. Command relay — when the popup submits a goal, POST it to the PinchTab server's
+//   2. Command relay — when the popup submits a goal, POST it to the Sutradhar server's
 //      agent endpoint. The server attaches to the user's Chrome (exposed via
 //      --remote-debugging-port) and drives it.
 //

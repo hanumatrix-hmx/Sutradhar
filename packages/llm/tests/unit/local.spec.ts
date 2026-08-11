@@ -9,7 +9,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { OllamaAdapter } from '../../src/index.js';
-import { createModelId } from '@pinchtab/contracts';
+import { createModelId } from '@sutradhar/contracts';
 
 async function ollamaReachable(): Promise<boolean> {
   try {
@@ -20,7 +20,7 @@ async function ollamaReachable(): Promise<boolean> {
   }
 }
 
-describe('@pinchtab/llm Local Ollama Provider Engine', () => {
+describe('@sutradhar/llm Local Ollama Provider Engine', () => {
   it('should initialize OllamaAdapter with the real provider id', () => {
     const adapter = new OllamaAdapter();
     expect(adapter.providerId).toBe('ollama-local');

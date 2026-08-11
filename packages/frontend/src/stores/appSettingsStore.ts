@@ -12,7 +12,7 @@ export interface AppSettings {
   autoStartRuns: boolean;
 }
 
-const STORAGE_KEY = 'pinchtab_app_settings_v1';
+const STORAGE_KEY = 'sutradhar_app_settings_v1';
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
   autoStartRuns: true,

@@ -16,8 +16,8 @@ import {
   BrowserTabDto,
   BrowserActionDto,
   BrowserActionResultDto,
-} from '@pinchtab/contracts';
-import { EventBus } from '@pinchtab/events';
+} from '@sutradhar/contracts';
+import { EventBus } from '@sutradhar/events';
 import { Dialog, Page } from 'puppeteer-core';
 
 /** How long a native dialog is left pending before it's auto-resolved so the page doesn't

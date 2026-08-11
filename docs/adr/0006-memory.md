@@ -8,8 +8,8 @@ Owner: Principal Software Architect
 Date: 2026-07-28
 Superseded Versions: None
 Related Packages:
-  - '@pinchtab/memory'
-  - '@pinchtab/knowledge'
+  - '@sutradhar/memory'
+  - '@sutradhar/knowledge'
 ---
 
 # ADR 0006: Multi-Tiered Vector & Fact Memory Architecture

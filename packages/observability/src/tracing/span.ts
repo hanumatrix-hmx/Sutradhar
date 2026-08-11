@@ -3,7 +3,7 @@
  * @description OpenTelemetry-compatible Span class for tracing execution context.
  */
 
-import { generateRandomToken } from '@pinchtab/utils';
+import { generateRandomToken } from '@sutradhar/utils';
 
 export class Span {
   public readonly spanId: string;

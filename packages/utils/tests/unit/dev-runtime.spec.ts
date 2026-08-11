@@ -5,9 +5,9 @@
 
 import { HanumatrixDevRuntime, EnvValidator, HANUMATRIX_PORT_REGISTRY } from '../../src/index.js';
 
-describe('@pinchtab/utils Hanumatrix Dev Runtime Engine', () => {
-  it('1. should contain preferred port configurations for PinchTab, MitSu, Supamatrix, Estate Matrix, Fanuc SDK', () => {
-    expect(HANUMATRIX_PORT_REGISTRY['PinchTab']?.frontendPreferredPort).toBe(5173);
+describe('@sutradhar/utils Hanumatrix Dev Runtime Engine', () => {
+  it('1. should contain preferred port configurations for Sutradhar, MitSu, Supamatrix, Estate Matrix, Fanuc SDK', () => {
+    expect(HANUMATRIX_PORT_REGISTRY['Sutradhar']?.frontendPreferredPort).toBe(5173);
     expect(HANUMATRIX_PORT_REGISTRY['MitSu']?.frontendPreferredPort).toBe(5180);
     expect(HANUMATRIX_PORT_REGISTRY['Supamatrix']?.frontendPreferredPort).toBe(5190);
     expect(HANUMATRIX_PORT_REGISTRY['EstateMatrix']?.frontendPreferredPort).toBe(5200);
@@ -15,7 +15,7 @@ describe('@pinchtab/utils Hanumatrix Dev Runtime Engine', () => {
   });
 
   it('2. should allocate project ports before startup and find open fallback ports', async () => {
-    const ports = await HanumatrixDevRuntime.allocateProjectPorts('PinchTab');
+    const ports = await HanumatrixDevRuntime.allocateProjectPorts('Sutradhar');
     expect(ports.frontendRequested).toBe(5173);
     expect(ports.frontendAssigned).toBeGreaterThan(0);
     expect(ports.backendRequested).toBe(3000);
@@ -24,7 +24,7 @@ describe('@pinchtab/utils Hanumatrix Dev Runtime Engine', () => {
 
   it('3. should generate structured startup summary with requested vs assigned ports', () => {
     const summary = HanumatrixDevRuntime.generateStartupSummary({
-      projectName: 'PinchTab',
+      projectName: 'Sutradhar',
       host: 'localhost',
       ports: {
         frontendRequested: 5173,
@@ -39,7 +39,7 @@ describe('@pinchtab/utils Hanumatrix Dev Runtime Engine', () => {
       websocketUrl: 'ws://localhost:6811',
     });
 
-    expect(summary).toContain('PinchTab Development Environment');
+    expect(summary).toContain('Sutradhar Development Environment');
     expect(summary).toContain('http://localhost:5217');
     expect(summary).toContain('Requested : 5173');
     expect(summary).toContain('Assigned  : 5217');

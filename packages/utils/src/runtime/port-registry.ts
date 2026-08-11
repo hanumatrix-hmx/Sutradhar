@@ -11,8 +11,8 @@ export interface ProjectPortConfig {
 }
 
 export const HANUMATRIX_PORT_REGISTRY: Record<string, ProjectPortConfig> = {
-  PinchTab: {
-    projectName: 'PinchTab',
+  Sutradhar: {
+    projectName: 'Sutradhar',
     frontendPreferredPort: 5173,
     backendPreferredPort: 3000,
     websocketPreferredPort: 3001,

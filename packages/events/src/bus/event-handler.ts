@@ -3,7 +3,7 @@
  * @description EventHandler type aliases and SubscriptionToken interface.
  */
 
-import { IDomainEvent } from '@pinchtab/contracts';
+import { IDomainEvent } from '@sutradhar/contracts';
 
 export type EventHandler<TPayload = unknown> = (
   event: IDomainEvent<string, TPayload>,

@@ -22,7 +22,7 @@ export class WorkflowHistory {
 }
 
 export class WorkflowPersistence {
-  private static readonly STORAGE_PREFIX = 'pinchtab_wf_snap_';
+  private static readonly STORAGE_PREFIX = 'sutradhar_wf_snap_';
   private static readonly memoryMap = new Map<string, string>();
 
   public static saveSnapshot(sessionId: string, snapshot: WorkflowSnapshot): void {

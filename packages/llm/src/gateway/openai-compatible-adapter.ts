@@ -12,7 +12,7 @@
  * this adapter throws — it never fabricates a response.
  */
 
-import { CapabilityMatrix } from '@pinchtab/capability';
+import { CapabilityMatrix } from '@sutradhar/capability';
 import {
   CompletionRequestDto,
   CompletionResponseDto,
@@ -20,9 +20,9 @@ import {
   StreamChunkDto,
   LlmToolCallDto,
   createModelId,
-} from '@pinchtab/contracts';
-import { RateLimiter, retryWithBackoff } from '@pinchtab/utils';
-import { StructuredLogger } from '@pinchtab/observability';
+} from '@sutradhar/contracts';
+import { RateLimiter, retryWithBackoff } from '@sutradhar/utils';
+import { StructuredLogger } from '@sutradhar/observability';
 import { ILlmProvider } from './llm-provider.js';
 import { FallbackLlmProvider } from './fallback-provider.js';
 import { HeuristicLlmProvider } from '../heuristic/heuristic-provider.js';
@@ -286,8 +286,8 @@ export class OpenAiCompatibleAdapter implements ILlmProvider {
       h['Authorization'] = `Bearer ${this.apiKey}`;
     }
     if (this.providerId === 'openrouter' || this.baseUrl.includes('openrouter.ai')) {
-      h['HTTP-Referer'] = 'https://github.com/pinchtab';
-      h['X-Title'] = 'PinchTab';
+      h['HTTP-Referer'] = 'https://github.com/sutradhar';
+      h['X-Title'] = 'Sutradhar';
     }
     return h;
   }
@@ -362,18 +362,18 @@ export class OpenAiCompatibleAdapter implements ILlmProvider {
  *   2. Local Ollama daemon (secondary, tried if primary fails)
  *   3. Heuristic rule-based provider (last resort, no LLM needed)
  *
- * Honors: PINCHTAB_MODEL (model id), PINCHTAB_LLM_BASE (override base url),
- *         PINCHTAB_LLM_KEY (override key), PINCHTAB_LLM_JSON (json mode).
+ * Honors: SUTRADHAR_MODEL (model id), SUTRADHAR_LLM_BASE (override base url),
+ *         SUTRADHAR_LLM_KEY (override key), SUTRADHAR_LLM_JSON (json mode).
  */
 export function createLlmProviderFromEnv(
   logger?: StructuredLogger,
 ): FallbackLlmProvider {
   const log = logger ?? new StructuredLogger({ minLevel: 'info' });
   const openRouterKey = process.env['OPENROUTER_API_KEY'];
-  const overrideBase = process.env['PINCHTAB_LLM_BASE'];
-  const overrideKey = process.env['PINCHTAB_LLM_KEY'];
-  const model = process.env['PINCHTAB_MODEL'];
-  const jsonMode = process.env['PINCHTAB_LLM_JSON'] === '1';
+  const overrideBase = process.env['SUTRADHAR_LLM_BASE'];
+  const overrideKey = process.env['SUTRADHAR_LLM_KEY'];
+  const model = process.env['SUTRADHAR_MODEL'];
+  const jsonMode = process.env['SUTRADHAR_LLM_JSON'] === '1';
 
   const providers: ILlmProvider[] = [];
 

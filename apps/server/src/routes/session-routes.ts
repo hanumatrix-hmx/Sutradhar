@@ -3,7 +3,7 @@
  * @description Thin HTTP route controller delegating exclusively to SessionApplicationService.
  */
 
-import { createSessionId } from '@pinchtab/contracts';
+import { createSessionId } from '@sutradhar/contracts';
 import { SessionApplicationService } from '../application/session-app-service.js';
 import { ApiRouter } from '../gateway/api-router.js';
 

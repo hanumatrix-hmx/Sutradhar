@@ -3,8 +3,8 @@
  * @description Configuration options and defaults for ServerApp.
  */
 
-import { EventBus } from '@pinchtab/events';
-import { StructuredLogger } from '@pinchtab/observability';
+import { EventBus } from '@sutradhar/events';
+import { StructuredLogger } from '@sutradhar/observability';
 
 export interface ServerOptions {
   readonly port?: number;

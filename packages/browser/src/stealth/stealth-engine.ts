@@ -3,7 +3,7 @@
  * @description StealthEngine orchestrating script generation and anti-detection rules.
  */
 
-import { StructuredLogger } from '@pinchtab/observability';
+import { StructuredLogger } from '@sutradhar/observability';
 import { StealthOptions, DEFAULT_STEALTH_OPTIONS } from './stealth-options.js';
 import {
   getWebdriverOverrideScript,

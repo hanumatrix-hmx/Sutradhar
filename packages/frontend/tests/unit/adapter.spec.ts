@@ -14,7 +14,7 @@ import { BrowserRuntime } from '../../src/runtime/browser/browserRuntime.js';
 import { BrowserSession } from '../../src/runtime/browser/browserSession.js';
 import { isBackendReachable } from '../_helpers/live-stack.js';
 
-describe('@pinchtab/frontend Milestone 5 — Browser Adapter Framework', () => {
+describe('@sutradhar/frontend Milestone 5 — Browser Adapter Framework', () => {
   it('1. should satisfy IBrowserAdapter contract for MockBrowserAdapter', async () => {
     const mockAdapter = new MockBrowserAdapter();
     expect(mockAdapter.id).toBe('mock-adapter');
@@ -41,7 +41,7 @@ describe('@pinchtab/frontend Milestone 5 — Browser Adapter Framework', () => {
     const transport = new HttpBrowserTransport('http://localhost:8081');
     const serverAdapter = new ServerBrowserAdapter(transport);
     expect(serverAdapter.id).toBe('server-adapter');
-    expect(serverAdapter.name).toContain('@pinchtab/browser');
+    expect(serverAdapter.name).toContain('@sutradhar/browser');
 
     // The live launch/navigate requires a real backend; skip when unreachable.
     if (!(await isBackendReachable('http://localhost:8081'))) return;

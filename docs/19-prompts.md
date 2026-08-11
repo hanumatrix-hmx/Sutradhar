@@ -11,8 +11,8 @@ Depends on ADRs:
 References ADRs:
   - 0004-runtime-architecture
 Related Packages:
-  - '@pinchtab/prompt'
-  - '@pinchtab/orchestrator'
+  - '@sutradhar/prompt'
+  - '@sutradhar/orchestrator'
 ---
 
 # System Prompt Templates & Guardrails
@@ -39,5 +39,5 @@ tool-calling format.
 
 ## 2. Prompt Versioning & Validation
 
-- All prompts are registered in `@pinchtab/prompt` with explicit version identifiers (e.g. `react-reasoner-v1.0`).
+- All prompts are registered in `@sutradhar/prompt` with explicit version identifiers (e.g. `react-reasoner-v1.0`).
 - Prompts undergo variable schema validation before rendering to prevent missing variable errors.

@@ -39,8 +39,8 @@ export interface SessionContextValue {
 
 export const SessionContext = createContext<SessionContextValue | undefined>(undefined);
 
-const STORAGE_KEY = 'pinchtab_sessions_v2';
-const BROWSER_SNAPSHOT_PREFIX = 'pinchtab_browser_snap_';
+const STORAGE_KEY = 'sutradhar_sessions_v2';
+const BROWSER_SNAPSHOT_PREFIX = 'sutradhar_browser_snap_';
 
 function normalizeStoredSession(raw: Session): Session {
   // Older localStorage payloads predate runs/backendSessionId — backfill so
@@ -204,7 +204,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const openSession = useCallback((id: string) => {
     const existing = sessions.find((s) => s.id === id);
     setActiveSessionId(id);
-    const bs = browserManager.getOrCreateBrowser(id, existing ? existing.browserState.currentUrl : 'https://github.com/pinchtab/pinchtab');
+    const bs = browserManager.getOrCreateBrowser(id, existing ? existing.browserState.currentUrl : 'https://github.com/sutradhar/sutradhar');
     const savedSnap = localStorage.getItem(`${BROWSER_SNAPSHOT_PREFIX}${id}`);
     if (savedSnap) bs.deserialize(savedSnap);
     setActiveBrowserSession(bs);

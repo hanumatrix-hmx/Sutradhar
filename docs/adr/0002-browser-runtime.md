@@ -8,22 +8,22 @@ Owner: Principal Software Architect
 Date: 2026-07-28
 Superseded Versions: None
 Related Packages:
-  - '@pinchtab/browser'
-  - '@pinchtab/runtime'
+  - '@sutradhar/browser'
+  - '@sutradhar/runtime'
 ---
 
 # ADR 0002: Pluggable Browser Runtime & Context Isolation Engine
 
 ## 1. Context
 
-AI browser agents require browser automation capability with support for local PinchTab instances, direct Chrome DevTools Protocol (CDP), local Playwright sessions, and remote cloud browser providers (e.g. Browserbase).
+AI browser agents require browser automation capability with support for local Sutradhar instances, direct Chrome DevTools Protocol (CDP), local Playwright sessions, and remote cloud browser providers (e.g. Browserbase).
 
 ## 2. Decision
 
-We decide to build a **Pluggable Browser Abstraction Layer** (`@pinchtab/browser`) decoupled from execution lifecycles (`@pinchtab/runtime`).
+We decide to build a **Pluggable Browser Abstraction Layer** (`@sutradhar/browser`) decoupled from execution lifecycles (`@sutradhar/runtime`).
 
 - All browser interactions occur through pure domain entities (`BrowserSession`, `BrowserTab`, `BrowserSnapshot`).
-- Concrete browser implementations (`PinchTab`, `CDP`, `Playwright`) implement the `IBrowserProvider` contract.
+- Concrete browser implementations (`Sutradhar`, `CDP`, `Playwright`) implement the `IBrowserProvider` contract.
 - Each `BrowserSession` runs within an isolated incognito context with dedicated memory limits and automatic teardown hooks.
 
 ## 3. Alternatives Considered
@@ -37,7 +37,7 @@ We decide to build a **Pluggable Browser Abstraction Layer** (`@pinchtab/browser
 
 ### Positive
 
-- Zero vendor lock-in; seamless switching between PinchTab, CDP, Playwright, or cloud providers.
+- Zero vendor lock-in; seamless switching between Sutradhar, CDP, Playwright, or cloud providers.
 - DOM snapshot pruning reduces context token usage by up to 90%.
 
 ### Negative

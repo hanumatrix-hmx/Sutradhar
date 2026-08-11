@@ -1,8 +1,8 @@
 /**
  * @file packages/capability-runtime/src/audit/site-audit.ts
  * @description Single-page audit: screenshot, console/page/network errors, basic accessibility
- * checks, and Core Web Vitals — the pieces real PinchTab's `pinchtab audit <url>` bundles
- * together, built here from PinchTabRuntime's existing primitives (getConsoleLogs/getPageErrors/
+ * checks, and Core Web Vitals — the pieces real Sutradhar's `sutradhar audit <url>` bundles
+ * together, built here from SutradharRuntime's existing primitives (getConsoleLogs/getPageErrors/
  * getNetworkLog were already there; this adds accessibility checks, vitals, and the report
  * shape tying them together).
  */
@@ -71,8 +71,8 @@ export const AUDIT_PAGE_SCRIPT = `(() => {
   // entries are — they only show up here if a PerformanceObserver was actively listening
   // BEFORE they occurred. installVitalsObserver() below (injected via evaluateOnNewDocument,
   // so it's running from the very start of the page's life) stashes them on
-  // window.__pinchtabVitals for exactly this reason; prefer that when present.
-  const stashed = window.__pinchtabVitals;
+  // window.__sutradharVitals for exactly this reason; prefer that when present.
+  const stashed = window.__sutradharVitals;
   const lcpEntries = performance.getEntriesByType('largest-contentful-paint');
   const lastLcp = lcpEntries[lcpEntries.length - 1];
 
@@ -91,18 +91,18 @@ export const AUDIT_PAGE_SCRIPT = `(() => {
  *  from the very start of the page's life and actually catch LCP/CLS entries — see the comment
  *  in AUDIT_PAGE_SCRIPT above for why a post-hoc query alone can't. */
 export const VITALS_OBSERVER_SCRIPT = `(() => {
-  window.__pinchtabVitals = { lcpMs: null, cls: 0 };
+  window.__sutradharVitals = { lcpMs: null, cls: 0 };
   try {
     new PerformanceObserver((list) => {
       const entries = list.getEntries();
       const last = entries[entries.length - 1];
-      if (last) window.__pinchtabVitals.lcpMs = Math.round(last.startTime);
+      if (last) window.__sutradharVitals.lcpMs = Math.round(last.startTime);
     }).observe({ type: 'largest-contentful-paint', buffered: true });
   } catch {}
   try {
     new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
-        if (!entry.hadRecentInput) window.__pinchtabVitals.cls += entry.value;
+        if (!entry.hadRecentInput) window.__sutradharVitals.cls += entry.value;
       }
     }).observe({ type: 'layout-shift', buffered: true });
   } catch {}

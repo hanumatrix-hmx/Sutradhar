@@ -3,8 +3,8 @@
  * @description ReflectionEngine evaluating step execution outcomes, detecting stuck loops, and offering feedback.
  */
 
-import { AgentStepDto } from '@pinchtab/contracts';
-import { StructuredLogger } from '@pinchtab/observability';
+import { AgentStepDto } from '@sutradhar/contracts';
+import { StructuredLogger } from '@sutradhar/observability';
 
 export interface ReflectionResult {
   readonly isSuccessful: boolean;

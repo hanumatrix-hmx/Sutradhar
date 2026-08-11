@@ -8,8 +8,8 @@ import {
   MemoryRecordDto,
   MemorySearchQueryDto,
   MemorySearchResultDto,
-} from '@pinchtab/contracts';
-import { StructuredLogger } from '@pinchtab/observability';
+} from '@sutradhar/contracts';
+import { StructuredLogger } from '@sutradhar/observability';
 import { IMemoryStore, IMultiTierMemoryManager } from './memory-store-interfaces.js';
 import { MemoryTier } from './memory-tier.js';
 import { WorkingMemoryStore } from '../tiers/working-memory-store.js';

@@ -8,10 +8,10 @@ Related ADRs:
   - 0005-tool-system
   - 0006-memory
 Related Packages:
-  - '@pinchtab/browser'
-  - '@pinchtab/llm'
-  - '@pinchtab/memory'
-  - '@pinchtab/tools'
+  - '@sutradhar/browser'
+  - '@sutradhar/llm'
+  - '@sutradhar/memory'
+  - '@sutradhar/tools'
 ---
 
 # Product Requirements Document (PRD)

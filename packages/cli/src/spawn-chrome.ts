@@ -1,6 +1,6 @@
 /**
  * @file packages/cli/src/spawn-chrome.ts
- * @description Spawns Chrome directly (bypassing PinchTabRuntime.launch()/Puppeteer's own
+ * @description Spawns Chrome directly (bypassing SutradharRuntime.launch()/Puppeteer's own
  * launcher) so it survives this CLI process exiting.
  *
  * Puppeteer's `launch()` registers its own process-exit cleanup that closes the browser it
@@ -15,7 +15,7 @@ import { spawn } from 'node:child_process';
 import net from 'node:net';
 import os from 'node:os';
 import path from 'node:path';
-import { BrowserLauncher } from '@pinchtab/browser';
+import { BrowserLauncher } from '@sutradhar/browser';
 
 async function getFreePort(): Promise<number> {
   return new Promise((resolve, reject) => {
@@ -31,9 +31,9 @@ async function getFreePort(): Promise<number> {
 export interface SpawnedChrome {
   wsEndpoint: string;
   /** The spawned Chrome process's PID — `attach()`-ed sessions only ever DETACH on
-   *  shutdown/close (by design: PinchTab doesn't own an attached browser's lifecycle, since
+   *  shutdown/close (by design: Sutradhar doesn't own an attached browser's lifecycle, since
    *  attach mode is normally used against the user's own already-running browser). For a
-   *  process WE spawned, something has to actually kill it, or every "pinchtab close" leaks
+   *  process WE spawned, something has to actually kill it, or every "sutradhar close" leaks
    *  the Chrome process — this PID is what `close` uses to do that. */
   pid: number;
 }
@@ -41,16 +41,16 @@ export interface SpawnedChrome {
 /** Spawns a detached Chrome with remote debugging enabled and returns its browser-level CDP
  *  WebSocket endpoint plus its PID, once it's actually ready to accept connections.
  *  `userDataDir` defaults to a fresh throwaway temp directory — pass a named profile's
- *  directory (via `PinchTabRuntime.getProfileManager().resolveUserDataDir(name)`) to launch
+ *  directory (via `SutradharRuntime.getProfileManager().resolveUserDataDir(name)`) to launch
  *  with persistent cookies/history/localStorage instead. */
 export async function spawnDetachedChrome(headless: boolean, userDataDir?: string): Promise<SpawnedChrome> {
   const chromePath = new BrowserLauncher().findExecutablePath();
   if (!chromePath) {
-    throw new Error('No Chrome/Chromium/Edge found on this system. Run "pinchtab doctor" to diagnose.');
+    throw new Error('No Chrome/Chromium/Edge found on this system. Run "sutradhar doctor" to diagnose.');
   }
 
   const port = await getFreePort();
-  const resolvedUserDataDir = userDataDir ?? path.join(os.tmpdir(), `pinchtab-cli-${Date.now()}`);
+  const resolvedUserDataDir = userDataDir ?? path.join(os.tmpdir(), `sutradhar-cli-${Date.now()}`);
   const args = [
     `--remote-debugging-port=${port}`,
     `--user-data-dir=${resolvedUserDataDir}`,

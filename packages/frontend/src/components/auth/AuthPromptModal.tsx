@@ -65,7 +65,7 @@ export const AuthPromptModal: React.FC<AuthPromptModalProps> = ({
               </div>
               <div style={{ fontSize: 'var(--pt-text-xs)', color: 'var(--pt-text-secondary)' }}>
                 {siteName ? `${siteName} is asking you to sign in. ` : ''}
-                Sign in on the viewport below, then resume. Credentials are never entered into PinchTab itself.
+                Sign in on the viewport below, then resume. Credentials are never entered into Sutradhar itself.
               </div>
             </div>
           </div>

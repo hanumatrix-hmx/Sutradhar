@@ -2,7 +2,7 @@
  * @file packages/agent/src/core/agent-loop.ts
  * @description A genuine observe→reason→act→verify agent loop.
  *
- * This is the real intelligence layer of PinchTab. It does NOT script goals to
+ * This is the real intelligence layer of Sutradhar. It does NOT script goals to
  * URLs. Instead it:
  *   1. Renders the live page (DOM semantic graph) into a compact observation.
  *   2. Asks a REAL LLM to choose one action as strict JSON.
@@ -26,18 +26,18 @@ import {
   createSessionId,
   AgentGoalDto,
   AgentStepDto,
-} from '@pinchtab/contracts';
-import { EventBus } from '@pinchtab/events';
-import { StructuredLogger } from '@pinchtab/observability';
-import { ILlmProvider } from '@pinchtab/llm';
+} from '@sutradhar/contracts';
+import { EventBus } from '@sutradhar/events';
+import { StructuredLogger } from '@sutradhar/observability';
+import { ILlmProvider } from '@sutradhar/llm';
 import {
   BrowserSessionManager,
   BrowserActionEngine,
   DOMSemanticEngine,
   formatGraphForLlm,
   selectorForNodeId,
-} from '@pinchtab/browser';
-import type { ActionParams, IBrowserTab } from '@pinchtab/browser';
+} from '@sutradhar/browser';
+import type { ActionParams, IBrowserTab } from '@sutradhar/browser';
 import { AGENT_SYSTEM_PROMPT, AgentAction, parseAgentAction } from './agent-prompt.js';
 import { ReflectionEngine } from '../executor/reflection-engine.js';
 import { RecoveryEngine } from '../recovery/recovery-engine.js';

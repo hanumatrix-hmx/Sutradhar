@@ -1,6 +1,6 @@
 /**
  * @file packages/contracts/src/shared/identifiers.ts
- * @description Strongly typed branded domain identifiers for PinchTab.
+ * @description Strongly typed branded domain identifiers for Sutradhar.
  */
 
 import { Brand } from './brand.js';

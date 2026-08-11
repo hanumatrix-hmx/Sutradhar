@@ -1,15 +1,15 @@
 /**
  * @file scripts/run-agent.ts
- * @description End-to-end demo of the REAL PinchTab agent loop.
+ * @description End-to-end demo of the REAL Sutradhar agent loop.
  *
  * Usage:
  *   node --experimental-strip-types scripts/run-agent.ts "your goal here"
  *   node --experimental-strip-types scripts/run-agent.ts          # runs a default demo goal
  *
  * Environment (all optional; auto-detected):
- *   PINCHTAB_MODEL       model id (default: qwen3.5:9b for local Ollama)
- *   PINCHTAB_LLM_BASE    override LLM base URL (any OpenAI-compatible endpoint)
- *   PINCHTAB_LLM_KEY     override API key
+ *   SUTRADHAR_MODEL       model id (default: qwen3.5:9b for local Ollama)
+ *   SUTRADHAR_LLM_BASE    override LLM base URL (any OpenAI-compatible endpoint)
+ *   SUTRADHAR_LLM_KEY     override API key
  *   OPENROUTER_API_KEY   if set, uses OpenRouter cloud instead of local Ollama
  *   CHROME_PATH          path to Chrome/Edge executable if auto-detection fails
  *   HEADED=1             show the browser window (default: headless)
@@ -31,7 +31,7 @@ async function main(): Promise<void> {
   const headed = process.env['HEADED'] === '1';
 
   console.log('\n╔══════════════════════════════════════════════════════════════╗');
-  console.log('║          PinchTab — REAL Agent Loop Demo                     ║');
+  console.log('║          Sutradhar — REAL Agent Loop Demo                     ║');
   console.log('╚══════════════════════════════════════════════════════════════╝');
   console.log(`\nGoal: ${goal}\n`);
 

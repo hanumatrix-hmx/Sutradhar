@@ -1,13 +1,13 @@
 // Live smoke test for Wave 9: Chrome crash detection, per-tab concurrency serialization, and
 // the idle-session reaper — all against real Chrome.
-import { PinchTabRuntime } from '../dist/index.js';
+import { SutradharRuntime } from '../dist/index.js';
 import { execSync } from 'node:child_process';
 
 const log = (m) => console.log(`[${new Date().toISOString().slice(11, 23)}] ${m}`);
 const watchdog = setTimeout(() => { console.error('WATCHDOG'); process.exit(2); }, 60000);
 
 async function testConcurrency() {
-  const runtime = new PinchTabRuntime();
+  const runtime = new SutradharRuntime();
   const { sessionId } = await runtime.launch({ headless: true });
   try {
     await runtime.navigate(sessionId, 'https://example.com');
@@ -25,7 +25,7 @@ async function testConcurrency() {
 }
 
 async function testCrashDetection() {
-  const runtime = new PinchTabRuntime();
+  const runtime = new SutradharRuntime();
   const { sessionId } = await runtime.launch({ headless: true });
   const mgr = runtime.getSessionManager();
   const session = mgr.getSession(sessionId);
@@ -51,7 +51,7 @@ async function testCrashDetection() {
 }
 
 async function testIdleReaper() {
-  const runtime = new PinchTabRuntime({ idleTimeoutMs: 1000 });
+  const runtime = new SutradharRuntime({ idleTimeoutMs: 1000 });
   const { sessionId } = await runtime.launch({ headless: true });
   log('[3] session launched with idleTimeoutMs=1000, waiting for the reaper...');
   await new Promise((r) => setTimeout(r, 2500));

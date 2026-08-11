@@ -9,13 +9,13 @@
 import os from 'node:os';
 import path from 'node:path';
 import { realpath, access } from 'node:fs/promises';
-import { EventBus } from '@pinchtab/events';
-import { StructuredLogger } from '@pinchtab/observability';
-import { SessionId } from '@pinchtab/contracts';
+import { EventBus } from '@sutradhar/events';
+import { StructuredLogger } from '@sutradhar/observability';
+import { SessionId } from '@sutradhar/contracts';
 import { ElementHandle, Page } from 'puppeteer-core';
 import { IBrowserTab } from '../session/browser-tab.js';
 import { ExecutionVerifier } from '../verifier/execution-verifier.js';
-import { PT_GENERATION_ATTR, PT_CURRENT_GENERATION_ATTR } from '../dom/dom-semantic-engine.js';
+import { SD_GENERATION_ATTR, SD_CURRENT_GENERATION_ATTR } from '../dom/dom-semantic-engine.js';
 import { ActionParams, ActionResultDto } from './action-types.js';
 
 export interface IBrowserActionEngine {
@@ -985,8 +985,8 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         const currentGen = el.ownerDocument.documentElement.getAttribute(currentGenAttr);
         return !!elGen && !!currentGen && elGen !== currentGen;
       },
-      PT_GENERATION_ATTR,
-      PT_CURRENT_GENERATION_ATTR,
+      SD_GENERATION_ATTR,
+      SD_CURRENT_GENERATION_ATTR,
     );
     if (isStale) {
       throw new Error(

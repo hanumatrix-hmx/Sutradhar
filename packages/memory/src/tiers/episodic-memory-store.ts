@@ -3,7 +3,7 @@
  * @description EpisodicMemoryStore implementation for agent execution history and temporal queries.
  */
 
-import { MemorySearchQueryDto, MemorySearchResultDto } from '@pinchtab/contracts';
+import { MemorySearchQueryDto, MemorySearchResultDto } from '@sutradhar/contracts';
 import { BaseMemoryStore } from './base-tier-store.js';
 import { MemoryTier } from '../store/memory-tier.js';
 

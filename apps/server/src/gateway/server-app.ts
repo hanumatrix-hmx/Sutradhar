@@ -4,7 +4,7 @@
  */
 
 import * as http from 'node:http';
-import { StructuredLogger } from '@pinchtab/observability';
+import { StructuredLogger } from '@sutradhar/observability';
 import { ServerOptions, DEFAULT_SERVER_OPTIONS } from './server-options.js';
 import { ApiRouter, ApiRequest, ApiResponse, MockApiResponse } from './api-router.js';
 import { registerConsoleRoute } from './static-handler.js';
@@ -165,7 +165,7 @@ export class ServerApp {
               this.port = addr.port;
             }
             this.logger.info(
-              `[ServerApp] PinchTab REST API Gateway running on fallback port http://${this.host}:${this.port}`,
+              `[ServerApp] Sutradhar REST API Gateway running on fallback port http://${this.host}:${this.port}`,
             );
             resolve();
           });
@@ -179,7 +179,7 @@ export class ServerApp {
       this.httpServer.listen(this.port, this.host, () => {
         this.isRunning = true;
         this.logger.info(
-          `[ServerApp] PinchTab REST API Gateway running at http://${this.host}:${this.port}`,
+          `[ServerApp] Sutradhar REST API Gateway running at http://${this.host}:${this.port}`,
         );
         resolve();
       });
@@ -194,7 +194,7 @@ export class ServerApp {
     return new Promise((resolve) => {
       this.httpServer!.close(() => {
         this.isRunning = false;
-        this.logger.info('[ServerApp] PinchTab REST API Gateway stopped');
+        this.logger.info('[ServerApp] Sutradhar REST API Gateway stopped');
         resolve();
       });
     });
@@ -213,7 +213,7 @@ export class ServerApp {
     this.router.get('/health', async (_req, res) => {
       res.status(200).json({
         status: 'ok',
-        service: '@pinchtab/server',
+        service: '@sutradhar/server',
         version: '0.1.0',
         timestamp: new Date().toISOString(),
       });

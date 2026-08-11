@@ -8,9 +8,9 @@
  * and user-driven only.
  */
 
-import { RunRecordDto } from '@pinchtab/contracts';
-import { LocalFileStorage } from '@pinchtab/storage';
-import { StructuredLogger } from '@pinchtab/observability';
+import { RunRecordDto } from '@sutradhar/contracts';
+import { LocalFileStorage } from '@sutradhar/storage';
+import { StructuredLogger } from '@sutradhar/observability';
 
 const RUNS_PREFIX = 'runs/';
 

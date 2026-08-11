@@ -5,7 +5,7 @@
 
 import { MasterEnvSchema, ServerEnvSchema, CONFIG_VERSION } from '../../src/index.js';
 
-describe('@pinchtab/config Zod Schemas & Version', () => {
+describe('@sutradhar/config Zod Schemas & Version', () => {
   it('should export correct package version constant', () => {
     expect(CONFIG_VERSION).toBe('0.1.0');
   });
@@ -22,7 +22,7 @@ describe('@pinchtab/config Zod Schemas & Version', () => {
     expect(parsed.PORT).toBe(4000);
     expect(parsed.HOST).toBe('0.0.0.0');
     expect(parsed.LOG_LEVEL).toBe('info');
-    expect(parsed.PINCHTAB_OLLAMA_HOST).toBe('http://localhost:11434');
+    expect(parsed.SUTRADHAR_OLLAMA_HOST).toBe('http://localhost:11434');
   });
 
   it('should throw validation error on invalid port or node env', () => {

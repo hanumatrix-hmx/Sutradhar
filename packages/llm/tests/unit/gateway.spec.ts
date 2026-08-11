@@ -10,7 +10,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { OpenRouterAdapter, OpenAiCompatibleAdapter, LLM_VERSION } from '../../src/index.js';
-import { createModelId } from '@pinchtab/contracts';
+import { createModelId } from '@sutradhar/contracts';
 
 const OLLAMA_URL = 'http://localhost:11434/v1';
 const OLLAMA_MODEL = 'qwen3.5:9b';
@@ -24,7 +24,7 @@ async function ollamaReachable(): Promise<boolean> {
   }
 }
 
-describe('@pinchtab/llm Gateway & OpenAiCompatibleAdapter', () => {
+describe('@sutradhar/llm Gateway & OpenAiCompatibleAdapter', () => {
   it('should export correct package version constant', () => {
     expect(LLM_VERSION).toBe('0.1.0');
   });

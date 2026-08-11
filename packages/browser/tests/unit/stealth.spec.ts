@@ -11,7 +11,7 @@ import {
   getHardwareConcurrencyScript,
 } from '../../src/index.js';
 
-describe('@pinchtab/browser Stealth Engine', () => {
+describe('@sutradhar/browser Stealth Engine', () => {
   it('should generate webdriver override script string', () => {
     const script = getWebdriverOverrideScript();
     expect(script).toContain('navigator');

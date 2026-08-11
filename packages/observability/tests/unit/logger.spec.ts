@@ -10,7 +10,7 @@ import {
   OBSERVABILITY_VERSION,
 } from '../../src/index.js';
 
-describe('@pinchtab/observability StructuredLogger', () => {
+describe('@sutradhar/observability StructuredLogger', () => {
   class MemoryLogTransport implements ILogTransport {
     public readonly name = 'MemoryLogTransport';
     public readonly entries: LogEntry[] = [];

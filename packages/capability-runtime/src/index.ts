@@ -1,9 +1,9 @@
 /**
  * @file packages/capability-runtime/src/index.ts
- * @description Package entry point for @pinchtab/capability-runtime.
+ * @description Package entry point for @sutradhar/capability-runtime.
  *
- * The single high-level façade over the PinchTab browser engine. Every integration
- * surface (MCP server, npm SDK, plugins, extension) composes {@link PinchTabRuntime}
+ * The single high-level façade over the Sutradhar browser engine. Every integration
+ * surface (MCP server, npm SDK, plugins, extension) composes {@link SutradharRuntime}
  * rather than duplicating browser logic.
  */
 

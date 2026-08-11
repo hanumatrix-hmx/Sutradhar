@@ -9,9 +9,9 @@ import {
   WorkingMemoryStore,
   cosineSimilarity,
 } from '../../src/index.js';
-import { createMemoryId, MemoryRecordDto } from '@pinchtab/contracts';
+import { createMemoryId, MemoryRecordDto } from '@sutradhar/contracts';
 
-describe('@pinchtab/memory Tiers & Vector Engine', () => {
+describe('@sutradhar/memory Tiers & Vector Engine', () => {
   it('should compute vector cosine similarity correctly', () => {
     const vecA = [1, 0, 0];
     const vecB = [1, 0, 0];

@@ -1,9 +1,9 @@
 {
-  "name": "@pinchtab/events",
+  "name": "@sutradhar/events",
   "version": "0.1.0",
   "type": "module",
   "private": true,
-  "description": "In-memory typed EventBus, handler registry, and event persistence engine for PinchTab",
+  "description": "In-memory typed EventBus, handler registry, and event persistence engine for Sutradhar",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -27,9 +27,9 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@pinchtab/contracts": "workspace:*",
-    "@pinchtab/utils": "workspace:*",
-    "@pinchtab/observability": "workspace:*"
+    "@sutradhar/contracts": "workspace:*",
+    "@sutradhar/utils": "workspace:*",
+    "@sutradhar/observability": "workspace:*"
   },
   "devDependencies": {
     "typescript": "5.4.2"

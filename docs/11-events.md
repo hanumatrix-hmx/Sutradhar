@@ -8,8 +8,8 @@ Review Frequency: Quarterly
 Related ADRs:
   - 0001-monorepo
 Related Packages:
-  - '@pinchtab/events'
-  - '@pinchtab/observability'
+  - '@sutradhar/events'
+  - '@sutradhar/observability'
 ---
 
 # Event Bus & Streaming Taxonomy

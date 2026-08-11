@@ -18,7 +18,7 @@ import {
   SDK_VERSION,
 } from '../../src/index.js';
 
-describe('@pinchtab/sdk loader + signature + extension point', () => {
+describe('@sutradhar/sdk loader + signature + extension point', () => {
   it('exports SDK version 0.2.0 (bumped from the stubbed 0.1.0)', () => {
     expect(SDK_VERSION).toBe('0.2.0');
   });
@@ -100,7 +100,7 @@ describe('@pinchtab/sdk loader + signature + extension point', () => {
     let pluginDir: string;
 
     beforeEach(() => {
-      pluginDir = mkdtempSync(join(tmpdir(), 'pinchtab-plugin-test-'));
+      pluginDir = mkdtempSync(join(tmpdir(), 'sutradhar-plugin-test-'));
     });
     afterEach(() => {
       rmSync(pluginDir, { recursive: true, force: true });
@@ -109,7 +109,7 @@ describe('@pinchtab/sdk loader + signature + extension point', () => {
     const writePlugin = (id: string, entryJs: string) => {
       mkdirSync(pluginDir, { recursive: true });
       writeFileSync(
-        join(pluginDir, 'pinchtab-plugin.json'),
+        join(pluginDir, 'sutradhar-plugin.json'),
         JSON.stringify({
           id,
           name: id,
@@ -165,7 +165,7 @@ describe('@pinchtab/sdk loader + signature + extension point', () => {
     it('reports a clear error when the entrypoint does not exist', async () => {
       mkdirSync(pluginDir, { recursive: true });
       writeFileSync(
-        join(pluginDir, 'pinchtab-plugin.json'),
+        join(pluginDir, 'sutradhar-plugin.json'),
         JSON.stringify({
           id: 'no-entry',
           name: 'no-entry',

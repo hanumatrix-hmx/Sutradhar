@@ -1,7 +1,7 @@
 /**
  * @file packages/frontend/src/runtime/browser/adapters/serverBrowserAdapter.ts
  * @description Real ServerBrowserAdapter bridging frontend runtime commands to
- * the @pinchtab/server backend via genuine HTTP calls.
+ * the @sutradhar/server backend via genuine HTTP calls.
  *
  * Every method calls the backend and propagates errors. There are NO fallback
  * objects, NO fake SVG/PNG screenshots, and NO synthetic events. If the backend
@@ -19,7 +19,7 @@ import {
 
 export class ServerBrowserAdapter implements IBrowserAdapter {
   public readonly id = 'server-adapter';
-  public readonly name = 'Server Browser Engine Adapter (@pinchtab/browser)';
+  public readonly name = 'Server Browser Engine Adapter (@sutradhar/browser)';
   public readonly transport: HttpBrowserTransport;
 
   private readonly eventListeners = new Map<string, Set<(event: any) => void>>();

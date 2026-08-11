@@ -3,8 +3,8 @@
  * @description Configuration options and defaults for local Ollama provider engine.
  */
 
-import { RateLimiter } from '@pinchtab/utils';
-import { StructuredLogger } from '@pinchtab/observability';
+import { RateLimiter } from '@sutradhar/utils';
+import { StructuredLogger } from '@sutradhar/observability';
 
 export interface OllamaAdapterOptions {
   readonly host?: string;

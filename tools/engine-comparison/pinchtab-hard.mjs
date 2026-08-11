@@ -1,8 +1,8 @@
-// PinchTab engine vs. 6 genuinely hard browser-automation problems, all on local, deterministic
+// Sutradhar engine vs. 6 genuinely hard browser-automation problems, all on local, deterministic
 // fixtures (no third-party site dependency, no adversarial/CAPTCHA-evasion content).
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { PinchTabRuntime } from '../../packages/capability-runtime/dist/index.js';
+import { SutradharRuntime } from '../../packages/capability-runtime/dist/index.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const fx = (name) => pathToFileURL(path.join(here, 'hard-fixtures', name)).href;
@@ -17,7 +17,7 @@ async function must(promise) {
 }
 
 async function withRuntime(fn) {
-  const runtime = new PinchTabRuntime({ logger: { info() {}, warn() {}, error() {}, debug() {} } });
+  const runtime = new SutradharRuntime({ logger: { info() {}, warn() {}, error() {}, debug() {} } });
   let sessionId;
   try {
     const launched = await runtime.launch({ headless: HEADLESS, launch: { viewport: { width: 1000, height: 700 } } });
@@ -33,9 +33,9 @@ async function timed(id, title, fn) {
   const start = Date.now();
   try {
     const detail = await fn();
-    return { id, title, engine: 'pinchtab', success: true, ms: Date.now() - start, detail: detail ?? null, error: null };
+    return { id, title, engine: 'sutradhar', success: true, ms: Date.now() - start, detail: detail ?? null, error: null };
   } catch (err) {
-    return { id, title, engine: 'pinchtab', success: false, ms: Date.now() - start, detail: null, error: err.message };
+    return { id, title, engine: 'sutradhar', success: false, ms: Date.now() - start, detail: null, error: err.message };
   }
 }
 
@@ -115,7 +115,7 @@ async function scenarioAnimatedPanel() {
   return withRuntime(async (rt, sid) => {
     await rt.navigate(sid, fx('animated-panel.html'));
     await must(rt.click(sid, '#trigger-btn'));
-    // No explicit wait for the 800ms transition — this is exactly the question: does PinchTab's
+    // No explicit wait for the 800ms transition — this is exactly the question: does Sutradhar's
     // own click verification (occlusion + delivery) happen to wait for visual stability too, or
     // does it click immediately once the button is technically present and visible?
     await must(rt.click(sid, '#confirm-btn'));

@@ -1,15 +1,15 @@
-// Example PinchTab plugin: contributes a trivial "echo" LLM provider.
+// Example Sutradhar plugin: contributes a trivial "echo" LLM provider.
 //
-// This file is the plugin entrypoint referenced by pinchtab-plugin.json. It default-exports
-// a constructor of IPinchTabPlugin. On initialize(), it registers an LLM provider into the
+// This file is the plugin entrypoint referenced by sutradhar-plugin.json. It default-exports
+// a constructor of ISutradharPlugin. On initialize(), it registers an LLM provider into the
 // host via the capabilities it receives on its context — that provider is then discoverable
-// by the PinchTab runtime.
+// by the Sutradhar runtime.
 
 const manifest = {
   id: 'echo-llm-provider',
   name: 'Echo LLM Provider',
   version: '0.1.0',
-  author: 'PinchTab',
+  author: 'Sutradhar',
   description: 'Example plugin that contributes a trivial LLM provider which echoes its prompt.',
   type: 'llm_provider',
   permissions: [],

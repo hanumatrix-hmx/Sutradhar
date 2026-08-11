@@ -1,6 +1,6 @@
 /**
  * @file apps/server/src/eval/evaluation-runner.ts
- * @description Automatic Evaluation Runner executing 100+ benchmark tasks against PinchTab runtime.
+ * @description Automatic Evaluation Runner executing 100+ benchmark tasks against Sutradhar runtime.
  */
 
 import * as fs from 'node:fs/promises';
@@ -11,8 +11,8 @@ import {
   FailureClassifier,
   EvaluationRecorder,
 } from './evaluation-framework.js';
-import { PinchTabRuntime } from '../runtime/bootstrap.js';
-import { createMemoryId } from '@pinchtab/contracts';
+import { SutradharRuntime } from '../runtime/bootstrap.js';
+import { createMemoryId } from '@sutradhar/contracts';
 
 export class EvaluationRunner {
   private readonly recorder = new EvaluationRecorder();
@@ -20,10 +20,10 @@ export class EvaluationRunner {
   public async runAll(
     tasks: readonly BenchmarkTask[] = BENCHMARK_DATASET,
   ): Promise<readonly TaskEvaluationResult[]> {
-    const runtime = new PinchTabRuntime();
+    const runtime = new SutradharRuntime();
     await runtime.start();
 
-    const evalDir = path.join(process.cwd(), '.pinchtab-eval');
+    const evalDir = path.join(process.cwd(), '.sutradhar-eval');
     await fs.mkdir(evalDir, { recursive: true });
 
     console.log(

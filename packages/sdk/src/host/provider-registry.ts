@@ -1,7 +1,7 @@
 /**
  * @file packages/sdk/src/host/provider-registry.ts
  * @description A registry that plugins populate with capability providers (LLM providers,
- * memory backends, etc.). The host (the PinchTab runtime/server) reads from this registry
+ * memory backends, etc.). The host (the Sutradhar runtime/server) reads from this registry
  * to discover extensions contributed by plugins.
  *
  * This is the receiving end of the first real extension point (llm_provider). A plugin's
@@ -14,7 +14,7 @@
 
 /**
  * Minimal LLM provider contract a plugin can contribute. Intentionally a structural subset
- * of @pinchtab/llm's ILlmProvider so plugins don't need to depend on that package — the host
+ * of @sutradhar/llm's ILlmProvider so plugins don't need to depend on that package — the host
  * adapts this shape to the full ILlmProvider at registration time.
  */
 export interface ContributedLlmProvider {

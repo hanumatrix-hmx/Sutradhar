@@ -3,7 +3,7 @@
  * @description REST API Gateway controller exposing DevTools trace inspection and runtime metrics endpoints.
  */
 
-import { ExecutionInspector, TraceExporter } from '@pinchtab/observability';
+import { ExecutionInspector, TraceExporter } from '@sutradhar/observability';
 
 export class DevToolsController {
   private readonly inspector = new ExecutionInspector();

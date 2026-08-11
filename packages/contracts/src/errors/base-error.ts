@@ -1,6 +1,6 @@
 /**
  * @file packages/contracts/src/errors/base-error.ts
- * @description Abstract base class for all PinchTab domain errors.
+ * @description Abstract base class for all Sutradhar domain errors.
  */
 
 import { Timestamp } from '../shared/primitives.js';

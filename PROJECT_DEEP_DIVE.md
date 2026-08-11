@@ -1,8 +1,8 @@
-# PinchTab — Complete Technical Deep Dive & System Documentation
+# Sutradhar — Complete Technical Deep Dive & System Documentation
 
-> **Auto-generated architectural reference.** This document consolidates the technical architecture, end-to-end workflows, data flow, and user lifecycles of the entire PinchTab codebase into a single source of truth.
+> **Auto-generated architectural reference.** This document consolidates the technical architecture, end-to-end workflows, data flow, and user lifecycles of the entire Sutradhar codebase into a single source of truth.
 >
-> **Project**: PinchTab — Enterprise AI Browser Runtime Platform
+> **Project**: Sutradhar — Enterprise AI Browser Runtime Platform
 > **Repository type**: Turborepo + pnpm-workspace hexagonal monorepo
 > **Language**: TypeScript 5.4 (strict) | **Runtime**: Node.js ≥ 18 (ESM)
 > **Generated**: 2026-07-30
@@ -31,11 +31,11 @@
 
 ## 1. Project Summary & Honest Status
 
-### What PinchTab is (intended)
+### What Sutradhar is (intended)
 
-PinchTab is an **enterprise-grade AI Browser Runtime Platform**: autonomous AI agents drive real browsers (Chromium) to complete natural-language goals — searching, navigating, filling forms, downloading, extracting data — while persisting multi-tier memory, emitting observability traces, and exposing a real-time web inspector.
+Sutradhar is an **enterprise-grade AI Browser Runtime Platform**: autonomous AI agents drive real browsers (Chromium) to complete natural-language goals — searching, navigating, filling forms, downloading, extracting data — while persisting multi-tier memory, emitting observability traces, and exposing a real-time web inspector.
 
-### What PinchTab is (actual code state)
+### What Sutradhar is (actual code state)
 
 A **cleanly architected scaffold** with substantial working subsystems but **significant stubbed I/O**. The honest characterization:
 
@@ -53,8 +53,8 @@ A **cleanly architected scaffold** with substantial working subsystems but **sig
 | HTTP server | ✅ Functional | Hand-rolled `node:http` (NOT Fastify despite docs) |
 | REST API (16 endpoints) | ✅ Functional | Real routing, CORS, body parsing |
 | Frontend (React SPA) | ✅ Functional UI / ⚠️ partial backend wiring | Embedded browser viewport streams real screenshots; action & workflow engines built but **not wired into UI** |
-| Workflow engine (backend `@pinchtab/workflow`) | ⚠️ Linear only | `parallel`/`condition` node types declared but runner only follows `nextNodes[0]` |
-| Eval framework (102-task benchmark) | ✅ Functional | Runs real goals, records results to `.pinchtab-eval/` |
+| Workflow engine (backend `@sutradhar/workflow`) | ⚠️ Linear only | `parallel`/`condition` node types declared but runner only follows `nextNodes[0]` |
+| Eval framework (102-task benchmark) | ✅ Functional | Runs real goals, records results to `.sutradhar-eval/` |
 | Real-world validation (16 live tasks) | ✅ Functional | Live URLs hit; narrative evidence partly hardcoded |
 
 ### Key contradiction to resolve
@@ -66,7 +66,7 @@ The **documentation suite** (`docs/`) and **AI state files** (`.ai/project-state
 ## 2. Repository Layout & Bounded Contexts
 
 ```
-PinchTab/
+Sutradhar/
 ├── apps/
 │   ├── server/                 # node:http API server (REST) + eval framework
 │   └── (web/  ← documented but not present as a built app; frontend lives in packages/frontend)
@@ -88,8 +88,8 @@ PinchTab/
 │   └── frontend/               # 🟢 React SPA (the actual UI)
 ├── docs/                       # Target architecture docs (00–23 + 6 ADRs)
 ├── .ai/                        # AI operational state (over-optimistic)
-├── .pinchtab-eval/             # Eval results + real-world evidence JSON
-├── .pinchtab-storage/          # Runtime artifacts (downloads, summaries)
+├── .sutradhar-eval/             # Eval results + real-world evidence JSON
+├── .sutradhar-storage/          # Runtime artifacts (downloads, summaries)
 ├── acceptance_artifacts/       # System acceptance test outputs
 └── PROJECT_CONSTITUTION.md     # Supreme governance law
 ```
@@ -141,9 +141,9 @@ packages/contracts                      (shared kernel — bottom)
 | Package manager | pnpm ≥ 8 | ✅ `pnpm@9.1.0` |
 | Language | TypeScript 5.4 strict | ✅ `typescript@5.4.2`, all strict flags |
 | Test runner | Vitest | ✅ `vitest@^1.4.0` |
-| HTTP server | **Fastify** | ❌ **Hand-rolled `node:http`** (`@pinchtab/server` has zero web-framework deps) |
+| HTTP server | **Fastify** | ❌ **Hand-rolled `node:http`** (`@sutradhar/server` has zero web-framework deps) |
 | Frontend | Next.js + Tailwind + shadcn/ui | ❌ **Vite + React 18.2 + custom CSS** (no Next.js, no Tailwind) |
-| Browser automation | PinchTab + CDP + Playwright | ❌ **Puppeteer-core ^22.6** (real system Chrome) — no Playwright |
+| Browser automation | Sutradhar + CDP + Playwright | ❌ **Puppeteer-core ^22.6** (real system Chrome) — no Playwright |
 | LLM | OpenRouter / Ollama / OpenAI / Anthropic | ⚠️ Adapters exist for OpenRouter + Ollama but **stubbed** (no real HTTP) |
 | DB | Drizzle/SQLite + PostgreSQL + Redis | ❌ **In-memory `Map`**; `SqliteClient` returns `[]` |
 | Vector store | Qdrant / SQLite-vector | ⚠️ Pure-TS `cosineSimilarity` over in-memory arrays |
@@ -155,7 +155,7 @@ packages/contracts                      (shared kernel — bottom)
 
 ## 4. Package-by-Package Technical Reference
 
-### 4.1 `@pinchtab/contracts` — The Shared Kernel
+### 4.1 `@sutradhar/contracts` — The Shared Kernel
 
 The foundation every other package depends on. Zero internal deps.
 
@@ -165,7 +165,7 @@ The foundation every other package depends on. Zero internal deps.
 - **Events** (`events/`): `IDomainEvent<TType,TPayload>` with `id`/`timestamp`/`version`/`correlationId?`/`causationId?`. `createDomainEvent()` factory (id `evt_<ts>_<rand7>`, protocol version `1.0.0`). **11 typed event topics** in `DomainEventMap` across Browser/Agent/LLM/Tool domains (e.g. `browser:session:created`, `agent:goal:started`, `agent:state:changed`, `llm:stream:chunk`).
 - **Requests/Responses** (`requests/`, `responses/`): `createSuccessResponse<T>(data)` → `{success:true, data, timestamp}`; `createErrorResponse(...)` → `{success:false, error:{code,message,statusCode,...}}`.
 
-### 4.2 `@pinchtab/utils` — Concurrency, Crypto, Formatters, Ports
+### 4.2 `@sutradhar/utils` — Concurrency, Crypto, Formatters, Ports
 
 - **`async/`**: 
   - `Mutex` (non-blocking, token-passing queue, `runExclusive<T>()`).
@@ -175,15 +175,15 @@ The foundation every other package depends on. Zero internal deps.
 - **`crypto/`**: `hashString` (sha256), `generateUuid` (v4), `generateRandomToken(byteLength=32→hex)`, **AES-256-GCM** `encryptSecret`/`decryptSecret` (64-hex-char key, 12-byte IV, auth tag).
 - **`formatters/`**: `cleanHtmlDom` (strips scripts/styles/comments/SVG paths/inline styles), `sanitizePromptText` (strips control chars + zero-width Unicode — **prompt-injection defense**), `estimateTokenCount` (`ceil(len/4)`), `truncateToTokenLimit`.
 - **`network/`**: `PortResolver` (static `isPortAvailable`, `findAvailablePort`, `getEnvironmentEndpoints`).
-- **`runtime/`**: `EnvValidator` (port range/duplicate detection), `HanumatrixDevRuntime` port allocator with a hardcoded `HANUMATRIX_PORT_REGISTRY` (PinchTab=5173/3000/3001, MitSu, Supamatrix, etc.).
+- **`runtime/`**: `EnvValidator` (port range/duplicate detection), `HanumatrixDevRuntime` port allocator with a hardcoded `HANUMATRIX_PORT_REGISTRY` (Sutradhar=5173/3000/3001, MitSu, Supamatrix, etc.).
 
-### 4.3 `@pinchtab/config` — Environment & Secrets
+### 4.3 `@sutradhar/config` — Environment & Secrets
 
-- **`schema/env-schema.ts`** (Zod): `MasterEnvSchema` merging Server (`NODE_ENV`/`PORT` default 3000/`HOST`/`LOG_LEVEL`), OpenRouter (`PINCHTAB_OPENROUTER_API_KEY?`, base URL), Ollama (`PINCHTAB_OLLAMA_HOST` default `http://localhost:11434`, `PINCHTAB_OLLAMA_DEFAULT_MODEL` default `llama3`), PinchTab (`PINCHTAB_SERVER_URL`), Storage (`DATABASE_URL`/`REDIS_URL`/`QDRANT_URL`).
+- **`schema/env-schema.ts`** (Zod): `MasterEnvSchema` merging Server (`NODE_ENV`/`PORT` default 3000/`HOST`/`LOG_LEVEL`), OpenRouter (`SUTRADHAR_OPENROUTER_API_KEY?`, base URL), Ollama (`SUTRADHAR_OLLAMA_HOST` default `http://localhost:11434`, `SUTRADHAR_OLLAMA_DEFAULT_MODEL` default `llama3`), Sutradhar (`SUTRADHAR_SERVER_URL`), Storage (`DATABASE_URL`/`REDIS_URL`/`QDRANT_URL`).
 - **`provider/config-provider.ts`**: `EnvConfigSource` reads `process.env`; `ConfigurationProvider.getAppConfig()` merges sources in order, runs `safeParse`, **fails fast** with formatted Zod errors, caches result.
 - **`provider/secret-masker.ts`**: `maskSecret()` — keeps first/last 4 chars, masks middle with ≥6 `*`.
 
-### 4.4 `@pinchtab/observability` — Logging, Metrics, Tracing, Inspector, Studio
+### 4.4 `@sutradhar/observability` — Logging, Metrics, Tracing, Inspector, Studio
 
 Five subsystems:
 
@@ -195,12 +195,12 @@ Five subsystems:
 
 > ⚠️ **Minor bug**: `packages/observability/src/studio/index.ts:8` re-exports `./failure-lab.ts` instead of `./failure-lab.js` — breaks ESM build/tooling expectations.
 
-### 4.5 `@pinchtab/events` — Typed Event Bus + Store
+### 4.5 `@sutradhar/events` — Typed Event Bus + Store
 
 - **`bus/event-bus.ts`**: `EventBus` implements `IEventBus<DomainEventMap>`. Two registries: per-type `Map<string, Set<EventHandler>>` and wildcard `Set`. `publish()` → `createDomainEvent()` → `publishEvent()` → fans out to type handlers **and** wildcard handlers **concurrently** via `Promise.all`, each wrapped in `invokeHandlerSafely` (a failing handler is caught, logged, and **does not abort siblings**). `subscribe()` returns a `SubscriptionToken.unsubscribe()`. `getSubscriberCount()`.
 - **`store/event-store.ts`**: `InMemoryEventStore` — ring buffer (`maxCapacity=10000`, evicts oldest). `append()`, `getEvents({type?,correlationId?,causationId?,fromTimestamp?,toTimestamp?,limit?})`, `getEventsByCorrelationId()`.
 
-### 4.6 `@pinchtab/browser` — Real Browser Engine (Puppeteer)
+### 4.6 `@sutradhar/browser` — Real Browser Engine (Puppeteer)
 
 **The most functionally complete package.** Uses **`puppeteer-core@^22.6`** with a real system Chrome/Edge/Chromium (resolved via `CHROME_PATH` or hardcoded candidate paths for Win/Linux/macOS).
 
@@ -214,7 +214,7 @@ Five subsystems:
 - **`skills/`**: `BrowserSkillsLibrary` — composable high-level skills: `searchGoogle`, `login`, `fillForm`, `extractLinks`, `extractEmails`, `acceptCookies`, `dismissPopup`, `captureScreenshot`.
 - **`verifier/`**: `ExecutionVerifier.verifyAction(tab, prevUrl, actionResult, spec)` — post-action validation (URL change, expected substring), returns `VerificationResultDto` with confidence.
 
-### 4.7 `@pinchtab/llm` — LLM Provider Gateway (STUBBED)
+### 4.7 `@sutradhar/llm` — LLM Provider Gateway (STUBBED)
 
 - **`gateway/llm-provider.ts`**: `ILlmProvider` — `providerId`, `capabilities: CapabilityMatrix`, `generateCompletion(CompletionRequestDto)`, `generateStream(...) → AsyncIterable<StreamChunkDto>`.
 - **`gateway/openrouter-adapter.ts`**: `OpenRouterAdapter` — rate-limited (60/min), wrapped in `retryWithBackoff`. **Stubbed**: returns canned `CompletionResponseDto`, **never calls fetch**. Declares capabilities: streaming/tool_calling/vision/reasoning = supported.
@@ -222,14 +222,14 @@ Five subsystems:
 
 > **Critical**: `ILlmProvider` is wired into `AgentCore` and `GoalPlanner` but **never invoked** in the reasoning loop. The agent runs heuristically today.
 
-### 4.8 `@pinchtab/memory` — Multi-Tier Memory (In-Memory)
+### 4.8 `@sutradhar/memory` — Multi-Tier Memory (In-Memory)
 
 Two parallel abstractions:
 
 - **Generic tiers** (`store/`, `tiers/`): `MemoryTier = 'working'|'short_term'|'episodic'|'semantic'|'procedural'`. `BaseMemoryStore` (Mutex-guarded `Map`, substring search, score 1.0). `EpisodicMemoryStore` (newest-first sort). `SemanticMemoryStore` (**cosine similarity** over embeddings, else text fallback). `MultiTierMemoryManager.searchMultiTier()` fans out in parallel across all tiers, sorts by score desc.
 - **Episodic engine** (`episodic/`): `EpisodicMemoryManager` for structured agent execution episodes — `createEpisode(goal, pageType, taskGraphId)`, `recordAction/Evidence/Recovery`, `finalizeEpisode(outcome, duration)` with **automated lesson extraction** (success→strategy+resilience lessons; failure→avoid-repeating lesson). `queryEpisodes({pageType?, goal?, outcome?})`.
 
-### 4.9 `@pinchtab/agent` — The Agent Reasoning Engine
+### 4.9 `@sutradhar/agent` — The Agent Reasoning Engine
 
 See [§5.5](#55-the-agent-reasoning-loop) for the full loop. Highlights:
 
@@ -242,18 +242,18 @@ See [§5.5](#55-the-agent-reasoning-loop) for the full loop. Highlights:
 - **`StepExecutor` + `ReflectionEngine`**: dispatches browser actions; detects stuck loops (same action+observation ≥3 times).
 - **`RecoveryEngine`**: 7 `FailureReason` → strategy mapping (`element_disappeared`→CandidateFallbackRanking, `popup_blocking`→DismissPopupSkill, `navigation_timeout`→PageRefreshRetry, `browser_crash`→escalate).
 
-### 4.10 `@pinchtab/workflow` — DAG Workflow Runner (Linear)
+### 4.10 `@sutradhar/workflow` — DAG Workflow Runner (Linear)
 
 - **`graph/`**: `WorkflowGraph` (frozen node map) with `validate()` (non-empty, one `start`, ≥1 `end`, no dangling edges). Node types: `start|task|condition|parallel|end`.
 - **`runner/workflow-runner.ts`**: `WorkflowRunner.runWorkflow(graph, initialInputs)` walks from start, delegates `task` nodes to `agentCore.executeGoal(name)`, follows **only `nextNodes[0]`** — so `parallel`/`condition` branching is **unimplemented**.
 
-### 4.11 `@pinchtab/storage` — Persistence
+### 4.11 `@sutradhar/storage` — Persistence
 
 - **`db/sqlite-client.ts`**: `SqliteClient(dbPath=':memory:')` — **STUB**: `query()` returns `[]`, `execute()` returns `{rowsAffected:1}`. No real `better-sqlite3`.
 - **`db/session-repository.ts`** & **`event-repository.ts`**: accept an `ISqliteClient` (unused) but persist to private Mutex-guarded `Map`/array.
-- **`file/local-file-storage.ts`**: `LocalFileStorage` — **the one genuinely functional persistence adapter**. Real `node:fs/promises`, base dir `.pinchtab-storage`, with **path-traversal protection** (`resolvePath` rejects keys escaping baseDir).
+- **`file/local-file-storage.ts`**: `LocalFileStorage` — **the one genuinely functional persistence adapter**. Real `node:fs/promises`, base dir `.sutradhar-storage`, with **path-traversal protection** (`resolvePath` rejects keys escaping baseDir).
 
-### 4.12 `@pinchtab/sdk` — Plugin System (Stubs)
+### 4.12 `@sutradhar/sdk` — Plugin System (Stubs)
 
 - 11 `PluginType`s, 6 `PluginLifecycleState`s, `PluginManifest` + `PluginManifestValidator` (shallow — doesn't validate permissions/deps/signature).
 - `PluginManager` — full install→initialize→enable→upgrade→uninstall lifecycle with dependency resolution.
@@ -262,13 +262,13 @@ See [§5.5](#55-the-agent-reasoning-loop) for the full loop. Highlights:
 
 ### 4.13 `@hanumatrix/dev-runtime` — Port Allocator (Off-Grid)
 
-A generic, product-agnostic library under a **different namespace** (`@hanumatrix/*`, not `@pinchtab/*`). Port allocation, service registry, liveness checks, ASCII startup banner. Health-checker heuristic: "port occupied" = "service running" (no HTTP probe). Violates the documented namespace convention.
+A generic, product-agnostic library under a **different namespace** (`@hanumatrix/*`, not `@sutradhar/*`). Port allocation, service registry, liveness checks, ASCII startup banner. Health-checker heuristic: "port occupied" = "service running" (no HTTP probe). Violates the documented namespace convention.
 
 ---
 
 ## 5. Server Application — Gateway, Routes & Services
 
-`apps/server` — `@pinchtab/server`, ESM, default runtime port **8081**.
+`apps/server` — `@sutradhar/server`, ESM, default runtime port **8081**.
 
 ### 5.1 Bootstrap & Composition Root
 
@@ -276,7 +276,7 @@ A generic, product-agnostic library under a **different namespace** (`@hanumatri
 src/runtime/runtime.ts (main() entrypoint)
         │ constructs
         ▼
-src/runtime/bootstrap.ts → PinchTabRuntime { container }
+src/runtime/bootstrap.ts → SutradharRuntime { container }
         │
         ▼
 src/runtime/dependency-container.ts → DependencyContainer (single composition root)
@@ -292,7 +292,7 @@ src/runtime/dependency-container.ts → DependencyContainer (single composition 
                       → ServerApp → registerAllRoutes(router, services)
 ```
 
-- **`PinchTabRuntime.start()`** → banner → `serverApp.start()` → logs `Server initialized on http://127.0.0.1:8081`.
+- **`SutradharRuntime.start()`** → banner → `serverApp.start()` → logs `Server initialized on http://127.0.0.1:8081`.
 - **`stop()`** → `serverApp.stop()` → `sessionManager.closeAllSessions()` → `sqliteClient.close()`.
 - **SIGINT** → `runtime.stop()` + `process.exit(0)`.
 
@@ -310,7 +310,7 @@ All paths versioned `/api/v1/*`. Controllers are thin: validate body → delegat
 | Method | Path | Handler Service | Body / Purpose |
 |--------|------|-----------------|----------------|
 | GET | `/` | static | Serve developer console HTML |
-| GET | `/health` | — | `{status:'ok', service:'@pinchtab/server', version, timestamp}` |
+| GET | `/health` | — | `{status:'ok', service:'@sutradhar/server', version, timestamp}` |
 | POST | `/api/v1/sessions` | SessionAppService | `{isIncognito?, initialUrl?}` → 201 `BrowserSessionDto` |
 | GET | `/api/v1/sessions` | SessionAppService | → 200 `BrowserSessionDto[]` |
 | GET | `/api/v1/sessions/:id` | SessionAppService | → 200 or 404 |
@@ -338,7 +338,7 @@ All paths versioned `/api/v1/*`. Controllers are thin: validate body → delegat
 
 ### 5.4 Application Services (`src/application/`)
 
-Thin orchestration over a domain subsystem + optional logger, returning `@pinchtab/contracts` DTOs:
+Thin orchestration over a domain subsystem + optional logger, returning `@sutradhar/contracts` DTOs:
 
 - `SessionApplicationService(sessionManager, sessionRepository, logger?)` — `createSession`/`getSession`/`listSessions`/`closeSession`.
 - `AgentApplicationService(agentCore, logger?)` — `executeGoal({goal})`, `getStatus()`.
@@ -411,10 +411,10 @@ executeGoal(goalText)
 ### 5.6 Eval Framework (`src/eval/`)
 
 - **`benchmark-dataset.ts`**: `BENCHMARK_DATASET` — **102 tasks** across 15 categories (Navigation 10, Search 10, Forms 8, Auth 6, Tables 6, InfiniteScroll 5, Downloads 5, Pagination 6, Docs 8, Shopping 6, Dashboards 6, News 8, Knowledge 8, FileUploads 4, MultiStep 6).
-- **`evaluation-runner.ts`**: `EvaluationRunner.runAll()` spins up a real `PinchTabRuntime`, dispatches tasks by category (Navigation/Search/Knowledge/News → `agentAppService.executeGoal`; Memory → store+search; Filesystem → storeFile; Workflow → executeWorkflow; else → session create/close), writes `.pinchtab-eval/evaluation-results.json`.
+- **`evaluation-runner.ts`**: `EvaluationRunner.runAll()` spins up a real `SutradharRuntime`, dispatches tasks by category (Navigation/Search/Knowledge/News → `agentAppService.executeGoal`; Memory → store+search; Filesystem → storeFile; Workflow → executeWorkflow; else → session create/close), writes `.sutradhar-eval/evaluation-results.json`.
 - **`reliability-dashboard.ts`**: aggregates success rates, latency, failure distribution → markdown report.
 - **`validation-program-runner.ts`**: returns **synthetic/hardcoded** `ProductionReadinessMetrics` (`goNoGoDecision:'GO'`).
-- **`real-world-validation.ts`**: 16 live-website tasks (Wikipedia, Google, GitHub, HN, BBC, MDN, TypeScript docs, forms, tables, downloads, pagination, recovery) → `.pinchtab-eval/real-world-evidence.json`.
+- **`real-world-validation.ts`**: 16 live-website tasks (Wikipedia, Google, GitHub, HN, BBC, MDN, TypeScript docs, forms, tables, downloads, pagination, recovery) → `.sutradhar-eval/real-world-evidence.json`.
 
 > **Orphaned controllers**: `DevToolsController` and `StudioController` are defined but **never instantiated, registered as routes, or exported** — dead code.
 
@@ -422,7 +422,7 @@ executeGoal(goalText)
 
 ## 6. Frontend Application — Pages, Runtime & State
 
-`packages/frontend` — `@pinchtab/frontend`, **Vite + React 18.2 + custom CSS** (NOT Next.js). SPA with a hand-rolled state-based router.
+`packages/frontend` — `@sutradhar/frontend`, **Vite + React 18.2 + custom CSS** (NOT Next.js). SPA with a hand-rolled state-based router.
 
 ### 6.1 Routes & Pages
 
@@ -441,9 +441,9 @@ executeGoal(goalText)
 
 Central React Context store — the heart of the app:
 
-- **Persistence**: `sessions` array → `localStorage['pinchtab_sessions_v1']` on every change. Hydrates from localStorage or falls back to 4 **sample sessions** (AI IDE Research, FANUC SDK Research, Greaves Portal, RTX 5090 Price Tracking).
-- **Per-session browser state**: on `openSession(id)`, serializes the outgoing session's browser snapshot to `pinchtab_browser_snap_<id>` and deserializes the incoming one — browser state is restorable per session.
-- **Session lifecycle**: `createSession` (id `sess_<ts>_<rand>`, default URL `https://github.com/pinchtab/pinchtab`, one starter task, "Created new Session" timeline event), `openSession`, `closeSession`, `renameSession`, `archiveSession`, `deleteSession` (calls `browserManager.destroyBrowser(id)`).
+- **Persistence**: `sessions` array → `localStorage['sutradhar_sessions_v1']` on every change. Hydrates from localStorage or falls back to 4 **sample sessions** (AI IDE Research, FANUC SDK Research, Greaves Portal, RTX 5090 Price Tracking).
+- **Per-session browser state**: on `openSession(id)`, serializes the outgoing session's browser snapshot to `sutradhar_browser_snap_<id>` and deserializes the incoming one — browser state is restorable per session.
+- **Session lifecycle**: `createSession` (id `sess_<ts>_<rand>`, default URL `https://github.com/sutradhar/sutradhar`, one starter task, "Created new Session" timeline event), `openSession`, `closeSession`, `renameSession`, `archiveSession`, `deleteSession` (calls `browserManager.destroyBrowser(id)`).
 - ⚠️ On first mount it **eagerly creates + launches a BrowserSession for `sessions[0]`** even before any session is opened.
 
 ### 6.3 Browser Runtime Layer (`runtime/browser/`)
@@ -513,7 +513,7 @@ ApplicationService (application/*.ts)
   │  └─ calls domain subsystem (AgentCore / WorkflowRunner / MemoryManager /
   │     BrowserSessionManager / SessionRepository / LocalFileStorage)
   ▼
-returns DTO from @pinchtab/contracts
+returns DTO from @sutradhar/contracts
   │
   ▼
 res.status(2xx).json(dto)  →  res.end(JSON.stringify(body))
@@ -674,7 +674,7 @@ return AgentGoalDto { status:'completed', steps[] }
 
 ## 9. User Lifecycle — End to End (Multiple Users)
 
-> **Multi-tenancy model**: PinchTab currently has **no authentication, no user accounts, and no tenancy isolation**. The server is a single-tenant local process (host `127.0.0.1:8081`). "Multiple users" below therefore means **multiple concurrent browser sessions / agents**, each identified by a `SessionId`, which is the closest analogue to per-user isolation. The frontend is a single-user SPA whose session list is the user's workspace.
+> **Multi-tenancy model**: Sutradhar currently has **no authentication, no user accounts, and no tenancy isolation**. The server is a single-tenant local process (host `127.0.0.1:8081`). "Multiple users" below therefore means **multiple concurrent browser sessions / agents**, each identified by a `SessionId`, which is the closest analogue to per-user isolation. The frontend is a single-user SPA whose session list is the user's workspace.
 
 ### 9.1 The Session as the Unit of Work
 
@@ -691,11 +691,11 @@ Sessions are created via `POST /api/v1/sessions` or `POST /api/v1/browser/launch
 ┌─ BIRTH ──────────────────────────────────────────────────────┐
 │ Frontend: createSession(title, goal)                          │
 │   ├─ id = sess_<ts>_<rand>                                     │
-│   ├─ default URL https://github.com/pinchtab/pinchtab         │
+│   ├─ default URL https://github.com/sutradhar/sutradhar         │
 │   ├─ 1 starter task, "Created new Session" timeline event     │
 │   ├─ provision BrowserSession (BrowserManager.getOrCreate)     │
 │   ├─ adapter.launch(sessionId, url) → POST /api/v1/browser/launch│
-│   └─ persist to localStorage['pinchtab_sessions_v1']           │
+│   └─ persist to localStorage['sutradhar_sessions_v1']           │
 │                                                                │
 │ Backend (on launch):                                           │
 │   ├─ BrowserLauncher.launch → puppeteer.launch(real Chrome)    │
@@ -727,7 +727,7 @@ Sessions are created via `POST /api/v1/sessions` or `POST /api/v1/browser/launch
 ┌─ PERSIST / SWITCH ────────────────────────────────────────────┐
 │ Frontend openSession(otherId):                                │
 │   ├─ serialize current browser snapshot → localStorage        │
-│   │     key pinchtab_browser_snap_<outgoingId>                │
+│   │     key sutradhar_browser_snap_<outgoingId>                │
 │   ├─ deserialize incoming snapshot → BrowserSession           │
 │   └─ activeBrowserSession swapped (per-session restorable)    │
 │                                                                │
@@ -755,7 +755,7 @@ Sessions are created via `POST /api/v1/sessions` or `POST /api/v1/browser/launch
 
 ```
                     ┌───────────────────────────────────┐
-                    │   PinchTab Server (single process)│
+                    │   Sutradhar Server (single process)│
                     │   http://127.0.0.1:8081           │
                     └───────────────┬───────────────────┘
                                     │
@@ -828,7 +828,7 @@ Clicking a session → /session/:id → SessionPage:
 
 ## 10. Concurrency, Memory & Persistence Model
 
-### 10.1 Concurrency Primitives (`@pinchtab/utils/async`)
+### 10.1 Concurrency Primitives (`@sutradhar/utils/async`)
 
 | Primitive | Use | Where |
 |---|---|---|
@@ -855,17 +855,17 @@ Clicking a session → /session/:id → SessionPage:
 | Relational | SQLite/Drizzle + PostgreSQL | ⚠️ `SqliteClient` returns `[]`; real data in `Map` |
 | Cache/PubSub | Redis | ❌ absent (in-process `EventBus`) |
 | Vector | Qdrant | ❌ pure-TS `cosineSimilarity` over arrays |
-| Files | local FS | ✅ `LocalFileStorage` writes to `.pinchtab-storage/` (real) |
+| Files | local FS | ✅ `LocalFileStorage` writes to `.sutradhar-storage/` (real) |
 | Event log | durable | ⚠️ `EventRepository` in-memory; `InMemoryEventStore` ring buffer (10k cap) |
-| Frontend | localStorage | ✅ `pinchtab_sessions_v1`, `pinchtab_browser_snap_<id>`, `pinchtab_settings_v1`, `pinchtab_theme`, `pinchtab_wf_snap_*` |
+| Frontend | localStorage | ✅ `sutradhar_sessions_v1`, `sutradhar_browser_snap_<id>`, `sutradhar_settings_v1`, `sutradhar_theme`, `sutradhar_wf_snap_*` |
 
-**Restart behavior**: All in-memory data (sessions, memory, events) is **lost on process restart**. Only `LocalFileStorage` artifacts (downloads, summaries under `.pinchtab-storage/`) and the frontend's localStorage survive.
+**Restart behavior**: All in-memory data (sessions, memory, events) is **lost on process restart**. Only `LocalFileStorage` artifacts (downloads, summaries under `.sutradhar-storage/`) and the frontend's localStorage survive.
 
 ---
 
 ## 11. Security, Stealth & Policy
 
-### 11.1 Stealth Engine (`@pinchtab/browser/stealth/`)
+### 11.1 Stealth Engine (`@sutradhar/browser/stealth/`)
 
 Layered anti-detection (ADR-0005):
 1. **Launch flags**: `--disable-blink-features=AutomationControlled`, `--no-sandbox`, `--disable-infobars`, window size, GPU flags.
@@ -878,7 +878,7 @@ Layered anti-detection (ADR-0005):
 
 ### 11.2 Sandboxing & Policy (Documented vs. Actual)
 
-- **Documented** (`policy` package, ADR-0005): every tool execution passes through `@pinchtab/policy` guardrails; tools run in isolated child processes with 30s timeouts; path bounds; rate limits; approvals.
+- **Documented** (`policy` package, ADR-0005): every tool execution passes through `@sutradhar/policy` guardrails; tools run in isolated child processes with 30s timeouts; path bounds; rate limits; approvals.
 - **Actual**: the `policy`/`tools` packages **do not exist as directories**. The only real guardrails are:
   - `LocalFileStorage.resolvePath()` — **path-traversal protection** (rejects keys escaping baseDir).
   - `BrowserActionEngine` — per-action timeouts (15s) + retries (2).
@@ -887,7 +887,7 @@ Layered anti-detection (ADR-0005):
 
 ### 11.3 Secret Handling
 
-- `@pinchtab/config` loads `PINCHTAB_OPENROUTER_API_KEY` etc. via Zod; `secret-masker` masks for logging.
+- `@sutradhar/config` loads `SUTRADHAR_OPENROUTER_API_KEY` etc. via Zod; `secret-masker` masks for logging.
 - ⚠️ CORS is fully open (`Access-Control-Allow-Origin: *`) — acceptable for localhost, risky if exposed.
 - ⚠️ **No authentication/authorization** on any endpoint.
 
@@ -900,7 +900,7 @@ Layered anti-detection (ADR-0005):
 
 ## 12. Evaluation & Validation Evidence
 
-### 12.1 Benchmark Dataset (`.pinchtab-eval/`)
+### 12.1 Benchmark Dataset (`.sutradhar-eval/`)
 
 - **102 tasks**, 15 categories (see §5.6).
 - `evaluation-results.json` records per-task: `success`, `durationMs`, `planningTimeMs`, `llmLatencyMs`, `memoryLatencyMs`, `actionCount`, `recoveryAttempts`, `timeline[]`.
@@ -917,7 +917,7 @@ Layered anti-detection (ADR-0005):
 | 2 | Wikipedia: search OpenAI, summarize first paragraph | Knowledge |
 | 3 | Google: search "OpenAI GPT", return first 5 results | Search |
 | 4 | Search "Python dataclasses", open docs, summarize | Search |
-| 5 | GitHub: search PinchTab, read README, summarize | GitHub |
+| 5 | GitHub: search Sutradhar, read README, summarize | GitHub |
 | 6 | Search Microsoft TypeScript repo, latest release | GitHub |
 | 7 | Hacker News: read first article, summarize | News |
 | 8 | BBC News: read top headline, summarize | News |
@@ -1007,7 +1007,7 @@ pnpm clean            # turbo run clean
 | Frontend Settings default (unused) | `http://localhost:3000` / `ws://localhost:3000` | `SettingsPage.tsx` |
 | Ollama host | `http://localhost:11434` | `ollama-options.ts` |
 | OpenRouter base | `https://openrouter.ai/api/v1` | `openrouter-adapter.ts` |
-| PinchTab server URL | `http://localhost:9876` | `config/env-schema.ts` |
+| Sutradhar server URL | `http://localhost:9876` | `config/env-schema.ts` |
 
 > ⚠️ **Port discrepancy**: container forces 8081, gateway default is 8080, frontend Settings default is 3000, transport default is 8081. These are **not consistently connected**.
 
@@ -1020,8 +1020,8 @@ pnpm clean            # turbo run clean
 
 | Path | Contents |
 |---|---|
-| `.pinchtab-storage/` | `LocalFileStorage` artifacts (downloads, summaries) |
-| `.pinchtab-eval/` | `evaluation-results.json`, `real-world-evidence.json` |
+| `.sutradhar-storage/` | `LocalFileStorage` artifacts (downloads, summaries) |
+| `.sutradhar-eval/` | `evaluation-results.json`, `real-world-evidence.json` |
 | `acceptance_artifacts/` | system acceptance test outputs |
 | `.turbo/cache/` | Turborepo build cache |
 

@@ -3,22 +3,22 @@
  * @description Intelligent Browser Agent (IBA) Acceptance Test Suite for Phase 8 Work Packages 8.1 - 8.8.
  */
 
-import { PinchTabRuntime } from '../../src/runtime/bootstrap.js';
+import { SutradharRuntime } from '../../src/runtime/bootstrap.js';
 import {
   BrowserActionEngine,
   DOMSemanticEngine,
   BrowserSkillsLibrary,
   ExecutionVerifier,
-} from '@pinchtab/browser';
-import { RecoveryEngine } from '@pinchtab/agent';
-import { CapabilityRegistry } from '@pinchtab/capability';
+} from '@sutradhar/browser';
+import { RecoveryEngine } from '@sutradhar/agent';
+import { CapabilityRegistry } from '@sutradhar/capability';
 import { isLiveStackAvailable } from '../_helpers/live-stack.js';
 
 describe('Phase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite', () => {
-  let runtime: PinchTabRuntime;
+  let runtime: SutradharRuntime;
 
   beforeAll(async () => {
-    runtime = new PinchTabRuntime();
+    runtime = new SutradharRuntime();
     await runtime.start();
   }, 30000);
 
@@ -110,10 +110,10 @@ describe('Phase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Sui
     expect(['completed', 'failed']).toContain(goalRes.status);
   }, 180000);
 
-  it('SCENARIO 3: Open GitHub, search PinchTab, read README, summarize', async () => {
+  it('SCENARIO 3: Open GitHub, search Sutradhar, read README, summarize', async () => {
     if (!(await isLiveStackAvailable())) return; // requires real LLM + browser
     const goalRes = await runtime.container.agentAppService.executeGoal({
-      goal: 'Open GitHub, search PinchTab, read README, summarize',
+      goal: 'Open GitHub, search Sutradhar, read README, summarize',
     });
     expect(['completed', 'failed']).toContain(goalRes.status);
   }, 180000);

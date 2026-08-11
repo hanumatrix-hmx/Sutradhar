@@ -1,11 +1,11 @@
 /**
- * @file packages/pinchtab/src/page.ts
+ * @file packages/sutradhar/src/page.ts
  * @description Puppeteer-style {@link Page} — a handle to a single browser tab. All verbs
- * delegate to the proven {@link PinchTabRuntime} substrate, so behavior is identical to the
+ * delegate to the proven {@link SutradharRuntime} substrate, so behavior is identical to the
  * MCP server and the REST API.
  */
 
-import type { PinchTabRuntime, SnapshotResult } from '@pinchtab/capability-runtime';
+import type { SutradharRuntime, SnapshotResult } from '@sutradhar/capability-runtime';
 
 /** Options accepted by {@link Page.click} / {@link Page.type}. */
 export interface ElementOptions {
@@ -23,7 +23,7 @@ export interface ScreenshotOptions {
 
 /**
  * A handle to one tab in a {@link Browser}. Mirrors the Puppeteer/Playwright Page surface
- * so it feels native, but every call goes through {@link PinchTabRuntime} (the same engine
+ * so it feels native, but every call goes through {@link SutradharRuntime} (the same engine
  * the MCP server and REST API use).
  *
  * @example
@@ -35,7 +35,7 @@ export interface ScreenshotOptions {
  */
 export class Page {
   /** @internal */ public constructor(
-    private readonly runtime: PinchTabRuntime,
+    private readonly runtime: SutradharRuntime,
     private readonly sessionId: string,
     /** This page's tab id within the session. */
     public readonly tabId: string,
@@ -58,7 +58,7 @@ export class Page {
 
   /**
    * Click an element. `selector` may be a CSS selector OR a numeric [#id] from
-   * {@link Page.snapshot} (e.g. `"7"` resolves to `[data-pt-node-id="7"]`).
+   * {@link Page.snapshot} (e.g. `"7"` resolves to `[data-sd-node-id="7"]`).
    */
   public async click(selector: string, _options?: ElementOptions): Promise<void> {
     await this.runtime.click(this.sessionId, selector, this.tabId);

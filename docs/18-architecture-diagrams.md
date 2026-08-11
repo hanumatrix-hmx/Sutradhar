@@ -13,9 +13,9 @@ References ADRs:
   - 0002-browser-runtime
   - 0003-provider-contract
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/orchestrator'
-  - '@pinchtab/runtime'
+  - '@sutradhar/contracts'
+  - '@sutradhar/orchestrator'
+  - '@sutradhar/runtime'
 ---
 
 # Architecture Diagrams & Sequence Flows
@@ -31,14 +31,14 @@ Related Packages:
                ▼                              ▼
 ┌──────────────────────────────┐ ┌────────────────────────────┐
 │      Orchestrator Engine     │ │      Execution Runtime     │
-│   (@pinchtab/orchestrator)   │ │    (@pinchtab/runtime)     │
+│   (@sutradhar/orchestrator)   │ │    (@sutradhar/runtime)     │
 └──────────────┬───────────────┘ └────────────┬───────────────┘
                │                              │
                └──────────────┬───────────────┘
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                   Infrastructure Providers                  │
-│       @pinchtab/browser | @pinchtab/llm | @pinchtab/memory  │
+│       @sutradhar/browser | @sutradhar/llm | @sutradhar/memory  │
 └─────────────────────────────────────────────────────────────┘
 ```
 

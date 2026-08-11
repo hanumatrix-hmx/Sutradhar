@@ -1,8 +1,8 @@
 // Live smoke test for Wave 11: browser.health, browser.shutdown_all, error-hint enrichment,
 // and session:blocked actually reaching an agent.runGoal response — all through the real
-// createPinchTabServer() wiring (not a raw PinchTabRuntime), so the EventBus-sharing fix in
+// createSutradharServer() wiring (not a raw SutradharRuntime), so the EventBus-sharing fix in
 // server.ts is exercised for real.
-import { PinchTabRuntime } from '../../capability-runtime/dist/index.js';
+import { SutradharRuntime } from '../../capability-runtime/dist/index.js';
 import { AgentCore } from '../../agent/dist/index.js';
 import { registerTools } from '../dist/tools.js';
 import { StructuredLogger } from '../../observability/dist/index.js';
@@ -17,7 +17,7 @@ function makeMockServer() {
 }
 
 const logger = new StructuredLogger({ minLevel: 'warn' });
-const runtime = new PinchTabRuntime({ logger });
+const runtime = new SutradharRuntime({ logger });
 
 // Scripted "LLM": first turn navigates nowhere useful — detectBlock will fire on the OAuth
 // wall page created below before the model even gets a real turn, so the stub only needs to

@@ -34,7 +34,7 @@ Overall Progress: Core loop functional
   The old fake string-returning adapters are gone.
 - **Real browser automation** (`packages/browser`): launches real Chrome via
   `puppeteer-core`; `BrowserActionEngine` executes 19 real actions;
-  `DOMSemanticEngine` stamps elements with `data-pt-node-id` so the agent can
+  `DOMSemanticEngine` stamps elements with `data-sd-node-id` so the agent can
   target elements by id.
 - **Real agent loop** (`packages/agent` `agent-loop.ts`): genuine ReAct loop —
   builds a DOM observation (including visible page text), asks the real LLM for
@@ -42,7 +42,7 @@ Overall Progress: Core loop functional
   `if(goal.includes('github'))` theater is removed.
 - **Server wiring**: `dependency-container.ts` wires the real auto-detected LLM
   provider into `AgentCore`; `POST /api/v1/agents/goals` runs the real loop.
-- **End-to-end proof**: `scripts/run-agent.ts` + `.pinchtab-eval/real-world-evidence.json`
+- **End-to-end proof**: `scripts/run-agent.ts` + `.sutradhar-eval/real-world-evidence.json`
   capture a REAL run (Alan Turing birth date → "23 June 1912", correct).
 
 ## What Is Still Stub / Not Yet Real (honest gaps)

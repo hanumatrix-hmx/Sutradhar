@@ -11,20 +11,20 @@ Depends on ADRs:
   - 0001-monorepo
   - 0004-agent-architecture
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/capability'
-  - '@pinchtab/utils'
-  - '@pinchtab/config'
-  - '@pinchtab/observability'
-  - '@pinchtab/events'
-  - '@pinchtab/browser'
-  - '@pinchtab/llm'
-  - '@pinchtab/memory'
+  - '@sutradhar/contracts'
+  - '@sutradhar/capability'
+  - '@sutradhar/utils'
+  - '@sutradhar/config'
+  - '@sutradhar/observability'
+  - '@sutradhar/events'
+  - '@sutradhar/browser'
+  - '@sutradhar/llm'
+  - '@sutradhar/memory'
 ---
 
-# @pinchtab/agent
+# @sutradhar/agent
 
-> Autonomous agent execution core, state machine, goal planning engine, step executor, and reflection subsystem for PinchTab.
+> Autonomous agent execution core, state machine, goal planning engine, step executor, and reflection subsystem for Sutradhar.
 
 ## Package Architectural Invariants
 

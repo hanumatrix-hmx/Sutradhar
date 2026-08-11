@@ -1,6 +1,6 @@
-// Headless smoke test for @pinchtab/capability-runtime — line-buffered + watchdog.
+// Headless smoke test for @sutradhar/capability-runtime — line-buffered + watchdog.
 // Run directly (no pipe): node packages/capability-runtime/scripts/smoke-headless.mjs
-import { PinchTabRuntime } from '../dist/index.js';
+import { SutradharRuntime } from '../dist/index.js';
 
 const log = (m) => console.log(`[${new Date().toISOString().slice(11, 23)}] ${m}`);
 const watchdog = setTimeout(() => {
@@ -8,7 +8,7 @@ const watchdog = setTimeout(() => {
   process.exit(2);
 }, 60000);
 
-const runtime = new PinchTabRuntime();
+const runtime = new SutradharRuntime();
 let sessionId;
 
 try {

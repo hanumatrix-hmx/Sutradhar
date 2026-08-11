@@ -10,11 +10,11 @@ import {
   createPlanId,
   createTaskId,
   createStepId,
-} from '@pinchtab/contracts';
-import { StructuredLogger } from '@pinchtab/observability';
-import { ILlmProvider } from '@pinchtab/llm';
+} from '@sutradhar/contracts';
+import { StructuredLogger } from '@sutradhar/observability';
+import { ILlmProvider } from '@sutradhar/llm';
 import { TaskGraph } from '../graph/task-graph-models.js';
-import { EpisodicMemoryManager } from '@pinchtab/memory';
+import { EpisodicMemoryManager } from '@sutradhar/memory';
 
 export class GoalPlanner {
   private readonly _llmProvider?: ILlmProvider;

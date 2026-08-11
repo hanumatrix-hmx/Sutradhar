@@ -4,11 +4,11 @@
  */
 
 import { WorkflowGraph, WorkflowRunner } from '../../src/index.js';
-import { createWorkflowId } from '@pinchtab/contracts';
-import { EventBus } from '@pinchtab/events';
-import { AgentCore } from '@pinchtab/agent';
+import { createWorkflowId } from '@sutradhar/contracts';
+import { EventBus } from '@sutradhar/events';
+import { AgentCore } from '@sutradhar/agent';
 
-describe('@pinchtab/workflow Multi-Agent Execution Engine', () => {
+describe('@sutradhar/workflow Multi-Agent Execution Engine', () => {
   it('should traverse a valid DAG and emit lifecycle domain events', async () => {
     const bus = new EventBus();
     const workflowEvents: string[] = [];

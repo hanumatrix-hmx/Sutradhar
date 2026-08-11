@@ -8,8 +8,8 @@ Review Frequency: Quarterly
 Related ADRs:
   - 0002-browser-runtime
 Related Packages:
-  - '@pinchtab/browser'
-  - '@pinchtab/runtime'
+  - '@sutradhar/browser'
+  - '@sutradhar/runtime'
 ---
 
 # Browser Runtime & Lifecycle Architecture

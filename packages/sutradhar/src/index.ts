@@ -1,13 +1,13 @@
 /**
- * @file packages/pinchtab/src/index.ts
- * @description PinchTab — embeddable AI browser automation SDK.
+ * @file packages/sutradhar/src/index.ts
+ * @description Sutradhar — embeddable AI browser automation SDK.
  *
  * Drive a real Chrome/Edge with a Puppeteer-style API, with semantic DOM snapshots built
  * for AI agents. The single entry point is {@link launch}; everything else flows from the
  * returned {@link Browser}.
  *
  * @example
- * import { launch } from 'pinchtab';
+ * import { launch } from 'sutradhar';
  *
  * const browser = await launch();                  // launches headless Chrome
  * const page = await browser.newPage();
@@ -21,10 +21,10 @@
  * await browser.close();
  */
 
-import { PinchTabRuntime } from '@pinchtab/capability-runtime';
+import { SutradharRuntime } from '@sutradhar/capability-runtime';
 import { Browser, type LaunchOptions } from './browser.js';
 
-export const PINCHTAB_VERSION = '0.1.0';
+export const SUTRADHAR_VERSION = '0.1.0';
 
 /**
  * Launch a browser and return a {@link Browser} handle. Resolves once the browser process
@@ -34,7 +34,7 @@ export const PINCHTAB_VERSION = '0.1.0';
  * const browser = await launch({ url: 'https://example.com' });
  */
 export async function launch(options: LaunchOptions = {}): Promise<Browser> {
-  const runtime = new PinchTabRuntime();
+  const runtime = new SutradharRuntime();
   const result = await runtime.launch({
     initialUrl: options.url,
     isIncognito: options.isIncognito,
@@ -44,7 +44,7 @@ export async function launch(options: LaunchOptions = {}): Promise<Browser> {
     // Clean up the useless session before throwing so we don't leak a browser process.
     await runtime.shutdown(result.sessionId).catch(() => {});
     throw new Error(
-      'PinchTab launched but no real browser page is available. Ensure Chrome/Edge is ' +
+      'Sutradhar launched but no real browser page is available. Ensure Chrome/Edge is ' +
         'installed, or set CHROME_PATH to the executable.',
     );
   }
@@ -53,4 +53,4 @@ export async function launch(options: LaunchOptions = {}): Promise<Browser> {
 
 export { Browser, type LaunchOptions } from './browser.js';
 export { Page, type ElementOptions, type ScreenshotOptions } from './page.js';
-export { PinchTabRuntime, type SnapshotResult } from '@pinchtab/capability-runtime';
+export { SutradharRuntime, type SnapshotResult } from '@sutradhar/capability-runtime';

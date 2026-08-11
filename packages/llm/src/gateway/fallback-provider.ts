@@ -7,9 +7,9 @@
  * active provider is tracked and exposed via `activeProviderId`.
  */
 
-import { CapabilityMatrix } from '@pinchtab/capability';
-import { CompletionRequestDto, CompletionResponseDto, StreamChunkDto } from '@pinchtab/contracts';
-import { StructuredLogger } from '@pinchtab/observability';
+import { CapabilityMatrix } from '@sutradhar/capability';
+import { CompletionRequestDto, CompletionResponseDto, StreamChunkDto } from '@sutradhar/contracts';
+import { StructuredLogger } from '@sutradhar/observability';
 import { ILlmProvider } from './llm-provider.js';
 
 export interface FallbackProviderOptions {

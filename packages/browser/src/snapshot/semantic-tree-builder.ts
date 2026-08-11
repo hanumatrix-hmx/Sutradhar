@@ -3,7 +3,7 @@
  * @description Builder for transforming element DTO arrays into human/LLM readable indented semantic trees.
  */
 
-import { BrowserElementDto } from '@pinchtab/contracts';
+import { BrowserElementDto } from '@sutradhar/contracts';
 
 export class SemanticTreeBuilder {
   /**

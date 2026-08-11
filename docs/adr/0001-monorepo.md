@@ -8,7 +8,7 @@ Owner: Principal Software Architect
 Date: 2026-07-28
 Superseded Versions: None
 Related Packages:
-  - '@pinchtab/contracts'
+  - '@sutradhar/contracts'
   - 'apps/server'
   - 'apps/web'
 ---
@@ -41,7 +41,7 @@ The repository is partitioned strictly into:
 
 - Strict hexagonal layer isolation enforced across package boundaries.
 - Unified build pipelines (`turbo build`, `turbo test`) with remote caching and parallel execution.
-- Single source of truth for contracts (`@pinchtab/contracts`) across apps and libraries.
+- Single source of truth for contracts (`@sutradhar/contracts`) across apps and libraries.
 
 ### Negative
 

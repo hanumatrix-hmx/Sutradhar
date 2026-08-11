@@ -8,8 +8,8 @@ Owner: Principal Software Architect
 Date: 2026-07-28
 Superseded Versions: None
 Related Packages:
-  - '@pinchtab/tools'
-  - '@pinchtab/policy'
+  - '@sutradhar/tools'
+  - '@sutradhar/policy'
 ---
 
 # ADR 0005: Extensible Typed Tool System & Policy Guardrails
@@ -20,10 +20,10 @@ AI agents interact with browsers, filesystems, HTTP endpoints, and shell instanc
 
 ## 2. Decision
 
-We decide to build a **Standardized Tool Interface** (`@pinchtab/tools`) governed by an intercepting **Policy Guardrail Layer** (`@pinchtab/policy`).
+We decide to build a **Standardized Tool Interface** (`@sutradhar/tools`) governed by an intercepting **Policy Guardrail Layer** (`@sutradhar/policy`).
 
 - Every tool implements `ITool<TInput, TOutput>` with Zod input validation schemas.
-- Every tool execution passes through `@pinchtab/policy` interceptors enforcing permission masks, path constraints, and rate limits.
+- Every tool execution passes through `@sutradhar/policy` interceptors enforcing permission masks, path constraints, and rate limits.
 - Tool actions run inside isolated child processes with 30-second timeout limits.
 
 ## 3. Alternatives Considered

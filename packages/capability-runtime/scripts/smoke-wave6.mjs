@@ -1,7 +1,7 @@
 // Live smoke test for Wave 6: right-click, drag-and-drop, touch tap, real file download,
 // PDF export, structured extraction, screenshot-on-failure, and action-history.
 // Run directly (no pipe): node packages/capability-runtime/scripts/smoke-wave6.mjs
-import { PinchTabRuntime } from '../dist/index.js';
+import { SutradharRuntime } from '../dist/index.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,7 +19,7 @@ const watchdog = setTimeout(() => {
   process.exit(2);
 }, 90000);
 
-const runtime = new PinchTabRuntime();
+const runtime = new SutradharRuntime();
 let sessionId;
 
 try {

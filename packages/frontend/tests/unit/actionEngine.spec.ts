@@ -32,7 +32,7 @@ import { BrowserRuntime } from '../../src/runtime/browser/browserRuntime.js';
 import { MockBrowserAdapter } from '../_mocks/MockBrowserAdapter.js';
 import { ActionContext } from '../../src/runtime/actions/actionContext.js';
 
-describe('@pinchtab/frontend Milestone 6 — Browser Action Engine', () => {
+describe('@sutradhar/frontend Milestone 6 — Browser Action Engine', () => {
   const adapter = new MockBrowserAdapter();
   const runtime = new BrowserRuntime('sess_act_test', adapter);
 
@@ -119,7 +119,7 @@ describe('@pinchtab/frontend Milestone 6 — Browser Action Engine', () => {
     expect(clickRes.success).toBe(true);
 
     const typeRes = await executor.execute(
-      new TypeTextAction({ selector: 'input[name="q"]', text: 'PinchTab' }),
+      new TypeTextAction({ selector: 'input[name="q"]', text: 'Sutradhar' }),
       context,
     );
     expect(typeRes.success).toBe(true);

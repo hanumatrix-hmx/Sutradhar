@@ -90,7 +90,7 @@ export class ReliabilityDashboard {
 
   public static renderMarkdownReport(data: ReliabilityReportData): string {
     return `
-# PinchTab Agent Evaluation & Reliability Report
+# Sutradhar Agent Evaluation & Reliability Report
 
 ## Overall Autonomous Task Execution Metric
 - **Total Tasks Evaluated**: ${data.totalTasks}

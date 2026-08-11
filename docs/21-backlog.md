@@ -11,8 +11,8 @@ Depends on ADRs:
 References ADRs:
   - 0002-browser-runtime
 Related Packages:
-  - '@pinchtab/browser'
-  - '@pinchtab/llm'
+  - '@sutradhar/browser'
+  - '@sutradhar/llm'
 ---
 
 # Project Feature & Technical Backlog

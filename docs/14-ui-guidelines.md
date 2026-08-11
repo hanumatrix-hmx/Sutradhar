@@ -8,7 +8,7 @@ Review Frequency: Quarterly
 Related ADRs:
   - 0001-monorepo
 Related Packages:
-  - '@pinchtab/ui'
+  - '@sutradhar/ui'
   - 'apps/web'
 ---
 

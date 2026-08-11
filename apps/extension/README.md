@@ -1,7 +1,7 @@
-# PinchTab Browser Extension
+# Sutradhar Browser Extension
 
 Drive your **real, logged-in browser** with an AI agent. This extension connects Chrome to
-the PinchTab runtime, so the agent can operate on sites behind your SSO/2FA — the use case
+the Sutradhar runtime, so the agent can operate on sites behind your SSO/2FA — the use case
 headless Chrome cannot reach.
 
 > **Status: MVP.** The engine's attach mode is built and verified. The extension UI is built.
@@ -11,7 +11,7 @@ headless Chrome cannot reach.
 
 ```
 ┌──────────────┐      goal       ┌─────────────────┐    CDP attach    ┌─────────────────┐
-│  Extension   │ ──────────────▶ │ PinchTab server │ ───────────────▶ │  Your Chrome    │
+│  Extension   │ ──────────────▶ │ Sutradhar server │ ───────────────▶ │  Your Chrome    │
 │  (this popup)│ ◀────────────── │  (port 8081)    │ ◀─────────────── │ (--remote-debug │
 └──────────────┘     result      └─────────────────┘   snapshots/      │  ging-port=9222)│
                                        ▲  actions       clicks          └─────────────────┘
@@ -19,13 +19,13 @@ headless Chrome cannot reach.
                                        └───────── LLM (Ollama/OpenRouter) ◀──────────────┘
 ```
 
-The agent lives on the PinchTab server (which needs an LLM — see below). It **attaches** to
+The agent lives on the Sutradhar server (which needs an LLM — see below). It **attaches** to
 your Chrome over the DevTools Protocol and drives it. Your browser's cookies and login state
 are the source of truth.
 
 ## Setup
 
-### 1. Run the PinchTab server
+### 1. Run the Sutradhar server
 
 From the monorepo root:
 
@@ -48,7 +48,7 @@ ollama pull qwen3.5:9b   # once, to fetch the model
 
 ### 2. Launch Chrome with remote debugging
 
-The PinchTab server attaches to Chrome over CDP. You must launch Chrome with a debugging
+The Sutradhar server attaches to Chrome over CDP. You must launch Chrome with a debugging
 port so it's reachable. **Fully quit Chrome first** (all windows), then relaunch with:
 
 **Windows (PowerShell):**
@@ -78,12 +78,12 @@ see a JSON response with a `webSocketDebuggerUrl`.
 1. Open `chrome://extensions` (or `edge://extensions`).
 2. Enable **Developer mode** (top-right toggle).
 3. Click **Load unpacked** and select the `apps/extension/` folder.
-4. Pin the PinchTab icon to your toolbar.
+4. Pin the Sutradhar icon to your toolbar.
 
 ### 4. Use it
 
-1. Click the PinchTab icon. The popup should show **"connected"** (green) — this confirms the
-   PinchTab server is reachable. If it says "no server", check the server is running.
+1. Click the Sutradhar icon. The popup should show **"connected"** (green) — this confirms the
+   Sutradhar server is reachable. If it says "no server", check the server is running.
 2. In Settings, confirm the **debug port** matches what you launched Chrome with (default 9222).
 3. Type a goal (e.g. *"On the current page, find the contact email"*) and click **Run goal**.
 4. The agent attaches to your Chrome, reads the page, and works toward the goal.
@@ -92,17 +92,17 @@ see a JSON response with a `webSocketDebuggerUrl`.
 
 | | `launch()` (headless) | `attach()` (this extension's path) |
 |---|---|---|
-| Browser | PinchTab spawns a fresh headless Chrome | PinchTab connects to **your** Chrome |
+| Browser | Sutradhar spawns a fresh headless Chrome | Sutradhar connects to **your** Chrome |
 | Login state | None — clean profile | **Your** cookies/SSO/2FA |
 | Where it runs | Server-side, scalable | Per-user, on your machine |
-| Tabs | PinchTab owns them | Opens a new tab *in your browser* |
+| Tabs | Sutradhar owns them | Opens a new tab *in your browser* |
 | Use case | Public sites, scraping, testing | Internal tools, Gmail, anything behind your login |
 
 ## What to test (since you're doing the real-browser verification)
 
 When you load the extension, please check:
 
-1. **Popup status shows "connected"** with the PinchTab server running.
+1. **Popup status shows "connected"** with the Sutradhar server running.
 2. **Settings save** (server URL + debug port persist after reopening the popup).
 3. **A goal runs end-to-end**: type a simple goal, click Run, and confirm the agent attaches
    to your Chrome (you should see a new tab open / navigation happen) and returns an answer.
@@ -117,11 +117,11 @@ If anything fails, the most common issues are:
 
 ## Programmatic attach (without the extension UI)
 
-The attach capability is in the `pinchtab` SDK too, for programmatic use:
+The attach capability is in the `sutradhar` SDK too, for programmatic use:
 
 ```ts
-import { PinchTabRuntime } from 'pinchtab';
-const rt = new PinchTabRuntime();
+import { SutradharRuntime } from 'sutradhar';
+const rt = new SutradharRuntime();
 const { sessionId } = await rt.attach({ endpoint: 'http://127.0.0.1:9222' });
 await rt.navigate(sessionId, 'https://example.com');
 ```
@@ -133,7 +133,7 @@ your browser and drive it.
 
 Today, Chrome must be launched with `--remote-debugging-port`. The seamless upgrade: use the
 extension's `chrome.debugger` API to expose the active tab over CDP and relay frames to the
-PinchTab server over a WebSocket — removing the launch-flag requirement entirely. That needs
+Sutradhar server over a WebSocket — removing the launch-flag requirement entirely. That needs
 a full CDP-bridge implementation in the background worker (multi-day work) and is the
 documented next step for this surface.
 

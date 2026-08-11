@@ -26,7 +26,7 @@ import {
 import { getAgentStatus, updateLlmConfig } from '../../runtime/api/client.js';
 import { IconAlert, IconCheckCircle, IconRefresh } from '../../components/ui/icons.js';
 
-const SETTINGS_KEY = 'pinchtab_settings_v1';
+const SETTINGS_KEY = 'sutradhar_settings_v1';
 
 interface Settings {
   apiUrl: string;

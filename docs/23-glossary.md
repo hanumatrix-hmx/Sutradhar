@@ -11,7 +11,7 @@ Depends on ADRs:
 References ADRs:
   - 0001-monorepo
 Related Packages:
-  - '@pinchtab/contracts'
+  - '@sutradhar/contracts'
 ---
 
 # Ubiquitous Domain Language & Glossary
@@ -25,7 +25,7 @@ Related Packages:
 - **Episodic Memory**: Permanent storage capturing historical agent execution traces and observations.
 - **Hexagonal Architecture**: Architectural pattern decoupling core domain logic from external infrastructure via contracts and adapters.
 - **Inspector**: The interactive Next.js dashboard used to observe agent reasoning, live browser views, and event streams.
-- **PinchTab**: Primary headless/headed browser control server and protocol.
+- **Sutradhar**: Primary headless/headed browser control server and protocol.
 - **Procedural Memory**: Vector-indexed repository of verified, reusable web action sequences.
 - **Semantic Memory**: Vector database storing domain facts and ingested document knowledge.
 - **Working Memory**: In-memory ring buffer representing the current active LLM prompt context window.

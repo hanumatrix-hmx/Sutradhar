@@ -1,7 +1,7 @@
 /**
  * @file packages/capability-runtime/src/audit/visual-compare.ts
  * @description Pixel-level visual regression comparison between two screenshots — real
- * PinchTab's `pinchtab compare <url1> <url2> --fail-on-diff`. Built on `pixelmatch` (pure
+ * Sutradhar's `sutradhar compare <url1> <url2> --fail-on-diff`. Built on `pixelmatch` (pure
  * pixel-diff algorithm) + `pngjs` (PNG encode/decode) — small, dependency-free/near-dependency-
  * free libraries doing exactly this one job, rather than hand-rolling PNG parsing.
  */

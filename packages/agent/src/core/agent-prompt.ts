@@ -43,7 +43,7 @@ export interface AgentAction {
   readonly summary?: string;
 }
 
-export const AGENT_SYSTEM_PROMPT = `You are PinchTab, an autonomous web browser agent. You achieve the user's goal by reasoning step by step and acting on a live web page through a real browser.
+export const AGENT_SYSTEM_PROMPT = `You are Sutradhar, an autonomous web browser agent. You achieve the user's goal by reasoning step by step and acting on a live web page through a real browser.
 
 # How you perceive the page
 Each turn you receive the current URL, title, a numbered list of the page's interactive elements, and an excerpt of the visible page text. Each element looks like:

@@ -3,9 +3,9 @@
  * @description Event repository implementation for persisting domain event records.
  */
 
-import { IDomainEvent } from '@pinchtab/contracts';
-import { Mutex } from '@pinchtab/utils';
-import { StructuredLogger } from '@pinchtab/observability';
+import { IDomainEvent } from '@sutradhar/contracts';
+import { Mutex } from '@sutradhar/utils';
+import { StructuredLogger } from '@sutradhar/observability';
 import { ISqliteClient } from './sqlite-client.js';
 
 export interface IEventRepository {

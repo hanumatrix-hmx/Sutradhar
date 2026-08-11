@@ -1,15 +1,15 @@
-// PinchTab-engine harness: runs each comparison scenario through the real PinchTabRuntime
+// Sutradhar-engine harness: runs each comparison scenario through the real SutradharRuntime
 // (packages/capability-runtime), exercising the actual production API surface an MCP client
 // or the autonomous agent would call — not a stripped-down reimplementation.
 //
-// IMPORTANT: PinchTab's action methods (click/type/waitForSelector/...) do NOT throw on
+// IMPORTANT: Sutradhar's action methods (click/type/waitForSelector/...) do NOT throw on
 // failure — they return an ActionResult with `.success`/`.error`, by design (matching the
 // codebase-wide "surface the error, don't fabricate success, but don't throw either" contract
 // used across the agent loop). `must()` below adapts that into throw-on-failure so a scenario
 // script reads the same as the Playwright version instead of silently plowing through a failed
 // step and crashing many steps later on a null dereference.
 import { pathToFileURL } from 'node:url';
-import { PinchTabRuntime } from '../../packages/capability-runtime/dist/index.js';
+import { SutradharRuntime } from '../../packages/capability-runtime/dist/index.js';
 import { FIXTURE_PATH, UPLOAD_FILE_PATH } from './scenarios.mjs';
 
 const HEADLESS = process.env.HEADFUL !== '1';
@@ -23,7 +23,7 @@ async function must(promise) {
 }
 
 async function withRuntime(fn) {
-  const runtime = new PinchTabRuntime({ logger: { info() {}, warn() {}, error() {}, debug() {} } });
+  const runtime = new SutradharRuntime({ logger: { info() {}, warn() {}, error() {}, debug() {} } });
   let sessionId;
   try {
     const launched = await runtime.launch({ headless: HEADLESS });
@@ -39,9 +39,9 @@ async function timed(id, title, fn) {
   const start = Date.now();
   try {
     const detail = await fn();
-    return { id, title, engine: 'pinchtab', success: true, ms: Date.now() - start, detail: detail ?? null, error: null };
+    return { id, title, engine: 'sutradhar', success: true, ms: Date.now() - start, detail: detail ?? null, error: null };
   } catch (err) {
-    return { id, title, engine: 'pinchtab', success: false, ms: Date.now() - start, detail: null, error: err.message };
+    return { id, title, engine: 'sutradhar', success: false, ms: Date.now() - start, detail: null, error: err.message };
   }
 }
 
@@ -141,7 +141,7 @@ async function scenarioLocalFixture() {
     const delayedText = await rt.eval(sid, "document.getElementById('delayed-result').textContent.trim()");
     if (delayedText !== 'delayed-value-ready') throw new Error(`unexpected delayed text: ${delayedText}`);
 
-    // Iframe: PinchTab's selector resolution races across all frames automatically — no
+    // Iframe: Sutradhar's selector resolution races across all frames automatically — no
     // explicit frame handle needed, unlike raw Puppeteer/Playwright.
     await must(rt.type(sid, '#inner-input', 'hello-iframe'));
     await must(rt.click(sid, '#inner-submit'));
@@ -153,7 +153,7 @@ async function scenarioLocalFixture() {
   });
 }
 
-export async function runPinchTabScenarios() {
+export async function runSutradharScenarios() {
   return [
     await timed('login-flow', 'Login + logout flow with dynamic flash-message verification', scenarioLoginFlow),
     await timed('dynamic-loading', 'Wait for AJAX-style delayed content, then extract it', scenarioDynamicLoading),
@@ -164,7 +164,7 @@ export async function runPinchTabScenarios() {
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const results = await runPinchTabScenarios();
+  const results = await runSutradharScenarios();
   console.log(JSON.stringify(results, null, 2));
   const failed = results.filter((r) => !r.success);
   process.exit(failed.length ? 1 : 0);

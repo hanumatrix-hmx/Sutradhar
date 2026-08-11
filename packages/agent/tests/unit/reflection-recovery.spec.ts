@@ -5,7 +5,7 @@
 
 import { ReflectionEngine } from '../../src/executor/reflection-engine.js';
 import { RecoveryEngine } from '../../src/recovery/recovery-engine.js';
-import { AgentStepDto, createStepId } from '@pinchtab/contracts';
+import { AgentStepDto, createStepId } from '@sutradhar/contracts';
 
 describe('Engineering Iteration 1 — ReflectionEngine & RecoveryEngine Integration', () => {
   it('should detect stuck state loops when consecutive identical actions occur', () => {

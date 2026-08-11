@@ -28,7 +28,7 @@ export interface LLMConfig {
   fallbackModel: string;
 }
 
-const LLM_CONFIG_KEY = 'pinchtab_llm_config_v1';
+const LLM_CONFIG_KEY = 'sutradhar_llm_config_v1';
 
 export const POPULAR_FREE_MODELS: OpenRouterModelItem[] = [
   { id: 'google/gemini-2.0-flash-exp:free', name: 'Gemini 2.0 Flash (Free)', isFree: true },

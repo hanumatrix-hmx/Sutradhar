@@ -11,17 +11,17 @@ Depends on ADRs:
   - 0001-monorepo
   - 0007-storage-sqlite
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/capability'
-  - '@pinchtab/utils'
-  - '@pinchtab/config'
-  - '@pinchtab/observability'
-  - '@pinchtab/events'
+  - '@sutradhar/contracts'
+  - '@sutradhar/capability'
+  - '@sutradhar/utils'
+  - '@sutradhar/config'
+  - '@sutradhar/observability'
+  - '@sutradhar/events'
 ---
 
-# @pinchtab/storage
+# @sutradhar/storage
 
-> File storage abstraction, local filesystem repository, artifact persistence, and SQLite database persistence layer for PinchTab.
+> File storage abstraction, local filesystem repository, artifact persistence, and SQLite database persistence layer for Sutradhar.
 
 ## Package Architectural Invariants
 

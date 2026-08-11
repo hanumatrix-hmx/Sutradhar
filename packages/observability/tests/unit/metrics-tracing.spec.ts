@@ -5,7 +5,7 @@
 
 import { MetricsCollector, Tracer } from '../../src/index.js';
 
-describe('@pinchtab/observability Metrics & Tracing Engine', () => {
+describe('@sutradhar/observability Metrics & Tracing Engine', () => {
   it('should aggregate metrics via MetricsCollector', () => {
     const collector = new MetricsCollector();
 

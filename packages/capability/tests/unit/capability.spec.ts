@@ -5,7 +5,7 @@
 
 import { CAPABILITY_VERSION, CapabilityMatrix, CapabilityRequirement } from '../../src/index.js';
 
-describe('@pinchtab/capability Interfaces & Version', () => {
+describe('@sutradhar/capability Interfaces & Version', () => {
   it('should export correct package version constant', () => {
     expect(CAPABILITY_VERSION).toBe('0.1.0');
   });

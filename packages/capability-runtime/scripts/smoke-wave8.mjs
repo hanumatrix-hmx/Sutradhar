@@ -1,5 +1,5 @@
 // Live smoke test for Wave 8: downloadDir confinement + no-fabricated-success on a dead page.
-import { PinchTabRuntime } from '../dist/index.js';
+import { SutradharRuntime } from '../dist/index.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,7 +14,7 @@ const watchdog = setTimeout(() => { console.error('WATCHDOG'); process.exit(2); 
 const scratchDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '.wave8-downloads');
 fs.mkdirSync(scratchDir, { recursive: true });
 
-const runtime = new PinchTabRuntime({ allowedDownloadRoots: [scratchDir] });
+const runtime = new SutradharRuntime({ allowedDownloadRoots: [scratchDir] });
 let sessionId;
 try {
   const launched = await runtime.launch({ headless: true });

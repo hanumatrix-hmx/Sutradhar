@@ -10,12 +10,12 @@ import os from 'node:os';
 import path from 'node:path';
 import { ProfileManager } from '../../src/profiles/profile-manager.js';
 
-describe('@pinchtab/capability-runtime ProfileManager', () => {
+describe('@sutradhar/capability-runtime ProfileManager', () => {
   let baseDir: string;
   let manager: ProfileManager;
 
   beforeEach(async () => {
-    baseDir = await mkdtemp(path.join(os.tmpdir(), 'pinchtab-profile-test-'));
+    baseDir = await mkdtemp(path.join(os.tmpdir(), 'sutradhar-profile-test-'));
     manager = new ProfileManager(baseDir);
   });
 

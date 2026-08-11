@@ -11,14 +11,14 @@ import {
   WorkflowApplicationService,
   StorageApplicationService,
 } from '../../src/index.js';
-import { BrowserSessionManager } from '@pinchtab/browser';
-import { AgentCore } from '@pinchtab/agent';
-import { WorkflowRunner } from '@pinchtab/workflow';
-import { LocalFileStorage, SessionRepository, SqliteClient } from '@pinchtab/storage';
+import { BrowserSessionManager } from '@sutradhar/browser';
+import { AgentCore } from '@sutradhar/agent';
+import { WorkflowRunner } from '@sutradhar/workflow';
+import { LocalFileStorage, SessionRepository, SqliteClient } from '@sutradhar/storage';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 
-describe('@pinchtab/server Route Controllers Integration', () => {
+describe('@sutradhar/server Route Controllers Integration', () => {
   const tempDir = path.join(process.cwd(), '.test-server-storage');
 
   afterAll(async () => {

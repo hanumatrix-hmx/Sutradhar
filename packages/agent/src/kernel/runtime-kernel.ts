@@ -4,8 +4,8 @@
  */
 
 import { IRuntimeService, KernelMetrics, ServiceHealth } from './kernel-types.js';
-import { EventBus } from '@pinchtab/events';
-import { StructuredLogger } from '@pinchtab/observability';
+import { EventBus } from '@sutradhar/events';
+import { StructuredLogger } from '@sutradhar/observability';
 
 export interface RegisteredServiceRecord {
   readonly service: IRuntimeService;

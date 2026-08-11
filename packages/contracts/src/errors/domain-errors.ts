@@ -1,6 +1,6 @@
 /**
  * @file packages/contracts/src/errors/domain-errors.ts
- * @description Standard concrete domain error classes for PinchTab.
+ * @description Standard concrete domain error classes for Sutradhar.
  */
 
 import { BaseDomainError } from './base-error.js';

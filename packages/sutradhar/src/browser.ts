@@ -1,10 +1,10 @@
 /**
- * @file packages/pinchtab/src/browser.ts
+ * @file packages/sutradhar/src/browser.ts
  * @description Puppeteer-style {@link Browser} — a handle to one launched browser session
  * that owns one or more {@link Page} tabs.
  */
 
-import type { PinchTabRuntime } from '@pinchtab/capability-runtime';
+import type { SutradharRuntime } from '@sutradhar/capability-runtime';
 import { Page } from './page.js';
 
 /** Options for {@link launch}. */
@@ -25,8 +25,8 @@ export interface LaunchOptions {
  */
 export class Browser {
   /** @internal */ public constructor(
-    private readonly runtime: PinchTabRuntime,
-    /** The underlying PinchTab session id. */
+    private readonly runtime: SutradharRuntime,
+    /** The underlying Sutradhar session id. */
     public readonly sessionId: string,
   ) {}
 

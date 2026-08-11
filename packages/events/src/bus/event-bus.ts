@@ -3,8 +3,8 @@
  * @description Strongly typed in-memory EventBus with async handler dispatch and error isolation.
  */
 
-import { IDomainEvent, DomainEventMap, createDomainEvent } from '@pinchtab/contracts';
-import { StructuredLogger } from '@pinchtab/observability';
+import { IDomainEvent, DomainEventMap, createDomainEvent } from '@sutradhar/contracts';
+import { StructuredLogger } from '@sutradhar/observability';
 import { EventHandler, SubscriptionToken } from './event-handler.js';
 
 export interface IEventBus<TEventMap = DomainEventMap> {

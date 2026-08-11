@@ -5,7 +5,7 @@
 
 import { PortResolver } from '../../src/network/index.js';
 
-describe('@pinchtab/utils PortResolver & Environment Port Management Policy', () => {
+describe('@sutradhar/utils PortResolver & Environment Port Management Policy', () => {
   it('1. should resolve dynamic environment endpoints without hardcoded assumptions', () => {
     const endpoints = PortResolver.getEnvironmentEndpoints();
     expect(endpoints.backendPort).toBeGreaterThan(0);

@@ -3,8 +3,8 @@
  * @description Application service for artifact file storage persistence use cases.
  */
 
-import { LocalFileStorage } from '@pinchtab/storage';
-import { StructuredLogger } from '@pinchtab/observability';
+import { LocalFileStorage } from '@sutradhar/storage';
+import { StructuredLogger } from '@sutradhar/observability';
 
 export interface StoreFileCommand {
   readonly key: string;

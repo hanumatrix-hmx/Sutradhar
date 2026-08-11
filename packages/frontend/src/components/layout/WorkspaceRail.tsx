@@ -28,7 +28,7 @@ type Theme = 'dark' | 'light';
 
 function getStoredTheme(): Theme {
   try {
-    const stored = localStorage.getItem('pinchtab_theme');
+    const stored = localStorage.getItem('sutradhar_theme');
     if (stored === 'light' || stored === 'dark') return stored;
   } catch { /* ignore */ }
   // Soft UI default: the neumorphic light canvas is the signature look.
@@ -37,7 +37,7 @@ function getStoredTheme(): Theme {
 
 function applyTheme(theme: Theme) {
   document.documentElement.setAttribute('data-theme', theme);
-  try { localStorage.setItem('pinchtab_theme', theme); } catch { /* ignore */ }
+  try { localStorage.setItem('sutradhar_theme', theme); } catch { /* ignore */ }
 }
 
 /* ------------------------------------------------------------------ */
@@ -73,7 +73,7 @@ export const WorkspaceRail: React.FC<WorkspaceRailProps> = ({
     <>
       <aside className="pt-rail" aria-label="Workspace navigation">
         {/* Brand mark */}
-        <Tooltip content="PinchTab" position="right">
+        <Tooltip content="Sutradhar" position="right">
           <button
             type="button"
             className="pt-rail__brand"

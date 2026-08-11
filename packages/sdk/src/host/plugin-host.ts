@@ -3,7 +3,7 @@
  * @description PluginHost — owns the {@link ProviderRegistry} and produces the enriched
  * {@link PluginContext} (with real host capabilities) that plugins receive.
  *
- * The host is the bridge between the plugin system and the PinchTab runtime: plugins
+ * The host is the bridge between the plugin system and the Sutradhar runtime: plugins
  * contribute providers through it, and the runtime queries the host's registry to discover
  * them. For the MVP the host is a thin holder around a PluginManager + ProviderRegistry.
  */
@@ -20,7 +20,7 @@ export interface PluginHostOptions {
 
 /**
  * The host-side façade for the plugin system. Holds the provider registry plugins write to,
- * and exposes a single read API (`getLlmProvider`) the PinchTab runtime calls.
+ * and exposes a single read API (`getLlmProvider`) the Sutradhar runtime calls.
  *
  * Wiring the host into the runtime (so the agent loop consults contributed providers) is a
  * documented next step — see the SDK README.

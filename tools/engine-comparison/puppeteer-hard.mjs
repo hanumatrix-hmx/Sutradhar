@@ -1,5 +1,5 @@
-// Raw puppeteer-core (the library PinchTab's browser engine is built on) vs. the same 6 hard
-// problems — isolates what PinchTab's own logic (occlusion/delivery verification, cross-frame
+// Raw puppeteer-core (the library Sutradhar's browser engine is built on) vs. the same 6 hard
+// problems — isolates what Sutradhar's own logic (occlusion/delivery verification, cross-frame
 // resolution, retries) adds or costs relative to using Puppeteer directly with no wrapper.
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -92,7 +92,7 @@ async function scenarioNativeDnD() {
   return withPage(async (page) => {
     await page.goto(fx('dnd-native.html'));
     // Raw Puppeteer has no high-level dragAndDrop helper -- must use the low-level
-    // ElementHandle.drag()/.drop() CDP primitives directly, same ones PinchTab uses internally.
+    // ElementHandle.drag()/.drop() CDP primitives directly, same ones Sutradhar uses internally.
     const source = await page.$('#item-alpha');
     const target = await page.$('#target');
     await source.drag(target);

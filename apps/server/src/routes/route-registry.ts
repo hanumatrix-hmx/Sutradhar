@@ -11,7 +11,7 @@ import { MemoryApplicationService } from '../application/memory-app-service.js';
 import { StorageApplicationService } from '../application/storage-app-service.js';
 import { RunManager } from '../application/run-manager.js';
 import { LlmConfigService } from '../application/llm-config-service.js';
-import { BrowserSessionManager } from '@pinchtab/browser';
+import { BrowserSessionManager } from '@sutradhar/browser';
 import { registerSessionRoutes } from './session-routes.js';
 import { registerAgentRoutes } from './agent-routes.js';
 import { registerWorkflowRoutes } from './workflow-routes.js';

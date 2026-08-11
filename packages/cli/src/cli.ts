@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 /**
  * @file packages/cli/src/cli.ts
- * @description Terminal CLI for driving the PinchTab browser engine directly, without an MCP
- * client or writing a script — `pinchtab nav <url>`, `pinchtab snap`, `pinchtab click <ref>`,
+ * @description Terminal CLI for driving the Sutradhar browser engine directly, without an MCP
+ * client or writing a script — `sutradhar nav <url>`, `sutradhar snap`, `sutradhar click <ref>`,
  * etc. Session continuity across separate CLI invocations works via attach()-ing back to the
- * same browser's CDP wsEndpoint, persisted in ~/.pinchtab-cli/state.json between calls.
+ * same browser's CDP wsEndpoint, persisted in ~/.sutradhar-cli/state.json between calls.
  */
-import { PinchTabRuntime } from '@pinchtab/capability-runtime';
-import { StructuredLogger } from '@pinchtab/observability';
+import { SutradharRuntime } from '@sutradhar/capability-runtime';
+import { StructuredLogger } from '@sutradhar/observability';
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { readState, writeState, clearState } from './state.js';
 import { spawnDetachedChrome, killChromeTree } from './spawn-chrome.js';
-import { createSessionId } from '@pinchtab/contracts';
+import { createSessionId } from '@sutradhar/contracts';
 
 const logger = new StructuredLogger({ minLevel: 'error' }); // CLI output IS the log; keep engine logs quiet
 const [, , verb, ...args] = process.argv;
@@ -32,7 +32,7 @@ const cleanArgs = args.filter(
 // before exiting — severing it lets Node's event loop drain and exit naturally, which flushes
 // stdout properly. A raw process.exit() right after console.log() can truncate/interleave
 // output on Windows if the write hasn't finished flushing yet.
-let activeRuntime: PinchTabRuntime | undefined;
+let activeRuntime: SutradharRuntime | undefined;
 let activeSessionId: string | undefined;
 
 function printErrorAndExit(message: string): never {
@@ -40,8 +40,8 @@ function printErrorAndExit(message: string): never {
   process.exit(1);
 }
 
-async function withSession<T>(fn: (runtime: PinchTabRuntime, sessionId: string) => Promise<T>): Promise<T> {
-  const runtime = new PinchTabRuntime({ logger });
+async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string) => Promise<T>): Promise<T> {
+  const runtime = new SutradharRuntime({ logger });
   activeRuntime = runtime;
   const state = await readState();
 
@@ -53,7 +53,7 @@ async function withSession<T>(fn: (runtime: PinchTabRuntime, sessionId: string) 
     } catch (err) {
       printErrorAndExit(
         `Could not reconnect to the previous session (${(err as Error).message}). ` +
-          `Run "pinchtab close" to clear stale state, then "pinchtab nav <url>" to start over.`,
+          `Run "sutradhar close" to clear stale state, then "sutradhar nav <url>" to start over.`,
       );
     }
   }
@@ -77,7 +77,7 @@ async function withSession<T>(fn: (runtime: PinchTabRuntime, sessionId: string) 
   }
   const attached = await runtime.attach({ endpoint: spawned.wsEndpoint });
   if (!attached.hasRealBrowser) {
-    printErrorAndExit('Spawned Chrome but could not attach to it. Run "pinchtab doctor" to diagnose.');
+    printErrorAndExit('Spawned Chrome but could not attach to it. Run "sutradhar doctor" to diagnose.');
   }
   await writeState({ sessionId: attached.sessionId, wsEndpoint: spawned.wsEndpoint, chromePid: spawned.pid });
   activeSessionId = attached.sessionId;
@@ -85,12 +85,12 @@ async function withSession<T>(fn: (runtime: PinchTabRuntime, sessionId: string) 
 }
 
 async function cmdProfile(sub: string | undefined, name: string | undefined, rest: string[]) {
-  const runtime = new PinchTabRuntime({ logger });
+  const runtime = new SutradharRuntime({ logger });
   const profiles = runtime.getProfileManager();
 
   switch (sub) {
     case 'create': {
-      if (!name) printErrorAndExit('usage: pinchtab profile create <name> [description]');
+      if (!name) printErrorAndExit('usage: sutradhar profile create <name> [description]');
       const info = await profiles.create(name!, rest.join(' ') || undefined);
       console.log(`Created profile "${info.name}" at ${info.userDataDir}`);
       return;
@@ -98,7 +98,7 @@ async function cmdProfile(sub: string | undefined, name: string | undefined, res
     case 'list': {
       const list = await profiles.list();
       if (list.length === 0) {
-        console.log('No profiles yet. Create one with "pinchtab profile create <name>".');
+        console.log('No profiles yet. Create one with "sutradhar profile create <name>".');
         return;
       }
       for (const p of list) {
@@ -107,18 +107,18 @@ async function cmdProfile(sub: string | undefined, name: string | undefined, res
       return;
     }
     case 'delete': {
-      if (!name) printErrorAndExit('usage: pinchtab profile delete <name>');
+      if (!name) printErrorAndExit('usage: sutradhar profile delete <name>');
       await profiles.delete(name!);
       console.log(`Deleted profile "${name}" (cookies/history/storage removed).`);
       return;
     }
     default:
-      printErrorAndExit('usage: pinchtab profile <create|list|delete> [args]');
+      printErrorAndExit('usage: sutradhar profile <create|list|delete> [args]');
   }
 }
 
 async function cmdDoctor() {
-  const runtime = new PinchTabRuntime({ logger });
+  const runtime = new SutradharRuntime({ logger });
   const health = runtime.checkHealth();
   console.log(`Platform:        ${process.platform} (${process.arch})`);
   console.log(`Node version:    ${process.version}`);
@@ -133,7 +133,7 @@ async function cmdDoctor() {
 }
 
 async function cmdNav(url: string | undefined) {
-  if (!url) printErrorAndExit('usage: pinchtab nav <url> [--headed]');
+  if (!url) printErrorAndExit('usage: sutradhar nav <url> [--headed]');
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.navigate(sessionId, url!);
     console.log(`Navigated to ${result.url}`);
@@ -160,7 +160,7 @@ async function cmdAxSnap() {
     console.log(`\nAccessible elements (${snap.nodeCount}):`);
     console.log(snap.listing);
     console.log(
-      '\n(No ids here — act on these via "pinchtab click <text>" / typing into a labeled ' +
+      '\n(No ids here — act on these via "sutradhar click <text>" / typing into a labeled ' +
         'field; this listing never goes stale even if the page re-renders.)',
     );
   });
@@ -174,7 +174,7 @@ async function cmdText() {
 }
 
 async function cmdClick(ref: string | undefined) {
-  if (!ref) printErrorAndExit('usage: pinchtab click <ref>  (ref = a selector, or a numeric id from "pinchtab snap")');
+  if (!ref) printErrorAndExit('usage: sutradhar click <ref>  (ref = a selector, or a numeric id from "sutradhar snap")');
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.click(sessionId, ref!);
     console.log(result.success ? `Clicked ${ref}` : `Click failed: ${result.error}`);
@@ -183,7 +183,7 @@ async function cmdClick(ref: string | undefined) {
 }
 
 async function cmdClickText(text: string | undefined) {
-  if (!text) printErrorAndExit('usage: pinchtab clicktext <text>  (matches an element containing this text, from "pinchtab axsnap")');
+  if (!text) printErrorAndExit('usage: sutradhar clicktext <text>  (matches an element containing this text, from "sutradhar axsnap")');
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.clickByText(sessionId, text!);
     console.log(result.success ? `Clicked element containing "${text}"` : `Click failed: ${result.error}`);
@@ -192,7 +192,7 @@ async function cmdClickText(text: string | undefined) {
 }
 
 async function cmdClickRole(role: string | undefined, name: string | undefined) {
-  if (!role) printErrorAndExit('usage: pinchtab clickrole <role> [name]  (role from "pinchtab axsnap", e.g. button)');
+  if (!role) printErrorAndExit('usage: sutradhar clickrole <role> [name]  (role from "sutradhar axsnap", e.g. button)');
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.clickByRole(sessionId, role!, name);
     console.log(result.success ? `Clicked role "${role}"${name ? ` "${name}"` : ''}` : `Click failed: ${result.error}`);
@@ -201,7 +201,7 @@ async function cmdClickRole(role: string | undefined, name: string | undefined) 
 }
 
 async function cmdType(ref: string | undefined, text: string | undefined) {
-  if (!ref || text === undefined) printErrorAndExit('usage: pinchtab type <ref> <text>');
+  if (!ref || text === undefined) printErrorAndExit('usage: sutradhar type <ref> <text>');
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.type(sessionId, ref!, text!);
     console.log(result.success ? `Typed into ${ref}` : `Type failed: ${result.error}`);
@@ -210,7 +210,7 @@ async function cmdType(ref: string | undefined, text: string | undefined) {
 }
 
 async function cmdPress(ref: string | undefined, key: string | undefined) {
-  if (!ref || !key) printErrorAndExit('usage: pinchtab press <ref> <key>  (e.g. pinchtab press 3 Enter)');
+  if (!ref || !key) printErrorAndExit('usage: sutradhar press <ref> <key>  (e.g. sutradhar press 3 Enter)');
   await withSession(async (runtime, sessionId) => {
     await runtime.click(sessionId, ref!).catch(() => {}); // focus the target first, best-effort
     const result = await runtime.pressKey(sessionId, key!);
@@ -257,7 +257,7 @@ async function cmdAudit(url: string | undefined, outDir: string | undefined) {
 }
 
 async function cmdCompare(urlA: string | undefined, urlB: string | undefined, outPath: string | undefined) {
-  if (!urlA || !urlB) printErrorAndExit('usage: pinchtab compare <urlA> <urlB> [diffOutPath] [--fail-on-diff]');
+  if (!urlA || !urlB) printErrorAndExit('usage: sutradhar compare <urlA> <urlB> [diffOutPath] [--fail-on-diff]');
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.compareUrls(sessionId, urlA!, urlB!);
     const dest = path.resolve(outPath ?? 'diff.png');
@@ -282,7 +282,7 @@ async function cmdClose() {
     // alone would leak it. Kill the actual process (and its child renderer/GPU processes).
     killChromeTree(state.chromePid);
   } else {
-    const runtime = new PinchTabRuntime({ logger });
+    const runtime = new SutradharRuntime({ logger });
     try {
       const { sessionId } = await runtime.attach({ endpoint: state.wsEndpoint, sessionId: state.sessionId });
       await runtime.shutdown(sessionId);
@@ -327,9 +327,9 @@ async function main() {
     case 'profile':
       return cmdProfile(cleanArgs[0], cleanArgs[1], cleanArgs.slice(2));
     default:
-      console.log(`PinchTab CLI
+      console.log(`Sutradhar CLI
 
-Usage: pinchtab <command> [args] [--headed] [--profile <name>]
+Usage: sutradhar <command> [args] [--headed] [--profile <name>]
 
 Commands:
   nav <url>                    Navigate to a URL (launches a session if none is active)
@@ -361,7 +361,7 @@ Flags:
                         starting a new session)
   --fail-on-diff        "compare" exits nonzero if any pixel difference is found (CI gating)
 
-Session state persists across commands in ~/.pinchtab-cli/state.json — run "close" when done.`);
+Session state persists across commands in ~/.sutradhar-cli/state.json — run "close" when done.`);
       process.exitCode = verb ? 1 : 0;
   }
 }

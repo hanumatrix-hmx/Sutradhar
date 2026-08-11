@@ -1,14 +1,14 @@
 /**
  * @file packages/sdk/src/index.ts
- * @description Package entry point for @pinchtab/sdk — the plugin/extension SDK for PinchTab.
+ * @description Package entry point for @sutradhar/sdk — the plugin/extension SDK for Sutradhar.
  *
  * Two layers:
- *   - Plugin authoring: types, manifest schema, the IPinchTabPlugin contract.
+ *   - Plugin authoring: types, manifest schema, the ISutradharPlugin contract.
  *   - Plugin hosting: PluginManager (lifecycle), PluginLoader (disk→instance), PluginHost
  *     (capability registry), and real signature verification.
  *
  * The author-facing surface (what a plugin imports) is just the types + manifest. The
- * host-facing surface (what the PinchTab runtime imports) is the manager/loader/host.
+ * host-facing surface (what the Sutradhar runtime imports) is the manager/loader/host.
  */
 
 export const SDK_VERSION = '0.2.0';

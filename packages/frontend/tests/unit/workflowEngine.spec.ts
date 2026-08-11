@@ -17,7 +17,7 @@ import { ActionExecutor, DefaultActionLogger } from '../../src/runtime/actions/i
 import { BrowserRuntime } from '../../src/runtime/browser/browserRuntime.js';
 import { MockBrowserAdapter } from '../_mocks/MockBrowserAdapter.js';
 
-describe('@pinchtab/frontend Milestone 7 — Workflow Engine', () => {
+describe('@sutradhar/frontend Milestone 7 — Workflow Engine', () => {
   const adapter = new MockBrowserAdapter();
   const runtime = new BrowserRuntime('sess_wf_test', adapter);
   const actionExecutor = new ActionExecutor();

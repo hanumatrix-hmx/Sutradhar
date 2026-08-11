@@ -8,9 +8,9 @@ import {
   MemoryRecordDto,
   MemorySearchQueryDto,
   MemorySearchResultDto,
-} from '@pinchtab/contracts';
-import { MultiTierMemoryManager } from '@pinchtab/memory';
-import { StructuredLogger } from '@pinchtab/observability';
+} from '@sutradhar/contracts';
+import { MultiTierMemoryManager } from '@sutradhar/memory';
+import { StructuredLogger } from '@sutradhar/observability';
 
 export class MemoryApplicationService {
   private readonly memoryManager: MultiTierMemoryManager;

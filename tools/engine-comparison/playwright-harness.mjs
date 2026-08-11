@@ -1,5 +1,5 @@
 // Playwright-core harness: implements the identical 5 scenarios using raw Playwright, launched
-// against the SAME system Chrome install PinchTab uses (via executablePath), so this compares
+// against the SAME system Chrome install Sutradhar uses (via executablePath), so this compares
 // engine/API ergonomics and reliability, not "which browser build is faster".
 import { chromium } from 'playwright-core';
 import { pathToFileURL } from 'node:url';
@@ -113,7 +113,7 @@ async function scenarioLocalFixture() {
     await page.goto(pathToFileURL(FIXTURE_PATH).href);
 
     // Shadow DOM: Playwright's own selectors pierce open shadow roots natively (no manual eval
-    // needed) via its standard CSS engine — a genuine ergonomic difference from PinchTab, which
+    // needed) via its standard CSS engine — a genuine ergonomic difference from Sutradhar, which
     // needed an explicit eval() for this in the equivalent scenario.
     const shadowText = (await page.textContent('#shadow-host >> #shadow-text').catch(async () => {
       // Fallback in case piercing-combinator syntax isn't enabled for this Playwright version.
@@ -127,7 +127,7 @@ async function scenarioLocalFixture() {
     if (delayedText !== 'delayed-value-ready') throw new Error(`unexpected delayed text: ${delayedText}`);
 
     // Iframe: Playwright requires explicitly getting the frame handle before interacting with
-    // elements inside it — no automatic cross-frame selector resolution like PinchTab's.
+    // elements inside it — no automatic cross-frame selector resolution like Sutradhar's.
     const frame = page.frame('frame1') ?? page.frames().find((f) => f !== page.mainFrame());
     if (!frame) throw new Error('could not locate iframe #frame1');
     await frame.fill('#inner-input', 'hello-iframe');

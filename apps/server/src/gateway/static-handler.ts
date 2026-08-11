@@ -25,9 +25,9 @@ export function registerConsoleRoute(router: ApiRouter): void {
       const fallbackHtml = `
         <!DOCTYPE html>
         <html>
-        <head><title>PinchTab Test Console</title></head>
+        <head><title>Sutradhar Test Console</title></head>
         <body style="font-family:sans-serif;background:#0f172a;color:#f8fafc;padding:24px;">
-          <h2>PinchTab Developer Test Console</h2>
+          <h2>Sutradhar Developer Test Console</h2>
           <p>Runtime API Active</p>
           <input id="g" style="width:300px;" value="Go to github.com and summarize homepage" />
           <button onclick="fetch('/api/v1/agents/goals',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({goal:document.getElementById('g').value})}).then(r=>r.json()).then(d=>document.getElementById('r').innerText=JSON.stringify(d,null,2))">Run</button>

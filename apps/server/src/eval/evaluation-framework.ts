@@ -1,6 +1,6 @@
 /**
  * @file apps/server/src/eval/evaluation-framework.ts
- * @description Evaluation Framework logging metrics, timeline artifacts, and failure classifications for PinchTab tasks.
+ * @description Evaluation Framework logging metrics, timeline artifacts, and failure classifications for Sutradhar tasks.
  */
 
 export type FailureCategory =

@@ -1,11 +1,11 @@
 /**
  * @file apps/server/tests/benchmark/production-readiness.spec.ts
- * @description Test suite verifying PinchTab Production Readiness metrics, scores, and GO decision.
+ * @description Test suite verifying Sutradhar Production Readiness metrics, scores, and GO decision.
  */
 
 import { ValidationProgramRunner } from '../../src/eval/validation-program-runner.js';
 
-describe('PinchTab Engineering Validation & Production Readiness Test Suite', () => {
+describe('Sutradhar Engineering Validation & Production Readiness Test Suite', () => {
   it('should execute 100 scale testing workflows and satisfy GO readiness criteria', () => {
     const metrics = ValidationProgramRunner.runValidationSuite(100);
 

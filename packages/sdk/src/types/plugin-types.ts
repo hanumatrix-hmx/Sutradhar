@@ -1,6 +1,6 @@
 /**
  * @file packages/sdk/src/types/plugin-types.ts
- * @description Plugin type definitions and lifecycle state machine for @pinchtab/sdk.
+ * @description Plugin type definitions and lifecycle state machine for @sutradhar/sdk.
  */
 
 import { PluginManifest } from '../manifest/plugin-manifest.js';
@@ -37,7 +37,7 @@ export interface PluginContext {
   };
   /**
    * Host capabilities — the extension surface a plugin uses to actually contribute to
-   * PinchTab (register LLM providers, etc.). Optional for backward-compatibility with
+   * Sutradhar (register LLM providers, etc.). Optional for backward-compatibility with
    * plugins authored against the original context shape; new plugins should use it.
    */
   readonly host?: HostCapabilities;
@@ -46,7 +46,7 @@ export interface PluginContext {
 /**
  * Capability surface the host exposes to plugins via PluginContext.host. Implemented by
  * PluginHost (see host/plugin-host.ts). A plugin uses this to register providers that the
- * PinchTab runtime then consumes.
+ * Sutradhar runtime then consumes.
  */
 export interface HostCapabilities {
   readonly pluginId: string;
@@ -55,7 +55,7 @@ export interface HostCapabilities {
   };
 }
 
-export interface IPinchTabPlugin {
+export interface ISutradharPlugin {
   readonly manifest: PluginManifest;
   state: PluginLifecycleState;
   initialize(context: PluginContext): Promise<void>;

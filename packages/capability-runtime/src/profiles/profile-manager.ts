@@ -7,7 +7,7 @@
  * `BrowserLaunchOptions.userDataDir` → `BrowserLauncher.launch()`) already existed — what this
  * adds is the missing management layer on top: a registry mapping human-readable names to their
  * own dedicated userDataDir, so a caller can say "launch as my-logged-in-account" instead of
- * tracking raw filesystem paths themselves. Mirrors the real pinchtab/pinchtab project's
+ * tracking raw filesystem paths themselves. Mirrors the real sutradhar/sutradhar project's
  * `POST /profiles` + per-instance profile selection.
  */
 import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
@@ -32,7 +32,7 @@ export class ProfileManager {
   private readonly profilesRoot: string;
 
   public constructor(baseDir?: string) {
-    const root = baseDir ?? path.join(os.homedir(), '.pinchtab');
+    const root = baseDir ?? path.join(os.homedir(), '.sutradhar');
     this.registryPath = path.join(root, 'profiles.json');
     this.profilesRoot = path.join(root, 'profiles');
   }

@@ -1,6 +1,6 @@
 /**
  * @file packages/agent/src/kernel/kernel-types.ts
- * @description Interfaces and state models for the PinchTab Runtime Kernel.
+ * @description Interfaces and state models for the Sutradhar Runtime Kernel.
  */
 
 export type ServiceState =

@@ -31,12 +31,12 @@ export class MockBrowserAdapter implements IBrowserAdapter {
 
   public async launch(
     sessionId: string,
-    initialUrl = 'https://github.com/pinchtab/pinchtab',
+    initialUrl = 'https://github.com/sutradhar/sutradhar',
   ): Promise<{ sessionId: string; status: BrowserStatus }> {
     const initialTab: TabSnapshot = {
       id: `tab_${sessionId}_1`,
       url: initialUrl,
-      title: 'PinchTab Autonomous Browser Agent Platform',
+      title: 'Sutradhar Autonomous Browser Agent Platform',
       active: true,
       loading: false,
       canGoBack: false,

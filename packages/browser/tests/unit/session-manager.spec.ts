@@ -6,8 +6,8 @@
  */
 
 import { BrowserSessionManager, BrowserLauncher } from '../../src/index.js';
-import { EventBus } from '@pinchtab/events';
-import { createSessionId } from '@pinchtab/contracts';
+import { EventBus } from '@sutradhar/events';
+import { createSessionId } from '@sutradhar/contracts';
 
 function mockBrowserInstance() {
   return {
@@ -18,7 +18,7 @@ function mockBrowserInstance() {
   } as any;
 }
 
-describe('@pinchtab/browser BrowserSessionManager session create/reuse race handling', () => {
+describe('@sutradhar/browser BrowserSessionManager session create/reuse race handling', () => {
   it('coalesces concurrent createSession() calls for the same sessionId onto a single launch', async () => {
     const launcher = new BrowserLauncher();
     let resolveLaunch!: (v: unknown) => void;
@@ -104,7 +104,7 @@ describe('@pinchtab/browser BrowserSessionManager session create/reuse race hand
   });
 });
 
-describe('@pinchtab/browser BrowserSessionManager.dispose()', () => {
+describe('@sutradhar/browser BrowserSessionManager.dispose()', () => {
   it('unsubscribes from the shared EventBus so a disposed manager stops reacting to future events', async () => {
     const bus = new EventBus();
     const launcher = new BrowserLauncher();

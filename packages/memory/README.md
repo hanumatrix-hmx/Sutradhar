@@ -11,23 +11,23 @@ Depends on ADRs:
   - 0001-monorepo
   - 0006-memory
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/capability'
-  - '@pinchtab/utils'
-  - '@pinchtab/config'
-  - '@pinchtab/observability'
-  - '@pinchtab/events'
+  - '@sutradhar/contracts'
+  - '@sutradhar/capability'
+  - '@sutradhar/utils'
+  - '@sutradhar/config'
+  - '@sutradhar/observability'
+  - '@sutradhar/events'
 ---
 
-# @pinchtab/memory
+# @sutradhar/memory
 
-> Multi-tier memory architecture (working, short-term, episodic, semantic, procedural) and vector retrieval engine for PinchTab Agents.
+> Multi-tier memory architecture (working, short-term, episodic, semantic, procedural) and vector retrieval engine for Sutradhar Agents.
 
 ## Package Architectural Invariants
 
 1. **Core Domain Isolation (`CTX-002`)**: Depends on foundational infrastructure packages (`CTX-001`). Must NEVER import from application or presentation packages (`apps/server`, `apps/web`).
 2. **Multi-Tier Separation**: Segregates volatile working memory, session short-term memory, execution episodic history, vector semantic knowledge, and workflow procedural rules (ADR-0006).
-3. **Contract Isolation**: Operates exclusively through canonical `MemoryRecordDto` and `MemorySearchQueryDto` data transfer objects defined in `@pinchtab/contracts`.
+3. **Contract Isolation**: Operates exclusively through canonical `MemoryRecordDto` and `MemorySearchQueryDto` data transfer objects defined in `@sutradhar/contracts`.
 
 ## Sub-Module Layout
 

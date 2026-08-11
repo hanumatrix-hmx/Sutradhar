@@ -11,7 +11,7 @@ Owner: Principal Software Architect
 
 ## Quick Context Hydration (<60 Seconds)
 
-PinchTab is an enterprise AI Browser Runtime Platform designed as a strict **Hexagonal Monorepo**.
+Sutradhar is an enterprise AI Browser Runtime Platform designed as a strict **Hexagonal Monorepo**.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -40,7 +40,7 @@ PinchTab is an enterprise AI Browser Runtime Platform designed as a strict **Hex
 
 ## Key Architectural Invariants
 
-1. **Hexagonal Isolation**: Business logic in `orchestrator` / `runtime` depends exclusively on interfaces in `@pinchtab/contracts`.
-2. **Zero Vendor Leaks**: Playwright, PinchTab, OpenRouter, and Ollama SDK calls are completely encapsulated within `packages/browser` and `packages/llm` adapters.
+1. **Hexagonal Isolation**: Business logic in `orchestrator` / `runtime` depends exclusively on interfaces in `@sutradhar/contracts`.
+2. **Zero Vendor Leaks**: Playwright, Sutradhar, OpenRouter, and Ollama SDK calls are completely encapsulated within `packages/browser` and `packages/llm` adapters.
 3. **Multi-Tier Memory**: Working Memory (Prompt buffer) -> Short-Term (Session) -> Episodic (Permanent Traces) -> Semantic (Vector knowledge).
-4. **Policy Sandboxing**: All tool executions pass through `@pinchtab/policy` guardrails.
+4. **Policy Sandboxing**: All tool executions pass through `@sutradhar/policy` guardrails.

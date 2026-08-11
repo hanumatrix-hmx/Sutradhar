@@ -1,9 +1,9 @@
 {
-  "name": "@pinchtab/storage",
+  "name": "@sutradhar/storage",
   "version": "0.1.0",
   "type": "module",
   "private": true,
-  "description": "Storage abstraction layer, local filesystem store, artifact persistence, and SQLite database repository for PinchTab",
+  "description": "Storage abstraction layer, local filesystem store, artifact persistence, and SQLite database repository for Sutradhar",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -27,12 +27,12 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@pinchtab/contracts": "workspace:*",
-    "@pinchtab/capability": "workspace:*",
-    "@pinchtab/utils": "workspace:*",
-    "@pinchtab/config": "workspace:*",
-    "@pinchtab/observability": "workspace:*",
-    "@pinchtab/events": "workspace:*"
+    "@sutradhar/contracts": "workspace:*",
+    "@sutradhar/capability": "workspace:*",
+    "@sutradhar/utils": "workspace:*",
+    "@sutradhar/config": "workspace:*",
+    "@sutradhar/observability": "workspace:*",
+    "@sutradhar/events": "workspace:*"
   },
   "devDependencies": {
     "typescript": "5.4.2"

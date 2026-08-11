@@ -1,6 +1,6 @@
 /**
  * @file packages/observability/src/studio/studio-models.ts
- * @description Data models and DTO interfaces for PinchTab Studio engineering environment.
+ * @description Data models and DTO interfaces for Sutradhar Studio engineering environment.
  */
 
 import { FullTraceExport } from '../devtools/devtools-models.js';

@@ -35,7 +35,7 @@ Owner: Principal Software Architect
 │   ├── observability/         # Structured Pino logger, OTel, metrics
 │   ├── events/                # EventBus interfaces & Redis streams
 │   ├── agent/                 # Agent entities & goals
-│   ├── browser/               # Browser domain & PinchTab/CDP adapters
+│   ├── browser/               # Browser domain & Sutradhar/CDP adapters
 │   ├── llm/                   # LLM domain & OpenRouter/Ollama adapters
 │   ├── memory/                # Multi-tier memory engines
 │   ├── knowledge/             # Document chunking & vector search

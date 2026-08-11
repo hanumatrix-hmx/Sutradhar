@@ -3,7 +3,7 @@
  * @description Tracer class for creating spans and managing active trace contexts.
  */
 
-import { generateRandomToken } from '@pinchtab/utils';
+import { generateRandomToken } from '@sutradhar/utils';
 import { Span } from './span.js';
 
 export class Tracer {

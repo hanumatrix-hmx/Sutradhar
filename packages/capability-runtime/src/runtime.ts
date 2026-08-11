@@ -1,7 +1,7 @@
 /**
  * @file packages/capability-runtime/src/runtime.ts
- * @description {@link PinchTabRuntime} — the single high-level entry point over the
- * PinchTab browser engine.
+ * @description {@link SutradharRuntime} — the single high-level entry point over the
+ * Sutradhar browser engine.
  *
  * This façade owns a {@link BrowserSessionManager}, {@link BrowserActionEngine}, and
  * {@link DOMSemanticEngine} and exposes clean async verbs (launch/navigate/snapshot/
@@ -23,13 +23,13 @@ import {
   type ActionHistoryEntry,
   type IBrowserSession,
   type IBrowserTab,
-} from '@pinchtab/browser';
+} from '@sutradhar/browser';
 import path from 'node:path';
 import { access, realpath } from 'node:fs/promises';
-import { createSessionId, createTabId } from '@pinchtab/contracts';
-import { EventBus } from '@pinchtab/events';
-import { type StructuredLogger } from '@pinchtab/observability';
-import { RateLimiter } from '@pinchtab/utils';
+import { createSessionId, createTabId } from '@sutradhar/contracts';
+import { EventBus } from '@sutradhar/events';
+import { type StructuredLogger } from '@sutradhar/observability';
+import { RateLimiter } from '@sutradhar/utils';
 import type {
   ActionResult,
   AttachOptions,
@@ -53,8 +53,8 @@ import {
 import { compareScreenshots, type VisualCompareResult } from './audit/visual-compare.js';
 import { buildAxSnapshot, type AxSnapshotResult } from './snapshot/ax-snapshot.js';
 
-/** Constructor options for {@link PinchTabRuntime}. */
-export interface PinchTabRuntimeOptions {
+/** Constructor options for {@link SutradharRuntime}. */
+export interface SutradharRuntimeOptions {
   /** Reuse an existing launcher (e.g. a test double). A default one is created otherwise. */
   launcher?: BrowserLauncher;
   /**
@@ -92,13 +92,13 @@ export interface PinchTabRuntimeOptions {
    * When `true`, every navigation (`navigate`, `launch`'s `initialUrl`, `createTab`'s `url`) is
    * rejected unless the target resolves to localhost, a private/loopback IP range, `file:`,
    * `about:`, or `data:` — the same "restrict to locally-hosted sites" posture the real
-   * PinchTab project defaults to. Unset (the default) here: most callers of this runtime
+   * Sutradhar project defaults to. Unset (the default) here: most callers of this runtime
    * legitimately need to browse the real internet, so this is opt-in rather than default-on —
    * enable it for sandboxed/testing deployments where any real-internet navigation would be a
    * mistake, not a feature.
    */
   restrictNavigationToLocal?: boolean;
-  /** Where named-profile registry/data lives. Defaults to `~/.pinchtab` — override for tests
+  /** Where named-profile registry/data lives. Defaults to `~/.sutradhar` — override for tests
    *  or to keep profile data somewhere other than the user's home directory. */
   profilesBaseDir?: string;
   logger?: StructuredLogger;
@@ -109,14 +109,14 @@ export interface PinchTabRuntimeOptions {
  * sessions. Every method is a pure async verb — no transport, no protocol.
  *
  * @example
- * const runtime = new PinchTabRuntime();
+ * const runtime = new SutradharRuntime();
  * const { sessionId } = await runtime.launch({ initialUrl: 'https://example.com' });
  * const snap = await runtime.snapshot(sessionId);
  * await runtime.click(sessionId, '7'); // pt-node-id from the snapshot
  * const png = await runtime.screenshot(sessionId);
  * await runtime.shutdown(sessionId);
  */
-export class PinchTabRuntime {
+export class SutradharRuntime {
   private readonly sessionManager: BrowserSessionManager;
   private readonly actionEngine: BrowserActionEngine;
   private readonly domEngine: DOMSemanticEngine;
@@ -127,7 +127,7 @@ export class PinchTabRuntime {
   private readonly restrictNavigationToLocal: boolean;
   private readonly profileManager: ProfileManager;
 
-  public constructor(options: PinchTabRuntimeOptions = {}) {
+  public constructor(options: SutradharRuntimeOptions = {}) {
     const eventBus = options.eventBus ?? new EventBus(options.logger);
     this.eventBus = eventBus;
     this.launcher = options.launcher ?? new BrowserLauncher(options.logger);
@@ -211,7 +211,7 @@ export class PinchTabRuntime {
    * This is the browser-extension path: the user's real, logged-in Chrome is the target
    * (exposed via `--remote-debugging-port` or the extension's `chrome.debugger` relay), so
    * the agent can operate on sessions headless Chrome cannot reach (SSO, 2FA, internal
-   * tools). PinchTab does NOT own the browser lifecycle here — closing the session detaches
+   * tools). Sutradhar does NOT own the browser lifecycle here — closing the session detaches
    * but leaves the user's browser running.
    */
   public async attach(options: AttachOptions): Promise<LaunchResult> {
@@ -352,7 +352,7 @@ export class PinchTabRuntime {
 
   /**
    * Click an element. `target` may be a CSS selector OR a numeric pt-node-id from a
-   * prior {@link PinchTabRuntime.snapshot} (e.g. `"7"` → `[data-pt-node-id="7"]`).
+   * prior {@link SutradharRuntime.snapshot} (e.g. `"7"` → `[data-sd-node-id="7"]`).
    */
   public async click(
     sessionId: string,
@@ -906,7 +906,7 @@ export class PinchTabRuntime {
 
   /**
    * A single-page audit bundling screenshot, console/page/network errors, basic accessibility
-   * checks, and Core Web Vitals — mirrors what real PinchTab's `pinchtab audit <url>` produces.
+   * checks, and Core Web Vitals — mirrors what real Sutradhar's `sutradhar audit <url>` produces.
    * If `url` is given, navigates there first and waits `settleMs` (default 1500ms) for the page
    * to render and Web Vitals observers to collect data before capturing anything; omit it to
    * audit whatever page the session is already on.
@@ -961,8 +961,8 @@ export class PinchTabRuntime {
   /**
    * Visual regression check: navigate to `urlA` then `urlB` in turn (same session/tab, so same
    * viewport for both — a size mismatch between the two screenshots would make a pixel diff
-   * meaningless), screenshot each, and pixel-diff them. Mirrors real PinchTab's
-   * `pinchtab compare <url1> <url2>`.
+   * meaningless), screenshot each, and pixel-diff them. Mirrors real Sutradhar's
+   * `sutradhar compare <url1> <url2>`.
    */
   public async compareUrls(
     sessionId: string,
@@ -1185,7 +1185,7 @@ export class PinchTabRuntime {
   }
 
   /**
-   * When {@link PinchTabRuntimeOptions.restrictNavigationToLocal} is enabled, rejects any
+   * When {@link SutradharRuntimeOptions.restrictNavigationToLocal} is enabled, rejects any
    * navigation target that isn't localhost, a private/loopback IP, or a scheme that never
    * touches the real network (`file:`, `about:`, `data:`). A no-op when the option is off
    * (the default) — most callers legitimately need to browse the real internet.
@@ -1248,5 +1248,5 @@ export class PinchTabRuntime {
   }
 }
 
-// Re-export the node-id bridge so consumers don't need @pinchtab/browser for it.
+// Re-export the node-id bridge so consumers don't need @sutradhar/browser for it.
 export { selectorForNodeId };

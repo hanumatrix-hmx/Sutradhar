@@ -8,16 +8,16 @@ Related ADRs:
   - 0002-browser-runtime
   - 0003-provider-contract
 Related Packages:
-  - '@pinchtab/contracts'
-  - '@pinchtab/orchestrator'
-  - '@pinchtab/runtime'
+  - '@sutradhar/contracts'
+  - '@sutradhar/orchestrator'
+  - '@sutradhar/runtime'
 ---
 
 # Project Overview
 
 ## Vision
 
-PinchTab is an enterprise-grade AI Browser Runtime Platform — a desktop and web-based application environment that enables autonomous AI agents to control web browsers, execute complex automation workflows, and maintain persistent multi-tiered memory across sessions. It bridges cloud LLM gateways (OpenRouter), local inference (Ollama), and headless/headed browser engines (PinchTab, CDP, Playwright) within a strictly decoupled, hexagonal monorepo architecture.
+Sutradhar is an enterprise-grade AI Browser Runtime Platform — a desktop and web-based application environment that enables autonomous AI agents to control web browsers, execute complex automation workflows, and maintain persistent multi-tiered memory across sessions. It bridges cloud LLM gateways (OpenRouter), local inference (Ollama), and headless/headed browser engines (Sutradhar, CDP, Playwright) within a strictly decoupled, hexagonal monorepo architecture.
 
 ## Core Value Proposition
 

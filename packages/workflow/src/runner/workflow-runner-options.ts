@@ -3,10 +3,10 @@
  * @description Configuration options and execution result DTO definitions for WorkflowRunner.
  */
 
-import { WorkflowId } from '@pinchtab/contracts';
-import { EventBus } from '@pinchtab/events';
-import { StructuredLogger } from '@pinchtab/observability';
-import { IAgentCore } from '@pinchtab/agent';
+import { WorkflowId } from '@sutradhar/contracts';
+import { EventBus } from '@sutradhar/events';
+import { StructuredLogger } from '@sutradhar/observability';
+import { IAgentCore } from '@sutradhar/agent';
 
 export type WorkflowExecutionState = 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
 
