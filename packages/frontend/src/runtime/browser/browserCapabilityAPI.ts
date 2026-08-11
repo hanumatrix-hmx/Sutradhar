@@ -69,10 +69,11 @@ export class BrowserCapabilityAPI {
    * the agent acts server-side, so we omit the guess and let the backend
    * resolve its own active tab — the backend browser is the source of truth.
    */
-  public async captureScreenshot(tabId?: string): Promise<string> {
+  public async captureScreenshot(tabId?: string, signal?: AbortSignal): Promise<string> {
     return this.browserSession.adapter.captureScreenshot(
       this.browserSession.sessionId,
       tabId,
+      signal,
     );
   }
 

@@ -27,7 +27,7 @@ export interface IBrowserAdapter {
   goBack(sessionId: string, tabId: string): Promise<{ tabId: string; url: string }>;
   goForward(sessionId: string, tabId: string): Promise<{ tabId: string; url: string }>;
   reload(sessionId: string, tabId: string): Promise<{ tabId: string; url: string }>;
-  captureScreenshot(sessionId: string, tabId?: string): Promise<string>;
+  captureScreenshot(sessionId: string, tabId?: string, signal?: AbortSignal): Promise<string>;
   executeScript(sessionId: string, tabId: string | undefined, code: string): Promise<unknown>;
   executeJavaScript(sessionId: string, tabId: string | undefined, script: string): Promise<unknown>;
   getCookies(sessionId: string): Promise<readonly CookieSnapshot[]>;

@@ -14,22 +14,99 @@ Two brain modes, one server:
   objective and it navigates, clicks, types, and extracts a final answer. Best for
   multi-step tasks you'd rather not script call-by-call. Requires an LLM provider.
 
-## Tools (14)
+## Tools (60)
 
-| Tool | Brain | Description |
-|---|---|---|
-| `browser.launch` | host | Launch a browser session; returns a `sessionId`. |
-| `browser.shutdown` | host | Shut down a session. |
-| `browser.navigate` | host | Navigate a tab to a URL. |
-| `browser.snapshot` | host | **Agent vision** — the interactive-element listing + page text. |
-| `browser.click` | host | Click by CSS selector or `[#id]` from a snapshot. |
-| `browser.type` | host | Type into an input (selector or `[#id]`). |
-| `browser.press_key` | host | Press a key (Enter, Escape, …). |
-| `browser.scroll` | host | Scroll up/down/top/bottom. |
-| `browser.screenshot` | host | Full-page PNG (returned inline). |
-| `browser.eval` | host | Evaluate arbitrary JS in the page. |
-| `browser.list_tabs` / `new_tab` / `close_tab` | host | Tab management. |
-| `agent.runGoal` | Sutradhar | Hand a natural-language goal to the autonomous loop. |
+The table below used to list only 14 tools — stale from an early build. The actual surface
+is much larger; grouped here by category, matching `tools.ts`'s own section layout.
+
+### Lifecycle
+| Tool | Description |
+|---|---|
+| `browser.health` | Preflight check — is a real browser available, without committing to a session. |
+| `browser.launch` | Launch a browser session; returns a `sessionId`. |
+| `browser.attach` | Attach to an existing browser over CDP instead of launching a new one (e.g. your own Chrome with `--remote-debugging-port`). |
+| `browser.shutdown` | Shut down a session. |
+| `browser.shutdown_all` | Shut down every session. |
+
+### Navigation
+| Tool | Description |
+|---|---|
+| `browser.navigate` | Navigate a tab to a URL. |
+| `browser.go_back` / `go_forward` | History navigation. |
+| `browser.reload` | Reload the current page. |
+
+### Agent vision
+| Tool | Description |
+|---|---|
+| `browser.snapshot` | **DOM-attribute grounding** — interactive-element listing (numeric `[#id]`, `data-sd-node-id`-backed) + page text. Fast; can go stale if the page re-renders between snapshot and action. |
+| `browser.ax_snapshot` | **Accessibility-tree grounding** — role + accessible-name listing, no ids to go stale. Prefer this for pages that re-render (SPAs, live search, infinite scroll). |
+
+### Interaction
+| Tool | Description |
+|---|---|
+| `browser.click` | Click by CSS selector or `[#id]` from a snapshot. |
+| `browser.click_by_text` | Click the element containing this text (pairs with `ax_snapshot`). |
+| `browser.click_by_role` | Click by accessibility role, optionally narrowed by name (pairs with `ax_snapshot`). |
+| `browser.right_click` | Right-click (context menu) an element. |
+| `browser.type` | Type into an input (selector or `[#id]`). |
+| `browser.type_by_label` | Type into an input identified by its associated label text. |
+| `browser.press_key` | Press a key (Enter, Escape, …). |
+| `browser.hover` | Hover the mouse over an element, optionally at a specific point within it — required for `:hover`-revealed controls (a real CSS `:hover` state, not simulable via a synthetic `mouseover` event). |
+| `browser.scroll` | Scroll up/down/top/bottom. |
+| `browser.select_option` / `select_options` | Set a `<select>`'s value (single or multi-select). |
+| `browser.drag_and_drop` | Drag from one element to another. |
+| `browser.touch_tap` | Simulate a touch tap (mobile emulation). |
+| `browser.upload_file` | Set a file input's value. |
+| `browser.upload_file_via_trigger` | For JS-triggered file choosers not backed by a plain `<input type=file>` — races `waitForFileChooser()` against clicking the triggering selector. |
+| `browser.download_file` | Trigger and wait for a file download; saves under an allow-listed directory. |
+| `browser.wait_for_selector` | Wait for an element to appear/become visible. |
+
+### Capture & extraction
+| Tool | Description |
+|---|---|
+| `browser.screenshot` | Full-page PNG (returned inline). |
+| `browser.export_pdf` | Export the current page as PDF. |
+| `browser.eval` | Evaluate arbitrary JS in the page. |
+| `browser.extract_data` | Structured extraction: field name → selector map, returns matched text/attributes. |
+
+### Storage
+| Tool | Description |
+|---|---|
+| `browser.get_cookies` / `set_cookie` / `delete_cookie` | Cookie read/write/delete. |
+| `browser.get_local_storage` / `set_local_storage_item` / `clear_local_storage` | `localStorage` read/write/clear. |
+| `browser.get_session_storage` / `set_session_storage_item` / `clear_session_storage` | `sessionStorage` read/write/clear. |
+
+### Emulation & permissions
+| Tool | Description |
+|---|---|
+| `browser.set_geolocation` | Override the page's geolocation. |
+| `browser.grant_permissions` | Grant browser permissions (camera, clipboard, notifications, …). |
+| `browser.set_viewport` | Set viewport size / mobile emulation / device scale factor. |
+| `browser.emulate` | Timezone, locale, color-scheme, and reduced-motion emulation. |
+| `browser.get_clipboard` / `set_clipboard` | Read/write the system clipboard (via the Clipboard API). |
+
+### Dialogs, observability & network
+| Tool | Description |
+|---|---|
+| `browser.get_pending_dialog` / `handle_dialog` | Inspect and accept/dismiss an open `alert`/`confirm`/`prompt`. |
+| `browser.get_console_logs` | Read captured `console.*` output for the page. |
+| `browser.get_page_errors` | Read captured uncaught page errors. |
+| `browser.get_network_log` | Read captured network requests/responses. |
+| `browser.get_action_history` | Read the session's action-execution history. |
+| `browser.route` / `clear_routes` | Intercept/mock network requests by pattern; clear interception rules. |
+
+### Tabs
+| Tool | Description |
+|---|---|
+| `browser.list_tabs` | List tabs in a session. |
+| `browser.new_tab` | Open a new tab. |
+| `browser.focus_tab` | Make a tab the active one. |
+| `browser.close_tab` | Close a tab. |
+
+### Autonomous agent (optional — requires an LLM provider)
+| Tool | Description |
+|---|---|
+| `agent.runGoal` | Hand a natural-language goal to Sutradhar's own observe→reason→act→verify loop; returns a final answer + step trace. Only registered when an LLM provider (Ollama/OpenRouter) is configured. |
 
 ## Quick start
 

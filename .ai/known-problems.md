@@ -62,20 +62,22 @@ Last Updated: 2026-08-09
   - **Mitigation**: None needed.
 
 - **ID**: `PROB-006`
-  - **Summary**: Session-page screenshot polling can saturate the browser connection pool, leaving a subsequent page's API calls stuck on "Loading…" until reload.
+  - **Summary**: ~~Session-page screenshot polling can saturate the browser connection pool, leaving a subsequent page's API calls stuck on "Loading…" until reload.~~
   - **Severity**: Medium
-  - **Status**: OPEN
-  - **Impact**: Observed during Phase 5 live verification: navigating from a
-    session page to a History run detail while `/api/v1/browser/screenshot`
-    requests were hanging (503/long-pending) exhausted the per-origin
-    connection limit, so `GET /api/v1/runs/:runId` never acquired a
-    connection and the detail page stayed on "Loading…". A manual reload
-    recovers. Related: "No live frame yet" persisted after run completion
-    while the screenshot endpoint 503'd.
-  - **Mitigation**: None yet. Planned: abort in-flight screenshot requests on
-    route change / component unmount (`AbortController`), cap concurrent
-    screenshot requests to 1 (serialize polls), and treat repeated 503 as
-    back-off instead of immediate retry.
+  - **Status**: FIX IMPLEMENTED 2026-08-11, typechecked, **not yet live-verified**
+  - **Impact**: `captureScreenshot` now threads an `AbortSignal` through
+    `serverBrowserAdapter` → `browserCapabilityAPI` → `EmbeddedBrowser.tsx`.
+    The poll loop aborts the previous in-flight request before starting a
+    new one (caps concurrent screenshot requests to 1) and aborts on
+    unmount/`browserSession` change (route away), so a hanging request can
+    no longer hold a connection-pool slot a subsequent page's API calls
+    need. The existing `MAX_SCREENSHOT_FAILURES` counter (unaffected by
+    this change) still separately handles the repeated-real-failure
+    back-off case. Compiles clean; the original bug required a live
+    session-page → history-detail navigation race to reproduce, which
+    hasn't been re-run against this fix yet — do that before calling this
+    fully closed.
+  - **Mitigation**: None needed if live verification confirms the fix.
 
 - **ID**: `PROB-004`
   - **Summary**: ~~README still lists ~25 packages; several are empty/aspirational.~~

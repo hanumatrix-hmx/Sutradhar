@@ -116,13 +116,17 @@ export class ServerBrowserAdapter implements IBrowserAdapter {
     });
   }
 
-  public async captureScreenshot(sessionId: string, tabId?: string): Promise<string> {
+  public async captureScreenshot(sessionId: string, tabId?: string, signal?: AbortSignal): Promise<string> {
     // Real screenshot ONLY. No SVG placeholder, no fallback image — if the
     // backend can't produce one, the error propagates to the UI. With no
     // tabId the backend screenshots its own active tab (source of truth).
+    // `signal` lets a caller abort an in-flight request (e.g. on unmount or
+    // before starting the next poll) instead of leaving it hanging against
+    // the browser's per-origin connection pool — see PROB-006.
     const res = await this.transport.send<{ screenshotData: string }>(
       '/api/v1/browser/screenshot',
       tabId ? { sessionId, tabId } : { sessionId },
+      { signal },
     );
     return res.screenshotData;
   }

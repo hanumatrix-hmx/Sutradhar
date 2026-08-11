@@ -83,6 +83,11 @@ export const EmbeddedBrowser: React.FC<EmbeddedBrowserProps> = ({ browserSession
   const addressRef = useRef<HTMLInputElement>(null);
   const screenshotFailures = useRef(0);
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Aborts the in-flight screenshot request, if any — set right before starting a new one
+  // (caps concurrent screenshot requests to 1) and on unmount, so a hung/slow request never
+  // outlives the component and doesn't sit in the browser's per-origin connection pool
+  // starving other requests (e.g. a History page load) after the user has navigated away.
+  const screenshotAbortRef = useRef<AbortController | null>(null);
   const frameRef = useRef<string | null>(null);
   const rippleId = useRef(0);
 
@@ -165,8 +170,13 @@ export const EmbeddedBrowser: React.FC<EmbeddedBrowserProps> = ({ browserSession
     if (currentActive && document.activeElement !== addressRef.current) {
       setInputUrl(currentActive.url);
     }
+      // Cap in-flight screenshot requests to 1: abort whatever the previous poll started
+      // before issuing a new one, rather than letting a slow/hung request linger.
+      screenshotAbortRef.current?.abort();
+      const controller = new AbortController();
+      screenshotAbortRef.current = controller;
       try {
-        const frame = await capability.captureScreenshot();
+        const frame = await capability.captureScreenshot(undefined, controller.signal);
         screenshotFailures.current = 0;
         if (frame?.startsWith('data:image') && frame !== frameRef.current) {
           setPrevFrame(frameRef.current);
@@ -175,6 +185,7 @@ export const EmbeddedBrowser: React.FC<EmbeddedBrowserProps> = ({ browserSession
           setFrameNonce((n) => n + 1);
         }
       } catch {
+        if (controller.signal.aborted) return; // superseded by a newer poll or unmount — not a real failure
         // Screenshot unavailable — honest empty state stays. Repeated failures
         // mean the backend no longer knows this session (e.g. server
         // restarted), so stop polling instead of flooding 404s.
@@ -206,6 +217,10 @@ export const EmbeddedBrowser: React.FC<EmbeddedBrowserProps> = ({ browserSession
 
     return () => {
       offTabCreated(); offTabClosed(); offTabActivated(); offNavStarted(); offNavCompleted();
+      // Abort any in-flight screenshot request — on unmount AND on browserSession change
+      // (e.g. navigating away to a History run detail), so it can't keep holding a
+      // connection-pool slot the next page needs. See PROB-006.
+      screenshotAbortRef.current?.abort();
     };
   }, [browserSession]);
 
