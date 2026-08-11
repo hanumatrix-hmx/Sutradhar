@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Animation-gated interactivity</title>
+<style>
+  #panel {
+    position: fixed; top: 0; left: 0; width: 260px; height: 100%;
+    background: #2c5f68; color: #fff; padding: 20px; box-sizing: border-box;
+    transform: translateX(-100%);
+    transition: transform 0.8s ease;
+  }
+  #panel.open { transform: translateX(0); }
+  #confirm-btn { padding: 10px 16px; }
+</style>
+</head>
+<body>
+  <h1>Slide-in panel (800ms CSS transition)</h1>
+  <button id="trigger-btn">Open panel</button>
+  <div id="panel">
+    <p>Panel content</p>
+    <button id="confirm-btn">Confirm</button>
+  </div>
+  <div id="animated-result">not-confirmed</div>
+
+  <script>
+    const panel = document.getElementById('panel');
+    document.getElementById('trigger-btn').addEventListener('click', () => {
+      panel.dataset.settled = 'false';
+      panel.classList.add('open');
+    });
+    panel.addEventListener('transitionend', (e) => {
+      if (e.propertyName === 'transform') panel.dataset.settled = 'true';
+    });
+    document.getElementById('confirm-btn').addEventListener('click', () => {
+      const el = document.getElementById('animated-result');
+      el.textContent = panel.dataset.settled === 'true' ? 'confirmed' : 'clicked-too-early';
+    });
+  </script>
+</body>
+</html>

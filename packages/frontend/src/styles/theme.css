@@ -1,0 +1,15 @@
+/**
+ * @file packages/frontend/src/styles/theme.css
+ * @description Theme base rules — imports components into global scope.
+ * All per-component classes are defined in components.css.
+ * This file only contains base element styles that require the token system.
+ */
+
+@import './components.css';
+
+/* Body defaults — already handled by reset.css but we reinforce font family */
+body {
+  font-family: var(--pt-font-sans);
+  background-color: var(--pt-surface-0);
+  color: var(--pt-text-primary);
+}

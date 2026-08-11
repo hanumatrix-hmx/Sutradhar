@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Canvas-only UI</title>
+<style>canvas { border: 1px solid #333; }</style>
+</head>
+<body>
+  <h1>Canvas-rendered button (no DOM element to select)</h1>
+  <canvas id="app" width="400" height="200"></canvas>
+  <div id="canvas-result">not-clicked</div>
+
+  <script>
+    const canvas = document.getElementById('app');
+    const ctx = canvas.getContext('2d');
+    // Deliberately off-center within the 400x200 canvas (canvas center is 200,100) — a naive
+    // "click the element, land at its bounding-box center" strategy must NOT hit this by luck.
+    const btn = { x: 30, y: 140, w: 100, h: 36 };
+
+    function draw() {
+      ctx.clearRect(0, 0, 400, 200);
+      ctx.fillStyle = '#2c5f68';
+      ctx.fillRect(btn.x, btn.y, btn.w, btn.h);
+      ctx.fillStyle = '#fff';
+      ctx.font = '16px sans-serif';
+      ctx.fillText('Click Me', btn.x + 22, btn.y + 25);
+    }
+    draw();
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const hit = x >= btn.x && x <= btn.x + btn.w && y >= btn.y && y <= btn.y + btn.h;
+      document.getElementById('canvas-result').textContent = hit ? 'clicked' : 'missed:' + x + ',' + y;
+    });
+  </script>
+</body>
+</html>

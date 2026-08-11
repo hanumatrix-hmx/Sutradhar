@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Nested Scroll Container</title>
+<style>
+  #outer { height: 220px; width: 320px; overflow-y: auto; border: 2px solid #333; padding: 8px; }
+  .spacer-row { height: 40px; line-height: 40px; }
+  #deep-btn { padding: 10px 16px; }
+</style>
+</head>
+<body>
+  <h1>Target is inside an inner scroll container, not the page</h1>
+  <p>The window itself doesn't scroll at all here -- <code>window.scrollBy</code> /
+     page-level <code>scrollIntoView</code> on the wrong node does nothing useful. The button is
+     2000px down inside <code>#outer</code>, a nested <code>overflow:auto</code> div.</p>
+  <div id="outer">
+    <div id="rows"></div>
+    <button id="deep-btn">Deep target</button>
+  </div>
+  <div id="nested-result">not-clicked</div>
+
+  <script>
+    const rows = document.getElementById('rows');
+    let html = '';
+    for (let i = 0; i < 50; i++) html += `<div class="spacer-row">filler row ${i}</div>`;
+    rows.innerHTML = html;
+
+    document.getElementById('deep-btn').addEventListener('click', () => {
+      document.getElementById('nested-result').textContent = 'clicked';
+    });
+  </script>
+</body>
+</html>

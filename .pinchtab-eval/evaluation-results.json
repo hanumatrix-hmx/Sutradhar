@@ -1,0 +1,380 @@
+[
+  {
+    "taskId": "nav_01",
+    "category": "Navigation",
+    "title": "Open GitHub Homepage",
+    "goal": "Navigate to github.com and verify page title",
+    "success": true,
+    "durationMs": 21737,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 3,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:37:25.440Z] Task nav_01 started (Navigation): \"Open GitHub Homepage\"",
+      "[2026-08-08T07:37:47.177Z] Agent goal execution status: completed"
+    ],
+    "timestamp": "2026-08-08T07:37:47.177Z"
+  },
+  {
+    "taskId": "nav_06",
+    "category": "Navigation",
+    "title": "Open MDN Web Docs",
+    "goal": "Navigate to developer.mozilla.org",
+    "success": true,
+    "durationMs": 10929,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 3,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:37:47.177Z] Task nav_06 started (Navigation): \"Open MDN Web Docs\"",
+      "[2026-08-08T07:37:58.106Z] Agent goal execution status: completed"
+    ],
+    "timestamp": "2026-08-08T07:37:58.106Z"
+  },
+  {
+    "taskId": "srch_01",
+    "category": "Search",
+    "title": "Search Google for OpenAI",
+    "goal": "Search Google for OpenAI and verify results",
+    "success": false,
+    "durationMs": 65548,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 3,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:37:58.106Z] Task srch_01 started (Search): \"Search Google for OpenAI\"",
+      "[2026-08-08T07:39:03.654Z] Agent goal execution status: failed"
+    ],
+    "timestamp": "2026-08-08T07:39:03.654Z"
+  },
+  {
+    "taskId": "srch_06",
+    "category": "Search",
+    "title": "Search Wikipedia for Quantum Computing",
+    "goal": "Search Wikipedia for Quantum Computing",
+    "success": true,
+    "durationMs": 79876,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 3,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:39:03.654Z] Task srch_06 started (Search): \"Search Wikipedia for Quantum Computing\"",
+      "[2026-08-08T07:40:23.530Z] Agent goal execution status: completed"
+    ],
+    "timestamp": "2026-08-08T07:40:23.530Z"
+  },
+  {
+    "taskId": "form_01",
+    "category": "Forms",
+    "title": "Fill Contact Form",
+    "goal": "Identify and fill contact form inputs",
+    "success": true,
+    "durationMs": 619,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 1,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:40:23.530Z] Task form_01 started (Forms): \"Fill Contact Form\"",
+      "[2026-08-08T07:40:24.149Z] Browser session executed cleanly"
+    ],
+    "timestamp": "2026-08-08T07:40:24.149Z"
+  },
+  {
+    "taskId": "form_06",
+    "category": "Forms",
+    "title": "Fill Search Filters Form",
+    "goal": "Select dropdown options and fill range inputs",
+    "success": true,
+    "durationMs": 665,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 1,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:40:24.149Z] Task form_06 started (Forms): \"Fill Search Filters Form\"",
+      "[2026-08-08T07:40:24.814Z] Browser session executed cleanly"
+    ],
+    "timestamp": "2026-08-08T07:40:24.814Z"
+  },
+  {
+    "taskId": "auth_03",
+    "category": "Authentication",
+    "title": "Check Password Masking State",
+    "goal": "Verify password input has type password",
+    "success": true,
+    "durationMs": 1239,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 1,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:40:24.814Z] Task auth_03 started (Authentication): \"Check Password Masking State\"",
+      "[2026-08-08T07:40:26.053Z] Browser session executed cleanly"
+    ],
+    "timestamp": "2026-08-08T07:40:26.053Z"
+  },
+  {
+    "taskId": "tbl_02",
+    "category": "Tables",
+    "title": "Extract First Row Values",
+    "goal": "Extract text content from first data row",
+    "success": true,
+    "durationMs": 1207,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 1,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:40:26.053Z] Task tbl_02 started (Tables): \"Extract First Row Values\"",
+      "[2026-08-08T07:40:27.260Z] Browser session executed cleanly"
+    ],
+    "timestamp": "2026-08-08T07:40:27.260Z"
+  },
+  {
+    "taskId": "scr_01",
+    "category": "InfiniteScroll",
+    "title": "Scroll Page Down 500px",
+    "goal": "Perform vertical scroll down by 500 pixels",
+    "success": true,
+    "durationMs": 1710,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 1,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:40:27.260Z] Task scr_01 started (InfiniteScroll): \"Scroll Page Down 500px\"",
+      "[2026-08-08T07:40:28.970Z] Browser session executed cleanly"
+    ],
+    "timestamp": "2026-08-08T07:40:28.970Z"
+  },
+  {
+    "taskId": "dl_01",
+    "category": "Downloads",
+    "title": "Identify PDF Download Link",
+    "goal": "Locate PDF download link on document page",
+    "success": true,
+    "durationMs": 1634,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 1,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:40:28.970Z] Task dl_01 started (Downloads): \"Identify PDF Download Link\"",
+      "[2026-08-08T07:40:30.604Z] Browser session executed cleanly"
+    ],
+    "timestamp": "2026-08-08T07:40:30.604Z"
+  },
+  {
+    "taskId": "pag_01",
+    "category": "Pagination",
+    "title": "Click Next Page Button",
+    "goal": "Click next page button on paginated list",
+    "success": true,
+    "durationMs": 1596,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 1,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:40:30.604Z] Task pag_01 started (Pagination): \"Click Next Page Button\"",
+      "[2026-08-08T07:40:32.200Z] Browser session executed cleanly"
+    ],
+    "timestamp": "2026-08-08T07:40:32.200Z"
+  },
+  {
+    "taskId": "pag_06",
+    "category": "Pagination",
+    "title": "Detect Last Page State",
+    "goal": "Verify Next button disabled on last page",
+    "success": true,
+    "durationMs": 1618,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 1,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:40:32.200Z] Task pag_06 started (Pagination): \"Detect Last Page State\"",
+      "[2026-08-08T07:40:33.818Z] Browser session executed cleanly"
+    ],
+    "timestamp": "2026-08-08T07:40:33.818Z"
+  },
+  {
+    "taskId": "doc_05",
+    "category": "Documentation",
+    "title": "Navigate Sidebar Navigation",
+    "goal": "Click sidebar link in documentation site",
+    "success": true,
+    "durationMs": 637,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 1,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:40:33.818Z] Task doc_05 started (Documentation): \"Navigate Sidebar Navigation\"",
+      "[2026-08-08T07:40:34.455Z] Browser session executed cleanly"
+    ],
+    "timestamp": "2026-08-08T07:40:34.455Z"
+  },
+  {
+    "taskId": "shop_02",
+    "category": "Shopping",
+    "title": "Select Product Item",
+    "goal": "Click product card link to view details",
+    "success": true,
+    "durationMs": 541,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 1,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:40:34.455Z] Task shop_02 started (Shopping): \"Select Product Item\"",
+      "[2026-08-08T07:40:34.996Z] Browser session executed cleanly"
+    ],
+    "timestamp": "2026-08-08T07:40:34.996Z"
+  },
+  {
+    "taskId": "dash_01",
+    "category": "Dashboards",
+    "title": "Read Dashboard Metric Card",
+    "goal": "Extract metric card total number",
+    "success": true,
+    "durationMs": 533,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 1,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:40:34.996Z] Task dash_01 started (Dashboards): \"Read Dashboard Metric Card\"",
+      "[2026-08-08T07:40:35.529Z] Browser session executed cleanly"
+    ],
+    "timestamp": "2026-08-08T07:40:35.529Z"
+  },
+  {
+    "taskId": "dash_06",
+    "category": "Dashboards",
+    "title": "Export Dashboard Data CSV",
+    "goal": "Click export CSV data action button",
+    "success": true,
+    "durationMs": 540,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 1,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:40:35.529Z] Task dash_06 started (Dashboards): \"Export Dashboard Data CSV\"",
+      "[2026-08-08T07:40:36.069Z] Browser session executed cleanly"
+    ],
+    "timestamp": "2026-08-08T07:40:36.069Z"
+  },
+  {
+    "taskId": "news_05",
+    "category": "News",
+    "title": "Count Comments on Top Post",
+    "goal": "Read comment count for first post",
+    "success": false,
+    "durationMs": 35812,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 3,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:40:36.069Z] Task news_05 started (News): \"Count Comments on Top Post\"",
+      "[2026-08-08T07:41:11.881Z] Agent goal execution status: failed"
+    ],
+    "timestamp": "2026-08-08T07:41:11.881Z"
+  },
+  {
+    "taskId": "knw_02",
+    "category": "Knowledge",
+    "title": "Extract Birth Date from Infobox",
+    "goal": "Read Alan Turing birth date from Wikipedia infobox",
+    "success": true,
+    "durationMs": 17628,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 3,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:41:11.881Z] Task knw_02 started (Knowledge): \"Extract Birth Date from Infobox\"",
+      "[2026-08-08T07:41:29.509Z] Agent goal execution status: completed"
+    ],
+    "timestamp": "2026-08-08T07:41:29.509Z"
+  },
+  {
+    "taskId": "knw_07",
+    "category": "Knowledge",
+    "title": "Open Related Topic Link",
+    "goal": "Click Enigma machine link inside article",
+    "success": false,
+    "durationMs": 12361,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 3,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:41:29.509Z] Task knw_07 started (Knowledge): \"Open Related Topic Link\"",
+      "[2026-08-08T07:41:41.870Z] Agent goal execution status: failed"
+    ],
+    "timestamp": "2026-08-08T07:41:41.870Z"
+  },
+  {
+    "taskId": "up_04",
+    "category": "FileUploads",
+    "title": "Submit Upload Form",
+    "goal": "Click Submit Upload button",
+    "success": true,
+    "durationMs": 517,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 1,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:41:41.870Z] Task up_04 started (FileUploads): \"Submit Upload Form\"",
+      "[2026-08-08T07:41:42.387Z] Browser session executed cleanly"
+    ],
+    "timestamp": "2026-08-08T07:41:42.387Z"
+  },
+  {
+    "taskId": "wf_05",
+    "category": "MultiStepWorkflows",
+    "title": "Multi-Agent Workflow Execution",
+    "goal": "Execute 4-node DAG workflow graph with agent steps",
+    "success": true,
+    "durationMs": 15555,
+    "planningTimeMs": 25,
+    "llmLatencyMs": 80,
+    "memoryLatencyMs": 15,
+    "actionCount": 1,
+    "recoveryAttempts": 0,
+    "timeline": [
+      "[2026-08-08T07:41:42.387Z] Task wf_05 started (MultiStepWorkflows): \"Multi-Agent Workflow Execution\"",
+      "[2026-08-08T07:41:57.942Z] Workflow execution state: completed"
+    ],
+    "timestamp": "2026-08-08T07:41:57.942Z"
+  }
+]

@@ -1,0 +1,41 @@
+/**
+ * @file packages/cli/src/state.ts
+ * @description Persists the "current session" across separate CLI process invocations. Each
+ * `pinchtab <verb>` call is its own short-lived Node process — there's no long-running daemon
+ * (unlike the real pinchtab/pinchtab Go project's server/bridge model) — so continuity comes
+ * from writing the live session's CDP wsEndpoint to disk after `nav`, then every subsequent
+ * command `attach()`-ing back to that same wsEndpoint before doing anything else.
+ */
+import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
+import path from 'node:path';
+import os from 'node:os';
+
+export interface CliState {
+  sessionId: string;
+  wsEndpoint: string;
+  /** PID of the Chrome process this CLI spawned itself (undefined if the session came from
+   *  attaching to a browser the CLI didn't start) — see spawn-chrome.ts's killChromeTree. */
+  chromePid?: number;
+  lastUrl?: string;
+}
+
+const STATE_DIR = path.join(os.homedir(), '.pinchtab-cli');
+const STATE_FILE = path.join(STATE_DIR, 'state.json');
+
+export async function readState(): Promise<CliState | undefined> {
+  try {
+    const raw = await readFile(STATE_FILE, 'utf-8');
+    return JSON.parse(raw) as CliState;
+  } catch {
+    return undefined;
+  }
+}
+
+export async function writeState(state: CliState): Promise<void> {
+  await mkdir(STATE_DIR, { recursive: true });
+  await writeFile(STATE_FILE, JSON.stringify(state, null, 2), 'utf-8');
+}
+
+export async function clearState(): Promise<void> {
+  await rm(STATE_FILE, { force: true });
+}

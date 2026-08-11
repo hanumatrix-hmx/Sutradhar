@@ -1,0 +1,43 @@
+{
+  "name": "@pinchtab/mcp-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Model Context Protocol server exposing PinchTab's browser engine and autonomous agent as tools for AI clients (Claude Desktop, ZCode, Cline, etc.).",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "pinchtab-mcp": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/ --ext .ts",
+    "start": "node dist/cli.js",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "@pinchtab/agent": "workspace:*",
+    "@pinchtab/browser": "workspace:*",
+    "@pinchtab/capability-runtime": "workspace:*",
+    "@pinchtab/config": "workspace:*",
+    "@pinchtab/contracts": "workspace:*",
+    "@pinchtab/events": "workspace:*",
+    "@pinchtab/llm": "workspace:*",
+    "@pinchtab/observability": "workspace:*",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "5.4.2"
+  }
+}

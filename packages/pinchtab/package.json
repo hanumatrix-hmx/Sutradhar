@@ -1,0 +1,41 @@
+{
+  "name": "pinchtab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Embeddable AI browser automation SDK. Drive a real Chrome/Edge with a Puppeteer-style API, with semantic DOM snapshots built for AI agents.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md"],
+  "sideEffects": false,
+  "engines": { "node": ">=18.0.0" },
+  "publishConfig": { "access": "public" },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/ --ext .ts",
+    "test": "vitest run --globals",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@pinchtab/capability-runtime": "workspace:*"
+  },
+  "peerDependencies": {
+    "puppeteer-core": ">=22.0.0"
+  },
+  "peerDependenciesMeta": {
+    "puppeteer-core": { "optional": true }
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "5.4.2"
+  }
+}

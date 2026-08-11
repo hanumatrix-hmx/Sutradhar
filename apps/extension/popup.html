@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PinchTab</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">▣</span>
+        <h1>PinchTab</h1>
+      </div>
+      <span id="status" class="status status--unknown" title="PinchTab server connection">checking…</span>
+    </header>
+
+    <main>
+      <section class="goal">
+        <label for="goal">What should the agent do?</label>
+        <textarea id="goal" rows="3" placeholder="e.g. On the current site, find the contact email and copy it"></textarea>
+        <button id="run" class="primary">Run goal</button>
+      </section>
+
+      <section id="result" class="result result--hidden"></section>
+
+      <details class="settings">
+        <summary>Settings</summary>
+        <label>PinchTab server URL
+          <input id="serverUrl" type="url" />
+        </label>
+        <label>Chrome remote-debugging port
+          <input id="debugPort" type="number" />
+        </label>
+        <p class="hint">
+          Launch Chrome with
+          <code>--remote-debugging-port=<span id="portEcho">9222</span></code>
+          and set the same port above so the PinchTab server can attach to this browser.
+        </p>
+        <button id="save">Save settings</button>
+      </details>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

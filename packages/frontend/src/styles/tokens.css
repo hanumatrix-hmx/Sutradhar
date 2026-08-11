@@ -1,0 +1,350 @@
+/**
+ * @file packages/frontend/src/styles/tokens.css
+ * @description PinchTab Design System — Complete Production Token System.
+ * Single source of truth for all visual primitives: colour, spacing, typography,
+ * radius, elevation, motion, z-index, and layout.
+ */
+
+:root {
+  /* ================================================================
+     COLOR SYSTEM
+     — 3-level surface hierarchy + semantic / brand / text
+     ================================================================ */
+
+  /* Surfaces */
+  --pt-surface-0:        #0a0c0f;          /* App canvas background          */
+  --pt-surface-1:        #12161c;          /* Rail, panel backgrounds         */
+  --pt-surface-2:        #1a1f28;          /* Cards, elevated panels          */
+  --pt-surface-3:        #22293a;          /* Hover fills, selected items     */
+  --pt-surface-4:        #2a3042;          /* Active fills, pressed states    */
+  --pt-surface-overlay:  rgba(0,0,0,0.68); /* Modal/drawer backdrop           */
+
+  /* Aliases (kept for backward compatibility) */
+  --pt-color-bg-base:     var(--pt-surface-0);
+  --pt-color-bg-card:     var(--pt-surface-2);
+  --pt-color-bg-header:   var(--pt-surface-1);
+  --pt-color-bg-elevated: var(--pt-surface-3);
+  --pt-color-bg-hover:    rgba(99,141,255,0.08);
+  --pt-color-bg-active:   rgba(99,141,255,0.14);
+  --pt-color-bg-overlay:  var(--pt-surface-overlay);
+
+  /* Borders */
+  --pt-border-subtle:      rgba(255,255,255,0.05);
+  --pt-border-default:     rgba(255,255,255,0.09);
+  --pt-border-strong:      rgba(255,255,255,0.16);
+  --pt-border-focus:       #4d8fff;
+  --pt-focus-ring:         rgba(77,143,255,0.35);
+
+  /* Aliases */
+  --pt-color-border:       var(--pt-border-default);
+  --pt-color-border-focus: var(--pt-border-focus);
+  --pt-color-focus-ring:   var(--pt-focus-ring);
+
+  /* Brand */
+  --pt-brand-primary:     #4d8fff;
+  --pt-brand-primary-dim: rgba(77,143,255,0.12);
+  --pt-brand-primary-h:   #6ea6ff;         /* Hover state                    */
+  --pt-brand-accent:      #8b5cf6;         /* AI / agent surfaces            */
+  --pt-brand-accent-dim:  rgba(139,92,246,0.12);
+
+  /* Aliases */
+  --pt-color-primary:       var(--pt-brand-primary);
+  --pt-color-primary-hover: var(--pt-brand-primary-h);
+  --pt-color-purple:        var(--pt-brand-accent);
+
+  /* Semantic */
+  --pt-semantic-success:      #22c55e;
+  --pt-semantic-success-dim:  rgba(34,197,94,0.12);
+  --pt-semantic-success-h:    #16a34a;
+  --pt-semantic-warning:      #f59e0b;
+  --pt-semantic-warning-dim:  rgba(245,158,11,0.12);
+  --pt-semantic-warning-h:    #d97706;
+  --pt-semantic-danger:       #ef4444;
+  --pt-semantic-danger-dim:   rgba(239,68,68,0.12);
+  --pt-semantic-danger-h:     #dc2626;
+  --pt-semantic-info:         var(--pt-brand-primary);
+  --pt-semantic-info-dim:     var(--pt-brand-primary-dim);
+
+  /* Aliases */
+  --pt-color-success:       var(--pt-semantic-success);
+  --pt-color-success-hover: var(--pt-semantic-success-h);
+  --pt-color-warning:       var(--pt-semantic-warning);
+  --pt-color-warning-hover: var(--pt-semantic-warning-h);
+  --pt-color-danger:        var(--pt-semantic-danger);
+  --pt-color-danger-hover:  var(--pt-semantic-danger-h);
+
+  /* AI-specific status colours */
+  --pt-ai-thinking:  #8b5cf6;
+  --pt-ai-acting:    #22c55e;
+  --pt-ai-waiting:   #f59e0b;
+  --pt-ai-error:     #ef4444;
+  --pt-ai-idle:      rgba(255,255,255,0.20);
+
+  /* Text */
+  --pt-text-primary:   #edf2f7;
+  --pt-text-secondary: #8b93a4;
+  --pt-text-tertiary:  #525a68;
+  --pt-text-on-color:  #ffffff;
+  --pt-text-link:      var(--pt-brand-primary);
+  --pt-text-heading:   #f0f4ff;
+
+  /* Aliases */
+  --pt-color-text-main:     var(--pt-text-primary);
+  --pt-color-text-muted:    var(--pt-text-secondary);
+  --pt-color-text-inverse:  var(--pt-surface-0);
+  --pt-color-text-link:     var(--pt-text-link);
+  --pt-color-text-on-accent: var(--pt-text-on-color);
+
+  /* ================================================================
+     TYPOGRAPHY
+     ================================================================ */
+
+  --pt-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --pt-font-mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+
+  /* Aliases */
+  --pt-font-family: var(--pt-font-sans);
+
+  /* Scale (11px → 32px, strict) */
+  --pt-text-xs:   11px;
+  --pt-text-sm:   12px;
+  --pt-text-base: 13px;
+  --pt-text-md:   14px;
+  --pt-text-lg:   16px;
+  --pt-text-xl:   20px;
+  --pt-text-2xl:  24px;
+  --pt-text-3xl:  32px;
+
+  /* Aliases */
+  --pt-font-size-xs:   var(--pt-text-xs);
+  --pt-font-size-sm:   var(--pt-text-sm);
+  --pt-font-size-md:   var(--pt-text-base);
+  --pt-font-size-base: var(--pt-text-md);
+  --pt-font-size-lg:   var(--pt-text-lg);
+  --pt-font-size-xl:   var(--pt-text-xl);
+  --pt-font-size-2xl:  var(--pt-text-2xl);
+  --pt-font-size-3xl:  var(--pt-text-3xl);
+
+  /* Weights */
+  --pt-weight-regular:  400;
+  --pt-weight-medium:   500;
+  --pt-weight-semibold: 600;
+  --pt-weight-bold:     700;
+
+  /* Aliases */
+  --pt-font-weight-normal:   var(--pt-weight-regular);
+  --pt-font-weight-medium:   var(--pt-weight-medium);
+  --pt-font-weight-semibold: var(--pt-weight-semibold);
+  --pt-font-weight-bold:     var(--pt-weight-bold);
+
+  /* Line heights */
+  --pt-leading-tight:   1.25;
+  --pt-leading-snug:    1.375;
+  --pt-leading-normal:  1.5;
+  --pt-leading-relaxed: 1.625;
+
+  /* Aliases */
+  --pt-line-height-tight:   var(--pt-leading-tight);
+  --pt-line-height-normal:  var(--pt-leading-normal);
+  --pt-line-height-relaxed: var(--pt-leading-relaxed);
+
+  /* ================================================================
+     SPACING — 4px base, 8-point grid
+     ================================================================ */
+  --pt-space-0:  0px;
+  --pt-space-1:  4px;
+  --pt-space-2:  8px;
+  --pt-space-3:  12px;
+  --pt-space-4:  16px;
+  --pt-space-5:  20px;
+  --pt-space-6:  24px;
+  --pt-space-8:  32px;
+  --pt-space-10: 40px;
+  --pt-space-12: 48px;
+  --pt-space-16: 64px;
+
+  /* Aliases */
+  --pt-space-2xs: var(--pt-space-1);
+  --pt-space-xs:  var(--pt-space-1);
+  --pt-space-sm:  var(--pt-space-2);
+  --pt-space-md:  var(--pt-space-4);
+  --pt-space-lg:  var(--pt-space-6);
+  --pt-space-xl:  var(--pt-space-8);
+  --pt-space-2xl: var(--pt-space-12);
+  --pt-space-3xl: var(--pt-space-16);
+
+  /* ================================================================
+     BORDER RADIUS
+     ================================================================ */
+  --pt-radius-1:    3px;
+  --pt-radius-2:    6px;
+  --pt-radius-3:    8px;
+  --pt-radius-4:    12px;
+  --pt-radius-5:    16px;
+  --pt-radius-full: 9999px;
+
+  /* Aliases */
+  --pt-radius-xs: var(--pt-radius-1);
+  --pt-radius-sm: var(--pt-radius-2);
+  --pt-radius-md: var(--pt-radius-3);
+  --pt-radius-lg: var(--pt-radius-4);
+  --pt-radius-xl: var(--pt-radius-5);
+
+  /* ================================================================
+     ELEVATION — consistent depth model
+     ================================================================ */
+  --pt-shadow-sm:       0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  --pt-shadow-md:       0 4px 12px rgba(0,0,0,0.45);
+  --pt-shadow-lg:       0 8px 28px rgba(0,0,0,0.55);
+  --pt-shadow-xl:       0 16px 48px rgba(0,0,0,0.65);
+  --pt-shadow-overlay:  0 20px 60px rgba(0,0,0,0.75);
+  --pt-shadow-focus:    0 0 0 3px var(--pt-focus-ring);
+
+  /* Aliases */
+  --pt-shadow-xs:   var(--pt-shadow-sm);
+  --pt-shadow-card: var(--pt-shadow-md);
+
+  /* ================================================================
+     MOTION — durations + easing
+     ================================================================ */
+  --pt-duration-instant: 50ms;
+  --pt-duration-fast:    120ms;
+  --pt-duration-normal:  200ms;
+  --pt-duration-slow:    350ms;
+  --pt-duration-slower:  500ms;
+
+  --pt-ease-standard:    cubic-bezier(0.2, 0, 0, 1);     /* Default UI transition      */
+  --pt-ease-decelerate:  cubic-bezier(0, 0, 0.2, 1);     /* Entering elements          */
+  --pt-ease-accelerate:  cubic-bezier(0.4, 0, 1, 1);     /* Leaving elements           */
+  --pt-ease-spring:      cubic-bezier(0.34, 1.56, 0.64, 1); /* Micro-interactions      */
+
+  /* Aliases */
+  --pt-ease-default: var(--pt-ease-standard);
+  --pt-ease-in:      var(--pt-ease-accelerate);
+  --pt-ease-out:     var(--pt-ease-decelerate);
+  --pt-ease-bounce:  var(--pt-ease-spring);
+
+  /* ================================================================
+     Z-INDEX SCALE — numeric, no CSS variable in zIndex property
+     ================================================================ */
+  --pt-z-base:            0;
+  --pt-z-raised:          10;
+  --pt-z-dropdown:        100;
+  --pt-z-sticky:          200;
+  --pt-z-drawer:          300;
+  --pt-z-modal:           400;
+  --pt-z-toast:           500;
+  --pt-z-tooltip:         600;
+  --pt-z-command-palette: 700;
+
+  /* ================================================================
+     LAYOUT CONSTANTS
+     ================================================================ */
+  --pt-rail-width:          48px;   /* WorkspaceRail icon-only nav width   */
+  --pt-topbar-height:       44px;   /* Reserved, per-page toolbars          */
+  --pt-tab-strip-height:    38px;   /* Browser tab strip                    */
+  --pt-omnibar-height:      40px;   /* Browser address bar                  */
+  --pt-dock-default-height: 260px;  /* AI Dock default open height          */
+  --pt-dock-collapsed-height: 36px; /* AI Dock tab-bar-only height          */
+  --pt-inspector-width:     360px;  /* Inspector / right panel              */
+}
+
+/* ================================================================
+   LIGHT THEME OVERRIDES
+   Applied when <html data-theme="light"> is set.
+   Only colour tokens change — spacing/type/motion are theme-neutral.
+   ================================================================ */
+
+[data-theme="light"] {
+  /* Surfaces */
+  --pt-surface-0:        #f5f6f8;
+  --pt-surface-1:        #ffffff;
+  --pt-surface-2:        #f0f2f5;
+  --pt-surface-3:        #e4e7ed;
+  --pt-surface-4:        #d8dce6;
+  --pt-surface-overlay:  rgba(0,0,0,0.40);
+
+  /* Aliases */
+  --pt-color-bg-base:     var(--pt-surface-0);
+  --pt-color-bg-card:     var(--pt-surface-2);
+  --pt-color-bg-header:   var(--pt-surface-1);
+  --pt-color-bg-elevated: var(--pt-surface-3);
+  --pt-color-bg-hover:    rgba(59,106,224,0.06);
+  --pt-color-bg-active:   rgba(59,106,224,0.10);
+  --pt-color-bg-overlay:  var(--pt-surface-overlay);
+
+  /* Borders */
+  --pt-border-subtle:   rgba(0,0,0,0.05);
+  --pt-border-default:  rgba(0,0,0,0.10);
+  --pt-border-strong:   rgba(0,0,0,0.18);
+  --pt-border-focus:    #2563eb;
+  --pt-focus-ring:      rgba(37,99,235,0.25);
+
+  /* Aliases */
+  --pt-color-border:       var(--pt-border-default);
+  --pt-color-border-focus: var(--pt-border-focus);
+  --pt-color-focus-ring:   var(--pt-focus-ring);
+
+  /* Brand */
+  --pt-brand-primary:     #2563eb;
+  --pt-brand-primary-dim: rgba(37,99,235,0.10);
+  --pt-brand-primary-h:   #1d4ed8;
+  --pt-brand-accent:      #7c3aed;
+  --pt-brand-accent-dim:  rgba(124,58,237,0.10);
+
+  /* Aliases */
+  --pt-color-primary:       var(--pt-brand-primary);
+  --pt-color-primary-hover: var(--pt-brand-primary-h);
+  --pt-color-purple:        var(--pt-brand-accent);
+
+  /* Semantic */
+  --pt-semantic-success:      #16a34a;
+  --pt-semantic-success-dim:  rgba(22,163,74,0.10);
+  --pt-semantic-success-h:    #15803d;
+  --pt-semantic-warning:      #d97706;
+  --pt-semantic-warning-dim:  rgba(217,119,6,0.10);
+  --pt-semantic-warning-h:    #b45309;
+  --pt-semantic-danger:       #dc2626;
+  --pt-semantic-danger-dim:   rgba(220,38,38,0.10);
+  --pt-semantic-danger-h:     #b91c1c;
+  --pt-semantic-info:         var(--pt-brand-primary);
+  --pt-semantic-info-dim:     var(--pt-brand-primary-dim);
+
+  /* Aliases */
+  --pt-color-success:       var(--pt-semantic-success);
+  --pt-color-success-hover: var(--pt-semantic-success-h);
+  --pt-color-warning:       var(--pt-semantic-warning);
+  --pt-color-warning-hover: var(--pt-semantic-warning-h);
+  --pt-color-danger:        var(--pt-semantic-danger);
+  --pt-color-danger-hover:  var(--pt-semantic-danger-h);
+
+  /* AI-specific status colours (adjusted for light bg) */
+  --pt-ai-thinking:  #7c3aed;
+  --pt-ai-acting:    #16a34a;
+  --pt-ai-waiting:   #d97706;
+  --pt-ai-error:     #dc2626;
+  --pt-ai-idle:      rgba(0,0,0,0.25);
+
+  /* Text */
+  --pt-text-primary:   #111827;
+  --pt-text-secondary: #4b5563;
+  --pt-text-tertiary:  #9ca3af;
+  --pt-text-on-color:  #ffffff;
+  --pt-text-link:      var(--pt-brand-primary);
+  --pt-text-heading:   #030712;
+
+  /* Aliases */
+  --pt-color-text-main:      var(--pt-text-primary);
+  --pt-color-text-muted:     var(--pt-text-secondary);
+  --pt-color-text-inverse:   #ffffff;
+  --pt-color-text-link:      var(--pt-text-link);
+  --pt-color-text-on-accent: var(--pt-text-on-color);
+
+  /* Elevation — lighter shadows for light mode */
+  --pt-shadow-sm:      0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+  --pt-shadow-md:      0 4px 12px rgba(0,0,0,0.10);
+  --pt-shadow-lg:      0 8px 28px rgba(0,0,0,0.14);
+  --pt-shadow-xl:      0 16px 48px rgba(0,0,0,0.18);
+  --pt-shadow-overlay: 0 20px 60px rgba(0,0,0,0.22);
+  --pt-shadow-focus:   0 0 0 3px var(--pt-focus-ring);
+}

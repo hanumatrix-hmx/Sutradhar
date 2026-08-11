@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Closed Shadow DOM</title></head>
+<body>
+  <h1>Closed Shadow Root</h1>
+  <secret-box></secret-box>
+  <div id="outside-marker">outside-dom-is-fine</div>
+  <!-- Verification aid only (not a backdoor into the shadow content itself): a `composed:true`
+       custom event is allowed by spec to cross a closed shadow boundary, so this proves a click
+       actually landed on the button inside the closed root without exposing what's in there. -->
+  <div id="outside-click-signal">0</div>
+
+  <script>
+    class SecretBox extends HTMLElement {
+      constructor() {
+        super();
+        // mode: 'closed' -- this.shadowRoot is null from here on; there is NO standard JS API
+        // to reach back in from outside this constructor closure. That's the point of the test.
+        const root = this.attachShadow({ mode: 'closed' });
+        root.innerHTML = `
+          <p id="secret-value">token-9f2c-locked</p>
+          <button id="secret-btn">Increment</button>
+          <span id="secret-counter">0</span>
+        `;
+        let count = 0;
+        root.getElementById('secret-btn').addEventListener('click', () => {
+          count++;
+          root.getElementById('secret-counter').textContent = String(count);
+          this.dispatchEvent(new CustomEvent('secret-clicked', { bubbles: true, composed: true, detail: count }));
+        });
+      }
+    }
+    customElements.define('secret-box', SecretBox);
+    document.addEventListener('secret-clicked', (e) => {
+      document.getElementById('outside-click-signal').textContent = String(e.detail);
+    });
+  </script>
+</body>
+</html>

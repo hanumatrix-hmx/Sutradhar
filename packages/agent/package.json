@@ -1,0 +1,44 @@
+{
+  "name": "@pinchtab/agent",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "Autonomous Agent execution core, state machine, goal planner, reflection engine, and task executor for PinchTab",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "default": "./dist/*.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/ --ext .ts",
+    "test": "vitest run --globals",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@pinchtab/contracts": "workspace:*",
+    "@pinchtab/capability": "workspace:*",
+    "@pinchtab/utils": "workspace:*",
+    "@pinchtab/config": "workspace:*",
+    "@pinchtab/observability": "workspace:*",
+    "@pinchtab/events": "workspace:*",
+    "@pinchtab/browser": "workspace:*",
+    "@pinchtab/llm": "workspace:*",
+    "@pinchtab/memory": "workspace:*",
+    "@pinchtab/storage": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "5.4.2"
+  }
+}

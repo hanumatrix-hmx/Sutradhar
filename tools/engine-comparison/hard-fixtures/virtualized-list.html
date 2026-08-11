@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Virtualized List</title>
+<style>
+  #viewport { height: 300px; overflow-y: auto; border: 1px solid #333; position: relative; width: 300px; }
+  #spacer { position: relative; }
+  .row { position: absolute; left: 0; right: 0; height: 40px; line-height: 40px; padding-left: 8px; box-sizing: border-box; border-bottom: 1px solid #eee; cursor: pointer; }
+</style>
+</head>
+<body>
+  <h1>Virtualized list (500 items, ~15 mounted at a time)</h1>
+  <p>Only a handful of rows exist in the DOM at any moment — the rest don't exist until scrolled
+     into range, and unmount again once scrolled past. A row for "Item 437" doesn't exist in the
+     DOM until you actually scroll there.</p>
+  <div id="viewport">
+    <div id="spacer"></div>
+  </div>
+  <div id="virtual-result">not-clicked</div>
+
+  <script>
+    const TOTAL = 500;
+    const ROW_H = 40;
+    const viewport = document.getElementById('viewport');
+    const spacer = document.getElementById('spacer');
+    spacer.style.height = (TOTAL * ROW_H) + 'px';
+
+    function render() {
+      const scrollTop = viewport.scrollTop;
+      const viewH = viewport.clientHeight;
+      const first = Math.max(0, Math.floor(scrollTop / ROW_H) - 2);
+      const last = Math.min(TOTAL - 1, Math.ceil((scrollTop + viewH) / ROW_H) + 2);
+
+      // Wipe and re-mount only the rows in range -- true unmount/remount, not just visibility toggling.
+      spacer.innerHTML = '';
+      for (let i = first; i <= last; i++) {
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.textContent = 'Item ' + i;
+        row.dataset.index = String(i);
+        row.style.top = (i * ROW_H) + 'px';
+        row.addEventListener('click', () => {
+          document.getElementById('virtual-result').textContent = 'clicked:' + i;
+        });
+        spacer.appendChild(row);
+      }
+    }
+    viewport.addEventListener('scroll', render);
+    render();
+  </script>
+</body>
+</html>

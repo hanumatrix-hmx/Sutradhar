@@ -1,0 +1,48 @@
+{
+  "name": "@pinchtab/server",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "PinchTab Platform REST API gateway server, HTTP route handlers, and application controller entrypoint",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "default": "./dist/*.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/ --ext .ts",
+    "start": "node dist/index.js",
+    "dev": "tsc -w",
+    "test": "vitest run --globals",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@pinchtab/contracts": "workspace:*",
+    "@pinchtab/capability": "workspace:*",
+    "@pinchtab/utils": "workspace:*",
+    "@pinchtab/config": "workspace:*",
+    "@pinchtab/observability": "workspace:*",
+    "@pinchtab/events": "workspace:*",
+    "@pinchtab/browser": "workspace:*",
+    "@pinchtab/llm": "workspace:*",
+    "@pinchtab/memory": "workspace:*",
+    "@pinchtab/agent": "workspace:*",
+    "@pinchtab/workflow": "workspace:*",
+    "@pinchtab/storage": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "5.4.2"
+  }
+}

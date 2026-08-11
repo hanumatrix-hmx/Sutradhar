@@ -1,0 +1,56 @@
+/**
+ * @file packages/pinchtab/src/index.ts
+ * @description PinchTab — embeddable AI browser automation SDK.
+ *
+ * Drive a real Chrome/Edge with a Puppeteer-style API, with semantic DOM snapshots built
+ * for AI agents. The single entry point is {@link launch}; everything else flows from the
+ * returned {@link Browser}.
+ *
+ * @example
+ * import { launch } from 'pinchtab';
+ *
+ * const browser = await launch();                  // launches headless Chrome
+ * const page = await browser.newPage();
+ * await page.goto('https://example.com');
+ *
+ * const snap = await page.snapshot();              // LLM-optimized interactive-element listing
+ * await page.click('7');                           // [#7] from the snapshot
+ * await page.type('#search', 'hello world');
+ * const png = await page.screenshot();
+ *
+ * await browser.close();
+ */
+
+import { PinchTabRuntime } from '@pinchtab/capability-runtime';
+import { Browser, type LaunchOptions } from './browser.js';
+
+export const PINCHTAB_VERSION = '0.1.0';
+
+/**
+ * Launch a browser and return a {@link Browser} handle. Resolves once the browser process
+ * is up and the first tab is ready.
+ *
+ * @example
+ * const browser = await launch({ url: 'https://example.com' });
+ */
+export async function launch(options: LaunchOptions = {}): Promise<Browser> {
+  const runtime = new PinchTabRuntime();
+  const result = await runtime.launch({
+    initialUrl: options.url,
+    isIncognito: options.isIncognito,
+    launch: options.headless !== undefined ? { headless: options.headless } : undefined,
+  });
+  if (!result.hasRealBrowser) {
+    // Clean up the useless session before throwing so we don't leak a browser process.
+    await runtime.shutdown(result.sessionId).catch(() => {});
+    throw new Error(
+      'PinchTab launched but no real browser page is available. Ensure Chrome/Edge is ' +
+        'installed, or set CHROME_PATH to the executable.',
+    );
+  }
+  return new Browser(runtime, result.sessionId);
+}
+
+export { Browser, type LaunchOptions } from './browser.js';
+export { Page, type ElementOptions, type ScreenshotOptions } from './page.js';
+export { PinchTabRuntime, type SnapshotResult } from '@pinchtab/capability-runtime';

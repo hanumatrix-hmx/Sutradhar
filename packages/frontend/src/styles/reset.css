@@ -1,0 +1,80 @@
+/**
+ * @file packages/frontend/src/styles/reset.css
+ * @description Production CSS Reset for PinchTab Frontend.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 14px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--pt-color-bg-base);
+  color: var(--pt-color-text-main);
+  font-family: var(--pt-font-family);
+  font-size: var(--pt-font-size-base);
+  line-height: var(--pt-line-height-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--pt-color-text-link);
+  text-decoration: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 2px solid var(--pt-color-border-focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--pt-color-bg-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--pt-color-border);
+  border-radius: var(--pt-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--pt-color-text-muted);
+}

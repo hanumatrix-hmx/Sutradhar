@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "PinchTab",
+  "version": "0.1.0",
+  "description": "Drive your real, logged-in browser with an AI agent. Connects Chrome to the PinchTab runtime.",
+  "permissions": ["storage", "activeTab", "scripting", "debugger", "tabs"],
+  "host_permissions": ["http://localhost/*", "http://127.0.0.1/*"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "PinchTab"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

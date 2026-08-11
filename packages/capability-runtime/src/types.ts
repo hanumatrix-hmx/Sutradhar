@@ -1,0 +1,137 @@
+/**
+ * @file packages/capability-runtime/src/types.ts
+ * @description Public option and result types for the PinchTab capability runtime façade.
+ *
+ * These types are intentionally framework-agnostic — no HTTP, no MCP, no extension
+ * glue. They describe the high-level browser verbs that every integration surface
+ * (MCP server, npm SDK, plugins, extension) calls through {@link PinchTabRuntime}.
+ */
+
+import type { ActionHistoryEntry, BrowserLaunchOptions, VerificationResultDto } from '@pinchtab/browser';
+import type { SessionId, TabId } from '@pinchtab/contracts';
+
+/** Options for {@link PinchTabRuntime.launch}. */
+export interface LaunchOptions {
+  /** Reuse an existing caller-owned session id; omit to let PinchTab mint one. */
+  sessionId?: string;
+  /** Open a fresh tab and navigate here immediately after launch. */
+  initialUrl?: string;
+  /** Incognito context. Defaults to false. */
+  isIncognito?: boolean;
+  /** Forwarded to the underlying browser launcher. */
+  launch?: BrowserLaunchOptions;
+  /**
+   * Launch using a named, persistent profile created via `PinchTabRuntime`'s `ProfileManager`
+   * (cookies/history/localStorage survive across separate launches) instead of a fresh,
+   * throwaway userDataDir. Resolves to that profile's userDataDir and merges it into `launch` —
+   * throws if the name doesn't exist. Takes precedence over an explicit `launch.userDataDir` if
+   * both are somehow set, since naming a profile is a more specific request than a raw path.
+   */
+  profileName?: string;
+}
+
+/** Result of {@link PinchTabRuntime.launch}. */
+export interface LaunchResult {
+  sessionId: string;
+  activeTabId?: string;
+  /** true only when a real Chrome/Edge page is backing the session. */
+  hasRealBrowser: boolean;
+}
+
+/** Options for {@link PinchTabRuntime.attach} — connect to an external browser over CDP. */
+export interface AttachOptions {
+  /**
+   * CDP endpoint of the external browser. Either a raw WebSocket URL
+   * (`ws://host:port/devtools/browser/<id>`) or an http discovery endpoint
+   * (`http://127.0.0.1:9222`). The user's real Chrome is exposed by launching it with
+   * `--remote-debugging-port=9222`, or by the browser extension via `chrome.debugger`.
+   */
+  endpoint: string;
+  /** Reuse an existing caller-owned session id; omit to let PinchTab mint one. */
+  sessionId?: string;
+}
+
+/** Result of {@link PinchTabRuntime.navigate}. */
+export interface NavigateResult {
+  tabId: string;
+  url: string;
+  title: string;
+}
+
+/** Result of {@link PinchTabRuntime.screenshot}. */
+export interface ScreenshotResult {
+  /** Base64-encoded PNG bytes, WITHOUT the `data:image/png;base64,` prefix. */
+  base64: string;
+}
+
+/** A rendered view of the page suitable for an LLM to reason over. */
+export interface SnapshotResult {
+  sessionId: string;
+  tabId: string;
+  url: string;
+  title: string;
+  /** Compact, LLM-optimized listing of interactive elements, e.g. `[#7] button "Search"`. */
+  interactiveElements: string;
+  /** Number of interactive elements discovered. */
+  elementCount: number;
+  /** Visible body text excerpt, best-effort. */
+  pageText: string;
+}
+
+/** Result of {@link PinchTabRuntime.click} and {@link PinchTabRuntime.type}. */
+export interface ActionResult {
+  success: boolean;
+  actionType: string;
+  executionTimeMs: number;
+  currentUrl?: string;
+  title?: string;
+  output?: Record<string, unknown>;
+  error?: string;
+  retriesUsed?: number;
+  /** Post-action verification signal — did the action's observable effect match expectations? */
+  verification?: VerificationResultDto;
+  /** Base64 PNG captured automatically when the action ultimately failed, for debugging. */
+  failureScreenshot?: string;
+}
+
+/** Result of {@link PinchTabRuntime.exportPdf}. */
+export interface PdfResult {
+  /** Base64-encoded PDF bytes, WITHOUT the `data:application/pdf;base64,` prefix. */
+  base64: string;
+}
+
+/** Result of {@link PinchTabRuntime.downloadFile}. */
+export interface DownloadResult {
+  filename: string;
+  path: string;
+  downloadDir: string;
+}
+
+export { type ActionHistoryEntry };
+
+/** A row in {@link PinchTabRuntime.listTabs}. */
+export interface TabInfo {
+  id: string;
+  url: string;
+  title: string;
+  isActive: boolean;
+}
+
+/** Failure raised when a session/tab cannot be resolved or the backing page is absent. */
+export class BrowserNotAvailableError extends Error {
+  public constructor(message: string) {
+    super(message);
+    this.name = 'BrowserNotAvailableError';
+  }
+}
+
+/** A verb argument that targets an element either by CSS selector or by snapshot node id. */
+export type ElementTarget = string;
+
+/** Internal helper: convert a snapshot node id (number) or selector string to a CSS selector. */
+export function normalizeTarget(target: ElementTarget): string {
+  // A pure-numeric target is interpreted as a pt-node-id stamped by the DOM semantic engine.
+  return /^\d+$/.test(target.trim()) ? `[data-pt-node-id="${target.trim()}"]` : target;
+}
+
+export { type SessionId, type TabId };

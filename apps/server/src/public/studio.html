@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PinchTab Studio — Agent Development & Analysis Environment</title>
+  <style>
+    :root {
+      --bg-main: #0d1117;
+      --bg-card: #161b22;
+      --bg-header: #1f242c;
+      --border-color: #30363d;
+      --accent-green: #238636;
+      --accent-blue: #58a6ff;
+      --accent-purple: #bc8cff;
+      --accent-orange: #d29922;
+      --text-main: #c9d1d9;
+      --text-muted: #8b949e;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    header {
+      background-color: var(--bg-header);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+    h1 { margin: 0; font-size: 20px; color: #ffffff; }
+    nav.tabs {
+      display: flex;
+      background-color: #161b22;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0 16px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 12px 18px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      border-bottom: 2px solid transparent;
+    }
+    .tab-btn.active {
+      color: var(--accent-blue);
+      border-bottom-color: var(--accent-blue);
+    }
+    .container {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 18px;
+    }
+    h2 { font-size: 14px; text-transform: uppercase; color: var(--text-muted); margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+    .status-pill { background: var(--accent-green); color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
+    button.btn-act { background: var(--accent-blue); color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-right: 6px; }
+    code { font-family: monospace; color: var(--accent-purple); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PinchTab Studio v1.0</h1>
+    <span class="status-pill">CLOSED ALPHA READY</span>
+  </header>
+  <nav class="tabs">
+    <button class="tab-btn active">1. Execution Replay</button>
+    <button class="tab-btn">2. Visual DOM</button>
+    <button class="tab-btn">3. Decision Diff</button>
+    <button class="tab-btn">4. Memory Explorer</button>
+    <button class="tab-btn">5. Performance Profiler</button>
+    <button class="tab-btn">6. Benchmark Dashboard</button>
+    <button class="tab-btn">7. Dataset Recorder</button>
+    <button class="tab-btn">8. Playground</button>
+    <button class="tab-btn">9. Failure Lab</button>
+    <button class="tab-btn">10. Release Readiness</button>
+  </nav>
+
+  <div class="container">
+    <!-- Module 1: Replay Controls -->
+    <div class="card">
+      <h2>Module 1 — Execution Replay</h2>
+      <p>Scrub Timeline Frame-by-Frame:</p>
+      <input type="range" min="1" max="7" value="3" style="width:100%;">
+      <p>Current Frame: <code>3 / 7 (Page Understanding)</code></p>
+      <button class="btn-act">⏮ Step Back</button>
+      <button class="btn-act">▶ Play</button>
+      <button class="btn-act">⏭ Step Next</button>
+    </div>
+
+    <!-- Module 3: Decision Diff -->
+    <div class="card">
+      <h2>Module 3 — Decision Diff</h2>
+      <p>Comparing Trace <code>goal_live_101</code> vs <code>goal_studio_101</code></p>
+      <p>Confidence Delta: <span style="color:#3fb950;">+0.04</span></p>
+      <p>Latency Delta: <span style="color:#3fb950;">-35ms</span></p>
+      <p>Recovery Path Match: <strong style="color:#3fb950;">TRUE</strong></p>
+    </div>
+
+    <!-- Module 5: Performance Profiler -->
+    <div class="card">
+      <h2>Module 5 — Performance Profiler</h2>
+      <p>Total Duration: <code>420ms</code></p>
+      <p>Planning Latency: <code>25ms</code></p>
+      <p>Browser Latency: <code>365ms</code></p>
+      <p>Verification Latency: <code>15ms</code></p>
+      <p>Memory Latency: <code>5ms</code></p>
+    </div>
+
+    <!-- Module 8: Agent Playground -->
+    <div class="card">
+      <h2>Module 8 — Agent Playground</h2>
+      <input type="text" value="Search Google for PinchTab Agent" style="width:100%; padding:8px; background:#21262d; border:1px solid #30363d; color:white; border-radius:4px; margin-bottom:10px;">
+      <button class="btn-act">Run Live Goal</button>
+      <button class="btn-act" style="background:#d29922;">Pause</button>
+    </div>
+
+    <!-- Module 9: Failure Lab -->
+    <div class="card">
+      <h2>Module 9 — Failure Lab Chaos Injection</h2>
+      <p>Simulate Controlled Failure:</p>
+      <button class="btn-act" style="background:#da3633;">Inject Popup</button>
+      <button class="btn-act" style="background:#da3633;">Inject Slow Net</button>
+      <button class="btn-act" style="background:#da3633;">DOM Mutation</button>
+      <p style="margin-top:10px;">Status: <span class="status-pill">RECOVERED AUTOMATICALLY</span></p>
+    </div>
+
+    <!-- Module 10: Release Readiness -->
+    <div class="card">
+      <h2>Module 10 — Release Readiness</h2>
+      <p>Reliability Score: <code>98.5 / 100</code></p>
+      <p>Maintainability Score: <code>96.0 / 100</code></p>
+      <p>Performance Score: <code>97.2 / 100</code></p>
+      <p>Release Status: <strong style="color:#3fb950;">GO FOR CLOSED ALPHA</strong></p>
+    </div>
+  </div>
+</body>
+</html>

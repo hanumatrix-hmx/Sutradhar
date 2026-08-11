@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Engine Comparison Fixture</title></head>
+<body>
+  <h1>Complex Fixture</h1>
+
+  <div id="shadow-host"></div>
+
+  <div id="delayed-container"></div>
+
+  <script>
+    // Shadow DOM: text is only reachable by piercing the shadow root.
+    const host = document.getElementById('shadow-host');
+    const root = host.attachShadow({ mode: 'open' });
+    root.innerHTML = '<p id="shadow-text">secret-shadow-value-42</p>';
+
+    // Delayed content: appears 1200ms after load, simulating an async fetch/render.
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.id = 'delayed-result';
+      el.textContent = 'delayed-value-ready';
+      document.getElementById('delayed-container').appendChild(el);
+    }, 1200);
+  </script>
+
+  <iframe id="frame1" srcdoc="
+    <form id='inner-form'>
+      <input id='inner-input' type='text' />
+      <button id='inner-submit' type='button' onclick=&quot;document.getElementById('inner-result').textContent = 'submitted:' + document.getElementById('inner-input').value&quot;>Submit</button>
+      <div id='inner-result'></div>
+    </form>
+  "></iframe>
+</body>
+</html>

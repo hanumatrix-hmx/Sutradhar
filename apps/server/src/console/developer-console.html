@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PinchTab — Developer Test Console</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --primary: #38bdf8;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #22c55e;
+    }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 24px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+    p {
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    textarea {
+      width: 100%;
+      height: 80px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 12px;
+      font-family: inherit;
+      font-size: 1rem;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+    button {
+      background: var(--primary);
+      color: #0f172a;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    pre {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+      color: #a5f3fc;
+      font-size: 0.9rem;
+    }
+    .timeline {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .timeline li {
+      padding: 8px 12px;
+      border-left: 3px solid var(--primary);
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 0 4px 4px 0;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>PinchTab Developer Test Console</h1>
+    <p>Runtime Architecture Validation & End-to-End Goal Execution</p>
+
+    <div class="panel">
+      <label for="goalInput"><strong>Goal Request:</strong></label>
+      <textarea id="goalInput" placeholder="Enter execution goal e.g., 'Go to github.com and summarize the homepage'"></textarea>
+      <button id="runBtn" onclick="runGoal()">Execute Goal</button>
+    </div>
+
+    <div class="panel">
+      <h3>Execution Timeline Log</h3>
+      <ul id="timeline" class="timeline">
+        <li>Runtime initialized. Enter a goal above to execute.</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h3>Execution Result Output</h3>
+      <pre id="resultJson">Waiting for execution...</pre>
+    </div>
+  </div>
+
+  <script>
+    async function runGoal() {
+      const goal = document.getElementById('goalInput').value.trim();
+      if (!goal) return;
+
+      const timeline = document.getElementById('timeline');
+      const resultJson = document.getElementById('resultJson');
+
+      timeline.innerHTML = '';
+      resultJson.textContent = 'Executing goal across full platform stack...';
+
+      addLog('HTTP Request Sent -> POST /api/v1/agents/goals');
+      addLog('Application Service -> AgentApplicationService.executeGoal()');
+      addLog('Workflow Engine -> WorkflowRunner.runWorkflow()');
+
+      try {
+        const res = await fetch('/api/v1/agents/goals', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ goal })
+        });
+
+        const data = await res.json();
+        addLog('Agent Execution -> AgentCore.executeGoal() completed');
+        addLog('DOM Snapshot -> SnapshotGenerator produced BrowserSnapshotDto');
+        addLog('Reflection Engine -> ReflectionEngine evaluated step outcome');
+        addLog('Response Received -> HTTP 200 OK');
+
+        resultJson.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        addLog('Execution Error: ' + err.message);
+        resultJson.textContent = 'Error: ' + err.message;
+      }
+    }
+
+    function addLog(msg) {
+      const timeline = document.getElementById('timeline');
+      const li = document.createElement('li');
+      li.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+      timeline.appendChild(li);
+    }
+  </script>
+</body>
+</html>

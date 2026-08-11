@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Native HTML5 Drag and Drop</title>
+<style>
+  .list { list-style: none; padding: 8px; margin: 8px; width: 160px; min-height: 160px; border: 1px solid #333; display: inline-block; vertical-align: top; }
+  .list li { padding: 8px; margin: 4px 0; background: #eee; cursor: grab; }
+  .list.over { background: #dff; }
+</style>
+</head>
+<body>
+  <h1>Native HTML5 drag-and-drop (real dataTransfer, not a custom mouse-based widget)</h1>
+  <ul class="list" id="source">
+    <li draggable="true" id="item-alpha">Alpha</li>
+    <li draggable="true" id="item-beta">Beta</li>
+  </ul>
+  <ul class="list" id="target"></ul>
+  <div id="dnd-result">not-dropped</div>
+
+  <script>
+    const source = document.getElementById('source');
+    const target = document.getElementById('target');
+
+    document.querySelectorAll('li[draggable]').forEach((li) => {
+      li.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', li.id);
+        e.dataTransfer.effectAllowed = 'move';
+      });
+    });
+
+    [source, target].forEach((list) => {
+      list.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        list.classList.add('over');
+      });
+      list.addEventListener('dragleave', () => list.classList.remove('over'));
+      list.addEventListener('drop', (e) => {
+        e.preventDefault();
+        list.classList.remove('over');
+        const id = e.dataTransfer.getData('text/plain');
+        const el = document.getElementById(id);
+        if (el) {
+          list.appendChild(el);
+          document.getElementById('dnd-result').textContent = 'dropped:' + id + '-in-' + list.id;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

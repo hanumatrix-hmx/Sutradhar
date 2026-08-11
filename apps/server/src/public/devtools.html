@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PinchTab Developer Console & Execution Inspector</title>
+  <style>
+    :root {
+      --bg-main: #0d1117;
+      --bg-card: #161b22;
+      --bg-header: #21262d;
+      --border-color: #30363d;
+      --accent-green: #238636;
+      --accent-blue: #58a6ff;
+      --accent-purple: #a371f7;
+      --text-main: #c9d1d9;
+      --text-muted: #8b949e;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    header {
+      background-color: var(--bg-header);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+    h1 { margin: 0; font-size: 18px; color: #ffffff; }
+    .badge {
+      background-color: var(--accent-green);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .grid-container {
+      display: grid;
+      grid-template-columns: 280px 1fr 340px;
+      gap: 16px;
+      padding: 16px;
+      height: calc(100vh - 65px);
+      box-sizing: border-box;
+    }
+    .panel {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      overflow-y: auto;
+    }
+    h2 { font-size: 14px; text-transform: uppercase; color: var(--text-muted); margin-top: 0; letter-spacing: 0.5px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+    .timeline-item {
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      background-color: #21262d;
+      border-left: 4px solid var(--accent-blue);
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .timeline-item.completed { border-left-color: var(--accent-green); }
+    .node-card {
+      background-color: #21262d;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .metric-val { color: var(--accent-blue); font-weight: bold; }
+    code { font-family: monospace; color: var(--accent-purple); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PinchTab Developer Console</h1>
+    <span class="badge">RUNTIME V1.0 READY</span>
+  </header>
+  <div class="grid-container">
+    <!-- Left Panel: Execution Timeline -->
+    <div class="panel">
+      <h2>1. Live Execution Timeline</h2>
+      <div class="timeline-item completed">1. Goal Received (2ms)</div>
+      <div class="timeline-item completed">2. Task Graph Construction (25ms)</div>
+      <div class="timeline-item completed">3. Page Understanding (15ms)</div>
+      <div class="timeline-item completed">4. Decision Evidence (12ms)</div>
+      <div class="timeline-item completed">5. Action Execution (120ms)</div>
+      <div class="timeline-item completed">6. Verification (45ms)</div>
+      <div class="timeline-item completed">7. Episode Finalized (5ms)</div>
+    </div>
+
+    <!-- Middle Panel: TaskGraph DAG & Page Model -->
+    <div class="panel">
+      <h2>2. TaskGraph Visualizer & Page Model</h2>
+      <div class="node-card">
+        <strong>Node #1: Navigate and Inspect</strong><br>
+        Status: <span style="color:#3fb950;">COMPLETED</span> | Duration: 120ms | Retries: 0
+      </div>
+      <div class="node-card">
+        <strong>Node #2: Execute Semantic Actions</strong><br>
+        Status: <span style="color:#3fb950;">COMPLETED</span> | Duration: 250ms | Retries: 0
+      </div>
+      <div class="node-card">
+        <strong>Node #3: Verify and Store Output</strong><br>
+        Status: <span style="color:#3fb950;">COMPLETED</span> | Duration: 70ms | Retries: 0
+      </div>
+
+      <h2 style="margin-top:20px;">3. Page Understanding Inspector</h2>
+      <p>Page Type: <code>Article</code> | Confidence: <code>0.92</code></p>
+      <p>Primary Intent: <i>Encyclopedic knowledge reading</i></p>
+      <p>Regions Detected: Header (1), Body (1), Form (1)</p>
+    </div>
+
+    <!-- Right Panel: Decision Evidence & Runtime Services -->
+    <div class="panel">
+      <h2>4. Decision Evidence Inspector</h2>
+      <p>Recommendation: <strong style="color:#3fb950;">EXECUTE</strong></p>
+      <p>Confidence: <code>0.94 / 1.00</code></p>
+      <p>Positive Factors: Exact Accessible Name (+0.45), Role Match (+0.18), Visible (+0.22)</p>
+
+      <h2 style="margin-top:20px;">5. Runtime Services Inspector</h2>
+      <p>PlannerService: <span style="color:#3fb950;">RUNNING</span></p>
+      <p>MemoryService: <span style="color:#3fb950;">RUNNING</span></p>
+      <p>BrowserService: <span style="color:#3fb950;">RUNNING</span></p>
+      <p>RecoveryService: <span style="color:#3fb950;">RUNNING</span></p>
+      <p>TaskGraphService: <span style="color:#3fb950;">RUNNING</span></p>
+      <p>DecisionService: <span style="color:#3fb950;">RUNNING</span></p>
+      <p>PageUnderstandingService: <span style="color:#3fb950;">RUNNING</span></p>
+    </div>
+  </div>
+</body>
+</html>

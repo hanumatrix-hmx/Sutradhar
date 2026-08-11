@@ -1,0 +1,35 @@
+{
+  "name": "@pinchtab/sdk",
+  "version": "0.2.0",
+  "type": "module",
+  "description": "Plugin/extension SDK for PinchTab — author plugins (types + manifest) and host them (loader, manager, host, real signature verification).",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md"],
+  "sideEffects": false,
+  "engines": { "node": ">=18.0.0" },
+  "publishConfig": { "access": "public" },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/ --ext .ts",
+    "test": "vitest run --globals",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@pinchtab/contracts": "workspace:*",
+    "@pinchtab/observability": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "5.4.2"
+  }
+}

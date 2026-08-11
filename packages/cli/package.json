@@ -1,0 +1,27 @@
+{
+  "name": "@pinchtab/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Terminal CLI for driving the PinchTab browser engine directly — nav/snap/click/type/press/text/screenshot/audit/compare/doctor.",
+  "main": "./dist/index.js",
+  "bin": {
+    "pinchtab": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/ --ext .ts",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@pinchtab/browser": "workspace:*",
+    "@pinchtab/capability-runtime": "workspace:*",
+    "@pinchtab/contracts": "workspace:*",
+    "@pinchtab/observability": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "5.4.2"
+  }
+}
