@@ -4,9 +4,23 @@
 
 ---
 
+## Ways to use Sutradhar
+
+Pick the integration surface that matches what you're building. All three sit on the same
+engine (`@sutradhar/capability-runtime`), so behavior is identical across them.
+
+| I want to... | Use | Docs |
+|---|---|---|
+| Let an MCP-compatible AI client (Claude Desktop, ZCode, Cline, ...) drive a real browser | **`@sutradhar/mcp-server`** | [packages/mcp-server/README.md](./packages/mcp-server/README.md) |
+| Drive a browser from my own Node code (scraping, testing, RPA, agent tooling) | **`sutradhar`** (the SDK) | [packages/sutradhar/README.md](./packages/sutradhar/README.md) |
+| Drive a browser from a terminal, no scripting | **`@sutradhar/cli`** | [packages/cli/README.md](./packages/cli/README.md) |
+| Run the full reference app (REST API + agent loop + web inspector dashboard) | this monorepo's `apps/server` + `packages/frontend` | see [Quickstart & Development](#-quickstart--development) below |
+
+---
+
 ## 🌟 Key Capabilities
 
-- **Universal Browser Control**: Native integration with Sutradhar, Playwright, Chrome DevTools Protocol (CDP), and cloud browser providers.
+- **Universal Browser Control**: Native integration with Puppeteer, Chrome DevTools Protocol (CDP), and cloud browser providers.
 - **Dynamic LLM Orchestration**: Unified gateway supporting OpenRouter (200+ cloud models), Ollama (local LLMs), OpenAI, and Anthropic with automatic failover and capability matching.
 - **Multi-Tier Memory Engine**: Working memory context buffer, episodic action traces, procedural skill scripts, and semantic fact knowledge base.
 - **Deterministic Workflows & Tools**: Extensible tool execution system (Browser, Shell, Filesystem, HTTP) guarded by strict security policies and visual DAG workflow graphs.
@@ -34,6 +48,9 @@ packages/
 ├── browser/                   # REAL browser automation: Puppeteer launcher, 19-action
 │                              #   engine, DOM semantic engine (data-sd-node-id grounding),
 │                              #   snapshot generator, stealth, verifier, skills
+├── capability-runtime/        # SutradharRuntime facade — the single high-level entry point
+│                              #   composed by the MCP server, CLI, and SDK; session/profile
+│                              #   management, axSnapshot, site-audit/visual-compare
 ├── llm/                       # REAL LLM gateway: OpenAiCompatibleAdapter (works with
 │                              #   OpenRouter, Ollama, any /v1/chat/completions endpoint),
 │                              #   thin OpenRouter/Ollama wrappers, env auto-detection
@@ -43,10 +60,23 @@ packages/
 │                              #   by the agent loop — see .ai/known-problems.md)
 ├── workflow/                  # DAG workflow runner (builds + tests pass; scaffolding)
 ├── storage/                   # SQLite client + Session/Event/File repositories
-├── sdk/                       # External TypeScript client SDK
+├── mcp-server/                # MCP server exposing the browser.*/agent.* tool surface
+│                              #   over stdio (bin: sutradhar-mcp) — see .mcp.json
+├── cli/                       # `sutradhar` CLI — detached-Chrome sessions that survive
+│                              #   across separate short-lived CLI invocations
+├── sutradhar/                 # Embeddable client SDK: Puppeteer-style API over a real
+│                              #   Chrome/Edge, published unscoped as `sutradhar` on npm
+├── sdk/                       # Plugin/extension SDK (author + host Sutradhar plugins)
+├── dev-runtime/                # Generic dev runtime/service registry shared across the
+│                              #   wider Hanumatrix ecosystem, not Sutradhar-specific
 └── frontend/                  # React (Vite) dashboard — WIRED to the real backend via
                                #   /api REST; no mocks in the production path
 ```
+
+A few more `packages/*` directories exist as empty, not-yet-implemented scaffolding
+(`backend`, `configs`, `core`, `desktop`, `providers`, `shared`, `types`) — intentionally
+omitted above since they contain no source yet. Tracked as `PROB-004` in
+[`.ai/known-problems.md`](./.ai/known-problems.md).
 
 **Data flow (all real, no mocks):**
 `Frontend (React)` → `REST /api/v1/*` → `Server` → `BrowserActionEngine` (Puppeteer/Chrome)

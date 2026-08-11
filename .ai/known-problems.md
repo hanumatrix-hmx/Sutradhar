@@ -78,11 +78,15 @@ Last Updated: 2026-08-09
     back-off instead of immediate retry.
 
 - **ID**: `PROB-004`
-  - **Summary**: README still lists ~25 packages; several are empty/aspirational.
+  - **Summary**: ~~README still lists ~25 packages; several are empty/aspirational.~~
   - **Severity**: Low
-  - **Status**: OPEN
-  - **Impact**: The README architecture diagram overstates what exists.
-  - **Mitigation**: Tracked for a later documentation-cleanup pass.
+  - **Status**: RESOLVED 2026-08-11
+  - **Impact**: Resolved: README's monorepo structure section now lists every
+    package with real source (was missing `capability-runtime`, `mcp-server`,
+    `cli`, `sutradhar`, `dev-runtime`) and explicitly names the empty
+    scaffolding dirs (`backend`, `configs`, `core`, `desktop`, `providers`,
+    `shared`, `types`) instead of silently omitting or overstating them.
+  - **Mitigation**: None needed.
 
 ## Resolved
 
