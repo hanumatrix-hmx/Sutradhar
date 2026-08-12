@@ -64,20 +64,22 @@ Last Updated: 2026-08-09
 - **ID**: `PROB-006`
   - **Summary**: ~~Session-page screenshot polling can saturate the browser connection pool, leaving a subsequent page's API calls stuck on "Loading…" until reload.~~
   - **Severity**: Medium
-  - **Status**: FIX IMPLEMENTED 2026-08-11, typechecked, **not yet live-verified**
+  - **Status**: RESOLVED 2026-08-12, live-verified
   - **Impact**: `captureScreenshot` now threads an `AbortSignal` through
     `serverBrowserAdapter` → `browserCapabilityAPI` → `EmbeddedBrowser.tsx`.
     The poll loop aborts the previous in-flight request before starting a
     new one (caps concurrent screenshot requests to 1) and aborts on
     unmount/`browserSession` change (route away), so a hanging request can
     no longer hold a connection-pool slot a subsequent page's API calls
-    need. The existing `MAX_SCREENSHOT_FAILURES` counter (unaffected by
-    this change) still separately handles the repeated-real-failure
-    back-off case. Compiles clean; the original bug required a live
-    session-page → history-detail navigation race to reproduce, which
-    hasn't been re-run against this fix yet — do that before calling this
-    fully closed.
-  - **Mitigation**: None needed if live verification confirms the fix.
+    need. **Live-verified 2026-08-12**: ran the real backend + frontend
+    dev stack, drove the actual dashboard through Sutradhar's own MCP
+    tools, created a live session, and rapidly bounced between the
+    session view (active screenshot polling) and History 3x in a row —
+    History loaded instantly every time, no "Loading…" hang, no errors in
+    the server log. The existing `MAX_SCREENSHOT_FAILURES` counter
+    (unaffected by this change) still separately handles the
+    repeated-real-failure back-off case.
+  - **Mitigation**: None needed.
 
 - **ID**: `PROB-004`
   - **Summary**: ~~README still lists ~25 packages; several are empty/aspirational.~~
@@ -89,6 +91,20 @@ Last Updated: 2026-08-09
     scaffolding dirs (`backend`, `configs`, `core`, `desktop`, `providers`,
     `shared`, `types`) instead of silently omitting or overstating them.
   - **Mitigation**: None needed.
+
+- **ID**: `PROB-007`
+  - **Summary**: The "New Session" modal silently no-ops if Launch is clicked with an empty Goal field.
+  - **Severity**: Low
+  - **Status**: OPEN
+  - **Impact**: Found live 2026-08-12 while dogfooding the dashboard: the
+    Goal `<textarea>` has a native `required` attribute; clicking "Launch
+    Session" with it empty triggers the browser's native constraint
+    validation, which blocks the submit — but nothing in the app's own UI
+    indicates why (no toast, no inline error, no focus/scroll to the
+    field). It just looks like the button did nothing.
+  - **Mitigation**: None yet. Fix is small: either surface a visible
+    inline error, or replace/report the native validation via
+    `onInvalid`/`reportValidity()` so it's obvious what's missing.
 
 ## Resolved
 
