@@ -180,6 +180,37 @@ findings:
 
 Append-only. Newest first.
 
+### 2026-08-13 — Milestone 15: second Claude-direct WebBench sample — a real completion number
+
+Milestone 14's sample scored 0/7 completions, but every task landed on one of three domains
+(acehardware.com, agoda.com, crunchbase.com) that turned out to run unusually aggressive
+anti-bot/auth walls — inconclusive about a general completion rate on its own. Ran a second,
+deliberately different 8-task sample (`tools/webbench/tasks-sample2.json`): all READ category
+(WebBench's largest, 64.4% of the full set), across 8 domains never touched in sample 1 —
+alberta.ca, aljazeera.com, allrecipes.com, apnews.com, berkeley.edu, britannica.com,
+collinsdictionary.com, craigslist.org.
+
+**Result: 5 of 8 completed end-to-end with real, verifiable answers (62.5%)** — full detail
+in `tools/webbench/claude-direct-run-2026-08-13-sample2.md`:
+
+- alberta.ca, aljazeera.com, apnews.com, berkeley.edu, craigslist.org: real data extracted
+  (eligibility criteria, dated article lists, library resources, a verbatim ToU clause).
+  One instance of the same content-drift pattern as sample 1's task 0 — the "Alberta Job
+  Grant" program had been renamed "Canada-Alberta Productivity Grant" — but this time the
+  successor page existed and had the real answer, extracted successfully.
+- allrecipes.com, britannica.com, collinsdictionary.com: blocked externally — one flat
+  IP-level access deny, two distinct Cloudflare JS-challenge walls (one on a deep page, one
+  on the bare homepage). None worked around via evasion.
+
+**Combined across both samples: 5 of 15 real WebBench tasks completed, 10 blocked by
+external anti-bot/auth walls, 0 Sutradhar-attributable failures.** This is the real number
+Milestone 14 was missing — confirms the tool mechanics were never the limiting factor; a
+majority of failures came from a specific minority of aggressively-protected sites
+(acehardware.com, agoda.com, crunchbase.com, britannica.com, collinsdictionary.com,
+allrecipes.com), not from Sutradhar generally. The 67% external-block rate across the full
+15-task combined sample is itself a real, honest data point about 2026 web conditions for
+unauthenticated automated browsing — not a caveat to bury under a headline completion rate.
+
 ### 2026-08-13 — Milestone 14: first Claude-direct WebBench run — the primary benchmarking mode
 
 The user corrected a framing mistake earlier in this loop: Sutradhar's benchmark story

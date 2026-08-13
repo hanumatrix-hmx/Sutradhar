@@ -67,6 +67,31 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-13 — Milestone 15: second WebBench sample — 5/8 completed, a real number at last
+
+Milestone 14's sample was inconclusive on completion rate — all 7 tasks happened to land on
+3 domains with unusually aggressive anti-bot/auth walls. Ran a second, deliberately
+different 8-task sample (all READ, 8 domains never touched before: alberta.ca,
+aljazeera.com, allrecipes.com, apnews.com, berkeley.edu, britannica.com,
+collinsdictionary.com, craigslist.org) to get past that confound. **5 of 8 completed
+end-to-end with real, verifiable answers.** The 3 blocks were unambiguous external causes
+(one flat IP-level deny, two distinct Cloudflare postures), not Sutradhar issues. Full detail:
+`tools/webbench/claude-direct-run-2026-08-13-sample2.md`.
+
+**Combined across both samples: 5/15 completed, 10/15 externally blocked, 0 Sutradhar
+failures.** This is the headline number the loop was missing — the tool mechanics were never
+the limiting factor; the limiting factor is that roughly a third to two-thirds of real
+top-1000-web targets (depending on sample) now run anti-bot protection aggressive enough to
+stop an unauthenticated automated session outright, and that's a fact about the 2026 web, not
+about this tool.
+
+**One more real navigation pattern learned**: when a site's own in-page search-toggle UI
+doesn't cleanly reveal a working input in a DOM snapshot (apnews.com's "Show Search" button),
+navigating directly to the site's own public `/search?q=...` URL pattern is a legitimate
+fallback, not a bypass — it's the same destination the site's own search box would produce.
+Used successfully this run; worth reaching for before spending more cycles fighting a
+particular widget's rendering quirks.
+
 ### 2026-08-13 — Milestone 14: first Claude-direct WebBench run (7/7 real tasks attempted)
 
 Full detail lives in `.ai/competitive-benchmarks.md`'s iteration log and
@@ -400,15 +425,22 @@ it completes.
 
 ## Current milestone
 
+**Milestone 15: DONE** (2026-08-13) — second WebBench sample (8 tasks, 8 new domains), 5/8
+completed with real answers, 3/8 externally blocked. Combined with Milestone 14: **5/15
+WebBench tasks completed, 10/15 externally blocked, 0 Sutradhar-attributable failures** —
+this is the real benchmark number the loop was missing, not just "mechanics work." See
+iteration log above and `tools/webbench/claude-direct-run-2026-08-13-sample2.md`. **Next**: no
+specific next task queued — resume the standing find→fix→verify loop by picking real,
+unexplored surface (candidates: the unresolved click-handler observation from Milestone 14 if
+it recurs, true WebSocket/SSE pages, or a third WebBench sample sized larger for a tighter
+completion-rate estimate).
+
 **Milestone 14: DONE** (2026-08-13) — first Claude-direct WebBench run, 7/7 tasks attempted
 live via `browser.*`. All 7 ended in honest, correctly-diagnosed external blocks (anti-bot
 walls, missing credentials, catalog drift), not Sutradhar failures — see iteration log above
 and `tools/webbench/claude-direct-run-2026-08-13.md`. This is now the primary benchmarking
 mode going forward (Claude/host-AI driving `browser.*` directly), not `agent.runGoal` +
-external LLM, per the user's correction. **Next**: no specific next task queued — resume the
-standing find→fix→verify loop by picking real, unexplored surface (candidates: the unresolved
-click-handler observation above if it recurs, true WebSocket/SSE pages, or a fresh batch of
-WebBench tasks against different site categories than this run's sample of 3 domains).
+external LLM, per the user's correction.
 
 **Milestone 1: DONE. Milestone 2: DONE. Milestone 3: DONE. Milestone 4: DONE** (all
 2026-08-13) — see iteration log above.

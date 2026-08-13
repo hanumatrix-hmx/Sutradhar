@@ -43,11 +43,15 @@ continuous loop, now explicitly benchmark- and competitor-aware:
 
 **Primary benchmarking mode: Claude (or another host AI) driving `browser.*` directly** — the
 same way Claude already drives Playwright MCP in other sessions. This needs no LLM provider
-at all; the host AI supplies the reasoning, Sutradhar supplies the tools. This is how the
-first real WebBench sample run happened (2026-08-13, all 7 curated tasks — see
-`.ai/competitive-benchmarks.md` and `tools/webbench/claude-direct-run-2026-08-13.md`) and is
-the default way to "benchmark it" going forward: pick real tasks (WebBench's task set or
-similar), attempt them live via `browser.*`, record what actually happened.
+at all; the host AI supplies the reasoning, Sutradhar supplies the tools. Two real WebBench
+samples have been run this way (2026-08-13, 15 tasks total — see
+`.ai/competitive-benchmarks.md` and `tools/webbench/claude-direct-run-2026-08-13*.md`):
+**5/15 completed with real, verifiable answers; 10/15 blocked by external anti-bot/auth
+walls; 0 Sutradhar-attributable failures.** That's the honest current number — not "we don't
+know," and not "100%, we're the best." This is the default way to "benchmark it" going
+forward: pick real tasks (WebBench's task set or similar), attempt them live via `browser.*`,
+record what actually happened, and let the completion/external-block split stand as the
+result rather than only reporting the flattering half.
 
 **Secondary, currently-blocked mode**: `agent.runGoal` is Sutradhar's own separate internal
 agent loop (`AgentCore` + an LLM provider it manages itself) — a different use case from the
