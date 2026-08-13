@@ -289,15 +289,18 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         'Caution: the [#id] is a snapshot of the DOM at the moment this ran — if the page re-renders afterward (a React/' +
         'Vue update, a list re-sorting) before you act on it, the id can point at nothing or the wrong element. For pages ' +
         'that update frequently, prefer browser.ax_snapshot + browser.click_by_role/click_by_text/type_by_label instead, ' +
-        'which re-resolve the real element at the moment they run rather than trusting a stored id.',
+        'which re-resolve the real element at the moment they run rather than trusting a stored id. ' +
+        'maxElements (default 60) bounds the listing — raise it for a content-heavy page whose element of interest ' +
+        '(e.g. a "next page" link) is further down; up to 300 elements per frame get a real, usable id regardless.',
       inputSchema: {
         sessionId: z.string(),
         tabId: z.string().optional(),
+        maxElements: z.number().int().positive().optional(),
       },
     },
-    async ({ sessionId, tabId }) => {
+    async ({ sessionId, tabId, maxElements }) => {
       try {
-        const snap = await runtime.snapshot(sessionId, tabId);
+        const snap = await runtime.snapshot(sessionId, tabId, maxElements);
         // Return as readable text rather than JSON — the model parses the listing directly.
         // `snap.interactiveElements` already embeds its own "URL/Title/Interactive elements
         // (N):" header (N = the true interactive-only count) — do not prepend another one here.

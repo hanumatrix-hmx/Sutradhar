@@ -36,7 +36,11 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Mobile/device emulation | covered, 2 bugs fixed | Milestone 2: `set_viewport`'s width/height/deviceScaleFactor/media-query emulation all verified correct against a real site (github.com); found `hasTouch` never got enabled for `isMobile:true`, fixed with a spread-order default. Milestone 6: live MCP testing caught that the Milestone 2 fix didn't actually work through the real call path (an object-spread subtlety hid it from direct-runtime testing) — refixed to resolve the default before construction, re-verified against the exact MCP-handler call shape. Still needs one more reconnect to confirm the corrected version live. |
 | Auth/session persistence across runs | covered | Milestone 2: created a named profile via the CLI, logged into a real test fixture (the-internet.herokuapp.com/login), fully closed the session (killed the Chrome process), launched a completely fresh session with the same profile, navigated straight to the auth-gated page — still authenticated, no re-login needed. Works correctly. |
 | Network conditions (slow/offline/throttled) | covered, new capability built | Milestone 3: confirmed this was a complete gap (zero code anywhere, not even internal). Built `SutradharRuntime.emulateNetwork` + `browser.set_network_conditions` MCP tool (offline mode + DevTools throttling presets or custom download/upload/latency), mirroring the existing `emulate`/`set_viewport` pattern. Verified live: offline genuinely blocked a real `fetch` ("Failed to fetch"), Slow 3G added ~2046ms to a request that normally takes ~17ms (matches the preset's math), clearing throttling restored the ~17ms baseline. |
-| Large-scale extraction / pagination | untested | |
+| Large-scale extraction / pagination | covered, 1 significant bug found and fixed | Milestone 8: a real Hacker News front page has 227 interactive elements — found that `formatGraphForLlm`'s listing was hardcoded to show only the first 60 with NO way for any caller to ask for more (the parameter existed in the function signature but nothing threaded it through the public API), and the underlying id-stamping cap (150) was itself lower than a single ordinary content page can have. The "More" pagination link was invisible past both caps — undiscoverable by an LLM reading the snapshot. Fixed: exposed `maxElements` through `runtime.snapshot()` and `browser.snapshot`'s MCP schema (default unchanged at 60, no behavior change for existing callers), and raised the stamping cap to 300. Verified live: default snapshot still hides "More" (no regression), `maxElements:250` reveals it with a real, clickable id, and clicking that id genuinely navigated to page 2. Completed a real 3-page, 90-story extraction task end-to-end via `browser.extract_data` + `.morelink` pagination. |
+| Cookies (get/set/delete) | covered | Milestone 8: verified against real `document.cookie` state directly, not just each tool's own success report. All three operations correct. |
+| localStorage / sessionStorage (get/set/clear) | covered | Milestone 8: verified against real `localStorage`/`sessionStorage` APIs directly. Set, get, and clear all correct. |
+| Clipboard (get/set) | covered | Milestone 8: real round-trip via `grant_permissions` + `set_clipboard` + `get_clipboard` — the exact text written was read back. |
+| Geolocation | covered | Milestone 8: `set_geolocation` verified against the real `navigator.geolocation.getCurrentPosition()` API — returned the exact overridden coordinates, permission auto-granted as documented. |
 | JS framework diversity beyond React | covered | Milestone 3: real TodoMVC implementations in Vue, Angular, and Svelte — add-todo, snapshot, and DOM-state verification all worked correctly in each, matching the earlier React result. Grounding operates on the rendered DOM, not framework internals, so this is expected but now actually confirmed rather than assumed. |
 | `agent.runGoal` (Sutradhar's own autonomous loop) | blocked on environment, partially covered | Milestone 7: no LLM provider available in this environment (no Ollama running, no `OPENROUTER_API_KEY`) — the actual reasoning capability is untested and I can't responsibly fix this myself (installing Ollama is a heavier step; won't provision API keys/billing). What DID get verified: the failure mode is honest (no fabricated success) and `session:blocked` event surfacing through the tool — built in an earlier project phase — actually works live, confirmed for the first time. |
 | Native dialogs (alert/confirm/prompt) | covered, 1 bug found and fixed | Milestone 7: found a real bug live — the 5s auto-dismiss safety net was too tight for a realistic check-then-act round trip (get_pending_dialog → handle_dialog), silently losing the race and auto-dismissing dialogs the caller intended to handle. Bumped the default to 30s (matches `downloadFile`'s timeout), re-verified with simulated ~4s latency between check and handle — correctly caught and handled now. |
@@ -62,6 +66,36 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-13 — Milestone 8: pagination discovery bug, cookies, storage, clipboard, geo
+
+Closed out the last remaining taxonomy row (large-scale extraction/pagination) with a real
+task, plus swept several completely untested fundamental tools.
+
+- **Pagination discovery — the milestone's real find.** Ran a genuine extraction task against
+  Hacker News (227 real interactive elements on the front page). The "More" link was
+  discoverable neither via the default `browser.snapshot` listing (hardcoded to the first 60
+  elements) nor by raising it — because nothing in the public API actually let a caller pass a
+  different `maxElements` value at all, despite the underlying function already accepting one.
+  Worse, the id-*stamping* cap (150) was independently too low for this exact real page. Fixed
+  both layers: `maxElements` now threads through `runtime.snapshot()` → `browser.snapshot`'s
+  MCP schema (default unchanged, zero behavior change for existing callers), and the stamping
+  cap is raised to 300 (now a named constant, was a bare magic number). Verified live end to
+  end: default listing still hides "More" (no regression), `maxElements:250` reveals a real
+  clickable id for it, and clicking that id genuinely navigated to page 2. Completed the
+  underlying task properly too — a real 3-page, 90-story extraction via `browser.extract_data`
+  + `.morelink` pagination.
+- **Cookies, localStorage/sessionStorage, clipboard, geolocation**: all verified against the
+  real browser-side state directly (`document.cookie`, `localStorage`, the actual Clipboard
+  and Geolocation APIs), not assumed from each tool's own success report. All correct, no
+  gaps found.
+- **Small drive-by fix**: `runtime.snapshot()`'s docstring still said "pt-node-id stamped" —
+  a rename leftover. Fixed to `data-sd-node-id` while already in that code.
+
+**Net result**: 1 significant, real bug found and fixed (pagination/large-page discoverability
+— plausibly the most practically important fix this whole loop, since it blocks a common,
+realistic task class rather than an edge case), 4 fundamental capability categories confirmed
+already correct.
 
 ### 2026-08-13 — Milestone 7: agent.runGoal, dialogs, drag-and-drop, routing, logs
 
@@ -320,8 +354,22 @@ live MCP round-trip — needs a real process restart, not just a reconnect. The 
 reasoning path remains genuinely blocked on this environment having no LLM provider (not
 something resolvable without the user installing Ollama or supplying an OpenRouter key).
 
-**Proposed Milestone 8**: no specific plan — per the loop's own standing guidance, further
-work should be driven by whatever real usage surfaces next, not another manufactured sweep.
-Candidates if/when relevant: large-scale extraction/pagination (last untested taxonomy row),
-confirming `agent.runGoal`'s actual reasoning once a provider is available, or whatever a real
-task turns up that this loop hasn't anticipated.
+**Milestone 8: DONE** (2026-08-13) — closed the last untested taxonomy row (large-scale
+extraction/pagination) with a real task, found and fixed a genuinely significant bug in the
+process (element-listing cap had no way to be raised, on top of an independently-too-low
+stamping cap — together made pagination links on ordinary content-heavy pages undiscoverable).
+Swept cookies/storage/clipboard/geolocation too — all correct. See iteration log.
+
+**Taxonomy status**: every row is now `covered`, `excluded`, or explicitly blocked on an
+external constraint (`agent.runGoal`'s reasoning, on an LLM provider). No untested rows remain
+that are actually resolvable from inside this environment.
+
+**Standing items, unchanged**: the `hasTouch` fix (Milestone 6) still isn't confirmed through
+an actual live MCP round-trip — needs a real process restart, not just a reconnect.
+`agent.runGoal`'s reasoning path remains genuinely blocked on no LLM provider being available.
+
+**Proposed Milestone 9**: no specific plan. With the taxonomy genuinely exhausted this time
+(not just self-declared), further work should be driven by real usage as it comes up, per the
+loop's own standing guidance — the difference from Milestone 6's premature version being that
+this time the untested surface was actually hunted down first (agent.runGoal, dialogs,
+pagination-at-scale), not assumed away.

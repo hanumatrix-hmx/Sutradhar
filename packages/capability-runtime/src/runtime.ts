@@ -327,14 +327,19 @@ export class SutradharRuntime {
 
   /**
    * Produce an LLM-optimized snapshot of the active page: the interactive-element
-   * listing (pt-node-id stamped), the element count, and a visible-text excerpt.
+   * listing (data-sd-node-id stamped), the element count, and a visible-text excerpt.
    * This is the single most reusable asset for an external AI driving the browser.
+   *
+   * `maxElements` (default 60) bounds how many elements appear in `interactiveElements` — up
+   * to `MAX_STAMPED_ELEMENTS_PER_FRAME` (300) elements per frame get a real, clickable id
+   * regardless of this value, so raising it (e.g. for a content-heavy page whose pagination
+   * link is past the default 60) surfaces ids that already exist rather than stamping new ones.
    */
-  public async snapshot(sessionId: string, tabId?: string): Promise<SnapshotResult> {
+  public async snapshot(sessionId: string, tabId?: string, maxElements?: number): Promise<SnapshotResult> {
     const { tab } = this.resolveTab(sessionId, tabId);
     this.requirePage(tab); // fail early if no real browser
     const graph = await this.domEngine.buildGraph(tab);
-    const interactiveElements = formatGraphForLlm(graph);
+    const interactiveElements = formatGraphForLlm(graph, maxElements);
     const pageText = await this.readPageText(tab);
     return {
       sessionId,

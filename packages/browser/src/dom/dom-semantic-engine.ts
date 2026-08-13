@@ -63,6 +63,17 @@ const INTERACTIVE_ROLES = new Set([
 /** Hard cap on frames scraped per snapshot, guarding against runaway cost on ad-heavy pages. */
 const MAX_FRAMES = 20;
 
+/**
+ * Hard cap on interactive elements stamped with an id per frame per snapshot. Elements beyond
+ * this never get a `data-sd-node-id` at all, so they're unreachable via numeric-id targeting
+ * (only via a raw CSS selector) no matter what `maxElements` is passed to
+ * {@link formatGraphForLlm} — that only controls how many of the *stamped* elements are listed
+ * in the text a caller reads. Content-heavy real pages routinely exceed the old default of 150
+ * (e.g. a single Hacker News front page has 227 interactive elements) — 300 gives real headroom
+ * while still bounding the cost of stamping a pathological page.
+ */
+const MAX_STAMPED_ELEMENTS_PER_FRAME = 300;
+
 /** Returns the CSS selector that uniquely targets the element stamped with `nodeId`. */
 export function selectorForNodeId(nodeId: number): string {
   return `[${SD_NODE_ID_ATTR}="${nodeId}"]`;
@@ -101,6 +112,7 @@ export class DOMSemanticEngine implements IDOMSemanticEngine {
             selector: INTERACTIVE_SELECTOR,
             generation,
             startId: nextId,
+            maxStamped: MAX_STAMPED_ELEMENTS_PER_FRAME,
           });
           allNodes.push(...frameNodes);
           nextId += frameNodes.length;
@@ -146,8 +158,9 @@ function scrapeFrame(params: {
   selector: string;
   generation: string;
   startId: number;
+  maxStamped: number;
 }): ScrapedNode[] {
-  const { attrName, genAttr, currentGenAttr, selector, generation, startId } = params;
+  const { attrName, genAttr, currentGenAttr, selector, generation, startId, maxStamped } = params;
 
   // Recursively collect matches from `root` and from every open shadow root nested within it.
   // Closed shadow roots have no accessible `.shadowRoot` property from outside — genuinely
@@ -172,7 +185,7 @@ function scrapeFrame(params: {
     el.removeAttribute(genAttr);
   }
 
-  return elements.slice(0, 150).map((elUntyped, idx) => {
+  return elements.slice(0, maxStamped).map((elUntyped, idx) => {
     const el = elUntyped as HTMLElement;
     const inputEl = el as HTMLInputElement;
     const rect = el.getBoundingClientRect();
