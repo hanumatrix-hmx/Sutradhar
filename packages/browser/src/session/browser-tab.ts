@@ -21,8 +21,13 @@ import { EventBus } from '@sutradhar/events';
 import { Dialog, Page } from 'puppeteer-core';
 
 /** How long a native dialog is left pending before it's auto-resolved so the page doesn't
- *  hang forever if nothing ever calls {@link BrowserTab.handleDialog}. */
-const DEFAULT_DIALOG_TIMEOUT_MS = 5000;
+ *  hang forever if nothing ever calls {@link BrowserTab.handleDialog}. Deliberately generous
+ *  (matches downloadFile's timeout) — a real caller typically checks {@link
+ *  BrowserTab.getPendingDialog} and then calls {@link BrowserTab.handleDialog} as two separate
+ *  round trips, and 5s (the original default) was found live to be too tight for that: an
+ *  agent/tool round trip of even a couple of seconds per call could burn the whole window
+ *  before the second call ever reached the dialog, silently auto-dismissing it instead. */
+const DEFAULT_DIALOG_TIMEOUT_MS = 30000;
 
 const MAX_CONSOLE_LOGS = 200;
 const MAX_PAGE_ERRORS = 50;

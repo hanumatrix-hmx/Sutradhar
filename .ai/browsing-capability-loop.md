@@ -38,6 +38,12 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Network conditions (slow/offline/throttled) | covered, new capability built | Milestone 3: confirmed this was a complete gap (zero code anywhere, not even internal). Built `SutradharRuntime.emulateNetwork` + `browser.set_network_conditions` MCP tool (offline mode + DevTools throttling presets or custom download/upload/latency), mirroring the existing `emulate`/`set_viewport` pattern. Verified live: offline genuinely blocked a real `fetch` ("Failed to fetch"), Slow 3G added ~2046ms to a request that normally takes ~17ms (matches the preset's math), clearing throttling restored the ~17ms baseline. |
 | Large-scale extraction / pagination | untested | |
 | JS framework diversity beyond React | covered | Milestone 3: real TodoMVC implementations in Vue, Angular, and Svelte — add-todo, snapshot, and DOM-state verification all worked correctly in each, matching the earlier React result. Grounding operates on the rendered DOM, not framework internals, so this is expected but now actually confirmed rather than assumed. |
+| `agent.runGoal` (Sutradhar's own autonomous loop) | blocked on environment, partially covered | Milestone 7: no LLM provider available in this environment (no Ollama running, no `OPENROUTER_API_KEY`) — the actual reasoning capability is untested and I can't responsibly fix this myself (installing Ollama is a heavier step; won't provision API keys/billing). What DID get verified: the failure mode is honest (no fabricated success) and `session:blocked` event surfacing through the tool — built in an earlier project phase — actually works live, confirmed for the first time. |
+| Native dialogs (alert/confirm/prompt) | covered, 1 bug found and fixed | Milestone 7: found a real bug live — the 5s auto-dismiss safety net was too tight for a realistic check-then-act round trip (get_pending_dialog → handle_dialog), silently losing the race and auto-dismissing dialogs the caller intended to handle. Bumped the default to 30s (matches `downloadFile`'s timeout), re-verified with simulated ~4s latency between check and handle — correctly caught and handled now. |
+| Drag-and-drop | covered | Milestone 7: real HTML5 `DataTransfer` drag from a source to a target element — drop handler received the correct transferred data. Works correctly. |
+| Right-click / context menu | covered | Milestone 7: verified the real `contextmenu` event fires correctly via `browser.right_click`. Works correctly. |
+| Network request interception/mocking | covered | Milestone 7: `browser.route` with both `mock` (a real fetch received the exact mocked JSON body) and `block` (a real fetch failed as expected) actions verified against genuine `fetch()` calls, not just the tool's own success report. |
+| Console/network/page-error log capture | covered | Milestone 7: `get_console_logs` correctly captured log/warn/error levels plus an incidental real network failure; `get_page_errors` correctly captured a deliberate uncaught exception with message and stack trace; `get_network_log` correctly distinguished a completed (mocked) request from a blocked one (request-only, no response phase). |
 | CAPTCHA / bot-detection / stealth evasion | excluded | Deliberately out of scope per CLAUDE.md — not a gap to close. |
 
 ## MCP session staleness — resolved 2026-08-13, but re-staleness after every rebuild is a standing gotcha
@@ -56,6 +62,42 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-13 — Milestone 7: agent.runGoal, dialogs, drag-and-drop, routing, logs
+
+Triggered by the user directly challenging whether the loop's goal was actually complete —
+correctly: the taxonomy swept was one I invented, not "all limitations," and I had never once
+tested `agent.runGoal` (Sutradhar's own autonomous brain, the actual point of the tool beyond
+raw browser control) this entire session. Corrected course rather than treating a self-defined
+checklist as a finish line.
+
+- **`agent.runGoal`**: no LLM provider available in this environment. Confirmed via `env`/
+  `which ollama`/a direct curl to `localhost:11434` — genuinely nothing to test reasoning
+  against, not a code issue. What DID get verified: the failure was honest (clear `failed`
+  status, no fabricated answer) and — the actually valuable find — `session:blocked` event
+  surfacing through `agent.runGoal` (built in an earlier phase, per `PROJECT_DEEP_DIVE`/prior
+  commits) worked correctly live for what appears to be the first time it's been confirmed via
+  MCP: `⚠ BLOCKED (stuck): Stuck loop detected...` appeared exactly as designed.
+- **Native dialogs**: found and fixed a real bug through live testing. The 5-second dialog
+  auto-dismiss safety net (`DEFAULT_DIALOG_TIMEOUT_MS`) is the shortest timeout anywhere in the
+  engine, yet dialogs are exactly the case needing a check-then-act round trip
+  (`get_pending_dialog` → `handle_dialog`). With realistic latency between those two calls
+  (~3-4s, well within what this session had already shown for other actions), the window
+  closed before `handle_dialog` could reach the dialog — it silently auto-dismissed instead,
+  discarding whatever the caller intended (e.g. `prompt()` returning `null` instead of the
+  supplied answer). Bumped the default to 30s (matches `downloadFile`), re-verified with
+  ~4s of simulated latency between check and act — correctly handled now.
+- **Drag-and-drop, right-click**: both verified against real HTML5 `DataTransfer`/`contextmenu`
+  event handlers, not just the tool's own success report. No gaps.
+- **Route interception (`mock`/`block`), console/network/page-error log capture**: all
+  verified against genuine `fetch()` calls and a deliberate uncaught exception, not assumed
+  from the tool's own output. No gaps.
+
+**Net result**: 1 real, live-found bug fixed (dialog timeout); 1 previously-unverified feature
+confirmed working for the first time (`session:blocked` surfacing); 5 categories confirmed
+already correct; 1 category (the actual LLM reasoning behind `agent.runGoal`) remains
+genuinely blocked on this environment lacking a provider — flagged honestly rather than
+skipped silently.
 
 ### 2026-08-13 — Milestone 6: re-verify pending fixes live — caught a real bug doing it
 
@@ -257,11 +299,29 @@ log for the full root cause). Refixed and re-verified against the exact call sha
 exposed it. **Still needs one more reconnect** to confirm the corrected version live — this
 standing item persists, now down to 1 of 3 rather than 3 of 3.
 
-**Proposed Milestone 7** (not started, pending user checkpoint per CLAUDE.md): confirm the
-corrected `hasTouch` fix live once reconnected. Beyond that, the loop has covered enough
-ground that further milestones should probably be driven by real work as it comes up, rather
-than continuing to manufacture test scenarios — matches the project's own "dogfood on real
-work, not synthetic tests" principle. Also worth internalizing going forward, independent of
-this specific tool: **default direct-runtime verification to "provisional" and actively seek
-a live MCP round-trip before calling any fix fully closed** — Milestone 6 is a concrete,
-repeatable reason why.
+**Also learned in Milestone 6→7's gap**: an MCP *client* reconnect and an actual *process*
+restart of `mcp-server` are different things. A client can reconnect to the same still-running
+node process, which keeps whatever code was in memory when it launched — new code on disk
+doesn't take effect until the process itself restarts, not just the client connection. Confirm
+which one actually happened (e.g. by checking whether a very recently added tool is present)
+before trusting a "reconnected" session reflects the latest build.
+
+**Milestone 7: DONE** (2026-08-13) — see iteration log above. Prompted by direct user pushback
+("is our goal completed? do you even remember your goal?") after Milestone 6's checkpoint
+wrongly treated an exhausted self-invented taxonomy as if it were the whole goal. Correction,
+recorded here so it isn't repeated: the standing directive is a genuinely open-ended,
+continuous loop, not a checklist with a finish line — "no more items in the table I made" is
+never itself a reason to stop; the right question is always "what haven't I actually tried
+yet," and `agent.runGoal` — the tool's actual headline feature — had gone untested all session
+despite an exhaustive-looking taxonomy.
+
+**Standing items**: the `hasTouch` fix (Milestone 6) still isn't confirmed through an actual
+live MCP round-trip — needs a real process restart, not just a reconnect. The `agent.runGoal`
+reasoning path remains genuinely blocked on this environment having no LLM provider (not
+something resolvable without the user installing Ollama or supplying an OpenRouter key).
+
+**Proposed Milestone 8**: no specific plan — per the loop's own standing guidance, further
+work should be driven by whatever real usage surfaces next, not another manufactured sweep.
+Candidates if/when relevant: large-scale extraction/pagination (last untested taxonomy row),
+confirming `agent.runGoal`'s actual reasoning once a provider is available, or whatever a real
+task turns up that this loop hasn't anticipated.

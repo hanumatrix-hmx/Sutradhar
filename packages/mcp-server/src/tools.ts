@@ -1158,7 +1158,7 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
       description:
         'Check whether the tab currently has a native dialog (alert/confirm/prompt) blocking it. ' +
         'Returns null if there is none. A pending dialog blocks most other page interactions until ' +
-        'handled via browser.handle_dialog — it is auto-dismissed after 5s if never handled.',
+        'handled via browser.handle_dialog — it is auto-dismissed after 30s if never handled.',
       inputSchema: { sessionId: z.string(), tabId: z.string().optional() },
     },
     async ({ sessionId, tabId }) => {
