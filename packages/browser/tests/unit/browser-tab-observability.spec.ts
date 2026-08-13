@@ -1,7 +1,7 @@
 /**
  * @file packages/browser/tests/unit/browser-tab-observability.spec.ts
  * @description Unit tests for BrowserTab's dialog handling, console/page-error/network
- * capture, and network route (block/mock) rules.
+ * capture, network route (block/mock) rules, and advisory multi-agent tab locking.
  */
 
 import { BrowserTab, RouteRule } from '../../src/index.js';
@@ -271,5 +271,78 @@ describe('@sutradhar/browser BrowserTab network route rules', () => {
     await tab.clearRoutes();
 
     expect((page as any).setRequestInterception).toHaveBeenLastCalledWith(false);
+  });
+});
+
+describe('@sutradhar/browser BrowserTab multi-agent tab locking (advisory)', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('is unlocked by default', () => {
+    const { page } = mockPage();
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+    expect(tab.getLock()).toBeUndefined();
+  });
+
+  it('acquireLock succeeds when unlocked, and getLock reports the owner + expiry', () => {
+    const { page } = mockPage();
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+
+    expect(tab.acquireLock('agent-a', 1000)).toBe(true);
+    const lock = tab.getLock();
+    expect(lock?.owner).toBe('agent-a');
+  });
+
+  it('acquireLock fails when a different owner already holds a valid lock', () => {
+    const { page } = mockPage();
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+
+    tab.acquireLock('agent-a', 1000);
+    expect(tab.acquireLock('agent-b', 1000)).toBe(false);
+    expect(tab.getLock()?.owner).toBe('agent-a'); // untouched by the failed attempt
+  });
+
+  it('acquireLock succeeds and extends the TTL when the same owner re-acquires', () => {
+    const { page } = mockPage();
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+
+    tab.acquireLock('agent-a', 1000);
+    vi.advanceTimersByTime(900);
+    expect(tab.acquireLock('agent-a', 1000)).toBe(true); // re-acquire before the old TTL would lapse
+    vi.advanceTimersByTime(900); // total 1800ms since first acquire, past the ORIGINAL 1000ms TTL
+    expect(tab.getLock()?.owner).toBe('agent-a'); // still locked - the re-acquire extended it
+  });
+
+  it('releaseLock succeeds only for the owner that holds the lock', () => {
+    const { page } = mockPage();
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+
+    tab.acquireLock('agent-a', 1000);
+    expect(tab.releaseLock('agent-b')).toBe(false);
+    expect(tab.getLock()?.owner).toBe('agent-a'); // untouched by the wrong-owner attempt
+    expect(tab.releaseLock('agent-a')).toBe(true);
+    expect(tab.getLock()).toBeUndefined();
+  });
+
+  it('releaseLock on an already-unlocked tab is a no-op, not an error', () => {
+    const { page } = mockPage();
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+    expect(tab.releaseLock('anyone')).toBe(false);
+  });
+
+  it('a lock past its TTL is reported as absent, and can be acquired by a new owner', () => {
+    const { page } = mockPage();
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+
+    tab.acquireLock('agent-a', 100);
+    vi.advanceTimersByTime(101);
+    expect(tab.getLock()).toBeUndefined();
+    expect(tab.acquireLock('agent-b', 1000)).toBe(true);
+    expect(tab.getLock()?.owner).toBe('agent-b');
   });
 });

@@ -79,6 +79,15 @@ const EXPECTED_BROWSER_TOOLS = [
   'browser.new_tab',
   'browser.focus_tab',
   'browser.close_tab',
+  'browser.set_network_conditions',
+  'browser.fill_form',
+  'browser.click_at_point',
+  'browser.drag_at_points',
+  'browser.get_storage_state',
+  'browser.set_storage_state',
+  'browser.lock_tab',
+  'browser.unlock_tab',
+  'browser.get_tab_lock',
 ];
 
 describe('@sutradhar/mcp-server registerTools', () => {

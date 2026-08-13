@@ -25,7 +25,11 @@ continuous loop, now explicitly benchmark- and competitor-aware:
    building it reflexively.
 3. **Verify live** — typechecking is necessary, not sufficient. Verification means actually
    driving the fix through Sutradhar's own tools against a real target and confirming it
-   works, the same way a user would hit it.
+   works, the same way a user would hit it. **Also run the actual `vitest` suite for every
+   touched package** (`node_modules/.bin/vitest run`, works even when `pnpm` isn't available in
+   this environment) — live scripts and `tsc` alone won't catch a stale test fixture (found
+   live: a hardcoded expected-tool-count assertion silently drifted out of sync across several
+   milestones of adding tools, and only a real test run caught it).
 4. **Benchmark it** — where a real, runnable comparison exists (an LLM-independent one today;
    an agent-level one once an LLM provider is available), use it. Don't claim "best" without a
    number or a documented, real comparison behind it.

@@ -67,6 +67,39 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-13 — Milestone 12: ran the actual unit test suites for the first time this session
+
+Every verification so far this session was typecheck (`tsc`) + live scripts (direct-runtime or
+MCP) — real functional verification, but never a run of the project's own `vitest` suites, and
+never any *new* unit tests for anything built in Milestones 9–11. Ran them (found `vitest` is
+locally available even though `pnpm` still isn't):
+
+- **`packages/browser`**: 137 passing, no regressions.
+- **`packages/capability-runtime`**: 71 passing, no regressions.
+- **`packages/mcp-server`**: found a real, legitimate failure — `tools.spec.ts` asserts the
+  exact registered tool count via a hardcoded `EXPECTED_BROWSER_TOOLS` list, still at 59 from
+  before this session's work. The real count is now 68 (9 tools added across Milestones 3,
+  9, and 11: `set_network_conditions`, `fill_form`, `click_at_point`, `drag_at_points`,
+  `get_storage_state`, `set_storage_state`, `lock_tab`, `unlock_tab`, `get_tab_lock`). Fixed
+  the fixture; 22/22 pass now.
+- **Added real unit test coverage for tab locking** (`browser-tab-observability.spec.ts`) —
+  the one new capability from this session's work that's pure logic and genuinely unit-
+  testable without a real browser (timestamp/TTL bookkeeping, not Puppeteer calls). 7 new
+  tests using `vi.useFakeTimers()` for precise TTL control: default-unlocked, acquire,
+  conflicting acquire refused, re-acquire extends TTL, wrong-owner release refused,
+  unlocked-release is a no-op, and TTL expiry making the tab acquirable again. All pass.
+  The other Milestone 9–11 additions (`fill_form`, `click_at_point`, `drag_at_points`,
+  storage-state export/import) remain verified only via live scripts, not durable unit
+  tests — they're thin wrappers around real Puppeteer calls (mouse/cookie/storage APIs),
+  which is what the project's own convention calls a "smoke script" case, not a "pure-logic,
+  needs a real unit test" case; the CLI package also has zero test files at all (pre-existing,
+  not new debt from this session).
+
+**Why this matters for the loop**: exactly the kind of debt live-script verification alone
+can't catch — a stale test fixture doesn't affect a running script, only a real test run.
+Standing practice going forward: run the actual test suite for touched packages, not just
+`tsc`, before considering a milestone's verification complete.
+
 ### 2026-08-13 — Milestone 9: goal reframed to competitive — researched, closed all 3 gaps
 
 The user reframed the standing goal: not just "no known bugs" but genuinely better than
@@ -404,8 +437,14 @@ all 3 tool-surface gaps found against Playwright MCP (`fill_form`, `click_at_poi
 competitive-comparison work — this doc stays focused on Sutradhar's own capability taxonomy;
 the competitive doc tracks positioning against named competitors specifically.
 
-**Proposed Milestone 10**: no specific plan. The Playwright MCP tool-surface diff is closed
-out; next competitive work is either (a) researching Puppeteer/real-`pinchtab` more precisely
-the same way (currently lighter-sourced than the Playwright comparison), or (b) revisiting
-agent-level benchmarks once an LLM provider is available. Otherwise, standing practice: real
-usage and real comparisons drive what's next, not manufactured sweeps.
+**Milestones 10–11** happened entirely in `.ai/competitive-benchmarks.md` (Puppeteer/real-
+PinchTab/AI-company-tools research, tab locking, coordinate-drag) — see that doc's own
+iteration log, not repeated here.
+
+**Milestone 12: DONE** (2026-08-13) — ran the actual `vitest` suites for the first time this
+session (previously typecheck + live scripts only), found and fixed a real stale-fixture test
+failure, added real unit coverage for tab locking. See iteration log above.
+
+**Proposed Milestone 13**: no specific plan. Standing practice reinforced this round: run the
+real test suite for any touched package before calling a milestone's verification complete,
+not just `tsc`. Otherwise, real usage and real comparisons drive what's next.
