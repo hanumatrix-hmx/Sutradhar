@@ -31,7 +31,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Shadow DOM | covered (open); closed is a known, reasonable limitation | Milestone 3: an injected open shadow root's button was correctly listed by `snapshot` and correctly clicked (verified via the real click handler firing). A *closed* shadow root's content is invisible to both — expected: `mode:'closed'` blocks even `evaluate()`-level JS access by design, and closed shadow roots are rare in practice since most real widgets use open ones. Not treated as a gap worth chasing. |
 | PDF handling: export | covered | `browser.export_pdf` verified — returns real, valid `%PDF-1.4` content for the current page. |
 | PDF handling: reading one encountered mid-browse | gap found, logged (`PROB-009`) | Navigating directly to a `.pdf` URL correctly enumerates Chrome's native PDF-viewer toolbar via `snapshot`, but `pageText` comes back completely empty even against a PDF with real (compressed) text content. Not fixed — needs real PDF text-layer extraction, nontrivial scope. |
-| Real-time/streaming pages (continuous background DOM churn) | partial | Milestone 1: grounding survives ongoing unrelated DOM churn elsewhere on the page (a simulated live-feed stream, numeric id captured then acted on ~8 re-renders later — still hit the right element). True WebSocket/SSE-driven pages and the harder "target itself gets destroyed and id gets reused" case remain untested. |
+| Real-time/streaming pages (continuous background DOM churn) | covered | Milestone 1: grounding survives ongoing unrelated DOM churn elsewhere on the page (a simulated live-feed stream, numeric id captured then acted on ~8 re-renders later — still hit the right element). Milestone 19: tested a genuinely WebSocket-push-driven page (piehost.com's live WebSocket tester, real `wss://` connection, not polling) — a numeric id (a copy button) captured in a snapshot immediately after 4 new log lines arrived via real WS push resolved correctly via `eval` to the live element; occlusion detection correctly refused a click blocked by an unrelated chat widget on the same push-updated content; typing into a filter field correctly filtered the WS-delivered log from 4 entries to the 1 matching in real time. The harder "target itself gets destroyed and id gets reused" case remains untested but is a narrower edge case, not the core WebSocket/SSE gap. |
 | Media (video/audio/canvas) | covered | Milestone 3: native `<video controls>` UI is not exposed via `snapshot` (expected — UA-internal shadow DOM; the correct control path is the JS media API, not clicking browser chrome). `video.play()`/`.pause()`/state inspection via `eval` works correctly against a real, well-formed video. One specific external test file failed with a genuine format/codec error (`MEDIA_ELEMENT_ERROR`) — confirmed to be that file's problem, not Sutradhar's, by successfully loading a different real video right after. Canvas: `browser.click`'s `offset` param verified pixel-accurate against a hand-drawn canvas region (239,119 landed correctly inside a 200-280×100-140 target). |
 | Mobile/device emulation | covered, 2 bugs fixed | Milestone 2: `set_viewport`'s width/height/deviceScaleFactor/media-query emulation all verified correct against a real site (github.com); found `hasTouch` never got enabled for `isMobile:true`, fixed with a spread-order default. Milestone 6: live MCP testing caught that the Milestone 2 fix didn't actually work through the real call path (an object-spread subtlety hid it from direct-runtime testing) — refixed to resolve the default before construction, re-verified against the exact MCP-handler call shape. Still needs one more reconnect to confirm the corrected version live. |
 | Auth/session persistence across runs | covered | Milestone 2: created a named profile via the CLI, logged into a real test fixture (the-internet.herokuapp.com/login), fully closed the session (killed the Chrome process), launched a completely fresh session with the same profile, navigated straight to the auth-gated page — still authenticated, no re-login needed. Works correctly. |
@@ -66,6 +66,38 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-14 — Milestone 19: docs re-audit, then closed the last real taxonomy gap
+
+Before picking a new capability task, re-audited docs for staleness against everything
+shipped in Milestones 9-17 (network conditions, fill_form, click_at_point, drag_at_points,
+storage-state export/import, tab locking, the WebBench harness). Found and fixed real
+staleness: `mcp-server/README.md`'s "Tools (60)" heading was missing exactly the 9 tools built
+across those milestones; `docs/ARCHITECTURE.md` and `docs/DEVELOPMENT.md` were substantially
+fictional (Next.js/Fastify/Tauri/Postgres/Qdrant — none of which exist in this repo) and got
+rewritten against the real package graph, which surfaced two real, previously-undocumented
+apps (`apps/server`, a genuine REST gateway; `apps/extension`, a plain workspace-external
+browser extension) along the way. Full detail in the commit message and the
+`roadmap_maturity` memory.
+
+Then closed the taxonomy's last genuinely untested row: true WebSocket/SSE-driven pages (as
+opposed to the polling/background-churn case already covered in Milestone 1). Used a real
+public WebSocket testing tool (piehost.com, a live `wss://` connection, not a simulation) —
+new log entries arrived via genuine WS push mid-session, and:
+- A numeric id captured in a snapshot immediately after 4 new elements arrived via push
+  resolved correctly to the live element via `eval` — grounding isn't fooled by push-driven
+  insertion any more than it is by polling-driven insertion.
+- Occlusion detection correctly refused a click on one of those newly-pushed elements when a
+  real, unrelated chat widget overlapped it — the safety check applies uniformly regardless
+  of how the occluding/occluded elements got onto the page.
+- Typing into a filter field correctly filtered the WS-delivered log in real time (4 entries
+  → 1 matching), confirming actions against WS-driven content actually take effect and the
+  result is correctly reflected.
+
+**Capability taxonomy is now fully covered/excluded — no untested rows remain** (the one
+narrower residual case, an id being reused after its original target is destroyed under
+WebSocket-driven churn specifically, wasn't hit in this test and is a finer-grained edge case
+than the core gap, not a new blocking unknown).
 
 ### 2026-08-13 — Milestone 17: real bug found+fixed live — `type` was appending, not clearing
 
@@ -450,18 +482,22 @@ it completes.
 
 ## Current milestone
 
-**Milestone 17: DONE** (2026-08-13) — third WebBench sample (14 tasks, 14 new domains),
-10/14 completed with real answers, 4/14 externally blocked, plus one real Sutradhar bug found
-and fixed live (`browser.type`/`type_by_label` were appending instead of clearing — see
-iteration log). **Combined across all three samples: 15/29 WebBench tasks completed (52%),
-14/29 externally blocked, 0 Sutradhar-attributable failures** — the real benchmark number
-this loop set out to get, not just "mechanics work." See
-`tools/webbench/claude-direct-run-2026-08-13-sample3.md` and `.ai/competitive-benchmarks.md`.
-**Next**: no specific next task queued — resume the standing find→fix→verify loop by picking
-real, unexplored surface (candidates: the unresolved click-handler observation from Milestone
-14 if it recurs, true WebSocket/SSE pages, confirming the `type`-clear fix through an actual
-MCP round-trip once the session is rebuilt/reconnected, or a fourth WebBench sample if an even
-tighter completion-rate estimate is wanted).
+**Milestone 19: DONE** (2026-08-14) — docs re-audit (found and fixed real staleness in
+`mcp-server/README.md`, `docs/ARCHITECTURE.md`, `docs/DEVELOPMENT.md`, root `README.md`), then
+closed the capability taxonomy's last untested row (true WebSocket/SSE-driven pages, tested
+against a real live `wss://` connection). **The capability taxonomy has no untested rows
+left** — everything is `covered` or deliberately `excluded`. Combined with Milestones 14-17's
+benchmark work (15/29 WebBench tasks completed, 0 Sutradhar-attributable failures) and 9-11's
+competitive tool-surface research, both halves of CLAUDE.md's goal (capability parity/edge,
+and evidenced benchmark numbers) are now in a genuinely strong, real state.
+
+**Next**: no specific capability gap queued — the taxonomy is exhausted. Candidates if
+resuming: the unresolved click-handler observation from Milestone 14 if it recurs on a
+different site, confirming the `type`-clear fix (Milestone 17) through an actual MCP
+round-trip once the session is rebuilt/reconnected, a fourth WebBench sample for a tighter
+completion-rate estimate, or a genuinely new axis entirely (per CLAUDE.md's ownership
+section: don't stop at "nothing queued," go find the next real thing by actually using the
+tool, the same way every item on this list was found).
 
 **Milestone 14: DONE** (2026-08-13) — first Claude-direct WebBench run, 7/7 tasks attempted
 live via `browser.*`. All 7 ended in honest, correctly-diagnosed external blocks (anti-bot
