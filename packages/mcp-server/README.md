@@ -14,10 +14,9 @@ Two brain modes, one server:
   objective and it navigates, clicks, types, and extracts a final answer. Best for
   multi-step tasks you'd rather not script call-by-call. Requires an LLM provider.
 
-## Tools (60)
+## Tools (68)
 
-The table below used to list only 14 tools — stale from an early build. The actual surface
-is much larger; grouped here by category, matching `tools.ts`'s own section layout.
+Grouped here by category, matching `tools.ts`'s own section layout.
 
 ### Lifecycle
 | Tool | Description |
@@ -60,6 +59,9 @@ is much larger; grouped here by category, matching `tools.ts`'s own section layo
 | `browser.upload_file_via_trigger` | For JS-triggered file choosers not backed by a plain `<input type=file>` — races `waitForFileChooser()` against clicking the triggering selector. |
 | `browser.download_file` | Trigger and wait for a file download; saves under an allow-listed directory. |
 | `browser.wait_for_selector` | Wait for an element to appear/become visible. |
+| `browser.fill_form` | Bulk multi-field form fill — an object of `{target: value}` pairs in one call instead of N `type` round-trips; a field that fails doesn't stop the rest. |
+| `browser.click_at_point` | Click a raw viewport `(x, y)` coordinate with no element/selector at all — the escape hatch for canvas-heavy or custom-rendered UI with nothing addressable via DOM. |
+| `browser.drag_at_points` | Coordinate-only mouse-down → move → mouse-up drag, the drag sibling of `click_at_point` (distinct from `drag_and_drop`'s element-to-element HTML5 `DataTransfer` API). |
 
 ### Capture & extraction
 | Tool | Description |
@@ -75,6 +77,7 @@ is much larger; grouped here by category, matching `tools.ts`'s own section layo
 | `browser.get_cookies` / `set_cookie` / `delete_cookie` | Cookie read/write/delete. |
 | `browser.get_local_storage` / `set_local_storage_item` / `clear_local_storage` | `localStorage` read/write/clear. |
 | `browser.get_session_storage` / `set_session_storage_item` / `clear_session_storage` | `sessionStorage` read/write/clear. |
+| `browser.get_storage_state` / `set_storage_state` | Single-blob export/import of cookies + localStorage + sessionStorage together — portable across sessions/machines, distinct from the per-item tools above. |
 
 ### Emulation & permissions
 | Tool | Description |
@@ -84,6 +87,7 @@ is much larger; grouped here by category, matching `tools.ts`'s own section layo
 | `browser.set_viewport` | Set viewport size / mobile emulation / device scale factor. |
 | `browser.emulate` | Timezone, locale, color-scheme, and reduced-motion emulation. |
 | `browser.get_clipboard` / `set_clipboard` | Read/write the system clipboard (via the Clipboard API). |
+| `browser.set_network_conditions` | Emulate offline mode or throttled bandwidth/latency (DevTools presets or custom values). |
 
 ### Dialogs, observability & network
 | Tool | Description |
@@ -102,6 +106,7 @@ is much larger; grouped here by category, matching `tools.ts`'s own section layo
 | `browser.new_tab` | Open a new tab. |
 | `browser.focus_tab` | Make a tab the active one. |
 | `browser.close_tab` | Close a tab. |
+| `browser.lock_tab` / `browser.unlock_tab` / `browser.get_tab_lock` | Advisory owner+TTL lock so multiple concurrent callers driving the same session can coordinate who's currently acting on a tab. |
 
 ### Autonomous agent (optional — requires an LLM provider)
 | Tool | Description |

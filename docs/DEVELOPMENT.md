@@ -2,436 +2,179 @@
 
 ## Prerequisites
 
-- Node.js >= 20.0.0
-- pnpm >= 9.0.0
+- Node.js >= 18.0.0 (repo `engines` says 18; CI runs on 20)
+- pnpm >= 9.0.0 (`packageManager` pins `pnpm@9.1.0` — use that, never npm or yarn)
 - Git
-- Docker & Docker Compose (for local services)
-- Git
+- **Chrome or Edge installed** — Sutradhar drives a real system browser via Puppeteer, not a
+  bundled/downloaded one. If auto-detection fails, set `CHROME_PATH`.
 
-## Quick Start
+No database, Docker, or other local services are required. This is a pure TypeScript
+monorepo; the only external dependency at runtime is a real Chrome/Edge binary, plus an LLM
+provider (Ollama or OpenRouter) if you're exercising `agent.runGoal`.
+
+## Quick start
 
 ```bash
-# Clone the repository
 git clone <repository-url>
-cd Sutradhar
+cd PinchTab   # repo directory name; the product itself is branded Sutradhar
 
-# Install dependencies
 pnpm install
 
-# Set up environment variables
-cp .env.example .env.local
+# Optional — only needed for agent.runGoal or the dashboard's LLM-backed features
+cp .env.example .env
 
-# Start local services (PostgreSQL, Redis, Qdrant)
-docker-compose up -d
-
-# Run database migrations
-pnpm db:migrate
-
-# Start development servers
-pnpm dev
+pnpm build       # build every package, in dependency order (via Turborepo)
+pnpm test        # run every package's test suite
 ```
 
-## Available Commands
+## Available commands
+
+Root `package.json` has exactly six scripts, each delegating to Turborepo, which runs the
+same-named script in every package that defines it (in dependency order, cached):
 
 ```bash
-# Development
-pnpm dev              # Start all dev servers (frontend, backend, desktop)
-pnpm dev:frontend     # Frontend only (Next.js)
-pnpm dev:backend      # Backend only (Fastify)
-pnpm dev:desktop      # Desktop only (Tauri/Electron)
-
-# Building
-pnpm build            # Build all packages
-pnpm build:frontend
-pnpm build:backend
-pnpm build:desktop
-
-# Testing
-pnpm test             # Run all tests
-pnpm test:unit        # Unit tests only
-pnpm test:integration # Integration tests only
-pnpm test:e2e         # E2E tests (Playwright)
-pnpm test:watch       # Watch mode
-
-# Code Quality
-pnpm lint             # Lint all packages
-pnpm lint:fix         # Auto-fix lint issues
-pnpm format           # Format with Prettier
-pnpm typecheck        # TypeScript type checking
-
-# Database
-pnpm db:migrate       # Run migrations
-pnpm db:studio        # Open Prisma Studio
-pnpm db:seed          # Seed database
-pnpm db:reset         # Reset database
-
-# Docker
-pnpm docker:build     # Build all Docker images
-pnpm docker:up        # Start all services
-pnpm docker:down      # Stop all services
-pnpm docker:logs      # View logs
-
-# Desktop
-pnpm tauri:dev        # Tauri dev mode
-pnpm tauri:build      # Build Tauri app
-pnpm electron:dev     # Electron dev mode
-pnpm electron:build   # Build Electron app
-
-# Utilities
-pnpm clean            # Clean all build artifacts
-pnpm changeset        # Create changeset for versioning
-pnpm version          # Version packages
-pnpm release          # Publish to npm
+pnpm build       # turbo run build     — tsc in each package
+pnpm lint        # turbo run lint      — eslint in each package
+pnpm typecheck   # turbo run typecheck — tsc --noEmit in each package
+pnpm test        # turbo run test      — vitest run --globals in each package
+pnpm dev         # turbo run dev       — persistent, uncached; each package's own watch mode
+pnpm clean       # turbo run clean     — rimraf dist in each package
 ```
 
-## Environment Variables
-
-See `.env.example` for all required variables. Key variables:
+There is no `pnpm dev:frontend`/`db:migrate`/`docker:*`/`tauri:*` — those commands don't
+exist in this repo. To scope any of the above to one package:
 
 ```bash
-# Database
-DATABASE_URL="postgresql://user:pass@localhost:5432/sutradhar"
-REDIS_URL="redis://localhost:6379"
-
-# Vector Database
-QDRANT_URL="http://localhost:6333"
-
-# LLM Providers
-OPENAI_API_KEY="sk-..."
-ANTHROPIC_API_KEY="sk-ant-..."
-OLLAMA_BASE_URL="http://localhost:11434"
-
-# Auth
-NEXTAUTH_SECRET="..."
-NEXTAUTH_URL="http://localhost:3000"
-
-# Browser Automation
-PLAYWRIGHT_BROWSERS_PATH="/path/to/browsers"
-
-# Frontend
-NEXT_PUBLIC_API_URL="http://localhost:4000"
-NEXT_PUBLIC_WS_URL="ws://localhost:4000"
+pnpm --filter @sutradhar/browser test
+pnpm --filter @sutradhar/mcp-server build
 ```
 
-## Project Structure
-
-```
-Sutradhar/
-├── .github/workflows/     # GitHub Actions CI/CD
-├── .husky/                # Git hooks
-├── .vscode/               # VS Code settings
-├── docs/                  # Documentation
-├── packages/
-│   ├── frontend/          # Next.js frontend
-│   ├── backend/           # Fastify backend
-│   ├── desktop/           # Tauri/Electron app
-│   ├── core/              # Core domain logic
-│   ├── shared/            # Shared utilities
-│   ├── providers/         # Provider implementations
-│   ├── types/             # Shared TypeScript types
-│   ├── utils/             # Shared utilities
-│   └── configs/           # Shared configs
-├── docker-compose.yml     # Local services
-├── docker-compose.override.yml
-├── docker-compose.prod.yml
-├── turbo.json             # Turborepo config
-├── pnpm-workspace.yaml    # pnpm workspace config
-├── package.json           # Root package.json
-├── tsconfig.json          # Root TypeScript config
-├── .eslintrc.js           # ESLint config
-├── .prettierrc            # Prettier config
-├── .env.example           # Environment template
-├── .gitignore
-├── .prettierignore
-├── .eslintignore
-├── turbo.json             # Turborepo config
-└── README.md
-```
-
-## Package Manager
-
-This project uses **pnpm** with workspaces. Never use npm or yarn.
+Note: `apps/server`'s own `dev` script is `tsc -w` (type-check/compile in watch mode only —
+it doesn't start the HTTP listener). To actually run the gateway locally, build it and start
+the compiled entry point directly:
 
 ```bash
-# Add dependency to a package
-pnpm --filter @sutradhar/frontend add <package>
-pnpm --filter @sutradhar/backend add -D <package>
-
-# Add to all packages
-pnpm add -w <package>
-
-# Run command in specific package
-pnpm --filter @sutradhar/frontend <command>
-
-# Run command in all packages
-pnpm -r <command>
+pnpm --filter @sutradhar/server build
+node apps/server/dist/index.js
 ```
 
-## TypeScript Configuration
+`apps/frontend`'s dev server (Vite) proxies API calls to `http://localhost:8081` by default
+(`VITE_API_BASE_URL`/`PORT` override it) — that's `apps/server`, not a separate hosted
+backend.
 
-All packages use strict TypeScript configuration from `packages/configs/tsconfig`:
+## Environment variables
 
-```json
-{
-  "extends": "@sutradhar/configs/tsconfig/base.json"
-}
-```
-
-Package-specific configs extend the base:
-
-```json
-{
-  "extends": "@sutradhar/configs/tsconfig/nextjs.json"
-}
-```
-
-## ESLint Configuration
-
-All packages use shared ESLint config from `packages/configs/eslint`:
-
-```json
-{
-  "extends": ["@sutradhar/configs/eslint/base"],
-  "rules": { }
-}
-```
-
-## Prettier Configuration
-
-Shared Prettier config from `packages/configs/prettier`:
-
-```json
-{
-  "printWidth": 100,
-  "tabWidth": 2,
-  "singleQuote": true,
-  "trailingComma": "es5",
-  "semi": true
-}
-```
-
-## Git Hooks
-
-Husky hooks configured in `.husky/`:
-
-- `pre-commit`: lint-staged (lint + format staged files)
-- `commit-msg`: commitlint (conventional commits)
-- `pre-push`: typecheck + test
-
-## IDE Setup (VS Code)
-
-Recommended extensions (in `.vscode/extensions.json`):
-
-- ESLint
-- Prettier
-- TypeScript Hero
-- Tailwind CSS IntelliSense
-- Prisma
-- Tauri
-- Docker
-
-Settings in `.vscode/settings.json`:
-
-- Format on save
-- ESLint fix on save
-- TypeScript auto-import
-
-## Debugging
-
-### Frontend (Next.js)
-
-```json
-// .vscode/launch.json
-{
-  "type": "next.js",
-  "request": "launch",
-  "name": "Next.js Debug",
-  "port": 9229
-}
-```
-
-### Backend (Fastify)
-
-```json
-{
-  "type": "node",
-  "request": "launch",
-  "name": "Backend Debug",
-  "program": "${workspaceFolder}/packages/backend/src/main.ts",
-  "outFiles": ["${workspaceFolder}/packages/backend/dist/**/*.js"]
-}
-```
-
-### Desktop (Tauri)
-
-```json
-{
-  "type": "node",
-  "request": "launch",
-  "name": "Tauri Debug",
-  "cwd": "${workspaceFolder}/packages/desktop",
-  "runtimeExecutable": "pnpm",
-  "runtimeArgs": ["tauri:dev"]
-}
-```
-
-## Database
-
-### Local Development
+See `.env.example` at the repo root — it's short and accurate. The real variables:
 
 ```bash
-# Start PostgreSQL, Redis, Qdrant
-docker-compose up -d
+# LLM provider for agent.runGoal (pick one; Ollama is the zero-config default)
+OPENROUTER_API_KEY=sk-or-v1-...          # cloud, if set takes precedence over Ollama
+SUTRADHAR_MODEL=qwen3.5:9b                # Ollama tag, or OpenRouter model id
+SUTRADHAR_LLM_BASE=http://localhost:4000/v1   # any OpenAI-compatible endpoint instead
+SUTRADHAR_LLM_KEY=
 
-# Run migrations
-pnpm db:migrate
+# Browser
+CHROME_PATH=C:\Program Files\Google\Chrome\Application\chrome.exe   # if auto-detect fails
 
-# Open Prisma Studio
-pnpm db:studio
+# apps/server
+PORT=8081
 ```
 
-### Migrations
+There is no `DATABASE_URL`, `REDIS_URL`, `QDRANT_URL`, or `NEXTAUTH_*` — this project doesn't
+use any of those.
 
-```bash
-# Create migration
-pnpm --filter @sutradhar/backend db:migrate:create <name>
+## Project structure
 
-# Apply migrations
-pnpm db:migrate
-
-# Reset database
-pnpm db:reset
 ```
+PinchTab/
+├── .github/workflows/ci.yml   # install → typecheck → build → test, on push to master/main + every PR
+├── docs/                       # This documentation
+├── packages/                    # Libraries — see docs/ARCHITECTURE.md for the full graph
+│   ├── contracts, utils, config, observability, events, dev-runtime  (foundational)
+│   ├── capability, browser, capability-runtime, llm, memory, storage
+│   ├── agent, workflow
+│   └── mcp-server, sutradhar, sdk, cli, frontend    (integration surfaces)
+├── apps/
+│   ├── server/                 # REST API gateway for the frontend dashboard
+│   └── extension/              # Plain browser extension, outside the pnpm workspace
+├── tools/                       # Standalone comparison/benchmark harnesses (not published packages)
+├── scripts/
+├── turbo.json                   # Turborepo task graph
+├── pnpm-workspace.yaml
+├── tsconfig.base.json / tsconfig.json
+├── vitest.config.ts
+├── .env.example
+└── package.json                 # 6 scripts: build/lint/typecheck/test/dev/clean
+```
+
+## TypeScript, linting, formatting
+
+Every package has its own `tsconfig.json`, `tsc --noEmit` for `typecheck`, and its own
+`eslint src/ --ext .ts` for `lint` — there's no shared `@sutradhar/configs` package; each
+package's config is self-contained. Formatting is Prettier, driven from the root
+devDependency (no per-package Prettier config to look for).
+
+## Git hooks
+
+There's no `.husky/` directory in this repo — no pre-commit/pre-push hooks are configured.
+CI (`.github/workflows/ci.yml`) is the enforcement point: install, typecheck, build, test, on
+every push to `master`/`main` and every pull request.
 
 ## Testing
 
-### Unit Tests (Vitest)
+Every package uses **Vitest** (`vitest run --globals`) for unit/integration tests — there is
+no separate E2E test tier or Playwright test suite in this repo (Puppeteer is the runtime
+browser-automation dependency, not a test framework here). Run the full suite with `pnpm
+test`, or scope it: `pnpm --filter @sutradhar/browser test`.
 
-```bash
-# Run all unit tests
-pnpm test:unit
-
-# Run with coverage
-pnpm test:unit -- --coverage
-
-# Watch mode
-pnpm test:watch
-```
-
-### Integration Tests
-
-```bash
-pnpm test:integration
-```
-
-### E2E Tests (Playwright)
-
-```bash
-# Install browsers
-pnpm --filter @sutradhar/frontend exec playwright install
-
-# Run E2E tests
-pnpm test:e2e
-
-# UI mode
-pnpm test:e2e -- --ui
-```
-
-## Building
-
-### Development Build
-
-```bash
-pnpm build
-```
-
-### Production Build
-
-```bash
-pnpm build -- --filter=@sutradhar/frontend --filter=@sutradhar/backend
-```
-
-### Desktop Build
-
-```bash
-# Tauri
-pnpm tauri:build
-
-# Electron
-pnpm electron:build
-```
-
-## Docker
-
-### Development
-
-```bash
-docker-compose up -d
-docker-compose logs -f
-```
-
-### Production
-
-```bash
-docker-compose -f docker-compose.prod.yml up -d
-```
+For live verification beyond what a test suite can check (actually driving a real browser
+through Sutradhar's own tools against a real page) — see `CLAUDE.md`'s standing verification
+standard: typechecking and unit tests are necessary but not sufficient on their own.
 
 ## Troubleshooting
 
-### Port Conflicts
+### Chrome/Edge not found
 
-Default ports:
-- Frontend: 3000
-- Backend: 4000
-- Backend WS: 4001
-- PostgreSQL: 5432
-- Redis: 6379
-- Qdrant: 6333
+`BrowserLauncher` doesn't throw when no real executable is found — it silently falls back to
+a no-op mock browser instance (logged at `info` level as `executablePath: "mock"`), so
+real-looking calls will start returning empty/no-op results instead of a clear error. If
+browser actions aren't doing anything, check the launch log line first. Set `CHROME_PATH` to
+your browser's executable, or install Chrome/Edge — see
+`packages/browser/src/launcher/browser-launcher.ts`'s `findExecutablePath` for the full list
+of paths checked automatically per platform.
 
-Change in `.env.local` if needed.
+### Port conflicts
 
-### Database Connection Issues
+`apps/frontend`'s dev server defaults to port 3000 (`VITE_PORT`/`PORT` override it);
+`apps/server` defaults to 8081 (`PORT`). If 3000 is already in use by something else on your
+machine, pass `--port <N> --strictPort` to the frontend's dev command rather than assuming
+3000 is free.
 
-```bash
-# Check PostgreSQL is running
-docker-compose ps
-
-# Check connection
-psql $DATABASE_URL -c "SELECT 1"
-
-# Reset database
-pnpm db:reset
-```
-
-### TypeScript Errors
+### TypeScript errors after a pull
 
 ```bash
-# Full type check
-pnpm typecheck
-
-# Clear TypeScript cache
 pnpm clean && pnpm install && pnpm typecheck
 ```
 
-### pnpm Issues
+### pnpm issues
 
 ```bash
-# Clear pnpm store
 pnpm store prune
-
-# Reinstall
-rm -rf node_modules packages/*/node_modules
+rm -rf node_modules packages/*/node_modules apps/*/node_modules
 pnpm install
 ```
 
-## Useful Links
+### MCP session looks stale after a rebuild
+
+If you rebuild `mcp-server` or any package it depends on, an already-connected MCP client
+session keeps running the old code in memory until it's reconnected/restarted — a client
+reconnect and a process restart are different things. See
+`.ai/browsing-capability-loop.md` for more on this recurring gotcha.
+
+## Useful links
 
 - [Turborepo Docs](https://turbo.build/repo/docs)
 - [pnpm Workspaces](https://pnpm.io/workspaces)
-- [Next.js Docs](https://nextjs.org/docs)
-- [Fastify Docs](https://fastify.dev/docs/latest/)
-- [Tauri Docs](https://tauri.app/v1/guides/)
-- [Playwright Docs](https://playwright.dev/docs/intro)
 - [Vitest Docs](https://vitest.dev/guide/)
-- [Tailwind CSS](https://tailwindcss.com/docs)
-- [shadcn/ui](https://ui.shadcn.com/docs)
+- [Puppeteer Docs](https://pptr.dev/)
+- [Model Context Protocol](https://modelcontextprotocol.io)

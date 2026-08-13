@@ -2,138 +2,137 @@
 
 ## Overview
 
-Sutradhar is a browser automation and AI-powered tab management application built as a monorepo with multiple packages.
+Sutradhar is a browser automation engine built for AI agents: a real Chrome/Edge instance
+driven via Puppeteer, with a semantic DOM/accessibility-tree snapshot layer on top so an LLM
+can read a page and act on it without screenshots or pixel coordinates. It's a TypeScript
+monorepo (pnpm workspaces + Turborepo), not a client/server web app — there is no separate
+backend service, database, or hosted deployment; every integration surface is a library or
+CLI that runs locally against a real browser process.
 
-## Architecture Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Sutradhar Monorepo                         │
-├─────────────────────────────────────────────────────────────────┤
-│  packages/                                                       │
-│  ├── frontend/          # Next.js + React + Tailwind + shadcn/ui │
-│  ├── backend/           # Fastify + TypeScript API               │
-│  ├── desktop/           # Electron/Tauri Desktop App              │
-│  ├── core/              # Core domain logic & entities           │
-│  ├── shared/            # Shared utilities & types               │
-│  ├── providers/         # Provider implementations                │
-│  │   ├── llm/           # LLM Provider implementations           │
-│  │   ├── browser/       # Browser automation providers           │
-│  │   ├── storage/       # Storage providers (local, cloud)       │
-│  │   └── memory/        # Memory/Vector storage providers        │
-│  ├── types/             # Shared TypeScript types                │
-│  ├── utils/             # Shared utilities                       │
-│  └── configs/           # Shared configs (tsconfig, eslint, etc) │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-## Core Principles
-
-1. **Domain-Driven Design** - Core domain logic isolated in `packages/core`
-2. **Provider Pattern** - All external integrations via provider interfaces
-3. **Type Safety** - Strict TypeScript across all packages
-3. **Monorepo** - Managed with pnpm workspaces and Turborepo
-4. **Type Safety** - Strict TypeScript, strict ESLint, strict Prettier
-5. **Testing** - Vitest for unit/integration, Playwright for E2E
-
-## Package Dependencies
+## Package layout
 
 ```
-frontend  → core, shared, types, providers/*
-backend   → core, shared, types, providers/*
-desktop   → frontend, backend, core, shared, types
-core      → types, shared
-shared    → types
-providers/* → core, types, shared
-types     → (no deps)
-utils     → types
-configs   → (no deps)
+packages/
+├── contracts/            # Pure TS domain types, DTOs, event schemas, error types — no deps
+├── utils/                 # Pure utility primitives (async limiters, crypto, formatters)
+├── config/                 # Zod environment-schema validation
+├── observability/           # Structured logging, metrics, tracing — in-house, no external deps
+├── events/                   # In-memory typed EventBus + handler registry
+├── capability/                 # Capability/feature-matrix discovery
+├── dev-runtime/                 # Generic dev runtime/service registry (shared across the
+│                                  wider Hanumatrix ecosystem, not Sutradhar-specific)
+│
+├── browser/                # The actual browser engine: Puppeteer-core launcher, DOM
+│                              semantic snapshot engine, action engine (click/type/scroll/…),
+│                              stealth launch flags
+├── capability-runtime/     # SutradharRuntime — the single high-level façade every
+│                              integration surface below calls (session/tab management,
+│                              wraps `browser`)
+├── llm/                    # LLM provider gateway (OpenRouter/Ollama adapters)
+├── memory/                 # Multi-tier agent memory (working/short-term/episodic/semantic)
+├── storage/                 # Storage abstraction — local filesystem persistence, artifacts
+├── agent/                   # AgentCore — the autonomous observe→reason→act→verify loop
+│                              behind `agent.runGoal` (built on capability-runtime + llm +
+│                              memory + storage)
+├── workflow/                 # Multi-agent workflow orchestration — DAG node graphs, step
+│                                routing, task graph execution (built on `agent`)
+│
+├── mcp-server/              # MCP server — exposes browser.* tools + agent.runGoal to any
+│                               MCP client (Claude Desktop, Cline, custom agents)
+├── sutradhar/                # Embeddable npm SDK — Puppeteer-style API over
+│                               capability-runtime, for driving Sutradhar directly from code
+├── sdk/                      # Plugin/extension SDK — author + host plugins (manifest,
+│                               loader, signature verification)
+├── cli/                       # Terminal CLI (nav/snap/click/type/screenshot/audit/compare/doctor)
+└── frontend/                   # Vite + React web/desktop client, built on `sdk`
+
+apps/
+├── server/                 # @sutradhar/server — REST API gateway (custom router, not
+│                              Express/Fastify) that `frontend` talks to. Depends on browser,
+│                              llm, memory, agent, workflow, storage — effectively the
+│                              "backend" for the dashboard UI, distinct from `mcp-server`
+│                              (which serves MCP clients, not this REST API)
+└── extension/               # Plain browser extension (manifest.json + vanilla JS,
+                                intentionally outside the pnpm/TypeScript workspace)
 ```
 
-## Core Domain Model
+`apps/` holds runnable applications composed from `packages/`; `packages/` holds the
+libraries themselves. `apps/server` is the one genuine "backend" in this repo — it exists,
+but it's a lightweight custom gateway over the same packages every other surface uses, not a
+separate service with its own database.
+
+## Core principles
+
+1. **Semantic grounding over pixels** — the whole point of `browser`'s DOM snapshot engine
+   is giving an LLM a structured, addressable listing of interactive elements instead of a
+   screenshot + coordinates. Two grounding modes exist: DOM-attribute (`browser.snapshot`,
+   fast, numeric ids) and accessibility-tree (`browser.ax_snapshot`, no ids to go stale,
+   preferred for frequently re-rendering pages).
+2. **One façade, many front doors** — `capability-runtime`'s `SutradharRuntime` is the single
+   place session/tab/action logic lives. `mcp-server`, `sutradhar` (the SDK), and `cli` are
+   all thin front doors onto the same façade, not independent implementations.
+3. **Monorepo, strict TypeScript** — pnpm workspaces + Turborepo for the build graph, Vitest
+   for unit/integration tests, strict TS across every package.
+4. **No hosted infra** — `apps/server` is a real local REST gateway for the `frontend`
+   dashboard, but there's no hosted database, queue, or third-party infra behind it or
+   anything else here by default; every surface runs locally against a real, locally-launched
+   Chrome/Edge process.
+
+## Package dependency shape
+
+Roughly bottom-up (each layer depends only on layers below it):
 
 ```
-Session → Tab → Action → Result
-   │         │        │
-   │         │        └── Screenshot, DOM, Console, Network
-   │         └── URL, Title, State, Metadata
-   └── ID, User, CreatedAt, Config
+contracts, utils, config, observability, events, dev-runtime    (foundational, few/no deps)
+        │
+capability
+        │
+browser  ──────────────┐
+        │               │
+capability-runtime      llm, memory, storage
+        │               │
+        └───── agent ───┘
+                │
+            workflow
 ```
 
-## Provider Interfaces
+`mcp-server`, `sutradhar`, `cli`, and `sdk` sit above this graph, composing
+`capability-runtime` (and `agent` for `mcp-server`'s `agent.runGoal`) rather than being
+depended on by anything below them. `frontend` depends only on `sdk` + `contracts`.
 
-Each provider type defines an interface in `packages/core/providers/`:
+## Two "brain" modes (the actual product surface)
 
-- `LLMProvider` - LLM completions, embeddings, tools
-- `BrowserProvider` - Browser automation (Playwright, CDP, CDP)
-- `StorageProvider` - Key-value, blob, structured storage
-- `MemoryProvider` - Vector search, embeddings, retrieval
+- **Host-AI-driven** (`browser.*` tools, or the `sutradhar` SDK directly): the calling AI
+  supplies the reasoning and drives the browser call-by-call — `snapshot` → `click`/`type`/…
+  This is the primary way Sutradhar is meant to be used (see `CLAUDE.md`).
+- **`agent.runGoal`**: Sutradhar's own `AgentCore` is the brain — hand it a natural-language
+  goal, it runs its own observe→reason→act→verify loop using an LLM provider it manages
+  itself (Ollama or OpenRouter). A separate, secondary use case from the primary one above.
 
-## Communication Patterns
-
-- **Frontend ↔ Backend**: REST API + WebSocket (tRPC planned)
-- **Desktop ↔ Backend**: IPC (Electron) or Tauri commands
-- **Backend ↔ Providers**: Direct dependency injection
-- **Frontend ↔ Providers**: Via backend API only
-
-## Data Flow
+## Data flow (a single browser action)
 
 ```
-User Action (Frontend)
-    → API Request (Backend)
-    → Domain Service (Core)
-    → Provider Interface (Core)
-    → Provider Implementation (Providers/*)
-    → External Service (LLM, Browser, DB)
-    → Result → Domain Entity → API Response → Frontend
+Caller (MCP tool call / SDK method / CLI command)
+    → capability-runtime (SutradharRuntime): resolves session/tab
+    → browser: BrowserActionEngine executes the action against the real Puppeteer page
+    → DOM semantic engine (for snapshot/grounding calls): stamps/reads data-sd-node-id or
+      walks the accessibility tree
+    → ActionResult (success, verification, timing) ← returned back up the same path
 ```
 
-## Technology Stack
+## Security considerations
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | Next.js 14, React 18, TypeScript, Tailwind CSS, shadcn/ui |
-| Backend | Fastify, TypeScript, tRPC (planned), Prisma (planned) |
-| Desktop | Tauri (preferred) / Electron |
-| Database | PostgreSQL (prod), SQLite (dev), Redis (cache) |
-| Vector DB | Qdrant / Pinecone / pgvector |
-| Browser | Playwright, CDP |
-| LLM | OpenAI, Anthropic, Ollama, LocalAI |
-| Vector DB | Qdrant, Pinecone, pgvector |
-| Queue | BullMQ (Redis) |
-| Auth | NextAuth.js / Better Auth |
-| Monitoring | OpenTelemetry, Grafana, Loki |
+- Browser processes launch with sandbox flags (`--no-sandbox`/`--disable-setuid-sandbox` are
+  used for headless CI/container compatibility, not to disable browser-level sandboxing of
+  page content).
+- File downloads/uploads are constrained to allow-listed directories.
+- Plugin signatures are verified before loading (`sdk`).
+- Stealth/bot-detection evasion is deliberately out of scope — see `CLAUDE.md`'s scope
+  boundary.
 
-## Deployment Architecture
+## What this document is not
 
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Vercel    │     │  Railway/   │     │   Docker    │
-│  (Frontend) │────▶│  Render     │────▶│  (Backend)  │
-│             │     │  (Backend)  │     │             │
-└─────────────┘     └─────────────┘     └─────────────┘
-                           │
-                    ┌──────┴──────┐
-                    │  PostgreSQL │
-                    │    Redis    │
-                    │   Qdrant    │
-                    └─────────────┘
-```
-
-## Security Considerations
-
-- All API communication over HTTPS/WSS
-- API keys encrypted at rest (age/sops)
-- Browser automation sandboxed
-- Rate limiting on all public APIs
-- Audit logging for all actions
-- Secrets managed via 1Password/HashiCorp Vault
-
-## Scalability
-
-- Stateless backend (horizontal scaling)
-- Redis for session/cache
-- BullMQ for job queues
-- Qdrant for vector search
-- CDN for static assets
-- Edge functions for edge compute
+There is no hosted deployment, no Postgres/Redis/Qdrant, no queueing system, no auth
+provider, and no CDN — those would describe a different kind of product (a hosted SaaS)
+that this repo does not build. If future work adds a real hosted service, document it here
+when it exists, not before.

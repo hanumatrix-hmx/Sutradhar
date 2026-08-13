@@ -24,7 +24,7 @@ engine (`@sutradhar/capability-runtime`), so behavior is identical across them.
 - **Dynamic LLM Orchestration**: Unified gateway supporting OpenRouter (200+ cloud models), Ollama (local LLMs), OpenAI, and Anthropic with automatic failover and capability matching.
 - **Multi-Tier Memory Engine**: Working memory context buffer, episodic action traces, procedural skill scripts, and semantic fact knowledge base.
 - **Deterministic Workflows & Tools**: Extensible tool execution system (Browser, Shell, Filesystem, HTTP) guarded by strict security policies and visual DAG workflow graphs.
-- **Real-Time Web Inspector**: Next.js dashboard providing live page canvas view, DOM accessibility tree inspection, agent reasoning trace visualization, and real-time WebSocket event streams.
+- **Real-Time Web Inspector**: Vite + React dashboard providing live page canvas view, DOM accessibility tree inspection, agent reasoning trace visualization, and real-time WebSocket event streams.
 
 ---
 
@@ -36,7 +36,9 @@ packages that were never implemented; those have been removed.
 
 ```
 apps/
-└── server/                    # Node http REST API server (real browser + agent runtime)
+├── server/                    # Node http REST API server (real browser + agent runtime)
+└── extension/                 # Browser extension (manifest.json + vanilla JS, intentionally
+                                #   outside the pnpm/TypeScript workspace)
 
 packages/
 ├── contracts/                 # Pure TypeScript DTOs, primitives, branded IDs, domain events
@@ -73,10 +75,11 @@ packages/
                                #   /api REST; no mocks in the production path
 ```
 
-A few more `packages/*` directories exist as empty, not-yet-implemented scaffolding
-(`backend`, `configs`, `core`, `desktop`, `providers`, `shared`, `types`) — intentionally
-omitted above since they contain no source yet. Tracked as `PROB-004` in
-[`.ai/known-problems.md`](./.ai/known-problems.md).
+The 7 empty scaffolding dirs this section used to name explicitly (`backend`, `configs`,
+`core`, `desktop`, `providers`, `shared`, `types`) have since been deleted outright — they
+were never git-tracked and nothing referenced them (closes the loop on `PROB-004` in
+[`.ai/known-problems.md`](./.ai/known-problems.md) a second time, since the situation changed
+after that entry was first resolved).
 
 **Data flow (all real, no mocks):**
 `Frontend (React)` → `REST /api/v1/*` → `Server` → `BrowserActionEngine` (Puppeteer/Chrome)
