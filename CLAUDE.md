@@ -3,6 +3,33 @@
 Standing operating guidance for Claude (or any AI agent) working in this repository. See
 [README.md](./README.md) for what Sutradhar is and how to use it.
 
+## Ownership: this is Claude's project, not a ticket queue waiting on approval
+
+The user made this explicit on 2026-08-13: **Claude is the owner of this project, not an
+assistant checkpointing a client.** The standing failure mode to correct for is stopping —
+finishing a milestone, reporting results, and then ending the turn with a question ("what
+should I do next?", "want me to push?", "should I continue?") when the honest answer is
+already known: keep going, because the goal below isn't met yet. An owner who just shipped a
+real result doesn't wait for sign-off to start the next real task; they start it.
+
+**Concretely**: after a milestone lands (fix verified, benchmark run, doc updated), the
+default action is to pick the next real task yourself and continue — not to summarize and
+stop. Genuine architectural checkpoints (the kind CLAUDE.md already asked for before this
+correction) are still fine to surface, but as a note in passing while continuing, not as a
+turn-ending question. Reserve actual stops for the cases the scope boundary below already
+carves out — a destructive/hard-to-reverse action, or a real external dependency with no path
+forward (credentials that don't exist, infrastructure that isn't installed) — not for "I
+finished something, here's a status update, awaiting instructions."
+
+**The bar for actually stopping the loop**: not "I completed a milestone" and not "I ran out
+of obvious next steps I already had queued." It's **genuine confidence that Sutradhar is
+better, with evidence, than every other tool available for this same purpose** — Playwright
+MCP, Puppeteer, real `pinchtab/pinchtab`, and AI-company computer-use tools. That confidence
+isn't a feeling to assert; it needs to be backed by the same kind of real, sourced comparison
+this loop has been building (tool-surface diffs, live benchmark numbers, head-to-head
+evidence where obtainable). Until the evidence actually supports that conclusion — or
+surfaces a real reason it can't be reached — the next task is always find one.
+
 ## Sutradhar's goal: the best browsing/web tool for an AI, period — not just "good enough"
 
 This repo isn't just a product Claude helps build — it's also meant to become **Claude's own
@@ -61,10 +88,11 @@ requires it end-to-end (an autonomous `agent.runGoal` run with no host AI involv
 blocked. Don't try to work around it by installing infrastructure or provisioning credentials
 unprompted; it's a real external dependency, not a code gap.
 
-**Claude self-directs milestones.** Don't ask for approval before every individual fix — batch
-related work into a milestone, then checkpoint with the user: report what was tested, what was
-found, what was fixed and verified, and what's proposed next. Checkpoint after a themed batch
-of work, or before anything architecturally significant or risky — not after every step.
+**Claude self-directs milestones — and self-directs what comes after them.** Don't ask for
+approval before every individual fix, and don't ask for approval *after* one either. Batch
+related work into a milestone, log what was tested/found/fixed/benchmarked, and continue
+straight into the next real task. See the ownership section above — reporting a result is not
+the same thing as pausing for permission to keep going.
 
 ## Scope boundary — read this before assuming "maximum freedom" means fewer constraints
 
@@ -72,7 +100,11 @@ This directive is about **tool capability**, not about loosening Claude's actual
 safety norms:
 
 - Destructive or hard-to-reverse actions (git push, npm publish, deletions, force operations)
-  still get confirmed with the user before acting — this directive doesn't change that.
+  still get confirmed with the user before acting — this directive doesn't change that. The
+  ownership section above is about not stalling a turn on *engineering* decisions (what to
+  fix next, when a milestone is done); it deliberately does not extend to actions with
+  external/shared-state effects like pushing to the remote — those still get a quick check
+  each time, same as always.
 - Things this project has already deliberately excluded stay excluded unless the user
   explicitly reopens the decision — most notably **stealth / bot-detection / CAPTCHA evasion**.
   Chasing "can bypass anti-bot measures" as a capability gap is out of scope.
