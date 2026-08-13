@@ -49,11 +49,14 @@ function singleFramePage(waitForSelectorImpl: (...args: any[]) => any): Page {
 }
 
 /** A click/hover-ready ElementHandle double with a scripted `.evaluate()` call sequence. */
-function mockHandle(overrides: Partial<Record<'click' | 'hover' | 'type' | 'select' | 'focus' | 'scrollIntoView', any>> = {}) {
+function mockHandle(
+  overrides: Partial<Record<'click' | 'hover' | 'type' | 'press' | 'select' | 'focus' | 'scrollIntoView', any>> = {},
+) {
   return {
     click: overrides.click ?? vi.fn().mockResolvedValue(undefined),
     hover: overrides.hover ?? vi.fn().mockResolvedValue(undefined),
     type: overrides.type ?? vi.fn().mockResolvedValue(undefined),
+    press: overrides.press ?? vi.fn().mockResolvedValue(undefined),
     select: overrides.select ?? vi.fn().mockResolvedValue(undefined),
     focus: overrides.focus ?? vi.fn().mockResolvedValue(undefined),
     scrollIntoView: overrides.scrollIntoView ?? vi.fn().mockResolvedValue(undefined),
@@ -561,6 +564,40 @@ describe('@sutradhar/browser BrowserActionEngine duplicate-action guard', () => 
 
     expect(result.success).toBe(true);
     expect(result.retriesUsed).toBe(1);
+  });
+});
+
+describe('@sutradhar/browser BrowserActionEngine type clears existing content first', () => {
+  it('triple-clicks to select existing text, backspaces it, then types the new value, in that order', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false); // assertNotStale: not stale
+    const page = singleFramePage(() => Promise.resolve(handle));
+    const callOrder: string[] = [];
+    handle.click.mockImplementation(() => {
+      callOrder.push('click');
+      return Promise.resolve();
+    });
+    handle.press.mockImplementation(() => {
+      callOrder.push('press');
+      return Promise.resolve();
+    });
+    handle.type.mockImplementation(() => {
+      callOrder.push('type');
+      return Promise.resolve();
+    });
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'type',
+      selector: '#field',
+      value: 'new value',
+    });
+
+    expect(result.success).toBe(true);
+    expect(handle.click).toHaveBeenCalledWith({ count: 3 });
+    expect(handle.press).toHaveBeenCalledWith('Backspace');
+    expect(handle.type).toHaveBeenCalledWith('new value');
+    expect(callOrder).toEqual(['click', 'press', 'type']);
   });
 });
 

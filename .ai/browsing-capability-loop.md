@@ -67,6 +67,31 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-13 — Milestone 17: real bug found+fixed live — `type` was appending, not clearing
+
+Task 36 of WebBench sample 3 (add a product to cart on AliExpress) surfaced a real bug:
+searching a second term right after a first one in the same input produced a garbage
+concatenated URL slug instead of a clean new search. Root cause in
+`packages/browser/src/actions/browser-action-engine.ts`: `type` and `type_by_label` called
+Puppeteer's bare `ElementHandle.type()`, which only appends keystrokes — despite
+`browser.type`'s own documented contract ("clears field first if needed"), nothing in the
+actual call path cleared the field first.
+
+**Fixed**: added a `clearAndType` helper (triple-click to select existing content, Backspace,
+then type — the same motion a real user clearing a field would make) and wired it into both
+`type` and `type_by_label` (and therefore `fillForm`, which is built on `type`). Typechecked,
+rebuilt, and the full `packages/browser` suite re-run clean (145/145 passing — 2 pre-existing
+tests needed their mock `ElementHandle` extended with `press`/`click`, since they'd only ever
+exercised the old direct-`.type()` path; added a new test locking in the exact
+click→backspace→type call order). Verified live against a real browser outside the test
+suite (typing two different values into the same input now correctly replaces, confirmed via
+`document.getElementById(...).value`) — not just unit-test-level confidence.
+
+Found via genuine dogfooding (an actual WebBench task), not speculative code review — exactly
+the loop's intended find→fix→verify cycle. Note: the standing MCP-session-staleness gotcha
+applies here too — the already-connected MCP session won't reflect this fix until it's
+rebuilt/reconnected.
+
 ### 2026-08-13 — Milestone 15: second WebBench sample — 5/8 completed, a real number at last
 
 Milestone 14's sample was inconclusive on completion rate — all 7 tasks happened to land on
@@ -425,15 +450,18 @@ it completes.
 
 ## Current milestone
 
-**Milestone 15: DONE** (2026-08-13) — second WebBench sample (8 tasks, 8 new domains), 5/8
-completed with real answers, 3/8 externally blocked. Combined with Milestone 14: **5/15
-WebBench tasks completed, 10/15 externally blocked, 0 Sutradhar-attributable failures** —
-this is the real benchmark number the loop was missing, not just "mechanics work." See
-iteration log above and `tools/webbench/claude-direct-run-2026-08-13-sample2.md`. **Next**: no
-specific next task queued — resume the standing find→fix→verify loop by picking real,
-unexplored surface (candidates: the unresolved click-handler observation from Milestone 14 if
-it recurs, true WebSocket/SSE pages, or a third WebBench sample sized larger for a tighter
-completion-rate estimate).
+**Milestone 17: DONE** (2026-08-13) — third WebBench sample (14 tasks, 14 new domains),
+10/14 completed with real answers, 4/14 externally blocked, plus one real Sutradhar bug found
+and fixed live (`browser.type`/`type_by_label` were appending instead of clearing — see
+iteration log). **Combined across all three samples: 15/29 WebBench tasks completed (52%),
+14/29 externally blocked, 0 Sutradhar-attributable failures** — the real benchmark number
+this loop set out to get, not just "mechanics work." See
+`tools/webbench/claude-direct-run-2026-08-13-sample3.md` and `.ai/competitive-benchmarks.md`.
+**Next**: no specific next task queued — resume the standing find→fix→verify loop by picking
+real, unexplored surface (candidates: the unresolved click-handler observation from Milestone
+14 if it recurs, true WebSocket/SSE pages, confirming the `type`-clear fix through an actual
+MCP round-trip once the session is rebuilt/reconnected, or a fourth WebBench sample if an even
+tighter completion-rate estimate is wanted).
 
 **Milestone 14: DONE** (2026-08-13) — first Claude-direct WebBench run, 7/7 tasks attempted
 live via `browser.*`. All 7 ended in honest, correctly-diagnosed external blocks (anti-bot

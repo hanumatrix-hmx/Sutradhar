@@ -405,7 +405,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         });
         if (!handle) throw new Error(`No element found for selector: ${params.selector}`);
         await this.assertNotStale(handle, params.selector);
-        await this.runHandleOp('type', () => handle.type(params.value!));
+        await this.runHandleOp('type', () => this.clearAndType(handle, params.value!));
         return { typedValue: params.value };
       }
 
@@ -415,7 +415,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         const selector = `input[aria-label="${params.label}"], input[placeholder="${params.label}"]`;
         const handle = await this.resolveElement(page, `pierce/${selector}`, { timeoutMs: 5000 });
         if (!handle) throw new Error(`No input found matching label: ${params.label}`);
-        await this.runHandleOp('type_by_label', () => handle.type(params.value!));
+        await this.runHandleOp('type_by_label', () => this.clearAndType(handle, params.value!));
         return { label: params.label, value: params.value };
       }
 
@@ -649,6 +649,21 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       }
       throw err;
     }
+  }
+
+  /**
+   * Clears an input/textarea/contenteditable's existing content before typing — triple-click
+   * selects whatever text is already there (works the same way a real user clearing a field
+   * would, and unlike a Ctrl+A/Cmd+A shortcut isn't platform-dependent), Backspace deletes the
+   * selection, then the new value is typed. Puppeteer's bare `ElementHandle.type()` only
+   * appends; found live (aliexpress.us's search box silently concatenated a second search term
+   * onto the first instead of replacing it) that nothing upstream of this call was clearing the
+   * field first, despite `browser.type`'s own documented contract promising it.
+   */
+  private async clearAndType(handle: ElementHandle<Element>, value: string): Promise<void> {
+    await handle.click({ count: 3 });
+    await handle.press('Backspace');
+    await handle.type(value);
   }
 
   /**

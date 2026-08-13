@@ -55,9 +55,10 @@ blocked here, see above). But the user corrected an important framing mistake: S
 `browser.*` the same way Claude would drive Playwright MCP — not necessarily via its own
 separate internal LLM loop. For that mode, "benchmarking" doesn't need Ollama/OpenRouter at
 all: it means Claude (or another host AI) actually attempting real WebBench tasks live via
-the `browser.*` tools. **This has now actually been done** — see
-`tools/webbench/claude-direct-run-2026-08-13.md` and the iteration log below for the first
-real run of that kind, across all 7 curated tasks.
+the `browser.*` tools. **This has now actually been done, across three samples totaling 29
+real tasks** — see `tools/webbench/claude-direct-run-2026-08-13*.md` and the iteration log
+below. Current combined number: **15/29 completed (52%), 14/29 externally blocked, 0
+Sutradhar-attributable failures** — a real, honestly-reported number, not a cherry-picked one.
 
 ## AI-company browser/computer-use tools — a different category, not a head-to-head gap list
 
@@ -179,6 +180,75 @@ findings:
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-13 — Milestone 17: third WebBench sample (10/14) + a real bug found and fixed
+
+Ran a third, larger sample (14 tasks — `tools/webbench/tasks-sample3.json`) across major
+e-commerce/media/travel sites not touched before (airbnb.com, alamy.com, alibaba.com,
+aliexpress.com ×2, amazon.com, asos.com, bbb.org, bestbuy.com, booking.com, cars.com,
+cnbc.com, cnet.com, collider.com), deliberately including several sites with real reputations
+for bot protection rather than cherry-picking easy targets. **10 of 14 completed end-to-end
+with real, verifiable answers (71%)** — the 4 blocks were real, external (alamy.com 403,
+alibaba.com CAPTCHA, asos.com "Access Denied", cars.com Cloudflare deny). Full detail in
+`tools/webbench/claude-direct-run-2026-08-13-sample3.md`.
+
+**This run also found and fixed a real Sutradhar bug**, not just external blocks: task 36
+(add a product to cart on AliExpress) surfaced that searching a second term right after a
+first one produced a garbage concatenated URL slug
+(`wholesale-black-leather-belts-for-menBluetooth-speakers.html`) instead of a clean new
+search. Root cause in `packages/browser/src/actions/browser-action-engine.ts`: the `type`
+and `type_by_label` actions called Puppeteer's bare `ElementHandle.type()`, which only
+appends — despite `browser.type`'s own documented contract promising the field gets cleared
+first, nothing in the actual call path did that. Fixed with a `clearAndType` helper
+(triple-click to select existing content, Backspace, then type) wired into both actions.
+Typechecked, rebuilt, full `packages/browser` suite re-run clean (145/145, including a new
+test locking in the click→backspace→type sequence), and verified live against a real browser
+outside the test suite: typing two different values into the same input now correctly
+replaces instead of concatenating. (The already-connected MCP session won't reflect this
+until it's rebuilt/reconnected — the standing gotcha logged in
+`.ai/browsing-capability-loop.md`.)
+
+**Combined across all three samples so far: 15 of 29 real WebBench tasks completed (52%),
+14 externally blocked, 0 Sutradhar-attributable failures** (once this fix is counted — the
+one real bug found this run was fixed within the same session, not left as a live failure).
+Sample 1's 0/7 is now clearly visible as a sampling artifact (it happened to land entirely on
+3 unusually locked-down sites); samples 2 and 3 land at 62.5% and 71% respectively, which is
+the more representative picture.
+
+### 2026-08-13 — Milestone 16: confirmed the external blocks are universal, not Sutradhar-specific
+
+The 10/15 external-block rate from Milestones 14-15 raises an obvious question: is that rate
+something about Sutradhar specifically (overly detectable browser fingerprint, missing
+headers, etc.), or would any browser-automation tool from this same machine/IP hit the same
+walls? Answered it directly rather than assuming: wrote a minimal, standalone script using
+raw `puppeteer-core` — Sutradhar's own default launch args (`DEFAULT_LAUNCH_ARGS`,
+`--disable-blink-features=AutomationControlled` included, same as always), but *zero* other
+Sutradhar code, no `DOMSemanticEngine`, no MCP layer, nothing — and pointed it at the three
+sites that blocked sample 2 (britannica.com, collinsdictionary.com, allrecipes.com).
+
+**Identical results**: the exact same Cloudflare "Performing security verification"
+interstitial on britannica.com and collinsdictionary.com, and the exact same
+`support@people.inc` hard IP-deny page on allrecipes.com — same block, same content, from a
+script with no Sutradhar involvement at all. This is strong, direct evidence (not inference)
+that these specific blocks are environment-level (IP reputation, TLS/network fingerprint, or
+plain headless-Chrome-from-a-datacenter-IP detection) rather than anything about Sutradhar's
+own code. **Any tool automating a real Chrome from this same machine — Playwright, a bare
+Puppeteer script, a hand-rolled CDP client — would hit the identical wall.** The 33-67%
+external-block rate observed across both WebBench samples says something true about running
+unauthenticated automated browsing from this specific environment against 2026's more
+bot-hardened sites, not about Sutradhar underperforming a competitor.
+
+**Related, deliberately-not-acted-on finding from the same investigation**: `packages/browser`
+already contains a built, unit-tested `StealthEngine` (`packages/browser/src/stealth/`) —
+webdriver-property override, Chrome-runtime mocking, WebGL fingerprint masking, hardware-
+concurrency randomization — but it is **not wired into the actual launch/page-setup path
+anywhere** (`grep`-confirmed zero call sites for `getEvasionScripts()` outside its own test
+file). Only the single mild `--disable-blink-features=AutomationControlled` flag is applied
+by default, which is standard practice even in plain automation setups, not active evasion.
+Wiring the dormant stealth engine in would very likely raise the completion rate — but per
+CLAUDE.md's scope boundary, active bot-detection evasion is deliberately excluded and doesn't
+get built even in service of a better benchmark number. Logged here as a real, correctly
+*unbuilt* capability, not silently forgotten.
 
 ### 2026-08-13 — Milestone 15: second Claude-direct WebBench sample — a real completion number
 
