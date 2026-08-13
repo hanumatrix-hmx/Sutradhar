@@ -53,6 +53,19 @@ import {
 import { compareScreenshots, type VisualCompareResult } from './audit/visual-compare.js';
 import { buildAxSnapshot, type AxSnapshotResult } from './snapshot/ax-snapshot.js';
 
+/**
+ * Standard Chrome DevTools network-throttling profiles, for {@link SutradharRuntime.emulateNetwork}.
+ * Values mirror Puppeteer's own `PredefinedNetworkConditions` (download/upload in bytes/sec,
+ * latency in ms) — inlined rather than imported so this package doesn't need a direct
+ * `puppeteer-core` dependency just for this one static table.
+ */
+const NETWORK_CONDITION_PRESETS = {
+  'Slow 3G': { download: ((500 * 1000) / 8) * 0.8, upload: ((500 * 1000) / 8) * 0.8, latency: 400 * 5 },
+  'Fast 3G': { download: ((1.6 * 1000 * 1000) / 8) * 0.9, upload: ((750 * 1000) / 8) * 0.9, latency: 150 * 3.75 },
+  'Slow 4G': { download: ((1.6 * 1000 * 1000) / 8) * 0.9, upload: ((750 * 1000) / 8) * 0.9, latency: 150 * 3.75 },
+  'Fast 4G': { download: ((9 * 1000 * 1000) / 8) * 0.9, upload: ((1.5 * 1000 * 1000) / 8) * 0.9, latency: 60 * 2.75 },
+} as const;
+
 /** Constructor options for {@link SutradharRuntime}. */
 export interface SutradharRuntimeOptions {
   /** Reuse an existing launcher (e.g. a test double). A default one is created otherwise. */
@@ -786,6 +799,39 @@ export class SutradharRuntime {
     if (settings.colorScheme) features.push({ name: 'prefers-color-scheme', value: settings.colorScheme });
     if (settings.reducedMotion) features.push({ name: 'prefers-reduced-motion', value: settings.reducedMotion });
     if (features.length > 0) await page.emulateMediaFeatures(features);
+  }
+
+  /**
+   * Emulate network conditions — offline mode and/or throughput/latency throttling. Offline is
+   * independent of throughput/latency (matches Puppeteer's own split: `setOfflineMode` doesn't
+   * touch the throttling values, and vice versa), so both can be set in the same call.
+   *
+   * `preset` picks one of Chrome DevTools' standard profiles ('Slow 3G' | 'Fast 3G' | 'Slow 4G'
+   * | 'Fast 4G'). Pass explicit `download`/`upload` (bytes/sec) and `latency` (ms) instead for a
+   * custom profile. Pass `conditions: null` (or omit both `preset` and explicit values) to
+   * clear throttling back to unrestricted.
+   */
+  public async emulateNetwork(
+    sessionId: string,
+    options: {
+      offline?: boolean;
+      conditions?:
+        | { preset: 'Slow 3G' | 'Fast 3G' | 'Slow 4G' | 'Fast 4G' }
+        | { download: number; upload: number; latency: number }
+        | null;
+    },
+    tabId?: string,
+  ): Promise<void> {
+    const { tab } = this.resolveTab(sessionId, tabId);
+    const page = this.requirePage(tab);
+    if (options.offline !== undefined) await page.setOfflineMode(options.offline);
+    if (options.conditions === null) {
+      await page.emulateNetworkConditions(null);
+    } else if (options.conditions && 'preset' in options.conditions) {
+      await page.emulateNetworkConditions(NETWORK_CONDITION_PRESETS[options.conditions.preset]);
+    } else if (options.conditions) {
+      await page.emulateNetworkConditions(options.conditions);
+    }
   }
 
   /** Read the current clipboard text. Requires the 'clipboard-read' permission — grant it

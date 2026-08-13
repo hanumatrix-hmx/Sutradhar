@@ -1059,6 +1059,42 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
   );
 
   server.registerTool(
+    'browser.set_network_conditions',
+    {
+      description:
+        'Emulate offline mode and/or network throttling (throughput + latency). offline is independent of ' +
+        'throttling — set either or both in one call. Use `preset` for a standard DevTools profile, or ' +
+        'download/upload/latency together for a custom one. Set clearThrottling:true to remove throttling ' +
+        '(offline is unaffected by this — set offline:false separately to go back online).',
+      inputSchema: {
+        sessionId: z.string(),
+        offline: z.boolean().optional(),
+        preset: z.enum(['Slow 3G', 'Fast 3G', 'Slow 4G', 'Fast 4G']).optional(),
+        download: z.number().positive().optional().describe('Bytes/sec. Use with upload + latency for a custom profile.'),
+        upload: z.number().positive().optional().describe('Bytes/sec.'),
+        latency: z.number().min(0).optional().describe('Milliseconds of extra round-trip latency.'),
+        clearThrottling: z.boolean().optional().describe('Remove throttling, back to unrestricted throughput.'),
+        tabId: z.string().optional(),
+      },
+    },
+    async ({ sessionId, offline, preset, download, upload, latency, clearThrottling, tabId }) => {
+      try {
+        const conditions = preset
+          ? ({ preset } as const)
+          : download !== undefined && upload !== undefined && latency !== undefined
+            ? { download, upload, latency }
+            : clearThrottling
+              ? null
+              : undefined;
+        await runtime.emulateNetwork(sessionId, { offline, conditions }, tabId);
+        return jsonResult({ success: true });
+      } catch (e) {
+        return errorResult(`set_network_conditions failed: ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
     'browser.get_clipboard',
     {
       description:

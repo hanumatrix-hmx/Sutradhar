@@ -28,16 +28,16 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | File download | covered | Milestone 1: `runtime.downloadFile` verified end-to-end — real file landed on disk at the expected path with correct content (read back and checked, not just a success flag). |
 | File upload | covered | Milestone 2: `browser.upload_file` against a real fixture page (the-internet.herokuapp.com/upload) — set a file input, clicked Upload, confirmed via the server's own response page ("File Uploaded! upload-test.txt") that it actually landed server-side, not just a client-side success flag. |
 | iframes / cross-frame interaction (incl. dynamically-injected, cross-origin) | covered | Milestone 1: verified directly against the runtime — `snapshot`/`click` correctly traverse into a cross-origin iframe injected into the page *after* initial load (the hardest realistic case — matches real chat-widget/payment-iframe behavior). Works correctly today. |
-| Shadow DOM | untested | `dom-semantic-engine.ts` has a shadow-piercing pattern reused elsewhere; never dogfooded. |
+| Shadow DOM | covered (open); closed is a known, reasonable limitation | Milestone 3: an injected open shadow root's button was correctly listed by `snapshot` and correctly clicked (verified via the real click handler firing). A *closed* shadow root's content is invisible to both — expected: `mode:'closed'` blocks even `evaluate()`-level JS access by design, and closed shadow roots are rare in practice since most real widgets use open ones. Not treated as a gap worth chasing. |
 | PDF handling: export | covered | `browser.export_pdf` verified — returns real, valid `%PDF-1.4` content for the current page. |
 | PDF handling: reading one encountered mid-browse | gap found, logged (`PROB-009`) | Navigating directly to a `.pdf` URL correctly enumerates Chrome's native PDF-viewer toolbar via `snapshot`, but `pageText` comes back completely empty even against a PDF with real (compressed) text content. Not fixed — needs real PDF text-layer extraction, nontrivial scope. |
 | Real-time/streaming pages (continuous background DOM churn) | partial | Milestone 1: grounding survives ongoing unrelated DOM churn elsewhere on the page (a simulated live-feed stream, numeric id captured then acted on ~8 re-renders later — still hit the right element). True WebSocket/SSE-driven pages and the harder "target itself gets destroyed and id gets reused" case remain untested. |
-| Media (video/audio/canvas) | untested | |
+| Media (video/audio/canvas) | covered | Milestone 3: native `<video controls>` UI is not exposed via `snapshot` (expected — UA-internal shadow DOM; the correct control path is the JS media API, not clicking browser chrome). `video.play()`/`.pause()`/state inspection via `eval` works correctly against a real, well-formed video. One specific external test file failed with a genuine format/codec error (`MEDIA_ELEMENT_ERROR`) — confirmed to be that file's problem, not Sutradhar's, by successfully loading a different real video right after. Canvas: `browser.click`'s `offset` param verified pixel-accurate against a hand-drawn canvas region (239,119 landed correctly inside a 200-280×100-140 target). |
 | Mobile/device emulation | covered, 1 bug fixed | Milestone 2: `set_viewport`'s width/height/deviceScaleFactor/media-query emulation all verified correct against a real site (github.com). Found and fixed a real gap: `isMobile:true` didn't enable touch (`ontouchstart`) since `hasTouch` was never passed to Puppeteer — real mobile devices always have touch. Fixed by defaulting `hasTouch` to `isMobile`'s value, overridable; verified all 3 cases (default-on, desktop-off, explicit-off) directly against the runtime. |
 | Auth/session persistence across runs | covered | Milestone 2: created a named profile via the CLI, logged into a real test fixture (the-internet.herokuapp.com/login), fully closed the session (killed the Chrome process), launched a completely fresh session with the same profile, navigated straight to the auth-gated page — still authenticated, no re-login needed. Works correctly. |
-| Network conditions (slow/offline/throttled) | untested | No obvious tool for this yet — check if Puppeteer's CDP network-emulation is exposed. |
+| Network conditions (slow/offline/throttled) | covered, new capability built | Milestone 3: confirmed this was a complete gap (zero code anywhere, not even internal). Built `SutradharRuntime.emulateNetwork` + `browser.set_network_conditions` MCP tool (offline mode + DevTools throttling presets or custom download/upload/latency), mirroring the existing `emulate`/`set_viewport` pattern. Verified live: offline genuinely blocked a real `fetch` ("Failed to fetch"), Slow 3G added ~2046ms to a request that normally takes ~17ms (matches the preset's math), clearing throttling restored the ~17ms baseline. |
 | Large-scale extraction / pagination | untested | |
-| JS framework diversity beyond React | partial | Only tested against a React app (TodoMVC, the dashboard itself). Vue/Angular/Svelte/vanilla untested. |
+| JS framework diversity beyond React | covered | Milestone 3: real TodoMVC implementations in Vue, Angular, and Svelte — add-todo, snapshot, and DOM-state verification all worked correctly in each, matching the earlier React result. Grounding operates on the rendered DOM, not framework internals, so this is expected but now actually confirmed rather than assumed. |
 | CAPTCHA / bot-detection / stealth evasion | excluded | Deliberately out of scope per CLAUDE.md — not a gap to close. |
 
 ## MCP session staleness — resolved 2026-08-13, but re-staleness after every rebuild is a standing gotcha
@@ -56,6 +56,36 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-13 — Milestone 3: shadow DOM, media, network conditions, framework diversity
+
+- **Shadow DOM**: open shadow root — listing and clicking both verified correct. Closed shadow
+  root — correctly invisible to both, which is expected JS-level encapsulation, not a bug.
+- **Media**: native `<video>` controls not exposed via `snapshot` (expected — UA-internal
+  shadow DOM, not something any automation framework interacts with directly); the actual JS
+  media API (`play`/`pause`/state) works correctly. One external test video failed with a
+  genuine codec/format error — confirmed as that file's problem, not Sutradhar's, by loading a
+  different real video successfully right after. Canvas `offset`-based clicking verified
+  pixel-accurate against a hand-drawn target region.
+- **Network conditions**: confirmed this was a complete gap (no code anywhere, not even
+  internal) — built a new capability rather than just logging it, since it's small and follows
+  an existing pattern (`emulate`/`set_viewport`). Added `SutradharRuntime.emulateNetwork` +
+  `browser.set_network_conditions` (offline mode + DevTools throttling presets or custom
+  throughput/latency). Verified live: offline genuinely blocked a real fetch, Slow 3G added
+  ~2046ms to a request that normally takes ~17ms (matches the preset's own math), clearing
+  throttling restored the baseline. Not yet confirmed through an actual MCP round-trip (same
+  standing gotcha as Milestone 2's fixes — needs a reconnect).
+- **JS framework diversity**: real TodoMVC apps in Vue, Angular, and Svelte — add-todo,
+  snapshot, and DOM verification all worked correctly in each, same as the earlier React
+  result. Confirms grounding is genuinely framework-agnostic rather than assumed to be.
+- **Minor DX observation, not chased further**: `browser.eval` calls appear to share
+  persistent top-level scope across separate invocations within a session (a `const` declared
+  in one `eval` call collided with the same name in a later, separate call). Worth understanding
+  if it comes up again, but low priority — easy to work around by not reusing identifier names.
+
+**Net result**: 1 new capability built from scratch (network conditions) and verified live; 3
+of 4 categories confirmed already correct with no code changes needed (shadow DOM open case,
+media, framework diversity); 1 external-file issue correctly identified as not a Sutradhar bug.
 
 ### 2026-08-13 — Milestone 2: upload, auth persistence, mobile emulation, PDF
 
@@ -128,10 +158,18 @@ it completes.
 
 ## Current milestone
 
-**Milestone 1: DONE** (2026-08-13). **Milestone 2: DONE** (2026-08-13) — see iteration log
-above.
+**Milestone 1: DONE. Milestone 2: DONE. Milestone 3: DONE** (all 2026-08-13) — see iteration
+log above.
 
-**Proposed Milestone 3** (not started, pending user checkpoint per CLAUDE.md): re-verify the
-Milestone 2 fixes through an actual MCP round-trip (needs a reconnect), then move to the next
-untested batch — shadow DOM, media (video/audio/canvas), network-condition emulation, and
-JS-framework diversity beyond React (Vue/Angular/Svelte).
+**Remaining untested rows in the taxonomy**: `axSnapshot` (never actually exercised live,
+despite being the documented recommendation), the harder id-reuse-after-*deletion* grounding
+case, true WebSocket/SSE-driven pages (vs. the background-churn case already covered), and
+large-scale extraction/pagination.
+
+**Standing item**: 3 fixes across Milestones 2–3 (double-header bug, `hasTouch` default,
+network-conditions tool) are verified directly against the runtime but not yet confirmed
+through an actual MCP round-trip — needs a reconnect to close that loop for real.
+
+**Proposed Milestone 4** (not started, pending user checkpoint per CLAUDE.md): reconnect MCP
+and re-verify the 3 pending fixes end-to-end, then `axSnapshot` live testing + the
+id-reuse-after-deletion grounding case.
