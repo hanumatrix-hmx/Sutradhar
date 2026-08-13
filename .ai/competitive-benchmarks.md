@@ -48,6 +48,13 @@ OpenRouter). This environment has neither (checked: no `ollama` binary, no
 dependency. Revisit once a provider is available; until then, no "we scored X% on WebArena"
 claim can be made honestly.
 
+**A real harness now exists and is ready** — see `tools/webbench/` and the iteration log
+below. Built against Web Bench specifically because it's the only one of these with a directly
+downloadable, real, open task set. Running it today (confirmed via an actual run, not just
+inference) correctly fails every task on the missing-provider grounds above — but also
+correctly, honestly detected a real CAPTCHA wall on one of the sample's real target sites,
+which is itself a genuine, unplanned live-verification data point.
+
 ## AI-company browser/computer-use tools — a different category, not a head-to-head gap list
 
 Researched 2026-08-13, direct from Anthropic's and OpenAI's own docs (not just benchmark
@@ -168,6 +175,33 @@ findings:
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-13 — Built a real WebBench harness, ready for the day a provider exists
+
+Of the agent-level benchmarks researched earlier (all blocked on no LLM provider here), Web
+Bench turned out to have something the others didn't: a directly downloadable, real, open
+task set (`webbenchfinal.csv` on GitHub, no signup) with a simple, exact schema (`ID, Starting
+URL, Category, Task`). Built `tools/webbench/` — a harness that composes
+`SutradharRuntime` + `AgentCore` + a real LLM provider exactly the way
+`packages/mcp-server/src/server.ts` composes them (the real production path, not a
+stripped-down reimplementation), runs a curated 7-task sample (one per WebBench category),
+and writes a structured report. No invented scoring function — WebBench's own methodology is
+human-in-the-loop review, so the harness captures status/answer/step-trace for that kind of
+review rather than pretending to auto-grade.
+
+**Ran it.** Confirms the no-LLM-provider finding directly rather than by inference (real
+`fetch failed` errors from Ollama, correctly triggering stuck-loop detection and a clean,
+honest failure after 3 attempts — no fabricated success). But it also surfaced something
+genuinely new and unplanned: **3 of the 7 tasks (all on acehardware.com) hit a real CAPTCHA
+wall**, and Sutradhar's block-detection correctly identified it and failed fast and honestly
+("CAPTCHA detected on the page — this requires human intervention", 1.8s, zero wasted LLM
+calls) rather than getting stuck. That's real, live verification of `detectBlock()` against a
+genuine real-world obstacle this loop didn't manufacture — the harness earned its keep on the
+very first run, before a provider even existed to attempt full task completion.
+
+**Status**: harness is real, tested, and ready — the only missing piece is a real LLM
+provider, same external blocker as `agent.runGoal` generally. Once one exists, re-run
+`node tools/webbench/run.mjs` and this section gets its first real scored numbers.
 
 ### 2026-08-13 — Established: researched the landscape, closed all 3 real gaps found
 

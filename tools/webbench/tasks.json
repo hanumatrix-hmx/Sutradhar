@@ -1,0 +1,48 @@
+{
+  "_source": "https://github.com/Halluminate/WebBench (webbenchfinal.csv), fetched 2026-08-13",
+  "_note": "A small, curated, real sample — not the full 2,454-task open-sourced set. One task per WebBench category (READ/CREATE/UPDATE/DELETE/FILE_MANIPULATION) plus 2 extra READ tasks, reproduced verbatim from the dataset including its own task-scoping instructions. IDs match the dataset's own row IDs.",
+  "tasks": [
+    {
+      "id": 0,
+      "startingUrl": "https://www.acehardware.com",
+      "category": "READ",
+      "task": "On the product details page for the \"Black & Decker Power Tool Combo Kit,\" list its specifications including dimensions, voltage, and warranty information.\nOnly use http://acehardware.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1,
+      "startingUrl": "https://www.acehardware.com",
+      "category": "READ",
+      "task": "Visit the store locator page to find out which Ace Hardware stores in California offer in-store pickup for online orders, then list the store names and addresses.\nOnly use http://acehardware.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 2,
+      "startingUrl": "https://www.acehardware.com",
+      "category": "READ",
+      "task": "Search for \"LED light bulbs\" on AceHardware.com and provide the titles and sale prices of the first 5 products that appear.\nOnly use http://acehardware.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 3,
+      "startingUrl": "https://www.agoda.com",
+      "category": "CREATE",
+      "task": "Create a new wishlist titled \"Summer Getaways\" in your Agoda account and add a hotel from Miami, Florida to it; then confirm the wishlist displays the hotel's name and location.\nOnly use http://agoda.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 5,
+      "startingUrl": "https://www.agoda.com",
+      "category": "DELETE",
+      "task": "Log in to your Agoda account, add a hotel from your recent search to your favorites list, and then remove it; finally, verify that it no longer appears in your favorites.\nOnly use http://agoda.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 12,
+      "startingUrl": "https://www.agoda.com",
+      "category": "UPDATE",
+      "task": "Modify your profile settings in your Agoda account to enable email notifications for special travel offers, and then check that the subscription status is updated.\nOnly use http://agoda.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 312,
+      "startingUrl": "https://www.crunchbase.com",
+      "category": "FILE_MANIPULATION",
+      "task": "Navigate to the data export section on Crunchbase, export the latest global startup funding report as a CSV file.\nOnly use http://crunchbase.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    }
+  ]
+}
