@@ -57,6 +57,27 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-13 — Milestone 5: a genuinely open-ended real task, not a fixture site
+
+With the taxonomy nearly exhausted, this milestone was a change in kind rather than another
+category sweep: a real, useful, unscripted research task on a genuinely complex real site
+(Wikipedia), the way an actual user/agent would use Sutradhar — not a purpose-built test
+fixture.
+
+**Task**: fact-check the etymology claim behind the tool's own name. The `pinchtab_to_
+sutradhar_rename` memory asserts "sutradhara" means "holder of the strings," the Sanskrit
+equivalent of "puppeteer." Searched Wikipedia, navigated into "Indian classical drama," and
+found the exact sentence: `"sutradhara" is "holder of the strings or threads"`, explicitly
+compared to a puppeteer, cited to a real scholarly source (Richmond 1998, *Indian Theatre:
+Traditions of Performance*) — not a Wikipedia editor's unsourced paraphrase. The naming
+rationale documented earlier in this project is genuinely accurate.
+
+**Net result**: no friction, no new gaps found — the whole flow (search → results → click
+into an article → extract targeted content from deep inside a long page → find a citation)
+worked smoothly end-to-end on a real, complex, unscripted site. That's itself a meaningful
+signal: the taxonomy sweep's positive results generalize to genuine real-world use, not just
+purpose-built fixtures.
+
 ### 2026-08-13 — Milestone 4: axSnapshot, hover, and the id-reuse-after-deletion case
 
 Closed out the taxonomy's last "attempted but unfinished" items, live via MCP:
@@ -197,9 +218,14 @@ still not confirmed through an actual MCP round-trip — confirmed again in Mile
 connected session predates all of them. This needs a user-side reconnect; not something
 resolvable from inside the loop.
 
-**Proposed Milestone 5** (not started, pending user checkpoint per CLAUDE.md): with the
-taxonomy nearly exhausted, the highest-leverage next step is probably a shift in kind rather
-than another category sweep — e.g. a genuinely open-ended real task (not a fixture site) to
-see what breaks under conditions this loop hasn't manufactured, or picking up one of the
-larger deferred items (the full grounding-architecture rewrite question, now backed by 3 solid
-real-world survival tests suggesting it may not be needed after all).
+**Milestone 5: DONE** (2026-08-13) — a real open-ended task on Wikipedia (fact-checking the
+tool's own naming etymology), not another fixture-site sweep. No new gaps found; the whole
+flow worked smoothly end-to-end on a genuine, complex, unscripted site — see iteration log.
+
+**Proposed Milestone 6** (not started, pending user checkpoint per CLAUDE.md): the standing
+MCP-reconnect item is now the most concrete remaining task — once reconnected, re-verify the
+3 pending fixes end-to-end and re-run a couple of earlier tests through actual MCP (not
+direct-runtime) for full confidence. Beyond that, the loop has covered enough ground that
+further milestones should probably be driven by real work as it comes up, rather than
+continuing to manufacture test scenarios — matches the project's own "dogfood on real work,
+not synthetic tests" principle.
