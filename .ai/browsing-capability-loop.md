@@ -33,7 +33,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | PDF handling: reading one encountered mid-browse | gap found, logged (`PROB-009`) | Navigating directly to a `.pdf` URL correctly enumerates Chrome's native PDF-viewer toolbar via `snapshot`, but `pageText` comes back completely empty even against a PDF with real (compressed) text content. Not fixed — needs real PDF text-layer extraction, nontrivial scope. |
 | Real-time/streaming pages (continuous background DOM churn) | partial | Milestone 1: grounding survives ongoing unrelated DOM churn elsewhere on the page (a simulated live-feed stream, numeric id captured then acted on ~8 re-renders later — still hit the right element). True WebSocket/SSE-driven pages and the harder "target itself gets destroyed and id gets reused" case remain untested. |
 | Media (video/audio/canvas) | covered | Milestone 3: native `<video controls>` UI is not exposed via `snapshot` (expected — UA-internal shadow DOM; the correct control path is the JS media API, not clicking browser chrome). `video.play()`/`.pause()`/state inspection via `eval` works correctly against a real, well-formed video. One specific external test file failed with a genuine format/codec error (`MEDIA_ELEMENT_ERROR`) — confirmed to be that file's problem, not Sutradhar's, by successfully loading a different real video right after. Canvas: `browser.click`'s `offset` param verified pixel-accurate against a hand-drawn canvas region (239,119 landed correctly inside a 200-280×100-140 target). |
-| Mobile/device emulation | covered, 1 bug fixed | Milestone 2: `set_viewport`'s width/height/deviceScaleFactor/media-query emulation all verified correct against a real site (github.com). Found and fixed a real gap: `isMobile:true` didn't enable touch (`ontouchstart`) since `hasTouch` was never passed to Puppeteer — real mobile devices always have touch. Fixed by defaulting `hasTouch` to `isMobile`'s value, overridable; verified all 3 cases (default-on, desktop-off, explicit-off) directly against the runtime. |
+| Mobile/device emulation | covered, 2 bugs fixed | Milestone 2: `set_viewport`'s width/height/deviceScaleFactor/media-query emulation all verified correct against a real site (github.com); found `hasTouch` never got enabled for `isMobile:true`, fixed with a spread-order default. Milestone 6: live MCP testing caught that the Milestone 2 fix didn't actually work through the real call path (an object-spread subtlety hid it from direct-runtime testing) — refixed to resolve the default before construction, re-verified against the exact MCP-handler call shape. Still needs one more reconnect to confirm the corrected version live. |
 | Auth/session persistence across runs | covered | Milestone 2: created a named profile via the CLI, logged into a real test fixture (the-internet.herokuapp.com/login), fully closed the session (killed the Chrome process), launched a completely fresh session with the same profile, navigated straight to the auth-gated page — still authenticated, no re-login needed. Works correctly. |
 | Network conditions (slow/offline/throttled) | covered, new capability built | Milestone 3: confirmed this was a complete gap (zero code anywhere, not even internal). Built `SutradharRuntime.emulateNetwork` + `browser.set_network_conditions` MCP tool (offline mode + DevTools throttling presets or custom download/upload/latency), mirroring the existing `emulate`/`set_viewport` pattern. Verified live: offline genuinely blocked a real `fetch` ("Failed to fetch"), Slow 3G added ~2046ms to a request that normally takes ~17ms (matches the preset's math), clearing throttling restored the ~17ms baseline. |
 | Large-scale extraction / pagination | untested | |
@@ -56,6 +56,39 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-13 — Milestone 6: re-verify pending fixes live — caught a real bug doing it
+
+MCP session reconnected (confirmed: `browser.set_network_conditions` newly present in the
+tool list). Went through the 3 standing pending fixes:
+
+- **Double-header bug**: confirmed fixed live — `browser.snapshot` now returns exactly one
+  header with the correct count.
+- **Network conditions**: confirmed live — `offline:true` genuinely blocked a real `fetch`
+  ("Failed to fetch") through the actual MCP tool, not just direct-runtime.
+- **`hasTouch` default**: **live testing caught a real regression that direct-runtime testing
+  in Milestone 2 completely missed.** `isMobile:true` still produced `hasTouch:false` through
+  the actual MCP call. Root cause: `tools.ts`'s handler always builds `{width, height,
+  isMobile, deviceScaleFactor, hasTouch}` as an object literal from destructured params — so
+  `hasTouch` is always a *present key*, even as `undefined`, when the caller doesn't pass one.
+  The fix's `{hasTouch: default, ...viewport}` pattern silently loses to that explicit
+  `undefined` during the spread (JS spread copies explicit `undefined` values, unlike a
+  genuinely absent key). My Milestone 2 direct-runtime test happened to call the method with
+  `hasTouch` truly absent, not explicitly `undefined` — so it never hit this path and falsely
+  read as fully verified. Refixed: resolve the default with `??` chaining *before* the object
+  is built, not via spread order (`const hasTouch = viewport.hasTouch ?? viewport.isMobile ??
+  false; await page.setViewport({...viewport, hasTouch})`). Re-verified against the exact
+  MCP-handler call shape (all keys present, `hasTouch: undefined` explicitly) — all 3 cases
+  correct now. The corrected version itself still needs one more reconnect to confirm through
+  an actual MCP round-trip (this session predates the just-made fix).
+
+**Why this matters for the loop, not just this one bug**: this is the clearest evidence yet
+for why CLAUDE.md's verification standard exists — "typechecking is necessary, not
+sufficient." Direct-runtime scripting is a reasonable fallback when MCP is stale, but it is
+NOT a full substitute for testing through the real call path a caller actually uses — object
+construction differences invisible in one calling style can hide real bugs. Prefer live MCP
+verification whenever the session is fresh; treat direct-runtime-only verification as
+provisional, not final.
 
 ### 2026-08-13 — Milestone 5: a genuinely open-ended real task, not a fixture site
 
@@ -212,20 +245,23 @@ it completes.
 background-churn case already covered) and large-scale extraction/pagination. Everything else
 in the taxonomy is now `covered` or `excluded`.
 
-**Standing item, unresolved across 3 milestones**: the double-header bug fix, the `hasTouch`
-default, and the network-conditions tool are all verified directly against the runtime but
-still not confirmed through an actual MCP round-trip — confirmed again in Milestone 4 that the
-connected session predates all of them. This needs a user-side reconnect; not something
-resolvable from inside the loop.
-
 **Milestone 5: DONE** (2026-08-13) — a real open-ended task on Wikipedia (fact-checking the
 tool's own naming etymology), not another fixture-site sweep. No new gaps found; the whole
 flow worked smoothly end-to-end on a genuine, complex, unscripted site — see iteration log.
 
-**Proposed Milestone 6** (not started, pending user checkpoint per CLAUDE.md): the standing
-MCP-reconnect item is now the most concrete remaining task — once reconnected, re-verify the
-3 pending fixes end-to-end and re-run a couple of earlier tests through actual MCP (not
-direct-runtime) for full confidence. Beyond that, the loop has covered enough ground that
-further milestones should probably be driven by real work as it comes up, rather than
-continuing to manufacture test scenarios — matches the project's own "dogfood on real work,
-not synthetic tests" principle.
+**Milestone 6: DONE** (2026-08-13) — MCP reconnected; re-verified the 3 pending fixes live.
+2 of 3 confirmed working through an actual MCP round-trip (double-header bug, network
+conditions). The 3rd (`hasTouch`) turned out to still be broken through the real call path —
+live testing caught a real bug direct-runtime verification had missed entirely (see iteration
+log for the full root cause). Refixed and re-verified against the exact call shape that
+exposed it. **Still needs one more reconnect** to confirm the corrected version live — this
+standing item persists, now down to 1 of 3 rather than 3 of 3.
+
+**Proposed Milestone 7** (not started, pending user checkpoint per CLAUDE.md): confirm the
+corrected `hasTouch` fix live once reconnected. Beyond that, the loop has covered enough
+ground that further milestones should probably be driven by real work as it comes up, rather
+than continuing to manufacture test scenarios — matches the project's own "dogfood on real
+work, not synthetic tests" principle. Also worth internalizing going forward, independent of
+this specific tool: **default direct-runtime verification to "provisional" and actively seek
+a live MCP round-trip before calling any fix fully closed** — Milestone 6 is a concrete,
+repeatable reason why.

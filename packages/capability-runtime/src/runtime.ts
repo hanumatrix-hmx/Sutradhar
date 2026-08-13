@@ -774,7 +774,13 @@ export class SutradharRuntime {
   ): Promise<void> {
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
-    await page.setViewport({ hasTouch: viewport.isMobile ?? false, ...viewport });
+    // Resolve the default explicitly with `??` rather than relying on spread order — a caller
+    // (e.g. the MCP tool handler) that builds this object from destructured params always
+    // includes the `hasTouch` key, even as `undefined`, which would silently defeat a
+    // `{hasTouch: default, ...viewport}`-style spread (an explicit `undefined` in a later
+    // spread overrides an earlier value — it doesn't get skipped like a genuinely absent key).
+    const hasTouch = viewport.hasTouch ?? viewport.isMobile ?? false;
+    await page.setViewport({ ...viewport, hasTouch });
   }
 
   /**
