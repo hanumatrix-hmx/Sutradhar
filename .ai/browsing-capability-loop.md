@@ -67,6 +67,30 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-13 — Milestone 14: first Claude-direct WebBench run (7/7 real tasks attempted)
+
+Full detail lives in `.ai/competitive-benchmarks.md`'s iteration log and
+`tools/webbench/claude-direct-run-2026-08-13.md` — this entry is the capability-loop-relevant
+summary. The user corrected the benchmarking approach: primary mode is Claude driving
+`browser.*` directly (no LLM provider needed), not `agent.runGoal` + Ollama/OpenRouter. Ran
+all 7 curated WebBench tasks live this way.
+
+**Capability-relevant findings**: occlusion detection (`verifiedClickOnHandle`) correctly
+refused every blind click into a recurring, repeatedly-reappearing store-locator modal on
+acehardware.com — reproduced across two independent fresh sessions, zero silent misclicks.
+`browser.get_network_log` + `browser.eval` were sufficient alone to precisely distinguish
+three different real external blockers (an HTTP 403 on a backend API, a Cloudflare JS
+challenge that never cleared, a hard Cloudflare deny) without guesswork — real diagnostic
+capability under adversarial, uncontrolled conditions, not a fixture site. All 7 tasks ended
+in an honest, correctly-surfaced external block (anti-bot walls, missing test credentials, or
+genuine product-catalog drift) rather than a fabricated success or a Sutradhar-side failure.
+
+**One unresolved, not-yet-a-gap observation**: a `type="button"` React click handler on
+acehardware.com's search bar didn't fire via either Sutradhar's click or a raw
+`element.click()` through `eval`, while real `<a>` link clicks on the same page worked fine.
+Left uninvestigated this round (a working alternate path existed, and there's no strong
+signal it's Sutradhar-side) — worth a closer look only if the same pattern recurs elsewhere.
+
 ### 2026-08-13 — Milestone 12: ran the actual unit test suites for the first time this session
 
 Every verification so far this session was typecheck (`tsc`) + live scripts (direct-runtime or
@@ -375,6 +399,16 @@ standing way of working, not a one-off. No capability work done yet in this entr
 it completes.
 
 ## Current milestone
+
+**Milestone 14: DONE** (2026-08-13) — first Claude-direct WebBench run, 7/7 tasks attempted
+live via `browser.*`. All 7 ended in honest, correctly-diagnosed external blocks (anti-bot
+walls, missing credentials, catalog drift), not Sutradhar failures — see iteration log above
+and `tools/webbench/claude-direct-run-2026-08-13.md`. This is now the primary benchmarking
+mode going forward (Claude/host-AI driving `browser.*` directly), not `agent.runGoal` +
+external LLM, per the user's correction. **Next**: no specific next task queued — resume the
+standing find→fix→verify loop by picking real, unexplored surface (candidates: the unresolved
+click-handler observation above if it recurs, true WebSocket/SSE pages, or a fresh batch of
+WebBench tasks against different site categories than this run's sample of 3 domains).
 
 **Milestone 1: DONE. Milestone 2: DONE. Milestone 3: DONE. Milestone 4: DONE** (all
 2026-08-13) — see iteration log above.

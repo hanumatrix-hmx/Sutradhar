@@ -30,21 +30,32 @@ continuous loop, now explicitly benchmark- and competitor-aware:
    this environment) — live scripts and `tsc` alone won't catch a stale test fixture (found
    live: a hardcoded expected-tool-count assertion silently drifted out of sync across several
    milestones of adding tools, and only a real test run caught it).
-4. **Benchmark it** — where a real, runnable comparison exists (an LLM-independent one today;
-   an agent-level one once an LLM provider is available), use it. Don't claim "best" without a
-   number or a documented, real comparison behind it.
+4. **Benchmark it** — where a real, runnable comparison exists, use it. That includes
+   agent-level task benchmarks (e.g. WebBench) attempted *live by Claude driving `browser.*`
+   directly* — no LLM provider needed for that mode, see below — as well as LLM-independent
+   tool-surface/reliability comparisons. Don't claim "best" without a number or a documented,
+   real comparison behind it.
 5. **Log and repeat** — record what was found/fixed/benchmarked in
    [.ai/browsing-capability-loop.md](./.ai/browsing-capability-loop.md) (capability gaps and
    the iteration log), [.ai/competitive-benchmarks.md](./.ai/competitive-benchmarks.md)
    (competitor research and comparisons), or [.ai/known-problems.md](./.ai/known-problems.md)
    (bugs), then pick the next real task.
 
-**Known standing blocker for agent-level benchmarks**: this environment has no LLM provider
-(no Ollama running, no `OPENROUTER_API_KEY`) — `agent.runGoal`'s actual reasoning and every
-agent-level benchmark (WebArena, OSWorld, Web Bench) are blocked on this. Don't try to
-work around it by installing infrastructure or provisioning credentials unprompted; it's a
-real external dependency, not a code gap. LLM-independent comparisons (tool surface parity,
-mechanical reliability, feature completeness) remain fully actionable without it.
+**Primary benchmarking mode: Claude (or another host AI) driving `browser.*` directly** — the
+same way Claude already drives Playwright MCP in other sessions. This needs no LLM provider
+at all; the host AI supplies the reasoning, Sutradhar supplies the tools. This is how the
+first real WebBench sample run happened (2026-08-13, all 7 curated tasks — see
+`.ai/competitive-benchmarks.md` and `tools/webbench/claude-direct-run-2026-08-13.md`) and is
+the default way to "benchmark it" going forward: pick real tasks (WebBench's task set or
+similar), attempt them live via `browser.*`, record what actually happened.
+
+**Secondary, currently-blocked mode**: `agent.runGoal` is Sutradhar's own separate internal
+agent loop (`AgentCore` + an LLM provider it manages itself) — a different use case from the
+primary one above, not the main benchmarking path. This environment has no LLM provider for
+it (no Ollama running, no `OPENROUTER_API_KEY`), so this specific mode and any benchmark that
+requires it end-to-end (an autonomous `agent.runGoal` run with no host AI involved) stay
+blocked. Don't try to work around it by installing infrastructure or provisioning credentials
+unprompted; it's a real external dependency, not a code gap.
 
 **Claude self-directs milestones.** Don't ask for approval before every individual fix — batch
 related work into a milestone, then checkpoint with the user: report what was tested, what was

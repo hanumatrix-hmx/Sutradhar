@@ -48,12 +48,16 @@ OpenRouter). This environment has neither (checked: no `ollama` binary, no
 dependency. Revisit once a provider is available; until then, no "we scored X% on WebArena"
 claim can be made honestly.
 
-**A real harness now exists and is ready** — see `tools/webbench/` and the iteration log
-below. Built against Web Bench specifically because it's the only one of these with a directly
-downloadable, real, open task set. Running it today (confirmed via an actual run, not just
-inference) correctly fails every task on the missing-provider grounds above — but also
-correctly, honestly detected a real CAPTCHA wall on one of the sample's real target sites,
-which is itself a genuine, unplanned live-verification data point.
+**A real harness exists for two distinct modes now.** `tools/webbench/run.mjs` covers the
+*`agent.runGoal`-autonomous* case (no host AI involved, needs its own LLM provider — still
+blocked here, see above). But the user corrected an important framing mistake: Sutradhar's
+**primary** use case per CLAUDE.md is being Claude's own tool, driven directly via
+`browser.*` the same way Claude would drive Playwright MCP — not necessarily via its own
+separate internal LLM loop. For that mode, "benchmarking" doesn't need Ollama/OpenRouter at
+all: it means Claude (or another host AI) actually attempting real WebBench tasks live via
+the `browser.*` tools. **This has now actually been done** — see
+`tools/webbench/claude-direct-run-2026-08-13.md` and the iteration log below for the first
+real run of that kind, across all 7 curated tasks.
 
 ## AI-company browser/computer-use tools — a different category, not a head-to-head gap list
 
@@ -175,6 +179,57 @@ findings:
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-13 — Milestone 14: first Claude-direct WebBench run — the primary benchmarking mode
+
+The user corrected a framing mistake earlier in this loop: Sutradhar's benchmark story
+shouldn't route through `agent.runGoal` + an external LLM provider as the main path. Its
+primary use case is being Claude's own browsing tool, driven directly via `browser.*` — so
+"benchmarking" should mean Claude actually attempting real tasks live, the same way this
+whole session's dogfooding already works, no Ollama/OpenRouter required.
+
+Did exactly that: drove all 7 curated `tools/webbench/tasks.json` tasks live via `browser.*`
+MCP tools. Full detail in `tools/webbench/claude-direct-run-2026-08-13.md`; summary:
+
+- **Task 0** (acehardware.com, READ): the target product ("Black & Decker Power Tool Combo
+  Kit") no longer exists in the live catalog — confirmed via the site's own suggest API
+  (brand category exists, `count: 0`) and a 404 on the brand page. A correct, honest answer
+  to the task as asked, not a tool failure — WebBench's dataset predates today's catalog.
+- **Task 1** (acehardware.com, READ): the store-locator's own backend API
+  (`/api/commerce/storefront/locationUsageTypes/SP/locations`) returns HTTP 403, reproduced
+  across two independent fresh sessions. Site-side, not client-side — geocoding itself
+  worked fine.
+- **Task 2** (acehardware.com, READ): `/search` results hang on an unresolved Cloudflare JS
+  challenge (15s+ wait, never cleared) — same domain's second distinct anti-bot wall found
+  this run, consistent with the real CAPTCHA the `agent.runGoal` harness hit on this same
+  site in Milestone 13.
+- **Tasks 3, 5, 12** (agoda.com, CREATE/DELETE/UPDATE): all three require a logged-in
+  account; confirmed the real sign-in wall, no credentials available. Creating a throwaway
+  account on a live third-party service was treated as the kind of externally-visible action
+  that gets checked with the user first, not just done — left as an honest block.
+- **Task 312** (crunchbase.com, FILE_MANIPULATION): `/discover` hard-blocks with Cloudflare's
+  "Sorry, you have been blocked" page — a full deny, not a challenge.
+
+**Net finding**: 0 of 7 tasks completed their nominal end-goal, but all 7 for reasons entirely
+external to Sutradhar (anti-bot walls on 5 of 7, missing credentials on 3, real catalog drift
+on 1) — the same walls any tool would hit today from an unauthenticated automated session,
+and none worked around via evasion, per the scope boundary. What the run *does* show working
+correctly: `verifiedClickOnHandle`'s occlusion detection correctly refused every blind click
+into a recurring store-locator modal on acehardware.com, every time, across two sessions —
+zero silent misclicks against a real, uncontrolled, adversarial page. `browser.get_network_log`
+and `browser.eval` were sufficient on their own to precisely root-cause and distinguish three
+different real blockers (a 403 API, a stuck JS challenge, a hard Cloudflare block) — no
+guessing required. This is genuine evidence the tool mechanics hold up; it just landed on a
+sample where the realistic bar (unauthenticated bot-protected sites) is the limiting factor,
+not Sutradhar.
+
+**One unresolved, uninvestigated observation, logged not chased**: a `type="button"` React
+search-submit control on acehardware.com didn't fire its click handler either via Sutradhar's
+click or a raw `element.click()` in `browser.eval` — but real `<a>` link clicks on the same
+page worked correctly and reached real navigation. Since a working alternate path existed and
+there's no strong signal this is Sutradhar-side (could easily be a mousedown-based toggle or
+Cloudflare's own click-shimming), not chased further this run — worth a closer look if the
+same click-doesn't-fire pattern recurs on a *different* real site.
 
 ### 2026-08-13 — Built a real WebBench harness, ready for the day a provider exists
 
