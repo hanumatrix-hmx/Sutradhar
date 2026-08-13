@@ -427,6 +427,48 @@ export class SutradharRuntime {
     }
   }
 
+  /**
+   * Drag from one absolute viewport coordinate to another — no elements or selectors involved
+   * at all, the coordinate-only sibling of {@link SutradharRuntime.clickAtPoint}. For dragging
+   * canvas-rendered content (a slider drawn on a `<canvas>`, a custom chart handle) where
+   * {@link SutradharRuntime.dragAndDrop}'s element-to-element model doesn't apply. Performs a
+   * real mouse-down → move → mouse-up sequence (not the HTML5 `DataTransfer` drag Puppeteer's
+   * element-level drag-and-drop uses), matching how canvas/custom UI actually reads input.
+   */
+  public async dragAtPoints(
+    sessionId: string,
+    fromX: number,
+    fromY: number,
+    toX: number,
+    toY: number,
+    tabId?: string,
+  ): Promise<ActionResult> {
+    const start = Date.now();
+    const { tab } = this.resolveTab(sessionId, tabId);
+    const page = this.requirePage(tab);
+    try {
+      await page.mouse.move(fromX, fromY);
+      await page.mouse.down();
+      await page.mouse.move(toX, toY);
+      await page.mouse.up();
+      return {
+        success: true,
+        actionType: 'drag_at_points',
+        executionTimeMs: Date.now() - start,
+        currentUrl: page.url(),
+        title: await this.readTitle(tab),
+        output: { fromX, fromY, toX, toY },
+      };
+    } catch (err) {
+      return {
+        success: false,
+        actionType: 'drag_at_points',
+        executionTimeMs: Date.now() - start,
+        error: err instanceof Error ? err.message : String(err),
+      };
+    }
+  }
+
   /** Type text into an element targeted by selector or sd-node-id. */
   public async type(
     sessionId: string,

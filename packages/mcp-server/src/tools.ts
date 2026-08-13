@@ -411,6 +411,32 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
   );
 
   server.registerTool(
+    'browser.drag_at_points',
+    {
+      description:
+        'Drag from one absolute viewport coordinate to another — no elements or selectors at all, the ' +
+        'coordinate-only sibling of browser.click_at_point. For canvas-rendered drag targets (a slider or ' +
+        'chart handle drawn on a <canvas>) where browser.drag_and_drop\'s element-to-element model doesn\'t ' +
+        'apply. Performs a real mouse-down -> move -> mouse-up sequence.',
+      inputSchema: {
+        sessionId: z.string(),
+        fromX: z.number(),
+        fromY: z.number(),
+        toX: z.number(),
+        toY: z.number(),
+        tabId: z.string().optional(),
+      },
+    },
+    async ({ sessionId, fromX, fromY, toX, toY, tabId }) => {
+      try {
+        return jsonResult(await runtime.dragAtPoints(sessionId, fromX, fromY, toX, toY, tabId));
+      } catch (e) {
+        return errorResult(`drag_at_points failed: ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
     'browser.type',
     {
       description: 'Type text into an input element (replaces existing focus; clears field first if needed).',

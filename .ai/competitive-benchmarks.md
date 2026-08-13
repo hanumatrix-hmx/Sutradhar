@@ -48,6 +48,44 @@ OpenRouter). This environment has neither (checked: no `ollama` binary, no
 dependency. Revisit once a provider is available; until then, no "we scored X% on WebArena"
 claim can be made honestly.
 
+## AI-company browser/computer-use tools — a different category, not a head-to-head gap list
+
+Researched 2026-08-13, direct from Anthropic's and OpenAI's own docs (not just benchmark
+scores, which were already covered above). The important finding: **both are general
+desktop computer-use tools, not browser-specific ones, and both are purely screenshot/vision
+grounded — no DOM, no accessibility tree, no semantic structure at all.**
+
+- **Anthropic Computer Use**: the model sees a screenshot, issues mouse clicks/keyboard/scroll/
+  drag/right-click/middle-click by pixel coordinate, sees the next screenshot, repeats. Works
+  on any GUI (not just a browser) — genuinely a different tool category from Sutradhar, closer
+  to what `browser.click_at_point` (built this session) covers as an escape hatch than to
+  Sutradhar's primary grounding model.
+- **OpenAI computer-use-preview**: same coordinate/screenshot loop; notable feature —
+  `needsApproval` on individual batched actions, an explicit human-approval gate for
+  high-impact interactions built into the tool's own action loop, not left to the caller.
+
+**Why this isn't a tool-surface diff like Playwright/Puppeteer/real-PinchTab**: those three are
+browser-automation libraries/servers, directly comparable action-for-action. Anthropic/OpenAI's
+computer-use tools solve a broader, blunter problem (control any GUI via pixels) that Sutradhar
+deliberately doesn't compete on — DOM/AX-semantic grounding *is* the reason Sutradhar (and
+Playwright MCP, and real PinchTab) exist as a sharper alternative for the browser-specific case:
+precise element targeting, structured extraction, cookie/storage/network manipulation — none of
+which a pure vision loop can do without OCR-level guessing. Not treated as "gaps to close by
+copying them" — a different tradeoff, already covered by `click_at_point` for the rare case
+Sutradhar's semantic grounding genuinely can't address (canvas content, unknown custom UI).
+
+**One idea worth recording, not building reflexively**: OpenAI's `needsApproval` gate is a
+genuinely interesting pattern — a tool-level mechanism for flagging a specific action as
+high-impact and requiring explicit approval before it executes, rather than leaving all safety
+judgment to the calling agent's own discipline. Sutradhar has no equivalent today (safety
+currently lives entirely in the *calling agent's* behavior, e.g. Claude's own confirm-before-
+destructive-actions norm, not in the tool itself). Building a real version would mean defining
+what counts as "high-impact" (a destructive-looking click? a form submit? a payment field?),
+an approval-callback mechanism threaded through the action dispatch path, and UX for who
+answers the approval — a genuine design question, not a quick fix. Logged for a future
+milestone if a real use case surfaces (e.g. Sutradhar driven by an agent with less inherent
+caution than Claude's own norms), not built speculatively now.
+
 ## LLM-independent comparison: tool surface vs Microsoft's own Playwright MCP server
 
 Playwright MCP (`microsoft/playwright-mcp`) is the most directly comparable reference point —
@@ -62,7 +100,8 @@ explicitly designed for AI-agent tool use rather than test-authoring. Full tool 
 | `browser_fill_form` | Bulk multi-field form fill in one call (Sutradhar only had single-field `type`/`type_by_label`) | **Fixed** — `browser.fill_form` |
 | `browser_mouse_click_xy` (vision mode) | Free-form viewport-coordinate click with no element/selector at all — needed for canvas-heavy or custom-rendered UI with nothing addressable via DOM | **Fixed** — `browser.click_at_point`, verified pixel-exact |
 | `browser_storage_state` / `browser_set_storage_state` | Single-blob export/import of all cookies+localStorage+sessionStorage — portable across machines, distinct from Sutradhar's per-item tools and from the CLI's directory-based named-profile mechanism | **Fixed** — `browser.get_storage_state`/`browser.set_storage_state`, verified: state exported from one session correctly restored a genuinely fresh, separate session's cookie + localStorage + sessionStorage |
-| `browser_mouse_move_xy` / `drag_xy` / `wheel` (rest of vision mode) | Coordinate-based move/drag/scroll, beyond the click case just fixed | Not built — lower value than the click case (drag/move-by-coordinate has no clear real use case surfaced yet; logged, not chased reflexively) |
+| `browser_mouse_drag_xy` (vision mode) | Coordinate-based drag, beyond the click case just fixed | **Fixed** — `browser.drag_at_points`, verified against a real canvas slider (see below) |
+| `browser_mouse_move_xy` / `wheel` (rest of vision mode) | Coordinate-based hover-move and wheel scroll | Not built — no clear real use case surfaced yet for these two specifically; logged, not chased reflexively |
 | `browser_resize`, `browser_wait_for`, `browser_navigate_back` | Sutradhar already covers these (`set_viewport`, `wait_for_selector`, `go_back`) | No gap |
 | DevTools tools (tracing, video recording, highlight/annotate) | Testing/debugging aids, not core browsing capability — lower priority for an *agent* tool vs a *test-authoring* tool | Deliberately not prioritized |
 | Testing assertion tools (`verify_element_visible` etc.) | Test-framework-specific, not relevant to autonomous browsing | Deliberately not prioritized |
@@ -152,9 +191,11 @@ server. Found 3 real gaps; built and verified all three in one pass:
   genuinely fresh, separate session's cookie, localStorage, *and* sessionStorage together —
   confirmed empty before, confirmed populated after.
 
-Not built: `browser_mouse_move_xy`/`drag_xy`/`wheel` (the rest of Playwright's vision-mode
-suite beyond click) — no real use case has surfaced yet for coordinate-based move/drag/scroll
-specifically, so not chasing feature parity for its own sake. Revisit if a real task needs it.
+Not built (at the time): `browser_mouse_move_xy`/`drag_xy`/`wheel` (the rest of Playwright's
+vision-mode suite beyond click) — no real use case had surfaced yet for coordinate-based
+move/drag/scroll specifically. The drag case was revisited and built later the same day once
+independent evidence surfaced (see the AI-company-tools entry below) — see that entry's
+follow-up.
 
 ### 2026-08-13 — Researched Puppeteer + real pinchtab/pinchtab precisely, closed the tab-lock gap
 
@@ -182,3 +223,23 @@ owner at that point). All 9 behaved exactly as designed.
 **Net result**: 1 new real capability built and fully verified (tab locking); Puppeteer and
 real-PinchTab positioning now backed by fresh, direct-source research instead of a stale,
 unlinked prior-session summary.
+
+### 2026-08-13 — Researched AI-company tools directly; revisited and built coordinate-drag
+
+Fetched Anthropic's and OpenAI's own docs for Computer Use / computer-use-preview (not just
+their benchmark scores, already covered above). Finding: both are general desktop computer-use
+tools, purely screenshot/coordinate-grounded, no DOM/AX structure at all — a genuinely
+different category from Sutradhar/Playwright/PinchTab's browser-specific semantic grounding,
+not a like-for-like tool-surface diff. Documented as positioning, not a gap list. One design
+idea recorded for later, not built: OpenAI's `needsApproval` gate on high-impact actions — a
+real pattern, but defining "high-impact" and building an approval-callback mechanism is a
+genuine design question, not a quick fix.
+
+**Revisited the coordinate-drag deferral from earlier today**: Anthropic's Computer Use
+includes `left_click_drag` by coordinate, independently confirming what Playwright's vision
+mode already had. Two independent competitors having it was enough new evidence to reconsider
+the earlier "no clear use case" call — built `browser.drag_at_points` (coordinate-only
+mouse-down → move → mouse-up, the drag sibling of `click_at_point`). Verified against a real
+canvas-drawn slider with genuine `mousedown`/`mousemove`/`mouseup` listeners (not the HTML5
+`DataTransfer` API `drag_and_drop` uses) — the slider's real handle position moved from x=20
+to exactly x=250 as dragged, confirmed via independent JS state, not the tool's own report.
