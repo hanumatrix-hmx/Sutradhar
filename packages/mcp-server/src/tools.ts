@@ -1472,6 +1472,68 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
     },
   );
 
+  // ── Multi-agent tab locking (advisory) ──────────────────────────────────
+  server.registerTool(
+    'browser.lock_tab',
+    {
+      description:
+        'Acquire an advisory lock on a tab so other callers sharing this session know you\'re driving it — ' +
+        'useful when multiple agents/sessions might act on the same tab. Succeeds if unlocked, expired, or ' +
+        'already held by the same owner (re-locking extends the TTL); fails if a different owner holds it. ' +
+        'ADVISORY ONLY: other browser.* calls do not currently refuse to run against a locked tab — this is ' +
+        'a coordination signal for well-behaved callers to check via browser.get_tab_lock, not an enforced mutex.',
+      inputSchema: {
+        sessionId: z.string(),
+        owner: z.string().describe('An identifier for who is acquiring the lock (e.g. an agent/run id).'),
+        ttlMs: z.number().int().positive().optional().describe('Lock duration in ms. Defaults to 30000.'),
+        tabId: z.string().optional(),
+      },
+    },
+    async ({ sessionId, owner, ttlMs, tabId }) => {
+      try {
+        const acquired = runtime.lockTab(sessionId, owner, ttlMs, tabId);
+        return jsonResult({ acquired });
+      } catch (e) {
+        return errorResult(`lock_tab failed: ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
+    'browser.unlock_tab',
+    {
+      description: "Release a tab's advisory lock. No-ops (returns released:false) if you don't currently hold it.",
+      inputSchema: {
+        sessionId: z.string(),
+        owner: z.string().describe('Must match the owner that acquired the lock.'),
+        tabId: z.string().optional(),
+      },
+    },
+    async ({ sessionId, owner, tabId }) => {
+      try {
+        const released = runtime.unlockTab(sessionId, owner, tabId);
+        return jsonResult({ released });
+      } catch (e) {
+        return errorResult(`unlock_tab failed: ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
+    'browser.get_tab_lock',
+    {
+      description: "Check a tab's current advisory lock (owner + expiry), or null if unlocked/expired.",
+      inputSchema: { sessionId: z.string(), tabId: z.string().optional() },
+    },
+    async ({ sessionId, tabId }) => {
+      try {
+        return jsonResult({ lock: runtime.getTabLock(sessionId, tabId) ?? null });
+      } catch (e) {
+        return errorResult(`get_tab_lock failed: ${(e as Error).message}`);
+      }
+    },
+  );
+
   // ── Autonomous agent (optional) ──────────────────────────────────────────
   if (options.agent) {
     const { agentCore } = options.agent;

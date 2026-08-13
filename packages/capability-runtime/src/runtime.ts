@@ -1183,6 +1183,31 @@ export class SutradharRuntime {
     await tab.handleDialog(action, promptText);
   }
 
+  /** The tab's current lock (owner + expiry), or `undefined` if unlocked/expired. See
+   *  {@link TabLockInfo} for why this is advisory-only in this pass, not yet enforced against
+   *  concurrent actions from a different caller. */
+  public getTabLock(sessionId: string, tabId?: string) {
+    const { tab } = this.resolveTab(sessionId, tabId);
+    return tab.getLock();
+  }
+
+  /**
+   * Acquire the tab's advisory lock for `owner`, valid for `ttlMs` (default 30s). Returns
+   * `true` if acquired (tab was unlocked, the previous lock expired, or `owner` already held
+   * it), `false` if a different owner currently holds a still-valid lock.
+   */
+  public lockTab(sessionId: string, owner: string, ttlMs = 30_000, tabId?: string): boolean {
+    const { tab } = this.resolveTab(sessionId, tabId);
+    return tab.acquireLock(owner, ttlMs);
+  }
+
+  /** Release the tab's lock if `owner` currently holds it. Returns `false` if the tab was
+   *  unlocked, already expired, or held by a different owner. */
+  public unlockTab(sessionId: string, owner: string, tabId?: string): boolean {
+    const { tab } = this.resolveTab(sessionId, tabId);
+    return tab.releaseLock(owner);
+  }
+
   /**
    * Block or mock requests whose URL contains `pattern`. Lazily enables request interception
    * for the tab on first use.

@@ -73,6 +73,22 @@ export interface PendingDialogInfo {
 }
 
 /**
+ * A tab-level lock so multiple concurrent callers (separate agents/sessions sharing one
+ * Sutradhar session) can coordinate who's currently driving a tab — matches real PinchTab's
+ * `POST /tab/lock` (owner + TTL) shape. **Advisory only in this pass**: acquiring/releasing/
+ * checking the lock works, but `click`/`type`/etc. don't yet refuse to run against a
+ * tab locked by a different owner — that would mean threading an `owner` identity through
+ * every action method's public signature (a much bigger change than this pass), not just the
+ * three lock methods. A well-behaved caller checks {@link BrowserTab.getLock} before acting;
+ * nothing currently stops a caller that doesn't.
+ */
+export interface TabLockInfo {
+  readonly owner: string;
+  /** Unix ms timestamp; the lock is treated as released once `Date.now()` passes this. */
+  readonly expiresAt: number;
+}
+
+/**
  * A rule applied to matching outgoing requests once interception is active. `pattern` is a
  * plain substring match against the request URL — simple and predictable rather than a full
  * glob/regex engine, which is enough for "block this analytics domain" / "mock this API call"
@@ -108,6 +124,9 @@ export interface IBrowserTab {
   clearRoutes(): Promise<void>;
   getActionHistory(): readonly ActionHistoryEntry[];
   recordAction(entry: ActionHistoryEntry): void;
+  getLock(): TabLockInfo | undefined;
+  acquireLock(owner: string, ttlMs: number): boolean;
+  releaseLock(owner: string): boolean;
 }
 
 export class BrowserTab implements IBrowserTab {
@@ -128,6 +147,7 @@ export class BrowserTab implements IBrowserTab {
   private routeRules: RouteRule[] = [];
   private interceptionEnabled = false;
   private readonly actionHistory: ActionHistoryEntry[] = [];
+  private lock?: TabLockInfo;
 
   public constructor(
     id: TabId,
@@ -382,6 +402,41 @@ export class BrowserTab implements IBrowserTab {
       await dialog.dismiss();
     }
     this.pendingDialog = undefined;
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Multi-agent tab locking (advisory — see class-level note)
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /** Current lock, or `undefined` if unlocked or the previous lock's TTL has elapsed. Reading
+   *  this never mutates state — an expired lock is simply reported as absent; the next
+   *  {@link acquireLock} call is what actually clears the stale entry. */
+  public getLock(): TabLockInfo | undefined {
+    if (!this.lock) return undefined;
+    if (Date.now() >= this.lock.expiresAt) return undefined;
+    return this.lock;
+  }
+
+  /**
+   * Acquire the tab's advisory lock for `owner`, valid for `ttlMs` from now. Succeeds
+   * (returns `true`) if the tab is unlocked, the existing lock has expired, or `owner` already
+   * holds it (re-acquiring extends the TTL). Fails (`false`, lock untouched) if a *different*
+   * owner currently holds a still-valid lock.
+   */
+  public acquireLock(owner: string, ttlMs: number): boolean {
+    const current = this.getLock();
+    if (current && current.owner !== owner) return false;
+    this.lock = { owner, expiresAt: Date.now() + ttlMs };
+    return true;
+  }
+
+  /** Release the lock if `owner` currently holds it. Returns `false` (no-op) if the tab is
+   *  unlocked, already expired, or held by a different owner — releasing is never forced. */
+  public releaseLock(owner: string): boolean {
+    const current = this.getLock();
+    if (!current || current.owner !== owner) return false;
+    this.lock = undefined;
+    return true;
   }
 
   // ─────────────────────────────────────────────────────────────────────────

@@ -82,20 +82,49 @@ pages, and this loop's own repeated stress-testing (Milestones 1 and 4) found th
 DOM-attribute path holds up well under adversarial conditions. Not treated as an automatic
 "copy the leader" gap — logged as a considered, evidence-based difference, not an oversight.
 
-## Puppeteer (no official MCP server)
+## Puppeteer (official MCP server is dead)
 
-Puppeteer has no official MCP server, no accessibility-snapshot-based grounding, and (per
-2026 comparisons) MCP wrappers built on top of it fall back to screenshots — the model reasons
-visually rather than over structured elements, which is materially less token-efficient.
-Sutradhar is already ahead of raw Puppeteer here by construction (semantic DOM/AX grounding is
-the whole point of `capability-runtime`'s `DOMSemanticEngine`).
+Researched 2026-08-13, more precisely than before. Puppeteer has no accessibility-snapshot
+grounding of its own, and — a stronger point than previously known — **the official
+`@modelcontextprotocol/server-puppeteer` package has been deprecated and is no longer
+supported.** What's left is a scatter of unofficial community forks (merajmehrabi,
+code-craka, sultannaufal), none of them an official, actively-maintained option. Community
+telemetry claims Puppeteer MCP (informally) enables 5–10x faster prototyping vs.
+Selenium/WebDriver, which is a real baseline worth beating, but says nothing about
+Puppeteer-vs-Sutradhar specifically. **Sutradhar is ahead here on two fronts, not one**: (1)
+semantic DOM/AX grounding by construction (the whole point of `DOMSemanticEngine`) where raw
+Puppeteer MCP wrappers fall back to screenshots, and (2) being an actively-maintained,
+purpose-built MCP-native tool where Puppeteer's own official attempt was abandoned entirely.
 
 ## Real `pinchtab/pinchtab` (Go project — the original name collision)
 
-Covered in earlier comparison work this project did (see the [[pinchtab_vs_sutradhar]] context
-in prior sessions — not re-litigated here). Known differentiator already documented: real
-PinchTab has optional stealth/anti-detection (CloakBrowser) that Sutradhar deliberately
-excludes per CLAUDE.md's scope boundary.
+Re-researched 2026-08-13 directly from the project's own GitHub (`pinchtab/pinchtab`,
+`pinchtab.com`) rather than relying on an unspecified "earlier comparison" — more precise
+findings:
+
+- **Standalone 12MB Go binary**, HTTP API (not MCP-native itself, though there's a
+  `skill/pinchtab/SKILL.md` for agent integration) — architecturally simpler/lighter than
+  Sutradhar's Node/TypeScript monorepo, a real tradeoff (fewer deps, faster cold start) not
+  worth chasing by rewriting languages.
+- **Accessibility-tree-first by default**: "structured tree with stable refs (e0, e1...) ...
+  optimized for AI agents (low token cost, fast)" — same positioning question already logged
+  for Playwright MCP (their default matches our `ax_snapshot`, not our default
+  `browser.snapshot`). Still not treated as an automatic gap — see that entry above.
+- **Stealth injection, on by default (light level)**: patches `navigator.webdriver`, spoofs
+  User-Agent, hides automation flags. Confirms the earlier documented differentiator.
+  Deliberately excluded per CLAUDE.md's scope boundary — not revisited without the user
+  explicitly reopening that decision.
+- **Session/profile persistence**: "log in once via headed mode, then run headless" — Sutradhar
+  already covers this via the CLI's named-profile mechanism (verified working, Milestone 2)
+  plus the new portable storage-state blob (this milestone). No gap.
+- **Multi-instance orchestration across containers/remote machines**: bigger infrastructure
+  scope than a single-process tool; not chased — no evidence yet Sutradhar needs distributed
+  orchestration specifically, and it's a materially larger undertaking than a tool-surface fix.
+- **`POST /tab/lock` with owner + TTL — multi-agent tab-locking safety.** A real gap Sutradhar
+  didn't have at all. **Fixed** — see iteration log.
+- **Created February 2026, "rapid growth"**: confirms this is a real, actively-growing,
+  independent project — the original rename rationale (avoiding a genuine collision, not a
+  strawman) holds up under fresh scrutiny.
 
 ## Iteration log
 
@@ -126,3 +155,30 @@ server. Found 3 real gaps; built and verified all three in one pass:
 Not built: `browser_mouse_move_xy`/`drag_xy`/`wheel` (the rest of Playwright's vision-mode
 suite beyond click) — no real use case has surfaced yet for coordinate-based move/drag/scroll
 specifically, so not chasing feature parity for its own sake. Revisit if a real task needs it.
+
+### 2026-08-13 — Researched Puppeteer + real pinchtab/pinchtab precisely, closed the tab-lock gap
+
+Re-researched both directly from their own sources rather than an unspecified prior summary:
+
+- **Puppeteer**: confirmed the official `@modelcontextprotocol/server-puppeteer` is deprecated
+  and unsupported — only unofficial community forks remain. Strengthens Sutradhar's position
+  (actively-maintained + semantic grounding, vs. an abandoned official attempt + screenshots).
+- **Real `pinchtab/pinchtab`**: fetched from its own GitHub/site. Confirmed the stealth
+  differentiator (already known, deliberately excluded). Found one genuinely new, real gap:
+  **`POST /tab/lock`** — an owner+TTL advisory lock so multiple concurrent callers driving the
+  same session can coordinate who's currently acting on a tab. Sutradhar had nothing like this.
+
+**Built and verified `browser.lock_tab` / `browser.unlock_tab` / `browser.get_tab_lock`**,
+matching real PinchTab's owner+TTL shape. Advisory only in this pass — full enforcement
+(refusing `click`/`type`/etc. against a tab locked by a different caller) would mean threading
+an `owner` identity through every one of the 20+ action methods, a materially bigger change
+than this pass; logged, not built reflexively, per CLAUDE.md's own stated bar for what counts
+as "small and scoped." Verified live against 9 distinct scenarios: initial-unlocked, acquire,
+conflicting acquire (correctly refused), re-acquire/extend by the same owner, release attempt
+by the wrong owner (correctly refused), release by the rightful owner, and TTL expiry (a
+100ms-TTL lock correctly reported as gone after 200ms, and correctly acquirable by a new
+owner at that point). All 9 behaved exactly as designed.
+
+**Net result**: 1 new real capability built and fully verified (tab locking); Puppeteer and
+real-PinchTab positioning now backed by fresh, direct-source research instead of a stale,
+unlinked prior-session summary.
