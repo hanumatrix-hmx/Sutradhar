@@ -21,9 +21,9 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Category | Status | Notes |
 |---|---|---|
 | Basic navigation/click/type/snapshot | covered | Exercised repeatedly this session (example.com, TodoMVC, the dashboard itself). |
-| DOM-attribute grounding (`data-sd-node-id`) under re-render | partial | Survived 2 independent real re-render tests (TodoMVC filter round-trip; a continuous-stream sibling-churn test). Id-reuse-after-*deletion* specifically still untested (attempted in Milestone 1, blocked by an unrelated test-script bug, not chased further). |
-| Accessibility-tree grounding (`axSnapshot`) | untested | Exists, documented as the recommended default for re-rendering pages, never actually exercised live. |
-| Hover / `:hover`-revealed UI | partial | `browser.hover` exists in source and works when called directly against the runtime; confirmed synthetic `mouseover` does NOT trigger real `:hover` (must use the real tool). |
+| DOM-attribute grounding (`data-sd-node-id`) under re-render | covered | Survived 3 independent real re-render tests: TodoMVC filter round-trip, a continuous-stream sibling-churn test, and (Milestone 4) the hardest case — a numeric id captured *before* deleting the item above it in the list, then acted on after the deletion-driven reflow. Correctly still hit the right (surviving) element every time, no misfires. |
+| Accessibility-tree grounding (`axSnapshot`) | covered | Milestone 4: used live against TodoMVC exactly as documented — `ax_snapshot` + `type_by_label` to add todos, both landed correctly with no ids involved at all. Works correctly. |
+| Hover / `:hover`-revealed UI | covered | Milestone 4: `browser.hover` used live via MCP (not just direct-runtime) to reveal a `:hover`-only destroy button, then clicked it successfully — confirmed synthetic `mouseover` does NOT trigger real `:hover`, but the real tool does. |
 | Multi-tab workflows | covered | Milestone 1: created a background tab via `new_tab`, navigated/snapshotted/clicked it independently via `tabId`, confirmed the original tab was completely unaffected. Works correctly. |
 | File download | covered | Milestone 1: `runtime.downloadFile` verified end-to-end — real file landed on disk at the expected path with correct content (read back and checked, not just a success flag). |
 | File upload | covered | Milestone 2: `browser.upload_file` against a real fixture page (the-internet.herokuapp.com/upload) — set a file input, clicked Upload, confirmed via the server's own response page ("File Uploaded! upload-test.txt") that it actually landed server-side, not just a client-side success flag. |
@@ -56,6 +56,32 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-13 — Milestone 4: axSnapshot, hover, and the id-reuse-after-deletion case
+
+Closed out the taxonomy's last "attempted but unfinished" items, live via MCP:
+
+- **`axSnapshot`**: used exactly as documented — `browser.ax_snapshot` + `type_by_label` to add
+  2 todos to a real TodoMVC list. Both landed correctly, no ids anywhere in the flow. Works.
+- **`browser.hover` via MCP** (not just direct-runtime, which Milestone 1 already covered):
+  hovered a real `:hover`-only destroy button on TodoMVC, then clicked it successfully.
+- **Id-reuse-after-deletion** (the case Milestone 1 attempted and couldn't finish due to a bug
+  in that test script, not a product issue): captured "Walk dog"'s checkbox numeric id, deleted
+  the item above it ("Buy milk", the actual list-reflow trigger), then clicked the *stale*
+  pre-deletion id with no re-snapshot in between. Correctly toggled "Walk dog" — the real
+  surviving element, not a misfire onto whatever ended up at that DOM position. This was the
+  single most realistic stress case for the grounding mechanism and it held up. Also
+  incidentally confirms Milestone 1's script bug (todo count stuck at 1) really was my script,
+  not Sutradhar — the same add-todo flow worked correctly here via plain MCP tool calls.
+- **Re-verifying the 3 pending Milestone 2/3 fixes through an actual MCP round-trip**: still
+  blocked. Checked directly — this connected session doesn't even have
+  `browser.set_network_conditions` registered, confirming it predates Milestone 3 entirely.
+  Needs a reconnect; not something I can force from here.
+
+**Net result**: no code changes this milestone — every remaining taxonomy gap tested turned
+out to already work correctly. The capability taxonomy now has no `untested` or `partial` rows
+left except the ones explicitly deferred (large-scale extraction/pagination, true WebSocket/
+SSE-driven pages) and the standing MCP-reconnect item.
 
 ### 2026-08-13 — Milestone 3: shadow DOM, media, network conditions, framework diversity
 
@@ -158,18 +184,22 @@ it completes.
 
 ## Current milestone
 
-**Milestone 1: DONE. Milestone 2: DONE. Milestone 3: DONE** (all 2026-08-13) — see iteration
-log above.
+**Milestone 1: DONE. Milestone 2: DONE. Milestone 3: DONE. Milestone 4: DONE** (all
+2026-08-13) — see iteration log above.
 
-**Remaining untested rows in the taxonomy**: `axSnapshot` (never actually exercised live,
-despite being the documented recommendation), the harder id-reuse-after-*deletion* grounding
-case, true WebSocket/SSE-driven pages (vs. the background-churn case already covered), and
-large-scale extraction/pagination.
+**Remaining untested rows in the taxonomy**: true WebSocket/SSE-driven pages (vs. the
+background-churn case already covered) and large-scale extraction/pagination. Everything else
+in the taxonomy is now `covered` or `excluded`.
 
-**Standing item**: 3 fixes across Milestones 2–3 (double-header bug, `hasTouch` default,
-network-conditions tool) are verified directly against the runtime but not yet confirmed
-through an actual MCP round-trip — needs a reconnect to close that loop for real.
+**Standing item, unresolved across 3 milestones**: the double-header bug fix, the `hasTouch`
+default, and the network-conditions tool are all verified directly against the runtime but
+still not confirmed through an actual MCP round-trip — confirmed again in Milestone 4 that the
+connected session predates all of them. This needs a user-side reconnect; not something
+resolvable from inside the loop.
 
-**Proposed Milestone 4** (not started, pending user checkpoint per CLAUDE.md): reconnect MCP
-and re-verify the 3 pending fixes end-to-end, then `axSnapshot` live testing + the
-id-reuse-after-deletion grounding case.
+**Proposed Milestone 5** (not started, pending user checkpoint per CLAUDE.md): with the
+taxonomy nearly exhausted, the highest-leverage next step is probably a shift in kind rather
+than another category sweep — e.g. a genuinely open-ended real task (not a fixture site) to
+see what breaks under conditions this loop hasn't manufactured, or picking up one of the
+larger deferred items (the full grounding-architecture rewrite question, now backed by 3 solid
+real-world survival tests suggesting it may not be needed after all).
