@@ -299,14 +299,16 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
       try {
         const snap = await runtime.snapshot(sessionId, tabId);
         // Return as readable text rather than JSON — the model parses the listing directly.
+        // `snap.interactiveElements` already embeds its own "URL/Title/Interactive elements
+        // (N):" header (N = the true interactive-only count) — do not prepend another one here.
+        // `snap.elementCount` counts ALL semantic-graph nodes, not just interactive ones, so a
+        // second header built from it would show a different, confusing number (see the same
+        // caveat in packages/cli/src/cli.ts's cmdSnap).
         return {
           content: [
             {
               type: 'text' as const,
-              text:
-                `URL: ${snap.url}\nTitle: ${snap.title}\n` +
-                `Interactive elements (${snap.elementCount}):\n${snap.interactiveElements}\n\n` +
-                `Page text:\n${snap.pageText.slice(0, 2000)}`,
+              text: `${snap.interactiveElements}\n\nPage text:\n${snap.pageText.slice(0, 2000)}`,
             },
           ],
         };
@@ -1008,19 +1010,22 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
     {
       description:
         'Resize the viewport at runtime (and optionally emulate a mobile device / pixel ratio). ' +
-        'The viewport option at browser.launch only sets the initial size — use this to change it mid-session.',
+        'The viewport option at browser.launch only sets the initial size — use this to change it mid-session. ' +
+        'hasTouch defaults to isMobile\'s value (every real mobile device has touch) — set it explicitly to ' +
+        'decouple them, e.g. a touch-enabled desktop or a non-touch mobile emulation.',
       inputSchema: {
         sessionId: z.string(),
         width: z.number().int().positive(),
         height: z.number().int().positive(),
         isMobile: z.boolean().optional(),
         deviceScaleFactor: z.number().positive().optional(),
+        hasTouch: z.boolean().optional(),
         tabId: z.string().optional(),
       },
     },
-    async ({ sessionId, width, height, isMobile, deviceScaleFactor, tabId }) => {
+    async ({ sessionId, width, height, isMobile, deviceScaleFactor, hasTouch, tabId }) => {
       try {
-        await runtime.setViewport(sessionId, { width, height, isMobile, deviceScaleFactor }, tabId);
+        await runtime.setViewport(sessionId, { width, height, isMobile, deviceScaleFactor, hasTouch }, tabId);
         return jsonResult({ success: true });
       } catch (e) {
         return errorResult(`set_viewport failed: ${(e as Error).message}`);

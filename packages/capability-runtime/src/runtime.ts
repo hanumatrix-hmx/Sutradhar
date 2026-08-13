@@ -747,12 +747,21 @@ export class SutradharRuntime {
    *  the launch-time `viewport` option only sets the *initial* size. */
   public async setViewport(
     sessionId: string,
-    viewport: { width: number; height: number; isMobile?: boolean; deviceScaleFactor?: number },
+    viewport: {
+      width: number;
+      height: number;
+      isMobile?: boolean;
+      deviceScaleFactor?: number;
+      /** Enable touch-event emulation (`ontouchstart` in window, etc). Defaults to `isMobile`'s
+       *  value — every real mobile device has touch, so mobile emulation without it is
+       *  incomplete and can make touch-branching sites behave like desktop despite isMobile. */
+      hasTouch?: boolean;
+    },
     tabId?: string,
   ): Promise<void> {
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
-    await page.setViewport(viewport);
+    await page.setViewport({ hasTouch: viewport.isMobile ?? false, ...viewport });
   }
 
   /**

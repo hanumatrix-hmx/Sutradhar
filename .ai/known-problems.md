@@ -106,6 +106,34 @@ Last Updated: 2026-08-09
     inline error, or replace/report the native validation via
     `onInvalid`/`reportValidity()` so it's obvious what's missing.
 
+- **ID**: `PROB-008`
+  - **Summary**: `browser.snapshot`'s MCP response double-printed its own header with two different, unexplained element counts.
+  - **Severity**: Low
+  - **Status**: RESOLVED 2026-08-13
+  - **Impact**: Resolved: `mcp-server/src/tools.ts`'s `browser.snapshot` handler prepended its
+    own `URL/Title/Interactive elements (elementCount)` header in front of
+    `snap.interactiveElements`, which already embeds its own such header — but with the
+    *interactive-only* count, not `elementCount` (which counts every semantic-graph node).
+    Result: the response showed "Interactive elements (4):" immediately followed by
+    "Interactive elements (1):" for the same page, with no explanation. The CLI's `cmdSnap`
+    already had a comment explicitly warning about this exact trap; the MCP tool just never
+    got the same fix. Removed the redundant outer header.
+  - **Mitigation**: None needed.
+
+- **ID**: `PROB-009`
+  - **Summary**: Navigating directly to a PDF returns the native viewer's toolbar controls via `browser.snapshot` but zero document text.
+  - **Severity**: Medium
+  - **Status**: OPEN
+  - **Impact**: Found live 2026-08-13 while dogfooding PDF handling: Chrome's built-in PDF
+    viewer (PDF.js) renders when a session navigates directly to a `.pdf` URL.
+    `browser.snapshot` correctly enumerates the viewer's own UI controls (zoom, print,
+    download, page nav) as interactive elements, but `pageText` comes back completely empty —
+    confirmed against a PDF with real (if compressed) text content, so this isn't a text-free
+    test file. An agent trying to *read* a PDF encountered mid-browse gets nothing useful.
+  - **Mitigation**: None yet. Needs real PDF text-layer extraction (e.g. driving PDF.js's own
+    text layer via CDP/`eval`, or a PDF-parsing library) — nontrivial scope, not a quick fix.
+    `browser.export_pdf` (page → PDF) is unaffected and works correctly.
+
 ## Resolved
 
 - ~~Run history client-side only — lost on site-data clear, no multi-day
