@@ -39,6 +39,7 @@ import type {
   PdfResult,
   SnapshotResult,
   ScreenshotResult,
+  StorageState,
   TabInfo,
 } from './types.js';
 import { BrowserNotAvailableError, normalizeTarget } from './types.js';
@@ -125,7 +126,7 @@ export interface SutradharRuntimeOptions {
  * const runtime = new SutradharRuntime();
  * const { sessionId } = await runtime.launch({ initialUrl: 'https://example.com' });
  * const snap = await runtime.snapshot(sessionId);
- * await runtime.click(sessionId, '7'); // pt-node-id from the snapshot
+ * await runtime.click(sessionId, '7'); // sd-node-id from the snapshot
  * const png = await runtime.screenshot(sessionId);
  * await runtime.shutdown(sessionId);
  */
@@ -369,7 +370,7 @@ export class SutradharRuntime {
   // ─────────────────────────────────────────────────────────────────────────
 
   /**
-   * Click an element. `target` may be a CSS selector OR a numeric pt-node-id from a
+   * Click an element. `target` may be a CSS selector OR a numeric sd-node-id from a
    * prior {@link SutradharRuntime.snapshot} (e.g. `"7"` → `[data-sd-node-id="7"]`).
    */
   public async click(
@@ -389,7 +390,44 @@ export class SutradharRuntime {
     );
   }
 
-  /** Type text into an element targeted by selector or pt-node-id. */
+  /**
+   * Click at an absolute viewport coordinate — no element or selector involved at all. For
+   * UI with nothing DOM-addressable to target: content drawn inside a `<canvas>` at a
+   * position not known ahead of time (unlike {@link SutradharRuntime.click}'s `offset`, which
+   * still needs a real element to be relative to), a PDF/video overlay, or anything only
+   * knowable from a screenshot's pixel coordinates rather than the page's semantic structure.
+   */
+  public async clickAtPoint(
+    sessionId: string,
+    x: number,
+    y: number,
+    tabId?: string,
+    button: 'left' | 'right' | 'middle' = 'left',
+  ): Promise<ActionResult> {
+    const start = Date.now();
+    const { tab } = this.resolveTab(sessionId, tabId);
+    const page = this.requirePage(tab);
+    try {
+      await page.mouse.click(x, y, { button });
+      return {
+        success: true,
+        actionType: 'click_at_point',
+        executionTimeMs: Date.now() - start,
+        currentUrl: page.url(),
+        title: await this.readTitle(tab),
+        output: { x, y, button },
+      };
+    } catch (err) {
+      return {
+        success: false,
+        actionType: 'click_at_point',
+        executionTimeMs: Date.now() - start,
+        error: err instanceof Error ? err.message : String(err),
+      };
+    }
+  }
+
+  /** Type text into an element targeted by selector or sd-node-id. */
   public async type(
     sessionId: string,
     target: string,
@@ -401,6 +439,33 @@ export class SutradharRuntime {
       { actionType: 'type', selector: normalizeTarget(target), value },
       tabId,
     );
+  }
+
+  /**
+   * Fill multiple form fields in one call — an object mapping each field's target (selector or
+   * numeric `[#id]`) to the value to type into it. Fields are filled sequentially, not in
+   * parallel, to avoid focus-stealing races between fields on the same page (matches how a
+   * real user tabs through a form). A field that fails doesn't stop the rest from being
+   * attempted — returns one {@link ActionResult} per field, keyed by its target.
+   */
+  public async fillForm(
+    sessionId: string,
+    fields: Record<string, string>,
+    tabId?: string,
+  ): Promise<Record<string, ActionResult>> {
+    const results: Record<string, ActionResult> = {};
+    for (const [target, value] of Object.entries(fields)) {
+      results[target] = await this.type(sessionId, target, value, tabId).catch(
+        (err: unknown) =>
+          ({
+            success: false,
+            actionType: 'type',
+            executionTimeMs: 0,
+            error: err instanceof Error ? err.message : String(err),
+          }) satisfies ActionResult,
+      );
+    }
+    return results;
   }
 
   /** Press a keyboard key (e.g. `"Enter"`, `"Escape"`). */
@@ -423,7 +488,7 @@ export class SutradharRuntime {
     return this.runAction(sessionId, { actionType: 'scroll', direction, amount }, tabId);
   }
 
-  /** Hover an element targeted by selector or pt-node-id. `offset` (relative to the target's
+  /** Hover an element targeted by selector or sd-node-id. `offset` (relative to the target's
    *  top-left corner) hovers a specific point within it instead of its center. */
   public async hover(
     sessionId: string,
@@ -434,7 +499,7 @@ export class SutradharRuntime {
     return this.runAction(sessionId, { actionType: 'hover', selector: normalizeTarget(target), offset }, tabId);
   }
 
-  /** Select an `<option>` by value on a `<select>` targeted by selector or pt-node-id. */
+  /** Select an `<option>` by value on a `<select>` targeted by selector or sd-node-id. */
   public async selectOption(
     sessionId: string,
     target: string,
@@ -501,7 +566,7 @@ export class SutradharRuntime {
     return this.runAction(sessionId, { actionType: 'type_by_label', label, value }, tabId);
   }
 
-  /** Upload a local file into a `<input type="file">` targeted by selector or pt-node-id. */
+  /** Upload a local file into a `<input type="file">` targeted by selector or sd-node-id. */
   public async uploadFile(
     sessionId: string,
     target: string,
@@ -515,7 +580,7 @@ export class SutradharRuntime {
     );
   }
 
-  /** Right-click (or middle-click) an element targeted by selector or pt-node-id. */
+  /** Right-click (or middle-click) an element targeted by selector or sd-node-id. */
   public async clickWithButton(
     sessionId: string,
     target: string,
@@ -529,7 +594,7 @@ export class SutradharRuntime {
     );
   }
 
-  /** Drag `sourceTarget` onto `destTarget` (both selectors or pt-node-ids). */
+  /** Drag `sourceTarget` onto `destTarget` (both selectors or sd-node-ids). */
   public async dragAndDrop(
     sessionId: string,
     sourceTarget: string,
@@ -547,7 +612,7 @@ export class SutradharRuntime {
     );
   }
 
-  /** Simulate a touchscreen tap on an element targeted by selector or pt-node-id. */
+  /** Simulate a touchscreen tap on an element targeted by selector or sd-node-id. */
   public async touchTap(sessionId: string, target: string, tabId?: string): Promise<ActionResult> {
     return this.runAction(
       sessionId,
@@ -722,6 +787,53 @@ export class SutradharRuntime {
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
     await page.evaluate(() => window.sessionStorage.clear());
+  }
+
+  /**
+   * Export the tab's full auth/session-relevant state — cookies, localStorage, sessionStorage
+   * — as a single portable blob. Distinct from the per-item cookie/storage tools (bulk vs
+   * one-at-a-time) and from the CLI's named-profile mechanism (a whole userDataDir on disk,
+   * tied to one machine) — this blob can be saved and handed to a *different* session, even on
+   * a different machine, to restore login state without redoing a login flow.
+   */
+  public async getStorageState(sessionId: string, tabId?: string): Promise<StorageState> {
+    const { tab } = this.resolveTab(sessionId, tabId);
+    const page = this.requirePage(tab);
+    const cookies = await page.cookies();
+    const [localStorageItems, sessionStorageItems] = await page.evaluate(() => {
+      const dump = (store: Storage) => {
+        const out: Record<string, string> = {};
+        for (let i = 0; i < store.length; i++) {
+          const key = store.key(i);
+          if (key !== null) out[key] = store.getItem(key) ?? '';
+        }
+        return out;
+      };
+      return [dump(window.localStorage), dump(window.sessionStorage)] as [Record<string, string>, Record<string, string>];
+    });
+    return { origin: page.url(), cookies, localStorage: localStorageItems, sessionStorage: sessionStorageItems };
+  }
+
+  /**
+   * Restore a blob previously captured by {@link SutradharRuntime.getStorageState} — sets
+   * every cookie, then every localStorage/sessionStorage item, on the current tab. Call this
+   * right after navigating to the target origin (storage APIs are origin-scoped) and before
+   * anything else that depends on being logged in.
+   */
+  public async setStorageState(sessionId: string, state: StorageState, tabId?: string): Promise<void> {
+    const { tab } = this.resolveTab(sessionId, tabId);
+    const page = this.requirePage(tab);
+    if (state.cookies.length > 0) {
+      await page.setCookie(...(state.cookies as Parameters<typeof page.setCookie>));
+    }
+    await page.evaluate(
+      (ls, ss) => {
+        for (const [key, value] of Object.entries(ls)) window.localStorage.setItem(key, value);
+        for (const [key, value] of Object.entries(ss)) window.sessionStorage.setItem(key, value);
+      },
+      state.localStorage,
+      state.sessionStorage,
+    );
   }
 
   // ─────────────────────────────────────────────────────────────────────────

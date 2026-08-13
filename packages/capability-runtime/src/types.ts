@@ -100,6 +100,25 @@ export interface PdfResult {
   base64: string;
 }
 
+/**
+ * A portable snapshot of a tab's auth/session-relevant browser state — everything
+ * {@link SutradharRuntime.getStorageState}/{@link SutradharRuntime.setStorageState} need to
+ * save and restore a logged-in session across a completely different browser session, even on
+ * a different machine (unlike the CLI's named-profile mechanism, which ties state to a
+ * userDataDir on one machine).
+ */
+export interface StorageState {
+  /** The origin this state was captured from — restoring elsewhere only makes sense for the
+   *  same origin, since storage APIs are origin-scoped. */
+  origin: string;
+  /** Raw cookie objects as returned by the underlying browser (shape intentionally left
+   *  framework-agnostic here — round-trip through getStorageState/setStorageState, don't
+   *  construct or inspect these by hand). */
+  cookies: unknown[];
+  localStorage: Record<string, string>;
+  sessionStorage: Record<string, string>;
+}
+
 /** Result of {@link SutradharRuntime.downloadFile}. */
 export interface DownloadResult {
   filename: string;
@@ -130,7 +149,7 @@ export type ElementTarget = string;
 
 /** Internal helper: convert a snapshot node id (number) or selector string to a CSS selector. */
 export function normalizeTarget(target: ElementTarget): string {
-  // A pure-numeric target is interpreted as a pt-node-id stamped by the DOM semantic engine.
+  // A pure-numeric target is interpreted as a sd-node-id stamped by the DOM semantic engine.
   return /^\d+$/.test(target.trim()) ? `[data-sd-node-id="${target.trim()}"]` : target;
 }
 

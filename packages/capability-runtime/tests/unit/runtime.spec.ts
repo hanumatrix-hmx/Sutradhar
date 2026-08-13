@@ -24,7 +24,7 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
   });
 
   describe('normalizeTarget', () => {
-    it('treats a pure-numeric string as a pt-node-id from a snapshot', () => {
+    it('treats a pure-numeric string as a sd-node-id from a snapshot', () => {
       expect(normalizeTarget('7')).toBe('[data-sd-node-id="7"]');
     });
 

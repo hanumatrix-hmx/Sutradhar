@@ -386,6 +386,31 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
   );
 
   server.registerTool(
+    'browser.click_at_point',
+    {
+      description:
+        'Click at an absolute viewport coordinate — no element or selector at all. For UI with nothing ' +
+        "DOM-addressable to target (canvas content at a position only knowable from a screenshot's pixel " +
+        "coordinates, a PDF/video overlay). Prefer browser.click when there's a real element to target — " +
+        "this bypasses element resolution and verification entirely.",
+      inputSchema: {
+        sessionId: z.string(),
+        x: z.number().describe('Viewport x coordinate in pixels.'),
+        y: z.number().describe('Viewport y coordinate in pixels.'),
+        button: z.enum(['left', 'right', 'middle']).optional(),
+        tabId: z.string().optional(),
+      },
+    },
+    async ({ sessionId, x, y, button, tabId }) => {
+      try {
+        return jsonResult(await runtime.clickAtPoint(sessionId, x, y, tabId, button));
+      } catch (e) {
+        return errorResult(`click_at_point failed: ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
     'browser.type',
     {
       description: 'Type text into an input element (replaces existing focus; clears field first if needed).',
@@ -589,6 +614,31 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         return jsonResult(await runtime.typeByLabel(sessionId, label, value, tabId));
       } catch (e) {
         return errorResult(`type_by_label failed: ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
+    'browser.fill_form',
+    {
+      description:
+        'Fill multiple form fields in one call instead of separate browser.type calls per field. ' +
+        'Provide an object mapping each field\'s target (a CSS selector or numeric [#id] from browser.snapshot) ' +
+        'to the value to type into it, e.g. {"#email": "a@b.com", "3": "hunter2"}. Fields are filled ' +
+        'sequentially; a field that fails does not stop the rest — check each result.',
+      inputSchema: {
+        sessionId: z.string(),
+        fields: z.record(z.string(), z.string()).refine((obj) => Object.keys(obj).length > 0, {
+          message: 'fields must have at least one entry',
+        }),
+        tabId: z.string().optional(),
+      },
+    },
+    async ({ sessionId, fields, tabId }) => {
+      try {
+        return jsonResult(await runtime.fillForm(sessionId, fields, tabId));
+      } catch (e) {
+        return errorResult(`fill_form failed: ${(e as Error).message}`);
       }
     },
   );
@@ -935,6 +985,54 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         return jsonResult({ success: true });
       } catch (e) {
         return errorResult(`clear_session_storage failed: ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
+    'browser.get_storage_state',
+    {
+      description:
+        'Export the tab\'s full auth/session state (cookies + localStorage + sessionStorage) as one portable ' +
+        'blob — unlike the per-item cookie/storage tools, this is meant to be saved and later restored via ' +
+        'browser.set_storage_state, even in a completely different session, to skip redoing a login flow.',
+      inputSchema: { sessionId: z.string(), tabId: z.string().optional() },
+    },
+    async ({ sessionId, tabId }) => {
+      try {
+        return jsonResult(await runtime.getStorageState(sessionId, tabId));
+      } catch (e) {
+        return errorResult(`get_storage_state failed: ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
+    'browser.set_storage_state',
+    {
+      description:
+        'Restore a blob previously captured by browser.get_storage_state onto the current tab. Call this ' +
+        'right after navigating to the target origin (storage is origin-scoped) and before anything else ' +
+        'that depends on being logged in.',
+      inputSchema: {
+        sessionId: z.string(),
+        state: z
+          .object({
+            origin: z.string(),
+            cookies: z.array(z.unknown()),
+            localStorage: z.record(z.string(), z.string()),
+            sessionStorage: z.record(z.string(), z.string()),
+          })
+          .describe('A blob previously returned by browser.get_storage_state.'),
+        tabId: z.string().optional(),
+      },
+    },
+    async ({ sessionId, state, tabId }) => {
+      try {
+        await runtime.setStorageState(sessionId, state, tabId);
+        return jsonResult({ success: true });
+      } catch (e) {
+        return errorResult(`set_storage_state failed: ${(e as Error).message}`);
       }
     },
   );

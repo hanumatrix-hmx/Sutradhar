@@ -3,27 +3,44 @@
 Standing operating guidance for Claude (or any AI agent) working in this repository. See
 [README.md](./README.md) for what Sutradhar is and how to use it.
 
-## Sutradhar is Claude's own browsing tool — keep improving it by actually using it
+## Sutradhar's goal: the best browsing/web tool for an AI, period — not just "good enough"
 
 This repo isn't just a product Claude helps build — it's also meant to become **Claude's own
-primary tool for web browsing and automation**. The standing directive is to keep closing the
-gap between what Sutradhar can do today and what a fully-capable browsing agent needs, using a
-continuous loop:
+primary tool for web browsing and automation**, and the bar is competitive, not just
+functional: **be genuinely better than Playwright, Puppeteer, the real `pinchtab/pinchtab`,
+and the browser tools built by other AI companies (Anthropic's own computer-use, OpenAI's
+Operator/computer-use, etc.)** — not just "has no known bugs." The standing directive is a
+continuous loop, now explicitly benchmark- and competitor-aware:
 
 1. **Discover** a real limitation — by actually using Sutradhar for a real task (via its MCP
-   tools, CLI, or SDK), not by reading code and guessing. Every genuine gap found this way so
-   far (grounding-path edge cases, a screenshot-polling connection-pool bug, an undocumented
-   tool, a missing README) was found by real use, not code review.
+   tools, CLI, or SDK), not by reading code and guessing, AND by comparing against what named
+   competitors actually offer (their real tool surface, their real benchmark scores) — not
+   assumptions about them. See
+   [.ai/competitive-benchmarks.md](./.ai/competitive-benchmarks.md) for the researched
+   landscape: agent-level benchmarks (WebArena, OSWorld, Web Bench, Mind2Web) that need a real
+   LLM driving the loop, and LLM-independent comparisons (tool surface, reliability, feature
+   parity) that don't.
 2. **Fix** it — small, scoped fixes. If something looks like it needs a multi-day rework
    (e.g. the DOM-attribute grounding path's default), log it in the backlog below rather than
    building it reflexively.
 3. **Verify live** — typechecking is necessary, not sufficient. Verification means actually
    driving the fix through Sutradhar's own tools against a real target and confirming it
    works, the same way a user would hit it.
-4. **Log and repeat** — record what was found/fixed in
+4. **Benchmark it** — where a real, runnable comparison exists (an LLM-independent one today;
+   an agent-level one once an LLM provider is available), use it. Don't claim "best" without a
+   number or a documented, real comparison behind it.
+5. **Log and repeat** — record what was found/fixed/benchmarked in
    [.ai/browsing-capability-loop.md](./.ai/browsing-capability-loop.md) (capability gaps and
-   the iteration log) or [.ai/known-problems.md](./.ai/known-problems.md) (bugs), then pick
-   the next real task.
+   the iteration log), [.ai/competitive-benchmarks.md](./.ai/competitive-benchmarks.md)
+   (competitor research and comparisons), or [.ai/known-problems.md](./.ai/known-problems.md)
+   (bugs), then pick the next real task.
+
+**Known standing blocker for agent-level benchmarks**: this environment has no LLM provider
+(no Ollama running, no `OPENROUTER_API_KEY`) — `agent.runGoal`'s actual reasoning and every
+agent-level benchmark (WebArena, OSWorld, Web Bench) are blocked on this. Don't try to
+work around it by installing infrastructure or provisioning credentials unprompted; it's a
+real external dependency, not a code gap. LLM-independent comparisons (tool surface parity,
+mechanical reliability, feature completeness) remain fully actionable without it.
 
 **Claude self-directs milestones.** Don't ask for approval before every individual fix — batch
 related work into a milestone, then checkpoint with the user: report what was tested, what was
@@ -50,6 +67,9 @@ deliberately excluded, don't build it.
 
 - [.ai/browsing-capability-loop.md](./.ai/browsing-capability-loop.md) — the loop's persistent
   state: capability taxonomy (what's covered/partial/untested/excluded) and the iteration log.
+- [.ai/competitive-benchmarks.md](./.ai/competitive-benchmarks.md) — researched benchmark
+  landscape (WebArena/OSWorld/Web Bench/Mind2Web etc.) and real, sourced feature/tool-surface
+  comparisons against Playwright, Puppeteer, `pinchtab/pinchtab`, and AI-company browser tools.
 - [.ai/known-problems.md](./.ai/known-problems.md) — active bugs/tech debt, existing convention.
 - [.ai/next-task.md](./.ai/next-task.md), [.ai/milestones.md](./.ai/milestones.md) — older
   project-management docs from an earlier planning phase; treat with caution, some content

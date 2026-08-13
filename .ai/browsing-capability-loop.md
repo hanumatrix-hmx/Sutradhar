@@ -67,6 +67,35 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-13 — Milestone 9: goal reframed to competitive — researched, closed all 3 gaps
+
+The user reframed the standing goal: not just "no known bugs" but genuinely better than
+Playwright, Puppeteer, real `pinchtab/pinchtab`, and AI-company browser tools, with real
+benchmarks backing any "best" claim. Full research and comparison now lives in
+[.ai/competitive-benchmarks.md](./competitive-benchmarks.md) — summary here:
+
+- Agent-level benchmarks (WebArena, OSWorld, Web Bench, Mind2Web) all need a real LLM driving
+  `agent.runGoal` — confirmed blocked on the same no-provider constraint as Milestone 7, not a
+  code gap.
+- Fetched Microsoft's own Playwright MCP server's real tool list for a precise,
+  LLM-independent tool-surface diff. Found 3 real gaps, built and verified all three:
+  - **`browser.fill_form`** — bulk multi-field form fill in one call (was: only single-field
+    `type`/`type_by_label`). Verified live against a real 2-field login form — both fields
+    landed via real DOM inspection; a deliberate partial-failure case correctly isolated
+    errors per-field. Incidentally confirmed a pre-existing duplicate-dispatch safety guard
+    fires correctly.
+  - **`browser.click_at_point`** — click at an absolute viewport `(x, y)` with no element or
+    selector involved, matching Playwright MCP's vision-mode click. Verified pixel-exact
+    against a hand-drawn canvas target.
+  - **`browser.get_storage_state` / `set_storage_state`** — single-blob export/import of all
+    cookies+localStorage+sessionStorage, distinct from the per-item tools and from the CLI's
+    directory-based profile mechanism. Verified live: a blob captured from one session
+    correctly restored a genuinely fresh, separate session's cookie/localStorage/sessionStorage
+    together.
+- Drive-by cleanup: swept and fixed ~11 remaining "pt-node-id" rename leftovers in doc
+  comments across `runtime.ts`/`types.ts`/tests (the actual code/attributes were already
+  correctly renamed to `sd-node-id`; only stale prose mentioned the old name).
+
 ### 2026-08-13 — Milestone 8: pagination discovery bug, cookies, storage, clipboard, geo
 
 Closed out the last remaining taxonomy row (large-scale extraction/pagination) with a real
@@ -368,8 +397,15 @@ that are actually resolvable from inside this environment.
 an actual live MCP round-trip — needs a real process restart, not just a reconnect.
 `agent.runGoal`'s reasoning path remains genuinely blocked on no LLM provider being available.
 
-**Proposed Milestone 9**: no specific plan. With the taxonomy genuinely exhausted this time
-(not just self-declared), further work should be driven by real usage as it comes up, per the
-loop's own standing guidance — the difference from Milestone 6's premature version being that
-this time the untested surface was actually hunted down first (agent.runGoal, dialogs,
-pagination-at-scale), not assumed away.
+**Milestone 9: DONE** (2026-08-13) — goal reframed to competitive positioning (see
+`.ai/competitive-benchmarks.md`); researched the real benchmark/competitor landscape; closed
+all 3 tool-surface gaps found against Playwright MCP (`fill_form`, `click_at_point`,
+`get_storage_state`/`set_storage_state`). See that doc's own iteration log for ongoing
+competitive-comparison work — this doc stays focused on Sutradhar's own capability taxonomy;
+the competitive doc tracks positioning against named competitors specifically.
+
+**Proposed Milestone 10**: no specific plan. The Playwright MCP tool-surface diff is closed
+out; next competitive work is either (a) researching Puppeteer/real-`pinchtab` more precisely
+the same way (currently lighter-sourced than the Playwright comparison), or (b) revisiting
+agent-level benchmarks once an LLM provider is available. Otherwise, standing practice: real
+usage and real comparisons drive what's next, not manufactured sweeps.
