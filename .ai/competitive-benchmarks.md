@@ -201,6 +201,44 @@ findings:
 
 Append-only. Newest first.
 
+### 2026-08-15 — Milestone 26: stealth confound independently confirmed at the fingerprint level (clean A/B not possible)
+
+Milestone 25 recommended one more experiment to settle the "is pinchtab's edge really stealth"
+question: rerun the 9 divergent tasks with pinchtab's `stealthLevel` set to none. Attempted it
+directly — and found the experiment as scoped **can't run**: `instanceDefaults.stealthLevel` is
+a hard-coded 3-value enum (`light`/`medium`/`full`), confirmed both via live CLI validation
+(`none`/`off` rejected; empty string silently normalizes back to `light`) and in the real
+pinchtab source (`internal/stealth/bundle.go`'s `NormalizeLevel()` defaults any unrecognized
+value to `LevelLight`). There is no stealth-off state — `light` (what the original 31/47 run
+already used) is the floor, not a midpoint. No rerun was performed, since there was no config
+delta to isolate against; re-running would only remeasure session noise, not a stealth effect.
+
+**The more informative move**: inspect what `light` actually does via the running instance's
+live `/stealth/status` endpoint, and compare directly against Sutradhar's own plain
+`browser.launch` fingerprint (`browser.eval` on both). This directly contradicts pinchtab's own
+docs, which describe `light` as "minimal fingerprint normalization" — the live patch list shows
+it already disables the `--enable-automation` CDP flag, masks `navigator.webdriver`, and
+normalizes plugins/languages/platform. Most concretely: **Sutradhar's plain-launch User-Agent
+contains a literal `HeadlessChrome` substring** (a classic, trivially string-matched bot
+signal many WAFs check directly) that pinchtab's `light` floor strips via a `headlessNew` flag.
+
+**Net effect on the standing question**: causation for the specific 9-task edge still can't be
+experimentally proven (no clean control exists), but the underlying premise — that pinchtab's
+default is a meaningfully-softened baseline relative to Sutradhar's plain launch — is now
+confirmed at the fingerprint level, independently of task outcomes, and is if anything larger
+than assumed. Closed as "isolation not possible with current tooling, asymmetry independently
+confirmed" rather than left open. Per CLAUDE.md's scope boundary, matching this on Sutradhar's
+side (UA rewriting, `navigator.webdriver` masking, etc.) is the excluded stealth/evasion
+category and stays unbuilt — this is the same line already held in Milestone 16's dormant
+`StealthEngine` finding. Full detail: `tools/engine-comparison/stealth-isolation-experiment.md`.
+
+**This closes out the pinchtab-comparison investigation thread** (Milestones 24-26): real
+pinchtab/pinchtab beats Sutradhar 31/47 vs 29/47 on the identical WebBench set, the entire gap
+traces to anti-bot mechanisms its (undisableable) default fingerprint-softening gets through,
+no other real capability gap was found, and closing that specific gap would require exactly
+what this project has deliberately and repeatedly excluded. Sutradhar remains ahead of
+Playwright (57%) and Puppeteer (53%) with clear, evidenced, non-stealth reasons why.
+
 ### 2026-08-14 — Milestone 25: task-level diff finds zero real, non-stealth capability gaps behind pinchtab's lead
 
 Milestone 24 left an open question: is real pinchtab/pinchtab's +2 net lead (31/47 vs
