@@ -60,6 +60,13 @@ real tasks** — see `tools/webbench/claude-direct-run-2026-*.md` and the iterat
 below. Current combined number: **29/47 completed (62%), 18/47 externally blocked, 0
 Sutradhar-attributable failures** — a real, honestly-reported number, not a cherry-picked one.
 
+**And now a real, controlled, three-way head-to-head on that identical 47-task set**: real
+Playwright and real Puppeteer were run through the exact same 47 tasks, same starting URLs,
+same scoring standard, no stealth. Result: **Sutradhar 29/47 (62%) — Playwright 27/47 (57%) —
+Puppeteer 25/47 (53%)**. Full methodology, per-shard breakdown, and root-cause analysis of
+every genuine tool-capability divergence (not just shared external blocks) in
+`tools/engine-comparison/head-to-head-comparison-2026-08-14.md`; see Milestone 23 below.
+
 ## AI-company browser/computer-use tools — a different category, not a head-to-head gap list
 
 Researched 2026-08-13, direct from Anthropic's and OpenAI's own docs (not just benchmark
@@ -180,6 +187,62 @@ findings:
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-14 — Milestone 23: real, controlled three-way head-to-head (Sutradhar vs. real Playwright vs. real Puppeteer, identical 47-task set)
+
+Direct response to the user's explicit instruction: "then do compare it, how will you know if
+sutradhar is actually good/better than other tools in every aspect? and do not change that
+goal." Milestones 16 and 22 had already shown Sutradhar and real Playwright hitting *identical*
+external blocks on a handful of shared URLs — real evidence, but not a controlled same-task,
+same-scoring comparison. This milestone is that comparison, done properly.
+
+Built two persistent driver servers in `tools/engine-comparison/`: `pw-server.mjs` (real
+`playwright-core`, driving Playwright's actual default AI-agent grounding — AI-mode
+`ariaSnapshot()` with `aria-ref=` element targeting) and `pp-server.mjs` (real `puppeteer-core`,
+driving a raw indexed DOM query of `a/button/input/select/textarea` — Puppeteer's honest
+out-of-box capability, since it has no official accessibility/AI grounding layer at all,
+confirmed dead upstream in earlier research). Both launched plain (`headless: true`, real
+Chrome, no stealth) — the same fairness standard already held for Sutradhar. A methodology
+decision was made deliberately (via AskUserQuestion, user said "you decide and proceed"): match
+each tool's *real* out-of-box capability rather than building an artificial equalizer that
+would give all three tools the same custom grounding — this tests genuine default experience,
+which is what actually matters for "is this tool better," not a leveled abstraction.
+
+Along the way, a real architectural bug was found and fixed in the driver itself (not
+Sutradhar): Playwright's `aria-ref` snapshot refs are scoped to the specific client connection
+that produced them — a per-command `connectOverCDP()` reconnect design broke ref-based
+targeting (a valid ref timed out after reconnect, confirmed live). Fixed by switching to one
+persistent long-lived server process holding the browser+page for the whole run instead.
+
+Then ran all 47 tasks (the exact same tasks, from `tasks.json`/`tasks-sample2..5.json`, already
+scored for Sutradhar across 5 samples) through both drivers, sharded across 5 parallel agents
+(one per existing Sutradhar sample boundary, `results-sample1.md` through `results-sample5.md`
+in `tools/engine-comparison/`), same Completed/Blocked scoring standard as the Sutradhar runs.
+
+**Result: Sutradhar 29/47 (62%) — Playwright 27/47 (57%) — Puppeteer 25/47 (53%).** On 3 of the
+5 shards (sample1, sample4, sample5) all three tools landed on the *exact identical*
+completed/blocked split, task for task — reconfirming Milestones 16/22's finding that most
+blocks are environment-level (IP/TLS fingerprint), not tool-specific. Where the tools genuinely
+diverged (same page load, different outcome by tool capability, not an external wall):
+Puppeteer's capped (120-element) and tag-restricted raw DOM list missed real content Playwright
+and Sutradhar's richer grounding found (CDC.gov outbreak data, a Craigslist ToS clause past a
+fixed 3000-char text-slice window, Best Buy product links crowded out by filter checkboxes, an
+ASUS icon-only search control with no accessible-name matching); Puppeteer's lack of default
+actionability checking produced a real silent false-success on Ace Hardware (reported `ok:true`
+while the typed value never actually landed) where Playwright's strict click failed loud with a
+diagnostic error instead; Puppeteer's flat DOM query doesn't traverse iframes where Playwright's
+snapshot does. Sample3 (14 of the toughest bot-protected retail sites in the set — Alibaba,
+ASOS, Best Buy) is where Sutradhar's dual DOM-attribute+accessibility-tree grounding and
+occlusion detection pulled ahead of both competitors on task count (10/14 vs. 8/14 each).
+
+Full methodology, the per-shard table, and root-cause detail on every genuine divergence:
+`tools/engine-comparison/head-to-head-comparison-2026-08-14.md`.
+
+**This is the first real, controlled, same-task, three-way number this project has had** —
+prior milestones established qualitative tool-surface parity/gaps and block-parity on shared
+URLs; this establishes a real completion-rate ranking on the identical task set under identical
+conditions, with Sutradhar ahead of both named competitors and a clear, evidenced account of
+*why* (richer default grounding, stricter action verification) rather than an assumption.
 
 ### 2026-08-14 — Milestone 22: real Playwright hits the identical real-world blocks
 
