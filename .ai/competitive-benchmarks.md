@@ -55,9 +55,9 @@ blocked here, see above). But the user corrected an important framing mistake: S
 `browser.*` the same way Claude would drive Playwright MCP — not necessarily via its own
 separate internal LLM loop. For that mode, "benchmarking" doesn't need Ollama/OpenRouter at
 all: it means Claude (or another host AI) actually attempting real WebBench tasks live via
-the `browser.*` tools. **This has now actually been done, across four samples totaling 36
+the `browser.*` tools. **This has now actually been done, across five samples totaling 47
 real tasks** — see `tools/webbench/claude-direct-run-2026-*.md` and the iteration log
-below. Current combined number: **21/36 completed (58%), 15/36 externally blocked, 0
+below. Current combined number: **29/47 completed (62%), 18/47 externally blocked, 0
 Sutradhar-attributable failures** — a real, honestly-reported number, not a cherry-picked one.
 
 ## AI-company browser/computer-use tools — a different category, not a head-to-head gap list
@@ -180,6 +180,26 @@ findings:
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-14 — Milestone 21: fifth WebBench sample (8/11), first dogfood of the webbench-sample skill
+
+Run via `/webbench-sample` itself (the skill created in Milestone 20) — a real test of
+whether the skill's own written procedure holds up when actually followed, not just whether
+it reads well. It did: picked 11 fresh domains from deeper in WebBench's ID range (400+) via
+`tested-domains.txt`, drove them live, scored honestly. **8 of 11 completed (73%)** — 2
+external blocks (hCaptcha on apa.org, Cloudflare on apkpure.com) and one inconclusive
+site-restructure finding on asus.com (3 real attempts, all 404, scored as blocked rather than
+stretched into a completion since the evidence wasn't as clean as a confirmed catalog-drift
+case). Full detail: `tools/webbench/claude-direct-run-2026-08-14-sample5.md`.
+
+Also reconfirmed, incidentally: the `type`-append bug fixed in Milestone 17 still shows
+through the *live* MCP session (expected — that session hasn't been rebuilt/reconnected since
+the fix), and archive.org's Wayback Machine can time out serving very old captures (a real,
+external limitation, not Sutradhar's) — though the redirect chain alone still revealed the
+real capture timestamp before the timeout.
+
+**Combined across all five samples: 29/47 completed (62%), 18/47 externally blocked, 0
+Sutradhar-attributable failures.**
 
 ### 2026-08-14 — Milestone 20: fourth WebBench sample (6/7), first run under an autonomous /loop
 
