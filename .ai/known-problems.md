@@ -93,18 +93,27 @@ Last Updated: 2026-08-09
   - **Mitigation**: None needed.
 
 - **ID**: `PROB-007`
-  - **Summary**: The "New Session" modal silently no-ops if Launch is clicked with an empty Goal field.
+  - **Summary**: ~~The "New Session" modal silently no-ops if Launch is clicked with an empty Goal field.~~
   - **Severity**: Low
-  - **Status**: OPEN
-  - **Impact**: Found live 2026-08-12 while dogfooding the dashboard: the
-    Goal `<textarea>` has a native `required` attribute; clicking "Launch
-    Session" with it empty triggers the browser's native constraint
-    validation, which blocks the submit — but nothing in the app's own UI
-    indicates why (no toast, no inline error, no focus/scroll to the
-    field). It just looks like the button did nothing.
-  - **Mitigation**: None yet. Fix is small: either surface a visible
-    inline error, or replace/report the native validation via
-    `onInvalid`/`reportValidity()` so it's obvious what's missing.
+  - **Status**: RESOLVED 2026-08-14, live-verified
+  - **Impact**: Found live 2026-08-12 while dogfooding the dashboard. Real root cause,
+    found on fix (`packages/frontend/src/app/App.tsx`), was more specific than first assumed:
+    the Goal `<textarea>`'s native `required` attribute was never actually the blocker — the
+    "Launch Session" button lives in the `Modal`'s `footer` slot, rendered as a sibling `<div>`
+    *outside* the `<form>` element, with no `form="..."` attribute linking it back. So clicking
+    it never triggered a native form submission at all; native `required` validation was
+    inert. The actual silencer was `disabled={!newGoal.trim()}` on the button itself — a
+    disabled button fires no `onClick`, so `handleCreateSession` never ran and no feedback
+    logic (that already existed) ever got a chance to execute.
+  - **Mitigation**: Removed `disabled` from the button so it's always clickable;
+    `handleCreateSession` now sets an inline error (via `TextArea`'s existing `error` prop,
+    `role="alert"`) and focuses the field when Goal is empty, instead of silently returning.
+    Error clears on the next keystroke. Live-verified 2026-08-14: built and ran the real
+    `apps/server` (:8081) + `packages/frontend` dev server (:3055), drove the actual dashboard
+    through Sutradhar's own MCP tools — clicking Launch with an empty Goal now shows "Goal is
+    required — describe what the agent should accomplish." inline; typing a real goal and
+    clicking Launch still correctly creates a session and navigates to it (no regression on
+    the happy path). `packages/frontend` typecheck clean, full suite 29/29 passing.
 
 - **ID**: `PROB-008`
   - **Summary**: `browser.snapshot`'s MCP response double-printed its own header with two different, unexplained element counts.

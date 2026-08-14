@@ -92,6 +92,8 @@ const AppContent: React.FC = () => {
   const [newTitle,    setNewTitle]    = useState('');
   const [newGoal,     setNewGoal]     = useState('');
   const [newUrl,      setNewUrl]      = useState('');
+  const [goalError,   setGoalError]   = useState<string | undefined>(undefined);
+  const goalRef = React.useRef<HTMLTextAreaElement | null>(null);
 
   // Global keyboard shortcuts
   useEffect(() => {
@@ -107,7 +109,15 @@ const AppContent: React.FC = () => {
 
   const handleCreateSession = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newGoal.trim()) return;
+    if (!newGoal.trim()) {
+      // PROB-007: clicking Launch with an empty Goal used to just silently do
+      // nothing (the button was `disabled`, so this handler never even ran).
+      // Now it always runs, so an empty goal gets a visible reason instead of
+      // a click that looks like it did nothing.
+      setGoalError('Goal is required — describe what the agent should accomplish.');
+      goalRef.current?.focus();
+      return;
+    }
     // Goal is the only required field; the title auto-derives from it and
     // the start URL is explicit (never regex-guessed from the goal text).
     const title   = newTitle.trim() || newGoal.trim().slice(0, 64);
@@ -115,11 +125,15 @@ const AppContent: React.FC = () => {
     setNewTitle('');
     setNewGoal('');
     setNewUrl('');
+    setGoalError(undefined);
     setNewSessOpen(false);
     navigate(`/session/${created.id}`);
   };
 
-  const openNewSession = () => setNewSessOpen(true);
+  const openNewSession = () => {
+    setGoalError(undefined);
+    setNewSessOpen(true);
+  };
 
   const sessionId = currentPath.startsWith('/session/')
     ? currentPath.replace('/session/', '')
@@ -174,7 +188,6 @@ const AppContent: React.FC = () => {
             <Button
               variant="primary"
               type="button"
-              disabled={!newGoal.trim()}
               onClick={handleCreateSession as unknown as React.MouseEventHandler<HTMLButtonElement>}
             >
               Launch Session
@@ -195,10 +208,15 @@ const AppContent: React.FC = () => {
             autoFocus
           />
           <TextArea
+            ref={goalRef}
             label="Goal"
             placeholder="Describe what the agent should accomplish in this session…"
             value={newGoal}
-            onChange={(e) => setNewGoal(e.target.value)}
+            onChange={(e) => {
+              setNewGoal(e.target.value);
+              if (goalError) setGoalError(undefined);
+            }}
+            error={goalError}
             autoResize
             required
           />
