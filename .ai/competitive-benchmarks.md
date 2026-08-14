@@ -201,6 +201,34 @@ findings:
 
 Append-only. Newest first.
 
+### 2026-08-14 — Milestone 25: task-level diff finds zero real, non-stealth capability gaps behind pinchtab's lead
+
+Milestone 24 left an open question: is real pinchtab/pinchtab's +2 net lead (31/47 vs
+Sutradhar's 29/47) explained by its disclosed `stealthLevel: "light"` default, by page/timing
+variance, or by a genuine Sutradhar tool-capability gap worth fixing? Answered it directly with
+a task-level diff (not just aggregate shard counts) matching all 47 tasks by ID/site across
+Sutradhar's 5 sample writeups and pinchtab's combined writeup — see
+`tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md`.
+
+**Finding: real-gap count 0.** All 9 tasks pinchtab completed that Sutradhar didn't turn on an
+external anti-bot/access-control mechanism (Cloudflare JS challenge ×4, CAPTCHA/hCaptcha ×2,
+hard IP/access deny ×2, HTTP 403 ×1) — none show pinchtab's grounding/`find`/interaction
+primitives outperforming Sutradhar's on a page both tools could actually load, which was the
+bar for calling something a genuine, fixable, non-stealth gap. Every one is judged
+stealth-plausible, consistent with pinchtab's disclosed default. For balance, the reverse
+direction (Sutradhar's 7 wins) was checked too: 4 are pinchtab hitting its own bot-challenges
+despite the stealth default (real evidence stealth-light is a probabilistic edge, not a
+reliable pass — this was not a clean natural experiment), 2 are agent-driving/task-
+interpretation variance, and one (CNET) is a genuine tool-mechanics finding that favors
+Sutradhar — pinchtab's own writeup admits failing to dismiss/route around an occluding
+cookie-consent modal where Sutradhar's occlusion-aware click handling succeeded.
+
+**Decision: no code fix chased.** Per CLAUDE.md's scope boundary, matching pinchtab's stealth
+default is explicitly out of scope, and this diff found no *other* real gap to fix instead.
+The single most informative next experiment identified (a measurement change, not a code
+change) is re-running pinchtab with `stealthLevel: "none"` on just the 9 divergent tasks to
+directly isolate the confound — logged as the natural next step, not yet run.
+
 ### 2026-08-14 — Milestone 24: real pinchtab/pinchtab actually run — the one honest result that doesn't favor Sutradhar
 
 Milestone 23 left one named competitor from CLAUDE.md's list — real `pinchtab/pinchtab` — with
