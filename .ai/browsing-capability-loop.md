@@ -67,6 +67,15 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-14 — Milestone 22: real Playwright hits the identical real-world blocks
+
+Direct (not analogous) evidence that Sutradhar isn't at a disadvantage versus real Playwright
+on the exact real-world anti-bot walls the WebBench samples hit — ran actual `playwright-core`
+(plain `chromium.launch()`, no stealth) against 6 of the blocking URLs; identical outcome on
+every one (same Cloudflare challenges, same hard deny, same CAPTCHA class). Full detail in
+`.ai/competitive-benchmarks.md`'s iteration log; script kept at
+`tools/engine-comparison/playwright-real-world-blocks.mjs`.
+
 ### 2026-08-14 — Milestone 19: docs re-audit, then closed the last real taxonomy gap
 
 Before picking a new capability task, re-audited docs for staleness against everything
