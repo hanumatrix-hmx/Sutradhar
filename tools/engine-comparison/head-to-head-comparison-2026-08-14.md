@@ -1,4 +1,28 @@
-# Head-to-head: Sutradhar vs. real Playwright vs. real Puppeteer on the identical 47-task WebBench set
+# Head-to-head: Sutradhar vs. real Playwright vs. real Puppeteer vs. real pinchtab/pinchtab on the identical 47-task WebBench set
+
+**Update 2026-08-14 (later same day)**: a fourth tool, real `pinchtab/pinchtab` (the actual
+open-source Go project, not a stand-in), was added to this comparison after the Playwright/
+Puppeteer runs below were already complete and committed — see
+`results-pinchtab.md` for its full run detail and required methodology disclosures (its IDPI
+content-safety scanner had to be turned off block-mode, and its `stealthLevel: "light"` default
+was left as-shipped, a real disclosed asymmetry vs. the other three tools). **Its score: 31/47
+(66.0%) — ahead of Sutradhar's 29/47.** The rest of this document (written before that run) is
+preserved as originally written for the three-tool comparison; the updated four-way table is
+immediately below.
+
+| Tool | Completed / 47 | Rate |
+|---|---|---|
+| real pinchtab/pinchtab | 31/47 | 66.0% |
+| **Sutradhar** | **29/47** | **61.7%** |
+| Playwright (real, AI-mode snapshot) | 27/47 | 57.4% |
+| Puppeteer (real, raw DOM query) | 25/47 | 53.2% |
+
+Read `results-pinchtab.md` before treating this as a settled "pinchtab wins" conclusion — it
+documents two disclosed, unresolved confounds (a default stealth setting not present on any
+other tool, and one page-variance finding on sample1 that produced 1/7 vs. 0/7 for reasons that
+could not be isolated as a systematic capability difference in a single run).
+
+---
 
 Requested directly by the user: "how will you know if sutradhar is actually good/better than
 other tools in every aspect? and do not change that goal." Prior milestones (16, 22) had only

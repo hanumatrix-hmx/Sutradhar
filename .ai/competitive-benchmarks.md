@@ -60,12 +60,18 @@ real tasks** — see `tools/webbench/claude-direct-run-2026-*.md` and the iterat
 below. Current combined number: **29/47 completed (62%), 18/47 externally blocked, 0
 Sutradhar-attributable failures** — a real, honestly-reported number, not a cherry-picked one.
 
-**And now a real, controlled, three-way head-to-head on that identical 47-task set**: real
-Playwright and real Puppeteer were run through the exact same 47 tasks, same starting URLs,
-same scoring standard, no stealth. Result: **Sutradhar 29/47 (62%) — Playwright 27/47 (57%) —
-Puppeteer 25/47 (53%)**. Full methodology, per-shard breakdown, and root-cause analysis of
-every genuine tool-capability divergence (not just shared external blocks) in
-`tools/engine-comparison/head-to-head-comparison-2026-08-14.md`; see Milestone 23 below.
+**And now a real, controlled, four-way head-to-head on that identical 47-task set**: real
+Playwright, real Puppeteer, and real `pinchtab/pinchtab` (the actual open-source Go project)
+were each run through the exact same 47 tasks, same starting URLs, same scoring standard, no
+added stealth. Result: **real pinchtab/pinchtab 31/47 (66%) — Sutradhar 29/47 (62%) —
+Playwright 27/47 (57%) — Puppeteer 25/47 (53%)**. Read that plainly: on this run, Sutradhar
+beat Playwright and Puppeteer but **trailed real pinchtab/pinchtab**, with two disclosed,
+unresolved confounds (real pinchtab's own `stealthLevel: "light"` default — not present on any
+other tool here — and one page-variance finding that isn't demonstrated as systematic). This is
+reported honestly, not spun, per the user's explicit instruction not to change the goal. Full
+methodology, per-shard breakdown, and root-cause analysis of every genuine tool-capability
+divergence in `tools/engine-comparison/head-to-head-comparison-2026-08-14.md` and
+`results-pinchtab.md`; see Milestones 23-24 below.
 
 ## AI-company browser/computer-use tools — a different category, not a head-to-head gap list
 
@@ -156,6 +162,13 @@ purpose-built MCP-native tool where Puppeteer's own official attempt was abandon
 
 ## Real `pinchtab/pinchtab` (Go project — the original name collision)
 
+**Superseded by a real run, 2026-08-14 (Milestone 24)**: the qualitative research below (from
+2026-08-13) is now backed by an actual live 47-task benchmark run — see the iteration log.
+Headline result: **real pinchtab/pinchtab 31/47 (66%), ahead of Sutradhar's 29/47 (62%)** on
+the identical WebBench task set, with two disclosed confounds (its default light stealth; one
+unresolved page-variance finding). The qualitative notes below remain accurate background but
+the live number is now the primary evidence for this competitor, not the doc research alone.
+
 Re-researched 2026-08-13 directly from the project's own GitHub (`pinchtab/pinchtab`,
 `pinchtab.com`) rather than relying on an unspecified "earlier comparison" — more precise
 findings:
@@ -187,6 +200,47 @@ findings:
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-14 — Milestone 24: real pinchtab/pinchtab actually run — the one honest result that doesn't favor Sutradhar
+
+Milestone 23 left one named competitor from CLAUDE.md's list — real `pinchtab/pinchtab` — with
+only doc-research-based positioning, not a live run. Closed that gap: cloned the real repo
+(`github.com/pinchtab/pinchtab`), ran it as a Docker container (`pinchtab/pinchtab` official
+image), and drove it through the identical 47-task WebBench set via its own HTTP API
+(`/instances/{id}/tabs/open`, `/tabs/{id}/text|snapshot|find|action|navigate`, its own `e<n>`
+accessibility refs and natural-language `find` endpoint) — same turn-by-turn methodology, same
+Completed/Blocked scoring standard, as the Sutradhar/Playwright/Puppeteer runs.
+
+Two real, disclosed methodology steps were required and are documented in full in
+`tools/engine-comparison/results-pinchtab.md`: (1) pinchtab's IDPI prompt-injection/content-
+safety scanner defaults to `strictMode: true`, which hard-blocks ordinary page reads with HTTP
+403 the moment its classifier flags marketing copy as "hostile" — this had to be turned off
+(scanning/labeling stayed on, only the hard block) just to read pages at all, the same category
+of necessary step as Sutradhar's own IDPI reconfiguration disclosed earlier in this project's
+history; (2) pinchtab ships `stealthLevel: "light"` by default — left as-is (not force-enabled,
+not disabled), which is a real, disclosed asymmetry since none of the other three tools in this
+comparison have any stealth applied.
+
+**Result: real pinchtab/pinchtab 31/47 (66.0%) — ahead of Sutradhar's 29/47 (62%), Playwright's
+27/47 (57%), and Puppeteer's 25/47 (53%).** Per-shard: 1/7, 7/8, 9/14, 7/7, 7/11. It outscored
+every other tool on 3 of 5 shards and is the only tool to score above 0/7 on sample1 — where the
+other three all lost 3 tasks to an un-dismissable store-locator modal on acehardware.com that
+simply never appeared in this run (a real, disclosed page-variance finding, not a demonstrated
+systematic capability edge — could not be isolated as caused by the stealth setting, timing, or
+plain site A/B variance in a single run).
+
+**This is reported exactly as found, per the user's explicit instruction not to change the
+goal or water down the comparison.** It means the honest current standing is: Sutradhar beats
+Playwright and Puppeteer on this task set, with clear, evidenced reasons why (richer default
+grounding, stricter action verification, occlusion detection). It does **not** currently beat
+real pinchtab/pinchtab on this same task set, and the two disclosed confounds (stealth default,
+one unreplicated modal-absence finding) are plausible but unconfirmed explanations, not
+excuses — a repeat run, or narrowing down which confound actually drove the gap, is legitimate
+future work (a real methodology question, not a capability fix, since matching pinchtab's
+stealth default is explicitly out of scope per CLAUDE.md's scope boundary). The standing
+"genuinely confident Sutradhar is better than every other tool" bar in CLAUDE.md is **not yet
+met** — three of four named competitors are now beaten with real evidence, one is not, and that
+is the honest state of the evidence today, not a reason to stop measuring or to spin the number.
 
 ### 2026-08-14 — Milestone 23: real, controlled three-way head-to-head (Sutradhar vs. real Playwright vs. real Puppeteer, identical 47-task set)
 
