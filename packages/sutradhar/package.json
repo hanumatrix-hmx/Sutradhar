@@ -3,7 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Embeddable AI browser automation SDK. Drive a real Chrome/Edge with a Puppeteer-style API, with semantic DOM snapshots built for AI agents.",
+  "description": "AI-agent browser automation, in one package: an MCP server (npx sutradhar-mcp), a terminal CLI (npx sutradhar), and an embeddable Node SDK (import { launch } from 'sutradhar'). Drives a real Chrome/Edge with dual DOM+accessibility-tree grounding built for AI agents.",
+  "homepage": "https://github.com/hanumatrix-hmx/Sutradhar#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanumatrix-hmx/Sutradhar.git"
+  },
+  "keywords": ["browser-automation", "mcp", "model-context-protocol", "ai-agent", "puppeteer", "claude", "llm-tools"],
+  "license": "MIT",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -14,25 +21,23 @@
       "default": "./dist/index.js"
     }
   },
-  "files": ["dist", "README.md"],
+  "bin": {
+    "sutradhar": "./dist/cli-bin.js",
+    "sutradhar-mcp": "./dist/mcp-cli.js"
+  },
+  "files": ["dist", "README.md", "LICENSE"],
   "sideEffects": false,
   "engines": { "node": ">=18.0.0" },
   "publishConfig": { "access": "public" },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --emitDeclarationOnly && node ../../scripts/build-bundle.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/ --ext .ts",
     "test": "vitest run --globals",
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@sutradhar/capability-runtime": "workspace:*"
-  },
-  "peerDependencies": {
-    "puppeteer-core": ">=22.0.0"
-  },
-  "peerDependenciesMeta": {
-    "puppeteer-core": { "optional": true }
+    "puppeteer-core": "^25.5.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
