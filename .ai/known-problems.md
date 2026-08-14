@@ -32,10 +32,54 @@ Last Updated: 2026-08-09
 - **ID**: `PROB-002`
   - **Summary**: Memory tiers are not consulted by the agent loop.
   - **Severity**: Low
-  - **Status**: OPEN
+  - **Status**: OPEN — recommendation ready 2026-08-14, pending user sign-off to close
   - **Impact**: Episodic/semantic memory compiles but the loop does not yet use
     retrieval to inform planning. No functional regression; just unused capacity.
-  - **Mitigation**: None required for current operation.
+  - **Research (2026-08-14)**: this had sat as "needs a user decision" for multiple
+    sessions with nobody doing the legwork to make that decision easy. Investigated properly:
+    - The real, live agent loop (`agent-loop.ts`, everything `apps/server` actually executes)
+      already has cross-run continuity via `CrossRunMemory` — disk-persisted, wired at 4 real
+      call sites, tested (6 cases), and it's the thing already feeding prior-run context into
+      the LLM's prompt today.
+    - `packages/memory`'s multi-tier system is real (not stubs) but 5 named tiers reduce to 3
+      distinct classes, retrieval is substring matching everywhere in practice (its one
+      genuine semantic/embedding path never activates — no embedding provider exists anywhere
+      in this codebase), and it has no persistence (in-process `Map`, lost on restart).
+    - Within a single run, nothing is being forgotten that memory tiers would recover — the
+      full step history already stays in scope for the run's duration and feeds the prompt.
+    - A separate `RuntimeKernel`/`PlannerService`/`GoalPlanner` subsystem *does* have real code
+      to consult episodic memory, but it's unreachable dead code (see new entry below) — not
+      wired into any real run, so this isn't even a live gap today.
+  - **Recommendation**: don't build it. `CrossRunMemory` already covers what this tool's actual
+    workload (short, ~15-step browser-automation tasks) needs; wiring the memory package in
+    wouldn't change agent behavior today since its only real differentiator (semantic search)
+    is blocked on a currently-nonexistent embedding provider, not on loop wiring. If this
+    changes (an embedding provider gets added, or tasks start genuinely needing persisted
+    semantic recall), revisit then with that as the trigger, not on a schedule.
+  - **Mitigation**: None required for current operation. Awaiting explicit user confirmation
+    to flip this to RESOLVED/won't-fix rather than closing it unilaterally, since it's a
+    product-direction call, not a bug.
+
+- **ID**: `PROB-010`
+  - **Summary**: `RuntimeKernel`/`PlannerService`/`MemoryService`/`GoalPlanner` subsystem is
+    dead code — real logic, real tests, but unreachable from any actual run.
+  - **Severity**: Low
+  - **Status**: OPEN (found during `PROB-002` research, not yet acted on)
+  - **Impact**: `packages/agent/src/kernel/*` and `packages/agent/src/planner/goal-planner.ts`
+    implement a parallel agent architecture (kernel + services + a planner that queries
+    episodic memory) that nothing outside their own unit tests ever calls —
+    `agent-app-service.ts`, `run-manager.ts`, `dependency-container.ts`, and `bootstrap.ts`
+    (the real execution path) never reference any of it. Even where it's internally wired
+    (`GoalPlanner` consulting episodic memory), the one real construction site
+    (`runtime-services.ts`'s `PlannerService`) passes zero constructor args, so that path is
+    inert even in isolation. `GoalPlanner.createPlan()` also returns a hardcoded 3-step
+    boilerplate plan that `runAgentLoop` wouldn't consume even if it were reachable — the real
+    loop does its own per-step LLM reasoning, not planner-driven execution.
+  - **Mitigation**: None yet — this is a real cleanup candidate (remove, or explicitly mark
+    `@experimental`/unused so it doesn't look like live functionality), not a bug fix. Flagging
+    rather than deleting reflexively since it's real, tested code, not empty scaffolding —
+    removing it is a more consequential, visible change than the earlier scaffolding-dir
+    cleanup and deserves a deliberate look, not a drive-by deletion.
 
 - **ID**: `PROB-003`
   - **Summary**: ~~Agent goal execution remains synchronous on the backend.~~
