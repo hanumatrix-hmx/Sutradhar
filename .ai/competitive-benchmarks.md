@@ -55,9 +55,9 @@ blocked here, see above). But the user corrected an important framing mistake: S
 `browser.*` the same way Claude would drive Playwright MCP — not necessarily via its own
 separate internal LLM loop. For that mode, "benchmarking" doesn't need Ollama/OpenRouter at
 all: it means Claude (or another host AI) actually attempting real WebBench tasks live via
-the `browser.*` tools. **This has now actually been done, across five samples totaling 47
+the `browser.*` tools. **This has now actually been done, across six samples totaling 59
 real tasks** — see `tools/webbench/claude-direct-run-2026-*.md` and the iteration log
-below. Current combined number: **29/47 completed (62%), 18/47 externally blocked, 0
+below. Current combined number: **36/59 completed (61%), 23/59 externally blocked, 0
 Sutradhar-attributable failures** — a real, honestly-reported number, not a cherry-picked one.
 
 **And now a real, controlled, four-way head-to-head on that identical 47-task set**: real
@@ -200,6 +200,34 @@ findings:
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-15 — Milestone 27: sixth WebBench sample (7/12), combined total now 36/59 (61%)
+
+Continued the primary benchmarking loop after closing out the pinchtab-comparison thread
+(Milestones 24-26) — ran a sixth, fresh 12-task READ-biased sample
+(`tools/webbench/tasks-sample6.json`, domains alltrails.com, apartments.com,
+barnesandnoble.com, barrons.com, betterhealth.vic.gov.au, billboard.com, buzzfeed.com,
+canada.ca, caranddriver.com, cbr.com, cbsnews.com, columbia.edu — none touched before, checked
+against `tested-domains.txt`). **7 of 12 completed (58%)** — full detail in
+`tools/webbench/claude-direct-run-2026-08-15-sample6.md`.
+
+5 blocks, all external: 2 real DataDome CAPTCHA walls (alltrails.com, barrons.com — same
+anti-bot vendor, two unrelated domains), 1 hard Akamai "Access Denied" (apartments.com), 1
+Cloudflare JS challenge that didn't clear (columbia.edu, in-scope per the task's own
+domain restriction), and 1 confirmed-nonexistent article (caranddriver.com — cross-checked via
+both the site's own search, which returned a clean "No results", and an external
+`site:caranddriver.com` web search, which also found nothing; treated as dataset drift, not a
+tool failure, only after both checks agreed). Two completions required disclosed interpretation
+calls where the site had visibly redesigned since WebBench's capture date (billboard.com's
+"featured artist header video" → the homepage's actual current lead video item;
+cbsnews.com's "featured investigative report" → the actual current top/lead headline) — scored
+Completed with the interpretation named explicitly, not silently assumed to match. One
+completion (buzzfeed.com) found genuine, real, on-topic content but only a 2019 archive hit, not
+a currently "trending" post as the task's premise implies — also disclosed rather than
+overclaimed. No new Sutradhar bugs found; all 12 attempts drove cleanly with no misfires.
+
+**Combined across all six samples: 36/59 completed (61%), 23/59 externally blocked, 0
+Sutradhar-attributable failures.**
 
 ### 2026-08-15 — Milestone 26: stealth confound independently confirmed at the fingerprint level (clean A/B not possible)
 
