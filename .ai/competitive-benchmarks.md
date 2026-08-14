@@ -55,9 +55,9 @@ blocked here, see above). But the user corrected an important framing mistake: S
 `browser.*` the same way Claude would drive Playwright MCP — not necessarily via its own
 separate internal LLM loop. For that mode, "benchmarking" doesn't need Ollama/OpenRouter at
 all: it means Claude (or another host AI) actually attempting real WebBench tasks live via
-the `browser.*` tools. **This has now actually been done, across three samples totaling 29
-real tasks** — see `tools/webbench/claude-direct-run-2026-08-13*.md` and the iteration log
-below. Current combined number: **15/29 completed (52%), 14/29 externally blocked, 0
+the `browser.*` tools. **This has now actually been done, across four samples totaling 36
+real tasks** — see `tools/webbench/claude-direct-run-2026-*.md` and the iteration log
+below. Current combined number: **21/36 completed (58%), 15/36 externally blocked, 0
 Sutradhar-attributable failures** — a real, honestly-reported number, not a cherry-picked one.
 
 ## AI-company browser/computer-use tools — a different category, not a head-to-head gap list
@@ -180,6 +180,22 @@ findings:
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-14 — Milestone 20: fourth WebBench sample (6/7), first run under an autonomous /loop
+
+Run as the first iteration of an autonomous `/loop` continuing the standing benchmarking work
+(the user asked for a scheduler/heartbeat so the loop keeps going without needing
+re-invocation each time — see `feedback_owner_dont_stop` memory). 7 fresh-domain READ tasks
+(aol.com, bandcamp.com, bbc.com, cambridge.org, cdc.gov, cosmopolitan.com, deadline.com),
+picked via the new `webbench-sample` skill's procedure. **6 of 7 completed (86%)** — the one
+block was Cloudflare on cambridge.org, matching the pattern already seen on other dictionary/
+reference sites. Full detail: `tools/webbench/claude-direct-run-2026-08-14-sample4.md`.
+
+**Combined across all four samples: 21/36 completed (58%), 15/36 externally blocked, 0
+Sutradhar-attributable failures.** Also added `tools/webbench/tested-domains.txt` (tracks
+every domain attempted so future samples don't repeat one) and three project skills
+(`webbench-sample`, `docs-audit`, `dashboard-verify` under `.claude/skills/`) codifying the
+procedures this loop has now run enough times to be worth automating.
 
 ### 2026-08-13 — Milestone 17: third WebBench sample (10/14) + a real bug found and fixed
 
