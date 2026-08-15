@@ -1,6 +1,6 @@
 {
   "name": "sutradhar",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "description": "AI-agent browser automation, in one package: an MCP server (npx sutradhar-mcp), a terminal CLI (npx sutradhar), and an embeddable Node SDK (import { launch } from 'sutradhar'). Drives a real Chrome/Edge with dual DOM+accessibility-tree grounding built for AI agents.",
   "homepage": "https://github.com/hanumatrix-hmx/Sutradhar#readme",
@@ -24,7 +24,7 @@
     "sutradhar": "dist/cli-bin.js",
     "sutradhar-mcp": "dist/mcp-cli.js"
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": ["dist", "README.md", "LICENSE", "AGENT_SETUP.md"],
   "sideEffects": false,
   "engines": { "node": ">=18.0.0" },
   "publishConfig": { "access": "public" },

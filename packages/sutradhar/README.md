@@ -11,11 +11,14 @@ npm install -g sutradhar   # or use npx for any of the three below, no install n
 
 | I want to... | Use |
 |---|---|
-| Let an MCP client (Claude Code, Claude Desktop, Cline, ...) drive a real browser | `npx sutradhar-mcp` — see [MCP server](#mcp-server) |
-| Drive a browser from a terminal, no scripting | `npx sutradhar <command>` — see [CLI](#cli) |
+| Let an MCP client (Claude Code, Claude Desktop, Cline, ...) drive a real browser | `npx --package=sutradhar sutradhar-mcp` — see [MCP server](#mcp-server) |
+| Drive a browser from a terminal, no scripting | `npx --package=sutradhar sutradhar <command>` — see [CLI](#cli) |
 | Drive a browser from my own Node code | `import { launch } from 'sutradhar'` — see [SDK](#sdk) |
 
-All three share the same engine, so behavior is identical across them.
+All three share the same engine, so behavior is identical across them. This package also ships
+[`AGENT_SETUP.md`](./AGENT_SETUP.md) — a self-contained setup/usage reference written for an AI
+coding agent to read directly (e.g. `node_modules/sutradhar/AGENT_SETUP.md` once installed),
+covering the full tool catalog and grounding guidance, not just this quick-start.
 
 ## MCP server
 

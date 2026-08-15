@@ -18,9 +18,18 @@
 import * as esbuild from 'esbuild';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { copyFileSync } from 'node:fs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
+
+// AGENT_SETUP.md's canonical copy lives at the repo root (so it's visible to anyone browsing
+// the repo, and easy to hand-copy into other projects) but also needs to physically exist
+// inside packages/sutradhar/ to be included in the published npm tarball — npm's "files"
+// field can't reference paths outside the package directory. Mirror it here rather than
+// maintaining two hand-edited copies that will inevitably drift.
+copyFileSync(path.join(root, 'AGENT_SETUP.md'), path.join(root, 'packages/sutradhar/AGENT_SETUP.md'));
+console.log('[build-bundle] mirrored AGENT_SETUP.md into packages/sutradhar/');
 
 const REQUIRE_SHIM =
   'import { createRequire as __sd_createRequire } from "node:module"; ' +

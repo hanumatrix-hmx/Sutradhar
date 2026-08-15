@@ -18,7 +18,7 @@ behavior is identical across them.
 | Drive a browser from my own Node code (scraping, testing, RPA, agent tooling) | `npm install sutradhar` then `import { launch } from 'sutradhar'` |
 
 **Setting this up in a project, or want an AI coding agent to know how to use it?** See
-[docs/AGENT_SETUP.md](./docs/AGENT_SETUP.md) — a self-contained, copy-into-any-project guide
+[AGENT_SETUP.md](./AGENT_SETUP.md) — a self-contained, copy-into-any-project guide
 covering setup, the full tool catalog, and usage guidance, written for an LLM to act on
 directly, not just a human to read.
 
