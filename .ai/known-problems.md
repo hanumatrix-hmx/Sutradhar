@@ -187,6 +187,20 @@ Last Updated: 2026-08-09
     text layer via CDP/`eval`, or a PDF-parsing library) — nontrivial scope, not a quick fix.
     `browser.export_pdf` (page → PDF) is unaffected and works correctly.
 
+- **ID**: `PROB-011`
+  - **Summary**: `ExecutionVerifier.verifyAction`'s `verified` field now honestly reports `false` for spec-less, non-self-verifying actions — this is an intentional behavior change from field-report remediation Phase 2, not a regression, but any external caller keying off `verification.verified` will see different values than before 2026-08-16.
+  - **Severity**: Low (behavior correction, not a bug)
+  - **Status**: RESOLVED (documented for visibility, not tracked as open work)
+  - **Impact**: Before this change, `ExecutionVerifier` hardcoded `elementFound: true` and defaulted `verified: true, confidence: 0.9` for *any* action that completed without throwing — including actions with no built-in post-condition check and no caller-supplied `verificationSpec`, which was never actually evidence the action did what it claimed (found live: a `type` that silently left a field empty still reported `verified:true, confidence:0.9`). Now, only actions with a real post-condition check (either a satisfied `verificationSpec`, or a self-verifying action type — see `SELF_VERIFYING_ACTION_TYPES` in `execution-verifier.ts`: `click`, `click_by_role`, `type`, `type_by_label`) get a confident `verified:true`. Everything else reports `verified:false` with an honest reason ("completed without throwing, but has no built-in post-condition check and no verificationSpec was provided").
+  - **Mitigation**: N/A — this is the fix. Any downstream code (dashboards, agent-loop logic) that branches on `verification.verified` should be reviewed if it assumed the old always-optimistic default; none is known to exist in this repo today (checked: no consumer keys off this field outside test assertions, which were updated in the same change).
+
+- **ID**: `PROB-012`
+  - **Summary**: `click_by_text` does not go through the occlusion-safe, delivery-verified click path — it calls `element.click()` directly, unlike `click`/`click_by_role` which both go through `verifiedClickOnHandle`.
+  - **Severity**: Low-Medium
+  - **Status**: OPEN — deliberately not fixed as part of field-report remediation Phase 2, to keep that change scoped to the verifier itself
+  - **Impact**: `click`/`click_by_role` both verify real delivery (occlusion check + a delivery-marker event listener, in `verifiedClickOnHandle`) before reporting success, and are listed in `ExecutionVerifier`'s `SELF_VERIFYING_ACTION_TYPES` accordingly. `click_by_text` (`browser-action-engine.ts`) instead resolves the element and calls `(el as HTMLElement).click()` directly, bypassing that whole path — so it is deliberately excluded from `SELF_VERIFYING_ACTION_TYPES`, meaning a spec-less `click_by_text` now honestly reports `verified:false` rather than a fabricated `true` (see PROB-011). The underlying gap — no occlusion/delivery check for `click_by_text` specifically — is still open.
+  - **Mitigation**: None yet. Fix would be routing `click_by_text` through the same `verifiedClickOnHandle` helper `click`/`click_by_role` use, once its element-resolution path (currently text-based, not selector-based) is reconciled with that helper's `ElementHandle`-based signature. Small, scoped follow-up — not attempted here to avoid scope creep into Phase 2's already-large batch.
+
 ## Resolved
 
 - ~~Run history client-side only — lost on site-data clear, no multi-day

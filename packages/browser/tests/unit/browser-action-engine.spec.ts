@@ -406,7 +406,7 @@ describe('@sutradhar/browser BrowserActionEngine click occlusion detection', () 
 });
 
 describe('@sutradhar/browser BrowserActionEngine ExecutionVerifier wiring', () => {
-  it('attaches a verification result to a successful action, verified true with no spec', async () => {
+  it('attaches an honest verification result to a successful action with no spec and no built-in post-condition check — verified false, not a fabricated true', async () => {
     const page = {
       frames: vi.fn().mockReturnValue([]),
       evaluate: vi.fn().mockResolvedValue(undefined), // scroll's own page.evaluate call
@@ -418,8 +418,13 @@ describe('@sutradhar/browser BrowserActionEngine ExecutionVerifier wiring', () =
       maxRetries: 0,
     });
 
+    // Fixes the field-report remediation's 2d finding: ExecutionVerifier used to hardcode
+    // verified:true/confidence:0.9 for ANY non-throwing action, which was never actually
+    // evidence of anything beyond "the action didn't throw". `scroll` has no built-in
+    // post-condition check and no spec was supplied here, so the honest answer is unverified.
     expect(result.success).toBe(true);
-    expect(result.verification?.verified).toBe(true);
+    expect(result.verification?.verified).toBe(false);
+    expect(result.verification?.reason).toContain('no built-in');
   });
 
   it('reports verification.verified:false (without failing the action) when a shouldUrlChange spec is not met', async () => {
@@ -460,7 +465,7 @@ describe('@sutradhar/browser BrowserActionEngine ExecutionVerifier wiring', () =
     expect(result.verification?.reason).toContain('below the verification threshold');
   });
 
-  it('reports verified:true when candidateConfidence is at/above the threshold', async () => {
+  it('does not fabricate verified:true from candidateConfidence alone — a spec-less action stays honestly unverified even at a high confidence', async () => {
     const page = {
       frames: vi.fn().mockReturnValue([]),
       evaluate: vi.fn().mockResolvedValue(undefined),
@@ -473,8 +478,35 @@ describe('@sutradhar/browser BrowserActionEngine ExecutionVerifier wiring', () =
       verificationSpec: { candidateConfidence: 0.75 },
     });
 
+    // candidateConfidence above the low-confidence threshold only clears that ONE gate — it is
+    // not itself evidence of a verified post-condition. `scroll` still has no built-in check and
+    // no shouldUrlChange/expectedUrlSubstring/expectedElementText was given, so this must stay
+    // verified:false (confidence halved, per the same discounting the other unverified branches
+    // use), per the 2d fix.
+    expect(result.success).toBe(true);
+    expect(result.verification?.verified).toBe(false);
+    expect(result.verification?.confidence).toBe(0.375);
+    expect(result.verification?.reason).toContain('no built-in');
+  });
+
+  it('reports verified:true (with the real confidence) for a self-verifying action type even with no spec', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true); // not stale; occlusion/delivery all clear
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'click',
+      selector: '#start button',
+      maxRetries: 0,
+      verificationSpec: { candidateConfidence: 0.75 },
+    });
+
+    // `click` DOES carry a built-in post-condition check (verifiedClickOnHandle's occlusion +
+    // delivery-marker check) even without a caller-supplied spec, so it earns a confident pass.
     expect(result.success).toBe(true);
     expect(result.verification?.verified).toBe(true);
+    expect(result.verification?.confidence).toBe(0.75);
   });
 });
 
@@ -570,7 +602,9 @@ describe('@sutradhar/browser BrowserActionEngine duplicate-action guard', () => 
 describe('@sutradhar/browser BrowserActionEngine type clears existing content first', () => {
   it('triple-clicks to select existing text, backspaces it, then types the new value, in that order', async () => {
     const handle = mockHandle();
-    handle.evaluate.mockResolvedValueOnce(false); // assertNotStale: not stale
+    handle.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale: not stale
+      .mockResolvedValueOnce('new value'); // readElementValue read-back: landed correctly
     const page = singleFramePage(() => Promise.resolve(handle));
     const callOrder: string[] = [];
     handle.click.mockImplementation(() => {
@@ -598,6 +632,130 @@ describe('@sutradhar/browser BrowserActionEngine type clears existing content fi
     expect(handle.press).toHaveBeenCalledWith('Backspace');
     expect(handle.type).toHaveBeenCalledWith('new value');
     expect(callOrder).toEqual(['click', 'press', 'type']);
+  });
+
+  it('throws (does not report success) when the typed value never lands, even after a native-setter repair attempt — fixes the field-report remediation\'s A1 finding', async () => {
+    const handle = mockHandle();
+    handle.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale: not stale
+      .mockResolvedValueOnce('') // readElementValue after clearAndType: still empty (the race)
+      .mockResolvedValueOnce(undefined) // nativeSetterFill's own evaluate call
+      .mockResolvedValueOnce(''); // readElementValue after the repair attempt: still empty
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'type',
+      selector: '#field',
+      value: 'Ada',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('did not land the expected value');
+    expect(result.error).toContain('"Ada"');
+  });
+
+  it('falls back to the native-setter fill when the normal type sequence leaves a mismatch, and succeeds if that lands the value', async () => {
+    const handle = mockHandle();
+    handle.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale: not stale
+      .mockResolvedValueOnce('') // readElementValue after clearAndType: empty (the race)
+      .mockResolvedValueOnce(undefined) // nativeSetterFill's own evaluate call (sets value + dispatches events)
+      .mockResolvedValueOnce('Ada'); // readElementValue after the repair: landed correctly
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'type',
+      selector: '#field',
+      value: 'Ada',
+    });
+
+    expect(result.success).toBe(true);
+    // 4 evaluate calls: assertNotStale, first read-back, nativeSetterFill, second read-back.
+    expect(handle.evaluate).toHaveBeenCalledTimes(4);
+  });
+});
+
+describe('@sutradhar/browser BrowserActionEngine retry does not interleave with an in-flight dispatch (fixes A2)', () => {
+  it('does not start a second dispatch until a timed-out first attempt has settled', async () => {
+    const handle = mockHandle();
+    let typeCallCount = 0;
+    let releaseFirstType: (() => void) | undefined;
+    handle.evaluate.mockImplementation(() => Promise.resolve(false)); // never stale
+    handle.type.mockImplementation(() => {
+      typeCallCount++;
+      if (typeCallCount === 1) {
+        // First attempt: never resolves on its own within the test's timeout window — the
+        // retry loop's own timeoutMs will fire first, simulating exactly the hang GLM's A2
+        // repro hit. It DOES eventually resolve, once released below, so the settlement-await
+        // fix has something real to wait for.
+        return new Promise<void>((resolve) => {
+          releaseFirstType = resolve;
+        });
+      }
+      return Promise.resolve();
+    });
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const resultPromise = engine.executeAction(mockTab(page), {
+      actionType: 'type',
+      selector: '#field',
+      value: 'Ada',
+      timeoutMs: 50, // fire the timeout almost immediately
+      maxRetries: 1,
+    });
+
+    // Let the timeout fire and the retry loop enter its settlement-await grace period, THEN
+    // release the first attempt's type() call — if the fix works, the second attempt's type()
+    // (typeCallCount === 2) cannot have started yet, because the loop is still awaiting the
+    // first one's settlement.
+    await new Promise((r) => setTimeout(r, 100));
+    expect(typeCallCount).toBe(1); // second attempt has NOT started while the first is in flight
+    releaseFirstType?.();
+
+    await resultPromise.catch(() => {}); // outcome doesn't matter here, only the interleaving
+    expect(typeCallCount).toBeLessThanOrEqual(2); // never a third overlapping call
+  });
+});
+
+describe('@sutradhar/browser BrowserActionEngine duplicate-action guard covers click_by_role/click_by_text targets (fixes the field-report remediation\'s new finding)', () => {
+  // Each waitForSelector call returns a FRESH handle (its own `evaluate` mock), matching real
+  // Puppeteer where every click_by_role targets a distinct live element — this lets each of the
+  // two executeAction calls below script its own assertNotStale(false)-then-true sequence
+  // instead of racing a single shared mock across both actions.
+  function freshHandlePage(): Page {
+    return singleFramePage(() => {
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true);
+      return Promise.resolve(handle);
+    });
+  }
+
+  it('does NOT reject two different click_by_role calls (different role/name) within the duplicate window', async () => {
+    const engine = new BrowserActionEngine();
+    const tab = mockTab(freshHandlePage());
+
+    const first = await engine.executeAction(tab, { actionType: 'click_by_role', role: 'button', name: 'Open Actions Menu' });
+    const second = await engine.executeAction(tab, { actionType: 'click_by_role', role: 'menuitem', name: 'Archive Item' });
+
+    expect(first.success).toBe(true);
+    expect(second.success).toBe(true);
+    expect(second.error).toBeUndefined();
+  });
+
+  it('DOES still reject a true duplicate — same role/name, same tab, within the window', async () => {
+    const engine = new BrowserActionEngine();
+    const tab = mockTab(freshHandlePage());
+
+    const first = await engine.executeAction(tab, { actionType: 'click_by_role', role: 'button', name: 'Submit' });
+    const second = await engine.executeAction(tab, { actionType: 'click_by_role', role: 'button', name: 'Submit' });
+
+    expect(first.success).toBe(true);
+    expect(second.success).toBe(false);
+    expect(second.error).toContain('Duplicate');
   });
 });
 

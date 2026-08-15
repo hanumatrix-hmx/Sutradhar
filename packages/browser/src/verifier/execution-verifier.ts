@@ -80,12 +80,45 @@ export class ExecutionVerifier {
       };
     }
 
+    // Everything above only runs a real check when the CALLER supplied a `verificationSpec` —
+    // most callers don't. Reaching here with an empty spec used to fall straight into a
+    // confident `verified:true, confidence:0.9` regardless, which was never actually evidence
+    // of anything beyond "the action didn't throw" — found live as a genuine false positive
+    // (a `type` that silently left a field empty still reported `verified:true` here, before
+    // the field-report remediation's Phase 2 fix). Some action types now carry their own
+    // built-in post-condition check inside `dispatchAction` itself, independent of any spec:
+    // `click`/`click_by_role` verify real delivery (occlusion + delivery-marker check in
+    // `verifiedClickOnHandle`); `type`/`type_by_label` verify the typed value actually landed
+    // (see `clearAndType`'s read-back). Only those get a confident pass without an explicit
+    // spec — `click_by_text` deliberately does NOT (it calls `element.click()` directly,
+    // bypassing `verifiedClickOnHandle` entirely — a separate, real gap, logged in
+    // `.ai/known-problems.md`, not fixed here to keep this change scoped to the verifier itself).
+    const specChecked = !!(spec.shouldUrlChange || spec.expectedUrlSubstring || spec.expectedElementText);
+    const selfVerifyingWithoutSpec = SELF_VERIFYING_ACTION_TYPES.has(actionResult.actionType);
+
+    if (!specChecked && !selfVerifyingWithoutSpec) {
+      return {
+        verified: false,
+        urlChanged,
+        elementFound: false,
+        confidence: candidateConfidence * 0.5,
+        reason:
+          `'${actionResult.actionType}' completed without throwing, but has no built-in ` +
+          'post-condition check and no verificationSpec was provided — nothing about its ' +
+          'actual effect on the page was verified. This is not evidence the action failed, ' +
+          'only an honest absence of verification.',
+      };
+    }
+
     return {
       verified: true,
       urlChanged,
       elementFound: true,
       confidence: candidateConfidence,
-      reason: `Action execution verified successfully with confidence ${candidateConfidence.toFixed(2)}`,
+      reason: specChecked
+        ? `Action execution verified successfully with confidence ${candidateConfidence.toFixed(2)}`
+        : `'${actionResult.actionType}' has a built-in post-condition check (verified inside the ` +
+          `action itself before it could report success) — confidence ${candidateConfidence.toFixed(2)}`,
     };
   }
 
@@ -118,3 +151,9 @@ export class ExecutionVerifier {
 /** Below this, a caller-supplied `candidateConfidence` is too uncertain to call the action
  *  "verified" even though it executed without error. */
 const LOW_CONFIDENCE_THRESHOLD = 0.5;
+
+/** Action types whose own `dispatchAction` implementation already checks a real post-condition
+ *  before reporting success — see the reasoning in `verifyAction`'s final branch. Keep this in
+ *  sync with `browser-action-engine.ts`: if a `case` there is given a genuine post-condition
+ *  check, add it here too; if one is removed, remove it here. */
+const SELF_VERIFYING_ACTION_TYPES = new Set(['click', 'click_by_role', 'type', 'type_by_label']);

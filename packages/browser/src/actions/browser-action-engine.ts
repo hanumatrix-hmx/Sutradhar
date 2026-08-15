@@ -41,6 +41,12 @@ const MUTATING_ACTIONS = new Set([
  *  rapid double-dispatch (e.g. a submit button clicked twice in quick succession). */
 const DUPLICATE_ACTION_WINDOW_MS = 1000;
 
+/** Bounded grace period the retry loop waits for a timed-out dispatch to settle on its own
+ *  before starting a new attempt — prevents two concurrent dispatches (e.g. two `clearAndType`
+ *  calls) from interleaving on the same element. Best-effort, not a guarantee: a dispatch that
+ *  takes even longer than this to actually finish will still race against a fresh retry. */
+const TIMEOUT_SETTLEMENT_GRACE_MS = 2000;
+
 export class BrowserActionEngine implements IBrowserActionEngine {
   private readonly eventBus?: EventBus;
   private readonly logger: StructuredLogger;
@@ -179,9 +185,16 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       text: params.text,
     });
 
+    // Tracks the most recently dispatched `dispatchAction` call so a timeout can await its real
+    // settlement (bounded) before the loop starts a second, concurrent one — see the catch
+    // block below for why this matters.
+    let inFlightDispatch: Promise<unknown> | undefined;
+
     while (attempt <= maxRetries) {
       try {
-        const resultData = await this.performActionWithTimeout(tab, params, timeoutMs);
+        const dispatchPromise = this.dispatchAction(tab, params);
+        inFlightDispatch = dispatchPromise;
+        const resultData = await this.raceWithTimeout(dispatchPromise, params.actionType, timeoutMs);
         const executionTimeMs = Date.now() - startTime;
 
         const result: ActionResultDto = {
@@ -227,6 +240,23 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       } catch (err) {
         lastError = err as Error;
         attempt++;
+
+        // A *timeout* failure (as opposed to dispatchAction throwing a real error, which means
+        // it already settled) leaves the previous dispatchAction call still running — Promise
+        // rejection from the race does not cancel it. Without waiting here, the next loop
+        // iteration would start a second, concurrent dispatchAction on the SAME element (e.g.
+        // two overlapping `clearAndType` calls interleaving keystrokes) before the first one
+        // finishes. Give the in-flight call a bounded grace period to settle on its own before
+        // proceeding — this is a best-effort bound, not a guarantee, for the rare case where
+        // dispatch takes even longer than that to actually finish.
+        const wasTimeout = this.isTimeoutError(lastError, params.actionType);
+        if (wasTimeout && inFlightDispatch) {
+          await Promise.race([
+            inFlightDispatch.catch(() => {}),
+            new Promise((r) => setTimeout(r, TIMEOUT_SETTLEMENT_GRACE_MS)),
+          ]);
+        }
+
         this.logger.warn(
           `[BrowserActionEngine] Action ${params.actionType} failed (attempt ${attempt}/${maxRetries + 1}): ${lastError.message}`,
         );
@@ -290,7 +320,17 @@ export class BrowserActionEngine implements IBrowserActionEngine {
   private checkDuplicateAction(tabId: string, params: ActionParams): ActionResultDto | undefined {
     if (!MUTATING_ACTIONS.has(params.actionType)) return undefined;
 
-    const target = params.selector ?? params.key ?? '';
+    // `click_by_role`/`click_by_text` carry their real target in `role`/`name`/`text`, not
+    // `selector` — omitting them here (found live in the field-report remediation's Phase 1
+    // baseline, independently on the SDK and MCP surfaces) collapsed every such call's key to
+    // the same `''` target, so two genuinely different role/text clicks on the same tab within
+    // DUPLICATE_ACTION_WINDOW_MS were rejected as duplicates of each other.
+    const target =
+      params.selector ??
+      (params.role !== undefined ? `role:${params.role}:${params.name ?? ''}` : undefined) ??
+      (params.text !== undefined ? `text:${params.text}` : undefined) ??
+      params.key ??
+      '';
     const key = `${tabId}:${params.actionType}:${target}`;
     const now = Date.now();
 
@@ -317,20 +357,32 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     return undefined;
   }
 
-  private async performActionWithTimeout(
-    tab: IBrowserTab,
-    params: ActionParams,
-    timeoutMs: number,
-  ): Promise<Record<string, unknown>> {
+  /**
+   * Races an *already-started* dispatch against a timeout, rather than starting the dispatch
+   * itself — the caller keeps its own reference to the dispatch promise so it can await the
+   * loser's real settlement after a timeout instead of abandoning it mid-flight (see the retry
+   * loop in {@link executeActionSerialized}, and {@link isTimeoutError} for how a caller
+   * distinguishes this timeout from dispatchAction's own thrown errors).
+   */
+  private async raceWithTimeout<T>(dispatchPromise: Promise<T>, actionType: string, timeoutMs: number): Promise<T> {
     return Promise.race([
-      this.dispatchAction(tab, params),
+      dispatchPromise,
       new Promise<never>((_, reject) =>
-        setTimeout(
-          () => reject(new Error(`Action ${params.actionType} timed out after ${timeoutMs}ms`)),
-          timeoutMs,
-        ),
+        setTimeout(() => reject(new Error(this.timeoutMessage(actionType, timeoutMs))), timeoutMs),
       ),
     ]);
+  }
+
+  private timeoutMessage(actionType: string, timeoutMs: number): string {
+    return `Action ${actionType} timed out after ${timeoutMs}ms`;
+  }
+
+  /** True if `err` is the timeout rejection {@link raceWithTimeout} manufactures for this
+   *  specific action type — as opposed to a real error `dispatchAction` itself threw (which
+   *  means dispatchAction already settled, so there's nothing to wait for). The exact `Nms`
+   *  suffix is deliberately not matched, only the fixed prefix `raceWithTimeout` always uses. */
+  private isTimeoutError(err: Error, actionType: string): boolean {
+    return err.message.startsWith(`Action ${actionType} timed out after `);
   }
 
   private async dispatchAction(
@@ -403,7 +455,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         const handle = await this.resolveElement(page, `pierce/${params.selector}`, {
           timeoutMs: 5000,
         });
-        if (!handle) throw new Error(`No element found for selector: ${params.selector}`);
+        if (!handle) throw new Error(await this.describeMissingElement(page, params.selector));
         await this.assertNotStale(handle, params.selector);
         await this.runHandleOp('type', () => this.clearAndType(handle, params.value!));
         return { typedValue: params.value };
@@ -452,7 +504,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         const handle = await this.resolveElement(page, `pierce/${params.selector}`, {
           timeoutMs: params.timeoutMs ?? 10000,
         });
-        if (!handle) throw new Error(`No element found for selector: ${params.selector}`);
+        if (!handle) throw new Error(await this.describeMissingElement(page, params.selector));
         return { foundSelector: params.selector };
       }
 
@@ -465,7 +517,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         const handle = await this.resolveElement(page, `pierce/${params.selector}`, {
           timeoutMs: 5000,
         });
-        if (!handle) throw new Error(`No element found for selector: ${params.selector}`);
+        if (!handle) throw new Error(await this.describeMissingElement(page, params.selector));
         await this.assertNotStale(handle, params.selector);
         await this.runHandleOp('select_option', () => handle.select(...values));
         return { selectedValues: values };
@@ -484,7 +536,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         const handle = await this.resolveElement(page, `pierce/${params.selector}`, {
           timeoutMs: 5000,
         });
-        if (!handle) throw new Error(`No element found for selector: ${params.selector}`);
+        if (!handle) throw new Error(await this.describeMissingElement(page, params.selector));
         await this.assertNotStale(handle, params.selector);
         await this.runHandleOp('focus', () => handle.focus());
         return { focusedSelector: params.selector };
@@ -652,6 +704,51 @@ export class BrowserActionEngine implements IBrowserActionEngine {
   }
 
   /**
+   * Read back an input/textarea/contenteditable's real current content — never trust an action's
+   * own "didn't throw" as evidence the value actually landed. Handles the three shapes a typeable
+   * element can take: `<input>`/`<textarea>` (`.value`), and `contenteditable` (`.textContent`,
+   * since `.value` doesn't exist on a plain element).
+   */
+  private async readElementValue(handle: ElementHandle<Element>): Promise<string> {
+    return handle.evaluate((el) => {
+      if ('value' in el && typeof (el as HTMLInputElement | HTMLTextAreaElement).value === 'string') {
+        return (el as HTMLInputElement | HTMLTextAreaElement).value;
+      }
+      return el.textContent ?? '';
+    });
+  }
+
+  /**
+   * Fallback fill path for React/Vue-style controlled components, where a real user's keystrokes
+   * (what `handle.type()` simulates) update the DOM's `value` attribute but the framework's own
+   * change handler — which owns the value the framework will actually render — sometimes misses
+   * the synthetic event ordering `clearAndType`'s click+Backspace+type sequence produces under
+   * load, leaving `value` reset back to empty by the framework's own re-render (this is the
+   * mechanism behind the intermittent empty-field race found live in Phase 1 of the field-report
+   * remediation, and independently in a real WebBench run this project already fixed once for
+   * the append-not-clear variant of this same class of bug).
+   *
+   * Sets the value through the native property setter (bypassing any framework-patched setter on
+   * the instance) and dispatches real `input`/`change` events — the same signal a framework's own
+   * controlled-component binding listens for from genuine user input.
+   */
+  private async nativeSetterFill(handle: ElementHandle<Element>, value: string): Promise<void> {
+    await handle.evaluate((el, val) => {
+      const isTextArea = el.tagName === 'TEXTAREA';
+      const proto = isTextArea ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
+      const setter = Object.getOwnPropertyDescriptor(proto, 'value')?.set;
+      if (setter && 'value' in el) {
+        setter.call(el, val);
+      } else {
+        // contenteditable — no `.value` property exists at all.
+        el.textContent = val;
+      }
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+    }, value);
+  }
+
+  /**
    * Clears an input/textarea/contenteditable's existing content before typing — triple-click
    * selects whatever text is already there (works the same way a real user clearing a field
    * would, and unlike a Ctrl+A/Cmd+A shortcut isn't platform-dependent), Backspace deletes the
@@ -659,11 +756,32 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    * appends; found live (aliexpress.us's search box silently concatenated a second search term
    * onto the first instead of replacing it) that nothing upstream of this call was clearing the
    * field first, despite `browser.type`'s own documented contract promising it.
+   *
+   * Read-back verified: `type()`'s own "didn't throw" was never evidence the value actually
+   * landed — the field-report remediation's Phase 0 measured this directly (2 of 5 identical
+   * runs left the field empty while `type()` reported success every time). After the normal
+   * type sequence, the real DOM value is read back; on mismatch, {@link nativeSetterFill} is
+   * tried as a repair for the controlled-component case; if the value still doesn't match after
+   * that, this throws instead of silently returning a false "succeeded".
    */
   private async clearAndType(handle: ElementHandle<Element>, value: string): Promise<void> {
     await handle.click({ count: 3 });
     await handle.press('Backspace');
     await handle.type(value);
+
+    let landed = await this.readElementValue(handle);
+    if (landed === value) return;
+
+    await this.nativeSetterFill(handle, value);
+    landed = await this.readElementValue(handle);
+    if (landed === value) return;
+
+    throw new Error(
+      `type did not land the expected value — expected ${JSON.stringify(value)}, but the ` +
+        `element's real content reads ${JSON.stringify(landed)} even after a native-setter ` +
+        'repair attempt. The page may be intercepting/resetting input in a way neither path ' +
+        'could overcome.',
+    );
   }
 
   /**
@@ -819,7 +937,11 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       timeoutMs: 5000,
     });
     if (!handle) {
-      throw new Error(`No visible element found for selector: ${selector}`);
+      // describeMissingElement's message starts with "No element found..." — click's own
+      // convention says "No visible element found..." (it requires visibility, unlike most
+      // other actions), so that distinction is prepended rather than lost.
+      const generic = await this.describeMissingElement(page, selector);
+      throw new Error(generic.replace('No element found', 'No visible element found'));
     }
     await this.assertNotStale(handle, selector);
     await this.verifiedClickOnHandle(handle, selector, button, offset);
@@ -993,6 +1115,38 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    * it's in the main frame, a nested iframe, or an open shadow root (shadow trees don't get
    * their own `Document` — they share the page's, unlike iframes).
    */
+  /**
+   * Produce a clear, actionable "element not found" message for a selector that failed to
+   * resolve — distinguishing the two real causes an agent can't tell apart from the old generic
+   * message alone (found as GLM field-report A5): a snapshot node id from BEFORE a navigation
+   * (the whole document, and its `data-sd-current-gen` marker, is gone — `assertNotStale` never
+   * even gets a handle to check, since resolution failed before it would run), versus a node id
+   * that's simply wrong/never existed in the CURRENT snapshot generation. A hand-written CSS
+   * selector (not a `data-sd-node-id` snapshot id) gets the original generic message unchanged —
+   * there's no generation concept for it to diagnose.
+   */
+  private async describeMissingElement(page: Page, selector: string): Promise<string> {
+    const nodeIdMatch = selector.match(/data-sd-node-id="(\d+)"/);
+    if (!nodeIdMatch) {
+      return `No element found for selector: ${selector}`;
+    }
+    const nodeId = nodeIdMatch[1];
+    const currentGen = await page
+      .evaluate((attr) => document.documentElement.getAttribute(attr), SD_CURRENT_GENERATION_ATTR)
+      .catch(() => null);
+    if (!currentGen) {
+      return (
+        `No element found for selector: ${selector} — the page navigated since the last ` +
+        'snapshot (or none has been taken yet this document). Call browser.snapshot again and ' +
+        'use a fresh node id.'
+      );
+    }
+    return (
+      `No element found for selector: ${selector} — node id ${nodeId} is not present in the ` +
+      'current snapshot generation. Call browser.snapshot again and use a fresh node id.'
+    );
+  }
+
   private async assertNotStale(handle: ElementHandle<Element>, selector: string): Promise<void> {
     const isStale = await handle.evaluate(
       (el, genAttr, currentGenAttr) => {

@@ -323,6 +323,63 @@ whichever of `role`/`name`/`text` is present, matching the existing fallback cha
 
 ---
 
+**RESULT (2026-08-16): all six fixes (2a-2f) implemented, unit-tested, and live-verified against real Chrome.**
+`packages/browser/src/actions/browser-action-engine.ts` + `verifier/execution-verifier.ts`.
+`npx vitest run` green in both `packages/browser` (151/151) and `packages/capability-runtime`
+(77/77); both typecheck clean (`capability-runtime`'s pre-existing, unrelated `pngjs` type-decl
+gap in `visual-compare.ts` is untouched by this work — confirmed via `git status` on that file).
+
+**Correction to the acceptance table above: the actual pre-fix baseline never had UC-03 failing
+on any surface** (`results/baseline-report.md` shows UC-03 passing SDK/CLI/MCP already) — that
+line in the acceptance table was written before Phase 1's baseline was captured and never
+updated. The real Phase 2 targets, per the actual baseline, were **UC-05 (failed all 3 surfaces)
+and UC-14 (failed SDK + MCP)**. Re-ran both, filtered, post-fix:
+
+| Scenario | SDK | CLI | MCP |
+|---|---|---|---|
+| UC-05 (long checkout flow, A1's `type()` race) | ❌→✅ **flipped** | ❌ still fails, **different cause** | ❌→✅ **flipped** |
+| UC-14 (duplicate-guard false-positive on click_by_role) | ❌→✅ **flipped** | ✅ (already passing) | ❌→✅ **flipped** |
+
+SDK UC-05 now completes the full saucedemo checkout end-to-end (`"confirmationText": "Thank you
+for your order!"`, cart math verified: `subtotal 7.99 + tax 0.64 = total 8.63`). MCP UC-05 also
+completes cleanly. **CLI's UC-05 failure is unchanged and NOT a Phase 2 regression** — its error
+changed from the old type-race symptom to `could not find "Sauce Labs Backpack" product link in
+snap`, because the CLI driver's `detail.inventorySnap` shows it's attached to
+`chrome://new-tab-page/` ("Adopted Tab") instead of the real saucedemo tab, a consequence of
+having no `select` CLI command yet (Phase 4's scope, not Phase 2's) forcing a workaround that
+mis-attaches. Confirmed by diffing against the pre-fix `results/baseline-cli.json`, which shows
+the exact same root cause already documented there.
+
+Live verification (script run directly against a freshly-rebuilt `capability-runtime` dist, since
+the connected MCP session goes stale after any rebuild — see the plan's standing rules):
+- **2a/2b**: `type()` on a real `<input type="number">` at the-internet.herokuapp.com/inputs
+  landed `"42"` exactly, with an honest verification payload: `verified:true`, reason `'type' has
+  a built-in post-condition check (verified inside the action itself before it could report
+  success) — confidence 0.90`.
+- **2f**: two different `clickByRole` calls (`link "A/B Testing"` then, after `goBack`, `link
+  "Checkboxes"`) both reported `success:true` back-to-back — no false duplicate rejection.
+- **2e**: a `[data-sd-node-id]` click issued after a real navigation away from the snapshotted
+  page failed with the new message verbatim: *"No visible element found for selector:
+  [data-sd-node-id="4"] — the page navigated since the last snapshot (or none has been taken yet
+  this document). Call browser.snapshot again and use a fresh node id."*
+
+**2d's behavior change is real and intentional** — logged in `.ai/known-problems.md` alongside
+the separate, not-fixed-here `click_by_text` non-self-verifying gap (`ExecutionVerifier`'s
+`SELF_VERIFYING_ACTION_TYPES` deliberately excludes `click_by_text`, which calls `element.click()`
+directly and bypasses `verifiedClickOnHandle`'s occlusion/delivery checks).
+
+**Process note**: `run-mcp.mjs` and `run-cli.mjs` don't implement the `SCENARIO_FILTER` env var
+`run-sdk.mjs` has — both always run all 14 scenarios and unconditionally overwrite
+`results/baseline-{cli,mcp}.json`. Running them for a targeted UC-05/UC-14 re-check silently
+clobbered both pre-fix baselines in the working tree (git history still has the originals). Both
+were restored via `git checkout --`, and the resulting full post-fix runs saved instead as
+`results/post-fix-{cli,mcp}.json` (not committed as the final Phase 7 post-fix artifact — Phase 7
+will do a clean full re-run across all three surfaces once every phase's fixes land). Worth fixing
+`run-mcp.mjs`/`run-cli.mjs` to support the same env var before the next targeted re-check, so this
+doesn't need manual recovery again.
+
+---
+
 ### Phase 3 — Grounding accuracy: interactive-element detection + honest visibility
 
 `packages/browser/src/dom/dom-semantic-engine.ts`. Higher blast radius than Phase 2 (it changes
