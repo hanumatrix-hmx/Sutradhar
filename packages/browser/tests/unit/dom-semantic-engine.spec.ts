@@ -76,4 +76,45 @@ describe('@sutradhar/browser formatGraphForLlm', () => {
     const headerMatch = formatted.match(/Interactive elements \((\d+)\):/);
     expect(Number(headerMatch![1])).toBe(3);
   });
+
+  it('includes label, summary, role=option, and the synthetic "clickable" role — the field-report remediation Phase 3 additions', () => {
+    // Fixes A3: previously only a fixed tag/ARIA-role allowlist reached this listing at all, so
+    // even when dom-semantic-engine.ts's scrape selector was extended to catch `<label>`,
+    // `<summary>`, `[role="option"]`, and elements matched only via `[onclick]`/`[tabindex]`/the
+    // cursor:pointer fallback (tagged with the synthetic "clickable" role), they would have been
+    // scraped and stamped but then silently dropped by this exact filter — the real bug the plan
+    // calls out to re-check.
+    const nodes: SemanticNode[] = [
+      node({ id: 1, tagName: 'LABEL', accessibleName: 'Username' }),
+      node({ id: 2, tagName: 'SUMMARY', accessibleName: 'More details' }),
+      node({ id: 3, tagName: 'DIV', role: 'option', accessibleName: 'Option A' }),
+      // A <div onclick="..."> or a cursor:pointer-detected element — no native tag, no ARIA
+      // role, so dom-semantic-engine.ts tags it with the synthetic "clickable" role.
+      node({ id: 4, tagName: 'DIV', role: 'clickable', accessibleName: 'Archive item' }),
+    ];
+    const graph = new SemanticElementGraph(nodes, 'https://example.com', 'Test');
+
+    const formatted = formatGraphForLlm(graph);
+
+    expect(formatted).toContain('"Username"');
+    expect(formatted).toContain('"More details"');
+    expect(formatted).toContain('"Option A"');
+    expect(formatted).toContain('"Archive item"');
+
+    const headerMatch = formatted.match(/Interactive elements \((\d+)\):/);
+    expect(Number(headerMatch![1])).toBe(4);
+  });
+
+  it('still excludes a plain, role-less div even after the Phase 3 additions — the synthetic "clickable" role must be explicitly assigned upstream, not inferred here', () => {
+    const nodes: SemanticNode[] = [
+      node({ id: 1, tagName: 'DIV', accessibleName: 'Not actually interactive' }),
+    ];
+    const graph = new SemanticElementGraph(nodes, 'https://example.com', 'Test');
+
+    const formatted = formatGraphForLlm(graph);
+
+    expect(formatted).not.toContain('"Not actually interactive"');
+    const headerMatch = formatted.match(/Interactive elements \((\d+)\):/);
+    expect(Number(headerMatch![1])).toBe(0);
+  });
 });

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<!--
+  Fixture for the field-report remediation Phase 3 fixes (A3): interactive-element detection
+  beyond the fixed tag/role allowlist, and honest visibility (getComputedStyle, not just a
+  nonzero bounding rect). Each element below is labeled with what it should do in a snapshot.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Interactive detection fixture</title>
+</head>
+<body>
+  <h1>Interactive detection fixture</h1>
+
+  <button id="control-visible-button">Control: visible button</button>
+
+  <button id="hidden-by-visibility" style="visibility: hidden;">
+    Should NOT be listed: visibility:hidden (nonzero rect)
+  </button>
+
+  <button id="hidden-by-opacity" style="opacity: 0;">
+    Should NOT be listed: opacity:0 (nonzero rect)
+  </button>
+
+  <button id="hidden-by-display" style="display: none;">
+    Should NOT be listed: display:none
+  </button>
+
+  <div id="onclick-card" onclick="window.__clicked = 'onclick-card'" style="border: 1px solid #333; padding: 8px; width: 200px;">
+    Should be listed: div[onclick] card
+  </div>
+
+  <div id="tabindex-widget" tabindex="0" style="border: 1px solid #333; padding: 8px; width: 200px;">
+    Should be listed: div[tabindex="0"] widget
+  </div>
+
+  <div id="tabindex-negative" tabindex="-1" style="border: 1px solid #333; padding: 8px; width: 200px;">
+    Should NOT be listed: div[tabindex="-1"] (explicitly not focusable)
+  </div>
+
+  <div id="cursor-pointer-card" style="cursor: pointer; border: 1px solid #333; padding: 8px; width: 200px;">
+    Should be listed: cursor:pointer card (addEventListener only, no onclick attr)
+    <span id="cursor-pointer-inner-span">Inner span — should NOT be separately listed (inherited cursor, pruned)</span>
+  </div>
+
+  <div contenteditable="true" id="editable-region" style="border: 1px solid #333; padding: 8px; width: 200px;">
+    Should be listed: contenteditable region (role=textbox)
+  </div>
+
+  <div contenteditable="false" id="not-editable-region" style="border: 1px solid #333; padding: 8px; width: 200px;">
+    Should NOT be listed via contenteditable: contenteditable="false"
+  </div>
+
+  <label for="labeled-input" id="the-label">Should be listed: label</label>
+  <input type="text" id="labeled-input" placeholder="type here" />
+
+  <details>
+    <summary id="the-summary">Should be listed: summary</summary>
+    <p>Details content.</p>
+  </details>
+
+  <div role="option" id="the-option" style="border: 1px solid #333; padding: 8px; width: 200px;">
+    Should be listed: role=option
+  </div>
+
+  <script>
+    document.getElementById('cursor-pointer-card').addEventListener('click', () => {
+      window.__clicked = 'cursor-pointer-card';
+    });
+    document.getElementById('tabindex-widget').addEventListener('click', () => {
+      window.__clicked = 'tabindex-widget';
+    });
+  </script>
+</body>
+</html>

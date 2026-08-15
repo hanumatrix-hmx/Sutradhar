@@ -410,6 +410,82 @@ what every snapshot contains), so it is its own phase with an explicit token-cos
 
 ---
 
+**RESULT (2026-08-16): all four detection/visibility fixes implemented, unit-tested, and
+live-verified — including a second, deeper root cause found and fixed mid-phase.**
+`packages/browser/src/dom/dom-semantic-engine.ts`. `npx tsc --noEmit` clean; `npx vitest run`
+green (153/153, up from 151 — 2 new `formatGraphForLlm` tests added for the role/tag additions).
+
+**`INTERACTIVE_SELECTOR` extended** with `label`, `summary`, `[role="option"]`, `[onclick]`,
+`[tabindex]:not([tabindex="-1"])`, `[contenteditable]:not([contenteditable="false"])` (the
+negation matters — `contenteditable="false"` is a real, valid, explicitly-non-editable state,
+not the absence of the attribute). **`cursor:pointer` fallback added**, folded into the existing
+shadow-root-piercing traversal (no extra full-DOM pass) with inheritance-aware pruning — `cursor`
+is an inherited CSS property, so every descendant of a clickable container computes
+`cursor:pointer` too; only the outermost such element in a subtree is kept, and any nested inside
+an already-selector-matched element is dropped. **`isVisible` now consults `getComputedStyle`**
+(`display`, `visibility`, `opacity`) alongside the bounding rect, catching `visibility:hidden`/
+`opacity:0` false positives the rect-only check missed.
+
+**A second root cause, found only by live-testing the actual GLM UC-06a repro, not anticipated in
+the original plan**: the-internet.herokuapp.com/entry_ad's real "Close" control is a bare `<p>`
+tag styled with `cursor:pointer`. `INTERACTIVE_SELECTOR` already includes bare `h1/h2/h3/p` (for
+page-structure *context*, not as click targets), so the element WAS being scraped and stamped —
+but `formatGraphForLlm`'s tag/role allowlist deliberately excludes plain paragraphs as prose, so
+it was scraped and then silently filtered back out, reproducing the exact same "modal blind spot"
+bug one layer down from where the plan assumed it lived (a selector gap). Fixed by making the
+role-assignment logic tag-aware: a heading/paragraph WITH an explicit interaction signal
+(`onclick`/`tabindex`/`contenteditable`/`cursor:pointer`) now gets the synthetic `clickable` role
+instead of its plain tag name, while a genuine context-only heading/paragraph (no such signal)
+is unaffected. Native tags (button/a/input/etc.) are untouched by this branch — `cursor:pointer`
+is default UA styling for several of them and must not override their real semantic role.
+
+**Live verification, full round trip** (fresh incognito session against real Chrome, via a
+rebuilt `capability-runtime` dist):
+- Built `tools/engine-comparison/hard-fixtures/interactive-detection.html` — one fixture element
+  per new detection/exclusion case (onclick div, tabindex div, tabindex="-1" exclusion,
+  contenteditable region, contenteditable="false" exclusion, cursor:pointer card with a nested
+  span that must NOT be separately listed, label, summary, role="option", plus
+  visibility:hidden/opacity:0/display:none controls that must all stay excluded). **Every case
+  matched its expected outcome exactly** — including the cursor-inheritance pruning (the nested
+  span inside the cursor:pointer card did not get its own entry).
+- **3a, real repro**: navigated to the-internet.herokuapp.com/entry_ad, waited for the modal's
+  entrance animation to settle (~1s — a real Chrome rendering-timing detail unrelated to this
+  fix, discovered while debugging; `getBoundingClientRect()` reports a stale 0×0 rect for up to
+  ~900ms after the DOM node exists). `snap` now shows `[#9] p "Close" role=clickable`. Clicked it
+  by that node id — `success:true`, `verified:true` — and confirmed via `getComputedStyle` that
+  `#modal`'s `display` genuinely changed to `none`. Full detect → click → real-effect chain
+  verified, not just "it appears in the listing."
+- **3b**: the fixture's `visibility:hidden`/`opacity:0` buttons are both absent from the listing
+  (the `display:none` case was already correctly excluded before this phase, via the rect check).
+- Re-ran the actual Phase 1 harness scenario (not just the ad hoc script) —
+  `SCENARIO_FILTER=UC-06 node run-sdk.mjs` — and confirmed the scenario's own internal
+  `closeInDefaultListing` diagnostic field, which was specifically added to the driver to detect
+  this exact gap, flipped **false → true**, with `fallbackUsed: null` (the `clickByText` fallback
+  the driver had been silently relying on was never invoked). **Correction to 3e's framing**:
+  UC-06 was already reported as passing in the Phase 1 baseline on all three surfaces — the
+  driver had a `clickByText('Close')` fallback specifically for this gap, so scenario-level
+  pass/fail never actually detected it. The real, honest signal is `closeInDefaultListing`, not
+  the scenario's top-level `success`; that field is what this phase actually fixed.
+
+**3c, token-cost guard** — measured `interactiveElements` size before/after on 4 pages (the
+exact pages behind the plan's original "166/590/143/104" figures weren't recoverable from
+available context, so this establishes a fresh, directly-comparable before/after pair rather than
+matching those absolute numbers):
+
+| Page | Before (chars / ~tokens) | After (chars / ~tokens) | Growth |
+|---|---|---|---|
+| example.com | 93 / 23 | 93 / 23 | 0% |
+| saucedemo login | 197 / 49 | 197 / 49 | 0% |
+| the-internet homepage | 1206 / 302 | 1206 / 302 | 0% |
+| the-internet /login form | 195 / 49 | 239 / 60 | +22.4% |
+
+All within the ≤25% budget; three of four pages had zero new matches at all (no page-specific
+`onclick`/`tabindex`/`contenteditable`/`cursor:pointer` elements to find), so real-world growth
+looks concentrated on pages that actually have the previously-missed interactivity, not a blanket
+tax on every snapshot.
+
+---
+
 ### Phase 4 — Structured output + CLI surface parity
 
 **4a. `--json` / structured snapshot (C6).** `runtime.snapshot()` (L339-354) currently discards

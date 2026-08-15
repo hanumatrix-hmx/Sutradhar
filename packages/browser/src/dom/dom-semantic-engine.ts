@@ -40,12 +40,28 @@ export const SD_GENERATION_ATTR = 'data-sd-gen';
 /** The attribute on `document.documentElement` holding the page's current stamp generation. */
 export const SD_CURRENT_GENERATION_ATTR = 'data-sd-current-gen';
 
-/** ARIA/tag combination treated as "interactive" for both scraping and the LLM-facing listing. */
+/**
+ * ARIA/tag combination treated as "interactive" for both scraping and the LLM-facing listing.
+ * `[onclick]`, `[tabindex]:not([tabindex="-1"])`, and `[contenteditable]` (excluding an explicit
+ * `contenteditable="false"`) catch elements whose only signal of interactivity is a DOM attribute
+ * rather than a native tag or ARIA role — e.g. a `<div onclick="...">` acting as a button. `label`
+ * and `summary` are natively actionable (a label focuses/activates its associated control; a
+ * `<summary>` toggles its parent `<details>`) but neither is a native form control nor carries an
+ * ARIA widget role, so both were previously invisible to this selector.
+ */
 const INTERACTIVE_SELECTOR =
-  'a, button, input, select, textarea, ' +
+  'a, button, input, select, textarea, label, summary, ' +
   '[role="button"], [role="link"], [role="textbox"], [role="combobox"], [role="tab"], ' +
   '[role="menuitem"], [role="checkbox"], [role="radio"], [role="switch"], [role="dialog"], ' +
+  '[role="option"], ' +
+  '[onclick], [tabindex]:not([tabindex="-1"]), [contenteditable]:not([contenteditable="false"]), ' +
   'h1, h2, h3, p';
+
+/** Elements matched only by `[onclick]`/`[tabindex]`/cursor-pointer-fallback (no native tag or
+ *  explicit ARIA role) are tagged with this synthetic role — not a real ARIA role, but a clear
+ *  signal to a listing consumer that the element is clickable without overclaiming what kind of
+ *  control it is. */
+const SYNTHETIC_CLICKABLE_ROLE = 'clickable';
 
 /** ARIA roles counted as interactive regardless of tag name (e.g. a `<div role="checkbox">`). */
 const INTERACTIVE_ROLES = new Set([
@@ -58,6 +74,8 @@ const INTERACTIVE_ROLES = new Set([
   'checkbox',
   'radio',
   'switch',
+  'option',
+  SYNTHETIC_CLICKABLE_ROLE,
 ]);
 
 /** Hard cap on frames scraped per snapshot, guarding against runaway cost on ad-heavy pages. */
@@ -113,6 +131,7 @@ export class DOMSemanticEngine implements IDOMSemanticEngine {
             generation,
             startId: nextId,
             maxStamped: MAX_STAMPED_ELEMENTS_PER_FRAME,
+            syntheticClickableRole: SYNTHETIC_CLICKABLE_ROLE,
           });
           allNodes.push(...frameNodes);
           nextId += frameNodes.length;
@@ -159,17 +178,55 @@ function scrapeFrame(params: {
   generation: string;
   startId: number;
   maxStamped: number;
+  syntheticClickableRole: string;
 }): ScrapedNode[] {
-  const { attrName, genAttr, currentGenAttr, selector, generation, startId, maxStamped } = params;
+  const { attrName, genAttr, currentGenAttr, selector, generation, startId, maxStamped, syntheticClickableRole } =
+    params;
 
   // Recursively collect matches from `root` and from every open shadow root nested within it.
   // Closed shadow roots have no accessible `.shadowRoot` property from outside — genuinely
   // unreachable, not a bug.
+  //
+  // Also applies a `cursor: pointer` computed-style fallback for elements the attribute-based
+  // `selector` still misses — the common remaining case being a handler attached purely via
+  // `addEventListener` (no `onclick=`, `role=`, or `tabindex`). This is a pragmatic proxy, not a
+  // real fix: genuinely detecting `addEventListener`-attached handlers needs CDP
+  // `DOMDebugger.getEventListeners`, a materially larger change than this file's scope (logged as
+  // PROB-013 in .ai/known-problems.md). `cursor:pointer` catches most real "this looks and acts
+  // clickable" cases without it.
   function collect(root: ParentNode, out: Element[]): void {
-    out.push(...Array.from(root.querySelectorAll(selector)));
-    for (const el of Array.from(root.querySelectorAll('*'))) {
+    const all = Array.from(root.querySelectorAll('*'));
+    const matchedSet = new Set<Element>();
+    const cursorPointerCandidates: Element[] = [];
+
+    for (const el of all) {
+      if (el.matches(selector)) {
+        out.push(el);
+        matchedSet.add(el);
+      } else if (getComputedStyle(el).cursor === 'pointer') {
+        cursorPointerCandidates.push(el);
+      }
       const shadow = (el as HTMLElement).shadowRoot;
       if (shadow) collect(shadow, out);
+    }
+
+    // `cursor` is an inherited CSS property, so every descendant of a clickable container
+    // (icons, text spans) also computes cursor:pointer — without pruning, each one would be
+    // stamped as its own separate interactive element. Keep only the outermost cursor:pointer
+    // element in a given subtree, and drop any already nested inside a selector-matched
+    // element (its own click target already covers them).
+    const cursorPointerSet = new Set(cursorPointerCandidates);
+    for (const el of cursorPointerCandidates) {
+      let ancestor = el.parentElement;
+      let nested = false;
+      while (ancestor) {
+        if (matchedSet.has(ancestor) || cursorPointerSet.has(ancestor)) {
+          nested = true;
+          break;
+        }
+        ancestor = ancestor.parentElement;
+      }
+      if (!nested) out.push(el);
     }
   }
 
@@ -189,6 +246,7 @@ function scrapeFrame(params: {
     const el = elUntyped as HTMLElement;
     const inputEl = el as HTMLInputElement;
     const rect = el.getBoundingClientRect();
+    const style = getComputedStyle(el);
     const id = startId + idx;
 
     // Stamp this element with a durable id so we can re-find it later, and the current
@@ -197,7 +255,43 @@ function scrapeFrame(params: {
     el.setAttribute(genAttr, generation);
 
     const parentText = el.parentElement?.innerText?.slice(0, 100) || undefined;
-    const role = el.getAttribute('role') || el.tagName.toLowerCase();
+    // `h1`/`h2`/`h3`/`p` are matched by `selector` purely to carry page-structure context —
+    // formatGraphForLlm deliberately excludes plain headings/paragraphs from the clickable
+    // listing (they're prose, not targets). But a heading/paragraph CAN also be the real click
+    // target, e.g. a modal's "Close" often IS a bare `<p>` styled with `cursor:pointer` and an
+    // `addEventListener` handler (found live: the-internet.herokuapp.com/entry_ad's modal —
+    // exactly GLM's original UC-06a report). Without this check, such an element would be
+    // stamped (it matches the selector) yet silently excluded from the listing purely because
+    // of its tag name — reproducing the same "modal blind spot" bug this phase set out to fix,
+    // just moved one layer down. So: an explicit interaction signal on a context-only tag wins
+    // over treating it as prose.
+    const CONTEXT_ONLY_TAGS = new Set(['H1', 'H2', 'H3', 'P']);
+    const hasExplicitInteractionSignal =
+      el.hasAttribute('onclick') ||
+      (el.hasAttribute('tabindex') && el.getAttribute('tabindex') !== '-1') ||
+      (el.hasAttribute('contenteditable') && el.getAttribute('contenteditable') !== 'false') ||
+      style.cursor === 'pointer';
+
+    // Explicit ARIA role wins. Failing that, a contenteditable region's implicit ARIA role is
+    // "textbox" per the HTML-AAM spec. Failing that: a genuine heading/paragraph (no interaction
+    // signal) keeps its own tag name as a non-actionable context role; a heading/paragraph WITH
+    // an interaction signal, or any other native tag from the selector's own fixed list
+    // (a/button/input/select/textarea/label/summary), uses the appropriate role. Anything left
+    // was matched only via `[onclick]`/`[tabindex]`/the cursor:pointer fallback — a real element
+    // to act on, but not one with any actual ARIA semantics, so it's tagged with the synthetic
+    // "clickable" marker instead of silently inheriting a misleading tag-name-as-role.
+    let role: string;
+    if (el.getAttribute('role')) {
+      role = el.getAttribute('role')!;
+    } else if (el.isContentEditable) {
+      role = 'textbox';
+    } else if (CONTEXT_ONLY_TAGS.has(el.tagName)) {
+      role = hasExplicitInteractionSignal ? syntheticClickableRole : el.tagName.toLowerCase();
+    } else if (el.matches('a, button, input, select, textarea, label, summary')) {
+      role = el.tagName.toLowerCase();
+    } else {
+      role = syntheticClickableRole;
+    }
     const name =
       el.getAttribute('aria-label') ||
       el.innerText?.slice(0, 100) ||
@@ -210,11 +304,24 @@ function scrapeFrame(params: {
       inputEl.placeholder ||
       undefined;
 
+    // A nonzero bounding box alone is not "visible" — an element can occupy real layout space
+    // while being `visibility:hidden` or `opacity:0`, both of which leave `rect` unchanged (only
+    // `display:none` collapses it, which the rect check already catches). Fixes a real false
+    // positive: a `visibility:hidden` element with no fallback rect used to be listed as if
+    // clickable, and clicking it would silently miss (nothing there for the browser to hit).
+    const hasSize = rect.width > 0 && rect.height > 0;
+    const isVisible =
+      hasSize &&
+      style.display !== 'none' &&
+      style.visibility !== 'hidden' &&
+      style.visibility !== 'collapse' &&
+      parseFloat(style.opacity || '1') !== 0;
+
     // Confidence heuristic
     let confidence = 0.5;
     if (name) confidence += 0.3;
     if (label) confidence += 0.15;
-    if (rect.width > 0 && rect.height > 0) confidence += 0.05;
+    if (hasSize) confidence += 0.05;
 
     return {
       id,
@@ -232,7 +339,7 @@ function scrapeFrame(params: {
         width: rect.width,
         height: rect.height,
       },
-      isVisible: rect.width > 0 && rect.height > 0,
+      isVisible,
       isEnabled: !inputEl.disabled,
     };
   });
@@ -250,7 +357,7 @@ export function formatGraphForLlm(
   graph: SemanticElementGraph,
   maxElements = 60,
 ): string {
-  const interactiveTags = new Set(['A', 'BUTTON', 'INPUT', 'SELECT', 'TEXTAREA', 'OPTION']);
+  const interactiveTags = new Set(['A', 'BUTTON', 'INPUT', 'SELECT', 'TEXTAREA', 'OPTION', 'LABEL', 'SUMMARY']);
   const interactive = graph.nodes.filter(
     (n) =>
       n.isVisible &&
