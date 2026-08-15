@@ -132,6 +132,16 @@ environment- or version-specific and the verification fix is still correct but t
 stays open). Do **not** skip this because the fix "is correct either way" — it determines whether
 an additional root-cause fix is needed beyond verification.
 
+**RESULT (2026-08-16): intermittent race, 2/5 runs reproduced.** Ran the exact flow via
+`SutradharRuntime` directly (`node phase0-a1-race-check.mjs`, saucedemo login → cart → checkout →
+`type('#first-name', 'Ada')` → read back real `.value`). `reportedSuccess: true` on **all 5**
+runs; `landedValue` was `"Ada"` on runs 1/3/4 and `""` on runs 2/5. This confirms both halves of
+the hypothesis at once: (a) A1 is a race, not a deterministic no-op — Phase 2's read-back +
+native-setter-repair design (2a/2b) is the correct fix, no separate root-cause hunt needed; (b)
+the action reports success even on the runs where it silently failed — live proof of the
+"confident false positive" verification-payload finding that 2d is designed to fix. Raw run data
+kept in this session's scratchpad, not committed (throwaway per the plan).
+
 ---
 
 ### Phase 1 — Permanent cross-surface regression harness + PRE-FIX baseline
