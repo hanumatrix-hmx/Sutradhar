@@ -6,15 +6,29 @@
 
 ## Ways to use Sutradhar
 
-Pick the integration surface that matches what you're building. All three sit on the same
-engine (`@sutradhar/capability-runtime`), so behavior is identical across them.
+**Published on npm as a single package: [`sutradhar`](https://www.npmjs.com/package/sutradhar).**
+No local build or repo checkout needed for any of these — `npx` fetches it directly. Pick the
+integration surface that matches what you're building; all three share the same engine, so
+behavior is identical across them.
 
-| I want to... | Use | Docs |
-|---|---|---|
-| Let an MCP-compatible AI client (Claude Desktop, ZCode, Cline, ...) drive a real browser | **`@sutradhar/mcp-server`** | [packages/mcp-server/README.md](./packages/mcp-server/README.md) |
-| Drive a browser from my own Node code (scraping, testing, RPA, agent tooling) | **`sutradhar`** (the SDK) | [packages/sutradhar/README.md](./packages/sutradhar/README.md) |
-| Drive a browser from a terminal, no scripting | **`@sutradhar/cli`** | [packages/cli/README.md](./packages/cli/README.md) |
-| Run the full reference app (REST API + agent loop + web inspector dashboard) | this monorepo's `apps/server` + `packages/frontend` | see [Quickstart & Development](#-quickstart--development) below |
+| I want to... | Use |
+|---|---|
+| Let an MCP-compatible AI client (Claude Code, Claude Desktop, Cline, ...) drive a real browser | `npx --package=sutradhar sutradhar-mcp` |
+| Drive a browser from a terminal, no scripting | `npx --package=sutradhar sutradhar <command>` |
+| Drive a browser from my own Node code (scraping, testing, RPA, agent tooling) | `npm install sutradhar` then `import { launch } from 'sutradhar'` |
+
+**Setting this up in a project, or want an AI coding agent to know how to use it?** See
+[docs/AGENT_SETUP.md](./docs/AGENT_SETUP.md) — a self-contained, copy-into-any-project guide
+covering setup, the full tool catalog, and usage guidance, written for an LLM to act on
+directly, not just a human to read.
+
+Working inside *this* monorepo instead (contributing to Sutradhar itself, not just using it)?
+The per-package READMEs cover the pre-bundling, workspace-internal view:
+[packages/mcp-server/README.md](./packages/mcp-server/README.md),
+[packages/sutradhar/README.md](./packages/sutradhar/README.md),
+[packages/cli/README.md](./packages/cli/README.md). Or run the full reference app (REST API +
+agent loop + web inspector dashboard) — this monorepo's `apps/server` + `packages/frontend`,
+see [Quickstart & Development](#-quickstart--development) below.
 
 ---
 
