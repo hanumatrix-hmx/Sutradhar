@@ -88,9 +88,14 @@ export class Page {
     return result.base64;
   }
 
-  /** Evaluate arbitrary JavaScript in the page context. */
-  public async evaluate<T = unknown>(expression: string): Promise<T> {
-    return this.runtime.eval<T>(this.sessionId, expression, this.tabId);
+  /**
+   * Evaluate arbitrary JavaScript. Runs in the top-level page's context by default; pass
+   * `frameSelector` (a CSS selector or snapshot [#id] for an `<iframe>` element on this page)
+   * to evaluate inside that frame instead — including a genuinely cross-origin one, which this
+   * page's own JS could never read into itself (same-origin policy).
+   */
+  public async evaluate<T = unknown>(expression: string, frameSelector?: string): Promise<T> {
+    return this.runtime.eval<T>(this.sessionId, expression, this.tabId, frameSelector);
   }
 
   /** Read cookies for this tab's URL. */

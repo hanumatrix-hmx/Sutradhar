@@ -795,16 +795,25 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
     {
       description:
         'Evaluate arbitrary JavaScript in the page context and return the serialized result. ' +
-        'Use for extraction the dedicated tools cannot express.',
+        'Use for extraction the dedicated tools cannot express. Runs in the top-level page by ' +
+        'default; pass frameSelector (a CSS selector or snapshot [#id] for an <iframe> element ' +
+        'on the top-level page) to evaluate inside that frame instead — including a genuinely ' +
+        'cross-origin one, which the top-level page\'s own JS could never read into itself ' +
+        '(same-origin policy). click/type already reach into cross-origin iframes on their ' +
+        'own; eval needs frameSelector to do the same.',
       inputSchema: {
         sessionId: z.string(),
         code: z.string().describe('JavaScript expression or function body to evaluate.'),
         tabId: z.string().optional(),
+        frameSelector: z
+          .string()
+          .optional()
+          .describe('CSS selector or snapshot [#id] for an <iframe> element on the top-level page — evaluate inside that frame instead of the top-level page.'),
       },
     },
-    async ({ sessionId, code, tabId }) => {
+    async ({ sessionId, code, tabId, frameSelector }) => {
       try {
-        return jsonResult({ result: await runtime.eval(sessionId, code, tabId) });
+        return jsonResult({ result: await runtime.eval(sessionId, code, tabId, frameSelector) });
       } catch (e) {
         return errorResult(`eval failed: ${(e as Error).message}`);
       }
@@ -836,7 +845,10 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
       description:
         'Extract structured data from the page. For each named field, provide a CSS selector (and optionally ' +
         'an attribute to read); returns every matching element\'s text or attribute value as an array, ' +
-        'e.g. {"titles": {"selector": ".product h2"}, "links": {"selector": ".product a", "attribute": "href"}}.',
+        'e.g. {"titles": {"selector": ".product h2"}, "links": {"selector": ".product a", "attribute": "href"}}. ' +
+        'Runs against the top-level page by default; pass frameSelector (a CSS selector or snapshot [#id] for ' +
+        'an <iframe> element on the top-level page) to extract from inside that frame instead — including a ' +
+        'genuinely cross-origin one.',
       inputSchema: {
         sessionId: z.string(),
         fields: z
@@ -845,11 +857,15 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
             message: 'fields must have at least one entry — an empty object is a no-op extraction',
           }),
         tabId: z.string().optional(),
+        frameSelector: z
+          .string()
+          .optional()
+          .describe('CSS selector or snapshot [#id] for an <iframe> element on the top-level page — extract from inside that frame instead of the top-level page.'),
       },
     },
-    async ({ sessionId, fields, tabId }) => {
+    async ({ sessionId, fields, tabId, frameSelector }) => {
       try {
-        return jsonResult(await runtime.extractData(sessionId, fields, tabId));
+        return jsonResult(await runtime.extractData(sessionId, fields, tabId, frameSelector));
       } catch (e) {
         return errorResult(`extract_data failed: ${(e as Error).message}`);
       }

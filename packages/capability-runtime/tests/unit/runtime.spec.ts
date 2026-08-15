@@ -348,9 +348,66 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
       );
     });
 
+    it('extractData with a frameSelector on an unknown session still throws BrowserNotAvailableError (frame resolution never gets a chance to run)', async () => {
+      const runtime = new SutradharRuntime();
+      await expect(
+        runtime.extractData('nope', { title: { selector: 'h1' } }, undefined, '#some-iframe'),
+      ).rejects.toThrow(BrowserNotAvailableError);
+    });
+
     it('getActionHistory on an unknown session throws BrowserNotAvailableError', () => {
       const runtime = new SutradharRuntime();
       expect(() => runtime.getActionHistory('nope')).toThrow(BrowserNotAvailableError);
+    });
+  });
+
+  describe('eval/extractData frameSelector — cross-frame reads (fixes the gap found in the extreme-scenarios comparison: eval() previously could never reach a genuinely cross-origin iframe, unlike click/type)', () => {
+    it('eval on an unknown session throws BrowserNotAvailableError even with frameSelector set', async () => {
+      const runtime = new SutradharRuntime();
+      await expect(runtime.eval('nope', '1 + 1', undefined, '#some-iframe')).rejects.toThrow(
+        BrowserNotAvailableError,
+      );
+    });
+
+    it('resolveFrame throws a clear error when frameSelector matches no element on the top-level page', async () => {
+      const runtime = new SutradharRuntime();
+      const fakePage = { $: vi.fn().mockResolvedValue(null) };
+      // @ts-expect-error — reaching into a private method to test resolveFrame's own error
+      // contract directly, without needing a real launched browser (this file's stated scope).
+      await expect(runtime.resolveFrame(fakePage, '#missing-iframe')).rejects.toThrow(
+        /No element matched frameSelector "#missing-iframe"/,
+      );
+    });
+
+    it('resolveFrame throws a clear error when the matched element is not an <iframe> (no content frame)', async () => {
+      const runtime = new SutradharRuntime();
+      const fakeHandle = { contentFrame: vi.fn().mockResolvedValue(null) };
+      const fakePage = { $: vi.fn().mockResolvedValue(fakeHandle) };
+      // @ts-expect-error — same private-method testing approach as above.
+      await expect(runtime.resolveFrame(fakePage, '.not-an-iframe')).rejects.toThrow(
+        /is not an <iframe>/,
+      );
+    });
+
+    it('resolveFrame returns the real Frame from a matched iframe element\'s contentFrame()', async () => {
+      const runtime = new SutradharRuntime();
+      const fakeFrame = { evaluate: vi.fn() };
+      const fakeHandle = { contentFrame: vi.fn().mockResolvedValue(fakeFrame) };
+      const fakePage = { $: vi.fn().mockResolvedValue(fakeHandle) };
+      // @ts-expect-error — same private-method testing approach as above.
+      const frame = await runtime.resolveFrame(fakePage, '#cross-origin-frame');
+      expect(frame).toBe(fakeFrame);
+      expect(fakePage.$).toHaveBeenCalledWith('#cross-origin-frame');
+    });
+
+    it('resolveFrame normalizes a numeric snapshot id the same way click/type do', async () => {
+      const runtime = new SutradharRuntime();
+      const fakeFrame = { evaluate: vi.fn() };
+      const fakeHandle = { contentFrame: vi.fn().mockResolvedValue(fakeFrame) };
+      const fakePage = { $: vi.fn().mockResolvedValue(fakeHandle) };
+      // @ts-expect-error — same private-method testing approach as above.
+      await runtime.resolveFrame(fakePage, '12');
+      expect(fakePage.$).toHaveBeenCalledWith('[data-sd-node-id="12"]');
     });
   });
 

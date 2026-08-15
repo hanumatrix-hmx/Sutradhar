@@ -79,15 +79,20 @@ async function scenarioNestedShadowIframe() {
       typeError = typeError ?? (err.message || String(err)).split('\n')[0];
     }
 
-    // Try to independently verify via eval() anyway (expected to fail per the discovery above —
-    // confirming honestly rather than trusting type/click's own success:true, per this project's
-    // "verify, don't trust the action's own report" standard).
+    // RE-VERIFICATION (2026-08-16): originally this eval() readback failed outright (no
+    // frame-targeting existed), leaving type/click's cross-boundary success unverifiable. Fixed
+    // in runtime.ts — eval() now accepts frameSelector, resolving the iframe's real Frame via
+    // contentFrame() (CDP-level, not subject to the file:// opaque-origin restriction that
+    // page.evaluate() on the outer page hit). Still reaching further into the shadow root from
+    // there, since frameSelector targets the frame boundary, not the shadow boundary inside it.
     let evalResult = null;
     let evalError = null;
     try {
       evalResult = await runtime.eval(
         sid,
-        `document.querySelector('#nested-frame').contentDocument.querySelector('nested-widget').shadowRoot.getElementById('nested-result').textContent`,
+        `document.querySelector('nested-widget').shadowRoot.getElementById('nested-result').textContent`,
+        undefined,
+        '#nested-frame',
       );
     } catch (err) {
       evalError = (err.message || String(err)).split('\n')[0];
@@ -96,10 +101,10 @@ async function scenarioNestedShadowIframe() {
 
     if (!independentlyVerified) {
       throw new Error(
-        `type/click reported success (type=${typeReportedSuccess}, click=${clickReportedSuccess}) suggesting Sutradhar's action engine DID reach across the iframe+shadow boundary (unlike eval(), which is restricted to the outer page's JS context), but the actual result text could NOT be independently verified: eval() readback failed with "${evalError}" because this fixture's separately-hosted file:// iframe is a distinct opaque origin in Chrome (confirmed: contentDocument is null from the outer page). No public SutradharRuntime API (eval/extractData) can read into this frame. typeError=${typeError} clickError=${clickError}`,
+        `type/click reported success (type=${typeReportedSuccess}, click=${clickReportedSuccess}) but independent verification via eval(..., frameSelector:'#nested-frame') failed: evalResult=${JSON.stringify(evalResult)} evalError=${evalError} typeError=${typeError} clickError=${clickError}`,
       );
     }
-    return { typeReportedSuccess, clickReportedSuccess, evalResult, independentlyVerified };
+    return { typeReportedSuccess, clickReportedSuccess, evalResult, independentlyVerified, note: 'FIXED: eval() with frameSelector now independently verifies type/click\'s cross-iframe+shadow reach.' };
   });
 }
 
@@ -171,40 +176,61 @@ async function scenarioCustomDragDrop() {
 }
 
 // ── 4. Genuinely cross-origin iframe (example.com inside a local page) ─────────────────────
+// RE-VERIFICATION (2026-08-16): the original run of this scenario found a real gap — eval()
+// ran in the outer page's own JS context via page.evaluate(), so it hit the same same-origin
+// policy any page script would. Fixed in packages/capability-runtime/src/runtime.ts: eval()/
+// extractData() now accept an optional frameSelector, resolving the named <iframe> element's
+// real Frame (via ElementHandle.contentFrame(), a CDP-level primitive unaffected by
+// same-origin policy — the same mechanism click/type already used to reach cross-origin
+// content) and evaluating there instead of the outer page. This re-run exercises the real fix,
+// not a workaround.
 async function scenarioCrossOriginIframe() {
   return withSession(async (sid) => {
     await runtime.navigate(sid, fx('cross-origin-iframe.html'));
     assertSuccess(await runtime.waitForSelector(sid, 'iframe#cross-origin-frame', 10000), 'wait for cross-origin iframe');
-    // Give the cross-origin document a moment to finish its own load inside the iframe.
     await new Promise((r) => setTimeout(r, 1500));
 
-    let selectorEvalWorked = false;
-    let selectorEvalError = null;
-    let heading = null;
+    // Old path, still checked for contrast: confirms the outer-page eval genuinely remains
+    // blocked (this isn't expected to have changed — same-origin policy is a browser rule,
+    // not something Sutradhar could or should route around at the page-JS level).
+    let outerPageEvalWorked = false;
+    let outerPageEvalError = null;
     try {
-      // This is exactly what the fixture's own comment calls out: the OUTER page's JS context
-      // cannot read contentDocument across origins (browser same-origin policy) — this call
-      // goes through runtime.eval(), which executes in the outer page's JS context via
-      // page.evaluate(), so it inherits that same restriction.
-      heading = await runtime.eval(sid, `document.querySelector('#cross-origin-frame').contentDocument.querySelector('h1').textContent`);
-      selectorEvalWorked = heading === 'Example Domain';
+      const heading = await runtime.eval(sid, `document.querySelector('#cross-origin-frame').contentDocument.querySelector('h1').textContent`);
+      outerPageEvalWorked = heading === 'Example Domain';
     } catch (err) {
-      selectorEvalError = (err.message || String(err)).split('\n')[0];
+      outerPageEvalError = (err.message || String(err)).split('\n')[0];
     }
 
-    // Real fallback: Puppeteer/CDP-level frame access, which operates outside the page's own JS
-    // context and so isn't blocked by same-origin policy the way page.evaluate() is. Sutradhar's
-    // runtime doesn't expose a public "get frame by selector" API, so this reaches it via the
-    // one CDP-level primitive that IS exposed: eval() on a specific tabId isn't frame-scoped
-    // either, so there's genuinely no documented Sutradhar API for cross-origin frame content
-    // read — reported honestly below instead of inventing a workaround outside the public API.
+    // New path: the real fix. frameSelector resolves the iframe's own Frame via contentFrame()
+    // and evaluates inside it — a genuinely different execution context than the outer page.
+    const heading = await runtime.eval(
+      sid,
+      `document.querySelector('h1').textContent`,
+      undefined,
+      '#cross-origin-frame',
+    );
+    if (heading !== 'Example Domain') {
+      throw new Error(`frameSelector eval returned unexpected heading: ${JSON.stringify(heading)}`);
+    }
+
+    // Also verify extractData() got the same fix, not just eval().
+    const extracted = await runtime.extractData(
+      sid,
+      { heading: { selector: 'h1' } },
+      undefined,
+      '#cross-origin-frame',
+    );
+    if (extracted.heading?.[0] !== 'Example Domain') {
+      throw new Error(`frameSelector extractData returned unexpected result: ${JSON.stringify(extracted)}`);
+    }
+
     return {
-      selectorEvalWorked,
-      selectorEvalError,
       heading,
-      note: selectorEvalWorked
-        ? 'eval() reached the cross-origin iframe heading directly'
-        : 'eval() blocked by same-origin policy as expected (runs in outer page JS context); no other public SutradharRuntime API exposes CDP-level cross-origin frame content access',
+      extractedHeading: extracted.heading[0],
+      outerPageEvalWorked,
+      outerPageEvalError,
+      note: 'FIXED: eval()/extractData() with frameSelector now correctly reach the cross-origin iframe (via contentFrame(), CDP-level, same mechanism click/type already used). Outer-page eval remains correctly blocked by same-origin policy, as it should be.',
     };
   });
 }

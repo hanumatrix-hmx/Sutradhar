@@ -201,6 +201,47 @@ findings:
 
 Append-only. Newest first.
 
+### 2026-08-16 — Milestone 28: researched real hardest-case scenarios, 4-way tested, found and fixed a real Sutradhar gap, re-verified live
+
+User-directed: "find out the hardest usecases for the browsing tool that are in the world. Then
+we will test it with all Sutradhar, playwright, puppeteer and pinchtab." Researched real,
+sourced hard cases (Playwright/Puppeteer's own GitHub issues, QA community docs, the WebCanvas
+agent-benchmark paper) rather than inventing scenarios — 7 testable ones selected: nested shadow
+DOM inside an iframe, a real ProseMirror editor, custom pointer-only drag-and-drop, a genuinely
+cross-origin iframe, real Cloudflare Turnstile detection, a large/deep real DOM, and 5-way
+session concurrency. Built local fixtures + confirmed live URLs, then ran all 7 through
+Sutradhar, real Playwright, real Puppeteer, and real pinchtab/pinchtab independently (4 parallel
+agents, each blind to the others). Full writeup:
+`tools/engine-comparison/extreme-scenarios-comparison-2026-08-16.md`.
+
+**Initial result: Playwright 7/7, Puppeteer 7/7 (more manual/verbose throughout), Sutradhar
+6/7, real pinchtab 6/7.** No clean sweep for anyone — two scenarios picked for documented real
+bugs (contenteditable `fill()`, HTML5-DnD-only drag) didn't reproduce on any of the four current
+versions, reported honestly rather than discarded. Real pinchtab surfaced two genuine bugs of
+its own (cross-origin frame-switching failure; a real concurrency reliability gap — 80% success
+under 5-way load due to its shared-single-instance architecture) plus a real performance cliff
+(accessibility-snapshot mode >10x slower than its own text read on the large-DOM page).
+
+**Sutradhar's one real gap — no CDP-level cross-frame read path for `eval()`/`extractData()`
+— was fixed the same day, per explicit instruction ("plan to fix the gap. and execute it
+please and re-verify again").** Root cause (confirmed via a dedicated read-only exploration
+pass first, not guessed): `click`/`type` already cross frame boundaries because
+`browser-action-engine.ts`'s `resolveElement()` races `page.frames()` and runs through each
+`Frame`'s own CDP execution context — `eval()`/`extractData()` never got the same treatment,
+always running via `page.evaluate()` on the top-level page, subject to same-origin policy like
+any page script. Fixed with a new optional `frameSelector` parameter on both methods
+(`packages/capability-runtime/src/runtime.ts`), resolving the named iframe's real `Frame` via
+Puppeteer's `ElementHandle.contentFrame()` — additive, fully backward compatible, no
+frame-listing subsystem built (a materially bigger change the fix doesn't need). Threaded
+through the MCP tools and the SDK's `Page.evaluate()`. 6 new unit tests; full vitest suites for
+`capability-runtime` (77), `mcp-server` (22), and the `sutradhar` SDK (7, after also fixing an
+unrelated stale hardcoded-version assertion the run surfaced) all pass. **Live re-verification**
+re-ran the exact same two affected scenarios against the real fix: both now genuinely pass with
+real extracted evidence (`"Example Domain"`, `"submitted:hello-nested"`), and the old outer-page
+path was confirmed to still correctly fail (the fix adds a real capability, doesn't bypass a
+same-origin-policy boundary it shouldn't). **Sutradhar's score on this comparison is now 7/7,
+tying Playwright and Puppeteer.**
+
 ### 2026-08-15 — Milestone 27: sixth WebBench sample (7/12), combined total now 36/59 (61%)
 
 Continued the primary benchmarking loop after closing out the pinchtab-comparison thread

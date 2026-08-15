@@ -8,7 +8,7 @@ import { launch, Browser, Page, SutradharRuntime, SUTRADHAR_VERSION } from '../.
 
 describe('sutradhar SDK public API', () => {
   it('exports its package version', () => {
-    expect(SUTRADHAR_VERSION).toBe('0.1.0');
+    expect(SUTRADHAR_VERSION).toBe('0.2.2');
   });
 
   it('exposes the launch entry point and the Browser/Page classes', () => {

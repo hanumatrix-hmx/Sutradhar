@@ -708,19 +708,49 @@ export class SutradharRuntime {
   }
 
   /**
-   * Extract structured data from the page: for each entry in `fields`, run a
-   * `querySelectorAll` and collect either the element's text content or a named attribute
-   * from every match. A purpose-built alternative to hand-writing an `eval()` scraper for
-   * the common "give me a list of {title, price, link}" case.
+   * Resolve an `<iframe>` element (found on the top-level page, by CSS selector or snapshot
+   * node id) to its own `Frame` — including genuinely cross-origin frames. `page.evaluate()`
+   * runs in the top-level page's own JS context, so it's subject to the same-origin policy
+   * exactly like any page script would be; a `Frame`'s `.evaluate()` runs via Puppeteer's
+   * per-frame CDP execution context instead, which is why `click`/`type` (built on
+   * `browser-action-engine`'s cross-frame `resolveElement`) can already reach into a
+   * cross-origin iframe while a plain page-level `eval()` cannot — this gives `eval`/
+   * `extractData` the same real capability, not a workaround.
+   */
+  private async resolveFrame(page: ReturnType<SutradharRuntime['requirePage']>, frameSelector: string) {
+    const handle = await page.$(normalizeTarget(frameSelector));
+    if (!handle) {
+      throw new Error(`No element matched frameSelector "${frameSelector}" on the top-level page.`);
+    }
+    const frame = await handle.contentFrame();
+    if (!frame) {
+      throw new Error(
+        `Element matching "${frameSelector}" is not an <iframe> (or its content frame isn't available yet — the frame may still be loading).`,
+      );
+    }
+    return frame;
+  }
+
+  /**
+   * Extract structured data: for each entry in `fields`, run a `querySelectorAll` and collect
+   * either the element's text content or a named attribute from every match. A purpose-built
+   * alternative to hand-writing an `eval()` scraper for the common "give me a list of
+   * {title, price, link}" case.
+   *
+   * Runs against the top-level page by default. Pass `frameSelector` (a CSS selector or
+   * snapshot node id identifying an `<iframe>` element on the top-level page) to extract from
+   * inside that frame instead — including a genuinely cross-origin one.
    */
   public async extractData(
     sessionId: string,
     fields: Record<string, { selector: string; attribute?: string }>,
     tabId?: string,
+    frameSelector?: string,
   ): Promise<Record<string, string[]>> {
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
-    return page.evaluate((fieldSpec) => {
+    const target = frameSelector ? await this.resolveFrame(page, frameSelector) : page;
+    return target.evaluate((fieldSpec) => {
       const out: Record<string, string[]> = {};
       for (const [name, spec] of Object.entries(fieldSpec)) {
         const elements = Array.from(document.querySelectorAll(spec.selector));
@@ -732,12 +762,23 @@ export class SutradharRuntime {
     }, fields);
   }
 
-  /** Evaluate arbitrary JS in the page context. Returns the serialized result. */
-  public async eval<T = unknown>(sessionId: string, code: string, tabId?: string): Promise<T> {
+  /**
+   * Evaluate arbitrary JS. Runs in the top-level page's context by default; pass
+   * `frameSelector` (a CSS selector or snapshot node id identifying an `<iframe>` element on
+   * the top-level page) to evaluate inside that frame instead — including a genuinely
+   * cross-origin one, which the top-level page's own JS could never reach into itself.
+   */
+  public async eval<T = unknown>(
+    sessionId: string,
+    code: string,
+    tabId?: string,
+    frameSelector?: string,
+  ): Promise<T> {
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
-    // page.evaluate<unknown, unknown> keeps the dynamic return type honest under strict TS.
-    return (await page.evaluate(code as unknown as string)) as T;
+    const target = frameSelector ? await this.resolveFrame(page, frameSelector) : page;
+    // evaluate<unknown, unknown> keeps the dynamic return type honest under strict TS.
+    return (await target.evaluate(code as unknown as string)) as T;
   }
 
   /** Read cookies for the active tab's URL. */

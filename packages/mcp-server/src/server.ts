@@ -91,7 +91,7 @@ export async function createSutradharServer(options: CreateServerOptions = {}): 
 
   const server = new McpServer({
     name: 'sutradhar',
-    version: '0.2.1',
+    version: '0.2.2',
   });
 
   registerTools(server, { runtime, agent });

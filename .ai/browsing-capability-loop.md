@@ -67,6 +67,26 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-16 — Milestone 28: real capability gap found via a 4-way hard-case comparison, fixed, live-reverified
+
+`eval()`/`extractData()` could not read into a genuinely cross-origin iframe — both always ran
+via `page.evaluate()` on the top-level page, subject to same-origin policy like any page script,
+unlike `click`/`type` which already cross frame boundaries via `browser-action-engine.ts`'s
+`resolveElement()` racing `page.frames()`. Found via a real, sourced 7-scenario hard-case
+comparison against Playwright/Puppeteer/real pinchtab (see `.ai/competitive-benchmarks.md`
+Milestone 28 for the full comparison and fix detail — this entry is the capability-loop-side
+summary). Fixed with an additive, backward-compatible `frameSelector` parameter on both methods,
+resolving the target iframe's real `Frame` via Puppeteer's `ElementHandle.contentFrame()`
+(CDP-level, not subject to the same-origin restriction page.evaluate() hits) — no bigger
+frame-listing subsystem built, since the realistic case (an agent that already knows a specific
+iframe's selector) doesn't need one. Exposed via `SutradharRuntime`, the `browser.eval`/
+`browser.extract_data` MCP tools, and the SDK's `Page.evaluate()`. 6 new unit tests +
+full vitest suites (capability-runtime 77, mcp-server 22, sutradhar SDK 7) pass. Live-reverified
+against the real scenario that found the gap — both `eval()` and `extractData()` now correctly
+read real cross-origin content (`"Example Domain"`), and the old outer-page path was confirmed
+to still correctly fail (a real browser security boundary, not something the fix should or does
+bypass).
+
 ### 2026-08-14 — Milestone 22: real Playwright hits the identical real-world blocks
 
 Direct (not analogous) evidence that Sutradhar isn't at a disadvantage versus real Playwright

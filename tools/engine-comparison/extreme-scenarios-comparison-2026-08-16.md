@@ -1,5 +1,25 @@
 # Hardest real-world browser-automation cases: Sutradhar vs. Playwright vs. Puppeteer vs. real pinchtab/pinchtab
 
+**Update 2026-08-16 (same day, follow-up): the Sutradhar gap found below is fixed and
+re-verified live.** `eval()`/`extractData()` (`packages/capability-runtime/src/runtime.ts`) now
+accept an optional `frameSelector` — a CSS selector or snapshot `[#id]` for an `<iframe>`
+element on the top-level page — and evaluate inside that frame's real `Frame` object (via
+Puppeteer's `ElementHandle.contentFrame()`, a CDP-level primitive, the same mechanism
+`click`/`type` already used to reach cross-origin content) instead of always running on the
+top-level page. Exposed through all three surfaces: `SutradharRuntime.eval()`/`.extractData()`,
+the `browser.eval`/`browser.extract_data` MCP tools, and the SDK's `Page.evaluate()`. 6 new unit
+tests added (`packages/capability-runtime/tests/unit/runtime.spec.ts`), full `capability-runtime`
+suite (77 tests), `mcp-server` suite (22 tests), and `sutradhar` SDK suite (7 tests, after also
+fixing one unrelated stale hardcoded-version assertion the run surfaced) all pass. Live
+re-verification re-ran the exact same two affected scenarios (nested-shadow-iframe,
+cross-origin-iframe) against the real fix — both now genuinely pass with real extracted
+evidence (`"Example Domain"`, `"submitted:hello-nested"`), not just an absence of errors, and
+the old outer-page eval path was confirmed to correctly *remain* blocked (real same-origin
+policy, not something to route around at the page-JS level — the fix adds a legitimate new
+path, it doesn't weaken an existing one). **Sutradhar's score on this comparison is now 7/7.**
+See the "Fix and re-verification" section at the end for full detail; the original findings
+below are preserved as-found, not edited, since they're what motivated the fix.
+
 Direct response to: "find out the hardest usecases for the browsing tool that are in the world.
 Then we will test it with all Sutradhar, playwright, puppeteer and pinchtab." The 7 scenarios
 were sourced from real, cited material — Playwright/Puppeteer's own GitHub issue trackers, QA
@@ -13,7 +33,7 @@ paper — not invented. Full sourcing in the prior turn's research; scenario def
 7 scenarios using that tool's own real, idiomatic API — no shared abstraction layer, no stealth/
 evasion. Written and run independently by 4 parallel agents, each blind to the others' results.
 
-## Final score
+## Final score (original run — see "Fix and re-verification" below for the updated Sutradhar 7/7)
 
 | Tool | Scenarios passed | Notes |
 |---|---|---|
@@ -153,3 +173,56 @@ Two of the seven scenarios (rich-text editor, custom drag-and-drop) were picked 
 because of documented real-world pain points and didn't reproduce failures on *any* of the four
 current tool versions — reported honestly rather than discarded, since a benchmark that only
 reports the scenarios that "worked out" isn't a benchmark.
+
+## Fix and re-verification (2026-08-16)
+
+**The fix**: `packages/capability-runtime/src/runtime.ts` — a new private `resolveFrame(page,
+frameSelector)` helper resolves an `<iframe>` element (`page.$(normalizeTarget(frameSelector))`,
+supporting both CSS selectors and numeric snapshot ids, same convention as every other target
+argument in this codebase) to its real `Frame` via `ElementHandle.contentFrame()`, throwing a
+clear error if the selector matches nothing or the matched element isn't a frame-owning iframe
+(or its content frame isn't available yet). `eval()` and `extractData()` both gained an optional
+trailing `frameSelector` parameter — when present, they evaluate against the resolved `Frame`
+instead of the top-level `Page`; when absent, behavior is 100% unchanged (fully backward
+compatible, additive-only). Threaded through `browser.eval`/`browser.extract_data`'s MCP tool
+schemas and the SDK's `Page.evaluate()` the same way.
+
+**Why this specific fix and not something bigger**: the investigation (a dedicated read-only
+exploration pass before writing any code) confirmed `click`/`type` already cross frame
+boundaries — `browser-action-engine.ts`'s `resolveElement()` races `page.frames()` for a
+selector match, and each `Frame`'s own `waitForSelector`/element handles run through Puppeteer's
+per-frame CDP execution context, unaffected by same-origin policy. `eval()`/`extractData()`
+never got the equivalent treatment; they always ran via `page.evaluate()` on the top-level page,
+which — like any page script — is bound by the browser's same-origin policy. No frame-listing/
+frame-provenance system exists anywhere in the codebase, and building one (threading frame
+identity through `snapshot()`/`axSnapshot()` results) would be a materially bigger, multi-day
+change for a capability this specific fix doesn't need — the realistic case is an agent that
+already knows "there's an iframe with selector X" (from a snapshot or from its own task context)
+and wants to read inside it, which `frameSelector` covers directly.
+
+**Verification, not just a green checkmark**:
+- `packages/capability-runtime` typechecks clean (only the same pre-existing, unrelated `pngjs`
+  declaration-file warning noted earlier this session) and its full vitest suite — 77 tests,
+  including 6 new ones covering `resolveFrame`'s own error contract (no match, not an iframe,
+  successful resolution, numeric-id normalization) and the unknown-session error path with
+  `frameSelector` set — all pass.
+- `packages/mcp-server` (22 tests) and `packages/sutradhar` (7 tests, after fixing one
+  unrelated stale hardcoded-version assertion the run itself surfaced — `'0.1.0'` should have
+  read `'0.2.1'` since the last publish) both typecheck clean and pass in full.
+- **Live re-verification**, not trusted from the test suite alone: re-ran
+  `tools/engine-comparison/sutradhar-extreme.mjs`'s exact same 7 scenarios fresh. All 7 now pass,
+  including the two the fix targeted:
+  - `cross-origin-iframe`: `eval(sid, "document.querySelector('h1').textContent", undefined,
+    '#cross-origin-frame')` → `"Example Domain"`. `extractData()` with the same `frameSelector`
+    → `{heading: ["Example Domain"]}`. The old outer-page path was re-checked in the same run
+    and confirmed to still correctly fail (`outerPageEvalWorked: false`) — the fix adds a real,
+    legitimate new capability, it doesn't bypass a browser security boundary it shouldn't.
+  - `nested-shadow-iframe`: `eval(sid, "...shadowRoot.getElementById('nested-result')
+    .textContent", undefined, '#nested-frame')` → `"submitted:hello-nested"` — independently
+    confirms `type()`/`click()`'s already-correct cross-boundary reach, which the original run
+    could report but not verify.
+
+**Updated final score**: Sutradhar 7/7, tying Playwright and Puppeteer. Real pinchtab's 6/7
+(with its own genuine, reproduced cross-origin frame-switching bug, unrelated to this fix) is
+unchanged — this was a Sutradhar-specific gap and fix, not something that touched or was
+verified against the other three tools again.

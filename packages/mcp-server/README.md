@@ -68,8 +68,8 @@ Grouped here by category, matching `tools.ts`'s own section layout.
 |---|---|
 | `browser.screenshot` | Full-page PNG (returned inline). |
 | `browser.export_pdf` | Export the current page as PDF. |
-| `browser.eval` | Evaluate arbitrary JS in the page. |
-| `browser.extract_data` | Structured extraction: field name → selector map, returns matched text/attributes. |
+| `browser.eval` | Evaluate arbitrary JS in the page. Optional `frameSelector` runs it inside a specific `<iframe>` instead — including a genuinely cross-origin one. |
+| `browser.extract_data` | Structured extraction: field name → selector map, returns matched text/attributes. Optional `frameSelector` extracts from inside a specific `<iframe>` instead — including a genuinely cross-origin one. |
 
 ### Storage
 | Tool | Description |
