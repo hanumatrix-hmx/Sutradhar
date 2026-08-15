@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Nested inner document</title></head>
+<body>
+  <h2>Inner document (loaded inside an iframe)</h2>
+  <nested-widget></nested-widget>
+
+  <script>
+    class NestedWidget extends HTMLElement {
+      constructor() {
+        super();
+        // Open shadow root — traversable in principle, but only if the caller correctly
+        // resolves BOTH the iframe boundary AND the shadow boundary in one selector/handle
+        // chain. This is the real hard case: not "is it possible" but "does the tool's
+        // normal selector/action path actually reach in without a hand-rolled workaround."
+        const root = this.attachShadow({ mode: 'open' });
+        root.innerHTML = `
+          <input id="nested-input" placeholder="type here">
+          <button id="nested-submit">Submit</button>
+          <div id="nested-result"></div>
+        `;
+        root.getElementById('nested-submit').addEventListener('click', () => {
+          const val = root.getElementById('nested-input').value;
+          root.getElementById('nested-result').textContent = 'submitted:' + val;
+        });
+      }
+    }
+    customElements.define('nested-widget', NestedWidget);
+  </script>
+</body>
+</html>

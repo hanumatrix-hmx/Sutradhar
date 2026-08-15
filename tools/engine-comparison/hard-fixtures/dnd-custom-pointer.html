@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Custom pointer-based drag-and-drop</title>
+<style>
+  .zone { padding: 8px; margin: 8px; width: 160px; min-height: 160px; border: 1px solid #333; display: inline-block; vertical-align: top; }
+  #card { padding: 10px; background: #eee; width: 100px; cursor: grab; user-select: none; position: relative; }
+  .zone.over { background: #dff; }
+</style>
+</head>
+<body>
+  <h1>Custom pointer-based drag (no native HTML5 draggable/dataTransfer at all)</h1>
+  <p>Many real Kanban/workflow-builder UIs implement drag this way — a real, high-level
+     "drag and drop" API built around HTML5 dragstart/dragover/drop events does nothing here;
+     the only thing that works is a genuine mousedown → mousemove (crossing the target's
+     bounding box) → mouseup sequence, since that's literally the only thing this page listens
+     for.</p>
+  <div class="zone" id="source"><div id="card">Drag me</div></div>
+  <div class="zone" id="target"></div>
+  <div id="pointer-dnd-result">not-dropped</div>
+
+  <script>
+    const card = document.getElementById('card');
+    const source = document.getElementById('source');
+    const target = document.getElementById('target');
+    let dragging = false;
+
+    card.addEventListener('mousedown', (e) => {
+      dragging = true;
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!dragging) return;
+      const overTarget = document.elementFromPoint(e.clientX, e.clientY);
+      const inTarget = overTarget === target || target.contains(overTarget);
+      target.classList.toggle('over', inTarget);
+    });
+
+    document.addEventListener('mouseup', (e) => {
+      if (!dragging) return;
+      dragging = false;
+      target.classList.remove('over');
+      const overEl = document.elementFromPoint(e.clientX, e.clientY);
+      const droppedOnTarget = overEl === target || target.contains(overEl);
+      if (droppedOnTarget) {
+        target.appendChild(card);
+        document.getElementById('pointer-dnd-result').textContent = 'dropped:card-in-target';
+      }
+    });
+  </script>
+</body>
+</html>

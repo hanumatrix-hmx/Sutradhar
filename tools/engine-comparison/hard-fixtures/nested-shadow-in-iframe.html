@@ -1,0 +1,10 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Nested Shadow DOM inside an iframe</title></head>
+<body>
+  <h1>Outer document</h1>
+  <p>The real target (an input + submit button) lives inside an open shadow root, inside a
+     same-origin iframe. Two encapsulation boundaries to cross in one flow.</p>
+  <iframe id="nested-frame" src="nested-shadow-in-iframe-inner.html" width="500" height="200"></iframe>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Real cross-origin iframe</title></head>
+<body>
+  <h1>Outer document (local file)</h1>
+  <p>The iframe below loads a genuinely different origin (https://example.com) — the browser's
+     same-origin policy means the outer page's OWN JavaScript cannot read
+     <code>iframe.contentDocument</code> (it's null / throws). Real automation tools generally
+     CAN still read frame content because their frame APIs operate at the CDP/browser-engine
+     level, not through the outer page's JS context — this scenario tests whether each tool's
+     normal selector/read path actually does that, not whether it's theoretically possible.</p>
+  <iframe id="cross-origin-frame" src="https://example.com" width="600" height="300"></iframe>
+</body>
+</html>
