@@ -146,3 +146,16 @@ so installing `sutradhar` pulls in exactly one real runtime dependency, `puppete
 
 Source lives in the [Sutradhar monorepo](https://github.com/hanumatrix-hmx/Sutradhar); this
 package is its single published distribution.
+
+## License
+
+`v0.2.0` and onward is licensed under the **Functional Source License 1.1, Apache-2.0 future
+grant** ([FSL-1.1-ALv2](https://fsl.software)) — free to use for almost everything (your own
+projects, internal tooling, research, professional services you provide to others), with one
+carve-out: you may not offer Sutradhar itself, or a substitute for it, as a competing commercial
+product or service. Each version automatically converts to the fully permissive Apache License
+2.0 two years after its release, so nothing here is locked up forever — see [LICENSE](./LICENSE)
+for the full text.
+
+`v0.1.0` was published under the MIT License and remains available under those original terms —
+license changes apply going forward, not retroactively.
