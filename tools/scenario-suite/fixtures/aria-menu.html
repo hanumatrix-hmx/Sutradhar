@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>ARIA-only Actions Menu</title>
+<style>
+  [role="menu"] { display: none; border: 1px solid #333; width: 160px; padding: 4px; }
+  [role="menu"].open { display: block; }
+  [role="menuitem"] { padding: 6px; cursor: pointer; }
+  [role="menuitem"]:hover { background: #eee; }
+</style>
+</head>
+<body>
+  <h1>Actions Menu (no CSS-selectable text on the trigger)</h1>
+  <!-- The trigger is deliberately a bare icon button: no visible text, no name/id/class hint —
+       only its aria-label carries the accessible name. A CSS-selector-only tool has nothing to
+       target here; only role/accessible-name-based grounding (axsnap/clickrole in Sutradhar,
+       role locators in Playwright) can find it. -->
+  <button aria-label="Open Actions Menu" id="menu-trigger">&#8942;</button>
+  <ul role="menu" id="actions-menu">
+    <li role="menuitem" id="mi-archive">Archive Item</li>
+    <li role="menuitem" id="mi-duplicate">Duplicate Item</li>
+    <li role="menuitem" id="mi-delete">Delete Item</li>
+  </ul>
+  <div id="action-result"></div>
+
+  <script>
+    const trigger = document.getElementById('menu-trigger');
+    const menu = document.getElementById('actions-menu');
+    trigger.addEventListener('click', () => menu.classList.toggle('open'));
+    document.getElementById('mi-archive').addEventListener('click', () => {
+      document.getElementById('action-result').textContent = 'ACTION TRIGGERED: archive';
+      menu.classList.remove('open');
+    });
+    document.getElementById('mi-duplicate').addEventListener('click', () => {
+      document.getElementById('action-result').textContent = 'ACTION TRIGGERED: duplicate';
+      menu.classList.remove('open');
+    });
+    document.getElementById('mi-delete').addEventListener('click', () => {
+      document.getElementById('action-result').textContent = 'ACTION TRIGGERED: delete';
+      menu.classList.remove('open');
+    });
+  </script>
+</body>
+</html>

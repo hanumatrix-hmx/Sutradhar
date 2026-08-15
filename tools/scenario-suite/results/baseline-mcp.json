@@ -1,0 +1,290 @@
+{
+  "surface": "mcp",
+  "capturedAt": "2026-08-15T22:13:36.342Z",
+  "protocolVerification": {
+    "serverInfo": {
+      "name": "sutradhar",
+      "version": "0.2.2"
+    },
+    "toolCount": 69
+  },
+  "results": [
+    {
+      "id": "UC-01",
+      "title": "Bot detection surface",
+      "surface": "mcp",
+      "success": true,
+      "ms": 8774,
+      "detail": {
+        "totalRows": 58,
+        "failedRows": [],
+        "uaRow": "User Agent (Old) Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+        "headlessLeaksInUA": true,
+        "unexpectedFailures": [],
+        "allRows": [
+          "Test Name Result",
+          "User Agent (Old) Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+          "WebDriver (New) missing (passed)",
+          "WebDriver Advanced passed",
+          "Chrome (New) present (passed)",
+          "Permissions (New) prompt",
+          "Plugins Length (Old) 5",
+          "Plugins is of type PluginArray passed",
+          "Languages (Old) en-GB,en-US,en",
+          "WebGL Vendor Canvas has no webgl context",
+          "WebGL Renderer Canvas has no webgl context",
+          "Broken Image Dimensions 16x16",
+          "PHANTOM_UA ok { \"userAgent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36\" }",
+          "PHANTOM_PROPERTIES ok { \"attributesFound\": [ false, false, false ] }",
+          "PHANTOM_ETSL ok { \"etsl\": 33 }",
+          "PHANTOM_LANGUAGE ok { \"languages\": [ \"en-GB\", \"en-US\", \"en\" ] }",
+          "PHANTOM_WEBSOCKET ok {}",
+          "MQ_SCREEN ok {}",
+          "PHANTOM_OVERFLOW ok { \"depth\": 12785, \"errorMessage\": \"Maximum call stack size exceeded\", \"errorName\": \"RangeError\", \"errorStacklength\": 846 }",
+          "PHANTOM_WINDOW_HEIGHT ok { \"wInnerHeight\": 705, \"wOuterHeight\": 800, \"wOuterWidth\": 1280, \"wInnerWidth\": 1264, \"wScreenX\": 10, \"wPageXOffset\": 0, \"wPageYOffset\": 0, \"cWidth\": 1248, \"cHeight\": 1561, \"sWidth\": 800, \"sHeight\": 600, \"sAvailWidth\": 800, \"sAvailHeight\": 600, \"sColorDepth\": 24, \"sPixelDepth\": 24, \"wDevicePixelRatio\": 1 }",
+          "HEADCHR_UA FAIL { \"userAgent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36\" }",
+          "HEADCHR_CHROME_OBJ ok {}",
+          "HEADCHR_PERMISSIONS ok {}",
+          "HEADCHR_PLUGINS ok { \"plugins\": [ \"PDF Viewer::Portable Document Format::internal-pdf-viewer::__application/pdf~pdf~Portable Document Format,text/pdf~pdf~Portable Document Format\", \"Chrome PDF Viewer::Portable Document Format::internal-pdf-viewer::__application/pdf~pdf~Portable Document Format,text/pdf~pdf~Portable Document Format\", \"Chromium PDF Viewer::Portable Document Format::internal-pdf-viewer::__application/pdf~pdf~Portable Document Format,text/pdf~pdf~Portable Document Format\", \"Microsoft Edge PDF Viewer::Portable Document Format::internal-pdf-viewer::__application/pdf~pdf~Portable Document Format,text/pdf~pdf~Portable Document Format\", \"WebKit built-in PDF::Portable Document Format::internal-pdf-viewer::__application/pdf~pdf~Portable Document Format,text/pdf~pdf~Portable Document Format\" ] }",
+          "HEADCHR_IFRAME ok {}",
+          "CHR_DEBUG_TOOLS ok {}",
+          "SELENIUM_DRIVER ok { \"attributesFound\": [ false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false ] }",
+          "CHR_BATTERY ok {}",
+          "CHR_MEMORY FAIL {}",
+          "TRANSPARENT_PIXEL ok { \"0\": 0, \"1\": 0, \"2\": 0, \"3\": 0 }",
+          "SEQUENTUM ok {}",
+          "VIDEO_CODECS ok { \"h264\": \"probably\" }",
+          "navigator.cookieEnabled true",
+          "navigator.doNotTrack null",
+          "navigator.msDoNotTrack undefined",
+          "navigator.sendBeacon",
+          "navigator.cookieEnabled true",
+          "navigator.userAgent Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+          "navigator.appName Netscape",
+          "navigator.vendor Google Inc.",
+          "navigator.appCodeName Mozilla",
+          "navigator.getUserMedia",
+          "navigator.sayswho undefined",
+          "navigator.javaEnabled false",
+          "navigator.plugins {\"0\":{\"0\":{},\"1\":{}},\"1\":{\"0\":{},\"1\":{}},\"2\":{\"0\":{},\"1\":{}},\"3\":{\"0\":{},\"1\":{}},\"4\":{\"0\":{},\"1\":{}}}",
+          "screen.width 800",
+          "screen.height 600",
+          "screen.colorDepth 24",
+          "navigator.language en-GB",
+          "navigator.loadPurpose undefined",
+          "navigator.platform Win32",
+          "navigator.mediaDevices audioinput: id = audiooutput: id =",
+          "navigator.getBattery details Charging: true Level: 1",
+          "Canvas1 Hash: 1118196126",
+          "Canvas2 Hash: 1118196126",
+          "Canvas3 (iframe sandbox) Hash: 1118196126",
+          "Canvas4 (iframe sandbox) Hash: 1118196126",
+          "Canvas5 (iframe) Hash: 1118196126"
+        ]
+      },
+      "error": null
+    },
+    {
+      "id": "UC-02",
+      "title": "CAPTCHA grounding (not solving)",
+      "surface": "mcp",
+      "success": true,
+      "ms": 3907,
+      "detail": {
+        "foundInDefaultSnapshot": true,
+        "foundInAxSnapshot": true,
+        "snapshotExcerpt": "URL: https://www.google.com/recaptcha/api2/demo\nTitle: ReCAPTCHA demo\nInteractive elements (2):\n[#8] input \"Submit\" value=\"Submit\"\n[#10] span role=checkbox\n\nPage text:\nSample Form with ReCAPTCHA\nFirst Name\nLast Name\nEmail\n\nPick your favorite color:\n\nRed\nGreen",
+        "axExcerpt": "URL: https://www.google.com/recaptcha/api2/demo\nTitle: ReCAPTCHA demo\n\nAccessible elements (6):\n[textbox] \"First Name\"\n[textbox] \"Last Name\"\n[textbox] \"Email\"\n[radio] \"Red\"\n[radio] \"Green\"\n[button] \"Submit\""
+      },
+      "error": null
+    },
+    {
+      "id": "UC-03",
+      "title": "Auth + session persistence",
+      "surface": "mcp",
+      "success": true,
+      "ms": 2212,
+      "detail": {
+        "mcpProfileNameParamExists": false,
+        "note": "browser.launch MCP tool schema exposes only {sessionId, initialUrl, headless} — no profileName param, unlike SutradharRuntime.launch() itself. The named-profile mechanism this scenario asks for is unreachable from the MCP surface as currently exposed.",
+        "loginStep": {
+          "loggedIn": true,
+          "sessionStorageKeysAfterLogin": []
+        },
+        "freshSessionStep": {
+          "currentUrlAfterFreshSession": "https://www.saucedemo.com/",
+          "survivedLogin": false
+        },
+        "honestResult": "Login state did NOT survive a fresh MCP session, as expected: saucedemo uses sessionStorage, no profile was (or could be) requested via MCP, and each browser.launch call gets its own ephemeral browser data dir."
+      },
+      "error": null
+    },
+    {
+      "id": "UC-04",
+      "title": "Canvas blindness (Google Maps)",
+      "surface": "mcp",
+      "success": true,
+      "ms": 5507,
+      "detail": {
+        "searchInputGroundable": true,
+        "zoomControlsGroundable": true,
+        "snapshotExcerpt": "URL: https://www.google.com/maps/@18.5761792,73.734616,14z?entry=ttu&g_ep=EgoyMDI2MDgxMi4wIKXMDSoASAFQAw%3D%3D\nTitle: Google Maps\nInteractive elements (31):\n[#1] input role=combobox label=\"Search Google Maps\"\n[#2] button \"Search\"\n[#3] button \"Directions\"\n[#5] button \"Light traffic in this area\nNo delays nearby\n\"\n[#6] button \"\nRestaurants\"\n[#7] button \"\nHotels\"\n[#8] button \"\nThings to do\"\n[#9] button \"\nMuseums\"\n[#10] button \"\nTransit\"\n[#11] button \"\nPharmacies\"\n[#12] button \"\nATMs\"\n[#13] button \"Next page\"\n[#14] button \"Menu\"\n[#15] button \"\nSaved\"\n[#17] button \"\nGet app\"\n[#19] a \"Google apps\" role=button\n[#20] a \"Sign in\"\n[#23] button \"Show Your Location\"\n[#24] button\n[#25] button \"Zoom in\"\n[#27] button\n[#28] button\n[#29] button \"Zoom out\"\n[#30] button \"Browse Street View images\"\n[#31] button \"Show imagery\"\n[#34] button\n[#52] button \"India\"\n[#53] button \"Terms\"\n[#54] button \"Privacy\"\n[#55] button \"Send Product Feedback\"\n[#56] button \"1 km\"\n\nPage text:\nSearch Google Maps\n\n\nHinjawadi\n23°\nLight traffic in this area\nNo delays nearby\n\n\nRestaurants\n\nHotels\n\nThings to do\n\nMuseums\n\nTransit\n\nPharmacies\n\nATMs\n\n\n\nSaved\n\nRecents\n\nGet app\nCollapse side panel\nSign in\n\n\n",
+        "canvasNote": "Map tiles/markers render into a <canvas> — expected to be opaque to DOM-based grounding, same as every DOM-reading tool. Not attempting pixel-level reads."
+      },
+      "error": null
+    },
+    {
+      "id": "UC-05",
+      "title": "Long 10+ step flow",
+      "surface": "mcp",
+      "success": false,
+      "ms": 26970,
+      "detail": null,
+      "error": "A1/A2 reproduced at the checkout-continue step: did not reach the order-summary screen. Readback immediately after typing (before clicking #continue) was {\"first\":\"\",\"last\":\"\",\"postal\":\"\"} (landedCorrectly=false); saucedemo's own client-side validation banner after the #continue click reads: \"Error: First Name is required\"; a SECOND readback taken after the failed continue click shows {\"first\":\"\",\"last\":\"\",\"postal\":\"\"}. This means the typed values either never durably landed, or landed and were silently cleared again before submission — the exact \"confident false positive\" A1 finding, just surfaced one step later than a same-instant readback would show."
+    },
+    {
+      "id": "UC-06",
+      "title": "Modals + dynamic content",
+      "surface": "mcp",
+      "success": true,
+      "ms": 5791,
+      "detail": {
+        "closeButtonInDefaultListing": false,
+        "modalClosedViaCssSelector": true,
+        "modalCloseError": null,
+        "modalBlindSpotNote": "Close button was NOT present in the default browser.snapshot listing, matching GLM's UC-06a modal blind-spot finding. A direct CSS-selector click still worked as a fallback.",
+        "helloText": "Hello World!",
+        "dynamicContentCorrect": true
+      },
+      "error": null
+    },
+    {
+      "id": "UC-07",
+      "title": "Cross-origin iframe (TinyMCE)",
+      "surface": "mcp",
+      "success": true,
+      "ms": 3082,
+      "detail": {
+        "toolbarButtonsListedInSnapshot": false,
+        "snapshotExcerpt": "URL: https://www.tiny.cloud/docs/tinymce/latest/basic-example/\nTitle: Basic example | TinyMCE Documentation\nInteractive elements (58):\n[#1] a\n[#2] button \"Search (Ctrl+K)\"\n[#4] a \"Home\"\n[#5] a \"Pricing\"\n[#6] a \"Language Packs\"\n[#7] a \"Log In\"\n[#8] a \"Get Free API Key\"\n[#9] a \"Get TinyMCE\"\n[#11] a \"TinyMCE Documentation\"\n[#12] button\n[#13] a \"Getting started\"\n[#94] button\n[#95] a \"How-to guides\"\n[#205] button\n[#206] a \"Examples\"\n[#207] button\n[#208] a \"General examples\"\n[#209] a \"Basic example\"\n[#210] a \"Full-featured demo including Open Source features\"\n[#211] a \"Full-featured demo Including Open Source and Premium features\"\n[#212] a \"Classic editor mode\"\n[#213] a \"Inline editor\"\n[#214] a \"Distraction-free editor\"\n[#215] button\n[#216] a \"Integration examples\"\n[#218] button\n[#219] a \"Skins ",
+        "typedIntoContentEditableBody": true,
+        "readback": "Welcome to the TinyMCE editor demo!\n\nMeet TinyMCE, the Internet's most battle-tested rich text editor with over 60 features including: Advanced formatting, Export to and from Word and PDF, Accessibility and spelling checkers, Mentions and comments, and an AI assistant.\n\nSutradhar MCP baseline test.﻿\n\n⭐️ Popular features (including paid subscription plugins)\nCollaborate with @Mentions, discuss using Comments and review changes using Suggested Edits and keep an audit trail with Revision history.\nPaste from MS Word and retain formatting. You can even import Word documents! \nPower your email editor with Merge tags and Inline CSS output.\nHit the highest standards with Spell Checker, Accessibility Checker, Advanced Typography and Link Checker.\n\n🖖 Get TinyMCE\nTinyMCE meets all your architecture requirements.\nCloud\tSign-up for free\tAlways up to date, easy to maintain\nSelf-hosted\tLet's talk\tWith enterprise level support\nOpen source\tDownload today\tAvailable under the GPLv2+ license\nWhy TinyMCE 👀\nOut-of-the-box features save dev time. From tables and spell checking to full collaboration and accessibility compliance, TinyMCE offers features you’d otherwise spend months building.\nBuilt to scale with you. TinyMCE powers applications with millions of users. Its performance, reliability, and architecture are built for scale, from early MVPs to global platforms.\nWorks where you build. Whether you're using React, Vue, Angular, or vanilla JavaScript—or embedding it in SaaS platforms or internal tools—TinyMCE integrates smoothly into your stack.\nNo one has been doing this longer. You benefit from 20+ years of stability, security, feature, accessibility, documentation improvements, and enterprise support services.\n\n❤️ Go build something today",
+        "typeError": null
+      },
+      "error": null
+    },
+    {
+      "id": "UC-08",
+      "title": "File download",
+      "surface": "mcp",
+      "success": false,
+      "ms": 7997,
+      "detail": null,
+      "error": "browser.download_file: literal-scenario call (no downloadDir) fails on this environment. Attempt 1 (no downloadDir, literal scenario steps): success=false error=\"Download was canceled\" | Attempt 2 (explicit NONEXISTENT subdir \"C:\\WINDOWS\\TEMP\\sutradhar-scenario-suite-downloads-nonexistent\" under the same allowed root): success=false error=\"downloadDir \"C:\\WINDOWS\\TEMP\\sutradhar-scenario-suite-downloads-nonexistent\" is outside the allowed download directories (C:\\WINDOWS\\TEMP). Pass a path under one of these, or configure additional allowed roots when constructing the runtime.\nHint: Pass a downloadDir under an allowed root, or omit it to use the default.\" | Attempt 3 (same subdir PRE-CREATED via fs.mkdir first, \"C:\\WINDOWS\\TEMP\\sutradhar-scenario-suite-downloads-precreated\"): success=true output={\"downloadedFilename\":\"sample_upload - Copy (2).txt\",\"downloadedPath\":\"C:\\\\WINDOWS\\\\TEMP\\\\sutradhar-scenario-suite-downloads-precreated\\\\sample_upload - Copy (2).txt\",\"downloadDir\":\"C:\\\\WINDOWS\\\\TEMP\\\\sutradhar-scenario-suite-downloads-precreated\"}"
+    },
+    {
+      "id": "UC-09",
+      "title": "Multi-tab / popup",
+      "surface": "mcp",
+      "success": true,
+      "ms": 5583,
+      "detail": {
+        "newTabFromListTabs": {
+          "id": "tab_sess_1786832006595_10_2",
+          "url": "https://the-internet.herokuapp.com/windows/new",
+          "title": "New Tab",
+          "isActive": false
+        },
+        "listTabsUrlIsStale": false,
+        "listTabsTitleIsStale": true,
+        "liveUrl": "https://the-internet.herokuapp.com/windows/new",
+        "liveTitle": "New Window",
+        "liveUrlCorrect": true,
+        "liveTitleCorrect": true,
+        "snapshotShowsRealContent": true,
+        "a4Note": "list_tabs cached dto is stale (about:blank/\"New Tab\") for the adopted popup even though live eval()/snapshot() see the real content — matches the plan's A4 root-cause analysis for the MCP surface (toDto() reads the cached currentUrl/currentTitle, not live page.url()/page.title())."
+      },
+      "error": null
+    },
+    {
+      "id": "UC-10",
+      "title": "Prompt injection exposure",
+      "surface": "mcp",
+      "success": true,
+      "ms": 467,
+      "detail": {
+        "surfacedVerbatimInSnapshot": false,
+        "surfacedVerbatimInEval": false,
+        "snapshotPageTextExcerpt": "URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/tools/scenario-suite/fixtures/prompt-injection.html\nTitle: Prompt Injection Test Page\nInteractive elements (1):\n[#3] button \"Mark Resolved\"\n\nPage text:\nReal Support Ticket #4471\n\nMy order hasn't arrived yet, please help. Order number is SD-88213, placed 5 days ago.\n\nMark Resolved",
+        "evalBodyText": "Real Support Ticket #4471\n\nMy order hasn't arrived yet, please help. Order number is SD-88213, placed 5 days ago.\n\nMark Resolved",
+        "note": "Deliberately no sanitization — reporting exactly what the surface returns, per Scope decisions in the remediation plan (prompt-injection sanitization is out of scope)."
+      },
+      "error": null
+    },
+    {
+      "id": "UC-11",
+      "title": "Token efficiency",
+      "surface": "mcp",
+      "success": true,
+      "ms": 894,
+      "detail": {
+        "snapshotChars": 2229,
+        "rawHtmlLength": 18793,
+        "ratio": 0.119,
+        "snapshotIsSmallerFraction": true
+      },
+      "error": null
+    },
+    {
+      "id": "UC-12",
+      "title": "Outcome verification after a state-changing action",
+      "surface": "mcp",
+      "success": true,
+      "ms": 955,
+      "detail": {
+        "clickReportedSuccess": true,
+        "independentState": {
+          "badge": "1",
+          "buttonText": "Remove"
+        },
+        "badgeCorrect": true,
+        "buttonFlippedToRemove": true
+      },
+      "error": null
+    },
+    {
+      "id": "UC-13",
+      "title": "Speed",
+      "surface": "mcp",
+      "success": true,
+      "ms": 1187,
+      "detail": {
+        "launchMs": 386,
+        "stepTimesMs": [
+          14,
+          2,
+          2,
+          2,
+          2,
+          3,
+          2,
+          2,
+          2,
+          1
+        ],
+        "avgStepMs": 3,
+        "stepDescription": "10x browser.snapshot round trips over the JSON-RPC/stdio transport (protocol overhead included)."
+      },
+      "error": null
+    },
+    {
+      "id": "UC-14",
+      "title": "Accessibility-only grounding (no CSS-selectable name)",
+      "surface": "mcp",
+      "success": false,
+      "ms": 661,
+      "detail": null,
+      "error": "browser.click_by_role → success:false: Duplicate 'click_by_role' on the same target within 1000ms — likely an accidental double-dispatch (e.g. a submit button clicked twice). If this is intentional, wait a moment and retry."
+    }
+  ]
+}

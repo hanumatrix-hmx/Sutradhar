@@ -171,6 +171,81 @@ it. This is the "before" half of the before/after.
   (modal missing from `snap`), UC-09 (SDK popup `about:blank`). If any does **not** reproduce,
   record that explicitly — it is a real finding about environment-dependence, not a harness bug.
 
+**RESULT (2026-08-16): all 42 scenario-runs executed with zero harness crashes.**
+`tools/scenario-suite/{scenarios.mjs, run-sdk.mjs, run-cli.mjs, run-mcp.mjs, report.mjs}` +
+`results/{baseline-sdk,baseline-cli,baseline-mcp}.json` + `results/baseline-report.md`. Built by
+three parallel agents (one per surface), each blind to the others. Totals: **SDK 11/14, CLI
+13/14, MCP 11/14.** Full matrix in `results/baseline-report.md`; note the pass/fail cells there
+are a coarse dashboard — agents did not use perfectly identical strictness on UC-01 (see below),
+so treat each JSON's `detail` field as the source of truth, not the matrix alone.
+
+**UC-05 (the long checkout flow) failed on all three surfaces** — the strongest possible
+cross-surface confirmation of A1: `type()` reported `success:true` while the real DOM value
+stayed empty, on SDK, CLI, *and* MCP independently. CLI's failure rate (0/4 attempts landed) was
+worse than Phase 0's SDK-direct 2/5, consistent with the CLI driver's own hypothesis that its
+per-command process-restart/reattach cycle aggravates the race. **A2's specific "tripled
+characters" signature did not reproduce** despite a deliberate attempt under the exact
+long-lived-headed-session conditions GLM described — the empty-value failure mode reproduced
+instead, every time. This does not change the Phase 2 fix (2c targets the underlying
+never-cancelled-retry race regardless of which symptom it produces) but means: don't gate 2c's
+verification on reproducing character-tripling specifically, gate it on "no lost/duplicated
+keystrokes under a forced-timeout condition," which covers both known symptoms.
+
+**A3 (modal blind spot) and A4 (stale popup) both reproduced on all three surfaces**, with A4
+showing real, useful surface-specific nuance the original field report didn't have: SDK's stale
+field is `title` only (`url` and body text are live-correct); MCP shows the same stale-`title`
+pattern plus a stale `list_tabs` DTO; CLI is genuinely nondeterministic run-to-run (its fresh
+`attach()` re-sync sometimes wins the race, sometimes doesn't). Phase 5's fix should verify
+against all three patterns, not just SDK's.
+
+**Two new, previously-unknown bugs were found and independently confirmed on two different
+surfaces each** — added to this plan as new sub-items below (do not treat as scope creep; they
+were found by exactly the methodology this plan calls for, and are already root-caused):
+
+1. **Duplicate-action-guard false-positive on `click_by_role`/`click_by_text`.**
+   `checkDuplicateAction`'s key (`browser-action-engine.ts`) is
+   `` `${tabId}:${actionType}:${params.selector ?? params.key ?? ''}` `` — but `click_by_role` and
+   `click_by_text` carry their target in `role`/`name`/`text`, not `selector`, so the key collapses
+   to an empty string for *every* such call. Two genuinely different role/text clicks on the same
+   tab within `DUPLICATE_ACTION_WINDOW_MS` (1000ms) are rejected as duplicates of each other.
+   Found independently on **SDK** (UC-14, `clickByRole('button','Open Actions Menu')` then
+   `clickByRole('menuitem','Archive Item')` — the second one rejected) and **MCP** (same scenario;
+   precisely timed: a 200ms gap between the two calls fails, a 1100ms gap succeeds — nails the
+   1000ms window as the exact cause). **CLI did not hit this** — its own per-command process
+   overhead (~1.7–4s) already exceeds the window, an accidental immunity worth noting, not relying
+   on. **Added as Phase 2f below.**
+2. **Download-directory resolution has a real Windows case-sensitivity bug.** Found on MCP (UC-08):
+   a legitimate nonexistent subdirectory of the allowed download root is rejected as "outside the
+   allowed download directories." Root-caused live: `resolveDownloadDir()`
+   (`browser-action-engine.ts`) `realpath()`-normalizes the *allowed root* to its on-disk case
+   (`C:\Windows\Temp`), but a requested path that doesn't exist yet can't be `realpath`'d and falls
+   back to the caller's literal case (`C:\WINDOWS\TEMP`, from `process.env.TEMP`) — the subsequent
+   case-sensitive `.startsWith()` check then fails despite the paths being the same real directory.
+   Confirmed by pre-creating the directory: it then succeeds. A second, separate issue on the same
+   scenario: downloading straight to the bare OS temp root (no subdirectory) fails with "Download
+   was canceled" on this environment. **Added as a Phase 4 prerequisite below** (Phase 4 adds the
+   CLI `download` command that would otherwise ship surfacing this same bug).
+
+**One more real, MCP-specific gap, not previously known**: MCP's `browser.launch` tool schema has
+**no `profileName` parameter at all**, unlike `SutradharRuntime.launch()` itself — named profiles
+are structurally unreachable from the MCP surface as currently exposed. **Added as a Phase 5
+prerequisite below.**
+
+**UC-01 (bot detection) surfaced real rows beyond the deliberate UA leak**: WebGL Vendor/Renderer
+reads as failed in headless (no WebGL context — a real headless-Chrome rendering-mode limitation,
+not obviously a Sutradhar code issue), plus `HEADCHR_UA` and `CHR_MEMORY`. **Recorded, not
+actioned** — chasing more bot.sannysoft.com rows is exactly the "improve a benchmark number via
+the excluded category" trap the Scope decisions section already warns against for the UA row
+specifically; the same discipline applies to these. If a *non-detection* reason to fix headless
+WebGL support ever surfaces (e.g. a real page's functionality depends on it, not just a detection
+panel), revisit then — not as a reaction to this benchmark.
+
+**Also recorded, not actioned**: the CLI driver observed `nav` intermittently reporting success
+while the page silently drifted to `chrome://new-tab-page/` before the next command ran (hit
+twice while building the harness, not standalone-reproducible) — logged here for future
+investigation, not chased now given low reproducibility and that the harness already has a
+retry/validation safety net around it.
+
 ---
 
 ### Phase 2 — Correctness core: typed-value verification, retry safety, honest verification payload, actionable stale-id errors
@@ -224,17 +299,27 @@ selector fails to resolve, check `document.documentElement`'s `data-sd-current-g
 Apply at every site producing the generic string: L406 (`type`), L455 (`wait_for_selector`),
 L468 (`select_option`), L487 (`focus`), and click's variant at L822.
 
+**2f. Fix the duplicate-action-guard false-positive on `click_by_role`/`click_by_text` (new,
+found in Phase 1's baseline, independently confirmed on SDK and MCP — see Phase 1 results
+above).** `checkDuplicateAction`'s key omits `role`/`name`/`text` entirely, so any two
+`click_by_role`/`click_by_text` calls on the same tab within `DUPLICATE_ACTION_WINDOW_MS`
+(1000ms) collide regardless of what they actually target. Fix the key construction to include
+whichever of `role`/`name`/`text` is present, matching the existing fallback chain style:
+`` const target = params.selector ?? params.role ? `${params.role}:${params.name ?? ''}` : params.text ?? params.key ?? ''; `` (adjust to real param shapes — check `ActionParams` in
+`action-types.ts` for the exact field names before writing this literally).
+
 **Acceptance:**
 | # | Criterion |
 |---|---|
 | 2a | New unit test: `type` whose `handle.type` silently leaves the value empty now **throws** with an error naming expected vs actual — it must not return `success: true`. Follow the existing `mockHandle()` pattern at `browser-action-engine.spec.ts` L52-65 and the lock-in test at L570-602. |
 | 2b | New unit test asserting the native-setter path fires `input` **and** `change` events, and is only attempted after the normal type path fails. |
-| 2c | New unit test: a `type` that times out on attempt 1 does **not** produce concatenated/duplicated text; assert the second attempt starts only after the first settles. Must reproduce-then-prevent the `ssstttaaannndddaaarrrddd___uuussseeerrr` shape. |
-| 2c | Live: the CLI headed-session repro from GLM's UC-03 no longer triples characters. |
+| 2c | New unit test: a `type` that times out on attempt 1 does **not** produce concatenated/duplicated text or lose data; assert the second attempt starts only after the first settles. Acceptance is "no lost/duplicated keystrokes under a forced-timeout condition" — Phase 1 found the character-tripling signature does not reliably reproduce, but the underlying race (and its empty-value symptom) does, every time; gate on the latter. |
+| 2c | Live: the CLI headed-session repro from GLM's UC-03 no longer loses or corrupts typed values. |
 | 2d | Existing tests that assert `verification.verified === true` for unverified actions are updated deliberately (not deleted), with the change noted. |
 | 2e | Live: click a stale `[#id]` after a real navigation → the error explicitly tells the agent to re-snapshot. Unit test for both branches (gen absent vs present). |
+| 2f | New unit test: two different `click_by_role` calls (different role/name) on the same tab within 1000ms both succeed — no false "duplicate" rejection. A true duplicate (same role/name, within window) still correctly rejects. |
 | all | `npx vitest run` green in `packages/browser` **and** `packages/capability-runtime`; both packages typecheck. |
-| all | Phase 1 harness re-run: UC-05 and UC-03 flip to pass on **all three** surfaces. |
+| all | Phase 1 harness re-run: UC-05 and UC-03 flip to pass on **all three** surfaces; UC-14 flips to pass on SDK and MCP (was already passing on CLI). |
 
 ---
 
@@ -284,6 +369,17 @@ failure — match neighbours, do not introduce an arg-parsing library. `download
 real `downloadedFilename` / `downloadedPath`** already returned by the runtime (see Context 1b) —
 that alone closes GLM's C3 without touching the download implementation.
 
+**4b-prereq. Fix `resolveDownloadDir()`'s Windows case-sensitivity bug first** (found in Phase 1's
+baseline, UC-08 on MCP — see Phase 1 results above). `realpath()` normalizes the *allowed root* to
+its on-disk case but a not-yet-existing requested subdirectory falls back to its literal
+(potentially differently-cased) input, so the subsequent `.startsWith()` check is case-sensitive
+against two different-case forms of the same real path and false-rejects. Fix by comparing paths
+case-insensitively on Windows (or normalizing both sides through a consistent casing before
+comparing) in `browser-action-engine.ts`. Do this **before** wiring the CLI `download` command,
+so the new command doesn't ship reproducing a bug already found. Separately, confirm/fix why
+downloading straight to the bare OS temp root fails with "Download was canceled" on this
+environment — root-cause before deciding whether it needs a fix or just a clearer error.
+
 **4c. `--user-agent` option** per the scope decision above — CLI flag + SDK `launch()` option +
 MCP `browser.launch` param. Neutral default; **must not** strip "Headless".
 
@@ -299,6 +395,7 @@ and cover the new commands' arg/flag parsing and exit codes.
 | 4c | `--user-agent` demonstrably changes `navigator.userAgent` live; **default UA still contains "HeadlessChrome"** (asserted in a test, so nobody "helpfully" changes it later). |
 | 4d | `npx vitest run` green in `packages/cli` with real tests present (not an empty pass). |
 | 4e | Phase 1 harness re-run on the CLI surface shows scenarios that previously needed `evaluate` workarounds now using first-class commands. |
+| 4b-prereq | Live: downloading into a legitimate not-yet-existing subdirectory of the allowed root succeeds (previously false-rejected). Unit test for the case-comparison fix. Phase 1 harness UC-08 flips to pass on MCP. |
 
 ---
 
@@ -343,14 +440,22 @@ code**: optionally persist a storage-state blob into the profile directory on sh
 it on launch-with-profile. Also expose profiles **and** storage-state through the SDK — currently
 neither exists there (0 grep hits in `packages/sutradhar/src`).
 
+**5c-prereq. Add `profileName` to the MCP `browser.launch` tool schema (new, found in Phase 1's
+baseline — see Phase 1 results above).** Confirmed the parameter is simply absent from
+`packages/mcp-server/src/tools.ts`'s `browser.launch` schema even though
+`SutradharRuntime.launch()` already accepts it — named profiles are structurally unreachable from
+MCP today, independent of 5c's storage-state wiring. Add the schema field and thread it through;
+small, do first since 5c's live verification should cover the MCP surface too.
+
 **Acceptance:**
 | # | Criterion |
 |---|---|
-| 5a | Live: SDK opens a popup via click; `popup.snapshot()` returns the popup's **real URL and title** (GLM's UC-09 / their `tests/uc09b.mjs`). Assert on **both** `url` and `title` — `url` may already be correct, `title` is the one frozen at `'New Tab'`. |
+| 5a | Live: SDK opens a popup via click; `popup.snapshot()` returns the popup's **real URL and title** (GLM's UC-09 / their `tests/uc09b.mjs`). Assert on **both** `url` and `title` — `url` may already be correct, `title` is the one frozen at `'New Tab'`. Also verify against MCP's stale-`list_tabs`-DTO variant and CLI's nondeterministic case found in Phase 1 — all three surfaces, not just SDK. |
 | 5b | Live: a tab created outside the popup path is registered and appears in `list_tabs`. Unit test for the new listener. |
-| 5c | Live: log in to saucedemo (sessionStorage-based) under a named profile, relaunch with that profile, session **survives**. If genuinely infeasible, ship a documented `storage_state` recipe instead and say so plainly. |
+| 5c | Live: log in to saucedemo (sessionStorage-based) under a named profile, relaunch with that profile, session **survives** — on **all three surfaces**, including MCP once 5c-prereq lands. If genuinely infeasible, ship a documented `storage_state` recipe instead and say so plainly. |
+| 5c-prereq | `browser.launch`'s MCP schema accepts `profileName`; live round trip via a real MCP tool call. |
 | 5d | SDK exposes profile + storage-state APIs with at least one live-verified round trip. |
-| 5e | Phase 1 harness: UC-03 and UC-09 flip to pass. |
+| 5e | Phase 1 harness: UC-09 flips to pass (title no longer stale on any surface). UC-03 already "passes" as a reporting scenario pre-fix — the real bar here is that its `detail` field changes from "session lost" to "session survived" on all three surfaces, not just that the scenario's pass/fail flag flips. |
 
 ---
 
