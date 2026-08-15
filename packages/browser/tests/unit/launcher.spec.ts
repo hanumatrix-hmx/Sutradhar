@@ -90,6 +90,18 @@ describe('@sutradhar/browser BrowserLauncher', () => {
     expect(args).toContain('--proxy-server=http://my-proxy.local:8080');
   });
 
+  it('should add a --user-agent arg only when userAgent is explicitly given (field-report remediation 4c)', () => {
+    const launcher = new BrowserLauncher();
+    const withUa = launcher.prepareLaunchArgs({ userAgent: 'MyBot/1.0' });
+    expect(withUa).toContain('--user-agent=MyBot/1.0');
+  });
+
+  it('should NOT add a --user-agent arg by default, so Chrome\'s own real UA (including "Headless" when headless) is left alone — this must stay true; see CLAUDE.md\'s scope boundary on stealth/detection-evasion defaults', () => {
+    const launcher = new BrowserLauncher();
+    const defaultArgs = launcher.prepareLaunchArgs();
+    expect(defaultArgs.some((a) => a.startsWith('--user-agent='))).toBe(false);
+  });
+
   it('should call page.authenticate() on every new page when proxy credentials are set', async () => {
     const authenticate = vi.fn().mockResolvedValue(undefined);
     const fakeBrowser = { newPage: vi.fn().mockResolvedValue({ authenticate }) } as any;

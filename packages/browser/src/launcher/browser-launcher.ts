@@ -122,6 +122,10 @@ export class BrowserLauncher implements IBrowserLauncher {
       mergedArgs.add(`--proxy-server=${options.proxy.server}`);
     }
 
+    if (options.userAgent) {
+      mergedArgs.add(`--user-agent=${options.userAgent}`);
+    }
+
     return Array.from(mergedArgs);
   }
 

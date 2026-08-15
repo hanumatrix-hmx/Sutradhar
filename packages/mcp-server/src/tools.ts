@@ -127,14 +127,22 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         sessionId: z.string().optional().describe('Reuse an existing caller-owned session id.'),
         initialUrl: z.string().url().optional().describe('Open a tab and navigate here immediately.'),
         headless: z.boolean().optional().describe('Run headless. Defaults to true in most environments.'),
+        userAgent: z
+          .string()
+          .optional()
+          .describe(
+            'Override navigator.userAgent for this session. Unset by default — the real Chrome UA ' +
+              '(including "HeadlessChrome" when headless) is left as-is; this is plain configurability, not a ' +
+              'detection-evasion default.',
+          ),
       },
     },
-    async ({ sessionId, initialUrl, headless }) => {
+    async ({ sessionId, initialUrl, headless, userAgent }) => {
       try {
         const result = await runtime.launch({
           sessionId,
           initialUrl,
-          launch: headless !== undefined ? { headless } : undefined,
+          launch: headless !== undefined || userAgent !== undefined ? { headless, userAgent } : undefined,
         });
         if (!result.hasRealBrowser) {
           return errorResult(
@@ -291,27 +299,32 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         'that update frequently, prefer browser.ax_snapshot + browser.click_by_role/click_by_text/type_by_label instead, ' +
         'which re-resolve the real element at the moment they run rather than trusting a stored id. ' +
         'maxElements (default 60) bounds the listing — raise it for a content-heavy page whose element of interest ' +
-        '(e.g. a "next page" link) is further down; up to 300 elements per frame get a real, usable id regardless.',
+        '(e.g. a "next page" link) is further down; up to 300 elements per frame get a real, usable id regardless. ' +
+        'includeNodes (default false) additionally returns the raw structured element data (boundingBox, confidence, ' +
+        'isEnabled, ...) the listing was rendered from, as a JSON block after the text listing — use this when you need ' +
+        'a field the compact listing does not show, instead of re-parsing the listing text.',
       inputSchema: {
         sessionId: z.string(),
         tabId: z.string().optional(),
         maxElements: z.number().int().positive().optional(),
+        includeNodes: z.boolean().optional(),
       },
     },
-    async ({ sessionId, tabId, maxElements }) => {
+    async ({ sessionId, tabId, maxElements, includeNodes }) => {
       try {
-        const snap = await runtime.snapshot(sessionId, tabId, maxElements);
+        const snap = await runtime.snapshot(sessionId, tabId, maxElements, { includeNodes });
         // Return as readable text rather than JSON — the model parses the listing directly.
         // `snap.interactiveElements` already embeds its own "URL/Title/Interactive elements
         // (N):" header (N = the true interactive-only count) — do not prepend another one here.
         // `snap.elementCount` counts ALL semantic-graph nodes, not just interactive ones, so a
         // second header built from it would show a different, confusing number (see the same
         // caveat in packages/cli/src/cli.ts's cmdSnap).
+        const nodesBlock = snap.nodes ? `\n\nStructured nodes (JSON):\n${JSON.stringify(snap.nodes)}` : '';
         return {
           content: [
             {
               type: 'text' as const,
-              text: `${snap.interactiveElements}\n\nPage text:\n${snap.pageText.slice(0, 2000)}`,
+              text: `${snap.interactiveElements}\n\nPage text:\n${snap.pageText.slice(0, 2000)}${nodesBlock}`,
             },
           ],
         };

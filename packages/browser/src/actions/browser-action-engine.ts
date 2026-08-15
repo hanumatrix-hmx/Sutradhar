@@ -22,6 +22,24 @@ export interface IBrowserActionEngine {
   executeAction(tab: IBrowserTab, params: ActionParams): Promise<ActionResultDto>;
 }
 
+/**
+ * True if `candidate` is `root` itself or nested under it. Windows' filesystem is
+ * case-insensitive (NTFS preserves case but doesn't distinguish it), but `fs.realpath` only
+ * normalizes a path to its on-disk case when the target actually **exists** — a not-yet-created
+ * subdirectory falls back to whatever case the caller happened to pass in. Found live: requesting
+ * a new subdirectory under an allowed root whose case differs from the root's own on-disk case
+ * (e.g. the root resolves to `C:\WINDOWS\TEMP` but the caller's literal string starts
+ * `C:\Windows\Temp\...`) made this comparison — plain `===`/`startsWith` on the two strings —
+ * false-reject a request that was genuinely inside the allowed root. Comparing case-insensitively
+ * on Windows only (POSIX filesystems are case-sensitive by default, and a case-insensitive check
+ * there could wrongly ALLOW a path that is actually a different, disallowed file) fixes it without
+ * weakening the containment check itself.
+ */
+function isPathWithinRoot(candidate: string, root: string): boolean {
+  const [c, r] = process.platform === 'win32' ? [candidate.toLowerCase(), root.toLowerCase()] : [candidate, root];
+  return c === r || c.startsWith(r + path.sep);
+}
+
 /** Action types that mutate page state — subject to the duplicate-action guard. */
 const MUTATING_ACTIONS = new Set([
   'click',
@@ -54,9 +72,15 @@ export class BrowserActionEngine implements IBrowserActionEngine {
   /** key: `${tabId}:${actionType}:${target}` -> last-dispatched timestamp. */
   private readonly recentActions = new Map<string, number>();
   /** Directories a 'download_file' action is allowed to write into (each resolved to an
-   *  absolute path). Defaults to just the OS temp directory — a caller-supplied `downloadDir`
-   *  that doesn't resolve under one of these is rejected rather than trusted blindly, since it
-   *  ultimately reaches CDP's `Browser.setDownloadBehavior` as a real filesystem write target. */
+   *  absolute path). Defaults to a dedicated subdirectory of the OS temp directory — NOT the
+   *  bare temp root itself. Found live: Chrome's `Browser.downloadProgress` reports
+   *  `state:'canceled'` for a download targeted directly at the OS temp root (e.g.
+   *  `C:\WINDOWS\TEMP` on Windows) every time, while the identical download into any
+   *  subdirectory of that same root succeeds — the exact same page, click, and CDP wiring, only
+   *  the target directory differs. CDP creates a non-existent target directory automatically, so
+   *  no separate `mkdir` is needed here. A caller-supplied `downloadDir` that doesn't resolve
+   *  under one of these is rejected rather than trusted blindly, since it ultimately reaches
+   *  CDP's `Browser.setDownloadBehavior` as a real filesystem write target. */
   private readonly allowedDownloadRoots: readonly string[];
   /** Directories an 'upload_file' action is allowed to read from, each resolved to an
    *  absolute path. Unset (the default) means unrestricted — uploading an arbitrary local
@@ -82,7 +106,9 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     this.eventBus = eventBus;
     this.logger = logger ?? new StructuredLogger({ minLevel: 'info' });
     this.verifier = verifier ?? new ExecutionVerifier();
-    this.allowedDownloadRoots = (allowedDownloadRoots ?? [os.tmpdir()]).map((root) => path.resolve(root));
+    this.allowedDownloadRoots = (allowedDownloadRoots ?? [path.join(os.tmpdir(), 'sutradhar-downloads')]).map(
+      (root) => path.resolve(root),
+    );
     this.allowedUploadRoots = allowedUploadRoots?.map((root) => path.resolve(root));
   }
 
@@ -105,7 +131,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     const canonical = await realpath(resolved).catch(() => resolved);
     for (const root of this.allowedUploadRoots) {
       const canonicalRoot = await realpath(root).catch(() => root);
-      if (canonical === canonicalRoot || canonical.startsWith(canonicalRoot + path.sep)) return;
+      if (isPathWithinRoot(canonical, canonicalRoot)) return;
     }
     throw new Error(
       `Upload file "${filePath}" is outside the allowed upload directories ` +
@@ -134,7 +160,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
 
     for (const root of this.allowedDownloadRoots) {
       const canonicalRoot = await realpath(root).catch(() => root);
-      if (canonical === canonicalRoot || canonical.startsWith(canonicalRoot + path.sep)) {
+      if (isPathWithinRoot(canonical, canonicalRoot)) {
         return resolved;
       }
     }

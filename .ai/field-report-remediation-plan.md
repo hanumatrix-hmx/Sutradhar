@@ -532,6 +532,97 @@ and cover the new commands' arg/flag parsing and exit codes.
 
 ---
 
+**RESULT (2026-08-16): all of 4a/4b/4c/4d/4e and the 4b-prereq landed, unit-tested, and
+live-verified — plus a second root cause found and fixed for the download-dir prereq beyond
+just the case-sensitivity bug.**
+
+**4b-prereq — two real bugs, not one.** Fixed the Windows case-sensitivity bug as planned (new
+`isPathWithinRoot` helper in `browser-action-engine.ts`, comparing case-insensitively only on
+`win32`, shared by both `resolveDownloadDir` and `assertUploadPathAllowed`). But live-reproducing
+the plan's other flagged symptom — "confirm/fix why downloading straight to the bare OS temp root
+fails with 'Download was canceled'" — surfaced a **second, unrelated, more consequential bug**:
+Chrome's `Browser.downloadProgress` reports `state:'canceled'` for **any** download targeted
+directly at the OS temp root (`C:\WINDOWS\TEMP` itself), every single time, while the identical
+download into any subdirectory of that same root succeeds — confirmed by isolating every other
+variable (same page, same click, same CDP session code) and only changing the target directory.
+CDP creates a non-existent target directory automatically, so the fix needed no new `mkdir` logic
+— just changed the **default** `allowedDownloadRoots` from the bare OS temp dir to a dedicated
+`sutradhar-downloads` subdirectory of it. This is arguably the bigger of the two fixes: the
+case-sensitivity bug only ever bit an explicit, differently-cased `downloadDir`, but the
+temp-root-cancellation bug silently broke **every download that used the default** (i.e. any
+caller that never passed `downloadDir` at all) on this environment.
+
+**4a.** `SnapshotResult.nodes?: readonly SemanticNode[]` added (optional, omitted unless a caller
+opts in), `runtime.snapshot()` takes a 4th `{includeNodes}` param, MCP `browser.snapshot` gained
+an `includeNodes` boolean input appending a JSON block after the text listing, CLI gained
+`snap --json`. Live-verified: `sutradhar snap` output is **byte-identical across two consecutive
+calls** (confirmed via `diff`, not just eyeballing); `sutradhar snap --json` produces valid JSON
+(parsed programmatically, not just visually) with 4 real per-element fields including a genuine
+`boundingBox`.
+
+**4b + 4b-prereq's download command.** All 8 new CLI commands (`select`, `wait`, `eval`, `hover`,
+`scroll`, `upload`, `drag`, `download`) were driven live against real the-internet.herokuapp.com
+pages, not just typechecked: `select` changed a real `<select>`'s value (confirmed via a
+follow-up `eval`); `wait`/`hover`/`scroll` all reported success against a real selector; `upload`
+attached a real local file to a real `<input type="file">`; `drag` genuinely swapped
+saucedemo-style column content (confirmed via `eval` reading the swapped text back); `download`
+succeeded with the **new default** downloadDir, printing a real saved path
+(`C:\WINDOWS\TEMP\sutradhar-downloads\...`) — directly confirming the 4b-prereq fix end-to-end,
+not just in isolation. Bare `sutradhar` (no args) lists every new command in its help text.
+
+**4c.** `BrowserLaunchOptions.userAgent` added, wired into `BrowserLauncher.prepareLaunchArgs`
+(`--user-agent=...` flag), threaded through `spawnDetachedChrome` for the CLI's own
+detached-Chrome path (which bypasses `BrowserLauncher` entirely, so needed separate wiring), and
+exposed as a top-level `userAgent` param on MCP's `browser.launch`. Live-verified both directions
+in the same session: `sutradhar nav <url> --user-agent "SutradharTestBot/1.0"` then
+`sutradhar eval navigator.userAgent` → `SutradharTestBot/1.0`; a fresh `nav` with **no** flag →
+`Mozilla/5.0 (Windows NT 10.0; Win64; x64) ... HeadlessChrome/151.0.0.0 Safari/537.36` — the
+neutral default is unchanged, per the plan's scope decision. Locked in with 2 new
+`launcher.spec.ts` unit tests (one asserting the override, one asserting no `--user-agent=` arg
+is added when unset) so the default can't quietly drift later.
+
+**4d.** `packages/cli/tests/unit/` was genuinely empty going in (confirmed, not assumed) — no
+`test` script, no vitest devDependency reference. Rather than test `cli.ts` directly (it runs
+`main()` immediately at module load — importing it in a test would spawn/attach to a real Chrome
+the moment the test file loaded), extracted the flag/verb-parsing logic into a new pure
+`parse-args.ts` module (`parseArgs(argv)`), which `cli.ts` now calls instead of inlining the
+same logic at module scope. 13 real tests added covering every flag (including this phase's new
+`--json`/`--user-agent`) individually and combined, edge cases (a valued flag with no following
+token, a positional arg that collides with a flag name later in argv), and the new multi-arg
+commands' positional threading. `npx vitest run` → 13/13, not an empty pass. Command-level
+integration (spawning a real runtime, real exit codes end-to-end) is intentionally left to the
+Phase 1 scenario-suite's live CLI driver rather than mocked here — consistent with this project's
+existing split between fast unit tests for logic and live verification for integration.
+
+**4e.** Updated `tools/scenario-suite/run-cli.mjs`'s UC-05 driver, which had a hardcoded
+`sortBlocked` placeholder recording "no `select` CLI command exists" as an honest pre-Phase-4
+gap — replaced it with a real `sutradhar select <ref> lohi` call now that the command exists, and
+re-snapshots afterward since sorting changes node ids. Re-ran the full Phase 1 harness on the CLI
+surface: **14/14 scenarios now pass** (was 13/14 pre-Phase-4), a full clean sweep. UC-05's sort
+step genuinely executed (`sortResult: {stdout: 'Selected "lohi" on 8", code: 0}`) and the whole
+downstream flow completed to `reachedConfirmation: true`. UC-08 also flips to pass on CLI,
+confirming the download-dir default fix from a second independent surface. **Also re-ran the
+full MCP surface** (not just the CLI) as a bonus check beyond what 4e strictly asked: 13/14 pass
+(was 11/14), UC-08 flips to pass there too; the one remaining failure (UC-06) failed with a plain
+30-second navigation timeout unrelated to anything changed this phase, and a direct reachability
+check immediately after (`fetch` to the same URL, 200 in 1.4s) confirms the site was fine —
+recorded honestly as a transient network blip against the live external site, not re-run again
+to avoid the cost of a second full 14-scenario MCP pass for what all available evidence points to
+as a one-off.
+
+**Process note**: both `run-mcp.mjs` and `run-cli.mjs` still lack `SCENARIO_FILTER` support
+(only `run-sdk.mjs` has it), so every targeted re-check this phase ran the full 14-scenario suite
+and unconditionally overwrote `results/baseline-{cli,mcp}.json` again. Recovered the same way as
+Phase 2 (save the post-fix run under a distinct filename, `git checkout --` to restore the
+pre-fix baseline) — `results/post-fix-{cli,mcp}-phase4.json`. This is now the second phase to hit
+this friction; worth fixing before Phase 7's real, final full re-run needs it.
+
+All touched packages typecheck clean and pass their full suites: `packages/browser` 156/156 (2
+new launcher tests), `packages/capability-runtime` 77/77, `packages/mcp-server` 22/22,
+`packages/cli` 13/13 (new).
+
+---
+
 ### Phase 5 — Session/SDK correctness (A4, C2)
 
 **5a. Popup tab frozen at `about:blank` / `'New Tab'` (fixes A4).** Root cause found:

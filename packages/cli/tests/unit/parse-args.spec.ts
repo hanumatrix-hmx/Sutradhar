@@ -1,0 +1,106 @@
+/**
+ * @file packages/cli/tests/unit/parse-args.spec.ts
+ * @description Unit tests for parseArgs — the CLI's flag/verb parsing, split out from cli.ts
+ * (which runs main() immediately at module load) specifically so it's independently testable.
+ */
+
+import { parseArgs } from '../../src/parse-args.js';
+
+describe('@sutradhar/cli parseArgs', () => {
+  it('parses a bare verb with no flags or positional args', () => {
+    const result = parseArgs(['snap']);
+    expect(result.verb).toBe('snap');
+    expect(result.cleanArgs).toEqual([]);
+    expect(result.headed).toBe(false);
+    expect(result.failOnDiff).toBe(false);
+    expect(result.jsonMode).toBe(false);
+    expect(result.profileFlag).toBeUndefined();
+    expect(result.userAgentFlag).toBeUndefined();
+  });
+
+  it('returns undefined verb when no arguments are given at all', () => {
+    const result = parseArgs([]);
+    expect(result.verb).toBeUndefined();
+    expect(result.cleanArgs).toEqual([]);
+  });
+
+  it('threads positional args through as cleanArgs, in order', () => {
+    const result = parseArgs(['click', '7']);
+    expect(result.verb).toBe('click');
+    expect(result.cleanArgs).toEqual(['7']);
+  });
+
+  it('parses --headed as a standalone boolean flag, stripped from cleanArgs', () => {
+    const result = parseArgs(['nav', 'https://example.com', '--headed']);
+    expect(result.headed).toBe(true);
+    expect(result.cleanArgs).toEqual(['https://example.com']);
+  });
+
+  it('parses --json as a standalone boolean flag, stripped from cleanArgs — new in this phase (snap --json / C6)', () => {
+    const result = parseArgs(['snap', '--json']);
+    expect(result.jsonMode).toBe(true);
+    expect(result.cleanArgs).toEqual([]);
+  });
+
+  it('parses --fail-on-diff as a standalone boolean flag', () => {
+    const result = parseArgs(['compare', 'https://a.com', 'https://b.com', '--fail-on-diff']);
+    expect(result.failOnDiff).toBe(true);
+    expect(result.cleanArgs).toEqual(['https://a.com', 'https://b.com']);
+  });
+
+  it('parses --profile <name> as a valued flag, consuming its value and stripping both from cleanArgs', () => {
+    const result = parseArgs(['nav', 'https://example.com', '--profile', 'work']);
+    expect(result.profileFlag).toBe('work');
+    expect(result.cleanArgs).toEqual(['https://example.com']);
+  });
+
+  it('parses --user-agent <ua> as a valued flag — new in this phase (4c)', () => {
+    const result = parseArgs(['nav', 'https://example.com', '--user-agent', 'MyBot/1.0']);
+    expect(result.userAgentFlag).toBe('MyBot/1.0');
+    expect(result.cleanArgs).toEqual(['https://example.com']);
+  });
+
+  it('handles a user agent string containing spaces, since it is a single argv element, not a shell-split string', () => {
+    const result = parseArgs(['nav', 'https://example.com', '--user-agent', 'Mozilla/5.0 (Custom Bot)']);
+    expect(result.userAgentFlag).toBe('Mozilla/5.0 (Custom Bot)');
+  });
+
+  it('combines multiple flags (boolean + two valued) and strips all of them cleanly', () => {
+    const result = parseArgs([
+      'nav',
+      'https://example.com',
+      '--headed',
+      '--profile',
+      'work',
+      '--user-agent',
+      'MyBot/1.0',
+    ]);
+    expect(result.headed).toBe(true);
+    expect(result.profileFlag).toBe('work');
+    expect(result.userAgentFlag).toBe('MyBot/1.0');
+    expect(result.cleanArgs).toEqual(['https://example.com']);
+  });
+
+  it('leaves profileFlag/userAgentFlag undefined, not the next arg, when the flag is the last token (no value given)', () => {
+    const result = parseArgs(['nav', 'https://example.com', '--profile']);
+    expect(result.profileFlag).toBeUndefined();
+    // The flag itself is still stripped from cleanArgs even with no following value.
+    expect(result.cleanArgs).toEqual(['https://example.com']);
+  });
+
+  it('supports the new multi-arg commands introduced in this phase — select/wait/upload/drag all thread two positional args', () => {
+    expect(parseArgs(['select', '3', 'blue']).cleanArgs).toEqual(['3', 'blue']);
+    expect(parseArgs(['wait', '3', '5000']).cleanArgs).toEqual(['3', '5000']);
+    expect(parseArgs(['upload', '3', '/tmp/file.txt']).cleanArgs).toEqual(['3', '/tmp/file.txt']);
+    expect(parseArgs(['drag', '3', '7']).cleanArgs).toEqual(['3', '7']);
+    expect(parseArgs(['download', '3', '/tmp/downloads']).cleanArgs).toEqual(['3', '/tmp/downloads']);
+  });
+
+  it('does not treat a positional arg that happens to equal a flag NAME as anything but a flag, even mid-command', () => {
+    // Guards the filter's index-based value-stripping: only the token immediately AFTER
+    // --profile/--user-agent is treated as that flag's value, not any later occurrence.
+    const result = parseArgs(['eval', '--profile', 'x', 'document.title']);
+    expect(result.profileFlag).toBe('x');
+    expect(result.cleanArgs).toEqual(['document.title']);
+  });
+});

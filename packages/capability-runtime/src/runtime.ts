@@ -336,7 +336,12 @@ export class SutradharRuntime {
    * regardless of this value, so raising it (e.g. for a content-heavy page whose pagination
    * link is past the default 60) surfaces ids that already exist rather than stamping new ones.
    */
-  public async snapshot(sessionId: string, tabId?: string, maxElements?: number): Promise<SnapshotResult> {
+  public async snapshot(
+    sessionId: string,
+    tabId?: string,
+    maxElements?: number,
+    options?: { includeNodes?: boolean },
+  ): Promise<SnapshotResult> {
     const { tab } = this.resolveTab(sessionId, tabId);
     this.requirePage(tab); // fail early if no real browser
     const graph = await this.domEngine.buildGraph(tab);
@@ -350,6 +355,7 @@ export class SutradharRuntime {
       interactiveElements,
       elementCount: graph.nodes.length,
       pageText,
+      ...(options?.includeNodes ? { nodes: graph.nodes } : {}),
     };
   }
 

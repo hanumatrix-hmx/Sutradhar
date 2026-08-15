@@ -13,19 +13,11 @@ import path from 'node:path';
 import { readState, writeState, clearState } from './state.js';
 import { spawnDetachedChrome, killChromeTree } from './spawn-chrome.js';
 import { createSessionId } from '@sutradhar/contracts';
+import { parseArgs } from './parse-args.js';
 
 const logger = new StructuredLogger({ minLevel: 'error' }); // CLI output IS the log; keep engine logs quiet
-const [, , verb, ...args] = process.argv;
-const headed = args.includes('--headed');
-const failOnDiff = args.includes('--fail-on-diff');
-const profileFlagIndex = args.indexOf('--profile');
-const profileFlag = profileFlagIndex !== -1 ? args[profileFlagIndex + 1] : undefined;
-const cleanArgs = args.filter(
-  (a, i) =>
-    a !== '--headed' &&
-    a !== '--fail-on-diff' &&
-    a !== '--profile' &&
-    !(profileFlagIndex !== -1 && i === profileFlagIndex + 1),
+const { verb, cleanArgs, headed, failOnDiff, jsonMode, profileFlag, userAgentFlag } = parseArgs(
+  process.argv.slice(2),
 );
 
 // Tracked so main()'s cleanup can disconnect the CDP client connection (NOT close the browser)
@@ -71,7 +63,7 @@ async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string)
   }
   let spawned: Awaited<ReturnType<typeof spawnDetachedChrome>>;
   try {
-    spawned = await spawnDetachedChrome(!headed, profileUserDataDir);
+    spawned = await spawnDetachedChrome(!headed, profileUserDataDir, userAgentFlag);
   } catch (err) {
     printErrorAndExit((err as Error).message);
   }
@@ -141,8 +133,16 @@ async function cmdNav(url: string | undefined) {
   });
 }
 
-async function cmdSnap() {
+async function cmdSnap(jsonMode: boolean) {
   await withSession(async (runtime, sessionId) => {
+    if (jsonMode) {
+      // Opt-in structured output (C6) — the raw per-element data interactiveElements was
+      // itself rendered from, for a caller that wants real fields (boundingBox, confidence,
+      // isEnabled, ...) instead of re-parsing the compact text listing.
+      const snap = await runtime.snapshot(sessionId, undefined, undefined, { includeNodes: true });
+      console.log(JSON.stringify({ url: snap.url, title: snap.title, elementCount: snap.elementCount, nodes: snap.nodes }, null, 2));
+      return;
+    }
     const snap = await runtime.snapshot(sessionId);
     // interactiveElements already includes its own "URL: ... / Title: ... / Interactive
     // elements (N):" header — printing snap.url/title/elementCount again separately would just
@@ -270,6 +270,92 @@ async function cmdCompare(urlA: string | undefined, urlB: string | undefined, ou
   });
 }
 
+async function cmdSelect(ref: string | undefined, value: string | undefined) {
+  if (!ref || value === undefined) printErrorAndExit('usage: sutradhar select <ref> <value>  (ref = a selector, or a numeric id from "snap"; value = the <option>\'s value)');
+  await withSession(async (runtime, sessionId) => {
+    const result = await runtime.selectOption(sessionId, ref!, value!);
+    console.log(result.success ? `Selected "${value}" on ${ref}` : `Select failed: ${result.error}`);
+    if (!result.success) process.exitCode = 1;
+  });
+}
+
+async function cmdWait(ref: string | undefined, timeoutMsArg: string | undefined) {
+  if (!ref) printErrorAndExit('usage: sutradhar wait <ref> [timeoutMs]  (ref = a selector, or a numeric id from "snap")');
+  const timeoutMs = timeoutMsArg ? Number(timeoutMsArg) : undefined;
+  await withSession(async (runtime, sessionId) => {
+    const result = await runtime.waitForSelector(sessionId, ref!, timeoutMs);
+    console.log(result.success ? `${ref} appeared` : `Wait failed: ${result.error}`);
+    if (!result.success) process.exitCode = 1;
+  });
+}
+
+async function cmdEval(code: string | undefined) {
+  if (!code) printErrorAndExit('usage: sutradhar eval <js-expression>  (runs in the page\'s top-level context)');
+  await withSession(async (runtime, sessionId) => {
+    try {
+      const result = await runtime.eval(sessionId, code!);
+      console.log(typeof result === 'string' ? result : JSON.stringify(result, null, 2));
+    } catch (err) {
+      console.log(`Eval failed: ${(err as Error).message}`);
+      process.exitCode = 1;
+    }
+  });
+}
+
+async function cmdHover(ref: string | undefined) {
+  if (!ref) printErrorAndExit('usage: sutradhar hover <ref>  (ref = a selector, or a numeric id from "snap")');
+  await withSession(async (runtime, sessionId) => {
+    const result = await runtime.hover(sessionId, ref!);
+    console.log(result.success ? `Hovered ${ref}` : `Hover failed: ${result.error}`);
+    if (!result.success) process.exitCode = 1;
+  });
+}
+
+async function cmdScroll(direction: string | undefined, amountArg: string | undefined) {
+  const dir = (direction ?? 'down') as 'up' | 'down' | 'top' | 'bottom';
+  if (!['up', 'down', 'top', 'bottom'].includes(dir)) {
+    printErrorAndExit('usage: sutradhar scroll [up|down|top|bottom] [amountPx]  (default: down 500px)');
+  }
+  const amount = amountArg ? Number(amountArg) : undefined;
+  await withSession(async (runtime, sessionId) => {
+    const result = await runtime.scroll(sessionId, dir, amount);
+    console.log(result.success ? `Scrolled ${dir}` : `Scroll failed: ${result.error}`);
+    if (!result.success) process.exitCode = 1;
+  });
+}
+
+async function cmdUpload(ref: string | undefined, filePath: string | undefined) {
+  if (!ref || !filePath) printErrorAndExit('usage: sutradhar upload <ref> <filePath>  (ref = a selector, or a numeric id from "snap", targeting an <input type="file">)');
+  await withSession(async (runtime, sessionId) => {
+    const result = await runtime.uploadFile(sessionId, ref!, path.resolve(filePath!));
+    console.log(result.success ? `Uploaded ${filePath} to ${ref}` : `Upload failed: ${result.error}`);
+    if (!result.success) process.exitCode = 1;
+  });
+}
+
+async function cmdDrag(sourceRef: string | undefined, destRef: string | undefined) {
+  if (!sourceRef || !destRef) printErrorAndExit('usage: sutradhar drag <sourceRef> <destRef>  (both = a selector, or a numeric id from "snap")');
+  await withSession(async (runtime, sessionId) => {
+    const result = await runtime.dragAndDrop(sessionId, sourceRef!, destRef!);
+    console.log(result.success ? `Dragged ${sourceRef} onto ${destRef}` : `Drag failed: ${result.error}`);
+    if (!result.success) process.exitCode = 1;
+  });
+}
+
+async function cmdDownload(ref: string | undefined, downloadDir: string | undefined) {
+  if (!ref) printErrorAndExit('usage: sutradhar download <ref> [downloadDir]  (ref = the element that triggers the download, a selector or a numeric id from "snap")');
+  await withSession(async (runtime, sessionId) => {
+    const result = await runtime.downloadFile(sessionId, ref!, downloadDir ? path.resolve(downloadDir) : undefined);
+    if (result.success) {
+      const output = result.output as { downloadedFilename?: string; downloadedPath?: string } | undefined;
+      console.log(`Downloaded "${output?.downloadedFilename}" to ${output?.downloadedPath}`);
+    } else {
+      console.log(`Download failed: ${result.error}`);
+      process.exitCode = 1;
+    }
+  });
+}
+
 async function cmdClose() {
   const state = await readState();
   if (!state) {
@@ -301,7 +387,7 @@ async function main() {
     case 'nav':
       return cmdNav(cleanArgs[0]);
     case 'snap':
-      return cmdSnap();
+      return cmdSnap(jsonMode);
     case 'axsnap':
       return cmdAxSnap();
     case 'text':
@@ -322,6 +408,22 @@ async function main() {
       return cmdAudit(cleanArgs[0], cleanArgs[1]);
     case 'compare':
       return cmdCompare(cleanArgs[0], cleanArgs[1], cleanArgs[2]);
+    case 'select':
+      return cmdSelect(cleanArgs[0], cleanArgs[1]);
+    case 'wait':
+      return cmdWait(cleanArgs[0], cleanArgs[1]);
+    case 'eval':
+      return cmdEval(cleanArgs.join(' '));
+    case 'hover':
+      return cmdHover(cleanArgs[0]);
+    case 'scroll':
+      return cmdScroll(cleanArgs[0], cleanArgs[1]);
+    case 'upload':
+      return cmdUpload(cleanArgs[0], cleanArgs[1]);
+    case 'drag':
+      return cmdDrag(cleanArgs[0], cleanArgs[1]);
+    case 'download':
+      return cmdDownload(cleanArgs[0], cleanArgs[1]);
     case 'close':
       return cmdClose();
     case 'profile':
@@ -334,6 +436,7 @@ Usage: sutradhar <command> [args] [--headed] [--profile <name>]
 Commands:
   nav <url>                    Navigate to a URL (launches a session if none is active)
   snap                         Print the interactive-element listing for the current page
+  snap --json                  Same, plus the raw structured element data as JSON
   axsnap                       Accessibility-tree listing — no ids, never goes stale even if
                                 the page re-renders; pair with clicktext/clickrole below
   text                         Print the current page's visible text
@@ -343,6 +446,14 @@ Commands:
                                 (from "axsnap", e.g. clickrole button Submit)
   type <ref> <text>            Type text into an element
   press <ref> <key>            Focus an element then press a key (e.g. Enter)
+  select <ref> <value>         Select an <option> by value on a <select>
+  wait <ref> [timeoutMs]       Wait for an element to appear and be visible
+  eval <js-expression>         Evaluate JS in the page's top-level context, print the result
+  hover <ref>                  Hover an element
+  scroll [dir] [amountPx]      Scroll the page (dir: up/down/top/bottom, default down 500px)
+  upload <ref> <filePath>      Upload a local file into an <input type="file">
+  drag <sourceRef> <destRef>   Drag one element onto another
+  download <ref> [dir]         Click an element that triggers a download, print the saved path
   screenshot [path]            Save a screenshot (default: ./screenshot.png)
   audit [url] [outDir]         Screenshot + console/page/network errors + accessibility
                                 checks + Core Web Vitals for a page (current page if no url)
@@ -357,8 +468,11 @@ Commands:
 Flags:
   --profile <name>     Launch as a named persistent profile (only applies to "nav" when
                         starting a new session — create one first with "profile create")
+  --user-agent <ua>    Launch with a custom navigator.userAgent (only applies to "nav" when
+                        starting a new session)
   --headed             Launch visibly instead of headless (only applies to "nav" when
                         starting a new session)
+  --json                "snap" additionally prints structured per-element data as JSON
   --fail-on-diff        "compare" exits nonzero if any pixel difference is found (CI gating)
 
 Session state persists across commands in ~/.sutradhar-cli/state.json — run "close" when done.`);

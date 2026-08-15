@@ -24,6 +24,15 @@ export interface BrowserLaunchOptions {
   readonly isIncognito?: boolean;
   readonly enableStealth?: boolean;
   readonly proxy?: ProxyConfig;
+  /**
+   * Override `navigator.userAgent` via Chrome's own `--user-agent` launch flag. Unset by
+   * default — the real Chrome UA (including "HeadlessChrome" when running headless) is left
+   * as-is. This is plain configurability (every HTTP client and browser automation tool
+   * exposes a UA override for legitimate uses like testing UA-conditional rendering), NOT a
+   * detection-evasion default: nothing in this codebase sets this automatically, and it must
+   * stay that way — see CLAUDE.md's scope boundary on stealth/bot-detection evasion.
+   */
+  readonly userAgent?: string;
 }
 
 export const DEFAULT_LAUNCH_ARGS: readonly string[] = [

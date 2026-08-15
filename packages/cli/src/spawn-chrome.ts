@@ -42,8 +42,15 @@ export interface SpawnedChrome {
  *  WebSocket endpoint plus its PID, once it's actually ready to accept connections.
  *  `userDataDir` defaults to a fresh throwaway temp directory — pass a named profile's
  *  directory (via `SutradharRuntime.getProfileManager().resolveUserDataDir(name)`) to launch
- *  with persistent cookies/history/localStorage instead. */
-export async function spawnDetachedChrome(headless: boolean, userDataDir?: string): Promise<SpawnedChrome> {
+ *  with persistent cookies/history/localStorage instead. `userAgent`, if given, overrides
+ *  `navigator.userAgent` via Chrome's own `--user-agent` flag — unset by default, so the real
+ *  Chrome UA (including "HeadlessChrome" when headless) is left as-is; see the equivalent doc
+ *  comment on `BrowserLaunchOptions.userAgent` for why this must never default to stripping it. */
+export async function spawnDetachedChrome(
+  headless: boolean,
+  userDataDir?: string,
+  userAgent?: string,
+): Promise<SpawnedChrome> {
   const chromePath = new BrowserLauncher().findExecutablePath();
   if (!chromePath) {
     throw new Error('No Chrome/Chromium/Edge found on this system. Run "sutradhar doctor" to diagnose.');
@@ -58,6 +65,7 @@ export async function spawnDetachedChrome(headless: boolean, userDataDir?: strin
     '--no-default-browser-check',
   ];
   if (headless) args.push('--headless=new');
+  if (userAgent) args.push(`--user-agent=${userAgent}`);
 
   const child = spawn(chromePath, args, { detached: true, stdio: 'ignore' });
   const pid = child.pid;

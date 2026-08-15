@@ -7,7 +7,7 @@
  * (MCP server, npm SDK, plugins, extension) calls through {@link SutradharRuntime}.
  */
 
-import type { ActionHistoryEntry, BrowserLaunchOptions, VerificationResultDto } from '@sutradhar/browser';
+import type { ActionHistoryEntry, BrowserLaunchOptions, SemanticNode, VerificationResultDto } from '@sutradhar/browser';
 import type { SessionId, TabId } from '@sutradhar/contracts';
 
 /** Options for {@link SutradharRuntime.launch}. */
@@ -76,6 +76,12 @@ export interface SnapshotResult {
   elementCount: number;
   /** Visible body text excerpt, best-effort. */
   pageText: string;
+  /** The structured element data `interactiveElements` was itself rendered from — present only
+   *  when the caller opts in via `snapshot(sessionId, tabId, maxElements, { includeNodes: true })`.
+   *  Lets a caller consume real per-element fields (boundingBox, confidence, isEnabled, ...)
+   *  instead of re-parsing the LLM-formatted text listing. Omitted by default so existing
+   *  callers see a byte-identical payload. */
+  nodes?: readonly SemanticNode[];
 }
 
 /** Result of {@link SutradharRuntime.click} and {@link SutradharRuntime.type}. */

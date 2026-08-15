@@ -1,11 +1,12 @@
 // CLI-surface driver for the GLM 5.3 field-report regression suite (tools/scenario-suite/scenarios.mjs).
 // Drives the REAL `sutradhar` CLI binary (packages/cli/dist/cli.js) as a real child process per
 // step — exactly the way a real user types commands one at a time — using the CLI's own
-// documented 15 commands (doctor, nav, snap, axsnap, text, click, clicktext, clickrole, type,
-// press, screenshot, audit, compare, close, profile). This is a PRE-FIX baseline: no CLI command
-// is added or worked around here — see .ai/field-report-remediation-plan.md Phase 1/4. Where a
-// scenario needs a verb the CLI does not have (select, wait, eval, hover, drag, upload, scroll,
-// download), that is recorded honestly as a genuine gap, not papered over.
+// documented commands (doctor, nav, snap, axsnap, text, click, clicktext, clickrole, type, press,
+// select, wait, eval, hover, scroll, upload, drag, download, screenshot, audit, compare, close,
+// profile). Originally written as a Phase 1 PRE-FIX baseline when select/wait/eval/hover/scroll/
+// upload/drag/download did not exist yet (each such gap recorded honestly, not papered over) —
+// UC-05's sort step was updated in Phase 4 (.ai/field-report-remediation-plan.md) to use the new
+// `select` command for real once it existed, rather than leaving the stale placeholder.
 //
 // Follows the timed()/result-shape convention from tools/engine-comparison/sutradhar-extreme.mjs:
 // { id, title, surface: 'cli', success, ms, detail, error }.
@@ -292,20 +293,22 @@ async function uc05() {
   const inventoryText = runCli(['text']);
   const reachedInventory = inventoryText.stdout.includes('Products');
 
-  // Sort step: genuinely blocked. GLM's own C1/Context item — `sutradhar` has no `select` verb
-  // and no `eval` verb (both are Phase 4 work, not built here). No CLI-level workaround was
-  // attempted (would misrepresent the CLI's real capability) — recorded as a real, honest gap.
+  // Sort step: Phase 4 added a `select` CLI command (field-report remediation C1) — use it for
+  // real, instead of the honest-gap placeholder this used to be pre-Phase-4.
+  const sortSelectId = inventorySnap.stdout.split('\n').find((l) => /^\[#\d+\] select/.test(l))?.match(/^\[#(\d+)\]/)?.[1];
+  const sortResult = sortSelectId ? runCli(['select', sortSelectId, 'lohi']) : { skipped: 'no select element found in inventory snap' };
   const sortBlocked = {
     step: 'sort products by price',
-    blockedBecause: 'no `select` CLI command exists (verified: packages/cli/src/cli.ts has no case \'select\')',
-    workaroundAttempted: false,
+    blockedBecause: sortSelectId ? null : 'no select element found in inventory snap',
+    workaroundAttempted: true,
+    sortResult,
   };
 
-  // Continue the flow anyway (default product order) to still gather real evidence downstream —
-  // a real user facing this gap would do the same rather than abandon the whole flow.
-  const productLink = inventorySnap.stdout.split('\n').find((l) => /Sauce Labs Backpack/.test(l));
+  // Re-snap after sorting — product order (and therefore node ids) changed if the sort landed.
+  const postSortSnap = sortSelectId && sortResult.code === 0 ? runCli(['snap']) : inventorySnap;
+  const productLink = postSortSnap.stdout.split('\n').find((l) => /Sauce Labs Backpack/.test(l));
   const productId = productLink?.match(/^\[#(\d+)\]/)?.[1];
-  if (!productId) fail('could not find "Sauce Labs Backpack" product link in snap', { inventorySnap: inventorySnap.stdout, sortBlocked });
+  if (!productId) fail('could not find "Sauce Labs Backpack" product link in snap', { inventorySnap: postSortSnap.stdout, sortBlocked });
 
   const detailClick = runCli(['click', productId]);
   const detailSnap = runCli(['snap']);

@@ -1363,6 +1363,40 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
     expect(result.error).toContain('outside the allowed download directories');
   });
 
+  it('accepts a requested downloadDir that differs only in case from the allowed root, on Windows — fixes the field-report remediation\'s new finding', async () => {
+    if (process.platform !== 'win32') return; // the bug (and its fix) is Windows-filesystem-specific
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true);
+    const page = singleFramePage(() => Promise.resolve(handle));
+    const client = mockCdpClient();
+    (page as any).browser = vi.fn().mockReturnValue({
+      target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+    });
+
+    // Neither path exists on disk, so `realpath` throws for both and each falls back to its own
+    // literal case — exactly the condition that used to make the plain `startsWith` check
+    // false-reject a genuinely-nested, not-yet-created subdirectory whose case happened to
+    // differ from the allowed root's.
+    const allowedRoot = path.resolve('C:\\SutradharTestFakeRoot' + Date.now());
+    const requestedSubdir = path.join(allowedRoot.toLowerCase(), 'downloads');
+    const engine = new BrowserActionEngine(undefined, undefined, undefined, [allowedRoot]);
+    const promise = engine.executeAction(mockTab(page), {
+      actionType: 'download_file',
+      selector: '#download-link',
+      downloadDir: requestedSubdir,
+      maxRetries: 0,
+    });
+
+    await new Promise((r) => setTimeout(r, 50));
+    client.emit('Browser.downloadWillBegin', { suggestedFilename: 'report.pdf' });
+    client.emit('Browser.downloadProgress', { state: 'completed' });
+
+    const result = await promise;
+
+    expect(result.success).toBe(true);
+    expect(result.error).toBeUndefined();
+  });
+
   it('fails cleanly when the download is canceled', async () => {
     const handle = mockHandle();
     handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true);
