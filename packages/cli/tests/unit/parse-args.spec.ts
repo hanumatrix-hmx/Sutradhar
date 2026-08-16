@@ -150,6 +150,17 @@ describe('@sutradhar/cli parseArgs', () => {
     expect(result.idsOnly).toBe(false);
   });
 
+  it('parses --scan-listeners as a standalone boolean flag for "snap"', () => {
+    const result = parseArgs(['snap', '--scan-listeners']);
+    expect(result.scanListeners).toBe(true);
+    expect(result.cleanArgs).toEqual([]);
+  });
+
+  it('defaults scanListeners to false when not given', () => {
+    const result = parseArgs(['snap']);
+    expect(result.scanListeners).toBe(false);
+  });
+
   it('does not treat a positional arg that happens to equal a flag NAME as anything but a flag, even mid-command', () => {
     // Guards the filter's index-based value-stripping: only the token immediately AFTER
     // --profile/--user-agent is treated as that flag's value, not any later occurrence.

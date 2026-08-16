@@ -49,6 +49,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Network request interception/mocking | covered | Milestone 7: `browser.route` with both `mock` (a real fetch received the exact mocked JSON body) and `block` (a real fetch failed as expected) actions verified against genuine `fetch()` calls, not just the tool's own success report. |
 | Console/network/page-error log capture | covered | Milestone 7: `get_console_logs` correctly captured log/warn/error levels plus an incidental real network failure; `get_page_errors` correctly captured a deliberate uncaught exception with message and stack trace; `get_network_log` correctly distinguished a completed (mocked) request from a blocked one (request-only, no response phase). |
 | CAPTCHA / bot-detection / stealth evasion | excluded | Deliberately out of scope per CLAUDE.md — not a gap to close. |
+| Modern code editors (Monaco/VS Code Web's `EditContext`-API input model) | covered, real technique documented (not obvious) | Milestone 43: tested live against the real Monaco Editor playground. Modern Monaco doesn't use a plain `<textarea>` for input at all — it uses the `EditContext` Web API, whose real focus target is an invisible, zero-box `<div class="native-edit-context">` that `click`/`type` correctly refuse to act on (no box model to click, "Node is either not clickable or not an Element") — a real, correct refusal, not a bug. The working technique: target the visible rendered surface (`.monaco-editor .view-lines`, a real, sizable, clickable div) for both `click` and `type` — Puppeteer's real synthetic keyboard events reach Monaco's model correctly through it (verified via `monaco.editor.getEditors()[0].getValue()` actually containing the typed text, not just a fabricated success report). Separately: an initial `snap` taken immediately after navigation surfaced a `<textarea aria-label="Editor content">` that looked like the obvious target but was a transitional element from Monaco's pre-`EditContext`-init state — gone moments later, clicking it failed with occlusion. A real, concrete example of why the `settle` option (Milestone 38) matters: snapshotting/acting too early after navigating into a heavy JS framework can grab elements that don't survive the framework's own init sequence. |
 
 ## MCP session staleness — resolved 2026-08-13, but re-staleness after every rebuild is a standing gotcha
 
@@ -66,6 +67,45 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-16 — Milestone 43: hunting the hardest real use cases (new user directive) — Monaco Editor documented, PROB-013 finally closed via real CDP event-listener introspection
+
+The user redirected the standing loop after a check-in: instead of grinding through
+`.ai/known-problems.md`'s remaining backlog, actively hunt the hardest real-world use cases and
+fix whatever breaks. First two targets:
+
+**Monaco Editor (VS Code's web editor)** — already fully usable, but only via a real,
+non-obvious technique now documented as `.ai/known-problems.md`'s "Documented technique"
+section: modern Monaco's real input target is an invisible, zero-box `EditContext`-API div that
+`click`/`type` correctly refuse to act on; the working path is targeting the visible
+`.monaco-editor .view-lines` surface instead. Also caught a real, generalizable lesson: a
+`snap` taken immediately after navigation grabbed a transitional `<textarea>` that Monaco's own
+init sequence had already discarded by the time anything tried to act on it — concrete evidence
+for why `settle` (Milestone 38) matters when acting on a heavy JS framework right after
+navigating into it.
+
+**SortableJS-based drag lists** — a real, hard gap, live-reproduced: draggable list items are
+plain `<div>`s with no `draggable` attribute, `cursor:auto`, `user-select:auto` — zero CSS/ARIA
+signal, invisible to every existing heuristic (confirmed via live computed-style inspection, not
+assumed). This is exactly the gap `PROB-013` had deferred as "materially larger... needs CDP
+`DOMDebugger.getEventListeners`" — now justified by a real example, so built it: an opt-in
+`scanEventListeners` pass (`snap --scan-listeners` / `browser.snapshot`'s `scanEventListeners`
+param, off by default), entirely within one CDP session (`DOM.getDocument({pierce:true})` +
+`DOM.querySelectorAll` finds candidates across frames/shadow roots in one call,
+`DOMDebugger.getEventListeners` checks each for a genuine interaction listener,
+`Runtime.callFunctionOn` stamps real matches — all CDP-native, since a Puppeteer
+`ElementHandle`'s `objectId` belongs to a different session and wouldn't resolve here), bounded
+to 150 candidates. Live-verified: default snapshot finds 0 of 6 real draggable items; with the
+new flag, correctly found and stamped the container in 129ms.
+
+Found and documented an honest nuance along the way rather than overclaiming: SortableJS
+attaches its listener to the *container* via event delegation, not each item, so the scan
+surfaces the container, not individual items — but `drag_and_drop` targeting a real child
+selector (`:nth-child(N)` on that container) still works, since the delegated handler receives
+the bubbled event regardless. Live-verified end to end: a real `drag_and_drop` call genuinely
+reordered the list (Item 1 moved from position 1 to position 3, confirmed via the real DOM
+order before/after). Closes `PROB-013`. `packages/browser` 172/172, `packages/capability-runtime`
+90/90, `packages/mcp-server` 25/25, `packages/cli` 24/24 — all green.
 
 ### 2026-08-16 — Milestone 41: `click_by_text` routed through the occlusion-safe path — closes PROB-012
 

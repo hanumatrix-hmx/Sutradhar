@@ -402,11 +402,11 @@ export class SutradharRuntime {
     sessionId: string,
     tabId?: string,
     maxElements?: number,
-    options?: { includeNodes?: boolean; noText?: boolean; idsOnly?: boolean },
+    options?: { includeNodes?: boolean; noText?: boolean; idsOnly?: boolean; scanEventListeners?: boolean },
   ): Promise<SnapshotResult> {
     const { tab } = this.resolveTab(sessionId, tabId);
     this.requirePage(tab); // fail early if no real browser
-    const graph = await this.domEngine.buildGraph(tab);
+    const graph = await this.domEngine.buildGraph(tab, { scanEventListeners: options?.scanEventListeners });
     const interactiveElements = formatGraphForLlm(graph, maxElements, {
       noText: options?.noText,
       idsOnly: options?.idsOnly,

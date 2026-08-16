@@ -29,6 +29,7 @@ const {
   settle,
   noText,
   idsOnly,
+  scanListeners,
 } = parseArgs(process.argv.slice(2));
 
 // Tracked so main()'s cleanup can disconnect the CDP client connection (NOT close the browser)
@@ -236,11 +237,14 @@ async function cmdSnap(jsonMode: boolean) {
       // Opt-in structured output (C6) — the raw per-element data interactiveElements was
       // itself rendered from, for a caller that wants real fields (boundingBox, confidence,
       // isEnabled, ...) instead of re-parsing the compact text listing.
-      const snap = await runtime.snapshot(sessionId, undefined, undefined, { includeNodes: true });
+      const snap = await runtime.snapshot(sessionId, undefined, undefined, {
+        includeNodes: true,
+        scanEventListeners: scanListeners,
+      });
       console.log(JSON.stringify({ url: snap.url, title: snap.title, elementCount: snap.elementCount, nodes: snap.nodes }, null, 2));
       return;
     }
-    const snap = await runtime.snapshot(sessionId, undefined, undefined, { noText, idsOnly });
+    const snap = await runtime.snapshot(sessionId, undefined, undefined, { noText, idsOnly, scanEventListeners: scanListeners });
     // interactiveElements already includes its own "URL: ... / Title: ... / Interactive
     // elements (N):" header — printing snap.url/title/elementCount again separately would just
     // duplicate it (and elementCount counts ALL DOM graph nodes, not just the interactive
@@ -582,6 +586,9 @@ Commands:
                                 (keeps tag+role+id) — smaller listing when you already know
                                 what you're targeting and just need fresh ids
   snap --ids-only                Smallest listing: only the bracketed [#id], nothing else
+  snap --scan-listeners          Also finds elements with only a real addEventListener-attached
+                                handler (no onclick=/role=/tabindex/cursor:pointer) — e.g.
+                                SortableJS-style drag lists. Slower; real CDP introspection.
   axsnap                       Accessibility-tree listing — no ids, never goes stale even if
                                 the page re-renders; pair with clicktext/clickrole below
   text                         Print the current page's visible text
@@ -637,6 +644,7 @@ Flags:
                         the action triggers a menu/modal/toast that renders a moment later
   --no-text             "snap" drops per-element text, keeping tag+role+id (see command list)
   --ids-only            "snap" keeps only the bracketed id, nothing else (see command list)
+  --scan-listeners      "snap" also finds real addEventListener-only elements (see command list)
   --allowlist-domains <a.com,b.com>
                         Block navigation to any domain not in this comma-separated list (and
                         their subdomains). Per-command, not persisted in session state — pass

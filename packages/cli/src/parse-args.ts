@@ -30,6 +30,11 @@ export interface ParsedArgs {
   /** `--ids-only` — used by `snap` to drop everything but the bracketed id. Implies `noText`.
    *  Off by default. */
   idsOnly: boolean;
+  /** `--scan-listeners` — used by `snap` to also find elements whose only interactivity signal
+   *  is a real addEventListener-attached handler (via CDP DOMDebugger.getEventListeners), for
+   *  libraries (e.g. SortableJS) that attach raw pointer/mouse listeners with no CSS/ARIA
+   *  signal at all. Slower than a normal snapshot; off by default. */
+  scanListeners: boolean;
 }
 
 /** Parses `process.argv.slice(2)`-style arguments (verb + flags) into their recognized pieces.
@@ -42,6 +47,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
   const settle = args.includes('--settle');
   const noText = args.includes('--no-text');
   const idsOnly = args.includes('--ids-only');
+  const scanListeners = args.includes('--scan-listeners');
   const profileFlagIndex = args.indexOf('--profile');
   const profileFlag = profileFlagIndex !== -1 ? args[profileFlagIndex + 1] : undefined;
   const userAgentFlagIndex = args.indexOf('--user-agent');
@@ -65,6 +71,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
       a !== '--settle' &&
       a !== '--no-text' &&
       a !== '--ids-only' &&
+      a !== '--scan-listeners' &&
       a !== '--profile' &&
       a !== '--user-agent' &&
       a !== '--allowlist-domains' &&
@@ -88,5 +95,6 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     settle,
     noText,
     idsOnly,
+    scanListeners,
   };
 }

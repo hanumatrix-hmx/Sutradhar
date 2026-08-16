@@ -315,7 +315,16 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         'noText (default false) drops each line\'s name/label/placeholder/value text, keeping tag+role+id — for when ' +
         'you already know what you\'re targeting (e.g. from an earlier full snapshot) and just need fresh ids after a ' +
         're-render. idsOnly (default false) drops everything but the id itself — the smallest possible listing, at the ' +
-        'cost of it no longer being self-describing; implies noText.',
+        'cost of it no longer being self-describing; implies noText. ' +
+        'scanEventListeners (default false) additionally finds elements whose ONLY interactivity signal is a real ' +
+        'addEventListener-attached handler with no onclick=/role=/tabindex/cursor:pointer at all — real libraries ' +
+        '(e.g. SortableJS-based drag lists) attach raw pointerdown/mousedown/dragstart handlers with zero CSS/ARIA ' +
+        'signal, invisible to the default pass. Uses real CDP event-listener introspection (not a guess), bounded to ' +
+        '150 candidates. Slower than a normal snapshot — reach for it only when the default listing is missing ' +
+        'something you can see is interactive. Note: some libraries attach the listener to a CONTAINER (event ' +
+        'delegation), not each item — if so, this finds the container, and a real child selector (e.g. ' +
+        '\':nth-child(N)\' on that container) still works for browser.drag_and_drop even though the child itself ' +
+        'has no listener, since the delegated handler still receives the bubbled event.',
       inputSchema: {
         sessionId: z.string(),
         tabId: z.string().optional(),
@@ -323,11 +332,17 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         includeNodes: z.boolean().optional(),
         noText: z.boolean().optional(),
         idsOnly: z.boolean().optional(),
+        scanEventListeners: z.boolean().optional(),
       },
     },
-    async ({ sessionId, tabId, maxElements, includeNodes, noText, idsOnly }) => {
+    async ({ sessionId, tabId, maxElements, includeNodes, noText, idsOnly, scanEventListeners }) => {
       try {
-        const snap = await runtime.snapshot(sessionId, tabId, maxElements, { includeNodes, noText, idsOnly });
+        const snap = await runtime.snapshot(sessionId, tabId, maxElements, {
+          includeNodes,
+          noText,
+          idsOnly,
+          scanEventListeners,
+        });
         // Return as readable text rather than JSON — the model parses the listing directly.
         // `snap.interactiveElements` already embeds its own "URL/Title/Interactive elements
         // (N):" header (N = the true interactive-only count) — do not prepend another one here.

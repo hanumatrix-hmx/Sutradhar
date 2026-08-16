@@ -3,7 +3,7 @@
  * @description Unit tests for formatGraphForLlm's interactive-element header/listing consistency.
  */
 
-import { formatGraphForLlm, SemanticElementGraph, SemanticNode } from '../../src/index.js';
+import { formatGraphForLlm, SemanticElementGraph, SemanticNode, DOMSemanticEngine, IBrowserTab } from '../../src/index.js';
 
 function node(overrides: Partial<SemanticNode>): SemanticNode {
   return {
@@ -158,5 +158,41 @@ describe('@sutradhar/browser formatGraphForLlm', () => {
       const lines = formatted.split('\n').filter((l) => /^\[#\d+\]/.test(l));
       expect(lines).toEqual(['[#7]', '[#8]']);
     });
+  });
+});
+
+describe('@sutradhar/browser DOMSemanticEngine.buildGraph — scanEventListeners option', () => {
+  it('returns an empty graph (no crash) when there is no live page, regardless of scanEventListeners', async () => {
+    const noPageTab: IBrowserTab = {
+      id: 'tab_1' as IBrowserTab['id'],
+      url: 'about:blank',
+      title: '',
+      active: true,
+      isActive: true,
+      isClosed: false,
+      page: undefined,
+    } as unknown as IBrowserTab;
+
+    const engine = new DOMSemanticEngine();
+    const graph = await engine.buildGraph(noPageTab, { scanEventListeners: true });
+
+    expect(graph.nodes).toEqual([]);
+  });
+
+  it('defaults scanEventListeners to off (no option passed) without throwing', async () => {
+    const noPageTab: IBrowserTab = {
+      id: 'tab_1' as IBrowserTab['id'],
+      url: 'about:blank',
+      title: '',
+      active: true,
+      isActive: true,
+      isClosed: false,
+      page: undefined,
+    } as unknown as IBrowserTab;
+
+    const engine = new DOMSemanticEngine();
+    const graph = await engine.buildGraph(noPageTab);
+
+    expect(graph.nodes).toEqual([]);
   });
 });

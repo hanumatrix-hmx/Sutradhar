@@ -22,7 +22,7 @@
  * blocks script access to are skipped rather than failing the whole snapshot.
  */
 
-import { Page } from 'puppeteer-core';
+import { Page, CDPSession } from 'puppeteer-core';
 import { IBrowserTab } from '../session/browser-tab.js';
 import { SemanticElementGraph } from './semantic-element-graph.js';
 
@@ -92,17 +92,50 @@ const MAX_FRAMES = 20;
  */
 const MAX_STAMPED_ELEMENTS_PER_FRAME = 300;
 
+/**
+ * CSS selector for candidates considered by the opt-in event-listener-based fallback scan (see
+ * {@link BuildGraphOptions.scanEventListeners}) — plausible containers for a JS-library-driven
+ * widget (a sortable list item, a custom drag handle, a virtualized-grid row) that carries none
+ * of `INTERACTIVE_SELECTOR`'s signals. `:not([${SD_NODE_ID_ATTR}])` excludes anything the
+ * primary pass already stamped, so the two passes never double-count the same element.
+ */
+const EVENT_LISTENER_CANDIDATE_TAGS = ['div', 'span', 'li', 'td', 'tr', 'ul', 'ol', 'section', 'article', 'img'];
+
+/** Real DOM event types treated as "this element is genuinely interactive", checked against
+ *  `DOMDebugger.getEventListeners`' real, attached listeners — not a proxy or a guess. */
+const INTERACTION_LISTENER_TYPES = new Set(['click', 'mousedown', 'pointerdown', 'touchstart', 'dragstart']);
+
+/** Hard cap on `DOMDebugger.getEventListeners` CDP round trips per snapshot — each is a real
+ *  IPC call to the browser process, meaningfully slower than the primary in-page-JS pass, so
+ *  this bounds the cost on a page with thousands of candidate elements rather than checking
+ *  every one of them. */
+const MAX_EVENT_LISTENER_CANDIDATES = 150;
+
 /** Returns the CSS selector that uniquely targets the element stamped with `nodeId`. */
 export function selectorForNodeId(nodeId: number): string {
   return `[${SD_NODE_ID_ATTR}="${nodeId}"]`;
 }
 
+export interface BuildGraphOptions {
+  /**
+   * Opt-in: also run a CDP `DOMDebugger.getEventListeners`-based pass to find elements whose
+   * ONLY interactivity signal is a JS `addEventListener`-attached handler — no `onclick=`,
+   * ARIA role, `tabindex`, or `cursor:pointer` styling (PROB-013's exact, previously-deferred
+   * gap). Real libraries exist that attach raw `pointerdown`/`mousedown`/`dragstart` handlers
+   * with zero CSS/ARIA signal at all (found live: SortableJS-based drag lists, a real, common
+   * pattern behind admin dashboards and kanban boards). Off by default — each candidate costs
+   * a real CDP round trip, so this is meaningfully slower than the primary pass and should be
+   * reached for only when the default snapshot doesn't find what's needed.
+   */
+  scanEventListeners?: boolean;
+}
+
 export interface IDOMSemanticEngine {
-  buildGraph(tab: IBrowserTab): Promise<SemanticElementGraph>;
+  buildGraph(tab: IBrowserTab, options?: BuildGraphOptions): Promise<SemanticElementGraph>;
 }
 
 export class DOMSemanticEngine implements IDOMSemanticEngine {
-  public async buildGraph(tab: IBrowserTab): Promise<SemanticElementGraph> {
+  public async buildGraph(tab: IBrowserTab, options: BuildGraphOptions = {}): Promise<SemanticElementGraph> {
     const page: Page | undefined = tab.page;
 
     if (!page) {
@@ -141,10 +174,83 @@ export class DOMSemanticEngine implements IDOMSemanticEngine {
         }
       }
 
+      if (options.scanEventListeners) {
+        const listenerNodes = await this.scanForEventListenerElements(page, nextId, generation);
+        allNodes.push(...listenerNodes);
+      }
+
       return new SemanticElementGraph(allNodes, tab.url, tab.title);
     } catch {
       return new SemanticElementGraph([], tab.url, tab.title);
     }
+  }
+
+  /**
+   * Real event-listener introspection via CDP, as a bounded, opt-in fallback for elements the
+   * primary attribute/style-based pass structurally cannot see (see {@link BuildGraphOptions}).
+   * Runs entirely within one CDP session so `Runtime.RemoteObject` ids stay valid throughout —
+   * `DOM.getDocument({pierce:true})` + `DOM.querySelectorAll` (which also crosses same-process
+   * iframes and open shadow roots in one call, unlike the per-frame Puppeteer loop above) find
+   * candidates, `DOM.resolveNode` gets each a real object id, `DOMDebugger.getEventListeners`
+   * checks for a genuine interaction listener, and `Runtime.callFunctionOn` stamps + extracts
+   * fields for real matches — the CDP-native equivalent of `ElementHandle.evaluate()`, without
+   * needing a Puppeteer handle (whose `objectId` would belong to a different session).
+   */
+  private async scanForEventListenerElements(
+    page: Page,
+    startId: number,
+    generation: string,
+  ): Promise<ScrapedNode[]> {
+    const results: ScrapedNode[] = [];
+    let client: CDPSession | undefined;
+    try {
+      client = await page.target().createCDPSession();
+      await client.send('DOM.enable');
+      await client.send('Runtime.enable');
+
+      const { root } = await client.send('DOM.getDocument', { depth: -1, pierce: true });
+      const selector = EVENT_LISTENER_CANDIDATE_TAGS.map((tag) => `${tag}:not([${SD_NODE_ID_ATTR}])`).join(', ');
+      const { nodeIds } = await client.send('DOM.querySelectorAll', { nodeId: root.nodeId, selector });
+
+      let nextId = startId;
+      for (const nodeId of nodeIds.slice(0, MAX_EVENT_LISTENER_CANDIDATES)) {
+        try {
+          const { object } = await client.send('DOM.resolveNode', { nodeId });
+          if (!object.objectId) continue;
+
+          const { listeners } = await client.send('DOMDebugger.getEventListeners', { objectId: object.objectId });
+          const hasInteractionListener = listeners.some((l) => INTERACTION_LISTENER_TYPES.has(l.type));
+          if (!hasInteractionListener) continue;
+
+          const extracted = await client.send('Runtime.callFunctionOn', {
+            objectId: object.objectId,
+            functionDeclaration: extractAndStampEventListenerElement.toString(),
+            arguments: [
+              { value: nextId },
+              { value: generation },
+              { value: SD_NODE_ID_ATTR },
+              { value: SD_GENERATION_ATTR },
+              { value: SYNTHETIC_CLICKABLE_ROLE },
+            ],
+            returnByValue: true,
+          });
+          const node = extracted.result.value as ScrapedNode | null;
+          if (node) {
+            results.push(node);
+            nextId++;
+          }
+        } catch {
+          // This one candidate failed to resolve/inspect (detached mid-scan, cross-origin,
+          // etc.) — skip it, not the whole pass.
+        }
+      }
+    } catch {
+      // No CDP session / DOM domain unavailable for this page (e.g. a mock tab in tests) —
+      // return whatever was found before the failure (normally nothing).
+    } finally {
+      if (client) await client.detach().catch(() => {});
+    }
+    return results;
   }
 }
 
@@ -343,6 +449,71 @@ function scrapeFrame(params: {
       isEnabled: !inputEl.disabled,
     };
   });
+}
+
+/**
+ * Runs via CDP `Runtime.callFunctionOn` (`this` bound to the candidate element) — the
+ * CDP-native equivalent of `elementHandle.evaluate()`, used because the candidate's real
+ * `objectId` comes from a CDP session {@link DOMSemanticEngine.scanForEventListenerElements}
+ * creates itself, not from a Puppeteer `ElementHandle` (whose `objectId` belongs to a
+ * different session and wouldn't resolve here). Only called for elements already confirmed to
+ * have a real interaction listener attached — this stamps + extracts the same fields
+ * {@link scrapeFrame} does for its own matches, at a lower base confidence since a genuine
+ * event listener existing says nothing about the element's semantic role, unlike a native tag
+ * or explicit ARIA attribute.
+ */
+function extractAndStampEventListenerElement(
+  this: Element,
+  id: number,
+  generation: string,
+  attrName: string,
+  genAttr: string,
+  syntheticRole: string,
+): {
+  id: number;
+  tagName: string;
+  role: string;
+  accessibleName?: string;
+  value?: string;
+  confidence: number;
+  boundingBox: { x: number; y: number; width: number; height: number };
+  isVisible: boolean;
+  isEnabled: boolean;
+} | null {
+  const el = this as HTMLElement;
+  if (!el || !el.getBoundingClientRect) return null;
+
+  const rect = el.getBoundingClientRect();
+  const style = getComputedStyle(el);
+  const hasSize = rect.width > 0 && rect.height > 0;
+  const isVisible =
+    hasSize &&
+    style.display !== 'none' &&
+    style.visibility !== 'hidden' &&
+    style.visibility !== 'collapse' &&
+    parseFloat(style.opacity || '1') !== 0;
+
+  el.setAttribute(attrName, String(id));
+  el.setAttribute(genAttr, generation);
+
+  const inputEl = el as HTMLInputElement;
+  const name = el.getAttribute('aria-label') || el.innerText?.slice(0, 100) || inputEl.placeholder || inputEl.value || undefined;
+
+  let confidence = 0.4; // lower base than the primary pass — a real listener, but no known semantics
+  if (name) confidence += 0.3;
+  if (hasSize) confidence += 0.05;
+
+  return {
+    id,
+    tagName: el.tagName,
+    role: el.getAttribute('role') || syntheticRole,
+    accessibleName: name ? name.trim() : undefined,
+    value: inputEl.value || undefined,
+    confidence: Math.min(0.85, confidence), // capped below the primary pass's max — heuristic, not certain
+    boundingBox: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
+    isVisible,
+    isEnabled: !inputEl.disabled,
+  };
 }
 
 /**
