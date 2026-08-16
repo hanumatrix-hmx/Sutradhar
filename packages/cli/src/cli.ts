@@ -31,6 +31,7 @@ const {
   idsOnly,
   scanListeners,
   modifiersFlag,
+  frameFlag,
 } = parseArgs(process.argv.slice(2));
 
 // Tracked so main()'s cleanup can disconnect the CDP client connection (NOT close the browser)
@@ -436,10 +437,17 @@ async function cmdWait(ref: string | undefined, timeoutMsArg: string | undefined
 }
 
 async function cmdEval(code: string | undefined) {
-  if (!code) printErrorAndExit('usage: sutradhar eval <js-expression>  (runs in the page\'s top-level context)');
+  if (!code) {
+    printErrorAndExit(
+      'usage: sutradhar eval <js-expression> [--frame <selector>]  ' +
+        '(runs in the page\'s top-level context by default; --frame targets a specific <iframe>, ' +
+        'including a genuinely cross-origin one, by CSS selector or a numeric id from "snap" — ' +
+        'chain with :: for an iframe nested inside another iframe, e.g. --frame "iframe.widget::iframe.payment")',
+    );
+  }
   await withSession(async (runtime, sessionId) => {
     try {
-      const result = await runtime.eval(sessionId, code!);
+      const result = await runtime.eval(sessionId, code!, undefined, frameFlag);
       console.log(typeof result === 'string' ? result : JSON.stringify(result, null, 2));
     } catch (err) {
       console.log(`Eval failed: ${(err as Error).message}`);
@@ -789,6 +797,12 @@ Commands:
   select <ref> <value>         Select an <option> by value on a <select>
   wait <ref> [timeoutMs]       Wait for an element to appear and be visible
   eval <js-expression>         Evaluate JS in the page's top-level context, print the result
+  eval <js-expression> --frame <selector>
+                                Same, but inside a specific <iframe> (selector or a numeric id
+                                from "snap") — including a genuinely cross-origin one the
+                                top-level page's own JS could never reach into itself. Chain
+                                with :: for an iframe nested inside another iframe, e.g.
+                                --frame "iframe.widget::iframe.payment"
   hover <ref>                  Hover an element
   scroll [dir] [amountPx]      Scroll the page (dir: up/down/top/bottom, default down 500px)
   scroll [dir] [amountPx] [targetRef]

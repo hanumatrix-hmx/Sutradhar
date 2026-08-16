@@ -27,7 +27,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Multi-tab workflows, incl. OAuth-style popup login | covered | Milestone 1: created a background tab via `new_tab`, navigated/snapshotted/clicked it independently via `tabId`, confirmed the original tab was completely unaffected. Works correctly. Milestone 58: closed the CLI-specific gap — the CLI had no tab commands at all, and adding them (`tabs`/`newtab`/`focustab`/`closetab`) surfaced two real multi-tab bugs in the per-process reattach architecture (only the most-recent tab was ever discovered; a focus choice didn't survive to the next command), both fixed. See PROB-031. Milestone 59: verified the exact real-world pattern that motivated the fix — a `window.open()`-triggered popup (how real "Sign in with X" OAuth buttons work) is correctly discovered as a real tab, and closing it (simulating provider auth completing) correctly leaves the session on the real parent page. Documented an honest, non-bug nuance: tab ids are a discovery-order counter reassigned fresh on every CLI reattach, not a stable identity — they can shift once the tab set changes between commands, so always re-`tabs` before acting rather than assuming a prior id is still valid. |
 | File download | covered | Milestone 1: `runtime.downloadFile` verified end-to-end — real file landed on disk at the expected path with correct content (read back and checked, not just a success flag). |
 | File upload | covered | Milestone 2: `browser.upload_file` against a real fixture page (the-internet.herokuapp.com/upload) — set a file input, clicked Upload, confirmed via the server's own response page ("File Uploaded! upload-test.txt") that it actually landed server-side, not just a client-side success flag. |
-| iframes / cross-frame interaction (incl. dynamically-injected, cross-origin) | covered | Milestone 1: verified directly against the runtime — `snapshot`/`click` correctly traverse into a cross-origin iframe injected into the page *after* initial load (the hardest realistic case — matches real chat-widget/payment-iframe behavior). Works correctly today. Milestone 35: closed the one remaining unverified sub-case — `type` into a contenteditable iframe body (TinyMCE), long assumed broken/cross-origin-restricted per GLM's original C4. Turned out to be a misdiagnosis: the iframe isn't actually cross-origin (`contentDocument` fully readable from the parent), it's already groundable via `snap`, and `type` into it already works, real text landing confirmed via independent DOM read-back. The actual bug was an invalid CSS selector in this project's own scenario-suite test code, fixed at the source — see `PROB-019`/`PROB-022`. |
+| iframes / cross-frame interaction (incl. dynamically-injected, cross-origin) | covered | Milestone 1: verified directly against the runtime — `snapshot`/`click` correctly traverse into a cross-origin iframe injected into the page *after* initial load (the hardest realistic case — matches real chat-widget/payment-iframe behavior). Works correctly today. Milestone 35: closed the one remaining unverified sub-case — `type` into a contenteditable iframe body (TinyMCE), long assumed broken/cross-origin-restricted per GLM's original C4. Turned out to be a misdiagnosis: the iframe isn't actually cross-origin (`contentDocument` fully readable from the parent), it's already groundable via `snap`, and `type` into it already works, real text landing confirmed via independent DOM read-back. The actual bug was an invalid CSS selector in this project's own scenario-suite test code, fixed at the source — see `PROB-019`/`PROB-022`. Milestone 64: closed the one remaining gap — genuinely nested iframes (an iframe inside another iframe). The main `snap`/`click`/`type` path already recursively pierced arbitrary depth automatically, but `eval --frame`/`extractData`'s explicit frame targeting only ever looked one level deep; now supports a `"::"`-separated selector chain to reach any nesting depth. See `PROB-033`. |
 | Shadow DOM | covered (open); closed is a known, reasonable limitation | Milestone 3: an injected open shadow root's button was correctly listed by `snapshot` and correctly clicked (verified via the real click handler firing). A *closed* shadow root's content is invisible to both — expected: `mode:'closed'` blocks even `evaluate()`-level JS access by design, and closed shadow roots are rare in practice since most real widgets use open ones. Not treated as a gap worth chasing. |
 | PDF handling: export | covered | `browser.export_pdf` verified — returns real, valid `%PDF-1.4` content for the current page. |
 | PDF handling: reading one encountered mid-browse | gap found, logged (`PROB-009`) | Navigating directly to a `.pdf` URL correctly enumerates Chrome's native PDF-viewer toolbar via `snapshot`, but `pageText` comes back completely empty even against a PDF with real (compressed) text content. Not fixed — needs real PDF text-layer extraction, nontrivial scope. |
@@ -78,6 +78,30 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-17 — Milestone 64: real 3-level nested iframe chain — found and fixed a genuine multi-hop gap in eval/extractData's frame targeting, closes PROB-033
+
+Continuing the hard-use-case hunt with a harder variant of the iframe cases already covered:
+genuinely nested iframes (an iframe inside another iframe), not just a single level. Built a
+controlled 3-level test page (level 1 → level 2 loads immediately → level 3 injected
+dynamically inside level 2 after a delay, mirroring a real chat-widget-lazily-injecting-a-
+payment-iframe pattern) rather than hunting for a live public demo of this specific shape.
+
+The main grounding path worked with zero extra effort — `snap`/`click`/`type` correctly found
+and interacted with level 3's elements straight away, confirming the existing recursive
+`resolveElement` piercing already handles arbitrary nesting depth. But verifying the result via
+`eval --frame` (a CLI flag this same session's docs-audit pass had just added) surfaced a real,
+separate gap: `resolveFrame` only ever looked one `<iframe>` level deep on the top-level page —
+targeting level 2 correctly reached level 2's own content, but had no way to reach level 3
+nested inside it. An inconsistency between the two cross-frame mechanisms, not a shared
+limitation.
+
+Fixed: `resolveFrame` (shared by `eval` and `extractData`) now accepts a `"::"`-separated chain
+of selectors, resolving one hop at a time — backward compatible, a plain single selector behaves
+exactly as before. `packages/capability-runtime` 90/90, `packages/cli` 29/29. Live-verified
+end-to-end through the actual CLI binary: `eval "..." --frame "iframe::iframe"` correctly
+returned level 3's real result text, matching exactly what an earlier `type`/`click` had produced
+there. Closes `PROB-033`.
 
 ### 2026-08-17 — Milestone 63: WebGL/3D canvas interaction (OrbitControls camera drag) — covered, no bug found
 

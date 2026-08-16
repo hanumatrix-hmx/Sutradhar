@@ -40,6 +40,14 @@ export interface ParsedArgs {
    *  underlying engine already supported this via `pressKey`'s `modifiers` param, but the CLI
    *  had no way to pass it (found live testing rich-text-editor toolbar formatting). */
   modifiersFlag: readonly ('Control' | 'Shift' | 'Alt' | 'Meta')[] | undefined;
+  /** Parsed from `--frame <selector>` — undefined when the flag isn't given. Used by `eval` to
+   *  run inside a specific `<iframe>` (a CSS selector or snap node id identifying the iframe
+   *  element on the top-level page) instead of the top-level page's own context — including a
+   *  genuinely cross-origin iframe, which the top-level page's own JS could never reach into
+   *  itself. The underlying runtime already supported this via `eval`'s `frameSelector` param,
+   *  but the CLI had no way to pass it (found live verifying a real 3-level nested iframe
+   *  chain, where reading a deeply-nested frame's own state needed this). */
+  frameFlag: string | undefined;
 }
 
 /** Parses `process.argv.slice(2)`-style arguments (verb + flags) into their recognized pieces.
@@ -77,6 +85,8 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
         .map((m) => m.trim())
         .filter((m) => VALID_MODIFIERS.has(m)) as ('Control' | 'Shift' | 'Alt' | 'Meta')[])
     : undefined;
+  const frameFlagIndex = args.indexOf('--frame');
+  const frameFlag = frameFlagIndex !== -1 ? args[frameFlagIndex + 1] : undefined;
   const cleanArgs = args.filter(
     (a, i) =>
       a !== '--headed' &&
@@ -91,11 +101,13 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
       a !== '--allowlist-domains' &&
       a !== '--baseline' &&
       a !== '--modifiers' &&
+      a !== '--frame' &&
       !(profileFlagIndex !== -1 && i === profileFlagIndex + 1) &&
       !(userAgentFlagIndex !== -1 && i === userAgentFlagIndex + 1) &&
       !(allowlistDomainsFlagIndex !== -1 && i === allowlistDomainsFlagIndex + 1) &&
       !(baselineFlagIndex !== -1 && i === baselineFlagIndex + 1) &&
-      !(modifiersFlagIndex !== -1 && i === modifiersFlagIndex + 1),
+      !(modifiersFlagIndex !== -1 && i === modifiersFlagIndex + 1) &&
+      !(frameFlagIndex !== -1 && i === frameFlagIndex + 1),
   );
 
   return {
@@ -113,5 +125,6 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     idsOnly,
     scanListeners,
     modifiersFlag,
+    frameFlag,
   };
 }

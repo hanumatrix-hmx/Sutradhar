@@ -63,6 +63,7 @@ Run `sutradhar` with no arguments for the full command list.
 | `select <ref> <value>` | Select an `<option>` by value on a `<select>`. |
 | `wait <ref> [timeoutMs]` | Wait for an element to appear and be visible. |
 | `eval <js-expression>` | Evaluate JS in the page's top-level context, print the result. |
+| `eval <js-expression> --frame <selector>` | Same, but inside a specific `<iframe>` (selector or numeric id from `snap`) — including a genuinely cross-origin one. Chain with `::` for an iframe nested inside another iframe, e.g. `--frame "iframe.widget::iframe.payment"`. |
 | `hover <ref>` | Hover an element. |
 | `scroll [dir] [amountPx]` | Scroll the page (`dir`: up/down/top/bottom, default down 500px). |
 | `scroll [dir] [amountPx] [targetRef]` | Scroll a specific element's own scroll container instead of the window (a data grid's rows, a chat pane, a modal body) — pair with `--settle` to reliably see newly-revealed content. |

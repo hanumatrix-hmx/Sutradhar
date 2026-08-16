@@ -177,6 +177,17 @@ describe('@sutradhar/cli parseArgs', () => {
     expect(result.modifiersFlag).toBeUndefined();
   });
 
+  it('parses --frame as the target iframe selector for "eval"', () => {
+    const result = parseArgs(['eval', 'document.title', '--frame', '#payment-iframe']);
+    expect(result.frameFlag).toBe('#payment-iframe');
+    expect(result.cleanArgs).toEqual(['document.title']);
+  });
+
+  it('defaults frameFlag to undefined when --frame is not given', () => {
+    const result = parseArgs(['eval', 'document.title']);
+    expect(result.frameFlag).toBeUndefined();
+  });
+
   it('does not treat a positional arg that happens to equal a flag NAME as anything but a flag, even mid-command', () => {
     // Guards the filter's index-based value-stripping: only the token immediately AFTER
     // --profile/--user-agent is treated as that flag's value, not any later occurrence.

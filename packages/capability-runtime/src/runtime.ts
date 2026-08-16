@@ -842,18 +842,42 @@ export class SutradharRuntime {
    * cross-origin iframe while a plain page-level `eval()` cannot — this gives `eval`/
    * `extractData` the same real capability, not a workaround.
    */
+  /**
+   * Resolves `frameSelector` against the top-level page, one `<iframe>` hop at a time. Accepts
+   * a chain of selectors separated by `"::"` (e.g. `"iframe.widget::iframe.payment"`) to reach
+   * an iframe nested inside another iframe — the main `click`/`type` grounding path
+   * (`browser-action-engine`'s `resolveElement`) already recursively pierces arbitrary nesting
+   * depth automatically, but this explicit frame-targeting path previously only ever looked one
+   * level deep on the top-level page, silently failing to find anything inside a deeper frame
+   * (found live testing a real 3-level nested iframe chain — a genuine pattern, e.g. a chat
+   * widget iframe that itself lazily injects a payment sub-iframe).
+   */
   private async resolveFrame(page: ReturnType<SutradharRuntime['requirePage']>, frameSelector: string) {
-    const handle = await page.$(normalizeTarget(frameSelector));
-    if (!handle) {
-      throw new Error(`No element matched frameSelector "${frameSelector}" on the top-level page.`);
+    const hops = frameSelector.split('::').map((s) => s.trim()).filter((s) => s.length > 0);
+    type Hoppable = {
+      $(selector: string): Promise<{ contentFrame(): Promise<Hoppable | null> } | null>;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- structural type spanning
+      // both Puppeteer's Page and Frame, whose real `evaluate` overloads are too varied to
+      // usefully narrow here; callers already cast their own specific return type.
+      evaluate(fn: any, ...args: any[]): Promise<any>;
+    };
+    let current: Hoppable = page;
+    for (const [i, hop] of hops.entries()) {
+      const handle = await current.$(normalizeTarget(hop));
+      if (!handle) {
+        throw new Error(
+          `No element matched frameSelector "${hop}" (from the full chain "${frameSelector}") — reached via ${i === 0 ? 'the top-level page' : 'the previous frame in the chain'}.`,
+        );
+      }
+      const frame = await handle.contentFrame();
+      if (!frame) {
+        throw new Error(
+          `Element matching "${hop}" is not an <iframe> (or its content frame isn't available yet — the frame may still be loading).`,
+        );
+      }
+      current = frame;
     }
-    const frame = await handle.contentFrame();
-    if (!frame) {
-      throw new Error(
-        `Element matching "${frameSelector}" is not an <iframe> (or its content frame isn't available yet — the frame may still be loading).`,
-      );
-    }
-    return frame;
+    return current;
   }
 
   /**
@@ -875,7 +899,7 @@ export class SutradharRuntime {
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
     const target = frameSelector ? await this.resolveFrame(page, frameSelector) : page;
-    return target.evaluate((fieldSpec) => {
+    return target.evaluate((fieldSpec: Record<string, { selector: string; attribute?: string }>) => {
       const out: Record<string, string[]> = {};
       for (const [name, spec] of Object.entries(fieldSpec)) {
         const elements = Array.from(document.querySelectorAll(spec.selector));
@@ -891,7 +915,10 @@ export class SutradharRuntime {
    * Evaluate arbitrary JS. Runs in the top-level page's context by default; pass
    * `frameSelector` (a CSS selector or snapshot node id identifying an `<iframe>` element on
    * the top-level page) to evaluate inside that frame instead — including a genuinely
-   * cross-origin one, which the top-level page's own JS could never reach into itself.
+   * cross-origin one, which the top-level page's own JS could never reach into itself. For an
+   * iframe nested inside another iframe, chain selectors with `"::"`
+   * (e.g. `"iframe.widget::iframe.payment"` reaches a payment iframe nested inside a widget
+   * iframe) — see {@link resolveFrame}.
    */
   public async eval<T = unknown>(
     sessionId: string,
