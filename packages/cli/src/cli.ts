@@ -92,6 +92,11 @@ async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string)
       for (const { origin, permissions } of state.grantedPermissions ?? []) {
         await runtime.grantPermissions(sessionId, origin, permissions).catch(() => {});
       }
+      // Restore a previously-focused tab — see CliState.activeTabId's doc comment for why this
+      // is necessary (setActiveTab's effect is in-memory only and doesn't survive the reconnect).
+      if (state.activeTabId && runtime.listTabs(sessionId).some((t) => t.id === state.activeTabId)) {
+        await runtime.focusTab(sessionId, state.activeTabId).catch(() => {});
+      }
       return await fn(runtime, sessionId);
     } catch (err) {
       // Self-heal instead of hard-erroring: a dead previous session (Chrome crashed, was
@@ -575,6 +580,61 @@ async function cmdGrant(origin: string | undefined, permissions: string[]) {
   });
 }
 
+async function cmdTabs() {
+  await withSession(async (runtime, sessionId) => {
+    const tabs = runtime.listTabs(sessionId);
+    if (tabs.length === 0) {
+      console.log('No tabs.');
+      return;
+    }
+    for (const tab of tabs) {
+      console.log(`${tab.isActive ? '* ' : '  '}${tab.id}  ${tab.title || '(no title)'}  ${tab.url}`);
+    }
+  });
+}
+
+/** Persists which tab should be active on the next command's reattach — see
+ * CliState.activeTabId's doc comment. */
+async function persistActiveTab(tabId: string) {
+  const state = await readState();
+  if (state) await writeState({ ...state, activeTabId: tabId });
+}
+
+async function cmdNewTab(url: string | undefined) {
+  await withSession(async (runtime, sessionId) => {
+    const tab = await runtime.createTab(sessionId, url);
+    await persistActiveTab(tab.id);
+    console.log(`New tab ${tab.id}${url ? ` opened at ${url}` : ''}`);
+  });
+}
+
+async function cmdFocusTab(tabId: string | undefined) {
+  if (!tabId) printErrorAndExit('usage: sutradhar focustab <tabId>  (see "tabs" for the list of open tab ids)');
+  await withSession(async (runtime, sessionId) => {
+    try {
+      await runtime.focusTab(sessionId, tabId!);
+      await persistActiveTab(tabId!);
+      console.log(`Focused tab ${tabId}`);
+    } catch (err) {
+      console.log(`Focus tab failed: ${(err as Error).message}`);
+      process.exitCode = 1;
+    }
+  });
+}
+
+async function cmdCloseTab(tabId: string | undefined) {
+  if (!tabId) printErrorAndExit('usage: sutradhar closetab <tabId>  (see "tabs" for the list of open tab ids)');
+  await withSession(async (runtime, sessionId) => {
+    try {
+      await runtime.closeTab(sessionId, tabId!);
+      console.log(`Closed tab ${tabId}`);
+    } catch (err) {
+      console.log(`Close tab failed: ${(err as Error).message}`);
+      process.exitCode = 1;
+    }
+  });
+}
+
 async function cmdDownload(ref: string | undefined, downloadDir: string | undefined) {
   if (!ref) printErrorAndExit('usage: sutradhar download <ref> [downloadDir]  (ref = the element that triggers the download, a selector or a numeric id from "snap")');
   await withSession(async (runtime, sessionId) => {
@@ -683,6 +743,14 @@ async function main() {
       return cmdGetClipboard();
     case 'grant':
       return cmdGrant(cleanArgs[0], cleanArgs.slice(1));
+    case 'tabs':
+      return cmdTabs();
+    case 'newtab':
+      return cmdNewTab(cleanArgs[0]);
+    case 'focustab':
+      return cmdFocusTab(cleanArgs[0]);
+    case 'closetab':
+      return cmdCloseTab(cleanArgs[0]);
     case 'download':
       return cmdDownload(cleanArgs[0], cleanArgs[1]);
     case 'close':
@@ -742,6 +810,10 @@ Commands:
   setclipboard <text>          Set the system clipboard (e.g. to then paste into a rich-text
                                 editor via press <ref> v --modifiers Control)
   getclipboard                 Print the current system clipboard contents
+  tabs                         List open tabs (id, title, url) — * marks the active one
+  newtab [url]                 Open a new tab, optionally navigating it immediately
+  focustab <tabId>             Switch the active tab (e.g. after a link opened target=_blank)
+  closetab <tabId>              Close a specific tab
   download <ref> [dir]         Click an element that triggers a download, print the saved path
   screenshot [path]            Save a screenshot (default: ./screenshot.png)
   audit [url] [outDir]         Screenshot + console/page/network errors + accessibility

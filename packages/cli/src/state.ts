@@ -28,6 +28,12 @@ export interface CliState {
    *  would only ever be visible to the exact command that called it, making it useless in
    *  practice for the CLI's one-process-per-command architecture. */
   grantedPermissions?: { origin: string; permissions: string[] }[];
+  /** The tab `focustab` last switched to. Necessary for the same reason as
+   * `grantedPermissions`: `focustab`'s effect on the session's in-memory active-tab pointer is
+   * discarded the instant that CLI process exits, so without persisting it, the very next
+   * command's fresh `attach()` silently reverts to its own default (the most-recently-opened
+   * tab) — found live testing the new `tabs`/`newtab`/`focustab` commands together. */
+  activeTabId?: string;
 }
 
 const STATE_DIR = path.join(os.homedir(), '.sutradhar-cli');

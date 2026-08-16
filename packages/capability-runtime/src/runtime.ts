@@ -277,14 +277,26 @@ export class SutradharRuntime {
     // on attach the session appears tab-less even though the real browser may already have open
     // pages (e.g. left navigated by a previous `attach()` against this same wsEndpoint — the CLI
     // does exactly this to persist a "session" across separate short-lived process invocations).
-    // Adopt the most-recently-opened real page when one exists, rather than always opening a
-    // fresh blank tab and losing whatever was already there.
+    // Adopt EVERY open real page, not just the most recent one — found live: after `newtab`
+    // opened a genuine second tab, the next CLI command's fresh `attach()` (a brand-new
+    // BrowserSession, empty tab map) only ever adopted the single most-recently-opened page,
+    // silently orphaning the first tab from `tabs`/`focustab`/`closetab` for the rest of the
+    // CLI session — a real, previously-latent gap the new tab-management commands finally made
+    // directly visible. The most-recently-opened page still becomes the active tab, preserving
+    // prior single-tab behavior exactly.
     let activeTab = session.activeTabId
       ? session.getTab(session.activeTabId)
       : session.getTabs()[0];
     if (!activeTab) {
-      const mostRecent = await this.tryFindMostRecentPage(session);
-      activeTab = mostRecent ? await session.adoptExistingPage(mostRecent) : await session.createTab();
+      const openPages = await this.findAllOpenPages(session);
+      if (openPages.length > 0) {
+        for (const page of openPages.slice(0, -1)) {
+          await session.adoptExistingPage(page, false);
+        }
+        activeTab = await session.adoptExistingPage(openPages[openPages.length - 1]!, false);
+      } else {
+        activeTab = await session.createTab();
+      }
       session.setActiveTab(activeTab.id);
     }
     return {
@@ -294,21 +306,20 @@ export class SutradharRuntime {
     };
   }
 
-  /** Best-effort: the most-recently-opened non-blank page already open on `session`'s
-   *  underlying browser (relevant only for `attach()`, where the browser process outlives this
-   *  runtime instance). Never throws — a failure here just means `attach()` falls back to
-   *  opening a fresh blank tab, same as before this existed. */
-  private async tryFindMostRecentPage(session: IBrowserSession) {
+  /** Best-effort: every non-blank page already open on `session`'s underlying browser, in
+   *  Puppeteer's own discovery order (relevant only for `attach()`, where the browser process
+   *  outlives this runtime instance). Never throws — a failure here just means `attach()` falls
+   *  back to opening a fresh blank tab, same as before this existed. */
+  private async findAllOpenPages(session: IBrowserSession) {
     try {
       const browser = session.getPuppeteerBrowser();
-      if (!browser) return undefined;
+      if (!browser) return [];
       const pages = await browser.pages();
       // Exclude blank/about:blank pages — adopting one of those is no better than opening a
       // fresh tab, and a browser freshly launched with no navigation yet always has exactly one.
-      const nonBlank = pages.filter((p) => p.url() && p.url() !== 'about:blank');
-      return nonBlank[nonBlank.length - 1];
+      return pages.filter((p) => p.url() && p.url() !== 'about:blank');
     } catch {
-      return undefined;
+      return [];
     }
   }
 

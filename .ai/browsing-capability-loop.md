@@ -24,7 +24,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | DOM-attribute grounding (`data-sd-node-id`) under re-render | covered | Survived 3 independent real re-render tests: TodoMVC filter round-trip, a continuous-stream sibling-churn test, and (Milestone 4) the hardest case — a numeric id captured *before* deleting the item above it in the list, then acted on after the deletion-driven reflow. Correctly still hit the right (surviving) element every time, no misfires. |
 | Accessibility-tree grounding (`axSnapshot`) | covered | Milestone 4: used live against TodoMVC exactly as documented — `ax_snapshot` + `type_by_label` to add todos, both landed correctly with no ids involved at all. Works correctly. |
 | Hover / `:hover`-revealed UI | covered | Milestone 4: `browser.hover` used live via MCP (not just direct-runtime) to reveal a `:hover`-only destroy button, then clicked it successfully — confirmed synthetic `mouseover` does NOT trigger real `:hover`, but the real tool does. |
-| Multi-tab workflows | covered | Milestone 1: created a background tab via `new_tab`, navigated/snapshotted/clicked it independently via `tabId`, confirmed the original tab was completely unaffected. Works correctly. |
+| Multi-tab workflows | covered | Milestone 1: created a background tab via `new_tab`, navigated/snapshotted/clicked it independently via `tabId`, confirmed the original tab was completely unaffected. Works correctly. Milestone 58: closed the CLI-specific gap — the CLI had no tab commands at all, and adding them (`tabs`/`newtab`/`focustab`/`closetab`) surfaced two real multi-tab bugs in the per-process reattach architecture (only the most-recent tab was ever discovered; a focus choice didn't survive to the next command), both fixed. See PROB-031. |
 | File download | covered | Milestone 1: `runtime.downloadFile` verified end-to-end — real file landed on disk at the expected path with correct content (read back and checked, not just a success flag). |
 | File upload | covered | Milestone 2: `browser.upload_file` against a real fixture page (the-internet.herokuapp.com/upload) — set a file input, clicked Upload, confirmed via the server's own response page ("File Uploaded! upload-test.txt") that it actually landed server-side, not just a client-side success flag. |
 | iframes / cross-frame interaction (incl. dynamically-injected, cross-origin) | covered | Milestone 1: verified directly against the runtime — `snapshot`/`click` correctly traverse into a cross-origin iframe injected into the page *after* initial load (the hardest realistic case — matches real chat-widget/payment-iframe behavior). Works correctly today. Milestone 35: closed the one remaining unverified sub-case — `type` into a contenteditable iframe body (TinyMCE), long assumed broken/cross-origin-restricted per GLM's original C4. Turned out to be a misdiagnosis: the iframe isn't actually cross-origin (`contentDocument` fully readable from the parent), it's already groundable via `snap`, and `type` into it already works, real text landing confirmed via independent DOM read-back. The actual bug was an invalid CSS selector in this project's own scenario-suite test code, fixed at the source — see `PROB-019`/`PROB-022`. |
@@ -78,6 +78,39 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-16 — Milestone 58: CLI tab management added — surfaced and fixed two real multi-tab bugs in the reattach architecture, closes PROB-031
+
+Following up on a concrete gap surfaced while debugging an AliExpress click during the WebBench
+rerun (Milestones 56-57): the CLI had **zero** tab-management commands — no way to list, switch,
+or close tabs — even though `list_tabs`/`new_tab`/`focus_tab`/`close_tab` fully exist at the
+runtime/MCP layer. Added `tabs`, `newtab [url]`, `focustab <tabId>`, `closetab <tabId>`.
+
+Adding them immediately surfaced two real, previously-latent bugs in the CLI's per-process
+reattach architecture — the exact kind of bug this new surface finally makes *visible*, since
+before there was no way to even ask "what tabs are open":
+
+1. **Multi-tab discovery**: `attach()`'s tab-adoption (`tryFindMostRecentPage`) only ever looked
+   at the single most-recently-opened real page via `browser.pages()`, discarding the rest.
+   Live-confirmed: after `newtab` opened a genuine second tab, the next `tabs` command (a fresh
+   process, fresh `attach()`) listed only one tab — and the wrong one.
+2. **Active-tab persistence**: `focustab`'s effect on the session's active-tab pointer is
+   in-memory only on the `BrowserSession` object, which is discarded the instant that CLI
+   process exits. Live-confirmed: `focustab tab_1` reported success, but the very next command's
+   fresh `attach()` reverted to its own default (most-recently-opened), not the just-made choice
+   — the same architectural class of bug as `PROB-029`'s `grant` (a CDP/Puppeteer-connection-
+   scoped or in-process-only piece of state silently not surviving the CLI's reconnect model),
+   just for tab focus instead of permissions.
+
+Fixed both: `attach()` now enumerates and adopts every open non-blank page
+(`findAllOpenPages`, replacing the single-page heuristic), preserving the most-recently-opened
+page as the default active tab (unchanged single-tab behavior). `CliState` gained an
+`activeTabId` field, persisted by `focustab`/`newtab` and restored by `withSession`'s reattach
+path — mirroring `PROB-029`'s `grantedPermissions` fix exactly. `packages/capability-runtime`
+90/90, `packages/cli` 27/27. Live-verified end-to-end through the actual CLI binary across
+multiple separate processes: `newtab` → `tabs` now lists both real tabs; `focustab` → a separate
+`tabs` call shows the correct `*` marker, and a separate `eval` call operates on that tab's real
+page (confirmed via `location.href`); `closetab` correctly removes a tab. Closes `PROB-031`.
 
 ### 2026-08-16 — Milestone 55: `grant` was invisible across CLI commands — a real, precisely root-caused bug, fixed, closes PROB-029
 
