@@ -482,6 +482,41 @@ async function cmdDrag(sourceRef: string | undefined, destRef: string | undefine
   });
 }
 
+async function cmdClickPoint(x: string | undefined, y: string | undefined) {
+  const xNum = Number(x);
+  const yNum = Number(y);
+  if (!x || !y || Number.isNaN(xNum) || Number.isNaN(yNum)) {
+    printErrorAndExit('usage: sutradhar clickpoint <x> <y>  (absolute viewport coordinates — for canvas-rendered UI with no addressable element)');
+  }
+  await withSession(async (runtime, sessionId) => {
+    const result = await runtime.clickAtPoint(sessionId, xNum, yNum);
+    console.log(result.success ? `Clicked at (${xNum}, ${yNum})` : `Click failed: ${result.error}`);
+    if (!result.success) process.exitCode = 1;
+  });
+}
+
+async function cmdDragPoints(
+  fromX: string | undefined,
+  fromY: string | undefined,
+  toX: string | undefined,
+  toY: string | undefined,
+) {
+  const nums = [fromX, fromY, toX, toY].map(Number);
+  if ([fromX, fromY, toX, toY].some((v) => v === undefined) || nums.some(Number.isNaN)) {
+    printErrorAndExit(
+      'usage: sutradhar dragpoints <fromX> <fromY> <toX> <toY>  ' +
+        '(absolute viewport coordinates — a real mouse-down->move->up sequence, for canvas-rendered ' +
+        'drag targets like a signature pad, slider, or chart handle drawn on a <canvas>)',
+    );
+  }
+  const [fx, fy, tx, ty] = nums;
+  await withSession(async (runtime, sessionId) => {
+    const result = await runtime.dragAtPoints(sessionId, fx!, fy!, tx!, ty!);
+    console.log(result.success ? `Dragged (${fx}, ${fy}) -> (${tx}, ${ty})` : `Drag failed: ${result.error}`);
+    if (!result.success) process.exitCode = 1;
+  });
+}
+
 async function cmdDownload(ref: string | undefined, downloadDir: string | undefined) {
   if (!ref) printErrorAndExit('usage: sutradhar download <ref> [downloadDir]  (ref = the element that triggers the download, a selector or a numeric id from "snap")');
   await withSession(async (runtime, sessionId) => {
@@ -580,6 +615,10 @@ async function main() {
       return cmdUpload(cleanArgs[0], cleanArgs[1]);
     case 'drag':
       return cmdDrag(cleanArgs[0], cleanArgs[1]);
+    case 'clickpoint':
+      return cmdClickPoint(cleanArgs[0], cleanArgs[1]);
+    case 'dragpoints':
+      return cmdDragPoints(cleanArgs[0], cleanArgs[1], cleanArgs[2], cleanArgs[3]);
     case 'download':
       return cmdDownload(cleanArgs[0], cleanArgs[1]);
     case 'close':
@@ -626,6 +665,12 @@ Commands:
                                 pair with --settle to reliably see newly-revealed content
   upload <ref> <filePath>      Upload a local file into an <input type="file">
   drag <sourceRef> <destRef>   Drag one element onto another
+  clickpoint <x> <y>           Click at an absolute viewport coordinate — no element/selector,
+                                for canvas-rendered UI with nothing DOM-addressable to target
+  dragpoints <fromX> <fromY> <toX> <toY>
+                                Real mouse-down->move->up drag between two absolute viewport
+                                coordinates — for canvas-rendered drag targets (a signature pad,
+                                a slider/chart handle drawn on a <canvas>)
   download <ref> [dir]         Click an element that triggers a download, print the saved path
   screenshot [path]            Save a screenshot (default: ./screenshot.png)
   audit [url] [outDir]         Screenshot + console/page/network errors + accessibility

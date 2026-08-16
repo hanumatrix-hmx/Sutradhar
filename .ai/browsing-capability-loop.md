@@ -49,6 +49,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Network request interception/mocking | covered | Milestone 7: `browser.route` with both `mock` (a real fetch received the exact mocked JSON body) and `block` (a real fetch failed as expected) actions verified against genuine `fetch()` calls, not just the tool's own success report. |
 | Console/network/page-error log capture | covered | Milestone 7: `get_console_logs` correctly captured log/warn/error levels plus an incidental real network failure; `get_page_errors` correctly captured a deliberate uncaught exception with message and stack trace; `get_network_log` correctly distinguished a completed (mocked) request from a blocked one (request-only, no response phase). |
 | CAPTCHA / bot-detection / stealth evasion | excluded | Deliberately out of scope per CLAUDE.md — not a gap to close. |
+| Canvas signature/drawing pad (coordinate-based drag, no addressable DOM inside the canvas) | covered, real CLI-exposure gap closed | Milestone 51: `dragAtPoints` (already existed via MCP/SDK) correctly draws real strokes on a live `signature_pad` canvas, confirmed visually. Added `clickpoint`/`dragpoints` CLI verbs — the underlying capability existed but was unreachable from the CLI, the only surface whose whole purpose is direct scriptable access. |
 | Infinite-scroll / "load more on scroll" pages (append-on-scroll, distinct from a virtualized/recycling grid) | covered, 1 high-severity bug found and fixed | Milestone 49: tested live against a real infinite-scroll demo. `scroll bottom` reported success on every call while `window.scrollY` silently stayed at 0 — `'top'`/`'bottom'` had never actually been implemented as jumps to the real boundary, they fell through to the same branch as `'up'`, so `'bottom'` scrolled the page UP by `amount` instead (a no-op from position 0, which the boundary-check logic then misread as "already there", masking the bug completely). Fixed to jump to the true `scrollTop 0` / `scrollHeight` boundary; live-confirmed `scroll bottom` now genuinely triggers the page's infinite-scroll library to load more content. See PROB-027. |
 | Rich-text-editor toolbar formatting (select text via keyboard, apply formatting via toolbar) | covered, 1 real CLI-only bug found and fixed | Milestone 48: tested live against Quill's own playground. Typing and single keypresses worked immediately; a keyboard-driven select-then-format sequence (`Home`, `Ctrl+Shift+ArrowRight`, click Bold) silently failed only through the CLI (each `press` re-clicked to focus, resetting the cursor position a prior `press` had built). Fixed by adding `SutradharRuntime.focus()`/`browser.focus` (real `.focus()`, doesn't move the cursor) and switching the CLI's `press` to use it instead of `click`. See PROB-026. |
 | Portal-rendered searchable multi-select combobox (react-select and similar) | covered | Milestone 47: tested live against `react-select.com`'s own demo. Both real interaction modes verified: (1) click-to-select — click the field, type a search term to filter, click the filtered `role=option` result, confirm the resulting chip via a fresh snapshot; (2) pure keyboard-driven selection — type a search term, `press ArrowDown` then `press Enter` with no click on the option at all, confirmed the chip landed correctly. Both modes work correctly with no engine changes needed. |
@@ -73,6 +74,30 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-16 — Milestone 51: canvas signature/drawing pad — covered, plus closed a real CLI-exposure gap (clickpoint/dragpoints)
+
+Continuing the hard-use-case hunt with a genuinely different pattern: a `<canvas>` with no
+addressable DOM structure inside it, requiring precise coordinate-based mouse-down→move→up
+sequences rather than element selectors. Tested live against the real `signature_pad` demo
+(`szimek.github.io/signature_pad/`).
+
+`SutradharRuntime.dragAtPoints` (already existed, exposed via MCP as `browser.drag_at_points`)
+correctly draws real, clean strokes on the canvas — confirmed visually via screenshot, a
+multi-segment zig-zag path landed exactly as intended. (A first attempt at verifying this via
+pixel-color counting undercounted badly — anti-aliased stroke edges aren't pure black, so a
+strict "R/G/B < 50" threshold missed most of the line; the screenshot made the real, correct
+result obvious immediately. Worth remembering: prefer a visual/screenshot check over a brittle
+pixel-threshold heuristic when verifying canvas drawing.)
+
+Found a real, if minor, gap along the way: `clickAtPoint`/`dragAtPoints` were only reachable via
+MCP/SDK — the CLI, whose whole reason for existing is direct scriptable access, had no verb for
+either, meaning canvas-based interaction (signature pads, custom sliders, chart handles — any
+UI with nothing DOM-addressable) was completely unreachable from the CLI. Added
+`clickpoint <x> <y>` and `dragpoints <fromX> <fromY> <toX> <toY>`, mirroring the existing
+`click`/`drag` commands' pattern exactly. `packages/cli` 27/27 (no parse-args changes needed —
+both are plain positional args). Live-verified through the actual CLI binary: `dragpoints` drew
+a real diagonal stroke, `clickpoint` added a visible dot on it, both confirmed via screenshot.
 
 ### 2026-08-16 — Milestone 50: middle-click opened a duplicate tab — found by sweeping for the same bug shape as PROB-027, closes PROB-028
 
