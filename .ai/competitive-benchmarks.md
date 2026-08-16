@@ -205,6 +205,32 @@ findings:
 
 Append-only. Newest first.
 
+### 2026-08-16 — Milestone 57: tested Milestone 56's own disclosed caveat by patiently retrying the 4 most promising Blocked tasks — 3 of 4 verdicts held, 1 flipped, revised score 27/47 (57.4%)
+
+Milestone 56's write-up disclosed a caveat rather than just asserting it: "at least 5 of the 21
+Blocked tasks showed real partial progress a more patient pass would likely resolve." Tested
+that claim directly instead of leaving it as a hedge — patiently re-attempted the 4 most
+promising candidates in the same session:
+
+- **Ace Hardware product search**: proactively dismissed the (delayed) zip-selector modal,
+  retried via both the search button and Enter key. **Confirmed Blocked** — genuinely doesn't
+  submit either way. Root cause refined (not modal-timing as first guessed), verdict unchanged.
+- **AliExpress CREATE (add to cart)**: instrumented the actual click with event listeners.
+  Found the click **times out at 15s** and retries 3 times before failing — a real
+  unreliability, not silent success as first assumed. **Confirmed Blocked**, root cause refined.
+- **BBB rating**: navigated directly to the real profile URL, waited 13s total. **Confirmed
+  Blocked** — a genuine Cloudflare managed challenge that doesn't auto-clear for an automated
+  client (the correct out-of-scope anti-bot case per CLAUDE.md).
+- **CBS Sports schedule**: the original pass guessed wrong generic URLs (`/live-tv/`,
+  `/schedule/`, both 404). The real URL (`/nfl/schedule/`) has genuine matchup/venue/ticket
+  data. **Flipped to Completed** — this one really was a rushed-pass artifact.
+
+**Net: 3 of 4 held, 1 flipped. Revised score 27/47 (57.4%)** — ties Playwright's original score,
+narrows the gap to real pinchtab (31/47) and original Sutradhar (29/47) considerably, and
+demonstrates the disclosed pacing caveat was mostly *not* the driver of the lower first-pass
+number — the Cloudflare/site-drift confound looks like the larger real factor. Full detail
+appended to `tools/engine-comparison/results-sutradhar-rerun-2026-08-16.md`.
+
 ### 2026-08-16 — Milestone 56: re-ran the full 47-task WebBench head-to-head against the current local build — 26/47 (55.3%), down from the original 29/47, with the gap fully explained by disclosed confounds, not a regression
 
 User-requested: re-run the 2026-08-14 head-to-head comparison against the **current local

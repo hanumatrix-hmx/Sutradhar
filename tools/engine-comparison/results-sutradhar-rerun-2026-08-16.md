@@ -9,16 +9,18 @@ why that's not a perfectly controlled diff).
 
 ## Headline result
 
-**26/47 Completed (55.3%)** — driven live via the actual CLI binary (`packages/cli/dist/cli.js`,
-rebuilt fresh from source immediately before this run), the same production engine any user or
-MCP client calls into, not a stripped-down test harness.
+**First pass: 26/47 (55.3%). After a patient same-session retry of the 4 most promising
+Blocked tasks (see below): 27/47 (57.4%).** Driven live via the actual CLI binary
+(`packages/cli/dist/cli.js`, rebuilt fresh from source immediately before this run), the same
+production engine any user or MCP client calls into, not a stripped-down test harness.
 
 | Tool | Completed / 47 | Rate | Run date |
 |---|---|---|---|
 | real pinchtab/pinchtab | 31/47 | 66.0% | 2026-08-14 (not re-run) |
 | Sutradhar (original) | 29/47 | 61.7% | 2026-08-14 |
+| **Sutradhar (this re-run, after patient retry)** | **27/47** | **57.4%** | **2026-08-16** |
 | Playwright (real, AI-mode) | 27/47 | 57.4% | 2026-08-14 |
-| **Sutradhar (this re-run)** | **26/47** | **55.3%** | **2026-08-16** |
+| Sutradhar (this re-run, first pass) | 26/47 | 55.3% | 2026-08-16 |
 | Puppeteer (real, raw DOM) | 25/47 | 53.2% | 2026-08-14 |
 
 **Read the caveats below before treating this as "Sutradhar got worse."** The honest conclusion
@@ -124,11 +126,42 @@ example of "benchmarking finds real bugs" doing its job live.
 | 40 | apkpure.com (Spotify) | READ | Blocked | Cloudflare |
 | 41 | biomedcentral.com (CRISPR) | READ | **Completed** | Real article titles (site moved to Springer Nature Link, disclosed) |
 | 42 | ca.gov (disaster prep) | READ | **Completed** | Real result found |
-| 43 | cbssports.com (schedule) | READ | Blocked | Schedule content not located |
+| 43 | cbssports.com (schedule) | READ | **Completed** (on patient retry — see below) | First pass used a wrong generic URL; `/nfl/schedule/` has real matchup/venue/ticket data |
 | 44 | cbs.com (investigative) | READ | **Completed** | Real 48 Hours headline + date |
 | 45 | apple.com (student discount) | READ | **Completed** | Real education pricing indicator |
 | 46 | archive.org (Wayback) | READ | **Completed** | Real archived snapshot loaded |
 | 47 | asus.com (ROG Strix Scar III) | READ | Blocked | Real dataset drift — 2019 model's page appears gone |
+
+## Patient-retry follow-up (same session, immediately after)
+
+Per the disclosed "this run was faster/less exhaustive" caveat, patiently re-attempted the 4
+most promising Blocked tasks — the ones that showed real partial progress on the first pass —
+to test whether the caveat was real or just a hedge.
+
+- **Task 1 (Ace Hardware product specs)**: proactively dismissed the zip-selector modal, retried
+  search via both the button and Enter key. **Verdict confirmed Blocked** — the search genuinely
+  does not submit in this environment via either path, even with the modal cleanly out of the
+  way. Refines the root cause (not modal-occlusion timing as first guessed) but doesn't flip the
+  result.
+- **Task 20 (AliExpress bluetooth speaker CREATE)**: re-attempted the product-page click with
+  event-listener instrumentation. Found the click was **timing out at 15s** (not silently
+  succeeding as first assumed) and retrying 3 times before failing outright — a real, if
+  possibly site-side/network, unreliability. **Verdict confirmed Blocked**, root cause refined
+  (unreliable/slow product-page navigation, not "reached the page but missed the cart button").
+- **Task 23 (BBB rating)**: navigated directly to the real profile URL and waited 13s total.
+  **Verdict confirmed Blocked** — a genuine Cloudflare managed challenge that does not
+  auto-clear for an automated client, the correct out-of-scope anti-bot case per CLAUDE.md, not
+  a timing artifact.
+- **Task 43 (CBS Sports schedule)**: the original pass guessed generic URLs
+  (`/live-tv/`, `/schedule/`) that both 404'd. A more specific, real URL
+  (`/nfl/schedule/`) loads real matchup/venue/ticket data (e.g. real ticket prices at "Empower
+  Field at Mile High"). **Verdict flips to Completed** — this one genuinely was a rushed-pass
+  artifact (a URL-guessing miss, not a capability gap).
+
+**Net effect: 3 of 4 retried verdicts held under patience; 1 flipped.** Revised score:
+**27/47 (57.4%)** — still below the original 29/47, but the gap narrows once the disclosed
+pacing caveat is actually tested rather than just asserted, and the remaining gap is
+increasingly explained by the Cloudflare/site-drift confound rather than rushed methodology.
 
 ## Honest bottom line
 
