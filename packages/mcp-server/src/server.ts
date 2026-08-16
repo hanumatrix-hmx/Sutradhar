@@ -43,6 +43,18 @@ export interface CreateServerOptions {
    * Ignored if `runtime` is supplied directly (the caller owns that runtime's configuration).
    */
   restrictNavigationToLocal?: boolean;
+  /**
+   * When set (non-empty), reject any navigation whose hostname isn't one of these domains (or a
+   * subdomain of one). Off by default. Also settable via `SUTRADHAR_ALLOWED_DOMAINS` as a
+   * comma-separated list. Composable with `restrictNavigationToLocal` — both are enforced when
+   * both are set. Ignored if `runtime` is supplied directly (the caller owns that runtime's
+   * configuration). Intended for handing an agent a logged-in internal session safely, and as
+   * partial prompt-injection defense-in-depth for navigation specifically — see the equivalent
+   * doc comment on `SutradharRuntimeOptions.allowedDomains` for what this does and does not
+   * cover (it gates `browser.navigate`/`launch`/`compare`/`new_tab`, not page-initiated
+   * navigation from a clicked link, which the browser performs client-side).
+   */
+  allowedDomains?: readonly string[];
   logger?: StructuredLogger;
 }
 
@@ -65,12 +77,21 @@ export async function createSutradharServer(options: CreateServerOptions = {}): 
     (process.env['SUTRADHAR_IDLE_TIMEOUT_MS'] ? Number(process.env['SUTRADHAR_IDLE_TIMEOUT_MS']) : DEFAULT_IDLE_TIMEOUT_MS);
   const restrictNavigationToLocal =
     options.restrictNavigationToLocal ?? process.env['SUTRADHAR_RESTRICT_NAVIGATION_TO_LOCAL'] === '1';
+  const allowedDomains =
+    options.allowedDomains ??
+    (process.env['SUTRADHAR_ALLOWED_DOMAINS']
+      ? process.env['SUTRADHAR_ALLOWED_DOMAINS']
+          .split(',')
+          .map((d) => d.trim())
+          .filter((d) => d.length > 0)
+      : undefined);
   const runtime =
     options.runtime ??
     new SutradharRuntime({
       logger,
       idleTimeoutMs: idleTimeoutMs > 0 ? idleTimeoutMs : undefined,
       restrictNavigationToLocal,
+      allowedDomains,
     });
 
   // Resolve an LLM provider for the autonomous agent (optional).

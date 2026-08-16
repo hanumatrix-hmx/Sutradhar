@@ -28,6 +28,15 @@ export interface LaunchOptions {
    * not a detection-evasion default.
    */
   userAgent?: string;
+  /**
+   * Restrict navigation (`page.goto`, the initial `url`, `browser.compare`, `newPage`'s `url`)
+   * to these domains (and their subdomains) — anything else throws instead of navigating.
+   * Unset by default (no restriction). Useful for handing an agent a logged-in internal
+   * session safely, and as partial prompt-injection defense-in-depth for navigation
+   * specifically — it does not intercept page-initiated navigation from a clicked link, which
+   * the browser performs client-side without going through this check.
+   */
+  allowedDomains?: readonly string[];
 }
 
 /**

@@ -99,3 +99,33 @@ describe('@sutradhar/mcp-server createSutradharServer restrictNavigationToLocal 
     expect(optionsArg.restrictNavigationToLocal).toBe(false);
   });
 });
+
+describe('@sutradhar/mcp-server createSutradharServer allowedDomains wiring', () => {
+  beforeEach(() => {
+    capabilityRuntimeMock.SutradharRuntimeMock.mockClear();
+    delete process.env['SUTRADHAR_ALLOWED_DOMAINS'];
+  });
+
+  it('defaults to undefined (unrestricted) when nothing overrides it', async () => {
+    await createSutradharServer({ disableAgent: true });
+
+    const optionsArg = capabilityRuntimeMock.SutradharRuntimeMock.mock.calls[0][0];
+    expect(optionsArg.allowedDomains).toBeUndefined();
+  });
+
+  it('honors SUTRADHAR_ALLOWED_DOMAINS as a comma-separated list, trimmed', async () => {
+    process.env['SUTRADHAR_ALLOWED_DOMAINS'] = ' example.com , internal.corp ';
+    await createSutradharServer({ disableAgent: true });
+
+    const optionsArg = capabilityRuntimeMock.SutradharRuntimeMock.mock.calls[0][0];
+    expect(optionsArg.allowedDomains).toEqual(['example.com', 'internal.corp']);
+  });
+
+  it('honors an explicit allowedDomains option over the env var', async () => {
+    process.env['SUTRADHAR_ALLOWED_DOMAINS'] = 'example.com';
+    await createSutradharServer({ disableAgent: true, allowedDomains: ['override.com'] });
+
+    const optionsArg = capabilityRuntimeMock.SutradharRuntimeMock.mock.calls[0][0];
+    expect(optionsArg.allowedDomains).toEqual(['override.com']);
+  });
+});

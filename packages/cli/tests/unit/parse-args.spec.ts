@@ -96,6 +96,22 @@ describe('@sutradhar/cli parseArgs', () => {
     expect(parseArgs(['download', '3', '/tmp/downloads']).cleanArgs).toEqual(['3', '/tmp/downloads']);
   });
 
+  it('parses --allowlist-domains <list> as a comma-separated valued flag', () => {
+    const result = parseArgs(['nav', 'https://example.com', '--allowlist-domains', 'example.com,internal.corp']);
+    expect(result.allowlistDomainsFlag).toEqual(['example.com', 'internal.corp']);
+    expect(result.cleanArgs).toEqual(['https://example.com']);
+  });
+
+  it('trims whitespace and drops empty entries in --allowlist-domains', () => {
+    const result = parseArgs(['nav', 'https://example.com', '--allowlist-domains', ' example.com , , internal.corp ']);
+    expect(result.allowlistDomainsFlag).toEqual(['example.com', 'internal.corp']);
+  });
+
+  it('leaves allowlistDomainsFlag undefined when the flag is not given', () => {
+    const result = parseArgs(['nav', 'https://example.com']);
+    expect(result.allowlistDomainsFlag).toBeUndefined();
+  });
+
   it('does not treat a positional arg that happens to equal a flag NAME as anything but a flag, even mid-command', () => {
     // Guards the filter's index-based value-stripping: only the token immediately AFTER
     // --profile/--user-agent is treated as that flag's value, not any later occurrence.

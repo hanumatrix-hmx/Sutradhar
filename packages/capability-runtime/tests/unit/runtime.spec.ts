@@ -122,6 +122,59 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
     });
   });
 
+  describe('allowedDomains', () => {
+    it('is off by default — navigate to any host is not blocked by this check', async () => {
+      const runtime = new SutradharRuntime();
+      await expect(runtime.navigate('nope', 'https://anything.example.com')).rejects.toThrow(
+        BrowserNotAvailableError,
+      );
+    });
+
+    it('blocks navigate() to a host not on the allowlist', async () => {
+      const runtime = new SutradharRuntime({ allowedDomains: ['example.com'] });
+      await expect(runtime.navigate('nope', 'https://evil.net')).rejects.toThrow(/allowedDomains is configured/);
+    });
+
+    it('allows the exact allowlisted domain', async () => {
+      const runtime = new SutradharRuntime({ allowedDomains: ['example.com'] });
+      await expect(runtime.navigate('nope', 'https://example.com')).rejects.toThrow(BrowserNotAvailableError);
+    });
+
+    it('allows a subdomain of an allowlisted domain', async () => {
+      const runtime = new SutradharRuntime({ allowedDomains: ['example.com'] });
+      await expect(runtime.navigate('nope', 'https://app.example.com')).rejects.toThrow(BrowserNotAvailableError);
+    });
+
+    it('does NOT treat "evilexample.com" as a match for allowlisted "example.com" (no naive substring/suffix check)', async () => {
+      const runtime = new SutradharRuntime({ allowedDomains: ['example.com'] });
+      await expect(runtime.navigate('nope', 'https://evilexample.com')).rejects.toThrow(
+        /allowedDomains is configured/,
+      );
+    });
+
+    it('composes with restrictNavigationToLocal — a local target still needs to be on the allowlist too', async () => {
+      const runtime = new SutradharRuntime({ restrictNavigationToLocal: true, allowedDomains: ['example.com'] });
+      await expect(runtime.navigate('nope', 'http://localhost:3000')).rejects.toThrow(
+        /allowedDomains is configured/,
+      );
+    });
+
+    it('allows file:/about:/data: URLs regardless of the allowlist', async () => {
+      const runtime = new SutradharRuntime({ allowedDomains: ['example.com'] });
+      await expect(runtime.navigate('nope', 'file:///C:/tmp/page.html')).rejects.toThrow(BrowserNotAvailableError);
+    });
+
+    it('blocks BOTH compareUrls() targets against the allowlist', async () => {
+      const runtime = new SutradharRuntime({ allowedDomains: ['example.com'] });
+      await expect(runtime.compareUrls('nope', 'https://evil.net', 'https://example.com')).rejects.toThrow(
+        /allowedDomains is configured/,
+      );
+      await expect(runtime.compareUrls('nope', 'https://example.com', 'https://evil.net')).rejects.toThrow(
+        /allowedDomains is configured/,
+      );
+    });
+  });
+
   describe('named profiles (launch profileName / getProfileManager)', () => {
     let profilesBaseDir: string;
 

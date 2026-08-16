@@ -16,6 +16,8 @@ export interface ParsedArgs {
   jsonMode: boolean;
   profileFlag: string | undefined;
   userAgentFlag: string | undefined;
+  /** Parsed from `--allowlist-domains a.com,b.com` — undefined when the flag isn't given. */
+  allowlistDomainsFlag: string[] | undefined;
 }
 
 /** Parses `process.argv.slice(2)`-style arguments (verb + flags) into their recognized pieces.
@@ -29,6 +31,15 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
   const profileFlag = profileFlagIndex !== -1 ? args[profileFlagIndex + 1] : undefined;
   const userAgentFlagIndex = args.indexOf('--user-agent');
   const userAgentFlag = userAgentFlagIndex !== -1 ? args[userAgentFlagIndex + 1] : undefined;
+  const allowlistDomainsFlagIndex = args.indexOf('--allowlist-domains');
+  const allowlistDomainsRaw =
+    allowlistDomainsFlagIndex !== -1 ? args[allowlistDomainsFlagIndex + 1] : undefined;
+  const allowlistDomainsFlag = allowlistDomainsRaw
+    ? allowlistDomainsRaw
+        .split(',')
+        .map((d) => d.trim())
+        .filter((d) => d.length > 0)
+    : undefined;
   const cleanArgs = args.filter(
     (a, i) =>
       a !== '--headed' &&
@@ -36,9 +47,20 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
       a !== '--json' &&
       a !== '--profile' &&
       a !== '--user-agent' &&
+      a !== '--allowlist-domains' &&
       !(profileFlagIndex !== -1 && i === profileFlagIndex + 1) &&
-      !(userAgentFlagIndex !== -1 && i === userAgentFlagIndex + 1),
+      !(userAgentFlagIndex !== -1 && i === userAgentFlagIndex + 1) &&
+      !(allowlistDomainsFlagIndex !== -1 && i === allowlistDomainsFlagIndex + 1),
   );
 
-  return { verb, cleanArgs, headed, failOnDiff, jsonMode, profileFlag, userAgentFlag };
+  return {
+    verb,
+    cleanArgs,
+    headed,
+    failOnDiff,
+    jsonMode,
+    profileFlag,
+    userAgentFlag,
+    allowlistDomainsFlag,
+  };
 }

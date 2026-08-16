@@ -112,6 +112,18 @@ export interface SutradharRuntimeOptions {
    * mistake, not a feature.
    */
   restrictNavigationToLocal?: boolean;
+  /**
+   * When set (non-empty), every navigation is rejected unless its hostname exactly matches one
+   * of these domains or is a subdomain of one (e.g. `["example.com"]` allows `example.com` and
+   * `app.example.com`, not `example.com.evil.net`). `file:`/`about:`/`data:` URLs are always
+   * exempt, same as {@link restrictNavigationToLocal}. Independent of and composable with
+   * `restrictNavigationToLocal` — both are checked when both are set. Unset (the default) means
+   * no domain restriction. Intended for handing an agent a logged-in internal session safely
+   * (e.g. company-only domains) — also a partial prompt-injection defense-in-depth, since a page
+   * that tries to navigate the agent off-allowlist via a malicious link gets blocked here
+   * regardless of why the navigation was attempted.
+   */
+  allowedDomains?: readonly string[];
   /** Where named-profile registry/data lives. Defaults to `~/.sutradhar` — override for tests
    *  or to keep profile data somewhere other than the user's home directory. */
   profilesBaseDir?: string;
@@ -139,6 +151,7 @@ export class SutradharRuntime {
   private readonly launcher: BrowserLauncher;
   private readonly allowedUploadRoots?: readonly string[];
   private readonly restrictNavigationToLocal: boolean;
+  private readonly allowedDomains?: readonly string[];
   private readonly profileManager: ProfileManager;
   /** sessionId -> the profileName it was launched with, so `shutdown()` knows whose storage
    *  state to persist. Only sessions launched via `launch({profileName})` get an entry; a
@@ -152,6 +165,7 @@ export class SutradharRuntime {
     this.launcher = options.launcher ?? new BrowserLauncher(options.logger);
     this.allowedUploadRoots = options.allowedUploadRoots;
     this.restrictNavigationToLocal = options.restrictNavigationToLocal ?? false;
+    this.allowedDomains = options.allowedDomains?.length ? options.allowedDomains : undefined;
     this.profileManager = new ProfileManager(options.profilesBaseDir);
     this.sessionManager = new BrowserSessionManager(
       this.launcher,
@@ -1530,13 +1544,14 @@ export class SutradharRuntime {
   }
 
   /**
-   * When {@link SutradharRuntimeOptions.restrictNavigationToLocal} is enabled, rejects any
-   * navigation target that isn't localhost, a private/loopback IP, or a scheme that never
-   * touches the real network (`file:`, `about:`, `data:`). A no-op when the option is off
-   * (the default) — most callers legitimately need to browse the real internet.
+   * When {@link SutradharRuntimeOptions.restrictNavigationToLocal} and/or
+   * {@link SutradharRuntimeOptions.allowedDomains} is set, rejects a navigation target that
+   * fails either check. Both are a no-op when unset (the default) — most callers legitimately
+   * need to browse the real internet without restriction. `file:`/`about:`/`data:` URLs are
+   * always exempt from both checks.
    */
   private assertNavigationAllowed(url: string): void {
-    if (!this.restrictNavigationToLocal) return;
+    if (!this.restrictNavigationToLocal && !this.allowedDomains) return;
 
     let parsed: URL;
     try {
@@ -1550,22 +1565,40 @@ export class SutradharRuntime {
     if (['file:', 'about:', 'data:'].includes(parsed.protocol)) return;
 
     const host = parsed.hostname.toLowerCase();
-    const isLocal =
-      host === 'localhost' ||
-      host === '127.0.0.1' ||
-      host === '::1' ||
-      host === '0.0.0.0' ||
-      host.endsWith('.localhost') ||
-      /^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(host) ||
-      /^192\.168\.\d{1,3}\.\d{1,3}$/.test(host) ||
-      /^172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}$/.test(host);
 
-    if (!isLocal) {
-      throw new Error(
-        `Navigation to "${url}" was blocked: restrictNavigationToLocal is enabled, which only ` +
-          'allows localhost/private-IP targets (and file:/about:/data: URLs). Disable this option ' +
-          'if this runtime needs to reach the real internet.',
-      );
+    if (this.restrictNavigationToLocal) {
+      const isLocal =
+        host === 'localhost' ||
+        host === '127.0.0.1' ||
+        host === '::1' ||
+        host === '0.0.0.0' ||
+        host.endsWith('.localhost') ||
+        /^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(host) ||
+        /^192\.168\.\d{1,3}\.\d{1,3}$/.test(host) ||
+        /^172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}$/.test(host);
+
+      if (!isLocal) {
+        throw new Error(
+          `Navigation to "${url}" was blocked: restrictNavigationToLocal is enabled, which only ` +
+            'allows localhost/private-IP targets (and file:/about:/data: URLs). Disable this option ' +
+            'if this runtime needs to reach the real internet.',
+        );
+      }
+    }
+
+    if (this.allowedDomains) {
+      const allowed = this.allowedDomains.some((d) => {
+        const domain = d.toLowerCase();
+        return host === domain || host.endsWith(`.${domain}`);
+      });
+
+      if (!allowed) {
+        throw new Error(
+          `Navigation to "${url}" was blocked: allowedDomains is configured and "${host}" is not in ` +
+            `the allowlist (${this.allowedDomains!.join(', ')}). This is a safety guardrail — add the ` +
+            'domain to allowedDomains if this navigation is expected.',
+        );
+      }
     }
   }
 

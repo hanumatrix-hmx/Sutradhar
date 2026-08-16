@@ -34,7 +34,7 @@ export const SUTRADHAR_VERSION = '0.3.0';
  * const browser = await launch({ url: 'https://example.com' });
  */
 export async function launch(options: LaunchOptions = {}): Promise<Browser> {
-  const runtime = new SutradharRuntime();
+  const runtime = new SutradharRuntime({ allowedDomains: options.allowedDomains });
   const result = await runtime.launch({
     initialUrl: options.url,
     isIncognito: options.isIncognito,

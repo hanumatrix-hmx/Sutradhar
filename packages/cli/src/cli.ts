@@ -16,9 +16,8 @@ import { createSessionId } from '@sutradhar/contracts';
 import { parseArgs } from './parse-args.js';
 
 const logger = new StructuredLogger({ minLevel: 'error' }); // CLI output IS the log; keep engine logs quiet
-const { verb, cleanArgs, headed, failOnDiff, jsonMode, profileFlag, userAgentFlag } = parseArgs(
-  process.argv.slice(2),
-);
+const { verb, cleanArgs, headed, failOnDiff, jsonMode, profileFlag, userAgentFlag, allowlistDomainsFlag } =
+  parseArgs(process.argv.slice(2));
 
 // Tracked so main()'s cleanup can disconnect the CDP client connection (NOT close the browser)
 // before exiting — severing it lets Node's event loop drain and exit naturally, which flushes
@@ -61,7 +60,7 @@ async function spawnFreshSession(runtime: SutradharRuntime): Promise<string> {
 }
 
 async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string) => Promise<T>): Promise<T> {
-  const runtime = new SutradharRuntime({ logger });
+  const runtime = new SutradharRuntime({ logger, allowedDomains: allowlistDomainsFlag });
   activeRuntime = runtime;
   const state = await readState();
 
@@ -452,7 +451,7 @@ async function main() {
     default:
       console.log(`Sutradhar CLI
 
-Usage: sutradhar <command> [args] [--headed] [--profile <name>]
+Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>]
 
 Commands:
   nav <url>                    Navigate to a URL (launches a session if none is active)
@@ -495,6 +494,13 @@ Flags:
                         starting a new session)
   --json                "snap" additionally prints structured per-element data as JSON
   --fail-on-diff        "compare" exits nonzero if any pixel difference is found (CI gating)
+  --allowlist-domains <a.com,b.com>
+                        Block navigation to any domain not in this comma-separated list (and
+                        their subdomains). Per-command, not persisted in session state — pass
+                        it on every command that might navigate ("nav", "compare") if you want
+                        the guard to hold for the whole session. Does not intercept
+                        page-initiated navigation from a clicked link (browser-internal, not
+                        routed through this check) — see .ai/known-problems.md PROB-018.
 
 Session state persists across commands in ~/.sutradhar-cli/state.json — run "close" when done.`);
       process.exitCode = verb ? 1 : 0;
