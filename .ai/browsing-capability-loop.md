@@ -79,6 +79,24 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-17 — Milestone 62: multi-step form wizard (validation-gated steps) — covered, no bug found
+
+Continuing the hard-use-case hunt with a genuinely common real pattern not yet specifically
+tested: a multi-step wizard (checkout/signup flow) where each step gates progression on real
+client-side validation. TanStack Form's own live docs example needed a slow-loading embedded
+StackBlitz sandbox that didn't render an iframe within a reasonable wait, so built a small,
+controlled 3-step wizard instead (name → email → review/submit) to test the same real mechanics
+faster and more reliably.
+
+Verified the full flow end-to-end, checking real page text after every step rather than trusting
+each action's own success report: clicking Next with an empty name correctly stayed on step 1
+with a real "Name is required" error; an invalid email correctly stayed on step 2 with "Valid
+email required"; Back correctly returned to step 1 with the previously-typed name preserved;
+moving forward again correctly preserved the earlier (invalid) email text for re-editing; a
+valid email correctly advanced to a review step showing the real aggregated data from both prior
+steps; and Submit correctly produced a final confirmation referencing the actual entered name and
+email. No bug found — first-class support for validation-gated multi-step forms confirmed.
+
 ### 2026-08-17 — Milestone 60: styled drag-drop file upload widget (FilePond) — covered, no bug found
 
 Continuing the hard-use-case hunt. Tested a real, popular styled upload widget
