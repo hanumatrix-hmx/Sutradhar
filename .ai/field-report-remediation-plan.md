@@ -858,6 +858,81 @@ surfaced. Build the gate:
 
 ---
 
+**RESULT (2026-08-16): the full gate built, wired, and live-verified — plus a genuine, unrelated
+pre-existing build blocker found and actually fixed (not worked around) along the way.**
+
+**The clean-rebuild step.** `scripts/build-bundle.mjs` no longer trusts whatever `dist/` output
+already exists on disk for any workspace dependency. New `scripts/workspace-graph.mjs` computes
+the real `@sutradhar/*` dependency closure by reading actual `package.json` `dependencies`
+fields (BFS from the three real bundle roots — `cli`, `mcp-server`, `capability-runtime` —
+since `sutradhar` itself declares no `@sutradhar/*` deps at all; they're inlined by esbuild, not
+real npm deps of the published package), then topologically sorts it (Kahn's algorithm) so each
+package only rebuilds after everything it imports already has. This is deliberately **not** a
+hand-maintained list — the investigation for this exact phase needed three separate rounds of
+"check one more package's real deps" (`cli`/`mcp-server` → `agent`/`llm` → `agent`'s own further
+deps `memory`/`storage`) before arriving at the true closure by hand, which is exactly the kind
+of drift a computed-from-`package.json` approach can't have. Live run: **14 workspace packages**
+correctly discovered and rebuilt from clean, in a valid topological order, confirmed by watching
+the console output list them in dependency order with no `tsc` failures.
+
+**A real, unrelated, pre-existing build blocker found and genuinely fixed while first running
+this**: `packages/capability-runtime`'s `tsc -p .` (a REAL build, unlike the `tsc --noEmit |
+grep -v pngjs` this project had been using as a filtered typecheck all session) hard-failed on
+the already-known "missing `@types/pngjs`" gap — except investigation showed `@types/pngjs` was
+**already correctly declared** in that package's own `package.json` devDependencies; it had
+simply never been linked because `pnpm install` hadn't been run since it was added. Ran `npx
+pnpm install` at the repo root (pnpm **is** available via `npx pnpm`, confirmed live — the
+"pnpm not reliably available" note in this project's own standing guidance turns out to mean
+"not on PATH directly," not "doesn't work via npx") — `packages/capability-runtime` now
+typechecks **completely clean with zero filtering needed**, not just for this phase's build but
+permanently, for every future session.
+
+**The `prepublishOnly` gate.** `scripts/check-release-ready.mjs` checks two things, as a pure
+detector — it deliberately does **not** auto-rebuild or auto-fix anything, since the acceptance
+criterion requires it to *fail* on staleness, and silently repairing it would defeat that: (1)
+`git status --porcelain` is empty; (2) for every package in the same computed closure (plus
+`sutradhar` itself, whose own entry-file `src` also feeds the bundle directly), the newest
+mtime under `dist/` is not older than the newest mtime under `src/`. Wired as `prepublishOnly`
+in `packages/sutradhar/package.json`.
+
+**Live-verified both failure modes independently, through the real `npm publish --dry-run`
+command** (not just by invoking the check script directly) — `npm publish --dry-run` correctly
+ran `prepublishOnly` first and aborted with `npm error code 1` **before attempting any network
+call**, exactly as npm's documented lifecycle promises:
+- **Dirty tree**: the current in-progress Phase 6 work itself (genuinely uncommitted at the
+  time) — flagged with the real `git status --porcelain` output listed in the error.
+- **Stale workspace dist**: `touch`ed `packages/browser/src/index.ts` (bumping its mtime with
+  no content change — deliberately invisible to `git status`, to prove this check is a real
+  independent filesystem-mtime signal, not a rebranded git-diff check) — flagged as
+  `packages/browser/dist is STALE`, correctly detected *alongside* the (unrelated) dirty-tree
+  failure in the same run. Rebuilt `packages/browser` to clear it.
+
+**The shasum-recording step.** `scripts/record-release-shasum.mjs`, wired as `postpack`, hashes
+the just-created `.tgz` (found by newest-mtime in the package directory — npm packs there by
+default) and appends `{date, version, filename, sha256}` to `packages/sutradhar/RELEASE-SHASUMS.md`.
+Live-verified with a real (unpublished — `npm pack`, not `npm publish`) pack: the hook fired,
+wrote the log entry, and the recorded sha256 was independently re-verified by hashing the actual
+`.tgz` a second, separate way (`sha256sum`) — **exact match**. Test artifacts (the `.tgz` and the
+test log entry, which would have misleadingly implied a real *published* release) were deleted
+afterward, not committed; `*.tgz` added to `.gitignore` so a future local `npm pack` can't be
+accidentally committed either.
+
+**`<select>` spot-check in the freshly built bundle** (not `src`): imported directly from
+`packages/sutradhar/dist/index.js` after the clean rebuild, launched against
+the-internet.herokuapp.com/dropdown, and confirmed `snap` reports `[#3] select "..."` — the
+actual published-bundle code path grounds `<select>` correctly, not just the TypeScript source.
+
+**`.ai/known-problems.md` updated exactly per the acceptance criterion** — `PROB-014` records
+the investigated (not invented) root cause: unrecoverable because published bytes were never in
+git, the build had no clean step, and workspace packages resolve through compiled `dist/`, not
+`src/`. Status: RESOLVED, since the gate that would have caught it now exists.
+
+All touched packages still typecheck clean and pass their full suites after the `pnpm install`
++ full clean rebuild: `packages/browser` 159/159, `packages/capability-runtime` 82/82 (now
+genuinely clean, not filtered), `packages/mcp-server` 22/22, `packages/cli` 13/13.
+
+---
+
 ### Phase 7 — Prove it got better, then ship
 
 - Re-run the full Phase 1 harness across all 3 surfaces → `results-post-fix.json`.

@@ -33,7 +33,9 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/ --ext .ts",
     "test": "vitest run --globals",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "prepublishOnly": "node ../../scripts/check-release-ready.mjs",
+    "postpack": "node ../../scripts/record-release-shasum.mjs"
   },
   "dependencies": {
     "puppeteer-core": "^25.5.0"
