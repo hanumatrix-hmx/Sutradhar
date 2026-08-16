@@ -24,7 +24,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | DOM-attribute grounding (`data-sd-node-id`) under re-render | covered | Survived 3 independent real re-render tests: TodoMVC filter round-trip, a continuous-stream sibling-churn test, and (Milestone 4) the hardest case — a numeric id captured *before* deleting the item above it in the list, then acted on after the deletion-driven reflow. Correctly still hit the right (surviving) element every time, no misfires. |
 | Accessibility-tree grounding (`axSnapshot`) | covered | Milestone 4: used live against TodoMVC exactly as documented — `ax_snapshot` + `type_by_label` to add todos, both landed correctly with no ids involved at all. Works correctly. |
 | Hover / `:hover`-revealed UI | covered | Milestone 4: `browser.hover` used live via MCP (not just direct-runtime) to reveal a `:hover`-only destroy button, then clicked it successfully — confirmed synthetic `mouseover` does NOT trigger real `:hover`, but the real tool does. |
-| Multi-tab workflows | covered | Milestone 1: created a background tab via `new_tab`, navigated/snapshotted/clicked it independently via `tabId`, confirmed the original tab was completely unaffected. Works correctly. Milestone 58: closed the CLI-specific gap — the CLI had no tab commands at all, and adding them (`tabs`/`newtab`/`focustab`/`closetab`) surfaced two real multi-tab bugs in the per-process reattach architecture (only the most-recent tab was ever discovered; a focus choice didn't survive to the next command), both fixed. See PROB-031. |
+| Multi-tab workflows, incl. OAuth-style popup login | covered | Milestone 1: created a background tab via `new_tab`, navigated/snapshotted/clicked it independently via `tabId`, confirmed the original tab was completely unaffected. Works correctly. Milestone 58: closed the CLI-specific gap — the CLI had no tab commands at all, and adding them (`tabs`/`newtab`/`focustab`/`closetab`) surfaced two real multi-tab bugs in the per-process reattach architecture (only the most-recent tab was ever discovered; a focus choice didn't survive to the next command), both fixed. See PROB-031. Milestone 59: verified the exact real-world pattern that motivated the fix — a `window.open()`-triggered popup (how real "Sign in with X" OAuth buttons work) is correctly discovered as a real tab, and closing it (simulating provider auth completing) correctly leaves the session on the real parent page. Documented an honest, non-bug nuance: tab ids are a discovery-order counter reassigned fresh on every CLI reattach, not a stable identity — they can shift once the tab set changes between commands, so always re-`tabs` before acting rather than assuming a prior id is still valid. |
 | File download | covered | Milestone 1: `runtime.downloadFile` verified end-to-end — real file landed on disk at the expected path with correct content (read back and checked, not just a success flag). |
 | File upload | covered | Milestone 2: `browser.upload_file` against a real fixture page (the-internet.herokuapp.com/upload) — set a file input, clicked Upload, confirmed via the server's own response page ("File Uploaded! upload-test.txt") that it actually landed server-side, not just a client-side success flag. |
 | iframes / cross-frame interaction (incl. dynamically-injected, cross-origin) | covered | Milestone 1: verified directly against the runtime — `snapshot`/`click` correctly traverse into a cross-origin iframe injected into the page *after* initial load (the hardest realistic case — matches real chat-widget/payment-iframe behavior). Works correctly today. Milestone 35: closed the one remaining unverified sub-case — `type` into a contenteditable iframe body (TinyMCE), long assumed broken/cross-origin-restricted per GLM's original C4. Turned out to be a misdiagnosis: the iframe isn't actually cross-origin (`contentDocument` fully readable from the parent), it's already groundable via `snap`, and `type` into it already works, real text landing confirmed via independent DOM read-back. The actual bug was an invalid CSS selector in this project's own scenario-suite test code, fixed at the source — see `PROB-019`/`PROB-022`. |
@@ -78,6 +78,30 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-17 — Milestone 59: OAuth-style popup login flow — covered, real fix from Milestone 58 confirmed working end-to-end; one honest tab-id-stability caveat documented
+
+Continuing the hard-use-case hunt, directly building on Milestone 58's tab-management fixes.
+Tested the real popup-login pattern (`window.open(url, name, 'width=,height=')`, exactly how
+real "Sign in with Google/GitHub/etc." buttons trigger their auth popups) via a controlled
+injected button (no real OAuth provider credentials needed to test the mechanics that matter:
+popup detection and post-completion state).
+
+Clicking the "Sign in" button correctly opened a genuine second tab, and Milestone 58's
+multi-tab-discovery fix correctly found and listed **both** tabs via a separate `tabs` command —
+directly exercising the fix against the exact real-world pattern (a popup window, not just a
+manually-opened `newtab`) that originally motivated it. Closing the popup tab (simulating a real
+OAuth provider's own post-auth "close this window" behavior) correctly left the session on the
+real parent page (`example.com`), confirmed via independent `location.href` read-back.
+
+One honest, documented nuance found along the way: tab **ids** are not stable identifiers across
+separate CLI invocations once the tab set changes — they're a counter assigned fresh, in
+discovery order, on every `attach()`, not a persistent identity tied to the underlying page. After
+closing one of two tabs, the remaining tab's id changed from `..._2` to `..._1` between one `tabs`
+call and the next. The *page* was still correct (verified via URL), just the *label* shifted —
+worth knowing if scripting multiple tab operations across separate CLI commands, but not a defect:
+`tabs`'s whole purpose is to let a caller re-discover the current, authoritative id set before
+acting, not to promise id permanence across a changing tab set.
 
 ### 2026-08-16 — Milestone 58: CLI tab management added — surfaced and fixed two real multi-tab bugs in the reattach architecture, closes PROB-031
 
