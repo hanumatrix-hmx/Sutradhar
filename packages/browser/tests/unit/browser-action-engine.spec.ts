@@ -376,6 +376,9 @@ describe('@sutradhar/browser BrowserActionEngine click occlusion detection', () 
   it('upload_file allows any existing file when allowedUploadRoots is not configured (default, unrestricted)', async () => {
     const handle = mockHandle();
     (handle as any).uploadFile = vi.fn().mockResolvedValue(undefined);
+    // Read-back verification (new): the input's real .files[0].name must match the uploaded
+    // file's basename.
+    handle.evaluate.mockResolvedValueOnce(path.basename(EXISTING_FILE_PATH));
     const page = singleFramePage(() => Promise.resolve(handle));
     const engine = new BrowserActionEngine();
 
@@ -407,20 +410,23 @@ describe('@sutradhar/browser BrowserActionEngine click occlusion detection', () 
 
 describe('@sutradhar/browser BrowserActionEngine ExecutionVerifier wiring', () => {
   it('attaches an honest verification result to a successful action with no spec and no built-in post-condition check — verified false, not a fabricated true', async () => {
+    // press_key (not scroll — scroll gained its own real post-condition check in the
+    // "assertEffect everywhere" pass, so it no longer demonstrates "no built-in check").
     const page = {
       frames: vi.fn().mockReturnValue([]),
-      evaluate: vi.fn().mockResolvedValue(undefined), // scroll's own page.evaluate call
+      keyboard: { press: vi.fn().mockResolvedValue(undefined) },
     } as unknown as Page;
 
     const engine = new BrowserActionEngine();
     const result = await engine.executeAction(mockTab(page), {
-      actionType: 'scroll',
+      actionType: 'press_key',
+      key: 'Enter',
       maxRetries: 0,
     });
 
     // Fixes the field-report remediation's 2d finding: ExecutionVerifier used to hardcode
     // verified:true/confidence:0.9 for ANY non-throwing action, which was never actually
-    // evidence of anything beyond "the action didn't throw". `scroll` has no built-in
+    // evidence of anything beyond "the action didn't throw". `press_key` has no built-in
     // post-condition check and no spec was supplied here, so the honest answer is unverified.
     expect(result.success).toBe(true);
     expect(result.verification?.verified).toBe(false);
@@ -430,17 +436,18 @@ describe('@sutradhar/browser BrowserActionEngine ExecutionVerifier wiring', () =
   it('reports verification.verified:false (without failing the action) when a shouldUrlChange spec is not met', async () => {
     const page = {
       frames: vi.fn().mockReturnValue([]),
-      evaluate: vi.fn().mockResolvedValue(undefined),
+      keyboard: { press: vi.fn().mockResolvedValue(undefined) },
     } as unknown as Page;
 
     const engine = new BrowserActionEngine();
     const result = await engine.executeAction(mockTab(page), {
-      actionType: 'scroll',
+      actionType: 'press_key',
+      key: 'Enter',
       maxRetries: 0,
       verificationSpec: { shouldUrlChange: true },
     });
 
-    // The scroll itself still succeeded — verification is informational, not gating.
+    // The action itself still succeeded — verification is informational, not gating.
     expect(result.success).toBe(true);
     expect(result.verification?.verified).toBe(false);
     expect(result.verification?.reason).toContain('Expected URL change');
@@ -449,12 +456,13 @@ describe('@sutradhar/browser BrowserActionEngine ExecutionVerifier wiring', () =
   it('downgrades to verified:false when candidateConfidence is below the low-confidence threshold', async () => {
     const page = {
       frames: vi.fn().mockReturnValue([]),
-      evaluate: vi.fn().mockResolvedValue(undefined),
+      keyboard: { press: vi.fn().mockResolvedValue(undefined) },
     } as unknown as Page;
 
     const engine = new BrowserActionEngine();
     const result = await engine.executeAction(mockTab(page), {
-      actionType: 'scroll',
+      actionType: 'press_key',
+      key: 'Enter',
       maxRetries: 0,
       verificationSpec: { candidateConfidence: 0.2 },
     });
@@ -468,21 +476,22 @@ describe('@sutradhar/browser BrowserActionEngine ExecutionVerifier wiring', () =
   it('does not fabricate verified:true from candidateConfidence alone — a spec-less action stays honestly unverified even at a high confidence', async () => {
     const page = {
       frames: vi.fn().mockReturnValue([]),
-      evaluate: vi.fn().mockResolvedValue(undefined),
+      keyboard: { press: vi.fn().mockResolvedValue(undefined) },
     } as unknown as Page;
 
     const engine = new BrowserActionEngine();
     const result = await engine.executeAction(mockTab(page), {
-      actionType: 'scroll',
+      actionType: 'press_key',
+      key: 'Enter',
       maxRetries: 0,
       verificationSpec: { candidateConfidence: 0.75 },
     });
 
     // candidateConfidence above the low-confidence threshold only clears that ONE gate — it is
-    // not itself evidence of a verified post-condition. `scroll` still has no built-in check and
-    // no shouldUrlChange/expectedUrlSubstring/expectedElementText was given, so this must stay
-    // verified:false (confidence halved, per the same discounting the other unverified branches
-    // use), per the 2d fix.
+    // not itself evidence of a verified post-condition. `press_key` still has no built-in check
+    // and no shouldUrlChange/expectedUrlSubstring/expectedElementText was given, so this must
+    // stay verified:false (confidence halved, per the same discounting the other unverified
+    // branches use), per the 2d fix.
     expect(result.success).toBe(true);
     expect(result.verification?.verified).toBe(false);
     expect(result.verification?.confidence).toBe(0.375);
@@ -868,7 +877,9 @@ describe('@sutradhar/browser BrowserActionEngine keyboard modifiers', () => {
 describe('@sutradhar/browser BrowserActionEngine multi-select', () => {
   it('selects multiple values when `values` is given', async () => {
     const handle = mockHandle();
-    handle.evaluate.mockResolvedValue(false); // assertNotStale
+    handle.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale
+      .mockResolvedValueOnce(['red', 'blue']); // read-back verification
     (handle as any).select = vi.fn().mockResolvedValue(['red', 'blue']);
     const page = singleFramePage(() => Promise.resolve(handle));
 
@@ -887,7 +898,9 @@ describe('@sutradhar/browser BrowserActionEngine multi-select', () => {
 
   it('still supports a single `value` for backward compatibility', async () => {
     const handle = mockHandle();
-    handle.evaluate.mockResolvedValue(false);
+    handle.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale
+      .mockResolvedValueOnce(['red']); // read-back verification
     (handle as any).select = vi.fn().mockResolvedValue(['red']);
     const page = singleFramePage(() => Promise.resolve(handle));
 
@@ -902,6 +915,26 @@ describe('@sutradhar/browser BrowserActionEngine multi-select', () => {
     expect(result.success).toBe(true);
     expect((handle as any).select).toHaveBeenCalledWith('red');
   });
+
+  it('throws when the read-back selected value does not match what was requested', async () => {
+    const handle = mockHandle();
+    handle.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale
+      .mockResolvedValueOnce(['green']); // read-back: landed on the wrong option
+    (handle as any).select = vi.fn().mockResolvedValue(['green']);
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'select_option',
+      selector: '#colors',
+      value: 'red',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('did not land the expected value');
+  });
 });
 
 describe('@sutradhar/browser BrowserActionEngine per-tab action concurrency guard', () => {
@@ -912,41 +945,56 @@ describe('@sutradhar/browser BrowserActionEngine per-tab action concurrency guar
       resolveFirst = r;
     });
 
+    // press_key (not scroll — scroll now issues several internal page.evaluate calls of its
+    // own for real post-condition verification, which would confuse this test's single-call
+    // ordering trace). press_key still only touches page.keyboard.press once, so it stays a
+    // clean probe for the tab-level serialization queue this test actually exercises.
     const page = {
       frames: vi.fn().mockReturnValue([]),
-      evaluate: vi.fn().mockImplementation(async () => {
-        order.push('scroll-1-start');
-        await firstGate; // held open until the test releases it
-        order.push('scroll-1-end');
-      }),
+      keyboard: {
+        press: vi.fn().mockImplementation(async () => {
+          order.push('press-1-start');
+          await firstGate; // held open until the test releases it
+          order.push('press-1-end');
+        }),
+      },
     } as unknown as Page;
 
     const engine = new BrowserActionEngine();
     const tab = mockTab(page);
 
-    const first = engine.executeAction(tab, { actionType: 'scroll', maxRetries: 0 });
+    const first = engine.executeAction(tab, { actionType: 'press_key', key: 'Enter', maxRetries: 0 });
     // Give the first action a tick to actually start (and get stuck on firstGate).
     await new Promise((r) => setTimeout(r, 10));
-    expect(order).toEqual(['scroll-1-start']);
+    expect(order).toEqual(['press-1-start']);
 
-    // The second call must not start its own page.evaluate until the first has resolved —
-    // if the queue didn't serialize, 'scroll-2-start' would appear before 'scroll-1-end'.
-    (page.evaluate as any).mockImplementationOnce(async () => {
-      order.push('scroll-2-start');
+    // The second call must not start its own keyboard.press until the first has resolved —
+    // if the queue didn't serialize, 'press-2-start' would appear before 'press-1-end'.
+    // Uses a different key than the first ('Tab' vs 'Enter') so the duplicate-action guard
+    // (same tab + actionType + target within 1s) doesn't reject it as a double-dispatch —
+    // that guard is a real, separate mechanism from the serialization queue this test targets.
+    (page.keyboard.press as any).mockImplementationOnce(async () => {
+      order.push('press-2-start');
     });
-    const second = engine.executeAction(tab, { actionType: 'scroll', maxRetries: 0 });
+    const second = engine.executeAction(tab, { actionType: 'press_key', key: 'Tab', maxRetries: 0 });
     await new Promise((r) => setTimeout(r, 10));
-    expect(order).toEqual(['scroll-1-start']); // second still hasn't run
+    expect(order).toEqual(['press-1-start']); // second still hasn't run
 
     resolveFirst();
     await Promise.all([first, second]);
 
-    expect(order).toEqual(['scroll-1-start', 'scroll-1-end', 'scroll-2-start']);
+    expect(order).toEqual(['press-1-start', 'press-1-end', 'press-2-start']);
   });
 
   it('does not serialize actions against two different tabs', async () => {
-    const pageA = { frames: vi.fn().mockReturnValue([]), evaluate: vi.fn().mockResolvedValue(undefined) } as unknown as Page;
-    const pageB = { frames: vi.fn().mockReturnValue([]), evaluate: vi.fn().mockResolvedValue(undefined) } as unknown as Page;
+    const pageA = {
+      frames: vi.fn().mockReturnValue([]),
+      keyboard: { press: vi.fn().mockResolvedValue(undefined) },
+    } as unknown as Page;
+    const pageB = {
+      frames: vi.fn().mockReturnValue([]),
+      keyboard: { press: vi.fn().mockResolvedValue(undefined) },
+    } as unknown as Page;
 
     const engine = new BrowserActionEngine();
     const tabA = mockTab(pageA);
@@ -955,8 +1003,8 @@ describe('@sutradhar/browser BrowserActionEngine per-tab action concurrency guar
     (tabB as any).id = 'tab_B';
 
     const [resultA, resultB] = await Promise.all([
-      engine.executeAction(tabA, { actionType: 'scroll', maxRetries: 0 }),
-      engine.executeAction(tabB, { actionType: 'scroll', maxRetries: 0 }),
+      engine.executeAction(tabA, { actionType: 'press_key', key: 'Enter', maxRetries: 0 }),
+      engine.executeAction(tabB, { actionType: 'press_key', key: 'Enter', maxRetries: 0 }),
     ]);
 
     expect(resultA.success).toBe(true);
@@ -1165,7 +1213,10 @@ describe('@sutradhar/browser BrowserActionEngine drag_and_drop', () => {
     (source as any).drag = vi.fn().mockResolvedValue(undefined);
     (target as any).drop = vi.fn().mockResolvedValue(undefined);
     source.evaluate.mockResolvedValue(false); // assertNotStale: not stale
-    target.evaluate.mockResolvedValue(false);
+    target.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale: not stale
+      .mockResolvedValueOnce(undefined) // delivery-marker setup (addEventListener)
+      .mockResolvedValueOnce(true); // read-back: 'drop' event was observed
 
     let call = 0;
     const mainFrame = {
@@ -1237,15 +1288,20 @@ describe('@sutradhar/browser BrowserActionEngine touch_tap', () => {
 
 describe('@sutradhar/browser BrowserActionEngine action-history recording', () => {
   it('records a successful action into the tab history', async () => {
-    const page = { frames: vi.fn().mockReturnValue([]), evaluate: vi.fn().mockResolvedValue(undefined) } as unknown as Page;
+    // press_key, not scroll — scroll now has real post-condition verification requiring
+    // multiple realistic page.evaluate return values; press_key stays a clean minimal probe.
+    const page = {
+      frames: vi.fn().mockReturnValue([]),
+      keyboard: { press: vi.fn().mockResolvedValue(undefined) },
+    } as unknown as Page;
     const engine = new BrowserActionEngine();
     const tab = mockTab(page);
 
-    const result = await engine.executeAction(tab, { actionType: 'scroll', maxRetries: 0 });
+    const result = await engine.executeAction(tab, { actionType: 'press_key', key: 'Enter', maxRetries: 0 });
 
     expect(result.success).toBe(true);
     expect(tab.getActionHistory()).toHaveLength(1);
-    expect(tab.getActionHistory()[0]).toMatchObject({ actionType: 'scroll', success: true });
+    expect(tab.getActionHistory()[0]).toMatchObject({ actionType: 'press_key', success: true });
   });
 
   it('records a failed action into the tab history, with the error message', async () => {

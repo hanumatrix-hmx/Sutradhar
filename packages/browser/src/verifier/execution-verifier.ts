@@ -85,14 +85,18 @@ export class ExecutionVerifier {
     // confident `verified:true, confidence:0.9` regardless, which was never actually evidence
     // of anything beyond "the action didn't throw" — found live as a genuine false positive
     // (a `type` that silently left a field empty still reported `verified:true` here, before
-    // the field-report remediation's Phase 2 fix). Some action types now carry their own
+    // the field-report remediation's Phase 2 fix). Most action types now carry their own
     // built-in post-condition check inside `dispatchAction` itself, independent of any spec:
     // `click`/`click_by_role` verify real delivery (occlusion + delivery-marker check in
     // `verifiedClickOnHandle`); `type`/`type_by_label` verify the typed value actually landed
-    // (see `clearAndType`'s read-back). Only those get a confident pass without an explicit
-    // spec — `click_by_text` deliberately does NOT (it calls `element.click()` directly,
-    // bypassing `verifiedClickOnHandle` entirely — a separate, real gap, logged in
-    // `.ai/known-problems.md`, not fixed here to keep this change scoped to the verifier itself).
+    // (see `clearAndType`'s read-back); `hover` verifies occlusion before dispatching (see
+    // `verifiedHover`); `select_option`/`upload_file` read back the real selected value/attached
+    // file; `scroll` reads back real `scrollY` movement (tolerating a legitimate no-op at a
+    // scroll boundary); `drag_and_drop` verifies a real `'drop'` event was delivered to the
+    // target. Only those get a confident pass without an explicit spec — `click_by_text`
+    // deliberately does NOT (it calls `element.click()` directly, bypassing
+    // `verifiedClickOnHandle` entirely — a separate, real gap, logged in
+    // `.ai/known-problems.md` as PROB-012, not fixed here to keep this change scoped).
     const specChecked = !!(spec.shouldUrlChange || spec.expectedUrlSubstring || spec.expectedElementText);
     const selfVerifyingWithoutSpec = SELF_VERIFYING_ACTION_TYPES.has(actionResult.actionType);
 
@@ -156,4 +160,14 @@ const LOW_CONFIDENCE_THRESHOLD = 0.5;
  *  before reporting success — see the reasoning in `verifyAction`'s final branch. Keep this in
  *  sync with `browser-action-engine.ts`: if a `case` there is given a genuine post-condition
  *  check, add it here too; if one is removed, remove it here. */
-const SELF_VERIFYING_ACTION_TYPES = new Set(['click', 'click_by_role', 'type', 'type_by_label']);
+const SELF_VERIFYING_ACTION_TYPES = new Set([
+  'click',
+  'click_by_role',
+  'type',
+  'type_by_label',
+  'hover',
+  'select_option',
+  'upload_file',
+  'scroll',
+  'drag_and_drop',
+]);

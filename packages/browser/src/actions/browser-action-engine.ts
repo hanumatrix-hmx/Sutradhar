@@ -508,6 +508,12 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         if (!page) throw new Error(`No live browser page for tab ${tab.id} — cannot execute scroll.`);
         const amount = params.amount ?? 500;
         const direction = params.direction ?? 'down';
+        // Read back scrollY before/after — `scrollBy()` not moving anything (a fixed/non-scrolling
+        // page, or an intercepted scroll) previously reported success identically to a real
+        // scroll. Legitimate no-op at a scroll boundary (already at the top/bottom) is not an
+        // error — only report failure when the page appears genuinely scrollable in that
+        // direction but nothing moved.
+        const before = await page.evaluate(() => window.scrollY);
         await page.evaluate(
           (amt, dir) => {
             window.scrollBy(0, dir === 'down' ? amt : -amt);
@@ -515,7 +521,19 @@ export class BrowserActionEngine implements IBrowserActionEngine {
           amount,
           direction,
         );
-        return { direction: params.direction ?? 'down' };
+        const after = await page.evaluate(() => window.scrollY);
+        const maxScrollY = await page.evaluate(
+          () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight),
+        );
+        const atBoundary = direction === 'down' ? before >= maxScrollY - 1 : before <= 1;
+        if (before === after && !atBoundary) {
+          throw new Error(
+            `scroll had no effect — scrollY stayed at ${before} after attempting to scroll ${direction} by ` +
+              `${amount}px, and the page doesn't appear to already be at that scroll boundary. The page may ` +
+              'not be scrollable at this point, or something is intercepting/resetting the scroll.',
+          );
+        }
+        return { direction: params.direction ?? 'down', scrolledFrom: before, scrolledTo: after };
       }
 
       case 'wait': {
@@ -546,6 +564,22 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         if (!handle) throw new Error(await this.describeMissingElement(page, params.selector));
         await this.assertNotStale(handle, params.selector);
         await this.runHandleOp('select_option', () => handle.select(...values));
+        // Read the real selected value(s) back rather than trusting Puppeteer's own select()
+        // not throwing — the same "verify, don't assume" discipline as `type`'s read-back.
+        // Catches e.g. a value that doesn't match any <option>, which select() can silently
+        // no-op on for some custom/JS-driven <select>-like widgets.
+        const landed = await handle.evaluate((el) => {
+          const sel = el as HTMLSelectElement;
+          return sel.multiple ? Array.from(sel.selectedOptions).map((o) => o.value) : [sel.value];
+        });
+        const landedSet = new Set(landed);
+        const matches = values.every((v) => landedSet.has(v)) && landed.every((v) => values.includes(v));
+        if (!matches) {
+          throw new Error(
+            `select_option did not land the expected value(s) — expected ${JSON.stringify(values)}, but the ` +
+              `element's real selected value(s) read back as ${JSON.stringify(landed)}.`,
+          );
+        }
         return { selectedValues: values };
       }
 
@@ -585,10 +619,37 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         if (!target) throw new Error(`No element found for target selector: ${params.targetSelector}`);
         await this.assertNotStale(source, params.selector);
         await this.assertNotStale(target, params.targetSelector);
+        // Delivery-marker check, same idea as verifiedClickOnHandle's: attach a listener BEFORE
+        // dispatching, so we observe whether a real 'drop' event actually reached the target —
+        // not just that drag()/drop() didn't throw. This is a genuine signal, not a rubber
+        // stamp: the HTML5 DnD spec requires the target to call preventDefault() on 'dragover'
+        // for 'drop' to fire at all, so a target with no (or broken) dragover handling — the
+        // most common real-world drag-and-drop integration mistake — is exactly what this catches.
+        await target.evaluate((el) => {
+          (el as unknown as { __sdDropped?: boolean }).__sdDropped = false;
+          el.addEventListener(
+            'drop',
+            () => {
+              (el as unknown as { __sdDropped?: boolean }).__sdDropped = true;
+            },
+            { once: true, capture: true },
+          );
+        });
         await this.runHandleOp('drag_and_drop', async () => {
           await source.drag(target);
           await target.drop(source);
         });
+        const delivered = await target.evaluate(
+          (el) => (el as unknown as { __sdDropped?: boolean }).__sdDropped === true,
+        );
+        if (!delivered) {
+          throw new Error(
+            `drag_and_drop dispatched the drag/drop sequence, but no 'drop' event was observed on the ` +
+              `target — it may not have been delivered. The most common cause: the target has no ` +
+              "'dragover' handler calling preventDefault(), which the HTML5 drag-and-drop spec requires " +
+              "before a 'drop' event will fire at all.",
+          );
+        }
         return { sourceSelector: params.selector, targetSelector: params.targetSelector };
       }
 
@@ -688,7 +749,20 @@ export class BrowserActionEngine implements IBrowserActionEngine {
           throw new Error(`No file input found for selector: ${params.selector}`);
         }
         await this.runHandleOp('upload_file', () => (handle as any).uploadFile(params.filePath));
-        return { uploadedFilePath: params.filePath };
+        // Read the input's real .files list back — uploadFile() not throwing only means the CDP
+        // call succeeded, not that the browser actually attached the file (e.g. a non-file
+        // <input>, or one a page script resets after the fact).
+        const expectedFileName = path.basename(params.filePath);
+        const landedFileName = await handle.evaluate(
+          (el) => (el as HTMLInputElement).files?.[0]?.name ?? null,
+        );
+        if (landedFileName !== expectedFileName) {
+          throw new Error(
+            `upload_file did not land the expected file — expected "${expectedFileName}" in the input's ` +
+              `files list, but it reads back as ${JSON.stringify(landedFileName)}.`,
+          );
+        }
+        return { uploadedFilePath: params.filePath, uploadedFileName: landedFileName };
       }
 
       default:
