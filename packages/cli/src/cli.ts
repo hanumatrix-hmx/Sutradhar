@@ -87,6 +87,11 @@ async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string)
     try {
       const { sessionId } = await runtime.attach({ endpoint: state.wsEndpoint, sessionId: state.sessionId });
       activeSessionId = sessionId;
+      // Re-apply any permissions granted in a prior invocation — see CliState.grantedPermissions'
+      // doc comment for why this is necessary (the grant itself doesn't survive the reconnect).
+      for (const { origin, permissions } of state.grantedPermissions ?? []) {
+        await runtime.grantPermissions(sessionId, origin, permissions).catch(() => {});
+      }
       return await fn(runtime, sessionId);
     } catch (err) {
       // Self-heal instead of hard-erroring: a dead previous session (Chrome crashed, was
@@ -517,6 +522,59 @@ async function cmdDragPoints(
   });
 }
 
+async function cmdSetClipboard(text: string | undefined) {
+  if (text === undefined) printErrorAndExit('usage: sutradhar setclipboard <text>  (requires clipboard permission — see "grant")');
+  await withSession(async (runtime, sessionId) => {
+    try {
+      await runtime.setClipboard(sessionId, text!);
+      console.log(`Set clipboard to ${JSON.stringify(text)}`);
+    } catch (err) {
+      console.log(`Set clipboard failed: ${(err as Error).message}`);
+      process.exitCode = 1;
+    }
+  });
+}
+
+async function cmdGetClipboard() {
+  await withSession(async (runtime, sessionId) => {
+    try {
+      const text = await runtime.getClipboard(sessionId);
+      console.log(text);
+    } catch (err) {
+      console.log(`Get clipboard failed: ${(err as Error).message}`);
+      process.exitCode = 1;
+    }
+  });
+}
+
+async function cmdGrant(origin: string | undefined, permissions: string[]) {
+  if (!origin || permissions.length === 0) {
+    printErrorAndExit(
+      'usage: sutradhar grant <origin> <permission...>  ' +
+        '(e.g. sutradhar grant https://example.com clipboard-read clipboard-write — required before ' +
+        'setclipboard/getclipboard will work against most real sites)',
+    );
+  }
+  await withSession(async (runtime, sessionId) => {
+    try {
+      await runtime.grantPermissions(sessionId, origin!, permissions);
+      console.log(`Granted [${permissions.join(', ')}] for ${origin}`);
+      // Persist so the next (separate-process) command re-applies it on reattach — see
+      // CliState.grantedPermissions' doc comment.
+      const state = await readState();
+      if (state) {
+        const existing = state.grantedPermissions ?? [];
+        const merged = existing.filter((g) => g.origin !== origin);
+        merged.push({ origin: origin!, permissions });
+        await writeState({ ...state, grantedPermissions: merged });
+      }
+    } catch (err) {
+      console.log(`Grant failed: ${(err as Error).message}`);
+      process.exitCode = 1;
+    }
+  });
+}
+
 async function cmdDownload(ref: string | undefined, downloadDir: string | undefined) {
   if (!ref) printErrorAndExit('usage: sutradhar download <ref> [downloadDir]  (ref = the element that triggers the download, a selector or a numeric id from "snap")');
   await withSession(async (runtime, sessionId) => {
@@ -619,6 +677,12 @@ async function main() {
       return cmdClickPoint(cleanArgs[0], cleanArgs[1]);
     case 'dragpoints':
       return cmdDragPoints(cleanArgs[0], cleanArgs[1], cleanArgs[2], cleanArgs[3]);
+    case 'setclipboard':
+      return cmdSetClipboard(cleanArgs.join(' '));
+    case 'getclipboard':
+      return cmdGetClipboard();
+    case 'grant':
+      return cmdGrant(cleanArgs[0], cleanArgs.slice(1));
     case 'download':
       return cmdDownload(cleanArgs[0], cleanArgs[1]);
     case 'close':
@@ -671,6 +735,13 @@ Commands:
                                 Real mouse-down->move->up drag between two absolute viewport
                                 coordinates — for canvas-rendered drag targets (a signature pad,
                                 a slider/chart handle drawn on a <canvas>)
+  grant <origin> <permission...>
+                                Grant browser permissions for an origin (e.g. clipboard-read,
+                                clipboard-write, geolocation, notifications) — needed before
+                                setclipboard/getclipboard work against most real sites
+  setclipboard <text>          Set the system clipboard (e.g. to then paste into a rich-text
+                                editor via press <ref> v --modifiers Control)
+  getclipboard                 Print the current system clipboard contents
   download <ref> [dir]         Click an element that triggers a download, print the saved path
   screenshot [path]            Save a screenshot (default: ./screenshot.png)
   audit [url] [outDir]         Screenshot + console/page/network errors + accessibility

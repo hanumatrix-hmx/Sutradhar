@@ -49,6 +49,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Network request interception/mocking | covered | Milestone 7: `browser.route` with both `mock` (a real fetch received the exact mocked JSON body) and `block` (a real fetch failed as expected) actions verified against genuine `fetch()` calls, not just the tool's own success report. |
 | Console/network/page-error log capture | covered | Milestone 7: `get_console_logs` correctly captured log/warn/error levels plus an incidental real network failure; `get_page_errors` correctly captured a deliberate uncaught exception with message and stack trace; `get_network_log` correctly distinguished a completed (mocked) request from a blocked one (request-only, no response phase). |
 | CAPTCHA / bot-detection / stealth evasion | excluded | Deliberately out of scope per CLAUDE.md — not a gap to close. |
+| Clipboard paste into a rich-text editor, via the CLI specifically | covered, 1 high-severity CLI-only bug found and fixed | Milestone 55: the underlying capability (`setClipboard`/`grantPermissions`/Ctrl+V) worked correctly via `SutradharRuntime` directly, but `grant` was invisible to every subsequent separate CLI process — Puppeteer's `overridePermissions()` doesn't survive a CDP client disconnect/reconnect cycle, which the CLI's one-process-per-command architecture always does. Fixed by persisting granted permissions in CLI state and re-applying them on every reattach. See PROB-029. |
 | Async/debounced-network typeahead search suggestions | covered, no bug found | Milestone 54: tested live against Wikipedia's real search box — typing landed correctly, real API-backed suggestion options (`role="option"`) appeared in the very next snapshot with no extra wait needed, clicking a suggestion correctly navigated to that exact article (confirmed via independent `location.href`/`document.title` read-back, not just the click's own success report). (DuckDuckGo's homepage search was tried first but never showed a suggestions dropdown at all in this environment — not investigated further as a possible bug, since Wikipedia's equivalent worked cleanly and DDG's suggestion behavior may simply be region/consent-state-gated; noted as untested rather than assumed broken.) |
 | Native HTML5 `<dialog>`/`showModal()` (browser-level top-layer modal, distinct from a div-based simulated modal) | covered, no bug found | Milestone 53: a real `<dialog>` opened via `showModal()` correctly makes background content unclickable — a click on a background button is correctly refused via the existing occlusion check (`elementFromPoint` resolves to the dialog, not the background element), with a clear, actionable error. Note: Chromium does NOT set a literal `.inert` DOM property on background elements for this case (checked live — it stays `false`), so the snapshot listing still includes the now-inert background button; harmless in practice since the click attempt fails safely and clearly rather than silently succeeding or doing the wrong thing. Closing the dialog via its own real `close()`-triggering button verified independently via `dialog.open` reading back `false`. |
 | Nested modal-in-modal dialogs (a modal opened from within another modal, z-index-stacked) | covered, no bug found | Milestone 52: tested live against MUI's own Nested Modal demo — opening a child modal from within a parent modal correctly stacked; `clicktext "Close Child Modal"` correctly hit the topmost (child) modal's button via occlusion detection and closed only the child, leaving the parent open — exactly correct nested-modal semantics, confirmed via real DOM state, not just each click's own success report. |
@@ -77,6 +78,35 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-16 — Milestone 55: `grant` was invisible across CLI commands — a real, precisely root-caused bug, fixed, closes PROB-029
+
+Continuing the hard-use-case hunt: clipboard-paste into a real rich-text editor (Quill). The
+core capability (`setClipboard` + `grantPermissions` + Ctrl+V) worked perfectly in a single
+continuous script, and confirmed a genuine gap along the way — the CLI had no verb for
+`clickAtPoint`/`dragAtPoints`/clipboard/permissions at all (Milestone 51 already closed the
+first two; this session closed clipboard + `grant`).
+
+But wiring `grant`/`setclipboard`/`getclipboard` into the CLI and testing the real 3-separate-
+process flow (`grant` → `setclipboard` → `getclipboard`) surfaced a genuine, high-severity bug:
+`getclipboard` failed with a real `NotAllowedError: Read permission denied`, even though `grant`
+had reported success moments earlier against the same persisted browser session. Root-caused
+precisely rather than assumed: built a script mirroring the CLI's *exact* architecture
+(`spawnDetachedChrome`, then a separate `SutradharRuntime`/`attach()` per "command", explicitly
+`disconnect()`-ing the Puppeteer client between each — literally what `cli.ts`'s `main().finally()`
+does) — this reproduced the failure exactly. The same script without the explicit `disconnect()`
+between steps did NOT reproduce it. Isolates the cause precisely: Puppeteer's
+`overridePermissions()` (backing CDP's `Browser.grantPermissions`) does not survive a full CDP
+client disconnect/reconnect cycle, even to the same browser and browsing context — a real
+Puppeteer/CDP limitation, not a Sutradhar design choice, but one the CLI's one-process-per-
+command architecture runs straight into.
+
+Fixed by persisting granted permissions into the CLI's existing `state.json` and re-applying
+them on every subsequent reattach, transparently working around the limitation rather than
+requiring every caller to understand it. Live-verified end-to-end through the actual CLI binary
+across multiple separate process invocations, and confirmed the full real workflow (grant →
+setclipboard → click a real Quill editor → `press v --modifiers Control` → paste) lands real
+text, verified via independent snapshot read-back. Closes `PROB-029`.
 
 ### 2026-08-16 — Milestone 54: async/debounced typeahead search suggestions — covered, no bug found
 

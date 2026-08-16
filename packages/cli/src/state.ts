@@ -21,6 +21,13 @@ export interface CliState {
    *  current storage state into that profile before killing Chrome. See cli.ts's cmdClose for
    *  why this can't just rely on SutradharRuntime.shutdown()'s own auto-save. */
   profileName?: string;
+  /** Permissions granted via `grant`, re-applied on every subsequent command's reattach.
+   *  Necessary because Puppeteer's `overridePermissions()` does not survive a CDP client
+   *  disconnect/reconnect cycle (confirmed live: a permission granted in one CLI invocation was
+   *  gone by the next, even though the same browser/session persisted) — without this, `grant`
+   *  would only ever be visible to the exact command that called it, making it useless in
+   *  practice for the CLI's one-process-per-command architecture. */
+  grantedPermissions?: { origin: string; permissions: string[] }[];
 }
 
 const STATE_DIR = path.join(os.homedir(), '.sutradhar-cli');
