@@ -311,17 +311,23 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         '(e.g. a "next page" link) is further down; up to 300 elements per frame get a real, usable id regardless. ' +
         'includeNodes (default false) additionally returns the raw structured element data (boundingBox, confidence, ' +
         'isEnabled, ...) the listing was rendered from, as a JSON block after the text listing — use this when you need ' +
-        'a field the compact listing does not show, instead of re-parsing the listing text.',
+        'a field the compact listing does not show, instead of re-parsing the listing text. ' +
+        'noText (default false) drops each line\'s name/label/placeholder/value text, keeping tag+role+id — for when ' +
+        'you already know what you\'re targeting (e.g. from an earlier full snapshot) and just need fresh ids after a ' +
+        're-render. idsOnly (default false) drops everything but the id itself — the smallest possible listing, at the ' +
+        'cost of it no longer being self-describing; implies noText.',
       inputSchema: {
         sessionId: z.string(),
         tabId: z.string().optional(),
         maxElements: z.number().int().positive().optional(),
         includeNodes: z.boolean().optional(),
+        noText: z.boolean().optional(),
+        idsOnly: z.boolean().optional(),
       },
     },
-    async ({ sessionId, tabId, maxElements, includeNodes }) => {
+    async ({ sessionId, tabId, maxElements, includeNodes, noText, idsOnly }) => {
       try {
-        const snap = await runtime.snapshot(sessionId, tabId, maxElements, { includeNodes });
+        const snap = await runtime.snapshot(sessionId, tabId, maxElements, { includeNodes, noText, idsOnly });
         // Return as readable text rather than JSON — the model parses the listing directly.
         // `snap.interactiveElements` already embeds its own "URL/Title/Interactive elements
         // (N):" header (N = the true interactive-only count) — do not prepend another one here.

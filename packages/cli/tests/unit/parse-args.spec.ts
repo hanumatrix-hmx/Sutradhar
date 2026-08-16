@@ -134,6 +134,22 @@ describe('@sutradhar/cli parseArgs', () => {
     expect(result.settle).toBe(false);
   });
 
+  it('parses --no-text and --ids-only as standalone boolean flags for "snap"', () => {
+    const noText = parseArgs(['snap', '--no-text']);
+    expect(noText.noText).toBe(true);
+    expect(noText.idsOnly).toBe(false);
+
+    const idsOnly = parseArgs(['snap', '--ids-only']);
+    expect(idsOnly.idsOnly).toBe(true);
+    expect(idsOnly.noText).toBe(false);
+  });
+
+  it('defaults noText/idsOnly to false when not given', () => {
+    const result = parseArgs(['snap']);
+    expect(result.noText).toBe(false);
+    expect(result.idsOnly).toBe(false);
+  });
+
   it('does not treat a positional arg that happens to equal a flag NAME as anything but a flag, even mid-command', () => {
     // Guards the filter's index-based value-stripping: only the token immediately AFTER
     // --profile/--user-agent is treated as that flag's value, not any later occurrence.

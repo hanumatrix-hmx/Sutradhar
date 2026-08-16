@@ -27,6 +27,8 @@ const {
   allowlistDomainsFlag,
   baselineFlag,
   settle,
+  noText,
+  idsOnly,
 } = parseArgs(process.argv.slice(2));
 
 // Tracked so main()'s cleanup can disconnect the CDP client connection (NOT close the browser)
@@ -238,7 +240,7 @@ async function cmdSnap(jsonMode: boolean) {
       console.log(JSON.stringify({ url: snap.url, title: snap.title, elementCount: snap.elementCount, nodes: snap.nodes }, null, 2));
       return;
     }
-    const snap = await runtime.snapshot(sessionId);
+    const snap = await runtime.snapshot(sessionId, undefined, undefined, { noText, idsOnly });
     // interactiveElements already includes its own "URL: ... / Title: ... / Interactive
     // elements (N):" header — printing snap.url/title/elementCount again separately would just
     // duplicate it (and elementCount counts ALL DOM graph nodes, not just the interactive
@@ -576,6 +578,10 @@ Commands:
   nav <url>                    Navigate to a URL (launches a session if none is active)
   snap                         Print the interactive-element listing for the current page
   snap --json                  Same, plus the raw structured element data as JSON
+  snap --no-text                Same elements, drops name/label/placeholder/value text
+                                (keeps tag+role+id) — smaller listing when you already know
+                                what you're targeting and just need fresh ids
+  snap --ids-only                Smallest listing: only the bracketed [#id], nothing else
   axsnap                       Accessibility-tree listing — no ids, never goes stale even if
                                 the page re-renders; pair with clicktext/clickrole below
   text                         Print the current page's visible text
@@ -629,6 +635,8 @@ Flags:
   --settle              "click"/"type" wait for the page to stop actively changing (no DOM
                         mutations, no in-flight network requests) before returning — helps when
                         the action triggers a menu/modal/toast that renders a moment later
+  --no-text             "snap" drops per-element text, keeping tag+role+id (see command list)
+  --ids-only            "snap" keeps only the bracketed id, nothing else (see command list)
   --allowlist-domains <a.com,b.com>
                         Block navigation to any domain not in this comma-separated list (and
                         their subdomains). Per-command, not persisted in session state — pass

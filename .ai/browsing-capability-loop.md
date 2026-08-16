@@ -67,6 +67,30 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-16 — Milestone 39: snapshot verbosity dial (`--no-text`/`--ids-only`) — closes the INSIGHTS.md campaign's full priority stack
+
+Closes INSIGHTS.md Insight 6's remaining ask ("Add verbosity levels: `--ids-only`, `--no-text`,
+`--max-elements K`" — `maxElements` already existed from Milestone 8). `formatGraphForLlm` gained
+a `FormatGraphOptions` param: `noText` keeps tag+role+id per line, dropping accessible-name/
+label/placeholder/value text (for a caller that already knows what it's targeting and just needs
+fresh ids after a re-render); `idsOnly` goes further, dropping everything but the bracketed id
+(smallest possible listing, at the cost of no longer being self-describing). Wired through
+`runtime.snapshot`'s existing options bag (alongside `includeNodes`), the `browser.snapshot` MCP
+tool schema, and CLI `snap --no-text`/`snap --ids-only`.
+
+Live-verified against a real page (the-internet.herokuapp.com/login, 6 real interactive
+elements): default listing 239 bytes → `--no-text` 154 bytes (36% smaller) → `--ids-only` 121
+bytes (49% smaller) — real, measured savings, not a theoretical estimate. 4 new unit tests for
+`formatGraphForLlm`'s new options (default unaffected, noText drops text, idsOnly drops
+everything but id, idsOnly takes precedence if both are somehow set). `packages/browser` at
+168/168, `packages/capability-runtime` at 90/90, `packages/mcp-server` at 25/25, `packages/cli`
+at 22/22 — all green.
+
+This closes out every item on INSIGHTS.md's own priority stack (Milestones 30, 32, 33/34, 35 ×2,
+36, 37, 38, 39 — everything except the deliberately-rejected UA-default-flip, Insight 4, which
+contradicts this project's standing anti-stealth-default policy and was flagged to the user
+rather than built).
+
 ### 2026-08-16 — Milestone 38: post-action settle waits (`settle` param) — the last of INSIGHTS.md's priority-stack items
 
 Closes INSIGHTS.md Insight 2 ("flakiness lives at state transitions, not at actions... nobody

@@ -24,6 +24,12 @@ export interface ParsedArgs {
   /** `--settle` — used by `click`/`type` to wait for the page to stop actively changing
    *  (DOM-quiet + network-idle) before returning. Off by default. */
   settle: boolean;
+  /** `--no-text` — used by `snap` to drop name/label/placeholder/value text from each line,
+   *  keeping tag+role+id. Off by default. */
+  noText: boolean;
+  /** `--ids-only` — used by `snap` to drop everything but the bracketed id. Implies `noText`.
+   *  Off by default. */
+  idsOnly: boolean;
 }
 
 /** Parses `process.argv.slice(2)`-style arguments (verb + flags) into their recognized pieces.
@@ -34,6 +40,8 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
   const failOnDiff = args.includes('--fail-on-diff');
   const jsonMode = args.includes('--json');
   const settle = args.includes('--settle');
+  const noText = args.includes('--no-text');
+  const idsOnly = args.includes('--ids-only');
   const profileFlagIndex = args.indexOf('--profile');
   const profileFlag = profileFlagIndex !== -1 ? args[profileFlagIndex + 1] : undefined;
   const userAgentFlagIndex = args.indexOf('--user-agent');
@@ -55,6 +63,8 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
       a !== '--fail-on-diff' &&
       a !== '--json' &&
       a !== '--settle' &&
+      a !== '--no-text' &&
+      a !== '--ids-only' &&
       a !== '--profile' &&
       a !== '--user-agent' &&
       a !== '--allowlist-domains' &&
@@ -76,5 +86,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     allowlistDomainsFlag,
     baselineFlag,
     settle,
+    noText,
+    idsOnly,
   };
 }

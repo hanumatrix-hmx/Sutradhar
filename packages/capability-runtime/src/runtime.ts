@@ -402,12 +402,15 @@ export class SutradharRuntime {
     sessionId: string,
     tabId?: string,
     maxElements?: number,
-    options?: { includeNodes?: boolean },
+    options?: { includeNodes?: boolean; noText?: boolean; idsOnly?: boolean },
   ): Promise<SnapshotResult> {
     const { tab } = this.resolveTab(sessionId, tabId);
     this.requirePage(tab); // fail early if no real browser
     const graph = await this.domEngine.buildGraph(tab);
-    const interactiveElements = formatGraphForLlm(graph, maxElements);
+    const interactiveElements = formatGraphForLlm(graph, maxElements, {
+      noText: options?.noText,
+      idsOnly: options?.idsOnly,
+    });
     const pageText = await this.readPageText(tab);
     return {
       sessionId,

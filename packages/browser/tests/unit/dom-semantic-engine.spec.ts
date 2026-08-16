@@ -117,4 +117,46 @@ describe('@sutradhar/browser formatGraphForLlm', () => {
     const headerMatch = formatted.match(/Interactive elements \((\d+)\):/);
     expect(Number(headerMatch![1])).toBe(0);
   });
+
+  describe('verbosity dial (noText / idsOnly)', () => {
+    const nodes: SemanticNode[] = [
+      node({ id: 7, tagName: 'BUTTON', role: 'button', accessibleName: 'Submit', label: 'Submit the form' }),
+      node({ id: 8, tagName: 'INPUT', accessibleName: 'Email', placeholder: 'you@example.com', value: 'x@y.com' }),
+    ];
+    const graph = new SemanticElementGraph(nodes, 'https://example.com', 'Test');
+
+    it('default (neither option) includes full text/label/placeholder/value', () => {
+      const formatted = formatGraphForLlm(graph);
+      expect(formatted).toContain('"Submit"');
+      expect(formatted).toContain('placeholder="you@example.com"');
+      expect(formatted).toContain('value="x@y.com"');
+    });
+
+    it('noText: keeps tag+role+id, drops name/label/placeholder/value text', () => {
+      const formatted = formatGraphForLlm(graph, 60, { noText: true });
+      expect(formatted).toContain('[#7] button');
+      expect(formatted).toContain('[#8] input');
+      expect(formatted).not.toContain('"Submit"');
+      expect(formatted).not.toContain('placeholder=');
+      expect(formatted).not.toContain('value=');
+      // Header count is unaffected — noText only changes per-line detail, not which/how many
+      // elements are listed.
+      const headerMatch = formatted.match(/Interactive elements \((\d+)\):/);
+      expect(Number(headerMatch![1])).toBe(2);
+    });
+
+    it('idsOnly: keeps only the bracketed id, nothing else', () => {
+      const formatted = formatGraphForLlm(graph, 60, { idsOnly: true });
+      const lines = formatted.split('\n').filter((l) => /^\[#\d+\]/.test(l));
+      expect(lines).toEqual(['[#7]', '[#8]']);
+      expect(formatted).not.toContain('button');
+      expect(formatted).not.toContain('"Submit"');
+    });
+
+    it('idsOnly takes precedence when both options are somehow set', () => {
+      const formatted = formatGraphForLlm(graph, 60, { noText: true, idsOnly: true });
+      const lines = formatted.split('\n').filter((l) => /^\[#\d+\]/.test(l));
+      expect(lines).toEqual(['[#7]', '[#8]']);
+    });
+  });
 });

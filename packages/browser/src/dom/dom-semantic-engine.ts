@@ -353,9 +353,23 @@ function scrapeFrame(params: {
  *   [#7] button "Search"  (role=button)
  *   [#8] input[search] placeholder="Search Wikipedia"
  */
+export interface FormatGraphOptions {
+  /** Drop accessible-name/label/placeholder/value text from each line, keeping tag+role+id —
+   *  for a caller that already knows what it's targeting (e.g. from a prior full snapshot or
+   *  `axSnapshot`) and just needs fresh ids after a re-render, not to re-read every label's
+   *  text again. Roughly halves listing size on a typical page. */
+  readonly noText?: boolean;
+  /** Drop everything except the bracketed id — `[#7]` with no tag/role/text at all. The
+   *  minimum needed to target an element by numeric id; most aggressive token savings, at the
+   *  cost of the listing no longer being self-describing (a caller needs another source, e.g.
+   *  a prior full snapshot, to know what each id actually is). Implies `noText`. */
+  readonly idsOnly?: boolean;
+}
+
 export function formatGraphForLlm(
   graph: SemanticElementGraph,
   maxElements = 60,
+  options: FormatGraphOptions = {},
 ): string {
   const interactiveTags = new Set(['A', 'BUTTON', 'INPUT', 'SELECT', 'TEXTAREA', 'OPTION', 'LABEL', 'SUMMARY']);
   const interactive = graph.nodes.filter(
@@ -368,8 +382,16 @@ export function formatGraphForLlm(
 
   const lines: string[] = [];
   for (const n of interactive.slice(0, maxElements)) {
+    if (options.idsOnly) {
+      lines.push(`[#${n.id}]`);
+      continue;
+    }
     const tag = n.tagName.toLowerCase();
     const role = n.role && n.role !== tag ? ` role=${n.role}` : '';
+    if (options.noText) {
+      lines.push(`[#${n.id}] ${tag}${role}`);
+      continue;
+    }
     const namePart = n.accessibleName ? ` "${n.accessibleName}"` : '';
     const labelPart = n.label && n.label !== n.accessibleName ? ` label="${n.label}"` : '';
     const placeholderPart = n.placeholder ? ` placeholder="${n.placeholder}"` : '';
