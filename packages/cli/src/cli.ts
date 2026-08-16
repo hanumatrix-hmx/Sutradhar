@@ -8,7 +8,7 @@
  */
 import { SutradharRuntime } from '@sutradhar/capability-runtime';
 import { StructuredLogger } from '@sutradhar/observability';
-import { writeFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { readState, writeState, clearState } from './state.js';
 import { spawnDetachedChrome, killChromeTree } from './spawn-chrome.js';
@@ -16,8 +16,17 @@ import { createSessionId } from '@sutradhar/contracts';
 import { parseArgs } from './parse-args.js';
 
 const logger = new StructuredLogger({ minLevel: 'error' }); // CLI output IS the log; keep engine logs quiet
-const { verb, cleanArgs, headed, failOnDiff, jsonMode, profileFlag, userAgentFlag, allowlistDomainsFlag } =
-  parseArgs(process.argv.slice(2));
+const {
+  verb,
+  cleanArgs,
+  headed,
+  failOnDiff,
+  jsonMode,
+  profileFlag,
+  userAgentFlag,
+  allowlistDomainsFlag,
+  baselineFlag,
+} = parseArgs(process.argv.slice(2));
 
 // Tracked so main()'s cleanup can disconnect the CDP client connection (NOT close the browser)
 // before exiting — severing it lets Node's event loop drain and exit naturally, which flushes
@@ -54,7 +63,12 @@ async function spawnFreshSession(runtime: SutradharRuntime): Promise<string> {
   if (!attached.hasRealBrowser) {
     printErrorAndExit('Spawned Chrome but could not attach to it. Run "sutradhar doctor" to diagnose.');
   }
-  await writeState({ sessionId: attached.sessionId, wsEndpoint: spawned.wsEndpoint, chromePid: spawned.pid });
+  await writeState({
+    sessionId: attached.sessionId,
+    wsEndpoint: spawned.wsEndpoint,
+    chromePid: spawned.pid,
+    profileName: profileFlag,
+  });
   activeSessionId = attached.sessionId;
   return attached.sessionId;
 }
@@ -124,8 +138,52 @@ async function cmdProfile(sub: string | undefined, name: string | undefined, res
       console.log(`Deleted profile "${name}" (cookies/history/storage removed).`);
       return;
     }
+    case 'export-state': {
+      const outFile = rest[0];
+      if (!name || !outFile) printErrorAndExit('usage: sutradhar profile export-state <name> <outFile>');
+      const state = await profiles.loadStorageState(name!);
+      if (!state) {
+        printErrorAndExit(
+          `Profile "${name}" has no saved storage state yet. Launch with "--profile ${name}", log in, ` +
+            'then "sutradhar close" (which saves it automatically) before exporting.',
+        );
+      }
+      await writeFile(outFile!, JSON.stringify(state, null, 2), 'utf-8');
+      console.log(`Exported storage state for profile "${name}" to ${outFile}`);
+      return;
+    }
+    case 'import-state': {
+      const inFile = rest[0];
+      if (!name || !inFile) printErrorAndExit('usage: sutradhar profile import-state <name> <inFile>');
+      let state: unknown;
+      try {
+        state = JSON.parse(await readFile(inFile!, 'utf-8'));
+      } catch (err) {
+        printErrorAndExit(`Could not read/parse "${inFile}": ${(err as Error).message}`);
+      }
+      if (
+        typeof state !== 'object' ||
+        state === null ||
+        !('cookies' in state) ||
+        !('localStorage' in state) ||
+        !('sessionStorage' in state)
+      ) {
+        printErrorAndExit(
+          `"${inFile}" does not look like a storage-state file (expected cookies/localStorage/sessionStorage ` +
+            'fields — the shape produced by "sutradhar profile export-state" or browser.get_storage_state).',
+        );
+      }
+      // saveStorageState() itself throws a clear "no profile named X" error if it doesn't exist
+      // yet — not re-checked here, so that error stays the single source of truth.
+      await profiles.saveStorageState(name!, state as Parameters<typeof profiles.saveStorageState>[1]);
+      console.log(
+        `Imported storage state into profile "${name}" — it will be restored automatically on the next ` +
+          `"nav ... --profile ${name}" launch.`,
+      );
+      return;
+    }
     default:
-      printErrorAndExit('usage: sutradhar profile <create|list|delete> [args]');
+      printErrorAndExit('usage: sutradhar profile <create|list|delete|export-state|import-state> [args]');
   }
 }
 
@@ -150,6 +208,22 @@ async function cmdNav(url: string | undefined) {
     const result = await runtime.navigate(sessionId, url!);
     console.log(`Navigated to ${result.url}`);
     console.log(`Title: ${result.title}`);
+
+    // Restore a profile's saved storage state after navigating, mirroring what
+    // SutradharRuntime.launch({profileName, initialUrl}) does internally — but the CLI never
+    // goes through launch() (it spawns Chrome itself and attach()es, see spawn-chrome.ts), so
+    // that internal restore path never runs for CLI sessions. Re-check state here (not passed
+    // through withSession) since it may have just been written by a fresh spawn in this same
+    // call. Origin-matched and best-effort, same as the runtime's own version — a profile with
+    // no saved state, or one saved for a different origin, is a normal no-op, not an error.
+    const state = await readState();
+    if (state?.profileName) {
+      const profiles = runtime.getProfileManager();
+      const saved = await profiles.loadStorageState(state.profileName).catch(() => undefined);
+      if (saved && saved.origin === new URL(result.url).origin) {
+        await runtime.setStorageState(sessionId, saved).catch(() => {});
+      }
+    }
   });
 }
 
@@ -273,6 +347,32 @@ async function cmdAudit(url: string | undefined, outDir: string | undefined) {
     for (const issue of result.accessibilityIssues) {
       console.log(`  - ${issue.description} (${issue.count})`);
     }
+
+    let visualDiffPercentage = 0;
+    if (baselineFlag) {
+      // One-command regression gate: audit's own findings (Web Vitals/console/page/a11y) plus
+      // a visual pixel-diff against a known-good baseline URL, instead of running "audit" and
+      // "compare" as two separate commands and correlating their output by hand.
+      const compareResult = await runtime.compareUrls(sessionId, baselineFlag, result.url);
+      const diffPath = path.join(dir, 'audit-baseline-diff.png');
+      await writeFile(diffPath, Buffer.from(compareResult.diffImageBase64, 'base64'));
+      visualDiffPercentage = compareResult.diffPercentage;
+      console.log(`\nVisual diff vs baseline (${baselineFlag}):`);
+      console.log(
+        `  ${compareResult.diffPixelCount} / ${compareResult.totalPixels} pixels (${compareResult.diffPercentage.toFixed(2)}%)`,
+      );
+      console.log(`  Diff image: ${diffPath}`);
+    }
+
+    if (
+      failOnDiff &&
+      (result.consoleErrors.length > 0 ||
+        result.pageErrors.length > 0 ||
+        result.brokenRequests.length > 0 ||
+        visualDiffPercentage > 0)
+    ) {
+      process.exitCode = 1; // CI-friendly gate, opt-in only — same convention as "compare --fail-on-diff"
+    }
   });
 }
 
@@ -382,6 +482,24 @@ async function cmdClose() {
     console.log('No active session.');
     return;
   }
+  if (state.profileName) {
+    // Best-effort: persist the current storage state into the profile before killing Chrome,
+    // so a login done under "--profile <name>" survives to the next launch. This can't rely on
+    // SutradharRuntime.shutdown()'s own auto-save-on-shutdown-for-a-profiled-session logic —
+    // that only fires for sessions IT launched via launch({profileName}), which populates its
+    // internal sessionProfiles map; the CLI always attach()es to a separately-spawned Chrome
+    // instead (see spawn-chrome.ts's doc comment for why), so that bookkeeping never applies
+    // here. Replicates the same save step directly against the CLI's own session model.
+    try {
+      const runtime = new SutradharRuntime({ logger });
+      const { sessionId } = await runtime.attach({ endpoint: state.wsEndpoint, sessionId: state.sessionId });
+      const storageState = await runtime.getStorageState(sessionId);
+      await runtime.getProfileManager().saveStorageState(state.profileName, storageState);
+    } catch {
+      // Best-effort — a page that navigated away from any real origin, or a session that's
+      // already gone, just means there's nothing meaningful to save. Not a reason to block close.
+    }
+  }
   if (state.chromePid) {
     // attach()-ed sessions only ever DETACH on shutdown (by design — see spawn-chrome.ts's
     // SpawnedChrome doc comment), so for a Chrome process THIS CLI spawned, runtime.shutdown()
@@ -477,6 +595,9 @@ Commands:
   screenshot [path]            Save a screenshot (default: ./screenshot.png)
   audit [url] [outDir]         Screenshot + console/page/network errors + accessibility
                                 checks + Core Web Vitals for a page (current page if no url)
+  audit [url] [outDir] --baseline <baselineUrl>
+                                Same, plus a visual pixel-diff against a known-good baseline
+                                URL — a one-command regression gate combining audit + compare
   compare <urlA> <urlB> [out]  Visual regression: pixel-diff two pages, save a diff image
   close                        Close the active session
   doctor                       Environment diagnostics (Chrome detection, active session)
@@ -484,6 +605,13 @@ Commands:
                                 survive across separate launches)
   profile list                 List profiles
   profile delete <name>        Delete a profile (irreversibly removes its stored data)
+  profile export-state <name> <outFile>
+                                Export a profile's saved login state (cookies/localStorage/
+                                sessionStorage) to a portable JSON file
+  profile import-state <name> <inFile>
+                                Pre-bake a profile with login state from a JSON file (e.g. one
+                                produced by export-state, or browser.get_storage_state) —
+                                restored automatically on the next launch with that profile
 
 Flags:
   --profile <name>     Launch as a named persistent profile (only applies to "nav" when
@@ -493,7 +621,10 @@ Flags:
   --headed             Launch visibly instead of headless (only applies to "nav" when
                         starting a new session)
   --json                "snap" additionally prints structured per-element data as JSON
-  --fail-on-diff        "compare" exits nonzero if any pixel difference is found (CI gating)
+  --fail-on-diff        "compare" exits nonzero if any pixel difference is found (CI gating);
+                        "audit" exits nonzero if any console/page/broken-request error was
+                        found, or (with --baseline) any visual diff from the baseline
+  --baseline <url>      "audit" also visually diffs the audited page against this URL
   --allowlist-domains <a.com,b.com>
                         Block navigation to any domain not in this comma-separated list (and
                         their subdomains). Per-command, not persisted in session state — pass

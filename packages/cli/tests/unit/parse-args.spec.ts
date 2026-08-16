@@ -112,6 +112,17 @@ describe('@sutradhar/cli parseArgs', () => {
     expect(result.allowlistDomainsFlag).toBeUndefined();
   });
 
+  it('parses --baseline <url> as a valued flag, for audit --baseline compare', () => {
+    const result = parseArgs(['audit', 'https://example.com', '--baseline', 'https://prod.example.com']);
+    expect(result.baselineFlag).toBe('https://prod.example.com');
+    expect(result.cleanArgs).toEqual(['https://example.com']);
+  });
+
+  it('leaves baselineFlag undefined when the flag is not given', () => {
+    const result = parseArgs(['audit', 'https://example.com']);
+    expect(result.baselineFlag).toBeUndefined();
+  });
+
   it('does not treat a positional arg that happens to equal a flag NAME as anything but a flag, even mid-command', () => {
     // Guards the filter's index-based value-stripping: only the token immediately AFTER
     // --profile/--user-agent is treated as that flag's value, not any later occurrence.

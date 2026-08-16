@@ -17,6 +17,10 @@ export interface CliState {
    *  attaching to a browser the CLI didn't start) — see spawn-chrome.ts's killChromeTree. */
   chromePid?: number;
   lastUrl?: string;
+  /** The --profile name this session was launched with, if any — lets `close` persist the
+   *  current storage state into that profile before killing Chrome. See cli.ts's cmdClose for
+   *  why this can't just rely on SutradharRuntime.shutdown()'s own auto-save. */
+  profileName?: string;
 }
 
 const STATE_DIR = path.join(os.homedir(), '.sutradhar-cli');

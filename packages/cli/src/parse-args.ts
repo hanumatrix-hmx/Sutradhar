@@ -18,6 +18,9 @@ export interface ParsedArgs {
   userAgentFlag: string | undefined;
   /** Parsed from `--allowlist-domains a.com,b.com` — undefined when the flag isn't given. */
   allowlistDomainsFlag: string[] | undefined;
+  /** Parsed from `--baseline <url>` — undefined when the flag isn't given. Used by `audit` to
+   *  also run a visual compare against a known-good baseline URL in the same command. */
+  baselineFlag: string | undefined;
 }
 
 /** Parses `process.argv.slice(2)`-style arguments (verb + flags) into their recognized pieces.
@@ -40,6 +43,8 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
         .map((d) => d.trim())
         .filter((d) => d.length > 0)
     : undefined;
+  const baselineFlagIndex = args.indexOf('--baseline');
+  const baselineFlag = baselineFlagIndex !== -1 ? args[baselineFlagIndex + 1] : undefined;
   const cleanArgs = args.filter(
     (a, i) =>
       a !== '--headed' &&
@@ -48,9 +53,11 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
       a !== '--profile' &&
       a !== '--user-agent' &&
       a !== '--allowlist-domains' &&
+      a !== '--baseline' &&
       !(profileFlagIndex !== -1 && i === profileFlagIndex + 1) &&
       !(userAgentFlagIndex !== -1 && i === userAgentFlagIndex + 1) &&
-      !(allowlistDomainsFlagIndex !== -1 && i === allowlistDomainsFlagIndex + 1),
+      !(allowlistDomainsFlagIndex !== -1 && i === allowlistDomainsFlagIndex + 1) &&
+      !(baselineFlagIndex !== -1 && i === baselineFlagIndex + 1),
   );
 
   return {
@@ -62,5 +69,6 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     profileFlag,
     userAgentFlag,
     allowlistDomainsFlag,
+    baselineFlag,
   };
 }
