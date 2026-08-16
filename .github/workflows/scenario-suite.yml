@@ -52,6 +52,18 @@ jobs:
       - name: Clear stale committed results before this run
         run: rm -f tools/scenario-suite/results/baseline-sdk.json tools/scenario-suite/results/baseline-cli.json tools/scenario-suite/results/baseline-mcp.json
 
+      # Deterministic, self-contained (file:// fixture, no external sites) — unlike the 14
+      # scenarios below, this IS a real regression gate: one instance of every canonical
+      # interactive element type, asserting each is either grounded by `snap` or has a
+      # documented, independently-verified alternative (video's eval-based media API, canvas's
+      # click offset param, open-shadow/same-origin-iframe piercing, closed-shadow's genuine
+      # inaccessibility). Closes INSIGHTS.md Insight 3 ("CI-assert that every type appears in
+      # snap or has a documented alternative command — the README's promise should be
+      # enumerable"). No if:always() here deliberately — a real regression in this should fail
+      # the job like any other gate, not get swallowed alongside the flaky-external-site steps.
+      - name: Grounding-completeness contract
+        run: node tools/scenario-suite/grounding-completeness.mjs
+
       # Each surface driver runs independently (`if: always()` on the second and third so a
       # crash in one — e.g. an uncaught rejection from a flaky external site mid-run, a real
       # failure mode observed live during this workflow's own dry run — doesn't skip the other

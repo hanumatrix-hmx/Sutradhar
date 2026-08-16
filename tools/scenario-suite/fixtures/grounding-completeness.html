@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<!--
+  Grounding-completeness matrix — one instance of every interactive element type Sutradhar's
+  README/tool docs imply it should be able to act on, in one page. Closes INSIGHTS.md Insight 3
+  ("build a grounding completeness matrix page and CI-assert that every type appears in snap or
+  has a documented alternative command — the README's 'drives the DOM' promise should be
+  enumerable"). Driven by grounding-completeness.mjs, wired into scenario-suite.yml.
+
+  Each element carries a stable id and a data-expect attribute:
+    data-expect="snap"       — must appear in the default `snap` listing, by this id.
+    data-expect="alternative:<name>" — legitimately NOT expected in `snap`; the documented
+                                        alternative command/path is named after the colon.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Grounding completeness matrix</title>
+</head>
+<body>
+  <h1>Grounding completeness matrix</h1>
+
+  <button id="gc-button" data-expect="snap">A native button</button>
+  <a id="gc-link" href="#anchor" data-expect="snap">A native link</a>
+
+  <input id="gc-input-text" type="text" data-expect="snap" />
+  <input id="gc-input-checkbox" type="checkbox" data-expect="snap" />
+  <input id="gc-input-radio" type="radio" name="gc-radio-group" data-expect="snap" />
+  <input id="gc-input-number" type="number" data-expect="snap" />
+  <input id="gc-input-range" type="range" data-expect="snap" />
+  <input id="gc-input-date" type="date" data-expect="snap" />
+  <input id="gc-input-color" type="color" data-expect="snap" />
+  <input id="gc-input-file" type="file" data-expect="snap" />
+  <input id="gc-input-search" type="search" data-expect="snap" />
+
+  <textarea id="gc-textarea" data-expect="snap"></textarea>
+
+  <select id="gc-select" data-expect="snap">
+    <option value="a">Option A</option>
+    <option value="b">Option B</option>
+  </select>
+
+  <div id="gc-contenteditable" contenteditable="true" data-expect="snap">Editable region</div>
+
+  <label id="gc-label" for="gc-input-text" data-expect="snap">A label</label>
+
+  <details>
+    <summary id="gc-summary" data-expect="snap">A summary/disclosure</summary>
+    <p>Details content.</p>
+  </details>
+
+  <div id="gc-role-button" role="button" tabindex="0" data-expect="snap">ARIA role=button div</div>
+  <div id="gc-role-option" role="option" data-expect="snap">ARIA role=option div</div>
+  <div id="gc-onclick" onclick="window.__gcClicked = 'gc-onclick'" data-expect="snap">onclick-only div</div>
+  <div id="gc-cursor-pointer" style="cursor: pointer;" data-expect="snap">cursor:pointer-only div</div>
+
+  <!-- Legitimately excluded from `snap` — the documented alternative is named after the colon,
+       verified independently by grounding-completeness.mjs, not merely asserted here. -->
+  <video id="gc-video" controls width="200" data-expect="alternative:eval-media-api">
+    <source src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQ==" type="video/mp4" />
+  </video>
+
+  <canvas id="gc-canvas" width="100" height="100" data-expect="alternative:offset-click"></canvas>
+
+  <div id="gc-shadow-host" data-expect="alternative:open-shadow-pierced"></div>
+
+  <div id="gc-closed-shadow-host" data-expect="alternative:none-closed-shadow-is-a-documented-limitation"></div>
+
+  <iframe id="gc-iframe-host" data-expect="alternative:frame-pierced" style="width:120px;height:60px;border:1px solid #333;"
+          srcdoc="&lt;button id=&quot;gc-iframe-button&quot;&gt;In-iframe button&lt;/button&gt;"></iframe>
+
+  <script>
+    // Open shadow root with a real button inside — should be pierced by `snap` per the existing
+    // "Shadow DOM (open)" covered capability (browsing-capability-loop.md).
+    const openHost = document.getElementById('gc-shadow-host');
+    const openRoot = openHost.attachShadow({ mode: 'open' });
+    openRoot.innerHTML = '<button id="gc-shadow-button">Shadow DOM (open) button</button>';
+
+    // Closed shadow root — documented, accepted limitation (mode:'closed' blocks even
+    // evaluate()-level JS access by design; not something snap can or should pierce).
+    const closedHost = document.getElementById('gc-closed-shadow-host');
+    const closedRoot = closedHost.attachShadow({ mode: 'closed' });
+    closedRoot.innerHTML = '<button id="gc-closed-shadow-button">Shadow DOM (closed) button</button>';
+
+    // Same-origin iframe (via srcdoc — reliably same-origin regardless of the parent
+    // document's own scheme, unlike a bare src='about:blank' + dynamic write, which behaves
+    // inconsistently under file:// parents specifically) — the dynamically-injected,
+    // same-origin-equivalent case `snap` should traverse into (see the corrected iframe finding
+    // in browsing-capability-loop.md — PROB-022). Content comes from the srcdoc attribute above.
+  </script>
+</body>
+</html>

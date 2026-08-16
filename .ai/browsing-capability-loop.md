@@ -67,6 +67,30 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-16 — Milestone 37: grounding-completeness contract test — 25/25 element types verified, wired as a real CI gate
+
+Closes INSIGHTS.md Insight 3 ("build a grounding completeness matrix page and CI-assert that
+every type appears in snap or has a documented alternative command — the README's promise
+should be enumerable"). New `tools/scenario-suite/fixtures/grounding-completeness.html` — one
+instance of every canonical interactive element type (native button/link/every common `<input
+type>`/textarea/select/contenteditable/label/summary, ARIA role=button/option, onclick-only and
+cursor:pointer-only divs, plus the legitimate exceptions: video, canvas, open shadow DOM, closed
+shadow DOM, a same-origin iframe) in one page, each tagged `data-expect="snap"` or
+`data-expect="alternative:<name>"`. `tools/scenario-suite/grounding-completeness.mjs` asserts
+each `snap`-expected element got the real `data-sd-node-id` stamp after a real `snapshot()` call
+(a precise id-based check, not fuzzy text matching), and independently verifies each named
+alternative actually works: video's eval-based media API, canvas's `click` `offset` param, an
+open shadow root's real content pierced and grounded, a closed shadow root's genuine
+inaccessibility (confirmed via `shadowRoot === null` — a real browser security boundary, not a
+gap), and a same-origin iframe's real content pierced and grounded. Live run: **25/25 checks
+passed**. One real fixture bug caught and fixed along the way (not a Sutradhar bug): a
+`src='about:blank'` + dynamic-write iframe pattern doesn't reliably become same-origin-accessible
+under a `file://` parent document specifically — switched to `srcdoc`, which works consistently
+regardless of the parent's scheme. Wired into `scenario-suite.yml` as a real, ungated (no
+`if:always()`) failure gate — deterministic and self-contained (no external sites), unlike the
+14-scenario harness alongside it, so a real regression here should fail the job like any other
+gate.
+
 ### 2026-08-16 — Milestones 30-35: a second independent field campaign's insights (INSIGHTS.md), six real fixes, one long-standing misdiagnosis corrected
 
 A separate, independent 3-version (0.2.0→0.2.2→0.3.0) benchmark campaign produced `INSIGHTS.md`
