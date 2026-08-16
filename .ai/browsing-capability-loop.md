@@ -49,6 +49,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Network request interception/mocking | covered | Milestone 7: `browser.route` with both `mock` (a real fetch received the exact mocked JSON body) and `block` (a real fetch failed as expected) actions verified against genuine `fetch()` calls, not just the tool's own success report. |
 | Console/network/page-error log capture | covered | Milestone 7: `get_console_logs` correctly captured log/warn/error levels plus an incidental real network failure; `get_page_errors` correctly captured a deliberate uncaught exception with message and stack trace; `get_network_log` correctly distinguished a completed (mocked) request from a blocked one (request-only, no response phase). |
 | CAPTCHA / bot-detection / stealth evasion | excluded | Deliberately out of scope per CLAUDE.md — not a gap to close. |
+| Portal-rendered searchable multi-select combobox (react-select and similar) | covered | Milestone 47: tested live against `react-select.com`'s own demo. Both real interaction modes verified: (1) click-to-select — click the field, type a search term to filter, click the filtered `role=option` result, confirm the resulting chip via a fresh snapshot; (2) pure keyboard-driven selection — type a search term, `press ArrowDown` then `press Enter` with no click on the option at all, confirmed the chip landed correctly. Both modes work correctly with no engine changes needed. |
 | Complex JS date-range picker widgets (calendar dropdown, two-month grid, re-render-on-click) | covered | Milestone 46: tested live against `daterangepicker.com`'s real widget — 9 identical widget instances share the same CSS classes on one page (only one visible at a time), a real trap for hand-written CSS selectors (confirmed one led straight to a hidden instance) that Sutradhar's own snapshot sidesteps entirely since it only stamps elements that are actually visible. The library re-renders its calendar `<table>` after every day-cell click, correctly invalidating the previously-stamped end-date cell's id — the engine's honest stale-id refusal fired exactly as designed ("re-snapshot and use a fresh id"), not a bug. Following that advice (re-snapshot between the two day clicks) completed the full flow: start date, end date, Apply — the input's real value updated to the exact selected range, independently confirmed via read-back. |
 | Cross-origin masked/validated payment iframe fields (Stripe Elements) | partial — single-field typing fully covered incl. live formatting; multi-field-group corruption is a documented, mitigated, open limitation | Milestone 45: real checkout tested against `stripe-payments-demo.appspot.com`. Typing into a single masked field (card number, expiry) works correctly and is now verified honestly (tolerates live reformatting, no longer false-negatives). A real, deeper bug found: typing into a *sibling* field in the same masked-input group can retroactively corrupt an earlier field's already-verified value — no per-field check can catch this. Mitigated procedurally (a final group-wide `snapshot` after filling all related fields), not fixed at the engine level. See PROB-025. |
 | Nested/independent scroll containers (virtualized grids, chat panes, modal bodies, code blocks) | covered, real gap found and fixed | Milestone 44: `scroll` previously only ever called `window.scrollBy()` — a page's own `overflow:auto` container (e.g. a virtualized data grid) was silently unreachable, no error. Fixed with an optional element target; also surfaced and fixed a related async-virtualization-re-render timing gap via `settle`. See PROB-024. |
@@ -70,6 +71,18 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-16 — Milestone 47: portal-rendered searchable multi-select combobox (react-select) — covered, no bug found
+
+Continuing to find fresh hard cases beyond the originally-planned 5-item list. Tested live
+against `react-select.com`'s own demo — a real, common, tricky pattern (options list rendered
+outside the normal DOM flow via a portal, filter-as-you-type, chip-based multi-value display).
+
+Both real interaction modes verified end-to-end: click-to-select (click field → type search term
+→ click the filtered `role=option` result → confirm the resulting "Remove X" chip via a fresh
+snapshot) and pure keyboard-driven selection (type a search term → `press ArrowDown` → `press
+Enter`, no click on the option at all → confirmed the chip landed correctly). Both work correctly
+with no engine changes needed — a clean "covered" result.
 
 ### 2026-08-16 — Milestone 46: complex date-range picker widget — covered, no bug found, confirms the grounding's own honest stale-id refusal working as designed
 
