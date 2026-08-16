@@ -49,6 +49,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Network request interception/mocking | covered | Milestone 7: `browser.route` with both `mock` (a real fetch received the exact mocked JSON body) and `block` (a real fetch failed as expected) actions verified against genuine `fetch()` calls, not just the tool's own success report. |
 | Console/network/page-error log capture | covered | Milestone 7: `get_console_logs` correctly captured log/warn/error levels plus an incidental real network failure; `get_page_errors` correctly captured a deliberate uncaught exception with message and stack trace; `get_network_log` correctly distinguished a completed (mocked) request from a blocked one (request-only, no response phase). |
 | CAPTCHA / bot-detection / stealth evasion | excluded | Deliberately out of scope per CLAUDE.md — not a gap to close. |
+| Native HTML5 `<dialog>`/`showModal()` (browser-level top-layer modal, distinct from a div-based simulated modal) | covered, no bug found | Milestone 53: a real `<dialog>` opened via `showModal()` correctly makes background content unclickable — a click on a background button is correctly refused via the existing occlusion check (`elementFromPoint` resolves to the dialog, not the background element), with a clear, actionable error. Note: Chromium does NOT set a literal `.inert` DOM property on background elements for this case (checked live — it stays `false`), so the snapshot listing still includes the now-inert background button; harmless in practice since the click attempt fails safely and clearly rather than silently succeeding or doing the wrong thing. Closing the dialog via its own real `close()`-triggering button verified independently via `dialog.open` reading back `false`. |
 | Nested modal-in-modal dialogs (a modal opened from within another modal, z-index-stacked) | covered, no bug found | Milestone 52: tested live against MUI's own Nested Modal demo — opening a child modal from within a parent modal correctly stacked; `clicktext "Close Child Modal"` correctly hit the topmost (child) modal's button via occlusion detection and closed only the child, leaving the parent open — exactly correct nested-modal semantics, confirmed via real DOM state, not just each click's own success report. |
 | Canvas signature/drawing pad (coordinate-based drag, no addressable DOM inside the canvas) | covered, real CLI-exposure gap closed | Milestone 51: `dragAtPoints` (already existed via MCP/SDK) correctly draws real strokes on a live `signature_pad` canvas, confirmed visually. Added `clickpoint`/`dragpoints` CLI verbs — the underlying capability existed but was unreachable from the CLI, the only surface whose whole purpose is direct scriptable access. |
 | Infinite-scroll / "load more on scroll" pages (append-on-scroll, distinct from a virtualized/recycling grid) | covered, 1 high-severity bug found and fixed | Milestone 49: tested live against a real infinite-scroll demo. `scroll bottom` reported success on every call while `window.scrollY` silently stayed at 0 — `'top'`/`'bottom'` had never actually been implemented as jumps to the real boundary, they fell through to the same branch as `'up'`, so `'bottom'` scrolled the page UP by `amount` instead (a no-op from position 0, which the boundary-check logic then misread as "already there", masking the bug completely). Fixed to jump to the true `scrollTop 0` / `scrollHeight` boundary; live-confirmed `scroll bottom` now genuinely triggers the page's infinite-scroll library to load more content. See PROB-027. |
@@ -75,6 +76,27 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-16 — Milestone 53: native `<dialog>`/`showModal()` — covered, no bug found
+
+Continuing the hard-use-case hunt with a genuinely different code path from Milestone 52's
+MUI div-based modal: the real browser-native `<dialog>` element via `showModal()`, which gets
+special top-layer rendering and background-inertness semantics enforced by the browser itself,
+not by application JS.
+
+Verified live (injected a minimal real `<dialog>` + open/close buttons, since MDN's own docs
+page had no live embedded sample to drive): clicking a background button while the dialog is
+modal-open is correctly refused by the existing occlusion check (`elementFromPoint` resolves to
+the dialog/backdrop, not the background button) with a clear, actionable error — safe, correct
+behavior. Checked whether Chromium sets a literal `.inert` DOM property on background elements
+for this case (it would be a cheap, direct signal to proactively exclude them from `snap`'s
+listing) — it does not; `.inert` reads `false` even while the dialog is genuinely modal-open, so
+native-dialog inertness is enforced at the rendering/event-dispatch layer, not exposed as a DOM
+property. This means the background button still appears in the interactive-element listing
+while inert — a minor completeness nuance, not a bug, since the occlusion check already catches
+any attempt to click it with a clear error rather than a silent wrong action. Closing the dialog
+via its own real close button verified independently via `dialog.open` reading back `false`
+afterward. No fix needed.
 
 ### 2026-08-16 — Milestone 52: nested modal-in-modal dialogs — covered, no bug found
 
