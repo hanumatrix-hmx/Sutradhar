@@ -848,9 +848,10 @@ Flags:
                         "audit" exits nonzero if any console/page/broken-request error was
                         found, or (with --baseline) any visual diff from the baseline
   --baseline <url>      "audit" also visually diffs the audited page against this URL
-  --settle              "click"/"type" wait for the page to stop actively changing (no DOM
-                        mutations, no in-flight network requests) before returning — helps when
-                        the action triggers a menu/modal/toast that renders a moment later
+  --settle              "click"/"type"/"scroll" wait for the page to stop actively changing (no
+                        DOM mutations, no in-flight network requests) before returning — helps
+                        when the action triggers a menu/modal/toast/virtualized-list-update that
+                        renders a moment later
   --no-text             "snap" drops per-element text, keeping tag+role+id (see command list)
   --ids-only            "snap" keeps only the bracketed id, nothing else (see command list)
   --scan-listeners      "snap" also finds real addEventListener-only elements (see command list)

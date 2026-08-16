@@ -107,9 +107,13 @@ profile export-state`/`import-state` turns that into a portable file you can pre
 different profile without ever logging in there directly.
 
 The example commands above aren't the full CLI — it also has `select`/`wait`/`eval`/`hover`/
-`scroll`/`upload`/`drag`/`download`, an `audit --baseline <url>` one-command regression gate,
-a `--settle` flag for `click`/`type` (waits for the page to stop actively changing before
-returning), `--no-text`/`--ids-only` verbosity flags for `snap`, and an `--allowlist-domains`
+`scroll`/`upload`/`drag`/`download`, coordinate-only `clickpoint`/`dragpoints` (for
+canvas-rendered UI with nothing DOM-addressable), tab management (`tabs`/`newtab`/`focustab`/
+`closetab`), clipboard + permissions (`grant`/`setclipboard`/`getclipboard`), an
+`audit --baseline <url>` one-command regression gate, a `--settle` flag for `click`/`type`/
+`scroll` (waits for the page to stop actively changing before returning), a `--modifiers` flag
+for `press` (hold modifier keys, e.g. Ctrl+Shift+ArrowRight to select a word),
+`--no-text`/`--ids-only`/`--scan-listeners` flags for `snap`, and an `--allowlist-domains`
 navigation guardrail. Run `sutradhar` with no arguments for the complete, current command and
 flag list straight from the binary — that's the authoritative reference, not this file.
 

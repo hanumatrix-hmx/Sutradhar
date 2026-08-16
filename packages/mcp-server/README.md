@@ -14,7 +14,7 @@ Two brain modes, one server:
   objective and it navigates, clicks, types, and extracts a final answer. Best for
   multi-step tasks you'd rather not script call-by-call. Requires an LLM provider.
 
-## Tools (68)
+## Tools (69)
 
 Grouped here by category, matching `tools.ts`'s own section layout.
 
@@ -50,6 +50,7 @@ Grouped here by category, matching `tools.ts`'s own section layout.
 | `browser.type` | Type into an input (selector or `[#id]`). |
 | `browser.type_by_label` | Type into an input identified by its associated label text. |
 | `browser.press_key` | Press a key (Enter, Escape, …). |
+| `browser.focus` | Focus an element via the real DOM `.focus()` method — unlike `click`, doesn't move/collapse an existing text cursor or selection; use before a `press_key` that's part of a multi-step keyboard sequence (e.g. Home, then Ctrl+Shift+Right to select a word). |
 | `browser.hover` | Hover the mouse over an element, optionally at a specific point within it — required for `:hover`-revealed controls (a real CSS `:hover` state, not simulable via a synthetic `mouseover` event). |
 | `browser.scroll` | Scroll up/down/top/bottom. |
 | `browser.select_option` / `select_options` | Set a `<select>`'s value (single or multi-select). |

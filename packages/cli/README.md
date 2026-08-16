@@ -51,6 +51,7 @@ Run `sutradhar` with no arguments for the full command list.
 | `snap --json` | Same, plus the raw structured per-element data as JSON. |
 | `snap --no-text` | Same elements, drops name/label/placeholder/value text (keeps tag+role+id) — smaller listing when you already know what you're targeting and just need fresh ids. |
 | `snap --ids-only` | Smallest listing: only the bracketed `[#id]`, nothing else. |
+| `snap --scan-listeners` | Also finds elements whose only interactivity signal is a real `addEventListener`-attached handler (no `onclick=`/role/`tabindex`/`cursor:pointer`) — e.g. SortableJS-style drag lists. Slower; real CDP introspection. |
 | `axsnap` | Accessibility-tree listing — no ids, never goes stale even if the page re-renders; pair with `clicktext`/`clickrole`. |
 | `text` | Print the current page's visible text. |
 | `click <ref>` | Click an element (selector, or a numeric id from `snap`). |
@@ -58,13 +59,24 @@ Run `sutradhar` with no arguments for the full command list.
 | `clickrole <role> [name]` | Click by accessibility role, optionally narrowed by name (e.g. `clickrole button Submit`). |
 | `type <ref> <text>` | Type text into an element. |
 | `press <ref> <key>` | Focus an element then press a key (e.g. `press 3 Enter`). |
+| `press <ref> <key> --modifiers Control,Shift` | Hold modifier keys while pressing (e.g. Ctrl+Shift+ArrowRight to select a word — a real rich-text-editor toolbar formatting workflow). |
 | `select <ref> <value>` | Select an `<option>` by value on a `<select>`. |
 | `wait <ref> [timeoutMs]` | Wait for an element to appear and be visible. |
 | `eval <js-expression>` | Evaluate JS in the page's top-level context, print the result. |
 | `hover <ref>` | Hover an element. |
 | `scroll [dir] [amountPx]` | Scroll the page (`dir`: up/down/top/bottom, default down 500px). |
+| `scroll [dir] [amountPx] [targetRef]` | Scroll a specific element's own scroll container instead of the window (a data grid's rows, a chat pane, a modal body) — pair with `--settle` to reliably see newly-revealed content. |
 | `upload <ref> <filePath>` | Upload a local file into an `<input type="file">`. |
 | `drag <sourceRef> <destRef>` | Drag one element onto another. |
+| `clickpoint <x> <y>` | Click at an absolute viewport coordinate — no element/selector, for canvas-rendered UI with nothing DOM-addressable to target. |
+| `dragpoints <fromX> <fromY> <toX> <toY>` | Real mouse-down→move→up drag between two absolute viewport coordinates — for canvas-rendered drag targets (a signature pad, a slider/chart handle drawn on a `<canvas>`). |
+| `grant <origin> <permission...>` | Grant browser permissions for an origin (e.g. `clipboard-read`, `clipboard-write`, `geolocation`, `notifications`) — needed before `setclipboard`/`getclipboard` work against most real sites. |
+| `setclipboard <text>` | Set the system clipboard (e.g. to then paste into a rich-text editor via `press <ref> v --modifiers Control`). |
+| `getclipboard` | Print the current system clipboard contents. |
+| `tabs` | List open tabs (id, title, url) — `*` marks the active one. |
+| `newtab [url]` | Open a new tab, optionally navigating it immediately. |
+| `focustab <tabId>` | Switch the active tab (e.g. after a link opened `target="_blank"`). |
+| `closetab <tabId>` | Close a specific tab. |
 | `download <ref> [dir]` | Click an element that triggers a download, print the saved path. |
 | `screenshot [path]` | Save a screenshot (default: `./screenshot.png`). |
 | `audit [url] [outDir]` | Screenshot + console/page/network errors + accessibility checks + Core Web Vitals for a page (current page if no url). |
@@ -91,7 +103,9 @@ Run `sutradhar` with no arguments for the full command list.
 | `--ids-only` | `snap` | Keep only the bracketed id, nothing else. |
 | `--baseline <url>` | `audit` | Also visually diff the audited page against this URL. |
 | `--fail-on-diff` | `compare`, `audit` | Exit nonzero if a pixel difference is found (`compare`), or if any console/page/broken-request error or (with `--baseline`) visual diff is found (`audit`) — CI-friendly gating. |
-| `--settle` | `click`, `type` | Wait for the page to stop actively changing (no DOM mutations, no in-flight network requests) before returning — helps when the action triggers a menu/modal/toast that renders a moment later. |
+| `--settle` | `click`, `type`, `scroll` | Wait for the page to stop actively changing (no DOM mutations, no in-flight network requests) before returning — helps when the action triggers a menu/modal/toast/virtualized-list-update that renders a moment later. |
+| `--scan-listeners` | `snap` | Also find real `addEventListener`-only elements (see command list above). |
+| `--modifiers <Control,Shift>` | `press` | Hold modifier keys while pressing the given key. |
 
 Run `sutradhar` with no arguments for this same list straight from the binary.
 
