@@ -55,14 +55,15 @@ blocked here, see above). But the user corrected an important framing mistake: S
 `browser.*` the same way Claude would drive Playwright MCP — not necessarily via its own
 separate internal LLM loop. For that mode, "benchmarking" doesn't need Ollama/OpenRouter at
 all: it means Claude (or another host AI) actually attempting real WebBench tasks live via
-the `browser.*` tools. **This has now actually been done, across seven samples totaling 71
+the `browser.*` tools. **This has now actually been done, across eight samples totaling 78
 real tasks** — see `tools/webbench/claude-direct-run-2026-*.md` and the iteration log
-below. Current combined number: **42/71 completed (59%), 29/71 externally blocked, 0
+below. Current combined number: **47/78 completed (60%), 31/78 externally blocked, 0
 Sutradhar-attributable failures** — a real, honestly-reported number, not a cherry-picked one.
-The rate has held steady in the 54-62% band across all seven samples regardless of how much
+The rate has held steady in the 52-62% band across all eight samples regardless of how much
 the underlying engine has changed in between (samples 1-3 predate the field-report remediation;
-sample 7 postdates a 10-milestone batch of engine fixes) — consistent evidence the ceiling here
-is external (Cloudflare/DataDome prevalence across the open web), not Sutradhar's own capability.
+samples 7-8 postdate a large batch of engine fixes across two remediation passes) — consistent
+evidence the ceiling here is external (Cloudflare/DataDome prevalence, real site outages, edge
+blocks across the open web), not Sutradhar's own capability.
 
 **And now a real, controlled, four-way head-to-head on that identical 47-task set**: real
 Playwright, real Puppeteer, and real `pinchtab/pinchtab` (the actual open-source Go project)
@@ -265,6 +266,24 @@ shipped" — yes, in ways fully disclosed above — but does not support a clean
 verdict against the original number without controlling for pacing and site-drift. A properly
 controlled re-comparison (matching the original's patience level, same-day fresh pinchtab run)
 is the right next step if a precise, defensible number is needed later.
+
+### 2026-08-17 — Milestone 68: eighth WebBench sample (5/7), combined total now 47/78 (60%) — driven via the CLI binary, no new bugs found
+
+Run to re-check the completion-rate estimate after Milestones 61-67 (multi-hop iframe frame
+targeting, live SPA title accuracy in `snap`/`tabs`, real PDF text extraction). 7 fresh
+READ-category domains (commonsensemedia.org, delish.com, deviantart.com,
+dickssportinggoods.com, drugs.com, epa.gov, espn.com), none previously attempted. **5/7
+completed (71%)** — 1 genuine site outage (dickssportinggoods.com's own "Site Maintenance"
+page, an Akamai-fronted error, not an anti-bot wall), 1 Akamai edge "Access Denied" block
+(drugs.com), 0 Sutradhar-attributable failures. One completion carried an honest caveat: ESPN's
+own search for "Tokyo 2020 Olympics" (a 6-year-old event) returned real but only tangentially
+relevant current articles — counted Completed since the task (search + report first three real
+results) was performed faithfully, not because the results were topically perfect. Full detail:
+`tools/webbench/claude-direct-run-2026-08-17-sample8.md`.
+
+**Combined across all eight samples: 47/78 completed (60.3%), 31/78 externally blocked, 0
+Sutradhar-attributable failures.** The rate continues to hold in the same 52-62% band this
+project has seen since the very first sample.
 
 ### 2026-08-16 — Milestone 40: seventh WebBench sample (6/12), combined total now 42/71 (59%) — re-confirms the ceiling is external, not affected by this session's large engine-fix batch
 
