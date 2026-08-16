@@ -1700,8 +1700,49 @@ export class SutradharRuntime {
   private async readPageText(tab: IBrowserTab): Promise<string> {
     const page = this.requirePage(tab);
     try {
+      // Chrome's built-in PDF viewer renders the document inside an isolated
+      // extension-hosted guestview, not the top document's DOM — `document.body.innerText`
+      // is genuinely empty there (confirmed live, not a truncation artifact), so a direct
+      // navigation to a .pdf URL returns zero text via the normal path. See PROB-009.
+      const isPdf = (await page.evaluate(
+        () => document.contentType === 'application/pdf',
+      )) as boolean;
+      if (isPdf) {
+        const pdfText = await this.readPdfText(page, tab.url);
+        if (pdfText) return pdfText;
+      }
       // Best-effort visible text excerpt (mirrors the server's snapshot endpoint).
       return (await page.evaluate(() => document.body?.innerText?.slice(0, 4000) ?? '')) as string;
+    } catch {
+      return '';
+    }
+  }
+
+  /** Extracts real text from a PDF the session navigated directly to (see PROB-009). Fetches the
+   *  PDF's own bytes through the page's `fetch` (reuses cookies/session, so an authenticated PDF
+   *  works the same as a public one) and parses them with `pdf-parse` — Chrome's native viewer
+   *  never exposes the document's text through the DOM at all, so there is no DOM-reading fix. */
+  private async readPdfText(
+    page: ReturnType<SutradharRuntime['requirePage']>,
+    url: string,
+  ): Promise<string> {
+    try {
+      const base64 = (await page.evaluate(async (pdfUrl: string) => {
+        const res = await fetch(pdfUrl);
+        const buf = await res.arrayBuffer();
+        let binary = '';
+        const bytes = new Uint8Array(buf);
+        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]!);
+        return btoa(binary);
+      }, url)) as string;
+      const { PDFParse } = await import('pdf-parse');
+      const parser = new PDFParse({ data: Buffer.from(base64, 'base64') });
+      try {
+        const result = await parser.getText();
+        return result.text.slice(0, 4000);
+      } finally {
+        await parser.destroy();
+      }
     } catch {
       return '';
     }

@@ -33,7 +33,7 @@ architecture. Now reads the title live. See PROB-035. |
 | iframes / cross-frame interaction (incl. dynamically-injected, cross-origin) | covered | Milestone 1: verified directly against the runtime — `snapshot`/`click` correctly traverse into a cross-origin iframe injected into the page *after* initial load (the hardest realistic case — matches real chat-widget/payment-iframe behavior). Works correctly today. Milestone 35: closed the one remaining unverified sub-case — `type` into a contenteditable iframe body (TinyMCE), long assumed broken/cross-origin-restricted per GLM's original C4. Turned out to be a misdiagnosis: the iframe isn't actually cross-origin (`contentDocument` fully readable from the parent), it's already groundable via `snap`, and `type` into it already works, real text landing confirmed via independent DOM read-back. The actual bug was an invalid CSS selector in this project's own scenario-suite test code, fixed at the source — see `PROB-019`/`PROB-022`. Milestone 64: closed the one remaining gap — genuinely nested iframes (an iframe inside another iframe). The main `snap`/`click`/`type` path already recursively pierced arbitrary depth automatically, but `eval --frame`/`extractData`'s explicit frame targeting only ever looked one level deep; now supports a `"::"`-separated selector chain to reach any nesting depth. See `PROB-033`. |
 | Shadow DOM | covered (open); closed is a known, reasonable limitation | Milestone 3: an injected open shadow root's button was correctly listed by `snapshot` and correctly clicked (verified via the real click handler firing). A *closed* shadow root's content is invisible to both — expected: `mode:'closed'` blocks even `evaluate()`-level JS access by design, and closed shadow roots are rare in practice since most real widgets use open ones. Not treated as a gap worth chasing. |
 | PDF handling: export | covered | `browser.export_pdf` verified — returns real, valid `%PDF-1.4` content for the current page. |
-| PDF handling: reading one encountered mid-browse | gap found, logged (`PROB-009`) | Navigating directly to a `.pdf` URL correctly enumerates Chrome's native PDF-viewer toolbar via `snapshot`, but `pageText` comes back completely empty even against a PDF with real (compressed) text content. Not fixed — needs real PDF text-layer extraction, nontrivial scope. |
+| PDF handling: reading one encountered mid-browse | covered | Milestone 67: closed a real, previously-logged gap (`PROB-009`) — navigating directly to a `.pdf` URL correctly enumerates Chrome's native PDF-viewer toolbar via `snapshot`, but `pageText` came back completely empty (root cause: the native viewer renders in an isolated guestview outside the top document's real DOM, so there was no DOM-reading fix). Now `readPageText` detects a PDF via `document.contentType` and extracts real text by fetching the PDF's own bytes through the page (reusing cookies/session) and parsing with `pdf-parse`. Live-verified against a real PDF (`bitcoin.org/bitcoin.pdf`): `pageText` now returns the document's real text instead of empty. |
 | Real-time/streaming pages (continuous background DOM churn) | covered | Milestone 1: grounding survives ongoing unrelated DOM churn elsewhere on the page (a simulated live-feed stream, numeric id captured then acted on ~8 re-renders later — still hit the right element). Milestone 19: tested a genuinely WebSocket-push-driven page (piehost.com's live WebSocket tester, real `wss://` connection, not polling) — a numeric id (a copy button) captured in a snapshot immediately after 4 new log lines arrived via real WS push resolved correctly via `eval` to the live element; occlusion detection correctly refused a click blocked by an unrelated chat widget on the same push-updated content; typing into a filter field correctly filtered the WS-delivered log from 4 entries to the 1 matching in real time. The harder "target itself gets destroyed and id gets reused" case remains untested but is a narrower edge case, not the core WebSocket/SSE gap. |
 | Media (video/audio/canvas, incl. WebGL 3D) | covered | Milestone 3: native `<video controls>` UI is not exposed via `snapshot` (expected — UA-internal shadow DOM; the correct control path is the JS media API, not clicking browser chrome). `video.play()`/`.pause()`/state inspection via `eval` works correctly against a real, well-formed video. One specific external test file failed with a genuine format/codec error (`MEDIA_ELEMENT_ERROR`) — confirmed to be that file's problem, not Sutradhar's, by successfully loading a different real video right after. Canvas: `browser.click`'s `offset` param verified pixel-accurate against a hand-drawn canvas region (239,119 landed correctly inside a 200-280×100-140 target). Milestone 51: 2D canvas signature-pad drawing via `dragAtPoints` confirmed working. Milestone 63: WebGL 3D camera-orbit drag (`three.js` OrbitControls) confirmed working — `dragpoints` correctly rotates the real 3D camera, verified via before/after screenshots showing a genuinely different rendered view. |
 | Mobile/device emulation | covered, 2 bugs fixed | Milestone 2: `set_viewport`'s width/height/deviceScaleFactor/media-query emulation all verified correct against a real site (github.com); found `hasTouch` never got enabled for `isMobile:true`, fixed with a spread-order default. Milestone 6: live MCP testing caught that the Milestone 2 fix didn't actually work through the real call path (an object-spread subtlety hid it from direct-runtime testing) — refixed to resolve the default before construction, re-verified against the exact MCP-handler call shape. Still needs one more reconnect to confirm the corrected version live. |
@@ -81,6 +81,31 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-17 — Milestone 67: real PDF text extraction — closes PROB-009, a gap open since Milestone 1's era
+
+Picked the oldest still-OPEN real capability gap in the taxonomy rather than another dogfooding
+sample: `PROB-009`, logged 2026-08-13 and left unfixed as "nontrivial scope". Investigated the
+actual root cause precisely before attempting a fix: Chrome's built-in PDF viewer (PDF.js) that
+renders on a direct `.pdf` navigation runs inside an isolated extension-hosted guestview — the
+document's real text genuinely never appears in the top document's DOM at all, confirmed live
+(not a truncation bug, not a lazy-render timing issue). No DOM-reading fix could ever have
+worked; the only real fix is extracting text from the PDF's own bytes.
+
+Added `pdf-parse` (new dependency, `packages/capability-runtime`) and wired it into
+`readPageText`: detect `document.contentType === 'application/pdf'`, fetch the PDF's bytes
+through the page's own `fetch` (so an authenticated PDF works identically to a public one, since
+it reuses the page's cookies/session), and extract real text server-side. Falls back to the
+original DOM-text path if extraction fails for any reason.
+
+`packages/capability-runtime` 90/90, `packages/browser` 184/184, `packages/cli` 29/29,
+`packages/mcp-server` 25/25, `packages/sutradhar` 11/11 — all green. Live-verified against a
+real PDF, not a synthetic fixture (`bitcoin.org/bitcoin.pdf`) via a direct `SutradharRuntime`
+script: `pageText` went from empty to 4000 real characters of the document's actual content.
+`pnpm` isn't available in this environment, so the new dependency's `node_modules` entries were
+installed via a plain `npm install` in an isolated scratch directory and copied in rather than
+resolved through the workspace's normal install path — noted explicitly in `PROB-009` so a
+future real `pnpm install` isn't skipped by mistake. Closes `PROB-009`.
 
 ### 2026-08-17 — Milestone 66: `tabs`/`list_tabs` always showed the placeholder `'Adopted Tab'` title, never a real one — same root cause as Milestone 65, one hop further, closes PROB-035
 

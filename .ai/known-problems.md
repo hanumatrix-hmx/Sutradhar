@@ -176,16 +176,34 @@ Last Updated: 2026-08-09
 - **ID**: `PROB-009`
   - **Summary**: Navigating directly to a PDF returns the native viewer's toolbar controls via `browser.snapshot` but zero document text.
   - **Severity**: Medium
-  - **Status**: OPEN
+  - **Status**: RESOLVED 2026-08-17
   - **Impact**: Found live 2026-08-13 while dogfooding PDF handling: Chrome's built-in PDF
     viewer (PDF.js) renders when a session navigates directly to a `.pdf` URL.
     `browser.snapshot` correctly enumerates the viewer's own UI controls (zoom, print,
     download, page nav) as interactive elements, but `pageText` comes back completely empty —
     confirmed against a PDF with real (if compressed) text content, so this isn't a text-free
-    test file. An agent trying to *read* a PDF encountered mid-browse gets nothing useful.
-  - **Mitigation**: None yet. Needs real PDF text-layer extraction (e.g. driving PDF.js's own
-    text layer via CDP/`eval`, or a PDF-parsing library) — nontrivial scope, not a quick fix.
-    `browser.export_pdf` (page → PDF) is unaffected and works correctly.
+    test file. An agent trying to *read* a PDF encountered mid-browse gets nothing useful. Root
+    cause confirmed precisely on investigation: Chrome's built-in PDF viewer renders inside an
+    isolated extension-hosted guestview, not the top document's real DOM at all — there was no
+    DOM-reading fix available, `document.body.innerText` was genuinely empty, not truncated.
+  - **Mitigation**: `readPageText` (`packages/capability-runtime/src/runtime.ts`) now detects
+    `document.contentType === 'application/pdf'` and, when true, fetches the PDF's own bytes
+    through the page's `fetch` (reuses cookies/session, so an authenticated PDF behaves like a
+    public one) and extracts real text via the `pdf-parse` library (new dependency), falling
+    back to the old DOM-text path only if extraction fails. `packages/capability-runtime` 90/90,
+    `packages/browser` 184/184, `packages/cli` 29/29, `packages/mcp-server` 25/25,
+    `packages/sutradhar` 11/11 — all still green (no existing test asserted the old empty-text
+    behavior). Live-verified against a real PDF (`bitcoin.org/bitcoin.pdf`, not a synthetic
+    fixture) via a direct `SutradharRuntime` script: `snapshot()`'s `pageText` went from empty to
+    4000 real characters of the document's actual text ("Bitcoin: A Peer-to-Peer Electronic Cash
+    System / Satoshi Nakamoto / ..."), matching the same text `pdf-parse` extracts standalone.
+    Note: `pdf-parse` was installed with plain `npm install` into an isolated scratch directory
+    and its resulting `node_modules` entries (`pdf-parse`, `pdfjs-dist`, `@napi-rs/canvas`) were
+    copied directly into `packages/capability-runtime/node_modules`, since `pnpm` is not
+    available in this environment — `package.json`'s `dependencies` entry is real and correct,
+    but a future `pnpm install` in a different environment is the way to reproduce this
+    installation properly; it was not run through `pnpm` here. `browser.export_pdf`
+    (page → PDF) was already unaffected and continues to work correctly.
 
 - **ID**: `PROB-011`
   - **Summary**: `ExecutionVerifier.verifyAction`'s `verified` field now honestly reports `false` for spec-less, non-self-verifying actions — this is an intentional behavior change from field-report remediation Phase 2, not a regression, but any external caller keying off `verification.verified` will see different values than before 2026-08-16.
