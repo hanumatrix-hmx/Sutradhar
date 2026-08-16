@@ -1866,4 +1866,51 @@ describe('@sutradhar/browser BrowserActionEngine scroll — element-targeted (ne
     expect(result.success).toBe(true);
     expect(result.outputData).toEqual({ direction: 'down', scrolledFrom: 0, scrolledTo: 500 });
   });
+
+  it('direction "bottom" actually jumps to the real scroll boundary, not a relative move (fixes a real bug: "bottom" previously scrolled UP by `amount` instead)', async () => {
+    const evaluateSpy = vi
+      .fn()
+      .mockResolvedValueOnce(0) // before: scrollY at the top
+      .mockResolvedValueOnce(undefined) // window.scrollTo(0, scrollHeight)
+      .mockResolvedValueOnce(2500) // after: landed at the real bottom
+      .mockResolvedValueOnce(2500); // maxScrollY
+    const page = { frames: vi.fn().mockReturnValue([]), evaluate: evaluateSpy } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'scroll',
+      direction: 'bottom',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData).toEqual({ direction: 'bottom', scrolledFrom: 0, scrolledTo: 2500 });
+  });
+
+  it('direction "top" jumps to scrollY 0 on an element-targeted scroll container', async () => {
+    const handle = mockHandle();
+    handle.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale
+      .mockResolvedValueOnce(800) // before: partway down
+      .mockResolvedValueOnce(undefined) // el.scrollTop = 0
+      .mockResolvedValueOnce(0) // after: at the real top
+      .mockResolvedValueOnce(1000); // maxScrollTop
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'scroll',
+      selector: '.grid-scroller',
+      direction: 'top',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData).toEqual({
+      direction: 'top',
+      selector: '.grid-scroller',
+      scrolledFrom: 800,
+      scrolledTo: 0,
+    });
+  });
 });

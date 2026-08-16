@@ -49,6 +49,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Network request interception/mocking | covered | Milestone 7: `browser.route` with both `mock` (a real fetch received the exact mocked JSON body) and `block` (a real fetch failed as expected) actions verified against genuine `fetch()` calls, not just the tool's own success report. |
 | Console/network/page-error log capture | covered | Milestone 7: `get_console_logs` correctly captured log/warn/error levels plus an incidental real network failure; `get_page_errors` correctly captured a deliberate uncaught exception with message and stack trace; `get_network_log` correctly distinguished a completed (mocked) request from a blocked one (request-only, no response phase). |
 | CAPTCHA / bot-detection / stealth evasion | excluded | Deliberately out of scope per CLAUDE.md — not a gap to close. |
+| Infinite-scroll / "load more on scroll" pages (append-on-scroll, distinct from a virtualized/recycling grid) | covered, 1 high-severity bug found and fixed | Milestone 49: tested live against a real infinite-scroll demo. `scroll bottom` reported success on every call while `window.scrollY` silently stayed at 0 — `'top'`/`'bottom'` had never actually been implemented as jumps to the real boundary, they fell through to the same branch as `'up'`, so `'bottom'` scrolled the page UP by `amount` instead (a no-op from position 0, which the boundary-check logic then misread as "already there", masking the bug completely). Fixed to jump to the true `scrollTop 0` / `scrollHeight` boundary; live-confirmed `scroll bottom` now genuinely triggers the page's infinite-scroll library to load more content. See PROB-027. |
 | Rich-text-editor toolbar formatting (select text via keyboard, apply formatting via toolbar) | covered, 1 real CLI-only bug found and fixed | Milestone 48: tested live against Quill's own playground. Typing and single keypresses worked immediately; a keyboard-driven select-then-format sequence (`Home`, `Ctrl+Shift+ArrowRight`, click Bold) silently failed only through the CLI (each `press` re-clicked to focus, resetting the cursor position a prior `press` had built). Fixed by adding `SutradharRuntime.focus()`/`browser.focus` (real `.focus()`, doesn't move the cursor) and switching the CLI's `press` to use it instead of `click`. See PROB-026. |
 | Portal-rendered searchable multi-select combobox (react-select and similar) | covered | Milestone 47: tested live against `react-select.com`'s own demo. Both real interaction modes verified: (1) click-to-select — click the field, type a search term to filter, click the filtered `role=option` result, confirm the resulting chip via a fresh snapshot; (2) pure keyboard-driven selection — type a search term, `press ArrowDown` then `press Enter` with no click on the option at all, confirmed the chip landed correctly. Both modes work correctly with no engine changes needed. |
 | Complex JS date-range picker widgets (calendar dropdown, two-month grid, re-render-on-click) | covered | Milestone 46: tested live against `daterangepicker.com`'s real widget — 9 identical widget instances share the same CSS classes on one page (only one visible at a time), a real trap for hand-written CSS selectors (confirmed one led straight to a hidden instance) that Sutradhar's own snapshot sidesteps entirely since it only stamps elements that are actually visible. The library re-renders its calendar `<table>` after every day-cell click, correctly invalidating the previously-stamped end-date cell's id — the engine's honest stale-id refusal fired exactly as designed ("re-snapshot and use a fresh id"), not a bug. Following that advice (re-snapshot between the two day clicks) completed the full flow: start date, end date, Apply — the input's real value updated to the exact selected range, independently confirmed via read-back. |
@@ -72,6 +73,33 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-16 — Milestone 49: infinite-scroll pages — a high-severity `scroll bottom`/`scroll top` bug found and fixed, closes PROB-027
+
+Continuing the hard-use-case hunt. Tested live against a real infinite-scroll demo (append-more-
+content-on-scroll — distinct from a virtualized/recycling grid, already covered in Milestone 44).
+
+Found a serious, silent bug: `scroll bottom` reported success on every call, but
+`window.scrollY` stayed at exactly 0 across repeated invocations. Root cause: `'top'` and
+`'bottom'` were never actually implemented as jumps to the real scroll boundary — the direction
+check only ever branched on `=== 'down'`, so anything else (including `'top'`/`'bottom'`) fell
+through to the "scroll up by `amount`" branch. From `scrollY=0`, scrolling up 500px is a no-op
+(can't go negative) — and the existing boundary-aware error-suppression logic (`before <= 1` for
+"not down") then read that no-op as "already at the boundary, nothing wrong to report," so no
+error ever surfaced. `scroll bottom` was silently doing the *opposite* of its name with total
+confidence. This bug predates the Milestone 44 element-targeted-scroll work — it was inherited
+from the original window-scroll code, and no test anywhere in the suite ever exercised `'top'`
+or `'bottom'` (confirmed: zero prior references).
+
+Fixed both the window-scroll and element-targeted-scroll paths: `'top'` now sets
+`scrollTop`/scrolls to `(0,0)` directly, `'bottom'` now sets `scrollTop = scrollHeight` / scrolls
+to the document's real `scrollHeight` directly — true boundary jumps, not a relative move. 3 new
+unit tests, `packages/browser` 182/182. Live-verified end-to-end through the actual CLI binary:
+before the fix, `scroll bottom` left `scrollY` at 0 every time; after, it correctly landed at the
+real bottom (2652) **and** this genuinely triggered the page's infinite-scroll library to load
+more content (post count 2 → 5, confirmed via independent `eval` read-back) — the actual
+real-world use case `scroll bottom` exists for. `scroll top` confirmed to correctly return to 0.
+Closes `PROB-027`.
 
 ### 2026-08-16 — Milestone 48: rich-text-editor toolbar formatting (Quill) — real CLI-only bug found and fixed, closes PROB-026
 

@@ -539,16 +539,26 @@ export class BrowserActionEngine implements IBrowserActionEngine {
           await this.assertNotStale(handle, params.selector);
 
           const before = await handle.evaluate((el) => el.scrollTop);
+          // 'top'/'bottom' jump to the actual scroll boundary (scrollTop 0, or scrollHeight -
+          // clientHeight) — NOT a relative move by `amount`. Previously 'top'/'bottom' fell
+          // through to the same branch as 'up' (anything !== 'down'), so 'bottom' silently
+          // scrolled UP by `amount` instead of jumping to the end — found live testing a real
+          // infinite-scroll page (`scroll bottom` reported success but scrollTop never moved
+          // off 0, because scrolling "up" from position 0 is a no-op that the boundary check
+          // then misread as "already at the top", masking the wrong-direction bug entirely).
           await handle.evaluate(
             (el, amt, dir) => {
-              el.scrollBy(0, dir === 'down' ? amt : -amt);
+              if (dir === 'top') el.scrollTop = 0;
+              else if (dir === 'bottom') el.scrollTop = el.scrollHeight;
+              else el.scrollBy(0, dir === 'down' ? amt : -amt);
             },
             amount,
             direction,
           );
           const after = await handle.evaluate((el) => el.scrollTop);
           const maxScrollTop = await handle.evaluate((el) => Math.max(0, el.scrollHeight - el.clientHeight));
-          const atBoundary = direction === 'down' ? before >= maxScrollTop - 1 : before <= 1;
+          const atBoundary =
+            direction === 'down' || direction === 'bottom' ? before >= maxScrollTop - 1 : before <= 1;
           if (before === after && !atBoundary) {
             throw new Error(
               `scroll had no effect on "${params.selector}" — its scrollTop stayed at ${before} after ` +
@@ -566,9 +576,13 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         // error — only report failure when the page appears genuinely scrollable in that
         // direction but nothing moved.
         const before = await page.evaluate(() => window.scrollY);
+        // Same 'top'/'bottom' fix as the element-targeted branch above — jump to the real
+        // boundary rather than a relative move by `amount`.
         await page.evaluate(
           (amt, dir) => {
-            window.scrollBy(0, dir === 'down' ? amt : -amt);
+            if (dir === 'top') window.scrollTo(0, 0);
+            else if (dir === 'bottom') window.scrollTo(0, document.documentElement.scrollHeight);
+            else window.scrollBy(0, dir === 'down' ? amt : -amt);
           },
           amount,
           direction,
@@ -577,7 +591,8 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         const maxScrollY = await page.evaluate(
           () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight),
         );
-        const atBoundary = direction === 'down' ? before >= maxScrollY - 1 : before <= 1;
+        const atBoundary =
+          direction === 'down' || direction === 'bottom' ? before >= maxScrollY - 1 : before <= 1;
         if (before === after && !atBoundary) {
           throw new Error(
             `scroll had no effect — scrollY stayed at ${before} after attempting to scroll ${direction} by ` +
