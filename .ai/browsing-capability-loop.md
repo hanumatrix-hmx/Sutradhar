@@ -79,6 +79,17 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-17 — Milestone 60: styled drag-drop file upload widget (FilePond) — covered, no bug found
+
+Continuing the hard-use-case hunt. Tested a real, popular styled upload widget
+(`pqina.nl/filepond/`'s own live demo) that hides its native `<input type="file">` behind a
+custom drop-zone UI — a very common real pattern. `snap` correctly did **not** stamp the hidden
+input (by design — it's not meant to be directly clicked, the drop-zone/trigger is), but
+`upload` targeting it directly via a plain CSS selector (`input[type=file]`) worked correctly
+regardless of visibility. Verified via independent page-text read-back (not the action's own
+success report): the uploaded filename genuinely appeared in FilePond's real file-list UI. No
+bug found — this is the already-documented, correct technique for styled upload widgets.
+
 ### 2026-08-17 — Milestone 59: OAuth-style popup login flow — covered, real fix from Milestone 58 confirmed working end-to-end; one honest tab-id-stability caveat documented
 
 Continuing the hard-use-case hunt, directly building on Milestone 58's tab-management fixes.
