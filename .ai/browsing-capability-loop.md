@@ -27,7 +27,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Multi-tab workflows | covered | Milestone 1: created a background tab via `new_tab`, navigated/snapshotted/clicked it independently via `tabId`, confirmed the original tab was completely unaffected. Works correctly. |
 | File download | covered | Milestone 1: `runtime.downloadFile` verified end-to-end — real file landed on disk at the expected path with correct content (read back and checked, not just a success flag). |
 | File upload | covered | Milestone 2: `browser.upload_file` against a real fixture page (the-internet.herokuapp.com/upload) — set a file input, clicked Upload, confirmed via the server's own response page ("File Uploaded! upload-test.txt") that it actually landed server-side, not just a client-side success flag. |
-| iframes / cross-frame interaction (incl. dynamically-injected, cross-origin) | covered | Milestone 1: verified directly against the runtime — `snapshot`/`click` correctly traverse into a cross-origin iframe injected into the page *after* initial load (the hardest realistic case — matches real chat-widget/payment-iframe behavior). Works correctly today. |
+| iframes / cross-frame interaction (incl. dynamically-injected, cross-origin) | covered | Milestone 1: verified directly against the runtime — `snapshot`/`click` correctly traverse into a cross-origin iframe injected into the page *after* initial load (the hardest realistic case — matches real chat-widget/payment-iframe behavior). Works correctly today. Milestone 35: closed the one remaining unverified sub-case — `type` into a contenteditable iframe body (TinyMCE), long assumed broken/cross-origin-restricted per GLM's original C4. Turned out to be a misdiagnosis: the iframe isn't actually cross-origin (`contentDocument` fully readable from the parent), it's already groundable via `snap`, and `type` into it already works, real text landing confirmed via independent DOM read-back. The actual bug was an invalid CSS selector in this project's own scenario-suite test code, fixed at the source — see `PROB-019`/`PROB-022`. |
 | Shadow DOM | covered (open); closed is a known, reasonable limitation | Milestone 3: an injected open shadow root's button was correctly listed by `snapshot` and correctly clicked (verified via the real click handler firing). A *closed* shadow root's content is invisible to both — expected: `mode:'closed'` blocks even `evaluate()`-level JS access by design, and closed shadow roots are rare in practice since most real widgets use open ones. Not treated as a gap worth chasing. |
 | PDF handling: export | covered | `browser.export_pdf` verified — returns real, valid `%PDF-1.4` content for the current page. |
 | PDF handling: reading one encountered mid-browse | gap found, logged (`PROB-009`) | Navigating directly to a `.pdf` URL correctly enumerates Chrome's native PDF-viewer toolbar via `snapshot`, but `pageText` comes back completely empty even against a PDF with real (compressed) text content. Not fixed — needs real PDF text-layer extraction, nontrivial scope. |
@@ -66,6 +66,65 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-16 — Milestones 30-35: a second independent field campaign's insights (INSIGHTS.md), six real fixes, one long-standing misdiagnosis corrected
+
+A separate, independent 3-version (0.2.0→0.2.2→0.3.0) benchmark campaign produced `INSIGHTS.md`
+— a fresh, real-usage-driven gap analysis distinct from GLM's original field report. Fact-checked
+against source before acting (one insight — flipping the default headless UA — was explicitly
+rejected as contradicting this project's standing anti-stealth-default policy; the rest were
+genuine and actionable). Executed in priority order, each fixed, typechecked, unit-tested, and
+live-verified against real Chrome before moving to the next:
+
+- **Milestone 30 — `assertEffect` extended to 5 more action types.** `select_option`/
+  `upload_file` now read back the real landed value/file from the DOM; `scroll` reads real
+  `scrollY` before/after (boundary-aware, so a legitimate no-op at top/bottom isn't a false
+  failure); `drag_and_drop` uses a delivery-marker pattern for the real `'drop'` DOM event
+  (per the HTML5 spec, only fires if the target's `dragover` handler calls `preventDefault()` —
+  a genuine signal, not a rubber stamp); `hover` needed only a verifier registration (its real
+  occlusion check already existed). Live-verified all five against a real Chrome fixture,
+  including a negative case: `drag_and_drop` onto a target with no `dragover` handler correctly
+  fails after 3 real retries with the genuine reason, proving the check isn't decorative.
+- **Milestone 31 — CLI session self-healing.** `withSession()` used to hard-error on a dead
+  previous session, forcing a manual `close` before the next command — a real stall for an
+  hours-long unattended CLI-driven agent session. Now self-heals: kills the old Chrome tree,
+  clears stale state, transparently spawns a fresh session. Live-verified: injected a
+  `state.json` pointing at an unreachable port, confirmed the self-heal note, real fresh
+  navigation, a valid new state file, and correct reuse by a follow-up command.
+- **Milestone 32 — `allowedDomains` navigation guardrail**, CLI/SDK/MCP (`--allowlist-domains`,
+  `launch({allowedDomains})`, `SUTRADHAR_ALLOWED_DOMAINS`). Blocks explicit runtime-initiated
+  navigation off a domain list — composable with `restrictNavigationToLocal`. Documented
+  honestly (not overclaimed): only covers `navigate`/`launch`/`audit`/`compareUrls`/`createTab`,
+  NOT page-initiated navigation from a clicked link (CDP doesn't route that through this check) —
+  logged as `PROB-018` rather than oversold as full prompt-injection defense.
+- **Milestone 33/34 — the 3-surface scenario-suite harness wired into real CI**
+  (`.github/workflows/scenario-suite.yml`, scheduled + `workflow_dispatch`, not a PR gate since
+  it hits real external sites). A full local dry run done specifically to validate this
+  end-to-end surfaced two real bugs in the harness itself before either shipped: (a) the SDK
+  driver crashed outright on UC-07 with an unhandled rejection (`PROB-019`), and (b)
+  `ci-gate.mjs`'s own missing-results-file health check was silently masked by committed
+  historical baseline files that `actions/checkout` leaves in place regardless of whether the
+  current run produced fresh ones (`PROB-020`) — exactly the "silent false-green" failure mode
+  the gate exists to prevent, caught before it ever shipped. Both fixed and re-verified.
+- **Milestone 35 — CLI `profile export-state`/`import-state` + `audit --baseline`.** Building
+  the profile-state verbs surfaced a real, previously-silent gap (`PROB-021`): the runtime's
+  save/restore-on-launch machinery only fires for sessions IT launches, but the CLI always
+  `attach()`es to a separately-spawned Chrome instead — so profile storage-state never actually
+  saved or restored for any CLI session, silently. Fixed on both ends (save-on-close,
+  restore-on-nav) and live-verified as a genuine full round trip: log in under profile A, close,
+  export to a portable file, import into a completely fresh profile B that never visited the
+  site, nav under B, read back the value only ever set under A. `audit --baseline <url>` folds
+  audit + visual compare into one command with a shared `--fail-on-diff` gate, live-verified in
+  both directions (0% diff passes, a real diff with the flag exits nonzero).
+- **A genuine misdiagnosis corrected, not just a bug fixed**: investigating Milestone 33's UC-07
+  crash led to discovering that the long-standing "no typing into cross-origin iframe bodies"
+  gap (GLM's original C4, carried in `RESPONSE-TO-FIELD-REPORT.md` as "not addressed this
+  round") was never actually a same-origin-policy limitation at all — see the updated iframe row
+  above and `PROB-022` for the full investigation. `RESPONSE-TO-FIELD-REPORT.md`'s C4 row
+  updated to reflect this rather than leaving a working capability mislabeled as an open gap.
+
+All six milestones committed and pushed individually (`Milestone 30` through `Milestone 35` in
+git history) with their own live-verification evidence; nothing here was typecheck-only.
 
 ### 2026-08-16 — Milestone 29: field-report remediation, 8 phases — 12 real bugs fixed (5 from GLM's report, 7 found along the way), a release-integrity gate built, all live-verified
 

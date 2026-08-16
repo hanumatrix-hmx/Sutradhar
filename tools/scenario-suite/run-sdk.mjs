@@ -360,7 +360,25 @@ async function scenarioUC07() {
     let typeError = null;
     let landedText = null;
     try {
-      const r = await runtime.type(sid, 'body#tinymce, iframe.tox-edit-area__iframe body', 'Sutradhar baseline UC-07 test text');
+      // `body#tinymce` alone — NOT the comma-list this used to be
+      // ('body#tinymce, iframe.tox-edit-area__iframe body'). The second alternative was invalid
+      // CSS for reaching cross-frame content in the first place (a descendant combinator can't
+      // pierce an iframe boundary — `iframe X` only ever matches an `X` that's a DOM descendant
+      // of the `<iframe>` tag in the SAME document, which a frame's own body never is), and
+      // racing that invalid alternative across frames via resolveElement's per-frame
+      // waitForSelector, while TinyMCE's own init sequence tears down and recreates this exact
+      // iframe, is what produced a real "frame got detached" crash that escaped this function's
+      // own try/catch and killed the whole script (see PROB-019/PROB-021 in
+      // .ai/known-problems.md — found live investigating this same scenario). `body#tinymce`
+      // alone resolves correctly via the pierce-based per-frame search (each frame's own
+      // waitForSelector('body#tinymce') matches within ITS OWN document — the TinyMCE iframe's
+      // body genuinely has id="tinymce") and reliably lands real text — confirmed live via CLI:
+      // `sutradhar type "body#tinymce" "..."` followed by reading back
+      // `iframe.contentDocument.body.innerText` shows the exact typed text. The iframe is also
+      // NOT actually cross-origin in the security sense — its `src` is empty (same-origin,
+      // `contentDocument` fully accessible from the parent) — so this was never a same-origin-
+      // policy limitation, just a bad selector in this scenario's own test code.
+      const r = await runtime.type(sid, 'body#tinymce', 'Sutradhar baseline UC-07 test text');
       typeSuccess = r.success;
       if (!r.success) typeError = r.error;
     } catch (err) {
