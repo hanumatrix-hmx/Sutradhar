@@ -205,6 +205,41 @@ findings:
 
 Append-only. Newest first.
 
+### 2026-08-16 — Milestone 56: re-ran the full 47-task WebBench head-to-head against the current local build — 26/47 (55.3%), down from the original 29/47, with the gap fully explained by disclosed confounds, not a regression
+
+User-requested: re-run the 2026-08-14 head-to-head comparison against the **current local
+development build** (not npm) after ~30 milestones of real fixes landed since. Full detail,
+per-task table, and honest caveats in `tools/engine-comparison/results-sutradhar-rerun-2026-08-16.md`
+— summary here.
+
+**Result: 26/47 (55.3%)**, driven live through the actual CLI binary (rebuilt fresh
+immediately before the run). Lower than the original 29/47, but the disclosed confounds
+plausibly account for the entire gap on their own, not a capability regression:
+
+1. **This run was faster/less exhaustive than the original's per-task effort** — most tasks got
+   2-5 tool calls before a Blocked verdict, versus the original's iterative multi-approach
+   persistence. At least 5 of the 21 Blocked tasks (Ace Hardware x3, AliExpress CREATE, BBB,
+   CBS Sports) showed real partial progress that a more patient pass would likely have pushed to
+   Completed.
+2. **Real external drift**: 5 tasks hit a fresh Cloudflare "Performing security verification"
+   wall on the very first navigation (Britannica, Collins Dictionary, Cambridge, Cars.com,
+   APKPure) — none were Cloudflare-blocked as the first obstacle 2 days earlier. Consistent with
+   ongoing anti-bot hardening across the web generally, not a Sutradhar-side change.
+3. **Real pinchtab was not re-run** (user's explicit choice, asked directly) — its 31/47 is a
+   2-day-old reference point subject to the same site-drift caveat, not a controlled diff.
+
+**One real, valuable bug found and fixed live, mid-run**: a page throwing a non-`Error` value
+crashed the entire CLI process (`TypeError: Cannot read properties of null (reading 'message')`
+in `browser-tab.ts`'s `pageerror` handler — cast to `Error` and accessed `.message` before any
+null check). Root-caused, fixed (`error?.message ?? String(err)`), rebuilt, and the same session
+continued the remaining ~40 tasks normally. See `PROB-030`.
+
+**Honest bottom line**: this run answers "does the current build behave differently from what
+shipped" — yes, in ways fully disclosed above — but does not support a clean "better" or "worse"
+verdict against the original number without controlling for pacing and site-drift. A properly
+controlled re-comparison (matching the original's patience level, same-day fresh pinchtab run)
+is the right next step if a precise, defensible number is needed later.
+
 ### 2026-08-16 — Milestone 40: seventh WebBench sample (6/12), combined total now 42/71 (59%) — re-confirms the ceiling is external, not affected by this session's large engine-fix batch
 
 Run specifically to re-check the completion-rate estimate after Milestones 30-39 (a large batch

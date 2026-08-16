@@ -574,10 +574,15 @@ export class BrowserTab implements IBrowserTab {
     });
 
     page.on('pageerror', (err) => {
-      const error = err as Error;
+      // Puppeteer's typings promise an `Error`, but a page can `throw null`/`throw undefined`/
+      // throw a non-Error value, which CDP forwards as-is — `err` itself can be null here, not
+      // just missing `.message`. Found live: this crashed the whole CLI process
+      // (`Cannot read properties of null (reading 'message')`) on a real page whose console
+      // logged such a throw, taking out an otherwise-healthy session's next command.
+      const error = err as Error | null | undefined;
       const entry: PageErrorEntry = {
-        message: error.message ?? String(err),
-        stack: error.stack,
+        message: error?.message ?? String(err),
+        stack: error?.stack,
         timestamp: new Date().toISOString(),
       };
       this.pageErrors.push(entry);
