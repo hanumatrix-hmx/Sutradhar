@@ -1,0 +1,82 @@
+name: Scenario Suite (3-surface regression)
+
+# Runs the 14-scenario cross-surface regression harness (tools/scenario-suite/) against real
+# Chrome, real external sites, and all three integration surfaces (SDK/CLI/MCP) — closes
+# INSIGHTS.md Insight 5 ("run the same harness against all three surfaces in CI — this campaign
+# caught 6 real issues across 3 versions; institutionalize it").
+#
+# Deliberately NOT wired into ci.yml's push/PR gate: individual scenarios hit real external
+# sites (bot.sannysoft.com, saucedemo, the-internet.herokuapp.com, etc.) and can fail for
+# reasons that have nothing to do with this repo (a site's layout changed, a bot wall got
+# stricter) — that's real signal to look at, not something that should block every PR merge.
+# Scheduled + manually triggerable instead; tools/scenario-suite/ci-gate.mjs still fails the
+# job outright if the suite finds literally nothing passing anywhere (the signature of total
+# infra breakage, e.g. no Chrome on the runner) rather than normal day-to-day flakiness.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Daily, off-peak UTC hour — avoids exact-hour contention with everyone else's cron jobs.
+    - cron: '17 3 * * *'
+
+jobs:
+  scenario-suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.1.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build (all packages, dependency order via turbo)
+        run: pnpm run build
+
+      # Each surface driver runs independently (`if: always()` on the second and third so a
+      # crash in one — e.g. an uncaught rejection from a flaky external site mid-run, a real
+      # failure mode observed live during this workflow's own dry run — doesn't skip the other
+      # two). A driver that crashes outright still fails the job overall (no continue-on-error
+      # here) since that's real signal; it just doesn't take the other surfaces' data down with
+      # it. ci-gate.mjs below separately tolerates a merely-missing surface's results.
+      - name: Run scenario suite — SDK surface
+        run: node tools/scenario-suite/run-sdk.mjs
+
+      - name: Run scenario suite — CLI surface
+        if: always()
+        run: node tools/scenario-suite/run-cli.mjs
+
+      - name: Run scenario suite — MCP surface
+        if: always()
+        run: node tools/scenario-suite/run-mcp.mjs
+
+      - name: Aggregate report
+        if: always()
+        run: node tools/scenario-suite/report.mjs
+
+      - name: Post summary
+        if: always()
+        run: |
+          if [ -f tools/scenario-suite/results/baseline-report.md ]; then
+            cat tools/scenario-suite/results/baseline-report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Health gate (fails only on total infra breakage, not individual scenario failures)
+        if: always()
+        run: node tools/scenario-suite/ci-gate.mjs
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scenario-suite-results-${{ github.run_id }}
+          path: tools/scenario-suite/results/
+          retention-days: 30
