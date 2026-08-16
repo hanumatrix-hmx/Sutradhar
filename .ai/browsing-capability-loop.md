@@ -49,6 +49,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Network request interception/mocking | covered | Milestone 7: `browser.route` with both `mock` (a real fetch received the exact mocked JSON body) and `block` (a real fetch failed as expected) actions verified against genuine `fetch()` calls, not just the tool's own success report. |
 | Console/network/page-error log capture | covered | Milestone 7: `get_console_logs` correctly captured log/warn/error levels plus an incidental real network failure; `get_page_errors` correctly captured a deliberate uncaught exception with message and stack trace; `get_network_log` correctly distinguished a completed (mocked) request from a blocked one (request-only, no response phase). |
 | CAPTCHA / bot-detection / stealth evasion | excluded | Deliberately out of scope per CLAUDE.md — not a gap to close. |
+| Nested modal-in-modal dialogs (a modal opened from within another modal, z-index-stacked) | covered, no bug found | Milestone 52: tested live against MUI's own Nested Modal demo — opening a child modal from within a parent modal correctly stacked; `clicktext "Close Child Modal"` correctly hit the topmost (child) modal's button via occlusion detection and closed only the child, leaving the parent open — exactly correct nested-modal semantics, confirmed via real DOM state, not just each click's own success report. |
 | Canvas signature/drawing pad (coordinate-based drag, no addressable DOM inside the canvas) | covered, real CLI-exposure gap closed | Milestone 51: `dragAtPoints` (already existed via MCP/SDK) correctly draws real strokes on a live `signature_pad` canvas, confirmed visually. Added `clickpoint`/`dragpoints` CLI verbs — the underlying capability existed but was unreachable from the CLI, the only surface whose whole purpose is direct scriptable access. |
 | Infinite-scroll / "load more on scroll" pages (append-on-scroll, distinct from a virtualized/recycling grid) | covered, 1 high-severity bug found and fixed | Milestone 49: tested live against a real infinite-scroll demo. `scroll bottom` reported success on every call while `window.scrollY` silently stayed at 0 — `'top'`/`'bottom'` had never actually been implemented as jumps to the real boundary, they fell through to the same branch as `'up'`, so `'bottom'` scrolled the page UP by `amount` instead (a no-op from position 0, which the boundary-check logic then misread as "already there", masking the bug completely). Fixed to jump to the true `scrollTop 0` / `scrollHeight` boundary; live-confirmed `scroll bottom` now genuinely triggers the page's infinite-scroll library to load more content. See PROB-027. |
 | Rich-text-editor toolbar formatting (select text via keyboard, apply formatting via toolbar) | covered, 1 real CLI-only bug found and fixed | Milestone 48: tested live against Quill's own playground. Typing and single keypresses worked immediately; a keyboard-driven select-then-format sequence (`Home`, `Ctrl+Shift+ArrowRight`, click Bold) silently failed only through the CLI (each `press` re-clicked to focus, resetting the cursor position a prior `press` had built). Fixed by adding `SutradharRuntime.focus()`/`browser.focus` (real `.focus()`, doesn't move the cursor) and switching the CLI's `press` to use it instead of `click`. See PROB-026. |
@@ -74,6 +75,23 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-16 — Milestone 52: nested modal-in-modal dialogs — covered, no bug found
+
+Continuing the hard-use-case hunt. Considered running another WebBench sample first (the last,
+sample 7, ran earlier today) but skipped it — sample 7's failures were dominated by external
+anti-bot walls (Cloudflare/DataDome on the homepage itself), not Sutradhar-attributable issues,
+and this session's later fixes (scroll, Stripe masking, middle-click, canvas) aren't the class
+of thing WebBench's READ-category tasks exercise. The hard-UI-case hunt has a much higher recent
+hit rate (real bugs in 3 of the last 5 tests), so continued there instead.
+
+Tested live against MUI's own Nested Modal demo (`mui.com/material-ui/react-modal/#nested-modal`)
+— a modal opened from within another modal, real z-index stacking. Opening the child modal
+correctly layered on top of the parent (confirmed via DOM text content of all non-hidden
+`.MuiModal-root` elements). `clicktext "Close Child Modal"` correctly targeted the topmost
+(child) modal's button via the existing occlusion-detection logic and closed only the child,
+leaving the parent modal still open — exactly correct nested-modal semantics, verified against
+real DOM state rather than trusting the click's own success report. No bug found or fix needed.
 
 ### 2026-08-16 — Milestone 51: canvas signature/drawing pad — covered, plus closed a real CLI-exposure gap (clickpoint/dragpoints)
 
