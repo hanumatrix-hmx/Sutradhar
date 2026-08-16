@@ -468,6 +468,20 @@ export class SutradharRuntime {
   }
 
   /**
+   * Focus an element via the real DOM `.focus()` method — unlike {@link click}, this does not
+   * simulate a mouse click at coordinates, so it does not move/collapse an existing text cursor
+   * or selection. Use this (not `click`) to focus a field before a `pressKey` call that's part
+   * of a multi-step keyboard sequence (e.g. Home, then Ctrl+Shift+Right to select a word) — a
+   * `click`-based focus resets the cursor to the click point on every call, silently discarding
+   * cursor state built by a prior `pressKey` in the same sequence (found live: `cli.ts`'s
+   * `press` command previously used `click` to focus, which broke exactly this pattern when
+   * testing a real rich-text-editor's word-select-then-format toolbar workflow).
+   */
+  public async focus(sessionId: string, target: string, tabId?: string): Promise<ActionResult> {
+    return this.runAction(sessionId, { actionType: 'focus', selector: normalizeTarget(target) }, tabId);
+  }
+
+  /**
    * Click at an absolute viewport coordinate — no element or selector involved at all. For
    * UI with nothing DOM-addressable to target: content drawn inside a `<canvas>` at a
    * position not known ahead of time (unlike {@link SutradharRuntime.click}'s `offset`, which

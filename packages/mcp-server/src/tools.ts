@@ -543,6 +543,31 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
   );
 
   server.registerTool(
+    'browser.focus',
+    {
+      description:
+        'Focus an element via the real DOM .focus() method — unlike browser.click, this does not simulate a ' +
+        'mouse click at coordinates, so it does not move or collapse an existing text cursor/selection. Use ' +
+        'this (not click) before a browser.press_key call that is part of a multi-step keyboard sequence ' +
+        '(e.g. Home, then Ctrl+Shift+Right to select a word, then a toolbar click to format it) — clicking to ' +
+        'focus on every step resets the cursor to the click point each time, silently discarding cursor state ' +
+        "a prior press_key call already established.",
+      inputSchema: {
+        sessionId: z.string(),
+        target: z.string().describe(targetDesc),
+        tabId: z.string().optional(),
+      },
+    },
+    async ({ sessionId, target, tabId }) => {
+      try {
+        return jsonResult(await runtime.focus(sessionId, target, tabId));
+      } catch (e) {
+        return errorResult(`focus failed: ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
     'browser.scroll',
     {
       description:

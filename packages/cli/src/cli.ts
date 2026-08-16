@@ -30,6 +30,7 @@ const {
   noText,
   idsOnly,
   scanListeners,
+  modifiersFlag,
 } = parseArgs(process.argv.slice(2));
 
 // Tracked so main()'s cleanup can disconnect the CDP client connection (NOT close the browser)
@@ -311,10 +312,18 @@ async function cmdType(ref: string | undefined, text: string | undefined) {
 }
 
 async function cmdPress(ref: string | undefined, key: string | undefined) {
-  if (!ref || !key) printErrorAndExit('usage: sutradhar press <ref> <key>  (e.g. sutradhar press 3 Enter)');
+  if (!ref || !key) {
+    printErrorAndExit(
+      'usage: sutradhar press <ref> <key> [--modifiers Control,Shift]  ' +
+        '(e.g. sutradhar press 3 Enter, or sutradhar press 3 ArrowRight --modifiers Control,Shift)',
+    );
+  }
   await withSession(async (runtime, sessionId) => {
-    await runtime.click(sessionId, ref!).catch(() => {}); // focus the target first, best-effort
-    const result = await runtime.pressKey(sessionId, key!);
+    // Focus (not click) the target first, best-effort — a real click would reset any cursor/
+    // selection position a prior `press` in the same sequence already established (e.g. Home,
+    // then Ctrl+Shift+Right to select a word); .focus() doesn't move the cursor at all.
+    await runtime.focus(sessionId, ref!).catch(() => {});
+    const result = await runtime.pressKey(sessionId, key!, undefined, modifiersFlag);
     console.log(result.success ? `Pressed ${key}` : `Press failed: ${result.error}`);
     if (!result.success) process.exitCode = 1;
   });
@@ -602,6 +611,10 @@ Commands:
                                 (from "axsnap", e.g. clickrole button Submit)
   type <ref> <text>            Type text into an element
   press <ref> <key>            Focus an element then press a key (e.g. Enter)
+  press <ref> <key> --modifiers Control,Shift
+                                Hold modifier keys while pressing (e.g. Ctrl+Shift+ArrowRight
+                                to select a word — a real rich-text-editor toolbar formatting
+                                workflow)
   select <ref> <value>         Select an <option> by value on a <select>
   wait <ref> [timeoutMs]       Wait for an element to appear and be visible
   eval <js-expression>         Evaluate JS in the page's top-level context, print the result

@@ -35,6 +35,11 @@ export interface ParsedArgs {
    *  libraries (e.g. SortableJS) that attach raw pointer/mouse listeners with no CSS/ARIA
    *  signal at all. Slower than a normal snapshot; off by default. */
   scanListeners: boolean;
+  /** Parsed from `--modifiers Control,Shift` — undefined when the flag isn't given. Used by
+   *  `press` to hold modifier keys (e.g. Ctrl+Shift+ArrowRight to select a word) — the
+   *  underlying engine already supported this via `pressKey`'s `modifiers` param, but the CLI
+   *  had no way to pass it (found live testing rich-text-editor toolbar formatting). */
+  modifiersFlag: readonly ('Control' | 'Shift' | 'Alt' | 'Meta')[] | undefined;
 }
 
 /** Parses `process.argv.slice(2)`-style arguments (verb + flags) into their recognized pieces.
@@ -63,6 +68,15 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     : undefined;
   const baselineFlagIndex = args.indexOf('--baseline');
   const baselineFlag = baselineFlagIndex !== -1 ? args[baselineFlagIndex + 1] : undefined;
+  const modifiersFlagIndex = args.indexOf('--modifiers');
+  const modifiersRaw = modifiersFlagIndex !== -1 ? args[modifiersFlagIndex + 1] : undefined;
+  const VALID_MODIFIERS = new Set(['Control', 'Shift', 'Alt', 'Meta']);
+  const modifiersFlag = modifiersRaw
+    ? (modifiersRaw
+        .split(',')
+        .map((m) => m.trim())
+        .filter((m) => VALID_MODIFIERS.has(m)) as ('Control' | 'Shift' | 'Alt' | 'Meta')[])
+    : undefined;
   const cleanArgs = args.filter(
     (a, i) =>
       a !== '--headed' &&
@@ -76,10 +90,12 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
       a !== '--user-agent' &&
       a !== '--allowlist-domains' &&
       a !== '--baseline' &&
+      a !== '--modifiers' &&
       !(profileFlagIndex !== -1 && i === profileFlagIndex + 1) &&
       !(userAgentFlagIndex !== -1 && i === userAgentFlagIndex + 1) &&
       !(allowlistDomainsFlagIndex !== -1 && i === allowlistDomainsFlagIndex + 1) &&
-      !(baselineFlagIndex !== -1 && i === baselineFlagIndex + 1),
+      !(baselineFlagIndex !== -1 && i === baselineFlagIndex + 1) &&
+      !(modifiersFlagIndex !== -1 && i === modifiersFlagIndex + 1),
   );
 
   return {
@@ -96,5 +112,6 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     noText,
     idsOnly,
     scanListeners,
+    modifiersFlag,
   };
 }

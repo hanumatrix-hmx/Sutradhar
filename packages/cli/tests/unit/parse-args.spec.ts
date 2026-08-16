@@ -161,6 +161,22 @@ describe('@sutradhar/cli parseArgs', () => {
     expect(result.scanListeners).toBe(false);
   });
 
+  it('parses --modifiers as a comma-separated modifier-key list for "press"', () => {
+    const result = parseArgs(['press', '3', 'ArrowRight', '--modifiers', 'Control,Shift']);
+    expect(result.modifiersFlag).toEqual(['Control', 'Shift']);
+    expect(result.cleanArgs).toEqual(['3', 'ArrowRight']);
+  });
+
+  it('drops unrecognized modifier names rather than passing them through', () => {
+    const result = parseArgs(['press', '3', 'a', '--modifiers', 'Control,NotAModifier,Shift']);
+    expect(result.modifiersFlag).toEqual(['Control', 'Shift']);
+  });
+
+  it('defaults modifiersFlag to undefined when --modifiers is not given', () => {
+    const result = parseArgs(['press', '3', 'Enter']);
+    expect(result.modifiersFlag).toBeUndefined();
+  });
+
   it('does not treat a positional arg that happens to equal a flag NAME as anything but a flag, even mid-command', () => {
     // Guards the filter's index-based value-stripping: only the token immediately AFTER
     // --profile/--user-agent is treated as that flag's value, not any later occurrence.

@@ -34,6 +34,7 @@ const EXPECTED_BROWSER_TOOLS = [
   'browser.click',
   'browser.type',
   'browser.press_key',
+  'browser.focus',
   'browser.scroll',
   'browser.hover',
   'browser.select_option',
