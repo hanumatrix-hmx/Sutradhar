@@ -41,7 +41,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | localStorage / sessionStorage (get/set/clear) | covered | Milestone 8: verified against real `localStorage`/`sessionStorage` APIs directly. Set, get, and clear all correct. |
 | Clipboard (get/set) | covered | Milestone 8: real round-trip via `grant_permissions` + `set_clipboard` + `get_clipboard` — the exact text written was read back. |
 | Geolocation | covered | Milestone 8: `set_geolocation` verified against the real `navigator.geolocation.getCurrentPosition()` API — returned the exact overridden coordinates, permission auto-granted as documented. |
-| JS framework diversity beyond React | covered | Milestone 3: real TodoMVC implementations in Vue, Angular, and Svelte — add-todo, snapshot, and DOM-state verification all worked correctly in each, matching the earlier React result. Grounding operates on the rendered DOM, not framework internals, so this is expected but now actually confirmed rather than assumed. |
+| JS framework diversity beyond React; SPA client-side routing (`history.pushState`) | covered, 1 real bug found and fixed | Milestone 3: real TodoMVC implementations in Vue, Angular, and Svelte — add-todo, snapshot, and DOM-state verification all worked correctly in each, matching the earlier React result. Grounding operates on the rendered DOM, not framework internals, so this is expected but now actually confirmed rather than assumed. Milestone 65: `goBack`/`goForward` navigation correctly follows real SPA `pushState` history, but found and fixed a real bug in `snap`'s reported title — it went stale for any title change without a real page load (the entire mechanism of client-side routing), since the underlying cache was only kept in sync by a `'load'` listener. See `PROB-034`. |
 | `agent.runGoal` (Sutradhar's own autonomous loop) | blocked on environment, partially covered | Milestone 7: no LLM provider available in this environment (no Ollama running, no `OPENROUTER_API_KEY`) — the actual reasoning capability is untested and I can't responsibly fix this myself (installing Ollama is a heavier step; won't provision API keys/billing). What DID get verified: the failure mode is honest (no fabricated success) and `session:blocked` event surfacing through the tool — built in an earlier project phase — actually works live, confirmed for the first time. |
 | Native dialogs (alert/confirm/prompt) | covered, 1 bug found and fixed | Milestone 7: found a real bug live — the 5s auto-dismiss safety net was too tight for a realistic check-then-act round trip (get_pending_dialog → handle_dialog), silently losing the race and auto-dismissing dialogs the caller intended to handle. Bumped the default to 30s (matches `downloadFile`'s timeout), re-verified with simulated ~4s latency between check and handle — correctly caught and handled now. |
 | Drag-and-drop | covered | Milestone 7: real HTML5 `DataTransfer` drag from a source to a target element — drop handler received the correct transferred data. Works correctly. |
@@ -78,6 +78,34 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-17 — Milestone 65: `snap`'s title goes stale on SPA route changes — found testing navigation history, closes PROB-034
+
+Rather than a reflexive blanket CLI-parity sweep (checked the full MCP-tool-vs-CLI-verb diff and
+found many gaps this project's own established policy already deliberately defers — `route`,
+`emulate`, `extract_data`, etc. — not worth mass-adding without fresh evidence), picked a
+genuinely hard, evidence-motivated case instead: browser navigation history (`goBack`/
+`goForward`) interacting with real SPA client-side routing (`history.pushState`), the pattern
+virtually every modern React/Vue/Next.js app uses instead of full page navigations.
+
+`goBack`/`goForward` themselves worked correctly — real URL history navigation confirmed via
+independent `location.href` read-back. But checking the result's own `title` field surfaced a
+real, high-value, previously-unknown bug: `snapshot()`/`snap` (the single most commonly used
+action in the whole tool surface) reports a **stale** page title for any title change that isn't
+a real full page load. `history.pushState` (the entire mechanism of client-side routing) and a
+bare `document.title = ...` JS assignment both never fire the `'load'` event `BrowserTab`'s
+title-caching relied on exclusively. Live-confirmed: after two simulated SPA route changes (no
+real navigation), `snapshot()` still reported the page's very first title. Notably `goBack`/
+`goForward`/`reload` were *already* correct — they use a separate `readTitle()` helper that
+reads `page.title()` live, proving the fix pattern already existed elsewhere in the same file;
+`snapshot()`'s own path just hadn't been brought in line with it.
+
+Fixed: `DOMSemanticEngine.buildGraph` now reads `document.title` live via `page.title()` rather
+than the stale cache — the same principle `tab.url`'s own getter already follows successfully.
+`packages/browser` 184/184. Live-verified twice: a direct `SutradharRuntime` script confirmed
+`snapshot()`'s title correctly updated after simulated SPA routing, and the real CLI binary's
+own printed `snap` output confirmed the same end-to-end (`Title: Live SPA Title`). Closes
+`PROB-034`.
 
 ### 2026-08-17 — Milestone 64: real 3-level nested iframe chain — found and fixed a genuine multi-hop gap in eval/extractData's frame targeting, closes PROB-033
 

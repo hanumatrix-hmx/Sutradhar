@@ -179,7 +179,14 @@ export class DOMSemanticEngine implements IDOMSemanticEngine {
         allNodes.push(...listenerNodes);
       }
 
-      return new SemanticElementGraph(allNodes, tab.url, tab.title);
+      // Read `document.title` live rather than `tab.title` (a cache kept in sync only by the
+      // page's 'load' event) — an SPA route change via `history.pushState` never fires 'load',
+      // and neither does a bare `document.title = ...` assignment, so the cache goes stale for
+      // any title update outside a real full navigation. Found live: after two SPA-style title
+      // changes with no real navigation, `snapshot()` still reported the page's very first,
+      // long-outdated title. `tab.url` already reads live the same way; title now matches.
+      const liveTitle = await page.title().catch(() => tab.title);
+      return new SemanticElementGraph(allNodes, tab.url, liveTitle);
     } catch {
       return new SemanticElementGraph([], tab.url, tab.title);
     }
