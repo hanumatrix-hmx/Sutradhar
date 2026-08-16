@@ -52,6 +52,13 @@ packages/sutradhar/AGENT_SETUP.md
 .sutradhar-storage/
 .sutradhar-cli/
 
+# Per-session lock file (sessionId/pid/timestamp) — was accidentally committed in the initial
+# commit and has been pure session churn ever since, with no legitimate reason to be tracked.
+# Untracked below via `git rm --cached`; this stops it from ever showing as a dirty-tree change
+# again (it was the one thing blocking `npm publish`'s prepublishOnly gate on a genuinely clean
+# working tree).
+.claude/scheduled_tasks.lock
+
 # Scratch/manual comparison tooling — installs its own deps outside the pnpm workspace
 tools/engine-comparison/scratch-npm/
 tools/engine-comparison/results/
