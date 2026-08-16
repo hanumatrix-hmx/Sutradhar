@@ -48,7 +48,7 @@ try {
   log('    base64 length=' + png.length + ' (~' + Math.round((png.length * 0.75) / 1024) + ' KB)');
 
   log('[9] browser.pages() ...');
-  const pages = browser.pages();
+  const pages = await browser.pages();
   log('    page count=' + pages.length);
 
   log('✅ sutradhar Puppeteer-style API works end-to-end.');

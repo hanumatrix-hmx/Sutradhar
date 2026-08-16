@@ -1552,7 +1552,7 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
     },
     async ({ sessionId }) => {
       try {
-        return jsonResult({ tabs: runtime.listTabs(sessionId) });
+        return jsonResult({ tabs: await runtime.listTabs(sessionId) });
       } catch (e) {
         return errorResult(`list_tabs failed: ${(e as Error).message}`);
       }

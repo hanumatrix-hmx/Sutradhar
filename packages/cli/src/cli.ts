@@ -95,7 +95,7 @@ async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string)
       }
       // Restore a previously-focused tab — see CliState.activeTabId's doc comment for why this
       // is necessary (setActiveTab's effect is in-memory only and doesn't survive the reconnect).
-      if (state.activeTabId && runtime.listTabs(sessionId).some((t) => t.id === state.activeTabId)) {
+      if (state.activeTabId && (await runtime.listTabs(sessionId)).some((t) => t.id === state.activeTabId)) {
         await runtime.focusTab(sessionId, state.activeTabId).catch(() => {});
       }
       return await fn(runtime, sessionId);
@@ -590,7 +590,7 @@ async function cmdGrant(origin: string | undefined, permissions: string[]) {
 
 async function cmdTabs() {
   await withSession(async (runtime, sessionId) => {
-    const tabs = runtime.listTabs(sessionId);
+    const tabs = await runtime.listTabs(sessionId);
     if (tabs.length === 0) {
       console.log('No tabs.');
       return;

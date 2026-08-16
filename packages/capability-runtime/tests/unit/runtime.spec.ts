@@ -53,9 +53,9 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
       );
     });
 
-    it('listTabs on an unknown session throws', () => {
+    it('listTabs on an unknown session throws', async () => {
       const runtime = new SutradharRuntime();
-      expect(() => runtime.listTabs('nope')).toThrow(BrowserNotAvailableError);
+      await expect(runtime.listTabs('nope')).rejects.toThrow(BrowserNotAvailableError);
     });
 
     it('shutdown on an unknown session throws', async () => {

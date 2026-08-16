@@ -58,9 +58,14 @@ export class Browser {
     return new Page(this.runtime, this.sessionId, tab.id);
   }
 
-  /** All tabs in this browser, as {@link Page} handles. */
-  public pages(): Page[] {
-    return this.runtime.listTabs(this.sessionId).map((t) => new Page(this.runtime, this.sessionId, t.id));
+  /**
+   * All tabs in this browser, as {@link Page} handles. Async (breaking change from a prior
+   * synchronous signature) because each tab's title is now read live from the page rather than
+   * from a cache that never gets a real value for a CLI-adopted tab — see PROB-035.
+   */
+  public async pages(): Promise<Page[]> {
+    const tabs = await this.runtime.listTabs(this.sessionId);
+    return tabs.map((t) => new Page(this.runtime, this.sessionId, t.id));
   }
 
   /** Close every tab and release the browser process. */

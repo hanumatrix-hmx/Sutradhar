@@ -1493,7 +1493,7 @@ export class SutradharRuntime {
     if (url) this.assertNavigationAllowed(url);
     const session = this.requireSession(sessionId);
     const tab = await session.createTab(url);
-    return this.toTabInfo(tab);
+    return await this.toTabInfo(tab);
   }
 
   /** Close a tab. */
@@ -1509,8 +1509,9 @@ export class SutradharRuntime {
   }
 
   /** List all tabs in a session. */
-  public listTabs(sessionId: string): TabInfo[] {
-    return this.requireSession(sessionId).getTabs().map((t) => this.toTabInfo(t));
+  public async listTabs(sessionId: string): Promise<TabInfo[]> {
+    const tabs = this.requireSession(sessionId).getTabs();
+    return Promise.all(tabs.map((t) => this.toTabInfo(t)));
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -1706,8 +1707,16 @@ export class SutradharRuntime {
     }
   }
 
-  private toTabInfo(tab: IBrowserTab): TabInfo {
-    return { id: tab.id, url: tab.url, title: tab.title, isActive: tab.isActive };
+  /** Reads the title live via `page.title()` rather than trusting `tab.title` (a cache kept in
+   *  sync only by the page's `'load'` event, and — for a tab reached via `attach()` — never
+   *  populated with a real title at all, permanently stuck on the `'Adopted Tab'`/`'New Tab'`
+   *  placeholder). Same "read live, don't trust the cache" fix as {@link DOMSemanticEngine}'s
+   *  `buildGraph` (see `PROB-034`) — found live: every single tab the CLI's `tabs` command
+   *  listed showed the literal placeholder title, not the real page title, because the CLI's
+   *  architecture means every tab is reached via `attach()`'s adoption path. */
+  private async toTabInfo(tab: IBrowserTab): Promise<TabInfo> {
+    const liveTitle = await tab.page?.title().catch(() => tab.title);
+    return { id: tab.id, url: tab.url, title: liveTitle ?? tab.title, isActive: tab.isActive };
   }
 }
 

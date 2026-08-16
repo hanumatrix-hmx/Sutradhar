@@ -24,7 +24,10 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | DOM-attribute grounding (`data-sd-node-id`) under re-render | covered | Survived 3 independent real re-render tests: TodoMVC filter round-trip, a continuous-stream sibling-churn test, and (Milestone 4) the hardest case — a numeric id captured *before* deleting the item above it in the list, then acted on after the deletion-driven reflow. Correctly still hit the right (surviving) element every time, no misfires. |
 | Accessibility-tree grounding (`axSnapshot`) | covered | Milestone 4: used live against TodoMVC exactly as documented — `ax_snapshot` + `type_by_label` to add todos, both landed correctly with no ids involved at all. Works correctly. |
 | Hover / `:hover`-revealed UI | covered | Milestone 4: `browser.hover` used live via MCP (not just direct-runtime) to reveal a `:hover`-only destroy button, then clicked it successfully — confirmed synthetic `mouseover` does NOT trigger real `:hover`, but the real tool does. |
-| Multi-tab workflows, incl. OAuth-style popup login | covered | Milestone 1: created a background tab via `new_tab`, navigated/snapshotted/clicked it independently via `tabId`, confirmed the original tab was completely unaffected. Works correctly. Milestone 58: closed the CLI-specific gap — the CLI had no tab commands at all, and adding them (`tabs`/`newtab`/`focustab`/`closetab`) surfaced two real multi-tab bugs in the per-process reattach architecture (only the most-recent tab was ever discovered; a focus choice didn't survive to the next command), both fixed. See PROB-031. Milestone 59: verified the exact real-world pattern that motivated the fix — a `window.open()`-triggered popup (how real "Sign in with X" OAuth buttons work) is correctly discovered as a real tab, and closing it (simulating provider auth completing) correctly leaves the session on the real parent page. Documented an honest, non-bug nuance: tab ids are a discovery-order counter reassigned fresh on every CLI reattach, not a stable identity — they can shift once the tab set changes between commands, so always re-`tabs` before acting rather than assuming a prior id is still valid. |
+| Multi-tab workflows, incl. OAuth-style popup login | covered | Milestone 1: created a background tab via `new_tab`, navigated/snapshotted/clicked it independently via `tabId`, confirmed the original tab was completely unaffected. Works correctly. Milestone 58: closed the CLI-specific gap — the CLI had no tab commands at all, and adding them (`tabs`/`newtab`/`focustab`/`closetab`) surfaced two real multi-tab bugs in the per-process reattach architecture (only the most-recent tab was ever discovered; a focus choice didn't survive to the next command), both fixed. See PROB-031. Milestone 59: verified the exact real-world pattern that motivated the fix — a `window.open()`-triggered popup (how real "Sign in with X" OAuth buttons work) is correctly discovered as a real tab, and closing it (simulating provider auth completing) correctly leaves the session on the real parent page. Documented an honest, non-bug nuance: tab ids are a discovery-order counter reassigned fresh on every CLI reattach, not a stable identity — they can shift once the tab set changes between commands, so always re-`tabs` before acting rather than assuming a prior id is still valid. Milestone 66: closed a
+real accuracy gap in `tabs`/`list_tabs` itself — every listed tab's title was the hardcoded
+placeholder `'Adopted Tab'`, never the real title, because of the CLI's per-command adoption
+architecture. Now reads the title live. See PROB-035. |
 | File download | covered | Milestone 1: `runtime.downloadFile` verified end-to-end — real file landed on disk at the expected path with correct content (read back and checked, not just a success flag). |
 | File upload | covered | Milestone 2: `browser.upload_file` against a real fixture page (the-internet.herokuapp.com/upload) — set a file input, clicked Upload, confirmed via the server's own response page ("File Uploaded! upload-test.txt") that it actually landed server-side, not just a client-side success flag. |
 | iframes / cross-frame interaction (incl. dynamically-injected, cross-origin) | covered | Milestone 1: verified directly against the runtime — `snapshot`/`click` correctly traverse into a cross-origin iframe injected into the page *after* initial load (the hardest realistic case — matches real chat-widget/payment-iframe behavior). Works correctly today. Milestone 35: closed the one remaining unverified sub-case — `type` into a contenteditable iframe body (TinyMCE), long assumed broken/cross-origin-restricted per GLM's original C4. Turned out to be a misdiagnosis: the iframe isn't actually cross-origin (`contentDocument` fully readable from the parent), it's already groundable via `snap`, and `type` into it already works, real text landing confirmed via independent DOM read-back. The actual bug was an invalid CSS selector in this project's own scenario-suite test code, fixed at the source — see `PROB-019`/`PROB-022`. Milestone 64: closed the one remaining gap — genuinely nested iframes (an iframe inside another iframe). The main `snap`/`click`/`type` path already recursively pierced arbitrary depth automatically, but `eval --frame`/`extractData`'s explicit frame targeting only ever looked one level deep; now supports a `"::"`-separated selector chain to reach any nesting depth. See `PROB-033`. |
@@ -78,6 +81,29 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-17 — Milestone 66: `tabs`/`list_tabs` always showed the placeholder `'Adopted Tab'` title, never a real one — same root cause as Milestone 65, one hop further, closes PROB-035
+
+Immediately after landing Milestone 65's "read live, don't trust the cache" fix for `snap`'s
+title, checked the obvious sibling code path: `tabs`/`list_tabs`. Found it was actually worse —
+not just stale for SPA-style title changes, but **permanently wrong for every tab, always**,
+including a plain tab that had never had its title touched at all. Root cause: the CLI's
+process-per-command architecture means every tab it ever sees arrives through `attach()`'s
+adoption path, which stamps a tab with the hardcoded placeholder `'Adopted Tab'`/`'New Tab'` at
+construction and never refreshes it (only `navigate()` does, and an adopted tab is never
+`navigate()`d through the runtime).
+
+Fixed: `toTabInfo` (`packages/capability-runtime/src/runtime.ts`) now reads `tab.page?.title()`
+live, falling back to the cache only if that call itself fails. This makes `listTabs()` async — a
+real breaking-signature change, propagated honestly to all 4 callers rather than papered over:
+CLI's two call sites (`await`ed), MCP `browser.list_tabs` (`await`ed), and the SDK's
+`Browser.pages()`, which itself had to become `async` (documented in its own doc comment as a
+breaking API change, not silently absorbed). `packages/capability-runtime` 90/90 (one existing
+test updated to the async-rejection form), `packages/cli` 29/29, `packages/mcp-server` 25/25,
+`packages/sutradhar` 11/11. Live-verified through the real CLI binary: one tab navigated plainly
+(no title change), a second tab's title changed via `eval` with no real navigation — `tabs`
+correctly showed `Example Domain` and `SPA Route Changed` respectively, instead of
+`'Adopted Tab'` for both. Closes `PROB-035`.
 
 ### 2026-08-17 — Milestone 65: `snap`'s title goes stale on SPA route changes — found testing navigation history, closes PROB-034
 

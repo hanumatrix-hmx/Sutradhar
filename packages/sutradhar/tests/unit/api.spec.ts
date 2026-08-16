@@ -29,9 +29,9 @@ describe('sutradhar SDK public API', () => {
       shutdown: async () => {},
     };
 
-    it('pages() wraps each session tab as a Page handle', () => {
+    it('pages() wraps each session tab as a Page handle', async () => {
       const browser = new Browser(stubRuntime as unknown as SutradharRuntime, 'sess-1');
-      const pages = browser.pages();
+      const pages = await browser.pages();
       expect(pages).toHaveLength(1);
       expect(pages[0]).toBeInstanceOf(Page);
       expect(pages[0].tabId).toBe('tab-1');
