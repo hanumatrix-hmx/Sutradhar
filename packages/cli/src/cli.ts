@@ -32,27 +32,11 @@ function printErrorAndExit(message: string): never {
   process.exit(1);
 }
 
-async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string) => Promise<T>): Promise<T> {
-  const runtime = new SutradharRuntime({ logger });
-  activeRuntime = runtime;
-  const state = await readState();
-
-  if (state) {
-    try {
-      const { sessionId } = await runtime.attach({ endpoint: state.wsEndpoint, sessionId: state.sessionId });
-      activeSessionId = sessionId;
-      return await fn(runtime, sessionId);
-    } catch (err) {
-      printErrorAndExit(
-        `Could not reconnect to the previous session (${(err as Error).message}). ` +
-          `Run "sutradhar close" to clear stale state, then "sutradhar nav <url>" to start over.`,
-      );
-    }
-  }
-
-  // Spawn Chrome directly (detached) rather than via runtime.launch() — Puppeteer's own
-  // launcher ties the browser's lifetime to THIS process and would close it the moment this
-  // CLI command exits, defeating persistence across separate invocations entirely.
+/** Spawns a fresh detached Chrome (see spawn-chrome.ts for why not runtime.launch()), attaches
+ *  to it, and persists the new session as CLI state. Shared by the "no prior session" and the
+ *  "prior session is dead, self-heal" paths in withSession — a session-worthy new spawn is the
+ *  same operation regardless of which one led to it. */
+async function spawnFreshSession(runtime: SutradharRuntime): Promise<string> {
   let profileUserDataDir: string | undefined;
   if (profileFlag) {
     try {
@@ -73,7 +57,44 @@ async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string)
   }
   await writeState({ sessionId: attached.sessionId, wsEndpoint: spawned.wsEndpoint, chromePid: spawned.pid });
   activeSessionId = attached.sessionId;
-  return fn(runtime, attached.sessionId);
+  return attached.sessionId;
+}
+
+async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string) => Promise<T>): Promise<T> {
+  const runtime = new SutradharRuntime({ logger });
+  activeRuntime = runtime;
+  const state = await readState();
+
+  if (state) {
+    try {
+      const { sessionId } = await runtime.attach({ endpoint: state.wsEndpoint, sessionId: state.sessionId });
+      activeSessionId = sessionId;
+      return await fn(runtime, sessionId);
+    } catch (err) {
+      // Self-heal instead of hard-erroring: a dead previous session (Chrome crashed, was
+      // closed externally, or the wsEndpoint just went stale) is not something the caller can
+      // do anything about except exactly what we're about to do ourselves — clear the stale
+      // state and start a new session. Surfacing a manual "run sutradhar close first" error
+      // here just adds an extra round-trip for a long-running agent session to get unstuck
+      // (found live via INSIGHTS.md's field campaign: this blocked the next command until a
+      // human intervened). Best-effort cleanup of the old Chrome process first, in case it's a
+      // zombie rather than genuinely gone — killChromeTree is already safe to call on a PID
+      // that's already dead.
+      console.error(
+        `Note: previous session was unreachable (${(err as Error).message}) — starting a fresh session.`,
+      );
+      if (state.chromePid) killChromeTree(state.chromePid);
+      await clearState();
+      const sessionId = await spawnFreshSession(runtime);
+      return await fn(runtime, sessionId);
+    }
+  }
+
+  // Spawn Chrome directly (detached) rather than via runtime.launch() — Puppeteer's own
+  // launcher ties the browser's lifetime to THIS process and would close it the moment this
+  // CLI command exits, defeating persistence across separate invocations entirely.
+  const sessionId = await spawnFreshSession(runtime);
+  return fn(runtime, sessionId);
 }
 
 async function cmdProfile(sub: string | undefined, name: string | undefined, rest: string[]) {
