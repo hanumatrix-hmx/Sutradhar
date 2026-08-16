@@ -67,6 +67,20 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-16 — Milestone 41: `click_by_text` routed through the occlusion-safe path — closes PROB-012
+
+A real, previously-deferred gap (`PROB-012`, first found and deliberately deferred back during
+the field-report remediation's Phase 2): `click_by_text` called `element.click()` directly
+instead of going through `verifiedClickOnHandle` the way `click`/`click_by_role` already do —
+an occluding overlay would never be detected, and the action would report success even though
+the real click landed on whatever was actually on top. Fixed: `click_by_text` now calls
+`assertNotStale` + `verifiedClickOnHandle`, the exact same path `click_by_role` uses, and is
+added to `ExecutionVerifier`'s `SELF_VERIFYING_ACTION_TYPES`. Live-verified against a real
+Chrome fixture: an unobstructed `click_by_text` succeeds and the real click handler fires; the
+identical call against the same element with a full-viewport overlay now correctly fails with
+an "occluded" error and the handler does NOT fire — previously it would have fired regardless,
+a genuine silent-failure risk this closes. 2 new unit tests; `packages/browser` 170/170 green.
+
 ### 2026-08-16 — Milestone 39: snapshot verbosity dial (`--no-text`/`--ids-only`) — closes the INSIGHTS.md campaign's full priority stack
 
 Closes INSIGHTS.md Insight 6's remaining ask ("Add verbosity levels: `--ids-only`, `--no-text`,

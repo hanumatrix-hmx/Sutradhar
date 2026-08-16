@@ -273,6 +273,26 @@ describe('@sutradhar/browser BrowserActionEngine click occlusion detection', () 
     expect(handle.click).not.toHaveBeenCalled();
   });
 
+  it('click_by_text now goes through the occlusion-safe path and reports a real miss instead of swallowing it (PROB-012)', async () => {
+    // Before this fix, click_by_text called element.click() directly — an occluding overlay
+    // would never be detected, and the click would report success even though the real click
+    // event went to whatever was actually on top. Same regression shape as click_by_role above.
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValueOnce(false); // not stale, occluded
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'click_by_text',
+      text: 'Submit',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('occluded');
+    expect(handle.click).not.toHaveBeenCalled();
+  });
+
   it('click_by_role resolves via Puppeteer\'s aria/ selector engine, not a plain [role="x"] CSS selector — so it matches implicit roles too', async () => {
     // Regression test: the previous implementation used `[role="button"]`, a CSS attribute
     // selector that only matches elements with an EXPLICIT role="button" attribute — missing
@@ -513,6 +533,24 @@ describe('@sutradhar/browser BrowserActionEngine ExecutionVerifier wiring', () =
 
     // `click` DOES carry a built-in post-condition check (verifiedClickOnHandle's occlusion +
     // delivery-marker check) even without a caller-supplied spec, so it earns a confident pass.
+    expect(result.success).toBe(true);
+    expect(result.verification?.verified).toBe(true);
+    expect(result.verification?.confidence).toBe(0.75);
+  });
+
+  it('reports verified:true for click_by_text too, now that it goes through the same occlusion-safe path (closes PROB-012)', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true); // not stale; occlusion/delivery all clear
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'click_by_text',
+      text: 'Submit',
+      maxRetries: 0,
+      verificationSpec: { candidateConfidence: 0.75 },
+    });
+
     expect(result.success).toBe(true);
     expect(result.verification?.verified).toBe(true);
     expect(result.verification?.confidence).toBe(0.75);

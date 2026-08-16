@@ -457,7 +457,12 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         const xpath = `xpath///*[contains(text(), "${params.text}")]`;
         const element = await this.resolveElement(page, xpath, { timeoutMs: 5000 });
         if (!element) throw new Error(`No element found containing text: ${params.text}`);
-        await element.click();
+        // Routed through the same occlusion-safe, delivery-verified path click/click_by_role
+        // use (PROB-012, logged in .ai/known-problems.md) — this used to call element.click()
+        // directly, which neither checked whether another element was actually topmost at the
+        // click point nor confirmed a real click event was delivered before reporting success.
+        await this.assertNotStale(element, xpath);
+        await this.verifiedClickOnHandle(element, xpath);
         return { clickedText: params.text };
       }
 
