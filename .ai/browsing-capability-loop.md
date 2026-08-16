@@ -49,6 +49,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Network request interception/mocking | covered | Milestone 7: `browser.route` with both `mock` (a real fetch received the exact mocked JSON body) and `block` (a real fetch failed as expected) actions verified against genuine `fetch()` calls, not just the tool's own success report. |
 | Console/network/page-error log capture | covered | Milestone 7: `get_console_logs` correctly captured log/warn/error levels plus an incidental real network failure; `get_page_errors` correctly captured a deliberate uncaught exception with message and stack trace; `get_network_log` correctly distinguished a completed (mocked) request from a blocked one (request-only, no response phase). |
 | CAPTCHA / bot-detection / stealth evasion | excluded | Deliberately out of scope per CLAUDE.md — not a gap to close. |
+| Cross-origin masked/validated payment iframe fields (Stripe Elements) | partial — single-field typing fully covered incl. live formatting; multi-field-group corruption is a documented, mitigated, open limitation | Milestone 45: real checkout tested against `stripe-payments-demo.appspot.com`. Typing into a single masked field (card number, expiry) works correctly and is now verified honestly (tolerates live reformatting, no longer false-negatives). A real, deeper bug found: typing into a *sibling* field in the same masked-input group can retroactively corrupt an earlier field's already-verified value — no per-field check can catch this. Mitigated procedurally (a final group-wide `snapshot` after filling all related fields), not fixed at the engine level. See PROB-025. |
 | Nested/independent scroll containers (virtualized grids, chat panes, modal bodies, code blocks) | covered, real gap found and fixed | Milestone 44: `scroll` previously only ever called `window.scrollBy()` — a page's own `overflow:auto` container (e.g. a virtualized data grid) was silently unreachable, no error. Fixed with an optional element target; also surfaced and fixed a related async-virtualization-re-render timing gap via `settle`. See PROB-024. |
 | Modern code editors (Monaco/VS Code Web's `EditContext`-API input model) | covered, real technique documented (not obvious) | Milestone 43: tested live against the real Monaco Editor playground. Modern Monaco doesn't use a plain `<textarea>` for input at all — it uses the `EditContext` Web API, whose real focus target is an invisible, zero-box `<div class="native-edit-context">` that `click`/`type` correctly refuse to act on (no box model to click, "Node is either not clickable or not an Element") — a real, correct refusal, not a bug. The working technique: target the visible rendered surface (`.monaco-editor .view-lines`, a real, sizable, clickable div) for both `click` and `type` — Puppeteer's real synthetic keyboard events reach Monaco's model correctly through it (verified via `monaco.editor.getEditors()[0].getValue()` actually containing the typed text, not just a fabricated success report). Separately: an initial `snap` taken immediately after navigation surfaced a `<textarea aria-label="Editor content">` that looked like the obvious target but was a transitional element from Monaco's pre-`EditContext`-init state — gone moments later, clicking it failed with occlusion. A real, concrete example of why the `settle` option (Milestone 38) matters: snapshotting/acting too early after navigating into a heavy JS framework can grab elements that don't survive the framework's own init sequence. |
 
@@ -68,6 +69,60 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-16 — Milestone 45: real Stripe Elements checkout — a genuine verification false-negative fixed, a deeper retroactive-corruption bug found and honestly documented, closes PROB-025
+
+Continuing the hard-use-case hunt (todo item 4: "a real multi-step checkout with nested iframe
+payment fields, Stripe Elements"). Tested live against the official
+`stripe-payments-demo.appspot.com` — real cross-origin Stripe Elements iframes for card number,
+expiry, and CVC.
+
+**First finding, fixed**: typing a valid test card number ("4242424242424242") into the real
+card-number iframe field correctly landed the value, but `clearAndType`'s read-back verification
+(raw string equality) reported it as a **failure** — Stripe's field legitimately reformats input
+as you type (spaces every 4 digits; a slash after `MM` in the expiry field), so the landed value
+never exactly matches what was typed even when it's completely correct. Fixed by comparing only
+the alphanumeric characters on both sides (tolerates inserted formatting punctuation/whitespace,
+still catches genuine truncation/wrong-digit/reordering failures since the alphanumeric sequence
+itself still has to match).
+
+**Second finding, precisely diagnosed and honestly NOT fully fixed**: while re-verifying the fix,
+a screenshot showed the card number field genuinely reading a truncated value in a full 3-field
+run. Investigated rigorously rather than assuming — five separate isolated `SutradharRuntime`
+repros ruled out red herrings one at a time: Stripe's own "collapse to a last-4-digits + brand
+icon summary" UI after a *valid* complete card number initially looked like data loss but is
+legitimate UX (confirmed the underlying value landed correctly at t+100ms before the collapse);
+a naive elapsed-time hypothesis was disproven by watching the expiry field stay stable and
+correct for 15+ seconds in isolation; a plain click focusing a different field (no typing) also
+left it untouched. The real, repeatable trigger: typing "1230" into the expiry field lands and
+verifies correctly as "12 / 30" — genuinely correct at that moment — but the instant the **CVC
+field is typed into** (the very next, completely ordinary step in any real checkout), Stripe's
+shared internal Card Element state re-renders the expiry field's display from its own internal
+model, which still hadn't fully registered the last keystroke, silently truncating it to
+"12 / 3". Confirmed this is a real, consequential bug, not cosmetic: attempting to pay in that
+state produces Stripe's own "Your card number is incomplete" validation error.
+
+Attempted an engine-level fix (force a real `blur()` + re-check + `focus()` whenever masking is
+detected) on the theory that blur triggers the canonicalization — built it, tested it, live
+re-verified against the exact repro, and it did **not** catch the bug: a field's own blur+refocus
+doesn't reproduce the failure (confirmed live), only a *sibling* field's later typing does. Rather
+than ship an incomplete fix and claim victory, left the honest gap documented: this specific
+retroactive-corruption class can't be caught by a single-field verification check because the
+corruption is caused by an action on a *different* field, not anything happening to the field
+itself. The blur+refocus change was kept anyway — it's a real, low-cost robustness improvement
+for the more common general case of a field that DOES canonicalize on its own blur, even though
+it didn't turn out to be this specific bug's mechanism.
+
+**Verified, working mitigation**: a final group-wide `browser.snapshot` after filling all related
+masked fields (not trusting each field's own individually-reported success) reliably surfaces the
+corruption — live-confirmed by filling all three Stripe fields and seeing the truncated expiry
+value in the final snapshot, exposing it before a real payment attempt would have hit the same
+wall. Documented as the standing technique for any masked-field-group scenario.
+
+6 new unit tests, `packages/browser` 180/180 — all live-verified against the real `browser-*`
+CLI/runtime path (not just mocks): the formatting-tolerance fix, the blur-recheck's real (if
+narrower-than-hoped) value, and the final-snapshot mitigation actually catching the corruption.
+Closes `PROB-025` (partially — see its "PARTIALLY RESOLVED" status, which is the honest state).
 
 ### 2026-08-16 — Milestone 44: nested/independent scroll containers — a real gap found via MUI's DataGrid, closes PROB-024
 

@@ -723,6 +723,94 @@ describe('@sutradhar/browser BrowserActionEngine type clears existing content fi
     // 4 evaluate calls: assertNotStale, first read-back, nativeSetterFill, second read-back.
     expect(handle.evaluate).toHaveBeenCalledTimes(4);
   });
+
+  it('treats a live-input-masked value as landed correctly once it survives a real blur — e.g. Stripe Elements formatting a card number with spaces', async () => {
+    const handle = mockHandle();
+    handle.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale: not stale
+      .mockResolvedValueOnce('4242 4242 4242 4242') // read-back: masking inserted spaces
+      .mockResolvedValueOnce(undefined) // blur() call
+      .mockResolvedValueOnce('4242 4242 4242 4242') // read-back after blur: still stable
+      .mockResolvedValueOnce(undefined); // focus() call (restoring focus)
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'type',
+      selector: '#card-number',
+      value: '4242424242424242',
+    });
+
+    expect(result.success).toBe(true);
+    // 5 evaluate calls: assertNotStale, read-back, blur, read-back, focus — no native-setter repair needed.
+    expect(handle.evaluate).toHaveBeenCalledTimes(5);
+  });
+
+  it('treats a masked value with inserted separators (slash, dash) as landed correctly once it survives a real blur — e.g. an expiry-date field', async () => {
+    const handle = mockHandle();
+    handle.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale: not stale
+      .mockResolvedValueOnce('12 / 30') // read-back: masking inserted spaces + a slash
+      .mockResolvedValueOnce(undefined) // blur() call
+      .mockResolvedValueOnce('12 / 30') // read-back after blur: still stable
+      .mockResolvedValueOnce(undefined); // focus() call
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'type',
+      selector: '#expiry',
+      value: '1230',
+    });
+
+    expect(result.success).toBe(true);
+    expect(handle.evaluate).toHaveBeenCalledTimes(5);
+  });
+
+  it('catches a masked value that drifts on blur — fixes the Stripe expiry-field digit-loss bug found live (only manifests once focus moves to the next field, e.g. CVC)', async () => {
+    const handle = mockHandle();
+    handle.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale: not stale
+      .mockResolvedValueOnce('12 / 30') // read-back immediately after typing: looks correct
+      .mockResolvedValueOnce(undefined) // blur() call
+      .mockResolvedValueOnce('12 / 3') // read-back after blur: the trailing digit is gone
+      .mockResolvedValueOnce(undefined) // focus() call (restoring focus)
+      .mockResolvedValueOnce(undefined) // nativeSetterFill's own evaluate call (repair attempt)
+      .mockResolvedValueOnce('12 / 3'); // read-back after repair: still drifted
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'type',
+      selector: '#expiry',
+      value: '1230',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('did not land the expected value');
+  });
+
+  it('still fails a genuinely truncated value even though it would pass a naive substring check', async () => {
+    const handle = mockHandle();
+    handle.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale: not stale
+      .mockResolvedValueOnce('4242 4242') // read-back: genuinely truncated, not just reformatted
+      .mockResolvedValueOnce(undefined) // nativeSetterFill's own evaluate call
+      .mockResolvedValueOnce('4242 4242'); // read-back after repair: still truncated
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'type',
+      selector: '#card-number',
+      value: '4242424242424242',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('did not land the expected value');
+  });
 });
 
 describe('@sutradhar/browser BrowserActionEngine retry does not interleave with an in-flight dispatch (fixes A2)', () => {

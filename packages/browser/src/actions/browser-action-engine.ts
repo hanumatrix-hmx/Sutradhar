@@ -915,18 +915,55 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    * type sequence, the real DOM value is read back; on mismatch, {@link nativeSetterFill} is
    * tried as a repair for the controlled-component case; if the value still doesn't match after
    * that, this throws instead of silently returning a false "succeeded".
+   *
+   * The comparison ignores inserted punctuation/whitespace: real-world fields with live input
+   * masking auto-insert formatting characters as you type — Stripe Elements' card-number field
+   * groups digits with spaces ("4242424242424242" lands as "4242 4242 4242 4242"), its expiry
+   * field inserts a slash ("1230" lands as "12 / 30"), phone fields insert dashes/parens, etc. A
+   * raw equality check treated these genuine successes as failures (found live against Stripe's
+   * own payments demo — first the card-number spacing, then the expiry slash). Comparing only
+   * the alphanumeric characters (stripping everything else from both sides) tolerates exactly
+   * that class of formatting while still catching a real failure: truncation, wrong digits, or
+   * reordering still changes the alphanumeric sequence and is still caught.
+   *
+   * A masked field's live formatting is also a signal of a second, subtler bug class: found live
+   * against Stripe Elements' expiry field (`MM / YY`) — typing "1230" read back correctly as
+   * "12 / 30" immediately afterward (masking detected, verification passed), stayed correct for
+   * 15+ seconds in isolation, but the *instant* focus moved to the next field (e.g. the CVC
+   * field getting typed into next, the ordinary next step in any real checkout flow) it silently
+   * dropped its last digit to "12 / 3". Root cause: on blur, Stripe canonicalizes the displayed
+   * value from its own internal parsed state rather than the DOM, and that internal state lags
+   * behind Puppeteer's fast synthetic keystroke dispatch — the DOM briefly shows the fully-typed
+   * value, but the field doesn't actually "know" about the last keystroke yet, and blur is what
+   * exposes the gap. A time-based wait cannot catch this (confirmed live: the value was still
+   * fully correct at t+15s with no blur) — the trigger is the blur event itself, not elapsed
+   * time. Whenever masking is detected, force a real blur (then restore focus, since a caller
+   * filling this field didn't ask for focus to move) and re-check against that — the same
+   * post-condition a real subsequent field-to-field tab would produce.
    */
   private async clearAndType(handle: ElementHandle<Element>, value: string): Promise<void> {
     await handle.click({ count: 3 });
     await handle.press('Backspace');
     await handle.type(value);
 
+    const normalize = (s: string) => s.replace(/[^a-zA-Z0-9]/g, '');
+    const expected = normalize(value);
+
     let landed = await this.readElementValue(handle);
-    if (landed === value) return;
+    if (normalize(landed) === expected) {
+      if (landed === value) return; // exact match — no masking involved, nothing to recheck.
+      // Masking detected (formatting characters were inserted) — confirm it survives a real
+      // blur, since some masked fields only canonicalize (and can silently truncate) on blur.
+      await handle.evaluate((el) => (el as HTMLElement).blur());
+      const afterBlur = await this.readElementValue(handle);
+      await handle.evaluate((el) => (el as HTMLElement).focus());
+      if (normalize(afterBlur) === expected) return;
+      landed = afterBlur;
+    }
 
     await this.nativeSetterFill(handle, value);
     landed = await this.readElementValue(handle);
-    if (landed === value) return;
+    if (normalize(landed) === expected) return;
 
     throw new Error(
       `type did not land the expected value — expected ${JSON.stringify(value)}, but the ` +
