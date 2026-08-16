@@ -49,6 +49,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Network request interception/mocking | covered | Milestone 7: `browser.route` with both `mock` (a real fetch received the exact mocked JSON body) and `block` (a real fetch failed as expected) actions verified against genuine `fetch()` calls, not just the tool's own success report. |
 | Console/network/page-error log capture | covered | Milestone 7: `get_console_logs` correctly captured log/warn/error levels plus an incidental real network failure; `get_page_errors` correctly captured a deliberate uncaught exception with message and stack trace; `get_network_log` correctly distinguished a completed (mocked) request from a blocked one (request-only, no response phase). |
 | CAPTCHA / bot-detection / stealth evasion | excluded | Deliberately out of scope per CLAUDE.md — not a gap to close. |
+| Complex JS date-range picker widgets (calendar dropdown, two-month grid, re-render-on-click) | covered | Milestone 46: tested live against `daterangepicker.com`'s real widget — 9 identical widget instances share the same CSS classes on one page (only one visible at a time), a real trap for hand-written CSS selectors (confirmed one led straight to a hidden instance) that Sutradhar's own snapshot sidesteps entirely since it only stamps elements that are actually visible. The library re-renders its calendar `<table>` after every day-cell click, correctly invalidating the previously-stamped end-date cell's id — the engine's honest stale-id refusal fired exactly as designed ("re-snapshot and use a fresh id"), not a bug. Following that advice (re-snapshot between the two day clicks) completed the full flow: start date, end date, Apply — the input's real value updated to the exact selected range, independently confirmed via read-back. |
 | Cross-origin masked/validated payment iframe fields (Stripe Elements) | partial — single-field typing fully covered incl. live formatting; multi-field-group corruption is a documented, mitigated, open limitation | Milestone 45: real checkout tested against `stripe-payments-demo.appspot.com`. Typing into a single masked field (card number, expiry) works correctly and is now verified honestly (tolerates live reformatting, no longer false-negatives). A real, deeper bug found: typing into a *sibling* field in the same masked-input group can retroactively corrupt an earlier field's already-verified value — no per-field check can catch this. Mitigated procedurally (a final group-wide `snapshot` after filling all related fields), not fixed at the engine level. See PROB-025. |
 | Nested/independent scroll containers (virtualized grids, chat panes, modal bodies, code blocks) | covered, real gap found and fixed | Milestone 44: `scroll` previously only ever called `window.scrollBy()` — a page's own `overflow:auto` container (e.g. a virtualized data grid) was silently unreachable, no error. Fixed with an optional element target; also surfaced and fixed a related async-virtualization-re-render timing gap via `settle`. See PROB-024. |
 | Modern code editors (Monaco/VS Code Web's `EditContext`-API input model) | covered, real technique documented (not obvious) | Milestone 43: tested live against the real Monaco Editor playground. Modern Monaco doesn't use a plain `<textarea>` for input at all — it uses the `EditContext` Web API, whose real focus target is an invisible, zero-box `<div class="native-edit-context">` that `click`/`type` correctly refuse to act on (no box model to click, "Node is either not clickable or not an Element") — a real, correct refusal, not a bug. The working technique: target the visible rendered surface (`.monaco-editor .view-lines`, a real, sizable, clickable div) for both `click` and `type` — Puppeteer's real synthetic keyboard events reach Monaco's model correctly through it (verified via `monaco.editor.getEditors()[0].getValue()` actually containing the typed text, not just a fabricated success report). Separately: an initial `snap` taken immediately after navigation surfaced a `<textarea aria-label="Editor content">` that looked like the obvious target but was a transitional element from Monaco's pre-`EditContext`-init state — gone moments later, clicking it failed with occlusion. A real, concrete example of why the `settle` option (Milestone 38) matters: snapshotting/acting too early after navigating into a heavy JS framework can grab elements that don't survive the framework's own init sequence. |
@@ -69,6 +70,33 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-16 — Milestone 46: complex date-range picker widget — covered, no bug found, confirms the grounding's own honest stale-id refusal working as designed
+
+Closing out the hard-use-case todo list's fifth item (a complex date-range picker) against the
+real `daterangepicker.com` demo. Two real findings, both positive:
+
+1. The page has **9 identical widget instances** (one per code example on the page), all sharing
+   the same `.daterangepicker`/`.drp-calendar` classes — only one visible at a time. A hand-written
+   CSS selector (`.daterangepicker.show-calendar td.available`) landed on a *hidden* instance
+   (`querySelector` returns DOM order, not visibility order) and silently failed to select
+   anything. Sutradhar's own `snapshot` sidesteps this entirely — it only ever stamps elements
+   that are actually visible, so the id-based approach worked correctly on the first try with no
+   extra visibility filtering needed.
+2. `daterangepicker.js` re-renders its calendar `<table>` after every day-cell click (a real,
+   common pattern for these widgets — not React-specific). The previously-stamped end-date cell's
+   id was correctly refused as stale ("node id 291 is not present in the current snapshot
+   generation... call browser.snapshot again") rather than misclicking or silently no-op'ing —
+   exactly the honest-refusal behavior this project built earlier (the field-report remediation's
+   navigation-aware stale-id message). Following that advice — re-snapshotting between the two
+   day-cell clicks — completed the full flow correctly: start date (Aug 5), end date (Sep 18),
+   Apply, with the input's real value landing as `"08/05/2026 - 09/18/2026"`, confirmed via
+   independent read-back after the fact, not just trusting each click's own success report.
+
+No engine bug found or fix needed — a genuine "covered" result, not a gap. Closes the originally
+planned 5-item hard-use-case list (Monaco, SortableJS/drag-and-drop, virtualized data grid,
+Stripe Elements checkout, date-range picker); continuing to find fresh hard cases per the
+standing "keep going" directive rather than treating this list's exhaustion as a stopping point.
 
 ### 2026-08-16 — Milestone 45: real Stripe Elements checkout — a genuine verification false-negative fixed, a deeper retroactive-corruption bug found and honestly documented, closes PROB-025
 
