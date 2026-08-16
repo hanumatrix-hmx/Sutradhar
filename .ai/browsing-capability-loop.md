@@ -74,6 +74,28 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-16 — Milestone 50: middle-click opened a duplicate tab — found by sweeping for the same bug shape as PROB-027, closes PROB-028
+
+After Milestone 49 fixed `scroll`'s `'top'`/`'bottom'` bug (a binary branch on a 3+-value enum
+silently mishandling the non-`'down'` values), swept the rest of `browser-action-engine.ts` for
+the same shape before picking a fresh UI pattern. Found one: `verifiedClick`'s delivery-detection
+and JS-click fallback were both only button-aware for `'right'` — `'middle'` silently inherited
+`'left'`'s behavior on both sides.
+
+Verified live rather than assuming: a real `target="_blank"` link, middle-clicked via
+`clickWithButton`, genuinely fires `auxclick` (confirmed — not `click`, per spec). But the
+delivery marker was listening for `'click'`, misread the middle-click as undelivered, and fired
+the fallback — which unconditionally calls `element.click()`, a plain left-click simulation. For
+a `target="_blank"` link, a left click ALSO opens a new tab — so a single middle-click action
+produced **two** new tabs (3 total including the original), confirmed via `listTabs()`.
+
+Fixed both sides to be three-way button-aware, matching the existing `'right'`-handling pattern
+exactly: `'middle'` now listens for `auxclick` and, on genuine non-delivery, dispatches a
+synthetic `auxclick` (not `element.click()`). 2 new unit tests, `packages/browser` 184/184.
+Live-verified: before the fix, 3 tabs total and a spurious extra `click` event (the fallback
+firing); after, exactly 2 tabs and only the real `auxclick` — no fallback triggered for a cleanly
+delivered middle-click. Closes `PROB-028`.
+
 ### 2026-08-16 — Milestone 49: infinite-scroll pages — a high-severity `scroll bottom`/`scroll top` bug found and fixed, closes PROB-027
 
 Continuing the hard-use-case hunt. Tested live against a real infinite-scroll demo (append-more-

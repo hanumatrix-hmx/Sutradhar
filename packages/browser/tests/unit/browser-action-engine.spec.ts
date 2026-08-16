@@ -1332,6 +1332,48 @@ describe('@sutradhar/browser BrowserActionEngine right-click (button-aware)', ()
   });
 });
 
+describe('@sutradhar/browser BrowserActionEngine middle-click (button-aware) — fixes a real duplicate-tab bug found live', () => {
+  it('listens for auxclick (not click) delivery and reports success on a clean middle-click, without ever falling back to a JS click', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true); // not stale, isHit, marker, delivered=true
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'click',
+      selector: '#link-target',
+      button: 'middle',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(handle.click).toHaveBeenCalledWith(expect.objectContaining({ button: 'middle' }));
+  });
+
+  it('falls back to a synthetic auxclick dispatch (not a JS click, which would open a duplicate target=_blank tab) when a middle-click is not delivered', async () => {
+    const handle = mockHandle();
+    handle.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale
+      .mockResolvedValueOnce(undefined) // stability wait
+      .mockResolvedValueOnce(true) // isHit
+      .mockResolvedValueOnce(undefined) // marker setup
+      .mockResolvedValueOnce(false) // delivered? no
+      .mockResolvedValueOnce(undefined); // fallback dispatch
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'click',
+      selector: '#link-target',
+      button: 'middle',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(handle.evaluate).toHaveBeenCalledTimes(6);
+  });
+});
+
 describe('@sutradhar/browser BrowserActionEngine drag_and_drop', () => {
   it('resolves both source and target handles and calls drag then drop', async () => {
     const source = mockHandle();

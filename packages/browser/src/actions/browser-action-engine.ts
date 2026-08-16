@@ -1247,11 +1247,16 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       );
     }
 
-    // A right-click's real signal is a 'contextmenu' event, not 'click' — a left/middle click
-    // still fires 'click'. Listening for the wrong one would always read as "not delivered"
-    // and wrongly trigger the JS-click fallback below (which can only ever simulate a *left*
-    // click), so the marker/fallback logic must be button-aware.
-    const deliveryEvent = button === 'right' ? 'contextmenu' : 'click';
+    // A right-click's real signal is a 'contextmenu' event, and a middle-click's real signal is
+    // 'auxclick' (per spec — 'click' is reserved for the primary/left button) — a left click is
+    // the only one that fires 'click'. Listening for the wrong one would always read as "not
+    // delivered" and wrongly trigger the JS-click fallback below, which can only ever simulate a
+    // *left* click — found live: a real middle-click on a `target="_blank"` link genuinely opened
+    // one new tab (confirmed via a real 'auxclick' event), but because the delivery check only
+    // distinguished 'right' from everything else, it (mis)judged the middle-click undelivered and
+    // fired the left-click fallback too, opening a SECOND, duplicate tab. So the marker/fallback
+    // logic must be button-aware for all three values, not just left-vs-right.
+    const deliveryEvent = button === 'right' ? 'contextmenu' : button === 'middle' ? 'auxclick' : 'click';
 
     await handle.evaluate((el, evtName) => {
       const target = el as HTMLElement & { __ptClicked?: boolean };
@@ -1296,6 +1301,12 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         // synthetic contextmenu event directly instead.
         await handle.evaluate((el) => {
           el.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, button: 2 }));
+        });
+      } else if (button === 'middle') {
+        // Same reasoning as the right-click branch — `element.click()` can only ever simulate a
+        // *left* click, so a middle-click's fallback must dispatch a real 'auxclick' instead.
+        await handle.evaluate((el) => {
+          el.dispatchEvent(new MouseEvent('auxclick', { bubbles: true, cancelable: true, button: 1 }));
         });
       } else {
         await handle.evaluate((el) => (el as HTMLElement).click());
