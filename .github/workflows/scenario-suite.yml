@@ -41,6 +41,17 @@ jobs:
       - name: Build (all packages, dependency order via turbo)
         run: pnpm run build
 
+      # tools/scenario-suite/results/baseline-*.json are committed historical snapshots (the
+      # Phase 1 pre-fix baseline) — actions/checkout leaves them in place, so without this step
+      # a driver that crashes before writing its own fresh output would still find yesterday's
+      # (or the original baseline's) file sitting there, masking the crash from ci-gate.mjs's
+      # missing-results-file check entirely. Found live in this workflow's own local dry run:
+      # the SDK driver crashed on UC-07 without writing baseline-sdk.json, but the pre-existing
+      # committed copy made the gate report a false "3/3 surfaces healthy". Clearing first makes
+      # "the file exists" actually mean "this run produced it".
+      - name: Clear stale committed results before this run
+        run: rm -f tools/scenario-suite/results/baseline-sdk.json tools/scenario-suite/results/baseline-cli.json tools/scenario-suite/results/baseline-mcp.json
+
       # Each surface driver runs independently (`if: always()` on the second and third so a
       # crash in one — e.g. an uncaught rejection from a flaky external site mid-run, a real
       # failure mode observed live during this workflow's own dry run — doesn't skip the other
