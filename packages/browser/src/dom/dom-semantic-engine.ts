@@ -41,6 +41,19 @@ export const SD_GENERATION_ATTR = 'data-sd-gen';
 export const SD_CURRENT_GENERATION_ATTR = 'data-sd-current-gen';
 
 /**
+ * A short snapshot-time text fingerprint stamped alongside {@link SD_NODE_ID_ATTR}. The
+ * generation check alone (`SD_GENERATION_ATTR`) only catches staleness caused by a NEW
+ * snapshot being taken — it says nothing about a virtualized/windowed list (react-window,
+ * MUI DataGrid, etc.) recycling the same DOM node for a different logical row via scroll,
+ * with no new snapshot involved at all. Found live (PROB-036): a node id captured for "Row 0"
+ * silently and confidently clicked "Row 50" after a scroll, because the recycled DOM node kept
+ * its original id/generation attributes untouched — only its text content changed. Comparing
+ * this fingerprint against the element's live text at act time catches that case without
+ * needing any virtualization-specific detection.
+ */
+export const SD_FINGERPRINT_ATTR = 'data-sd-fp';
+
+/**
  * ARIA/tag combination treated as "interactive" for both scraping and the LLM-facing listing.
  * `[onclick]`, `[tabindex]:not([tabindex="-1"])`, and `[contenteditable]` (excluding an explicit
  * `contenteditable="false"`) catch elements whose only signal of interactivity is a DOM attribute
@@ -160,6 +173,7 @@ export class DOMSemanticEngine implements IDOMSemanticEngine {
             attrName: SD_NODE_ID_ATTR,
             genAttr: SD_GENERATION_ATTR,
             currentGenAttr: SD_CURRENT_GENERATION_ATTR,
+            fpAttr: SD_FINGERPRINT_ATTR,
             selector: INTERACTIVE_SELECTOR,
             generation,
             startId: nextId,
@@ -237,6 +251,7 @@ export class DOMSemanticEngine implements IDOMSemanticEngine {
               { value: generation },
               { value: SD_NODE_ID_ATTR },
               { value: SD_GENERATION_ATTR },
+              { value: SD_FINGERPRINT_ATTR },
               { value: SYNTHETIC_CLICKABLE_ROLE },
             ],
             returnByValue: true,
@@ -287,13 +302,14 @@ function scrapeFrame(params: {
   attrName: string;
   genAttr: string;
   currentGenAttr: string;
+  fpAttr: string;
   selector: string;
   generation: string;
   startId: number;
   maxStamped: number;
   syntheticClickableRole: string;
 }): ScrapedNode[] {
-  const { attrName, genAttr, currentGenAttr, selector, generation, startId, maxStamped, syntheticClickableRole } =
+  const { attrName, genAttr, currentGenAttr, fpAttr, selector, generation, startId, maxStamped, syntheticClickableRole } =
     params;
 
   // Recursively collect matches from `root` and from every open shadow root nested within it.
@@ -353,6 +369,7 @@ function scrapeFrame(params: {
   for (const el of elements) {
     el.removeAttribute(attrName);
     el.removeAttribute(genAttr);
+    el.removeAttribute(fpAttr);
   }
 
   return elements.slice(0, maxStamped).map((elUntyped, idx) => {
@@ -417,6 +434,12 @@ function scrapeFrame(params: {
       inputEl.placeholder ||
       undefined;
 
+    // Snapshot-time text fingerprint (see SD_FINGERPRINT_ATTR's doc comment) — lets a later
+    // action detect that this exact DOM node now represents different content than it did at
+    // snapshot time (virtualized-list row recycling), even though its id/generation attributes
+    // never changed because no new snapshot was taken.
+    el.setAttribute(fpAttr, (name || '').trim().slice(0, 60));
+
     // A nonzero bounding box alone is not "visible" — an element can occupy real layout space
     // while being `visibility:hidden` or `opacity:0`, both of which leave `rect` unchanged (only
     // `display:none` collapses it, which the rect check already catches). Fixes a real false
@@ -475,6 +498,7 @@ function extractAndStampEventListenerElement(
   generation: string,
   attrName: string,
   genAttr: string,
+  fpAttr: string,
   syntheticRole: string,
 ): {
   id: number;
@@ -505,6 +529,7 @@ function extractAndStampEventListenerElement(
 
   const inputEl = el as HTMLInputElement;
   const name = el.getAttribute('aria-label') || el.innerText?.slice(0, 100) || inputEl.placeholder || inputEl.value || undefined;
+  el.setAttribute(fpAttr, (name || '').trim().slice(0, 60));
 
   let confidence = 0.4; // lower base than the primary pass — a real listener, but no known semantics
   if (name) confidence += 0.3;

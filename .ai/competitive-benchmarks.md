@@ -123,7 +123,8 @@ official, from the same company whose engine (Chromium via CDP) Sutradhar itself
 explicitly designed for AI-agent tool use rather than test-authoring. Full tool list fetched
 2026-08-13 from the project's own README.
 
-**What Playwright MCP has that Sutradhar's 60-tool surface (at the time) didn't:**
+**What Playwright MCP has that Sutradhar's tool surface (60 tools at the time this comparison
+was first written; 69 as of 2026-08-17) didn't:**
 
 | Their tool | Gap | Status |
 |---|---|---|

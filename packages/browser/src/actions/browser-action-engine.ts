@@ -15,7 +15,7 @@ import { SessionId } from '@sutradhar/contracts';
 import { ElementHandle, Page } from 'puppeteer-core';
 import { IBrowserTab } from '../session/browser-tab.js';
 import { ExecutionVerifier } from '../verifier/execution-verifier.js';
-import { SD_GENERATION_ATTR, SD_CURRENT_GENERATION_ATTR } from '../dom/dom-semantic-engine.js';
+import { SD_GENERATION_ATTR, SD_CURRENT_GENERATION_ATTR, SD_FINGERPRINT_ATTR } from '../dom/dom-semantic-engine.js';
 import { ActionParams, ActionResultDto, SettleSpec } from './action-types.js';
 
 export interface IBrowserActionEngine {
@@ -1412,18 +1412,56 @@ export class BrowserActionEngine implements IBrowserActionEngine {
   }
 
   private async assertNotStale(handle: ElementHandle<Element>, selector: string): Promise<void> {
-    const isStale = await handle.evaluate(
-      (el, genAttr, currentGenAttr) => {
+    // Single evaluate() call checking two independent staleness signals, kept as one round trip
+    // (not two) so this stays a drop-in call-count match for every existing test mock's
+    // evaluate() sequence.
+    //
+    // 1. Generation mismatch: a NEW snapshot has been taken since this element was stamped —
+    //    the classic case.
+    // 2. Fingerprint mismatch: the element's live text no longer matches its snapshot-time text,
+    //    even though its generation is unchanged. Catches a virtualized/windowed list
+    //    (react-window, MUI DataGrid, etc.) recycling the SAME DOM node for a different logical
+    //    row via scroll, with no new snapshot involved — the recycled node's id/generation
+    //    attributes never change, only its content does. Found live: a node id captured for one
+    //    row silently and confidently clicked a completely different row after a scroll (see
+    //    PROB-036). Elements with no stamped fingerprint (an older snapshot generation predating
+    //    this check) are skipped, not false-flagged.
+    const reason = await handle.evaluate(
+      (el, genAttr, currentGenAttr, fpAttr) => {
         const elGen = el.getAttribute(genAttr);
         const currentGen = el.ownerDocument.documentElement.getAttribute(currentGenAttr);
-        return !!elGen && !!currentGen && elGen !== currentGen;
+        if (!!elGen && !!currentGen && elGen !== currentGen) return 'generation';
+
+        const storedFp = el.getAttribute(fpAttr);
+        if (storedFp) {
+          const inputEl = el as HTMLInputElement;
+          const liveText = (
+            el.getAttribute('aria-label') ||
+            (el as HTMLElement).innerText?.slice(0, 100) ||
+            inputEl.placeholder ||
+            inputEl.value ||
+            ''
+          )
+            .trim()
+            .slice(0, 60);
+          if (liveText !== storedFp) return 'fingerprint';
+        }
+        return null;
       },
       SD_GENERATION_ATTR,
       SD_CURRENT_GENERATION_ATTR,
+      SD_FINGERPRINT_ATTR,
     );
-    if (isStale) {
+    if (reason === 'generation') {
       throw new Error(
         `Element matching "${selector}" is from a stale snapshot (the page has been re-snapshotted since) — call browser.snapshot again and use a fresh node id.`,
+      );
+    }
+    if (reason === 'fingerprint') {
+      throw new Error(
+        `Element matching "${selector}" now shows different content than when it was snapshotted — its ` +
+          `underlying DOM node was likely recycled for a different row by a virtualized/windowed list ` +
+          `(e.g. after scrolling). Call browser.snapshot again and use a fresh node id.`,
       );
     }
   }

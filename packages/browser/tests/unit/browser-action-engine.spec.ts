@@ -560,7 +560,7 @@ describe('@sutradhar/browser BrowserActionEngine ExecutionVerifier wiring', () =
 describe('@sutradhar/browser BrowserActionEngine node-id staleness guard', () => {
   it('rejects a click on a selector stamped with an older generation than the page currently has', async () => {
     const handle = mockHandle();
-    handle.evaluate.mockResolvedValueOnce(true); // assertNotStale: IS stale
+    handle.evaluate.mockResolvedValueOnce('generation'); // assertNotStale: IS stale (generation mismatch)
     const page = singleFramePage(() => Promise.resolve(handle));
 
     const engine = new BrowserActionEngine();
@@ -572,6 +572,23 @@ describe('@sutradhar/browser BrowserActionEngine node-id staleness guard', () =>
 
     expect(result.success).toBe(false);
     expect(result.error).toContain('stale snapshot');
+    expect(handle.click).not.toHaveBeenCalled();
+  });
+
+  it('rejects a click on a selector whose DOM node was recycled by a virtualized list (content changed, generation unchanged)', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce('fingerprint'); // assertNotStale: recycled content
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'click',
+      selector: '[data-sd-node-id="7"]',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('different content than when it was snapshotted');
     expect(handle.click).not.toHaveBeenCalled();
   });
 

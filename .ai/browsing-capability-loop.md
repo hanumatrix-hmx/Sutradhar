@@ -62,7 +62,7 @@ architecture. Now reads the title live. See PROB-035. |
 | Portal-rendered searchable multi-select combobox (react-select and similar) | covered | Milestone 47: tested live against `react-select.com`'s own demo. Both real interaction modes verified: (1) click-to-select — click the field, type a search term to filter, click the filtered `role=option` result, confirm the resulting chip via a fresh snapshot; (2) pure keyboard-driven selection — type a search term, `press ArrowDown` then `press Enter` with no click on the option at all, confirmed the chip landed correctly. Both modes work correctly with no engine changes needed. |
 | Complex JS date-range picker widgets (calendar dropdown, two-month grid, re-render-on-click) | covered | Milestone 46: tested live against `daterangepicker.com`'s real widget — 9 identical widget instances share the same CSS classes on one page (only one visible at a time), a real trap for hand-written CSS selectors (confirmed one led straight to a hidden instance) that Sutradhar's own snapshot sidesteps entirely since it only stamps elements that are actually visible. The library re-renders its calendar `<table>` after every day-cell click, correctly invalidating the previously-stamped end-date cell's id — the engine's honest stale-id refusal fired exactly as designed ("re-snapshot and use a fresh id"), not a bug. Following that advice (re-snapshot between the two day clicks) completed the full flow: start date, end date, Apply — the input's real value updated to the exact selected range, independently confirmed via read-back. |
 | Cross-origin masked/validated payment iframe fields (Stripe Elements) | partial — single-field typing fully covered incl. live formatting; multi-field-group corruption is a documented, mitigated, open limitation | Milestone 45: real checkout tested against `stripe-payments-demo.appspot.com`. Typing into a single masked field (card number, expiry) works correctly and is now verified honestly (tolerates live reformatting, no longer false-negatives). A real, deeper bug found: typing into a *sibling* field in the same masked-input group can retroactively corrupt an earlier field's already-verified value — no per-field check can catch this. Mitigated procedurally (a final group-wide `snapshot` after filling all related fields), not fixed at the engine level. See PROB-025. |
-| Nested/independent scroll containers (virtualized grids, chat panes, modal bodies, code blocks) | covered, real gap found and fixed | Milestone 44: `scroll` previously only ever called `window.scrollBy()` — a page's own `overflow:auto` container (e.g. a virtualized data grid) was silently unreachable, no error. Fixed with an optional element target; also surfaced and fixed a related async-virtualization-re-render timing gap via `settle`. See PROB-024. |
+| Nested/independent scroll containers (virtualized grids, chat panes, modal bodies, code blocks) | covered, 2 real gaps found and fixed | Milestone 44: `scroll` previously only ever called `window.scrollBy()` — a page's own `overflow:auto` container (e.g. a virtualized data grid) was silently unreachable, no error. Fixed with an optional element target; also surfaced and fixed a related async-virtualization-re-render timing gap via `settle`. See PROB-024. Milestone 69: a deeper, previously-unknown grounding-correctness gap — a node id captured before scrolling a virtualized/windowed list (react-window/MUI DataGrid-style DOM node recycling) could be acted on afterward and silently hit the WRONG recycled row, `success:true`, because the generation-based staleness guard never fires when a node's id/generation attributes are untouched by recycling. Fixed with a snapshot-time text fingerprint compared against live content at act time. See PROB-036. |
 | Modern code editors (Monaco/VS Code Web's `EditContext`-API input model) | covered, real technique documented (not obvious) | Milestone 43: tested live against the real Monaco Editor playground. Modern Monaco doesn't use a plain `<textarea>` for input at all — it uses the `EditContext` Web API, whose real focus target is an invisible, zero-box `<div class="native-edit-context">` that `click`/`type` correctly refuse to act on (no box model to click, "Node is either not clickable or not an Element") — a real, correct refusal, not a bug. The working technique: target the visible rendered surface (`.monaco-editor .view-lines`, a real, sizable, clickable div) for both `click` and `type` — Puppeteer's real synthetic keyboard events reach Monaco's model correctly through it (verified via `monaco.editor.getEditors()[0].getValue()` actually containing the typed text, not just a fabricated success report). Separately: an initial `snap` taken immediately after navigation surfaced a `<textarea aria-label="Editor content">` that looked like the obvious target but was a transitional element from Monaco's pre-`EditContext`-init state — gone moments later, clicking it failed with occlusion. A real, concrete example of why the `settle` option (Milestone 38) matters: snapshotting/acting too early after navigating into a heavy JS framework can grab elements that don't survive the framework's own init sequence. |
 
 ## MCP session staleness — resolved 2026-08-13, but re-staleness after every rebuild is a standing gotcha
@@ -106,6 +106,34 @@ script: `pageText` went from empty to 4000 real characters of the document's act
 installed via a plain `npm install` in an isolated scratch directory and copied in rather than
 resolved through the workspace's normal install path — noted explicitly in `PROB-009` so a
 future real `pnpm install` isn't skipped by mistake. Closes `PROB-009`.
+
+### 2026-08-17 — Milestone 69: virtualized-list node-id recycling could silently act on the wrong row — closes PROB-036, the deepest grounding-correctness gap found this session
+
+Picked a hard, previously-unprobed hazard rather than another surface-level dogfooding pass:
+what happens to a captured node id across a scroll on a list library that genuinely *recycles*
+DOM nodes (react-window, MUI DataGrid, and similar — distinct from Milestone 44's "can `scroll`
+even reach the container" question, which was already solved). Built a synthetic but faithful
+repro matching real recycling behavior exactly (a fixed pool of DOM row elements whose
+`textContent`/dataset gets reassigned as different logical rows scroll into view, never
+creating/destroying the actual elements) rather than fighting a specific external site's exact
+virtualization internals.
+
+Result: a node id captured for "Row 0" before scrolling, then acted on afterward, silently
+clicked "Row 50" — the recycled DOM node's real content — while reporting `success:true`. The
+existing staleness guard (`assertNotStale`) never caught it: it only compares a stamped
+generation against the document's current generation, which only changes on a NEW `snapshot()`
+call. Scroll-triggered recycling touches neither attribute — the exact blind spot a confident
+false-positive report like this project's own `verify, don't assume` standard exists to prevent.
+
+Fixed: every stamped interactive element now also carries a `data-sd-fp` text fingerprint at
+snapshot time; `assertNotStale` compares it against the element's live text in the same single
+`evaluate()` round trip as the existing generation check (not a second call — kept as one to
+stay a drop-in match for every existing test's mocked call-count). A mismatch throws a distinct,
+honest error naming virtualized-list recycling as the likely cause. `packages/browser` 185/185
+(new fingerprint-mismatch test + the one existing staleness test updated). Live-verified twice:
+the repro above now correctly refuses the click instead of hitting the wrong row, and a normal,
+never-recycled click still succeeds (explicit regression check, not just the positive case).
+Closes `PROB-036`.
 
 ### 2026-08-17 — Milestone 66: `tabs`/`list_tabs` always showed the placeholder `'Adopted Tab'` title, never a real one — same root cause as Milestone 65, one hop further, closes PROB-035
 
