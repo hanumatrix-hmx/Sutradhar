@@ -4,7 +4,7 @@ Machine Readable: true
 Update Ownership: AI Agent
 Freshness Expectation: Per Loop Iteration
 Update Policy: Append-driven (log), change-driven (taxonomy)
-Last Updated: 2026-08-13
+Last Updated: 2026-08-16
 ---
 
 # Browsing capability loop — persistent state
@@ -34,7 +34,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Real-time/streaming pages (continuous background DOM churn) | covered | Milestone 1: grounding survives ongoing unrelated DOM churn elsewhere on the page (a simulated live-feed stream, numeric id captured then acted on ~8 re-renders later — still hit the right element). Milestone 19: tested a genuinely WebSocket-push-driven page (piehost.com's live WebSocket tester, real `wss://` connection, not polling) — a numeric id (a copy button) captured in a snapshot immediately after 4 new log lines arrived via real WS push resolved correctly via `eval` to the live element; occlusion detection correctly refused a click blocked by an unrelated chat widget on the same push-updated content; typing into a filter field correctly filtered the WS-delivered log from 4 entries to the 1 matching in real time. The harder "target itself gets destroyed and id gets reused" case remains untested but is a narrower edge case, not the core WebSocket/SSE gap. |
 | Media (video/audio/canvas) | covered | Milestone 3: native `<video controls>` UI is not exposed via `snapshot` (expected — UA-internal shadow DOM; the correct control path is the JS media API, not clicking browser chrome). `video.play()`/`.pause()`/state inspection via `eval` works correctly against a real, well-formed video. One specific external test file failed with a genuine format/codec error (`MEDIA_ELEMENT_ERROR`) — confirmed to be that file's problem, not Sutradhar's, by successfully loading a different real video right after. Canvas: `browser.click`'s `offset` param verified pixel-accurate against a hand-drawn canvas region (239,119 landed correctly inside a 200-280×100-140 target). |
 | Mobile/device emulation | covered, 2 bugs fixed | Milestone 2: `set_viewport`'s width/height/deviceScaleFactor/media-query emulation all verified correct against a real site (github.com); found `hasTouch` never got enabled for `isMobile:true`, fixed with a spread-order default. Milestone 6: live MCP testing caught that the Milestone 2 fix didn't actually work through the real call path (an object-spread subtlety hid it from direct-runtime testing) — refixed to resolve the default before construction, re-verified against the exact MCP-handler call shape. Still needs one more reconnect to confirm the corrected version live. |
-| Auth/session persistence across runs | covered | Milestone 2: created a named profile via the CLI, logged into a real test fixture (the-internet.herokuapp.com/login), fully closed the session (killed the Chrome process), launched a completely fresh session with the same profile, navigated straight to the auth-gated page — still authenticated, no re-login needed. Works correctly. |
+| Auth/session persistence across runs | covered, incl. sessionStorage-based logins | Milestone 2: created a named profile via the CLI, logged into a real test fixture (the-internet.herokuapp.com/login), fully closed the session (killed the Chrome process), launched a completely fresh session with the same profile, navigated straight to the auth-gated page — still authenticated, no re-login needed. Works correctly for cookie/localStorage-based auth via `userDataDir` alone. Milestone 29: closed the remaining real gap — Chrome discards real `sessionStorage` on process exit regardless of `userDataDir`, so a sessionStorage-based login was still lost on relaunch. Wired profiles to `getStorageState`/`setStorageState`, persisted automatically on `shutdown()` for a profile-launched session and restored on the next launch with the same profile + `initialUrl`. Verified with a purpose-built fixture (a real `sessionStorage` value set under a named profile survives shutdown + relaunch) since the original candidate test site (saucedemo) turned out to be cookie-based on live inspection, not sessionStorage-based as assumed. |
 | Network conditions (slow/offline/throttled) | covered, new capability built | Milestone 3: confirmed this was a complete gap (zero code anywhere, not even internal). Built `SutradharRuntime.emulateNetwork` + `browser.set_network_conditions` MCP tool (offline mode + DevTools throttling presets or custom download/upload/latency), mirroring the existing `emulate`/`set_viewport` pattern. Verified live: offline genuinely blocked a real `fetch` ("Failed to fetch"), Slow 3G added ~2046ms to a request that normally takes ~17ms (matches the preset's math), clearing throttling restored the ~17ms baseline. |
 | Large-scale extraction / pagination | covered, 1 significant bug found and fixed | Milestone 8: a real Hacker News front page has 227 interactive elements — found that `formatGraphForLlm`'s listing was hardcoded to show only the first 60 with NO way for any caller to ask for more (the parameter existed in the function signature but nothing threaded it through the public API), and the underlying id-stamping cap (150) was itself lower than a single ordinary content page can have. The "More" pagination link was invisible past both caps — undiscoverable by an LLM reading the snapshot. Fixed: exposed `maxElements` through `runtime.snapshot()` and `browser.snapshot`'s MCP schema (default unchanged at 60, no behavior change for existing callers), and raised the stamping cap to 300. Verified live: default snapshot still hides "More" (no regression), `maxElements:250` reveals it with a real, clickable id, and clicking that id genuinely navigated to page 2. Completed a real 3-page, 90-story extraction task end-to-end via `browser.extract_data` + `.morelink` pagination. |
 | Cookies (get/set/delete) | covered | Milestone 8: verified against real `document.cookie` state directly, not just each tool's own success report. All three operations correct. |
@@ -66,6 +66,59 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-16 — Milestone 29: field-report remediation, 8 phases — 12 real bugs fixed (5 from GLM's report, 7 found along the way), a release-integrity gate built, all live-verified
+
+An independent field-report campaign (GLM 5.3, testing the published `sutradhar` npm package,
+`GAPS_AND_SUGGESTIONS.md`/`REPORT.md` at the repo root) found 5 real bugs (A1-A5) and several
+gaps. Planned thoroughly in an Opus 5 planning session, approved, then executed phase-by-phase
+across this whole session — full detail in `.ai/field-report-remediation-plan.md` (8 phases,
+each with a RESULT block written at completion, not just planned) and
+`tools/scenario-suite/BEFORE-AFTER.md` (the full per-scenario, per-surface before/after, with
+every non-flip explained honestly, not just the flattering half). This entry is the
+capability-loop-side summary; don't duplicate the detail here.
+
+**Fixed, all live-verified against real Chrome, not just typechecked**: A1 (`type()` silently
+reporting success while leaving a field empty — read-back + native-setter-repair + honest
+throw), A2 (retry interleaving/tripled keystrokes — await a timed-out dispatch's real settlement
+before retrying), A3 (modal/handler-driven elements invisible to `snap` — extended interactive
+detection + a `cursor:pointer` fallback; the exact GLM-reported modal now detects, clicks, and
+genuinely dismisses), A4 (stale popup title/URL — a `'load'`-listener refresh + a `toDto()`
+fix), A5 (unhelpful post-navigation stale-id errors — now tells the agent to re-snapshot). Plus
+7 more bugs found live, not in the original report: a duplicate-action-guard false positive on
+`click_by_role`/`click_by_text`; a Windows case-sensitivity bug in the download-directory
+containment check; a second, more consequential download bug (Chrome cancels any download
+targeted at the bare OS temp root — silently broke every default-directory download until
+fixed); a `getStorageState()` bug returning the full URL mislabeled as "origin"; a stale-CLI-test
+gap where the harness itself still used pre-Phase-4 workarounds for two commands after the real
+commands existed; a genuinely unrelated `capability-runtime` build blocker (`@types/pngjs` was
+correctly declared but never linked — `pnpm install` fixed it permanently, not just for this
+build); and the release-integrity gap below.
+
+**New capability surface**: 8 new CLI commands (`select`, `wait`, `eval`, `hover`, `scroll`,
+`upload`, `drag`, `download`), structured `snap --json` output, a `--user-agent` option across
+CLI/SDK/MCP (neutral default — does NOT strip "Headless", locked in by a unit test), and
+profiles wired to real storage-state persistence (a `sessionStorage`-based login now genuinely
+survives a named-profile relaunch — proven with a purpose-built fixture, since GLM's suggested
+test case, saucedemo, turned out to be cookie-based on live inspection, already covered by
+`userDataDir` alone).
+
+**Release-integrity gate** (Phase 6): a past published npm artifact once diverged from its own
+source tree for an unrecoverable-from-git reason (workspace packages resolve through compiled
+`dist/`, which had no clean-rebuild guarantee). Built `scripts/workspace-graph.mjs` (computes the
+real dependency closure from `package.json`, not a hand-maintained list) + a clean-rebuild step
+in `build-bundle.mjs` + a `prepublishOnly` gate (`check-release-ready.mjs`) that fails on a dirty
+tree or stale workspace `dist/` + a `postpack` shasum-recording hook. All three live-verified
+by actually inducing the failure conditions through the real `npm publish --dry-run` command,
+not by reading the scripts.
+
+**Final numbers** (`tools/scenario-suite/BEFORE-AFTER.md` has the full matrix and honest
+per-scenario explanation of every non-flip): MCP reaches a full **14/14** clean sweep (up from
+11/14). SDK and CLI both show real, independently-verified fixes whose raw pass/fail counts
+don't fully capture the improvement — one residual, honestly-logged flake (`PROB-015`: UC-05/
+UC-14 pass reliably in isolation but still show intermittent timing races deep into a long
+sequential 14-scenario run; root mechanism not fully identified) and one pre-existing, genuine
+CLI-surface gap (no tab-listing/switching command) are documented rather than hidden.
 
 ### 2026-08-16 — Milestone 28: real capability gap found via a 4-way hard-case comparison, fixed, live-reverified
 

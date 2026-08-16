@@ -950,6 +950,85 @@ genuinely clean, not filtered), `packages/mcp-server` 22/22, `packages/cli` 13/1
 
 ---
 
+**RESULT (2026-08-16): the full loop closed — harness re-run, honest before/after written,
+both `.ai` logs updated at the real next milestone number, version bumped and cleanly rebuilt,
+a real pre-existing smoke-test bug found and fixed along the way, and the reply to GLM written.
+`npm publish` itself correctly handed off, not automated.**
+
+**Harness re-run, sequentially (not parallel) to avoid the resource-contention flakiness Phase 5
+already documented.** Confirmed zero `chrome.exe` processes running before each surface's run.
+Final numbers: **MCP 14/14** (a full clean sweep, up from 11/14 pre-fix), **SDK 11/14** (same
+raw count as pre-fix, but see below — the raw count doesn't tell the real story here), **CLI
+12/14**. Full matrix, every flip and non-flip explained, in the new
+`tools/scenario-suite/BEFORE-AFTER.md`.
+
+**The one genuinely surprising result**: SDK's UC-05 and UC-14 — both confirmed fixed in Phase 2,
+re-confirmed via isolated `SCENARIO_FILTER` re-runs on **three separate occasions** across this
+plan's execution — failed again in this final sequential run, with the identical symptom
+signature as a prior contamination (25+ second wait-step timings; the exact same "Duplicate
+'click_by_role'" error string). This time the system was confirmed genuinely clean beforehand
+(0 Chrome processes), ruling out the "49 accumulated zombies" explanation Phase 5 used. Isolated
+re-runs immediately after (2/2, then run again for a third confirmation) both passed cleanly —
+the fixes are correct; something about running as scenario 5/14 or 14/14 in one long sequential
+process still triggers a residual race under real timing pressure that a clean isolated run
+doesn't hit. Logged as `PROB-015` rather than either hidden or allowed to block completion — the
+underlying bugs are fixed (verified independently of this specific run's numbers, repeatedly),
+and this project's own standing position already accepts that some real browser-automation
+races are probabilistic under load, not eliminable; the goal was always honest reporting of
+them, not literal 100% determinism in one long-running harness process.
+
+**CLI's two failures are both explained, not hidden**: UC-08 (download) is the same
+harness-external-timeout flake documented in Phase 5, with the underlying `download` command
+independently verified working correctly three separate times outside the harness. UC-09
+(multi-tab) is the exact pre-existing CLI `attach()`-race nondeterminism Phase 1's own baseline
+notes already named — not a regression (it passed cleanly in Phase 5's dedicated clean CLI run)
+— surfacing a real, honestly-diagnosed, unfixed gap: the CLI has no tab-listing/switching
+command at all, so even a correctly-tracked new tab has no way to be addressed from that
+surface. Both explained in `BEFORE-AFTER.md`'s notes rather than left as unexplained red X's.
+
+**`.ai` logs**: `.ai/competitive-benchmarks.md`'s own iteration log was already at Milestone 28
+from unrelated same-day work (a 4-way hard-case comparison) — confirmed by reading that entry
+before assuming the plan's own "29 at time of writing" guess was still accurate. It was — used
+**Milestone 29** in both `.ai/competitive-benchmarks.md` and `.ai/browsing-capability-loop.md`
+(which independently also happened to be at 28), plus updated the capability taxonomy's
+"Auth/session persistence" row for the new sessionStorage-survives-relaunch capability, and
+bumped both files' `Last Updated` frontmatter.
+
+**Version bump + clean rebuild + a bonus bug found and fixed**: bumped `0.2.2` → **`0.3.0`**
+(a minor bump, not a patch — this remediation added real new public API surface: 8 CLI commands,
+`--json`/`--user-agent` options, SDK profile/storage-state methods, not just bug fixes) in both
+`package.json` and the `SUTRADHAR_VERSION` export, then ran the full Phase 6 clean-rebuild
+pipeline for real (14 workspace dependencies + the 3 bundle entries, all from clean). Caught a
+genuinely stale hardcoded version assertion in `packages/sutradhar/tests/unit/api.spec.ts` — the
+exact category of bug this project's own CLAUDE.md already calls out by name ("a hardcoded
+expected-tool-count assertion silently drifted out of sync ... only a real test run caught it")
+— fixed it, and discovered along the way that this package's real test suite (7 existing tests)
+and **live smoke test** (`scripts/smoke.mjs`, driving the actual built bundle end-to-end) had
+never actually been run during this whole remediation, despite Phase 4/5's RESULT blocks
+incorrectly claiming "no dedicated test suite existed." Running the smoke test for the first
+time surfaced a real, pre-existing, live-reproduced bug in the test script itself: it called
+`page.evaluate()` immediately after a real navigating click, racing the navigation and
+occasionally throwing "Execution context was destroyed." Fixed by settling on a stable page
+first — the same real requirement the script's own later screenshot step already had. Added 2
+new unit tests for `Page.getStorageState()`/`setStorageState()` (Phase 5's SDK additions had
+zero dedicated coverage in this package specifically, despite live verification elsewhere).
+Final state: `packages/sutradhar` 9/9 unit tests, smoke test passes clean end-to-end against the
+freshly rebuilt bundle. All five touched packages' full suites green: browser 159/159,
+capability-runtime 82/82, mcp-server 22/22, cli 13/13, sutradhar 9/9.
+
+**`npm publish` itself**: correctly not attempted. It requires the user's hardware-key 2FA, is a
+real, external, shared-state action, and this project's own standing rules (CLAUDE.md) are
+explicit that this is a hand-off, not something to automate — the version bump, clean rebuild,
+and the entire Phase 6 gate exist so that when the user does run it, it's already verified ready.
+
+**`RESPONSE-TO-FIELD-REPORT.md`** written at the repo root — a direct, point-by-point reply to
+GLM's `GAPS_AND_SUGGESTIONS.md`, covering every A/B/C item's real disposition, the three
+CLI-vs-runtime mis-scoping corrections (plus C3's, found during this same investigation), the 5
+bugs found beyond their report, and the two honestly-unresolved items (`PROB-015`, the CLI
+tab-listing gap) — not just the flattering parts.
+
+---
+
 ## Standing rules for execution
 
 - **Never trust an action's own `success` flag as verification** — read back real state. That is

@@ -8,7 +8,7 @@ import { launch, Browser, Page, SutradharRuntime, SUTRADHAR_VERSION } from '../.
 
 describe('sutradhar SDK public API', () => {
   it('exports its package version', () => {
-    expect(SUTRADHAR_VERSION).toBe('0.2.2');
+    expect(SUTRADHAR_VERSION).toBe('0.3.0');
   });
 
   it('exposes the launch entry point and the Browser/Page classes', () => {
@@ -52,6 +52,29 @@ describe('sutradhar SDK public API', () => {
     it('close() delegates to runtime.shutdown', async () => {
       const browser = new Browser(stubRuntime as unknown as SutradharRuntime, 'sess-1');
       await browser.close(); // should not throw
+    });
+  });
+
+  describe('Page storage-state methods (constructed against a stub runtime)', () => {
+    it('getStorageState() delegates to runtime.getStorageState with this page\'s session/tab ids', async () => {
+      const sampleState = { origin: 'https://x', cookies: [], localStorage: {}, sessionStorage: {} };
+      const stub = { getStorageState: vi.fn().mockResolvedValue(sampleState) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      const result = await page.getStorageState();
+
+      expect(stub.getStorageState).toHaveBeenCalledWith('sess-1', 'tab-1');
+      expect(result).toBe(sampleState);
+    });
+
+    it('setStorageState() delegates to runtime.setStorageState with this page\'s session/tab ids and the given state', async () => {
+      const sampleState = { origin: 'https://x', cookies: [], localStorage: { k: 'v' }, sessionStorage: {} };
+      const stub = { setStorageState: vi.fn().mockResolvedValue(undefined) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      await page.setStorageState(sampleState);
+
+      expect(stub.setStorageState).toHaveBeenCalledWith('sess-1', sampleState, 'tab-1');
     });
   });
 });

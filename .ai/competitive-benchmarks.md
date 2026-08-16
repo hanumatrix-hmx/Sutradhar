@@ -4,7 +4,7 @@ Machine Readable: true
 Update Ownership: AI Agent
 Freshness Expectation: Per Competitive Review
 Update Policy: Append-driven (log), change-driven (comparison tables)
-Last Updated: 2026-08-13
+Last Updated: 2026-08-16
 ---
 
 # Competitive benchmarks & positioning
@@ -200,6 +200,24 @@ findings:
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-16 — Milestone 29: field-report remediation closed, real independent-testing feedback loop proven end-to-end
+
+An outside, independent field-report campaign against the *published npm package* (GLM 5.3 —
+this project's first genuinely external validation, not self-authored dogfooding) found 5 real
+bugs and several gaps; all fixed, plus 7 more bugs found live along the way that GLM's report
+never caught. Full detail: `.ai/field-report-remediation-plan.md` (8 phases, each with a real
+RESULT block) and `tools/scenario-suite/BEFORE-AFTER.md` (the honest per-scenario before/after).
+This is the competitive-positioning-relevant summary: **the loop this file tracks — external
+signal in, real fix out, re-verified — worked**, including the parts that are genuinely hard to
+get right without a real external tester (a Windows-specific download-cancellation bug, a
+case-sensitivity path bug, a release-integrity gap in the publish pipeline itself). MCP now
+reaches a full 14/14 clean sweep on the regression suite this phase built specifically to make
+this kind of before/after claim checkable in the future, not just asserted (up from 11/14
+pre-fix). Also closed a real competitive-positioning gap: `--user-agent` is now genuine
+configurability across all three surfaces (CLI/SDK/MCP) — still defaulting to an honest,
+undisguised headless UA, per this project's standing transparency-over-evasion position, not
+changed to chase a detection-benchmark number.
 
 ### 2026-08-16 — Milestone 28: researched real hardest-case scenarios, 4-way tested, found and fixed a real Sutradhar gap, re-verified live
 

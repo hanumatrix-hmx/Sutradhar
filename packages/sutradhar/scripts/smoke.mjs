@@ -27,21 +27,27 @@ try {
   const snap = await page.snapshot();
   log('    elementCount=' + snap.elementCount + ' interactiveElements=' + JSON.stringify(snap.interactiveElements.slice(0, 120)));
 
-  log('[5] page.click("4")  // [#4] from snapshot ...');
+  log('[5] page.click("4")  // [#4] from snapshot ("Learn more" — a real link that navigates) ...');
   await page.click('4');
   log('    clicked OK');
 
-  log('[6] page.evaluate(document.title) ...');
+  // The click above triggers a REAL navigation (example.com's "Learn more" link goes to
+  // iana.org) — click() itself doesn't wait for it to finish (same as Puppeteer's own
+  // ElementHandle.click()), so calling evaluate() immediately after races the navigation and
+  // can throw "Execution context was destroyed" if it fires mid-evaluate. Go back to a known,
+  // stable page first — the same real requirement page.screenshot() below also has.
+  log('[6] page.goto(example.com) again — settle after the navigating click before evaluating ...');
+  await page.goto('https://example.com');
+
+  log('[7] page.evaluate(document.title) ...');
   const title = await page.evaluate('document.title');
   log('    title=' + JSON.stringify(title));
 
-  log('[7] page.screenshot() ...');
-  // The click above navigated to a new page; go back to a stable rendered page before screenshotting.
-  await page.goto('https://example.com');
+  log('[8] page.screenshot() ...');
   const png = await page.screenshot();
   log('    base64 length=' + png.length + ' (~' + Math.round((png.length * 0.75) / 1024) + ' KB)');
 
-  log('[8] browser.pages() ...');
+  log('[9] browser.pages() ...');
   const pages = browser.pages();
   log('    page count=' + pages.length);
 
