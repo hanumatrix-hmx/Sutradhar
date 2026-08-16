@@ -49,6 +49,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Network request interception/mocking | covered | Milestone 7: `browser.route` with both `mock` (a real fetch received the exact mocked JSON body) and `block` (a real fetch failed as expected) actions verified against genuine `fetch()` calls, not just the tool's own success report. |
 | Console/network/page-error log capture | covered | Milestone 7: `get_console_logs` correctly captured log/warn/error levels plus an incidental real network failure; `get_page_errors` correctly captured a deliberate uncaught exception with message and stack trace; `get_network_log` correctly distinguished a completed (mocked) request from a blocked one (request-only, no response phase). |
 | CAPTCHA / bot-detection / stealth evasion | excluded | Deliberately out of scope per CLAUDE.md — not a gap to close. |
+| Async/debounced-network typeahead search suggestions | covered, no bug found | Milestone 54: tested live against Wikipedia's real search box — typing landed correctly, real API-backed suggestion options (`role="option"`) appeared in the very next snapshot with no extra wait needed, clicking a suggestion correctly navigated to that exact article (confirmed via independent `location.href`/`document.title` read-back, not just the click's own success report). (DuckDuckGo's homepage search was tried first but never showed a suggestions dropdown at all in this environment — not investigated further as a possible bug, since Wikipedia's equivalent worked cleanly and DDG's suggestion behavior may simply be region/consent-state-gated; noted as untested rather than assumed broken.) |
 | Native HTML5 `<dialog>`/`showModal()` (browser-level top-layer modal, distinct from a div-based simulated modal) | covered, no bug found | Milestone 53: a real `<dialog>` opened via `showModal()` correctly makes background content unclickable — a click on a background button is correctly refused via the existing occlusion check (`elementFromPoint` resolves to the dialog, not the background element), with a clear, actionable error. Note: Chromium does NOT set a literal `.inert` DOM property on background elements for this case (checked live — it stays `false`), so the snapshot listing still includes the now-inert background button; harmless in practice since the click attempt fails safely and clearly rather than silently succeeding or doing the wrong thing. Closing the dialog via its own real `close()`-triggering button verified independently via `dialog.open` reading back `false`. |
 | Nested modal-in-modal dialogs (a modal opened from within another modal, z-index-stacked) | covered, no bug found | Milestone 52: tested live against MUI's own Nested Modal demo — opening a child modal from within a parent modal correctly stacked; `clicktext "Close Child Modal"` correctly hit the topmost (child) modal's button via occlusion detection and closed only the child, leaving the parent open — exactly correct nested-modal semantics, confirmed via real DOM state, not just each click's own success report. |
 | Canvas signature/drawing pad (coordinate-based drag, no addressable DOM inside the canvas) | covered, real CLI-exposure gap closed | Milestone 51: `dragAtPoints` (already existed via MCP/SDK) correctly draws real strokes on a live `signature_pad` canvas, confirmed visually. Added `clickpoint`/`dragpoints` CLI verbs — the underlying capability existed but was unreachable from the CLI, the only surface whose whole purpose is direct scriptable access. |
@@ -76,6 +77,22 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-16 — Milestone 54: async/debounced typeahead search suggestions — covered, no bug found
+
+Continuing the hard-use-case hunt. First attempted DuckDuckGo's homepage search box (a real,
+common async-typeahead pattern) but it never showed a suggestions dropdown at all after typing,
+even after a 1s wait — checked via broad selectors and confirmed the typed text landed correctly
+in the input, so it's not a Sutradhar action failure, just an absence of the expected UI. Didn't
+chase this further as a bug: DDG's suggestion behavior is plausibly gated by region/consent state
+in this environment, and a second, more reliable target (Wikipedia's search) tests the same
+capability cleanly, so this is logged honestly as untested rather than assumed broken.
+
+Wikipedia's real search box: typed a query, real API-backed suggestion options (`role="option"`)
+appeared in the very next snapshot with no extra wait needed, clicked one (a genuinely amusing
+real result: "Sutradhar v Natural Environment Research Council," an unrelated real Wikipedia
+article), and confirmed the click correctly navigated to that exact page via independent
+`location.href`/`document.title` read-back. No bug found or fix needed.
 
 ### 2026-08-16 — Milestone 53: native `<dialog>`/`showModal()` — covered, no bug found
 
