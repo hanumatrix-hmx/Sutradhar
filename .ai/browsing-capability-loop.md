@@ -49,6 +49,7 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Network request interception/mocking | covered | Milestone 7: `browser.route` with both `mock` (a real fetch received the exact mocked JSON body) and `block` (a real fetch failed as expected) actions verified against genuine `fetch()` calls, not just the tool's own success report. |
 | Console/network/page-error log capture | covered | Milestone 7: `get_console_logs` correctly captured log/warn/error levels plus an incidental real network failure; `get_page_errors` correctly captured a deliberate uncaught exception with message and stack trace; `get_network_log` correctly distinguished a completed (mocked) request from a blocked one (request-only, no response phase). |
 | CAPTCHA / bot-detection / stealth evasion | excluded | Deliberately out of scope per CLAUDE.md — not a gap to close. |
+| Nested/independent scroll containers (virtualized grids, chat panes, modal bodies, code blocks) | covered, real gap found and fixed | Milestone 44: `scroll` previously only ever called `window.scrollBy()` — a page's own `overflow:auto` container (e.g. a virtualized data grid) was silently unreachable, no error. Fixed with an optional element target; also surfaced and fixed a related async-virtualization-re-render timing gap via `settle`. See PROB-024. |
 | Modern code editors (Monaco/VS Code Web's `EditContext`-API input model) | covered, real technique documented (not obvious) | Milestone 43: tested live against the real Monaco Editor playground. Modern Monaco doesn't use a plain `<textarea>` for input at all — it uses the `EditContext` Web API, whose real focus target is an invisible, zero-box `<div class="native-edit-context">` that `click`/`type` correctly refuse to act on (no box model to click, "Node is either not clickable or not an Element") — a real, correct refusal, not a bug. The working technique: target the visible rendered surface (`.monaco-editor .view-lines`, a real, sizable, clickable div) for both `click` and `type` — Puppeteer's real synthetic keyboard events reach Monaco's model correctly through it (verified via `monaco.editor.getEditors()[0].getValue()` actually containing the typed text, not just a fabricated success report). Separately: an initial `snap` taken immediately after navigation surfaced a `<textarea aria-label="Editor content">` that looked like the obvious target but was a transitional element from Monaco's pre-`EditContext`-init state — gone moments later, clicking it failed with occlusion. A real, concrete example of why the `settle` option (Milestone 38) matters: snapshotting/acting too early after navigating into a heavy JS framework can grab elements that don't survive the framework's own init sequence. |
 
 ## MCP session staleness — resolved 2026-08-13, but re-staleness after every rebuild is a standing gotcha
@@ -67,6 +68,45 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-16 — Milestone 44: nested/independent scroll containers — a real gap found via MUI's DataGrid, closes PROB-024
+
+Continuing the hard-use-case hunt (todo item 3: "a virtualized/infinite-scroll data grid").
+Tested live against MUI X's `DataGrid` demo page, which — deliberately hard-case — renders
+**three** grids on one page, only one of which actually overflows (`scrollHeight - clientHeight`
+of 0, 0, and 593px respectively; a naive class selector would silently match the wrong one).
+
+Found a real, previously-undocumented gap: `scroll` only ever called `window.scrollBy()`. A page
+owning its own `overflow:auto`/`scroll` container (virtualized grids, chat panes, modal bodies,
+code blocks — all common, real UI patterns) was completely unreachable by `scroll` with **no
+error** — a silent no-op indistinguishable from success. The only workaround was `eval` with a
+manual `el.scrollBy()`, strictly worse UX than a first-class action.
+
+Digging into it also surfaced a second, related timing gap: MUI's `DataGrid` virtualization
+re-renders **asynchronously**, not synchronously with the scroll event. A correctly-targeted
+element scroll could read back stale (pre-scroll) row content if read immediately after —
+confirmed by reproducing it with a raw script (scrollTop genuinely moved, row `data-id`s
+unchanged in an immediate read, but completely different after a manual 500ms delay). Exactly
+the class of flake `settle` (Milestone 38) exists to solve — extended `settle` support to
+`scroll` and confirmed it resolves the same timing issue with no manual delay needed.
+
+Fix: `scroll` gained an optional `selector`/`target` param — when given, scrolls the resolved
+element directly (not `window`), with its own before/after `scrollTop` read-back and
+boundary-aware verification (a clear, element-specific error only when genuinely stuck, not
+already at the scroll boundary). Falls through to the existing, unchanged window-scroll path
+when no target is given. Wired through all four layers: `browser-action-engine.ts`,
+`capability-runtime`'s `scroll()`, MCP `browser.scroll` (`target`, `settle`), CLI
+`scroll [dir] [amountPx] [targetRef] [--settle]`. 4 new unit tests
+(target-scroll success, stuck-error, boundary-no-false-fail, default-fallback-regression) —
+`packages/browser` 176/176.
+
+Live-verified end-to-end through the **actual CLI binary** (not just a `SutradharRuntime`
+script) against the real grid: correctly identified the one grid of three with real overflow,
+`scroll down 500 [data-test-scroller="true"] --settle` moved `scrollTop` 0→500 and the rendered
+row genuinely changed (`"Adzuki bean (4)106,726"` → `"Milk (3)128,346"`, independently confirmed
+via `eval` read-back — real virtualized re-render, not the command's own success claim);
+separately confirmed the no-target default path still only moves the window and leaves the
+grid's `scrollTop` untouched (regression check). Closes `PROB-024`.
 
 ### 2026-08-16 — Milestone 43: hunting the hardest real use cases (new user directive) — Monaco Editor documented, PROB-013 finally closed via real CDP event-listener introspection
 

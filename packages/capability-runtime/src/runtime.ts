@@ -607,8 +607,27 @@ export class SutradharRuntime {
     direction: 'up' | 'down' | 'top' | 'bottom' = 'down',
     amount = 500,
     tabId?: string,
+    /**
+     * Scroll THIS element's own scroll container instead of the window — a CSS selector or
+     * `snap` node id. Needed for anything with its own independent scrollable region: a
+     * virtualized data grid's rows, a chat pane, a modal's scrollable body, a code block.
+     * Without this, `scroll` can only ever move `window.scrollY`, which does nothing to a
+     * nested scroll container (confirmed live against a real virtualized data grid — window-
+     * scrolling the page left its rendered rows completely unchanged).
+     */
+    target?: string,
+    /** Opt-in post-action settle wait — see {@link SutradharRuntime.click}'s equivalent param.
+     *  Particularly useful after scrolling a virtualized region: many virtualization libraries
+     *  (confirmed live against a real MUI Data Grid) re-render their visible rows on a short
+     *  debounce after the real scroll event, not synchronously — reading the DOM immediately
+     *  after `scroll` returns can still show the pre-scroll rows. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
-    return this.runAction(sessionId, { actionType: 'scroll', direction, amount }, tabId);
+    return this.runAction(
+      sessionId,
+      { actionType: 'scroll', direction, amount, selector: target ? normalizeTarget(target) : undefined, settle },
+      tabId,
+    );
   }
 
   /** Hover an element targeted by selector or sd-node-id. `offset` (relative to the target's

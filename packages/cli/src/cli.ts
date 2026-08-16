@@ -438,15 +438,19 @@ async function cmdHover(ref: string | undefined) {
   });
 }
 
-async function cmdScroll(direction: string | undefined, amountArg: string | undefined) {
+async function cmdScroll(direction: string | undefined, amountArg: string | undefined, target: string | undefined) {
   const dir = (direction ?? 'down') as 'up' | 'down' | 'top' | 'bottom';
   if (!['up', 'down', 'top', 'bottom'].includes(dir)) {
-    printErrorAndExit('usage: sutradhar scroll [up|down|top|bottom] [amountPx]  (default: down 500px)');
+    printErrorAndExit('usage: sutradhar scroll [up|down|top|bottom] [amountPx] [targetRef] [--settle]  (default: down 500px, window)');
   }
   const amount = amountArg ? Number(amountArg) : undefined;
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.scroll(sessionId, dir, amount);
-    console.log(result.success ? `Scrolled ${dir}` : `Scroll failed: ${result.error}`);
+    const result = await runtime.scroll(sessionId, dir, amount, undefined, target, settle);
+    console.log(
+      result.success
+        ? `Scrolled ${dir}${target ? ` within ${target}` : ''}`
+        : `Scroll failed: ${result.error}`,
+    );
     if (!result.success) process.exitCode = 1;
   });
 }
@@ -562,7 +566,7 @@ async function main() {
     case 'hover':
       return cmdHover(cleanArgs[0]);
     case 'scroll':
-      return cmdScroll(cleanArgs[0], cleanArgs[1]);
+      return cmdScroll(cleanArgs[0], cleanArgs[1], cleanArgs[2]);
     case 'upload':
       return cmdUpload(cleanArgs[0], cleanArgs[1]);
     case 'drag':
@@ -603,6 +607,10 @@ Commands:
   eval <js-expression>         Evaluate JS in the page's top-level context, print the result
   hover <ref>                  Hover an element
   scroll [dir] [amountPx]      Scroll the page (dir: up/down/top/bottom, default down 500px)
+  scroll [dir] [amountPx] [targetRef]
+                                Scroll a specific element's own scroll container instead of
+                                the window (a data grid's rows, a chat pane, a modal body) —
+                                pair with --settle to reliably see newly-revealed content
   upload <ref> <filePath>      Upload a local file into an <input type="file">
   drag <sourceRef> <destRef>   Drag one element onto another
   download <ref> [dir]         Click an element that triggers a download, print the saved path

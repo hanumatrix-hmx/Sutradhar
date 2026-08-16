@@ -524,6 +524,42 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         if (!page) throw new Error(`No live browser page for tab ${tab.id} — cannot execute scroll.`);
         const amount = params.amount ?? 500;
         const direction = params.direction ?? 'down';
+
+        // Opt-in: scroll a SPECIFIC element's own scroll container instead of the window.
+        // Without this, `scroll` could only ever move `window.scrollY` — a real, common gap:
+        // a data grid's virtualized rows, a chat pane, a modal's scrollable body, or a code
+        // block each have their OWN independent scroll container, and window.scrollBy does
+        // nothing to them at all (found live testing a real MUI Data Grid: window-scrolling
+        // the page left the grid's own rendered rows completely unchanged — confirmed by
+        // reading the grid's real row content before/after, not just trusting scroll's own
+        // success report).
+        if (params.selector) {
+          const handle = await this.resolveElement(page, `pierce/${params.selector}`, { timeoutMs: 5000 });
+          if (!handle) throw new Error(await this.describeMissingElement(page, params.selector));
+          await this.assertNotStale(handle, params.selector);
+
+          const before = await handle.evaluate((el) => el.scrollTop);
+          await handle.evaluate(
+            (el, amt, dir) => {
+              el.scrollBy(0, dir === 'down' ? amt : -amt);
+            },
+            amount,
+            direction,
+          );
+          const after = await handle.evaluate((el) => el.scrollTop);
+          const maxScrollTop = await handle.evaluate((el) => Math.max(0, el.scrollHeight - el.clientHeight));
+          const atBoundary = direction === 'down' ? before >= maxScrollTop - 1 : before <= 1;
+          if (before === after && !atBoundary) {
+            throw new Error(
+              `scroll had no effect on "${params.selector}" — its scrollTop stayed at ${before} after ` +
+                `attempting to scroll ${direction} by ${amount}px, and it doesn't appear to already be at ` +
+                'that scroll boundary. The element may not actually be its own scroll container (no ' +
+                'overflow:auto/scroll), or something is intercepting/resetting the scroll.',
+            );
+          }
+          return { direction: params.direction ?? 'down', selector: params.selector, scrolledFrom: before, scrolledTo: after };
+        }
+
         // Read back scrollY before/after — `scrollBy()` not moving anything (a fixed/non-scrolling
         // page, or an intercepted scroll) previously reported success identically to a real
         // scroll. Legitimate no-op at a scroll boundary (already at the top/bottom) is not an

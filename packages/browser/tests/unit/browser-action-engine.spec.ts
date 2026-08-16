@@ -1694,3 +1694,88 @@ describe('@sutradhar/browser BrowserActionEngine post-action settle wait', () =>
     expect(result.success).toBe(true);
   });
 });
+
+describe('@sutradhar/browser BrowserActionEngine scroll — element-targeted (nested scroll containers)', () => {
+  it('scrolls the target element itself (its own scrollTop), not the window, when a selector is given', async () => {
+    const handle = mockHandle();
+    handle.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale
+      .mockResolvedValueOnce(0) // before: el.scrollTop
+      .mockResolvedValueOnce(undefined) // el.scrollBy(...)
+      .mockResolvedValueOnce(300) // after: el.scrollTop
+      .mockResolvedValueOnce(1000); // maxScrollTop
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'scroll',
+      selector: '.grid-scroller',
+      amount: 300,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData).toEqual({
+      direction: 'down',
+      selector: '.grid-scroller',
+      scrolledFrom: 0,
+      scrolledTo: 300,
+    });
+  });
+
+  it('throws a clear, element-specific error when the target scroll container genuinely does not move (not at a boundary)', async () => {
+    const handle = mockHandle();
+    handle.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale
+      .mockResolvedValueOnce(50) // before
+      .mockResolvedValueOnce(undefined) // scrollBy
+      .mockResolvedValueOnce(50) // after — unchanged
+      .mockResolvedValueOnce(1000); // maxScrollTop — nowhere near boundary
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'scroll',
+      selector: '.grid-scroller',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('had no effect on ".grid-scroller"');
+  });
+
+  it('does not false-fail when the target element is already at its scroll boundary', async () => {
+    const handle = mockHandle();
+    handle.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale
+      .mockResolvedValueOnce(1000) // before — already at (near) the bottom
+      .mockResolvedValueOnce(undefined) // scrollBy
+      .mockResolvedValueOnce(1000) // after — unchanged (genuinely at the boundary)
+      .mockResolvedValueOnce(1000); // maxScrollTop
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'scroll',
+      selector: '.grid-scroller',
+      direction: 'down',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('falls back to window-scrolling when no selector is given (unchanged default behavior)', async () => {
+    const evaluateSpy = vi.fn().mockResolvedValueOnce(0).mockResolvedValueOnce(undefined).mockResolvedValueOnce(500).mockResolvedValueOnce(1000);
+    const page = { frames: vi.fn().mockReturnValue([]), evaluate: evaluateSpy } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'scroll',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData).toEqual({ direction: 'down', scrolledFrom: 0, scrolledTo: 500 });
+  });
+});

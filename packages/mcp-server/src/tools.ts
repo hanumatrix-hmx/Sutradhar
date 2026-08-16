@@ -545,17 +545,26 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
   server.registerTool(
     'browser.scroll',
     {
-      description: 'Scroll the page.',
+      description:
+        'Scroll the page, or a specific scrollable element within it. Without target, scrolls the window — does ' +
+        'nothing to an element with its OWN independent scroll container (a virtualized data grid\'s rows, a chat ' +
+        'pane, a modal\'s scrollable body, a code block). Pass target (a CSS selector or snap [#id]) to scroll that ' +
+        'element\'s own scrollTop instead — confirmed live against a real virtualized data grid: window-scrolling ' +
+        'left its rendered rows completely unchanged, target-scrolling correctly revealed new virtualized rows. ' +
+        'Many virtualization libraries re-render on a short debounce after the real scroll, not synchronously — ' +
+        'pair with settle:true to reliably see the new rows before your next call.',
       inputSchema: {
         sessionId: z.string(),
         direction: z.enum(['up', 'down', 'top', 'bottom']).optional().describe('Defaults to "down".'),
         amount: z.number().int().optional().describe('Pixels; defaults to 500.'),
         tabId: z.string().optional(),
+        target: z.string().optional().describe(targetDesc + ' Scrolls this element\'s own scroll container instead of the window.'),
+        settle: settleSchema,
       },
     },
-    async ({ sessionId, direction, amount, tabId }) => {
+    async ({ sessionId, direction, amount, tabId, target, settle }) => {
       try {
-        return jsonResult(await runtime.scroll(sessionId, direction, amount, tabId));
+        return jsonResult(await runtime.scroll(sessionId, direction, amount, tabId, target, settle));
       } catch (e) {
         return errorResult(`scroll failed: ${(e as Error).message}`);
       }
