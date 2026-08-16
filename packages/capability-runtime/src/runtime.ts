@@ -140,6 +140,11 @@ export class SutradharRuntime {
   private readonly allowedUploadRoots?: readonly string[];
   private readonly restrictNavigationToLocal: boolean;
   private readonly profileManager: ProfileManager;
+  /** sessionId -> the profileName it was launched with, so `shutdown()` knows whose storage
+   *  state to persist. Only sessions launched via `launch({profileName})` get an entry; a
+   *  plain/unnamed launch never touches this. Entries are removed on shutdown regardless of
+   *  outcome, so this never grows across a long-lived runtime's full session history. */
+  private readonly sessionProfiles = new Map<string, string>();
 
   public constructor(options: SutradharRuntimeOptions = {}) {
     const eventBus = options.eventBus ?? new EventBus(options.logger);
@@ -212,6 +217,26 @@ export class SutradharRuntime {
       activeTab = await session.createTab();
       session.setActiveTab(activeTab.id);
     }
+
+    if (options.profileName) {
+      this.sessionProfiles.set(session.id, options.profileName);
+      // Restoring storage-state requires a real origin to restore it INTO — localStorage/
+      // sessionStorage are origin-scoped, so there's nothing to restore onto until the tab has
+      // navigated somewhere. Only possible here when the caller also gave `initialUrl` (which
+      // BrowserSessionManager already navigated to before this point — see its own doc
+      // comment). A profile launched with no `initialUrl` still gets userDataDir's own
+      // cookies/localStorage restore (that part needs no help from this); only the
+      // sessionStorage half of a bare, no-initialUrl launch stays lost until the caller
+      // navigates and restores it themselves via `setStorageState`.
+      if (options.initialUrl && this.hasRealPage(activeTab)) {
+        const saved = await this.profileManager.loadStorageState(options.profileName).catch(() => undefined);
+        if (saved && saved.origin === new URL(activeTab.url).origin) {
+          // Best-effort — a failed restore should not fail the whole launch.
+          await this.setStorageState(session.id, saved, activeTab.id).catch(() => {});
+        }
+      }
+    }
+
     return {
       sessionId: session.id,
       activeTabId: activeTab.id,
@@ -272,14 +297,36 @@ export class SutradharRuntime {
     }
   }
 
-  /** Shut down a single session and release its browser. */
+  /** Shut down a single session and release its browser. If the session was launched with
+   *  `profileName`, its current storage-state (cookies/localStorage/sessionStorage) is
+   *  persisted for that profile first, best-effort — see {@link ProfileManager.saveStorageState}
+   *  for why this matters beyond what `userDataDir` alone already covers. */
   public async shutdown(sessionId: string, reason = 'Runtime shutdown'): Promise<void> {
     const session = this.requireSession(sessionId);
+    const profileName = this.sessionProfiles.get(sessionId);
+    if (profileName) {
+      const activeTab = session.activeTabId ? session.getTab(session.activeTabId) : session.getTabs()[0];
+      if (activeTab && this.hasRealPage(activeTab)) {
+        const state = await this.getStorageState(sessionId, activeTab.id).catch(() => undefined);
+        if (state) {
+          await this.profileManager.saveStorageState(profileName, state).catch(() => {});
+        }
+      }
+      this.sessionProfiles.delete(sessionId);
+    }
     await this.sessionManager.closeSession(session.id, reason);
   }
 
-  /** Shut down every session. Safe to call on teardown. */
+  /** Shut down every session. Safe to call on teardown. Persists storage-state for every
+   *  profile-launched session first, same as {@link shutdown} — bypassing that per-session
+   *  logic here would silently lose any profile's session-storage-based login on every
+   *  teardown that goes through this method instead of individual `shutdown()` calls. */
   public async shutdownAll(): Promise<void> {
+    await Promise.all(
+      Array.from(this.sessionProfiles.keys()).map((sessionId) =>
+        this.shutdown(sessionId, 'Runtime shutdown').catch(() => {}),
+      ),
+    );
     await this.sessionManager.closeAllSessions();
     this.sessionManager.dispose();
   }
@@ -900,7 +947,13 @@ export class SutradharRuntime {
       };
       return [dump(window.localStorage), dump(window.sessionStorage)] as [Record<string, string>, Record<string, string>];
     });
-    return { origin: page.url(), cookies, localStorage: localStorageItems, sessionStorage: sessionStorageItems };
+    // `new URL(...).origin`, not the raw `page.url()` — found live while wiring 5c (profile ↔
+    // storage-state persistence): this previously returned the full URL (path/query/hash and
+    // all) mislabeled as "origin", which silently broke any caller that actually compared
+    // origins for a match (as launch()'s profile-restore path now does) since two pages on the
+    // same origin but different paths would never compare equal.
+    const origin = new URL(page.url()).origin;
+    return { origin, cookies, localStorage: localStorageItems, sessionStorage: sessionStorageItems };
   }
 
   /**

@@ -13,6 +13,7 @@
 import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
+import type { StorageState } from '../types.js';
 
 export interface ProfileInfo {
   readonly name: string;
@@ -30,11 +31,18 @@ const VALID_NAME = /^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$/;
 export class ProfileManager {
   private readonly registryPath: string;
   private readonly profilesRoot: string;
+  /** Kept as a directory separate from `profilesRoot` (which Chrome's own `--user-data-dir`
+   *  points at directly) rather than a file dropped inside it — writing arbitrary files into a
+   *  Chrome profile directory works in practice (Chrome ignores files it doesn't recognize) but
+   *  co-mingling this project's own bookkeeping with Chrome's internal profile data is fragile
+   *  to depend on across Chrome versions. */
+  private readonly storageStateRoot: string;
 
   public constructor(baseDir?: string) {
     const root = baseDir ?? path.join(os.homedir(), '.sutradhar');
     this.registryPath = path.join(root, 'profiles.json');
     this.profilesRoot = path.join(root, 'profiles');
+    this.storageStateRoot = path.join(root, 'profile-storage-state');
   }
 
   private async readRegistry(): Promise<ProfileRegistry> {
@@ -103,5 +111,40 @@ export class ProfileManager {
       throw new Error(`No profile named "${name}". Run profile list to see what's available, or create() it first.`);
     }
     return info.userDataDir;
+  }
+
+  /**
+   * Persist a storage-state blob (cookies/localStorage/sessionStorage) for a named profile.
+   * This is what actually makes a login survive across separate launches of the same profile
+   * — `userDataDir` alone (the mechanism `create()`/`resolveUserDataDir()` manage) persists
+   * cookies and localStorage to disk via Chrome's own profile directory, but real Chrome
+   * treats `sessionStorage` as memory-only and discards it when the process exits regardless
+   * of `userDataDir`, so a session-storage-based login (saucedemo, and plenty of real SPAs)
+   * would still be lost on relaunch without this. Throws if the profile doesn't exist.
+   */
+  public async saveStorageState(name: string, state: StorageState): Promise<void> {
+    const info = await this.get(name);
+    if (!info) {
+      throw new Error(`No profile named "${name}". Run profile list to see what's available, or create() it first.`);
+    }
+    await mkdir(this.storageStateRoot, { recursive: true });
+    await writeFile(this.storageStatePath(name), JSON.stringify(state, null, 2), 'utf-8');
+  }
+
+  /** Load a previously-{@link saveStorageState}'d blob for a named profile. Returns `undefined`
+   *  (not a throw) when none has been saved yet — a brand-new profile, or one that was only
+   *  ever used against a page whose storage was never explicitly captured, is a normal state,
+   *  not an error. */
+  public async loadStorageState(name: string): Promise<StorageState | undefined> {
+    try {
+      const raw = await readFile(this.storageStatePath(name), 'utf-8');
+      return JSON.parse(raw) as StorageState;
+    } catch {
+      return undefined;
+    }
+  }
+
+  private storageStatePath(name: string): string {
+    return path.join(this.storageStateRoot, `${name}.json`);
   }
 }

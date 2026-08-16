@@ -15,6 +15,19 @@ export interface LaunchOptions {
   headless?: boolean;
   /** Incognito context. */
   isIncognito?: boolean;
+  /**
+   * Launch using a named, persistent profile (cookies/history/localStorage — and, if a prior
+   * session under this name ever called `page.setStorageState`/closed cleanly with data to
+   * save, sessionStorage too — survive across separate launches). Create one first via
+   * `new ProfileManager().create(name)`. Throws if the name doesn't exist.
+   */
+  profileName?: string;
+  /**
+   * Override `navigator.userAgent` for this session. Unset by default — the real Chrome UA
+   * (including "HeadlessChrome" when headless) is left as-is; this is plain configurability,
+   * not a detection-evasion default.
+   */
+  userAgent?: string;
 }
 
 /**

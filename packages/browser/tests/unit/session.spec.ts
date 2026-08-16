@@ -169,6 +169,144 @@ describe('@sutradhar/browser Session Management & Tab Lifecycle', () => {
     ]);
   });
 
+  it('refreshes an adopted popup\'s title once its page fires \'load\' — fixes the field-report remediation\'s 5a finding (title was previously frozen at the constructor placeholder forever)', async () => {
+    let popupHandler: ((page: Page) => void) | undefined;
+    const mainPage = {
+      isClosed: () => false,
+      url: () => 'https://example.com',
+      on: vi.fn((event: string, handler: any) => {
+        if (event === 'popup') popupHandler = handler;
+        return mainPage;
+      }),
+    } as unknown as Page;
+
+    // First call simulates the popup still being on about:blank when the constructor's own
+    // best-effort refresh runs; second call simulates the REAL title once the popup's actual
+    // navigation finishes and 'load' fires — a still-loading popup genuinely returns each in
+    // that order in real Chrome, so this isn't an artificial test-only distinction.
+    let titleCallCount = 0;
+    let popupLoadHandler: (() => void) | undefined;
+    const popupPage = {
+      isClosed: () => false,
+      url: () => 'https://example.com/popup',
+      title: vi.fn().mockImplementation(() => {
+        titleCallCount++;
+        return Promise.resolve(titleCallCount === 1 ? 'about:blank' : 'Real Popup Title');
+      }),
+      on: vi.fn((event: string, handler: any) => {
+        if (event === 'load') popupLoadHandler = handler;
+        return popupPage;
+      }),
+    } as unknown as Page;
+
+    const browserInstance = {
+      isConnected: true,
+      newPage: vi.fn().mockResolvedValue(mainPage),
+      close: vi.fn(),
+      onDisconnected: vi.fn(),
+    } as any;
+
+    const session = new BrowserSession(createSessionId('sess_popup_title'), false, undefined, undefined, browserInstance);
+    const mainTab = await session.createTab('https://example.com');
+
+    popupHandler!(popupPage);
+    await new Promise((r) => setTimeout(r, 0));
+    const popupTab = session.getTabs().find((t) => t.id !== mainTab.id)!;
+
+    // The constructor's own best-effort refresh already ran (page.title() called once) — this
+    // is a real improvement over the pre-fix behavior, which would still show the placeholder
+    // 'New Tab' here forever with no listener to ever correct it.
+    expect(popupTab.title).toBe('about:blank');
+
+    expect(popupLoadHandler).toBeDefined();
+    popupLoadHandler!();
+    await new Promise((r) => setTimeout(r, 0)); // refreshTitleFromPage is async
+
+    expect(popupTab.title).toBe('Real Popup Title');
+    expect(popupTab.toDto().title).toBe('Real Popup Title');
+    expect(popupTab.toDto().url).toBe('https://example.com/popup');
+    expect(popupTab.toDto().historyStack).toEqual(['https://example.com/popup']);
+  });
+
+  it('auto-adopts a tab created via a browser-level targetcreated event — not just the page-level popup path (fixes the field-report remediation\'s 5b finding)', async () => {
+    let targetCreatedHandler: ((target: any) => void) | undefined;
+    const newTabPage = {
+      isClosed: () => false,
+      url: () => 'https://example.com/opened-elsewhere',
+      on: vi.fn().mockReturnThis(),
+    } as unknown as Page;
+    const fakeTarget = {
+      type: () => 'page',
+      page: vi.fn().mockResolvedValue(newTabPage),
+    };
+
+    const mainPage = {
+      isClosed: () => false,
+      url: () => 'https://example.com',
+      on: vi.fn().mockReturnThis(),
+    } as unknown as Page;
+
+    const browserInstance = {
+      isConnected: true,
+      newPage: vi.fn().mockResolvedValue(mainPage),
+      close: vi.fn(),
+      onDisconnected: vi.fn(),
+      puppeteerBrowser: {
+        on: vi.fn((event: string, handler: any) => {
+          if (event === 'targetcreated') targetCreatedHandler = handler;
+        }),
+      },
+    } as any;
+
+    const session = new BrowserSession(createSessionId('sess_target'), false, undefined, undefined, browserInstance);
+    const mainTab = await session.createTab('https://example.com');
+
+    expect(targetCreatedHandler).toBeDefined();
+    targetCreatedHandler!(fakeTarget);
+    // adoptTargetIfNew waits out TARGET_ADOPTION_GRACE_MS (100ms) before checking for dedup.
+    await new Promise((r) => setTimeout(r, 150));
+
+    expect(session.getTabs().length).toBe(2);
+    const newTab = session.getTabs().find((t) => t.id !== mainTab.id);
+    expect(newTab?.url).toBe('https://example.com/opened-elsewhere');
+  });
+
+  it('does not double-register a tab that createTab() itself already adopted, even though newPage() also fires targetcreated', async () => {
+    let targetCreatedHandler: ((target: any) => void) | undefined;
+    const mainPage = {
+      isClosed: () => false,
+      url: () => 'https://example.com',
+      on: vi.fn().mockReturnThis(),
+    } as unknown as Page;
+    // The SAME page object createTab() already registered — simulates newPage()'s own target
+    // firing 'targetcreated' for a page this session is already in the middle of tracking.
+    const fakeTargetForMainPage = {
+      type: () => 'page',
+      page: vi.fn().mockResolvedValue(mainPage),
+    };
+
+    const browserInstance = {
+      isConnected: true,
+      newPage: vi.fn().mockResolvedValue(mainPage),
+      close: vi.fn(),
+      onDisconnected: vi.fn(),
+      puppeteerBrowser: {
+        on: vi.fn((event: string, handler: any) => {
+          if (event === 'targetcreated') targetCreatedHandler = handler;
+        }),
+      },
+    } as any;
+
+    const session = new BrowserSession(createSessionId('sess_target_dedup'), false, undefined, undefined, browserInstance);
+    await session.createTab('https://example.com');
+    expect(session.getTabs().length).toBe(1);
+
+    targetCreatedHandler!(fakeTargetForMainPage);
+    await new Promise((r) => setTimeout(r, 150));
+
+    expect(session.getTabs().length).toBe(1); // still just the one tab — no orphaned duplicate
+  });
+
   it('adoptExistingPage wraps an already-open page as the active tab, instead of opening a new blank one', async () => {
     // Regression coverage for the attach()-reuse gap: a separate process attaching to the same
     // long-lived browser (the CLI's cross-invocation persistence mechanism) needs to pick up a

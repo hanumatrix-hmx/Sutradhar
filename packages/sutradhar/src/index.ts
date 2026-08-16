@@ -38,7 +38,11 @@ export async function launch(options: LaunchOptions = {}): Promise<Browser> {
   const result = await runtime.launch({
     initialUrl: options.url,
     isIncognito: options.isIncognito,
-    launch: options.headless !== undefined ? { headless: options.headless } : undefined,
+    launch:
+      options.headless !== undefined || options.userAgent !== undefined
+        ? { headless: options.headless, userAgent: options.userAgent }
+        : undefined,
+    profileName: options.profileName,
   });
   if (!result.hasRealBrowser) {
     // Clean up the useless session before throwing so we don't leak a browser process.
@@ -53,4 +57,10 @@ export async function launch(options: LaunchOptions = {}): Promise<Browser> {
 
 export { Browser, type LaunchOptions } from './browser.js';
 export { Page, type ElementOptions, type ScreenshotOptions } from './page.js';
-export { SutradharRuntime, type SnapshotResult } from '@sutradhar/capability-runtime';
+export {
+  SutradharRuntime,
+  type SnapshotResult,
+  ProfileManager,
+  type ProfileInfo,
+  type StorageState,
+} from '@sutradhar/capability-runtime';

@@ -168,6 +168,11 @@ export class BrowserTab implements IBrowserTab {
 
     if (this.page) {
       this.attachPageListeners(this.page);
+      // Best-effort immediate sync — covers an adopted popup/existing page that had ALREADY
+      // finished loading before this tab object was constructed (so no future 'load' event
+      // will fire to trigger refreshTitleFromPage below). See that method's doc comment for
+      // why `title` can't just read live the way `url` does.
+      void this.refreshTitleFromPage();
     }
   }
 
@@ -178,6 +183,17 @@ export class BrowserTab implements IBrowserTab {
     return this.currentUrl;
   }
 
+  /**
+   * `title` cannot read live from the page the way {@link url} does — Puppeteer's
+   * `page.title()` is an async CDP round trip, and this getter must stay synchronous. Instead,
+   * `currentTitle` is kept in sync by a `'load'` listener (registered in
+   * {@link attachPageListeners}) plus the constructor's own best-effort refresh above. Without
+   * this, a tab adopted outside of `navigate()` (an adopted popup or a browser-level
+   * `targetcreated` page — see `browser-session.ts`) would report the constructor's placeholder
+   * title forever, since nothing else ever calls `navigate()` on it — found live via GLM's
+   * original UC-09 popup repro, where `title` stayed frozen at `'New Tab'` even though `url`
+   * (reading live) was already correct.
+   */
   public get title(): string {
     return this.currentTitle;
   }
@@ -345,15 +361,22 @@ export class BrowserTab implements IBrowserTab {
   }
 
   public toDto(): BrowserTabDto {
+    // `this.url` (not `this.currentUrl`) — the getter already reads live from the page when one
+    // exists; using the raw cached field here reintroduced the exact staleness `url`'s own
+    // getter was written to avoid, just one layer further out. Found live via GLM's UC-09 popup
+    // repro: `toDto()` (and therefore `list_tabs`/`BrowserSession.toDto()`) reported a stale
+    // `about:blank` for an adopted popup's URL and history even though `tab.url` itself was
+    // already correct.
+    const liveUrl = this.url;
     return {
       id: this.id,
-      url: this.currentUrl,
+      url: liveUrl,
       title: this.currentTitle,
       isActive: this.activeState,
       loading: false,
       canGoBack: false,
       canGoForward: false,
-      historyStack: [this.currentUrl],
+      historyStack: [liveUrl],
       historyIndex: 0,
     };
   }
@@ -483,7 +506,27 @@ export class BrowserTab implements IBrowserTab {
   // Internals
   // ─────────────────────────────────────────────────────────────────────────
 
+  /** Best-effort sync of {@link currentTitle} from the live page — see the `title` getter's doc
+   *  comment for why this can't just be read live on every access the way `url` is. */
+  private async refreshTitleFromPage(): Promise<void> {
+    if (!this.page || this.page.isClosed()) return;
+    try {
+      this.currentTitle = await this.page.title();
+    } catch {
+      // Best-effort — leave currentTitle as whatever it was (e.g. the constructor's
+      // placeholder), rather than throwing out of a fire-and-forget background refresh.
+    }
+  }
+
   private attachPageListeners(page: Page): void {
+    // Keeps `title` from going stale after any real navigation this BrowserTab didn't itself
+    // drive via `navigate()` — an adopted popup, a `targetcreated`-adopted tab, or the page's
+    // own client-side navigation (SPA route change, redirect). `'load'` fires once per real
+    // top-level navigation, unlike `'framenavigated'` which also fires for every subframe.
+    page.on('load', () => {
+      void this.refreshTitleFromPage();
+    });
+
     page.on('dialog', (dialog) => {
       this.pendingDialog = dialog;
 

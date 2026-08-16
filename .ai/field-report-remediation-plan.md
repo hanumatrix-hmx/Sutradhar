@@ -683,6 +683,138 @@ small, do first since 5c's live verification should cover the MCP surface too.
 
 ---
 
+**RESULT (2026-08-16): all of 5a/5b/5c/5c-prereq/5d landed, unit-tested, and live-verified —
+plus two more real bugs found and fixed mid-phase, one of them a pre-existing bug in
+`getStorageState` that the new wiring exposed rather than caused.**
+
+**5a (popup title staleness).** `title` can't read live from the page the way `url`'s getter
+already does (`page.title()` is an async CDP round trip; the getter must stay synchronous).
+Fixed with a `'load'` page-event listener in `attachPageListeners` that refreshes the cached
+`currentTitle`, plus a best-effort immediate refresh in the constructor for a page that had
+already finished loading before adoption (an adopted popup/existing page gets no further `'load'`
+event to trigger off of otherwise). Also fixed `toDto()`, which read the raw cached
+`currentUrl` field directly instead of the `url` getter — reintroducing the exact staleness the
+getter was written to avoid, one layer further out (this fed `list_tabs` and
+`BrowserSession.toDto()` too, not just this one tab's own consumers).
+
+**5b (non-popup tab registration).** Added a browser-level `targetcreated` listener
+(`browser.on('targetcreated', ...)`, alongside the existing page-level `'popup'` listener) so a
+tab created any way other than `window.open()`/`target=_blank` from an already-known page (a
+DevTools-initiated tab, a raw `Target.createTarget`, etc.) is still auto-adopted. `newPage()`
+itself also fires `targetcreated` for the tab `createTab()` is already in the middle of
+registering, so `adoptTargetIfNew` waits a short grace period (`TARGET_ADOPTION_GRACE_MS`,
+100ms) and checks for an already-tracked page with the same `Page` object reference before
+adopting, avoiding a double-registered orphan tab.
+
+**5c + 5c-prereq (profiles ↔ storage-state).** Added `ProfileManager.saveStorageState`/
+`loadStorageState`, storing blobs in a directory separate from the profiles' own `userDataDir`
+(Chrome owns everything inside that; co-mingling bookkeeping files there is fragile to depend on
+across Chrome versions). `runtime.launch({profileName})` now restores a saved blob when
+`initialUrl` is also given (storage APIs are origin-scoped — there's nothing to restore onto
+before the tab has navigated somewhere) and the saved origin matches; `shutdown()`/`shutdownAll()`
+persist the active tab's storage-state for any profile-launched session before closing it.
+`profileName` was added to the MCP `browser.launch` schema (5c-prereq) and threads straight
+through to the already-existing `runtime.launch()` support.
+
+**A pre-existing bug found while wiring this, not introduced by it**: `getStorageState()`
+returned `origin: page.url()` — the **full URL**, not the actual origin — mislabeled as
+"origin" ever since this method was first written. Nothing had ever compared two origins for
+equality before now, so it went unnoticed; the moment 5c's restore-matching logic
+(`saved.origin === new URL(activeTab.url).origin`) depended on it being a real origin, it never
+matched and silently skipped every restore. Fixed to `new URL(page.url()).origin`.
+
+**A real-world assumption in the plan corrected via live testing**: the plan's 5c acceptance
+criterion assumed saucedemo's login is sessionStorage-based ("log in to saucedemo
+(sessionStorage-based) under a named profile"). Live inspection
+(`{...localStorage}`/`{...sessionStorage}`/`document.cookie` dumped right after a real login)
+shows saucedemo's actual session is a **cookie** (`session-username=standard_user`);
+`sessionStorage` is genuinely empty. This means saucedemo's login already survives a profile
+relaunch via Chrome's own native `userDataDir` cookie persistence, independent of anything built
+this phase — confirmed live (cookie survives relaunch; navigating directly to `/inventory.html`
+post-relaunch shows the real authenticated page, `/`'s own lack of auto-redirect was a red
+herring in an earlier check). Since saucedemo can't actually exercise the NEW mechanism this
+phase built, the real proof of 5c is a purpose-built fixture: set a `sessionStorage` value under
+a named profile, shut down (persists it), relaunch the same profile, and directly
+`sessionStorage.getItem` the value back — **it survived** (`"user-42-abc"`), proving the actual
+storage-state round trip works for the case `userDataDir` alone cannot cover (Chrome discards
+real sessionStorage on process exit regardless of `userDataDir`).
+
+**5d (SDK exposure).** Discovered while starting this: Phase 4's own RESULT block claimed
+`--user-agent` was already "an SDK `launch()` option," which was **only true of
+`capability-runtime`**, not of `packages/sutradhar` (the actual embeddable SDK package Phase
+5c-prereq's own plan text points at — "0 grep hits in `packages/sutradhar/src`"). Corrected here:
+added `profileName`/`userAgent` to `packages/sutradhar`'s own `LaunchOptions` and threaded them
+through its `launch()`; added `getStorageState()`/`setStorageState()` to `Page`; re-exported
+`ProfileManager`/`ProfileInfo`/`StorageState` from the package's public API. Live-verified
+directly against the built SDK package (not capability-runtime): `launch({userAgent})` changes
+`navigator.userAgent`; `launch({profileName})` succeeds; `page.getStorageState()` returns the
+correct origin (confirming the origin-field fix); `page.setStorageState()` writes localStorage
+that reads back correctly.
+
+**Live verification summary** — every mechanism was driven directly (not just typechecked)
+against real Chrome:
+- 5a/5b: a real link-click that opens a new tab on the-internet.herokuapp.com/windows shows 2
+  tabs, with the new tab's `title` reading `"New Window"` (not the `'New Tab'` placeholder) both
+  live and in the cached DTO.
+- 5c: the sessionStorage-fixture round trip above; separately, saucedemo's cookie-based login
+  confirmed surviving a profile relaunch via direct navigation to the authenticated page.
+- 5c-prereq: real MCP `browser.launch` calls — an unknown `profileName` errors clearly; a real
+  one launches successfully (`hasRealBrowser:true`).
+- 5d: the SDK-level script above, run against the actual built `sutradhar` package.
+
+**5e / Phase 1 harness re-run — a full clean sweep on MCP, near-clean on SDK/CLI, with one
+environmental lesson learned the hard way.** First attempt hit real interference: by this point
+in the session, **49 Chrome processes had accumulated** across the dozens of live-verification
+scripts run throughout Phases 0–5 (not all cleanly shut down). Under that load, a full SDK run
+showed UC-05 and UC-14 failing with symptoms that looked like real regressions (a duplicate-guard
+false-positive on two genuinely-different `click_by_role` targets; a `type` landing empty despite
+the Phase 2 read-back fix) — but wait-step timings in that run were 25+ seconds where they're
+normally low tens-of-milliseconds, the unmistakable signature of real resource contention, not
+a code path. Killed all `chrome.exe` processes, re-ran both scenarios in isolation (3/3 clean),
+and confirmed: **not a regression** — inspected the actual `checkDuplicateAction` code
+side-by-side with the failure and it was unchanged from Phase 2's fix. A second contamination
+occurred mid-investigation (killing `chrome.exe` while a CLI harness run was still using its own
+detached Chrome process, corrupting that run's UC-08/UC-09 results) — recovered the same way,
+confirmed via a subsequent clean run. **Lesson for future phases**: check `tasklist` for
+`chrome.exe` and kill stragglers before trusting a "regression," especially deep into a long
+multi-phase live-testing session.
+
+Final clean numbers:
+
+| Surface | Pre-fix (Phase 1) | Post-Phase-5 | Notes |
+|---|---|---|---|
+| MCP | 11/14 | **14/14** | Full clean sweep. |
+| SDK | 11/14 | 13/14 | Only UC-01 (bot-detection) fails — deliberately out of scope. |
+| CLI | 13/14 | 13/14 | Only UC-08 (download) fails, in the FINAL clean (no other processes running) run — see below; the underlying `download` command itself was independently verified working 3 separate times. |
+
+**UC-08 on CLI — a real bug found and fixed in the harness itself, plus one flake left
+unresolved and documented rather than hidden.** Re-running UC-08's driver
+(`tools/scenario-suite/run-cli.mjs`) surfaced that it still used the **pre-Phase-4** workaround
+(click the link, then poll the real OS Downloads folder by filesystem diff) instead of the new
+`download` CLI command Phase 4 added — the same category of staleness Phase 4's own 4e fix
+already addressed for `select`/UC-05. Updated it to use `sutradhar download <ref> <dir>` for
+real, downloading into a scratch subdirectory of the runtime's own default allowed root instead
+of the shared real Downloads folder. This fix is confirmed correct (SDK's equivalent scenario
+flipped from fail to pass using the identical default-download-root path), but the CLI-specific
+harness run failed once more afterward with `downloadResultStdout: ""` after 96 seconds —
+consistent with the harness's own 90-second external process timeout killing the CLI child
+before it could print anything, not a hang in `download` itself. Manually reproduced the exact
+same command **twice**, standalone (no harness, no external timeout) — both times it completed
+in ~3.6 seconds. Given two independent manual runs succeed cleanly and the harness failure shows
+every sign of being specific to that one sequential run (immediately after UC-07's cross-origin
+iframe scenario, against a public, uncontrolled shared demo site whose file listing changes from
+real strangers' uploads), this is recorded honestly as an unresolved harness-level flake, not
+re-chased further given the cost of another full 14-scenario CLI pass (each real ~2-3 minutes)
+against evidence that already points away from a real code bug.
+
+All touched packages typecheck clean and pass their full suites: `packages/browser` 159/159 (3
+new: 2 targetcreated-adoption tests, 1 title-refresh test), `packages/capability-runtime` 82/82
+(5 new storage-state tests), `packages/mcp-server` 22/22, `packages/cli` 13/13,
+`packages/sutradhar` typechecks clean (no dedicated test suite existed before this phase either —
+out of this phase's stated scope; noted for a future pass).
+
+---
+
 ### Phase 6 — Release hygiene: the `<select>` delta is unexplainable *by design*, and that is the real bug
 
 **Investigation is already done — do not redo it.** Findings:

@@ -20,7 +20,6 @@ import { SCENARIOS, fx } from './scenarios.mjs';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(here, '..', '..');
 const CLI = path.join(repoRoot, 'packages', 'cli', 'dist', 'cli.js');
-const DOWNLOADS_DIR = path.join(os.homedir(), 'Downloads');
 
 const scenarioById = Object.fromEntries(SCENARIOS.map((s) => [s.id, s]));
 
@@ -471,9 +470,9 @@ async function uc07() {
 async function uc08() {
   closeSession();
   const nav = runCli(['nav', scenarioById['UC-08'].url, '--headed']); // headed: headless Chrome
-  // blocks downloads by default without an explicit CDP Page.setDownloadBehavior call, which the
-  // CLI's withSession() does not make (only runtime.downloadFile() does, and there's no `download`
-  // CLI verb — see Context 1b in the plan) — headed gives the download a real chance to land at all.
+  // blocks downloads by default without an explicit CDP Page.setDownloadBehavior call — the
+  // `download` CLI command (added Phase 4) makes this call internally, but headed still gives
+  // the download a real chance to land regardless of that.
   requireNav(nav, 'download page nav');
   const snap = runCli(['snap']);
   const fileLine = snap.stdout.split('\n').find((l) => /^\[#\d+\] a "[^"]+\.\w+"/.test(l) && !/Elemental Selenium/.test(l));
@@ -481,26 +480,33 @@ async function uc08() {
   const fileName = fileLine?.match(/"([^"]+)"/)?.[1];
   if (!fileId) fail('could not find a downloadable file link in snap', { snap: snap.stdout });
 
-  const before = await fs.readdir(DOWNLOADS_DIR).catch(() => []);
-  const click = runCli(['click', fileId]);
-  await sleep(4000); // harness-level pacing — no `download` CLI command / completion signal exists
-  const after = await fs.readdir(DOWNLOADS_DIR).catch(() => []);
+  // Phase 4 added a real `download` CLI command with its own real completion signal
+  // (browser.download_file's CDP downloadWillBegin/downloadProgress events) — use it for real
+  // instead of the pre-Phase-4 click-then-poll-the-real-Downloads-folder workaround this used
+  // to be. Downloads into a dedicated scratch subdir of the runtime's own default allowed
+  // download root (a `sutradhar-downloads` subdirectory of the OS temp dir — see the Phase 4
+  // fix in browser-action-engine.ts), not the bare OS temp root or the real user Downloads
+  // folder, so this test can't collide with a real download the operator is doing themselves.
+  const downloadDir = path.join(os.tmpdir(), 'sutradhar-downloads', `cli-uc08-${Date.now()}`);
+  const downloadResult = runCli(['download', fileId, downloadDir]);
   closeSession();
 
-  const newFiles = after.filter((f) => !before.includes(f));
-  const landedExpectedFile = newFiles.includes(fileName);
-  const anyNewFile = newFiles.length > 0;
+  const downloadedFilename = downloadResult.stdout.match(/Downloaded "([^"]+)"/)?.[1];
+  const downloadedPath = downloadResult.stdout.match(/to (.+)$/)?.[1];
+  const landedExpectedFile = downloadedFilename === fileName;
+  const succeeded = downloadResult.code === 0 && !!downloadedFilename;
 
   const detail = {
     fileName,
-    downloadsDir: DOWNLOADS_DIR,
-    newFilesSinceClick: newFiles,
+    downloadDir,
+    downloadResultStdout: downloadResult.stdout,
+    downloadedFilename,
+    downloadedPath,
     landedExpectedFile,
-    signalUsed: 'no `download` CLI command exists (verified: 0 matches in packages/cli/src) — no completion ' +
-      'signal from the CLI itself; the driver polled the OS Downloads directory by filesystem diff, exactly ' +
-      'the fallback the scenario itself allows for a pre-Phase-4 CLI baseline.',
+    signalUsed: 'the `download` CLI command\'s own real completion signal (added Phase 4) — no longer ' +
+      'polling the filesystem by diff.',
   };
-  if (!anyNewFile) fail('no new file appeared in Downloads after clicking and waiting', detail);
+  if (!succeeded) fail('the `download` CLI command did not report a successful download', detail);
   return detail;
 }
 

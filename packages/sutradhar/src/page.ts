@@ -5,7 +5,7 @@
  * MCP server and the REST API.
  */
 
-import type { SutradharRuntime, SnapshotResult } from '@sutradhar/capability-runtime';
+import type { SutradharRuntime, SnapshotResult, StorageState } from '@sutradhar/capability-runtime';
 
 /** Options accepted by {@link Page.click} / {@link Page.type}. */
 export interface ElementOptions {
@@ -101,6 +101,28 @@ export class Page {
   /** Read cookies for this tab's URL. */
   public async cookies(): Promise<unknown[]> {
     return this.runtime.getCookies(this.sessionId, this.tabId);
+  }
+
+  /**
+   * Export this tab's full auth/session-relevant state — cookies, localStorage, sessionStorage
+   * — as one portable blob. Save it (e.g. to disk) and pass it to a LATER page's
+   * {@link setStorageState} to restore login state without redoing a login flow — including on
+   * a different machine. If launched under a named profile (`launch({profileName})`), this is
+   * also what `browser.close()` persists automatically for next time; call this directly only
+   * when you want the blob yourself (to save elsewhere) or want it captured at a specific point
+   * mid-session rather than only at close.
+   */
+  public async getStorageState(): Promise<StorageState> {
+    return this.runtime.getStorageState(this.sessionId, this.tabId);
+  }
+
+  /**
+   * Restore a blob previously captured by {@link getStorageState}. Call this right after
+   * navigating to the target origin (storage APIs are origin-scoped) and before anything else
+   * that depends on being logged in.
+   */
+  public async setStorageState(state: StorageState): Promise<void> {
+    await this.runtime.setStorageState(this.sessionId, state, this.tabId);
   }
 
   /** Bring this tab to the front (make it the active tab). */

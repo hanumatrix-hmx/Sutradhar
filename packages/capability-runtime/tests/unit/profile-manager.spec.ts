@@ -83,4 +83,49 @@ describe('@sutradhar/capability-runtime ProfileManager', () => {
     const info = await secondManager.get('work');
     expect(info?.name).toBe('work');
   });
+
+  describe('storage-state persistence (field-report remediation 5c: wiring profiles to storage-state)', () => {
+    const sampleState = {
+      origin: 'https://saucedemo.com',
+      cookies: [{ name: 'session-username', value: 'standard_user' }],
+      localStorage: { theme: 'dark' },
+      sessionStorage: { 'cart-token': 'abc123' },
+    };
+
+    it('loadStorageState returns undefined for a profile that has never had state saved', async () => {
+      await manager.create('work');
+      expect(await manager.loadStorageState('work')).toBeUndefined();
+    });
+
+    it('round-trips a saved storage-state blob for an existing profile', async () => {
+      await manager.create('work');
+      await manager.saveStorageState('work', sampleState);
+
+      const loaded = await manager.loadStorageState('work');
+      expect(loaded).toEqual(sampleState);
+    });
+
+    it('persists storage-state across separate ProfileManager instances pointed at the same baseDir — this IS the relaunch-survives-login scenario', async () => {
+      await manager.create('work');
+      await manager.saveStorageState('work', sampleState);
+
+      const secondManager = new ProfileManager(baseDir);
+      const loaded = await secondManager.loadStorageState('work');
+      expect(loaded).toEqual(sampleState);
+    });
+
+    it('saveStorageState throws for a profile that does not exist, rather than silently writing an orphaned file', async () => {
+      await expect(manager.saveStorageState('nope', sampleState)).rejects.toThrow(/No profile named "nope"/);
+    });
+
+    it('does not touch the profile\'s own userDataDir — storage-state is stored in a separate location', async () => {
+      const info = await manager.create('work');
+      await manager.saveStorageState('work', sampleState);
+
+      // The userDataDir itself must be untouched by this — Chrome owns everything inside it.
+      const { readdir } = await import('node:fs/promises');
+      const contents = await readdir(info.userDataDir).catch(() => []);
+      expect(contents).toEqual([]);
+    });
+  });
 });

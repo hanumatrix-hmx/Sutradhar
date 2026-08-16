@@ -396,7 +396,12 @@ async function scenarioUC08() {
     const firstHref = await runtime.eval(sid, `document.querySelector('a[href^="download/"]')?.getAttribute('href') ?? null`);
     if (!firstHref) throw new Error('No downloadable file link found on the page.');
 
-    const downloadDir = path.join(os.tmpdir(), `sutradhar-baseline-uc08-${Date.now()}`);
+    // Nested under the runtime's own default allowed download root (a dedicated
+    // 'sutradhar-downloads' subdirectory of the OS temp dir, not the bare temp dir itself — see
+    // the field-report remediation Phase 4 fix in browser-action-engine.ts) rather than a
+    // sibling of it, since a bare os.tmpdir() subdirectory is no longer inside the allowed root
+    // by default and would be rejected exactly like any other caller-supplied path outside it.
+    const downloadDir = path.join(os.tmpdir(), 'sutradhar-downloads', `baseline-uc08-${Date.now()}`);
     await fs.mkdir(downloadDir, { recursive: true });
 
     const result = await runtime.downloadFile(sid, 'a[href^="download/"]', downloadDir);

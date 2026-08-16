@@ -135,14 +135,23 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
               '(including "HeadlessChrome" when headless) is left as-is; this is plain configurability, not a ' +
               'detection-evasion default.',
           ),
+        profileName: z
+          .string()
+          .optional()
+          .describe(
+            'Launch using a named, persistent profile (cookies/history/localStorage survive across separate ' +
+              'launches) — create one first via the CLI ("sutradhar profile create <name>") or the SDK\'s ' +
+              'profile manager. Throws if the name does not exist.',
+          ),
       },
     },
-    async ({ sessionId, initialUrl, headless, userAgent }) => {
+    async ({ sessionId, initialUrl, headless, userAgent, profileName }) => {
       try {
         const result = await runtime.launch({
           sessionId,
           initialUrl,
           launch: headless !== undefined || userAgent !== undefined ? { headless, userAgent } : undefined,
+          profileName,
         });
         if (!result.hasRealBrowser) {
           return errorResult(

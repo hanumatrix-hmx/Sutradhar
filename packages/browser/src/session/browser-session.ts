@@ -6,9 +6,17 @@
 import { SessionId, TabId, createTabId, BrowserSessionDto } from '@sutradhar/contracts';
 import { EventBus } from '@sutradhar/events';
 import { StructuredLogger } from '@sutradhar/observability';
-import { Browser as PuppeteerBrowser, Page } from 'puppeteer-core';
+import { Browser as PuppeteerBrowser, Page, Target } from 'puppeteer-core';
 import { IBrowserInstance } from '../launcher/browser-launcher.js';
 import { BrowserTab, IBrowserTab } from './browser-tab.js';
+
+/** Grace period given to an explicit, in-flight `createTab()`/`adoptPopupPage()` call to finish
+ *  registering its own new tab before {@link BrowserSession.adoptTargetIfNew} decides a
+ *  browser-level `targetcreated` event refers to an untracked page — `newPage()` itself creates
+ *  a target too, so without this the SAME page could be double-registered as an orphaned second
+ *  tab entry. Best-effort, not a hard guarantee, mirroring the same tradeoff this codebase
+ *  already accepts elsewhere (see `TIMEOUT_SETTLEMENT_GRACE_MS` in `browser-action-engine.ts`). */
+const TARGET_ADOPTION_GRACE_MS = 100;
 
 export interface IBrowserSession {
   readonly id: SessionId;
@@ -60,6 +68,33 @@ export class BrowserSession implements IBrowserSession {
     this.browserInstance = browserInstance;
     this.browserInstance?.onDisconnected(() => {
       void this.handleCrash();
+    });
+    // `watchForPopups` only catches a new page opened via `window.open()`/`target=_blank` FROM a
+    // page this session already knows about — a tab created any other way (DevTools' own "new
+    // tab" button, `Target.createTarget` used directly, or various extension/automation paths)
+    // fires no page-level 'popup' event on anything we're already watching, so it was previously
+    // invisible to `getTabs()`/`list_tabs` for the lifetime of a long-running session. This
+    // browser-level listener catches those too — see `adoptTargetIfNew` for how it avoids
+    // double-registering a page `createTab()` itself is already in the middle of adopting.
+    this.browserInstance?.puppeteerBrowser?.on('targetcreated', (target) => {
+      void this.adoptTargetIfNew(target);
+    });
+  }
+
+  private async adoptTargetIfNew(target: Target): Promise<void> {
+    if (this.isClosed) return;
+    if (target.type() !== 'page') return; // skip background/service-worker/other target kinds
+    const page = await target.page().catch(() => null);
+    if (!page || page.isClosed()) return;
+
+    await new Promise((resolve) => setTimeout(resolve, TARGET_ADOPTION_GRACE_MS));
+    if (this.isClosed || page.isClosed()) return;
+
+    const alreadyTracked = Array.from(this.tabsMap.values()).some((t) => t.page === page);
+    if (alreadyTracked) return;
+
+    await this.adoptExistingPage(page, false).catch((err) => {
+      this.logger.warn(`[BrowserSession] Failed to adopt newly-detected target as a tab: ${(err as Error).message}`);
     });
   }
 
