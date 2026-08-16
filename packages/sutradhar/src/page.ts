@@ -5,12 +5,20 @@
  * MCP server and the REST API.
  */
 
-import type { SutradharRuntime, SnapshotResult, StorageState } from '@sutradhar/capability-runtime';
+import type { SutradharRuntime, SnapshotResult, StorageState, SettleSpec } from '@sutradhar/capability-runtime';
 
 /** Options accepted by {@link Page.click} / {@link Page.type}. */
 export interface ElementOptions {
   /** Click delay in ms (ignored by type/click today; reserved for parity). */
   delay?: number;
+  /**
+   * Opt-in: after the action, wait for the page to stop actively changing (no DOM mutations,
+   * no in-flight network requests) before returning — helps when the action triggers a menu/
+   * modal/toast that takes a moment to finish rendering and the very next call needs to see
+   * the settled result. `true` uses the defaults; pass an object to override individual
+   * fields. Off by default — most actions don't need it and it adds real latency.
+   */
+  settle?: boolean | SettleSpec;
 }
 
 /** Options accepted by {@link Page.screenshot}. */
@@ -60,13 +68,13 @@ export class Page {
    * Click an element. `selector` may be a CSS selector OR a numeric [#id] from
    * {@link Page.snapshot} (e.g. `"7"` resolves to `[data-sd-node-id="7"]`).
    */
-  public async click(selector: string, _options?: ElementOptions): Promise<void> {
-    await this.runtime.click(this.sessionId, selector, this.tabId);
+  public async click(selector: string, options?: ElementOptions): Promise<void> {
+    await this.runtime.click(this.sessionId, selector, this.tabId, undefined, undefined, options?.settle);
   }
 
   /** Type text into an input targeted by selector or [#id]. */
-  public async type(selector: string, text: string, _options?: ElementOptions): Promise<void> {
-    await this.runtime.type(this.sessionId, selector, text, this.tabId);
+  public async type(selector: string, text: string, options?: ElementOptions): Promise<void> {
+    await this.runtime.type(this.sessionId, selector, text, this.tabId, options?.settle);
   }
 
   /** Press a keyboard key (e.g. `"Enter"`, `"Escape"`). */

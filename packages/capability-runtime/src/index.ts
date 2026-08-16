@@ -15,3 +15,4 @@ export { ProfileManager, type ProfileInfo } from './profiles/profile-manager.js'
 export type { AuditResult, A11yIssue, WebVitals } from './audit/site-audit.js';
 export { compareScreenshots, type VisualCompareResult } from './audit/visual-compare.js';
 export { type AxNode, type AxSnapshotResult } from './snapshot/ax-snapshot.js';
+export type { SettleSpec } from '@sutradhar/browser';

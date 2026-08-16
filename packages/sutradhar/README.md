@@ -104,6 +104,9 @@ Use that `[#id]` as the selector for `page.click('4')` or `page.type('4', '...')
 | `url` | `string` | — | Open the first tab at this URL. |
 | `headless` | `boolean` | `true` | Run headless. |
 | `isIncognito` | `boolean` | `false` | Incognito context. |
+| `profileName` | `string` | — | Launch using a named, persistent profile (cookies/history/localStorage — and sessionStorage, if a prior session under this name saved it — survive across separate launches). Create one first via `new ProfileManager().create(name)`. Throws if the name doesn't exist. |
+| `userAgent` | `string` | — | Override `navigator.userAgent`. Unset by default — the real Chrome UA (including "HeadlessChrome" when headless) is left as-is; this is plain configurability, not a detection-evasion default. |
+| `allowedDomains` | `readonly string[]` | — | Restrict navigation (`page.goto`, the initial `url`, `browser.compare`, `newPage`'s `url`) to these domains (and their subdomains) — anything else throws. Useful for handing an agent a logged-in internal session safely; does **not** intercept page-initiated navigation from a clicked link (client-side, not routed through this check). |
 
 Throws if no real browser is available. Set `CHROME_PATH` to point at a Chrome/Edge executable
 if auto-detection fails.

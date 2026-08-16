@@ -48,6 +48,9 @@ Run `sutradhar` with no arguments for the full command list.
 |---|---|
 | `nav <url>` | Navigate to a URL (launches a session if none is active). |
 | `snap` | Print the interactive-element listing for the current page. |
+| `snap --json` | Same, plus the raw structured per-element data as JSON. |
+| `snap --no-text` | Same elements, drops name/label/placeholder/value text (keeps tag+role+id) — smaller listing when you already know what you're targeting and just need fresh ids. |
+| `snap --ids-only` | Smallest listing: only the bracketed `[#id]`, nothing else. |
 | `axsnap` | Accessibility-tree listing — no ids, never goes stale even if the page re-renders; pair with `clicktext`/`clickrole`. |
 | `text` | Print the current page's visible text. |
 | `click <ref>` | Click an element (selector, or a numeric id from `snap`). |
@@ -55,19 +58,42 @@ Run `sutradhar` with no arguments for the full command list.
 | `clickrole <role> [name]` | Click by accessibility role, optionally narrowed by name (e.g. `clickrole button Submit`). |
 | `type <ref> <text>` | Type text into an element. |
 | `press <ref> <key>` | Focus an element then press a key (e.g. `press 3 Enter`). |
+| `select <ref> <value>` | Select an `<option>` by value on a `<select>`. |
+| `wait <ref> [timeoutMs]` | Wait for an element to appear and be visible. |
+| `eval <js-expression>` | Evaluate JS in the page's top-level context, print the result. |
+| `hover <ref>` | Hover an element. |
+| `scroll [dir] [amountPx]` | Scroll the page (`dir`: up/down/top/bottom, default down 500px). |
+| `upload <ref> <filePath>` | Upload a local file into an `<input type="file">`. |
+| `drag <sourceRef> <destRef>` | Drag one element onto another. |
+| `download <ref> [dir]` | Click an element that triggers a download, print the saved path. |
 | `screenshot [path]` | Save a screenshot (default: `./screenshot.png`). |
-| `audit [url] [outDir]` | Screenshot + console/page/network errors + accessibility checks + Core Web Vitals for a page. |
+| `audit [url] [outDir]` | Screenshot + console/page/network errors + accessibility checks + Core Web Vitals for a page (current page if no url). |
+| `audit [url] [outDir] --baseline <url>` | Same, plus a visual pixel-diff against a known-good baseline URL — a one-command regression gate combining `audit` + `compare`. |
 | `compare <urlA> <urlB> [out]` | Visual regression: pixel-diff two pages, save a diff image. |
 | `close` | Close the active session. |
 | `doctor` | Environment diagnostics (Chrome detection, active session). |
 | `profile create <name> [desc]` | Create a named, persistent profile (cookies/history/storage survive across separate launches). |
 | `profile list` | List profiles. |
 | `profile delete <name>` | Delete a profile (irreversibly removes its stored data). |
+| `profile export-state <name> <outFile>` | Export a profile's saved login state (cookies/localStorage/sessionStorage) to a portable JSON file. |
+| `profile import-state <name> <inFile>` | Pre-bake a profile with login state from a JSON file (e.g. one produced by `export-state`, or `browser.get_storage_state`) — restored automatically on the next launch with that profile. |
 
-**Flags:** `--headed` (launch visibly instead of headless — only applies to `nav` when
-starting a new session), `--profile <name>` (launch as a named persistent profile, created
-first via `profile create`), `--fail-on-diff` (`compare` exits nonzero on any pixel
-difference — CI-friendly gating).
+**Flags:**
+
+| Flag | Applies to | Effect |
+|---|---|---|
+| `--headed` | `nav` (new session only) | Launch visibly instead of headless. |
+| `--profile <name>` | `nav` (new session only) | Launch as a named persistent profile (create one first via `profile create`). |
+| `--user-agent <ua>` | `nav` (new session only) | Launch with a custom `navigator.userAgent`. |
+| `--allowlist-domains <a.com,b.com>` | any command | Block navigation to any domain not in this comma-separated list (and their subdomains). Per-command, not persisted in session state — pass it on every command that might navigate. |
+| `--json` | `snap` | Additionally print structured per-element data as JSON. |
+| `--no-text` | `snap` | Drop per-element text, keep tag+role+id. |
+| `--ids-only` | `snap` | Keep only the bracketed id, nothing else. |
+| `--baseline <url>` | `audit` | Also visually diff the audited page against this URL. |
+| `--fail-on-diff` | `compare`, `audit` | Exit nonzero if a pixel difference is found (`compare`), or if any console/page/broken-request error or (with `--baseline`) visual diff is found (`audit`) — CI-friendly gating. |
+| `--settle` | `click`, `type` | Wait for the page to stop actively changing (no DOM mutations, no in-flight network requests) before returning — helps when the action triggers a menu/modal/toast that renders a moment later. |
+
+Run `sutradhar` with no arguments for this same list straight from the binary.
 
 ## Why `axsnap`/`clicktext`/`clickrole` over `snap`/`click`
 

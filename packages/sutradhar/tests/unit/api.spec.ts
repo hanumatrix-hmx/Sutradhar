@@ -77,4 +77,31 @@ describe('sutradhar SDK public API', () => {
       expect(stub.setStorageState).toHaveBeenCalledWith('sess-1', sampleState, 'tab-1');
     });
   });
+
+  describe('Page click/type settle pass-through (constructed against a stub runtime)', () => {
+    it('click() forwards options.settle as runtime.click\'s 6th positional arg, undefined when not given', async () => {
+      const stub = { click: vi.fn().mockResolvedValue({ success: true }) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      await page.click('7');
+      expect(stub.click).toHaveBeenCalledWith('sess-1', '7', 'tab-1', undefined, undefined, undefined);
+
+      await page.click('7', { settle: true });
+      expect(stub.click).toHaveBeenLastCalledWith('sess-1', '7', 'tab-1', undefined, undefined, true);
+
+      await page.click('7', { settle: { mutationQuietMs: 100 } });
+      expect(stub.click).toHaveBeenLastCalledWith('sess-1', '7', 'tab-1', undefined, undefined, { mutationQuietMs: 100 });
+    });
+
+    it('type() forwards options.settle as runtime.type\'s 5th positional arg, undefined when not given', async () => {
+      const stub = { type: vi.fn().mockResolvedValue({ success: true }) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      await page.type('7', 'hello');
+      expect(stub.type).toHaveBeenCalledWith('sess-1', '7', 'hello', 'tab-1', undefined);
+
+      await page.type('7', 'hello', { settle: true });
+      expect(stub.type).toHaveBeenLastCalledWith('sess-1', '7', 'hello', 'tab-1', true);
+    });
+  });
 });
