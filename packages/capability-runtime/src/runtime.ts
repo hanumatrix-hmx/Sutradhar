@@ -23,6 +23,7 @@ import {
   type ActionHistoryEntry,
   type IBrowserSession,
   type IBrowserTab,
+  type SettleSpec,
 } from '@sutradhar/browser';
 import path from 'node:path';
 import { access, realpath } from 'node:fs/promises';
@@ -449,10 +450,16 @@ export class SutradharRuntime {
      *  corner, instead of the default (its center). Needed for canvas-rendered UI, where the
      *  interactive thing is pixels drawn inside a `<canvas>`, not a sub-selectable DOM node. */
     offset?: { x: number; y: number },
+    /** Opt-in: after the click, wait for the page to stop actively changing (no DOM mutations,
+     *  no in-flight network requests) before returning — see `ActionParams.settle`'s doc
+     *  comment. Off by default; pass `true` for the defaults or a partial `SettleSpec` to
+     *  override individual fields. Useful when a click triggers a menu/modal/toast that takes
+     *  a moment to finish rendering and the very next call needs to see the settled result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     return this.runAction(
       sessionId,
-      { actionType: 'click', selector: normalizeTarget(target), modifiers, offset },
+      { actionType: 'click', selector: normalizeTarget(target), modifiers, offset, settle },
       tabId,
     );
   }
@@ -542,10 +549,14 @@ export class SutradharRuntime {
     target: string,
     value: string,
     tabId?: string,
+    /** Opt-in post-action settle wait — see {@link SutradharRuntime.click}'s equivalent param
+     *  for what this does. Useful when typing triggers an async autocomplete/validation UI
+     *  that takes a moment to render and the next call needs to see it. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     return this.runAction(
       sessionId,
-      { actionType: 'type', selector: normalizeTarget(target), value },
+      { actionType: 'type', selector: normalizeTarget(target), value, settle },
       tabId,
     );
   }

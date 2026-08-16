@@ -21,6 +21,9 @@ export interface ParsedArgs {
   /** Parsed from `--baseline <url>` — undefined when the flag isn't given. Used by `audit` to
    *  also run a visual compare against a known-good baseline URL in the same command. */
   baselineFlag: string | undefined;
+  /** `--settle` — used by `click`/`type` to wait for the page to stop actively changing
+   *  (DOM-quiet + network-idle) before returning. Off by default. */
+  settle: boolean;
 }
 
 /** Parses `process.argv.slice(2)`-style arguments (verb + flags) into their recognized pieces.
@@ -30,6 +33,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
   const headed = args.includes('--headed');
   const failOnDiff = args.includes('--fail-on-diff');
   const jsonMode = args.includes('--json');
+  const settle = args.includes('--settle');
   const profileFlagIndex = args.indexOf('--profile');
   const profileFlag = profileFlagIndex !== -1 ? args[profileFlagIndex + 1] : undefined;
   const userAgentFlagIndex = args.indexOf('--user-agent');
@@ -50,6 +54,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
       a !== '--headed' &&
       a !== '--fail-on-diff' &&
       a !== '--json' &&
+      a !== '--settle' &&
       a !== '--profile' &&
       a !== '--user-agent' &&
       a !== '--allowlist-domains' &&
@@ -70,5 +75,6 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     userAgentFlag,
     allowlistDomainsFlag,
     baselineFlag,
+    settle,
   };
 }

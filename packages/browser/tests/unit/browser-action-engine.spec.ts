@@ -1564,3 +1564,95 @@ describe('@sutradhar/browser BrowserActionEngine tab-lifecycle actions are sessi
     },
   );
 });
+
+describe('@sutradhar/browser BrowserActionEngine post-action settle wait', () => {
+  it('does not wait for settle when the caller does not request it (default off)', async () => {
+    // press_key: the only action-specific async call is page.keyboard.press — if a settle wait
+    // ran unrequested, it would show up as an extra page.evaluate/waitForNetworkIdle call.
+    const evaluateSpy = vi.fn().mockResolvedValue(undefined);
+    const waitForNetworkIdleSpy = vi.fn().mockResolvedValue(undefined);
+    const page = {
+      frames: vi.fn().mockReturnValue([]),
+      keyboard: { press: vi.fn().mockResolvedValue(undefined) },
+      evaluate: evaluateSpy,
+      waitForNetworkIdle: waitForNetworkIdleSpy,
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'press_key',
+      key: 'Enter',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(evaluateSpy).not.toHaveBeenCalled();
+    expect(waitForNetworkIdleSpy).not.toHaveBeenCalled();
+  });
+
+  it('waits for DOM-quiet and network-idle when settle:true is requested', async () => {
+    const evaluateSpy = vi.fn().mockResolvedValue(undefined);
+    const waitForNetworkIdleSpy = vi.fn().mockResolvedValue(undefined);
+    const page = {
+      frames: vi.fn().mockReturnValue([]),
+      keyboard: { press: vi.fn().mockResolvedValue(undefined) },
+      evaluate: evaluateSpy,
+      waitForNetworkIdle: waitForNetworkIdleSpy,
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'press_key',
+      key: 'Enter',
+      maxRetries: 0,
+      settle: true,
+    });
+
+    expect(result.success).toBe(true);
+    expect(evaluateSpy).toHaveBeenCalledTimes(1);
+    expect(evaluateSpy).toHaveBeenCalledWith(expect.any(Function), 300, 5000); // DEFAULT_SETTLE_SPEC
+    expect(waitForNetworkIdleSpy).toHaveBeenCalledWith({ idleTime: 500, timeout: 5000 });
+  });
+
+  it('honors a partial settle spec, filling in defaults for the rest', async () => {
+    const evaluateSpy = vi.fn().mockResolvedValue(undefined);
+    const waitForNetworkIdleSpy = vi.fn().mockResolvedValue(undefined);
+    const page = {
+      frames: vi.fn().mockReturnValue([]),
+      keyboard: { press: vi.fn().mockResolvedValue(undefined) },
+      evaluate: evaluateSpy,
+      waitForNetworkIdle: waitForNetworkIdleSpy,
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'press_key',
+      key: 'Enter',
+      maxRetries: 0,
+      settle: { mutationQuietMs: 100 },
+    });
+
+    expect(result.success).toBe(true);
+    expect(evaluateSpy).toHaveBeenCalledWith(expect.any(Function), 100, 5000); // overridden + default
+    expect(waitForNetworkIdleSpy).toHaveBeenCalledWith({ idleTime: 500, timeout: 5000 }); // default
+  });
+
+  it('does not fail the action if the settle wait itself times out (best-effort, not a hard requirement)', async () => {
+    const page = {
+      frames: vi.fn().mockReturnValue([]),
+      keyboard: { press: vi.fn().mockResolvedValue(undefined) },
+      evaluate: vi.fn().mockRejectedValue(new Error('evaluate failed: execution context destroyed')),
+      waitForNetworkIdle: vi.fn().mockRejectedValue(new Error('Waiting for network idle failed: timeout')),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'press_key',
+      key: 'Enter',
+      maxRetries: 0,
+      settle: true,
+    });
+
+    expect(result.success).toBe(true);
+  });
+});

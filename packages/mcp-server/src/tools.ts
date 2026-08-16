@@ -379,6 +379,25 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
   const targetDesc =
     'A CSS selector OR a numeric [#id] from browser.snapshot (e.g. "7" resolves to [data-sd-node-id="7"]).';
 
+  const settleDesc =
+    'Opt-in: after the action, wait for the page to stop actively changing (no DOM mutations, no ' +
+    'in-flight network requests) before returning — helps when the action triggers a menu/modal/' +
+    'toast/autocomplete that takes a moment to finish rendering and the very next call needs to see ' +
+    'the settled result. true uses the defaults (300ms DOM-quiet, 500ms network-idle, 5s overall ' +
+    'bound); pass an object to override individual fields. Off by default — most actions don\'t need ' +
+    'it and it adds real latency.';
+  const settleSchema = z
+    .union([
+      z.boolean(),
+      z.object({
+        mutationQuietMs: z.number().optional(),
+        networkIdleMs: z.number().optional(),
+        timeoutMs: z.number().optional(),
+      }),
+    ])
+    .optional()
+    .describe(settleDesc);
+
   server.registerTool(
     'browser.click',
     {
@@ -396,11 +415,12 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
           .optional()
           .describe('Click this point relative to the target element\'s top-left corner, instead of its center.'),
         tabId: z.string().optional(),
+        settle: settleSchema,
       },
     },
-    async ({ sessionId, target, modifiers, offset, tabId }) => {
+    async ({ sessionId, target, modifiers, offset, tabId, settle }) => {
       try {
-        return jsonResult(await runtime.click(sessionId, target, tabId, modifiers, offset));
+        return jsonResult(await runtime.click(sessionId, target, tabId, modifiers, offset, settle));
       } catch (e) {
         return errorResult(`click failed: ${(e as Error).message}`);
       }
@@ -467,11 +487,12 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         target: z.string().describe(targetDesc),
         value: z.string().describe('Text to type into the element.'),
         tabId: z.string().optional(),
+        settle: settleSchema,
       },
     },
-    async ({ sessionId, target, value, tabId }) => {
+    async ({ sessionId, target, value, tabId, settle }) => {
       try {
-        return jsonResult(await runtime.type(sessionId, target, value, tabId));
+        return jsonResult(await runtime.type(sessionId, target, value, tabId, settle));
       } catch (e) {
         return errorResult(`type failed: ${(e as Error).message}`);
       }

@@ -26,6 +26,7 @@ const {
   userAgentFlag,
   allowlistDomainsFlag,
   baselineFlag,
+  settle,
 } = parseArgs(process.argv.slice(2));
 
 // Tracked so main()'s cleanup can disconnect the CDP client connection (NOT close the browser)
@@ -268,9 +269,9 @@ async function cmdText() {
 }
 
 async function cmdClick(ref: string | undefined) {
-  if (!ref) printErrorAndExit('usage: sutradhar click <ref>  (ref = a selector, or a numeric id from "sutradhar snap")');
+  if (!ref) printErrorAndExit('usage: sutradhar click <ref> [--settle]  (ref = a selector, or a numeric id from "sutradhar snap")');
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.click(sessionId, ref!);
+    const result = await runtime.click(sessionId, ref!, undefined, undefined, undefined, settle);
     console.log(result.success ? `Clicked ${ref}` : `Click failed: ${result.error}`);
     if (!result.success) process.exitCode = 1;
   });
@@ -295,9 +296,9 @@ async function cmdClickRole(role: string | undefined, name: string | undefined) 
 }
 
 async function cmdType(ref: string | undefined, text: string | undefined) {
-  if (!ref || text === undefined) printErrorAndExit('usage: sutradhar type <ref> <text>');
+  if (!ref || text === undefined) printErrorAndExit('usage: sutradhar type <ref> <text> [--settle]');
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.type(sessionId, ref!, text!);
+    const result = await runtime.type(sessionId, ref!, text!, undefined, settle);
     console.log(result.success ? `Typed into ${ref}` : `Type failed: ${result.error}`);
     if (!result.success) process.exitCode = 1;
   });
@@ -625,6 +626,9 @@ Flags:
                         "audit" exits nonzero if any console/page/broken-request error was
                         found, or (with --baseline) any visual diff from the baseline
   --baseline <url>      "audit" also visually diffs the audited page against this URL
+  --settle              "click"/"type" wait for the page to stop actively changing (no DOM
+                        mutations, no in-flight network requests) before returning — helps when
+                        the action triggers a menu/modal/toast that renders a moment later
   --allowlist-domains <a.com,b.com>
                         Block navigation to any domain not in this comma-separated list (and
                         their subdomains). Per-command, not persisted in session state — pass

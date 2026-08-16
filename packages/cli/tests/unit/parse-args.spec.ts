@@ -123,6 +123,17 @@ describe('@sutradhar/cli parseArgs', () => {
     expect(result.baselineFlag).toBeUndefined();
   });
 
+  it('parses --settle as a standalone boolean flag, stripped from cleanArgs', () => {
+    const result = parseArgs(['click', '7', '--settle']);
+    expect(result.settle).toBe(true);
+    expect(result.cleanArgs).toEqual(['7']);
+  });
+
+  it('defaults settle to false when not given', () => {
+    const result = parseArgs(['click', '7']);
+    expect(result.settle).toBe(false);
+  });
+
   it('does not treat a positional arg that happens to equal a flag NAME as anything but a flag, even mid-command', () => {
     // Guards the filter's index-based value-stripping: only the token immediately AFTER
     // --profile/--user-agent is treated as that flag's value, not any later occurrence.

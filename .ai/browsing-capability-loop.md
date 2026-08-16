@@ -67,6 +67,41 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-16 — Milestone 38: post-action settle waits (`settle` param) — the last of INSIGHTS.md's priority-stack items
+
+Closes INSIGHTS.md Insight 2 ("flakiness lives at state transitions, not at actions... nobody
+has productized the post-condition side — a built-in post-action settle would make first-run
+reliability equal retry reliability") — the #2 item on INSIGHTS' own priority stack and the one
+explicitly flagged earlier this session as needing careful scoped design before building.
+
+New opt-in `settle` param (`ActionParams.settle: boolean | SettleSpec`, default off — this adds
+real latency so it's deliberately per-call, not a blanket auto-wait on every action). After a
+successful dispatch and before verification, `waitForSettle` runs two checks in parallel, both
+bounded by an overall timeout (default 5s): a `MutationObserver`-based DOM-quiet wait (default
+300ms of zero mutations) and Puppeteer's own real `page.waitForNetworkIdle` (default 500ms,
+tracks actual in-flight CDP requests — not reimplemented by hand). Neither throws on its own
+timeout — a page with continuous background chatter (ads, polling, a live ticker) just means the
+bound was reached, not a failure.
+
+Scoped deliberately narrow rather than touching every action type's signature: exposed on
+`runtime.click`/`runtime.type` only (the two actions INSIGHTS' own examples are about — a click
+that fires before a menu renders, a submit whose toast hasn't appeared) and wired through to
+`browser.click`/`browser.type` MCP tool schemas and CLI `click`/`type --settle`. Broader coverage
+across all ~20 action types deferred to a future pass if it proves needed — `verificationSpec`
+(the closest existing analogous opt-in param) was never wired through the convenience methods
+either, so this isn't a new gap, just not fully closed everywhere at once.
+
+Live-verified end to end (SDK direct + CLI) against a purpose-built fixture: a button whose click
+handler renders a new DOM element 400ms later (a real async-menu-render race). Without `settle`,
+`click` returns in ~73ms and the element isn't there yet — confirming the flake this feature
+targets is real. With `settle:true`, `click` returns only after the element has actually
+rendered (both via `SutradharRuntime.click` directly and via the built CLI's `--settle` flag) —
+confirming the fix actually works, not just that it doesn't throw. 4 new unit tests (default-off,
+requested-on with exact spec values asserted, partial-spec-with-defaults, and a
+does-not-fail-the-action-if-the-wait-itself-times-out case) — `packages/browser` at 164/164,
+`packages/capability-runtime` at 90/90, `packages/mcp-server` at 25/25, `packages/cli` at 20/20,
+all green.
+
 ### 2026-08-16 — Milestone 37: grounding-completeness contract test — 25/25 element types verified, wired as a real CI gate
 
 Closes INSIGHTS.md Insight 3 ("build a grounding completeness matrix page and CI-assert that

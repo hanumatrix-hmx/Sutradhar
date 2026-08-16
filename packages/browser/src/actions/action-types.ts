@@ -81,6 +81,30 @@ export interface ActionParams {
   readonly sessionId?: string;
   /** Optional post-action expectations, checked by {@link ExecutionVerifier}. */
   readonly verificationSpec?: VerificationSpec;
+  /**
+   * Opt-in post-action settle wait — after the action itself completes (and before
+   * verification runs), wait for the page to stop actively changing: no DOM mutations for
+   * `mutationQuietMs`, and no in-flight network requests for `networkIdleMs`, both checked in
+   * parallel and bounded by `timeoutMs` overall. `true` uses the defaults ({@link
+   * DEFAULT_SETTLE_SPEC}); an object overrides individual fields. Off by default — most
+   * actions don't need it and it adds real latency, so this is deliberately opt-in per call,
+   * not a blanket auto-wait. See INSIGHTS.md Insight 2: "flakiness lives at state transitions,
+   * not at actions... a built-in post-action settle would make first-run reliability equal
+   * retry reliability."
+   */
+  readonly settle?: boolean | SettleSpec;
+}
+
+export interface SettleSpec {
+  /** No DOM mutations observed for this long counts as "DOM quiet". */
+  readonly mutationQuietMs?: number;
+  /** No in-flight network requests for this long counts as "network idle". */
+  readonly networkIdleMs?: number;
+  /** Overall bound — a page with continuous background chatter (ads, polling, a live ticker)
+   *  will never go quiet on its own, so this guarantees the wait falls through instead of
+   *  hanging indefinitely. Not an error if reached — it just means "waited as long as asked,
+   *  the page may still be settling." */
+  readonly timeoutMs?: number;
 }
 
 export interface ActionResultDto {
