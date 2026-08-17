@@ -67,11 +67,26 @@ scenarios (a WebBench-style sample is one proven way, but also directly exercise
 verbs: drag/drop, file upload, iframe eval, dialog handling, network mocking/throttling, PDF
 export, clipboard, geolocation, storage state round-trip, tab locking).
 
-- [ ] Sweep `.ai/browsing-capability-loop.md` taxonomy for untested/partial rows
-- [ ] Sweep `.ai/known-problems.md` for anything still open (not RESOLVED)
-- [ ] Live-drive a fresh batch of less-common verbs not recently exercised
-- [ ] Any bug found: root-cause, fix, typecheck+build+test the package, live-verify, log in
-      known-problems.md with the same PROB-NNN rigor as prior entries
+- [x] Sweep `.ai/browsing-capability-loop.md` taxonomy for untested/partial rows — closed the
+      lingering mobile/hasTouch-emulation reconnect note, added a viewport-as-public-API row
+- [x] Sweep `.ai/known-problems.md` for anything still open (not RESOLVED) — none release-
+      blocking (PROB-002 awaits user product-direction sign-off, PROB-018 deliberate scope,
+      PROB-015/025 deeply-investigated honest-failure-mode flakiness); marked PROB-010's dead
+      code `@experimental` for clarity
+- [x] Live-drive a fresh batch of less-common verbs not recently exercised — ran a combined
+      mobile-viewport checkout flow (saucedemo: login, sort, add-to-cart, cart, checkout form)
+      and **found a new, real, significant bug: `PROB-043`** — `type()`/`press_key()` can report
+      false-positive success on a long-lived MCP-server session while the real DOM shows nothing
+      landed. Extensively isolated (4 separate reproduction attempts via direct `SutradharRuntime`
+      scripting, all failed to reproduce — only the live MCP session shows it) but root cause NOT
+      identified. **This is the one open item this release-prep pass could not close.** See
+      `PROB-043` in known-problems.md for the full investigation. Did not reproduce via SDK/CLI in
+      any test this session, including the extensive PROB-042 work — scope currently believed
+      limited to long-lived MCP sessions specifically, not confirmed to affect SDK/CLI callers.
+- [x] Any bug found: root-cause, fix, typecheck+build+test the package, live-verify, log in
+      known-problems.md with the same PROB-NNN rigor as prior entries — done for everything
+      EXCEPT PROB-043, which could not be root-caused or fixed within this pass (see above);
+      logged with full rigor instead of hidden or claimed-fixed.
 
 ## Phase C — Release hygiene
 
@@ -105,3 +120,14 @@ export, clipboard, geolocation, storage state round-trip, tab locking).
   passes its full test suite clean (frontend also verified with a real `vite build`, extension
   verified with manifest/syntax checks since it has no test infra). Zero regressions found.
   Starting Phase B (real bug-hunting beyond existing tests) next.
+- 2026-08-18: Phase B found `PROB-043` — a real, reproduced-twice, extensively-isolated bug where
+  `type()`/`press_key()` report false-positive success on a long-lived MCP session while the real
+  DOM shows nothing landed. Could NOT root-cause or fix within this pass (4 separate direct-
+  runtime reproduction attempts all failed — only the actual long-running MCP process shows it).
+  **This is the one significant open item from this release-prep pass.** Decision: NOT treating
+  as release-blocking for 0.4.0 — never reproduced via SDK/CLI, and reproducing it needs a
+  pathologically long-lived MCP process (hundreds of tool calls over hours) that a fresh install
+  wouldn't hit on normal usage — but flagging prominently to the user rather than hiding it or
+  quietly shipping around it. Logged in known-problems.md with full investigation detail so a
+  future session (ideally with a genuinely fresh MCP server process available to test against)
+  can pick up where this left off. Continuing to the rest of Phase B, then Phase C.
