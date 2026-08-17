@@ -1,6 +1,12 @@
 /**
  * @file packages/agent/src/kernel/runtime-kernel.ts
  * @description RuntimeKernel orchestrating service lifecycles, dependency graph startup/shutdown, health monitoring, and event propagation.
+ *
+ * @experimental Not wired into any real run — `agent-app-service.ts`/`run-manager.ts`/
+ * `bootstrap.ts` (the actual execution path this package ships) never reference this kernel or
+ * its services. Real, tested code, kept intentionally rather than deleted pending a deliberate
+ * decision on its future — see `.ai/known-problems.md` `PROB-010`. Do not assume anything here
+ * runs in production; the real per-step agent loop lives in `agent-loop.ts`.
  */
 
 import { IRuntimeService, KernelMetrics, ServiceHealth } from './kernel-types.js';

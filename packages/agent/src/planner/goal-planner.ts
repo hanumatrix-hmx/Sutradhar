@@ -1,6 +1,12 @@
 /**
  * @file packages/agent/src/planner/goal-planner.ts
  * @description GoalPlanner transforming natural language goal requests into canonical AgentPlanDto and TaskGraph instances, enriched by Episodic Memory experience.
+ *
+ * @experimental Not wired into the real execution path — `createPlan()` returns a hardcoded
+ * 3-step boilerplate plan and the real `runAgentLoop` does its own per-step LLM reasoning
+ * instead of consuming a planner-produced plan. The one real construction site
+ * (`runtime-services.ts`'s `PlannerService`) passes no constructor args, so even the episodic-
+ * memory consultation here is inert in practice. See `.ai/known-problems.md` `PROB-010`.
  */
 
 import {
