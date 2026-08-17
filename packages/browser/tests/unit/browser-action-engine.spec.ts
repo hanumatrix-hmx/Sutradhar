@@ -575,9 +575,14 @@ describe('@sutradhar/browser BrowserActionEngine node-id staleness guard', () =>
     expect(handle.click).not.toHaveBeenCalled();
   });
 
-  it('rejects a click on a selector whose DOM node was recycled by a virtualized list (content changed, generation unchanged)', async () => {
+  it('warns but still proceeds when a selector\'s content differs from snapshot time (does NOT hard-block, since this is also the normal signature of ordinary live-updating content, not just virtualized-list recycling)', async () => {
     const handle = mockHandle();
-    handle.evaluate.mockResolvedValueOnce('fingerprint'); // assertNotStale: recycled content
+    // First call (assertNotStale) returns 'fingerprint' — a content mismatch. Unlike a
+    // 'generation' mismatch, this must NOT throw: live-tested that treating it as fatal blocks
+    // completely legitimate clicks on ordinary dynamic content (a price ticker, a relative
+    // timestamp), which is a far more common pattern than actual list-node recycling. So the
+    // click proceeds — every subsequent evaluate() call (occlusion/delivery) resolves clear.
+    handle.evaluate.mockResolvedValueOnce('fingerprint').mockResolvedValue(true);
     const page = singleFramePage(() => Promise.resolve(handle));
 
     const engine = new BrowserActionEngine();
@@ -587,9 +592,8 @@ describe('@sutradhar/browser BrowserActionEngine node-id staleness guard', () =>
       maxRetries: 0,
     });
 
-    expect(result.success).toBe(false);
-    expect(result.error).toContain('different content than when it was snapshotted');
-    expect(handle.click).not.toHaveBeenCalled();
+    expect(result.success).toBe(true);
+    expect(handle.click).toHaveBeenCalled();
   });
 
   it('does not block a plain CSS selector with no generation stamp', async () => {

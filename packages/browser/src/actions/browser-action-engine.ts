@@ -1458,10 +1458,24 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       );
     }
     if (reason === 'fingerprint') {
-      throw new Error(
-        `Element matching "${selector}" now shows different content than when it was snapshotted — its ` +
-          `underlying DOM node was likely recycled for a different row by a virtualized/windowed list ` +
-          `(e.g. after scrolling). Call browser.snapshot again and use a fresh node id.`,
+      // Deliberately a WARNING, not a thrown error — unlike the generation check above, a
+      // fingerprint mismatch is genuinely ambiguous, not a reliable staleness signal on its
+      // own. Live-tested both directions: (1) a virtualized-list row genuinely recycled to a
+      // different logical row produces this exact signal (the original PROB-036 case), but (2)
+      // so does completely ordinary, correct usage — a "Buy at $X" button whose price ticks up
+      // via a timer, a relative timestamp ("2 minutes ago"), a live view/like counter — where
+      // the SAME row's own content legitimately changed and clicking it is exactly the right
+      // thing to do. A first attempt at this fix threw here unconditionally and was caught by
+      // testing case (2) live: it hard-blocked (and kept blocking across all retries) a
+      // completely legitimate click on a page with nothing virtualized at all — a worse
+      // regression than the bug it fixed, since live-updating content is far more common than
+      // list-recycling. Logging (discoverable via `get_console_logs`/action history) instead of
+      // throwing keeps PROB-036's case non-silent without breaking the common case.
+      this.logger.warn(
+        `[BrowserActionEngine] Element matching "${selector}" shows different content than when it was ` +
+          `snapshotted — proceeding, but if this element is inside a virtualized/windowed list this may be ` +
+          `acting on a recycled node's new row rather than the originally-intended one. Re-snapshot to confirm ` +
+          `if the target's identity matters here.`,
       );
     }
   }

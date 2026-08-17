@@ -107,6 +107,34 @@ installed via a plain `npm install` in an isolated scratch directory and copied 
 resolved through the workspace's normal install path — noted explicitly in `PROB-009` so a
 future real `pnpm install` isn't skipped by mistake. Closes `PROB-009`.
 
+### 2026-08-17 — Milestone 71: caught and fixed a false-positive regression in Milestone 69's own fix, same day, before it caused real damage
+
+Immediately after Milestone 69 shipped (the virtualized-list fingerprint check), deliberately
+went looking for the failure mode of the fix itself rather than moving on — a hard-throw
+staleness check is exactly the kind of change that can trade one bug for a worse one. Built a
+second live repro: a "Buy at $X" button whose price ticks up every 200ms via an ordinary
+`setInterval`, nothing virtualized at all. Result: the click was hard-blocked across all 3
+retries — a completely legitimate, correct click on ordinary dynamic content, refused with the
+same "likely recycled by a virtualized list" error Milestone 69 introduced.
+
+Root cause: a content-fingerprint mismatch cannot structurally distinguish "this exact DOM node
+was recycled to represent a different logical row" (the real PROB-036 bug) from "this exact DOM
+node's own content legitimately changed" (a price ticker, a relative timestamp, a live counter)
+— both produce the identical signal (same id, same generation, different text). Live-updating
+own-content is far more common across real pages than actual list-node recycling, so treating
+the ambiguous signal as fatal would have been a worse regression than the bug it fixed.
+
+Fixed within the same session, before this reached a committed "done" state anyone would build
+on: downgraded the fingerprint mismatch from a thrown error to a logged warning (the action
+still proceeds) — the generation-mismatch check (an unambiguous signal: a real new snapshot
+happened) still throws as before, unchanged. `packages/browser` 185/185. Live-verified three
+ways: the original recycling repro (still discoverable via the log, not silently swallowed —
+an honest trade-off now, not a false prevention claim); the price-ticker repro (now succeeds
+normally); a plain unaffected element (regression check). Full downstream rebuild+retest:
+`capability-runtime` 90/90, `cli` 29/29, `mcp-server` 25/25, `sutradhar` 11/11, `agent` 56/56,
+`apps/server` 28/28 — all green. See `PROB-036`'s revised entry in `.ai/known-problems.md` for
+the full before/after.
+
 ### 2026-08-17 — Milestone 69: virtualized-list node-id recycling could silently act on the wrong row — closes PROB-036, the deepest grounding-correctness gap found this session
 
 Picked a hard, previously-unprobed hazard rather than another surface-level dogfooding pass:
