@@ -197,6 +197,10 @@ Last Updated: 2026-08-09
     fixture) via a direct `SutradharRuntime` script: `snapshot()`'s `pageText` went from empty to
     4000 real characters of the document's actual text ("Bitcoin: A Peer-to-Peer Electronic Cash
     System / Satoshi Nakamoto / ..."), matching the same text `pdf-parse` extracts standalone.
+    Follow-up check (2026-08-17): confirmed this same fix reaches the CLI with zero extra
+    wiring — `sutradhar text` (which already prints `snapshot()`'s `pageText`) against the
+    identical PDF URL now prints the real extracted text directly, since it shares the same
+    `readPageText` code path; no separate CLI-specific gap to close.
     Note: `pdf-parse` was installed with plain `npm install` into an isolated scratch directory
     and its resulting `node_modules` entries (`pdf-parse`, `pdfjs-dist`, `@napi-rs/canvas`) were
     copied directly into `packages/capability-runtime/node_modules`, since `pnpm` is not
