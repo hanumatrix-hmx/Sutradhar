@@ -64,6 +64,7 @@ const EXPECTED_BROWSER_TOOLS = [
   'browser.set_geolocation',
   'browser.grant_permissions',
   'browser.set_viewport',
+  'browser.get_viewport',
   'browser.emulate',
   'browser.get_clipboard',
   'browser.set_clipboard',

@@ -85,7 +85,7 @@ Grouped here by category, matching `tools.ts`'s own section layout.
 |---|---|
 | `browser.set_geolocation` | Override the page's geolocation. |
 | `browser.grant_permissions` | Grant browser permissions (camera, clipboard, notifications, …). |
-| `browser.set_viewport` | Set viewport size / mobile emulation / device scale factor. |
+| `browser.set_viewport` / `get_viewport` | Set viewport size / mobile emulation / device scale factor, and read back the metrics actually in effect. |
 | `browser.emulate` | Timezone, locale, color-scheme, and reduced-motion emulation. |
 | `browser.get_clipboard` / `set_clipboard` | Read/write the system clipboard (via the Clipboard API). |
 | `browser.set_network_conditions` | Emulate offline mode or throttled bandwidth/latency (DevTools presets or custom values). |

@@ -143,14 +143,26 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
               'launches) — create one first via the CLI ("sutradhar profile create <name>") or the SDK\'s ' +
               'profile manager. Throws if the name does not exist.',
           ),
+        viewport: z
+          .object({ width: z.number().int().positive(), height: z.number().int().positive() })
+          .optional()
+          .describe(
+            'Set the initial viewport size (CDP device-metrics override, plus a best-effort real OS window ' +
+              'resize for a non-headless session). Use browser.set_viewport to change it mid-session instead, ' +
+              'or to also emulate mobile/touch/pixel-ratio. Was previously accepted only by browser.set_viewport, ' +
+              'not at launch time — found missing via an external field report (PROB-042).',
+          ),
       },
     },
-    async ({ sessionId, initialUrl, headless, userAgent, profileName }) => {
+    async ({ sessionId, initialUrl, headless, userAgent, profileName, viewport }) => {
       try {
         const result = await runtime.launch({
           sessionId,
           initialUrl,
-          launch: headless !== undefined || userAgent !== undefined ? { headless, userAgent } : undefined,
+          launch:
+            headless !== undefined || userAgent !== undefined || viewport !== undefined
+              ? { headless, userAgent, viewport }
+              : undefined,
           profileName,
         });
         if (!result.hasRealBrowser) {
@@ -1270,6 +1282,29 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         return jsonResult({ success: true });
       } catch (e) {
         return errorResult(`set_viewport failed: ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
+    'browser.get_viewport',
+    {
+      description:
+        'Read the viewport/device metrics actually in effect right now — width, height, device scale factor, ' +
+        'mobile/touch emulation. Returns null if none has ever been set (Chrome\'s own default applies). Useful ' +
+        'for diagnosing a visual mismatch: confirms whether it is a wrong-viewport issue before assuming it is a ' +
+        'real layout bug. Was previously unreachable via MCP at all — found missing via an external field report ' +
+        '(PROB-042).',
+      inputSchema: {
+        sessionId: z.string(),
+        tabId: z.string().optional(),
+      },
+    },
+    ({ sessionId, tabId }) => {
+      try {
+        return jsonResult(runtime.getViewport(sessionId, tabId));
+      } catch (e) {
+        return errorResult(`get_viewport failed: ${(e as Error).message}`);
       }
     },
   );
