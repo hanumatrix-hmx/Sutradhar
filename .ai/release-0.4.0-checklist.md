@@ -93,24 +93,46 @@ export, clipboard, geolocation, storage state round-trip, tab locking).
 - [x] Decide on `SUTRADHAR-ISSUES.md` (currently untracked, blocks the clean-tree gate) — commit
       it (it's real, valuable field-report documentation already cited in known-problems.md)
       DONE 2026-08-18, commit 36b7fdc
-- [ ] `sdk` and `dev-runtime` packages have no `private` field — verify neither is accidentally
+- [x] `sdk` and `dev-runtime` packages have no `private` field — verify neither is accidentally
       publishable and doesn't need one added (found during Phase A's package survey)
-- [ ] Bump `packages/sutradhar/package.json` version 0.3.0 → 0.4.0 (minor bump: additive API
-      surface — new `Page.setViewport/getViewport`, `Browser.getWsEndpoint`, CLI `--viewport` —
-      plus real bug fixes, no breaking changes identified so far)
-- [ ] Confirm `scripts/check-release-ready.mjs` passes (clean tree + no stale workspace dist/)
-- [ ] Fresh clean build of the bundle (`npm run clean && npm run build` in packages/sutradhar)
+      DONE 2026-08-18, commit e6b0e50 — both marked `private:true` (sdk had a stale
+      `publishConfig.access:public` plus unresolvable `workspace:*` deps on private packages;
+      dev-runtime has zero consumers anywhere). Neither is part of the sutradhar bundle.
+- [x] Bump `packages/sutradhar/package.json` version 0.3.0 → 0.4.0
+      DONE 2026-08-18, commit e5b9679 — also bumped the exported `SUTRADHAR_VERSION` constant
+      and the test asserting it (would have been a stale-fixture drift otherwise).
+- [x] Confirm `scripts/check-release-ready.mjs` passes (clean tree + no stale workspace dist/)
+      DONE 2026-08-18 — first run correctly caught real staleness (agent/sutradhar dist older
+      than src, from this pass's own edits); passed clean after a real `build-bundle.mjs` run.
+- [x] Fresh clean build of the bundle (`npm run clean && npm run build` in packages/sutradhar)
       and spot-check the built artifact behaves correctly (not just src/)
-- [ ] `npm publish --dry-run` from packages/sutradhar to confirm the tarball contents/gate are
+      DONE 2026-08-18 — `scripts/build-bundle.mjs` rebuilt all 14 workspace dependencies from
+      clean, in order. Smoke-tested the real built `dist/index.js` end-to-end against a real
+      Chrome: `SUTRADHAR_VERSION` reads `0.4.0`, `launch({viewport})` + `getViewport()` +
+      `getWsEndpoint()` all work correctly through the actual bundled artifact. `dist/cli-bin.js`
+      runs and its `--help` text includes the `--viewport` flag. `dist/mcp-cli.js` starts cleanly.
+- [x] `npm publish --dry-run` from packages/sutradhar to confirm the tarball contents/gate are
       correct WITHOUT actually publishing (dry-run should not require 2FA — verify this
       assumption live, don't just assume it)
+      DONE 2026-08-18 — dry-run succeeded cleanly: `prepublishOnly` gate passed, real tarball
+      built (18 files, 1.0MB packed / 5.2MB unpacked, sha512 integrity printed), no 2FA prompt
+      encountered (confirmed live, not assumed). **Repo is now genuinely publish-ready.**
+
+**PHASE C COMPLETE (2026-08-18).**
 
 ## Phase D — Final report
 
-- [ ] Write a short RELEASE-0.4.0-READY.md or update known-problems.md/competitive-benchmarks.md
-      summarizing everything tested/fixed since 0.3.0
-- [ ] Tell the user explicitly: repo is ready, here's exactly what to run (`npm publish` from
+- [x] Write a short RELEASE-0.4.0-READY.md or update known-problems.md/competitive-benchmarks.md
+      summarizing everything tested/fixed since 0.3.0 — DONE, see `RELEASE-0.4.0-READY.md` at
+      repo root.
+- [x] Tell the user explicitly: repo is ready, here's exactly what to run (`npm publish` from
       packages/sutradhar) and that it needs their hardware key — do NOT attempt this step myself
+      — DONE, see `RELEASE-0.4.0-READY.md`'s final section.
+
+**TASK COMPLETE (2026-08-18).** Repo is genuinely publish-ready for 0.4.0. Only remaining step is
+the user running `npm publish` themselves (2FA required, cannot be automated). One significant
+real bug (`PROB-043`) was found and documented but not resolved — not release-blocking per the
+reasoning above, but the user has been told plainly.
 
 ## Log
 
