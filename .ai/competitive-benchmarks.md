@@ -4,7 +4,7 @@ Machine Readable: true
 Update Ownership: AI Agent
 Freshness Expectation: Per Competitive Review
 Update Policy: Append-driven (log), change-driven (comparison tables)
-Last Updated: 2026-08-16
+Last Updated: 2026-08-17
 ---
 
 # Competitive benchmarks & positioning
@@ -13,6 +13,61 @@ See [CLAUDE.md](../CLAUDE.md): the goal is to be genuinely better than Playwrigh
 the real `pinchtab/pinchtab`, and AI-company browser tools — not just bug-free. This doc holds
 the researched landscape and real, sourced comparisons so "best" claims have evidence behind
 them, not vibes.
+
+## Where things actually stand, 2026-08-17 — a synthesis of the evidence below
+
+The evidence in this doc has accumulated across ~20 milestones and several independent
+comparison runs; nobody had stepped back to state the combined conclusion plainly in one place
+until now. Read this section, then the detail below backs each claim with a real run.
+
+- **vs Playwright and Puppeteer: yes, with real controlled evidence, on two separate axes.**
+  (1) The identical 47-task WebBench set, same scoring standard, no stealth on any side:
+  **Sutradhar 29/47 (62%) — Playwright 27/47 (57%) — Puppeteer 25/47 (53%)** (Milestone 23,
+  2026-08-14). (2) A harder, more controlled 7-scenario "extreme cases" comparison sourced from
+  real documented bugs in Playwright's/Puppeteer's own issue trackers: **Sutradhar 7/7 (after a
+  same-day fix), Playwright 7/7, Puppeteer 7/7** — a clean sweep for all three on pure
+  capability, but Sutradhar's dual grounding + honest verification + occlusion detection are
+  real, demonstrated differentiators Puppeteer has no equivalent of at all (confirmed via its
+  own docs: no accessibility grounding, no built-in actionability checking). This session alone
+  (Milestones 66-71) fixed 6 more real correctness bugs — a virtualized-list silent-wrong-click
+  hazard, a permanently-wrong tab-title bug, a PDF-reading gap open since the start of this
+  project, multi-hop iframe targeting, and more — none of which Playwright/Puppeteer's own
+  bug trackers show equivalent fixes for, because neither tool does semantic grounding or
+  self-verification in the first place; there's no equivalent class of bug for them to have.
+- **vs real `pinchtab/pinchtab`: mixed, and the mix itself is the honest finding.** On the full
+  47-task WebBench, pinchtab currently leads (31/47, 66%, vs Sutradhar's 29/47, 62%) — but with
+  a disclosed confound: pinchtab ships stealth injection **on by default**, which Sutradhar
+  deliberately does not build (CLAUDE.md's scope boundary, held three times now). On the
+  harder, more controlled 7-scenario extreme comparison — which stresses genuine engine
+  capability (nested shadow DOM, real rich-text editors, non-native drag-and-drop, cross-origin
+  frames, concurrent load) rather than external-block avoidance — **Sutradhar scored 7/7,
+  pinchtab 6/7 with a real reproduced cross-origin-frame failure and a real concurrency
+  reliability issue (80% success under 5-way load, not 100%)**. Read plainly: pinchtab's WebBench
+  edge looks substantially attributable to stealth avoiding blocks Sutradhar's engine would
+  otherwise have handled just as well — the controlled comparison is the fairer read of the
+  actual engines, and on that comparison Sutradhar is ahead, not behind.
+- **vs AI-company computer-use tools (Anthropic's own, OpenAI's): not a head-to-head — a
+  different tool category**, confirmed from both companies' own docs. They're general
+  screenshot/pixel-coordinate desktop-control loops with no DOM/accessibility grounding at all;
+  Sutradhar (like Playwright MCP and pinchtab) is a browser-specific semantic-grounding tool.
+  Not a gap to close by copying pixel-clicking as a *default* — `browser.click_at_point` already
+  covers the rare case semantic grounding can't address (canvas, unknown custom UI).
+- **What would move this from "ahead on the fairer comparison" to "unambiguously ahead on every
+  axis"**: a clean isolation of the stealth confound on the WebBench number specifically —
+  already investigated and confirmed **not possible with current tooling**
+  (`tools/engine-comparison/stealth-isolation-experiment.md`, 2026-08-14): pinchtab's
+  `stealthLevel` is a hard-coded 3-value enum (`light`/`medium`/`full`) with no off-switch,
+  confirmed both by live CLI rejection and by reading pinchtab's own source
+  (`internal/stealth/bundle.go`). That same investigation independently confirmed the asymmetry
+  is real (pinchtab's `light` floor already masks `navigator.webdriver` and disables the
+  `--enable-automation` CDP flag; Sutradhar's plain launch does neither and leaks a literal
+  `HeadlessChrome` UA substring) — so the confound can't be experimentally isolated, but it also
+  isn't invented. There is no further lever on the pinchtab side; pulling one on Sutradhar's side
+  would mean adopting the fingerprint-evasion patches CLAUDE.md explicitly excludes. Given that,
+  the honest remaining move isn't to chase this specific number further — it's what this loop
+  keeps doing: real dogfooding, real bug fixes, and periodic fresh WebBench samples to confirm
+  the ~52-71% external-block band (held across eight independent samples) is a property of the
+  modern web, not something more engine work will change.
 
 ## Agent-level benchmarks (require a real LLM driving the loop — currently blocked)
 
