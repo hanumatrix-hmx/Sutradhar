@@ -110,13 +110,13 @@ blocked here, see above). But the user corrected an important framing mistake: S
 `browser.*` the same way Claude would drive Playwright MCP — not necessarily via its own
 separate internal LLM loop. For that mode, "benchmarking" doesn't need Ollama/OpenRouter at
 all: it means Claude (or another host AI) actually attempting real WebBench tasks live via
-the `browser.*` tools. **This has now actually been done, across eight samples totaling 78
+the `browser.*` tools. **This has now actually been done, across nine samples totaling 85
 real tasks** — see `tools/webbench/claude-direct-run-2026-*.md` and the iteration log
-below. Current combined number: **47/78 completed (60%), 31/78 externally blocked, 0
+below. Current combined number: **52/85 completed (61%), 33/85 externally blocked, 0
 Sutradhar-attributable failures** — a real, honestly-reported number, not a cherry-picked one.
-The rate has held steady in the 52-62% band across all eight samples regardless of how much
+The rate has held steady in the 52-62% band across all nine samples regardless of how much
 the underlying engine has changed in between (samples 1-3 predate the field-report remediation;
-samples 7-8 postdate a large batch of engine fixes across two remediation passes) — consistent
+samples 7-9 postdate a large batch of engine fixes across three remediation passes) — consistent
 evidence the ceiling here is external (Cloudflare/DataDome prevalence, real site outages, edge
 blocks across the open web), not Sutradhar's own capability.
 
@@ -322,6 +322,25 @@ shipped" — yes, in ways fully disclosed above — but does not support a clean
 verdict against the original number without controlling for pacing and site-drift. A properly
 controlled re-comparison (matching the original's patience level, same-day fresh pinchtab run)
 is the right next step if a precise, defensible number is needed later.
+
+### 2026-08-17 — Milestone 84: ninth WebBench sample (5/7), combined total now 52/85 (61%) — driven via the CLI binary, no new bugs found
+
+Run to continue building the post-fix completion-rate picture after Milestones 66-83's real
+bug fixes (`beforeunload`-guarded navigation always failing, keyboard repeat-key presses
+getting silently stuck, popup self-close leaving phantom tabs, real PDF text extraction,
+virtualized-list node-id recycling safety) — none of those fixes turned out to be directly
+exercised by this particular task set. 7 fresh READ-category domains (howstuffworks.com,
+huffpost.com, ign.com, instructables.com, khanacademy.org, livescience.com, lonelyplanet.com),
+none previously attempted. **5/7 completed (71%)** — 1 genuine CAPTCHA wall on a search results
+page (howstuffworks.com), 1 apparent dataset-drift case investigated thoroughly before
+concluding (lonelyplanet.com's `/search` page renders as a non-functional stub across every
+approach tried — direct URL, homepage link, live DOM inspection — most likely a removed/
+redesigned feature since the dataset's capture date), 0 Sutradhar-attributable failures. Full
+detail: `tools/webbench/claude-direct-run-2026-08-17-sample9.md`.
+
+**Combined across all nine samples: 52/85 completed (61.2%), 33/85 externally blocked, 0
+Sutradhar-attributable failures.** The rate continues to hold in the same 52-71% band this
+project has seen since the very first sample.
 
 ### 2026-08-17 — Milestone 68: eighth WebBench sample (5/7), combined total now 47/78 (60%) — driven via the CLI binary, no new bugs found
 
