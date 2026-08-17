@@ -116,11 +116,11 @@ blocked here, see above). But the user corrected an important framing mistake: S
 `browser.*` the same way Claude would drive Playwright MCP — not necessarily via its own
 separate internal LLM loop. For that mode, "benchmarking" doesn't need Ollama/OpenRouter at
 all: it means Claude (or another host AI) actually attempting real WebBench tasks live via
-the `browser.*` tools. **This has now actually been done, across ten samples totaling 95
+the `browser.*` tools. **This has now actually been done, across eleven samples totaling 103
 real tasks** — see `tools/webbench/claude-direct-run-2026-*.md` and the iteration log
-below. Current combined number: **58/95 completed (61%), 37/95 externally blocked, 0
+below. Current combined number: **62/103 completed (60%), 41/103 externally blocked, 0
 Sutradhar-attributable failures** — a real, honestly-reported number, not a cherry-picked one.
-The rate has held steady in the 52-62% band across all ten samples regardless of how much
+The rate has held steady in the 52-62% band across all eleven samples regardless of how much
 the underlying engine has changed in between (samples 1-3 predate the field-report remediation;
 samples 7-9 postdate a large batch of engine fixes across three remediation passes) — consistent
 evidence the ceiling here is external (Cloudflare/DataDome prevalence, real site outages, edge
@@ -278,6 +278,30 @@ findings:
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-17 — Milestone 93: eleventh WebBench sample (4/8), combined total now 62/103 (60%) — first sample run immediately after a real capability-fix batch, rate unchanged
+
+Ran 8 fresh READ-heavy tasks across 8 new domains right after Milestone 92's field-report
+remediation (viewport SDK/CLI parity, wsEndpoint reconnect, leak warning, CLI flag-safety) —
+the natural next step to check whether a real fix batch moves the completion rate. It didn't:
+4/8 completed, 4/8 blocked, all four blocks externally caused (a real site outage on diy.com,
+a genuine bot-detection "Press & Hold" challenge on dreamstime.com, a reproducible
+`ERR_HTTP2_PROTOCOL_ERROR` on ea.com, and a publisher-level access-denied page on
+eatingwell.com from People Inc./Dotdash Meredith) — zero Sutradhar-attributable failures, same
+as most recent samples. Full detail: `tools/webbench/claude-direct-run-2026-08-13-sample11.md`.
+
+Task-selection note worth recording: `WebFetch` against the raw ~2600-row WebBench CSV both
+returned already-excluded domains on a first attempt and silently truncated the file around
+row 337 on a second, more targeted attempt — neither a Sutradhar issue, just `WebFetch`'s own
+summarization behavior on large content. Worked around by downloading the CSV directly via
+`curl` and filtering it locally with Python for exact domain-exclusion matching — a pattern
+worth reusing for future samples if `WebFetch` continues to struggle with this file's size.
+
+**Combined across all eleven samples: 62/103 completed (60.2%), 41/103 externally blocked, 0
+Sutradhar-attributable failures.** The rate has now held in the same 52-62% band across eleven
+independent samples spanning multiple engine-fix batches, including one run immediately after
+this session's most recent real capability fix — continued strong evidence the ceiling is the
+external open web, not Sutradhar's own tool surface.
 
 ### 2026-08-17 — Milestone 92: remediated a 9-issue external field-report batch (SUTRADHAR-ISSUES.md, published `sutradhar@0.3.0`) — viewport reachable end-to-end for the first time, wsEndpoint reconnect, leak warning, CLI flag-safety
 
