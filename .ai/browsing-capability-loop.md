@@ -119,6 +119,24 @@ installed via a plain `npm install` in an isolated scratch directory and copied 
 resolved through the workspace's normal install path — noted explicitly in `PROB-009` so a
 future real `pnpm install` isn't skipped by mistake. Closes `PROB-009`.
 
+### 2026-08-17 — Milestone 82: composite real-workflow test — four of today's fixes (PROB-037/038/039 + keyboard Enter-activation) verified working together, not just in isolation
+
+Every fix today (66-81) was live-verified individually via a focused repro. This milestone
+instead built one realistic composite workflow exercising four of them together in sequence, to
+check for interaction bugs a set of isolated tests can't catch: (1) keyboard-only navigation
+through a 2-field form via repeated `Tab` presses — the exact PROB-037 same-key-repeat case; (2)
+activating a button via keyboard `Enter` (not `click()`) that opens a popup which self-closes
+~200ms later, matching a real OAuth flow's timing; (3) `list_tabs` correctly reflecting the
+self-closed popup's removal (PROB-039); (4) `navigate()` away from the same page, which also
+carries a `beforeunload` guard, completing successfully despite it (PROB-038).
+
+All four composed correctly with no interaction bugs: keyboard nav landed on the right element
+each Tab press, the popup opened and was correctly discovered then correctly removed after
+self-closing, and the subsequent `beforeunload`-guarded navigation completed in ~3s exactly as
+its own isolated test showed. A single realistic session driving multiple recently-fixed
+mechanisms back-to-back — the kind of workflow a real agent session would actually produce —
+works end-to-end.
+
 ### 2026-08-17 — Milestone 80: a popup self-closing via `window.close()` left a permanent phantom entry in `list_tabs` — closes PROB-039
 
 Tested a real, subtly different variant of an already-covered pattern: Milestone 59 verified
