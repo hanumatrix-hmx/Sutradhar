@@ -36,7 +36,25 @@ export interface CliState {
   activeTabId?: string;
 }
 
-const STATE_DIR = path.join(os.homedir(), '.sutradhar-cli');
+/**
+ * Where the "current session" pointer lives. Defaults to `~/.sutradhar-cli`, but can be
+ * redirected with `SUTRADHAR_CLI_STATE_DIR`.
+ *
+ * Why the override exists (found live, 2026-08-17, during a WebBench benchmark run): this file
+ * is a single *global* mutable pointer, and every CLI invocation reads it to decide which
+ * browser to attach to. Two unrelated CLI users on the same machine therefore silently share
+ * one browser session — the second one attaches to the first one's live session and drives the
+ * first one's tab. That was observed for real: a concurrent UI-audit job navigated this
+ * benchmark run's tab out from under it, so `nav <a nps.gov url>` reported
+ * "Navigated to http://bharattech.localhost:18000/portal/me?ui-shot=schooladmin" — a URL the
+ * caller never asked for. There is no locking here and deliberately no daemon (see the file
+ * header), so the cheap, non-invasive fix is to let each caller opt into its own state dir.
+ * Overriding HOME/USERPROFILE instead is not a workaround: Chrome inherits those and fails to
+ * start (confirmed live — "Timed out waiting for Chrome to start on port ...").
+ */
+const STATE_DIR = process.env.SUTRADHAR_CLI_STATE_DIR
+  ? path.resolve(process.env.SUTRADHAR_CLI_STATE_DIR)
+  : path.join(os.homedir(), '.sutradhar-cli');
 const STATE_FILE = path.join(STATE_DIR, 'state.json');
 
 export async function readState(): Promise<CliState | undefined> {

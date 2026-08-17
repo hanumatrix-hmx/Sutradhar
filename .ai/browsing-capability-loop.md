@@ -98,6 +98,48 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-17 — Milestone 90: concurrent CLI invocations silently shared one browser session — found by being the victim of it mid-benchmark, closes PROB-041
+
+Discovered the way this loop is supposed to discover things: by actually using Sutradhar for a
+real task and having it break, not by reading code. During the Opus-driven WebBench sample 10
+run, `text` on what should have been an nps.gov page returned **"Sign in to BharatTech
+Education"** — content from an unrelated local test fixture. The disciplined path mattered more
+than the fix here: the tempting response ("weird page, just re-run it") would have produced a
+benchmark whose numbers looked perfectly normal while being quietly corrupted, and would have
+missed the bug entirely.
+
+Investigated instead. `tabs` showed the active tab was `tab_sess_1786965204055_1_1` — a session
+whose id timestamp (~17:53) *predated this run's own launch* (~21:14). Closing it and starting a
+clean session produced the decisive evidence: a `nav` to an nps.gov URL reported
+`Navigated to http://bharattech.localhost:18000/portal/me?ui-shot=schooladmin`, a URL never
+requested, carrying another job's own query params (`?ui-audit=1`, `?ui-shot=...`). A concurrent
+UI-audit job in the same checkout was driving this run's tab in real time.
+
+Root cause, confirmed in source: `packages/cli/src/state.ts:39` resolved the session pointer as
+`path.join(os.homedir(), '.sutradhar-cli')` — one fixed global mutable file, no locking, and
+deliberately no daemon (the CLI is one-process-per-command by design). Every invocation reads it
+to decide which browser to attach to, so two unrelated users on one machine necessarily collide,
+silently. A related ergonomics gap kept it invisible: there is no `launch` verb in this CLI
+(`nav` auto-launches; headless is the default with `--headed` as the opt-out), so
+`launch --headless` printed usage and exited without an obvious error — which is precisely how
+the run attached to a stale pre-existing session rather than creating its own.
+
+Fixed narrowly and backward-compatibly: honor an optional `SUTRADHAR_CLI_STATE_DIR` env var,
+default unchanged when unset. Rejected the obvious alternative live rather than by assumption —
+overriding `HOME`/`USERPROFILE` to move `os.homedir()` does not work, because Chrome inherits
+those and fails to launch ("Timed out waiting for Chrome to start on port 63541"). `tsc --noEmit`
+clean, build clean, `packages/cli` 29/29. Live-verified against the real repro: with the env var
+pointed at a scratch dir, a fresh `nav` wrote its own `state.json` (`sess_1786982166618_1`) and
+`location.href` read back `https://www.nps.gov/index.htm` across two consecutive independent CLI
+invocations while the concurrent job continued on the default state dir untouched — and the
+remaining 6 benchmark tasks then ran to completion with zero further interference.
+
+Scope note, logged rather than built reflexively per this file's own convention: real multi-session
+support (per-invocation session ids or a `--session` flag, plus locking, and making an unrecognized
+verb fail loudly instead of printing usage and exiting clean) is a larger design question than this
+unblock. Left open deliberately. Benchmark result and the host-model comparison it was actually run
+for: `tools/webbench/claude-direct-run-2026-08-17-sample10.md` and `.ai/competitive-benchmarks.md`.
+
 ### 2026-08-17 — Milestone 67: real PDF text extraction — closes PROB-009, a gap open since Milestone 1's era
 
 Picked the oldest still-OPEN real capability gap in the taxonomy rather than another dogfooding
