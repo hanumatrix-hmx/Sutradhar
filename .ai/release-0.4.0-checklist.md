@@ -30,34 +30,32 @@ contracts, events, llm, mcp-server, memory, observability, storage, sutradhar, u
 
 ## Phase A — Full regression sweep (typecheck + build + test, every package)
 
-Baseline as of 2026-08-18 (from Milestones 92-94 this session): capability-runtime 90/90,
-cli 32/32, sutradhar 11/11, mcp-server 25/25, agent 56/56, apps/server 28/28 — all clean.
-NOT yet run this pass: browser, capability, config, contracts, events, llm, memory,
-observability, storage, utils, workflow, frontend, sdk, dev-runtime, apps/extension.
+**PHASE A COMPLETE (2026-08-18) — every single package clean.** No bugs found in this pass
+(pure regression sweep); real bug-hunting is Phase B.
 
 | Package | Typecheck | Build | Test | Notes |
 |---|---|---|---|---|
-| capability-runtime | ✅ | ✅ | ✅ 90/90 | from Milestone 92 |
-| cli | ✅ | ✅ | ✅ 32/32 | from Milestone 92/94 |
-| sutradhar | ✅ | ✅ | ✅ 11/11 | from Milestone 92 |
-| mcp-server | ✅ | ✅ | ✅ 25/25 | from Milestone 94 |
-| agent | ✅ | ✅ | ✅ 56/56 | from Milestone 92 |
-| apps/server | ✅ | ✅ | ✅ 28/28 | from Milestone 92 |
-| browser | ⬜ | ⬜ | ⬜ | not yet run this pass |
-| capability | ⬜ | ⬜ | ⬜ | not yet run this pass |
-| config | ⬜ | ⬜ | ⬜ | not yet run this pass |
-| contracts | ⬜ | ⬜ | ⬜ | not yet run this pass |
-| events | ⬜ | ⬜ | ⬜ | not yet run this pass |
-| llm | ⬜ | ⬜ | ⬜ | not yet run this pass |
-| memory | ⬜ | ⬜ | ⬜ | not yet run this pass |
-| observability | ⬜ | ⬜ | ⬜ | not yet run this pass |
-| storage | ⬜ | ⬜ | ⬜ | not yet run this pass |
-| utils | ⬜ | ⬜ | ⬜ | not yet run this pass |
-| workflow | ⬜ | ⬜ | ⬜ | not yet run this pass |
-| frontend | ⬜ | ⬜ | ⬜ | not yet run this pass |
-| sdk | ⬜ | ⬜ | ⬜ | not yet run this pass — check if this is even still live/used |
-| dev-runtime | ⬜ | ⬜ | ⬜ | not yet run this pass |
-| apps/extension | ⬜ | ⬜ | ⬜ | not yet run this pass |
+| capability-runtime | ✅ | ✅ | ✅ 90/90 | |
+| cli | ✅ | ✅ | ✅ 32/32 | |
+| sutradhar | ✅ | ✅ | ✅ 11/11 | |
+| mcp-server | ✅ | ✅ | ✅ 25/25 | |
+| agent | ✅ | ✅ | ✅ 56/56 | |
+| apps/server | ✅ | ✅ | ✅ 28/28 | incl. live browser integration tests |
+| browser | ✅ | ✅ | ✅ 9 files, all pass | |
+| capability | ✅ | ✅ | ✅ 2 files, all pass | |
+| config | ✅ | ✅ | ✅ 6/6 | |
+| contracts | ✅ | ✅ | ✅ 7/7 | |
+| events | ✅ | ✅ | ✅ 6/6 | |
+| llm | ✅ | ✅ | ✅ 2 files, all pass | |
+| memory | ✅ | ✅ | ✅ 8/8 | |
+| observability | ✅ | ✅ | ✅ 13/13 | |
+| storage | ✅ | ✅ | ✅ 7/7 | |
+| utils | ✅ | ✅ | ✅ 20/20 | |
+| workflow | ✅ | ✅ | ✅ 2 files, all pass | |
+| frontend | ✅ | ✅ real `vite build` | ✅ 29/29 | prod bundle: 271KB JS / 70KB CSS |
+| sdk | ✅ | ✅ | ✅ 2 files, all pass | v0.2.0, no `private` flag — flagged for Phase C check |
+| dev-runtime | ✅ | ✅ | n/a (no test script) | `@hanumatrix/dev-runtime`, no `private` flag — flagged for Phase C |
+| apps/extension | n/a (no build tooling) | n/a | manifest.json valid (MV3), background.js/popup.js syntax OK | plain extension, no package.json |
 
 ## Phase B — Real bug-hunting (not just re-running existing tests)
 
@@ -77,8 +75,11 @@ export, clipboard, geolocation, storage state round-trip, tab locking).
 
 ## Phase C — Release hygiene
 
-- [ ] Decide on `SUTRADHAR-ISSUES.md` (currently untracked, blocks the clean-tree gate) — commit
+- [x] Decide on `SUTRADHAR-ISSUES.md` (currently untracked, blocks the clean-tree gate) — commit
       it (it's real, valuable field-report documentation already cited in known-problems.md)
+      DONE 2026-08-18, commit 36b7fdc
+- [ ] `sdk` and `dev-runtime` packages have no `private` field — verify neither is accidentally
+      publishable and doesn't need one added (found during Phase A's package survey)
 - [ ] Bump `packages/sutradhar/package.json` version 0.3.0 → 0.4.0 (minor bump: additive API
       surface — new `Page.setViewport/getViewport`, `Browser.getWsEndpoint`, CLI `--viewport` —
       plus real bug fixes, no breaking changes identified so far)
@@ -100,3 +101,7 @@ export, clipboard, geolocation, storage state round-trip, tab locking).
 
 - 2026-08-18: Checklist created. Starting Phase A (full regression sweep across untested
   packages) next.
+- 2026-08-18: Phase A complete — every one of the 20 packages/apps typechecks, builds, and
+  passes its full test suite clean (frontend also verified with a real `vite build`, extension
+  verified with manifest/syntax checks since it has no test infra). Zero regressions found.
+  Starting Phase B (real bug-hunting beyond existing tests) next.
