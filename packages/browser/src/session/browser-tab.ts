@@ -29,6 +29,23 @@ import { Dialog, Page } from 'puppeteer-core';
  *  before the second call ever reached the dialog, silently auto-dismissing it instead. */
 const DEFAULT_DIALOG_TIMEOUT_MS = 30000;
 
+/** How long a `beforeunload` dialog specifically is left pending before auto-dismissal — much
+ *  shorter than {@link DEFAULT_DIALOG_TIMEOUT_MS}. A `beforeunload` dialog uniquely blocks an
+ *  in-flight `navigate()` call, which races its own Puppeteer `page.goto()` timeout (also
+ *  30000ms by default) — using the same 30s window for both meant the auto-dismiss safety net
+ *  NEVER actually rescued the navigation in practice: both timers expired at essentially the
+ *  same instant, so `navigate()` always failed with its own "Navigation timeout of 30000ms
+ *  exceeded" instead of the dialog being dismissed in time to let it through. Found live: every
+ *  single navigation away from a page with a `beforeunload` handler (extremely common — any
+ *  form/editor/checkout with an unsaved-changes warning) took the full 30 seconds and then
+ *  failed outright, confirmed reproducible across repeated runs (see PROB-038). Unlike
+ *  alert/confirm/prompt (where a real agent round trip genuinely benefits from a generous
+ *  window to read and react to the dialog before acting), there's no comparable "give the agent
+ *  time to decide" case for `beforeunload` specifically — an automated navigate() call already
+ *  expresses clear intent to leave the page, so a short window that reliably beats the
+ *  navigation timeout is the correct default. */
+const BEFOREUNLOAD_DIALOG_TIMEOUT_MS = 3000;
+
 const MAX_CONSOLE_LOGS = 200;
 const MAX_PAGE_ERRORS = 50;
 const MAX_NETWORK_LOG = 200;
@@ -546,13 +563,26 @@ export class BrowserTab implements IBrowserTab {
 
       // Safety net: if nothing calls handleDialog(), don't leave the page hung forever.
       // Dismissing (rather than accepting) is the safer default — it never confirms a
-      // destructive action the caller never got a chance to review.
+      // destructive action the caller never got a chance to review. `beforeunload` gets both a
+      // much shorter window AND the opposite polarity — see BEFOREUNLOAD_DIALOG_TIMEOUT_MS's
+      // doc comment for the timing half; the polarity half (PROB-038, part 2): `dismiss()` on a
+      // `beforeunload` dialog means "stay on this page, cancel the navigation" — the exact
+      // opposite of what an in-flight `navigate()` call unambiguously asked for. Auto-dismissing
+      // it (the "safe" choice for alert/confirm/prompt) was actively self-defeating here: found
+      // live that even after shortening the timeout, `navigate()` still failed outright with
+      // `net::ERR_ABORTED` and the page never actually left the original URL, because dismiss()
+      // was cancelling the very navigation the caller asked for. `accept()` (confirm leaving) is
+      // the correct default specifically for `beforeunload` — there is no legitimate scenario
+      // where a caller invokes `navigate()` and secretly wants to stay put if a page objects.
+      const isBeforeUnload = dialog.type() === 'beforeunload';
+      const timeoutMs = isBeforeUnload ? BEFOREUNLOAD_DIALOG_TIMEOUT_MS : DEFAULT_DIALOG_TIMEOUT_MS;
       this.dialogTimeout = setTimeout(() => {
         if (!dialog.handled) {
-          dialog.dismiss().catch(() => {});
+          const resolve = isBeforeUnload ? dialog.accept() : dialog.dismiss();
+          resolve.catch(() => {});
         }
         this.pendingDialog = undefined;
-      }, DEFAULT_DIALOG_TIMEOUT_MS);
+      }, timeoutMs);
     });
 
     page.on('console', (msg) => {

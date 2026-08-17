@@ -47,7 +47,7 @@ architecture. Now reads the title live. See PROB-035. |
 | Web Notifications API (`Notification.permission` prompt, real notification creation) | covered, no bug found | Milestone 77: `grant_permissions(['notifications'])` correctly flips `Notification.permission` from `'default'` to `'granted'`, verified via the real live API (not just the grant call's own success report); a real `new Notification(...)` construction then succeeds and carries the exact title/body passed, confirming the whole permission→construct flow works end-to-end, not just the permission flag in isolation. |
 | JS framework diversity beyond React; SPA client-side routing (`history.pushState`) | covered, 1 real bug found and fixed | Milestone 3: real TodoMVC implementations in Vue, Angular, and Svelte — add-todo, snapshot, and DOM-state verification all worked correctly in each, matching the earlier React result. Grounding operates on the rendered DOM, not framework internals, so this is expected but now actually confirmed rather than assumed. Milestone 65: `goBack`/`goForward` navigation correctly follows real SPA `pushState` history, but found and fixed a real bug in `snap`'s reported title — it went stale for any title change without a real page load (the entire mechanism of client-side routing), since the underlying cache was only kept in sync by a `'load'` listener. See `PROB-034`. |
 | `agent.runGoal` (Sutradhar's own autonomous loop) | blocked on environment, partially covered | Milestone 7: no LLM provider available in this environment (no Ollama running, no `OPENROUTER_API_KEY`) — the actual reasoning capability is untested and I can't responsibly fix this myself (installing Ollama is a heavier step; won't provision API keys/billing). What DID get verified: the failure mode is honest (no fabricated success) and `session:blocked` event surfacing through the tool — built in an earlier project phase — actually works live, confirmed for the first time. |
-| Native dialogs (alert/confirm/prompt) | covered, 1 bug found and fixed | Milestone 7: found a real bug live — the 5s auto-dismiss safety net was too tight for a realistic check-then-act round trip (get_pending_dialog → handle_dialog), silently losing the race and auto-dismissing dialogs the caller intended to handle. Bumped the default to 30s (matches `downloadFile`'s timeout), re-verified with simulated ~4s latency between check and handle — correctly caught and handled now. |
+| Native dialogs (alert/confirm/prompt/beforeunload) | covered, 2 bugs found and fixed | Milestone 7: found a real bug live — the 5s auto-dismiss safety net was too tight for a realistic check-then-act round trip (get_pending_dialog → handle_dialog), silently losing the race and auto-dismissing dialogs the caller intended to handle. Bumped the default to 30s (matches `downloadFile`'s timeout), re-verified with simulated ~4s latency between check and handle — correctly caught and handled now. Milestone 78: found a real, high-severity bug specific to `beforeunload` (the "unsaved changes" navigation guard, extremely common on forms/editors) — `navigate()` away from any such page always took the full 30s and then failed outright, page stuck on the original URL. Two compounding causes: the 30s auto-dismiss safety net raced Puppeteer's own 30s navigation timeout and never won; and even after shortening it, the "safe default" of `dismiss()` (correct for alert/confirm/prompt) means "stay, cancel navigation" for `beforeunload` specifically — the opposite of what an in-flight `navigate()` call asks for. Fixed with a `beforeunload`-specific 3s timeout + `accept()` (proceed with leaving); other dialog types' behavior unchanged, explicitly regression-tested. See PROB-038. |
 | Drag-and-drop | covered | Milestone 7: real HTML5 `DataTransfer` drag from a source to a target element — drop handler received the correct transferred data. Works correctly. |
 | Right-click / context menu | covered | Milestone 7: verified the real `contextmenu` event fires correctly via `browser.right_click`. Works correctly. |
 | Network request interception/mocking | covered | Milestone 7: `browser.route` with both `mock` (a real fetch received the exact mocked JSON body) and `block` (a real fetch failed as expected) actions verified against genuine `fetch()` calls, not just the tool's own success report. |
@@ -110,6 +110,43 @@ script: `pageText` went from empty to 4000 real characters of the document's act
 installed via a plain `npm install` in an isolated scratch directory and copied in rather than
 resolved through the workspace's normal install path — noted explicitly in `PROB-009` so a
 future real `pnpm install` isn't skipped by mistake. Closes `PROB-009`.
+
+### 2026-08-17 — Milestone 78: `navigate()` always failed after 30s on any page with a `beforeunload` guard — closes PROB-038, a high-severity real-world gap
+
+Tested a genuinely common real-world pattern that had never specifically been dogfooded: a page
+with a `beforeunload` handler (the standard "you have unsaved changes, are you sure you want to
+leave?" browser guard — forms, editors, checkout flows all commonly use this). Result: every
+single `navigate()` call away from such a page took the full 30 seconds and then failed outright
+with `net::ERR_ABORTED`, leaving the session stuck on the original URL. Not an edge case — this
+is one of the most common real interaction guards on the web, and the failure mode (a long stall
+followed by a hard failure) would silently break any automated flow that hits it.
+
+Root-caused via a live diagnostic that polled `getPendingDialog()` while `navigate()` was still
+in flight, rather than guessing: the `beforeunload` dialog genuinely appeared almost instantly
+(~110ms) and the existing dialog auto-dismiss safety net *was* firing — but two things
+compounded to defeat it entirely:
+1. **Timing**: the safety net's 30000ms timeout raced Puppeteer's own `page.goto()` navigation
+   timeout, which is also 30000ms by default. Both timers, started within milliseconds of each
+   other, expired together — so the safety net never actually won the race in time to rescue the
+   navigation; `navigate()` always hit its own timeout error first.
+2. **Polarity** (found only after fixing #1 alone still left `navigate()` failing, just 10x
+   faster): the safety net's default action, `dialog.dismiss()`, is the correct, safe choice for
+   alert/confirm/prompt (never confirms something destructive) — but for `beforeunload`
+   specifically, dismissing means "stay on this page, cancel the navigation," which is the exact
+   opposite of what an in-flight `navigate()` call unambiguously requested. The "safe" default
+   was actively self-defeating for this one dialog type.
+
+Fixed both, scoped precisely to `dialog.type() === 'beforeunload'` so alert/confirm/prompt keep
+their original, correct 30s-timeout/dismiss-default behavior unchanged: a much shorter
+`beforeunload`-specific timeout (3000ms, reliably beating the navigation timeout instead of
+racing it) and `accept()` instead of `dismiss()` (there's no legitimate case where a caller
+invokes `navigate()` and secretly wants to stay put). `packages/browser` 186/186. Live-verified
+across 3 separate runs: `navigate()` now resolves successfully in ~3s with the real page state
+confirmed at the new URL (not just the promise resolving cleanly) — and a plain `confirm()`
+dialog was independently re-checked to still auto-dismiss exactly as before, confirming the
+polarity change didn't leak into unrelated dialog types. Full downstream rebuild+retest:
+`capability-runtime` 90/90, `cli` 29/29, `mcp-server` 25/25, `sutradhar` 11/11, `agent` 56/56,
+`apps/server` 28/28. Closes `PROB-038`.
 
 ### 2026-08-17 — Milestone 76: WebRTC/`getUserMedia` camera pages — covered, no engine work needed
 
