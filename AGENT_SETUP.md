@@ -164,6 +164,22 @@ it ships), the pattern that actually holds up is:
   key) configured separately for the server — the `browser.*` tools need none of that, since the
   calling AI is already the brain.
 - Chrome/Edge only, driven locally — no built-in remote/cloud-browser execution.
+- **A headed Chrome window will never visually shrink narrower than ~516px wide**, no matter what
+  viewport/window-size is requested — Chromium enforces this floor at the OS-window level and it
+  can't be overridden via CDP by Sutradhar or any other CDP-based tool (confirmed empirically:
+  requesting 500px silently clamped to 516px; there's no equivalent floor on height). This is
+  purely cosmetic — `window.innerWidth`/`innerHeight`/`devicePixelRatio` inside the page (what
+  real layout code reads) are set correctly and unaffected, and `page.screenshot()` captures only
+  the content viewport, not the OS window — only the visible on-screen window keeps a margin
+  below the floor. If a headed session genuinely needs to *look* narrower than 516px on screen,
+  draw the page into a canvas/iframe at the target size instead of resizing the real window — the
+  same pattern Chrome DevTools' own "Responsive" device-toolbar mode uses.
+- **A script holding an open `attach()`/`launch()` session never exits on its own** — the CDP
+  WebSocket connection keeps Node's event loop alive indefinitely. Always call `browser.close()`
+  (or `runtime.shutdown()`, or `process.exit(0)` if the browser should keep running detached) at
+  the end of a one-shot script, or it will sit there as an invisible live process forever. This is
+  also the main reason orphaned Chrome processes accumulate — see the previous point about
+  `launch()` now warning when a prior session isn't closed.
 
 ## License
 

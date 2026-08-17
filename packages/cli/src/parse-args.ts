@@ -48,6 +48,31 @@ export interface ParsedArgs {
    *  but the CLI had no way to pass it (found live verifying a real 3-level nested iframe
    *  chain, where reading a deeply-nested frame's own state needed this). */
   frameFlag: string | undefined;
+  /** Parsed from `--viewport WIDTHxHEIGHT` (e.g. `--viewport 390x844`) — undefined when the flag
+   *  isn't given or doesn't parse as two positive integers separated by `x`. Applied at session
+   *  creation: sets both the real page's CDP device-metrics override (so `window.innerWidth`/
+   *  responsive CSS see the requested size — this is what actually matters for layout
+   *  correctness) and, for a headed session, Chrome's own `--window-size` launch flag (so the
+   *  visible OS window is reasonably sized too, instead of full desktop with a large empty
+   *  margin around a phone-sized page — found live via an external field report, PROB-042,
+   *  that this was previously not exposed anywhere in the public SDK or CLI at all, only on the
+   *  internal runtime). Not pixel-perfect for headed mode (Chrome's own window chrome/toolbar
+   *  still eats a few dozen px the CDP override doesn't know about) — that's a real, undocumented
+   *  Chromium quirk, not something worth chasing further; the CDP override alone already
+   *  guarantees the functionally-correct result. */
+  viewportFlag: { width: number; height: number } | undefined;
+  /** True when `--viewport` was given but its value didn't parse as `WIDTHxHEIGHT` (e.g.
+   *  `--viewport bogus`) — lets the caller reject it with a clear usage message instead of
+   *  silently ignoring a typo'd value. */
+  viewportFlagGivenButInvalid: boolean;
+  /** Any `--something`-shaped argument that isn't one of the flags this parser recognizes (and
+   *  isn't a consumed value of one, e.g. the URL after `--baseline`). Found live (external field
+   *  report, PROB-042): a typo'd or misplaced flag like `sutradhar screenshot --help` was
+   *  silently treated as the command's positional filename argument instead of being rejected —
+   *  `screenshot --help` created a real file literally named `--help` on disk, no error at all.
+   *  `main()` checks this before dispatching to any command and errors out immediately rather
+   *  than letting an unrecognized flag silently become positional data. */
+  unrecognizedFlags: string[];
 }
 
 /** Parses `process.argv.slice(2)`-style arguments (verb + flags) into their recognized pieces.
@@ -87,28 +112,40 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     : undefined;
   const frameFlagIndex = args.indexOf('--frame');
   const frameFlag = frameFlagIndex !== -1 ? args[frameFlagIndex + 1] : undefined;
-  const cleanArgs = args.filter(
-    (a, i) =>
-      a !== '--headed' &&
-      a !== '--fail-on-diff' &&
-      a !== '--json' &&
-      a !== '--settle' &&
-      a !== '--no-text' &&
-      a !== '--ids-only' &&
-      a !== '--scan-listeners' &&
-      a !== '--profile' &&
-      a !== '--user-agent' &&
-      a !== '--allowlist-domains' &&
-      a !== '--baseline' &&
-      a !== '--modifiers' &&
-      a !== '--frame' &&
-      !(profileFlagIndex !== -1 && i === profileFlagIndex + 1) &&
-      !(userAgentFlagIndex !== -1 && i === userAgentFlagIndex + 1) &&
-      !(allowlistDomainsFlagIndex !== -1 && i === allowlistDomainsFlagIndex + 1) &&
-      !(baselineFlagIndex !== -1 && i === baselineFlagIndex + 1) &&
-      !(modifiersFlagIndex !== -1 && i === modifiersFlagIndex + 1) &&
-      !(frameFlagIndex !== -1 && i === frameFlagIndex + 1),
-  );
+  const viewportFlagIndex = args.indexOf('--viewport');
+  const viewportRaw = viewportFlagIndex !== -1 ? args[viewportFlagIndex + 1] : undefined;
+  const viewportMatch = viewportRaw?.match(/^(\d+)x(\d+)$/);
+  const viewportFlag = viewportMatch
+    ? { width: parseInt(viewportMatch[1]!, 10), height: parseInt(viewportMatch[2]!, 10) }
+    : undefined;
+  const KNOWN_FLAGS = new Set([
+    '--headed',
+    '--fail-on-diff',
+    '--json',
+    '--viewport',
+    '--settle',
+    '--no-text',
+    '--ids-only',
+    '--scan-listeners',
+    '--profile',
+    '--user-agent',
+    '--allowlist-domains',
+    '--baseline',
+    '--modifiers',
+    '--frame',
+  ]);
+  const isConsumedValue = (i: number): boolean =>
+    (profileFlagIndex !== -1 && i === profileFlagIndex + 1) ||
+    (userAgentFlagIndex !== -1 && i === userAgentFlagIndex + 1) ||
+    (allowlistDomainsFlagIndex !== -1 && i === allowlistDomainsFlagIndex + 1) ||
+    (baselineFlagIndex !== -1 && i === baselineFlagIndex + 1) ||
+    (modifiersFlagIndex !== -1 && i === modifiersFlagIndex + 1) ||
+    (frameFlagIndex !== -1 && i === frameFlagIndex + 1) ||
+    (viewportFlagIndex !== -1 && i === viewportFlagIndex + 1);
+  const cleanArgs = args.filter((a, i) => !KNOWN_FLAGS.has(a) && !isConsumedValue(i));
+  // Anything left that's still shaped like a flag (`--foo`) is almost certainly a typo'd or
+  // misplaced flag, not literal positional data — see `unrecognizedFlags`'s doc comment.
+  const unrecognizedFlags = cleanArgs.filter((a) => a.startsWith('--'));
 
   return {
     verb,
@@ -126,5 +163,8 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     scanListeners,
     modifiersFlag,
     frameFlag,
+    viewportFlag,
+    viewportFlagGivenButInvalid: viewportFlagIndex !== -1 && !viewportFlag,
+    unrecognizedFlags,
   };
 }

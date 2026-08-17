@@ -37,6 +37,18 @@ export interface LaunchOptions {
    * the browser performs client-side without going through this check.
    */
   allowedDomains?: readonly string[];
+  /**
+   * Sets both the CDP device-metrics override (`window.innerWidth`/responsive CSS see this
+   * size) and, for a non-headless session, Chrome's own `--window-size` launch flag (so the
+   * visible OS window is reasonably sized instead of full-desktop with an empty margin around
+   * a phone-sized page). Unset by default — Chrome's own default viewport is used. Not
+   * pixel-perfect for the real OS window (Chrome's own title bar/tabs/toolbar chrome still eats
+   * a few dozen px this doesn't account for, confirmed live at ~126px width / ~95px height) —
+   * that's a real Chromium quirk, not something worth chasing further; the CDP override alone
+   * already guarantees the functionally-correct page size. Found missing entirely from this SDK
+   * via an external field report using the published npm package (PROB-042).
+   */
+  viewport?: { width: number; height: number };
 }
 
 /**
@@ -46,11 +58,24 @@ export interface LaunchOptions {
  * Obtained from {@link launch} — do not construct directly.
  */
 export class Browser {
+  /** Count of {@link Browser} instances from this process's `launch()` calls that haven't had
+   *  {@link close} called yet — each one is a live, separate Chrome process. Used by `launch()`
+   *  to warn when a caller launches again without closing the previous one (PROB-042: found via
+   *  an external field report of a long-running process silently accumulating Chrome instances,
+   *  each ~150-300MB, with no warning at all). */
+  private static openCount = 0;
+
+  /** @internal */ static get openSessionCount(): number {
+    return Browser.openCount;
+  }
+
   /** @internal */ public constructor(
     private readonly runtime: SutradharRuntime,
     /** The underlying Sutradhar session id. */
     public readonly sessionId: string,
-  ) {}
+  ) {
+    Browser.openCount++;
+  }
 
   /** Open a new tab, optionally navigating to a URL, and return a {@link Page} for it. */
   public async newPage(url?: string): Promise<Page> {
@@ -68,8 +93,27 @@ export class Browser {
     return tabs.map((t) => new Page(this.runtime, this.sessionId, t.id));
   }
 
+  /**
+   * The CDP WebSocket endpoint of this session's underlying Chrome process, or `undefined` if
+   * it has no real browser backing it. Lets a SEPARATE later process `puppeteer.connect()` or
+   * `SutradharRuntime.attach({endpoint})` to the same running browser instead of launching a new
+   * one — this SDK's own `launch()` doesn't itself expose a reconnect path, so a caller that
+   * needs cross-process continuity (e.g. a long-lived browser handed off between two scripts)
+   * needs this. Was previously unreachable from this SDK, only from the internal runtime, found
+   * via an external field report (PROB-042).
+   */
+  public getWsEndpoint(): string | undefined {
+    return this.runtime.getSessionWsEndpoint(this.sessionId);
+  }
+
+  private closed = false;
+
   /** Close every tab and release the browser process. */
   public async close(): Promise<void> {
     await this.runtime.shutdown(this.sessionId);
+    if (!this.closed) {
+      this.closed = true;
+      Browser.openCount--;
+    }
   }
 }

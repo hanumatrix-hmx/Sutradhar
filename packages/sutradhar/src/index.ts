@@ -34,13 +34,21 @@ export const SUTRADHAR_VERSION = '0.3.0';
  * const browser = await launch({ url: 'https://example.com' });
  */
 export async function launch(options: LaunchOptions = {}): Promise<Browser> {
+  if (Browser.openSessionCount > 0) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[sutradhar] launch() called with ${Browser.openSessionCount} previous session(s) from ` +
+        'this process not yet close()d — each launch() spawns a separate Chrome process; call ' +
+        'browser.close() when done or Chrome processes will leak.',
+    );
+  }
   const runtime = new SutradharRuntime({ allowedDomains: options.allowedDomains });
   const result = await runtime.launch({
     initialUrl: options.url,
     isIncognito: options.isIncognito,
     launch:
-      options.headless !== undefined || options.userAgent !== undefined
-        ? { headless: options.headless, userAgent: options.userAgent }
+      options.headless !== undefined || options.userAgent !== undefined || options.viewport !== undefined
+        ? { headless: options.headless, userAgent: options.userAgent, viewport: options.viewport }
         : undefined,
     profileName: options.profileName,
   });
@@ -56,7 +64,13 @@ export async function launch(options: LaunchOptions = {}): Promise<Browser> {
 }
 
 export { Browser, type LaunchOptions } from './browser.js';
-export { Page, type ElementOptions, type ScreenshotOptions } from './page.js';
+export {
+  Page,
+  type ElementOptions,
+  type ScreenshotOptions,
+  type SetViewportOptions,
+  type ViewportInfo,
+} from './page.js';
 export {
   SutradharRuntime,
   type SnapshotResult,

@@ -50,6 +50,14 @@ export async function spawnDetachedChrome(
   headless: boolean,
   userDataDir?: string,
   userAgent?: string,
+  /** Real Chrome `--window-size` launch flag, applied only when `headless` is false (headless
+   *  Chrome has no real OS window to size — the CDP device-metrics override, applied separately
+   *  after attaching, is what actually matters there). Not pixel-perfect for a headed window —
+   *  Chrome's own toolbar/frame chrome still eats a few dozen px this doesn't account for — but
+   *  it's what stops a `--viewport 390x844` request from rendering phone-sized content inside a
+   *  full-desktop-sized window with a large empty grey margin (found live via an external field
+   *  report, PROB-042). */
+  windowSize?: { width: number; height: number },
 ): Promise<SpawnedChrome> {
   const chromePath = new BrowserLauncher().findExecutablePath();
   if (!chromePath) {
@@ -66,6 +74,7 @@ export async function spawnDetachedChrome(
   ];
   if (headless) args.push('--headless=new');
   if (userAgent) args.push(`--user-agent=${userAgent}`);
+  if (!headless && windowSize) args.push(`--window-size=${windowSize.width},${windowSize.height}`);
 
   const child = spawn(chromePath, args, { detached: true, stdio: 'ignore' });
   const pid = child.pid;

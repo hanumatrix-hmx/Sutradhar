@@ -188,6 +188,22 @@ describe('@sutradhar/cli parseArgs', () => {
     expect(result.frameFlag).toBeUndefined();
   });
 
+  it('flags an unrecognized --flag-shaped positional arg instead of silently accepting it as data (fixes PROB-042 — "screenshot --help" used to create a real file named "--help")', () => {
+    const result = parseArgs(['screenshot', '--help']);
+    expect(result.unrecognizedFlags).toEqual(['--help']);
+    expect(result.cleanArgs).toEqual(['--help']); // still surfaced in cleanArgs too, for callers that want it
+  });
+
+  it('does not flag a recognized flag or a value consumed by one', () => {
+    const result = parseArgs(['nav', 'https://example.com', '--headed', '--profile', 'work']);
+    expect(result.unrecognizedFlags).toEqual([]);
+  });
+
+  it('reports every unrecognized flag, not just the first', () => {
+    const result = parseArgs(['nav', 'https://example.com', '--out', '--dry-run']);
+    expect(result.unrecognizedFlags).toEqual(['--out', '--dry-run']);
+  });
+
   it('does not treat a positional arg that happens to equal a flag NAME as anything but a flag, even mid-command', () => {
     // Guards the filter's index-based value-stripping: only the token immediately AFTER
     // --profile/--user-agent is treated as that flag's value, not any later occurrence.

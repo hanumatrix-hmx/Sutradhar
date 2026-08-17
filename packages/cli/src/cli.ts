@@ -32,6 +32,9 @@ const {
   scanListeners,
   modifiersFlag,
   frameFlag,
+  viewportFlag,
+  viewportFlagGivenButInvalid,
+  unrecognizedFlags,
 } = parseArgs(process.argv.slice(2));
 
 // Tracked so main()'s cleanup can disconnect the CDP client connection (NOT close the browser)
@@ -61,7 +64,7 @@ async function spawnFreshSession(runtime: SutradharRuntime): Promise<string> {
   }
   let spawned: Awaited<ReturnType<typeof spawnDetachedChrome>>;
   try {
-    spawned = await spawnDetachedChrome(!headed, profileUserDataDir, userAgentFlag);
+    spawned = await spawnDetachedChrome(!headed, profileUserDataDir, userAgentFlag, viewportFlag);
   } catch (err) {
     printErrorAndExit((err as Error).message);
   }
@@ -69,11 +72,15 @@ async function spawnFreshSession(runtime: SutradharRuntime): Promise<string> {
   if (!attached.hasRealBrowser) {
     printErrorAndExit('Spawned Chrome but could not attach to it. Run "sutradhar doctor" to diagnose.');
   }
+  if (viewportFlag) {
+    await runtime.setViewport(attached.sessionId, viewportFlag);
+  }
   await writeState({
     sessionId: attached.sessionId,
     wsEndpoint: spawned.wsEndpoint,
     chromePid: spawned.pid,
     profileName: profileFlag,
+    viewport: viewportFlag,
   });
   activeSessionId = attached.sessionId;
   return attached.sessionId;
@@ -97,6 +104,16 @@ async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string)
       // is necessary (setActiveTab's effect is in-memory only and doesn't survive the reconnect).
       if (state.activeTabId && (await runtime.listTabs(sessionId)).some((t) => t.id === state.activeTabId)) {
         await runtime.focusTab(sessionId, state.activeTabId).catch(() => {});
+      }
+      // Apply this invocation's --viewport if given (and persist it), otherwise re-apply
+      // whatever viewport a prior invocation set — see CliState.viewport's doc comment for why
+      // this is necessary on every reattach, not just once.
+      const effectiveViewport = viewportFlag ?? state.viewport;
+      if (effectiveViewport) {
+        await runtime.setViewport(sessionId, effectiveViewport).catch(() => {});
+      }
+      if (viewportFlag) {
+        await writeState({ ...state, sessionId, viewport: viewportFlag }).catch(() => {});
       }
       return await fn(runtime, sessionId);
     } catch (err) {
@@ -700,6 +717,21 @@ async function cmdClose() {
 }
 
 async function main() {
+  // A `--foo`-shaped argument the parser doesn't recognize is almost certainly a typo'd or
+  // misplaced flag, not literal positional data — reject it here, before any command gets a
+  // chance to silently treat it as a filename/selector/etc. Found live (external field report,
+  // PROB-042): `sutradhar screenshot --help` created a real file literally named `--help` on
+  // disk instead of erroring or showing help, because `screenshot`'s positional `[path]` arg
+  // just took whatever was left over with no validation at all.
+  if (unrecognizedFlags.length > 0) {
+    printErrorAndExit(
+      `Unrecognized flag ${unrecognizedFlags.map((f) => `"${f}"`).join(', ')} — run "sutradhar" ` +
+        'with no arguments to see the full command/flag list, or check for a typo.',
+    );
+  }
+  if (viewportFlagGivenButInvalid) {
+    printErrorAndExit('--viewport must be WIDTHxHEIGHT (e.g. --viewport 390x844)');
+  }
   switch (verb) {
     case 'doctor':
       return cmdDoctor();

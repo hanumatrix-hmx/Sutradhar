@@ -279,6 +279,51 @@ findings:
 
 Append-only. Newest first.
 
+### 2026-08-17 — Milestone 92: remediated a 9-issue external field-report batch (SUTRADHAR-ISSUES.md, published `sutradhar@0.3.0`) — viewport reachable end-to-end for the first time, wsEndpoint reconnect, leak warning, CLI flag-safety
+
+First genuinely independent field report this session has processed that wasn't self-generated
+(unlike the GLM/Milestone-28-29 report, this one came from someone else's checkout already
+concurrently working in this same repo). All 12 issues triaged against current source before
+any fix — 9 real gaps, 3 not real bugs (documented instead, see below). Full detail and every
+live-verification result: `.ai/known-problems.md` `PROB-042`. Summary here:
+
+- **Viewport was completely unreachable from either public surface** — the internal runtime
+  already had `setViewport()`/window-resize capability the whole time; neither the `sutradhar`
+  SDK's `launch()`/`Page` nor the CLI ever exposed it. Fixed at both: SDK `launch({viewport})` +
+  `Page.setViewport()`/`getViewport()`, CLI `--viewport WIDTHxHEIGHT` (persisted across CLI
+  reattaches, like `grantedPermissions`/`activeTabId` already are). Also wired `page.resize()`
+  so a headed session's real OS window follows the requested size, not just the CDP override —
+  live-measured at 516×939 for a 390×844 request, the delta being exactly Chrome's own window
+  chrome (title bar/tabs/toolbar), not a bug.
+- **wsEndpoint reconnect + leak warning** — `SutradharRuntime.getSessionWsEndpoint()` already
+  existed at the runtime layer (same unreached-by-the-public-SDK pattern as viewport); added
+  `Browser.getWsEndpoint()`. Live-verified a genuinely separate `SutradharRuntime` instance
+  reconnecting to a live session via the exposed endpoint. Also added a `console.warn` when
+  `launch()` is called again without closing a prior session's `Browser` — previously silent,
+  now flags Chrome-process accumulation immediately.
+- **CLI flag-safety** — `sutradhar screenshot --help` (or any unrecognized `--flag`) used to be
+  silently accepted as the positional filename argument, creating a real file named `--help` on
+  disk with zero error. Now rejected before dispatch. Reproduced the exact bug live first, then
+  confirmed fixed.
+- **Not real bugs, documented instead**: a real, unfixable ~516px Chromium OS-window-width floor
+  and the "a script holding an open session never exits on its own" footgun both got a line in
+  `AGENT_SETUP.md`'s "Known limitations" section rather than a code change — no realistic fix
+  exists for either.
+
+Full downstream rebuild+retest after the batch (not just the directly-edited packages):
+`packages/capability-runtime` 90/90, `packages/cli` 32/32, `packages/sutradhar` 11/11,
+`packages/mcp-server` 25/25, `packages/agent` 56/56, `apps/server` 28/28.
+
+**Real environmental hazard hit and resolved mid-session, not caused by this work**: the shared
+machine's C: drive hit 0 bytes free (an unrelated hung Docker Desktop daemon, apparently stuck
+retrying a write against the full disk), causing one transient build-tool `ERR_MODULE_NOT_FOUND`
+failure that was correctly diagnosed as environmental rather than a real code bug (the file
+genuinely existed on disk; a bare retry succeeded). Investigated the disk usage, found ~72GB in
+Docker (images/containers/volumes/build-cache) and ~46GB across two WSL distros as the two real
+hogs, and — per explicit user direction to touch nothing that might belong to the other parallel
+projects sharing this machine — resolved it with a plain Docker Desktop restart alone (no
+`docker system prune`, no WSL distro touched), which recovered free space from 0 to ~8-11GB.
+
 ### 2026-08-16 — Milestone 57: tested Milestone 56's own disclosed caveat by patiently retrying the 4 most promising Blocked tasks — 3 of 4 verdicts held, 1 flipped, revised score 27/47 (57.4%)
 
 Milestone 56's write-up disclosed a caveat rather than just asserting it: "at least 5 of the 21

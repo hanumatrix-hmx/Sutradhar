@@ -21,6 +21,24 @@ export interface ElementOptions {
   settle?: boolean | SettleSpec;
 }
 
+/** Options accepted by {@link Page.setViewport}. */
+export interface SetViewportOptions {
+  width: number;
+  height: number;
+  isMobile?: boolean;
+  deviceScaleFactor?: number;
+  hasTouch?: boolean;
+}
+
+/** Return value of {@link Page.getViewport}. */
+export interface ViewportInfo {
+  width: number;
+  height: number;
+  deviceScaleFactor?: number;
+  isMobile?: boolean;
+  hasTouch?: boolean;
+}
+
 /** Options accepted by {@link Page.screenshot}. */
 export interface ScreenshotOptions {
   /** Currently always full-page; reserved for parity with Puppeteer. */
@@ -131,6 +149,23 @@ export class Page {
    */
   public async setStorageState(state: StorageState): Promise<void> {
     await this.runtime.setStorageState(this.sessionId, state, this.tabId);
+  }
+
+  /**
+   * Set this tab's viewport (CDP device-metrics override) — `window.innerWidth`/responsive CSS
+   * see this size immediately. For a non-headless session, also best-effort resizes the real OS
+   * window's content area to match (not pixel-perfect — Chrome's own title bar/toolbar chrome
+   * still eats a few dozen px this doesn't account for). Was previously only reachable via the
+   * internal runtime, not this SDK — found missing via an external field report (PROB-042).
+   */
+  public async setViewport(viewport: SetViewportOptions): Promise<void> {
+    await this.runtime.setViewport(this.sessionId, viewport, this.tabId);
+  }
+
+  /** Read the viewport/device metrics actually in effect right now, or `null` if none has ever
+   *  been set (Chrome's own default applies in that case). */
+  public getViewport(): ViewportInfo | null {
+    return this.runtime.getViewport(this.sessionId, this.tabId);
   }
 
   /** Bring this tab to the front (make it the active tab). */

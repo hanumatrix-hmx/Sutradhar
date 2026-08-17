@@ -34,6 +34,12 @@ export interface CliState {
    * command's fresh `attach()` silently reverts to its own default (the most-recently-opened
    * tab) — found live testing the new `tabs`/`newtab`/`focustab` commands together. */
   activeTabId?: string;
+  /** The viewport `--viewport WIDTHxHEIGHT` last applied, re-applied on every subsequent
+   *  command's reattach for the same reason as `grantedPermissions`/`activeTabId`: the CDP
+   *  device-metrics override does not survive a client disconnect/reconnect cycle, so without
+   *  this a session's viewport would silently revert to Chrome's default the moment a second
+   *  CLI command runs (external field report, PROB-042). */
+  viewport?: { width: number; height: number };
 }
 
 /**

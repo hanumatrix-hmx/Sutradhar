@@ -1181,6 +1181,39 @@ export class SutradharRuntime {
     // spread overrides an earlier value — it doesn't get skipped like a genuinely absent key).
     const hasTouch = viewport.hasTouch ?? viewport.isMobile ?? false;
     await page.setViewport({ ...viewport, hasTouch });
+    // Best-effort: also resize the real OS window's CONTENT area (not the outer window — this
+    // is what `Page.resize()`'s own `Browser.setContentsSize` CDP call does, precisely, with no
+    // frame-offset guessing needed) so a headed session actually LOOKS the requested size
+    // instead of rendering phone-sized content inside a full-desktop window with a large empty
+    // grey margin. Found live via an external field report (PROB-042): the CDP device-metrics
+    // override above only affects what the PAGE thinks its size is, never the visible window —
+    // a real, confusing-looking gap the report's own author worked around by hand-computing a
+    // guessed Chrome-frame offset for `Browser.setWindowBounds`, which `page.resize()` makes
+    // unnecessary. Wrapped in try/catch and never awaited-through to the caller: `resize()` is
+    // `@experimental` in this Puppeteer version, throws in headless (no real window to resize),
+    // and its failure should never fail the CDP device-metrics override that already succeeded
+    // above — that's the part that actually matters functionally (`window.innerWidth`/responsive
+    // CSS), this is purely cosmetic for a human looking at a headed window.
+    await page.resize({ contentWidth: viewport.width, contentHeight: viewport.height }).catch(() => {});
+  }
+
+  /** Reads the viewport/device metrics actually in effect right now — CSS viewport width/
+   *  height, device scale factor, and mobile/touch emulation state — via Puppeteer's own live
+   *  `page.viewport()` getter (reflects the last real `setViewport()` call, not a value Sutradhar
+   *  itself has to track). Returns `null` if no viewport override has ever been applied to this
+   *  page (Chrome's own default metrics are in effect). Closes a real gap from an external field
+   *  report (PROB-042): there was previously no supported way to verify what viewport a session
+   *  was actually running at without dropping to raw page JavaScript. */
+  public getViewport(sessionId: string, tabId?: string): {
+    width: number;
+    height: number;
+    deviceScaleFactor?: number;
+    isMobile?: boolean;
+    hasTouch?: boolean;
+  } | null {
+    const { tab } = this.resolveTab(sessionId, tabId);
+    const page = this.requirePage(tab);
+    return page.viewport();
   }
 
   /**
