@@ -116,15 +116,26 @@ blocked here, see above). But the user corrected an important framing mistake: S
 `browser.*` the same way Claude would drive Playwright MCP — not necessarily via its own
 separate internal LLM loop. For that mode, "benchmarking" doesn't need Ollama/OpenRouter at
 all: it means Claude (or another host AI) actually attempting real WebBench tasks live via
-the `browser.*` tools. **This has now actually been done, across nine samples totaling 85
+the `browser.*` tools. **This has now actually been done, across ten samples totaling 95
 real tasks** — see `tools/webbench/claude-direct-run-2026-*.md` and the iteration log
-below. Current combined number: **52/85 completed (61%), 33/85 externally blocked, 0
+below. Current combined number: **58/95 completed (61%), 37/95 externally blocked, 0
 Sutradhar-attributable failures** — a real, honestly-reported number, not a cherry-picked one.
-The rate has held steady in the 52-62% band across all nine samples regardless of how much
+The rate has held steady in the 52-62% band across all ten samples regardless of how much
 the underlying engine has changed in between (samples 1-3 predate the field-report remediation;
 samples 7-9 postdate a large batch of engine fixes across three remediation passes) — consistent
 evidence the ceiling here is external (Cloudflare/DataDome prevalence, real site outages, edge
 blocks across the open web), not Sutradhar's own capability.
+
+**Host-model quality has now been isolated as a variable too, and it is *not* the constraint.**
+Samples 1-9 were all driven by Claude Sonnet; sample 10 was driven by Claude **Opus** with
+everything else held constant, and scored **6/10 (60%)** — statistically indistinguishable from
+the nine-sample Sonnet combined rate of 61.2%. All four non-completions in that sample were
+external (two never-resolving Cloudflare interstitials, one hard edge deny, one site whose video
+section genuinely moved off-domain since the dataset's capture date), so none of them were
+reachable by better reasoning. The stronger host model's benefit showed up as *fidelity* — no
+unnoticed-wrong answers, explicit disclosure when a dataset target no longer exists, and
+root-causing a session-level anomaly into a real fix (`PROB-041`) instead of retrying past it —
+rather than as a higher score.
 
 **And now a real, controlled, four-way head-to-head on that identical 47-task set**: real
 Playwright, real Puppeteer, and real `pinchtab/pinchtab` (the actual open-source Go project)
@@ -328,6 +339,51 @@ shipped" — yes, in ways fully disclosed above — but does not support a clean
 verdict against the original number without controlling for pacing and site-drift. A properly
 controlled re-comparison (matching the original's patience level, same-day fresh pinchtab run)
 is the right next step if a precise, defensible number is needed later.
+
+### 2026-08-17 — Milestone 90: tenth WebBench sample (6/10), combined total now 58/95 (61%) — **first Opus-driven sample**, host-model quality isolated as a variable, one real bug found and fixed
+
+Run at the user's explicit request to isolate a variable every prior sample held fixed: samples
+1-9 (85 tasks) were all driven by Claude **Sonnet** as the host AI, so this one was driven by
+Claude **Opus** with everything else held constant — same CLI binary (rebuilt fresh), same
+methodology, same "Completed only if real verifiable data was actually extracted" bar, no
+stealth. 10 fresh READ-category domains (macys.com, merriam-webster.com, nasa.gov, nps.gov,
+pcgamer.com, geeksforgeeks.org, rottentomatoes.com, stackoverflow.com, timeanddate.com,
+worldatlas.com), none previously attempted, deliberately spread across retail/dictionary/gov/
+parks/gaming-media/dev-Q&A/film/education/utility/reference rather than picked for easiness.
+
+**6/10 completed (60%)** — 2 never-resolving Cloudflare interstitials (merriam-webster.com,
+timeanddate.com), 1 hard edge deny with a real reference id (macys.com, "Access Denied - Macy's"),
+1 dataset-drift case investigated thoroughly before concluding (pcgamer.com's on-site video
+section is gone — its "Videos" nav now points off-site to YouTube, which the task explicitly
+forbids; `/videos/` and `/video/` redirect to plain article tag listings with no duration
+metadata, and `/clips/` is a user-submitted clip hub), 0 Sutradhar-attributable failures.
+
+**The headline finding is the null result**: 60% vs the nine-sample Sonnet combined 52/85
+(61.2%) — no material difference, and below the two most recent individual Sonnet samples' 71%,
+well inside the 52-71% per-sample band this project has documented throughout. Every
+non-completion was external and would have stopped any host model equally. Where Opus visibly
+helped was fidelity rather than throughput: nps.gov was completed *after* the site's own search
+returned a literally empty document (39-byte `<html><head></head><body></body></html>`) three
+separate ways including a real form submission — solved by abandoning URL guessing and walking
+the site's real link graph to NPS Form 10-930; nasa.gov was not scored on the generic
+"international partners" phrasing sitting on the landing page but pushed one hop deeper for
+actually-named agencies (ESA, JAXA, Roscosmos) and re-verified in a clean session; and
+rottentomatoes.com/geeksforgeeks.org were completed only with explicit disclosure that the
+dataset's literal target no longer exists. Also worth recording: stackoverflow.com served a
+Cloudflare interstitial that **did** clear on a real settle wait — "Cloudflare interstitial" is
+not automatically a block.
+
+**One real bug found and fixed (`PROB-041`)**, surfaced live rather than by reading code: the
+CLI's session pointer was a single global mutable file (`~/.sutradhar-cli/state.json`, no
+locking, no daemon), so a concurrent UI-audit job in the same checkout silently attached to this
+run's browser session and drove its tab — a `nav` to an nps.gov URL literally reported
+`Navigated to http://bharattech.localhost:18000/portal/me?ui-shot=schooladmin`. Fixed by
+honoring an optional `SUTRADHAR_CLI_STATE_DIR` env var with the existing default unchanged;
+live-verified by re-running the remaining tasks under isolation with zero further interference.
+Full detail: `tools/webbench/claude-direct-run-2026-08-17-sample10.md`.
+
+**Combined across all ten samples: 58/95 completed (61.1%), 37/95 externally blocked, 0
+Sutradhar-attributable failures.**
 
 ### 2026-08-17 — Milestone 84: ninth WebBench sample (5/7), combined total now 52/85 (61%) — driven via the CLI binary, no new bugs found
 
