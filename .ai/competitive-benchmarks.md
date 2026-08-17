@@ -29,11 +29,17 @@ until now. Read this section, then the detail below backs each claim with a real
   capability, but Sutradhar's dual grounding + honest verification + occlusion detection are
   real, demonstrated differentiators Puppeteer has no equivalent of at all (confirmed via its
   own docs: no accessibility grounding, no built-in actionability checking). This session alone
-  (Milestones 66-71) fixed 6 more real correctness bugs — a virtualized-list silent-wrong-click
+  (Milestones 66-89) fixed 15 more real correctness bugs — a virtualized-list silent-wrong-click
   hazard, a permanently-wrong tab-title bug, a PDF-reading gap open since the start of this
-  project, multi-hop iframe targeting, and more — none of which Playwright/Puppeteer's own
-  bug trackers show equivalent fixes for, because neither tool does semantic grounding or
-  self-verification in the first place; there's no equivalent class of bug for them to have.
+  project, multi-hop iframe targeting, repeated same-key presses silently getting stuck,
+  `beforeunload`-guarded navigation always failing after a 30s stall, a popup self-closing
+  leaving a permanent phantom tab, `clipboard-write` never actually working through the
+  documented grant mechanism, and more — plus honestly mapping a genuine headless-browser hang
+  class (`navigator.share()`/WebAuthn never resolve, distinct from File System Access/
+  Notifications which fail fast or auto-resolve cleanly) rather than either hiding it or
+  papering over it. None of the fixes have equivalent entries in Playwright/Puppeteer's own bug
+  trackers, because neither tool does semantic grounding or self-verification in the first
+  place; there's no equivalent class of bug for them to have.
 - **vs real `pinchtab/pinchtab`: mixed, and the mix itself is the honest finding.** On the full
   47-task WebBench, pinchtab currently leads (31/47, 66%, vs Sutradhar's 29/47, 62%) — but with
   a disclosed confound: pinchtab ships stealth injection **on by default**, which Sutradhar
