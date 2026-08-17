@@ -340,7 +340,7 @@ verdict against the original number without controlling for pacing and site-drif
 controlled re-comparison (matching the original's patience level, same-day fresh pinchtab run)
 is the right next step if a precise, defensible number is needed later.
 
-### 2026-08-17 — Milestone 90: tenth WebBench sample (6/10), combined total now 58/95 (61%) — **first Opus-driven sample**, host-model quality isolated as a variable, one real bug found and fixed
+### 2026-08-17 — Milestone 91: tenth WebBench sample (6/10), combined total now 58/95 (61%) — **first Opus-driven sample**, host-model quality isolated as a variable, one real bug found and fixed
 
 Run at the user's explicit request to isolate a variable every prior sample held fixed: samples
 1-9 (85 tasks) were all driven by Claude **Sonnet** as the host AI, so this one was driven by
