@@ -40,14 +40,25 @@ function isPathWithinRoot(candidate: string, root: string): boolean {
   return c === r || c.startsWith(r + path.sep);
 }
 
-/** Action types that mutate page state — subject to the duplicate-action guard. */
+/** Action types that mutate page state — subject to the duplicate-action guard.
+ *
+ *  `press_key` is deliberately NOT included (see PROB-037): the guard's `target` derivation
+ *  falls through to the raw key name (`params.key`) when there's no selector/role/text, which
+ *  made every repeated press of the SAME key within 1000ms — regardless of what element is
+ *  currently focused — look identical to the guard, and get silently rejected as an "accidental
+ *  double-dispatch". That's backwards for keyboard input specifically: repeatedly pressing the
+ *  same key (Tab-Tab-Tab through a form, ArrowDown-ArrowDown through a dropdown, Backspace-
+ *  Backspace to clear several characters) is one of the most common, completely legitimate
+ *  keyboard-navigation patterns there is — unlike a click or type, which really do carry a
+ *  meaningful "target" a rapid repeat on could plausibly be an accidental double-submit of.
+ *  Found live: a real Tab-Tab-Tab flow through a 2-field form moved focus correctly on the
+ *  first Tab, then silently got stuck on the second field for every subsequent Tab press. */
 const MUTATING_ACTIONS = new Set([
   'click',
   'click_by_text',
   'click_by_role',
   'type',
   'type_by_label',
-  'press_key',
   'select_option',
   'upload_file',
   'drag_and_drop',

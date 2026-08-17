@@ -631,6 +631,24 @@ describe('@sutradhar/browser BrowserActionEngine duplicate-action guard', () => 
     expect(handle.click).toHaveBeenCalledTimes(1); // no second dispatch
   });
 
+  it('does NOT reject repeated press_key calls on the same key (fixes PROB-037 — Tab-Tab-Tab through a form, ArrowDown-ArrowDown through a dropdown, etc. are legitimate, not accidental double-dispatch)', async () => {
+    const page = {
+      frames: vi.fn().mockReturnValue([]),
+      keyboard: { press: vi.fn().mockResolvedValue(undefined) },
+    } as unknown as Page;
+    const engine = new BrowserActionEngine();
+    const tab = mockTab(page);
+
+    const first = await engine.executeAction(tab, { actionType: 'press_key', key: 'Tab', maxRetries: 0 });
+    const second = await engine.executeAction(tab, { actionType: 'press_key', key: 'Tab', maxRetries: 0 });
+    const third = await engine.executeAction(tab, { actionType: 'press_key', key: 'Tab', maxRetries: 0 });
+
+    expect(first.success).toBe(true);
+    expect(second.success).toBe(true);
+    expect(second.error).toBeUndefined();
+    expect(third.success).toBe(true);
+  });
+
   it('does not guard non-mutating actions like wait_for_selector', async () => {
     const handle = mockHandle();
     const page = singleFramePage(() => Promise.resolve(handle));

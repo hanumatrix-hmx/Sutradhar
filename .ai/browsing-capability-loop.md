@@ -63,6 +63,7 @@ architecture. Now reads the title live. See PROB-035. |
 | Complex JS date-range picker widgets (calendar dropdown, two-month grid, re-render-on-click) | covered | Milestone 46: tested live against `daterangepicker.com`'s real widget — 9 identical widget instances share the same CSS classes on one page (only one visible at a time), a real trap for hand-written CSS selectors (confirmed one led straight to a hidden instance) that Sutradhar's own snapshot sidesteps entirely since it only stamps elements that are actually visible. The library re-renders its calendar `<table>` after every day-cell click, correctly invalidating the previously-stamped end-date cell's id — the engine's honest stale-id refusal fired exactly as designed ("re-snapshot and use a fresh id"), not a bug. Following that advice (re-snapshot between the two day clicks) completed the full flow: start date, end date, Apply — the input's real value updated to the exact selected range, independently confirmed via read-back. |
 | Cross-origin masked/validated payment iframe fields (Stripe Elements) | partial — single-field typing fully covered incl. live formatting; multi-field-group corruption is a documented, mitigated, open limitation | Milestone 45: real checkout tested against `stripe-payments-demo.appspot.com`. Typing into a single masked field (card number, expiry) works correctly and is now verified honestly (tolerates live reformatting, no longer false-negatives). A real, deeper bug found: typing into a *sibling* field in the same masked-input group can retroactively corrupt an earlier field's already-verified value — no per-field check can catch this. Mitigated procedurally (a final group-wide `snapshot` after filling all related fields), not fixed at the engine level. See PROB-025. |
 | Concurrent/overlapping actions on the same session (e.g. an LLM caller firing several tool calls in parallel) | covered, no bug found | Milestone 73: real `Promise.all`-fired concurrent `type()` calls confirmed safe on two axes — 5 concurrent calls into 5 *different* fields all landed their own correct value with zero cross-contamination (the per-tab promise-chain queue in `executeAction` genuinely serializes overlapping CDP calls, not just in code review); 3 concurrent calls into the *same* field correctly triggered the existing duplicate-action guard, rejecting the 2 that arrived within its 1000ms window rather than interleaving/corrupting keystrokes — final value was clean, matching one whole input, not a mangled mix. No new engine work needed; confirms the queue + duplicate-guard design (built earlier this project) actually holds under real concurrent load, not just sequential calls. |
+| Pure keyboard-only navigation (Tab between fields, arrow-key traversal, repeated same-key sequences, no `click()` at all) | covered, 1 high-severity bug found and fixed | Milestone 75: tested a real keyboard-only form flow (focus + Tab + type, zero clicks — matching a screen-reader/keyboard-only user, or an agent targeting a non-clickable custom widget). Found and fixed a real bug: `press_key` was subject to the duplicate-action guard using the raw key name as its "target", so the SECOND and every subsequent press of the SAME key within 1000ms — Tab-Tab-Tab through a form, ArrowDown-ArrowDown through a dropdown — was silently rejected as an "accidental double-dispatch", regardless of which element was actually focused. The very first Tab worked; every following one got stuck. This had gone undetected because every prior keyboard test in this taxonomy (e.g. Milestone 47's react-select combobox) happened to use a single ArrowDown then a single Enter — different keys, never the same key twice in a row. Fixed by removing `press_key` from the duplicate-guard's applicability set. See PROB-037. |
 | Nested/independent scroll containers (virtualized grids, chat panes, modal bodies, code blocks) | covered, 2 real gaps found and fixed | Milestone 44: `scroll` previously only ever called `window.scrollBy()` — a page's own `overflow:auto` container (e.g. a virtualized data grid) was silently unreachable, no error. Fixed with an optional element target; also surfaced and fixed a related async-virtualization-re-render timing gap via `settle`. See PROB-024. Milestone 69: a deeper, previously-unknown grounding-correctness gap — a node id captured before scrolling a virtualized/windowed list (react-window/MUI DataGrid-style DOM node recycling) could be acted on afterward and silently hit the WRONG recycled row, `success:true`, because the generation-based staleness guard never fires when a node's id/generation attributes are untouched by recycling. Fixed with a snapshot-time text fingerprint compared against live content at act time. See PROB-036. |
 | Modern code editors (Monaco/VS Code Web's `EditContext`-API input model) | covered, real technique documented (not obvious) | Milestone 43: tested live against the real Monaco Editor playground. Modern Monaco doesn't use a plain `<textarea>` for input at all — it uses the `EditContext` Web API, whose real focus target is an invisible, zero-box `<div class="native-edit-context">` that `click`/`type` correctly refuse to act on (no box model to click, "Node is either not clickable or not an Element") — a real, correct refusal, not a bug. The working technique: target the visible rendered surface (`.monaco-editor .view-lines`, a real, sizable, clickable div) for both `click` and `type` — Puppeteer's real synthetic keyboard events reach Monaco's model correctly through it (verified via `monaco.editor.getEditors()[0].getValue()` actually containing the typed text, not just a fabricated success report). Separately: an initial `snap` taken immediately after navigation surfaced a `<textarea aria-label="Editor content">` that looked like the obvious target but was a transitional element from Monaco's pre-`EditContext`-init state — gone moments later, clicking it failed with occlusion. A real, concrete example of why the `settle` option (Milestone 38) matters: snapshotting/acting too early after navigating into a heavy JS framework can grab elements that don't survive the framework's own init sequence. |
 
@@ -107,6 +108,37 @@ script: `pageText` went from empty to 4000 real characters of the document's act
 installed via a plain `npm install` in an isolated scratch directory and copied in rather than
 resolved through the workspace's normal install path — noted explicitly in `PROB-009` so a
 future real `pnpm install` isn't skipped by mistake. Closes `PROB-009`.
+
+### 2026-08-17 — Milestone 75: repeated same-key presses (Tab-Tab-Tab, ArrowDown-ArrowDown) were silently blocked after the first — closes PROB-037
+
+Tested a genuinely different interaction modality from anything tried before: a pure
+keyboard-only form flow — `focus()` the first field, `type()`, `press_key('Tab')`, `type()`
+into the next field, `press_key('Tab')` again, `press_key('Enter')` to activate a focused
+button — zero `click()` calls anywhere, matching how a screen-reader/keyboard-only user (or an
+agent targeting a genuinely non-clickable custom widget) would operate.
+
+Found a real, high-severity bug: the first Tab correctly moved focus from field 1 to field 2
+(confirmed via `document.activeElement`), but the SECOND Tab press reported `success:false`
+with `"Duplicate 'press_key' on the same target within 1000ms"` — and focus never advanced
+again for any further Tab press. Root cause: `checkDuplicateAction`'s "target" derivation falls
+through to the raw key name when there's no selector/role/text, so every repeat of the SAME key
+— regardless of which element is actually focused at the time — looks identical to the guard.
+This is backwards for keyboard input specifically: Tab-Tab-Tab through a form, ArrowDown-
+ArrowDown through a dropdown, and Backspace-Backspace to clear several characters are some of
+the most common, completely legitimate real interaction patterns there are — unlike a click or
+type, which really do carry a meaningful "target" a rapid repeat on could plausibly double-submit.
+
+This had gone undetected through every prior keyboard-driven test in this project (e.g.
+Milestone 47's react-select keyboard-selection test) purely because none of them happened to
+press the exact same key twice in a row within the 1000ms window — always a different key each
+time (ArrowDown then Enter), never the reuse case that actually triggers the bug.
+
+Fixed by removing `press_key` from `MUTATING_ACTIONS` (the duplicate-guard's applicability set).
+`packages/browser` 186/186 (1 new test: three consecutive `press_key('Tab')` calls all succeed).
+Live-verified via a direct `SutradharRuntime` script: a real Tab-Tab-Tab sequence through a
+2-field-plus-button form now correctly traverses focus every time (f1→f2→btn→body) instead of
+getting stuck after the first press. Full downstream rebuild+retest: `capability-runtime` 90/90,
+`cli` 29/29, `mcp-server` 25/25, `sutradhar` 11/11. Closes `PROB-037`.
 
 ### 2026-08-17 — Milestone 74: harder Web Component patterns (slotted content, multi-level nested shadow DOM) — covered, no bug found
 
