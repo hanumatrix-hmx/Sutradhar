@@ -889,6 +889,9 @@ Flags:
                         starting a new session)
   --headed             Launch visibly instead of headless (only applies to "nav" when
                         starting a new session)
+  --viewport <WxH>      Set the CDP viewport (e.g. --viewport 390x844) and, when --headed, the
+                        real OS window's size too. Applies at session creation and persists
+                        across later commands until a new --viewport is given
   --json                "snap" additionally prints structured per-element data as JSON
   --fail-on-diff        "compare" exits nonzero if any pixel difference is found (CI gating);
                         "audit" exits nonzero if any console/page/broken-request error was
