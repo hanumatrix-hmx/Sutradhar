@@ -159,6 +159,17 @@ export class SutradharRuntime {
    *  plain/unnamed launch never touches this. Entries are removed on shutdown regardless of
    *  outcome, so this never grows across a long-lived runtime's full session history. */
   private readonly sessionProfiles = new Map<string, string>();
+  /** `${sessionId}::${origin}` -> the full set of permissions currently granted there. CDP's
+   *  `Browser.grantPermissions` (Puppeteer's `overridePermissions`) does NOT add to a prior
+   *  grant — it REPLACES the origin's entire permission set with exactly what's passed, silently
+   *  revoking anything granted earlier and not repeated in the new call. Found live (PROB-040):
+   *  granting `geolocation` alone (as `setGeolocation` used to do internally) flipped an
+   *  already-`granted` `clipboard-write` back to `denied` for the same origin — confirmed not
+   *  clipboard-specific, granting ANY single permission resets every other permission on that
+   *  origin the same way. Tracked here so every grant call re-passes the full accumulated set,
+   *  making `grantPermissions`/`setGeolocation` behave additively, matching what a caller
+   *  reasonably expects from a method named "grant". */
+  private readonly grantedPermissionsByOrigin = new Map<string, Set<string>>();
 
   public constructor(options: SutradharRuntimeOptions = {}) {
     const eventBus = options.eventBus ?? new EventBus(options.logger);
@@ -1094,7 +1105,7 @@ export class SutradharRuntime {
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
     const origin = new URL(page.url()).origin;
-    await page.browserContext().overridePermissions(origin, ['geolocation']);
+    await this.applyPermissionGrant(page, sessionId, origin, ['geolocation']);
     await page.setGeolocation(coords);
   }
 
@@ -1107,7 +1118,38 @@ export class SutradharRuntime {
   ): Promise<void> {
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
-    await page.browserContext().overridePermissions(origin, permissions as any);
+    await this.applyPermissionGrant(page, sessionId, origin, permissions);
+  }
+
+  /** Grants `newPermissions` for `origin` ADDITIVELY — see {@link grantedPermissionsByOrigin}'s
+   *  doc comment for why this can't just forward to `overridePermissions` directly: CDP replaces
+   *  the origin's whole permission set on every call, so a bare pass-through would silently
+   *  revoke every permission granted in an earlier call. */
+  private async applyPermissionGrant(
+    page: ReturnType<SutradharRuntime['requirePage']>,
+    sessionId: string,
+    origin: string,
+    newPermissions: readonly string[],
+  ): Promise<void> {
+    const key = `${sessionId}::${origin}`;
+    const existing = this.grantedPermissionsByOrigin.get(key) ?? new Set<string>();
+    for (const p of newPermissions) {
+      existing.add(p);
+      // Puppeteer maps the friendly name 'clipboard-write' to CDP's `clipboardReadWrite` — but
+      // that does NOT satisfy `navigator.permissions.query({name:'clipboard-write'})`, which is
+      // actually gated by CDP's separate `clipboardSanitizedWrite` permission. Found live
+      // (PROB-040): granting exactly 'clipboard-write' left the Permissions API reporting
+      // 'denied' and a real page's own `navigator.clipboard.writeText()` throwing "Write
+      // permission denied" — confirmed via the baseline (no grant call at all: 'granted' by
+      // Chrome's own permissive default) vs. after an explicit 'clipboard-write' grant
+      // ('denied'), and confirmed the fix by granting 'clipboard-sanitized-write' instead
+      // ('granted', writeText succeeds). A caller asking for 'clipboard-write' virtually always
+      // means "let the page write to the clipboard", so grant both automatically rather than
+      // requiring callers to know this CDP-naming quirk themselves.
+      if (p === 'clipboard-write') existing.add('clipboard-sanitized-write');
+    }
+    this.grantedPermissionsByOrigin.set(key, existing);
+    await page.browserContext().overridePermissions(origin, Array.from(existing) as any);
   }
 
   // ─────────────────────────────────────────────────────────────────────────

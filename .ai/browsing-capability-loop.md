@@ -50,7 +50,7 @@ underlying page's own close event outside `closeTab()`'s own explicit path. Fixe
 | Large-scale extraction / pagination | covered, 1 significant bug found and fixed | Milestone 8: a real Hacker News front page has 227 interactive elements — found that `formatGraphForLlm`'s listing was hardcoded to show only the first 60 with NO way for any caller to ask for more (the parameter existed in the function signature but nothing threaded it through the public API), and the underlying id-stamping cap (150) was itself lower than a single ordinary content page can have. The "More" pagination link was invisible past both caps — undiscoverable by an LLM reading the snapshot. Fixed: exposed `maxElements` through `runtime.snapshot()` and `browser.snapshot`'s MCP schema (default unchanged at 60, no behavior change for existing callers), and raised the stamping cap to 300. Verified live: default snapshot still hides "More" (no regression), `maxElements:250` reveals it with a real, clickable id, and clicking that id genuinely navigated to page 2. Completed a real 3-page, 90-story extraction task end-to-end via `browser.extract_data` + `.morelink` pagination. |
 | Cookies (get/set/delete) | covered | Milestone 8: verified against real `document.cookie` state directly, not just each tool's own success report. All three operations correct. |
 | localStorage / sessionStorage (get/set/clear) | covered | Milestone 8: verified against real `localStorage`/`sessionStorage` APIs directly. Set, get, and clear all correct. |
-| Clipboard (get/set) | covered | Milestone 8: real round-trip via `grant_permissions` + `set_clipboard` + `get_clipboard` — the exact text written was read back. |
+| Clipboard (get/set) | covered, 2 high-severity bugs found and fixed | Milestone 8: real round-trip via `grant_permissions` + `set_clipboard` + `get_clipboard` — the exact text written was read back. Milestone 86: tested a REAL page-level "Copy to Clipboard" button (`navigator.clipboard.writeText()` in a click handler — the actual real-world pattern, not Sutradhar's own tools) and found two compounding bugs: `grant_permissions`/`set_geolocation` silently revoked every OTHER previously-granted permission on the same origin whenever either was called again (CDP replaces an origin's whole permission set, doesn't add to it); and `'clipboard-write'` specifically never actually worked at all, because Puppeteer's mapping for it doesn't satisfy the real Permissions API check. Fixed both — grants are now additive, and requesting `'clipboard-write'` automatically also grants the CDP permission that actually gates it. See PROB-040. |
 | Geolocation | covered | Milestone 8: `set_geolocation` verified against the real `navigator.geolocation.getCurrentPosition()` API — returned the exact overridden coordinates, permission auto-granted as documented. |
 | Web Notifications API (`Notification.permission` prompt, real notification creation) | covered, no bug found | Milestone 77: `grant_permissions(['notifications'])` correctly flips `Notification.permission` from `'default'` to `'granted'`, verified via the real live API (not just the grant call's own success report); a real `new Notification(...)` construction then succeeds and carries the exact title/body passed, confirming the whole permission→construct flow works end-to-end, not just the permission flag in isolation. |
 | JS framework diversity beyond React; SPA client-side routing (`history.pushState`) | covered, 1 real bug found and fixed | Milestone 3: real TodoMVC implementations in Vue, Angular, and Svelte — add-todo, snapshot, and DOM-state verification all worked correctly in each, matching the earlier React result. Grounding operates on the rendered DOM, not framework internals, so this is expected but now actually confirmed rather than assumed. Milestone 65: `goBack`/`goForward` navigation correctly follows real SPA `pushState` history, but found and fixed a real bug in `snap`'s reported title — it went stale for any title change without a real page load (the entire mechanism of client-side routing), since the underlying cache was only kept in sync by a `'load'` listener. See `PROB-034`. |
@@ -120,6 +120,40 @@ script: `pageText` went from empty to 4000 real characters of the document's act
 installed via a plain `npm install` in an isolated scratch directory and copied in rather than
 resolved through the workspace's normal install path — noted explicitly in `PROB-009` so a
 future real `pnpm install` isn't skipped by mistake. Closes `PROB-009`.
+
+### 2026-08-17 — Milestone 86: two compounding permission-grant bugs — `clipboard-write` never actually worked, and any grant call silently revoked every other permission on the origin — closes PROB-040
+
+Tested a genuinely different clipboard scenario from Milestone 8's: a REAL page-level "Copy to
+Clipboard" button using `navigator.clipboard.writeText()` inside a click handler — the actual
+real-world pattern (npm-install copy buttons, coupon codes, share links), not Sutradhar's own
+`set_clipboard`/`get_clipboard` tools directly. Result: the click succeeded, but the page's own
+`writeText()` promise rejected with "Write permission denied" — even immediately after calling
+`grant_permissions(['clipboard-read', 'clipboard-write'])`.
+
+Root-caused via a live diagnostic sequence rather than guessing:
+1. Confirmed `clipboard-write` reads as `'granted'` via `navigator.permissions.query` in Chrome's
+   own default state, *before any grant call is ever made*.
+2. Confirmed calling `grant_permissions` with a totally UNRELATED permission (`geolocation`
+   alone) also flipped `clipboard-write` to `'denied'` — proving this isn't clipboard-specific:
+   CDP's `Browser.grantPermissions` REPLACES an origin's entire permission set with exactly what
+   was passed, rather than adding to it. `set_geolocation`'s own internal auto-grant
+   (`overridePermissions(origin, ['geolocation'])`) had the identical bug.
+3. Confirmed granting `'clipboard-write'` explicitly still left the Permissions API reporting
+   `'denied'`, while granting `'clipboard-sanitized-write'` instead correctly reported
+   `'granted'` — Puppeteer's friendly-name mapping for `'clipboard-write'` (to CDP's
+   `clipboardReadWrite`) doesn't actually satisfy the real Permissions API check, which is gated
+   by the separate `clipboardSanitizedWrite` CDP permission.
+
+Fixed both: added a tracked, per-origin accumulated permission set (`grantedPermissionsByOrigin`)
+that `grantPermissions`/`setGeolocation` both route through via a shared `applyPermissionGrant`
+helper, always re-passing the FULL accumulated set so grants are additive instead of replacing;
+and that same helper automatically adds `'clipboard-sanitized-write'` whenever a caller requests
+`'clipboard-write'`, since that's virtually always the real intent. `packages/capability-runtime`
+90/90. Live-verified end-to-end: clipboard permissions now correctly report `'granted'`, a real
+click-triggered `writeText()` succeeds with the value reading back correctly via `get_clipboard`,
+and granting an unrelated permission afterward no longer wipes the earlier clipboard grant. Full
+downstream rebuild+retest: `cli` 29/29, `mcp-server` 25/25, `sutradhar` 11/11, `agent` 56/56,
+`apps/server` 28/28. Closes `PROB-040`.
 
 ### 2026-08-17 — Milestone 82: composite real-workflow test — four of today's fixes (PROB-037/038/039 + keyboard Enter-activation) verified working together, not just in isolation
 
