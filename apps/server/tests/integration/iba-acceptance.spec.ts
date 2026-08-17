@@ -64,11 +64,24 @@ describe('Phase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Sui
     expect(Array.isArray(links)).toBe(true);
 
     const verifier = new ExecutionVerifier();
-    const verifyRes = await verifier.verifyAction(activeTab!, 'about:blank', {
-      success: true,
-      actionType: 'navigate',
-    });
+    // `navigate` has no built-in post-condition check of its own (unlike `click`/`type`/etc,
+    // which each verify a real effect inside dispatchAction itself — see PROB-011), so a
+    // genuine verification here needs an explicit spec to check against; `shouldUrlChange` is
+    // real and true because this tab actually navigated to https://example.com/ (session
+    // creation's initialUrl) versus the 'about:blank' passed as the previous URL. Without a
+    // spec, `verifyAction` now honestly reports `verified:false` (an intentional behavior
+    // change from this project's field-report remediation — an unspecced, non-self-verifying
+    // action type is no longer given a confident, unearned true) — this test was still
+    // asserting the old, always-optimistic default until it was caught by a full
+    // regression sweep and fixed to genuinely exercise the verifier instead.
+    const verifyRes = await verifier.verifyAction(
+      activeTab!,
+      'about:blank',
+      { success: true, actionType: 'navigate' },
+      { shouldUrlChange: true },
+    );
     expect(verifyRes.verified).toBe(true);
+    expect(verifyRes.urlChanged).toBe(true);
 
     await runtime.container.sessionAppService.closeSession(session.id);
   }, 30000);
