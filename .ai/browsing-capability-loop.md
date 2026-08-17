@@ -27,7 +27,13 @@ loop. `excluded` = deliberately out of scope (see CLAUDE.md's scope boundary).
 | Multi-tab workflows, incl. OAuth-style popup login | covered | Milestone 1: created a background tab via `new_tab`, navigated/snapshotted/clicked it independently via `tabId`, confirmed the original tab was completely unaffected. Works correctly. Milestone 58: closed the CLI-specific gap — the CLI had no tab commands at all, and adding them (`tabs`/`newtab`/`focustab`/`closetab`) surfaced two real multi-tab bugs in the per-process reattach architecture (only the most-recent tab was ever discovered; a focus choice didn't survive to the next command), both fixed. See PROB-031. Milestone 59: verified the exact real-world pattern that motivated the fix — a `window.open()`-triggered popup (how real "Sign in with X" OAuth buttons work) is correctly discovered as a real tab, and closing it (simulating provider auth completing) correctly leaves the session on the real parent page. Documented an honest, non-bug nuance: tab ids are a discovery-order counter reassigned fresh on every CLI reattach, not a stable identity — they can shift once the tab set changes between commands, so always re-`tabs` before acting rather than assuming a prior id is still valid. Milestone 66: closed a
 real accuracy gap in `tabs`/`list_tabs` itself — every listed tab's title was the hardcoded
 placeholder `'Adopted Tab'`, never the real title, because of the CLI's per-command adoption
-architecture. Now reads the title live. See PROB-035. |
+architecture. Now reads the title live. See PROB-035. Milestone 80: closed a real, permanent
+bookkeeping leak — Milestone 59 tested closing a popup from the *session* side (simulating
+provider auth completing); this milestone tested the popup closing *itself* via page-script
+`window.close()` (the real mechanism OAuth popups actually use), and found `list_tabs` kept
+reporting the dead tab forever, unchanged for 2+ seconds, because nothing was listening for the
+underlying page's own close event outside `closeTab()`'s own explicit path. Fixed with a
+`page.on('close', ...)` listener wired at every tab-creation site. See PROB-039. |
 | File download | covered | Milestone 1: `runtime.downloadFile` verified end-to-end — real file landed on disk at the expected path with correct content (read back and checked, not just a success flag). |
 | File upload | covered | Milestone 2: `browser.upload_file` against a real fixture page (the-internet.herokuapp.com/upload) — set a file input, clicked Upload, confirmed via the server's own response page ("File Uploaded! upload-test.txt") that it actually landed server-side, not just a client-side success flag. |
 | iframes / cross-frame interaction (incl. dynamically-injected, cross-origin) | covered | Milestone 1: verified directly against the runtime — `snapshot`/`click` correctly traverse into a cross-origin iframe injected into the page *after* initial load (the hardest realistic case — matches real chat-widget/payment-iframe behavior). Works correctly today. Milestone 35: closed the one remaining unverified sub-case — `type` into a contenteditable iframe body (TinyMCE), long assumed broken/cross-origin-restricted per GLM's original C4. Turned out to be a misdiagnosis: the iframe isn't actually cross-origin (`contentDocument` fully readable from the parent), it's already groundable via `snap`, and `type` into it already works, real text landing confirmed via independent DOM read-back. The actual bug was an invalid CSS selector in this project's own scenario-suite test code, fixed at the source — see `PROB-019`/`PROB-022`. Milestone 64: closed the one remaining gap — genuinely nested iframes (an iframe inside another iframe). The main `snap`/`click`/`type` path already recursively pierced arbitrary depth automatically, but `eval --frame`/`extractData`'s explicit frame targeting only ever looked one level deep; now supports a `"::"`-separated selector chain to reach any nesting depth. See `PROB-033`. |
@@ -111,6 +117,33 @@ script: `pageText` went from empty to 4000 real characters of the document's act
 installed via a plain `npm install` in an isolated scratch directory and copied in rather than
 resolved through the workspace's normal install path — noted explicitly in `PROB-009` so a
 future real `pnpm install` isn't skipped by mistake. Closes `PROB-009`.
+
+### 2026-08-17 — Milestone 80: a popup self-closing via `window.close()` left a permanent phantom entry in `list_tabs` — closes PROB-039
+
+Tested a real, subtly different variant of an already-covered pattern: Milestone 59 verified
+closing an OAuth popup from the *session* side (an explicit `closeTab()` call simulating the
+provider's own completion flow). This milestone tested the OTHER real mechanism OAuth/payment
+popups actually use to close themselves — page-script `window.close()`, called by the popup's
+own JS once auth completes, with nothing on the parent/session side initiating the close at all.
+
+Result: `popup.closed` correctly flipped to `true` immediately (the real browser tab genuinely
+closed), but `list_tabs` kept reporting the dead tab, unchanged, for 2+ seconds afterward and
+counting — a permanent bookkeeping leak, not a timing race. Root cause: `BrowserSession`'s
+`tabsMap` only ever gets an entry removed by `closeTab()` itself; nothing was listening for the
+underlying Puppeteer `Page`'s own `'close'` event, so any tab that closed by a route other than
+this session explicitly closing it (a self-closing popup, a crashed renderer, an external CDP
+client) left a stale entry with literally no cleanup path.
+
+Fixed: added `BrowserSession.watchForClose(tabId, page)` — a `page.on('close', ...)` listener
+wired at all three places a tab enters `tabsMap` (`createTab`, `adoptPopupPage`,
+`adoptExistingPage`), removing the entry the moment the real page closes for any reason, with
+the same active-tab re-election logic `closeTab()` already used. Guarded against
+double-processing when `closeTab()` itself triggers the same event. `packages/browser` 186/186.
+Live-verified: the repro now correctly drops to 1 tab immediately after the popup self-closes,
+confirmed stable across 5 repeated checks over 2 seconds (previously stuck forever); explicit
+`closeTab()` re-checked to still work identically (regression, not just the positive case). Full
+downstream rebuild+retest: `capability-runtime` 90/90, `cli` 29/29, `mcp-server` 25/25,
+`sutradhar` 11/11, `agent` 56/56, `apps/server` 28/28. Closes `PROB-039`.
 
 ### 2026-08-17 — Milestone 78: `navigate()` always failed after 30s on any page with a `beforeunload` guard — closes PROB-038, a high-severity real-world gap
 

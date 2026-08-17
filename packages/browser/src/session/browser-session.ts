@@ -156,6 +156,7 @@ export class BrowserSession implements IBrowserSession {
     this.tabsMap.set(tabId, tab);
     if (puppeteerPage) {
       this.watchForPopups(puppeteerPage);
+      this.watchForClose(tabId, puppeteerPage);
     }
 
     if (url && url !== 'about:blank') {
@@ -194,6 +195,32 @@ export class BrowserSession implements IBrowserSession {
     });
   }
 
+  /**
+   * Removes a tab from {@link tabsMap} when its underlying page actually closes, regardless of
+   * how — {@link closeTab} already removes its own entry, but that only covers the case where
+   * *this session* initiated the close. A tab closed any other way (most commonly: a real
+   * OAuth-style popup calling `window.close()` on itself once auth completes, but also a crashed
+   * renderer or an external CDP client closing the target) had nothing watching for it at all —
+   * `tabsMap` kept a permanently-stale entry for an already-closed tab forever. Found live: a
+   * popup's `window.close()` correctly closed the real browser tab (`popup.closed` reported
+   * `true` immediately), but `listTabs()` kept reporting it as open, unchanged, 2+ seconds later
+   * (see PROB-039) — an agent acting on that phantom tab id would hit a confusing failure with
+   * no indication the tab was ever gone.
+   */
+  private watchForClose(tabId: TabId, page: Page): void {
+    page.on('close', () => {
+      if (!this.tabsMap.has(tabId)) return;
+      this.tabsMap.delete(tabId);
+      if (this.currentActiveTabId === tabId) {
+        const remaining = Array.from(this.tabsMap.keys());
+        this.currentActiveTabId = remaining[remaining.length - 1];
+        if (this.currentActiveTabId) {
+          this.tabsMap.get(this.currentActiveTabId)?.setActive(true);
+        }
+      }
+    });
+  }
+
   private async adoptPopupPage(page: Page): Promise<IBrowserTab> {
     // Popups bypass IBrowserInstance.newPage(), which is where proxy auth normally gets
     // applied — a proxy-authenticated session's popups need it repeated here explicitly.
@@ -206,6 +233,7 @@ export class BrowserSession implements IBrowserSession {
     const tab = new BrowserTab(tabId, page.url() || 'about:blank', 'New Tab', false, page, this.id, this.eventBus);
     this.tabsMap.set(tabId, tab);
     this.watchForPopups(page); // a popup can itself open further popups
+    this.watchForClose(tabId, page);
 
     this.logger.debug(`[BrowserSession] Adopted popup as tab ${tabId} in session ${this.id}`, {
       url: tab.url,
@@ -253,6 +281,7 @@ export class BrowserSession implements IBrowserSession {
       this.currentActiveTabId = tabId;
     }
     this.watchForPopups(page);
+    this.watchForClose(tabId, page);
 
     this.logger.debug(`[BrowserSession] Adopted existing page as tab ${tabId} in session ${this.id}`, {
       url: tab.url,
