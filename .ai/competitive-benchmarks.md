@@ -1141,3 +1141,38 @@ mouse-down → move → mouse-up, the drag sibling of `click_at_point`). Verifie
 canvas-drawn slider with genuine `mousedown`/`mousemove`/`mouseup` listeners (not the HTML5
 `DataTransfer` API `drag_and_drop` uses) — the slider's real handle position moved from x=20
 to exactly x=250 as dragged, confirmed via independent JS state, not the tool's own report.
+
+### 2026-08-18 — Milestone 97: multi-browser feasibility scoped with real evidence (research only, no build)
+
+The maturity roadmap has long carried "multi-browser (Firefox/WebKit)" as a watchlist gap
+against Playwright, held deliberately unbuilt without a real use case. This pass turned that
+into an evidence-based scoping instead of an assumption, via a codebase audit (Explore agent,
+not guessed):
+
+- **Raw CDP (Chrome-only) calls are narrow and already isolated**: exactly 8 call sites across
+  2 files — `dom-semantic-engine.ts`'s `scanForEventListenerElements` (7 calls, including
+  `DOMDebugger.getEventListeners`, which has no WebDriver-BiDi/Firefox equivalent — it's a
+  bounded opt-in fallback pass, not the primary grounding path) and
+  `browser-action-engine.ts`'s `download_file` action (1 call, `Browser.setDownloadBehavior`,
+  used because the page-level equivalent is deprecated/broken in new headless Chrome). Every
+  other call site in `capability-runtime`, `cli`, `mcp-server`, and the `sutradhar` SDK goes
+  through puppeteer-core's browser-agnostic API (`page.click()`, `page.type()`,
+  `page.evaluate()`, ...), not raw CDP strings.
+- **puppeteer-core 25.5.0 (the version already installed) already speaks real Firefox** via
+  WebDriver-BiDi (`chromium-bidi`/`webdriver-bidi-protocol` deps, `FirefoxLauncher.js`,
+  `browser: 'chrome' | 'firefox'` typed) — not the old experimental CDP-shim Firefox support
+  from years ago. The dependency already in `node_modules` supports the target, unprompted.
+- Several `runtime.ts` comments already acknowledge *implicit* Chrome-specific behavior leaking
+  through puppeteer's "agnostic" surface (permission-name mapping for clipboard grants,
+  viewport-resize semantics) — real but narrow, not raw-CDP literal strings.
+
+**Verdict**: a moderate, contained abstraction-layer project — not a near-rewrite of the
+grounding/action engine, and not free either. Real work would be: (a) a browser-driver
+selection layer in `spawn-chrome.ts`/`browser-launcher.ts` (currently hardcoded to Chrome
+executable discovery), (b) a Firefox-safe fallback for the download-behavior CDP call (BiDi has
+an equivalent) and a JS-injection reimplementation for the `DOMDebugger`-based event-listener
+scan (BiDi has none), (c) an audit of the implicit Chrome-specific quirks already documented in
+`runtime.ts`. This is a real, buildable next roadmap item once there's an actual use case
+driving it — not built in this pass, per CLAUDE.md's standing rule against building
+speculative capability without evidence a user needs it; logged here so the next session
+doesn't have to re-derive the scoping from scratch.
