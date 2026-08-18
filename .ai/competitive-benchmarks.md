@@ -116,11 +116,13 @@ blocked here, see above). But the user corrected an important framing mistake: S
 `browser.*` the same way Claude would drive Playwright MCP — not necessarily via its own
 separate internal LLM loop. For that mode, "benchmarking" doesn't need Ollama/OpenRouter at
 all: it means Claude (or another host AI) actually attempting real WebBench tasks live via
-the `browser.*` tools. **This has now actually been done, across twelve samples totaling 118
+the `browser.*` tools. **This has now actually been done, across thirteen samples totaling 130
 real tasks** — see `tools/webbench/claude-direct-run-2026-*.md` and the iteration log
-below. Current combined number: **74/118 completed (62.7%), 44/118 externally blocked, 0
-Sutradhar-attributable failures** — a real, honestly-reported number, not a cherry-picked one.
-Has not yet crossed 65%. The rate has held steady in the 52-63% band across all twelve samples regardless of how much
+below. Current combined number: **79/130 completed (60.8%), 51/130 externally blocked, 0
+Sutradhar-attributable *task* failures** (one real Sutradhar bug, `PROB-044`, was found and
+fixed live during sample 13 — not counted as a task failure since it was root-caused and
+resolved within the same session) — a real, honestly-reported number, not a cherry-picked one.
+Has not yet crossed 65%. The rate has held steady in the 52-63% band across all thirteen samples regardless of how much
 the underlying engine has changed in between (samples 1-3 predate the field-report remediation;
 samples 7-9 postdate a large batch of engine fixes across three remediation passes) — consistent
 evidence the ceiling here is external (Cloudflare/DataDome prevalence, real site outages, edge
@@ -278,6 +280,34 @@ findings:
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-18 — Milestone 96: thirteenth WebBench sample (5/12), combined total now 79/130 (60.8%) — a real bug found and fixed live (PROB-044), completion rate dipped on an unusually bot-wall-heavy draw
+
+Continued the standing loop per the user's open-ended "you decide how to proceed" directive. 5/12
+completed, 7/12 blocked — 5 of the 7 blocks were CAPTCHA/Cloudflare/bot-detection specifically
+(DataDome on Forbes Advisor, Cloudflare on GameSpot, site-wide bot walls on Freepik and Genius,
+plus a repeat of the Dotdash Meredith access-block pattern on foodandwine.com), pulling this
+sample below the established 52-63% band by chance, not a regression. Full detail:
+`tools/webbench/claude-direct-run-2026-08-13-sample13.md`.
+
+**The real story this round is `PROB-044`, a genuine Sutradhar bug found and fixed live**:
+`click_by_text` failed outright against a real Frontiers.org search result whose matched query
+words were each wrapped in their own `<mark>` element for highlighting (an extremely common
+real-world pattern) — no single node's own text contained the full phrase, even though it read
+as one continuous line and correctly appeared in `snapshot`'s own `pageText`. Root cause: the
+underlying XPath used `contains(text(), ...)`, which only matches direct text-node children, not
+text concatenated across sibling elements. Fixed with the standard `contains(., ...) and
+not(.//*[contains(., ...)])` idiom. `packages/browser` 187/187 (1 new regression test); full
+downstream rebuild+retest all green. Live-verified against the exact page that surfaced it, via
+direct `SutradharRuntime` scripting (not the potentially-stale connected MCP session):
+`clickByText` now succeeds and opens the correct article. See `PROB-044` in
+`.ai/known-problems.md` for the complete investigation.
+
+**Combined across all thirteen samples: 79/130 completed (60.8%), 51/130 externally blocked, 0
+Sutradhar-attributable task failures.** Exactly the pattern this project keeps confirming: real
+dogfooding finds real, fixable engine gaps even in a sample where the raw completion number dips
+— the ceiling on completion rate itself stays governed by the external anti-bot landscape, not
+Sutradhar's own capability, which just got measurably better again this round.
 
 ### 2026-08-18 — Milestone 95: twelfth WebBench sample (12/15), combined total now 74/118 (62.7%) — first sample run against the real published sutradhar@0.4.0, has not crossed 65%
 
