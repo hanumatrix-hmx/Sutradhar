@@ -293,6 +293,35 @@ describe('@sutradhar/browser BrowserActionEngine click occlusion detection', () 
     expect(handle.click).not.toHaveBeenCalled();
   });
 
+  it('click_by_text uses a concatenated-descendant-text XPath match, not text()-only — so it can find a phrase split across sibling elements (e.g. <mark>-highlighted search terms), preferring the deepest match', async () => {
+    // Regression test for a real bug found live against Frontiers.org's search results
+    // (Milestone 95, 2026-08-18): a title like "...artificial intelligence in healthcare..."
+    // rendered with each matched query word wrapped in its own <mark> meant no single
+    // element's direct text() ever contained the full phrase, even though it read as one
+    // continuous phrase and correctly appeared in snapshot's own pageText. `contains(text(),
+    // ...)` structurally cannot match this; `contains(., ...)` (concatenated descendant text,
+    // like textContent) can — but needs the `not(.//*[contains(., ...)])` clause to prefer the
+    // innermost/most specific match over every ancestor up to <html>, which trivially also
+    // contains any substring present anywhere on the page.
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true); // not stale; occlusion/delivery all clear
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'click_by_text',
+      text: 'artificial intelligence in healthcare',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    const mainFrame = page.mainFrame();
+    const [xpath] = (mainFrame.waitForSelector as any).mock.calls[0];
+    expect(xpath).toContain('contains(., "artificial intelligence in healthcare")');
+    expect(xpath).toContain('not(.//*[contains(., "artificial intelligence in healthcare")])');
+    expect(xpath).not.toContain('contains(text(),');
+  });
+
   it('click_by_role resolves via Puppeteer\'s aria/ selector engine, not a plain [role="x"] CSS selector — so it matches implicit roles too', async () => {
     // Regression test: the previous implementation used `[role="button"]`, a CSS attribute
     // selector that only matches elements with an EXPLICIT role="button" attribute — missing

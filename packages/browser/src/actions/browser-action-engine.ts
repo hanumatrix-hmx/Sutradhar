@@ -465,7 +465,20 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       case 'click_by_text': {
         if (!params.text) throw new Error('ClickByText action requires text parameter');
         if (!page) throw new Error(`No live browser page for tab ${tab.id} — cannot execute click_by_text.`);
-        const xpath = `xpath///*[contains(text(), "${params.text}")]`;
+        // `contains(text(), ...)` only matches an element's DIRECT text-node children — it
+        // structurally cannot match a phrase split across sibling elements, e.g. a search
+        // results UI wrapping matched query words in <mark> (extremely common on the modern
+        // web: "artificial intelligence in healthcare" landing as ["...of ", <mark>artificial
+        // </mark>, <mark>intelligence</mark>, " in ", <mark>healthcare</mark>, "..."] — no
+        // single node's own text() ever contains the full phrase, even though it reads as one
+        // continuous phrase and correctly appears in `snapshot`'s own pageText). `contains(.,
+        // ...)` matches concatenated descendant text instead (like `.textContent`), but on its
+        // own over-matches every ancestor up to <html> too, since ancestors always contain
+        // all descendant text. The `not(.//*[contains(., ...)])` clause excludes any element
+        // that has a descendant which ALSO contains the full phrase, leaving only the deepest/
+        // most specific match — the standard XPath idiom for this. Found live via a real
+        // Frontiers.org search-results page (Milestone 95, 2026-08-18).
+        const xpath = `xpath///*[contains(., "${params.text}") and not(.//*[contains(., "${params.text}")])]`;
         const element = await this.resolveElement(page, xpath, { timeoutMs: 5000 });
         if (!element) throw new Error(`No element found containing text: ${params.text}`);
         // Routed through the same occlusion-safe, delivery-verified path click/click_by_role
