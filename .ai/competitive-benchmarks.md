@@ -1176,3 +1176,30 @@ scan (BiDi has none), (c) an audit of the implicit Chrome-specific quirks alread
 driving it — not built in this pass, per CLAUDE.md's standing rule against building
 speculative capability without evidence a user needs it; logged here so the next session
 doesn't have to re-derive the scoping from scratch.
+
+### 2026-08-18 — Milestone 98: full 47-task pinchtab comparison re-run, fresh (not relying on a 4-day-old snapshot)
+
+User explicitly asked for a fresh re-run rather than continuing to cite the 2026-08-14 numbers.
+Ran all 47 WebBench tasks against both real Sutradhar and real `pinchtab/pinchtab` again, live,
+via 5 parallel Workflow agents (one per original shard). Full writeup:
+`tools/engine-comparison/results-refresh-2026-08-18.md`.
+
+**Fresh score: pinchtab 29/47 (61.7%), Sutradhar 24/47 (51.1%)** — both down from the original
+snapshot (31/47, 29/47), expected since WebBench pass rates decay as real sites drift; the
+*relative* gap (pinchtab now +5 tasks, was +2) is the number to trust over either tool's
+absolute rate vs. its own 4-day-old number.
+
+**The actual finding, from reading the disclosed per-task causes rather than the score alone**:
+6 of the 7 tasks pinchtab won that Sutradhar didn't were a real anti-bot wall (Cloudflare
+JS-challenge, an access-denied block, hCaptcha, Akamai) hitting Sutradhar's session specifically
+on a URL pinchtab's parallel session loaded cleanly at essentially the same real time — directly
+reproducing, at larger scale, what the original run's "Stealth disclosure" section flagged as a
+real-but-unisolated asymmetry from pinchtab's shipped `stealthLevel: "light"` default. Only 2
+tasks flipped on a genuine capability difference, and both favored Sutradhar (pinchtab's own
+extraction/rendering missed content Sutradhar correctly read). On every task neither tool hit a
+wall on, both landed the same real answer. Read plainly: task-for-task grounding/extraction
+capability is roughly at parity; the topline score gap is mostly explained by a stealth-default
+asymmetry this project deliberately won't copy, not by Sutradhar being a materially weaker
+engine. This is not grounds to build stealth into Sutradhar — still out of scope per CLAUDE.md
+— but it is the honest, evidence-backed reason behind the number, replacing the earlier
+snapshot's less-examined "pinchtab ahead" headline with what's actually driving it.
