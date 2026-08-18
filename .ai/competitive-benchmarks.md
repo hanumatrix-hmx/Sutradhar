@@ -116,11 +116,11 @@ blocked here, see above). But the user corrected an important framing mistake: S
 `browser.*` the same way Claude would drive Playwright MCP — not necessarily via its own
 separate internal LLM loop. For that mode, "benchmarking" doesn't need Ollama/OpenRouter at
 all: it means Claude (or another host AI) actually attempting real WebBench tasks live via
-the `browser.*` tools. **This has now actually been done, across eleven samples totaling 103
+the `browser.*` tools. **This has now actually been done, across twelve samples totaling 118
 real tasks** — see `tools/webbench/claude-direct-run-2026-*.md` and the iteration log
-below. Current combined number: **62/103 completed (60%), 41/103 externally blocked, 0
+below. Current combined number: **74/118 completed (62.7%), 44/118 externally blocked, 0
 Sutradhar-attributable failures** — a real, honestly-reported number, not a cherry-picked one.
-The rate has held steady in the 52-62% band across all eleven samples regardless of how much
+Has not yet crossed 65%. The rate has held steady in the 52-63% band across all twelve samples regardless of how much
 the underlying engine has changed in between (samples 1-3 predate the field-report remediation;
 samples 7-9 postdate a large batch of engine fixes across three remediation passes) — consistent
 evidence the ceiling here is external (Cloudflare/DataDome prevalence, real site outages, edge
@@ -278,6 +278,32 @@ findings:
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-08-18 — Milestone 95: twelfth WebBench sample (12/15), combined total now 74/118 (62.7%) — first sample run against the real published sutradhar@0.4.0, has not crossed 65%
+
+User directly asked to re-benchmark against the newly published `sutradhar@0.4.0` and report
+whether the combined completion rate has crossed 65%. Ran 15 fresh READ tasks across 15 new
+domains — 12/15 completed, 3/15 blocked, all three externally caused (a real "Bot or Not?"
+bot-detection challenge on expedia.com, a Cloudflare wall on fodors.com, and one genuine case of
+dataset drift where a WebBench-described site section — food.com's "cooking challenges" — no
+longer exists anywhere on the current site, confirmed via nav/footer/the site's own search
+before concluding). Zero Sutradhar-attributable failures. Full detail:
+`tools/webbench/claude-direct-run-2026-08-13-sample12.md`.
+
+**Direct answer to the user's question: not yet.** Combined total moved from 62/103 (60.2%) to
+74/118 (62.7%) — a real gain, but still short of 65%. The rate continues to hold in the same
+52-63% band it's held across all twelve samples now, including this one run specifically against
+the real npm-published artifact (separately smoke-tested end-to-end against real Chrome earlier
+the same session, confirming the published package matches what was benchmarked) — consistent,
+repeated evidence the ceiling is the external open web, not Sutradhar's own capability.
+
+Four completions this round required a disclosed reasonable-interpretation substitution (a named
+site section had been renamed/restructured since WebBench's capture date but a functionally-
+equivalent real section was used instead) — same honest-disclosure pattern as prior samples, not
+new. One reliability anomaly observed but not fully diagnosed: the MCP session ended unexpectedly
+between two tasks (`browser.health` still reported a healthy Chrome install; a fresh
+`browser.launch` immediately resolved it) — possibly related to `PROB-043`'s already-documented
+long-session flakiness, not enough signal to confirm either way.
 
 ### 2026-08-17 — Milestone 93: eleventh WebBench sample (4/8), combined total now 62/103 (60%) — first sample run immediately after a real capability-fix batch, rate unchanged
 
