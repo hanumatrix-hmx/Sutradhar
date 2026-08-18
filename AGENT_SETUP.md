@@ -100,8 +100,9 @@ npx --package=sutradhar sutradhar doctor    # environment diagnostics
 ```
 
 Or `npm install -g sutradhar` once, then drop the `npx --package=sutradhar` prefix and just
-run `sutradhar <command>`. Sessions persist across separate CLI invocations
-(`~/.sutradhar-cli/state.json`) — run `sutradhar close` when done. `sutradhar profile create
+run `sutradhar <command>`. Sessions persist across separate CLI invocations, scoped
+automatically to the calling directory (`~/.sutradhar-cli/<hash-of-cwd>/state.json`) so two
+projects run in parallel don't share a browser — run `sutradhar close` when done. `sutradhar profile create
 <name>` gives you a persistent, named profile (cookies/login survive across runs); `sutradhar
 profile export-state`/`import-state` turns that into a portable file you can pre-bake into a
 different profile without ever logging in there directly.

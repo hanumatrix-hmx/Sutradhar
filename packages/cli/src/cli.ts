@@ -4,7 +4,8 @@
  * @description Terminal CLI for driving the Sutradhar browser engine directly, without an MCP
  * client or writing a script — `sutradhar nav <url>`, `sutradhar snap`, `sutradhar click <ref>`,
  * etc. Session continuity across separate CLI invocations works via attach()-ing back to the
- * same browser's CDP wsEndpoint, persisted in ~/.sutradhar-cli/state.json between calls.
+ * same browser's CDP wsEndpoint, persisted per-project-directory under
+ * ~/.sutradhar-cli/<hash-of-cwd>/state.json between calls (see state.ts).
  */
 import { SutradharRuntime } from '@sutradhar/capability-runtime';
 import { StructuredLogger } from '@sutradhar/observability';
@@ -912,7 +913,9 @@ Flags:
                         page-initiated navigation from a clicked link (browser-internal, not
                         routed through this check) — see .ai/known-problems.md PROB-018.
 
-Session state persists across commands in ~/.sutradhar-cli/state.json — run "close" when done.`);
+Session state persists across commands, scoped to this directory, in
+~/.sutradhar-cli/<hash-of-cwd>/state.json — run "close" when done. Override with
+SUTRADHAR_CLI_STATE_DIR to share state across directories or use a custom path.`);
       process.exitCode = verb ? 1 : 0;
   }
 }

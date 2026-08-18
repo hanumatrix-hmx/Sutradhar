@@ -6,8 +6,11 @@ MCP client.
 
 Every command is its own one-shot process, but they all operate on the **same live browser
 session**: the first command that needs a browser spawns a detached Chrome and remembers how
-to reconnect to it (in `~/.sutradhar-cli/state.json`); every later command re-attaches to that
-same session instead of launching a new one. Run `sutradhar close` when you're done.
+to reconnect to it (in `~/.sutradhar-cli/<hash-of-cwd>/state.json`, scoped automatically to the
+directory you're running from so two unrelated projects on the same machine never collide);
+every later command re-attaches to that same session instead of launching a new one. Run
+`sutradhar close` when you're done. Set `SUTRADHAR_CLI_STATE_DIR` to point at a custom path
+instead — e.g. to deliberately share one session across directories.
 
 ## Quick start
 
@@ -129,8 +132,9 @@ your terminal ──▶ @sutradhar/cli (this package)
 
 Session persistence across separate CLI invocations works by spawning Chrome **detached**
 (not tied to the CLI process's lifetime) and reconnecting via its CDP `wsEndpoint`, saved in
-`~/.sutradhar-cli/state.json`. `sutradhar close` kills that Chrome process tree and clears the
-saved state.
+`~/.sutradhar-cli/<hash-of-cwd>/state.json` — scoped by the calling directory by default, so
+concurrent CLI use from two different projects doesn't share a browser. `sutradhar close` kills
+that Chrome process tree and clears the saved state.
 
 ## Requirements
 

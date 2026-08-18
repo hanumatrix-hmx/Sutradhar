@@ -9,6 +9,7 @@
 import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
+import crypto from 'node:crypto';
 
 export interface CliState {
   sessionId: string;
@@ -43,24 +44,34 @@ export interface CliState {
 }
 
 /**
- * Where the "current session" pointer lives. Defaults to `~/.sutradhar-cli`, but can be
- * redirected with `SUTRADHAR_CLI_STATE_DIR`.
+ * Where the "current session" pointer lives. Defaults to a directory scoped to the caller's
+ * cwd under `~/.sutradhar-cli/<hash-of-cwd>`, but can be overridden entirely with
+ * `SUTRADHAR_CLI_STATE_DIR`.
  *
- * Why the override exists (found live, 2026-08-17, during a WebBench benchmark run): this file
- * is a single *global* mutable pointer, and every CLI invocation reads it to decide which
- * browser to attach to. Two unrelated CLI users on the same machine therefore silently share
- * one browser session — the second one attaches to the first one's live session and drives the
- * first one's tab. That was observed for real: a concurrent UI-audit job navigated this
- * benchmark run's tab out from under it, so `nav <a nps.gov url>` reported
- * "Navigated to http://bharattech.localhost:18000/portal/me?ui-shot=schooladmin" — a URL the
- * caller never asked for. There is no locking here and deliberately no daemon (see the file
- * header), so the cheap, non-invasive fix is to let each caller opt into its own state dir.
- * Overriding HOME/USERPROFILE instead is not a workaround: Chrome inherits those and fails to
- * start (confirmed live — "Timed out waiting for Chrome to start on port ...").
+ * History (PROB-041): this used to be one single flat `~/.sutradhar-cli` directory shared by
+ * every CLI invocation on the machine, with an opt-in `SUTRADHAR_CLI_STATE_DIR` escape hatch —
+ * found live 2026-08-17 during a WebBench benchmark run (a concurrent UI-audit job navigated
+ * the run's tab out from under it: `nav <a nps.gov url>` reported "Navigated to
+ * http://bharattech.localhost:18000/portal/me?ui-shot=schooladmin", a URL the caller never
+ * asked for). That fix required every caller to *know about and set* the env var themselves,
+ * which real usage proved insufficient: a real user hit the identical default-shared-session
+ * symptom on 2026-08-19 running the CLI from two unrelated project directories at once, with
+ * neither having set the override. Cwd-scoping the default closes that gap with zero config:
+ * repeated invocations from the *same* project directory still resolve to the same state file
+ * (the continuity this whole mechanism exists for), while two different project directories
+ * now get different files automatically, with no collision and nothing for the caller to set.
+ * `SUTRADHAR_CLI_STATE_DIR` still works as an explicit override for anyone who wants shared or
+ * custom state (e.g. deliberately sharing one session across sibling directories in CI).
+ * Overriding HOME/USERPROFILE instead of either of these is not a workaround: Chrome inherits
+ * those and fails to start (confirmed live — "Timed out waiting for Chrome to start on port ...").
  */
-const STATE_DIR = process.env.SUTRADHAR_CLI_STATE_DIR
-  ? path.resolve(process.env.SUTRADHAR_CLI_STATE_DIR)
-  : path.join(os.homedir(), '.sutradhar-cli');
+export function resolveStateDir(cwd: string, envOverride: string | undefined): string {
+  if (envOverride) return path.resolve(envOverride);
+  const cwdHash = crypto.createHash('sha256').update(path.resolve(cwd)).digest('hex').slice(0, 16);
+  return path.join(os.homedir(), '.sutradhar-cli', cwdHash);
+}
+
+const STATE_DIR = resolveStateDir(process.cwd(), process.env.SUTRADHAR_CLI_STATE_DIR);
 const STATE_FILE = path.join(STATE_DIR, 'state.json');
 
 export async function readState(): Promise<CliState | undefined> {
