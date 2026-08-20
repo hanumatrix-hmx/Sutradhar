@@ -104,7 +104,7 @@ export class LocalFileStorage implements IFileStorage {
    */
   private async resolvePath(key: string): Promise<string> {
     // Sanitize path key to prevent directory traversal
-    const sanitized = path.normalize(key).replace(/^(\.\.[\/\\])+/, '');
+    const sanitized = path.normalize(key).replace(/^(\.\.[/\\])+/, '');
     const resolved = path.join(this.baseDir, sanitized);
 
     if (resolved !== this.baseDir && !resolved.startsWith(this.baseDir + path.sep)) {

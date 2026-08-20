@@ -132,7 +132,7 @@ export async function runAgentLoop(opts: AgentLoopOptions): Promise<AgentLoopRes
    *  and to the domain event bus (persisted history). Never synthesized. */
   const emitStep = (step: AgentLoopStep): void => {
     opts.onStep?.(step);
-    opts.eventBus?.publish(
+    void opts.eventBus?.publish(
       'agent:step:executed',
       {
         agentId: opts.agentId,
@@ -200,7 +200,7 @@ export async function runAgentLoop(opts: AgentLoopOptions): Promise<AgentLoopRes
     throw err;
   }
 
-  opts.eventBus?.publish(
+  void opts.eventBus?.publish(
     'agent:goal:started',
     { agentId: opts.agentId, goalId, goal: opts.objective },
     `corr_${goalId}`,
@@ -235,7 +235,7 @@ export async function runAgentLoop(opts: AgentLoopOptions): Promise<AgentLoopRes
     if (reflection.isStuck) {
       status = 'failed';
       summary = `Stuck: ${reflection.feedback}`;
-      opts.eventBus?.publish(
+      void opts.eventBus?.publish(
         'session:blocked',
         { sessionId: session.id, agentId: opts.agentId, goalId, blockReason: 'stuck', message: reflection.feedback },
         `corr_${goalId}`,
@@ -272,7 +272,7 @@ export async function runAgentLoop(opts: AgentLoopOptions): Promise<AgentLoopRes
         opts.onTurn?.(`  step ${stepNum}: ⚠ ${message}`);
         status = 'failed';
         summary = message;
-        opts.eventBus?.publish(
+        void opts.eventBus?.publish(
           'session:blocked',
           { sessionId: session.id, agentId: opts.agentId, goalId, blockReason, message },
           `corr_${goalId}`,

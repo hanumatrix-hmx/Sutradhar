@@ -18,7 +18,7 @@ import {
   BrowserActionResultDto,
 } from '@sutradhar/contracts';
 import { EventBus } from '@sutradhar/events';
-import { Dialog, Page } from 'puppeteer-core';
+import { Dialog, KeyInput, Page } from 'puppeteer-core';
 
 /** How long a native dialog is left pending before it's auto-resolved so the page doesn't
  *  hang forever if nothing ever calls {@link BrowserTab.handleDialog}. Deliberately generous
@@ -310,7 +310,7 @@ export class BrowserTab implements IBrowserTab {
 
           case 'pressKey':
             if (!action.key) throw new Error("'pressKey' requires key");
-            await this.page!.keyboard.press(action.key as any);
+            await this.page!.keyboard.press(action.key as KeyInput);
             break;
 
           case 'evaluate': {

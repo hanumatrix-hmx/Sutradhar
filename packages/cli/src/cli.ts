@@ -925,6 +925,7 @@ main()
     console.error(`Fatal: ${(err as Error).message}`);
     process.exitCode = 1;
   })
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises -- Promise.finally awaits this teardown before the one-shot CLI exits.
   .finally(async () => {
     // Every command here is one-shot — nothing legitimately needs to keep the process running
     // after it prints its result. The open CDP WebSocket connection to Chrome (left

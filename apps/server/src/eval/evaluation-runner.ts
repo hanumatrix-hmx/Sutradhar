@@ -8,6 +8,7 @@ import * as path from 'node:path';
 import { BENCHMARK_DATASET, BenchmarkTask } from './benchmark-dataset.js';
 import {
   TaskEvaluationResult,
+  FailureCategory,
   FailureClassifier,
   EvaluationRecorder,
 } from './evaluation-framework.js';
@@ -45,7 +46,7 @@ export class EvaluationRunner {
 
       let success = false;
       let failureReason: string | undefined;
-      let failureCategory: any;
+      let failureCategory: FailureCategory | undefined;
       let actionCount = 1;
       let recoveryAttempts = 0;
       const planningTimeMs = 25;

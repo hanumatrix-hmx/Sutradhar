@@ -32,4 +32,16 @@ module.exports = {
     '.turbo/',
     '*.js',
   ],
+  overrides: [
+    {
+      // The CLI's public contract is terminal output; console is its deliberate output sink.
+      files: ['packages/cli/src/**/*.ts'],
+      rules: { 'no-console': 'off' },
+    },
+    {
+      // The evaluation runner is an explicit terminal report generator.
+      files: ['apps/server/src/eval/**/*.ts'],
+      rules: { 'no-console': 'off' },
+    },
+  ],
 };

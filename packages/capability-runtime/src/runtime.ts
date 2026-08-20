@@ -867,10 +867,8 @@ export class SutradharRuntime {
     const hops = frameSelector.split('::').map((s) => s.trim()).filter((s) => s.length > 0);
     type Hoppable = {
       $(selector: string): Promise<{ contentFrame(): Promise<Hoppable | null> } | null>;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- structural type spanning
-      // both Puppeteer's Page and Frame, whose real `evaluate` overloads are too varied to
-      // usefully narrow here; callers already cast their own specific return type.
-      evaluate(fn: any, ...args: any[]): Promise<any>;
+      evaluate<T>(fn: (...args: never[]) => T | Promise<T>, ...args: never[]): Promise<T>;
+      evaluate<T = unknown>(fn: string): Promise<T>;
     };
     let current: Hoppable = page;
     for (const [i, hop] of hops.entries()) {
@@ -909,7 +907,9 @@ export class SutradharRuntime {
   ): Promise<Record<string, string[]>> {
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
-    const target = frameSelector ? await this.resolveFrame(page, frameSelector) : page;
+    const target = (frameSelector ? await this.resolveFrame(page, frameSelector) : page) as Awaited<
+      ReturnType<SutradharRuntime['resolveFrame']>
+    >;
     return target.evaluate((fieldSpec: Record<string, { selector: string; attribute?: string }>) => {
       const out: Record<string, string[]> = {};
       for (const [name, spec] of Object.entries(fieldSpec)) {
@@ -919,7 +919,7 @@ export class SutradharRuntime {
         );
       }
       return out;
-    }, fields);
+    }, fields as never);
   }
 
   /**
@@ -939,7 +939,9 @@ export class SutradharRuntime {
   ): Promise<T> {
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
-    const target = frameSelector ? await this.resolveFrame(page, frameSelector) : page;
+    const target = (frameSelector ? await this.resolveFrame(page, frameSelector) : page) as Awaited<
+      ReturnType<SutradharRuntime['resolveFrame']>
+    >;
     // evaluate<unknown, unknown> keeps the dynamic return type honest under strict TS.
     return (await target.evaluate(code as unknown as string)) as T;
   }
@@ -1149,7 +1151,10 @@ export class SutradharRuntime {
       if (p === 'clipboard-write') existing.add('clipboard-sanitized-write');
     }
     this.grantedPermissionsByOrigin.set(key, existing);
-    await page.browserContext().overridePermissions(origin, Array.from(existing) as any);
+    const permissions = Array.from(existing) as Parameters<
+      ReturnType<typeof page.browserContext>['overridePermissions']
+    >[1];
+    await page.browserContext().overridePermissions(origin, permissions);
   }
 
   // ─────────────────────────────────────────────────────────────────────────

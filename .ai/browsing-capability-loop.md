@@ -100,6 +100,29 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-08-19 — Milestone 99: long-session reliability harnesses, current-head sequential evidence, and a real detached-frame crash fixed
+
+Worked the two selected reliability items in order. For PROB-043, added a durable real-MCP soak
+harness with independent DOM and application-state verification. After clean 104-, 1,008-, and
+10,866-call campaigns, the same harness completed a genuine two-hour run: 260,179 real MCP calls,
+83,703 checked type operations, 27,901 checked raw key presses, 697 reloads, and 1,395 temporary-tab
+cycles, with zero mismatches, zero run errors, no malformed JSONL records, no call over one second,
+stable harness memory, and clean owned-process teardown. The historical failure remains unexplained
+and no corrective code change was made, so PROB-043 moves to monitoring rather than resolved.
+
+For PROB-015, instrumented the sequential SDK runner with process/resource/session telemetry and
+unique output paths. UC-05 and UC-14 passed 10/10 focused repetitions and every one of six
+completed full-suite runs on rebuilt current source, including a final full run after the two-hour
+MCP soak, with zero runtime sessions retained after each scenario. The old failure mechanism cannot be proven from the historical artifact, so this
+is recorded as open/monitoring rather than relabeled as solved.
+
+The full-suite work did expose a separate current defect: UC-07's TinyMCE frame recreation crashed
+4/10 isolated Node processes because losing cross-frame `Promise.any()` selector waits survived
+after a winner and later rejected against detached frames. An AbortController attempt was tested
+and rejected after it still crashed 5/10 with unhandled `AbortError`. The final implementation
+uses short, fully-settled sequential probes over a refreshed live-frame list: UC-07 then passed
+10/10 isolated runs and three full sequential suites, including the post-soak verification. See PROB-045.
+
 ### 2026-08-17 — Milestone 90: concurrent CLI invocations silently shared one browser session — found by being the victim of it mid-benchmark, closes PROB-041
 
 Discovered the way this loop is supposed to discover things: by actually using Sutradhar for a

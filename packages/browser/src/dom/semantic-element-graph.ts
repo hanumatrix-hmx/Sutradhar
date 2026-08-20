@@ -3,7 +3,7 @@
  * @description SemanticElementGraph and element node models for rich DOM accessibility understanding.
  */
 
-import { ElementCandidate, CandidateMatchResult } from './element-candidate.js';
+import { ElementCandidate, CandidateMatchResult, MatchingStrategy } from './element-candidate.js';
 
 export interface BoundingBox {
   readonly x: number;
@@ -65,7 +65,7 @@ export class SemanticElementGraph {
 
     for (const n of this.nodes) {
       let score = 0;
-      let strategy: any = 'partial_text';
+      let strategy: MatchingStrategy = 'partial_text';
       let evidence = '';
 
       if (n.accessibleName?.toLowerCase() === query) {
@@ -167,7 +167,7 @@ export class SemanticElementGraph {
       if (!isInput) continue;
 
       let score = 0;
-      let strategy: any = 'label_attribute';
+      let strategy: MatchingStrategy = 'label_attribute';
       let evidence = '';
 
       if (n.label?.toLowerCase().includes(query)) {

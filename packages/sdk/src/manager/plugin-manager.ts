@@ -52,6 +52,7 @@ export class PluginManager {
       pluginId,
       grantedPermissions: plugin.manifest.permissions,
       logger: {
+        // eslint-disable-next-line no-console -- plugin callbacks deliberately surface host-visible progress.
         info: (msg) => console.log(`[Plugin:${pluginId}] ${msg}`),
         warn: (msg) => console.warn(`[Plugin:${pluginId}] ${msg}`),
         error: (msg) => console.error(`[Plugin:${pluginId}] ${msg}`),

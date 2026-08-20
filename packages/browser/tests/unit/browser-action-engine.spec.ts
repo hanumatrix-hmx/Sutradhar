@@ -1356,6 +1356,50 @@ describe('@sutradhar/browser BrowserActionEngine cross-frame element resolution'
     expect(handle.click).toHaveBeenCalledTimes(1);
     expect((mainFrame.waitForSelector as any)).toHaveBeenCalledTimes(2);
   });
+
+  it('fully settles each cross-frame selector probe before starting the next, so no losing wait survives to reject after a frame detach', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true);
+    const order: string[] = [];
+
+    const mainFrame = {
+      isDetached: () => false,
+      waitForSelector: vi
+        .fn()
+        .mockRejectedValueOnce(new Error('not found during main-frame head start'))
+        .mockImplementationOnce(() =>
+          new Promise((_resolve, reject) => {
+            order.push('main-probe-start');
+            setTimeout(() => {
+              order.push('main-probe-settled');
+              reject(new Error('not in main frame'));
+            }, 5);
+          }),
+        ),
+    } as unknown as Frame;
+    const iframe = {
+      isDetached: () => false,
+      waitForSelector: vi.fn().mockImplementation(async () => {
+        order.push('iframe-probe-start');
+        return handle;
+      }),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, iframe]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'click',
+      selector: '#inside-dynamic-iframe',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(order).toEqual(['main-probe-start', 'main-probe-settled', 'iframe-probe-start']);
+    expect(handle.click).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('@sutradhar/browser BrowserActionEngine right-click (button-aware)', () => {

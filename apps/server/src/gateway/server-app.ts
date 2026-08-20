@@ -101,7 +101,7 @@ export class ServerApp {
     }
 
     const createHttpServer = () =>
-      http.createServer(async (nodeReq, nodeRes) => {
+      http.createServer((nodeReq, nodeRes) => {
         // Set CORS headers for all incoming frontend client requests
         nodeRes.setHeader('Access-Control-Allow-Origin', '*');
         nodeRes.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -117,7 +117,7 @@ export class ServerApp {
         // Read request body
         const chunks: Buffer[] = [];
         nodeReq.on('data', (chunk) => chunks.push(chunk));
-        nodeReq.on('end', async () => {
+        const handleRequest = async (): Promise<void> => {
           let body: unknown = undefined;
           if (chunks.length > 0) {
             try {
@@ -148,13 +148,24 @@ export class ServerApp {
           nodeRes.end(
             typeof apiRes.body === 'string' ? apiRes.body : JSON.stringify(apiRes.body),
           );
+        };
+        nodeReq.on('end', () => {
+          void handleRequest().catch((error: unknown) => {
+            const message = error instanceof Error ? error.message : String(error);
+            this.logger.error('[ServerApp] Request handling failed', { error: message });
+            if (!nodeRes.headersSent) {
+              nodeRes.statusCode = 500;
+              nodeRes.setHeader('Content-Type', 'application/json');
+            }
+            nodeRes.end(JSON.stringify({ error: 'Internal server error' }));
+          });
         });
       });
 
     return new Promise((resolve, reject) => {
       this.httpServer = createHttpServer();
 
-      this.httpServer.on('error', (err: any) => {
+      this.httpServer.on('error', (err: NodeJS.ErrnoException) => {
         if (err.code === 'EADDRINUSE') {
           // If preferred port is occupied (e.g. parallel Vitest workers), bind to any available port
           this.httpServer = createHttpServer();

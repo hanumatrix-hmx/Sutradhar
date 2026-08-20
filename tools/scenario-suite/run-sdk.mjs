@@ -28,13 +28,50 @@ async function withSession(fn, launchOptions = {}) {
 
 async function timed(id, title, fn) {
   const start = Date.now();
+  const before = resourceSnapshot();
   try {
     const detail = await fn();
     const success = detail && typeof detail === 'object' && 'success' in detail ? detail.success : true;
-    return { id, title, surface: 'sdk', success, ms: Date.now() - start, detail: detail ?? null, error: null };
+    return {
+      id,
+      title,
+      surface: 'sdk',
+      success,
+      ms: Date.now() - start,
+      detail: detail ?? null,
+      error: null,
+      telemetry: { before, after: resourceSnapshot() },
+    };
   } catch (err) {
-    return { id, title, surface: 'sdk', success: false, ms: Date.now() - start, detail: null, error: (err && err.message) || String(err) };
+    return {
+      id,
+      title,
+      surface: 'sdk',
+      success: false,
+      ms: Date.now() - start,
+      detail: null,
+      error: (err && err.message) || String(err),
+      telemetry: { before, after: resourceSnapshot() },
+    };
   }
+}
+
+/** Lightweight, same-process evidence for the long sequential-run flakiness tracked as
+ * PROB-015. `_getActiveHandles` is diagnostic-only and intentionally guarded because it is a
+ * Node internal; the stable signals (memory + runtime session count) are always available. */
+function resourceSnapshot() {
+  const memory = process.memoryUsage();
+  const activeHandles = typeof process._getActiveHandles === 'function'
+    ? process._getActiveHandles().length
+    : null;
+  return {
+    at: new Date().toISOString(),
+    rssBytes: memory.rss,
+    heapUsedBytes: memory.heapUsed,
+    externalBytes: memory.external,
+    activeHandles,
+    runtimeSessionCount: runtime.getSessionManager().getSessionCount(),
+  };
 }
 
 function short(err) {
@@ -446,10 +483,10 @@ async function scenarioUC08() {
 async function scenarioUC09() {
   return withSession(async (sid) => {
     await runtime.navigate(sid, 'https://the-internet.herokuapp.com/windows');
-    const tabsBefore = runtime.listTabs(sid);
+    const tabsBefore = await runtime.listTabs(sid);
     await runtime.clickByText(sid, 'Click Here');
     await new Promise((r) => setTimeout(r, 1500));
-    const tabsAfter = runtime.listTabs(sid);
+    const tabsAfter = await runtime.listTabs(sid);
 
     const newTab = tabsAfter.find((t) => !tabsBefore.some((b) => b.id === t.id));
     if (!newTab) {
@@ -674,9 +711,14 @@ async function run() {
 const results = await run();
 console.log(JSON.stringify(results, null, 2));
 
-const outPath = filterIds
+const defaultOutPath = filterIds
   ? path.join(here, 'results', 'baseline-sdk.partial.json')
   : path.join(here, 'results', 'baseline-sdk.json');
+// Reliability investigations need immutable per-run artifacts; preserve the historical default
+// for existing callers, while allowing a harness/CI job to choose a unique result path.
+const outPath = process.env.SCENARIO_OUTPUT_PATH
+  ? path.resolve(process.env.SCENARIO_OUTPUT_PATH)
+  : defaultOutPath;
 await fs.mkdir(path.dirname(outPath), { recursive: true });
 await fs.writeFile(outPath, JSON.stringify(results, null, 2));
 await runtime.shutdownAll().catch(() => {});

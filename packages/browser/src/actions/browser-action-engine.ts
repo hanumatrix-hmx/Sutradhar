@@ -12,7 +12,7 @@ import { realpath, access } from 'node:fs/promises';
 import { EventBus } from '@sutradhar/events';
 import { StructuredLogger } from '@sutradhar/observability';
 import { SessionId } from '@sutradhar/contracts';
-import { ElementHandle, Page } from 'puppeteer-core';
+import { ElementHandle, KeyInput, Page } from 'puppeteer-core';
 import { IBrowserTab } from '../session/browser-tab.js';
 import { ExecutionVerifier } from '../verifier/execution-verifier.js';
 import { SD_GENERATION_ATTR, SD_CURRENT_GENERATION_ATTR, SD_FINGERPRINT_ATTR } from '../dom/dom-semantic-engine.js';
@@ -540,7 +540,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       case 'press_key': {
         if (!params.key) throw new Error('PressKey requires key parameter');
         if (!page) throw new Error(`No live browser page for tab ${tab.id} — cannot execute press_key.`);
-        await this.withModifiers(page, params.modifiers, () => page.keyboard.press(params.key as any));
+        await this.withModifiers(page, params.modifiers, () => page.keyboard.press(params.key as KeyInput));
         return { key: params.key, modifiers: params.modifiers };
       }
 
@@ -839,7 +839,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         if (!handle) {
           throw new Error(`No file input found for selector: ${params.selector}`);
         }
-        await this.runHandleOp('upload_file', () => (handle as any).uploadFile(params.filePath));
+        await this.runHandleOp('upload_file', () => (handle as ElementHandle<HTMLInputElement>).uploadFile(params.filePath!));
         // Read the input's real .files list back — uploadFile() not throwing only means the CDP
         // call succeeded, not that the browser actually attached the file (e.g. a non-file
         // <input>, or one a page script resets after the fact).
@@ -1024,13 +1024,13 @@ export class BrowserActionEngine implements IBrowserActionEngine {
   ): Promise<T> {
     if (!modifiers || modifiers.length === 0) return op();
     for (const key of modifiers) {
-      await page.keyboard.down(key as any);
+      await page.keyboard.down(key as KeyInput);
     }
     try {
       return await op();
     } finally {
       for (const key of [...modifiers].reverse()) {
-        await page.keyboard.up(key as any).catch(() => {});
+        await page.keyboard.up(key as KeyInput).catch(() => {});
       }
     }
   }
@@ -1086,15 +1086,35 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     // nothing about whether the element appears in the main frame later (e.g. content that
     // loads/renders asynchronously). Excluding it here would silently never find a main-frame
     // element that shows up after the head-start window on any page that also has iframes.
-    try {
-      return await Promise.any(
-        targets.map((f) =>
-          f.waitForSelector(fullSelector, { visible: options.visible, timeout: remainingTimeoutMs }),
-        ),
-      );
-    } catch {
-      return null;
+    // Do not race long-lived waitForSelector calls across frames. Promise.any returns as soon as
+    // one frame matches but leaves every losing Puppeteer WaitTask alive in the background. On
+    // pages that recreate an iframe during init (TinyMCE does this in normal operation), a loser
+    // later rejects with "frame got detached" after the action has already moved on. Trying to
+    // AbortSignal-cancel the losers is not safe either: Puppeteer 25.5 can surface the resulting
+    // AbortError as the same process-killing unhandled rejection (both variants reproduced live
+    // while investigating PROB-015). Poll current live frames sequentially with short, fully-
+    // awaited probes instead: there is never an abandoned selector task, and refreshing
+    // page.frames() each pass naturally follows an iframe that was destroyed and recreated.
+    const deadline = Date.now() + remainingTimeoutMs;
+    const probeTimeoutMs = 150;
+    while (Date.now() < deadline) {
+      const currentMain = page.mainFrame();
+      const currentFrames = page.frames().filter((f) => !f.isDetached());
+      const ordered = [currentMain, ...currentFrames.filter((f) => f !== currentMain)];
+
+      for (const frame of ordered) {
+        const remaining = deadline - Date.now();
+        if (remaining <= 0) return null;
+        const match = await frame
+          .waitForSelector(fullSelector, {
+            visible: options.visible,
+            timeout: Math.min(probeTimeoutMs, remaining),
+          })
+          .catch(() => null);
+        if (match) return match;
+      }
     }
+    return null;
   }
 
   /**

@@ -96,7 +96,9 @@ export function registerRunRoutes(router: ApiRouter, manager: RunManager): void 
     res.stream({ contentType: 'text/event-stream', headers: { 'X-Accel-Buffering': 'no' } });
 
     let closed = false;
+    // eslint-disable-next-line prefer-const -- synchronous subscribe replay can call cleanup before the unsubscribe function is returned.
     let unsubscribe: (() => void) | undefined;
+    // eslint-disable-next-line prefer-const -- cleanup must be callable before the heartbeat starts.
     let heartbeat: ReturnType<typeof setInterval> | undefined;
 
     const send = (frame: RunFrame): void => {

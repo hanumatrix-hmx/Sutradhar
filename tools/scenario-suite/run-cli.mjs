@@ -697,7 +697,9 @@ async function main() {
 
   closeSession(); // final cleanup, best-effort
 
-  const outPath = path.join(here, 'results', 'baseline-cli.json');
+  const outPath = process.env.SCENARIO_OUTPUT_PATH
+    ? path.resolve(process.env.SCENARIO_OUTPUT_PATH)
+    : path.join(here, 'results', 'baseline-cli.json');
   await fs.mkdir(path.dirname(outPath), { recursive: true });
   await fs.writeFile(outPath, JSON.stringify(results, null, 2));
 
