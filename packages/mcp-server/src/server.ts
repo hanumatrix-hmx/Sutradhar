@@ -13,6 +13,7 @@ import { OllamaAdapter, OpenRouterAdapter } from '@sutradhar/llm';
 import type { ILlmProvider } from '@sutradhar/llm';
 import { StructuredLogger } from '@sutradhar/observability';
 import { registerTools, type AgentHandle } from './tools.js';
+import { MCP_SERVER_VERSION } from './version.js';
 
 /** Idle-session reaper default for the shipped MCP server: an MCP client (an LLM) can easily
  *  forget to call browser.shutdown after finishing with a session — without a default here, a
@@ -112,7 +113,7 @@ export async function createSutradharServer(options: CreateServerOptions = {}): 
 
   const server = new McpServer({
     name: 'sutradhar',
-    version: '0.2.2',
+    version: MCP_SERVER_VERSION,
   });
 
   registerTools(server, { runtime, agent });

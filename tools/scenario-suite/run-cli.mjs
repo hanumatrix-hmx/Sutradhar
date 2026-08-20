@@ -20,8 +20,22 @@ import { SCENARIOS, fx } from './scenarios.mjs';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(here, '..', '..');
 const CLI = path.join(repoRoot, 'packages', 'cli', 'dist', 'cli.js');
+// The CLI deliberately persists a detached Chrome session between invocations.  A scenario
+// run must not inherit a developer's (or a previous aborted run's) state: besides making the
+// result non-repeatable, a stale CDP endpoint can make an otherwise ordinary command hang.
+// Keep every child in one fresh, run-scoped state directory so commands within this suite still
+// exercise the real cross-process persistence contract.
+const scenarioStateDir = process.env.SUTRADHAR_CLI_STATE_DIR
+  ? path.resolve(process.env.SUTRADHAR_CLI_STATE_DIR)
+  : path.join(os.tmpdir(), 'sutradhar-scenario-cli', `run-${Date.now()}-${process.pid}`);
+const cliEnv = { ...process.env, SUTRADHAR_CLI_STATE_DIR: scenarioStateDir };
 
 const scenarioById = Object.fromEntries(SCENARIOS.map((s) => [s.id, s]));
+// Mirror the SDK driver: release qualification needs isolated, repeatable probes for a single
+// risky flow without paying for every independent external target first.
+const filterIds = process.env.SCENARIO_FILTER
+  ? new Set(process.env.SCENARIO_FILTER.split(',').map((id) => id.trim()))
+  : null;
 
 // ── Low-level CLI invocation ────────────────────────────────────────────────────────────────
 /** Spawns `node CLI <argv...>` as a real, separate child process — same as a user typing
@@ -32,6 +46,7 @@ function runCli(argv, { timeout = 90_000 } = {}) {
     encoding: 'utf-8',
     timeout,
     cwd: repoRoot,
+    env: cliEnv,
     windowsHide: true,
   });
   return {
@@ -520,11 +535,27 @@ async function uc09() {
   if (!clickHereId) fail('could not find "Click Here" link', { snap: snap.stdout });
   const click = runCli(['click', clickHereId]);
   await sleep(1500);
-  const textAfter = runCli(['text']); // next invocation re-attaches fresh via runtime.attach()
+  // Tab selection is explicit on the one-shot CLI: list the popup and persist its id before
+  // asking a fresh process to read it. This validates the documented tabs/focustab contract.
+  const tabsAfter = runCli(['tabs']);
+  const popupLine = tabsAfter.stdout
+    .split('\n')
+    .find((line) => /\/windows\/new\b/.test(line) || /\bNew Window\b/.test(line));
+  const popupTabId = popupLine?.match(/^\s*(?:\*\s+)?(tab_\S+)\s+/)?.[1];
+  if (!popupTabId) {
+    closeSession();
+    fail('new popup tab was not listed by the CLI', { click, tabsAfter });
+  }
+  const focusPopup = runCli(['focustab', popupTabId]);
+  const textAfter = runCli(['text']); // fresh attach must honor the persisted active tab
   closeSession();
 
   const gotNewWindowContent = textAfter.stdout.trim() === 'New Window' || textAfter.stdout.includes('New Window');
   const detail = {
+    click,
+    tabsAfter: tabsAfter.stdout,
+    popupTabId,
+    focusPopup,
     textAfterClickingPopupLink: textAfter.stdout,
     gotNewWindowContent,
     note: gotNewWindowContent
@@ -680,20 +711,19 @@ async function uc14() {
 // ── Run all 14 ───────────────────────────────────────────────────────────────────────────────
 async function main() {
   const results = [];
-  results.push(await timed('UC-01', uc01));
-  results.push(await timed('UC-02', uc02));
-  results.push(await timed('UC-03', uc03));
-  results.push(await timed('UC-04', uc04));
-  results.push(await timed('UC-05', uc05));
-  results.push(await timed('UC-06', uc06));
-  results.push(await timed('UC-07', uc07));
-  results.push(await timed('UC-08', uc08));
-  results.push(await timed('UC-09', uc09));
-  results.push(await timed('UC-10', uc10));
-  results.push(await timed('UC-11', uc11));
-  results.push(await timed('UC-12', uc12));
-  results.push(await timed('UC-13', uc13));
-  results.push(await timed('UC-14', uc14));
+  const cases = [
+    ['UC-01', uc01], ['UC-02', uc02], ['UC-03', uc03], ['UC-04', uc04],
+    ['UC-05', uc05], ['UC-06', uc06], ['UC-07', uc07], ['UC-08', uc08],
+    ['UC-09', uc09], ['UC-10', uc10], ['UC-11', uc11], ['UC-12', uc12],
+    ['UC-13', uc13], ['UC-14', uc14],
+  ];
+  for (const [id, runCase] of cases) {
+    if (filterIds && !filterIds.has(id)) continue;
+    process.stderr.write(`[run-cli] ${id} ${scenarioById[id].title} ...\n`);
+    const result = await timed(id, runCase);
+    process.stderr.write(`[run-cli] ${id} -> success=${result.success} ms=${result.ms}${result.error ? ` error=${result.error}` : ''}\n`);
+    results.push(result);
+  }
 
   closeSession(); // final cleanup, best-effort
 

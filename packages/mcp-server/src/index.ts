@@ -6,7 +6,7 @@
  * to any transport (stdio, SSE, HTTP). For the stdio CLI binary, run `node dist/cli.js`.
  */
 
-export const MCP_SERVER_VERSION = '0.1.0';
+export { MCP_SERVER_VERSION } from './version.js';
 
 export { createSutradharServer } from './server.js';
 export type { CreateServerOptions, SutradharServerHandle } from './server.js';
