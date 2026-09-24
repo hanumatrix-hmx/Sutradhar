@@ -39,6 +39,34 @@ If this recurs during any FR2 item's VERIFY step, re-run standalone before concl
 regression, and if it keeps recurring, escalate to a real investigation (don't keep dismissing
 it as flake indefinitely).
 
+## 2026-09-25 — FR2-01 spec decisions (from the Planner)
+
+Context: the Planner (Opus) traced the full `wait_for_selector` call path and surfaced design
+choices the original finding didn't cover. It could not write files (Plan subagent is
+read-only), so the Orchestrator saved its output to
+`.ai/loop/field-report-2/evidence/FR2-01/spec.md` verbatim and is recording its flagged
+decisions here as instructed by that spec.
+
+1. **Visibility definition adopts Puppeteer's own `checkVisibility` exactly**: not
+   `visibility:hidden`/`collapse` AND non-zero bounding box, checked on the first DOM match per
+   frame. Consequence: `opacity:0` counts as **visible**, off-screen position counts as
+   **visible**, and zero-size/`display:none`/`visibility:hidden` counts as **hidden**. Chosen
+   for consistency with every other `visible:true` caller already in this engine
+   (`click_by_role`, etc.) rather than inventing a stricter definition. Occlusion/covering stays
+   the click path's job, not the wait's.
+2. **CLI live-verify must use the fixture's `#manual` mode, not `#auto`.** Each CLI command is a
+   separate process that costs ~0.5-1.5s just to reattach, so a fixed 1.5s auto-timer can't
+   prove the wait is actually blocking (the element may already be visible before the wait
+   starts). The manual mode, driven by an independent observer connected to the same Chrome,
+   proves causality instead (checks the child is still running, then triggers the transition,
+   then checks the child exits only after).
+3. **The new SDK `Page.waitForSelector` throws on failure**, unlike `click`/`type` which return
+   `success:false` silently. Rationale: a wait that times out and returns quietly is the exact
+   silent-wrongness bug class FR2-01 exists to fix, and throwing matches both Puppeteer's and
+   Playwright's own `waitForSelector` contract.
+4. **`--state` is accepted but ignored on CLI verbs other than `wait`**, the same precedent as
+   `--settle` today.
+
 ## 2026-09-25 — Stray test-run artifact cleanup
 
 Context: running the baseline test suite left an untracked `apps/server/.sutradhar-eval/

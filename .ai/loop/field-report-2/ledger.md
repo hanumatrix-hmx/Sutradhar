@@ -4,7 +4,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 
 | id | title | phase | status | attempts | last evidence | commit |
 |---|---|---|---|---|---|---|
-| FR2-01 | wait_for_selector visibility states | 1 | TODO | 0 | - | - |
+| FR2-01 | wait_for_selector visibility states | 1 | DEV | 0 | evidence/FR2-01/spec.md | - |
 | FR2-02 | extract_data reads live values | 1 | TODO | 0 | - | - |
 | FR2-03 | Session/profile GC | 1 | TODO | 0 | - | - |
 | FR2-04 | CLI dialog handling | 1 | TODO | 0 | - | - |
