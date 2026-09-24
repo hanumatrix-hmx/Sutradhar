@@ -146,3 +146,33 @@ PID. That's in scope because FR2-03 owns that code path.
 Sequencing: FR2-03 DEVELOP waits for FR2-01 to reach DONE, because GAP-003's fix may touch
 `spawn-chrome.ts` and FR2-01 changed `cli.ts`/`parse-args.ts`. FR2-03 has no file overlap with
 FR2-02, so those two can be developed in parallel (separate worktrees) once FR2-01 is done.
+
+## 2026-09-25 — FR2-04 spec decisions (from the Planner)
+
+Spec: `evidence/FR2-04/spec.md`. Step-1 experiment: `evidence/FR2-04/step1-experiment.mjs`,
+both extracted verbatim from the Planner transcript.
+
+Adopted as written (full text in the spec's decision table, §7.1):
+- D-1: use Chrome's native CDP dialog handling. Overriding alert/confirm/prompt with an init script
+  is rejected. Pages can detect the override, it can't cover beforeunload, the injected script is
+  scoped to one session and disappears between CLI commands, and hiding it would be stealth work.
+- D-2: the dialog policy lives in `BrowserTab` with a per-session default. The runtime default
+  stays `auto`, today's behavior, so MCP and SDK are unchanged. Only the CLI default becomes
+  `report`.
+- D-3: the CLI prints one line of JSON per dialog, `dialogPending:` or `dialogHandled:`. Adding
+  dialog info to MCP results is deferred to FR2-07 (GAP-018).
+- D-4: new exit code 3, meaning "blocked by a dialog". A 300 s watchdog on every CLI command.
+  Pre-emption grace is 250 ms, or 4 s for click-type commands.
+- D-5: beforeunload. `report` keeps the existing 3 s auto-accept during navigation. `dismiss`
+  cancels the navigation, so `nav` exits 1.
+- D-6: the dialog check runs before attach. GAP-006 gets fixed in FR2-04 by moving `fn()` out of
+  the self-heal `try`.
+- D-7: the design branch depends on the Step-1 outcome (D, D-hint, W or X). **Still to be decided.**
+- D-8: `dialog` handles the oldest dialog first. The dialog check is conservative across tabs.
+- D-9: accepting a prompt without text submits the prompt's default value.
+- D-10: Branch W only. `warden.json` sits next to the state file, and the warden runs as a hidden
+  verb on the same binary.
+
+Sequencing: Step 1 runs only after FR2-01's current fix round finishes, because it drives the
+worktree build and the FR2-01 Executor is rebuilding `dist` right now. FR2-04's DEVELOP runs
+after FR2-03, in merge order FR2-01, FR2-03, FR2-04.
