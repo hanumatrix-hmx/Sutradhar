@@ -16,7 +16,7 @@ import { ElementHandle, KeyInput, Page } from 'puppeteer-core';
 import { IBrowserTab } from '../session/browser-tab.js';
 import { ExecutionVerifier } from '../verifier/execution-verifier.js';
 import { SD_GENERATION_ATTR, SD_CURRENT_GENERATION_ATTR, SD_FINGERPRINT_ATTR } from '../dom/dom-semantic-engine.js';
-import { ActionParams, ActionResultDto, SettleSpec } from './action-types.js';
+import { ActionParams, ActionResultDto, SettleSpec, WaitForSelectorState } from './action-types.js';
 
 export interface IBrowserActionEngine {
   executeAction(tab: IBrowserTab, params: ActionParams): Promise<ActionResultDto>;
@@ -75,6 +75,14 @@ const DUPLICATE_ACTION_WINDOW_MS = 1000;
  *  calls) from interleaving on the same element. Best-effort, not a guarantee: a dispatch that
  *  takes even longer than this to actually finish will still race against a fresh retry. */
 const TIMEOUT_SETTLEMENT_GRACE_MS = 2000;
+
+/** Extra time the outer per-attempt race (`executeActionSerialized`) grants `wait_for_selector`
+ *  specifically, on top of its own `timeoutMs`. Without this, a caller-supplied `timeoutMs` sizes
+ *  BOTH the inner state-aware wait AND the outer generic race identically, so they finish at
+ *  effectively the same instant — and the outer race, which names no state, usually wins,
+ *  producing the old undiagnostic `Action wait_for_selector timed out after Xms` instead of the
+ *  state-naming message the inner wait would have produced a moment later (FR2-01). */
+const WAIT_FOR_SELECTOR_OUTER_GRACE_MS = 2000;
 
 /** Defaults for {@link ActionParams.settle} when passed as `true` instead of a full spec. */
 const DEFAULT_SETTLE_SPEC: Required<SettleSpec> = {
@@ -216,7 +224,14 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     }
 
     const startTime = Date.now();
-    const timeoutMs = params.timeoutMs ?? 15000;
+    // `wait_for_selector` gets a grace period on top of its own `timeoutMs` here so its inner,
+    // state-naming wait (which uses the same `timeoutMs`) finishes and throws its own diagnostic
+    // error BEFORE this outer race's generic timeout can win instead — see
+    // WAIT_FOR_SELECTOR_OUTER_GRACE_MS.
+    const timeoutMs =
+      params.actionType === 'wait_for_selector'
+        ? Math.max(1, params.timeoutMs ?? 10000) + WAIT_FOR_SELECTOR_OUTER_GRACE_MS
+        : params.timeoutMs ?? 15000;
     const maxRetries = params.maxRetries ?? 2;
     const previousUrl = tab.url;
     let attempt = 0;
@@ -636,11 +651,41 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       case 'wait_for_selector': {
         if (!params.selector) throw new Error('WaitForSelector requires selector parameter');
         if (!page) throw new Error(`No live browser page for tab ${tab.id} — cannot execute wait_for_selector.`);
-        const handle = await this.resolveElement(page, `pierce/${params.selector}`, {
-          timeoutMs: params.timeoutMs ?? 10000,
+        const state: WaitForSelectorState = params.state ?? 'visible';
+        if (state !== 'visible' && state !== 'attached' && state !== 'hidden') {
+          throw new Error(
+            `Invalid wait_for_selector state "${state}" — expected one of: visible, attached, hidden.`,
+          );
+        }
+        // Puppeteer treats `timeout: 0` as "wait forever", not "check once" — clamp to at least
+        // 1ms so a caller-supplied 0 behaves as a single immediate check instead of a hang.
+        const waitMs = Math.max(1, params.timeoutMs ?? 10000);
+        const fullSelector = `pierce/${params.selector}`;
+
+        if (state === 'hidden') {
+          // `resolveElement` can't express `hidden` — Puppeteer's own `waitForSelector({hidden:
+          // true})` resolves to `null` on SUCCESS (the element genuinely went away), and
+          // `resolveElement` already maps every rejection to `null` too, so the two "null"
+          // outcomes would be indistinguishable through that helper (FR2-01 spec note).
+          const matchedAtStart = await this.probeSelectorMatchExists(page, fullSelector);
+          const becameHidden = await this.waitForHiddenInAllFrames(page, fullSelector, waitMs);
+          if (!becameHidden) {
+            throw new Error(
+              `wait_for_selector timed out after ${waitMs}ms waiting for state=hidden: an element ` +
+                `matching "${params.selector}" is still visible.`,
+            );
+          }
+          return { foundSelector: params.selector, state: 'hidden', matchedAtStart };
+        }
+
+        const handle = await this.resolveElement(page, fullSelector, {
+          visible: state === 'visible' ? true : undefined,
+          timeoutMs: waitMs,
         });
-        if (!handle) throw new Error(await this.describeMissingElement(page, params.selector));
-        return { foundSelector: params.selector };
+        if (!handle) {
+          throw new Error(await this.describeWaitForSelectorTimeout(page, params.selector, fullSelector, state, waitMs));
+        }
+        return { foundSelector: params.selector, state };
       }
 
       case 'select_option': {
@@ -1115,6 +1160,161 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       }
     }
     return null;
+  }
+
+  /**
+   * `wait_for_selector`'s `state: 'hidden'` helper — resolves once the selector's first match is
+   * absent or not visible **in every live frame**, the exact negation of `visible` (which
+   * accepts the FIRST frame whose first match is visible). `resolveElement` can't be reused
+   * here: Puppeteer's `waitForSelector({hidden: true})` resolves to `null` on success (the
+   * element genuinely disappeared/hid), and `resolveElement` already maps every rejection to
+   * `null` too, so the two very different outcomes would collapse into the same return value.
+   *
+   * Deliberately no `Promise.any` across frames, for the same PROB-015 reason documented on
+   * {@link resolveElement}: every probe is fully awaited before the next one starts, so no
+   * losing wait is ever abandoned mid-flight to reject later after a frame detach.
+   */
+  private async waitForHiddenInAllFrames(page: Page, fullSelector: string, waitMs: number): Promise<boolean> {
+    const live = page.frames().filter((f) => !f.isDetached());
+    const targets = live.length > 0 ? live : [page.mainFrame()];
+
+    if (targets.length === 1) {
+      const only = targets[0]!;
+      return only
+        .waitForSelector(fullSelector, { hidden: true, timeout: waitMs })
+        .then(() => true)
+        .catch(() => false);
+    }
+
+    // Several live frames: a pass succeeds only when EVERY frame agrees the selector is hidden
+    // there. Re-read `page.frames()` each pass (mirroring resolveElement) so a frame that gets
+    // destroyed and recreated mid-wait (e.g. TinyMCE re-initializing its iframe) is naturally
+    // picked up rather than probed against a stale reference.
+    const deadline = Date.now() + waitMs;
+    while (Date.now() < deadline) {
+      const currentFrames = page.frames().filter((f) => !f.isDetached());
+      const ordered = currentFrames.length > 0 ? currentFrames : [page.mainFrame()];
+
+      let allHidden = true;
+      for (const frame of ordered) {
+        const remaining = deadline - Date.now();
+        if (remaining <= 0) return false;
+        const hiddenHere = await frame
+          .waitForSelector(fullSelector, { hidden: true, timeout: Math.min(150, remaining) })
+          .then(() => true)
+          .catch(() => false);
+        if (!hiddenHere) {
+          allHidden = false;
+          break;
+        }
+      }
+      if (allHidden) return true;
+    }
+    return false;
+  }
+
+  /**
+   * Best-effort check (bounded to ~500ms) of whether ANY live frame currently has a match for
+   * `fullSelector`, used to populate `state:'hidden'`'s `matchedAtStart` — a `hidden` wait
+   * "succeeds" immediately on a typo'd selector that never matched anything, so this gives a
+   * caller a way to tell that apart from a genuine disappearance.
+   */
+  private async probeSelectorMatchExists(page: Page, fullSelector: string): Promise<boolean> {
+    try {
+      return await Promise.race([
+        (async () => {
+          const live = page.frames().filter((f) => !f.isDetached());
+          const targets = live.length > 0 ? live : [page.mainFrame()];
+          for (const frame of targets) {
+            const handle = await frame.$(fullSelector).catch(() => null);
+            if (handle) return true;
+          }
+          return false;
+        })(),
+        new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 500)),
+      ]);
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Best-effort per-frame visibility diagnosis for a `state:'visible'` `wait_for_selector`
+   * timeout — mirrors Puppeteer's own `checkVisibility` rule exactly (computed `visibility` not
+   * `hidden`/`collapse`, AND a non-empty bounding box; `opacity` is deliberately ignored, same
+   * as Puppeteer) so the count/verdict it reports is consistent with what `resolveElement` itself
+   * just checked. Returns `null` (never throws) when nothing matched or the query-handler
+   * doesn't support `$$eval` for this selector dialect (e.g. some mocked/older environments) —
+   * callers fall back to the generic "no element found" message in that case.
+   */
+  private async diagnoseSelectorVisibility(
+    page: Page,
+    fullSelector: string,
+  ): Promise<{ total: number; visibleFlags: boolean[] } | null> {
+    const live = page.frames().filter((f) => !f.isDetached());
+    const targets = live.length > 0 ? live : [page.mainFrame()];
+    let flags: boolean[] = [];
+    for (const frame of targets) {
+      try {
+        const frameFlags = await frame.$$eval(fullSelector, (els) =>
+          els.map((el) => {
+            const s = getComputedStyle(el);
+            const r = el.getBoundingClientRect();
+            return !['hidden', 'collapse'].includes(s.visibility) && r.width > 0 && r.height > 0;
+          }),
+        );
+        flags = flags.concat(frameFlags);
+      } catch {
+        // Best-effort: no $$eval support for this frame/selector — skip it, don't fail the
+        // whole diagnosis over one frame.
+      }
+    }
+    if (flags.length === 0) return null;
+    return { total: flags.length, visibleFlags: flags };
+  }
+
+  /**
+   * Produces the state-naming timeout message for a `wait_for_selector` `state: 'visible'` or
+   * `state: 'attached'` timeout. Wrapped in an overall ~1000ms bound (it fits inside
+   * WAIT_FOR_SELECTOR_OUTER_GRACE_MS) so a slow/failing diagnosis can never itself cause the
+   * generic, undiagnostic outer-race message to win instead.
+   */
+  private async describeWaitForSelectorTimeout(
+    page: Page,
+    selector: string,
+    fullSelector: string,
+    state: 'visible' | 'attached',
+    waitMs: number,
+  ): Promise<string> {
+    const prefix = `wait_for_selector timed out after ${waitMs}ms waiting for state=${state}: `;
+    if (state === 'attached') {
+      return prefix + (await this.describeMissingElement(page, selector));
+    }
+    try {
+      const diagnosis = await Promise.race([
+        this.diagnoseSelectorVisibility(page, fullSelector),
+        new Promise<null>((resolve) => setTimeout(() => resolve(null), 1000)),
+      ]);
+      if (diagnosis && diagnosis.total > 0 && !diagnosis.visibleFlags[0]) {
+        const laterVisibleCount = diagnosis.visibleFlags.slice(1).filter(Boolean).length;
+        if (laterVisibleCount > 0) {
+          return (
+            prefix +
+            `the first match is not visible, but ${laterVisibleCount} later match(es) are. Visibility is ` +
+            'checked on the first match in document order; use a more specific selector.'
+          );
+        }
+        return (
+          prefix +
+          `${diagnosis.total} element(s) match "${selector}" and are attached to the DOM, but none is ` +
+          'visible (display:none, visibility:hidden, or zero width/height). Pass state "attached" if DOM ' +
+          'presence is enough.'
+        );
+      }
+    } catch {
+      // Best-effort — fall through to the generic "no element found" diagnosis below.
+    }
+    return prefix + (await this.describeMissingElement(page, selector));
   }
 
   /**

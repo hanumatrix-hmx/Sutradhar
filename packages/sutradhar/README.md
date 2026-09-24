@@ -129,6 +129,7 @@ if auto-detection fails.
 | `click(selector)` | Click by CSS selector **or** `[#id]` from a snapshot. |
 | `type(selector, text)` | Type into an input (selector or `[#id]`). |
 | `press(key)` | Press a keyboard key (`"Enter"`, `"Escape"`, …). |
+| `waitForSelector(selector, options?)` | Wait for `selector` to reach `options.state` — `"visible"` (default), `"attached"` (just in the DOM), or `"hidden"` (removed or not visible). Throws on timeout. |
 | `scroll(direction?, amount?)` | Scroll up/down/top/bottom. |
 | `screenshot()` | Full-page PNG as base64. |
 | `evaluate(expression)` | Run JS in the page; return serialized result. |

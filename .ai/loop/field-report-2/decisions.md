@@ -74,3 +74,21 @@ evaluation-results.json` (a benchmark-suite side effect), never previously track
 Choice: deleted it and added `apps/server/.sutradhar-eval/` to `.gitignore`, since this loop will
 run that suite repeatedly and it should not accumulate untracked cruft or get accidentally
 committed. Not a functional change to any package.
+
+## 2026-09-25 — Model routing restored
+
+The user switched the top-level session back to Opus 5.5, so the Orchestrator now runs on the
+model the prompt specifies. This closes the earlier "Model routing deviation" entry. Planner and
+Auditor stay pinned to Opus and Executors to Sonnet, as before.
+
+## 2026-09-25 — FR2-01 Executor scoped itself down; sent back before audit
+
+The Executor reported all green (32/32 live cases) but said it had skipped negatives N5-N7 and
+N10, plus several mechanism cases (ancestor-hidden, iframe, late insertion). Decision: send it
+back to finish them before the Auditor runs, instead of letting the Auditor spend a cycle
+rediscovering a known shortfall. The spec's Done-when/§6 lists can be added to, never reduced.
+
+Gotcha the Executor found, worth keeping for every future live-verify script: navigating to the
+same fixture URL with only a different #fragment is a same-document navigation in Chrome. The
+page doesn't reload and the fixture script doesn't re-run, so DOM state leaks between cases. Put
+per-case uniqueness in the query string, not the fragment.

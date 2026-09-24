@@ -498,4 +498,36 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
       expect(typeof mgr.createSession).toBe('function');
     });
   });
+
+  describe('waitForSelector state pass-through (FR2-01)', () => {
+    it('R1: passes the given state straight through to the engine — the engine, not the runtime, owns the default', async () => {
+      const runtime = new SutradharRuntime();
+      const spy = vi
+        .spyOn(runtime as any, 'runAction')
+        .mockResolvedValue({ success: true, actionType: 'wait_for_selector', executionTimeMs: 1 });
+
+      await runtime.waitForSelector('s', '7', 500, 't', 'hidden');
+
+      expect(spy).toHaveBeenCalledWith(
+        's',
+        { actionType: 'wait_for_selector', selector: '[data-sd-node-id="7"]', timeoutMs: 500, state: 'hidden' },
+        't',
+      );
+    });
+
+    it('R2: called without a state, passes state:undefined through unchanged', async () => {
+      const runtime = new SutradharRuntime();
+      const spy = vi
+        .spyOn(runtime as any, 'runAction')
+        .mockResolvedValue({ success: true, actionType: 'wait_for_selector', executionTimeMs: 1 });
+
+      await runtime.waitForSelector('s', '#t', 500, 't');
+
+      expect(spy).toHaveBeenCalledWith(
+        's',
+        { actionType: 'wait_for_selector', selector: '#t', timeoutMs: 500, state: undefined },
+        't',
+      );
+    });
+  });
 });

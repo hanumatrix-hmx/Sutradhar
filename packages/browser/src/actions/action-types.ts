@@ -23,6 +23,9 @@ export type ActionType =
   | 'drag_and_drop'
   | 'touch_tap';
 
+/** Element state 'wait_for_selector' waits for. See BrowserActionEngine for the exact visibility test. */
+export type WaitForSelectorState = 'visible' | 'attached' | 'hidden';
+
 /** Optional expectations an action's caller can assert; checked post-hoc by {@link ExecutionVerifier}. */
 export interface VerificationSpec {
   readonly expectedUrlSubstring?: string;
@@ -93,6 +96,8 @@ export interface ActionParams {
    * retry reliability."
    */
   readonly settle?: boolean | SettleSpec;
+  /** Element state to wait for. Only meaningful for 'wait_for_selector'. Default 'visible'. */
+  readonly state?: WaitForSelectorState;
 }
 
 export interface SettleSpec {

@@ -1,0 +1,4 @@
+{"case":"a-default-visible-toast","expected":"resolves after waiting ~1.5s","observed":{"elapsed":1626},"pass":true}
+{"case":"c1-hidden-banner","expected":"resolves after waiting ~1.5s for the hide","observed":{"elapsed":1508},"pass":true}
+{"case":"N-never-rejects","expected":"rejects with state=visible message","observed":{"error":"wait_for_selector timed out after 1200ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough."},"pass":true}
+{"case":"N8-sdk-invalid-state-rejects","expected":"rejects with Invalid wait_for_selector state","observed":{"error":"Invalid wait_for_selector state \"bogus\" — expected one of: visible, attached, hidden."},"pass":true}

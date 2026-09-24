@@ -24,6 +24,7 @@ import {
   type IBrowserSession,
   type IBrowserTab,
   type SettleSpec,
+  type WaitForSelectorState,
 } from '@sutradhar/browser';
 import path from 'node:path';
 import { access, realpath } from 'node:fs/promises';
@@ -705,16 +706,20 @@ export class SutradharRuntime {
     );
   }
 
-  /** Wait for a selector to appear (and be visible) before returning. */
+  /** Wait until the element matched by `target` reaches `state` (default 'visible'; 'attached' = present in
+   *  the DOM, visibility ignored; 'hidden' = absent or not visible, and succeeds immediately if nothing matches).
+   *  Visible means computed visibility not hidden/collapse AND a non-empty bounding box (opacity is ignored),
+   *  checked on the FIRST match. */
   public async waitForSelector(
     sessionId: string,
     target: string,
     timeoutMs?: number,
     tabId?: string,
+    state?: WaitForSelectorState,
   ): Promise<ActionResult> {
     return this.runAction(
       sessionId,
-      { actionType: 'wait_for_selector', selector: normalizeTarget(target), timeoutMs },
+      { actionType: 'wait_for_selector', selector: normalizeTarget(target), timeoutMs, state },
       tabId,
     );
   }

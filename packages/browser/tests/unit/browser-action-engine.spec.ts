@@ -2068,3 +2068,338 @@ describe('@sutradhar/browser BrowserActionEngine scroll — element-targeted (ne
     });
   });
 });
+
+describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01)', () => {
+  it('E1: default state is now visible — the intentional 0.5.0 behavior change from the old attached-only default', async () => {
+    const handle = mockHandle();
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData?.state).toBe('visible');
+    const mainFrame = (page.frames() as unknown as Frame[])[0]!;
+    expect(mainFrame.waitForSelector).toHaveBeenCalledWith('pierce/#t', expect.objectContaining({ visible: true }));
+  });
+
+  it('E2: state:"visible" only succeeds once the element is genuinely visible, never on attached-but-hidden', async () => {
+    const handle = mockHandle();
+    const calls: any[] = [];
+    const page = singleFramePage((_sel: string, options: any) => {
+      calls.push(options);
+      if (options?.visible) return Promise.resolve(handle);
+      return new Promise((_r, reject) => setTimeout(() => reject(new Error('not visible')), options?.timeout ?? 5));
+    });
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'visible',
+      timeoutMs: 200,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(calls.every((c) => c?.visible)).toBe(true);
+  });
+
+  it('E3: state:"attached" returns even though the element is hidden — the old default behavior, unchanged', async () => {
+    const handle = mockHandle();
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'attached',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData?.state).toBe('attached');
+    const mainFrame = (page.frames() as unknown as Frame[])[0]!;
+    const firstCallOptions = (mainFrame.waitForSelector as any).mock.calls[0][1];
+    expect(firstCallOptions.visible).not.toBe(true);
+  });
+
+  it('E4: state:"hidden" resolves on hide or removal, and reports matchedAtStart', async () => {
+    const handle = mockHandle();
+    const waitForSelectorMock = vi.fn().mockImplementation((_sel: string, opts: any) =>
+      opts?.hidden ? Promise.resolve(null) : Promise.reject(new Error('nope')),
+    );
+    const dollarMock = vi.fn().mockResolvedValue(handle);
+    const mainFrame = {
+      isDetached: () => false,
+      waitForSelector: waitForSelectorMock,
+      $: dollarMock,
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#toast',
+      state: 'hidden',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData?.state).toBe('hidden');
+    expect(result.outputData?.matchedAtStart).toBe(true);
+    expect(waitForSelectorMock).toHaveBeenCalledWith('pierce/#toast', expect.objectContaining({ hidden: true }));
+
+    dollarMock.mockResolvedValue(null);
+    const result2 = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#toast',
+      state: 'hidden',
+      maxRetries: 0,
+    });
+
+    expect(result2.success).toBe(true);
+    expect(result2.outputData?.matchedAtStart).toBe(false);
+  });
+
+  it('E5: hidden across multiple frames requires EVERY frame to agree, and every probe is fully awaited (no Promise.any)', async () => {
+    const order: string[] = [];
+    const mainFrame = {
+      isDetached: () => false,
+      waitForSelector: vi.fn().mockImplementation(() => {
+        order.push('main-probe-start');
+        return new Promise((resolve) =>
+          setTimeout(() => {
+            order.push('main-probe-settled');
+            resolve(null);
+          }, 5),
+        );
+      }),
+    } as unknown as Frame;
+    const iframe = {
+      isDetached: () => false,
+      waitForSelector: vi.fn().mockImplementation((_sel: string, opts: any) => {
+        order.push('iframe-probe-start');
+        return new Promise((_r, reject) =>
+          setTimeout(() => {
+            order.push('iframe-probe-settled');
+            reject(new Error('still visible'));
+          }, opts?.timeout ?? 5),
+        );
+      }),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, iframe]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#banner',
+      state: 'hidden',
+      timeoutMs: 400,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/waiting for state=hidden/);
+    // Ordering proves each probe fully settles before the next one starts — a losing
+    // Promise.any race would interleave "iframe-probe-start" before "main-probe-settled".
+    expect(order[0]).toBe('main-probe-start');
+    expect(order[1]).toBe('main-probe-settled');
+    expect(order[2]).toBe('iframe-probe-start');
+    expect(order[3]).toBe('iframe-probe-settled');
+  });
+
+  it('E6: a visible timeout names the state and diagnoses that matches exist but are hidden', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      waitForSelector: vi.fn().mockRejectedValue(new Error('timeout')),
+      $$eval: vi.fn().mockResolvedValue([false]),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/timed out after \d+ms waiting for state=visible/);
+    expect(result.error).toContain('attached to the DOM, but none is visible');
+  });
+
+  it('E7: first match hidden, a later match visible — diagnosed instead of silently timing out', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      waitForSelector: vi.fn().mockRejectedValue(new Error('timeout')),
+      $$eval: vi.fn().mockResolvedValue([false, true]),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '.dup',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('later match(es) are');
+  });
+
+  it('E8: visible with zero matches keeps the node-id staleness guidance and the "no element found" substring', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      waitForSelector: vi.fn().mockRejectedValue(new Error('timeout')),
+    } as unknown as Frame;
+    const plainPage = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(plainPage), {
+      actionType: 'wait_for_selector',
+      selector: '#nope',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('state=visible');
+    expect(result.error).toContain('No element found for selector: #nope');
+
+    const nodeIdPage = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+      evaluate: vi.fn().mockResolvedValue(null),
+    } as unknown as Page;
+
+    const nodeIdResult = await engine.executeAction(mockTab(nodeIdPage), {
+      actionType: 'wait_for_selector',
+      selector: '[data-sd-node-id="99"]',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(nodeIdResult.success).toBe(false);
+    expect(nodeIdResult.error).toContain('navigated since the last snapshot');
+  });
+
+  it('E9: an attached timeout names the state too', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      waitForSelector: vi.fn().mockRejectedValue(new Error('timeout')),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'attached',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/waiting for state=attached/);
+  });
+
+  it('E10: the state-naming error beats the generic outer-race timeout message', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      waitForSelector: vi.fn().mockImplementation(
+        (_sel: string, opts: any) =>
+          new Promise((_r, reject) => setTimeout(() => reject(new Error('TimeoutError')), opts?.timeout ?? 100)),
+      ),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      timeoutMs: 100,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).not.toMatch(/^Action wait_for_selector timed out after/);
+    expect(result.error).toMatch(/state=visible/);
+  });
+
+  it('E11: an invalid state bypassing the type system fails clearly instead of being silently coerced', async () => {
+    const handle = mockHandle();
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'bogus' as any,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Invalid wait_for_selector state "bogus"');
+  });
+
+  it('E12: timeoutMs 0 is clamped to 1ms, never passed to Puppeteer as 0 ("wait forever")', async () => {
+    const handle = mockHandle();
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      timeoutMs: 0,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    const mainFrame = (page.frames() as unknown as Frame[])[0]!;
+    expect(mainFrame.waitForSelector).toHaveBeenCalledWith('pierce/#t', expect.objectContaining({ timeout: 1 }));
+  });
+
+  it('E13: the visibility diagnosis is best-effort — a frame with no $$eval support still returns a state-naming error, not a TypeError', async () => {
+    const page = singleFramePage(() => Promise.reject(new Error('nope')));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/waiting for state=visible/);
+    expect(result.error).not.toMatch(/TypeError/);
+  });
+});

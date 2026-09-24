@@ -314,3 +314,68 @@ describe('@sutradhar/mcp-server registerTools', () => {
     expect(result.content[0].text).not.toContain('different call');
   });
 });
+
+describe('@sutradhar/mcp-server browser.wait_for_selector state (FR2-01)', () => {
+  it('M1: the state enum accepts the three valid values, omission, and rejects an invalid one', () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    registerTools(server, { runtime });
+
+    const schema = tools.get('browser.wait_for_selector')!.config.inputSchema.state;
+    expect(schema.safeParse('hidden').success).toBe(true);
+    expect(schema.safeParse('visible').success).toBe(true);
+    expect(schema.safeParse('attached').success).toBe(true);
+    expect(schema.safeParse(undefined).success).toBe(true);
+    expect(schema.safeParse('bogus').success).toBe(false);
+  });
+
+  it('M2: the handler passes state straight through to runtime.waitForSelector', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const spy = vi.spyOn(runtime, 'waitForSelector').mockResolvedValue({
+      success: true,
+      actionType: 'wait_for_selector',
+      executionTimeMs: 5,
+    });
+
+    registerTools(server, { runtime });
+    await tools
+      .get('browser.wait_for_selector')!
+      .handler({ sessionId: 's1', target: '#t', timeoutMs: 500, state: 'attached' });
+
+    expect(spy).toHaveBeenCalledWith('s1', '#t', 500, undefined, 'attached');
+  });
+
+  it('M3: the description names all three states and says which one is the default', () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    registerTools(server, { runtime });
+
+    const description = tools.get('browser.wait_for_selector')!.config.description as string;
+    expect(description).toContain('visible');
+    expect(description).toContain('attached');
+    expect(description).toContain('hidden');
+    expect(description.toLowerCase()).toContain('default');
+  });
+
+  it('M4: the "none is visible" error gets the state-aware hint, not the misleading generic "still loading" one', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'waitForSelector').mockResolvedValue({
+      success: false,
+      actionType: 'wait_for_selector',
+      executionTimeMs: 5,
+      error:
+        'wait_for_selector timed out after 5000ms waiting for state=visible: 1 element(s) match "#t" and ' +
+        'are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). ' +
+        'Pass state "attached" if DOM presence is enough.',
+    });
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.wait_for_selector')!.handler({ sessionId: 's1', target: '#t' });
+
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed.error).toContain('state:"attached"');
+    expect(parsed.error).not.toContain('page may still be loading');
+  });
+});

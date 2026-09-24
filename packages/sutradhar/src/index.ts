@@ -70,6 +70,8 @@ export {
   type ScreenshotOptions,
   type SetViewportOptions,
   type ViewportInfo,
+  type WaitForSelectorOptions,
+  type WaitForSelectorState,
 } from './page.js';
 export {
   SutradharRuntime,

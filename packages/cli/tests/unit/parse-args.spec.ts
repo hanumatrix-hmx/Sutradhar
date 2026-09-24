@@ -211,4 +211,37 @@ describe('@sutradhar/cli parseArgs', () => {
     expect(result.profileFlag).toBe('x');
     expect(result.cleanArgs).toEqual(['document.title']);
   });
+
+  // --state (FR2-01): wait_for_selector visibility states.
+  it('C1: parses --state hidden, stripping it (and its value) from cleanArgs', () => {
+    const result = parseArgs(['wait', '#t', '5000', '--state', 'hidden']);
+    expect(result.stateFlag).toBe('hidden');
+    expect(result.cleanArgs).toEqual(['#t', '5000']);
+    expect(result.unrecognizedFlags).toEqual([]);
+  });
+
+  it('C2: defaults stateFlag to undefined, not invalid, when --state is not given', () => {
+    const result = parseArgs(['wait', '#t']);
+    expect(result.stateFlag).toBeUndefined();
+    expect(result.stateFlagGivenButInvalid).toBe(false);
+  });
+
+  it('C3: --state bogus is invalid and stripped from cleanArgs', () => {
+    const result = parseArgs(['wait', '#t', '--state', 'bogus']);
+    expect(result.stateFlag).toBeUndefined();
+    expect(result.stateFlagGivenButInvalid).toBe(true);
+    expect(result.cleanArgs).toEqual(['#t']);
+  });
+
+  it('C4: --state with no value at all is invalid', () => {
+    const result = parseArgs(['wait', '#t', '--state']);
+    expect(result.stateFlag).toBeUndefined();
+    expect(result.stateFlagGivenButInvalid).toBe(true);
+  });
+
+  it('C5: each of the three valid state values parses', () => {
+    expect(parseArgs(['wait', '#t', '--state', 'visible']).stateFlag).toBe('visible');
+    expect(parseArgs(['wait', '#t', '--state', 'attached']).stateFlag).toBe('attached');
+    expect(parseArgs(['wait', '#t', '--state', 'hidden']).stateFlag).toBe('hidden');
+  });
 });

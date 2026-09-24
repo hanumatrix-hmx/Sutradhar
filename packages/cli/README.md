@@ -64,7 +64,7 @@ Run `sutradhar` with no arguments for the full command list.
 | `press <ref> <key>` | Focus an element then press a key (e.g. `press 3 Enter`). |
 | `press <ref> <key> --modifiers Control,Shift` | Hold modifier keys while pressing (e.g. Ctrl+Shift+ArrowRight to select a word — a real rich-text-editor toolbar formatting workflow). |
 | `select <ref> <value>` | Select an `<option>` by value on a `<select>`. |
-| `wait <ref> [timeoutMs]` | Wait for an element to appear and be visible. |
+| `wait <ref> [timeoutMs] [--state visible\|attached\|hidden]` | Wait for an element to become visible (default), just attached to the DOM (`--state attached`, visibility ignored), or removed/not visible (`--state hidden`). |
 | `eval <js-expression>` | Evaluate JS in the page's top-level context, print the result. |
 | `eval <js-expression> --frame <selector>` | Same, but inside a specific `<iframe>` (selector or numeric id from `snap`) — including a genuinely cross-origin one. Chain with `::` for an iframe nested inside another iframe, e.g. `--frame "iframe.widget::iframe.payment"`. |
 | `hover <ref>` | Hover an element. |

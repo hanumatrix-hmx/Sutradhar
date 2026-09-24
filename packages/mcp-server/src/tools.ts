@@ -40,6 +40,14 @@ export interface RegisterToolsOptions {
  * match wins. Deliberately short and generic — this is a hint, not a diagnosis.
  */
 const ERROR_HINTS: ReadonlyArray<readonly [pattern: string, hint: string]> = [
+  // These two must precede the generic 'timed out' entry below — a wait_for_selector timeout
+  // message always contains "timed out" too, and without a more specific match winning first
+  // the hint would be the misleading "The page may still be loading" (FR2-01).
+  [
+    'but none is visible',
+    'The element exists but is hidden. Pass state:"attached" to wait only for DOM presence, or trigger whatever reveals it.',
+  ],
+  ['waiting for state=hidden', 'The element is still visible. Check the selector, or raise timeoutMs.'],
   ['stale snapshot', 'Call browser.snapshot again and use a fresh element id.'],
   ['no visible element found', 'Verify the selector/id via browser.snapshot — the page may have changed.'],
   ['no element found', 'Verify the selector/id via browser.snapshot — the page may have changed.'],
@@ -677,18 +685,29 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
     'browser.wait_for_selector',
     {
       description:
-        'Wait for a CSS selector to appear and become visible before returning. Use this instead of ' +
-        'guessing a fixed delay for content that loads asynchronously (AJAX, animations, etc.).',
+        'Wait for an element to reach a state before returning: "visible" by default, or "attached" / ' +
+        '"hidden". Use this instead of guessing a fixed delay for content that loads or appears ' +
+        'asynchronously (AJAX, toasts, animations). Visibility is checked on the first element matching ' +
+        'the selector.',
       inputSchema: {
         sessionId: z.string(),
         target: z.string().describe(targetDesc),
         timeoutMs: z.number().int().optional().describe('Defaults to 10000ms.'),
         tabId: z.string().optional(),
+        state: z
+          .enum(['visible', 'attached', 'hidden'])
+          .optional()
+          .describe(
+            'Defaults to "visible". "visible": the element exists AND is visible (non-empty box, not ' +
+              'visibility:hidden; opacity is ignored). "attached": it only has to exist in the DOM. ' +
+              '"hidden": it is removed or not visible; succeeds immediately if nothing matches, so ' +
+              'double-check the selector.',
+          ),
       },
     },
-    async ({ sessionId, target, timeoutMs, tabId }) => {
+    async ({ sessionId, target, timeoutMs, tabId, state }) => {
       try {
-        return jsonResult(await runtime.waitForSelector(sessionId, target, timeoutMs, tabId));
+        return jsonResult(await runtime.waitForSelector(sessionId, target, timeoutMs, tabId, state));
       } catch (e) {
         return errorResult(`wait_for_selector failed: ${(e as Error).message}`);
       }

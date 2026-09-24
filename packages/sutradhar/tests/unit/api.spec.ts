@@ -104,4 +104,45 @@ describe('sutradhar SDK public API', () => {
       expect(stub.type).toHaveBeenLastCalledWith('sess-1', '7', 'hello', 'tab-1', true);
     });
   });
+
+  describe('Page.waitForSelector (FR2-01)', () => {
+    it('S1: forwards to runtime.waitForSelector with undefined timeout/state when no options are given', async () => {
+      const stub = { waitForSelector: vi.fn().mockResolvedValue({ success: true }) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      await page.waitForSelector('#t');
+
+      expect(stub.waitForSelector).toHaveBeenCalledWith('sess-1', '#t', undefined, 'tab-1', undefined);
+    });
+
+    it('S2: forwards options.state and options.timeout', async () => {
+      const stub = { waitForSelector: vi.fn().mockResolvedValue({ success: true }) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      await page.waitForSelector('#t', { state: 'hidden', timeout: 2000 });
+
+      expect(stub.waitForSelector).toHaveBeenCalledWith('sess-1', '#t', 2000, 'tab-1', 'hidden');
+    });
+
+    it('S3: rejects with the runtime\'s own error message on failure, instead of returning silently', async () => {
+      const stub = {
+        waitForSelector: vi.fn().mockResolvedValue({
+          success: false,
+          error: 'wait_for_selector timed out after 2000ms waiting for state=visible: no element found',
+        }),
+      };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      await expect(page.waitForSelector('#t', { timeout: 2000 })).rejects.toThrow(
+        'wait_for_selector timed out after 2000ms waiting for state=visible: no element found',
+      );
+    });
+
+    it('S4: resolves to undefined on success', async () => {
+      const stub = { waitForSelector: vi.fn().mockResolvedValue({ success: true }) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      await expect(page.waitForSelector('#t')).resolves.toBeUndefined();
+    });
+  });
 });

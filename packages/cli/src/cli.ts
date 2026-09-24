@@ -35,6 +35,8 @@ const {
   frameFlag,
   viewportFlag,
   viewportFlagGivenButInvalid,
+  stateFlag,
+  stateFlagGivenButInvalid,
   unrecognizedFlags,
 } = parseArgs(process.argv.slice(2));
 
@@ -445,11 +447,19 @@ async function cmdSelect(ref: string | undefined, value: string | undefined) {
 }
 
 async function cmdWait(ref: string | undefined, timeoutMsArg: string | undefined) {
-  if (!ref) printErrorAndExit('usage: sutradhar wait <ref> [timeoutMs]  (ref = a selector, or a numeric id from "snap")');
+  if (!ref)
+    printErrorAndExit(
+      'usage: sutradhar wait <ref> [timeoutMs] [--state visible|attached|hidden]  (ref = a selector, or a numeric id from "snap")',
+    );
   const timeoutMs = timeoutMsArg ? Number(timeoutMsArg) : undefined;
+  const state = stateFlag ?? 'visible';
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.waitForSelector(sessionId, ref!, timeoutMs);
-    console.log(result.success ? `${ref} appeared` : `Wait failed: ${result.error}`);
+    const result = await runtime.waitForSelector(sessionId, ref!, timeoutMs, undefined, stateFlag);
+    console.log(
+      result.success
+        ? `${ref} is ${state === 'hidden' ? 'hidden or absent' : state} (state=${state})`
+        : `Wait failed: ${result.error}`,
+    );
     if (!result.success) process.exitCode = 1;
   });
 }
@@ -733,6 +743,9 @@ async function main() {
   if (viewportFlagGivenButInvalid) {
     printErrorAndExit('--viewport must be WIDTHxHEIGHT (e.g. --viewport 390x844)');
   }
+  if (stateFlagGivenButInvalid) {
+    printErrorAndExit('--state must be one of: visible, attached, hidden (e.g. wait "#toast" --state hidden)');
+  }
   switch (verb) {
     case 'doctor':
       return cmdDoctor();
@@ -828,7 +841,9 @@ Commands:
                                 to select a word — a real rich-text-editor toolbar formatting
                                 workflow)
   select <ref> <value>         Select an <option> by value on a <select>
-  wait <ref> [timeoutMs]       Wait for an element to appear and be visible
+  wait <ref> [timeoutMs] [--state S]
+                                Wait for an element to become visible (default), --state attached
+                                (just in the DOM), or --state hidden (removed or not visible)
   eval <js-expression>         Evaluate JS in the page's top-level context, print the result
   eval <js-expression> --frame <selector>
                                 Same, but inside a specific <iframe> (selector or a numeric id
@@ -902,6 +917,8 @@ Flags:
                         DOM mutations, no in-flight network requests) before returning — helps
                         when the action triggers a menu/modal/toast/virtualized-list-update that
                         renders a moment later
+  --state <S>           "wait" only: visible (default), attached (just in the DOM), or hidden
+                        (removed or not visible). Ignored on other commands.
   --no-text             "snap" drops per-element text, keeping tag+role+id (see command list)
   --ids-only            "snap" keeps only the bracketed id, nothing else (see command list)
   --scan-listeners      "snap" also finds real addEventListener-only elements (see command list)

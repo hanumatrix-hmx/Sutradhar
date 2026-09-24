@@ -5,7 +5,23 @@
  * MCP server and the REST API.
  */
 
-import type { SutradharRuntime, SnapshotResult, StorageState, SettleSpec } from '@sutradhar/capability-runtime';
+import type {
+  SutradharRuntime,
+  SnapshotResult,
+  StorageState,
+  SettleSpec,
+  WaitForSelectorState,
+} from '@sutradhar/capability-runtime';
+
+export type { WaitForSelectorState } from '@sutradhar/capability-runtime';
+
+/** Options accepted by {@link Page.waitForSelector} (Playwright-style names). */
+export interface WaitForSelectorOptions {
+  /** 'visible' (default) | 'attached' | 'hidden'. */
+  state?: WaitForSelectorState;
+  /** Milliseconds; defaults to 10000. */
+  timeout?: number;
+}
 
 /** Options accepted by {@link Page.click} / {@link Page.type}. */
 export interface ElementOptions {
@@ -93,6 +109,18 @@ export class Page {
   /** Type text into an input targeted by selector or [#id]. */
   public async type(selector: string, text: string, options?: ElementOptions): Promise<void> {
     await this.runtime.type(this.sessionId, selector, text, this.tabId, options?.settle);
+  }
+
+  /**
+   * Wait for `selector` (CSS or a snapshot [#id]) to reach `options.state` ('visible' by
+   * default, or 'attached'/'hidden'). Throws on timeout, with a message naming the state it
+   * waited for — unlike {@link Page.click}/{@link Page.type}, which swallow a failed result, a
+   * wait that returned silently on timeout would be the same silent-wrongness bug class this
+   * method exists to fix, so it throws instead (matching Puppeteer/Playwright's own behavior).
+   */
+  public async waitForSelector(selector: string, options?: WaitForSelectorOptions): Promise<void> {
+    const r = await this.runtime.waitForSelector(this.sessionId, selector, options?.timeout, this.tabId, options?.state);
+    if (!r.success) throw new Error(r.error ?? `waitForSelector("${selector}") failed`);
   }
 
   /** Press a keyboard key (e.g. `"Enter"`, `"Escape"`). */

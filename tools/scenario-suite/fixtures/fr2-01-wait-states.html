@@ -1,0 +1,189 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>FR2-01 wait_for_selector states</title>
+<style>
+  body { font-family: sans-serif; padding: 16px; }
+  .toast { display: none; background: #222; color: #fff; padding: 8px 12px; }
+  #vis-hidden { visibility: hidden; width: 100px; height: 20px; background: #ddd; }
+  #zero-size { width: 0; height: 0; overflow: hidden; background: #ddd; }
+  #ancestor-hidden { display: none; }
+  #opacity-zero { opacity: 0; width: 100px; height: 20px; background: #ddd; }
+  #offscreen { position: absolute; left: -9999px; width: 100px; height: 20px; background: #ddd; }
+  /* Not ':first-of-type' — that means "first <div> child of its parent", which is #toast
+     (the actual first div under <body>), not "first element matching .dup". A dedicated class
+     on just the first .dup element is unambiguous regardless of what else shares the page. */
+  .dup-first { display: none; }
+  #never { display: none; }
+</style>
+</head>
+<body>
+<h1>FR2-01 wait_for_selector states fixture</h1>
+
+<div id="toast" class="toast">Saved!</div>
+<div id="vis-hidden">vis-hidden content</div>
+<div id="zero-size">zero-size content</div>
+<div id="ancestor-hidden"><div id="child">child content</div></div>
+<div id="opacity-zero">opacity-zero content</div>
+<div id="offscreen">offscreen content</div>
+<div id="banner">banner content</div>
+<div id="spinner">spinner content</div>
+<!-- #late is inserted dynamically, not present at load -->
+<div id="never">never revealed</div>
+<div id="stays">stays visible forever</div>
+<div class="dup dup-first">dup first (hidden)</div>
+<div class="dup">dup second (visible)</div>
+
+<div id="host"></div>
+<iframe id="f" srcdoc="
+  <div id='frame-toast' style='display:none'>frame toast</div>
+  <script>
+    window.__armFrameTimer = function(delay) {
+      setTimeout(function() {
+        var el = document.getElementById('frame-toast');
+        el.style.display = 'block';
+        if (window.parent.__fx) {
+          window.parent.__fx.events.push({ id: 'frame-toast', what: 'shown', at: Date.now() });
+        }
+      }, delay);
+    };
+    window.__revealFrameToast = function() {
+      var el = document.getElementById('frame-toast');
+      el.style.display = 'block';
+      if (window.parent.__fx) {
+        window.parent.__fx.events.push({ id: 'frame-toast', what: 'shown', at: Date.now() });
+      }
+    };
+  </script>
+"></iframe>
+
+<script>
+(function () {
+  var hash = window.location.hash || '';
+  var mode = hash.indexOf('manual') !== -1 ? 'manual' : 'auto';
+  var delayMatch = hash.match(/delay=(\d+)/);
+  var delay = delayMatch ? parseInt(delayMatch[1], 10) : 1500;
+
+  window.__fx = { events: [], mode: mode };
+
+  function record(id, what) {
+    window.__fx.events.push({ id: id, what: what, at: Date.now() });
+  }
+
+  // Open shadow root with a hidden-then-shown element (checks 'pierce/' still works).
+  var host = document.getElementById('host');
+  var shadow = host.attachShadow({ mode: 'open' });
+  var shadowToast = document.createElement('div');
+  shadowToast.id = 'shadow-toast';
+  shadowToast.textContent = 'shadow toast';
+  shadowToast.style.display = 'none';
+  shadow.appendChild(shadowToast);
+
+  var T = {
+    toast: {
+      reveal: function () {
+        document.getElementById('toast').style.display = 'block';
+        record('toast', 'shown');
+      },
+    },
+    'vis-hidden': {
+      reveal: function () {
+        document.getElementById('vis-hidden').style.visibility = 'visible';
+        record('vis-hidden', 'shown');
+      },
+    },
+    'zero-size': {
+      reveal: function () {
+        var el = document.getElementById('zero-size');
+        el.style.width = '120px';
+        el.style.height = '24px';
+        record('zero-size', 'shown');
+      },
+    },
+    'ancestor-hidden': {
+      reveal: function () {
+        document.getElementById('ancestor-hidden').style.display = 'block';
+        record('child', 'shown');
+      },
+    },
+    'shadow-toast': {
+      reveal: function () {
+        shadowToast.style.display = 'block';
+        record('shadow-toast', 'shown');
+      },
+    },
+    late: {
+      insert: function () {
+        var el = document.createElement('div');
+        el.id = 'late';
+        el.textContent = 'late content';
+        document.body.appendChild(el);
+        record('late', 'inserted');
+      },
+    },
+    banner: {
+      hide: function () {
+        document.getElementById('banner').style.display = 'none';
+        record('banner', 'hidden');
+      },
+    },
+    spinner: {
+      remove: function () {
+        var el = document.getElementById('spinner');
+        if (el) el.remove();
+        record('spinner', 'removed');
+      },
+    },
+    'frame-toast': {
+      reveal: function () {
+        var f = document.getElementById('f');
+        if (f && f.contentWindow && f.contentWindow.__revealFrameToast) {
+          f.contentWindow.__revealFrameToast();
+        }
+      },
+    },
+  };
+
+  // Public manual-mode API used by the live-verify script's observer.
+  window.__fx.reveal = function (id) {
+    if (T[id] && T[id].reveal) T[id].reveal();
+  };
+  window.__fx.hide = function (id) {
+    if (T[id] && T[id].hide) T[id].hide();
+  };
+  window.__fx.remove = function (id) {
+    if (T[id] && T[id].remove) T[id].remove();
+  };
+  window.__fx.insert = function (id) {
+    if (T[id] && T[id].insert) T[id].insert();
+  };
+
+  function runAll() {
+    T.toast.reveal();
+    T['vis-hidden'].reveal();
+    T['zero-size'].reveal();
+    T['ancestor-hidden'].reveal();
+    T['shadow-toast'].reveal();
+    T.late.insert();
+    T.banner.hide();
+    T.spinner.remove();
+    T['frame-toast'].reveal();
+  }
+
+  if (mode === 'auto') {
+    var f = document.getElementById('f');
+    var armWhenReady = function () {
+      if (f.contentWindow && f.contentWindow.__armFrameTimer) {
+        f.contentWindow.__armFrameTimer(delay);
+      }
+    };
+    if (f.contentDocument && f.contentDocument.readyState === 'complete') armWhenReady();
+    else f.addEventListener('load', armWhenReady);
+    setTimeout(runAll, delay);
+  }
+  // #manual: no timers — the observer drives transitions via window.__fx.*
+})();
+</script>
+</body>
+</html>

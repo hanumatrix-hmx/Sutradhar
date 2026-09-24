@@ -59,7 +59,7 @@ Grouped here by category, matching `tools.ts`'s own section layout.
 | `browser.upload_file` | Set a file input's value. |
 | `browser.upload_file_via_trigger` | For JS-triggered file choosers not backed by a plain `<input type=file>` — races `waitForFileChooser()` against clicking the triggering selector. |
 | `browser.download_file` | Trigger and wait for a file download; saves under an allow-listed directory. |
-| `browser.wait_for_selector` | Wait for an element to appear/become visible. |
+| `browser.wait_for_selector` | Wait for an element to reach a state: `visible` (default), `attached` (just in the DOM), or `hidden` (removed or not visible). |
 | `browser.fill_form` | Bulk multi-field form fill — an object of `{target: value}` pairs in one call instead of N `type` round-trips; a field that fails doesn't stop the rest. |
 | `browser.click_at_point` | Click a raw viewport `(x, y)` coordinate with no element/selector at all — the escape hatch for canvas-heavy or custom-rendered UI with nothing addressable via DOM. |
 | `browser.drag_at_points` | Coordinate-only mouse-down → move → mouse-up drag, the drag sibling of `click_at_point` (distinct from `drag_and_drop`'s element-to-element HTML5 `DataTransfer` API). |

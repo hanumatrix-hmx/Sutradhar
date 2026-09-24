@@ -65,6 +65,14 @@ export interface ParsedArgs {
    *  `--viewport bogus`) — lets the caller reject it with a clear usage message instead of
    *  silently ignoring a typo'd value. */
   viewportFlagGivenButInvalid: boolean;
+  /** Parsed from `--state visible|attached|hidden` — undefined when the flag isn't given.
+   *  Only meaningful for the `wait` command; `undefined` leaves the engine's own default
+   *  ('visible') in force. */
+  stateFlag: 'visible' | 'attached' | 'hidden' | undefined;
+  /** True when `--state` was given but its value was missing or not one of the three valid
+   *  values — lets the caller reject it with a clear usage message instead of silently
+   *  falling back to the default. */
+  stateFlagGivenButInvalid: boolean;
   /** Any `--something`-shaped argument that isn't one of the flags this parser recognizes (and
    *  isn't a consumed value of one, e.g. the URL after `--baseline`). Found live (external field
    *  report, PROB-042): a typo'd or misplaced flag like `sutradhar screenshot --help` was
@@ -118,6 +126,12 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
   const viewportFlag = viewportMatch
     ? { width: parseInt(viewportMatch[1]!, 10), height: parseInt(viewportMatch[2]!, 10) }
     : undefined;
+  const stateFlagIndex = args.indexOf('--state');
+  const stateRaw = stateFlagIndex !== -1 ? args[stateFlagIndex + 1] : undefined;
+  const VALID_STATES = new Set(['visible', 'attached', 'hidden']);
+  const stateFlag =
+    stateRaw && VALID_STATES.has(stateRaw) ? (stateRaw as 'visible' | 'attached' | 'hidden') : undefined;
+  const stateFlagGivenButInvalid = stateFlagIndex !== -1 && !stateFlag;
   const KNOWN_FLAGS = new Set([
     '--headed',
     '--fail-on-diff',
@@ -133,6 +147,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     '--baseline',
     '--modifiers',
     '--frame',
+    '--state',
   ]);
   const isConsumedValue = (i: number): boolean =>
     (profileFlagIndex !== -1 && i === profileFlagIndex + 1) ||
@@ -141,7 +156,8 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     (baselineFlagIndex !== -1 && i === baselineFlagIndex + 1) ||
     (modifiersFlagIndex !== -1 && i === modifiersFlagIndex + 1) ||
     (frameFlagIndex !== -1 && i === frameFlagIndex + 1) ||
-    (viewportFlagIndex !== -1 && i === viewportFlagIndex + 1);
+    (viewportFlagIndex !== -1 && i === viewportFlagIndex + 1) ||
+    (stateFlagIndex !== -1 && i === stateFlagIndex + 1);
   const cleanArgs = args.filter((a, i) => !KNOWN_FLAGS.has(a) && !isConsumedValue(i));
   // Anything left that's still shaped like a flag (`--foo`) is almost certainly a typo'd or
   // misplaced flag, not literal positional data — see `unrecognizedFlags`'s doc comment.
@@ -165,6 +181,8 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     frameFlag,
     viewportFlag,
     viewportFlagGivenButInvalid: viewportFlagIndex !== -1 && !viewportFlag,
+    stateFlag,
+    stateFlagGivenButInvalid,
     unrecognizedFlags,
   };
 }
