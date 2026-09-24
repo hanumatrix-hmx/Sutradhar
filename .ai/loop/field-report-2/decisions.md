@@ -114,3 +114,35 @@ table. The ones worth calling out:
    truncation.
 9. Sequencing: FR2-02 shares four files with FR2-01, so its DEVELOP waits until FR2-01's audit and
    fix cycles finish.
+
+## 2026-09-25 — FR2-03 spec decisions (from the Planner)
+
+Spec at `evidence/FR2-03/spec.md`, extracted verbatim from the Planner's subagent transcript at
+`~/.claude/projects/<project>/<session>/subagents/agent-<id>.jsonl`. The `tasks/*.output` files
+stay empty for Plan agents, so this is the reliable way to save specs from now on.
+
+Adopted as written (full text in spec §7.1):
+- D1: every Chrome that Sutradhar launches gets `--sutradhar-*` marker switches. Temp dirs that
+  Puppeteer creates get a `.sutradhar-owner.json` file.
+- D2: GC deletes a `puppeteer_dev_chrome_profile-*` dir only when it can prove Sutradhar created
+  it. Other Puppeteer users' dirs are never touched.
+- D3: `close --all-stale` is an exact alias of `doctor --gc`.
+- D4: no temp-root env var. TEMP/TMP/TMPDIR already isolate the harness. If preflight shows that
+  isn't enough, fall back to `SUTRADHAR_CLI_TEMP_ROOT`.
+- D5: an orphaned named-profile session gets its process killed, but its dir is never deleted.
+- D6: the limitation with legacy custom state dirs is documented, not fixed.
+- D7: `unresponsive` and `unknown` sessions are never collected.
+- D8: 120 s grace period, measured from dir mtime. No env knob.
+- D9: GC exits 0, 1 or 2. `close` still exits 0 and prints a warning if it couldn't remove a dir.
+- D10: MCP shuts down on stdin `end`/`close`, not `error`. A 10 s deadline forces exit(1).
+- D11: temp dirs get an `mkdtemp` suffix. This also fixes a real collision when two sessions start
+  in the same millisecond.
+- D12: `sessions` is read-only and exits 0.
+
+Also adopted: PID-verified kills in `close` and self-heal. The spec found that today's code kills
+`state.chromePid` without checking (`cli.ts:135`, `:716`), which could kill an unrelated reused
+PID. That's in scope because FR2-03 owns that code path.
+
+Sequencing: FR2-03 DEVELOP waits for FR2-01 to reach DONE, because GAP-003's fix may touch
+`spawn-chrome.ts` and FR2-01 changed `cli.ts`/`parse-args.ts`. FR2-03 has no file overlap with
+FR2-02, so those two can be developed in parallel (separate worktrees) once FR2-01 is done.
