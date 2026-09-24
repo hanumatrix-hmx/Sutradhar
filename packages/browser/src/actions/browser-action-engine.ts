@@ -299,10 +299,12 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         // dispatch takes even longer than that to actually finish.
         const wasTimeout = this.isTimeoutError(lastError, params.actionType);
         if (wasTimeout && inFlightDispatch) {
+          let graceTimer: ReturnType<typeof setTimeout>;
           await Promise.race([
             inFlightDispatch.catch(() => {}),
-            new Promise((r) => setTimeout(r, TIMEOUT_SETTLEMENT_GRACE_MS)),
+            new Promise((r) => { graceTimer = setTimeout(r, TIMEOUT_SETTLEMENT_GRACE_MS); }),
           ]);
+          clearTimeout(graceTimer!);
         }
 
         this.logger.warn(
@@ -411,14 +413,24 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    * loser's real settlement after a timeout instead of abandoning it mid-flight (see the retry
    * loop in {@link executeActionSerialized}, and {@link isTimeoutError} for how a caller
    * distinguishes this timeout from dispatchAction's own thrown errors).
+   *
+   * The timeout's own `setTimeout` is cleared as soon as either side of the race settles. Left
+   * running, a won-by-dispatch race (the common case) would leave a referenced timer alive for
+   * up to the full `timeoutMs` — keeping Node's event loop open that whole time and delaying
+   * process exit in one-shot callers like the CLI (found live: `sutradhar wait` took ~3s to
+   * actually exit after printing its result, because this dangling timer kept the loop alive
+   * past the CDP disconnect until the CLI's own force-exit fallback fired).
    */
   private async raceWithTimeout<T>(dispatchPromise: Promise<T>, actionType: string, timeoutMs: number): Promise<T> {
-    return Promise.race([
-      dispatchPromise,
-      new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error(this.timeoutMessage(actionType, timeoutMs))), timeoutMs),
-      ),
-    ]);
+    let timer: ReturnType<typeof setTimeout>;
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => reject(new Error(this.timeoutMessage(actionType, timeoutMs))), timeoutMs);
+    });
+    try {
+      return await Promise.race([dispatchPromise, timeoutPromise]);
+    } finally {
+      clearTimeout(timer!);
+    }
   }
 
   private timeoutMessage(actionType: string, timeoutMs: number): string {
@@ -1316,10 +1328,14 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     // and handle the dialog (via getPendingDialog/handleDialog) before it's auto-dismissed.
     // The original click promise is left to settle in the background either way — swallowing
     // its eventual outcome so a late rejection can't surface as an unhandled rejection.
-    await Promise.race([
-      handle.click({ button, offset }).catch(() => {}),
-      new Promise<void>((resolve) => setTimeout(resolve, 1500)),
-    ]);
+    {
+      let clickRaceTimer: ReturnType<typeof setTimeout>;
+      await Promise.race([
+        handle.click({ button, offset }).catch(() => {}),
+        new Promise<void>((resolve) => { clickRaceTimer = setTimeout(resolve, 1500); }),
+      ]);
+      clearTimeout(clickRaceTimer!);
+    }
 
     // If the click itself triggered a navigation, the handle evaluating this check may already
     // be mid-teardown ("Execution context was destroyed") — that's strong evidence the click
@@ -1332,12 +1348,14 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     // safety net) — race it against a short timeout rather than silently waiting out that
     // entire window, so a dialog-triggering click still returns promptly and the caller gets
     // a real chance to see and handle the dialog before it's auto-dismissed.
+    let deliveredRaceTimer: ReturnType<typeof setTimeout>;
     const delivered = await Promise.race([
       handle
         .evaluate((el) => !!(el as HTMLElement & { __ptClicked?: boolean }).__ptClicked)
         .catch(() => true),
-      new Promise<boolean>((resolve) => setTimeout(() => resolve(true), 1500)),
+      new Promise<boolean>((resolve) => { deliveredRaceTimer = setTimeout(() => resolve(true), 1500); }),
     ]);
+    clearTimeout(deliveredRaceTimer!);
 
     if (!delivered) {
       if (button === 'right') {
