@@ -12,7 +12,7 @@ import { realpath, access } from 'node:fs/promises';
 import { EventBus } from '@sutradhar/events';
 import { StructuredLogger } from '@sutradhar/observability';
 import { SessionId } from '@sutradhar/contracts';
-import { ElementHandle, KeyInput, Page } from 'puppeteer-core';
+import { ElementHandle, Frame, KeyInput, Page } from 'puppeteer-core';
 import { IBrowserTab } from '../session/browser-tab.js';
 import { ExecutionVerifier } from '../verifier/execution-verifier.js';
 import { SD_GENERATION_ATTR, SD_CURRENT_GENERATION_ATTR, SD_FINGERPRINT_ATTR } from '../dom/dom-semantic-engine.js';
@@ -82,7 +82,25 @@ const TIMEOUT_SETTLEMENT_GRACE_MS = 2000;
  *  effectively the same instant — and the outer race, which names no state, usually wins,
  *  producing the old undiagnostic `Action wait_for_selector timed out after Xms` instead of the
  *  state-naming message the inner wait would have produced a moment later (FR2-01). */
-const WAIT_FOR_SELECTOR_OUTER_GRACE_MS = 2000;
+let WAIT_FOR_SELECTOR_OUTER_GRACE_MS = 2000;
+
+/** Test-only hook (FR2-01 fix-1, GAP-013): lets a unit test temporarily zero out the grace
+ *  period to PROVE a test actually depends on it (by showing the test fails without it), then
+ *  restore the real value. Not re-exported from the package's public `index.ts`, and not part
+ *  of the engine's public surface — imported directly from this module path by the spec file. */
+export function __TEST_ONLY_setWaitForSelectorOuterGraceMs(ms: number): number {
+  const previous = WAIT_FOR_SELECTOR_OUTER_GRACE_MS;
+  WAIT_FOR_SELECTOR_OUTER_GRACE_MS = ms;
+  return previous;
+}
+
+/** Hard cap (GAP-010) on the best-effort failure screenshot in {@link executeActionSerialized}.
+ *  Found live during FR2-01 audit-1: a screenshot attempt against a backgrounded/non-foreground
+ *  tab can hang far longer than any reasonable "best effort" — up to the CDP protocol timeout
+ *  (~180s) — turning an already-failed action into a multi-minute stall. The screenshot is
+ *  diagnostic-only, so racing it against this bound and skipping it (with a logged warning) on
+ *  timeout is strictly better than blocking the actual result on it. */
+const FAILURE_SCREENSHOT_TIMEOUT_MS = 3000;
 
 /** Defaults for {@link ActionParams.settle} when passed as `true` instead of a full spec. */
 const DEFAULT_SETTLE_SPEC: Required<SettleSpec> = {
@@ -337,10 +355,22 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     let failureScreenshot: string | undefined;
     if (tab.page) {
       try {
-        const buf = await tab.page.screenshot({ encoding: 'base64' });
+        const buf = await Promise.race([
+          tab.page.screenshot({ encoding: 'base64' }),
+          new Promise<never>((_, reject) =>
+            setTimeout(
+              () => reject(new Error(`failure screenshot exceeded ${FAILURE_SCREENSHOT_TIMEOUT_MS}ms`)),
+              FAILURE_SCREENSHOT_TIMEOUT_MS,
+            ),
+          ),
+        ]);
         failureScreenshot = String(buf);
-      } catch {
-        // best-effort — leave undefined
+      } catch (err) {
+        // best-effort — leave undefined. GAP-010: a hung screenshot (e.g. a backgrounded tab)
+        // must not itself block the already-failed result past FAILURE_SCREENSHOT_TIMEOUT_MS.
+        this.logger.warn(
+          `[BrowserActionEngine] Skipping failure screenshot: ${(err as Error)?.message ?? String(err)}`,
+        );
       }
     }
 
@@ -657,10 +687,16 @@ export class BrowserActionEngine implements IBrowserActionEngine {
             `Invalid wait_for_selector state "${state}" — expected one of: visible, attached, hidden.`,
           );
         }
-        // Puppeteer treats `timeout: 0` as "wait forever", not "check once" — clamp to at least
-        // 1ms so a caller-supplied 0 behaves as a single immediate check instead of a hang.
-        const waitMs = Math.max(1, params.timeoutMs ?? 10000);
         const fullSelector = `pierce/${params.selector}`;
+
+        // GAP-011: `timeoutMs <= 0` means "check once, don't wait" — a single immediate
+        // evaluation of the requested state, with NO timer/race involved at all (the old
+        // behavior clamped to a 1ms Puppeteer `waitForSelector` call, which still raced a real
+        // timer and could lose even when the element was already in the requested state).
+        if (params.timeoutMs !== undefined && params.timeoutMs <= 0) {
+          return this.checkWaitForSelectorOnce(page, params.selector, fullSelector, state);
+        }
+        const waitMs = params.timeoutMs ?? 10000;
 
         if (state === 'hidden') {
           // `resolveElement` can't express `hidden` — Puppeteer's own `waitForSelector({hidden:
@@ -668,22 +704,51 @@ export class BrowserActionEngine implements IBrowserActionEngine {
           // `resolveElement` already maps every rejection to `null` too, so the two "null"
           // outcomes would be indistinguishable through that helper (FR2-01 spec note).
           const matchedAtStart = await this.probeSelectorMatchExists(page, fullSelector);
-          const becameHidden = await this.waitForHiddenInAllFrames(page, fullSelector, waitMs);
+          let becameHidden: boolean;
+          try {
+            becameHidden = await this.waitForHiddenInAllFrames(page, fullSelector, waitMs);
+          } catch (err) {
+            // GAP-015: a genuinely invalid selector (parser/SyntaxError) must fail fast with
+            // that real error, not be swallowed into "still visible" after the full timeout.
+            throw new Error(
+              `wait_for_selector failed waiting for state=hidden: ${(err as Error)?.message ?? String(err)}`,
+            );
+          }
           if (!becameHidden) {
             throw new Error(
               `wait_for_selector timed out after ${waitMs}ms waiting for state=hidden: an element ` +
                 `matching "${params.selector}" is still visible.`,
             );
           }
-          return { foundSelector: params.selector, state: 'hidden', matchedAtStart };
+          // GAP-016: hidden can succeed on the FIRST match while a LATER match (in some frame)
+          // is still visible — best-effort, bounded diagnostic so a caller can spot that.
+          const otherVisibleMatches = await this.countOtherVisibleMatches(page, fullSelector).catch(() => 0);
+          const out: Record<string, unknown> = { foundSelector: params.selector, state: 'hidden', matchedAtStart };
+          if (otherVisibleMatches > 0) out.otherVisibleMatches = otherVisibleMatches;
+          return out;
         }
 
-        const handle = await this.resolveElement(page, fullSelector, {
-          visible: state === 'visible' ? true : undefined,
-          timeoutMs: waitMs,
-        });
+        if (state === 'visible') {
+          // GAP-008: interval polling (not Puppeteer's own `visible:true`, which forces
+          // requestAnimationFrame polling and can stall for ~500ms/frame on a non-foreground
+          // tab) — see {@link waitForVisibleWithPolling}.
+          const handle = await this.waitForVisibleWithPolling(page, fullSelector, waitMs);
+          if (!handle) {
+            throw new Error(
+              await this.describeWaitForSelectorTimeout(page, params.selector, fullSelector, 'visible', waitMs),
+            );
+          }
+          return { foundSelector: params.selector, state };
+        }
+
+        // state === 'attached' — UNCHANGED: still resolveElement without `visible`, same as
+        // before FR2-01 fix-1. Not exposed to the rAF-polling risk since `visible`/`hidden` are
+        // never passed here.
+        const handle = await this.resolveElement(page, fullSelector, { timeoutMs: waitMs });
         if (!handle) {
-          throw new Error(await this.describeWaitForSelectorTimeout(page, params.selector, fullSelector, state, waitMs));
+          throw new Error(
+            await this.describeWaitForSelectorTimeout(page, params.selector, fullSelector, 'attached', waitMs),
+          );
         }
         return { foundSelector: params.selector, state };
       }
@@ -1174,43 +1239,208 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    * {@link resolveElement}: every probe is fully awaited before the next one starts, so no
    * losing wait is ever abandoned mid-flight to reject later after a frame detach.
    */
-  private async waitForHiddenInAllFrames(page: Page, fullSelector: string, waitMs: number): Promise<boolean> {
-    const live = page.frames().filter((f) => !f.isDetached());
-    const targets = live.length > 0 ? live : [page.mainFrame()];
-
-    if (targets.length === 1) {
-      const only = targets[0]!;
-      return only
-        .waitForSelector(fullSelector, { hidden: true, timeout: waitMs })
-        .then(() => true)
-        .catch(() => false);
-    }
-
-    // Several live frames: a pass succeeds only when EVERY frame agrees the selector is hidden
-    // there. Re-read `page.frames()` each pass (mirroring resolveElement) so a frame that gets
-    // destroyed and recreated mid-wait (e.g. TinyMCE re-initializing its iframe) is naturally
-    // picked up rather than probed against a stale reference.
+  private async waitForHiddenInAllFrames(page: Page, fullSelector: string, waitMs: number, pollMs = 100): Promise<boolean> {
     const deadline = Date.now() + waitMs;
-    while (Date.now() < deadline) {
-      const currentFrames = page.frames().filter((f) => !f.isDetached());
-      const ordered = currentFrames.length > 0 ? currentFrames : [page.mainFrame()];
-
-      let allHidden = true;
-      for (const frame of ordered) {
-        const remaining = deadline - Date.now();
-        if (remaining <= 0) return false;
-        const hiddenHere = await frame
-          .waitForSelector(fullSelector, { hidden: true, timeout: Math.min(150, remaining) })
-          .then(() => true)
-          .catch(() => false);
-        if (!hiddenHere) {
-          allHidden = false;
-          break;
-        }
-      }
-      if (allHidden) return true;
+    for (;;) {
+      // Re-read live frames every pass (mirroring resolveElement) so a frame that gets destroyed
+      // and recreated mid-wait (e.g. TinyMCE re-initializing its iframe) is naturally picked up
+      // rather than probed against a stale reference. Every probe is fully awaited in order — no
+      // Promise.any — for the same PROB-015 reason documented on {@link resolveElement}.
+      if (await this.isHiddenInEveryFrame(page, fullSelector)) return true;
+      const remaining = deadline - Date.now();
+      if (remaining <= 0) return false;
+      await new Promise((r) => setTimeout(r, Math.min(pollMs, remaining)));
     }
-    return false;
+  }
+
+  /**
+   * GAP-008 core primitive: resolves `fullSelector`'s first match in `frame` with Puppeteer's
+   * own pierce-aware query handler (`frame.$`) — reusing Puppeteer's own `pierce/` resolution
+   * here, rather than reimplementing shadow-piercing `querySelector` inside a page-context
+   * function, keeps exactly one place in this codebase that has to agree with Puppeteer's
+   * `pierce/` semantics (the one `resolveElement`/`click_by_role` already rely on). Propagates a
+   * genuine selector-syntax error (GAP-015) instead of treating it as "no match" — a caller
+   * that DOES want "no match" for an unresolvable selector (nothing in this file does) would
+   * need to catch it explicitly.
+   */
+  private async pierceFirstMatch(frame: Frame, fullSelector: string): Promise<ElementHandle<Element> | null> {
+    try {
+      return await frame.$(fullSelector);
+    } catch (err) {
+      if (BrowserActionEngine.isSelectorSyntaxError(err)) throw err;
+      return null;
+    }
+  }
+
+  private static isSelectorSyntaxError(err: unknown): boolean {
+    const msg = err instanceof Error ? err.message : String(err);
+    return /is not a valid selector|SyntaxError|Failed to execute 'querySelector'/i.test(msg);
+  }
+
+  /** Puppeteer's own `checkVisibility` rule, applied to a single already-resolved handle:
+   *  computed `visibility` not `hidden`/`collapse` AND a non-empty bounding box. `opacity` is
+   *  deliberately ignored, matching Puppeteer. Best-effort: a handle that throws on `.evaluate`
+   *  (e.g. it went stale mid-check) is treated as not visible rather than propagating. */
+  private async isHandleVisible(handle: ElementHandle<Element>): Promise<boolean> {
+    return handle
+      .evaluate((el) => {
+        const s = getComputedStyle(el);
+        const r = el.getBoundingClientRect();
+        return !['hidden', 'collapse'].includes(s.visibility) && r.width > 0 && r.height > 0;
+      })
+      .catch(() => false);
+  }
+
+  private liveFramesOf(page: Page): Frame[] {
+    const live = page.frames().filter((f) => !f.isDetached());
+    return live.length > 0 ? live : [page.mainFrame()];
+  }
+
+  /** "Any frame" first-match-visible check (mirrors `resolveElement`'s `visible:true`
+   *  acceptance rule: the FIRST frame whose FIRST match is visible wins) — the single-instant
+   *  primitive both {@link waitForVisibleWithPolling} (GAP-008) and the `timeoutMs<=0` check-once
+   *  path (GAP-011) build on. */
+  private async firstVisibleHandleAnyFrame(page: Page, fullSelector: string): Promise<ElementHandle<Element> | null> {
+    for (const frame of this.liveFramesOf(page)) {
+      const handle = await this.pierceFirstMatch(frame, fullSelector);
+      if (!handle) continue;
+      if (await this.isHandleVisible(handle)) return handle;
+      if (typeof handle.dispose === 'function') await handle.dispose().catch(() => {});
+    }
+    return null;
+  }
+
+  /** "Any frame" first-match-EXISTS check (DOM presence only, visibility ignored) — used only by
+   *  the `timeoutMs<=0` check-once path for `state:'attached'` (GAP-011). The *waiting* attached
+   *  path is unchanged and still goes through {@link resolveElement}. */
+  private async firstAnyHandleAnyFrame(page: Page, fullSelector: string): Promise<ElementHandle<Element> | null> {
+    for (const frame of this.liveFramesOf(page)) {
+      const handle = await this.pierceFirstMatch(frame, fullSelector);
+      if (handle) return handle;
+    }
+    return null;
+  }
+
+  /** True iff, in EVERY live frame, the first match is absent or not visible — the exact
+   *  negation of {@link firstVisibleHandleAnyFrame}'s "any frame visible" rule. This is the
+   *  `hidden` state's single-instant primitive, reused by both {@link waitForHiddenInAllFrames}'s
+   *  polling loop and the `timeoutMs<=0` check-once path. */
+  private async isHiddenInEveryFrame(page: Page, fullSelector: string): Promise<boolean> {
+    for (const frame of this.liveFramesOf(page)) {
+      const handle = await this.pierceFirstMatch(frame, fullSelector);
+      if (!handle) continue;
+      const visible = await this.isHandleVisible(handle);
+      if (typeof handle.dispose === 'function') await handle.dispose().catch(() => {});
+      if (visible) return false;
+    }
+    return true;
+  }
+
+  /**
+   * `wait_for_selector`'s `state:'visible'` wait (GAP-008). Puppeteer's own
+   * `waitForSelector({visible: true})` forces requestAnimationFrame-based polling
+   * (`QueryHandler.ts`: `polling = visible || hidden ? RAF : options.polling`), and a
+   * non-foreground/backgrounded tab gets roughly one animation frame per ~500ms — confirmed as a
+   * real, live reproduction in audit-1 (`adv-gap003-singleframe.mjs`,
+   * `adv-gap003-sdk-falsefail.mjs`), not a theoretical risk. Plain interval polling (`setTimeout`)
+   * is not throttled that way. This keeps the exact same multi-frame "any frame" semantics
+   * `resolveElement`'s `visible:true` path had. `state:'attached'` and `click_by_role`'s own
+   * `visible:true` `resolveElement` call are UNCHANGED and out of scope — see decisions.md for
+   * the same rAF-throttling exposure noted there for `click_by_role`.
+   */
+  private async waitForVisibleWithPolling(
+    page: Page,
+    fullSelector: string,
+    waitMs: number,
+    pollMs = 100,
+  ): Promise<ElementHandle<Element> | null> {
+    const deadline = Date.now() + waitMs;
+    for (;;) {
+      const handle = await this.firstVisibleHandleAnyFrame(page, fullSelector);
+      if (handle) return handle;
+      const remaining = deadline - Date.now();
+      if (remaining <= 0) return null;
+      await new Promise((r) => setTimeout(r, Math.min(pollMs, remaining)));
+    }
+  }
+
+  /**
+   * GAP-011: `timeoutMs <= 0` means "check once, don't wait" — a single immediate evaluation of
+   * the requested state with no timer/race of any kind (unlike the old behavior, which clamped
+   * to a 1ms Puppeteer `waitForSelector` call that still raced a real 1ms timer and could lose
+   * even when the element was already in the requested state).
+   */
+  private async checkWaitForSelectorOnce(
+    page: Page,
+    selector: string,
+    fullSelector: string,
+    state: WaitForSelectorState,
+  ): Promise<Record<string, unknown>> {
+    if (state === 'attached') {
+      const handle = await this.firstAnyHandleAnyFrame(page, fullSelector);
+      if (!handle) {
+        throw new Error(await this.describeWaitForSelectorTimeout(page, selector, fullSelector, 'attached', 0));
+      }
+      return { foundSelector: selector, state };
+    }
+    if (state === 'visible') {
+      const handle = await this.firstVisibleHandleAnyFrame(page, fullSelector);
+      if (!handle) {
+        throw new Error(await this.describeWaitForSelectorTimeout(page, selector, fullSelector, 'visible', 0));
+      }
+      return { foundSelector: selector, state };
+    }
+    // hidden
+    const matchedAtStart = await this.probeSelectorMatchExists(page, fullSelector);
+    let hiddenNow: boolean;
+    try {
+      hiddenNow = await this.isHiddenInEveryFrame(page, fullSelector);
+    } catch (err) {
+      throw new Error(
+        `wait_for_selector failed waiting for state=hidden: ${(err as Error)?.message ?? String(err)}`,
+      );
+    }
+    if (!hiddenNow) {
+      throw new Error(
+        `wait_for_selector timed out after 0ms waiting for state=hidden: an element matching ` +
+          `"${selector}" is still visible.`,
+      );
+    }
+    const otherVisibleMatches = await this.countOtherVisibleMatches(page, fullSelector).catch(() => 0);
+    const out: Record<string, unknown> = { foundSelector: selector, state: 'hidden', matchedAtStart };
+    if (otherVisibleMatches > 0) out.otherVisibleMatches = otherVisibleMatches;
+    return out;
+  }
+
+  /**
+   * GAP-016: best-effort, bounded (~500ms) count of matches AFTER each live frame's first match
+   * that are themselves visible — the `hidden` state's counterpart to the `visible` path's
+   * "later match(es) are [visible]" diagnosis. A `hidden` wait succeeds as soon as every frame's
+   * FIRST match is gone/hidden; this surfaces the case where some LATER match (e.g. a second
+   * `#banner` node) is still visible, which would otherwise succeed silently.
+   */
+  private async countOtherVisibleMatches(page: Page, fullSelector: string): Promise<number> {
+    return await Promise.race([
+      (async () => {
+        let count = 0;
+        for (const frame of this.liveFramesOf(page)) {
+          try {
+            const flags = await frame.$$eval(fullSelector, (els) =>
+              els.map((el) => {
+                const s = getComputedStyle(el);
+                const r = el.getBoundingClientRect();
+                return !['hidden', 'collapse'].includes(s.visibility) && r.width > 0 && r.height > 0;
+              }),
+            );
+            count += flags.slice(1).filter(Boolean).length;
+          } catch {
+            // best-effort — skip this frame
+          }
+        }
+        return count;
+      })(),
+      new Promise<number>((resolve) => setTimeout(() => resolve(0), 500)),
+    ]);
   }
 
   /**
@@ -1287,15 +1517,33 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     waitMs: number,
   ): Promise<string> {
     const prefix = `wait_for_selector timed out after ${waitMs}ms waiting for state=${state}: `;
-    if (state === 'attached') {
-      return prefix + (await this.describeMissingElement(page, selector));
-    }
+    // GAP-009: this must NEVER fall through to the generic "No element found" message when a
+    // match genuinely exists — that includes `state:'attached'` (which used to skip diagnosis
+    // entirely) AND the race where `state:'visible'`'s first match IS visible by the time this
+    // diagnosis runs (the element became visible right at the end, after the wait itself gave
+    // up). `describeMissingElement` is reserved for the case with truly zero live matches.
     try {
       const diagnosis = await Promise.race([
         this.diagnoseSelectorVisibility(page, fullSelector),
         new Promise<null>((resolve) => setTimeout(() => resolve(null), 1000)),
       ]);
-      if (diagnosis && diagnosis.total > 0 && !diagnosis.visibleFlags[0]) {
+      if (diagnosis && diagnosis.total > 0) {
+        if (state === 'attached') {
+          return (
+            prefix +
+            `${diagnosis.total} element(s) already match "${selector}". The wait still timed out — ` +
+            'this is likely a race where the DOM-presence check did not observe them settle in time; ' +
+            'try a larger timeoutMs.'
+          );
+        }
+        if (diagnosis.visibleFlags[0]) {
+          return (
+            prefix +
+            `${diagnosis.total} element(s) match "${selector}" and the first is visible now; it became ` +
+            'visible after the wait gave up. This is likely a race at the very end of the timeout; try a ' +
+            'larger timeoutMs.'
+          );
+        }
         const laterVisibleCount = diagnosis.visibleFlags.slice(1).filter(Boolean).length;
         if (laterVisibleCount > 0) {
           return (

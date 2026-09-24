@@ -1,0 +1,10 @@
+<!doctype html><html><body>
+<div id="toast" style="display:none">Saved!</div>
+<div id="banner">banner</div>
+<script>
+window.__fx = { events: [] };
+function rec(id){ window.__fx.events.push({ id, at: Date.now() }); }
+window.__fx.reveal = (id) => { document.getElementById(id).style.display = 'block'; rec(id); };
+window.__fx.hide = (id) => { document.getElementById(id).style.display = 'none'; rec(id); };
+window.__fx.insert = (id) => { const d = document.createElement('div'); d.id = id; d.textContent = id; document.body.appendChild(d); rec(id); };
+</script></body></html>

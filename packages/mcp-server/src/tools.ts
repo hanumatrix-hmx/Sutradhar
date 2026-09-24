@@ -688,20 +688,26 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         'Wait for an element to reach a state before returning: "visible" by default, or "attached" / ' +
         '"hidden". Use this instead of guessing a fixed delay for content that loads or appears ' +
         'asynchronously (AJAX, toasts, animations). Visibility is checked on the first element matching ' +
-        'the selector.',
+        'the selector. "visible" means a non-empty bounding box AND computed visibility not ' +
+        'hidden/collapse — opacity:0 and off-screen elements still count as visible; zero width/height, ' +
+        'display:none and visibility:hidden count as hidden. timeoutMs applies to each internal attempt; ' +
+        'retries can extend the real total wait beyond it (open issue). On success, state:"hidden" may ' +
+        'also return output.otherVisibleMatches (best-effort) when a LATER match is still visible.',
       inputSchema: {
         sessionId: z.string(),
         target: z.string().describe(targetDesc),
-        timeoutMs: z.number().int().optional().describe('Defaults to 10000ms.'),
+        timeoutMs: z.number().int().optional().describe('Defaults to 10000ms. Applies per attempt; retries can extend the real total.'),
         tabId: z.string().optional(),
         state: z
           .enum(['visible', 'attached', 'hidden'])
           .optional()
           .describe(
-            'Defaults to "visible". "visible": the element exists AND is visible (non-empty box, not ' +
-              'visibility:hidden; opacity is ignored). "attached": it only has to exist in the DOM. ' +
-              '"hidden": it is removed or not visible; succeeds immediately if nothing matches, so ' +
-              'double-check the selector.',
+            'Defaults to "visible". "visible": the element exists AND is visible — a non-empty box ' +
+              '(width>0, height>0) AND computed visibility not hidden/collapse, checked on the FIRST ' +
+              'matching element in document order. opacity:0 and off-screen positioning still count as ' +
+              'visible; zero size, display:none, and visibility:hidden count as hidden. "attached": it ' +
+              'only has to exist in the DOM, visibility ignored. "hidden": the first match is removed or ' +
+              'not visible; succeeds immediately if nothing matches at all, so double-check the selector.',
           ),
       },
     },

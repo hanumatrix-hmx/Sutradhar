@@ -117,6 +117,15 @@ export class Page {
    * waited for — unlike {@link Page.click}/{@link Page.type}, which swallow a failed result, a
    * wait that returned silently on timeout would be the same silent-wrongness bug class this
    * method exists to fix, so it throws instead (matching Puppeteer/Playwright's own behavior).
+   *
+   * **'visible'** means the element has a non-empty bounding box (width>0, height>0) AND its
+   * computed `visibility` is not `hidden`/`collapse` — checked on the FIRST element the selector
+   * matches, in document order. `opacity:0` and off-screen positioning still count as visible;
+   * zero size, `display:none`, and `visibility:hidden` count as hidden. **'attached'** only
+   * requires DOM presence, visibility ignored. **'hidden'** succeeds immediately if nothing
+   * matches the selector at all — double-check the selector if that's not what you expect.
+   * `options.timeout` applies to each internal attempt; retries can extend the real total wait
+   * beyond it (open issue, tracked as GAP-001).
    */
   public async waitForSelector(selector: string, options?: WaitForSelectorOptions): Promise<void> {
     const r = await this.runtime.waitForSelector(this.sessionId, selector, options?.timeout, this.tabId, options?.state);

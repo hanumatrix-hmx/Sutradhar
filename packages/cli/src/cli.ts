@@ -843,7 +843,14 @@ Commands:
   select <ref> <value>         Select an <option> by value on a <select>
   wait <ref> [timeoutMs] [--state S]
                                 Wait for an element to become visible (default), --state attached
-                                (just in the DOM), or --state hidden (removed or not visible)
+                                (just in the DOM), or --state hidden (removed or not visible).
+                                "visible" means non-empty size AND visibility not hidden/collapse
+                                — opacity:0 and off-screen elements still count as visible; zero
+                                size, display:none and visibility:hidden count as hidden.
+                                Visibility is checked on the FIRST matching element only. "hidden"
+                                succeeds immediately if nothing matches the selector at all.
+                                timeoutMs applies to each internal attempt; retries (GAP-001,
+                                still open) can extend the real total wait beyond it.
   eval <js-expression>         Evaluate JS in the page's top-level context, print the result
   eval <js-expression> --frame <selector>
                                 Same, but inside a specific <iframe> (selector or a numeric id
@@ -918,7 +925,13 @@ Flags:
                         when the action triggers a menu/modal/toast/virtualized-list-update that
                         renders a moment later
   --state <S>           "wait" only: visible (default), attached (just in the DOM), or hidden
-                        (removed or not visible). Ignored on other commands.
+                        (removed or not visible). Ignored on other commands. "visible" is a
+                        non-empty box AND visibility not hidden/collapse — opacity:0 and
+                        off-screen elements still count as visible; zero size, display:none and
+                        visibility:hidden count as hidden. Checked on the FIRST matching element
+                        only. "hidden" succeeds immediately if nothing matches at all. timeoutMs
+                        is per attempt; retries can extend the real total wait (still open, see
+                        GAP-001).
   --no-text             "snap" drops per-element text, keeping tag+role+id (see command list)
   --ids-only            "snap" keeps only the bracketed id, nothing else (see command list)
   --scan-listeners      "snap" also finds real addEventListener-only elements (see command list)

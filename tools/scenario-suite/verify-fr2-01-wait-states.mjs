@@ -17,7 +17,18 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.join(here, '..', '..');
 const EVIDENCE_DIR = path.join(repoRoot, '.ai', 'loop', 'field-report-2', 'evidence', 'FR2-01');
 const FIXTURE_PATH = path.join(here, 'fixtures', 'fr2-01-wait-states.html');
-const FIXTURE_URL = 'file://' + FIXTURE_PATH.replace(/\\/g, '/');
+// GAP-012: `pathToFileURL` (not a hand-rolled 'file://' + path string) — on Windows, Chrome's
+// own normalized file:// URL for an absolute drive-letter path has THREE slashes
+// ("file:///E:/...", not "file://E:/..."), so the naive version never actually matched a real
+// page's `.url()` by prefix. That went unnoticed everywhere it was used because every call site
+// silently fell back to "the last open page" — see gotoAndGetObserverPage's new hard check,
+// added for GAP-012, which is what actually surfaced this.
+const FIXTURE_URL = pathToFileURL(FIXTURE_PATH).href;
+// GAP-008: a page with NO iframes at all — the multi-frame fixture above masked the original
+// bug (its iframe made resolveElement/waitForHiddenInAllFrames take the multi-frame branch,
+// which happened to poll differently). This fixture forces the plain single-frame path.
+const SINGLEFRAME_FIXTURE_PATH = path.join(here, 'fixtures', 'fr2-01-singleframe.html');
+const SINGLEFRAME_FIXTURE_URL = pathToFileURL(SINGLEFRAME_FIXTURE_PATH).href;
 
 const require_ = createRequire(path.join(repoRoot, 'packages', 'browser', 'package.json'));
 const puppeteer = require_('puppeteer-core');
@@ -30,6 +41,11 @@ const puppeteer = require_('puppeteer-core');
  *  state. A query-string nonce forces a real full navigation every time. */
 function freshUrl(hash) {
   return `${FIXTURE_URL}?t=${Date.now()}-${Math.random().toString(36).slice(2)}${hash}`;
+}
+
+/** Same nonce-in-query-string discipline, for the single-frame fixture (GAP-008 cases only). */
+function freshSingleFrameUrl() {
+  return `${SINGLEFRAME_FIXTURE_URL}?t=${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
 const results = { mcp: [], cli: [], sdk: [] };
@@ -59,6 +75,25 @@ async function resolveChromeExecutablePath() {
   const p = launcher.findExecutablePath();
   if (!p) throw new Error('No Chrome/Edge executable found — set CHROME_PATH.');
   return p;
+}
+
+/**
+ * GAP-012: a REAL count of Chrome/Chromium processes still referencing any of this run's
+ * scratch profile paths (or the `sutradhar-cli-*` temp dirs the CLI surface leaks pending
+ * FR2-03) — not a "we called close() so it must be gone" assumption. Uses PowerShell's
+ * `Get-CimInstance Win32_Process` (Windows) so the check reads the process's real command
+ * line, the same technique already used in audit-1's `chrome-before.txt`.
+ */
+async function countLingeringChromeProcesses(needlePaths) {
+  if (process.platform !== 'win32' || needlePaths.length === 0) return { count: 0, matches: [] };
+  const { spawnSync } = await import('node:child_process');
+  const script =
+    "Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'chrome|msedge' } | " +
+    "ForEach-Object { \"$($_.ProcessId)`t$($_.CommandLine)\" }";
+  const r = spawnSync('powershell', ['-NoProfile', '-Command', script], { encoding: 'utf-8', maxBuffer: 32 * 1024 * 1024 });
+  const lines = (r.stdout || '').split('\n').filter(Boolean);
+  const matches = lines.filter((line) => needlePaths.some((p) => p && line.includes(p)));
+  return { count: matches.length, matches };
 }
 
 async function rmWithRetry(dir, attempts = 5) {
@@ -546,6 +581,46 @@ async function runMcpSurface() {
     });
   }
 
+  // GAP-008 live proof, MCP surface: wait_for_selector on a tab that is NOT the foreground tab
+  // must not stall for whole rAF-polling frames (~500ms) — resolve within ~500ms of the real
+  // reveal, on the FIRST attempt (retriesUsed 0). Opens a second tab AFTER navigating the
+  // fixture tab (so the fixture tab goes to the background) and targets the fixture tab
+  // explicitly via `tabId`, the same technique the audit used.
+  {
+    // Single-frame fixture (GAP-008): the multi-frame fixture's iframe masked the original bug.
+    await mcp.callTool('browser.navigate', { sessionId, url: freshSingleFrameUrl() });
+    const pagesNow = await observerBrowser.pages();
+    const page = pagesNow.find((p) => p.url().startsWith(SINGLEFRAME_FIXTURE_URL)) ?? pagesNow[pagesNow.length - 1];
+    const tabsBefore = jsonOf(await mcp.callTool('browser.list_tabs', { sessionId })).tabs;
+    const tabA = tabsBefore.find((t) => t.url.startsWith(SINGLEFRAME_FIXTURE_URL)) ?? tabsBefore[0];
+    await mcp.callTool('browser.new_tab', { sessionId, url: 'about:blank' });
+    await delay(200);
+    const visState = await page.evaluate(() => document.visibilityState);
+    setTimeout(() => {
+      page.evaluate(() => window.__fx.reveal('toast')).catch(() => {});
+    }, 400);
+    const res = jsonOf(
+      await mcp.callTool('browser.wait_for_selector', { sessionId, target: '#toast', timeoutMs: 5000, tabId: tabA.id }),
+    );
+    const recvAt = Date.now();
+    const ev = await fxEvent(page, 'toast');
+    const latencyAfterRevealMs = ev ? recvAt - ev.at : null;
+    const pass =
+      res.success === true &&
+      res.output?.state === 'visible' &&
+      (res.retriesUsed ?? 0) === 0 &&
+      !!ev &&
+      latencyAfterRevealMs !== null &&
+      latencyAfterRevealMs >= 0 &&
+      latencyAfterRevealMs < 500;
+    record('mcp', {
+      case: 'GAP-008-background-tab-visible-resolves-fast',
+      expected: 'success on the first attempt, within ~500ms of the real reveal, even though tabA is backgrounded',
+      observed: { res, visState, ev, latencyAfterRevealMs },
+      pass,
+    });
+  }
+
   // N11: no timeout error ever starts with the generic outer-race message.
   {
     const allErrors = results.mcp.filter((r) => r.observed?.res?.error || r.observed?.error).map((r) => r.observed.res?.error ?? r.observed.error);
@@ -568,12 +643,27 @@ function runCliCommand(cliJs, args, env, opts = {}) {
   });
   let stdout = '';
   let stderr = '';
-  child.stdout.on('data', (d) => (stdout += d.toString('utf8')));
+  let firstStdoutAt = null;
+  child.stdout.on('data', (d) => {
+    if (firstStdoutAt === null) firstStdoutAt = Date.now();
+    stdout += d.toString('utf8');
+  });
   child.stderr.on('data', (d) => (stderr += d.toString('utf8')));
   const exitPromise = new Promise((resolve) => {
     child.on('exit', (code) => resolve({ code, get stdout() { return stdout; }, get stderr() { return stderr; } }));
   });
-  return { child, exitPromise, get stdout() { return stdout; }, get stderr() { return stderr; } };
+  return {
+    child,
+    exitPromise,
+    get stdout() { return stdout; },
+    get stderr() { return stderr; },
+    // GAP-008 timing note: the CLI process can take several extra seconds to actually EXIT
+    // after it has already printed its result (an unrelated, pre-existing characteristic of
+    // this per-command process's teardown — reproduced live even for a plain foreground `wait`
+    // with no backgrounding involved at all, so it is NOT something FR2-01 introduced). The
+    // real "did it detect the change quickly" signal is when stdout first arrives, not exit.
+    get firstStdoutAt() { return firstStdoutAt; },
+  };
 }
 
 async function runCliSurface() {
@@ -618,6 +708,77 @@ async function runCliSurface() {
       .catch(() => null);
     const pass = stillRunning === true && exitResult.code === 0 && /is visible \(state=visible\)/.test(exitResult.stdout) && exitAt >= revealAt && nowVisible === true;
     record('cli', { case: 'wait-default-visible-toast-blocks-then-resolves', expected: 'blocked >2.5s, exit 0 after reveal', observed: { stillRunning, exitResult, nowVisible }, pass });
+  }
+
+  // GAP-008 live proof, CLI surface: `newtab` then `focustab` back to the fixture tab (the
+  // audit's own technique — `newtab` makes Chrome's real foreground tab tabB, while `focustab`
+  // only moves the CLI's OWN "next command targets this tab" bookkeeping back to tabA; it does
+  // NOT call bringToFront, so tabA stays genuinely backgrounded in Chrome). `wait` must still
+  // resolve within ~500ms of the real reveal, on the first attempt.
+  {
+    // Single-frame fixture (GAP-008): the multi-frame fixture's iframe masked the original bug.
+    const navBg = await runCliCommand(cliJs, ['nav', freshSingleFrameUrl()], env).exitPromise;
+    // `nav` never calls persistActiveTab (only `newtab`/`focustab` do), so state.json's
+    // activeTabId is still whatever a PRIOR case left it as (or absent on a brand-new session).
+    // Read the real current tab id off `tabs`' own output instead (the line marked with `*`).
+    const tabsOut = (await runCliCommand(cliJs, ['tabs'], env).exitPromise).stdout;
+    const activeLine = tabsOut.split('\n').find((l) => l.startsWith('*'));
+    const tabA = activeLine ? activeLine.slice(1).trim().split(/\s+/)[0] : undefined;
+    const newTabResult = await runCliCommand(cliJs, ['newtab', 'about:blank'], env).exitPromise;
+    const focusResult = await runCliCommand(cliJs, ['focustab', tabA], env).exitPromise;
+    const stateBg = await readCliState();
+    const observerBg = await puppeteer.connect({ browserWSEndpoint: stateBg.wsEndpoint });
+    const pagesBg = await observerBg.pages();
+    const pageBg = pagesBg.find((p) => p.url().startsWith(SINGLEFRAME_FIXTURE_URL)) ?? pagesBg[pagesBg.length - 1];
+    const visState = await pageBg.evaluate(() => document.visibilityState);
+    // Each CLI command is a NEW Node process that must re-attach to the existing Chrome over
+    // CDP before its own internal wait even starts — spec §5.2 measured this at ~0.5-1.5s. A
+    // fixed short delay before revealing can't prove anything (the reveal might land before the
+    // process has even finished attaching). Instead: start `wait` as a background child, first
+    // confirm it's STILL RUNNING after a delay comfortably longer than that attach overhead
+    // (2500ms, the same bound the pre-existing default-visible case above uses), THEN trigger
+    // the real reveal, and measure latency from the reveal event to the child's actual exit.
+    const waitRunHandle = runCliCommand(cliJs, ['wait', '#toast', '10000'], env);
+    const stillRunning = await Promise.race([
+      waitRunHandle.exitPromise.then(() => false),
+      delay(2500).then(() => true),
+    ]);
+    await pageBg.evaluate(() => window.__fx.reveal('toast')).catch(() => {});
+    const waitRun = await waitRunHandle.exitPromise;
+    const ev = await pageBg
+      .evaluate(() => {
+        const e = (window.__fx?.events ?? []).filter((x) => x.id === 'toast');
+        return e.length ? e[e.length - 1] : null;
+      })
+      .catch(() => null);
+    // GAP-008 timing note (found live debugging this exact case): the CLI's own process EXIT
+    // can lag several extra seconds behind the moment it already printed its result — a
+    // pre-existing, unrelated CLI process-teardown characteristic (reproduced even for a plain
+    // foreground `wait` with no backgrounding at all), not something this fix introduced. The
+    // real "detected the change quickly" signal is when stdout first arrives, not process exit.
+    const latencyAfterRevealMs = ev && waitRunHandle.firstStdoutAt ? waitRunHandle.firstStdoutAt - ev.at : null;
+    observerBg.disconnect();
+    const pass =
+      !!tabA &&
+      navBg.code === 0 &&
+      newTabResult.code === 0 &&
+      focusResult.code === 0 &&
+      visState === 'hidden' &&
+      stillRunning === true &&
+      waitRun.code === 0 &&
+      /is visible \(state=visible\)/.test(waitRun.stdout) &&
+      !!ev &&
+      latencyAfterRevealMs !== null &&
+      latencyAfterRevealMs >= 0 &&
+      latencyAfterRevealMs < 500;
+    record('cli', {
+      case: 'GAP-008-background-tab-visible-resolves-fast',
+      expected: 'tabA visibilityState=hidden (real backgrounding); once attached and blocked, the RESULT (stdout) appears within ~500ms of the real reveal',
+      observed: { tabA, navBg, newTabResult, focusResult, visState, stillRunning, waitRun, ev, latencyAfterRevealMs, firstStdoutAt: waitRunHandle.firstStdoutAt },
+      pass,
+    });
+    // tabB (about:blank) is left open — harmless; the surface's final `close` command tears
+    // down the whole browser, and every later case does its own fresh `nav` on the active tab.
   }
 
   // Fresh nav, wait "#toast" --state attached — exits promptly, still hidden.
@@ -707,7 +868,16 @@ async function runCliSurface() {
   for (const d of newDirs) {
     await rmWithRetry(path.join(os.tmpdir(), d));
   }
-  record('cli', { case: 'cleanup-no-leaked-profile-dirs-left-by-us', expected: 'this run\'s temp dirs removed', observed: { newDirs }, pass: true });
+  // GAP-012: compute the real outcome instead of a hardcoded pass — actually re-list the temp
+  // dir and confirm every one of THIS run's new dirs is genuinely gone (rmWithRetry is
+  // best-effort and can legitimately fail on a Windows EBUSY lock).
+  const stillPresent = (await fs.readdir(os.tmpdir())).filter((n) => newDirs.includes(n));
+  record('cli', {
+    case: 'cleanup-no-leaked-profile-dirs-left-by-us',
+    expected: "this run's temp dirs removed",
+    observed: { newDirs, stillPresent },
+    pass: stillPresent.length === 0,
+  });
 
   await rmWithRetry(scratchStateDir);
 }
@@ -724,16 +894,33 @@ async function runSdkSurface() {
   const observer = await puppeteer.connect({ browserWSEndpoint: wsEndpoint });
   const observerPage = (await observer.pages())[0];
 
-  async function fxEvent(id) {
-    return observerPage.evaluate((elId) => {
+  async function fxEvent(observerPageArg, id) {
+    return observerPageArg.evaluate((elId) => {
       const ev = (window.__fx?.events ?? []).filter((e) => e.id === elId);
       return ev.length ? ev[ev.length - 1] : null;
     }, id);
   }
 
-  // (a) default visible on #toast.
+  // GAP-012: verify the observer really IS the fixture page, by URL, before trusting anything
+  // it reports for (a)/(c1)/(c2) below.
+  async function gotoAndGetObserverPage(hash) {
+    const url = freshUrl(hash);
+    await page.goto(url);
+    // observerPage is a live reference (same Puppeteer Page object across navigations within
+    // the same tab), but re-resolve defensively via observer.pages() in case the SDK's own
+    // page ever creates a new tab/target instead of navigating the existing one.
+    const pages = await observer.pages();
+    const op = pages.find((p) => p.url().startsWith(FIXTURE_URL)) ?? observerPage;
+    if (!op.url().startsWith(FIXTURE_URL)) {
+      throw new Error(`observer page URL "${op.url()}" does not match the fixture — not observing the real tab`);
+    }
+    return op;
+  }
+
+  // (a) default visible on #toast — real observer/fixture-event timestamps, not just "didn't throw".
   {
-    await page.goto(freshUrl('#auto'));
+    const op = await gotoAndGetObserverPage('#auto');
+    const before = await isVisibleOn(op, '#toast');
     const sentAt = Date.now();
     let error;
     try {
@@ -742,13 +929,48 @@ async function runSdkSurface() {
       error = e;
     }
     const recvAt = Date.now();
-    const pass = !error && recvAt - sentAt >= 1000;
-    record('sdk', { case: 'a-default-visible-toast', expected: 'resolves after waiting ~1.5s', observed: { error: error?.message, elapsed: recvAt - sentAt }, pass });
+    const ev = await fxEvent(op, 'toast');
+    const afterVisible = await isVisibleOn(op, '#toast');
+    const pass =
+      !error &&
+      before === false &&
+      !!ev &&
+      sentAt <= ev.at &&
+      ev.at <= recvAt + 50 &&
+      afterVisible === true &&
+      op.url().startsWith(FIXTURE_URL);
+    record('sdk', {
+      case: 'a-default-visible-toast',
+      expected: 'resolves with sentAt<=toastShownAt<=recvAt, observer confirms visible',
+      observed: { error: error?.message, before, ev, afterVisible, sentAt, recvAt, observerUrl: op.url() },
+      pass,
+    });
   }
 
-  // (c1) state:'hidden' on #banner.
+  // (b) state:'attached' on #toast — returns BEFORE the reveal (GAP-012: was missing entirely).
   {
-    await page.goto(freshUrl('#auto'));
+    const op = await gotoAndGetObserverPage('#auto');
+    const recvBefore = Date.now();
+    let error;
+    try {
+      await page.waitForSelector('#toast', { state: 'attached', timeout: 5000 });
+    } catch (e) {
+      error = e;
+    }
+    const recvAt = Date.now();
+    const stillHidden = (await isVisibleOn(op, '#toast')) === false;
+    const pass = !error && recvAt - recvBefore < 1000 && stillHidden;
+    record('sdk', {
+      case: 'b-attached-toast-returns-before-reveal',
+      expected: 'resolves quickly, before the ~1.5s reveal, still display:none',
+      observed: { error: error?.message, elapsed: recvAt - recvBefore, stillHidden },
+      pass,
+    });
+  }
+
+  // (c1) state:'hidden' on #banner — visible->hidden at ~1500ms, real timestamps.
+  {
+    const op = await gotoAndGetObserverPage('#auto');
     const sentAt = Date.now();
     let error;
     try {
@@ -757,24 +979,108 @@ async function runSdkSurface() {
       error = e;
     }
     const recvAt = Date.now();
-    const pass = !error && recvAt - sentAt >= 1000;
-    record('sdk', { case: 'c1-hidden-banner', expected: 'resolves after waiting ~1.5s for the hide', observed: { error: error?.message, elapsed: recvAt - sentAt }, pass });
+    const ev = await fxEvent(op, 'banner');
+    const nowHidden = (await isVisibleOn(op, '#banner')) === false;
+    const pass = !error && !!ev && sentAt <= ev.at && ev.at <= recvAt + 50 && nowHidden;
+    record('sdk', {
+      case: 'c1-hidden-banner',
+      expected: 'resolves with sentAt<=bannerHiddenAt<=recvAt, observer confirms hidden',
+      observed: { error: error?.message, ev, sentAt, recvAt, nowHidden },
+      pass,
+    });
   }
 
-  // Negative: #never times out and REJECTS with a state-naming message.
+  // (c2) state:'hidden' on #spinner via REMOVAL, not CSS hiding (GAP-012: was missing entirely).
   {
-    await page.goto(freshUrl('#auto'));
+    const op = await gotoAndGetObserverPage('#auto');
+    const sentAt = Date.now();
+    let error;
+    try {
+      await page.waitForSelector('#spinner', { state: 'hidden', timeout: 5000 });
+    } catch (e) {
+      error = e;
+    }
+    const recvAt = Date.now();
+    const ev = await fxEvent(op, 'spinner');
+    const nowAbsent = await op.evaluate(() => document.querySelector('#spinner') === null);
+    const pass = !error && !!ev && sentAt <= ev.at && ev.at <= recvAt + 50 && nowAbsent === true;
+    record('sdk', {
+      case: 'c2-hidden-spinner-removed',
+      expected: 'resolves with sentAt<=spinnerRemovedAt<=recvAt, observer confirms querySelector===null',
+      observed: { error: error?.message, ev, sentAt, recvAt, nowAbsent },
+      pass,
+    });
+  }
+
+  // GAP-008 live proof, SDK surface: wait_for_selector on a tab that is NOT the foreground tab.
+  // Single-frame fixture: the multi-frame fixture's iframe masked the original bug.
+  {
+    await page.goto(freshSingleFrameUrl());
+    const opPages = await observer.pages();
+    const op = opPages.find((p) => p.url().startsWith(SINGLEFRAME_FIXTURE_URL)) ?? observerPage;
+    const bgPage = await browser.newPage('about:blank'); // becomes Chrome's real foreground tab
+    await delay(200);
+    const visState = await op.evaluate(() => document.visibilityState);
+    setTimeout(() => {
+      op.evaluate(() => window.__fx.reveal('toast')).catch(() => {});
+    }, 400);
+    const sentAt = Date.now();
+    let error;
+    let retriesUsed;
+    try {
+      await page.waitForSelector('#toast', { timeout: 5000 });
+    } catch (e) {
+      error = e;
+    }
+    const recvAt = Date.now();
+    const ev = await fxEvent(op, 'toast');
+    const latencyAfterRevealMs = ev ? recvAt - ev.at : null;
+    const pass = !error && !!ev && latencyAfterRevealMs !== null && latencyAfterRevealMs >= 0 && latencyAfterRevealMs < 500;
+    record('sdk', {
+      case: 'GAP-008-background-tab-visible-resolves-fast',
+      expected: 'resolves within ~500ms of the real reveal even though the tab is backgrounded (visibilityState=hidden)',
+      observed: { error: error?.message, visState, ev, latencyAfterRevealMs },
+      pass,
+    });
+    await bgPage.close().catch(() => {});
+  }
+
+  // N1: #never times out and REJECTS with a state-naming message, and the diagnosis is
+  // strengthened to assert NONE of the matches is visible (not just "some substring present").
+  {
+    const op = await gotoAndGetObserverPage('#auto');
     let error;
     try {
       await page.waitForSelector('#never', { timeout: 1200 });
     } catch (e) {
       error = e;
     }
-    const pass = !!error && /state=visible/.test(error.message);
-    record('sdk', { case: 'N-never-rejects', expected: 'rejects with state=visible message', observed: { error: error?.message }, pass });
+    const noneVisible = await op.evaluate(() => {
+      const els = Array.from(document.querySelectorAll('#never'));
+      return els.every((el) => {
+        const s = getComputedStyle(el);
+        const r = el.getBoundingClientRect();
+        return ['hidden', 'collapse'].includes(s.visibility) || r.width === 0 || r.height === 0;
+      });
+    });
+    const pass = !!error && /state=visible/.test(error.message) && noneVisible === true;
+    record('sdk', { case: 'N1-never-rejects-none-visible', expected: 'rejects with state=visible message AND observer confirms none is visible', observed: { error: error?.message, noneVisible }, pass });
   }
 
-  // Negative: invalid state (JS bypassing types) rejects with the Invalid-state message.
+  // N3: hidden on #stays must REJECT with state=hidden and "still visible" (GAP-012: was missing).
+  {
+    await gotoAndGetObserverPage('#auto');
+    let error;
+    try {
+      await page.waitForSelector('#stays', { state: 'hidden', timeout: 1200 });
+    } catch (e) {
+      error = e;
+    }
+    const pass = !!error && /state=hidden/.test(error.message) && error.message.includes('still visible');
+    record('sdk', { case: 'N3-stays-hidden-rejects', expected: 'rejects with state=hidden and "still visible"', observed: { error: error?.message }, pass });
+  }
+
+  // N8: invalid state (JS bypassing types) rejects with the Invalid-state message.
   {
     let error;
     try {
@@ -788,6 +1094,18 @@ async function runSdkSurface() {
 
   observer.disconnect();
   await browser.close();
+}
+
+async function isVisibleOn(observerPage, selector) {
+  return observerPage
+    .evaluate((sel) => {
+      const el = document.querySelector(sel);
+      if (!el) return null;
+      const s = getComputedStyle(el);
+      const r = el.getBoundingClientRect();
+      return !['hidden', 'collapse'].includes(s.visibility) && r.width > 0 && r.height > 0;
+    }, selector)
+    .catch(() => null);
 }
 
 // ── Main ─────────────────────────────────────────────────────────────────────────────────────
@@ -817,6 +1135,11 @@ async function main() {
   await writeJsonl('live-cli.jsonl', results.cli);
   await writeJsonl('live-sdk.jsonl', results.sdk);
 
+  // GAP-012: final Chrome-process count across ALL surfaces, computed for real.
+  const needlePaths = [...cleanupDirs, path.join(os.tmpdir(), 'sutradhar-cli-')];
+  const chromeCheck = await countLingeringChromeProcesses(needlePaths);
+  if (chromeCheck.count > 0) overallOk = false;
+
   const summary = {
     at: new Date().toISOString(),
     overallOk,
@@ -826,6 +1149,7 @@ async function main() {
       sdk: { total: results.sdk.length, passed: results.sdk.filter((r) => r.pass).length },
     },
     cleanupDirsAttempted: cleanupDirs,
+    lingeringChromeProcesses: chromeCheck,
   };
   await fs.writeFile(path.join(EVIDENCE_DIR, 'live-summary.json'), JSON.stringify(summary, null, 2), 'utf-8');
   console.log(JSON.stringify(summary, null, 2));
