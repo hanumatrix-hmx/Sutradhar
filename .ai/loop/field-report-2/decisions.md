@@ -176,3 +176,40 @@ Adopted as written (full text in the spec's decision table, §7.1):
 Sequencing: Step 1 runs only after FR2-01's current fix round finishes, because it drives the
 worktree build and the FR2-01 Executor is rebuilding `dist` right now. FR2-04's DEVELOP runs
 after FR2-03, in merge order FR2-01, FR2-03, FR2-04.
+
+## 2026-09-25 — FR2-05 spec decisions (from the Planner), plus a real bug it found
+
+Spec: `evidence/FR2-05/spec.md`. The finding asked only for wiring the existing allowlist
+options through to the CLI, MCP and SDK, but tracing the code surfaced a genuine security bug in
+the containment check itself (B2): `resolveDownloadDir` falls back to comparing the literal,
+uncanonicalized path whenever the target directory doesn't exist yet. A directory inside an
+allowed root that is actually a symlink or junction pointing outside it passes the check, and
+Chrome then creates the downloaded file through that link, outside every configured root. This
+is a real sandbox escape in shipped code, not something FR2-05 introduces. It gets fixed in this
+item (canonicalize by walking up to the deepest existing ancestor, and reject a broken link
+outright), with a negative test run against the pre-fix build to document the escape before it's
+closed.
+
+Adopted as written (full reasoning in the spec's §0.1 decision list):
+1. Why the CLI's own destination is safe to auto-allow: whoever typed the shell command can
+   already write anywhere on that machine, so refusing their own argument protects nothing. It's
+   granted for that one resolved directory, for that one `download` command, and isn't saved.
+   MCP keeps the allowlist in full, since there an untrusted page — not the operator — is what's
+   picking the destination.
+2. The env var list uses the OS path separator (`;` on Windows, `:` on POSIX), not commas,
+   because Windows paths contain colons. Only absolute paths are accepted; a relative one fails
+   the server at startup rather than resolving against an unpredictable cwd. `~` expands to the
+   home directory. Setting the env var replaces the default temp folder, and its first entry
+   becomes the new default destination.
+3. Setting `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` turns the upload allowlist on; today it's
+   unrestricted by default, and that default doesn't change unless the operator sets it.
+4. The SDK gets `page.download()` and `page.uploadFile()`, since neither existed before and the
+   new launch options would otherwise be unreachable. The SDK does not read the env vars itself,
+   only explicit `launch()` options — an imported library silently changing its own sandbox based
+   on ambient environment variables would be a surprising thing for it to do.
+5. One shared resolver (`resolveFsRoots`, option > env > default) is used by the CLI, MCP and
+   SDK, so FR2-14's `.sutradhar.json` can later add one more layer without reshaping any caller.
+
+Sequencing: merge order FR2-01 -> FR2-03 -> FR2-04 -> FR2-05. FR2-05 touches the same
+`withSession`/`cli.ts` construction as FR2-04, but only adds two keys to the options object and
+one parameter to the wrapper, so it's a small, low-risk rebase.

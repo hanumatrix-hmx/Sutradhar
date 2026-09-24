@@ -21,5 +21,8 @@
 | GAP-017 | FR2-04 (planning) | major | runtime.attach calls findAllOpenPages (runtime.ts:325-336), which swallows a 180s page-init timeout on a page blocked by a dialog and silently adopts a new blank tab instead. This affects MCP browser.attach too. | TODO | - |
 | GAP-018 | FR2-04 (planning) | minor | MCP and SDK action results don't include dialogPending. Deferred to FR2-07's unified result contract. | TODO | - |
 | GAP-019 | FR2-04 (planning) | minor | runtime.clickAtPoint (runtime.ts:514-545) doesn't race against dialogs, so MCP click_at_point on a point that opens a dialog blocks until the 30s auto-dismiss. | TODO | - |
+| GAP-020 | FR2-05 (planning) | minor | download_file runs through the engine's generic retry loop (2 retries by default). A policy rejection or a real timeout gets retried and re-clicked, which can produce duplicate downloaded files. | TODO | - |
+| GAP-021 | FR2-05 (planning) | minor | download_file's inner and outer timeouts are both 30000ms, the same race class FR2-01 (GAP-008/009) had to fix for wait_for_selector. | TODO | - |
+| GAP-022 | FR2-05 (planning) | minor | Resetting Browser.setDownloadBehavior to default after every download_file can land mid-way through a second concurrent download_file on the same browser (two tabs downloading at once already race on this browser-wide setting today). | TODO | - |
 
 (Further entries populated as Auditors report gaps during the loop.)
