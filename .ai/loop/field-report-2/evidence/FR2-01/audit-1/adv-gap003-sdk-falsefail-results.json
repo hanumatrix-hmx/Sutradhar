@@ -1,0 +1,33 @@
+[
+  {
+    "label": "reveal-during-attempt-1",
+    "timeout": 3000,
+    "revealAtMs": 1000,
+    "visibilityStateA": "hidden",
+    "threw": false,
+    "elapsedMs": 3533,
+    "revealedMsAfterCall": 1007,
+    "truthAtEnd": {
+      "display": "block",
+      "w": 1248,
+      "h": 18,
+      "revealedAt": 1790289157874
+    }
+  },
+  {
+    "label": "reveal-during-attempt-3",
+    "timeout": 2000,
+    "revealAtMs": 6000,
+    "visibilityStateA": "hidden",
+    "threw": true,
+    "error": "wait_for_selector timed out after 2000ms waiting for state=visible: No element found for selector: #toast",
+    "elapsedMs": 169036,
+    "revealedMsAfterCall": 6016,
+    "truthAtEnd": {
+      "display": "block",
+      "w": 1248,
+      "h": 18,
+      "revealedAt": 1790289166435
+    }
+  }
+]

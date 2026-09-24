@@ -5,7 +5,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 | id | title | phase | status | attempts | last evidence | commit |
 |---|---|---|---|---|---|---|
 | FR2-01 | wait_for_selector visibility states | 1 | AUDIT | 1 | evidence/FR2-01/live-summary.json (42/42) | - |
-| FR2-02 | extract_data reads live values | 1 | TODO | 0 | - | - |
+| FR2-02 | extract_data reads live values | 1 | SPEC (waits for FR2-01 audit; shared files) | 0 | evidence/FR2-02/spec.md | - |
 | FR2-03 | Session/profile GC | 1 | TODO | 0 | - | - |
 | FR2-04 | CLI dialog handling | 1 | TODO | 0 | - | - |
 | FR2-05 | Download dir / upload roots wiring | 1 | TODO | 0 | - | - |

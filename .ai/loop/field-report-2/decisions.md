@@ -92,3 +92,25 @@ Gotcha the Executor found, worth keeping for every future live-verify script: na
 same fixture URL with only a different #fragment is a same-document navigation in Chrome. The
 page doesn't reload and the fixture script doesn't re-run, so DOM state leaks between cases. Put
 per-case uniqueness in the query string, not the fragment.
+
+## 2026-09-25 — FR2-02 spec decisions (from the Planner)
+
+Spec saved to `evidence/FR2-02/spec.md`. Every edge-semantic decision is listed in its §2.6
+table. The ones worth calling out:
+1. With no attribute, a checkbox returns its `.value` (usually "on"), not its checked state. This
+   follows §4.4 literally, and the description points callers to `attribute:"checked"`.
+2. `href` and every other non-keyword attribute keep returning the raw attribute (relative stays
+   relative), for backward compatibility. A future `prop:<name>` prefix is an idea, not built.
+3. `<select multiple>` with "value" returns only the first selected value (the live property). To
+   get all of them, use `select option:checked`. No invented delimiter.
+4. `<option>` visibility under `visibleOnly` is judged by its owning `<select>`.
+5. `visibleOnly` reuses FR2-01's visibility rule exactly.
+6. There's no CLI `extract` verb and no SDK `Page.extract` in this item. The field-map syntax for
+   the CLI is FR2-13's design question, so it isn't designed twice (GAP-004).
+7. Selector validation uses the browser's own parser, inside the page, with every field checked
+   before anything is read. `SELECTOR_SYNTAX_HINT` and `selectorSyntaxDetail` in `types.ts` are
+   the handoff point FR2-06 must build on rather than duplicate.
+8. No cap on `innerText` cost. C18 measures it; a pathological result becomes a gap, not a
+   truncation.
+9. Sequencing: FR2-02 shares four files with FR2-01, so its DEVELOP waits until FR2-01's audit and
+   fix cycles finish.
