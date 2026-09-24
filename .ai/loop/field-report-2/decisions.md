@@ -213,3 +213,40 @@ Adopted as written (full reasoning in the spec's §0.1 decision list):
 Sequencing: merge order FR2-01 -> FR2-03 -> FR2-04 -> FR2-05. FR2-05 touches the same
 `withSession`/`cli.ts` construction as FR2-04, but only adds two keys to the options object and
 one parameter to the wrapper, so it's a small, low-risk rebase.
+
+## 2026-09-25 — FR2-06 spec decisions (from the Planner)
+
+Spec: `evidence/FR2-06/spec.md`. **Hard precondition:** FR2-06 needs FR2-02's
+`SELECTOR_SYNTAX_HINT`/`selectorSyntaxDetail`/`planExtractFields`/`resolveFrame` wrap to exist
+first (FR2-02 is still at SPEC, not DONE). The Executor must stop and report if that isn't true
+yet when this item's DEVELOP starts.
+
+Adopted as written (full reasoning in the spec's §0.1):
+1. Detection (Playwright syntax) and validation (any other bad CSS/XPath) are solved differently.
+   Detection is a synchronous string check with zero browser contact, so a Playwright selector is
+   rejected before any session lookup or CDP call. Validation of everything else has to be the
+   browser's own parser — no two Chrome versions agree on what's valid CSS — run once as a cheap
+   probe against an empty document fragment (so a valid-but-not-yet-present selector is never
+   confused with a syntax error), before the normal retry loop, outside the caller's timeout.
+2. `pierce/`, `xpath/`, `aria/` and `text/` prefixes now actually work on click/type/wait and
+   the rest — today, per the spec's tracing, every one of them silently double-prefixes and fails.
+   Only the CSS after `pierce/` gets scanned for Playwright syntax; the payload after the other
+   three is never CSS, so it's never scanned (an aria label can legitimately contain `>>` or `=`).
+3. Puppeteer's undocumented `text=`/`xpath=`/`aria=`/`pierce=` (`=` as an alternate separator)
+   stop being accepted on the two paths that took them today (`uploadFileViaTrigger`,
+   `frameSelector` hops) — only the slash spellings are supported now. This is a narrowing,
+   recorded plainly in the changelog.
+4. Runtime methods now throw a typed `InvalidSelectorError` for a Playwright selector, rather than
+   resolving `success:false` ~16 seconds later. Every MCP handler already catches; the CLI
+   pre-validates before touching a session; the SDK's `page.click`/`page.type` — which silently
+   swallowed a bad selector before — now surface it as a throw.
+5. The one documented case where a Playwright pseudo-class can slip through undetected: inside a
+   forgiving :is()/:where() selector list, which is syntactically valid CSS Chrome just silently
+   ignores the offending branch of. Rejecting it anyway (with the hint) is judged the lesser harm
+   versus a selector that "works" but can never match what was actually written.
+6. A handful of the Planner's own additions beyond the finding's list: coaching `#12`/`[#12]` to
+   the bare node id `12` (a very common mistake against snapshot output), and rejecting a bare
+   XPath with no `xpath/` prefix.
+
+Sequencing: DEVELOP runs after FR2-05 (last in the merge order for shared files) — no parallel
+Executor, since the touched files overlap with FR2-01 through FR2-05.

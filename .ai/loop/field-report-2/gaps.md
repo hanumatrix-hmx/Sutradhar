@@ -24,5 +24,9 @@
 | GAP-020 | FR2-05 (planning) | minor | download_file runs through the engine's generic retry loop (2 retries by default). A policy rejection or a real timeout gets retried and re-clicked, which can produce duplicate downloaded files. | TODO | - |
 | GAP-021 | FR2-05 (planning) | minor | download_file's inner and outer timeouts are both 30000ms, the same race class FR2-01 (GAP-008/009) had to fix for wait_for_selector. | TODO | - |
 | GAP-022 | FR2-05 (planning) | minor | Resetting Browser.setDownloadBehavior to default after every download_file can land mid-way through a second concurrent download_file on the same browser (two tabs downloading at once already race on this browser-wide setting today). | TODO | - |
+| GAP-023 | FR2-06 (planning) | minor | click_by_text, type_by_label and click_by_role interpolate caller-supplied text into XPath/CSS/aria without escaping. A quote character in the text builds an invalid selector, silently swallowed as "No element found" after the full retry budget. | TODO | - |
+| GAP-024 | FR2-06 (planning) | minor | SDK Page.click and Page.type discard success:false, so invalid CSS stays silent on the SDK surface even after FR2-06. Natural home: FR2-07's unified verification contract. | TODO | - |
+| GAP-025 | FR2-06 (planning) | minor | cmdPress ignores a failed focus() and presses the key anyway, on whatever element happens to be focused. | TODO | - |
+| GAP-026 | FR2-06 (planning) | minor | After a click failure inside upload_file_via_trigger, waitForFileChooser is left pending with interception enabled for up to 30s. It also can't reach shadow DOM or iframes, since it uses a plain page.click. | TODO | - |
 
 (Further entries populated as Auditors report gaps during the loop.)
