@@ -4,7 +4,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 
 | id | title | phase | status | attempts | last evidence | commit |
 |---|---|---|---|---|---|---|
-| FR2-01 | wait_for_selector visibility states | 1 | AUDIT | 1 | evidence/FR2-01/live-summary.json (42/42) | - |
+| FR2-01 | wait_for_selector visibility states | 1 | FIX(1) | 1 | audit-1: 1 blocker, 4 major, 4 minor (GAP-008..016) | 16a9173 (pre-audit) |
 | FR2-02 | extract_data reads live values | 1 | SPEC (waits for FR2-01 audit; shared files) | 0 | evidence/FR2-02/spec.md | - |
 | FR2-03 | Session/profile GC | 1 | SPEC (waits for FR2-01 DONE) | 0 | evidence/FR2-03/spec.md | - |
 | FR2-04 | CLI dialog handling | 1 | TODO | 0 | - | - |

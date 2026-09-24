@@ -8,5 +8,5 @@ const b = await puppeteer.launch({ executablePath: new BrowserLauncher().findExe
 const [a] = await b.pages(); await a.goto(pathToFileURL(path.join(here, 'adv-singleframe.html')).href);
 const bb = await b.newPage(); await bb.goto('data:text/html,B');
 console.log('A visibility', await a.evaluate('document.visibilityState'));
-let t = Date.now(); try { await a.screenshot({ encoding: 'base64' }); console.log('screenshot ok', Date.now() - t); } catch (e) { console.log('screenshot failed', Date.now() - t, e.message.slice(0, 120)); }
+await a.evaluate("window.__fx.reveal('toast')"); let t = Date.now(); try { await a.screenshot({ encoding: 'base64' }); console.log('screenshot ok', Date.now() - t); } catch (e) { console.log('screenshot failed', Date.now() - t, e.message.slice(0, 120)); }
 await b.close(); await fs.rm(dir, { recursive: true, force: true }).catch(() => {});
