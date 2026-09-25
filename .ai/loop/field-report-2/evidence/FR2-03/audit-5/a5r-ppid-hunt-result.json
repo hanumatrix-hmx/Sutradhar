@@ -1,0 +1,77 @@
+{
+  "elapsedS": 82,
+  "hitsFound": 2,
+  "attempts": [
+    6352,
+    5824
+  ],
+  "hitsWithVerifiedReuseChain": 2,
+  "victimsPlannedOrKilled": 0,
+  "grandchildrenPlannedOrKilled": 0,
+  "squattersKilled": 2,
+  "controlsGenuineChildKilled": 2,
+  "results": [
+    {
+      "h": 0,
+      "tries": 6352,
+      "hit": {
+        "squatterPid": 267064,
+        "launcher": 267064,
+        "victim": 95468,
+        "grandchild": 251472
+      },
+      "chainAtGc": {
+        "victimPpidEqualsSquatter": true,
+        "grandchildPpidEqualsVictim": true,
+        "squatterMinusVictimCreation_us": 35102451.2
+      },
+      "plannedKills": [
+        267064,
+        3588,
+        189308,
+        193252
+      ],
+      "squatterKilled": true,
+      "VICTIM_PLANNED_MUST_BE_FALSE": false,
+      "GRANDCHILD_PLANNED_MUST_BE_FALSE": false,
+      "VICTIM_ALIVE_AFTER_REAL_GC_MUST_BE_TRUE": true,
+      "GRANDCHILD_ALIVE_AFTER_REAL_GC_MUST_BE_TRUE": true,
+      "control": {
+        "fakeKilled": true,
+        "GENUINE_CHILD_KILLED_MUST_BE_TRUE": true
+      },
+      "exitCode": 0
+    },
+    {
+      "h": 1,
+      "tries": 5824,
+      "hit": {
+        "squatterPid": 93400,
+        "launcher": 93400,
+        "victim": 264032,
+        "grandchild": 72668
+      },
+      "chainAtGc": {
+        "victimPpidEqualsSquatter": true,
+        "grandchildPpidEqualsVictim": true,
+        "squatterMinusVictimCreation_us": 35551987.2
+      },
+      "plannedKills": [
+        93400,
+        183216,
+        195672,
+        154364
+      ],
+      "squatterKilled": true,
+      "VICTIM_PLANNED_MUST_BE_FALSE": false,
+      "GRANDCHILD_PLANNED_MUST_BE_FALSE": false,
+      "VICTIM_ALIVE_AFTER_REAL_GC_MUST_BE_TRUE": true,
+      "GRANDCHILD_ALIVE_AFTER_REAL_GC_MUST_BE_TRUE": true,
+      "control": {
+        "fakeKilled": true,
+        "GENUINE_CHILD_KILLED_MUST_BE_TRUE": true
+      },
+      "exitCode": 0
+    }
+  ]
+}

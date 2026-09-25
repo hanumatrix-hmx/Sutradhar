@@ -1811,3 +1811,71 @@ user exchange, but the situation has since changed. This entry is the explicit, 
 record that supersedes that pause: **live-Chrome-heavy dispatch, including FR2-03's escalated
 fix-4, is authorized to proceed as of this commit.** Any future agent finding the OLD pause
 entry should read forward to this one and treat it as current.
+
+## 2026-09-26 -- FR2-03 marked BLOCKED: 5 audits, 4 fix cycles, both escalation cycles exhausted. Full diagnosis.
+
+**Verdict: BLOCKED, per the loop's own stated retry bound** -- the third item in this loop to
+reach this outcome (after FR2-01, FR2-16). audit-5 (the final allowed audit, evaluating fix-4,
+the second and last escalation cycle) found that while GAP-193's fix is now GENUINELY,
+STRUCTURALLY closed (confirmed independently by BOTH audit-4's re-check and audit-5's own fresh
+sweep -- the marker-authorization signal is provably incapable of authorizing a deletion
+anywhere in the file now, and forging an owner-file gives an attacker no capability they didn't
+already have), GAP-194's remedy mechanism is fundamentally the wrong tool for the job:
+
+**GAP-198 (major, the disqualifying finding)**: `probeLegacyChromeReachable`'s approach --
+"ask the Chrome's own debug port if it's alive" -- cannot distinguish a live, in-use session
+from a genuinely ORPHANED one, because EVERY running Chrome process answers its own debug port,
+orphan or not. This isn't a narrow edge case that needs a follow-up patch; it's the wrong
+signal entirely for the question being asked ("is anyone still using this," not "is the process
+technically running"). The live-reproduced consequence is severe in the opposite direction from
+every prior round's bug: a genuine, unmarked, 125-second-old orphan with no state file anywhere
+is now protected FOREVER, defeating the entire point of this GC feature for exactly the class
+of Chrome (legacy/unmarked) it was originally meant to help reclaim. fix-4's own "no regression"
+test never actually exercised this case (it killed the Chrome BEFORE running GC in its test),
+so a passing test gave false confidence.
+
+**Root-cause assessment**: this is a genuinely different failure shape than the prior 4 rounds.
+Rounds 1-4 were all "protection is too narrow, closes one path but not a sibling path" --
+under-protection. Round 5's finding is over-correction in the opposite direction -- the fix for
+under-protection swung all the way to a mechanism that can never determine ANYTHING is safe to
+reclaim in the affected category. Both are real failure modes of the same underlying difficulty:
+distinguishing "genuinely still in use" from "abandoned" for a Chrome process that has no marker
+and an unreadable state file is a HARD problem with no single cheap signal (the debug port
+answers either way; the state file's readability doesn't tell you liveness; the PID's mere
+existence doesn't tell you if anyone still cares about it). GAP-199 (a live, unreadable-state,
+merely-SLOW session that the port probe times out on) and GAP-200 (an unrelated, pre-existing,
+real data-loss race in the recursive-delete-after-empty-check pattern, present since fix-1 and
+newly found this round) round out the audit's findings -- none of these are the SAME shape of
+bug repeating; they're 3 genuinely distinct new problems found in one final sweep, which is
+itself informative: this feature's surface area for "is this safe to delete/kill" questions is
+larger and subtler than 4 rounds of narrowly-targeted fixes have been able to fully map.
+
+**What IS solid and would be worth preserving if this item is ever picked back up**: GAP-183
+(PID-reuse protection via process start-time verification) and GAP-193 (marker-authorization
+structural closure) are both genuinely correct, independently re-confirmed multiple times, and
+represent real, transferable safety patterns. GAP-175/176/177/178/188/189's original scenarios
+also all still hold. The problem is narrowly GAP-194's specific remedy mechanism, plus the newly
+surfaced GAP-198/199/200.
+
+**Disposition**: unlike FR2-16 (where the honest core content was genuinely shippable
+independent of the broken enforcement mechanism), NONE of FR2-03's source code has ever been
+committed to this branch across all 5 rounds -- every round's actual gc.ts/sessions.ts/
+process-list.ts/etc. changes have remained uncommitted working-tree state throughout, with only
+evidence and tracking-doc updates landing in git. This pattern continues: no source code is
+committed with this BLOCKED marking. The feature (session/profile GC as a whole) does not ship
+in this loop. A future attempt at this item should start from a genuinely different design
+question -- "what signal, if any, can safely tell 'abandoned' apart from 'in use' for an
+unmarked legacy Chrome with an unreadable state file" -- rather than another narrow patch to
+the port-probe approach, per this loop's own repeatedly-relearned lesson about structural fixes.
+
+**Recommendation for whoever picks this up next**: GAP-200 (the recursive-delete-after-
+empty-check data-loss race) is a real, independent, narrower bug worth fixing on its own even
+if the rest of this item stays blocked -- it doesn't depend on resolving the live/orphan
+distinction problem, and a non-recursive `rmdir` (atomically fails if anything was added between
+the check and the delete) closes it cheaply. Consider carving this out as its own small,
+separately-scoped item rather than waiting for the whole GC feature to be redesigned.
+
+**Third item in this loop now BLOCKED (FR2-01, FR2-16, FR2-03)**, alongside 3 DONE
+(FR2-02, FR2-09, FR2-10). The remaining 11 items are still at SPEC, several genuinely blocked
+by dependency chains on FR2-01's now-permanent block (needing a future Orchestrator decision on
+how to proceed), others independently developable.

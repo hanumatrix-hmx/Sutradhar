@@ -1,0 +1,47 @@
+{
+  "item": "FR2-03",
+  "round": "audit-5 (escalation cycle 2 of 2)",
+  "date": "2026-09-26",
+  "verdict": "FAIL",
+  "headline": "GAP-193 is structurally closed. GAP-194 is closed only for the exact reported scenario: its DevToolsActivePort 'liveness oracle' cannot tell a live legacy session from a running legacy orphan. (a) Every running legacy orphan is now protected forever, which regresses spec G12/§101/D6 (live-proven, undisclosed, and fix-4's own no-regression evidence never tested it). (b) A live legacy session with unreadable state whose browser stalls for more than 800ms is still killed (live-proven with a suspended Chrome). Also found a separate pre-existing destructive path in clearStateFileIfUnchanged: a recursive rm after an emptiness check deleted 8,267 concurrently-written files in a 60s hammer.",
+  "gap193": {
+    "status": "structurally closed",
+    "reasoning": "dirsWithKilledBrowser now has zero marginal authority. For legacy dirs it is consulted only after grace, and an unreferenced, past-grace sutradhar-cli dir is deleted as orphan-dir at line 574 anyway. For Puppeteer dirs only dir.ownerFile can authorize. Forging an owner file needs write access inside the victim dir, which already amounts to the power to delete it, so it gives no privilege amplification. Checked on Windows only. See the caveat about multi-user Linux /tmp.",
+    "live": "a5r-gap189-sibling-path.json: V1 young dir kept grace, V2 unowned puppeteer kept not-sutradhar, controls unchanged"
+  },
+  "gap194": {
+    "status": "reported scenario closed, fix structurally unsound",
+    "live": "a5r-gap188-legacy-sibling.json: garbled and locked state with a reachable legacy Chrome gives zero actions, Chrome alive",
+    "underKill": "a5-legacy-orphan-and-hung.json A_*: real running unmarked Chrome on sutradhar-cli-*, no state anywhere, 125s old. fix-4 keeps it as 'unknown-liveness' (real CLI dry-run agrees). The same snapshot with legacyProbes={} gives kill legacy-orphan.",
+    "stillKillsLive": "a5-legacy-orphan-and-hung.json B2: garbled legacy state plus live Chrome suspended for about 1.3s gives kill legacy-orphan planned. B3 (the same hung Chrome with a READABLE state) is protected as 'unresponsive'.",
+    "realism": "a5-devtools-latency-under-load.json: 0/40 false-unreachable at 2x-core CPU saturation (max 98ms), so B2 needs a genuinely stalled browser"
+  },
+  "gaps": [
+    "GAP-198 | FR2-03 audit-5 | major (spec regression + evidence integrity) | fix-4's probeLegacyChromeReachable returns true for EVERY running Chrome, orphan or not (a running orphan still serves its own DevToolsActivePort), so spec §101/G12/D6's legacy-orphan reclaim is dead code for real Chromes. Live: a 125s-old unmarked Chrome with no state anywhere is kept 'unknown-liveness' forever, and its dir leaks too. The G12/GAP-194 unit tests model an orphan as 'alive process, probe false', which does not happen for a running Chrome. fix-4's code comment claims 'reclaimed exactly as before, no regression to G12'. Its f4-gap194-no-regression-real-orphan test killed the Chrome BEFORE running GC (so it never tested a running orphan), and its own JSON shows actions:[] with the dir kept 'grace'.",
+    "GAP-199 | FR2-03 audit-5 | minor (timing-dependent residual of GAP-194, same class) | For a legacy Chrome with unreadable state, protection now depends on answering /json/version within 800ms. A live session whose browser process stalls (suspended in the repro) is killed as legacy-orphan, while the SAME hung Chrome with a readable state is protected as 'unresponsive'. Not reproduced by CPU load alone (max 98ms). Suggested structural fix for both GAP-198 and GAP-199: drop the port probe. If ANY in-scope state file is unreadable this run, keep every unmarked legacy Chrome as 'unknown-liveness' (and say so in the output); otherwise apply G12 as specified.",
+    "GAP-200 | FR2-03 audit-5 | minor (real destructive path, narrow window, pre-existing since fix-1) | clearStateFileIfUnchanged does readdir(dir) and then, if the dir is empty, rm(dir,{recursive:true,force:true}). Files written between those two steps are deleted. The spec explicitly promises that a sibling history.jsonl survives, and a racing new session's writeState would lose its state.json, orphaning a live Chrome. Live hammer: 8,267 of 106,207 concurrently-written files were deleted in 60s (a5-clearstate-race.json). A non-recursive rmdir closes it. A smaller readFile-compare -> rm(file) window has the same shape.",
+    "GAP-201 | FR2-03 audit-5 | observation (PID-reuse class, sibling of GAP-183, not live-hit) | executeGc kills by raw PID (taskkill /PID /T /F, process.kill) from a plan built on an earlier snapshot, with no start-time or command-line re-check at kill time. If a planned orphan exits and its PID is reused inside the window (measured about 0.5s: collectGcSnapshot 471-495ms), an unrelated process tree is killed. Live hunts found no reuse in 8,000 (single target) or 20,000 (40 targets) spawns (a5-exec-pid-reuse*.json), so the likelihood is very low on this machine.",
+    "GAP-202 | FR2-03 audit-5 | minor (code-read only, spec-mandated, not live-reproduced) | releaseSessionResources (close/self-heal, spec §2.6) verifies an unreachable-but-alive LEGACY chromePid only by cmdline.includes('<tmp>\\\\sutradhar-cli-'). Every Sutradhar CLI Chrome matches that, and there is no start-time check. If a stale pre-0.5.0 state's PID has been reused by another live session's Chrome, that session would be tree-killed.",
+    "GAP-203 | FR2-03 audit-5 | minor, test-integrity | Mutation A5-N2 (Puppeteer owner-file'd dir deleted even when ownerAliveAndSame says the owner is ALIVE: ownerDead=true) survives all 172 cli tests. The owner-liveness half of the only remaining Puppeteer delete gate has no failing test.",
+    "GAP-204 | FR2-03 audit-5 | minor, reporting | After the disclosed R176 deferral, GC reports remaining.orphanDirs=0 and exit 0 while a dir it knowingly deferred under 'grace' still exists (DW11's independent observer sees it). The report should count grace-deferred dirs of browsers killed in the same run."
+  ],
+  "revertAndConfirm": "a5-revert-and-confirm.json: F4-M1/M2/M3 each caught (1 failure each). A5-N1 (probe unparsable port -> true) caught. A5-N3 (collectGcSnapshot legacyProbes wiring removed) caught. A5-N2 SURVIVES 172/172. gc.ts sha256 e7e30c21... restored and verified after every mutation.",
+  "regressions": {
+    "a5r-regressions": "10/11. R176 is the only FAIL, the disclosed deferral.",
+    "R176_next_run": "a5-r176-next-run.json: kept 'grace' at dir mtime age 80s and 101s, deleted at 121.8s, so it is reclaimed on the first run after mtime+120s. No grace-math edge found beyond deferral.",
+    "donewhen": "a5r-donewhen: 23/25. G176 and DW11 FAIL, both the same disclosed R176 deferral. G175/G177/G178a-f/DW1-10/12/13 PASS.",
+    "GAP-183": "a5r-ppid-hunt: 2/2 verified reuse chains, victims and grandchildren spared, squatters and genuine control children killed",
+    "GAP-188/189/193/194 original repros": "all hold"
+  },
+  "observations_no_gap": [
+    "probeLock on a live Chrome's profile dir returns 'in-use' (degraded-mode gate sound)",
+    "owner-start skew (marker processStartMs vs WMI CreationDate): idle 27-35ms, under 2x-core CPU load 549-1034ms, 0/60 over the 5000ms tolerance",
+    "untested caveat: multi-user Linux /tmp. GC does not check dir uid, so the recursive rm could descend into another user's world-writable sutradhar-cli-* dir (symlink-race class). Not reproducible on this Windows machine."
+  ],
+  "verification": {
+    "typecheck": "browser/cli/mcp-server exit=0 (typecheck.txt)",
+    "vitest": "cli 172/172, browser 302/302, mcp-server 84/84",
+    "build": "turbo run build --filter=!sutradhar --force exit=0 (build.txt)"
+  },
+  "cleanup": "Zero processes matching audit-5 markers and zero fr2-03-a5* / a3-dw-Z9riRj dirs remaining (fresh CIM + dir listing). chrome.exe count 69, same as the pre-audit baseline. One planned self-heal demonstration script was not written or run."
+}

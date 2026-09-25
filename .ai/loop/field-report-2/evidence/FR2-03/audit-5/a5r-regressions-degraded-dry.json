@@ -1,0 +1,57 @@
+{
+  "dryRun": true,
+  "scope": {
+    "tempRoot": "E:\\AI-Cache\\tmp\\fr2-03-a5r-reg-RIk6Xk\\temp",
+    "stateRoot": "E:\\AI-Cache\\tmp\\fr2-03-a5r-reg-RIk6Xk\\sr",
+    "extraStateDirs": []
+  },
+  "graceMs": 120000,
+  "processEnumeration": {
+    "ok": false,
+    "reason": "spawn powershell.exe ENOENT"
+  },
+  "actions": [
+    {
+      "type": "clearState",
+      "stateFile": "E:\\AI-Cache\\tmp\\fr2-03-a5r-reg-RIk6Xk\\sr\\r177stale\\state.json",
+      "result": "planned"
+    },
+    {
+      "type": "deleteDir",
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-a5r-reg-RIk6Xk\\temp\\puppeteer_dev_chrome_profile-OwNd01",
+      "reason": "owner-dead",
+      "result": "planned"
+    }
+  ],
+  "kept": [
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-a5r-reg-RIk6Xk\\sr\\75283e3e339dedab\\state.json",
+      "reason": "live-session"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-a5r-reg-RIk6Xk\\temp\\puppeteer_dev_chrome_profile-UnMk01",
+      "reason": "not-sutradhar"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-a5r-reg-RIk6Xk\\temp\\sutradhar-cli-1790372347918-EaAss5",
+      "reason": "grace"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-a5r-reg-RIk6Xk\\temp\\sutradhar-cli-1790372348589-RDwyVF",
+      "reason": "grace"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-a5r-reg-RIk6Xk\\temp\\sutradhar-cli-1790372349261-FcLVj6",
+      "reason": "in-use"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-a5r-reg-RIk6Xk\\temp\\sutradhar-cli-1790372349682-yOuNg4",
+      "reason": "grace"
+    }
+  ],
+  "remaining": {
+    "orphanProcesses": 0,
+    "orphanDirs": 1
+  },
+  "exitCode": 0
+}

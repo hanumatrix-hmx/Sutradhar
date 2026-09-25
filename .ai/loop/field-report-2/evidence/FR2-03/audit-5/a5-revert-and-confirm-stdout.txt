@@ -1,0 +1,58 @@
+{
+  "origSha": "e7e30c21f8c4de4b63980aff7ca295149c756c2911e0bba5d5e9d073c43e5737",
+  "results": [
+    {
+      "name": "F4-M1 revert GAP-193 Puppeteer gate (dirsWithKilledBrowser may authorize)",
+      "tests": "1 failed | 171 passed (172)",
+      "caught": true,
+      "failing": [
+        "tests/unit/gc.spec.ts > planGc > GAP-193: an UNOWNED (no .sutradhar-owner.json) Puppeteer dir is never deleted, even when a killed marked browser claims it as --user-data-dir (D2 attribution cannot be satisfied by command-line text alone)"
+      ],
+      "restoredShaOk": true
+    },
+    {
+      "name": "F4-M2 revert GAP-193 grace ordering (dirsWithKilledBrowser before grace)",
+      "tests": "1 failed | 171 passed (172)",
+      "caught": true,
+      "failing": [
+        "tests/unit/gc.spec.ts > planGc > GAP-193: a YOUNG dir (mtime=now) stays grace-protected even though a killed CLI-marked browser claims it as its --user-data-dir"
+      ],
+      "restoredShaOk": true
+    },
+    {
+      "name": "F4-M3 remove GAP-194 legacyProbes consultation",
+      "tests": "1 failed | 171 passed (172)",
+      "caught": true,
+      "failing": [
+        "tests/unit/gc.spec.ts > planGc > GAP-194: a legacy unmarked CLI dir past grace is PROTECTED (unknown-liveness) when legacyProbes independently confirms its DevToolsActivePort still answers -- no marker or state file involved at all"
+      ],
+      "restoredShaOk": true
+    },
+    {
+      "name": "A5-N1 probeLegacyChromeReachable: unparsable/missing port reads as REACHABLE",
+      "tests": "1 failed | 171 passed (172)",
+      "caught": true,
+      "failing": [
+        "tests/unit/legacy-probe.spec.ts > probeLegacyChromeReachable (pure function) > returns false for a garbled (non-numeric) port line rather than throwing"
+      ],
+      "restoredShaOk": true
+    },
+    {
+      "name": "A5-N2 ownerFile-only gate: delete owner-file'd Puppeteer dir even when owner ALIVE",
+      "tests": "172 passed (172)",
+      "caught": false,
+      "failing": [],
+      "restoredShaOk": true
+    },
+    {
+      "name": "A5-N3 collectGcSnapshot never populates legacyProbes (production wiring of GAP-194)",
+      "tests": "1 failed | 171 passed (172)",
+      "caught": true,
+      "failing": [
+        "tests/unit/legacy-probe.spec.ts > GAP-194: collectGcSnapshot wires probeLegacyChromeReachable into legacyProbes (production wiring, not just planGc) > a real, reachable legacy Chrome's profile dir shows up as legacyProbes[dir] === true in the collected snapshot"
+      ],
+      "restoredShaOk": true
+    }
+  ],
+  "finalShaOk": true
+}
