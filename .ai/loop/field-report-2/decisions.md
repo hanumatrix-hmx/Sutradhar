@@ -837,3 +837,41 @@ claim before accepting it. If audit-5 finds the pattern genuinely closed (no new
 shape), FR2-01 can move to DONE. If audit-5 finds one more instance of the same shape, exactly
 one Orchestrator-supervised cycle (2 of 2) remains before the item must be marked BLOCKED with a
 full diagnosis, per the loop's own stated bound -- not an open-ended sixth attempt.
+
+## 2026-09-25 -- FR2-16 audit-1: FAILED, own wording is dishonest -- exactly the mistake this item exists to fix
+
+The independent Auditor re-ran everything itself (typecheck, vitest, build, live-verify,
+mutation tests) and confirmed all of it passes, but caught a real, serious mistake: the new
+README invariant and browser-options.ts comment claim '--disable-blink-features=
+AutomationControlled' is "a Chrome-recommended stability flag, not a detection-evasion feature".
+A live probe (webdriver-probe.log) shows this claim is FALSE -- navigator.webdriver is literally
+true without the flag and false with it, and the repo's own tools/engine-comparison
+stealth-isolation-experiment.md already documents webdriver masking as a stealth technique. This
+is not a minor wording nit: it's the exact same category of false claim this item exists to
+remove, reintroduced in the very sentence meant to replace the old false claim.
+
+Decision, made now rather than left to the next Executor to guess: reword honestly rather than
+remove the flag. Removing --disable-blink-features=AutomationControlled would be a real behavior
+change (this flag does something, even if not full stealth), outside this item's stated scope
+(pure honesty/cleanup, no capability change, per loop-prompt decision #1's "no stealth opt-in" --
+the flag isn't an opt-in today, it's unconditional, and changing that unconditional behavior is
+not what this item asked for). The new wording must say plainly: the retained flag hides
+navigator.webdriver from simple detection scripts, but does not defeat Cloudflare, CAPTCHA, or
+any real bot-detection service -- i.e., state what it actually does and what it does not do,
+instead of asserting it does nothing detection-relevant at all.
+
+Four more minor gaps logged (GAP-102..105): a wider set of stale stealth claims than the
+Executor's grep caught (PROJECT_DEEP_DIVE.md's own §11.1 describes a whole working anti-detection
+engine, missed); no test guards the README's 4th spot; several new tests are weak/vacuous; a
+gitignored stale local dist/ still locally re-exposes the deleted class through a wildcard export
+(doesn't affect the published tarball, confirmed separately).
+
+Also: GAP-106 (new) confirms GAP-100's flagged concern was real, not theoretical -- the shared
+baseline-*.json files visibly changed mid-audit while two unrelated items' agents ran
+concurrently in the same worktree. Standing rule adopted now: scenario-suite baseline files are
+regenerated and committed only as part of the loop's own final full-repo gate (§9), never as a
+side effect of an individual item's live-verify run. Neither FR2-01's nor FR2-16's commit
+includes them; this is intentional going forward, not an oversight to fix per-item.
+
+FR2-16 moves to FIX(2). Not an escalation (this is a normal fix cycle after a normal audit-1
+FAIL, only FR2-01 is in the escalation track).

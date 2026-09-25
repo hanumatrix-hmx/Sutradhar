@@ -19,7 +19,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 | FR2-13 | `sutradhar run` scenario runner | 3 | SPEC (HARD-blocked: needs FR2-07+FR2-08+FR2-11+FR2-12 all DONE) | 0 | evidence/FR2-13/spec.md | - |
 | FR2-14 | `.sutradhar.json` project config | 3 | SPEC (builds on FR2-03/04/05, all still SPEC) | 0 | evidence/FR2-14/spec.md | - |
 | FR2-15 | Playwright migration guide | 4 | SPEC (HARD-blocked: needs FR2-01..FR2-14 all DONE) | 0 | evidence/FR2-15/spec.md | - |
-| FR2-16 | Stealth boundary honesty | 4 | SPEC (no dependencies -- unblocked) | 0 | evidence/FR2-16/spec.md | - |
+| FR2-16 | Stealth boundary honesty | 4 | FIX(2) [audit-1 FAILED: GAP-101 major -- new wording is itself factually false] | 1 | audit-1 found new claim 'AutomationControlled is a stability flag, not detection-evasion' is FALSE (navigator.webdriver probe proves otherwise); + 4 minor gaps | (uncommitted, not yet -- audit-1 blocked it) |
 | FR2-17 | Docs sweep | 4 | TODO | 0 | - | - |
 
 ## Baseline
