@@ -1,0 +1,5 @@
+frames loaded: 4
+PASS K1 engine click with "pierce/ #notaframe" (space after prefix, valid CSS) still clicks sends=31 :: {"success":true,"actionType":"click","executionTimeMs":64,"currentUrl":"file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understandi
+PASS K2 engine click "pierce/ text=plain div" rejected with zero CDP (GAP-213) sends=0 :: Invalid selector "pierce/ text=plain div" — "text=" is Playwright selector-engine syntax (Puppeteer's own text query is spelled "text/"). Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for el
+PASS K3 engine click data-test-id=go -> exact GAP-205 text, zero CDP sends=0 :: Invalid selector "data-test-id=go" — "data-test-id=" is a Playwright attribute-engine prefix; use a CSS attribute selector such as [data-test-id="…"]. Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes als
+overall true

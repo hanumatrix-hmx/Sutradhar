@@ -14,6 +14,7 @@ import type {
   SkippedFrame,
   VerificationResultDto,
 } from '@sutradhar/browser';
+import { assertSupportedSelectorDialect, InvalidSelectorError, SELECTOR_SYNTAX_HINT, selectorSyntaxDetail } from '@sutradhar/browser';
 import type { SessionId, TabId } from '@sutradhar/contracts';
 
 /** Options for {@link SutradharRuntime.launch}. */
@@ -194,33 +195,22 @@ export interface ExtractDataOptions {
   visibleOnly?: boolean;
 }
 
-/** Internal helper: convert a snapshot node id (number) or selector string to a CSS selector. */
+export { SELECTOR_SYNTAX_HINT, selectorSyntaxDetail, InvalidSelectorError };
+
+/**
+ * Convert a snapshot node id ("12") or selector string to the selector the engine resolves.
+ * Throws {@link InvalidSelectorError} synchronously — before any session lookup, `await`, or CDP
+ * call — for Playwright-style syntax (text=, role=, >>, :has-text(), getBy*(), internal:, …).
+ * Everything else passes through unchanged; genuinely invalid CSS is judged later by the
+ * browser's own parser (FR2-06).
+ */
 export function normalizeTarget(target: ElementTarget): string {
-  // A pure-numeric target is interpreted as a sd-node-id stamped by the DOM semantic engine.
-  return /^\d+$/.test(target.trim()) ? `[data-sd-node-id="${target.trim()}"]` : target;
-}
-
-/**
- * Actionable tail appended to every selector-syntax error raised across the runtime (FR2-02).
- * Owned here as the seam FR2-06 (a dedicated fast Playwright-pattern detector) takes over —
- * FR2-06 may reword this constant and {@link selectorSyntaxDetail} in place, but every caller
- * (extractData, resolveFrame/eval today) keeps working unchanged.
- */
-export const SELECTOR_SYNTAX_HINT =
-  'Use standard CSS or a snapshot node id. Playwright-style selectors (text=, role=, >>, :has-text(), ' +
-  'getBy*, internal:) are not supported: take a snapshot to find a CSS selector or node id, or use ' +
-  'click_by_text / click_by_role / type_by_label to act by visible text.';
-
-/**
- * Extracts the first line of a browser selector-parser error message, with a leading
- * "SyntaxError: " / "DOMException: " prefix stripped, for use in a Sutradhar-authored error
- * message (the raw parser message is still useful, just not as the exception's own `name`/type).
- * Never returns an empty string — falls back to a generic phrase when given no message.
- */
-export function selectorSyntaxDetail(parserMessage: string): string {
-  const firstLine = (parserMessage ?? '').split('\n')[0]?.trim() ?? '';
-  const stripped = firstLine.replace(/^(SyntaxError|DOMException):\s*/i, '').trim();
-  return stripped.length > 0 ? stripped : 'invalid selector syntax';
+  const trimmed = target.trim();
+  // A pure-numeric target is interpreted as a sd-node-id stamped by the DOM semantic engine —
+  // checked first (D6) so node ids never pay for the dialect scan below.
+  if (/^\d+$/.test(trimmed)) return `[data-sd-node-id="${trimmed}"]`;
+  assertSupportedSelectorDialect(target);
+  return target;
 }
 
 export { type SessionId, type TabId };

@@ -1913,3 +1913,25 @@ tests that pin every reason string so this can't silently regress; (2) fix GAP-2
 CLI's own already-correct `validateFrameChain` pattern, and REWRITE R7 to assert the correct
 (spec-compliant) behavior rather than the deviation. GAP-207/208/209/210/212/213 are minor;
 address opportunistically if time allows without destabilizing the two required fixes.
+
+## 2026-09-26 -- FR2-06: DONE (1 fix cycle)
+
+audit-2 (independent, own multi-hop iframe fixtures, own detection-table enumeration, own
+revert-and-confirm) returned PASS: both real defects from audit-1 confirmed genuinely fixed --
+GAP-205's coaching text now matches spec section 2.1 character-for-character across all 10
+`=`-suffixed prefixes in 11 variant forms each (113/113); GAP-206's frame-hop pre-validation
+holds across 13 new adversarial multi-hop chains (3-hop/4-hop, bad-hop-in-any-position,
+whitespace-padded, mixed node-id/internal: hops) with zero over-rejection on 8 valid-chain
+controls and 2 "syntactically valid but semantically wrong" controls still reaching the browser
+correctly. The R7 test rewrite was independently confirmed to be doing real work (a revert that
+kept the same error wrapper but reverted to lazy per-hop checking was caught ONLY by R7's
+call-count assertion).
+
+3 minor gaps logged (GAP-214/215/216), none blocking. GAP-216 is confirmed PRE-EXISTING --
+the frameSelector `::` splitter doesn't respect quoted attribute values, a bug that predates
+FR2-06 entirely (FR2-06 only changed the error text shown for an already-broken split) --
+logged for a future item, not this one's scope.
+
+Fourth item to reach DONE in this loop (after FR2-02, FR2-09, FR2-10), and the second to need
+only one fix cycle. GAP-211's process note applies at commit time: `cli.ts` and `AGENT_SETUP.md`
+are shared with FR2-03's still-uncommitted, BLOCKED code -- only FR2-06's own hunks are staged.

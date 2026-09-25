@@ -1,0 +1,54 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/capability-runtime[39m
+
+ [32m✓[39m tests/unit/visual-compare.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m tests/unit/profile-manager.spec.ts [2m ([22m[2m14 tests[22m[2m)[22m[90m 42[2mms[22m[39m
+ [32m✓[39m tests/unit/ax-snapshot.spec.ts [2m ([22m[2m15 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m tests/unit/extract-data.spec.ts [2m ([22m[2m28 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS2: launch() twice registers two launched, mock (no real browser) entries, sorted by createdAt then id[22m[39m
+{"timestamp":"2026-09-25T22:47:37.375Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:47:37.375Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376457375_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T22:47:37.376Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:47:37.376Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376457376_2","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS3: attach() registers an "attached" entry[22m[39m
+{"timestamp":"2026-09-25T22:47:37.381Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376457381_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS4: lifecycleOpsInFlight is 1 while launch() is pending, 0 after it resolves, and 0 after it rejects or throws synchronously[22m[39m
+{"timestamp":"2026-09-25T22:47:37.381Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376457381_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS5: shutdown() and shutdownAll() remove entries; shutdown of an unknown id still throws and leaves the counter at 0[22m[39m
+{"timestamp":"2026-09-25T22:47:37.382Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:47:37.382Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376457382_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T22:47:37.382Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:47:37.382Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376457382_2","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T22:47:37.382Z","level":"info","message":"[BrowserSession] Closed session sess_1790376457382_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T22:47:37.382Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790376457382_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T22:47:37.382Z","level":"info","message":"[BrowserSession] Closed session sess_1790376457382_2","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-25T22:47:37.382Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790376457382_2","context":{"reason":"Close all sessions requested"}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS6: a session created directly via the session manager (agent.runGoal-style, no launch()/attach()) is not listed[22m[39m
+{"timestamp":"2026-09-25T22:47:37.382Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:47:37.382Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376457382_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS7: a session removed behind the runtime's back (idle reap / crash) is pruned from listSessions[22m[39m
+{"timestamp":"2026-09-25T22:47:37.382Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:47:37.382Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376457382_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T22:47:37.382Z","level":"info","message":"[BrowserSession] Closed session sess_1790376457382_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-25T22:47:37.382Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790376457382_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-25T22:47:37.382Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:47:37.382Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376457382_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS8: a reused id keeps its original origin (launch/launch, and attach then launch under the same id)[22m[39m
+{"timestamp":"2026-09-25T22:47:37.383Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:47:37.383Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T22:47:37.383Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed2","context":{"isIncognito":false}}
+
+ [32m✓[39m tests/unit/runtime.spec.ts [2m ([22m[2m95 tests[22m[2m)[22m[90m 39[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[32m157 passed[39m[22m[90m (157)[39m
+[2m   Start at [22m 04:17:36
+[2m   Duration [22m 964ms[2m (transform 464ms, setup 0ms, collect 1.83s, tests 100ms, environment 1ms, prepare 661ms)[22m
+

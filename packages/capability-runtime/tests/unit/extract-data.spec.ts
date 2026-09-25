@@ -315,9 +315,14 @@ describe('invalidExtractSelectorsError', () => {
     expect(err.message).toMatch(
       /^Invalid selector for field "bad": "\.p\[" — Failed to execute 'querySelectorAll' on 'Document': '\.p\[' is not a valid selector\./,
     );
+    // FR2-06 moved SELECTOR_SYNTAX_HINT into @sutradhar/browser and reworded it (spec §2.1) —
+    // the exported name/shape this test cares about (a hint appended after the message) is
+    // unchanged, so this assertion follows the new wording rather than pinning FR2-02's original
+    // text verbatim.
     expect(err.message).toContain(
-      'Use standard CSS or a snapshot node id. Playwright-style selectors (text=, role=, >>, :has-text(), ' +
-        'getBy*, internal:) are not supported',
+      'Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer\'s pierce/, xpath/, aria/ and text/ ' +
+        'prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), ' +
+        'getBy*(), internal:) are not supported',
     );
   });
 
@@ -325,6 +330,44 @@ describe('invalidExtractSelectorsError', () => {
     const err = invalidExtractSelectorsError([{ name: 'bad', selector: '.p[', message: `SyntaxError: ${badMessage}` }]);
     expect(err.message).toContain(`— ${badMessage}`);
     expect(err.message).not.toContain('SyntaxError:');
+  });
+
+  it('P9 (FR2-06): planExtractFields with a pierce/text= selector gets FR2-02\'s prefix note plus the dialect reason', () => {
+    expect(() => planExtractFields({ bad: { selector: 'pierce/text=x' } })).toThrow(
+      /Invalid selector for field "bad": "pierce\/text=x" — "text=".*does not support Puppeteer's pierce\//s,
+    );
+  });
+
+  it('P10 (FR2-06): a non-InvalidSelectorError throw from normalizeTarget passes through UNCHANGED (the actual rethrow branch, not the unrelated "attr:" error)', () => {
+    // GAP-210 (audit-1): the original version of this test asserted the "attr:" error, which is
+    // thrown OUTSIDE the try/catch around normalizeTarget() entirely (that block only wraps the
+    // `selector = normalizeTarget(spec.selector)` call) — so the actual `throw e` rethrow branch
+    // in planExtractFields (extract-data.ts) was never exercised, and a mutation deleting it
+    // would have survived. normalizeTarget's only real non-InvalidSelectorError failure mode is
+    // a non-string selector, whose `target.trim()` throws a plain TypeError — that's used here
+    // to genuinely exercise (and pin, by reference identity) the rethrow.
+    const badSelector = null as unknown as string;
+    let thrown: unknown;
+    try {
+      planExtractFields({ ok: { selector: 'h1' }, bad: { selector: badSelector } });
+    } catch (e) {
+      thrown = e;
+    }
+    expect(thrown).toBeInstanceOf(TypeError);
+    expect((thrown as Error).name).not.toBe('InvalidSelectorError');
+    expect((thrown as Error).message).not.toContain('Invalid selector for field');
+  });
+
+  it('P10b (FR2-06): the unrelated "attr:" error (thrown outside the normalizeTarget try/catch) still surfaces as its own distinct error', () => {
+    expect(() => planExtractFields({ bad: { selector: '#a', attribute: 'attr:' } })).toThrow(
+      /needs an attribute name/,
+    );
+  });
+
+  it('P11 (FR2-06): every Playwright-style field is collected and named, not just the first', () => {
+    expect(() =>
+      planExtractFields({ ok: { selector: 'h1' }, bad: { selector: 'text=Buy' }, bad2: { selector: 'button >> text=OK' } }),
+    ).toThrow(/Invalid selector for field "bad": "text=Buy".*Invalid selector for field "bad2"/s);
   });
 
   it('X3: a pierce/ prefixed selector gets the extra prefix note', () => {

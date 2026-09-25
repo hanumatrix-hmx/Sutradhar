@@ -17,6 +17,14 @@ import { IBrowserTab } from '../session/browser-tab.js';
 import { ExecutionVerifier } from '../verifier/execution-verifier.js';
 import { SD_GENERATION_ATTR, SD_CURRENT_GENERATION_ATTR, SD_FINGERPRINT_ATTR } from '../dom/dom-semantic-engine.js';
 import { ActionParams, ActionResultDto, SettleSpec, WaitForSelectorState } from './action-types.js';
+import {
+  invalidSelectorSyntaxError,
+  selectorProbeTarget,
+  selectorSyntaxProbeInPage,
+  toPuppeteerQuery,
+  SELECTOR_SYNTAX_PROBE_TIMEOUT_MS,
+  type SelectorProbeTarget,
+} from './selector-dialect.js';
 
 export interface IBrowserActionEngine {
   executeAction(tab: IBrowserTab, params: ActionParams): Promise<ActionResultDto>;
@@ -306,6 +314,13 @@ export class BrowserActionEngine implements IBrowserActionEngine {
   }
 
   private async executeActionSerialized(tab: IBrowserTab, params: ActionParams): Promise<ActionResultDto> {
+    // FR2-06: one browser-side parse of every CALLER selector, before the duplicate guard (a
+    // rejected selector must not occupy the duplicate window) and before the retry loop (never
+    // retried, never counted against timeoutMs).
+    const invalidSelector = await this.rejectInvalidCallerSelector(tab, params);
+    if (invalidSelector) {
+      return invalidSelector;
+    }
     const duplicateError = this.checkDuplicateAction(tab.id, params);
     if (duplicateError) {
       return duplicateError;
@@ -434,6 +449,14 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         this.logger.warn(
           `[BrowserActionEngine] Action ${params.actionType} failed (attempt ${attempt}/${maxRetries + 1}): ${lastError.message}`,
         );
+        // FR2-06 (D8): a selector-parse error is deterministic — the browser's own parser will
+        // reject the exact same string again on the next attempt, so retrying only wastes the
+        // backoff below (and, without this, pierceFirstMatch's syntax-error fast-fail on the
+        // 'attached' path would still burn `maxRetries` retries on something that can never
+        // succeed).
+        if (/is not a valid selector|is not a valid XPath expression/.test(lastError.message)) {
+          break;
+        }
         if (attempt <= maxRetries) {
           await new Promise((r) => setTimeout(r, 500 * attempt));
         }
@@ -494,6 +517,104 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     });
 
     return { ...failResult, verification };
+  }
+
+  /** Caller-supplied selectors only — never the selectors the engine builds itself for
+   *  click_by_text (XPath from free text), click_by_role (aria/ from role+name) or type_by_label
+   *  (both plain CSS built from a caller-given LABEL string, not a selector). */
+  private static callerSelectorsOf(p: ActionParams): string[] {
+    switch (p.actionType) {
+      case 'click':
+      case 'type':
+      case 'wait_for_selector':
+      case 'select_option':
+      case 'hover':
+      case 'focus':
+      case 'touch_tap':
+      case 'download_file':
+      case 'upload_file':
+      case 'scroll':
+        return p.selector ? [p.selector] : [];
+      case 'drag_and_drop':
+        return [p.selector, p.targetSelector].filter((s): s is string => !!s);
+      default:
+        return [];
+    }
+  }
+
+  /**
+   * FR2-06: a single, cheap, browser-side parse of every caller-supplied selector for this
+   * action, run once BEFORE the retry loop (so it's never retried) and BEFORE the duplicate
+   * guard (so a rejected selector doesn't occupy the duplicate-dispatch window). Returns a
+   * failed {@link ActionResultDto} when the browser's own parser DEFINITELY rejects a selector;
+   * `undefined` when every selector is valid, or when the probe was inconclusive (no
+   * `mainFrame().evaluate`, a pending dialog, a timeout, ...) — in which case today's path
+   * (`resolveElement`'s `.catch(() => null)`) is unchanged.
+   */
+  private async rejectInvalidCallerSelector(
+    tab: IBrowserTab,
+    params: ActionParams,
+  ): Promise<ActionResultDto | undefined> {
+    const page = tab.page;
+    const selectors = BrowserActionEngine.callerSelectorsOf(params);
+    if (!page || selectors.length === 0) return undefined;
+    if (tab.getPendingDialog?.()) return undefined; // main-thread evaluate would block on the dialog
+    const start = Date.now();
+    for (const selector of selectors) {
+      const target = selectorProbeTarget(selector);
+      if (!target) continue;
+      const parserMessage = await this.probeSelectorSyntax(page, target);
+      if (parserMessage === null) continue; // valid OR inconclusive -> today's path
+      const error = invalidSelectorSyntaxError(selector, parserMessage, { enginePath: true }).message;
+      const executionTimeMs = Date.now() - start;
+      const failResult: ActionResultDto = {
+        success: false,
+        actionType: params.actionType,
+        executionTimeMs,
+        currentUrl: tab.url,
+        title: tab.title,
+        error,
+        retriesUsed: 0, // no failureScreenshot: nothing on the page is relevant to a parse error
+      };
+      const verification = await this.verifier.verifyAction(tab, tab.url, failResult, params.verificationSpec);
+      tab.recordAction({
+        actionType: params.actionType,
+        selector: params.selector,
+        success: false,
+        error,
+        executionTimeMs,
+        timestamp: new Date().toISOString(),
+      });
+      this.logger.warn(`[BrowserActionEngine] Rejected invalid selector before dispatch: ${error}`);
+      return { ...failResult, verification };
+    }
+    return undefined;
+  }
+
+  /**
+   * Returns the browser parser's message iff it DEFINITELY rejects the selector; `null` when
+   * valid or when the probe can't run/answer in time (never a guess). Bounded by
+   * {@link SELECTOR_SYNTAX_PROBE_TIMEOUT_MS} — a busy main thread or a slow/detached frame must
+   * never add real latency to an action whose selector turns out to be fine.
+   */
+  private async probeSelectorSyntax(page: Page, target: SelectorProbeTarget): Promise<string | null> {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      const frame = page.mainFrame();
+      if (!frame || typeof frame.evaluate !== 'function' || frame.isDetached?.()) return null;
+      const probe = frame.evaluate(selectorSyntaxProbeInPage, target.kind, target.expr);
+      probe.catch(() => {}); // PROB-015: an abandoned probe (we raced it away below) must never go unhandled
+      return await Promise.race([
+        probe.then((r) => (typeof r === 'string' ? r : null)),
+        new Promise<null>((resolve) => {
+          timer = setTimeout(() => resolve(null), SELECTOR_SYNTAX_PROBE_TIMEOUT_MS);
+        }),
+      ]);
+    } catch {
+      return null;
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
   }
 
   /**
@@ -697,7 +818,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         if (!params.value) throw new Error('Type action requires value parameter');
         if (!params.selector) throw new Error('Type action requires a selector parameter');
         if (!page) throw new Error(`No live browser page for tab ${tab.id} — cannot execute type.`);
-        const handle = await this.resolveElement(page, `pierce/${params.selector}`, {
+        const handle = await this.resolveElement(page, toPuppeteerQuery(params.selector), {
           timeoutMs: 5000,
         });
         if (!handle) throw new Error(await this.describeMissingElement(page, params.selector));
@@ -737,7 +858,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         // reading the grid's real row content before/after, not just trusting scroll's own
         // success report).
         if (params.selector) {
-          const handle = await this.resolveElement(page, `pierce/${params.selector}`, { timeoutMs: 5000 });
+          const handle = await this.resolveElement(page, toPuppeteerQuery(params.selector), { timeoutMs: 5000 });
           if (!handle) throw new Error(await this.describeMissingElement(page, params.selector));
           await this.assertNotStale(handle, params.selector);
 
@@ -821,7 +942,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
             `Invalid wait_for_selector state "${state}" — expected one of: visible, attached, hidden.`,
           );
         }
-        const fullSelector = `pierce/${params.selector}`;
+        const fullSelector = toPuppeteerQuery(params.selector);
 
         // GAP-011: `timeoutMs <= 0` means "check once, don't wait" — a single immediate
         // evaluation of the requested state, with NO timer/race involved at all (the old
@@ -923,7 +1044,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
           throw new Error("SelectOption requires selector and either 'value' or 'values'");
         }
         if (!page) throw new Error(`No live browser page for tab ${tab.id} — cannot execute select_option.`);
-        const handle = await this.resolveElement(page, `pierce/${params.selector}`, {
+        const handle = await this.resolveElement(page, toPuppeteerQuery(params.selector), {
           timeoutMs: 5000,
         });
         if (!handle) throw new Error(await this.describeMissingElement(page, params.selector));
@@ -958,7 +1079,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       case 'focus': {
         if (!params.selector) throw new Error('Focus action requires a selector parameter');
         if (!page) throw new Error(`No live browser page for tab ${tab.id} — cannot execute focus.`);
-        const handle = await this.resolveElement(page, `pierce/${params.selector}`, {
+        const handle = await this.resolveElement(page, toPuppeteerQuery(params.selector), {
           timeoutMs: 5000,
         });
         if (!handle) throw new Error(await this.describeMissingElement(page, params.selector));
@@ -978,9 +1099,9 @@ export class BrowserActionEngine implements IBrowserActionEngine {
           throw new Error('DragAndDrop action requires selector (source) and targetSelector (destination) parameters');
         }
         if (!page) throw new Error(`No live browser page for tab ${tab.id} — cannot execute drag_and_drop.`);
-        const source = await this.resolveElement(page, `pierce/${params.selector}`, { timeoutMs: 5000 });
+        const source = await this.resolveElement(page, toPuppeteerQuery(params.selector), { timeoutMs: 5000 });
         if (!source) throw new Error(`No element found for source selector: ${params.selector}`);
-        const target = await this.resolveElement(page, `pierce/${params.targetSelector}`, { timeoutMs: 5000 });
+        const target = await this.resolveElement(page, toPuppeteerQuery(params.targetSelector), { timeoutMs: 5000 });
         if (!target) throw new Error(`No element found for target selector: ${params.targetSelector}`);
         await this.assertNotStale(source, params.selector);
         await this.assertNotStale(target, params.targetSelector);
@@ -1021,7 +1142,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       case 'touch_tap': {
         if (!params.selector) throw new Error('TouchTap action requires selector parameter');
         if (!page) throw new Error(`No live browser page for tab ${tab.id} — cannot execute touch_tap.`);
-        const handle = await this.resolveElement(page, `pierce/${params.selector}`, {
+        const handle = await this.resolveElement(page, toPuppeteerQuery(params.selector), {
           visible: true,
           timeoutMs: 5000,
         });
@@ -1107,7 +1228,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         }
         if (!page) throw new Error(`No live browser page for tab ${tab.id} — cannot execute upload_file.`);
         await this.assertUploadPathAllowed(params.filePath);
-        const handle = await this.resolveElement(page, `pierce/${params.selector}`, {
+        const handle = await this.resolveElement(page, toPuppeteerQuery(params.selector), {
           timeoutMs: 5000,
         });
         if (!handle) {
@@ -2233,7 +2354,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     button: 'left' | 'right' | 'middle' = 'left',
     offset?: { x: number; y: number },
   ): Promise<void> {
-    const handle = await this.resolveElement(page, `pierce/${selector}`, {
+    const handle = await this.resolveElement(page, toPuppeteerQuery(selector), {
       visible: true,
       timeoutMs: 5000,
     });
@@ -2364,7 +2485,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
 
   /** Same occlusion check as {@link verifiedClick}, applied before hovering. */
   private async verifiedHover(page: Page, selector: string, offset?: { x: number; y: number }): Promise<void> {
-    const handle = await this.resolveElement(page, `pierce/${selector}`, {
+    const handle = await this.resolveElement(page, toPuppeteerQuery(selector), {
       visible: true,
       timeoutMs: 5000,
     });

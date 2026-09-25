@@ -3460,3 +3460,242 @@ describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-0
     expect(elapsedMs).toBeLessThan(900);
   });
 });
+
+describe('@sutradhar/browser BrowserActionEngine FR2-06 caller-selector syntax probe', () => {
+  /** A page whose main frame supports the syntax probe (`evaluate`) in addition to the
+   *  ordinary `waitForSelector`-based resolution path every other test in this file uses. */
+  function pageWithProbe(opts: {
+    evaluateImpl?: (...args: any[]) => any;
+    waitForSelectorImpl?: (...args: any[]) => any;
+    isDetached?: () => boolean;
+  }) {
+    const evaluate = vi.fn().mockImplementation(opts.evaluateImpl ?? (() => Promise.resolve(null)));
+    const waitForSelector = vi.fn().mockImplementation(
+      opts.waitForSelectorImpl ?? (() => Promise.reject(new Error('No element found for selector'))),
+    );
+    const mainFrame = {
+      isDetached: opts.isDetached ?? (() => false),
+      evaluate,
+      waitForSelector,
+    } as unknown as Frame;
+    const screenshot = vi.fn().mockResolvedValue('base64screenshot');
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+      screenshot,
+    } as unknown as Page;
+    return { page, mainFrame, evaluate, waitForSelector, screenshot };
+  }
+
+  function tabWithDialog(page: Page, getPendingDialog?: () => any): IBrowserTab {
+    const tab = mockTab(page);
+    if (getPendingDialog) {
+      (tab as any).getPendingDialog = getPendingDialog;
+    }
+    return tab;
+  }
+
+  it('E1: a probe-confirmed invalid selector fails before dispatch, with no retry and no screenshot', async () => {
+    const parserMessage = "Failed to execute 'querySelector' on 'DocumentFragment': 'div[' is not a valid selector.";
+    const { page, waitForSelector, screenshot, evaluate } = pageWithProbe({
+      evaluateImpl: () => Promise.resolve(parserMessage),
+    });
+    const engine = new BrowserActionEngine();
+    const tab = tabWithDialog(page);
+    const result = await engine.executeAction(tab, { actionType: 'click', selector: 'div[', maxRetries: 2 });
+
+    expect(result.success).toBe(false);
+    expect(result.retriesUsed).toBe(0);
+    expect(result.error).toContain('Invalid selector "div["');
+    expect(result.error).toContain(parserMessage);
+    expect(result.error).toContain('Playwright-style');
+    expect(result.failureScreenshot).toBeUndefined();
+    expect(waitForSelector).not.toHaveBeenCalled();
+    expect(screenshot).not.toHaveBeenCalled();
+    expect(result.verification?.verified).toBe(false);
+    expect(tab.getActionHistory()).toHaveLength(1);
+    expect(tab.getActionHistory()[0].success).toBe(false);
+    expect(evaluate).toHaveBeenCalledTimes(1);
+    const call = evaluate.mock.calls[0];
+    expect(call[1]).toBe('css');
+    expect(call[2]).toBe('div[');
+  });
+
+  it('E2: a probe-cleared but absent selector goes through the normal retry loop, probing only once', async () => {
+    const { page, evaluate, waitForSelector } = pageWithProbe({
+      evaluateImpl: () => Promise.resolve(null),
+      waitForSelectorImpl: () => Promise.reject(new Error('No element found for selector: #nope')),
+    });
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), { actionType: 'click', selector: '#nope' });
+
+    expect(result.error).toContain('No visible element found for selector: #nope');
+    expect(result.error).not.toContain('Invalid selector');
+    expect(evaluate).toHaveBeenCalledTimes(1);
+    expect(waitForSelector).toHaveBeenCalledTimes(3); // default maxRetries=2 -> 3 attempts
+  });
+
+  it('E3: a probe-cleared, present selector clicks successfully', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true);
+    const { page } = pageWithProbe({
+      evaluateImpl: () => Promise.resolve(null),
+      waitForSelectorImpl: () => Promise.resolve(handle),
+    });
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), { actionType: 'click', selector: '#ok', maxRetries: 0 });
+
+    expect(result.success).toBe(true);
+    expect(handle.click).toHaveBeenCalledTimes(1);
+  });
+
+  it('E4: an inconclusive probe (rejection) lets the action succeed normally', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true);
+    const { page } = pageWithProbe({
+      evaluateImpl: () => Promise.reject(new Error('Execution context was destroyed')),
+      waitForSelectorImpl: () => Promise.resolve(handle),
+    });
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), { actionType: 'click', selector: '#ok', maxRetries: 0 });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('E5: a probe that never resolves is bounded, and the action still succeeds', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true);
+    const { page } = pageWithProbe({
+      evaluateImpl: () => new Promise(() => {}), // never settles
+      waitForSelectorImpl: () => Promise.resolve(handle),
+    });
+    const engine = new BrowserActionEngine();
+    const t0 = Date.now();
+    const result = await engine.executeAction(mockTab(page), { actionType: 'click', selector: '#ok', maxRetries: 0 });
+    const elapsed = Date.now() - t0;
+
+    expect(result.success).toBe(true);
+    expect(elapsed).toBeGreaterThanOrEqual(450);
+    expect(elapsed).toBeLessThan(2000);
+  });
+
+  it('E6: the probe is skipped for node ids, aria/text prefixes, engine-built selectors, non-selector actions, and a pending dialog', async () => {
+    const cases: Array<Record<string, unknown>> = [
+      { actionType: 'click', selector: '[data-sd-node-id="12"]', maxRetries: 0 },
+      { actionType: 'click', selector: 'aria/Submit[role="button"]', maxRetries: 0 },
+      { actionType: 'click', selector: 'text/Hi', maxRetries: 0 },
+      { actionType: 'click_by_text', text: 'text=Submit', maxRetries: 0 },
+      { actionType: 'click_by_role', role: 'button', name: 'Go >> now', maxRetries: 0 },
+      { actionType: 'type_by_label', label: 'Notes >> x', value: 'v', maxRetries: 0 },
+      { actionType: 'press_key', key: 'Enter', maxRetries: 0 },
+      { actionType: 'scroll', maxRetries: 0 },
+    ];
+    for (const params of cases) {
+      const { page, evaluate } = pageWithProbe({});
+      const engine = new BrowserActionEngine();
+      await engine.executeAction(mockTab(page), params as any).catch(() => {});
+      expect(evaluate).not.toHaveBeenCalled();
+    }
+
+    // Pending dialog: skip even for an otherwise-probed selector.
+    const { page, evaluate } = pageWithProbe({});
+    const engine = new BrowserActionEngine();
+    const tab = tabWithDialog(page, () => ({ type: 'alert', message: 'hi' }));
+    await engine.executeAction(tab, { actionType: 'click', selector: 'div[', maxRetries: 0 }).catch(() => {});
+    expect(evaluate).not.toHaveBeenCalled();
+  });
+
+  it('E7: the probe passes xpath// as xpath and pierce/ payload as css', async () => {
+    {
+      const { page, evaluate } = pageWithProbe({ evaluateImpl: () => Promise.resolve(null) });
+      const engine = new BrowserActionEngine();
+      await engine.executeAction(mockTab(page), { actionType: 'click', selector: 'xpath//[', maxRetries: 0 }).catch(() => {});
+      expect(evaluate.mock.calls[0][1]).toBe('xpath');
+      expect(evaluate.mock.calls[0][2]).toBe('/[');
+    }
+    {
+      const { page, evaluate } = pageWithProbe({ evaluateImpl: () => Promise.resolve(null) });
+      const engine = new BrowserActionEngine();
+      await engine.executeAction(mockTab(page), { actionType: 'click', selector: 'pierce/#x', maxRetries: 0 }).catch(() => {});
+      expect(evaluate.mock.calls[0][1]).toBe('css');
+      expect(evaluate.mock.calls[0][2]).toBe('#x');
+    }
+  });
+
+  it('E8: drag_and_drop probes both selectors and names the invalid target', async () => {
+    const parserMessage = "'div[' is not a valid selector.";
+    const { page, evaluate } = pageWithProbe({
+      evaluateImpl: (_fn: unknown, _kind: string, expr: string) =>
+        Promise.resolve(expr === 'div[' ? parserMessage : null),
+    });
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'drag_and_drop',
+      selector: '#src',
+      targetSelector: 'div[',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Invalid selector "div["');
+    expect(evaluate).toHaveBeenCalledTimes(2);
+  });
+
+  it('E9: toPuppeteerQuery passthrough never double-prefixes an already-prefixed caller selector', async () => {
+    const cases: Array<[string, string]> = [
+      ['xpath///button', 'xpath///button'],
+      ['pierce/#x', 'pierce/#x'],
+      ['#x', 'pierce/#x'],
+    ];
+    for (const [input, expected] of cases) {
+      const { page, waitForSelector } = pageWithProbe({ evaluateImpl: () => Promise.resolve(null) });
+      const engine = new BrowserActionEngine();
+      await engine.executeAction(mockTab(page), { actionType: 'click', selector: input, maxRetries: 0 }).catch(() => {});
+      expect(waitForSelector.mock.calls[0][0]).toBe(expected);
+    }
+
+    const { page, waitForSelector } = pageWithProbe({ evaluateImpl: () => Promise.resolve(null) });
+    const engine = new BrowserActionEngine();
+    await engine
+      .executeAction(mockTab(page), { actionType: 'type', selector: 'aria/Name[role="textbox"]', value: 'hi', maxRetries: 0 })
+      .catch(() => {});
+    expect(waitForSelector.mock.calls[0][0]).toBe('aria/Name[role="textbox"]');
+  });
+
+  it('E10: a syntax-error dispatch failure (probe inconclusive, browser itself rejects) stops the retry loop immediately', async () => {
+    const { page } = pageWithProbe({});
+    // Remove `evaluate` entirely so the pre-loop probe is inconclusive (T11: some mocks have no
+    // evaluate) — the browser's OWN dispatch-time syntax-error fast-fail (GAP-033's
+    // pierceFirstMatch pre-check, via `frame.$`) is what must surface and stop the retry loop.
+    delete (page.mainFrame() as any).evaluate;
+    const dollarMock = vi.fn().mockRejectedValue(new Error("'div[' is not a valid selector."));
+    (page.mainFrame() as any).$ = dollarMock;
+    const engine = new BrowserActionEngine();
+    const t0 = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: 'div[',
+      state: 'attached',
+      timeoutMs: 5000,
+    });
+    const elapsed = Date.now() - t0;
+
+    expect(result.retriesUsed).toBe(0);
+    expect(result.error).toContain('is not a valid selector');
+    expect(dollarMock).toHaveBeenCalledTimes(1);
+    expect(elapsed).toBeLessThan(400);
+  });
+
+  it('E11: the duplicate-action guard never masks a rejected-selector result on a repeat dispatch', async () => {
+    const parserMessage = "'div[' is not a valid selector.";
+    const { page } = pageWithProbe({ evaluateImpl: () => Promise.resolve(parserMessage) });
+    const engine = new BrowserActionEngine();
+    const tab = mockTab(page);
+    const r1 = await engine.executeAction(tab, { actionType: 'click', selector: 'div[', maxRetries: 0 });
+    const r2 = await engine.executeAction(tab, { actionType: 'click', selector: 'div[', maxRetries: 0 });
+
+    expect(r1.error).toContain('Invalid selector');
+    expect(r2.error).toContain('Invalid selector');
+    expect(r2.error).not.toContain('Duplicate');
+  });
+});

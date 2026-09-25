@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>FR2-06 selector dialect fixture</title></head>
+<body>
+  <button id="plain-btn">Plain</button>
+  <button id="xp-btn">XPath target</button>
+  <button id="aria-btn" aria-label="Submit order">OK</button>
+  <button id="text-btn">Exact text button</button>
+  <button id="attr-text" data-text="text=Submit">Attr text</button>
+  <button id="attr-chain" data-x="a &gt;&gt; b">Attr chain</button>
+  <button id="attr-internal" title="internal:role=button">Attr internal</button>
+  <button id="attr-getby" data-q="getByRole('x')">Attr getBy</button>
+  <button class="a&gt;&gt;b" id="cls-chev">Chevron class</button>
+  <button id="getByRole">Literal id getByRole</button>
+  <button class="internal" id="cls-internal">Internal class</button>
+  <div id="host"></div>
+  <button id="browse-btn">Browse</button>
+  <input type="file" id="hidden-file" style="display:none">
+  <div id="late-slot"></div>
+  <script>
+    window.__fx6 = {
+      ready: false,
+      clicks: [],
+      insertLate(id, ms) {
+        setTimeout(() => {
+          const b = document.createElement('button');
+          b.id = id;
+          b.textContent = 'Late ' + id;
+          document.getElementById('late-slot').appendChild(b);
+        }, ms);
+      },
+    };
+    document.addEventListener(
+      'click',
+      (e) => {
+        const path = e.composedPath ? e.composedPath() : [e.target];
+        window.__fx6.clicks.push(path[0] && path[0].id);
+      },
+      { capture: true },
+    );
+    document.getElementById('browse-btn').addEventListener('click', () => {
+      document.getElementById('hidden-file').click();
+    });
+    const host = document.getElementById('host');
+    const shadow = host.attachShadow({ mode: 'open' });
+    const sbtn = document.createElement('button');
+    sbtn.id = 'shadow-btn';
+    sbtn.textContent = 'Shadow';
+    shadow.appendChild(sbtn);
+    const sinput = document.createElement('input');
+    sinput.id = 'shadow-input';
+    shadow.appendChild(sinput);
+    window.__fx6.ready = true;
+  </script>
+</body>
+</html>

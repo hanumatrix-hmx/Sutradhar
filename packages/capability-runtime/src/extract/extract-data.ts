@@ -5,7 +5,14 @@
  * unit-testable without a real browser (FR2-02).
  */
 
-import { normalizeTarget, selectorSyntaxDetail, SELECTOR_SYNTAX_HINT, type ExtractFieldSpec, type ExtractDataOptions } from '../types.js';
+import {
+  normalizeTarget,
+  selectorSyntaxDetail,
+  SELECTOR_SYNTAX_HINT,
+  InvalidSelectorError,
+  type ExtractFieldSpec,
+  type ExtractDataOptions,
+} from '../types.js';
 
 /** How a single planned field should be read from each matched element (in-page). */
 export type ExtractRead =
@@ -38,9 +45,23 @@ export function planExtractFields(
   options?: ExtractDataOptions,
 ): ExtractPlanEntry[] {
   const plan: ExtractPlanEntry[] = [];
+  // FR2-06: a Playwright-style selector on one field must not abort the whole plan before every
+  // OTHER field's selector has even been checked — collect every InvalidSelectorError across all
+  // fields first (same "name every bad field, no partial result" discipline extractFieldsInPage
+  // already applies to browser-parser errors below), then throw once via the shared formatter.
+  const invalidDialect: Array<{ name: string; selector: string; message: string }> = [];
   for (const [name, spec] of Object.entries(fields)) {
     const visibleOnly = spec.visibleOnly ?? options?.visibleOnly ?? false;
-    const selector = normalizeTarget(spec.selector);
+    let selector: string;
+    try {
+      selector = normalizeTarget(spec.selector);
+    } catch (e) {
+      if (e instanceof InvalidSelectorError) {
+        invalidDialect.push({ name, selector: spec.selector, message: e.reason });
+        continue;
+      }
+      throw e;
+    }
     const attribute = spec.attribute;
     let read: ExtractRead;
     if (attribute === undefined || attribute === '') {
@@ -59,6 +80,9 @@ export function planExtractFields(
       read = { kind: 'attr', name: attribute };
     }
     plan.push({ name, selector, read, visibleOnly });
+  }
+  if (invalidDialect.length > 0) {
+    throw invalidExtractSelectorsError(invalidDialect);
   }
   return plan;
 }

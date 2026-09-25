@@ -1,0 +1,142 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser[39m
+
+ [33m❯[39m tests/unit/selector-dialect.spec.ts [2m ([22m[2m109 tests[22m [2m|[22m [31m7 failed[39m[2m)[22m[90m 14[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mGAP-205: engine-prefix reason strings are pinned exactly, for every "="-suffixed prefix[2m > [22mxpath=//button -> exact reason 0[39m
+[31m     → expected '"xpath==" is not supported; use the s…' to be '"xpath=" is not supported; use the sl…' // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mGAP-205: engine-prefix reason strings are pinned exactly, for every "="-suffixed prefix[2m > [22maria=Submit -> exact reason 1[39m
+[31m     → expected '"aria==" is not supported; use the sl…' to be '"aria=" is not supported; use the sla…' // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mGAP-205: engine-prefix reason strings are pinned exactly, for every "="-suffixed prefix[2m > [22mpierce=#x -> exact reason 2[39m
+[31m     → expected '"pierce==" is not supported; use the …' to be '"pierce=" is not supported; use the s…' // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mGAP-205: engine-prefix reason strings are pinned exactly, for every "="-suffixed prefix[2m > [22mid=main -> exact reason 3[39m
+[31m     → expected '"id==" is a Playwright attribute-engi…' to be '"id=" is a Playwright attribute-engin…' // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mGAP-205: engine-prefix reason strings are pinned exactly, for every "="-suffixed prefix[2m > [22mdata-testid=go -> exact reason 4[39m
+[31m     → expected '"data-testid==" is a Playwright attri…' to be '"data-testid=" is a Playwright attrib…' // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mGAP-205: engine-prefix reason strings are pinned exactly, for every "="-suffixed prefix[2m > [22mDATA-TESTID=go -> exact reason 5[39m
+[31m     → expected '"data-testid==" is a Playwright attri…' to be '"data-testid=" is a Playwright attrib…' // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mGAP-205: engine-prefix reason strings are pinned exactly, for every "="-suffixed prefix[2m > [22mXpath = //a -> exact reason 6[39m
+[31m     → expected '"xpath ==" is not supported; use the …' to be '"xpath=" is not supported; use the sl…' // Object.is equality[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 7 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mGAP-205: engine-prefix reason strings are pinned exactly, for every "="-suffixed prefix[2m > [22mxpath=//button -> exact reason 0
+[31m[1mAssertionError[22m: expected '"xpath==" is not supported; use the s…' to be '"xpath=" is not supported; use the sl…' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- "xpath=" is not supported; use the slash form "xpath/".[39m
+[31m+ "xpath==" is not supported; use the slash form "xpath=/".[39m
+
+[36m [2m❯[22m tests/unit/selector-dialect.spec.ts:[2m127:29[22m[39m
+    [90m125| [39m      [35mconst[39m match [33m=[39m [34mdetectForeignSelectorDialect[39m(input)[33m;[39m
+    [90m126| [39m      [34mexpect[39m(match)[33m.[39mnot[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m127| [39m      [34mexpect[39m(match[33m![39m[33m.[39mreason)[33m.[39m[34mtoBe[39m(expectedReason)[33m;[39m
+    [90m   | [39m                            [31m^[39m
+    [90m128| [39m      [90m// The advised form itself must never contain a doubled "=" or "[39m…
+    [90m129| [39m      [90m// hint that the detector would itself reject.[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mGAP-205: engine-prefix reason strings are pinned exactly, for every "="-suffixed prefix[2m > [22maria=Submit -> exact reason 1
+[31m[1mAssertionError[22m: expected '"aria==" is not supported; use the sl…' to be '"aria=" is not supported; use the sla…' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- "aria=" is not supported; use the slash form "aria/".[39m
+[31m+ "aria==" is not supported; use the slash form "aria=/".[39m
+
+[36m [2m❯[22m tests/unit/selector-dialect.spec.ts:[2m127:29[22m[39m
+    [90m125| [39m      [35mconst[39m match [33m=[39m [34mdetectForeignSelectorDialect[39m(input)[33m;[39m
+    [90m126| [39m      [34mexpect[39m(match)[33m.[39mnot[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m127| [39m      [34mexpect[39m(match[33m![39m[33m.[39mreason)[33m.[39m[34mtoBe[39m(expectedReason)[33m;[39m
+    [90m   | [39m                            [31m^[39m
+    [90m128| [39m      [90m// The advised form itself must never contain a doubled "=" or "[39m…
+    [90m129| [39m      [90m// hint that the detector would itself reject.[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mGAP-205: engine-prefix reason strings are pinned exactly, for every "="-suffixed prefix[2m > [22mpierce=#x -> exact reason 2
+[31m[1mAssertionError[22m: expected '"pierce==" is not supported; use the …' to be '"pierce=" is not supported; use the s…' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- "pierce=" is not supported; use the slash form "pierce/".[39m
+[31m+ "pierce==" is not supported; use the slash form "pierce=/".[39m
+
+[36m [2m❯[22m tests/unit/selector-dialect.spec.ts:[2m127:29[22m[39m
+    [90m125| [39m      [35mconst[39m match [33m=[39m [34mdetectForeignSelectorDialect[39m(input)[33m;[39m
+    [90m126| [39m      [34mexpect[39m(match)[33m.[39mnot[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m127| [39m      [34mexpect[39m(match[33m![39m[33m.[39mreason)[33m.[39m[34mtoBe[39m(expectedReason)[33m;[39m
+    [90m   | [39m                            [31m^[39m
+    [90m128| [39m      [90m// The advised form itself must never contain a doubled "=" or "[39m…
+    [90m129| [39m      [90m// hint that the detector would itself reject.[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mGAP-205: engine-prefix reason strings are pinned exactly, for every "="-suffixed prefix[2m > [22mid=main -> exact reason 3
+[31m[1mAssertionError[22m: expected '"id==" is a Playwright attribute-engi…' to be '"id=" is a Playwright attribute-engin…' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- "id=" is a Playwright attribute-engine prefix; use a CSS attribute selector such as [id="…"].[39m
+[31m+ "id==" is a Playwright attribute-engine prefix; use a CSS attribute selector such as [id=="…"].[39m
+
+[36m [2m❯[22m tests/unit/selector-dialect.spec.ts:[2m127:29[22m[39m
+    [90m125| [39m      [35mconst[39m match [33m=[39m [34mdetectForeignSelectorDialect[39m(input)[33m;[39m
+    [90m126| [39m      [34mexpect[39m(match)[33m.[39mnot[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m127| [39m      [34mexpect[39m(match[33m![39m[33m.[39mreason)[33m.[39m[34mtoBe[39m(expectedReason)[33m;[39m
+    [90m   | [39m                            [31m^[39m
+    [90m128| [39m      [90m// The advised form itself must never contain a doubled "=" or "[39m…
+    [90m129| [39m      [90m// hint that the detector would itself reject.[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mGAP-205: engine-prefix reason strings are pinned exactly, for every "="-suffixed prefix[2m > [22mdata-testid=go -> exact reason 4
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mGAP-205: engine-prefix reason strings are pinned exactly, for every "="-suffixed prefix[2m > [22mDATA-TESTID=go -> exact reason 5
+[31m[1mAssertionError[22m: expected '"data-testid==" is a Playwright attri…' to be '"data-testid=" is a Playwright attrib…' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- "data-testid=" is a Playwright attribute-engine prefix; use a CSS attribute selector such as [data-testid="…"].[39m
+[31m+ "data-testid==" is a Playwright attribute-engine prefix; use a CSS attribute selector such as [data-testid=="…"].[39m
+
+[36m [2m❯[22m tests/unit/selector-dialect.spec.ts:[2m127:29[22m[39m
+    [90m125| [39m      [35mconst[39m match [33m=[39m [34mdetectForeignSelectorDialect[39m(input)[33m;[39m
+    [90m126| [39m      [34mexpect[39m(match)[33m.[39mnot[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m127| [39m      [34mexpect[39m(match[33m![39m[33m.[39mreason)[33m.[39m[34mtoBe[39m(expectedReason)[33m;[39m
+    [90m   | [39m                            [31m^[39m
+    [90m128| [39m      [90m// The advised form itself must never contain a doubled "=" or "[39m…
+    [90m129| [39m      [90m// hint that the detector would itself reject.[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mGAP-205: engine-prefix reason strings are pinned exactly, for every "="-suffixed prefix[2m > [22mXpath = //a -> exact reason 6
+[31m[1mAssertionError[22m: expected '"xpath ==" is not supported; use the …' to be '"xpath=" is not supported; use the sl…' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- "xpath=" is not supported; use the slash form "xpath/".[39m
+[31m+ "xpath ==" is not supported; use the slash form "xpath =/".[39m
+
+[36m [2m❯[22m tests/unit/selector-dialect.spec.ts:[2m127:29[22m[39m
+    [90m125| [39m      [35mconst[39m match [33m=[39m [34mdetectForeignSelectorDialect[39m(input)[33m;[39m
+    [90m126| [39m      [34mexpect[39m(match)[33m.[39mnot[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m127| [39m      [34mexpect[39m(match[33m![39m[33m.[39mreason)[33m.[39m[34mtoBe[39m(expectedReason)[33m;[39m
+    [90m   | [39m                            [31m^[39m
+    [90m128| [39m      [90m// The advised form itself must never contain a doubled "=" or "[39m…
+    [90m129| [39m      [90m// hint that the detector would itself reject.[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m7 failed[39m[22m[2m | [22m[1m[32m102 passed[39m[22m[90m (109)[39m
+[2m   Start at [22m 04:18:25
+[2m   Duration [22m 337ms[2m (transform 28ms, setup 0ms, collect 32ms, tests 14ms, environment 0ms, prepare 111ms)[22m
+

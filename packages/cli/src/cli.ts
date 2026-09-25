@@ -15,6 +15,7 @@ import { readState, writeState, clearState } from './state.js';
 import { spawnDetachedChrome, killChromeTree } from './spawn-chrome.js';
 import { createSessionId } from '@sutradhar/contracts';
 import { parseArgs } from './parse-args.js';
+import { validateSelectorArgs, validateFrameChain } from './selector-args.js';
 
 const logger = new StructuredLogger({ minLevel: 'error' }); // CLI output IS the log; keep engine logs quiet
 const {
@@ -320,6 +321,8 @@ async function cmdText() {
 
 async function cmdClick(ref: string | undefined) {
   if (!ref) printErrorAndExit('usage: sutradhar click <ref> [--settle]  (ref = a selector, or a numeric id from "sutradhar snap")');
+  const selectorErr = validateSelectorArgs([ref]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.click(sessionId, ref!, undefined, undefined, undefined, settle);
     console.log(result.success ? `Clicked ${ref}` : `Click failed: ${result.error}`);
@@ -347,6 +350,8 @@ async function cmdClickRole(role: string | undefined, name: string | undefined) 
 
 async function cmdType(ref: string | undefined, text: string | undefined) {
   if (!ref || text === undefined) printErrorAndExit('usage: sutradhar type <ref> <text> [--settle]');
+  const selectorErr = validateSelectorArgs([ref]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.type(sessionId, ref!, text!, undefined, settle);
     console.log(result.success ? `Typed into ${ref}` : `Type failed: ${result.error}`);
@@ -361,6 +366,8 @@ async function cmdPress(ref: string | undefined, key: string | undefined) {
         '(e.g. sutradhar press 3 Enter, or sutradhar press 3 ArrowRight --modifiers Control,Shift)',
     );
   }
+  const selectorErr = validateSelectorArgs([ref]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     // Focus (not click) the target first, best-effort — a real click would reset any cursor/
     // selection position a prior `press` in the same sequence already established (e.g. Home,
@@ -451,6 +458,8 @@ async function cmdCompare(urlA: string | undefined, urlB: string | undefined, ou
 
 async function cmdSelect(ref: string | undefined, value: string | undefined) {
   if (!ref || value === undefined) printErrorAndExit('usage: sutradhar select <ref> <value>  (ref = a selector, or a numeric id from "snap"; value = the <option>\'s value)');
+  const selectorErr = validateSelectorArgs([ref]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.selectOption(sessionId, ref!, value!);
     console.log(result.success ? `Selected "${value}" on ${ref}` : `Select failed: ${result.error}`);
@@ -476,6 +485,8 @@ async function cmdWait(ref: string | undefined, timeoutMsArg: string | undefined
     );
   }
   const state = stateFlag ?? 'visible';
+  const selectorErr = validateSelectorArgs([ref]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.waitForSelector(sessionId, ref!, timeoutMs, undefined, stateFlag);
     console.log(
@@ -496,6 +507,8 @@ async function cmdEval(code: string | undefined) {
         'chain with :: for an iframe nested inside another iframe, e.g. --frame "iframe.widget::iframe.payment")',
     );
   }
+  const frameErr = validateFrameChain(frameFlag);
+  if (frameErr) printErrorAndExit(frameErr);
   await withSession(async (runtime, sessionId) => {
     try {
       const result = await runtime.eval(sessionId, code!, undefined, frameFlag);
@@ -509,6 +522,8 @@ async function cmdEval(code: string | undefined) {
 
 async function cmdHover(ref: string | undefined) {
   if (!ref) printErrorAndExit('usage: sutradhar hover <ref>  (ref = a selector, or a numeric id from "snap")');
+  const selectorErr = validateSelectorArgs([ref]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.hover(sessionId, ref!);
     console.log(result.success ? `Hovered ${ref}` : `Hover failed: ${result.error}`);
@@ -522,6 +537,8 @@ async function cmdScroll(direction: string | undefined, amountArg: string | unde
     printErrorAndExit('usage: sutradhar scroll [up|down|top|bottom] [amountPx] [targetRef] [--settle]  (default: down 500px, window)');
   }
   const amount = amountArg ? Number(amountArg) : undefined;
+  const selectorErr = validateSelectorArgs([target]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.scroll(sessionId, dir, amount, undefined, target, settle);
     console.log(
@@ -535,6 +552,8 @@ async function cmdScroll(direction: string | undefined, amountArg: string | unde
 
 async function cmdUpload(ref: string | undefined, filePath: string | undefined) {
   if (!ref || !filePath) printErrorAndExit('usage: sutradhar upload <ref> <filePath>  (ref = a selector, or a numeric id from "snap", targeting an <input type="file">)');
+  const selectorErr = validateSelectorArgs([ref]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.uploadFile(sessionId, ref!, path.resolve(filePath!));
     console.log(result.success ? `Uploaded ${filePath} to ${ref}` : `Upload failed: ${result.error}`);
@@ -544,6 +563,8 @@ async function cmdUpload(ref: string | undefined, filePath: string | undefined) 
 
 async function cmdDrag(sourceRef: string | undefined, destRef: string | undefined) {
   if (!sourceRef || !destRef) printErrorAndExit('usage: sutradhar drag <sourceRef> <destRef>  (both = a selector, or a numeric id from "snap")');
+  const selectorErr = validateSelectorArgs([sourceRef, destRef]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.dragAndDrop(sessionId, sourceRef!, destRef!);
     console.log(result.success ? `Dragged ${sourceRef} onto ${destRef}` : `Drag failed: ${result.error}`);
@@ -696,6 +717,8 @@ async function cmdCloseTab(tabId: string | undefined) {
 
 async function cmdDownload(ref: string | undefined, downloadDir: string | undefined) {
   if (!ref) printErrorAndExit('usage: sutradhar download <ref> [downloadDir]  (ref = the element that triggers the download, a selector or a numeric id from "snap")');
+  const selectorErr = validateSelectorArgs([ref]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.downloadFile(sessionId, ref!, downloadDir ? path.resolve(downloadDir) : undefined);
     if (result.success) {
@@ -857,6 +880,9 @@ Commands:
   clicktext <text>             Click the element containing this text (from "axsnap")
   clickrole <role> [name]      Click by accessibility role, optionally narrowed by name
                                 (from "axsnap", e.g. clickrole button Submit)
+  Selectors are CSS (shadow roots crossed), a numeric id from "snap", or pierce/ xpath/ aria/
+                                text/; Playwright syntax (text=, >>, role=) is rejected — use
+                                clicktext/clickrole.
   type <ref> <text>            Type text into an element
   press <ref> <key>            Focus an element then press a key (e.g. Enter)
   press <ref> <key> --modifiers Control,Shift

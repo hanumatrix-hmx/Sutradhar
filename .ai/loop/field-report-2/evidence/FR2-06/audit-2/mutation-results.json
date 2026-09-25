@@ -1,0 +1,80 @@
+[
+  {
+    "id": "M1-gap205-remove-equals-strip",
+    "killed": true,
+    "exit": 1,
+    "summary": "Tests  7 failed | 104 passed (111)",
+    "failed": [
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > GAP-205: engine-prefix reason strings are pinned exactly, for every \"=\"-suffixed prefix > xpath=//button -> exact reason 0",
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > GAP-205: engine-prefix reason strings are pinned exactly, for every \"=\"-suffixed prefix > aria=Submit -> exact reason 1",
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > GAP-205: engine-prefix reason strings are pinned exactly, for every \"=\"-suffixed prefix > pierce=#x -> exact reason 2",
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > GAP-205: engine-prefix reason strings are pinned exactly, for every \"=\"-suffixed prefix > id=main -> exact reason 3",
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > GAP-205: engine-prefix reason strings are pinned exactly, for every \"=\"-suffixed prefix > data-testid=go -> exact reason 4",
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > GAP-205: engine-prefix reason strings are pinned exactly, for every \"=\"-suffixed prefix > DATA-TESTID=go -> exact reason 5",
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > GAP-205: engine-prefix reason strings are pinned exactly, for every \"=\"-suffixed prefix > Xpath = //a -> exact reason 6"
+    ],
+    "restoredOk": true
+  },
+  {
+    "id": "M2-gap205-strip-equals-but-not-whitespace",
+    "killed": true,
+    "exit": 1,
+    "summary": "Tests  1 failed | 110 passed (111)",
+    "failed": [
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > GAP-205: engine-prefix reason strings are pinned exactly, for every \"=\"-suffixed prefix > Xpath = //a -> exact reason 6"
+    ],
+    "restoredOk": true
+  },
+  {
+    "id": "M3-gap206-revert-to-per-hop-in-loop-validation",
+    "killed": true,
+    "exit": 1,
+    "summary": "Tests  2 failed | 93 passed (95)",
+    "failed": [
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R7: a Playwright-style SECOND hop is caught by the up-front validation pass, before the FIRST hop's own $ call ever runs (spec §2.4: \"a bad second hop costs no first-hop round trip\")",
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R7b: a Playwright-style FIRST hop rejects before any page.$ call at all"
+    ],
+    "restoredOk": true
+  },
+  {
+    "id": "M4-gap206-drop-prevalidation-entirely",
+    "killed": true,
+    "exit": 1,
+    "summary": "Tests  3 failed | 92 passed (95)",
+    "failed": [
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > eval/extractData frameSelector — cross-frame reads (fixes the gap found in the extreme-scenarios comparison: eval() previously could never reach a genuinely cross-origin iframe, unlike click/type) > resolveFrame normalizes a numeric snapshot id the same way click/type do",
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R7: a Playwright-style SECOND hop is caught by the up-front validation pass, before the FIRST hop's own $ call ever runs (spec §2.4: \"a bad second hop costs no first-hop round trip\")",
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R7b: a Playwright-style FIRST hop rejects before any page.$ call at all"
+    ],
+    "restoredOk": true
+  },
+  {
+    "id": "M5-gap213-remove-trimStart",
+    "killed": true,
+    "exit": 1,
+    "summary": "Tests  2 failed | 109 passed (111)",
+    "failed": [
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D1: every Playwright form is detected > pierce/ text=Submit -> engine-prefix",
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D1: every Playwright form is detected > pierce/  role=button -> engine-prefix"
+    ],
+    "restoredOk": true
+  },
+  {
+    "id": "M6-gap210-rethrow-becomes-continue",
+    "killed": true,
+    "exit": 1,
+    "summary": "Tests  1 failed | 28 passed (29)",
+    "failed": [
+      "tests/unit/extract-data.spec.ts > invalidExtractSelectorsError > P10 (FR2-06): a non-InvalidSelectorError throw from normalizeTarget passes through UNCHANGED (the actual rethrow branch, not the unrelated \"attr:\" error)"
+    ],
+    "restoredOk": true
+  },
+  {
+    "id": "M7-gap210-rethrow-wrapped-in-new-TypeError",
+    "killed": false,
+    "exit": 0,
+    "summary": "Tests  29 passed (29)",
+    "failed": [],
+    "restoredOk": true
+  }
+]

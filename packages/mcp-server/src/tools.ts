@@ -458,7 +458,10 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
 
   // ── Interaction ──────────────────────────────────────────────────────────
   const targetDesc =
-    'A CSS selector OR a numeric [#id] from browser.snapshot (e.g. "7" resolves to [data-sd-node-id="7"]).';
+    'A CSS selector OR a numeric [#id] from browser.snapshot (e.g. "7" resolves to [data-sd-node-id="7"]). ' +
+    "Puppeteer's pierce/, xpath/, aria/ and text/ prefixes are also accepted. Playwright syntax (text=, " +
+    'role=, >>, :has-text(), getBy*()) is rejected immediately — use browser.click_by_text / ' +
+    'browser.click_by_role / browser.type_by_label to target by visible text or role.';
 
   const settleDesc =
     'Opt-in: after the action, wait for the page to stop actively changing (no DOM mutations, no ' +

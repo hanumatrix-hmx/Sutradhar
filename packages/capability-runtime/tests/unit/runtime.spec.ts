@@ -11,6 +11,7 @@ import {
   SutradharRuntime,
   normalizeTarget,
   BrowserNotAvailableError,
+  InvalidSelectorError,
   CAPABILITY_RUNTIME_VERSION,
 } from '../../src/index.js';
 import { RateLimiter } from '@sutradhar/utils';
@@ -41,6 +42,24 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
 
     it('treats an attribute selector as a selector, not an id', () => {
       expect(normalizeTarget('[data-sd-node-id="7"]')).toBe('[data-sd-node-id="7"]');
+    });
+
+    it('FR2-06 R1: throws InvalidSelectorError synchronously for Playwright-style syntax', () => {
+      for (const bad of ['text=Submit', 'role=button', 'button >> text=OK', ':has-text("x")', "getByRole('x')", 'internal:role=button', '//a', '#12', '"x"']) {
+        expect(() => normalizeTarget(bad)).toThrow(InvalidSelectorError);
+      }
+    });
+
+    it('FR2-06 R1: still maps a whitespace-padded numeric id', () => {
+      expect(normalizeTarget('12')).toBe('[data-sd-node-id="12"]');
+      expect(normalizeTarget(' 7 ')).toBe('[data-sd-node-id="7"]');
+    });
+
+    it('FR2-06 R1: Puppeteer-native slash prefixes pass through unchanged', () => {
+      expect(normalizeTarget('pierce/#x')).toBe('pierce/#x');
+      expect(normalizeTarget('xpath///a')).toBe('xpath///a');
+      expect(normalizeTarget('aria/X')).toBe('aria/X');
+      expect(normalizeTarget('text/Y')).toBe('text/Y');
     });
   });
 
@@ -825,5 +844,161 @@ describe('listSessions (FR2-10)', () => {
     await runtime2.launch({ sessionId: 'fixed2' });
     const entry = runtime2.listSessions().sessions.find((s) => s.sessionId === 'fixed2');
     expect(entry?.origin).toBe('attached');
+  });
+});
+
+describe('@sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect', () => {
+  it('R2: a Playwright selector rejects with InvalidSelectorError and touches neither resolveTab nor the action engine', async () => {
+    const runtime = new SutradharRuntime();
+    const resolveTabSpy = vi.spyOn(runtime as any, 'resolveTab');
+    const executeActionSpy = vi.spyOn((runtime as any).actionEngine, 'executeAction');
+
+    const calls: Array<() => Promise<unknown>> = [
+      () => runtime.click('s1', 'text=Submit'),
+      () => runtime.clickWithButton('s1', 'text=Submit', 'right'),
+      () => runtime.focus('s1', 'text=Submit'),
+      () => runtime.type('s1', 'text=Submit', 'hi'),
+      () => runtime.scroll('s1', 'down', 100, undefined, 'text=Submit'),
+      () => runtime.hover('s1', 'text=Submit'),
+      () => runtime.selectOption('s1', 'text=Submit', 'v'),
+      () => runtime.selectOptions('s1', 'text=Submit', ['v']),
+      () => runtime.waitForSelector('s1', 'text=Submit'),
+      () => runtime.uploadFile('s1', 'text=Submit', '/tmp/x.txt'),
+      () => runtime.dragAndDrop('s1', 'text=Submit', '#ok'),
+      () => runtime.dragAndDrop('s1', '#ok', 'text=Submit'),
+      () => runtime.touchTap('s1', 'text=Submit'),
+      () => runtime.downloadFile('s1', 'text=Submit'),
+    ];
+    for (const call of calls) {
+      await expect(call()).rejects.toThrow(InvalidSelectorError);
+    }
+    expect(resolveTabSpy).not.toHaveBeenCalled();
+    expect(executeActionSpy).not.toHaveBeenCalled();
+  });
+
+  it('R3: fillForm reports the Playwright field as success:false with a hint, and still types the other field', async () => {
+    const runtime = new SutradharRuntime();
+    const runActionSpy = vi.spyOn(runtime as any, 'runAction').mockResolvedValue({
+      success: true,
+      actionType: 'type',
+      executionTimeMs: 1,
+    });
+
+    const results = await runtime.fillForm('s1', { 'text=Name': 'x', '#ok': 'y' });
+
+    expect(results['text=Name']!.success).toBe(false);
+    expect(results['text=Name']!.error).toContain('Playwright-style');
+    expect(results['#ok']!.success).toBe(true);
+    expect(runActionSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('R4: free-text inputs to click_by_text/click_by_role/type_by_label are never treated as selectors', async () => {
+    const runtime = new SutradharRuntime();
+    const runActionSpy = vi.spyOn(runtime as any, 'runAction').mockResolvedValue({ success: true, actionType: 'click_by_text', executionTimeMs: 1 });
+
+    for (const text of ['text=Submit', 'Next >> step', 'a=b', 'getByRole(x)']) {
+      await runtime.clickByText('s1', text);
+      expect(runActionSpy).toHaveBeenLastCalledWith('s1', { actionType: 'click_by_text', text }, undefined);
+    }
+    for (const name of ['Go >> now', 'role=x']) {
+      await runtime.clickByRole('s1', 'button', name);
+      expect(runActionSpy).toHaveBeenLastCalledWith('s1', { actionType: 'click_by_role', role: 'button', name }, undefined);
+    }
+    await runtime.typeByLabel('s1', 'Notes >> extra', 'v');
+    expect(runActionSpy).toHaveBeenLastCalledWith('s1', { actionType: 'type_by_label', label: 'Notes >> extra', value: 'v' }, undefined);
+  });
+
+  it('R5: uploadFileViaTrigger rejects Playwright syntax before any fs check or page interaction', async () => {
+    const runtime = new SutradharRuntime();
+    const resolveTabSpy = vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({
+      session: {} as any,
+      tab: { page: { click: vi.fn(), waitForFileChooser: vi.fn() } } as any,
+    });
+
+    await expect(runtime.uploadFileViaTrigger('s1', 'text=Browse', '/definitely/does/not/exist.txt')).rejects.toThrow(
+      InvalidSelectorError,
+    );
+    const rejection = await runtime
+      .uploadFileViaTrigger('s1', 'text=Browse', '/definitely/does/not/exist.txt')
+      .catch((e: Error) => e);
+    expect((rejection as Error).message).not.toContain('does not exist');
+    expect(resolveTabSpy).toHaveBeenCalled();
+  });
+
+  it('R6: uploadFileViaTrigger wraps a browser parser error, and passes any other error through as the same object', async () => {
+    const parserErr = new Error(
+      "SyntaxError: Failed to execute 'querySelector' on 'Document': 'div[' is not a valid selector.",
+    );
+    const page1 = { click: vi.fn().mockRejectedValue(parserErr), waitForFileChooser: vi.fn().mockResolvedValue({}) };
+    const runtime1 = new SutradharRuntime();
+    vi.spyOn(runtime1 as any, 'resolveTab').mockReturnValue({ session: {} as any, tab: { page: page1 } as any });
+    vi.spyOn(runtime1 as any, 'assertUploadPathAllowed').mockResolvedValue(undefined);
+
+    const rejection = await runtime1.uploadFileViaTrigger('s1', 'div[', '/tmp/x.txt').catch((e: Error) => e);
+    expect(rejection.name).toBe('Error');
+    expect(rejection.message).toMatch(/^Invalid selector "div\[" — Failed to execute/);
+    expect(rejection.message).not.toMatch(/^SyntaxError/);
+    expect(rejection.message).toContain('Playwright-style');
+
+    const otherErr = new Error('No element found for selector: #x');
+    const page2 = { click: vi.fn().mockRejectedValue(otherErr), waitForFileChooser: vi.fn().mockResolvedValue({}) };
+    const runtime2 = new SutradharRuntime();
+    vi.spyOn(runtime2 as any, 'resolveTab').mockReturnValue({ session: {} as any, tab: { page: page2 } as any });
+    vi.spyOn(runtime2 as any, 'assertUploadPathAllowed').mockResolvedValue(undefined);
+    await expect(runtime2.uploadFileViaTrigger('s1', '#x', '/tmp/x.txt')).rejects.toBe(otherErr);
+  });
+
+  it('R7: a Playwright-style SECOND hop is caught by the up-front validation pass, before the FIRST hop\'s own $ call ever runs (spec §2.4: "a bad second hop costs no first-hop round trip")', async () => {
+    const innerDollarMock = vi.fn();
+    const innerFrame = { $: innerDollarMock };
+    const firstHopHandle = { contentFrame: vi.fn().mockResolvedValue(innerFrame) };
+    const outerDollarMock = vi.fn().mockResolvedValue(firstHopHandle);
+    const fakePage = { $: outerDollarMock };
+    const runtime = new SutradharRuntime();
+
+    // @ts-expect-error — private method, same pattern as the existing resolveFrame tests.
+    await expect(runtime.resolveFrame(fakePage, 'iframe.a::role=frame')).rejects.toMatchObject({
+      message: expect.stringMatching(
+        /^Invalid frameSelector "role=frame" \(from the full chain "iframe\.a::role=frame"\) — "role="/,
+      ),
+    });
+    // GAP-206 (audit-1): every hop's dialect syntax is validated UP FRONT, before any hop's
+    // own $() call — so the bad SECOND hop is caught without ever resolving the (valid) first
+    // hop. This was previously asserted the other way (outerDollarMock called once), which
+    // encoded the bug (checking each hop inside the loop, one at a time) as expected behavior
+    // rather than catching it.
+    expect(outerDollarMock).not.toHaveBeenCalled();
+    expect(innerDollarMock).not.toHaveBeenCalled();
+  });
+
+  it('R7b: a Playwright-style FIRST hop rejects before any page.$ call at all', async () => {
+    const dollarMock = vi.fn();
+    const fakePage = { $: dollarMock };
+    const runtime = new SutradharRuntime();
+
+    // @ts-expect-error — private method.
+    await expect(runtime.resolveFrame(fakePage, 'role=frame')).rejects.toMatchObject({
+      message: expect.stringMatching(/^Invalid frameSelector "role=frame" \(from the full chain "role=frame"\) — "role="/),
+    });
+    expect(dollarMock).not.toHaveBeenCalled();
+  });
+
+  it('R8: extractData names every Playwright-style field, with the hint exactly once, and never touches evaluate', async () => {
+    const runtime = new SutradharRuntime();
+    const evaluateMock = vi.fn();
+    vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({
+      session: {} as any,
+      tab: { page: { evaluate: evaluateMock } } as any,
+    });
+
+    const rejection = await runtime
+      .extractData('s1', { ok: { selector: 'h1' }, bad: { selector: 'text=Buy' }, bad2: { selector: 'button >> text=OK' } })
+      .catch((e: Error) => e);
+
+    expect(rejection.message).toMatch(/^Invalid selector for field "bad": "text=Buy" — "text="/);
+    expect(rejection.message).toContain('bad2');
+    const hintOccurrences = rejection.message.split('Playwright-style selectors').length - 1;
+    expect(hintOccurrences).toBe(1);
+    expect(evaluateMock).not.toHaveBeenCalled();
   });
 });

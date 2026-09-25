@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>FR2-06 audit-1 fixture</title></head>
+<body>
+  <h1 id="title">Audit</h1>
+  <button id="plain-btn">Plain</button>
+  <button id="pw-text-btn">text=Submit</button>
+  <button id="aria-pw" aria-label="text=Submit">A</button>
+  <button id="cmt-btn" class="cmt">Comment target</button>
+  <button id="esc-eq" class="text=Submit">Escaped eq class</button>
+  <button id="colon-cls" class="has-text:x">Colon class</button>
+  <button id="vis-attr" data-visible="1">vis attr</button>
+  <button id="href-like" data-u="//cdn/x">href-like</button>
+  <span class="price">1</span><span class="price">2</span>
+  <iframe id="f" srcdoc="<button id='in-frame-btn'>Frame</button>"></iframe>
+  <script>
+    window.__a = { clicks: [], ready: false };
+    document.addEventListener('click', (e) => {
+      const p = e.composedPath ? e.composedPath() : [e.target];
+      window.__a.clicks.push(p[0] && p[0].id);
+    }, { capture: true });
+    window.__a.ready = true;
+  </script>
+</body>
+</html>

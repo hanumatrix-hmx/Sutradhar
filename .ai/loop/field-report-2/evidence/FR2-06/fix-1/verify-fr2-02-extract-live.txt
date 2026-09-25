@@ -1,0 +1,88 @@
+[mcp] PASS C1-typed-input-live-value
+[mcp] PASS C2-prefilled-attr-vs-live
+[mcp] PASS C3-textarea-live-vs-attr
+[mcp] PASS C4-checkbox-checked-live-vs-attr
+[mcp] PASS C5-radio-group-checked
+[mcp] PASS C6-select-and-options
+[mcp] PASS C7-multi-select
+[mcp] PASS C8-contenteditable
+[mcp] PASS C9-href-raw
+[mcp] PASS C10-innertext-visibility (DONE-WHEN)
+[mcp] PASS C11-visibleOnly-precedence
+[mcp] PASS C13-opacity-offscreen-still-visible
+[mcp] PASS C14-frameSelector
+[mcp] PASS C15-shadow-not-pierced
+[mcp] PASS C16-numeric-snapshot-node-id
+[mcp] PASS C17-plain-heading
+[mcp] PASS C18-5000-rows-perf
+[mcp] PASS C19-observer-mutation-picked-up
+[mcp] PASS N1-invalid-selector
+[mcp] PASS N2-multiple-invalid-no-partial
+[mcp] PASS N4-pierce-prefix-note
+[mcp] PASS N5-invalid-frameSelector
+[mcp] PASS N6-unmatched-frameSelector-unchanged
+[mcp] PASS N7-attr-colon-no-name
+[mcp] PASS N10-empty-selector
+[mcp] PASS N12-no-match-not-an-error
+[mcp] PASS N13-hidden-only-under-visibleOnly
+[mcp] PASS N8-visibleOnly-schema-rejection-top-level
+[mcp] PASS N8-visibleOnly-schema-rejection-per-field
+[mcp] PASS N9-empty-fields-refine
+[runtime] PASS C1-typed-input-live-value
+[runtime] PASS C2-prefilled-attr-vs-live
+[runtime] PASS C3-textarea-live-vs-attr
+[runtime] PASS C4-checkbox-checked-live-vs-attr
+[runtime] PASS C5-radio-group-checked
+[runtime] PASS C6-select-and-options
+[runtime] PASS C7-multi-select
+[runtime] PASS C8-contenteditable
+[runtime] PASS C9-href-raw
+[runtime] PASS C10-innertext-visibility (DONE-WHEN)
+[runtime] PASS C11-visibleOnly-precedence
+[runtime] PASS C13-opacity-offscreen-still-visible
+[runtime] PASS C14-frameSelector
+[runtime] PASS C15-shadow-not-pierced
+[runtime] PASS C16-numeric-snapshot-node-id
+[runtime] PASS C17-plain-heading
+[runtime] PASS C18-5000-rows-perf
+[runtime] PASS C19-observer-mutation-picked-up
+[runtime] PASS N1-invalid-selector
+[runtime] PASS N2-multiple-invalid-no-partial
+[runtime] PASS N4-pierce-prefix-note
+[runtime] PASS N5-invalid-frameSelector
+[runtime] PASS N6-unmatched-frameSelector-unchanged
+[runtime] PASS N7-attr-colon-no-name
+[runtime] PASS N10-empty-selector
+[runtime] PASS N12-no-match-not-an-error
+[runtime] PASS N13-hidden-only-under-visibleOnly
+[bundle] PASS N1-bundle-invalid-selector
+[bundle] PASS C1-bundle-live-typed-value
+[bundle] PASS C4-bundle-live-checkbox
+[bundle] PASS C10-bundle-visibleOnly
+{
+  "at": "2026-09-25T22:54:28.211Z",
+  "overallOk": true,
+  "counts": {
+    "mcp": {
+      "total": 30,
+      "passed": 30
+    },
+    "runtime": {
+      "total": 27,
+      "passed": 27
+    },
+    "bundle": {
+      "total": 4,
+      "passed": 4
+    }
+  },
+  "cleanupDirsAttempted": [
+    "E:\\AI-Cache\\tmp\\fr2-02-mcp-observer-V633s3",
+    "E:\\AI-Cache\\tmp\\fr2-02-runtime-observer-5IxmDo",
+    "E:\\AI-Cache\\tmp\\fr2-02-bundle-observer-SxKkZv"
+  ],
+  "lingeringChromeProcesses": {
+    "count": 0,
+    "matches": []
+  }
+}

@@ -830,3 +830,79 @@ describe('FR2-10 optional sessionId', () => {
     expect(listSessions).not.toHaveBeenCalled();
   });
 });
+
+describe('@sutradhar/mcp-server FR2-06 selector dialect', () => {
+  it('M1: browser.click\'s target description documents the dialect', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    registerTools(server, { runtime });
+
+    const desc = (tools.get('browser.click')!.config.inputSchema.target as any).description as string;
+    expect(desc).toContain('Playwright');
+    expect(desc).toContain('click_by_text');
+    expect(desc).toContain('xpath/');
+  });
+
+  it('M2: every selector-taking handler rejects a Playwright selector with isError, no "\\nHint:", before touching a real session', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime(); // real instance, no sessions created
+    registerTools(server, { runtime });
+
+    const cases: Array<[string, Record<string, unknown>, string]> = [
+      ['browser.click', { sessionId: 'nope', target: 'text=Submit' }, 'click'],
+      ['browser.right_click', { sessionId: 'nope', target: 'text=Submit' }, 'right_click'],
+      ['browser.type', { sessionId: 'nope', target: 'text=Submit', value: 'x' }, 'type'],
+      ['browser.hover', { sessionId: 'nope', target: 'text=Submit' }, 'hover'],
+      ['browser.focus', { sessionId: 'nope', target: 'text=Submit' }, 'focus'],
+      ['browser.select_option', { sessionId: 'nope', target: 'text=Submit', value: 'v' }, 'select_option'],
+      ['browser.select_options', { sessionId: 'nope', target: 'text=Submit', values: ['v'] }, 'select_options'],
+      ['browser.wait_for_selector', { sessionId: 'nope', target: 'text=Submit' }, 'wait_for_selector'],
+      ['browser.upload_file', { sessionId: 'nope', target: 'text=Submit', filePath: '/tmp/x' }, 'upload_file'],
+      ['browser.drag_and_drop', { sessionId: 'nope', sourceTarget: 'text=Submit', destTarget: '#ok' }, 'drag_and_drop'],
+      ['browser.drag_and_drop', { sessionId: 'nope', sourceTarget: '#ok', destTarget: 'text=Submit' }, 'drag_and_drop'],
+      ['browser.touch_tap', { sessionId: 'nope', target: 'text=Submit' }, 'touch_tap'],
+      ['browser.download_file', { sessionId: 'nope', target: 'text=Submit' }, 'download_file'],
+      ['browser.scroll', { sessionId: 'nope', target: 'text=Submit' }, 'scroll'],
+    ];
+    for (const [toolName, args, verb] of cases) {
+      const result = await tools.get(toolName)!.handler(args);
+      expect(result.isError, `${toolName} isError`).toBe(true);
+      const text = result.content[0].text as string;
+      expect(text, `${toolName} text`).toMatch(new RegExp(`^${verb} failed: Invalid selector "text=Submit"`));
+      expect(text).toContain('click_by_text');
+      expect(text).not.toContain('\nHint:');
+    }
+
+    const fillResult = await tools.get('browser.fill_form')!.handler({ sessionId: 'nope', fields: { 'text=Submit': 'x' } });
+    expect(fillResult.isError).toBeUndefined();
+    const parsed = JSON.parse(fillResult.content[0].text);
+    expect(parsed['text=Submit'].success).toBe(false);
+    expect(parsed['text=Submit'].error).toContain('Playwright-style');
+  });
+
+  it('M3: a runtime.click success:false with the selector-dialect hint is not double-hinted', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const message = 'Invalid selector "div[" — is not a valid selector. Use standard CSS or a snapshot node id (e.g. "12")';
+    vi.spyOn(runtime, 'click').mockResolvedValue({
+      success: false,
+      actionType: 'click',
+      executionTimeMs: 1,
+      error: message,
+    });
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.click')!.handler({ sessionId: 's1', target: 'div[' });
+
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed.error).toBe(message);
+    expect(parsed.error).not.toContain('\nHint:');
+  });
+
+  it('M4: the tool count is unchanged by this item', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    registerTools(server, { runtime });
+    expect(tools.size).toBe(EXPECTED_BROWSER_TOOLS.length);
+  });
+});

@@ -20,6 +20,7 @@ import {
   DOMSemanticEngine,
   formatGraphForLlm,
   selectorForNodeId,
+  invalidSelectorSyntaxError,
   type ActionHistoryEntry,
   type IBrowserSession,
   type IBrowserTab,
@@ -51,6 +52,7 @@ import {
   normalizeTarget,
   selectorSyntaxDetail,
   SELECTOR_SYNTAX_HINT,
+  InvalidSelectorError,
   type ExtractFieldSpec,
   type ExtractDataOptions,
 } from './types.js';
@@ -925,6 +927,26 @@ export class SutradharRuntime {
    */
   private async resolveFrame(page: ReturnType<SutradharRuntime['requirePage']>, frameSelector: string) {
     const hops = frameSelector.split('::').map((s) => s.trim()).filter((s) => s.length > 0);
+    // FR2-06/GAP-206 (spec §2.4): validate every hop's selector-DIALECT syntax up front, before
+    // any browser round trip for ANY hop — the same pure, zero-CDP check the CLI's own
+    // `validateFrameChain` already does. This means a bad second (or later) hop is rejected
+    // before the first hop's `$()` call ever runs, and a bad FIRST hop gets full Playwright-
+    // syntax coaching instead of a generic "no element matched" (there was previously no coaching
+    // at all for a bad first hop, since the loop below checked hop N only once it was reached).
+    const normalizedHops: string[] = [];
+    for (const hop of hops) {
+      try {
+        normalizedHops.push(normalizeTarget(hop));
+      } catch (e) {
+        if (e instanceof InvalidSelectorError) {
+          throw new Error(
+            `Invalid frameSelector "${hop}" (from the full chain "${frameSelector}") — ` +
+              `${e.reason} ${SELECTOR_SYNTAX_HINT}`,
+          );
+        }
+        throw e;
+      }
+    }
     type Hoppable = {
       $(selector: string): Promise<{ contentFrame(): Promise<Hoppable | null> } | null>;
       evaluate<T>(fn: (...args: never[]) => T | Promise<T>, ...args: never[]): Promise<T>;
@@ -932,9 +954,10 @@ export class SutradharRuntime {
     };
     let current: Hoppable = page;
     for (const [i, hop] of hops.entries()) {
+      const normalized = normalizedHops[i]!;
       let handle: Awaited<ReturnType<Hoppable['$']>>;
       try {
-        handle = await current.$(normalizeTarget(hop));
+        handle = await current.$(normalized);
       } catch (e) {
         const msg = (e as Error)?.message ?? String(e);
         if (/is not a valid selector|SyntaxError/i.test(msg)) {
@@ -1429,18 +1452,27 @@ export class SutradharRuntime {
     filePath: string,
     tabId?: string,
   ): Promise<void> {
-    const { tab } = this.resolveTab(sessionId, tabId);
+    const { tab } = this.resolveTab(sessionId, tabId); // unchanged order: unknown session still throws first
     const page = this.requirePage(tab);
+    // FR2-06: normalized (and so checked for Playwright syntax) BEFORE the fs allowlist check —
+    // a bad trigger selector now fails before any filesystem I/O.
+    const selector = normalizeTarget(triggerTarget);
     // This bypasses BrowserActionEngine entirely (no action-engine 'upload_file' case
     // involved), so it needs its own copy of the same existence/allowlist check that case
     // applies — otherwise this path would read an arbitrary host file with no validation at
     // all, unlike its sibling.
     await this.assertUploadPathAllowed(filePath);
-    const selector = normalizeTarget(triggerTarget);
-    const [fileChooser] = await Promise.all([
-      page.waitForFileChooser(),
-      page.click(selector),
-    ]);
+    let fileChooser: Awaited<ReturnType<typeof page.waitForFileChooser>>;
+    try {
+      [fileChooser] = await Promise.all([page.waitForFileChooser(), page.click(selector)]);
+    } catch (e) {
+      const msg = (e as Error)?.message ?? String(e);
+      if (/is not a valid selector|is not a valid XPath expression/i.test(msg)) {
+        // No `enginePath`: Puppeteer P-selectors (>>>, ::-p-*()) DO work on this unprefixed path.
+        throw new Error(invalidSelectorSyntaxError(selector, msg).message);
+      }
+      throw e; // same object — anything else (no chooser opened, navigation, ...) passes through
+    }
     await fileChooser.accept([filePath]);
   }
 

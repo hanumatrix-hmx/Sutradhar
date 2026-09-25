@@ -5,3 +5,4 @@
 
 export * from './action-types.js';
 export * from './browser-action-engine.js';
+export * from './selector-dialect.js';
