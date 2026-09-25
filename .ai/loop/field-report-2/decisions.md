@@ -762,3 +762,36 @@ Sequencing: same posture as FR2-13 -- hard-blocked on FR2-01..FR2-14 all reachin
 BLOCKED/DESCOPED with a diagnosis). The standalone harness modules have no dependency on those
 items' shapes and could in principle be built early, but the spec's default is strict
 sequencing, not a partial head start.
+
+## 2026-09-25 — FR2-16 spec decisions (from the Planner)
+
+Spec: `evidence/FR2-16/spec.md`. **No dependency on any other FR2-0X item** -- confirmed by
+grep, unblocked and developable in parallel with FR2-01's ongoing escalation.
+
+Key finding: enableStealth is a PROVABLE no-op today, not merely unused -- DEFAULT_LAUNCH_ARGS
+already unconditionally includes --disable-blink-features=AutomationControlled, and the
+conditional block that supposedly gates it just re-adds the same flag to a Set (a no-op on an
+existing member). StealthEngine and its 4 script generators are fully dead: publicly exported,
+never called by any runtime path, only exercised by their own isolated unit test.
+
+Adopted as written:
+1. Remove outright, don't deprecate -- no product-facing surface (CLI/MCP/SDK) exposes any of
+   this; only a direct "import from @sutradhar/browser" would see the type removal, and the
+   package is pre-1.0. Deprecating a no-op with a runtime warning would ship a warning for
+   behavior that already does nothing.
+2. AGENT_SETUP.md already has honest, specific boundary language (verified accurate, measured,
+   not a hedge) -- no change needed there; --help and the README fix mirror the SAME wording
+   rather than inventing new prose per surface, to avoid exactly the kind of divergence this item
+   exists to fix.
+3. packages/browser/README.md has FOUR contradictory spots, not just the one line named in the
+   original finding (ADR frontmatter reference, package tagline, the numbered invariant, and the
+   module-layout description) -- all four get fixed together.
+4. A breaking type removal from @sutradhar/browser's public exports gets a changelog fragment
+   that folds into the SAME 0.5.0 release item FR2-01 already requires (wait_for_selector's
+   default-state change) -- not a separate version bump.
+5. New negative case worth flagging for the Executor: check whether dist/ is committed (if so,
+   its stale .d.ts files need removing in the same commit) and whether an actual
+   docs/adr/0005-stealth-evasion.md file exists (if so, its status needs flipping, not left
+   claiming an implemented policy that no longer exists).
+
+Sequencing: unblocked. No hard or soft precondition on any other item.
