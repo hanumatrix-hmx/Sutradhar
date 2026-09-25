@@ -1789,3 +1789,25 @@ from the "keep going, don't stop for permission" default, justified by the scope
 carve-out for real external-system impact (this loop's own testing is now visibly affecting the
 user's live machine resources) -- exactly the kind of situation CLAUDE.md's ownership section
 says is still worth surfacing rather than plowing through.
+
+## 2026-09-26 -- Live-Chrome dispatch pause lifted: user confirmed cleanup, runaway process count resolved
+
+The pause recorded in the previous entry ("FR2-03 audit-4: FAILED a 4th consecutive time, item
+ESCALATED") is now LIFTED. The user was shown the exact findings (673 of 758 Chrome+Node
+processes referencing sutradhar/fr2 test paths, ~9GB of orphaned scratch profile directories on
+E: driving it to 6.4GB free) and explicitly confirmed cleanup. The Orchestrator then:
+1. Killed the remaining Chrome processes still referencing sutradhar-cli-*/fr2-0X/scratch test
+   paths (most had already self-cleaned as agents finished naturally between the pause and the
+   cleanup -- count had already dropped from 673 to 8 matching processes by the time cleanup ran).
+2. Removed 295 orphaned sutradhar-cli-*/puppeteer_dev_chrome_profile-* directories (~9GB) from
+   E:\AI-Cache\tmp, freeing E: from 6.4GB to 15.5GB free.
+3. Verified via direct process inspection: chrome/node counts are back to a normal baseline (no
+   remaining matches against test paths).
+
+The user then explicitly said "resume" for the FR2-03 loop specifically. A first fix-4 dispatch
+correctly self-halted on finding the OLD pause note still in the repo (the tip commit named this
+exact task by name as paused) -- correct caution given it had no visibility into this out-of-band
+user exchange, but the situation has since changed. This entry is the explicit, written
+record that supersedes that pause: **live-Chrome-heavy dispatch, including FR2-03's escalated
+fix-4, is authorized to proceed as of this commit.** Any future agent finding the OLD pause
+entry should read forward to this one and treat it as current.
