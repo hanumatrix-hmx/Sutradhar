@@ -509,3 +509,53 @@ GAP-060. Executors must save fresh scenario-suite run output to their own eviden
 every time they claim a gate result, not just cite whatever baseline file happens to be on disk.
 
 FR2-01 moves to FIX(3) — its fourth fix round overall, third full audit cycle.
+
+## 2026-09-25 — FR2-12 spec decisions (from the Planner)
+
+Spec: `evidence/FR2-12/spec.md` (97KB). No hard precondition. Soft dependencies on FR2-08
+(settle) and FR2-04/FR2-07 (dialog line formatting in --json mode) -- both have documented
+fallback behavior if not yet landed, so this item isn't blocked by either.
+
+Two real bugs found while tracing, beyond what the finding described:
+1. Audit results leak between pages in any long-lived process (MCP or SDK): the browser tab's
+   console/error/network buffers are never scoped to the currently audited document, so visiting
+   a noisy page and then a clean one and running audit() on the clean page still reports the
+   noisy page's errors. The CLI mostly dodges this by accident (each command is a fresh process),
+   which is exactly why exposing audit on MCP/SDK for the first time makes this newly reachable.
+2. CLS gets multiplied by the number of times audit() has run against the same tab: each URL
+   audit injects a fresh vitals-tracking script via evaluateOnNewDocument and never removes it,
+   so after k audits, k copies are all summing into the same live counter.
+
+Also: the finding's claim that current-page audits can't retroactively get LCP/CLS is probably
+just wrong. PerformanceObserver.observe({buffered:true}) is documented to synchronously return
+already-recorded entries, which the existing vitals-capture script never actually uses -- it
+takes the harder path of injecting a listener before every navigation instead. This needs a live
+experiment (Step 0, mandatory before writing any audit code) to confirm before committing to a
+design, since a browser-pane probe during planning got an inconclusive result (the pane itself
+was hidden during load, which -- notably -- is exactly the "page was hidden" case that produces
+no vitals at all; a real headless Chrome run is needed to settle it either way).
+
+Adopted as written (full reasoning in the spec's §0.3):
+1. One runtime.audit() call stays the single source of truth; CLI/MCP/SDK are three thin
+   wrappers around it plus a pure report-shaping module, never three separate implementations.
+2. MCP's browser.audit has no outDir option at all -- a stdio server's filesystem isn't the
+   client's, and adding a second unfenced arbitrary-write path would undercut FR2-05's whole
+   point. Images come back as real MCP image content blocks (the same mechanism
+   browser.screenshot already uses), never as base64 buried inside the JSON text.
+3. The committed JSON Schema is hand-written, not generated from Zod -- capability-runtime has
+   no Zod dependency today and adding one, or a new devDependency just to convert schemas, would
+   outweigh the benefit for one file. Drift is guarded three ways instead: a fully-populated
+   TypeScript example object that the compiler itself enforces stays in sync with the interface,
+   a test asserting the schema's own key sets match that example, and live validation of real
+   audit output using a JSON Schema validator the MCP SDK already ships (avoiding a new
+   dependency entirely).
+4. An open dialog now fails an audit fast with a clear message rather than hanging until the
+   30-second auto-dismiss -- the same "never silently hang on a dialog" principle FR2-04 already
+   established elsewhere.
+5. The 5 existing accessibility heuristics are deliberately NOT touched or extended in this item
+   -- real false positives exist in them, but the Done-when doesn't ask for that work and it's
+   logged as a separate gap rather than folded in here.
+
+Sequencing: no hard precondition. Step 0's live experiment must run and its outcome recorded
+BEFORE any audit code is written, since it decides between two meaningfully different designs
+for the vitals-capture rewrite.

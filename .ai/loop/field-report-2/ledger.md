@@ -15,7 +15,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 | FR2-09 | Snapshot frame/shadow labels | 2 | SPEC (no hard precondition; default merge after FR2-08) | 0 | evidence/FR2-09/spec.md | - |
 | FR2-10 | MCP optional sessionId | 2 | SPEC (no hard precondition; MCP-only; default merge after FR2-09) | 0 | evidence/FR2-10/spec.md | - |
 | FR2-11 | Full action history | 3 | SPEC (soft dep on FR2-07 field shape; default merge after Phase 2) | 0 | evidence/FR2-11/spec.md | - |
-| FR2-12 | Machine-readable audit | 3 | TODO | 0 | - | - |
+| FR2-12 | Machine-readable audit | 3 | SPEC (Step 0 live experiment required before DEVELOP; soft deps FR2-04/07/08) | 0 | evidence/FR2-12/spec.md | - |
 | FR2-13 | `sutradhar run` scenario runner | 3 | TODO | 0 | - | - |
 | FR2-14 | `.sutradhar.json` project config | 3 | TODO | 0 | - | - |
 | FR2-15 | Playwright migration guide | 4 | TODO | 0 | - | - |
