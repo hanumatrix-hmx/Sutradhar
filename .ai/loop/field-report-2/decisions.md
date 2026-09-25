@@ -445,3 +445,47 @@ Adopted as written (full reasoning in the spec's §0.1):
 
 Sequencing: no hard precondition; default merge after FR2-09. Tools added by later items (FR2-08's
 wait_for, FR2-12's audit) are covered automatically since the mechanism runs at registration time.
+
+## 2026-09-25 — FR2-11 spec decisions (from the Planner)
+
+Spec: `evidence/FR2-11/spec.md` (75KB). Soft dependency on FR2-07 (still at SPEC, not DONE) —
+this item doesn't block on it reaching full audit, but the verification field it adds to history
+entries must use FR2-07's exact field name and shape once that code lands.
+
+A real gap found while tracing, beyond the original finding: in-memory history doesn't just
+reset on an MCP server restart -- it resets on EVERY SEPARATE CLI PROCESS, because each CLI
+invocation builds a brand-new runtime/session/tab object from scratch and re-attaches to the
+same browser. So "the CLI's own action history" as a concept literally cannot exist without a
+file, confirming the Done-when's history.jsonl requirement is the only way to satisfy it, not an
+implementation preference.
+
+Adopted as written (full reasoning in the spec's §0):
+1. Session-wide history is its own real ring buffer fed by every tab, not a live re-read of
+   whichever tabs happen to still be open -- because a tab that closes itself (the very common
+   case of an OAuth popup) would otherwise take its whole action history with it the moment it
+   closes, right when that history is most likely to matter.
+2. The merged multi-tab view is opt-in (a new scope parameter, default unchanged), NOT a silent
+   change to what an omitted tabId already means today. FR2-04 got away with a similar
+   "omitted means everything" choice for its OWN brand-new getDialogHistory method, but
+   get_action_history has existing callers relying on omitted-tabId meaning "the active tab" --
+   flipping that quietly would be exactly the silent-wrongness class this whole loop exists to
+   close.
+3. Every field that reaches disk goes through one central sanitizer at the point of recording:
+   URLs drop their query and fragment (reusing FR2-09's exact rule), typed text and clipboard
+   content are stored as lengths only, eval code is stored as a whitespace-collapsed, URL-redacted
+   200-character preview -- never its result. history.jsonl sits in the exact same per-session
+   directory FR2-03 already defined, as a third append-only sidecar next to state.json and
+   FR2-04's warden.json, deliberately inventing no new locking scheme since neither of those
+   files needed one either.
+4. Eviction counts are tracked separately at the per-tab AND per-session level, both exact and
+   never silently reset while their owner (tab or session) is alive.
+5. The CLI writes one history line per command that touches a session, including read-only
+   commands like snap -- because "what did the agent actually see" is exactly what a debugging
+   session most wants back, and excluding reads would make the record incomplete for that
+   purpose. Rotation kicks in at 5MB into a single backup generation; there's deliberately no
+   env knob to disable history writing at all, matching FR2-03's stance of not adding
+   configuration knobs without a demonstrated need.
+
+Sequencing: soft dependency only on FR2-07 (field-name compatibility, not full audit completion).
+Default merge order after all of Phase 2, since runtime.ts/tools.ts/cli.ts/browser-session.ts are
+touched by nearly every prior item.

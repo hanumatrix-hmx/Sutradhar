@@ -14,7 +14,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 | FR2-08 | Condition waits + settle everywhere | 2 | SPEC (needs FR2-07 DONE; DEVELOP after FR2-07) | 0 | evidence/FR2-08/spec.md | - |
 | FR2-09 | Snapshot frame/shadow labels | 2 | SPEC (no hard precondition; default merge after FR2-08) | 0 | evidence/FR2-09/spec.md | - |
 | FR2-10 | MCP optional sessionId | 2 | SPEC (no hard precondition; MCP-only; default merge after FR2-09) | 0 | evidence/FR2-10/spec.md | - |
-| FR2-11 | Full action history | 3 | TODO | 0 | - | - |
+| FR2-11 | Full action history | 3 | SPEC (soft dep on FR2-07 field shape; default merge after Phase 2) | 0 | evidence/FR2-11/spec.md | - |
 | FR2-12 | Machine-readable audit | 3 | TODO | 0 | - | - |
 | FR2-13 | `sutradhar run` scenario runner | 3 | TODO | 0 | - | - |
 | FR2-14 | `.sutradhar.json` project config | 3 | TODO | 0 | - | - |

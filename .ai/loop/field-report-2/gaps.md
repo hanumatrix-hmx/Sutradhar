@@ -51,5 +51,12 @@
 | GAP-047 | FR2-10 (planning) | minor | An explicit but UNKNOWN sessionId still gets only the generic "Call browser.launch first" hint, without listing the actually-live session ids the caller could have meant. Cheap follow-up once FR2-10's line-formatting helper exists. | TODO | - |
 | GAP-048 | FR2-10 (planning) | minor idea | No browser.list_sessions tool exists; the ambiguity error message covers the immediate need, but a dedicated listing tool would be a natural follow-up (would need a EXPECTED_BROWSER_TOOLS bump, so deferred rather than folded in here). | TODO | - |
 | GAP-049 | FR2-10 (planning) | minor, future | FR2-10's session-resolution scope is the whole MCP server process, which is correct for the current stdio transport (always exactly one client). If an HTTP/SSE transport with multiple simultaneous clients is ever added, resolution would need to be scoped per client connection instead. | TODO | - |
+| GAP-050 | FR2-11 (planning) | minor | The SDK has no history API at all (no page.history()/browser.history()) -- this item only covers MCP and CLI. | TODO | - |
+| GAP-051 | FR2-11 (planning) | minor | MCP-side action history still isn't persisted across a server restart -- only the CLI gets a durable history.jsonl in this item. | TODO | - |
+| GAP-052 | FR2-11 (planning) | minor | Tab lifecycle actions (new_tab/close_tab/focus_tab) and state-setter tools (set_cookie, set_viewport, grant_permissions, etc.) are still never recorded into history at all, by design -- same category as GAP-027. | TODO | - |
+| GAP-053 | FR2-11 (planning) | minor | The new sutradhar history command has no filtering at all (no --last N, no --session <id>) -- only file rotation bounds how much output it can produce. | TODO | - |
+| GAP-054 | FR2-11 (planning) | minor | CLI flags (e.g. --expect-text, --frame) passed to a command are not recorded in history.jsonl v1 lines, only positional arguments. | TODO | - |
+| GAP-055 | FR2-11 (planning) | minor | There's no env var or flag to opt OUT of CLI history persistence entirely, even though history.jsonl can end up holding sensitive text lengths, URLs and error messages on disk indefinitely. | TODO | - |
+| GAP-056 | FR2-11 (planning) | minor | CLI-assigned tab ids are not stable across separate CLI process invocations (each process re-numbers tabs from Puppeteer's own page-adoption order), so a tabId recorded in one history.jsonl line may not mean the same tab in a later line. | TODO | - |
 
 (Further entries populated as Auditors report gaps during the loop.)
