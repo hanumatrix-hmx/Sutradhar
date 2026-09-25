@@ -1022,3 +1022,47 @@ failure here would trigger the same Orchestrator-supervised escalation track FR2
 Orchestrator is treating this seriously: the next Executor brief for fix-4 is written with that
 in mind, requiring a genuinely different (broader, more mechanical, less pattern-matching-by-hand)
 approach to the guard rather than another manual game of whack-a-mole with individual sentences.
+
+## 2026-09-25 -- FR2-16 audit-4: FAILED a 4th time -- pattern-matching approach itself is the problem, plus a genuine self-flattering benchmark bug found
+
+fix-4's rebuilt guard (shared module, 11-file list, whitespace collapse, 7-pattern family,
+negation-lookback) still failed comprehensively: 0 of 19 new synonym mutations were caught,
+including all 4 the Orchestrator's OWN dispatch brief handed the Executor verbatim as examples
+to guard against ("chosen for compatibility reasons", "improves reliability", "necessary for
+consistent behavior", a claim split across two sentences). The negation-lookback meant to prevent
+false positives on this item's own honest negation sentences is itself exploitable in both
+directions (a real false claim can hide near an unrelated negation word; a genuinely honest
+sentence can be mis-flagged because "not" can't regex-match inside "doesn't"). This confirms
+what audit-3 already suspected: hand-written deny-list pattern matching is structurally the
+wrong tool for this job, no matter how many patterns get added -- the fix needs a different
+SHAPE of check, not a bigger list.
+
+**Adopted for the escalation, per the auditor's own suggested redesign**: switch from a deny-list
+(flag known-false phrasings) to an ALLOW-list (every sentence in the checked files that mentions
+the flag/webdriver/stealth/detection must match one of a small set of pre-approved, Orchestrator-
+reviewed honest sentences; anything else fails closed). This inverts the failure mode: instead of
+"a new false phrasing slips through because it wasn't on the deny-list," a future edit that isn't
+pre-approved FAILS LOUDLY and forces a human/Orchestrator review, rather than silently passing.
+This is a more invasive rewrite of the checked files (every relevant sentence must be rewritten to
+match one canonical form) but is the only design that structurally closes this failure mode rather
+than adding a 20th pattern to a list that's already failed at 7.
+
+**Also found, independently valuable regardless of FR2-16's own fate**: GAP-127, a genuine,
+undisclosed detection-asymmetry in THIS PROJECT'S OWN competitive-benchmarks.md. The headline
+claim "Sutradhar 29/47 beats Playwright 27/47 and Puppeteer 25/47" with "no stealth on any side"
+was measured with Sutradhar's own retained flag giving it navigator.webdriver=false while the
+competitors, launched plainly, showed true -- an undisclosed advantage in Sutradhar's own favor,
+live-verified. This directly contradicts the corrected passage fix-4 wrote elsewhere in the SAME
+file just one fix cycle ago. This is arguably a MORE serious finding than FR2-16's original scope
+(a stale/dead-code cleanup item) because it touches this loop's own claimed benchmark integrity --
+logged prominently, and the Orchestrator will fold its correction into FR2-16's escalated scope
+rather than treating it as a separate item, since it's the same underlying dishonesty-about-
+detection-asymmetry category this whole item exists to fix.
+
+**This is FR2-16's 4th audit failure -- it now moves to the SAME Orchestrator-supervised
+escalation track FR2-01 is on** (bonus cycle 1 of 2, per the loop's own retry-bound rule). If the
+next audit (audit-5) still finds a new instance, one more escalation cycle remains before FR2-16
+must be marked BLOCKED, exactly mirroring FR2-01's situation. Two items are now simultaneously in
+the escalation track -- both on the same underlying lesson: an ad-hoc, incrementally-patched
+guard/check will keep failing against a determined-enough set of rewordings; only a structural
+redesign (tri-state propagation for FR2-01, allow-list for FR2-16) actually closes the class of bug.

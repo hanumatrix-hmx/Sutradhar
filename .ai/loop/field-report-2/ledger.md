@@ -19,7 +19,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 | FR2-13 | `sutradhar run` scenario runner | 3 | SPEC (HARD-blocked: needs FR2-07+FR2-08+FR2-11+FR2-12 all DONE) | 0 | evidence/FR2-13/spec.md | - |
 | FR2-14 | `.sutradhar.json` project config | 3 | SPEC (builds on FR2-03/04/05, all still SPEC) | 0 | evidence/FR2-14/spec.md | - |
 | FR2-15 | Playwright migration guide | 4 | SPEC (HARD-blocked: needs FR2-01..FR2-14 all DONE) | 0 | evidence/FR2-15/spec.md | - |
-| FR2-16 | Stealth boundary honesty | 4 | FIX(4) [audit-3 FAILED: GAP-122 major -- same false framing found in a 4th location, browser-launcher.ts comment, missed by the guard scripts' narrow file scope] | 3 | audit-3: 4th instance of the stability-flag false claim (in code THIS item itself wrote), + guard-script robustness gaps (whitespace-beatable regex, narrow scope, no GAP-119 regression coverage) + 2 unrelated minor accuracy notes | (uncommitted, blocked by audit-3)
+| FR2-16 | Stealth boundary honesty | 4 | FIX(5) [ESCALATED: Orchestrator-supervised bonus cycle 1/2 -- 4th audit failed, same bound FR2-01 hit] | 4 | audit-4: rebuilt guard still pattern-matching (0/19 new synonyms caught, including all 4 the brief itself named), negation-lookback exploitable both directions, zero GAP-119 regression coverage, AND a genuine self-flattering detection-asymmetry found in the project's OWN competitive-benchmarks.md (GAP-127, undisclosed, favors Sutradhar) | (uncommitted, blocked by audit-4)
 | FR2-17 | Docs sweep | 4 | TODO | 0 | - | - |
 
 ## Baseline
