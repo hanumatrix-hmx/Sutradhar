@@ -1592,3 +1592,51 @@ renderer-backgrounding-flags improvement remains a separate, still-open backlog 
 to FR2-03's own scope (session/profile GC) and not something FR2-03 needs to implement itself.
 
 Ledger status for FR2-03 changes from BLOCKED-BY-DEPENDENCY to SPEC (ready for DEVELOP).
+
+## 2026-09-25 -- FR2-03 audit-1: FAILED -- self-disclosed scope cut AND real, live-reproduced safety bugs in a destructive feature
+
+audit-1's first job, per the Orchestrator's explicit instruction at dispatch, was to determine
+whether run-1's disclosed scope reduction (skipping the full §5 adversarial harness and the
+changelog fragment) was disqualifying. It was: the spec's own Done-when list (not just the §5
+test catalog) includes a specific live-proof scenario -- create 5 sessions, hard-kill the Node
+side plus 2 Chromes, run `doctor --gc`, and show the orphan dir/process counts reach 0 -- and
+this was never built or verified in run-1. audit-1 built it from scratch itself and it FAILS: 2
+orphan profile dirs remain after `doctor --gc` (and again after a second `close --all-stale`),
+while the tool reports a false `remaining:{0,0}`/exit 0 "all clean."
+
+Worse, and exactly why this item's dispatch brief asked for extra scrutiny on destructive-
+operation false-positive risk: audit-1 found and LIVE-REPRODUCED a genuine blocker (GAP-175) --
+GC kills a live CLI session that uses `SUTRADHAR_CLI_STATE_DIR`, a real, documented feature
+(the README suggests it for sharing a session across working directories). The GC's owner-
+process check always reports "dead" for such a session because the CLI process that set the env
+var always exits after each command, and `cmdGc` never reads the marker's own state-file
+reference to check the ACTUAL owning session's liveness. A real run killed the live Chrome and
+deleted its profile out from under an active user. This is not a theoretical edge case -- it's a
+documented usage pattern this exact feature would break.
+
+Three more major gaps in the same destructive-safety category: GAP-176 (orphan Chrome killed
+correctly, but its own child processes -- present on every Chrome instance on this machine --
+aren't excluded from the "still in use" check, so the directory is never actually reclaimed,
+directly causing the Done-when live-proof failure above); GAP-177 (the stale-session delete path
+skips the spec's own delete-safety rules 3-4 entirely -- live-reproduced deleting a LIVE
+session's profile, including its `Local State` file, reported only as a generic error rather
+than surfaced as the safety violation it is); GAP-178 (degraded mode, when process enumeration
+itself is unavailable, breaks 3 safety properties at once, including a dry-run that actually
+mutates disk).
+
+This is now the loop's clearest demonstration of why the "extra scrutiny for destructive
+operations" instruction at dispatch mattered -- a lighter audit pass focused only on "does the
+happy path work" would likely have missed all 4 of these, since run-1's own live-verify script's
+8/8 passing cases never actually exercised the real orphan-kill path (its own "reclaims orphan"
+case never killed anything, a false-positive proxy the Executor didn't realize was vacuous).
+
+fix-1's scope, in priority order (destructive-safety blockers first): (1) GAP-175 -- protect
+SUTRADHAR_CLI_STATE_DIR sessions by passing extraStateDirs and implementing the marker's own
+state-file read (spec rule G8); (2) GAP-176 -- treat a killed browser's child processes as dead
+in the same pass, so orphan dirs actually get reclaimed; (3) GAP-177 -- apply the same reference-
+check rules to stale-session deletes that already exist for orphan-dir deletes; (4) GAP-178 --
+fix degraded-mode to preserve all 3 safety properties, including making --dry-run a genuine no-op;
+(5) build the ACTUAL Done-when live-proof scenario for real this time, using audit-1's own
+harness-main.mjs/harness-adv.mjs as a starting point per its own suggestion; (6) the changelog
+fragment. GAP-179 through 182 (minor) fixed opportunistically if time allows without destabilizing
+the above priority list.

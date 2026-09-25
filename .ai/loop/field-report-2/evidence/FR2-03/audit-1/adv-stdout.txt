@@ -1,0 +1,50 @@
+--- crashpad (E:\AI-Cache\tmp\fr2-03-adv-crashpad-rPKYH7)
+PASS ADV-crashpad-evidence
+--- adv1-statedir (E:\AI-Cache\tmp\fr2-03-adv-adv1-statedir-t8f1Ca)
+FAIL ADV1a-live-STATE_DIR-session-not-targeted (GC without env)  observed={"navCode":0,"plannedKill":true,"plannedDel":false}
+FAIL ADV1b-live-STATE_DIR-session-not-targeted (GC with env)  observed={"plannedKill":true}
+FAIL ADV1c-live-session-survives-real-gc  observed={"gcCode":0,"alive":false,"dir":false,"selfHeal":true,"snapCode":0}
+--- adv2-stale-refs-live-dir (E:\AI-Cache\tmp\fr2-03-adv-adv2-stale-refs-live-dir-i7AuXn)
+FAIL ADV2a-live-dir-not-planned-for-delete  observed={"del":{"type":"deleteDir","path":"E:\\AI-Cache\\tmp\\fr2-03-adv-adv2-stale-refs-live-dir-i7AuXn\\temp\\sutradhar-cli-1790330926632-zJAUki","reason":"stale-session","result":"planned"}}
+FAIL ADV2b-real-gc-harm-to-live-profile  observed={"gcCode":2,"act":{"type":"deleteDir","path":"E:\\AI-Cache\\tmp\\fr2-03-adv-adv2-stale-refs-live-dir-i7AuXn\\temp\\sutradhar-cli-1790330926632-zJAUki","reason":"stale-session","result":"failed","code":"EBUSY","attempts":8},"filesBefore":38,"filesAfter":6,"localStateExists":false,"liveChromeAlive":true,"snapCode":0,"snapSelfHeal":false}
+--- adv3-user-dir-junction (E:\AI-Cache\tmp\fr2-03-adv-adv3-user-dir-junction-6Nkysk)
+PASS ADV3a-name-convention-dir-planned
+PASS ADV3b-junction-target-survives
+--- adv4-degraded (E:\AI-Cache\tmp\fr2-03-adv-adv4-degraded-FgnjMb)
+PASS ADV4-pre-degraded
+FAIL ADV4a-foreign-puppeteer-dir-not-planned  observed={"delForeign":true}
+FAIL ADV4b-young-dir-grace-respected  observed={"delYoung":true}
+FAIL ADV4c-dry-run-did-not-mutate  observed={"lockfileExists":false}
+PASS ADV4d-degraded-exit-code
+--- adv5-concurrent (E:\AI-Cache\tmp\fr2-03-adv-adv5-concurrent-kBASzN)
+PASS ADV5a-no-crash-no-false-deleted
+PASS ADV5b-no-spurious-failure
+PASS ADV5c-all-fakes-gone
+FAIL ADV5d-orphan-dir-gone  observed={"exists":true}
+--- adv6-selfheal (E:\AI-Cache\tmp\fr2-03-adv-adv6-selfheal-MO7HeT)
+PASS ADV6-self-heal-removes-old-dir
+PASS ADV6b-close-after-heal
+--- adv7-mcp-stdin (E:\AI-Cache\tmp\fr2-03-adv-adv7-mcp-stdin-099xd9)
+PASS ADV7a-mcp-idle-no-shutdown
+PASS ADV7b-mcp-stdin-eof-shutdown
+--- adv8-n15 (E:\AI-Cache\tmp\fr2-03-adv-adv8-n15-Z6OwKj)
+PASS ADV8-N15-close-does-not-kill-unverified-pid
+--- adv9-n17 (E:\AI-Cache\tmp\fr2-03-adv-adv9-n17-2bYlCc)
+PASS ADV9-N17-mid-spawn
+--- adv10-dryrun-diff (E:\AI-Cache\tmp\fr2-03-adv-adv10-dryrun-diff-2JDhj8)
+PASS ADV10-dryrun-temp-diff
+{
+  "total": 24,
+  "passed": 15,
+  "failed": [
+    "ADV1a-live-STATE_DIR-session-not-targeted (GC without env)",
+    "ADV1b-live-STATE_DIR-session-not-targeted (GC with env)",
+    "ADV1c-live-session-survives-real-gc",
+    "ADV2a-live-dir-not-planned-for-delete",
+    "ADV2b-real-gc-harm-to-live-profile",
+    "ADV4a-foreign-puppeteer-dir-not-planned",
+    "ADV4b-young-dir-grace-respected",
+    "ADV4c-dry-run-did-not-mutate",
+    "ADV5d-orphan-dir-gone"
+  ]
+}

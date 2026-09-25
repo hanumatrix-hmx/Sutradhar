@@ -1,0 +1,35 @@
+{
+  "dryRun": true,
+  "scope": {
+    "tempRoot": "E:\\AI-Cache\\tmp\\fr2-03-adv-adv4-degraded-FgnjMb\\temp",
+    "stateRoot": "E:\\AI-Cache\\tmp\\fr2-03-adv-adv4-degraded-FgnjMb\\state-root",
+    "extraStateDirs": []
+  },
+  "graceMs": 120000,
+  "processEnumeration": {
+    "ok": false,
+    "reason": "spawn powershell.exe ENOENT"
+  },
+  "actions": [
+    {
+      "type": "deleteDir",
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-adv-adv4-degraded-FgnjMb\\temp\\puppeteer_dev_chrome_profile-ForEiG",
+      "reason": "orphan-dir",
+      "result": "planned"
+    },
+    {
+      "type": "deleteDir",
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-adv-adv4-degraded-FgnjMb\\temp\\sutradhar-cli-1790330947097-MidSpn",
+      "reason": "orphan-dir",
+      "result": "planned"
+    }
+  ],
+  "kept": [],
+  "remaining": {
+    "orphanProcesses": 0,
+    "orphanDirs": 2
+  },
+  "exitCode": 0
+}
+
+--stderr--
