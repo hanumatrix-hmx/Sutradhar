@@ -919,3 +919,33 @@ diagnoseSelectorVisibility's and countOtherVisibleMatches' per-frame ERROR paths
 fix-4 already did for their TIMEOUT paths), and the next inventory must explicitly trace from the
 MCP/CLI/SDK surfaces DOWN through the engine, not stop at the engine file boundary the way fix-4's
 did.
+
+## 2026-09-25 -- FR2-16 audit-2: FAILED again -- fixed one half of the dishonest claim, left the other half standing (and backwards)
+
+fix-2 correctly added the honest "hides navigator.webdriver" sentence, but left (or in two spots,
+reinforced) the ORIGINAL false claim right next to it: that --disable-blink-features=
+AutomationControlled is "a Chrome-recommended stability flag" and the webdriver change is a mere
+"side effect". Audit-2 proved this backwards with sources: Chromium's own bad_flags_prompt.cc
+lists this flag as unsupported/bad for end users (not a stability recommendation), a live headed
+launch with the flag still shows Chrome's own automation-controlled banner, and puppeteer-core's
+defaults don't include it. Hiding navigator.webdriver is not a side effect -- it is the flag's
+only real effect. This is the second time this item's own honesty wording has itself needed
+correcting, in two different specific ways -- the loop's insistence on independent re-verification
+(never trusting a self-report) is exactly what caught both.
+
+Decision: delete the "stability flag" framing entirely from all three locations (README,
+browser-options.ts comment, PROJECT_DEEP_DIVE.md), state plainly there is exactly one reason the
+flag is kept (hides navigator.webdriver from simple checks), and don't invent a second
+justification that isn't true. Also fix the newly-caught PROJECT_DEEP_DIVE.md:48/872 regression
+(silently reintroduced "plain, undisguised browser" phrasing that now contradicts its own next
+sentence) and the wider stale-claim surface audit-2 found (SECURITY.md, competitive-benchmarks.md
+-- the latter is a fairness issue for this project's own benchmark claims against pinchtab, not
+just a wording nit).
+
+Also strengthen doc-static's checks per GAP-120: it currently only checks for the PRESENCE of the
+correct sentence, not the ABSENCE of a re-added false one -- add an explicit negative check for
+"stability flag"/"stability reason"/similar phrasing so a future regression like this one is
+caught by CI, not just by a human/auditor rereading the prose.
+
+FR2-16 moves to fix-3 (its 3rd fix cycle; still well within the loop's normal 4-cycle bound,
+no escalation needed here -- FR2-01 is the only item currently in the escalation track).
