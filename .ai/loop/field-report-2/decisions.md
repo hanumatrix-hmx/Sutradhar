@@ -328,3 +328,44 @@ assertion still needed a real effect on whichever page was actually being observ
 is a reminder that an N/N pass count is only as strong as the harness's own identity/ground-truth
 checks, not just its pass/fail tally. Keep this in mind reviewing any future "N/N passing" claim
 in this loop.
+
+## 2026-09-25 — FR2-08 spec decisions (from the Planner)
+
+Spec: `evidence/FR2-08/spec.md` (102KB). **Hard precondition:** FR2-07 must be DONE first — this
+item's text/textGone condition reuses FR2-07's visible-text check as a shared function rather
+than a second copy, and its result shares FR2-07's verification contract.
+
+Adopted as written (full reasoning in the spec's §0.6):
+1. `wait_for` polls from Node, not through Puppeteer's own `waitForFunction`. Traced why: that
+   API defaults to requestAnimationFrame-based polling, which is exactly the mechanism FR2-01 had
+   to work around for background tabs (GAP-008), and a string predicate for it gets compiled
+   inside the page with `new Function`, which a strict Content-Security-Policy blocks outright.
+   Node-side polling with CDP-based evaluation avoids both problems, reusing FR2-01's proven
+   pattern.
+2. `wait_for` is a runtime-level method, not an engine action type — a wait has no reason to go
+   through the engine's retry loop (which would triple its length), duplicate-action guard, or
+   failure screenshot (which can hang for minutes on a background tab, per GAP-010's history).
+3. `textGone` succeeds immediately if the text was never there at all, matching FR2-01's
+   `hidden` semantics for a non-existent selector — but this is flagged in the result
+   (`presentAtStart:false`) precisely so a typo doesn't look identical to "already gone".
+4. `settle` and `wait_for` and `expect` are kept strictly distinct, with a comparison table in
+   the spec: settle is a heuristic quiet-period that can't see a page timer scheduled for later
+   (demonstrated as a real, pre-existing bug — GAP-new-3 below); expect is a one-shot check right
+   after an action, never a wait; wait_for is the only one of the three that actually blocks
+   until a named condition is true.
+5. A real bug found while tracing, not in the original ask: engine settle has no Node-side time
+   bound at all — every one of its timers is either in-page or a Puppeteer timeout that never
+   starts running until `page.evaluate` itself starts, so a click with settle:true that opens an
+   alert() blocks until the tab's 30-second auto-dismiss. Fixed here by adding a real Node-side
+   hard bound.
+6. CLI condition flags (--text/--text-gone/--url/--js) are REJECTED outright on any verb other
+   than `waitfor`, deliberately breaking the "silently ignored" precedent --settle set. A user
+   writing `click 7 --text Saved` believes they asserted something; silently ignoring that flag
+   would be exactly the silent-wrongness class this whole loop exists to close.
+7. GAP-002 (stale "CLI has no wait command" comments in run-cli.mjs, with sleeps instead) is
+   folded into this item, scoped to exactly the two lines carrying that stale claim — not a
+   broader sleep-removal pass (the other bare sleeps are logged as a new gap for FR2-13, which
+   ports these scenarios to files with real wait_for steps).
+
+Sequencing: DEVELOP runs after FR2-07 (last in the merge order for shared files: the engine,
+runtime.ts, tools.ts, cli.ts, page.ts and types.ts all overlap).
