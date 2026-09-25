@@ -949,3 +949,40 @@ caught by CI, not just by a human/auditor rereading the prose.
 
 FR2-16 moves to fix-3 (its 3rd fix cycle; still well within the loop's normal 4-cycle bound,
 no escalation needed here -- FR2-01 is the only item currently in the escalation track).
+
+## 2026-09-25 -- FR2-01 fix-5: final escalation cycle (2/2), outside-in inventory closes the layer audit-5 found
+
+Executor's inventory this time traced DOWN from all three user-facing surfaces (MCP tool, CLI
+verb, SDK method) into the engine, rather than starting from the engine file the way fix-4 did --
+exactly the methodology change audit-5 recommended. This independently rediscovered the same 3
+sites audit-5 named (MCP's ERROR_HINTS, diagnoseSelectorVisibility, countOtherVisibleMatches)
+without having read audit-5 first, which is meaningful corroboration that the outside-in approach
+itself was the missing piece, not luck. The CLI and SDK surfaces, once actually read (not
+assumed clean), forward errors verbatim with no hint/rewrite logic of their own -- confirmed,
+not guessed.
+
+Fixes: GAP-111 (MCP hint no longer fires when the underlying message says "could not verify" --
+falls through to a generic non-committal hint instead of a contradicting confident claim);
+GAP-112 and GAP-113 (both functions now fold a genuine thrown per-frame error into the same
+"unconfirmed" bucket their timeout case already used, rather than treating a thrown error
+differently from a timeout -- closing the exact asymmetry audit-5 found). GAP-115 (attached-state
+mutation test added). GAP-114 deliberately NOT fixed -- it's a real, live-reproduced robustness
+gap (17/30 hard failures when a cross-origin iframe detaches mid-probe), but it is not a
+false-positive/negative instance of THIS pattern (no false success/failure observed, 0/30), so
+leaving it open does not violate the escalation's own retry-bound condition. This was the
+Executor's own judgment call, made explicitly rather than silently, and is Orchestrator-endorsed:
+correctly distinguishing "a different, real bug" from "the specific pattern this escalation
+exists to close" is exactly the discipline this loop has been asking for throughout.
+
+Fresh verification: tsc clean x5, vitest 412/412, real build x2, live-verify 48/48 x2 against
+real Chrome (with the CLI Chrome-process leak cleaned up by the Executor itself both times,
+rather than left to pollute overallOk the way it did in audit-5's own runs). Live-reproduced all
+3 of audit-5's exact probe scenarios (adapted probe-a5.mjs) and confirmed each surface now gives
+the honest result. Mutation-and-revert proof for all 3 fixes, sha256-confirmed clean revert.
+
+**This was the loop's own final allowed escalation cycle (2/2) for this item.** The next and
+last step, per the loop's own stated bound: dispatch audit-6, a fresh, maximally skeptical Opus
+Auditor. If audit-6 finds ANY new instance of the same shape of bug anywhere in the
+wait_for_selector path, FR2-01 must be marked BLOCKED with a full written diagnosis -- there is
+no cycle after audit-6. If audit-6 passes, FR2-01 moves to DONE, becoming the loop's first
+completed item, unblocking FR2-02 and FR2-03 for DEVELOP.

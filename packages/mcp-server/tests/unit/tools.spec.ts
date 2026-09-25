@@ -229,6 +229,52 @@ describe('@sutradhar/mcp-server registerTools', () => {
     expect(parsed.error).toContain('browser.snapshot');
   });
 
+  it('GAP-111 (FR2-01 fix-5): a genuine confirmed-visible hidden-wait timeout still gets the "still visible" hint', async () => {
+    // The genuine case the hint exists for: the engine explicitly confirmed some frame still
+    // has a visible match, not merely "couldn't tell". Must not regress.
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'waitForSelector').mockResolvedValue({
+      success: false,
+      actionType: 'wait_for_selector',
+      executionTimeMs: 5,
+      error:
+        'wait_for_selector timed out after 1000ms waiting for state=hidden: an element matching "#x" is still visible.',
+    });
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.wait_for_selector')!.handler({ sessionId: 's1', target: '#x' });
+
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed.error).toContain('Hint: The element is still visible.');
+  });
+
+  it('GAP-111 (FR2-01 fix-5): an honest "could not verify" hidden-wait timeout must NOT get the misleading "still visible" hint', async () => {
+    // fix-4's engine-level tri-state fix (GAP-082) produces this message when a busy/
+    // unresponsive frame prevented a real check — a genuinely different, uncertain outcome
+    // from "some frame confirmed still visible". Appending "The element is still visible."
+    // here would directly contradict the engine's own honest uncertainty (audit-5 GAP-111,
+    // live-reproduced probe A1).
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'waitForSelector').mockResolvedValue({
+      success: false,
+      actionType: 'wait_for_selector',
+      executionTimeMs: 5,
+      error:
+        'wait_for_selector timed out after 1000ms waiting for state=hidden: could not verify: one or more frames were unresponsive.',
+    });
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.wait_for_selector')!.handler({ sessionId: 's1', target: '#x' });
+
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed.error).not.toContain('The element is still visible.');
+    // Falls through to the generic, non-committal "timed out" hint instead of no hint at all.
+    expect(parsed.error).toContain('Hint:');
+    expect(parsed.error).toContain('may still be loading');
+  });
+
   it('browser.health reports Chrome availability without launching a session', async () => {
     const { server, tools } = createMockServer();
     const runtime = new SutradharRuntime();

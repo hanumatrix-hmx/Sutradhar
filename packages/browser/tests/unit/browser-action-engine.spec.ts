@@ -3358,4 +3358,105 @@ describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-0
     // margin kept to avoid CI timing flakiness while still failing against an unbounded regression.
     expect(elapsedMs).toBeLessThan(900);
   });
+
+  it('GAP-112 (FR2-01 audit-5/fix-5): a genuine per-frame THROWN error in the visibility diagnosis must say "could not be determined", never the confirmed-negative "No element found" (element genuinely present)', async () => {
+    // Unlike GAP-083's test (the diagnosis HANGS on every frame), this is the sibling shape
+    // audit-5 found: the diagnosis's $$eval genuinely THROWS (e.g. getComputedStyle itself
+    // erroring) rather than timing out. Before this fix, a thrown error fell through a
+    // `.catch(() => null)` inside diagnoseSelectorVisibility and was treated as "nothing to
+    // report", contributing to neither `flags` nor `unconfirmedFrames` — so a diagnosis on a
+    // single frame that only ever errors returned `null` overall, and the caller fell through
+    // to the false "No element found for selector" for an element that IS attached (confirmed
+    // by `$` resolving a real handle below; live-reproduced by audit-5 as probe A2).
+    const presentHandle = mockHandle();
+    (presentHandle as any).evaluate = vi.fn().mockResolvedValue(false); // never confirms visible
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(presentHandle), // the element IS attached/present
+      $$eval: vi.fn().mockRejectedValue(new Error('getComputedStyle threw for this element')),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#present',
+      state: 'visible',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/state=visible/);
+    expect(result.error).not.toContain('No element found');
+    expect(result.error).toMatch(/visibility could not be determined for 1 of 1 frame/);
+  });
+
+  it('GAP-113 (FR2-01 audit-5/fix-5): the otherVisibleMatches diagnostic reports its own uncertainty, not a silently-wrong confirmed zero, when its per-frame check THROWS (not just times out)', async () => {
+    // Sibling of the existing GAP-085 test (which uses a HANGING $$eval). fix-4 only handled
+    // the timeout case for countOtherVisibleMatches; a genuine thrown error still fell through
+    // a `.catch(() => null)` and silently read as a confirmed zero (live-reproduced by audit-5
+    // as probe A3 — a second, genuinely visible match existed but the advisory vanished with
+    // no trace it was ever computed).
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null), // already hidden -> the wait itself succeeds immediately
+      $$eval: vi.fn().mockRejectedValue(new Error('getComputedStyle threw for this element')),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#banner',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData?.otherVisibleMatches).toBeUndefined();
+    expect(result.outputData?.otherVisibleMatchesUnknown).toBe(true);
+  });
+
+  it("GAP-115 (FR2-01 audit-5/fix-5): the ATTACHED-state check-once path (timeoutMs<=0) probes multiple busy frames in PARALLEL — firstAnyHandleAnyFrame's own parallelization, previously unguarded by any test (audit-5's mutation X1, reverting it to sequential probing, passed all 141 existing tests)", async () => {
+    // firstAnyHandleAnyFrame is reached ONLY via the timeoutMs<=0 check-once 'attached' path
+    // (checkWaitForSelectorOnce) — the timed 'attached' wait uses resolveElement instead. Each
+    // frame's own probe (pierceFirstMatch -> raceFrameProbe) is independently bounded to
+    // FRAME_PROBE_TIMEOUT_MS (250ms) regardless of how long the mock's own promise takes to
+    // settle, so sequential vs. parallel is what the total elapsed time distinguishes here.
+    const makeBusyFrame = () =>
+      ({
+        isDetached: () => false,
+        $: vi.fn().mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve(null), 5000))),
+      }) as unknown as Frame;
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const busyFrames = [makeBusyFrame(), makeBusyFrame(), makeBusyFrame(), makeBusyFrame()];
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, ...busyFrames]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const t0 = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#thing',
+      state: 'attached',
+      timeoutMs: 0,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - t0;
+
+    expect(result.success).toBe(false);
+    // Sequential probing of 4 busy frames (each bounded to ~250ms) would need >= 1000ms.
+    // Parallel probing keeps the whole call well under that.
+    expect(elapsedMs).toBeLessThan(900);
+  });
 });
