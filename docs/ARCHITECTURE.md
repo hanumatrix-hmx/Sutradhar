@@ -23,8 +23,7 @@ packages/
 │                                  wider Hanumatrix ecosystem, not Sutradhar-specific)
 │
 ├── browser/                # The actual browser engine: Puppeteer-core launcher, DOM
-│                              semantic snapshot engine, action engine (click/type/scroll/…),
-│                              stealth launch flags
+│                              semantic snapshot engine, action engine (click/type/scroll/…)
 ├── capability-runtime/     # SutradharRuntime — the single high-level façade every
 │                              integration surface below calls (session/tab management,
 │                              wraps `browser`)

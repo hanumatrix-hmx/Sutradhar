@@ -39,8 +39,11 @@ all, confirmed dead upstream in Milestone 9/13 research).
 
 **Methodology**: same task set, same starting URLs, same scoring standard (Completed only with
 real verified data/state-change, Blocked with a specific cause) as the 5 Sutradhar samples.
-Both tools launched plain (`headless: true`, real Chrome, no stealth/evasion — same standard
-CLAUDE.md already holds Sutradhar to). Driven turn-by-turn via `curl POST /cmd`, one action per
+Both tools launched plain (`headless: true`, real Chrome, no stealth/evasion added on top of
+that plain launch). Sutradhar's launch masks navigator.webdriver via its retained
+--disable-blink-features=AutomationControlled flag; the other tool(s) in this comparison,
+launched plain, do not -- a real, narrow asymmetry favoring Sutradhar that these numbers do
+not control for. Driven turn-by-turn via `curl POST /cmd`, one action per
 round trip — the same interaction shape as driving Sutradhar's own MCP tools. Work was sharded
 across 5 parallel agents (one per existing Sutradhar sample boundary) to make a 94-task-drive
 comparison practical; each shard's full per-task detail is in `results-sampleN.md` next to this
@@ -110,8 +113,11 @@ This is not "Sutradhar wins every category" — Playwright's real AI-mode snapsh
 genuinely strong, actively-maintained default (57.4% here, ahead of Puppeteer, and it
 recovered a few tasks Puppeteer's raw DOM query missed). What this run does establish, with
 real numbers instead of an analogy or a parity check on a handful of shared URLs: on the
-identical 47-task set, under the identical fairness standard (no stealth, plain launch,
-turn-by-turn driving), **Sutradhar completed more tasks than either competitor**, and every
+identical 47-task set, under the same plain-launch, turn-by-turn driving methodology --
+Sutradhar's launch masks navigator.webdriver via its retained
+--disable-blink-features=AutomationControlled flag; the other tool(s) in this comparison,
+launched plain, do not -- a real, narrow asymmetry favoring Sutradhar that these numbers do
+not control for. Even so, **Sutradhar completed more tasks than either competitor**, and every
 tool-capability divergence found (not counting shared external blocks) favored Sutradhar's or
 Playwright's richer grounding over Puppeteer's bare DOM query — consistent with, and now
 numerically backing, the qualitative tool-surface comparisons already logged in

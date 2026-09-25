@@ -38,9 +38,16 @@ public internet. This document lists what's enforced by default today and what's
 
 ## What's explicitly NOT built in
 
-- **No stealth / fingerprint evasion.** No plugin masks automation signals, spoofs a user agent,
-  or otherwise tries to defeat bot detection. If you need that, it needs a clear, legitimate use
-  case behind it — this isn't something to add reflexively.
+- **No stealth / fingerprint evasion.** Sutradhar does not attempt to evade bot-detection or
+  solve CAPTCHAs, and Cloudflare challenges, CAPTCHA walls, and IP-level blocks stop it exactly
+  as they would stop any other automation tool run the same way. The only launch argument here
+  with detection-relevant behavior is `--disable-blink-features=AutomationControlled`, which
+  hides `navigator.webdriver` from scripts that check for it -- measured directly:
+  `navigator.webdriver` is `true` without the flag and `false` with it. It does not defeat
+  Cloudflare, CAPTCHA, or any other real bot-detection service, and other simple signals -- the
+  default headless user agent's `HeadlessChrome` substring and `--enable-automation` still
+  being present in the launch command line -- remain unmasked. If you need more than that, it
+  needs a clear, legitimate use case behind it — this isn't something to add reflexively.
 - **No authentication layer** on either server — see "Network exposure" above.
 - **No multi-tenant isolation.** One `SutradharRuntime`/`BrowserSessionManager` instance is meant
   for one trust domain. Don't share a single running instance across callers who shouldn't be

@@ -1,0 +1,11 @@
+import { createRequire } from 'node:module';
+const require = createRequire(process.argv[2] + '/package.json');
+const { pathToFileURL } = await import('node:url');
+const puppeteer = (await import(pathToFileURL(require.resolve('puppeteer-core')).href)).default;
+const exe = process.argv[3];
+const b = await puppeteer.launch({ executablePath: exe, headless: true, args: ['--no-sandbox', '--disable-blink-features=AutomationControlled'] });
+const p = await b.newPage();
+const ua = await p.evaluate(() => navigator.userAgent);
+console.log('UA:', ua);
+console.log('contains HeadlessChrome:', ua.includes('HeadlessChrome'));
+await b.close();

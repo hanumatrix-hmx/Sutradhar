@@ -63,7 +63,7 @@ packages/
 ├── capability/                # Capability matrix declarations
 ├── browser/                   # REAL browser automation: Puppeteer launcher, 19-action
 │                              #   engine, DOM semantic engine (data-sd-node-id grounding),
-│                              #   snapshot generator, stealth, verifier, skills
+│                              #   snapshot generator, verifier, skills
 ├── capability-runtime/        # SutradharRuntime facade — the single high-level entry point
 │                              #   composed by the MCP server, CLI, and SDK; session/profile
 │                              #   management, axSnapshot, site-audit/visual-compare

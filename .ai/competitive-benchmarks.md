@@ -21,9 +21,12 @@ comparison runs; nobody had stepped back to state the combined conclusion plainl
 until now. Read this section, then the detail below backs each claim with a real run.
 
 - **vs Playwright and Puppeteer: yes, with real controlled evidence, on two separate axes.**
-  (1) The identical 47-task WebBench set, same scoring standard, no stealth on any side:
+  (1) The identical 47-task WebBench set, same scoring standard, all three launched plain:
   **Sutradhar 29/47 (62%) — Playwright 27/47 (57%) — Puppeteer 25/47 (53%)** (Milestone 23,
-  2026-08-14). (2) A harder, more controlled 7-scenario "extreme cases" comparison sourced from
+  2026-08-14). Disclosed asymmetry: Sutradhar's launch masks navigator.webdriver via its
+  retained `--disable-blink-features=AutomationControlled` flag; the other tool(s) in this
+  comparison, launched plain, do not -- a real, narrow asymmetry favoring Sutradhar that these
+  numbers do not control for. (2) A harder, more controlled 7-scenario "extreme cases" comparison sourced from
   real documented bugs in Playwright's/Puppeteer's own issue trackers: **Sutradhar 7/7 (after a
   same-day fix), Playwright 7/7, Puppeteer 7/7** — a clean sweep for all three on pure
   capability, but Sutradhar's dual grounding + honest verification + occlusion detection are
@@ -65,9 +68,15 @@ until now. Read this section, then the detail below backs each claim with a real
   `stealthLevel` is a hard-coded 3-value enum (`light`/`medium`/`full`) with no off-switch,
   confirmed both by live CLI rejection and by reading pinchtab's own source
   (`internal/stealth/bundle.go`). That same investigation independently confirmed the asymmetry
-  is real (pinchtab's `light` floor already masks `navigator.webdriver` and disables the
-  `--enable-automation` CDP flag; Sutradhar's plain launch does neither and leaks a literal
-  `HeadlessChrome` UA substring) — so the confound can't be experimentally isolated, but it also
+  is real and larger than a single-flag comparison suggests: pinchtab's `light` floor (per its
+  own live `/stealth/status` response) applies patch set `["marker-cleanup",
+  "webdriver-native-baseline", "plugins", "languages", "platform", "downlink-max", "permissions",
+  "battery", "screen"]` and disables the `--enable-automation` CDP flag, leaving no
+  `HeadlessChrome` substring in its UA — versus Sutradhar's plain launch, which does none of
+  that except mask `navigator.webdriver` itself via its one retained launch flag (so that one
+  signal specifically is not part of the asymmetry, but the plugin/language/platform spoofing
+  and the permissions/battery/screen/downlink-max patches are, and were previously omitted from
+  this comparison) — so the confound can't be experimentally isolated, but it also
   isn't invented. There is no further lever on the pinchtab side; pulling one on Sutradhar's side
   would mean adopting the fingerprint-evasion patches CLAUDE.md explicitly excludes. Given that,
   the honest remaining move isn't to chase this specific number further — it's what this loop
@@ -689,10 +698,12 @@ experimentally proven (no clean control exists), but the underlying premise — 
 default is a meaningfully-softened baseline relative to Sutradhar's plain launch — is now
 confirmed at the fingerprint level, independently of task outcomes, and is if anything larger
 than assumed. Closed as "isolation not possible with current tooling, asymmetry independently
-confirmed" rather than left open. Per CLAUDE.md's scope boundary, matching this on Sutradhar's
-side (UA rewriting, `navigator.webdriver` masking, etc.) is the excluded stealth/evasion
-category and stays unbuilt — this is the same line already held in Milestone 16's dormant
-`StealthEngine` finding. Full detail: `tools/engine-comparison/stealth-isolation-experiment.md`.
+confirmed" rather than left open. Per CLAUDE.md's scope boundary, matching the remaining gap on
+Sutradhar's side (stripping the `HeadlessChrome` UA substring, disabling `--enable-automation`,
+etc. — `navigator.webdriver` masking is not part of that remaining gap, since Sutradhar's one
+retained launch flag already does that unconditionally) is the excluded stealth/evasion category
+and stays unbuilt — this is the same line already held in Milestone 16's dormant `StealthEngine`
+finding. Full detail: `tools/engine-comparison/stealth-isolation-experiment.md`.
 
 **This closes out the pinchtab-comparison investigation thread** (Milestones 24-26): real
 pinchtab/pinchtab beats Sutradhar 31/47 vs 29/47 on the identical WebBench set, the entire gap
@@ -784,7 +795,10 @@ Built two persistent driver servers in `tools/engine-comparison/`: `pw-server.mj
 driving a raw indexed DOM query of `a/button/input/select/textarea` — Puppeteer's honest
 out-of-box capability, since it has no official accessibility/AI grounding layer at all,
 confirmed dead upstream in earlier research). Both launched plain (`headless: true`, real
-Chrome, no stealth) — the same fairness standard already held for Sutradhar. A methodology
+Chrome, no stealth added on top of that plain launch). Sutradhar's launch masks
+navigator.webdriver via its retained `--disable-blink-features=AutomationControlled` flag; the
+other tool(s) in this comparison, launched plain, do not -- a real, narrow asymmetry favoring
+Sutradhar that these numbers do not control for. A methodology
 decision was made deliberately (via AskUserQuestion, user said "you decide and proceed"): match
 each tool's *real* out-of-box capability rather than building an artificial equalizer that
 would give all three tools the same custom grounding — this tests genuine default experience,
@@ -831,8 +845,11 @@ conditions, with Sutradhar ahead of both named competitors and a clear, evidence
 Milestone 16 confirmed the WebBench external blocks were environment-level using a bare
 `puppeteer-core` proxy — solid evidence, but an analogy, not the actual named competitor. This
 milestone runs the real thing: `tools/engine-comparison/playwright-real-world-blocks.mjs`
-drives real **Playwright** (`playwright-core` 1.62.1, plain `chromium.launch()`, no stealth,
-same fairness standard held for Sutradhar) against 6 of the exact URLs that blocked Sutradhar
+drives real **Playwright** (`playwright-core` 1.62.1, plain `chromium.launch()`, no stealth
+added on top of that plain launch; Sutradhar's launch masks navigator.webdriver via its
+retained `--disable-blink-features=AutomationControlled` flag; the other tool(s) in this
+comparison, launched plain, do not -- a real, narrow asymmetry favoring Sutradhar that these
+numbers do not control for) against 6 of the exact URLs that blocked Sutradhar
 across the WebBench samples — 3 Cloudflare JS-challenge sites (britannica.com,
 collinsdictionary.com, cambridge.org), 1 hard Cloudflare deny (cars.com), 1 real CAPTCHA
 (alibaba.com), 1 hCaptcha wall (apa.org).
