@@ -4,9 +4,9 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 
 | id | title | phase | status | attempts | last evidence | commit |
 |---|---|---|---|---|---|---|
-| FR2-01 | wait_for_selector visibility states | 1 | AUDIT(6) [ESCALATED bonus cycle 2/2 fix complete -- this is the FINAL allowed audit; BLOCKED if it finds a new instance] | 10 | fix-5: outside-in inventory (MCP/CLI/SDK down) found and fixed GAP-111 (MCP hint contradicting engine uncertainty), GAP-112 (diagnoseSelectorVisibility error-swallow), GAP-113 (countOtherVisibleMatches error-swallow), GAP-115 (missing attached-state mutation test); GAP-114 deliberately deferred (robustness, not this pattern); 412/412 vitest, 5/5 clean tsc, 2x48/48 live-verify | (fix-5 commit pending) |
+| FR2-01 | wait_for_selector visibility states | 1 | **BLOCKED** [6 audits, 5 fix cycles, 2 Orchestrator-supervised escalation cycles exhausted per loop's own retry bound -- audit-6 found 3 NEW instances (GAP-132 critical tab-close false-success, GAP-133/134 major) of the exact same recurring pattern] | 11 | See decisions.md 'FR2-01 BLOCKED' entry for the full diagnosis. GAP-132..137 logged, unresolved. | 61df926 (last landed fix; GAP-132/133/134 NOT fixed)
 | FR2-02 | extract_data reads live values | 1 | SPEC (waits for FR2-01 audit; shared files) | 0 | evidence/FR2-02/spec.md | - |
-| FR2-03 | Session/profile GC | 1 | SPEC (waits for FR2-01 DONE) | 0 | evidence/FR2-03/spec.md | - |
+| FR2-03 | Session/profile GC | 1 | BLOCKED-BY-DEPENDENCY (hard dep FR2-01 DONE, which is now itself BLOCKED) | 0 | evidence/FR2-03/spec.md | - |
 | FR2-04 | CLI dialog handling | 1 | SPEC (Step-1 experiment runs after FR2-01 FIX(1); DEVELOP after FR2-03) | 0 | evidence/FR2-04/spec.md | - |
 | FR2-05 | Download dir / upload roots wiring | 1 | SPEC (found a real symlink-escape bug B2; DEVELOP after FR2-04) | 0 | evidence/FR2-05/spec.md | - |
 | FR2-06 | Selector dialect coach | 2 | SPEC (needs FR2-02 DONE; DEVELOP after FR2-05) | 0 | evidence/FR2-06/spec.md | - |
@@ -18,7 +18,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 | FR2-12 | Machine-readable audit | 3 | SPEC (Step 0 live experiment required before DEVELOP; soft deps FR2-04/07/08) | 0 | evidence/FR2-12/spec.md | - |
 | FR2-13 | `sutradhar run` scenario runner | 3 | SPEC (HARD-blocked: needs FR2-07+FR2-08+FR2-11+FR2-12 all DONE) | 0 | evidence/FR2-13/spec.md | - |
 | FR2-14 | `.sutradhar.json` project config | 3 | SPEC (builds on FR2-03/04/05, all still SPEC) | 0 | evidence/FR2-14/spec.md | - |
-| FR2-15 | Playwright migration guide | 4 | SPEC (HARD-blocked: needs FR2-01..FR2-14 all DONE) | 0 | evidence/FR2-15/spec.md | - |
+| FR2-15 | Playwright migration guide | 4 | BLOCKED-BY-DEPENDENCY (hard dep FR2-01 DONE, which is now itself BLOCKED) | 0 | evidence/FR2-15/spec.md | - |
 | FR2-16 | Stealth boundary honesty | 4 | FIX(5) [ESCALATED: Orchestrator-supervised bonus cycle 1/2 -- 4th audit failed, same bound FR2-01 hit] | 4 | audit-4: rebuilt guard still pattern-matching (0/19 new synonyms caught, including all 4 the brief itself named), negation-lookback exploitable both directions, zero GAP-119 regression coverage, AND a genuine self-flattering detection-asymmetry found in the project's OWN competitive-benchmarks.md (GAP-127, undisclosed, favors Sutradhar) | (uncommitted, blocked by audit-4)
 | FR2-17 | Docs sweep | 4 | TODO | 0 | - | - |
 

@@ -1066,3 +1066,78 @@ must be marked BLOCKED, exactly mirroring FR2-01's situation. Two items are now 
 the escalation track -- both on the same underlying lesson: an ad-hoc, incrementally-patched
 guard/check will keep failing against a determined-enough set of rewordings; only a structural
 redesign (tri-state propagation for FR2-01, allow-list for FR2-16) actually closes the class of bug.
+
+## 2026-09-25 -- FR2-01 marked BLOCKED: 6 audits, 5 fix cycles, both escalation cycles exhausted. Full diagnosis.
+
+**Verdict: BLOCKED, per the loop's own stated retry bound (CLAUDE.md/§9): 4 standard FIX->AUDIT
+cycles, then at most 2 Orchestrator-supervised escalation cycles, then BLOCKED with a full
+diagnosis if the pattern still recurs.** Audit-6 (the final allowed audit, evaluating fix-5,
+the second and last escalation cycle) found THREE new instances of the exact same recurring bug
+shape that has now been found in 6 consecutive independent audits, each in a location none of
+the prior 5 rounds examined:
+
+- **GAP-132 (critical): a hidden wait reports FALSE SUCCESS when the tab closes mid-wait.**
+  `pierceFirstMatch` and `isHandleVisible` both classify "Execution context was destroyed" (a
+  tab-close signal) as a harmless same-tab navigation, collapsing it to "no match"/"not visible"
+  instead of "unknown" -- so a wait for an element to become HIDDEN reports SUCCESS the instant
+  the tab closes, even though the element never actually hid. This is the single worst-case
+  version of this whole bug family: it is user-visible, it is a false SUCCESS (not just a
+  confusing error message), and it is the SAME underlying mistake as the very first gap found in
+  this item, GAP-031, six rounds ago -- surviving because each round's fix targeted the specific
+  named symptom rather than the general "is this error classification safe under EVERY way a
+  frame/tab can stop responding" question.
+- **GAP-133 (major): a visible-wait timeout falsely claims "none is visible" when a match exists
+  in a frame that never answered.** fix-4's fix for this class of message only covered the
+  all-frames-unanswered case; the partial case (some frames answer, one doesn't) was never
+  tested.
+- **GAP-134 (major): MCP's "still visible" hint still fires on hidden-wait failures fix-5 didn't
+  anticipate**, because its exclusion list matched only the exact phrases "could not verify"/
+  "could not determine" rather than the full space of the engine's failure messages.
+
+**Root-cause assessment, stated honestly rather than glossed over**: this is not a case of
+"almost done, one more gap." Six independent audits, using increasingly rigorous methodologies
+(fix-3's shared tri-state type, fix-4's inventory-first discipline, fix-5's outside-in
+MCP/CLI/SDK trace) have each closed the specific instances they found while a structurally
+identical bug persisted in an unexamined corner. GAP-137 names this directly: the manual,
+however-improved-each-time inventory approach appears to have a structural ceiling for a
+function this size and a bug shape this easy to reintroduce accidentally (any new per-frame
+check that doesn't use the shared verdict type is a candidate). A 7th round chasing the same
+approach is not expected to behave differently in kind, only in which specific site it finds --
+which is exactly the pattern that triggered this escalation in the first place.
+
+**What IS genuinely solid, stated for the record so it isn't lost**: the shared
+`FrameProbeVerdict`/`HandleVisibilityVerdict` tri-state TYPE itself, introduced in fix-3 and
+extended in fix-4/fix-5, is a real, correct architectural improvement -- every site that uses it
+correctly distinguishes confirmed-no from unknown. The bug is never "the tri-state type is
+wrong"; it's always "a function that hasn't been migrated to use it yet, or a new call site that
+bypasses it." 412/412 tests pass; 48/48 live scenarios pass; the specific named gaps from every
+prior round remain genuinely fixed (audit-6 confirmed GAP-111/112/113 hold under harder variants:
+two simultaneous busy frames, a busy main frame, and delayed-throw timing).
+
+**Recommendation for whoever picks this up next** (not attempted now -- this is the diagnosis,
+not a 7th fix cycle, per the loop's own rule that BLOCKED means stop and move on, not stop and
+immediately retry): the fix likely needs a MECHANICAL guarantee rather than another manual
+inventory -- e.g. a lint rule or a runtime assertion that flags any `catch` block in this file
+that doesn't route through the shared verdict type, so a missed site fails a build/test rather
+than requiring a human (or agent) to have thought to check that exact function. GAP-132
+specifically needs the "is this tab-closing vs. same-tab-navigating" distinction made
+structurally reliable (e.g. checking `page.isClosed()` synchronously at the moment of the catch,
+not just at the start of the next poll), since string-matching an error message ("Execution
+context was destroyed") can't reliably distinguish the two cases that produced this exact
+instance of the bug twice now (GAP-031, then GAP-132).
+
+**Downstream impact, assessed now rather than left implicit**: per the ledger's own recorded
+dependencies, FR2-03 ("waits for FR2-01 DONE" -- hard) and FR2-15 ("HARD-blocked: needs
+FR2-01..FR2-14 all DONE") cannot proceed to DEVELOP while FR2-01 is BLOCKED; both are marked
+BLOCKED-BY-DEPENDENCY below, not attempted. FR2-02, FR2-04-08, FR2-11-14 have softer or
+timing-only dependencies on FR2-01 and are NOT hard-gated on its DONE status specifically (their
+own recorded dependencies are on OTHER items, or on FR2-01 reaching a stable state short of full
+DONE) -- these remain eligible for DEVELOP once their own stated prerequisites are met, unaffected
+by this block. **FR2-09 and FR2-10 have no dependency on FR2-01 at all** ("no hard precondition")
+and are immediately eligible for DEVELOP now -- the Orchestrator is moving to these next rather
+than stalling on FR2-01's block, per this project's own standing "don't stop, find the next real
+task" directive.
+
+Per the loop's exit conditions (§9), a BLOCKED item is a real, documented outcome, not a failure
+of the loop itself -- "target zero BLOCKED" is a target, and this diagnosis is what happens when
+that target isn't met for a specific item: full honesty about why, not a forced fake DONE.

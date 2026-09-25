@@ -1,0 +1,98 @@
+FR2-01 audit-6 -- verdict: BLOCKED-REQUIRED
+Three NEW, live-reproduced instances of the escalation pattern: a per-frame/per-probe check that
+times out or throws is collapsed into a false definite answer. They are in the wait_for_selector
+path, at engine and MCP level, and none of them is among the ~20 sites already named.
+(NOTE: *.log is gitignored repo-wide (GAP-117); the committable copies are the *.json, *.mjs and *.cjs files and this file.)
+
+== Fresh re-run (not cited) ==
+build: pnpm build exit 0 (build.log)
+tsc --noEmit: browser 0, capability-runtime 0, mcp-server 0, cli 0, sutradhar 0 (tsc-*.log)
+vitest: browser 227, mcp-server 31, capability-runtime 92, cli 47, sutradhar 15 = 412/412 pass. This matches
+  fix-5's claim. The count includes concurrent FR2-16 uncommitted test changes.
+live-verify (tools/scenario-suite/verify-fr2-01-wait-states.mjs) x2: 48/48 cases PASS both runs. overallOk:false both
+  runs is caused ONLY by lingering processes of a pre-existing CLI Chrome profile, sutradhar-cli-1790307865575
+  (created 09:14:25 local, and already in chrome-baseline-before-liveverify.txt before this audit ran any CLI).
+  No Crashpad EBUSY flake was seen.
+Leak check: chrome.exe total 67 before and 67 after. No fr2-01-a6-* profile dirs remain and no new sutradhar-cli-*
+  dirs were created. Zero leaked by this audit.
+
+== GAP-111/112/113 re-verified live (probe-a6.mjs, real MCP server over stdio, --site-per-process) ==
+RA1 hidden wait + check-once, #banner hidden, busy OOPIF: "could not verify", generic hint, no "still visible". FIXED.
+V1  same with TWO busy OOPIFs on different sites (localhost + 127.0.0.2): same honest result. OK.
+V2  same with the MAIN frame busy: same honest result (10.5s / 3.5s wall, failure screenshot bound). OK.
+RA2 hostile getComputedStyle, #present exists: "visibility could not be determined ... does NOT confirm absent". FIXED.
+V3a/V3b error thrown after a 120ms / 400ms in-page delay (throw path / timeout path): same honest result. OK.
+V3c error that starts only ~1.5s into a hidden wait on a VISIBLE element: "could not verify", no false success. OK.
+RA3 hostile .dup: otherVisibleMatchesUnknown:true. Control: otherVisibleMatches:1. FIXED.
+
+== NEW INSTANCE 1 (critical): hidden wait falsely SUCCEEDS when the tab closes mid-wait ==
+browser-action-engine.ts:1477-1485 (pierceFirstMatch). On tab close, frame.$ can reject with "Execution context was
+destroyed". isContextDestroyedError() classifies this as a "recoverable in-page navigation hiccup" and returns
+{kind:'no-match'}. isHiddenInEveryFrame then returns 'hidden', and the wait reports success with matchedAtStart:true.
+liveFramesOf's page.isClosed() guard (GAP-031) only fires on the NEXT pass. The close races the in-flight probe of
+the CURRENT pass, and that probe's error is misread as a confirmed negative.
+Same shape one level down: isHandleVisible:1616 maps context-destroyed to 'not-visible'.
+Live:
+  MCP (probe-a6 T): 1/30, then 3/60 (probe-a6-T-run2.log). In each case: correct tabId, #stay observer-confirmed
+    visible just before close, success returned 228-436ms after the wait started (right after the close,
+    not at the 2000ms timeout).
+  Engine-direct with a prototype-wrapper trace (diag-tabclose.mjs): 1/80. Trace:
+    raceFrameProbe threw "Execution context was destroyed" -> pierceFirstMatch {kind:'no-match'} -> isHiddenInEveryFrame "hidden"
+This is GAP-031 / GAP-081's exact user-visible bug (false hidden success on tab close), surviving through a third
+classification branch that no inventory examined. Mutation a6-N3 (context-destroyed -> 'unknown') passes all 227
+browser tests, so nothing guards this behaviour.
+
+== NEW INSTANCE 2 (major): visible-wait timeout says "none is visible" while an unanswered frame holds a VISIBLE match ==
+browser-action-engine.ts:2086-2116 (describeWaitForSelectorTimeout). fix-4's GAP-083 guard (:2078) only handles
+total===0 && unconfirmedFrames>0. Once ANY frame answered (total>0), unconfirmedFrames is ignored. The message then
+asserts "N element(s) match ... but none is visible", and MCP appends "Hint: The element exists but is hidden."
+Frames that never answered are silently treated as confirmed not-visible: the same asymmetry fix-4 closed for
+total===0.
+Live (ground truth read from each frame BEFORE it was made busy):
+  C2a: #x hidden in main, VISIBLE #x in a busy OOPIF. Wait and check-once both give "none is visible" + hint. 2/2.
+  C2b: VISIBLE #x in a busy MAIN frame, hidden #x in an OOPIF. Wait and check-once both give "none is visible" + hint. 2/2.
+  SDK surface (sdk-c2.mjs, SDK's own default Chrome launch): C2a gives the same false message. 2/2.
+  CLI: prints `Wait failed: ${result.error}` verbatim (cli.ts cmdWait), so it gets the same engine text (by code read).
+audit-5's A6 had the same setup with no match in the busy frame, and it was judged "correct" only because of
+ground truth that the tool could not have known.
+
+== NEW INSTANCE 3 (major): MCP hint "The element is still visible." appended to a probe ERROR ==
+tools.ts ERROR_HINTS 'waiting for state=hidden' entry. Its `unless` list only covers 'could not verify' and
+'could not determine'. The engine's OTHER hidden-state failure family, "wait_for_selector failed waiting for
+state=hidden: <raw error>" (engine :853-855 and :1843-1845), also contains 'waiting for state=hidden'. So a
+Target-closed, Session-closed or "Tab was closed" probe error reaches MCP users with a confident "The element is
+still visible."
+Live:
+  C1: #banner display:none the WHOLE time, an unrelated iframe churning every 15ms. 3/30 calls failed with
+    "...failed waiting for state=hidden: Protocol error (Runtime.callFunctionOn): Target closed
+     Hint: The element is still visible." That is a false claim about a genuinely hidden element.
+  T: 57/60 tab-close failures carry the same unfounded hint.
+This also refutes fix-5's GAP-114 judgement that isFatalFrameCheckError's over-matching yields "only hard failures,
+0 false answers". That holds at the engine layer, but on the MCP surface every one of those hard failures carries a
+false definite claim. So GAP-114 is not purely a robustness issue on the user-facing surface.
+
+== Mutations (mutate-a6.cjs; each restored from a byte-exact backup, sha256 before==after for every one) ==
+Reproduced, all caught:
+  fix4-M2: fails GAP-081a + GAP-086
+  fix4-M3: fails GAP-081b
+  fix4-M4: fails GAP-081a + GAP-081b
+  fix5-G111: fails the GAP-111 MCP test
+  fix5-G112: fails the GAP-112 test
+  fix5-G113: fails the GAP-113 test
+New:
+  a6-N1: reword the engine's 'could not verify' text. The browser suite fails 3 tests; the mcp-server suite passes
+    31/31. The MCP `unless` coupling has no cross-layer test, though the engine suite pins the text.
+  a6-N2: drop 'could not determine' from `unless`. 31/31 pass. The entry is dead: no engine message contains that
+    substring (the engine says "could not be determined").
+  a6-N3: pierceFirstMatch context-destroyed -> 'unknown'. 227/227 pass. No test pins or guards instance 1.
+  a6-N4: remove the GAP-083 guard. Fails GAP-083 + GAP-112. The guard is pinned.
+
+== Inventory completeness (fix-5 inventory.md) ==
+The function list is complete: every function in the path is named. The miss is the same one as fix-4: it checked
+each function's own error handling, but not
+  (a) how message branches downstream consume the uncertainty fields (instance 2),
+  (b) every message family the MCP hint regex can match (instance 3), or
+  (c) whether the "recoverable" context-destroyed classification is actually safe under tab close (instance 1).
+
+Evidence preservation: 61df926 touched only fix-5/ plus decisions/gaps/ledger and the 4 code/test files. It did not
+touch audit-1..5/ or fix-1..4/ (evidence-preservation-check.txt). This audit wrote only under audit-6/.

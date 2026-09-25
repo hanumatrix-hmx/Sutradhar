@@ -1,0 +1,49 @@
+== files touched by 61df926 (fix-5) ==
+.ai/loop/field-report-2/decisions.md
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/browser-action-engine.ts.orig
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/build-output.txt
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/inventory.md
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/live-cli.jsonl
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/live-mcp.jsonl
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/live-sdk.jsonl
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/live-summary.json
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/live-verify-run1.txt
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/live-verify-run2.txt
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/mutation-gap111.txt
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/mutation-gap112.txt
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/mutation-gap113.txt
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/probe-a5-results-A1_A2_A3.json
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/probe-fix5-output.txt
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/probe-fix5.mjs
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/sha256-before-mutations.txt
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/tools.ts.orig
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/tsc-browser.txt
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/tsc-output.txt
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/vitest-browser-2.txt
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/vitest-browser.txt
+.ai/loop/field-report-2/evidence/FR2-01/fix-5/vitest-mcp-server.txt
+.ai/loop/field-report-2/gaps.md
+.ai/loop/field-report-2/ledger.md
+packages/browser/src/actions/browser-action-engine.ts
+packages/browser/tests/unit/browser-action-engine.spec.ts
+packages/mcp-server/src/tools.ts
+packages/mcp-server/tests/unit/tools.spec.ts
+
+== any fix-5 path under a prior round dir? ==
+NONE
+
+== any path under FR2-01 evidence touched by fix-5 outside fix-5/ ==
+NONE
+
+== working-tree changes to prior rounds (tracked + untracked) ==
+?? .ai/loop/field-report-2/evidence/FR2-01/audit-6/
+(end)
+
+== cumulative 8b8e3a5..HEAD code diffstat (scoped) ==
+ .../browser/src/actions/browser-action-engine.ts   |  78 +++++++++++-----
+ .../tests/unit/browser-action-engine.spec.ts       | 101 +++++++++++++++++++++
+ packages/mcp-server/src/tools.ts                   |  28 +++++-
+ packages/mcp-server/tests/unit/tools.spec.ts       |  46 ++++++++++
+ 4 files changed, 227 insertions(+), 26 deletions(-)
+== uncommitted working-tree diff to those 4 files ==
+(end)

@@ -1,0 +1,190 @@
+[
+  {
+    "id": "RA1-hidden-wait",
+    "truth": "#banner display=none in main frame (genuinely hidden); busy: /frame",
+    "framesFound": [
+      true
+    ],
+    "success": false,
+    "totalMs": 7481,
+    "error": "wait_for_selector timed out after 1500ms waiting for state=hidden: could not verify: one or more frames were unresponsive.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "engineSaysCouldNotVerify": true,
+    "falseHintStillVisible": false
+  },
+  {
+    "id": "RA1-hidden-checkonce",
+    "truth": "#banner display=none in main frame (genuinely hidden); busy: /frame",
+    "framesFound": [
+      true
+    ],
+    "success": false,
+    "totalMs": 551,
+    "error": "wait_for_selector timed out after 0ms waiting for state=hidden: could not verify: one or more frames were unresponsive.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "engineSaysCouldNotVerify": true,
+    "falseHintStillVisible": false
+  },
+  {
+    "id": "V1-two-busy-oopifs-hidden-wait",
+    "truth": "#banner display=none in main frame (genuinely hidden); busy: /frame,/frame2",
+    "framesFound": [
+      true,
+      true
+    ],
+    "success": false,
+    "totalMs": 7487,
+    "error": "wait_for_selector timed out after 1500ms waiting for state=hidden: could not verify: one or more frames were unresponsive.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "engineSaysCouldNotVerify": true,
+    "falseHintStillVisible": false
+  },
+  {
+    "id": "V1-two-busy-oopifs-hidden-checkonce",
+    "truth": "#banner display=none in main frame (genuinely hidden); busy: /frame,/frame2",
+    "framesFound": [
+      true,
+      true
+    ],
+    "success": false,
+    "totalMs": 549,
+    "error": "wait_for_selector timed out after 0ms waiting for state=hidden: could not verify: one or more frames were unresponsive.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "engineSaysCouldNotVerify": true,
+    "falseHintStillVisible": false
+  },
+  {
+    "id": "V2-busy-main-hidden-wait",
+    "truth": "#banner display=none in main frame (genuinely hidden); busy: MAIN",
+    "framesFound": [
+      true
+    ],
+    "success": false,
+    "totalMs": 10488,
+    "error": "wait_for_selector timed out after 1500ms waiting for state=hidden: could not verify: one or more frames were unresponsive.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "engineSaysCouldNotVerify": true,
+    "falseHintStillVisible": false
+  },
+  {
+    "id": "V2-busy-main-hidden-checkonce",
+    "truth": "#banner display=none in main frame (genuinely hidden); busy: MAIN",
+    "framesFound": [
+      true
+    ],
+    "success": false,
+    "totalMs": 3524,
+    "error": "wait_for_selector timed out after 0ms waiting for state=hidden: could not verify: one or more frames were unresponsive.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "engineSaysCouldNotVerify": true,
+    "falseHintStillVisible": false
+  },
+  {
+    "id": "RA2-visible-wait",
+    "truth": "#present EXISTS in main frame; page getComputedStyle throws for it (possibly after a delay)",
+    "observerSaysExists": true,
+    "success": false,
+    "error": "wait_for_selector timed out after 1000ms waiting for state=visible: visibility could not be determined for 1 of 1 frame(s) — they did not respond within the diagnostic's time bound. This does NOT confirm the element is absent; try a larger timeoutMs.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "falseNoElementFound": false,
+    "falseNoneVisible": false
+  },
+  {
+    "id": "RA2-visible-checkonce",
+    "truth": "#present EXISTS in main frame; page getComputedStyle throws for it (possibly after a delay)",
+    "observerSaysExists": true,
+    "success": false,
+    "error": "wait_for_selector timed out after 0ms waiting for state=visible: visibility could not be determined for 1 of 1 frame(s) — they did not respond within the diagnostic's time bound. This does NOT confirm the element is absent; try a larger timeoutMs.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "falseNoElementFound": false,
+    "falseNoneVisible": false
+  },
+  {
+    "id": "V3a-delayed-throw-120ms-wait",
+    "truth": "#present EXISTS in main frame; page getComputedStyle throws for it (possibly after a delay)",
+    "observerSaysExists": true,
+    "success": false,
+    "error": "wait_for_selector timed out after 1000ms waiting for state=visible: visibility could not be determined for 1 of 1 frame(s) — they did not respond within the diagnostic's time bound. This does NOT confirm the element is absent; try a larger timeoutMs.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "falseNoElementFound": false,
+    "falseNoneVisible": false
+  },
+  {
+    "id": "V3a-delayed-throw-120ms-checkonce",
+    "truth": "#present EXISTS in main frame; page getComputedStyle throws for it (possibly after a delay)",
+    "observerSaysExists": true,
+    "success": false,
+    "error": "wait_for_selector timed out after 0ms waiting for state=visible: visibility could not be determined for 1 of 1 frame(s) — they did not respond within the diagnostic's time bound. This does NOT confirm the element is absent; try a larger timeoutMs.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "falseNoElementFound": false,
+    "falseNoneVisible": false
+  },
+  {
+    "id": "V3b-delayed-throw-400ms-wait",
+    "truth": "#present EXISTS in main frame; page getComputedStyle throws for it (possibly after a delay)",
+    "observerSaysExists": true,
+    "success": false,
+    "error": "wait_for_selector timed out after 1000ms waiting for state=visible: visibility could not be determined for 1 of 1 frame(s) — they did not respond within the diagnostic's time bound. This does NOT confirm the element is absent; try a larger timeoutMs.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "falseNoElementFound": false,
+    "falseNoneVisible": false
+  },
+  {
+    "id": "V3b-delayed-throw-400ms-checkonce",
+    "truth": "#present EXISTS in main frame; page getComputedStyle throws for it (possibly after a delay)",
+    "observerSaysExists": true,
+    "success": false,
+    "error": "wait_for_selector timed out after 0ms waiting for state=visible: visibility could not be determined for 1 of 1 frame(s) — they did not respond within the diagnostic's time bound. This does NOT confirm the element is absent; try a larger timeoutMs.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "falseNoElementFound": false,
+    "falseNoneVisible": false
+  },
+  {
+    "id": "V3c-late-arming-error-hidden-wait",
+    "truth": "#present VISIBLE throughout; getComputedStyle starts throwing ~1s into the wait",
+    "success": false,
+    "error": "wait_for_selector timed out after 3000ms waiting for state=hidden: could not verify: one or more frames were unresponsive.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "falseHiddenSuccess": false,
+    "falseHintStillVisible": false
+  },
+  {
+    "id": "RA3-hostile",
+    "truth": "first .dup display:none, SECOND .dup genuinely visible",
+    "success": true,
+    "output": {
+      "foundSelector": ".dup",
+      "state": "hidden",
+      "matchedAtStart": true,
+      "otherVisibleMatchesUnknown": true
+    },
+    "silentlyReportsNoOtherVisible": false
+  },
+  {
+    "id": "RA3-control",
+    "truth": "first .dup display:none, SECOND .dup genuinely visible",
+    "success": true,
+    "output": {
+      "foundSelector": ".dup",
+      "state": "hidden",
+      "matchedAtStart": true,
+      "otherVisibleMatches": 1
+    },
+    "silentlyReportsNoOtherVisible": false
+  },
+  {
+    "id": "C1-hidden-target-iframe-churn",
+    "truth": "#banner display:none in main frame the WHOLE time; churn iframes never contain #banner",
+    "trials": 30,
+    "success": 27,
+    "hardFail": 3,
+    "engineSaysStillVisible": 0,
+    "falseStillVisibleHint": 3,
+    "examples": [
+      "wait_for_selector failed waiting for state=hidden: Protocol error (Runtime.callFunctionOn): Target closed\nHint: The element is still visible. Check the selector, or raise timeoutMs.",
+      "wait_for_selector failed waiting for state=hidden: Protocol error (Runtime.callFunctionOn): Target closed\nHint: The element is still visible. Check the selector, or raise timeoutMs.",
+      "wait_for_selector failed waiting for state=hidden: Protocol error (Runtime.callFunctionOn): Target closed\nHint: The element is still visible. Check the selector, or raise timeoutMs."
+    ],
+    "msgs": {
+      "": 27,
+      "wait_for_selector failed waiting for state=hidden: Protocol error (Runtime.callFunctionOn): Target closed\nHint: The element is still visible. Check the selector, or raise timeoutMs.": 3
+    }
+  },
+  {
+    "id": "T-tab-close-mid-hidden-wait",
+    "truth": "#stay VISIBLE until the tab is closed; a hidden success is FALSE",
+    "trials": 30,
+    "falseSuccess": 1,
+    "msgs": {
+      "wait_for_selector failed waiting for state=hidden: Tab was closed while wait_for_selector was checking its state.\nHint: The element is still visible. Check the selector, or raise timeoutMs.": 29,
+      "": 1
+    }
+  }
+]
