@@ -986,3 +986,39 @@ Auditor. If audit-6 finds ANY new instance of the same shape of bug anywhere in 
 wait_for_selector path, FR2-01 must be marked BLOCKED with a full written diagnosis -- there is
 no cycle after audit-6. If audit-6 passes, FR2-01 moves to DONE, becoming the loop's first
 completed item, unblocking FR2-02 and FR2-03 for DEVELOP.
+
+## 2026-09-25 -- FR2-16 audit-3: FAILED a third time -- the same false claim found in a 4th spot, this time in code THIS item itself wrote
+
+Everything mechanical (typecheck, tests, build, the doc/wording checks that DID run) passed
+again. But a 4th location was found: browser-launcher.ts:110-111, whose comment text was itself
+WRITTEN by fix-1 (as a replacement for the old "stealth evasion flags" wording) and still calls
+DEFAULT_LAUNCH_ARGS "the stability flags that are always included" -- restating the exact false
+claim this item exists to remove, in code its own earlier fix round produced. This was missed
+purely because the guard scripts' file scope (README.md, browser-options.ts, PROJECT_DEEP_DIVE.md
+only) never included browser-launcher.ts.
+
+The auditor also found the guard itself is fragile in ways that matter more than this specific
+miss: the regex is beaten by a line break (the shipped PROJECT_DEEP_DIVE.md already has "not a
+stability<newline>flag" -- true, but proves the check doesn't collapse whitespace before
+matching), and it has literally ZERO regression coverage for the GAP-119 SECURITY.md/
+competitive-benchmarks.md fixes, plus several equally-false synonym rewordings would all slip
+past silently.
+
+Decision for fix-4: stop treating this as "find the next missed file" and instead fix the CLASS
+of problem -- the check has failed to be the safety net it was built as three audits running.
+Fix-4 must: (1) fix GAP-122 in browser-launcher.ts; (2) rebuild the guard checks to scan a
+complete, explicit file list covering every location any of GAP-101/118/122 have ever been found
+(README.md, browser-options.ts, browser-launcher.ts, PROJECT_DEEP_DIVE.md, SECURITY.md,
+competitive-benchmarks.md, package.json, root README.md, docs/ARCHITECTURE.md, AGENT_SETUP.md,
+cli.ts) rather than a hand-picked subset; (3) collapse whitespace before matching; (4) broaden the
+pattern to catch the demonstrated synonym family (stability/compatibility/reliable/"prevent
+launch failures"/"side effect" framing), not just the literal phrase "stability flag". GAP-125/126
+(minor, --disable-infobars omission and the benchmark-fairness understatement) fixed opportunistically
+if time allows, not blocking.
+
+This is FR2-16's 3rd audit failure (fix-4 is its 4th cycle) -- still within the loop's normal
+4-cycle bound (no escalation needed yet), but this is the LAST normal cycle before an audit
+failure here would trigger the same Orchestrator-supervised escalation track FR2-01 is on. The
+Orchestrator is treating this seriously: the next Executor brief for fix-4 is written with that
+in mind, requiring a genuinely different (broader, more mechanical, less pattern-matching-by-hand)
+approach to the guard rather than another manual game of whack-a-mole with individual sentences.

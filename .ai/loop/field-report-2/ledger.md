@@ -19,7 +19,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 | FR2-13 | `sutradhar run` scenario runner | 3 | SPEC (HARD-blocked: needs FR2-07+FR2-08+FR2-11+FR2-12 all DONE) | 0 | evidence/FR2-13/spec.md | - |
 | FR2-14 | `.sutradhar.json` project config | 3 | SPEC (builds on FR2-03/04/05, all still SPEC) | 0 | evidence/FR2-14/spec.md | - |
 | FR2-15 | Playwright migration guide | 4 | SPEC (HARD-blocked: needs FR2-01..FR2-14 all DONE) | 0 | evidence/FR2-15/spec.md | - |
-| FR2-16 | Stealth boundary honesty | 4 | FIX(3) [audit-2 FAILED: GAP-118 major -- 'stability flag' framing survives in 3 spots, contradicts the webdriver-hiding fact itself] | 2 | audit-2: core webdriver-hiding sentence now correct, but a leftover 'kept for stability, webdriver is a side-effect' framing (backwards) remains in README/browser-options.ts/PROJECT_DEEP_DIVE.md; + 3 minor gaps | (uncommitted, blocked by audit-2) |
+| FR2-16 | Stealth boundary honesty | 4 | FIX(4) [audit-3 FAILED: GAP-122 major -- same false framing found in a 4th location, browser-launcher.ts comment, missed by the guard scripts' narrow file scope] | 3 | audit-3: 4th instance of the stability-flag false claim (in code THIS item itself wrote), + guard-script robustness gaps (whitespace-beatable regex, narrow scope, no GAP-119 regression coverage) + 2 unrelated minor accuracy notes | (uncommitted, blocked by audit-3)
 | FR2-17 | Docs sweep | 4 | TODO | 0 | - | - |
 
 ## Baseline
