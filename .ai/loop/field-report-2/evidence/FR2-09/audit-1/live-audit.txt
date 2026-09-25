@@ -1,0 +1,148 @@
+NOTE server http://127.0.0.1:55446
+{"timestamp":"2026-09-25T04:42:51.481Z","level":"info","message":"[BrowserLauncher] Connecting to remote browser endpoint","context":{"endpoint":"ws://127.0.0.1:55447/devtools/browser/fc479045-4c74-499d-96f6-6dbaea013713"}}
+{"timestamp":"2026-09-25T04:42:51.486Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790311371481_1","context":{"isIncognito":false}}
+--- S1 listing ---
+URL: http://127.0.0.1:55446/main.html?n=1790311370322
+Title: audit main
+Interactive elements (13):
+[#1] button "Top button"
+[#2] button "Shadow one" (shadow: outer-app#root)
+[#3] input "Shadow two" (shadow: outer-app#root > mid-el.wrap)
+[#4] button "Shadow three" (shadow: outer-app#root > … > leaf-el#leafx)
+[#5 in iframe "checkout" (http://127.0.0.1:55446/inner.html)] input "Card num"
+[#6 in iframe "checkout"] button "Submit order"
+[#7 in iframe "checkout"] input "Security code" (shadow: card-box#cb)
+[#8 in iframe 2 (about:srcdoc)] button "Srcdoc thing"
+[#9 in iframe "this-is-a-really-long-frame-na" (about:srcdoc)] button "Longname btn"
+[#12 in iframe "remote" (http://localhost:55446/remote.html)] button "Remote go"
+[#13 in iframe "remote"] input "Remote field"
+[#14 in iframe "lvl2" (http://localhost:55446/lvl2.html)] button "Level two"
+[#15 in iframe "lvl3" (about:srcdoc)] button "Level three"
+[iframe "deny" chrome-error:// — not inspectable] (browser error page: blocked or failed to load)
+PASS S1a main light-DOM line has no label :: [#1] button "Top button"
+PASS S1b shadow depth1 :: [#2] button "Shadow one" (shadow: outer-app#root)
+PASS S1c shadow depth2 uses first class, sanitized :: [#3] input "Shadow two" (shadow: outer-app#root > mid-el.wrap)
+PASS S1d shadow depth3 → outer > … > inner, host id sanitized to [\w-] :: [#4] button "Shadow three" (shadow: outer-app#root > … > leaf-el#leafx)
+PASS S1e same-origin named frame: first line has URL with query+fragment dropped :: [#5 in iframe "checkout" (http://127.0.0.1:55446/inner.html)] input "Card num"
+PASS S1f secret query value never printed in listing
+PASS S1g checkout later lines omit URL :: ["[#5 in iframe \"checkout\" (http://127.0.0.1:55446/inner.html)] input \"Card num\"","[#6 in iframe \"checkout\"] button \"Submit order\"","[#7 in iframe \"checkout\"] input \"Security code\" (shadow: card-box#cb)"]
+PASS S1h iframe+shadow co-occur :: [#7 in iframe "checkout"] input "Security code" (shadow: card-box#cb)
+PASS S1i OOPIF named remote listed with localhost URL :: [#12 in iframe "remote" (http://localhost:55446/remote.html)] button "Remote go"
+PASS S1j srcdoc unnamed → numeric designator + about:srcdoc :: [#8 in iframe 2 (about:srcdoc)] button "Srcdoc thing"
+PASS S1k 2-level nested OOPIF (lvl2 inside checkout) labelled :: [#14 in iframe "lvl2" (http://localhost:55446/lvl2.html)] button "Level two"
+PASS S1l 3-level nested srcdoc (lvl3) labelled :: [#15 in iframe "lvl3" (about:srcdoc)] button "Level three"
+PASS S1m long name sanitized to ≤30 chars in designator :: [#9 in iframe "this-is-a-really-long-frame-na" (about:srcdoc)] button "Longname btn"
+PASS S1n XFO-denied frame → error-page placeholder :: [iframe "deny" chrome-error:// — not inspectable] (browser error page: blocked or failed to load)
+NOTE XFO placeholder origin shown: [iframe "deny" chrome-error:// — not inspectable] (browser error page: blocked or failed to load)
+PASS S1o "Should never render" content not listed
+PASS S1p header count == number of [#N lines :: {"hdr":13}
+PASS S1q structured frame.url keeps full URL incl query+fragment :: {"index":1,"url":"http://127.0.0.1:55446/inner.html?token=SECRET123#frag","name":"checkout"}
+PASS S1r lvl2 parentIndex == checkout index :: {"ck":{"index":1,"url":"http://127.0.0.1:55446/inner.html?token=SECRET123#frag","name":"checkout"},"l2":{"index":6,"url":"http://localhost:55446/lvl2.html","name":"lvl2","parentIndex":1}}
+PASS S1s lvl3 parentIndex == lvl2 index :: {"index":7,"url":"about:srcdoc","name":"lvl3","parentIndex":6}
+PASS S1t main nodes have no frame key; light-DOM nodes have no shadowHosts key
+PASS S1u shadowHosts full chain (3) in structured form :: ["outer-app#root","mid-el.wrap","leaf-el#leafx"]
+PASS S1v skippedFrames has deny error-page :: [{"index":4,"url":"chrome-error://chromewebdata/","origin":"chrome-error://","name":"deny","reason":"error-page"}]
+PASS ADV-b1 structured ids unique :: [1,2,3,4,5,6,7,8,9,12,13,14,15]
+PASS ADV-b2 no id stamped (current gen) in two different frames/elements :: []
+FAIL ADV-b3 observer ground truth: every label points at the right frame/shadow :: [{"l":"[#14 in iframe \"lvl2\" (http://localhost:55446/lvl2.html)] button \"Level two\"","why":"no truth element"}]
+PASS S1w noText: designator kept, no URL, no shadow :: ["[#1] button","[#2] button","[#3] input","[#4] button","[#5 in iframe \"checkout\"] input"]
+PASS S1x noText still has placeholder
+PASS S1y idsOnly: node lines exactly [#N], placeholder kept
+{"timestamp":"2026-09-25T04:43:21.537Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790311371481_1_1","selector":"[data-sd-node-id=\"12\"]"}}
+PASS S1z click by id into OOPIF succeeds :: {"success":true,"actionType":"click","executionTimeMs":1820,"currentUrl":"http://127.0.0.1:55446/main.html?n=1790311370322","title":"audit main","output":{"clickedSelector":"[data-sd-node-id=\"12\"]","button":"left"},"retriesUsed":0,"verification":{"verified":true,"urlChanged":false,"elementFound":true,"confidence":0.9,"reason":"'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90"}}
+{"timestamp":"2026-09-25T04:43:23.358Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_sess_1790311371481_1_1","selector":"[data-sd-node-id=\"7\"]"}}
+PASS S1za type by id into shadow-in-iframe :: 424
+--- S2 ax listing ---
+[button] "Top button"
+[button] "Shadow one"
+[textbox] "Shadow two"
+[button] "Shadow three"
+[iframe "checkout" (http://127.0.0.1:55446/inner.html)]
+  [textbox] "Card num"
+  [button] "Submit order"
+  [textbox] "Security code"
+  [iframe "lvl2" (http://localhost:55446/lvl2.html)]
+    [button] "Level two"
+    [iframe "lvl3" (about:srcdoc)]
+      [button] "Level three"
+[iframe "remote" (http://localhost:55446/remote.html)]
+  [button] "Remote go"
+  [textbox] "Remote field"
+[iframe 2 (about:srcdoc)]
+  [button] "Srcdoc thing"
+[iframe 3 (about:srcdoc)]
+  [button] "Longname btn"
+PASS ADV-c1 ax: checkout header at depth 0
+PASS ADV-c2 ax: lvl2 header at depth 1 under checkout
+PASS ADV-c3 ax: lvl2 content at depth 2
+PASS ADV-c4 ax: lvl3 header at depth 2 under lvl2
+PASS ADV-c5 ax: lvl3 content at depth 3
+PASS ADV-c6 ax: OOPIF remote grouped
+PASS ADV-c7 ax: no fallback note on healthy page
+NOTE ax long-name frame header: [iframe 3 (about:srcdoc)]
+FAIL ADV-e ax designator for long (>30 char) name matches DOM snapshot designator ("this-is-a-really-long-frame-na") :: [iframe 3 (about:srcdoc)]
+PASS S2 ax: shadow content present, no shadow labels (D12)
+NOTE warm busypage listing:
+URL: http://127.0.0.1:55446/busypage.html?n=1790311404550
+Title: audit busy
+Interactive elements (7):
+[#1] button "Main alive"
+[#2 in iframe "busyx" (http://localhost:55446/remote.html)] button "Remote go"
+[#3 in iframe "busyx"] input "Remote field"
+[#4 in iframe "sib" (http://localhost:55446/remote.html)] button "Remote go"
+[#5 in iframe "sib"] input "Remote field"
+[#6 in iframe "after" (http://127.0.0.1:55446/lvl2.html)] button "Level two"
+[#7 in iframe "lvl3" (about:srcdoc)] button "Level three"
+--- S3 busy listing (10026ms) ---
+URL: http://127.0.0.1:55446/busypage.html?n=1790311404550
+Title: audit busy
+Interactive elements (3):
+[#1] button "Main alive"
+[#602 in iframe "after" (http://127.0.0.1:55446/lvl2.html)] button "Level two"
+[#603 in iframe "lvl3" (about:srcdoc)] button "Level three"
+[iframe "busyx" http://localhost:55446 — not inspectable] (timed out after 5000ms)
+[iframe "sib" http://localhost:55446 — not inspectable] (timed out after 5000ms)
+PASS S3a busy OOPIF placeholder with 5000ms
+PASS S3b main still listed
+NOTE ADV-d same-site sibling "sib" also timed out: true; total elapsed 10026ms
+FAIL ADV-d snapshot bounded at ~5s even with TWO frames sharing the busy renderer (spec N10: ≤ ~6.5s) :: {"s3ms":10026,"sibTimedOut":true}
+PASS S3c ids after the timed-out frame jump by the reserved 300 :: {"mainMax":1,"after":602}
+--- S3 ax busy (5012ms) ---
+[button] "Main alive"
+[iframes not included — reading an iframe's accessibility tree timed out after 5000ms]
+PASS S3d ax bounded (<7000ms) with fallback note :: {"axms":5012}
+NOTE post-busy truth: [{"id":1,"f":"main","gen":"1790311405850"},{"id":2,"f":"busyx","gen":"1790311405850"},{"id":3,"f":"busyx","gen":"1790311405850"},{"id":302,"f":"sib","gen":"1790311405850"},{"id":303,"f":"sib","gen":"1790311405850"},{"id":602,"f":"after","gen":"1790311405850"},{"id":603,"f":"lvl3","gen":"1790311405850"}]
+PASS S3e no duplicate ids in the latest generation after late stamps land :: [{"id":1,"f":"main","gen":"1790311405850"},{"id":2,"f":"busyx","gen":"1790311405850"},{"id":3,"f":"busyx","gen":"1790311405850"},{"id":302,"f":"sib","gen":"1790311405850"},{"id":303,"f":"sib","gen":"1790311405850"},{"id":602,"f":"after","gen":"1790311405850"},{"id":603,"f":"lvl3","gen":"1790311405850"}]
+PASS S3f re-snapshot after busy lists busyx normally :: []
+--- S4 same-origin busy (7692ms) ---
+URL: http://127.0.0.1:55446/samebusy.html?n=1790311437557
+Title: audit same busy
+Interactive elements (3):
+[#1] button "Main alive"
+[#2 in iframe "samex" (http://127.0.0.1:55446/remote.html)] button "Remote go"
+[#3 in iframe "samex"] input "Remote field"
+NOTE LIMITATION-REPRO same-origin busy iframe: snapshot took 7692ms (busy 8000ms), skipped=[]
+PASS S4 limitation reproduced: same-process busy frame is NOT bounded by the 5s timeout :: {"s4ms":7692}
+--- S5 flip stats ---
+{
+ "runs": 60,
+ "listedA": 26,
+ "listedB": 26,
+ "navigated": 8,
+ "error": 0,
+ "wrongUrl": [],
+ "threw": 0,
+ "other": []
+}
+PASS ADV-a1 snapshot never throws while a frame navigates continuously :: 0
+PASS ADV-a2 no node labelled with the OTHER document's URL (stale/wrong frame label) :: []
+NOTE ADV-a3 mid-scrape outcomes: navigated=8 error=0 other=[]
+PASS S6a MCP snapshot description has in iframe / (shadow: / not inspectable / ^\[#(\d+)
+PASS S6b MCP snapshot text has OOPIF label
+PASS S6c MCP Skipped frames (JSON) block after Structured nodes
+PASS S6d MCP without includeNodes has no JSON blocks
+PASS S6e MCP ax_snapshot shows nested iframe headers
+{"timestamp":"2026-09-25T04:44:08.901Z","level":"warn","message":"[BrowserSession] Session sess_1790311371481_1 crashed — Chrome disconnected unexpectedly","context":{}}
+{"timestamp":"2026-09-25T04:44:08.901Z","level":"warn","message":"[BrowserSessionManager] Removed crashed session sess_1790311371481_1","context":{}}
+
+51/54 checks passed, 3 failed

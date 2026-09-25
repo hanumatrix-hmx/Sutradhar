@@ -1218,3 +1218,50 @@ solution needs a different category of tool (a structural/mechanical guarantee f
 case; human review for FR2-16's case) rather than a bigger version of the same kind of check.
 This is recorded prominently because it's the single most transferable finding of the entire
 loop so far, more valuable than either item's specific bug list.
+
+## 2026-09-25 -- FR2-09 audit-1: FAILED -- code is genuinely correct, but a Done-when bullet was skipped and one test makes a false coverage claim
+
+The independent Auditor's own live run (54 checks, including several adversarial angles the
+Executor's own live-verify didn't cover -- mid-scrape frame navigation, id-collision safety
+across 5 frames plus shadow roots, 3-level nested iframe indentation in ax_snapshot) found the
+actual label logic, timeouts, and placeholder behavior all correct: 51/54 passed, and the 3
+that didn't were explained (one observer timeout in the auditor's own harness, re-confirmed
+correct via a simpler repro).
+
+The FAIL is about process, not the feature: Done-when bullet 5 (a <=10% token-size regression
+gate on existing fixtures) was never measured by the Executor at all -- no token-size.md, no
+number cited anywhere in run-1's evidence. The Auditor measured it independently: 7 of 9
+existing fixtures are byte-identical (good), grounding-completeness grows a tolerable 7.9%, but
+nested-shadow-in-iframe grows +56.4% -- well over the stated 10% ceiling, driven mostly by an
+~80-character file:// URL now appearing in that fixture's snapshot output. The spec's own
+section 5.7 anticipates exactly this outcome and names 3 remedy options for the Orchestrator to
+choose among; that decision was never made because the measurement that would have triggered it
+was never taken.
+
+Separately and more concerning as a PATTERN (not a one-off): a unit test (U10) was found hollow
+-- its title promises shadow-chain assertions at three specific depths, but its body only checks
+that a snippet of code parses, and its own comment cites a live-verify file
+(tools/scenario-suite/verify-fr2-09-frames.mjs) that doesn't exist anywhere in the repo. This is
+explicitly named by the Auditor as "the same kind of false claim that failed the FR2-16 audits"
+-- a test or comment asserting coverage it doesn't actually provide. Given FR2-16 needed 5
+rounds specifically because self-reported claims kept turning out to be inaccurate on close
+inspection, this is flagged here as a THIRD occurrence of the same meta-pattern (FR2-01's
+"cited stale ci-gate results" GAP-060, FR2-16's various miscounts, now FR2-09's phantom file
+citation) -- worth the Orchestrator's standing attention across every remaining item's Executor
+briefs, not just this one's fix cycle.
+
+FR2-09 moves to fix-1 (its first fix cycle; nowhere near the retry bound). The fix brief must:
+(1) actually run the token-size measurement and either bring nested-shadow-in-iframe under 10%
+or make the explicit Orchestrator-endorsed remedy choice per spec section 5.7; (2) replace U10
+with a real test that asserts what its title claims, and either write the missing
+verify-fr2-09-frames.mjs live-verify script or remove the false citation; (3) fix GAP-146
+(one-line: sanitize frame names in ax_snapshot too) and record the GAP-147 D8-fork decision in
+decisions.md as the spec's own process requires; (4) recreate the missing spec deliverables
+(fr2-09-*.html fixtures, golden-pre.txt, step0-matrix.json) that run-1 apparently never produced
+or saved; (5) save evidence as non-gitignored files (the .gitignore's blanket *.log rule, already
+flagged loop-wide as GAP-117, bit this round too -- use .txt/.json/.md extensions for anything
+that needs to be committed, matching the pattern the Auditor itself used).
+
+Not a defect: GAP-148 (busy same-origin iframe leaves the snapshot unbounded) is confirmed
+genuinely in-scope-excluded, matching the Executor's own honest account from run-1 -- logged to
+the backlog, not chased in this fix cycle.
