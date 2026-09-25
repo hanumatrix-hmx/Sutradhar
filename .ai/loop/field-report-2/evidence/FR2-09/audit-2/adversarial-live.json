@@ -1,0 +1,232 @@
+[
+  {
+    "k": "a1 snapshot",
+    "v": "URL: http://127.0.0.1:50774/a1?n=1790319243579\nTitle: \nInteractive elements (3):\n[#1] button \"Main\"\n[#2 in iframe 1 (about:srcdoc)] button \"One\"\n[#3 in iframe 2 (about:srcdoc)] button \"Two\""
+  },
+  {
+    "k": "a1 ax_snapshot",
+    "v": "[button] \"Main\"\n[iframe 1 (about:srcdoc)]\n  [button] \"One\"\n[iframe 2 (about:srcdoc)]\n  [button] \"Two\""
+  },
+  {
+    "k": "a1 VERDICT",
+    "v": {
+      "snapshotDesignators": [
+        "1",
+        "2"
+      ],
+      "axDesignators": [
+        "1",
+        "2"
+      ],
+      "agree": true
+    }
+  },
+  {
+    "k": "a2 snapshot",
+    "v": "URL: http://127.0.0.1:50774/a2?n=1790319244201\nTitle: \nInteractive elements (3):\n[#1] button \"Main\"\n[#2 in iframe 1 (about:srcdoc)] button \"One\"\n[#3 in iframe 2 (about:srcdoc)] button \"Two\""
+  },
+  {
+    "k": "a2 ax_snapshot",
+    "v": "[button] \"Main\"\n[iframe 1 (about:srcdoc)]\n  [button] \"One\"\n[iframe 2 (about:srcdoc)]\n  [button] \"Two\""
+  },
+  {
+    "k": "a2 VERDICT",
+    "v": {
+      "snapshotDesignators": [
+        "1",
+        "2"
+      ],
+      "axDesignators": [
+        "1",
+        "2"
+      ],
+      "agree": true
+    }
+  },
+  {
+    "k": "a3 snapshot",
+    "v": "URL: http://127.0.0.1:50774/a3?n=1790319244758\nTitle: \nInteractive elements (2):\n[#1] button \"Main\"\n[#2 in iframe \"cccccccccccccccccccccccccccccc\" (about:srcdoc)] button \"One\""
+  },
+  {
+    "k": "a3 ax_snapshot",
+    "v": "[button] \"Main\"\n[iframe \"cccccccccccccccccccccccccccccc\" (about:srcdoc)]\n  [button] \"One\""
+  },
+  {
+    "k": "a3 VERDICT",
+    "v": {
+      "snapshotDesignators": [
+        "\"cccccccccccccccccccccccccccccc\""
+      ],
+      "axDesignators": [
+        "\"cccccccccccccccccccccccccccccc\""
+      ],
+      "agree": true
+    }
+  },
+  {
+    "k": "a4 snapshot",
+    "v": "URL: http://127.0.0.1:50774/a4?n=1790319245304\nTitle: \nInteractive elements (2):\n[#1] button \"Main\"\n[#2 in iframe \"ev'il #1 x\" (about:srcdoc)] button \"One\""
+  },
+  {
+    "k": "a4 ax_snapshot",
+    "v": "[button] \"Main\"\n[iframe \"ev'il #1 x\" (about:srcdoc)]\n  [button] \"One\""
+  },
+  {
+    "k": "a4 VERDICT",
+    "v": {
+      "snapshotDesignators": [
+        "\"ev'il #1 x\""
+      ],
+      "axDesignators": [
+        "\"ev'il #1 x\""
+      ],
+      "agree": true
+    }
+  },
+  {
+    "k": "b snapshot",
+    "v": "URL: http://127.0.0.1:50774/b?n=1790319245845\nTitle: \nInteractive elements (2):\n[#1] button \"Main\"\n[#2 in iframe 1 (about:srcdoc)] button \"Real\""
+  },
+  {
+    "k": "b ax_snapshot",
+    "v": "[button] \"Main\"\n[iframe 1 (about:srcdoc)]\n  [button] \"Real\""
+  },
+  {
+    "k": "b VERDICT",
+    "v": {
+      "snapshotDesignators": [
+        "1"
+      ],
+      "axDesignators": [
+        "1"
+      ],
+      "agree": true
+    }
+  },
+  {
+    "k": "b2 snapshot",
+    "v": "URL: http://127.0.0.1:50774/b2?n=1790319246378\nTitle: \nInteractive elements (2):\n[#1] button \"Main\"\n[#2 in iframe 1 (about:srcdoc)] button \"Real\""
+  },
+  {
+    "k": "b2 ax_snapshot",
+    "v": "[button] \"Main\"\n[iframe 1 (about:srcdoc)]\n  [button] \"Real\""
+  },
+  {
+    "k": "b2 VERDICT",
+    "v": {
+      "snapshotDesignators": [
+        "1"
+      ],
+      "axDesignators": [
+        "1"
+      ],
+      "agree": true
+    }
+  },
+  {
+    "k": "C displayFrameUrl edge cases",
+    "v": {
+      "longHttpsWithQuery": {
+        "in": "https://shop.example.com/checkout/payment/step-3/confirm/3ds-challenge/frame.html?session=SECRET_TOKEN_abcdef0123456789&x=1#frag",
+        "inLen": 128,
+        "out": "https://shop.example.com/checkout/paym…t/step-3/confirm/3ds-challenge/frame.html",
+        "outLen": 80
+      },
+      "longHttpsNoPath": {
+        "in": "https://sub.sub.sub.sub.sub.sub.sub.sub.sub.sub.sub.sub.sub.sub.sub.sub.sub.sub.sub.sub.example.com/?token=SECRET",
+        "inLen": 113,
+        "out": "https://sub.sub.sub.sub.sub.sub.sub.su….sub.sub.sub.sub.sub.sub.sub.example.com/",
+        "outLen": 80
+      },
+      "fileA": {
+        "in": "file:///E:/very_long_directory_name/very_long_directory_name/very_long_directory_name/very_long_directory_name/projA/inner.html",
+        "inLen": 127,
+        "out": "file://inner.html",
+        "outLen": 17
+      },
+      "fileB": {
+        "in": "file:///E:/very_long_directory_name/very_long_directory_name/very_long_directory_name/very_long_directory_name/projB/inner.html",
+        "inLen": 127,
+        "out": "file://inner.html",
+        "outLen": 17
+      },
+      "file80": {
+        "in": "file:///xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.html",
+        "inLen": 80,
+        "out": "file:///xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.html",
+        "outLen": 80
+      },
+      "file81": {
+        "in": "file:///xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.html",
+        "inLen": 81,
+        "out": "file://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.html",
+        "outLen": 80
+      },
+      "fileLongName": {
+        "in": "file:///E:/nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn.html",
+        "inLen": 106,
+        "out": "file://nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn…nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn.html",
+        "outLen": 80
+      },
+      "fileUNC": {
+        "in": "file://fileserver/share/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/d/inner.html",
+        "inLen": 114,
+        "out": "file://inner.html",
+        "outLen": 17
+      },
+      "fileQuery": {
+        "in": "file:///E:/very_long_directory_name/very_long_directory_name/very_long_directory_name/very_long_directory_name/inner.html?token=SECRET#frag",
+        "inLen": 139,
+        "out": "file://inner.html",
+        "outLen": 17
+      },
+      "fileTrailingSlash": {
+        "in": "file:///E:/very_long_directory_name/very_long_directory_name/very_long_directory_name/very_long_directory_name/dir/",
+        "inLen": 115,
+        "out": "file://dir",
+        "outLen": 10
+      },
+      "fileEncoded": {
+        "in": "file:///E:/very_long_directory_name/very_long_directory_name/very_long_directory_name/very_long_directory_name/my%20file%22%5D.html",
+        "inLen": 131,
+        "out": "file://my%20file%22%5D.html",
+        "outLen": 27
+      },
+      "__fileA_equals_fileB": true,
+      "__query_leak": false
+    }
+  },
+  {
+    "k": "D busy OOPIF snapshot PRE (main checkout dist)",
+    "v": {
+      "elapsedMs": 7506,
+      "listing": "URL: http://127.0.0.1:50774/busyParent?n=1790319247395\nTitle: \nInteractive elements (2):\n[#1] button \"Main\"\n[#2] button \"Child\""
+    }
+  },
+  {
+    "k": "D busy OOPIF snapshot POST (worktree dist)",
+    "v": {
+      "elapsedMs": 5023,
+      "listing": "URL: http://127.0.0.1:50774/busyParent?n=1790319265414\nTitle: \nInteractive elements (1):\n[#1] button \"Main\"\n[iframe \"xo\" http://localhost:50774 — not inspectable] (timed out after 5000ms)"
+    }
+  },
+  {
+    "k": "E PROB-046 frameElement() probe",
+    "v": [
+      {
+        "frameUrl": "chrome-error://chromewebdata/",
+        "name": "",
+        "recoveredSrcFromParent": "http://localhost:50774/xfo-deny?secret=1",
+        "err": null,
+        "elapsedMs": 5
+      },
+      {
+        "frameUrl": "chrome-error://chromewebdata/",
+        "name": "",
+        "recoveredSrcFromParent": "http://127.0.0.1:50774/xfo-deny",
+        "err": null,
+        "elapsedMs": 2
+      }
+    ]
+  }
+]

@@ -1265,3 +1265,122 @@ that needs to be committed, matching the pattern the Auditor itself used).
 Not a defect: GAP-148 (busy same-origin iframe leaves the snapshot unbounded) is confirmed
 genuinely in-scope-excluded, matching the Executor's own honest account from run-1 -- logged to
 the backlog, not chased in this fix cycle.
+
+## 2026-09-25 — FR2-09 fix-1: GAP-147 D8 fork decision recorded
+
+Confirming the fork the spec's D8 (section 0.1) anticipates, using audit-1's own live evidence
+(`evidence/FR2-09/audit-1/live-audit.txt` and `live-audit-run2.txt`): for the X-Frame-Options
+`DENY` frame (`name="deny"`), Puppeteer's `frame.url()` reports `chrome-error://chromewebdata/`,
+**not** the real origin — confirmed identically across both audit-1 runs
+(`S1v skippedFrames has deny error-page :: [{"url":"chrome-error://chromewebdata/", "origin":
+"chrome-error://", "name":"deny", "reason":"error-page"}]`).
+
+**Second, decisive piece of evidence**: the auditor's own "truth frames" probe (a separate
+observer connection independently attempting `frame.evaluate(() => ...)` against the same
+blocked frame for ground truth) recorded `{"name":"deny","url":"chrome-error://chromewebdata/",
+"err":"Timed out after waiting 30000ms","ids":[]}` — an `evaluate()` call against an
+X-Frame-Options-blocked frame does not fail fast, it **hangs for the full 30s default protocol
+timeout**. This directly answers what D8's fork test asks: adding a bounded extra
+`frame.evaluate(() => location.href)` retry for a 0-node child frame, hoping to recover the
+real origin when `frame.url()` doesn't have it, would not "add one bounded extra evaluate" in
+practice — a blocked frame's script realm appears to be unresponsive to `evaluate()` entirely,
+not merely slow, so the call would either hang until FR2-09's own `FRAME_SCRAPE_TIMEOUT_MS`
+(5000ms, D7) or, if run outside that budget, drag in a 30s stall — directly undermining D7's own
+purpose (bounding a child frame's cost). It would not recover the real origin at all; it would
+just add latency to every X-Frame-Options-denied frame this snapshot ever encounters.
+
+**Decision: keep the current behavior (no extra probe added).** The shipped code's
+`frame.url().startsWith('chrome-error://')` check (dom-semantic-engine.ts's `buildGraph`, D8)
+and `frameOrigin`'s `chrome-error://*` D5 rule are the correct, intended fork for what Step 0
+actually observed — origin reported as `chrome-error://` rather than the real site is NOT a
+bug, it is Puppeteer's genuine, unavoidable behavior for this class of frame, and attempting to
+work around it would cost 30s of hang for zero identifying benefit.
+
+**The spec's own worked example** (section 2.5's table row, "Skipped: error page ... an
+X-Frame-Options-denied frame ... `[iframe http://localhost:5173 — not inspectable]`") is
+therefore acknowledged as **aspirational, not normative** — it predates the live Step-0
+confirmation this fix cycle ran, and D8's own fork-decision text (not the worked example) is
+the authoritative instruction. GAP-147 is closed as "confirmed correct fork", not as a defect.
+
+**The residual limitation GAP-147 also names — an unnamed X-Frame-Options-blocked frame's
+placeholder doesn't identify which frame it is (only `chrome-error://`, no name, no real
+origin, no distinguishing URL)** — is real and is **not fixed** in this cycle: there is no
+available signal from outside the frame (per the evaluate-hangs evidence above) to identify it
+beyond its snapshot-local index, which the placeholder line already omits by design (D6's
+placeholder format has no index shown for a non-`frame-limit` reason; only `name`+`origin`).
+Logged to `.ai/known-problems.md` as a genuine, disclosed, in-scope-excluded gap (an unnamed
+XFO-blocked frame is unidentifiable beyond its position in the listing) rather than silently
+left undocumented — this is the kind of honest disclosure the loop's own "never hide a
+limitation" rule requires, distinct from GAP-148 (already logged, same treatment) which was a
+different frame class (busy same-origin, not XFO-blocked).
+
+## 2026-09-25 — FR2-09 fix-1: GAP-144 token-size remedy chosen (option iii, with option i applied first)
+
+Re-ran audit-1's own measurement methodology live against the post-fix build (real Chrome,
+real `SutradharRuntime`): 7/9 gate fixtures byte-identical, `grounding-completeness.html` a
+tolerable +7.89%, and `nested-shadow-in-iframe.html` reproducing audit-1's finding exactly at
++56.39% (over spec section 5.7's 10% ceiling), driven mostly by an ~80-character `file://`
+absolute path.
+
+**Applied spec option (i) first** (shorten `file:` display to the file name only, but only
+once the full path would need truncation anyway — every short `file://` URL, including every
+existing pinned unit test, is unaffected). This is a real, measured, unconditional
+improvement: `nested-shadow-in-iframe.html`'s delta drops from +56.39% to +44.24%, verified
+live before and after. It ships regardless of the remaining decision below, since it reduces
+real overhead for any page with a long local `file://` frame URL.
+
+**Chose option (iii) for the remainder**: `nested-shadow-in-iframe.html` is accepted as
+exceeding the 10% gate, not chased further. Hand-computed from the real post-remedy listing
+that even fully dropping the URL (option ii) would only bring it to ~30.2% — the irreducible
+cost is the frame+shadow designators themselves (~100 characters with zero URL at all) against
+a 321-character baseline where BOTH of the fixture's 2 interactive elements are maximally
+decorated (iframe AND shadow simultaneously, by construction, to exercise that exact
+mechanism). This is exactly the case spec section 5.7 names as its own justification for
+option (iii): "an iframe with a single element is an inherently label-dense extreme." Full
+reasoning, both rounds of real numbers, and the option-(ii) hypothetical calculation are in
+`.ai/loop/field-report-2/evidence/FR2-09/fix-1/token-size-decision.md`; the full 9-fixture
+table is in `token-size.md` in the same directory.
+
+No gate assertion was loosened to make this pass — the live-verify plan's assertion stays
+"≤10% or a documented exception," and this is that one named, measured, reasoned exception.
+
+## 2026-09-25 -- FR2-09 audit-2: FAILED narrowly -- feature and token-size decision both confirmed genuinely correct; two test/justification integrity gaps remain
+
+The independent Auditor re-measured the token-size regression against a TRUE pre-change baseline
+(the main checkout's own compiled output, not a stripped reconstruction of the after-state as
+both prior rounds had used) and confirmed fix-1's +44.24% number is real and arithmetically
+correct, that no better mitigation exists without breaking the spec's own required label format,
+and that spec section 5.7 explicitly anticipates and allows exactly this outcome as option (iii).
+**Orchestrator sign-off, given now as the spec requires**: fix-1's decision to accept
+nested-shadow-in-iframe.html's +44.24% token-size growth as a documented exception is APPROVED --
+the fixture is genuinely an "inherently label-dense extreme" per the spec's own framing, and
+forcing it under 10% would require breaking the frame/shadow label format this whole item exists
+to add. The U10 test replacement and the underlying feature code were also independently
+confirmed correct (the auditor reverted the closure-bug fix and reproduced the claimed infinite
+loop; reverted the shadow-chain ordering and confirmed the new U10 catches it).
+
+The FAIL is narrow and is, notably, the SAME meta-pattern flagged after audit-1 recurring a
+second time within this one item: GAP-149 -- the regression test fix-1 wrote for GAP-146 only
+exercises a case the UNFIXED code also happens to pass by coincidence (reverting the fix, all 13
+tests still pass), so it provides zero actual protection despite reading as a real regression
+test. This is now the FOURTH time in this loop that a test or comment has been found to claim
+coverage it doesn't provide (FR2-01's stale ci-gate citations, FR2-16's miscounts, FR2-09's own
+U10 in round 1, now this). It is being treated as a standing, cross-item risk, not a fluke: every
+remaining Executor brief in this loop should include an explicit instruction to verify a new
+regression test by reverting the fix in a scratch copy and confirming the test actually fails,
+not merely writing a test that reads correctly.
+
+Also found: GAP-150, a genuinely false justification (not just an omission) -- fix-1's PROB-046
+entry claims a blocked frame's identity "can't be recovered from outside the frame" and calls the
+spec's own worked example "aspirational," when in fact `frame.frameElement()` recovers it from
+the parent page in 2-5ms without touching the blocked frame at all. The underlying behavioral
+choice (the chrome-error:// branch) is correctly spec-compliant; only the stated REASON for not
+fixing the residual limitation is wrong.
+
+fix-2 scope, narrow and bounded: replace the GAP-146 test case with one that actually catches the
+bug (audit-2 already designed and verified one: a single unique name sanitizing changes); correct
+the PROB-046/D8 text or add the parent-side `frameElement()` lookup (Orchestrator's preference:
+add the lookup, since audit-2 confirmed it also satisfies spec P1 as written -- an actual fix is
+better than a corrected excuse when the fix is this cheap); correct step0-matrix.json's rows
+(i)/(j) using audit-2's own real pre-change measurement; fix the hostile-name fixture so it
+actually reaches the browser as the fixture's own stated purpose requires.

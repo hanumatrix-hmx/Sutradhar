@@ -1,0 +1,24 @@
+URL: http://127.0.0.1:58518/?n=1790319464985
+Title: 
+Interactive elements (8):
+[#1] button "Main"
+[#2] button "Depth one" (shadow: pay-shell#shell)
+[#3] input "Depth two" (shadow: pay-shell#shell > card-field.cvc)
+[#4] button "Depth three" (shadow: pay-shell#shell > … > x-inner#deep)
+[#5 in iframe "xo" (http://localhost:58518/child)] button "Pay"
+[#6 in iframe "xo"] button "Depth one" (shadow: pay-shell#shell)
+[#7 in iframe "xo"] input "Depth two" (shadow: pay-shell#shell > card-field.cvc)
+[#8 in iframe "xo"] button "Depth three" (shadow: pay-shell#shell > … > x-inner#deep)
+{
+  "payLine": "[#5 in iframe \"xo\" (http://localhost:58518/child)] button \"Pay\"",
+  "id": "5",
+  "checks": {
+    "depth1": true,
+    "depth2": true,
+    "depth3": true,
+    "oopifLabelWithUrlNoQuery": true,
+    "iframePlusShadowCooccur": true,
+    "clickOopifPayById": true
+  },
+  "allPass": true
+}

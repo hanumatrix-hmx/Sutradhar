@@ -1,0 +1,40 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-09/audit-2/u10-closure-repro/srcmutant[39m
+
+ [33m❯[39m u10-srcmutant.spec.ts [2m ([22m[2m33 tests[22m [2m|[22m [31m1 failed[39m [2m|[22m [33m29 skipped[39m[2m)[22m[90m 15[2mms[22m[39m
+[31m   [33m❯[31m u10-srcmutant.spec.ts[2m > [22m@sutradhar/browser scrapeFrame / extractAndStampEventListenerElement — FR2-09 shadow chain (U10, in-page logic)[2m > [22mscrapeFrame: shadowHosts is undefined at depth 0 and the full outer-to-inner chain at depth 1 and depth 3[39m
+[31m     → expected [ 'x-inner#deep', …(2) ] to deeply equal [ 'pay-shell#shell', …(2) ][39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m u10-srcmutant.spec.ts[2m > [22m@sutradhar/browser scrapeFrame / extractAndStampEventListenerElement — FR2-09 shadow chain (U10, in-page logic)[2m > [22mscrapeFrame: shadowHosts is undefined at depth 0 and the full outer-to-inner chain at depth 1 and depth 3
+[31m[1mAssertionError[22m: expected [ 'x-inner#deep', …(2) ] to deeply equal [ 'pay-shell#shell', …(2) ][39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  Array [[22m
+[32m-   "pay-shell#shell",[39m
+[32m-   "card-field.cvc",[39m
+[2m    "x-inner#deep",[22m
+[31m+   "card-field.cvc",[39m
+[31m+   "pay-shell#shell",[39m
+[2m  ][22m
+
+[36m [2m❯[22m u10-srcmutant.spec.ts:[2m716:29[22m[39m
+    [90m714| [39m    [34mexpect[39m(n0[33m![39m[33m.[39mshadowHosts)[33m.[39m[34mtoBeUndefined[39m()[33m;[39m
+    [90m715| [39m    [34mexpect[39m(n1[33m![39m[33m.[39mshadowHosts)[33m.[39m[34mtoEqual[39m([[32m'pay-shell#shell'[39m])[33m;[39m
+    [90m716| [39m    [34mexpect[39m(n3[33m![39m[33m.[39mshadowHosts)[33m.[39m[34mtoEqual[39m([[32m'pay-shell#shell'[39m[33m,[39m [32m'card-field.cv[39m…
+    [90m   | [39m                            [31m^[39m
+    [90m717| [39m  })[33m;[39m
+    [90m718| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[2m | [22m[33m29 skipped[39m[90m (33)[39m
+[2m   Start at [22m 12:21:56
+[2m   Duration [22m 1000ms[2m (transform 332ms, setup 0ms, collect 626ms, tests 15ms, environment 0ms, prepare 142ms)[22m
+
+exit=1

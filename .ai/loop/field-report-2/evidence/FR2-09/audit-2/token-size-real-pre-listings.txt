@@ -1,0 +1,749 @@
+===== aria-menu.html PRE =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/fixtures/aria-menu.html?n=1790000000000
+Title: ARIA-only Actions Menu
+Interactive elements (1):
+[#2] button "Open Actions Menu"
+===== aria-menu.html POST =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/fixtures/aria-menu.html?n=1790000000000
+Title: ARIA-only Actions Menu
+Interactive elements (1):
+[#2] button "Open Actions Menu"
+===== aria-menu.html AX PRE =====
+# Actions Menu (no CSS-selectable text on the trigger)
+[button] "Open Actions Menu"
+===== aria-menu.html AX POST =====
+# Actions Menu (no CSS-selectable text on the trigger)
+[button] "Open Actions Menu"
+
+===== fr2-01-singleframe.html PRE =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/fixtures/fr2-01-singleframe.html?n=1790000000000
+Title: 
+Interactive elements (0):
+
+===== fr2-01-singleframe.html POST =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/fixtures/fr2-01-singleframe.html?n=1790000000000
+Title: 
+Interactive elements (0):
+
+===== fr2-01-singleframe.html AX PRE =====
+
+===== fr2-01-singleframe.html AX POST =====
+
+
+===== fr2-01-wait-states.html PRE =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/fixtures/fr2-01-wait-states.html?n=1790000000000#manual
+Title: FR2-01 wait_for_selector states
+Interactive elements (0):
+
+===== fr2-01-wait-states.html POST =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/fixtures/fr2-01-wait-states.html?n=1790000000000#manual
+Title: FR2-01 wait_for_selector states
+Interactive elements (0):
+
+===== fr2-01-wait-states.html AX PRE =====
+# FR2-01 wait_for_selector states fixture
+===== fr2-01-wait-states.html AX POST =====
+# FR2-01 wait_for_selector states fixture
+
+===== grounding-completeness.html PRE =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/fixtures/grounding-completeness.html?n=1790000000000
+Title: Grounding completeness matrix
+Interactive elements (22):
+[#2] button "A native button"
+[#3] a "A native link"
+[#4] input label="A label"
+[#5] input "on" value="on"
+[#6] input "on" value="on"
+[#7] input
+[#8] input "50" value="50"
+[#9] input
+[#10] input "#000000" value="#000000"
+[#11] input
+[#12] input
+[#13] textarea
+[#14] select "Option A
+Option B" value="a"
+[#15] div "Editable region" role=textbox
+[#16] label "A label"
+[#17] summary "A summary/disclosure"
+[#19] div "ARIA role=button div" role=button
+[#20] div "ARIA role=option div" role=option
+[#21] div "onclick-only div" role=clickable
+[#22] button "Shadow DOM (open) button"
+[#23] div "cursor:pointer-only div" role=clickable
+[#24] button "In-iframe button"
+===== grounding-completeness.html POST =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/fixtures/grounding-completeness.html?n=1790000000000
+Title: Grounding completeness matrix
+Interactive elements (22):
+[#2] button "A native button"
+[#3] a "A native link"
+[#4] input label="A label"
+[#5] input "on" value="on"
+[#6] input "on" value="on"
+[#7] input
+[#8] input "50" value="50"
+[#9] input
+[#10] input "#000000" value="#000000"
+[#11] input
+[#12] input
+[#13] textarea
+[#14] select "Option A
+Option B" value="a"
+[#15] div "Editable region" role=textbox
+[#16] label "A label"
+[#17] summary "A summary/disclosure"
+[#19] div "ARIA role=button div" role=button
+[#20] div "ARIA role=option div" role=option
+[#21] div "onclick-only div" role=clickable
+[#22] button "Shadow DOM (open) button" (shadow: div#gc-shadow-host)
+[#23] div "cursor:pointer-only div" role=clickable
+[#24 in iframe "gc-iframe-host" (about:srcdoc)] button "In-iframe button"
+===== grounding-completeness.html AX PRE =====
+# Grounding completeness matrix
+[button] "A native button"
+[link] "A native link"
+[textbox] "A label"
+[button] "Show date picker"
+[button] "Choose file"
+[option] "Option A"
+[option] "Option B"
+[button] "ARIA role=button div"
+[button] "play"
+[button] "mute"
+[button] "enter full screen"
+[button] "show more media controls"
+[slider] "video time scrubber"
+[button] "Shadow DOM (open) button"
+[button] "Shadow DOM (closed) button"
+===== grounding-completeness.html AX POST =====
+# Grounding completeness matrix
+[button] "A native button"
+[link] "A native link"
+[textbox] "A label"
+[button] "Show date picker"
+[button] "Choose file"
+[option] "Option A"
+[option] "Option B"
+[button] "ARIA role=button div"
+[button] "play"
+[button] "mute"
+[button] "enter full screen"
+[button] "show more media controls"
+[slider] "video time scrubber"
+[button] "Shadow DOM (open) button"
+[button] "Shadow DOM (closed) button"
+[iframe "gc-iframe-host" (about:srcdoc)]
+  [button] "In-iframe button"
+
+===== prob043-keyboard.html PRE =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/fixtures/prob043-keyboard.html?n=1790000000000
+Title: PROB-043 keyboard delivery probe
+Interactive elements (298):
+[#3] label "plain-0"
+[#4] input "plain-0"
+[#5] label "controlled-0"
+[#6] input "controlled-0"
+[#7] label "press-0"
+[#8] input "press-0"
+[#9] label "plain-1"
+[#10] input "plain-1"
+[#11] label "controlled-1"
+[#12] input "controlled-1"
+[#13] label "press-1"
+[#14] input "press-1"
+[#15] label "plain-2"
+[#16] input "plain-2"
+[#17] label "controlled-2"
+[#18] input "controlled-2"
+[#19] label "press-2"
+[#20] input "press-2"
+[#21] label "plain-3"
+[#22] input "plain-3"
+[#23] label "controlled-3"
+[#24] input "controlled-3"
+[#25] label "press-3"
+[#26] input "press-3"
+[#27] label "plain-4"
+[#28] input "plain-4"
+[#29] label "controlled-4"
+[#30] input "controlled-4"
+[#31] label "press-4"
+[#32] input "press-4"
+[#33] label "plain-5"
+[#34] input "plain-5"
+[#35] label "controlled-5"
+[#36] input "controlled-5"
+[#37] label "press-5"
+[#38] input "press-5"
+[#39] label "plain-6"
+[#40] input "plain-6"
+[#41] label "controlled-6"
+[#42] input "controlled-6"
+[#43] label "press-6"
+[#44] input "press-6"
+[#45] label "plain-7"
+[#46] input "plain-7"
+[#47] label "controlled-7"
+[#48] input "controlled-7"
+[#49] label "press-7"
+[#50] input "press-7"
+[#51] label "plain-8"
+[#52] input "plain-8"
+[#53] label "controlled-8"
+[#54] input "controlled-8"
+[#55] label "press-8"
+[#56] input "press-8"
+[#57] label "plain-9"
+[#58] input "plain-9"
+[#59] label "controlled-9"
+[#60] input "controlled-9"
+[#61] label "press-9"
+[#62] input "press-9"
+... (238 more elements not shown)
+===== prob043-keyboard.html POST =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/fixtures/prob043-keyboard.html?n=1790000000000
+Title: PROB-043 keyboard delivery probe
+Interactive elements (298):
+[#3] label "plain-0"
+[#4] input "plain-0"
+[#5] label "controlled-0"
+[#6] input "controlled-0"
+[#7] label "press-0"
+[#8] input "press-0"
+[#9] label "plain-1"
+[#10] input "plain-1"
+[#11] label "controlled-1"
+[#12] input "controlled-1"
+[#13] label "press-1"
+[#14] input "press-1"
+[#15] label "plain-2"
+[#16] input "plain-2"
+[#17] label "controlled-2"
+[#18] input "controlled-2"
+[#19] label "press-2"
+[#20] input "press-2"
+[#21] label "plain-3"
+[#22] input "plain-3"
+[#23] label "controlled-3"
+[#24] input "controlled-3"
+[#25] label "press-3"
+[#26] input "press-3"
+[#27] label "plain-4"
+[#28] input "plain-4"
+[#29] label "controlled-4"
+[#30] input "controlled-4"
+[#31] label "press-4"
+[#32] input "press-4"
+[#33] label "plain-5"
+[#34] input "plain-5"
+[#35] label "controlled-5"
+[#36] input "controlled-5"
+[#37] label "press-5"
+[#38] input "press-5"
+[#39] label "plain-6"
+[#40] input "plain-6"
+[#41] label "controlled-6"
+[#42] input "controlled-6"
+[#43] label "press-6"
+[#44] input "press-6"
+[#45] label "plain-7"
+[#46] input "plain-7"
+[#47] label "controlled-7"
+[#48] input "controlled-7"
+[#49] label "press-7"
+[#50] input "press-7"
+[#51] label "plain-8"
+[#52] input "plain-8"
+[#53] label "controlled-8"
+[#54] input "controlled-8"
+[#55] label "press-8"
+[#56] input "press-8"
+[#57] label "plain-9"
+[#58] input "plain-9"
+[#59] label "controlled-9"
+[#60] input "controlled-9"
+[#61] label "press-9"
+[#62] input "press-9"
+... (238 more elements not shown)
+===== prob043-keyboard.html AX PRE =====
+# PROB-043 keyboard delivery probe
+[textbox] "plain-0"
+[textbox] "controlled-0"
+[textbox] "press-0"
+[textbox] "plain-1"
+[textbox] "controlled-1"
+[textbox] "press-1"
+[textbox] "plain-2"
+[textbox] "controlled-2"
+[textbox] "press-2"
+[textbox] "plain-3"
+[textbox] "controlled-3"
+[textbox] "press-3"
+[textbox] "plain-4"
+[textbox] "controlled-4"
+[textbox] "press-4"
+[textbox] "plain-5"
+[textbox] "controlled-5"
+[textbox] "press-5"
+[textbox] "plain-6"
+[textbox] "controlled-6"
+[textbox] "press-6"
+[textbox] "plain-7"
+[textbox] "controlled-7"
+[textbox] "press-7"
+[textbox] "plain-8"
+[textbox] "controlled-8"
+[textbox] "press-8"
+[textbox] "plain-9"
+[textbox] "controlled-9"
+[textbox] "press-9"
+[textbox] "plain-10"
+[textbox] "controlled-10"
+[textbox] "press-10"
+[textbox] "plain-11"
+[textbox] "controlled-11"
+[textbox] "press-11"
+[textbox] "plain-12"
+[textbox] "controlled-12"
+[textbox] "press-12"
+[textbox] "plain-13"
+[textbox] "controlled-13"
+[textbox] "press-13"
+[textbox] "plain-14"
+[textbox] "controlled-14"
+[textbox] "press-14"
+[textbox] "plain-15"
+[textbox] "controlled-15"
+[textbox] "press-15"
+[textbox] "plain-16"
+[textbox] "controlled-16"
+[textbox] "press-16"
+[textbox] "plain-17"
+[textbox] "controlled-17"
+[textbox] "press-17"
+[textbox] "plain-18"
+[textbox] "controlled-18"
+[textbox] "press-18"
+[textbox] "plain-19"
+[textbox] "controlled-19"
+[textbox] "press-19"
+[textbox] "plain-20"
+[textbox] "controlled-20"
+[textbox] "press-20"
+[textbox] "plain-21"
+[textbox] "controlled-21"
+[textbox] "press-21"
+[textbox] "plain-22"
+[textbox] "controlled-22"
+[textbox] "press-22"
+[textbox] "plain-23"
+[textbox] "controlled-23"
+[textbox] "press-23"
+[textbox] "plain-24"
+[textbox] "controlled-24"
+[textbox] "press-24"
+[textbox] "plain-25"
+[textbox] "controlled-25"
+[textbox] "press-25"
+[textbox] "plain-26"
+[textbox] "controlled-26"
+[textbox] "press-26"
+[textbox] "plain-27"
+[textbox] "controlled-27"
+[textbox] "press-27"
+[textbox] "plain-28"
+[textbox] "controlled-28"
+[textbox] "press-28"
+[textbox] "plain-29"
+[textbox] "controlled-29"
+[textbox] "press-29"
+[textbox] "plain-30"
+[textbox] "controlled-30"
+[textbox] "press-30"
+[textbox] "plain-31"
+[textbox] "controlled-31"
+[textbox] "press-31"
+[textbox] "plain-32"
+[textbox] "controlled-32"
+[textbox] "press-32"
+[textbox] "plain-33"
+[textbox] "controlled-33"
+[textbox] "press-33"
+[textbox] "plain-34"
+[textbox] "controlled-34"
+[textbox] "press-34"
+[textbox] "plain-35"
+[textbox] "controlled-35"
+[textbox] "press-35"
+[textbox] "plain-36"
+[textbox] "controlled-36"
+[textbox] "press-36"
+[textbox] "plain-37"
+[textbox] "controlled-37"
+[textbox] "press-37"
+[textbox] "plain-38"
+[textbox] "controlled-38"
+[textbox] "press-38"
+[textbox] "plain-39"
+[textbox] "controlled-39"
+[textbox] "press-39"
+[textbox] "plain-40"
+[textbox] "controlled-40"
+[textbox] "press-40"
+[textbox] "plain-41"
+[textbox] "controlled-41"
+[textbox] "press-41"
+[textbox] "plain-42"
+[textbox] "controlled-42"
+[textbox] "press-42"
+[textbox] "plain-43"
+[textbox] "controlled-43"
+[textbox] "press-43"
+[textbox] "plain-44"
+[textbox] "controlled-44"
+[textbox] "press-44"
+[textbox] "plain-45"
+[textbox] "controlled-45"
+[textbox] "press-45"
+[textbox] "plain-46"
+[textbox] "controlled-46"
+[textbox] "press-46"
+[textbox] "plain-47"
+[textbox] "controlled-47"
+[textbox] "press-47"
+[textbox] "plain-48"
+[textbox] "controlled-48"
+[textbox] "press-48"
+[textbox] "plain-49"
+[textbox] "controlled-49"
+[textbox] "press-49"
+[textbox] "plain-50"
+[textbox] "controlled-50"
+[textbox] "press-50"
+[textbox] "plain-51"
+[textbox] "controlled-51"
+[textbox] "press-51"
+[textbox] "plain-52"
+[textbox] "controlled-52"
+[textbox] "press-52"
+[textbox] "plain-53"
+[textbox] "controlled-53"
+[textbox] "press-53"
+[textbox] "plain-54"
+[textbox] "controlled-54"
+[textbox] "press-54"
+[textbox] "plain-55"
+[textbox] "controlled-55"
+[textbox] "press-55"
+[textbox] "plain-56"
+[textbox] "controlled-56"
+[textbox] "press-56"
+[textbox] "plain-57"
+[textbox] "controlled-57"
+[textbox] "press-57"
+[textbox] "plain-58"
+[textbox] "controlled-58"
+[textbox] "press-58"
+[textbox] "plain-59"
+[textbox] "controlled-59"
+[textbox] "press-59"
+[textbox] "plain-60"
+[textbox] "controlled-60"
+[textbox] "press-60"
+[textbox] "plain-61"
+[textbox] "controlled-61"
+[textbox] "press-61"
+[textbox] "plain-62"
+[textbox] "controlled-62"
+[textbox] "press-62"
+[textbox] "plain-63"
+[textbox] "controlled-63"
+[textbox] "press-63"
+===== prob043-keyboard.html AX POST =====
+# PROB-043 keyboard delivery probe
+[textbox] "plain-0"
+[textbox] "controlled-0"
+[textbox] "press-0"
+[textbox] "plain-1"
+[textbox] "controlled-1"
+[textbox] "press-1"
+[textbox] "plain-2"
+[textbox] "controlled-2"
+[textbox] "press-2"
+[textbox] "plain-3"
+[textbox] "controlled-3"
+[textbox] "press-3"
+[textbox] "plain-4"
+[textbox] "controlled-4"
+[textbox] "press-4"
+[textbox] "plain-5"
+[textbox] "controlled-5"
+[textbox] "press-5"
+[textbox] "plain-6"
+[textbox] "controlled-6"
+[textbox] "press-6"
+[textbox] "plain-7"
+[textbox] "controlled-7"
+[textbox] "press-7"
+[textbox] "plain-8"
+[textbox] "controlled-8"
+[textbox] "press-8"
+[textbox] "plain-9"
+[textbox] "controlled-9"
+[textbox] "press-9"
+[textbox] "plain-10"
+[textbox] "controlled-10"
+[textbox] "press-10"
+[textbox] "plain-11"
+[textbox] "controlled-11"
+[textbox] "press-11"
+[textbox] "plain-12"
+[textbox] "controlled-12"
+[textbox] "press-12"
+[textbox] "plain-13"
+[textbox] "controlled-13"
+[textbox] "press-13"
+[textbox] "plain-14"
+[textbox] "controlled-14"
+[textbox] "press-14"
+[textbox] "plain-15"
+[textbox] "controlled-15"
+[textbox] "press-15"
+[textbox] "plain-16"
+[textbox] "controlled-16"
+[textbox] "press-16"
+[textbox] "plain-17"
+[textbox] "controlled-17"
+[textbox] "press-17"
+[textbox] "plain-18"
+[textbox] "controlled-18"
+[textbox] "press-18"
+[textbox] "plain-19"
+[textbox] "controlled-19"
+[textbox] "press-19"
+[textbox] "plain-20"
+[textbox] "controlled-20"
+[textbox] "press-20"
+[textbox] "plain-21"
+[textbox] "controlled-21"
+[textbox] "press-21"
+[textbox] "plain-22"
+[textbox] "controlled-22"
+[textbox] "press-22"
+[textbox] "plain-23"
+[textbox] "controlled-23"
+[textbox] "press-23"
+[textbox] "plain-24"
+[textbox] "controlled-24"
+[textbox] "press-24"
+[textbox] "plain-25"
+[textbox] "controlled-25"
+[textbox] "press-25"
+[textbox] "plain-26"
+[textbox] "controlled-26"
+[textbox] "press-26"
+[textbox] "plain-27"
+[textbox] "controlled-27"
+[textbox] "press-27"
+[textbox] "plain-28"
+[textbox] "controlled-28"
+[textbox] "press-28"
+[textbox] "plain-29"
+[textbox] "controlled-29"
+[textbox] "press-29"
+[textbox] "plain-30"
+[textbox] "controlled-30"
+[textbox] "press-30"
+[textbox] "plain-31"
+[textbox] "controlled-31"
+[textbox] "press-31"
+[textbox] "plain-32"
+[textbox] "controlled-32"
+[textbox] "press-32"
+[textbox] "plain-33"
+[textbox] "controlled-33"
+[textbox] "press-33"
+[textbox] "plain-34"
+[textbox] "controlled-34"
+[textbox] "press-34"
+[textbox] "plain-35"
+[textbox] "controlled-35"
+[textbox] "press-35"
+[textbox] "plain-36"
+[textbox] "controlled-36"
+[textbox] "press-36"
+[textbox] "plain-37"
+[textbox] "controlled-37"
+[textbox] "press-37"
+[textbox] "plain-38"
+[textbox] "controlled-38"
+[textbox] "press-38"
+[textbox] "plain-39"
+[textbox] "controlled-39"
+[textbox] "press-39"
+[textbox] "plain-40"
+[textbox] "controlled-40"
+[textbox] "press-40"
+[textbox] "plain-41"
+[textbox] "controlled-41"
+[textbox] "press-41"
+[textbox] "plain-42"
+[textbox] "controlled-42"
+[textbox] "press-42"
+[textbox] "plain-43"
+[textbox] "controlled-43"
+[textbox] "press-43"
+[textbox] "plain-44"
+[textbox] "controlled-44"
+[textbox] "press-44"
+[textbox] "plain-45"
+[textbox] "controlled-45"
+[textbox] "press-45"
+[textbox] "plain-46"
+[textbox] "controlled-46"
+[textbox] "press-46"
+[textbox] "plain-47"
+[textbox] "controlled-47"
+[textbox] "press-47"
+[textbox] "plain-48"
+[textbox] "controlled-48"
+[textbox] "press-48"
+[textbox] "plain-49"
+[textbox] "controlled-49"
+[textbox] "press-49"
+[textbox] "plain-50"
+[textbox] "controlled-50"
+[textbox] "press-50"
+[textbox] "plain-51"
+[textbox] "controlled-51"
+[textbox] "press-51"
+[textbox] "plain-52"
+[textbox] "controlled-52"
+[textbox] "press-52"
+[textbox] "plain-53"
+[textbox] "controlled-53"
+[textbox] "press-53"
+[textbox] "plain-54"
+[textbox] "controlled-54"
+[textbox] "press-54"
+[textbox] "plain-55"
+[textbox] "controlled-55"
+[textbox] "press-55"
+[textbox] "plain-56"
+[textbox] "controlled-56"
+[textbox] "press-56"
+[textbox] "plain-57"
+[textbox] "controlled-57"
+[textbox] "press-57"
+[textbox] "plain-58"
+[textbox] "controlled-58"
+[textbox] "press-58"
+[textbox] "plain-59"
+[textbox] "controlled-59"
+[textbox] "press-59"
+[textbox] "plain-60"
+[textbox] "controlled-60"
+[textbox] "press-60"
+[textbox] "plain-61"
+[textbox] "controlled-61"
+[textbox] "press-61"
+[textbox] "plain-62"
+[textbox] "controlled-62"
+[textbox] "press-62"
+[textbox] "plain-63"
+[textbox] "controlled-63"
+[textbox] "press-63"
+
+===== prompt-injection.html PRE =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/fixtures/prompt-injection.html?n=1790000000000
+Title: Prompt Injection Test Page
+Interactive elements (1):
+[#3] button "Mark Resolved"
+===== prompt-injection.html POST =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/fixtures/prompt-injection.html?n=1790000000000
+Title: Prompt Injection Test Page
+Interactive elements (1):
+[#3] button "Mark Resolved"
+===== prompt-injection.html AX PRE =====
+# Real Support Ticket #4471
+[button] "Mark Resolved"
+===== prompt-injection.html AX POST =====
+# Real Support Ticket #4471
+[button] "Mark Resolved"
+
+===== nested-shadow-in-iframe.html PRE =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/engine-comparison/hard-fixtures/nested-shadow-in-iframe.html?n=1790000000000
+Title: Nested Shadow DOM inside an iframe
+Interactive elements (2):
+[#4] input "type here" placeholder="type here"
+[#5] button "Submit"
+===== nested-shadow-in-iframe.html POST =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/engine-comparison/hard-fixtures/nested-shadow-in-iframe.html?n=1790000000000
+Title: Nested Shadow DOM inside an iframe
+Interactive elements (2):
+[#4 in iframe "nested-frame" (file://nested-shadow-in-iframe-inner.html)] input "type here" placeholder="type here" (shadow: nested-widget)
+[#5 in iframe "nested-frame"] button "Submit" (shadow: nested-widget)
+===== nested-shadow-in-iframe.html AX PRE =====
+# Outer document
+===== nested-shadow-in-iframe.html AX POST =====
+# Outer document
+[iframe "nested-frame" (file://nested-shadow-in-iframe-inner.html)]
+  ## Inner document (loaded inside an iframe)
+  [textbox] "type here"
+  [button] "Submit"
+
+===== interactive-detection.html PRE =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/engine-comparison/hard-fixtures/interactive-detection.html?n=1790000000000
+Title: Interactive detection fixture
+Interactive elements (9):
+[#2] button "Control: visible button"
+[#6] div "Should be listed: div[onclick] card" role=clickable
+[#7] div "Should be listed: div[tabindex="0"] widget" role=clickable
+[#8] div "Should be listed: contenteditable region (role=textbox)" role=textbox
+[#9] label "Should be listed: label"
+[#10] input "type here" label="Should be listed: label" placeholder="type here"
+[#11] summary "Should be listed: summary"
+[#13] div "Should be listed: role=option" role=option
+[#14] div "Should be listed: cursor:pointer card (addEventListener only, no onclick attr) Inner span — should N" role=clickable
+===== interactive-detection.html POST =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/engine-comparison/hard-fixtures/interactive-detection.html?n=1790000000000
+Title: Interactive detection fixture
+Interactive elements (9):
+[#2] button "Control: visible button"
+[#6] div "Should be listed: div[onclick] card" role=clickable
+[#7] div "Should be listed: div[tabindex="0"] widget" role=clickable
+[#8] div "Should be listed: contenteditable region (role=textbox)" role=textbox
+[#9] label "Should be listed: label"
+[#10] input "type here" label="Should be listed: label" placeholder="type here"
+[#11] summary "Should be listed: summary"
+[#13] div "Should be listed: role=option" role=option
+[#14] div "Should be listed: cursor:pointer card (addEventListener only, no onclick attr) Inner span — should N" role=clickable
+===== interactive-detection.html AX PRE =====
+# Interactive detection fixture
+[button] "Control: visible button"
+[button] "Should NOT be listed: opacity:0 (nonzero rect)"
+[textbox] "Should be listed: label"
+===== interactive-detection.html AX POST =====
+# Interactive detection fixture
+[button] "Control: visible button"
+[button] "Should NOT be listed: opacity:0 (nonzero rect)"
+[textbox] "Should be listed: label"
+
+===== closed-shadow.html PRE =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/engine-comparison/hard-fixtures/closed-shadow.html?n=1790000000000
+Title: Closed Shadow DOM
+Interactive elements (0):
+
+===== closed-shadow.html POST =====
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/engine-comparison/hard-fixtures/closed-shadow.html?n=1790000000000
+Title: Closed Shadow DOM
+Interactive elements (0):
+
+===== closed-shadow.html AX PRE =====
+# Closed Shadow Root
+[button] "Increment"
+===== closed-shadow.html AX POST =====
+# Closed Shadow Root
+[button] "Increment"
+

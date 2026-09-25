@@ -1,0 +1,25 @@
+
+> sutradhar@0.4.3 build
+> tsc --emitDeclarationOnly && node ../../scripts/build-bundle.mjs
+
+[build-bundle] rebuilding 14 workspace dependencies from clean, in order:
+[build-bundle]   ✓ contracts
+[build-bundle]   ✓ utils
+[build-bundle]   ✓ capability
+[build-bundle]   ✓ observability
+[build-bundle]   ✓ config
+[build-bundle]   ✓ events
+[build-bundle]   ✓ browser
+[build-bundle]   ✓ llm
+[build-bundle]   ✓ storage
+[build-bundle]   ✓ memory
+[build-bundle]   ✓ capability-runtime
+[build-bundle]   ✓ agent
+[build-bundle]   ✓ cli
+[build-bundle]   ✓ mcp-server
+[build-bundle] mirrored AGENT_SETUP.md into packages/sutradhar/
+[build-bundle] library (import { launch } from "sutradhar") -> packages\sutradhar\dist\index.js (1446kb)
+[build-bundle] CLI (bin: sutradhar) -> packages\sutradhar\dist\cli-bin.js (1482kb)
+[build-bundle] MCP server (bin: sutradhar-mcp) -> packages\sutradhar\dist\mcp-cli.js (2281kb)
+[build-bundle] done.
+exit=0
