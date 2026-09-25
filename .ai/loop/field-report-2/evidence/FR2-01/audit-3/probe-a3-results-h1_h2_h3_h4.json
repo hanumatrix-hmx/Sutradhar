@@ -1,0 +1,53 @@
+[
+  {
+    "id": "h1-hidden-main-frame-busy-element-never-hid",
+    "expected": "success:false (still visible)",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#spinner",
+      "state": "hidden",
+      "matchedAtStart": false
+    },
+    "totalMs": 1275,
+    "stillVisibleAfter": true,
+    "FALSE_SUCCESS": true
+  },
+  {
+    "id": "h2-hidden-oopif-busy-element-never-hid",
+    "expected": "success:false (still visible)",
+    "oopif": 1,
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#inframe",
+      "state": "hidden",
+      "matchedAtStart": false
+    },
+    "totalMs": 1282,
+    "stillVisibleAfter": true,
+    "FALSE_SUCCESS": true
+  },
+  {
+    "id": "h3-hidden-checkonce-oopif-busy",
+    "expected": "success:false (still visible)",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#inframe",
+      "state": "hidden",
+      "matchedAtStart": false
+    },
+    "totalMs": 1286,
+    "stillVisibleAfter": true,
+    "FALSE_SUCCESS": true
+  },
+  {
+    "id": "h4-control-hidden-oopif-not-busy",
+    "expected": "success:false",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "wait_for_selector timed out after 1000ms waiting for state=hidden: an element matching \"#inframe\" is still visible.",
+    "totalMs": 4608
+  }
+]

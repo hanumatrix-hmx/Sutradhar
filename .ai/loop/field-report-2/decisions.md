@@ -489,3 +489,23 @@ Adopted as written (full reasoning in the spec's §0):
 Sequencing: soft dependency only on FR2-07 (field-name compatibility, not full audit completion).
 Default merge order after all of Phase 2, since runtime.ts/tools.ts/cli.ts/browser-session.ts are
 touched by nearly every prior item.
+
+## 2026-09-25 — FR2-01 audit-3: a NEW blocker introduced by fix-2 itself
+
+audit-3 is genuinely fresh evidence, not a rerun of stale claims: it found GAP-057, a blocker
+that fix-2's OWN GAP-030 fix introduced (a busy-frame probe timeout gets read as "no match",
+which for state:hidden means "success" -- so a hidden wait can now falsely report success while
+the element is still visible, if any frame is busy). This is the exact false-success bug class
+GAP-031 was about, resurfacing through brand-new code in the very fix meant to close a different
+gap. It's a clean illustration of why this loop insists on a genuinely independent audit after
+every fix round rather than trusting a self-report, however thorough: fixing gap N can introduce
+gap N+1 in the same code path, and only a fresh adversarial pass catches that.
+
+Also worth keeping: audit-3 caught that fix-2's "ci-gate 38/42, matches baseline" claim had zero
+real evidence behind it -- the gate script silently reads committed baseline files from an
+EARLIER round rather than a fresh run, and fix-2 never actually ran it. The number turned out to
+be correct when independently re-run, but the claim itself was unfounded when made. Recorded as
+GAP-060. Executors must save fresh scenario-suite run output to their own evidence directory
+every time they claim a gate result, not just cite whatever baseline file happens to be on disk.
+
+FR2-01 moves to FIX(3) — its fourth fix round overall, third full audit cycle.

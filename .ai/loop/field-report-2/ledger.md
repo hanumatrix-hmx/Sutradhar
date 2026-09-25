@@ -4,7 +4,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 
 | id | title | phase | status | attempts | last evidence | commit |
 |---|---|---|---|---|---|---|
-| FR2-01 | wait_for_selector visibility states | 1 | AUDIT(3) | 4 | fix-2: GAP-030..036 all addressed, evidence rule followed; awaiting audit-3 | (uncommitted fix-2, commit pending) |
+| FR2-01 | wait_for_selector visibility states | 1 | FIX(3) | 5 | audit-3: 1 NEW blocker introduced by fix-2 itself (GAP-057), 4 minor (GAP-058..061); NOT DONE | e638e2a |
 | FR2-02 | extract_data reads live values | 1 | SPEC (waits for FR2-01 audit; shared files) | 0 | evidence/FR2-02/spec.md | - |
 | FR2-03 | Session/profile GC | 1 | SPEC (waits for FR2-01 DONE) | 0 | evidence/FR2-03/spec.md | - |
 | FR2-04 | CLI dialog handling | 1 | SPEC (Step-1 experiment runs after FR2-01 FIX(1); DEVELOP after FR2-03) | 0 | evidence/FR2-04/spec.md | - |

@@ -1,0 +1,286 @@
+[
+  {
+    "id": "c1-concurrent-tabs-A-6-busy-oopifs-B-clean",
+    "tabA": {
+      "success": true,
+      "retriesUsed": 0,
+      "output": {
+        "foundSelector": "#toast",
+        "state": "visible"
+      },
+      "latencyAfterRevealMs": 1164
+    },
+    "tabB": {
+      "success": true,
+      "retriesUsed": 0,
+      "output": {
+        "foundSelector": "#toast",
+        "state": "visible"
+      },
+      "latencyAfterRevealMs": 34
+    },
+    "tabBAloneLatencyMs": 50
+  },
+  {
+    "id": "b1-reveal-at-1990ms-of-2000ms (0 busy oopifs)",
+    "rows": [
+      {
+        "success": true,
+        "retriesUsed": 0,
+        "shownRelMs": 2003,
+        "totalMs": 2006
+      },
+      {
+        "success": true,
+        "retriesUsed": 0,
+        "shownRelMs": 2005,
+        "totalMs": 2010
+      },
+      {
+        "success": true,
+        "retriesUsed": 0,
+        "shownRelMs": 1998,
+        "totalMs": 2016
+      },
+      {
+        "success": true,
+        "retriesUsed": 0,
+        "shownRelMs": 1995,
+        "totalMs": 2013
+      },
+      {
+        "success": true,
+        "retriesUsed": 0,
+        "shownRelMs": 1998,
+        "totalMs": 2017
+      },
+      {
+        "success": true,
+        "retriesUsed": 0,
+        "shownRelMs": 2000,
+        "totalMs": 2018
+      }
+    ]
+  },
+  {
+    "id": "b1-reveal-at-1990ms-of-2000ms (2 busy oopifs)",
+    "rows": [
+      {
+        "success": true,
+        "retriesUsed": 1,
+        "shownRelMs": 1995,
+        "totalMs": 3929
+      },
+      {
+        "success": true,
+        "retriesUsed": 1,
+        "shownRelMs": 2003,
+        "totalMs": 3933
+      },
+      {
+        "success": true,
+        "retriesUsed": 1,
+        "shownRelMs": 2002,
+        "totalMs": 3954
+      },
+      {
+        "success": true,
+        "retriesUsed": 1,
+        "shownRelMs": 2006,
+        "totalMs": 3946
+      },
+      {
+        "success": true,
+        "retriesUsed": 1,
+        "shownRelMs": 1993,
+        "totalMs": 3951
+      },
+      {
+        "success": true,
+        "retriesUsed": 1,
+        "shownRelMs": 2003,
+        "totalMs": 3967
+      }
+    ]
+  },
+  {
+    "id": "r1-timeout0-never-visible",
+    "expected": "fails immediately, no retry",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "wait_for_selector timed out after 0ms waiting for state=visible: No element found for selector: #never",
+    "totalMs": 1561
+  },
+  {
+    "id": "r1-timeout0-toast-revealed-at-700ms",
+    "expected": "documented: check once -> success:false",
+    "success": true,
+    "retriesUsed": 2,
+    "output": {
+      "foundSelector": "#toast",
+      "state": "visible"
+    },
+    "totalMs": 1530
+  },
+  {
+    "id": "s1-invalid-selector-attached",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "SyntaxError: Failed to execute 'matches' on 'Element': '#[[[' is not a valid selector.",
+    "totalMs": 1540
+  },
+  {
+    "id": "s1-invalid-selector-visible",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "SyntaxError: Failed to execute 'matches' on 'Element': '#[[[' is not a valid selector.",
+    "totalMs": 1550
+  },
+  {
+    "id": "s1-invalid-selector-hidden",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "wait_for_selector failed waiting for state=hidden: SyntaxError: Failed to execute 'matches' on 'Element': '#[[[' is not a valid selector.",
+    "totalMs": 1547
+  },
+  {
+    "id": "s1-timeout-NaN-visible",
+    "sel": "#never",
+    "success": false,
+    "retriesUsed": 0,
+    "error": "Invalid timeoutMs (NaN) for action \"wait_for_selector\" — timeoutMs must be a finite number of milliseconds (NaN and Infinity are rejected, not silently reinterpreted).",
+    "totalMs": 1
+  },
+  {
+    "id": "s1-timeout-NaN-attached",
+    "sel": "#never",
+    "success": false,
+    "retriesUsed": 0,
+    "error": "Invalid timeoutMs (NaN) for action \"wait_for_selector\" — timeoutMs must be a finite number of milliseconds (NaN and Infinity are rejected, not silently reinterpreted).",
+    "totalMs": 0
+  },
+  {
+    "id": "s1-timeout-NaN-hidden",
+    "sel": "#never",
+    "success": false,
+    "retriesUsed": 0,
+    "error": "Invalid timeoutMs (NaN) for action \"wait_for_selector\" — timeoutMs must be a finite number of milliseconds (NaN and Infinity are rejected, not silently reinterpreted).",
+    "totalMs": 0
+  },
+  {
+    "id": "s1-timeout-Infinity-visible",
+    "sel": "#never",
+    "success": false,
+    "retriesUsed": 0,
+    "error": "Invalid timeoutMs (Infinity) for action \"wait_for_selector\" — timeoutMs must be a finite number of milliseconds (NaN and Infinity are rejected, not silently reinterpreted).",
+    "totalMs": 0
+  },
+  {
+    "id": "s1-timeout-Infinity-attached",
+    "sel": "#never",
+    "success": false,
+    "retriesUsed": 0,
+    "error": "Invalid timeoutMs (Infinity) for action \"wait_for_selector\" — timeoutMs must be a finite number of milliseconds (NaN and Infinity are rejected, not silently reinterpreted).",
+    "totalMs": 0
+  },
+  {
+    "id": "s1-timeout-Infinity-hidden",
+    "sel": "#never",
+    "success": false,
+    "retriesUsed": 0,
+    "error": "Invalid timeoutMs (Infinity) for action \"wait_for_selector\" — timeoutMs must be a finite number of milliseconds (NaN and Infinity are rejected, not silently reinterpreted).",
+    "totalMs": 0
+  },
+  {
+    "id": "s1-timeout--Infinity-visible",
+    "sel": "#never",
+    "success": false,
+    "retriesUsed": 0,
+    "error": "Invalid timeoutMs (-Infinity) for action \"wait_for_selector\" — timeoutMs must be a finite number of milliseconds (NaN and Infinity are rejected, not silently reinterpreted).",
+    "totalMs": 0
+  },
+  {
+    "id": "s1-timeout--Infinity-attached",
+    "sel": "#never",
+    "success": false,
+    "retriesUsed": 0,
+    "error": "Invalid timeoutMs (-Infinity) for action \"wait_for_selector\" — timeoutMs must be a finite number of milliseconds (NaN and Infinity are rejected, not silently reinterpreted).",
+    "totalMs": 0
+  },
+  {
+    "id": "s1-timeout--Infinity-hidden",
+    "sel": "#never",
+    "success": false,
+    "retriesUsed": 0,
+    "error": "Invalid timeoutMs (-Infinity) for action \"wait_for_selector\" — timeoutMs must be a finite number of milliseconds (NaN and Infinity are rejected, not silently reinterpreted).",
+    "totalMs": 0
+  },
+  {
+    "id": "s1-timeout-2^31-visible",
+    "sel": "#stays",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#stays",
+      "state": "visible"
+    },
+    "totalMs": 3
+  },
+  {
+    "id": "s1-timeout-2^31-attached",
+    "sel": "#stays",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#stays",
+      "state": "attached"
+    },
+    "totalMs": 6
+  },
+  {
+    "id": "s1-timeout-2^31-hidden",
+    "sel": "#nomatch",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#nomatch",
+      "state": "hidden",
+      "matchedAtStart": false
+    },
+    "totalMs": 9
+  },
+  {
+    "id": "s1-timeout-1e308-visible",
+    "sel": "#stays",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#stays",
+      "state": "visible"
+    },
+    "totalMs": 4
+  },
+  {
+    "id": "s1-timeout-1e308-attached",
+    "sel": "#stays",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#stays",
+      "state": "attached"
+    },
+    "totalMs": 4
+  },
+  {
+    "id": "s1-timeout-1e308-hidden",
+    "sel": "#nomatch",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#nomatch",
+      "state": "hidden",
+      "matchedAtStart": false
+    },
+    "totalMs": 8
+  }
+]
