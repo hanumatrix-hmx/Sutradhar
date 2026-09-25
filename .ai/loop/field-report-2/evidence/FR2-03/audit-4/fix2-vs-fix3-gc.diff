@@ -1,0 +1,37 @@
+227a228,252
+>     // GAP-189 (FR2-03 fix-3, structural): a session whose ONLY discovery route was a
+>     // command-line marker read off some OTHER process (`viaMarker`) must NEVER reach the two
+>     // action-producing lines below, no matter what its computed status is. Content read from a
+>     // marker's target is exactly the surface a forged/hijacked marker controls (fake
+>     // `sessionId`/`wsEndpoint` that reads as unreachable, an attacker-chosen `profileDir`
+>     // pointing at someone else's unrelated dir) — audit-3's `gap184-bypass.mjs` used precisely
+>     // this to get a foreign `state.json` cleared (deleting its now-empty parent dir) and an
+>     // unrelated, grace-protected young profile dir queued for deletion, entirely via a plain
+>     // `node` process forging the right command-line substrings. Rather than adding yet another
+>     // "is this marker legitimate" check (fix-2's approach, twice bypassed), the marker path is
+>     // now structurally incapable of ever producing a `clearState`/`deleteDir` action or seeding
+>     // `pendingStaleDirDeletes`: this `continue` is unconditional on `viaMarker`, so there is no
+>     // code path — forged content or not — for a marker-sourced entry to reach the action-
+>     // pushing lines. It can only ever ADD protection (referencedPids/referencedDirs/kept),
+>     // exactly like every other non-actionable status already does. The one cost, accepted
+>     // deliberately: a genuinely stale marker-sourced session (e.g. a real `SUTRADHAR_CLI_STATE_DIR`
+>     // session whose Chrome exited without a clean `close`) no longer self-cleans via this path —
+>     // it stays protected forever rather than risk trusting attacker-shapeable content to decide
+>     // "safe to delete", the same conservative trade-off GAP-185/191 already make elsewhere.
+>     if (s.viaMarker) {
+>       if (s.chromePid != null) referencedPids.add(s.chromePid);
+>       if (s.profileDir) referencedDirs.add(normalizePathForCompare(s.profileDir));
+>       kept.push({ path: s.stateFile, reason: 'unknown-liveness' });
+>       continue;
+>     }
+662a688,692
+>   // GAP-189 (FR2-03 fix-3): `discoveredStateFiles` is passed as `markerStateFiles`, kept
+>   // structurally separate from the trusted `extraStateFiles` list (this process's OWN
+>   // `SUTRADHAR_CLI_STATE_DIR`/`extraStateDirs`, no less trusted than `stateRoot` itself) — see
+>   // `scanStateFiles`'s `viaMarker` tagging and `planGc`'s pass-1 loop, which is the actual
+>   // enforcement point.
+666c696,697
+<     extraStateFiles: [...extraStateDirs.map((d) => path.join(d, 'state.json')), ...discoveredStateFiles],
+---
+>     extraStateFiles: extraStateDirs.map((d) => path.join(d, 'state.json')),
+>     markerStateFiles: discoveredStateFiles,

@@ -1,0 +1,191 @@
+chrome 118604 ws://127.0.0.1:65269/devtools/browser/7acf4805-6b1c-4473-8fd1-18e50be9fc44 waiting 125s so the legacy process is past the 120s grace...
+{
+  "R": "E:\\AI-Cache\\tmp\\fr2-03-a4-legacy-T5ZR0E",
+  "udd": "E:\\AI-Cache\\tmp\\fr2-03-a4-legacy-T5ZR0E\\temp\\sutradhar-cli-1790340837630",
+  "stateFile": "E:\\AI-Cache\\tmp\\fr2-03-a4-legacy-T5ZR0E\\sr\\a1b2c3d4e5f60718\\state.json",
+  "chromePid": 118604,
+  "wsEndpoint": "ws://127.0.0.1:65269/devtools/browser/7acf4805-6b1c-4473-8fd1-18e50be9fc44",
+  "step1_readable": {
+    "sessions": [
+      {
+        "status": "live",
+        "chromePid": 118604
+      }
+    ],
+    "dry": {
+      "actions": [],
+      "kept": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-legacy-T5ZR0E\\sr\\a1b2c3d4e5f60718\\state.json",
+          "reason": "live-session"
+        },
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-legacy-T5ZR0E\\temp\\sutradhar-cli-1790340837630",
+          "reason": "in-use"
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "step2_garbage": {
+    "dry": {
+      "actions": [
+        {
+          "type": "kill",
+          "pid": 118604,
+          "role": "browser",
+          "userDataDir": "E:\\AI-Cache\\tmp\\fr2-03-a4-legacy-T5ZR0E\\temp\\sutradhar-cli-1790340837630",
+          "reason": "legacy-orphan",
+          "result": "planned"
+        },
+        {
+          "type": "kill",
+          "pid": 111768,
+          "role": "child",
+          "reason": "orphan-cli",
+          "result": "planned"
+        },
+        {
+          "type": "kill",
+          "pid": 75832,
+          "role": "child",
+          "reason": "orphan-cli",
+          "result": "planned"
+        },
+        {
+          "type": "kill",
+          "pid": 54936,
+          "role": "child",
+          "reason": "orphan-cli",
+          "result": "planned"
+        },
+        {
+          "type": "kill",
+          "pid": 66028,
+          "role": "child",
+          "reason": "orphan-cli",
+          "result": "planned"
+        },
+        {
+          "type": "kill",
+          "pid": 119508,
+          "role": "child",
+          "reason": "orphan-cli",
+          "result": "planned"
+        },
+        {
+          "type": "kill",
+          "pid": 71796,
+          "role": "child",
+          "reason": "orphan-cli",
+          "result": "planned"
+        },
+        {
+          "type": "kill",
+          "pid": 95464,
+          "role": "child",
+          "reason": "orphan-cli",
+          "result": "planned"
+        },
+        {
+          "type": "deleteDir",
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-legacy-T5ZR0E\\temp\\sutradhar-cli-1790340837630",
+          "reason": "orphan-browser",
+          "result": "planned"
+        }
+      ],
+      "kept": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-legacy-T5ZR0E\\sr\\a1b2c3d4e5f60718\\state.json",
+          "reason": "unreadable-state"
+        }
+      ],
+      "exitCode": 0
+    },
+    "chromeAliveAfterDry": true
+  },
+  "step3_locked_real": {
+    "reachableBefore": true,
+    "real": {
+      "actions": [
+        {
+          "type": "kill",
+          "pid": 118604,
+          "role": "browser",
+          "userDataDir": "E:\\AI-Cache\\tmp\\fr2-03-a4-legacy-T5ZR0E\\temp\\sutradhar-cli-1790340837630",
+          "reason": "legacy-orphan",
+          "result": "killed"
+        },
+        {
+          "type": "kill",
+          "pid": 111768,
+          "role": "child",
+          "reason": "orphan-cli",
+          "result": "killed"
+        },
+        {
+          "type": "kill",
+          "pid": 75832,
+          "role": "child",
+          "reason": "orphan-cli",
+          "result": "killed"
+        },
+        {
+          "type": "kill",
+          "pid": 54936,
+          "role": "child",
+          "reason": "orphan-cli",
+          "result": "killed"
+        },
+        {
+          "type": "kill",
+          "pid": 66028,
+          "role": "child",
+          "reason": "orphan-cli",
+          "result": "killed"
+        },
+        {
+          "type": "kill",
+          "pid": 119508,
+          "role": "child",
+          "reason": "orphan-cli",
+          "result": "killed"
+        },
+        {
+          "type": "kill",
+          "pid": 71796,
+          "role": "child",
+          "reason": "orphan-cli",
+          "result": "killed"
+        },
+        {
+          "type": "kill",
+          "pid": 95464,
+          "role": "child",
+          "reason": "orphan-cli",
+          "result": "killed"
+        },
+        {
+          "type": "deleteDir",
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-legacy-T5ZR0E\\temp\\sutradhar-cli-1790340837630",
+          "reason": "orphan-browser",
+          "result": "deleted",
+          "attempts": 2
+        }
+      ],
+      "kept": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-legacy-T5ZR0E\\sr\\a1b2c3d4e5f60718\\state.json",
+          "reason": "unreadable-state"
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "after": {
+    "chromeAlive": false,
+    "endpointReachable": false,
+    "profileDirExists": false,
+    "stateFileExists": true
+  }
+}

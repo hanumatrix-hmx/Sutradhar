@@ -1,0 +1,26 @@
+PASS A1 two MCP runtime launches -> 2 puppeteer dirs, each with an owner file naming the MCP pid
+PASS A2 (informational, recorded honestly) runtime Chromes surviving kill -9 of the MCP node process: 0 (Windows job object usually takes them down; audit-2 recorded the same)
+PASS G178-0 degraded mode really engaged (processEnumeration.ok === false)
+PASS G178a degraded mode never deletes the unmarked foreign puppeteer dir (dry+real)
+PASS G178b degraded mode keeps the young dir under grace (dry+real)
+PASS G178c degraded probe never removes a lockfile (foreign dir lockfile intact after dry+real)
+PASS G178d degraded mode kills nothing
+PASS G178e degraded dry-run plans no delete of a LIVE session dir
+PASS DW1 real GC exit 0 and the dry-run planned the same browser kills/clears/deletes (child pids excluded: Chrome spawns children dynamically)
+PASS DW2 runtime (MCP) leg: every surviving runtime Chrome killed, both orphaned puppeteer dirs deleted (owner-dead / orphan-browser)
+PASS DW3 stale session 1: state cleared, dir deleted
+PASS G176 orphan session 2 (state wiped): Chrome killed AND its dir reclaimed in the SAME run
+PASS DW4 live sessions 3,4,5 untouched and still usable (eval returns their own title, same chromePid)
+PASS G177 hand-made stale state pointing at LIVE session 4 dir: state cleared, dir NOT deleted
+PASS G175 live SUTRADHAR_CLI_STATE_DIR session (GC run WITHOUT that env) survives: not killed, dir kept, still usable
+PASS DW5 10 old legacy dirs deleted
+PASS DW6 young dir kept (grace)
+PASS DW7 junction kept as symlink, precious target intact
+PASS DW8 corrupt state file kept (unreadable-state), not deleted
+PASS DW9 named-profile stale: state cleared, named profile dir kept
+PASS DW10 foreign unmarked puppeteer dir kept (enumeration ok path)
+PASS DW11 orphan-process count and orphan-dir count both reach 0 (independent observer)
+PASS DW12 a second GC run is a no-op (idempotent)
+PASS G178f degraded REAL run (after main GC): kills nothing, live dirs + young + foreign pup + lockfile intact, live sessions still usable
+PASS DW13 close --all-stale alias works identically (dry-run, nothing to do)
+{"R":"E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC","total":25,"passed":25,"failed":[],"leftoverProcsUnderR":0}

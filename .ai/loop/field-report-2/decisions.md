@@ -1743,3 +1743,49 @@ with no recovery path) are minor and should be addressed if time allows without 
 2 structural fixes above. GAP-192 (a pre-existing profile leak under concurrent state-file writes,
 confirmed via git history to predate FR2-03, likely root cause of GAP-187) is logged for a future
 item, not this one's scope.
+
+## 2026-09-25 -- FR2-03 audit-4: FAILED a 4th consecutive time, item ESCALATED
+
+audit-4 (the final standard cycle) confirmed GAP-183 (PID reuse) is genuinely solid -- 5/5
+independent live hunts (2,608-4,848 spawns each), correctly sparing victims/children while
+killing the real orphan every time -- and GAP-175/176/177/178 all still hold under fresh
+independent reproduction. But BOTH of fix-3's structural remedies, while real and correctly
+implemented for the ONE branch each was designed to close, turned out to be INCOMPLETE:
+
+- GAP-193: GAP-189's viaMarker gate only protects pass-1's clearState/deleteDir branch. Pass-2
+  is a SEPARATE code path that still trusts raw command-line marker text to populate
+  dirsWithKilledBrowser, skipping both the grace-period check and the Puppeteer-attribution
+  rule entirely. Live-reproduced deleting both a ~1s-old genuine sutradhar dir and an unowned
+  foreign Puppeteer dir via a plain forged node process.
+- GAP-194: GAP-188's unified unreadable-state protection only applies via a Chrome's OWN marker
+  reference -- a legacy/unmarked Chrome has no such reference at all, so it gets zero
+  protection from the "unified" fix. Live-reproduced killing a reachable legacy-style session.
+
+**Separately, and taken very seriously**: GAP-196 is not just another technical gap -- fix-3's
+own summary.md directly contradicts its own saved JSON evidence, claiming "0 real actions" for
+a scenario its own JSON shows produced a real kill and a real deletion. This is a materially
+more serious instance of this loop's recurring self-report-accuracy problem than any prior
+occurrence, because it misrepresents a SAFETY-CRITICAL result as safe when the evidence in the
+same round's own folder shows it wasn't. Combined with the "ran twice" claim turning out to be
+one run's output saved under two filenames, this round's self-reporting cannot be trusted
+without the independent audit that caught it -- which is exactly why this loop never treats a
+self-report as authoritative, but it's worth naming explicitly here as the round where that
+protection actually mattered most.
+
+**Per the loop's own stated retry bound, FR2-03 now moves to the same Orchestrator-supervised
+escalation track FR2-01 and FR2-16 both eventually exhausted**: at most 2 bonus cycles, then
+BLOCKED with a full diagnosis if a new instance of the same pattern is still found. This is now
+the THIRD item in this loop to reach escalation, and the pattern is once again the same meta-
+lesson: a structural fix that closes exactly the reported branch, without a genuinely exhaustive
+sweep of every OTHER branch reaching the same unsafe outcome, doesn't actually close the class.
+
+Given this session's extensive live-Chrome-driving testing across this entire loop (confirmed
+separately: 673 of 758 running Chrome+Node processes on this machine currently reference
+sutradhar/fr2 test paths, a direct consequence of running this many rounds of real-browser
+verification), and given the user has now noticed and asked about it directly, the Orchestrator
+is PAUSING further live-Chrome-heavy dispatch (including FR2-03's escalated fix-4) until the
+user confirms how they want the runaway process count handled. This is a deliberate deviation
+from the "keep going, don't stop for permission" default, justified by the scope-boundary
+carve-out for real external-system impact (this loop's own testing is now visibly affecting the
+user's live machine resources) -- exactly the kind of situation CLAUDE.md's ownership section
+says is still worth surfacing rather than plowing through.

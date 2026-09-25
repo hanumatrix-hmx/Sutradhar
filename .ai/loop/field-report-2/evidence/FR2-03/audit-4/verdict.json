@@ -1,0 +1,21 @@
+{
+  "item": "FR2-03",
+  "round": "audit-4",
+  "date": "2026-09-25",
+  "verdict": "FAIL",
+  "summary": "GAP-183 holds (5/5 real reuse hits, 2-hop chains, real non-dry GC). The narrow fix-3 changes are correct in themselves: viaMarker tagging cannot be forged (6 alias forms + a junction all collapse to the trusted entry), and the pass-1 gate is the only action-producing branch for scanned sessions. But neither STRUCTURAL claim holds for the class. (1) GAP-189 class: pass 2 still uses command-line marker TEXT to authorize deletion. A plain node process with --sutradhar-launch plus a dead owner can point --user-data-dir at ANY victim dir, which gets deleted as orphan-browser. That path skips the 120s grace and also bypasses D2 Puppeteer attribution. Live-reproduced: a ~1s-old sutradhar-cli dir and an unowned foreign puppeteer dir were both deleted, and the controls were kept. fix-3's own f3-gap189-final-confirm.json shows this same effect (carrier's 1s-old dir deleted), while fix-3-summary.md claims '0 real actions ... carrier dir still exist'. (2) GAP-188 class: 'unreadable' is unified at scan level, but it only protects a browser downstream through the --sutradhar-state marker link. A legacy (pre-0.5.0, unmarked) CLI Chrome whose state.json is locked or garbled is killed as legacy-orphan and its profile deleted. Live-reproduced with a real, reachable Chrome: exit 0, with the state file reported as 'unreadable-state' kept.",
+  "evidence": {
+    "gap183_region_untouched": "reconstructed-fix2-gc.ts (fix-3's 2 Edit calls reversed out of its transcript) hashes to 9ff05918..., exactly audit-3's recorded fix-2 hash; fix2-vs-fix3-gc.diff shows only the gate hunk (228-252) and the snapshot-call hunk (688-697). process-list.ts was not edited by fix-3.",
+    "gap183_hunt": "a4-ppid-hunt-result.json: 5/5 hits (2608-4848 spawns each), all with verified reuse chains; victim AND its own child spared by a REAL doctor --gc (0/5 planned, 0/5 dead); squatter killed 5/5; positive-control genuine child killed 5/5. Run 1 (a4-ppid-hunt-run1-nohit-*): 0 hits in 40k spawns, a launcher-design artifact explained in a4-launcher.cjs",
+    "gap189_sibling_path": "a4-gap189-sibling-path.json: V1 young cli victim deleted (orphan-browser), V1c control kept grace; V2 unowned puppeteer victim deleted, V2c control kept not-sutradhar",
+    "gap188_sibling_path": "a4-gap188-legacy-sibling.json: readable -> live-session kept; garbage -> dry plans kill legacy-orphan + deleteDir; locked -> REAL run killed Chrome + 7 children, deleted profile, exit 0",
+    "viamarker_tagging": "a4-viamarker-tagging-probe.json",
+    "revert_and_confirm": "a4-revert-and-confirm.json: M1 tagging, M3 gate order, M5 readFile-drop caught (1 failed each); M2 (revert production wiring to fix-2 form) and M4 (drop stat failures) SURVIVE 164/164; sources restored byte-identical",
+    "regressions_175_178": "a4-regressions-summary.json 11/11 (run-1 had 2 environmental failures, explained in a4-regressions-run1-*)",
+    "donewhen": "donewhen-summary.json 25/25 (audit-3's own harness, re-run)",
+    "typecheck": "clean x3",
+    "vitest": "cli 164/164, browser 302/302, mcp-server 84/84",
+    "build": "14/14"
+  },
+  "new_gaps": ["GAP-193", "GAP-194", "GAP-195", "GAP-196", "GAP-197"]
+}
