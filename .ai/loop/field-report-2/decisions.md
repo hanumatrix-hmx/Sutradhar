@@ -626,3 +626,65 @@ in the loop can and should proceed; this item simply cannot start DEVELOP until 
 standalone modules with no dependency on those items (the schema files, the loader, the gate
 collector, the classifier, the field-map normalizer) could in principle be built early, but the
 spec's default is strict sequencing rather than a partial head start.
+
+## 2026-09-25 — FR2-14 spec decisions: config auto-discovery treated as a real attack surface
+
+Spec: `evidence/FR2-14/spec.md` (92KB). First correction: the loop prompt's OWN precedence
+order is "CLI flag > env var > config file > default" -- the original finding restated this
+loosely as "env vars, then the config file, then flags", which is a different and wrong order.
+The spec implements the loop prompt's literal order, not the restatement.
+
+The central finding: auto-discovering a config file by walking up from the current directory is
+itself a security-relevant feature, not just a settings convenience, because an agent regularly
+cd's into directories (cloned repos, project folders) it doesn't fully control. A planted
+.sutradhar.json in such a directory could otherwise redirect the default download location
+somewhere sensitive (a Startup folder, ~/.ssh) or silently switch native dialogs to auto-accept,
+removing an agent's last chance to not confirm something destructive. This is treated with the
+same seriousness as this loop's "never guess" rule elsewhere, not accepted as a convenience
+trade-off.
+
+Adopted as written (full reasoning in the spec's §0.5 and §7.1):
+1. Discovery differs by surface, deliberately: the CLI and MCP always search upward from their
+   process's cwd (well-defined for the CLI; for MCP, made visible via one guaranteed startup log
+   line naming which file loaded or where the search stopped, since an MCP host's cwd isn't
+   always meaningful). The SDK does NOT auto-discover at all by default -- an embedding
+   application's own process cwd is meaningful, but a library silently changing its own sandbox
+   based on ambient files would still be a surprising thing for it to do, matching FR2-05's same
+   stance on env vars. discoverConfig:true opts in explicitly.
+2. The upward search stops at a .git boundary (inclusive) or at the user's home directory
+   (inclusive), and NEVER reads a config placed at a filesystem root. This closes both the
+   "planted file above a shared parent directory" case and the "config leaks across unrelated
+   repositories" case.
+3. Download-related keys from a DISCOVERED (not explicitly-loaded) config are contained: every
+   resolved path must stay inside the config file's own directory and outside any .git folder,
+   using FR2-05's existing symlink-safe canonicalization. A config loaded explicitly via
+   SUTRADHAR_CONFIG is trusted like an env var and skips this containment -- the operator named
+   it on purpose.
+4. A discovered dialog.mode:"accept" is honored, never silently -- every CLI command where it's
+   in effect prints a one-line stderr Note naming the file, and MCP prints an equivalent startup
+   warning. An explicit CLI --dialog flag, or a previously-set sticky flag, still overrides it.
+5. On POSIX, a discovered config file owned by someone other than the current user (or the root
+   user), or writable by group/others, is refused outright -- borrowing git's own "dubious
+   ownership" model. Windows can't check file ownership through Node at all; that gap is
+   documented honestly as a residual, platform-specific risk rather than pretended away.
+6. Unknown keys warn rather than error (per the loop prompt's own explicit instruction), but every
+   warning is surfaced on every single command, not just once, and suggests the likely intended
+   key name -- so a typo in a RESTRICTIVE key (e.g. allowedDomain instead of allowedDomains) is
+   still very hard to miss even though it doesn't hard-fail.
+7. A real bug found and closed in passing: today, an invalid SUTRADHAR_IDLE_TIMEOUT_MS value
+   (e.g. a typo) silently DISABLES the MCP server's idle-session reaper entirely, which is
+   exactly the kind of failure that reaper exists to prevent. It now fails MCP startup loudly
+   instead.
+8. Merge conflicts, precedence rules and layer-collapse rules cross-reference FR2-03/04/05's
+   EXACT field names and shapes as already specified (DialogPolicy, resolveFsRoots's config
+   layer, etc.) rather than approximating them, since none of those three items has landed yet
+   either -- this is now the fourth spec in a row built entirely on top of other still-unbuilt
+   specs' documented shapes.
+
+One amendment proposed to FR2-04 (not yet built): --dialog report should PERSIST that choice in
+CliState explicitly, rather than clearing it as FR2-04 originally specified -- otherwise a
+config-file dialog policy could silently reassert itself after a user explicitly asked for
+"report" (no auto-handling) on an earlier command. Recorded as a spec amendment for whoever
+develops FR2-04, not a silent contradiction between the two documents.
+
+Sequencing: builds on FR2-03/04/05 (soft-to-hard depending on the key), all still SPEC status.

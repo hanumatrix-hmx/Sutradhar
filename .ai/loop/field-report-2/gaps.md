@@ -75,5 +75,9 @@
 | GAP-074 | FR2-13 (planning) | minor idea | No SDK runScenario() -- the executor takes an injected runtime port specifically so this could be added later without moving code, but isn't built now. | TODO | - |
 | GAP-075 | FR2-13 (planning) | minor | No opt-in strict-verification mode for scenarios (failing the whole run on any contradicted-but-unrequested verification, rather than only surfacing it as a warning). | TODO | - |
 | GAP-076 | FR2-13 (planning) | minor | sutradhar run doesn't support --profile (named persistent browser profiles) -- every run gets a fresh throwaway browser. | TODO | - |
+| GAP-077 | FR2-14 (planning) | minor | No Windows ACL/ownership check exists for a discovered (auto-found) config file, unlike the POSIX uid/mode check -- Node has no built-in way to read Windows file ownership. Documented as a residual, platform-specific risk rather than built. | TODO | - |
+| GAP-078 | FR2-14 (planning) | minor | No user-level config layer exists for directories that ARE inside a git repository -- ~/.sutradhar.json is only ever reached from directories that are NOT inside any repo, because the .git boundary stops the upward search first. | TODO | - |
+| GAP-079 | FR2-14 (planning) | minor | restrictNavigationToLocal, headless and userAgent are not yet config-file keys in v1 -- setting them in .sutradhar.json produces only the generic unknown-key warning. | TODO | - |
+| GAP-080 | FR2-14 (planning) | minor | The new project-config JSON Schema isn't shipped inside the published npm tarball either (same issue as GAP-065 for the audit-report schema) -- an editor can't resolve the $schema URL from a plain npm install. | TODO | - |
 
 (Further entries populated as Auditors report gaps during the loop.)
