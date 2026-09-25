@@ -13,7 +13,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 | FR2-07 | Unified verification contract | 2 | SPEC (needs FR2-05 + FR2-06 DONE; DEVELOP after FR2-06) | 0 | evidence/FR2-07/spec.md | - |
 | FR2-08 | Condition waits + settle everywhere | 2 | SPEC (needs FR2-07 DONE; DEVELOP after FR2-07) | 0 | evidence/FR2-08/spec.md | - |
 | FR2-09 | Snapshot frame/shadow labels | 2 | SPEC (no hard precondition; default merge after FR2-08) | 0 | evidence/FR2-09/spec.md | - |
-| FR2-10 | MCP optional sessionId | 2 | TODO | 0 | - | - |
+| FR2-10 | MCP optional sessionId | 2 | SPEC (no hard precondition; MCP-only; default merge after FR2-09) | 0 | evidence/FR2-10/spec.md | - |
 | FR2-11 | Full action history | 3 | TODO | 0 | - | - |
 | FR2-12 | Machine-readable audit | 3 | TODO | 0 | - | - |
 | FR2-13 | `sutradhar run` scenario runner | 3 | TODO | 0 | - | - |

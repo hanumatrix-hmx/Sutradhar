@@ -410,3 +410,38 @@ Adopted as written (full reasoning in the spec's §0.1):
 Sequencing: no hard precondition; file overlap with prior items is minimal. Default merge order
 is after FR2-08, but a parallel worktree Executor is acceptable if the Orchestrator wants to
 develop it alongside another item.
+
+## 2026-09-25 — FR2-10 spec decisions (from the Planner)
+
+Spec: `evidence/FR2-10/spec.md` (62KB). No hard precondition. This item turns out to be MCP-only
+by design -- the CLI and SDK already carry a concrete session id everywhere, so there's no
+"omitted id" case for either of them to resolve.
+
+Adopted as written (full reasoning in the spec's §0.1):
+1. One shared mechanism at MCP tool-registration time, not a per-tool check copy-pasted onto ~66
+   handlers. A required sessionId schema gets rewritten to optional automatically when a tool is
+   registered; everything else passes through untouched by reference, so browser.launch,
+   browser.attach, browser.health, browser.shutdown_all and agent.runGoal are provably unaffected.
+2. "Live" for this purpose deliberately does NOT reuse FR2-03's CLI liveness probe. The CLI has to
+   probe because its Chrome is detached across separate processes with nobody watching it; the
+   MCP server IS the owner of its browser connection, so its own in-memory session registry is
+   already a maintained, real-time liveness signal -- no network round-trip needed to answer
+   "which sessions exist right now".
+3. Only sessions the caller could plausibly hold an id for are candidates. Traced a real edge case
+   from this: agent.runGoal creates its own short-lived session in the same manager when called
+   with no sessionId, and that session must NEVER be picked when some other tool's sessionId is
+   omitted, because the caller was never handed its id. A separate tracked set enforces this.
+4. While a launch, attach or shutdown call is still running, an omitted-id call is refused rather
+   than guessed at -- the traced race is real: the MCP protocol dispatches tool calls without
+   awaiting them, so a client really can send two calls that overlap in-flight.
+5. When the id was picked automatically, the result says which one was used, appended as an extra
+   line, never replacing the original result content -- so the choice is always auditable, and
+   the one irreducible risk (the caller's own picture of "the" session is stale because a prior
+   session quietly idle-timed-out) is at least visible after the fact.
+6. Distinguishes clearly: browser.launch/attach's OWN optional sessionId already means something
+   different ("the id to create or reuse under") from what this item adds to every OTHER tool
+   ("resolve to whichever existing session is live"). The two are not the same feature and the
+   spec is explicit that launch/attach must never be touched by this change.
+
+Sequencing: no hard precondition; default merge after FR2-09. Tools added by later items (FR2-08's
+wait_for, FR2-12's audit) are covered automatically since the mechanism runs at registration time.
