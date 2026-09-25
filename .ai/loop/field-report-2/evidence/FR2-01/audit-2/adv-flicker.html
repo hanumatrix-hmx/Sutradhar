@@ -1,0 +1,11 @@
+<!doctype html><html><body>
+<div id="blink" style="display:none">blink (visible ~30ms every 1000ms)</div>
+<div id="wink">wink (hidden ~30ms every 1000ms)</div>
+<div id="stays">stays</div>
+<script>
+window.__fx = { events: [] };
+const rec = (id, what) => window.__fx.events.push({ id, what, at: Date.now() });
+window.__fx.startBlink = (ms) => setInterval(() => { const b = document.getElementById('blink'); b.style.display = 'block'; rec('blink','on'); setTimeout(() => { b.style.display = 'none'; rec('blink','off'); }, ms); }, 1000);
+window.__fx.startWink = (ms) => setInterval(() => { const w = document.getElementById('wink'); w.style.display = 'none'; rec('wink','off'); setTimeout(() => { w.style.display = 'block'; rec('wink','on'); }, ms); }, 1000);
+window.__fx.busy = (ms) => { const t = Date.now(); while (Date.now() - t < ms) {} };
+</script></body></html>

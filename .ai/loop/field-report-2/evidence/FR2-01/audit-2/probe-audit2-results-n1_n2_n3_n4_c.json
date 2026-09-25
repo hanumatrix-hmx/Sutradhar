@@ -1,0 +1,107 @@
+[
+  {
+    "id": "n1-bg-visible-navigate-away-to-page-with-element",
+    "visibilityState": "hidden",
+    "success": true,
+    "retriesUsed": 0,
+    "totalMs": 889,
+    "timeoutsBefore": 0,
+    "timeoutsAfter": 1
+  },
+  {
+    "id": "n2-bg-hidden-navigate-away",
+    "visibilityState": "hidden",
+    "success": true,
+    "output": {
+      "foundSelector": "#stays",
+      "state": "hidden",
+      "matchedAtStart": true
+    },
+    "totalMs": 879
+  },
+  {
+    "id": "n3-bg-visible-tab-closed-mid-wait",
+    "visibilityState": "hidden",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "wait_for_selector timed out after 5000ms waiting for state=visible: No element found for selector: #never",
+    "totalMs": 16530,
+    "timeoutsBefore": 3,
+    "timeoutsAtReturn": 3,
+    "timeouts3sLater": 0
+  },
+  {
+    "id": "n4-bg-hidden-tab-closed-mid-wait",
+    "success": true,
+    "output": {
+      "foundSelector": "#stays",
+      "state": "hidden",
+      "matchedAtStart": true
+    },
+    "retriesUsed": 0,
+    "totalMs": 868
+  },
+  {
+    "id": "c1-two-tabs-concurrent-visible",
+    "visA": "hidden",
+    "visE": "visible",
+    "a": {
+      "success": true,
+      "retries": 0,
+      "doneAt": 1108,
+      "latency": 97
+    },
+    "e": {
+      "success": true,
+      "retries": 0,
+      "doneAt": 1544,
+      "latency": 34
+    }
+  },
+  {
+    "id": "c2-same-tab-three-concurrent",
+    "results": [
+      {
+        "success": true,
+        "doneAt": 1104,
+        "retries": 0
+      },
+      {
+        "success": true,
+        "doneAt": 1329,
+        "retries": 0
+      },
+      {
+        "success": true,
+        "doneAt": 1330,
+        "retries": 0
+      }
+    ]
+  },
+  {
+    "id": "c3-six-waits-three-tabs",
+    "wallMs": 11514,
+    "successes": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      true
+    ],
+    "errs": [
+      "wait_for_selector timed out after 400ms waiting for state=visible: No element fo",
+      "wait_for_selector timed out after 400ms waiting for state=hidden: an element mat",
+      "wait_for_selector timed out after 400ms waiting for state=visible: No element fo",
+      "wait_for_selector timed out after 400ms waiting for state=hidden: an element mat",
+      "wait_for_selector timed out after 400ms waiting for state=visible: No element fo",
+      null
+    ]
+  },
+  {
+    "id": "final-resource-check",
+    "timeoutsNow": 1,
+    "timeoutsAfter2500ms": 0,
+    "unhandledRejections": []
+  }
+]

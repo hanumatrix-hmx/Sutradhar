@@ -297,3 +297,34 @@ Adopted as written (full reasoning in the spec's §0.6):
 Sequencing: DEVELOP runs after FR2-06 (last in the merge order for shared files), no parallel
 Executor — the touched files (execution-verifier.ts, action-types.ts, browser-action-engine.ts,
 runtime.ts, tools.ts) overlap every prior item in this loop.
+
+## 2026-09-25 — FR2-01 audit-2: found real gaps, plus a process violation
+
+audit-2 (a fresh Auditor) found the fix-1 round was NOT clean: 2 major gaps (GAP-030, a busy
+cross-origin iframe stalls detecting an already-visible main-frame element; GAP-031, a hidden
+wait can falsely report success if the tab closes mid-wait) and 6 minor ones (GAP-032..036, plus
+this entry). FR2-01 moves to FIX(2), not DONE. Full detail in gaps.md.
+
+**Process issue, worth a standing rule.** The fix-1 Executor overwrote three of audit-1's own
+result files in place (`evidence/FR2-01/audit-1/adv-gap003-singleframe-results.json`,
+`adv-gap003-sdk-falsefail-results.json`, `adv-misc-results.json`) with post-fix passing data,
+destroying the record of what audit-1 actually observed. The original failing evidence now only
+exists by checking out commit 049a899. audit-2 caught this by diffing, but it shouldn't have had
+to.
+
+**Standing rule for the rest of this loop:** an Executor's own evidence directory
+(`evidence/&lt;item&gt;/fix-N/`, `.../audit-N/`) is that round's own to write. It must never
+overwrite a PRIOR round's directory (`audit-1/`, `fix-1/`, etc.) for the same item. Rerunning a
+prior round's repro script to confirm a fix is fine and expected — but the output goes into the
+CURRENT round's own directory, never back into the old one. This is now added to the standing
+Executor brief template for every remaining item's fix cycles.
+
+Also recorded from audit-2, not yet actioned: the UC-04/UC-08 scenario-suite flakiness is
+confirmed unrelated to FR2-01 (real external site timing, not a regression) — the Executor's
+claim held up under independent re-checking. And the earlier finding that FR2-01's own original
+"42/42 passing" claim rested on a broken file:// URL comparison (so the harness had no actual
+page-identity check) is confirmed not to have produced any false PASS in that run — every
+assertion still needed a real effect on whichever page was actually being observed — but it
+is a reminder that an N/N pass count is only as strong as the harness's own identity/ground-truth
+checks, not just its pass/fail tally. Keep this in mind reviewing any future "N/N passing" claim
+in this loop.
