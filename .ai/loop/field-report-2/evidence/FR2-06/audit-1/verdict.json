@@ -1,0 +1,34 @@
+{
+  "item": "FR2-06",
+  "audit": "audit-1",
+  "verdict": "FAIL",
+  "defects": [
+    {
+      "id": "D-1",
+      "severity": "moderate (the item's own product is the coaching text)",
+      "where": "packages/browser/src/actions/selector-dialect.ts engineReason()",
+      "what": "engineReason() receives the regex match INCLUDING '=' (e.g. 'xpath=') and appends another '=' / '/'. Live output: 'xpath=//button' => '\"xpath==\" is not supported; use the slash form \"xpath=/\".' (same for aria=, pierce=; id=/data-testid= get '\"id==\"'). Spec §2.1 exact text is '\"xpath=\" is not supported; use the slash form \"xpath/\".' The advised 'xpath=/' is itself rejected. No unit test pins these reasons (mutation M5 survives).",
+      "evidence": ["engine-prefix-reason-text.txt", "audit-runtime-cases.json (Q7 xpath=//button)", "mutation-results.json M5"]
+    },
+    {
+      "id": "D-2",
+      "severity": "minor-moderate (undisclosed spec deviation + test encodes the deviation)",
+      "where": "packages/capability-runtime/src/runtime.ts resolveFrame(); runtime.spec.ts R7",
+      "what": "Spec §2.4 requires every frame hop normalized UP FRONT (\"a bad second hop costs no first-hop round trip\") and spec R7 requires page.$ never called, not even for the first hop. Implementation normalizes inside the loop; the Executor's R7 asserts the opposite (outerDollarMock toHaveBeenCalledTimes(1)). Live: eval(frameSelector 'iframe#f::role=frame') sends 13 CDP messages before rejecting; 'iframe#missing::role=frame' returns 'No element matched frameSelector \"iframe#missing\"' and never coaches about role=.",
+      "evidence": ["audit-runtime-cases.json Q1c, Q1d"]
+    }
+  ],
+  "confirmed": [
+    "vitest browser 412/412, capability-runtime 157/157, cli 177/177, mcp-server 88/88",
+    "tsc build clean: contracts, utils, capability, browser, capability-runtime, mcp-server, cli; bundle rebuilt clean",
+    "Q1: 578 Playwright-selector calls across 17 runtime entry points => 0 CDP messages sent (WebSocket-layer tap), max 0.34 ms",
+    "Q2: busy-main-thread proof with control (control wait blocked 2847 ms; Playwright rejections 0 ms)",
+    "MCP: 17 tool calls with Playwright selectors => 0 CDP / 0 HTTP from inside the MCP child (preload tracer; control click traced 26 CDP sends)",
+    "Invalid CSS/XPath => exactly one Runtime.callFunctionOn(selectorSyntaxProbeInPage), retriesUsed 0, detail == observer's own parser text",
+    "extract: 5 Playwright fields of 5 different rules all named, hint once, 0 CDP",
+    "CLI: 13 commands with Playwright selectors => exit 1, 0 spawn/connect/CDP, state.json byte+mtime identical, Chrome alive; no-session case never spawns",
+    "FR2-02 regression 61/61; FR2-01 regression 48/48 with 0 leaked processes (could not reproduce the Executor's 32-process leak)",
+    "FR2-02 test-wording edit: necessary (spec §2.1 rewords the hint) and minimal (one assertion + comment)",
+    "14 of 17 mutations killed; the 3 survivors were predicted (M5 reason text, M11 P10 tests a different throw, M16 cli.ts wiring has no unit test but is covered live)"
+  ]
+}

@@ -1,0 +1,21 @@
+[
+  {
+    "case": "bundle-playwright",
+    "ms": 1,
+    "pass": true,
+    "text": "click failed: Invalid selector \"text=Submit\" — \"text=\" is Playwright selector-engine syntax (Puppeteer's own text query "
+  },
+  {
+    "case": "bundle-invalid-css-probe-serialized",
+    "ms": 3,
+    "retriesUsed": 0,
+    "err": "Invalid selector \"div[\" — Failed to execute 'querySelector' on 'DocumentFragment': 'div[' is not a valid selector. Use standard CSS or a sna",
+    "pass": true
+  },
+  {
+    "case": "bundle-xpath-prefix-click",
+    "success": true,
+    "last": "plain-btn",
+    "pass": true
+  }
+]

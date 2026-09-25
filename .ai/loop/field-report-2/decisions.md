@@ -1879,3 +1879,37 @@ separately-scoped item rather than waiting for the whole GC feature to be redesi
 (FR2-02, FR2-09, FR2-10). The remaining 11 items are still at SPEC, several genuinely blocked
 by dependency chains on FR2-01's now-permanent block (needing a future Orchestrator decision on
 how to proceed), others independently developable.
+
+## 2026-09-26 -- FR2-06 audit-1: FAILED -- self-contradictory coaching text, plus a test written to match a real deviation instead of catch it
+
+The independent Auditor confirmed the item's core guarantees hold up under real, rigorous
+verification: zero CDP round-trips for a rejected Playwright selector (traced at the WebSocket
+layer across 578 runtime calls + 17 MCP tools, not just measured by timing), multi-field error
+collection in extract_data (5 different Playwright fields all named in one error), CLI
+pre-session validation genuinely running before any Chrome spawn (traced across 13 commands,
+0 spawns/connects/CDP messages), and the prefix/dialect detection rules matching spec exactly
+across 43 of the auditor's own near-miss test selectors.
+
+Two real defects found: GAP-205 -- the coaching message for `=`-suffixed prefixes (xpath=,
+aria=, pierce=, id=, data-testid=) doubles the equals sign, producing advice like 'use the slash
+form "xpath=/"' that would ITSELF be rejected by the same detector. This is the item's own
+product failing at exactly the thing it exists to do (give correct guidance) -- ironic and
+worth fixing carefully. GAP-206 -- `resolveFrame` doesn't check every hop of a multi-hop
+`frameSelector` chain up front as spec section 2.4 explicitly requires; more seriously, the
+Executor's own test for this (R7) was written to ASSERT the deviation (the mock IS called once)
+rather than the spec's actual requirement (never called) -- a test that encodes a known bug as
+expected behavior rather than catching it. This is a new variant of this loop's recurring
+"test doesn't test what it claims" pattern: not a hollow test this time, but a test that
+correctly executes and passes while asserting the wrong thing entirely.
+
+7 more minor/process gaps logged (GAP-207-213), including GAP-211 (a process note: FR2-06
+shares 2 files with FR2-03's still-uncommitted, now-BLOCKED code -- the eventual commit must
+stage only FR2-06's specific hunks).
+
+fix-1 scope: (1) fix GAP-205's message construction (strip the trailing '=' from the regex
+match before building the advice string, matching spec section 2.1's exact text), and add unit
+tests that pin every reason string so this can't silently regress; (2) fix GAP-206 -- make
+`resolveFrame` check every hop of a frameSelector chain before any browser call, matching the
+CLI's own already-correct `validateFrameChain` pattern, and REWRITE R7 to assert the correct
+(spec-compliant) behavior rather than the deviation. GAP-207/208/209/210/212/213 are minor;
+address opportunistically if time allows without destabilizing the two required fixes.
