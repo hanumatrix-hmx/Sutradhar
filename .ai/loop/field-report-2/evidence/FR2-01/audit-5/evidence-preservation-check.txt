@@ -1,0 +1,46 @@
+# git show --name-status 8b8e3a5
+M	.ai/loop/field-report-2/decisions.md
+A	.ai/loop/field-report-2/evidence/FR2-01/fix-4/inventory.md
+A	.ai/loop/field-report-2/evidence/FR2-01/fix-4/live-cli.jsonl
+A	.ai/loop/field-report-2/evidence/FR2-01/fix-4/live-mcp.jsonl
+A	.ai/loop/field-report-2/evidence/FR2-01/fix-4/live-sdk.jsonl
+A	.ai/loop/field-report-2/evidence/FR2-01/fix-4/live-summary.json
+A	.ai/loop/field-report-2/evidence/FR2-01/fix-4/mutate.cjs
+M	.ai/loop/field-report-2/gaps.md
+M	.ai/loop/field-report-2/ledger.md
+M	packages/browser/src/actions/browser-action-engine.ts
+M	packages/browser/tests/unit/browser-action-engine.spec.ts
+
+# files under FR2-01/{audit-1..4,fix-1..3} or top-level FR2-01 evidence touched by 8b8e3a5:
+(none)
+
+# diff of 80636b8..8b8e3a5 for those dirs:
+ .../FR2-01/audit-4/live-verify/live-cli.jsonl      |  12 +
+ .../FR2-01/audit-4/live-verify/live-mcp.jsonl      |  28 +
+ .../FR2-01/audit-4/live-verify/live-sdk.jsonl      |   8 +
+ .../FR2-01/audit-4/live-verify/live-summary.json   |  35 ++
+ .../evidence/FR2-01/audit-4/mutate.cjs             |  31 +
+ .../FR2-01/audit-4/probe-a3-results-c1_b1_d4.json  | 130 ++++
+ .../FR2-01/audit-4/probe-a3-results-v1_v2_r1.json  |  66 ++
+ .../evidence/FR2-01/audit-4/probe-a3.mjs           | 302 +++++++++
+ .../FR2-01/audit-4/probe-a4-mock-results.json      |  87 +++
+ .../evidence/FR2-01/audit-4/probe-a4-mock.mjs      |  77 +++
+ .../FR2-01/audit-4/probe-a4-results-b_v.json       | 185 ++++++
+ .../FR2-01/audit-4/probe-a4-results-p_d.json       |  55 ++
+ .../FR2-01/audit-4/probe-a4-results-s5.json        |  37 ++
+ .../FR2-01/audit-4/probe-a4-results-s_l.json       |  67 ++
+ .../FR2-01/audit-4/probe-a4-tabclose-results.json  | 350 +++++++++++
+ .../evidence/FR2-01/audit-4/probe-a4-tabclose.mjs  |  51 ++
+ .../evidence/FR2-01/audit-4/probe-a4.mjs           | 213 +++++++
+ .../FR2-01/audit-4/probe-audit2-results-n4_c.json  |  72 +++
+ .../evidence/FR2-01/audit-4/probe-audit2.mjs       | 201 ++++++
+ .../FR2-01/audit-4/probe-busy-oopif-results.json   |  30 +
+ .../evidence/FR2-01/audit-4/probe-busy-oopif.mjs   |  48 ++
+ .../FR2-01/audit-4/scenario-gate/ci-gate.mjs       |  57 ++
+ .../scenario-gate/results/baseline-cli.json        | 259 ++++++++
+ .../scenario-gate/results/baseline-mcp.json        | 360 +++++++++++
+ .../scenario-gate/results/baseline-sdk.json        | 685 +++++++++++++++++++++
+ .../FR2-01/audit-4/scenario-gate/timing.txt        |   6 +
+ 26 files changed, 3452 insertions(+)
+(the audit-4 files above were added by audit-4's own commit e0f5d2f, which lies inside this range; 8b8e3a5 itself touched none -- see name-status above)
+# commits after 8b8e3a5 touching FR2-01 evidence:

@@ -875,3 +875,47 @@ includes them; this is intentional going forward, not an oversight to fix per-it
 
 FR2-16 moves to FIX(2). Not an escalation (this is a normal fix cycle after a normal audit-1
 FAIL, only FR2-01 is in the escalation track).
+
+## 2026-09-25 -- FR2-01 audit-5: FAILED -- engine fix confirmed correct, but pattern survives one layer up. FINAL escalation cycle (2/2) now in progress.
+
+A fresh, independent Opus Auditor re-ran everything from fix-4 (tsc, vitest 405/405, build,
+two live-Chrome runs, 4 reproduced mutations + 3 of its own) and CONFIRMED the core engine-level
+tri-state fix is real: isHandleVisible, waitForHiddenInAllFrames, diagnoseSelectorVisibility's
+per-frame timeout handling, countOtherVisibleMatches' timeout handling, and the 9th
+checkWaitForSelectorOnce site all now correctly distinguish confirmed-no from unknown WITHIN
+browser-action-engine.ts, as fix-4 claimed. GAP-081..088 (+099) are marked CONFIRMED FIXED.
+
+But the auditor found the SAME shape of bug in three places fix-4's inventory never reached,
+because that inventory was scoped only to browser-action-engine.ts and never traced up through
+the layers that consume its output:
+1. GAP-111 (major): packages/mcp-server/src/tools.ts:49's hint-matching rule appends "Hint: The
+   element is still visible." to ANY error containing "waiting for state=hidden" -- including
+   fix-4's own new, honest "could not verify: one or more frames were unresponsive" message. The
+   MCP layer directly contradicts the engine layer's now-correct uncertainty.
+2. GAP-112 (major): diagnoseSelectorVisibility swallows a per-frame error into null, and the
+   caller renders that as "No element found for selector" for an element that DEMONSTRABLY
+   EXISTS (live-reproduced). This is the exact same "error must default to unknown" rule fix-4
+   applied correctly elsewhere in the same file, just not here -- despite fix-4's own inventory
+   calling this function's behavior "unsafe" in its own notes without following through on the
+   fix.
+3. GAP-113 (major): countOtherVisibleMatches treats a per-frame THROWN ERROR (as opposed to a
+   timeout, which fix-4 did fix) as a confirmed zero, silently dropping the otherVisibleMatches
+   advisory with false confidence.
+
+Plus 3 more minor gaps (GAP-114 overly-broad fatal-error classification on frame detach;
+GAP-115 missing test coverage for the attached-state mutation; GAP-116 process gap in fix-4's own
+inventory methodology) and one loop-wide process note (GAP-117: .gitignore's blanket *.log rule
+means no round's raw command-output evidence is ever actually committed to git, only described
+in reports -- a standing convention gap worth a future decision, not specific to this item).
+
+**This consumes escalation bonus cycle 2 of 2 -- the loop's own final allowed cycle for this
+item (§9).** Per the loop's stated bound, if THIS cycle still finds a new instance of the
+timeout/error-as-false-boolean pattern anywhere in the wait_for_selector path (engine through
+MCP/CLI/SDK), FR2-01 must be marked BLOCKED with a full written diagnosis, and the loop moves on
+to other items rather than issuing a 6th open-ended attempt. The audit's own recommendation, which
+this dispatch adopts directly: the fix is narrow (stop the MCP hint rule from firing on a
+"could not verify" message; apply the SAME unknown-not-no-match discipline to
+diagnoseSelectorVisibility's and countOtherVisibleMatches' per-frame ERROR paths, matching what
+fix-4 already did for their TIMEOUT paths), and the next inventory must explicitly trace from the
+MCP/CLI/SDK surfaces DOWN through the engine, not stop at the engine file boundary the way fix-4's
+did.

@@ -4,7 +4,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 
 | id | title | phase | status | attempts | last evidence | commit |
 |---|---|---|---|---|---|---|
-| FR2-01 | wait_for_selector visibility states | 1 | AUDIT(5) [ESCALATED bonus cycle 1/2 complete, awaiting final independent audit] | 8 | fix-4: 8 named gaps + 1 newly-found 9th site all fixed via one shared tri-state mechanism (HandleVisibilityVerdict + raceBounded), each with unit test + mutation proof; 404/404 vitest, 5/5 clean tsc, 48/48 then 47/48 (1 unrelated OS file-lock flake) live-verify; awaiting audit-5 | (fix-4 commit pending) |
+| FR2-01 | wait_for_selector visibility states | 1 | FIX(5) [ESCALATED: Orchestrator-supervised bonus cycle 2/2 -- FINAL allowed cycle] | 9 | audit-5 FAILED fix-4: engine-level tri-state fix confirmed correct, but the SAME pattern survives one layer up in 3 places (MCP hint text, diagnoseSelectorVisibility, countOtherVisibleMatches) that fix-4's inventory never traced to; if this cycle still finds a new instance of the same shape, FR2-01 must be marked BLOCKED with a full diagnosis per the loop's own stated bound | 8b8e3a5 |
 | FR2-02 | extract_data reads live values | 1 | SPEC (waits for FR2-01 audit; shared files) | 0 | evidence/FR2-02/spec.md | - |
 | FR2-03 | Session/profile GC | 1 | SPEC (waits for FR2-01 DONE) | 0 | evidence/FR2-03/spec.md | - |
 | FR2-04 | CLI dialog handling | 1 | SPEC (Step-1 experiment runs after FR2-01 FIX(1); DEVELOP after FR2-03) | 0 | evidence/FR2-04/spec.md | - |

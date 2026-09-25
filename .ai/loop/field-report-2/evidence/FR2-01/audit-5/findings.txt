@@ -1,0 +1,32 @@
+FR2-01 audit-5 -- verdict: FAIL (same shape found in 3 more places in the wait_for_selector call graph, all live-reproduced)
+Raw evidence in this dir (NOTE: *.log is gitignored repo-wide; probe-a5-results.json / mutation outcomes below are the committable copies).
+
+Re-run (fresh, not cited): tsc exit 0 x5 (browser, capability-runtime, cli, mcp-server, sutradhar); vitest 224+92+45+29+15 = 405 pass
+(count includes concurrent FR2-16 uncommitted test changes); pnpm build exit 0.
+Live-verify: run1 48/48 cases PASS, overallOk:false only from 8 lingering Chrome procs of a PRE-EXISTING leaked CLI profile
+(sutradhar-cli-1790305414309, predates this audit; FR2-03). run2 INVALID: concurrent FR2-16 agent's rebuild deleted packages/*/dist
+mid-run (ERR_MODULE_NOT_FOUND). run3 (after dist restored) 48/48 PASS, same pre-existing leak. Crashpad EBUSY flake: NOT reproduced.
+
+Mutations (8 applied, each reverted by byte-exact backup; sha256 before==after 4004b995...):
+ M1 fails GAP-084 visible timing test (1042ms vs <900) | M4 fails GAP-081a+b | M7 fails GAP-085 | M2 fails GAP-081a+GAP-086
+ X2 (isHiddenInEveryFrame ignores visibility 'unknown') fails 081a+086 | X3 (fatal->not-visible) fails 081a | X4 (timeout->not-visible) fails 086
+ X1 (firstAnyHandleAnyFrame back to SEQUENTIAL) -> 141/141 PASS: attached half of GAP-084 has no guarding test.
+
+Live adversarial probe (probe-a5.mjs, via the real MCP server over stdio, --site-per-process OOPIF on a different site):
+ A1 hidden wait + check-once, element genuinely hidden, unrelated OOPIF busy: engine says "could not verify: one or more frames were
+    unresponsive" but MCP output appends "Hint: The element is still visible." -> tri-state re-collapsed at the final user-facing hop.
+    Source: packages/mcp-server/src/tools.ts:49 (ERROR_HINTS 'waiting for state=hidden').
+ A2 visible wait + check-once, element PRESENT (attached check-once succeeds), page's getComputedStyle throws for it:
+    "No element found for selector: #present". Chain: isHandleVisible unrecognized error -> 'unknown' (ok) -> but
+    diagnoseSelectorVisibility per-frame .catch(() => null) (browser-action-engine.ts:1991) -> null (:2007) -> describeMissingElement (:2085).
+ A3 hidden wait on .dup (first hidden, second VISIBLE), $$eval errors on second: success with neither otherVisibleMatches nor
+    otherVisibleMatchesUnknown (control page without the error reports otherVisibleMatches:1).
+    Source: countOtherVisibleMatches .catch(() => null) (browser-action-engine.ts:1901) -> 0, unconfirmed:false.
+ A4 frame churn (OOPIF replaced every 15ms), target visible in MAIN frame: 0/30 false hidden successes (good), but 17/30 waits fail
+    hard with raw "Protocol error ... Target closed" / "Session closed. Most likely the iframe has been closed": an iframe detaching
+    is classified FATAL by isFatalFrameCheckError (:1580) and aborts the whole wait. (#inframe sub-check discarded: the iframe never
+    loads within 15ms so its truth is unknown -- not counted as a finding.)
+ A5 tab closed mid attached-wait: raw "Attempted to use detached Frame" error, no false "No element found" -- no finding.
+ A6 visible timeout, present-but-hidden element, busy OOPIF: correct "attached ... but none is visible" -- no finding.
+
+Evidence preservation: 8b8e3a5 touched only fix-4/ files + decisions/gaps/ledger + engine + spec; no audit-1..4 / fix-1..3 files.
