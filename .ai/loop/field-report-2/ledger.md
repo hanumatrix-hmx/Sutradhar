@@ -4,7 +4,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 
 | id | title | phase | status | attempts | last evidence | commit |
 |---|---|---|---|---|---|---|
-| FR2-01 | wait_for_selector visibility states | 1 | AUDIT(4) | 6 | fix-3: root-caused via shared tri-state probe result (match/no-match/unknown), all 5 gaps + underlying pattern fixed; awaiting audit-4 | (uncommitted fix-3, commit pending) |
+| FR2-01 | wait_for_selector visibility states | 1 | FIX(4) [ESCALATED: Orchestrator-supervised bonus cycle 1/2] | 7 | audit-4: same root-cause pattern found in 3 MORE adjacent functions (GAP-081..083 major) fix-3 didn't touch, + GAP-059 claim false for visible-state path; NOT DONE | 80636b8 |
 | FR2-02 | extract_data reads live values | 1 | SPEC (waits for FR2-01 audit; shared files) | 0 | evidence/FR2-02/spec.md | - |
 | FR2-03 | Session/profile GC | 1 | SPEC (waits for FR2-01 DONE) | 0 | evidence/FR2-03/spec.md | - |
 | FR2-04 | CLI dialog handling | 1 | SPEC (Step-1 experiment runs after FR2-01 FIX(1); DEVELOP after FR2-03) | 0 | evidence/FR2-04/spec.md | - |

@@ -688,3 +688,45 @@ config-file dialog policy could silently reassert itself after a user explicitly
 develops FR2-04, not a silent contradiction between the two documents.
 
 Sequencing: builds on FR2-03/04/05 (soft-to-hard depending on the key), all still SPEC status.
+
+## 2026-09-25 — FR2-01 audit-4: ESCALATION. Same root-cause pattern found in 3 more functions
+
+audit-4 confirms fix-3's claim was false: "a timeout can no longer be silently read as a
+definitive yes or no anywhere in this code" doesn't hold. The pattern (a probe that errors or
+times out gets collapsed into a definite negative answer) exists in at least three more
+functions fix-3 never touched: isHandleVisible (catches every error including tab-closed and
+returns "not visible"), diagnoseSelectorVisibility (a timeout becomes "No element found", the
+exact GAP-009 symptom), and countOtherVisibleMatches (a timeout silently drops its warning).
+It also found that GAP-059's claimed fix only applies to the hidden-state code path -- the
+visible/attached-state frame probing (firstVisibleHandleAnyFrame, firstAnyHandleAnyFrame) is
+STILL sequential, so the original GAP-059 symptom (latency scaling with busy-frame count, and a
+boundary-timing false-timeout risk) is unfixed for the more common visible-state case. And a new
+tradeoff was introduced without being disclosed: waitForHiddenInAllFrames now reports "unknown"
+(a busy neighbor frame) as "still visible", making a genuinely-hidden element's wait fail with a
+message indistinguishable from the real-visible case.
+
+This is now the FOURTH consecutive independent audit to find the same underlying mistake
+recurring through different code paths in the same item. Per the loop's own retry-bound rule
+(§9 of the loop prompt): at most 4 standard FIX->AUDIT cycles, then the Orchestrator itself does
+root-cause work and gets up to 2 more supervised cycles before the item must be marked BLOCKED
+with a full diagnosis rather than continuing indefinitely. fix-3 already represented an
+Orchestrator-directed root-cause attempt (explicitly targeting the pattern, not the symptom) and
+still missed 3 sibling functions with the identical shape. This is now escalation cycle 1 of the
+2 remaining supervised attempts.
+
+**Decision for this cycle:** the next Executor brief requires, as its FIRST deliverable before
+touching any code, a complete line-by-line inventory of every place in
+browser-action-engine.ts's wait_for_selector code path where a caught error, a timed-out probe,
+or an empty/null result currently gets treated as a definite yes/no answer -- audit-4's own gap
+list is the starting point, but the Executor must independently re-derive it by reading the
+whole file, not just patch the 8 named sites. Only after that inventory is produced and reviewed
+does the fix proceed. This is meant to catch a 5th sibling function neither fix-3 nor audit-4
+found, if one exists.
+
+**Also decided:** GAP-082's disclosed-but-undocumented tradeoff (a busy neighbor frame can make
+a hidden wait time out even though the target is genuinely hidden) needs an explicit Orchestrator
+call, not another silent choice by an Executor. Decision: correctness over liveness is the right
+default here (an honest timeout beats a false "hidden"), but the error message in that specific
+case must say "could not verify: one or more frames were unresponsive" rather than the plain
+"still visible" text, so a caller isn't misled about which failure mode occurred. This is now a
+REQUIRED distinction, not left to the Executor's judgment.

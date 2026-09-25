@@ -1,0 +1,72 @@
+[
+  {
+    "id": "n4-bg-hidden-tab-closed-mid-wait",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "wait_for_selector failed waiting for state=hidden: Tab was closed while wait_for_selector was checking its state.",
+    "totalMs": 2418
+  },
+  {
+    "id": "c1-two-tabs-concurrent-visible",
+    "visA": "hidden",
+    "visE": "visible",
+    "a": {
+      "success": true,
+      "retries": 0,
+      "doneAt": 1101,
+      "latency": 95
+    },
+    "e": {
+      "success": true,
+      "retries": 0,
+      "doneAt": 1539,
+      "latency": 33
+    }
+  },
+  {
+    "id": "c2-same-tab-three-concurrent",
+    "results": [
+      {
+        "success": true,
+        "doneAt": 1108,
+        "retries": 0
+      },
+      {
+        "success": true,
+        "doneAt": 1333,
+        "retries": 0
+      },
+      {
+        "success": true,
+        "doneAt": 1335,
+        "retries": 0
+      }
+    ]
+  },
+  {
+    "id": "c3-six-waits-three-tabs",
+    "wallMs": 11522,
+    "successes": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      true
+    ],
+    "errs": [
+      "wait_for_selector timed out after 400ms waiting for state=visible: No element fo",
+      "wait_for_selector timed out after 400ms waiting for state=hidden: an element mat",
+      "wait_for_selector timed out after 400ms waiting for state=visible: No element fo",
+      "wait_for_selector timed out after 400ms waiting for state=hidden: an element mat",
+      "wait_for_selector timed out after 400ms waiting for state=visible: No element fo",
+      null
+    ]
+  },
+  {
+    "id": "final-resource-check",
+    "timeoutsNow": 1,
+    "timeoutsAfter2500ms": 0,
+    "unhandledRejections": []
+  }
+]
