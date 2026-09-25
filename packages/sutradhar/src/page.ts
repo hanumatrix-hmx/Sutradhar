@@ -127,6 +127,18 @@ export class Page {
    * `options.timeout` applies to each internal attempt; retries can extend the real total wait
    * beyond it (open issue, tracked as GAP-001).
    */
+  /**
+   * Wait for `selector` to reach `options.state` — `'visible'` (default), `'attached'` (just in
+   * the DOM, visibility ignored), or `'hidden'` (removed or not visible; succeeds immediately if
+   * nothing matches). "Visible" means computed visibility not `hidden`/`collapse` AND a
+   * non-empty bounding box (opacity is ignored), checked on the FIRST match.
+   * `options.timeout` is per internal attempt; retries can extend the real total wait beyond it
+   * (open issue) — EXCEPT for the case below. `options.timeout <= 0` checks the current state
+   * once, immediately, with no waiting AND no retrying (this is the one case where the "retries
+   * can extend the wait" caveat above does not apply — see GAP-058). Waiting states poll roughly
+   * every 100ms, so a state that's only true for less than ~100ms (a fast visibility flicker)
+   * may be missed. Throws on timeout, with a message naming the state it waited for.
+   */
   public async waitForSelector(selector: string, options?: WaitForSelectorOptions): Promise<void> {
     const r = await this.runtime.waitForSelector(this.sessionId, selector, options?.timeout, this.tabId, options?.state);
     if (!r.success) throw new Error(r.error ?? `waitForSelector("${selector}") failed`);

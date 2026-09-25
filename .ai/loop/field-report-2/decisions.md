@@ -559,3 +559,26 @@ Adopted as written (full reasoning in the spec's §0.3):
 Sequencing: no hard precondition. Step 0's live experiment must run and its outcome recorded
 BEFORE any audit code is written, since it decides between two meaningfully different designs
 for the vitals-capture rewrite.
+
+## 2026-09-25 — FR2-01 fix-3: root-caused the timeout-as-boolean pattern
+
+Fix-3 (the 4th fix round) didn't patch GAP-057 in isolation. It introduced one shared
+tri-state result type (`match` | `no-match` | `unknown`) used by every per-frame probe in
+this file's wait_for_selector code, so "the check couldn't finish in time" can no longer be
+silently read as either a positive or negative answer anywhere in this path. This is the
+architectural fix the loop asked for after audit-3 found the same collapsing-timeout mistake
+recurring a third time through a different call site.
+
+One existing test's assertions were deliberately changed, with the change explained rather than
+silently made: E5 previously pinned SEQUENTIAL per-frame probing as if that ordering were a
+required invariant, when it was actually part of the GAP-059 latency bug. The Executor rewrote
+E5 to assert genuine parallel probe starts instead, with the old assertion's removal justified
+inline. This is the kind of test change the loop's rules allow: fixing forward with proof, not
+silently weakening a check.
+
+FR2-01 moves to audit-4 (its 4th independent audit, 5th fix-cycle attempt overall in the
+loop-prompt's counting). This is at the edge of the loop's stated retry bound (4 FIX->AUDIT
+cycles before the Orchestrator must do its own root-cause pass and get at most 2 more tries) --
+fix-3 already represents that root-cause pass, made explicitly. If audit-4 still finds a
+genuine new gap in this same code path, the next step is to treat it as one of the 2
+Orchestrator-supervised bonus cycles, not to keep issuing open-ended standard fix rounds.

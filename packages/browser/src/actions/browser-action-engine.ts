@@ -116,6 +116,36 @@ const FRAME_PROBE_TIMEOUT_MS = 250;
  *  probe timed out" from a legitimate `null` (genuinely no match) result of the real probe. */
 const FRAME_PROBE_TIMED_OUT = Symbol('frame-probe-timed-out');
 
+/**
+ * GAP-057 (FR2-01 audit-3): the shared tri-state outcome of ANY bounded, per-frame probe in this
+ * file's `wait_for_selector` code path. A probe against one frame genuinely has THREE possible
+ * outcomes — it found a match ('match'), it definitively found no match ('no-match'), or it
+ * simply didn't answer within its own bound because the frame was busy ('unknown') — and every
+ * place that reduces a set of per-frame probes to a single yes/no verdict MUST keep 'unknown' as
+ * its own state all the way through, rather than collapsing it into either of the other two.
+ *
+ * Collapsing 'unknown' into 'no-match' is exactly what caused GAP-057: `isHiddenInEveryFrame`
+ * read a busy frame's probe timeout as "no match in this frame", which is indistinguishable from
+ * "this frame confirms not-visible" for the `hidden` state's all-frames-must-agree rule — so a
+ * `hidden` wait could fully "agree" and report FALSE SUCCESS while the element was still visible
+ * in the one frame that never got to answer. Collapsing 'unknown' into 'match' would be just as
+ * wrong the other direction (a false failure/false "still visible"). Neither collapse is safe;
+ * only treating it as its own state — "try again next pass, don't conclude anything from this
+ * frame yet" — is.
+ */
+type FrameProbeVerdict =
+  | { readonly kind: 'match'; readonly handle: ElementHandle<Element> }
+  | { readonly kind: 'no-match' }
+  | { readonly kind: 'unknown' };
+
+/** The all-frames-considered verdict {@link BrowserActionEngine.isHiddenInEveryFrame} produces
+ *  for one pass: 'hidden' (every live frame explicitly confirmed no-match/not-visible),
+ *  'visible' (some frame explicitly confirmed a visible match — a definitive answer, since
+ *  `hidden` requires every frame to agree), or 'unknown' (no frame confirmed visible, but at
+ *  least one frame's probe timed out rather than confirming no-match — GAP-057: this must NEVER
+ *  be treated the same as 'hidden'). */
+type FrameSetHiddenVerdict = 'hidden' | 'visible' | 'unknown';
+
 /** GAP-032 (FR2-01 audit-2): a `timeoutMs` this large no longer fits in Node's/CDP's own
  *  32-bit-signed-int `setTimeout` delay range (2**31 - 1 ms, ~24.8 days) and gets silently
  *  clamped to fire almost immediately by the runtime — producing exactly the "outer deadline
@@ -285,7 +315,17 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         ? Math.max(1, sanitizedTimeoutMs ?? 10000) + WAIT_FOR_SELECTOR_OUTER_GRACE_MS
         : sanitizedTimeoutMs ?? 15000,
     );
-    const maxRetries = params.maxRetries ?? 2;
+    // GAP-058 (FR2-01 audit-3): `wait_for_selector` with `timeoutMs <= 0` documents "check once,
+    // don't wait or retry" (GAP-011/GAP-036) — but that contract lives entirely in
+    // `checkWaitForSelectorOnce`'s own single-pass logic, and this OUTER retry loop had no idea
+    // about it: it still applied the ordinary `maxRetries ?? 2` default, so a "check once"
+    // failure got retried up to 2 more times anyway (confirmed live: retriesUsed:2, ~1.5s total
+    // for a call documented as instantaneous). A caller-supplied `params.maxRetries` is still
+    // honored as an explicit override either way — this only replaces the *default* of 2 with 0
+    // specifically for this one documented case.
+    const maxRetries =
+      params.maxRetries ??
+      (params.actionType === 'wait_for_selector' && params.timeoutMs !== undefined && params.timeoutMs <= 0 ? 0 : 2);
     const previousUrl = tab.url;
     let attempt = 0;
     let lastError: Error | undefined;
@@ -1339,9 +1379,15 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     for (;;) {
       // Re-read live frames every pass (mirroring resolveElement) so a frame that gets destroyed
       // and recreated mid-wait (e.g. TinyMCE re-initializing its iframe) is naturally picked up
-      // rather than probed against a stale reference. Every probe is fully awaited in order — no
-      // Promise.any — for the same PROB-015 reason documented on {@link resolveElement}.
-      if (await this.isHiddenInEveryFrame(page, fullSelector)) return true;
+      // rather than probed against a stale reference. Frames within one pass are now probed in
+      // parallel (GAP-059) rather than sequentially, but the pass-to-pass polling here is
+      // unchanged: no Promise.any across PASSES either, for the same PROB-015 reason documented
+      // on {@link resolveElement}.
+      //
+      // GAP-057: only a definitive 'hidden' verdict satisfies the wait. 'unknown' (a busy frame
+      // that didn't answer this pass) falls through to "keep polling" exactly like 'visible'
+      // does — it must never be treated as satisfied.
+      if ((await this.isHiddenInEveryFrame(page, fullSelector)) === 'hidden') return true;
       const remaining = deadline - Date.now();
       if (remaining <= 0) return false;
       await new Promise((r) => setTimeout(r, Math.min(pollMs, remaining)));
@@ -1372,13 +1418,18 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    * the tab closing) is deliberately still swallowed to `null` — recoverable, and already
    * exercised by pages that destroy/recreate an iframe mid-wait (e.g. TinyMCE).
    */
-  private async pierceFirstMatch(frame: Frame, fullSelector: string): Promise<ElementHandle<Element> | null> {
+  private async pierceFirstMatch(frame: Frame, fullSelector: string): Promise<FrameProbeVerdict> {
     try {
       return await this.raceFrameProbe(frame, fullSelector);
     } catch (err) {
       if (BrowserActionEngine.isSelectorSyntaxError(err)) throw err;
       if (BrowserActionEngine.isFatalFrameCheckError(err)) throw err;
-      return null;
+      // A single frame's own context being destroyed by an ordinary in-page navigation (NOT the
+      // tab/session closing — that's `isFatalFrameCheckError` above) is a recoverable, per-frame
+      // hiccup: this frame definitively has no answer for THIS pass, and will be re-probed fresh
+      // (via `page.frames()`) on the next one. That's 'no-match' for this pass, not 'unknown' —
+      // unlike a timeout, there's no live probe still in flight that might resolve differently.
+      return { kind: 'no-match' };
     }
   }
 
@@ -1393,9 +1444,8 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    * {@link resolveElement} PROB-015 comment avoids — accepted here because the abandoned probe
    * is scoped to a single frame for a bounded ~250ms, not a long-lived cross-frame race.
    */
-  private async raceFrameProbe(frame: Frame, fullSelector: string): Promise<ElementHandle<Element> | null> {
+  private async raceFrameProbe(frame: Frame, fullSelector: string): Promise<FrameProbeVerdict> {
     const real = frame.$(fullSelector);
-    real.catch(() => {});
     // Assigned synchronously by the Promise constructor's executor, which runs immediately —
     // the `!` reflects that, not an actual possibly-unset timer at the `finally` below.
     let timer!: ReturnType<typeof setTimeout>;
@@ -1404,7 +1454,24 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     });
     try {
       const winner = await Promise.race([real, timedOut]);
-      return winner === FRAME_PROBE_TIMED_OUT ? null : winner;
+      if (winner === FRAME_PROBE_TIMED_OUT) {
+        // GAP-059 (FR2-01 audit-3): the real probe LOST the race and is now abandoned — there's
+        // no primitive to cancel it, same as the PROB-015 note on {@link resolveElement} — so it
+        // keeps running in the background and will settle on its own later, well after this
+        // call has already returned 'unknown'. If it settles with a genuine element handle, that
+        // handle is a real CDP resource (a remote-object reference held open in the renderer)
+        // that nothing else will ever see or dispose again unless it's disposed right here —
+        // found by code reading during audit-3, not measured live, but real: every timed-out
+        // probe against a frame that's merely busy (not permanently gone) leaks one handle per
+        // pass if left unhandled.
+        real
+          .then((handle) => {
+            if (handle && typeof handle.dispose === 'function') void handle.dispose().catch(() => {});
+          })
+          .catch(() => {});
+        return { kind: 'unknown' };
+      }
+      return winner ? { kind: 'match', handle: winner } : { kind: 'no-match' };
     } finally {
       clearTimeout(timer);
     }
@@ -1475,10 +1542,16 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    *  path (GAP-011) build on. */
   private async firstVisibleHandleAnyFrame(page: Page, fullSelector: string): Promise<ElementHandle<Element> | null> {
     for (const frame of this.liveFramesOf(page)) {
-      const handle = await this.pierceFirstMatch(frame, fullSelector);
-      if (!handle) continue;
-      if (await this.isHandleVisible(handle)) return handle;
-      if (typeof handle.dispose === 'function') await handle.dispose().catch(() => {});
+      const verdict = await this.pierceFirstMatch(frame, fullSelector);
+      // A 'no-match' and an 'unknown' (this frame's probe simply didn't answer within its
+      // bound) both mean "this frame doesn't confirm visible THIS pass" — for the `visible`
+      // state's any-frame-wins rule that's a safe, non-lossy conflation: neither outcome can
+      // cause a false SUCCESS here (only an explicit visible match does), and the caller
+      // (`waitForVisibleWithPolling`) re-probes every live frame again next pass, so a busy
+      // frame that later becomes reachable still gets its chance to confirm visible.
+      if (verdict.kind !== 'match') continue;
+      if (await this.isHandleVisible(verdict.handle)) return verdict.handle;
+      if (typeof verdict.handle.dispose === 'function') await verdict.handle.dispose().catch(() => {});
     }
     return null;
   }
@@ -1489,8 +1562,11 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    *  its own fast syntax-error pre-check, which reuses {@link pierceFirstMatch} directly. */
   private async firstAnyHandleAnyFrame(page: Page, fullSelector: string): Promise<ElementHandle<Element> | null> {
     for (const frame of this.liveFramesOf(page)) {
-      const handle = await this.pierceFirstMatch(frame, fullSelector);
-      if (handle) return handle;
+      const verdict = await this.pierceFirstMatch(frame, fullSelector);
+      // Same reasoning as {@link firstVisibleHandleAnyFrame}: 'unknown' can't safely be treated
+      // as a confirmed match, so it's conflated with 'no-match' here too — "this frame doesn't
+      // confirm attached THIS pass", never "this frame confirms NOT attached".
+      if (verdict.kind === 'match') return verdict.handle;
     }
     return null;
   }
@@ -1499,15 +1575,37 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    *  negation of {@link firstVisibleHandleAnyFrame}'s "any frame visible" rule. This is the
    *  `hidden` state's single-instant primitive, reused by both {@link waitForHiddenInAllFrames}'s
    *  polling loop and the `timeoutMs<=0` check-once path. */
-  private async isHiddenInEveryFrame(page: Page, fullSelector: string): Promise<boolean> {
-    for (const frame of this.liveFramesOf(page)) {
-      const handle = await this.pierceFirstMatch(frame, fullSelector);
-      if (!handle) continue;
-      const visible = await this.isHandleVisible(handle);
-      if (typeof handle.dispose === 'function') await handle.dispose().catch(() => {});
-      if (visible) return false;
+  private async isHiddenInEveryFrame(page: Page, fullSelector: string): Promise<FrameSetHiddenVerdict> {
+    // GAP-059 (FR2-01 audit-3): probe every live frame's bounded {@link FRAME_PROBE_TIMEOUT_MS}
+    // check IN PARALLEL, not sequentially — sequential probing made this pass's latency scale
+    // linearly with the number of simultaneously busy frames (measured live: 239ms/1 busy frame,
+    // 658ms/4, 1687ms/8). Each probe is still independently bounded and safely self-contained
+    // (see {@link raceFrameProbe}'s own abandon/dispose handling), so racing them together is
+    // safe: this is not the PROB-015 "abandoned long-lived cross-frame race" shape — the loser
+    // here is bounded to ~250ms, not "until the wait's whole timeout".
+    const frames = this.liveFramesOf(page);
+    const verdicts = await Promise.all(frames.map((frame) => this.pierceFirstMatch(frame, fullSelector)));
+
+    // GAP-057 (FR2-01 audit-3): a frame whose probe timed out ('unknown') must NEVER be read as
+    // "this frame confirms hidden/no-match" — that collapse is exactly what let a `hidden` wait
+    // report false SUCCESS while a busy frame's element was still genuinely visible. It also
+    // must not immediately fail the whole pass either (that would force an unnecessary failure
+    // when the frame simply hasn't answered yet and may well turn out hidden). So: any frame that
+    // explicitly confirms VISIBLE wins immediately (hidden requires EVERY frame to agree, so one
+    // visible frame is a definitive answer) — but an 'unknown' only downgrades an otherwise-
+    // 'hidden' verdict to 'unknown' (keep polling), never promotes it to 'hidden'.
+    let sawUnknown = false;
+    for (const verdict of verdicts) {
+      if (verdict.kind === 'unknown') {
+        sawUnknown = true;
+        continue;
+      }
+      if (verdict.kind === 'no-match') continue;
+      const visible = await this.isHandleVisible(verdict.handle);
+      if (typeof verdict.handle.dispose === 'function') await verdict.handle.dispose().catch(() => {});
+      if (visible) return 'visible';
     }
-    return true;
+    return sawUnknown ? 'unknown' : 'hidden';
   }
 
   /**
@@ -1582,7 +1680,10 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     const matchedAtStart = await this.probeSelectorMatchExists(page, fullSelector);
     let hiddenNow: boolean;
     try {
-      hiddenNow = await this.isHiddenInEveryFrame(page, fullSelector);
+      // GAP-057: a single check-once pass can also come back 'unknown' (a busy frame that
+      // didn't answer within its bound) — with no retry loop to fall back on here, 'unknown'
+      // is treated as "not confirmed hidden" (same as 'visible'), never as a false success.
+      hiddenNow = (await this.isHiddenInEveryFrame(page, fullSelector)) === 'hidden';
     } catch (err) {
       throw new Error(
         `wait_for_selector failed waiting for state=hidden: ${(err as Error)?.message ?? String(err)}`,
@@ -1632,28 +1733,40 @@ export class BrowserActionEngine implements IBrowserActionEngine {
   }
 
   /**
-   * Best-effort check (bounded to ~500ms) of whether ANY live frame currently has a match for
-   * `fullSelector`, used to populate `state:'hidden'`'s `matchedAtStart` — a `hidden` wait
-   * "succeeds" immediately on a typo'd selector that never matched anything, so this gives a
-   * caller a way to tell that apart from a genuine disappearance.
+   * Best-effort check of whether ANY live frame currently has a match for `fullSelector`, used
+   * to populate `state:'hidden'`'s `matchedAtStart` — a `hidden` wait "succeeds" immediately on a
+   * typo'd selector that never matched anything, so this gives a caller a way to tell that apart
+   * from a genuine disappearance.
+   *
+   * GAP-057 (FR2-01 audit-3): this used to run a single whole-probe 500ms race and report
+   * `false` — "never matched" — whenever that race timed out, exactly the same
+   * timeout-collapsed-into-a-negative-answer bug as {@link isHiddenInEveryFrame}, just for a
+   * different consumer. A busy frame could make a selector that DOES match look like a typo.
+   * Now each live frame gets its own independently-bounded {@link raceFrameProbe} probe (the
+   * same {@link FRAME_PROBE_TIMEOUT_MS} primitive `isHiddenInEveryFrame` uses), run in parallel,
+   * and the tri-state result is preserved all the way to the return value: `true` (some frame
+   * confirmed a match), `false` (every frame confirmed no match), or `undefined` (at least one
+   * frame's probe timed out and no OTHER frame confirmed a match — genuinely unknown, not "no").
+   * `undefined` is a deliberate part of `matchedAtStart`'s public shape (`boolean | undefined`),
+   * not an omission.
    */
-  private async probeSelectorMatchExists(page: Page, fullSelector: string): Promise<boolean> {
-    try {
-      return await Promise.race([
-        (async () => {
-          const live = page.frames().filter((f) => !f.isDetached());
-          const targets = live.length > 0 ? live : [page.mainFrame()];
-          for (const frame of targets) {
-            const handle = await frame.$(fullSelector).catch(() => null);
-            if (handle) return true;
-          }
-          return false;
-        })(),
-        new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 500)),
-      ]);
-    } catch {
-      return false;
+  private async probeSelectorMatchExists(page: Page, fullSelector: string): Promise<boolean | undefined> {
+    const live = page.frames().filter((f) => !f.isDetached());
+    const targets = live.length > 0 ? live : [page.mainFrame()];
+    const verdicts = await Promise.all(
+      targets.map((frame) =>
+        this.raceFrameProbe(frame, fullSelector).catch((): FrameProbeVerdict => ({ kind: 'unknown' })),
+      ),
+    );
+    let sawUnknown = false;
+    for (const verdict of verdicts) {
+      if (verdict.kind === 'match') {
+        if (typeof verdict.handle.dispose === 'function') void verdict.handle.dispose().catch(() => {});
+        return true;
+      }
+      if (verdict.kind === 'unknown') sawUnknown = true;
     }
+    return sawUnknown ? undefined : false;
   }
 
   /**

@@ -2214,7 +2214,7 @@ describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-0
     expect(result2.outputData?.matchedAtStart).toBe(false);
   });
 
-  it('E5: hidden across multiple frames requires EVERY frame to agree, and every probe is fully awaited (no Promise.any)', async () => {
+  it('E5: hidden across multiple frames requires EVERY frame to agree, and frame probes within one pass now run in parallel (GAP-059, FR2-01 fix-3)', async () => {
     const order: string[] = [];
     const mainHandle = mockHandle();
     (mainHandle as any).evaluate = vi.fn().mockResolvedValue(false); // main frame: already hidden
@@ -2260,16 +2260,30 @@ describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-0
 
     expect(result.success).toBe(false);
     expect(result.error).toMatch(/waiting for state=hidden/);
-    // Ordering proves each probe fully settles before the next one starts on the SAME pass — a
-    // losing Promise.any race would interleave "iframe-probe-start" before "main-probe-settled".
-    // The very first pair is the best-effort `matchedAtStart` pre-probe (it stops at the main
-    // frame since it already found a match there), so look for the first real hidden-check
-    // pass instead of assuming fixed indices.
+    // BEFORE fix-3 (fix-1/fix-2): frames were probed SEQUENTIALLY within a pass, so this
+    // asserted "iframe-probe-start" only ever happens after "main-probe-settled" — a losing
+    // Promise.any race would have interleaved them the OTHER way, which is what that assertion
+    // was actually guarding against (an abandoned, unbounded cross-frame race, the PROB-015
+    // shape `resolveElement` avoids). That sequential ordering was also GAP-059's own bug: pass
+    // latency scaled linearly with the number of busy frames because each frame's up-to-250ms
+    // probe was paid one at a time instead of concurrently.
+    // AFTER fix-3: every live frame's probe for a pass is started together via `Promise.all`
+    // (see `isHiddenInEveryFrame`), which is safe here for a DIFFERENT reason than a plain
+    // Promise.any race would be — each individual probe (`raceFrameProbe`) is still its own
+    // fully-self-contained, independently-~250ms-bounded call with its own dispose-on-late-
+    // resolve handling, never abandoned to run indefinitely. So the correct invariant to assert
+    // now is the opposite of before: both frames' probes START back-to-back in the SAME pass,
+    // and at least one frame's probe is still in flight when the other's probe starts — proving
+    // genuine concurrency, not a regression back to sequential probing.
     const iframeStartIdx = order.indexOf('iframe-probe-start');
     expect(iframeStartIdx).toBeGreaterThan(0);
-    expect(order[iframeStartIdx - 1]).toBe('main-probe-settled');
-    expect(order[iframeStartIdx - 2]).toBe('main-probe-start');
-    expect(order[iframeStartIdx + 1]).toBe('iframe-probe-settled');
+    expect(order[iframeStartIdx - 1]).toBe('main-probe-start');
+    // The main frame's probe for this SAME pass must not have already settled by the time the
+    // iframe's probe for that pass starts — that's exactly the parallel-start guarantee GAP-059
+    // relies on. (Both probes share the same 5ms mock delay and are registered in the same
+    // microtask, so main's settle event cannot appear before iframe's start event.)
+    const mainSettledIdx = order.indexOf('main-probe-settled');
+    expect(mainSettledIdx).toBeGreaterThan(iframeStartIdx);
   });
 
   it('E6: a visible timeout names the state and diagnoses that matches exist but are hidden', async () => {
@@ -2579,6 +2593,35 @@ describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-0
       expect(result.success).toBe(false);
       expect(result.error).toMatch(/state=hidden/);
       expect(result.error).toContain('still visible');
+    }
+
+    // Sub-case 7 (GAP-058, FR2-01 audit-3/fix-3): every sub-case above passes `maxRetries: 0`
+    // explicitly, which means none of them actually exercise the REAL default retry path — and
+    // that's exactly how this gap slipped through fix-1/fix-2: the engine's OUTER retry loop
+    // still applied its ordinary `maxRetries ?? 2` default for a `timeoutMs <= 0` "check once"
+    // call, so a failing check-once wait was silently retried up to 2 more times (confirmed
+    // live: retriesUsed:2, ~1.5s total for something documented as instantaneous), even though
+    // `checkWaitForSelectorOnce` itself has no concept of retrying. This sub-case omits
+    // `maxRetries` entirely — using whatever the engine actually defaults to — so a regression
+    // back to "check once" secretly retrying would show up here as `retriesUsed !== 0` and as a
+    // materially slower `executionTimeMs`, not just as a passing assertion that only ever
+    // exercised the overridden path.
+    {
+      const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+      const page = { frames: vi.fn().mockReturnValue([mainFrame]), mainFrame: vi.fn().mockReturnValue(mainFrame) } as unknown as Page;
+      const result = await new BrowserActionEngine().executeAction(mockTab(page), {
+        actionType: 'wait_for_selector',
+        selector: '#t',
+        state: 'attached',
+        timeoutMs: 0,
+        // No `maxRetries` override — this is the real default path GAP-058 was about.
+      });
+      expect(result.success).toBe(false);
+      expect(result.error).toMatch(/state=attached/);
+      expect(result.retriesUsed).toBe(0);
+      // GAP-058's live repro showed ~1.5s (3 attempts with 500ms/1000ms backoff) for exactly
+      // this shape of call before the fix; a real "check once" call should be near-instant.
+      expect(result.executionTimeMs).toBeLessThan(500);
     }
   });
 
@@ -2891,5 +2934,191 @@ describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-0
 
     expect(result.success).toBe(false);
     expect(result.error).toMatch(/waiting for state=attached/);
+  });
+});
+
+describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-3, audit-3 gaps)', () => {
+  it('GAP-057: a hidden wait must NOT report success while a busy frame\'s element is genuinely, persistently still visible (repro of audit-3 probe-a3.mjs h1/h2 pattern)', async () => {
+    // Main frame: no match at all (genuinely absent there). Iframe: a real, visible element,
+    // but `frame.$` never answers within FRAME_PROBE_TIMEOUT_MS (250ms) on ANY call — modeling
+    // a persistently busy/slow renderer, not a one-off hiccup. Before the fix, EVERY probe of
+    // this frame timing out got read as "no match in this frame", which for `hidden` (every
+    // frame must agree) meant the whole wait "agreed" — a false SUCCESS while the element was
+    // still genuinely visible. After the fix, a timed-out probe is 'unknown', which can never
+    // satisfy `hidden` on its own — the wait must keep polling and eventually fail.
+    const visibleHandle = mockHandle();
+    (visibleHandle as any).evaluate = vi.fn().mockResolvedValue(true);
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const busyIframe = {
+      isDetached: () => false,
+      $: vi.fn().mockImplementation(
+        () => new Promise((resolve) => setTimeout(() => resolve(visibleHandle), 2000)),
+      ),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, busyIframe]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#spinner',
+      state: 'hidden',
+      timeoutMs: 400,
+      maxRetries: 0,
+    });
+
+    // The one non-negotiable assertion: this must never be `true`. Before the GAP-057 fix, it
+    // was — reliably, on every run, because the busy iframe's probe timeout was read as "hidden
+    // in this frame" on the very first pass.
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/waiting for state=hidden/);
+  });
+
+  it('GAP-057 regression guard: a hidden wait still succeeds once every frame genuinely agrees, even after an earlier pass saw one frame time out (recovering busy frame, not a permanent one)', async () => {
+    // Iframe: its FIRST `$` call is slow enough to time out the 250ms probe bound (so pass 1
+    // sees 'unknown' for this frame), but it genuinely has no match at all, and every
+    // SUBSEQUENT call resolves quickly with `null` — a busy-then-recovers frame, not a busy-
+    // forever one. This proves the fix doesn't overcorrect into never succeeding: 'unknown'
+    // must fall through to "keep polling", and a later pass that gets a real, fully-agreed
+    // answer from every frame must still succeed.
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const recoveringIframe = {
+      isDetached: () => false,
+      $: vi
+        .fn()
+        .mockImplementationOnce(() => new Promise((resolve) => setTimeout(() => resolve(null), 400)))
+        .mockResolvedValue(null),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, recoveringIframe]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#banner',
+      state: 'hidden',
+      timeoutMs: 2000,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData?.state).toBe('hidden');
+  });
+
+  it('GAP-059: probing multiple busy frames within one hidden-wait pass runs in parallel, not sequentially (latency does not scale with frame count)', async () => {
+    // 4 frames that are ALL persistently busy (never answer within the 250ms probe bound). If
+    // probing were still sequential, paying that ~250ms bound once per frame per pass would
+    // cost at least 4 * 250ms = 1000ms for the FIRST pass alone. Probed in parallel, one pass
+    // costs ~250ms total regardless of frame count.
+    const visibleHandle = mockHandle();
+    (visibleHandle as any).evaluate = vi.fn().mockResolvedValue(true);
+    const makeBusyFrame = () =>
+      ({
+        isDetached: () => false,
+        $: vi.fn().mockImplementation(
+          () => new Promise((resolve) => setTimeout(() => resolve(visibleHandle), 5000)),
+        ),
+      }) as unknown as Frame;
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const busyFrames = [makeBusyFrame(), makeBusyFrame(), makeBusyFrame(), makeBusyFrame()];
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, ...busyFrames]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const t0 = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#spinner',
+      state: 'hidden',
+      timeoutMs: 260,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - t0;
+
+    expect(result.success).toBe(false);
+    // Sequential probing of 4 busy frames would need >= 1000ms just for the first pass, before
+    // the 260ms deadline is even checked. Parallel probing keeps the whole call well under
+    // that — generous margin kept here to avoid CI timing flakiness while still being tight
+    // enough to fail against a sequential regression.
+    expect(elapsedMs).toBeLessThan(900);
+  });
+
+  it('GAP-059: an abandoned per-frame probe that resolves a real handle AFTER its 250ms bound is disposed, not leaked', async () => {
+    const lateHandle = mockHandle();
+    const disposeSpy = vi.fn().mockResolvedValue(undefined);
+    (lateHandle as any).dispose = disposeSpy;
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const lateFrame = {
+      isDetached: () => false,
+      // Resolves a REAL handle, but only after the 250ms probe bound has already elapsed —
+      // exactly the "abandoned probe settles late" case GAP-059 flagged as a resource leak. Only
+      // called ONCE for this test's whole call: `state:'attached'`'s check-once path
+      // (`firstAnyHandleAnyFrame`) probes frames sequentially and there's only one other frame
+      // besides the (immediately-answering) main frame — an easy assertion that dispose fires
+      // exactly once, not a "did it fire at least once" one.
+      $: vi.fn().mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve(lateHandle), 400))),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, lateFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    // `timeoutMs <= 0` drives the single-pass `checkWaitForSelectorOnce` path directly.
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'attached',
+      timeoutMs: 0,
+      maxRetries: 0,
+    });
+    expect(result.success).toBe(false); // the probe timed out -> 'unknown' -> not confirmed attached
+    expect(disposeSpy).not.toHaveBeenCalled(); // not yet — the probe is still abandoned/in flight
+
+    // Give the abandoned real probe time to settle in the background (it resolves at ~400ms).
+    await new Promise((r) => setTimeout(r, 500));
+    expect(disposeSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('GAP-057 (matchedAtStart): probeSelectorMatchExists reports `undefined` (unknown), never `false`, when a frame times out and no OTHER frame confirms a match', async () => {
+    // Main frame answers quickly with no match, in every call. The other frame's FIRST `$` call
+    // (the one `probeSelectorMatchExists` makes) never answers within its 250ms probe bound —
+    // before the fix, this collapsed straight into `false`, reporting "the selector never
+    // matched anything" (a misleading typo diagnosis) instead of "we genuinely don't know".
+    // That frame's SECOND `$` call (made moments later by the actual hidden-check,
+    // `isHiddenInEveryFrame`) resolves quickly with no match, so the overall wait still succeeds
+    // — isolating the assertion to `matchedAtStart` specifically, rather than conflating it with
+    // whether the wait itself succeeds.
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const partiallyBusyIframe = {
+      isDetached: () => false,
+      $: vi
+        .fn()
+        .mockImplementationOnce(() => new Promise((resolve) => setTimeout(() => resolve(null), 2000)))
+        .mockResolvedValue(null),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, partiallyBusyIframe]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'hidden',
+      timeoutMs: 0,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData?.matchedAtStart).toBeUndefined();
+    expect('matchedAtStart' in (result.outputData as object)).toBe(true);
   });
 });
