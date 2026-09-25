@@ -1,0 +1,43 @@
+{"timestamp":"2026-09-25T07:20:14.838Z","level":"info","message":"[BrowserLauncher] Connecting to remote browser endpoint","context":{"endpoint":"ws://127.0.0.1:62796/devtools/browser/8dd923c9-fdda-43d0-81bc-3eb46d18553b"}}
+{"timestamp":"2026-09-25T07:20:14.845Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790320814838_1","context":{"isIncognito":false}}
+--- iframe src attributes (parent DOM) ---
+[{"name":"r302","srcAttr":"http://127.0.0.1:62795/redir"},{"name":"rjs","srcAttr":"http://127.0.0.1:62795/jsredir"},{"name":"t","srcAttr":"http://127.0.0.1:62795/ok"}]
+--- listing ---
+URL: http://127.0.0.1:62795/main?n=1790320811818
+Title: 
+Interactive elements (2):
+[#1] button "Main"
+[#2] a "go"
+[iframe "rjs" http://127.0.0.1:62795 — not inspectable] (browser error page: blocked or failed to load)
+[iframe "r302" http://127.0.0.1:62795 — not inspectable] (browser error page: blocked or failed to load)
+[iframe "t" http://127.0.0.1:62795 — not inspectable] (browser error page: blocked or failed to load)
+--- skippedFrames ---
+[
+  {
+    "index": 1,
+    "url": "http://127.0.0.1:62795/jsredir",
+    "origin": "http://127.0.0.1:62795",
+    "name": "rjs",
+    "reason": "error-page"
+  },
+  {
+    "index": 2,
+    "url": "http://127.0.0.1:62795/redir",
+    "origin": "http://127.0.0.1:62795",
+    "name": "r302",
+    "reason": "error-page"
+  },
+  {
+    "index": 3,
+    "url": "http://127.0.0.1:62795/ok",
+    "origin": "http://127.0.0.1:62795",
+    "name": "t",
+    "reason": "error-page"
+  }
+]
+FAIL r302: skipped url is the URL actually blocked (localhost ...via=302) :: {"index":2,"url":"http://127.0.0.1:62795/redir","origin":"http://127.0.0.1:62795","name":"r302","reason":"error-page"}
+FAIL rjs: skipped url is the URL actually blocked (localhost ...via=js) :: {"index":1,"url":"http://127.0.0.1:62795/jsredir","origin":"http://127.0.0.1:62795","name":"rjs","reason":"error-page"}
+FAIL t: skipped url is the URL actually blocked (localhost ...via=link) :: {"index":3,"url":"http://127.0.0.1:62795/ok","origin":"http://127.0.0.1:62795","name":"t","reason":"error-page"}
+{"timestamp":"2026-09-25T07:20:14.910Z","level":"warn","message":"[BrowserSession] Session sess_1790320814838_1 crashed — Chrome disconnected unexpectedly","context":{}}
+{"timestamp":"2026-09-25T07:20:14.910Z","level":"warn","message":"[BrowserSessionManager] Removed crashed session sess_1790320814838_1","context":{}}
+exit=0

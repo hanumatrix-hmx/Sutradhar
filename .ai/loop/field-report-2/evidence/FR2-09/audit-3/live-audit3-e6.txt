@@ -1,0 +1,29 @@
+{"timestamp":"2026-09-25T07:21:12.943Z","level":"info","message":"[BrowserLauncher] Connecting to remote browser endpoint","context":{"endpoint":"ws://127.0.0.1:50559/devtools/browser/597f3e49-f908-4eea-a4ca-9488b18601e1"}}
+{"timestamp":"2026-09-25T07:21:12.950Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790320872943_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T07:21:14.539Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790320872943_1_1","selector":"#nav"}}
+snapshot ms 19
+--- iframe src attributes (parent DOM) ---
+[{"name":"r302","srcAttr":"http://127.0.0.1:50558/redir"},{"name":"rjs","srcAttr":"http://127.0.0.1:50558/jsredir"},{"name":"t","srcAttr":"http://127.0.0.1:50558/ok"}]
+--- listing ---
+URL: http://127.0.0.1:50558/main?n=1790320872955
+Title: 
+Interactive elements (2):
+[#1] button "Main"
+[#2] a "go"
+[iframe "r302" http://127.0.0.1:50558 — not inspectable] (browser error page: blocked or failed to load)
+--- skippedFrames ---
+[
+  {
+    "index": 1,
+    "url": "http://127.0.0.1:50558/redir",
+    "origin": "http://127.0.0.1:50558",
+    "name": "r302",
+    "reason": "error-page"
+  }
+]
+FAIL r302: skipped url is the URL actually blocked (localhost ...via=302) :: {"index":1,"url":"http://127.0.0.1:50558/redir","origin":"http://127.0.0.1:50558","name":"r302","reason":"error-page"}
+FAIL rjs: skipped url is the URL actually blocked (localhost ...via=js) :: undefined
+FAIL t: skipped url is the URL actually blocked (localhost ...via=link) :: undefined
+{"timestamp":"2026-09-25T07:21:16.683Z","level":"warn","message":"[BrowserSession] Session sess_1790320872943_1 crashed — Chrome disconnected unexpectedly","context":{}}
+{"timestamp":"2026-09-25T07:21:16.683Z","level":"warn","message":"[BrowserSessionManager] Removed crashed session sess_1790320872943_1","context":{}}
+exit=0

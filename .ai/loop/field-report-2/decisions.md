@@ -1314,6 +1314,40 @@ left undocumented — this is the kind of honest disclosure the loop's own "neve
 limitation" rule requires, distinct from GAP-148 (already logged, same treatment) which was a
 different frame class (busy same-origin, not XFO-blocked).
 
+### CORRECTION (2026-09-25, FR2-09 fix-2, GAP-150) — the residual-limitation paragraph above is wrong
+
+FR2-09 audit-2 (GAP-150) found the paragraph directly above this one — "there is no available
+signal from outside the frame ... to identify it beyond its snapshot-local index" — is FALSE,
+not merely incomplete. `frame.frameElement()`, called on the frame object but evaluated in the
+**parent** frame's realm (it never touches the blocked frame's own inaccessible realm at all),
+resolves the `<iframe>` element handle sitting in the parent document; reading `.src` off that
+handle recovers the real, intended URL. This is a fundamentally different operation from the
+`frame.evaluate(() => location.href)` probe this same decision correctly rejected above — that
+probe runs INSIDE the blocked frame's own script realm (hence the 30s hang); `frameElement()`
+never crosses into it. Audit-2 live-measured the recovery at 2-5ms per frame
+(`evidence/FR2-09/audit-2/adversarial-live.json`, case E) — negligible next to the 5000ms
+`FRAME_SCRAPE_TIMEOUT_MS` budget this decision was protecting.
+
+**What was correct in the original decision, and stays correct**: the choice to keep
+`frame.url().startsWith('chrome-error://')` as the D8 fork condition itself (i.e. detecting that
+a child frame resolved to a browser error page) — that's unaffected by this correction, and no
+extra `evaluate()`-based probe was or is warranted for that detection. Only the claim that the
+frame's *identity* can't be recovered was wrong.
+
+**Orchestrator-preferred fix-2 resolution (see the FR2-09 audit-2 entry below)**: add the
+`frameElement()` lookup rather than just correct this text, since it's cheap and also satisfies
+spec section 2.5's worked-example placeholder format (`[iframe http://localhost:5173 — not
+inspectable]`) as literally written — which the "aspirational, not normative" framing two
+paragraphs up should also be read as narrowed by this correction: the worked example's URL is
+now actually achievable for the common case (frame not yet detached, real `<iframe>` element,
+not a popup), just not universally guaranteed. Implemented in
+`packages/browser/src/dom/dom-semantic-engine.ts` (`recoverBlockedFrameSrc()`), live-verified in
+`evidence/FR2-09/fix-2/gap150-live-verify.txt`. `.ai/known-problems.md`'s `PROB-046` entry is
+updated to match — RESOLVED, with the corrected history stated explicitly rather than the false
+claim silently removed, and the genuinely-real narrower residual case (popup / already-detached
+frame, where no parent-document element exists to read `.src` from) stated honestly in its
+place.
+
 ## 2026-09-25 — FR2-09 fix-1: GAP-144 token-size remedy chosen (option iii, with option i applied first)
 
 Re-ran audit-1's own measurement methodology live against the post-fix build (real Chrome,
@@ -1384,3 +1418,48 @@ add the lookup, since audit-2 confirmed it also satisfies spec P1 as written -- 
 better than a corrected excuse when the fix is this cheap); correct step0-matrix.json's rows
 (i)/(j) using audit-2's own real pre-change measurement; fix the hostile-name fixture so it
 actually reaches the browser as the fixture's own stated purpose requires.
+
+## 2026-09-25 -- FR2-09 audit-3: FAILED narrowly -- GAP-149/151/152 confirmed genuinely fixed; fix-2's own GAP-150 fix introduced a new, worse defect
+
+The independent Auditor redid every fix-2 verification itself from scratch (its own revert-and-
+confirm on GAP-149's test, its own X-Frame-Options/CSP test pages for GAP-150, its own read of
+step0-matrix-corrected.json against audit-2's real numbers, its own live serve-and-check for
+GAP-152) and confirmed 3 of the 4 items are genuinely, substantively fixed -- GAP-149's new test
+really does fail on unfixed code (with 4 more of the auditor's own adversarial name variants, all
+correctly caught); GAP-151's corrected timing numbers match exactly; GAP-152's hostile name now
+flows correctly through every output path (runtime snapshot, ax_snapshot, MCP tools, JSON) with
+no injection-adjacent issue found despite deliberately being a hostile string.
+
+The FAIL: fix-2's own GAP-150 remedy (reading the iframe's src attribute via frame.frameElement()
+to recover a blocked frame's real URL) is ITSELF now buggy in a way that's arguably worse than
+what it replaced. src is the URL the frame was TOLD to load, not necessarily the URL that
+actually got blocked -- after a server redirect, an in-frame script redirect, or a target= link
+navigation, the recovered "real" URL is false (live-reproduced 3/3, typically reporting the
+embedding page's own origin as if it were the blocker). The old chrome-error:// output was
+unhelpful but never actively wrong; the new one states a false fact with the same confidence as
+a correct one. This is now recognized as its own small instance of the SAME meta-lesson this
+loop keeps re-learning: a plausible-looking, narrowly-tested fix for one gap can introduce a
+new, more serious gap of a different shape, which is exactly why every fix round in this loop
+gets independently re-audited rather than trusted on its own report.
+
+**Remedy decided for fix-3**: switch to Chrome DevTools Protocol's own `unreachableUrl` field
+(read via `Page.getFrameTree` on each frame's own CDP session), which audit-3 already live-
+confirmed gives the CORRECT blocked URL in all 4 tested cases (the 3 that broke frameElement()'s
+src-reading, plus the original direct-load case) -- this is the actual signal Chrome itself
+records for "the URL I failed to load here," rather than inferring it from a DOM attribute that
+can go stale. If `unreachableUrl` isn't available for some reason (older Chrome, some edge case),
+fall back to the existing frameElement()-src behavior but state the result as a "likely" URL
+rather than a definite fact in that fallback path -- never claim more certainty than the signal
+actually supports, which is the root failure both the pre-fix-2 and fix-2 attempts shared in
+different ways (one said nothing useful; the other said something false).
+
+fix-3 scope: (1) implement the unreachableUrl-based fix per above, with a real unit test this
+time (GAP-156's finding that the whole feature had zero coverage); (2) fix the GAP-155 file
+citation and the "same-origin"/"cross-origin" mislabel; (3) GAP-157 (frame navigates to blocked
+AFTER attach, vanishes with no placeholder) is a genuinely separate, pre-existing timing gap
+(not introduced by this round) -- log it to the backlog rather than expanding fix-3's scope to
+cover it, since the item's core Done-when bullets are otherwise met and this is its own distinct
+investigation.
+
+FR2-09 is now at its 3rd fix cycle -- still comfortably within the loop's normal 4-cycle bound,
+no escalation warranted.
