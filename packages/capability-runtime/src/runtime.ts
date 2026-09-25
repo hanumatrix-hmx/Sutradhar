@@ -46,7 +46,20 @@ import type {
   StorageState,
   TabInfo,
 } from './types.js';
-import { BrowserNotAvailableError, normalizeTarget } from './types.js';
+import {
+  BrowserNotAvailableError,
+  normalizeTarget,
+  selectorSyntaxDetail,
+  SELECTOR_SYNTAX_HINT,
+  type ExtractFieldSpec,
+  type ExtractDataOptions,
+} from './types.js';
+import {
+  planExtractFields,
+  extractFieldsInPage,
+  invalidExtractSelectorsError,
+  type ExtractInPageResult,
+} from './extract/extract-data.js';
 import { ProfileManager } from './profiles/profile-manager.js';
 import {
   AUDIT_PAGE_SCRIPT,
@@ -919,7 +932,19 @@ export class SutradharRuntime {
     };
     let current: Hoppable = page;
     for (const [i, hop] of hops.entries()) {
-      const handle = await current.$(normalizeTarget(hop));
+      let handle: Awaited<ReturnType<Hoppable['$']>>;
+      try {
+        handle = await current.$(normalizeTarget(hop));
+      } catch (e) {
+        const msg = (e as Error)?.message ?? String(e);
+        if (/is not a valid selector|SyntaxError/i.test(msg)) {
+          throw new Error(
+            `Invalid frameSelector "${hop}" (from the full chain "${frameSelector}") — ` +
+              `${selectorSyntaxDetail(msg)} ${SELECTOR_SYNTAX_HINT}`,
+          );
+        }
+        throw e; // navigation/context errors pass through untouched (same object)
+      }
       if (!handle) {
         throw new Error(
           `No element matched frameSelector "${hop}" (from the full chain "${frameSelector}") — reached via ${i === 0 ? 'the top-level page' : 'the previous frame in the chain'}.`,
@@ -937,36 +962,51 @@ export class SutradharRuntime {
   }
 
   /**
-   * Extract structured data: for each entry in `fields`, run a `querySelectorAll` and collect
-   * either the element's text content or a named attribute from every match. A purpose-built
-   * alternative to hand-writing an `eval()` scraper for the common "give me a list of
-   * {title, price, link}" case.
+   * Extract structured data: for each entry in `fields`, run a `querySelectorAll` and collect a
+   * value from every match. A purpose-built alternative to hand-writing an `eval()` scraper for
+   * the common "give me a list of {title, price, link}" case.
+   *
+   * With no `attribute`, reads "what the user sees": a live `<input>`/`<select>`/`<textarea>`
+   * `.value` (including anything typed but not yet submitted), an `<option>`'s `.text`, or, for
+   * any other element, its rendered `innerText` trimmed (falling back to `textContent` trimmed
+   * for elements without `innerText`, e.g. SVG) — CSS-hidden descendants and `<script>`/`<style>`
+   * text are left out, matching what a sighted user would actually see. `attribute` of
+   * `"value"`/`"checked"`/`"selected"` (case-insensitive) reads the LIVE DOM property instead of
+   * markup (`"checked"`/`"selected"` stringify to `"true"`/`"false"`); an element with no such
+   * property of the right type falls back to the raw attribute. `"attr:<name>"` always reads the
+   * raw markup attribute (e.g. `"attr:value"` = the original default value). Any other name
+   * (e.g. `"href"`) returns the raw attribute exactly as before — not resolved to an absolute
+   * URL. Selectors don't pierce shadow DOM.
+   *
+   * All field selectors are validated before anything is read: an invalid selector fails the
+   * whole call and names every bad field (no partial result). Arrays have one entry per match in
+   * document order, unless `options.visibleOnly` (or a field's own `visibleOnly`) drops some —
+   * hidden matches use the same visibility rule as `waitForSelector`'s `state: 'visible'`
+   * (computed visibility hidden/collapse, or a zero-size bounding box; opacity and off-screen
+   * position are ignored); an `<option>` is judged by its owning `<select>`. With `visibleOnly`,
+   * index alignment across fields is not guaranteed.
    *
    * Runs against the top-level page by default. Pass `frameSelector` (a CSS selector or
    * snapshot node id identifying an `<iframe>` element on the top-level page) to extract from
-   * inside that frame instead — including a genuinely cross-origin one.
+   * inside that frame instead — including a genuinely cross-origin one. `visibleOnly` inside a
+   * frame is judged within that frame's own document only.
    */
   public async extractData(
     sessionId: string,
-    fields: Record<string, { selector: string; attribute?: string }>,
+    fields: Record<string, ExtractFieldSpec>,
     tabId?: string,
     frameSelector?: string,
+    options?: ExtractDataOptions,
   ): Promise<Record<string, string[]>> {
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
+    const plan = planExtractFields(fields, options); // throws on 'attr:' with no name — before any CDP call
     const target = (frameSelector ? await this.resolveFrame(page, frameSelector) : page) as Awaited<
       ReturnType<SutradharRuntime['resolveFrame']>
     >;
-    return target.evaluate((fieldSpec: Record<string, { selector: string; attribute?: string }>) => {
-      const out: Record<string, string[]> = {};
-      for (const [name, spec] of Object.entries(fieldSpec)) {
-        const elements = Array.from(document.querySelectorAll(spec.selector));
-        out[name] = elements.map((el) =>
-          spec.attribute ? (el.getAttribute(spec.attribute) ?? '') : (el.textContent ?? '').trim(),
-        );
-      }
-      return out;
-    }, fields as never);
+    const result = (await target.evaluate(extractFieldsInPage as never, plan as never)) as ExtractInPageResult;
+    if (!result.ok) throw invalidExtractSelectorsError(result.invalid);
+    return result.data;
   }
 
   /**

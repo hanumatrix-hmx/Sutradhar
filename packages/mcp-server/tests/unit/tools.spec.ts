@@ -426,6 +426,105 @@ describe('@sutradhar/mcp-server browser.wait_for_selector state (FR2-01)', () =>
   });
 });
 
+describe('@sutradhar/mcp-server browser.extract_data live values (FR2-02)', () => {
+  it('M1: visibleOnly (top-level and per-field) validates as boolean; fields refine is unchanged', () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    registerTools(server, { runtime });
+
+    const config = tools.get('browser.extract_data')!.config.inputSchema;
+    expect(config.visibleOnly.safeParse(true).success).toBe(true);
+    expect(config.visibleOnly.safeParse(undefined).success).toBe(true);
+    expect(config.visibleOnly.safeParse('yes').success).toBe(false);
+
+    expect(
+      config.fields.safeParse({ a: { selector: '#a', attribute: 'attr:value', visibleOnly: true } }).success,
+    ).toBe(true);
+    expect(config.fields.safeParse({ a: { selector: '#a', visibleOnly: 'yes' } }).success).toBe(false);
+
+    const emptyResult = config.fields.safeParse({});
+    expect(emptyResult.success).toBe(false);
+    expect(emptyResult.error!.issues[0].message).toBe(
+      'fields must have at least one entry — an empty object is a no-op extraction',
+    );
+  });
+
+  it('M2: the handler passes sessionId/fields/tabId/frameSelector and { visibleOnly } through to runtime.extractData', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const F = { v: { selector: '#v' } };
+    const spy = vi.spyOn(runtime, 'extractData').mockResolvedValue({ v: ['x'] });
+
+    registerTools(server, { runtime });
+    const result = await tools
+      .get('browser.extract_data')!
+      .handler({ sessionId: 's1', fields: F, tabId: 't1', frameSelector: '#f', visibleOnly: true });
+
+    expect(spy).toHaveBeenCalledWith('s1', F, 't1', '#f', { visibleOnly: true });
+    expect(JSON.parse(result.content[0].text)).toEqual({ v: ['x'] });
+
+    spy.mockClear();
+    await tools.get('browser.extract_data')!.handler({ sessionId: 's1', fields: F });
+    expect(spy).toHaveBeenCalledWith('s1', F, undefined, undefined, { visibleOnly: undefined });
+  });
+
+  it('M3: the description and field description document every FR2-02 semantic', () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    registerTools(server, { runtime });
+
+    const tool = tools.get('browser.extract_data')!;
+    const description = tool.config.description as string;
+    for (const term of ['live', 'attr:', 'visibleOnly', 'innerText', '"true"', 'option:checked', 'shadow']) {
+      expect(description).toContain(term);
+    }
+    const attributeDesc = (tool.config.inputSchema.fields as any)._def.schema._def.valueType._def.shape().attribute
+      .description as string;
+    expect(attributeDesc).toContain('attr:');
+  });
+
+  it('M4: an invalid-selector rejection gets the "extract_data failed:" prefix and no misleading/duplicate hint', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'extractData').mockRejectedValue(
+      new Error(
+        'Invalid selector for field "bad": ".p[" — Failed to execute \'querySelectorAll\' on \'Document\': ' +
+          "'.p[' is not a valid selector.\n" +
+          'Use standard CSS or a snapshot node id. Playwright-style selectors (text=, role=, >>, :has-text(), ' +
+          'getBy*, internal:) are not supported: take a snapshot to find a CSS selector or node id, or use ' +
+          'click_by_text / click_by_role / type_by_label to act by visible text.',
+      ),
+    );
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.extract_data')!.handler({ sessionId: 's1', fields: { bad: { selector: '.p[' } } });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toMatch(/^extract_data failed: Invalid selector for field "bad"/);
+    expect(result.content[0].text).not.toContain('page may still be loading');
+    expect(result.content[0].text).not.toContain('Hint:');
+  });
+
+  it('M5: an invalid frameSelector rejection from browser.eval gets the "eval failed:" prefix', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'eval').mockRejectedValue(
+      new Error(
+        'Invalid frameSelector "iframe[" (from the full chain "iframe[") — Failed to execute \'querySelector\' ' +
+          "on 'Document': 'iframe[' is not a valid selector. Use standard CSS or a snapshot node id.",
+      ),
+    );
+
+    registerTools(server, { runtime });
+    const result = await tools
+      .get('browser.eval')!
+      .handler({ sessionId: 's1', code: '1', frameSelector: 'iframe[' });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toMatch(/^eval failed: Invalid frameSelector/);
+  });
+});
+
 describe('@sutradhar/mcp-server FR2-09 frame/shadow labels', () => {
   it('M1: browser.snapshot\'s description documents the iframe/shadow label forms, the tolerant id pattern, and not-inspectable placeholders', () => {
     const { server, tools } = createMockServer();

@@ -1,0 +1,4 @@
+{"case":"N1-bundle-invalid-selector","expected":"same error shape through the esbuild bundle","observed":{"content":[{"type":"text","text":"extract_data failed: Invalid selector for field \"bad\": \".price[\" — Failed to execute 'querySelectorAll' on 'Document': '.price[' is not a valid selector.\nUse standard CSS or a snapshot node id. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*, internal:) are not supported: take a snapshot to find a CSS selector or node id, or use click_by_text / click_by_role / type_by_label to act by visible text."}],"isError":true},"pass":true}
+{"case":"C1-bundle-live-typed-value","expected":"[\"Ada Lovelace\"]","observed":{"a":["Ada Lovelace"]},"pass":true}
+{"case":"C4-bundle-live-checkbox","expected":"[\"true\"]","observed":{"a":["true"]},"pass":true}
+{"case":"C10-bundle-visibleOnly","expected":"[\"Visible message\"]","observed":{"v":["Visible message"]},"pass":true}

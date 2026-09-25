@@ -534,6 +534,143 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
   });
 });
 
+describe('extractData live values (FR2-02)', () => {
+  const originalDocument = (globalThis as any).document;
+  const originalGetComputedStyle = (globalThis as any).getComputedStyle;
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+    (globalThis as any).document = originalDocument;
+    (globalThis as any).getComputedStyle = originalGetComputedStyle;
+  });
+
+  function stubDom(elementsBySelector: Record<string, any[]>) {
+    vi.stubGlobal('document', {
+      querySelectorAll: vi.fn((sel: string) => {
+        const found = elementsBySelector[sel];
+        if (found === undefined) return [];
+        if (found instanceof Error) throw found;
+        return found;
+      }),
+    });
+    vi.stubGlobal('getComputedStyle', () => ({ visibility: 'visible' }));
+  }
+
+  function withFakePage() {
+    const fakePage = { evaluate: vi.fn((fn: any, arg: any) => fn(arg)) };
+    vi.spyOn(SutradharRuntime.prototype as any, 'resolveTab').mockReturnValue({ tab: {} });
+    vi.spyOn(SutradharRuntime.prototype as any, 'requirePage').mockReturnValue(fakePage);
+    return fakePage;
+  }
+
+  it('R1: reads live values for both a plain selector and a normalized numeric selector', async () => {
+    stubDom({
+      '#i': [{ localName: 'input', value: 'typed', getAttribute: () => null }],
+      '[data-sd-node-id="12"]': [{ localName: 'div', innerText: 'text' }],
+    });
+    const fakePage = withFakePage();
+    const runtime = new SutradharRuntime();
+
+    const result = await runtime.extractData('s', { v: { selector: '#i' }, t: { selector: '12' } });
+
+    expect(result).toEqual({ v: ['typed'], t: ['text'] });
+    const plan = fakePage.evaluate.mock.calls[0][1];
+    expect(plan.find((p: any) => p.name === 't').selector).toBe('[data-sd-node-id="12"]');
+  });
+
+  it('R2: an invalid selector rejects with the Sutradhar-authored message, hint, and Error name', async () => {
+    const parserError = new Error(
+      "Failed to execute 'querySelectorAll' on 'Document': '.p[' is not a valid selector.",
+    );
+    stubDom({ '.p[': parserError });
+    withFakePage();
+    const runtime = new SutradharRuntime();
+
+    await expect(runtime.extractData('s', { bad: { selector: '.p[' } })).rejects.toMatchObject({
+      name: 'Error',
+      message: expect.stringMatching(/^Invalid selector for field "bad"/),
+    });
+    await expect(runtime.extractData('s', { bad: { selector: '.p[' } })).rejects.toThrow(
+      /is not a valid selector/,
+    );
+    await expect(runtime.extractData('s', { bad: { selector: '.p[' } })).rejects.toThrow(/Playwright-style/);
+  });
+
+  it('R3: an "attr:" attribute with no name rejects before evaluate is ever called', async () => {
+    const fakePage = withFakePage();
+    const runtime = new SutradharRuntime();
+
+    await expect(runtime.extractData('s', { bad: { selector: '#a', attribute: 'attr:' } })).rejects.toThrow(
+      /needs an attribute name/,
+    );
+    expect(fakePage.evaluate).not.toHaveBeenCalled();
+  });
+
+  it('R4: call-level visibleOnly applies to every field unless a field overrides it', async () => {
+    stubDom({ '#a': [], '#b': [] });
+    const fakePage = withFakePage();
+    const runtime = new SutradharRuntime();
+
+    await runtime.extractData(
+      's',
+      { a: { selector: '#a' }, b: { selector: '#b', visibleOnly: false } },
+      undefined,
+      undefined,
+      { visibleOnly: true },
+    );
+
+    const plan = fakePage.evaluate.mock.calls[0][1];
+    expect(plan.find((p: any) => p.name === 'a').visibleOnly).toBe(true);
+    expect(plan.find((p: any) => p.name === 'b').visibleOnly).toBe(false);
+  });
+
+  it('R5: resolveFrame wraps a selector-syntax rejection from page.$ into a Sutradhar-authored error', async () => {
+    const err = new Error("Failed to execute 'querySelector' on 'Document': 'iframe[' is not a valid selector.");
+    const fakePage = { $: vi.fn().mockRejectedValue(err) };
+    const runtime = new SutradharRuntime();
+
+    // @ts-expect-error — reaching into the private method, same pattern as the existing
+    // resolveFrame tests above.
+    await expect(runtime.resolveFrame(fakePage, 'iframe[')).rejects.toMatchObject({
+      message: expect.stringMatching(
+        /^Invalid frameSelector "iframe\[" \(from the full chain "iframe\["\) — Failed to execute/,
+      ),
+    });
+    // @ts-expect-error
+    await expect(runtime.resolveFrame(fakePage, 'iframe[')).rejects.toThrow(/Playwright-style/);
+    // @ts-expect-error
+    const rejection = await runtime.resolveFrame(fakePage, 'iframe[').catch((e: Error) => e);
+    expect(rejection.message).not.toContain('SyntaxError:');
+  });
+
+  it('R6: a non-syntax rejection from page.$ is rethrown as the exact same error object', async () => {
+    const err = new Error('Execution context was destroyed');
+    const fakePage = { $: vi.fn().mockRejectedValue(err) };
+    const runtime = new SutradharRuntime();
+
+    // @ts-expect-error
+    await expect(runtime.resolveFrame(fakePage, '#a')).rejects.toBe(err);
+  });
+
+  it('R7: a syntax error on the second hop of a chain names that hop and the full chain', async () => {
+    const err = new Error("Failed to execute 'querySelector' on 'Document': 'iframe[' is not a valid selector.");
+    const goodFrame = { evaluate: vi.fn() };
+    const goodHandle = { contentFrame: vi.fn().mockResolvedValue(goodFrame) };
+    const fakePage = {
+      $: vi.fn().mockResolvedValueOnce(goodHandle),
+    };
+    // The second hop's $ call happens on the resolved frame, not the top-level page.
+    (goodFrame as any).$ = vi.fn().mockRejectedValue(err);
+    const runtime = new SutradharRuntime();
+
+    // @ts-expect-error
+    await expect(runtime.resolveFrame(fakePage, 'iframe.a::iframe[')).rejects.toMatchObject({
+      message: expect.stringContaining('Invalid frameSelector "iframe[" (from the full chain "iframe.a::iframe[")'),
+    });
+  });
+});
+
 describe('@sutradhar/capability-runtime SutradharRuntime.snapshot — FR2-09 skippedFrames', () => {
   it('FR2-09 R1: skippedFrames is present exactly when includeNodes is set, and absent otherwise (like nodes)', async () => {
     const runtime = new SutradharRuntime();

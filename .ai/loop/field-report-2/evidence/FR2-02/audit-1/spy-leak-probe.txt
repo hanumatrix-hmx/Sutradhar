@@ -1,0 +1,77 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041
+
+stdout | packages/capability-runtime/tests/unit/runtime.spec.ts > listSessions (FR2-10) > S2: launch() twice registers two launched, mock (no real browser) entries, sorted by createdAt then id
+{"timestamp":"2026-09-25T09:23:32.858Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T09:23:32.859Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328212858_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T09:23:32.859Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T09:23:32.859Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328212859_2","context":{"isIncognito":false}}
+
+stdout | packages/capability-runtime/tests/unit/runtime.spec.ts > listSessions (FR2-10) > S3: attach() registers an "attached" entry
+{"timestamp":"2026-09-25T09:23:32.866Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328212866_1","context":{"isIncognito":false}}
+
+stdout | packages/capability-runtime/tests/unit/runtime.spec.ts > listSessions (FR2-10) > S4: lifecycleOpsInFlight is 1 while launch() is pending, 0 after it resolves, and 0 after it rejects or throws synchronously
+{"timestamp":"2026-09-25T09:23:32.868Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328212867_1","context":{"isIncognito":false}}
+
+stdout | packages/capability-runtime/tests/unit/runtime.spec.ts > listSessions (FR2-10) > S5: shutdown() and shutdownAll() remove entries; shutdown of an unknown id still throws and leaves the counter at 0
+{"timestamp":"2026-09-25T09:23:32.869Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T09:23:32.869Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328212869_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T09:23:32.869Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T09:23:32.869Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328212869_2","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T09:23:32.870Z","level":"info","message":"[BrowserSession] Closed session sess_1790328212869_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T09:23:32.870Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790328212869_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T09:23:32.870Z","level":"info","message":"[BrowserSession] Closed session sess_1790328212869_2","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-25T09:23:32.870Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790328212869_2","context":{"reason":"Close all sessions requested"}}
+
+stdout | packages/capability-runtime/tests/unit/runtime.spec.ts > listSessions (FR2-10) > S6: a session created directly via the session manager (agent.runGoal-style, no launch()/attach()) is not listed
+{"timestamp":"2026-09-25T09:23:32.870Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T09:23:32.870Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328212870_1","context":{"isIncognito":false}}
+
+stdout | packages/capability-runtime/tests/unit/runtime.spec.ts > listSessions (FR2-10) > S7: a session removed behind the runtime's back (idle reap / crash) is pruned from listSessions
+{"timestamp":"2026-09-25T09:23:32.870Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T09:23:32.870Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328212870_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T09:23:32.871Z","level":"info","message":"[BrowserSession] Closed session sess_1790328212870_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-25T09:23:32.871Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790328212870_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-25T09:23:32.871Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T09:23:32.871Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328212870_1","context":{"isIncognito":false}}
+
+stdout | packages/capability-runtime/tests/unit/runtime.spec.ts > listSessions (FR2-10) > S8: a reused id keeps its original origin (launch/launch, and attach then launch under the same id)
+{"timestamp":"2026-09-25T09:23:32.871Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T09:23:32.871Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T09:23:32.871Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed2","context":{"isIncognito":false}}
+
+stdout | packages/capability-runtime/tests/unit/runtime.spec.ts > AUDIT-PROBE spy leak > prototype resolveTab/requirePage are real after the FR2-02 describe
+AUDIT-PROBE {"resolveTab":true,"requirePage":true}
+
+ ❯ packages/capability-runtime/tests/unit/runtime.spec.ts  (85 tests | 1 failed) 59ms
+   ❯ packages/capability-runtime/tests/unit/runtime.spec.ts > AUDIT-PROBE spy leak > prototype resolveTab/requirePage are real after the FR2-02 describe
+     → expected [Function] to throw error matching /No browser session|not available|Bro…/i but got 'Invalid selector for field "a": "h1" …'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/capability-runtime/tests/unit/runtime.spec.ts > AUDIT-PROBE spy leak > prototype resolveTab/requirePage are real after the FR2-02 describe
+AssertionError: expected [Function] to throw error matching /No browser session|not available|Bro…/i but got 'Invalid selector for field "a": "h1" …'
+
+- Expected: 
+/No browser session|not available|BrowserNotAvailable/i
+
++ Received: 
+"Invalid selector for field \"a\": \"h1\" — Cannot read properties of undefined (reading 'querySelectorAll')
+Use standard CSS or a snapshot node id. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*, internal:) are not supported: take a snapshot to find a CSS selector or node id, or use click_by_text / click_by_role / type_by_label to act by visible text."
+
+ ❯ packages/capability-runtime/tests/unit/runtime.spec.ts:834:5
+    832|     const leaked = { resolveTab: vi.isMockFunction((SutradharRuntime.p…
+    833|     console.log('AUDIT-PROBE', JSON.stringify(leaked));
+    834|     await expect(new SutradharRuntime().extractData('no-such-session',…
+       |     ^
+    835|   });
+    836| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 84 passed (85)
+   Start at  14:53:31
+   Duration  1.54s (transform 521ms, setup 0ms, collect 1.06s, tests 59ms, environment 0ms, prepare 176ms)
+

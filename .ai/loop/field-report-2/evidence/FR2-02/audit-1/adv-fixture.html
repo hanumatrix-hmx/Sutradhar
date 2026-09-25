@@ -1,0 +1,31 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>FR2-02 audit-1 adversarial</title></head>
+<body>
+<h1>audit</h1>
+<!-- C12 variants -->
+<select id="sel-visible"><option value="v1">Vis One</option><option value="v2">Vis Two</option></select>
+<select id="sel-none" style="display:none"><option value="n1">None One</option><option value="n2">None Two</option></select>
+<div style="display:none"><select id="sel-in-hidden-parent"><option value="p1">Parent One</option></select></div>
+<select id="sel-vishidden" style="visibility:hidden"><option value="h1">VH One</option></select>
+<select id="sel-listbox" size="3"><option value="l1">List One</option><option value="l2">List Two</option><optgroup label="G"><option value="l3">List Three</option></optgroup></select>
+<datalist id="dl"><option value="dl1">DL One</option></datalist>
+<!-- multi-select -->
+<select id="multi" multiple size="4"><option value="a">A</option><option value="b">B</option><option value="c">C</option><option value="d">D</option></select>
+<!-- attr:checked -->
+<input type="checkbox" id="cb-plain">
+<input type="checkbox" id="cb-markup" checked>
+<input type="radio" name="rr" id="rr1" value="one" checked><input type="radio" name="rr" id="rr2">
+<!-- misc -->
+<input type="password" id="pw">
+<input type="number" id="num" value="5">
+<input id="spaced" value="markup-spaced" data-x="dx">
+<details id="det"><summary>Sum</summary><p id="in-details">Closed details body</p></details>
+<div id="host"></div>
+<iframe id="f" srcdoc="<input type='checkbox' id='fcb'><select id='fsel' style='display:none'><option>FO</option></select>"></iframe>
+<script>
+  const host = document.getElementById('host');
+  const sr = host.attachShadow({ mode: 'open' });
+  sr.innerHTML = '<input id="shadow-in" value="shadow-markup"><span class="in-shadow">shadow text</span>';
+  window.__adv = { ready: true };
+</script>
+</body></html>

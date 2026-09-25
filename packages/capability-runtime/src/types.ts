@@ -165,10 +165,62 @@ export class BrowserNotAvailableError extends Error {
 /** A verb argument that targets an element either by CSS selector or by snapshot node id. */
 export type ElementTarget = string;
 
+/** One named field of {@link SutradharRuntime.extractData}. */
+export interface ExtractFieldSpec {
+  /** Standard CSS (run with querySelectorAll in the target document) or a snapshot node id ("12"). */
+  selector: string;
+  /**
+   * What to read from each matched element.
+   * - omitted or '' → "what the user sees": <input>/<select>/<textarea> → the live `.value`;
+   *   <option> → `.text`; any other element → rendered `innerText`, trimmed (falls back to
+   *   `textContent`, trimmed, for elements without innerText, e.g. SVG).
+   * - 'value' | 'checked' | 'selected' (case-insensitive) → the LIVE DOM property, stringified
+   *   ('checked'/'selected' give "true"/"false"). An element with no such property of the right
+   *   type (string for value, boolean for checked/selected) falls back to the raw attribute.
+   * - 'attr:<name>' → the raw markup attribute via getAttribute ('' when absent),
+   *   e.g. 'attr:value' = the original default value.
+   * - any other name (e.g. 'href') → the raw attribute, exactly as before (href is NOT resolved).
+   */
+  attribute?: string;
+  /** Per-field override of {@link ExtractDataOptions.visibleOnly}. */
+  visibleOnly?: boolean;
+}
+
+/** Call-level options for {@link SutradharRuntime.extractData}. */
+export interface ExtractDataOptions {
+  /** Drop matched elements that are not visible: computed visibility hidden/collapse, or a zero
+   *  width/height bounding box (same rule as wait_for_selector's state 'visible'; opacity and
+   *  off-screen position are ignored). An <option> is judged by its owning <select>. Default false. */
+  visibleOnly?: boolean;
+}
+
 /** Internal helper: convert a snapshot node id (number) or selector string to a CSS selector. */
 export function normalizeTarget(target: ElementTarget): string {
   // A pure-numeric target is interpreted as a sd-node-id stamped by the DOM semantic engine.
   return /^\d+$/.test(target.trim()) ? `[data-sd-node-id="${target.trim()}"]` : target;
+}
+
+/**
+ * Actionable tail appended to every selector-syntax error raised across the runtime (FR2-02).
+ * Owned here as the seam FR2-06 (a dedicated fast Playwright-pattern detector) takes over —
+ * FR2-06 may reword this constant and {@link selectorSyntaxDetail} in place, but every caller
+ * (extractData, resolveFrame/eval today) keeps working unchanged.
+ */
+export const SELECTOR_SYNTAX_HINT =
+  'Use standard CSS or a snapshot node id. Playwright-style selectors (text=, role=, >>, :has-text(), ' +
+  'getBy*, internal:) are not supported: take a snapshot to find a CSS selector or node id, or use ' +
+  'click_by_text / click_by_role / type_by_label to act by visible text.';
+
+/**
+ * Extracts the first line of a browser selector-parser error message, with a leading
+ * "SyntaxError: " / "DOMException: " prefix stripped, for use in a Sutradhar-authored error
+ * message (the raw parser message is still useful, just not as the exception's own `name`/type).
+ * Never returns an empty string — falls back to a generic phrase when given no message.
+ */
+export function selectorSyntaxDetail(parserMessage: string): string {
+  const firstLine = (parserMessage ?? '').split('\n')[0]?.trim() ?? '';
+  const stripped = firstLine.replace(/^(SyntaxError|DOMException):\s*/i, '').trim();
+  return stripped.length > 0 ? stripped : 'invalid selector syntax';
 }
 
 export { type SessionId, type TabId };

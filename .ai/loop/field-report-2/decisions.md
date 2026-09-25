@@ -1544,3 +1544,31 @@ process, in contrast to FR2-01/FR2-16's unbounded-shape bugs that exhausted ever
 
 The shared baseline-*.json files are, once again, left untouched per the standing GAP-100/106
 rule -- confirmed by both the Executor and the Auditor to be pre-existing, unrelated to this item.
+
+## 2026-09-25 -- FR2-02: DONE (1 audit, no fix cycles needed)
+
+audit-1 (independent, its own live probes for the C12 ancestor-select-visibility edge case that
+run-1 had only unit-tested, its own 10 break-and-restore checks, its own read of the full-repo
+test-suite failures to confirm they're genuinely pre-existing) returned PASS with caveats -- the
+same shape of result as FR2-10, no fix cycle needed. Confirmed correct: attr:<name> genuinely
+bypasses live-property logic for every element type; form-control defaults correctly distinguish
+input/select/textarea from everything else; <option> defaults to .text specifically (not .value
+or innerText); the visibility rule matches FR2-01's landed rule in substance (not byte-for-byte
+identical code, but the same semantics, confirmed by direct comparison against
+browser-action-engine.ts's actual lines); multi-select, shadow-DOM non-piercing, and the
+invalid-selector multi-field error collection all behave exactly as documented.
+
+6 minor gaps logged (GAP-169 through 174), the same now-familiar test-integrity/evidence-
+accuracy category every item in this loop has produced at least one instance of. Two were fixed
+directly on this commit: GAP-169 (a real mock leak -- vi.spyOn on the prototype without
+vi.restoreAllMocks() in afterEach, live-proven to bleed into a later unrelated test) and, on
+reflection, left as documented rather than fixed: GAP-170 (a false tool-limitation claim in
+run-1's OWN evidence file, not retroactively edited per the evidence-preservation rule, but
+corrected here on the record instead). GAP-172 (attr:<name> with a typo'd/mistyped name silently
+returns empty rather than erroring) is worth flagging as a genuine design nit for a future docs
+pass -- it's the exact "silent wrongness" category this item exists to eliminate, now present in
+a smaller form in its own new escape-hatch syntax -- but doesn't rise to blocking DONE per the
+spec's own literal design (the spec asked for this exact trim behavior).
+
+Third item to reach DONE (after FR2-09, FR2-10), second to pass with only 1 audit needed. The
+shared baseline-*.json files are once again pre-existing and untouched, per the standing rule.

@@ -1021,16 +1021,39 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
     'browser.extract_data',
     {
       description:
-        'Extract structured data from the page. For each named field, provide a CSS selector (and optionally ' +
-        'an attribute to read); returns every matching element\'s text or attribute value as an array, ' +
+        'Extract structured data from the page. For each named field give a CSS selector (or snapshot [#id]); ' +
+        'returns one string per matching element in document order, ' +
         'e.g. {"titles": {"selector": ".product h2"}, "links": {"selector": ".product a", "attribute": "href"}}. ' +
-        'Runs against the top-level page by default; pass frameSelector (a CSS selector or snapshot [#id] for ' +
-        'an <iframe> element on the top-level page) to extract from inside that frame instead — including a ' +
-        'genuinely cross-origin one.',
+        'With no attribute: form controls (input/select/textarea) return their LIVE current value, including ' +
+        'typed text not yet submitted; other elements return rendered text (innerText, trimmed), leaving out ' +
+        'CSS-hidden text and <script>/<style> content. "value"/"checked"/"selected" (case-insensitive) read ' +
+        'live DOM state instead of markup; "checked"/"selected" return "true"/"false". "attr:<name>" reads the ' +
+        'raw HTML attribute (e.g. "attr:value" = the original markup value). Any other name, e.g. "href", ' +
+        'returns the raw attribute, not resolved to an absolute URL. Hidden matches are still returned unless ' +
+        'visibleOnly is true (whole call or per field). For a checkbox/radio\'s state use "checked"; with no ' +
+        'attribute a checkbox returns its value (usually "on"). For <select multiple>, "value" is only the ' +
+        'first selected value — use selector "select option:checked" with attribute "value" for all selected. ' +
+        'Selectors don\'t pierce shadow DOM. Runs against the top-level page by default; pass frameSelector ' +
+        '(a CSS selector or snapshot [#id] for an <iframe> element on the top-level page) to extract from ' +
+        'inside that frame instead — including a genuinely cross-origin one.',
       inputSchema: {
         sessionId: z.string(),
         fields: z
-          .record(z.string(), z.object({ selector: z.string(), attribute: z.string().optional() }))
+          .record(
+            z.string(),
+            z.object({
+              selector: z.string().describe('CSS selector or snapshot [#id]. Does not pierce shadow DOM.'),
+              attribute: z
+                .string()
+                .optional()
+                .describe(
+                  'Omit for the current value/visible text. "value" | "checked" | "selected" read LIVE state ' +
+                    '("checked"/"selected" → "true"/"false"). "attr:<name>" reads the raw HTML attribute ' +
+                    '(e.g. "attr:value" = original markup value). Any other name (e.g. "href") returns the raw attribute.',
+                ),
+              visibleOnly: z.boolean().optional().describe('Per-field override of the top-level visibleOnly.'),
+            }),
+          )
           .refine((obj) => Object.keys(obj).length > 0, {
             message: 'fields must have at least one entry — an empty object is a no-op extraction',
           }),
@@ -1039,11 +1062,18 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
           .string()
           .optional()
           .describe('CSS selector or snapshot [#id] for an <iframe> element on the top-level page — extract from inside that frame instead of the top-level page.'),
+        visibleOnly: z
+          .boolean()
+          .optional()
+          .describe(
+            'Drop matched elements that are not visible (visibility:hidden/collapse or a zero-size box; opacity ' +
+              'is ignored). Default false: hidden matches are still returned.',
+          ),
       },
     },
-    async ({ sessionId, fields, tabId, frameSelector }) => {
+    async ({ sessionId, fields, tabId, frameSelector, visibleOnly }) => {
       try {
-        return jsonResult(await runtime.extractData(sessionId, fields, tabId, frameSelector));
+        return jsonResult(await runtime.extractData(sessionId, fields, tabId, frameSelector, { visibleOnly }));
       } catch (e) {
         return errorResult(`extract_data failed: ${(e as Error).message}`);
       }
