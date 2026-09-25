@@ -369,3 +369,44 @@ Adopted as written (full reasoning in the spec's §0.6):
 
 Sequencing: DEVELOP runs after FR2-07 (last in the merge order for shared files: the engine,
 runtime.ts, tools.ts, cli.ts, page.ts and types.ts all overlap).
+
+## 2026-09-25 — FR2-09 spec decisions (from the Planner)
+
+Spec: `evidence/FR2-09/spec.md` (81KB). No hard precondition on another item — its file overlap
+with FR2-02..08 is a handful of lines each, not shared logic.
+
+The Planner corrected a real inaccuracy in the existing code and docs while tracing: the current
+snapshot engine's own header comment and a note in browsing-capability-loop.md both claim
+cross-origin iframes are skipped because of site isolation. That's false — Puppeteer already
+reads cross-origin iframe content fine via its own per-frame CDP session, and the loop's own
+prior milestones demonstrate this working (Stripe Elements, a real cross-origin case). What
+actually falls into the "skipped" bucket today is: a frame that detached or navigated mid-scrape,
+any other CDP error, and — newly identified as a real risk — a frame whose page script is busy,
+which today doesn't throw, it just hangs the whole snapshot indefinitely (the same class of bug
+as FR2-01's GAP-030, just for the snapshot engine instead of wait_for_selector).
+
+Adopted as written (full reasoning in the spec's §0.1):
+1. A node's frame is omitted entirely when it's in the main frame (the majority case) — adding an
+   annotation to every node would bloat every snapshot for no benefit. Only non-main-frame nodes
+   carry frame identity, and only shadow-DOM nodes carry a shadow-host chain.
+2. Frames that can't be scraped get a real 5-second timeout added (there wasn't one before), so a
+   busy iframe can no longer hang an entire snapshot — it becomes a listed placeholder instead.
+3. Skipped-frame placeholders appear in every listing mode, including idsOnly, because hiding
+   missing content is exactly the silent-wrongness bug class this loop exists to close.
+4. Frame and shadow labels are both structured fields (for JSON/programmatic consumers) AND baked
+   into the text listing (for LLM consumers) — not one or the other.
+5. ax_snapshot gets Puppeteer's own includeIframes:true option, also with a bounded timeout and a
+   fallback to the no-iframes read if that read is too slow or fails, rather than leaving iframe
+   content silently absent from the accessibility tree as it is today.
+6. No real tokenizer dependency is added for the token-size regression measurement — the repo
+   already has a documented chars/4 proxy in an existing script, reused here rather than inventing
+   a second convention.
+7. Backward compatibility: every existing parser of the snapshot text targets main-frame-only
+   elements, which stay byte-identical, so nothing in-repo breaks. External regex parsers of
+   iframe-labeled lines are the one real compatibility risk, mitigated by publishing a tolerant
+   \`^\\[#(\\d+)\` pattern in the tool description instead of the exact \`^\\[#(\\d+)\\]$\` some
+   callers might have used.
+
+Sequencing: no hard precondition; file overlap with prior items is minimal. Default merge order
+is after FR2-08, but a parallel worktree Executor is acceptable if the Orchestrator wants to
+develop it alongside another item.
