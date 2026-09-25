@@ -730,3 +730,35 @@ default here (an honest timeout beats a false "hidden"), but the error message i
 case must say "could not verify: one or more frames were unresponsive" rather than the plain
 "still visible" text, so a caller isn't misled about which failure mode occurred. This is now a
 REQUIRED distinction, not left to the Executor's judgment.
+
+## 2026-09-25 — FR2-15 spec decisions (from the Planner)
+
+Spec: `evidence/FR2-15/spec.md` (condensed to ~7KB in the committed copy; the Planner's full
+output ran ~150KB with the complete row catalog -- retrievable from this session's own
+task-notification record if needed verbatim). **Hard precondition, same shape as FR2-13**: this
+guide maps Playwright onto the FINAL shapes of FR2-01 through FR2-14, none of which is DONE yet
+(FR2-01 itself is mid-escalation). DEVELOP cannot start.
+
+Adopted as written:
+1. The markdown file IS the executed source of every snippet (tagged HTML comment markers,
+   parsed and run verbatim by the live-verify harness) -- never a second copy that could drift
+   from what the reader sees.
+2. Both Playwright (pinned playwright-core@1.62.1, already isolated in tools/engine-comparison)
+   and Sutradhar sides are executed for every row that claims a divergence, rather than trusting
+   memory about Playwright's own behavior (case-sensitivity of getByText, strict-mode role
+   matching, goto's load-vs-domcontentloaded default, auto-dismissed dialogs, fullPage default,
+   storageState shape, etc.) -- about a third of the ~115 rows make exactly this kind of claim.
+3. "No equivalent" rows are proven as absence checks against the live built tool list/CLI help/
+   SDK prototype, not asserted from memory -- so the day a capability is added, the row fails
+   loudly and forces a doc update (a drift detector, not just documentation).
+4. No product code changes in this item (D12): a bug surfaced while tracing (e.g. type_by_label
+   ignoring <label for>) is documented truthfully as a gap, never quietly patched so the doc can
+   say something nicer.
+5. Playwright MCP (microsoft/playwright-mcp) tool-name mapping is explicitly out of scope (D15) --
+   covering it would need a second executed side; logged as a gap for later consideration.
+6. No internal ids (GAP-/FR2-/PROB-) appear anywhere in the public-facing doc (D16).
+
+Sequencing: same posture as FR2-13 -- hard-blocked on FR2-01..FR2-14 all reaching DONE (or
+BLOCKED/DESCOPED with a diagnosis). The standalone harness modules have no dependency on those
+items' shapes and could in principle be built early, but the spec's default is strict
+sequencing, not a partial head start.
