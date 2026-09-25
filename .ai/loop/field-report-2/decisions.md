@@ -1572,3 +1572,23 @@ spec's own literal design (the spec asked for this exact trim behavior).
 
 Third item to reach DONE (after FR2-09, FR2-10), second to pass with only 1 audit needed. The
 shared baseline-*.json files are once again pre-existing and untouched, per the standing rule.
+
+## 2026-09-25 -- FR2-03 unblocked: its FR2-01 dependency never actually materialized
+
+FR2-03's spec (section 0.10) states it must wait for FR2-01 DONE specifically because GAP-003's
+"possible fix" (adding renderer-backgrounding flags to packages/cli/src/spawn-chrome.ts) might
+change the file FR2-03 needs to rebase onto. Checked directly: spawn-chrome.ts's git history
+shows it was NOT touched by any of FR2-01's 5 fix rounds (fix-1 through fix-5, commits
+80636b8/8b8e3a5/61df926 and the audit commits around them) -- FR2-01's actual landed work was
+entirely in browser-action-engine.ts and mcp-server/tools.ts. GAP-003's renderer-backgrounding
+flags were never implemented as part of FR2-01's real scope.
+
+Since the specific file FR2-03 was waiting to "rebase onto" never changed, and FR2-01 is now
+permanently BLOCKED (not going to change further in this loop), the wait condition is
+unsatisfiable in its literal form but also moot in substance -- the current spawn-chrome.ts IS
+"whatever it looks like after FR2-01," because FR2-01 never touched it. FR2-03 is unblocked for
+DEVELOP now, using the current spawn-chrome.ts as its real, final base. GAP-003's underlying
+renderer-backgrounding-flags improvement remains a separate, still-open backlog item, unrelated
+to FR2-03's own scope (session/profile GC) and not something FR2-03 needs to implement itself.
+
+Ledger status for FR2-03 changes from BLOCKED-BY-DEPENDENCY to SPEC (ready for DEVELOP).
