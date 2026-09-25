@@ -1688,3 +1688,58 @@ all 142 tests, and require an actual saved evidence file for every future revert
 claim, not just a self-report. GAP-187 (self-heal restart frequency) is out of scope for this
 item unless it's confirmed to be caused by FR2-03's own changes -- investigate briefly, don't
 fix blindly.
+
+## 2026-09-25 -- FR2-03 audit-3: FAILED a 3rd time -- each round closes the literal reported scenario, not the general class of bug. One standard cycle from the escalation threshold.
+
+audit-3 confirmed GAP-183 (PID reuse) IS genuinely closed this time -- its own independent hunt
+(10/10 hits, spared the reused-PID victim while still killing real orphan children) and a much
+larger mid-write-race sample (562 dry-runs, 151 genuine mid-write catches, 0 false kills) both
+hold up. GAP-175/176/177/178 (the original 4) also all still hold under independent re-
+verification. But GAP-185's fix and GAP-184's fix were each found to be too narrow, in the exact
+way this item's whole history has been too narrow: fixing the literal reported trigger without
+fixing the underlying class.
+
+GAP-188: GAP-185's "unreadable state" protection only covers a state.json that fails to PARSE.
+A state.json that fails to READ (a real EBUSY/EACCES from a held file handle -- exactly the kind
+of transient condition a live session's own write path could produce) is silently dropped by
+`catch{continue}` and falls through to the OLD dead-owner default. Live-reproduced: holding a
+live, default-config, reachable session's state.json open with no sharing killed it and deleted
+its profile, exit 0 clean. This is not a new bug shape -- it's the SAME bug (GAP-185) reached via
+a sibling code path fix-2 didn't also patch.
+
+GAP-189: GAP-184's marker-scoping checks are all textual (does the carrying process's command
+line merely CONTAIN the right substrings), so a crafted process (a plain `node` process with a
+fake `--user-data-dir=...sutradhar-cli-...` string and a marker pointing at a file literally
+named `state.json`) passes every check and reproduces all 3 of audit-2's original effects again.
+
+**Root-cause pattern, now visible across 3 consecutive rounds on this ONE item**: both remaining
+gaps share the same underlying mistake -- treating "verify this is legitimate" as a checklist
+that can be grown indefinitely, rather than a structural guarantee. GAP-188 needed "unreadable"
+to mean ALL the ways a file can fail to yield trustworthy content (parse OR read), not just the
+one way that was reported. GAP-189 needed the marker mechanism to be incapable of AUTHORIZING
+destructive action in the first place, not merely harder to forge. Both are naturally fixed by
+widening the FIRST principle rather than adding a new check for the newly-found bypass:
+1. GAP-188's fix: treat ANY failure to obtain trustworthy state-file content (read throwing OR
+   parse throwing) identically, as unknown/protected -- one unified code path, not two.
+2. GAP-189's fix: change the marker mechanism's role structurally. A discovered marker should
+   ONLY ever be used to ADD a "do not touch" protection to a path it references -- it should
+   never be consulted, directly or indirectly, when deciding whether something IS safe to
+   delete/kill. If this structural change is made, no amount of a crafted process's command-line
+   text can ever cause a deletion via the marker path, because the marker path structurally
+   cannot authorize deletion at all, only prevent it. This closes the whole class the way GAP-114/
+   GAP-183's tri-state pattern closed FR2-01's whole class, rather than requiring an ever-growing
+   list of "is this marker real" heuristics that a sufficiently motivated forgery can always
+   eventually satisfy.
+
+**This is now FR2-03's 3rd fix cycle -- one standard cycle remains before this item hits the
+loop's own 4-cycle escalation threshold** (the same bound FR2-01 and FR2-16 both eventually
+exhausted). fix-3 is explicitly briefed to make the two STRUCTURAL changes above rather than add
+more narrow patches, specifically to try to break this item's own established 3-round pattern
+before it requires escalation.
+
+GAP-190 (weak test coverage for GAP-183's own safety logic -- several mutations targeting the
+new code survive all tests) and GAP-191 (permanently-corrupted state files block cleanup forever
+with no recovery path) are minor and should be addressed if time allows without destabilizing the
+2 structural fixes above. GAP-192 (a pre-existing profile leak under concurrent state-file writes,
+confirmed via git history to predate FR2-03, likely root cause of GAP-187) is logged for a future
+item, not this one's scope.

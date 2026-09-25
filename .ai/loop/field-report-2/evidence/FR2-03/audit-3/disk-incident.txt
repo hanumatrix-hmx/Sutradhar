@@ -1,0 +1,12 @@
+audit-3 incident note (2026-09-25 ~17:40 IST): the first a3-midwrite-race.mjs attempt (200s, tight writeState-equivalent
+writer + a concurrent real `sutradhar eval --viewport` loop in the same session) crashed at the very end on a harness bug
+(unsettled await on the writer's close event), so it wrote no result JSON. Its 3 concurrent writers had made the CLI
+spawn a NEW Chrome many times: when `readState()` reads state.json mid-write it returns undefined, and withSession then
+treats that as "no session" and calls spawnFreshSession, with NO self-heal message and NO kill of the previous Chrome.
+Result: 74 leaked sutradhar-cli-* profile dirs (~6.1 GB) under that run's private temp root, plus ~80 orphan Chrome
+trees (670 processes, all matching only this run's own fr2-03-a3-midw-* path, killed by the auditor with taskkill).
+That filled drive E: (ENOSPC). The auditor deleted only its own scratch dir E:\AI-Cache\tmp\fr2-03-a3-midw-zbq5M3.
+This is a plausible root cause for GAP-187 (concurrent CLI commands leave extra Chromes running): the CLI's own
+readState-mid-write -> fresh-spawn path, not the unreachable self-heal path. The CLI code involved predates FR2-03 (readState
++ withSession); FR2-03 only changed readState's parser (parseCliState), which still returns undefined for a partial file.
+run2 was therefore re-run with the tight writer only (no concurrent CLI eval loop) so it could not leak more Chromes.

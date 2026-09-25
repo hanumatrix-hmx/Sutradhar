@@ -1,0 +1,32 @@
+== M5-fix2 (re-run) GAP-184 scoping removed entirely (src/gc.ts)
+   vitest exit 1; Tests  1 failed | 155 passed (156)
+   FAIL  tests/unit/gc.spec.ts > planGc > GAP-175: a session using a custom state dir (SUTRADHAR_CLI_STATE_DIR) must never look orphaned just because its owner CLI process has already exited > GAP-184: discoverMarkerStateFiles ignores a marker whose --user-data-d
+   restored-sha-match: true
+== M7 (re-run) probeLock destructive unlinkSync (src/profile-cleanup.ts)
+   vitest exit 1; Tests  1 failed | 155 passed (156)
+   FAIL  tests/unit/profile-cleanup.spec.ts > PL1-PL5: probeLock is a read-only probe, never a mutation > PL2: win32, lockfile present and not held open -> free, AND the lockfile is NOT deleted by the probe (the exact M7 regression: a reverted destructive unlinkS
+   restored-sha-match: true
+== M10-fix2 (re-run) PPID start-time guard removed entirely (src/gc.ts)
+   vitest exit 1; Tests  1 failed | 155 passed (156)
+   FAIL  tests/unit/gc.spec.ts > planGc > GAP-183 (BLOCKER, audit-2): the killedTreePids PPID walk must verify a candidate parent actually predates its apparent child before trusting the link, so a dead parent's reused PID can never be misclassified as still owni
+   restored-sha-match: true
+== M11-fix2 (re-run) GAP-185 unreadable-state protection removed (src/gc.ts)
+   vitest exit 1; Tests  1 failed | 155 passed (156)
+   FAIL  tests/unit/gc.spec.ts > planGc > GAP-185 (major, audit-2): an unreadable/malformed state file must make GC treat that session as UNKNOWN liveness, never "orphan" -- same failure class as the original GAP-175 blocker, via a different code path (state-file
+   restored-sha-match: true
+== N1 NEW: GAP-183 ordering comparison ONLY removed (finite check kept) -- i.e. the actual PID-reuse defence is gone (src/gc.ts)
+   vitest exit 0; Tests  156 passed (156)
+   (NO FAILING TEST -- mutation SURVIVED)
+   restored-sha-match: true
+== N2 NEW: GAP-184 isBrowserProcess carrier check removed (udd + state.json checks kept) (src/gc.ts)
+   vitest exit 0; Tests  156 passed (156)
+   (NO FAILING TEST -- mutation SURVIVED)
+   restored-sha-match: true
+== N3 NEW: GAP-183 "<=" tightened to strict "<" (same-ms genuine child no longer walked -> GAP-176 regression) (src/gc.ts)
+   vitest exit 1; Tests  1 failed | 155 passed (156)
+   FAIL  tests/unit/gc.spec.ts > planGc > GAP-176: a killed browser's profile dir is reclaimed in the SAME run even though a child process (e.g. Windows crashpad-handler) still carries the same --user-data-dir at snapshot time
+   restored-sha-match: true
+== N4 NEW: GAP-183 check applied only at the FIRST hop (later hops trust any ppid link) (src/gc.ts)
+   vitest exit 0; Tests  156 passed (156)
+   (NO FAILING TEST -- mutation SURVIVED)
+   restored-sha-match: true
