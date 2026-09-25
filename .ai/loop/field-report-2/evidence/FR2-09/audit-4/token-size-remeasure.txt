@@ -1,0 +1,46 @@
+--- grounding-completeness.html post ---
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/fixtures/grounding-completeness.html?n=1790322868531
+Title: Grounding completeness matrix
+Interactive elements (22):
+[#2] button "A native button"
+[#3] a "A native link"
+[#4] input label="A label"
+[#5] input "on" value="on"
+[#6] input "on" value="on"
+[#7] input
+[#8] input "50" value="50"
+[#9] input
+[#10] input "#000000" value="#000000"
+[#11] input
+[#12] input
+[#13] textarea
+[#14] select "Option A
+Option B" value="a"
+[#15] div "Editable region" role=textbox
+[#16] label "A label"
+[#17] summary "A summary/disclosure"
+[#19] div "ARIA role=button div" role=button
+[#20] div "ARIA role=option div" role=option
+[#21] div "onclick-only div" role=clickable
+[#22] button "Shadow DOM (open) button" (shadow: div#gc-shadow-host)
+[#23] div "cursor:pointer-only div" role=clickable
+[#24 in iframe "gc-iframe-host" (about:srcdoc)] button "In-iframe button"
+--- nested-shadow-in-iframe.html post ---
+URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/engine-comparison/hard-fixtures/nested-shadow-in-iframe.html?n=1790322871076
+Title: Nested Shadow DOM inside an iframe
+Interactive elements (2):
+[#4 in iframe "nested-frame" (file://nested-shadow-in-iframe-inner.html)] input "type here" placeholder="type here" (shadow: nested-widget)
+[#5 in iframe "nested-frame"] button "Submit" (shadow: nested-widget)
+┌─────────┬────────────────────────────────┬──────┬──────┬──────────┬────────┬─────────┬───────────┐
+│ (index) │ fixture                        │ pre  │ post │ deltaPct │ preTok │ postTok │ identical │
+├─────────┼────────────────────────────────┼──────┼──────┼──────────┼────────┼─────────┼───────────┤
+│ 0       │ 'aria-menu.html'               │ 251  │ 251  │ 0        │ 63     │ 63      │ true      │
+│ 1       │ 'fr2-01-singleframe.html'      │ 207  │ 207  │ 0        │ 52     │ 52      │ true      │
+│ 2       │ 'fr2-01-wait-states.html'      │ 245  │ 245  │ 0        │ 62     │ 62      │ true      │
+│ 3       │ 'grounding-completeness.html'  │ 900  │ 971  │ 7.89     │ 225    │ 243     │ false     │
+│ 4       │ 'prob043-keyboard.html'        │ 1685 │ 1685 │ 0        │ 422    │ 422     │ true      │
+│ 5       │ 'prompt-injection.html'        │ 258  │ 258  │ 0        │ 65     │ 65      │ true      │
+│ 6       │ 'nested-shadow-in-iframe.html' │ 321  │ 463  │ 44.24    │ 81     │ 116     │ false     │
+│ 7       │ 'interactive-detection.html'   │ 836  │ 836  │ 0        │ 209    │ 209     │ true      │
+│ 8       │ 'closed-shadow.html'           │ 227  │ 227  │ 0        │ 57     │ 57      │ true      │
+└─────────┴────────────────────────────────┴──────┴──────┴──────────┴────────┴─────────┴───────────┘

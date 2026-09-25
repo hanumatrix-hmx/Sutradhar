@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<!--
+  FR2-09 frame/shadow-label fixture (spec section 3). Recreated in fix-1 — audit-1 found this
+  file (and fr2-09-inner.html, fr2-09-many-frames.html) missing from run-1's evidence entirely
+  (decisions.md "FR2-09 audit-1"). Meant to be SERVED over HTTP (not opened via file://), from
+  two different hostnames, so the "xo" iframe below is a genuine out-of-process cross-origin
+  frame (OOPIF) and "blocked" gets a real X-Frame-Options response — a static tools/webserver
+  helper (or the future tools/scenario-suite/verify-fr2-09-frames.mjs live-verify script this
+  spec section 5 designs) is expected to serve this file and rewrite the "xo"/"blocked" iframe
+  src hosts/ports at serve time. Query-string uniqueness (not #fragment) per the decisions.md
+  "Stray test-run artifact cleanup" / FR2-01 same-document-navigation gotcha.
+
+  Element -> what it proves (spec section 3's table):
+    #main-btn              main-frame line stays byte-identical
+    pay-shell#shell         shadow chain depths 1/2/3 (pay-shell > card-field.cvc > x-inner#deep)
+    #slot-host              N3: a slotted light-DOM child gets no shadow label
+    #closed-host            N2: closed shadow — not listed, no label
+    iframe name="pay"       same-origin named frame, iframe + shadow, nested iframe
+    iframe name="xo"        cross-origin OOPIF, named, busy-loop target
+    unnamed srcdoc iframe   index designator, about:srcdoc
+    iframe name="dup" (x2)  N9: duplicate names both fall back to numeric designators
+    iframe name="evil..."   N7: a page-controlled name can't forge a line or close a bracket
+    iframe name="blocked"   D8: X-Frame-Options-blocked frame's error-page placeholder
+    iframe name="sbx"       sandboxed (no allow-scripts) — Step-0 row, whatever it shows is pinned
+    iframe name="hidden"    N4: display:none — not listed, no placeholder
+    iframe name="empty"     N5: about:blank — nothing, no placeholder
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>FR2-09 frames fixture</title>
+</head>
+<body>
+<button id="main-btn">Main button</button>
+
+<pay-shell id="shell"></pay-shell>
+<div id="slot-host"></div>
+<div id="closed-host"></div>
+
+<!-- Same-origin named frame; the query string carries a nonce placeholder the serving script
+     replaces, matching the decisions.md query-not-fragment rule. -->
+<iframe name="pay" src="/fr2-09-inner.html?role=pay" width="300" height="150"></iframe>
+
+<!-- Cross-origin OOPIF target — the serving script points this at a second hostname. -->
+<iframe name="xo" src="/fr2-09-inner.html?role=xo" width="300" height="150" data-fr2-09-cross-origin="true"></iframe>
+
+<iframe srcdoc="<button id='srcdoc-btn'>Srcdoc button</button>"></iframe>
+
+<iframe name="dup" srcdoc="<button>Dup A</button>"></iframe>
+<iframe name="dup" srcdoc="<button>Dup B</button>"></iframe>
+
+<!-- GAP-152 (FR2-09 fix-2): a hostile frame `name` DOES reach frame.name() correctly as a
+     STATIC attribute, as long as the hostile characters are HTML-entity-encoded (&quot; for a
+     literal quote, &#10; for a literal newline) — the HTML parser decodes entities in an
+     attribute value before Chrome's CDP frameNavigated event reports the frame's name, so the
+     raw string (quote, newline, bracket, hash — everything sanitizeFrameName/D14 strips) lands
+     in frame.name() unescaped, exactly as spec section 3 requires. The PREVIOUS version of this
+     fixture instead assigned `.name` via JS AFTER the iframe element was created
+     (`document.getElementById('evil-frame').name = ...`) — that never worked: by the time that
+     script ran, the srcdoc frame had already navigated (and CDP had already reported its name
+     as empty, so Puppeteer's frame.name() fell back to the element's `id`, "evil-frame" — the
+     literal hostile string never reached the browser at all. Confirmed live both ways by
+     FR2-09 audit-2 (case A4: an entity-encoded static `name` attribute round-trips through
+     frame.name() correctly; `.ai/loop/field-report-2/evidence/FR2-09/fix-2/gap152-live-verify.txt`
+     confirms the same for this exact fixture). -->
+<iframe name="evil&quot;]&#10;[#1] button &quot;Pay" srcdoc="<button id='evil-btn'>Pay evil</button>"></iframe>
+
+<iframe name="blocked" src="/xfo-deny" width="200" height="60"></iframe>
+
+<iframe name="sbx" src="/fr2-09-inner.html?role=sbx" sandbox width="200" height="60"></iframe>
+
+<iframe name="hidden" style="display:none" srcdoc="<button>Hidden button</button>"></iframe>
+
+<iframe name="empty" src="about:blank"></iframe>
+
+<script>
+  // window.__busy(ms): a synchronous busy-loop, used to simulate a frame whose renderer main
+  // thread is busy (D7/T2's timeout path) — posted into via postMessage from the parent so the
+  // per-frame timeout tests can trigger it without needing a same-origin call.
+  window.__busy = (ms) => {
+    const t = Date.now();
+    while (Date.now() - t < ms) {
+      /* spin */
+    }
+  };
+
+  // A capture-phase click listener posts {role, id} up to the top window via postMessage — it
+  // works cross-origin, unlike a same-origin-only callback, so the live-verify script's
+  // observer can confirm which element a click actually landed on regardless of frame origin.
+  window.__fx9 = window.__fx9 || { clicks: [] };
+  document.addEventListener(
+    'click',
+    (e) => {
+      const id = e.target && e.target.id;
+      if (id) parent.postMessage({ __fx9: true, role: 'main', id }, '*');
+    },
+    true,
+  );
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.__fx9) window.__fx9.clicks.push({ role: e.data.role, id: e.data.id });
+  });
+
+  customElements.define(
+    'pay-shell',
+    class extends HTMLElement {
+      connectedCallback() {
+        const root = this.attachShadow({ mode: 'open' });
+        root.innerHTML =
+          '<button id="d1-btn">Depth one</button><card-field class="cvc"></card-field>';
+      }
+    },
+  );
+  customElements.define(
+    'card-field',
+    class extends HTMLElement {
+      connectedCallback() {
+        const root = this.attachShadow({ mode: 'open' });
+        root.innerHTML = '<input id="d2-input" aria-label="Depth two"><x-inner id="deep"></x-inner>';
+      }
+    },
+  );
+  customElements.define(
+    'x-inner',
+    class extends HTMLElement {
+      connectedCallback() {
+        const root = this.attachShadow({ mode: 'open' });
+        root.innerHTML = '<button id="d3-btn">Depth three</button>';
+      }
+    },
+  );
+
+  // N3: a slotted light-DOM child resolves to the document root, so it gets NO shadow label.
+  const slotHost = document.getElementById('slot-host');
+  const slotShadow = slotHost.attachShadow({ mode: 'open' });
+  slotShadow.innerHTML = '<slot></slot>';
+  const slottedBtn = document.createElement('button');
+  slottedBtn.id = 'slotted-btn';
+  slottedBtn.textContent = 'Slotted';
+  slotHost.appendChild(slottedBtn);
+
+  // N2: a CLOSED shadow root is fundamentally inaccessible from outside — genuinely
+  // unreachable, not a bug (the scraper's own header comment says so).
+  const closedHost = document.getElementById('closed-host');
+  const closedShadow = closedHost.attachShadow({ mode: 'closed' });
+  closedShadow.innerHTML = '<button id="closed-btn">Closed button</button>';
+
+</script>
+</body>
+</html>

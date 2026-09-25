@@ -341,6 +341,13 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         'Capture an LLM-optimized snapshot of the active page. Returns `interactiveElements`: a compact listing ' +
         'of every interactive element stamped with a numeric [#id] (e.g. `[#7] button "Search"`), plus `pageText` ' +
         '(visible body text). Use the [#id] as the `target` argument to browser.click / browser.type to act on an element. ' +
+        'Elements inside an iframe are listed as `[#31 in iframe "pay" (https://…)]` (the frame\'s URL is shown on its ' +
+        'first listed element, then just `[#32 in iframe "pay"]`; an unnamed frame shows its number instead). Elements ' +
+        'inside an open shadow root end with `(shadow: host-tag#id)`. Ids stay globally unique across frames, so pass ' +
+        'just the number (`"31"`); when parsing, match `^\\[#(\\d+)`, not `^\\[#(\\d+)\\]`. A frame whose content could ' +
+        'not be read is listed as `[iframe <origin> — not inspectable] (reason)` rather than silently omitted; take the ' +
+        'snapshot again, or read it with eval/extract_data + `frameSelector` (e.g. `iframe[name="pay"]`). With ' +
+        'includeNodes, nodes carry `frame` and `shadowHosts` fields, and skipped frames are returned as JSON. ' +
         'Caution: the [#id] is a snapshot of the DOM at the moment this ran — if the page re-renders afterward (a React/' +
         'Vue update, a list re-sorting) before you act on it, the id can point at nothing or the wrong element. For pages ' +
         'that update frequently, prefer browser.ax_snapshot + browser.click_by_role/click_by_text/type_by_label instead, ' +
@@ -388,11 +395,15 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         // second header built from it would show a different, confusing number (see the same
         // caveat in packages/cli/src/cli.ts's cmdSnap).
         const nodesBlock = snap.nodes ? `\n\nStructured nodes (JSON):\n${JSON.stringify(snap.nodes)}` : '';
+        const skippedFramesBlock =
+          snap.nodes && snap.skippedFrames && snap.skippedFrames.length > 0
+            ? `\n\nSkipped frames (JSON):\n${JSON.stringify(snap.skippedFrames)}`
+            : '';
         return {
           content: [
             {
               type: 'text' as const,
-              text: `${snap.interactiveElements}\n\nPage text:\n${snap.pageText.slice(0, 2000)}${nodesBlock}`,
+              text: `${snap.interactiveElements}\n\nPage text:\n${snap.pageText.slice(0, 2000)}${nodesBlock}${skippedFramesBlock}`,
             },
           ],
         };
@@ -411,7 +422,9 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         'this and acting on it. Nothing here has an id to look up; instead, act on what you read using ' +
         'browser.click_by_role (role + optional name), browser.click_by_text, or browser.type_by_label — all three ' +
         'resolve the real element fresh at the moment they run, not a snapshot of where it used to be. Prefer this ' +
-        'over browser.snapshot when a page is known to re-render frequently (React/Vue apps, live-updating lists).',
+        'over browser.snapshot when a page is known to re-render frequently (React/Vue apps, live-updating lists). ' +
+        'Iframe content (including cross-origin frames) is included in place, grouped under an indented ' +
+        '[iframe "name" (url)] line.',
       inputSchema: {
         sessionId: z.string(),
         tabId: z.string().optional(),

@@ -531,3 +531,27 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
     });
   });
 });
+
+describe('@sutradhar/capability-runtime SutradharRuntime.snapshot — FR2-09 skippedFrames', () => {
+  it('FR2-09 R1: skippedFrames is present exactly when includeNodes is set, and absent otherwise (like nodes)', async () => {
+    const runtime = new SutradharRuntime();
+    const fakeTab = { id: 'tab_1', url: 'https://x.test', title: 'T' };
+    const skipped = [
+      { index: 1, url: 'https://ads.example', origin: 'https://ads.example', reason: 'timeout' as const, detail: '5000' },
+    ];
+    const graph = { nodes: [], url: 'https://x.test', title: 'T', skippedFrames: skipped };
+
+    vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab: fakeTab });
+    vi.spyOn(runtime as any, 'requirePage').mockReturnValue({});
+    vi.spyOn((runtime as any).domEngine, 'buildGraph').mockResolvedValue(graph);
+    vi.spyOn(runtime as any, 'readPageText').mockResolvedValue('');
+
+    const withNodes = await runtime.snapshot('s1', undefined, undefined, { includeNodes: true });
+    expect(withNodes.skippedFrames).toEqual(skipped);
+    expect(withNodes.nodes).toEqual([]);
+
+    const withoutNodes = await runtime.snapshot('s1', undefined, undefined, {});
+    expect('skippedFrames' in withoutNodes).toBe(false);
+    expect('nodes' in withoutNodes).toBe(false);
+  });
+});

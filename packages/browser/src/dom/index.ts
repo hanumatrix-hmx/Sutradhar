@@ -6,3 +6,4 @@
 export * from './semantic-element-graph.js';
 export * from './dom-semantic-engine.js';
 export * from './element-candidate.js';
+export * from './frame-labels.js';

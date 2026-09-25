@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<!-- FR2-09 frame-cap fixture (spec section 3, N11/P3): 24 tiny srcdoc iframes, so together
+     with the main frame there are 25 frames total — 5 over MAX_FRAMES (20). Proves the main
+     frame is always scanned first and never cut by the cap (D3), and that the aggregate
+     "[5 more iframes not scanned — frame limit 20]" placeholder line appears. Recreated in
+     fix-1 (see fr2-09-frames.html's header comment: audit-1 found this file missing from
+     run-1's evidence entirely). Generated via document.write below rather than 24 literal
+     <iframe> tags, purely to keep this file short — the resulting DOM is identical either way. -->
+<html lang="en">
+<head><meta charset="utf-8" /><title>FR2-09 many-frames fixture</title></head>
+<body>
+<button id="main-btn">Main button</button>
+<script>
+  for (let i = 1; i <= 24; i++) {
+    const f = document.createElement('iframe');
+    f.srcdoc = `<button>F${i}</button>`;
+    document.body.appendChild(f);
+  }
+</script>
+</body>
+</html>

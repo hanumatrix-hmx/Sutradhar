@@ -7,7 +7,13 @@
  * (MCP server, npm SDK, plugins, extension) calls through {@link SutradharRuntime}.
  */
 
-import type { ActionHistoryEntry, BrowserLaunchOptions, SemanticNode, VerificationResultDto } from '@sutradhar/browser';
+import type {
+  ActionHistoryEntry,
+  BrowserLaunchOptions,
+  SemanticNode,
+  SkippedFrame,
+  VerificationResultDto,
+} from '@sutradhar/browser';
 import type { SessionId, TabId } from '@sutradhar/contracts';
 
 /** Options for {@link SutradharRuntime.launch}. */
@@ -82,6 +88,12 @@ export interface SnapshotResult {
    *  instead of re-parsing the LLM-formatted text listing. Omitted by default so existing
    *  callers see a byte-identical payload. */
   nodes?: readonly SemanticNode[];
+  /** Child frames whose content could not be read this snapshot (timed out, navigated,
+   *  errored, browser error page) or that exceeded the frame cap — present exactly when
+   *  `nodes` is (i.e. only when the caller opts in via `includeNodes`). Listed rather than
+   *  silently dropped; see `SemanticNode.frame`/`shadowHosts` for per-node frame/shadow
+   *  context on `nodes` itself. */
+  skippedFrames?: readonly SkippedFrame[];
 }
 
 /** Result of {@link SutradharRuntime.click} and {@link SutradharRuntime.type}. */

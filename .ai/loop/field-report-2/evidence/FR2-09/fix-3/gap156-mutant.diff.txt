@@ -1,0 +1,35 @@
+Revert-and-confirm proof for GAP-156 (fix-3): the single line that, if the new CDP-based
+recovery is bypassed and buildGraph falls straight back to the old fix-2 behavior
+(frameElement()/src, wrongly labeled 'confirmed' since fix-2 never had a confidence concept),
+makes the three new GAP-154 tests (and part of one other assertion) fail.
+
+File: packages/browser/src/dom/dom-semantic-engine.ts
+
+--- fixed (fix-3)
++++ mutant (fix-2-equivalent, for revert-and-confirm only)
+@@ -412,7 +412,7 @@
+             // CDP unreachableUrl signal (confirmed), falling back to the parent page's
+             // iframe-src read (likely, may be stale) only if that fails — before falling back
+             // further to the unhelpful chrome-error:// value. See recoverBlockedFrameUrl.
+-            const recovered = await recoverBlockedFrameUrl(frame);
++            const recovered = { url: await recoverBlockedFrameSrc(frame), confidence: 'confirmed' as const };
+             skipped.push(skippedOf(frame, 'error-page', undefined, recovered?.url, recovered?.confidence));
+             continue;
+           }
+
+Result: `node_modules/.bin/vitest run tests/unit/dom-semantic-engine.spec.ts` on this mutant —
+4 failed / 32 passed (see gap156-mutant-run.txt for the full run). The three new GAP-154 tests
+fail exactly as expected:
+  - "a blocked frame recovers its real URL from CDP ... unreachableUrl" — mutant reports the
+    WRONG (parent-src) url/origin instead of the CDP one (the exact false-origin failure mode
+    audit-3 live-reproduced), because the mutant never calls the CDP path at all.
+  - "when CDP unreachableUrl is unavailable ... falls back ... marked 'likely'" — mutant reports
+    urlConfidence: 'confirmed' instead of 'likely', because the mutant has no real confidence
+    signal and just hardcodes 'confirmed'.
+  - "a hanging CDP getFrameTree call is bounded ... falls back ... ('likely')" — same
+    urlConfidence mismatch as above.
+(The 4th failure line is the SAME assertion within one of the above tests reporting two related
+mismatches; there are 3 distinct test cases, all new to this fix-3 cycle.)
+
+After restoring the real fix (recoverBlockedFrameUrl), the same test file: 36/36 passed (see
+vitest-browser.txt in this directory for the full post-restore suite run).

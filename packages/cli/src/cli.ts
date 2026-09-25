@@ -273,7 +273,19 @@ async function cmdSnap(jsonMode: boolean) {
         includeNodes: true,
         scanEventListeners: scanListeners,
       });
-      console.log(JSON.stringify({ url: snap.url, title: snap.title, elementCount: snap.elementCount, nodes: snap.nodes }, null, 2));
+      console.log(
+        JSON.stringify(
+          {
+            url: snap.url,
+            title: snap.title,
+            elementCount: snap.elementCount,
+            nodes: snap.nodes,
+            skippedFrames: snap.skippedFrames ?? [],
+          },
+          null,
+          2,
+        ),
+      );
       return;
     }
     const snap = await runtime.snapshot(sessionId, undefined, undefined, { noText, idsOnly, scanEventListeners: scanListeners });
@@ -957,6 +969,16 @@ Flags:
                         the guard to hold for the whole session. Does not intercept
                         page-initiated navigation from a clicked link (browser-internal, not
                         routed through this check) — see .ai/known-problems.md PROB-018.
+
+Boundary: Sutradhar does not attempt to evade bot-detection or solve CAPTCHAs, and Cloudflare
+challenges, CAPTCHA walls, and IP-level blocks stop it exactly as they would stop any other
+automation tool run the same way. The only launch argument here with detection-relevant
+behavior is --disable-blink-features=AutomationControlled, which hides navigator.webdriver
+from scripts that check for it -- measured directly: navigator.webdriver is true without the
+flag and false with it. It does not defeat Cloudflare, CAPTCHA, or any other real bot-detection
+service, and other simple signals -- the default headless user agent's HeadlessChrome
+substring and --enable-automation still being present in the launch command line -- remain
+unmasked.
 
 Session state persists across commands, scoped to this directory, in
 ~/.sutradhar-cli/<hash-of-cwd>/state.json — run "close" when done. Override with

@@ -1,0 +1,35 @@
+FR2-09 fix-1 — golden-pre.txt (spec section 4.2, unit test U1)
+
+Recreated deliverable: run-1 never saved this file (audit-1 finding, decisions.md
+"FR2-09 audit-1"). U1 in packages/browser/tests/unit/dom-semantic-engine.spec.ts pins these
+exact three strings as the PRE-change `formatGraphForLlm` output for a fixed, 2-node,
+main-frame-only graph (id 7 BUTTON "Search", id 8 INPUT "Query" placeholder "Search…"), under
+all 3 listing modes. They are the pre-change form because a main-frame-only graph is the case
+D1/D3/D4 guarantee stays byte-identical before and after FR2-09 (no `frame` field is ever
+stamped on a main-frame node, so nothing in formatGraphForLlm's main-frame code path changed
+for this input) — confirmed post-change by the same test still passing verbatim (`toBe`, not
+`toContain`), and independently by the token-size audit's own byte-identical fixtures
+(aria-menu.html, fr2-01-singleframe.html, fr2-01-wait-states.html, prob043-keyboard.html,
+prompt-injection.html, interactive-detection.html, closed-shadow.html — 7 of 9 gate fixtures —
+see token-size-decision.md and token-size.md in this same fix-1 directory).
+
+=== default mode ===
+URL: https://example.com
+Title: Home
+Interactive elements (2):
+[#7] button "Search"
+[#8] input "Query" placeholder="Search…"
+
+=== noText: true ===
+URL: https://example.com
+Title: Home
+Interactive elements (2):
+[#7] button
+[#8] input
+
+=== idsOnly: true ===
+URL: https://example.com
+Title: Home
+Interactive elements (2):
+[#7]
+[#8]

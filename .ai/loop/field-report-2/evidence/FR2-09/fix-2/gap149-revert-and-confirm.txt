@@ -1,0 +1,35 @@
+GAP-149 revert-and-confirm proof
+=================================
+
+Step 1: replaced the old GAP-146 test in packages/capability-runtime/tests/unit/ax-snapshot.spec.ts
+(the collide-after-sanitizing case, which the audit-2 evidence showed the UNFIXED code also
+passes by coincidence) with audit-2's verified case: a single unique frame name that sanitizing
+itself changes (>30 chars, or containing [ ] or "). Source of the case:
+.ai/loop/field-report-2/evidence/FR2-09/audit-2/gap146-fixed/tests/unit/gap146-killer.spec.ts.txt
+
+Step 2: ran the new test against the FIXED code (packages/capability-runtime/src/snapshot/ax-snapshot.ts,
+line ~173, `sanitizeFrameName(f.name())`):
+
+  15 tests | 15 passed
+
+Step 3: temporarily reverted the GAP-146 fix in the real source file (changed
+`.map((f) => sanitizeFrameName(f.name()))` back to `.map((f) => f.name())`, i.e. building
+`allNames` from RAW names instead of sanitized names -- the exact pre-fix behavior) and re-ran:
+
+  15 tests | 3 failed | 12 passed
+
+  FAIL  unique frame name "ccccccccccccccccccccccccccccccccccccccccccccc" ... renders quoted, not numeric
+  FAIL  unique frame name "pay[1]" ... renders quoted, not numeric
+  FAIL  unique frame name "my \"card\"" ... renders quoted, not numeric
+
+  All three failed with:
+    expected '[iframe 1 (about:srcdoc)]...' not to contain '[iframe 1 (about:srcdoc)]'
+  i.e. on unfixed code the unique-but-sanitizable name collides against nothing in the raw
+  allNames list and falls back to a numeric designator -- exactly the bug GAP-146 fixed.
+
+Step 4: restored the real fix (`sanitizeFrameName(f.name())`) and re-ran:
+
+  15 tests | 15 passed
+
+Conclusion: the new test genuinely distinguishes fixed from unfixed code (fails 3/3 unfixed,
+passes 3/3 fixed), unlike the test it replaced (which the audit found passes 13/13 on both).

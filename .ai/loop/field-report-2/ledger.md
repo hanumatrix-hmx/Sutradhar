@@ -12,7 +12,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 | FR2-06 | Selector dialect coach | 2 | SPEC (needs FR2-02 DONE; DEVELOP after FR2-05) | 0 | evidence/FR2-06/spec.md | - |
 | FR2-07 | Unified verification contract | 2 | SPEC (needs FR2-05 + FR2-06 DONE; DEVELOP after FR2-06) | 0 | evidence/FR2-07/spec.md | - |
 | FR2-08 | Condition waits + settle everywhere | 2 | SPEC (needs FR2-07 DONE; DEVELOP after FR2-07) | 0 | evidence/FR2-08/spec.md | - |
-| FR2-09 | Snapshot frame/shadow labels | 2 | FIX(3) [audit-3 FAILED (narrow): GAP-154 moderate -- fix-2's own frameElement() recovery reports a FALSE url/origin after a redirect, worse than the chrome-error:// it replaced] | 3 | audit-3: GAP-149/151/152 all confirmed genuinely fixed via independent re-derivation; whole-item Done-when bullets 1/2/4/5 met, bullet 3 has 2 residual edge cases (GAP-154, GAP-157) | (uncommitted, blocked by audit-3)
+| FR2-09 | Snapshot frame/shadow labels | 2 | **DONE** | 4 | audit-4 PASSED: all 5 Done-when bullets met, token-size exception approved, CDP-based blocked-frame fix confirmed correct across redirects/re-navigation/nesting; 4 minor gaps (GAP-158..161), GAP-158 fixed on landing, others deferred/logged, none blocking | (pending DONE commit) |
 | FR2-10 | MCP optional sessionId | 2 | SPEC (no hard precondition; MCP-only; default merge after FR2-09) | 0 | evidence/FR2-10/spec.md | - |
 | FR2-11 | Full action history | 3 | SPEC (soft dep on FR2-07 field shape; default merge after Phase 2) | 0 | evidence/FR2-11/spec.md | - |
 | FR2-12 | Machine-readable audit | 3 | SPEC (Step 0 live experiment required before DEVELOP; soft deps FR2-04/07/08) | 0 | evidence/FR2-12/spec.md | - |

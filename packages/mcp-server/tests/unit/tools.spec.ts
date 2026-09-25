@@ -425,3 +425,102 @@ describe('@sutradhar/mcp-server browser.wait_for_selector state (FR2-01)', () =>
     expect(parsed.error).not.toContain('page may still be loading');
   });
 });
+
+describe('@sutradhar/mcp-server FR2-09 frame/shadow labels', () => {
+  it('M1: browser.snapshot\'s description documents the iframe/shadow label forms, the tolerant id pattern, and not-inspectable placeholders', () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    registerTools(server, { runtime });
+
+    const desc = tools.get('browser.snapshot')!.config.description as string;
+    expect(desc).toContain('in iframe');
+    expect(desc).toContain('(shadow:');
+    expect(desc).toContain('not inspectable');
+    expect(desc).toContain('^\\[#(\\d+)');
+  });
+
+  it('M1: browser.ax_snapshot\'s description documents grouped iframe content', () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    registerTools(server, { runtime });
+
+    const desc = tools.get('browser.ax_snapshot')!.config.description as string;
+    expect(desc).toContain('[iframe');
+  });
+
+  it('M1: registering tools does not change the total tool count', () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    registerTools(server, { runtime });
+    expect(tools.size).toBe(EXPECTED_BROWSER_TOOLS.length);
+  });
+
+  it('M2: includeNodes + a non-empty skippedFrames appends a "Skipped frames (JSON)" block after the nodes block', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const skippedFrames = [
+      { index: 1, url: 'https://ads.example', origin: 'https://ads.example', reason: 'timeout', detail: '5000' },
+    ];
+    vi.spyOn(runtime, 'snapshot').mockResolvedValue({
+      sessionId: 's1',
+      tabId: 't1',
+      url: 'https://x.test',
+      title: 'T',
+      interactiveElements: 'URL: https://x.test\nTitle: T\nInteractive elements (0):\n',
+      elementCount: 0,
+      pageText: '',
+      nodes: [],
+      skippedFrames,
+    } as any);
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.snapshot')!.handler({ sessionId: 's1', includeNodes: true });
+
+    expect(result.content[0].text).toContain('Structured nodes (JSON):');
+    expect(result.content[0].text.indexOf('Skipped frames (JSON):')).toBeGreaterThan(
+      result.content[0].text.indexOf('Structured nodes (JSON):'),
+    );
+    expect(result.content[0].text).toContain(JSON.stringify(skippedFrames));
+  });
+
+  it('M2: includeNodes with an empty skippedFrames array adds no block', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'snapshot').mockResolvedValue({
+      sessionId: 's1',
+      tabId: 't1',
+      url: 'https://x.test',
+      title: 'T',
+      interactiveElements: 'URL: https://x.test\nTitle: T\nInteractive elements (0):\n',
+      elementCount: 0,
+      pageText: '',
+      nodes: [],
+      skippedFrames: [],
+    } as any);
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.snapshot')!.handler({ sessionId: 's1', includeNodes: true });
+
+    expect(result.content[0].text).not.toContain('Skipped frames (JSON):');
+  });
+
+  it('M2: without includeNodes, no skipped-frames block even if the runtime happened to return one', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'snapshot').mockResolvedValue({
+      sessionId: 's1',
+      tabId: 't1',
+      url: 'https://x.test',
+      title: 'T',
+      interactiveElements: 'URL: https://x.test\nTitle: T\nInteractive elements (0):\n',
+      elementCount: 0,
+      pageText: '',
+    } as any);
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.snapshot')!.handler({ sessionId: 's1' });
+
+    expect(result.content[0].text).not.toContain('Skipped frames (JSON):');
+    expect(result.content[0].text).not.toContain('Structured nodes (JSON):');
+  });
+});

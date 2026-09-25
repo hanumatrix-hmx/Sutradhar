@@ -420,6 +420,12 @@ export class SutradharRuntime {
    * to `MAX_STAMPED_ELEMENTS_PER_FRAME` (300) elements per frame get a real, clickable id
    * regardless of this value, so raising it (e.g. for a content-heavy page whose pagination
    * link is past the default 60) surfaces ids that already exist rather than stamping new ones.
+   *
+   * Elements inside an iframe or an open shadow root carry frame/shadow context in the text
+   * listing (`[#31 in iframe "pay" (url)]`, `(shadow: host-tag#id)`) and, structurally, on
+   * `SemanticNode.frame`/`shadowHosts` (present with `includeNodes`). Frames whose content
+   * couldn't be read are returned as `skippedFrames` (present with `includeNodes`) rather than
+   * silently omitted.
    */
   public async snapshot(
     sessionId: string,
@@ -443,7 +449,7 @@ export class SutradharRuntime {
       interactiveElements,
       elementCount: graph.nodes.length,
       pageText,
-      ...(options?.includeNodes ? { nodes: graph.nodes } : {}),
+      ...(options?.includeNodes ? { nodes: graph.nodes, skippedFrames: graph.skippedFrames } : {}),
     };
   }
 

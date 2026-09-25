@@ -1,0 +1,23 @@
+--- snapshot 1 (before re-nav) ---
+[["so-src","http://127.0.0.1:64087/xfo-deny?s=so-src-FIRST","confirmed"],["so-link","http://127.0.0.1:64087/xfo-deny?s=so-link-FIRST","confirmed"],["xo-src","http://localhost:64087/xfo-deny?s=xo-src-FIRST","confirmed"],["xo-link","http://localhost:64087/xfo-deny?s=xo-link-FIRST","confirmed"]]
+--- ground truth unreachableUrl (audit script's own puppeteer connection) ---
+{"xo-src":"http://localhost:64087/csp-none?s=xo-src-SECOND","xo-link":"http://localhost:64087/csp-none?s=xo-link-SECOND","so-src":"http://127.0.0.1:64087/csp-none?s=so-src-SECOND","so-link":"http://127.0.0.1:64087/csp-none?s=so-link-SECOND"}
+--- snapshot 2 (same long-lived session, after re-nav) ---
+URL: http://127.0.0.1:64087/main
+Title: 
+Interactive elements (3):
+[#1] button "M"
+[#2] a "l1"
+[#3] a "l2"
+[iframe "so-src" http://127.0.0.1:64087 — not inspectable] (browser error page: blocked or failed to load)
+[iframe "so-link" http://127.0.0.1:64087 — not inspectable] (browser error page: blocked or failed to load)
+[iframe "xo-src" http://localhost:64087 — not inspectable] (browser error page: blocked or failed to load)
+[iframe "xo-link" http://localhost:64087 — not inspectable] (browser error page: blocked or failed to load)
+[["so-src","http://127.0.0.1:64087/csp-none?s=so-src-SECOND","confirmed"],["so-link","http://127.0.0.1:64087/csp-none?s=so-link-SECOND","confirmed"],["xo-src","http://localhost:64087/csp-none?s=xo-src-SECOND","confirmed"],["xo-link","http://localhost:64087/csp-none?s=xo-link-SECOND","confirmed"]]
+xo-src: http://localhost:64087/csp-none?s=xo-src-SECOND [confirmed] LATEST
+xo-link: http://localhost:64087/csp-none?s=xo-link-SECOND [confirmed] LATEST
+so-src: http://127.0.0.1:64087/csp-none?s=so-src-SECOND [confirmed] LATEST
+so-link: http://127.0.0.1:64087/csp-none?s=so-link-SECOND [confirmed] LATEST
+--- snapshot 3 (FRESH attach after re-nav) ---
+[["so-src","http://127.0.0.1:64087/csp-none?s=so-src-SECOND","confirmed"],["so-link","http://127.0.0.1:64087/csp-none?s=so-link-SECOND","confirmed"],["xo-src","http://localhost:64087/csp-none?s=xo-src-SECOND","confirmed"],["xo-link","http://localhost:64087/csp-none?s=xo-link-SECOND","confirmed"]]
+STALE-CONFIRMED COUNT: 0

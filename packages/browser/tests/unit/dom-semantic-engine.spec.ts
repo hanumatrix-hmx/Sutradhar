@@ -3,7 +3,16 @@
  * @description Unit tests for formatGraphForLlm's interactive-element header/listing consistency.
  */
 
-import { formatGraphForLlm, SemanticElementGraph, SemanticNode, DOMSemanticEngine, IBrowserTab } from '../../src/index.js';
+import {
+  formatGraphForLlm,
+  SemanticElementGraph,
+  SemanticNode,
+  SkippedFrame,
+  DOMSemanticEngine,
+  IBrowserTab,
+  scrapeFrame,
+  extractAndStampEventListenerElement,
+} from '../../src/index.js';
 
 function node(overrides: Partial<SemanticNode>): SemanticNode {
   return {
@@ -194,5 +203,699 @@ describe('@sutradhar/browser DOMSemanticEngine.buildGraph — scanEventListeners
     const graph = await engine.buildGraph(noPageTab);
 
     expect(graph.nodes).toEqual([]);
+  });
+});
+
+describe('@sutradhar/browser formatGraphForLlm — FR2-09 frame/shadow labels', () => {
+  it('U1: a main-frame-only graph keeps the exact pre-FR2-09 text form in every mode (byte-identical golden)', () => {
+    const nodes: SemanticNode[] = [
+      node({ id: 7, tagName: 'BUTTON', accessibleName: 'Search' }),
+      node({ id: 8, tagName: 'INPUT', accessibleName: 'Query', placeholder: 'Search…' }),
+    ];
+    const graph = new SemanticElementGraph(nodes, 'https://example.com', 'Home');
+
+    expect(formatGraphForLlm(graph)).toBe(
+      'URL: https://example.com\nTitle: Home\nInteractive elements (2):\n' +
+        '[#7] button "Search"\n[#8] input "Query" placeholder="Search…"',
+    );
+    expect(formatGraphForLlm(graph, 60, { noText: true })).toBe(
+      'URL: https://example.com\nTitle: Home\nInteractive elements (2):\n[#7] button\n[#8] input',
+    );
+    expect(formatGraphForLlm(graph, 60, { idsOnly: true })).toBe(
+      'URL: https://example.com\nTitle: Home\nInteractive elements (2):\n[#7]\n[#8]',
+    );
+  });
+
+  it('U2: shadow-depth-1 node gets a trailing "(shadow: host)" suffix', () => {
+    const graph = new SemanticElementGraph(
+      [node({ id: 12, tagName: 'INPUT', accessibleName: 'Card', shadowHosts: ['payment-widget#pw'] })],
+      'https://shop.test/checkout',
+    );
+    expect(formatGraphForLlm(graph)).toContain('[#12] input "Card" (shadow: payment-widget#pw)');
+  });
+
+  it('U2: shadow-depth-2 and shadow-depth-4 chains render via the D2 outermost/innermost rule', () => {
+    const graph = new SemanticElementGraph(
+      [
+        node({ id: 13, tagName: 'INPUT', accessibleName: 'CVC', shadowHosts: ['app-shell', 'card-field.cvc'] }),
+        node({ id: 14, tagName: 'INPUT', accessibleName: 'Deep', shadowHosts: ['a-x', 'b-y', 'c-z', 'card-field#n'] }),
+      ],
+      'https://shop.test/checkout',
+    );
+    const formatted = formatGraphForLlm(graph);
+    expect(formatted).toContain('[#13] input "CVC" (shadow: app-shell > card-field.cvc)');
+    expect(formatted).toContain('(shadow: a-x > … > card-field#n)');
+  });
+
+  it('U2/U3: the frame URL is shown once, on the first LISTED node of that frame, and later nodes of the same frame omit it', () => {
+    const graph = new SemanticElementGraph(
+      [
+        node({
+          id: 31,
+          tagName: 'INPUT',
+          placeholder: '1234',
+          frame: { index: 1, url: 'https://shop.test/pay/form?sid=abc', name: 'pay' },
+        }),
+        node({
+          id: 32,
+          tagName: 'BUTTON',
+          accessibleName: 'Pay',
+          frame: { index: 1, url: 'https://shop.test/pay/form?sid=abc', name: 'pay' },
+        }),
+      ],
+      'https://shop.test/checkout',
+    );
+    const formatted = formatGraphForLlm(graph);
+    expect(formatted).toContain('[#31 in iframe "pay" (https://shop.test/pay/form)] input placeholder="1234"');
+    expect(formatted).toContain('[#32 in iframe "pay"] button "Pay"');
+    // The query string is dropped from the displayed URL, and shown only once.
+    expect(formatted.match(/\(https:\/\/shop\.test\/pay\/form\)/g)?.length).toBe(1);
+  });
+
+  it('U2: an unnamed (OOPIF/srcdoc) frame is designated by its bare index', () => {
+    const graph = new SemanticElementGraph(
+      [
+        node({ id: 40, tagName: 'BUTTON', accessibleName: 'In frame', frame: { index: 2, url: 'http://localhost:5173/frame' } }),
+        node({ id: 41, tagName: 'BUTTON', accessibleName: 'In-iframe button', frame: { index: 3, url: 'about:srcdoc' } }),
+      ],
+      'https://shop.test/checkout',
+    );
+    const formatted = formatGraphForLlm(graph);
+    expect(formatted).toContain('[#40 in iframe 2 (http://localhost:5173/frame)] button "In frame"');
+    expect(formatted).toContain('[#41 in iframe 3 (about:srcdoc)] button "In-iframe button"');
+  });
+
+  it('U2: iframe and shadow co-occur on the same line', () => {
+    const graph = new SemanticElementGraph(
+      [
+        node({
+          id: 33,
+          tagName: 'INPUT',
+          accessibleName: 'CVC',
+          frame: { index: 1, url: 'https://shop.test/pay/form', name: 'pay' },
+          shadowHosts: ['card-field#cvc'],
+        }),
+      ],
+      'https://shop.test/checkout',
+    );
+    expect(formatGraphForLlm(graph)).toContain(
+      '[#33 in iframe "pay" (https://shop.test/pay/form)] input "CVC" (shadow: card-field#cvc)',
+    );
+  });
+
+  it('U2/N9: two frames sharing the same name both fall back to numeric designators', () => {
+    const graph = new SemanticElementGraph(
+      [
+        node({ id: 50, tagName: 'BUTTON', accessibleName: 'Dup A', frame: { index: 4, url: 'about:srcdoc', name: 'dup' } }),
+        node({ id: 51, tagName: 'BUTTON', accessibleName: 'Dup B', frame: { index: 5, url: 'about:srcdoc', name: 'dup' } }),
+      ],
+      'https://shop.test/checkout',
+    );
+    const formatted = formatGraphForLlm(graph);
+    expect(formatted).toContain('[#50 in iframe 4');
+    expect(formatted).toContain('[#51 in iframe 5');
+    expect(formatted).not.toContain('"dup"');
+  });
+
+  it('GAP-146 regression: two frame names that only collide AFTER sanitization (identical first 30 chars) both fall back to numeric designators, matching ax_snapshot', () => {
+    // Distinct raw names (so a naive raw-name uniqueness check would wrongly call each one
+    // "unique"), but sanitizeFrameName's 30-char cap makes both collapse to the identical
+    // 30-character prefix. formatGraphForLlm's `allNames` list is built via
+    // `sanitizeFrameName` (dom-semantic-engine.ts), which is exactly the invariant GAP-146
+    // required ax-snapshot.ts to also honor.
+    const prefix = 'a'.repeat(30);
+    const graph = new SemanticElementGraph(
+      [
+        node({ id: 60, tagName: 'BUTTON', accessibleName: 'One', frame: { index: 1, url: 'about:srcdoc', name: prefix + 'ONE' } }),
+        node({ id: 61, tagName: 'BUTTON', accessibleName: 'Two', frame: { index: 2, url: 'about:srcdoc', name: prefix + 'TWO' } }),
+      ],
+      'https://shop.test/checkout',
+    );
+    const formatted = formatGraphForLlm(graph);
+    expect(formatted).toContain('[#60 in iframe 1');
+    expect(formatted).toContain('[#61 in iframe 2');
+    expect(formatted).not.toContain(`"${prefix}"`);
+  });
+
+  it('U2/D13: noText drops the URL and the shadow suffix but keeps the frame designator', () => {
+    const graph = new SemanticElementGraph(
+      [
+        node({
+          id: 31,
+          tagName: 'INPUT',
+          placeholder: '1234',
+          frame: { index: 1, url: 'https://shop.test/pay/form', name: 'pay' },
+          shadowHosts: ['x'],
+        }),
+      ],
+      'https://shop.test/checkout',
+    );
+    const formatted = formatGraphForLlm(graph, 60, { noText: true });
+    expect(formatted).toContain('[#31 in iframe "pay"] input');
+    expect(formatted).not.toContain('(shadow:');
+    expect(formatted).not.toContain('(http');
+  });
+
+  it('U2/D13: idsOnly keeps just the bracketed id, no frame/shadow info at all', () => {
+    const graph = new SemanticElementGraph(
+      [node({ id: 31, tagName: 'INPUT', frame: { index: 1, url: 'https://shop.test/pay/form', name: 'pay' } })],
+      'https://shop.test/checkout',
+    );
+    expect(formatGraphForLlm(graph, 60, { idsOnly: true })).toContain('[#31]');
+  });
+
+  it('U4: invariants — header count matches "[#N" lines; placeholders never match "^\\[#"; the "more elements" line precedes placeholders', () => {
+    const nodes: SemanticNode[] = [
+      node({ id: 1, tagName: 'BUTTON', accessibleName: 'A' }),
+      node({ id: 2, tagName: 'BUTTON', accessibleName: 'B' }),
+      node({ id: 3, tagName: 'BUTTON', accessibleName: 'C' }),
+    ];
+    const skipped: SkippedFrame[] = [{ index: 1, url: 'https://ads.example', origin: 'https://ads.example', reason: 'timeout', detail: '5000' }];
+    const graph = new SemanticElementGraph(nodes, 'https://example.com', 'T', skipped);
+    const formatted = formatGraphForLlm(graph, 2);
+    const lines = formatted.split('\n');
+    const idLines = lines.filter((l) => /^\[#\d+[\] ]/.test(l));
+    const headerMatch = formatted.match(/Interactive elements \((\d+)\):/);
+    // header counts ALL interactive nodes (3), independent of the maxElements truncation (2).
+    expect(Number(headerMatch![1])).toBe(3);
+    expect(idLines.length).toBe(2);
+    const moreIdx = lines.findIndex((l) => l.startsWith('... ('));
+    const placeholderIdx = lines.findIndex((l) => l.startsWith('[iframe'));
+    expect(moreIdx).toBeGreaterThan(-1);
+    expect(placeholderIdx).toBeGreaterThan(moreIdx);
+    for (const l of lines) {
+      if (l.startsWith('[iframe') || / more iframe/.test(l)) {
+        expect(l).not.toMatch(/^\[#/);
+      }
+    }
+  });
+
+  it('U5: placeholders appear identically in default, noText and idsOnly modes', () => {
+    const skipped: SkippedFrame[] = [
+      { index: 1, url: 'https://ads.example', origin: 'https://ads.example', reason: 'timeout', detail: '5000' },
+      { index: 2, url: 'about:srcdoc', origin: 'about:srcdoc', reason: 'frame-limit' },
+      { index: 3, url: 'about:srcdoc', origin: 'about:srcdoc', reason: 'frame-limit' },
+    ];
+    const graph = new SemanticElementGraph([node({ id: 7, tagName: 'BUTTON', accessibleName: 'X' })], 'https://example.com', 'T', skipped);
+
+    const placeholderLines = (out: string) => out.split('\n').filter((l) => l.startsWith('[') && !/^\[#/.test(l));
+    const full = placeholderLines(formatGraphForLlm(graph));
+    const noText = placeholderLines(formatGraphForLlm(graph, 60, { noText: true }));
+    const idsOnly = placeholderLines(formatGraphForLlm(graph, 60, { idsOnly: true }));
+    expect(full).toEqual(noText);
+    expect(full).toEqual(idsOnly);
+    expect(full).toEqual([
+      '[iframe https://ads.example — not inspectable] (timed out after 5000ms)',
+      '[2 more iframes not scanned — frame limit 20]',
+    ]);
+    const idsOnlyIdLines = formatGraphForLlm(graph, 60, { idsOnly: true })
+      .split('\n')
+      .filter((l) => /^\[#\d+\]$/.test(l));
+    expect(idsOnlyIdLines).toEqual(['[#7]']);
+  });
+});
+
+interface MockFrame {
+  evaluate: ReturnType<typeof vi.fn>;
+  url: () => string;
+  name: () => string;
+  isDetached: () => boolean;
+  parentFrame: () => MockFrame | null;
+  // GAP-154 (fix-3): optional, only set by tests exercising the blocked-frame URL recovery.
+  // `client`/`_id` mirror the real (internal, but real) Puppeteer Frame fields
+  // recoverBlockedFrameUnreachableUrl reads; `frameElement` mirrors the public API
+  // recoverBlockedFrameSrc's fallback path calls.
+  client?: { send: ReturnType<typeof vi.fn> };
+  _id?: string;
+  frameElement?: ReturnType<typeof vi.fn>;
+}
+
+function mockFrame(url: string, name = '', detached = false): MockFrame {
+  return {
+    evaluate: vi.fn(),
+    url: () => url,
+    name: () => name,
+    isDetached: () => detached,
+    parentFrame: () => null,
+  };
+}
+
+function scrapedNode(id: number, tagName = 'BUTTON'): unknown {
+  return {
+    id,
+    tagName,
+    role: tagName.toLowerCase(),
+    confidence: 1,
+    boundingBox: { x: 0, y: 0, width: 1, height: 1 },
+    isVisible: true,
+    isEnabled: true,
+  };
+}
+
+function pageFromFrames(main: MockFrame, frames: MockFrame[]): { mainFrame: () => MockFrame; frames: () => MockFrame[]; title: () => Promise<string> } {
+  return {
+    mainFrame: () => main,
+    frames: () => frames,
+    title: async () => 'T',
+  };
+}
+
+describe('@sutradhar/browser DOMSemanticEngine.buildGraph — FR2-09 frame handling', () => {
+  it('U6: main frame is always scraped first regardless of page.frames() order; child nodes carry a frame ref; a nested frame carries parentIndex', async () => {
+    const main = mockFrame('https://shop.test', '');
+    const child1 = mockFrame('https://shop.test/pay', 'pay');
+    const child2 = mockFrame('about:srcdoc', '');
+    const nested = mockFrame('about:srcdoc', 'nested');
+    nested.parentFrame = () => child1;
+
+    main.evaluate.mockResolvedValue([scrapedNode(0, 'BUTTON')]);
+    child1.evaluate.mockResolvedValue([scrapedNode(0, 'INPUT')]);
+    child2.evaluate.mockResolvedValue([]);
+    nested.evaluate.mockResolvedValue([scrapedNode(0, 'A')]);
+
+    const page = pageFromFrames(main, [child1, main, child2, nested]);
+    const tab = { url: 'https://shop.test', title: 'T', page } as unknown as IBrowserTab;
+
+    const engine = new DOMSemanticEngine();
+    const graph = await engine.buildGraph(tab);
+
+    const mainOrder = main.evaluate.mock.invocationCallOrder[0]!;
+    const child1Order = child1.evaluate.mock.invocationCallOrder[0]!;
+    expect(mainOrder).toBeLessThan(child1Order);
+
+    expect(main.evaluate.mock.calls[0]![1].startId).toBe(1);
+    expect(child1.evaluate.mock.calls[0]![1].startId).toBe(2); // main returned 1 node
+
+    const mainNode = graph.nodes.find((n) => n.tagName === 'BUTTON');
+    const child1Node = graph.nodes.find((n) => n.tagName === 'INPUT');
+    const nestedNode = graph.nodes.find((n) => n.tagName === 'A');
+
+    expect(mainNode?.frame).toBeUndefined();
+    expect(child1Node?.frame).toMatchObject({ index: 1, name: 'pay', url: 'https://shop.test/pay' });
+    expect(nestedNode?.frame).toMatchObject({ parentIndex: 1 });
+    expect(graph.skippedFrames).toEqual([]);
+  });
+
+  it('U7: a child frame whose scrape never resolves times out after 5000ms, is reported as skipped, and reserves its whole id range — the main frame is never timed out', async () => {
+    vi.useFakeTimers();
+    try {
+      const main = mockFrame('https://shop.test', '');
+      const busy = mockFrame('https://xo.test', 'xo');
+      const after = mockFrame('https://after.test', 'after');
+
+      main.evaluate.mockResolvedValue([scrapedNode(0)]);
+      busy.evaluate.mockReturnValue(new Promise(() => {})); // never resolves
+      after.evaluate.mockResolvedValue([scrapedNode(0)]);
+
+      const page = pageFromFrames(main, [main, busy, after]);
+      const tab = { url: 'https://shop.test', title: 'T', page } as unknown as IBrowserTab;
+
+      const engine = new DOMSemanticEngine();
+      const graphPromise = engine.buildGraph(tab);
+      await vi.advanceTimersByTimeAsync(5000);
+      const graph = await graphPromise;
+
+      expect(graph.skippedFrames).toEqual([
+        { index: 1, url: 'https://xo.test', origin: 'https://xo.test', name: 'xo', reason: 'timeout', detail: '5000' },
+      ]);
+      // main's 1 node + the busy frame's full reserved range (300).
+      expect(after.evaluate.mock.calls[0]![1].startId).toBe(1 + 1 + 300);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('U8: a "context destroyed" rejection is reported as navigated, an unrecognized rejection as error (first line only), and main-frame failures never produce a skipped entry', async () => {
+    const main = mockFrame('https://shop.test', '');
+    const navigated = mockFrame('https://a.test', '');
+    const errored = mockFrame('https://b.test', '');
+
+    main.evaluate.mockRejectedValue(new Error('main crashed'));
+    navigated.evaluate.mockRejectedValue(new Error('Execution context was destroyed.'));
+    errored.evaluate.mockRejectedValue(new Error('Protocol error: boom\nstack trace here'));
+
+    const page = pageFromFrames(main, [main, navigated, errored]);
+    const tab = { url: 'https://shop.test', title: 'T', page } as unknown as IBrowserTab;
+
+    const engine = new DOMSemanticEngine();
+    const graph = await engine.buildGraph(tab);
+
+    expect(graph.nodes).toEqual([]); // main failed silently, as today
+    expect(graph.skippedFrames).toEqual([
+      { index: 1, url: 'https://a.test', origin: 'https://a.test', reason: 'navigated', detail: 'Execution context was destroyed.' },
+      { index: 2, url: 'https://b.test', origin: 'https://b.test', reason: 'error', detail: 'Protocol error: boom' },
+    ]);
+  });
+
+  it('U8/N6: a frame that becomes detached by the time its rejection is handled is dropped silently, not reported', async () => {
+    const main = mockFrame('https://shop.test', '');
+    main.evaluate.mockResolvedValue([scrapedNode(0)]);
+
+    const goneDuringScrape = mockFrame('https://c.test', '');
+    let isDetachedCalls = 0;
+    goneDuringScrape.isDetached = () => {
+      isDetachedCalls++;
+      return isDetachedCalls > 1; // false during ordering, true by the time the catch block checks
+    };
+    goneDuringScrape.evaluate.mockRejectedValue(new Error('Attempted to use detached Frame'));
+
+    const page = pageFromFrames(main, [main, goneDuringScrape]);
+    const tab = { url: 'https://shop.test', title: 'T', page } as unknown as IBrowserTab;
+
+    const engine = new DOMSemanticEngine();
+    const graph = await engine.buildGraph(tab);
+
+    expect(graph.skippedFrames).toEqual([]);
+  });
+
+  it('U9: a frame resolving to a browser error page discards its nodes (ids still reserved) and is reported as error-page', async () => {
+    const main = mockFrame('https://shop.test', '');
+    main.evaluate.mockResolvedValue([scrapedNode(0)]);
+
+    const blocked = mockFrame('chrome-error://chromewebdata/', 'blocked');
+    blocked.evaluate.mockResolvedValue([scrapedNode(0), scrapedNode(1)]);
+
+    const after = mockFrame('https://after.test', 'after');
+    after.evaluate.mockResolvedValue([]);
+
+    const page = pageFromFrames(main, [main, blocked, after]);
+    const tab = { url: 'https://shop.test', title: 'T', page } as unknown as IBrowserTab;
+
+    const engine = new DOMSemanticEngine();
+    const graph = await engine.buildGraph(tab);
+
+    expect(graph.skippedFrames).toEqual([
+      { index: 1, url: 'chrome-error://chromewebdata/', origin: 'chrome-error://', name: 'blocked', reason: 'error-page' },
+    ]);
+    expect(graph.nodes.some((n) => n.frame?.name === 'blocked')).toBe(false);
+    // main (1 node) + blocked's 2 discarded nodes reserved => after's startId is 4.
+    expect(after.evaluate.mock.calls[0]![1].startId).toBe(4);
+  });
+
+  // GAP-154/GAP-156 (fix-3): recoverBlockedFrameUrl's real unit coverage. Before this, GAP-156
+  // found that disabling the whole recovery feature (see audit-3's gap150-mutant.diff.txt)
+  // still passed all 284 existing tests — U9 above only covers the case where NO url is
+  // recovered at all. These three tests exercise the actual recovery paths: the CDP
+  // unreachableUrl signal (confirmed), the frameElement()/src fallback (likely, only used when
+  // the CDP signal is unavailable), and the CDP call's own timeout bound.
+
+  it('GAP-154: a blocked frame recovers its real URL from CDP Page.getFrameTree unreachableUrl, marked "confirmed" — the frameElement()/src fallback is never even called', async () => {
+    const main = mockFrame('https://shop.test', '');
+    main.evaluate.mockResolvedValue([scrapedNode(0)]);
+
+    const blocked = mockFrame('chrome-error://chromewebdata/', 'blocked');
+    blocked.evaluate.mockResolvedValue([]);
+    blocked._id = 'FRAME-CONFIRMED';
+    blocked.client = {
+      send: vi.fn().mockResolvedValue({
+        frameTree: {
+          frame: { id: 'FRAME-CONFIRMED', unreachableUrl: 'https://real-target.example/blocked?via=302' },
+          childFrames: [],
+        },
+      }),
+    };
+    // If the fallback were called it would report a DIFFERENT (wrong) url — the exact failure
+    // mode audit-3 live-reproduced for frameElement()/src after a redirect.
+    blocked.frameElement = vi.fn().mockResolvedValue({
+      evaluate: vi.fn().mockResolvedValue('https://embedding-page.example/wrong-src'),
+      dispose: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const page = pageFromFrames(main, [main, blocked]);
+    const tab = { url: 'https://shop.test', title: 'T', page } as unknown as IBrowserTab;
+
+    const engine = new DOMSemanticEngine();
+    const graph = await engine.buildGraph(tab);
+
+    expect(graph.skippedFrames).toEqual([
+      {
+        index: 1,
+        url: 'https://real-target.example/blocked?via=302',
+        origin: 'https://real-target.example',
+        name: 'blocked',
+        reason: 'error-page',
+        urlConfidence: 'confirmed',
+      },
+    ]);
+    expect(blocked.frameElement).not.toHaveBeenCalled();
+    // A confirmed recovery is presented as plain fact — no lower-confidence marker in the text.
+    const text = formatGraphForLlm(graph);
+    expect(text).toContain('[iframe "blocked" https://real-target.example — not inspectable]');
+    expect(text).not.toContain('likely');
+  });
+
+  it('GAP-154: when CDP unreachableUrl is unavailable for this frame, falls back to the parent iframe\'s src attribute, marked "likely" (lower confidence) both structurally and in the rendered text', async () => {
+    const main = mockFrame('https://shop.test', '');
+    main.evaluate.mockResolvedValue([scrapedNode(0)]);
+
+    const blocked = mockFrame('chrome-error://chromewebdata/', 'blocked');
+    blocked.evaluate.mockResolvedValue([]);
+    blocked._id = 'FRAME-FALLBACK';
+    // The CDP tree resolves, but this frame's node has no unreachableUrl (e.g. older Chrome).
+    blocked.client = {
+      send: vi.fn().mockResolvedValue({
+        frameTree: { frame: { id: 'FRAME-FALLBACK' }, childFrames: [] },
+      }),
+    };
+    blocked.frameElement = vi.fn().mockResolvedValue({
+      evaluate: vi.fn().mockResolvedValue('https://told-to-load.example/original'),
+      dispose: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const page = pageFromFrames(main, [main, blocked]);
+    const tab = { url: 'https://shop.test', title: 'T', page } as unknown as IBrowserTab;
+
+    const engine = new DOMSemanticEngine();
+    const graph = await engine.buildGraph(tab);
+
+    expect(graph.skippedFrames).toEqual([
+      {
+        index: 1,
+        url: 'https://told-to-load.example/original',
+        origin: 'https://told-to-load.example',
+        name: 'blocked',
+        reason: 'error-page',
+        urlConfidence: 'likely',
+      },
+    ]);
+    const text = formatGraphForLlm(graph);
+    expect(text).toContain('[iframe "blocked" https://told-to-load.example (likely, unconfirmed) — not inspectable]');
+  });
+
+  it('GAP-154/GAP-156: a hanging CDP getFrameTree call is bounded rather than stalling the snapshot, and still falls back to the src-based recovery ("likely") once it gives up', async () => {
+    vi.useFakeTimers();
+    try {
+      const main = mockFrame('https://shop.test', '');
+      main.evaluate.mockResolvedValue([scrapedNode(0)]);
+
+      const blocked = mockFrame('chrome-error://chromewebdata/', 'blocked');
+      blocked.evaluate.mockResolvedValue([]);
+      blocked._id = 'FRAME-HANG';
+      blocked.client = { send: vi.fn(() => new Promise(() => {})) }; // never resolves
+      blocked.frameElement = vi.fn().mockResolvedValue({
+        evaluate: vi.fn().mockResolvedValue('https://fallback-after-hang.example/x'),
+        dispose: vi.fn().mockResolvedValue(undefined),
+      });
+
+      const page = pageFromFrames(main, [main, blocked]);
+      const tab = { url: 'https://shop.test', title: 'T', page } as unknown as IBrowserTab;
+
+      const engine = new DOMSemanticEngine();
+      const graphPromise = engine.buildGraph(tab);
+      // The CDP read's own bound (BLOCKED_FRAME_URL_TIMEOUT_MS = 1000ms), then the
+      // frameElement()/src fallback's bound (BLOCKED_FRAME_SRC_TIMEOUT_MS = 1000ms) — both must
+      // fire in sequence for the fallback to even run, then produce its own result.
+      await vi.advanceTimersByTimeAsync(1000);
+      await vi.advanceTimersByTimeAsync(1000);
+      const graph = await graphPromise;
+
+      expect(graph.skippedFrames).toEqual([
+        {
+          index: 1,
+          url: 'https://fallback-after-hang.example/x',
+          origin: 'https://fallback-after-hang.example',
+          name: 'blocked',
+          reason: 'error-page',
+          urlConfidence: 'likely',
+        },
+      ]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('U9/N11: frames beyond the 20-frame cap are aggregated as frame-limit placeholders, and the main frame is always scanned', async () => {
+    const main = mockFrame('https://shop.test', '');
+    main.evaluate.mockResolvedValue([]);
+    const extras = Array.from({ length: 24 }, (_, i) => mockFrame('about:srcdoc', `f${i}`));
+    for (const f of extras) f.evaluate.mockResolvedValue([]);
+
+    const page = pageFromFrames(main, [main, ...extras]);
+    const tab = { url: 'https://shop.test', title: 'T', page } as unknown as IBrowserTab;
+
+    const engine = new DOMSemanticEngine();
+    const graph = await engine.buildGraph(tab);
+
+    expect(main.evaluate).toHaveBeenCalled();
+    const scraped = extras.filter((f) => f.evaluate.mock.calls.length > 0);
+    expect(scraped.length).toBe(19); // 20-frame cap minus the main frame
+    const limitEntries = graph.skippedFrames.filter((s) => s.reason === 'frame-limit');
+    expect(limitEntries.length).toBe(5); // 25 total frames - 20 scraped
+  });
+});
+
+describe('@sutradhar/browser scrapeFrame / extractAndStampEventListenerElement — FR2-09 shadow chain (U10, in-page logic)', () => {
+  // A root with no `.host` (duck-typed like a real Document) — terminates the ascending walk
+  // in both scrapeFrame's and extractAndStampEventListenerElement's `shadowHostsOf`.
+  const FAKE_DOCUMENT_ROOT = { __isDocument: true } as unknown;
+
+  function fakeHost(
+    tag: string,
+    id = '',
+    cls = '',
+  ): { tagName: string; id: string; className: string } {
+    return { tagName: tag, id, className: cls };
+  }
+
+  /**
+   * Builds a fake interactive element nested inside zero or more open shadow roots.
+   * `chainHosts` is INNERMOST-FIRST (the host of the shadow root the element itself sits in,
+   * then that host's own containing host, ..., ending just inside the document) — this mirrors
+   * the real ascending walk `shadowHostsOf` performs: `el.getRootNode().host`, then
+   * `host.getRootNode().host`, etc., until a root with no `.host` (the document) is reached.
+   * Also carries every other property `scrapeFrame`/`extractAndStampEventListenerElement`
+   * touch, so the real exported functions can run against it unmodified (no jsdom needed).
+   */
+  function fakeElAtDepth(chainHosts: ReturnType<typeof fakeHost>[]): Record<string, unknown> {
+    let currentRoot: unknown = FAKE_DOCUMENT_ROOT;
+    // Process OUTERMOST host first (the end of the innermost-first array): its getRootNode()
+    // must resolve straight to the document, then each host processed after it is one level
+    // further IN, resolving to the shadow root wrapping the previous (more outer) host.
+    //
+    // `parentRoot` MUST be captured as its own `const` per iteration — closing over the
+    // outer `currentRoot` variable directly would make every host's `getRootNode()` read
+    // whatever `currentRoot` is reassigned to LAST (after the loop finishes), not the value
+    // at the time that host was built. With only one host that makes it read its own
+    // just-created shadow-root wrapper, i.e. a root whose `.host` is itself — infinite-looping
+    // `shadowHostsOf`'s `while (root && root.host)` walk instead of ever terminating at the
+    // document. (Found live: this exact bug hung `vitest run`/`vitest list` on this file
+    // indefinitely — bisected by running smaller and smaller slices of the file until it
+    // reproduced with just this one helper.)
+    for (let i = chainHosts.length - 1; i >= 0; i--) {
+      const parentRoot = currentRoot;
+      const host: Record<string, unknown> = { ...chainHosts[i], getRootNode: () => parentRoot };
+      currentRoot = { host };
+    }
+    const attrs: Record<string, string> = {};
+    return {
+      tagName: 'BUTTON',
+      matches: () => true,
+      getBoundingClientRect: () => ({ x: 0, y: 0, width: 10, height: 10 }),
+      getRootNode: () => currentRoot,
+      getAttribute: (name: string) => (name in attrs ? attrs[name] : null),
+      hasAttribute: (name: string) => name in attrs,
+      setAttribute: (name: string, v: string) => {
+        attrs[name] = v;
+      },
+      removeAttribute: (name: string) => {
+        delete attrs[name];
+      },
+      isContentEditable: false,
+      labels: undefined,
+      innerText: 'Depth button',
+      placeholder: '',
+      value: '',
+      disabled: false,
+      shadowRoot: null,
+      parentElement: null,
+    };
+  }
+
+  const SCRAPE_PARAMS = {
+    attrName: 'data-sd-node-id',
+    genAttr: 'data-sd-gen',
+    currentGenAttr: 'data-sd-current-gen',
+    fpAttr: 'data-sd-fp',
+    selector: 'button,input,a,select,textarea,label,summary,[onclick],[tabindex]',
+    generation: 'g1',
+    startId: 1,
+    maxStamped: 300,
+    syntheticClickableRole: 'clickable',
+  };
+
+  beforeEach(() => {
+    vi.stubGlobal('getComputedStyle', () => ({ cursor: 'default', display: 'block', visibility: 'visible', opacity: '1' }));
+    vi.stubGlobal('location', { href: 'https://fx9.test/page' });
+    vi.stubGlobal('window', { name: 'top-frame', top: undefined as unknown });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('scrapeFrame: shadowHosts is undefined at depth 0 and the full outer-to-inner chain at depth 1 and depth 3', () => {
+    const el0 = fakeElAtDepth([]); // light DOM: getRootNode() -> the document directly
+    const el1 = fakeElAtDepth([fakeHost('pay-shell', 'shell')]);
+    // Innermost-first: the button sits in x-inner's shadow, x-inner sits in card-field's
+    // shadow, card-field sits in pay-shell's shadow, pay-shell sits in the document.
+    const el3 = fakeElAtDepth([
+      fakeHost('x-inner', 'deep'),
+      fakeHost('card-field', '', 'cvc'),
+      fakeHost('pay-shell', 'shell'),
+    ]);
+    vi.stubGlobal('document', {
+      documentElement: { setAttribute: vi.fn() },
+      querySelectorAll: () => [el0, el1, el3],
+    });
+
+    const [n0, n1, n3] = scrapeFrame(SCRAPE_PARAMS);
+
+    expect(n0!.shadowHosts).toBeUndefined();
+    expect(n1!.shadowHosts).toEqual(['pay-shell#shell']);
+    expect(n3!.shadowHosts).toEqual(['pay-shell#shell', 'card-field.cvc', 'x-inner#deep']);
+  });
+
+  it('scrapeFrame: a shadow host id is sanitized to [\\w-] characters, falling back to the first class when no id survives', () => {
+    const elDirtyId = fakeElAtDepth([fakeHost('div', 'a b"c)')]);
+    const elClassOnly = fakeElAtDepth([fakeHost('span', '', '  primary big')]);
+    vi.stubGlobal('document', {
+      documentElement: { setAttribute: vi.fn() },
+      querySelectorAll: () => [elDirtyId, elClassOnly],
+    });
+
+    const [nDirty, nClass] = scrapeFrame(SCRAPE_PARAMS);
+
+    expect(nDirty!.shadowHosts).toEqual(['div#abc']);
+    expect(nClass!.shadowHosts).toEqual(['span.primary']);
+  });
+
+  it('extractAndStampEventListenerElement: reports the identical shadowHosts chain as scrapeFrame for the same fixtures (self-containment)', () => {
+    const el0 = fakeElAtDepth([]);
+    const el1 = fakeElAtDepth([fakeHost('pay-shell', 'shell')]);
+    const el3 = fakeElAtDepth([
+      fakeHost('x-inner', 'deep'),
+      fakeHost('card-field', '', 'cvc'),
+      fakeHost('pay-shell', 'shell'),
+    ]);
+
+    const call = (el: Record<string, unknown>) =>
+      extractAndStampEventListenerElement.call(
+        el as unknown as Element,
+        1,
+        'g1',
+        'data-sd-node-id',
+        'data-sd-gen',
+        'data-sd-fp',
+        'clickable',
+      );
+
+    expect(call(el0)?.shadowHosts).toBeUndefined();
+    expect(call(el1)?.shadowHosts).toEqual(['pay-shell#shell']);
+    expect(call(el3)?.shadowHosts).toEqual(['pay-shell#shell', 'card-field.cvc', 'x-inner#deep']);
+  });
+
+  it('self-containment: both functions still parse standalone via new Function(...) (the FR2-06 D8 precedent — proves they stay serializable for frame.evaluate/CDP callFunctionOn)', () => {
+    expect(() => new Function('return (' + scrapeFrame.toString() + ')')()).not.toThrow();
+    expect(() => new Function('return (' + extractAndStampEventListenerElement.toString() + ')')()).not.toThrow();
   });
 });

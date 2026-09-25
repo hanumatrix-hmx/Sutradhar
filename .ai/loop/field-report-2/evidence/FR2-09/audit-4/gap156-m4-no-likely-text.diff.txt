@@ -1,0 +1,11 @@
+--- E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/fl.orig.ts	2026-09-25 13:19:55.484402800 +0530
++++ packages/browser/src/dom/frame-labels.ts	2026-09-25 13:23:00.450155100 +0530
+@@ -158,7 +158,7 @@
+     // GAP-154: a 'likely' urlConfidence means the origin below came from the fallback
+     // iframe-src-attribute read, not a CDP-confirmed unreachableUrl — flag it so the text never
+     // states a guessed origin with the same certainty as a confirmed one.
+-    const originText = s.urlConfidence === 'likely' ? `${s.origin} (likely, unconfirmed)` : s.origin;
++    const originText = s.origin;
+     lines.push(`[iframe ${namePart}${originText} — not inspectable] (${reasonText})`);
+   }
+   if (limitCount > 0) {

@@ -63,7 +63,7 @@ at all since you already are one).
 |---|---|---|
 | **Lifecycle** | `health`, `launch`, `attach`, `shutdown`, `shutdown_all` | Start/stop a session. `attach` connects to an already-running Chrome over CDP instead of launching a new one. |
 | **Navigation** | `navigate`, `go_back`, `go_forward`, `reload` | Standard page navigation. |
-| **Agent vision** | `snapshot`, `ax_snapshot` | **Read the page.** See the grounding section below — this is the most important pair of tools here. |
+| **Agent vision** | `snapshot`, `ax_snapshot` | **Read the page.** See the grounding section below — this is the most important pair of tools here. Elements inside an iframe are labelled `[#31 in iframe "pay" (https://…)]` (the URL shown once per frame; an unnamed frame shows its number instead), and elements inside an open shadow root end with `(shadow: host-tag#id)`; a frame that couldn't be read is listed as `[iframe <origin> — not inspectable] (reason)` instead of being silently dropped. |
 | **Interaction** | `click`, `click_by_text`, `click_by_role`, `right_click`, `type`, `type_by_label`, `press_key`, `hover`, `scroll`, `select_option`/`select_options`, `drag_and_drop`, `touch_tap`, `upload_file`, `upload_file_via_trigger`, `download_file`, `wait_for_selector`, `fill_form`, `click_at_point`, `drag_at_points` | Act on the page. `fill_form` does a whole form in one call. `click_at_point`/`drag_at_points` are the escape hatch for canvas/custom-rendered UI with nothing addressable via DOM. |
 | **Capture & extraction** | `screenshot`, `export_pdf`, `eval`, `extract_data` | Get data out. `extract_data` takes a field-name → CSS-selector map and returns real matched values — prefer this over eyeballing a screenshot for anything you need to assert on. Both `eval` and `extract_data` accept an optional `frameSelector` (a CSS selector or snapshot `[#id]` for an `<iframe>` element) to read inside that frame instead of the top-level page — including a genuinely cross-origin one. |
 | **Storage** | `get_cookies`/`set_cookie`/`delete_cookie`, `get_local_storage`/`set_local_storage_item`/`clear_local_storage`, `get_session_storage`/`set_session_storage_item`/`clear_session_storage`, `get_storage_state`/`set_storage_state` | Cookie/storage read-write. The `storage_state` pair is a single-blob export/import of all three at once — the way to log in once and reuse that session later. |
@@ -157,10 +157,17 @@ it ships), the pattern that actually holds up is:
 
 ## Known limitations — stated honestly
 
-- **No stealth or bot-detection evasion, by design.** Sutradhar launches a plain, undisguised
-  browser. Real anti-bot walls (Cloudflare challenges, CAPTCHAs, hard IP-level denies) will
-  block it exactly the way they'd block any other automation tool run the same way — this was
-  directly measured and confirmed, not assumed, across real benchmark runs against real sites.
+- **No stealth or bot-detection evasion, by design.** Sutradhar does not attempt to evade
+  bot-detection or solve CAPTCHAs, and Cloudflare challenges, CAPTCHA walls, and IP-level
+  blocks stop it exactly as they would stop any other automation tool run the same way — this
+  was directly measured and confirmed, not assumed, across real benchmark runs against real
+  sites. The only launch argument here with detection-relevant behavior is
+  `--disable-blink-features=AutomationControlled`, which hides `navigator.webdriver` from
+  scripts that check for it -- measured directly: `navigator.webdriver` is `true` without the
+  flag and `false` with it. It does not defeat Cloudflare, CAPTCHA, or any other real
+  bot-detection service, and other simple signals -- the default headless user agent's
+  `HeadlessChrome` substring and `--enable-automation` still being present in the launch
+  command line -- remain unmasked.
 - **`agent.runGoal` needs its own LLM provider** (Ollama running locally, or an OpenRouter API
   key) configured separately for the server — the `browser.*` tools need none of that, since the
   calling AI is already the brain.

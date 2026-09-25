@@ -1,0 +1,11 @@
+idle snapshot ms=11 [["k1","error-page","http://127.0.0.1:62272/xfo-deny?k=1","confirmed"],["k2","error-page","http://127.0.0.1:62272/xfo-deny?k=2","confirmed"],["k3","error-page","http://127.0.0.1:62272/xfo-deny?k=3","confirmed"]]
+busy-parent snapshot ms=5015
+URL: http://127.0.0.1:62272/main
+Title: 
+Interactive elements (1):
+[#1] button "M"
+[iframe "busyp" http://localhost:62272 — not inspectable] (timed out after 5000ms)
+[iframe "k1" http://127.0.0.1:62272 — not inspectable] (browser error page: blocked or failed to load)
+[iframe "k2" http://127.0.0.1:62272 — not inspectable] (browser error page: blocked or failed to load)
+[iframe "k3" http://127.0.0.1:62272 — not inspectable] (browser error page: blocked or failed to load)
+[["busyp","timeout","http://localhost:62272/busy",null],["k1","error-page","http://127.0.0.1:62272/xfo-deny?k=1","confirmed"],["k2","error-page","http://127.0.0.1:62272/xfo-deny?k=2","confirmed"],["k3","error-page","http://127.0.0.1:62272/xfo-deny?k=3","confirmed"]]

@@ -1,0 +1,163 @@
+MODE=cdp-reject snapshotMs=34 getFrameTreeCallsDuringSnapshot=15 clientGetterCallsFromRecovery=7
+--- ground truth (Chrome CDP per-frame session, read by the audit script itself) ---
+{
+ "(main)": {
+  "pptrUrl": "http://127.0.0.1:59809/main",
+  "cdpUrl": "http://127.0.0.1:59809/main"
+ },
+ "a1": {
+  "pptrUrl": "http://127.0.0.1:59809/meta",
+  "cdpUrl": "chrome-error://chromewebdata/",
+  "unreachableUrl": "http://localhost:59809/csp-none?via=meta"
+ },
+ "a2": {
+  "pptrUrl": "chrome-error://chromewebdata/",
+  "cdpUrl": "chrome-error://chromewebdata/",
+  "unreachableUrl": "http://localhost:59809/xfo-so?via=chain"
+ },
+ "a3": {
+  "pptrUrl": "chrome-error://chromewebdata/",
+  "cdpUrl": "chrome-error://chromewebdata/",
+  "unreachableUrl": "http://127.0.0.1:59809/csp-none?via=sameorigin-csp"
+ },
+ "a4": {
+  "pptrUrl": "chrome-error://chromewebdata/",
+  "cdpUrl": "chrome-error://chromewebdata/",
+  "unreachableUrl": "http://127.0.0.1:59809/xfo-deny?via=sameorigin-xfo"
+ },
+ "a5": {
+  "pptrUrl": "chrome-error://chromewebdata/",
+  "cdpUrl": "chrome-error://chromewebdata/",
+  "unreachableUrl": "http://localhost:59809/csp-none?step=A5-second"
+ },
+ "a6": {
+  "pptrUrl": "chrome-error://chromewebdata/",
+  "cdpUrl": "chrome-error://chromewebdata/",
+  "unreachableUrl": "http://localhost:59809/xfo-so?step=A6-second"
+ },
+ "a7": {
+  "pptrUrl": "http://localhost:59809/outer",
+  "cdpUrl": "http://localhost:59809/outer"
+ },
+ "a8": {
+  "pptrUrl": "http://localhost:59809/fine?step=A8-second",
+  "cdpUrl": "http://localhost:59809/fine?step=A8-second"
+ },
+ "gc": {
+  "pptrUrl": "chrome-error://chromewebdata/",
+  "cdpUrl": "chrome-error://chromewebdata/",
+  "unreachableUrl": "http://127.0.0.1:59809/xfo-deny?via=grandchild"
+ }
+}
+--- parent iframe src attributes ---
+{
+ "a1": "http://127.0.0.1:59809/meta",
+ "a2": "http://127.0.0.1:59809/hop1",
+ "a3": "http://127.0.0.1:59809/csp-none?via=sameorigin-csp",
+ "a4": "http://127.0.0.1:59809/xfo-deny?via=sameorigin-xfo",
+ "a5": "http://localhost:59809/xfo-deny?step=A5-first",
+ "a6": "http://localhost:59809/xfo-so?step=A6-second",
+ "a7": "http://localhost:59809/outer",
+ "a8": "http://localhost:59809/xfo-deny?step=A8-first"
+}
+--- listing ---
+URL: http://127.0.0.1:59809/main
+Title: 
+Interactive elements (5):
+[#1] button "Main"
+[#2] a "nav5"
+[#3] a "nav8"
+[#10 in iframe "a8" (http://localhost:59809/fine)] button "fine inner"
+[#13 in iframe "a7" (http://localhost:59809/outer)] button "outer btn"
+[iframe "a3" http://127.0.0.1:59809 (likely, unconfirmed) — not inspectable] (browser error page: blocked or failed to load)
+[iframe "a4" http://127.0.0.1:59809 (likely, unconfirmed) — not inspectable] (browser error page: blocked or failed to load)
+[iframe "a5" http://localhost:59809 (likely, unconfirmed) — not inspectable] (browser error page: blocked or failed to load)
+[iframe "a6" http://localhost:59809 (likely, unconfirmed) — not inspectable] (browser error page: blocked or failed to load)
+[iframe "a2" http://127.0.0.1:59809 (likely, unconfirmed) — not inspectable] (browser error page: blocked or failed to load)
+[iframe "a1" http://127.0.0.1:59809 (likely, unconfirmed) — not inspectable] (browser error page: blocked or failed to load)
+[iframe "gc" http://127.0.0.1:59809 (likely, unconfirmed) — not inspectable] (browser error page: blocked or failed to load)
+--- skippedFrames ---
+[
+ {
+  "index": 1,
+  "url": "http://127.0.0.1:59809/csp-none?via=sameorigin-csp",
+  "origin": "http://127.0.0.1:59809",
+  "name": "a3",
+  "reason": "error-page",
+  "urlConfidence": "likely"
+ },
+ {
+  "index": 2,
+  "url": "http://127.0.0.1:59809/xfo-deny?via=sameorigin-xfo",
+  "origin": "http://127.0.0.1:59809",
+  "name": "a4",
+  "reason": "error-page",
+  "urlConfidence": "likely"
+ },
+ {
+  "index": 3,
+  "url": "http://localhost:59809/xfo-deny?step=A5-first",
+  "origin": "http://localhost:59809",
+  "name": "a5",
+  "reason": "error-page",
+  "urlConfidence": "likely"
+ },
+ {
+  "index": 5,
+  "url": "http://localhost:59809/xfo-so?step=A6-second",
+  "origin": "http://localhost:59809",
+  "name": "a6",
+  "reason": "error-page",
+  "urlConfidence": "likely"
+ },
+ {
+  "index": 7,
+  "url": "http://127.0.0.1:59809/hop1",
+  "origin": "http://127.0.0.1:59809",
+  "name": "a2",
+  "reason": "error-page",
+  "urlConfidence": "likely"
+ },
+ {
+  "index": 8,
+  "url": "http://127.0.0.1:59809/meta",
+  "origin": "http://127.0.0.1:59809",
+  "name": "a1",
+  "reason": "error-page",
+  "urlConfidence": "likely"
+ },
+ {
+  "index": 9,
+  "url": "http://127.0.0.1:59809/xfo-deny?via=grandchild",
+  "origin": "http://127.0.0.1:59809",
+  "name": "gc",
+  "reason": "error-page",
+  "urlConfidence": "likely"
+ }
+]
+PASS a1 url :: {"want":"http://127.0.0.1:59809/meta","got":"http://127.0.0.1:59809/meta","truthUnreachable":"http://localhost:59809/csp-none?via=meta"}
+PASS a1 urlConfidence=likely :: "likely"
+PASS a1 rendered line :: "[iframe \"a1\" http://127.0.0.1:59809 (likely, unconfirmed) — not inspectable] (browser error page: blocked or failed to load)"
+PASS a2 url :: {"want":"http://127.0.0.1:59809/hop1","got":"http://127.0.0.1:59809/hop1","truthUnreachable":"http://localhost:59809/xfo-so?via=chain"}
+PASS a2 urlConfidence=likely :: "likely"
+PASS a2 rendered line :: "[iframe \"a2\" http://127.0.0.1:59809 (likely, unconfirmed) — not inspectable] (browser error page: blocked or failed to load)"
+PASS a3 url :: {"want":"http://127.0.0.1:59809/csp-none?via=sameorigin-csp","got":"http://127.0.0.1:59809/csp-none?via=sameorigin-csp","truthUnreachable":"http://127.0.0.1:59809/csp-none?via=sameorigin-csp"}
+PASS a3 urlConfidence=likely :: "likely"
+PASS a3 rendered line :: "[iframe \"a3\" http://127.0.0.1:59809 (likely, unconfirmed) — not inspectable] (browser error page: blocked or failed to load)"
+PASS a4 url :: {"want":"http://127.0.0.1:59809/xfo-deny?via=sameorigin-xfo","got":"http://127.0.0.1:59809/xfo-deny?via=sameorigin-xfo","truthUnreachable":"http://127.0.0.1:59809/xfo-deny?via=sameorigin-xfo"}
+PASS a4 urlConfidence=likely :: "likely"
+PASS a4 rendered line :: "[iframe \"a4\" http://127.0.0.1:59809 (likely, unconfirmed) — not inspectable] (browser error page: blocked or failed to load)"
+PASS a5 url :: {"want":"http://localhost:59809/xfo-deny?step=A5-first","got":"http://localhost:59809/xfo-deny?step=A5-first","truthUnreachable":"http://localhost:59809/csp-none?step=A5-second"}
+PASS a5 urlConfidence=likely :: "likely"
+PASS a5 rendered line :: "[iframe \"a5\" http://localhost:59809 (likely, unconfirmed) — not inspectable] (browser error page: blocked or failed to load)"
+PASS a6 url :: {"want":"http://localhost:59809/xfo-so?step=A6-second","got":"http://localhost:59809/xfo-so?step=A6-second","truthUnreachable":"http://localhost:59809/xfo-so?step=A6-second"}
+PASS a6 urlConfidence=likely :: "likely"
+PASS a6 rendered line :: "[iframe \"a6\" http://localhost:59809 (likely, unconfirmed) — not inspectable] (browser error page: blocked or failed to load)"
+PASS gc url :: {"want":"http://127.0.0.1:59809/xfo-deny?via=grandchild","got":"http://127.0.0.1:59809/xfo-deny?via=grandchild","truthUnreachable":"http://127.0.0.1:59809/xfo-deny?via=grandchild"}
+PASS gc urlConfidence=likely :: "likely"
+PASS gc rendered line :: "[iframe \"gc\" http://127.0.0.1:59809 (likely, unconfirmed) — not inspectable] (browser error page: blocked or failed to load)"
+PASS a8 (blocked then navigated to a fine page) is a normal frame, no placeholder :: "no placeholder"
+PASS a7 outer OOPIF itself scraped normally :: "ok"
+PASS no blocked-frame secret leaked :: null
+PASS fallback path actually exercised (recovery touched patched API) :: {"getFrameTreeCalls":15,"clientGetterCalls":7}
+OVERALL PASS

@@ -1463,3 +1463,53 @@ investigation.
 
 FR2-09 is now at its 3rd fix cycle -- still comfortably within the loop's normal 4-cycle bound,
 no escalation warranted.
+
+## 2026-09-25 -- FR2-09: DONE. The loop's first successfully-completed item.
+
+audit-4 (Opus, independent, its own test pages for redirects/CSP/re-navigation/nesting, its own
+revert-and-confirm on every fix-3 claim, its own byte-identical evidence-preservation check)
+returned PASS: "I found no functional defect." All 5 of the spec's top-level Done-when bullets
+are genuinely met:
+1. Frame and shadow labels render correctly (same-origin, cross-origin OOPIF, srcdoc, nested 2+
+   levels, shadow-in-iframe) -- independently spot-checked 12/12 against the real fixture.
+2. A frame that can't be inspected gets an honest placeholder, never silent omission -- including,
+   after 3 escalating rounds, a blocked frame's REAL url via Chrome's own CDP unreachableUrl
+   signal (not a DOM attribute that can go stale), correctly confidence-labeled when that signal
+   is unavailable.
+3. The token-size regression gate is measured for real (not skipped, as run-1 originally did) and
+   the one fixture that exceeds 10% (nested-shadow-in-iframe, +44.24%) is an Orchestrator-
+   approved, spec-sanctioned documented exception, not a silent overage.
+4. Unit tests genuinely test what they claim (after finding, in this one item, FOUR separate
+   instances across 4 rounds of a test/comment claiming coverage it didn't provide -- U10's
+   hollow parse-check, the GAP-146 test that passed on unfixed code, a wrong file citation, and
+   a mislabeled origin -- each one caught by independent re-derivation, not trusted from a
+   self-report).
+5. A real, live-reproduced correctness bug that a fix ITSELF introduced (fix-2's false-URL
+   regression, GAP-154) was caught by the very next audit and root-caused to a better underlying
+   signal (CDP's unreachableUrl vs. an inferred src attribute) rather than patched superficially.
+
+**This item took 4 audits and 3 fix cycles -- comfortably within the loop's normal bound, no
+escalation needed.** Compare directly against FR2-01 (6 audits, 5 fix cycles, both escalation
+cycles exhausted, BLOCKED) and FR2-16 (5 audits, 4 fix cycles, both escalation cycles exhausted,
+BLOCKED): FR2-09 succeeded because each round's genuine defects were narrow, mechanically
+fixable, and didn't recur in a NEW shape after being fixed (with the one exception of GAP-154,
+which the very next round closed for good) -- unlike FR2-01/16's core bugs, which kept
+reappearing in structurally different places each round no matter how the fix was designed. This
+is the clearest positive data point yet for this loop's central working hypothesis: bugs that are
+genuinely bounded get closed by this process; bugs that are open-ended in shape (an unbounded
+space of code sites, or an unbounded space of prose phrasings) don't, no matter how many rounds
+run, and the process itself is what correctly identifies which kind it's dealing with by round 4-6
+rather than running forever.
+
+4 minor gaps remain, logged and NOT blocking DONE per audit-4's own explicit judgment: GAP-158
+(a wrong file citation, fixed by the Orchestrator directly on this commit -- a one-line change),
+GAP-159 (missing test coverage for the frame-id-matching logic and for a hypothetical future
+Puppeteer internals removal), GAP-160 (PROB-046's stale description, corrected by the
+Orchestrator directly on this commit), GAP-161 (2 more instances of the self-report-accuracy
+pattern, both independently re-verified true regardless). GAP-157 (a frame that becomes blocked
+only after a long-lived session has already attached to it) remains open as a genuinely separate,
+narrower backlog item.
+
+The shared `tools/scenario-suite/results/baseline-*.json` files show local diffs from this item's
+own live-verify runs, per the standing GAP-100/106 rule -- these are NOT included in this commit;
+they are regenerated fresh only as part of the loop's own final full-repo gate.

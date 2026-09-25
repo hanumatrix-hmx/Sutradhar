@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!-- FR2-09 inner frame fixture (spec section 3) — served at /fr2-09-inner.html?role=<pay|xo|sbx>
+     by fr2-09-frames.html's outer frames. Recreated in fix-1 (see fr2-09-frames.html's header
+     comment for why: audit-1 found this file missing from run-1's evidence entirely). -->
+<html lang="en">
+<head><meta charset="utf-8" /><title>FR2-09 inner fixture</title></head>
+<body>
+<h2>Card details</h2>
+<input aria-label="Card number" />
+<button id="pay-btn">Pay</button>
+
+<card-field id="cvc"></card-field>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const role = params.get('role') || '';
+
+  window.__busy = (ms) => {
+    const t = Date.now();
+    while (Date.now() - t < ms) {
+      /* spin */
+    }
+  };
+  document.addEventListener(
+    'click',
+    (e) => {
+      const id = e.target && e.target.id;
+      if (id) parent.postMessage({ __fx9: true, role, id }, '*');
+    },
+    true,
+  );
+
+  customElements.define(
+    'card-field',
+    class extends HTMLElement {
+      connectedCallback() {
+        const root = this.attachShadow({ mode: 'open' });
+        root.innerHTML = '<input aria-label="CVC">';
+      }
+    },
+  );
+
+  // Only the "pay" role nests a further same-origin srcdoc iframe (spec section 3:
+  // "when ?role=pay, also a nested iframe name='nested' srcdoc=...").
+  if (role === 'pay') {
+    const nested = document.createElement('iframe');
+    nested.name = 'nested';
+    nested.srcdoc = "<button id='nested-btn'>Nested</button>";
+    document.body.appendChild(nested);
+  }
+</script>
+</body>
+</html>
