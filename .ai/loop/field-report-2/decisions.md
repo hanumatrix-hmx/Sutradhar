@@ -1640,3 +1640,51 @@ fix degraded-mode to preserve all 3 safety properties, including making --dry-ru
 harness-main.mjs/harness-adv.mjs as a starting point per its own suggestion; (6) the changelog
 fragment. GAP-179 through 182 (minor) fixed opportunistically if time allows without destabilizing
 the above priority list.
+
+## 2026-09-25 -- FR2-03 audit-2: FAILED -- fix-1's own remedy for one blocker introduced a new one
+
+audit-2 confirmed all 4 of audit-1's original gaps (GAP-175/176/177/178) are genuinely fixed for
+the SPECIFIC scenarios that found them -- SUTRADHAR_CLI_STATE_DIR sessions survive, orphan dirs
+reclaim in the same run, stale-session deletes now respect live-process checks, degraded mode's
+3 safety properties hold, and probeLock's switch from destructive unlinkSync to a self-renameSync
+probe is confirmed safe across real headless/headed Chrome states.
+
+But exactly the failure mode the dispatch brief warned about happened: fixing GAP-176's under-
+kill (orphan dirs never reclaimed) via a new PPID-chain walk introduced a NEW blocker, GAP-183 --
+the walk never checks that a parent process predates its apparent child (a real, spec-mandated
+safety rule this loop's own spec explicitly states), making it vulnerable to PID reuse. On this
+actual machine, an orphan browser's PID landed on a dead parent's reused PID after only ~150
+spawns, and a real `doctor --gc` then killed a genuinely unrelated process misclassified as its
+"child." Computed worst case against this machine's real process table: if an orphan reused
+explorer.exe's dead PID, GC would plan to kill 211 processes including explorer, claude, Docker,
+and pwsh. The pre-fix-1 code (a plain `taskkill /T`) did not have this specific vulnerability --
+it is a genuine regression introduced by trying to fix the previous round's under-kill bug.
+
+Two more major destructive-safety gaps, both newly introduced by fix-1's own GAP-175 remedy:
+GAP-184 (the new marker-discovery logic trusts a launch marker on ANY process with NO scoping
+check, live-reproduced deleting a non-Sutradhar file and a fresh, under-grace-period profile
+dir) and GAP-185 (a corrupted/mid-write state.json is misread as "orphan," live-reproduced
+killing a genuinely live session 1/348 times under realistic concurrent CLI activity -- the same
+severity class as the original GAP-175 blocker, via a different code path).
+
+This is the loop's second most severe safety finding after FR2-01/16's BLOCKED status (though
+FR2-03 has only had 2 fix cycles so far, well within normal bounds -- no escalation yet). It is
+also, notably, direct empirical validation of exactly the risk this session flagged when
+dispatching fix-1: destructive-safety fixes need to be verified not just for "does this close
+the reported gap" but "does this fix's own new logic introduce a DIFFERENT unsafe behavior,"
+and a second independent audit round is what caught it, not the first.
+
+fix-2 scope, in priority order: (1) GAP-183 -- add process-start-time verification to the PPID
+walk (the spec's own rule this should have followed from the start), so a dead parent's reused
+PID can never be misclassified as still owning a live child; (2) GAP-184 -- scope marker trust:
+a marker must be corroborated by something beyond "a process happens to reference this path"
+(e.g. requiring the referenced state file to itself be a validated Sutradhar state file with a
+plausible schema, inside a known state root, not an arbitrary path any process can point at);
+(3) GAP-185 -- treat an unreadable/malformed state file as UNKNOWN (protect, don't delete),
+matching the same "unknown must never collapse into a confirmed-safe-to-act-on answer" principle
+this loop keeps re-deriving across FR2-01's entire history -- this is the SAME category of bug,
+now in a different item; (4) GAP-186 -- add real test coverage for the 2 mutations that survived
+all 142 tests, and require an actual saved evidence file for every future revert-and-confirm
+claim, not just a self-report. GAP-187 (self-heal restart frequency) is out of scope for this
+item unless it's confirmed to be caused by FR2-03's own changes -- investigate briefly, don't
+fix blindly.

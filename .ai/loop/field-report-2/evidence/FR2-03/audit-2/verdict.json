@@ -1,0 +1,25 @@
+{
+  "item": "FR2-03", "audit": "audit-2", "verdict": "FAIL",
+  "headline": "GAP-175's documented scenario is fixed, and GAP-176/177/178 are fixed as specified. But fix-1 introduced a new BLOCKER in the destructive path (GAP-183: the PPID walk has no creation-time guard, and GC killed an unrelated process live), plus two more live-reproduced ways to kill or delete things it shouldn't (GAP-184, GAP-185).",
+  "priorGaps": {
+    "GAP-175": "documented scenario FIXED (own harness: two simultaneous custom state dirs, relaunch orphan, 8 concurrent GCs during an in-flight launch, all protected and usable). A live session is NOT always protected: GAP-185 (unreadable/mid-write state -> live Chrome killed, reproduced live 1/348) and GAP-184 (marker trust).",
+    "GAP-176": "FIXED for the dir-reclaim goal (Done-when counts reach 0 in 3 independent runs), but the PPID walk that fixed it introduced GAP-183 over-kill",
+    "GAP-177": "FIXED (own mutation M3 caught; own harness has no stale-session delete of live dirs)",
+    "GAP-178": "FIXED (probeLock self-rename verified live against headless and headed Chrome: in-use while live, no mutation, free after kill; D2 and grace ordering mutations M4/M8 caught). A reverted destructive unlink is NOT caught by any test (M7)."
+  },
+  "newGaps": [
+    "GAP-183 BLOCKER: killedTreePids PPID walk lacks spec 0.2's 'parent created before child' guard; live-reproduced GC killing an unrelated process (ppid-reuse/); worst-case real-table exposure is 211 processes incl. explorer (explorer-exposure.txt)",
+    "GAP-184 major: discoverMarkerStateFiles trusts a marker on ANY process, pointing at ANY path; live-reproduced deleting a non-Sutradhar file outside all roots + its parent dir + a 1-3s-old profile dir (adv-forged-marker.json)",
+    "GAP-185 major: unreadable/mid-write marker state file -> live Chrome killed + profile deleted; live race 1/348 (midwrite-race-strict output), deterministic 3/3 (main/adv-corrupt-state.json)",
+    "GAP-186 minor: GAP-175 wiring (M9) and the probeLock non-destructive swap (M7) have no regression tests; fix-1 saved no revert-and-confirm evidence despite claiming it",
+    "GAP-187 minor/observation: concurrent CLI commands on one session repeatedly self-heal a reachable session and leak Chromes (midwrite-race-diag300s.json); pre-existence not verified"
+  ],
+  "verification": {
+    "typecheck": "exit 0 (cli, browser, mcp-server + deps)",
+    "vitest": {"cli": "142/142", "browser": "302/302", "mcp-server": "84/84"},
+    "build": "forced scoped build of cli/mcp-server/sdk + deps and sutradhar bundle: OK. A full forced turbo build fails only in @sutradhar/server (TS2307 @sutradhar/contracts resolution in this worktree; not touched by FR2-03)",
+    "ownDoneWhen": "3 independent runs, G3/G4 independent counts reach 0 each time (main/, main-run2-old-checks/, main-run1-harness-artifacts/)",
+    "fix1AdvRerun": "23/23 (fix1-adv-rerun/)",
+    "revertAndConfirm": "9 own mutations: 7 caught, 2 uncaught (M7, M9)"
+  }
+}
