@@ -19,14 +19,17 @@
 | GAP-015 | FR2-01 audit-1 G8 | minor | An invalid selector under state hidden reports "is still visible" after about 6s. The .catch in waitForHiddenInAllFrames swallows the SyntaxError. | TODO | - |
 | GAP-016 | FR2-01 audit-1 G9 | minor | Hidden succeeds silently when the first match is hidden but a later match is visible (e.g. "#banner, #stays"). There is no counterpart to the visible path's later-matches diagnosis. | TODO | - |
 | GAP-017 | FR2-04 (planning) | major | runtime.attach calls findAllOpenPages (runtime.ts:325-336), which swallows a 180s page-init timeout on a page blocked by a dialog and silently adopts a new blank tab instead. This affects MCP browser.attach too. | TODO | - |
-| GAP-018 | FR2-04 (planning) | minor | MCP and SDK action results don't include dialogPending. Deferred to FR2-07's unified result contract. | TODO | - |
-| GAP-019 | FR2-04 (planning) | minor | runtime.clickAtPoint (runtime.ts:514-545) doesn't race against dialogs, so MCP click_at_point on a point that opens a dialog blocks until the 30s auto-dismiss. | TODO | - |
+| GAP-018 | FR2-04 (planning) | minor | MCP and SDK action results don't include dialogPending. Deferred to FR2-07's unified result contract. (closed by FR2-07) | TODO | - |
+| GAP-019 | FR2-04 (planning) | minor | runtime.clickAtPoint (runtime.ts:514-545) doesn't race against dialogs, so MCP click_at_point on a point that opens a dialog blocks until the 30s auto-dismiss. (closed by FR2-07) | TODO | - |
 | GAP-020 | FR2-05 (planning) | minor | download_file runs through the engine's generic retry loop (2 retries by default). A policy rejection or a real timeout gets retried and re-clicked, which can produce duplicate downloaded files. | TODO | - |
 | GAP-021 | FR2-05 (planning) | minor | download_file's inner and outer timeouts are both 30000ms, the same race class FR2-01 (GAP-008/009) had to fix for wait_for_selector. | TODO | - |
 | GAP-022 | FR2-05 (planning) | minor | Resetting Browser.setDownloadBehavior to default after every download_file can land mid-way through a second concurrent download_file on the same browser (two tabs downloading at once already race on this browser-wide setting today). | TODO | - |
 | GAP-023 | FR2-06 (planning) | minor | click_by_text, type_by_label and click_by_role interpolate caller-supplied text into XPath/CSS/aria without escaping. A quote character in the text builds an invalid selector, silently swallowed as "No element found" after the full retry budget. | TODO | - |
-| GAP-024 | FR2-06 (planning) | minor | SDK Page.click and Page.type discard success:false, so invalid CSS stays silent on the SDK surface even after FR2-06. Natural home: FR2-07's unified verification contract. | TODO | - |
-| GAP-025 | FR2-06 (planning) | minor | cmdPress ignores a failed focus() and presses the key anyway, on whatever element happens to be focused. | TODO | - |
+| GAP-024 | FR2-06 (planning) | minor | SDK Page.click and Page.type discard success:false, so invalid CSS stays silent on the SDK surface even after FR2-06. Natural home: FR2-07's unified verification contract. (closed by FR2-07) | TODO | - |
+| GAP-025 | FR2-06 (planning) | minor | cmdPress ignores a failed focus() and presses the key anyway, on whatever element happens to be focused. (closed by FR2-07) | TODO | - |
 | GAP-026 | FR2-06 (planning) | minor | After a click failure inside upload_file_via_trigger, waitForFileChooser is left pending with interception enabled for up to 30s. It also can't reach shadow DOM or iframes, since it uses a plain page.click. | TODO | - |
+| GAP-027 | FR2-07 (planning) | minor | State-setter tools (set_cookie, set_local_storage_item, grant_permissions, set_viewport, ...) and read tools (eval, extract_data, snapshot, most get_*) are outside the new verification contract by design; not planned to be added. | TODO | - |
+| GAP-028 | FR2-07 (planning) | minor | There are still no CLI back/forward/reload verbs and no SDK goBack/goForward/reload methods, even though the runtime now supports verification for them. | TODO | - |
+| GAP-029 | FR2-07 (planning) | minor | drag_and_drop's delivery isn't observed inside frames (only the top-level document's drop event is checked). | TODO | - |
 
 (Further entries populated as Auditors report gaps during the loop.)

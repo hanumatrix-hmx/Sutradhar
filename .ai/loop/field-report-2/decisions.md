@@ -250,3 +250,50 @@ Adopted as written (full reasoning in the spec's §0.1):
 
 Sequencing: DEVELOP runs after FR2-05 (last in the merge order for shared files) — no parallel
 Executor, since the touched files overlap with FR2-01 through FR2-05.
+
+## 2026-09-25 — FR2-07 spec decisions (from the Planner)
+
+Spec: `evidence/FR2-07/spec.md` (128KB — the largest spec so far; extracted verbatim from the
+Planner's own transcript, since the task-notification truncated a ~30KB middle section).
+**Hard preconditions:** FR2-05 and FR2-06 must both be DONE before this item's DEVELOP starts —
+it reads FR2-05's rewritten `download_file` (the CDP filePath/guid handling) and FR2-06's
+reordered `uploadFileViaTrigger`. The Executor is told to grep for markers of both and stop if
+either is missing.
+
+Adopted as written (full reasoning in the spec's §0.6):
+1. Every action result gets one common evidence shape — `{tier, checks[]}`, where `tier` is one
+   of verified / contradicted / unverifiable / low-confidence / action-failed — rather than a
+   different JSON shape per action type. A caller checks `tier`, not a confidence number, to
+   tell "we checked and it's wrong" apart from "we couldn't check".
+2. A new check only ever *observes*; it never throws. If it fails, the action still reports
+   success (the primitive really was dispatched) but verification reports false. The 10 checks
+   FR2-01 already made throw (click, type, etc.) are left exactly as they are — retrying a check
+   that throws is fine for a click, but retrying a check on press_key would type the same key
+   twice, and retrying a download would create a duplicate file (GAP-020).
+3. A specific, honest reason for every "we couldn't check" case — press_key with nothing focused,
+   a clipboard read blocked by the browser, a screenshot verified only for being a valid PNG file
+   (there's no post-condition for a screenshot to have). Confidence for "checked and found wrong"
+   drops further (0.09) than "couldn't check" (0.45, unchanged) — a real contradiction is worse
+   than genuine uncertainty.
+4. `expect: {text, url, urlChanged}` is the one public option added to MCP tools, CLI flags and
+   SDK calls. A failed expectation never flips `success` to false — it's reported as
+   `verified:false` on an otherwise-successful action, with its own CLI exit code (4) and its own
+   SDK exception (`ExpectationFailedError`, distinct from `ActionFailedError`), so a caller can
+   tell "the click didn't happen" apart from "the click happened but didn't do what I expected".
+5. `expect.text` now means visible text (checked across every frame and open shadow root, bounded
+   to 1.5s), not `textContent` — the old check counted text inside `display:none` elements and
+   `<script>` tags as present, which is a real, demonstrated false positive (recorded as a
+   pre-fix baseline case in the live-verify plan, alongside the CLI's own file:// URL bug FR2-01's
+   audit surfaced — worth remembering both when reviewing any "N/N passing" claim in this loop).
+6. Clipboard reads run through a separate, page-inaccessible CDP execution context, specifically
+   because a hostile page can trivially monkey-patch `navigator.clipboard` in its own main-world
+   scope — verifying through the normal page context would just be asking the possibly-lying
+   page whether it lied.
+7. Four small existing gaps close as part of this item because they're small and adjacent:
+   GAP-018 (dialogPending on every result), GAP-019 (click_at_point had no dialog race), GAP-024
+   (the SDK silently swallowing failures), GAP-025 (the CLI pressing a key into whatever's
+   focused even when focusing failed first).
+
+Sequencing: DEVELOP runs after FR2-06 (last in the merge order for shared files), no parallel
+Executor — the touched files (execution-verifier.ts, action-types.ts, browser-action-engine.ts,
+runtime.ts, tools.ts) overlap every prior item in this loop.
