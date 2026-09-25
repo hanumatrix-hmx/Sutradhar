@@ -582,3 +582,47 @@ cycles before the Orchestrator must do its own root-cause pass and get at most 2
 fix-3 already represents that root-cause pass, made explicitly. If audit-4 still finds a
 genuine new gap in this same code path, the next step is to treat it as one of the 2
 Orchestrator-supervised bonus cycles, not to keep issuing open-ended standard fix rounds.
+
+## 2026-09-25 — FR2-13 spec decisions (from the Planner)
+
+Spec: `evidence/FR2-13/spec.md` (150KB, the largest so far). **This item has HARD
+preconditions, not soft ones**: the loop prompt itself names FR2-07, FR2-08, FR2-11 and FR2-12
+as prerequisites for FR2-13, and none of them is DONE yet (all still at SPEC; FR2-01 itself is
+still mid-audit). DEVELOP cannot start. The spec is written so every borrowed shape is
+referenced by name and cross-checked against each source spec, with a short list of grep checks
+the Executor must run first and stop if any comes back empty.
+
+Adopted as written (full reasoning in the spec's §0.5):
+1. `sutradhar run` drives its own freshly-launched, fully isolated browser in-process, exactly
+   like the existing scenario-suite's SDK driver does today -- never the CLI's persistent
+   per-directory session. A scenario needs to start from known state and never touch or mutate
+   whatever session a user already has open in that directory.
+2. Every step's parameters use the exact same names MCP tools already use (target, value, role,
+   etc.), not a new vocabulary -- so anyone who already knows the MCP tool surface can write a
+   scenario file without learning a second dialect. expect and settle are options ON a step, not
+   separate step types, matching how FR2-07 and FR2-08 already attach them to actions.
+3. Gates (console errors, page errors, broken requests) are fed from the runtime's event bus --
+   the same live stream that already feeds FR2-12's per-tab buffers -- rather than reading those
+   buffers directly, specifically because the buffers are capped and die with their tab. A noisy
+   page could silently evict its own early errors from a 200-entry buffer and turn a real gate
+   failure into a pass; the event stream has neither problem.
+4. No "expect this action to fail" mechanism. The Done-when's deliberately-failing scenario is
+   one the RUNNER correctly diagnoses as failing (wrong exit code, right reason) -- not a
+   scenario designed to assert failure. Negative-path testing is already expressible with the
+   existing primitives (wait for hidden, assert a zero count, expect no URL change).
+5. Directory- or glob-based multi-file runs are explicitly deferred, not built now -- a shell
+   loop covers today's need, and doing it properly would need its own aggregate-report design.
+6. Closes the design half of GAP-004 (the CLI/SDK field-map syntax for extract, deferred by
+   FR2-02): a scenario's extract step, a future page.extract(), and a future CLI extract verb
+   will all share one field-map syntax, fixed now so it only gets designed once.
+7. Found and closes GAP-062 in passing: browser tabs never listen for the requestfailed CDP
+   event at all today, so a DNS failure or a refused connection is completely invisible to any
+   consumer -- only HTTP responses >= 400 are ever seen. A scenario's failOnBrokenRequests gate
+   needs this to be meaningful, so the listener is added here (excluding net::ERR_ABORTED, which
+   is what ordinary navigation-away and cancellation produce, to avoid a flaky gate).
+
+Sequencing: hard-blocked on FR2-07, FR2-08, FR2-11 and FR2-12 all reaching DONE. Everything else
+in the loop can and should proceed; this item simply cannot start DEVELOP until then. The new
+standalone modules with no dependency on those items (the schema files, the loader, the gate
+collector, the classifier, the field-map normalizer) could in principle be built early, but the
+spec's default is strict sequencing rather than a partial head start.
