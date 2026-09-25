@@ -691,8 +691,11 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         'the selector. "visible" means a non-empty bounding box AND computed visibility not ' +
         'hidden/collapse — opacity:0 and off-screen elements still count as visible; zero width/height, ' +
         'display:none and visibility:hidden count as hidden. timeoutMs applies to each internal attempt; ' +
-        'retries can extend the real total wait beyond it (open issue). On success, state:"hidden" may ' +
-        'also return output.otherVisibleMatches (best-effort) when a LATER match is still visible.',
+        'retries can extend the real total wait beyond it (open issue). timeoutMs <= 0 checks the current ' +
+        'state once, immediately, with no waiting or retrying. Waiting states poll roughly every 100ms, so ' +
+        "a state that's only true for less than ~100ms (a fast visibility flicker) may be missed. On " +
+        'success, state:"hidden" may also return output.otherVisibleMatches (best-effort) when a LATER ' +
+        'match is still visible.',
       inputSchema: {
         sessionId: z.string(),
         target: z.string().describe(targetDesc),

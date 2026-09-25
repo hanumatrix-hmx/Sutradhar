@@ -709,7 +709,9 @@ export class SutradharRuntime {
   /** Wait until the element matched by `target` reaches `state` (default 'visible'; 'attached' = present in
    *  the DOM, visibility ignored; 'hidden' = absent or not visible, and succeeds immediately if nothing matches).
    *  Visible means computed visibility not hidden/collapse AND a non-empty bounding box (opacity is ignored),
-   *  checked on the FIRST match. */
+   *  checked on the FIRST match. `timeoutMs <= 0` checks the current state once, immediately, with no
+   *  waiting or retrying. Waiting states poll roughly every 100ms, so a state that's only true for less
+   *  than ~100ms (a fast visibility flicker) may be missed. */
   public async waitForSelector(
     sessionId: string,
     target: string,

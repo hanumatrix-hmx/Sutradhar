@@ -2661,3 +2661,235 @@ describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-0
     expect(result.outputData?.otherVisibleMatches).toBe(1);
   });
 });
+
+describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-2, audit-2 gaps)', () => {
+  it('GAP-030: a busy/unresponsive frame does not stall detecting an element already visible in a healthy frame', async () => {
+    const visibleHandle = mockHandle();
+    (visibleHandle as any).evaluate = vi.fn().mockResolvedValue(true);
+    const healthyFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(visibleHandle),
+    } as unknown as Frame;
+    // Simulates a busy/unresponsive cross-origin (out-of-process) iframe: its `$` call never
+    // settles on its own within the test's lifetime, standing in for a CDP round-trip that
+    // never comes back because the frame's renderer is blocked.
+    const busyFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockImplementation(() => new Promise(() => {})),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([busyFrame, healthyFrame]),
+      mainFrame: vi.fn().mockReturnValue(busyFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const start = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'visible',
+      timeoutMs: 2000,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - start;
+
+    expect(result.success).toBe(true);
+    // Before GAP-030's fix, `pierceFirstMatch` had no per-frame bound, so a frame whose `$`
+    // never resolves would stall the ENTIRE poll pass — including the healthy frame's
+    // already-visible element — all the way out to `timeoutMs` (2000ms here). Resolving well
+    // under that, on roughly one FRAME_PROBE_TIMEOUT_MS window, proves the busy frame did not
+    // block detection in the healthy one.
+    expect(elapsedMs).toBeLessThan(1000);
+  });
+
+  it('GAP-031: a hidden wait does not falsely report success when the tab/session itself closes mid-wait', async () => {
+    const fatalError = new Error(
+      'Protocol error (DOM.querySelector): Session closed. Most likely the page has been closed.',
+    );
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockRejectedValue(fatalError),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#stays',
+      state: 'hidden',
+      timeoutMs: 2000,
+      maxRetries: 0,
+    });
+
+    // Before GAP-031's fix, `pierceFirstMatch` swallowed EVERY non-syntax-error rejection
+    // (including this one) into "no match", which made `isHiddenInEveryFrame` conclude every
+    // frame was hidden — a FALSE SUCCESS for an element that never actually hid, just because
+    // the check itself stopped being able to run (the exact scenario audit-2's
+    // `probe-audit2.mjs n4` reproduced live: tab closed mid-wait, false success).
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Session closed');
+  });
+
+  it('GAP-031: a visible wait also surfaces a fatal check failure instead of a plain timeout', async () => {
+    const fatalError = new Error('Protocol error (DOM.querySelector): Target closed.');
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockRejectedValue(fatalError),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#toast',
+      state: 'visible',
+      timeoutMs: 2000,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Target closed');
+  });
+
+  it('GAP-032: a NaN timeoutMs (e.g. the CLI parsing "5s") is rejected immediately, not silently reinterpreted', async () => {
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const start = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'visible',
+      timeoutMs: NaN,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - start;
+
+    // Before GAP-032's fix, a NaN timeoutMs made `Date.now() + waitMs` itself NaN, so the poll
+    // loop's own `remaining <= 0` deadline check was permanently false and `setTimeout(fn,
+    // NaN)` fired in ~0ms — a runaway, CPU-bound poll loop with no legitimate end. Rejecting
+    // synchronously, before dispatch, means the mocked `$` is never even called.
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Invalid timeoutMs');
+    expect(elapsedMs).toBeLessThan(500);
+    expect(mainFrame.$).not.toHaveBeenCalled();
+  });
+
+  it('GAP-032: an Infinity timeoutMs is rejected the same way as NaN', async () => {
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const start = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'hidden',
+      timeoutMs: Infinity,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - start;
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Invalid timeoutMs');
+    expect(elapsedMs).toBeLessThan(500);
+    expect(mainFrame.$).not.toHaveBeenCalled();
+  });
+
+  it('GAP-032: a finite timeoutMs far beyond setTimeout\'s own ceiling is clamped, not rejected, and still resolves normally', async () => {
+    const visibleHandle = mockHandle();
+    (visibleHandle as any).evaluate = vi.fn().mockResolvedValue(true);
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(visibleHandle),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'visible',
+      timeoutMs: 3e9, // well beyond Node's 2**31-1 ms setTimeout ceiling
+      maxRetries: 0,
+    });
+
+    // A well-formed, merely-oversized request is a normal wait, not an error — the element is
+    // already visible, so this must resolve immediately regardless of how the huge timeoutMs
+    // got clamped internally.
+    expect(result.success).toBe(true);
+  });
+
+  it('GAP-033: an invalid selector under state attached fails fast with the real parser error, not the generic "No element found" after the full timeout', async () => {
+    const syntaxError = new Error("Failed to execute 'querySelector' on 'Document': '#[[[' is not a valid selector.");
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockRejectedValue(syntaxError),
+      waitForSelector: vi.fn().mockRejectedValue(syntaxError),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const start = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#[[[',
+      state: 'attached',
+      timeoutMs: 5000,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - start;
+
+    // Before GAP-033's fix, `state:'attached'` went straight to `resolveElement`, whose blanket
+    // `.catch(() => null)` swallowed this exact syntax error into "no match" and kept
+    // re-probing for the FULL timeout before giving up with the generic "No element found"
+    // message — GAP-015's fast-fail fix never covered this path.
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('is not a valid selector');
+    expect(result.error).not.toContain('No element found');
+    expect(elapsedMs).toBeLessThan(2000);
+  });
+
+  it('GAP-033: a genuinely missing element under state attached still times out normally (pre-check does not false-positive)', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null),
+      waitForSelector: vi.fn().mockRejectedValue(new Error('timeout')),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#nope',
+      state: 'attached',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/waiting for state=attached/);
+  });
+});

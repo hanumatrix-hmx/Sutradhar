@@ -102,6 +102,28 @@ export function __TEST_ONLY_setWaitForSelectorOuterGraceMs(ms: number): number {
  *  timeout is strictly better than blocking the actual result on it. */
 const FAILURE_SCREENSHOT_TIMEOUT_MS = 3000;
 
+/** GAP-030 (FR2-01 audit-2): the bound a SINGLE frame's probe (`frame.$(...)`) gets within one
+ *  poll pass of {@link pierceFirstMatch}, before that pass treats the frame as "no match yet"
+ *  and moves on. Without this, one busy/unresponsive cross-origin (out-of-process) iframe — a
+ *  synchronous-blocking script, a hung renderer — stalls the CDP round-trip for that frame
+ *  indefinitely, which stalls detecting an ALREADY-satisfied condition in every other, healthy
+ *  frame on the very same poll pass. A frame that times out here is retried on the next pass
+ *  (never permanently excluded), since a busy frame commonly recovers. Reproduced live:
+ *  audit-2/probe-busy-oopif-2s.mjs / probe-busy-oopif.mjs. */
+const FRAME_PROBE_TIMEOUT_MS = 250;
+
+/** Unique sentinel {@link raceFrameProbe} resolves its timeout branch to, distinguishing "the
+ *  probe timed out" from a legitimate `null` (genuinely no match) result of the real probe. */
+const FRAME_PROBE_TIMED_OUT = Symbol('frame-probe-timed-out');
+
+/** GAP-032 (FR2-01 audit-2): a `timeoutMs` this large no longer fits in Node's/CDP's own
+ *  32-bit-signed-int `setTimeout` delay range (2**31 - 1 ms, ~24.8 days) and gets silently
+ *  clamped to fire almost immediately by the runtime — producing exactly the "outer deadline
+ *  fires almost immediately while the inner poll loop's deadline never really arrives" mismatch
+ *  the gap describes. Any finite `timeoutMs` above this is clamped down to it rather than
+ *  trusted as-is. */
+const MAX_TIMEOUT_MS = 2 ** 31 - 1;
+
 /** Defaults for {@link ActionParams.settle} when passed as `true` instead of a full spec. */
 const DEFAULT_SETTLE_SPEC: Required<SettleSpec> = {
   mutationQuietMs: 300,
@@ -240,16 +262,29 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     if (duplicateError) {
       return duplicateError;
     }
+    // GAP-032: validate `timeoutMs` at the boundary, before it can reach ANY poll loop or
+    // `setTimeout` call below (the outer race's own `timeoutMs` computed right here, or the
+    // per-state inner waits `wait_for_selector` dispatches to) — see {@link checkInvalidTimeoutMs}.
+    const timeoutMsError = this.checkInvalidTimeoutMs(params);
+    if (timeoutMsError) {
+      return timeoutMsError;
+    }
 
     const startTime = Date.now();
+    const sanitizedTimeoutMs = BrowserActionEngine.sanitizeTimeoutMs(params.timeoutMs);
     // `wait_for_selector` gets a grace period on top of its own `timeoutMs` here so its inner,
     // state-naming wait (which uses the same `timeoutMs`) finishes and throws its own diagnostic
     // error BEFORE this outer race's generic timeout can win instead — see
-    // WAIT_FOR_SELECTOR_OUTER_GRACE_MS.
-    const timeoutMs =
+    // WAIT_FOR_SELECTOR_OUTER_GRACE_MS. The final `Math.min(MAX_TIMEOUT_MS, ...)` re-clamps
+    // AFTER adding that grace period too — an already-clamped `sanitizedTimeoutMs` plus
+    // `WAIT_FOR_SELECTOR_OUTER_GRACE_MS` could otherwise creep back over Node's own `setTimeout`
+    // ceiling (GAP-032).
+    const timeoutMs = Math.min(
+      MAX_TIMEOUT_MS,
       params.actionType === 'wait_for_selector'
-        ? Math.max(1, params.timeoutMs ?? 10000) + WAIT_FOR_SELECTOR_OUTER_GRACE_MS
-        : params.timeoutMs ?? 15000;
+        ? Math.max(1, sanitizedTimeoutMs ?? 10000) + WAIT_FOR_SELECTOR_OUTER_GRACE_MS
+        : sanitizedTimeoutMs ?? 15000,
+    );
     const maxRetries = params.maxRetries ?? 2;
     const previousUrl = tab.url;
     let attempt = 0;
@@ -468,6 +503,47 @@ export class BrowserActionEngine implements IBrowserActionEngine {
 
   private timeoutMessage(actionType: string, timeoutMs: number): string {
     return `Action ${actionType} timed out after ${timeoutMs}ms`;
+  }
+
+  /**
+   * GAP-032: validates a caller-supplied `timeoutMs` BEFORE it can reach any `setTimeout` call
+   * or poll-loop deadline arithmetic — mirrors {@link checkDuplicateAction}'s "return a proper
+   * failure result, don't throw" shape, so a bad `timeoutMs` is reported the same honest way as
+   * any other action failure (an MCP/CLI/SDK caller, or a script calling `runtime.waitForSelector`
+   * directly, gets back `{success:false, error}`, not an uncaught rejection). `undefined` (the
+   * normal "use the default" case) and any finite number — including 0 or a negative one, which
+   * `wait_for_selector` gives its own "check once, don't wait" meaning to — are fine. `NaN`
+   * (e.g. the CLI's `Number('5s')`) or `Infinity`/`-Infinity` are REJECTED rather than silently
+   * reinterpreted, because `Date.now() + NaN` is itself `NaN`, and a poll loop's `remaining <= 0`
+   * deadline check is always `false` for `NaN` — the loop never legitimately ends, and
+   * `setTimeout(fn, NaN)` fires in ~0ms, so it spins at CPU-bound speed until whatever it's
+   * polling (a tab, a session) goes away.
+   */
+  private checkInvalidTimeoutMs(params: ActionParams): ActionResultDto | undefined {
+    const raw = params.timeoutMs;
+    if (raw === undefined || Number.isFinite(raw)) return undefined;
+    return {
+      success: false,
+      actionType: params.actionType,
+      executionTimeMs: 0,
+      error:
+        `Invalid timeoutMs (${String(raw)}) for action "${params.actionType}" — timeoutMs must be a ` +
+        'finite number of milliseconds (NaN and Infinity are rejected, not silently reinterpreted).',
+      retriesUsed: 0,
+    };
+  }
+
+  /**
+   * GAP-032: clamps an already-validated (finite-or-undefined; see {@link checkInvalidTimeoutMs})
+   * `timeoutMs` down to {@link MAX_TIMEOUT_MS} when it's too large for Node's own `setTimeout`
+   * (a 32-bit signed int of milliseconds) to represent. A merely too-large finite value is
+   * CLAMPED, not rejected — it's a well-formed request; silently doing the equivalent of "wait
+   * as long as this process reasonably can" is the more useful behavior than an error for what's
+   * very likely a caller who intended "a very long time," not a hostile input.
+   */
+  private static sanitizeTimeoutMs(raw: number | undefined): number | undefined {
+    if (raw === undefined) return undefined;
+    return raw > MAX_TIMEOUT_MS ? MAX_TIMEOUT_MS : raw;
   }
 
   /** True if `err` is the timeout rejection {@link raceWithTimeout} manufactures for this
@@ -696,7 +772,13 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         if (params.timeoutMs !== undefined && params.timeoutMs <= 0) {
           return this.checkWaitForSelectorOnce(page, params.selector, fullSelector, state);
         }
-        const waitMs = params.timeoutMs ?? 10000;
+        // GAP-032: re-clamp here too (idempotent with the same check `executeActionSerialized`
+        // already ran before dispatching) — that earlier check guarantees `params.timeoutMs` is
+        // either `undefined` or finite by this point, but NOT that it's small enough for
+        // `Date.now() + waitMs` and the `setTimeout` calls below to stay inside Node's own
+        // `setTimeout` ceiling, so an overly large-but-finite value still needs clamping down
+        // to {@link MAX_TIMEOUT_MS} before it drives either poll loop's deadline.
+        const waitMs = BrowserActionEngine.sanitizeTimeoutMs(params.timeoutMs) ?? 10000;
 
         if (state === 'hidden') {
           // `resolveElement` can't express `hidden` — Puppeteer's own `waitForSelector({hidden:
@@ -741,9 +823,21 @@ export class BrowserActionEngine implements IBrowserActionEngine {
           return { foundSelector: params.selector, state };
         }
 
-        // state === 'attached' — UNCHANGED: still resolveElement without `visible`, same as
-        // before FR2-01 fix-1. Not exposed to the rAF-polling risk since `visible`/`hidden` are
-        // never passed here.
+        // state === 'attached' — still resolveElement-based (unlike hidden/visible), but GAP-033
+        // (FR2-01 audit-2) adds a fast syntax-error pre-check first: `resolveElement` swallows
+        // EVERY rejection (including a genuine selector-syntax error) into "no match" and keeps
+        // re-probing every live frame for the FULL timeout before giving up with the generic
+        // "No element found" message — GAP-015's fast-fail-on-syntax-error fix never covered
+        // this path, only hidden/visible. `pierceFirstMatch` already has exactly this fast-fail
+        // behavior (and is cheap/bounded via GAP-030's per-frame probe timeout), so run it once
+        // against the main frame purely to surface a real syntax error immediately; any OTHER
+        // outcome (a match, no match, or some other error) is intentionally ignored here and
+        // left to `resolveElement`'s own unchanged matching logic below.
+        try {
+          await this.pierceFirstMatch(page.mainFrame(), fullSelector);
+        } catch (err) {
+          if (BrowserActionEngine.isSelectorSyntaxError(err)) throw err;
+        }
         const handle = await this.resolveElement(page, fullSelector, { timeoutMs: waitMs });
         if (!handle) {
           throw new Error(
@@ -1237,7 +1331,8 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    *
    * Deliberately no `Promise.any` across frames, for the same PROB-015 reason documented on
    * {@link resolveElement}: every probe is fully awaited before the next one starts, so no
-   * losing wait is ever abandoned mid-flight to reject later after a frame detach.
+   * losing wait is ever abandoned mid-flight to reject later after a frame detach. `pollMs`
+   * defaults to 100ms — see the GAP-034 tradeoff note on {@link waitForVisibleWithPolling}.
    */
   private async waitForHiddenInAllFrames(page: Page, fullSelector: string, waitMs: number, pollMs = 100): Promise<boolean> {
     const deadline = Date.now() + waitMs;
@@ -1262,19 +1357,77 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    * genuine selector-syntax error (GAP-015) instead of treating it as "no match" — a caller
    * that DOES want "no match" for an unresolvable selector (nothing in this file does) would
    * need to catch it explicitly.
+   *
+   * GAP-030: the actual `frame.$` call is bounded to {@link FRAME_PROBE_TIMEOUT_MS} per call —
+   * see {@link raceFrameProbe} — so one busy/unresponsive frame can't stall this pass past that
+   * bound; a timed-out probe is simply "no match this pass" and gets retried the next pass by
+   * whichever poll loop is calling this.
+   *
+   * GAP-031: a "the check itself failed to run" error — the tab/session/target genuinely
+   * closing mid-check, detected by {@link isFatalFrameCheckError} — is also rethrown rather
+   * than swallowed to `null`. Swallowing it (the previous behavior) made `isHiddenInEveryFrame`
+   * conclude every frame was "hidden" whenever the whole check failed to even run, which made a
+   * `hidden` wait falsely report SUCCESS when the tab closed mid-wait instead of surfacing a
+   * real failure. A single frame's own context being destroyed by an in-page navigation (NOT
+   * the tab closing) is deliberately still swallowed to `null` — recoverable, and already
+   * exercised by pages that destroy/recreate an iframe mid-wait (e.g. TinyMCE).
    */
   private async pierceFirstMatch(frame: Frame, fullSelector: string): Promise<ElementHandle<Element> | null> {
     try {
-      return await frame.$(fullSelector);
+      return await this.raceFrameProbe(frame, fullSelector);
     } catch (err) {
       if (BrowserActionEngine.isSelectorSyntaxError(err)) throw err;
+      if (BrowserActionEngine.isFatalFrameCheckError(err)) throw err;
       return null;
+    }
+  }
+
+  /**
+   * GAP-030: races a single frame's `frame.$(fullSelector)` against {@link FRAME_PROBE_TIMEOUT_MS}
+   * so a busy/unresponsive frame's CDP round-trip can't stall the whole multi-frame pass. The
+   * `setTimeout` race can't actually CANCEL an in-flight CDP call — there is no such primitive
+   * here — so on a timeout the real probe is simply abandoned: its eventual settlement (a real
+   * handle we'll never use, a `null`, or a rejection) is caught and discarded so it can never
+   * surface as a Node unhandled-rejection well after this pass has already moved on. This is the
+   * one place in this file that deliberately reintroduces the "abandoned promise" shape the
+   * {@link resolveElement} PROB-015 comment avoids — accepted here because the abandoned probe
+   * is scoped to a single frame for a bounded ~250ms, not a long-lived cross-frame race.
+   */
+  private async raceFrameProbe(frame: Frame, fullSelector: string): Promise<ElementHandle<Element> | null> {
+    const real = frame.$(fullSelector);
+    real.catch(() => {});
+    // Assigned synchronously by the Promise constructor's executor, which runs immediately —
+    // the `!` reflects that, not an actual possibly-unset timer at the `finally` below.
+    let timer!: ReturnType<typeof setTimeout>;
+    const timedOut = new Promise<typeof FRAME_PROBE_TIMED_OUT>((resolve) => {
+      timer = setTimeout(() => resolve(FRAME_PROBE_TIMED_OUT), FRAME_PROBE_TIMEOUT_MS);
+    });
+    try {
+      const winner = await Promise.race([real, timedOut]);
+      return winner === FRAME_PROBE_TIMED_OUT ? null : winner;
+    } finally {
+      clearTimeout(timer);
     }
   }
 
   private static isSelectorSyntaxError(err: unknown): boolean {
     const msg = err instanceof Error ? err.message : String(err);
     return /is not a valid selector|SyntaxError|Failed to execute 'querySelector'/i.test(msg);
+  }
+
+  /**
+   * GAP-031: true for the family of errors that mean "the check itself never really ran" —
+   * the browser tab, its CDP session, or its target genuinely closed — as opposed to a single
+   * frame's execution context being destroyed by an ordinary in-page navigation (handled
+   * separately, and deliberately still treated as "no match, retry next pass"; see
+   * {@link isContextDestroyedError}). These must never be swallowed into "no match": doing so
+   * is exactly what made `isHiddenInEveryFrame` conclude every frame was hidden when the tab
+   * closed mid-wait, reporting a false SUCCESS for a `hidden` wait on an element that never
+   * actually hid (audit-2 `probe-audit2.mjs n4`).
+   */
+  private static isFatalFrameCheckError(err: unknown): boolean {
+    const msg = err instanceof Error ? err.message : String(err);
+    return /Session closed|Target closed|Connection closed|has been closed|Protocol error/i.test(msg);
   }
 
   /** Puppeteer's own `checkVisibility` rule, applied to a single already-resolved handle:
@@ -1291,9 +1444,29 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       .catch(() => false);
   }
 
+  /**
+   * GAP-031 (found finishing the fix for it, via a live repro that still false-succeeded): a
+   * REAL Puppeteer `Page` always includes at least its main frame in `page.frames()`, so an
+   * empty `live` list here only ever means the tab itself has genuinely closed — NOT the
+   * "pathological/mocked scenario" the old fallback assumed. Falling back to `page.mainFrame()`
+   * in that case hands every caller a DETACHED frame; `frame.$` on it fails with a
+   * "detached Frame"-style error, which `pierceFirstMatch` deliberately treats as a per-frame,
+   * RECOVERABLE hiccup (e.g. an iframe mid-navigation) rather than a real failure — which is
+   * exactly how `isHiddenInEveryFrame` still concluded "hidden" (false SUCCESS) when the tab
+   * closed mid-wait, even after `pierceFirstMatch` started rethrowing "Session closed"/"Target
+   * closed"-style errors: a closed TAB (as opposed to a closed BROWSER/session) never actually
+   * throws one of those — it just leaves `page.frames()` empty. `page.isClosed()` asks the page
+   * itself, which knows definitively, instead of trying to infer tab-closure from a frame-level
+   * error message. A page/mock that doesn't implement `isClosed` (nothing in this codebase's
+   * own tests does) keeps the original defensive fallback.
+   */
   private liveFramesOf(page: Page): Frame[] {
     const live = page.frames().filter((f) => !f.isDetached());
-    return live.length > 0 ? live : [page.mainFrame()];
+    if (live.length > 0) return live;
+    if (typeof page.isClosed === 'function' && page.isClosed()) {
+      throw new Error('Tab was closed while wait_for_selector was checking its state.');
+    }
+    return [page.mainFrame()];
   }
 
   /** "Any frame" first-match-visible check (mirrors `resolveElement`'s `visible:true`
@@ -1312,7 +1485,8 @@ export class BrowserActionEngine implements IBrowserActionEngine {
 
   /** "Any frame" first-match-EXISTS check (DOM presence only, visibility ignored) — used only by
    *  the `timeoutMs<=0` check-once path for `state:'attached'` (GAP-011). The *waiting* attached
-   *  path is unchanged and still goes through {@link resolveElement}. */
+   *  path is still `resolveElement`-based; see the `wait_for_selector` case's GAP-033 note for
+   *  its own fast syntax-error pre-check, which reuses {@link pierceFirstMatch} directly. */
   private async firstAnyHandleAnyFrame(page: Page, fullSelector: string): Promise<ElementHandle<Element> | null> {
     for (const frame of this.liveFramesOf(page)) {
       const handle = await this.pierceFirstMatch(frame, fullSelector);
@@ -1346,7 +1520,21 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    * is not throttled that way. This keeps the exact same multi-frame "any frame" semantics
    * `resolveElement`'s `visible:true` path had. `state:'attached'` and `click_by_role`'s own
    * `visible:true` `resolveElement` call are UNCHANGED and out of scope — see decisions.md for
-   * the same rAF-throttling exposure noted there for `click_by_role`.
+   * the same rAF-throttling exposure noted there for `click_by_role`. (`state:'attached'` did
+   * gain a fast syntax-error pre-check for GAP-033 — see the `wait_for_selector` case — but its
+   * underlying wait is still `resolveElement`, not a poll loop like this one.)
+   *
+   * GAP-034 (FR2-01 audit-2, documented tradeoff): `pollMs` defaults to 100ms, not the ~16ms
+   * the OLD (buggy, rAF-adjacent) mechanism happened to achieve on a foreground tab. This is a
+   * deliberate, known latency tradeoff, not an oversight: 100ms keeps every poll a plain
+   * `setTimeout` (immune to the ~500ms/frame rAF throttling GAP-008 exists to avoid on a
+   * backgrounded tab) while still being fast enough for ordinary async UI (AJAX responses,
+   * toasts, animations settling). It CAN miss a state that's true for less than ~100ms — a
+   * visibility "flicker" (confirmed live, `audit-2/probe-flicker.mjs`: a ~30-60ms on-window is
+   * unreliably caught; ~150ms+ is reliably caught) — and it adds up to ~100ms of latency to
+   * every `visible`/`hidden` wait that would otherwise return in single-digit ms. Tightening
+   * this further trades detection latency for CDP call volume on every wait in the codebase;
+   * 100ms was kept as the safer default rather than re-tuned without a broader benchmark.
    */
   private async waitForVisibleWithPolling(
     page: Page,

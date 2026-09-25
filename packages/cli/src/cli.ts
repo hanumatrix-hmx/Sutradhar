@@ -451,7 +451,18 @@ async function cmdWait(ref: string | undefined, timeoutMsArg: string | undefined
     printErrorAndExit(
       'usage: sutradhar wait <ref> [timeoutMs] [--state visible|attached|hidden]  (ref = a selector, or a numeric id from "snap")',
     );
+  // GAP-032: `Number('5s')` (a plausible typo for "5 seconds") is `NaN`, and `Number('')` on an
+  // empty-but-present arg is `0` (a real, meaningful "check once" value, so only reject when
+  // parsing genuinely fails) — validate here instead of letting a non-finite value reach the
+  // engine, which now rejects it too, but with a less actionable message than the CLI can give
+  // for its own most likely cause (a typo'd unit suffix).
   const timeoutMs = timeoutMsArg ? Number(timeoutMsArg) : undefined;
+  if (timeoutMs !== undefined && !Number.isFinite(timeoutMs)) {
+    printErrorAndExit(
+      `Invalid timeoutMs "${timeoutMsArg}" — expected a plain number of milliseconds (e.g. 5000 for 5s), ` +
+        'not a unit suffix like "5s".',
+    );
+  }
   const state = stateFlag ?? 'visible';
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.waitForSelector(sessionId, ref!, timeoutMs, undefined, stateFlag);
@@ -850,7 +861,11 @@ Commands:
                                 Visibility is checked on the FIRST matching element only. "hidden"
                                 succeeds immediately if nothing matches the selector at all.
                                 timeoutMs applies to each internal attempt; retries (GAP-001,
-                                still open) can extend the real total wait beyond it.
+                                still open) can extend the real total wait beyond it. timeoutMs
+                                <= 0 checks the current state once, immediately, with no waiting
+                                or retrying. Waiting states poll roughly every 100ms, so a state
+                                that's only true for less than ~100ms (a fast visibility flicker)
+                                may be missed.
   eval <js-expression>         Evaluate JS in the page's top-level context, print the result
   eval <js-expression> --frame <selector>
                                 Same, but inside a specific <iframe> (selector or a numeric id

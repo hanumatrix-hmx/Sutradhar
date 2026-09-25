@@ -15,7 +15,13 @@ import { spawn } from 'node:child_process';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.join(here, '..', '..');
-const EVIDENCE_DIR = path.join(repoRoot, '.ai', 'loop', 'field-report-2', 'evidence', 'FR2-01');
+// FR2-01 fix-2 standing rule: each fix/audit round's evidence directory is its own to write —
+// never a prior round's (`audit-1/`, `fix-1/`, `audit-2/`, or this top-level FR2-01 dir, which
+// predates all of those). `SUTRADHAR_FR2_01_EVIDENCE_DIR` lets a later round redirect this
+// script's output into its OWN evidence directory instead of overwriting an earlier round's.
+const EVIDENCE_DIR =
+  process.env.SUTRADHAR_FR2_01_EVIDENCE_DIR ??
+  path.join(repoRoot, '.ai', 'loop', 'field-report-2', 'evidence', 'FR2-01');
 const FIXTURE_PATH = path.join(here, 'fixtures', 'fr2-01-wait-states.html');
 // GAP-012: `pathToFileURL` (not a hand-rolled 'file://' + path string) — on Windows, Chrome's
 // own normalized file:// URL for an absolute drive-letter path has THREE slashes
@@ -605,10 +611,15 @@ async function runMcpSurface() {
     const recvAt = Date.now();
     const ev = await fxEvent(page, 'toast');
     const latencyAfterRevealMs = ev ? recvAt - ev.at : null;
+    // GAP-035: this case's whole point is that tabA is genuinely BACKGROUNDED — assert that
+    // directly (visState === 'hidden'), not just record it, or the case could pass without tabA
+    // ever really being backgrounded at all (audit-2 found the CLI case already asserted this,
+    // but the MCP and SDK cases didn't).
     const pass =
       res.success === true &&
       res.output?.state === 'visible' &&
       (res.retriesUsed ?? 0) === 0 &&
+      visState === 'hidden' &&
       !!ev &&
       latencyAfterRevealMs !== null &&
       latencyAfterRevealMs >= 0 &&
@@ -1035,7 +1046,15 @@ async function runSdkSurface() {
     const recvAt = Date.now();
     const ev = await fxEvent(op, 'toast');
     const latencyAfterRevealMs = ev ? recvAt - ev.at : null;
-    const pass = !error && !!ev && latencyAfterRevealMs !== null && latencyAfterRevealMs >= 0 && latencyAfterRevealMs < 500;
+    // GAP-035: assert the tab was actually backgrounded (visState === 'hidden'), same reasoning
+    // as the MCP case above — this is the one thing the case exists to prove.
+    const pass =
+      !error &&
+      visState === 'hidden' &&
+      !!ev &&
+      latencyAfterRevealMs !== null &&
+      latencyAfterRevealMs >= 0 &&
+      latencyAfterRevealMs < 500;
     record('sdk', {
       case: 'GAP-008-background-tab-visible-resolves-fast',
       expected: 'resolves within ~500ms of the real reveal even though the tab is backgrounded (visibilityState=hidden)',
@@ -1136,7 +1155,16 @@ async function main() {
   await writeJsonl('live-sdk.jsonl', results.sdk);
 
   // GAP-012: final Chrome-process count across ALL surfaces, computed for real.
-  const needlePaths = [...cleanupDirs, path.join(os.tmpdir(), 'sutradhar-cli-')];
+  // GAP-035: this previously only ever matched the CLI's own `sutradhar-cli-*` temp-profile
+  // naming — an SDK-side leak (Puppeteer's own default profile dir, named
+  // `puppeteer_dev_chrome_profile-*` when no explicit `userDataDir` is given, which is exactly
+  // what the SDK surface in this script uses) would never show up in `chromeCheck.count` at
+  // all, silently passing even with real lingering Chrome processes left behind.
+  const needlePaths = [
+    ...cleanupDirs,
+    path.join(os.tmpdir(), 'sutradhar-cli-'),
+    path.join(os.tmpdir(), 'puppeteer_dev_chrome_profile-'),
+  ];
   const chromeCheck = await countLingeringChromeProcesses(needlePaths);
   if (chromeCheck.count > 0) overallOk = false;
 
