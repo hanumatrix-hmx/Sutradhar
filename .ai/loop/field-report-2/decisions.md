@@ -1513,3 +1513,34 @@ narrower backlog item.
 The shared `tools/scenario-suite/results/baseline-*.json` files show local diffs from this item's
 own live-verify runs, per the standing GAP-100/106 rule -- these are NOT included in this commit;
 they are regenerated fresh only as part of the loop's own final full-repo gate.
+
+## 2026-09-25 -- FR2-10: DONE (1 audit, no fix cycles needed)
+
+audit-1 (Opus, independent, its own 11 mutations, its own race-stress script with real timing
+across 64+48+N calls, its own byte-for-byte schema re-derivation from the real built server)
+returned PASS on the first audit -- no fix cycle needed, the fastest item so far in this loop.
+Confirmed correct: exactly 0 of 66 applicable tools now require sessionId (down from 66 required
++ 3 optional-with-different-shape + 2 none, matching the spec precisely); launch/attach/
+agent.runGoal's schemas are byte-identical to before; health/shutdown_all still have no
+sessionId key at all. Race conditions specifically stress-tested and held: 64 launch-race calls,
+48 shutdown-race calls, an attach race, and an external-Chrome-killed scenario all resolved
+correctly with zero incorrect session attribution. Multi-client isolation confirmed: a second
+MCP connection's ambiguity error lists only ITS OWN session ids, never leaking across clients.
+
+7 minor gaps logged (GAP-162 through 168), all in the now-familiar test-integrity/evidence-
+accuracy category this loop keeps finding across every item (untestable assertions that pass
+even with the real logic removed; missing coverage for in-flight counters; a token-cost figure
+that omitted an unrelated concurrent change; a hardcoded evidence path with no override, which
+is literally the same hazard the very same Executor had just caught and fixed for a DIFFERENT
+item's script earlier in this same session). None block DONE -- audit-1 was explicit that none
+of the 7 is a code defect, and the auditor's own live re-verification (13/13 live-verify cases,
+race stress, schema re-derivation) is the actual evidence DONE rests on, not the self-report.
+
+Notable data point for this loop's running methodology assessment: FR2-10 is now the SECOND item
+(after FR2-09) to reach DONE within the loop's normal bounds, and the FASTEST (1 audit, 0 fix
+cycles) -- consistent with the pattern that bugs/gaps with a genuinely bounded shape (a specific,
+enumerable set of tool schemas; a specific, testable race condition) get closed reliably by this
+process, in contrast to FR2-01/FR2-16's unbounded-shape bugs that exhausted every escalation.
+
+The shared baseline-*.json files are, once again, left untouched per the standing GAP-100/106
+rule -- confirmed by both the Executor and the Auditor to be pre-existing, unrelated to this item.

@@ -1,0 +1,128 @@
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/mcp-server[39m
+
+ [33m❯[39m tests/unit/session-resolution.spec.ts [2m ([22m[2m23 tests[22m [2m|[22m [31m2 failed[39m[2m)[22m[90m 14[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/session-resolution.spec.ts[2m > [22mwithSessionResolution[2m > [22mW5: omitted with 1 live session -> resolves, appends the note as the last content item[39m
+[31m     → expected '' to be 'sessionId omitted: used "A", the only…' // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/session-resolution.spec.ts[2m > [22mwithSessionResolution[2m > [22mW5b: an isError result keeps isError:true, note still appended last[39m
+[31m     → expected '' to be 'sessionId omitted: used "A", the only…' // Object.is equality[39m
+ [33m❯[39m tests/unit/tools.spec.ts [2m ([22m[2m38 tests[22m [2m|[22m [31m2 failed[39m[2m)[22m[90m 84[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT7: browser.shutdown resolves the omitted id and reports it[39m
+[31m     → expected '' to be 'sessionId omitted: used "A", the only…' // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT11: browser.screenshot keeps the image as content[0], note appended after it[39m
+[31m     → expected '' to be 'sessionId omitted: used "A", the only…' // Object.is equality[39m
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mconstructs SutradharRuntime with the 30-minute default idleTimeoutMs when nothing overrides it[22m[39m
+{"timestamp":"2026-09-25T08:38:15.541Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mhonors SUTRADHAR_IDLE_TIMEOUT_MS when set[22m[39m
+{"timestamp":"2026-09-25T08:38:15.551Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mhonors an explicit idleTimeoutMs option over the env var and default[22m[39m
+{"timestamp":"2026-09-25T08:38:15.554Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2midleTimeoutMs:0 disables the reaper (passed through as undefined, matching SutradharRuntime's "unset = disabled" contract)[22m[39m
+{"timestamp":"2026-09-25T08:38:15.558Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mdoes not construct a new SutradharRuntime at all when the caller supplies one directly[22m[39m
+{"timestamp":"2026-09-25T08:38:15.560Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring[2m > [22m[2mdefaults to false (unrestricted) when nothing overrides it[22m[39m
+{"timestamp":"2026-09-25T08:38:15.563Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring[2m > [22m[2mhonors SUTRADHAR_RESTRICT_NAVIGATION_TO_LOCAL=1[22m[39m
+{"timestamp":"2026-09-25T08:38:15.565Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring[2m > [22m[2mhonors an explicit restrictNavigationToLocal option over the env var[22m[39m
+{"timestamp":"2026-09-25T08:38:15.567Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer allowedDomains wiring[2m > [22m[2mdefaults to undefined (unrestricted) when nothing overrides it[22m[39m
+{"timestamp":"2026-09-25T08:38:15.569Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer allowedDomains wiring[2m > [22m[2mhonors SUTRADHAR_ALLOWED_DOMAINS as a comma-separated list, trimmed[22m[39m
+{"timestamp":"2026-09-25T08:38:15.571Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer allowedDomains wiring[2m > [22m[2mhonors an explicit allowedDomains option over the env var[22m[39m
+{"timestamp":"2026-09-25T08:38:15.573Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+ [32m✓[39m tests/unit/server.spec.ts [2m ([22m[2m11 tests[22m[2m)[22m[90m 36[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m68 passed[39m[22m[90m (72)[39m
+[2m   Start at [22m 14:08:13
+[2m   Duration [22m 1.89s[2m (transform 1.06s, setup 0ms, collect 2.53s, tests 134ms, environment 0ms, prepare 627ms)[22m
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 4 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/session-resolution.spec.ts[2m > [22mwithSessionResolution[2m > [22mW5: omitted with 1 live session -> resolves, appends the note as the last content item
+[31m[1mAssertionError[22m: expected '' to be 'sessionId omitted: used "A", the only…' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- sessionId omitted: used "A", the only live browser session.[39m
+
+[36m [2m❯[22m tests/unit/session-resolution.spec.ts:[2m238:36[22m[39m
+    [90m236| [39m    [34mexpect[39m(result[33m.[39mcontent[[34m0[39m])[33m.[39m[34mtoEqual[39m({ type[33m:[39m [32m'text'[39m[33m,[39m text[33m:[39m [32m'{"ok":1}'[39m…
+    [90m237| [39m    [34mexpect[39m(result[33m.[39mcontent[33m.[39mlength)[33m.[39m[34mtoBe[39m([34m2[39m)[33m;[39m
+    [90m238| [39m    [34mexpect[39m(result[33m.[39mcontent[[34m1[39m][33m.[39mtext)[33m.[39m[34mtoBe[39m([32m'sessionId omitted: used "A", [39m…
+    [90m   | [39m                                   [31m^[39m
+    [90m239| [39m    [34mexpect[39m(listSessions)[33m.[39m[34mtoHaveBeenCalledTimes[39m([34m1[39m)[33m;[39m
+    [90m240| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/session-resolution.spec.ts[2m > [22mwithSessionResolution[2m > [22mW5b: an isError result keeps isError:true, note still appended last
+[31m[1mAssertionError[22m: expected '' to be 'sessionId omitted: used "A", the only…' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- sessionId omitted: used "A", the only live browser session.[39m
+
+[36m [2m❯[22m tests/unit/session-resolution.spec.ts:[2m250:40[22m[39m
+    [90m248| [39m    [35mconst[39m result [33m=[39m [35mawait[39m tools[33m.[39m[35mget[39m([32m't.req'[39m)[33m![39m[33m.[39m[34mhandler[39m({}[33m,[39m undefined)[33m;[39m
+    [90m249| [39m    [34mexpect[39m(result[33m.[39misError)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m250| [39m    [34mexpect[39m(result[33m.[39mcontent[33m.[39m[34mat[39m([33m-[39m[34m1[39m)[33m.[39mtext)[33m.[39m[34mtoBe[39m([32m'sessionId omitted: used "[39m…
+    [90m   | [39m                                       [31m^[39m
+    [90m251| [39m  })[33m;[39m
+    [90m252| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT7: browser.shutdown resolves the omitted id and reports it
+[31m[1mAssertionError[22m: expected '' to be 'sessionId omitted: used "A", the only…' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- sessionId omitted: used "A", the only live browser session.[39m
+
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m664:36[22m[39m
+    [90m662| [39m    [34mexpect[39m(parsed)[33m.[39m[34mtoEqual[39m({ success[33m:[39m [35mtrue[39m[33m,[39m sessionId[33m:[39m [32m'A'[39m })[33m;[39m
+    [90m663| [39m    [34mexpect[39m(result[33m.[39mcontent[33m.[39mlength)[33m.[39m[34mtoBe[39m([34m2[39m)[33m;[39m
+    [90m664| [39m    [34mexpect[39m(result[33m.[39mcontent[[34m1[39m][33m.[39mtext)[33m.[39m[34mtoBe[39m([32m'sessionId omitted: used "A", [39m…
+    [90m   | [39m                                   [31m^[39m
+    [90m665| [39m  })[33m;[39m
+    [90m666| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT11: browser.screenshot keeps the image as content[0], note appended after it
+[31m[1mAssertionError[22m: expected '' to be 'sessionId omitted: used "A", the only…' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- sessionId omitted: used "A", the only live browser session.[39m
+
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m718:36[22m[39m
+    [90m716| [39m
+    [90m717| [39m    [34mexpect[39m(result[33m.[39mcontent[[34m0[39m][33m.[39mtype)[33m.[39m[34mtoBe[39m([32m'image'[39m)[33m;[39m
+    [90m718| [39m    [34mexpect[39m(result[33m.[39mcontent[[34m1[39m][33m.[39mtext)[33m.[39m[34mtoBe[39m([32m'sessionId omitted: used "A", [39m…
+    [90m   | [39m                                   [31m^[39m
+    [90m719| [39m  })[33m;[39m
+    [90m720| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯[22m[39m
+

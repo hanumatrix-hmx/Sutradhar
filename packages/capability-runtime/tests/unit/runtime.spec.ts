@@ -17,6 +17,8 @@ import { RateLimiter } from '@sutradhar/utils';
 import { mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { BrowserLauncher, PuppeteerBrowserInstance } from '@sutradhar/browser';
+import { createSessionId } from '@sutradhar/contracts';
 
 describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', () => {
   it('exports its package version', () => {
@@ -553,5 +555,138 @@ describe('@sutradhar/capability-runtime SutradharRuntime.snapshot — FR2-09 ski
     const withoutNodes = await runtime.snapshot('s1', undefined, undefined, {});
     expect('skippedFrames' in withoutNodes).toBe(false);
     expect('nodes' in withoutNodes).toBe(false);
+  });
+});
+
+describe('listSessions (FR2-10)', () => {
+  function noBrowserRuntime() {
+    const launcher = new BrowserLauncher();
+    vi.spyOn(launcher, 'findExecutablePath').mockReturnValue(undefined);
+    return new SutradharRuntime({ launcher, rateLimiter: null });
+  }
+
+  it('S1: a fresh runtime reports no sessions and no in-flight ops', () => {
+    const runtime = noBrowserRuntime();
+    expect(runtime.listSessions()).toEqual({ sessions: [], lifecycleOpsInFlight: 0 });
+  });
+
+  it('S2: launch() twice registers two launched, mock (no real browser) entries, sorted by createdAt then id', async () => {
+    const runtime = noBrowserRuntime();
+    const { sessionId: id1 } = await runtime.launch();
+    const { sessionId: id2 } = await runtime.launch();
+
+    const view = runtime.listSessions();
+    expect(view.sessions.length).toBe(2);
+    for (const s of view.sessions) {
+      expect(s.origin).toBe('launched');
+      expect(s.hasRealBrowser).toBe(false);
+      expect(s.tabCount).toBe(1);
+      expect(s.activeUrl).toBe('about:blank');
+      expect(s.createdAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+    }
+    const ids = view.sessions.map((s) => s.sessionId);
+    expect(new Set(ids)).toEqual(new Set([id1, id2]));
+    const sorted = [...view.sessions].sort(
+      (a, b) => a.createdAt.localeCompare(b.createdAt) || a.sessionId.localeCompare(b.sessionId),
+    );
+    expect(view.sessions).toEqual(sorted);
+  });
+
+  it('S3: attach() registers an "attached" entry', async () => {
+    const launcher = new BrowserLauncher();
+    vi.spyOn(launcher, 'findExecutablePath').mockReturnValue(undefined);
+    vi.spyOn(launcher, 'connect').mockResolvedValue(new PuppeteerBrowserInstance());
+    const runtime = new SutradharRuntime({ launcher, rateLimiter: null });
+
+    const { sessionId } = await runtime.attach({ endpoint: 'ws://x' });
+
+    const view = runtime.listSessions();
+    expect(view.sessions).toHaveLength(1);
+    expect(view.sessions[0]!.sessionId).toBe(sessionId);
+    expect(view.sessions[0]!.origin).toBe('attached');
+  });
+
+  it('S4: lifecycleOpsInFlight is 1 while launch() is pending, 0 after it resolves, and 0 after it rejects or throws synchronously', async () => {
+    const launcher = new BrowserLauncher();
+    vi.spyOn(launcher, 'findExecutablePath').mockReturnValue(undefined);
+
+    let resolveLaunch!: (v: PuppeteerBrowserInstance) => void;
+    const deferred = new Promise<PuppeteerBrowserInstance>((res) => (resolveLaunch = res));
+    const launchSpy = vi.spyOn(launcher, 'launch').mockReturnValue(deferred);
+    const runtime = new SutradharRuntime({ launcher, rateLimiter: null });
+
+    const pending = runtime.launch();
+    // Give the microtask queue a turn so the async launch() body actually starts.
+    await Promise.resolve();
+    expect(runtime.listSessions().lifecycleOpsInFlight).toBe(1);
+    expect(runtime.listSessions().sessions).toEqual([]);
+
+    resolveLaunch(new PuppeteerBrowserInstance());
+    await pending;
+    expect(runtime.listSessions().lifecycleOpsInFlight).toBe(0);
+
+    launchSpy.mockRejectedValueOnce(new Error('boom'));
+    await expect(runtime.launch()).rejects.toThrow('boom');
+    expect(runtime.listSessions().lifecycleOpsInFlight).toBe(0);
+
+    const restricted = new SutradharRuntime({ launcher, rateLimiter: null, restrictNavigationToLocal: true });
+    await expect(restricted.launch({ initialUrl: 'https://example.com' })).rejects.toThrow(
+      /restrictNavigationToLocal is enabled/,
+    );
+    expect(restricted.listSessions().lifecycleOpsInFlight).toBe(0);
+  });
+
+  it('S5: shutdown() and shutdownAll() remove entries; shutdown of an unknown id still throws and leaves the counter at 0', async () => {
+    const runtime = noBrowserRuntime();
+    const { sessionId: id1 } = await runtime.launch();
+    const { sessionId: id2 } = await runtime.launch();
+
+    await runtime.shutdown(id1);
+    expect(runtime.listSessions().sessions.map((s) => s.sessionId)).toEqual([id2]);
+
+    await runtime.shutdownAll();
+    expect(runtime.listSessions().sessions).toEqual([]);
+
+    await expect(runtime.shutdown('nope')).rejects.toThrow(BrowserNotAvailableError);
+    expect(runtime.listSessions().lifecycleOpsInFlight).toBe(0);
+  });
+
+  it('S6: a session created directly via the session manager (agent.runGoal-style, no launch()/attach()) is not listed', async () => {
+    const runtime = noBrowserRuntime();
+    await runtime.getSessionManager().createSession({});
+
+    expect(runtime.getSessionManager().getSessionCount()).toBe(1);
+    expect(runtime.listSessions().sessions).toEqual([]);
+  });
+
+  it('S7: a session removed behind the runtime\'s back (idle reap / crash) is pruned from listSessions', async () => {
+    const runtime = noBrowserRuntime();
+    const { sessionId } = await runtime.launch();
+    expect(runtime.listSessions().sessions).toHaveLength(1);
+
+    await runtime.getSessionManager().closeSession(createSessionId(sessionId));
+    expect(runtime.listSessions().sessions).toEqual([]);
+
+    // Re-launching under the SAME id proves the stale internal entry was actually pruned, not
+    // just filtered on display: exactly one entry is listed, not a stale duplicate.
+    await runtime.launch({ sessionId });
+    expect(runtime.listSessions().sessions).toHaveLength(1);
+  });
+
+  it('S8: a reused id keeps its original origin (launch/launch, and attach then launch under the same id)', async () => {
+    const runtime = noBrowserRuntime();
+    await runtime.launch({ sessionId: 'fixed' });
+    await runtime.launch({ sessionId: 'fixed' });
+    expect(runtime.listSessions().sessions).toHaveLength(1);
+    expect(runtime.listSessions().sessions[0]!.origin).toBe('launched');
+
+    const launcher2 = new BrowserLauncher();
+    vi.spyOn(launcher2, 'findExecutablePath').mockReturnValue(undefined);
+    vi.spyOn(launcher2, 'connect').mockResolvedValue(new PuppeteerBrowserInstance());
+    const runtime2 = new SutradharRuntime({ launcher: launcher2, rateLimiter: null });
+    await runtime2.attach({ endpoint: 'ws://x', sessionId: 'fixed2' });
+    await runtime2.launch({ sessionId: 'fixed2' });
+    const entry = runtime2.listSessions().sessions.find((s) => s.sessionId === 'fixed2');
+    expect(entry?.origin).toBe('attached');
   });
 });

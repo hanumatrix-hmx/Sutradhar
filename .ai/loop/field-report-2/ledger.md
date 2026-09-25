@@ -13,7 +13,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 | FR2-07 | Unified verification contract | 2 | SPEC (needs FR2-05 + FR2-06 DONE; DEVELOP after FR2-06) | 0 | evidence/FR2-07/spec.md | - |
 | FR2-08 | Condition waits + settle everywhere | 2 | SPEC (needs FR2-07 DONE; DEVELOP after FR2-07) | 0 | evidence/FR2-08/spec.md | - |
 | FR2-09 | Snapshot frame/shadow labels | 2 | **DONE** | 4 | audit-4 PASSED: all 5 Done-when bullets met, token-size exception approved, CDP-based blocked-frame fix confirmed correct across redirects/re-navigation/nesting; 4 minor gaps (GAP-158..161), GAP-158 fixed on landing, others deferred/logged, none blocking | (pending DONE commit) |
-| FR2-10 | MCP optional sessionId | 2 | SPEC (no hard precondition; MCP-only; default merge after FR2-09) | 0 | evidence/FR2-10/spec.md | - |
+| FR2-10 | MCP optional sessionId | 2 | **DONE** | 1 | audit-1 PASSED: schema/race/multi-client behavior all independently re-verified correct (0/66 tools require sessionId now, launch/attach/agent.runGoal/health/shutdown_all schemas byte-identical to before); 7 minor gaps (GAP-162..168, test-integrity/evidence-accuracy, same recurring pattern as FR2-01/16/09), none blocking, all deferred | (pending DONE commit) |
 | FR2-11 | Full action history | 3 | SPEC (soft dep on FR2-07 field shape; default merge after Phase 2) | 0 | evidence/FR2-11/spec.md | - |
 | FR2-12 | Machine-readable audit | 3 | SPEC (Step 0 live experiment required before DEVELOP; soft deps FR2-04/07/08) | 0 | evidence/FR2-12/spec.md | - |
 | FR2-13 | `sutradhar run` scenario runner | 3 | SPEC (HARD-blocked: needs FR2-07+FR2-08+FR2-11+FR2-12 all DONE) | 0 | evidence/FR2-13/spec.md | - |

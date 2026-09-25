@@ -524,3 +524,210 @@ describe('@sutradhar/mcp-server FR2-09 frame/shadow labels', () => {
     expect(result.content[0].text).not.toContain('Structured nodes (JSON):');
   });
 });
+
+describe('FR2-10 optional sessionId', () => {
+  const A = {
+    sessionId: 'A',
+    origin: 'launched' as const,
+    createdAt: '2026-09-25T10:00:00.000Z',
+    tabCount: 1,
+    activeTabId: 't1',
+    activeUrl: 'https://x.test/',
+    hasRealBrowser: true,
+  };
+  const B = { ...A, sessionId: 'B', createdAt: '2026-09-25T10:01:00.000Z' };
+
+  it('T1: every non-exempt tool has an optional sessionId; exempt tools are untouched', () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const agentCore = { executeGoal: vi.fn() } as any;
+
+    registerTools(server, { runtime, agent: { agentCore } });
+
+    const EXEMPT = ['browser.launch', 'browser.attach', 'browser.health', 'browser.shutdown_all'];
+    let nonExemptCount = 0;
+    for (const name of EXPECTED_BROWSER_TOOLS) {
+      if (EXEMPT.includes(name)) continue;
+      const schema = tools.get(name)!.config.inputSchema;
+      expect(schema.sessionId, `${name} should have a sessionId key`).toBeDefined();
+      expect(schema.sessionId.safeParse(undefined).success).toBe(true);
+      expect(schema.sessionId.safeParse('s1').success).toBe(true);
+      expect(schema.sessionId.safeParse(5).success).toBe(false);
+      nonExemptCount++;
+    }
+    expect(nonExemptCount).toBeGreaterThanOrEqual(66);
+
+    expect(tools.get('browser.launch')!.config.inputSchema.sessionId.safeParse(undefined).success).toBe(true);
+    expect(tools.get('browser.attach')!.config.inputSchema.sessionId.safeParse(undefined).success).toBe(true);
+    expect(tools.get('browser.launch')!.config.inputSchema.sessionId.description).toBe(
+      'Reuse an existing caller-owned session id.',
+    );
+    expect(tools.get('browser.health')!.config.inputSchema.sessionId).toBeUndefined();
+    expect(tools.get('browser.shutdown_all')!.config.inputSchema.sessionId).toBeUndefined();
+    expect(tools.get('agent.runGoal')!.config.inputSchema.sessionId.description).toBe(
+      'Run against an existing browser session.',
+    );
+  });
+
+  it('T2: omitted (1 live session) resolves to the same positional runtime call as an explicit id', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'listSessions').mockReturnValue({ sessions: [A], lifecycleOpsInFlight: 0 });
+    const spy = vi
+      .spyOn(runtime, 'click')
+      .mockResolvedValue({ success: true, actionType: 'click', executionTimeMs: 1 });
+
+    registerTools(server, { runtime });
+    const r1 = await tools.get('browser.click')!.handler({ target: '#x' });
+    const r2 = await tools.get('browser.click')!.handler({ sessionId: 'A', target: '#x' });
+
+    expect(spy.mock.calls[0]).toEqual(spy.mock.calls[1]);
+    expect(spy.mock.calls[0].length).toBe(spy.mock.calls[1].length);
+    expect(r1.content.length).toBe(2);
+    expect(r2.content.length).toBe(1);
+  });
+
+  it('T3: omitted with 0 live sessions -> isError, runtime.click never called', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'listSessions').mockReturnValue({ sessions: [], lifecycleOpsInFlight: 0 });
+    const spy = vi.spyOn(runtime, 'click');
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.click')!.handler({ target: '#x' });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain('click failed: No sessionId given, and there is no live browser session');
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('T4: omitted with 2+ live sessions -> isError listing both ids, runtime.click never called', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'listSessions').mockReturnValue({ sessions: [A, B], lifecycleOpsInFlight: 0 });
+    const spy = vi.spyOn(runtime, 'click');
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.click')!.handler({ target: '#x' });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain('A');
+    expect(result.content[0].text).toContain('B');
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('T5: browser.launch is unaffected — omitted sessionId always means "create new", never resolved', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const listSessions = vi.spyOn(runtime, 'listSessions').mockReturnValue({ sessions: [A], lifecycleOpsInFlight: 0 });
+    const spy = vi
+      .spyOn(runtime, 'launch')
+      .mockResolvedValue({ sessionId: 'N', activeTabId: 't', hasRealBrowser: true });
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.launch')!.handler({});
+
+    expect(spy.mock.calls[0][0]).toMatchObject({ sessionId: undefined });
+    expect(listSessions).not.toHaveBeenCalled();
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed.sessionId).toBe('N');
+    expect(result.content.length).toBe(1);
+  });
+
+  it('T6: browser.attach is unaffected the same way', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'listSessions').mockReturnValue({ sessions: [A], lifecycleOpsInFlight: 0 });
+    const spy = vi
+      .spyOn(runtime, 'attach')
+      .mockResolvedValue({ sessionId: 'N', activeTabId: 't', hasRealBrowser: true });
+
+    registerTools(server, { runtime });
+    await tools.get('browser.attach')!.handler({ endpoint: 'http://127.0.0.1:9222' });
+
+    expect(spy.mock.calls[0][0]).toMatchObject({ endpoint: 'http://127.0.0.1:9222', sessionId: undefined });
+  });
+
+  it('T7: browser.shutdown resolves the omitted id and reports it', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'listSessions').mockReturnValue({ sessions: [A], lifecycleOpsInFlight: 0 });
+    const spy = vi.spyOn(runtime, 'shutdown').mockResolvedValue(undefined);
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.shutdown')!.handler({});
+
+    expect(spy).toHaveBeenCalledWith('A');
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed).toEqual({ success: true, sessionId: 'A' });
+    expect(result.content.length).toBe(2);
+    expect(result.content[1].text).toBe('sessionId omitted: used "A", the only live browser session.');
+  });
+
+  it('T8: browser.get_viewport (sync handler) resolves the omitted id; explicit id stays synchronous', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'listSessions').mockReturnValue({ sessions: [A], lifecycleOpsInFlight: 0 });
+    const spy = vi.spyOn(runtime, 'getViewport').mockReturnValue(null);
+
+    registerTools(server, { runtime });
+    await tools.get('browser.get_viewport')!.handler({});
+    expect(spy).toHaveBeenCalledWith('A', undefined);
+
+    const syncRet = tools.get('browser.get_viewport')!.handler({ sessionId: 'A' });
+    expect(syncRet).not.toBeInstanceOf(Promise);
+  });
+
+  it('T9: browser.set_cookie (rest spread) never leaks sessionId into the cookie object', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'listSessions').mockReturnValue({ sessions: [A], lifecycleOpsInFlight: 0 });
+    const spy = vi.spyOn(runtime, 'setCookie').mockResolvedValue(undefined);
+
+    registerTools(server, { runtime });
+    await tools.get('browser.set_cookie')!.handler({ name: 'n', value: 'v' });
+    await tools.get('browser.set_cookie')!.handler({ sessionId: 'A', name: 'n', value: 'v' });
+
+    expect(spy.mock.calls[0][1]).not.toHaveProperty('sessionId');
+    expect(spy.mock.calls[0][1]).toEqual(spy.mock.calls[1][1]);
+  });
+
+  it('T10: agent.runGoal is unaffected — omitted sessionId still means "let the agent create one"', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'listSessions').mockReturnValue({ sessions: [A], lifecycleOpsInFlight: 0 });
+    const executeGoal = vi.fn().mockResolvedValue({ finalAnswer: 'done', steps: [], success: true });
+    const agentCore = { executeGoal } as any;
+
+    registerTools(server, { runtime, agent: { agentCore } });
+    await tools.get('agent.runGoal')!.handler({ goal: 'g' });
+
+    expect(executeGoal.mock.calls[0][1]).toBeUndefined();
+  });
+
+  it('T11: browser.screenshot keeps the image as content[0], note appended after it', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'listSessions').mockReturnValue({ sessions: [A], lifecycleOpsInFlight: 0 });
+    vi.spyOn(runtime, 'screenshot').mockResolvedValue({ base64: 'ZmFrZQ==' });
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.screenshot')!.handler({});
+
+    expect(result.content[0].type).toBe('image');
+    expect(result.content[1].text).toBe('sessionId omitted: used "A", the only live browser session.');
+  });
+
+  it('T12: an explicit but unknown id is never redirected to the one live session', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const listSessions = vi.spyOn(runtime, 'listSessions').mockReturnValue({ sessions: [A], lifecycleOpsInFlight: 0 });
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.click')!.handler({ sessionId: 'nope', target: '#x' });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain('No browser session "nope"');
+    expect(listSessions).not.toHaveBeenCalled();
+  });
+});

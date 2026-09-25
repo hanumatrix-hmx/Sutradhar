@@ -22,7 +22,7 @@ Grouped here by category, matching `tools.ts`'s own section layout.
 | Tool | Description |
 |---|---|
 | `browser.health` | Preflight check — is a real browser available, without committing to a session. |
-| `browser.launch` | Launch a browser session; returns a `sessionId`. |
+| `browser.launch` | Launch a browser session; returns a `sessionId`. Other tools accept it, and it may be omitted while exactly one session is live. |
 | `browser.attach` | Attach to an existing browser over CDP instead of launching a new one (e.g. your own Chrome with `--remote-debugging-port`). |
 | `browser.shutdown` | Shut down a session. |
 | `browser.shutdown_all` | Shut down every session. |

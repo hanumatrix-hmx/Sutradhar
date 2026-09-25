@@ -1,0 +1,112 @@
+[mcp] PASS a-default-visible-toast
+[mcp] PASS a2-explicit-visible-toast
+[mcp] PASS b-attached-toast-returns-before-reveal
+[mcp] PASS c1-hidden-banner
+[mcp] PASS c2-hidden-spinner-removed
+[mcp] PASS mechanism-visible-vis-hidden
+[mcp] PASS mechanism-visible-zero-size
+[mcp] PASS mechanism-visible-shadow-toast
+[mcp] PASS manual-causality-toast-visible
+[mcp] PASS manual-causality-banner-hidden
+[mcp] PASS N1-never-visible-timeout
+[mcp] PASS N2-nonexistent-selector
+[mcp] PASS N3-stays-hidden-timeout
+[mcp] PASS N4-typo-hidden-succeeds-fast
+[mcp] PASS N8-invalid-state-schema-rejection
+[mcp] PASS N9-timeoutMs-zero-no-hang
+[mcp] PASS N5a-opacity-zero-visible-immediately
+[mcp] PASS N5b-opacity-zero-hidden-times-out
+[mcp] PASS N6-offscreen-visible-immediately
+[mcp] PASS N7-dup-first-hidden-second-visible-diagnosed
+[mcp] PASS N10-stale-node-id-after-navigation
+[mcp] PASS mechanism-visible-ancestor-hidden-child
+[mcp] PASS mechanism-visible-frame-toast
+[mcp] PASS mechanism-attached-late-waits-for-insertion
+[mcp] PASS mechanism-visible-late-waits-for-insertion
+[mcp] PASS hidden-multiframe-visible-in-iframe-does-not-succeed
+[mcp] PASS GAP-008-background-tab-visible-resolves-fast
+[mcp] PASS N11-never-the-generic-outer-message
+[cli] PASS setup-nav-manual
+[cli] PASS wait-default-visible-toast-blocks-then-resolves
+[cli] PASS GAP-008-background-tab-visible-resolves-fast
+[cli] PASS wait-attached-toast-returns-promptly
+[cli] PASS wait-hidden-banner-blocks-then-resolves
+[cli] PASS wait-hidden-spinner-blocks-then-resolves-on-removal
+[cli] PASS N-never-visible-exit1
+[cli] PASS N8-cli-state-bogus-exit1
+[cli] PASS N8-cli-state-missing-value-exit1
+[cli] PASS N-stays-hidden-exit1
+[cli] PASS teardown-close-kills-chrome
+[cli] PASS cleanup-no-leaked-profile-dirs-left-by-us
+{"timestamp":"2026-09-25T08:32:57.362Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T08:32:57.677Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790325177362_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T08:32:57.838Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790325177362_1_1","selector":"#toast"}}
+[sdk] PASS a-default-visible-toast
+{"timestamp":"2026-09-25T08:32:59.359Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790325177362_1_1","selector":"#toast"}}
+[sdk] PASS b-attached-toast-returns-before-reveal
+{"timestamp":"2026-09-25T08:32:59.407Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790325177362_1_1","selector":"#banner"}}
+[sdk] PASS c1-hidden-banner
+{"timestamp":"2026-09-25T08:33:00.992Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790325177362_1_1","selector":"#spinner"}}
+[sdk] PASS c2-hidden-spinner-removed
+{"timestamp":"2026-09-25T08:33:02.838Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790325177362_1_1","selector":"#toast"}}
+[sdk] PASS GAP-008-background-tab-visible-resolves-fast
+{"timestamp":"2026-09-25T08:33:03.370Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790325177362_1_1","selector":"#never"}}
+{"timestamp":"2026-09-25T08:33:04.587Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/3): wait_for_selector timed out after 1200ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.","context":{}}
+{"timestamp":"2026-09-25T08:33:06.317Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 2/3): wait_for_selector timed out after 1200ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.","context":{}}
+{"timestamp":"2026-09-25T08:33:08.543Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 3/3): wait_for_selector timed out after 1200ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.","context":{}}
+[sdk] PASS N1-never-rejects-none-visible
+{"timestamp":"2026-09-25T08:33:08.627Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790325177362_1_1","selector":"#stays"}}
+{"timestamp":"2026-09-25T08:33:09.856Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/3): wait_for_selector timed out after 1200ms waiting for state=hidden: an element matching \"#stays\" is still visible.","context":{}}
+{"timestamp":"2026-09-25T08:33:11.576Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 2/3): wait_for_selector timed out after 1200ms waiting for state=hidden: an element matching \"#stays\" is still visible.","context":{}}
+{"timestamp":"2026-09-25T08:33:13.805Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 3/3): wait_for_selector timed out after 1200ms waiting for state=hidden: an element matching \"#stays\" is still visible.","context":{}}
+[sdk] PASS N3-stays-hidden-rejects
+{"timestamp":"2026-09-25T08:33:13.818Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790325177362_1_1","selector":"#toast"}}
+{"timestamp":"2026-09-25T08:33:13.818Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/3): Invalid wait_for_selector state \"bogus\" — expected one of: visible, attached, hidden.","context":{}}
+{"timestamp":"2026-09-25T08:33:14.328Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 2/3): Invalid wait_for_selector state \"bogus\" — expected one of: visible, attached, hidden.","context":{}}
+{"timestamp":"2026-09-25T08:33:15.337Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 3/3): Invalid wait_for_selector state \"bogus\" — expected one of: visible, attached, hidden.","context":{}}
+[sdk] PASS N8-sdk-invalid-state-rejects
+{"timestamp":"2026-09-25T08:33:15.556Z","level":"info","message":"[BrowserSession] Closed session sess_1790325177362_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T08:33:15.556Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790325177362_1","context":{"reason":"Runtime shutdown"}}
+{
+  "at": "2026-09-25T08:33:16.822Z",
+  "overallOk": false,
+  "counts": {
+    "mcp": {
+      "total": 28,
+      "passed": 28
+    },
+    "cli": {
+      "total": 12,
+      "passed": 12
+    },
+    "sdk": {
+      "total": 8,
+      "passed": 8
+    }
+  },
+  "cleanupDirsAttempted": [
+    "E:\\AI-Cache\\tmp\\fr2-01-mcp-observer-TvLqUu",
+    "E:\\AI-Cache\\tmp\\fr2-01-cli-state-nzvb9z"
+  ],
+  "lingeringChromeProcesses": {
+    "count": 16,
+    "matches": [
+      "52988\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --remote-debugging-port=62445 --user-data-dir=E:\\AI-Cache\\tmp\\sutradhar-cli-1790322445084 --no-first-run --no-default-browser-check --headless=new\r",
+      "11556\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=crashpad-handler --user-data-dir=E:\\AI-Cache\\tmp\\sutradhar-cli-1790322445084 /prefetch:4 --monitor-self-annotation=ptype=crashpad-handler --database=E:\\AI-Cache\\tmp\\sutradhar-cli-1790322445084\\Crashpad --metrics-dir=E:\\AI-Cache\\tmp\\sutradhar-cli-1790322445084 --url=https://clients2.google.com/cr/report --annotation=channel= --annotation=plat=Win64 --annotation=prod=Chrome --annotation=ver=153.0.8010.53 --initial-client-data=0x150,0x154,0x158,0x120,0x15c,0x7ffcb56bfe80,0x7ffcb56bfe90,0x7ffcb56bfea0\r",
+      "62088\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=gpu-process --headless=new --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790322445084\" --no-pre-read-main-dll --gpu-preferences=WAAAAAAAAADgAAAEAAAAAAAAAAAAAGAAQAAAAAAAAAADAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAAEAAAAAIAAAABAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= --field-trial-handle=1868,i,5788859380016929096,1958520695805638872,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1872,i,1506994886200045903,8396138879927645835,4 --trace-process-track-uuid=3190708988185955192 --mojo-platform-channel-handle=1852 /prefetch:2\r",
+      "12956\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-GB --service-sandbox-type=none --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790322445084\" --no-pre-read-main-dll --field-trial-handle=1868,i,5788859380016929096,1958520695805638872,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1872,i,1506994886200045903,8396138879927645835,4 --trace-process-track-uuid=3190708989122997041 --mojo-platform-channel-handle=2136 /prefetch:11\r",
+      "3600\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-GB --service-sandbox-type=service --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790322445084\" --no-pre-read-main-dll --field-trial-handle=1868,i,5788859380016929096,1958520695805638872,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1872,i,1506994886200045903,8396138879927645835,4 --trace-process-track-uuid=3190708990060038890 --mojo-platform-channel-handle=2596 /prefetch:13\r",
+      "31732\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --top-chrome-webui --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790322445084\" --no-pre-read-main-dll --remote-debugging-port=62445 --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=5 --launch-time-ticks=90774174763 --field-trial-handle=1868,i,5788859380016929096,1958520695805638872,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1872,i,1506994886200045903,8396138879927645835,4 --trace-process-track-uuid=3190708990997080739 --mojo-platform-channel-handle=3560 /prefetch:1\r",
+      "66532\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --allow-pre-commit-input --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-crash-reporter --disable-default-apps --disable-dev-shm-usage --disable-hang-monitor --disable-infobars --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-search-engine-choice-screen --disable-sync --enable-automation --export-tagged-pdf --force-color-profile=srgb --generate-pdf-document-outline --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --disable-features=Translate,AcceptCHFrame,MediaRouter,OptimizationHints,WebUIReloadButton,WebUIOmniboxPopup,WebUIOmniboxAimPopup,ProcessPerSiteUpToMainFrameThreshold,IsolateSandboxedIframes --enable-features=PdfOopif --headless=new --hide-scrollbars --mute-audio --disable-extensions about:blank --no-sandbox --disable-setuid-sandbox --disable-blink-features=AutomationControlled --disable-infobars --window-size=1280,800 --disable-gpu --disable-software-rasterizer --disable-accelerated-video-decode --disable-accelerated-2d-canvas --disable-gl-drawing-for-tests --force-color-profile=srgb --remote-debugging-port=0 --user-data-dir=E:\\AI-Cache\\tmp\\puppeteer_dev_chrome_profile-pOirrg\r",
+      "4192\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=crashpad-handler --user-data-dir=E:\\AI-Cache\\tmp\\puppeteer_dev_chrome_profile-pOirrg /prefetch:4 --monitor-self-annotation=ptype=crashpad-handler --database=E:\\AI-Cache\\tmp\\puppeteer_dev_chrome_profile-pOirrg\\Crashpad --metrics-dir=E:\\AI-Cache\\tmp\\puppeteer_dev_chrome_profile-pOirrg --url=https://clients2.google.com/cr/report --annotation=channel= --annotation=plat=Win64 --annotation=prod=Chrome --annotation=ver=153.0.8010.53 --initial-client-data=0x120,0x124,0x128,0xf8,0x12c,0x7ffcb56bfe80,0x7ffcb56bfe90,0x7ffcb56bfea0\r",
+      "48732\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=gpu-process --no-sandbox --disable-breakpad --headless=new --disable-gl-drawing-for-tests --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\puppeteer_dev_chrome_profile-pOirrg\" --no-pre-read-main-dll --gpu-preferences=WAAAAAAAAADhAQAEAAAAAAAAAAAAAGAAQAAAAAAAAAAAAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAgAAAAAAAAAAgAAAAAAAAACAAAAAAAAAAIAAAAAAAAAAgAAAAAAAAA --use-gl=disabled --field-trial-handle=1836,i,715589728316515917,742959353647394926,262144 --enable-features=PdfOopif --disable-features=AcceptCHFrame,IsolateSandboxedIframes,MediaRouter,OptimizationHints,PaintHolding,ProcessPerSiteUpToMainFrameThreshold,Translate,WebUIOmniboxAimPopup,WebUIOmniboxPopup,WebUIReloadButton --variations-seed-version --pseudonymization-salt-handle=1840,i,7462143621350948180,3872431550208823612,4 --trace-process-track-uuid=3190708988185955192 --mojo-platform-channel-handle=1832 /prefetch:2\r",
+      "66920\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-GB --service-sandbox-type=none --no-sandbox --mute-audio --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\puppeteer_dev_chrome_profile-pOirrg\" --no-pre-read-main-dll --field-trial-handle=1836,i,715589728316515917,742959353647394926,262144 --enable-features=PdfOopif --disable-features=AcceptCHFrame,IsolateSandboxedIframes,MediaRouter,OptimizationHints,PaintHolding,ProcessPerSiteUpToMainFrameThreshold,Translate,WebUIOmniboxAimPopup,WebUIOmniboxPopup,WebUIReloadButton --variations-seed-version --pseudonymization-salt-handle=1840,i,7462143621350948180,3872431550208823612,4 --trace-process-track-uuid=3190708989122997041 --mojo-platform-channel-handle=2000 /prefetch:11\r",
+      "40208\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-GB --service-sandbox-type=service --no-sandbox --mute-audio --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\puppeteer_dev_chrome_profile-pOirrg\" --no-pre-read-main-dll --field-trial-handle=1836,i,715589728316515917,742959353647394926,262144 --enable-features=PdfOopif --disable-features=AcceptCHFrame,IsolateSandboxedIframes,MediaRouter,OptimizationHints,PaintHolding,ProcessPerSiteUpToMainFrameThreshold,Translate,WebUIOmniboxAimPopup,WebUIOmniboxPopup,WebUIReloadButton --variations-seed-version --pseudonymization-salt-handle=1840,i,7462143621350948180,3872431550208823612,4 --trace-process-track-uuid=3190708990060038890 --mojo-platform-channel-handle=2360 /prefetch:13\r",
+      "61932\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\puppeteer_dev_chrome_profile-pOirrg\" --no-pre-read-main-dll --no-sandbox --disable-accelerated-video-decode --disable-background-timer-throttling --disable-breakpad --enable-automation --force-color-profile=srgb --remote-debugging-port=0 --allow-pre-commit-input --disable-gpu-compositing --disable-blink-features=AutomationControlled --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=6 --launch-time-ticks=92412815717 --field-trial-handle=1836,i,715589728316515917,742959353647394926,262144 --enable-features=PdfOopif --disable-features=AcceptCHFrame,IsolateSandboxedIframes,MediaRouter,OptimizationHints,PaintHolding,ProcessPerSiteUpToMainFrameThreshold,Translate,WebUIOmniboxAimPopup,WebUIOmniboxPopup,WebUIReloadButton --variations-seed-version --pseudonymization-salt-handle=1840,i,7462143621350948180,3872431550208823612,4 --trace-process-track-uuid=3190708991934122588 --mojo-platform-channel-handle=3256 /prefetch:1\r",
+      "59044\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\puppeteer_dev_chrome_profile-pOirrg\" --no-pre-read-main-dll --no-sandbox --disable-accelerated-video-decode --disable-background-timer-throttling --disable-breakpad --enable-automation --force-color-profile=srgb --remote-debugging-port=0 --allow-pre-commit-input --disable-gpu-compositing --disable-blink-features=AutomationControlled --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=5 --launch-time-ticks=92412843799 --field-trial-handle=1836,i,715589728316515917,742959353647394926,262144 --enable-features=PdfOopif --disable-features=AcceptCHFrame,IsolateSandboxedIframes,MediaRouter,OptimizationHints,PaintHolding,ProcessPerSiteUpToMainFrameThreshold,Translate,WebUIOmniboxAimPopup,WebUIOmniboxPopup,WebUIReloadButton --variations-seed-version --pseudonymization-salt-handle=1840,i,7462143621350948180,3872431550208823612,4 --trace-process-track-uuid=3190708990997080739 --mojo-platform-channel-handle=3420 /prefetch:1\r",
+      "25744\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\puppeteer_dev_chrome_profile-pOirrg\" --no-pre-read-main-dll --no-sandbox --disable-accelerated-video-decode --disable-background-timer-throttling --disable-breakpad --enable-automation --force-color-profile=srgb --remote-debugging-port=0 --allow-pre-commit-input --disable-gpu-compositing --disable-blink-features=AutomationControlled --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=7 --launch-time-ticks=92412919174 --field-trial-handle=1836,i,715589728316515917,742959353647394926,262144 --enable-features=PdfOopif --disable-features=AcceptCHFrame,IsolateSandboxedIframes,MediaRouter,OptimizationHints,PaintHolding,ProcessPerSiteUpToMainFrameThreshold,Translate,WebUIOmniboxAimPopup,WebUIOmniboxPopup,WebUIReloadButton --variations-seed-version --pseudonymization-salt-handle=1840,i,7462143621350948180,3872431550208823612,4 --trace-process-track-uuid=3190708992871164437 --mojo-platform-channel-handle=4232 /prefetch:1\r",
+      "10444\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790322445084\" --no-pre-read-main-dll --remote-debugging-port=62445 --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=108 --launch-time-ticks=93385347453 --field-trial-handle=1868,i,5788859380016929096,1958520695805638872,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1872,i,1506994886200045903,8396138879927645835,4 --trace-process-track-uuid=3190709087512391186 --mojo-platform-channel-handle=7024 /prefetch:1\r",
+      "18344\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790322445084\" --no-pre-read-main-dll --remote-debugging-port=62445 --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=110 --launch-time-ticks=93442311681 --field-trial-handle=1868,i,5788859380016929096,1958520695805638872,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1872,i,1506994886200045903,8396138879927645835,4 --trace-process-track-uuid=3190709089386474884 --mojo-platform-channel-handle=5648 /prefetch:1\r"
+    ]
+  }
+}

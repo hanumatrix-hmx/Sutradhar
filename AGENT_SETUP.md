@@ -61,7 +61,7 @@ at all since you already are one).
 
 | Category | Tools | What they're for |
 |---|---|---|
-| **Lifecycle** | `health`, `launch`, `attach`, `shutdown`, `shutdown_all` | Start/stop a session. `attach` connects to an already-running Chrome over CDP instead of launching a new one. |
+| **Lifecycle** | `health`, `launch`, `attach`, `shutdown`, `shutdown_all` | Start/stop a session. `attach` connects to an already-running Chrome over CDP instead of launching a new one. Other tools take the sessionId from launch/attach. It may be omitted only while exactly one session is live. Otherwise the call fails and lists the live ids. |
 | **Navigation** | `navigate`, `go_back`, `go_forward`, `reload` | Standard page navigation. |
 | **Agent vision** | `snapshot`, `ax_snapshot` | **Read the page.** See the grounding section below — this is the most important pair of tools here. Elements inside an iframe are labelled `[#31 in iframe "pay" (https://…)]` (the URL shown once per frame; an unnamed frame shows its number instead), and elements inside an open shadow root end with `(shadow: host-tag#id)`; a frame that couldn't be read is listed as `[iframe <origin> — not inspectable] (reason)` instead of being silently dropped. |
 | **Interaction** | `click`, `click_by_text`, `click_by_role`, `right_click`, `type`, `type_by_label`, `press_key`, `hover`, `scroll`, `select_option`/`select_options`, `drag_and_drop`, `touch_tap`, `upload_file`, `upload_file_via_trigger`, `download_file`, `wait_for_selector`, `fill_form`, `click_at_point`, `drag_at_points` | Act on the page. `fill_form` does a whole form in one call. `click_at_point`/`drag_at_points` are the escape hatch for canvas/custom-rendered UI with nothing addressable via DOM. |

@@ -37,6 +37,8 @@ import type {
   AttachOptions,
   LaunchOptions,
   LaunchResult,
+  LiveSessionInfo,
+  LiveSessionsView,
   NavigateResult,
   PdfResult,
   SnapshotResult,
@@ -171,6 +173,14 @@ export class SutradharRuntime {
    *  making `grantPermissions`/`setGeolocation` behave additively, matching what a caller
    *  reasonably expects from a method named "grant". */
   private readonly grantedPermissionsByOrigin = new Map<string, Set<string>>();
+  /** Sessions created through this runtime's own launch()/attach() — i.e. ones a caller was
+   *  handed an id for. Deliberately NOT every session in the manager: agent.runGoal (no
+   *  sessionId) creates its own ephemeral session in the same manager (agent-loop.ts), which no
+   *  MCP caller holds an id for and must never be auto-selected (FR2-10 D3). Entries whose
+   *  session has left the manager (crash, idle reap) are pruned lazily in listSessions(). */
+  private readonly clientSessions = new Map<string, 'launched' | 'attached'>();
+  /** launch/attach/shutdown/shutdownAll calls currently executing (FR2-10 D4). */
+  private lifecycleOpsInFlight = 0;
 
   public constructor(options: SutradharRuntimeOptions = {}) {
     const eventBus = options.eventBus ?? new EventBus(options.logger);
@@ -223,52 +233,58 @@ export class SutradharRuntime {
    * created on demand.)
    */
   public async launch(options: LaunchOptions = {}): Promise<LaunchResult> {
-    if (options.initialUrl) this.assertNavigationAllowed(options.initialUrl);
-    let launchOptions = options.launch;
-    if (options.profileName) {
-      const userDataDir = await this.profileManager.resolveUserDataDir(options.profileName);
-      launchOptions = { ...launchOptions, userDataDir };
-    }
-    const session = await this.sessionManager.createSession({
-      sessionId: options.sessionId ? createSessionId(options.sessionId) : undefined,
-      isIncognito: options.isIncognito,
-      initialUrl: options.initialUrl,
-      launch: launchOptions,
-    });
-    let activeTab = session.activeTabId
-      ? session.getTab(session.activeTabId)
-      : session.getTabs()[0];
-    if (!activeTab) {
-      // No initialUrl was given so the manager created zero tabs — open a blank one
-      // so the session has a live page to act on.
-      activeTab = await session.createTab();
-      session.setActiveTab(activeTab.id);
-    }
+    this.lifecycleOpsInFlight++;
+    try {
+      if (options.initialUrl) this.assertNavigationAllowed(options.initialUrl);
+      let launchOptions = options.launch;
+      if (options.profileName) {
+        const userDataDir = await this.profileManager.resolveUserDataDir(options.profileName);
+        launchOptions = { ...launchOptions, userDataDir };
+      }
+      const session = await this.sessionManager.createSession({
+        sessionId: options.sessionId ? createSessionId(options.sessionId) : undefined,
+        isIncognito: options.isIncognito,
+        initialUrl: options.initialUrl,
+        launch: launchOptions,
+      });
+      if (!this.clientSessions.has(session.id)) this.clientSessions.set(session.id, 'launched');
+      let activeTab = session.activeTabId
+        ? session.getTab(session.activeTabId)
+        : session.getTabs()[0];
+      if (!activeTab) {
+        // No initialUrl was given so the manager created zero tabs — open a blank one
+        // so the session has a live page to act on.
+        activeTab = await session.createTab();
+        session.setActiveTab(activeTab.id);
+      }
 
-    if (options.profileName) {
-      this.sessionProfiles.set(session.id, options.profileName);
-      // Restoring storage-state requires a real origin to restore it INTO — localStorage/
-      // sessionStorage are origin-scoped, so there's nothing to restore onto until the tab has
-      // navigated somewhere. Only possible here when the caller also gave `initialUrl` (which
-      // BrowserSessionManager already navigated to before this point — see its own doc
-      // comment). A profile launched with no `initialUrl` still gets userDataDir's own
-      // cookies/localStorage restore (that part needs no help from this); only the
-      // sessionStorage half of a bare, no-initialUrl launch stays lost until the caller
-      // navigates and restores it themselves via `setStorageState`.
-      if (options.initialUrl && this.hasRealPage(activeTab)) {
-        const saved = await this.profileManager.loadStorageState(options.profileName).catch(() => undefined);
-        if (saved && saved.origin === new URL(activeTab.url).origin) {
-          // Best-effort — a failed restore should not fail the whole launch.
-          await this.setStorageState(session.id, saved, activeTab.id).catch(() => {});
+      if (options.profileName) {
+        this.sessionProfiles.set(session.id, options.profileName);
+        // Restoring storage-state requires a real origin to restore it INTO — localStorage/
+        // sessionStorage are origin-scoped, so there's nothing to restore onto until the tab has
+        // navigated somewhere. Only possible here when the caller also gave `initialUrl` (which
+        // BrowserSessionManager already navigated to before this point — see its own doc
+        // comment). A profile launched with no `initialUrl` still gets userDataDir's own
+        // cookies/localStorage restore (that part needs no help from this); only the
+        // sessionStorage half of a bare, no-initialUrl launch stays lost until the caller
+        // navigates and restores it themselves via `setStorageState`.
+        if (options.initialUrl && this.hasRealPage(activeTab)) {
+          const saved = await this.profileManager.loadStorageState(options.profileName).catch(() => undefined);
+          if (saved && saved.origin === new URL(activeTab.url).origin) {
+            // Best-effort — a failed restore should not fail the whole launch.
+            await this.setStorageState(session.id, saved, activeTab.id).catch(() => {});
+          }
         }
       }
-    }
 
-    return {
-      sessionId: session.id,
-      activeTabId: activeTab.id,
-      hasRealBrowser: this.hasRealPage(activeTab),
-    };
+      return {
+        sessionId: session.id,
+        activeTabId: activeTab.id,
+        hasRealBrowser: this.hasRealPage(activeTab),
+      };
+    } finally {
+      this.lifecycleOpsInFlight--;
+    }
   }
 
   /**
@@ -281,41 +297,47 @@ export class SutradharRuntime {
    * but leaves the user's browser running.
    */
   public async attach(options: AttachOptions): Promise<LaunchResult> {
-    const session = await this.sessionManager.createSession({
-      sessionId: options.sessionId ? createSessionId(options.sessionId) : undefined,
-      wsEndpoint: options.endpoint,
-    });
-    // BrowserSession does not mirror the external browser's existing tabs into its tab map, so
-    // on attach the session appears tab-less even though the real browser may already have open
-    // pages (e.g. left navigated by a previous `attach()` against this same wsEndpoint — the CLI
-    // does exactly this to persist a "session" across separate short-lived process invocations).
-    // Adopt EVERY open real page, not just the most recent one — found live: after `newtab`
-    // opened a genuine second tab, the next CLI command's fresh `attach()` (a brand-new
-    // BrowserSession, empty tab map) only ever adopted the single most-recently-opened page,
-    // silently orphaning the first tab from `tabs`/`focustab`/`closetab` for the rest of the
-    // CLI session — a real, previously-latent gap the new tab-management commands finally made
-    // directly visible. The most-recently-opened page still becomes the active tab, preserving
-    // prior single-tab behavior exactly.
-    let activeTab = session.activeTabId
-      ? session.getTab(session.activeTabId)
-      : session.getTabs()[0];
-    if (!activeTab) {
-      const openPages = await this.findAllOpenPages(session);
-      if (openPages.length > 0) {
-        for (const page of openPages.slice(0, -1)) {
-          await session.adoptExistingPage(page, false);
+    this.lifecycleOpsInFlight++;
+    try {
+      const session = await this.sessionManager.createSession({
+        sessionId: options.sessionId ? createSessionId(options.sessionId) : undefined,
+        wsEndpoint: options.endpoint,
+      });
+      if (!this.clientSessions.has(session.id)) this.clientSessions.set(session.id, 'attached');
+      // BrowserSession does not mirror the external browser's existing tabs into its tab map, so
+      // on attach the session appears tab-less even though the real browser may already have open
+      // pages (e.g. left navigated by a previous `attach()` against this same wsEndpoint — the CLI
+      // does exactly this to persist a "session" across separate short-lived process invocations).
+      // Adopt EVERY open real page, not just the most recent one — found live: after `newtab`
+      // opened a genuine second tab, the next CLI command's fresh `attach()` (a brand-new
+      // BrowserSession, empty tab map) only ever adopted the single most-recently-opened page,
+      // silently orphaning the first tab from `tabs`/`focustab`/`closetab` for the rest of the
+      // CLI session — a real, previously-latent gap the new tab-management commands finally made
+      // directly visible. The most-recently-opened page still becomes the active tab, preserving
+      // prior single-tab behavior exactly.
+      let activeTab = session.activeTabId
+        ? session.getTab(session.activeTabId)
+        : session.getTabs()[0];
+      if (!activeTab) {
+        const openPages = await this.findAllOpenPages(session);
+        if (openPages.length > 0) {
+          for (const page of openPages.slice(0, -1)) {
+            await session.adoptExistingPage(page, false);
+          }
+          activeTab = await session.adoptExistingPage(openPages[openPages.length - 1]!, false);
+        } else {
+          activeTab = await session.createTab();
         }
-        activeTab = await session.adoptExistingPage(openPages[openPages.length - 1]!, false);
-      } else {
-        activeTab = await session.createTab();
+        session.setActiveTab(activeTab.id);
       }
-      session.setActiveTab(activeTab.id);
+      return {
+        sessionId: session.id,
+        activeTabId: activeTab.id,
+        hasRealBrowser: this.hasRealPage(activeTab),
+      };
+    } finally {
+      this.lifecycleOpsInFlight--;
     }
-    return {
-      sessionId: session.id,
-      activeTabId: activeTab.id,
-      hasRealBrowser: this.hasRealPage(activeTab),
-    };
   }
 
   /** Best-effort: every non-blank page already open on `session`'s underlying browser, in
@@ -340,19 +362,25 @@ export class SutradharRuntime {
    *  persisted for that profile first, best-effort — see {@link ProfileManager.saveStorageState}
    *  for why this matters beyond what `userDataDir` alone already covers. */
   public async shutdown(sessionId: string, reason = 'Runtime shutdown'): Promise<void> {
-    const session = this.requireSession(sessionId);
-    const profileName = this.sessionProfiles.get(sessionId);
-    if (profileName) {
-      const activeTab = session.activeTabId ? session.getTab(session.activeTabId) : session.getTabs()[0];
-      if (activeTab && this.hasRealPage(activeTab)) {
-        const state = await this.getStorageState(sessionId, activeTab.id).catch(() => undefined);
-        if (state) {
-          await this.profileManager.saveStorageState(profileName, state).catch(() => {});
+    this.lifecycleOpsInFlight++;
+    try {
+      const session = this.requireSession(sessionId);
+      const profileName = this.sessionProfiles.get(sessionId);
+      if (profileName) {
+        const activeTab = session.activeTabId ? session.getTab(session.activeTabId) : session.getTabs()[0];
+        if (activeTab && this.hasRealPage(activeTab)) {
+          const state = await this.getStorageState(sessionId, activeTab.id).catch(() => undefined);
+          if (state) {
+            await this.profileManager.saveStorageState(profileName, state).catch(() => {});
+          }
         }
+        this.sessionProfiles.delete(sessionId);
       }
-      this.sessionProfiles.delete(sessionId);
+      await this.sessionManager.closeSession(session.id, reason);
+      this.clientSessions.delete(sessionId);
+    } finally {
+      this.lifecycleOpsInFlight--;
     }
-    await this.sessionManager.closeSession(session.id, reason);
   }
 
   /** Shut down every session. Safe to call on teardown. Persists storage-state for every
@@ -360,13 +388,19 @@ export class SutradharRuntime {
    *  logic here would silently lose any profile's session-storage-based login on every
    *  teardown that goes through this method instead of individual `shutdown()` calls. */
   public async shutdownAll(): Promise<void> {
-    await Promise.all(
-      Array.from(this.sessionProfiles.keys()).map((sessionId) =>
-        this.shutdown(sessionId, 'Runtime shutdown').catch(() => {}),
-      ),
-    );
-    await this.sessionManager.closeAllSessions();
-    this.sessionManager.dispose();
+    this.lifecycleOpsInFlight++;
+    try {
+      await Promise.all(
+        Array.from(this.sessionProfiles.keys()).map((sessionId) =>
+          this.shutdown(sessionId, 'Runtime shutdown').catch(() => {}),
+        ),
+      );
+      await this.sessionManager.closeAllSessions();
+      this.clientSessions.clear();
+      this.sessionManager.dispose();
+    } finally {
+      this.lifecycleOpsInFlight--;
+    }
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -1605,6 +1639,37 @@ export class SutradharRuntime {
   public async listTabs(sessionId: string): Promise<TabInfo[]> {
     const tabs = this.requireSession(sessionId).getTabs();
     return Promise.all(tabs.map((t) => this.toTabInfo(t)));
+  }
+
+  /**
+   * The caller-owned sessions (created via launch()/attach()) that are still live, plus how many
+   * lifecycle calls are in flight. "Live" = still registered in this process's session manager:
+   * removed on shutdown, idle reap, or Chrome disconnect (crash). No endpoint probe — this process
+   * holds the browser connection itself, unlike the CLI's detached-Chrome model (FR2-03), so the
+   * registry is already a maintained liveness signal. Synchronous and CDP-free.
+   */
+  public listSessions(): LiveSessionsView {
+    const sessions: LiveSessionInfo[] = [];
+    for (const [id, origin] of this.clientSessions) {
+      const session = this.sessionManager.getSession(createSessionId(id));
+      if (!session) {
+        this.clientSessions.delete(id); // crashed / reaped behind our back
+        continue;
+      }
+      const tabs = session.getTabs();
+      const active = session.activeTabId ? session.getTab(session.activeTabId) : tabs[0];
+      sessions.push({
+        sessionId: id,
+        origin,
+        createdAt: session.createdAt,
+        tabCount: tabs.length,
+        activeTabId: active?.id,
+        activeUrl: active?.url,
+        hasRealBrowser: this.hasRealPage(active),
+      });
+    }
+    sessions.sort((a, b) => a.createdAt.localeCompare(b.createdAt) || a.sessionId.localeCompare(b.sessionId));
+    return { sessions, lifecycleOpsInFlight: this.lifecycleOpsInFlight };
   }
 
   // ─────────────────────────────────────────────────────────────────────────

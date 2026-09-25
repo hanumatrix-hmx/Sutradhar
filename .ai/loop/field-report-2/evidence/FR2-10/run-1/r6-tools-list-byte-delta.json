@@ -1,0 +1,10 @@
+{
+  "note": "R6 (spec risk section): real before/after tools/list byte-size measurement, taken by temporarily disabling withSessionResolution in registerTools (this is the ONLY thing that changes any tool's schema/description under FR2-10), rebuilding packages/mcp-server, and hitting the real built server's tools/list twice.",
+  "beforeBytes": 52121,
+  "afterBytes": 56985,
+  "deltaBytes": 4864,
+  "expectedApprox": "74 chars * 66 tools ~= 4884 bytes",
+  "thresholdBytes": 8192,
+  "underThreshold": true,
+  "action": "none needed — delta is within the ~5KB estimate and well under the 8KB shorten-the-description threshold"
+}

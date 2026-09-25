@@ -1,0 +1,345 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041[39m
+
+ [33m❯[39m packages/mcp-server/tests/unit/session-resolution.spec.ts [2m ([22m[2m23 tests[22m [2m|[22m [31m11 failed[39m[2m)[22m[90m 18[2mms[22m[39m
+[31m   [33m❯[31m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mresolveSessionId[2m > [22mR1: 0 sessions -> exact MSG_NONE[39m
+[31m     → expected true to be false // Object.is equality[39m
+[31m   [33m❯[31m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mresolveSessionId[2m > [22mR2: 1 session -> resolves implicitly[39m
+[31m     → expected { ok: true, …(2) } to deeply equal { ok: true, sessionId: 'A', …(1) }[39m
+[31m   [33m❯[31m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mresolveSessionId[2m > [22mR3: more than 1 -> ambiguity error listing both, with the id placeholder, never a real id[39m
+[31m     → expected true to be false // Object.is equality[39m
+[31m   [33m❯[31m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mresolveSessionId[2m > [22mR3b: three sessions mentions "3 browser sessions"[39m
+[31m     → expected true to be false // Object.is equality[39m
+[31m   [33m❯[31m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mresolveSessionId[2m > [22mR4: in flight with 1 session never resolves to it[39m
+[31m     → expected true to be false // Object.is equality[39m
+[31m   [33m❯[31m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mresolveSessionId[2m > [22mR5: in flight with 0 sessions[39m
+[31m     → expected true to be false // Object.is equality[39m
+[31m   [33m❯[31m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mwithSessionResolution[2m > [22mW5: omitted with 1 live session -> resolves, appends the note as the last content item[39m
+[31m     → expected "spy" to be called with arguments: [ …(2) ][90m
+
+Received: 
+
+[1m  1st spy call:
+
+[22m[2m  Array [[22m
+[2m    Object {[22m
+[32m-     "sessionId": "A",[90m
+[31m+     "sessionId": "__broken__",[90m
+[2m      "target": "#x",[22m
+[2m    },[22m
+[2m    undefined,[22m
+[2m  ][22m
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[31m   [33m❯[31m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mwithSessionResolution[2m > [22mW5b: an isError result keeps isError:true, note still appended last[39m
+[31m     → expected 'sessionId omitted: used "__broken__",…' to be 'sessionId omitted: used "A", the only…' // Object.is equality[39m
+[31m   [33m❯[31m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mwithSessionResolution[2m > [22mW6: omitted with 0 sessions -> inner never called, exact error, no Hint: line[39m
+[31m     → expected "spy" to not be called at all, but actually been called 1 times[90m
+
+Received: 
+
+[1m  1st spy call:
+
+[22m    Array [
+      Object {
+        "sessionId": "__broken__",
+      },
+      undefined,
+    ]
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[31m   [33m❯[31m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mwithSessionResolution[2m > [22mW7: omitted with 2+ sessions -> inner never called, both ids present[39m
+[31m     → expected "spy" to not be called at all, but actually been called 1 times[90m
+
+Received: 
+
+[1m  1st spy call:
+
+[22m    Array [
+      Object {
+        "sessionId": "__broken__",
+      },
+      undefined,
+    ]
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[31m   [33m❯[31m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mwithSessionResolution[2m > [22mW7b: omitted while a lifecycle op is in flight -> inner never called, "in progress" in text[39m
+[31m     → expected "spy" to not be called at all, but actually been called 1 times[90m
+
+Received: 
+
+[1m  1st spy call:
+
+[22m    Array [
+      Object {
+        "sessionId": "__broken__",
+      },
+      undefined,
+    ]
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 11 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mresolveSessionId[2m > [22mR1: 0 sessions -> exact MSG_NONE
+[31m[1mAssertionError[22m: expected true to be false // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- false[39m
+[31m+ true[39m
+
+[36m [2m❯[22m packages/mcp-server/tests/unit/session-resolution.spec.ts:[2m39:18[22m[39m
+    [90m 37| [39m  [34mit[39m([32m'R1: 0 sessions -> exact MSG_NONE'[39m[33m,[39m () [33m=>[39m {
+    [90m 38| [39m    [35mconst[39m r [33m=[39m [34mresolveSessionId[39m(undefined[33m,[39m [34mview[39m([]))[33m;[39m
+    [90m 39| [39m    [34mexpect[39m(r[33m.[39mok)[33m.[39m[34mtoBe[39m([35mfalse[39m)[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 40| [39m    [35mif[39m ([33m![39mr[33m.[39mok) {
+    [90m 41| [39m      [34mexpect[39m(r[33m.[39mmessage)[33m.[39m[34mtoBe[39m(
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mresolveSessionId[2m > [22mR2: 1 session -> resolves implicitly
+[31m[1mAssertionError[22m: expected { ok: true, …(2) } to deeply equal { ok: true, sessionId: 'A', …(1) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  Object {[22m
+[32m-   "implicit": true,[39m
+[31m+   "implicit": false,[39m
+[2m    "ok": true,[22m
+[32m-   "sessionId": "A",[39m
+[31m+   "sessionId": "__broken__",[39m
+[2m  }[22m
+
+[36m [2m❯[22m packages/mcp-server/tests/unit/session-resolution.spec.ts:[2m51:15[22m[39m
+    [90m 49| [39m  [34mit[39m([32m'R2: 1 session -> resolves implicitly'[39m[33m,[39m () [33m=>[39m {
+    [90m 50| [39m    [35mconst[39m r [33m=[39m [34mresolveSessionId[39m(undefined[33m,[39m [34mview[39m([[33mA[39m]))[33m;[39m
+    [90m 51| [39m    [34mexpect[39m(r)[33m.[39m[34mtoEqual[39m({ ok[33m:[39m [35mtrue[39m[33m,[39m sessionId[33m:[39m [32m'A'[39m[33m,[39m implicit[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m   | [39m              [31m^[39m
+    [90m 52| [39m  })[33m;[39m
+    [90m 53| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mresolveSessionId[2m > [22mR3: more than 1 -> ambiguity error listing both, with the id placeholder, never a real id
+[31m[1mAssertionError[22m: expected true to be false // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- false[39m
+[31m+ true[39m
+
+[36m [2m❯[22m packages/mcp-server/tests/unit/session-resolution.spec.ts:[2m56:18[22m[39m
+    [90m 54| [39m  [34mit[39m([32m'R3: more than 1 -> ambiguity error listing both, with the id pla[39m…
+    [90m 55| [39m    [35mconst[39m r [33m=[39m [34mresolveSessionId[39m(undefined[33m,[39m [34mview[39m([[33mA[39m[33m,[39m [33mB[39m]))[33m;[39m
+    [90m 56| [39m    [34mexpect[39m(r[33m.[39mok)[33m.[39m[34mtoBe[39m([35mfalse[39m)[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 57| [39m    [35mif[39m (r[33m.[39mok) [35mthrow[39m [35mnew[39m [33mError[39m([32m'unreachable'[39m)[33m;[39m
+    [90m 58| [39m    [34mexpect[39m(r[33m.[39mmessage[33m.[39m[34mstartsWith[39m([32m'No sessionId given, and 2 browser ses[39m…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mresolveSessionId[2m > [22mR3b: three sessions mentions "3 browser sessions"
+[31m[1mAssertionError[22m: expected true to be false // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- false[39m
+[31m+ true[39m
+
+[36m [2m❯[22m packages/mcp-server/tests/unit/session-resolution.spec.ts:[2m68:18[22m[39m
+    [90m 66| [39m  [34mit[39m([32m'R3b: three sessions mentions "3 browser sessions"'[39m[33m,[39m () [33m=>[39m {
+    [90m 67| [39m    [35mconst[39m r [33m=[39m [34mresolveSessionId[39m(undefined[33m,[39m [34mview[39m([[33mA[39m[33m,[39m [33mB[39m[33m,[39m [33mC[39m]))[33m;[39m
+    [90m 68| [39m    [34mexpect[39m(r[33m.[39mok)[33m.[39m[34mtoBe[39m([35mfalse[39m)[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 69| [39m    [35mif[39m (r[33m.[39mok) [35mthrow[39m [35mnew[39m [33mError[39m([32m'unreachable'[39m)[33m;[39m
+    [90m 70| [39m    [34mexpect[39m(r[33m.[39mmessage)[33m.[39m[34mtoContain[39m([32m'3 browser sessions'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mresolveSessionId[2m > [22mR4: in flight with 1 session never resolves to it
+[31m[1mAssertionError[22m: expected true to be false // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- false[39m
+[31m+ true[39m
+
+[36m [2m❯[22m packages/mcp-server/tests/unit/session-resolution.spec.ts:[2m75:18[22m[39m
+    [90m 73| [39m  [34mit[39m([32m'R4: in flight with 1 session never resolves to it'[39m[33m,[39m () [33m=>[39m {
+    [90m 74| [39m    [35mconst[39m r [33m=[39m [34mresolveSessionId[39m(undefined[33m,[39m [34mview[39m([[33mA[39m][33m,[39m [34m1[39m))[33m;[39m
+    [90m 75| [39m    [34mexpect[39m(r[33m.[39mok)[33m.[39m[34mtoBe[39m([35mfalse[39m)[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 76| [39m    [35mif[39m (r[33m.[39mok) [35mthrow[39m [35mnew[39m [33mError[39m([32m'unreachable'[39m)[33m;[39m
+    [90m 77| [39m    [34mexpect[39m(r[33m.[39mmessage)[33m.[39m[34mtoContain[39m([32m'1 browser.launch/attach/shutdown call[39m…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/11]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mresolveSessionId[2m > [22mR5: in flight with 0 sessions
+[31m[1mAssertionError[22m: expected true to be false // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- false[39m
+[31m+ true[39m
+
+[36m [2m❯[22m packages/mcp-server/tests/unit/session-resolution.spec.ts:[2m83:18[22m[39m
+    [90m 81| [39m  [34mit[39m([32m'R5: in flight with 0 sessions'[39m[33m,[39m () [33m=>[39m {
+    [90m 82| [39m    [35mconst[39m r [33m=[39m [34mresolveSessionId[39m(undefined[33m,[39m [34mview[39m([][33m,[39m [34m2[39m))[33m;[39m
+    [90m 83| [39m    [34mexpect[39m(r[33m.[39mok)[33m.[39m[34mtoBe[39m([35mfalse[39m)[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 84| [39m    [35mif[39m (r[33m.[39mok) [35mthrow[39m [35mnew[39m [33mError[39m([32m'unreachable'[39m)[33m;[39m
+    [90m 85| [39m    [34mexpect[39m(r[33m.[39mmessage)[33m.[39m[34mtoContain[39m([32m'2 browser.launch'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/11]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mwithSessionResolution[2m > [22mW5: omitted with 1 live session -> resolves, appends the note as the last content item
+[31m[1mAssertionError[22m: expected "spy" to be called with arguments: [ …(2) ][90m
+
+Received: 
+
+[1m  1st spy call:
+
+[22m[2m  Array [[22m
+[2m    Object {[22m
+[32m-     "sessionId": "A",[90m
+[31m+     "sessionId": "__broken__",[90m
+[2m      "target": "#x",[22m
+[2m    },[22m
+[2m    undefined,[22m
+[2m  ][22m
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[36m [2m❯[22m packages/mcp-server/tests/unit/session-resolution.spec.ts:[2m235:19[22m[39m
+    [90m233| [39m    [35mconst[39m result [33m=[39m [35mawait[39m tools[33m.[39m[35mget[39m([32m't.req'[39m)[33m![39m[33m.[39m[34mhandler[39m({ target[33m:[39m [32m'#x'[39m }[33m,[39m…
+    [90m234| [39m    [34mexpect[39m(inner)[33m.[39m[34mtoHaveBeenCalledTimes[39m([34m1[39m)[33m;[39m
+    [90m235| [39m    [34mexpect[39m(inner)[33m.[39m[34mtoHaveBeenCalledWith[39m({ target[33m:[39m [32m'#x'[39m[33m,[39m sessionId[33m:[39m [32m'A'[39m …
+    [90m   | [39m                  [31m^[39m
+    [90m236| [39m    [34mexpect[39m(result[33m.[39mcontent[[34m0[39m])[33m.[39m[34mtoEqual[39m({ type[33m:[39m [32m'text'[39m[33m,[39m text[33m:[39m [32m'{"ok":1}'[39m…
+    [90m237| [39m    [34mexpect[39m(result[33m.[39mcontent[33m.[39mlength)[33m.[39m[34mtoBe[39m([34m2[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/11]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mwithSessionResolution[2m > [22mW5b: an isError result keeps isError:true, note still appended last
+[31m[1mAssertionError[22m: expected 'sessionId omitted: used "__broken__",…' to be 'sessionId omitted: used "A", the only…' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- sessionId omitted: used "A", the only live browser session.[39m
+[31m+ sessionId omitted: used "__broken__", the only live browser session.[39m
+
+[36m [2m❯[22m packages/mcp-server/tests/unit/session-resolution.spec.ts:[2m250:40[22m[39m
+    [90m248| [39m    [35mconst[39m result [33m=[39m [35mawait[39m tools[33m.[39m[35mget[39m([32m't.req'[39m)[33m![39m[33m.[39m[34mhandler[39m({}[33m,[39m undefined)[33m;[39m
+    [90m249| [39m    [34mexpect[39m(result[33m.[39misError)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m250| [39m    [34mexpect[39m(result[33m.[39mcontent[33m.[39m[34mat[39m([33m-[39m[34m1[39m)[33m.[39mtext)[33m.[39m[34mtoBe[39m([32m'sessionId omitted: used "[39m…
+    [90m   | [39m                                       [31m^[39m
+    [90m251| [39m  })[33m;[39m
+    [90m252| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/11]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mwithSessionResolution[2m > [22mW6: omitted with 0 sessions -> inner never called, exact error, no Hint: line
+[31m[1mAssertionError[22m: expected "spy" to not be called at all, but actually been called 1 times[90m
+
+Received: 
+
+[1m  1st spy call:
+
+[22m    Array [
+      Object {
+        "sessionId": "__broken__",
+      },
+      undefined,
+    ]
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[36m [2m❯[22m packages/mcp-server/tests/unit/session-resolution.spec.ts:[2m260:23[22m[39m
+    [90m258| [39m    wrapped[33m.[39m[34mregisterTool[39m([32m'browser.req'[39m[33m,[39m { inputSchema[33m:[39m { sessionId[33m:[39m z[33m.[39m…
+    [90m259| [39m    [35mconst[39m result [33m=[39m [35mawait[39m tools[33m.[39m[35mget[39m([32m'browser.req'[39m)[33m![39m[33m.[39m[34mhandler[39m({}[33m,[39m undefin…
+    [90m260| [39m    [34mexpect[39m(inner)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m   | [39m                      [31m^[39m
+    [90m261| [39m    [34mexpect[39m(result[33m.[39misError)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m262| [39m    [34mexpect[39m(result[33m.[39mcontent)[33m.[39m[34mtoEqual[39m([
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/11]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mwithSessionResolution[2m > [22mW7: omitted with 2+ sessions -> inner never called, both ids present
+[31m[1mAssertionError[22m: expected "spy" to not be called at all, but actually been called 1 times[90m
+
+Received: 
+
+[1m  1st spy call:
+
+[22m    Array [
+      Object {
+        "sessionId": "__broken__",
+      },
+      undefined,
+    ]
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[36m [2m❯[22m packages/mcp-server/tests/unit/session-resolution.spec.ts:[2m281:23[22m[39m
+    [90m279| [39m    wrapped[33m.[39m[34mregisterTool[39m([32m'browser.req'[39m[33m,[39m { inputSchema[33m:[39m { sessionId[33m:[39m z[33m.[39m…
+    [90m280| [39m    [35mconst[39m result [33m=[39m [35mawait[39m tools[33m.[39m[35mget[39m([32m'browser.req'[39m)[33m![39m[33m.[39m[34mhandler[39m({}[33m,[39m undefin…
+    [90m281| [39m    [34mexpect[39m(inner)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m   | [39m                      [31m^[39m
+    [90m282| [39m    [34mexpect[39m(result[33m.[39mcontent[[34m0[39m][33m.[39mtext)[33m.[39m[34mtoContain[39m([32m'A'[39m)[33m;[39m
+    [90m283| [39m    [34mexpect[39m(result[33m.[39mcontent[[34m0[39m][33m.[39mtext)[33m.[39m[34mtoContain[39m([32m'B'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/11]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/mcp-server/tests/unit/session-resolution.spec.ts[2m > [22mwithSessionResolution[2m > [22mW7b: omitted while a lifecycle op is in flight -> inner never called, "in progress" in text
+[31m[1mAssertionError[22m: expected "spy" to not be called at all, but actually been called 1 times[90m
+
+Received: 
+
+[1m  1st spy call:
+
+[22m    Array [
+      Object {
+        "sessionId": "__broken__",
+      },
+      undefined,
+    ]
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[36m [2m❯[22m packages/mcp-server/tests/unit/session-resolution.spec.ts:[2m293:23[22m[39m
+    [90m291| [39m    wrapped[33m.[39m[34mregisterTool[39m([32m'browser.req'[39m[33m,[39m { inputSchema[33m:[39m { sessionId[33m:[39m z[33m.[39m…
+    [90m292| [39m    [35mconst[39m result [33m=[39m [35mawait[39m tools[33m.[39m[35mget[39m([32m'browser.req'[39m)[33m![39m[33m.[39m[34mhandler[39m({}[33m,[39m undefin…
+    [90m293| [39m    [34mexpect[39m(inner)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m   | [39m                      [31m^[39m
+    [90m294| [39m    [34mexpect[39m(result[33m.[39mcontent[[34m0[39m][33m.[39mtext)[33m.[39m[34mtoContain[39m([32m'in progress'[39m)[33m;[39m
+    [90m295| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/11]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m11 failed[39m[22m[2m | [22m[1m[32m12 passed[39m[22m[90m (23)[39m
+[2m   Start at [22m 13:40:05
+[2m   Duration [22m 497ms[2m (transform 43ms, setup 0ms, collect 51ms, tests 18ms, environment 0ms, prepare 185ms)[22m
+

@@ -1,0 +1,8 @@
+PASS S-A launch race (4 rounds x 16 omitted evals spread 0..1800ms)
+PASS S-B shutdown race of E with A live (4 rounds x 12 evals)
+PASS S-C shutdown race of the only session
+PASS S-D attach race never lands on the attaching session
+PASS S-E external Chrome killed: omitted id falls back to the one remaining session, never D
+PASS ADV-b 5 live sessions: message lists all 5 ids, one per line, no query/fragment leak
+PASS ADV-a per-client isolation (separate MCP connections = separate server processes)
+ALL OK: true

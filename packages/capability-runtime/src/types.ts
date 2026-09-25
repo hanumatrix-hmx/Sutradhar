@@ -172,3 +172,26 @@ export function normalizeTarget(target: ElementTarget): string {
 }
 
 export { type SessionId, type TabId };
+
+/** One caller-owned browser session, as reported by {@link SutradharRuntime.listSessions}. */
+export interface LiveSessionInfo {
+  sessionId: string;
+  /** How the session came to exist: launch() (Sutradhar owns the browser) or attach() (external browser). */
+  origin: 'launched' | 'attached';
+  /** ISO timestamp the session was created (BrowserSession.createdAt). */
+  createdAt: string;
+  tabCount: number;
+  activeTabId?: string;
+  /** The active tab's current URL (full; callers that display it should shorten it). */
+  activeUrl?: string;
+  /** false when the session is backed by the no-Chrome mock instance (launch fell back). */
+  hasRealBrowser: boolean;
+}
+
+/** Snapshot of the runtime's caller-owned sessions at one instant. */
+export interface LiveSessionsView {
+  /** Sorted by createdAt ascending, then sessionId. */
+  sessions: LiveSessionInfo[];
+  /** launch/attach/shutdown/shutdownAll calls currently executing — while > 0 the set is changing. */
+  lifecycleOpsInFlight: number;
+}

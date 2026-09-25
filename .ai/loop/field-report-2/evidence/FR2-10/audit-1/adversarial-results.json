@@ -1,0 +1,362 @@
+{
+  "allOk": true,
+  "results": [
+    {
+      "name": "S-A launch race (4 rounds x 16 omitted evals spread 0..1800ms)",
+      "pass": true,
+      "detail": [
+        {
+          "round": 0,
+          "A": "sess_1790325809737_1",
+          "E": "sess_1790325810201_2",
+          "launchDoneAt": 416,
+          "branches": [
+            "1ms:OTHER",
+            "1ms:OTHER",
+            "1ms:OTHER",
+            "2ms:OTHER",
+            "9ms:OTHER",
+            "10ms:OTHER",
+            "34ms:OTHER",
+            "50ms:OTHER",
+            "95ms:OTHER",
+            "124ms:OTHER",
+            "200ms:OTHER",
+            "308ms:OTHER",
+            "511ms:ambiguous",
+            "807ms:ambiguous",
+            "1211ms:ambiguous",
+            "1803ms:ambiguous"
+          ],
+          "violations": []
+        },
+        {
+          "round": 1,
+          "A": "sess_1790325809737_1",
+          "E": "sess_1790325812156_3",
+          "launchDoneAt": 492,
+          "branches": [
+            "1ms:OTHER",
+            "1ms:OTHER",
+            "1ms:OTHER",
+            "8ms:OTHER",
+            "8ms:OTHER",
+            "18ms:OTHER",
+            "33ms:OTHER",
+            "48ms:OTHER",
+            "95ms:OTHER",
+            "125ms:OTHER",
+            "203ms:OTHER",
+            "310ms:OTHER",
+            "510ms:ambiguous",
+            "808ms:ambiguous",
+            "1214ms:ambiguous",
+            "1806ms:ambiguous"
+          ],
+          "violations": []
+        },
+        {
+          "round": 2,
+          "A": "sess_1790325809737_1",
+          "E": "sess_1790325814110_4",
+          "launchDoneAt": 398,
+          "branches": [
+            "1ms:OTHER",
+            "1ms:OTHER",
+            "1ms:OTHER",
+            "8ms:OTHER",
+            "8ms:OTHER",
+            "23ms:OTHER",
+            "23ms:OTHER",
+            "54ms:OTHER",
+            "85ms:OTHER",
+            "132ms:OTHER",
+            "208ms:OTHER",
+            "315ms:OTHER",
+            "502ms:ambiguous",
+            "810ms:ambiguous",
+            "1200ms:ambiguous",
+            "1806ms:ambiguous"
+          ],
+          "violations": []
+        },
+        {
+          "round": 3,
+          "A": "sess_1790325809737_1",
+          "E": "sess_1790325816065_5",
+          "launchDoneAt": 431,
+          "branches": [
+            "1ms:OTHER",
+            "1ms:OTHER",
+            "1ms:OTHER",
+            "6ms:OTHER",
+            "6ms:OTHER",
+            "21ms:OTHER",
+            "21ms:OTHER",
+            "52ms:OTHER",
+            "83ms:OTHER",
+            "129ms:OTHER",
+            "208ms:OTHER",
+            "300ms:OTHER",
+            "501ms:ambiguous",
+            "809ms:ambiguous",
+            "1202ms:ambiguous",
+            "1805ms:ambiguous"
+          ],
+          "violations": []
+        }
+      ]
+    },
+    {
+      "name": "S-B shutdown race of E with A live (4 rounds x 12 evals)",
+      "pass": true,
+      "detail": [
+        {
+          "round": 0,
+          "E": "sess_1790325818062_6",
+          "shutDoneAt": 160,
+          "branches": [
+            "3ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "3ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "3ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "3ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "5ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "19ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "20ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "49ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "82ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "159ms:onA",
+            "300ms:onA",
+            "613ms:onA"
+          ],
+          "violations": []
+        },
+        {
+          "round": 1,
+          "E": "sess_1790325819129_7",
+          "shutDoneAt": 133,
+          "branches": [
+            "2ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "2ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "2ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "2ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "8ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "24ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "25ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "55ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "87ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "151ms:onA",
+            "305ms:onA",
+            "614ms:onA"
+          ],
+          "violations": []
+        },
+        {
+          "round": 2,
+          "E": "sess_1790325820170_8",
+          "shutDoneAt": 146,
+          "branches": [
+            "3ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "3ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "3ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "3ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "5ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "18ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "19ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "48ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "80ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "157ms:onA",
+            "315ms:onA",
+            "611ms:onA"
+          ],
+          "violations": []
+        },
+        {
+          "round": 3,
+          "E": "sess_1790325821301_9",
+          "shutDoneAt": 134,
+          "branches": [
+            "2ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "2ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "2ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "2ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "19ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "19ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "20ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "44ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "81ms:OTHER:eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "157ms:onA",
+            "312ms:onA",
+            "603ms:onA"
+          ],
+          "violations": []
+        }
+      ]
+    },
+    {
+      "name": "S-C shutdown race of the only session",
+      "pass": true,
+      "detail": [
+        {
+          "sentAt": 7,
+          "isError": true,
+          "note": null,
+          "txt": "eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in progress,"
+        },
+        {
+          "sentAt": 7,
+          "isError": true,
+          "note": null,
+          "txt": "eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in progress,"
+        },
+        {
+          "sentAt": 7,
+          "isError": true,
+          "note": null,
+          "txt": "eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in progress,"
+        },
+        {
+          "sentAt": 8,
+          "isError": true,
+          "note": null,
+          "txt": "eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in progress,"
+        },
+        {
+          "sentAt": 23,
+          "isError": true,
+          "note": null,
+          "txt": "eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in progress,"
+        },
+        {
+          "sentAt": 113,
+          "isError": true,
+          "note": null,
+          "txt": "eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in progress,"
+        },
+        {
+          "sentAt": 405,
+          "isError": true,
+          "note": null,
+          "txt": "eval failed: No sessionId given, and there is no live browser session to use. Call browser.launch (o"
+        }
+      ]
+    },
+    {
+      "name": "S-D attach race never lands on the attaching session",
+      "pass": true,
+      "detail": {
+        "A2": "sess_1790325822719_10",
+        "D": "sess_1790325823365_11",
+        "evs": [
+          {
+            "key": "__aud_att_0",
+            "sentAt": 1,
+            "isError": true,
+            "note": null,
+            "err": "eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "onA2": null,
+            "onD": null
+          },
+          {
+            "key": "__aud_att_1",
+            "sentAt": 1,
+            "isError": true,
+            "note": null,
+            "err": "eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "onA2": null,
+            "onD": null
+          },
+          {
+            "key": "__aud_att_2",
+            "sentAt": 1,
+            "isError": true,
+            "note": null,
+            "err": "eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "onA2": null,
+            "onD": null
+          },
+          {
+            "key": "__aud_att_3",
+            "sentAt": 16,
+            "isError": true,
+            "note": null,
+            "err": "eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "onA2": null,
+            "onD": null
+          },
+          {
+            "key": "__aud_att_4",
+            "sentAt": 23,
+            "isError": true,
+            "note": null,
+            "err": "eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "onA2": null,
+            "onD": null
+          },
+          {
+            "key": "__aud_att_5",
+            "sentAt": 63,
+            "isError": true,
+            "note": null,
+            "err": "eval failed: No sessionId given, and 1 browser.launch/attach/shutdown call(s) are still in",
+            "onA2": null,
+            "onD": null
+          },
+          {
+            "key": "__aud_att_6",
+            "sentAt": 156,
+            "isError": true,
+            "note": null,
+            "err": "eval failed: No sessionId given, and 2 browser sessions are live, so which one to use is a",
+            "onA2": null,
+            "onD": null
+          },
+          {
+            "key": "__aud_att_7",
+            "sentAt": 405,
+            "isError": true,
+            "note": null,
+            "err": "eval failed: No sessionId given, and 2 browser sessions are live, so which one to use is a",
+            "onA2": null,
+            "onD": null
+          }
+        ]
+      }
+    },
+    {
+      "name": "S-E external Chrome killed: omitted id falls back to the one remaining session, never D",
+      "pass": true,
+      "detail": {
+        "A2": "sess_1790325822719_10",
+        "D": "sess_1790325823365_11",
+        "elapsedMs": 106,
+        "resolved": "sessionId omitted: used \"sess_1790325822719_10\", the only live browser session.",
+        "firstSeen": [
+          "err:eval failed: No sessionId given, and 2 browser sessions are ",
+          "sessionId omitted: used \"sess_1790325822719_10\", the only live browser session."
+        ]
+      }
+    },
+    {
+      "name": "ADV-b 5 live sessions: message lists all 5 ids, one per line, no query/fragment leak",
+      "pass": true,
+      "detail": {
+        "text": "click failed: No sessionId given, and 5 browser sessions are live, so which one to use is ambiguous (Sutradhar never picks one for you). Pass sessionId explicitly, e.g. {\"sessionId\": \"<id>\", ...} using one of these ids:\n  - sess_1790325824030_12 (launched 2026-09-25T08:43:44.324Z; 1 tab; active: http://127.0.0.1:53422/five/0)\n  - sess_1790325824437_13 (launched 2026-09-25T08:43:44.705Z; 1 tab; active: http://127.0.0.1:53422/five/1)\n  - sess_1790325824847_14 (launched 2026-09-25T08:43:45.109Z; 1 tab; active: http://127.0.0.1:53422/five/2)\n  - sess_1790325825264_15 (launched 2026-09-25T08:43:45.538Z; 1 tab; active: http://127.0.0.1:53422/five/3)\n  - sess_1790325825679_16 (launched 2026-09-25T08:43:45.947Z; 1 tab; active: http://127.0.0.1:53422/five/4)"
+      }
+    },
+    {
+      "name": "ADV-a per-client isolation (separate MCP connections = separate server processes)",
+      "pass": true,
+      "detail": {
+        "x1": "sess_1790325827368_1",
+        "x2": "sess_1790325827814_2",
+        "y1": "sess_1790325828261_1",
+        "idCollision": false,
+        "xText": "eval failed: No sessionId given, and 2 browser sessions are live, so which one to use is ambiguous (Sutradhar never picks one for you). Pass sessionId explicitly, e.g. {\"sessionId\": \"<id>\", ...} using one of these ids:\n  - sess_1790325827368_1 (launched 2026-09-25T08:43:47.664Z; 1 tab; active: http://127.0.0.1:53422/x1)\n  - sess_1790325827814_2 (launched 2026-09-25T08:43:48.097Z; 1 tab; active: http://127.0.0.1:53422/x2)",
+        "yNote": "sessionId omitted: used \"sess_1790325828261_1\", the only live browser session.",
+        "yPath": "/y1",
+        "crossExplicit": "eval failed: No browser session \"sess_1790325828261_1\". Call launch() first.\nHint: Call browser.launch first to create a"
+      }
+    }
+  ]
+}

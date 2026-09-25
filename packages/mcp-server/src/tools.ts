@@ -15,6 +15,7 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { SutradharRuntime } from '@sutradhar/capability-runtime';
 import type { AgentCore } from '@sutradhar/agent';
 import { createGoalId } from '@sutradhar/contracts';
+import { withSessionResolution } from './session-resolution.js';
 
 /** Shape of the agent core passed to {@link registerTools}, if autonomous mode is enabled. */
 export interface AgentHandle {
@@ -119,8 +120,12 @@ function jsonResult(value: unknown) {
  * Register all Sutradhar browser tools (and, if an agent is provided, the
  * `agent.runGoal` tool) onto an {@link McpServer}.
  */
-export function registerTools(server: McpServer, options: RegisterToolsOptions): void {
+export function registerTools(mcpServer: McpServer, options: RegisterToolsOptions): void {
   const { runtime } = options;
+  // FR2-10: every tool whose schema requires sessionId gets it made optional, resolved to the
+  // one live session when omitted (error listing the live ids when there are 0 or several). One
+  // mechanism for all tools — see session-resolution.ts.
+  const server = withSessionResolution(mcpServer, runtime);
 
   // ── Lifecycle ────────────────────────────────────────────────────────────
   server.registerTool(
@@ -147,8 +152,12 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
     'browser.launch',
     {
       description:
-        'Launch a real browser session. Returns a sessionId (pass it to every other browser tool) ' +
-        'and whether a real Chrome/Edge page is backing the session. Optionally open an initial URL.',
+        'Launch a real browser session. Returns a sessionId and whether a real Chrome/Edge page is backing ' +
+        'the session. Optionally open an initial URL. Pass the sessionId to other browser tools. You may omit ' +
+        'it while this is the ONLY live session: the call then uses that session and says so. With 0 or several ' +
+        'live sessions, an omitted sessionId fails and lists the live ids. Nothing is ever guessed. The ' +
+        'sessionId parameter HERE is different: it is the id to create (or return, if already live) and never ' +
+        'selects an existing session automatically. Omitting it always launches a new session.',
       inputSchema: {
         sessionId: z.string().optional().describe('Reuse an existing caller-owned session id.'),
         initialUrl: z.string().url().optional().describe('Open a tab and navigate here immediately.'),
