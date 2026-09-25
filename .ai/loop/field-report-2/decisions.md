@@ -795,3 +795,45 @@ Adopted as written:
    claiming an implemented policy that no longer exists).
 
 Sequencing: unblocked. No hard or soft precondition on any other item.
+
+## 2026-09-25 -- FR2-01 fix-4 (escalated bonus cycle 1/2): pattern claimed closed for wait_for_selector
+
+Executor completed the escalation brief's required order: (1) an independent full inventory of
+every function in the wait_for_selector call graph, written to inventory.md BEFORE any code
+change, cross-checked against gaps.md's GAP-081..088 -- and found a 9th, previously-unnamed site
+(checkWaitForSelectorOnce's own check-once hidden branch had the identical boolean-collapse bug,
+one call path over from GAP-082); (2) one shared tri-state mechanism, not per-site patches:
+extended FrameProbeVerdict one level down with a new HandleVisibilityVerdict
+(visible/not-visible/unknown) plus a general-purpose raceBounded helper, reused across
+isHandleVisible, diagnoseSelectorVisibility, and countOtherVisibleMatches; (3) every one of the
+8 named gaps + the 9th site fixed with BOTH a failing-before/passing-after unit test AND a
+mutation proof (7 mutations, each applied and reverted interactively, each confirmed to flip the
+relevant new test from pass to fail) -- this is real proof-of-fix, not a self-report.
+
+Fresh verification this round, not cited: tsc clean across all 5 touched/dependent packages,
+vitest 404/404 across all 5 packages, a real pnpm build, and TWO live-verify runs against real
+Chrome (48/48, then 47/48 with one Windows-specific OS file-lock flake on a Crashpad metrics file
+from running two live-Chrome sessions back-to-back -- not a regression in the fix itself, logged
+honestly rather than hidden). ci-gate.mjs was re-run fresh (38/42, exit 0) against freshly
+regenerated (not stale) baseline files, per GAP-060's own standing rule.
+
+Two things flagged, not silently absorbed:
+1. GAP-100 (new): the scenario-suite's baseline-{cli,mcp,sdk}.json files are shared, unscoped,
+   with no per-item ownership boundary -- regenerating them was necessary for a REAL fresh gate
+   result, but the Executor deliberately left them uncommitted/unreverted rather than guess at
+   reconciling them against a concurrently-running FR2-16 session's own use of the same files.
+   This is a real gap in the loop's file-ownership conventions worth a standing rule, not yet
+   decided here -- left as an open question for whoever finalizes both items' commits.
+2. The Executor's own honest self-assessment: confident the wait_for_selector call graph
+   specifically has now been read exhaustively three times over (audit-4, this inventory, the
+   mutation pass) and does not expect a 10th sibling site WITHIN it -- but explicitly does NOT
+   claim the same confidence for this file's OTHER action types (click/type/scroll/etc.), which
+   were out of this inventory's scope by design. Recommends any further escalation widen scope
+   rather than repeat wait_for_selector once more.
+
+Per the loop's own retry-bound rule, this consumed escalation bonus cycle 1 of 2. Next step:
+dispatch audit-5, a fresh independent Opus Auditor who did not write this code, to verify the
+claim before accepting it. If audit-5 finds the pattern genuinely closed (no new gap of the SAME
+shape), FR2-01 can move to DONE. If audit-5 finds one more instance of the same shape, exactly
+one Orchestrator-supervised cycle (2 of 2) remains before the item must be marked BLOCKED with a
+full diagnosis, per the loop's own stated bound -- not an open-ended sixth attempt.

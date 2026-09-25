@@ -3122,3 +3122,240 @@ describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-0
     expect('matchedAtStart' in (result.outputData as object)).toBe(true);
   });
 });
+
+describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)', () => {
+  it('GAP-081a (isHandleVisible): a fatal session-closed error while checking visibility must report "unknown", never a silently-confirmed "not visible" (which previously let a hidden wait falsely succeed)', async () => {
+    // A real handle IS found (frame.$ resolves quickly), but checking ITS visibility fails with
+    // a fatal, tab/session-closed-style error. Before the fix, `isHandleVisible`'s
+    // `.catch(() => false)` read this identically to a genuine "not visible" computed-style
+    // result — for `hidden` (every frame must agree), that meant the whole pass "agreed" on the
+    // very first check, a false SUCCESS while visibility was never actually confirmed either way.
+    const staleHandle = mockHandle();
+    (staleHandle as any).evaluate = vi
+      .fn()
+      .mockRejectedValue(new Error('Protocol error (Runtime.callFunctionOn): Session closed. Most likely the page has been closed.'));
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(staleHandle) } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#spinner',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('could not verify: one or more frames were unresponsive');
+  });
+
+  it('GAP-081b (pierceFirstMatch): an error this code does not otherwise recognize defaults to "unknown", never "no-match" — a probe error is not evidence of absence', async () => {
+    // `frame.$` rejects with a genuinely unclassified error on every call (not a selector syntax
+    // error, not a fatal session/target-closed error, not an ordinary context-destroyed
+    // navigation hiccup). Before the fix, pierceFirstMatch's catch-all mapped this straight to
+    // 'no-match' — for `hidden`, indistinguishable from a real confirmed absence, so the wait
+    // would falsely "succeed" on the very first pass even though the probe never actually
+    // answered either way.
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockRejectedValue(new Error('some genuinely unclassified CDP hiccup')),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#spinner',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('could not verify: one or more frames were unresponsive');
+  });
+
+  it('GAP-082: a hidden timeout CONFIRMED visible by a healthy frame still says "is still visible", distinct from the "could not verify" unresponsive-frame message', async () => {
+    const visibleHandle = mockHandle();
+    (visibleHandle as any).evaluate = vi.fn().mockResolvedValue(true);
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(visibleHandle) } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#banner',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('is still visible');
+    expect(result.error).not.toContain('could not verify');
+  });
+
+  it('GAP-082 (9th site — checkWaitForSelectorOnce): the timeoutMs<=0 hidden check-once path also distinguishes "could not verify" (unresponsive frame) from "is still visible" (confirmed)', async () => {
+    // Sub-case 1: the only frame never answers within its probe bound at all -> 'unknown'.
+    {
+      const neverAnswers = { isDetached: () => false, $: vi.fn().mockImplementation(() => new Promise(() => {})) } as unknown as Frame;
+      const page = {
+        frames: vi.fn().mockReturnValue([neverAnswers]),
+        mainFrame: vi.fn().mockReturnValue(neverAnswers),
+      } as unknown as Page;
+      const result = await new BrowserActionEngine().executeAction(mockTab(page), {
+        actionType: 'wait_for_selector',
+        selector: '#banner',
+        state: 'hidden',
+        timeoutMs: 0,
+        maxRetries: 0,
+      });
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('could not verify: one or more frames were unresponsive');
+    }
+
+    // Sub-case 2: the frame answers immediately and confirms the element is genuinely visible.
+    {
+      const visibleHandle = mockHandle();
+      (visibleHandle as any).evaluate = vi.fn().mockResolvedValue(true);
+      const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(visibleHandle) } as unknown as Frame;
+      const page = {
+        frames: vi.fn().mockReturnValue([mainFrame]),
+        mainFrame: vi.fn().mockReturnValue(mainFrame),
+      } as unknown as Page;
+      const result = await new BrowserActionEngine().executeAction(mockTab(page), {
+        actionType: 'wait_for_selector',
+        selector: '#banner',
+        state: 'hidden',
+        timeoutMs: 0,
+        maxRetries: 0,
+      });
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('is still visible');
+      expect(result.error).not.toContain('could not verify');
+    }
+  });
+
+  it('GAP-083: a state=visible timeout where the diagnostic itself times out on every frame says "could not be determined", never the confirmed-negative "No element found"', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null), // the wait itself never caught a match in time
+      $$eval: vi.fn().mockImplementation(() => new Promise(() => {})), // the diagnosis never answers either
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/state=visible/);
+    expect(result.error).not.toContain('No element found');
+    expect(result.error).toMatch(/visibility could not be determined for 1 of 1 frame/);
+  });
+
+  it('GAP-084/GAP-087: probing multiple busy frames within a single VISIBLE-state pass now runs in parallel too — mirrors GAP-059\'s hidden-path fix, which this exact scenario (state:visible) previously did NOT get', async () => {
+    // Identical shape to the existing GAP-059 hidden-state test, but for `state:'visible'`.
+    // Before this fix, `firstVisibleHandleAnyFrame` probed frames SEQUENTIALLY — reintroducing
+    // the GAP-059 latency-scales-with-busy-frame-count symptom for the more common visible-state
+    // path, which the GAP-059 fix never actually reached.
+    const makeBusyFrame = () =>
+      ({
+        isDetached: () => false,
+        $: vi.fn().mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve(null), 5000))),
+      }) as unknown as Frame;
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const busyFrames = [makeBusyFrame(), makeBusyFrame(), makeBusyFrame(), makeBusyFrame()];
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, ...busyFrames]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const t0 = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#spinner',
+      state: 'visible',
+      timeoutMs: 260,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - t0;
+
+    expect(result.success).toBe(false);
+    // Sequential probing of 4 busy frames would need >= 1000ms for the first pass alone.
+    // Parallel probing keeps the whole call well under that. This is the exact assertion shape
+    // GAP-087 flagged E5 as failing to provide for the visible-state path — a mutation that
+    // reintroduces sequential probing here fails this specific test (verified by mutation, see
+    // fix-4's live report).
+    expect(elapsedMs).toBeLessThan(900);
+  });
+
+  it('GAP-085: the otherVisibleMatches diagnostic reports its own uncertainty instead of a silently-wrong confirmed zero when its per-frame check times out', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null), // already hidden -> the wait itself succeeds immediately
+      $$eval: vi.fn().mockImplementation(() => new Promise(() => {})), // the otherVisibleMatches check never answers
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#banner',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData?.otherVisibleMatches).toBeUndefined();
+    expect(result.outputData?.otherVisibleMatchesUnknown).toBe(true);
+  });
+
+  it('GAP-086: isHandleVisible is bounded on its own — a handle whose evaluate() never resolves cannot stall a pass past FRAME_PROBE_TIMEOUT_MS', async () => {
+    const stuckHandle = mockHandle();
+    (stuckHandle as any).evaluate = vi.fn().mockImplementation(() => new Promise(() => {})); // never resolves
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(stuckHandle) } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const t0 = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#spinner',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - t0;
+
+    expect(result.success).toBe(false);
+    // Bounded by FRAME_PROBE_TIMEOUT_MS (250ms) per pass, not stalled indefinitely — generous
+    // margin kept to avoid CI timing flakiness while still failing against an unbounded regression.
+    expect(elapsedMs).toBeLessThan(900);
+  });
+});

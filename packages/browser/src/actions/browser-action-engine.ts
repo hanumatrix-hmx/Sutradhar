@@ -116,6 +116,12 @@ const FRAME_PROBE_TIMEOUT_MS = 250;
  *  probe timed out" from a legitimate `null` (genuinely no match) result of the real probe. */
 const FRAME_PROBE_TIMED_OUT = Symbol('frame-probe-timed-out');
 
+/** Unique sentinel {@link raceBounded} resolves to on timeout — the general-purpose counterpart
+ *  of {@link FRAME_PROBE_TIMED_OUT} for probes that don't return a disposable `ElementHandle`
+ *  (a plain boolean visibility check, a `$$eval` array, etc.), so those callers don't need
+ *  {@link raceFrameProbe}'s handle-dispose-on-late-resolve machinery. */
+const BOUNDED_TIMED_OUT = Symbol('bounded-probe-timed-out');
+
 /**
  * GAP-057 (FR2-01 audit-3): the shared tri-state outcome of ANY bounded, per-frame probe in this
  * file's `wait_for_selector` code path. A probe against one frame genuinely has THREE possible
@@ -145,6 +151,18 @@ type FrameProbeVerdict =
  *  least one frame's probe timed out rather than confirming no-match — GAP-057: this must NEVER
  *  be treated the same as 'hidden'). */
 type FrameSetHiddenVerdict = 'hidden' | 'visible' | 'unknown';
+
+/**
+ * GAP-081/GAP-086 (FR2-01 fix-4): the tri-state result of {@link BrowserActionEngine.isHandleVisible}
+ * checking a single, already-resolved handle. Mirrors {@link FrameProbeVerdict}'s reasoning one
+ * level down — a visibility check on a handle genuinely has three outcomes: it confirms visible,
+ * it confirms not-visible (a real computed-style/bounding-box read that says so), or it simply
+ * couldn't tell (the check itself timed out, or the tab/session closed mid-check). Before this
+ * fix, `isHandleVisible`'s `.catch(() => false)` conflated ALL of those into "not visible",
+ * including a tab-closed/session-closed error — exactly GAP-031's bug surviving one call deeper,
+ * inside the very function fix-3 rewrote to fix it at the frame level.
+ */
+type HandleVisibilityVerdict = 'visible' | 'not-visible' | 'unknown';
 
 /** GAP-032 (FR2-01 audit-2): a `timeoutMs` this large no longer fits in Node's/CDP's own
  *  32-bit-signed-int `setTimeout` delay range (2**31 - 1 ms, ~24.8 days) and gets silently
@@ -826,9 +844,9 @@ export class BrowserActionEngine implements IBrowserActionEngine {
           // `resolveElement` already maps every rejection to `null` too, so the two "null"
           // outcomes would be indistinguishable through that helper (FR2-01 spec note).
           const matchedAtStart = await this.probeSelectorMatchExists(page, fullSelector);
-          let becameHidden: boolean;
+          let hiddenVerdict: FrameSetHiddenVerdict;
           try {
-            becameHidden = await this.waitForHiddenInAllFrames(page, fullSelector, waitMs);
+            hiddenVerdict = await this.waitForHiddenInAllFrames(page, fullSelector, waitMs);
           } catch (err) {
             // GAP-015: a genuinely invalid selector (parser/SyntaxError) must fail fast with
             // that real error, not be swallowed into "still visible" after the full timeout.
@@ -836,17 +854,29 @@ export class BrowserActionEngine implements IBrowserActionEngine {
               `wait_for_selector failed waiting for state=hidden: ${(err as Error)?.message ?? String(err)}`,
             );
           }
-          if (!becameHidden) {
-            throw new Error(
-              `wait_for_selector timed out after ${waitMs}ms waiting for state=hidden: an element ` +
-                `matching "${params.selector}" is still visible.`,
-            );
+          if (hiddenVerdict !== 'hidden') {
+            // GAP-082 (Orchestrator decision, decisions.md audit-4 entry): an 'unknown' timeout
+            // (a busy neighbor frame that never answered, no frame ever confirming visible) is a
+            // GENUINELY DIFFERENT failure from a 'visible' timeout (some frame explicitly
+            // confirmed the element is still there) — the two must never share the same message,
+            // or a caller can't tell "we don't know" from "we know it's still there".
+            const detail =
+              hiddenVerdict === 'unknown'
+                ? 'could not verify: one or more frames were unresponsive'
+                : `an element matching "${params.selector}" is still visible`;
+            throw new Error(`wait_for_selector timed out after ${waitMs}ms waiting for state=hidden: ${detail}.`);
           }
           // GAP-016: hidden can succeed on the FIRST match while a LATER match (in some frame)
           // is still visible — best-effort, bounded diagnostic so a caller can spot that.
-          const otherVisibleMatches = await this.countOtherVisibleMatches(page, fullSelector).catch(() => 0);
+          // GAP-085: `countOtherVisibleMatches` now reports its own uncertainty (a busy frame
+          // that never answered) instead of silently returning 0 as if it had confirmed zero.
+          const otherVisible = await this.countOtherVisibleMatches(page, fullSelector).catch(() => ({
+            count: 0,
+            unconfirmed: true,
+          }));
           const out: Record<string, unknown> = { foundSelector: params.selector, state: 'hidden', matchedAtStart };
-          if (otherVisibleMatches > 0) out.otherVisibleMatches = otherVisibleMatches;
+          if (otherVisible.count > 0) out.otherVisibleMatches = otherVisible.count;
+          if (otherVisible.unconfirmed) out.otherVisibleMatchesUnknown = true;
           return out;
         }
 
@@ -1374,8 +1404,24 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    * losing wait is ever abandoned mid-flight to reject later after a frame detach. `pollMs`
    * defaults to 100ms — see the GAP-034 tradeoff note on {@link waitForVisibleWithPolling}.
    */
-  private async waitForHiddenInAllFrames(page: Page, fullSelector: string, waitMs: number, pollMs = 100): Promise<boolean> {
+  /**
+   * GAP-082 (FR2-01 audit-4/fix-4): previously returned a plain `boolean`, so once the deadline
+   * was reached, an `'unknown'` last-pass verdict (a busy neighbor frame that never answered) and
+   * a `'visible'` last-pass verdict (some frame explicitly confirmed the element is still there)
+   * both collapsed to the same `false` — indistinguishable to the caller, and indistinguishable
+   * in the resulting error message. That's a real, disclosed tradeoff (decisions.md, audit-4
+   * entry): correctness over liveness is the right default (an honest timeout beats a false
+   * "hidden"), but the message for the two cases must say different, honest things. Returning
+   * the full {@link FrameSetHiddenVerdict} lets the caller do that.
+   */
+  private async waitForHiddenInAllFrames(
+    page: Page,
+    fullSelector: string,
+    waitMs: number,
+    pollMs = 100,
+  ): Promise<FrameSetHiddenVerdict> {
     const deadline = Date.now() + waitMs;
+    let lastVerdict: FrameSetHiddenVerdict = 'unknown';
     for (;;) {
       // Re-read live frames every pass (mirroring resolveElement) so a frame that gets destroyed
       // and recreated mid-wait (e.g. TinyMCE re-initializing its iframe) is naturally picked up
@@ -1387,9 +1433,13 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       // GAP-057: only a definitive 'hidden' verdict satisfies the wait. 'unknown' (a busy frame
       // that didn't answer this pass) falls through to "keep polling" exactly like 'visible'
       // does — it must never be treated as satisfied.
-      if ((await this.isHiddenInEveryFrame(page, fullSelector)) === 'hidden') return true;
+      lastVerdict = await this.isHiddenInEveryFrame(page, fullSelector);
+      if (lastVerdict === 'hidden') return 'hidden';
       const remaining = deadline - Date.now();
-      if (remaining <= 0) return false;
+      // GAP-082: return the REAL last verdict ('visible' or 'unknown'), not a flattened `false`
+      // — the caller now distinguishes a confirmed-still-visible timeout from a genuinely
+      // unconfirmed one instead of reporting both identically.
+      if (remaining <= 0) return lastVerdict;
       await new Promise((r) => setTimeout(r, Math.min(pollMs, remaining)));
     }
   }
@@ -1424,12 +1474,23 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     } catch (err) {
       if (BrowserActionEngine.isSelectorSyntaxError(err)) throw err;
       if (BrowserActionEngine.isFatalFrameCheckError(err)) throw err;
-      // A single frame's own context being destroyed by an ordinary in-page navigation (NOT the
-      // tab/session closing — that's `isFatalFrameCheckError` above) is a recoverable, per-frame
-      // hiccup: this frame definitively has no answer for THIS pass, and will be re-probed fresh
-      // (via `page.frames()`) on the next one. That's 'no-match' for this pass, not 'unknown' —
-      // unlike a timeout, there's no live probe still in flight that might resolve differently.
-      return { kind: 'no-match' };
+      if (this.isContextDestroyedError(err)) {
+        // A single frame's own context being destroyed by an ordinary in-page navigation (NOT
+        // the tab/session closing — that's `isFatalFrameCheckError` above) is a recoverable,
+        // per-frame hiccup: this frame definitively has no answer for THIS pass, and will be
+        // re-probed fresh (via `page.frames()`) on the next one. That's 'no-match' for this
+        // pass, not 'unknown' — unlike a timeout, there's no live probe still in flight that
+        // might resolve differently.
+        return { kind: 'no-match' };
+      }
+      // GAP-081 (FR2-01 audit-4/fix-4): any OTHER, unrecognized error was previously ALSO mapped
+      // to 'no-match' here — silently treating an error this code has no classification for as
+      // a confirmed negative. Audit-4's explicit instruction: "Error handling should default to
+      // unknown, not no-match." Only the two positively-classified cases above (a real selector
+      // syntax error, which rethrows; a recoverable in-page-navigation hiccup, which is
+      // 'no-match') get a definite answer — everything else defaults to 'unknown' so a caller
+      // can't mistake "this code doesn't recognize the error" for "this frame confirms absent".
+      return { kind: 'unknown' };
     }
   }
 
@@ -1477,6 +1538,28 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     }
   }
 
+  /**
+   * GAP-083/GAP-085/GAP-086 (FR2-01 fix-4): general-purpose counterpart of {@link raceFrameProbe}
+   * for a probe that doesn't produce a disposable `ElementHandle` — a plain boolean visibility
+   * check ({@link isHandleVisible}), a `$$eval` result array ({@link diagnoseSelectorVisibility},
+   * {@link countOtherVisibleMatches}). Resolves to {@link BOUNDED_TIMED_OUT} if `promise` doesn't
+   * settle within `timeoutMs`; a rejection from `promise` itself still propagates as a rejection
+   * (callers decide how to classify it), matching `raceFrameProbe`'s own contract. Like
+   * `raceFrameProbe`, the loser of the race (a timed-out `promise`) is not and cannot be
+   * cancelled — it's simply not awaited further by this call.
+   */
+  private async raceBounded<T>(promise: Promise<T>, timeoutMs: number): Promise<T | typeof BOUNDED_TIMED_OUT> {
+    let timer!: ReturnType<typeof setTimeout>;
+    const timedOut = new Promise<typeof BOUNDED_TIMED_OUT>((resolve) => {
+      timer = setTimeout(() => resolve(BOUNDED_TIMED_OUT), timeoutMs);
+    });
+    try {
+      return await Promise.race([promise, timedOut]);
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   private static isSelectorSyntaxError(err: unknown): boolean {
     const msg = err instanceof Error ? err.message : String(err);
     return /is not a valid selector|SyntaxError|Failed to execute 'querySelector'/i.test(msg);
@@ -1497,18 +1580,42 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     return /Session closed|Target closed|Connection closed|has been closed|Protocol error/i.test(msg);
   }
 
-  /** Puppeteer's own `checkVisibility` rule, applied to a single already-resolved handle:
-   *  computed `visibility` not `hidden`/`collapse` AND a non-empty bounding box. `opacity` is
-   *  deliberately ignored, matching Puppeteer. Best-effort: a handle that throws on `.evaluate`
-   *  (e.g. it went stale mid-check) is treated as not visible rather than propagating. */
-  private async isHandleVisible(handle: ElementHandle<Element>): Promise<boolean> {
-    return handle
-      .evaluate((el) => {
-        const s = getComputedStyle(el);
-        const r = el.getBoundingClientRect();
-        return !['hidden', 'collapse'].includes(s.visibility) && r.width > 0 && r.height > 0;
-      })
-      .catch(() => false);
+  /**
+   * Puppeteer's own `checkVisibility` rule, applied to a single already-resolved handle:
+   * computed `visibility` not `hidden`/`collapse` AND a non-empty bounding box. `opacity` is
+   * deliberately ignored, matching Puppeteer.
+   *
+   * GAP-081/GAP-086 (FR2-01 audit-4/fix-4): previously this caught EVERY rejection (including a
+   * tab-closed/session-closed error) and returned a plain `false` ("not visible") with no time
+   * bound of its own at all — GAP-031's exact bug (a failed check silently read as a confirmed
+   * negative) surviving inside the very function fix-3 rewrote to fix it one level up. Now:
+   *  - the `.evaluate()` call itself is bounded by {@link FRAME_PROBE_TIMEOUT_MS} via
+   *    {@link raceBounded} (GAP-086) — a busy renderer can't stall the whole poll pass;
+   *  - a fatal check failure (session/target/connection closed) reports `'unknown'`, never a
+   *    confirmed negative (GAP-081);
+   *  - the handle's own frame being destroyed by an ordinary in-page navigation reports
+   *    `'not-visible'` — the node this handle referred to is genuinely gone, the same
+   *    per-frame-hiccup precedent {@link pierceFirstMatch} already applies;
+   *  - any OTHER, unrecognized error defaults to `'unknown'` (audit-4's explicit instruction),
+   *    not a confirmed negative.
+   */
+  private async isHandleVisible(handle: ElementHandle<Element>): Promise<HandleVisibilityVerdict> {
+    try {
+      const outcome = await this.raceBounded(
+        handle.evaluate((el) => {
+          const s = getComputedStyle(el);
+          const r = el.getBoundingClientRect();
+          return !['hidden', 'collapse'].includes(s.visibility) && r.width > 0 && r.height > 0;
+        }),
+        FRAME_PROBE_TIMEOUT_MS,
+      );
+      if (outcome === BOUNDED_TIMED_OUT) return 'unknown';
+      return outcome ? 'visible' : 'not-visible';
+    } catch (err) {
+      if (BrowserActionEngine.isFatalFrameCheckError(err)) return 'unknown';
+      if (this.isContextDestroyedError(err)) return 'not-visible';
+      return 'unknown';
+    }
   }
 
   /**
@@ -1536,13 +1643,29 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     return [page.mainFrame()];
   }
 
-  /** "Any frame" first-match-visible check (mirrors `resolveElement`'s `visible:true`
-   *  acceptance rule: the FIRST frame whose FIRST match is visible wins) — the single-instant
-   *  primitive both {@link waitForVisibleWithPolling} (GAP-008) and the `timeoutMs<=0` check-once
-   *  path (GAP-011) build on. */
+  /**
+   * "Any frame" first-match-visible check (mirrors `resolveElement`'s `visible:true`
+   * acceptance rule: the FIRST frame whose FIRST match is visible wins) — the single-instant
+   * primitive both {@link waitForVisibleWithPolling} (GAP-008) and the `timeoutMs<=0` check-once
+   * path (GAP-011) build on.
+   *
+   * GAP-084 (FR2-01 audit-4/fix-4): GAP-059's parallel-probing fix was only ever applied to the
+   * `hidden` state's frame-probing ({@link isHiddenInEveryFrame}) — this function still probed
+   * every live frame SEQUENTIALLY, reintroducing the exact GAP-059 symptom (pass latency scales
+   * with the number of simultaneously busy frames) for the more common `visible`/`attached`
+   * states. Every live frame's probe for a pass is now started together via `Promise.all`, same
+   * as `isHiddenInEveryFrame` — each individual probe is still its own fully self-contained,
+   * ~250ms-bounded call (`raceFrameProbe`), never abandoned to run indefinitely, so racing them
+   * together is safe for the same reason it's safe there. The "first frame in order wins" rule is
+   * preserved by iterating the settled verdicts in their original frame order; any OTHER matched
+   * handle besides the winner is disposed here — previously the sequential loop never even
+   * fetched a later frame's handle once an earlier one won, so there was nothing to dispose.
+   */
   private async firstVisibleHandleAnyFrame(page: Page, fullSelector: string): Promise<ElementHandle<Element> | null> {
-    for (const frame of this.liveFramesOf(page)) {
-      const verdict = await this.pierceFirstMatch(frame, fullSelector);
+    const frames = this.liveFramesOf(page);
+    const verdicts = await Promise.all(frames.map((frame) => this.pierceFirstMatch(frame, fullSelector)));
+    let winner: ElementHandle<Element> | null = null;
+    for (const verdict of verdicts) {
       // A 'no-match' and an 'unknown' (this frame's probe simply didn't answer within its
       // bound) both mean "this frame doesn't confirm visible THIS pass" — for the `visible`
       // state's any-frame-wins rule that's a safe, non-lossy conflation: neither outcome can
@@ -1550,25 +1673,48 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       // (`waitForVisibleWithPolling`) re-probes every live frame again next pass, so a busy
       // frame that later becomes reachable still gets its chance to confirm visible.
       if (verdict.kind !== 'match') continue;
-      if (await this.isHandleVisible(verdict.handle)) return verdict.handle;
-      if (typeof verdict.handle.dispose === 'function') await verdict.handle.dispose().catch(() => {});
+      if (winner) {
+        if (typeof verdict.handle.dispose === 'function') await verdict.handle.dispose().catch(() => {});
+        continue;
+      }
+      // GAP-081: `isHandleVisible` is now tri-state — only an explicit 'visible' verdict wins;
+      // 'not-visible' and 'unknown' are both "doesn't confirm visible this pass", same
+      // conflation as the frame-level verdict above and for the same reason.
+      const visibility = await this.isHandleVisible(verdict.handle);
+      if (visibility === 'visible') {
+        winner = verdict.handle;
+      } else if (typeof verdict.handle.dispose === 'function') {
+        await verdict.handle.dispose().catch(() => {});
+      }
     }
-    return null;
+    return winner;
   }
 
-  /** "Any frame" first-match-EXISTS check (DOM presence only, visibility ignored) — used only by
-   *  the `timeoutMs<=0` check-once path for `state:'attached'` (GAP-011). The *waiting* attached
-   *  path is still `resolveElement`-based; see the `wait_for_selector` case's GAP-033 note for
-   *  its own fast syntax-error pre-check, which reuses {@link pierceFirstMatch} directly. */
+  /**
+   * "Any frame" first-match-EXISTS check (DOM presence only, visibility ignored) — used only by
+   * the `timeoutMs<=0` check-once path for `state:'attached'` (GAP-011). The *waiting* attached
+   * path is still `resolveElement`-based; see the `wait_for_selector` case's GAP-033 note for
+   * its own fast syntax-error pre-check, which reuses {@link pierceFirstMatch} directly.
+   *
+   * GAP-084 (FR2-01 audit-4/fix-4): same parallelization as {@link firstVisibleHandleAnyFrame},
+   * for the same reason — this used to probe frames sequentially too.
+   */
   private async firstAnyHandleAnyFrame(page: Page, fullSelector: string): Promise<ElementHandle<Element> | null> {
-    for (const frame of this.liveFramesOf(page)) {
-      const verdict = await this.pierceFirstMatch(frame, fullSelector);
+    const frames = this.liveFramesOf(page);
+    const verdicts = await Promise.all(frames.map((frame) => this.pierceFirstMatch(frame, fullSelector)));
+    let winner: ElementHandle<Element> | null = null;
+    for (const verdict of verdicts) {
       // Same reasoning as {@link firstVisibleHandleAnyFrame}: 'unknown' can't safely be treated
       // as a confirmed match, so it's conflated with 'no-match' here too — "this frame doesn't
       // confirm attached THIS pass", never "this frame confirms NOT attached".
-      if (verdict.kind === 'match') return verdict.handle;
+      if (verdict.kind !== 'match') continue;
+      if (!winner) {
+        winner = verdict.handle;
+      } else if (typeof verdict.handle.dispose === 'function') {
+        await verdict.handle.dispose().catch(() => {});
+      }
     }
-    return null;
+    return winner;
   }
 
   /** True iff, in EVERY live frame, the first match is absent or not visible — the exact
@@ -1601,9 +1747,18 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         continue;
       }
       if (verdict.kind === 'no-match') continue;
-      const visible = await this.isHandleVisible(verdict.handle);
+      // GAP-081: `isHandleVisible` is now tri-state. An explicit 'visible' is still the one
+      // definitive, immediately-returned answer (hidden requires EVERY frame to agree, so one
+      // confirmed-visible frame settles the whole pass). 'unknown' here (the visibility check
+      // itself couldn't tell — a bounded timeout, or a fatal/unrecognized error) must downgrade
+      // this pass to 'unknown' too, exactly like a frame-probe-level 'unknown' does — it must
+      // NEVER be silently read as "this frame confirms hidden", which is the GAP-081 bug one
+      // level down from the original GAP-057. 'not-visible' behaves like 'no-match' — this
+      // frame's match doesn't block a 'hidden' verdict.
+      const visibility = await this.isHandleVisible(verdict.handle);
       if (typeof verdict.handle.dispose === 'function') await verdict.handle.dispose().catch(() => {});
-      if (visible) return 'visible';
+      if (visibility === 'visible') return 'visible';
+      if (visibility === 'unknown') sawUnknown = true;
     }
     return sawUnknown ? 'unknown' : 'hidden';
   }
@@ -1678,58 +1833,83 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     }
     // hidden
     const matchedAtStart = await this.probeSelectorMatchExists(page, fullSelector);
-    let hiddenNow: boolean;
+    let hiddenVerdict: FrameSetHiddenVerdict;
     try {
       // GAP-057: a single check-once pass can also come back 'unknown' (a busy frame that
       // didn't answer within its bound) — with no retry loop to fall back on here, 'unknown'
       // is treated as "not confirmed hidden" (same as 'visible'), never as a false success.
-      hiddenNow = (await this.isHiddenInEveryFrame(page, fullSelector)) === 'hidden';
+      hiddenVerdict = await this.isHiddenInEveryFrame(page, fullSelector);
     } catch (err) {
       throw new Error(
         `wait_for_selector failed waiting for state=hidden: ${(err as Error)?.message ?? String(err)}`,
       );
     }
-    if (!hiddenNow) {
-      throw new Error(
-        `wait_for_selector timed out after 0ms waiting for state=hidden: an element matching ` +
-          `"${selector}" is still visible.`,
-      );
+    if (hiddenVerdict !== 'hidden') {
+      // GAP-082 (9th site — this check-once path collapsed 'unknown' into the SAME "still
+      // visible" message as a confirmed-visible verdict, exactly like `waitForHiddenInAllFrames`
+      // did before this fix round, one call path over. Same fix, same reasoning: an honest
+      // "couldn't verify" must never read the same as a confirmed negative.
+      const detail =
+        hiddenVerdict === 'unknown'
+          ? 'could not verify: one or more frames were unresponsive'
+          : `an element matching "${selector}" is still visible`;
+      throw new Error(`wait_for_selector timed out after 0ms waiting for state=hidden: ${detail}.`);
     }
-    const otherVisibleMatches = await this.countOtherVisibleMatches(page, fullSelector).catch(() => 0);
+    const otherVisible = await this.countOtherVisibleMatches(page, fullSelector).catch(() => ({
+      count: 0,
+      unconfirmed: true,
+    }));
     const out: Record<string, unknown> = { foundSelector: selector, state: 'hidden', matchedAtStart };
-    if (otherVisibleMatches > 0) out.otherVisibleMatches = otherVisibleMatches;
+    if (otherVisible.count > 0) out.otherVisibleMatches = otherVisible.count;
+    if (otherVisible.unconfirmed) out.otherVisibleMatchesUnknown = true;
     return out;
   }
 
   /**
-   * GAP-016: best-effort, bounded (~500ms) count of matches AFTER each live frame's first match
-   * that are themselves visible — the `hidden` state's counterpart to the `visible` path's
-   * "later match(es) are [visible]" diagnosis. A `hidden` wait succeeds as soon as every frame's
-   * FIRST match is gone/hidden; this surfaces the case where some LATER match (e.g. a second
+   * GAP-016: best-effort count of matches AFTER each live frame's first match that are
+   * themselves visible — the `hidden` state's counterpart to the `visible` path's "later
+   * match(es) are [visible]" diagnosis. A `hidden` wait succeeds as soon as every frame's FIRST
+   * match is gone/hidden; this surfaces the case where some LATER match (e.g. a second
    * `#banner` node) is still visible, which would otherwise succeed silently.
+   *
+   * GAP-085 (FR2-01 audit-4/fix-4): previously wrapped the WHOLE per-frame loop in one flat
+   * 500ms `Promise.race` and silently resolved to `0` on timeout — indistinguishable from "every
+   * frame confirmed zero other visible matches", so the GAP-016 advisory warning could disappear
+   * with no trace it was ever computed. Now every live frame's `$$eval` is bounded and run in
+   * PARALLEL (same `raceBounded`/{@link FRAME_PROBE_TIMEOUT_MS} primitive as the rest of this
+   * file's frame probes), and the result reports whether any frame's probe timed out
+   * (`unconfirmed: true`) alongside whatever count the frames that DID answer contributed — the
+   * caller surfaces that uncertainty instead of a silently-wrong zero.
    */
-  private async countOtherVisibleMatches(page: Page, fullSelector: string): Promise<number> {
-    return await Promise.race([
-      (async () => {
-        let count = 0;
-        for (const frame of this.liveFramesOf(page)) {
-          try {
-            const flags = await frame.$$eval(fullSelector, (els) =>
+  private async countOtherVisibleMatches(
+    page: Page,
+    fullSelector: string,
+  ): Promise<{ count: number; unconfirmed: boolean }> {
+    const frames = this.liveFramesOf(page);
+    let unconfirmed = false;
+    const perFrame = await Promise.all(
+      frames.map(async (frame) => {
+        const outcome = await this.raceBounded(
+          frame
+            .$$eval(fullSelector, (els) =>
               els.map((el) => {
                 const s = getComputedStyle(el);
                 const r = el.getBoundingClientRect();
                 return !['hidden', 'collapse'].includes(s.visibility) && r.width > 0 && r.height > 0;
               }),
-            );
-            count += flags.slice(1).filter(Boolean).length;
-          } catch {
-            // best-effort — skip this frame
-          }
+            )
+            .catch(() => null), // best-effort — a real per-frame error, skip it (not "unconfirmed")
+          FRAME_PROBE_TIMEOUT_MS,
+        );
+        if (outcome === BOUNDED_TIMED_OUT) {
+          unconfirmed = true;
+          return 0;
         }
-        return count;
-      })(),
-      new Promise<number>((resolve) => setTimeout(() => resolve(0), 500)),
-    ]);
+        if (outcome === null) return 0;
+        return outcome.slice(1).filter(Boolean).length;
+      }),
+    );
+    return { count: perFrame.reduce((a, b) => a + b, 0), unconfirmed };
   }
 
   /**
@@ -1770,38 +1950,62 @@ export class BrowserActionEngine implements IBrowserActionEngine {
   }
 
   /**
-   * Best-effort per-frame visibility diagnosis for a `state:'visible'` `wait_for_selector`
-   * timeout — mirrors Puppeteer's own `checkVisibility` rule exactly (computed `visibility` not
-   * `hidden`/`collapse`, AND a non-empty bounding box; `opacity` is deliberately ignored, same
-   * as Puppeteer) so the count/verdict it reports is consistent with what `resolveElement` itself
-   * just checked. Returns `null` (never throws) when nothing matched or the query-handler
-   * doesn't support `$$eval` for this selector dialect (e.g. some mocked/older environments) —
-   * callers fall back to the generic "no element found" message in that case.
+   * Best-effort per-frame visibility diagnosis for a `state:'visible'`/`state:'attached'`
+   * `wait_for_selector` timeout — mirrors Puppeteer's own `checkVisibility` rule exactly
+   * (computed `visibility` not `hidden`/`collapse`, AND a non-empty bounding box; `opacity` is
+   * deliberately ignored, same as Puppeteer) so the count/verdict it reports is consistent with
+   * what `resolveElement` itself just checked.
+   *
+   * GAP-083 (FR2-01 audit-4/fix-4): previously ran every frame's `$$eval` sequentially with NO
+   * per-frame time limit of its own — only the CALLER ({@link describeWaitForSelectorTimeout})
+   * wrapped the whole loop in a single 1000ms race, so a busy neighbor frame's `$$eval` call
+   * could eat that entire budget and make this function return `null` — which its caller then
+   * read as "nothing to diagnose" and fell through to the "No element found for selector"
+   * message, even when the element WAS genuinely attached and this diagnosis simply never got to
+   * confirm it. Every frame's `$$eval` is now individually bounded (the same
+   * `raceBounded`/{@link FRAME_PROBE_TIMEOUT_MS} primitive the rest of this file's frame probes
+   * use) and run in PARALLEL, so one slow frame can no longer starve every other frame's
+   * diagnosis. `unconfirmedFrames`/`framesProbed` are reported alongside `total`/`visibleFlags`
+   * so a caller can tell "confirmed nothing anywhere" apart from "some frames never answered" —
+   * `null` is now returned ONLY when there is truly nothing to report either way (zero visible
+   * flags collected AND zero frames timed out — i.e. every live frame either had no `$$eval`
+   * support or genuinely errored, the one case this diagnosis really can't help with).
    */
   private async diagnoseSelectorVisibility(
     page: Page,
     fullSelector: string,
-  ): Promise<{ total: number; visibleFlags: boolean[] } | null> {
-    const live = page.frames().filter((f) => !f.isDetached());
-    const targets = live.length > 0 ? live : [page.mainFrame()];
-    let flags: boolean[] = [];
-    for (const frame of targets) {
-      try {
-        const frameFlags = await frame.$$eval(fullSelector, (els) =>
-          els.map((el) => {
-            const s = getComputedStyle(el);
-            const r = el.getBoundingClientRect();
-            return !['hidden', 'collapse'].includes(s.visibility) && r.width > 0 && r.height > 0;
-          }),
+  ): Promise<{ total: number; visibleFlags: boolean[]; unconfirmedFrames: number; framesProbed: number } | null> {
+    const targets = this.liveFramesOf(page);
+    let unconfirmedFrames = 0;
+    const perFrame = await Promise.all(
+      targets.map(async (frame) => {
+        const outcome = await this.raceBounded(
+          frame
+            .$$eval(fullSelector, (els) =>
+              els.map((el) => {
+                const s = getComputedStyle(el);
+                const r = el.getBoundingClientRect();
+                return !['hidden', 'collapse'].includes(s.visibility) && r.width > 0 && r.height > 0;
+              }),
+            )
+            .catch(() => null), // Best-effort: a real per-frame error (e.g. no $$eval support
+          // for this frame/selector dialect) — skip it, don't fail the whole diagnosis.
+          FRAME_PROBE_TIMEOUT_MS,
         );
-        flags = flags.concat(frameFlags);
-      } catch {
-        // Best-effort: no $$eval support for this frame/selector — skip it, don't fail the
-        // whole diagnosis over one frame.
+        return outcome;
+      }),
+    );
+    let flags: boolean[] = [];
+    for (const outcome of perFrame) {
+      if (outcome === BOUNDED_TIMED_OUT) {
+        unconfirmedFrames++;
+        continue;
       }
+      if (outcome === null) continue;
+      flags = flags.concat(outcome);
     }
-    if (flags.length === 0) return null;
-    return { total: flags.length, visibleFlags: flags };
+    if (flags.length === 0 && unconfirmedFrames === 0) return null;
+    return { total: flags.length, visibleFlags: flags, unconfirmedFrames, framesProbed: targets.length };
   }
 
   /**
@@ -1828,6 +2032,21 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         this.diagnoseSelectorVisibility(page, fullSelector),
         new Promise<null>((resolve) => setTimeout(() => resolve(null), 1000)),
       ]);
+      // GAP-083 (FR2-01 audit-4/fix-4): when the diagnosis has NO confirmed-positive evidence
+      // (`total === 0`) but some frame(s) never answered within their own bound
+      // (`unconfirmedFrames > 0`), that is NOT the same thing as "confirmed zero matches
+      // anywhere" — falling through to the generic "No element found" message below would
+      // assert a confirmed negative this diagnosis never actually established. This must be
+      // checked before the `total > 0` branch is skipped, and must never itself fall through to
+      // that generic message.
+      if (diagnosis && diagnosis.total === 0 && diagnosis.unconfirmedFrames > 0) {
+        return (
+          prefix +
+          `visibility could not be determined for ${diagnosis.unconfirmedFrames} of ` +
+          `${diagnosis.framesProbed} frame(s) — they did not respond within the diagnostic's ` +
+          'time bound. This does NOT confirm the element is absent; try a larger timeoutMs.'
+        );
+      }
       if (diagnosis && diagnosis.total > 0) {
         if (state === 'attached') {
           return (
