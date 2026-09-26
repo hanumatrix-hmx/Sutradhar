@@ -1935,3 +1935,30 @@ logged for a future item, not this one's scope.
 Fourth item to reach DONE in this loop (after FR2-02, FR2-09, FR2-10), and the second to need
 only one fix cycle. GAP-211's process note applies at commit time: `cli.ts` and `AGENT_SETUP.md`
 are shared with FR2-03's still-uncommitted, BLOCKED code -- only FR2-06's own hunks are staged.
+
+## 2026-09-26 -- Opus review of the loop; FR2-04 re-planned onto HEAD, unblocking the FR2-03-shadowed chain
+
+After the model switched to Opus, an Orchestrator review of the loop found two structural
+problems worth recording: (1) FR2-01's `state: 'hidden'` is a NEW feature on this branch (absent
+on master) that currently ships with a known critical false-success bug (GAP-132) documented only
+in gaps.md -- a new narrowly-scoped fix (GAP-132/133/134, NOT a 7th FR2-01 round) has been
+dispatched; (2) FR2-03's block had cascaded into 7 of 17 items being BLOCKED-BY-DEPENDENCY without
+the chain ever being re-planned.
+
+For (2), a read-only Planner re-planned FR2-04 onto HEAD 368598b
+(evidence/FR2-04/spec-amendment-1.md): of FR2-04's 10 FR2-03 touchpoints, 5 are simply dropped
+(sessions/GC/probeEndpoint/clearStateFileIfUnchanged/force-exit) and 5 become small self-provided
+changes against code that already exists at HEAD (CliState fields, spawnFreshSession carry,
+self-heal, cmdClose, KNOWN_FLAGS). Zero hard dependencies -- dialog handling is conceptually
+independent of garbage collection. Decisions adopted as written:
+- FR2-04 is UNBLOCKED. FR2-05, FR2-07, FR2-08, FR2-13, FR2-14 follow in their normal order.
+  FR2-15 stays blocked (its hard dependency is FR2-01, not this chain).
+- FR2-14's D10 "--dialog report persists" is folded into FR2-04 now (CliState dialogPolicy.action
+  includes 'report'), avoiding a second rewrite of the same line later.
+- New requirement: runDialogGate disconnects its own connection in a finally (R-E).
+- PRECONDITION R-A (critical): FR2-03's uncommitted, non-shipping edits to cli.ts, state.ts,
+  parse-args.ts, spawn-chrome.ts, READMEs, AGENT_SETUP.md, mcp-server/src/cli.ts and the browser
+  launcher must be moved OFF this working tree (a WIP commit on a side branch, not a bare stash)
+  and dist rebuilt from clean HEAD before FR2-04's Step 1 or DEVELOP -- otherwise every build and
+  test run measures code that will not ship. This is deferred until the in-flight GAP-132 executor
+  finishes, so its working files aren't moved out from under it.
