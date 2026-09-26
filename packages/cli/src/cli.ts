@@ -1100,7 +1100,7 @@ async function cmdDialog(sub: string | undefined, rest: string[]): Promise<void>
   // on its own — found live: an undefined promptText resolved the prompt with an EMPTY string,
   // not the dialog's actual default).
   const effectivePromptText = accept && target.dialogType === 'prompt' ? (text ?? target.defaultValue) : undefined;
-  let outcome: { closedTarget?: boolean; message?: string } | void;
+  let outcome: { closedTarget?: boolean; message?: string; redirectTo?: string; redirectUrl?: string; isolated?: boolean } | void;
   try {
     const broker2 = await getBroker(state);
     try {
@@ -1116,6 +1116,30 @@ async function cmdDialog(sub: string | undefined, rest: string[]): Promise<void>
   // say so plainly instead of claiming "Accepted"/"Dismissed" for a dialog we never touched.
   if (outcome?.closedTarget) {
     console.log(outcome.message ?? `Tab was closed because its dialog could not be addressed directly.`);
+    return;
+  }
+  // FR2-04 fix-3/GAP-236, decision point 3: the target `selectDialog` picked turned out (on a
+  // fresh re-probe, inside the broker) to be only collaterally blocked by the ACTUAL holder — this
+  // is a defensive fallback (normal `selectDialog` already filters out `blockedBy` entries), only
+  // reachable if attribution shifted between `list()` and this `handle()` call. Report the real
+  // holder plainly rather than claiming success for a target nothing was actually done to.
+  if (outcome?.redirectTo) {
+    console.log(outcome.message ?? `Tab ${target.targetId} is not the dialog holder; run "sutradhar dialog" again.`);
+    return;
+  }
+  // FR2-04 fix-3/GAP-240, decision point 6: live re-verification found that scoping recovery to
+  // the identified holder (points 1+3) was not enough on its own — an ISOLATED unknown dialog (no
+  // sibling relationship at all, e.g. a healthy tab running a slow synchronous script) still got
+  // closed here every time, because a generic accept/dismiss dead-ends into the same
+  // Target.closeTarget recovery GAP-230 built. There is no way to tell that case apart from a
+  // genuinely stuck, unobserved dialog, so this refuses to act rather than risk closing a healthy
+  // tab — `sutradhar close` remains the escape hatch for a real stuck dialog with no evidence.
+  if (outcome?.isolated) {
+    console.log(
+      outcome.message ??
+        `Tab ${target.targetId} is busy or unresponsive, but nothing identifies this as an actual dialog — no automatic recovery was attempted.`,
+    );
+    process.exitCode = 1;
     return;
   }
 
@@ -1160,7 +1184,20 @@ async function cmdClose() {
   if (policy.mode === 'accept' || policy.mode === 'dismiss') {
     const broker = await getBroker(state);
     const result = await runDialogGate(verb, broker, policy, 'close');
-    if (result.status === 'blocked') blockedDialogs = result.dialogs;
+    if (result.status === 'handled') {
+      for (const r of result.records) {
+        console.log(formatDialogHandled({ type: r.dialog.dialogType, message: r.dialog.message, action: r.action, promptText: r.promptText, by: 'policy' }));
+      }
+    }
+    if (result.status === 'blocked') {
+      blockedDialogs = result.dialogs;
+      // FR2-04 fix-3/GAP-242: even though this gate run ultimately blocked (e.g. a chain limit),
+      // print whatever it DID manage to resolve first — same reasoning as `main().catch`'s
+      // DialogBlockedError handling.
+      for (const r of result.records ?? []) {
+        console.log(formatDialogHandled({ type: r.dialog.dialogType, message: r.dialog.message, action: r.action, promptText: r.promptText, by: 'policy' }));
+      }
+    }
   } else {
     const broker = await getBroker(state);
     try {
@@ -1511,6 +1548,10 @@ if (verb === '__dialog-warden') {
   main()
     .catch((err) => {
       if (err instanceof DialogBlockedError) {
+        // FR2-04 fix-3/GAP-242: print any dialogs THIS gate run already resolved before it hit
+        // the condition that made it block anyway (a chain limit, a probe timeout) — dropping
+        // these silently would make real, completed work invisible to the caller.
+        for (const line of err.handledStdoutLines()) console.log(line);
         for (const line of err.stdoutLines()) console.log(line);
         console.error(`Error: ${err.message}`);
         console.error(DIALOG_HINT(err.dialogs[0]?.dialogType ?? 'unknown'));

@@ -22,18 +22,20 @@ function fakeSession(targetId: string) {
   };
 }
 
-function fakeTarget(targetId: string, url: string, session: ReturnType<typeof fakeSession>) {
+function fakeTarget(targetId: string, url: string, session: ReturnType<typeof fakeSession>, opener?: any) {
   return {
     type: () => 'page',
     url: () => url,
     _targetId: targetId,
     createCDPSession: vi.fn().mockResolvedValue(session),
+    ...(opener !== undefined ? { opener: () => opener } : {}),
   };
 }
 
 function fakeBrowser(targets: any[]) {
   const emitter = new EventEmitter();
   let connected = true;
+  const closeTargetCalls: string[] = [];
   return {
     targets: () => targets,
     on: (event: string, cb: (...args: any[]) => void) => emitter.on(event, cb),
@@ -44,6 +46,14 @@ function fakeBrowser(targets: any[]) {
       connected = false;
     }),
     _emit: (event: string, ...args: any[]) => emitter.emit(event, ...args),
+    // `closeTargetAtBrowserLevel` (dialog-cdp.ts) reads this internal Puppeteer field directly —
+    // mocked here so recovery-close tests can run against the real function, not a stub of it.
+    _connection: {
+      send: vi.fn(async (method: string, params: { targetId: string }) => {
+        if (method === 'Target.closeTarget') closeTargetCalls.push(params.targetId);
+      }),
+    },
+    closeTargetCalls,
   };
 }
 
@@ -647,5 +657,147 @@ describe('@sutradhar/browser DialogWarden (FR2-04 Branch W)', () => {
     const { LIVENESS_PROBE_MS } = await import('../../src/session/dialog-warden.js');
     expect(LIVENESS_PROBE_MS).toBeGreaterThan(0);
     expect(LIVENESS_PROBE_MS).toBeLessThanOrEqual(1000);
+  });
+
+  // FR2-04 fix-3: tests for decision points 1 (GAP-236 attribution), 3 (GAP-236/244 recovery
+  // naming), and 6 (GAP-240 isolated-target refusal) against the real DialogWarden HTTP surface —
+  // audit-3's own mutation run (GAP-243) found the previous cycle's recovery/attribution code had
+  // zero direct tests, only live probes; these close that gap structurally.
+
+  function busySession() {
+    const s = fakeSession('busy');
+    s.send.mockImplementation((method: string) =>
+      method === 'Performance.getMetrics' ? Promise.reject(new Error('ProtocolError: operation timed out')) : Promise.resolve(undefined),
+    );
+    return s;
+  }
+
+  it('FR2-04-fix3-A (GAP-236): a popup and its blocked opener — /v1/dialogs reports the popup as the holder (no blockedBy) and the opener as blockedBy the popup; recovery closes ONLY the popup', async () => {
+    const openerSession = busySession();
+    const popupSession = busySession();
+    const openerTarget = fakeTarget('opener', 'https://opener/', openerSession);
+    const popupTarget = fakeTarget('popup', 'about:blank', popupSession, openerTarget);
+    const browser = fakeBrowser([openerTarget, popupTarget]);
+    let readyInfo: { port: number; token: string } | undefined;
+    const warden = new DialogWarden({
+      wsEndpoint: 'ws://x',
+      readPolicy: async () => undefined,
+      isStillCurrent: async () => true,
+      onReady: (info) => {
+        readyInfo = info;
+      },
+      onExit: () => {},
+      connect: async () => browser as any,
+    });
+    await warden.start();
+    try {
+      const res = await req(readyInfo!.port, '/v1/dialogs', readyInfo!.token);
+      const body = (await res.json()) as { dialogs: Array<{ targetId: string; blockedBy?: string }> };
+      const openerEntry = body.dialogs.find((d) => d.targetId === 'opener');
+      const popupEntry = body.dialogs.find((d) => d.targetId === 'popup');
+      expect(popupEntry?.blockedBy).toBeUndefined();
+      expect(openerEntry?.blockedBy).toBe('popup');
+
+      // Recovery: ask the warden to handle the OPENER (the wrong target, exactly GAP-236's shape)
+      // — it must refuse and redirect to the popup, never close the opener.
+      const wrongRes = await req(readyInfo!.port, '/v1/dialogs/handle', readyInfo!.token, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ targetId: 'opener', accept: true }),
+      });
+      expect(wrongRes.status).toBe(409);
+      expect((await wrongRes.json()).holderTargetId).toBe('popup');
+      expect(browser.closeTargetCalls).toEqual([]);
+
+      // Recovery on the actual holder (popup) succeeds and names it (GAP-244).
+      const rightRes = await req(readyInfo!.port, '/v1/dialogs/handle', readyInfo!.token, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ targetId: 'popup', accept: true }),
+      });
+      expect(rightRes.status).toBe(200);
+      const rightBody = await rightRes.json();
+      expect(rightBody.closedTarget).toBe(true);
+      expect(rightBody.message).toContain('popup');
+      expect(browser.closeTargetCalls).toEqual(['popup']);
+    } finally {
+      await warden.stop('test-teardown');
+    }
+  });
+
+  it('FR2-04-fix3-B (GAP-240): an ISOLATED busy target with no sibling relationship is never closed by recovery — reports isolated:true and takes no action', async () => {
+    const session = busySession();
+    const target = fakeTarget('solo', 'https://solo/', session); // no opener — nothing to attribute against
+    const browser = fakeBrowser([target]);
+    let readyInfo: { port: number; token: string } | undefined;
+    const warden = new DialogWarden({
+      wsEndpoint: 'ws://x',
+      readPolicy: async () => undefined,
+      isStillCurrent: async () => true,
+      onReady: (info) => {
+        readyInfo = info;
+      },
+      onExit: () => {},
+      connect: async () => browser as any,
+    });
+    await warden.start();
+    try {
+      const res = await req(readyInfo!.port, '/v1/dialogs/handle', readyInfo!.token, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ targetId: 'solo', accept: true }),
+      });
+      expect(res.status).toBe(409);
+      const body = await res.json();
+      expect(body.isolated).toBe(true);
+      expect(browser.closeTargetCalls).toEqual([]); // never closed — no evidence it's an actual dialog
+    } finally {
+      await warden.stop('test-teardown');
+    }
+  });
+
+  it('FR2-04-fix3-C (GAP-230 re-probe, M21 shape): a target that recovers on its own between list() and the recovery call is never closed', async () => {
+    const openerSession = busySession();
+    let popupBlocked = true;
+    const popupSession = fakeSession('popup');
+    popupSession.send.mockImplementation((method: string) =>
+      method === 'Performance.getMetrics'
+        ? popupBlocked
+          ? Promise.reject(new Error('ProtocolError: operation timed out'))
+          : Promise.resolve({ metrics: [] })
+        : Promise.resolve(undefined),
+    );
+    const openerTarget = fakeTarget('opener', 'https://opener/', openerSession);
+    const popupTarget = fakeTarget('popup', 'about:blank', popupSession, openerTarget);
+    const browser = fakeBrowser([openerTarget, popupTarget]);
+    let readyInfo: { port: number; token: string } | undefined;
+    const warden = new DialogWarden({
+      wsEndpoint: 'ws://x',
+      readPolicy: async () => undefined,
+      isStillCurrent: async () => true,
+      onReady: (info) => {
+        readyInfo = info;
+      },
+      onExit: () => {},
+      connect: async () => browser as any,
+    });
+    await warden.start();
+    try {
+      // The popup clears (e.g. its own dialog got dismissed by something else) right before the
+      // recovery call re-probes it.
+      popupBlocked = false;
+      const res = await req(readyInfo!.port, '/v1/dialogs/handle', readyInfo!.token, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ targetId: 'popup', accept: true }),
+      });
+      // Not tracked as a real dialog, and the re-probe now finds it responsive with no sibling
+      // still blocked either (opener's own busy-ness alone isn't enough — popup itself must have
+      // been the one identified as a holder to recover) — either way `popup` must never be closed.
+      expect(browser.closeTargetCalls).not.toContain('popup');
+      expect(res.status).not.toBe(200);
+    } finally {
+      await warden.stop('test-teardown');
+    }
   });
 });

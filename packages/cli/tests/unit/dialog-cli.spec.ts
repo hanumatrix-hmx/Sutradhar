@@ -75,6 +75,10 @@ describe('@sutradhar/cli dialog-cli (FR2-04)', () => {
     }
   });
 
+  it('D5b (FR2-04 fix-3/GAP-237): tabs is GUARDED, not exempt — it still calls runtime.attach() via withSessionFlow regardless of exemption, so leaving it exempt let it hang ~180s against any open dialog (audit-3, 3/3). It must go through the gate like every other verb now.', () => {
+    expect(classifyVerb('tabs')).toBe('guarded');
+  });
+
   it('D6: selectDialog returns the OLDEST (FIFO) and the remainder', () => {
     const t2 = { dialogType: 'alert', message: 'b', url: 'u', openedAt: '2026-01-01T00:00:02Z' };
     const t1 = { dialogType: 'confirm', message: 'a', url: 'u', openedAt: '2026-01-01T00:00:01Z' };
@@ -139,6 +143,24 @@ describe('@sutradhar/cli dialog-cli (FR2-04)', () => {
     it('a rejection from work propagates as this function\'s own rejection', async () => {
       const work = Promise.reject(new Error('boom'));
       await expect(raceWithDialog(work, () => [], { graceMs: 250 })).rejects.toThrow('boom');
+    });
+
+    it('FR2-04 fix-3, decision point 8 (overhead): the poll timer is cleared the moment work wins the race, not left pending until it would have next fired', async () => {
+      // audit-3 traced +100ms of the +129ms measured per-command overhead to exactly this: the
+      // dialogWatch loop's in-flight setTimeout(pollMs) was never cancelled when `work` won
+      // Promise.race, so it kept Node's event loop alive (a real, ref'd timer) until it eventually
+      // fired on its own. `vi.getTimerCount()` gives a direct, non-timing-based assertion: right
+      // after raceWithDialog resolves, there must be ZERO timers left registered by it — not "zero
+      // once enough time has passed for the old timer to fire anyway".
+      const work = new Promise((resolve) => setTimeout(() => resolve('ok'), 40));
+      const p = raceWithDialog(work, () => [], { graceMs: 250, pollMs: 100 });
+      await vi.advanceTimersByTimeAsync(40);
+      await expect(p).resolves.toEqual({ kind: 'done', value: 'ok' });
+      // Only `work`'s own already-fired setTimeout(40) could still be a phantom entry in some
+      // fake-timer implementations right at the firing instant; give the microtask queue a beat
+      // and then require the poll timer specifically to be gone.
+      await Promise.resolve();
+      expect(vi.getTimerCount()).toBe(0);
     });
   });
 

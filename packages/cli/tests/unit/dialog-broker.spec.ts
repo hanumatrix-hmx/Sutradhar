@@ -61,7 +61,10 @@ describe('@sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per
     const dialog = { targetId: 't1', dialogType: 'confirm', message: 'm', url: 'u', openedAt: 'o1' };
     const broker = fakeBroker({ list: async () => ({ status: 'ok', dialogs: [dialog], busy: [] }) });
     const result = await runDialogGate('close', broker, { mode: 'report' }, 'close');
-    expect(result).toEqual({ status: 'blocked', dialogs: [dialog] });
+    // FR2-04 fix-3/GAP-242: 'close' mode's blocked result now also carries `records` (empty here —
+    // nothing was handled before it blocked) so a caller that DID handle something first never
+    // loses that record just because the gate ultimately blocked anyway.
+    expect(result).toEqual({ status: 'blocked', dialogs: [dialog], records: [] });
     expect(broker.disposeCalls).toBe(1);
   });
 
@@ -187,5 +190,93 @@ describe('@sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per
     await expect(runDialogGate('snap', broker, { mode: 'accept' }, 'command')).rejects.toThrow(DialogBlockedError);
     // Never more than the bounded number of list() calls (max rounds + the final check).
     expect(round).toBeLessThanOrEqual(6);
+  });
+
+  // FR2-04 fix-3 decision points 5, 6, 7 — see dialog-broker.ts's runDialogGate doc comment.
+
+  it('decision point 6 (GAP-240): a liveness-inferred "unknown" dialog is NEVER auto-handled by an accept/dismiss policy — the command still blocks, but handle() is never called for it', async () => {
+    const unknown = { targetId: 't1', dialogType: 'unknown', message: '', url: 'u', openedAt: 'o1' };
+    const handleCalls: string[] = [];
+    const broker = fakeBroker({
+      list: async () => ({ status: 'ok', dialogs: [unknown], busy: ['t1'] }),
+      handle: async (targetId: string) => {
+        handleCalls.push(targetId);
+      },
+    });
+    await expect(runDialogGate('snap', broker, { mode: 'accept' }, 'command')).rejects.toThrow(DialogBlockedError);
+    expect(handleCalls).toEqual([]); // never auto-recovered — GAP-240's sync-XHR false positive
+  });
+
+  it('decision point 6: a real dialog is still auto-handled even alongside an unrelated liveness-inferred "unknown" entry, and the chain re-checks until the unknown one clears on its own', async () => {
+    const real = { targetId: 't1', dialogType: 'alert', message: 'm', url: 'u', openedAt: 'o1' };
+    const unknown = { targetId: 't2', dialogType: 'unknown', message: '', url: 'u2', openedAt: 'o2' };
+    let round = 0;
+    const handleCalls: string[] = [];
+    const broker = fakeBroker({
+      list: async () => {
+        round++;
+        // t1's real alert is present only on round 1; t2 (collateral/busy) clears by round 2 once
+        // the real dialog is gone — mirrors GAP-239's fix (a fresh re-probe decides, not a stale
+        // classification).
+        if (round === 1) return { status: 'ok', dialogs: [real, unknown], busy: ['t2'] };
+        return { status: 'ok', dialogs: [], busy: [] };
+      },
+      handle: async (targetId: string) => {
+        handleCalls.push(targetId);
+      },
+    });
+    const result = await runDialogGate('snap', broker, { mode: 'accept' }, 'command');
+    expect(result.status).toBe('handled');
+    expect(handleCalls).toEqual(['t1']); // only the real dialog was ever handled
+  });
+
+  it('decision point 5 (GAP-241): list() reporting reason "timeout" fails CLOSED (throws), unlike reason "unreachable" which reports clear', async () => {
+    const timeoutBroker = fakeBroker({ list: async () => ({ status: 'unknown', reason: 'timeout' }) });
+    await expect(runDialogGate('snap', timeoutBroker, { mode: 'report' }, 'command')).rejects.toThrow(DialogBlockedError);
+
+    const unreachableBroker = fakeBroker({ list: async () => ({ status: 'unknown', reason: 'unreachable' }) });
+    const result = await runDialogGate('snap', unreachableBroker, { mode: 'report' }, 'command');
+    expect(result).toEqual({ status: 'clear' });
+
+    const legacyBroker = fakeBroker({ list: async () => ({ status: 'unknown' }) }); // no reason at all
+    const legacyResult = await runDialogGate('snap', legacyBroker, { mode: 'report' }, 'command');
+    expect(legacyResult).toEqual({ status: 'clear' });
+  });
+
+  it('decision point 7 (GAP-242): dialogs already handled before the chain-limit fail-closed are preserved on the thrown DialogBlockedError, not dropped', async () => {
+    let round = 0;
+    const broker = fakeBroker({
+      list: async () => {
+        round++;
+        return { status: 'ok', dialogs: [{ targetId: 't1', dialogType: 'confirm', message: `m${round}`, url: 'u', openedAt: `o${round}` }], busy: [] };
+      },
+      handle: async () => {},
+    });
+    try {
+      await runDialogGate('snap', broker, { mode: 'accept' }, 'command');
+      expect.unreachable('should have thrown');
+    } catch (err) {
+      expect(err).toBeInstanceOf(DialogBlockedError);
+      const dbe = err as DialogBlockedError;
+      // GATE_REGATE_MAX_ROUNDS is 5 — every round handled its one dialog before the loop gave up.
+      expect(dbe.handledRecords.length).toBe(5);
+      expect(dbe.handledStdoutLines().length).toBe(5);
+    }
+  });
+
+  it('decision point 7: "close" mode also preserves handledRecords on its blocked result, not just the thrown-error path', async () => {
+    let round = 0;
+    const broker = fakeBroker({
+      list: async () => {
+        round++;
+        return { status: 'ok', dialogs: [{ targetId: 't1', dialogType: 'confirm', message: `m${round}`, url: 'u', openedAt: `o${round}` }], busy: [] };
+      },
+      handle: async () => {},
+    });
+    const result = await runDialogGate('close', broker, { mode: 'accept' }, 'close');
+    expect(result.status).toBe('blocked');
+    if (result.status === 'blocked') {
+      expect(result.records?.length).toBe(5);
+    }
   });
 });

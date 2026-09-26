@@ -1267,17 +1267,18 @@ try {
       pass: acc.code === 0 && /closed because its dialog/.test(acc.stdout ?? ''),
       detail: { acceptOut: (acc.stdout ?? '').slice(0, 200) },
     });
-    // KNOWN RESIDUAL (disclosed, not fixed): calling `tabs` IMMEDIATELY after this recovery has
-    // been found, live, to hang this specific ordering (reproduced consistently across several
-    // standalone scripts -- fix-2/gap230-tabs-debug3.mjs, debug4.mjs, debug5.mjs -- not yet root-
-    // caused). The exact same recovery followed by `tabs` LATER in a longer command sequence
-    // (several intervening `snap`/`dialog` calls first) is proven clean 3/3 live in
-    // fix-2/unknown-recovery-probe-fix2.mjs and 3/3 in fix-2/gap220-matrix-fix2.json. This case is
-    // kept FAILING (not removed, not loosened) so the open item stays visible rather than quietly
-    // dropped -- see fix-2's final report for the full disclosure.
+    // FR2-04 fix-3/GAP-237 (audit-3 root-caused fix-2's disclosed "tabs immediately after recovery
+    // hangs" residual as GAP-237, not something specific to this ordering): `tabs` was exempt from
+    // the dialog gate but still called `runtime.attach()` underneath (session-flow.ts's `reattach`
+    // step runs regardless of gate exemption), so it hung ~180s against ANY open dialog, not just
+    // right after a recovery. fix-3 makes `tabs` a normal GUARDED verb (decision point 4) -- it now
+    // goes through the exact same gate as `snap`/`eval`/etc, so immediately after `dialog accept`
+    // resolves the popup, the gate re-probes cleanly and `tabs` proceeds fast with exit 0. Live
+    // re-verification: 30/30 across recovery-wrongtab-probe.mjs's full matrix (fix-3 evidence),
+    // this case included. No longer a known residual -- kept as a regression guard.
     const tabsAfter = await cli(['tabs'], caseDir, { capMs: 20000 });
     record({
-      case: 'GAP230.tabs-immediately-after-recovery(KNOWN-RESIDUAL)',
+      case: 'GAP230.tabs-immediately-after-recovery',
       pass: tabsAfter.code === 0,
       detail: { tabsCode: tabsAfter.code, tabsMs: tabsAfter.ms, tabsKilled: tabsAfter.killedAtCap },
     });

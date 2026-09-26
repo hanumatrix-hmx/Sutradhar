@@ -15,23 +15,37 @@ import { DirectCdpBroker } from '../../src/dialog-broker.js';
 
 const state = {
   connectResult: undefined as any,
-  targets: [] as Array<{ info: { targetId: string; url: string }; target: any }>,
+  targets: [] as Array<{ info: { targetId: string; url: string; openerTargetId?: string }; target: any }>,
   livenessResults: new Map<string, 'responsive' | 'blocked' | 'error'>(),
   handleCalls: [] as Array<{ accept: boolean; promptText: string | undefined }>,
+  handleShouldFail: false,
+  closeCalls: [] as string[],
 };
 
-vi.mock('@sutradhar/browser', () => ({
-  connectForDialogs: vi.fn(async () => state.connectResult),
-  listPageTargets: vi.fn(() => state.targets),
-  livenessProbe: vi.fn(async (session: { targetId: string }) => state.livenessResults.get(session.targetId) ?? 'responsive'),
-  handleDialogOnTarget: vi.fn(async (session: { targetId: string }, accept: boolean, promptText: string | undefined) => {
-    state.handleCalls.push({ accept, promptText });
-  }),
-}));
-
-function fakeTarget(targetId: string, url: string) {
+vi.mock('@sutradhar/browser', async (importOriginal) => {
+  // FR2-04 fix-3: `DirectCdpBroker.list()` now also calls the real, pure
+  // `attributeDialogHolders`/`probeTargetsConcurrently` helpers from this module — pull those
+  // through from the actual implementation instead of stubbing them, since these tests only need
+  // to control connect/list/liveness/handle, not re-implement fix-3's own attribution logic.
+  const actual = await importOriginal<typeof import('@sutradhar/browser')>();
   return {
-    info: { targetId, url },
+    ...actual,
+    connectForDialogs: vi.fn(async () => state.connectResult),
+    listPageTargets: vi.fn(() => state.targets),
+    livenessProbe: vi.fn(async (session: { targetId: string }) => state.livenessResults.get(session.targetId) ?? 'responsive'),
+    handleDialogOnTarget: vi.fn(async (session: { targetId: string }, accept: boolean, promptText: string | undefined) => {
+      if (state.handleShouldFail) throw new Error('No dialog is showing');
+      state.handleCalls.push({ accept, promptText });
+    }),
+    closeTargetAtBrowserLevel: vi.fn(async (_browser: unknown, targetId: string) => {
+      state.closeCalls.push(targetId);
+    }),
+  };
+});
+
+function fakeTarget(targetId: string, url: string, openerTargetId?: string) {
+  return {
+    info: { targetId, url, openerTargetId },
     target: {
       createCDPSession: vi.fn(async () => ({ targetId })),
     },
@@ -44,6 +58,8 @@ describe('@sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222)', () =>
     state.targets = [];
     state.livenessResults = new Map();
     state.handleCalls = [];
+    state.handleShouldFail = false;
+    state.closeCalls = [];
   });
 
   it('a blocked target with a matching hint is reported as that real dialog, not "unknown"', async () => {
@@ -92,11 +108,14 @@ describe('@sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222)', () =>
     expect(result.busy).toEqual([]);
   });
 
-  it('connectForDialogs failing entirely reports status "unknown" (falls through to normal attach)', async () => {
+  it('connectForDialogs failing entirely reports status "unknown" with reason "unreachable" (falls through to normal attach)', async () => {
+    // FR2-04 fix-3, decision point 5: `reason` now distinguishes "never reachable at all" (this
+    // case — safe to fall through to `clear`) from "reachable but the probe itself timed out"
+    // (`reason:'timeout'`, which the gate must fail CLOSED on instead — see dialog-broker.spec.ts).
     state.connectResult = undefined;
     const broker = new DirectCdpBroker('ws://x');
     const result = await broker.list();
-    expect(result).toEqual({ status: 'unknown' });
+    expect(result).toEqual({ status: 'unknown', reason: 'unreachable' });
   });
 
   it('GAP-222: handle() works even when list() was never called first (warden-down "dialog accept|dismiss")', async () => {
@@ -112,5 +131,53 @@ describe('@sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222)', () =>
     state.connectResult = undefined;
     const broker = new DirectCdpBroker('ws://x');
     await expect(broker.handle('t1', true, undefined)).rejects.toThrow(/could not reach the browser/i);
+  });
+
+  it('FR2-04 fix-3/GAP-236: a popup+opener pair both blocked — list() attributes the popup as the holder (no blockedBy) and the opener as blockedBy the popup', async () => {
+    state.targets = [fakeTarget('opener', 'https://opener/'), fakeTarget('popup', 'about:blank', 'opener')];
+    state.livenessResults.set('opener', 'blocked');
+    state.livenessResults.set('popup', 'blocked');
+    const broker = new DirectCdpBroker('ws://x');
+    const result = await broker.list();
+    if (result.status !== 'ok') throw new Error('unreachable');
+    const opener = result.dialogs.find((d) => d.targetId === 'opener');
+    const popup = result.dialogs.find((d) => d.targetId === 'popup');
+    expect(popup?.blockedBy).toBeUndefined();
+    expect(opener?.blockedBy).toBe('popup');
+  });
+
+  it('FR2-04 fix-3/GAP-236, decision point 3: handle() on a collaterally-blocked target refuses to close it and redirects to the real holder', async () => {
+    state.targets = [fakeTarget('opener', 'https://opener/'), fakeTarget('popup', 'about:blank', 'opener')];
+    state.livenessResults.set('opener', 'blocked');
+    state.livenessResults.set('popup', 'blocked');
+    state.handleShouldFail = true; // forces the recovery-close branch, same as a real "No dialog is showing"
+    const broker = new DirectCdpBroker('ws://x');
+    const outcome = await broker.handle('opener', true, undefined);
+    expect(outcome?.redirectTo).toBe('popup');
+    expect(outcome?.closedTarget).toBeFalsy();
+    expect(state.closeCalls).toEqual([]); // never closed the wrong tab
+  });
+
+  it('FR2-04 fix-3/GAP-236, decision point 3: handle() on the actual holder closes it and names it (GAP-244)', async () => {
+    state.targets = [fakeTarget('opener', 'https://opener/'), fakeTarget('popup', 'about:blank', 'opener')];
+    state.livenessResults.set('opener', 'blocked');
+    state.livenessResults.set('popup', 'blocked');
+    state.handleShouldFail = true;
+    const broker = new DirectCdpBroker('ws://x');
+    const outcome = await broker.handle('popup', true, undefined);
+    expect(outcome?.closedTarget).toBe(true);
+    expect(outcome?.message).toContain('popup');
+    expect(state.closeCalls).toEqual(['popup']);
+  });
+
+  it('FR2-04 fix-3/GAP-240, decision point 6: handle() on an ISOLATED blocked target (no sibling relationship) refuses to close it', async () => {
+    state.targets = [fakeTarget('solo', 'https://solo/')]; // no opener, no siblings — the sync-XHR shape
+    state.livenessResults.set('solo', 'blocked');
+    state.handleShouldFail = true;
+    const broker = new DirectCdpBroker('ws://x');
+    const outcome = await broker.handle('solo', true, undefined);
+    expect(outcome?.isolated).toBe(true);
+    expect(outcome?.closedTarget).toBeFalsy();
+    expect(state.closeCalls).toEqual([]); // GAP-240: never close a target we can't distinguish from a busy script
   });
 });

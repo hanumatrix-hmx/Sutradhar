@@ -21,6 +21,7 @@ import {
   listPageTargets,
   livenessProbe,
   closeTargetAtBrowserLevel,
+  attributeDialogHolders,
   type ObservedDialog,
 } from './dialog-cdp.js';
 import type { DialogPolicy } from './browser-tab.js';
@@ -134,38 +135,72 @@ export class DialogWarden {
     const busy: string[] = [];
     if (!this.browser) return { dialogs, busy };
     const trackedIds = new Set(dialogs.map((d) => d.targetId));
-    for (const { info, target } of listPageTargets(this.browser)) {
-      if (trackedIds.has(info.targetId)) continue;
-      // GAP-228: probe every target with nothing tracked — no `pageEnableAckedAt` narrowing any
-      // more (see LIVENESS_PROBE_MS's doc comment for why the old narrowing existed and why it's
-      // gone: the new probe signal is decidable, so N9/N10 busy-script cases don't need it).
-      let session = this.sessions.get(info.targetId);
-      let ownSession = false;
-      if (!session) {
-        try {
-          session = await target.createCDPSession();
-          ownSession = true;
-        } catch {
-          continue; // target gone between listing and attach — nothing to probe
+    const candidates = listPageTargets(this.browser).filter(({ info }) => !trackedIds.has(info.targetId));
+
+    // FR2-04 fix-3, decision point 5 (GAP-241): probe every candidate CONCURRENTLY, not one after
+    // another — see `probeTargetsConcurrently`'s doc comment for the exact failure this replaces
+    // (serial 400ms-per-target probing scaling linearly with tab count until it blew past the
+    // CLI's own 5s outer wait cap, which then failed OPEN). Each probe still has its own bounded
+    // `LIVENESS_PROBE_MS` timeout, so the whole round costs about one probe's worth of wall time
+    // regardless of how many targets there are. A target whose session can't even be attached
+    // (closed between listing and attach) is dropped, exactly as before.
+    const sessionInfo = new Map<string, { session: CDPSession; ownSession: boolean }>();
+    await Promise.all(
+      candidates.map(async ({ info, target }) => {
+        let session = this.sessions.get(info.targetId);
+        let ownSession = false;
+        if (!session) {
+          try {
+            session = await target.createCDPSession();
+            ownSession = true;
+          } catch {
+            return; // target gone between listing and attach — nothing to probe
+          }
         }
-      }
-      let state: Awaited<ReturnType<typeof livenessProbe>>;
-      try {
-        state = await livenessProbe(session, LIVENESS_PROBE_MS);
-      } finally {
-        if (ownSession) void session.detach().catch(() => {});
-      }
-      if (state !== 'responsive') {
-        busy.push(info.targetId);
-        dialogs.push({
-          targetId: info.targetId,
-          url: info.url,
-          type: 'unknown',
-          message: '',
-          openedAt: new Date().toISOString(),
-          source: 'hint',
-        });
-      }
+        sessionInfo.set(info.targetId, { session, ownSession });
+      }),
+    );
+    const probeable = candidates.filter(({ info }) => sessionInfo.has(info.targetId));
+    const states = new Map<string, Awaited<ReturnType<typeof livenessProbe>>>(
+      await Promise.all(
+        probeable.map(async ({ info }): Promise<[string, Awaited<ReturnType<typeof livenessProbe>>]> => {
+          const { session, ownSession } = sessionInfo.get(info.targetId)!;
+          try {
+            return [info.targetId, await livenessProbe(session, LIVENESS_PROBE_MS)];
+          } finally {
+            if (ownSession) void session.detach().catch(() => {});
+          }
+        }),
+      ),
+    );
+
+    // FR2-04 fix-3, decision point 1 (GAP-236): among everything that just came back non-
+    // responsive, figure out which target actually HOLDS the dialog versus which is merely
+    // collaterally blocked by sharing a renderer with the holder (a popup and its opener being
+    // the concrete, evidenced case) — see `attributeDialogHolders`'s doc comment for the full
+    // reasoning. Only the holder is reported as its own `unknown` dialog; a collateral target is
+    // reported with `blockedBy` set instead, so the gate still blocks (the shared renderer really
+    // is unresponsive) but recovery/auto-policy code never treats it as independently
+    // addressable — never its own "unknown dialog" that a generic `accept`/`dismiss` might land on
+    // (that indirection is exactly how GAP-236 closed the wrong tab).
+    const blockedInfos = probeable
+      .filter(({ info }) => states.get(info.targetId) !== 'responsive')
+      .map(({ info }) => ({ targetId: info.targetId, openerTargetId: info.openerTargetId, discoveredAt: this.discoveredAt.get(info.targetId) }));
+    const attribution = attributeDialogHolders(blockedInfos);
+    for (const { info } of probeable) {
+      const state = states.get(info.targetId);
+      if (state === 'responsive') continue;
+      busy.push(info.targetId);
+      const blockedBy = attribution.get(info.targetId);
+      dialogs.push({
+        targetId: info.targetId,
+        url: info.url,
+        type: 'unknown',
+        message: '',
+        openedAt: new Date().toISOString(),
+        source: 'hint',
+        blockedBy,
+      });
     }
     return { dialogs, busy };
   }
@@ -365,39 +400,60 @@ export class DialogWarden {
   }
 
   /**
-   * GAP-230: re-probes `targetId` (it may have unblocked on its own since the caller's `list()`)
-   * and, if it's still genuinely unresponsive AND still exists, closes it via
-   * {@link closeTargetAtBrowserLevel}. Returns `false` (no recovery attempted/needed) for a
-   * target that's gone, or that answers normally — never closes a tab that isn't actually stuck.
+   * GAP-230/fix-3 decision point 1+3 (GAP-236): re-probes the WHOLE session (it may have
+   * unblocked on its own since the caller's `list()`, and a fresh probe is the only way to know
+   * which target — if several share a blocked renderer — actually holds the dialog right now).
+   * Reuses {@link listWithLiveness} rather than re-implementing the probe/attribution logic: it
+   * already does the exact "probe every untracked target, then attribute holder vs collateral"
+   * work this recovery path needs, so a live re-probe here is cheap (bounded, parallel) and always
+   * consistent with what the next `GET /v1/dialogs` would report a moment later.
+   *
+   * Returns `{closed:true}` only when `targetId` itself was identified as the actual holder and
+   * was closed. If `targetId` is currently attributed as collaterally blocked BY another target
+   * (the exact GAP-236 shape — a popup's opener sharing its renderer), this refuses to close it
+   * and returns the real holder's id/url instead, so the caller can report which tab it should
+   * have asked about (decision point 3: recovery must never be the implicit side effect of
+   * closing whatever target merely sorted first). `{closed:false}` with no `redirectTo`/`isolated`
+   * means the target isn't blocked at all any more (it cleared on its own) or no longer exists —
+   * nothing to recover either way.
+   *
+   * FR2-04 fix-3, decision point 6 (GAP-240): live re-verification found that scoping recovery to
+   * the identified holder (points 1+3) was NECESSARY but not SUFFICIENT to retire GAP-240 — a
+   * target with no sibling relationship at all (the sync-XHR/heavy-script shape: one isolated tab,
+   * `Performance.getMetrics` timing out with nothing else to attribute it against) still passed
+   * straight through as "the holder of its own dialog" and got closed exactly like a real orphaned
+   * popup would (signal-attack-probe.mjs, `sync-xhr-10s`: FALSE-BLOCK+TAB-CLOSED, ~510ms). An
+   * isolated hint entry has ZERO structural evidence it's an actual dialog rather than a slow
+   * script — `blockedBy` only exists for a target with at least one sibling in the SAME
+   * probe round, which is real evidence of the popup/opener shape this item's audits demonstrated.
+   * Refuse to close an isolated target under ANY path (this method is shared by both the automatic
+   * policy's — which fix-3 already never calls into for a hint entry, see runDialogGate — and the
+   * explicit `sutradhar dialog accept|dismiss` command, which fix-2 left free to close it). The
+   * accepted trade (decision point 6): a busy-but-healthy isolated tab stays blocked with a plain
+   * "not necessarily a dialog" message and NO destructive action; `sutradhar close` remains the
+   * escape hatch for a genuinely stuck, unobservable, isolated dialog, exactly as before Branch W
+   * existed at all.
    */
-  private async tryRecoverUnknownTarget(targetId: string): Promise<boolean> {
-    if (!this.browser) return false;
-    const stillExists = listPageTargets(this.browser).some(({ info }) => info.targetId === targetId);
-    if (!stillExists) return false;
-    let session = this.sessions.get(targetId);
-    let ownSession = false;
-    if (!session) {
-      const entry = this.browser.targets().find((t) => idOf(t) === targetId);
-      if (!entry) return false;
-      try {
-        session = await entry.createCDPSession();
-        ownSession = true;
-      } catch {
-        return false;
-      }
+  private async tryRecoverUnknownTarget(
+    targetId: string,
+  ): Promise<{ closed: boolean; redirectTo?: string; redirectUrl?: string; isolated?: boolean }> {
+    if (!this.browser) return { closed: false };
+    const { dialogs } = await this.listWithLiveness();
+    const entry = dialogs.find((d) => d.targetId === targetId && d.source === 'hint');
+    if (!entry) return { closed: false }; // not currently probed as blocked — nothing to recover
+    if (entry.blockedBy) {
+      const holder = dialogs.find((d) => d.targetId === entry.blockedBy);
+      return { closed: false, redirectTo: entry.blockedBy, redirectUrl: holder?.url };
     }
-    let state: Awaited<ReturnType<typeof livenessProbe>>;
-    try {
-      state = await livenessProbe(session, LIVENESS_PROBE_MS);
-    } finally {
-      if (ownSession) void session.detach().catch(() => {});
+    const hasCollateralSibling = dialogs.some((d) => d.blockedBy === targetId);
+    if (!hasCollateralSibling) {
+      return { closed: false, isolated: true };
     }
-    if (state === 'responsive') return false; // it cleared on its own — nothing to recover
     try {
       await closeTargetAtBrowserLevel(this.browser, targetId);
-      return true;
+      return { closed: true };
     } catch {
-      return false;
+      return { closed: false };
     }
   }
 
@@ -457,15 +513,51 @@ export class DialogWarden {
         // actually fine (session missing because it already closed, or newly responsive) still
         // 404s as before — this only recovers a target that's genuinely still stuck.
         if (targetId && this.browser) {
-          const recovered = await this.tryRecoverUnknownTarget(targetId);
-          if (recovered) {
+          const recovery = await this.tryRecoverUnknownTarget(targetId);
+          if (recovery.closed) {
+            const url = listPageTargets(this.browser).find(({ info }) => info.targetId === targetId)?.info.url;
             res
               .writeHead(200, { 'content-type': 'application/json' })
               .end(
                 JSON.stringify({
                   handled: true,
                   closedTarget: true,
-                  message: `Tab ${targetId} was closed because its dialog could not be addressed directly (unknown dialog).`,
+                  message: `Tab ${targetId}${url ? ` (${url})` : ''} was closed because its dialog could not be addressed directly (unknown dialog).`,
+                }),
+              );
+            return;
+          }
+          if (recovery.redirectTo) {
+            // FR2-04 fix-3/GAP-236, decision point 3: `targetId` is only collaterally blocked by
+            // sharing a renderer with the ACTUAL holder — refuse to close it, and name the real
+            // holder so the caller (cmdDialog) can report it plainly rather than silently acting
+            // on whichever tab it happened to be asked about.
+            res
+              .writeHead(409, { 'content-type': 'application/json' })
+              .end(
+                JSON.stringify({
+                  error:
+                    `tab ${targetId} is unresponsive because it shares a browser process with tab ` +
+                    `${recovery.redirectTo}${recovery.redirectUrl ? ` (${recovery.redirectUrl})` : ''}, which actually holds the ` +
+                    'dialog — re-run "sutradhar dialog" and target that tab instead.',
+                  holderTargetId: recovery.redirectTo,
+                }),
+              );
+            return;
+          }
+          if (recovery.isolated) {
+            // FR2-04 fix-3/GAP-240, decision point 6: no sibling relationship at all — nothing
+            // distinguishes this from a healthy tab running a slow script. Never close it
+            // automatically; report plainly instead so the caller knows why nothing happened.
+            res
+              .writeHead(409, { 'content-type': 'application/json' })
+              .end(
+                JSON.stringify({
+                  error:
+                    `tab ${targetId} is busy or unresponsive, but nothing identifies this as an actual dialog ` +
+                    '(it may just be running a slow script) — no automatic recovery was attempted. If you are ' +
+                    'sure it is a stuck dialog, "sutradhar close" ends the session.',
+                  isolated: true,
                 }),
               );
             return;

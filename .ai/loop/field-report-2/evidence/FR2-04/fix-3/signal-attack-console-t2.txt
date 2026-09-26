@@ -1,0 +1,28 @@
+{"t":0,"state":"control/idle","gm":"r1,r0,r0","rt":"responsive","warden":{"ms":8,"dialogs":[]},"snap":"0/294ms","verdict":"OK"}
+{"t":0,"state":"control/alert(dialog)","gm":"b404,b406,b409","rt":"blocked","warden":{"ms":2,"dialogs":["TGT:alert"]},"snap":"3/270ms","verdict":"DIALOG-CAUGHT"}
+{"t":0,"state":"busy-js-6s","gm":"r1,r0,r1","rt":"blocked","warden":{"ms":3,"dialogs":[]},"snap":"0/5307ms","verdict":"OK"}
+{"t":0,"state":"sync-xhr-10s","gm":"b415,b410,b404","rt":"blocked","warden":{"ms":409,"dialogs":["TGT:unknown"]},"snap":"3/714ms","rec":"tab BC81DFCEF0F2AF7F3A5F5193715D5098 is busy or unresponsive, but nothing identi","verdict":"FALSE-BLOCK"}
+{"t":0,"state":"huge-dom-parse+layout","gm":"b407,b402,r14","rt":"responsive","warden":{"ms":7,"dialogs":[]},"snap":"0/549ms","busy":907,"verdict":"OK"}
+{"t":1,"state":"control/idle","gm":"r1,r1,r0","rt":"responsive","warden":{"ms":2,"dialogs":[]},"snap":"0/282ms","verdict":"OK"}
+{"t":1,"state":"control/alert(dialog)","gm":"b404,b406,b408","rt":"blocked","warden":{"ms":3,"dialogs":["TGT:alert"]},"snap":"3/316ms","verdict":"DIALOG-CAUGHT"}
+{"t":1,"state":"busy-js-6s","gm":"r1,r1,r0","rt":"blocked","warden":{"ms":3,"dialogs":[]},"snap":"0/5298ms","verdict":"OK"}
+{"t":1,"state":"sync-xhr-10s","gm":"b403,b401,b406","rt":"blocked","warden":{"ms":404,"dialogs":["TGT:unknown"]},"snap":"3/701ms","rec":"tab A278C596FE438453C9F127197CEEBC95 is busy or unresponsive, but nothing identi","verdict":"FALSE-BLOCK"}
+{"t":1,"state":"huge-dom-parse+layout","gm":"b406,b407,r2","rt":"responsive","warden":{"ms":8,"dialogs":[]},"snap":"0/482ms","busy":908,"verdict":"OK"}
+{
+ "control/idle": {
+  "OK": 2
+ },
+ "control/alert(dialog)": {
+  "DIALOG-CAUGHT": 2
+ },
+ "busy-js-6s": {
+  "OK": 2
+ },
+ "sync-xhr-10s": {
+  "FALSE-BLOCK": 2
+ },
+ "huge-dom-parse+layout": {
+  "OK": 2
+ }
+}
+leftovers {"wardens":[],"chrome":[],"cliChildren":[]}

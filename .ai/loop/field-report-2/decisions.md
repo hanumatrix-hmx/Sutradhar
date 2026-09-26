@@ -2250,3 +2250,60 @@ BLOCKED with a diagnosis per the loop's rules):
 GAP-235 (pre-existing adoptPopupPage crash) stays tracked separately, not part of this item's scope,
 but catching it cheaply (instead of an uncaught throw after "Clicked ...") would remove a
 contradictory success+crash output; fix-3 may take it if time allows, otherwise leave it open.
+
+## 2026-09-27 -- FR2-04 fix-3 executed; sent to independent audit-4 (LAST STANDARD CYCLE, 4 of 4)
+
+Executor (Sonnet) self-report, independently spot-checked by the Orchestrator (vitest browser 472
+and cli 119 re-run directly: exact match; 0 leftover processes; the one stray temp dir found
+belongs to an unrelated FR2-03 item, left alone).
+
+Core design change: the fixes so far treated "is this renderer blocked" as the only signal, which
+can't tell a popup from its opener when they share a process. fix-3 adds Target.opener() (a
+browser-level CDP field, no renderer round-trip) and a new attributeDialogHolders function: when
+several same-renderer targets are all blocked, it walks opener->child chains, designates the
+newest leaf as the actual holder, and tags the rest as "blocked by X" rather than reporting them
+as their own unknown dialogs.
+
+- GAP-236 (wrong-tab close): fixed via attribution. recovery-wrongtab-probe 30/30 closes the
+  popup, never the opener; multi-unknown-probe 2/2 with an unrelated idle tab never touched.
+- GAP-237 (tabs hangs): `tabs` is now fully gated (simplest of the two options offered), not
+  special-cased. ~280 ms exit 3 vs the ~180 s hang/wrong-tab before.
+- GAP-238 (blank popup invisible): the blank-URL exclusion on the probe is removed.
+- GAP-239 (false exit-3 under policy): fixed as a side effect of the GAP-240 change (below).
+  policy-sibling-probe 15/15, opener always alive, no phantom unknown line.
+- GAP-240 (false positive on busy pages): NOT eliminated -- re-scoped per the decision. Automatic
+  --dialog policies never resolve a liveness-inferred 'unknown' entry, and recovery (manual or
+  automatic) refuses to close an isolated target with no sibling relationship. The false BLOCK
+  (exit 3 on a busy-but-healthy tab) still happens; what changed is that it can no longer destroy
+  a tab. The executor found this the hard way: its first pass only fixed the automatic-policy
+  path, and its own live re-check (signal-attack-probe) caught that manual `dialog accept` still
+  closed a healthy sync-XHR tab, which drove the second, isolated-target half of the fix.
+- GAP-241 (fails open past ~13 tabs): per-target probing is now parallel; many-blocked-probe is
+  flat at ~410 ms whether K=4, 14 or 30 (was O(K x 400ms) and failed open past ~13).
+- GAP-242 (dropped records at chain limit): DialogBlockedError now carries handledRecords through.
+- GAP-243 (8 surviving mutations): 16 new/updated tests; a from-scratch revert-confirm harness,
+  9/9 confirmed, every restore sha-verified.
+- GAP-244 (recovery message identity): PARTIAL, disclosed rather than hidden. The warden
+  deliberately never attaches (that's the whole point -- attaching is what hangs against an open
+  dialog), so it structurally has no access to the CLI's own tab_<sessionId>_<counter> id scheme,
+  which is itself regenerated per process anyway. Messages now name the tab by its persistent CDP
+  target id plus URL instead. A real, structural limitation, not an oversight -- audit-4 should
+  judge whether this is acceptable.
+- Overhead: down to +17-29 ms vs master (was +129-159 ms), from clearing/unref'ing the pre-emption
+  poll timer -- close to fix-3's own +30 ms estimate.
+
+Verification: forced build 19/19 clean. vitest browser 472 / cli 119 / capability-runtime 164 /
+mcp-server 84 / sutradhar 15 = 854, 0 failures (one download-timing test flaked once under
+full-parallel load, clean on repeat and in isolation -- pre-existing, unrelated). Live verify
+(--skip-slow) 108/108 pass, 0 fail, 3 skip, run twice. Audit-3's full attack matrix re-run live
+against fix-3 with the rates above.
+
+GAP-235 (pre-existing adoptPopupPage crash) untouched, confirmed not to block anything above.
+
+This is the last standard cycle for FR2-04 (4 of 4 used). If audit-4 fails with any critical or
+major finding, FR2-04 moves to 2 escalation cycles per the loop's rules, then BLOCKED with a
+diagnosis if those also fail. audit-4 should pay particular attention to: whether the
+Target.opener()-based attribution generalizes beyond the popup/opener shape audit-3 demonstrated
+(e.g. iframes, multiple popups from one opener, a popup that opens its own popup); whether GAP-240's
+re-scoped false-block-without-close is actually livable for an agent driving the CLI; and whether
+GAP-244's disclosed identity limitation is acceptable.

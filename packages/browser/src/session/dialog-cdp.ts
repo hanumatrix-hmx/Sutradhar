@@ -17,6 +17,18 @@ import type { Browser, CDPSession, Target } from 'puppeteer-core';
 export interface PageTargetInfo {
   readonly targetId: string;
   readonly url: string;
+  /** FR2-04 fix-3/GAP-236: the CDP target id of the target that OPENED this one (`window.open()`/
+   *  a `target=_blank` link), when known — `Target.getTargetInfo`'s `openerId`, surfaced by
+   *  Puppeteer's `Target.opener()`. Populated for every target this module touches (not just
+   *  popups) so {@link attributeDialogHolders} can tell a popup apart from the long-lived opener
+   *  it shares a renderer process with — see that function's doc comment for why the liveness
+   *  probe alone (audit-3 finding, GAP-236) can never make this distinction on its own: both
+   *  targets share one renderer, so a probe that only asks "responsive or not" times out on BOTH
+   *  identically, and audit-3 found the old code (sorting by nothing in particular) attributed the
+   *  block to whichever target happened to sort first — usually the opener, the user's healthy
+   *  tab, not the popup actually holding the dialog. `openerId` is a browser-level field (no
+   *  renderer round trip), so reading it never blocks even while the renderer itself is wedged. */
+  readonly openerTargetId?: string;
 }
 
 export interface ObservedDialog {
@@ -34,6 +46,15 @@ export interface ObservedDialog {
    *  populates this (`DialogWarden`); a `DirectCdpBroker` dialog is always a live, single-shot
    *  read with no persistent identity to protect. */
   readonly id?: string;
+  /** FR2-04 fix-3/GAP-236, decision point 1: set to another target's id when THIS entry is not
+   *  itself a dialog holder but is only reported because {@link attributeDialogHolders} found it
+   *  collaterally blocked by sharing a renderer with `blockedBy`. The gate still needs to know
+   *  about it (the shared renderer really is unresponsive, so a command run against THIS target
+   *  right now would still hang) but must never treat it as an independently addressable dialog:
+   *  never pass it to `handleDialogOnTarget`/`closeTargetAtBrowserLevel` on its own, and never
+   *  auto-select it as "the" dialog to accept/dismiss (see `dialog-cli.ts`'s `selectDialog` and
+   *  `dialog-broker.ts`'s `runDialogGate`, both of which skip a `blockedBy`-tagged entry). */
+  readonly blockedBy?: string;
 }
 
 export type LivenessState = 'responsive' | 'blocked' | 'error';
@@ -64,14 +85,26 @@ export async function connectForDialogs(
 }
 
 /** Every real page target on `browser`, in `targets()` order (the same order `attach()` adopts
- *  pages in) — `about:blank` and non-page targets (service workers, background pages, the
- *  browser target itself) are dropped, since a gate/warden has nothing useful to check on them. */
+ *  pages in) — non-page targets (service workers, background pages, the browser target itself)
+ *  are dropped, since a gate/warden has nothing useful to check on them.
+ *
+ *  FR2-04 fix-3/GAP-238: `about:blank` targets are DELIBERATELY no longer excluded here. fix-2
+ *  excluded them because the gate/`DirectCdpBroker` "has nothing useful to check" on a blank
+ *  page — true for a NORMAL blank tab, but audit-3 found the exact case where that reasoning
+ *  breaks: once a popup that alerts during construction has its (wrongly-attributed) opener
+ *  closed by recovery, the popup itself is left as `about:blank` (it never got a chance to
+ *  navigate) and STILL has a real dialog open on it — excluding it here made it invisible to
+ *  every later gate check, so the next command hung ~180s and silently landed on the wrong tab
+ *  (GAP-238, 8/8). A blank target that is genuinely idle just probes as `responsive` and costs one
+ *  extra `Performance.getMetrics` round trip (run in parallel with every other target — see
+ *  `LIVENESS_PROBE_MS`'s callers, fix-3 point 5) — negligible next to the cost of missing a real
+ *  dialog entirely. */
 export function listPageTargets(browser: Browser): Array<{ info: PageTargetInfo; target: Target }> {
   return browser
     .targets()
-    .filter((t) => t.type() === 'page' && t.url() !== 'about:blank')
+    .filter((t) => t.type() === 'page')
     .map((target) => ({
-      info: { targetId: targetIdOf(target), url: target.url() },
+      info: { targetId: targetIdOf(target), url: target.url(), openerTargetId: openerIdOf(target) },
       target,
     }));
 }
@@ -80,6 +113,16 @@ export function listPageTargets(browser: Browser): Array<{ info: PageTargetInfo;
  *  comment. Kept as a free function here since `dialog-cdp.ts` never touches `BrowserTab`. */
 function targetIdOf(target: Target): string {
   return (target as unknown as { _targetId: string })._targetId;
+}
+
+/** `Target.opener()` is public API (`pp:api/Target.ts`, backed by `TargetInfo.openerId`, a
+ *  browser-level field) — returns the CDP target id of whichever target opened `target` via
+ *  `window.open()`/`target=_blank`, or `undefined` for a target nobody opened (a normal
+ *  navigated tab, or the browser's first tab). Guarded with optional chaining: test doubles for
+ *  `Target` in this codebase's unit tests predate this field and don't implement `.opener()`. */
+function openerIdOf(target: Target): string | undefined {
+  const opener = (target as unknown as { opener?: () => Target | undefined }).opener?.();
+  return opener ? targetIdOf(opener) : undefined;
 }
 
 /**
@@ -109,6 +152,123 @@ export async function livenessProbe(session: CDPSession, ms: number): Promise<Li
     if (/timed out/i.test(message)) return 'blocked';
     return 'error';
   }
+}
+
+/**
+ * FR2-04 fix-3, decision point 1 (GAP-236): a same-renderer popup and its opener both time out on
+ * {@link livenessProbe} identically — the probe is a renderer-level signal (Chromium suspends
+ * per-frame CDP dispatch for every target hosted by a blocked renderer process while a dialog's
+ * modal IPC is unresolved, not just for the one target that actually owns the dialog), so it
+ * structurally cannot by itself tell "the target holding the dialog" apart from "an unrelated
+ * sibling target that merely shares its process". audit-3 found fix-2's code picked whichever
+ * target happened to sort first (usually the long-lived opener — the user's healthy tab), closed
+ * IT during recovery, and left the actual popup still blocked (GAP-236, 8/8 single-popup).
+ *
+ * `openerId` (a BROWSER-level field — `Target.getTargetInfo`, no renderer round trip, so it's
+ * always readable even while the renderer is fully wedged) gives a real, structural way to break
+ * the tie for the specific relationship this item's own evidence is built on (a popup and the
+ * page that opened it): given a set of targets that are ALL blocked right now, walk each target's
+ * opener chain — if target A's opener B is ALSO in the blocked set, A is presumed the actual
+ * holder (a popup script commonly starts running, and can alert()/confirm() synchronously, before
+ * the popup has navigated anywhere) and B is reported as merely collaterally blocked BY A, never
+ * as its own independent "unknown" dialog (decision point 1's exact requirement). The walk repeats
+ * for a longer chain (grandparent -> parent -> child, all sharing one renderer) until it reaches a
+ * target that isn't the opener of any other still-blocked target — that leaf is the holder.
+ *
+ * A blocked target with no opener relationship to any OTHER blocked target (the common case: one
+ * tab, one dialog; or two genuinely independent popups from unrelated `window.open()` calls, each
+ * in their own renderer) is its own holder, exactly like before this function existed — this is
+ * deliberately a narrow, additive fix for the one relationship this item's evidence demonstrates
+ * (opener/popup), not a claim that it resolves every conceivable multi-target ambiguity.
+ *
+ * Returns a map from every blocked target's id to either `undefined` (this target IS the holder —
+ * report/recover it as its own dialog) or the holder's target id (this target is collaterally
+ * blocked — report it as "blocked by tab <holder>", never hand it to `handleDialogOnTarget` or
+ * `closeTargetAtBrowserLevel` as if it had a dialog of its own).
+ */
+export function attributeDialogHolders(
+  blocked: ReadonlyArray<{ readonly targetId: string; readonly openerTargetId?: string; readonly discoveredAt?: number }>,
+): Map<string, string | undefined> {
+  type Entry = (typeof blocked)[number];
+  const byId = new Map(blocked.map((b) => [b.targetId, b] as const));
+  // Group every blocked target that has a BLOCKED opener under that opener's id — only a
+  // relationship where BOTH ends are currently blocked is evidence of anything (an opener whose
+  // popup is fine is just an ordinary responsive-or-not target on its own).
+  const childrenByOpener = new Map<string, Entry[]>();
+  for (const b of blocked) {
+    if (b.openerTargetId && byId.has(b.openerTargetId)) {
+      const arr = childrenByOpener.get(b.openerTargetId) ?? [];
+      arr.push(b);
+      childrenByOpener.set(b.openerTargetId, arr);
+    }
+  }
+  const isOpenerOfBlocked = new Set(childrenByOpener.keys());
+
+  // The ultimate holder of everything rooted at `id`: if `id` has blocked children, it's whatever
+  // the newest child's OWN subtree ultimately resolves to (handles a chain of any depth); a target
+  // with no blocked children is a leaf and holds its own dialog.
+  const memo = new Map<string, string>();
+  const visiting = new Set<string>();
+  function ultimateHolder(id: string): string {
+    const cached = memo.get(id);
+    if (cached !== undefined) return cached;
+    if (visiting.has(id)) return id; // cycle guard — never actually reachable via real openerId chains
+    visiting.add(id);
+    const children = childrenByOpener.get(id);
+    const result =
+      !children || children.length === 0
+        ? id
+        : ultimateHolder([...children].sort((x, y) => (y.discoveredAt ?? 0) - (x.discoveredAt ?? 0))[0]!.targetId);
+    visiting.delete(id);
+    memo.set(id, result);
+    return result;
+  }
+
+  const result = new Map<string, string | undefined>();
+  for (const b of blocked) {
+    let holder: string;
+    if (isOpenerOfBlocked.has(b.targetId)) {
+      // An opener (of at least one blocked child): defer entirely to its subtree's holder.
+      holder = ultimateHolder(b.targetId);
+    } else if (b.openerTargetId && byId.has(b.openerTargetId)) {
+      // A leaf that itself has a blocked opener: it's the holder only if it's the newest among
+      // its OWN siblings under that same opener; otherwise every sibling defers to whichever one
+      // the newest sibling's subtree ultimately resolves to (kept consistent with `ultimateHolder`
+      // rather than pointing at the raw newest sibling directly, so a longer chain still resolves
+      // to one single leaf everyone agrees on).
+      const siblings = childrenByOpener.get(b.openerTargetId)!;
+      const newestSibling = [...siblings].sort((x, y) => (y.discoveredAt ?? 0) - (x.discoveredAt ?? 0))[0]!;
+      holder = newestSibling.targetId === b.targetId ? b.targetId : ultimateHolder(newestSibling.targetId);
+    } else {
+      // No opener relationship to any other currently-blocked target at all — its own holder,
+      // exactly like before this function existed (the common single-tab, or independent-popups,
+      // case).
+      holder = b.targetId;
+    }
+    result.set(b.targetId, holder === b.targetId ? undefined : holder);
+  }
+  return result;
+}
+
+/**
+ * FR2-04 fix-3, decision point 5 (GAP-241): probes every entry in `targets` CONCURRENTLY instead
+ * of one after another. audit-3 measured the old serial loop (`LIVENESS_PROBE_MS`, 400ms, per
+ * target) scaling linearly with tab count — 14 same-renderer tabs took ~5.6s, which blew past the
+ * CLI's own 5s outer wait cap on the whole gate check and made THAT cap's own timeout handler
+ * treat "didn't finish in time" as "clear" (fail OPEN, the opposite of decision point 5's
+ * requirement). Running every probe at once bounds the whole round to roughly one probe's own
+ * timeout (`ms`) regardless of how many targets there are — each individual `livenessProbe` call
+ * already has its own bounded timeout, so nothing here can hang past `ms` plus normal CDP
+ * scheduling overhead.
+ */
+export async function probeTargetsConcurrently<T extends { readonly targetId: string }>(
+  entries: readonly T[],
+  probe: (entry: T) => Promise<LivenessState>,
+): Promise<Map<string, LivenessState>> {
+  const results = await Promise.all(
+    entries.map(async (entry) => [entry.targetId, await probe(entry)] as const),
+  );
+  return new Map(results);
 }
 
 /**

@@ -1,0 +1,262 @@
+{
+  "at": "2026-09-26T22:22:08.554Z",
+  "rows": [
+    {
+      "t": 0,
+      "variant": "xsite-nav",
+      "n": "be0x47877",
+      "targets": [
+        "http://localhost:64752/other?n=be0x47877:responsive"
+      ],
+      "anyBlocked": false,
+      "warden": [],
+      "snap": {
+        "code": 0,
+        "ms": 289,
+        "killedAtCap": false,
+        "first": "URL: http://localhost:64752/other?n=be0x47877 | Title: other be0x47877",
+        "err": ""
+      },
+      "verdict": "NOT-BLOCKED(no test)"
+    },
+    {
+      "t": 0,
+      "variant": "xsite-nav-w.setTimeout",
+      "n": "be0x52658",
+      "targets": [
+        "http://localhost:64752/other?n=be0x52658:responsive"
+      ],
+      "anyBlocked": false,
+      "warden": [],
+      "snap": {
+        "code": 0,
+        "ms": 338,
+        "killedAtCap": false,
+        "first": "URL: http://localhost:64752/other?n=be0x52658 | Title: other be0x52658",
+        "err": ""
+      },
+      "verdict": "NOT-BLOCKED(no test)"
+    },
+    {
+      "t": 0,
+      "variant": "xsite-nav-docwrite-timer",
+      "n": "be0x57428",
+      "targets": [
+        "http://localhost:64752/other?n=be0x57428:responsive",
+        "about:blank:blocked"
+      ],
+      "anyBlocked": true,
+      "warden": [
+        "alert:about:blank"
+      ],
+      "snap": {
+        "code": 3,
+        "ms": 287,
+        "killedAtCap": false,
+        "first": "dialogPending: {\"type\":\"alert\",\"message\":\"ESC2-be0x57428\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or s"
+      },
+      "verdict": "CAUGHT"
+    },
+    {
+      "t": 0,
+      "variant": "same-site-control",
+      "n": "be0x62770",
+      "targets": [
+        "http://127.0.0.1:64752/?n=be0x62770:blocked",
+        "about:blank:blocked"
+      ],
+      "anyBlocked": true,
+      "warden": [
+        "unknown:http://127.0.0.1:64752/?n=be0x62770",
+        "unknown:about:blank"
+      ],
+      "snap": {
+        "code": 3,
+        "ms": 700,
+        "killedAtCap": false,
+        "first": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64752/?n=be0x62770\"} | dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", "
+      },
+      "verdict": "CAUGHT"
+    },
+    {
+      "t": 1,
+      "variant": "xsite-nav",
+      "n": "be1x72713",
+      "targets": [
+        "http://localhost:64752/other?n=be1x72713:responsive"
+      ],
+      "anyBlocked": false,
+      "warden": [],
+      "snap": {
+        "code": 0,
+        "ms": 319,
+        "killedAtCap": false,
+        "first": "URL: http://localhost:64752/other?n=be1x72713 | Title: other be1x72713",
+        "err": ""
+      },
+      "verdict": "NOT-BLOCKED(no test)"
+    },
+    {
+      "t": 1,
+      "variant": "xsite-nav-w.setTimeout",
+      "n": "be1x77457",
+      "targets": [
+        "http://localhost:64752/other?n=be1x77457:responsive"
+      ],
+      "anyBlocked": false,
+      "warden": [],
+      "snap": {
+        "code": 0,
+        "ms": 287,
+        "killedAtCap": false,
+        "first": "URL: http://localhost:64752/other?n=be1x77457 | Title: other be1x77457",
+        "err": ""
+      },
+      "verdict": "NOT-BLOCKED(no test)"
+    },
+    {
+      "t": 1,
+      "variant": "xsite-nav-docwrite-timer",
+      "n": "be1x82123",
+      "targets": [
+        "http://localhost:64752/other?n=be1x82123:responsive",
+        "about:blank:blocked"
+      ],
+      "anyBlocked": true,
+      "warden": [
+        "alert:about:blank"
+      ],
+      "snap": {
+        "code": 3,
+        "ms": 308,
+        "killedAtCap": false,
+        "first": "dialogPending: {\"type\":\"alert\",\"message\":\"ESC2-be1x82123\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or s"
+      },
+      "verdict": "CAUGHT"
+    },
+    {
+      "t": 1,
+      "variant": "same-site-control",
+      "n": "be1x87346",
+      "targets": [
+        "http://127.0.0.1:64752/?n=be1x87346:blocked",
+        "about:blank:blocked"
+      ],
+      "anyBlocked": true,
+      "warden": [
+        "unknown:http://127.0.0.1:64752/?n=be1x87346",
+        "unknown:about:blank"
+      ],
+      "snap": {
+        "code": 3,
+        "ms": 725,
+        "killedAtCap": false,
+        "first": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64752/?n=be1x87346\"} | dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", "
+      },
+      "verdict": "CAUGHT"
+    },
+    {
+      "t": 2,
+      "variant": "xsite-nav",
+      "n": "be2x97273",
+      "targets": [
+        "http://localhost:64752/other?n=be2x97273:responsive"
+      ],
+      "anyBlocked": false,
+      "warden": [],
+      "snap": {
+        "code": 0,
+        "ms": 288,
+        "killedAtCap": false,
+        "first": "URL: http://localhost:64752/other?n=be2x97273 | Title: other be2x97273",
+        "err": ""
+      },
+      "verdict": "NOT-BLOCKED(no test)"
+    },
+    {
+      "t": 2,
+      "variant": "xsite-nav-w.setTimeout",
+      "n": "be2x2017",
+      "targets": [
+        "chrome://newtab/:responsive",
+        "http://localhost:64752/other?n=be2x2017:responsive"
+      ],
+      "anyBlocked": false,
+      "warden": [],
+      "snap": {
+        "code": 0,
+        "ms": 290,
+        "killedAtCap": false,
+        "first": "URL: http://localhost:64752/other?n=be2x2017 | Title: other be2x2017",
+        "err": ""
+      },
+      "verdict": "NOT-BLOCKED(no test)"
+    },
+    {
+      "t": 2,
+      "variant": "xsite-nav-docwrite-timer",
+      "n": "be2x6787",
+      "targets": [
+        "http://localhost:64752/other?n=be2x6787:responsive",
+        "about:blank:blocked"
+      ],
+      "anyBlocked": true,
+      "warden": [
+        "alert:about:blank"
+      ],
+      "snap": {
+        "code": 3,
+        "ms": 275,
+        "killedAtCap": false,
+        "first": "dialogPending: {\"type\":\"alert\",\"message\":\"ESC2-be2x6787\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or s"
+      },
+      "verdict": "CAUGHT"
+    },
+    {
+      "t": 2,
+      "variant": "same-site-control",
+      "n": "be2x11973",
+      "targets": [
+        "http://127.0.0.1:64752/?n=be2x11973:blocked",
+        "about:blank:blocked"
+      ],
+      "anyBlocked": true,
+      "warden": [
+        "unknown:http://127.0.0.1:64752/?n=be2x11973",
+        "unknown:about:blank"
+      ],
+      "snap": {
+        "code": 3,
+        "ms": 682,
+        "killedAtCap": false,
+        "first": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64752/?n=be2x11973\"} | dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", "
+      },
+      "verdict": "CAUGHT"
+    }
+  ],
+  "summary": {
+    "xsite-nav": {
+      "NOT-BLOCKED(no test)": 3
+    },
+    "xsite-nav-w.setTimeout": {
+      "NOT-BLOCKED(no test)": 3
+    },
+    "xsite-nav-docwrite-timer": {
+      "CAUGHT": 3
+    },
+    "same-site-control": {
+      "CAUGHT": 3
+    }
+  },
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}
