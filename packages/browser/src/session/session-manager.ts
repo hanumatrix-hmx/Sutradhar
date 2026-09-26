@@ -9,6 +9,7 @@ import { StructuredLogger } from '@sutradhar/observability';
 import { BrowserLauncher } from '../launcher/browser-launcher.js';
 import type { BrowserLaunchOptions } from '../launcher/browser-options.js';
 import { BrowserSession, IBrowserSession } from './browser-session.js';
+import type { DialogPolicy } from './browser-tab.js';
 
 export interface CreateSessionOptions {
   readonly sessionId?: SessionId;
@@ -29,6 +30,9 @@ export interface CreateSessionOptions {
    * `isIncognito`/launch options are ignored — the external browser owns its own context.
    */
   readonly wsEndpoint?: string;
+  /** FR2-04: this session's default native-dialog policy. Unset (the default) leaves every tab
+   *  at `'auto'` — today's exact pre-FR2-04 behavior. */
+  readonly dialogPolicy?: DialogPolicy;
 }
 
 export interface IBrowserSessionManager {
@@ -185,6 +189,7 @@ export class BrowserSessionManager implements IBrowserSessionManager {
       this.eventBus,
       this.logger,
       browserInstance,
+      options.dialogPolicy,
     );
 
     if (options.initialUrl) {

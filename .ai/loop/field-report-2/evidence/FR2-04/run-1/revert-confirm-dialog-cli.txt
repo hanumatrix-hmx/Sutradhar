@@ -1,0 +1,154 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli[39m
+
+ [33m❯[39m tests/unit/dialog-cli.spec.ts [2m ([22m[2m17 tests[22m [2m|[22m [31m6 failed[39m[2m)[22m[90m 17[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/dialog-cli.spec.ts[2m > [22m@sutradhar/cli dialog-cli (FR2-04)[2m > [22mD1: resolveDialogPolicy precedence (flag > state > report)[2m > [22man accept/dismiss flag wins over any persisted state, and persists[39m
+[31m     → expected { …(2) } to deeply equal { …(2) }[39m
+[31m   [33m❯[31m tests/unit/dialog-cli.spec.ts[2m > [22m@sutradhar/cli dialog-cli (FR2-04)[2m > [22mD2: formatDialogPending produces the exact §2.8.5 line[39m
+[31m     → expected 'dialogPending: {"message":"Delete?","…' to be 'dialogPending: {"type":"confirm","mes…' // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/dialog-cli.spec.ts[2m > [22m@sutradhar/cli dialog-cli (FR2-04)[2m > [22mD5: classifyVerb (trigger/guarded/exempt)[39m
+[31m     → expected 'guarded' to be 'trigger' // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/dialog-cli.spec.ts[2m > [22m@sutradhar/cli dialog-cli (FR2-04)[2m > [22mD6: selectDialog returns the OLDEST (FIFO) and the remainder[39m
+[31m     → expected { dialogType: 'alert', …(3) } to be { dialogType: 'confirm', …(3) } // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/dialog-cli.spec.ts[2m > [22m@sutradhar/cli dialog-cli (FR2-04)[2m > [22mD9: deadlineFor default/override/wait-scaling/ignored-invalid[39m
+[31m     → expected 300000 to be 630000 // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/dialog-cli.spec.ts[2m > [22m@sutradhar/cli dialog-cli (FR2-04)[2m > [22mD10: beforeunload cancel message and detector[39m
+[31m     → expected false to be true // Object.is equality[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 6 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/dialog-cli.spec.ts[2m > [22m@sutradhar/cli dialog-cli (FR2-04)[2m > [22mD1: resolveDialogPolicy precedence (flag > state > report)[2m > [22man accept/dismiss flag wins over any persisted state, and persists
+[31m[1mAssertionError[22m: expected { …(2) } to deeply equal { …(2) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  Object {[22m
+[32m-   "persist": "set",[39m
+[31m+   "persist": "keep",[39m
+[2m    "policy": Object {[22m
+[32m-     "mode": "accept",[39m
+[32m-     "promptText": "t",[39m
+[31m+     "mode": "dismiss",[39m
+[31m+     "promptText": undefined,[39m
+[2m    },[22m
+[2m  }[22m
+
+[36m [2m❯[22m tests/unit/dialog-cli.spec.ts:[2m22:17[22m[39m
+    [90m 20| [39m    [34mit[39m([32m'an accept/dismiss flag wins over any persisted state, and pers[39m…
+    [90m 21| [39m      [35mconst[39m r [33m=[39m [34mresolveDialogPolicy[39m([32m'accept'[39m[33m,[39m [32m't'[39m[33m,[39m { dialogPolicy[33m:[39m { a…
+    [90m 22| [39m      [34mexpect[39m(r)[33m.[39m[34mtoEqual[39m({ policy[33m:[39m { mode[33m:[39m [32m'accept'[39m[33m,[39m promptText[33m:[39m [32m't'[39m }[33m,[39m…
+    [90m   | [39m                [31m^[39m
+    [90m 23| [39m    })[33m;[39m
+    [90m 24| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/dialog-cli.spec.ts[2m > [22m@sutradhar/cli dialog-cli (FR2-04)[2m > [22mD2: formatDialogPending produces the exact §2.8.5 line
+[31m[1mAssertionError[22m: expected 'dialogPending: {"message":"Delete?","…' to be 'dialogPending: {"type":"confirm","mes…' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- dialogPending: {"type":"confirm","message":"Delete?","defaultValue":null,"url":"http://x/"}[39m
+[31m+ dialogPending: {"message":"Delete?","type":"confirm","defaultValue":null,"url":"http://x/"}[39m
+
+[36m [2m❯[22m tests/unit/dialog-cli.spec.ts:[2m44:92[22m[39m
+    [90m 42| [39m
+    [90m 43| [39m  [34mit[39m([32m'D2: formatDialogPending produces the exact §2.8.5 line'[39m[33m,[39m () [33m=>[39m {
+    [90m 44| [39m    [34mexpect[39m([34mformatDialogPending[39m({ type[33m:[39m [32m'confirm'[39m[33m,[39m message[33m:[39m [32m'Delete?'[39m[33m,[39m …
+    [90m   | [39m                                                                                           [31m^[39m
+    [90m 45| [39m      [32m'dialogPending: {"type":"confirm","message":"Delete?","defaultVa[39m…
+    [90m 46| [39m    )[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/dialog-cli.spec.ts[2m > [22m@sutradhar/cli dialog-cli (FR2-04)[2m > [22mD5: classifyVerb (trigger/guarded/exempt)
+[31m[1mAssertionError[22m: expected 'guarded' to be 'trigger' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- trigger[39m
+[31m+ guarded[39m
+
+[36m [2m❯[22m tests/unit/dialog-cli.spec.ts:[2m66:96[22m[39m
+    [90m 64| [39m
+    [90m 65| [39m  [34mit[39m([32m'D5: classifyVerb (trigger/guarded/exempt)'[39m[33m,[39m () [33m=>[39m {
+    [90m 66| [39m    [35mfor[39m ([35mconst[39m v [35mof[39m [[32m'click'[39m[33m,[39m [32m'clicktext'[39m[33m,[39m [32m'clickrole'[39m[33m,[39m [32m'clickpoint'[39m])…
+    [90m   | [39m                                                                                               [31m^[39m
+    [90m 67| [39m    [35mfor[39m ([35mconst[39m v [35mof[39m [[32m'eval'[39m[33m,[39m [32m'snap'[39m[33m,[39m [32m'nav'[39m[33m,[39m [32m'type'[39m[33m,[39m [32m'wait'[39m[33m,[39m [32m'unknownve[39m…
+    [90m 68| [39m    [35mfor[39m ([35mconst[39m v [35mof[39m [[32m'dialog'[39m[33m,[39m [32m'doctor'[39m[33m,[39m [32m'profile'[39m[33m,[39m [32m'sessions'[39m[33m,[39m [32m'close[39m…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/dialog-cli.spec.ts[2m > [22m@sutradhar/cli dialog-cli (FR2-04)[2m > [22mD6: selectDialog returns the OLDEST (FIFO) and the remainder
+[31m[1mAssertionError[22m: expected { dialogType: 'alert', …(3) } to be { dialogType: 'confirm', …(3) } // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  Object {[22m
+[32m-   "dialogType": "confirm",[39m
+[32m-   "message": "a",[39m
+[32m-   "openedAt": "2026-01-01T00:00:01Z",[39m
+[31m+   "dialogType": "alert",[39m
+[31m+   "message": "b",[39m
+[31m+   "openedAt": "2026-01-01T00:00:02Z",[39m
+[2m    "url": "u",[22m
+[2m  }[22m
+
+[36m [2m❯[22m tests/unit/dialog-cli.spec.ts:[2m77:20[22m[39m
+    [90m 75| [39m    [35mconst[39m t1 [33m=[39m { dialogType[33m:[39m [32m'confirm'[39m[33m,[39m message[33m:[39m [32m'a'[39m[33m,[39m url[33m:[39m [32m'u'[39m[33m,[39m opened…
+    [90m 76| [39m    [35mconst[39m { target[33m,[39m rest } [33m=[39m [34mselectDialog[39m([t2[33m,[39m t1])[33m;[39m
+    [90m 77| [39m    [34mexpect[39m(target)[33m.[39m[34mtoBe[39m(t1)[33m;[39m
+    [90m   | [39m                   [31m^[39m
+    [90m 78| [39m    [34mexpect[39m(rest)[33m.[39m[34mtoEqual[39m([t2])[33m;[39m
+    [90m 79| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/dialog-cli.spec.ts[2m > [22m@sutradhar/cli dialog-cli (FR2-04)[2m > [22mD9: deadlineFor default/override/wait-scaling/ignored-invalid
+[31m[1mAssertionError[22m: expected 300000 to be 630000 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 630000[39m
+[31m+ 300000[39m
+
+[36m [2m❯[22m tests/unit/dialog-cli.spec.ts:[2m151:55[22m[39m
+    [90m149| [39m  [34mit[39m([32m'D9: deadlineFor default/override/wait-scaling/ignored-invalid'[39m[33m,[39m …
+    [90m150| [39m    [34mexpect[39m([34mdeadlineFor[39m([32m'snap'[39m[33m,[39m [][33m,[39m {}))[33m.[39m[34mtoBe[39m([34m300000[39m)[33m;[39m
+    [90m151| [39m    [34mexpect[39m([34mdeadlineFor[39m([32m'wait'[39m[33m,[39m [[32m'#x'[39m[33m,[39m [32m'200000'[39m][33m,[39m {}))[33m.[39m[34mtoBe[39m([34m630000[39m)[33m;[39m
+    [90m   | [39m                                                      [31m^[39m
+    [90m152| [39m    [34mexpect[39m([34mdeadlineFor[39m([32m'snap'[39m[33m,[39m [][33m,[39m { [33mSUTRADHAR_CLI_DEADLINE_MS[39m[33m:[39m [32m'5000'[39m…
+    [90m153| [39m    [34mexpect[39m([34mdeadlineFor[39m([32m'snap'[39m[33m,[39m [][33m,[39m { [33mSUTRADHAR_CLI_DEADLINE_MS[39m[33m:[39m [32m'abc'[39m …
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/dialog-cli.spec.ts[2m > [22m@sutradhar/cli dialog-cli (FR2-04)[2m > [22mD10: beforeunload cancel message and detector
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/unit/dialog-cli.spec.ts:[2m163:114[22m[39m
+    [90m161| [39m    )[33m;[39m
+    [90m162| [39m    [35mconst[39m history [33m=[39m [{ dialogType[33m:[39m [32m'beforeunload'[39m[33m,[39m action[33m:[39m [32m'dismiss'[39m[33m,[39m …
+    [90m163| [39m    [34mexpect[39m([34misBeforeunloadCancel[39m([35mnew[39m [33mError[39m([32m'net::ERR_ABORTED'[39m)[33m,[39m history…
+    [90m   | [39m                                                                                                                 [31m^[39m
+    [90m164| [39m      [35mtrue[39m[33m,[39m
+    [90m165| [39m    )[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m6 failed[39m[22m[2m | [22m[1m[32m11 passed[39m[22m[90m (17)[39m
+[2m   Start at [22m 15:56:13
+[2m   Duration [22m 350ms[2m (transform 26ms, setup 0ms, collect 25ms, tests 17ms, environment 0ms, prepare 117ms)[22m
+

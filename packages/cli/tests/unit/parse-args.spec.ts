@@ -4,7 +4,7 @@
  * (which runs main() immediately at module load) specifically so it's independently testable.
  */
 
-import { parseArgs } from '../../src/parse-args.js';
+import { parseArgs, dialogFlagError } from '../../src/parse-args.js';
 
 describe('@sutradhar/cli parseArgs', () => {
   it('parses a bare verb with no flags or positional args', () => {
@@ -243,5 +243,76 @@ describe('@sutradhar/cli parseArgs', () => {
     expect(parseArgs(['wait', '#t', '--state', 'visible']).stateFlag).toBe('visible');
     expect(parseArgs(['wait', '#t', '--state', 'attached']).stateFlag).toBe('attached');
     expect(parseArgs(['wait', '#t', '--state', 'hidden']).stateFlag).toBe('hidden');
+  });
+
+  // ───────────────────────────────────────────────────────────────────────
+  // FR2-04: --dialog / --dialog-text
+  // ───────────────────────────────────────────────────────────────────────
+
+  it('P-D1: --dialog accept parses and is stripped from cleanArgs', () => {
+    const result = parseArgs(['click', '#a', '--dialog', 'accept']);
+    expect(result.dialogFlag).toBe('accept');
+    expect(result.cleanArgs).toEqual(['#a']);
+    expect(result.unrecognizedFlags).toEqual([]);
+  });
+
+  it('P-D2: --dialog dismiss and --dialog report parse as those values', () => {
+    expect(parseArgs(['snap', '--dialog', 'dismiss']).dialogFlag).toBe('dismiss');
+    expect(parseArgs(['snap', '--dialog', 'report']).dialogFlag).toBe('report');
+  });
+
+  it('P-D3: an invalid or missing --dialog value is flagged', () => {
+    let result = parseArgs(['snap', '--dialog', 'bogus']);
+    expect(result.dialogFlag).toBeUndefined();
+    expect(result.dialogFlagGivenButInvalid).toBe(true);
+    result = parseArgs(['snap', '--dialog']);
+    expect(result.dialogFlagGivenButInvalid).toBe(true);
+  });
+
+  it('P-D4: --dialog-text takes the exact next argument, even multi-word', () => {
+    const result = parseArgs(['nav', 'u', '--dialog', 'accept', '--dialog-text', 'hello world']);
+    expect(result.dialogTextFlag).toBe('hello world');
+    expect(result.cleanArgs).toEqual(['u']);
+  });
+
+  it('P-D5: --dialog-text captures a literal "--weird" value without treating it as a flag', () => {
+    const result = parseArgs(['nav', 'u', '--dialog', 'accept', '--dialog-text', '--weird']);
+    expect(result.dialogTextFlag).toBe('--weird');
+    expect(result.unrecognizedFlags).toEqual([]);
+  });
+
+  it('P-D6: the "dialog" verb keeps its own sub-args as cleanArgs', () => {
+    const result = parseArgs(['dialog', 'accept', 'some', 'text']);
+    expect(result.verb).toBe('dialog');
+    expect(result.cleanArgs).toEqual(['accept', 'some', 'text']);
+  });
+
+  it('P-D7: dialogFlagError returns the exact three messages, and undefined for valid combos', () => {
+    expect(dialogFlagError(parseArgs(['snap', '--dialog', 'bogus']))).toBe(
+      '--dialog must be one of: accept, dismiss, report (e.g. --dialog accept)',
+    );
+    expect(dialogFlagError(parseArgs(['snap', '--dialog-text', 'x']))).toBe(
+      '--dialog-text only applies with --dialog accept (it is the text entered into prompt() dialogs)',
+    );
+    expect(dialogFlagError(parseArgs(['dialog', 'accept', '--dialog', 'dismiss']))).toBe(
+      '--dialog sets the session\'s default policy; to handle the open dialog now use: sutradhar dialog accept [text] | sutradhar dialog dismiss',
+    );
+    expect(dialogFlagError(parseArgs(['click', '#a', '--dialog', 'accept']))).toBeUndefined();
+    expect(dialogFlagError(parseArgs(['nav', 'u', '--dialog', 'accept', '--dialog-text', 'hello world']))).toBeUndefined();
+    expect(dialogFlagError(parseArgs(['snap']))).toBeUndefined();
+  });
+
+  it('P-D8: no --dialog/--dialog-text given at all leaves everything undefined/false', () => {
+    const result = parseArgs(['snap']);
+    expect(result.dialogFlag).toBeUndefined();
+    expect(result.dialogTextFlag).toBeUndefined();
+    expect(result.dialogFlagGivenButInvalid).toBe(false);
+  });
+
+  it('P-D9: --dialog/--dialog-text coexist with every pre-existing flag', () => {
+    const result = parseArgs(['wait', '#x', '--state', 'hidden', '--dialog', 'accept']);
+    expect(result.stateFlag).toBe('hidden');
+    expect(result.dialogFlag).toBe('accept');
+    expect(result.cleanArgs).toEqual(['#x']);
   });
 });

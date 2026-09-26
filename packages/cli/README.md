@@ -86,6 +86,9 @@ Run `sutradhar` with no arguments for the full command list.
 | `audit [url] [outDir]` | Screenshot + console/page/network errors + accessibility checks + Core Web Vitals for a page (current page if no url). |
 | `audit [url] [outDir] --baseline <url>` | Same, plus a visual pixel-diff against a known-good baseline URL — a one-command regression gate combining `audit` + `compare`. |
 | `compare <urlA> <urlB> [out]` | Visual regression: pixel-diff two pages, save a diff image. |
+| `dialog` | Show any open native dialog (alert/confirm/prompt/beforeunload), or "No dialog is open." |
+| `dialog accept [text]` | Accept the oldest open dialog (`text` = what to type into a `prompt()`; ignored for other dialog types). |
+| `dialog dismiss` | Dismiss the oldest open dialog. |
 | `close` | Close the active session. |
 | `doctor` | Environment diagnostics (Chrome detection, active session). |
 | `profile create <name> [desc]` | Create a named, persistent profile (cookies/history/storage survive across separate launches). |
@@ -110,8 +113,35 @@ Run `sutradhar` with no arguments for the full command list.
 | `--settle` | `click`, `type`, `scroll` | Wait for the page to stop actively changing (no DOM mutations, no in-flight network requests) before returning — helps when the action triggers a menu/modal/toast/virtualized-list-update that renders a moment later. |
 | `--scan-listeners` | `snap` | Also find real `addEventListener`-only elements (see command list above). |
 | `--modifiers <Control,Shift>` | `press` | Hold modifier keys while pressing the given key. |
+| `--dialog <accept\|dismiss\|report>` | any session command | Sets this session's default policy for native dialogs (alert/confirm/prompt/beforeunload), **persisted** across later commands until changed again — including `--dialog report`, which explicitly persists back to the default "leave it open and report it" behavior (it does not merely clear a previous `accept`/`dismiss`). `report` (the CLI's own default) never auto-resolves alert/confirm/prompt; while one is open, other commands exit with code **3** until you run `sutradhar dialog accept\|dismiss`. `beforeunload` during a navigation is still auto-accepted after 3s under `report`, so a page-initiated "leave this page?" prompt can't hang a `nav` forever. |
+| `--dialog-text <text>` | any session command, with `--dialog accept` | The text entered into `prompt()` dialogs when the session's policy auto-accepts one (default: the prompt's own default value). |
 
 Run `sutradhar` with no arguments for this same list straight from the binary.
+
+## Native dialogs (alert / confirm / prompt / beforeunload)
+
+Because each `sutradhar` command is its own short-lived process, a dialog opened by one command
+(e.g. `sutradhar click "#delete"` triggering a `confirm()`) would otherwise be invisible to, and
+unhandleable by, the next one — the in-page `Dialog` object only ever exists inside the process
+that was attached when it opened. The CLI runs a small per-session **dialog warden** (a detached
+helper process, started automatically alongside the browser) that stays attached the whole time,
+so a dialog left open between commands can still be seen and handled later:
+
+```bash
+sutradhar nav https://example.com
+sutradhar click "#delete"        # opens a confirm() — the click "succeeds", but the
+                                  # confirm is left open (the default policy is "report")
+                                  # -> prints: dialogPending: {"type":"confirm","message":"...","defaultValue":null,"url":"..."}
+sutradhar dialog                 # shows what's open, without touching it
+sutradhar dialog accept          # accepts it — prints: Accepted confirm "..."
+```
+
+Every session command exits with code **3** while a dialog is open and blocking the page
+(instead of hanging or silently acting on the wrong tab) — run `sutradhar dialog` to see what's
+open, then `sutradhar dialog accept|dismiss` to clear it, or set `--dialog accept|dismiss` once
+so future dialogs in that session are resolved automatically without you having to intervene.
+
+**Exit codes:** `0` ok, `1` failure, `3` blocked by or interrupted by an open dialog.
 
 ## Why `axsnap`/`clicktext`/`clickrole` over `snap`/`click`
 

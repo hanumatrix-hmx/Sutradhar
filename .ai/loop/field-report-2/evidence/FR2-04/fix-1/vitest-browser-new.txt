@@ -1,0 +1,49 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser[39m
+
+ [32m✓[39m tests/unit/dialog-warden.spec.ts [2m ([22m[2m8 tests[22m[2m)[22m[90m 235[2mms[22m[39m
+[90mstdout[2m | tests/unit/session.spec.ts[2m > [22m[2m@sutradhar/browser Session Management & Tab Lifecycle[2m > [22m[2mshould manage multi-tab lifecycle within BrowserSession[22m[39m
+{"timestamp":"2026-09-26T12:32:43.614Z","level":"info","message":"[BrowserSession] Closed session sess_123","context":{"reason":"Test cleanup"}}
+
+[90mstdout[2m | tests/unit/session.spec.ts[2m > [22m[2m@sutradhar/browser Session Management & Tab Lifecycle[2m > [22m[2mshould manage sessions via BrowserSessionManager[22m[39m
+{"timestamp":"2026-09-26T12:32:43.615Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+
+[90mstdout[2m | tests/unit/session.spec.ts[2m > [22m[2m@sutradhar/browser Session Management & Tab Lifecycle[2m > [22m[2mshould manage sessions via BrowserSessionManager[22m[39m
+{"timestamp":"2026-09-26T12:32:44.008Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790425963615_1","context":{"isIncognito":true,"initialUrl":"https://initial.com"}}
+
+[90mstdout[2m | tests/unit/session.spec.ts[2m > [22m[2m@sutradhar/browser Session Management & Tab Lifecycle[2m > [22m[2mshould manage sessions via BrowserSessionManager[22m[39m
+{"timestamp":"2026-09-26T12:32:44.107Z","level":"info","message":"[BrowserSession] Closed session sess_1790425963615_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-26T12:32:44.107Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790425963615_1","context":{"reason":"User requested close"}}
+
+[90mstdout[2m | tests/unit/session.spec.ts[2m > [22m[2m@sutradhar/browser Session Management & Tab Lifecycle[2m > [22m[2mshould forward launch options (headless/viewport/etc.) to the launcher, not just isIncognito[22m[39m
+{"timestamp":"2026-09-26T12:32:44.107Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790425964107_1","context":{"isIncognito":true}}
+
+[90mstderr[2m | tests/unit/session.spec.ts[2m > [22m[2m@sutradhar/browser Session Management & Tab Lifecycle[2m > [22m[2mmarks the session closed, clears its tabs, and publishes browser:session:crashed when Chrome disconnects unexpectedly[22m[39m
+{"timestamp":"2026-09-26T12:32:44.466Z","level":"warn","message":"[BrowserSession] Session sess_crash crashed — Chrome disconnected unexpectedly","context":{}}
+
+[90mstdout[2m | tests/unit/session.spec.ts[2m > [22m[2m@sutradhar/browser Session Management & Tab Lifecycle[2m > [22m[2mBrowserSessionManager drops a session once it reports crashed[22m[39m
+{"timestamp":"2026-09-26T12:32:44.482Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790425964482_1","context":{"isIncognito":false}}
+
+[90mstderr[2m | tests/unit/session.spec.ts[2m > [22m[2m@sutradhar/browser Session Management & Tab Lifecycle[2m > [22m[2mBrowserSessionManager drops a session once it reports crashed[22m[39m
+{"timestamp":"2026-09-26T12:32:44.482Z","level":"warn","message":"[BrowserSession] Session sess_1790425964482_1 crashed — Chrome disconnected unexpectedly","context":{}}
+{"timestamp":"2026-09-26T12:32:44.482Z","level":"warn","message":"[BrowserSessionManager] Removed crashed session sess_1790425964482_1","context":{}}
+
+[90mstdout[2m | tests/unit/session.spec.ts[2m > [22m[2m@sutradhar/browser Session Management & Tab Lifecycle[2m > [22m[2midle reaper is disabled by default — a session with no activity is never auto-closed[22m[39m
+{"timestamp":"2026-09-26T12:32:44.496Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790425964496_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/session.spec.ts[2m > [22m[2m@sutradhar/browser Session Management & Tab Lifecycle[2m > [22m[2mreaps a session once it has been idle past idleTimeoutMs[22m[39m
+{"timestamp":"2026-09-26T12:32:44.528Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790425964528_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-26T12:32:45.528Z","level":"info","message":"[BrowserSession] Closed session sess_1790425964528_1","context":{"reason":"Idle timeout"}}
+{"timestamp":"2026-09-26T12:32:45.528Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790425964528_1","context":{"reason":"Idle timeout"}}
+
+[90mstderr[2m | tests/unit/session.spec.ts[2m > [22m[2m@sutradhar/browser Session Management & Tab Lifecycle[2m > [22m[2mreaps a session once it has been idle past idleTimeoutMs[22m[39m
+{"timestamp":"2026-09-26T12:32:45.528Z","level":"warn","message":"[BrowserSessionManager] Reaping idle session sess_1790425964528_1 (idle for 1000ms, limit 1000ms)","context":{}}
+
+ [32m✓[39m tests/unit/session.spec.ts [2m ([22m[2m18 tests[22m[2m)[22m[33m 931[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m26 passed[39m[22m[90m (26)[39m
+[2m   Start at [22m 18:02:42
+[2m   Duration [22m 1.83s[2m (transform 334ms, setup 0ms, collect 622ms, tests 1.17s, environment 0ms, prepare 261ms)[22m
+

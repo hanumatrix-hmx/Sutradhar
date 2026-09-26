@@ -8,7 +8,7 @@ import { EventBus } from '@sutradhar/events';
 import { StructuredLogger } from '@sutradhar/observability';
 import { Browser as PuppeteerBrowser, Page, Target } from 'puppeteer-core';
 import { IBrowserInstance } from '../launcher/browser-launcher.js';
-import { BrowserTab, IBrowserTab } from './browser-tab.js';
+import { BrowserTab, IBrowserTab, DEFAULT_DIALOG_POLICY, type DialogPolicy } from './browser-tab.js';
 
 /** Grace period given to an explicit, in-flight `createTab()`/`adoptPopupPage()` call to finish
  *  registering its own new tab before {@link BrowserSession.adoptTargetIfNew} decides a
@@ -39,6 +39,10 @@ export interface IBrowserSession {
   getWsEndpoint(): string | undefined;
   /** The underlying real Puppeteer `Browser`, if this session has one. */
   getPuppeteerBrowser(): PuppeteerBrowser | undefined;
+  /** FR2-04. Optional so existing `IBrowserSession` implementations/mocks keep compiling. Sets
+   *  the session's dialog-policy default AND applies it immediately to every current tab
+   *  (future tabs pick it up via the constructor param this session was created with). */
+  setDialogPolicy?(policy: DialogPolicy): void;
 }
 
 export class BrowserSession implements IBrowserSession {
@@ -52,6 +56,7 @@ export class BrowserSession implements IBrowserSession {
   private readonly eventBus?: EventBus;
   private readonly logger: StructuredLogger;
   private tabCounter = 0;
+  private dialogPolicy: DialogPolicy;
 
   public constructor(
     id: SessionId,
@@ -59,6 +64,7 @@ export class BrowserSession implements IBrowserSession {
     eventBus?: EventBus,
     logger?: StructuredLogger,
     browserInstance?: IBrowserInstance,
+    dialogPolicy: DialogPolicy = DEFAULT_DIALOG_POLICY,
   ) {
     this.id = id;
     this.isIncognito = isIncognito;
@@ -66,6 +72,7 @@ export class BrowserSession implements IBrowserSession {
     this.eventBus = eventBus;
     this.logger = logger ?? new StructuredLogger({ minLevel: 'info' });
     this.browserInstance = browserInstance;
+    this.dialogPolicy = dialogPolicy;
     this.browserInstance?.onDisconnected(() => {
       void this.handleCrash();
     });
@@ -152,7 +159,7 @@ export class BrowserSession implements IBrowserSession {
       }
     }
 
-    const tab = new BrowserTab(tabId, url, 'New Tab', isFirstTab, puppeteerPage, this.id, this.eventBus);
+    const tab = new BrowserTab(tabId, url, 'New Tab', isFirstTab, puppeteerPage, this.id, this.eventBus, this.dialogPolicy);
     this.tabsMap.set(tabId, tab);
     if (puppeteerPage) {
       this.watchForPopups(puppeteerPage);
@@ -230,7 +237,7 @@ export class BrowserSession implements IBrowserSession {
 
     this.tabCounter++;
     const tabId = createTabId(`tab_${this.id}_${this.tabCounter}`);
-    const tab = new BrowserTab(tabId, page.url() || 'about:blank', 'New Tab', false, page, this.id, this.eventBus);
+    const tab = new BrowserTab(tabId, page.url() || 'about:blank', 'New Tab', false, page, this.id, this.eventBus, this.dialogPolicy);
     this.tabsMap.set(tabId, tab);
     this.watchForPopups(page); // a popup can itself open further popups
     this.watchForClose(tabId, page);
@@ -275,6 +282,7 @@ export class BrowserSession implements IBrowserSession {
       page,
       this.id,
       this.eventBus,
+      this.dialogPolicy,
     );
     this.tabsMap.set(tabId, tab);
     if (makeActive || isFirstTab) {
@@ -382,5 +390,13 @@ export class BrowserSession implements IBrowserSession {
    *  discover pages already open on it (see {@link adoptExistingPage}). */
   public getPuppeteerBrowser() {
     return this.browserInstance?.puppeteerBrowser;
+  }
+
+  /** FR2-04: see {@link IBrowserSession.setDialogPolicy}'s doc comment. */
+  public setDialogPolicy(policy: DialogPolicy): void {
+    this.dialogPolicy = policy;
+    for (const tab of this.tabsMap.values()) {
+      tab.setDialogPolicy(policy);
+    }
   }
 }

@@ -1,0 +1,34 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli[39m
+
+ [33m❯[39m tests/unit/session-flow.spec.ts [2m ([22m[2m5 tests[22m [2m|[22m [31m1 failed[39m[2m)[22m[90m 8[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/session-flow.spec.ts[2m > [22m@sutradhar/cli withSessionFlow (FR2-04, GAP-006)[2m > [22mW3: fn() throwing never triggers selfHeal (GAP-006) — the error propagates, reattach ran once[39m
+[31m     → expected 1 to be +0 // Object.is equality[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/session-flow.spec.ts[2m > [22m@sutradhar/cli withSessionFlow (FR2-04, GAP-006)[2m > [22mW3: fn() throwing never triggers selfHeal (GAP-006) — the error propagates, reattach ran once
+[31m[1mAssertionError[22m: expected 1 to be +0 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 0[39m
+[31m+ 1[39m
+
+[36m [2m❯[22m tests/unit/session-flow.spec.ts:[2m100:27[22m[39m
+    [90m 98| [39m    }[33m;[39m
+    [90m 99| [39m    [35mawait[39m [34mexpect[39m([34mwithSessionFlow[39m(deps))[33m.[39mrejects[33m.[39m[34mtoThrow[39m([32m'boom'[39m)[33m;[39m
+    [90m100| [39m    [34mexpect[39m(selfHealCalls)[33m.[39m[34mtoBe[39m([34m0[39m)[33m;[39m
+    [90m   | [39m                          [31m^[39m
+    [90m101| [39m    [34mexpect[39m(calls[33m.[39m[34mfilter[39m((c) [33m=>[39m c [33m===[39m [32m'reattach'[39m))[33m.[39m[34mtoHaveLength[39m([34m1[39m)[33m;[39m
+    [90m102| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m4 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 15:57:05
+[2m   Duration [22m 417ms[2m (transform 28ms, setup 0ms, collect 24ms, tests 8ms, environment 0ms, prepare 149ms)[22m
+

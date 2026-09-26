@@ -10,6 +10,7 @@
 import type {
   ActionHistoryEntry,
   BrowserLaunchOptions,
+  DialogPolicy,
   SemanticNode,
   SkippedFrame,
   VerificationResultDto,
@@ -35,6 +36,8 @@ export interface LaunchOptions {
    * both are somehow set, since naming a profile is a more specific request than a raw path.
    */
   profileName?: string;
+  /** FR2-04: overrides the runtime's own `dialogPolicy` default for this one session. */
+  dialogPolicy?: DialogPolicy;
 }
 
 /** Result of {@link SutradharRuntime.launch}. */
@@ -56,6 +59,8 @@ export interface AttachOptions {
   endpoint: string;
   /** Reuse an existing caller-owned session id; omit to let Sutradhar mint one. */
   sessionId?: string;
+  /** FR2-04: overrides the runtime's own `dialogPolicy` default for this one session. */
+  dialogPolicy?: DialogPolicy;
 }
 
 /** Result of {@link SutradharRuntime.navigate}. */
@@ -196,6 +201,7 @@ export interface ExtractDataOptions {
 }
 
 export { SELECTOR_SYNTAX_HINT, selectorSyntaxDetail, InvalidSelectorError };
+export type { DialogPolicy, DialogPolicyMode, DialogRecord } from '@sutradhar/browser';
 
 /**
  * Convert a snapshot node id ("12") or selector string to the selector the engine resolves.

@@ -1,0 +1,27 @@
+{"case":"process-baseline","pass":true,"detail":{"chrome":0,"warden":0}}
+{"case":"L0.nav","pass":true}
+{"case":"L0.state.no-dialogPolicy","pass":true}
+{"case":"L0.warden-ready","pass":true,"detail":{"pid":199536,"wsEndpoint":"ws://127.0.0.1:63668/devtools/browser/1af466cf-a7cf-4ba8-8634-9f15de58fd16"}}
+{"case":"L1.click.exit0","pass":true,"detail":{"args":["click","#alert"],"code":0,"ms":6328,"killedAtCap":false,"stdout":"Clicked #alert\ndialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert l1-1790419169137-x5ebpv\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63663/fx.html?n=l1-1790419169137-x5ebpv\"}\n","stderr":"Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"}}
+{"case":"L1.click.fast","pass":true,"detail":{"ms":6328}}
+{"case":"L1.click.stdout-has-Clicked","pass":true}
+{"case":"L1.click.dialogPending-exact","pass":true,"detail":"Clicked #alert\ndialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert l1-1790419169137-x5ebpv\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63663/fx.html?n=l1-1790419169137-x5ebpv\"}\n"}
+{"case":"L1.observer-blocked","pass":true}
+{"case":"L1.snap.exit3","pass":true,"detail":{"args":["snap"],"code":3,"ms":287,"killedAtCap":false,"stdout":"dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert l1-1790419169137-x5ebpv\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63663/fx.html?n=l1-1790419169137-x5ebpv\"}\n","stderr":"Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"}}
+{"case":"GAP-017.no-new-blank-tab","pass":true,"detail":{"urlsBefore":["http://127.0.0.1:63663/fx.html?n=l1-1790419169137-x5ebpv"],"urlsAfter":["http://127.0.0.1:63663/fx.html?n=l1-1790419169137-x5ebpv"]}}
+{"case":"GAP-017.no-self-heal-kill","pass":true,"detail":{"before":163864,"after":163864}}
+{"case":"L1.snap.dialogPending-exact","pass":true,"detail":"dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert l1-1790419169137-x5ebpv\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63663/fx.html?n=l1-1790419169137-x5ebpv\"}\n"}
+{"case":"L1.dialog.lists-it","pass":true}
+{"case":"L1.dialog-accept.stdout","pass":true,"detail":{"args":["dialog","accept"],"code":0,"ms":276,"killedAtCap":false,"stdout":"Accepted alert \"fr2-04 alert l1-1790419169137-x5ebpv\"\n","stderr":""}}
+{"case":"L1.responsive-after-accept","pass":true}
+{"case":"L1.record-exact","pass":true,"detail":[{"kind":"alert","phase":"opening","t":1790419170465},{"kind":"alert","phase":"returned","result":"__undefined__","t":1790419178796}]}
+{"case":"L1.final-snap-clear","pass":true}
+{"case":"L5.no-cli-process-running","pass":true,"detail":[]}
+{"case":"L5.warden-process-exists","pass":true}
+{"case":"L5.observer-saw-blocked","pass":true}
+{"case":"L5.warden-auto-accepted","pass":true}
+{"case":"L5.record-true","pass":true,"detail":[{"kind":"confirm","phase":"opening","timer":true,"t":1790419184567},{"kind":"confirm","phase":"returned","timer":true,"result":true,"t":1790419184880}]}
+{"case":"N9.snap-not-blocked","pass":true,"detail":{"args":["snap"],"code":0,"ms":2593,"killedAtCap":false,"stdout":"URL: http://127.0.0.1:63663/fx.html?n=n9-1790419185360-r813uf&busyMs=3000\nTitle: fr2-04 live\nInteractive elements (2):\n[#1] button \"alert\"\n[#2] button \"confirm\"\n","stderr":""}}
+{"case":"L14.no-leftover-chrome","pass":true,"detail":[]}
+{"case":"L14.no-leftover-warden","pass":true,"detail":[]}
+{"case":"observer-no-violations","pass":true,"detail":[]}

@@ -1,0 +1,160 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli[39m
+
+ [33m❯[39m tests/unit/parse-args.spec.ts [2m ([22m[2m46 tests[22m [2m|[22m [31m7 failed[39m[2m)[22m[90m 8[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/parse-args.spec.ts[2m > [22m@sutradhar/cli parseArgs[2m > [22mP-D1: --dialog accept parses and is stripped from cleanArgs[39m
+[31m     → expected undefined to be 'accept' // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/parse-args.spec.ts[2m > [22m@sutradhar/cli parseArgs[2m > [22mP-D2: --dialog dismiss and --dialog report parse as those values[39m
+[31m     → expected undefined to be 'dismiss' // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/parse-args.spec.ts[2m > [22m@sutradhar/cli parseArgs[2m > [22mP-D3: an invalid or missing --dialog value is flagged[39m
+[31m     → expected false to be true // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/parse-args.spec.ts[2m > [22m@sutradhar/cli parseArgs[2m > [22mP-D4: --dialog-text takes the exact next argument, even multi-word[39m
+[31m     → expected undefined to be 'hello world' // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/parse-args.spec.ts[2m > [22m@sutradhar/cli parseArgs[2m > [22mP-D5: --dialog-text captures a literal "--weird" value without treating it as a flag[39m
+[31m     → expected undefined to be '--weird' // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/parse-args.spec.ts[2m > [22m@sutradhar/cli parseArgs[2m > [22mP-D7: dialogFlagError returns the exact three messages, and undefined for valid combos[39m
+[31m     → expected undefined to be '--dialog must be one of: accept, dism…' // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/parse-args.spec.ts[2m > [22m@sutradhar/cli parseArgs[2m > [22mP-D9: --dialog/--dialog-text coexist with every pre-existing flag[39m
+[31m     → expected undefined to be 'accept' // Object.is equality[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 7 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/parse-args.spec.ts[2m > [22m@sutradhar/cli parseArgs[2m > [22mP-D1: --dialog accept parses and is stripped from cleanArgs
+[31m[1mAssertionError[22m: expected undefined to be 'accept' // Object.is equality[39m
+
+[32m- Expected:[39m 
+"accept"
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m tests/unit/parse-args.spec.ts:[2m254:31[22m[39m
+    [90m252| [39m  [34mit[39m([32m'P-D1: --dialog accept parses and is stripped from cleanArgs'[39m[33m,[39m ()…
+    [90m253| [39m    [35mconst[39m result [33m=[39m [34mparseArgs[39m([[32m'click'[39m[33m,[39m [32m'#a'[39m[33m,[39m [32m'--dialog'[39m[33m,[39m [32m'accept'[39m])[33m;[39m
+    [90m254| [39m    [34mexpect[39m(result[33m.[39mdialogFlag)[33m.[39m[34mtoBe[39m([32m'accept'[39m)[33m;[39m
+    [90m   | [39m                              [31m^[39m
+    [90m255| [39m    [34mexpect[39m(result[33m.[39mcleanArgs)[33m.[39m[34mtoEqual[39m([[32m'#a'[39m])[33m;[39m
+    [90m256| [39m    [34mexpect[39m(result[33m.[39munrecognizedFlags)[33m.[39m[34mtoEqual[39m([])[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/parse-args.spec.ts[2m > [22m@sutradhar/cli parseArgs[2m > [22mP-D2: --dialog dismiss and --dialog report parse as those values
+[31m[1mAssertionError[22m: expected undefined to be 'dismiss' // Object.is equality[39m
+
+[32m- Expected:[39m 
+"dismiss"
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m tests/unit/parse-args.spec.ts:[2m260:67[22m[39m
+    [90m258| [39m
+    [90m259| [39m  [34mit[39m([32m'P-D2: --dialog dismiss and --dialog report parse as those values[39m…
+    [90m260| [39m    [34mexpect[39m([34mparseArgs[39m([[32m'snap'[39m[33m,[39m [32m'--dialog'[39m[33m,[39m [32m'dismiss'[39m])[33m.[39mdialogFlag)[33m.[39m[34mtoBe[39m…
+    [90m   | [39m                                                                  [31m^[39m
+    [90m261| [39m    [34mexpect[39m([34mparseArgs[39m([[32m'snap'[39m[33m,[39m [32m'--dialog'[39m[33m,[39m [32m'report'[39m])[33m.[39mdialogFlag)[33m.[39m[34mtoBe[39m(…
+    [90m262| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/parse-args.spec.ts[2m > [22m@sutradhar/cli parseArgs[2m > [22mP-D3: an invalid or missing --dialog value is flagged
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/unit/parse-args.spec.ts:[2m267:46[22m[39m
+    [90m265| [39m    [35mlet[39m result [33m=[39m [34mparseArgs[39m([[32m'snap'[39m[33m,[39m [32m'--dialog'[39m[33m,[39m [32m'bogus'[39m])[33m;[39m
+    [90m266| [39m    [34mexpect[39m(result[33m.[39mdialogFlag)[33m.[39m[34mtoBeUndefined[39m()[33m;[39m
+    [90m267| [39m    [34mexpect[39m(result[33m.[39mdialogFlagGivenButInvalid)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m                                             [31m^[39m
+    [90m268| [39m    result [33m=[39m [34mparseArgs[39m([[32m'snap'[39m[33m,[39m [32m'--dialog'[39m])[33m;[39m
+    [90m269| [39m    [34mexpect[39m(result[33m.[39mdialogFlagGivenButInvalid)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/parse-args.spec.ts[2m > [22m@sutradhar/cli parseArgs[2m > [22mP-D4: --dialog-text takes the exact next argument, even multi-word
+[31m[1mAssertionError[22m: expected undefined to be 'hello world' // Object.is equality[39m
+
+[32m- Expected:[39m 
+"hello world"
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m tests/unit/parse-args.spec.ts:[2m274:35[22m[39m
+    [90m272| [39m  [34mit[39m([32m'P-D4: --dialog-text takes the exact next argument, even multi-wo[39m…
+    [90m273| [39m    [35mconst[39m result [33m=[39m [34mparseArgs[39m([[32m'nav'[39m[33m,[39m [32m'u'[39m[33m,[39m [32m'--dialog'[39m[33m,[39m [32m'accept'[39m[33m,[39m [32m'--dia[39m…
+    [90m274| [39m    [34mexpect[39m(result[33m.[39mdialogTextFlag)[33m.[39m[34mtoBe[39m([32m'hello world'[39m)[33m;[39m
+    [90m   | [39m                                  [31m^[39m
+    [90m275| [39m    [34mexpect[39m(result[33m.[39mcleanArgs)[33m.[39m[34mtoEqual[39m([[32m'u'[39m])[33m;[39m
+    [90m276| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/parse-args.spec.ts[2m > [22m@sutradhar/cli parseArgs[2m > [22mP-D5: --dialog-text captures a literal "--weird" value without treating it as a flag
+[31m[1mAssertionError[22m: expected undefined to be '--weird' // Object.is equality[39m
+
+[32m- Expected:[39m 
+"--weird"
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m tests/unit/parse-args.spec.ts:[2m280:35[22m[39m
+    [90m278| [39m  [34mit[39m([32m'P-D5: --dialog-text captures a literal "--weird" value without t[39m…
+    [90m279| [39m    [35mconst[39m result [33m=[39m [34mparseArgs[39m([[32m'nav'[39m[33m,[39m [32m'u'[39m[33m,[39m [32m'--dialog'[39m[33m,[39m [32m'accept'[39m[33m,[39m [32m'--dia[39m…
+    [90m280| [39m    [34mexpect[39m(result[33m.[39mdialogTextFlag)[33m.[39m[34mtoBe[39m([32m'--weird'[39m)[33m;[39m
+    [90m   | [39m                                  [31m^[39m
+    [90m281| [39m    [34mexpect[39m(result[33m.[39munrecognizedFlags)[33m.[39m[34mtoEqual[39m([])[33m;[39m
+    [90m282| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/parse-args.spec.ts[2m > [22m@sutradhar/cli parseArgs[2m > [22mP-D7: dialogFlagError returns the exact three messages, and undefined for valid combos
+[31m[1mAssertionError[22m: expected undefined to be '--dialog must be one of: accept, dism…' // Object.is equality[39m
+
+[32m- Expected:[39m 
+"--dialog must be one of: accept, dismiss, report (e.g. --dialog accept)"
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m tests/unit/parse-args.spec.ts:[2m291:71[22m[39m
+    [90m289| [39m
+    [90m290| [39m  [34mit[39m([32m'P-D7: dialogFlagError returns the exact three messages, and unde[39m…
+    [90m291| [39m    [34mexpect[39m([34mdialogFlagError[39m([34mparseArgs[39m([[32m'snap'[39m[33m,[39m [32m'--dialog'[39m[33m,[39m [32m'bogus'[39m])))[33m.[39m…
+    [90m   | [39m                                                                      [31m^[39m
+    [90m292| [39m      [32m'--dialog must be one of: accept, dismiss, report (e.g. --dialog[39m…
+    [90m293| [39m    )[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/parse-args.spec.ts[2m > [22m@sutradhar/cli parseArgs[2m > [22mP-D9: --dialog/--dialog-text coexist with every pre-existing flag
+[31m[1mAssertionError[22m: expected undefined to be 'accept' // Object.is equality[39m
+
+[32m- Expected:[39m 
+"accept"
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m tests/unit/parse-args.spec.ts:[2m315:31[22m[39m
+    [90m313| [39m    [35mconst[39m result [33m=[39m [34mparseArgs[39m([[32m'wait'[39m[33m,[39m [32m'#x'[39m[33m,[39m [32m'--state'[39m[33m,[39m [32m'hidden'[39m[33m,[39m [32m'--di[39m…
+    [90m314| [39m    [34mexpect[39m(result[33m.[39mstateFlag)[33m.[39m[34mtoBe[39m([32m'hidden'[39m)[33m;[39m
+    [90m315| [39m    [34mexpect[39m(result[33m.[39mdialogFlag)[33m.[39m[34mtoBe[39m([32m'accept'[39m)[33m;[39m
+    [90m   | [39m                              [31m^[39m
+    [90m316| [39m    [34mexpect[39m(result[33m.[39mcleanArgs)[33m.[39m[34mtoEqual[39m([[32m'#x'[39m])[33m;[39m
+    [90m317| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m7 failed[39m[22m[2m | [22m[1m[32m39 passed[39m[22m[90m (46)[39m
+[2m   Start at [22m 15:55:05
+[2m   Duration [22m 355ms[2m (transform 28ms, setup 0ms, collect 26ms, tests 8ms, environment 0ms, prepare 129ms)[22m
+

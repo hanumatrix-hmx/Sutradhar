@@ -89,6 +89,45 @@ export interface PendingDialogInfo {
   readonly defaultValue?: string;
 }
 
+/** FR2-04: how a tab's native dialogs (alert/confirm/prompt/beforeunload) are resolved.
+ *  `'auto'` (the default) is byte-for-byte today's pre-FR2-04 behavior — a 30s dismiss timer
+ *  for alert/confirm/prompt, a 3s accept timer for beforeunload — so MCP and the SDK, which
+ *  never pass this, are unaffected. `'report'` (the CLI's own default) never auto-resolves
+ *  alert/confirm/prompt at all (they stay pending until something calls handleDialog), but
+ *  still keeps the 3s beforeunload accept — a page-initiated navigation must not hang forever
+ *  just because nothing is watching for it. `'accept'`/`'dismiss'` resolve every dialog
+ *  immediately with that action. */
+export type DialogPolicyMode = 'auto' | 'report' | 'accept' | 'dismiss';
+
+export interface DialogPolicy {
+  readonly mode: DialogPolicyMode;
+  /** Only meaningful for `'accept'` on a `prompt()` dialog — the text entered. Omitted means
+   *  "whatever the prompt's own default value is" (see BrowserTab's accept-prompt-text rule). */
+  readonly promptText?: string;
+}
+
+export const DEFAULT_DIALOG_POLICY: DialogPolicy = { mode: 'auto' };
+
+/** Bound on {@link BrowserTab.getDialogHistory}'s ring buffer — plenty for a CLI session's
+ *  worth of dialogs without growing unbounded across a very long-lived one. */
+export const MAX_DIALOG_HISTORY = 50;
+
+/** One dialog this tab has seen, from the moment it opened to however it was (or wasn't yet)
+ *  resolved. Pushed once a dialog finishes being handled — by policy, by an explicit caller
+ *  {@link BrowserTab.handleDialog} call, or by the safety-net auto-timeout. */
+export interface DialogRecord {
+  readonly dialogType: string;
+  readonly message: string;
+  readonly defaultValue?: string;
+  readonly url: string;
+  readonly openedAt: string;
+  readonly handledAt?: string;
+  readonly action?: 'accept' | 'dismiss';
+  readonly promptText?: string;
+  readonly handledBy?: 'policy' | 'caller' | 'auto-timeout';
+  readonly error?: string;
+}
+
 /**
  * A tab-level lock so multiple concurrent callers (separate agents/sessions sharing one
  * Sutradhar session) can coordinate who's currently driving a tab — matches real PinchTab's
@@ -137,6 +176,13 @@ export interface IBrowserTab {
   getNetworkLog(): readonly NetworkLogEntry[];
   getPendingDialog(): PendingDialogInfo | undefined;
   handleDialog(action: 'accept' | 'dismiss', promptText?: string): Promise<void>;
+  /** FR2-04. Optional so existing `IBrowserTab` literal mocks (e.g. dom-semantic-engine.spec.ts)
+   *  keep compiling unchanged. */
+  readonly targetId?: string;
+  setDialogPolicy?(policy: DialogPolicy): void;
+  getDialogPolicy?(): DialogPolicy;
+  getPendingDialogDetail?(): (PendingDialogInfo & { url: string; openedAt: string }) | undefined;
+  getDialogHistory?(): readonly DialogRecord[];
   addRoute(rule: RouteRule): Promise<void>;
   clearRoutes(): Promise<void>;
   getActionHistory(): readonly ActionHistoryEntry[];
@@ -160,7 +206,10 @@ export class BrowserTab implements IBrowserTab {
   private readonly pageErrors: PageErrorEntry[] = [];
   private readonly networkLog: NetworkLogEntry[] = [];
   private pendingDialog?: Dialog;
+  private pendingDialogOpenedAt?: string;
   private dialogTimeout?: ReturnType<typeof setTimeout>;
+  private dialogPolicy: DialogPolicy;
+  private readonly dialogHistory: DialogRecord[] = [];
   private routeRules: RouteRule[] = [];
   private interceptionEnabled = false;
   private readonly actionHistory: ActionHistoryEntry[] = [];
@@ -174,6 +223,7 @@ export class BrowserTab implements IBrowserTab {
     page?: Page,
     sessionId?: SessionId,
     eventBus?: EventBus,
+    dialogPolicy: DialogPolicy = DEFAULT_DIALOG_POLICY,
   ) {
     this.id = id;
     this.currentUrl = initialUrl;
@@ -182,6 +232,7 @@ export class BrowserTab implements IBrowserTab {
     this.page = page;
     this.sessionId = sessionId;
     this.eventBus = eventBus;
+    this.dialogPolicy = dialogPolicy;
 
     if (this.page) {
       this.attachPageListeners(this.page);
@@ -427,6 +478,46 @@ export class BrowserTab implements IBrowserTab {
     };
   }
 
+  /** FR2-04. Same data as {@link getPendingDialog} plus `url`/`openedAt`, for the CLI's
+   *  reporting/gate logic. Kept as a separate method (rather than widening
+   *  `getPendingDialog`'s own shape) because an existing test asserts `getPendingDialog()`'s
+   *  exact 3-key shape via `toEqual`. */
+  public getPendingDialogDetail(): (PendingDialogInfo & { url: string; openedAt: string }) | undefined {
+    const base = this.getPendingDialog();
+    if (!base || !this.pendingDialogOpenedAt) return undefined;
+    return { ...base, url: this.url, openedAt: this.pendingDialogOpenedAt };
+  }
+
+  public getDialogHistory(): readonly DialogRecord[] {
+    return this.dialogHistory;
+  }
+
+  /** FR2-04. Sets this tab's dialog policy going forward. Affects only FUTURE dialogs — a
+   *  currently-pending one keeps whatever behavior was already armed for it (the CLI's gate
+   *  handles a pending dialog explicitly instead). */
+  public setDialogPolicy(policy: DialogPolicy): void {
+    this.dialogPolicy = policy;
+  }
+
+  public getDialogPolicy(): DialogPolicy {
+    return this.dialogPolicy;
+  }
+
+  /** FR2-04: the underlying CDP target id, when known — internal Puppeteer API (`_targetId`,
+   *  stable across the pinned puppeteer-core version; see dialog-policy.live.spec.ts LV5). Used
+   *  by the CLI's dialog gate/warden to correlate a raw-CDP-observed dialog with this tab.
+   *  `undefined` for a mock/no-page tab. */
+  public get targetId(): string | undefined {
+    if (!this.page) return undefined;
+    const target = this.page.target() as unknown as { _targetId?: string };
+    return target._targetId;
+  }
+
+  private pushDialogRecord(record: DialogRecord): void {
+    this.dialogHistory.push(record);
+    if (this.dialogHistory.length > MAX_DIALOG_HISTORY) this.dialogHistory.shift();
+  }
+
   public async handleDialog(action: 'accept' | 'dismiss', promptText?: string): Promise<void> {
     const dialog = this.pendingDialog;
     if (!dialog || dialog.handled) {
@@ -436,12 +527,46 @@ export class BrowserTab implements IBrowserTab {
       clearTimeout(this.dialogTimeout);
       this.dialogTimeout = undefined;
     }
-    if (action === 'accept') {
-      await dialog.accept(promptText);
-    } else {
-      await dialog.dismiss();
+    const openedAt = this.pendingDialogOpenedAt ?? new Date().toISOString();
+    const dialogType = dialog.type();
+    const message = dialog.message();
+    const defaultValue = dialog.defaultValue() || undefined;
+    const url = this.url;
+    try {
+      if (action === 'accept') {
+        await dialog.accept(promptText);
+      } else {
+        await dialog.dismiss();
+      }
+      this.pushDialogRecord({
+        dialogType,
+        message,
+        defaultValue,
+        url,
+        openedAt,
+        handledAt: new Date().toISOString(),
+        action,
+        promptText,
+        handledBy: 'caller',
+      });
+    } catch (err) {
+      this.pushDialogRecord({
+        dialogType,
+        message,
+        defaultValue,
+        url,
+        openedAt,
+        handledAt: new Date().toISOString(),
+        action,
+        promptText,
+        handledBy: 'caller',
+        error: (err as Error).message,
+      });
+      throw err;
+    } finally {
+      this.pendingDialog = undefined;
+      this.pendingDialogOpenedAt = undefined;
     }
-    this.pendingDialog = undefined;
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -535,6 +660,65 @@ export class BrowserTab implements IBrowserTab {
     }
   }
 
+  /** FR2-04: immediately resolves `dialog` per an `'accept'`/`'dismiss'` policy. Fire-and-forget
+   *  (called via `void` from the `'dialog'` listener, which cannot be async) — every path pushes
+   *  a {@link DialogRecord}, including a rejection (e.g. a warden/gate got there first with
+   *  "No dialog is showing"), so this can never produce an unhandled promise rejection. */
+  private async applyPolicyNow(
+    dialog: Dialog,
+    mode: 'accept' | 'dismiss',
+    policy: DialogPolicy,
+    isBeforeUnload: boolean,
+  ): Promise<void> {
+    const openedAt = this.pendingDialogOpenedAt ?? new Date().toISOString();
+    const dialogType = dialog.type();
+    const message = dialog.message();
+    const defaultValue = dialog.defaultValue() || undefined;
+    const url = this.url;
+    // Prompt accept-with-no-text rule (D-9): "OK with the prefilled text", explicit rather than
+    // relying on CDP's own behavior when promptText is omitted. Non-prompt dialogs never pass
+    // promptText through, even if the policy set one.
+    const promptText =
+      mode === 'accept' && dialogType === 'prompt' ? (policy.promptText ?? defaultValue) : undefined;
+    try {
+      if (mode === 'accept') {
+        await dialog.accept(promptText);
+      } else {
+        await dialog.dismiss();
+      }
+      this.pushDialogRecord({
+        dialogType,
+        message,
+        defaultValue,
+        url,
+        openedAt,
+        handledAt: new Date().toISOString(),
+        action: mode,
+        promptText,
+        handledBy: 'policy',
+      });
+    } catch (err) {
+      this.pushDialogRecord({
+        dialogType,
+        message,
+        defaultValue,
+        url,
+        openedAt,
+        handledAt: new Date().toISOString(),
+        action: mode,
+        promptText,
+        handledBy: 'policy',
+        error: (err as Error).message,
+      });
+    } finally {
+      if (this.pendingDialog === dialog) {
+        this.pendingDialog = undefined;
+        this.pendingDialogOpenedAt = undefined;
+      }
+      void isBeforeUnload; // reserved for parity with the timer branch; no special-case needed here
+    }
+  }
+
   private attachPageListeners(page: Page): void {
     // Keeps `title` from going stale after any real navigation this BrowserTab didn't itself
     // drive via `navigate()` — an adopted popup, a `targetcreated`-adopted tab, or the page's
@@ -546,6 +730,7 @@ export class BrowserTab implements IBrowserTab {
 
     page.on('dialog', (dialog) => {
       this.pendingDialog = dialog;
+      this.pendingDialogOpenedAt = new Date().toISOString();
 
       if (this.eventBus && this.sessionId) {
         void this.eventBus.publish(
@@ -561,27 +746,68 @@ export class BrowserTab implements IBrowserTab {
         );
       }
 
-      // Safety net: if nothing calls handleDialog(), don't leave the page hung forever.
-      // Dismissing (rather than accepting) is the safer default — it never confirms a
-      // destructive action the caller never got a chance to review. `beforeunload` gets both a
-      // much shorter window AND the opposite polarity — see BEFOREUNLOAD_DIALOG_TIMEOUT_MS's
-      // doc comment for the timing half; the polarity half (PROB-038, part 2): `dismiss()` on a
-      // `beforeunload` dialog means "stay on this page, cancel the navigation" — the exact
-      // opposite of what an in-flight `navigate()` call unambiguously asked for. Auto-dismissing
-      // it (the "safe" choice for alert/confirm/prompt) was actively self-defeating here: found
-      // live that even after shortening the timeout, `navigate()` still failed outright with
-      // `net::ERR_ABORTED` and the page never actually left the original URL, because dismiss()
-      // was cancelling the very navigation the caller asked for. `accept()` (confirm leaving) is
-      // the correct default specifically for `beforeunload` — there is no legitimate scenario
-      // where a caller invokes `navigate()` and secretly wants to stay put if a page objects.
       const isBeforeUnload = dialog.type() === 'beforeunload';
+      const policy = this.dialogPolicy;
+
+      // FR2-04: `accept`/`dismiss` resolve every dialog (including beforeunload) at once, and
+      // never arm the safety-net timer at all. This is the ONLY new branch that changes
+      // observable timing for non-'auto' modes — see BrowserTab-observability T1-T8.
+      if (policy.mode === 'accept' || policy.mode === 'dismiss') {
+        void this.applyPolicyNow(dialog, policy.mode, policy, isBeforeUnload);
+        return;
+      }
+
+      // 'report' (the CLI's own default): alert/confirm/prompt stay pending indefinitely — no
+      // timer at all — until something (the gate, `sutradhar dialog`, or a caller) resolves it.
+      // beforeunload still gets the short accept-timeout: it uniquely blocks an in-flight
+      // navigate() call, and there is no legitimate "leave it open forever" outcome for that
+      // (see BEFOREUNLOAD_DIALOG_TIMEOUT_MS's doc comment — same reasoning as 'auto').
+      if (policy.mode === 'report' && !isBeforeUnload) {
+        return;
+      }
+
+      // 'auto' (default; also 'report'+beforeunload): unchanged pre-FR2-04 safety-net timer —
+      // see BEFOREUNLOAD_DIALOG_TIMEOUT_MS's doc comment for why beforeunload's timeout/polarity
+      // differ from alert/confirm/prompt's.
       const timeoutMs = isBeforeUnload ? BEFOREUNLOAD_DIALOG_TIMEOUT_MS : DEFAULT_DIALOG_TIMEOUT_MS;
       this.dialogTimeout = setTimeout(() => {
         if (!dialog.handled) {
+          const openedAt = this.pendingDialogOpenedAt ?? new Date().toISOString();
+          const dialogType = dialog.type();
+          const message = dialog.message();
+          const defaultValue = dialog.defaultValue() || undefined;
+          const url = this.url;
+          const action: 'accept' | 'dismiss' = isBeforeUnload ? 'accept' : 'dismiss';
           const resolve = isBeforeUnload ? dialog.accept() : dialog.dismiss();
-          resolve.catch(() => {});
+          resolve
+            .then(() => {
+              this.pushDialogRecord({
+                dialogType,
+                message,
+                defaultValue,
+                url,
+                openedAt,
+                handledAt: new Date().toISOString(),
+                action,
+                handledBy: 'auto-timeout',
+              });
+            })
+            .catch((err: Error) => {
+              this.pushDialogRecord({
+                dialogType,
+                message,
+                defaultValue,
+                url,
+                openedAt,
+                handledAt: new Date().toISOString(),
+                action,
+                handledBy: 'auto-timeout',
+                error: err.message,
+              });
+            });
         }
         this.pendingDialog = undefined;
+        this.pendingDialogOpenedAt = undefined;
       }, timeoutMs);
     });
 

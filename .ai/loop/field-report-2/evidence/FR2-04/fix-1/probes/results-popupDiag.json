@@ -1,0 +1,195 @@
+{
+  "at": "2026-09-26T13:17:42.959Z",
+  "before": {
+    "chrome": 0,
+    "wardens": 0
+  },
+  "checks": [
+    {
+      "probe": "popupDiag",
+      "name": "onload-alert-popup-seen-by-warden (4 trials)",
+      "pass": true,
+      "detail": [
+        {
+          "btn": "#popup-delay",
+          "i": 0,
+          "popupBlocked": true,
+          "dialogStatus": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428611080-ppqd-pop&onloadAlert=1\"}",
+          "code": 0,
+          "chromeLeftAfterClose": 0
+        },
+        {
+          "btn": "#popup-delay",
+          "i": 1,
+          "popupBlocked": true,
+          "dialogStatus": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428618706-ju4f-pop&onloadAlert=1\"}",
+          "code": 0,
+          "chromeLeftAfterClose": 0
+        },
+        {
+          "btn": "#popup-delay",
+          "i": 2,
+          "popupBlocked": true,
+          "dialogStatus": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428626480-qpqy-pop&onloadAlert=1\"}",
+          "code": 0,
+          "chromeLeftAfterClose": 0
+        },
+        {
+          "btn": "#popup-delay",
+          "i": 3,
+          "popupBlocked": true,
+          "dialogStatus": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428633960-0vdt-pop&onloadAlert=1\"}",
+          "code": 0,
+          "chromeLeftAfterClose": 0
+        },
+        {
+          "btn": "#popup-late",
+          "i": 0,
+          "popupBlocked": true,
+          "dialogStatus": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 timer pd-1790428641372-2d45-late\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428641372-2d45-late&timerKind=alert&timerMs=3000\"}",
+          "code": 0,
+          "chromeLeftAfterClose": 0
+        },
+        {
+          "btn": "#popup-late",
+          "i": 1,
+          "popupBlocked": true,
+          "dialogStatus": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 timer pd-1790428649487-6j04-late\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428649487-6j04-late&timerKind=alert&timerMs=3000\"}",
+          "code": 0,
+          "chromeLeftAfterClose": 0
+        }
+      ]
+    },
+    {
+      "probe": "popupDiag",
+      "name": "late-alert-popup-seen-by-warden (2 trials)",
+      "pass": true,
+      "detail": [
+        {
+          "btn": "#popup-delay",
+          "i": 0,
+          "popupBlocked": true,
+          "dialogStatus": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428611080-ppqd-pop&onloadAlert=1\"}",
+          "code": 0,
+          "chromeLeftAfterClose": 0
+        },
+        {
+          "btn": "#popup-delay",
+          "i": 1,
+          "popupBlocked": true,
+          "dialogStatus": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428618706-ju4f-pop&onloadAlert=1\"}",
+          "code": 0,
+          "chromeLeftAfterClose": 0
+        },
+        {
+          "btn": "#popup-delay",
+          "i": 2,
+          "popupBlocked": true,
+          "dialogStatus": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428626480-qpqy-pop&onloadAlert=1\"}",
+          "code": 0,
+          "chromeLeftAfterClose": 0
+        },
+        {
+          "btn": "#popup-delay",
+          "i": 3,
+          "popupBlocked": true,
+          "dialogStatus": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428633960-0vdt-pop&onloadAlert=1\"}",
+          "code": 0,
+          "chromeLeftAfterClose": 0
+        },
+        {
+          "btn": "#popup-late",
+          "i": 0,
+          "popupBlocked": true,
+          "dialogStatus": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 timer pd-1790428641372-2d45-late\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428641372-2d45-late&timerKind=alert&timerMs=3000\"}",
+          "code": 0,
+          "chromeLeftAfterClose": 0
+        },
+        {
+          "btn": "#popup-late",
+          "i": 1,
+          "popupBlocked": true,
+          "dialogStatus": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 timer pd-1790428649487-6j04-late\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428649487-6j04-late&timerKind=alert&timerMs=3000\"}",
+          "code": 0,
+          "chromeLeftAfterClose": 0
+        }
+      ]
+    },
+    {
+      "probe": "cleanup",
+      "name": "no-leftover-wardens-before-forced-kill",
+      "pass": true,
+      "detail": {
+        "wardens": [],
+        "chrome": []
+      }
+    },
+    {
+      "probe": "cleanup",
+      "name": "no-leftover-chrome-before-forced-kill",
+      "pass": true,
+      "detail": {
+        "wardens": [],
+        "chrome": []
+      }
+    },
+    {
+      "probe": "observer",
+      "name": "no-guard-violations",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "results": {
+    "popupDiag": [
+      {
+        "btn": "#popup-delay",
+        "i": 0,
+        "popupBlocked": true,
+        "dialogStatus": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428611080-ppqd-pop&onloadAlert=1\"}",
+        "code": 0,
+        "chromeLeftAfterClose": 0
+      },
+      {
+        "btn": "#popup-delay",
+        "i": 1,
+        "popupBlocked": true,
+        "dialogStatus": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428618706-ju4f-pop&onloadAlert=1\"}",
+        "code": 0,
+        "chromeLeftAfterClose": 0
+      },
+      {
+        "btn": "#popup-delay",
+        "i": 2,
+        "popupBlocked": true,
+        "dialogStatus": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428626480-qpqy-pop&onloadAlert=1\"}",
+        "code": 0,
+        "chromeLeftAfterClose": 0
+      },
+      {
+        "btn": "#popup-delay",
+        "i": 3,
+        "popupBlocked": true,
+        "dialogStatus": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428633960-0vdt-pop&onloadAlert=1\"}",
+        "code": 0,
+        "chromeLeftAfterClose": 0
+      },
+      {
+        "btn": "#popup-late",
+        "i": 0,
+        "popupBlocked": true,
+        "dialogStatus": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 timer pd-1790428641372-2d45-late\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428641372-2d45-late&timerKind=alert&timerMs=3000\"}",
+        "code": 0,
+        "chromeLeftAfterClose": 0
+      },
+      {
+        "btn": "#popup-late",
+        "i": 1,
+        "popupBlocked": true,
+        "dialogStatus": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 timer pd-1790428649487-6j04-late\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62906/fx.html?n=pd-1790428649487-6j04-late&timerKind=alert&timerMs=3000\"}",
+        "code": 0,
+        "chromeLeftAfterClose": 0
+      }
+    ]
+  }
+}

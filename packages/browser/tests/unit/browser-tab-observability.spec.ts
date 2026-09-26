@@ -346,3 +346,204 @@ describe('@sutradhar/browser BrowserTab multi-agent tab locking (advisory)', () 
     expect(tab.getLock()?.owner).toBe('agent-b');
   });
 });
+
+// ─────────────────────────────────────────────────────────────────────────
+// FR2-04: dialog policy (auto / report / accept / dismiss)
+// ─────────────────────────────────────────────────────────────────────────
+
+function mockDialog(type: string, message = 'msg', defaultValue = '') {
+  return {
+    handled: false,
+    type: () => type,
+    message: () => message,
+    defaultValue: () => defaultValue,
+    accept: vi.fn().mockResolvedValue(undefined),
+    dismiss: vi.fn().mockResolvedValue(undefined),
+  };
+}
+
+describe('@sutradhar/browser BrowserTab dialog policy (FR2-04)', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('T1: no policy argument (auto) — 30s dismiss for confirm, 3s accept for beforeunload — unchanged MCP/SDK behavior', async () => {
+    const { page, handlers } = mockPage();
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+    const confirm = mockDialog('confirm');
+    handlers.get('dialog')!(confirm);
+    vi.advanceTimersByTime(29_999);
+    expect(confirm.dismiss).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(1);
+    expect(confirm.dismiss).toHaveBeenCalledTimes(1);
+
+    const bu = mockDialog('beforeunload');
+    handlers.get('dialog')!(bu);
+    vi.advanceTimersByTime(2999);
+    expect(bu.accept).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(1);
+    expect(bu.accept).toHaveBeenCalledTimes(1);
+  });
+
+  it('T2: {mode:"accept"} resolves a confirm immediately and records history', async () => {
+    const { page, handlers } = mockPage();
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page, undefined, undefined, {
+      mode: 'accept',
+    });
+    const confirm = mockDialog('confirm', 'Are you sure?');
+    handlers.get('dialog')!(confirm);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(confirm.accept).toHaveBeenCalledTimes(1);
+    expect(confirm.accept).toHaveBeenCalledWith(undefined);
+    expect(vi.getTimerCount()).toBe(0);
+    expect(tab.getPendingDialog()).toBeUndefined();
+    const history = tab.getDialogHistory();
+    expect(history).toHaveLength(1);
+    expect(history[0]).toMatchObject({ dialogType: 'confirm', action: 'accept', handledBy: 'policy' });
+    expect(typeof history[0]!.handledAt).toBe('string');
+  });
+
+  it('T3: prompt accept-with-no-text uses the prompt default; an alert ignores a given promptText', async () => {
+    const { page, handlers } = mockPage();
+    const tabA = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'A', true, page, undefined, undefined, {
+      mode: 'accept',
+    });
+    const promptNoText = mockDialog('prompt', 'q', 'fr2-default');
+    handlers.get('dialog')!(promptNoText);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(promptNoText.accept).toHaveBeenCalledWith('fr2-default');
+
+    const { page: page2, handlers: h2 } = mockPage();
+    const tabB = new BrowserTab(createTabId('tab_2'), 'https://example.com', 'B', true, page2, undefined, undefined, {
+      mode: 'accept',
+      promptText: 'zz',
+    });
+    const promptWithText = mockDialog('prompt', 'q', 'fr2-default');
+    h2.get('dialog')!(promptWithText);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(promptWithText.accept).toHaveBeenCalledWith('zz');
+
+    const alertDialog = mockDialog('alert', 'hi');
+    h2.get('dialog')!(alertDialog);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(alertDialog.accept).toHaveBeenCalledWith(undefined);
+    void tabA;
+    void tabB;
+  });
+
+  it('T4: {mode:"dismiss"} on beforeunload dismisses at once, never accepts', async () => {
+    const { page, handlers } = mockPage();
+    new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page, undefined, undefined, {
+      mode: 'dismiss',
+    });
+    const bu = mockDialog('beforeunload');
+    handlers.get('dialog')!(bu);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(bu.dismiss).toHaveBeenCalledTimes(1);
+    expect(bu.accept).not.toHaveBeenCalled();
+  });
+
+  it('T5: {mode:"report"} never auto-resolves alert/confirm/prompt, but still 3s-accepts beforeunload', async () => {
+    const { page, handlers } = mockPage();
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page, undefined, undefined, {
+      mode: 'report',
+    });
+    const confirm = mockDialog('confirm');
+    handlers.get('dialog')!(confirm);
+    expect(vi.getTimerCount()).toBe(0);
+    vi.advanceTimersByTime(600_000);
+    expect(confirm.accept).not.toHaveBeenCalled();
+    expect(confirm.dismiss).not.toHaveBeenCalled();
+    expect(tab.getPendingDialog()?.dialogType).toBe('confirm');
+
+    const bu = mockDialog('beforeunload');
+    handlers.get('dialog')!(bu);
+    vi.advanceTimersByTime(2999);
+    expect(bu.accept).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(1);
+    expect(bu.accept).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(tab.getDialogHistory().find((h) => h.dialogType === 'beforeunload')?.handledBy).toBe('auto-timeout');
+  });
+
+  it('T6: setDialogPolicy affects only FUTURE dialogs, not one already pending', async () => {
+    const { page, handlers } = mockPage();
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page, undefined, undefined, {
+      mode: 'report',
+    });
+    const confirm1 = mockDialog('confirm', 'first');
+    handlers.get('dialog')!(confirm1);
+    tab.setDialogPolicy({ mode: 'accept' });
+    await vi.advanceTimersByTimeAsync(0);
+    expect(confirm1.accept).not.toHaveBeenCalled();
+    expect(tab.getPendingDialog()?.message).toBe('first');
+
+    const confirm2 = mockDialog('confirm', 'second');
+    handlers.get('dialog')!(confirm2);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(confirm2.accept).toHaveBeenCalledTimes(1);
+  });
+
+  it('T7: a rejected policy accept ("No dialog is showing") never produces an unhandled rejection, and is recorded with .error', async () => {
+    const { page, handlers } = mockPage();
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page, undefined, undefined, {
+      mode: 'accept',
+    });
+    const confirm = mockDialog('confirm');
+    confirm.accept = vi.fn().mockRejectedValue(new Error('No dialog is showing'));
+    const onUnhandled = vi.fn();
+    process.on('unhandledRejection', onUnhandled);
+    try {
+      handlers.get('dialog')!(confirm);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(onUnhandled).not.toHaveBeenCalled();
+      const history = tab.getDialogHistory();
+      expect(history[0]?.error).toContain('No dialog is showing');
+    } finally {
+      process.off('unhandledRejection', onUnhandled);
+    }
+  });
+
+  it('T8: handleDialog("accept","Ada") records handledBy:"caller"', async () => {
+    const { page, handlers } = mockPage();
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page, undefined, undefined, {
+      mode: 'report',
+    });
+    const prompt = mockDialog('prompt', 'name?');
+    handlers.get('dialog')!(prompt);
+    await tab.handleDialog('accept', 'Ada');
+    const history = tab.getDialogHistory();
+    expect(history[0]).toMatchObject({ handledBy: 'caller', promptText: 'Ada', action: 'accept' });
+  });
+
+  it('T9: dialog history is bounded to MAX_DIALOG_HISTORY (50), dropping the oldest', async () => {
+    const { page, handlers } = mockPage();
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page, undefined, undefined, {
+      mode: 'accept',
+    });
+    for (let i = 0; i < 60; i++) {
+      const d = mockDialog('confirm', `m${i}`);
+      handlers.get('dialog')!(d);
+      await vi.advanceTimersByTimeAsync(0);
+    }
+    const history = tab.getDialogHistory();
+    expect(history).toHaveLength(50);
+    expect(history[0]?.message).toBe('m10');
+  });
+
+  it('T10: getPendingDialogDetail includes url/openedAt; getPendingDialog keeps its exact 3-key shape', () => {
+    const { page, handlers } = mockPage();
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page, undefined, undefined, {
+      mode: 'report',
+    });
+    const confirm = mockDialog('confirm', 'hi', 'def');
+    handlers.get('dialog')!(confirm);
+    expect(tab.getPendingDialog()).toEqual({ dialogType: 'confirm', message: 'hi', defaultValue: 'def' });
+    const detail = tab.getPendingDialogDetail();
+    expect(detail).toMatchObject({ dialogType: 'confirm', message: 'hi', defaultValue: 'def', url: 'https://example.com' });
+    expect(typeof detail?.openedAt).toBe('string');
+  });
+});

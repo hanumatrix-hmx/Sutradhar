@@ -1,0 +1,139 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser[39m
+
+ [33m❯[39m tests/unit/browser-tab-observability.spec.ts [2m ([22m[2m31 tests[22m [2m|[22m [31m7 failed[39m[2m)[22m[90m 16[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/browser-tab-observability.spec.ts[2m > [22m@sutradhar/browser BrowserTab dialog policy (FR2-04)[2m > [22mT2: {mode:"accept"} resolves a confirm immediately and records history[39m
+[31m     → expected "spy" to be called 1 times, but got 0 times[39m
+[31m   [33m❯[31m tests/unit/browser-tab-observability.spec.ts[2m > [22m@sutradhar/browser BrowserTab dialog policy (FR2-04)[2m > [22mT3: prompt accept-with-no-text uses the prompt default; an alert ignores a given promptText[39m
+[31m     → expected "spy" to be called with arguments: [ 'fr2-default' ][90m
+
+Received: 
+
+[31m[90m
+
+Number of calls: [1m0[22m
+[31m[39m
+[31m   [33m❯[31m tests/unit/browser-tab-observability.spec.ts[2m > [22m@sutradhar/browser BrowserTab dialog policy (FR2-04)[2m > [22mT4: {mode:"dismiss"} on beforeunload dismisses at once, never accepts[39m
+[31m     → expected "spy" to be called 1 times, but got 0 times[39m
+[31m   [33m❯[31m tests/unit/browser-tab-observability.spec.ts[2m > [22m@sutradhar/browser BrowserTab dialog policy (FR2-04)[2m > [22mT5: {mode:"report"} never auto-resolves alert/confirm/prompt, but still 3s-accepts beforeunload[39m
+[31m     → expected 1 to be +0 // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/browser-tab-observability.spec.ts[2m > [22m@sutradhar/browser BrowserTab dialog policy (FR2-04)[2m > [22mT6: setDialogPolicy affects only FUTURE dialogs, not one already pending[39m
+[31m     → expected "spy" to be called 1 times, but got 0 times[39m
+[31m   [33m❯[31m tests/unit/browser-tab-observability.spec.ts[2m > [22m@sutradhar/browser BrowserTab dialog policy (FR2-04)[2m > [22mT7: a rejected policy accept ("No dialog is showing") never produces an unhandled rejection, and is recorded with .error[39m
+[31m     → the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string[39m
+[31m   [33m❯[31m tests/unit/browser-tab-observability.spec.ts[2m > [22m@sutradhar/browser BrowserTab dialog policy (FR2-04)[2m > [22mT9: dialog history is bounded to MAX_DIALOG_HISTORY (50), dropping the oldest[39m
+[31m     → expected [] to have a length of 50 but got +0[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 7 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/browser-tab-observability.spec.ts[2m > [22m@sutradhar/browser BrowserTab dialog policy (FR2-04)[2m > [22mT2: {mode:"accept"} resolves a confirm immediately and records history
+[31m[1mAssertionError[22m: expected "spy" to be called 1 times, but got 0 times[39m
+[36m [2m❯[22m tests/unit/browser-tab-observability.spec.ts:[2m399:28[22m[39m
+    [90m397| [39m    handlers[33m.[39m[35mget[39m([32m'dialog'[39m)[33m![39m(confirm)[33m;[39m
+    [90m398| [39m    [35mawait[39m vi[33m.[39m[34madvanceTimersByTimeAsync[39m([34m0[39m)[33m;[39m
+    [90m399| [39m    [34mexpect[39m(confirm[33m.[39maccept)[33m.[39m[34mtoHaveBeenCalledTimes[39m([34m1[39m)[33m;[39m
+    [90m   | [39m                           [31m^[39m
+    [90m400| [39m    [34mexpect[39m(confirm[33m.[39maccept)[33m.[39m[34mtoHaveBeenCalledWith[39m(undefined)[33m;[39m
+    [90m401| [39m    [34mexpect[39m(vi[33m.[39m[34mgetTimerCount[39m())[33m.[39m[34mtoBe[39m([34m0[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/browser-tab-observability.spec.ts[2m > [22m@sutradhar/browser BrowserTab dialog policy (FR2-04)[2m > [22mT3: prompt accept-with-no-text uses the prompt default; an alert ignores a given promptText
+[31m[1mAssertionError[22m: expected "spy" to be called with arguments: [ 'fr2-default' ][90m
+
+Received: 
+
+[31m[90m
+
+Number of calls: [1m0[22m
+[31m[39m
+[36m [2m❯[22m tests/unit/browser-tab-observability.spec.ts:[2m417:33[22m[39m
+    [90m415| [39m    handlers[33m.[39m[35mget[39m([32m'dialog'[39m)[33m![39m(promptNoText)[33m;[39m
+    [90m416| [39m    [35mawait[39m vi[33m.[39m[34madvanceTimersByTimeAsync[39m([34m0[39m)[33m;[39m
+    [90m417| [39m    [34mexpect[39m(promptNoText[33m.[39maccept)[33m.[39m[34mtoHaveBeenCalledWith[39m([32m'fr2-default'[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m418| [39m
+    [90m419| [39m    [35mconst[39m { page[33m:[39m page2[33m,[39m handlers[33m:[39m h2 } [33m=[39m [34mmockPage[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/browser-tab-observability.spec.ts[2m > [22m@sutradhar/browser BrowserTab dialog policy (FR2-04)[2m > [22mT4: {mode:"dismiss"} on beforeunload dismisses at once, never accepts
+[31m[1mAssertionError[22m: expected "spy" to be called 1 times, but got 0 times[39m
+[36m [2m❯[22m tests/unit/browser-tab-observability.spec.ts:[2m445:24[22m[39m
+    [90m443| [39m    handlers[33m.[39m[35mget[39m([32m'dialog'[39m)[33m![39m(bu)[33m;[39m
+    [90m444| [39m    [35mawait[39m vi[33m.[39m[34madvanceTimersByTimeAsync[39m([34m0[39m)[33m;[39m
+    [90m445| [39m    [34mexpect[39m(bu[33m.[39mdismiss)[33m.[39m[34mtoHaveBeenCalledTimes[39m([34m1[39m)[33m;[39m
+    [90m   | [39m                       [31m^[39m
+    [90m446| [39m    [34mexpect[39m(bu[33m.[39maccept)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m447| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/browser-tab-observability.spec.ts[2m > [22m@sutradhar/browser BrowserTab dialog policy (FR2-04)[2m > [22mT5: {mode:"report"} never auto-resolves alert/confirm/prompt, but still 3s-accepts beforeunload
+[31m[1mAssertionError[22m: expected 1 to be +0 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 0[39m
+[31m+ 1[39m
+
+[36m [2m❯[22m tests/unit/browser-tab-observability.spec.ts:[2m456:32[22m[39m
+    [90m454| [39m    [35mconst[39m confirm [33m=[39m [34mmockDialog[39m([32m'confirm'[39m)[33m;[39m
+    [90m455| [39m    handlers[33m.[39m[35mget[39m([32m'dialog'[39m)[33m![39m(confirm)[33m;[39m
+    [90m456| [39m    [34mexpect[39m(vi[33m.[39m[34mgetTimerCount[39m())[33m.[39m[34mtoBe[39m([34m0[39m)[33m;[39m
+    [90m   | [39m                               [31m^[39m
+    [90m457| [39m    vi[33m.[39m[34madvanceTimersByTime[39m([34m600_000[39m)[33m;[39m
+    [90m458| [39m    [34mexpect[39m(confirm[33m.[39maccept)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/browser-tab-observability.spec.ts[2m > [22m@sutradhar/browser BrowserTab dialog policy (FR2-04)[2m > [22mT6: setDialogPolicy affects only FUTURE dialogs, not one already pending
+[31m[1mAssertionError[22m: expected "spy" to be called 1 times, but got 0 times[39m
+[36m [2m❯[22m tests/unit/browser-tab-observability.spec.ts:[2m487:29[22m[39m
+    [90m485| [39m    handlers[33m.[39m[35mget[39m([32m'dialog'[39m)[33m![39m(confirm2)[33m;[39m
+    [90m486| [39m    [35mawait[39m vi[33m.[39m[34madvanceTimersByTimeAsync[39m([34m0[39m)[33m;[39m
+    [90m487| [39m    [34mexpect[39m(confirm2[33m.[39maccept)[33m.[39m[34mtoHaveBeenCalledTimes[39m([34m1[39m)[33m;[39m
+    [90m   | [39m                            [31m^[39m
+    [90m488| [39m  })[33m;[39m
+    [90m489| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/browser-tab-observability.spec.ts[2m > [22m@sutradhar/browser BrowserTab dialog policy (FR2-04)[2m > [22mT7: a rejected policy accept ("No dialog is showing") never produces an unhandled rejection, and is recorded with .error
+[31m[1mAssertionError[22m: the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string[39m
+[36m [2m❯[22m tests/unit/browser-tab-observability.spec.ts:[2m504:33[22m[39m
+    [90m502| [39m      [34mexpect[39m(onUnhandled)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m503| [39m      [35mconst[39m history [33m=[39m tab[33m.[39m[34mgetDialogHistory[39m()[33m;[39m
+    [90m504| [39m      [34mexpect[39m(history[[34m0[39m][33m?.[39merror)[33m.[39m[34mtoContain[39m([32m'No dialog is showing'[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m505| [39m    } [35mfinally[39m {
+    [90m506| [39m      process[33m.[39m[34moff[39m([32m'unhandledRejection'[39m[33m,[39m onUnhandled)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/browser-tab-observability.spec.ts[2m > [22m@sutradhar/browser BrowserTab dialog policy (FR2-04)[2m > [22mT9: dialog history is bounded to MAX_DIALOG_HISTORY (50), dropping the oldest
+[31m[1mAssertionError[22m: expected [] to have a length of 50 but got +0[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 50[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m tests/unit/browser-tab-observability.spec.ts:[2m533:21[22m[39m
+    [90m531| [39m    }
+    [90m532| [39m    [35mconst[39m history [33m=[39m tab[33m.[39m[34mgetDialogHistory[39m()[33m;[39m
+    [90m533| [39m    [34mexpect[39m(history)[33m.[39m[34mtoHaveLength[39m([34m50[39m)[33m;[39m
+    [90m   | [39m                    [31m^[39m
+    [90m534| [39m    [34mexpect[39m(history[[34m0[39m][33m?.[39mmessage)[33m.[39m[34mtoBe[39m([32m'm10'[39m)[33m;[39m
+    [90m535| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m7 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (31)[39m
+[2m   Start at [22m 15:53:58
+[2m   Duration [22m 820ms[2m (transform 259ms, setup 0ms, collect 502ms, tests 16ms, environment 0ms, prepare 110ms)[22m
+

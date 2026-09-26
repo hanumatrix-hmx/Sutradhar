@@ -1002,3 +1002,96 @@ describe('@sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect
     expect(evaluateMock).not.toHaveBeenCalled();
   });
 });
+
+describe('@sutradhar/capability-runtime dialog policy plumbing (FR2-04)', () => {
+  function noBrowserRuntime(options: ConstructorParameters<typeof SutradharRuntime>[0] = {}) {
+    const launcher = new BrowserLauncher();
+    vi.spyOn(launcher, 'findExecutablePath').mockReturnValue(undefined);
+    return new SutradharRuntime({ launcher, rateLimiter: null, ...options });
+  }
+
+  it('R1: launch() forwards a runtime-default dialogPolicy to createSession', async () => {
+    const runtime = noBrowserRuntime({ dialogPolicy: { mode: 'accept' } });
+    const spy = vi.spyOn((runtime as any).sessionManager, 'createSession');
+    await runtime.launch();
+    expect(spy).toHaveBeenCalledWith(expect.objectContaining({ dialogPolicy: { mode: 'accept' } }));
+  });
+
+  it('R2: a per-call dialogPolicy on attach() overrides the runtime default', async () => {
+    const launcher = new BrowserLauncher();
+    vi.spyOn(launcher, 'findExecutablePath').mockReturnValue(undefined);
+    vi.spyOn(launcher, 'connect').mockResolvedValue(new PuppeteerBrowserInstance());
+    const runtime = new SutradharRuntime({ launcher, rateLimiter: null, dialogPolicy: { mode: 'accept' } });
+    const spy = vi.spyOn((runtime as any).sessionManager, 'createSession');
+    await runtime.attach({ endpoint: 'ws://x', dialogPolicy: { mode: 'dismiss' } });
+    expect(spy).toHaveBeenCalledWith(expect.objectContaining({ dialogPolicy: { mode: 'dismiss' } }));
+  });
+
+  it('R3: no dialogPolicy option anywhere -> createSession gets dialogPolicy undefined (tabs stay "auto") — the MCP/SDK guard', async () => {
+    const runtime = noBrowserRuntime();
+    const spy = vi.spyOn((runtime as any).sessionManager, 'createSession');
+    await runtime.launch();
+    expect(spy).toHaveBeenCalledWith(expect.objectContaining({ dialogPolicy: undefined }));
+  });
+
+  it('R4: setDialogPolicy calls session.setDialogPolicy once; an unknown sessionId throws', async () => {
+    const runtime = noBrowserRuntime();
+    const { sessionId } = await runtime.launch();
+    const session = runtime.getSessionManager().getSession(createSessionId(sessionId))!;
+    const spy = vi.spyOn(session, 'setDialogPolicy');
+    runtime.setDialogPolicy(sessionId, { mode: 'dismiss' });
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({ mode: 'dismiss' });
+    expect(() => runtime.setDialogPolicy('nope', { mode: 'dismiss' })).toThrow(/No browser session/);
+  });
+
+  it('R5: getPendingDialogs reports only tabs with a pending dialog, with the correct "active" shape', async () => {
+    const runtime = noBrowserRuntime();
+    const { sessionId } = await runtime.launch();
+    const session = runtime.getSessionManager().getSession(createSessionId(sessionId))!;
+    const tab2 = await session.createTab('https://example.com/2');
+    vi.spyOn(tab2, 'getPendingDialogDetail' as any).mockReturnValue({
+      dialogType: 'confirm',
+      message: 'm',
+      defaultValue: undefined,
+      url: 'https://example.com/2',
+      openedAt: '2026-01-01T00:00:00.000Z',
+    });
+
+    const pending = runtime.getPendingDialogs(sessionId);
+    expect(pending).toHaveLength(1);
+    expect(pending[0]).toEqual({
+      tabId: tab2.id,
+      url: 'https://example.com/2',
+      dialogType: 'confirm',
+      message: 'm',
+      defaultValue: undefined,
+      openedAt: '2026-01-01T00:00:00.000Z',
+      active: true,
+    });
+  });
+
+  it('R6: getDialogHistory merges every tab in handledAt order, tagging each entry with its tabId', async () => {
+    const runtime = noBrowserRuntime();
+    const { sessionId, activeTabId } = await runtime.launch();
+    const session = runtime.getSessionManager().getSession(createSessionId(sessionId))!;
+    const tab1 = session.getTab(activeTabId! as any)!;
+    const tab2 = await session.createTab('https://example.com/2');
+    vi.spyOn(tab1, 'getDialogHistory' as any).mockReturnValue([
+      { dialogType: 'confirm', message: 'a', url: 'u1', openedAt: 'o1', handledAt: '2026-01-01T00:00:02.000Z' },
+    ]);
+    vi.spyOn(tab2, 'getDialogHistory' as any).mockReturnValue([
+      { dialogType: 'alert', message: 'b', url: 'u2', openedAt: 'o2', handledAt: '2026-01-01T00:00:01.000Z' },
+    ]);
+
+    const history = runtime.getDialogHistory(sessionId);
+    expect(history).toEqual([
+      { dialogType: 'alert', message: 'b', url: 'u2', openedAt: 'o2', handledAt: '2026-01-01T00:00:01.000Z', tabId: tab2.id },
+      { dialogType: 'confirm', message: 'a', url: 'u1', openedAt: 'o1', handledAt: '2026-01-01T00:00:02.000Z', tabId: tab1.id },
+    ]);
+
+    const narrowed = runtime.getDialogHistory(sessionId, tab2.id);
+    expect(narrowed).toHaveLength(1);
+    expect(narrowed[0]?.tabId).toBe(tab2.id);
+  });
+});

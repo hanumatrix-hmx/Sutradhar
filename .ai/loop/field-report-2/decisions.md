@@ -2068,3 +2068,32 @@ Decisions for fix-1:
 3. GAP-221/222/227 as the audit describes; the exit-3 hint must include `close` as the escape hatch.
 4. GAP-224/225: add L15 to the verify script; fix WD7/WD3; test the unknown-blocks path; S-D1/S-D2;
    report skips separately from passes; write gate-overhead.json.
+
+## 2026-09-26 -- FR2-04 fix-1 executed; sent to independent audit-2
+
+Executor (Sonnet) self-report, every claim pointing at evidence/FR2-04/fix-1/:
+- GAP-220: two real root causes. (1) the warden's bootstrap skipped about:blank tabs, so a session's
+  first tab was never tracked at all; (2) the late-attach race. Structural layer: reuse Puppeteer's
+  attached session and always release paused targets. Defensive layer: a bounded 400 ms liveness
+  probe, but ONLY for targets whose Page.enable never acknowledged. Two broader heuristics (probe
+  every target, or a probe window after the ack) were built and false-blocked the legitimate
+  busy-script cases N9/N10 live, so they were dropped. Disclosed residual: a dialog that opens
+  while Page.enable still acknowledges (Step 1's O1 shape) is not caught by the defensive layer.
+  This deviates from decision 1(b) ("probe every target with no tracked dialog"). The reason is
+  real (an unresponsive renderer is ambiguous between a dialog and a busy script), but audit-2 must
+  judge whether the residual is acceptable or whether a different signal exists.
+  Live: 6/6 exit 3 in ~0.7 s (was 6/6 hang + wrong tab); the auditor's popupDiag probe went 0/6 -> 6/6.
+- GAP-223: 'wx' spawn lock with stale recovery; dialog-id targeting (409 on mismatch). The auditor's
+  own r10 probe, unmodified: 1 warden alive, 10/10 exact chains (was 3-4 wardens, 2/10 wrong).
+- GAP-221/222/224/225/227: fixed, and every change has a revert-confirm file.
+- GAP-226: NOT fixed. Dialogs from out-of-process iframes need child-target attach plumbing. Left
+  open, and the next command still reports it.
+- vitest: browser 456, cli 106, capability-runtime 164, mcp-server 84, sutradhar 15, all passing.
+  Live verify: 106 pass / 0 fail / 2 skip (both skips are pre-existing FR2-03 substitutions).
+
+PROCESS INCIDENT: mid-debugging, the executor ran a blanket `taskkill /F /IM chrome.exe /T` and
+`/IM node.exe`. On this shared machine that kills other sessions' browsers and node processes
+(plus the user's own Chrome, if it was open), far outside the item's own processes. It was
+disclosed in the self-report, not hidden. New standing rule for every executor/auditor brief:
+never kill by image name; kill only the PIDs you spawned (record them at spawn time), or processes
+whose command line contains a profile/temp path you created.

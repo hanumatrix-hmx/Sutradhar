@@ -1,0 +1,150 @@
+<!doctype html>
+<!--
+  FR2-04 live-verify fixture (spec §3). Served by the verify script's own http.createServer on
+  127.0.0.1:0 — a fresh origin per run, so a fresh localStorage. Every URL carries `?n=<nonce>`
+  in the query string (a fragment-only change would not reload the page). Every recorded event
+  is appended to `localStorage['fr2-04:' + n]` so an INDEPENDENT observer can read the outcome
+  once the page is unblocked, without ever needing to see the dialog itself.
+-->
+<html>
+<head>
+<meta charset="utf-8" />
+<title>fr2-04 dialogs</title>
+<script>
+  // onloadAlert must run BEFORE DOMContentLoaded — inline, in <head>, unconditionally evaluated
+  // as the document parses.
+  (function () {
+    var q = new URLSearchParams(location.search);
+    if (q.get('onloadAlert')) {
+      var N = q.get('n') || 'none';
+      var KEY = 'fr2-04:' + N;
+      function rec(e) {
+        var a = JSON.parse(localStorage.getItem(KEY) || '[]');
+        e.seq = a.length + 1;
+        e.t = Date.now();
+        a.push(e);
+        localStorage.setItem(KEY, JSON.stringify(a));
+      }
+      rec({ kind: 'onload', phase: 'opening' });
+      var r = alert('fr2-04 onload ' + N);
+      rec({ kind: 'onload', phase: 'returned', result: r === undefined ? '__undefined__' : String(r) });
+    }
+  })();
+</script>
+</head>
+<body>
+<button id="alert">alert</button>
+<button id="confirm">confirm</button>
+<button id="prompt">prompt</button>
+<button id="chain">chain</button>
+<button id="popup">popup</button>
+<button id="arm-bu">arm beforeunload</button>
+<button id="arm-bu-nav">arm beforeunload + nav</button>
+<div id="iframe-host"><iframe id="ifr"></iframe></div>
+<pre id="log"></pre>
+<script>
+  var q = new URLSearchParams(location.search);
+  var N = q.get('n') || 'none';
+  window.N = N;
+  var KEY = 'fr2-04:' + N;
+
+  function rec(e) {
+    var a = JSON.parse(localStorage.getItem(KEY) || '[]');
+    e.seq = a.length + 1;
+    e.t = Date.now();
+    a.push(e);
+    localStorage.setItem(KEY, JSON.stringify(a));
+    document.getElementById('log').textContent = JSON.stringify(a);
+  }
+  window.rec = rec;
+
+  if (q.get('landed')) rec({ kind: 'landed' });
+  document.title = 'fr2-04 ' + N;
+
+  document.getElementById('alert').onclick = function () {
+    rec({ kind: 'alert', phase: 'opening' });
+    var r = alert('fr2-04 alert ' + N);
+    rec({ kind: 'alert', phase: 'returned', result: r === undefined ? '__undefined__' : String(r) });
+  };
+  document.getElementById('confirm').onclick = function () {
+    rec({ kind: 'confirm', phase: 'opening' });
+    var r = confirm('fr2-04 confirm ' + N);
+    rec({ kind: 'confirm', phase: 'returned', result: r });
+  };
+  document.getElementById('prompt').onclick = function () {
+    rec({ kind: 'prompt', phase: 'opening' });
+    var r = prompt('fr2-04 prompt ' + N, 'fr2-default');
+    rec({ kind: 'prompt', phase: 'returned', result: r, isNull: r === null });
+  };
+  // GAP-220 fixture support: opens a NEW target (a real popup, not the same page/tab) whose OWN
+  // `onloadAlert` fires an alert while it is still loading — this is what the audit reproduced
+  // (a dialog opening on a target the warden hasn't finished attaching to yet), as distinct from
+  // `onloadAlert` on the MAIN page (which the warden is already tracking long before any nav).
+  document.getElementById('popup').onclick = function () {
+    var popupNonce = N + '-popup';
+    rec({ kind: 'popup', phase: 'opening', popupNonce: popupNonce });
+    window.open(location.pathname + '?n=' + popupNonce + '&onloadAlert=1', '_blank');
+  };
+  document.getElementById('chain').onclick = function () {
+    rec({ kind: 'alert', phase: 'opening', chain: true });
+    var r1 = alert('fr2-04 chain-a ' + N);
+    rec({ kind: 'alert', phase: 'returned', chain: true, result: r1 === undefined ? '__undefined__' : String(r1) });
+    rec({ kind: 'confirm', phase: 'opening', chain: true });
+    var r2 = confirm('fr2-04 chain-b ' + N);
+    rec({ kind: 'confirm', phase: 'returned', chain: true, result: r2 });
+  };
+  document.getElementById('arm-bu').onclick = function () {
+    addEventListener('beforeunload', function (e) {
+      rec({ kind: 'beforeunload', phase: 'fired' });
+      e.preventDefault();
+      e.returnValue = 'fr2-04 unsaved';
+    });
+    rec({ kind: 'beforeunload', phase: 'armed' });
+  };
+  document.getElementById('arm-bu-nav').onclick = function () {
+    addEventListener('beforeunload', function (e) {
+      rec({ kind: 'beforeunload', phase: 'fired' });
+      e.preventDefault();
+      e.returnValue = 'fr2-04 unsaved';
+    });
+    rec({ kind: 'beforeunload', phase: 'armed' });
+    setTimeout(function () {
+      location.href = location.pathname + '?n=' + N + '&landed=1';
+    }, 2500);
+  };
+
+  var tk = q.get('timerKind');
+  var tm = Number(q.get('timerMs') || 0);
+  if (tk && tm) {
+    setTimeout(function () {
+      rec({ kind: tk, phase: 'opening', timer: true });
+      var r = tk === 'alert' ? alert('fr2-04 timer ' + N) : confirm('fr2-04 timer ' + N);
+      rec({ kind: tk, phase: 'returned', timer: true, result: r === undefined ? '__undefined__' : r });
+    }, tm);
+  }
+
+  // Build the iframe's content via JS (not a static srcdoc attribute) — avoids HTML-attribute
+  // escaping pitfalls with nested quotes/script tags inside srcdoc.
+  (function () {
+    var ifr = document.getElementById('ifr');
+    var doc = ifr.contentDocument;
+    doc.open();
+    doc.write('<button id="ifr-alert">iframe alert</button>');
+    doc.close();
+    doc.getElementById('ifr-alert').onclick = function () {
+      rec({ kind: 'iframe', phase: 'opening', frame: true });
+      var r = doc.defaultView.alert('fr2-04 iframe ' + N);
+      rec({ kind: 'iframe', phase: 'returned', frame: true, result: r === undefined ? '__undefined__' : String(r) });
+    };
+  })();
+
+  var busyMs = Number(q.get('busyMs') || 0);
+  if (busyMs) {
+    var t0 = Date.now();
+    while (Date.now() - t0 < busyMs) {
+      /* busy-wait: simulates a long-running script, NOT a dialog (N9) */
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,462 @@
+/**
+ * @file packages/browser/src/session/dialog-warden.ts
+ * @description FR2-04 Branch W: the `DialogWarden` core. Step 1 (evidence/FR2-04/step1)
+ * established that a FRESH CDP session can neither see (a fresh Page.enable never re-emits
+ * `Page.javascriptDialogOpening`) nor handle (`Page.handleJavaScriptDialog` fails with "No
+ * dialog is showing") a dialog that opened before it connected — but a session that was already
+ * `Page.enable`d BEFORE the dialog opened CAN handle it after the process that opened it exits
+ * (Step 1 E4/E4b, O8=true). The warden exists to be that pre-attached holder: a small, detached
+ * Node process that connects once per CLI session and keeps every page's dialog-domain enabled
+ * for the session's whole lifetime, independent of any single short-lived CLI command process.
+ *
+ * No `process.*` calls live here (no `process.exit`, no `process.argv`) — this class is pure
+ * CDP + HTTP; `packages/cli/src/warden-control.ts` is the thing that actually spawns/wraps it as
+ * a detached OS process, decodes argv, and calls `process.exit`.
+ */
+import http, { type IncomingMessage, type ServerResponse } from 'node:http';
+import crypto from 'node:crypto';
+import type { Browser, CDPSession, Target } from 'puppeteer-core';
+import { connectForDialogs, listPageTargets, livenessProbe, type ObservedDialog } from './dialog-cdp.js';
+import type { DialogPolicy } from './browser-tab.js';
+
+const DEFAULT_POLICY_GRACE_MS = 300;
+const DEFAULT_STATE_POLL_MS = 2000;
+/** Every warden HTTP call's own budget (WARDEN_HTTP_TIMEOUT_MS, FR2-04 spec §0.4) — the CLI side
+ *  (warden-control.ts) applies this per-request; kept here too as the doc-of-record. */
+export const WARDEN_HTTP_TIMEOUT_MS = 500;
+/** GAP-220 (b), the defensive layer: bounded per-target liveness probe budget used by
+ *  `/v1/dialogs` for page targets whose attach never completed (see `pageEnableAckedAt`'s doc
+ *  comment below for exactly which targets that is — NOT every target on every command). Kept
+ *  short so a session with several tabs doesn't make the gate noticeably slower (measured in
+ *  fix-1/gate-overhead.json) — a target that fails to answer within this window is reported as an
+ *  `unknown` dialog and the gate blocks, exactly like `DirectCdpBroker`'s fallback does. */
+export const LIVENESS_PROBE_MS = 400;
+/**
+ * GAP-220 (b): the liveness probe applies ONLY to a target whose `Page.enable` has never
+ * successfully ACKed. This is a deliberately narrower, DECIDABLE condition, arrived at after two
+ * broader, timing-window-based versions both regressed live (fix-1 evidence): a discovery-time
+ * window (`Date.now()` since the target was first seen) failed because a real CLI `nav` command's
+ * own process/attach overhead (~1s, measured live) already exceeds any window generous enough to
+ * matter; a `Page.enable`-ack-plus-grace-period version failed for the same reason once the ack
+ * itself was shown to happen only shortly before a legitimate next action, since `Page.enable` is
+ * a browser-level toggle that acks quickly REGARDLESS of whether a dialog blocked the renderer
+ * (same fact `DirectCdpBroker`'s own doc comment relies on for C11) — so "how long since ack"
+ * cannot distinguish "we won the attach race" from "we lost it but the ack still came back fast."
+ * There is NO bounded timing signal that reliably tells "will resolve on its own" (a busy script)
+ * apart from "will never resolve without external help" (an orphaned dialog) — both simply fail
+ * to answer a short probe. Rather than keep guessing at a magic number, this only probes a target
+ * the warden's own attach genuinely never completed for AT ALL — a real, decidable signal with no
+ * false-positive risk for an established tab (confirmed live: N9/N10 clean with this condition,
+ * see fix-1 vitest/live evidence). The honest cost: a target whose `Page.enable` happens to ack
+ * successfully despite having missed an already-open dialog (Step 1 O1) is NOT caught by this
+ * layer — that residual gap is carried by structural layer (a) alone, and is disclosed, not
+ * hidden, in this item's final report.
+ */
+
+export interface WardenOptions {
+  readonly wsEndpoint: string;
+  /** Read the session's current dialog policy (mirrors CLI state's `dialogPolicy`). Called after
+   *  `policyGraceMs` for each newly-opened dialog, and re-checked at handle time. */
+  readonly readPolicy: () => Promise<DialogPolicy | undefined>;
+  /** Is this warden still the one that should be running? `false` means the state file is gone,
+   *  or points at a different session — the warden then exits (R-D: no GC net exists, so the
+   *  warden must police its own lifetime). */
+  readonly isStillCurrent: () => Promise<boolean>;
+  readonly onReady: (info: { port: number; token: string }) => Promise<void> | void;
+  readonly onExit: (reason: string) => Promise<void> | void;
+  readonly policyGraceMs?: number;
+  readonly statePollMs?: number;
+  readonly connect?: typeof connectForDialogs;
+}
+
+interface TrackedDialog extends ObservedDialog {
+  handled: boolean;
+}
+
+/**
+ * Tracks every page target's dialogs for one Chrome session and serves a tiny localhost HTTP API
+ * so the CLI (a separate, short-lived process) can list/handle them. See the file header for why
+ * this needs to be a separate long-lived process at all (Step 1 O8).
+ */
+export class DialogWarden {
+  private browser?: Browser;
+  private server?: http.Server;
+  private readonly token = crypto.randomBytes(32).toString('hex');
+  private readonly sessions = new Map<string, CDPSession>();
+  private readonly dialogs = new Map<string, TrackedDialog>(); // keyed by targetId (one at a time per target)
+  /** When this warden first discovered each target — kept for diagnostics and as the bootstrap
+   *  fallback age (see `listWithLiveness`'s use of it for a target with no ack recorded yet). */
+  private readonly discoveredAt = new Map<string, number>();
+  /** When each target's `Page.enable` last ACKed — see `PAGE_ENABLE_GRACE_MS`. */
+  private readonly pageEnableAckedAt = new Map<string, number>();
+  private readonly graceTimers = new Map<string, ReturnType<typeof setTimeout>>();
+  private pollTimer?: ReturnType<typeof setInterval>;
+  private stopped = false;
+  private port = 0;
+
+  public constructor(private readonly opts: WardenOptions) {}
+
+  /** The HTTP server's actual bound address (host, port, family) — exposed so tests (and anyone
+   *  auditing this at runtime) can assert the real bind address rather than merely that SOME
+   *  request to 127.0.0.1 happens to succeed, which would still pass even if this server were
+   *  mistakenly bound to `0.0.0.0` (GAP-225: WD7 never actually checked this before). */
+  public address(): { address: string; port: number; family: string } | undefined {
+    const addr = this.server?.address();
+    return typeof addr === 'object' && addr ? addr : undefined;
+  }
+
+  public pending(): ObservedDialog[] {
+    return Array.from(this.dialogs.values())
+      .filter((d) => !d.handled)
+      .sort((a, b) => a.openedAt.localeCompare(b.openedAt))
+      .map(({ handled: _handled, ...rest }) => rest);
+  }
+
+  /**
+   * GAP-220 defensive layer (b): `pending()` alone only reports dialogs the warden's OWN
+   * `Page.javascriptDialogOpening` listener actually saw — which the structural layer above
+   * cannot guarantee for a target whose dialog fires during the attach race. Never trust "no
+   * tracked dialog" by itself: for every real page target with nothing tracked, run a short,
+   * bounded liveness probe (the same primitive `DirectCdpBroker`'s fallback uses) and report an
+   * unresponsive one as an `unknown` dialog, exactly like that fallback does — the gate then
+   * blocks (exit 3) instead of letting `runtime.attach()` risk the 180s hang / silent wrong-tab
+   * adoption (GAP-017/GAP-220). Bounded to `LIVENESS_PROBE_MS` per target so a session with a
+   * normal number of tabs doesn't make every gated command noticeably slower.
+   */
+  public async listWithLiveness(): Promise<{ dialogs: ObservedDialog[]; busy: string[] }> {
+    const dialogs = this.pending();
+    const busy: string[] = [];
+    if (!this.browser) return { dialogs, busy };
+    const trackedIds = new Set(dialogs.map((d) => d.targetId));
+    for (const { info, target } of listPageTargets(this.browser)) {
+      if (trackedIds.has(info.targetId)) continue;
+      // Only probe a target whose Page.enable has NEVER acked — see the doc comment above
+      // `pageEnableAckedAt`'s declaration for why this (not a timing window) is the decidable
+      // condition fix-1 settled on.
+      if (this.pageEnableAckedAt.has(info.targetId)) continue;
+      let session = this.sessions.get(info.targetId);
+      let ownSession = false;
+      if (!session) {
+        try {
+          session = await target.createCDPSession();
+          ownSession = true;
+        } catch {
+          continue; // target gone between listing and attach — nothing to probe
+        }
+      }
+      let state: Awaited<ReturnType<typeof livenessProbe>>;
+      try {
+        state = await livenessProbe(session, LIVENESS_PROBE_MS);
+      } finally {
+        if (ownSession) void session.detach().catch(() => {});
+      }
+      if (state !== 'responsive') {
+        busy.push(info.targetId);
+        dialogs.push({
+          targetId: info.targetId,
+          url: info.url,
+          type: 'unknown',
+          message: '',
+          openedAt: new Date().toISOString(),
+          source: 'hint',
+        });
+      }
+    }
+    return { dialogs, busy };
+  }
+
+  public async start(): Promise<void> {
+    const connect = this.opts.connect ?? connectForDialogs;
+    const browser = await connect(this.opts.wsEndpoint, 10000);
+    if (!browser) throw new Error(`DialogWarden could not connect to ${this.opts.wsEndpoint}`);
+    this.browser = browser;
+
+    browser.on('disconnected', () => {
+      void this.stop('browser-disconnected');
+    });
+    browser.on('targetcreated', (target) => {
+      if (target.type() === 'page') void this.track(target);
+    });
+    browser.on('targetdestroyed', (target) => {
+      const targetId = idOf(target);
+      this.dialogs.delete(targetId);
+      const session = this.sessions.get(targetId);
+      this.sessions.delete(targetId);
+      void session?.detach().catch(() => {});
+      const timer = this.graceTimers.get(targetId);
+      if (timer) {
+        clearTimeout(timer);
+        this.graceTimers.delete(targetId);
+      }
+      this.discoveredAt.delete(targetId);
+      this.pageEnableAckedAt.delete(targetId);
+    });
+
+    // Deliberately NOT `listPageTargets(browser)` here — that helper filters out `about:blank`
+    // targets (right, for the gate's/DirectCdpBroker's OWN listing, which has nothing useful to
+    // check on a blank tab). But this is the warden's bootstrap: a session's very first tab
+    // typically STARTS as `about:blank` and is navigated to its real URL moments later by the
+    // very first CLI command — that's a URL CHANGE on an EXISTING target, which never fires
+    // `targetcreated`, so if this loop skipped it, it would never get a `discoveredAt` entry at
+    // all. `listWithLiveness()` then has to treat a missing entry as "brand new" (age 0) to stay
+    // safe for a genuinely-new target it truly missed — which made this untracked-since-launch
+    // primary tab look "brand new" on EVERY check, forever, and start false-blocking any
+    // legitimately slow script on it (regressed live: N9/N10). Track every real page target,
+    // blank or not, so the common case (single already-open tab) gets a proper bootstrap-time
+    // `discoveredAt` and ages out of the liveness-probe window normally.
+    for (const target of browser.targets()) {
+      if (target.type() === 'page') await this.track(target);
+    }
+
+    await this.listen();
+    await this.opts.onReady({ port: this.port, token: this.token });
+
+    const statePollMs = this.opts.statePollMs ?? DEFAULT_STATE_POLL_MS;
+    this.pollTimer = setInterval(() => {
+      void this.opts.isStillCurrent().then((current) => {
+        if (!current) void this.stop('state-changed');
+      });
+    }, statePollMs);
+    this.pollTimer.unref?.();
+  }
+
+  /**
+   * GAP-220 structural layer (a): attaches to `target` and enables `Page` as fast as this
+   * process can manage. Puppeteer's own `TargetManager` already auto-attaches every new target
+   * with `Target.setAutoAttach({waitForDebuggerOnStart:true, flatten:true})` and releases it with
+   * `Runtime.runIfWaitingForDebugger` **synchronously**, inside the same `Target.attachedToTarget`
+   * handler turn, before this class's `browser.on('targetcreated', …)` listener can even run
+   * (Puppeteer's `Browser` only re-emits `targetcreated` after the target's OWN internal
+   * initialization promise resolves — by which point the paused-target window has already
+   * closed). That means a brand-new attach via `target.createCDPSession()` cannot structurally
+   * win the race against a script that runs immediately on load (confirmed live: FR2-04 fix-1
+   * evidence, GAP-220 rerun). This method narrows the window as much as is reachable from the
+   * public Puppeteer API — reusing the session Puppeteer already attached (`target._session()`,
+   * one CDP round-trip cheaper than a fresh `createCDPSession()`) and sending `Page.enable`
+   * before doing anything else — but it is NOT a structural guarantee on its own. GAP-220's actual
+   * safety net is the defensive liveness probe in `listWithLiveness()` below: any page target this
+   * method (or Puppeteer's own release) loses the race on still gets caught there and reported as
+   * an `unknown` blocking dialog rather than silently treated as clear.
+   */
+  private async track(target: Target): Promise<void> {
+    if (this.stopped) return;
+    const targetId = idOf(target);
+    if (!this.discoveredAt.has(targetId)) this.discoveredAt.set(targetId, Date.now());
+    if (this.sessions.has(targetId)) return;
+    let session: CDPSession | undefined;
+    let ownAttach = false;
+    try {
+      // Reuse Puppeteer's own already-attached session when available — one fewer CDP round trip
+      // than a fresh `createCDPSession()`, which matters exactly during the GAP-220 window.
+      session = (target as unknown as { _session?: () => CDPSession | undefined })._session?.();
+      if (!session) {
+        session = await target.createCDPSession();
+        ownAttach = true;
+      }
+    } catch {
+      session = undefined;
+    }
+    if (!session) return; // target may have closed between discovery and attach — nothing to track
+    if (this.stopped) {
+      // Warden stopped while we were attaching — never leave a target paused/tracked past stop().
+      if (ownAttach) void session.detach().catch(() => {});
+      return;
+    }
+    this.sessions.set(targetId, session);
+
+    session.on('Page.javascriptDialogOpening', (e: { type: string; message: string; defaultPrompt?: string }) => {
+      const dialog: TrackedDialog = {
+        id: crypto.randomUUID(),
+        targetId,
+        url: target.url(),
+        type: e.type,
+        message: e.message,
+        defaultPrompt: e.defaultPrompt,
+        openedAt: new Date().toISOString(),
+        source: 'event',
+        handled: false,
+      };
+      this.dialogs.set(targetId, dialog);
+      const graceMs = this.opts.policyGraceMs ?? DEFAULT_POLICY_GRACE_MS;
+      const timer = setTimeout(() => {
+        this.graceTimers.delete(targetId);
+        void this.maybeApplyPolicy(targetId, dialog);
+      }, graceMs);
+      this.graceTimers.set(targetId, timer);
+    });
+    session.on('Page.javascriptDialogClosed', () => {
+      this.dialogs.delete(targetId);
+      const timer = this.graceTimers.get(targetId);
+      if (timer) {
+        clearTimeout(timer);
+        this.graceTimers.delete(targetId);
+      }
+    });
+
+    try {
+      // Sent, not awaited past a short cap — Step 1 (E4) established the browser-side handler
+      // becomes enabled at SEND time, and a fresh Page.enable can itself hang while a dialog is
+      // already open (E2.pageEnable) — awaiting it fully here would deadlock the warden on exactly
+      // the tab it most needs to keep tracking. A target we just released
+      // (`Runtime.runIfWaitingForDebugger`, only reachable via the fallback `createCDPSession()`
+      // path) is never left paused: we always at least attempt the release below.
+      const enableTimeout = setTimeout(() => {}, 2000);
+      session
+        .send('Page.enable')
+        .then(() => {
+          // GAP-220 (b): the precise end of this target's race window — see
+          // `PAGE_ENABLE_GRACE_MS`'s doc comment for why this is measured from HERE, not from
+          // when the target was merely discovered.
+          this.pageEnableAckedAt.set(targetId, Date.now());
+        })
+        .catch(() => {})
+        .finally(() => clearTimeout(enableTimeout));
+      if (ownAttach) {
+        // Our own fresh attach also auto-pauses the target (Puppeteer's browser-level
+        // Target.setAutoAttach applies to every attach, including ours) — release it. Never skip
+        // this: a target left paused here would hang forever, worse than the race we're guarding
+        // against. Fire-and-forget with its own short timeout, same reasoning as Page.enable.
+        session.send('Runtime.runIfWaitingForDebugger').catch(() => {});
+      }
+    } catch {
+      // Never leave a target paused because of an unexpected throw setting up listeners.
+      if (ownAttach) void session.send('Runtime.runIfWaitingForDebugger').catch(() => {});
+    }
+  }
+
+  /**
+   * `expected` is the EXACT `TrackedDialog` object instance this policy decision was made about
+   * (captured at schedule time, when the grace timer was armed). GAP-223: without this identity
+   * check, a late policy application (delayed by the grace timer, or by a slow `readPolicy()`)
+   * could land on a DIFFERENT dialog that has since opened on the same `targetId` — e.g. a
+   * confirm→prompt chain, where the confirm's grace timer fires just as the prompt has already
+   * replaced it in `this.dialogs`. Comparing object identity (not just "is something pending")
+   * catches that even though the replacement dialog reuses the same map key.
+   */
+  private async maybeApplyPolicy(targetId: string, expected: TrackedDialog): Promise<void> {
+    const dialog = this.dialogs.get(targetId);
+    if (!dialog || dialog.handled || dialog !== expected) return;
+    const policy = await this.opts.readPolicy().catch(() => undefined);
+    if (!policy || (policy.mode !== 'accept' && policy.mode !== 'dismiss')) return;
+    const session = this.sessions.get(targetId);
+    if (!session) return;
+    const stillPending = this.dialogs.get(targetId);
+    if (!stillPending || stillPending.handled || stillPending !== expected) return;
+    const promptText =
+      policy.mode === 'accept' && dialog.type === 'prompt' ? (policy.promptText ?? dialog.defaultPrompt) : undefined;
+    try {
+      await session.send(
+        'Page.handleJavaScriptDialog',
+        { accept: policy.mode === 'accept', promptText },
+        { timeout: 5000 },
+      );
+      dialog.handled = true;
+      this.dialogs.delete(targetId);
+    } catch {
+      // "No dialog is showing" (or any other CDP failure) means the in-process BrowserTab (or a
+      // concurrent `sutradhar dialog` call) already got there first with the same policy —
+      // logged-and-ignored per spec §2.5, not an error worth surfacing.
+    }
+  }
+
+  private async listen(): Promise<void> {
+    this.server = http.createServer((req, res) => {
+      void this.handleRequest(req, res);
+    });
+    await new Promise<void>((resolve, reject) => {
+      this.server!.once('error', reject);
+      this.server!.listen(0, '127.0.0.1', () => resolve());
+    });
+    const address = this.server.address();
+    this.port = typeof address === 'object' && address ? address.port : 0;
+  }
+
+  private async handleRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
+    const auth = req.headers.authorization;
+    if (auth !== `Bearer ${this.token}`) {
+      res.writeHead(401, { 'content-type': 'application/json' }).end(JSON.stringify({ error: 'unauthorized' }));
+      return;
+    }
+    const url = new URL(req.url ?? '/', 'http://127.0.0.1');
+    if (req.method === 'GET' && url.pathname === '/v1/health') {
+      res
+        .writeHead(200, { 'content-type': 'application/json' })
+        .end(JSON.stringify({ pid: process.pid, wsEndpoint: this.opts.wsEndpoint }));
+      return;
+    }
+    if (req.method === 'GET' && url.pathname === '/v1/dialogs') {
+      const { dialogs, busy } = await this.listWithLiveness();
+      res.writeHead(200, { 'content-type': 'application/json' }).end(JSON.stringify({ dialogs, busy }));
+      return;
+    }
+    if (req.method === 'POST' && url.pathname === '/v1/dialogs/handle') {
+      let body = '';
+      for await (const chunk of req) body += chunk;
+      let parsed: { targetId?: string; accept?: boolean; promptText?: string; dialogId?: string };
+      try {
+        parsed = JSON.parse(body || '{}');
+      } catch {
+        res.writeHead(400, { 'content-type': 'application/json' }).end(JSON.stringify({ error: 'invalid JSON body' }));
+        return;
+      }
+      const { targetId, accept, promptText, dialogId } = parsed;
+      const session = targetId ? this.sessions.get(targetId) : undefined;
+      const dialog = targetId ? this.dialogs.get(targetId) : undefined;
+      if (!session || !dialog || dialog.handled) {
+        res
+          .writeHead(404, { 'content-type': 'application/json' })
+          .end(JSON.stringify({ error: 'No dialog is open on that tab' }));
+        return;
+      }
+      // GAP-223: if the caller told us which specific dialog it decided on, refuse to apply that
+      // decision to a DIFFERENT dialog that has since replaced it on the same target (e.g. a
+      // confirm the caller listed, then a prompt opens before the caller's `handle` call lands).
+      if (dialogId !== undefined && dialog.id !== dialogId) {
+        res
+          .writeHead(409, { 'content-type': 'application/json' })
+          .end(JSON.stringify({ error: 'the dialog on that tab has changed since it was listed; re-run "sutradhar dialog" to see the current one' }));
+        return;
+      }
+      const timer = this.graceTimers.get(targetId!);
+      if (timer) {
+        clearTimeout(timer);
+        this.graceTimers.delete(targetId!);
+      }
+      try {
+        await session.send('Page.handleJavaScriptDialog', { accept: !!accept, promptText }, { timeout: 5000 });
+        dialog.handled = true;
+        this.dialogs.delete(targetId!);
+        res.writeHead(200, { 'content-type': 'application/json' }).end(JSON.stringify({ handled: true }));
+      } catch (err) {
+        res
+          .writeHead(409, { 'content-type': 'application/json' })
+          .end(JSON.stringify({ error: (err as Error).message }));
+      }
+      return;
+    }
+    res.writeHead(404, { 'content-type': 'application/json' }).end(JSON.stringify({ error: 'not found' }));
+  }
+
+  public async stop(reason: string): Promise<void> {
+    if (this.stopped) return;
+    this.stopped = true;
+    if (this.pollTimer) clearInterval(this.pollTimer);
+    for (const timer of this.graceTimers.values()) clearTimeout(timer);
+    this.graceTimers.clear();
+    for (const session of this.sessions.values()) {
+      await session.detach().catch(() => {});
+    }
+    this.sessions.clear();
+    if (this.server) {
+      await new Promise<void>((resolve) => this.server!.close(() => resolve()));
+    }
+    if (this.browser && this.browser.connected) {
+      await this.browser.disconnect().catch(() => {});
+    }
+    await this.opts.onExit(reason);
+  }
+}
+
+function idOf(target: Target): string {
+  return (target as unknown as { _targetId: string })._targetId;
+}

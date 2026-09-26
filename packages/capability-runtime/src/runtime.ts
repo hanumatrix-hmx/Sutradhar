@@ -22,6 +22,8 @@ import {
   selectorForNodeId,
   invalidSelectorSyntaxError,
   type ActionHistoryEntry,
+  type DialogPolicy,
+  type DialogRecord,
   type IBrowserSession,
   type IBrowserTab,
   type SettleSpec,
@@ -147,6 +149,11 @@ export interface SutradharRuntimeOptions {
    *  or to keep profile data somewhere other than the user's home directory. */
   profilesBaseDir?: string;
   logger?: StructuredLogger;
+  /** FR2-04: default native-dialog policy for every session this runtime creates. Unset (the
+   *  default) means `'auto'` — byte-for-byte today's pre-FR2-04 behavior, so MCP and the SDK
+   *  (neither of which passes this) are unaffected. The CLI is the only caller that sets this,
+   *  to `'report'`. */
+  dialogPolicy?: DialogPolicy;
 }
 
 /**
@@ -172,6 +179,9 @@ export class SutradharRuntime {
   private readonly restrictNavigationToLocal: boolean;
   private readonly allowedDomains?: readonly string[];
   private readonly profileManager: ProfileManager;
+  /** FR2-04: default dialog policy for sessions this runtime creates. `undefined` means every
+   *  session's tabs stay at `'auto'` — see {@link SutradharRuntimeOptions.dialogPolicy}. */
+  private readonly dialogPolicy?: DialogPolicy;
   /** sessionId -> the profileName it was launched with, so `shutdown()` knows whose storage
    *  state to persist. Only sessions launched via `launch({profileName})` get an entry; a
    *  plain/unnamed launch never touches this. Entries are removed on shutdown regardless of
@@ -205,6 +215,7 @@ export class SutradharRuntime {
     this.restrictNavigationToLocal = options.restrictNavigationToLocal ?? false;
     this.allowedDomains = options.allowedDomains?.length ? options.allowedDomains : undefined;
     this.profileManager = new ProfileManager(options.profilesBaseDir);
+    this.dialogPolicy = options.dialogPolicy;
     this.sessionManager = new BrowserSessionManager(
       this.launcher,
       eventBus,
@@ -261,6 +272,7 @@ export class SutradharRuntime {
         isIncognito: options.isIncognito,
         initialUrl: options.initialUrl,
         launch: launchOptions,
+        dialogPolicy: options.dialogPolicy ?? this.dialogPolicy,
       });
       if (!this.clientSessions.has(session.id)) this.clientSessions.set(session.id, 'launched');
       let activeTab = session.activeTabId
@@ -317,6 +329,7 @@ export class SutradharRuntime {
       const session = await this.sessionManager.createSession({
         sessionId: options.sessionId ? createSessionId(options.sessionId) : undefined,
         wsEndpoint: options.endpoint,
+        dialogPolicy: options.dialogPolicy ?? this.dialogPolicy,
       });
       if (!this.clientSessions.has(session.id)) this.clientSessions.set(session.id, 'attached');
       // BrowserSession does not mirror the external browser's existing tabs into its tab map, so
@@ -1621,6 +1634,68 @@ export class SutradharRuntime {
   ): Promise<void> {
     const { tab } = this.resolveTab(sessionId, tabId);
     await tab.handleDialog(action, promptText);
+  }
+
+  /** FR2-04: sets `sessionId`'s dialog policy going forward (affects future dialogs only — see
+   *  `BrowserTab.setDialogPolicy`'s doc comment). Throws if the session doesn't exist. */
+  public setDialogPolicy(sessionId: string, policy: DialogPolicy): void {
+    const session = this.requireSession(sessionId);
+    session.setDialogPolicy?.(policy);
+  }
+
+  /** FR2-04: every tab in `sessionId` with a currently-pending dialog. Used by the CLI's gate/
+   *  reporting to enumerate ALL pending dialogs, not just the active tab's (§2.10: the gate is
+   *  conservative across tabs). */
+  public getPendingDialogs(
+    sessionId: string,
+  ): Array<{ tabId: string; url: string; dialogType: string; message: string; defaultValue?: string; openedAt: string; active: boolean }> {
+    const session = this.requireSession(sessionId);
+    const result: Array<{
+      tabId: string;
+      url: string;
+      dialogType: string;
+      message: string;
+      defaultValue?: string;
+      openedAt: string;
+      active: boolean;
+    }> = [];
+    for (const tab of session.getTabs()) {
+      const detail = tab.getPendingDialogDetail?.();
+      if (!detail) continue;
+      result.push({
+        tabId: tab.id,
+        url: detail.url,
+        dialogType: detail.dialogType,
+        message: detail.message,
+        defaultValue: detail.defaultValue,
+        openedAt: detail.openedAt,
+        active: true,
+      });
+    }
+    return result;
+  }
+
+  /** FR2-04: every tab's dialog history for `sessionId`, oldest-first across all tabs, each
+   *  tagged with the `tabId` it happened on. `tabId` narrows to one tab. */
+  public getDialogHistory(sessionId: string, tabId?: string): ReadonlyArray<DialogRecord & { tabId: string }> {
+    const session = this.requireSession(sessionId);
+    const tabs = tabId ? [session.getTab(createTabId(tabId))].filter((t): t is IBrowserTab => !!t) : session.getTabs();
+    const merged: Array<DialogRecord & { tabId: string }> = [];
+    for (const tab of tabs) {
+      for (const record of tab.getDialogHistory?.() ?? []) {
+        merged.push({ ...record, tabId: tab.id });
+      }
+    }
+    merged.sort((a, b) => (a.handledAt ?? '').localeCompare(b.handledAt ?? ''));
+    return merged;
+  }
+
+  /** FR2-04: the underlying CDP target id of `sessionId`'s active tab, when known — used to
+   *  correlate a raw-CDP-observed dialog (dialog-cdp.ts/dialog-warden.ts) with the runtime's own
+   *  tab bookkeeping. */
+  public getActiveTargetId(sessionId: string): string | undefined {
+    const { tab } = this.resolveTab(sessionId);
+    return tab.targetId;
   }
 
   /** The tab's current lock (owner + expiry), or `undefined` if unlocked/expired. See

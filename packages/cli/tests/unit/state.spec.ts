@@ -33,3 +33,30 @@ describe('resolveStateDir', () => {
     expect(dir).toContain('.sutradhar-cli');
   });
 });
+
+describe('ST-D1 (FR2-04): CliState round-trips dialogPolicy/lastPendingDialog as a whole object', () => {
+  it('writeState followed by readState deep-equals both new keys', async () => {
+    const os = await import('node:os');
+    const path = await import('node:path');
+    const fs = await import('node:fs/promises');
+    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'fr2-04-st-d1-'));
+    try {
+      vi.stubEnv('SUTRADHAR_CLI_STATE_DIR', tmp);
+      vi.resetModules();
+      const { readState: freshReadState, writeState: freshWriteState } = await import('../../src/state.js');
+      await freshWriteState({
+        sessionId: 's',
+        wsEndpoint: 'ws://x',
+        dialogPolicy: { action: 'accept', promptText: 'zz', setAt: '2026-01-01T00:00:00Z' },
+        lastPendingDialog: { type: 'alert', message: 'm', url: 'u', openedAt: 't' },
+      });
+      const result = await freshReadState();
+      expect(result?.dialogPolicy).toEqual({ action: 'accept', promptText: 'zz', setAt: '2026-01-01T00:00:00Z' });
+      expect(result?.lastPendingDialog).toEqual({ type: 'alert', message: 'm', url: 'u', openedAt: 't' });
+    } finally {
+      vi.unstubAllEnvs();
+      vi.resetModules();
+      await fs.rm(tmp, { recursive: true, force: true });
+    }
+  });
+});

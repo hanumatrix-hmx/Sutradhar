@@ -1,0 +1,58 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser[39m
+
+ [33m❯[39m tests/unit/dialog-cdp.spec.ts [2m ([22m[2m10 tests[22m [2m|[22m [31m2 failed[39m[2m)[22m[90m 10[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/dialog-cdp.spec.ts[2m > [22m@sutradhar/browser dialog-cdp (FR2-04)[2m > [22mB2: livenessProbe[2m > [22ma "timed out" rejection -> blocked[39m
+[31m     → expected 'error' to be 'blocked' // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/dialog-cdp.spec.ts[2m > [22m@sutradhar/browser dialog-cdp (FR2-04)[2m > [22mB5: listPageTargets drops about:blank and non-page targets, keeps targets() order[39m
+[31m     → expected [ 'blank', 'a', 'b' ] to deeply equal [ 'a', 'b' ][39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 2 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/dialog-cdp.spec.ts[2m > [22m@sutradhar/browser dialog-cdp (FR2-04)[2m > [22mB2: livenessProbe[2m > [22ma "timed out" rejection -> blocked
+[31m[1mAssertionError[22m: expected 'error' to be 'blocked' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- blocked[39m
+[31m+ error[39m
+
+[36m [2m❯[22m tests/unit/dialog-cdp.spec.ts:[2m63:50[22m[39m
+    [90m 61| [39m      [35mconst[39m session [33m=[39m [34mfakeSession[39m()[33m;[39m
+    [90m 62| [39m      session[33m.[39msend[33m.[39m[34mmockRejectedValue[39m([35mnew[39m [33mError[39m([32m'Runtime.evaluate timed[39m…
+    [90m 63| [39m      [34mexpect[39m([35mawait[39m [34mlivenessProbe[39m(session[33m,[39m [34m1000[39m))[33m.[39m[34mtoBe[39m([32m'blocked'[39m)[33m;[39m
+    [90m   | [39m                                                 [31m^[39m
+    [90m 64| [39m    })[33m;[39m
+    [90m 65| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/dialog-cdp.spec.ts[2m > [22m@sutradhar/browser dialog-cdp (FR2-04)[2m > [22mB5: listPageTargets drops about:blank and non-page targets, keeps targets() order
+[31m[1mAssertionError[22m: expected [ 'blank', 'a', 'b' ] to deeply equal [ 'a', 'b' ][39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  Array [[22m
+[31m+   "blank",[39m
+[2m    "a",[22m
+[2m    "b",[22m
+[2m  ][22m
+
+[36m [2m❯[22m tests/unit/dialog-cdp.spec.ts:[2m114:48[22m[39m
+    [90m112| [39m    [35mconst[39m browser [33m=[39m { targets[33m:[39m () [33m=>[39m targets } [35mas[39m any[33m;[39m
+    [90m113| [39m    [35mconst[39m result [33m=[39m [34mlistPageTargets[39m(browser)[33m;[39m
+    [90m114| [39m    [34mexpect[39m(result[33m.[39m[34mmap[39m((r) [33m=>[39m r[33m.[39minfo[33m.[39mtargetId))[33m.[39m[34mtoEqual[39m([[32m'a'[39m[33m,[39m [32m'b'[39m])[33m;[39m
+    [90m   | [39m                                               [31m^[39m
+    [90m115| [39m    [34mexpect[39m(result[33m.[39m[34mmap[39m((r) [33m=>[39m r[33m.[39minfo[33m.[39murl))[33m.[39m[34mtoEqual[39m([[32m'https://a/'[39m[33m,[39m [32m'http[39m…
+    [90m116| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m8 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 15:57:52
+[2m   Duration [22m 331ms[2m (transform 23ms, setup 0ms, collect 21ms, tests 10ms, environment 0ms, prepare 124ms)[22m
+

@@ -118,6 +118,17 @@ for `press` (hold modifier keys, e.g. Ctrl+Shift+ArrowRight to select a word),
 navigation guardrail. Run `sutradhar` with no arguments for the complete, current command and
 flag list straight from the binary — that's the authoritative reference, not this file.
 
+Native dialogs (`alert`/`confirm`/`prompt`/`beforeunload`) are the one place the CLI's default
+behavior differs from the MCP server and SDK: by default a session leaves a dialog open and
+reports it (`dialogPending: {...}` on stdout) rather than silently accepting or dismissing it,
+and any command that finds one blocking the page exits with code **3** instead of hanging. Run
+`sutradhar dialog` to see what's open, `sutradhar dialog accept [text]|dismiss` to resolve it, or
+set `--dialog accept|dismiss` once to make future dialogs in that session resolve automatically
+(`--dialog report` restores the default, and — like `accept`/`dismiss` — persists explicitly,
+it does not just clear a previous setting). This is safe across separate CLI invocations because
+of a small per-session helper process (the "dialog warden") that stays attached even between
+commands; see `packages/cli/README.md`'s "Native dialogs" section for the full behavior.
+
 **Node SDK** (drive a browser from your own code):
 
 ```bash
