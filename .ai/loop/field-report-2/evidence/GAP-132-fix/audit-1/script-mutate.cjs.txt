@@ -1,0 +1,61 @@
+// GAP-132-fix audit-1 mutation runner: apply one exact-string mutation, run vitest, restore byte-exact.
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+const { spawnSync } = require('child_process');
+const R = process.env.REPO;
+const A = process.env.AOUT;
+const ENG = path.join(R, 'packages/browser/src/actions/browser-action-engine.ts');
+const TOOLS = path.join(R, 'packages/mcp-server/src/tools.ts');
+const sha = (f) => crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
+
+const muts = [
+  { id: 'A1-pierce-isTabClosed-removed', file: ENG, pkg: 'browser',
+    from: "        if (this.isTabClosed(frame.page())) {\n          throw new Error(TAB_CLOSED_MID_WAIT_MESSAGE);\n        }\n        // A single frame's",
+    to: "        // A single frame's" },
+  { id: 'A2-GAP133-partial-guard-removed', file: ENG, pkg: 'browser',
+    from: "        if (diagnosis.unconfirmedFrames > 0) {\n          return (\n            prefix +\n            `${diagnosis.total} element(s) match",
+    to: "        if (false) {\n          return (\n            prefix +\n            `${diagnosis.total} element(s) match" },
+  { id: 'A3-hint-back-to-broad-trigger', file: TOOLS, pkg: 'mcp-server',
+    from: "    WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT,\n    'The element is still visible.",
+    to: "    'waiting for state=hidden',\n    'The element is still visible." },
+  // sibling sites (own mutations)
+  { id: 'S1-liveFramesOf-tabclosed-throw-removed', file: ENG, pkg: 'browser',
+    from: "    if (live.length > 0) return live;\n    if (this.isTabClosed(page)) {\n      throw new Error(TAB_CLOSED_MID_WAIT_MESSAGE);\n    }",
+    to: "    if (live.length > 0) return live;" },
+  { id: 'S2-isHandleVisible-fatal-to-not-visible', file: ENG, pkg: 'browser',
+    from: "      if (BrowserActionEngine.isFatalFrameCheckError(err)) return 'unknown';\n      if (this.isContextDestroyedError(err)) {\n        // GAP-132",
+    to: "      if (BrowserActionEngine.isFatalFrameCheckError(err)) return 'not-visible';\n      if (this.isContextDestroyedError(err)) {\n        // GAP-132" },
+  { id: 'S3-isHandleVisible-isTabClosed-removed', file: ENG, pkg: 'browser',
+    from: "        if (this.isTabClosed(handle.frame.page())) {\n          throw new Error(TAB_CLOSED_MID_WAIT_MESSAGE);\n        }\n        return 'not-visible';",
+    to: "        return 'not-visible';" },
+];
+const only = process.argv.slice(2);
+const results = [];
+for (const m of muts) {
+  if (only.length && !only.includes(m.id)) continue;
+  const before = sha(m.file);
+  const orig = fs.readFileSync(m.file);
+  const txt = orig.toString('utf8').replace(/\r\n/g, '\n');
+  const crlf = orig.toString('utf8').includes('\r\n');
+  const n = txt.split(m.from).length - 1;
+  if (n !== 1) { results.push({ id: m.id, error: `pattern occurrences=${n}` }); continue; }
+  let mutated = txt.replace(m.from, m.to);
+  if (crlf) mutated = mutated.replace(/\n/g, '\r\n');
+  fs.writeFileSync(m.file, mutated);
+  let r;
+  try {
+    r = spawnSync(path.join(R, 'node_modules/.bin/vitest.cmd'), ['run'], { cwd: path.join(R, 'packages', m.pkg), encoding: 'utf8', shell: true, timeout: 600000 });
+  } finally {
+    fs.writeFileSync(m.file, orig);
+  }
+  const after = sha(m.file);
+  const out = (r.stdout || '') + (r.stderr || '');
+  const clean = out.replace(/\x1b\[[0-9;]*m/g, '');
+  fs.writeFileSync(path.join(A, `mutation-${m.id}.txt`), clean);
+  const failed = [...clean.matchAll(/^\s*(?:×|FAIL)\s+(.*)$/gm)].map((x) => x[1].slice(0, 220));
+  const summ = (clean.match(/Tests\s+.*$/m) || [''])[0];
+  results.push({ id: m.id, pkg: m.pkg, exit: r.status, tests: summ, failed, restoredByteExact: before === after });
+  console.log(JSON.stringify(results[results.length - 1]));
+}
+fs.writeFileSync(path.join(A, 'mutation-results.json'), JSON.stringify(results, null, 2));

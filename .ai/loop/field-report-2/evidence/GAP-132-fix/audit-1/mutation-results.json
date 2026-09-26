@@ -1,0 +1,60 @@
+[
+  {
+    "id": "A1-pierce-isTabClosed-removed",
+    "pkg": "browser",
+    "exit": 1,
+    "tests": "Tests  1 failed | 427 passed (428)",
+    "failed": [
+      "tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps) > GAP-132 (pierceFirstMatch, critical): a hidden wait must FAIL, never falsely"
+    ],
+    "restoredByteExact": true
+  },
+  {
+    "id": "A2-GAP133-partial-guard-removed",
+    "pkg": "browser",
+    "exit": 1,
+    "tests": "Tests  1 failed | 427 passed (428)",
+    "failed": [
+      "tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps) > GAP-133 (FR2-01 audit-6, major): a visible-wait timeout must not claim \"none"
+    ],
+    "restoredByteExact": true
+  },
+  {
+    "id": "A3-hint-back-to-broad-trigger",
+    "pkg": "mcp-server",
+    "exit": 1,
+    "tests": "Tests  1 failed | 90 passed (91)",
+    "failed": [
+      "tests/unit/tools.spec.ts > @sutradhar/mcp-server registerTools > GAP-111 (FR2-01 fix-5): an honest \"could not verify\" hidden-wait timeout must NOT get the misleading \"still visible\" hint"
+    ],
+    "restoredByteExact": true
+  },
+  {
+    "id": "S1-liveFramesOf-tabclosed-throw-removed",
+    "pkg": "browser",
+    "exit": 0,
+    "tests": "Tests  428 passed (428)",
+    "failed": [],
+    "restoredByteExact": true
+  },
+  {
+    "id": "S2-isHandleVisible-fatal-to-not-visible",
+    "pkg": "browser",
+    "exit": 1,
+    "tests": "Tests  1 failed | 427 passed (428)",
+    "failed": [
+      "tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-081a (isHandleVisible): a fatal session-closed error while checkin"
+    ],
+    "restoredByteExact": true
+  },
+  {
+    "id": "S3-isHandleVisible-isTabClosed-removed",
+    "pkg": "browser",
+    "exit": 1,
+    "tests": "Tests  1 failed | 427 passed (428)",
+    "failed": [
+      "tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps) > GAP-132 (isHandleVisible, critical): a hidden wait must FAIL, never falsely "
+    ],
+    "restoredByteExact": true
+  }
+]

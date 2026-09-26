@@ -15,6 +15,7 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { SutradharRuntime } from '@sutradhar/capability-runtime';
 import type { AgentCore } from '@sutradhar/agent';
 import { createGoalId } from '@sutradhar/contracts';
+import { WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT, WAIT_HIDDEN_HARD_FAILURE_PREFIX } from '@sutradhar/browser';
 import { withSessionResolution } from './session-resolution.js';
 
 /** Shape of the agent core passed to {@link registerTools}, if autonomous mode is enabled. */
@@ -49,18 +50,29 @@ const ERROR_HINTS: ReadonlyArray<readonly [pattern: string, hint: string, unless
     'The element exists but is hidden. Pass state:"attached" to wait only for DOM presence, or trigger whatever reveals it.',
   ],
   [
-    'waiting for state=hidden',
+    // GAP-111/GAP-134/GAP-135 (FR2-01 audit-5 and audit-6): this hint asserts a CONFIDENT claim
+    // ("the element is still visible") that must fire ONLY on the engine's own genuinely
+    // confirmed-visible outcome — never on an honest "couldn't verify" timeout (a
+    // busy/unresponsive frame), and never on a HARD failure (tab/session/target closed, or any
+    // other error that stopped the check from running at all — `WAIT_HIDDEN_HARD_FAILURE_PREFIX`).
+    // GAP-111's original fix tried to enforce this with a hand-maintained `unless` list matched
+    // against a broad 'waiting for state=hidden' trigger — audit-6 found that list had already
+    // drifted (GAP-135: it excluded the phrase "could not determine", which the engine never
+    // actually emits — the real wording is "could not be determined") and didn't cover the hard-
+    // failure case at all (GAP-134: 57/60 tab-close failures and 3/30 genuinely-hidden-the-whole-
+    // time failures carried this false hint). Importing `WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT`
+    // directly from `@sutradhar/browser` — the exact literal the engine uses to build its ONE
+    // confirmed-visible message — makes this a mechanical guarantee instead of a hand-copied
+    // string that can silently drift out of sync with the engine's real wording again: this
+    // fragment appears in NO other `wait_for_selector`/`state:'hidden'` message the engine
+    // produces (see the coupling tests in `tests/unit/tools.spec.ts` tagged GAP-134/GAP-135,
+    // which assert against these same imported constants, not a duplicated guess). The
+    // `WAIT_HIDDEN_HARD_FAILURE_PREFIX` exclusion below is defense-in-depth only, for the
+    // pathological case where a wrapped THIRD-PARTY error message happens to itself contain the
+    // literal text "is still visible".
+    WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT,
     'The element is still visible. Check the selector, or raise timeoutMs.',
-    // GAP-111 (FR2-01 audit-5/fix-5): this hint asserts a CONFIDENT claim ("the element is
-    // still visible") that directly contradicts the engine's own honest uncertainty message
-    // for the SAME "waiting for state=hidden" substring — `hiddenVerdict === 'unknown'` (a
-    // busy/unresponsive frame, not a confirmed-visible one) produces "...could not verify: one
-    // or more frames were unresponsive", which is a genuinely different outcome from "some
-    // frame confirmed it's still visible" (GAP-082's whole point at the engine layer). Without
-    // this exclusion, the MCP layer re-collapses the tri-state result the engine just went to
-    // the trouble of preserving. Any future "could not determine..." uncertainty phrasing this
-    // or a later fix introduces for the same message family must be added here too.
-    ['could not verify', 'could not determine'],
+    [WAIT_HIDDEN_HARD_FAILURE_PREFIX],
   ],
   ['stale snapshot', 'Call browser.snapshot again and use a fresh element id.'],
   ['no visible element found', 'Verify the selector/id via browser.snapshot — the page may have changed.'],

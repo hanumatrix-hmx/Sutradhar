@@ -1,0 +1,18 @@
+[
+  {
+    "id": "T-tab-close-mid-hidden-wait",
+    "mode": "checkonce",
+    "truth": "#stay VISIBLE until the tab is closed; a hidden success is FALSE",
+    "trials": 80,
+    "falseSuccess": 0,
+    "hintStill": 66,
+    "anyHint": {
+      "The element is still visible. Check the selector, or raise timeoutMs.": 66
+    },
+    "successes": [],
+    "msgs": {
+      "wait_for_selector failed waiting for state=hidden: Tab was closed while wait_for_selector was checking its state.": 14,
+      "wait_for_selector timed out after Nms waiting for state=hidden: an element matching \"#stay\" is still visible.\nHint: The element is still visible. Check the selector, or raise timeoutMs.": 66
+    }
+  }
+]

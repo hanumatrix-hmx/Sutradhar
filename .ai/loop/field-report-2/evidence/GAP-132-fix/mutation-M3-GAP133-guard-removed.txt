@@ -1,0 +1,43 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser[39m
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps)[2m > [22m[2mGAP-133 (FR2-01 audit-6, major): a visible-wait timeout must not claim "none is visible" when one frame confirms a match but ANOTHER frame never answered the diagnosis[22m[39m
+{"timestamp":"2026-09-26T07:23:26.332Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#x"}}
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps)[2m > [22m[2mGAP-133 (FR2-01 audit-6, major): a visible-wait timeout must not claim "none is visible" when one frame confirms a match but ANOTHER frame never answered the diagnosis[22m[39m
+<empty line>
+[90mstderr[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps)[2m > [22m[2mGAP-133 (FR2-01 audit-6, major): a visible-wait timeout must not claim "none is visible" when one frame confirms a match but ANOTHER frame never answered the diagnosis[22m[39m
+{"timestamp":"2026-09-26T07:23:26.758Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 150ms waiting for state=visible: 1 element(s) match \"#x\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.","context":{}}
+{"timestamp":"2026-09-26T07:23:26.758Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+ [33m❯[39m tests/unit/browser-action-engine.spec.ts [2m ([22m[2m159 tests[22m [2m|[22m [31m1 failed[39m [2m|[22m [33m158 skipped[39m[2m)[22m[33m 433[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/browser-action-engine.spec.ts[2m > [22m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps)[2m > [22mGAP-133 (FR2-01 audit-6, major): a visible-wait timeout must not claim "none is visible" when one frame confirms a match but ANOTHER frame never answered the diagnosis[39m
+[31m     → expected 'wait_for_selector timed out after 150…' not to contain 'but none is'[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/browser-action-engine.spec.ts[2m > [22m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps)[2m > [22mGAP-133 (FR2-01 audit-6, major): a visible-wait timeout must not claim "none is visible" when one frame confirms a match but ANOTHER frame never answered the diagnosis
+[31m[1mAssertionError[22m: expected 'wait_for_selector timed out after 150…' not to contain 'but none is'[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- but none is[39m
+[31m+ wait_for_selector timed out after 150ms waiting for state=visible: 1 element(s) match "#x" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state "attached" if DOM presence is enough.[39m
+
+[36m [2m❯[22m tests/unit/browser-action-engine.spec.ts:[2m3588:30[22m[39m
+    [90m3586| [39m
+    [90m3587| [39m    expect(result.success).toBe(false);
+    [90m3588| [39m    expect(result.error).not.toContain('but none is');
+    [90m   | [39m                             [31m^[39m
+    [90m3589| [39m    expect(result.error).toMatch(/could not be fully determined/);
+    [90m3590| [39m    expect(result.error).toMatch(/1 of 2 frame/);
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[33m158 skipped[39m[90m (159)[39m
+[2m   Start at [22m 12:53:25
+[2m   Duration [22m 1.28s[2m (transform 315ms, setup 0ms, collect 555ms, tests 433ms, environment 0ms, prepare 108ms)[22m
+

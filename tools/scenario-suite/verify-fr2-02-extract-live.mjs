@@ -15,9 +15,21 @@ import { spawn } from 'node:child_process';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.join(here, '..', '..');
+// GAP-132-fix process finding: this defaulted to the shared, committed FR2-02 evidence
+// directory, so simply running the script with no env var set silently overwrote it — the same
+// issue found and fixed for verify-fr2-01-wait-states.mjs's EVIDENCE_DIR. The default is now a
+// fresh scratch directory under the OS temp dir — never a path under `.ai/loop/` — so a run
+// can never clobber committed evidence by accident. Pass `SUTRADHAR_FR2_02_EVIDENCE_DIR`
+// explicitly to write into a real (new, not-yet-existing) round directory on purpose.
 const EVIDENCE_DIR =
   process.env.SUTRADHAR_FR2_02_EVIDENCE_DIR ??
-  path.join(repoRoot, '.ai', 'loop', 'field-report-2', 'evidence', 'FR2-02');
+  path.join(os.tmpdir(), `sutradhar-fr2-02-verify-${Date.now()}`);
+if (!process.env.SUTRADHAR_FR2_02_EVIDENCE_DIR) {
+  console.warn(
+    `[verify-fr2-02-extract-live] SUTRADHAR_FR2_02_EVIDENCE_DIR not set — writing evidence to a ` +
+      `scratch directory instead of any committed .ai/loop/ evidence: ${EVIDENCE_DIR}`,
+  );
+}
 const FIXTURE_PATH = path.join(here, 'fixtures', 'fr2-02-extract-live.html');
 const FIXTURE_URL = pathToFileURL(FIXTURE_PATH).href;
 

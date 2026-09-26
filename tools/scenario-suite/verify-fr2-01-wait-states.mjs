@@ -19,9 +19,25 @@ const repoRoot = path.join(here, '..', '..');
 // never a prior round's (`audit-1/`, `fix-1/`, `audit-2/`, or this top-level FR2-01 dir, which
 // predates all of those). `SUTRADHAR_FR2_01_EVIDENCE_DIR` lets a later round redirect this
 // script's output into its OWN evidence directory instead of overwriting an earlier round's.
+//
+// GAP-132-fix process finding: the OLD default here — the shared, top-level FR2-01 evidence
+// dir — meant simply running this script with no env var set would silently overwrite that
+// shared directory's files, including earlier rounds' committed evidence, exactly the kind of
+// clobber this comment already warned against for a LATER round but never actually prevented
+// for the SIMPLE case of "someone runs this without reading the comment first". The default is
+// now a fresh scratch directory under the OS temp dir — never a path under `.ai/loop/` at all —
+// so running this script can never overwrite committed evidence by accident. Pass
+// `SUTRADHAR_FR2_01_EVIDENCE_DIR` explicitly to write into a real (new, not-yet-existing) round
+// directory on purpose.
 const EVIDENCE_DIR =
   process.env.SUTRADHAR_FR2_01_EVIDENCE_DIR ??
-  path.join(repoRoot, '.ai', 'loop', 'field-report-2', 'evidence', 'FR2-01');
+  path.join(os.tmpdir(), `sutradhar-fr2-01-verify-${Date.now()}`);
+if (!process.env.SUTRADHAR_FR2_01_EVIDENCE_DIR) {
+  console.warn(
+    `[verify-fr2-01-wait-states] SUTRADHAR_FR2_01_EVIDENCE_DIR not set — writing evidence to a ` +
+      `scratch directory instead of any committed .ai/loop/ evidence: ${EVIDENCE_DIR}`,
+  );
+}
 const FIXTURE_PATH = path.join(here, 'fixtures', 'fr2-01-wait-states.html');
 // GAP-012: `pathToFileURL` (not a hand-rolled 'file://' + path string) — on Windows, Chrome's
 // own normalized file:// URL for an absolute drive-letter path has THREE slashes

@@ -6,6 +6,11 @@
 
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { SutradharRuntime } from '@sutradhar/capability-runtime';
+import {
+  WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT,
+  WAIT_HIDDEN_HARD_FAILURE_PREFIX,
+  TAB_CLOSED_MID_WAIT_MESSAGE,
+} from '@sutradhar/browser';
 import { registerTools } from '../../src/tools.js';
 
 /** A minimal in-memory McpServer double that just records what was registered. */
@@ -273,6 +278,56 @@ describe('@sutradhar/mcp-server registerTools', () => {
     // Falls through to the generic, non-committal "timed out" hint instead of no hint at all.
     expect(parsed.error).toContain('Hint:');
     expect(parsed.error).toContain('may still be loading');
+  });
+
+  it('GAP-134 (FR2-01 audit-6): a HARD failure (tab/session/target closed mid-check) wrapped in the engine\'s "wait_for_selector failed waiting for state=hidden: ..." prefix must NOT get the "still visible" hint, even though the old broad "waiting for state=hidden" trigger this replaces would have matched it', async () => {
+    // Live-reproduced (audit-6 probe-a6.mjs): 3/30 calls where the element was hidden the WHOLE
+    // time (an unrelated iframe merely churning) failed with a Target-closed protocol error and
+    // still got the confident "The element is still visible." hint appended — a false claim
+    // about a genuinely hidden element. This is NOT a timeout at all (no "timed out" substring),
+    // so it must never be read as a confirmed-visible outcome.
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'waitForSelector').mockResolvedValue({
+      success: false,
+      actionType: 'wait_for_selector',
+      executionTimeMs: 5,
+      error: `${WAIT_HIDDEN_HARD_FAILURE_PREFIX} Protocol error (Runtime.callFunctionOn): Target closed`,
+    });
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.wait_for_selector')!.handler({ sessionId: 's1', target: '#x' });
+
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed.error).not.toContain('The element is still visible.');
+  });
+
+  it('GAP-134 (FR2-01 audit-6): the GAP-132 tab-closed-mid-wait failure specifically must NOT get the "still visible" hint', async () => {
+    // 57/60 tab-close failures in audit-6's live run (probe-a6-T-run2.log) carried this exact
+    // false hint before the fix. Uses the engine's own exported TAB_CLOSED_MID_WAIT_MESSAGE so
+    // this test can never drift from the real wording GAP-132's fix actually throws.
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'waitForSelector').mockResolvedValue({
+      success: false,
+      actionType: 'wait_for_selector',
+      executionTimeMs: 5,
+      error: `${WAIT_HIDDEN_HARD_FAILURE_PREFIX} ${TAB_CLOSED_MID_WAIT_MESSAGE}`,
+    });
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.wait_for_selector')!.handler({ sessionId: 's1', target: '#x' });
+
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed.error).not.toContain('The element is still visible.');
+  });
+
+  it("GAP-135 (FR2-01 audit-6, process integrity): the hint's trigger/exclusion literals are IMPORTED from @sutradhar/browser's exported constants, not hand-copied strings that can silently drift out of sync with the engine's real wording (exactly what happened to the old list, which excluded a phrase — \"could not determine\" — the engine never actually emits)", () => {
+    // A future rename/removal of either constant on the engine side fails this test's IMPORT
+    // (a TypeScript compile error), not just a runtime string comparison — the two literally
+    // cannot drift apart silently again the way GAP-135 found they already had.
+    expect(WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT).toBe('is still visible');
+    expect(WAIT_HIDDEN_HARD_FAILURE_PREFIX).toBe('wait_for_selector failed waiting for state=hidden:');
   });
 
   it('browser.health reports Chrome availability without launching a session', async () => {

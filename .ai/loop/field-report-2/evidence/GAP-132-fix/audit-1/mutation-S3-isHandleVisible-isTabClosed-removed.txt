@@ -1,0 +1,17 @@
+stdout | tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps) > GAP-132 (pierceFirstMatch, critical): a hidden wait must FAIL, never falsely SUCCEED, when the tab closes mid-probe — even though the underlying error text ("Execution context was destroyed") is IDENTICAL to the text an ordinary in-page navigation also produces
+stdout | tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps) > GAP-132 (isHandleVisible, critical): a hidden wait must FAIL, never falsely succeed, when the tab closes while checking a MATCHED handle's own visibility
+   ❯ tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps) > GAP-132 (isHandleVisible, critical): a hidden wait must FAIL, never falsely succeed, when the tab closes while checking a MATCHED handle's own visibility
+stderr | tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps) > GAP-132 (pierceFirstMatch, critical): a hidden wait must FAIL, never falsely SUCCEED, when the tab closes mid-probe — even though the underlying error text ("Execution context was destroyed") is IDENTICAL to the text an ordinary in-page navigation also produces
+ FAIL  tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps) > GAP-132 (isHandleVisible, critical): a hidden wait must FAIL, never falsely succeed, when the tab closes while checking a MATCHED handle's own visibility
+AssertionError: expected true to be false // Object.is equality
+- Expected
++ Received
+...
+ ❯ tests/unit/browser-action-engine.spec.ts:3526:28
+    3524|     });
+    3525| 
+    3526|     expect(result.success).toBe(false);
+       |                            ^
+    3527|     expect(result.error).toContain('Tab was closed while wait_for_sele…
+    3528|   });
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯

@@ -3,6 +3,33 @@
  * @description Parameter schemas, result DTOs, and type definitions for the Browser Action Engine.
  */
 
+/**
+ * GAP-134/135 (FR2-01 audit-6, closed by the GAP-132-fix round): the exact message fragments
+ * `BrowserActionEngine`'s `wait_for_selector`/`state:'hidden'` path uses to distinguish a
+ * genuinely CONFIRMED-visible timeout from every other outcome (an honest "couldn't verify"
+ * timeout, or a hard failure — tab/session/target closed — wrapped by the `wait_for_selector
+ * failed waiting for state=hidden: ...` prefix). These are exported so `@sutradhar/mcp-server`'s
+ * `ERROR_HINTS` table can match/exclude against the SAME literal strings the engine actually
+ * produces, instead of a hand-maintained copy that can silently drift out of sync with the
+ * engine's real wording (exactly what happened to GAP-135: the old exclusion list referenced a
+ * phrase — "could not determine" — the engine never actually emits, which is "could not be
+ * determined").
+ */
+export const WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT = 'is still visible';
+export const WAIT_HIDDEN_COULD_NOT_VERIFY_FRAGMENT = 'could not verify: one or more frames were unresponsive';
+/** The prefix `wait_for_selector`'s `state:'hidden'` path uses to wrap a HARD failure (tab
+ *  closed, session closed, target closed, a genuine per-frame throw) — as opposed to a real
+ *  timeout, whose messages always start with `wait_for_selector timed out after`. A hard
+ *  failure must never be read as a confirmed-visible timeout, no matter what text the wrapped
+ *  underlying error happens to contain. */
+export const WAIT_HIDDEN_HARD_FAILURE_PREFIX = 'wait_for_selector failed waiting for state=hidden:';
+/** Message thrown when a `wait_for_selector` check discovers, via `Page.isClosed()`'s own
+ *  synchronous and definitive signal (not an inferred error-text guess), that the tab itself
+ *  closed mid-check — GAP-132's fix. Exported so tests (and any future caller that wants to
+ *  special-case this specific failure) can assert against the exact wording without duplicating
+ *  the literal string. */
+export const TAB_CLOSED_MID_WAIT_MESSAGE = 'Tab was closed while wait_for_selector was checking its state.';
+
 export type ActionType =
   | 'navigate'
   | 'click'

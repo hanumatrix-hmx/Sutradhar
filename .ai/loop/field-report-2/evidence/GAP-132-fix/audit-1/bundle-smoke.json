@@ -1,0 +1,45 @@
+{
+  "bundleExports": [
+    "Browser",
+    "Page",
+    "ProfileManager",
+    "SUTRADHAR_VERSION",
+    "SutradharRuntime",
+    "launch"
+  ],
+  "cases": [
+    {
+      "id": "positive: hidden wait on a genuinely visible element (confirmed-visible timeout)",
+      "success": false,
+      "error": "wait_for_selector timed out after 400ms waiting for state=hidden: an element matching \"#stay\" is still visible.\nHint: The element is still visible. Check the selector, or raise timeoutMs.",
+      "stillVisibleHint": true,
+      "expectHint": true,
+      "ok": true
+    },
+    {
+      "id": "positive: hidden check-once on a visible element",
+      "success": false,
+      "error": "wait_for_selector timed out after 0ms waiting for state=hidden: an element matching \"#stay\" is still visible.\nHint: The element is still visible. Check the selector, or raise timeoutMs.",
+      "stillVisibleHint": true,
+      "expectHint": true,
+      "ok": true
+    },
+    {
+      "id": "negative: visible wait on a hidden element (none is visible, NOT still-visible)",
+      "success": false,
+      "error": "wait_for_selector timed out after 400ms waiting for state=visible: 1 element(s) match \"#h\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.\nHint: The element exists but is hidden. Pass state:\"attached\" to wait only for DOM presence, or trigger whatever reveals it.",
+      "stillVisibleHint": false,
+      "expectHint": false,
+      "ok": true
+    },
+    {
+      "id": "negative: tab closed mid hidden wait (hard failure)",
+      "success": false,
+      "error": "wait_for_selector failed waiting for state=hidden: Tab was closed while wait_for_selector was checking its state.",
+      "stillVisibleHint": false,
+      "expectHint": false,
+      "ok": true
+    }
+  ],
+  "toolCount": 71
+}

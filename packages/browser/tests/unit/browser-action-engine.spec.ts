@@ -3461,6 +3461,234 @@ describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-0
   });
 });
 
+describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps)', () => {
+  it('GAP-132 (pierceFirstMatch, critical): a hidden wait must FAIL, never falsely SUCCEED, when the tab closes mid-probe — even though the underlying error text ("Execution context was destroyed") is IDENTICAL to the text an ordinary in-page navigation also produces', async () => {
+    // Live-reproduced (audit-6 probe-a6.mjs/diag-tabclose.mjs): 1/30 then 3/60 trials via MCP,
+    // 1/80 via the engine directly. Before this fix, `pierceFirstMatch` classified this error
+    // by TEXT ALONE as a recoverable per-frame hiccup ('no-match'), which every live frame
+    // "agreeing" on reported a false SUCCESS for a `hidden` wait whose element was still
+    // genuinely visible right up to the close. The fix checks `frame.page().isClosed()`
+    // synchronously, at the moment of the catch, instead of inferring tab-closure from text.
+    let closed = false;
+    const page: any = { isClosed: () => closed };
+    const mainFrame: any = {
+      isDetached: () => false,
+      page: () => page,
+      $: vi.fn().mockImplementation(() => {
+        // The tab closes WHILE this exact probe is in flight — the same race audit-6 caught.
+        closed = true;
+        return Promise.reject(new Error('Execution context was destroyed, most likely because of a navigation.'));
+      }),
+    };
+    page.frames = vi.fn().mockReturnValue([mainFrame]);
+    page.mainFrame = vi.fn().mockReturnValue(mainFrame);
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page as Page), {
+      actionType: 'wait_for_selector',
+      selector: '#stay',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Tab was closed while wait_for_selector was checking its state.');
+  });
+
+  it('GAP-132 (isHandleVisible, critical): a hidden wait must FAIL, never falsely succeed, when the tab closes while checking a MATCHED handle\'s own visibility', async () => {
+    // Same underlying ambiguity one level down: `handle.evaluate()` throws the identical
+    // "Execution context was destroyed" text whether the handle's frame merely navigated or the
+    // whole tab closed out from under it. `isHandleVisible` must check `handle.frame.page()
+    // .isClosed()`, the same synchronous signal `pierceFirstMatch` now uses.
+    let closed = false;
+    const page: any = { isClosed: () => closed };
+    const frame: any = { isDetached: () => false, page: () => page };
+    const handle = mockHandle() as any;
+    handle.frame = frame;
+    handle.evaluate = vi.fn().mockImplementation(() => {
+      closed = true;
+      return Promise.reject(new Error('Execution context was destroyed, most likely because of a navigation.'));
+    });
+    frame.$ = vi.fn().mockResolvedValue(handle);
+    page.frames = vi.fn().mockReturnValue([frame]);
+    page.mainFrame = vi.fn().mockReturnValue(frame);
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page as Page), {
+      actionType: 'wait_for_selector',
+      selector: '#stay',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Tab was closed while wait_for_selector was checking its state.');
+  });
+
+  it('GAP-132 regression guard: an ordinary in-page navigation (context destroyed, but the TAB itself is NOT closed) must remain the pre-existing recoverable per-frame hiccup, not a new false failure', async () => {
+    // The fix must not overcorrect: `page.isClosed()` returning false throughout means this is
+    // the ordinary "a single frame's own context was destroyed by an in-page navigation" case
+    // (e.g. an iframe destroying/recreating itself mid-wait, like TinyMCE) that fix-3 already
+    // established must classify as 'no-match' this pass, not a failure. With no other frame ever
+    // confirming a match, that's a genuine, correct 'hidden' success — not a regression.
+    const page: any = { isClosed: () => false };
+    const mainFrame: any = {
+      isDetached: () => false,
+      page: () => page,
+      $: vi.fn().mockRejectedValue(new Error('Execution context was destroyed, most likely because of a navigation.')),
+    };
+    page.frames = vi.fn().mockReturnValue([mainFrame]);
+    page.mainFrame = vi.fn().mockReturnValue(mainFrame);
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page as Page), {
+      actionType: 'wait_for_selector',
+      selector: '#stay',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.error).toBeUndefined();
+  });
+
+  it('GAP-133 (FR2-01 audit-6, major): a visible-wait timeout must not claim "none is visible" when one frame confirms a match but ANOTHER frame never answered the diagnosis', async () => {
+    // fix-4's GAP-083 guard only covered the ALL-frames-unanswered case (total === 0). audit-6
+    // found the partial case — some frames answer, one doesn't — was never tested: live-verified
+    // 2/2 on a busy iframe and 2/2 on a busy main frame, each with a genuinely VISIBLE match
+    // sitting in the frame that never got to answer.
+    const frameA: any = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null),
+      $$eval: vi.fn().mockResolvedValue([false]),
+    };
+    const frameB: any = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null),
+      $$eval: vi.fn().mockImplementation(() => new Promise(() => {})), // never answers
+    };
+    const page: any = {
+      frames: vi.fn().mockReturnValue([frameA, frameB]),
+      mainFrame: vi.fn().mockReturnValue(frameA),
+    };
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page as Page), {
+      actionType: 'wait_for_selector',
+      selector: '#x',
+      state: 'visible',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).not.toContain('but none is');
+    expect(result.error).toMatch(/could not be fully determined/);
+    expect(result.error).toMatch(/1 of 2 frame/);
+  });
+
+  it('GAP-218: with a frame unanswered, the timeout message must not claim "the first match is not visible" from the answered frames alone', async () => {
+    // The answered frame's first match is hidden and its second is visible, but another frame
+    // never answered, so the answered frame's "first match" need not be the first in document order.
+    const frameA: any = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null),
+      $$eval: vi.fn().mockResolvedValue([false, true]),
+    };
+    const frameB: any = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null),
+      $$eval: vi.fn().mockImplementation(() => new Promise(() => {})),
+    };
+    const page: any = { frames: vi.fn().mockReturnValue([frameB, frameA]), mainFrame: vi.fn().mockReturnValue(frameB) };
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page as Page), {
+      actionType: 'wait_for_selector',
+      selector: '#x',
+      state: 'visible',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).not.toContain('the first match is not visible');
+    expect(result.error).toMatch(/could not be fully determined/);
+  });
+
+  it('GAP-217: a visible-wait timeout diagnosis must report a closed tab, never "No element found", when the tab closes during diagnosis', async () => {
+    let closed = false;
+    const page: any = { isClosed: () => closed };
+    const frame: any = {
+      isDetached: () => false,
+      page: () => page,
+      $: vi.fn().mockResolvedValue(null),
+      $$eval: vi.fn().mockImplementation(() => {
+        closed = true;
+        return Promise.reject(new Error('Execution context was destroyed, most likely because of a navigation.'));
+      }),
+    };
+    page.frames = vi.fn().mockImplementation(() => (closed ? [] : [frame]));
+    page.mainFrame = vi.fn().mockReturnValue(frame);
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page as Page), {
+      actionType: 'wait_for_selector',
+      selector: '#stay',
+      state: 'visible',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).not.toContain('No element found');
+    expect(result.error).toContain('Tab was closed while wait_for_selector was checking its state.');
+  });
+
+  it('GAP-217: a hidden-wait success must not report a confident zero for otherVisibleMatches when a frame errors because the tab closed', async () => {
+    let closed = false;
+    const page: any = { isClosed: () => closed };
+    const frame: any = {
+      isDetached: () => false,
+      page: () => page,
+      $: vi.fn().mockResolvedValue(null),
+      $$eval: vi.fn().mockImplementation(() => {
+        closed = true;
+        return Promise.reject(new Error('Execution context was destroyed, most likely because of a navigation.'));
+      }),
+    };
+    page.frames = vi.fn().mockReturnValue([frame]);
+    page.mainFrame = vi.fn().mockReturnValue(frame);
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page as Page), {
+      actionType: 'wait_for_selector',
+      selector: '#gone',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    // The hidden verdict is reached before $$eval runs; the tab closes only during the advisory count.
+    expect(result.success).toBe(true);
+    expect(result.outputData?.otherVisibleMatchesUnknown).toBe(true);
+  });
+
+  it('GAP-219: liveFramesOf must throw the tab-closed error, not fall back to the main frame, when the tab is closed and has no live frames', async () => {
+    const mainFrame: any = { isDetached: () => true };
+    const page: any = {
+      isClosed: () => true,
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    };
+    const engine = new BrowserActionEngine();
+    expect(() => (engine as any).liveFramesOf(page)).toThrow('Tab was closed while wait_for_selector was checking its state.');
+  });
+});
+
 describe('@sutradhar/browser BrowserActionEngine FR2-06 caller-selector syntax probe', () => {
   /** A page whose main frame supports the syntax probe (`evaluate`) in addition to the
    *  ordinary `waitForSelector`-based resolution path every other test in this file uses. */

@@ -1,0 +1,86 @@
+// GAP-132-fix audit-1: import-smoke the built `sutradhar` bundle + drive its bundled MCP server
+// (dist/mcp-cli.js) over stdio, attached to a Chrome this script launches, to confirm the
+// @sutradhar/browser constants imported by mcp-server's ERROR_HINTS are wired correctly in the
+// bundle: positive control (confirmed-visible hidden timeout DOES get the hint) + negatives
+// (could-not-verify, tab-closed hard failure, visible-wait messages do NOT).
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import http from 'node:http';
+import { spawn } from 'node:child_process';
+import { pathToFileURL } from 'node:url';
+import { createRequire } from 'node:module';
+
+const R = process.env.REPO;
+const require_ = createRequire(path.join(R, 'packages', 'browser', 'package.json'));
+const puppeteer = require_('puppeteer-core');
+const bundle = await import(pathToFileURL(path.join(R, 'packages', 'sutradhar', 'dist', 'index.js')));
+const results = { bundleExports: Object.keys(bundle).sort(), cases: [] };
+const delay = (ms) => new Promise((r) => setTimeout(r, ms));
+
+const server = http.createServer((req, res) => {
+  res.setHeader('content-type', 'text/html');
+  const u = new URL(req.url, 'http://x');
+  if (u.pathname === '/vis') return res.end('<div id="stay">visible</div>');
+  if (u.pathname === '/hid') return res.end('<div id="h" style="display:none">hidden</div>');
+  return res.end('<div>nothing</div>');
+});
+await new Promise((r) => server.listen(0, '127.0.0.1', r));
+const port = server.address().port;
+
+const { BrowserLauncher } = await import(pathToFileURL(path.join(R, 'packages', 'browser', 'dist', 'index.js')));
+const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'gap132-a1-bundle-'));
+const browser = await puppeteer.launch({ executablePath: process.env.CHROME_PATH ?? new BrowserLauncher().findExecutablePath(), headless: true, userDataDir: profile, args: ['--no-sandbox'] });
+
+const child = spawn(process.execPath, [path.join(R, 'packages', 'sutradhar', 'dist', 'mcp-cli.js')], { stdio: ['pipe', 'pipe', 'pipe'] });
+let buf = '';
+const pending = new Map();
+let nextId = 1;
+child.stdout.on('data', (d) => {
+  buf += d.toString();
+  let i;
+  while ((i = buf.indexOf('\n')) >= 0) {
+    const line = buf.slice(0, i); buf = buf.slice(i + 1);
+    try { const m = JSON.parse(line); if (m.id && pending.has(m.id)) { pending.get(m.id)(m); pending.delete(m.id); } } catch {}
+  }
+});
+child.stderr.on('data', () => {});
+const call = (method, params) => new Promise((res) => { const id = nextId++; pending.set(id, res); child.stdin.write(JSON.stringify({ jsonrpc: '2.0', id, method, params }) + '\n'); });
+const tool = async (name, args) => { const m = await call('tools/call', { name, arguments: args }); const t = m.result?.content?.[0]?.text ?? JSON.stringify(m); try { return JSON.parse(t); } catch { return { raw: t, isError: m.result?.isError }; } };
+
+try {
+  await call('initialize', { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'a1', version: '1' } });
+  child.stdin.write(JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized' }) + '\n');
+  const tl = await call('tools/list', {});
+  results.toolCount = tl.result?.tools?.length;
+  const att = await tool('browser.attach', { endpoint: browser.wsEndpoint() });
+  const sessionId = att.sessionId;
+  const err = (r) => r.error ?? r.raw ?? '';
+  const rec = (id, r, expectHint) => {
+    const e = err(r);
+    const hasHint = /Hint: The element is still visible/.test(e);
+    results.cases.push({ id, success: r.success, error: e, stillVisibleHint: hasHint, expectHint, ok: r.success === false && hasHint === expectHint });
+  };
+  await tool('browser.navigate', { sessionId, url: `http://127.0.0.1:${port}/vis` });
+  rec('positive: hidden wait on a genuinely visible element (confirmed-visible timeout)', await tool('browser.wait_for_selector', { sessionId, target: '#stay', state: 'hidden', timeoutMs: 400, maxRetries: 0 }), true);
+  rec('positive: hidden check-once on a visible element', await tool('browser.wait_for_selector', { sessionId, target: '#stay', state: 'hidden', timeoutMs: 0, maxRetries: 0 }), true);
+  await tool('browser.navigate', { sessionId, url: `http://127.0.0.1:${port}/hid` });
+  rec('negative: visible wait on a hidden element (none is visible, NOT still-visible)', await tool('browser.wait_for_selector', { sessionId, target: '#h', state: 'visible', timeoutMs: 400, maxRetries: 0 }), false);
+  // tab-closed hard failure via bundle
+  const nt = await tool('browser.new_tab', { sessionId, url: `http://127.0.0.1:${port}/vis?tc=1` });
+  await delay(300);
+  const pg = (await browser.pages()).find((p) => p.url().includes('tc=1'));
+  const p = tool('browser.wait_for_selector', { sessionId, tabId: nt.tabId ?? nt.id, target: '#stay', state: 'hidden', timeoutMs: 2000, maxRetries: 0 });
+  await delay(150);
+  await pg?.close().catch(() => {});
+  rec('negative: tab closed mid hidden wait (hard failure)', await p, false);
+} finally {
+  fs.writeFileSync(process.env.OUT, JSON.stringify(results, null, 2));
+  child.kill();
+  await browser.close().catch(() => {});
+  server.close();
+  try { fs.rmSync(profile, { recursive: true, force: true }); } catch {}
+}
+console.log(JSON.stringify(results.cases.map((c) => ({ id: c.id, ok: c.ok, hint: c.stillVisibleHint, err: c.error.slice(0, 200) })), null, 1));
+console.log('toolCount', results.toolCount, 'exports', results.bundleExports.length);
+process.exit(0);

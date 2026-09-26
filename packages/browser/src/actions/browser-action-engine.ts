@@ -16,7 +16,16 @@ import { ElementHandle, Frame, KeyInput, Page } from 'puppeteer-core';
 import { IBrowserTab } from '../session/browser-tab.js';
 import { ExecutionVerifier } from '../verifier/execution-verifier.js';
 import { SD_GENERATION_ATTR, SD_CURRENT_GENERATION_ATTR, SD_FINGERPRINT_ATTR } from '../dom/dom-semantic-engine.js';
-import { ActionParams, ActionResultDto, SettleSpec, WaitForSelectorState } from './action-types.js';
+import {
+  ActionParams,
+  ActionResultDto,
+  SettleSpec,
+  WaitForSelectorState,
+  TAB_CLOSED_MID_WAIT_MESSAGE,
+  WAIT_HIDDEN_HARD_FAILURE_PREFIX,
+  WAIT_HIDDEN_COULD_NOT_VERIFY_FRAGMENT,
+  WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT,
+} from './action-types.js';
 import {
   invalidSelectorSyntaxError,
   selectorProbeTarget,
@@ -971,9 +980,12 @@ export class BrowserActionEngine implements IBrowserActionEngine {
           } catch (err) {
             // GAP-015: a genuinely invalid selector (parser/SyntaxError) must fail fast with
             // that real error, not be swallowed into "still visible" after the full timeout.
-            throw new Error(
-              `wait_for_selector failed waiting for state=hidden: ${(err as Error)?.message ?? String(err)}`,
-            );
+            // GAP-134 (FR2-01 audit-6): this is a HARD failure (the check itself didn't run to
+            // completion — including GAP-132's tab-closed-mid-wait case), never a confirmed
+            // timeout outcome — it must always start with `WAIT_HIDDEN_HARD_FAILURE_PREFIX` so
+            // the MCP layer's hint-matching can tell it apart from the two real timeout messages
+            // below, no matter what text the wrapped underlying error happens to contain.
+            throw new Error(`${WAIT_HIDDEN_HARD_FAILURE_PREFIX} ${(err as Error)?.message ?? String(err)}`);
           }
           if (hiddenVerdict !== 'hidden') {
             // GAP-082 (Orchestrator decision, decisions.md audit-4 entry): an 'unknown' timeout
@@ -983,8 +995,8 @@ export class BrowserActionEngine implements IBrowserActionEngine {
             // or a caller can't tell "we don't know" from "we know it's still there".
             const detail =
               hiddenVerdict === 'unknown'
-                ? 'could not verify: one or more frames were unresponsive'
-                : `an element matching "${params.selector}" is still visible`;
+                ? WAIT_HIDDEN_COULD_NOT_VERIFY_FRAGMENT
+                : `an element matching "${params.selector}" ${WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT}`;
             throw new Error(`wait_for_selector timed out after ${waitMs}ms waiting for state=hidden: ${detail}.`);
           }
           // GAP-016: hidden can succeed on the FIRST match while a LATER match (in some frame)
@@ -1271,6 +1283,30 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       message.includes('detached Frame') ||
       message.includes('Cannot find context with specified id')
     );
+  }
+
+  /**
+   * GAP-132 (FR2-01 audit-6): `isContextDestroyedError` cannot distinguish, BY TEXT ALONE, an
+   * ordinary in-page navigation destroying one frame's JS context (recoverable — this frame just
+   * has no answer for this pass) from the TAB ITSELF having closed mid-check (a real failure —
+   * "Execution context was destroyed" is thrown for both). `Page.isClosed()` is Puppeteer's own
+   * synchronous, definitive answer to "did the tab close" — checking it AT THE MOMENT OF THE
+   * CATCH (not on the next poll pass, the way `liveFramesOf`'s existing `page.isClosed()` guard
+   * already does one level up) settles this deterministically instead of inferring it from error
+   * text. Without this, a `hidden` wait racing a tab close reads the close's context-destroyed
+   * error as "confirmed not visible", and every live frame agreeing on that reports a false
+   * SUCCESS for an element that was still genuinely visible right up to the close — live-verified
+   * 1/30, then 3/60 trials via MCP, 1/80 via the engine directly (audit-6 `probe-a6.mjs`,
+   * `diag-tabclose.mjs`). This is the SAME user-visible bug as GAP-031/GAP-081, one classification
+   * branch neither of those rounds examined.
+   */
+  /** Frame-level form of {@link isTabClosed}; tolerates a frame without `page()`. */
+  private isFrameTabClosed(frame: Frame): boolean {
+    return typeof frame.page === "function" && this.isTabClosed(frame.page());
+  }
+
+  private isTabClosed(page: Page): boolean {
+    return typeof page.isClosed === 'function' && page.isClosed();
   }
 
   /** Runs a handle-based operation, rethrowing a context-destroyed failure with a clear
@@ -1596,12 +1632,23 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       if (BrowserActionEngine.isSelectorSyntaxError(err)) throw err;
       if (BrowserActionEngine.isFatalFrameCheckError(err)) throw err;
       if (this.isContextDestroyedError(err)) {
+        // GAP-132 (FR2-01 audit-6): a tab closing mid-probe throws this SAME error text as an
+        // ordinary in-page navigation — `isFatalFrameCheckError` above never catches it, because
+        // a closed TAB (as opposed to a closed browser/session) doesn't throw a "Session
+        // closed"/"Target closed"-style error at all. Check `frame.page().isClosed()`
+        // synchronously, right here, rather than inferring tab-closure from error text: if the
+        // tab is genuinely gone, this is a real failure, not a recoverable per-frame hiccup, and
+        // must never be read as "no match" (which is exactly what lets a `hidden` wait falsely
+        // report SUCCESS the instant the tab closes).
+        if (this.isTabClosed(frame.page())) {
+          throw new Error(TAB_CLOSED_MID_WAIT_MESSAGE);
+        }
         // A single frame's own context being destroyed by an ordinary in-page navigation (NOT
-        // the tab/session closing — that's `isFatalFrameCheckError` above) is a recoverable,
-        // per-frame hiccup: this frame definitively has no answer for THIS pass, and will be
-        // re-probed fresh (via `page.frames()`) on the next one. That's 'no-match' for this
-        // pass, not 'unknown' — unlike a timeout, there's no live probe still in flight that
-        // might resolve differently.
+        // the tab/session closing — that's `isFatalFrameCheckError` above, or the tab-closed
+        // check just above) is a recoverable, per-frame hiccup: this frame definitively has no
+        // answer for THIS pass, and will be re-probed fresh (via `page.frames()`) on the next
+        // one. That's 'no-match' for this pass, not 'unknown' — unlike a timeout, there's no
+        // live probe still in flight that might resolve differently.
         return { kind: 'no-match' };
       }
       // GAP-081 (FR2-01 audit-4/fix-4): any OTHER, unrecognized error was previously ALSO mapped
@@ -1734,7 +1781,20 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       return outcome ? 'visible' : 'not-visible';
     } catch (err) {
       if (BrowserActionEngine.isFatalFrameCheckError(err)) return 'unknown';
-      if (this.isContextDestroyedError(err)) return 'not-visible';
+      if (this.isContextDestroyedError(err)) {
+        // GAP-132 (FR2-01 audit-6): the same tab-closed-vs-in-page-navigation ambiguity as
+        // `pierceFirstMatch` above, one level down — `handle.evaluate` throws this identical
+        // error text whether the handle's frame merely navigated (recoverable: the node this
+        // handle referred to is genuinely gone, 'not-visible' is correct) or the whole TAB
+        // closed out from under it (a real failure that must never be read as a confirmed
+        // negative — that's exactly what let a `hidden` wait falsely succeed on tab close).
+        // `handle.frame.page().isClosed()` settles this deterministically, the same way
+        // `pierceFirstMatch` now does.
+        if (this.isTabClosed(handle.frame.page())) {
+          throw new Error(TAB_CLOSED_MID_WAIT_MESSAGE);
+        }
+        return 'not-visible';
+      }
       return 'unknown';
     }
   }
@@ -1758,8 +1818,8 @@ export class BrowserActionEngine implements IBrowserActionEngine {
   private liveFramesOf(page: Page): Frame[] {
     const live = page.frames().filter((f) => !f.isDetached());
     if (live.length > 0) return live;
-    if (typeof page.isClosed === 'function' && page.isClosed()) {
-      throw new Error('Tab was closed while wait_for_selector was checking its state.');
+    if (this.isTabClosed(page)) {
+      throw new Error(TAB_CLOSED_MID_WAIT_MESSAGE);
     }
     return [page.mainFrame()];
   }
@@ -1961,9 +2021,9 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       // is treated as "not confirmed hidden" (same as 'visible'), never as a false success.
       hiddenVerdict = await this.isHiddenInEveryFrame(page, fullSelector);
     } catch (err) {
-      throw new Error(
-        `wait_for_selector failed waiting for state=hidden: ${(err as Error)?.message ?? String(err)}`,
-      );
+      // GAP-134 (FR2-01 audit-6): same hard-failure prefix as the polling path above — never a
+      // confirmed timeout outcome, so the MCP layer must never read it as one.
+      throw new Error(`${WAIT_HIDDEN_HARD_FAILURE_PREFIX} ${(err as Error)?.message ?? String(err)}`);
     }
     if (hiddenVerdict !== 'hidden') {
       // GAP-082 (9th site — this check-once path collapsed 'unknown' into the SAME "still
@@ -1972,8 +2032,8 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       // "couldn't verify" must never read the same as a confirmed negative.
       const detail =
         hiddenVerdict === 'unknown'
-          ? 'could not verify: one or more frames were unresponsive'
-          : `an element matching "${selector}" is still visible`;
+          ? WAIT_HIDDEN_COULD_NOT_VERIFY_FRAGMENT
+          : `an element matching "${selector}" ${WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT}`;
       throw new Error(`wait_for_selector timed out after 0ms waiting for state=hidden: ${detail}.`);
     }
     const otherVisible = await this.countOtherVisibleMatches(page, fullSelector).catch(() => ({
@@ -2038,7 +2098,9 @@ export class BrowserActionEngine implements IBrowserActionEngine {
           // `isContextDestroyedError` handling) — that frame genuinely has nothing to
           // contribute this pass, so it's excluded without flipping `unconfirmed`. Any OTHER,
           // unrecognized error defaults to unconfirmed, not a confirmed zero.
-          if (this.isContextDestroyedError(err)) return 0;
+          // GAP-217: a closed TAB also surfaces as context-destroyed; that is not a recoverable
+          // per-frame hiccup, so it must not read as a confirmed zero.
+          if (this.isContextDestroyedError(err) && !this.isFrameTabClosed(frame)) return 0;
           unconfirmed = true;
           return 0;
         }
@@ -2147,6 +2209,9 @@ export class BrowserActionEngine implements IBrowserActionEngine {
             FRAME_PROBE_TIMEOUT_MS,
           );
         } catch (err) {
+          // GAP-217: same tab-closed check as pierceFirstMatch/isHandleVisible — a closed tab's
+          // context-destroyed error must abort the diagnosis, not be skipped as "nothing here".
+          if (this.isFrameTabClosed(frame)) throw new Error(TAB_CLOSED_MID_WAIT_MESSAGE);
           if (this.isContextDestroyedError(err)) return null;
           return BOUNDED_TIMED_OUT;
         }
@@ -2184,11 +2249,21 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     // entirely) AND the race where `state:'visible'`'s first match IS visible by the time this
     // diagnosis runs (the element became visible right at the end, after the wait itself gave
     // up). `describeMissingElement` is reserved for the case with truly zero live matches.
+    const DIAGNOSIS_TIMED_OUT = Symbol('diagnosis-timed-out');
     try {
-      const diagnosis = await Promise.race([
+      const raced = await Promise.race([
         this.diagnoseSelectorVisibility(page, fullSelector),
-        new Promise<null>((resolve) => setTimeout(() => resolve(null), 1000)),
+        new Promise<typeof DIAGNOSIS_TIMED_OUT>((resolve) => setTimeout(() => resolve(DIAGNOSIS_TIMED_OUT), 1000)),
       ]);
+      // The overall bound expiring means "could not determine", never "confirmed absent".
+      if (raced === DIAGNOSIS_TIMED_OUT) {
+        return (
+          prefix +
+          'the element could not be diagnosed within the time bound (a frame may be busy). This does NOT ' +
+          'confirm the element is absent; try a larger timeoutMs.'
+        );
+      }
+      const diagnosis = raced;
       // GAP-083 (FR2-01 audit-4/fix-4): when the diagnosis has NO confirmed-positive evidence
       // (`total === 0`) but some frame(s) never answered within their own bound
       // (`unconfirmedFrames > 0`), that is NOT the same thing as "confirmed zero matches
@@ -2211,6 +2286,21 @@ export class BrowserActionEngine implements IBrowserActionEngine {
             `${diagnosis.total} element(s) already match "${selector}". The wait still timed out — ` +
             'this is likely a race where the DOM-presence check did not observe them settle in time; ' +
             'try a larger timeoutMs.'
+          );
+        }
+        // GAP-133 (FR2-01 audit-6) / GAP-218: the `total === 0` branch above already refuses to
+        // say "confirmed absent" when a frame never answered — this is the same guard for the
+        // PARTIAL case, where at least one frame DID answer (so `total > 0`) but at least one
+        // OTHER frame never got to. It must run BEFORE every branch below that makes a claim
+        // about "the first match": with a frame unanswered, the answered frames' first match is
+        // not necessarily the first match in document order (live: C2c, 2/2 wait + 2/2 check-once).
+        if (diagnosis.unconfirmedFrames > 0) {
+          return (
+            prefix +
+            `${diagnosis.total} element(s) match "${selector}" and are attached to the DOM, but visibility ` +
+            `could not be fully determined — ${diagnosis.unconfirmedFrames} of ${diagnosis.framesProbed} ` +
+            "frame(s) did not respond within the diagnostic's time bound. This does NOT confirm none of " +
+            'them is visible; try a larger timeoutMs.'
           );
         }
         if (diagnosis.visibleFlags[0]) {
@@ -2237,8 +2327,12 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         );
       }
     } catch {
-      // Best-effort — fall through to the generic "no element found" diagnosis below.
+      // GAP-217: a failed diagnosis is "unknown", never "no element found". Report a closed tab
+      // as such; any other failure as undetermined.
+      if (this.isTabClosed(page)) return prefix + TAB_CLOSED_MID_WAIT_MESSAGE;
+      return prefix + 'the element could not be diagnosed. This does NOT confirm it is absent.';
     }
+    if (this.isTabClosed(page)) return prefix + TAB_CLOSED_MID_WAIT_MESSAGE;
     return prefix + (await this.describeMissingElement(page, selector));
   }
 

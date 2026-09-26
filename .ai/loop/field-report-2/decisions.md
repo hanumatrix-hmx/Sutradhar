@@ -1962,3 +1962,38 @@ independent of garbage collection. Decisions adopted as written:
   and dist rebuilt from clean HEAD before FR2-04's Step 1 or DEVELOP -- otherwise every build and
   test run measures code that will not ship. This is deferred until the in-flight GAP-132 executor
   finishes, so its working files aren't moved out from under it.
+
+## 2026-09-26 -- GAP-132/133/134/135 + GAP-217/218/219 closed (new scoped item, not an FR2-01 round)
+
+wait_for_selector `state:'hidden'` is new on this branch, and it was shipping with a known
+critical false-success bug (GAP-132: a hidden wait reported SUCCESS when the tab closed mid-wait)
+recorded only in gaps.md. A new, narrowly-scoped item fixed exactly the mechanisms FR2-01's
+BLOCKED diagnosis named -- FR2-01 itself stays BLOCKED; this does not reopen it.
+
+Executor (Sonnet): `isTabClosed(page)` (`page.isClosed()`, checked synchronously at the catch
+site) in pierceFirstMatch and isHandleVisible; GAP-133 partial-unanswered guard; the MCP
+"still visible" hint now keys on the engine's exact exported fragment instead of a broad
+substring plus a hand-maintained exclusion list. Also two process fixes: `.gitignore` now keeps
+`.ai/loop/**/*.log` (GAP-117), and verify-fr2-01/02 default their output to a temp dir so a
+regression run can never overwrite committed evidence again.
+
+Independent audit (Opus): GAP-132 confirmed closed -- 1,920 engine trials + 320 MCP trials,
+0 false successes, with a power check proving the harness catches the bug when the fix is
+reverted (131/640). But found two sibling defects in the same diagnosis function (GAP-217: a
+closed tab produced a false "No element found"; GAP-218: a "first match is not visible" claim
+made while a frame never answered). The Orchestrator fixed both directly, plus the overall
+diagnosis timeout (now "could not be diagnosed", not "No element found"), and GAP-219's test gap.
+
+Orchestrator verification: vitest browser 432 / capability-runtime 158 / cli 177 / mcp-server
+91 / sutradhar 15, all passing; forced build 9/9 with 0 cached; engine race 360 trials across
+self/external close x mid/final/check-once: 0 false successes, 0 false "No element found"
+(was 2-6 per 60); MCP C2a/b/c 6/6 honest (C2c was 2/2 false). Revert-and-confirm: every fix is
+caught by a test, except that the in-diagnosis tab-closed throw (M-A) and the final tab-closed
+check (M-E) are two layers of the same protection -- neither is caught alone, both together are.
+One self-caught mistake worth recording: the Orchestrator's own first version broke the
+existing GAP-112 test (calling frame.page() on a mock without it), which a filtered test run
+missed and a full-file run caught; fixed with a tolerant isFrameTabClosed helper.
+
+Given this item's pedigree (FR2-01 failed 6 audits), the Orchestrator's own fix-2 edits have
+not had a second independent audit; the live re-runs above used audit-1's own reproduction
+scripts. A re-audit is recommended before this branch is merged, not before it is committed.

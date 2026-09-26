@@ -1,0 +1,13 @@
+ FAIL  tests/unit/tools.spec.ts > @sutradhar/mcp-server registerTools > GAP-111 (FR2-01 fix-5): an honest "could not verify" hidden-wait timeout must NOT get the misleading "still visible" hint
+AssertionError: expected 'wait_for_selector timed out after 100…' not to contain 'The element is still visible.'
+- Expected
++ Received
+...
+ ❯ tests/unit/tools.spec.ts:277:30
+    275| 
+    276|     const parsed = JSON.parse(result.content[0].text);
+    277|     expect(parsed.error).not.toContain('The element is still visible.'…
+       |                              ^
+    278|     // Falls through to the generic, non-committal "timed out" hint in…
+    279|     expect(parsed.error).toContain('Hint:');
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
