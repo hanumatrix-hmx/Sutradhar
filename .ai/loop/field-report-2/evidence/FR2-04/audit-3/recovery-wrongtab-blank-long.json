@@ -1,0 +1,230 @@
+{
+  "at": "2026-09-26T21:14:18.315Z",
+  "rows": [
+    {
+      "t": 0,
+      "case": "blankpopup/accept-then-snap",
+      "n": "r0x92940",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:64404/?n=r0x92940:blocked",
+            "POPUP:about:blank:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 797,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64404/?n=r0x92940\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1111,
+          "out": "Tab AD93185E1B2E428853C5D2D4B95B3B5B was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:64404/?n=r0x92940:error",
+            "POPUP:about:blank:blocked"
+          ]
+        },
+        {
+          "step": "next:snap",
+          "code": 0,
+          "ms": 180460,
+          "killedAtCap": false,
+          "out": "URL: about:blank\nTitle: \nInteractive elements (0):",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "POPUP:about:blank:blocked",
+            "other:about:blank:responsive"
+          ]
+        }
+      ],
+      "popUrl": "about:blank",
+      "closedWhich": "OPENER",
+      "urlsAfter": [
+        "about:blank",
+        "about:blank"
+      ]
+    },
+    {
+      "t": 0,
+      "case": "blankpopup/accept-then-eval",
+      "n": "r0x83218",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:64404/?n=r0x83218:blocked",
+            "POPUP:about:blank:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 750,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64404/?n=r0x83218\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1148,
+          "out": "Tab E66F0DF56CF6605D54B341BB3DF6CB1C was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:64404/?n=r0x83218:error",
+            "POPUP:about:blank:blocked"
+          ]
+        },
+        {
+          "step": "next:eval",
+          "code": 0,
+          "ms": 180482,
+          "killedAtCap": false,
+          "out": "",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "POPUP:about:blank:blocked",
+            "other:about:blank:responsive"
+          ]
+        }
+      ],
+      "popUrl": "about:blank",
+      "closedWhich": "OPENER",
+      "urlsAfter": [
+        "about:blank",
+        "about:blank"
+      ]
+    },
+    {
+      "t": 1,
+      "case": "blankpopup/accept-then-snap",
+      "n": "r1x73698",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:64404/?n=r1x73698:blocked",
+            "POPUP:about:blank:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 704,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64404/?n=r1x73698\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1105,
+          "out": "Tab 4F3CD04B48048F53741E7E0A81EBA09B was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:64404/?n=r1x73698:blocked",
+            "POPUP:about:blank:blocked"
+          ]
+        },
+        {
+          "step": "next:snap",
+          "code": 0,
+          "ms": 180456,
+          "killedAtCap": false,
+          "out": "URL: about:blank\nTitle: \nInteractive elements (0):",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "POPUP:about:blank:blocked",
+            "other:about:blank:responsive"
+          ]
+        }
+      ],
+      "popUrl": "about:blank",
+      "closedWhich": "OPENER",
+      "urlsAfter": [
+        "about:blank",
+        "about:blank"
+      ]
+    },
+    {
+      "t": 1,
+      "case": "blankpopup/accept-then-eval",
+      "n": "r1x63897",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:64404/?n=r1x63897:blocked",
+            "POPUP:about:blank:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 685,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64404/?n=r1x63897\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1086,
+          "out": "Tab D6C6A35E8A2A7B00DA8AFBC1CA95DABA was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:64404/?n=r1x63897:blocked",
+            "POPUP:about:blank:blocked"
+          ]
+        },
+        {
+          "step": "next:eval",
+          "code": 0,
+          "ms": 180447,
+          "killedAtCap": false,
+          "out": "",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "POPUP:about:blank:blocked",
+            "other:about:blank:responsive"
+          ]
+        }
+      ],
+      "popUrl": "about:blank",
+      "closedWhich": "OPENER",
+      "urlsAfter": [
+        "about:blank",
+        "about:blank"
+      ]
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

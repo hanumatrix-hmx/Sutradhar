@@ -1,0 +1,98 @@
+{
+  "at": "2026-09-26T21:35:21.251Z",
+  "rows": [
+    {
+      "t": 0,
+      "K": 4,
+      "n": "mb0x4x96322",
+      "pages": 5,
+      "warden": {
+        "ms": 1641,
+        "n": 5,
+        "types": [
+          "alert",
+          "unknown"
+        ]
+      },
+      "snap": {
+        "code": 3,
+        "ms": 1944,
+        "killedAtCap": false,
+        "first": "dialogPending: {\"type\":\"alert\",\"message\":\"MB-mb0x4x96322\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60758/?n=mb0x4x96322\"}",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or s"
+      },
+      "verdict": "EXIT3"
+    },
+    {
+      "t": 0,
+      "K": 14,
+      "n": "mb0x14x5810",
+      "pages": 15,
+      "warden": {
+        "ms": 5677,
+        "n": 15,
+        "types": [
+          "alert",
+          "unknown"
+        ]
+      },
+      "snap": {
+        "code": 0,
+        "ms": 185465,
+        "killedAtCap": false,
+        "first": "URL: about:blank",
+        "err": ""
+      },
+      "verdict": "EXIT0-ABOUTBLANK(WRONG)"
+    },
+    {
+      "t": 1,
+      "K": 4,
+      "n": "mb1x4x6526",
+      "pages": 5,
+      "warden": {
+        "ms": 1619,
+        "n": 5,
+        "types": [
+          "alert",
+          "unknown"
+        ]
+      },
+      "snap": {
+        "code": 3,
+        "ms": 1969,
+        "killedAtCap": false,
+        "first": "dialogPending: {\"type\":\"alert\",\"message\":\"MB-mb1x4x6526\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60758/?n=mb1x4x6526\"}",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or s"
+      },
+      "verdict": "EXIT3"
+    },
+    {
+      "t": 1,
+      "K": 14,
+      "n": "mb1x14x16204",
+      "pages": 15,
+      "warden": {
+        "ms": 5704,
+        "n": 15,
+        "types": [
+          "alert",
+          "unknown"
+        ]
+      },
+      "snap": {
+        "code": 0,
+        "ms": 185430,
+        "killedAtCap": false,
+        "first": "URL: about:blank",
+        "err": ""
+      },
+      "verdict": "EXIT0-ABOUTBLANK(WRONG)"
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

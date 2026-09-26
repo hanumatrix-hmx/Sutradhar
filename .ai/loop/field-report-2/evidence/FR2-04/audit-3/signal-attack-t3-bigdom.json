@@ -1,0 +1,133 @@
+{
+  "at": "2026-09-26T21:22:39.069Z",
+  "headed": false,
+  "rows": [
+    {
+      "t": 0,
+      "state": "huge-dom-big(600k)-snap-now",
+      "n": "g0x23623",
+      "getMetrics": [
+        {
+          "state": "blocked",
+          "ms": 406,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "blocked",
+          "ms": 414,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "blocked",
+          "ms": 406,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        }
+      ],
+      "runtimeEval": "blocked",
+      "warden": {
+        "ms": 421,
+        "dialogs": [
+          "TGT:unknown"
+        ]
+      },
+      "snap": {
+        "code": 0,
+        "ms": 832,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:49942/?n=g0x23623 | Title: sig g0x23623",
+        "err": ""
+      },
+      "elapsedSinceMeasureStart": 2885,
+      "pageBusyMs": 1958,
+      "verdict": "OK"
+    },
+    {
+      "t": 1,
+      "state": "huge-dom-big(600k)-snap-now",
+      "n": "g1x34143",
+      "getMetrics": [
+        {
+          "state": "blocked",
+          "ms": 403,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "blocked",
+          "ms": 406,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "blocked",
+          "ms": 403,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        }
+      ],
+      "runtimeEval": "blocked",
+      "warden": {
+        "ms": 407,
+        "dialogs": [
+          "TGT:unknown"
+        ]
+      },
+      "snap": {
+        "code": 0,
+        "ms": 872,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:49942/?n=g1x34143 | Title: sig g1x34143",
+        "err": ""
+      },
+      "elapsedSinceMeasureStart": 2897,
+      "pageBusyMs": 1960,
+      "verdict": "OK"
+    },
+    {
+      "t": 2,
+      "state": "huge-dom-big(600k)-snap-now",
+      "n": "g2x44616",
+      "getMetrics": [
+        {
+          "state": "blocked",
+          "ms": 402,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "blocked",
+          "ms": 415,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "blocked",
+          "ms": 404,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        }
+      ],
+      "runtimeEval": "blocked",
+      "warden": {
+        "ms": 407,
+        "dialogs": [
+          "TGT:unknown"
+        ]
+      },
+      "snap": {
+        "code": 0,
+        "ms": 852,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:49942/?n=g2x44616 | Title: sig g2x44616",
+        "err": ""
+      },
+      "elapsedSinceMeasureStart": 2886,
+      "pageBusyMs": 1972,
+      "verdict": "OK"
+    }
+  ],
+  "summary": {
+    "huge-dom-big(600k)-snap-now": {
+      "OK": 3
+    }
+  },
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

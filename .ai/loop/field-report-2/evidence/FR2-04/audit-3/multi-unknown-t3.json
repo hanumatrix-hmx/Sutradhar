@@ -1,0 +1,238 @@
+{
+  "at": "2026-09-26T21:04:09.892Z",
+  "rows": [
+    {
+      "t": 0,
+      "n": "mu0x88569",
+      "steps": [
+        {
+          "step": "initial",
+          "targets": {
+            "B1": "blocked",
+            "B2": "blocked",
+            "A": "responsive",
+            "P1": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "dialog",
+          "out": [
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53305/?n=mu0x88569-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:53305/?n=mu0x88569-B2\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53305/pop?n=mu0x88569-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:53305/pop?n=mu0x88569-B2\"}"
+          ]
+        },
+        {
+          "step": "after-accept-0",
+          "targets": {
+            "B1": "error",
+            "B2": "blocked",
+            "A": "responsive",
+            "P1": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "after-accept-1",
+          "targets": {
+            "B2": "error",
+            "A": "responsive",
+            "P1": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "after-accept-2",
+          "targets": {
+            "A": "responsive",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "after-accept-3",
+          "targets": {
+            "A": "responsive"
+          }
+        }
+      ],
+      "closed": [
+        "B1",
+        "B2",
+        "P1",
+        "P2"
+      ],
+      "wrongCloses": [
+        "B1",
+        "B2"
+      ],
+      "finalSnap": {
+        "code": 0,
+        "ms": 446,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:53305/?n=mu0x88569-A"
+      },
+      "aliveAtEnd": [
+        "A"
+      ]
+    },
+    {
+      "t": 1,
+      "n": "mu1x7732",
+      "steps": [
+        {
+          "step": "initial",
+          "targets": {
+            "A": "responsive",
+            "B1": "blocked",
+            "B2": "blocked",
+            "P1": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "dialog",
+          "out": [
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53305/?n=mu1x7732-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:53305/?n=mu1x7732-B2\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53305/pop?n=mu1x7732-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:53305/pop?n=mu1x7732-B2\"}"
+          ]
+        },
+        {
+          "step": "after-accept-0",
+          "targets": {
+            "A": "responsive",
+            "B1": "error",
+            "B2": "blocked",
+            "P1": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "after-accept-1",
+          "targets": {
+            "A": "responsive",
+            "B2": "error",
+            "P1": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "after-accept-2",
+          "targets": {
+            "A": "responsive",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "after-accept-3",
+          "targets": {
+            "A": "responsive"
+          }
+        }
+      ],
+      "closed": [
+        "B1",
+        "B2",
+        "P1",
+        "P2"
+      ],
+      "wrongCloses": [
+        "B1",
+        "B2"
+      ],
+      "finalSnap": {
+        "code": 0,
+        "ms": 398,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:53305/?n=mu1x7732-A"
+      },
+      "aliveAtEnd": [
+        "A"
+      ]
+    },
+    {
+      "t": 2,
+      "n": "mu2x26559",
+      "steps": [
+        {
+          "step": "initial",
+          "targets": {
+            "B1": "blocked",
+            "A": "responsive",
+            "B2": "blocked",
+            "P1": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "dialog",
+          "out": [
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53305/?n=mu2x26559-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:53305/?n=mu2x26559-B2\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53305/pop?n=mu2x26559-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:53305/pop?n=mu2x26559-B2\"}"
+          ]
+        },
+        {
+          "step": "after-accept-0",
+          "targets": {
+            "B1": "blocked",
+            "A": "responsive",
+            "B2": "blocked",
+            "P1": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "after-accept-1",
+          "targets": {
+            "A": "responsive",
+            "B2": "error",
+            "P1": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "after-accept-2",
+          "targets": {
+            "A": "responsive",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "after-accept-3",
+          "targets": {
+            "A": "responsive"
+          }
+        }
+      ],
+      "closed": [
+        "B1",
+        "B2",
+        "P1",
+        "P2"
+      ],
+      "wrongCloses": [
+        "B1",
+        "B2"
+      ],
+      "finalSnap": {
+        "code": 0,
+        "ms": 440,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:53305/?n=mu2x26559-A"
+      },
+      "aliveAtEnd": [
+        "A"
+      ]
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

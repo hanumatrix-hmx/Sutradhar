@@ -2177,3 +2177,76 @@ sutradhar-fr2-04-verify-*), all matched by name to this loop.
 
 Open questions for audit-3 to settle: is the GAP-234 residual acceptable for DONE, and is +129 ms
 per command acceptable?
+
+## 2026-09-27 -- FR2-04 audit-3: FAILED (3 critical, 4 major). Cycle 3 of 4 used; this is the last standard cycle.
+
+Independent audit-3 wrote its findings progressively this time (no interruption). 11 findings, 14
+verified items, in evidence/FR2-04/audit-3/audit-findings.json. No processes or temp dirs left
+behind; a mutation-restore write failure on dialog-broker.ts was confirmed fully reverted (git diff
+clean against HEAD) before this was logged.
+
+What held: GAP-229's re-gate loop (18/18 over-limit chains exit 3 cleanly, 12/12 normal chains
+clean, including a deliberately-infinite dialog loop); GAP-231's lock (stale/plain/crash/held-lock/
+kill-mid-startup all converge to exactly 1 warden); GAP-226 (real OOPIF dialogs, not just the
+same-process approximation fix-2 tested); GAP-233 (beforeunload in a popup, 3/3).
+
+What failed, and why it matters: GAP-228's fix (probe every target with Performance.getMetrics) was
+correct as far as it went, but every blank-popup case in the fix-2 matrix was caught only via the
+POPUP'S OPENER sharing a renderer with it -- not via the popup itself. That indirection is now the
+root of three new critical bugs:
+- GAP-236: recovering an 'unknown' dialog closes the opener (the user's healthy tab), because the
+  same-renderer heuristic can't tell popup from opener and the opener sorts first. The popup stays
+  blocked and the user loses an unrelated tab.
+- GAP-237: 'tabs' was exempted from the GATE (so the user could inspect tab ids to recover) but
+  still calls runtime.attach() underneath, which hangs ~180s against ANY open dialog and then
+  silently succeeds on a wrong, freshly-created tab. This is the exact GAP-017 shape FR2-04 exists
+  to close, now reachable through the hint FR2-04 itself prints.
+- GAP-238: once GAP-236 closes the opener, the popup (now about:blank) is invisible to the probe,
+  because blank targets are excluded from it -- the next command hangs and silently succeeds on the
+  wrong tab.
+Also GAP-240: the Performance.getMetrics signal is not fully decidable after all -- sync XHR and
+heavy main-thread work also read as 'unknown dialog', and recovering from that false positive closes
+a healthy tab. GAP-241: the per-target probe is serial (400ms each) and the CLI's own 5s cap on
+waiting for the list makes it fail OPEN (treats a timeout as clear) past about 13 same-renderer
+tabs -- silent wrong tab again.
+
+audit-3 also root-caused GAP-234 (fix-2's disclosed 'tabs hangs after recovery' residual): it is
+GAP-237, not something specific to recovery -- 'tabs' hangs against any open dialog. Marked
+ROOT-CAUSED, not a separate open item. GAP-232's test-integrity fix was only partial: 8 of the 12
+audit-3 mutations against fix-2's own new code still survive.
+
+Per-command overhead is confirmed +129-159ms vs master, and audit-3 traced essentially all of it to
+a pre-emption polling timer that keeps the process alive ~100ms after the command already finished
+-- not to the gate logic itself (gate ~2.6ms, ensureWarden ~1.9ms). Clearing/unref'ing that timer
+should bring this to roughly +30ms.
+
+Decisions for fix-3 (last standard cycle -- if this fails, FR2-04 goes to 2 escalation cycles, then
+BLOCKED with a diagnosis per the loop's rules):
+1. Stop attributing a blocked renderer to "whichever target sorts first". When several targets
+   share one renderer, attribute the dialog to the target that ACTUALLY OWNS it: prefer the
+   untracked/newest target (the popup, not the long-lived opener) as the holder, and report the
+   opener (and any other same-renderer target) as 'blocked by tab X', not as its own unknown dialog.
+   Never report a tracked target that has an active Page.enable ack and no dialog event as unknown.
+2. Probe about:blank targets too (GAP-238's exact gap) -- don't special-case blank URLs out of the
+   probe.
+3. Recovery (accept/dismiss on an unknown dialog) must close ONLY the target it identified as the
+   actual holder, by CLI tab id, and must never be the implicit default outcome of a generic
+   'accept' -- name the tab and URL it's closing in the message.
+4. Fix 'tabs': it must not call runtime.attach() while gated targets exist. Either gate it fully
+   (simplest, safest for this cycle) or make it list targets via browser-level Target.getTargets
+   without attaching. Remove 'run tabs' from the hint if it can't be made safe.
+5. Fail CLOSED, not open, when the per-target probe can't finish before the CLI's own wait cap:
+   block (exit 3, type unknown) rather than proceeding as clear. Consider probing targets in
+   parallel instead of serially to keep this bounded at higher tab counts.
+6. Re-scope GAP-240: decide whether sync-XHR/heavy-JS false positives are acceptable (block plus a
+   clear 'busy, not necessarily a dialog' message, no auto-recovery) given recovery is now
+   tab-targeted and no longer destroys an unrelated tab once (1) and (3) are fixed. A busy page
+   blocking one gated command is a much smaller harm than an unknown dialog silently resolving
+   the wrong tab.
+7. Preserve dialogHandled records when the re-gate loop hits its chain limit (GAP-242). Add tests
+   that kill audit-3's 8 surviving mutations (GAP-243).
+8. Clear/unref the pre-emption poll timer so the process doesn't wait out a pending sleep after the
+   command already completed (the +100ms of the +129ms overhead).
+GAP-235 (pre-existing adoptPopupPage crash) stays tracked separately, not part of this item's scope,
+but catching it cheaply (instead of an uncaught throw after "Clicked ...") would remove a
+contradictory success+crash output; fix-3 may take it if time allows, otherwise leave it open.

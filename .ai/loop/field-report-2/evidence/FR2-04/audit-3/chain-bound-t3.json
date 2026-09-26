@@ -1,0 +1,942 @@
+{
+  "at": "2026-09-26T21:05:44.920Z",
+  "rows": [
+    {
+      "t": 0,
+      "case": "c2/snap-accept",
+      "n": "cb0x40896",
+      "click": {
+        "code": 0,
+        "ms": 6369,
+        "out": "Clicked #c2\ndialogPending: {\"type\":\"alert\",\"message\":\"c2-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb0x40896\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 0,
+        "ms": 711,
+        "killedAtCap": false,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"c2-0\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\ndialogHandled: {\"type\":\"alert\",\"message\":\"c2-1\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:53071/?n=cb0x40896\nTitle: done2\nInteractive elements (5):\n[#1] button \"2\"\n[#2] button \"6\"\n[#3] button \"12\"\n[#4] button \"inf\"\n[#5] button \"infslow\"\n",
+        "err": "Note: dialog policy for this session is now \"accept\".\n"
+      },
+      "handledLines": 2,
+      "ranCommand": true,
+      "reportedAboutBlank": false,
+      "blockedAfter": false,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb0x40896"
+      ],
+      "verdict": "RAN-CLEAN",
+      "close": {
+        "code": 0,
+        "ms": 724
+      }
+    },
+    {
+      "t": 0,
+      "case": "c2/eval-dismiss",
+      "n": "cb0x49966",
+      "click": {
+        "code": 0,
+        "ms": 6442,
+        "out": "Clicked #c2\ndialogPending: {\"type\":\"alert\",\"message\":\"c2-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb0x49966\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 0,
+        "ms": 708,
+        "killedAtCap": false,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"c2-0\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}\ndialogHandled: {\"type\":\"alert\",\"message\":\"c2-1\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}\ndone2\n",
+        "err": "Note: dialog policy for this session is now \"dismiss\".\n"
+      },
+      "handledLines": 2,
+      "ranCommand": true,
+      "reportedAboutBlank": false,
+      "blockedAfter": false,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb0x49966"
+      ],
+      "verdict": "RAN-CLEAN",
+      "close": {
+        "code": 0,
+        "ms": 558
+      }
+    },
+    {
+      "t": 0,
+      "case": "c6/snap-accept",
+      "n": "cb0x59312",
+      "click": {
+        "code": 0,
+        "ms": 6370,
+        "out": "Clicked #c6\ndialogPending: {\"type\":\"alert\",\"message\":\"c6-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb0x59312\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1058,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"c6-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb0x59312\"}\n",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) — ru"
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb0x59312"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 753
+      }
+    },
+    {
+      "t": 0,
+      "case": "c6/eval-dismiss",
+      "n": "cb0x69570",
+      "click": {
+        "code": 0,
+        "ms": 6434,
+        "out": "Clicked #c6\ndialogPending: {\"type\":\"alert\",\"message\":\"c6-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb0x69570\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1048,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"c6-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb0x69570\"}\n",
+        "err": "Error: a alert dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) — ru"
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb0x69570"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 449
+      }
+    },
+    {
+      "t": 0,
+      "case": "c12/snap-accept",
+      "n": "cb0x79827",
+      "click": {
+        "code": 0,
+        "ms": 6386,
+        "out": "Clicked #c12\ndialogPending: {\"type\":\"confirm\",\"message\":\"c12-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb0x79827\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1072,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"confirm\",\"message\":\"c12-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb0x79827\"}\n",
+        "err": "Error: a confirm dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) "
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb0x79827"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 664
+      }
+    },
+    {
+      "t": 0,
+      "case": "c12/eval-dismiss",
+      "n": "cb0x89959",
+      "click": {
+        "code": 0,
+        "ms": 6326,
+        "out": "Clicked #c12\ndialogPending: {\"type\":\"confirm\",\"message\":\"c12-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb0x89959\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1026,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"confirm\",\"message\":\"c12-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb0x89959\"}\n",
+        "err": "Error: a confirm dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) "
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb0x89959"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 512
+      }
+    },
+    {
+      "t": 0,
+      "case": "inf/snap-accept",
+      "n": "cb0x214",
+      "click": {
+        "code": 0,
+        "ms": 6329,
+        "out": "Clicked #inf\ndialogPending: {\"type\":\"alert\",\"message\":\"inf-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb0x214\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1080,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"inf-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb0x214\"}\n",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) — ru"
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb0x214"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 572
+      }
+    },
+    {
+      "t": 0,
+      "case": "inf/eval-dismiss",
+      "n": "cb0x10226",
+      "click": {
+        "code": 0,
+        "ms": 6371,
+        "out": "Clicked #inf\ndialogPending: {\"type\":\"alert\",\"message\":\"inf-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb0x10226\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1038,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"inf-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb0x10226\"}\n",
+        "err": "Error: a alert dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) — ru"
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb0x10226"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 471
+      }
+    },
+    {
+      "t": 0,
+      "case": "infslow/snap-accept",
+      "n": "cb0x20246",
+      "click": {
+        "code": 0,
+        "ms": 6330,
+        "out": "Clicked #infslow\ndialogPending: {\"type\":\"alert\",\"message\":\"slow-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb0x20246\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 0,
+        "ms": 571,
+        "killedAtCap": false,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"slow-0\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:53071/?n=cb0x20246\nTitle: chain cb0x20246\nInteractive elements (5):\n[#1] button \"2\"\n[#2] button \"6\"\n[#3] button \"12\"\n[#4] button \"inf\"\n[#5] button \"infslow\"\n",
+        "err": "Note: dialog policy for this session is now \"accept\".\n"
+      },
+      "handledLines": 1,
+      "ranCommand": true,
+      "reportedAboutBlank": false,
+      "blockedAfter": false,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb0x20246"
+      ],
+      "verdict": "RAN-CLEAN",
+      "close": {
+        "code": 0,
+        "ms": 670
+      }
+    },
+    {
+      "t": 0,
+      "case": "infslow/eval-dismiss",
+      "n": "cb0x29141",
+      "click": {
+        "code": 0,
+        "ms": 6344,
+        "out": "Clicked #infslow\ndialogPending: {\"type\":\"alert\",\"message\":\"slow-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb0x29141\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 0,
+        "ms": 582,
+        "killedAtCap": false,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"slow-0\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}\nchain cb0x29141\n",
+        "err": "Note: dialog policy for this session is now \"dismiss\".\n"
+      },
+      "handledLines": 1,
+      "ranCommand": true,
+      "reportedAboutBlank": false,
+      "blockedAfter": false,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb0x29141"
+      ],
+      "verdict": "RAN-CLEAN",
+      "close": {
+        "code": 0,
+        "ms": 660
+      }
+    },
+    {
+      "t": 1,
+      "case": "c2/snap-accept",
+      "n": "cb1x37952",
+      "click": {
+        "code": 0,
+        "ms": 6323,
+        "out": "Clicked #c2\ndialogPending: {\"type\":\"alert\",\"message\":\"c2-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb1x37952\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 0,
+        "ms": 712,
+        "killedAtCap": false,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"c2-0\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\ndialogHandled: {\"type\":\"alert\",\"message\":\"c2-1\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:53071/?n=cb1x37952\nTitle: done2\nInteractive elements (5):\n[#1] button \"2\"\n[#2] button \"6\"\n[#3] button \"12\"\n[#4] button \"inf\"\n[#5] button \"infslow\"\n",
+        "err": "Note: dialog policy for this session is now \"accept\".\n"
+      },
+      "handledLines": 2,
+      "ranCommand": true,
+      "reportedAboutBlank": false,
+      "blockedAfter": false,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb1x37952"
+      ],
+      "verdict": "RAN-CLEAN",
+      "close": {
+        "code": 0,
+        "ms": 470
+      }
+    },
+    {
+      "t": 1,
+      "case": "c2/eval-dismiss",
+      "n": "cb1x46678",
+      "click": {
+        "code": 0,
+        "ms": 6356,
+        "out": "Clicked #c2\ndialogPending: {\"type\":\"alert\",\"message\":\"c2-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb1x46678\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 0,
+        "ms": 730,
+        "killedAtCap": false,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"c2-0\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}\ndialogHandled: {\"type\":\"alert\",\"message\":\"c2-1\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}\ndone2\n",
+        "err": "Note: dialog policy for this session is now \"dismiss\".\n"
+      },
+      "handledLines": 2,
+      "ranCommand": true,
+      "reportedAboutBlank": false,
+      "blockedAfter": false,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb1x46678"
+      ],
+      "verdict": "RAN-CLEAN",
+      "close": {
+        "code": 0,
+        "ms": 638
+      }
+    },
+    {
+      "t": 1,
+      "case": "c6/snap-accept",
+      "n": "cb1x55629",
+      "click": {
+        "code": 0,
+        "ms": 6351,
+        "out": "Clicked #c6\ndialogPending: {\"type\":\"alert\",\"message\":\"c6-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb1x55629\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1039,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"c6-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb1x55629\"}\n",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) — ru"
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb1x55629"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 468
+      }
+    },
+    {
+      "t": 1,
+      "case": "c6/eval-dismiss",
+      "n": "cb1x65557",
+      "click": {
+        "code": 0,
+        "ms": 6387,
+        "out": "Clicked #c6\ndialogPending: {\"type\":\"alert\",\"message\":\"c6-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb1x65557\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1077,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"c6-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb1x65557\"}\n",
+        "err": "Error: a alert dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) — ru"
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb1x65557"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 598
+      }
+    },
+    {
+      "t": 1,
+      "case": "c12/snap-accept",
+      "n": "cb1x75653",
+      "click": {
+        "code": 0,
+        "ms": 6426,
+        "out": "Clicked #c12\ndialogPending: {\"type\":\"confirm\",\"message\":\"c12-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb1x75653\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1051,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"confirm\",\"message\":\"c12-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb1x75653\"}\n",
+        "err": "Error: a confirm dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) "
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb1x75653"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 535
+      }
+    },
+    {
+      "t": 1,
+      "case": "c12/eval-dismiss",
+      "n": "cb1x85758",
+      "click": {
+        "code": 0,
+        "ms": 6387,
+        "out": "Clicked #c12\ndialogPending: {\"type\":\"confirm\",\"message\":\"c12-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb1x85758\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1103,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"confirm\",\"message\":\"c12-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb1x85758\"}\n",
+        "err": "Error: a confirm dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) "
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb1x85758"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 519
+      }
+    },
+    {
+      "t": 1,
+      "case": "inf/snap-accept",
+      "n": "cb1x95938",
+      "click": {
+        "code": 0,
+        "ms": 6404,
+        "out": "Clicked #inf\ndialogPending: {\"type\":\"alert\",\"message\":\"inf-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb1x95938\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1100,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"inf-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb1x95938\"}\n",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) — ru"
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb1x95938"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 582
+      }
+    },
+    {
+      "t": 1,
+      "case": "inf/eval-dismiss",
+      "n": "cb1x6118",
+      "click": {
+        "code": 0,
+        "ms": 6375,
+        "out": "Clicked #inf\ndialogPending: {\"type\":\"alert\",\"message\":\"inf-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb1x6118\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1056,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"inf-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb1x6118\"}\n",
+        "err": "Error: a alert dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) — ru"
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb1x6118"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 498
+      }
+    },
+    {
+      "t": 1,
+      "case": "infslow/snap-accept",
+      "n": "cb1x16157",
+      "click": {
+        "code": 0,
+        "ms": 6479,
+        "out": "Clicked #infslow\ndialogPending: {\"type\":\"alert\",\"message\":\"slow-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb1x16157\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 0,
+        "ms": 569,
+        "killedAtCap": false,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"slow-0\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:53071/?n=cb1x16157\nTitle: chain cb1x16157\nInteractive elements (5):\n[#1] button \"2\"\n[#2] button \"6\"\n[#3] button \"12\"\n[#4] button \"inf\"\n[#5] button \"infslow\"\n",
+        "err": "Note: dialog policy for this session is now \"accept\".\n"
+      },
+      "handledLines": 1,
+      "ranCommand": true,
+      "reportedAboutBlank": false,
+      "blockedAfter": false,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb1x16157"
+      ],
+      "verdict": "RAN-CLEAN",
+      "close": {
+        "code": 0,
+        "ms": 752
+      }
+    },
+    {
+      "t": 1,
+      "case": "infslow/eval-dismiss",
+      "n": "cb1x25448",
+      "click": {
+        "code": 0,
+        "ms": 6354,
+        "out": "Clicked #infslow\ndialogPending: {\"type\":\"alert\",\"message\":\"slow-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb1x25448\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 0,
+        "ms": 644,
+        "killedAtCap": false,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"slow-0\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}\nchain cb1x25448\n",
+        "err": "Note: dialog policy for this session is now \"dismiss\".\n"
+      },
+      "handledLines": 1,
+      "ranCommand": true,
+      "reportedAboutBlank": false,
+      "blockedAfter": false,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb1x25448"
+      ],
+      "verdict": "RAN-CLEAN",
+      "close": {
+        "code": 0,
+        "ms": 823
+      }
+    },
+    {
+      "t": 2,
+      "case": "c2/snap-accept",
+      "n": "cb2x34545",
+      "click": {
+        "code": 0,
+        "ms": 6488,
+        "out": "Clicked #c2\ndialogPending: {\"type\":\"alert\",\"message\":\"c2-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb2x34545\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 0,
+        "ms": 774,
+        "killedAtCap": false,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"c2-0\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\ndialogHandled: {\"type\":\"alert\",\"message\":\"c2-1\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:53071/?n=cb2x34545\nTitle: done2\nInteractive elements (5):\n[#1] button \"2\"\n[#2] button \"6\"\n[#3] button \"12\"\n[#4] button \"inf\"\n[#5] button \"infslow\"\n",
+        "err": "Note: dialog policy for this session is now \"accept\".\n"
+      },
+      "handledLines": 2,
+      "ranCommand": true,
+      "reportedAboutBlank": false,
+      "blockedAfter": false,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb2x34545"
+      ],
+      "verdict": "RAN-CLEAN",
+      "close": {
+        "code": 0,
+        "ms": 760
+      }
+    },
+    {
+      "t": 2,
+      "case": "c2/eval-dismiss",
+      "n": "cb2x43879",
+      "click": {
+        "code": 0,
+        "ms": 6389,
+        "out": "Clicked #c2\ndialogPending: {\"type\":\"alert\",\"message\":\"c2-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb2x43879\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 0,
+        "ms": 704,
+        "killedAtCap": false,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"c2-0\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}\ndialogHandled: {\"type\":\"alert\",\"message\":\"c2-1\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}\ndone2\n",
+        "err": "Note: dialog policy for this session is now \"dismiss\".\n"
+      },
+      "handledLines": 2,
+      "ranCommand": true,
+      "reportedAboutBlank": false,
+      "blockedAfter": false,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb2x43879"
+      ],
+      "verdict": "RAN-CLEAN",
+      "close": {
+        "code": 0,
+        "ms": 519
+      }
+    },
+    {
+      "t": 2,
+      "case": "c6/snap-accept",
+      "n": "cb2x52830",
+      "click": {
+        "code": 0,
+        "ms": 6375,
+        "out": "Clicked #c6\ndialogPending: {\"type\":\"alert\",\"message\":\"c6-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb2x52830\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1270,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"c6-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb2x52830\"}\n",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) — ru"
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb2x52830"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 649
+      }
+    },
+    {
+      "t": 2,
+      "case": "c6/eval-dismiss",
+      "n": "cb2x63238",
+      "click": {
+        "code": 0,
+        "ms": 6369,
+        "out": "Clicked #c6\ndialogPending: {\"type\":\"alert\",\"message\":\"c6-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb2x63238\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1094,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"c6-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb2x63238\"}\n",
+        "err": "Error: a alert dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) — ru"
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb2x63238"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 587
+      }
+    },
+    {
+      "t": 2,
+      "case": "c12/snap-accept",
+      "n": "cb2x73397",
+      "click": {
+        "code": 0,
+        "ms": 6356,
+        "out": "Clicked #c12\ndialogPending: {\"type\":\"confirm\",\"message\":\"c12-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb2x73397\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1051,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"confirm\",\"message\":\"c12-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb2x73397\"}\n",
+        "err": "Error: a confirm dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) "
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb2x73397"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 592
+      }
+    },
+    {
+      "t": 2,
+      "case": "c12/eval-dismiss",
+      "n": "cb2x83611",
+      "click": {
+        "code": 0,
+        "ms": 6353,
+        "out": "Clicked #c12\ndialogPending: {\"type\":\"confirm\",\"message\":\"c12-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb2x83611\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1185,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"confirm\",\"message\":\"c12-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb2x83611\"}\n",
+        "err": "Error: a confirm dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) "
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb2x83611"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 499
+      }
+    },
+    {
+      "t": 2,
+      "case": "inf/snap-accept",
+      "n": "cb2x93901",
+      "click": {
+        "code": 0,
+        "ms": 6371,
+        "out": "Clicked #inf\ndialogPending: {\"type\":\"alert\",\"message\":\"inf-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb2x93901\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1070,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"inf-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb2x93901\"}\n",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) — ru"
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb2x93901"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 476
+      }
+    },
+    {
+      "t": 2,
+      "case": "inf/eval-dismiss",
+      "n": "cb2x3903",
+      "click": {
+        "code": 0,
+        "ms": 6352,
+        "out": "Clicked #inf\ndialogPending: {\"type\":\"alert\",\"message\":\"inf-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb2x3903\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 3,
+        "ms": 1067,
+        "killedAtCap": false,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"inf-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb2x3903\"}\n",
+        "err": "Error: a alert dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now recovers by closing the affected tab (GAP-230) — ru"
+      },
+      "handledLines": 0,
+      "ranCommand": false,
+      "reportedAboutBlank": false,
+      "blockedAfter": true,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb2x3903"
+      ],
+      "verdict": "EXIT3-OK",
+      "close": {
+        "code": 0,
+        "ms": 611
+      }
+    },
+    {
+      "t": 2,
+      "case": "infslow/snap-accept",
+      "n": "cb2x13980",
+      "click": {
+        "code": 0,
+        "ms": 6359,
+        "out": "Clicked #infslow\ndialogPending: {\"type\":\"alert\",\"message\":\"slow-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb2x13980\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 0,
+        "ms": 562,
+        "killedAtCap": false,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"slow-0\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:53071/?n=cb2x13980\nTitle: chain cb2x13980\nInteractive elements (5):\n[#1] button \"2\"\n[#2] button \"6\"\n[#3] button \"12\"\n[#4] button \"inf\"\n[#5] button \"infslow\"\n",
+        "err": "Note: dialog policy for this session is now \"accept\".\n"
+      },
+      "handledLines": 1,
+      "ranCommand": true,
+      "reportedAboutBlank": false,
+      "blockedAfter": false,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb2x13980"
+      ],
+      "verdict": "RAN-CLEAN",
+      "close": {
+        "code": 0,
+        "ms": 635
+      }
+    },
+    {
+      "t": 2,
+      "case": "infslow/eval-dismiss",
+      "n": "cb2x22960",
+      "click": {
+        "code": 0,
+        "ms": 6341,
+        "out": "Clicked #infslow\ndialogPending: {\"type\":\"alert\",\"message\":\"slow-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53071/?n=cb2x22960\"}"
+      },
+      "blockedBefore": true,
+      "cmd": {
+        "code": 0,
+        "ms": 584,
+        "killedAtCap": false,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"slow-0\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}\nchain cb2x22960\n",
+        "err": "Note: dialog policy for this session is now \"dismiss\".\n"
+      },
+      "handledLines": 1,
+      "ranCommand": true,
+      "reportedAboutBlank": false,
+      "blockedAfter": false,
+      "urls": [
+        "http://127.0.0.1:53071/?n=cb2x22960"
+      ],
+      "verdict": "RAN-CLEAN",
+      "close": {
+        "code": 0,
+        "ms": 687
+      }
+    }
+  ],
+  "summary": {
+    "c2/snap-accept": {
+      "RAN-CLEAN": 3
+    },
+    "c2/eval-dismiss": {
+      "RAN-CLEAN": 3
+    },
+    "c6/snap-accept": {
+      "EXIT3-OK": 3
+    },
+    "c6/eval-dismiss": {
+      "EXIT3-OK": 3
+    },
+    "c12/snap-accept": {
+      "EXIT3-OK": 3
+    },
+    "c12/eval-dismiss": {
+      "EXIT3-OK": 3
+    },
+    "inf/snap-accept": {
+      "EXIT3-OK": 3
+    },
+    "inf/eval-dismiss": {
+      "EXIT3-OK": 3
+    },
+    "infslow/snap-accept": {
+      "RAN-CLEAN": 3
+    },
+    "infslow/eval-dismiss": {
+      "RAN-CLEAN": 3
+    }
+  },
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

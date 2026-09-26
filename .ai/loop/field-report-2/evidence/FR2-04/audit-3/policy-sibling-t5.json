@@ -1,0 +1,336 @@
+{
+  "at": "2026-09-26T21:08:23.034Z",
+  "rows": [
+    {
+      "t": 0,
+      "cmd": "snap --dialog accept",
+      "n": "ps0x32492",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 3,
+        "ms": 700,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"PS-ps0x32492\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/pop?n=ps0x32492\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/?n=ps0x32492\"}",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run. applying the \"accept\" policy failed: No dialog is open on that tab.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept"
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:65185/?n=ps0x32492",
+        "http://127.0.0.1:65185/pop?n=ps0x32492"
+      ],
+      "verdict": "exit3"
+    },
+    {
+      "t": 0,
+      "cmd": "snap --dialog dismiss",
+      "n": "ps0x36638",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 3,
+        "ms": 698,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"PS-ps0x36638\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/pop?n=ps0x36638\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/?n=ps0x36638\"}",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run. applying the \"dismiss\" policy failed: No dialog is open on that tab.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accep"
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:65185/?n=ps0x36638",
+        "http://127.0.0.1:65185/pop?n=ps0x36638"
+      ],
+      "verdict": "exit3"
+    },
+    {
+      "t": 0,
+      "cmd": "dialog accept",
+      "n": "ps0x40729",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 731,
+        "out": "Accepted alert \"PS-ps0x40729\"\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/?n=ps0x40729\"}",
+        "err": ""
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:65185/?n=ps0x40729",
+        "http://127.0.0.1:65185/pop?n=ps0x40729"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 1,
+      "cmd": "snap --dialog accept",
+      "n": "ps1x44959",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 3,
+        "ms": 698,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"PS-ps1x44959\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/pop?n=ps1x44959\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/?n=ps1x44959\"}",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run. applying the \"accept\" policy failed: No dialog is open on that tab.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept"
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:65185/?n=ps1x44959",
+        "http://127.0.0.1:65185/pop?n=ps1x44959"
+      ],
+      "verdict": "exit3"
+    },
+    {
+      "t": 1,
+      "cmd": "snap --dialog dismiss",
+      "n": "ps1x49311",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 3,
+        "ms": 754,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"PS-ps1x49311\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/pop?n=ps1x49311\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/?n=ps1x49311\"}",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run. applying the \"dismiss\" policy failed: No dialog is open on that tab.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accep"
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:65185/?n=ps1x49311",
+        "http://127.0.0.1:65185/pop?n=ps1x49311"
+      ],
+      "verdict": "exit3"
+    },
+    {
+      "t": 1,
+      "cmd": "dialog accept",
+      "n": "ps1x53467",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 688,
+        "out": "Accepted alert \"PS-ps1x53467\"\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/?n=ps1x53467\"}",
+        "err": ""
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:65185/?n=ps1x53467",
+        "http://127.0.0.1:65185/pop?n=ps1x53467"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 2,
+      "cmd": "snap --dialog accept",
+      "n": "ps2x57512",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 3,
+        "ms": 670,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"PS-ps2x57512\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/pop?n=ps2x57512\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/?n=ps2x57512\"}",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run. applying the \"accept\" policy failed: No dialog is open on that tab.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept"
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:65185/?n=ps2x57512",
+        "http://127.0.0.1:65185/pop?n=ps2x57512"
+      ],
+      "verdict": "exit3"
+    },
+    {
+      "t": 2,
+      "cmd": "snap --dialog dismiss",
+      "n": "ps2x61520",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 3,
+        "ms": 731,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"PS-ps2x61520\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/pop?n=ps2x61520\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/?n=ps2x61520\"}",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run. applying the \"dismiss\" policy failed: No dialog is open on that tab.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accep"
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:65185/?n=ps2x61520",
+        "http://127.0.0.1:65185/pop?n=ps2x61520"
+      ],
+      "verdict": "exit3"
+    },
+    {
+      "t": 2,
+      "cmd": "dialog accept",
+      "n": "ps2x65696",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 747,
+        "out": "Accepted alert \"PS-ps2x65696\"\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/?n=ps2x65696\"}",
+        "err": ""
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:65185/?n=ps2x65696",
+        "http://127.0.0.1:65185/pop?n=ps2x65696"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 3,
+      "cmd": "snap --dialog accept",
+      "n": "ps3x69874",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 3,
+        "ms": 761,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"PS-ps3x69874\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/pop?n=ps3x69874\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/?n=ps3x69874\"}",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run. applying the \"accept\" policy failed: No dialog is open on that tab.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept"
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:65185/?n=ps3x69874",
+        "http://127.0.0.1:65185/pop?n=ps3x69874"
+      ],
+      "verdict": "exit3"
+    },
+    {
+      "t": 3,
+      "cmd": "snap --dialog dismiss",
+      "n": "ps3x74236",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 3,
+        "ms": 724,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"PS-ps3x74236\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/pop?n=ps3x74236\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/?n=ps3x74236\"}",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run. applying the \"dismiss\" policy failed: No dialog is open on that tab.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accep"
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:65185/?n=ps3x74236",
+        "http://127.0.0.1:65185/pop?n=ps3x74236"
+      ],
+      "verdict": "exit3"
+    },
+    {
+      "t": 3,
+      "cmd": "dialog accept",
+      "n": "ps3x78797",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 715,
+        "out": "Accepted alert \"PS-ps3x78797\"\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/?n=ps3x78797\"}",
+        "err": ""
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:65185/?n=ps3x78797",
+        "http://127.0.0.1:65185/pop?n=ps3x78797"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 4,
+      "cmd": "snap --dialog accept",
+      "n": "ps4x82888",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 3,
+        "ms": 710,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"PS-ps4x82888\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/pop?n=ps4x82888\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/?n=ps4x82888\"}",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run. applying the \"accept\" policy failed: No dialog is open on that tab.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept"
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:65185/?n=ps4x82888",
+        "http://127.0.0.1:65185/pop?n=ps4x82888"
+      ],
+      "verdict": "exit3"
+    },
+    {
+      "t": 4,
+      "cmd": "snap --dialog dismiss",
+      "n": "ps4x87178",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 3,
+        "ms": 689,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"PS-ps4x87178\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/pop?n=ps4x87178\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/?n=ps4x87178\"}",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run. applying the \"dismiss\" policy failed: No dialog is open on that tab.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accep"
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:65185/?n=ps4x87178",
+        "http://127.0.0.1:65185/pop?n=ps4x87178"
+      ],
+      "verdict": "exit3"
+    },
+    {
+      "t": 4,
+      "cmd": "dialog accept",
+      "n": "ps4x91289",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 768,
+        "out": "Accepted alert \"PS-ps4x91289\"\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65185/?n=ps4x91289\"}",
+        "err": ""
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:65185/?n=ps4x91289",
+        "http://127.0.0.1:65185/pop?n=ps4x91289"
+      ],
+      "verdict": "OK"
+    }
+  ],
+  "summary": {
+    "snap --dialog accept": {
+      "exit3": 5
+    },
+    "snap --dialog dismiss": {
+      "exit3": 5
+    },
+    "dialog accept": {
+      "OK": 5
+    }
+  },
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

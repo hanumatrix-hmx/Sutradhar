@@ -1,0 +1,42 @@
+KILLED   M1-WD7-bind-0.0.0.0 :: Tests  1 failed | 460 passed (461) :: tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD7: the HTTP server binds to 127.0.0.1 (not 0.0.0.0 or any other interfa
+(node:56580) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+KILLED   M2-WD3-missing-token-accepted :: Tests  1 failed | 460 passed (461) :: tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD3: a missing or wrong token gets 401, and no CDP handle call is made
+KILLED   M3-direct-unknown-reported-busy-only :: Tests  1 failed | 107 passed (108) :: tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > GAP-225: a blocked target with NO hint is reported as an
+M4-WC5-no-spawn-lock SKIP find count 0
+M5-WC6-no-stale-recovery SKIP find count 0
+KILLED   M5b-WC6-age-only-staleness(ignore dead pid) :: Tests  1 failed | 107 passed (108) :: tests/unit/warden-control.spec.ts > @sutradhar/cli warden-control (FR2-04 Branch W) > WC6 (GAP-223): a stale lock (dead pid) from a crashed spawner is recovered
+KILLED   M6a-SD1-createTab-no-policy :: Tests  2 failed | 459 passed (461) :: tests/unit/session.spec.ts > @sutradhar/browser BrowserSession dialog policy propagation (FR2-04 fix-1, GAP-225 S-D1/S-D2) > S-D1: createTab, adoptExistingPage, | tests/unit/session.spec.ts > @sutradhar/browser BrowserSession dialog policy propagation (FR2-04 fix-1, GAP-225 S-D1/S-D2) > S-D2: setDialogPolicy updates exist
+KILLED   M6b-SD1-popup-no-policy :: Tests  1 failed | 460 passed (461) :: tests/unit/session.spec.ts > @sutradhar/browser BrowserSession dialog policy propagation (FR2-04 fix-1, GAP-225 S-D1/S-D2) > S-D1: createTab, adoptExistingPage,
+KILLED   M6c-SD1-adopt-no-policy :: Tests  1 failed | 460 passed (461) :: tests/unit/session.spec.ts > @sutradhar/browser BrowserSession dialog policy propagation (FR2-04 fix-1, GAP-225 S-D1/S-D2) > S-D1: createTab, adoptExistingPage,
+KILLED   M7-SD2-setDialogPolicy-no-propagation :: Tests  1 failed | 460 passed (461) :: tests/unit/session.spec.ts > @sutradhar/browser BrowserSession dialog policy propagation (FR2-04 fix-1, GAP-225 S-D1/S-D2) > S-D2: setDialogPolicy updates exist
+KILLED   M8-GAP221-gate-no-default-fallback :: Tests  1 failed | 107 passed (108) :: tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > GAP-221/D-9: accepting an orphaned prompt with
+KILLED   M9-GAP223-warden-ignores-dialogId(409) :: Tests  1 failed | 460 passed (461) :: tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > M9 (GAP-223 409 path): POST /v1/dialogs/handle with a dialogId that no lo
+KILLED   M10-GAP223-policy-identity-check-removed :: Tests  1 failed | 460 passed (461) :: tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > M10 (GAP-223 second identity check): if the target's dialog changes WHILE
+KILLED   M10b-GAP223-both-identity-checks-removed :: Tests  1 failed | 460 passed (461) :: tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > M10b (GAP-223 first identity check): a confirm whose grace timer fires AF
+M11-GAP220-never-probe SKIP find count 0
+M12-GAP220-probe-everything SKIP find count 0
+SURVIVED M13-GAP220-bootstrap-skips-blank :: Tests  461 passed (461) :: 
+KILLED   M14-GAP222-no-lazy-connect :: Tests  2 failed | 106 passed (108) :: tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > GAP-222: handle() works even when list() was never calle | tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > handle() still throws a clear error when the browser is
+KILLED   M15-gate-dispose-skipped :: Tests  7 failed | 101 passed (108) :: tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > clear path (no dialogs): dispose called exactl | tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > handled path (accept policy resolves a pending
+KILLED   M16-warden-never-releases-own-attach :: Tests  1 failed | 460 passed (461) :: tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > M16 (self-release of a fresh paused attach): track() always sends Runtime
+KILLED   M17-liveness-probe-budget-10s :: Tests  1 failed | 460 passed (461) :: tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > M17 (liveness probe time budget is actually bounded): LIVENESS_PROBE_MS s
+KILLED   M18-probe-signal-back-to-Runtime.evaluate :: Tests  4 failed | 457 passed (461) :: tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B2: livenessProbe > resolves -> responsive | tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD9 (GAP-220/228 defensive layer): a target whose Page.enable NEVER acked
+KILLED   M19-regate-single-round :: Tests  1 failed | 107 passed (108) :: tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > GAP-229: a chained second dialog (e.g. alert->
+KILLED   M20-no-final-fail-closed :: Tests  1 failed | 107 passed (108) :: tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > GAP-229: a dialog chain that never stops openi
+KILLED   M20b-regate-loop-returns-after-first-handle :: Tests  2 failed | 106 passed (108) :: tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > GAP-229: a chained second dialog (e.g. alert-> | tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > GAP-229: a dialog chain that never stops openi
+node:internal/fs/promises:641
+  return new FileHandle(await PromisePrototypeThen(
+                        ^
+
+Error: UNKNOWN: unknown error, open 'E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\cli\src\dialog-broker.ts'
+    at async open (node:internal/fs/promises:641:25)
+    at async Object.writeFile (node:internal/fs/promises:1249:14)
+    at async file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-04/audit-3/mutations.mjs:79:5 {
+  errno: -4094,
+  code: 'UNKNOWN',
+  syscall: 'open',
+  path: 'E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\cli\\src\\dialog-broker.ts'
+}
+
+Node.js v25.0.0
