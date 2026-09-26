@@ -1,0 +1,166 @@
+{
+  "at": "2026-09-26T12:01:00.028Z",
+  "before": {
+    "chrome": 0,
+    "wardens": 0
+  },
+  "checks": [
+    {
+      "probe": "l15_selfheal",
+      "name": "setup-accept-persisted",
+      "pass": true
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "old-warden-exited-on-chrome-death",
+      "pass": true,
+      "detail": {
+        "pid": 92360
+      }
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "snap-exit0",
+      "pass": true,
+      "detail": {
+        "args": "snap",
+        "code": 0,
+        "ms": 3946,
+        "killedAtCap": false,
+        "stdout": "URL: chrome://new-tab-page/\nTitle: New tab\nInteractive elements (16):\n[#1] input \"Search Google or type a URL\" role=combobox placeholder=\"Search Google or type a URL\" (shadow: ntp-app > … > cr-searchbox-input#input)\n[#2] button (shadow: ntp-app > ntp-searchbox#searchbox)\n[#3] button (shadow: ntp-app > ntp-searchbox#searchbox)\n[#10] a \"Web Store\" (shadow: ntp-app > cr-most-visited#mostVisited)\n[#12] div role=clickable (shadow: ntp-app > … > cr-icon-button#actionMenuButton)\n[#18] cr-button \"Add shortcut\" role=button (shadow: ntp-app > cr-most-visited#mostVisited)\n[#19] div role=clickable (shadow: ntp-app > … > cr-button#addShortcut)\n[#21] span role=clickable (shadow: ntp-app > … > cr-button#addShortcut)\n[#60] div \"Web Store\" role=clickable (shadow: ntp-app > cr-most-visited#mostVisited)\n[#74] cr-button \"Customise Chrome\" role=button (shadow: ntp-app > ntp-customize-buttons#customizeButtons)\n[#75] div role=clickable (shadow: ntp-app > … > cr-button#customizeButton)\n[#77] span role=clickable (shadow: ntp-app > … > cr-button#customizeButton)\n[#80] svg role=clickable (shadow: ntp-app > … > cr-icon.customize-icon)\n[#86 in iframe 2 (null/one-google-bar)] a \"Gmail\"\n[#87 in iframe 2] a \"Search for images\"\n[#88 in iframe 2] a \"Google apps\" role=button\n",
+        "stderr": "Note: previous session was unreachable (connect ECONNREFUSED 127.0.0.1:53338) — starting a fresh session.\n"
+      }
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "stderr-note-line",
+      "pass": true,
+      "detail": "Note: previous session was unreachable (connect ECONNREFUSED 127.0.0.1:53338) — starting a fresh session.\n"
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "new-chromePid",
+      "pass": true,
+      "detail": {
+        "old": 184004,
+        "new": 44368
+      }
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "policy-carried-accept",
+      "pass": true,
+      "detail": {
+        "action": "accept",
+        "setAt": "2026-09-26T12:00:45.087Z"
+      }
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "new-warden-for-new-endpoint",
+      "pass": true,
+      "detail": {
+        "v": 1,
+        "pid": 136268,
+        "port": 52140,
+        "token": "4bb4d994bc88fcd7bc4ee8142ee9122298e78942256614dd58ff50fec3d7be4d",
+        "wsEndpoint": "ws://127.0.0.1:54846/devtools/browser/d63e35dd-70f8-4dec-9732-78cdb1c170f1",
+        "startedAt": "2026-09-26T12:00:49.658Z"
+      }
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "exactly-one-warden-for-dir",
+      "pass": true,
+      "detail": [
+        {
+          "pid": 136268,
+          "stateFile": "E:\\AI-Cache\\tmp\\fr2-04-audit-H2vMfx\\state-l15_selfheal\\state.json",
+          "wsEndpoint": "ws://127.0.0.1:54846/devtools/browser/d63e35dd-70f8-4dec-9732-78cdb1c170f1"
+        }
+      ]
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "carried-accept-applied-by-warden-between-commands",
+      "pass": true,
+      "detail": [
+        {
+          "kind": "confirm",
+          "phase": "opening",
+          "timer": true,
+          "seq": 1,
+          "t": 1790424055442
+        },
+        {
+          "kind": "confirm",
+          "phase": "returned",
+          "timer": true,
+          "result": true,
+          "seq": 2,
+          "t": 1790424055755
+        }
+      ]
+    },
+    {
+      "probe": "cleanup",
+      "name": "no-leftover-wardens-before-forced-kill",
+      "pass": true,
+      "detail": {
+        "wardens": [],
+        "chrome": []
+      }
+    },
+    {
+      "probe": "cleanup",
+      "name": "no-leftover-chrome-before-forced-kill",
+      "pass": true,
+      "detail": {
+        "wardens": [],
+        "chrome": []
+      }
+    },
+    {
+      "probe": "observer",
+      "name": "no-guard-violations",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "results": {
+    "l15_selfheal": [
+      {
+        "args": "nav http://127.0.0.1:58878/fx.html?n=l15-1790424044475-m6ls --dialog accept",
+        "code": 0,
+        "ms": 1064,
+        "killedAtCap": false,
+        "stdout": "Navigated to http://127.0.0.1:58878/fx.html?n=l15-1790424044475-m6ls\nTitle: fr2-04 l15-1790424044475-m6ls\n",
+        "stderr": ""
+      },
+      {
+        "args": "snap",
+        "code": 0,
+        "ms": 3946,
+        "killedAtCap": false,
+        "stdout": "URL: chrome://new-tab-page/\nTitle: New tab\nInteractive elements (16):\n[#1] input \"Search Google or type a URL\" role=combobox placeholder=\"Search Google or type a URL\" (shadow: ntp-app > … > cr-searchbox-input#input)\n[#2] button (shadow: ntp-app > ntp-searchbox#searchbox)\n[#3] button (shadow: ntp-app > ntp-searchbox#searchbox)\n[#10] a \"Web Store\" (shadow: ntp-app > cr-most-visited#mostVisited)\n[#12] div role=clickable (shadow: ntp-app > … > cr-icon-button#actionMenuButton)\n[#18] cr-button \"Add shortcut\" role=button (shadow: ntp-app > cr-most-visited#mostVisited)\n[#19] div role=clickable (shadow: ntp-app > … > cr-button#addShortcut)\n[#21] span role=clickable (shadow: ntp-app > … > cr-button#addShortcut)\n[#60] div \"Web Store\" role=clickable (shadow: ntp-app > cr-most-visited#mostVisited)\n[#74] cr-button \"Customise Chrome\" role=button (shadow: ntp-app > ntp-customize-buttons#customizeButtons)\n[#75] div role=clickable (shadow: ntp-app > … > cr-button#customizeButton)\n[#77] span role=clickable (shadow: ntp-app > … > cr-button#customizeButton)\n[#80] svg role=clickable (shadow: ntp-app > … > cr-icon.customize-icon)\n[#86 in iframe 2 (null/one-google-bar)] a \"Gmail\"\n[#87 in iframe 2] a \"Search for images\"\n[#88 in iframe 2] a \"Google apps\" role=button\n",
+        "stderr": "Note: previous session was unreachable (connect ECONNREFUSED 127.0.0.1:53338) — starting a fresh session.\n"
+      },
+      {
+        "args": "nav http://127.0.0.1:58878/fx.html?n=l15-1790424044475-m6ls-2&timerKind=confirm&timerMs=1500",
+        "code": 0,
+        "ms": 388,
+        "killedAtCap": false,
+        "stdout": "Navigated to http://127.0.0.1:58878/fx.html?n=l15-1790424044475-m6ls-2&timerKind=confirm&timerMs=1500\nTitle: fr2-04 l15-1790424044475-m6ls-2\n",
+        "stderr": ""
+      },
+      {
+        "args": "close",
+        "code": 0,
+        "ms": 516,
+        "killedAtCap": false,
+        "stdout": "Session closed.\n",
+        "stderr": ""
+      }
+    ]
+  }
+}

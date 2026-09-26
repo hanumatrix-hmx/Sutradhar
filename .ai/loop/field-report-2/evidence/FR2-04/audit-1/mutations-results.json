@@ -1,0 +1,164 @@
+[
+  {
+    "id": "M1-B6-dispose-once",
+    "file": "packages/cli/src/dialog-broker.ts",
+    "spec": "tests/unit/dialog-broker.spec.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "6 failed (6)",
+    "failedNames": [
+      "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > clear path (no dialogs): dispose called exactly once",
+      "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > handled path (accept policy resolves a pending dialog): dispose called exactly once",
+      "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > blocked path (report policy, command mode throws DialogBlockedError): dispose still called exactly once",
+      "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > blocked path (close mode returns {status:\"blocked\"} instead of throwing): dispose called exactly once",
+      "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > throw path (list() itself throws): dispose still called exactly once, and the original error propagates",
+      "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > a failed policy handle (accept/dismiss) in command mode: dispose still called exactly once"
+    ],
+    "restored": true
+  },
+  {
+    "id": "M1b-B6-dispose-twice",
+    "file": "packages/cli/src/dialog-broker.ts",
+    "spec": "tests/unit/dialog-broker.spec.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "6 failed (6)",
+    "failedNames": [
+      "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > clear path (no dialogs): dispose called exactly once",
+      "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > handled path (accept policy resolves a pending dialog): dispose called exactly once",
+      "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > blocked path (report policy, command mode throws DialogBlockedError): dispose still called exactly once",
+      "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > blocked path (close mode returns {status:\"blocked\"} instead of throwing): dispose called exactly once",
+      "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > throw path (list() itself throws): dispose still called exactly once, and the original error propagates",
+      "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > a failed policy handle (accept/dismiss) in command mode: dispose still called exactly once"
+    ],
+    "restored": true
+  },
+  {
+    "id": "M2-DC2-report-not-persisted",
+    "file": "packages/cli/src/dialog-cli.ts",
+    "spec": "tests/unit/dialog-cli.spec.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "1 failed | 17 passed (18)",
+    "failedNames": [
+      "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D1: resolveDialogPolicy precedence (flag > state > report) > D10 (corrected): --dialog report PERSISTS (persist:\"set\"), it does not clear the policy"
+    ],
+    "restored": true
+  },
+  {
+    "id": "M3-GAP006-fn-inside-selfheal-try",
+    "file": "packages/cli/src/session-flow.ts",
+    "spec": "tests/unit/session-flow.spec.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "1 failed | 4 passed (5)",
+    "failedNames": [
+      "tests/unit/session-flow.spec.ts > @sutradhar/cli withSessionFlow (FR2-04, GAP-006) > W3: fn() throwing never triggers selfHeal (GAP-006) — the error propagates, reattach ran once"
+    ],
+    "restored": true
+  },
+  {
+    "id": "M4-warden-no-exit-on-disconnect",
+    "file": "packages/browser/src/session/dialog-warden.ts",
+    "spec": "tests/unit/dialog-warden.spec.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "1 failed | 7 passed (8)",
+    "failedNames": [
+      "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD5 (R-D): browser \"disconnected\" makes the warden exit and stop serving"
+    ],
+    "restored": true
+  },
+  {
+    "id": "M4b-warden-no-exit-on-state-change",
+    "file": "packages/browser/src/session/dialog-warden.ts",
+    "spec": "tests/unit/dialog-warden.spec.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "1 failed | 7 passed (8)",
+    "failedNames": [
+      "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD6 (R-D): isStillCurrent() returning false exits the warden within ~2 poll intervals"
+    ],
+    "restored": true
+  },
+  {
+    "id": "M5-auto-mode-timer-changed(T1 MCP guard)",
+    "file": "packages/browser/src/session/browser-tab.ts",
+    "spec": "tests/unit/browser-tab-observability.spec.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "1 failed | 30 passed (31)",
+    "failedNames": [
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab dialog policy (FR2-04) > T1: no policy argument (auto) — 30s dismiss for confirm, 3s accept for beforeunload — unchanged MCP/SDK behavior"
+    ],
+    "restored": true
+  },
+  {
+    "id": "A1-token-check-accepts-missing-header",
+    "file": "packages/browser/src/session/dialog-warden.ts",
+    "spec": "tests/unit/dialog-warden.spec.ts",
+    "exit": 0,
+    "caught": false,
+    "tests": "8 passed (8)",
+    "failedNames": [],
+    "restored": true
+  },
+  {
+    "id": "A2-token-check-prefix-only",
+    "file": "packages/browser/src/session/dialog-warden.ts",
+    "spec": "tests/unit/dialog-warden.spec.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "1 failed | 7 passed (8)",
+    "failedNames": [
+      "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD3: a missing or wrong token gets 401, and no CDP handle call is made"
+    ],
+    "restored": true
+  },
+  {
+    "id": "A3-DirectCdpBroker-unknown-no-longer-blocks",
+    "file": "packages/cli/src/dialog-broker.ts",
+    "spec": "tests/unit",
+    "exit": 0,
+    "caught": false,
+    "tests": "95 passed (95)",
+    "failedNames": [],
+    "restored": true
+  },
+  {
+    "id": "A4-warden-binds-all-interfaces",
+    "file": "packages/browser/src/session/dialog-warden.ts",
+    "spec": "tests/unit/dialog-warden.spec.ts",
+    "exit": 0,
+    "caught": false,
+    "tests": "8 passed (8)",
+    "failedNames": [],
+    "restored": true
+  },
+  {
+    "id": "A5-gate-unknown-status-falls-to-clear-vs-block",
+    "file": "packages/cli/src/dialog-broker.ts",
+    "spec": "tests/unit",
+    "exit": 0,
+    "caught": false,
+    "tests": "95 passed (95)",
+    "failedNames": [],
+    "restored": true
+  },
+  {
+    "id": "A6-warden-closed-event-ignored",
+    "file": "packages/browser/src/session/dialog-warden.ts",
+    "spec": "tests/unit/dialog-warden.spec.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "1 failed | 7 passed (8)",
+    "failedNames": [
+      "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD1: an opening event makes GET /v1/dialogs return 1 entry; a closed event then gives 0"
+    ],
+    "restored": true
+  },
+  {
+    "id": "A7-stopWarden-in-close-removed(no unit guard expected)",
+    "error": "pattern matched 0 times"
+  }
+]

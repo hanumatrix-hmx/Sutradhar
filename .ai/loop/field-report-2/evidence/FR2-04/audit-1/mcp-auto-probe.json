@@ -1,0 +1,122 @@
+{
+  "at": "2026-09-26T11:53:12.419Z",
+  "checks": [
+    {
+      "n": "launched",
+      "p": true,
+      "d": {
+        "ms": 245,
+        "isError": false,
+        "body": {
+          "sessionId": "sess_1790423559037_1",
+          "activeTabId": "tab_sess_1790423559037_1_1",
+          "hasRealBrowser": true
+        }
+      }
+    },
+    {
+      "n": "pending-visible",
+      "p": true,
+      "d": {
+        "dialog": {
+          "dialogType": "confirm",
+          "message": "mcp-probe-1"
+        }
+      }
+    },
+    {
+      "n": "auto-dismiss-after-30s (eval resolves false, 29-36s)",
+      "p": true,
+      "d": {
+        "ms": 30010,
+        "body": {
+          "result": false
+        }
+      }
+    },
+    {
+      "n": "pending-cleared-after-auto-dismiss",
+      "p": true,
+      "d": {
+        "dialog": null
+      }
+    },
+    {
+      "n": "caller-handle-prompt-zz",
+      "p": true,
+      "d": {
+        "h": {
+          "success": true
+        },
+        "ev2": {
+          "ms": 1517,
+          "isError": false,
+          "body": {
+            "result": "zz"
+          }
+        }
+      }
+    },
+    {
+      "n": "handle-nothing-pending-errors",
+      "p": true,
+      "d": "handle_dialog failed: Tab tab_sess_1790423559037_1_1 has no pending dialog to handle."
+    }
+  ],
+  "out": {
+    "toolCount": 71,
+    "launch": {
+      "ms": 245,
+      "isError": false,
+      "body": {
+        "sessionId": "sess_1790423559037_1",
+        "activeTabId": "tab_sess_1790423559037_1_1",
+        "hasRealBrowser": true
+      }
+    },
+    "pending1": {
+      "ms": 1,
+      "isError": false,
+      "body": {
+        "dialog": {
+          "dialogType": "confirm",
+          "message": "mcp-probe-1"
+        }
+      }
+    },
+    "eval1": {
+      "ms": 30010,
+      "isError": false,
+      "body": {
+        "result": false
+      }
+    },
+    "pending3": {
+      "dialog": {
+        "dialogType": "prompt",
+        "message": "mcp-probe-2",
+        "defaultValue": "dv"
+      }
+    },
+    "handle": {
+      "ms": 2,
+      "isError": false,
+      "body": {
+        "success": true
+      }
+    },
+    "eval2": {
+      "ms": 1517,
+      "isError": false,
+      "body": {
+        "result": "zz"
+      }
+    },
+    "handleNone": {
+      "ms": 1,
+      "isError": true,
+      "body": "handle_dialog failed: Tab tab_sess_1790423559037_1_1 has no pending dialog to handle."
+    }
+  },
+  "stderrTail": ""
+}

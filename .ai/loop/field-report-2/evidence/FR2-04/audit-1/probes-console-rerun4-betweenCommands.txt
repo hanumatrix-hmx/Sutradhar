@@ -1,0 +1,18 @@
+--- betweenCommands_newTargets
+[PASS] betweenCommands_newTargets.#popup-delay-dialog-opened-between-commands
+[FAIL] betweenCommands_newTargets.#popup-delay-snap-exit3-fast {"code":0,"ms":180432,"out":"URL: about:blank\nTitle: \nInteractive elements (0):\n\n","err":""}
+[FAIL] betweenCommands_newTargets.#popup-delay-snap-names-onload-alert "URL: about:blank\nTitle: \nInteractive elements (0):\n\n"
+[FAIL] betweenCommands_newTargets.#popup-delay-no-new-blank-tab-no-heal ["http://127.0.0.1:62194/audit.html?n=bc-1790424475265-zabs","http://127.0.0.1:62194/fx.html?n=bc-1790424475265-zabs-pop&onloadAlert=1","about:blank"]
+[FAIL] betweenCommands_newTargets.#popup-delay-dialog-accept {"args":"dialog accept","code":1,"ms":284,"killedAtCap":false,"stdout":"","stderr":"Error: no dialog is open to accept.\n"}
+[PASS] betweenCommands_newTargets.#xnav-delay-dialog-opened-between-commands
+[PASS] betweenCommands_newTargets.#xnav-delay-snap-exit3-fast
+[PASS] betweenCommands_newTargets.#xnav-delay-snap-names-onload-alert
+[PASS] betweenCommands_newTargets.#xnav-delay-no-new-blank-tab-no-heal
+[PASS] betweenCommands_newTargets.#xnav-delay-dialog-accept
+[FAIL] betweenCommands_newTargets.xframe-click-reports-oopif-dialog "Clicked #xframe\n"
+[PASS] betweenCommands_newTargets.xframe-next-snap-honest(exit3 or clean exit0), fast, no heal/blank
+[PASS] cleanup.no-leftover-wardens-before-forced-kill
+[PASS] cleanup.no-leftover-chrome-before-forced-kill
+[PASS] observer.no-guard-violations
+
+10/15 pass; failed: betweenCommands_newTargets.#popup-delay-snap-exit3-fast, betweenCommands_newTargets.#popup-delay-snap-names-onload-alert, betweenCommands_newTargets.#popup-delay-no-new-blank-tab-no-heal, betweenCommands_newTargets.#popup-delay-dialog-accept, betweenCommands_newTargets.xframe-click-reports-oopif-dialog

@@ -1,0 +1,319 @@
+{
+  "at": "2026-09-26T12:11:18.787Z",
+  "before": {
+    "chrome": 0,
+    "wardens": 0
+  },
+  "checks": [
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#popup-delay-dialog-opened-between-commands",
+      "pass": true,
+      "detail": {
+        "found": true,
+        "urls": [
+          "http://127.0.0.1:62194/audit.html?n=bc-1790424475265-zabs",
+          "http://127.0.0.1:62194/fx.html?n=bc-1790424475265-zabs-pop&onloadAlert=1"
+        ]
+      }
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#popup-delay-snap-exit3-fast",
+      "pass": false,
+      "detail": {
+        "code": 0,
+        "ms": 180432,
+        "out": "URL: about:blank\nTitle: \nInteractive elements (0):\n\n",
+        "err": ""
+      }
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#popup-delay-snap-names-onload-alert",
+      "pass": false,
+      "detail": "URL: about:blank\nTitle: \nInteractive elements (0):\n\n"
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#popup-delay-no-new-blank-tab-no-heal",
+      "pass": false,
+      "detail": [
+        "http://127.0.0.1:62194/audit.html?n=bc-1790424475265-zabs",
+        "http://127.0.0.1:62194/fx.html?n=bc-1790424475265-zabs-pop&onloadAlert=1",
+        "about:blank"
+      ]
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#popup-delay-dialog-accept",
+      "pass": false,
+      "detail": {
+        "args": "dialog accept",
+        "code": 1,
+        "ms": 284,
+        "killedAtCap": false,
+        "stdout": "",
+        "stderr": "Error: no dialog is open to accept.\n"
+      }
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#xnav-delay-dialog-opened-between-commands",
+      "pass": true,
+      "detail": {
+        "found": true,
+        "urls": [
+          "http://localhost:62194/fx.html?n=bc-1790424661128-64ga-x&onloadAlert=1"
+        ]
+      }
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#xnav-delay-snap-exit3-fast",
+      "pass": true,
+      "detail": {
+        "code": 3,
+        "ms": 269,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 onload bc-1790424661128-64ga-x\",\"defaultValue\":null,\"url\":\"http://localhost:62194/fx.html?n=bc-1790424661128-64ga-x&onloadAlert=1\"}\n",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      }
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#xnav-delay-snap-names-onload-alert",
+      "pass": true,
+      "detail": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 onload bc-1790424661128-64ga-x\",\"defaultValue\":null,\"url\":\"http://localhost:62194/fx.html?n=bc-1790424661128-64ga-x&onloadAlert=1\"}\n"
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#xnav-delay-no-new-blank-tab-no-heal",
+      "pass": true,
+      "detail": [
+        "http://localhost:62194/fx.html?n=bc-1790424661128-64ga-x&onloadAlert=1"
+      ]
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#xnav-delay-dialog-accept",
+      "pass": true,
+      "detail": {
+        "args": "dialog accept",
+        "code": 0,
+        "ms": 719,
+        "killedAtCap": false,
+        "stdout": "Accepted alert \"fr2-04 onload bc-1790424661128-64ga-x\"\n",
+        "stderr": ""
+      }
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "xframe-click-reports-oopif-dialog",
+      "pass": false,
+      "detail": "Clicked #xframe\n"
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "xframe-next-snap-honest(exit3 or clean exit0), fast, no heal/blank",
+      "pass": true,
+      "detail": {
+        "code": 3,
+        "ms": 266
+      }
+    },
+    {
+      "probe": "cleanup",
+      "name": "no-leftover-wardens-before-forced-kill",
+      "pass": true,
+      "detail": {
+        "wardens": [],
+        "chrome": []
+      }
+    },
+    {
+      "probe": "cleanup",
+      "name": "no-leftover-chrome-before-forced-kill",
+      "pass": true,
+      "detail": {
+        "wardens": [],
+        "chrome": []
+      }
+    },
+    {
+      "probe": "observer",
+      "name": "no-guard-violations",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "results": {
+    "betweenCommands_newTargets#popup-delay_snap": {
+      "code": 0,
+      "ms": 180432,
+      "stdout": "URL: about:blank\nTitle: \nInteractive elements (0):\n\n",
+      "stderr": "",
+      "urlsBefore": [
+        "http://127.0.0.1:62194/audit.html?n=bc-1790424475265-zabs",
+        "http://127.0.0.1:62194/fx.html?n=bc-1790424475265-zabs-pop&onloadAlert=1"
+      ],
+      "urlsAfter": [
+        "http://127.0.0.1:62194/audit.html?n=bc-1790424475265-zabs",
+        "http://127.0.0.1:62194/fx.html?n=bc-1790424475265-zabs-pop&onloadAlert=1",
+        "about:blank"
+      ]
+    },
+    "betweenCommands_newTargets#popup-delay": [
+      {
+        "args": "nav http://127.0.0.1:62194/audit.html?n=bc-1790424475265-zabs",
+        "code": 0,
+        "ms": 1039,
+        "killedAtCap": false,
+        "stdout": "Navigated to http://127.0.0.1:62194/audit.html?n=bc-1790424475265-zabs\nTitle: audit bc-1790424475265-zabs\n",
+        "stderr": ""
+      },
+      {
+        "args": "click #popup-delay",
+        "code": 0,
+        "ms": 3399,
+        "killedAtCap": false,
+        "stdout": "Clicked #popup-delay\n",
+        "stderr": ""
+      },
+      {
+        "args": "snap",
+        "code": 0,
+        "ms": 180432,
+        "killedAtCap": false,
+        "stdout": "URL: about:blank\nTitle: \nInteractive elements (0):\n\n",
+        "stderr": ""
+      },
+      {
+        "args": "dialog accept",
+        "code": 1,
+        "ms": 284,
+        "killedAtCap": false,
+        "stdout": "",
+        "stderr": "Error: no dialog is open to accept.\n"
+      },
+      {
+        "args": "close",
+        "code": 0,
+        "ms": 486,
+        "killedAtCap": false,
+        "stdout": "Session closed.\n",
+        "stderr": ""
+      }
+    ],
+    "betweenCommands_newTargets#xnav-delay_snap": {
+      "code": 3,
+      "ms": 269,
+      "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 onload bc-1790424661128-64ga-x\",\"defaultValue\":null,\"url\":\"http://localhost:62194/fx.html?n=bc-1790424661128-64ga-x&onloadAlert=1\"}\n",
+      "stderr": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n",
+      "urlsBefore": [
+        "http://localhost:62194/fx.html?n=bc-1790424661128-64ga-x&onloadAlert=1"
+      ],
+      "urlsAfter": [
+        "http://localhost:62194/fx.html?n=bc-1790424661128-64ga-x&onloadAlert=1"
+      ]
+    },
+    "betweenCommands_newTargets#xnav-delay": [
+      {
+        "args": "nav http://127.0.0.1:62194/audit.html?n=bc-1790424661128-64ga",
+        "code": 0,
+        "ms": 1019,
+        "killedAtCap": false,
+        "stdout": "Navigated to http://127.0.0.1:62194/audit.html?n=bc-1790424661128-64ga\nTitle: audit bc-1790424661128-64ga\n",
+        "stderr": ""
+      },
+      {
+        "args": "click #xnav-delay",
+        "code": 0,
+        "ms": 3346,
+        "killedAtCap": false,
+        "stdout": "Clicked #xnav-delay\n",
+        "stderr": ""
+      },
+      {
+        "args": "snap",
+        "code": 3,
+        "ms": 269,
+        "killedAtCap": false,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 onload bc-1790424661128-64ga-x\",\"defaultValue\":null,\"url\":\"http://localhost:62194/fx.html?n=bc-1790424661128-64ga-x&onloadAlert=1\"}\n",
+        "stderr": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      },
+      {
+        "args": "dialog accept",
+        "code": 0,
+        "ms": 719,
+        "killedAtCap": false,
+        "stdout": "Accepted alert \"fr2-04 onload bc-1790424661128-64ga-x\"\n",
+        "stderr": ""
+      },
+      {
+        "args": "close",
+        "code": 0,
+        "ms": 497,
+        "killedAtCap": false,
+        "stdout": "Session closed.\n",
+        "stderr": ""
+      }
+    ],
+    "betweenCommands_newTargets_xframe_click": {
+      "code": 0,
+      "ms": 3347,
+      "stdout": "Clicked #xframe\n",
+      "stderr": ""
+    },
+    "betweenCommands_newTargets_xframe_snap": {
+      "code": 3,
+      "ms": 266,
+      "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 onload xf-1790424667194-wqt7-f\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62194/audit.html?n=xf-1790424667194-wqt7\"}\n",
+      "stderr": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n",
+      "urls": [
+        "http://127.0.0.1:62194/audit.html?n=xf-1790424667194-wqt7"
+      ]
+    },
+    "betweenCommands_newTargets_xframe": [
+      {
+        "args": "nav http://127.0.0.1:62194/audit.html?n=xf-1790424667194-wqt7",
+        "code": 0,
+        "ms": 1041,
+        "killedAtCap": false,
+        "stdout": "Navigated to http://127.0.0.1:62194/audit.html?n=xf-1790424667194-wqt7\nTitle: audit xf-1790424667194-wqt7\n",
+        "stderr": ""
+      },
+      {
+        "args": "click #xframe",
+        "code": 0,
+        "ms": 3347,
+        "killedAtCap": false,
+        "stdout": "Clicked #xframe\n",
+        "stderr": ""
+      },
+      {
+        "args": "snap",
+        "code": 3,
+        "ms": 266,
+        "killedAtCap": false,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 onload xf-1790424667194-wqt7-f\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62194/audit.html?n=xf-1790424667194-wqt7\"}\n",
+        "stderr": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      },
+      {
+        "args": "dialog accept",
+        "code": 0,
+        "ms": 712,
+        "killedAtCap": false,
+        "stdout": "Accepted alert \"fr2-04 onload xf-1790424667194-wqt7-f\"\n",
+        "stderr": ""
+      },
+      {
+        "args": "close",
+        "code": 0,
+        "ms": 464,
+        "killedAtCap": false,
+        "stdout": "Session closed.\n",
+        "stderr": ""
+      }
+    ]
+  }
+}

@@ -1,0 +1,1979 @@
+{
+  "at": "2026-09-26T11:58:56.714Z",
+  "before": {
+    "chrome": 0,
+    "wardens": 0
+  },
+  "checks": [
+    {
+      "probe": "gap017_wardenUp",
+      "name": "click-exit0-pending",
+      "pass": true,
+      "detail": {
+        "args": "click #confirm",
+        "code": 0,
+        "ms": 6464,
+        "killedAtCap": false,
+        "stdout": "Clicked #confirm\ndialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm g1-1790423481551-r5ml\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\"}\n",
+        "stderr": "Hint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      }
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "observer-blocked",
+      "pass": true
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "snap-exit3",
+      "pass": true,
+      "detail": {
+        "code": 3,
+        "ms": 388,
+        "out": "dialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm g1-1790423481551-r5ml\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\"}\n",
+        "err": "Error: a confirm dialog is open and blocking the page, so \"snap\" did not run.\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      }
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "snap-no-selfheal-same-chrome",
+      "pass": true
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "snap-no-new-tab",
+      "pass": true,
+      "detail": [
+        "http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml"
+      ]
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "tabs-exit3",
+      "pass": true,
+      "detail": {
+        "code": 3,
+        "ms": 281,
+        "out": "dialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm g1-1790423481551-r5ml\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\"}\n",
+        "err": "Error: a confirm dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      }
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "tabs-no-selfheal-same-chrome",
+      "pass": true
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "tabs-no-new-tab",
+      "pass": true,
+      "detail": [
+        "http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml"
+      ]
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "eval-exit3",
+      "pass": true,
+      "detail": {
+        "code": 3,
+        "ms": 280,
+        "out": "dialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm g1-1790423481551-r5ml\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\"}\n",
+        "err": "Error: a confirm dialog is open and blocking the page, so \"eval\" did not run.\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      }
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "eval-no-selfheal-same-chrome",
+      "pass": true
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "eval-no-new-tab",
+      "pass": true,
+      "detail": [
+        "http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml"
+      ]
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "text-exit3",
+      "pass": true,
+      "detail": {
+        "code": 3,
+        "ms": 284,
+        "out": "dialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm g1-1790423481551-r5ml\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\"}\n",
+        "err": "Error: a confirm dialog is open and blocking the page, so \"text\" did not run.\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      }
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "text-no-selfheal-same-chrome",
+      "pass": true
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "text-no-new-tab",
+      "pass": true,
+      "detail": [
+        "http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml"
+      ]
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "nav-exit3",
+      "pass": true,
+      "detail": {
+        "code": 3,
+        "ms": 280,
+        "out": "dialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm g1-1790423481551-r5ml\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\"}\n",
+        "err": "Error: a confirm dialog is open and blocking the page, so \"nav\" did not run.\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      }
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "nav-no-selfheal-same-chrome",
+      "pass": true
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "nav-no-new-tab",
+      "pass": true,
+      "detail": [
+        "http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml"
+      ]
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "click-exit3",
+      "pass": true,
+      "detail": {
+        "code": 3,
+        "ms": 368,
+        "out": "dialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm g1-1790423481551-r5ml\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\"}\n",
+        "err": "Error: a confirm dialog is open and blocking the page, so \"click\" did not run.\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      }
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "click-no-selfheal-same-chrome",
+      "pass": true
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "click-no-new-tab",
+      "pass": true,
+      "detail": [
+        "http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml"
+      ]
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "dismiss",
+      "pass": true,
+      "detail": {
+        "args": "dialog dismiss",
+        "code": 0,
+        "ms": 728,
+        "killedAtCap": false,
+        "stdout": "Dismissed confirm \"fr2-04 confirm g1-1790423481551-r5ml\"\n",
+        "stderr": ""
+      }
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "responsive-after",
+      "pass": true
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "record-false-once",
+      "pass": true,
+      "detail": [
+        {
+          "kind": "confirm",
+          "phase": "opening",
+          "seq": 1,
+          "t": 1790423483000
+        },
+        {
+          "kind": "confirm",
+          "phase": "returned",
+          "result": false,
+          "seq": 2,
+          "t": 1790423491356
+        }
+      ]
+    },
+    {
+      "probe": "gap017_wardenUp",
+      "name": "snap-right-tab",
+      "pass": true,
+      "detail": {
+        "args": "snap",
+        "code": 0,
+        "ms": 442,
+        "killedAtCap": false,
+        "stdout": "URL: http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\nTitle: fr2-04 g1-1790423481551-r5ml\nInteractive elements (7):\n[#1] button \"alert\"\n[#2] button \"confirm\"\n[#3] button \"prompt\"\n[#4] button \"chain\"\n[#5] button \"arm beforeunload\"\n[#6] button \"arm beforeunload + nav\"\n[#7 in iframe \"ifr\" (http://127.0.0.1:53143/fx.html)] button \"iframe alert\"\n",
+        "stderr": ""
+      }
+    },
+    {
+      "probe": "wardenDown_hint",
+      "name": "lastPendingDialog-written",
+      "pass": true,
+      "detail": {
+        "type": "confirm",
+        "message": "fr2-04 confirm h-1790423492708-jh1d",
+        "url": "http://127.0.0.1:53143/fx.html?n=h-1790423492708-jh1d",
+        "openedAt": "2026-09-26T11:51:34.233Z"
+      }
+    },
+    {
+      "probe": "wardenDown_hint",
+      "name": "warden-dead",
+      "pass": true
+    },
+    {
+      "probe": "wardenDown_hint",
+      "name": "snap-exit3-fast",
+      "pass": true,
+      "detail": {
+        "code": 3,
+        "ms": 4261
+      }
+    },
+    {
+      "probe": "wardenDown_hint",
+      "name": "snap-reports-confirm-via-hint",
+      "pass": true,
+      "detail": "dialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm h-1790423492708-jh1d\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=h-1790423492708-jh1d\"}\n"
+    },
+    {
+      "probe": "wardenDown_hint",
+      "name": "no-selfheal-no-newtab",
+      "pass": true,
+      "detail": {
+        "urls": [
+          "http://127.0.0.1:53143/fx.html?n=h-1790423492708-jh1d"
+        ]
+      }
+    },
+    {
+      "probe": "wardenDown_hint",
+      "name": "dialog-accept-honest-failure-or-success",
+      "pass": true,
+      "detail": {
+        "args": "dialog accept",
+        "code": 1,
+        "ms": 4277,
+        "killedAtCap": false,
+        "stdout": "",
+        "stderr": "Error: could not accept the confirm dialog: DirectCdpBroker.handle called before list()\n"
+      }
+    },
+    {
+      "probe": "wardenDown_hint",
+      "name": "failure-message-mentions-recovery",
+      "pass": false,
+      "detail": "Error: could not accept the confirm dialog: DirectCdpBroker.handle called before list()\n"
+    },
+    {
+      "probe": "wardenDown_hint",
+      "name": "close-fast",
+      "pass": true,
+      "detail": {
+        "args": "close",
+        "code": 0,
+        "ms": 4279,
+        "killedAtCap": false,
+        "stdout": "Session closed.\n",
+        "stderr": "Warning: a dialog is open, so the profile's storage state was not saved. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it saved.\n"
+      }
+    },
+    {
+      "probe": "wardenDown_laterDialog",
+      "name": "observer-blocked",
+      "pass": true
+    },
+    {
+      "probe": "wardenDown_laterDialog",
+      "name": "snap-exit3-fast",
+      "pass": true,
+      "detail": {
+        "code": 3,
+        "ms": 4268,
+        "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=ld-1790423513747-wb18&timerKind=confirm&timerMs=3000\"}\n",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      }
+    },
+    {
+      "probe": "wardenDown_laterDialog",
+      "name": "no-selfheal-no-newtab",
+      "pass": true,
+      "detail": [
+        "http://127.0.0.1:53143/fx.html?n=ld-1790423513747-wb18&timerKind=confirm&timerMs=3000"
+      ]
+    },
+    {
+      "probe": "wardenDown_laterDialog",
+      "name": "close-fast",
+      "pass": true
+    },
+    {
+      "probe": "wardenDown_slowScript",
+      "name": "busy-with-warden-down-reports-unknown-exit3 (disclosed trade-off)",
+      "pass": true,
+      "detail": {
+        "args": "snap",
+        "code": 3,
+        "ms": 4289,
+        "killedAtCap": false,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=ss-1790423530703-bata\"}\n",
+        "stderr": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      }
+    },
+    {
+      "probe": "wardenDown_slowScript",
+      "name": "after-busy-ends-snap-ok-and-warden-respawned",
+      "pass": true,
+      "detail": {
+        "snap2": {
+          "args": "snap",
+          "code": 0,
+          "ms": 3619,
+          "killedAtCap": false,
+          "stdout": "URL: http://127.0.0.1:53143/fx.html?n=ss-1790423530703-bata\nTitle: fr2-04 ss-1790423530703-bata\nInteractive elements (7):\n[#1] button \"alert\"\n[#2] button \"confirm\"\n[#3] button \"prompt\"\n[#4] button \"chain\"\n[#5] button \"arm beforeunload\"\n[#6] button \"arm beforeunload + nav\"\n[#7 in iframe \"ifr\" (http://127.0.0.1:53143/fx.html)] button \"iframe alert\"\n",
+          "stderr": ""
+        },
+        "w2": {
+          "v": 1,
+          "pid": 265468,
+          "port": 54791,
+          "token": "be49e1640a13c6137bb2f0f4e3622b07410c1dfe6c33d98378b79a02812fb5bb",
+          "wsEndpoint": "ws://127.0.0.1:53074/devtools/browser/c8bf2551-9ae0-4c3a-8287-c2809363c936",
+          "startedAt": "2026-09-26T11:52:22.667Z"
+        }
+      }
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#popup-delay-dialog-opened-between-commands",
+      "pass": true,
+      "detail": {
+        "found": true,
+        "urls": [
+          "http://127.0.0.1:53143/audit.html?n=bc-1790423546249-hj0r",
+          "http://127.0.0.1:53143/fx.html?n=bc-1790423546249-hj0r-pop&onloadAlert=1"
+        ]
+      }
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#popup-delay-snap-exit3-fast",
+      "pass": false,
+      "detail": {
+        "code": 0,
+        "ms": 180408,
+        "out": "URL: about:blank\nTitle: \nInteractive elements (0):\n\n",
+        "err": ""
+      }
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#popup-delay-snap-names-onload-alert",
+      "pass": false,
+      "detail": "URL: about:blank\nTitle: \nInteractive elements (0):\n\n"
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#popup-delay-no-new-blank-tab-no-heal",
+      "pass": false,
+      "detail": [
+        "http://127.0.0.1:53143/audit.html?n=bc-1790423546249-hj0r",
+        "http://127.0.0.1:53143/fx.html?n=bc-1790423546249-hj0r-pop&onloadAlert=1",
+        "about:blank"
+      ]
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#popup-delay-dialog-accept",
+      "pass": false,
+      "detail": {
+        "args": "dialog accept",
+        "code": 1,
+        "ms": 311,
+        "killedAtCap": false,
+        "stdout": "",
+        "stderr": "Error: no dialog is open to accept.\n"
+      }
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#xnav-delay-dialog-opened-between-commands",
+      "pass": true,
+      "detail": {
+        "found": true,
+        "urls": [
+          "http://localhost:53143/fx.html?n=bc-1790423732070-7khh-x&onloadAlert=1"
+        ]
+      }
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#xnav-delay-snap-exit3-fast",
+      "pass": true,
+      "detail": {
+        "code": 3,
+        "ms": 275,
+        "out": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 onload bc-1790423732070-7khh-x\",\"defaultValue\":null,\"url\":\"http://localhost:53143/fx.html?n=bc-1790423732070-7khh-x&onloadAlert=1\"}\n",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      }
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#xnav-delay-snap-names-onload-alert",
+      "pass": true,
+      "detail": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 onload bc-1790423732070-7khh-x\",\"defaultValue\":null,\"url\":\"http://localhost:53143/fx.html?n=bc-1790423732070-7khh-x&onloadAlert=1\"}\n"
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#xnav-delay-no-new-blank-tab-no-heal",
+      "pass": true,
+      "detail": [
+        "http://localhost:53143/fx.html?n=bc-1790423732070-7khh-x&onloadAlert=1"
+      ]
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "#xnav-delay-dialog-accept",
+      "pass": true,
+      "detail": {
+        "args": "dialog accept",
+        "code": 0,
+        "ms": 723,
+        "killedAtCap": false,
+        "stdout": "Accepted alert \"fr2-04 onload bc-1790423732070-7khh-x\"\n",
+        "stderr": ""
+      }
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "xframe-click-reports-oopif-dialog",
+      "pass": false,
+      "detail": "Clicked #xframe\n"
+    },
+    {
+      "probe": "betweenCommands_newTargets",
+      "name": "xframe-next-snap-honest(exit3 or clean exit0), fast, no heal/blank",
+      "pass": true,
+      "detail": {
+        "code": 3,
+        "ms": 281
+      }
+    },
+    {
+      "probe": "d10_persist",
+      "name": "fresh-no-flag-no-key",
+      "pass": true
+    },
+    {
+      "probe": "d10_persist",
+      "name": "accept-set",
+      "pass": true
+    },
+    {
+      "probe": "d10_persist",
+      "name": "report-set-explicitly",
+      "pass": true,
+      "detail": {
+        "action": "report",
+        "setAt": "2026-09-26T11:55:47.250Z"
+      }
+    },
+    {
+      "probe": "d10_persist",
+      "name": "report-persists-1",
+      "pass": true
+    },
+    {
+      "probe": "d10_persist",
+      "name": "report-persists-2",
+      "pass": true
+    },
+    {
+      "probe": "d10_persist",
+      "name": "behaves-as-report",
+      "pass": true,
+      "detail": "Clicked #confirm\ndialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm d10-1790423745582-r7jf\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=d10-1790423745582-r7jf\"}\n"
+    },
+    {
+      "probe": "d10_persist",
+      "name": "still-pending-after-1.5s(warden not applying stale accept)",
+      "pass": true,
+      "detail": {
+        "args": "snap",
+        "code": 3,
+        "ms": 322,
+        "killedAtCap": false,
+        "stdout": "dialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm d10-1790423745582-r7jf\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=d10-1790423745582-r7jf\"}\n",
+        "stderr": "Error: a confirm dialog is open and blocking the page, so \"snap\" did not run.\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      }
+    },
+    {
+      "probe": "d10_persist",
+      "name": "fresh-spawn-flag-report-persisted?",
+      "pass": true,
+      "detail": {
+        "action": "report",
+        "setAt": "2026-09-26T11:55:57.341Z"
+      }
+    },
+    {
+      "probe": "d10_persist",
+      "name": "fresh-spawn-with-report-flag-persists",
+      "pass": true,
+      "detail": {
+        "action": "report",
+        "setAt": "2026-09-26T11:55:58.512Z"
+      }
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "setup-accept-persisted",
+      "pass": true
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "old-warden-exited-on-chrome-death",
+      "pass": true,
+      "detail": {
+        "pid": 112748
+      }
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "snap-exit0",
+      "pass": true,
+      "detail": {
+        "args": "snap",
+        "code": 0,
+        "ms": 3901,
+        "killedAtCap": false,
+        "stdout": "URL: chrome://new-tab-page/\nTitle: New tab\nInteractive elements (16):\n[#1] input \"Search Google or type a URL\" role=combobox placeholder=\"Search Google or type a URL\" (shadow: ntp-app > … > cr-searchbox-input#input)\n[#2] button (shadow: ntp-app > ntp-searchbox#searchbox)\n[#3] button (shadow: ntp-app > ntp-searchbox#searchbox)\n[#10] a \"Web Store\" (shadow: ntp-app > cr-most-visited#mostVisited)\n[#12] div role=clickable (shadow: ntp-app > … > cr-icon-button#actionMenuButton)\n[#18] cr-button \"Add shortcut\" role=button (shadow: ntp-app > cr-most-visited#mostVisited)\n[#19] div role=clickable (shadow: ntp-app > … > cr-button#addShortcut)\n[#21] span role=clickable (shadow: ntp-app > … > cr-button#addShortcut)\n[#60] div \"Web Store\" role=clickable (shadow: ntp-app > cr-most-visited#mostVisited)\n[#74] cr-button \"Customise Chrome\" role=button (shadow: ntp-app > ntp-customize-buttons#customizeButtons)\n[#75] div role=clickable (shadow: ntp-app > … > cr-button#customizeButton)\n[#77] span role=clickable (shadow: ntp-app > … > cr-button#customizeButton)\n[#80] svg role=clickable (shadow: ntp-app > … > cr-icon.customize-icon)\n[#86 in iframe 2 (null/one-google-bar)] a \"Gmail\"\n[#87 in iframe 2] a \"Search for images\"\n[#88 in iframe 2] a \"Google apps\" role=button\n",
+        "stderr": "Note: previous session was unreachable (connect ECONNREFUSED 127.0.0.1:61331) — starting a fresh session.\n"
+      }
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "stderr-note-line",
+      "pass": true,
+      "detail": "Note: previous session was unreachable (connect ECONNREFUSED 127.0.0.1:61331) — starting a fresh session.\n"
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "new-chromePid",
+      "pass": true,
+      "detail": {
+        "old": 217268,
+        "new": 237512
+      }
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "policy-carried-accept",
+      "pass": true,
+      "detail": {
+        "action": "accept",
+        "setAt": "2026-09-26T11:56:00.028Z"
+      }
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "new-warden-for-new-endpoint",
+      "pass": true,
+      "detail": {
+        "v": 1,
+        "pid": 303700,
+        "port": 57857,
+        "token": "798c1f289644bda077085fa7c319423aa4bbee0fbf6ce739bca885e399183720",
+        "wsEndpoint": "ws://127.0.0.1:56014/devtools/browser/44c89677-e307-43e8-8fbb-b65239a0050c",
+        "startedAt": "2026-09-26T11:56:04.583Z"
+      }
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "exactly-one-warden-for-dir",
+      "pass": true,
+      "detail": [
+        {
+          "pid": 303700,
+          "stateFile": "E:\\AI-Cache\\tmp\\fr2-04-audit-yCwCsh\\state-l15_selfheal\\state.json",
+          "wsEndpoint": "ws://127.0.0.1:56014/devtools/browser/44c89677-e307-43e8-8fbb-b65239a0050c"
+        }
+      ]
+    },
+    {
+      "probe": "l15_selfheal",
+      "name": "carried-accept-applied-by-warden-between-commands",
+      "pass": true,
+      "detail": [
+        {
+          "kind": "confirm",
+          "phase": "opening",
+          "timer": true,
+          "seq": 1,
+          "t": 1790423770283
+        },
+        {
+          "kind": "confirm",
+          "phase": "returned",
+          "timer": true,
+          "result": true,
+          "seq": 2,
+          "t": 1790423770597
+        }
+      ]
+    },
+    {
+      "probe": "wardenLifecycle",
+      "name": "a-chrome-death-warden-exits",
+      "pass": true,
+      "detail": {
+        "exitedMs": 105,
+        "alive": false,
+        "wardenJsonLeft": false
+      }
+    },
+    {
+      "probe": "wardenLifecycle",
+      "name": "a-warden-json-removed-by-warden",
+      "pass": true,
+      "detail": {
+        "exitedMs": 105,
+        "alive": false,
+        "wardenJsonLeft": false
+      }
+    },
+    {
+      "probe": "wardenLifecycle",
+      "name": "b-state-removed-warden-exits<=5s",
+      "pass": true,
+      "detail": {
+        "exitedMs": 1857,
+        "alive": false
+      }
+    },
+    {
+      "probe": "wardenLifecycle",
+      "name": "b2-state-dir-removed-warden-exits",
+      "pass": true,
+      "detail": {
+        "exitedMs": 1958,
+        "alive": false
+      }
+    },
+    {
+      "probe": "wardenLifecycle",
+      "name": "c-state-repointed-warden-exits",
+      "pass": true,
+      "detail": {
+        "exitedMs": 1862,
+        "alive": false
+      }
+    },
+    {
+      "probe": "wardenLifecycle",
+      "name": "d-close-stops-warden-and-removes-file",
+      "pass": true,
+      "detail": {
+        "alive": false,
+        "wardenJson": false,
+        "code": 0,
+        "ms": 450
+      }
+    },
+    {
+      "probe": "wardenLifecycle",
+      "name": "d2-close-with-dialog-fast-and-clean",
+      "pass": true,
+      "detail": {
+        "alive": false,
+        "chromeAlive": false,
+        "code": 0,
+        "ms": 456,
+        "stderr": "Warning: a dialog is open, so the profile's storage state was not saved. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it saved.\n"
+      }
+    },
+    {
+      "probe": "wardenLifecycle",
+      "name": "e-one-warden-each",
+      "pass": true,
+      "detail": [
+        {
+          "pid": 27644,
+          "stateFile": "E:\\AI-Cache\\tmp\\fr2-04-audit-yCwCsh\\state-lc-eB\\state.json",
+          "wsEndpoint": "ws://127.0.0.1:57122/devtools/browser/e0ccc1d5-dfb2-40d4-9d6e-89a6a9616dcd"
+        },
+        {
+          "pid": 164700,
+          "stateFile": "E:\\AI-Cache\\tmp\\fr2-04-audit-yCwCsh\\state-lc-eA\\state.json",
+          "wsEndpoint": "ws://127.0.0.1:57121/devtools/browser/b6c4849f-0096-4fda-8403-11047dc259aa"
+        }
+      ]
+    },
+    {
+      "probe": "wardenLifecycle",
+      "name": "e-B-sees-no-dialog-from-A",
+      "pass": true,
+      "detail": {
+        "args": "dialog",
+        "code": 0,
+        "ms": 273,
+        "killedAtCap": false,
+        "stdout": "No dialog is open.\n",
+        "stderr": ""
+      }
+    },
+    {
+      "probe": "wardenLifecycle",
+      "name": "e-B-token-rejected-by-A",
+      "pass": true,
+      "detail": 401
+    },
+    {
+      "probe": "wardenLifecycle",
+      "name": "e-B-accept-does-not-touch-A",
+      "pass": true,
+      "detail": {
+        "args": "dialog accept",
+        "code": 1,
+        "ms": 262,
+        "killedAtCap": false,
+        "stdout": "",
+        "stderr": "Error: no dialog is open to accept.\n"
+      }
+    },
+    {
+      "probe": "wardenLifecycle",
+      "name": "e-A-still-blocked",
+      "pass": true,
+      "detail": 3
+    },
+    {
+      "probe": "wardenLifecycle",
+      "name": "e-both-wardens-gone",
+      "pass": true
+    },
+    {
+      "probe": "wardenLifecycle",
+      "name": "f-concurrent-respawn-yields-one-warden (informational)",
+      "pass": false,
+      "detail": {
+        "wardensAfterRace": [
+          243484,
+          173892,
+          303072
+        ],
+        "file": 303072,
+        "afterClose": []
+      }
+    },
+    {
+      "probe": "wardenLifecycle",
+      "name": "f-all-racing-wardens-gone-after-close(+poll)",
+      "pass": true,
+      "detail": {
+        "wardensAfterRace": [
+          243484,
+          173892,
+          303072
+        ],
+        "file": 303072,
+        "afterClose": []
+      }
+    },
+    {
+      "probe": "wardenSecurity",
+      "name": "no-token-401",
+      "pass": true
+    },
+    {
+      "probe": "wardenSecurity",
+      "name": "wrong-token-401",
+      "pass": true
+    },
+    {
+      "probe": "wardenSecurity",
+      "name": "no-bearer-prefix-401",
+      "pass": true
+    },
+    {
+      "probe": "wardenSecurity",
+      "name": "prefix-token-401",
+      "pass": true
+    },
+    {
+      "probe": "wardenSecurity",
+      "name": "query-token-401",
+      "pass": true
+    },
+    {
+      "probe": "wardenSecurity",
+      "name": "handle-no-token-401",
+      "pass": true
+    },
+    {
+      "probe": "wardenSecurity",
+      "name": "preflight-no-cors-allow",
+      "pass": true,
+      "detail": {
+        "status": 401,
+        "acao": null
+      }
+    },
+    {
+      "probe": "wardenSecurity",
+      "name": "good-token-200",
+      "pass": true
+    },
+    {
+      "probe": "wardenSecurity",
+      "name": "lan-ip-not-reachable",
+      "pass": true,
+      "detail": {
+        "100.102.95.107": "refused/TimeoutError",
+        "192.168.1.5": "refused/TimeoutError",
+        "172.25.16.1": "refused/TimeoutError",
+        "172.26.16.1": "refused/TimeoutError"
+      }
+    },
+    {
+      "probe": "wardenSecurity",
+      "name": "listens-on-127.0.0.1-only",
+      "pass": true,
+      "detail": "{\r\n    \"LocalAddress\":  \"127.0.0.1\",\r\n    \"LocalPort\":  59522\r\n}\r\n"
+    },
+    {
+      "probe": "wardenSecurity",
+      "name": "token-not-on-command-line",
+      "pass": true
+    },
+    {
+      "probe": "wardenSecurity",
+      "name": "dialog-still-pending-after-unauth-attempts",
+      "pass": true
+    },
+    {
+      "probe": "r10_doubleHandling",
+      "name": "in-command-chains-exact(12)",
+      "pass": true,
+      "detail": [
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt0\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt1\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt2\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt3\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt4\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt5\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt6\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt7\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt8\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt9\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt10\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt11\",true]"
+        }
+      ]
+    },
+    {
+      "probe": "r10_doubleHandling",
+      "name": "between-commands-warden-chain-exact",
+      "pass": true,
+      "detail": [
+        [
+          {
+            "k": "c1",
+            "r": true,
+            "seq": 1
+          },
+          {
+            "k": "p1",
+            "r": "dflt",
+            "seq": 2
+          },
+          {
+            "k": "c2",
+            "r": true,
+            "seq": 3
+          }
+        ],
+        [
+          {
+            "k": "c1",
+            "r": true,
+            "seq": 1
+          },
+          {
+            "k": "p1",
+            "r": "dflt",
+            "seq": 2
+          },
+          {
+            "k": "c2",
+            "r": true,
+            "seq": 3
+          }
+        ],
+        [
+          {
+            "k": "c1",
+            "r": true,
+            "seq": 1
+          },
+          {
+            "k": "p1",
+            "r": "dflt",
+            "seq": 2
+          },
+          {
+            "k": "c2",
+            "r": true,
+            "seq": 3
+          }
+        ],
+        [
+          {
+            "k": "c1",
+            "r": true,
+            "seq": 1
+          },
+          {
+            "k": "p1",
+            "r": "dflt",
+            "seq": 2
+          },
+          {
+            "k": "c2",
+            "r": true,
+            "seq": 3
+          }
+        ]
+      ]
+    },
+    {
+      "probe": "r10_doubleHandling",
+      "name": "concurrent-inprocess+warden-chain-exact",
+      "pass": true,
+      "detail": [
+        {
+          "rec": [
+            {
+              "k": "c1",
+              "r": true,
+              "seq": 1
+            },
+            {
+              "k": "p1",
+              "r": "dflt",
+              "seq": 2
+            },
+            {
+              "k": "c2",
+              "r": true,
+              "seq": 3
+            }
+          ],
+          "waitCode": 1,
+          "waitOut": "Wait failed: wait_for_selector timed out after 3500ms waiting for state=visible: No element found for selector: #never-exists\ndialogHandled: {\"type\":\"confirm\",\"message\":\"audit c1 r10-1790423829377-i7io-cc0\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\ndialogHandled: {\"type\":\"prompt\",\"message\":",
+          "waitErr": ""
+        },
+        {
+          "rec": [
+            {
+              "k": "c1",
+              "r": true,
+              "seq": 1
+            },
+            {
+              "k": "p1",
+              "r": "dflt",
+              "seq": 2
+            },
+            {
+              "k": "c2",
+              "r": true,
+              "seq": 3
+            }
+          ],
+          "waitCode": 1,
+          "waitOut": "Wait failed: wait_for_selector timed out after 3500ms waiting for state=visible: No element found for selector: #never-exists\ndialogHandled: {\"type\":\"confirm\",\"message\":\"audit c1 r10-1790423829377-i7io-cc1\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\ndialogHandled: {\"type\":\"prompt\",\"message\":",
+          "waitErr": ""
+        },
+        {
+          "rec": [
+            {
+              "k": "c1",
+              "r": true,
+              "seq": 1
+            },
+            {
+              "k": "p1",
+              "r": "dflt",
+              "seq": 2
+            },
+            {
+              "k": "c2",
+              "r": true,
+              "seq": 3
+            }
+          ],
+          "waitCode": 1,
+          "waitOut": "Wait failed: wait_for_selector timed out after 3500ms waiting for state=visible: No element found for selector: #never-exists\ndialogHandled: {\"type\":\"confirm\",\"message\":\"audit c1 r10-1790423829377-i7io-cc2\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\ndialogHandled: {\"type\":\"prompt\",\"message\":",
+          "waitErr": ""
+        },
+        {
+          "rec": [
+            {
+              "k": "c1",
+              "r": true,
+              "seq": 1
+            },
+            {
+              "k": "p1",
+              "r": "dflt",
+              "seq": 2
+            },
+            {
+              "k": "c2",
+              "r": true,
+              "seq": 3
+            }
+          ],
+          "waitCode": 1,
+          "waitOut": "Wait failed: wait_for_selector timed out after 3500ms waiting for state=visible: No element found for selector: #never-exists\ndialogHandled: {\"type\":\"confirm\",\"message\":\"audit c1 r10-1790423829377-i7io-cc3\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\ndialogHandled: {\"type\":\"prompt\",\"message\":",
+          "waitErr": ""
+        }
+      ]
+    },
+    {
+      "probe": "gatePromptDefault",
+      "name": "gate-handled-exit0",
+      "pass": true,
+      "detail": {
+        "args": "snap --dialog accept",
+        "code": 0,
+        "ms": 392,
+        "killedAtCap": false,
+        "stdout": "dialogHandled: {\"type\":\"prompt\",\"message\":\"fr2-04 prompt gp-1790423910587-yolw\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:53143/fx.html?n=gp-1790423910587-yolw\nTitle: fr2-04 gp-1790423910587-yolw\nInteractive elements (7):\n[#1] button \"alert\"\n[#2] button \"confirm\"\n[#3] button \"prompt\"\n[#4] button \"chain\"\n[#5] button \"arm beforeunload\"\n[#6] button \"arm beforeunload + nav\"\n[#7 in iframe \"ifr\" (http://127.0.0.1:53143/fx.html)] button \"iframe alert\"\n",
+        "stderr": "Note: dialog policy for this session is now \"accept\".\n"
+      }
+    },
+    {
+      "probe": "gatePromptDefault",
+      "name": "gate-accept-no-text-uses-default(D-9)",
+      "pass": false,
+      "detail": [
+        {
+          "kind": "prompt",
+          "phase": "opening",
+          "seq": 1,
+          "t": 1790423911926
+        },
+        {
+          "kind": "prompt",
+          "phase": "returned",
+          "result": "",
+          "isNull": false,
+          "seq": 2,
+          "t": 1790423918199
+        }
+      ]
+    },
+    {
+      "probe": "gatePromptDefault",
+      "name": "dialogHandled-line-promptText",
+      "pass": "dialogHandled: {\"type\":\"prompt\",\"message\":\"fr2-04 prompt gp-1790423910587-yolw\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:53143/fx.html?n=gp-1790423910587-yolw\nTitle: fr2-04 gp-1790423910587-yolw\nInteractive elements (7):\n[#1] button \"alert\"\n[#2] button \"confirm\"\n[#3] button \"prompt\"\n[#4] button \"chain\"\n[#5] button \"arm beforeunload\"\n[#6] button \"arm beforeunload + nav\"\n[#7 in iframe \"ifr\" (http://127.0.0.1:53143/fx.html)] button \"iframe alert\"\n",
+      "detail": "dialogHandled: {\"type\":\"prompt\",\"message\":\"fr2-04 prompt gp-1790423910587-yolw\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}"
+    },
+    {
+      "probe": "gatePromptDefault",
+      "name": "control-dialog-accept-uses-default",
+      "pass": true,
+      "detail": [
+        {
+          "kind": "prompt",
+          "phase": "opening",
+          "seq": 1,
+          "t": 1790423919043
+        },
+        {
+          "kind": "prompt",
+          "phase": "returned",
+          "result": "fr2-default",
+          "isNull": false,
+          "seq": 2,
+          "t": 1790423925304
+        }
+      ]
+    },
+    {
+      "probe": "cleanup",
+      "name": "no-leftover-wardens-before-forced-kill",
+      "pass": true,
+      "detail": {
+        "wardens": [],
+        "chrome": [
+          122484
+        ]
+      }
+    },
+    {
+      "probe": "cleanup",
+      "name": "no-leftover-chrome-before-forced-kill",
+      "pass": false,
+      "detail": {
+        "wardens": [],
+        "chrome": [
+          122484
+        ]
+      }
+    },
+    {
+      "probe": "observer",
+      "name": "no-guard-violations",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "results": {
+    "gap017_wardenUp": [
+      {
+        "args": "nav http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml",
+        "code": 0,
+        "ms": 981,
+        "killedAtCap": false,
+        "stdout": "Navigated to http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\nTitle: fr2-04 g1-1790423481551-r5ml\n",
+        "stderr": ""
+      },
+      {
+        "args": "click #confirm",
+        "code": 0,
+        "ms": 6464,
+        "killedAtCap": false,
+        "stdout": "Clicked #confirm\ndialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm g1-1790423481551-r5ml\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\"}\n",
+        "stderr": "Hint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      },
+      {
+        "args": "snap",
+        "code": 3,
+        "ms": 388,
+        "killedAtCap": false,
+        "stdout": "dialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm g1-1790423481551-r5ml\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\"}\n",
+        "stderr": "Error: a confirm dialog is open and blocking the page, so \"snap\" did not run.\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      },
+      {
+        "args": "tabs",
+        "code": 3,
+        "ms": 281,
+        "killedAtCap": false,
+        "stdout": "dialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm g1-1790423481551-r5ml\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\"}\n",
+        "stderr": "Error: a confirm dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      },
+      {
+        "args": "eval 1+1",
+        "code": 3,
+        "ms": 280,
+        "killedAtCap": false,
+        "stdout": "dialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm g1-1790423481551-r5ml\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\"}\n",
+        "stderr": "Error: a confirm dialog is open and blocking the page, so \"eval\" did not run.\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      },
+      {
+        "args": "text",
+        "code": 3,
+        "ms": 284,
+        "killedAtCap": false,
+        "stdout": "dialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm g1-1790423481551-r5ml\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\"}\n",
+        "stderr": "Error: a confirm dialog is open and blocking the page, so \"text\" did not run.\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      },
+      {
+        "args": "nav http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml-other",
+        "code": 3,
+        "ms": 280,
+        "killedAtCap": false,
+        "stdout": "dialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm g1-1790423481551-r5ml\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\"}\n",
+        "stderr": "Error: a confirm dialog is open and blocking the page, so \"nav\" did not run.\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      },
+      {
+        "args": "click #alert",
+        "code": 3,
+        "ms": 368,
+        "killedAtCap": false,
+        "stdout": "dialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm g1-1790423481551-r5ml\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\"}\n",
+        "stderr": "Error: a confirm dialog is open and blocking the page, so \"click\" did not run.\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      },
+      {
+        "args": "dialog dismiss",
+        "code": 0,
+        "ms": 728,
+        "killedAtCap": false,
+        "stdout": "Dismissed confirm \"fr2-04 confirm g1-1790423481551-r5ml\"\n",
+        "stderr": ""
+      },
+      {
+        "args": "snap",
+        "code": 0,
+        "ms": 442,
+        "killedAtCap": false,
+        "stdout": "URL: http://127.0.0.1:53143/fx.html?n=g1-1790423481551-r5ml\nTitle: fr2-04 g1-1790423481551-r5ml\nInteractive elements (7):\n[#1] button \"alert\"\n[#2] button \"confirm\"\n[#3] button \"prompt\"\n[#4] button \"chain\"\n[#5] button \"arm beforeunload\"\n[#6] button \"arm beforeunload + nav\"\n[#7 in iframe \"ifr\" (http://127.0.0.1:53143/fx.html)] button \"iframe alert\"\n",
+        "stderr": ""
+      },
+      {
+        "args": "close",
+        "code": 0,
+        "ms": 430,
+        "killedAtCap": false,
+        "stdout": "Session closed.\n",
+        "stderr": ""
+      }
+    ],
+    "wardenDown_hint_acceptOutcome": {
+      "code": 1,
+      "stdout": "",
+      "stderr": "Error: could not accept the confirm dialog: DirectCdpBroker.handle called before list()\n"
+    },
+    "wardenDown_hint": [
+      {
+        "args": "nav http://127.0.0.1:53143/fx.html?n=h-1790423492708-jh1d",
+        "code": 0,
+        "ms": 1181,
+        "killedAtCap": false,
+        "stdout": "Navigated to http://127.0.0.1:53143/fx.html?n=h-1790423492708-jh1d\nTitle: fr2-04 h-1790423492708-jh1d\n",
+        "stderr": ""
+      },
+      {
+        "args": "click #confirm",
+        "code": 0,
+        "ms": 6370,
+        "killedAtCap": false,
+        "stdout": "Clicked #confirm\ndialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm h-1790423492708-jh1d\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=h-1790423492708-jh1d\"}\n",
+        "stderr": "Hint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      },
+      {
+        "args": "snap",
+        "code": 3,
+        "ms": 4261,
+        "killedAtCap": false,
+        "stdout": "dialogPending: {\"type\":\"confirm\",\"message\":\"fr2-04 confirm h-1790423492708-jh1d\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=h-1790423492708-jh1d\"}\n",
+        "stderr": "Error: a confirm dialog is open and blocking the page, so \"snap\" did not run.\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      },
+      {
+        "args": "dialog accept",
+        "code": 1,
+        "ms": 4277,
+        "killedAtCap": false,
+        "stdout": "",
+        "stderr": "Error: could not accept the confirm dialog: DirectCdpBroker.handle called before list()\n"
+      },
+      {
+        "args": "close",
+        "code": 0,
+        "ms": 4279,
+        "killedAtCap": false,
+        "stdout": "Session closed.\n",
+        "stderr": "Warning: a dialog is open, so the profile's storage state was not saved. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it saved.\n"
+      }
+    ],
+    "wardenDown_laterDialog_acceptOutcome": {
+      "code": 1,
+      "stdout": "",
+      "stderr": "Error: could not accept the unknown dialog: DirectCdpBroker.handle called before list()\n"
+    },
+    "wardenDown_laterDialog": [
+      {
+        "args": "nav http://127.0.0.1:53143/fx.html?n=ld-1790423513747-wb18&timerKind=confirm&timerMs=3000",
+        "code": 0,
+        "ms": 991,
+        "killedAtCap": false,
+        "stdout": "Navigated to http://127.0.0.1:53143/fx.html?n=ld-1790423513747-wb18&timerKind=confirm&timerMs=3000\nTitle: fr2-04 ld-1790423513747-wb18\n",
+        "stderr": ""
+      },
+      {
+        "args": "snap",
+        "code": 3,
+        "ms": 4268,
+        "killedAtCap": false,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=ld-1790423513747-wb18&timerKind=confirm&timerMs=3000\"}\n",
+        "stderr": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      },
+      {
+        "args": "dialog accept",
+        "code": 1,
+        "ms": 4266,
+        "killedAtCap": false,
+        "stdout": "",
+        "stderr": "Error: could not accept the unknown dialog: DirectCdpBroker.handle called before list()\n"
+      },
+      {
+        "args": "close",
+        "code": 0,
+        "ms": 4311,
+        "killedAtCap": false,
+        "stdout": "Session closed.\n",
+        "stderr": "Warning: a dialog is open, so the profile's storage state was not saved. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it saved.\n"
+      }
+    ],
+    "wardenDown_slowScript_snapDuringBusy": {
+      "code": 3,
+      "ms": 4289,
+      "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=ss-1790423530703-bata\"}\n",
+      "stderr": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+    },
+    "wardenDown_slowScript": [
+      {
+        "args": "nav http://127.0.0.1:53143/fx.html?n=ss-1790423530703-bata",
+        "code": 0,
+        "ms": 985,
+        "killedAtCap": false,
+        "stdout": "Navigated to http://127.0.0.1:53143/fx.html?n=ss-1790423530703-bata\nTitle: fr2-04 ss-1790423530703-bata\n",
+        "stderr": ""
+      },
+      {
+        "args": "snap",
+        "code": 3,
+        "ms": 4289,
+        "killedAtCap": false,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/fx.html?n=ss-1790423530703-bata\"}\n",
+        "stderr": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      },
+      {
+        "args": "snap",
+        "code": 0,
+        "ms": 3619,
+        "killedAtCap": false,
+        "stdout": "URL: http://127.0.0.1:53143/fx.html?n=ss-1790423530703-bata\nTitle: fr2-04 ss-1790423530703-bata\nInteractive elements (7):\n[#1] button \"alert\"\n[#2] button \"confirm\"\n[#3] button \"prompt\"\n[#4] button \"chain\"\n[#5] button \"arm beforeunload\"\n[#6] button \"arm beforeunload + nav\"\n[#7 in iframe \"ifr\" (http://127.0.0.1:53143/fx.html)] button \"iframe alert\"\n",
+        "stderr": ""
+      },
+      {
+        "args": "close",
+        "code": 0,
+        "ms": 456,
+        "killedAtCap": false,
+        "stdout": "Session closed.\n",
+        "stderr": ""
+      }
+    ],
+    "betweenCommands_newTargets#popup-delay_snap": {
+      "code": 0,
+      "ms": 180408,
+      "stdout": "URL: about:blank\nTitle: \nInteractive elements (0):\n\n",
+      "stderr": "",
+      "urlsBefore": [
+        "http://127.0.0.1:53143/audit.html?n=bc-1790423546249-hj0r",
+        "http://127.0.0.1:53143/fx.html?n=bc-1790423546249-hj0r-pop&onloadAlert=1"
+      ],
+      "urlsAfter": [
+        "http://127.0.0.1:53143/audit.html?n=bc-1790423546249-hj0r",
+        "http://127.0.0.1:53143/fx.html?n=bc-1790423546249-hj0r-pop&onloadAlert=1",
+        "about:blank"
+      ]
+    },
+    "betweenCommands_newTargets#popup-delay": [
+      {
+        "args": "nav http://127.0.0.1:53143/audit.html?n=bc-1790423546249-hj0r",
+        "code": 0,
+        "ms": 1057,
+        "killedAtCap": false,
+        "stdout": "Navigated to http://127.0.0.1:53143/audit.html?n=bc-1790423546249-hj0r\nTitle: audit bc-1790423546249-hj0r\n",
+        "stderr": ""
+      },
+      {
+        "args": "click #popup-delay",
+        "code": 0,
+        "ms": 3337,
+        "killedAtCap": false,
+        "stdout": "Clicked #popup-delay\n",
+        "stderr": ""
+      },
+      {
+        "args": "snap",
+        "code": 0,
+        "ms": 180408,
+        "killedAtCap": false,
+        "stdout": "URL: about:blank\nTitle: \nInteractive elements (0):\n\n",
+        "stderr": ""
+      },
+      {
+        "args": "dialog accept",
+        "code": 1,
+        "ms": 311,
+        "killedAtCap": false,
+        "stdout": "",
+        "stderr": "Error: no dialog is open to accept.\n"
+      },
+      {
+        "args": "close",
+        "code": 0,
+        "ms": 493,
+        "killedAtCap": false,
+        "stdout": "Session closed.\n",
+        "stderr": ""
+      }
+    ],
+    "betweenCommands_newTargets#xnav-delay_snap": {
+      "code": 3,
+      "ms": 275,
+      "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 onload bc-1790423732070-7khh-x\",\"defaultValue\":null,\"url\":\"http://localhost:53143/fx.html?n=bc-1790423732070-7khh-x&onloadAlert=1\"}\n",
+      "stderr": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n",
+      "urlsBefore": [
+        "http://localhost:53143/fx.html?n=bc-1790423732070-7khh-x&onloadAlert=1"
+      ],
+      "urlsAfter": [
+        "http://localhost:53143/fx.html?n=bc-1790423732070-7khh-x&onloadAlert=1"
+      ]
+    },
+    "betweenCommands_newTargets#xnav-delay": [
+      {
+        "args": "nav http://127.0.0.1:53143/audit.html?n=bc-1790423732070-7khh",
+        "code": 0,
+        "ms": 1114,
+        "killedAtCap": false,
+        "stdout": "Navigated to http://127.0.0.1:53143/audit.html?n=bc-1790423732070-7khh\nTitle: audit bc-1790423732070-7khh\n",
+        "stderr": ""
+      },
+      {
+        "args": "click #xnav-delay",
+        "code": 0,
+        "ms": 3339,
+        "killedAtCap": false,
+        "stdout": "Clicked #xnav-delay\n",
+        "stderr": ""
+      },
+      {
+        "args": "snap",
+        "code": 3,
+        "ms": 275,
+        "killedAtCap": false,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 onload bc-1790423732070-7khh-x\",\"defaultValue\":null,\"url\":\"http://localhost:53143/fx.html?n=bc-1790423732070-7khh-x&onloadAlert=1\"}\n",
+        "stderr": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      },
+      {
+        "args": "dialog accept",
+        "code": 0,
+        "ms": 723,
+        "killedAtCap": false,
+        "stdout": "Accepted alert \"fr2-04 onload bc-1790423732070-7khh-x\"\n",
+        "stderr": ""
+      },
+      {
+        "args": "close",
+        "code": 0,
+        "ms": 485,
+        "killedAtCap": false,
+        "stdout": "Session closed.\n",
+        "stderr": ""
+      }
+    ],
+    "betweenCommands_newTargets_xframe_click": {
+      "code": 0,
+      "ms": 3365,
+      "stdout": "Clicked #xframe\n",
+      "stderr": ""
+    },
+    "betweenCommands_newTargets_xframe_snap": {
+      "code": 3,
+      "ms": 281,
+      "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 onload xf-1790423738221-e35z-f\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/audit.html?n=xf-1790423738221-e35z\"}\n",
+      "stderr": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n",
+      "urls": [
+        "http://127.0.0.1:53143/audit.html?n=xf-1790423738221-e35z"
+      ]
+    },
+    "betweenCommands_newTargets_xframe": [
+      {
+        "args": "nav http://127.0.0.1:53143/audit.html?n=xf-1790423738221-e35z",
+        "code": 0,
+        "ms": 993,
+        "killedAtCap": false,
+        "stdout": "Navigated to http://127.0.0.1:53143/audit.html?n=xf-1790423738221-e35z\nTitle: audit xf-1790423738221-e35z\n",
+        "stderr": ""
+      },
+      {
+        "args": "click #xframe",
+        "code": 0,
+        "ms": 3365,
+        "killedAtCap": false,
+        "stdout": "Clicked #xframe\n",
+        "stderr": ""
+      },
+      {
+        "args": "snap",
+        "code": 3,
+        "ms": 281,
+        "killedAtCap": false,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 onload xf-1790423738221-e35z-f\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53143/audit.html?n=xf-1790423738221-e35z\"}\n",
+        "stderr": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n"
+      },
+      {
+        "args": "dialog accept",
+        "code": 0,
+        "ms": 740,
+        "killedAtCap": false,
+        "stdout": "Accepted alert \"fr2-04 onload xf-1790423738221-e35z-f\"\n",
+        "stderr": ""
+      },
+      {
+        "args": "close",
+        "code": 0,
+        "ms": 471,
+        "killedAtCap": false,
+        "stdout": "Session closed.\n",
+        "stderr": ""
+      }
+    ],
+    "d10_persist": [
+      {
+        "args": "nav http://127.0.0.1:53143/fx.html?n=d10-1790423745582-r7jf",
+        "code": 0,
+        "stderr": ""
+      },
+      {
+        "args": "snap --dialog accept",
+        "code": 0,
+        "stderr": "Note: dialog policy for this session is now \"accept\".\n",
+        "policy": {
+          "action": "accept",
+          "setAt": "2026-09-26T11:55:46.867Z"
+        }
+      },
+      {
+        "args": "snap --dialog report",
+        "code": 0,
+        "stderr": "Note: dialog policy for this session is now \"report\".\n",
+        "policy": {
+          "action": "report",
+          "setAt": "2026-09-26T11:55:47.250Z"
+        }
+      },
+      {
+        "args": "snap",
+        "code": 0,
+        "stderr": "",
+        "policy": {
+          "action": "report",
+          "setAt": "2026-09-26T11:55:47.250Z"
+        }
+      },
+      {
+        "args": "eval 1",
+        "code": 0,
+        "stderr": "",
+        "policy": {
+          "action": "report",
+          "setAt": "2026-09-26T11:55:47.250Z"
+        }
+      },
+      {
+        "args": "click #confirm",
+        "code": 0,
+        "stderr": "Hint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n",
+        "policy": {
+          "action": "report",
+          "setAt": "2026-09-26T11:55:47.250Z"
+        }
+      },
+      {
+        "args": "snap",
+        "code": 3,
+        "stderr": "Error: a confirm dialog is open and blocking the page, so \"snap\" did not run.\nHint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss.\n",
+        "policy": {
+          "action": "report",
+          "setAt": "2026-09-26T11:55:47.250Z"
+        }
+      },
+      {
+        "args": "dialog dismiss",
+        "code": 0,
+        "stderr": "",
+        "policy": {
+          "action": "report",
+          "setAt": "2026-09-26T11:55:47.250Z"
+        }
+      },
+      {
+        "args": "nav http://127.0.0.1:53143/fx.html?n=d10-1790423745582-r7jf-b --dialog report",
+        "code": 0,
+        "stderr": "Note: dialog policy for this session is now \"report\".\n",
+        "policy": {
+          "action": "report",
+          "setAt": "2026-09-26T11:55:57.341Z"
+        }
+      }
+    ],
+    "l15_selfheal": [
+      {
+        "args": "nav http://127.0.0.1:53143/fx.html?n=l15-1790423759459-htuw --dialog accept",
+        "code": 0,
+        "ms": 1014,
+        "killedAtCap": false,
+        "stdout": "Navigated to http://127.0.0.1:53143/fx.html?n=l15-1790423759459-htuw\nTitle: fr2-04 l15-1790423759459-htuw\n",
+        "stderr": ""
+      },
+      {
+        "args": "snap",
+        "code": 0,
+        "ms": 3901,
+        "killedAtCap": false,
+        "stdout": "URL: chrome://new-tab-page/\nTitle: New tab\nInteractive elements (16):\n[#1] input \"Search Google or type a URL\" role=combobox placeholder=\"Search Google or type a URL\" (shadow: ntp-app > … > cr-searchbox-input#input)\n[#2] button (shadow: ntp-app > ntp-searchbox#searchbox)\n[#3] button (shadow: ntp-app > ntp-searchbox#searchbox)\n[#10] a \"Web Store\" (shadow: ntp-app > cr-most-visited#mostVisited)\n[#12] div role=clickable (shadow: ntp-app > … > cr-icon-button#actionMenuButton)\n[#18] cr-button \"Add shortcut\" role=button (shadow: ntp-app > cr-most-visited#mostVisited)\n[#19] div role=clickable (shadow: ntp-app > … > cr-button#addShortcut)\n[#21] span role=clickable (shadow: ntp-app > … > cr-button#addShortcut)\n[#60] div \"Web Store\" role=clickable (shadow: ntp-app > cr-most-visited#mostVisited)\n[#74] cr-button \"Customise Chrome\" role=button (shadow: ntp-app > ntp-customize-buttons#customizeButtons)\n[#75] div role=clickable (shadow: ntp-app > … > cr-button#customizeButton)\n[#77] span role=clickable (shadow: ntp-app > … > cr-button#customizeButton)\n[#80] svg role=clickable (shadow: ntp-app > … > cr-icon.customize-icon)\n[#86 in iframe 2 (null/one-google-bar)] a \"Gmail\"\n[#87 in iframe 2] a \"Search for images\"\n[#88 in iframe 2] a \"Google apps\" role=button\n",
+        "stderr": "Note: previous session was unreachable (connect ECONNREFUSED 127.0.0.1:61331) — starting a fresh session.\n"
+      },
+      {
+        "args": "nav http://127.0.0.1:53143/fx.html?n=l15-1790423759459-htuw-2&timerKind=confirm&timerMs=1500",
+        "code": 0,
+        "ms": 396,
+        "killedAtCap": false,
+        "stdout": "Navigated to http://127.0.0.1:53143/fx.html?n=l15-1790423759459-htuw-2&timerKind=confirm&timerMs=1500\nTitle: fr2-04 l15-1790423759459-htuw-2\n",
+        "stderr": ""
+      },
+      {
+        "args": "close",
+        "code": 0,
+        "ms": 437,
+        "killedAtCap": false,
+        "stdout": "Session closed.\n",
+        "stderr": ""
+      }
+    ],
+    "wardenLifecycle": {
+      "a": {
+        "exitedMs": 105,
+        "alive": false,
+        "wardenJsonLeft": false
+      },
+      "b": {
+        "exitedMs": 1857,
+        "alive": false
+      },
+      "b2": {
+        "exitedMs": 1958,
+        "alive": false
+      },
+      "c": {
+        "exitedMs": 1862,
+        "alive": false
+      },
+      "d": {
+        "alive": false,
+        "wardenJson": false,
+        "code": 0,
+        "ms": 450
+      },
+      "d2": {
+        "alive": false,
+        "chromeAlive": false,
+        "code": 0,
+        "ms": 456,
+        "stderr": "Warning: a dialog is open, so the profile's storage state was not saved. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it saved.\n"
+      },
+      "f": {
+        "wardensAfterRace": [
+          243484,
+          173892,
+          303072
+        ],
+        "file": 303072,
+        "afterClose": []
+      }
+    },
+    "wardenSecurity": {
+      "noToken": 401,
+      "wrongToken": 401,
+      "tokenNoBearer": 401,
+      "bearerLower": 401,
+      "tokenPrefix": 401,
+      "tokenInQuery": 401,
+      "handleNoToken": 401,
+      "optionsPreflight": {
+        "status": 401,
+        "acao": null
+      },
+      "goodToken": 200,
+      "lanAttempts": {
+        "100.102.95.107": "refused/TimeoutError",
+        "192.168.1.5": "refused/TimeoutError",
+        "172.25.16.1": "refused/TimeoutError",
+        "172.26.16.1": "refused/TimeoutError"
+      },
+      "listen": "{\r\n    \"LocalAddress\":  \"127.0.0.1\",\r\n    \"LocalPort\":  59522\r\n}\r\n",
+      "tokenOnCommandLine": false
+    },
+    "r10_doubleHandling": {
+      "inCommand": [
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt0\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt1\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt2\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt3\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt4\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt5\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt6\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt7\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt8\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt9\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt10\",true]"
+        },
+        {
+          "code": 0,
+          "stdout": "[true,\"dflt11\",true]"
+        }
+      ],
+      "between": [
+        [
+          {
+            "k": "c1",
+            "r": true,
+            "seq": 1
+          },
+          {
+            "k": "p1",
+            "r": "dflt",
+            "seq": 2
+          },
+          {
+            "k": "c2",
+            "r": true,
+            "seq": 3
+          }
+        ],
+        [
+          {
+            "k": "c1",
+            "r": true,
+            "seq": 1
+          },
+          {
+            "k": "p1",
+            "r": "dflt",
+            "seq": 2
+          },
+          {
+            "k": "c2",
+            "r": true,
+            "seq": 3
+          }
+        ],
+        [
+          {
+            "k": "c1",
+            "r": true,
+            "seq": 1
+          },
+          {
+            "k": "p1",
+            "r": "dflt",
+            "seq": 2
+          },
+          {
+            "k": "c2",
+            "r": true,
+            "seq": 3
+          }
+        ],
+        [
+          {
+            "k": "c1",
+            "r": true,
+            "seq": 1
+          },
+          {
+            "k": "p1",
+            "r": "dflt",
+            "seq": 2
+          },
+          {
+            "k": "c2",
+            "r": true,
+            "seq": 3
+          }
+        ]
+      ],
+      "concurrent": [
+        {
+          "rec": [
+            {
+              "k": "c1",
+              "r": true,
+              "seq": 1
+            },
+            {
+              "k": "p1",
+              "r": "dflt",
+              "seq": 2
+            },
+            {
+              "k": "c2",
+              "r": true,
+              "seq": 3
+            }
+          ],
+          "waitCode": 1,
+          "waitOut": "Wait failed: wait_for_selector timed out after 3500ms waiting for state=visible: No element found for selector: #never-exists\ndialogHandled: {\"type\":\"confirm\",\"message\":\"audit c1 r10-1790423829377-i7io-cc0\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\ndialogHandled: {\"type\":\"prompt\",\"message\":",
+          "waitErr": ""
+        },
+        {
+          "rec": [
+            {
+              "k": "c1",
+              "r": true,
+              "seq": 1
+            },
+            {
+              "k": "p1",
+              "r": "dflt",
+              "seq": 2
+            },
+            {
+              "k": "c2",
+              "r": true,
+              "seq": 3
+            }
+          ],
+          "waitCode": 1,
+          "waitOut": "Wait failed: wait_for_selector timed out after 3500ms waiting for state=visible: No element found for selector: #never-exists\ndialogHandled: {\"type\":\"confirm\",\"message\":\"audit c1 r10-1790423829377-i7io-cc1\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\ndialogHandled: {\"type\":\"prompt\",\"message\":",
+          "waitErr": ""
+        },
+        {
+          "rec": [
+            {
+              "k": "c1",
+              "r": true,
+              "seq": 1
+            },
+            {
+              "k": "p1",
+              "r": "dflt",
+              "seq": 2
+            },
+            {
+              "k": "c2",
+              "r": true,
+              "seq": 3
+            }
+          ],
+          "waitCode": 1,
+          "waitOut": "Wait failed: wait_for_selector timed out after 3500ms waiting for state=visible: No element found for selector: #never-exists\ndialogHandled: {\"type\":\"confirm\",\"message\":\"audit c1 r10-1790423829377-i7io-cc2\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\ndialogHandled: {\"type\":\"prompt\",\"message\":",
+          "waitErr": ""
+        },
+        {
+          "rec": [
+            {
+              "k": "c1",
+              "r": true,
+              "seq": 1
+            },
+            {
+              "k": "p1",
+              "r": "dflt",
+              "seq": 2
+            },
+            {
+              "k": "c2",
+              "r": true,
+              "seq": 3
+            }
+          ],
+          "waitCode": 1,
+          "waitOut": "Wait failed: wait_for_selector timed out after 3500ms waiting for state=visible: No element found for selector: #never-exists\ndialogHandled: {\"type\":\"confirm\",\"message\":\"audit c1 r10-1790423829377-i7io-cc3\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\ndialogHandled: {\"type\":\"prompt\",\"message\":",
+          "waitErr": ""
+        }
+      ]
+    },
+    "gatePromptDefault": {
+      "snap": {
+        "code": 0,
+        "stdout": "dialogHandled: {\"type\":\"prompt\",\"message\":\"fr2-04 prompt gp-1790423910587-yolw\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:53143/fx.html?n=gp-1790423910587-yolw\nTitle: fr2-04 gp-1790423910587-yolw\nInteractive elements (7):\n[#1] button \"alert\"\n[#2] button \"confirm\"\n[#3] ",
+        "stderr": "Note: dialog policy for this session is now \"accept\".\n"
+      },
+      "rec": [
+        {
+          "kind": "prompt",
+          "phase": "opening",
+          "seq": 1,
+          "t": 1790423911926
+        },
+        {
+          "kind": "prompt",
+          "phase": "returned",
+          "result": "",
+          "isNull": false,
+          "seq": 2,
+          "t": 1790423918199
+        }
+      ]
+    }
+  }
+}

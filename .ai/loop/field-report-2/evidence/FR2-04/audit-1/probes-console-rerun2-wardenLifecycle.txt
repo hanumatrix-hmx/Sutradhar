@@ -1,0 +1,16 @@
+--- wardenLifecycle
+[PASS] wardenLifecycle.a-chrome-death-warden-exits
+[PASS] wardenLifecycle.a-warden-json-removed-by-warden
+[PASS] wardenLifecycle.b-state-removed-warden-exits<=5s
+[PASS] wardenLifecycle.b2-state-dir-removed-warden-exits
+[PASS] wardenLifecycle.c-state-repointed-warden-exits
+[PASS] wardenLifecycle.d-close-stops-warden-and-removes-file
+[PASS] wardenLifecycle.d2-close-with-dialog-fast-and-clean
+[FAIL] wardenLifecycle.e-one-warden-each [{"pid":132500,"stateFile":"E:\\AI-Cache\\tmp\\fr2-04-audit-KstyLz\\state-lc-eA\\state.json","wsEndpoint":"ws://127.0.0.1:54808/devtools/browser/3cfcccbe-3102-4a8f-963a-ea2ec58f3136"}]
+[FAIL] wardenLifecycle.e-B-sees-no-dialog-from-A {"args":"dialog","code":1,"ms":271,"killedAtCap":false,"stdout":"","stderr":"Error: No active session.\n"}
+[FAIL] wardenLifecycle.unexpected-exception "TypeError: Cannot read properties of undefined (reading 'token')\n    at wardenLifecycle (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-04/audit-1/audit-probes.mjs:393:121)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-04/audit-1/audit-probes.mjs:532:11"
+[PASS] cleanup.no-leftover-wardens-before-forced-kill
+[PASS] cleanup.no-leftover-chrome-before-forced-kill
+[PASS] observer.no-guard-violations
+
+10/13 pass; failed: wardenLifecycle.e-one-warden-each, wardenLifecycle.e-B-sees-no-dialog-from-A, wardenLifecycle.unexpected-exception

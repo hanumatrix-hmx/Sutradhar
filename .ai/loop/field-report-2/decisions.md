@@ -2037,3 +2037,34 @@ Carry into DEVELOP:
 4. Cleanup: headless run 1 leaked one Chrome tree from the E4 case (killed manually, verified
    back to baseline). The DEVELOP live-verify must put all temp state under one scratch root and
    clean it in an unskippable finally -- with a warden process in play, leaks are the main risk.
+
+## 2026-09-26 -- FR2-04 audit-1: FAILED. The GAP-017 fix has a race; fix-1 must close it structurally.
+
+The independent audit confirmed most of FR2-04 holds: forced build/typecheck clean; vitest counts
+match exactly; E3 (orphaned dialog, then 6 different commands) exits 3 cleanly with the right tab;
+warden-down behaviour never hangs or picks the wrong tab; D10 persists; the auditor BUILT the
+missing L15 and it passes 12/12; the warden exits correctly on Chrome death, state removal,
+repointing, and close; two sessions don't cross-talk; the warden's HTTP API rejects every bad-token
+variant and listens on 127.0.0.1 only; MCP 'auto' mode is genuinely unchanged.
+
+But the headline claim -- GAP-017 "now structurally impossible" -- is false. GAP-220 (critical): a
+popup whose alert fires during load produces exactly the silent wrong-tab result, 6/6, with the
+warden healthy, because the warden attaches to new targets late and the gate trusts the warden's
+event list without checking liveness. Three majors (GAP-221 prompt default ignored at the gate,
+GAP-222 dialog accept unusable when the warden is down with a hint that points at the failing
+command, GAP-223 no spawn lock so several wardens double-handle).
+
+Decisions for fix-1:
+1. GAP-220 needs BOTH layers: (a) structural -- the warden must see a new target before any of its
+   script runs: use CDP auto-attach with waitForDebuggerOnStart so the warden enables Page on a new
+   target and then releases it with Runtime.runIfWaitingForDebugger; (b) defensive -- the gate must
+   not trust "no tracked dialog" alone: liveness-probe every target with no tracked dialog and treat
+   a blocked one as type:'unknown' (block, exit 3), exactly as the DirectCdpBroker fallback does.
+   Either layer alone is not enough: (a) could miss a target created in a window the warden wasn't
+   attached for; (b) alone would still let the dialog go unidentified.
+2. GAP-223: a spawn lock (exclusive-create of a lock/pid file next to warden.json) so exactly one
+   warden per session; and policy handling must target the specific dialog it decided on, so a late
+   handle can never land on a different dialog.
+3. GAP-221/222/227 as the audit describes; the exit-3 hint must include `close` as the escape hatch.
+4. GAP-224/225: add L15 to the verify script; fix WD7/WD3; test the unknown-blocks path; S-D1/S-D2;
+   report skips separately from passes; write gate-overhead.json.
