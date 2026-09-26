@@ -33,7 +33,18 @@ describe('@sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per
 
   it('handled path (accept policy resolves a pending dialog): dispose called exactly once', async () => {
     const dialog = { targetId: 't1', dialogType: 'confirm', message: 'm', url: 'u', openedAt: 'o1' };
-    const broker = fakeBroker({ list: async () => ({ status: 'ok', dialogs: [dialog], busy: [] }) });
+    // GAP-229 (fix-2): the gate re-lists after handling to catch a chained dialog — a stateful
+    // mock (list() reports empty once handle() has actually run) is what a REAL broker looks
+    // like once `Page.handleJavaScriptDialog` really resolved the dialog; a static mock that
+    // always reports the same dialog would (correctly) make the gate treat it as an unbroken
+    // chain and fail closed, which is exactly the behavior GAP-229 requires.
+    let handled = false;
+    const broker = fakeBroker({
+      list: async () => ({ status: 'ok', dialogs: handled ? [] : [dialog], busy: [] }),
+      handle: async () => {
+        handled = true;
+      },
+    });
     const result = await runDialogGate('snap', broker, { mode: 'accept' }, 'command');
     expect(result.status).toBe('handled');
     expect(broker.disposeCalls).toBe(1);
@@ -86,9 +97,11 @@ describe('@sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per
       openedAt: 'o1',
     };
     const handleCalls: Array<{ accept: boolean; promptText: string | undefined }> = [];
+    let handled = false;
     const broker = fakeBroker({
-      list: async () => ({ status: 'ok', dialogs: [dialog], busy: [] }),
+      list: async () => ({ status: 'ok', dialogs: handled ? [] : [dialog], busy: [] }),
       handle: async (_targetId, accept, promptText) => {
+        handled = true;
         handleCalls.push({ accept, promptText });
       },
     });
@@ -109,9 +122,11 @@ describe('@sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per
       openedAt: 'o1',
     };
     const handleCalls: Array<{ accept: boolean; promptText: string | undefined }> = [];
+    let handled = false;
     const broker = fakeBroker({
-      list: async () => ({ status: 'ok', dialogs: [dialog], busy: [] }),
+      list: async () => ({ status: 'ok', dialogs: handled ? [] : [dialog], busy: [] }),
       handle: async (_targetId, accept, promptText) => {
+        handled = true;
         handleCalls.push({ accept, promptText });
       },
     });
@@ -123,13 +138,54 @@ describe('@sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per
   it('GAP-223: handle() is called with the dialog\'s dialogId so a late handle can be verified against the right dialog', async () => {
     const dialog = { targetId: 't1', dialogType: 'confirm', message: 'm', url: 'u', openedAt: 'o1', dialogId: 'abc-123' };
     const handleCalls: Array<{ targetId: string; dialogId: string | undefined }> = [];
+    let handled = false;
     const broker = fakeBroker({
-      list: async () => ({ status: 'ok', dialogs: [dialog], busy: [] }),
+      list: async () => ({ status: 'ok', dialogs: handled ? [] : [dialog], busy: [] }),
       handle: async (targetId, _accept, _promptText, dialogId) => {
+        handled = true;
         handleCalls.push({ targetId, dialogId });
       },
     });
     await runDialogGate('snap', broker, { mode: 'accept' }, 'command');
     expect(handleCalls).toEqual([{ targetId: 't1', dialogId: 'abc-123' }]);
+  });
+
+  it('GAP-229: a chained second dialog (e.g. alert->confirm) opened right after the first is handled is caught and handled too, before the gate reports clear', async () => {
+    const first = { targetId: 't1', dialogType: 'alert', message: 'm1', url: 'u', openedAt: 'o1' };
+    const second = { targetId: 't1', dialogType: 'confirm', message: 'm2', url: 'u', openedAt: 'o2' };
+    let round = 0;
+    const handleCalls: string[] = [];
+    const broker = fakeBroker({
+      list: async () => {
+        if (round === 0) return { status: 'ok', dialogs: [first], busy: [] };
+        if (round === 1) return { status: 'ok', dialogs: [second], busy: [] };
+        return { status: 'ok', dialogs: [], busy: [] };
+      },
+      handle: async (_targetId, _accept, _promptText, _dialogId) => {
+        handleCalls.push(round === 0 ? 'first' : 'second');
+        round++;
+      },
+    });
+    const result = await runDialogGate('snap', broker, { mode: 'accept' }, 'command');
+    expect(result.status).toBe('handled');
+    if (result.status === 'handled') {
+      expect(result.records.map((r) => r.dialog.message)).toEqual(['m1', 'm2']);
+    }
+    expect(handleCalls).toEqual(['first', 'second']);
+    expect(broker.disposeCalls).toBe(1);
+  });
+
+  it('GAP-229: a dialog chain that never stops opening fails CLOSED (throws DialogBlockedError) instead of ever reporting clear', async () => {
+    let round = 0;
+    const broker = fakeBroker({
+      list: async () => {
+        round++;
+        return { status: 'ok', dialogs: [{ targetId: 't1', dialogType: 'confirm', message: `m${round}`, url: 'u', openedAt: `o${round}` }], busy: [] };
+      },
+      handle: async () => {},
+    });
+    await expect(runDialogGate('snap', broker, { mode: 'accept' }, 'command')).rejects.toThrow(DialogBlockedError);
+    // Never more than the bounded number of list() calls (max rounds + the final check).
+    expect(round).toBeLessThanOrEqual(6);
   });
 });

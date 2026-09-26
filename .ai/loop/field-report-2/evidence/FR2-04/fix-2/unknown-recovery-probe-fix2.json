@@ -1,0 +1,87 @@
+{
+  "at": "2026-09-26T20:20:42.232Z",
+  "rows": [
+    {
+      "t": 0,
+      "steps": [
+        {
+          "step": "popup-blocked-initially",
+          "v": true
+        },
+        {
+          "step": "snap",
+          "code": 3,
+          "ms": 1090,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62550/?n=u0x9316\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:6",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command now rec",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 1079,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62550/?n=u0x9316\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:6",
+          "err": "",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1478,
+          "cap": false,
+          "out": "Tab EADBE3879B7D1DFE27DF8854A9D87670 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": "",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "dialog dismiss",
+          "code": 0,
+          "ms": 1073,
+          "cap": false,
+          "out": "Tab 72FA99527C7DA86BD3AA0D8C73D03751 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": "",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "snap --dialog accept",
+          "code": 0,
+          "ms": 419,
+          "cap": false,
+          "out": "URL: about:blank\nTitle: \nInteractive elements (0):",
+          "err": "Note: dialog policy for this session is now \"accept\".",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "closetab",
+          "code": 1,
+          "ms": 228,
+          "cap": false,
+          "out": "",
+          "err": "Error: usage: sutradhar closetab <tabId>  (see \"tabs\" for the list of open tab ids)",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "tabs",
+          "code": 0,
+          "ms": 365,
+          "cap": false,
+          "out": "* tab_sess_1790454029738_1_1  (no title)  about:blank",
+          "err": "",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "close",
+          "code": 0,
+          "ms": 391,
+          "err": ""
+        }
+      ]
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": []
+  }
+}

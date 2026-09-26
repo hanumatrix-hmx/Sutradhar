@@ -9,9 +9,10 @@
  * work already has to worry about (R-F).
  */
 import { spawn } from 'node:child_process';
-import { readFile, writeFile, rm, open } from 'node:fs/promises';
+import { readFile, writeFile, rm, open, rename } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
+import crypto from 'node:crypto';
 import { WARDEN_HTTP_TIMEOUT_MS } from '@sutradhar/browser';
 import type { CliState } from './state.js';
 
@@ -48,40 +49,72 @@ function isPidAlive(pid: number): boolean {
   }
 }
 
-/** Tries to take the spawn lock. Returns `true` if this call now owns it, `false` if another
- *  live, non-stale spawn is already in progress (the caller should wait for its result instead).
- *  Recovers a stale lock (dead pid, or simply too old — a spawn should never legitimately take
- *  longer than `WARDEN_READY_TIMEOUT_MS`) by deleting it and retrying once, so a spawner that
- *  crashed mid-lock can never wedge every future command. */
+/**
+ * Tries to take the spawn lock. Returns `true` if this call now owns it, `false` if another
+ * live, non-stale spawn is already in progress (the caller should wait for its result instead).
+ *
+ * FR2-04 fix-2/GAP-231: the original stale-lock recovery did `rm(lockPath)` and then looped back
+ * to `open(lockPath, 'wx')` — an unlink-then-create pattern with a real window between the two
+ * calls where the lock path does not exist at all. audit-2 measured that window being wide enough
+ * in practice for several racing processes to each get through their own `rm()` + `open('wx')`
+ * pair before any of them observed another's write (stale-lock scenario: 8/10 rounds ended with
+ * multiple wardens alive, up to 4). Never do that again: recovering a stale lock now writes the
+ * challenger's claim to a uniquely-named temp file first (an `open('wx')` on a name nobody else
+ * could be using, so writing it is never itself racy), `rename()`s it onto the lock path (a
+ * single filesystem operation — POSIX and Windows both guarantee no observer ever sees the lock
+ * path transiently absent during a rename, unlike unlink-then-create), and then reads the lock
+ * back to confirm THIS process's write is the one that's actually there — if a concurrent
+ * challenger's rename landed after ours, our read-back fails and we correctly report we do not
+ * own the lock, rather than assuming the rename alone proved ownership.
+ */
 async function tryAcquireSpawnLock(stateDir: string): Promise<boolean> {
   const lockPath = spawnLockPath(stateDir);
-  for (let attempt = 0; attempt < 2; attempt++) {
+  const payload: SpawnLockFile = { pid: process.pid, startedAt: Date.now() };
+
+  // Fast path: nobody holds the lock at all yet. `open(..., 'wx')` (O_CREAT|O_EXCL) is a single
+  // atomic filesystem operation on both POSIX and Windows — exactly one concurrent caller can
+  // win it for a given path.
+  try {
+    const handle = await open(lockPath, 'wx');
     try {
-      const handle = await open(lockPath, 'wx');
-      try {
-        const payload: SpawnLockFile = { pid: process.pid, startedAt: Date.now() };
-        await handle.writeFile(JSON.stringify(payload));
-      } finally {
-        await handle.close();
-      }
-      return true;
-    } catch (err) {
-      if ((err as NodeJS.ErrnoException).code !== 'EEXIST') return false;
-      // Someone else holds it — is it stale?
-      let existing: SpawnLockFile | undefined;
-      try {
-        existing = JSON.parse(await readFile(lockPath, 'utf-8')) as SpawnLockFile;
-      } catch {
-        existing = undefined; // unreadable/gone between the EEXIST and our read — retry once
-      }
-      const stale =
-        !existing || !isPidAlive(existing.pid) || Date.now() - existing.startedAt > SPAWN_LOCK_STALE_MS;
-      if (!stale) return false;
-      await rm(lockPath, { force: true });
-      // loop once more to actually take it now that it's cleared
+      await handle.writeFile(JSON.stringify(payload));
+    } finally {
+      await handle.close();
     }
+    return true;
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code !== 'EEXIST') return false;
   }
-  return false;
+
+  // Someone already holds it — is it stale?
+  let existing: SpawnLockFile | undefined;
+  try {
+    existing = JSON.parse(await readFile(lockPath, 'utf-8')) as SpawnLockFile;
+  } catch {
+    existing = undefined; // unreadable/gone between the EEXIST and our read
+  }
+  const stale = !existing || !isPidAlive(existing.pid) || Date.now() - existing.startedAt > SPAWN_LOCK_STALE_MS;
+  if (!stale) return false;
+
+  // Atomic replace, never unlink-then-create: write our claim to a name only we could be using,
+  // then rename it over the lock path in one filesystem call.
+  const tempPath = `${lockPath}.${process.pid}.${crypto.randomBytes(4).toString('hex')}.tmp`;
+  try {
+    await writeFile(tempPath, JSON.stringify(payload), { flag: 'wx' });
+    await rename(tempPath, lockPath);
+  } catch {
+    await rm(tempPath, { force: true });
+    return false;
+  }
+  // Read the lock back: only a payload that's still exactly OURS means our rename is the one
+  // that "won" — a concurrent challenger's rename landing microseconds after ours would mean the
+  // file we just wrote is already gone, and we must NOT believe we hold the lock.
+  try {
+    const after = JSON.parse(await readFile(lockPath, 'utf-8')) as SpawnLockFile;
+    return after.pid === payload.pid && after.startedAt === payload.startedAt;
+  } catch {
+    return false;
+  }
 }
 
 async function releaseSpawnLock(stateDir: string): Promise<void> {
@@ -133,6 +166,31 @@ async function healthCheck(
   } catch {
     return undefined;
   }
+}
+
+/**
+ * FR2-04 fix-2/GAP-231: a warden-side singleton check, called by a just-spawned warden process
+ * BEFORE it does anything else (connect to Chrome, bind its HTTP server, start tracking targets).
+ * The spawn lock in `ensureWarden` above is the primary defense against double-spawning, but
+ * audit-2 found it isn't airtight under a stale-lock race; this is the defense-in-depth backstop
+ * on the OTHER end — even if two spawns both got past the lock, at most one of them should ever
+ * actually start acting as the session's warden. If `warden.json` already names a DIFFERENT,
+ * live, healthy warden for the SAME `wsEndpoint`, this process is redundant and must exit
+ * immediately without ever attaching to the browser or touching any dialog — the existing warden
+ * keeps running untouched. Returns `false` (safe to proceed) when there's no rival, the rival is
+ * for a different browser, or the rival is unreachable/stale.
+ */
+export async function isRivalWardenAlive(
+  stateDir: string,
+  wsEndpoint: string,
+  selfPid: number,
+  fetchImpl: typeof fetch = fetch,
+): Promise<boolean> {
+  const existing = await readWardenFile(stateDir);
+  if (!existing || existing.pid === selfPid) return false;
+  if (!isPidAlive(existing.pid)) return false;
+  const health = await healthCheck(existing, fetchImpl);
+  return !!health && health.wsEndpoint === wsEndpoint;
 }
 
 export interface EnsureWardenDeps {

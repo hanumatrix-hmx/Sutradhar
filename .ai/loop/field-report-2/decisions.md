@@ -2144,3 +2144,36 @@ Decisions for fix-2:
 6. GAP-233: build a fixture that really triggers beforeunload in a popup (navigate it), then decide.
 7. In fix-2's verification, also run the items audit-2 never reached: gate overhead vs baseline, and
    the GAP-226 late-report-only check.
+
+## 2026-09-27 -- FR2-04 fix-2 executed; sent to independent audit-3 (cycle 3 of 4)
+
+Executor (Sonnet) self-report. Every claim points at evidence/FR2-04/fix-2/.
+- GAP-228: the probe now uses Performance.getMetrics on every untracked page target. Re-verified
+  10/10 per state: it answers under busy and busy-async scripts, and times out under all four dialog
+  types. The audit-2 matrix, 63 rows: 57 caught, 0 missed. The 6 not-blocked rows are the
+  beforeunload no-trigger fixture. N9/N10 are not blocked.
+- GAP-229: a bounded re-gate loop (5 rounds, 3 s), failing closed. Chain probe 9/9, ~0.7 s, no
+  about:blank.
+- GAP-230: an unknown dialog is recovered by closing its target (Target.closeTarget); `tabs` is
+  ungated. 3/3 recover with the session alive. RESIDUAL GAP-234: `tabs` immediately after recovery
+  hangs. It is kept as a deliberately failing live case, so the live total is 110 pass / 1 fail /
+  2 skip.
+- GAP-231: rename-then-confirm lock plus a warden-side singleton check. Stale lock 0/10, plain 0/10,
+  crash 4/4, r10 stale-nojson 4/4 runs exact.
+- GAP-232: the 5 surviving mutations are now killed. GAP-233: beforeunload in a real popup is
+  detected, but only 2/5 runs reached the case because of a probe-script bug.
+- GAP-226: caught immediately 3/3 as a side effect of probing every target. The executor could not
+  confirm the iframe was truly out-of-process on 127.0.0.1/localhost.
+- Gate overhead against master (7073142, from a temp worktree that was removed afterwards): median
+  snap 253 -> 382 ms (+129 ms, +51%). That's a real per-command cost of the gate.
+- New, pre-existing, not FR2-04 code: GAP-235, an adoptPopupPage "Requesting main frame too early!"
+  crash on click -> immediately-alerting popup.
+
+Orchestrator checks: vitest browser 461 and cli 108, run independently. The executor's saved
+vitest-browser.txt said 456 because it predated its last 5 tests, so the self-reported 461 is
+correct and its evidence file was stale. No leftover processes and no leftover worktree. The
+Orchestrator also removed stale temp dirs from earlier loop rounds (fr2-03/fr2-09 fix2 and
+sutradhar-fr2-04-verify-*), all matched by name to this loop.
+
+Open questions for audit-3 to settle: is the GAP-234 residual acceptable for DONE, and is +129 ms
+per command acceptable?

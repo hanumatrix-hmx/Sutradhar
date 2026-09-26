@@ -41,6 +41,7 @@ import {
   writeWardenFile,
   removeWardenFileIfOwned,
   policyFromState,
+  isRivalWardenAlive,
 } from './warden-control.js';
 import { DialogWarden } from '@sutradhar/browser';
 
@@ -125,6 +126,16 @@ async function runWardenProcess(payloadB64: string): Promise<void> {
   };
   const stateDir = path.dirname(stateFile);
 
+  // GAP-231 warden-side singleton check (fix-2): even if this process's spawner won the spawn
+  // lock's race in error (or an old, stale warden.json still names a rival that's actually
+  // alive), never let two wardens for the same wsEndpoint both start acting — exit immediately,
+  // before ever connecting to Chrome, if a live, healthy rival is already there. Deliberately
+  // checked BEFORE `new DialogWarden(...)`/`.start()`, so a loser never attaches to a single
+  // target, races the winner for a paused-target release, or double-handles a dialog.
+  if (await isRivalWardenAlive(stateDir, wsEndpoint, process.pid)) {
+    process.exit(0);
+  }
+
   const warden = new DialogWarden({
     wsEndpoint,
     readPolicy: async () => policyFromState(await readStateFileAt(stateFile)),
@@ -141,6 +152,20 @@ async function runWardenProcess(payloadB64: string): Promise<void> {
         wsEndpoint,
         startedAt: new Date().toISOString(),
       });
+      // GAP-231 (fix-2, hardening): the pre-start check above closes the common case, but two
+      // spawns that both start within the same few hundred milliseconds can each pass IT before
+      // either one has published `warden.json` at all — a real, narrow TOCTOU window fix-2's own
+      // lock-race-probe still measured live (down from 8/10 stale rounds with up to 4 wardens
+      // alive to a residual few/10 with at most 2, after the CLI-side lock fix alone). Re-read
+      // `warden.json` after a short settle window: if it no longer names THIS pid, a concurrent
+      // rival's write landed after ours and is the one every future command will actually talk
+      // to (readWardenFile is the CLI's only way to find a warden) — so continuing to run here
+      // would just be an unreachable, dialog-double-handling zombie. Stop rather than linger.
+      await new Promise((r) => setTimeout(r, 300));
+      const settled = await readWardenFile(stateDir);
+      if (settled && settled.pid !== process.pid) {
+        void warden.stop('duplicate-warden-lost-settle-race');
+      }
     },
     onExit: async (_reason) => {
       await removeWardenFileIfOwned(stateDir, process.pid);
@@ -1075,15 +1100,23 @@ async function cmdDialog(sub: string | undefined, rest: string[]): Promise<void>
   // on its own — found live: an undefined promptText resolved the prompt with an EMPTY string,
   // not the dialog's actual default).
   const effectivePromptText = accept && target.dialogType === 'prompt' ? (text ?? target.defaultValue) : undefined;
+  let outcome: { closedTarget?: boolean; message?: string } | void;
   try {
     const broker2 = await getBroker(state);
     try {
-      await broker2.handle(target.targetId!, accept, effectivePromptText, target.dialogId);
+      outcome = await broker2.handle(target.targetId!, accept, effectivePromptText, target.dialogId);
     } finally {
       await broker2.dispose();
     }
   } catch (err) {
     return dialogErrorAndReturn(`could not ${sub} the ${target.dialogType} dialog: ${(err as Error).message}`);
+  }
+
+  // GAP-230: an `unknown` dialog was recovered by closing its tab rather than actually resolved —
+  // say so plainly instead of claiming "Accepted"/"Dismissed" for a dialog we never touched.
+  if (outcome?.closedTarget) {
+    console.log(outcome.message ?? `Tab was closed because its dialog could not be addressed directly.`);
+    return;
   }
 
   if (accept) {

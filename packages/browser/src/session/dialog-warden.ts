@@ -16,7 +16,13 @@
 import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 import crypto from 'node:crypto';
 import type { Browser, CDPSession, Target } from 'puppeteer-core';
-import { connectForDialogs, listPageTargets, livenessProbe, type ObservedDialog } from './dialog-cdp.js';
+import {
+  connectForDialogs,
+  listPageTargets,
+  livenessProbe,
+  closeTargetAtBrowserLevel,
+  type ObservedDialog,
+} from './dialog-cdp.js';
 import type { DialogPolicy } from './browser-tab.js';
 
 const DEFAULT_POLICY_GRACE_MS = 300;
@@ -24,33 +30,29 @@ const DEFAULT_STATE_POLL_MS = 2000;
 /** Every warden HTTP call's own budget (WARDEN_HTTP_TIMEOUT_MS, FR2-04 spec §0.4) — the CLI side
  *  (warden-control.ts) applies this per-request; kept here too as the doc-of-record. */
 export const WARDEN_HTTP_TIMEOUT_MS = 500;
-/** GAP-220 (b), the defensive layer: bounded per-target liveness probe budget used by
- *  `/v1/dialogs` for page targets whose attach never completed (see `pageEnableAckedAt`'s doc
- *  comment below for exactly which targets that is — NOT every target on every command). Kept
- *  short so a session with several tabs doesn't make the gate noticeably slower (measured in
- *  fix-1/gate-overhead.json) — a target that fails to answer within this window is reported as an
+/** GAP-220/228 (b), the defensive layer: bounded per-target liveness probe budget used by
+ *  `/v1/dialogs` for EVERY page target with no tracked dialog (see the doc comment on
+ *  `listWithLiveness` for fix-2's change from "only never-acked targets" to "every target").
+ *  Kept short so a session with several tabs doesn't make the gate noticeably slower (measured in
+ *  fix-2/gate-overhead.json) — a target that fails to answer within this window is reported as an
  *  `unknown` dialog and the gate blocks, exactly like `DirectCdpBroker`'s fallback does. */
 export const LIVENESS_PROBE_MS = 400;
 /**
- * GAP-220 (b): the liveness probe applies ONLY to a target whose `Page.enable` has never
- * successfully ACKed. This is a deliberately narrower, DECIDABLE condition, arrived at after two
- * broader, timing-window-based versions both regressed live (fix-1 evidence): a discovery-time
- * window (`Date.now()` since the target was first seen) failed because a real CLI `nav` command's
- * own process/attach overhead (~1s, measured live) already exceeds any window generous enough to
- * matter; a `Page.enable`-ack-plus-grace-period version failed for the same reason once the ack
- * itself was shown to happen only shortly before a legitimate next action, since `Page.enable` is
- * a browser-level toggle that acks quickly REGARDLESS of whether a dialog blocked the renderer
- * (same fact `DirectCdpBroker`'s own doc comment relies on for C11) — so "how long since ack"
- * cannot distinguish "we won the attach race" from "we lost it but the ack still came back fast."
- * There is NO bounded timing signal that reliably tells "will resolve on its own" (a busy script)
- * apart from "will never resolve without external help" (an orphaned dialog) — both simply fail
- * to answer a short probe. Rather than keep guessing at a magic number, this only probes a target
- * the warden's own attach genuinely never completed for AT ALL — a real, decidable signal with no
- * false-positive risk for an established tab (confirmed live: N9/N10 clean with this condition,
- * see fix-1 vitest/live evidence). The honest cost: a target whose `Page.enable` happens to ack
- * successfully despite having missed an already-open dialog (Step 1 O1) is NOT caught by this
- * layer — that residual gap is carried by structural layer (a) alone, and is disclosed, not
- * hidden, in this item's final report.
+ * FR2-04 fix-2/GAP-228: fix-1 narrowed the liveness probe (see git history) to only a target
+ * whose `Page.enable` had never ACKed, because its probe signal at the time (`Runtime.evaluate`)
+ * was NOT decidable — it timed out under both a genuinely dialog-blocked renderer and a page
+ * merely running a long synchronous script, so probing every target with it false-blocked the
+ * legitimate busy-script cases N9/N10. That narrowing traded a live regression for a real,
+ * common miss: a target whose `Page.enable` happens to ACK despite an already-open dialog (the
+ * `about:blank` popup that `alert()`s synchronously during its own construction, Step 1's O1
+ * shape) was never probed at all and went undetected 26/26 (audit-2, GAP-228).
+ *
+ * `livenessProbe` (dialog-cdp.ts) now uses `Performance.getMetrics`, which audit-2's signal
+ * research (and fix-2's own re-verification, evidence/FR2-04/fix-2/signal-reverify/) confirmed IS
+ * decidable: it answers under a busy synchronous script but times out under every native dialog
+ * type. That removes the reason fix-1 had to narrow the probe at all, so `listWithLiveness` below
+ * now probes EVERY real page target with nothing tracked, regardless of `pageEnableAckedAt` —
+ * `pageEnableAckedAt` is kept only for diagnostics now, not as a probe gate.
  */
 
 export interface WardenOptions {
@@ -113,15 +115,19 @@ export class DialogWarden {
   }
 
   /**
-   * GAP-220 defensive layer (b): `pending()` alone only reports dialogs the warden's OWN
+   * GAP-220/228 defensive layer (b): `pending()` alone only reports dialogs the warden's OWN
    * `Page.javascriptDialogOpening` listener actually saw — which the structural layer above
-   * cannot guarantee for a target whose dialog fires during the attach race. Never trust "no
-   * tracked dialog" by itself: for every real page target with nothing tracked, run a short,
-   * bounded liveness probe (the same primitive `DirectCdpBroker`'s fallback uses) and report an
-   * unresponsive one as an `unknown` dialog, exactly like that fallback does — the gate then
-   * blocks (exit 3) instead of letting `runtime.attach()` risk the 180s hang / silent wrong-tab
-   * adoption (GAP-017/GAP-220). Bounded to `LIVENESS_PROBE_MS` per target so a session with a
-   * normal number of tabs doesn't make every gated command noticeably slower.
+   * cannot guarantee for a target whose dialog fires during the attach race, OR (GAP-228) for a
+   * target whose `Page.enable` acks normally but whose FIRST script (synchronous, before the
+   * warden's listener could ever fire) already opened and is blocking on a dialog. Never trust
+   * "no tracked dialog" by itself: for EVERY real page target with nothing tracked — fix-2 removed
+   * the old "only never-acked" narrowing (see `LIVENESS_PROBE_MS`'s doc comment) now that the probe
+   * signal itself (`Performance.getMetrics`) is decidable — run a short, bounded liveness probe
+   * and report an unresponsive one as an `unknown` dialog, exactly like `DirectCdpBroker`'s
+   * fallback does. The gate then blocks (exit 3) instead of letting `runtime.attach()` risk the
+   * 180s hang / silent wrong-tab adoption (GAP-017/GAP-220/GAP-228). Bounded to
+   * `LIVENESS_PROBE_MS` per target so a session with a normal number of tabs doesn't make every
+   * gated command noticeably slower (measured in fix-2/gate-overhead.json).
    */
   public async listWithLiveness(): Promise<{ dialogs: ObservedDialog[]; busy: string[] }> {
     const dialogs = this.pending();
@@ -130,10 +136,9 @@ export class DialogWarden {
     const trackedIds = new Set(dialogs.map((d) => d.targetId));
     for (const { info, target } of listPageTargets(this.browser)) {
       if (trackedIds.has(info.targetId)) continue;
-      // Only probe a target whose Page.enable has NEVER acked — see the doc comment above
-      // `pageEnableAckedAt`'s declaration for why this (not a timing window) is the decidable
-      // condition fix-1 settled on.
-      if (this.pageEnableAckedAt.has(info.targetId)) continue;
+      // GAP-228: probe every target with nothing tracked — no `pageEnableAckedAt` narrowing any
+      // more (see LIVENESS_PROBE_MS's doc comment for why the old narrowing existed and why it's
+      // gone: the new probe signal is decidable, so N9/N10 busy-script cases don't need it).
       let session = this.sessions.get(info.targetId);
       let ownSession = false;
       if (!session) {
@@ -359,6 +364,43 @@ export class DialogWarden {
     }
   }
 
+  /**
+   * GAP-230: re-probes `targetId` (it may have unblocked on its own since the caller's `list()`)
+   * and, if it's still genuinely unresponsive AND still exists, closes it via
+   * {@link closeTargetAtBrowserLevel}. Returns `false` (no recovery attempted/needed) for a
+   * target that's gone, or that answers normally — never closes a tab that isn't actually stuck.
+   */
+  private async tryRecoverUnknownTarget(targetId: string): Promise<boolean> {
+    if (!this.browser) return false;
+    const stillExists = listPageTargets(this.browser).some(({ info }) => info.targetId === targetId);
+    if (!stillExists) return false;
+    let session = this.sessions.get(targetId);
+    let ownSession = false;
+    if (!session) {
+      const entry = this.browser.targets().find((t) => idOf(t) === targetId);
+      if (!entry) return false;
+      try {
+        session = await entry.createCDPSession();
+        ownSession = true;
+      } catch {
+        return false;
+      }
+    }
+    let state: Awaited<ReturnType<typeof livenessProbe>>;
+    try {
+      state = await livenessProbe(session, LIVENESS_PROBE_MS);
+    } finally {
+      if (ownSession) void session.detach().catch(() => {});
+    }
+    if (state === 'responsive') return false; // it cleared on its own — nothing to recover
+    try {
+      await closeTargetAtBrowserLevel(this.browser, targetId);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   private async listen(): Promise<void> {
     this.server = http.createServer((req, res) => {
       void this.handleRequest(req, res);
@@ -403,6 +445,32 @@ export class DialogWarden {
       const session = targetId ? this.sessions.get(targetId) : undefined;
       const dialog = targetId ? this.dialogs.get(targetId) : undefined;
       if (!session || !dialog || dialog.handled) {
+        // GAP-230: an `unknown` dialog (this target's `Page.enable` never acked, so it was never
+        // tracked as a real `TrackedDialog` at all — `listWithLiveness` only synthesizes a
+        // transient `unknown` entry for the caller, nothing persists in `this.dialogs`) used to be
+        // a dead end here: every `dialog accept|dismiss` failed "No dialog is open on that tab",
+        // and the ONLY escape was `sutradhar close` (losing the whole session). Recover instead:
+        // if the target genuinely exists and is still unresponsive (re-probe — it may have
+        // resolved on its own between list() and this call), close it at the BROWSER level
+        // (`Target.closeTarget`, which doesn't touch the blocked renderer at all, so it works
+        // even though `Page.handleJavaScriptDialog` has nothing to act on). A target that's
+        // actually fine (session missing because it already closed, or newly responsive) still
+        // 404s as before — this only recovers a target that's genuinely still stuck.
+        if (targetId && this.browser) {
+          const recovered = await this.tryRecoverUnknownTarget(targetId);
+          if (recovered) {
+            res
+              .writeHead(200, { 'content-type': 'application/json' })
+              .end(
+                JSON.stringify({
+                  handled: true,
+                  closedTarget: true,
+                  message: `Tab ${targetId} was closed because its dialog could not be addressed directly (unknown dialog).`,
+                }),
+              );
+            return;
+          }
+        }
         res
           .writeHead(404, { 'content-type': 'application/json' })
           .end(JSON.stringify({ error: 'No dialog is open on that tab' }));

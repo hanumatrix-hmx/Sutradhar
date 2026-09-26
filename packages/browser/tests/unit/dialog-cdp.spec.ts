@@ -50,16 +50,21 @@ describe('@sutradhar/browser dialog-cdp (FR2-04)', () => {
   });
 
   describe('B2: livenessProbe', () => {
+    // FR2-04 fix-2/GAP-228: the probe signal changed from `Runtime.evaluate` to
+    // `Performance.getMetrics` — audit-2's signal research (and fix-2's own re-verification,
+    // evidence/FR2-04/fix-2/signal-reverify/) found `Runtime.evaluate` is NOT decidable (it times
+    // out under both a real dialog AND a busy synchronous script), whereas `Performance.getMetrics`
+    // answers under a busy script but times out under every dialog type.
     it('resolves -> responsive', async () => {
       const session = fakeSession();
-      session.send.mockResolvedValue({ result: { value: 1 } });
+      session.send.mockResolvedValue({ metrics: [] });
       expect(await livenessProbe(session, 1000)).toBe('responsive');
-      expect(session.send).toHaveBeenCalledWith('Runtime.evaluate', { expression: '1', returnByValue: true }, { timeout: 1000 });
+      expect(session.send).toHaveBeenCalledWith('Performance.getMetrics', undefined, { timeout: 1000 });
     });
 
     it('a "timed out" rejection -> blocked', async () => {
       const session = fakeSession();
-      session.send.mockRejectedValue(new Error('Runtime.evaluate timed out'));
+      session.send.mockRejectedValue(new Error('Performance.getMetrics timed out'));
       expect(await livenessProbe(session, 1000)).toBe('blocked');
     });
 

@@ -84,8 +84,10 @@ export function formatDialogHandled(d: DialogHandledLike): string {
 export const DIALOG_HINT =
   (type: string) =>
     `Hint: a ${type} dialog is open and blocking the page. Run "sutradhar dialog accept [text]" or ` +
-    `"sutradhar dialog dismiss", or set a policy with --dialog accept|dismiss. If that doesn't ` +
-    `work, "sutradhar close" ends the session so you can start a fresh one.`;
+    `"sutradhar dialog dismiss", or set a policy with --dialog accept|dismiss. For a dialog type ` +
+    `"unknown", that same command now recovers by closing the affected tab (GAP-230) — run ` +
+    `"sutradhar tabs" (never gated) afterwards to confirm, or "sutradhar closetab <tabId>" directly. ` +
+    `If nothing else works, "sutradhar close" ends the whole session so you can start a fresh one.`;
 
 export function beforeunloadCancelMessage(url: string): string {
   return (
@@ -111,7 +113,12 @@ export function isBeforeunloadCancel(
 
 export type VerbClass = 'exempt' | 'trigger' | 'guarded';
 
-const EXEMPT_VERBS = new Set(['dialog', 'doctor', 'profile', 'sessions', 'close', '__dialog-warden']);
+// GAP-230 (fix-2): 'tabs' must never be gated — it is the only way to learn a tab's id when
+// `dialog accept|dismiss` can't address it directly (an `unknown` dialog before fix-2's
+// Target.closeTarget recovery existed at all), and it is harmless to run against a
+// dialog-blocked session (it only lists tabs, via the same browser-level info the gate itself
+// uses — no attach/page interaction that could hang).
+const EXEMPT_VERBS = new Set(['dialog', 'doctor', 'profile', 'sessions', 'close', 'tabs', '__dialog-warden']);
 const TRIGGER_VERBS = new Set(['click', 'clicktext', 'clickrole', 'clickpoint']);
 
 /** Classifies a verb per spec §2.10. Help/no-verb (`undefined`) is exempt; any unknown/unlisted

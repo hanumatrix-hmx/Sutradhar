@@ -14,6 +14,7 @@ import {
   listPageTargets,
   livenessProbe,
   handleDialogOnTarget,
+  closeTargetAtBrowserLevel,
 } from '@sutradhar/browser';
 import type { DialogPolicy } from '@sutradhar/browser';
 import {
@@ -26,13 +27,21 @@ import {
 
 export type BrokerDialog = PendingDialogEntry;
 
+/** GAP-230: `handle()`'s outcome beyond "it worked" — set when the target was closed as a
+ *  recovery path for an unknown dialog rather than actually resolved via
+ *  `Page.handleJavaScriptDialog`, so the caller can report what really happened. */
+export interface HandleOutcome {
+  readonly closedTarget?: boolean;
+  readonly message?: string;
+}
+
 export interface DialogBroker {
   /** Every dialog currently open across the session's tabs, or `'unknown'` if the browser
    *  couldn't be reached at all (the caller falls through to the normal attach path). */
   list(): Promise<{ status: 'ok'; dialogs: BrokerDialog[]; busy: string[] } | { status: 'unknown' }>;
   /** `dialogId`, when known (warden-sourced dialogs — GAP-223), lets the broker refuse to apply
    *  this decision to a dialog that isn't the exact one it was made about any more. */
-  handle(targetId: string, accept: boolean, promptText: string | undefined, dialogId?: string): Promise<void>;
+  handle(targetId: string, accept: boolean, promptText: string | undefined, dialogId?: string): Promise<HandleOutcome | void>;
   /** Releases whatever connection `list()`/`handle()` opened (R-E: every gate path must
    *  disconnect its own connection, even on an exception). Idempotent. */
   dispose(): Promise<void>;
@@ -114,7 +123,7 @@ export class DirectCdpBroker implements DialogBroker {
     return { status: 'ok', dialogs, busy };
   }
 
-  public async handle(targetId: string, accept: boolean, promptText: string | undefined): Promise<void> {
+  public async handle(targetId: string, accept: boolean, promptText: string | undefined): Promise<HandleOutcome | void> {
     // GAP-222: `handle()` must work even when `list()` was never called first — `sutradhar
     // dialog accept|dismiss` builds a fresh broker and calls `handle()` directly (cli.ts
     // `cmdDialog`), with no `list()` in between. Connect lazily here instead of requiring the
@@ -127,7 +136,20 @@ export class DirectCdpBroker implements DialogBroker {
     const entry = listPageTargets(this.browser).find(({ info }) => info.targetId === targetId);
     if (!entry) throw new Error('No dialog is open on that tab');
     const session = await entry.target.createCDPSession();
-    await handleDialogOnTarget(session, accept, promptText, HANDLE_TIMEOUT_MS);
+    try {
+      await handleDialogOnTarget(session, accept, promptText, HANDLE_TIMEOUT_MS);
+    } catch (err) {
+      // GAP-230: this fallback path has no persistent dialog identity to check (it's a live,
+      // single-shot CDP read every time), so an `unknown`-typed target (state:'blocked', no hint)
+      // reaching here means `Page.handleJavaScriptDialog` really has nothing to resolve. Recover
+      // the same way the warden does: close the target at the browser level instead of dead-
+      // ending — re-probe first so a target that cleared on its own between `list()` and this
+      // call is never closed unnecessarily.
+      const state = await livenessProbe(session, LIVENESS_TIMEOUT_MS).catch(() => 'error' as const);
+      if (state === 'responsive') throw err;
+      await closeTargetAtBrowserLevel(this.browser, targetId);
+      return { closedTarget: true, message: `Tab ${targetId} was closed because its dialog could not be addressed directly (unknown dialog).` };
+    }
   }
 
   public async dispose(): Promise<void> {
@@ -185,7 +207,7 @@ export class WardenBroker implements DialogBroker {
     }
   }
 
-  public async handle(targetId: string, accept: boolean, promptText: string | undefined, dialogId?: string): Promise<void> {
+  public async handle(targetId: string, accept: boolean, promptText: string | undefined, dialogId?: string): Promise<HandleOutcome | void> {
     const res = await this.request('/v1/dialogs/handle', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -195,6 +217,12 @@ export class WardenBroker implements DialogBroker {
       const body = (await res.json().catch(() => ({ error: `HTTP ${res.status}` }))) as { error?: string };
       throw new Error(body.error ?? `warden handle failed with HTTP ${res.status}`);
     }
+    // GAP-230: the warden reports `closedTarget:true` when it recovered an unknown dialog by
+    // closing the tab (`Target.closeTarget`) instead of actually resolving one via
+    // `Page.handleJavaScriptDialog` — surface that so `cmdDialog` can tell the user what really
+    // happened, rather than printing "Accepted/Dismissed" for a dialog it never touched.
+    const body = (await res.json().catch(() => undefined)) as { closedTarget?: boolean; message?: string } | undefined;
+    if (body?.closedTarget) return { closedTarget: true, message: body.message };
   }
 
   public async dispose(): Promise<void> {
@@ -208,10 +236,31 @@ export type GateResult =
   | { status: 'handled'; records: Array<{ dialog: BrokerDialog; action: 'accept' | 'dismiss'; promptText?: string }> }
   | { status: 'blocked'; dialogs: BrokerDialog[] };
 
+/** GAP-229 (fix-2): bounds on the gate's re-check loop after applying a policy — an alert-then-
+ *  confirm (or longer) chain must be re-gated before the command is allowed to run, but that loop
+ *  must not itself become an unbounded hang if a page keeps opening dialogs indefinitely. */
+const GATE_REGATE_MAX_ROUNDS = 5;
+const GATE_REGATE_BUDGET_MS = 3000;
+const GATE_REGATE_POLL_MS = 150;
+
 /**
  * The gate itself (spec §2.8.2). Runs BEFORE `runtime.attach`, outside any self-heal `try` — the
  * only thing it may throw is {@link DialogBlockedError}, in `command` mode with policy `'report'`
  * or a failed handle attempt.
+ *
+ * FR2-04 fix-2/GAP-229: the original version listed once, handled whatever it found, and returned
+ * — so a chained second dialog (e.g. `alert()` immediately followed by `confirm()`, the second
+ * only opening once the page's own script resumes after the first is resolved) was never re-
+ * checked: the command then ran straight into it, `findAllOpenPages`-style code blocked for the
+ * full 180s protocol timeout, and the command silently returned from the wrong (`about:blank`)
+ * tab with exit 0 (audit-2, 4/4). This version loops: after applying the policy to everything
+ * `list()` currently reports, it waits a short beat (a chained dialog needs the page's script to
+ * actually resume and call the next one) and re-lists. It only returns "clear enough to run" once
+ * a list comes back with nothing pending — bounded to `GATE_REGATE_MAX_ROUNDS` handled dialogs or
+ * `GATE_REGATE_BUDGET_MS` total, whichever comes first, after which ONE final list decides: if
+ * still blocked, the gate fails closed (throws/`blocked`) rather than ever letting the command run
+ * against a target that might still be blocked — never the silent "assume clear" that caused
+ * GAP-229 in the first place.
  */
 export async function runDialogGate(
   verb: string | undefined,
@@ -219,18 +268,27 @@ export async function runDialogGate(
   policy: DialogPolicy,
   mode: GateMode,
 ): Promise<GateResult> {
+  const records: Array<{ dialog: BrokerDialog; action: 'accept' | 'dismiss'; promptText?: string }> = [];
+  const startedAt = Date.now();
   try {
-    const listed = await broker.list();
-    if (listed.status === 'unknown') return { status: 'clear' };
-    if (listed.dialogs.length === 0) {
-      if (listed.busy.length > 0) {
-        console.error('Note: the page did not respond within 1000ms (a long-running script?).');
+    for (let round = 0; round < GATE_REGATE_MAX_ROUNDS; round++) {
+      const listed = await broker.list();
+      if (listed.status === 'unknown') return { status: 'clear' };
+      if (listed.dialogs.length === 0) {
+        if (listed.busy.length > 0) {
+          console.error('Note: the page did not respond within 1000ms (a long-running script?).');
+        }
+        return records.length > 0 ? { status: 'handled', records } : { status: 'clear' };
       }
-      return { status: 'clear' };
-    }
 
-    if (policy.mode === 'accept' || policy.mode === 'dismiss') {
-      const records: Array<{ dialog: BrokerDialog; action: 'accept' | 'dismiss'; promptText?: string }> = [];
+      if (policy.mode !== 'accept' && policy.mode !== 'dismiss') {
+        // policy.mode === 'report' (or 'auto', which never reaches the CLI gate in practice, but
+        // is handled the same conservative way if it does) — nothing to apply, so there's no
+        // chain to loop on; report/block on whatever is open right now.
+        if (mode === 'close') return { status: 'blocked', dialogs: listed.dialogs };
+        throw new DialogBlockedError(verb, listed.dialogs, 'blocked');
+      }
+
       const accept = policy.mode === 'accept';
       try {
         for (const dialog of [...listed.dialogs].sort((a, b) => a.openedAt.localeCompare(b.openedAt))) {
@@ -243,17 +301,33 @@ export async function runDialogGate(
           await broker.handle(dialog.targetId!, accept, promptText, dialog.dialogId);
           records.push({ dialog, action: policy.mode, promptText });
         }
-        return { status: 'handled', records };
       } catch (err) {
         if (mode === 'close') return { status: 'blocked', dialogs: listed.dialogs };
         throw new DialogBlockedError(verb, listed.dialogs, 'blocked', `applying the "${policy.mode}" policy failed: ${(err as Error).message}.`);
       }
+
+      if (Date.now() - startedAt > GATE_REGATE_BUDGET_MS) break;
+      // GAP-229: give a chained dialog a moment to actually open (the page's script only resumes,
+      // and only THEN may call the next dialog, once this one's `handle()` above returns) before
+      // re-checking — an immediate re-list after the first `accept`/`dismiss` of a chain missed
+      // the second dialog entirely (same shape `cmdDialog`'s own poll loop already guards against).
+      await new Promise((r) => setTimeout(r, GATE_REGATE_POLL_MS));
     }
 
-    // policy.mode === 'report' (or 'auto', which never reaches the CLI gate in practice, but is
-    // handled the same conservative way if it does)
-    if (mode === 'close') return { status: 'blocked', dialogs: listed.dialogs };
-    throw new DialogBlockedError(verb, listed.dialogs, 'blocked');
+    // Ran out of rounds/budget — one last check. The command must NEVER run against a target
+    // that's still blocked (GAP-229's core requirement), so a dialog still open here fails
+    // closed exactly like the very first round would have.
+    const finalListed = await broker.list();
+    if (finalListed.status !== 'unknown' && finalListed.dialogs.length > 0) {
+      if (mode === 'close') return { status: 'blocked', dialogs: finalListed.dialogs };
+      throw new DialogBlockedError(
+        verb,
+        finalListed.dialogs,
+        'blocked',
+        'too many dialogs opened in a row (chain limit reached).',
+      );
+    }
+    return records.length > 0 ? { status: 'handled', records } : { status: 'clear' };
   } finally {
     await broker.dispose();
   }

@@ -82,12 +82,27 @@ function targetIdOf(target: Target): string {
   return (target as unknown as { _targetId: string })._targetId;
 }
 
-/** Is `session`'s page currently answering `Runtime.evaluate`? A dialog-blocked renderer never
- *  responds until the dialog closes (FR2-04 spec §0.2 C13), so this is the gate's core "is a
- *  dialog (or a long script) blocking this tab right now" signal. */
+/**
+ * Is `session`'s page currently blocked by an open native dialog? FR2-04 fix-2/GAP-228:
+ * `Runtime.evaluate` (the original signal) is NOT decidable — audit-2's signal research
+ * (evidence/FR2-04/audit-2/signal-probe-2.json, re-verified live in fix-2/signal-reverify/)
+ * showed it times out under BOTH a genuinely dialog-blocked renderer AND a page merely running a
+ * long synchronous script, so probing every target with it (as GAP-220's original design
+ * intended) false-blocked busy-script cases (N9/N10, fix-1's disclosed reason for narrowing the
+ * probe to only-never-acked targets — which is exactly what let GAP-228's acked-but-missed
+ * blank-popup shape through 26/26).
+ *
+ * `Performance.getMetrics` is decidable: it answers immediately under a busy synchronous script
+ * (it's served by the browser/page-agent side, not queued behind the renderer's blocked JS task
+ * queue the same way `Runtime.evaluate` is) but times out for the full duration a native dialog
+ * (alert/confirm/prompt/beforeunload) is open, because CDP itself suspends per-frame protocol
+ * command dispatch while a `Page.javascriptDialogOpening` is unresolved. This lets fix-2 safely
+ * probe EVERY page target with no tracked dialog (GAP-228's decision 1) without reintroducing the
+ * N9/N10 false-block fix-1 hit with the old signal.
+ */
 export async function livenessProbe(session: CDPSession, ms: number): Promise<LivenessState> {
   try {
-    await session.send('Runtime.evaluate', { expression: '1', returnByValue: true }, { timeout: ms });
+    await session.send('Performance.getMetrics', undefined, { timeout: ms });
     return 'responsive';
   } catch (err) {
     const message = String((err as Error)?.message ?? err);
@@ -139,4 +154,23 @@ export async function handleDialogOnTarget(
   ms: number,
 ): Promise<void> {
   await session.send('Page.handleJavaScriptDialog', { accept, promptText }, { timeout: ms });
+}
+
+/**
+ * GAP-230: closes `targetId` at the BROWSER level (`Target.closeTarget`, sent on the browser's
+ * own root connection, not a per-target session send) — the escape hatch for a dialog this
+ * process has no way to identify or resolve directly (an `unknown` dialog: the target's
+ * `Page.enable` never acked, so there is no `Page.javascriptDialogOpening` payload to act on and
+ * `Page.handleJavaScriptDialog` on that target's session either hangs or fails "No dialog is
+ * showing"). `Target.closeTarget` does not go through the blocked renderer at all — Chrome's
+ * browser process tears the target down directly — so it works even while the tab is completely
+ * wedged behind a dialog it never told us about. Confirmed live (fix-2/live-verify):
+ * `unknown-recovery-probe` closes such a tab in well under a second with the session's OTHER
+ * tabs (and the warden itself) unaffected.
+ */
+export async function closeTargetAtBrowserLevel(browser: Browser, targetId: string): Promise<void> {
+  const connection = (browser as unknown as { _connection?: { send: (method: string, params?: unknown) => Promise<unknown> } })
+    ._connection;
+  if (!connection) throw new Error('no browser-level CDP connection available to close the target');
+  await connection.send('Target.closeTarget', { targetId });
 }

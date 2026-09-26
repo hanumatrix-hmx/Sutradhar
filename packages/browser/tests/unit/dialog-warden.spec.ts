@@ -277,11 +277,13 @@ describe('@sutradhar/browser DialogWarden (FR2-04 Branch W)', () => {
     }
   });
 
-  it('WD9 (GAP-220 defensive layer): a target whose Page.enable NEVER acked is reported as an "unknown" blocking dialog, not silently clear', async () => {
+  it('WD9 (GAP-220/228 defensive layer): a target whose Page.enable NEVER acked is reported as an "unknown" blocking dialog, not silently clear', async () => {
     const trackedTargetSession = fakeSession('t1'); // has a real tracked dialog
     const untrackedTargetSession = fakeSession('t2'); // attach never completes — Page.enable hangs forever
     untrackedTargetSession.send.mockImplementation((method: string) => {
-      if (method === 'Runtime.evaluate') return Promise.reject(new Error('ProtocolError: operation timed out'));
+      // FR2-04 fix-2/GAP-228: the probe signal is `Performance.getMetrics`, not `Runtime.evaluate`
+      // (see dialog-cdp.spec.ts B2) — a genuinely dialog-blocked target never answers it either.
+      if (method === 'Performance.getMetrics') return Promise.reject(new Error('ProtocolError: operation timed out'));
       if (method === 'Page.enable') return new Promise(() => {}); // never resolves — attach stuck
       return Promise.resolve(undefined);
     });
@@ -345,14 +347,22 @@ describe('@sutradhar/browser DialogWarden (FR2-04 Branch W)', () => {
     }
   });
 
-  it('WD11 (GAP-220 regression guard): an ESTABLISHED target whose attach already ACKed is NOT reported as a blocking dialog even while busy — only a target whose attach never acked is', async () => {
-    const establishedSession = fakeSession('established'); // Page.enable already acked; now busy with a legit script
+  it('WD11 (GAP-228 regression guard, N9/N10 shape): an ESTABLISHED target running a long BUSY SCRIPT is NOT reported as a blocking dialog — only a target that is genuinely BLOCKED (by a real dialog) is, even though fix-2 now probes both', async () => {
+    // FR2-04 fix-2/GAP-228: fix-1 avoided this false-positive by never probing an already-acked
+    // target at all — which is exactly what let a synchronously-alerting blank popup go
+    // undetected 26/26 (GAP-228). fix-2 probes every target with nothing tracked instead, relying
+    // on the probe SIGNAL itself (`Performance.getMetrics`) being decidable: it must still answer
+    // promptly for a page merely running a long synchronous script (busy, `Runtime.evaluate`
+    // itself would be blocked, but the browser-level Performance domain is not queued behind the
+    // page's own JS task queue) while it genuinely times out for a real open dialog.
+    const establishedSession = fakeSession('established'); // busy with a legit long script, no dialog
     establishedSession.send.mockImplementation((method: string) =>
       method === 'Runtime.evaluate' ? Promise.reject(new Error('operation timed out')) : Promise.resolve(undefined),
     );
-    const stuckSession = fakeSession('stuck'); // attach never completes
+    const stuckSession = fakeSession('stuck'); // genuinely blocked by an open dialog
     stuckSession.send.mockImplementation((method: string) => {
       if (method === 'Runtime.evaluate') return Promise.reject(new Error('operation timed out'));
+      if (method === 'Performance.getMetrics') return Promise.reject(new Error('ProtocolError: operation timed out'));
       if (method === 'Page.enable') return new Promise(() => {}); // never acks
       return Promise.resolve(undefined);
     });
@@ -380,10 +390,12 @@ describe('@sutradhar/browser DialogWarden (FR2-04 Branch W)', () => {
       const body = await res.json();
       const establishedEntry = body.dialogs.find((d: any) => d.targetId === 'established');
       const stuckEntry = body.dialogs.find((d: any) => d.targetId === 'stuck');
-      // The established, merely-busy target must NOT be reported — this is exactly what
-      // regressed live against N9/N10 before this ack-based (not timing-based) condition existed.
+      // Both targets are probed now (fix-2 dropped the ack-based skip), but only the genuinely
+      // blocked one is reported: `established`'s Performance.getMetrics still answers even
+      // though its Runtime.evaluate is busy — this is the N9/N10 shape the probe must not
+      // false-block.
       expect(establishedEntry).toBeUndefined();
-      // The target whose attach never completed IS reported — this is GAP-220's decidable case.
+      // `stuck`'s Performance.getMetrics times out too (a real dialog) — reported as unknown.
       expect(stuckEntry).toMatchObject({ targetId: 'stuck', type: 'unknown' });
     } finally {
       await warden.stop('test-teardown');
@@ -474,5 +486,166 @@ describe('@sutradhar/browser DialogWarden (FR2-04 Branch W)', () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  // FR2-04 fix-2/GAP-232: audit-2's mutations.mjs found these five survive with no test killing
+  // them (M9, M10, M10b, M16, M17) — added here against the real DialogWarden HTTP surface so a
+  // future regression in any of them fails a unit test, not just a live probe.
+
+  it('M9 (GAP-223 409 path): POST /v1/dialogs/handle with a dialogId that no longer matches the current dialog is refused with 409, and the actual dialog is left untouched', async () => {
+    const session = fakeSession('t1');
+    const target = fakeTarget('t1', 'https://x/', session);
+    const browser = fakeBrowser([target]);
+    let readyInfo: { port: number; token: string } | undefined;
+    const warden = new DialogWarden({
+      wsEndpoint: 'ws://x',
+      readPolicy: async () => undefined,
+      isStillCurrent: async () => true,
+      onReady: (info) => {
+        readyInfo = info;
+      },
+      onExit: () => {},
+      connect: async () => browser as any,
+    });
+    await warden.start();
+    try {
+      session.emitOpening({ type: 'confirm', message: 'm' });
+      const listed = await req(readyInfo!.port, '/v1/dialogs', readyInfo!.token);
+      const { dialogs } = (await listed.json()) as { dialogs: Array<{ targetId: string; id: string }> };
+      expect(dialogs).toHaveLength(1);
+      const staleDialogId = 'this-is-not-the-current-dialog-id';
+      expect(dialogs[0]!.id).not.toBe(staleDialogId);
+      const res = await req(readyInfo!.port, '/v1/dialogs/handle', readyInfo!.token, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ targetId: 't1', accept: true, dialogId: staleDialogId }),
+      });
+      expect(res.status).toBe(409);
+      // The real dialog is still there, unhandled — a wrong-dialogId call must never resolve it.
+      const stillThere = await req(readyInfo!.port, '/v1/dialogs', readyInfo!.token);
+      expect((await stillThere.json()).dialogs).toHaveLength(1);
+      expect(session.send).not.toHaveBeenCalledWith('Page.handleJavaScriptDialog', expect.anything(), expect.anything());
+    } finally {
+      await warden.stop('test-teardown');
+    }
+  });
+
+  it('M10b (GAP-223 first identity check): a confirm whose grace timer fires AFTER it has already been replaced by a prompt on the same target must never even consult the policy for it', async () => {
+    vi.useFakeTimers();
+    try {
+      const session = fakeSession('t1');
+      const target = fakeTarget('t1', 'https://x/', session);
+      const browser = fakeBrowser([target]);
+      let policyCalls = 0;
+      const warden = new DialogWarden({
+        wsEndpoint: 'ws://x',
+        readPolicy: async () => {
+          policyCalls++;
+          return { mode: 'accept' as const };
+        },
+        isStillCurrent: async () => true,
+        onReady: () => {},
+        onExit: () => {},
+        policyGraceMs: 300,
+        connect: async () => browser as any,
+      });
+      await warden.start();
+      try {
+        // The confirm opens; before its OWN grace timer fires, it's replaced by a prompt on the
+        // same target (e.g. the confirm's own onclick handler opened a prompt next) — both grace
+        // timers are then due at the same virtual instant, confirm's firing first (it was armed
+        // first). With the identity check intact, confirm's stale callback must return on its
+        // FIRST line (`dialog !== expected`) WITHOUT ever calling `readPolicy()` — only the
+        // prompt's own (correctly-identified) callback should. Removing that check (M10b) makes
+        // the stale callback fall through and call `readPolicy()` too, an observable extra call.
+        session.emitOpening({ type: 'confirm', message: 'c' });
+        await vi.advanceTimersByTimeAsync(0);
+        session.emitOpening({ type: 'prompt', message: 'p', defaultPrompt: 'dflt' });
+        await vi.advanceTimersByTimeAsync(300);
+        expect(policyCalls).toBe(1);
+      } finally {
+        await warden.stop('test-teardown');
+      }
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('M10 (GAP-223 second identity check): if the target\'s dialog changes WHILE readPolicy() is still pending, the stale decision must not be applied to whatever dialog is open now', async () => {
+    vi.useFakeTimers();
+    try {
+      const session = fakeSession('t1');
+      const target = fakeTarget('t1', 'https://x/', session);
+      const browser = fakeBrowser([target]);
+      let resolvePolicy!: (v: { mode: 'accept' }) => void;
+      const policyPromise = new Promise<{ mode: 'accept' }>((r) => {
+        resolvePolicy = r;
+      });
+      const warden = new DialogWarden({
+        wsEndpoint: 'ws://x',
+        readPolicy: async () => policyPromise,
+        isStillCurrent: async () => true,
+        onReady: () => {},
+        onExit: () => {},
+        policyGraceMs: 50,
+        connect: async () => browser as any,
+      });
+      await warden.start();
+      try {
+        // The confirm opens and survives to its grace timer (readPolicy() is now pending — the
+        // FIRST identity check already passed, since the map still held the confirm at that
+        // moment). While readPolicy() is still unresolved, a prompt replaces the confirm on the
+        // same target — this is the real race window the SECOND identity check exists for.
+        session.emitOpening({ type: 'confirm', message: 'c' });
+        await vi.advanceTimersByTimeAsync(50); // confirm's grace fires, readPolicy() called, pending
+        session.emitOpening({ type: 'prompt', message: 'p', defaultPrompt: 'dflt' });
+        resolvePolicy({ mode: 'accept' });
+        await vi.advanceTimersByTimeAsync(0);
+        await Promise.resolve().then(() => Promise.resolve()); // let the resolved policy chain settle
+        // Without the second identity check, the confirm's stale decision would apply using the
+        // ORIGINAL (confirm) dialog object — `dialog.type==='confirm'` — sending
+        // Page.handleJavaScriptDialog with promptText:undefined even though the dialog actually
+        // open on the target right now is the prompt, resolving it with an EMPTY value instead
+        // of its default ('dflt'). That call must never happen.
+        expect(session.send).not.toHaveBeenCalledWith(
+          'Page.handleJavaScriptDialog',
+          { accept: true, promptText: undefined },
+          expect.anything(),
+        );
+      } finally {
+        await warden.stop('test-teardown');
+      }
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('M16 (self-release of a fresh paused attach): track() always sends Runtime.runIfWaitingForDebugger for a target it attached to itself, never leaving it paused', async () => {
+    const session = fakeSession('t1');
+    const target = fakeTarget('t1', 'https://x/', session);
+    const browser = fakeBrowser([target]);
+    const warden = new DialogWarden({
+      wsEndpoint: 'ws://x',
+      readPolicy: async () => undefined,
+      isStillCurrent: async () => true,
+      onReady: () => {},
+      onExit: () => {},
+      connect: async () => browser as any,
+    });
+    await warden.start();
+    try {
+      // This test's fakeTarget has no `_session()` accessor, so `track()` always takes the
+      // `ownAttach = true` (fresh `createCDPSession()`) path — exactly the path that must
+      // release the paused target it just created.
+      expect(session.send).toHaveBeenCalledWith('Runtime.runIfWaitingForDebugger');
+    } finally {
+      await warden.stop('test-teardown');
+    }
+  });
+
+  it('M17 (liveness probe time budget is actually bounded): LIVENESS_PROBE_MS stays well under a second, so a gated command never becomes noticeably slow because of it', async () => {
+    const { LIVENESS_PROBE_MS } = await import('../../src/session/dialog-warden.js');
+    expect(LIVENESS_PROBE_MS).toBeGreaterThan(0);
+    expect(LIVENESS_PROBE_MS).toBeLessThanOrEqual(1000);
   });
 });

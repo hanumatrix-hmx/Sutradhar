@@ -1,0 +1,243 @@
+{
+  "at": "2026-09-26T14:05:35.956Z",
+  "rows": [
+    {
+      "t": 0,
+      "steps": [
+        {
+          "step": "popup-blocked-initially",
+          "v": true
+        },
+        {
+          "step": "snap",
+          "code": 3,
+          "ms": 709,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53464/pop?n=u0x6395\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. If that doesn't work, \"sutradhar close\" ends the sessi",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 699,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53464/pop?n=u0x6395\"}",
+          "err": "",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "dialog accept",
+          "code": 1,
+          "ms": 728,
+          "cap": false,
+          "out": "",
+          "err": "Error: could not accept the unknown dialog: No dialog is open on that tab",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "dialog dismiss",
+          "code": 1,
+          "ms": 745,
+          "cap": false,
+          "out": "",
+          "err": "Error: could not dismiss the unknown dialog: No dialog is open on that tab",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "snap --dialog accept",
+          "code": 3,
+          "ms": 702,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53464/pop?n=u0x6395\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. applying the \"accept\" policy failed: No dialog is open on that tab.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog ac",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "closetab",
+          "code": 1,
+          "ms": 266,
+          "cap": false,
+          "out": "",
+          "err": "Error: usage: sutradhar closetab <tabId>  (see \"tabs\" for the list of open tab ids)",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "tabs",
+          "code": 3,
+          "ms": 726,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53464/pop?n=u0x6395\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. If that doesn't work, \"sutradhar close\" ends the sessi",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "close",
+          "code": 0,
+          "ms": 1115,
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ]
+    },
+    {
+      "t": 1,
+      "steps": [
+        {
+          "step": "popup-blocked-initially",
+          "v": true
+        },
+        {
+          "step": "snap",
+          "code": 3,
+          "ms": 702,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53464/pop?n=u1x7817\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. If that doesn't work, \"sutradhar close\" ends the sessi",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 787,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53464/pop?n=u1x7817\"}",
+          "err": "",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "dialog accept",
+          "code": 1,
+          "ms": 765,
+          "cap": false,
+          "out": "",
+          "err": "Error: could not accept the unknown dialog: No dialog is open on that tab",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "dialog dismiss",
+          "code": 1,
+          "ms": 743,
+          "cap": false,
+          "out": "",
+          "err": "Error: could not dismiss the unknown dialog: No dialog is open on that tab",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "snap --dialog accept",
+          "code": 3,
+          "ms": 769,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53464/pop?n=u1x7817\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. applying the \"accept\" policy failed: No dialog is open on that tab.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog ac",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "closetab",
+          "code": 1,
+          "ms": 277,
+          "cap": false,
+          "out": "",
+          "err": "Error: usage: sutradhar closetab <tabId>  (see \"tabs\" for the list of open tab ids)",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "tabs",
+          "code": 3,
+          "ms": 701,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53464/pop?n=u1x7817\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. If that doesn't work, \"sutradhar close\" ends the sessi",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "close",
+          "code": 0,
+          "ms": 1110,
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ]
+    },
+    {
+      "t": 2,
+      "steps": [
+        {
+          "step": "popup-blocked-initially",
+          "v": true
+        },
+        {
+          "step": "snap",
+          "code": 3,
+          "ms": 735,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53464/pop?n=u2x9350\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. If that doesn't work, \"sutradhar close\" ends the sessi",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 725,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53464/pop?n=u2x9350\"}",
+          "err": "",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "dialog accept",
+          "code": 1,
+          "ms": 717,
+          "cap": false,
+          "out": "",
+          "err": "Error: could not accept the unknown dialog: No dialog is open on that tab",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "dialog dismiss",
+          "code": 1,
+          "ms": 734,
+          "cap": false,
+          "out": "",
+          "err": "Error: could not dismiss the unknown dialog: No dialog is open on that tab",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "snap --dialog accept",
+          "code": 3,
+          "ms": 718,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53464/pop?n=u2x9350\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. applying the \"accept\" policy failed: No dialog is open on that tab.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog ac",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "closetab",
+          "code": 1,
+          "ms": 270,
+          "cap": false,
+          "out": "",
+          "err": "Error: usage: sutradhar closetab <tabId>  (see \"tabs\" for the list of open tab ids)",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "tabs",
+          "code": 3,
+          "ms": 716,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:53464/pop?n=u2x9350\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. If that doesn't work, \"sutradhar close\" ends the sessi",
+          "popupStillBlocked": true
+        },
+        {
+          "step": "close",
+          "code": 0,
+          "ms": 1319,
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ]
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": []
+  }
+}
