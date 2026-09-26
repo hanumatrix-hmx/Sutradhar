@@ -2009,3 +2009,31 @@ mcp-server 84, sutradhar 15 -- all passing; the drops vs earlier counts are exac
 tests leaving. The forced full build's one failure (@sutradhar/server) is the known parallel-
 build race and passes on re-run. FR2-04 proceeds to Step 1; the Orchestrator makes the D-7
 branch decision from Step 1's evidence before any DEVELOP code is written.
+
+## 2026-09-26 -- FR2-04 Step 1 done: D-7 = Branch W (dialog warden). Orchestrator decision.
+
+Step 1 ran the spec's full experiment suite 3 times (2 headless incl. the slow E3, 1 headed),
+evidence in evidence/FR2-04/step1/. The Orchestrator re-read the raw results JSON of all three
+runs directly (not the Executor's summary); every decision input is identical across runs:
+- O5 true -- /json/version answers HTTP 200 in 1-2 ms while a dialog blocks the renderer. The
+  STOP condition is NOT hit (confirms C11).
+- O3 "blocked" -- Runtime.evaluate on the page is blocked while the dialog is open.
+- O1 false -- a FRESH session's Page.enable times out (~3 s) and never re-emits the dialog event.
+- O2 false -- a FRESH session's Page.handleJavaScriptDialog fails: "No dialog is showing".
+- O8 true -- a holder session that did Page.enable BEFORE the dialog opened handles it after the
+  original process exits (page responsive afterwards); E4b confirms it is holder-specific.
+Spec's decision rule therefore selects **Branch W**: a warden process that holds a pre-attached
+session so an orphaned dialog stays detectable and handleable. Decision ACCEPTED.
+
+Carry into DEVELOP:
+1. E3 reproduced GAP-017 live: after an orphaned confirm, `snap` silently reported a NEW blank
+   tab (about:blank) while the real page was still open -- a silent wrong-tab result. The gate
+   must make this impossible (block with exit 3 or report the dialog), and a live case must prove it.
+2. E6b observed beforeunload firing WITHOUT user-gesture activation in this fixture,
+   contradicting assumption C14. DEVELOP must not rely on C14; either handle beforeunload
+   regardless of activation or show the fixture was granting activation.
+3. Branch W's risks from spec-amendment-1 section D apply in full (R-D warden lifetime with no GC
+   safety net; R-E the gate disconnects its own connection; R-F re-read state before each write).
+4. Cleanup: headless run 1 leaked one Chrome tree from the E4 case (killed manually, verified
+   back to baseline). The DEVELOP live-verify must put all temp state under one scratch root and
+   clean it in an unskippable finally -- with a warden process in play, leaks are the main risk.
