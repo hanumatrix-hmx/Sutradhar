@@ -1,0 +1,277 @@
+{
+  "at": "2026-09-26T13:52:02.973Z",
+  "results": [
+    {
+      "id": "M1-WD7-bind-0.0.0.0",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "eol": "LF",
+      "expect": "WD7",
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 11 passed (12)",
+      "failed": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD7: the HTTP server binds to 127.0.0.1 (not 0.0.0.0 or any other interfa"
+      ],
+      "ms": 1609,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M2-WD3-missing-token-accepted",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "eol": "LF",
+      "expect": "WD3",
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 11 passed (12)",
+      "failed": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD3: a missing or wrong token gets 401, and no CDP handle call is made"
+      ],
+      "ms": 1111,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M3-direct-unknown-reported-busy-only",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "eol": "LF",
+      "expect": "GAP-225 unknown blocks",
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 5 passed (6)",
+      "failed": [
+        "tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > GAP-225: a blocked target with NO hint is reported as an"
+      ],
+      "ms": 851,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M4-WC5-no-spawn-lock",
+      "file": "packages/cli/src/warden-control.ts",
+      "eol": "LF",
+      "expect": "WC5",
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 5 passed (6)",
+      "failed": [
+        "tests/unit/warden-control.spec.ts > @sutradhar/cli warden-control (FR2-04 Branch W) > WC5 (GAP-223): two concurrent ensureWarden calls for the same fresh sessio"
+      ],
+      "ms": 4769,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M5-WC6-no-stale-recovery",
+      "file": "packages/cli/src/warden-control.ts",
+      "eol": "LF",
+      "expect": "WC6",
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 5 passed (6)",
+      "failed": [
+        "tests/unit/warden-control.spec.ts > @sutradhar/cli warden-control (FR2-04 Branch W) > WC6 (GAP-223): a stale lock (dead pid) from a crashed spawner is recovered"
+      ],
+      "ms": 8579,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M5b-WC6-age-only-staleness(ignore dead pid)",
+      "file": "packages/cli/src/warden-control.ts",
+      "eol": "LF",
+      "expect": "WC6",
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 5 passed (6)",
+      "failed": [
+        "tests/unit/warden-control.spec.ts > @sutradhar/cli warden-control (FR2-04 Branch W) > WC6 (GAP-223): a stale lock (dead pid) from a crashed spawner is recovered"
+      ],
+      "ms": 8675,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M6a-SD1-createTab-no-policy",
+      "file": "packages/browser/src/session/browser-session.ts",
+      "eol": "CRLF",
+      "expect": "S-D1/S-D2",
+      "verdict": "KILLED",
+      "tests": "Tests  2 failed | 16 passed (18)",
+      "failed": [
+        "tests/unit/session.spec.ts > @sutradhar/browser BrowserSession dialog policy propagation (FR2-04 fix-1, GAP-225 S-D1/S-D2) > S-D1: createTab, adoptExistingPage,",
+        "tests/unit/session.spec.ts > @sutradhar/browser BrowserSession dialog policy propagation (FR2-04 fix-1, GAP-225 S-D1/S-D2) > S-D2: setDialogPolicy updates exist"
+      ],
+      "ms": 2315,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M6b-SD1-popup-no-policy",
+      "file": "packages/browser/src/session/browser-session.ts",
+      "eol": "CRLF",
+      "expect": "S-D1",
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 17 passed (18)",
+      "failed": [
+        "tests/unit/session.spec.ts > @sutradhar/browser BrowserSession dialog policy propagation (FR2-04 fix-1, GAP-225 S-D1/S-D2) > S-D1: createTab, adoptExistingPage,"
+      ],
+      "ms": 2282,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M6c-SD1-adopt-no-policy",
+      "file": "packages/browser/src/session/browser-session.ts",
+      "eol": "CRLF",
+      "expect": "S-D1",
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 17 passed (18)",
+      "failed": [
+        "tests/unit/session.spec.ts > @sutradhar/browser BrowserSession dialog policy propagation (FR2-04 fix-1, GAP-225 S-D1/S-D2) > S-D1: createTab, adoptExistingPage,"
+      ],
+      "ms": 2233,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M7-SD2-setDialogPolicy-no-propagation",
+      "file": "packages/browser/src/session/browser-session.ts",
+      "eol": "CRLF",
+      "expect": "S-D2",
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 17 passed (18)",
+      "failed": [
+        "tests/unit/session.spec.ts > @sutradhar/browser BrowserSession dialog policy propagation (FR2-04 fix-1, GAP-225 S-D1/S-D2) > S-D2: setDialogPolicy updates exist"
+      ],
+      "ms": 2253,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M8-GAP221-gate-no-default-fallback",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "eol": "LF",
+      "expect": "GAP-221",
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 8 passed (9)",
+      "failed": [
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > GAP-221/D-9: accepting an orphaned prompt with"
+      ],
+      "ms": 1394,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M9-GAP223-warden-ignores-dialogId(409)",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "eol": "LF",
+      "expect": "GAP-223 409 path",
+      "verdict": "SURVIVED",
+      "tests": "Tests  12 passed (12)",
+      "failed": [],
+      "ms": 1095,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M10-GAP223-policy-identity-check-removed",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "eol": "LF",
+      "expect": "GAP-223 late-handle identity",
+      "verdict": "SURVIVED",
+      "tests": "Tests  12 passed (12)",
+      "failed": [],
+      "ms": 1142,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M10b-GAP223-both-identity-checks-removed",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "eol": "LF",
+      "expect": "GAP-223 late-handle identity (1st check)",
+      "verdict": "SURVIVED",
+      "tests": "Tests  12 passed (12)",
+      "failed": [],
+      "ms": 1097,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M11-GAP220-never-probe",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "eol": "LF",
+      "expect": "WD9",
+      "verdict": "KILLED",
+      "tests": "Tests  2 failed | 10 passed (12)",
+      "failed": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD9 (GAP-220 defensive layer): a target whose Page.enable NEVER acked is",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD11 (GAP-220 regression guard): an ESTABLISHED target whose attach alrea"
+      ],
+      "ms": 1110,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M12-GAP220-probe-everything",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "eol": "LF",
+      "expect": "WD11",
+      "verdict": "KILLED",
+      "tests": "Tests  2 failed | 10 passed (12)",
+      "failed": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD11 (GAP-220 regression guard): an ESTABLISHED target whose attach alrea",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD12 (regression guard): a tab that starts as about:blank at warden start"
+      ],
+      "ms": 1091,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M13-GAP220-bootstrap-skips-blank",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "eol": "LF",
+      "expect": "WD12",
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 11 passed (12)",
+      "failed": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD12 (regression guard): a tab that starts as about:blank at warden start"
+      ],
+      "ms": 1114,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M14-GAP222-no-lazy-connect",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "eol": "LF",
+      "expect": "GAP-222",
+      "verdict": "KILLED",
+      "tests": "Tests  2 failed | 4 passed (6)",
+      "failed": [
+        "tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > GAP-222: handle() works even when list() was never calle",
+        "tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > handle() still throws a clear error when the browser is"
+      ],
+      "ms": 880,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M15-gate-dispose-skipped",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "eol": "LF",
+      "expect": "B6",
+      "verdict": "KILLED",
+      "tests": "Tests  6 failed | 3 passed (9)",
+      "failed": [
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > clear path (no dialogs): dispose called exactl",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > handled path (accept policy resolves a pending",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > blocked path (report policy, command mode thro",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > blocked path (close mode returns {status:\"bloc",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > throw path (list() itself throws): dispose sti",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > a failed policy handle (accept/dismiss) in com"
+      ],
+      "ms": 1440,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M16-warden-never-releases-own-attach",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "eol": "LF",
+      "expect": "never leave a target paused",
+      "verdict": "SURVIVED",
+      "tests": "Tests  12 passed (12)",
+      "failed": [],
+      "ms": 1123,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M17-liveness-probe-budget-10s",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "eol": "LF",
+      "expect": "probe bound",
+      "verdict": "SURVIVED",
+      "tests": "Tests  12 passed (12)",
+      "failed": [],
+      "ms": 1125,
+      "restoredShaOk": true
+    }
+  ]
+}

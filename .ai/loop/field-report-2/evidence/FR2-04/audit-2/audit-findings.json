@@ -1,0 +1,129 @@
+{
+  "verdict": "FAIL",
+  "provenance": "The audit-2 auditor (Opus, independent) was interrupted when the host session ended, before it wrote this file. The Orchestrator compiled this file on 2026-09-27 from the auditor's raw evidence in this directory, without re-running or re-interpreting anything. Items the auditor never reached are listed under notReached.",
+  "findings": [
+    {
+      "id": "A2-1",
+      "gap": "GAP-228",
+      "severity": "critical",
+      "title": "GAP-220 residual is real and common: a blank popup (window.open('') / about:blank) that alerts synchronously, or via document.write inline script, is missed entirely",
+      "repro": "w = window.open(''); w.alert(...) | w.confirm | w.prompt | w.document.write('<script>alert()</script>') | a CLI click that opens such a popup",
+      "evidence": [
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/gap220-matrix-console-t1.txt",
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/gap220-matrix-console-blank6.txt",
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/structural-probe-console-t1.txt"
+      ],
+      "rate": "26/26 MISS (warden list empty, `dialog` says no dialog; next snap hangs 180 s then exits 0 on about:blank, or hits the 30 s probe cap). An independently attached raw CDP session DID see the dialog in every case (rawSaw) -- so it is observable, the warden just does not observe it."
+    },
+    {
+      "id": "A2-2",
+      "gap": "GAP-229",
+      "severity": "critical",
+      "title": "After the gate applies a policy (--dialog accept|dismiss) to one dialog, a follow-up dialog (alert -> confirm chain) is not re-gated: the command runs anyway, hangs 180 s, and returns exit 0 from the wrong tab (about:blank)",
+      "repro": "popup alerts then confirms; run `snap --dialog accept` / `snap --dialog dismiss` / `eval 1 --dialog accept`",
+      "evidence": [
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/gate-chain-console-t2-cap200.txt",
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/gate-chain-console-t1.txt"
+      ],
+      "rate": "4/4 variants x trials observed (180.4 s, exit 0, URL about:blank, stillBlocked true). Control `dialog accept` handles it correctly in 480 ms."
+    },
+    {
+      "id": "A2-3",
+      "gap": "GAP-230",
+      "severity": "major",
+      "title": "An `unknown` dialog is a dead end: `dialog accept|dismiss` and `--dialog accept` all fail \"No dialog is open on that tab\", `tabs` is gated (exit 3) so the tab id needed by `closetab` cannot be learned, and only `close` (losing the whole session) escapes",
+      "repro": "any case that yields type unknown (e.g., window.open + inline alert), then dialog accept / dialog dismiss / snap --dialog accept / tabs / closetab",
+      "evidence": [
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/unknown-recovery-console.txt",
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/unknown-recovery-probe.json"
+      ],
+      "rate": "3/3 trials, every recovery command except close"
+    },
+    {
+      "id": "A2-4",
+      "gap": "GAP-231",
+      "severity": "major",
+      "title": "GAP-223 spawn lock is not reliable: with a stale lock present, concurrent commands still spawn multiple wardens and the stale lock can be left behind; plain concurrency also occasionally spawns 2; double-handling reproduces",
+      "repro": "lock-race-probe (stale / plain / crash variants); r10 probe with a stale lock and no warden.json",
+      "evidence": [
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/lock-race-console.txt",
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/lock-race-probe.json",
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/r10-stale-lock-nojson-console.txt"
+      ],
+      "rate": "stale: 8/10 rounds multi-warden (max 4), lock left 1/10; plain: 1/10 rounds 2 wardens; r10 stale-nojson: 1/4 runs had 2 wardens and 3/10 chains resolved the prompt with '' instead of the default. Unmodified r10 probe: 1 warden, 10/10 (holds)."
+    },
+    {
+      "id": "A2-5",
+      "gap": "GAP-232",
+      "severity": "minor, test-integrity",
+      "title": "Surviving mutations: dialog-id targeting (the GAP-223 identity half) is untested; the warden never releasing its own paused attach is untested; the liveness-probe time budget is untested",
+      "repro": "mutations.mjs M9, M10, M10b, M16, M17",
+      "evidence": [
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/mutations-console.txt",
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/mutations-all.json"
+      ],
+      "rate": "5 of 20 mutations survive; the other 15 (WD7, WD3, DirectCdpBroker unknown, WC5, WC6, S-D1/S-D2, GAP-221, GAP-220 WD9/11/12, GAP-222, gate dispose) are killed"
+    },
+    {
+      "id": "A2-6",
+      "gap": "GAP-233",
+      "severity": "minor",
+      "title": "beforeunload in a popup is neither detected nor blocking (warden reports no dialog, snap returns normally)",
+      "repro": "open/inline/beforeunload, open/t0/beforeunload",
+      "evidence": [
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/gap220-matrix-console-t1.txt"
+      ],
+      "rate": "2/2; possibly correct by design (beforeunload only fires on navigation) -- the auditor marked it \"no test\", needs a fixture that actually triggers it"
+    }
+  ],
+  "signalResearch": {
+    "question": "2(c): is there a decidable signal separating \"dialog open\" from \"busy script\"?",
+    "answer": "Yes, promising, not yet productised: Performance.getMetrics and Debugger.setBreakpointsActive ANSWER under a busy synchronous script (4/4 trials each) but TIME OUT under an open alert/confirm/prompt/beforeunload (4/4 each). Runtime.evaluate, Page.getFrameTree and Runtime.getIsolateId time out in BOTH states (not decidable) -- which is exactly why fix-1 false-blocked N9/N10 when it probed with Runtime.evaluate. Page.getNavigationHistory answered even under beforeunload.",
+    "evidence": [
+      ".ai/loop/field-report-2/evidence/FR2-04/audit-2/signal-probe-2-console.txt",
+      ".ai/loop/field-report-2/evidence/FR2-04/audit-2/signal-probe-2.json",
+      ".ai/loop/field-report-2/evidence/FR2-04/audit-2/signal-probe-console.txt"
+    ]
+  },
+  "verified": [
+    {
+      "what": "Forced build 9/9 (0 cached); vitest browser 456, capability-runtime 164, cli 106, mcp-server 84, sutradhar 15 -- all pass, counts match fix-1",
+      "evidence": [
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/build-forced-2.txt",
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/vitest-browser.txt",
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/vitest-cli.txt"
+      ]
+    },
+    {
+      "what": "Unmodified audit-1 r10 probe: 1 warden, 10/10 exact chains, 0 left after close",
+      "evidence": [
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/r10-multi-warden-console.txt"
+      ]
+    },
+    {
+      "what": "Timed popup dialogs (setTimeout >=50/200 ms, opener timer 2 s, noopener, CLI newtab) are caught with the correct type in ~260-340 ms; inline/onload popups are caught as type unknown (exit 3, ~0.7 s) -- no wrong tab, no hang, in those shapes",
+      "evidence": [
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/gap220-matrix-console-t1.txt",
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/structural-probe-console-t1.txt"
+      ]
+    },
+    {
+      "what": "15 of 20 mutations killed (incl. every GAP-225 test the audit-1 said was hollow)",
+      "evidence": [
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/mutations-console.txt"
+      ]
+    },
+    {
+      "what": "After a warden restart, a blank main tab alert is caught as unknown (exit 3)",
+      "evidence": [
+        ".ai/loop/field-report-2/evidence/FR2-04/audit-2/gap220-matrix-console-t1.txt"
+      ]
+    }
+  ],
+  "notReached": [
+    "gate overhead vs a pre-FR2-04 baseline (gate-overhead.mjs written, not run)",
+    "full verify-fr2-04-dialogs.mjs run by the auditor",
+    "GAP-226 honesty check (late report only, never wrong tab)",
+    "whether the structural layer truly uses setAutoAttach+waitForDebuggerOnStart (structural-probe shows Page.enable timing but no code-level conclusion was written)"
+  ]
+}

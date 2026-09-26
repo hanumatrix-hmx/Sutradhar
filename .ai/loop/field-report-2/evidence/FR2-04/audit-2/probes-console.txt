@@ -1,0 +1,101 @@
+--- gap017_wardenUp
+[PASS] gap017_wardenUp.click-exit0-pending
+[PASS] gap017_wardenUp.observer-blocked
+[PASS] gap017_wardenUp.snap-exit3
+[PASS] gap017_wardenUp.snap-no-selfheal-same-chrome
+[PASS] gap017_wardenUp.snap-no-new-tab
+[PASS] gap017_wardenUp.tabs-exit3
+[PASS] gap017_wardenUp.tabs-no-selfheal-same-chrome
+[PASS] gap017_wardenUp.tabs-no-new-tab
+[PASS] gap017_wardenUp.eval-exit3
+[PASS] gap017_wardenUp.eval-no-selfheal-same-chrome
+[PASS] gap017_wardenUp.eval-no-new-tab
+[PASS] gap017_wardenUp.text-exit3
+[PASS] gap017_wardenUp.text-no-selfheal-same-chrome
+[PASS] gap017_wardenUp.text-no-new-tab
+[PASS] gap017_wardenUp.nav-exit3
+[PASS] gap017_wardenUp.nav-no-selfheal-same-chrome
+[PASS] gap017_wardenUp.nav-no-new-tab
+[PASS] gap017_wardenUp.click-exit3
+[PASS] gap017_wardenUp.click-no-selfheal-same-chrome
+[PASS] gap017_wardenUp.click-no-new-tab
+[PASS] gap017_wardenUp.dismiss
+[PASS] gap017_wardenUp.responsive-after
+[PASS] gap017_wardenUp.record-false-once
+[PASS] gap017_wardenUp.snap-right-tab
+--- wardenDown_hint
+[PASS] wardenDown_hint.lastPendingDialog-written
+[PASS] wardenDown_hint.warden-dead
+[PASS] wardenDown_hint.snap-exit3-fast
+[PASS] wardenDown_hint.snap-reports-confirm-via-hint
+[PASS] wardenDown_hint.no-selfheal-no-newtab
+[PASS] wardenDown_hint.dialog-accept-honest-failure-or-success
+[FAIL] wardenDown_hint.failure-message-mentions-recovery "Error: could not accept the confirm dialog: Protocol error (Page.handleJavaScriptDialog): No dialog is showing\n"
+[PASS] wardenDown_hint.close-fast
+--- wardenDown_laterDialog
+[PASS] wardenDown_laterDialog.observer-blocked
+[PASS] wardenDown_laterDialog.snap-exit3-fast
+[PASS] wardenDown_laterDialog.no-selfheal-no-newtab
+[PASS] wardenDown_laterDialog.close-fast
+--- wardenDown_slowScript
+[PASS] wardenDown_slowScript.busy-with-warden-down-reports-unknown-exit3 (disclosed trade-off)
+[PASS] wardenDown_slowScript.after-busy-ends-snap-ok-and-warden-respawned
+--- betweenCommands_newTargets
+[FAIL] betweenCommands_newTargets.#popup-delay-dialog-opened-between-commands {"found":false,"urls":["http://127.0.0.1:64379/audit.html?n=bc-1790431621187-7qw2","chrome://newtab/"]}
+[FAIL] betweenCommands_newTargets.#popup-delay-snap-exit3-fast {"code":0,"ms":404,"out":"URL: chrome://new-tab-page/\nTitle: New tab\nInteractive elements (19):\n[#1] input \"Search Google or type a URL\" role=combobox placeholder=\"Search Google or type a URL\" (shadow: ntp-app > … > cr-searchbox-input#input)\n[#2] button (shadow: ntp-app > ntp-searchbox#searchbox)\n[#3] button (shadow: ntp-app > ntp-searchbox#searchbox)\n[#10] a \"audit bc-1790431621187-7qw2\" (shadow: ntp-app > cr-most-visited","err":""}
+[FAIL] betweenCommands_newTargets.#popup-delay-snap-names-onload-alert "URL: chrome://new-tab-page/\nTitle: New tab\nInteractive elements (19):\n[#1] input \"Search Google or type a URL\" role=combobox placeholder=\"Search Google or type a URL\" (shadow: ntp-app > … > cr-searchbox-input#input)\n[#2] button (shadow: ntp-app > ntp-searchbox#searchbox)\n[#3] button (shadow: ntp-app > ntp-searchbox#searchbox)\n[#10] a \"audit bc-1790431621187-7qw2\" (shadow: ntp-app > cr-most-visited"
+[PASS] betweenCommands_newTargets.#popup-delay-no-new-blank-tab-no-heal
+[FAIL] betweenCommands_newTargets.#popup-delay-dialog-accept {"args":"dialog accept","code":1,"ms":316,"killedAtCap":false,"stdout":"","stderr":"Error: no dialog is open to accept.\n"}
+[PASS] betweenCommands_newTargets.#xnav-delay-dialog-opened-between-commands
+[PASS] betweenCommands_newTargets.#xnav-delay-snap-exit3-fast
+[PASS] betweenCommands_newTargets.#xnav-delay-snap-names-onload-alert
+[PASS] betweenCommands_newTargets.#xnav-delay-no-new-blank-tab-no-heal
+[PASS] betweenCommands_newTargets.#xnav-delay-dialog-accept
+[FAIL] betweenCommands_newTargets.xframe-click-reports-oopif-dialog "Clicked #xframe\n"
+[PASS] betweenCommands_newTargets.xframe-next-snap-honest(exit3 or clean exit0), fast, no heal/blank
+--- popupDiag
+[PASS] popupDiag.onload-alert-popup-seen-by-warden (4 trials)
+[PASS] popupDiag.late-alert-popup-seen-by-warden (2 trials)
+--- d10_persist
+[PASS] d10_persist.fresh-no-flag-no-key
+[PASS] d10_persist.accept-set
+[PASS] d10_persist.report-set-explicitly
+[PASS] d10_persist.report-persists-1
+[PASS] d10_persist.report-persists-2
+[PASS] d10_persist.behaves-as-report
+[PASS] d10_persist.still-pending-after-1.5s(warden not applying stale accept)
+[PASS] d10_persist.fresh-spawn-flag-report-persisted?
+[PASS] d10_persist.fresh-spawn-with-report-flag-persists
+--- l15_selfheal
+[PASS] l15_selfheal.setup-accept-persisted
+[PASS] l15_selfheal.old-warden-exited-on-chrome-death
+[PASS] l15_selfheal.snap-exit0
+[PASS] l15_selfheal.stderr-note-line
+[PASS] l15_selfheal.new-chromePid
+[PASS] l15_selfheal.policy-carried-accept
+[PASS] l15_selfheal.new-warden-for-new-endpoint
+[PASS] l15_selfheal.exactly-one-warden-for-dir
+[PASS] l15_selfheal.carried-accept-applied-by-warden-between-commands
+--- gatePromptDefault
+[FAIL] gatePromptDefault.unexpected-exception "TypeError: Cannot read properties of undefined (reading 'wsEndpoint')\n    at gatePromptDefault (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-04/audit-2/audit-probes.mjs:505:63)\n    at async file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-04/audit-2/audit-probes.mjs:532:11"
+node:internal/errors:998
+  const err = new Error(message);
+              ^
+
+Error: Command failed: powershell -NoProfile -Command "Get-CimInstance Win32_Process | Select-Object ProcessId,Name,CommandLine | ConvertTo-Json -Depth 2"
+    at genericNodeError (node:internal/errors:998:15)
+    at wrappedFn (node:internal/errors:543:14)
+    at checkExecSyncError (node:child_process:925:11)
+    at execSync (node:child_process:997:15)
+    at procs (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-04/audit-2/audit-probes.mjs:74:15)
+    at wardenPids (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-04/audit-2/audit-probes.mjs:78:10)
+    at file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-04/audit-2/audit-probes.mjs:538:12 {
+  status: 3221226091,
+  signal: null,
+  output: [ null, '', '' ],
+  pid: 191904,
+  stdout: '',
+  stderr: ''
+}
+
+Node.js v25.0.0

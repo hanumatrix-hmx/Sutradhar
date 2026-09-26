@@ -1,0 +1,46 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/mcp-server[39m
+
+ [32m✓[39m tests/unit/session-resolution.spec.ts [2m ([22m[2m23 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m tests/unit/tools.spec.ts [2m ([22m[2m50 tests[22m[2m)[22m[90m 81[2mms[22m[39m
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mconstructs SutradharRuntime with the 30-minute default idleTimeoutMs when nothing overrides it[22m[39m
+{"timestamp":"2026-09-26T13:29:08.144Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mhonors SUTRADHAR_IDLE_TIMEOUT_MS when set[22m[39m
+{"timestamp":"2026-09-26T13:29:08.151Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mhonors an explicit idleTimeoutMs option over the env var and default[22m[39m
+{"timestamp":"2026-09-26T13:29:08.153Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2midleTimeoutMs:0 disables the reaper (passed through as undefined, matching SutradharRuntime's "unset = disabled" contract)[22m[39m
+{"timestamp":"2026-09-26T13:29:08.154Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mdoes not construct a new SutradharRuntime at all when the caller supplies one directly[22m[39m
+{"timestamp":"2026-09-26T13:29:08.155Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring[2m > [22m[2mdefaults to false (unrestricted) when nothing overrides it[22m[39m
+{"timestamp":"2026-09-26T13:29:08.157Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring[2m > [22m[2mhonors SUTRADHAR_RESTRICT_NAVIGATION_TO_LOCAL=1[22m[39m
+{"timestamp":"2026-09-26T13:29:08.158Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring[2m > [22m[2mhonors an explicit restrictNavigationToLocal option over the env var[22m[39m
+{"timestamp":"2026-09-26T13:29:08.159Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer allowedDomains wiring[2m > [22m[2mdefaults to undefined (unrestricted) when nothing overrides it[22m[39m
+{"timestamp":"2026-09-26T13:29:08.162Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer allowedDomains wiring[2m > [22m[2mhonors SUTRADHAR_ALLOWED_DOMAINS as a comma-separated list, trimmed[22m[39m
+{"timestamp":"2026-09-26T13:29:08.164Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer allowedDomains wiring[2m > [22m[2mhonors an explicit allowedDomains option over the env var[22m[39m
+{"timestamp":"2026-09-26T13:29:08.165Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+ [32m✓[39m tests/unit/server.spec.ts [2m ([22m[2m11 tests[22m[2m)[22m[90m 23[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m84 passed[39m[22m[90m (84)[39m
+[2m   Start at [22m 18:59:06
+[2m   Duration [22m 1.24s[2m (transform 631ms, setup 0ms, collect 1.59s, tests 111ms, environment 0ms, prepare 371ms)[22m
+

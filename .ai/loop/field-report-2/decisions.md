@@ -2097,3 +2097,50 @@ PROCESS INCIDENT: mid-debugging, the executor ran a blanket `taskkill /F /IM chr
 disclosed in the self-report, not hidden. New standing rule for every executor/auditor brief:
 never kill by image name; kill only the PIDs you spawned (record them at spawn time), or processes
 whose command line contains a profile/temp path you created.
+
+## 2026-09-27 -- FR2-04 audit-2: FAILED (2 critical, 2 major). Cycle 2 of 4 used.
+
+The audit-2 auditor was interrupted when the host session ended, before it wrote its findings file.
+Its raw evidence (about 40 minutes of live probes) was complete enough to decide the verdict, so the
+Orchestrator compiled audit-2/audit-findings.json from it without re-interpreting anything, and
+recorded what it never reached. The auditor's cleanup crashed. Afterwards no processes were left,
+and the Orchestrator removed three leftover fr2-04-audit* temp dirs (created by that auditor, matched
+by name).
+
+What held: build and vitest counts, the unmodified r10 probe (10/10), timed popup dialogs caught with
+their correct type, and inline popups caught as unknown with exit 3. 15/20 mutations were killed.
+GAP-221, 222, 224, 225 and 227 are verified fixed.
+
+What failed:
+- GAP-228 (critical): about:blank popups that alert synchronously are missed 26/26. Their
+  Page.enable acks, so fix-1's narrowed probe skips them: the disclosed residual turned out to be a
+  common real-world shape (print/OAuth/document.write popups).
+- GAP-229 (critical): after a --dialog policy handles one dialog, a chained second dialog isn't
+  re-gated, giving a silent wrong tab with exit 0 after 180 s.
+- GAP-230 (major): an 'unknown' dialog can't be recovered except by closing the whole session.
+- GAP-231 (major): the spawn lock leaks under a stale lock, and double-handling reproduces.
+- GAP-232: dialog-id targeting, the self-release of the paused attach, and the probe budget are
+  untested.
+- GAP-233: beforeunload in a popup, which may be correct by design.
+
+Decisions for fix-2:
+1. GAP-228: switch the liveness probe to a DECIDABLE signal and probe EVERY page target that has no
+   tracked dialog. audit-2's signal research shows Performance.getMetrics (and
+   Debugger.setBreakpointsActive) answer under a busy script but time out under every dialog type,
+   4/4 each way. That removes the N9/N10 false-block reason fix-1 had for narrowing the probe.
+   Require busy-script cases N9/N10 to stay unblocked, live.
+2. GAP-229: after applying a policy, the gate must re-check (loop until clear, bounded, e.g. max 5
+   dialogs or 3 s) before letting the command run. The command itself must never run against a
+   target that's still blocked.
+3. GAP-230: an unknown-blocked target must be recoverable without losing the session. Offer a real
+   escape: 'dialog dismiss'/'accept' on an unknown dialog should close that target
+   (Target.closeTarget works at browser level) with a clear message. At minimum, 'tabs' must be
+   ungated so 'closetab' is usable. The hint must name whichever path works.
+4. GAP-231: make the spawn lock correct. Break a stale lock atomically (rename-then-create, not
+   unlink-then-create), and have a warden that finds another live warden for its session exit
+   immediately (a warden-side singleton check). Prove it with audit-2's lock-race-probe (stale,
+   plain and crash): 0 multi-warden rounds.
+5. GAP-232: add tests that kill M9, M10, M10b, M16 and M17.
+6. GAP-233: build a fixture that really triggers beforeunload in a popup (navigate it), then decide.
+7. In fix-2's verification, also run the items audit-2 never reached: gate overhead vs baseline, and
+   the GAP-226 late-report-only check.
