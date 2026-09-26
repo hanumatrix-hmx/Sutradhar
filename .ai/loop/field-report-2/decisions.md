@@ -1997,3 +1997,15 @@ missed and a full-file run caught; fixed with a tolerant isFrameTabClosed helper
 Given this item's pedigree (FR2-01 failed 6 audits), the Orchestrator's own fix-2 edits have
 not had a second independent audit; the live re-runs above used audit-1's own reproduction
 scripts. A re-audit is recommended before this branch is merged, not before it is committed.
+
+## 2026-09-26 -- FR2-03 code parked off the loop branch; FR2-04 precondition R-A satisfied
+
+FR2-03's uncommitted, BLOCKED code (29 files) is now committed on its own branch,
+`claude/fr2-03-parked` (83dd1a0, pushed), and the loop branch's working tree matches HEAD exactly.
+Every build and test run from here on measures only code that would ship. Loop evidence
+that .gitignore had been hiding was committed separately first (e470e6d), so nothing was lost.
+Clean-tree baseline after a forced rebuild: vitest browser 417, capability-runtime 158, cli 52,
+mcp-server 84, sutradhar 15 -- all passing; the drops vs earlier counts are exactly FR2-03's own
+tests leaving. The forced full build's one failure (@sutradhar/server) is the known parallel-
+build race and passes on re-run. FR2-04 proceeds to Step 1; the Orchestrator makes the D-7
+branch decision from Step 1's evidence before any DEVELOP code is written.
