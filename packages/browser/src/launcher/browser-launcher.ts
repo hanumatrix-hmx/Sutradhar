@@ -7,6 +7,7 @@ import puppeteer, { Browser as PuppeteerBrowser, BrowserContext, Page } from 'pu
 import * as fs from 'node:fs';
 import { StructuredLogger } from '@sutradhar/observability';
 import { BrowserLaunchOptions, DEFAULT_LAUNCH_ARGS } from './browser-options.js';
+import { buildMarkerArgs, processStartMs, writeOwnerFile } from './launch-marker.js';
 
 export interface IBrowserInstance {
   readonly isConnected: boolean;
@@ -151,15 +152,42 @@ export class BrowserLauncher implements IBrowserLauncher {
 
     if (executablePath) {
       try {
+        // Marks every runtime-launched Chrome (SDK launch(), MCP browser.launch, apps/server)
+        // with harmless command-line switches so a leaked/orphaned process can later be proven
+        // to be Sutradhar's — see launch-marker.ts's doc comment and FR2-03 spec §0.1/D1. Added
+        // here (not in prepareLaunchArgs, which stays marker-free so its existing tests are
+        // unchanged) because the marker needs this process's own PID/start time, not just the
+        // caller's options.
+        const marker = buildMarkerArgs({ kind: 'runtime', ownerPid: process.pid, ownerStartMs: processStartMs() });
         const browser = await puppeteer.launch({
           executablePath,
           headless: options.headless ?? true,
-          args: launchArgs,
+          args: [...launchArgs, ...marker],
           // null = size the viewport to the actual window (matches --window-size) instead of
           // Puppeteer's small 800x600 default when the caller hasn't asked for a specific size.
           defaultViewport: options.viewport ?? null,
           userDataDir: options.userDataDir,
         });
+        // Only when Puppeteer itself chose the temp profile dir (options.userDataDir was
+        // undefined) — never write into a caller-supplied or named-profile dir. Every
+        // Puppeteer user on the machine shares the `puppeteer_dev_chrome_profile-*` naming, so
+        // this owner file is the only way GC can later attribute such a dir to Sutradhar.
+        if (options.userDataDir === undefined) {
+          const spawnArgs = browser.process()?.spawnargs ?? [];
+          const uddArg = spawnArgs.find((a) => a.startsWith('--user-data-dir='));
+          const udd = uddArg?.slice('--user-data-dir='.length);
+          if (udd) {
+            await writeOwnerFile(udd, {
+              kind: 'runtime',
+              ownerPid: process.pid,
+              ownerStartMs: processStartMs(),
+              chromePid: browser.process()?.pid,
+              createdAt: new Date().toISOString(),
+            }).catch((err) => {
+              this.logger.warn('[BrowserLauncher] owner file not written', { error: (err as Error).message });
+            });
+          }
+        }
         const browserContext = options.isIncognito
           ? await browser.createBrowserContext()
           : undefined;

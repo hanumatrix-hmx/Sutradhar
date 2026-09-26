@@ -200,8 +200,12 @@ describe('@sutradhar/cli parseArgs', () => {
   });
 
   it('reports every unrecognized flag, not just the first', () => {
-    const result = parseArgs(['nav', 'https://example.com', '--out', '--dry-run']);
-    expect(result.unrecognizedFlags).toEqual(['--out', '--dry-run']);
+    // Uses two flags that are genuinely unrecognized by any verb — --dry-run itself became a
+    // real, recognized flag in FR2-03 (valid only with "doctor --gc" / "close --all-stale"),
+    // so it no longer serves as a stand-in "unknown flag" here; see the FR2-03 P-series tests
+    // below for its own validation.
+    const result = parseArgs(['nav', 'https://example.com', '--out', '--bogus']);
+    expect(result.unrecognizedFlags).toEqual(['--out', '--bogus']);
   });
 
   it('does not treat a positional arg that happens to equal a flag NAME as anything but a flag, even mid-command', () => {
@@ -243,5 +247,57 @@ describe('@sutradhar/cli parseArgs', () => {
     expect(parseArgs(['wait', '#t', '--state', 'visible']).stateFlag).toBe('visible');
     expect(parseArgs(['wait', '#t', '--state', 'attached']).stateFlag).toBe('attached');
     expect(parseArgs(['wait', '#t', '--state', 'hidden']).stateFlag).toBe('hidden');
+  });
+});
+
+describe('FR2-03: GC-related flags', () => {
+  it('P1: close --all-stale', () => {
+    const result = parseArgs(['close', '--all-stale']);
+    expect(result.allStale).toBe(true);
+    expect(result.cleanArgs).toEqual([]);
+    expect(result.unrecognizedFlags).toEqual([]);
+  });
+
+  it('P2: doctor --gc --dry-run', () => {
+    const result = parseArgs(['doctor', '--gc', '--dry-run']);
+    expect(result.gc).toBe(true);
+    expect(result.dryRun).toBe(true);
+    expect(result.unrecognizedFlags).toEqual([]);
+  });
+
+  it('P3: sessions --json', () => {
+    const result = parseArgs(['sessions', '--json']);
+    expect(result.jsonMode).toBe(true);
+  });
+
+  it('P4: a plain verb leaves all three false', () => {
+    const result = parseArgs(['snap']);
+    expect(result.allStale).toBe(false);
+    expect(result.gc).toBe(false);
+    expect(result.dryRun).toBe(false);
+  });
+
+  it('P5: gcFlagError is undefined for every valid combination', async () => {
+    const { gcFlagError } = await import('../../src/parse-args.js');
+    expect(gcFlagError(parseArgs(['doctor', '--gc']))).toBeUndefined();
+    expect(gcFlagError(parseArgs(['doctor', '--gc', '--dry-run']))).toBeUndefined();
+    expect(gcFlagError(parseArgs(['close', '--all-stale']))).toBeUndefined();
+    expect(gcFlagError(parseArgs(['close', '--all-stale', '--dry-run']))).toBeUndefined();
+  });
+
+  it('P6: gcFlagError gives the exact §2.7 messages for misuse', async () => {
+    const { gcFlagError } = await import('../../src/parse-args.js');
+    expect(gcFlagError(parseArgs(['snap', '--gc']))).toBe(
+      '--gc is only valid with "doctor" (sutradhar doctor --gc [--dry-run])',
+    );
+    expect(gcFlagError(parseArgs(['doctor', '--all-stale']))).toBe(
+      '--all-stale is only valid with "close" (sutradhar close --all-stale [--dry-run])',
+    );
+    expect(gcFlagError(parseArgs(['doctor', '--dry-run']))).toBe(
+      '--dry-run requires "doctor --gc" or "close --all-stale"',
+    );
+    expect(gcFlagError(parseArgs(['sessions', '--dry-run']))).toBe(
+      '--dry-run requires "doctor --gc" or "close --all-stale"',
+    );
   });
 });

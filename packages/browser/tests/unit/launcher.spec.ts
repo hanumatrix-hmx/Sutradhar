@@ -204,4 +204,53 @@ describe('@sutradhar/browser BrowserLauncher', () => {
       expect(launcher.findExecutablePath('/opt/my-chrome/chrome')).toBe('/opt/my-chrome/chrome');
     });
   });
+
+  describe('FR2-03: launch markers', () => {
+    it('L1: a real launch stamps --sutradhar-launch=runtime and the right owner pid; the owner file matches; close() still removes the temp dir', async () => {
+      const launcher = new BrowserLauncher();
+      const instance = await launcher.launch({ headless: true });
+      const puppeteerBrowser = instance.puppeteerBrowser;
+      expect(puppeteerBrowser).toBeDefined();
+      const spawnargs = puppeteerBrowser!.process()?.spawnargs ?? [];
+      expect(spawnargs).toContain('--sutradhar-launch=runtime');
+      expect(spawnargs).toContain(`--sutradhar-owner-pid=${process.pid}`);
+
+      const uddArg = spawnargs.find((a) => a.startsWith('--user-data-dir='));
+      expect(uddArg).toBeDefined();
+      const dir = uddArg!.slice('--user-data-dir='.length);
+
+      const { readOwnerFile } = await import('../../src/launcher/launch-marker.js');
+      const owner = await readOwnerFile(dir);
+      expect(owner?.ownerPid).toBe(process.pid);
+      expect(owner?.chromePid).toBe(puppeteerBrowser!.process()?.pid);
+
+      await instance.close();
+      const fs = await import('node:fs');
+      expect(fs.existsSync(dir)).toBe(false);
+    }, 30000);
+
+    it('L2: a caller-supplied userDataDir still gets the marker args, but no owner file is written into it', async () => {
+      const { mkdtemp, rm } = await import('node:fs/promises');
+      const os = await import('node:os');
+      const path = await import('node:path');
+      const dir = await mkdtemp(path.join(os.tmpdir(), 'fr2-03-l2-'));
+      try {
+        const launcher = new BrowserLauncher();
+        const instance = await launcher.launch({ headless: true, userDataDir: dir });
+        const spawnargs = instance.puppeteerBrowser?.process()?.spawnargs ?? [];
+        expect(spawnargs).toContain('--sutradhar-launch=runtime');
+        const fs = await import('node:fs');
+        expect(fs.existsSync(path.join(dir, '.sutradhar-owner.json'))).toBe(false);
+        await instance.close();
+      } finally {
+        await rm(dir, { recursive: true, force: true });
+      }
+    }, 30000);
+
+    it('L3: prepareLaunchArgs() itself never contains a --sutradhar- arg (markers are added later, only in launch())', () => {
+      const launcher = new BrowserLauncher();
+      const args = launcher.prepareLaunchArgs();
+      expect(args.some((a) => a.startsWith('--sutradhar-'))).toBe(false);
+    });
+  });
 });

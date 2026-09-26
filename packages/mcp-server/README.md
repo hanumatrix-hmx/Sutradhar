@@ -27,6 +27,12 @@ Grouped here by category, matching `tools.ts`'s own section layout.
 | `browser.shutdown` | Shut down a session. |
 | `browser.shutdown_all` | Shut down every session. |
 
+**Process-level shutdown:** the server also shuts everything down (every open Chrome session,
+the idle-reaper timer) on its own when the process is ending, not just via an explicit tool call
+— on `SIGINT`/`SIGTERM`, and on the client closing its stdin (`end`/`close`), since some MCP
+clients disconnect that way without sending a signal. It always exits within a bounded deadline
+(10s) even if that shutdown hangs.
+
 ### Navigation
 | Tool | Description |
 |---|---|

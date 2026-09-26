@@ -10,7 +10,12 @@ to reconnect to it (in `~/.sutradhar-cli/<hash-of-cwd>/state.json`, scoped autom
 directory you're running from so two unrelated projects on the same machine never collide);
 every later command re-attaches to that same session instead of launching a new one. Run
 `sutradhar close` when you're done. Set `SUTRADHAR_CLI_STATE_DIR` to point at a custom path
-instead — e.g. to deliberately share one session across directories.
+instead — e.g. to deliberately share one session across directories, or `SUTRADHAR_CLI_STATE_ROOT`
+to relocate the whole `~/.sutradhar-cli` root itself. If a session is ever abandoned without a
+clean `close` (a killed CLI process, a crash), its Chrome process and throwaway profile
+directory can leak — run `sutradhar sessions` to see what's live/stale, and
+`sutradhar doctor --gc --dry-run` (or its alias `sutradhar close --all-stale --dry-run`) to
+preview and then reclaim exactly what's actually orphaned.
 
 ## Quick start
 
@@ -87,7 +92,10 @@ Run `sutradhar` with no arguments for the full command list.
 | `audit [url] [outDir] --baseline <url>` | Same, plus a visual pixel-diff against a known-good baseline URL — a one-command regression gate combining `audit` + `compare`. |
 | `compare <urlA> <urlB> [out]` | Visual regression: pixel-diff two pages, save a diff image. |
 | `close` | Close the active session. |
-| `doctor` | Environment diagnostics (Chrome detection, active session). |
+| `close --all-stale [--dry-run]` | Alias of `doctor --gc` — reclaims every leaked/orphaned CLI or runtime Chrome process and profile directory, not just this session's. |
+| `sessions [--json]` | List every CLI session under the state root (live/unresponsive/unknown/stale/unreadable), with age, PID and endpoint status. |
+| `doctor` | Environment diagnostics (Chrome detection, active session, a leaked-session/profile summary). |
+| `doctor --gc [--dry-run]` | Garbage-collect leaked CLI/runtime Chrome processes and profile directories — `--dry-run` previews without changing anything. |
 | `profile create <name> [desc]` | Create a named, persistent profile (cookies/history/storage survive across separate launches). |
 | `profile list` | List profiles. |
 | `profile delete <name>` | Delete a profile (irreversibly removes its stored data). |
@@ -135,6 +143,12 @@ Session persistence across separate CLI invocations works by spawning Chrome **d
 `~/.sutradhar-cli/<hash-of-cwd>/state.json` — scoped by the calling directory by default, so
 concurrent CLI use from two different projects doesn't share a browser. `sutradhar close` kills
 that Chrome process tree and clears the saved state.
+
+Every Chrome process this CLI (or the runtime's own `launch()`) spawns is stamped with a
+harmless command-line marker (`--sutradhar-launch=...`) recording who launched it and when —
+this is what lets `sutradhar doctor --gc` later prove a leaked process and its throwaway profile
+directory are actually Sutradhar's before killing/deleting anything, rather than guessing from
+naming alone.
 
 ## Requirements
 

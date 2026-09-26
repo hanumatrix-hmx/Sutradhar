@@ -81,6 +81,14 @@ export interface ParsedArgs {
    *  `main()` checks this before dispatching to any command and errors out immediately rather
    *  than letting an unrecognized flag silently become positional data. */
   unrecognizedFlags: string[];
+  /** `--all-stale` — only valid with `close`; alias of `doctor --gc` (FR2-03 D3). */
+  allStale: boolean;
+  /** `--gc` — only valid with `doctor`; runs garbage collection over leaked CLI/runtime
+   *  sessions and profile directories (FR2-03). */
+  gc: boolean;
+  /** `--dry-run` — only valid alongside `doctor --gc` or `close --all-stale`; plans and prints
+   *  what GC would do without changing anything. */
+  dryRun: boolean;
 }
 
 /** Parses `process.argv.slice(2)`-style arguments (verb + flags) into their recognized pieces.
@@ -94,6 +102,9 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
   const noText = args.includes('--no-text');
   const idsOnly = args.includes('--ids-only');
   const scanListeners = args.includes('--scan-listeners');
+  const allStale = args.includes('--all-stale');
+  const gc = args.includes('--gc');
+  const dryRun = args.includes('--dry-run');
   const profileFlagIndex = args.indexOf('--profile');
   const profileFlag = profileFlagIndex !== -1 ? args[profileFlagIndex + 1] : undefined;
   const userAgentFlagIndex = args.indexOf('--user-agent');
@@ -148,6 +159,9 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     '--modifiers',
     '--frame',
     '--state',
+    '--all-stale',
+    '--gc',
+    '--dry-run',
   ]);
   const isConsumedValue = (i: number): boolean =>
     (profileFlagIndex !== -1 && i === profileFlagIndex + 1) ||
@@ -184,5 +198,25 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     stateFlag,
     stateFlagGivenButInvalid,
     unrecognizedFlags,
+    allStale,
+    gc,
+    dryRun,
   };
+}
+
+/** Validates the GC-related flag combinations (FR2-03 §2.7). Returns the exact usage message
+ *  to print (and exit 1 with) when a flag is used with the wrong verb, or `undefined` when the
+ *  combination is valid. Called by `main()` right after the existing `stateFlagGivenButInvalid`
+ *  check, before any dispatch. */
+export function gcFlagError(p: ParsedArgs): string | undefined {
+  if (p.gc && p.verb !== 'doctor') {
+    return '--gc is only valid with "doctor" (sutradhar doctor --gc [--dry-run])';
+  }
+  if (p.allStale && p.verb !== 'close') {
+    return '--all-stale is only valid with "close" (sutradhar close --all-stale [--dry-run])';
+  }
+  if (p.dryRun && !((p.verb === 'doctor' && p.gc) || (p.verb === 'close' && p.allStale))) {
+    return '--dry-run requires "doctor --gc" or "close --all-stale"';
+  }
+  return undefined;
 }

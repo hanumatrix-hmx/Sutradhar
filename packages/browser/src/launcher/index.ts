@@ -5,3 +5,4 @@
 
 export * from './browser-options.js';
 export * from './browser-launcher.js';
+export * from './launch-marker.js';

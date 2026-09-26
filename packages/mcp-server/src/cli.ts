@@ -11,6 +11,7 @@
 
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { createSutradharServer } from './server.js';
+import { installShutdownHooks } from './shutdown-hooks.js';
 
 // Every tool handler already catches its own errors and returns an MCP `isError` result —
 // an exception reaching this far means something escaped that (e.g. a dangling timer/promise
@@ -33,18 +34,11 @@ async function main(): Promise<void> {
   // Without this, the process exiting (client disconnect, host shutdown) never releases what
   // the runtime holds: open Chrome sessions, the idle-reaper timer, EventBus subscriptions —
   // all previously only reachable via an explicit browser.shutdown_all tool call that an
-  // exiting client has no chance to make.
-  let shuttingDown = false;
-  const shutdown = (signal: string) => {
-    if (shuttingDown) return;
-    shuttingDown = true;
-    runtime
-      .shutdownAll()
-      .catch((err) => console.error(`[sutradhar-mcp] error during ${signal} shutdown:`, err))
-      .finally(() => process.exit(0));
-  };
-  process.on('SIGINT', () => shutdown('SIGINT'));
-  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  // exiting client has no chance to make. Triggers: SIGINT/SIGTERM (as before), plus stdin
+  // 'end'/'close' (FR2-03 §0.6) — StdioServerTransport never listens for those itself, so a
+  // client that simply closes its write side without sending a signal used to leave this
+  // process (and its Chrome sessions) running forever.
+  installShutdownHooks({ runtime, stdin: process.stdin, proc: process });
 }
 
 main().catch((e) => {

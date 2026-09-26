@@ -11,10 +11,15 @@ import { SutradharRuntime } from '@sutradhar/capability-runtime';
 import { StructuredLogger } from '@sutradhar/observability';
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { readState, writeState, clearState } from './state.js';
+import { readState, writeState, clearState, STATE_FILE_PATH, resolveStateRoot, type CliState } from './state.js';
 import { spawnDetachedChrome, killChromeTree } from './spawn-chrome.js';
 import { createSessionId } from '@sutradhar/contracts';
-import { parseArgs } from './parse-args.js';
+import { parseArgs, gcFlagError } from './parse-args.js';
+import os from 'node:os';
+import { getProcessCommandLine, isPidAlive } from './process-list.js';
+import { isOwnedTempProfileDir, removeDirWithRetry } from './profile-cleanup.js';
+import { buildSessionsSnapshot, formatSessionsHuman, toSessionsJson } from './sessions.js';
+import { collectGcSnapshot, planGc, executeGc, formatGcHuman } from './gc.js';
 import { validateSelectorArgs, validateFrameChain } from './selector-args.js';
 
 const logger = new StructuredLogger({ minLevel: 'error' }); // CLI output IS the log; keep engine logs quiet
@@ -39,6 +44,9 @@ const {
   stateFlag,
   stateFlagGivenButInvalid,
   unrecognizedFlags,
+  allStale,
+  gc,
+  dryRun,
 } = parseArgs(process.argv.slice(2));
 
 // Tracked so main()'s cleanup can disconnect the CDP client connection (NOT close the browser)
@@ -68,12 +76,23 @@ async function spawnFreshSession(runtime: SutradharRuntime): Promise<string> {
   }
   let spawned: Awaited<ReturnType<typeof spawnDetachedChrome>>;
   try {
-    spawned = await spawnDetachedChrome(!headed, profileUserDataDir, userAgentFlag, viewportFlag);
+    spawned = await spawnDetachedChrome(!headed, profileUserDataDir, userAgentFlag, viewportFlag, STATE_FILE_PATH);
   } catch (err) {
     printErrorAndExit((err as Error).message);
   }
-  const attached = await runtime.attach({ endpoint: spawned.wsEndpoint });
+  let attached: Awaited<ReturnType<typeof runtime.attach>>;
+  try {
+    attached = await runtime.attach({ endpoint: spawned.wsEndpoint });
+  } catch (err) {
+    await killChromeTree(spawned.pid).catch(() => {});
+    if (spawned.ownsUserDataDir) await removeDirWithRetry(spawned.userDataDir).catch(() => {});
+    printErrorAndExit((err as Error).message);
+  }
   if (!attached.hasRealBrowser) {
+    // Spawned Chrome but the attach didn't produce a usable browser — clean up before erroring
+    // out, same as any other spawn-then-fail path (FR2-03: a failed nav must never leak).
+    await killChromeTree(spawned.pid).catch(() => {});
+    if (spawned.ownsUserDataDir) await removeDirWithRetry(spawned.userDataDir).catch(() => {});
     printErrorAndExit('Spawned Chrome but could not attach to it. Run "sutradhar doctor" to diagnose.');
   }
   if (viewportFlag) {
@@ -85,9 +104,67 @@ async function spawnFreshSession(runtime: SutradharRuntime): Promise<string> {
     chromePid: spawned.pid,
     profileName: profileFlag,
     viewport: viewportFlag,
+    profileDir: spawned.userDataDir,
+    profileDirOwned: spawned.ownsUserDataDir,
+    cwd: path.resolve(process.cwd()),
+    createdAt: new Date().toISOString(),
   });
   activeSessionId = attached.sessionId;
   return attached.sessionId;
+}
+
+/** Shared close/self-heal cleanup (FR2-03 §2.6) — never throws; warnings go to stderr. Kills
+ *  the session's Chrome ONLY when it's verifiably still this session's (reachable, or a
+ *  command-line match on the recorded profile dir), then removes the owned profile dir. */
+async function releaseSessionResources(state: CliState): Promise<void> {
+  const probe = state.wsEndpoint ? await probeEndpointSafe(state.wsEndpoint) : false;
+  if (state.chromePid) {
+    if (probe) {
+      await killChromeTree(state.chromePid).catch(() => {});
+    } else if (isPidAlive(state.chromePid)) {
+      const cmd = await getProcessCommandLine(state.chromePid);
+      const tempRoot = os.tmpdir();
+      const legacyPrefix = `${tempRoot}${path.sep}sutradhar-cli-`;
+      const matches =
+        cmd.ok &&
+        cmd.commandLine !== undefined &&
+        (state.profileDir
+          ? cmd.commandLine.includes(state.profileDir) || cmd.commandLine.includes(`--user-data-dir=${state.profileDir}`)
+          : cmd.commandLine.includes(legacyPrefix));
+      if (matches) {
+        await killChromeTree(state.chromePid).catch(() => {});
+      } else {
+        console.error(
+          `Warning: not killing PID ${state.chromePid}: could not verify it is this session's Chrome (${
+            cmd.ok ? 'command line does not reference this session\'s profile dir' : cmd.reason
+          }).`,
+        );
+      }
+    }
+    // else: not alive — nothing to kill.
+  }
+  if (state.profileDir && state.profileDirOwned) {
+    if (isOwnedTempProfileDir(state.profileDir, os.tmpdir(), 'cli')) {
+      const r = await removeDirWithRetry(state.profileDir);
+      if (r.status === 'failed') {
+        console.error(
+          `Warning: could not remove profile dir ${state.profileDir} (${r.code} after ${r.attempts} attempts). ` +
+            'Reclaim it later with "sutradhar doctor --gc".',
+        );
+      }
+    }
+  } else if (!state.profileDir) {
+    console.error(
+      'Note: this session was created by an older Sutradhar version that did not record its profile dir. ' +
+        'Run "sutradhar doctor --gc" to reclaim it.',
+    );
+  }
+}
+
+async function probeEndpointSafe(wsEndpoint: string): Promise<boolean> {
+  const { probeEndpoint } = await import('./sessions.js');
+  const r = await probeEndpoint(wsEndpoint);
+  return r.reachable;
 }
 
 async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string) => Promise<T>): Promise<T> {
@@ -133,7 +210,7 @@ async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string)
       console.error(
         `Note: previous session was unreachable (${(err as Error).message}) — starting a fresh session.`,
       );
-      if (state.chromePid) killChromeTree(state.chromePid);
+      await releaseSessionResources(state);
       await clearState();
       const sessionId = await spawnFreshSession(runtime);
       return await fn(runtime, sessionId);
@@ -237,6 +314,25 @@ async function cmdDoctor() {
   }
   const state = await readState();
   console.log(`Active session:  ${state ? `${state.sessionId} (attach via saved wsEndpoint)` : 'none'}`);
+
+  // Leaked-session/profile summary (FR2-03) — computed from a dry plan so `doctor` alone never
+  // mutates anything; the summary is what points a user at "--gc --dry-run" in the first place.
+  try {
+    const snapshot = await collectGcSnapshot();
+    const plan = planGc(snapshot);
+    const liveCount = snapshot.sessions.sessions.filter((s) => s.status === 'live').length;
+    const staleCount = snapshot.sessions.sessions.filter((s) => s.status === 'stale').length;
+    const total = snapshot.sessions.sessions.length;
+    console.log(`Sessions:        ${total} (${liveCount} live, ${staleCount} stale): "sutradhar sessions" for details`);
+    const orphanDirCount = plan.actions.filter((a) => a.type === 'deleteDir').length;
+    const orphanProcCount = plan.actions.filter((a) => a.type === 'kill' && a.role === 'browser').length;
+    console.log(
+      `Leaked profiles: ${orphanDirCount} dirs, ${orphanProcCount} orphan Chrome processes: ` +
+        '"sutradhar doctor --gc --dry-run" to preview cleanup',
+    );
+  } catch (err) {
+    console.error(`(Could not compute leaked-session summary: ${(err as Error).message})`);
+  }
 }
 
 async function cmdNav(url: string | undefined) {
@@ -758,8 +854,9 @@ async function cmdClose() {
   if (state.chromePid) {
     // attach()-ed sessions only ever DETACH on shutdown (by design — see spawn-chrome.ts's
     // SpawnedChrome doc comment), so for a Chrome process THIS CLI spawned, runtime.shutdown()
-    // alone would leak it. Kill the actual process (and its child renderer/GPU processes).
-    killChromeTree(state.chromePid);
+    // alone would leak it. releaseSessionResources kills it (PID-verified) and removes its
+    // owned profile dir.
+    await releaseSessionResources(state);
   } else {
     const runtime = new SutradharRuntime({ logger });
     try {
@@ -771,6 +868,46 @@ async function cmdClose() {
   }
   await clearState();
   console.log('Session closed.');
+}
+
+/** `sutradhar close --all-stale` and `sutradhar doctor --gc` are exact aliases (FR2-03 D3) —
+ *  same plan, same execution, same output, same exit codes. `--dry-run` prints the plan and
+ *  exits 0 without changing anything. */
+async function cmdGc(dryRunFlag: boolean, jsonModeFlag: boolean): Promise<void> {
+  // GAP-175: if THIS invocation's own environment happens to carry SUTRADHAR_CLI_STATE_DIR
+  // (e.g. gc is run from within the same shared-state shell that a session was started in),
+  // scan that directory too -- it may sit outside the default state root entirely. This is a
+  // secondary discovery path; the primary fix (finding a session's real state file via the
+  // `--sutradhar-state` marker on its own Chrome process, even when gc's OWN env has no idea
+  // that custom dir exists) lives in `collectGcSnapshot` itself. See spec §0.1/G8 and decisions.md.
+  const extraStateDirs = process.env.SUTRADHAR_CLI_STATE_DIR ? [process.env.SUTRADHAR_CLI_STATE_DIR] : [];
+  const snapshot = await collectGcSnapshot({ extraStateDirs });
+  const plan = planGc(snapshot);
+  const report = await executeGc(plan, snapshot, dryRunFlag);
+  if (jsonModeFlag) {
+    console.log(JSON.stringify(report, null, 2));
+  } else {
+    console.log(formatGcHuman(report));
+  }
+  process.exitCode = report.exitCode;
+}
+
+async function cmdSessions(jsonModeFlag: boolean): Promise<void> {
+  const { listProcesses } = await import('./process-list.js');
+  const tempRoot = os.tmpdir();
+  const stateRoot = resolveStateRoot(process.env.SUTRADHAR_CLI_STATE_ROOT);
+  const processEnumeration = await listProcesses();
+  const snapshot = await buildSessionsSnapshot({
+    stateRoot,
+    currentStateFile: STATE_FILE_PATH,
+    processEnumeration,
+    tempRoot,
+  });
+  if (jsonModeFlag) {
+    console.log(JSON.stringify(toSessionsJson(snapshot), null, 2));
+  } else {
+    console.log(formatSessionsHuman(snapshot));
+  }
 }
 
 async function main() {
@@ -792,9 +929,38 @@ async function main() {
   if (stateFlagGivenButInvalid) {
     printErrorAndExit('--state must be one of: visible, attached, hidden (e.g. wait "#toast" --state hidden)');
   }
+  const gcErr = gcFlagError({
+    verb,
+    cleanArgs,
+    headed,
+    failOnDiff,
+    jsonMode,
+    profileFlag,
+    userAgentFlag,
+    allowlistDomainsFlag,
+    baselineFlag,
+    settle,
+    noText,
+    idsOnly,
+    scanListeners,
+    modifiersFlag,
+    frameFlag,
+    viewportFlag,
+    viewportFlagGivenButInvalid,
+    stateFlag,
+    stateFlagGivenButInvalid,
+    unrecognizedFlags,
+    allStale,
+    gc,
+    dryRun,
+  });
+  if (gcErr) printErrorAndExit(gcErr);
   switch (verb) {
     case 'doctor':
+      if (gc) return cmdGc(dryRun, jsonMode);
       return cmdDoctor();
+    case 'sessions':
+      return cmdSessions(jsonMode);
     case 'nav':
       return cmdNav(cleanArgs[0]);
     case 'snap':
@@ -854,6 +1020,7 @@ async function main() {
     case 'download':
       return cmdDownload(cleanArgs[0], cleanArgs[1]);
     case 'close':
+      if (allStale) return cmdGc(dryRun, jsonMode);
       return cmdClose();
     case 'profile':
       return cmdProfile(cleanArgs[0], cleanArgs[1], cleanArgs.slice(2));
@@ -945,7 +1112,16 @@ Commands:
                                 URL — a one-command regression gate combining audit + compare
   compare <urlA> <urlB> [out]  Visual regression: pixel-diff two pages, save a diff image
   close                        Close the active session
+  close --all-stale [--dry-run]
+                                Alias of "doctor --gc" — kills orphaned Sutradhar Chrome
+                                processes and deletes leaked throwaway profile directories
+                                across every CLI session, not just this one
+  sessions [--json]            List every CLI session under the state root (live/unresponsive/
+                                unknown/stale/unreadable), with age, PID and endpoint status
   doctor                       Environment diagnostics (Chrome detection, active session)
+  doctor --gc [--dry-run]      Garbage-collect leaked CLI/runtime Chrome processes and profile
+                                directories this Sutradhar orphaned (crashed CLI, killed Node
+                                process, etc.) — --dry-run previews without changing anything
   profile create <name> [desc] Create a named, persistent profile (cookies/history/storage
                                 survive across separate launches)
   profile list                 List profiles
@@ -1008,7 +1184,8 @@ unmasked.
 
 Session state persists across commands, scoped to this directory, in
 ~/.sutradhar-cli/<hash-of-cwd>/state.json — run "close" when done. Override with
-SUTRADHAR_CLI_STATE_DIR to share state across directories or use a custom path.`);
+SUTRADHAR_CLI_STATE_DIR to share state across directories or use a custom path, or
+SUTRADHAR_CLI_STATE_ROOT to relocate the whole ~/.sutradhar-cli root (e.g. for a test harness).`);
       process.exitCode = verb ? 1 : 0;
   }
 }
