@@ -1,0 +1,84 @@
+{
+  "steps": [
+    {
+      "step": "nav",
+      "code": 0
+    },
+    {
+      "step": "orphaned (state dir removed, chrome still running)",
+      "browserAlive": true
+    }
+  ],
+  "childrenBeforeOrphan": [
+    {
+      "pid": 39480,
+      "cmd": "\"C:\\Program Files\\Google\\Chrome\\Applicat..."
+    },
+    {
+      "pid": 54024,
+      "cmd": "\"C:\\Program Files\\Google\\Chrome\\Applicat..."
+    },
+    {
+      "pid": 54800,
+      "cmd": "\"C:\\Program Files\\Google\\Chrome\\Applicat..."
+    },
+    {
+      "pid": 6344,
+      "cmd": "\"C:\\Program Files\\Google\\Chrome\\Applicat..."
+    },
+    {
+      "pid": 66568,
+      "cmd": "\"C:\\Program Files\\Google\\Chrome\\Applicat..."
+    },
+    {
+      "pid": 62368,
+      "cmd": "\"C:\\Program Files\\Google\\Chrome\\Applicat..."
+    },
+    {
+      "pid": 50848,
+      "cmd": "\"C:\\Program Files\\Google\\Chrome\\Applicat..."
+    },
+    {
+      "pid": 52020,
+      "cmd": "\"C:\\Program Files\\Google\\Chrome\\Applicat..."
+    },
+    {
+      "pid": 73672,
+      "cmd": "\"C:\\Program Files\\Google\\Chrome\\Applicat..."
+    },
+    {
+      "pid": 55240,
+      "cmd": "\"C:\\Program Files\\Google\\Chrome\\Applicat..."
+    }
+  ],
+  "dryRun": {
+    "killPlanned": true,
+    "deletePlanned": true,
+    "deleteReason": "orphan-browser"
+  },
+  "realRun": {
+    "exitCode": 0,
+    "killResult": {
+      "type": "kill",
+      "pid": 39480,
+      "role": "browser",
+      "userDataDir": "E:\\AI-Cache\\tmp\\fr2-03-fix1-gap176-MspK2g\\temp\\sutradhar-cli-1790332673440-jcvO6E",
+      "reason": "orphan-cli",
+      "result": "killed"
+    },
+    "delResult": {
+      "type": "deleteDir",
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-fix1-gap176-MspK2g\\temp\\sutradhar-cli-1790332673440-jcvO6E",
+      "reason": "orphan-browser",
+      "result": "deleted",
+      "attempts": 2
+    },
+    "dirExistsAfter": false,
+    "remainingProcessesOnDir": 0,
+    "remaining": {
+      "orphanProcesses": 0,
+      "orphanDirs": 0
+    }
+  },
+  "pass": true
+}

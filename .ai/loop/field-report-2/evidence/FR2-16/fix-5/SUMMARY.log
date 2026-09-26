@@ -1,0 +1,8 @@
+typecheck (8 consumers): all exit=0 -- see typecheck-summary.log
+vitest browser: 278/278 passed
+vitest cli: 47/47 passed
+doc-static.spec.mjs: ALL PASS (17/17 checks)
+verify-fr2-16-boundary.mjs: OVERALL PASS (22/22 checks across 6 categories)
+mutation spec: SYN 19/19 caught, NEG 2/2 caught, false-positive checks pass, 12th file coverage confirmed, 9/11 self-authored revert-wording regressions caught (2 known limitations documented in-file)
+clean build (turbo run build --force, concurrency=1): 20/20 packages succeeded
+live-webdriver-asymmetry re-run: navigator.webdriver=false with DEFAULT_LAUNCH_ARGS, true without; HeadlessChrome UA present both; --enable-automation present both -- matches new disclosure wording exactly

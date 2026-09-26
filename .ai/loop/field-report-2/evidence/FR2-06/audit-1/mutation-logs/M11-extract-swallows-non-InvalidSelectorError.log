@@ -1,0 +1,54 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/capability-runtime
+
+ ✓ tests/unit/visual-compare.spec.ts  (5 tests) 6ms
+ ✓ tests/unit/profile-manager.spec.ts  (14 tests) 44ms
+ ✓ tests/unit/ax-snapshot.spec.ts  (15 tests) 5ms
+ ✓ tests/unit/extract-data.spec.ts  (28 tests) 6ms
+stdout | tests/unit/runtime.spec.ts > listSessions (FR2-10) > S2: launch() twice registers two launched, mock (no real browser) entries, sorted by createdAt then id
+{"timestamp":"2026-09-25T22:40:23.049Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:40:23.049Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376023049_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T22:40:23.049Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:40:23.049Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376023049_2","context":{"isIncognito":false}}
+
+stdout | tests/unit/runtime.spec.ts > listSessions (FR2-10) > S3: attach() registers an "attached" entry
+{"timestamp":"2026-09-25T22:40:23.054Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376023054_1","context":{"isIncognito":false}}
+
+stdout | tests/unit/runtime.spec.ts > listSessions (FR2-10) > S4: lifecycleOpsInFlight is 1 while launch() is pending, 0 after it resolves, and 0 after it rejects or throws synchronously
+{"timestamp":"2026-09-25T22:40:23.055Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376023055_1","context":{"isIncognito":false}}
+
+stdout | tests/unit/runtime.spec.ts > listSessions (FR2-10) > S5: shutdown() and shutdownAll() remove entries; shutdown of an unknown id still throws and leaves the counter at 0
+{"timestamp":"2026-09-25T22:40:23.055Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:40:23.055Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376023055_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T22:40:23.055Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:40:23.055Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376023055_2","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T22:40:23.055Z","level":"info","message":"[BrowserSession] Closed session sess_1790376023055_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T22:40:23.055Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790376023055_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T22:40:23.055Z","level":"info","message":"[BrowserSession] Closed session sess_1790376023055_2","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-25T22:40:23.055Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790376023055_2","context":{"reason":"Close all sessions requested"}}
+
+stdout | tests/unit/runtime.spec.ts > listSessions (FR2-10) > S6: a session created directly via the session manager (agent.runGoal-style, no launch()/attach()) is not listed
+{"timestamp":"2026-09-25T22:40:23.055Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:40:23.056Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376023055_1","context":{"isIncognito":false}}
+
+stdout | tests/unit/runtime.spec.ts > listSessions (FR2-10) > S7: a session removed behind the runtime's back (idle reap / crash) is pruned from listSessions
+{"timestamp":"2026-09-25T22:40:23.056Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:40:23.056Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376023056_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T22:40:23.056Z","level":"info","message":"[BrowserSession] Closed session sess_1790376023056_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-25T22:40:23.056Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790376023056_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-25T22:40:23.056Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:40:23.056Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376023056_1","context":{"isIncognito":false}}
+
+stdout | tests/unit/runtime.spec.ts > listSessions (FR2-10) > S8: a reused id keeps its original origin (launch/launch, and attach then launch under the same id)
+{"timestamp":"2026-09-25T22:40:23.056Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:40:23.056Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T22:40:23.056Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed2","context":{"isIncognito":false}}
+
+ ✓ tests/unit/runtime.spec.ts  (95 tests) 35ms
+
+ Test Files  5 passed (5)
+      Tests  157 passed (157)
+   Start at  04:10:22
+   Duration  974ms (transform 418ms, setup 0ms, collect 1.85s, tests 96ms, environment 1ms, prepare 673ms)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.

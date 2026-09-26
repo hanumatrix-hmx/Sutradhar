@@ -1,0 +1,82 @@
+FR2-16 audit-5 (final escalation cycle) -- VERDICT: BLOCKED-REQUIRED
+
+Core finding: fix-5's "allow-list, fail-closed" guard is not fail-closed. It only ever asks
+"does this match an approved template?" for text that (a) contains one of 11 trigger words (or,
+in 9 files, a flag-word + a closed reason-word list), AND (b) is not within 160 chars of any of
+~45 NARRATIVE_RE anchors, 250 chars of "pinchtab", or 60 chars of a template. Anything outside
+(a) is invisible; anything inside (b) is auto-approved. So it is still a vocabulary list -- the
+deny-list moved from "bad phrasings" to "trigger words + narrative anchors", and both halves are
+open-ended in exactly the way the redesign said a positive list would not be.
+
+probe-audit5.mjs: 30 false-claim sentences x 4 insertion positions (end/mid/start/after-template)
+= 118 insertions, 102 MISSED, 16 CAUGHT. See probe-audit5.log.
+
+Representative undetected false claims (all MISSED at every position tried):
+  A2 SECURITY.md                 "Sutradhar reliably gets past reCAPTCHA and hCaptcha challenges."
+                                 (\bcaptcha\b does not match inside reCAPTCHA/hCaptcha)
+  A1 README.md                   "Sutradhar is undetectable by anti-bot vendors."
+  A3 packages/browser/README.md  "Sutradhar evades anti-bot systems such as DataDome and Akamai."
+  A5 AGENT_SETUP.md              "Sites will not detect that Sutradhar is automated."
+  A6 PROJECT_DEEP_DIVE.md        "Sutradhar strips --enable-automation from the launch command line and
+                                  rewrites the HeadlessChrome user agent by default." (live-false, see
+                                  live-webdriver-real-launcher.log)
+  B1 .ai/competitive-benchmarks.md "All three tools were launched identically, so the comparison is fully
+                                  symmetric and no tool had any masking advantage."  <- GAP-127 itself, re-introduced
+  B2 head-to-head-...-08-14.md   "Both tools were launched identically with no automation-hiding of any
+                                  kind on either side, so the comparison is perfectly fair." <- GAP-127 again
+  C1 browser-options.ts          "In our 2026-08-14 benchmark, the AutomationControlled flag was shown to
+                                  help launch stability."  (date = narrative anchor; the brief's own example)
+  C5 browser-options.ts          "'--disable-blink-features=AutomationControlled' is kept purely for launch
+                                  stability."  (a QUOTED flag literal is itself a whitelisted narrative anchor)
+  C7 SECURITY.md                 "Evasion is deliberately out of scope, and the AutomationControlled flag is
+                                  only a stability flag with no stealth effect." ("is deliberately out of scope" whitelisted)
+  C10 docs/ARCHITECTURE.md       "As task 1 showed, Sutradhar passes every bot-detection check and every CAPTCHA."
+  F1 browser-options.ts          "This flag makes launches more resilient." (reason word not in closed list)
+  F4 browser-launcher.ts         "Without this flag Chrome crashes on some machines." (GAP-122's own file)
+  G1 (CONTROL) browser-options.ts "The AutomationControlled flag is kept for stability." -- MISSED when inserted
+                                  mid-file or after the boundary paragraph (caught only at end/start).
+
+Acknowledged-limitation check (task item 3): fix-5 describes its 2 self-test misses as an
+end-of-file/position edge in 2 files. Reproduced: B3/B4 (same shape) are also MISSED mid-file.
+blind-zone-coverage.log: 70.5% of competitive-benchmarks.md and 76.1% of the head-to-head file
+(35.9% across all 12 files, 72.0% of browser-options.ts) is a zone where ANY trigger word is
+auto-approved without template matching. The "limitation" is the majority of exactly the two
+files GAP-127 was about -- downplayed, not narrow. And the mutation spec that documents it exits 1
+(35/37, see mutation-spec.log) while its label check "12 revert-wording cases" is `=== 11 || true`
+(tautological).
+
+File-list completeness (task item 2c): repo-wide grep (repo-wide-files.log, outside-12-lines.log)
+finds the same GAP-127 statement shape outside the 12 files:
+  tools/engine-comparison/extreme-scenarios-comparison-2026-08-16.md:33 "no stealth/ evasion" and :114
+  "No stealth/evasion attempted by any tool" (Sutradhar vs Playwright/Puppeteer/pinchtab, no disclosure
+  of Sutradhar's webdriver mask; cited from competitive-benchmarks.md:617);
+  tools/engine-comparison/results-refresh-2026-08-18.md:18 "No stealth/evasion added to either tool
+  beyond pinchtab's own shipped default" (omits Sutradhar's own shipped-default mask).
+Not in STEALTH_CLAIM_FILES, so any wording there is unchecked.
+
+What IS genuinely fixed / verified:
+  - audit-4's 19 SYN + 2 NEG sentences: caught (end-of-file, as tested) -- 21/21 reproduced.
+  - GAP-127 disclosure text present at competitive-benchmarks.md:26-29, ~798-801, ~849-852 and
+    head-to-head:42-46, 117-120; accurate vs live: Sutradhar's real BrowserLauncher.launch() ->
+    navigator.webdriver=false, HeadlessChrome UA present, --enable-automation present
+    (live-webdriver-real-launcher.log). Playwright not installed here (audit-4/fix-5 vanilla-puppeteer
+    baseline webdriver=true stands).
+  - typecheck 8/8 exit 0; vitest browser 278/278 (= 227 + 33 frame-labels.spec + 18 new
+    dom-semantic-engine tests, all FR2-09 concurrent work, not a discrepancy); cli 47/47;
+    doc-static ALL PASS 17/17; verify-fr2-16-boundary OVERALL PASS 22/22; turbo build --force 20/20.
+  - The shipped docs themselves (clean HEAD) contain no false claim I found.
+
+Proposed gaps (gaps.md max was GAP-137 at audit start; not written there -- evidence-dir-only rule):
+GAP-138 | FR2-16 audit-5 | major | Allow-list is not fail-closed: text with no trigger word is never checked. TRIGGER_RE misses reCAPTCHA/hCaptcha (\b), undetectable/detect/detected, evade/evasion, anti-bot, disguise/masking, DataDome/Akamai; 6 direct boundary-contradicting claims (A1-A6) pass in every position in 5 different tracked files. | TODO | -
+GAP-139 | FR2-16 audit-5 | major | NARRATIVE_RE auto-approves any trigger within 160 chars of an attacker-suppliable anchor (ISO date, n/m fraction, *.com, "task N", quoted flag literal, --no-sandbox, "is deliberately out of scope", sutradhar-mcp, auto-detection, ...) and PINCHTAB within 250; 10/10 narrative-disguised false claims (C1-C10) pass at every position. Blind zone = 35.9% of all tracked text, 70-76% of the two benchmark files. | TODO | -
+GAP-140 | FR2-16 audit-5 | major | GAP-127's own self-flattering "symmetric, no masking on any side" claim can be re-introduced anywhere in competitive-benchmarks.md / head-to-head file without detection (B1, B2 no trigger; B3, B4 with trigger, mid-file); fix-5's "narrow end-of-file limitation" description understates this. | TODO | -
+GAP-141 | FR2-16 audit-5 | minor | Flag+reason co-occurrence anchor: reason vocabulary incomplete (resilient/durable/dependable/crash/safety all miss, F1-F5) and siblings (--disable-infobars, --enable-automation) undefended outside the 2 launcher files (E1, E2); even the plain control sentence G1 is missed mid-file in browser-options.ts. | TODO | -
+GAP-142 | FR2-16 audit-5 | minor | File list still incomplete: extreme-scenarios-comparison-2026-08-16.md:33,114 and results-refresh-2026-08-18.md:18 make undisclosed "no stealth on any side" statements about Sutradhar-vs-competitor comparisons, outside STEALTH_CLAIM_FILES. | TODO | -
+GAP-143 | FR2-16 audit-5 | minor, process integrity | stealth-claim-check.mutation.spec.mjs ships red (exit 1, 35/37) and contains a tautological check (`REVERT_WORDINGS.length === 11 || true`, labeled "12 ... cases"); no fr2-16 script is wired into ci-gate.mjs / package scripts, so the guard only runs when someone remembers to. | TODO | -
+
+Diagnosis for BLOCKED: the recurring failure across 5 audits is the premise that honesty of free
+prose can be enforced by a regex-level classifier. A deny-list fails on synonyms; this allow-list
+fails because deciding WHICH text needs approval is itself a vocabulary problem (trigger words +
+narrative exemptions), with the same unbounded-synonym property. A genuinely closed design would
+have to require every sentence in a fenced, marker-delimited boundary region to be a template
+(and forbid topic prose elsewhere), or accept that this is a human-review property, not a CI check.

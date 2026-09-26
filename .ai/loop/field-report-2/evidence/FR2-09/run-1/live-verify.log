@@ -1,0 +1,53 @@
+server on 127.0.0.1:54184
+{"timestamp":"2026-09-25T04:30:41.944Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T04:30:42.189Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790310641944_1","context":{"isIncognito":false}}
+launched session sess_1790310641944_1 hasRealBrowser= true
+--- snapshot listing ---
+URL: http://127.0.0.1:54184/fixture.html
+Title: FR2-09 live verify
+Interactive elements (10):
+[#1] button "Main button"
+[#2] button "Depth one" (shadow: pay-shell#shell)
+[#3] input "Depth two" (shadow: pay-shell#shell > card-field.cvc)
+[#5 in iframe "pay" (http://127.0.0.1:54184/inner.html)] input "Card number"
+[#6 in iframe "pay"] button "Pay"
+[#7 in iframe "pay"] input "CVC" (shadow: card-field#cvc)
+[#9 in iframe "xo" (http://localhost:54184/inner.html)] input "Card number"
+[#10 in iframe "xo"] button "Pay"
+[#11 in iframe "xo"] input "CVC" (shadow: card-field#cvc)
+[#12 in iframe 3 (about:srcdoc)] button "Srcdoc button"
+OK: main-frame line has no "in iframe" and no "(shadow:"
+OK: main button line has no iframe label
+OK: first "pay" node line carries the frame designator + URL (query dropped)
+OK: "pay" lines after the first omit the URL
+OK: the cross-origin OOPIF ("xo") content is listed at all
+OK: the cross-origin OOPIF first node carries its designator + URL
+OK: the unnamed srcdoc iframe uses a numeric designator
+OK: main-frame depth-2 shadow chain label
+OK: main-frame depth-1 shadow label
+OK: iframe + shadow co-occurrence on the "pay" CVC input
+OK: structured node frame.url keeps the full URL including the query string
+OK: structured OOPIF node present with frame.name "xo"
+--- ax_snapshot listing ---
+[button] "Main button"
+[button] "Depth one"
+[textbox] "Depth two"
+[iframe "pay" (http://127.0.0.1:54184/inner.html)]
+  ## Card details
+  [textbox] "Card number"
+  [button] "Pay"
+  [textbox] "CVC"
+[iframe "xo" (http://localhost:54184/inner.html)]
+  ## Card details
+  [textbox] "Card number"
+  [button] "Pay"
+  [textbox] "CVC"
+[iframe 3 (about:srcdoc)]
+  [button] "Srcdoc button"
+OK: ax_snapshot groups "pay" iframe content under a header
+OK: ax_snapshot includes the cross-origin OOPIF, grouped
+OK: ax_snapshot content under a header is indented
+{"timestamp":"2026-09-25T04:30:43.302Z","level":"info","message":"[BrowserSession] Closed session sess_1790310641944_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T04:30:43.302Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790310641944_1","context":{"reason":"Runtime shutdown"}}
+
+ALL ASSERTIONS PASSED

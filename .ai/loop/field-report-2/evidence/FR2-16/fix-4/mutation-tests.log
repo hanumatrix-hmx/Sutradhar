@@ -1,0 +1,19 @@
+=== Step 1: guard passes against real, current (fixed) files -- zero false positives ===
+PASS: clean HEAD (with fix-4 applied) produces zero violations across all 11 tracked files
+
+=== Step 2: guard FAILS when each of the 3 real historical false sentences is reintroduced ===
+PASS: GAP-101/118 (audit-1/2 original wording) -> guard detects violation in packages/browser/src/launcher/browser-options.ts
+PASS: GAP-118/120 (audit-2, line-wrapped variant that beat the old regex via a newline) -> guard detects violation in PROJECT_DEEP_DIVE.md
+PASS: GAP-122 (audit-3, browser-launcher.ts comment this item itself wrote) -> guard detects violation in packages/browser/src/launcher/browser-launcher.ts
+
+=== Step 3: guard FAILS on the broader synonym family from the fix-4 brief ===
+PASS: synonym: compatibility flag -> guard detects violation in SECURITY.md
+PASS: synonym: recommended for reliable automated launches -> guard detects violation in AGENT_SETUP.md
+PASS: synonym: "side effect" framing near webdriver -> guard detects violation in README.md
+PASS: synonym: "plain, undisguised browser" overclaim with no nearby exception -> guard detects violation in docs/ARCHITECTURE.md
+PASS: synonym: hides all automation signals overclaim -> guard detects violation in .ai/competitive-benchmarks.md
+
+=== Step 4: sanity -- an unrelated, honest edit to a tracked file does NOT trip the guard ===
+PASS: unrelated honest edit produces zero new violations
+
+ALL PASS

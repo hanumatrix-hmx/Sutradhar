@@ -1,0 +1,242 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/capability-runtime
+
+ ✓ tests/unit/visual-compare.spec.ts  (5 tests) 6ms
+ ✓ tests/unit/profile-manager.spec.ts  (14 tests) 39ms
+ ✓ tests/unit/ax-snapshot.spec.ts  (15 tests) 5ms
+ ❯ tests/unit/extract-data.spec.ts  (28 tests | 2 failed) 9ms
+   ❯ tests/unit/extract-data.spec.ts > invalidExtractSelectorsError > P9 (FR2-06): planExtractFields with a pierce/text= selector gets FR2-02's prefix note plus the dialect reason
+     → expected [Function] to throw an error
+   ❯ tests/unit/extract-data.spec.ts > invalidExtractSelectorsError > P11 (FR2-06): every Playwright-style field is collected and named, not just the first
+     → expected [Function] to throw an error
+stdout | tests/unit/runtime.spec.ts > listSessions (FR2-10) > S2: launch() twice registers two launched, mock (no real browser) entries, sorted by createdAt then id
+{"timestamp":"2026-09-25T22:40:20.071Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:40:20.072Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376020071_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T22:40:20.072Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:40:20.072Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376020072_2","context":{"isIncognito":false}}
+
+stdout | tests/unit/runtime.spec.ts > listSessions (FR2-10) > S3: attach() registers an "attached" entry
+{"timestamp":"2026-09-25T22:40:20.077Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376020077_1","context":{"isIncognito":false}}
+
+stdout | tests/unit/runtime.spec.ts > listSessions (FR2-10) > S4: lifecycleOpsInFlight is 1 while launch() is pending, 0 after it resolves, and 0 after it rejects or throws synchronously
+{"timestamp":"2026-09-25T22:40:20.077Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376020077_1","context":{"isIncognito":false}}
+
+stdout | tests/unit/runtime.spec.ts > listSessions (FR2-10) > S5: shutdown() and shutdownAll() remove entries; shutdown of an unknown id still throws and leaves the counter at 0
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376020078_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376020078_2","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserSession] Closed session sess_1790376020078_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790376020078_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserSession] Closed session sess_1790376020078_2","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790376020078_2","context":{"reason":"Close all sessions requested"}}
+
+stdout | tests/unit/runtime.spec.ts > listSessions (FR2-10) > S6: a session created directly via the session manager (agent.runGoal-style, no launch()/attach()) is not listed
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376020078_1","context":{"isIncognito":false}}
+
+stdout | tests/unit/runtime.spec.ts > listSessions (FR2-10) > S7: a session removed behind the runtime's back (idle reap / crash) is pruned from listSessions
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376020078_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserSession] Closed session sess_1790376020078_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790376020078_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790376020078_1","context":{"isIncognito":false}}
+
+stdout | tests/unit/runtime.spec.ts > listSessions (FR2-10) > S8: a reused id keeps its original origin (launch/launch, and attach then launch under the same id)
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T22:40:20.078Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T22:40:20.079Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed2","context":{"isIncognito":false}}
+
+ ❯ tests/unit/runtime.spec.ts  (95 tests | 7 failed) 39ms
+   ❯ tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > normalizeTarget > FR2-06 R1: throws InvalidSelectorError synchronously for Playwright-style syntax
+     → expected function to throw an error, but it didn't
+   ❯ tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R2: a Playwright selector rejects with InvalidSelectorError and touches neither resolveTab nor the action engine
+     → expected error to be instance of InvalidSelectorError
+   ❯ tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R3: fillForm reports the Playwright field as success:false with a hint, and still types the other field
+     → expected true to be false // Object.is equality
+   ❯ tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R5: uploadFileViaTrigger rejects Playwright syntax before any fs check or page interaction
+     → expected error to be instance of InvalidSelectorError
+   ❯ tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R7: a Playwright-style frame hop names the hop and the full chain, and the SECOND hop never calls the inner frame's $
+     → expected Error: No element matched frameSelector "… to match object { message: StringMatching{…} }
+   ❯ tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R7b: a Playwright-style FIRST hop rejects before any page.$ call at all
+     → expected Error: No element matched frameSelector "… to match object { message: StringMatching{…} }
+   ❯ tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R8: extractData names every Playwright-style field, with the hint exactly once, and never touches evaluate
+     → expected 'Cannot read properties of undefined (…' to match /^Invalid selector for field "bad": "t…/
+
+ Test Files  2 failed | 3 passed (5)
+      Tests  9 failed | 148 passed (157)
+   Start at  04:10:19
+   Duration  999ms (transform 457ms, setup 0ms, collect 1.85s, tests 98ms, environment 1ms, prepare 792ms)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/extract-data.spec.ts > invalidExtractSelectorsError > P9 (FR2-06): planExtractFields with a pierce/text= selector gets FR2-02's prefix note plus the dialect reason
+AssertionError: expected [Function] to throw an error
+
+- Expected: 
+null
+
++ Received: 
+undefined
+
+ ❯ tests/unit/extract-data.spec.ts:336:77
+    334| 
+    335|   it('P9 (FR2-06): planExtractFields with a pierce/text= selector gets…
+    336|     expect(() => planExtractFields({ bad: { selector: 'pierce/text=x' …
+       |                                                                             ^
+    337|       /Invalid selector for field "bad": "pierce\/text=x" — "text=".*d…
+    338|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  tests/unit/extract-data.spec.ts > invalidExtractSelectorsError > P11 (FR2-06): every Playwright-style field is collected and named, not just the first
+AssertionError: expected [Function] to throw an error
+
+- Expected: 
+null
+
++ Received: 
+undefined
+
+ ❯ tests/unit/extract-data.spec.ts:353:7
+    351|     expect(() =>
+    352|       planExtractFields({ ok: { selector: 'h1' }, bad: { selector: 'te…
+    353|     ).toThrow(/Invalid selector for field "bad": "text=Buy".*Invalid s…
+       |       ^
+    354|   });
+    355| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > normalizeTarget > FR2-06 R1: throws InvalidSelectorError synchronously for Playwright-style syntax
+AssertionError: expected function to throw an error, but it didn't
+ ❯ tests/unit/runtime.spec.ts:49:44
+     47|     it('FR2-06 R1: throws InvalidSelectorError synchronously for Playw…
+     48|       for (const bad of ['text=Submit', 'role=button', 'button >> text…
+     49|         expect(() => normalizeTarget(bad)).toThrow(InvalidSelectorErro…
+       |                                            ^
+     50|       }
+     51|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R2: a Playwright selector rejects with InvalidSelectorError and touches neither resolveTab nor the action engine
+AssertionError: expected error to be instance of InvalidSelectorError
+
+- Expected: 
+[Function InvalidSelectorError]
+
++ Received: 
+[BrowserNotAvailableError: No browser session "s1". Call launch() first.]
+
+ ❯ tests/unit/runtime.spec.ts:873:7
+    871|     ];
+    872|     for (const call of calls) {
+    873|       await expect(call()).rejects.toThrow(InvalidSelectorError);
+       |       ^
+    874|     }
+    875|     expect(resolveTabSpy).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R3: fillForm reports the Playwright field as success:false with a hint, and still types the other field
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/runtime.spec.ts:889:43
+    887|     const results = await runtime.fillForm('s1', { 'text=Name': 'x', '…
+    888| 
+    889|     expect(results['text=Name']!.success).toBe(false);
+       |                                           ^
+    890|     expect(results['text=Name']!.error).toContain('Playwright-style');
+    891|     expect(results['#ok']!.success).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R5: uploadFileViaTrigger rejects Playwright syntax before any fs check or page interaction
+AssertionError: expected error to be instance of InvalidSelectorError
+
+- Expected: 
+[Function InvalidSelectorError]
+
++ Received: 
+[Error: Upload file "/definitely/does/not/exist.txt" does not exist or is not accessible.]
+
+ ❯ tests/unit/runtime.spec.ts:918:5
+    916|     });
+    917| 
+    918|     await expect(runtime.uploadFileViaTrigger('s1', 'text=Browse', '/d…
+       |     ^
+    919|       InvalidSelectorError,
+    920|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R7: a Playwright-style frame hop names the hop and the full chain, and the SECOND hop never calls the inner frame's $
+AssertionError: expected Error: No element matched frameSelector "… to match object { message: StringMatching{…} }
+
+- Expected
++ Received
+
+- Object {
+-   "message": StringMatching /^Invalid frameSelector "role=frame" \(from the full chain "iframe\.a::role=frame"\) — "role="/,
+- }
++ [Error: No element matched frameSelector "role=frame" (from the full chain "iframe.a::role=frame") — reached via the previous frame in the chain.]
+
+ ❯ tests/unit/runtime.spec.ts:960:5
+    958| 
+    959|     // @ts-expect-error — private method, same pattern as the existing…
+    960|     await expect(runtime.resolveFrame(fakePage, 'iframe.a::role=frame'…
+       |     ^
+    961|       message: expect.stringMatching(
+    962|         /^Invalid frameSelector "role=frame" \(from the full chain "if…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+ FAIL  tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R7b: a Playwright-style FIRST hop rejects before any page.$ call at all
+AssertionError: expected Error: No element matched frameSelector "… to match object { message: StringMatching{…} }
+
+- Expected
++ Received
+
+- Object {
+-   "message": StringMatching /^Invalid frameSelector "role=frame" \(from the full chain "role=frame"\) — "role="/,
+- }
++ [Error: No element matched frameSelector "role=frame" (from the full chain "role=frame") — reached via the top-level page.]
+
+ ❯ tests/unit/runtime.spec.ts:975:5
+    973| 
+    974|     // @ts-expect-error — private method.
+    975|     await expect(runtime.resolveFrame(fakePage, 'role=frame')).rejects…
+       |     ^
+    976|       message: expect.stringMatching(/^Invalid frameSelector "role=fra…
+    977|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/9]⎯
+
+ FAIL  tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R8: extractData names every Playwright-style field, with the hint exactly once, and never touches evaluate
+AssertionError: expected 'Cannot read properties of undefined (…' to match /^Invalid selector for field "bad": "t…/
+
+- Expected: 
+/^Invalid selector for field "bad": "text=Buy" — "text="/
+
++ Received: 
+"Cannot read properties of undefined (reading 'ok')"
+
+ ❯ tests/unit/runtime.spec.ts:993:31
+    991|       .catch((e: Error) => e);
+    992| 
+    993|     expect(rejection.message).toMatch(/^Invalid selector for field "ba…
+       |                               ^
+    994|     expect(rejection.message).toContain('bad2');
+    995|     const hintOccurrences = rejection.message.split('Playwright-style …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/9]⎯
+

@@ -1,0 +1,13 @@
+=== Mutation M1: reintroduce 'stealth launcher' in tagline ===
+1
+FAIL: README.md does not contain "stealth launcher" (old tagline)
+1 FAILURE(S)
+exit=1
+=== Mutation M2: reintroduce module-layout src/stealth/ line (4th spot) ===
+- `src/stealth/`: Anti-detection evasion scripts (navigator.webdriver override).
+ALL PASS
+OVERALL: PASS
+=== Mutation M3: restore old launcher sub-module text 'stealth launch flags' ===
+ALL PASS
+=== revert check ===
+packages/browser/README.md: OK

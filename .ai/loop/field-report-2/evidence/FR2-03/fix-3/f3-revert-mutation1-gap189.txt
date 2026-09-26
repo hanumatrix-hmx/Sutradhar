@@ -1,0 +1,35 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli[39m
+
+ [32m✓[39m tests/unit/help-text.spec.ts [2m ([22m[2m6 tests[22m[2m)[22m[90m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/parse-args.spec.ts [2m ([22m[2m43 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/state.spec.ts [2m ([22m[2m18 tests[22m[2m)[22m[90m 18[2mms[22m[39m
+ [32m✓[39m tests/unit/profile-cleanup.spec.ts [2m ([22m[2m21 tests[22m[2m)[22m[90m 28[2mms[22m[39m
+ [32m✓[39m tests/unit/sessions.spec.ts [2m ([22m[2m17 tests[22m[2m)[22m[90m 74[2mms[22m[39m
+ [32m✓[39m tests/unit/process-list.spec.ts [2m ([22m[2m21 tests[22m[2m)[22m[90m 163[2mms[22m[39m
+ [32m✓[39m tests/unit/spawn-chrome.spec.ts [2m ([22m[2m2 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/collect-gc-snapshot.spec.ts [2m ([22m[2m1 test[22m[2m)[22m[90m 11[2mms[22m[39m
+ [33m❯[39m tests/unit/gc.spec.ts [2m ([22m[2m35 tests[22m [2m|[22m [31m1 failed[39m[2m)[22m[90m 18[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/gc.spec.ts[2m > [22mplanGc[2m > [22mGAP-189 (FR2-03 fix-3, structural): a `viaMarker` session must NEVER reach the clearState/deleteDir-producing branch, no matter what its (attacker-shapeable) content claims -- audit-3's gap184-bypass.mjs forged exactly this: a plain node process's command-line marker pointing at a foreign, parseable state.json with a fake sessionId/wsEndpoint (reads unreachable/stale) and an attacker-chosen profileDir aimed at an unrelated, grace-protected young dir[2m > [22ma viaMarker stale session with a full attacker-shaped payload (sessionId+endpoint set, profileDir pointing at a victim dir) produces ZERO actions -- no clearState for its own state file, no deleteDir for the dir it names[39m
+[31m     → expected { type: 'clearState', …(2) } to be undefined[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/gc.spec.ts[2m > [22mplanGc[2m > [22mGAP-189 (FR2-03 fix-3, structural): a `viaMarker` session must NEVER reach the clearState/deleteDir-producing branch, no matter what its (attacker-shapeable) content claims -- audit-3's gap184-bypass.mjs forged exactly this: a plain node process's command-line marker pointing at a foreign, parseable state.json with a fake sessionId/wsEndpoint (reads unreachable/stale) and an attacker-chosen profileDir aimed at an unrelated, grace-protected young dir[2m > [22ma viaMarker stale session with a full attacker-shaped payload (sessionId+endpoint set, profileDir pointing at a victim dir) produces ZERO actions -- no clearState for its own state file, no deleteDir for the dir it names
+[31m[1mAssertionError[22m: expected { type: 'clearState', …(2) } to be undefined[39m
+[36m [2m❯[22m tests/unit/gc.spec.ts:[2m625:65[22m[39m
+    [90m623| [39m      [35mconst[39m plan [33m=[39m [34mplanGc[39m(snapshot)[33m;[39m
+    [90m624| [39m      [90m// The two lines this gap is about: neither ever fires for a via[39m…
+    [90m625| [39m      [34mexpect[39m(plan[33m.[39mactions[33m.[39m[34mfind[39m((a) [33m=>[39m a[33m.[39mtype [33m===[39m [32m'clearState'[39m))[33m.[39m[34mtoBeUn[39m…
+    [90m   | [39m                                                                [31m^[39m
+    [90m626| [39m      [34mexpect[39m(plan[33m.[39mactions[33m.[39m[34mfind[39m((a) [33m=>[39m a[33m.[39mtype [33m===[39m [32m'deleteDir'[39m [33m&&[39m a[33m.[39mpath…
+    [90m627| [39m      [34mexpect[39m(plan[33m.[39mactions)[33m.[39m[34mtoEqual[39m([])[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m8 passed[39m[22m[90m (9)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m163 passed[39m[22m[90m (164)[39m
+[2m   Start at [22m 18:12:16
+[2m   Duration [22m 1.15s[2m (transform 625ms, setup 2ms, collect 2.47s, tests 321ms, environment 1ms, prepare 1.98s)[22m
+

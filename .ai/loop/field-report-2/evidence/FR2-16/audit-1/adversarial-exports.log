@@ -1,0 +1,45 @@
+== src/index.ts ==
+/**
+ * @file packages/browser/src/index.ts
+ * @description Package entry point for @sutradhar/browser.
+ */
+
+export const BROWSER_VERSION = '0.1.0';
+
+export * from './launcher/index.js';
+export * from './session/index.js';
+export * from './snapshot/index.js';
+export * from './actions/index.js';
+export * from './dom/index.js';
+export * from './skills/index.js';
+export * from './verifier/index.js';
+export * from './page/index.js';
+== case-insensitive 'stealth' in all package src (non-dist) ==
+packages/browser/src/launcher/browser-options.ts:32:   * stay that way — see CLAUDE.md's scope boundary on stealth/bot-detection evasion.
+packages/browser/src/launcher/browser-options.ts:40:// must not become, gated behind any opt-in. See CLAUDE.md's scope boundary on stealth/
+== runtime export check against freshly built dist ==
+node:internal/modules/esm/load:183
+    throw new ERR_UNSUPPORTED_ESM_URL_SCHEME(parsed, schemes);
+          ^
+
+Error [ERR_UNSUPPORTED_ESM_URL_SCHEME]: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'e:'
+    at throwIfUnsupportedURLScheme (node:internal/modules/esm/load:183:11)
+    at defaultLoad (node:internal/modules/esm/load:78:3)
+    at ModuleLoader.load (node:internal/modules/esm/loader:841:12)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:612:31)
+    at #createModuleJob (node:internal/modules/esm/loader:643:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:353:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:318:41) {
+  code: 'ERR_UNSUPPORTED_ESM_URL_SCHEME'
+}
+
+Node.js v25.0.0
+== stale subpath still resolvable locally? ==
+RESOLVES stale: [
+  'DEFAULT_STEALTH_OPTIONS',
+  'StealthEngine',
+  'getChromeRuntimeScript',
+  'getHardwareConcurrencyScript',
+  'getWebdriverOverrideScript',
+  'getWebglMaskScript'
+]

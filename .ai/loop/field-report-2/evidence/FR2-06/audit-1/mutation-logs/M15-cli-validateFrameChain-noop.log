@@ -1,0 +1,27 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli
+
+ ❯ tests/unit/selector-args.spec.ts  (5 tests | 1 failed) 4ms
+   ❯ tests/unit/selector-args.spec.ts > @sutradhar/cli FR2-06 selector-args > validateFrameChain > C2: names the hop and the full chain
+     → .toMatch() expects to receive a string, but got object
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  04:10:27
+   Duration  885ms (transform 327ms, setup 0ms, collect 586ms, tests 4ms, environment 0ms, prepare 125ms)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/selector-args.spec.ts > @sutradhar/cli FR2-06 selector-args > validateFrameChain > C2: names the hop and the full chain
+TypeError: .toMatch() expects to receive a string, but got object
+ ❯ tests/unit/selector-args.spec.ts:31:19
+     29|     it('C2: names the hop and the full chain', () => {
+     30|       const err = validateFrameChain('iframe.a::role=x');
+     31|       expect(err).toMatch(/Invalid frameSelector "role=x" \(from the f…
+       |                   ^
+     32|     });
+     33| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

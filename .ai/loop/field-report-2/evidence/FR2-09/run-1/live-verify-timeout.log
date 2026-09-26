@@ -1,0 +1,35 @@
+server on 127.0.0.1:52006
+{"timestamp":"2026-09-25T04:35:37.335Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T04:35:37.565Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790310937334_1","context":{"isIncognito":false}}
+launched session sess_1790310937334_1 hasRealBrowser= true
+--- snapshot listing (busy/blocked frames present) ---
+URL: http://127.0.0.1:52006/fixture2.html
+Title: FR2-09 timeout/placeholder verify
+Interactive elements (1):
+[#1] button "Main button"
+[iframe "busy" http://localhost:52006 — not inspectable] (timed out after 5000ms)
+[iframe "blocked" chrome-error:// — not inspectable] (browser error page: blocked or failed to load)
+elapsedMs = 5014
+skippedFrames = [{"index":1,"url":"http://localhost:52006/busy.html","origin":"http://localhost:52006","name":"busy","reason":"timeout","detail":"5000"},{"index":2,"url":"chrome-error://chromewebdata/","origin":"chrome-error://","name":"blocked","reason":"error-page"}]
+OK: main frame content is still listed while a sibling child frame is busy
+OK: snapshot returned in 5014ms, bounded well under the frame's 8000ms busy-loop (was previously unbounded)
+OK: the busy frame is reported in skippedFrames, not silently dropped
+OK: busy frame's skip reason is "timeout" (got "timeout")
+OK: busy frame's timeout detail is "5000" (got "5000")
+OK: the text listing carries a "not inspectable" placeholder line
+OK: the placeholder line names the 5000ms bound
+blocked-frame skip entry (Step-0-style, real observed branch): {"index":2,"url":"chrome-error://chromewebdata/","origin":"chrome-error://","name":"blocked","reason":"error-page"}
+Real-world finding: an X-Frame-Options-DENIED frame surfaces as skippedFrames reason "error-page".
+--- re-snapshot after busy period ends ---
+URL: http://127.0.0.1:52006/fixture2.html
+Title: FR2-09 timeout/placeholder verify
+Interactive elements (2):
+[#1] button "Main button"
+[#2 in iframe "busy" (http://localhost:52006/busy.html)] button "Busy button"
+[iframe "blocked" chrome-error:// — not inspectable] (browser error page: blocked or failed to load)
+OK: after the busy period ends, a fresh snapshot lists the busy frame normally (no placeholder)
+OK: re-snapshot has no timeout entry for "busy" once it is idle again
+{"timestamp":"2026-09-25T04:35:51.899Z","level":"info","message":"[BrowserSession] Closed session sess_1790310937334_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T04:35:51.899Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790310937334_1","context":{"reason":"Runtime shutdown"}}
+
+ALL ASSERTIONS PASSED

@@ -1,0 +1,194 @@
+./.ai/autonomous-loop-prompt-field-report-2.md:95:1. **Stealth (#15):** no stealth opt-in. It is out of scope per `CLAUDE.md`. Deliver only the
+./.ai/autonomous-loop-prompt-field-report-2.md:97:   fix the contradictory `packages/browser/README.md:30`, and remove the dead `StealthEngine` and
+./.ai/autonomous-loop-prompt-field-report-2.md:98:   the no-op `enableStealth` option (or mark them clearly deprecated if removal breaks public
+./.ai/autonomous-loop-prompt-field-report-2.md:317:**FR2-16 Stealth boundary.** As in §4.1.
+./.ai/browsing-capability-loop.md:66:| CAPTCHA / bot-detection / stealth evasion | excluded | Deliberately out of scope per CLAUDE.md — not a gap to close. |
+./.ai/browsing-capability-loop.md:1073:contradicts this project's standing anti-stealth-default policy and was flagged to the user
+./.ai/browsing-capability-loop.md:1140:rejected as contradicting this project's standing anti-stealth-default policy; the rest were
+./.ai/browsing-capability-loop.md:1271:(plain `chromium.launch()`, no stealth) against 6 of the blocking URLs; identical outcome on
+./.ai/competitive-benchmarks.md:24:  (1) The identical 47-task WebBench set, same scoring standard, no stealth on any side:
+./.ai/competitive-benchmarks.md:45:  a disclosed confound: pinchtab ships stealth injection **on by default**, which Sutradhar
+./.ai/competitive-benchmarks.md:52:  edge looks substantially attributable to stealth avoiding blocks Sutradhar's engine would
+./.ai/competitive-benchmarks.md:62:  axis"**: a clean isolation of the stealth confound on the WebBench number specifically —
+./.ai/competitive-benchmarks.md:64:  (`tools/engine-comparison/stealth-isolation-experiment.md`, 2026-08-14): pinchtab's
+./.ai/competitive-benchmarks.md:65:  `stealthLevel` is a hard-coded 3-value enum (`light`/`medium`/`full`) with no off-switch,
+./.ai/competitive-benchmarks.md:67:  (`internal/stealth/bundle.go`). That same investigation independently confirmed the asymmetry
+./.ai/competitive-benchmarks.md:145:added stealth. Result: **real pinchtab/pinchtab 31/47 (66%) — Sutradhar 29/47 (62%) —
+./.ai/competitive-benchmarks.md:148:unresolved confounds (real pinchtab's own `stealthLevel: "light"` default — not present on any
+./.ai/competitive-benchmarks.md:248:the identical WebBench task set, with two disclosed confounds (its default light stealth; one
+./.ai/competitive-benchmarks.md:264:- **Stealth injection, on by default (light level)**: patches `navigator.webdriver`, spoofs
+./.ai/competitive-benchmarks.md:474:stealth. 10 fresh READ-category domains (macys.com, merriam-webster.com, nasa.gov, nps.gov,
+./.ai/competitive-benchmarks.md:594:undisguised headless UA, per this project's standing transparency-over-evasion position, not
+./.ai/competitive-benchmarks.md:666:### 2026-08-15 — Milestone 26: stealth confound independently confirmed at the fingerprint level (clean A/B not possible)
+./.ai/competitive-benchmarks.md:668:Milestone 25 recommended one more experiment to settle the "is pinchtab's edge really stealth"
+./.ai/competitive-benchmarks.md:669:question: rerun the 9 divergent tasks with pinchtab's `stealthLevel` set to none. Attempted it
+./.ai/competitive-benchmarks.md:670:directly — and found the experiment as scoped **can't run**: `instanceDefaults.stealthLevel` is
+./.ai/competitive-benchmarks.md:673:pinchtab source (`internal/stealth/bundle.go`'s `NormalizeLevel()` defaults any unrecognized
+./.ai/competitive-benchmarks.md:674:value to `LevelLight`). There is no stealth-off state — `light` (what the original 31/47 run
+./.ai/competitive-benchmarks.md:676:delta to isolate against; re-running would only remeasure session noise, not a stealth effect.
+./.ai/competitive-benchmarks.md:679:live `/stealth/status` endpoint, and compare directly against Sutradhar's own plain
+./.ai/competitive-benchmarks.md:693:side (UA rewriting, `navigator.webdriver` masking, etc.) is the excluded stealth/evasion
+./.ai/competitive-benchmarks.md:695:`StealthEngine` finding. Full detail: `tools/engine-comparison/stealth-isolation-experiment.md`.
+./.ai/competitive-benchmarks.md:702:Playwright (57%) and Puppeteer (53%) with clear, evidenced, non-stealth reasons why.
+./.ai/competitive-benchmarks.md:704:### 2026-08-14 — Milestone 25: task-level diff finds zero real, non-stealth capability gaps behind pinchtab's lead
+./.ai/competitive-benchmarks.md:707:Sutradhar's 29/47) explained by its disclosed `stealthLevel: "light"` default, by page/timing
+./.ai/competitive-benchmarks.md:717:bar for calling something a genuine, fixable, non-stealth gap. Every one is judged
+./.ai/competitive-benchmarks.md:718:stealth-plausible, consistent with pinchtab's disclosed default. For balance, the reverse
+./.ai/competitive-benchmarks.md:720:despite the stealth default (real evidence stealth-light is a probabilistic edge, not a
+./.ai/competitive-benchmarks.md:726:**Decision: no code fix chased.** Per CLAUDE.md's scope boundary, matching pinchtab's stealth
+./.ai/competitive-benchmarks.md:729:change) is re-running pinchtab with `stealthLevel: "none"` on just the 9 divergent tasks to
+./.ai/competitive-benchmarks.md:748:history; (2) pinchtab ships `stealthLevel: "light"` by default — left as-is (not force-enabled,
+./.ai/competitive-benchmarks.md:750:comparison have any stealth applied.
+./.ai/competitive-benchmarks.md:757:systematic capability edge — could not be isolated as caused by the stealth setting, timing, or
+./.ai/competitive-benchmarks.md:764:real pinchtab/pinchtab on this same task set, and the two disclosed confounds (stealth default,
+./.ai/competitive-benchmarks.md:768:stealth default is explicitly out of scope per CLAUDE.md's scope boundary). The standing
+./.ai/competitive-benchmarks.md:787:Chrome, no stealth) — the same fairness standard already held for Sutradhar. A methodology
+./.ai/competitive-benchmarks.md:834:drives real **Playwright** (`playwright-core` 1.62.1, plain `chromium.launch()`, no stealth,
+./.ai/competitive-benchmarks.md:845:benchmark encountered. Both hit the same walls under a fair (non-stealth) comparison, because
+./.ai/competitive-benchmarks.md:950:already contains a built, unit-tested `StealthEngine` (`packages/browser/src/stealth/`) —
+./.ai/competitive-benchmarks.md:956:Wiring the dormant stealth engine in would very likely raise the completion rate — but per
+./.ai/competitive-benchmarks.md:1105:- **Real `pinchtab/pinchtab`**: fetched from its own GitHub/site. Confirmed the stealth
+./.ai/competitive-benchmarks.md:1196:reproducing, at larger scale, what the original run's "Stealth disclosure" section flagged as a
+./.ai/competitive-benchmarks.md:1197:real-but-unisolated asymmetry from pinchtab's shipped `stealthLevel: "light"` default. Only 2
+./.ai/competitive-benchmarks.md:1201:capability is roughly at parity; the topline score gap is mostly explained by a stealth-default
+./.ai/competitive-benchmarks.md:1203:engine. This is not grounds to build stealth into Sutradhar — still out of scope per CLAUDE.md
+./.claude/skills/webbench-sample/SKILL.md:47:via stealth/evasion, per CLAUDE.md's scope boundary**, just document honestly:
+./AGENT_SETUP.md:160:- **No stealth or bot-detection evasion, by design.** Real anti-bot walls (Cloudflare challenges,
+./CLAUDE.md:111:  explicitly reopens the decision — most notably **stealth / bot-detection / CAPTCHA evasion**.
+./docs/ARCHITECTURE.md:129:- Stealth/bot-detection evasion is deliberately out of scope — see `CLAUDE.md`'s scope
+./packages/browser/.turbo/turbo-test.log:11: [32m✓[39m tests/unit/stealth.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+./packages/browser/src/launcher/browser-options.ts:32:   * stay that way — see CLAUDE.md's scope boundary on stealth/bot-detection evasion.
+./packages/browser/src/launcher/browser-options.ts:45:// stealth/bot-detection evasion: Sutradhar does not attempt to defeat bot detection or solve
+./packages/browser/tests/unit/launcher.spec.ts:31:  it('should unconditionally include --disable-blink-features=AutomationControlled in launch arguments (FR2-16: proves no behavior change after removing the dead enableStealth conditional, which was a provable no-op)', () => {
+./packages/browser/tests/unit/launcher.spec.ts:39:  it('enableStealth (if a caller still passes it despite the type removal) has zero effect on prepareLaunchArgs output, in either direction (GAP-104 fix: this must be distinct from the previous test, not a duplicate of it — it compares BOTH enableStealth:true and enableStealth:false against the no-option baseline and asserts all three produce an identical arg set, which the previous "default flags present" test never checked)', () => {
+./packages/browser/tests/unit/launcher.spec.ts:42:    const withTrue = launcher.prepareLaunchArgs({ enableStealth: true } as never);
+./packages/browser/tests/unit/launcher.spec.ts:43:    const withFalse = launcher.prepareLaunchArgs({ enableStealth: false } as never);
+./packages/browser/tests/unit/launcher.spec.ts:49:  // GAP-104 fix: the previous version of this regression guard named IStealthEngine and
+./packages/browser/tests/unit/launcher.spec.ts:50:  // StealthOptions in its description as if they were being checked here, but both are
+./packages/browser/tests/unit/launcher.spec.ts:53:  // `browserExports.IStealthEngine === undefined` would be vacuously true regardless of whether
+./packages/browser/tests/unit/launcher.spec.ts:58:  // fix-1's version): it was always an instance method on the (now-deleted) StealthEngine class,
+./packages/browser/tests/unit/launcher.spec.ts:61:  it('regression guard (FR2-16): StealthEngine/DEFAULT_STEALTH_OPTIONS/getWebdriverOverrideScript/getChromeRuntimeScript/getWebglMaskScript/getHardwareConcurrencyScript must stay removed from the package\'s real runtime exports', () => {
+./packages/browser/tests/unit/launcher.spec.ts:62:    expect((browserExports as Record<string, unknown>).StealthEngine).toBeUndefined();
+./packages/browser/tests/unit/launcher.spec.ts:63:    expect((browserExports as Record<string, unknown>).DEFAULT_STEALTH_OPTIONS).toBeUndefined();
+./packages/browser/tests/unit/launcher.spec.ts:131:  it('should NOT add a --user-agent arg by default, so Chrome\'s own real UA (including "Headless" when headless) is left alone — this must stay true; see CLAUDE.md\'s scope boundary on stealth/detection-evasion defaults', () => {
+./packages/sutradhar/AGENT_SETUP.md:160:- **No stealth or bot-detection evasion, by design.** Sutradhar launches a plain, undisguised
+./PROJECT_DEEP_DIVE.md:48:| Detection-evasion / stealth | ❌ **Not built (by design)** | No stealth engine exists; one retained launch flag hides `navigator.webdriver` only, everything else is a plain, undisguised browser — see AGENT_SETUP.md's boundary section |
+./PROJECT_DEEP_DIVE.md:867:### 11.1 Detection-Evasion Boundary (no stealth engine)
+./PROJECT_DEEP_DIVE.md:869:There is no stealth/anti-detection engine in this codebase — an earlier `@sutradhar/browser/stealth/`
+./PROJECT_DEEP_DIVE.md:870:module (a dead, never-invoked `StealthEngine` plus 4 unused script generators) was removed
+./PROJECT_DEEP_DIVE.md:871:outright as dead code, along with the no-op `enableStealth` option that never gated anything
+./PROJECT_DEEP_DIVE.md:872:observable. Sutradhar launches a plain, undisguised browser: it does not attempt to evade
+./SECURITY.md:41:- **No stealth / fingerprint evasion.** No plugin masks automation signals, spoofs a user agent,
+./tools/engine-comparison/extreme-scenarios-comparison-2026-08-16.md:33:7 scenarios using that tool's own real, idiomatic API — no shared abstraction layer, no stealth/
+./tools/engine-comparison/extreme-scenarios-comparison-2026-08-16.md:114:No stealth/evasion attempted by any tool, per this project's standing exclusion — detection
+./tools/engine-comparison/extreme-scenarios.mjs:45:    steps: 'Load the page and correctly report that a Turnstile challenge widget is present. Do NOT attempt to solve/bypass it — detection correctness only, per this project\'s stealth/evasion exclusion.',
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:18:| T2 (sample1) | acehardware.com, LED bulb search | Suggestion link navigated to `/search?...` but landed on a Cloudflare "Performing security verification" interstitial that never cleared after 15+s wait | Completed cleanly — real product titles + sale prices, no obstacle mentioned | **stealth-plausible** — Cloudflare's JS challenge is a fingerprint-based bot check; pinchtab's `stealthLevel: "light"` default is a direct candidate explanation |
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:19:| T63 (sample2) | allrecipes.com | Hard access-denial page (`support@people.inc`), an outright IP/bot-management deny, not a JS challenge | Completed — real fall recipe, no obstacle mentioned | **stealth-plausible** — IP/bot-management-level denies are commonly triggered by request fingerprint (headers, TLS, browser signals), exactly what stealth softening targets |
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:20:| T175 (sample2) | britannica.com | Cloudflare "Performing security verification" interstitial on `/place/Mount-Everest`, 15s+ wait never cleared | Completed — real Everest-vs-K2 comparison extracted, no obstacle mentioned | **stealth-plausible** |
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:21:| T263 (sample2) | collinsdictionary.com | Cloudflare interstitial on the bare homepage itself (most aggressive of the set) | Completed — real dictionary blog content, no obstacle mentioned | **stealth-plausible** |
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:22:| T29 (sample3) | alamy.com | HTTP 403 on the search-results path | Completed — real data recovered | **stealth-plausible** — 403s on search endpoints are a common bot-fingerprint gate |
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:23:| T33 (sample3) | alibaba.com | Real CAPTCHA interception page | Completed — real data recovered | **stealth-plausible** (strongest case in the set — CAPTCHA is a textbook anti-bot mechanism, and stealth softening is specifically designed to avoid triggering it) |
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:24:| T114 (sample3) | asos.com | "Access Denied" on search | Completed — real data recovered | **stealth-plausible** |
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:25:| T195 (sample4) | cambridge.org, "ubiquitous" lookup | Cloudflare JS challenge, recorded as Blocked (consistent with this same tool's wait_for_selector pattern elsewhere in the run: 15s+ waits that never cleared on the same challenge type at britannica.com/acehardware.com) | Completed — pinchtab's own writeup says the *same* Cloudflare challenge appeared but "auto-cleared on its own within 5s," then a cookie modal | **stealth-plausible, not a wait/retry gap** — Sutradhar's proven wait budget elsewhere (15s+) already exceeds the 5s pinchtab needed, so a "wait longer" fix wouldn't plausibly change this outcome; the more likely explanation is Cloudflare's risk-scoring assigning a harder/longer challenge tier to Sutradhar's session, consistent with a fingerprint-based (stealth) split rather than a Sutradhar retry-logic deficiency |
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:26:| T90 (sample5) | apa.org, CBT search | "Real hCaptcha wall on search" | Completed — pinchtab's writeup describes an entirely different problem (direct URL-query returned irrelevant "Newest"-sorted results, fixed by using the page's own search box) and never mentions hCaptcha at all | **stealth-plausible** (primary) with a page-variance secondary note — hCaptcha simply not appearing at all in pinchtab's session is the standout fact; the "irrelevant results" issue pinchtab did report is unrelated methodology noise, not evidence of a Sutradhar tool gap (Sutradhar didn't get far enough to hit a relevance problem, it hit the CAPTCHA first) |
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:34:pinchtab's 9 task wins survive a skeptical read as a genuine, non-stealth tool-capability gap.**
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:40:| T46 (sample2) | aljazeera.com | Search page rendered nav/footer chrome only, zero results, even after direct search-box interaction — "protected by reCAPTCHA" near the search control | Completed cleanly via search box + Enter, 5 real dated results | **page-variance** — a reCAPTCHA gate appeared in pinchtab's session that never appeared in Sutradhar's on the identical task; undercuts a simple "stealth always wins" narrative, since pinchtab hit a captcha here despite its stealth default |
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:53:`stealthLevel: "light"` by default, a real, disclosed, uncontrolled asymmetry with exactly the
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:60:load — which is the bar this analysis held out as the actual signal of a fixable, non-stealth
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:65:Sutradhar didn't, despite pinchtab's stealth default — real evidence that stealth-light is not a
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:75:non-stealth fix worth making in `packages/browser` off the back of the pinchtab comparison. The
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:77:undisclosed-effect-size but real stealth default interacting with anti-bot mechanisms
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:80:further with code changes; if this comparison is rerun, isolating the stealth variable (running
+./tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md:81:pinchtab once with `stealthLevel: "none"` if the config supports it) would be the single most
+./tools/engine-comparison/head-to-head-comparison-2026-08-14.md:7:content-safety scanner had to be turned off block-mode, and its `stealthLevel: "light"` default
+./tools/engine-comparison/head-to-head-comparison-2026-08-14.md:21:documents two disclosed, unresolved confounds (a default stealth setting not present on any
+./tools/engine-comparison/head-to-head-comparison-2026-08-14.md:42:Both tools launched plain (`headless: true`, real Chrome, no stealth/evasion — same standard
+./tools/engine-comparison/head-to-head-comparison-2026-08-14.md:113:identical 47-task set, under the identical fairness standard (no stealth, plain launch,
+./tools/engine-comparison/playwright-real-world-blocks.mjs:3:// benchmark samples hit? Uses Playwright's own default chromium.launch() -- no stealth
+./tools/engine-comparison/results-pinchtab.md:16:grounding. No hand-rolled extra grounding, no stealth/evasion flags, headless Chrome, plain
+./tools/engine-comparison/results-pinchtab.md:85:## Stealth disclosure
+./tools/engine-comparison/results-pinchtab.md:87:Per this project's standing exclusion (no stealth/evasion), no `CloakBrowser` binary was
+./tools/engine-comparison/results-pinchtab.md:88:supplied and no stealth flag was force-enabled. real pinchtab's own `instanceDefaults` default
+./tools/engine-comparison/results-pinchtab.md:89:to **`stealthLevel: "light"`** out of the box — this was left at its shipped default rather
+./tools/engine-comparison/results-pinchtab.md:91:(none of which had stealth manually added either). This is a real, disclosed asymmetry: unlike
+./tools/engine-comparison/results-pinchtab.md:95:rather than left undisclosed, per this project's own no-stealth-but-be-honest-about-asymmetries
+./tools/engine-comparison/results-pinchtab.md:186:read pages at all, and `stealthLevel: "light"` is real pinchtab's shipped default rather than
+./tools/engine-comparison/results-refresh-2026-08-18.md:16:persisted config — `idpi.strictMode: false`, `stealthLevel: "light"` default, no auto-solvers
+./tools/engine-comparison/results-refresh-2026-08-18.md:18:against its HTTP API. No stealth/evasion added to either tool beyond pinchtab's own shipped
+./tools/engine-comparison/results-refresh-2026-08-18.md:77:"Stealth disclosure" section already flagged as a real-but-unisolated asymmetry — real
+./tools/engine-comparison/results-refresh-2026-08-18.md:78:pinchtab's shipped default (`stealthLevel: "light"`) is very plausibly the actual explanation
+./tools/engine-comparison/results-refresh-2026-08-18.md:82:build stealth into Sutradhar — that stays out of scope per CLAUDE.md — but it is the honest
+./tools/engine-comparison/results-sample1.md:8:faithfully to each tool's real capability (no stealth/evasion, no hand-rolled CSS-selector
+./tools/engine-comparison/results-sample1.md:121:3. **No stealth/anti-bot wall encountered** on Ace Hardware or Agoda for either engine (aside
+./tools/engine-comparison/results-sample2.md:9:of the box). No stealth/evasion. Same Chrome binary, headless, both servers.
+./tools/engine-comparison/results-sample3.md:9:faithfully — no stealth/evasion, no hand-holding Puppeteer beyond its real `list` action.
+./tools/engine-comparison/results-sample4.md:7:(see `tools/webbench/claude-direct-run-2026-08-14-sample4.md`). No stealth/evasion was used; any
+./tools/engine-comparison/results-sample5.md:7:(`tools/webbench/claude-direct-run-2026-08-14-sample5.md`). No stealth/bypass techniques used
+./tools/engine-comparison/results-sample5.md:53:tool without stealth/bypass (out of scope), this had zero effect on the actual result — both
+./tools/engine-comparison/stealth-isolation-experiment.md:1:# Stealth-isolation experiment: can pinchtab's stealth actually be turned off?
+./tools/engine-comparison/stealth-isolation-experiment.md:5:**"stealth-plausible"** because pinchtab ships `instanceDefaults.stealthLevel: "light"` by
+./tools/engine-comparison/stealth-isolation-experiment.md:7:pinchtab's stealth explicitly disabled to isolate the variable. This experiment attempted
+./tools/engine-comparison/stealth-isolation-experiment.md:12:`instanceDefaults.stealthLevel` is a 3-value enum, confirmed two independent ways:
+./tools/engine-comparison/stealth-isolation-experiment.md:14:1. **CLI validation, live**: `pinchtab config set instanceDefaults.stealthLevel none` and
+./tools/engine-comparison/stealth-isolation-experiment.md:15:   `...stealthLevel off` both failed immediately: `invalid value "none"/"off" (must be light,
+./tools/engine-comparison/stealth-isolation-experiment.md:16:   medium, or full)`. `pinchtab config set instanceDefaults.stealthLevel ""` was *accepted* by
+./tools/engine-comparison/stealth-isolation-experiment.md:20:   `internal/stealth/bundle.go:144-153`): the enum is hard-coded to
+./tools/engine-comparison/stealth-isolation-experiment.md:21:   `[]string{"light", "medium", "full"}`, and `stealth.NormalizeLevel()` maps *any* unrecognized
+./tools/engine-comparison/stealth-isolation-experiment.md:23:   field to empty string doesn't disable stealth; it silently falls back to `light`, the exact
+./tools/engine-comparison/stealth-isolation-experiment.md:26:**There is no config value, documented or undocumented, that produces a stealth-off launch in
+./tools/engine-comparison/stealth-isolation-experiment.md:28:necessarily the same stealth level — the isolation this experiment set out to perform is not
+./tools/engine-comparison/stealth-isolation-experiment.md:30:(`pinchtab config set instanceDefaults.stealthLevel light`) to restore the exact original state,
+./tools/engine-comparison/stealth-isolation-experiment.md:31:confirmed via `pinchtab config get instanceDefaults.stealthLevel` → `light`. No fresh instance
+./tools/engine-comparison/stealth-isolation-experiment.md:34:stealth effect, and would risk misrepresenting noise as a stealth finding.
+./tools/engine-comparison/stealth-isolation-experiment.md:39:does, via the real running instance's `/stealth/status` endpoint
+./tools/engine-comparison/stealth-isolation-experiment.md:40:(`inst_6b53428c`, `GET /stealth/status`, real live response):
+./tools/engine-comparison/stealth-isolation-experiment.md:73:boundary, adopting stealth/fingerprint-evasion techniques to close this specific gap is
+./tools/engine-comparison/stealth-isolation-experiment.md:74:explicitly out of scope (CLAUDE.md: "stealth / bot-detection / CAPTCHA evasion... out of
+./tools/engine-comparison/stealth-isolation-experiment.md:79:| Task | Original pinchtab result (`light` stealth) | New result (no stealth) | Same anti-bot mechanism seen? | Interpretation |
+./tools/engine-comparison/stealth-isolation-experiment.md:81:| T2, T63, T175, T263, T29, T33, T114, T195, T90 | Completed (see `gap-analysis-...md`) | **Not retested** — no stealth-off config exists to retest under | N/A | Cannot be determined by this experiment; see below |
+./tools/engine-comparison/stealth-isolation-experiment.md:85:This does **not** confirm the stealth-plausible judgment (no A/B was actually run — the
+./tools/engine-comparison/stealth-isolation-experiment.md:88:expected. The original "stealth-plausible" judgment assumed pinchtab's *default* was a
+./tools/engine-comparison/stealth-isolation-experiment.md:94:original run cannot be experimentally attributed to stealth with a clean control — but the
+./tools/engine-comparison/stealth-isolation-experiment.md:100:stealth/evasion category per CLAUDE.md.
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:1:// Doc-static consistency test for FR2-16 (stealth boundary honesty). Grep-based, no build or
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:36:  'README.md does not contain "stealth launcher" (old tagline)',
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:37:  !readme.includes('stealth launcher'),
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:40:  'README.md does not contain "Stealth Launch Policy" (old invariant #2 heading)',
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:41:  !readme.includes('Stealth Launch Policy'),
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:44:  'README.md does not contain "bypass bot detection" (old invariant #2 body)',
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:45:  !readme.includes('bypass bot detection'),
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:48:  'README.md does not reference "0005-stealth-evasion" (dangling ADR reference — no such ADR file exists in docs/adr/)',
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:49:  !readme.includes('0005-stealth-evasion'),
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:54:  'AGENT_SETUP.md still contains "No stealth or bot-detection evasion, by design."',
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:55:  agentSetup.includes('No stealth or bot-detection evasion, by design.'),
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:73:  // navigator.webdriver) rather than implying the browser is undisguised in every respect.
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:100:// --- GAP-103: README's 4th contradictory spot (the module-layout line naming src/stealth/)
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:104:  'README.md Sub-Module Layout section does not mention src/stealth/',
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:105:  !readme.includes('src/stealth/'),
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:108:  'README.md does not mention "stealth launch flags" (old module-layout description)',
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:109:  !readme.toLowerCase().includes('stealth launch flags'),
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:1:// Live-verify script for FR2-16 (stealth boundary honesty). No Chrome needed — this is a small,
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:5://   1. Build @sutradhar/browser, assert success (proves the enableStealth/StealthEngine removal
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:39:  'tsc build succeeds after enableStealth/StealthEngine removal',
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:83:  'still contains "No stealth or bot-detection evasion, by design."',
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:84:  agentSetup.includes('No stealth or bot-detection evasion, by design.'),
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:89:record('packages/browser/README.md', 'does NOT contain "stealth launcher"', !readme.includes('stealth launcher'));
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:92:  'does NOT contain "Stealth Launch Policy"',
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:93:  !readme.includes('Stealth Launch Policy'),
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:97:  'does NOT contain "bypass bot detection"',
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:98:  !readme.includes('bypass bot detection'),
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:102:  'does NOT reference "0005-stealth-evasion"',
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:103:  !readme.includes('0005-stealth-evasion'),
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:127:// --- GAP-103: README's 4th contradictory spot (module-layout line naming src/stealth/) must
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:131:  'Sub-Module Layout section does not mention src/stealth/ (GAP-103)',
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:132:  !readme.includes('src/stealth/'),
+./tools/webbench/claude-direct-run-2026-08-13-sample11.md:74:per CLAUDE.md's standing scope exclusion on stealth/evasion.
+./tools/webbench/claude-direct-run-2026-08-13-sample2.md:10:MCP tools, no LLM provider, no stealth/evasion workarounds.
+./tools/webbench/claude-direct-run-2026-08-13.md:68:via stealth/evasion techniques — that stays deliberately out of scope.
+./tools/webbench/claude-direct-run-2026-08-15-sample6.md:5:no LLM provider, Claude is the brain, same methodology as samples 1-5. No stealth/evasion.
+./tools/webbench/claude-direct-run-2026-08-16-sample7.md:5:no LLM provider, Claude is the brain, same methodology as samples 1-6. No stealth/evasion. Run
+./tools/webbench/claude-direct-run-2026-08-17-sample10.md:7:honest scoring standard as samples 1-9. No stealth/evasion.
+./tools/webbench/claude-direct-run-2026-08-17-sample8.md:7:samples 1-7. No stealth/evasion. Run to re-check the completion-rate estimate after this
+./tools/webbench/claude-direct-run-2026-08-17-sample8.md:75:  crossing into stealth/evasion, which is out of scope per CLAUDE.md.
+./tools/webbench/claude-direct-run-2026-08-17-sample9.md:7:samples 1-8. No stealth/evasion. Run to continue building the post-fix completion-rate picture
+./USECASES.md:18:**Baseline:** vanilla Playwright/Puppeteer fail ~7 rows (navigator.webdriver, chrome.runtime, permissions...); stealth plugins needed.

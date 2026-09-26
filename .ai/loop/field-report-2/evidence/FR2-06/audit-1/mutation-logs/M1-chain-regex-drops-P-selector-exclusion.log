@@ -1,0 +1,30 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser
+
+ ❯ tests/unit/selector-dialect.spec.ts  (99 tests | 2 failed) 14ms
+   ❯ tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D2: false-positive guards — valid CSS returns null > div >>> span -> null
+     → expected { rule: 'chain', token: '>>', …(1) } to be null
+   ❯ tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D2: false-positive guards — valid CSS returns null > div >>>> span -> null
+     → expected { rule: 'chain', token: '>>', …(1) } to be null
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 97 passed (99)
+   Start at  04:09:02
+   Duration  351ms (transform 30ms, setup 0ms, collect 33ms, tests 14ms, environment 0ms, prepare 121ms)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D2: false-positive guards — valid CSS returns null > div >>> span -> null
+ FAIL  tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D2: false-positive guards — valid CSS returns null > div >>>> span -> null
+AssertionError: expected { rule: 'chain', token: '>>', …(1) } to be null
+ ❯ tests/unit/selector-dialect.spec.ts:144:51
+    142|     ];
+    143|     it.each(valid)('%s -> null', (input) => {
+    144|       expect(detectForeignSelectorDialect(input)).toBeNull();
+       |                                                   ^
+    145|     });
+    146|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+

@@ -1,0 +1,57 @@
+=== Negative case 1: post-diff repo-wide grep ===
+./.ai/autonomous-loop-prompt-field-report-2.md:97:   fix the contradictory `packages/browser/README.md:30`, and remove the dead `StealthEngine` and
+./.ai/autonomous-loop-prompt-field-report-2.md:98:   the no-op `enableStealth` option (or mark them clearly deprecated if removal breaks public
+./.ai/competitive-benchmarks.md:695:`StealthEngine` finding. Full detail: `tools/engine-comparison/stealth-isolation-experiment.md`.
+./.ai/competitive-benchmarks.md:950:already contains a built, unit-tested `StealthEngine` (`packages/browser/src/stealth/`) —
+./.ai/competitive-benchmarks.md:953:anywhere** (`grep`-confirmed zero call sites for `getEvasionScripts()` outside its own test
+./.ai/loop/field-report-2/decisions.md:771:Key finding: enableStealth is a PROVABLE no-op today, not merely unused -- DEFAULT_LAUNCH_ARGS
+./.ai/loop/field-report-2/decisions.md:774:existing member). StealthEngine and its 4 script generators are fully dead: publicly exported,
+./.ai/loop/field-report-2/evidence/FR2-16/changelog-fragment.md:5:- Removed `BrowserLaunchOptions.enableStealth`, `IStealthEngine`, `StealthEngine`,
+./.ai/loop/field-report-2/evidence/FR2-16/changelog-fragment.md:6:  `StealthOptions`, `DEFAULT_STEALTH_OPTIONS`, `getWebdriverOverrideScript`,
+./.ai/loop/field-report-2/evidence/FR2-16/changelog-fragment.md:7:  `getChromeRuntimeScript`, `getWebglMaskScript`, and `getHardwareConcurrencyScript` from
+./.ai/loop/field-report-2/evidence/FR2-16/changelog-fragment.md:8:  `@sutradhar/browser`'s public exports. These were dead code: `enableStealth` was a provable
+./.ai/loop/field-report-2/evidence/FR2-16/changelog-fragment.md:10:  unconditionally present in `DEFAULT_LAUNCH_ARGS`), and `StealthEngine`/the script generators
+./.ai/loop/field-report-2/evidence/FR2-16/changelog-fragment.md:34:stealth/`enableStealth` — this was a package-internal, unused surface only.
+./.ai/loop/field-report-2/evidence/FR2-16/spec.md:6:remove the dead `StealthEngine`/no-op `enableStealth`, or deprecate if removal breaks public
+./.ai/loop/field-report-2/evidence/FR2-16/spec.md:10:references `enableStealth`, `StealthEngine`, or the browser-options/stealth files this item
+./.ai/loop/field-report-2/evidence/FR2-16/spec.md:21:- **T2.** `enableStealth` is a genuine, provable no-op today: `DEFAULT_LAUNCH_ARGS`
+./.ai/loop/field-report-2/evidence/FR2-16/spec.md:23:  AutomationControlled`; the conditional `if (options.enableStealth ?? true)` block in
+./.ai/loop/field-report-2/evidence/FR2-16/spec.md:25:  already present. Toggling `enableStealth` changes nothing observable.
+./.ai/loop/field-report-2/evidence/FR2-16/spec.md:26:- **T3.** `StealthEngine`/`IStealthEngine`/`StealthOptions`/the 4 script-generator functions
+./.ai/loop/field-report-2/evidence/FR2-16/spec.md:31:- **T4.** Zero exposure through any product-facing surface: no `enableStealth`/stealth field in
+./.ai/loop/field-report-2/evidence/FR2-16/spec.md:55:4. `packages/browser/src/launcher/browser-options.ts` — remove `enableStealth?: boolean`; add a
+./.ai/loop/field-report-2/evidence/FR2-16/spec.md:69:Removed (breaking, `@sutradhar/browser` package only): `BrowserLaunchOptions.enableStealth`,
+./.ai/loop/field-report-2/evidence/FR2-16/spec.md:70:`IStealthEngine`, `StealthEngine`, `StealthOptions`, `DEFAULT_STEALTH_OPTIONS`,
+./.ai/loop/field-report-2/evidence/FR2-16/spec.md:71:`getWebdriverOverrideScript`, `getChromeRuntimeScript`, `getWebglMaskScript`,
+./.ai/loop/field-report-2/evidence/FR2-16/spec.md:72:`getHardwareConcurrencyScript`. No CLI/MCP/SDK surface affected. `prepareLaunchArgs`'s actual
+./.ai/loop/field-report-2/evidence/FR2-16/spec.md:103:3. Regression guard: assert `StealthEngine`/`getEvasionScripts` are `undefined` on the package's
+./.ai/loop/field-report-2/evidence/FR2-16/spec.md:127:1. Grep the full repo post-diff for `StealthEngine`/`enableStealth`/`getEvasionScripts` — zero
+./.ai/loop/field-report-2/evidence/FR2-16/spec.md:140:- R1: theoretical only (T2 proves `enableStealth` is already a no-op) — a consumer's build fails
+./packages/browser/tests/unit/launcher.spec.ts:31:  it('should unconditionally include --disable-blink-features=AutomationControlled in launch arguments (FR2-16: proves no behavior change after removing the dead enableStealth conditional, which was a provable no-op)', () => {
+./packages/browser/tests/unit/launcher.spec.ts:39:  it('does not expose enableStealth on BrowserLaunchOptions at runtime (structural regression guard: the field carried no behavior even before removal, so this only proves it is not silently re-added)', () => {
+./packages/browser/tests/unit/launcher.spec.ts:41:    const args = launcher.prepareLaunchArgs({ enableStealth: false } as never);
+./packages/browser/tests/unit/launcher.spec.ts:43:    // Even if a caller (wrongly, post-removal, via `as never`) still passes enableStealth, the
+./packages/browser/tests/unit/launcher.spec.ts:48:  it('regression guard (FR2-16): StealthEngine/getEvasionScripts/IStealthEngine/StealthOptions must stay removed from the package exports — a future re-add without an accompanying doc/boundary update should fail this test', () => {
+./packages/browser/tests/unit/launcher.spec.ts:49:    expect((browserExports as Record<string, unknown>).StealthEngine).toBeUndefined();
+./packages/browser/tests/unit/launcher.spec.ts:50:    expect((browserExports as Record<string, unknown>).getEvasionScripts).toBeUndefined();
+./packages/browser/tests/unit/launcher.spec.ts:51:    expect((browserExports as Record<string, unknown>).DEFAULT_STEALTH_OPTIONS).toBeUndefined();
+./packages/browser/tests/unit/launcher.spec.ts:52:    expect((browserExports as Record<string, unknown>).getWebdriverOverrideScript).toBeUndefined();
+./packages/browser/tests/unit/launcher.spec.ts:53:    expect((browserExports as Record<string, unknown>).getChromeRuntimeScript).toBeUndefined();
+./packages/browser/tests/unit/launcher.spec.ts:54:    expect((browserExports as Record<string, unknown>).getWebglMaskScript).toBeUndefined();
+./packages/browser/tests/unit/launcher.spec.ts:55:    expect((browserExports as Record<string, unknown>).getHardwareConcurrencyScript).toBeUndefined();
+./PROJECT_DEEP_DIVE.md:213:- **`stealth/`**: `StealthEngine.getEvasionScripts()` returns 4 scripts (webdriver override, chrome.runtime mock, WebGL vendor/renderer spoofing, hardware concurrency/platform/languages) for `evaluateOnNewDocument`.
+./PROJECT_DEEP_DIVE.md:1034:| Browser provider | `IBrowserLauncher`, `IBrowserInstance`, `IBrowserSession`, `IBrowserTab`, `IBrowserSessionManager`, `IBrowserActionEngine`, `IDOMSemanticEngine`, `IPageUnderstandingEngine`, `ISnapshotGenerator`, `IStealthEngine` | browser |
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:5://   1. Build @sutradhar/browser, assert success (proves the enableStealth/StealthEngine removal
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:39:  'tsc build succeeds after enableStealth/StealthEngine removal',
+
+=== Negative case 2: dist/ git-tracked? ===
+(empty above = not tracked; .gitignore line: 6:dist/)
+
+=== Negative case 3: docs/adr/0005-stealth-evasion.md exists? ===
+0001-monorepo.md
+0002-browser-runtime.md
+0003-provider-contract.md
+0004-runtime-architecture.md
+0005-tool-system.md
+0006-memory.md
+(no 0005-stealth-evasion.md present; 0005 is 0005-tool-system.md, an unrelated ADR — README's frontmatter ref was a dangling pointer to a doc never written, removed rather than status-flipped)

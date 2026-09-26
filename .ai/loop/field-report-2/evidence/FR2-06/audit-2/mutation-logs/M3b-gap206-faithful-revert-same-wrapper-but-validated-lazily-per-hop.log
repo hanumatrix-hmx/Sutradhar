@@ -1,0 +1,90 @@
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/capability-runtime[39m
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS2: launch() twice registers two launched, mock (no real browser) entries, sorted by createdAt then id[22m[39m
+{"timestamp":"2026-09-25T23:06:06.164Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T23:06:06.165Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377566164_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T23:06:06.165Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T23:06:06.165Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377566165_2","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS3: attach() registers an "attached" entry[22m[39m
+{"timestamp":"2026-09-25T23:06:06.170Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377566170_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS4: lifecycleOpsInFlight is 1 while launch() is pending, 0 after it resolves, and 0 after it rejects or throws synchronously[22m[39m
+{"timestamp":"2026-09-25T23:06:06.170Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377566170_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS5: shutdown() and shutdownAll() remove entries; shutdown of an unknown id still throws and leaves the counter at 0[22m[39m
+{"timestamp":"2026-09-25T23:06:06.170Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T23:06:06.170Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377566170_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T23:06:06.170Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T23:06:06.170Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377566170_2","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T23:06:06.171Z","level":"info","message":"[BrowserSession] Closed session sess_1790377566170_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T23:06:06.171Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790377566170_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T23:06:06.171Z","level":"info","message":"[BrowserSession] Closed session sess_1790377566170_2","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-25T23:06:06.171Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790377566170_2","context":{"reason":"Close all sessions requested"}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS6: a session created directly via the session manager (agent.runGoal-style, no launch()/attach()) is not listed[22m[39m
+{"timestamp":"2026-09-25T23:06:06.171Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T23:06:06.171Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377566171_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS7: a session removed behind the runtime's back (idle reap / crash) is pruned from listSessions[22m[39m
+{"timestamp":"2026-09-25T23:06:06.171Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T23:06:06.171Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377566171_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T23:06:06.171Z","level":"info","message":"[BrowserSession] Closed session sess_1790377566171_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-25T23:06:06.171Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790377566171_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-25T23:06:06.171Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T23:06:06.171Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377566171_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS8: a reused id keeps its original origin (launch/launch, and attach then launch under the same id)[22m[39m
+{"timestamp":"2026-09-25T23:06:06.171Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T23:06:06.171Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T23:06:06.171Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed2","context":{"isIncognito":false}}
+
+ [33m❯[39m tests/unit/runtime.spec.ts [2m ([22m[2m95 tests[22m [2m|[22m [31m1 failed[39m[2m)[22m[90m 34[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/runtime.spec.ts[2m > [22m@sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect[2m > [22mR7: a Playwright-style SECOND hop is caught by the up-front validation pass, before the FIRST hop's own $ call ever runs (spec §2.4: "a bad second hop costs no first-hop round trip")[39m
+[31m     → expected "spy" to not be called at all, but actually been called 1 times[90m
+
+Received: 
+
+[1m  1st spy call:
+
+[22m    Array [
+      "iframe.a",
+    ]
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m94 passed[39m[22m[90m (95)[39m
+[2m   Start at [22m 04:36:05
+[2m   Duration [22m 910ms[2m (transform 316ms, setup 0ms, collect 575ms, tests 34ms, environment 0ms, prepare 109ms)[22m
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/runtime.spec.ts[2m > [22m@sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect[2m > [22mR7: a Playwright-style SECOND hop is caught by the up-front validation pass, before the FIRST hop's own $ call ever runs (spec §2.4: "a bad second hop costs no first-hop round trip")
+[31m[1mAssertionError[22m: expected "spy" to not be called at all, but actually been called 1 times[90m
+
+Received: 
+
+[1m  1st spy call:
+
+[22m    Array [
+      "iframe.a",
+    ]
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[36m [2m❯[22m tests/unit/runtime.spec.ts:[2m970:33[22m[39m
+    [90m968| [39m    [90m// encoded the bug (checking each hop inside the loop, one at a ti[39m…
+    [90m969| [39m    [90m// rather than catching it.[39m
+    [90m970| [39m    [34mexpect[39m(outerDollarMock)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m971| [39m    [34mexpect[39m(innerDollarMock)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m972| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+

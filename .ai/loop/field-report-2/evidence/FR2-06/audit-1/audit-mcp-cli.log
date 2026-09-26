@@ -1,0 +1,40 @@
+PASS M-zero-cdp browser.click {"target":"text=Submit"}
+PASS M-zero-cdp browser.right_click {"target":"button >> text=OK"}
+PASS M-zero-cdp browser.type {"target":"div:has-text(\"x\")","value":"x"}
+PASS M-zero-cdp browser.hover {"target":"getByRole('button')"}
+PASS M-zero-cdp browser.focus {"target":"internal:role=button"}
+PASS M-zero-cdp browser.select_option {"target":"role=combobox","value":"v"}
+PASS M-zero-cdp browser.select_options {"target":"css=select","values":["v"]}
+PASS M-zero-cdp browser.wait_for_selector {"target":"xpath=//div"}
+PASS M-zero-cdp browser.upload_file {"target":"#12","filePath":"E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.clau
+PASS M-zero-cdp browser.drag_and_drop {"sourceTarget":"#plain-btn","destTarget":"//div"}
+PASS M-zero-cdp browser.drag_and_drop {"sourceTarget":"aria=Go","destTarget":"#plain-btn"}
+PASS M-zero-cdp browser.touch_tap {"target":"button:visible"}
+PASS M-zero-cdp browser.download_file {"target":"\"Download\""}
+PASS M-zero-cdp browser.scroll {"target":"data-testid=list"}
+PASS M-zero-cdp browser.upload_file_via_trigger {"target":"text=Browse","filePath":"E:\\HMX_Projects\\Internal_Projects\\PinchTa
+PASS M-zero-cdp browser.eval {"code":"1","frameSelector":"role=frame"}
+PASS M-zero-cdp browser.extract_data {"fields":{"a":{"selector":"text=Buy"},"b":{"selector":"li >> nth=0"}}}
+PASS M-fill_form per-field: Playwright field fails with hint, other field still dispatched
+PASS M-control-valid-click-is-traced
+PASS M-invalid-css-single-probe
+PASS C0-cli-no-session-playwright-click: exit 1, zero spawn/connect/cdp, state dir untouched
+PASS C0b-tracer-loaded-in-cli-child
+PASS C1-cli-nav-creates-session (tracer control: sees spawns + CDP)
+PASS C2-cli-existing-session click text=Submit: exit 1, zero connect/cdp, state unchanged, chrome alive
+PASS C2-cli-existing-session type role=textbox hi: exit 1, zero connect/cdp, state unchanged, chrome alive
+PASS C2-cli-existing-session press button >> text=OK Enter: exit 1, zero connect/cdp, state unchanged, chrome alive
+PASS C2-cli-existing-session select div:has-text("x") v: exit 1, zero connect/cdp, state unchanged, chrome alive
+PASS C2-cli-existing-session wait getByRole('button'): exit 1, zero connect/cdp, state unchanged, chrome alive
+PASS C2-cli-existing-session eval 1 --frame iframe#f::role=frame: exit 1, zero connect/cdp, state unchanged, chrome alive
+PASS C2-cli-existing-session eval 1 --frame internal:role=frame: exit 1, zero connect/cdp, state unchanged, chrome alive
+PASS C2-cli-existing-session hover internal:has-text="x": exit 1, zero connect/cdp, state unchanged, chrome alive
+PASS C2-cli-existing-session scroll down 100 xpath=//div: exit 1, zero connect/cdp, state unchanged, chrome alive
+PASS C2-cli-existing-session upload #12 E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\.ai\loop\field-report-2\evidence\FR2-06\audit-1\fixture-audit.html: exit 1, zero connect/cdp, state unchanged, chrome alive
+PASS C2-cli-existing-session drag aria=Go #plain-btn: exit 1, zero connect/cdp, state unchanged, chrome alive
+PASS C2-cli-existing-session drag #plain-btn //div: exit 1, zero connect/cdp, state unchanged, chrome alive
+PASS C2-cli-existing-session download css=a: exit 1, zero connect/cdp, state unchanged, chrome alive
+PASS C3-cli-same-session-still-works-after-rejections
+PASS C4-cli-invalid-css
+PASS C5-cli-close
+overall true {"cleanup":["E:\\AI-Cache\\tmp\\fr2-06-audit1-trace-4Y6QwG","E:\\AI-Cache\\tmp\\fr2-06-audit1-mcp-kiI6TG","E:\\AI-Cache\\tmp\\fr2-06-audit1-cli-state-y9mwrP"],"cliInfo":{"stateDir":"E:\\AI-Cache\\tmp\\fr2-06-audit1-cli-state-y9mwrP","chromePid":105804}}

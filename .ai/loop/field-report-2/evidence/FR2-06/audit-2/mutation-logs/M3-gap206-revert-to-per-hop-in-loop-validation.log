@@ -1,0 +1,94 @@
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/capability-runtime[39m
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS2: launch() twice registers two launched, mock (no real browser) entries, sorted by createdAt then id[22m[39m
+{"timestamp":"2026-09-25T23:05:33.638Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T23:05:33.638Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377533638_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T23:05:33.639Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T23:05:33.639Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377533639_2","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS3: attach() registers an "attached" entry[22m[39m
+{"timestamp":"2026-09-25T23:05:33.644Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377533644_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS4: lifecycleOpsInFlight is 1 while launch() is pending, 0 after it resolves, and 0 after it rejects or throws synchronously[22m[39m
+{"timestamp":"2026-09-25T23:05:33.644Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377533644_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS5: shutdown() and shutdownAll() remove entries; shutdown of an unknown id still throws and leaves the counter at 0[22m[39m
+{"timestamp":"2026-09-25T23:05:33.644Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T23:05:33.645Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377533644_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T23:05:33.645Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T23:05:33.645Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377533645_2","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T23:05:33.645Z","level":"info","message":"[BrowserSession] Closed session sess_1790377533644_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T23:05:33.645Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790377533644_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T23:05:33.645Z","level":"info","message":"[BrowserSession] Closed session sess_1790377533645_2","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-25T23:05:33.645Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790377533645_2","context":{"reason":"Close all sessions requested"}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS6: a session created directly via the session manager (agent.runGoal-style, no launch()/attach()) is not listed[22m[39m
+{"timestamp":"2026-09-25T23:05:33.645Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T23:05:33.645Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377533645_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS7: a session removed behind the runtime's back (idle reap / crash) is pruned from listSessions[22m[39m
+{"timestamp":"2026-09-25T23:05:33.645Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T23:05:33.645Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377533645_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T23:05:33.645Z","level":"info","message":"[BrowserSession] Closed session sess_1790377533645_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-25T23:05:33.645Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790377533645_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-25T23:05:33.645Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T23:05:33.645Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377533645_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS8: a reused id keeps its original origin (launch/launch, and attach then launch under the same id)[22m[39m
+{"timestamp":"2026-09-25T23:05:33.645Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T23:05:33.646Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T23:05:33.646Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed2","context":{"isIncognito":false}}
+
+ [33m❯[39m tests/unit/runtime.spec.ts [2m ([22m[2m95 tests[22m [2m|[22m [31m2 failed[39m[2m)[22m[90m 39[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/runtime.spec.ts[2m > [22m@sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect[2m > [22mR7: a Playwright-style SECOND hop is caught by the up-front validation pass, before the FIRST hop's own $ call ever runs (spec §2.4: "a bad second hop costs no first-hop round trip")[39m
+[31m     → expected InvalidSelectorError: Invalid selector "r… { …(3) } to match object { message: StringMatching{…} }
+(4 matching properties omitted from actual)[39m
+[31m   [33m❯[31m tests/unit/runtime.spec.ts[2m > [22m@sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect[2m > [22mR7b: a Playwright-style FIRST hop rejects before any page.$ call at all[39m
+[31m     → expected InvalidSelectorError: Invalid selector "r… { …(3) } to match object { message: StringMatching{…} }
+(4 matching properties omitted from actual)[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m93 passed[39m[22m[90m (95)[39m
+[2m   Start at [22m 04:35:32
+[2m   Duration [22m 957ms[2m (transform 346ms, setup 0ms, collect 620ms, tests 39ms, environment 0ms, prepare 116ms)[22m
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 2 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/runtime.spec.ts[2m > [22m@sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect[2m > [22mR7: a Playwright-style SECOND hop is caught by the up-front validation pass, before the FIRST hop's own $ call ever runs (spec §2.4: "a bad second hop costs no first-hop round trip")
+[31m[1mAssertionError[22m: expected InvalidSelectorError: Invalid selector "r… { …(3) } to match object { message: StringMatching{…} }
+(4 matching properties omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- Object {[39m
+[32m-   "message": StringMatching /^Invalid frameSelector "role=frame" \(from the full chain "iframe\.a::role=frame"\) — "role="/,[39m
+[32m- }[39m
+[31m+ [InvalidSelectorError: Invalid selector "role=frame" — "role=" is Playwright selector-engine syntax. Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.][39m
+
+[36m [2m❯[22m tests/unit/runtime.spec.ts:[2m960:5[22m[39m
+    [90m958| [39m
+    [90m959| [39m    [90m// @ts-expect-error — private method, same pattern as the existing[39m…
+    [90m960| [39m    [35mawait[39m [34mexpect[39m(runtime[33m.[39m[34mresolveFrame[39m(fakePage[33m,[39m [32m'iframe.a::role=frame'[39m…
+    [90m   | [39m    [31m^[39m
+    [90m961| [39m      message[33m:[39m expect[33m.[39m[34mstringMatching[39m(
+    [90m962| [39m        [36m/^Invalid frameSelector "role=frame" \(from the full chain "if[39m…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/runtime.spec.ts[2m > [22m@sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect[2m > [22mR7b: a Playwright-style FIRST hop rejects before any page.$ call at all
+[31m[1mAssertionError[22m: expected InvalidSelectorError: Invalid selector "r… { …(3) } to match object { message: StringMatching{…} }
+(4 matching properties omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- Object {[39m
+[32m-   "message": StringMatching /^Invalid frameSelector "role=frame" \(from the full chain "role=frame"\) — "role="/,[39m
+[32m- }[39m
+[31m+ [InvalidSelectorError: Invalid selector "role=frame" — "role=" is Playwright selector-engine syntax. Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.][39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+

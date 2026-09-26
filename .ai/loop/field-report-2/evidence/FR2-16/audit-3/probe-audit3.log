@@ -1,0 +1,14 @@
+DEFAULT_LAUNCH_ARGS includes flag: true
+prepareLaunchArgs({}) includes flag: true | argc 11
+prepareLaunchArgs({args:[]}) includes flag: true
+prepareLaunchArgs({args:["--disable-blink-features=Foo"]}) => [
+  '--disable-blink-features=AutomationControlled',
+  '--disable-blink-features=Foo'
+]
+[sutradhar launcher, headless=true, flag PRESENT] {"webdriver":false,"ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36","uaHasHeadlessChrome":true,"uaDataBrands":null}
+   spawned with --enable-automation: true | with flag: true
+[same DEFAULT_LAUNCH_ARGS minus flag, headless=true, flag ABSENT] {"webdriver":true,"ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36","uaHasHeadlessChrome":true,"uaDataBrands":null}
+[sutradhar launcher, headless=false, flag PRESENT] {"webdriver":false,"ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36","uaHasHeadlessChrome":false,"uaDataBrands":null}
+   spawned with --enable-automation: true | with flag: true
+[same DEFAULT_LAUNCH_ARGS minus flag, headless=false, flag ABSENT] {"webdriver":true,"ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36","uaHasHeadlessChrome":false,"uaDataBrands":null}
+[sutradhar launcher, caller args --disable-blink-features=Foo] {"webdriver":false,"ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36","uaHasHeadlessChrome":true,"uaDataBrands":null}

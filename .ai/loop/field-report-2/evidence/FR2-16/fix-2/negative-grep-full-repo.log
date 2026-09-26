@@ -1,0 +1,28 @@
+./.ai/autonomous-loop-prompt-field-report-2.md:97:   fix the contradictory `packages/browser/README.md:30`, and remove the dead `StealthEngine` and
+./.ai/autonomous-loop-prompt-field-report-2.md:98:   the no-op `enableStealth` option (or mark them clearly deprecated if removal breaks public
+./.ai/competitive-benchmarks.md:695:`StealthEngine` finding. Full detail: `tools/engine-comparison/stealth-isolation-experiment.md`.
+./.ai/competitive-benchmarks.md:950:already contains a built, unit-tested `StealthEngine` (`packages/browser/src/stealth/`) —
+./.ai/competitive-benchmarks.md:953:anywhere** (`grep`-confirmed zero call sites for `getEvasionScripts()` outside its own test
+./packages/browser/tests/unit/launcher.spec.ts:31:  it('should unconditionally include --disable-blink-features=AutomationControlled in launch arguments (FR2-16: proves no behavior change after removing the dead enableStealth conditional, which was a provable no-op)', () => {
+./packages/browser/tests/unit/launcher.spec.ts:39:  it('enableStealth (if a caller still passes it despite the type removal) has zero effect on prepareLaunchArgs output, in either direction (GAP-104 fix: this must be distinct from the previous test, not a duplicate of it — it compares BOTH enableStealth:true and enableStealth:false against the no-option baseline and asserts all three produce an identical arg set, which the previous "default flags present" test never checked)', () => {
+./packages/browser/tests/unit/launcher.spec.ts:42:    const withTrue = launcher.prepareLaunchArgs({ enableStealth: true } as never);
+./packages/browser/tests/unit/launcher.spec.ts:43:    const withFalse = launcher.prepareLaunchArgs({ enableStealth: false } as never);
+./packages/browser/tests/unit/launcher.spec.ts:49:  // GAP-104 fix: the previous version of this regression guard named IStealthEngine and
+./packages/browser/tests/unit/launcher.spec.ts:53:  // `browserExports.IStealthEngine === undefined` would be vacuously true regardless of whether
+./packages/browser/tests/unit/launcher.spec.ts:57:  // exports that used to exist. `getEvasionScripts` is also deliberately omitted below (unlike
+./packages/browser/tests/unit/launcher.spec.ts:58:  // fix-1's version): it was always an instance method on the (now-deleted) StealthEngine class,
+./packages/browser/tests/unit/launcher.spec.ts:61:  it('regression guard (FR2-16): StealthEngine/DEFAULT_STEALTH_OPTIONS/getWebdriverOverrideScript/getChromeRuntimeScript/getWebglMaskScript/getHardwareConcurrencyScript must stay removed from the package\'s real runtime exports', () => {
+./packages/browser/tests/unit/launcher.spec.ts:62:    expect((browserExports as Record<string, unknown>).StealthEngine).toBeUndefined();
+./packages/browser/tests/unit/launcher.spec.ts:63:    expect((browserExports as Record<string, unknown>).DEFAULT_STEALTH_OPTIONS).toBeUndefined();
+./packages/browser/tests/unit/launcher.spec.ts:64:    expect((browserExports as Record<string, unknown>).getWebdriverOverrideScript).toBeUndefined();
+./packages/browser/tests/unit/launcher.spec.ts:65:    expect((browserExports as Record<string, unknown>).getChromeRuntimeScript).toBeUndefined();
+./packages/browser/tests/unit/launcher.spec.ts:66:    expect((browserExports as Record<string, unknown>).getWebglMaskScript).toBeUndefined();
+./packages/browser/tests/unit/launcher.spec.ts:67:    expect((browserExports as Record<string, unknown>).getHardwareConcurrencyScript).toBeUndefined();
+./PROJECT_DEEP_DIVE.md:870:module (a dead, never-invoked `StealthEngine` plus 4 unused script generators) was removed
+./PROJECT_DEEP_DIVE.md:871:outright as dead code, along with the no-op `enableStealth` option that never gated anything
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:48:  'README.md does not reference "0005-stealth-evasion" (dangling ADR reference — no such ADR file exists in docs/adr/)',
+./tools/scenario-suite/fr2-16/doc-static.spec.mjs:49:  !readme.includes('0005-stealth-evasion'),
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:5://   1. Build @sutradhar/browser, assert success (proves the enableStealth/StealthEngine removal
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:39:  'tsc build succeeds after enableStealth/StealthEngine removal',
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:102:  'does NOT reference "0005-stealth-evasion"',
+./tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:103:  !readme.includes('0005-stealth-evasion'),

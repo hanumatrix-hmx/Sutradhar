@@ -1,0 +1,62 @@
+[
+  {
+    "id": "login-flow",
+    "title": "Login + logout flow with dynamic flash-message verification",
+    "engine": "sutradhar",
+    "success": true,
+    "ms": 8337,
+    "detail": {
+      "loggedInText": "You logged into a secure area!\n            ×",
+      "loggedOutText": "You logged out of the secure area!\n            ×"
+    },
+    "error": null
+  },
+  {
+    "id": "dynamic-loading",
+    "title": "Wait for AJAX-style delayed content, then extract it",
+    "engine": "sutradhar",
+    "success": true,
+    "ms": 8873,
+    "detail": {
+      "text": "Hello World!"
+    },
+    "error": null
+  },
+  {
+    "id": "file-upload",
+    "title": "Upload a local file through a native file input",
+    "engine": "sutradhar",
+    "success": true,
+    "ms": 4552,
+    "detail": {
+      "uploaded": "upload-payload.txt"
+    },
+    "error": null
+  },
+  {
+    "id": "long-checkout",
+    "title": "Long multi-step task: login -> add 3 items -> cart -> checkout -> confirm",
+    "engine": "sutradhar",
+    "success": true,
+    "ms": 1572,
+    "detail": {
+      "confirmation": "Thank you for your order!",
+      "cartCount": "3",
+      "cartItemCount": 3
+    },
+    "error": null
+  },
+  {
+    "id": "local-fixture",
+    "title": "Shadow DOM text + delayed element + iframe form, all in one page",
+    "engine": "sutradhar",
+    "success": true,
+    "ms": 5355,
+    "detail": {
+      "shadowText": "secret-shadow-value-42",
+      "delayedText": "delayed-value-ready",
+      "iframeResult": "submitted:hello-iframe"
+    },
+    "error": null
+  }
+]

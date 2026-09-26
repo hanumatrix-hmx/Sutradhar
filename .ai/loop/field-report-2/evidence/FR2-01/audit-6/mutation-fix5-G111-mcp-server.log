@@ -1,0 +1,69 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/mcp-server
+
+ ❯ tests/unit/tools.spec.ts  (20 tests | 1 failed) 31ms
+   ❯ tests/unit/tools.spec.ts > @sutradhar/mcp-server registerTools > GAP-111 (FR2-01 fix-5): an honest "could not verify" hidden-wait timeout must NOT get the misleading "still visible" hint
+     → expected 'wait_for_selector timed out after 100…' not to contain 'The element is still visible.'
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer idle-reaper default wiring > constructs SutradharRuntime with the 30-minute default idleTimeoutMs when nothing overrides it
+{"timestamp":"2026-09-25T04:01:39.614Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer idle-reaper default wiring > honors SUTRADHAR_IDLE_TIMEOUT_MS when set
+{"timestamp":"2026-09-25T04:01:39.620Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer idle-reaper default wiring > honors an explicit idleTimeoutMs option over the env var and default
+{"timestamp":"2026-09-25T04:01:39.621Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer idle-reaper default wiring > idleTimeoutMs:0 disables the reaper (passed through as undefined, matching SutradharRuntime's "unset = disabled" contract)
+{"timestamp":"2026-09-25T04:01:39.624Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer idle-reaper default wiring > does not construct a new SutradharRuntime at all when the caller supplies one directly
+{"timestamp":"2026-09-25T04:01:39.625Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring > defaults to false (unrestricted) when nothing overrides it
+{"timestamp":"2026-09-25T04:01:39.627Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring > honors SUTRADHAR_RESTRICT_NAVIGATION_TO_LOCAL=1
+{"timestamp":"2026-09-25T04:01:39.628Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring > honors an explicit restrictNavigationToLocal option over the env var
+{"timestamp":"2026-09-25T04:01:39.629Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer allowedDomains wiring > defaults to undefined (unrestricted) when nothing overrides it
+{"timestamp":"2026-09-25T04:01:39.630Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer allowedDomains wiring > honors SUTRADHAR_ALLOWED_DOMAINS as a comma-separated list, trimmed
+{"timestamp":"2026-09-25T04:01:39.631Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer allowedDomains wiring > honors an explicit allowedDomains option over the env var
+{"timestamp":"2026-09-25T04:01:39.632Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+ ✓ tests/unit/server.spec.ts  (11 tests) 22ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 30 passed (31)
+   Start at  09:31:38
+   Duration  1.25s (transform 602ms, setup 0ms, collect 1.54s, tests 53ms, environment 0ms, prepare 270ms)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/tools.spec.ts > @sutradhar/mcp-server registerTools > GAP-111 (FR2-01 fix-5): an honest "could not verify" hidden-wait timeout must NOT get the misleading "still visible" hint
+AssertionError: expected 'wait_for_selector timed out after 100…' not to contain 'The element is still visible.'
+
+- Expected
++ Received
+
+- The element is still visible.
++ wait_for_selector timed out after 1000ms waiting for state=hidden: could not verify: one or more frames were unresponsive.
++ Hint: The element is still visible. Check the selector, or raise timeoutMs.
+
+ ❯ tests/unit/tools.spec.ts:272:30
+    270| 
+    271|     const parsed = JSON.parse(result.content[0].text);
+    272|     expect(parsed.error).not.toContain('The element is still visible.'…
+       |                              ^
+    273|     // Falls through to the generic, non-committal "timed out" hint in…
+    274|     expect(parsed.error).toContain('Hint:');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

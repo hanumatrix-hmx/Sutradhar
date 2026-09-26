@@ -1,0 +1,12 @@
+FR2-16 typecheck summary (tsc --noEmit), all exit code 0 / clean (empty stdout = no errors):
+  packages/browser            EXIT:0
+  packages/cli                EXIT:0
+  packages/agent               EXIT:0 (imports @sutradhar/browser)
+  packages/capability-runtime  EXIT:0 (imports @sutradhar/browser)
+  packages/mcp-server          EXIT:0 (imports @sutradhar/browser)
+  packages/workflow            EXIT:0 (imports @sutradhar/browser)
+  apps/server                  EXIT:0 (imports @sutradhar/browser)
+Individual logs: typecheck-browser.log, typecheck-packages-cli.log,
+typecheck-packages-agent.log, typecheck-packages-capability-runtime.log,
+typecheck-packages-mcp-server.log, typecheck-packages-workflow.log,
+typecheck-apps-server.log (all empty = clean).

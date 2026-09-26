@@ -1,0 +1,26 @@
+# PROJECT_DEEP_DIVE.md live text (sed -n 877,881p):
+`DEFAULT_LAUNCH_ARGS` unconditionally includes `--disable-blink-features=AutomationControlled`,
+kept for exactly one reason: it hides `navigator.webdriver` from simple client-side detection
+scripts (`navigator.webdriver` is `true` without it, `false` with it). It is not a stability
+flag — Chromium's own source (`bad_flags_prompt.cc`) lists `--disable-blink-features` among
+unsupported, developer-only flags, and a live headed launch with the flag present still shows
+regex on raw file: false
+regex on whitespace-normalized file: true
+# regex definitions in both guard scripts (identical => same blind spots):
+tools/scenario-suite/fr2-16/doc-static.spec.mjs:127:const stabilityFlagPattern = /stability flag|kept for stability|chrome-recommended stability/i;
+tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs:147:const stabilityFlagPattern = /stability flag|kept for stability|chrome-recommended stability/i;
+# files each guard scans for the pattern:
+const stabilityFlagPattern = /stability flag|kept for stability|chrome-recommended stability/i;
+for (const [label, text] of [
+  ['packages/browser/README.md', readme],
+  ['packages/browser/src/launcher/browser-options.ts', browserOptions],
+  ['PROJECT_DEEP_DIVE.md', projectDeepDive],
+]) {
+  record(
+    label,
+    'does not contain a "stability flag" framing for --disable-blink-features=AutomationControlled (GAP-118/120)',
+    !stabilityFlagPattern.test(text),
+  );
+}
+# live residual 'stability flags' in an unscanned file:
+111:   * Generates sanitized launch arguments (see DEFAULT_LAUNCH_ARGS for the stability flags that

@@ -1,0 +1,31 @@
+CAUGHT  [REPRO] packages/browser/src/launcher/browser-options.ts :: "--disable-blink-features=AutomationControlled is kept for stability, a chrome-recommended stability flag, not detection-evasion."  <- literal "stability flag" / "kept for sta | stability-word + flag/reason/purpose (GA
+CAUGHT  [REPRO] packages/browser/src/launcher/browser-launcher.ts :: "Generates sanitized launch arguments (see DEFAULT_LAUNCH_ARGS for the stability flags that are always included, unconditionally)."  <- literal "stability flag" / "kept for sta | stability-word + flag/reason/purpose (GA
+CAUGHT  [REPRO] SECURITY.md :: "It is a compatibility flag, nothing more."  <- compatibility-flag framing
+CAUGHT  [REPRO] README.md :: "Hiding navigator.webdriver is just a side effect of this flag, not its purpose."  <- "side effect" framing used near a webdri
+MISSED  [SYN] packages/browser/src/launcher/browser-options.ts :: "The --disable-blink-features=AutomationControlled flag is chosen for compatibility reasons."
+MISSED  [SYN] packages/browser/src/launcher/browser-options.ts :: "The AutomationControlled flag helps avoid launch instability."
+MISSED  [SYN] packages/browser/src/launcher/browser-options.ts :: "This argument improves reliability."
+MISSED  [SYN] packages/browser/src/launcher/browser-options.ts :: "It is necessary for consistent behavior across Chrome versions."
+MISSED  [SYN] packages/browser/src/launcher/browser-options.ts :: "The flag is included by default. This helps launches remain stable."
+MISSED  [SYN] packages/browser/src/launcher/browser-options.ts :: "The AutomationControlled flag is retained for stability."
+MISSED  [SYN] packages/browser/src/launcher/browser-options.ts :: "DEFAULT_LAUNCH_ARGS exists purely to keep Chrome stable under automation."
+MISSED  [SYN] packages/browser/src/launcher/browser-options.ts :: "This flag improves launch stability."
+MISSED  [SYN] packages/browser/src/launcher/browser-options.ts :: "The flag is kept for robustness, not detection evasion."
+MISSED  [SYN] PROJECT_DEEP_DIVE.md :: "The retained flag is a Chrome-recommended default for automation."
+MISSED  [SYN] SECURITY.md :: "Nothing in the launcher masks automation signals."
+MISSED  [SYN] SECURITY.md :: "Sutradhar does not modify navigator.webdriver or any other automation signal."
+MISSED  [SYN] README.md :: "Sutradhar launches a completely stock Chrome with no fingerprint changes at all."
+MISSED  [SYN] README.md :: "The flag hides every automation signal."
+MISSED  [SYN] README.md :: "This flag hides all the automation signals."
+MISSED  [SYN] README.md :: "navigator.webdriver hiding is merely incidental to this flag."
+MISSED  [SYN] README.md :: "Hiding navigator.webdriver is a byproduct of this flag."
+MISSED  [SYN] docs/ARCHITECTURE.md :: "Sutradhar launches a plain undisguised Chrome."
+MISSED  [SYN] docs/ARCHITECTURE.md :: "Sutradhar launches an undisguised, plain browser."
+MISSED  [NEG] packages/browser/src/launcher/browser-options.ts :: "Do not remove this stability flag."
+MISSED  [NEG] packages/browser/src/launcher/browser-options.ts :: "This is not optional: it is a stability flag."
+MISSED  [NEG] packages/browser/src/launcher/browser-options.ts :: "Never drop the stability flags from DEFAULT_LAUNCH_ARGS."
+CAUGHT  [NEG] packages/browser/src/launcher/browser-options.ts :: "Don't remove it; it is a stability flag."  <- literal "stability flag" / "kept for sta | stability-word + flag/reason/purpose (GA
+MISSED  [NEG] SECURITY.md :: "It is not optional -- a compatibility flag Chrome needs."
+CAUGHT  [HONEST] packages/browser/src/launcher/browser-options.ts :: "The flag doesn't act as a stability flag; it hides navigator.webdriver."  <- literal "stability flag" / "kept for sta | stability-word + flag/reason/purpose (GA
+MISSED  [HONEST] packages/browser/src/launcher/browser-options.ts :: "Contrary to older docs, this is not in any sense a stability flag."
+MISSED  [HONEST] packages/browser/src/launcher/browser-options.ts :: "It is not a stability flag."
