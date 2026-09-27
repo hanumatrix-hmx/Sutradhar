@@ -1,0 +1,116 @@
+{
+  "runtime": {
+    "hash-404": {
+      "pass": 0,
+      "n": 2,
+      "fails": [
+        {
+          "t": 0,
+          "url": "http://127.0.0.1:51855/h404?t=0#top",
+          "broken": []
+        },
+        {
+          "t": 1,
+          "url": "http://127.0.0.1:51855/h404?t=1#top",
+          "broken": []
+        }
+      ]
+    },
+    "emptybody-404": {
+      "pass": 0,
+      "n": 2,
+      "fails": [
+        {
+          "t": 0,
+          "url": "chrome-error://chromewebdata/",
+          "broken": []
+        },
+        {
+          "t": 1,
+          "url": "chrome-error://chromewebdata/",
+          "broken": []
+        }
+      ]
+    },
+    "control-ok": {
+      "pass": 2,
+      "n": 2,
+      "fails": []
+    },
+    "a-302-then-hash-404": {
+      "pass": 0,
+      "n": 2,
+      "fails": [
+        {
+          "t": 0,
+          "url": "http://127.0.0.1:51855/h404?from=r#top",
+          "broken": []
+        },
+        {
+          "t": 1,
+          "url": "http://127.0.0.1:51855/h404?from=r#top",
+          "broken": []
+        }
+      ]
+    },
+    "a-js200-to-hash404": {
+      "pass": 0,
+      "n": 2,
+      "fails": [
+        {
+          "t": 0,
+          "url": "http://127.0.0.1:51855/h404?from=js#top",
+          "broken": []
+        },
+        {
+          "t": 1,
+          "url": "http://127.0.0.1:51855/h404?from=js#top",
+          "broken": []
+        }
+      ]
+    }
+  },
+  "cli": {
+    "hash-404": {
+      "pass": 0,
+      "n": 0,
+      "oneDoc": 0,
+      "fails": []
+    },
+    "emptybody-404": {
+      "pass": 0,
+      "n": 0,
+      "oneDoc": 0,
+      "fails": []
+    },
+    "a-302-then-hash-404": {
+      "pass": 0,
+      "n": 0,
+      "oneDoc": 0,
+      "fails": []
+    }
+  },
+  "samples": {
+    "hash-404": {
+      "url": "http://127.0.0.1:51855/h404?t=0#top",
+      "broken": []
+    },
+    "emptybody-404": {
+      "url": "chrome-error://chromewebdata/",
+      "broken": []
+    },
+    "control-ok": {
+      "url": "http://127.0.0.1:51855/ok?t=0",
+      "broken": []
+    },
+    "a-302-then-hash-404": {
+      "url": "http://127.0.0.1:51855/h404?from=r#top",
+      "broken": []
+    },
+    "a-js200-to-hash404": {
+      "url": "http://127.0.0.1:51855/h404?from=js#top",
+      "broken": []
+    }
+  },
+  "tmpRemoved": true
+}

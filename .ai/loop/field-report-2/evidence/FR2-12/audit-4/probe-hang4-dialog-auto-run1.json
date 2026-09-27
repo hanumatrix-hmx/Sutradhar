@@ -1,0 +1,209 @@
+{
+  "order": "dialog-auto",
+  "trials": 1,
+  "startedAt": "2026-09-27T19:25:18.769Z",
+  "steps": [
+    {
+      "label": "t0 open alertload",
+      "ms": 737,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t0 audit ok while alert open",
+      "ms": 2566,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:57397/ok?d0",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t0 open alertload again",
+      "ms": 620,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t0 audit own404hash while alert open",
+      "ms": 2562,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:57397/own404hash?d0#top",
+        "broken": [],
+        "consoleErrors": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "covers": true
+      }
+    },
+    {
+      "label": "t0 open alertload again",
+      "ms": 615,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t0 audit own404empty while alert open",
+      "ms": 2585,
+      "ok": true,
+      "r": {
+        "url": "chrome-error://chromewebdata/",
+        "broken": [],
+        "consoleErrors": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "covers": true
+      }
+    },
+    {
+      "label": "t0 audit ok baseline",
+      "ms": 1563,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:57397/ok?base0",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    }
+  ],
+  "cdp": [
+    {
+      "createdAt": "2026-09-27T19:25:19.730Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1017,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 6,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 2,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 1019,
+          "status": 200,
+          "url": "http://127.0.0.1:57397/ok?d0"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 1020,
+          "url": "http://127.0.0.1:57397/ok?d0"
+        }
+      ],
+      "detachAt": 2530,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:25:22.916Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1008,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 7,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 0,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "frameNavigated",
+          "at": 1011,
+          "url": "http://127.0.0.1:57397/own404hash?d0"
+        }
+      ],
+      "detachAt": 2526,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:25:26.095Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1019,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 11,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 16,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "frameNavigated",
+          "at": 1025,
+          "url": "chrome-error://chromewebdata/"
+        }
+      ],
+      "detachAt": 2549,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:25:28.681Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 0,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 0,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 7,
+          "status": 200,
+          "url": "http://127.0.0.1:57397/ok?base0"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 8,
+          "url": "http://127.0.0.1:57397/ok?base0"
+        }
+      ],
+      "detachAt": 1531,
+      "detach": "ok"
+    }
+  ],
+  "finishedAt": "2026-09-27T19:25:30.523Z"
+}

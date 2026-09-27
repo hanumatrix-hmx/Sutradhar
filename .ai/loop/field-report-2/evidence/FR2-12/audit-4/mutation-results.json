@@ -1,0 +1,283 @@
+{
+  "origSha": "1a60d61a8d8b809e44fb332fb27e19edb0a36a63e570da924509724f681ac46d",
+  "restoredShaMatch": true,
+  "finalRebuild": 0,
+  "results": [
+    {
+      "id": "M1-unbounded",
+      "build": "ok",
+      "vitest": {
+        "status": 1,
+        "tests": "1 failed | 203 passed (204)",
+        "failed": [
+          "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA14 (GAP-274): a Page.en"
+        ]
+      },
+      "live": {
+        "dialog": {
+          "status": 0,
+          "lines": [
+            "31035ms t0 audit ok while alert open {\"url\":\"http://127.0.0.1:65509/ok?d0\",\"broken\":[],\"consoleErrors\":0,\"sample\":[],\"covers\":true}",
+            "31042ms t0 audit own404hash while alert open {\"url\":\"http://127.0.0.1:65509/own404hash?d0#top\",\"broken\":[{\"url\":\"http://127.0.0.1:65509/own4",
+            "31092ms t0 audit own404empty while alert open {\"url\":\"chrome-error://chromewebdata/\",\"broken\":[{\"url\":\"http://127.0.0.1:65509/own404empty?d0",
+            "1563ms t0 audit ok baseline {\"url\":\"http://127.0.0.1:65509/ok?base0\",\"broken\":[],\"consoleErrors\":0,\"sample\":[],\"covers\":true}"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M2-bound-60s",
+      "build": "ok",
+      "vitest": {
+        "status": 1,
+        "tests": "1 failed | 203 passed (204)",
+        "failed": [
+          "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA14 (GAP-274): a Page.en"
+        ]
+      },
+      "live": {
+        "dialog": {
+          "status": 0,
+          "lines": [
+            "31049ms t0 audit ok while alert open {\"url\":\"http://127.0.0.1:63835/ok?d0\",\"broken\":[],\"consoleErrors\":0,\"sample\":[],\"covers\":true}",
+            "31058ms t0 audit own404hash while alert open {\"url\":\"http://127.0.0.1:63835/own404hash?d0#top\",\"broken\":[{\"url\":\"http://127.0.0.1:63835/own4",
+            "31106ms t0 audit own404empty while alert open {\"url\":\"chrome-error://chromewebdata/\",\"broken\":[{\"url\":\"http://127.0.0.1:63835/own404empty?d0",
+            "1564ms t0 audit ok baseline {\"url\":\"http://127.0.0.1:63835/ok?base0\",\"broken\":[],\"consoleErrors\":0,\"sample\":[],\"covers\":true}"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M3-first-response-wins",
+      "build": "ok",
+      "vitest": {
+        "status": 1,
+        "tests": "1 failed | 203 passed (204)",
+        "failed": [
+          "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA13 (GAP-273 mutation ki"
+        ]
+      },
+      "live": {
+        "273": {
+          "status": 0,
+          "lines": [
+            "runtime hash-404 2/2 ",
+            "runtime emptybody-404 2/2 ",
+            "runtime control-ok 2/2 ",
+            "runtime a-302-then-hash-404 2/2 ",
+            "runtime a-js200-to-hash404 0/2 {\"t\":0,\"url\":\"http://127.0.0.1:53183/h404?from=js#top\",\"broken\":[]}"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M4-no-frameId-filter",
+      "build": "ok",
+      "vitest": {
+        "status": 1,
+        "tests": "1 failed | 203 passed (204)",
+        "failed": [
+          "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA11 (GAP-273 mutation ki"
+        ]
+      },
+      "live": {
+        "273": {
+          "status": 0,
+          "lines": [
+            "runtime hash-404 2/2 ",
+            "runtime emptybody-404 2/2 ",
+            "runtime control-ok 2/2 ",
+            "runtime a-302-then-hash-404 2/2 ",
+            "runtime a-js200-to-hash404 2/2 "
+          ]
+        }
+      }
+    },
+    {
+      "id": "M5-no-Document-type-filter",
+      "build": "ok",
+      "vitest": {
+        "status": 1,
+        "tests": "1 failed | 203 passed (204)",
+        "failed": [
+          "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA12 (GAP-273 mutation ki"
+        ]
+      },
+      "live": {
+        "273": {
+          "status": 0,
+          "lines": [
+            "runtime hash-404 0/2 {\"t\":0,\"url\":\"http://127.0.0.1:52408/h404?t=0#top\",\"broken\":[]}",
+            "runtime emptybody-404 0/2 {\"t\":0,\"url\":\"chrome-error://chromewebdata/\",\"broken\":[]}",
+            "runtime control-ok 2/2 ",
+            "runtime a-302-then-hash-404 0/2 {\"t\":0,\"url\":\"http://127.0.0.1:52408/h404?from=r#top\",\"broken\":[]}",
+            "runtime a-js200-to-hash404 0/2 {\"t\":0,\"url\":\"http://127.0.0.1:52408/h404?from=js#top\",\"broken\":[]}"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M6-primary-capture-ignored",
+      "build": "ok",
+      "vitest": {
+        "status": 1,
+        "tests": "2 failed | 202 passed (204)",
+        "failed": [
+          "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA10 (GAP-273): the main ",
+          "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA13 (GAP-273 mutation ki"
+        ]
+      },
+      "live": {
+        "273": {
+          "status": 0,
+          "lines": [
+            "runtime hash-404 0/2 {\"t\":0,\"url\":\"http://127.0.0.1:59701/h404?t=0#top\",\"broken\":[]}",
+            "runtime emptybody-404 0/2 {\"t\":0,\"url\":\"chrome-error://chromewebdata/\",\"broken\":[]}",
+            "runtime control-ok 2/2 ",
+            "runtime a-302-then-hash-404 0/2 {\"t\":0,\"url\":\"http://127.0.0.1:59701/h404?from=r#top\",\"broken\":[]}",
+            "runtime a-js200-to-hash404 0/2 {\"t\":0,\"url\":\"http://127.0.0.1:59701/h404?from=js#top\",\"broken\":[]}"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M7-clear-client-in-catch",
+      "build": "ok",
+      "vitest": {
+        "status": 0,
+        "tests": "204 passed (204)",
+        "failed": []
+      },
+      "live": {
+        "leak": {
+          "status": 0,
+          "lines": [
+            "Page.enable never resolves {\"ms\":1038,\"res\":\"ok\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "Page.enable rejects late (1.5s, after bound) {\"ms\":1034,\"res\":\"ok\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "Page.enable rejects immediately {\"ms\":16,\"res\":\"ok\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "send throws synchronously {\"ms\":19,\"res\":\"ok\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "Network.enable never resolves {\"ms\":1032,\"res\":\"ok\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "getFrameTree never resolves {\"ms\":1032,\"res\":\"ok\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "client.on throws synchronously {\"ms\":31,\"res\":\"ok\",\"created\":1,\"detached\":0,\"detachCalls\":0,\"leak\":true}",
+            "navigate throws {\"ms\":13,\"res\":\"threw: nav failed\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "navigate throws after hanging Page.enable {\"ms\":1005,\"res\":\"threw: nav failed\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "detach rejects {\"ms\":16,\"res\":\"ok\",\"created\":1,\"detached\":0,\"detachCalls\":1,\"leak\":false}",
+            "evaluate throws (post-detach) {\"ms\":18,\"res\":\"threw: eval failed\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "createCDPSession sync throw {\"ms\":19,\"res\":\"ok\",\"created\":0,\"detached\":0,\"detachCalls\":0,\"leak\":false}",
+            "createCDPSession rejects {\"ms\":17,\"res\":\"ok\",\"created\":0,\"detached\":0,\"detachCalls\":0,\"leak\":false}",
+            "unhandled rejections: 0"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M8-no-detach",
+      "build": "ok",
+      "vitest": {
+        "status": 1,
+        "tests": "3 failed | 201 passed (204)",
+        "failed": [
+          "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA4b (GAP-262/GAP-264): s",
+          "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA14 (GAP-274): a Page.en",
+          "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA15 (GAP-274 leak kill):"
+        ]
+      },
+      "live": {
+        "leak": {
+          "status": 0,
+          "lines": [
+            "Page.enable never resolves {\"ms\":1034,\"res\":\"ok\",\"created\":1,\"detached\":0,\"detachCalls\":0,\"leak\":true}",
+            "Page.enable rejects late (1.5s, after bound) {\"ms\":1031,\"res\":\"ok\",\"created\":1,\"detached\":0,\"detachCalls\":0,\"leak\":true}",
+            "Page.enable rejects immediately {\"ms\":22,\"res\":\"ok\",\"created\":1,\"detached\":0,\"detachCalls\":0,\"leak\":true}",
+            "send throws synchronously {\"ms\":21,\"res\":\"ok\",\"created\":1,\"detached\":0,\"detachCalls\":0,\"leak\":true}",
+            "Network.enable never resolves {\"ms\":1027,\"res\":\"ok\",\"created\":1,\"detached\":0,\"detachCalls\":0,\"leak\":true}",
+            "getFrameTree never resolves {\"ms\":1030,\"res\":\"ok\",\"created\":1,\"detached\":0,\"detachCalls\":0,\"leak\":true}",
+            "client.on throws synchronously {\"ms\":13,\"res\":\"ok\",\"created\":1,\"detached\":0,\"detachCalls\":0,\"leak\":true}",
+            "navigate throws {\"ms\":10,\"res\":\"threw: nav failed\",\"created\":1,\"detached\":0,\"detachCalls\":0,\"leak\":true}",
+            "navigate throws after hanging Page.enable {\"ms\":1028,\"res\":\"threw: nav failed\",\"created\":1,\"detached\":0,\"detachCalls\":0,\"leak\":true}",
+            "detach rejects {\"ms\":28,\"res\":\"ok\",\"created\":1,\"detached\":0,\"detachCalls\":0,\"leak\":true}",
+            "evaluate throws (post-detach) {\"ms\":29,\"res\":\"threw: eval failed\",\"created\":1,\"detached\":0,\"detachCalls\":0,\"leak\":true}",
+            "createCDPSession sync throw {\"ms\":16,\"res\":\"ok\",\"created\":0,\"detached\":0,\"detachCalls\":0,\"leak\":false}",
+            "createCDPSession rejects {\"ms\":18,\"res\":\"ok\",\"created\":0,\"detached\":0,\"detachCalls\":0,\"leak\":false}",
+            "unhandled rejections: 0"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M9-rejection-not-swallowed",
+      "build": "ok",
+      "vitest": {
+        "status": 0,
+        "tests": "204 passed (204)",
+        "failed": []
+      },
+      "live": {
+        "leak": {
+          "status": 0,
+          "lines": [
+            "Page.enable never resolves {\"ms\":1036,\"res\":\"ok\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "Page.enable rejects late (1.5s, after bound) {\"ms\":1040,\"res\":\"ok\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "Page.enable rejects immediately {\"ms\":18,\"res\":\"ok\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "send throws synchronously {\"ms\":1025,\"res\":\"ok\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "Network.enable never resolves {\"ms\":1042,\"res\":\"ok\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "getFrameTree never resolves {\"ms\":1027,\"res\":\"ok\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "client.on throws synchronously {\"ms\":21,\"res\":\"ok\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "navigate throws {\"ms\":7,\"res\":\"threw: nav failed\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "navigate throws after hanging Page.enable {\"ms\":1020,\"res\":\"threw: nav failed\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "detach rejects {\"ms\":16,\"res\":\"ok\",\"created\":1,\"detached\":0,\"detachCalls\":1,\"leak\":false}",
+            "evaluate throws (post-detach) {\"ms\":31,\"res\":\"threw: eval failed\",\"created\":1,\"detached\":1,\"detachCalls\":1,\"leak\":false}",
+            "createCDPSession sync throw {\"ms\":20,\"res\":\"ok\",\"created\":0,\"detached\":0,\"detachCalls\":0,\"leak\":false}",
+            "createCDPSession rejects {\"ms\":26,\"res\":\"ok\",\"created\":0,\"detached\":0,\"detachCalls\":0,\"leak\":false}",
+            "unhandled rejections: 1"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M10-no-Network.enable",
+      "build": "ok",
+      "vitest": {
+        "status": 0,
+        "tests": "204 passed (204)",
+        "failed": []
+      },
+      "live": {
+        "273": {
+          "status": 0,
+          "lines": [
+            "runtime hash-404 0/2 {\"t\":0,\"url\":\"http://127.0.0.1:51855/h404?t=0#top\",\"broken\":[]}",
+            "runtime emptybody-404 0/2 {\"t\":0,\"url\":\"chrome-error://chromewebdata/\",\"broken\":[]}",
+            "runtime control-ok 2/2 ",
+            "runtime a-302-then-hash-404 0/2 {\"t\":0,\"url\":\"http://127.0.0.1:51855/h404?from=r#top\",\"broken\":[]}",
+            "runtime a-js200-to-hash404 0/2 {\"t\":0,\"url\":\"http://127.0.0.1:51855/h404?from=js#top\",\"broken\":[]}"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M11-mainFrameId-only-from-frameTree",
+      "build": "ok",
+      "vitest": {
+        "status": 1,
+        "tests": "2 failed | 202 passed (204)",
+        "failed": [
+          "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA10 (GAP-273): the main ",
+          "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA13 (GAP-273 mutation ki"
+        ]
+      },
+      "live": {
+        "273": {
+          "status": 0,
+          "lines": [
+            "runtime hash-404 2/2 ",
+            "runtime emptybody-404 2/2 ",
+            "runtime control-ok 2/2 ",
+            "runtime a-302-then-hash-404 2/2 ",
+            "runtime a-js200-to-hash404 2/2 "
+          ]
+        }
+      }
+    }
+  ]
+}

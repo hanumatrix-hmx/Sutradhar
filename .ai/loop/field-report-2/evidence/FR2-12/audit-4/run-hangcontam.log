@@ -1,0 +1,7 @@
+108ms nav noisy "http://127.0.0.1:52184/noisy?n=0"
+30013ms nav hang (times out; noisy page keeps running) ERR Navigation timeout of 30000 ms exceeded
+2976ms audit okslow (clean page) {"url":"http://127.0.0.1:52184/okslow?n=0","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+12ms control: nav noisy "http://127.0.0.1:52184/noisy?n=1"
+1953ms control: audit okslow {"url":"http://127.0.0.1:52184/okslow?n=1","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+CDP: {"s":{"Page.enable":{"ms":1006,"ok":true},"Network.enable":{"ms":420,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":0,"ok":true},"Network.enable":{"ms":0,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":2}

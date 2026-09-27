@@ -1,0 +1,110 @@
+{
+  "Page.enable never resolves": {
+    "ms": 1036,
+    "res": "ok",
+    "created": 1,
+    "detached": 1,
+    "detachCalls": 1,
+    "leak": false
+  },
+  "Page.enable rejects late (1.5s, after bound)": {
+    "ms": 1040,
+    "res": "ok",
+    "created": 1,
+    "detached": 1,
+    "detachCalls": 1,
+    "leak": false
+  },
+  "Page.enable rejects immediately": {
+    "ms": 18,
+    "res": "ok",
+    "created": 1,
+    "detached": 1,
+    "detachCalls": 1,
+    "leak": false
+  },
+  "__unhandled": [
+    "sync send throw"
+  ],
+  "send throws synchronously": {
+    "ms": 1025,
+    "res": "ok",
+    "created": 1,
+    "detached": 1,
+    "detachCalls": 1,
+    "leak": false
+  },
+  "Network.enable never resolves": {
+    "ms": 1042,
+    "res": "ok",
+    "created": 1,
+    "detached": 1,
+    "detachCalls": 1,
+    "leak": false
+  },
+  "getFrameTree never resolves": {
+    "ms": 1027,
+    "res": "ok",
+    "created": 1,
+    "detached": 1,
+    "detachCalls": 1,
+    "leak": false
+  },
+  "client.on throws synchronously": {
+    "ms": 21,
+    "res": "ok",
+    "created": 1,
+    "detached": 1,
+    "detachCalls": 1,
+    "leak": false
+  },
+  "navigate throws": {
+    "ms": 7,
+    "res": "threw: nav failed",
+    "created": 1,
+    "detached": 1,
+    "detachCalls": 1,
+    "leak": false
+  },
+  "navigate throws after hanging Page.enable": {
+    "ms": 1020,
+    "res": "threw: nav failed",
+    "created": 1,
+    "detached": 1,
+    "detachCalls": 1,
+    "leak": false
+  },
+  "detach rejects": {
+    "ms": 16,
+    "res": "ok",
+    "created": 1,
+    "detached": 0,
+    "detachCalls": 1,
+    "leak": false
+  },
+  "evaluate throws (post-detach)": {
+    "ms": 31,
+    "res": "threw: eval failed",
+    "created": 1,
+    "detached": 1,
+    "detachCalls": 1,
+    "leak": false
+  },
+  "createCDPSession sync throw": {
+    "ms": 20,
+    "res": "ok",
+    "created": 0,
+    "detached": 0,
+    "detachCalls": 0,
+    "leak": false
+  },
+  "createCDPSession rejects": {
+    "ms": 26,
+    "res": "ok",
+    "created": 0,
+    "detached": 0,
+    "detachCalls": 0,
+    "leak": false
+  },
+  "__unhandledCount": 1
+}

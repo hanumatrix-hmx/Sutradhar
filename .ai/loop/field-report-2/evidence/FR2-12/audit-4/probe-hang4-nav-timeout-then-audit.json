@@ -1,0 +1,252 @@
+{
+  "order": "nav-timeout-then-audit",
+  "trials": 1,
+  "startedAt": "2026-09-27T19:29:17.009Z",
+  "steps": [
+    {
+      "label": "i0 goto hang timeout 2000",
+      "ms": 2007,
+      "ok": true,
+      "r": "timeout: Navigation timeout of 2000 ms exceeded"
+    },
+    {
+      "label": "i0 audit ok",
+      "ms": 2554,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:49464/ok?i=0",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "i1 goto hang timeout 2000",
+      "ms": 2006,
+      "ok": true,
+      "r": "timeout: Navigation timeout of 2000 ms exceeded"
+    },
+    {
+      "label": "i1 audit ok",
+      "ms": 2559,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:49464/ok?i=1",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "i2 goto hang timeout 2000",
+      "ms": 2008,
+      "ok": true,
+      "r": "timeout: Navigation timeout of 2000 ms exceeded"
+    },
+    {
+      "label": "i2 audit ok",
+      "ms": 2574,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:49464/ok?i=2",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "runtime.navigate hang (30s timeout)",
+      "ms": 30009,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "audit ok after 30s nav timeout",
+      "ms": 2557,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:49464/ok?rt=1",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "runtime.navigate hang (30s timeout) #2",
+      "ms": 30014,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "audit own404hash after 30s nav timeout",
+      "ms": 2567,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:49464/own404hash?rt=2#top",
+        "broken": [
+          {
+            "url": "http://127.0.0.1:49464/own404hash?rt=2",
+            "status": 404
+          }
+        ],
+        "consoleErrors": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "covers": true
+      }
+    }
+  ],
+  "cdp": [
+    {
+      "createdAt": "2026-09-27T19:29:19.230Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1002,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 10,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 2,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 1005,
+          "status": 200,
+          "url": "http://127.0.0.1:49464/ok?i=0"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 1007,
+          "url": "http://127.0.0.1:49464/ok?i=0"
+        }
+      ],
+      "detachAt": 2514,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:29:23.792Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1011,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 6,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 1012,
+          "status": 200,
+          "url": "http://127.0.0.1:49464/ok?i=1"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 1013,
+          "url": "http://127.0.0.1:49464/ok?i=1"
+        }
+      ],
+      "detachAt": 2524,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:29:28.360Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1016,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 5,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "frameNavigated",
+          "at": 1018,
+          "url": "http://127.0.0.1:49464/ok?i=2"
+        }
+      ],
+      "detachAt": 2531,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:30:00.943Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1004,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 5,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "frameNavigated",
+          "at": 1006,
+          "url": "http://127.0.0.1:49464/ok?rt=1"
+        }
+      ],
+      "detachAt": 2523,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:30:33.516Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1016,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 8,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 0,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "frameNavigated",
+          "at": 1017,
+          "url": "http://127.0.0.1:49464/own404hash?rt=2"
+        }
+      ],
+      "detachAt": 2532,
+      "detach": "ok"
+    }
+  ],
+  "finishedAt": "2026-09-27T19:30:36.411Z"
+}

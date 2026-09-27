@@ -1,0 +1,204 @@
+{
+  "order": "audit-first",
+  "trials": 1,
+  "startedAt": "2026-09-27T19:28:09.537Z",
+  "steps": [
+    {
+      "label": "audit hang#0 (expected nav timeout)",
+      "ms": 30012,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "audit hang#1",
+      "ms": 31014,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "audit ok",
+      "ms": 2558,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:64654/ok",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "audit own404 after hang",
+      "ms": 1549,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:64654/own404?x=1",
+        "broken": [
+          {
+            "url": "http://127.0.0.1:64654/own404?x=1",
+            "status": 404
+          }
+        ],
+        "consoleErrors": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "covers": true
+      }
+    },
+    {
+      "label": "audit ok 2",
+      "ms": 1566,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:64654/ok?2",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    }
+  ],
+  "cdp": [
+    {
+      "createdAt": "2026-09-27T19:28:09.751Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 0,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 0,
+          "ok": true
+        }
+      },
+      "events": [],
+      "detachAt": 30012,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:28:39.764Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1005,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 30007,
+          "err": "Protocol error (Network.enable): Target closed"
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "err": "Protocol error (Page.getFrameTree): Session closed. Most likely the page has been closed."
+        }
+      },
+      "events": [],
+      "detachAt": 31012,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:29:10.778Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1017,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 9,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 1019,
+          "status": 200,
+          "url": "http://127.0.0.1:64654/ok"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 1020,
+          "url": "http://127.0.0.1:64654/ok"
+        }
+      ],
+      "detachAt": 2532,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:29:13.337Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 0,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 0,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 7,
+          "status": 404,
+          "url": "http://127.0.0.1:64654/own404?x=1"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 8,
+          "url": "http://127.0.0.1:64654/own404?x=1"
+        }
+      ],
+      "detachAt": 1514,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:29:14.886Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 0,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 1,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 0,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 7,
+          "status": 200,
+          "url": "http://127.0.0.1:64654/ok?2"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 8,
+          "url": "http://127.0.0.1:64654/ok?2"
+        }
+      ],
+      "detachAt": 1525,
+      "detach": "ok"
+    }
+  ],
+  "finishedAt": "2026-09-27T19:29:16.768Z"
+}

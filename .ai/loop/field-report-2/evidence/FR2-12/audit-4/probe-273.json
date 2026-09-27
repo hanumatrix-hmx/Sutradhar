@@ -1,0 +1,257 @@
+{
+  "runtime": {
+    "hash-404": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    },
+    "replaceState-404": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    },
+    "emptybody-404": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    },
+    "emptybody-500": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    },
+    "control-own404": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    },
+    "control-ok": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    },
+    "a-302-then-replaceState-404": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    },
+    "a-302-then-hash-404": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    },
+    "a-302-then-replaceState-200": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    },
+    "a-js200-to-hash404": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    },
+    "a-js404-to-200": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    },
+    "b-slow-body-404": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    },
+    "b-5MB-body-404": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    },
+    "b-slow-headers-500": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    },
+    "c-302>500(js)>302>200": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    },
+    "c-302>500(js)>302>404": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    },
+    "subframe-emptybody-404": {
+      "pass": 10,
+      "n": 10,
+      "fails": []
+    }
+  },
+  "cli": {
+    "hash-404": {
+      "pass": 10,
+      "n": 10,
+      "oneDoc": 10,
+      "fails": []
+    },
+    "replaceState-404": {
+      "pass": 10,
+      "n": 10,
+      "oneDoc": 10,
+      "fails": []
+    },
+    "emptybody-404": {
+      "pass": 10,
+      "n": 10,
+      "oneDoc": 10,
+      "fails": []
+    },
+    "emptybody-500": {
+      "pass": 10,
+      "n": 10,
+      "oneDoc": 10,
+      "fails": []
+    },
+    "a-302-then-hash-404": {
+      "pass": 10,
+      "n": 10,
+      "oneDoc": 10,
+      "fails": []
+    }
+  },
+  "samples": {
+    "hash-404": {
+      "url": "http://127.0.0.1:52221/h404?t=0#top",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:52221/h404?t=0",
+          "status": 404
+        }
+      ]
+    },
+    "replaceState-404": {
+      "url": "http://127.0.0.1:52221/rewritten-0.3681935794087988",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:52221/rs404?t=0",
+          "status": 404
+        }
+      ]
+    },
+    "emptybody-404": {
+      "url": "chrome-error://chromewebdata/",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:52221/e404?t=0",
+          "status": 404
+        }
+      ]
+    },
+    "emptybody-500": {
+      "url": "chrome-error://chromewebdata/",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:52221/e500?t=0",
+          "status": 500
+        }
+      ]
+    },
+    "control-own404": {
+      "url": "http://127.0.0.1:52221/own404?t=0",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:52221/own404?t=0",
+          "status": 404
+        }
+      ]
+    },
+    "control-ok": {
+      "url": "http://127.0.0.1:52221/ok?t=0",
+      "broken": []
+    },
+    "a-302-then-replaceState-404": {
+      "url": "http://127.0.0.1:52221/rewritten-0.8272738934272004",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:52221/rs404?from=r",
+          "status": 404
+        }
+      ]
+    },
+    "a-302-then-hash-404": {
+      "url": "http://127.0.0.1:52221/h404?from=r#top",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:52221/h404?from=r",
+          "status": 404
+        }
+      ]
+    },
+    "a-302-then-replaceState-200": {
+      "url": "http://127.0.0.1:52221/ok-rs-rewritten",
+      "broken": []
+    },
+    "a-js200-to-hash404": {
+      "url": "http://127.0.0.1:52221/h404?from=js#top",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:52221/h404?from=js",
+          "status": 404
+        }
+      ]
+    },
+    "a-js404-to-200": {
+      "url": "http://127.0.0.1:52221/ok?from=js404",
+      "broken": []
+    },
+    "b-slow-body-404": {
+      "url": "http://127.0.0.1:52221/slow404?t=0",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:52221/slow404?t=0",
+          "status": 404
+        }
+      ]
+    },
+    "b-5MB-body-404": {
+      "url": "http://127.0.0.1:52221/big404?t=0",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:52221/big404?t=0",
+          "status": 404
+        }
+      ]
+    },
+    "b-slow-headers-500": {
+      "url": "http://127.0.0.1:52221/slowhdr500?t=0",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:52221/slowhdr500?t=0",
+          "status": 500
+        }
+      ]
+    },
+    "c-302>500(js)>302>200": {
+      "url": "http://127.0.0.1:52221/ok?from=chain",
+      "broken": []
+    },
+    "c-302>500(js)>302>404": {
+      "url": "http://127.0.0.1:52221/own404?from=chain",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:52221/own404?from=chain",
+          "status": 404
+        }
+      ]
+    },
+    "subframe-emptybody-404": {
+      "url": "http://127.0.0.1:52221/ok-iframe404?t=0",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:52221/e404?frame=1",
+          "status": 404
+        }
+      ]
+    }
+  },
+  "tmpRemoved": true
+}

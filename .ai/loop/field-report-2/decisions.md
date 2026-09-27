@@ -3006,3 +3006,60 @@ the baseline/after diff, killed by PID (command-line matched to this worktree), 
 
 Sent to independent audit-4 (LAST STANDARD CYCLE -- if this fails with a critical/major finding,
 FR2-12 moves to escalation per the loop's rules).
+
+## 2026-09-28 -- FR2-12 audit-4: FAILED (1 major). All 4 standard cycles used; entering ESCALATION cycle 1 of 2.
+
+Good news first: audit-4 independently RE-VERIFIED both of fix-3's targets, adversarially, and both
+hold. GAP-273 (own-response-status via live CDP capture): 170/170 across 17 shapes including new
+attacks audit-4 devised (a redirect followed by a same-document nav; a slow/large/late-headers body;
+a redirect chain with an error in the MIDDLE hop; an error iframe under a healthy page), plus 50/50
+via the CLI. GAP-274 (bounded Page.enable): audit-4 root-caused WHY fix-3's own live revert-confirm
+couldn't reproduce a hang -- fix-3's test script's re-import only cache-busted index.js while Node
+kept the already-loaded runtime.js module, so its "unbounded" measurement was silently still running
+the bounded code (confirmed via probe-esm-cache.json). audit-4 then reproduced the REAL original hang
+cleanly in a genuinely fresh process with the bound actually removed: 3/3, matching audit-3's own
+~29.5-31s measurement exactly. With the bound restored, the same conditions resolve in ~2.5-2.6s,
+52/52 for the dialog case. The session-leak fix also holds: 13 injected failure points, 0 leaks, 0
+unhandled rejections; 475/475 live sessions detached. This closes the evidence gap fix-3 disclosed --
+GAP-274 is now confirmed fixed against a REAL reproduced hang, not just a mock.
+
+The failure: GAP-278 (major) -- auditing the CURRENT PAGE (no url argument) right after a navigation
+in the same process/tab still leaks the previous page's console errors and broken requests into the
+new page's report, exactly the original GAP-262 contamination bug. This is NOT a fix-3 regression --
+it's a SCOPE GAP that has existed across all 3 prior fix cycles. GAP-262/266/267's fixes (fix-1
+through fix-3) only ever touched the boundary logic for audit({url}) mode (the "navigate somewhere
+else, then audit that URL" pattern); current-page mode ("audit whatever I already navigated to", the
+spec's own T11 scenario and the ordinary MCP/SDK usage pattern) still scopes by navigation-start, not
+commit-time, because nobody had re-examined that code path since the original min()-based fix. Rate:
+15/15 runtime at realistic response times, 10/10 MCP, the spec's OWN L12 test case 9/10 via MCP.
+url-mode audits remain unaffected (0/20).
+
+Minor: GAP-279 (a dialog open when audit({url}) starts makes Network.enable set up too late for
+live capture, falling back to the fragile URL-match GAP-273 was built to replace -- 2/30 vs 10/10
+with no dialog), GAP-280 (3 mutations, including the exact session-leak pattern fix-3 claims to have
+fixed, still pass all tests untested), plus informational entries recording the ESM-cache root-cause
+finding, GAP-276's still-open third item, and a theoretical (never-observed) gap in
+createCDPSession/detach's own timeout coverage.
+
+Per the loop's rules, FR2-12 has now used all 4 standard cycles (audit-1..4, fix-1..3) and enters
+ESCALATION CYCLE 1 OF 2. If escalation-1 also fails with a critical/major finding, one more
+escalation cycle remains before this item would be marked BLOCKED with a written diagnosis.
+
+Decisions for escalation-1 (binding):
+1. GAP-278: apply the same commit-time contamination boundary to CURRENT-PAGE mode that URL-mode
+   already has. Investigate both directions audit-4 suggested: an in-page read of
+   performance.timeOrigin + the navigation entry's responseStart, versus having the tab itself record
+   its own last main-frame Page.frameNavigated/commit time (matching what URL-mode's runtime.ts
+   change already does) and reading THAT instead of re-deriving it in-page. Prefer whichever shares
+   the most logic with URL-mode's already-verified fix rather than a parallel implementation. Add
+   live cases at realistic response times (150/800ms, matching audit-4's own repro) through BOTH the
+   runtime directly and the real MCP tool, since audit-4 found the MCP path leaks more reliably
+   (10/10) than the runtime-direct path at instant response times (4/10) -- both must be fixed, not
+   just whichever is easier to reproduce.
+2. GAP-279: make the live-capture-missed fallback use the response the navigation call itself
+   returns, not a URL-based lookup.
+3. GAP-280: add tests that specifically kill M7 (the exact session-leak pattern), M9 (the swallowed
+   rejection), and M10 (Network.enable removed).
+Escalation-1 should re-run the FULL audit-1 through audit-4 attack surface, given this item's
+established pattern, with particular attention to whether the current-page fix interacts with
+anything URL-mode's fixes depend on (they share runtime.ts's audit() method).

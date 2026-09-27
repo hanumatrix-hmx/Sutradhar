@@ -1,0 +1,50 @@
+{
+ "baseValid": true,
+ "cases": {
+  "399": {
+   "valid": false,
+   "errors": [
+    "/brokenRequests/0/status must be >= 400"
+   ]
+  },
+  "400": {
+   "valid": true
+  },
+  "404": {
+   "valid": true
+  },
+  "599": {
+   "valid": true
+  },
+  "600": {
+   "valid": true
+  },
+  "999": {
+   "valid": true
+  },
+  "1000": {
+   "valid": false,
+   "errors": [
+    "/brokenRequests/0/status must be <= 999"
+   ]
+  },
+  "404.5": {
+   "valid": false,
+   "errors": [
+    "/brokenRequests/0/status must be integer"
+   ]
+  },
+  "-1": {
+   "valid": false,
+   "errors": [
+    "/brokenRequests/0/status must be >= 400"
+   ]
+  },
+  "404(string)": {
+   "valid": false,
+   "errors": [
+    "/brokenRequests/0/status must be integer"
+   ]
+  }
+ }
+}
