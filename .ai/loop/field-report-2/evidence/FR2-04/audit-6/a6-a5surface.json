@@ -1,0 +1,5481 @@
+{
+  "at": "2026-09-27T05:42:37.201Z",
+  "results": [
+    {
+      "scenario": "older-fresh-alerts-g0",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 880,
+        "out": "Navigated to http://127.0.0.1:56776/?n=older-fresh-alerts-g0-0-928\nTitle: page older-fresh-alerts-g0-0-928",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 1524,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=older-fresh-alerts-g0-0-928",
+          "opener": null,
+          "createdMs": -162
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 21
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "safe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=older-fresh-alerts-g0-0-928\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab 98DB34F07A90A0EE1B3ED51863F745E1 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 4333E4F5A2C4EF548EC8205CD01D717E.\n  Note: tab 4333E4F5A2C4EF548EC8205CD01D717E appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier alert dialog on tab 958F8AF473EC0825E75CE1BB312AD445 first, not this one."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1141,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 275,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=older-fresh-alerts-g0-0-928 | Title: page older-fresh-alerts-g0-0-928",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "responsive"
+      }
+    },
+    {
+      "scenario": "older-fresh-alerts-g10",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 848,
+        "out": "Navigated to http://127.0.0.1:56776/?n=older-fresh-alerts-g10-0-9955\nTitle: page older-fresh-alerts-g10-0-9955",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 1532,
+      "targets": [
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 36
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=older-fresh-alerts-g10-0-9955",
+          "opener": null,
+          "createdMs": -165
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "safe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=older-fresh-alerts-g10-0-9955\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab 60152E913F4186F9D75A17EB0BA3F691 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab A238907A6C34E431C21D53369D5DA68A.\n  Note: tab A238907A6C34E431C21D53369D5DA68A appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier alert dialog on tab 6CE8D2D840C25C175CD251F102659C10 first, not this one."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1119,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 270,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=older-fresh-alerts-g10-0-9955 | Title: page older-fresh-alerts-g10-0-9955",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "responsive"
+      }
+    },
+    {
+      "scenario": "older-fresh-alerts-g30",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 869,
+        "out": "Navigated to http://127.0.0.1:56776/?n=older-fresh-alerts-g30-0-18968\nTitle: page older-fresh-alerts-g30-0-18968",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 1550,
+      "targets": [
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 52
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=older-fresh-alerts-g30-0-18968",
+          "opener": null,
+          "createdMs": -160
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "safe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=older-fresh-alerts-g30-0-18968\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab E6319E9C71FDDA453569C3EFBDFE6C0A is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 975C150B77FA7A75DAE0A715BD2C3E13.\n  Note: tab 975C150B77FA7A75DAE0A715BD2C3E13 appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier alert dialog on tab C8A549E18BA9DD28EB98FA142DAD9B96 first, not this one."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1134,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 313,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=older-fresh-alerts-g30-0-18968 | Title: page older-fresh-alerts-g30-0-18968",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "responsive"
+      }
+    },
+    {
+      "scenario": "older-fresh-alerts-g60",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 886,
+        "out": "Navigated to http://127.0.0.1:56776/?n=older-fresh-alerts-g60-0-28046\nTitle: page older-fresh-alerts-g60-0-28046",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 1603,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=older-fresh-alerts-g60-0-28046",
+          "opener": null,
+          "createdMs": -158
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 7
+        },
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 97
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "safe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=older-fresh-alerts-g60-0-28046\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab D6F171ED8A31CFDD5B6F0F290595BE7E is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 803F348DBB435BCCC500C90F4925F804.\n  Note: tab 803F348DBB435BCCC500C90F4925F804 appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier alert dialog on tab 3783D68623D80A2949750DED05E26EB3 first, not this one."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1135,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 286,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=older-fresh-alerts-g60-0-28046 | Title: page older-fresh-alerts-g60-0-28046",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "responsive"
+      }
+    },
+    {
+      "scenario": "older-fresh-alerts-g120",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 905,
+        "out": "Navigated to http://127.0.0.1:56776/?n=older-fresh-alerts-g120-0-37183\nTitle: page older-fresh-alerts-g120-0-37183",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 1650,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=older-fresh-alerts-g120-0-37183",
+          "opener": null,
+          "createdMs": -164
+        },
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 145
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "safe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=older-fresh-alerts-g120-0-37183\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab 43B416189684D40E30BF0C08D854E355 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 779F221E95803126261B233157FCACFA.\n  Note: tab 779F221E95803126261B233157FCACFA appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier alert dialog on tab 4E198B1DB270C887D2E3D33A3CB1E098 first, not this one."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1125,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 264,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=older-fresh-alerts-g120-0-37183 | Title: page older-fresh-alerts-g120-0-37183",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "responsive"
+      }
+    },
+    {
+      "scenario": "older-fresh-alerts-g250",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 886,
+        "out": "Navigated to http://127.0.0.1:56776/?n=older-fresh-alerts-g250-0-46384\nTitle: page older-fresh-alerts-g250-0-46384",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 1788,
+      "targets": [
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 280
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 7
+        },
+        {
+          "label": "O",
+          "url": "B/?n=older-fresh-alerts-g250-0-46384",
+          "opener": null,
+          "createdMs": -163
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "safe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=older-fresh-alerts-g250-0-46384\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab 09A7DEF37AF142ECA4C565F5EEAA54B5 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab B4137ADF52C6804171015567F0414C42.\n  Note: tab B4137ADF52C6804171015567F0414C42 appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier alert dialog on tab C862A3CCCE8A912901EFE478E09CDFDC first, not this one."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1120,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 276,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=older-fresh-alerts-g250-0-46384 | Title: page older-fresh-alerts-g250-0-46384",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "responsive"
+      }
+    },
+    {
+      "scenario": "older-fresh-alerts-g600",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 918,
+        "out": "Navigated to http://127.0.0.1:56776/?n=older-fresh-alerts-g600-0-55717\nTitle: page older-fresh-alerts-g600-0-55717",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 2129,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=older-fresh-alerts-g600-0-55717",
+          "opener": null,
+          "createdMs": -155
+        },
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 626
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 5
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "safe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=older-fresh-alerts-g600-0-55717\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab A4CCC9EB25A5F88AB007E38A64F432A3 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 6A03915E98467ADBA65C8432E7D2654E.\n  Note: tab 6A03915E98467ADBA65C8432E7D2654E appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier alert dialog on tab 571EEE89FC2C6C3C8E0CBA3D20204680 first, not this one."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1124,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 274,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=older-fresh-alerts-g600-0-55717 | Title: page older-fresh-alerts-g600-0-55717",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "responsive"
+      }
+    },
+    {
+      "scenario": "chain-middle-fresh-g0",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 883,
+        "out": "Navigated to http://127.0.0.1:56776/?n=chain-middle-fresh-g0-0-65417\nTitle: page chain-middle-fresh-g0-0-65417",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 1522,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=chain-middle-fresh-g0-0-65417",
+          "opener": null,
+          "createdMs": -162
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 7
+        },
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "P0",
+          "createdMs": 22
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=chain-middle-fresh-g0-0-65417\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab 937EDAAE06ADE8DDC6DA89856C9F313F is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it.\n  Note: tab 338524BE143511D8974803E0A12D3AA7 appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier alert dialog on tab 173A3CF2C825128A433883446F1E2C96 first, not this one."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1119,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 261,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=chain-middle-fresh-g0-0-65417 | Title: page chain-middle-fresh-g0-0-65417",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "responsive"
+      }
+    },
+    {
+      "scenario": "chain-middle-fresh-g30",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 863,
+        "out": "Navigated to http://127.0.0.1:56776/?n=chain-middle-fresh-g30-0-74402\nTitle: page chain-middle-fresh-g30-0-74402",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 1569,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=chain-middle-fresh-g30-0-74402",
+          "opener": null,
+          "createdMs": -160
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 7
+        },
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "P0",
+          "createdMs": 68
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=chain-middle-fresh-g30-0-74402\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab B8FE9E260B528DA3763FB17FDF8F0DB2 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it.\n  Note: tab B04755E8810C749E4BD389187C945FC3 appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier alert dialog on tab 74B7E56B7232DA31B35E07401536367D first, not this one."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1123,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 265,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=chain-middle-fresh-g30-0-74402 | Title: page chain-middle-fresh-g30-0-74402",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "responsive"
+      }
+    },
+    {
+      "scenario": "chain-middle-fresh-g120",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 866,
+        "out": "Navigated to http://127.0.0.1:56776/?n=chain-middle-fresh-g120-0-83419\nTitle: page chain-middle-fresh-g120-0-83419",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 1648,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=chain-middle-fresh-g120-0-83419",
+          "opener": null,
+          "createdMs": -164
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "P0",
+          "createdMs": 146
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=chain-middle-fresh-g120-0-83419\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab 6EBAD202892ADC08BBF250F2F861C326 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it.\n  Note: tab 2832DB2FAEAD34F4589775A50D6DD1FC appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier alert dialog on tab 4FC6D5A6F30F3481910CB59E90B5FE26 first, not this one."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1126,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 269,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=chain-middle-fresh-g120-0-83419 | Title: page chain-middle-fresh-g120-0-83419",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "responsive"
+      }
+    },
+    {
+      "scenario": "chain-middle-fresh-g600",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 911,
+        "out": "Navigated to http://127.0.0.1:56776/?n=chain-middle-fresh-g600-0-92596\nTitle: page chain-middle-fresh-g600-0-92596",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 2130,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "P0",
+          "createdMs": 633
+        },
+        {
+          "label": "O",
+          "url": "B/?n=chain-middle-fresh-g600-0-92596",
+          "opener": null,
+          "createdMs": -162
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=chain-middle-fresh-g600-0-92596\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab B736094F6F0F519DEAEEB1D46266CB3A is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it.\n  Note: tab A14BCC22D87203F6114E668DAFD07604 appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier alert dialog on tab 939CDE68CF27460790EE8DAC02A78E59 first, not this one."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1136,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 275,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=chain-middle-fresh-g600-0-92596 | Title: page chain-middle-fresh-g600-0-92596",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "responsive"
+      }
+    },
+    {
+      "scenario": "opener-alerts-fresh-g0",
+      "trial": 0,
+      "holderLabel": "O",
+      "nav": {
+        "code": 0,
+        "ms": 918,
+        "out": "Navigated to http://127.0.0.1:56776/?n=opener-alerts-fresh-g0-0-2292\nTitle: page opener-alerts-fresh-g0-0-2292",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 15,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=opener-alerts-fresh-g0-0-2292",
+          "opener": null,
+          "createdMs": -162
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "alert"
+        },
+        {
+          "label": "P0",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=opener-alerts-fresh-g0-0-2292\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab D278748592FCBC8FFDB771E2DD1CEA6F appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier alert dialog on tab 123B9F0CB046E9AC5ECBFFC283A0FA1B first, not this one."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1150,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 275,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=opener-alerts-fresh-g0-0-2292 | Title: page opener-alerts-fresh-g0-0-2292",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "opener-alerts-fresh-g50",
+      "trial": 0,
+      "holderLabel": "O",
+      "nav": {
+        "code": 0,
+        "ms": 874,
+        "out": "Navigated to http://127.0.0.1:56776/?n=opener-alerts-fresh-g50-0-9915\nTitle: page opener-alerts-fresh-g50-0-9915",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 76,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=opener-alerts-fresh-g50-0-9915",
+          "opener": null,
+          "createdMs": -163
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "alert"
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=opener-alerts-fresh-g50-0-9915\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab BC83DD8B1EA4D5B18DBC4D634C7B6ACE is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1142,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 274,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=opener-alerts-fresh-g50-0-9915 | Title: page opener-alerts-fresh-g50-0-9915",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "opener-alerts-fresh-g200",
+      "trial": 0,
+      "holderLabel": "O",
+      "nav": {
+        "code": 0,
+        "ms": 868,
+        "out": "Navigated to http://127.0.0.1:56776/?n=opener-alerts-fresh-g200-0-17534\nTitle: page opener-alerts-fresh-g200-0-17534",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 217,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=opener-alerts-fresh-g200-0-17534",
+          "opener": null,
+          "createdMs": -162
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "alert"
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=opener-alerts-fresh-g200-0-17534\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab 4ABB96003E7FA318B654A4543C26B4D6 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1120,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 276,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=opener-alerts-fresh-g200-0-17534 | Title: page opener-alerts-fresh-g200-0-17534",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "blank-timer-alert-300",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 910,
+        "out": "Navigated to http://127.0.0.1:56776/?n=blank-timer-alert-300-0-25275\nTitle: page blank-timer-alert-300-0-25275",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 15,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=blank-timer-alert-300-0-25275",
+          "opener": null,
+          "createdMs": -156
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 5
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"T300\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=blank-timer-alert-300-0-25275\"}",
+        "stderr": "Note: tab 113A212B30705BCDFD583FB12A887263 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1123,
+          "closed": null,
+          "stdout": "Accepted alert \"T300\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 262,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=blank-timer-alert-300-0-25275 | Title: page blank-timer-alert-300-0-25275",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "blank-timer-alert-450",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 855,
+        "out": "Navigated to http://127.0.0.1:56776/?n=blank-timer-alert-450-0-32795\nTitle: page blank-timer-alert-450-0-32795",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 15,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 5
+        },
+        {
+          "label": "O",
+          "url": "B/?n=blank-timer-alert-450-0-32795",
+          "opener": null,
+          "createdMs": -165
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"T450\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=blank-timer-alert-450-0-32795\"}",
+        "stderr": "Note: tab F59182F6A988784B72FD19E3C8A44043 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1128,
+          "closed": null,
+          "stdout": "Accepted alert \"T450\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 283,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=blank-timer-alert-450-0-32795 | Title: page blank-timer-alert-450-0-32795",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "blank-timer-alert-500",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 865,
+        "out": "Navigated to http://127.0.0.1:56776/?n=blank-timer-alert-500-0-40302\nTitle: page blank-timer-alert-500-0-40302",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 14,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 5
+        },
+        {
+          "label": "O",
+          "url": "B/?n=blank-timer-alert-500-0-40302",
+          "opener": null,
+          "createdMs": -152
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"T500\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=blank-timer-alert-500-0-40302\"}",
+        "stderr": "Note: tab A2B6BA49C45EA8C1B3F8C6C1A400C909 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1139,
+          "closed": null,
+          "stdout": "Accepted alert \"T500\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 267,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=blank-timer-alert-500-0-40302 | Title: page blank-timer-alert-500-0-40302",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "blank-timer-alert-550",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 879,
+        "out": "Navigated to http://127.0.0.1:56776/?n=blank-timer-alert-550-0-47844\nTitle: page blank-timer-alert-550-0-47844",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 17,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=blank-timer-alert-550-0-47844",
+          "opener": null,
+          "createdMs": -159
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"T550\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=blank-timer-alert-550-0-47844\"}",
+        "stderr": "Note: tab 1C55C75569D47C591288413E8AC02AF3 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1141,
+          "closed": null,
+          "stdout": "Accepted alert \"T550\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 271,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=blank-timer-alert-550-0-47844 | Title: page blank-timer-alert-550-0-47844",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "blank-timer-alert-600",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 956,
+        "out": "Navigated to http://127.0.0.1:56776/?n=blank-timer-alert-600-0-55412\nTitle: page blank-timer-alert-600-0-55412",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 15,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=blank-timer-alert-600-0-55412",
+          "opener": null,
+          "createdMs": -153
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"T600\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=blank-timer-alert-600-0-55412\"}",
+        "stderr": "Note: tab 1131C594A9DA6A85D9B8C66247BDE60B is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1125,
+          "closed": null,
+          "stdout": "Accepted alert \"T600\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 262,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=blank-timer-alert-600-0-55412 | Title: page blank-timer-alert-600-0-55412",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "blank-timer-alert-700",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 855,
+        "out": "Navigated to http://127.0.0.1:56776/?n=blank-timer-alert-700-0-62964\nTitle: page blank-timer-alert-700-0-62964",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 16,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=blank-timer-alert-700-0-62964",
+          "opener": null,
+          "createdMs": -166
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"T700\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=blank-timer-alert-700-0-62964\"}",
+        "stderr": "Note: tab 27E3B20F829C2DEDBC4DC008508DFEFF is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1127,
+          "closed": null,
+          "stdout": "Accepted alert \"T700\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 268,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=blank-timer-alert-700-0-62964 | Title: page blank-timer-alert-700-0-62964",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "blank-timer-alert-1000",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 854,
+        "out": "Navigated to http://127.0.0.1:56776/?n=blank-timer-alert-1000-0-70513\nTitle: page blank-timer-alert-1000-0-70513",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 15,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 5
+        },
+        {
+          "label": "O",
+          "url": "B/?n=blank-timer-alert-1000-0-70513",
+          "opener": null,
+          "createdMs": -164
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"T1000\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=blank-timer-alert-1000-0-70513\"}",
+        "stderr": "Note: tab 1EB3021C38FA1A7781733D39EE0EFCFE is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1132,
+          "closed": null,
+          "stdout": "Accepted alert \"T1000\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 283,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=blank-timer-alert-1000-0-70513 | Title: page blank-timer-alert-1000-0-70513",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "url-delay-alert-400",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 874,
+        "out": "Navigated to http://127.0.0.1:56776/?n=url-delay-alert-400-0-78085\nTitle: page url-delay-alert-400-0-78085",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 14,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "B/alert-delay?n=p&ms=400",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=url-delay-alert-400-0-78085",
+          "opener": null,
+          "createdMs": -166
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-400-p\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/alert-delay?n=p&ms=400\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=url-delay-alert-400-0-78085\"}",
+        "stderr": "Note: tab 3FF11764E3ABDBD433D0794162747874 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1104,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-400-p\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 278,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/alert-delay?n=p&ms=400 | Title: delay p",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "xsite-delay-alert-400",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 888,
+        "out": "Navigated to http://127.0.0.1:56776/?n=xsite-delay-alert-400-0-85591\nTitle: page xsite-delay-alert-400-0-85591",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 18,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "XS/alert-delay?n=p&ms=400",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=xsite-delay-alert-400-0-85591",
+          "opener": null,
+          "createdMs": -166
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "responsive",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-400-p\",\"defaultValue\":null,\"url\":\"http://localhost:56776/alert-delay?n=p&ms=400\"}",
+        "stderr": ""
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 733,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-400-p\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 284,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=xsite-delay-alert-400-0-85591 | Title: page xsite-delay-alert-400-0-85591",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "url-delay-alert-500",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 909,
+        "out": "Navigated to http://127.0.0.1:56776/?n=url-delay-alert-500-0-91960\nTitle: page url-delay-alert-500-0-91960",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 14,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=url-delay-alert-500-0-91960",
+          "opener": null,
+          "createdMs": -158
+        },
+        {
+          "label": "P0",
+          "url": "B/alert-delay?n=p&ms=500",
+          "opener": "O",
+          "createdMs": 6
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-500-p\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/alert-delay?n=p&ms=500\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=url-delay-alert-500-0-91960\"}",
+        "stderr": "Note: tab 98D78881022EA39ADC680383AE1081B3 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1125,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-500-p\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 269,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/alert-delay?n=p&ms=500 | Title: delay p",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "xsite-delay-alert-500",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 883,
+        "out": "Navigated to http://127.0.0.1:56776/?n=xsite-delay-alert-500-0-99488\nTitle: page xsite-delay-alert-500-0-99488",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 19,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "XS/alert-delay?n=p&ms=500",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=xsite-delay-alert-500-0-99488",
+          "opener": null,
+          "createdMs": -159
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "responsive",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-500-p\",\"defaultValue\":null,\"url\":\"http://localhost:56776/alert-delay?n=p&ms=500\"}",
+        "stderr": ""
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 712,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-500-p\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 261,
+        "killedAtCap": false,
+        "head": "URL: http://localhost:56776/alert-delay?n=p&ms=500 | Title: delay p",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "url-delay-alert-550",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 908,
+        "out": "Navigated to http://127.0.0.1:56776/?n=url-delay-alert-550-0-5833\nTitle: page url-delay-alert-550-0-5833",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 15,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=url-delay-alert-550-0-5833",
+          "opener": null,
+          "createdMs": -154
+        },
+        {
+          "label": "P0",
+          "url": "B/alert-delay?n=p&ms=550",
+          "opener": "O",
+          "createdMs": 6
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-550-p\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/alert-delay?n=p&ms=550\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=url-delay-alert-550-0-5833\"}",
+        "stderr": "Note: tab E7942939B4D06BBE9D55A5681995BB68 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1122,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-550-p\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 275,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/alert-delay?n=p&ms=550 | Title: delay p",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "xsite-delay-alert-550",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 863,
+        "out": "Navigated to http://127.0.0.1:56776/?n=xsite-delay-alert-550-0-13389\nTitle: page xsite-delay-alert-550-0-13389",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 18,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=xsite-delay-alert-550-0-13389",
+          "opener": null,
+          "createdMs": -162
+        },
+        {
+          "label": "P0",
+          "url": "XS/alert-delay?n=p&ms=550",
+          "opener": "O",
+          "createdMs": 6
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "responsive",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-550-p\",\"defaultValue\":null,\"url\":\"http://localhost:56776/alert-delay?n=p&ms=550\"}",
+        "stderr": ""
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 736,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-550-p\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 267,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=xsite-delay-alert-550-0-13389 | Title: page xsite-delay-alert-550-0-13389",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "url-delay-alert-600",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 870,
+        "out": "Navigated to http://127.0.0.1:56776/?n=url-delay-alert-600-0-19782\nTitle: page url-delay-alert-600-0-19782",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 14,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "B/alert-delay?n=p&ms=600",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=url-delay-alert-600-0-19782",
+          "opener": null,
+          "createdMs": -160
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-600-p\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/alert-delay?n=p&ms=600\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=url-delay-alert-600-0-19782\"}",
+        "stderr": "Note: tab 37EEFFBB5C12F34B89031884063BF369 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1120,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-600-p\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 269,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=url-delay-alert-600-0-19782 | Title: page url-delay-alert-600-0-19782",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "xsite-delay-alert-600",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 913,
+        "out": "Navigated to http://127.0.0.1:56776/?n=xsite-delay-alert-600-0-27241\nTitle: page xsite-delay-alert-600-0-27241",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 17,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "XS/alert-delay?n=p&ms=600",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=xsite-delay-alert-600-0-27241",
+          "opener": null,
+          "createdMs": -155
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "responsive",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-600-p\",\"defaultValue\":null,\"url\":\"http://localhost:56776/alert-delay?n=p&ms=600\"}",
+        "stderr": ""
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 714,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-600-p\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 269,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=xsite-delay-alert-600-0-27241 | Title: page xsite-delay-alert-600-0-27241",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "url-delay-alert-700",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 884,
+        "out": "Navigated to http://127.0.0.1:56776/?n=url-delay-alert-700-0-33605\nTitle: page url-delay-alert-700-0-33605",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 14,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=url-delay-alert-700-0-33605",
+          "opener": null,
+          "createdMs": -161
+        },
+        {
+          "label": "P0",
+          "url": "B/alert-delay?n=p&ms=700",
+          "opener": "O",
+          "createdMs": 5
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-700-p\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/alert-delay?n=p&ms=700\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=url-delay-alert-700-0-33605\"}",
+        "stderr": "Note: tab D5B22A4013BB7D8063798D620B94C2F7 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1116,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-700-p\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 267,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/alert-delay?n=p&ms=700 | Title: delay p",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "xsite-delay-alert-700",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 882,
+        "out": "Navigated to http://127.0.0.1:56776/?n=xsite-delay-alert-700-0-41084\nTitle: page xsite-delay-alert-700-0-41084",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 16,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=xsite-delay-alert-700-0-41084",
+          "opener": null,
+          "createdMs": -164
+        },
+        {
+          "label": "P0",
+          "url": "XS/alert-delay?n=p&ms=700",
+          "opener": "O",
+          "createdMs": 5
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "responsive",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-700-p\",\"defaultValue\":null,\"url\":\"http://localhost:56776/alert-delay?n=p&ms=700\"}",
+        "stderr": ""
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 727,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-700-p\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 269,
+        "killedAtCap": false,
+        "head": "URL: http://localhost:56776/alert-delay?n=p&ms=700 | Title: delay p",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "url-busy-alert-400",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 886,
+        "out": "Navigated to http://127.0.0.1:56776/?n=url-busy-alert-400-0-47455\nTitle: page url-busy-alert-400-0-47455",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 14,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "B/busy-alert?n=p&ms=400",
+          "opener": "O",
+          "createdMs": 5
+        },
+        {
+          "label": "O",
+          "url": "B/?n=url-busy-alert-400-0-47455",
+          "opener": null,
+          "createdMs": -165
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"busy-400-p\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/busy-alert?n=p&ms=400\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=url-busy-alert-400-0-47455\"}",
+        "stderr": "Note: tab 97EA236C7D147ECE85515F863A55A32D is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1135,
+          "closed": null,
+          "stdout": "Accepted alert \"busy-400-p\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 278,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/busy-alert?n=p&ms=400 | Title: busy p",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "url-busy-alert-550",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 884,
+        "out": "Navigated to http://127.0.0.1:56776/?n=url-busy-alert-550-0-54995\nTitle: page url-busy-alert-550-0-54995",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 13,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "B/busy-alert?n=p&ms=550",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=url-busy-alert-550-0-54995",
+          "opener": null,
+          "createdMs": -162
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"busy-550-p\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/busy-alert?n=p&ms=550\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=url-busy-alert-550-0-54995\"}",
+        "stderr": "Note: tab FADDF648A8E335716D2DB456B1119CC7 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1124,
+          "closed": null,
+          "stdout": "Accepted alert \"busy-550-p\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 271,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/busy-alert?n=p&ms=550 | Title: busy p",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "url-busy-alert-700",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 904,
+        "out": "Navigated to http://127.0.0.1:56776/?n=url-busy-alert-700-0-62483\nTitle: page url-busy-alert-700-0-62483",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 15,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=url-busy-alert-700-0-62483",
+          "opener": null,
+          "createdMs": -153
+        },
+        {
+          "label": "P0",
+          "url": "B/busy-alert?n=p&ms=700",
+          "opener": "O",
+          "createdMs": 6
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"busy-700-p\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/busy-alert?n=p&ms=700\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=url-busy-alert-700-0-62483\"}",
+        "stderr": "Note: tab E6F51056EC13524F4C8454B46F73468B is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1142,
+          "closed": null,
+          "stdout": "Accepted alert \"busy-700-p\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 271,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/busy-alert?n=p&ms=700 | Title: busy p",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "url-busy-alert-900",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 911,
+        "out": "Navigated to http://127.0.0.1:56776/?n=url-busy-alert-900-0-70051\nTitle: page url-busy-alert-900-0-70051",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 14,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "B/busy-alert?n=p&ms=900",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=url-busy-alert-900-0-70051",
+          "opener": null,
+          "createdMs": -163
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"busy-900-p\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/busy-alert?n=p&ms=900\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=url-busy-alert-900-0-70051\"}",
+        "stderr": "Note: tab 8814B8E8935C0B1D0D40623A5BAB311D is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1142,
+          "closed": null,
+          "stdout": "Accepted alert \"busy-900-p\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 266,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=url-busy-alert-900-0-70051 | Title: page url-busy-alert-900-0-70051",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "reactive-url-inline",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 921,
+        "out": "Navigated to http://127.0.0.1:56776/?n=reactive-url-inline-0-77605\nTitle: page reactive-url-inline-0-77605",
+        "err": ""
+      },
+      "stepLog": [],
+      "polls": [
+        {
+          "off": 0,
+          "at": 5,
+          "done": 13,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 5,
+          "at": 5,
+          "done": 13,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 10,
+          "at": 9,
+          "done": 15,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 15,
+          "at": 14,
+          "done": 18,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 20,
+          "at": 30,
+          "done": 436,
+          "view": [
+            "O:unknown<P0:SAFE",
+            "P0:unknown"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 30,
+          "at": 30,
+          "done": 435,
+          "view": [
+            "O:unknown<P0:SAFE",
+            "P0:unknown"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 40,
+          "at": 45,
+          "done": 450,
+          "view": [
+            "O:unknown<P0:SAFE",
+            "P0:unknown"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 60,
+          "at": 61,
+          "done": 467,
+          "view": [
+            "O:unknown<P0:SAFE",
+            "P0:unknown"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 80,
+          "at": 93,
+          "done": 499,
+          "view": [
+            "O:unknown<P0:SAFE",
+            "P0:unknown"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 120,
+          "at": 124,
+          "done": 530,
+          "view": [
+            "O:unknown<P0:SAFE",
+            "P0:unknown"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 160,
+          "at": 171,
+          "done": 577,
+          "view": [
+            "O:unknown<P0:SAFE",
+            "P0:unknown"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 220,
+          "at": 233,
+          "done": 639,
+          "view": [
+            "O:unknown<P0:SAFE",
+            "P0:unknown"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        }
+      ],
+      "scenMs": 640,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=reactive-url-inline-0-77605",
+          "opener": null,
+          "createdMs": -158
+        },
+        {
+          "label": "P0",
+          "url": "B/alert-inline?n=p",
+          "opener": "O",
+          "createdMs": 6
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P0",
+          "safe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=reactive-url-inline-0-77605\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/alert-inline?n=p\"}",
+        "stderr": "Note: tab 5868BA57C7D224AA623FF84A4D430676 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab B95F37B973ABC64F176286032F065E98.\n  Note: tab B95F37B973ABC64F176286032F065E98 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1089,
+          "closed": "P0",
+          "stdout": "Tab B95F37B973ABC64F176286032F065E98 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "P0": "gone",
+            "O": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P0"
+      ],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 267,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=reactive-url-inline-0-77605 | Title: page reactive-url-inline-0-77605",
+        "err": ""
+      },
+      "end": {
+        "P0": "gone",
+        "O": "responsive"
+      }
+    },
+    {
+      "scenario": "reactive-xsite-inline",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 909,
+        "out": "Navigated to http://127.0.0.1:56776/?n=reactive-xsite-inline-0-85762\nTitle: page reactive-xsite-inline-0-85762",
+        "err": ""
+      },
+      "stepLog": [],
+      "polls": [
+        {
+          "off": 0,
+          "at": 5,
+          "done": 13,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 5,
+          "at": 5,
+          "done": 13,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 10,
+          "at": 10,
+          "done": 17,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 15,
+          "at": 17,
+          "done": 19,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 20,
+          "at": 23,
+          "done": 439,
+          "view": [
+            "P0:unknown"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 30,
+          "at": 46,
+          "done": 454,
+          "view": [
+            "P0:unknown"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 40,
+          "at": 46,
+          "done": 454,
+          "view": [
+            "P0:unknown"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 60,
+          "at": 61,
+          "done": 470,
+          "view": [
+            "P0:unknown"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 80,
+          "at": 93,
+          "done": 502,
+          "view": [
+            "P0:unknown"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 120,
+          "at": 124,
+          "done": 533,
+          "view": [
+            "P0:unknown"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 160,
+          "at": 170,
+          "done": 580,
+          "view": [
+            "P0:unknown"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 220,
+          "at": 233,
+          "done": 642,
+          "view": [
+            "P0:unknown"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        }
+      ],
+      "scenMs": 642,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "XS/alert-inline?n=p",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=reactive-xsite-inline-0-85762",
+          "opener": null,
+          "createdMs": -164
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "responsive",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:56776/alert-inline?n=p\"}",
+        "stderr": "Note: tab DFA0CBC0FECD52195150315C7833F83F appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1054,
+          "closed": "P0",
+          "stdout": "Tab DFA0CBC0FECD52195150315C7833F83F was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "P0": "gone",
+            "O": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P0"
+      ],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 271,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=reactive-xsite-inline-0-85762 | Title: page reactive-xsite-inline-0-85762",
+        "err": ""
+      },
+      "end": {
+        "P0": "gone",
+        "O": "responsive"
+      }
+    },
+    {
+      "scenario": "reactive-noopener-inline",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 873,
+        "out": "Navigated to http://127.0.0.1:56776/?n=reactive-noopener-inline-0-93838\nTitle: page reactive-noopener-inline-0-93838",
+        "err": ""
+      },
+      "stepLog": [],
+      "polls": [
+        {
+          "off": 0,
+          "at": 4,
+          "done": 15,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 5,
+          "at": 6,
+          "done": 16,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 10,
+          "at": 12,
+          "done": 16,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 15,
+          "at": 16,
+          "done": 19,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 20,
+          "at": 30,
+          "done": 32,
+          "view": [
+            "P0:alert"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 30,
+          "at": 31,
+          "done": 32,
+          "view": [
+            "P0:alert"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 40,
+          "at": 46,
+          "done": 47,
+          "view": [
+            "P0:alert"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 60,
+          "at": 62,
+          "done": 63,
+          "view": [
+            "P0:alert"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 80,
+          "at": 93,
+          "done": 95,
+          "view": [
+            "P0:alert"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 120,
+          "at": 125,
+          "done": 126,
+          "view": [
+            "P0:alert"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 160,
+          "at": 172,
+          "done": 174,
+          "view": [
+            "P0:alert"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 220,
+          "at": 234,
+          "done": 236,
+          "view": [
+            "P0:alert"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        }
+      ],
+      "scenMs": 237,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "B/alert-inline?n=p",
+          "opener": "O",
+          "createdMs": 5
+        },
+        {
+          "label": "O",
+          "url": "B/?n=reactive-noopener-inline-0-93838",
+          "opener": null,
+          "createdMs": -164
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "responsive",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"inline-p\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/alert-inline?n=p\"}",
+        "stderr": ""
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 704,
+          "closed": null,
+          "stdout": "Accepted alert \"inline-p\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 277,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=reactive-noopener-inline-0-93838 | Title: page reactive-noopener-inline-0-93838",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "reactive-url-delay80",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 872,
+        "out": "Navigated to http://127.0.0.1:56776/?n=reactive-url-delay80-0-316\nTitle: page reactive-url-delay80-0-316",
+        "err": ""
+      },
+      "stepLog": [],
+      "polls": [
+        {
+          "off": 0,
+          "at": 5,
+          "done": 12,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 5,
+          "at": 5,
+          "done": 12,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 10,
+          "at": 9,
+          "done": 13,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 15,
+          "at": 14,
+          "done": 19,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 20,
+          "at": 20,
+          "done": 22,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 30,
+          "at": 30,
+          "done": 32,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 40,
+          "at": 45,
+          "done": 47,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 60,
+          "at": 61,
+          "done": 63,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 80,
+          "at": 92,
+          "done": 94,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 120,
+          "at": 123,
+          "done": 530,
+          "view": [
+            "P0:alert",
+            "O:unknown:SAFE"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 160,
+          "at": 170,
+          "done": 577,
+          "view": [
+            "P0:alert",
+            "O:unknown:SAFE"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 220,
+          "at": 233,
+          "done": 640,
+          "view": [
+            "P0:alert",
+            "O:unknown:SAFE"
+          ],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        }
+      ],
+      "scenMs": 641,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "B/alert-delay?n=p&ms=80",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=reactive-url-delay80-0-316",
+          "opener": null,
+          "createdMs": -162
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-80-p\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/alert-delay?n=p&ms=80\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=reactive-url-delay80-0-316\"}",
+        "stderr": "Note: tab 5778CD893ED3105C713C74A795D33761 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1175,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-80-p\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 281,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/alert-delay?n=p&ms=80 | Title: delay p",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "reactive-blank-timer40",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 863,
+        "out": "Navigated to http://127.0.0.1:56776/?n=reactive-blank-timer40-0-8510\nTitle: page reactive-blank-timer40-0-8510",
+        "err": ""
+      },
+      "stepLog": [],
+      "polls": [
+        {
+          "off": 0,
+          "at": 5,
+          "done": 13,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 5,
+          "at": 6,
+          "done": 13,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 10,
+          "at": 10,
+          "done": 16,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 15,
+          "at": 15,
+          "done": 17,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 20,
+          "at": 30,
+          "done": 32,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 30,
+          "at": 30,
+          "done": 32,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 40,
+          "at": 46,
+          "done": 47,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 60,
+          "at": 61,
+          "done": 63,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 80,
+          "at": 94,
+          "done": 96,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 120,
+          "at": 124,
+          "done": 126,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 160,
+          "at": 169,
+          "done": 172,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        },
+        {
+          "off": 220,
+          "at": 231,
+          "done": 234,
+          "view": [],
+          "labels": [
+            "O",
+            "P0"
+          ]
+        }
+      ],
+      "scenMs": 234,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=reactive-blank-timer40-0-8510",
+          "opener": null,
+          "createdMs": -163
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"T40\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=reactive-blank-timer40-0-8510\"}",
+        "stderr": "Note: tab 253281737D6D4E2BE0753A425BD2C140 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1128,
+          "closed": null,
+          "stdout": "Accepted alert \"T40\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 310,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=reactive-blank-timer40-0-8510 | Title: page reactive-blank-timer40-0-8510",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "xhr-popup-fresh-g0",
+      "trial": 0,
+      "holderLabel": "NONE",
+      "nav": {
+        "code": 0,
+        "ms": 891,
+        "out": "Navigated to http://127.0.0.1:56776/?n=xhr-popup-fresh-g0-0-16303\nTitle: page xhr-popup-fresh-g0-0-16303",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 15,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=xhr-popup-fresh-g0-0-16303",
+          "opener": null,
+          "createdMs": -163
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P0",
+          "safe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=xhr-popup-fresh-g0-0-16303\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab B23FDD664DB8079A27C4672EDF498384 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 2B32B76A7C593FF3C397C92554B04356.\n  Note: tab 2B32B76A7C593FF3C397C92554B04356 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1091,
+          "closed": "P0",
+          "stdout": "Tab 2B32B76A7C593FF3C397C92554B04356 (about:blank) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 657,
+          "closed": null,
+          "stdout": "",
+          "stderr": "Error: no dialog is open to accept.",
+          "after": {
+            "P0": "gone",
+            "O": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P0"
+      ],
+      "innocentClosed": [
+        "P0"
+      ],
+      "stillBlockedAfterAccepts": [
+        "O"
+      ],
+      "extra": [],
+      "snapAfter": {
+        "code": 3,
+        "ms": 679,
+        "killedAtCap": false,
+        "head": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=xhr-popup-fresh-g0-0-16303\"} | ",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identif"
+      },
+      "end": {
+        "P0": "gone",
+        "O": "blocked"
+      }
+    },
+    {
+      "scenario": "xhr-popup-fresh-g100",
+      "trial": 0,
+      "holderLabel": "NONE",
+      "nav": {
+        "code": 0,
+        "ms": 900,
+        "out": "Navigated to http://127.0.0.1:56776/?n=xhr-popup-fresh-g100-0-27529\nTitle: page xhr-popup-fresh-g100-0-27529",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 127,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=xhr-popup-fresh-g100-0-27529",
+          "opener": null,
+          "createdMs": -154
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=xhr-popup-fresh-g100-0-27529\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab 29862863F78F8A6428E965F79B0F338F is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it.\n  Note: tab D6969EDD0F5818C3FA70F65F681D1B25 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 678,
+          "closed": null,
+          "stdout": "",
+          "stderr": "Error: no dialog is open to accept.",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [
+        "O",
+        "P0"
+      ],
+      "extra": [],
+      "snapAfter": {
+        "code": 3,
+        "ms": 671,
+        "killedAtCap": false,
+        "head": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=xhr-popup-fresh-g100-0-27529\"} | dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"u",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identif"
+      },
+      "end": {
+        "O": "blocked",
+        "P0": "blocked"
+      }
+    },
+    {
+      "scenario": "xhr-popup-fresh-g300",
+      "trial": 0,
+      "holderLabel": "NONE",
+      "nav": {
+        "code": 0,
+        "ms": 893,
+        "out": "Navigated to http://127.0.0.1:56776/?n=xhr-popup-fresh-g300-0-36756\nTitle: page xhr-popup-fresh-g300-0-36756",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 323,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 7
+        },
+        {
+          "label": "O",
+          "url": "B/?n=xhr-popup-fresh-g300-0-36756",
+          "opener": null,
+          "createdMs": -157
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=xhr-popup-fresh-g300-0-36756\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab FA3321B4CB53CBA4BFE30F5CD8691D36 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it.\n  Note: tab A04CB57884E14A58C777CD05FF64AF40 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 673,
+          "closed": null,
+          "stdout": "",
+          "stderr": "Error: no dialog is open to accept.",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [
+        "O",
+        "P0"
+      ],
+      "extra": [],
+      "snapAfter": {
+        "code": 3,
+        "ms": 669,
+        "killedAtCap": false,
+        "head": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=xhr-popup-fresh-g300-0-36756\"} | dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"u",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identif"
+      },
+      "end": {
+        "O": "blocked",
+        "P0": "blocked"
+      }
+    },
+    {
+      "scenario": "xhr-popup-fresh-g450",
+      "trial": 0,
+      "holderLabel": "NONE",
+      "nav": {
+        "code": 0,
+        "ms": 924,
+        "out": "Navigated to http://127.0.0.1:56776/?n=xhr-popup-fresh-g450-0-46159\nTitle: page xhr-popup-fresh-g450-0-46159",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 470,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=xhr-popup-fresh-g450-0-46159",
+          "opener": null,
+          "createdMs": -161
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=xhr-popup-fresh-g450-0-46159\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab 85A4EC08C79E030A5CAC2D1AD409AB9B is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it.\n  Note: tab 89DB653D12A69EABD1A2B3513201F9A7 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 672,
+          "closed": null,
+          "stdout": "",
+          "stderr": "Error: no dialog is open to accept.",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [
+        "O",
+        "P0"
+      ],
+      "extra": [],
+      "snapAfter": {
+        "code": 3,
+        "ms": 670,
+        "killedAtCap": false,
+        "head": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=xhr-popup-fresh-g450-0-46159\"} | dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"u",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identif"
+      },
+      "end": {
+        "O": "blocked",
+        "P0": "blocked"
+      }
+    },
+    {
+      "scenario": "xhr-popup-fresh-g700",
+      "trial": 0,
+      "holderLabel": "NONE",
+      "nav": {
+        "code": 0,
+        "ms": 919,
+        "out": "Navigated to http://127.0.0.1:56776/?n=xhr-popup-fresh-g700-0-55802\nTitle: page xhr-popup-fresh-g700-0-55802",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 722,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=xhr-popup-fresh-g700-0-55802",
+          "opener": null,
+          "createdMs": -159
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "safe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=xhr-popup-fresh-g700-0-55802\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "stderr": "Note: tab 39BD6E571ADA278B4E3897E6FD99B4AC is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it.\n  Note: tab A3FF820229310B2C9F9BF7C0C91BACCB is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 671,
+          "closed": null,
+          "stdout": "",
+          "stderr": "Error: no dialog is open to accept.",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [
+        "O",
+        "P0"
+      ],
+      "extra": [],
+      "snapAfter": {
+        "code": 3,
+        "ms": 669,
+        "killedAtCap": false,
+        "head": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=xhr-popup-fresh-g700-0-55802\"} | dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"u",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identif"
+      },
+      "end": {
+        "O": "blocked",
+        "P0": "blocked"
+      }
+    },
+    {
+      "scenario": "popup-xhr-inline",
+      "trial": 0,
+      "holderLabel": "NONE",
+      "nav": {
+        "code": 0,
+        "ms": 923,
+        "out": "Navigated to http://127.0.0.1:56776/?n=popup-xhr-inline-0-65623\nTitle: page popup-xhr-inline-0-65623",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 16,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "B/xhr-inline?n=p&ms=15000",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=popup-xhr-inline-0-65623",
+          "opener": null,
+          "createdMs": -158
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P0",
+          "safe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=popup-xhr-inline-0-65623\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/xhr-inline?n=p&ms=15000\"}",
+        "stderr": "Note: tab AD0771E9767FF4C8A7C4C24497641054 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 3916215DCC02154B02DC848013059440.\n  Note: tab 3916215DCC02154B02DC848013059440 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1079,
+          "closed": "P0",
+          "stdout": "Tab 3916215DCC02154B02DC848013059440 (http://127.0.0.1:56776/xhr-inline?n=p&ms=15000) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 670,
+          "closed": null,
+          "stdout": "",
+          "stderr": "Error: no dialog is open to accept.",
+          "after": {
+            "P0": "gone",
+            "O": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P0"
+      ],
+      "innocentClosed": [
+        "P0"
+      ],
+      "stillBlockedAfterAccepts": [
+        "O"
+      ],
+      "extra": [],
+      "snapAfter": {
+        "code": 3,
+        "ms": 670,
+        "killedAtCap": false,
+        "head": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=popup-xhr-inline-0-65623\"} | ",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identif"
+      },
+      "end": {
+        "P0": "gone",
+        "O": "blocked"
+      }
+    },
+    {
+      "scenario": "popup-xhr-inline-noopener",
+      "trial": 0,
+      "holderLabel": "NONE",
+      "nav": {
+        "code": 0,
+        "ms": 872,
+        "out": "Navigated to http://127.0.0.1:56776/?n=popup-xhr-inline-noopener-0-76823\nTitle: page popup-xhr-inline-noopener-0-76823",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 23,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "B/xhr-inline?n=p&ms=15000",
+          "opener": "O",
+          "createdMs": 9
+        },
+        {
+          "label": "O",
+          "url": "B/?n=popup-xhr-inline-noopener-0-76823",
+          "opener": null,
+          "createdMs": -163
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "responsive",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/xhr-inline?n=p&ms=15000\"}",
+        "stderr": "Note: tab CF30DFC8B76B0F6B1E07878B028740EC appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1052,
+          "closed": "P0",
+          "stdout": "Tab CF30DFC8B76B0F6B1E07878B028740EC (http://127.0.0.1:56776/xhr-inline?n=p&ms=15000) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "blocked"
+          }
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 261,
+          "closed": null,
+          "stdout": "",
+          "stderr": "Error: no dialog is open to accept.",
+          "after": {
+            "P0": "gone",
+            "O": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P0"
+      ],
+      "innocentClosed": [
+        "P0"
+      ],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 269,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=popup-xhr-inline-noopener-0-76823 | Title: page popup-xhr-inline-noopener-0-76823",
+        "err": ""
+      },
+      "end": {
+        "P0": "gone",
+        "O": "responsive"
+      }
+    },
+    {
+      "scenario": "popup-heavy-noopener",
+      "trial": 0,
+      "holderLabel": "NONE",
+      "nav": {
+        "code": 0,
+        "ms": 915,
+        "out": "Navigated to http://127.0.0.1:56776/?n=popup-heavy-noopener-0-85531\nTitle: page popup-heavy-noopener-0-85531",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 326,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "B/heavy?n=p&ms=9000",
+          "opener": "O",
+          "createdMs": 5
+        },
+        {
+          "label": "O",
+          "url": "B/?n=popup-heavy-noopener-0-85531",
+          "opener": null,
+          "createdMs": -162
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "responsive",
+        "P0": "blocked"
+      },
+      "warden": [],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "No dialog is open.",
+        "stderr": ""
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 376,
+          "closed": null,
+          "stdout": "",
+          "stderr": "Error: no dialog is open to accept.",
+          "after": {
+            "O": "responsive",
+            "P0": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [
+        "P0"
+      ],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 5710,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=popup-heavy-noopener-0-85531 | Title: page popup-heavy-noopener-0-85531",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "popup-heavy-opener",
+      "trial": 0,
+      "holderLabel": "NONE",
+      "nav": {
+        "code": 0,
+        "ms": 924,
+        "out": "Navigated to http://127.0.0.1:56776/?n=popup-heavy-opener-0-96191\nTitle: page popup-heavy-opener-0-96191",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 329,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "B/heavy?n=p&ms=9000",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=popup-heavy-opener-0-96191",
+          "opener": null,
+          "createdMs": -164
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "No dialog is open.",
+        "stderr": ""
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 372,
+          "closed": null,
+          "stdout": "",
+          "stderr": "Error: no dialog is open to accept.",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [
+        "O",
+        "P0"
+      ],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 7004,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/heavy?n=p&ms=9000 | Title: heavy p",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "xsite-siblings-newer-alerts-g100",
+      "trial": 0,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 880,
+        "out": "Navigated to http://127.0.0.1:56776/?n=xsite-siblings-newer-alerts-g100-0-8116\nTitle: page xsite-siblings-newer-alerts-g100-0-8116",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 137,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "XS/?n=a",
+          "opener": "O",
+          "createdMs": 5
+        },
+        {
+          "label": "O",
+          "url": "B/?n=xsite-siblings-newer-alerts-g100-0-8116",
+          "opener": null,
+          "createdMs": -164
+        },
+        {
+          "label": "P1",
+          "url": "XS/alert-inline?n=b",
+          "opener": "O",
+          "createdMs": 129
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "responsive",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "safe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:56776/?n=a\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:56776/alert-inline?n=b\"}",
+        "stderr": "Note: tab 3B19836E686F6E325EC5BC471877BCF8 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 0724D5343E6310A20153E4872A068766.\n  Note: tab 0724D5343E6310A20153E4872A068766 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1068,
+          "closed": "P1",
+          "stdout": "Tab 0724D5343E6310A20153E4872A068766 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "P1": "gone",
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P1"
+      ],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 273,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=xsite-siblings-newer-alerts-g100-0-8116 | Title: page xsite-siblings-newer-alerts-g100-0-8116",
+        "err": ""
+      },
+      "end": {
+        "P1": "gone",
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "xsite-siblings-newer-alerts-g300",
+      "trial": 0,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 905,
+        "out": "Navigated to http://127.0.0.1:56776/?n=xsite-siblings-newer-alerts-g300-0-15695\nTitle: page xsite-siblings-newer-alerts-g300-0-15695",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 343,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "XS/?n=a",
+          "opener": "O",
+          "createdMs": 6
+        },
+        {
+          "label": "O",
+          "url": "B/?n=xsite-siblings-newer-alerts-g300-0-15695",
+          "opener": null,
+          "createdMs": -151
+        },
+        {
+          "label": "P1",
+          "url": "XS/alert-inline?n=b",
+          "opener": "O",
+          "createdMs": 333
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "responsive",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "safe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:56776/?n=a\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:56776/alert-inline?n=b\"}",
+        "stderr": "Note: tab 1E8E56BD34882C4E79A13E9EF3B63B3D is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 35039AB1549E7989A55CC2464BCAC564.\n  Note: tab 35039AB1549E7989A55CC2464BCAC564 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1087,
+          "closed": "P1",
+          "stdout": "Tab 35039AB1549E7989A55CC2464BCAC564 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "P1": "gone",
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P1"
+      ],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 268,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=xsite-siblings-newer-alerts-g300-0-15695 | Title: page xsite-siblings-newer-alerts-g300-0-15695",
+        "err": ""
+      },
+      "end": {
+        "P1": "gone",
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "xsite-siblings-older-alerts",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 866,
+        "out": "Navigated to http://127.0.0.1:56776/?n=xsite-siblings-older-alerts-0-23502\nTitle: page xsite-siblings-older-alerts-0-23502",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 76,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=xsite-siblings-older-alerts-0-23502",
+          "opener": null,
+          "createdMs": -163
+        },
+        {
+          "label": "P0",
+          "url": "XS/alert-delay?n=a&ms=150",
+          "opener": "O",
+          "createdMs": 5
+        },
+        {
+          "label": "P1",
+          "url": "XS/?n=b",
+          "opener": "O",
+          "createdMs": 66
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "responsive",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "P1",
+          "type": "unknown",
+          "safe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-150-a\",\"defaultValue\":null,\"url\":\"http://localhost:56776/alert-delay?n=a&ms=150\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:56776/?n=b\"}",
+        "stderr": "Note: tab 15D36E3A8C6ACC8F71A63B117F2FB173 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1121,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-150-a\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 271,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=xsite-siblings-older-alerts-0-23502 | Title: page xsite-siblings-older-alerts-0-23502",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "responsive"
+      }
+    },
+    {
+      "scenario": "warden-down-isolated-alert",
+      "trial": 0,
+      "holderLabel": "O",
+      "nav": {
+        "code": 0,
+        "ms": 853,
+        "out": "Navigated to http://127.0.0.1:56776/?n=warden-down-isolated-alert-0-31038\nTitle: page warden-down-isolated-alert-0-31038",
+        "err": ""
+      },
+      "stepLog": [
+        {
+          "killWarden": 32424,
+          "ours": true
+        }
+      ],
+      "scenMs": 1171,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=warden-down-isolated-alert-0-31038",
+          "opener": null,
+          "createdMs": -160
+        }
+      ],
+      "popupCount": 0,
+      "before": {
+        "O": "blocked"
+      },
+      "warden": {
+        "error": "TypeError: fetch failed"
+      },
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=warden-down-isolated-alert-0-31038\"}",
+        "stderr": "Note: tab 3D0FFED2F9FEDC6BA7CD14A5A0BDF4B2 may be the dialog holder, but the dialog warden is not running, so \"dialog accept/dismiss\" cannot safely confirm or close it -- it will refuse rather than guess."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 6295,
+          "closed": null,
+          "stdout": "Tab 3D0FFED2F9FEDC6BA7CD14A5A0BDF4B2 is unresponsive, but the dialog warden is not running, so this dialog cannot be safely attributed to one specific tab without guessing (guessing here has been measured to close the wrong, innocent tab) — no automatic recovery was attempted. Run \"sutradhar close\" to end the session.",
+          "stderr": "",
+          "after": {
+            "O": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [
+        "O"
+      ],
+      "extra": [
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 4260,
+          "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=warden-down-isolated-alert-0-31038\"}",
+          "stderr": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "tabs",
+          "code": 3,
+          "ms": 4291,
+          "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=warden-down-isolated-alert-0-31038\"}",
+          "stderr": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 6315,
+          "stdout": "Tab 3D0FFED2F9FEDC6BA7CD14A5A0BDF4B2 is unresponsive, but the dialog warden is not running, so this dialog cannot be safely attributed to one specific tab without guessing (guessing here has been measured to close the wrong, innocent tab) — no automatic recovery was attempted. Run \"sutradhar close\" to end the session.",
+          "stderr": ""
+        }
+      ],
+      "snapAfter": {
+        "code": 3,
+        "ms": 4266,
+        "killedAtCap": false,
+        "head": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=warden-down-isolated-alert-0-31038\"} | ",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identif"
+      },
+      "end": {
+        "O": "blocked"
+      }
+    },
+    {
+      "scenario": "warden-down-isolated-xhr",
+      "trial": 0,
+      "holderLabel": "NONE",
+      "nav": {
+        "code": 0,
+        "ms": 880,
+        "out": "Navigated to http://127.0.0.1:56776/?n=warden-down-isolated-xhr-0-72002\nTitle: page warden-down-isolated-xhr-0-72002",
+        "err": ""
+      },
+      "stepLog": [
+        {
+          "killWarden": 65416,
+          "ours": true
+        }
+      ],
+      "scenMs": 1165,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=warden-down-isolated-xhr-0-72002",
+          "opener": null,
+          "createdMs": -159
+        }
+      ],
+      "popupCount": 0,
+      "before": {
+        "O": "blocked"
+      },
+      "warden": {
+        "error": "TypeError: fetch failed"
+      },
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=warden-down-isolated-xhr-0-72002\"}",
+        "stderr": "Note: tab DCA6F4CB2C47D176EA7BE9C5EB1A8E72 may be the dialog holder, but the dialog warden is not running, so \"dialog accept/dismiss\" cannot safely confirm or close it -- it will refuse rather than guess."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 4638,
+          "closed": null,
+          "stdout": "",
+          "stderr": "Error: could not accept the unknown dialog: Protocol error (Page.handleJavaScriptDialog): No dialog is showing",
+          "after": {
+            "O": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 3613,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=warden-down-isolated-xhr-0-72002 | Title: page warden-down-isolated-xhr-0-72002",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive"
+      }
+    },
+    {
+      "scenario": "oopif-alert",
+      "trial": 0,
+      "holderLabel": "O(frame)",
+      "nav": {
+        "code": 0,
+        "ms": 864,
+        "out": "Navigated to http://127.0.0.1:56776/?n=oopif-alert-0-90679\nTitle: page oopif-alert-0-90679",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 815,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/?n=oopif-alert-0-90679",
+          "opener": null,
+          "createdMs": -163
+        }
+      ],
+      "popupCount": 0,
+      "before": {
+        "O": "responsive"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "alert"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"inline-f\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/?n=oopif-alert-0-90679\"}",
+        "stderr": ""
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 704,
+          "closed": null,
+          "stdout": "Accepted alert \"inline-f\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 296,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/?n=oopif-alert-0-90679 | Title: page oopif-alert-0-90679",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive"
+      }
+    },
+    {
+      "scenario": "bootstrap-nav-timer-0",
+      "trial": 0,
+      "holderLabel": "O",
+      "nav": {
+        "code": 3,
+        "ms": 1279,
+        "out": "Navigation to http://127.0.0.1:56776/alert-delay?ms=0&n=bootstrap-nav-timer-0-0-97139 started, but the page opened a alert dialog while loading.\ndialogPending: {\"type\":\"alert\",\"message\":\"delay-0-bootstrap-nav-timer-0-0-97139\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/alert-delay?ms=0&n=boots",
+        "err": "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prov"
+      },
+      "stepLog": [],
+      "scenMs": 201,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/alert-delay?ms=0&n=bootstrap-nav-timer-0-0-97139",
+          "opener": null,
+          "createdMs": -160
+        }
+      ],
+      "popupCount": 0,
+      "before": {
+        "O": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "alert"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-0-bootstrap-nav-timer-0-0-97139\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/alert-delay?ms=0&n=bootstrap-nav-timer-0-0-97139\"}",
+        "stderr": ""
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 719,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-0-bootstrap-nav-timer-0-0-97139\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 280,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/alert-delay?ms=0&n=bootstrap-nav-timer-0-0-97139 | Title: delay bootstrap-nav-timer-0-0-97139",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive"
+      }
+    },
+    {
+      "scenario": "bootstrap-nav-timer-150",
+      "trial": 0,
+      "holderLabel": "O",
+      "nav": {
+        "code": 0,
+        "ms": 858,
+        "out": "Navigated to http://127.0.0.1:56776/alert-delay?ms=150&n=bootstrap-nav-timer-150-0-4013\nTitle: delay bootstrap-nav-timer-150-0-4013",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 202,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/alert-delay?ms=150&n=bootstrap-nav-timer-150-0-4013",
+          "opener": null,
+          "createdMs": -157
+        }
+      ],
+      "popupCount": 0,
+      "before": {
+        "O": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "alert"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-150-bootstrap-nav-timer-150-0-4013\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/alert-delay?ms=150&n=bootstrap-nav-timer-150-0-4013\"}",
+        "stderr": ""
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 711,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-150-bootstrap-nav-timer-150-0-4013\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 272,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/alert-delay?ms=150&n=bootstrap-nav-timer-150-0-4013 | Title: delay bootstrap-nav-timer-150-0-4013",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive"
+      }
+    },
+    {
+      "scenario": "bootstrap-nav-timer-400",
+      "trial": 0,
+      "holderLabel": "O",
+      "nav": {
+        "code": 0,
+        "ms": 884,
+        "out": "Navigated to http://127.0.0.1:56776/alert-delay?ms=400&n=bootstrap-nav-timer-400-0-10440\nTitle: delay bootstrap-nav-timer-400-0-10440",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 202,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/alert-delay?ms=400&n=bootstrap-nav-timer-400-0-10440",
+          "opener": null,
+          "createdMs": -163
+        }
+      ],
+      "popupCount": 0,
+      "before": {
+        "O": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "alert"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-400-bootstrap-nav-timer-400-0-10440\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/alert-delay?ms=400&n=bootstrap-nav-timer-400-0-10440\"}",
+        "stderr": ""
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 709,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-400-bootstrap-nav-timer-400-0-10440\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 292,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/alert-delay?ms=400&n=bootstrap-nav-timer-400-0-10440 | Title: delay bootstrap-nav-timer-400-0-10440",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive"
+      }
+    },
+    {
+      "scenario": "bootstrap-nav-timer-800",
+      "trial": 0,
+      "holderLabel": "O",
+      "nav": {
+        "code": 0,
+        "ms": 871,
+        "out": "Navigated to http://127.0.0.1:56776/alert-delay?ms=800&n=bootstrap-nav-timer-800-0-16933\nTitle: delay bootstrap-nav-timer-800-0-16933",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 213,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/alert-delay?ms=800&n=bootstrap-nav-timer-800-0-16933",
+          "opener": null,
+          "createdMs": -159
+        }
+      ],
+      "popupCount": 0,
+      "before": {
+        "O": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "alert"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-800-bootstrap-nav-timer-800-0-16933\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/alert-delay?ms=800&n=bootstrap-nav-timer-800-0-16933\"}",
+        "stderr": ""
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 718,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-800-bootstrap-nav-timer-800-0-16933\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 267,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/alert-delay?ms=800&n=bootstrap-nav-timer-800-0-16933 | Title: delay bootstrap-nav-timer-800-0-16933",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive"
+      }
+    },
+    {
+      "scenario": "bootstrap-nav-timer-1500",
+      "trial": 0,
+      "holderLabel": "O",
+      "nav": {
+        "code": 0,
+        "ms": 926,
+        "out": "Navigated to http://127.0.0.1:56776/alert-delay?ms=1500&n=bootstrap-nav-timer-1500-0-23373\nTitle: delay bootstrap-nav-timer-1500-0-23373",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 203,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/alert-delay?ms=1500&n=bootstrap-nav-timer-1500-0-23373",
+          "opener": null,
+          "createdMs": -163
+        }
+      ],
+      "popupCount": 0,
+      "before": {
+        "O": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "alert"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-1500-bootstrap-nav-timer-1500-0-23373\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/alert-delay?ms=1500&n=bootstrap-nav-timer-1500-0-23373\"}",
+        "stderr": ""
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 722,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-1500-bootstrap-nav-timer-1500-0-23373\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 267,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/alert-delay?ms=1500&n=bootstrap-nav-timer-1500-0-23373 | Title: delay bootstrap-nav-timer-1500-0-23373",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive"
+      }
+    },
+    {
+      "scenario": "bootstrap-nav-timer-3000",
+      "trial": 0,
+      "holderLabel": "O",
+      "nav": {
+        "code": 0,
+        "ms": 869,
+        "out": "Navigated to http://127.0.0.1:56776/alert-delay?ms=3000&n=bootstrap-nav-timer-3000-0-29949\nTitle: delay bootstrap-nav-timer-3000-0-29949",
+        "err": ""
+      },
+      "stepLog": [],
+      "scenMs": 201,
+      "targets": [
+        {
+          "label": "O",
+          "url": "B/alert-delay?ms=3000&n=bootstrap-nav-timer-3000-0-29949",
+          "opener": null,
+          "createdMs": -165
+        }
+      ],
+      "popupCount": 0,
+      "before": {
+        "O": "responsive"
+      },
+      "warden": [],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"delay-3000-bootstrap-nav-timer-3000-0-29949\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56776/alert-delay?ms=3000&n=bootstrap-nav-timer-3000-0-29949\"}",
+        "stderr": ""
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 709,
+          "closed": null,
+          "stdout": "Accepted alert \"delay-3000-bootstrap-nav-timer-3000-0-29949\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 261,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56776/alert-delay?ms=3000&n=bootstrap-nav-timer-3000-0-29949 | Title: delay bootstrap-nav-timer-3000-0-29949",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive"
+      }
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

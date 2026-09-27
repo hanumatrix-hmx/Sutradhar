@@ -1,0 +1,358 @@
+{
+  "at": "2026-09-27T06:35:02.237Z",
+  "results": [
+    {
+      "which": "cur",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:58431/?n=keep0",
+          "code": 0,
+          "ms": 860,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:58431/?n=keep0 | Title: page keep0",
+          "err": ""
+        },
+        {
+          "args": "newtab http://127.0.0.1:58431/?n=victim0",
+          "code": 0,
+          "ms": 404,
+          "cap": false,
+          "out": "New tab tab_sess_1790490746513_1_2 opened at http://127.0.0.1:58431/?n=victim0",
+          "err": ""
+        },
+        {
+          "args": "nav chrome://crash",
+          "code": 1,
+          "ms": 898,
+          "cap": false,
+          "out": "",
+          "err": "Fatal: net::ERR_ABORTED at chrome://crash"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 676,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58431/?n=keep0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "tabs",
+          "code": 3,
+          "ms": 674,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58431/?n=keep0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 681,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58431/?n=keep0\"}",
+          "err": "Note: tab 5DBD1BF7C0C90A2D04B16478E17DD48A is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 673,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "nav http://127.0.0.1:58431/?n=after0",
+          "code": 3,
+          "ms": 677,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58431/?n=keep0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"nav\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identi"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 673,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58431/?n=keep0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 835,
+          "cap": false,
+          "out": "Session closed.",
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ],
+      "finalSnap": 3
+    },
+    {
+      "which": "cur",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:58431/?n=keep1",
+          "code": 0,
+          "ms": 878,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:58431/?n=keep1 | Title: page keep1",
+          "err": ""
+        },
+        {
+          "args": "newtab http://127.0.0.1:58431/?n=victim1",
+          "code": 0,
+          "ms": 391,
+          "cap": false,
+          "out": "New tab tab_sess_1790490756294_1_2 opened at http://127.0.0.1:58431/?n=victim1",
+          "err": ""
+        },
+        {
+          "args": "nav chrome://crash",
+          "code": 1,
+          "ms": 911,
+          "cap": false,
+          "out": "",
+          "err": "Fatal: net::ERR_ABORTED at chrome://crash"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 686,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58431/?n=victim1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "tabs",
+          "code": 3,
+          "ms": 673,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58431/?n=victim1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 671,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58431/?n=victim1\"}",
+          "err": "Note: tab 5F6FC5F79CD27D343EC5D3483E09A359 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 674,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "nav http://127.0.0.1:58431/?n=after1",
+          "code": 3,
+          "ms": 687,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58431/?n=victim1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"nav\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identi"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 672,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58431/?n=victim1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 856,
+          "cap": false,
+          "out": "Session closed.",
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ],
+      "finalSnap": 3
+    },
+    {
+      "which": "master",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:58431/?n=keep0",
+          "code": 0,
+          "ms": 600,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:58431/?n=keep0 | Title: page keep0",
+          "err": ""
+        },
+        {
+          "args": "newtab http://127.0.0.1:58431/?n=victim0",
+          "code": 0,
+          "ms": 384,
+          "cap": false,
+          "out": "New tab tab_sess_1790490766119_1_2 opened at http://127.0.0.1:58431/?n=victim0",
+          "err": ""
+        },
+        {
+          "args": "nav chrome://crash",
+          "code": 1,
+          "ms": 622,
+          "cap": false,
+          "out": "",
+          "err": "Note: previous session was unreachable (net::ERR_ABORTED at chrome://crash) — starting a fresh session. | Fatal: net::ERR_ABORTED at chrome://crash"
+        },
+        {
+          "args": "snap",
+          "code": 1,
+          "ms": 60167,
+          "cap": true,
+          "out": "",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 318,
+          "cap": false,
+          "out": "* tab_sess_1790490768460_2_1  New tab  chrome://new-tab-page/",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 1,
+          "ms": 223,
+          "cap": false,
+          "out": "Sutradhar CLI |  | Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>]",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 225,
+          "cap": false,
+          "out": "Sutradhar CLI |  | Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>]",
+          "err": ""
+        },
+        {
+          "args": "nav http://127.0.0.1:58431/?n=after0",
+          "code": 0,
+          "ms": 262,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:58431/?n=after0 | Title: page after0",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 0,
+          "ms": 238,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:58431/?n=after0 | Title: page after0 | Interactive elements (0):",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 398,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "finalSnap": 0
+    },
+    {
+      "which": "master",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:58431/?n=keep1",
+          "code": 0,
+          "ms": 585,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:58431/?n=keep1 | Title: page keep1",
+          "err": ""
+        },
+        {
+          "args": "newtab http://127.0.0.1:58431/?n=victim1",
+          "code": 0,
+          "ms": 380,
+          "cap": false,
+          "out": "New tab tab_sess_1790490832234_1_2 opened at http://127.0.0.1:58431/?n=victim1",
+          "err": ""
+        },
+        {
+          "args": "nav chrome://crash",
+          "code": 1,
+          "ms": 637,
+          "cap": false,
+          "out": "",
+          "err": "Note: previous session was unreachable (net::ERR_ABORTED at chrome://crash) — starting a fresh session. | Fatal: net::ERR_ABORTED at chrome://crash"
+        },
+        {
+          "args": "snap",
+          "code": 1,
+          "ms": 60190,
+          "cap": true,
+          "out": "",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 278,
+          "cap": false,
+          "out": "* tab_sess_1790490834576_2_1  New tab  chrome://new-tab-page/",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 1,
+          "ms": 239,
+          "cap": false,
+          "out": "Sutradhar CLI |  | Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>]",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 222,
+          "cap": false,
+          "out": "Sutradhar CLI |  | Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>]",
+          "err": ""
+        },
+        {
+          "args": "nav http://127.0.0.1:58431/?n=after1",
+          "code": 0,
+          "ms": 260,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:58431/?n=after1 | Title: page after1",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 0,
+          "ms": 237,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:58431/?n=after1 | Title: page after1 | Interactive elements (0):",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 416,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "finalSnap": 0
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

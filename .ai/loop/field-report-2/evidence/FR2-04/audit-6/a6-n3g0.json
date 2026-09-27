@@ -1,0 +1,592 @@
+{
+  "at": "2026-09-27T06:21:46.109Z",
+  "results": [
+    {
+      "scenario": "N3-type252-openerclosed-g0",
+      "trial": 0,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 904,
+        "out": "Navigated to http://127.0.0.1:51712/?n=N3-type252-openerclosed-g0-0-38163\nTitle: page N3-type252-openerclosed-g0-0-38163",
+        "err": ""
+      },
+      "stepLog": [
+        {
+          "closeTarget": "O",
+          "r": "ok"
+        }
+      ],
+      "scenMs": 1553,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "XS/?n=first-innocent",
+          "opener": null,
+          "createdMs": 6
+        },
+        {
+          "label": "P1",
+          "url": "XS/alert-inline?n=holder",
+          "opener": null,
+          "createdMs": 23
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "gone",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "unknown"
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:51712/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:51712/alert-inline?n=holder\"}",
+        "stderr": "Note: tab BF4DB266D8589DB6BDE32114F3BFA0A0 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab.\n  Note: tab 99DD8C690C2ED14952E60EDD4EC56581 appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier unknown dialog on tab BF4DB266D8589DB6BDE32114F3BFA0A0 first, not this one."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1092,
+          "closed": "P0",
+          "stdout": "Tab BF4DB266D8589DB6BDE32114F3BFA0A0 (http://localhost:51712/?n=first-innocent) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "gone",
+            "P0": "blocked",
+            "P1": "blocked"
+          }
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1086,
+          "closed": "P1",
+          "stdout": "Tab 99DD8C690C2ED14952E60EDD4EC56581 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "gone",
+            "P0": "gone",
+            "P1": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P0",
+        "P1"
+      ],
+      "innocentClosed": [
+        "P0"
+      ],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 430,
+        "killedAtCap": false,
+        "head": "URL: about:blank | Title: ",
+        "err": ""
+      },
+      "end": {
+        "O": "gone",
+        "P0": "gone",
+        "P1": "gone"
+      }
+    },
+    {
+      "scenario": "N3-type252-openerclosed-g0",
+      "trial": 1,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 903,
+        "out": "Navigated to http://127.0.0.1:51712/?n=N3-type252-openerclosed-g0-1-49469\nTitle: page N3-type252-openerclosed-g0-1-49469",
+        "err": ""
+      },
+      "stepLog": [
+        {
+          "closeTarget": "O",
+          "r": "ok"
+        }
+      ],
+      "scenMs": 1561,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "XS/?n=first-innocent",
+          "opener": null,
+          "createdMs": 5
+        },
+        {
+          "label": "P1",
+          "url": "XS/alert-inline?n=holder",
+          "opener": null,
+          "createdMs": 25
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "gone",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "unknown"
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:51712/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:51712/alert-inline?n=holder\"}",
+        "stderr": "Note: tab 1CC1A8C6E7CCC23B7D488FD1DFDAE5EF appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab.\n  Note: tab CFF35E04FCCAB2E1ED9690950E0C28C2 appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier unknown dialog on tab 1CC1A8C6E7CCC23B7D488FD1DFDAE5EF first, not this one."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1076,
+          "closed": "P0",
+          "stdout": "Tab 1CC1A8C6E7CCC23B7D488FD1DFDAE5EF (http://localhost:51712/?n=first-innocent) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "gone",
+            "P0": "blocked",
+            "P1": "blocked"
+          }
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1073,
+          "closed": "P1",
+          "stdout": "Tab CFF35E04FCCAB2E1ED9690950E0C28C2 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "gone",
+            "P0": "gone",
+            "P1": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P0",
+        "P1"
+      ],
+      "innocentClosed": [
+        "P0"
+      ],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 428,
+        "killedAtCap": false,
+        "head": "URL: about:blank | Title: ",
+        "err": ""
+      },
+      "end": {
+        "O": "gone",
+        "P0": "gone",
+        "P1": "gone"
+      }
+    },
+    {
+      "scenario": "N3-type252-openerclosed-g0",
+      "trial": 2,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 911,
+        "out": "Navigated to http://127.0.0.1:51712/?n=N3-type252-openerclosed-g0-2-60754\nTitle: page N3-type252-openerclosed-g0-2-60754",
+        "err": ""
+      },
+      "stepLog": [
+        {
+          "closeTarget": "O",
+          "r": "ok"
+        }
+      ],
+      "scenMs": 1566,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "XS/?n=first-innocent",
+          "opener": null,
+          "createdMs": 9
+        },
+        {
+          "label": "P1",
+          "url": "XS/alert-inline?n=holder",
+          "opener": null,
+          "createdMs": 33
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "gone",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "unknown",
+          "safe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:51712/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:51712/alert-inline?n=holder\"}",
+        "stderr": "Note: tab 752AFBBF8AA3BB84A53BD6838746D481 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it.\n  Note: tab 9A0B38029875E308A2599B585C1F6A51 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1112,
+          "closed": "P1",
+          "stdout": "Tab 9A0B38029875E308A2599B585C1F6A51 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "gone",
+            "P1": "gone",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P1"
+      ],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 274,
+        "killedAtCap": false,
+        "head": "URL: http://localhost:51712/?n=first-innocent | Title: page first-innocent",
+        "err": ""
+      },
+      "end": {
+        "O": "gone",
+        "P1": "gone",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "N3-type252-openerclosed-g0",
+      "trial": 3,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 881,
+        "out": "Navigated to http://127.0.0.1:51712/?n=N3-type252-openerclosed-g0-3-69935\nTitle: page N3-type252-openerclosed-g0-3-69935",
+        "err": ""
+      },
+      "stepLog": [
+        {
+          "closeTarget": "O",
+          "r": "ok"
+        }
+      ],
+      "scenMs": 1559,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "XS/?n=first-innocent",
+          "opener": null,
+          "createdMs": 6
+        },
+        {
+          "label": "P1",
+          "url": "XS/alert-inline?n=holder",
+          "opener": null,
+          "createdMs": 23
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "gone",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "unknown",
+          "safe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:51712/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:51712/alert-inline?n=holder\"}",
+        "stderr": "Note: tab 704246A93D20F7E59E191F72D9EB12ED is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it.\n  Note: tab E5E1F7C00273DE2726636EF0B6A55D34 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1079,
+          "closed": "P1",
+          "stdout": "Tab E5E1F7C00273DE2726636EF0B6A55D34 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "gone",
+            "P1": "gone",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P1"
+      ],
+      "innocentClosed": [],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 298,
+        "killedAtCap": false,
+        "head": "URL: http://localhost:51712/?n=first-innocent | Title: page first-innocent",
+        "err": ""
+      },
+      "end": {
+        "O": "gone",
+        "P1": "gone",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "N3-type252-openerclosed-g0",
+      "trial": 4,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 850,
+        "out": "Navigated to http://127.0.0.1:51712/?n=N3-type252-openerclosed-g0-4-78987\nTitle: page N3-type252-openerclosed-g0-4-78987",
+        "err": ""
+      },
+      "stepLog": [
+        {
+          "closeTarget": "O",
+          "r": "ok"
+        }
+      ],
+      "scenMs": 1558,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "XS/?n=first-innocent",
+          "opener": null,
+          "createdMs": 5
+        },
+        {
+          "label": "P1",
+          "url": "XS/alert-inline?n=holder",
+          "opener": null,
+          "createdMs": 21
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "gone",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "unknown"
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:51712/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:51712/alert-inline?n=holder\"}",
+        "stderr": "Note: tab F30EEF3B487DED057D2456B261CEF5D7 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab.\n  Note: tab 48A59EA2CE0BF7643E973D0FA2A4FA34 appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier unknown dialog on tab F30EEF3B487DED057D2456B261CEF5D7 first, not this one."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1073,
+          "closed": "P0",
+          "stdout": "Tab F30EEF3B487DED057D2456B261CEF5D7 (http://localhost:51712/?n=first-innocent) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "gone",
+            "P0": "blocked",
+            "P1": "blocked"
+          }
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1071,
+          "closed": "P1",
+          "stdout": "Tab 48A59EA2CE0BF7643E973D0FA2A4FA34 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "gone",
+            "P0": "gone",
+            "P1": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P0",
+        "P1"
+      ],
+      "innocentClosed": [
+        "P0"
+      ],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 428,
+        "killedAtCap": false,
+        "head": "URL: about:blank | Title: ",
+        "err": ""
+      },
+      "end": {
+        "O": "gone",
+        "P0": "gone",
+        "P1": "gone"
+      }
+    },
+    {
+      "scenario": "N3-type252-openerclosed-g0",
+      "trial": 5,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 894,
+        "out": "Navigated to http://127.0.0.1:51712/?n=N3-type252-openerclosed-g0-5-90230\nTitle: page N3-type252-openerclosed-g0-5-90230",
+        "err": ""
+      },
+      "stepLog": [
+        {
+          "closeTarget": "O",
+          "r": "ok"
+        }
+      ],
+      "scenMs": 1547,
+      "targets": [
+        {
+          "label": "P0",
+          "url": "XS/?n=first-innocent",
+          "opener": null,
+          "createdMs": 6
+        },
+        {
+          "label": "P1",
+          "url": "XS/alert-inline?n=holder",
+          "opener": null,
+          "createdMs": 22
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "gone",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "unknown"
+        },
+        {
+          "label": "P1",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:51712/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:51712/alert-inline?n=holder\"}",
+        "stderr": "Note: tab 836B1728627C4A3F09159A59D1B5B2BA appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab.\n  Note: tab 1080796378AD5B667A8991C29C4C17F0 appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier unknown dialog on tab 836B1728627C4A3F09159A59D1B5B2BA first, not this one."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1068,
+          "closed": "P0",
+          "stdout": "Tab 836B1728627C4A3F09159A59D1B5B2BA (http://localhost:51712/?n=first-innocent) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "gone",
+            "P0": "blocked",
+            "P1": "blocked"
+          }
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1071,
+          "closed": "P1",
+          "stdout": "Tab 1080796378AD5B667A8991C29C4C17F0 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "gone",
+            "P0": "gone",
+            "P1": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P0",
+        "P1"
+      ],
+      "innocentClosed": [
+        "P0"
+      ],
+      "stillBlockedAfterAccepts": [],
+      "extra": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 430,
+        "killedAtCap": false,
+        "head": "URL: about:blank | Title: ",
+        "err": ""
+      },
+      "end": {
+        "O": "gone",
+        "P0": "gone",
+        "P1": "gone"
+      }
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

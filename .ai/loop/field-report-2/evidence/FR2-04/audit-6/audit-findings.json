@@ -1,0 +1,196 @@
+{
+  "item": "FR2-04",
+  "audit": "audit-6 (FINAL)",
+  "head": "36eefa48fa59b6d0c4b06a42fa501af9d62ff1f8",
+  "auditor": "independent (did not write this code)",
+  "startedAt": "2026-09-27T05:06:00Z",
+  "verdict": "FAIL",
+  "findings": [
+    {
+      "id": "A6-01",
+      "severity": "major",
+      "title": "A crashed renderer anywhere in the session (no dialog at all) locks the WHOLE CLI session: every gated command exits 3 claiming \"a unknown dialog is open\", dialog accept/dismiss refuses, tabs/closetab/nav are gated, only sutradhar close (destroying every tab and non-profile state) escapes. Regression vs the pre-FR2-04 CLI, which recovers in one command.",
+      "reproduction": {
+        "rate": "PURE CLI (nav -> newtab -> nav chrome://crash -> snap/tabs/dialog/dialog accept/nav/snap): cur 2/2 permanent lockout (tabs=3 nav=3 snap=3, dialog accept=1), pre-FR2-04 master dist 2/2 recovered (tabs=0 nav=0 snap=0). Observer Page.crash variant: cur 4/4 (bg + active tab) lockout vs master 0/4. a6 N5 4/4, signal-attack 2/2 (crashed) + 2/2 (chrome://hang).",
+        "evidence": [
+          "cli-crash.json",
+          "cli-crash-console.txt",
+          "crash-compare.json",
+          "crash-compare-console.txt",
+          "a6-new.json (N5-*)",
+          "signal-attack-console.txt"
+        ]
+      },
+      "mechanism": "The warden proactively confirms the tab (confirmedResponsiveSince) while healthy. After the crash, Performance.getMetrics times out, so listWithLiveness reports it as an unknown entry with confirmedSafe=true. runDialogGate blocks on ANY hint entry (allHint -> blockWith), selectDialog skips confirmedSafe entries (dialog accept -> \"no dialog is open to accept\", exit 1), tryRecoverUnknownTarget refuses confirmedSafe, and tabs/closetab/nav/reload are not exempt verbs. A crashed renderer never recovers on its own, so unlike the GAP-240 sync-XHR false block (accepted because it is transient) this block is permanent.",
+      "whyNotAlreadyAccepted": "audit-3 listed crashed/hung renderers under GAP-240 and fix-3/escalation-1 accepted the false BLOCK on the premise that a busy page blocks one command transiently and recovery must not close a healthy tab; audit-4/5 re-ran the crash case and only checked that recovery refused to close it. Nobody checked the escape path or compared with master: for a crash the block is permanent and the refused recovery is exactly what removes every in-session escape.",
+      "specConflict": "spec 2.8.2 step 1: a blocked target with no dialog known counts as busy and the gate proceeds with a Note; R1/D-4: exit 3 means blocked by an open dialog. Here there is provably no dialog (the tool itself says its history proves it), yet the tool reports one and exits 3 forever.",
+      "fixDirection": "Small, not architectural: exclude crashed targets (Target.targetCrashed / Inspector.targetCrashed) from the gate, and give every blocking state an in-session escape that does not need runtime.attach (e.g. tabs/closetab served from browser-level Target.getTargets + Target.closeTarget, or an explicit dialog close <targetId>)."
+    },
+    {
+      "id": "A6-02",
+      "severity": "major harm class (same as audit-5 GAP-252), narrower reach",
+      "title": "GAP-252 fix is incomplete: its anchor is the opener, so when the opener window is gone (e.g. a script-opened compose/search window that closes itself after opening popups) the two cross-site sibling popups are unlinked again and dialog accept closes the INNOCENT older popup first",
+      "reproduction": {
+        "rate": "raw-CDP N3-type252-openerclosed-g0: 5/8 innocent closed first (1/2 + 4/6); pure CLI (opener window closes itself): 2/5; with the opener still alive: 0 wrong closes (escalation-2 fix holds)",
+        "evidence": [
+          "cli-252-openerclosed-600.json",
+          "cli-252-openerclosed-console.txt",
+          "a6-new.json (N3-type252-openerclosed-g0)",
+          "a6-n3g0.json",
+          "a6-console-n3g0.txt"
+        ]
+      },
+      "mechanism": "attributeDialogHolders links siblings only through a KNOWN opener (allKnown); a closed opener is no longer in browser.targets(), so each never-confirmed sibling is its own root and its own holder; selectDialog then picks FIFO by synthesized openedAt (targets() order), i.e. the older innocent. The innocent is never-confirmed because it was born into the renderer the holder blocked within milliseconds (same root as the disclosed residual: never-confirmed is treated as candidate)."
+    },
+    {
+      "id": "A6-03",
+      "severity": "minor (evidence integrity, not a product defect)",
+      "title": "The pure-CLI xhr-after-open repro used by audit-5 and escalation-2 never opened a popup: its inline onclick called open(\"\"), which inside an inline event handler resolves to document.open() and wipes the opener. escalation-2 cited its 0 closes as CLI-level evidence. With window.open() fixed (cli-repro-fixed-probe.mjs) the same CLI flow closes the innocent about:blank popup 3/3 (GAP-251 at gap 0, pure CLI).",
+      "reproduction": {
+        "rate": "3/3",
+        "evidence": [
+          "cli-repro-fixed-fixed.json",
+          "cli-repro-fixed-console.txt",
+          "cli-repro-console.txt (unmodified copy: 0 closes, no popup ever opened)"
+        ]
+      }
+    },
+    {
+      "id": "A6-04",
+      "severity": "minor, test-integrity",
+      "title": "6 of 27 new mutations survive vitest: W3 (DialogWarden call site stops passing allTargets -- the escalation-2 GAP-252 wiring is covered only by the pure-function test, not by any warden test), C8 (findRoot limited to one level), W9 (error-state probe result treated as blocked), C2, W2, W4 (last three near-equivalent).",
+      "reproduction": {
+        "rate": "6/27 survive",
+        "evidence": [
+          "mutations-a6.json",
+          "mutations-console.txt"
+        ]
+      }
+    },
+    {
+      "id": "A6-05",
+      "severity": "minor, docs",
+      "title": "User-facing docs (packages/cli/README.md native-dialogs section, AGENT_SETUP.md CLI section, changelog-fragment.md) never mention the \"unknown\" dialog type, that dialog accept/dismiss may CLOSE a tab, that busy/crashed pages also produce exit 3, or the disclosed residual. The runtime hint mentions closing, but says it happens \"when the dialog warden can prove which one it actually is\" -- for the residual it proves nothing (it closes on absence of history)."
+    },
+    {
+      "id": "A6-06",
+      "severity": "minor (pre-existing, tracked)",
+      "title": "GAP-235 still reproduces: type/click that opens popups exits 1 with the Puppeteer \"Requesting main frame too early!\" crash after printing success (cli-repro type-two-popups 3/3, cli-252 5/5). GAP-244 unchanged: close messages sometimes omit the URL (target already gone when the message is built). A just-closed tab can still be listed by the very next dialog call (~1s later) in cli-252 t1/t2."
+    }
+  ],
+  "verified": [
+    {
+      "id": "build",
+      "result": "forced turbo build 9/9 tasks, 0 cached (build-forced.txt)"
+    },
+    {
+      "id": "vitest",
+      "result": "browser 497, capability-runtime 164, cli 144, mcp-server 84, sutradhar 15 = 904 passed, 0 failed (vitest-*.txt); matches escalation-2 self-report exactly"
+    },
+    {
+      "id": "live-verify-full",
+      "result": "verify-fr2-04-dialogs.mjs WITHOUT --skip-slow: 111 pass / 0 fail / 2 skip (L11 sessions-json: FR2-03 verb parked, substituted; N7: covered by observer-no-violations) -- verify-console.txt, verify-run/"
+    },
+    {
+      "id": "mutations-a6",
+      "result": "27 new mutations (beyond escalation-2 E3/E4/E6/E7), every restore sha-verified, git status clean afterwards: 21 killed / 6 survived. Survivors: C2 (non-blocked known opener may be named as holder -- messaging-only, near-equivalent), C8 (findRoot limited to 1 level -- deep chains through a pass-through node untested), W2 (proactive probe race guard vs tracked dialog), W3 (warden call site does not pass allTargets -- the GAP-252 fix WIRING in DialogWarden is not covered by any unit test, only the pure function is), W4 (equivalent: target ids are never reused), W9 (an error-state probe result is treated as blocked -- untested). mutations-a6.json"
+    },
+    {
+      "id": "audit-5-surface-rerun",
+      "result": "all 61 audit-5/escalation-2 scenarios (a6-probe non-N groups, incl. the GAP-251 timing sweep 0/100/300/450/700ms, the 300-1000ms dialog-timing sweeps, reactive polls, xsite siblings, warden-down, OOPIF, bootstrap timers): 58/61 clean, 0 wrong closes of a real-dialog scenario; the 3 innocent closes are exactly the residual shapes (xhr-popup-fresh-g0, popup-xhr-inline, popup-xhr-inline-noopener) -- identical to escalation-2 own run. GAP-251 fixed for gap>=100ms, not for gap 0 (a6-console-a5surface.txt)"
+    },
+    {
+      "id": "audit-3/4 attribution attacks",
+      "result": "attrib-attack-probe all 28 scenarios x2 = 56 trials (single-sync, older/newer siblings, chain leaf/middle, opener-alerts, rapid2/rapid4, rapid-gap 0/10/30/50/100, orphan, 4 warden-down shapes, noopener same-origin/cross-site, opener cross-site/same-origin, two-tabs-same-site, xhr/layout busy manual+policy): 0 innocent closes, 0 real holders left blocked (attrib-attack-console.txt)"
+    },
+    {
+      "id": "audit-3/4/5 probe re-runs",
+      "result": "cli-repro (escalation-2 copy) type-two-popups 3/3 innocent survived; link-deadend 9/9 recovered (GAP-246 holds); recovery-wrongtab 14/14 closed the POPUP never the opener, plain tracked orphans handled with no close, tabs gated exit 3 (GAP-236/237 hold); blank-escape same-site 3/3 + docwrite-timer 3/3 CAUGHT (GAP-238 holds); policy-sibling 15/15 OK opener alive (GAP-239 holds); many-blocked K=4/14/30/40 x2 flat ~405-419ms, exit 3, 0 stale pending lines after accept (GAP-241/248 hold); chain-bound all EXIT3-OK/RAN-CLEAN (GAP-229/242 hold); multi-unknown 3/3 closed only P1,P2, unrelated A,B1,B2 alive; signal-attack: busy/background-busy OK, crashed renderer + chrome://hang FALSE-BLOCK exit 3 2/2 each (known since audit-3, GAP-240 re-scope)"
+    },
+    {
+      "id": "two separate CLI sessions",
+      "result": "3/3: distinct Chrome + distinct wardens, each dialog listing only its own targets, each accept closing only its own popup, B accept while A has a tracked alert -> B \"no dialog is open\" and A later lists+accepts its own alert (cli-two-sessions.json)"
+    }
+  ],
+  "residualJudgement": {
+    "q1_narrowness": "Reproduced and measured. Pure CLI: a popup/new tab whose own load does a sync XHR still outstanding ~6s after creation is closed by the recommended dialog accept 15/15 (same-site button popup 6/6, target=_blank link 3/3, cross-site popup 3/3, plus 3/3 for an opener that does a sync XHR right after window.open(\"\") = GAP-251 at gap 0, which the escalation-2 binding decision explicitly required to be pinned no-close); a 3s XHR finishes before accept and survives 6/6 (it even loads). Heavy parse/layout and JS busy loops did not produce a close. Real-web frequency: sync XHR is deprecated but still common in legacy apps (jQuery async:false); it only matters with a multi-second endpoint and an agent that follows the hint. Rare, but WIDER than disclosed (not only the popup own first script: also the opener blocking right after window.open and plain target=_blank links).",
+    "q2_signal": "None found. discriminator-probe.mjs compared blocked-from-birth-by-dialog vs by-sync-XHR for both about:blank and URL popups, 2 trials each, across Target.getTargetInfo (url/title/attached/canAccessOpener/openerFrameId), Page.getNavigationHistory, Page.handleJavaScriptDialog (fresh session: No dialog is showing in both), Page.captureScreenshot, Performance.getMetrics, Runtime.evaluate, DOM.getDocument, Page.getFrameTree, Memory.getDOMCounters, Page.getLayoutMetrics, Network.enable, Page.enable, and renderer CPU time (SystemInfo.getProcessInfo): identical in every pair (browser-side answers identical, renderer-side all time out, CPU idle). The only discriminator is history: whether a Page-enabled listener existed before the first script ran. That is achievable structurally for URL-navigating popups (a warden-owned Target.setAutoAttach({waitForDebuggerOnStart:true}) so Page.enable precedes the popup first script), not for the about:blank synchronous-from-opener shape.",
+    "q3_harm": "Closing loses the popup and its in-flight work (the 3s variants show it would have loaded normally); in the same-renderer case it does not even unblock the opener (still blocked afterwards 4/4). It is not silent (the message names the tab, often with URL) and only happens on an explicit dialog accept|dismiss, never under --dialog policies. The alternative (refuse) turns every real load-time-alert popup -- which the warden consistently misses (reactive-*-inline, link-deadend) -- back into GAP-246 dead ends that only close escapes. Verdict on the residual alone: ACCEPTABLE to ship as a disclosed limitation (it would not by itself fail this audit), provided the docs state it and the disclosure is widened to the shapes above."
+  },
+  "newShapes": [
+    {
+      "id": "N1 cross-site OLDER holder (untracked load-time alert) + NEWER innocent same-site siblings landing in the blocked renderer, gaps 0/50/300/1000ms + 2 newer",
+      "result": "10/10 correct: only the real holder closed, 0 innocent closes (the newer innocents are either confirmed or not even listed)"
+    },
+    {
+      "id": "N2 4-level and 5-level opener chains (blank sync-alert leaf, same-site URL inline-alert leaf, cross-site 3-site chain)",
+      "result": "6/6 correct: leaf holder closed, every ancestor attributed blockedBy/confirmedSafe. Busy variant (leaf born into an opener sync-XHR) = the residual: 2/2 innocent leaf closed"
+    },
+    {
+      "id": "N3 opener closed mid-sequence (three xs siblings, three blank siblings, xs older-holder, GAP-252 typing shape at gap 10ms and 0ms)",
+      "result": "three-sibling and older-holder variants 6/6 correct; GAP-252 shape g10 2/2 correct; GAP-252 shape g0 1/2 closed the INNOCENT sibling first (opener gone -> anchor gone -> two unlinked never-confirmed candidates, FIFO picks the innocent). Re-measuring with more trials + a pure-CLI reach attempt."
+    },
+    {
+      "id": "N4 real load-time dialog on an ALREADY confirmed-safe target after same-site / cross-site / 3rd-site navigation (primary tab and popup)",
+      "result": "10/10 tracked as a typed alert (history rule survives cross-process navigation) -- no dead end"
+    },
+    {
+      "id": "N5 crashed renderer (no dialog at all) in a popup, same-site and cross-site",
+      "result": "4/4: warden lists it as unknown+confirmedSafe, every gated command exits 3 (\"a unknown dialog is open\"), dialog accept exits 1 (refused / no dialog to accept), tabs/closetab/nav gated -> only sutradhar close escapes. Comparing against the pre-FR2-04 CLI (crash-compare-probe) before grading."
+    },
+    {
+      "id": "N6 confirmed-safe target later hangs (20s sync XHR, or 20s JS loop), then a real load-time dialog on a DIFFERENT target of the same opener group (3rd site)",
+      "result": "4/4 correct: holder P1 closed, the hung confirmed-safe P0 never closed. Newborn into the hung renderer: not listed, not closed 2/2"
+    },
+    {
+      "id": "N7 3-generation multi-branch tree (A,B from O; A1,B1 from A,B): A1 blank holder, cross-branch holder landing in the other branch renderer, two holders in two branches, cross-branch with its opener A closed",
+      "result": "8/8 correct, 0 innocent closes"
+    },
+    {
+      "id": "N8 disclosed residual measured",
+      "result": "popup whose own load does a sync XHR of 3000ms: 0/4 closed (finished before accept); 6000ms: 4/4 innocent popup closed; 15000ms: 4/4 closed (same-site: opener still blocked afterwards); opener sync-XHR right after window.open(\"\") (GAP-251 at gap 0): 2/2 innocent closed; after window.open(url): 0/2 (popup not listed)"
+    }
+  ],
+  "progress": [
+    "setup: audit-6 dir, process-baseline.txt (chrome=114 node=3, 0 matching audit6/warden)",
+    "read: spec.md, spec-amendment-1.md, decisions.md FR2-04 entries (step1..escalation-2), gaps GAP-220..255, escalation-2 diff",
+    "pre-observation from escalation-2's OWN evidence (a5-escalation2-all.json): xhr-popup-fresh-g0 (opener sync-XHR right after window.open, i.e. GAP-251 at gap 0) still closes the innocent popup 1/1 -- the binding decision asked for exactly this shape to be pinned 'no close'; escalation-2 relabels it as the disclosed residual. To be re-measured live.",
+    "vitest + full live verify done; mutations-a6 running; run-sweep-a6.sh (new shapes N1-N8, CLI residual, two sessions, full audit-3/4/5 re-run) started",
+    "mutations-a6 done: 21/27 killed",
+    "a6-probe group:N done (2 trials each)",
+    "audit-5 surface re-run done",
+    "attrib-attack re-run done",
+    "sweep 1 complete; sweep 2 (crash compare vs pre-FR2-04 dist, GAP-252 anchor-removed CLI reach, fixed CLI residual, two sessions) running",
+    "crash-compare done: regression confirmed vs pre-FR2-04 dist; pure-CLI chrome://crash probe queued",
+    "GAP-252 anchor-removed pure-CLI reach: 2/5",
+    "sweep 2 done; residual pure-CLI measured; pure-CLI chrome://crash + discriminator probes running",
+    "pure-CLI chrome://crash probe + discriminator probe done; process-after.txt clean (chrome=114 node=3 = baseline, 0 audit6/warden); all temp roots removed; git status shows only audit-6/"
+  ],
+  "summary": "FAIL on A6-01 (major, regression, 100% reproducible pure-CLI: one crashed renderer anywhere permanently locks the whole CLI session; only close escapes) and A6-02 (major harm class, GAP-252 fix incomplete when the opener is gone; pure CLI 2/5, raw 5/8). The attribution design otherwise held against every audit-3/4/5 attack and all new shapes (4/5-level chains, multi-branch trees, opener-closed siblings, cross-process navigation of confirmed targets, two sessions). The disclosed residual is judged acceptable on its own. vitest 904/904; full live verify 111/0/2; 21/27 new mutations killed.",
+  "finishedAt": "2026-09-27T06:37:07.588Z",
+  "blockedDiagnosis": {
+    "rootCause": "Every FR2-04 cycle since fix-1 has patched one edge of the same inference: the design infers dialog state from a renderer-liveness probe that can only say answering or not answering, then layers heuristics (opener topology, newest-leaf, confirmedResponsiveSince history, known-opener anchors) on top of it to decide two different things at once: whether to block every command, and which tab it is safe to close. A6-01 is the block half failing (a provably non-dialog, never-recovering target blocks everything, with no escape because the escape verbs are gated too). A6-02 and the residual are the close half failing (never-confirmed is treated as candidate, and any missing anchor turns FIFO order into the decision).",
+    "whatMustChange": [
+      "1. Block only on positive evidence or a real attach hazard, never on unconfirmed inference alone: crashed targets excluded outright (Target.targetCrashed / Inspector.targetCrashed), and confirmed-safe busy targets reported as busy (spec 2.8.2 step 1), with attach made safe against them (lazy page adoption / bounded page init) instead of gating every verb.",
+      "2. Always keep an in-session escape that does not call runtime.attach: tabs and closetab served from browser-level Target.getTargets / Target.closeTarget, so no blocking state can require sutradhar close.",
+      "3. Make untracked dialogs structurally impossible for navigating popups: the warden holds its own browser-level Target.setAutoAttach({autoAttach:true, waitForDebuggerOnStart:true, flatten:true}) and sends Page.enable before Runtime.runIfWaitingForDebugger, so a URL popup is Page-enabled before its first script. Then blocked + untracked means busy for those popups and recovery never has to guess. Only the about:blank popup driven synchronously by its opener stays ambiguous.",
+      "4. Replace implicit recovery (dialog accept closes a guessed holder chosen FIFO among candidates) with explicit targeting: list the candidate tabs with ids and URLs and require dialog close <targetId>. The tool never picks among several unconfirmed candidates."
+    ],
+    "smallestPatchThatWouldHaveClosedA6_01": "exclude crashed targets and ungate closetab/tabs via browser-level CDP; this is a small patch, but no fix cycles remain."
+  },
+  "specCompliance": {
+    "met": [
+      "Every spec 4 numbered unit test exists and passes (T1-T10, S-D1/2, B1-B6, LV1-5, R1-6, P-D1-9, D1-10, W1-5, ST-D1, WD1-8, WC1-4, help-text/selector-args re-run)",
+      "Every 5/6 live case (L0-L15, N1-N14, N11b, L15 per amendment) passes in the full run: 111/0/2 (the 2 skips are the parked FR2-03 sessions verb and N7, which is covered by the global observer-no-violations check)",
+      "2.8.5 exact strings and exit codes present in source and asserted live",
+      "D-2: MCP/SDK unchanged (auto default, R3, mcp-server 84/84)",
+      "R-E gate disposes its connection (B6); watchdog (N10); D10 report persisted",
+      "Gate overhead snap median 273ms / p90 395ms (gate-overhead.json)"
+    ],
+    "deviations": [
+      "2.8.2 step 1: \"a blocked target with no dialog known counts as busy; the gate does not block\" -- the implementation blocks (exit 3, type unknown) on every liveness-inferred entry, including confirmedSafe ones that the warden itself says cannot be a dialog. This was an Orchestrator decision in fix-1/fix-3 (accepted on the premise that busy is transient), and it is the direct cause of A6-01.",
+      "1 row 16 (docs match behavior): unknown-dialog recovery by closing a tab, and the residual, are undocumented (A6-05).",
+      "2.9 step 5 (verify the target answers liveness within VERIFY_UNBLOCK_MS): implemented as a re-list poll (5 x 80ms) that prints what is still pending. It is functionally equivalent, but no explicit liveness verdict is reported."
+    ]
+  }
+}

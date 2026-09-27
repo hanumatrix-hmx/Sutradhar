@@ -2536,3 +2536,99 @@ Orchestrator does not get to decide DONE-worthiness unilaterally on the last cyc
 This is escalation cycle 2 of 2 (the last one). If audit-6 finds a critical or major defect, FR2-04
 is marked BLOCKED with a written diagnosis per the loop's rules -- no further cycles. If audit-6
 passes, FR2-04 is DONE and the loop moves to the next item.
+
+## 2026-09-27 -- FR2-04: BLOCKED. Final audit (audit-6) FAILED after 4 standard + 2 escalation cycles. Written diagnosis below.
+
+audit-6 was the last cycle available under the loop's rules (4 standard cycles: audit-1..4/fix-1..3;
+2 escalation cycles: audit-5/escalation-1, audit-6/escalation-2). It found the attribution redesign
+from escalation-1/2 genuinely holds under very broad attack -- 4- and 5-level opener chains, three
+siblings with an opener closed mid-sequence, cross-origin navigation of a confirmed target, two
+independent CLI sessions, a confirmed target that later hangs from an infinite loop rather than a
+dialog -- all correct, 0 wrong closes across every one of these new shapes plus a full re-run of
+every prior audit's attribution attacks (56+58 trials). The disclosed residual from escalation-1/2
+(a popup busy from the instant of its own creation) was judged ACCEPTABLE to ship with, once
+documented and its true scope (wider than disclosed: also an opener that starts blocking work right
+after opening a popup, and plain links, not just a popup's own inline script) is stated honestly.
+That residual is NOT why this item is blocked.
+
+Two things are why:
+
+**GAP-256 (major, a real regression from this branch, not merely an unclosed gap): a crashed tab
+permanently locks the whole CLI session.** No dialog is involved. A crashed renderer never answers
+the liveness probe (it's dead, not busy), so it reads exactly like an "unknown dialog" forever.
+GAP-247's own refuse-when-ambiguous design (built in escalation-1 specifically to stop destructive
+recovery from guessing wrong) then means `dialog accept/dismiss` correctly REFUSE to touch it -- but
+nothing else can either, because `tabs` and `closetab` are themselves gated behind the same check.
+The only escape is `close`, which destroys the entire session. The pre-FR2-04 CLI recovers from an
+identical crash in one command. This is a straightforward regression against spec.md 2.8.2 step 1,
+which says a blocked tab with no known dialog should be treated as busy and the gate should let the
+command through -- FR2-04's gate does not implement that distinction; it only distinguishes "is a
+dialog open" from "is a dialog possibly open", never "is anything ever going to answer".
+
+**GAP-257: the GAP-252 fix (link same-renderer siblings through their shared opener) only holds
+while the opener stays open.** If the opener itself closes after spawning several popups -- e.g. a
+compose window that opens child windows then closes -- the anchor is gone and the exact GAP-252
+failure mode returns: unlinked, unconfirmed siblings, and `dialog accept` may close the innocent
+one. This is not a new class of bug; it's the same one only partially closed, in a shape (opener
+closing itself) that is ordinary browser use.
+
+**Root cause, spanning both**: every cycle on this item has patched one edge of the same underlying
+inference problem. The system has exactly one signal -- "did this target answer a liveness probe" --
+and uses it for two different decisions that need different answers: (a) should the CLI GATE block
+this command at all, and (b) if something needs to be closed to recover, WHICH target is it safe to
+close. A crashed tab and a busy tab and a dialog-holding tab all look identical to that one signal
+(none answer), so (a) can't tell "genuinely stuck forever" (crash) apart from "busy but will finish"
+(GAP-240's accepted residual) apart from "holding a real dialog" -- it currently treats all three the
+same (block, forever, in the crash case). And (b) can't identify a holder once its only anchor
+(the opener) is gone, because the anchor was topological, not intrinsic to the target itself.
+
+**Architectural changes that would actually close this (not more patches -- these are the audit-6
+diagnosis, recorded for whoever picks this up next):**
+1. The gate must stop treating "never answered" as sufficient reason to block forever. It needs a
+   THIRD state distinct from "confirmed clear" and "confirmed dialog": a bounded number of retries
+   or a longer timeout past which an unanswering target is treated as busy/dead and the gate
+   proceeds (matching spec 2.8.2 step 1 literally), rather than blocking indefinitely on ambiguity.
+2. `tabs` and `closetab` must have a code path that NEVER depends on the gate or on attaching to
+   the blocked target at all -- serve them from browser-level Target.getTargets/Target.closeTarget.
+   This alone would have let a user recover from GAP-256 without losing the whole session, even
+   without solving the gate's classification problem.
+3. Give the warden its own Target.setAutoAttach with waitForDebuggerOnStart on every new target
+   (not just page-level Page.enable after the fact), so a URL-navigating popup has its dialog
+   listener live before its first script executes at all. This would make "blocked but no dialog
+   event ever fired" mean busy, unambiguously, for that class of target -- closing the gap the
+   liveness probe structurally cannot close on its own (confirmed by audit-6's own signal
+   comparison: dialog-from-birth and busy-from-birth are indistinguishable across every CDP signal
+   it tried, because the only real discriminator is whether a listener existed before the first
+   script ran, which is exactly what this would provide).
+4. Replace "an ambiguous accept/dismiss guesses which target to close" with an explicit
+   `dialog close <targetId>`, verified against `tabs`' own listing, so the tool never has to guess
+   among several unconfirmed candidates at all -- GAP-236/246/252/257 are all different faces of
+   "the tool guessed which of several candidates to close"; removing the guess removes the whole
+   family.
+
+**What holds, confirmed one final time**: GAP-236 (wrong-tab-close), GAP-238 (blank-popup-invisible),
+GAP-239 (false-exit-3), GAP-241 (many-blocked, flat to 40 tabs), GAP-242 (chain-limit records),
+GAP-246 (isolated real dialog recoverable), GAP-253/254 (message accuracy) are all independently
+re-verified as fixed. vitest 904/904. Full live scenario suite 111 pass / 0 fail / 2 skip, unchanged
+across the last three audits.
+
+**Limitations this item would ship with, if unblocked in the future**: the residual (busy-from-birth,
+wider than originally disclosed -- also an opener blocking right after opening a popup, and plain
+links), GAP-235 (pre-existing, out of scope), GAP-244 (tab identity in messages), GAP-247's
+warden-down refuse-always trade, and now GAP-256/257 above.
+
+**Status: FR2-04 is BLOCKED.** Per the loop's rules (4 standard cycles + 2 escalation cycles, then
+BLOCKED with a diagnosis), no further fix cycle is being dispatched. This diagnosis, GAP-256/257 and
+the architectural changes above are the handoff for whenever this is picked up again -- likely as a
+new, differently-scoped item (e.g. "dialog gate: bounded busy/dead detection + non-attaching
+tabs/closetab" as its own spec) rather than another patch cycle on the current design, per CLAUDE.md's
+guidance that a multi-day rework belongs in the backlog rather than being built reflexively.
+
+The FR2-04 branch changes remain uncommitted product code in the working tree (36eefa4 is the last
+commit; escalation-2's actual source diff was never committed on its own, only its evidence -- check
+'git status' before touching packages/browser or packages/cli for the next item, since FR2-04's
+in-progress code is still sitting there). The Orchestrator will decide, when preparing the final PR,
+whether to ship FR2-04 in its current (escalation-2) state with GAP-256/257 documented as known
+issues, revert it to pre-FR2-04 behavior, or leave it out of the PR entirely -- this needs a
+decision at PR-prep time, not now, since other FR2 items are unblocked by FR2-04 landing at all
+(FR2-05/07/08/13/14 per spec-amendment-1) regardless of whether the dialog warden itself is perfect.

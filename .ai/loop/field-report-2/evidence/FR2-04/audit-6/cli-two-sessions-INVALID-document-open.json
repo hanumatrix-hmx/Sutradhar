@@ -1,0 +1,463 @@
+{
+  "at": "2026-09-27T05:33:20.733Z",
+  "results": [
+    {
+      "trial": 0,
+      "steps": [
+        {
+          "s": "B",
+          "args": "nav http://127.0.0.1:59706/?n=B0",
+          "code": 0,
+          "ms": 999,
+          "out": "Navigated to http://127.0.0.1:59706/?n=B0\nTitle: opener B0",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "nav http://127.0.0.1:59706/?n=A0",
+          "code": 0,
+          "ms": 1052,
+          "out": "Navigated to http://127.0.0.1:59706/?n=A0\nTitle: opener A0",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "click #pop",
+          "code": 0,
+          "ms": 3367,
+          "out": "Clicked #pop",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "click #pop",
+          "code": 0,
+          "ms": 3372,
+          "out": "Clicked #pop",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "dialog",
+          "code": 0,
+          "ms": 302,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "dialog",
+          "code": 0,
+          "ms": 307,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 327,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "s": "A",
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 334,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "s": "B",
+          "args": "tabs",
+          "code": 0,
+          "ms": 296,
+          "out": "* tab_sess_1790487112104_1_1  (no title)  http://127.0.0.1:59706/?n=B0",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "tabs",
+          "code": 0,
+          "ms": 299,
+          "out": "* tab_sess_1790487112102_1_1  (no title)  http://127.0.0.1:59706/?n=A0",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "click #al",
+          "code": 1,
+          "ms": 19877,
+          "out": "Click failed: No visible element found for selector: #al",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 269,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "s": "A",
+          "args": "dialog",
+          "code": 0,
+          "ms": 271,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 274,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "s": "B",
+          "args": "close",
+          "code": 0,
+          "ms": 545,
+          "out": "Session closed.",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "close",
+          "code": 0,
+          "ms": 549,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "summary": {
+        "distinctChrome": true,
+        "distinctWardens": true,
+        "wardenCountUnderRoot": 2,
+        "aListOnlyA": false,
+        "bListOnlyB": false,
+        "aClosedOwn": false,
+        "bClosedOwn": false,
+        "aTabsHasOpener": false,
+        "bTabsHasOpener": false,
+        "bAcceptWhileATrackedOpen": {
+          "code": 1,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        "aStillListsTracked": false,
+        "aAcceptedTracked": false
+      }
+    },
+    {
+      "trial": 1,
+      "steps": [
+        {
+          "s": "B",
+          "args": "nav http://127.0.0.1:59706/?n=B1",
+          "code": 0,
+          "ms": 978,
+          "out": "Navigated to http://127.0.0.1:59706/?n=B1\nTitle: opener B1",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "nav http://127.0.0.1:59706/?n=A1",
+          "code": 0,
+          "ms": 997,
+          "out": "Navigated to http://127.0.0.1:59706/?n=A1\nTitle: opener A1",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "click #pop",
+          "code": 0,
+          "ms": 3373,
+          "out": "Clicked #pop",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "click #pop",
+          "code": 0,
+          "ms": 3375,
+          "out": "Clicked #pop",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "dialog",
+          "code": 0,
+          "ms": 322,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "dialog",
+          "code": 0,
+          "ms": 320,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 291,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "s": "A",
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 295,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "s": "A",
+          "args": "tabs",
+          "code": 0,
+          "ms": 304,
+          "out": "* tab_sess_1790487140216_1_1  (no title)  http://127.0.0.1:59706/?n=A1",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "tabs",
+          "code": 0,
+          "ms": 303,
+          "out": "* tab_sess_1790487140191_1_1  (no title)  http://127.0.0.1:59706/?n=B1",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "click #al",
+          "code": 1,
+          "ms": 19911,
+          "out": "Click failed: No visible element found for selector: #al",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 300,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "s": "A",
+          "args": "dialog",
+          "code": 0,
+          "ms": 281,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 274,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "s": "B",
+          "args": "close",
+          "code": 0,
+          "ms": 577,
+          "out": "Session closed.",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "close",
+          "code": 0,
+          "ms": 580,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "summary": {
+        "distinctChrome": true,
+        "distinctWardens": true,
+        "wardenCountUnderRoot": 2,
+        "aListOnlyA": false,
+        "bListOnlyB": false,
+        "aClosedOwn": false,
+        "bClosedOwn": false,
+        "aTabsHasOpener": false,
+        "bTabsHasOpener": false,
+        "bAcceptWhileATrackedOpen": {
+          "code": 1,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        "aStillListsTracked": false,
+        "aAcceptedTracked": false
+      }
+    },
+    {
+      "trial": 2,
+      "steps": [
+        {
+          "s": "B",
+          "args": "nav http://127.0.0.1:59706/?n=B2",
+          "code": 0,
+          "ms": 1063,
+          "out": "Navigated to http://127.0.0.1:59706/?n=B2\nTitle: opener B2",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "nav http://127.0.0.1:59706/?n=A2",
+          "code": 0,
+          "ms": 1092,
+          "out": "Navigated to http://127.0.0.1:59706/?n=A2\nTitle: opener A2",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "click #pop",
+          "code": 0,
+          "ms": 3362,
+          "out": "Clicked #pop",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "click #pop",
+          "code": 0,
+          "ms": 3365,
+          "out": "Clicked #pop",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "dialog",
+          "code": 0,
+          "ms": 294,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "dialog",
+          "code": 0,
+          "ms": 297,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 287,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "s": "A",
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 290,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "s": "A",
+          "args": "tabs",
+          "code": 0,
+          "ms": 299,
+          "out": "* tab_sess_1790487168322_1_1  (no title)  http://127.0.0.1:59706/?n=A2",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "tabs",
+          "code": 0,
+          "ms": 297,
+          "out": "* tab_sess_1790487168323_1_1  (no title)  http://127.0.0.1:59706/?n=B2",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "click #al",
+          "code": 1,
+          "ms": 19861,
+          "out": "Click failed: No visible element found for selector: #al",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 270,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "s": "A",
+          "args": "dialog",
+          "code": 0,
+          "ms": 266,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 268,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "s": "B",
+          "args": "close",
+          "code": 0,
+          "ms": 569,
+          "out": "Session closed.",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "close",
+          "code": 0,
+          "ms": 572,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "summary": {
+        "distinctChrome": true,
+        "distinctWardens": true,
+        "wardenCountUnderRoot": 2,
+        "aListOnlyA": false,
+        "bListOnlyB": false,
+        "aClosedOwn": false,
+        "bClosedOwn": false,
+        "aTabsHasOpener": false,
+        "bTabsHasOpener": false,
+        "bAcceptWhileATrackedOpen": {
+          "code": 1,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        "aStillListsTracked": false,
+        "aAcceptedTracked": false
+      }
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

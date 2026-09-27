@@ -1,0 +1,762 @@
+{
+  "at": "2026-09-27T06:19:29.255Z",
+  "results": [
+    {
+      "which": "cur",
+      "shape": "bg",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:62597/?n=main0",
+          "code": 0,
+          "ms": 857,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:62597/?n=main0 | Title: page main0",
+          "err": ""
+        },
+        {
+          "args": "newtab http://127.0.0.1:62597/?n=bg0",
+          "code": 0,
+          "ms": 404,
+          "cap": false,
+          "out": "New tab tab_sess_1790489903088_1_2 opened at http://127.0.0.1:62597/?n=bg0",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 686,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=bg0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "tabs",
+          "code": 3,
+          "ms": 684,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=bg0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 697,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=bg0\"}",
+          "err": "Note: tab 3E067446EAB3AAD461464CBB00F1A572 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 670,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "nav http://127.0.0.1:62597/?n=after0",
+          "code": 3,
+          "ms": 698,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=bg0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"nav\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identi"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 659,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=bg0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 845,
+          "cap": false,
+          "out": "Session closed.",
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ],
+      "firstSnapCode": 3,
+      "finalSnapCode": 3,
+      "anyCap": false
+    },
+    {
+      "which": "cur",
+      "shape": "bg",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:62597/?n=main1",
+          "code": 0,
+          "ms": 893,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:62597/?n=main1 | Title: page main1",
+          "err": ""
+        },
+        {
+          "args": "newtab http://127.0.0.1:62597/?n=bg1",
+          "code": 0,
+          "ms": 410,
+          "cap": false,
+          "out": "New tab tab_sess_1790489912052_1_2 opened at http://127.0.0.1:62597/?n=bg1",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 671,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=bg1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "tabs",
+          "code": 3,
+          "ms": 671,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=bg1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 675,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=bg1\"}",
+          "err": "Note: tab D2609376546F3628AE3856764B28DB9E is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 685,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "nav http://127.0.0.1:62597/?n=after1",
+          "code": 3,
+          "ms": 667,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=bg1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"nav\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identi"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 674,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=bg1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 851,
+          "cap": false,
+          "out": "Session closed.",
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ],
+      "firstSnapCode": 3,
+      "finalSnapCode": 3,
+      "anyCap": false
+    },
+    {
+      "which": "cur",
+      "shape": "active",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:62597/?n=main0",
+          "code": 0,
+          "ms": 886,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:62597/?n=main0 | Title: page main0",
+          "err": ""
+        },
+        {
+          "args": "newtab http://127.0.0.1:62597/?n=bg0",
+          "code": 0,
+          "ms": 386,
+          "cap": false,
+          "out": "New tab tab_sess_1790489920956_1_2 opened at http://127.0.0.1:62597/?n=bg0",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 277,
+          "cap": false,
+          "out": "tab_sess_1790489920956_1_1  page bg0  http://127.0.0.1:62597/?n=bg0 | * tab_sess_1790489920956_1_2  page main0  http://127.0.0.1:62597/?n=main0",
+          "err": ""
+        },
+        {
+          "args": "focustab tab_sess_1790489920956_1_2",
+          "code": 0,
+          "ms": 263,
+          "cap": false,
+          "out": "Focused tab tab_sess_1790489920956_1_2",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 673,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=main0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "tabs",
+          "code": 3,
+          "ms": 658,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=main0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 672,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=main0\"}",
+          "err": "Note: tab 99549C4F2F5AE370F2BDEDDB9F6D137D is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 666,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "nav http://127.0.0.1:62597/?n=after0",
+          "code": 3,
+          "ms": 667,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=main0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"nav\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identi"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 668,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=main0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 849,
+          "cap": false,
+          "out": "Session closed.",
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ],
+      "firstSnapCode": 3,
+      "finalSnapCode": 3,
+      "anyCap": false
+    },
+    {
+      "which": "cur",
+      "shape": "active",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:62597/?n=main1",
+          "code": 0,
+          "ms": 904,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:62597/?n=main1 | Title: page main1",
+          "err": ""
+        },
+        {
+          "args": "newtab http://127.0.0.1:62597/?n=bg1",
+          "code": 0,
+          "ms": 404,
+          "cap": false,
+          "out": "New tab tab_sess_1790489930336_1_2 opened at http://127.0.0.1:62597/?n=bg1",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 268,
+          "cap": false,
+          "out": "tab_sess_1790489930336_1_1  page bg1  http://127.0.0.1:62597/?n=bg1 | * tab_sess_1790489930336_1_2  page main1  http://127.0.0.1:62597/?n=main1",
+          "err": ""
+        },
+        {
+          "args": "focustab tab_sess_1790489930336_1_2",
+          "code": 0,
+          "ms": 276,
+          "cap": false,
+          "out": "Focused tab tab_sess_1790489930336_1_2",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 674,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=main1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "tabs",
+          "code": 3,
+          "ms": 682,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=main1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 666,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=main1\"}",
+          "err": "Note: tab FB5EC7F190E2B67A7DC9A033A23A77A6 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 671,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "nav http://127.0.0.1:62597/?n=after1",
+          "code": 3,
+          "ms": 683,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=main1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"nav\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identi"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 667,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:62597/?n=main1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. | Hint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command ident"
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 850,
+          "cap": false,
+          "out": "Session closed.",
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ],
+      "firstSnapCode": 3,
+      "finalSnapCode": 3,
+      "anyCap": false
+    },
+    {
+      "which": "master",
+      "shape": "bg",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:62597/?n=main0",
+          "code": 0,
+          "ms": 695,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:62597/?n=main0 | Title: page main0",
+          "err": ""
+        },
+        {
+          "args": "newtab http://127.0.0.1:62597/?n=bg0",
+          "code": 0,
+          "ms": 391,
+          "cap": false,
+          "out": "New tab tab_sess_1790489939870_1_2 opened at http://127.0.0.1:62597/?n=bg0",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 0,
+          "ms": 292,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:62597/?n=main0 | Title: page main0 | Interactive elements (0):",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 240,
+          "cap": false,
+          "out": "tab_sess_1790489939870_1_1  page bg0  http://127.0.0.1:62597/?n=bg0 | * tab_sess_1790489939870_1_2  page main0  http://127.0.0.1:62597/?n=main0",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 1,
+          "ms": 229,
+          "cap": false,
+          "out": "Sutradhar CLI |  | Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>]",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 224,
+          "cap": false,
+          "out": "Sutradhar CLI |  | Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>]",
+          "err": ""
+        },
+        {
+          "args": "closetab tab_sess_1790489939870_1_1",
+          "code": 0,
+          "ms": 252,
+          "cap": false,
+          "out": "Closed tab tab_sess_1790489939870_1_1",
+          "err": ""
+        },
+        {
+          "args": "nav http://127.0.0.1:62597/?n=after0",
+          "code": 0,
+          "ms": 254,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:62597/?n=after0 | Title: page after0",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 0,
+          "ms": 248,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:62597/?n=after0 | Title: page after0 | Interactive elements (0):",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 416,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "firstSnapCode": 0,
+      "finalSnapCode": 0,
+      "anyCap": false
+    },
+    {
+      "which": "master",
+      "shape": "bg",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:62597/?n=main1",
+          "code": 0,
+          "ms": 663,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:62597/?n=main1 | Title: page main1",
+          "err": ""
+        },
+        {
+          "args": "newtab http://127.0.0.1:62597/?n=bg1",
+          "code": 0,
+          "ms": 403,
+          "cap": false,
+          "out": "New tab tab_sess_1790489945738_1_2 opened at http://127.0.0.1:62597/?n=bg1",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 0,
+          "ms": 283,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:62597/?n=main1 | Title: page main1 | Interactive elements (0):",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 257,
+          "cap": false,
+          "out": "tab_sess_1790489945738_1_1  page bg1  http://127.0.0.1:62597/?n=bg1 | * tab_sess_1790489945738_1_2  page main1  http://127.0.0.1:62597/?n=main1",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 1,
+          "ms": 254,
+          "cap": false,
+          "out": "Sutradhar CLI |  | Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>]",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 227,
+          "cap": false,
+          "out": "Sutradhar CLI |  | Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>]",
+          "err": ""
+        },
+        {
+          "args": "closetab tab_sess_1790489945738_1_1",
+          "code": 0,
+          "ms": 246,
+          "cap": false,
+          "out": "Closed tab tab_sess_1790489945738_1_1",
+          "err": ""
+        },
+        {
+          "args": "nav http://127.0.0.1:62597/?n=after1",
+          "code": 0,
+          "ms": 254,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:62597/?n=after1 | Title: page after1",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 0,
+          "ms": 255,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:62597/?n=after1 | Title: page after1 | Interactive elements (0):",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 415,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "firstSnapCode": 0,
+      "finalSnapCode": 0,
+      "anyCap": false
+    },
+    {
+      "which": "master",
+      "shape": "active",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:62597/?n=main0",
+          "code": 0,
+          "ms": 599,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:62597/?n=main0 | Title: page main0",
+          "err": ""
+        },
+        {
+          "args": "newtab http://127.0.0.1:62597/?n=bg0",
+          "code": 0,
+          "ms": 380,
+          "cap": false,
+          "out": "New tab tab_sess_1790489951729_1_2 opened at http://127.0.0.1:62597/?n=bg0",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 243,
+          "cap": false,
+          "out": "tab_sess_1790489951729_1_1  page main0  http://127.0.0.1:62597/?n=main0 | * tab_sess_1790489951729_1_2  page bg0  http://127.0.0.1:62597/?n=bg0",
+          "err": ""
+        },
+        {
+          "args": "focustab tab_sess_1790489951729_1_1",
+          "code": 0,
+          "ms": 253,
+          "cap": false,
+          "out": "Focused tab tab_sess_1790489951729_1_1",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 0,
+          "ms": 280,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:62597/?n=main0 | Title: page main0 | Interactive elements (0):",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 243,
+          "cap": false,
+          "out": "* tab_sess_1790489951729_1_1  page main0  http://127.0.0.1:62597/?n=main0 |   tab_sess_1790489951729_1_2  page bg0  http://127.0.0.1:62597/?n=bg0",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 1,
+          "ms": 228,
+          "cap": false,
+          "out": "Sutradhar CLI |  | Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>]",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 228,
+          "cap": false,
+          "out": "Sutradhar CLI |  | Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>]",
+          "err": ""
+        },
+        {
+          "args": "closetab tab_sess_1790489951729_1_1",
+          "code": 0,
+          "ms": 240,
+          "cap": false,
+          "out": "Closed tab tab_sess_1790489951729_1_1",
+          "err": ""
+        },
+        {
+          "args": "nav http://127.0.0.1:62597/?n=after0",
+          "code": 0,
+          "ms": 253,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:62597/?n=after0 | Title: page after0",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 0,
+          "ms": 244,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:62597/?n=after0 | Title: page after0 | Interactive elements (0):",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 441,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "firstSnapCode": 0,
+      "finalSnapCode": 0,
+      "anyCap": false
+    },
+    {
+      "which": "master",
+      "shape": "active",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:62597/?n=main1",
+          "code": 0,
+          "ms": 642,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:62597/?n=main1 | Title: page main1",
+          "err": ""
+        },
+        {
+          "args": "newtab http://127.0.0.1:62597/?n=bg1",
+          "code": 0,
+          "ms": 418,
+          "cap": false,
+          "out": "New tab tab_sess_1790489958092_1_2 opened at http://127.0.0.1:62597/?n=bg1",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 245,
+          "cap": false,
+          "out": "tab_sess_1790489958092_1_1  page bg1  http://127.0.0.1:62597/?n=bg1 | * tab_sess_1790489958092_1_2  page main1  http://127.0.0.1:62597/?n=main1",
+          "err": ""
+        },
+        {
+          "args": "focustab tab_sess_1790489958092_1_2",
+          "code": 0,
+          "ms": 240,
+          "cap": false,
+          "out": "Focused tab tab_sess_1790489958092_1_2",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 0,
+          "ms": 277,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:62597/?n=main1 | Title: page main1 | Interactive elements (0):",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 229,
+          "cap": false,
+          "out": "tab_sess_1790489958092_1_1  page bg1  http://127.0.0.1:62597/?n=bg1 | * tab_sess_1790489958092_1_2  page main1  http://127.0.0.1:62597/?n=main1",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 1,
+          "ms": 216,
+          "cap": false,
+          "out": "Sutradhar CLI |  | Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>]",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 222,
+          "cap": false,
+          "out": "Sutradhar CLI |  | Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>]",
+          "err": ""
+        },
+        {
+          "args": "closetab tab_sess_1790489958092_1_2",
+          "code": 0,
+          "ms": 239,
+          "cap": false,
+          "out": "Closed tab tab_sess_1790489958092_1_2",
+          "err": ""
+        },
+        {
+          "args": "nav http://127.0.0.1:62597/?n=after1",
+          "code": 0,
+          "ms": 244,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:62597/?n=after1 | Title: page after1",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 0,
+          "ms": 236,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:62597/?n=after1 | Title: page after1 | Interactive elements (0):",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 398,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "firstSnapCode": 0,
+      "finalSnapCode": 0,
+      "anyCap": false
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

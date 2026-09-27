@@ -1,0 +1,550 @@
+{
+  "at": "2026-09-27T06:20:37.961Z",
+  "results": [
+    {
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:52979/main?t=0",
+          "code": 0,
+          "ms": 929,
+          "out": "Navigated to http://127.0.0.1:52979/main?t=0\nTitle: main",
+          "err": ""
+        },
+        {
+          "args": "click #open",
+          "code": 0,
+          "ms": 3335,
+          "out": "Clicked #open",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 270,
+          "out": "tab_sess_1790489969926_1_1  main  http://127.0.0.1:52979/main?t=0\n* tab_sess_1790489969926_1_2  typer  http://127.0.0.1:52979/typer",
+          "err": ""
+        },
+        {
+          "args": "focustab tab_sess_1790489969926_1_2",
+          "code": 0,
+          "ms": 259,
+          "out": "Focused tab tab_sess_1790489969926_1_2",
+          "err": ""
+        },
+        {
+          "args": "type #in ab",
+          "code": 1,
+          "ms": 320,
+          "out": "Typed into #in",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15:15)\r\n    at FrameManager.mainFrame (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/cdp/FrameManager.js:222:9)\r\n    at CdpPage.mainFrame (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-unde"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 689,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 678,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Note: tab C94C57D85339EE85AC6CF577CE0E1245 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it.\n  Note: tab F18D76AB5CD0E7FF7049578D03C1C205 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1119,
+          "out": "Tab F18D76AB5CD0E7FF7049578D03C1C205 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 680,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Note: tab C94C57D85339EE85AC6CF577CE0E1245 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it.\n  Note: tab 4B9C35FCECC5E266860A8484ED847231 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1119,
+          "out": "Tab 4B9C35FCECC5E266860A8484ED847231 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 286,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 265,
+          "out": "tab_sess_1790489969926_1_1  main  http://127.0.0.1:52979/main?t=0\n* tab_sess_1790489969926_1_2  page first-innocent  http://localhost:52979/?n=first-innocent",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 442,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "innocentSurvived": true,
+      "holderGone": true,
+      "closes": [
+        "Tab F18D76AB5CD0E7FF7049578D03C1C205 was closed because its dialog could not be addressed directly (unknown dialog).",
+        "Tab 4B9C35FCECC5E266860A8484ED847231 was closed because its dialog could not be addressed directly (unknown dialog)."
+      ]
+    },
+    {
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:52979/main?t=1",
+          "code": 0,
+          "ms": 880,
+          "out": "Navigated to http://127.0.0.1:52979/main?t=1\nTitle: main",
+          "err": ""
+        },
+        {
+          "args": "click #open",
+          "code": 0,
+          "ms": 3355,
+          "out": "Clicked #open",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 280,
+          "out": "tab_sess_1790489982102_1_1  main  http://127.0.0.1:52979/main?t=1\n* tab_sess_1790489982102_1_2  typer  http://127.0.0.1:52979/typer",
+          "err": ""
+        },
+        {
+          "args": "focustab tab_sess_1790489982102_1_2",
+          "code": 0,
+          "ms": 264,
+          "out": "Focused tab tab_sess_1790489982102_1_2",
+          "err": ""
+        },
+        {
+          "args": "type #in ab",
+          "code": 1,
+          "ms": 332,
+          "out": "Typed into #in",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15:15)\r\n    at FrameManager.mainFrame (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/cdp/FrameManager.js:222:9)\r\n    at CdpPage.mainFrame (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-unde"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 674,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 667,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Note: tab A7C4481C5E668C51479989BE509BB572 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab.\n  Note: tab C7C14C322F85F9AE63D397C7F060C5EE appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier unknown dialog on tab A7C4481C5E668C51479989BE509BB572 first, not this one."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1073,
+          "out": "Tab A7C4481C5E668C51479989BE509BB572 (http://localhost:52979/?n=first-innocent) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 660,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Note: tab A7C4481C5E668C51479989BE509BB572 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab.\n  Note: tab C7C14C322F85F9AE63D397C7F060C5EE appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier unknown dialog on tab A7C4481C5E668C51479989BE509BB572 first, not this one."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1072,
+          "out": "Tab C7C14C322F85F9AE63D397C7F060C5EE was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 675,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Note: tab FF3BB639397FA4A341F313C056D758DA appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1062,
+          "out": "Tab FF3BB639397FA4A341F313C056D758DA was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 263,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 280,
+          "out": "* tab_sess_1790489982102_1_1  main  http://127.0.0.1:52979/main?t=1",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 425,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "innocentSurvived": false,
+      "holderGone": true,
+      "closes": [
+        "Tab A7C4481C5E668C51479989BE509BB572 (http://localhost:52979/?n=first-innocent) was closed because its dialog could not be addressed directly (unknown dialog).",
+        "Tab C7C14C322F85F9AE63D397C7F060C5EE was closed because its dialog could not be addressed directly (unknown dialog).",
+        "Tab FF3BB639397FA4A341F313C056D758DA was closed because its dialog could not be addressed directly (unknown dialog)."
+      ]
+    },
+    {
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:52979/main?t=2",
+          "code": 0,
+          "ms": 874,
+          "out": "Navigated to http://127.0.0.1:52979/main?t=2\nTitle: main",
+          "err": ""
+        },
+        {
+          "args": "click #open",
+          "code": 0,
+          "ms": 3354,
+          "out": "Clicked #open",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 299,
+          "out": "tab_sess_1790489995854_1_1  main  http://127.0.0.1:52979/main?t=2\n* tab_sess_1790489995854_1_2  typer  http://127.0.0.1:52979/typer",
+          "err": ""
+        },
+        {
+          "args": "focustab tab_sess_1790489995854_1_2",
+          "code": 0,
+          "ms": 258,
+          "out": "Focused tab tab_sess_1790489995854_1_2",
+          "err": ""
+        },
+        {
+          "args": "type #in ab",
+          "code": 1,
+          "ms": 331,
+          "out": "Typed into #in",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15:15)\r\n    at FrameManager.mainFrame (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/cdp/FrameManager.js:222:9)\r\n    at CdpPage.mainFrame (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-unde"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 669,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 672,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Note: tab 919A82FBE8F042EECF881AA73759FA7A appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab.\n  Note: tab 677679C56520221DF5873FF6CEAE41C4 appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier unknown dialog on tab 919A82FBE8F042EECF881AA73759FA7A first, not this one."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1060,
+          "out": "Tab 919A82FBE8F042EECF881AA73759FA7A (http://localhost:52979/?n=first-innocent) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 678,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Note: tab 919A82FBE8F042EECF881AA73759FA7A appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab.\n  Note: tab 677679C56520221DF5873FF6CEAE41C4 appears to be a candidate dialog holder, but \"dialog accept/dismiss\" would currently act on the earlier unknown dialog on tab 919A82FBE8F042EECF881AA73759FA7A first, not this one."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1067,
+          "out": "Tab 677679C56520221DF5873FF6CEAE41C4 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 677,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Note: tab 4C987D053945039518467E63BA0646B1 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1070,
+          "out": "Tab 4C987D053945039518467E63BA0646B1 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 296,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 283,
+          "out": "* tab_sess_1790489995854_1_1  main  http://127.0.0.1:52979/main?t=2",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 456,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "innocentSurvived": false,
+      "holderGone": true,
+      "closes": [
+        "Tab 919A82FBE8F042EECF881AA73759FA7A (http://localhost:52979/?n=first-innocent) was closed because its dialog could not be addressed directly (unknown dialog).",
+        "Tab 677679C56520221DF5873FF6CEAE41C4 was closed because its dialog could not be addressed directly (unknown dialog).",
+        "Tab 4C987D053945039518467E63BA0646B1 was closed because its dialog could not be addressed directly (unknown dialog)."
+      ]
+    },
+    {
+      "trial": 3,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:52979/main?t=3",
+          "code": 0,
+          "ms": 949,
+          "out": "Navigated to http://127.0.0.1:52979/main?t=3\nTitle: main",
+          "err": ""
+        },
+        {
+          "args": "click #open",
+          "code": 0,
+          "ms": 3365,
+          "out": "Clicked #open",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 263,
+          "out": "tab_sess_1790490009754_1_1  typer  http://127.0.0.1:52979/typer\n* tab_sess_1790490009754_1_2  main  http://127.0.0.1:52979/main?t=3",
+          "err": ""
+        },
+        {
+          "args": "focustab tab_sess_1790490009754_1_1",
+          "code": 0,
+          "ms": 261,
+          "out": "Focused tab tab_sess_1790490009754_1_1",
+          "err": ""
+        },
+        {
+          "args": "type #in ab",
+          "code": 1,
+          "ms": 333,
+          "out": "Typed into #in",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15:15)\r\n    at FrameManager.mainFrame (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/cdp/FrameManager.js:222:9)\r\n    at CdpPage.mainFrame (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-unde"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 671,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 675,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Note: tab 52FFCE5F6367EA3A127892D1FA9FA84D is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it.\n  Note: tab BAB015BFEA9EB18C9050B1AB2E8CD1A3 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1099,
+          "out": "Tab BAB015BFEA9EB18C9050B1AB2E8CD1A3 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 676,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Note: tab 52FFCE5F6367EA3A127892D1FA9FA84D is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it.\n  Note: tab 958B109DFFE3524FFDEB2E3949FC583C appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1077,
+          "out": "Tab 958B109DFFE3524FFDEB2E3949FC583C was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 263,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 265,
+          "out": "* tab_sess_1790490009754_1_1  page first-innocent  http://localhost:52979/?n=first-innocent\n  tab_sess_1790490009754_1_2  main  http://127.0.0.1:52979/main?t=3",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 419,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "innocentSurvived": true,
+      "holderGone": true,
+      "closes": [
+        "Tab BAB015BFEA9EB18C9050B1AB2E8CD1A3 was closed because its dialog could not be addressed directly (unknown dialog).",
+        "Tab 958B109DFFE3524FFDEB2E3949FC583C was closed because its dialog could not be addressed directly (unknown dialog)."
+      ]
+    },
+    {
+      "trial": 4,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:52979/main?t=4",
+          "code": 0,
+          "ms": 891,
+          "out": "Navigated to http://127.0.0.1:52979/main?t=4\nTitle: main",
+          "err": ""
+        },
+        {
+          "args": "click #open",
+          "code": 0,
+          "ms": 3343,
+          "out": "Clicked #open",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 259,
+          "out": "tab_sess_1790490021849_1_1  main  http://127.0.0.1:52979/main?t=4\n* tab_sess_1790490021849_1_2  typer  http://127.0.0.1:52979/typer",
+          "err": ""
+        },
+        {
+          "args": "focustab tab_sess_1790490021849_1_2",
+          "code": 0,
+          "ms": 267,
+          "out": "Focused tab tab_sess_1790490021849_1_2",
+          "err": ""
+        },
+        {
+          "args": "type #in ab",
+          "code": 1,
+          "ms": 327,
+          "out": "Typed into #in",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15:15)\r\n    at FrameManager.mainFrame (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/cdp/FrameManager.js:222:9)\r\n    at CdpPage.mainFrame (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-unde"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 697,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 662,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Note: tab BB81834BEA41697720330DBD3F75E4DB is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it.\n  Note: tab 21D2BF6C1BA5C24AE67D4E5F7FBB1D6D appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1103,
+          "out": "Tab 21D2BF6C1BA5C24AE67D4E5F7FBB1D6D was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 690,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52979/alert-inline?n=second-holder\"}",
+          "err": "Note: tab BB81834BEA41697720330DBD3F75E4DB is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it.\n  Note: tab 479104783B2978B10E53A44976C6AE36 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1089,
+          "out": "Tab 479104783B2978B10E53A44976C6AE36 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 261,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 263,
+          "out": "tab_sess_1790490021849_1_1  page first-innocent  http://localhost:52979/?n=first-innocent\n* tab_sess_1790490021849_1_2  main  http://127.0.0.1:52979/main?t=4",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 432,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "innocentSurvived": true,
+      "holderGone": true,
+      "closes": [
+        "Tab 21D2BF6C1BA5C24AE67D4E5F7FBB1D6D was closed because its dialog could not be addressed directly (unknown dialog).",
+        "Tab 479104783B2978B10E53A44976C6AE36 was closed because its dialog could not be addressed directly (unknown dialog)."
+      ]
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}
