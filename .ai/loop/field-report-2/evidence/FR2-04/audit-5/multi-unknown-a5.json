@@ -1,0 +1,184 @@
+{
+  "at": "2026-09-27T03:58:50.282Z",
+  "rows": [
+    {
+      "t": 0,
+      "n": "mu0x98529",
+      "steps": [
+        {
+          "step": "initial",
+          "targets": {
+            "B1": "blocked",
+            "B2": "blocked",
+            "A": "responsive",
+            "P1": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "dialog",
+          "out": [
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64647/?n=mu0x98529-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:64647/?n=mu0x98529-B2\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64647/pop?n=mu0x98529-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:64647/pop?n=mu0x98529-B2\"}"
+          ]
+        },
+        {
+          "step": "after-accept-0",
+          "targets": {
+            "B1": "responsive",
+            "B2": "blocked",
+            "A": "responsive",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "after-accept-1",
+          "targets": {
+            "B1": "responsive",
+            "B2": "responsive",
+            "A": "responsive"
+          }
+        }
+      ],
+      "closed": [
+        "P1",
+        "P2"
+      ],
+      "wrongCloses": [],
+      "finalSnap": {
+        "code": 0,
+        "ms": 269,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:64647/?n=mu0x98529-A"
+      },
+      "aliveAtEnd": [
+        "B1",
+        "B2",
+        "A"
+      ]
+    },
+    {
+      "t": 1,
+      "n": "mu1x7838",
+      "steps": [
+        {
+          "step": "initial",
+          "targets": {
+            "A": "responsive",
+            "B2": "blocked",
+            "B1": "blocked",
+            "P1": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "dialog",
+          "out": [
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64647/?n=mu1x7838-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:64647/?n=mu1x7838-B2\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64647/pop?n=mu1x7838-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:64647/pop?n=mu1x7838-B2\"}"
+          ]
+        },
+        {
+          "step": "after-accept-0",
+          "targets": {
+            "A": "responsive",
+            "B2": "blocked",
+            "B1": "responsive",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "after-accept-1",
+          "targets": {
+            "A": "responsive",
+            "B2": "responsive",
+            "B1": "responsive"
+          }
+        }
+      ],
+      "closed": [
+        "P1",
+        "P2"
+      ],
+      "wrongCloses": [],
+      "finalSnap": {
+        "code": 0,
+        "ms": 269,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:64647/?n=mu1x7838-B1"
+      },
+      "aliveAtEnd": [
+        "A",
+        "B2",
+        "B1"
+      ]
+    },
+    {
+      "t": 2,
+      "n": "mu2x17161",
+      "steps": [
+        {
+          "step": "initial",
+          "targets": {
+            "B2": "blocked",
+            "B1": "blocked",
+            "A": "responsive",
+            "P1": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "dialog",
+          "out": [
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64647/?n=mu2x17161-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:64647/?n=mu2x17161-B2\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64647/pop?n=mu2x17161-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:64647/pop?n=mu2x17161-B2\"}"
+          ]
+        },
+        {
+          "step": "after-accept-0",
+          "targets": {
+            "B2": "blocked",
+            "B1": "responsive",
+            "A": "responsive",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "after-accept-1",
+          "targets": {
+            "B2": "responsive",
+            "B1": "responsive",
+            "A": "responsive"
+          }
+        }
+      ],
+      "closed": [
+        "P1",
+        "P2"
+      ],
+      "wrongCloses": [],
+      "finalSnap": {
+        "code": 0,
+        "ms": 264,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:64647/?n=mu2x17161-A"
+      },
+      "aliveAtEnd": [
+        "B2",
+        "B1",
+        "A"
+      ]
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

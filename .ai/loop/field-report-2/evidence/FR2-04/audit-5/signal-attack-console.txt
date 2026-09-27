@@ -1,0 +1,73 @@
+{"t":0,"state":"control/idle","gm":"r1,r0,r0","rt":"responsive","warden":{"ms":9,"dialogs":[]},"snap":"0/280ms","verdict":"OK"}
+{"t":0,"state":"control/alert(dialog)","gm":"b408,b413,b405","rt":"blocked","warden":{"ms":2,"dialogs":["TGT:alert"]},"snap":"3/287ms","verdict":"DIALOG-CAUGHT"}
+{"t":0,"state":"busy-js-6s","gm":"r1,r0,r1","rt":"blocked","warden":{"ms":3,"dialogs":[]},"snap":"0/5300ms","verdict":"OK"}
+{"t":0,"state":"sync-xhr-10s","gm":"b410,b405,b402","rt":"blocked","warden":{"ms":406,"dialogs":["TGT:unknown"]},"snap":"3/680ms","rec":"","verdict":"FALSE-BLOCK"}
+{"t":0,"state":"huge-dom-parse+layout","gm":"b407,r353,r2","rt":"responsive","warden":{"ms":8,"dialogs":[]},"snap":"0/449ms","busy":851,"verdict":"OK"}
+{"t":0,"state":"huge-dom-big(600k)-snap-now","gm":"b405,b403,b401","rt":"blocked","warden":{"ms":408,"dialogs":["TGT:unknown"]},"snap":"0/931ms","busy":2031,"verdict":"OK"}
+{"t":0,"state":"repeated-forced-layout","gm":"r45,r135,r84","rt":"blocked","warden":{"ms":44,"dialogs":[]},"snap":"0/4649ms","busy":5034,"verdict":"OK"}
+{"t":0,"state":"alloc-heavy-gc","gm":"r44,r0,r1","rt":"blocked","warden":{"ms":3,"dialogs":[]},"snap":"0/4158ms","busy":5002,"verdict":"OK"}
+{"t":0,"state":"mid-navigation-slow-response","gm":"r0,r0,r1","rt":"blocked","warden":{"ms":3,"dialogs":[]},"snap":"0/5127ms","verdict":"OK"}
+{"t":0,"state":"debugger-paused","gm":"r1,r1,r0","rt":"responsive","warden":{"ms":3,"dialogs":[]},"snap":"1(CAP)/60189ms","verdict":"OK"}
+{"t":0,"state":"print-preview","gm":"r1,r0,r0","rt":"responsive","warden":{"ms":2,"dialogs":[]},"snap":"0/263ms","verdict":"OK"}
+{"t":0,"state":"background-tab-busy","gm":"r1,r0,r1","rt":"responsive","warden":{"ms":2,"dialogs":[]},"snap":"0/281ms","verdict":"OK"}
+{"t":0,"state":"renderer-crashed(aw-snap)","gm":"b402,b402,b405","rt":"blocked","warden":{"ms":408,"dialogs":["TGT:unknown"]},"snap":"3/717ms","rec":"","verdict":"FALSE-BLOCK"}
+{"t":0,"state":"renderer-hung(chrome://hang)","gm":"b410,b408,b402","rt":"blocked","warden":{"ms":405,"dialogs":["TGT:unknown"]},"snap":"3/681ms","rec":"","verdict":"FALSE-BLOCK"}
+{"t":1,"state":"control/idle","gm":"r1,r0,r1","rt":"responsive","warden":{"ms":2,"dialogs":[]},"snap":"0/284ms","verdict":"OK"}
+{"t":1,"state":"control/alert(dialog)","gm":"b406,b404,b408","rt":"blocked","warden":{"ms":2,"dialogs":["TGT:alert"]},"snap":"3/262ms","verdict":"DIALOG-CAUGHT"}
+{"t":1,"state":"busy-js-6s","gm":"r1,r0,r0","rt":"blocked","warden":{"ms":2,"dialogs":[]},"snap":"0/5313ms","verdict":"OK"}
+{"t":1,"state":"sync-xhr-10s","gm":"b407,b408,b408","rt":"blocked","warden":{"ms":406,"dialogs":["TGT:unknown"]},"snap":"3/674ms","rec":"","verdict":"FALSE-BLOCK"}
+{"t":1,"state":"huge-dom-parse+layout","gm":"b408,r320,r1","rt":"responsive","warden":{"ms":8,"dialogs":[]},"snap":"0/448ms","busy":827,"verdict":"OK"}
+{"t":1,"state":"huge-dom-big(600k)-snap-now","gm":"b405,b406,b404","rt":"blocked","warden":{"ms":408,"dialogs":["TGT:unknown"]},"snap":"0/788ms","busy":1882,"verdict":"OK"}
+{"t":1,"state":"repeated-forced-layout","gm":"r31,r137,r84","rt":"blocked","warden":{"ms":56,"dialogs":[]},"snap":"0/4696ms","busy":5055,"verdict":"OK"}
+{"t":1,"state":"alloc-heavy-gc","gm":"r20,r0,r0","rt":"blocked","warden":{"ms":3,"dialogs":[]},"snap":"0/4189ms","busy":5004,"verdict":"OK"}
+{"t":1,"state":"mid-navigation-slow-response","gm":"r1,r0,r1","rt":"blocked","warden":{"ms":2,"dialogs":[]},"snap":"0/5132ms","verdict":"OK"}
+{"t":1,"state":"debugger-paused","gm":"r1,r0,r1","rt":"responsive","warden":{"ms":2,"dialogs":[]},"snap":"1(CAP)/60182ms","verdict":"OK"}
+{"t":1,"state":"print-preview","gm":"r1,r0,r1","rt":"responsive","warden":{"ms":2,"dialogs":[]},"snap":"0/281ms","verdict":"OK"}
+{"t":1,"state":"background-tab-busy","gm":"r1,r0,r1","rt":"responsive","warden":{"ms":2,"dialogs":[]},"snap":"0/278ms","verdict":"OK"}
+{"t":1,"state":"renderer-crashed(aw-snap)","gm":"b408,b408,b404","rt":"blocked","warden":{"ms":409,"dialogs":["TGT:unknown"]},"snap":"3/711ms","rec":"","verdict":"FALSE-BLOCK"}
+{"t":1,"state":"renderer-hung(chrome://hang)","gm":"b409,b407,b408","rt":"blocked","warden":{"ms":405,"dialogs":["TGT:unknown"]},"snap":"3/682ms","rec":"","verdict":"FALSE-BLOCK"}
+{
+ "control/idle": {
+  "OK": 2
+ },
+ "control/alert(dialog)": {
+  "DIALOG-CAUGHT": 2
+ },
+ "busy-js-6s": {
+  "OK": 2
+ },
+ "sync-xhr-10s": {
+  "FALSE-BLOCK": 2
+ },
+ "huge-dom-parse+layout": {
+  "OK": 2
+ },
+ "huge-dom-big(600k)-snap-now": {
+  "OK": 2
+ },
+ "repeated-forced-layout": {
+  "OK": 2
+ },
+ "alloc-heavy-gc": {
+  "OK": 2
+ },
+ "mid-navigation-slow-response": {
+  "OK": 2
+ },
+ "debugger-paused": {
+  "OK": 2
+ },
+ "print-preview": {
+  "OK": 2
+ },
+ "background-tab-busy": {
+  "OK": 2
+ },
+ "renderer-crashed(aw-snap)": {
+  "FALSE-BLOCK": 2
+ },
+ "renderer-hung(chrome://hang)": {
+  "FALSE-BLOCK": 2
+ }
+}
+leftovers {"wardens":[],"chrome":[],"cliChildren":[]}

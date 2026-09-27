@@ -2429,3 +2429,68 @@ Residuals, disclosed up front:
 This is escalation cycle 1 of 2. If audit-5 fails with a critical or major finding, FR2-04 gets one
 more escalation cycle (cycle 2 of 2); if that also fails, FR2-04 is marked BLOCKED with a written
 diagnosis per the loop's rules.
+
+## 2026-09-27 -- FR2-04 audit-5: FAILED, narrowly (2 major). Escalation 1 of 2 used; entering ESCALATION 2 (the last cycle before BLOCKED).
+
+audit-5 wrote findings progressively; confirmed clean process hygiene; independently re-ran vitest
+(880/880, matching escalation-1's own count) and the full live verify (111/0/2, matching). Both new
+findings, and the minor ones, trace to ONE root cause, which the auditor pinned down with a direct
+experiment rather than just asserting it.
+
+Escalation-1 added a 500ms delay before proactively probing a NEW target, specifically to protect
+against a stale-confirmation race: marking a target confirmed-safe before it's had a chance to show
+a load-time dialog. audit-5 fired 63 real dialogs at every delay from 300ms to 1000ms, plus 15 rapid
+reactive-poll trials around popup creation, and found ZERO cases where that race actually happens --
+every dialog arrived as a tracked, typed event regardless of timing, because Page.enable acks and
+Page.javascriptDialogOpening fires before the proactive probe's timer would ever mark the target
+safe. The auditor then set the delay to 0 for every target (temporarily, sha-verified restore) and
+re-ran every shape escalation-1's own decision cited as the delay's justification: 36/36 clean. The
+delay the fix was built to protect a real race, and no evidence supports that the race exists; the
+delay itself is what leaves a target unconfirmed (and therefore attributable/closable) for up to
+500ms after creation, which is exactly the window GAP-251's two attacks exploit:
+- GAP-251 (major): a popup under ~500ms old, whose opener runs a slow synchronous request, still
+  gets closed as the wrongly-attributed holder -- 12/12 at gaps of 0-450ms, 0/3 once past 500ms.
+- GAP-252 (major, a genuinely new shape, not just GAP-251 restated): two popups opened to a
+  DIFFERENT origin than their (unblocked) opener share a renderer, but attributeDialogHolders only
+  links opener<->child pairs -- with the opener itself never blocked, there's no root to anchor the
+  pair, so BOTH popups report as "the holder" and accept closes the innocent older one first.
+  Reproduces via ordinary CLI use (typing into a field that opens one cross-site popup per
+  keystroke), 3/3. This is not something the 500ms delay alone explains; it's a gap in the
+  attribution graph itself (unconfirmed candidates with no confirmed-safe anchor at all).
+- GAP-253/254 (minor): message-accuracy leftovers -- naming the wrong tab in a note (never causes a
+  wrong close) and an inconsistent warden-down refusal message.
+- GAP-255 (minor, test-integrity): 6 of 22 new mutations survive, naming E3/E4/E6/E7 as the ones
+  that matter (the rest are near-equivalent).
+
+What holds, confirmed independently: every audit-3/4 attribution attack (84 trials, 0 innocent
+closes), GAP-236/238/239/241/242 all still correct, GAP-246's core fix (real dialog in an isolated
+renderer is recoverable, 9/9 vs audit-4's dead ends), GAP-247's warden-down refuse-always trade
+(judged acceptable, matches spec 2.9's own recommended degraded path), and GAP-249/250's mutation
+kills (A13/A20/M22/M23/M26 all confirmed dead).
+
+Per the loop's rules, this was escalation cycle 1 of 2. FR2-04 now enters ESCALATION CYCLE 2, the
+LAST cycle before the item is marked BLOCKED with a written diagnosis if this also fails.
+
+Decisions for escalation-2 (binding):
+1. Remove the 500ms delay. Probe every new target immediately once Page.enable has ack'd (the
+   audit's own live data supports this directly: 36/36 clean at 0 delay across every shape that
+   motivated adding it). Keep the underlying confirmedResponsiveSince/transparent-pass-through
+   design from escalation-1 -- only the DELAY before the first proactive probe is being removed, not
+   the confirmation mechanism itself. Pin this with a test at zero delay reproducing GAP-251's exact
+   attack (opener sync-XHR at gap 0ms) and confirming no close.
+2. Fix GAP-252: extend attributeDialogHolders so unconfirmed, unlinked candidates that share a
+   renderer but have NO confirmed-safe anchor in their graph are never treated as independently
+   correct holders. Either (a) require at least one candidate in a same-renderer group to be
+   confirmed-safe before any of them can be closed via automatic/hinted recovery (refuse and list
+   both, same spirit as GAP-247's refuse-when-ambiguous), or (b) link siblings by shared renderer
+   process id in addition to opener/child, so an unblocked-but-present opener can still anchor them.
+   Prove the choice against the exact CLI-reachable repro (typing into a field opening one cross-site
+   popup per keystroke): 0 wrong closes, and confirm a genuine single popup (no sibling) is still
+   correctly recoverable.
+3. GAP-253/254: fix the message text so a note never names a tab that accept won't actually act on,
+   and make the warden-down refusal message consistent with what 'dialog'/the hint say, without
+   suggesting a retry path that can't work while the page is blocked.
+4. GAP-255: add tests that specifically kill E3, E4, E6 and E7 by name.
+Escalation-2 should re-run the FULL audit-3/4/5 attack surface (not just the new targets), since
+removing the delay changes proactive-probe timing for every path, and the GAP-252 fix touches the
+attribution graph itself.

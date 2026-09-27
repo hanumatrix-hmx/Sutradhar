@@ -1,0 +1,685 @@
+{
+  "at": "2026-09-27T03:26:24.951Z",
+  "results": [
+    {
+      "variant": "xhr-after-open",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:49625/xhr-after-open?t=0",
+          "code": 0,
+          "ms": 915,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:49625/xhr-after-open?t=0\nTitle: xhr-after-open",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 6325,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 682,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:49625/xhr-after-open?t=0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with). If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 708,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:49625/xhr-after-open?t=0\"}",
+          "err": "Note: tab E7C2D6E20FA8285E59EBC9939439D783 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 681,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 676,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 267,
+          "cap": false,
+          "out": "* tab_sess_1790479421359_1_1  page popup-target  http://127.0.0.1:49625/?n=popup-target",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 423,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "xhr-after-open",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:49625/xhr-after-open?t=1",
+          "code": 0,
+          "ms": 864,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:49625/xhr-after-open?t=1\nTitle: xhr-after-open",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 6348,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 680,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:49625/xhr-after-open?t=1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with). If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 674,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:49625/xhr-after-open?t=1\"}",
+          "err": "Note: tab 9F2C5E1067B3D838B7B8CBF9DC52E40B is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 673,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 673,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 264,
+          "cap": false,
+          "out": "* tab_sess_1790479445237_1_1  page popup-target  http://127.0.0.1:49625/?n=popup-target",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 422,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "xhr-after-open",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:49625/xhr-after-open?t=2",
+          "code": 0,
+          "ms": 870,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:49625/xhr-after-open?t=2\nTitle: xhr-after-open",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 6338,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 672,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:49625/xhr-after-open?t=2\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with). If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 676,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:49625/xhr-after-open?t=2\"}",
+          "err": "Note: tab 8DA6B26CB566687E8B1F8E0E919D6D7E is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 673,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 683,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 259,
+          "cap": false,
+          "out": "* tab_sess_1790479469045_1_1  page popup-target  http://127.0.0.1:49625/?n=popup-target",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 415,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "xhr-after-open-timer",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:49625/xhr-after-open-timer?t=0",
+          "code": 0,
+          "ms": 885,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:49625/xhr-after-open-timer?t=0\nTitle: xhr-after-open-timer",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3335,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 703,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:49625/xhr-after-open-timer?t=0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with). If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 676,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:49625/xhr-after-open-timer?t=0\"}",
+          "err": "Note: tab B4447DFAB0D3D52F1F111F763D7F0E01 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 694,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 699,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 259,
+          "cap": false,
+          "out": "* tab_sess_1790479492877_1_1  page popup-target  http://127.0.0.1:49625/?n=popup-target",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 456,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "xhr-after-open-timer",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:49625/xhr-after-open-timer?t=1",
+          "code": 0,
+          "ms": 884,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:49625/xhr-after-open-timer?t=1\nTitle: xhr-after-open-timer",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3341,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 701,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:49625/xhr-after-open-timer?t=1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with). If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 675,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:49625/xhr-after-open-timer?t=1\"}",
+          "err": "Note: tab 703F11450D7DF9FBA3476ECE57452904 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 696,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 673,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 268,
+          "cap": false,
+          "out": "* tab_sess_1790479513784_1_1  page popup-target  http://127.0.0.1:49625/?n=popup-target",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 428,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "xhr-after-open-timer",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:49625/xhr-after-open-timer?t=2",
+          "code": 0,
+          "ms": 866,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:49625/xhr-after-open-timer?t=2\nTitle: xhr-after-open-timer",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3338,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 685,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:49625/xhr-after-open-timer?t=2\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with). If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 686,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:49625/xhr-after-open-timer?t=2\"}",
+          "err": "Note: tab 71E78B4AEBC8273E5CF67631C3772889 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 668,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 657,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 275,
+          "cap": false,
+          "out": "* tab_sess_1790479534659_1_1  page popup-target  http://127.0.0.1:49625/?n=popup-target",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 454,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "type-two-popups",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:49625/type-two-popups?t=0",
+          "code": 0,
+          "ms": 919,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:49625/type-two-popups?t=0\nTitle: type",
+          "err": ""
+        },
+        {
+          "args": "type #in ab",
+          "code": 1,
+          "ms": 353,
+          "cap": false,
+          "out": "Typed into #in",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15:15)\r\n    at FrameManager.mainFrame (file:///E:/HMX_Projects/Inter"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 670,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:49625/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:49625/alert-inline?n=second-holder\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with). If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 689,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:49625/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:49625/alert-inline?n=second-holder\"}",
+          "err": "Note: tab F1E857A4D91ED97CD9760F7D4C97B451 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab.\n  Note: tab F8505A52A3CDE9AA764E404640220C8E appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1131,
+          "cap": false,
+          "out": "Tab F1E857A4D91ED97CD9760F7D4C97B451 (http://localhost:49625/?n=first-innocent) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 1128,
+          "cap": false,
+          "out": "",
+          "err": "Error: could not accept the unknown dialog: No dialog is open on that tab"
+        },
+        {
+          "args": "tabs",
+          "code": 3,
+          "ms": 669,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:49625/alert-inline?n=second-holder\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with). If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 840,
+          "cap": false,
+          "out": "Session closed.",
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ],
+      "closedUrls": [
+        "http://localhost:49625/?n=first-innocent",
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "type-two-popups",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:49625/type-two-popups?t=1",
+          "code": 0,
+          "ms": 872,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:49625/type-two-popups?t=1\nTitle: type",
+          "err": ""
+        },
+        {
+          "args": "type #in ab",
+          "code": 1,
+          "ms": 341,
+          "cap": false,
+          "out": "Typed into #in",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15:15)\r\n    at FrameManager.mainFrame (file:///E:/HMX_Projects/Inter"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 686,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:49625/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:49625/alert-inline?n=second-holder\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with). If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 679,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:49625/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:49625/alert-inline?n=second-holder\"}",
+          "err": "Note: tab C4EA46C6F498616676777C5377F734EB appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab.\n  Note: tab 81C79765D37AB8177D023F7F78275B4F appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1140,
+          "cap": false,
+          "out": "Tab C4EA46C6F498616676777C5377F734EB (http://localhost:49625/?n=first-innocent) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 1076,
+          "cap": false,
+          "out": "",
+          "err": "Error: could not accept the unknown dialog: No dialog is open on that tab"
+        },
+        {
+          "args": "tabs",
+          "code": 3,
+          "ms": 678,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:49625/alert-inline?n=second-holder\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with). If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 840,
+          "cap": false,
+          "out": "Session closed.",
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ],
+      "closedUrls": [
+        "http://localhost:49625/?n=first-innocent",
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "type-two-popups",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:49625/type-two-popups?t=2",
+          "code": 0,
+          "ms": 904,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:49625/type-two-popups?t=2\nTitle: type",
+          "err": ""
+        },
+        {
+          "args": "type #in ab",
+          "code": 1,
+          "ms": 344,
+          "cap": false,
+          "out": "Typed into #in",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15:15)\r\n    at FrameManager.mainFrame (file:///E:/HMX_Projects/Inter"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 684,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:49625/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:49625/alert-inline?n=second-holder\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with). If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 676,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:49625/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:49625/alert-inline?n=second-holder\"}",
+          "err": "Note: tab 6751B74ADCF6338C7C8E798818E40F46 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab.\n  Note: tab 3DF1C7F3BC0723A796C102B9DD1F9C16 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1106,
+          "cap": false,
+          "out": "Tab 6751B74ADCF6338C7C8E798818E40F46 (http://localhost:49625/?n=first-innocent) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 1077,
+          "cap": false,
+          "out": "",
+          "err": "Error: could not accept the unknown dialog: No dialog is open on that tab"
+        },
+        {
+          "args": "tabs",
+          "code": 3,
+          "ms": 673,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:49625/alert-inline?n=second-holder\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with). If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 836,
+          "cap": false,
+          "out": "Session closed.",
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ],
+      "closedUrls": [
+        "http://localhost:49625/?n=first-innocent",
+        null
+      ],
+      "closeCode": 0
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}
