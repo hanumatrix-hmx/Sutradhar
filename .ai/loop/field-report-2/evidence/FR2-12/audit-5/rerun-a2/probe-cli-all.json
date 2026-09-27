@@ -1,0 +1,1111 @@
+{
+  "origin": "http://127.0.0.1:64051",
+  "startedAt": "2026-09-27T23:35:49.391Z",
+  "cases": {
+    "S1_defaultPolicyLeftover": [
+      {
+        "navCode": 3,
+        "navStdout": "Navigation to http://127.0.0.1:64051/alertload?t=0 started, but the page opened a alert dialog while loading.\ndialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-load\",\"defaultValue\":null,\"url\":\"ht",
+        "audit": {
+          "code": 3,
+          "ms": 253,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog is open and blocking the page, so \"audit\" did not run.",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-load",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertload?t=0"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "Error: a alert dialog is open and blocking the page, so \"audit\" did not run.",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "navCode": 3,
+        "navStdout": "Navigation to http://127.0.0.1:64051/alertload?t=1 started, but the page opened a alert dialog while loading.\ndialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-load\",\"defaultValue\":null,\"url\":\"ht",
+        "audit": {
+          "code": 3,
+          "ms": 251,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog is open and blocking the page, so \"audit\" did not run.",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-load",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertload?t=1"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "Error: a alert dialog is open and blocking the page, so \"audit\" did not run.",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      }
+    ],
+    "S1b_leftoverCurrentPage": {
+      "code": 3,
+      "ms": 253,
+      "timedOut": false,
+      "stdoutIsSingleJson": true,
+      "stdoutKind": "dialog-blocked-doc",
+      "schemaValid": null,
+      "blockedDoc": {
+        "error": "a alert dialog is open and blocking the page, so \"audit\" did not run.",
+        "dialogPending": {
+          "type": "alert",
+          "message": "audit2-alert-load",
+          "defaultValue": null,
+          "url": "http://127.0.0.1:64051/alertload?b=1"
+        },
+        "dialogsHandled": []
+      },
+      "rawDialogLinesOnStdout": 0,
+      "stderrDialogLines": [
+        "Error: a alert dialog is open and blocking the page, so \"audit\" did not run.",
+        "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+      ]
+    },
+    "S2_acceptFlag": [
+      {
+        "alertAtMs": 0,
+        "audit": {
+          "code": 0,
+          "ms": 2450,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "report",
+          "schemaValid": true,
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "dialogHandled: {\"type\":\"alert\",\"message\":\"audit2-alert-at-0\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}"
+          ],
+          "report": {
+            "url": "http://127.0.0.1:64051/alertat?ms=0&k=S2_acceptFlag",
+            "consoleErrors": [],
+            "brokenRequests": []
+          }
+        }
+      },
+      {
+        "alertAtMs": 600,
+        "audit": {
+          "code": 0,
+          "ms": 2421,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "report",
+          "schemaValid": true,
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "dialogHandled: {\"type\":\"alert\",\"message\":\"audit2-alert-at-600\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}"
+          ],
+          "report": {
+            "url": "http://127.0.0.1:64051/alertat?ms=600&k=S2_acceptFlag",
+            "consoleErrors": [],
+            "brokenRequests": []
+          }
+        }
+      }
+    ],
+    "S2_persistedAccept": [
+      {
+        "alertAtMs": 0,
+        "audit": {
+          "code": 0,
+          "ms": 1832,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "report",
+          "schemaValid": true,
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "dialogHandled: {\"type\":\"alert\",\"message\":\"audit2-alert-at-0\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}"
+          ],
+          "report": {
+            "url": "http://127.0.0.1:64051/alertat?ms=0&k=S2_persistedAccept",
+            "consoleErrors": [],
+            "brokenRequests": []
+          }
+        }
+      },
+      {
+        "alertAtMs": 600,
+        "audit": {
+          "code": 0,
+          "ms": 1841,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "report",
+          "schemaValid": true,
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "dialogHandled: {\"type\":\"alert\",\"message\":\"audit2-alert-at-600\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}"
+          ],
+          "report": {
+            "url": "http://127.0.0.1:64051/alertat?ms=600&k=S2_persistedAccept",
+            "consoleErrors": [],
+            "brokenRequests": []
+          }
+        }
+      }
+    ],
+    "S2_dismissFlag": [
+      {
+        "alertAtMs": 0,
+        "audit": {
+          "code": 0,
+          "ms": 2458,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "report",
+          "schemaValid": true,
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "dialogHandled: {\"type\":\"alert\",\"message\":\"audit2-alert-at-0\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}"
+          ],
+          "report": {
+            "url": "http://127.0.0.1:64051/alertat?ms=0&k=S2_dismissFlag",
+            "consoleErrors": [],
+            "brokenRequests": []
+          }
+        }
+      },
+      {
+        "alertAtMs": 600,
+        "audit": {
+          "code": 0,
+          "ms": 2412,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "report",
+          "schemaValid": true,
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "dialogHandled: {\"type\":\"alert\",\"message\":\"audit2-alert-at-600\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}"
+          ],
+          "report": {
+            "url": "http://127.0.0.1:64051/alertat?ms=600&k=S2_dismissFlag",
+            "consoleErrors": [],
+            "brokenRequests": []
+          }
+        }
+      }
+    ],
+    "S3_neverHandledMidAudit": [
+      {
+        "alertAtMs": 0,
+        "audit": {
+          "code": 3,
+          "ms": 1323,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog opened while \"audit\" was running and is blocking the page; \"audit\" did not complete (it may have partially run).",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-0",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=0&s3=1"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=0&s3=1\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 600,
+        "audit": {
+          "code": 3,
+          "ms": 2362,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog opened while \"audit\" was running and is blocking the page; \"audit\" did not complete (it may have partially run).",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-600",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=600&s3=1"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-600\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=600&s3=1\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1400,
+        "audit": {
+          "code": 3,
+          "ms": 2366,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog is open (\"audit2-alert-at-1400\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again.",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-1400",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=1400&s3=1"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "Error: a alert dialog is open (\"audit2-alert-at-1400\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again.",
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-1400\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=1400&s3=1\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1500,
+        "audit": {
+          "code": 3,
+          "ms": 2398,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog is open (\"audit2-alert-at-1500\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again.",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-1500",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=1500&s3=1"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "Error: a alert dialog is open (\"audit2-alert-at-1500\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again.",
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-1500\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=1500&s3=1\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1550,
+        "audit": {
+          "code": 3,
+          "ms": 2795,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog opened while \"audit\" was running and is blocking the page; \"audit\" did not complete (it may have partially run).",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-1550",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=1550&s3=1"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-1550\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=1550&s3=1\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1650,
+        "audit": {
+          "code": 0,
+          "ms": 2457,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "report",
+          "schemaValid": true,
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [],
+          "report": {
+            "url": "http://127.0.0.1:64051/alertat?ms=1650&s3=1",
+            "consoleErrors": [],
+            "brokenRequests": []
+          }
+        }
+      },
+      {
+        "alertAtMs": 1800,
+        "audit": {
+          "code": 0,
+          "ms": 2426,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "report",
+          "schemaValid": true,
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [],
+          "report": {
+            "url": "http://127.0.0.1:64051/alertat?ms=1800&s3=1",
+            "consoleErrors": [],
+            "brokenRequests": []
+          }
+        }
+      }
+    ],
+    "S3_confirmOnLoad": {
+      "code": 3,
+      "ms": 1310,
+      "timedOut": false,
+      "stdoutIsSingleJson": true,
+      "stdoutKind": "dialog-blocked-doc",
+      "schemaValid": null,
+      "blockedDoc": {
+        "error": "a confirm dialog opened while \"audit\" was running and is blocking the page; \"audit\" did not complete (it may have partially run).",
+        "dialogPending": {
+          "type": "confirm",
+          "message": "audit2-confirm",
+          "defaultValue": null,
+          "url": "http://127.0.0.1:64051/confirmload"
+        },
+        "dialogsHandled": []
+      },
+      "rawDialogLinesOnStdout": 0,
+      "stderrDialogLines": [
+        "dialogPending: {\"type\":\"confirm\",\"message\":\"audit2-confirm\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/confirmload\"}",
+        "Hint: a confirm dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+      ]
+    },
+    "nonDialogFatal": {
+      "code": 1,
+      "stdoutEmpty": true,
+      "stderr": "Fatal: net::ERR_UNSAFE_PORT at http://127.0.0.1:1/unreachable\n"
+    },
+    "control": {
+      "code": 0,
+      "ms": 2466,
+      "timedOut": false,
+      "stdoutIsSingleJson": true,
+      "stdoutKind": "report",
+      "schemaValid": true,
+      "rawDialogLinesOnStdout": 0,
+      "stderrDialogLines": [],
+      "report": {
+        "url": "http://127.0.0.1:64051/clean?ctl=1",
+        "consoleErrors": [],
+        "brokenRequests": []
+      }
+    },
+    "S3_boundary": [
+      {
+        "alertAtMs": 1450,
+        "audit": {
+          "code": 3,
+          "ms": 2353,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog is open (\"audit2-alert-at-1450\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again.",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-1450",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=1450&rep=0"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "Error: a alert dialog is open (\"audit2-alert-at-1450\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again.",
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-1450\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=1450&rep=0\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1500,
+        "audit": {
+          "code": 3,
+          "ms": 2389,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog is open (\"audit2-alert-at-1500\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again.",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-1500",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=1500&rep=0"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "Error: a alert dialog is open (\"audit2-alert-at-1500\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again.",
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-1500\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=1500&rep=0\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1525,
+        "audit": {
+          "code": 3,
+          "ms": 2804,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog opened while \"audit\" was running and is blocking the page; \"audit\" did not complete (it may have partially run).",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-1525",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=1525&rep=0"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-1525\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=1525&rep=0\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1550,
+        "audit": {
+          "code": 3,
+          "ms": 2767,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog opened while \"audit\" was running and is blocking the page; \"audit\" did not complete (it may have partially run).",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-1550",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=1550&rep=0"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-1550\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=1550&rep=0\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1575,
+        "audit": {
+          "code": 0,
+          "ms": 2429,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "report",
+          "schemaValid": true,
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [],
+          "report": {
+            "url": "http://127.0.0.1:64051/alertat?ms=1575&rep=0",
+            "consoleErrors": [],
+            "brokenRequests": []
+          }
+        }
+      },
+      {
+        "alertAtMs": 1600,
+        "audit": {
+          "code": 0,
+          "ms": 2472,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "report",
+          "schemaValid": true,
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [],
+          "report": {
+            "url": "http://127.0.0.1:64051/alertat?ms=1600&rep=0",
+            "consoleErrors": [],
+            "brokenRequests": []
+          }
+        }
+      },
+      {
+        "alertAtMs": 1450,
+        "audit": {
+          "code": 3,
+          "ms": 2361,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog is open (\"audit2-alert-at-1450\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again.",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-1450",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=1450&rep=1"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "Error: a alert dialog is open (\"audit2-alert-at-1450\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again.",
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-1450\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=1450&rep=1\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1500,
+        "audit": {
+          "code": 3,
+          "ms": 2383,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog is open (\"audit2-alert-at-1500\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again.",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-1500",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=1500&rep=1"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "Error: a alert dialog is open (\"audit2-alert-at-1500\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again.",
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-1500\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=1500&rep=1\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1525,
+        "audit": {
+          "code": 3,
+          "ms": 2824,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog opened while \"audit\" was running and is blocking the page; \"audit\" did not complete (it may have partially run).",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-1525",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=1525&rep=1"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-1525\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=1525&rep=1\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1550,
+        "audit": {
+          "code": 3,
+          "ms": 2811,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog opened while \"audit\" was running and is blocking the page; \"audit\" did not complete (it may have partially run).",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-1550",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=1550&rep=1"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-1550\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=1550&rep=1\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1575,
+        "audit": {
+          "code": 3,
+          "ms": 2824,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog opened while \"audit\" was running and is blocking the page; \"audit\" did not complete (it may have partially run).",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-1575",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=1575&rep=1"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-1575\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=1575&rep=1\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1600,
+        "audit": {
+          "code": 0,
+          "ms": 2478,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "report",
+          "schemaValid": true,
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [],
+          "report": {
+            "url": "http://127.0.0.1:64051/alertat?ms=1600&rep=1",
+            "consoleErrors": [],
+            "brokenRequests": []
+          }
+        }
+      },
+      {
+        "alertAtMs": 1450,
+        "audit": {
+          "code": 3,
+          "ms": 2391,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog is open (\"audit2-alert-at-1450\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again.",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-1450",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=1450&rep=2"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "Error: a alert dialog is open (\"audit2-alert-at-1450\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again.",
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-1450\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=1450&rep=2\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1500,
+        "audit": {
+          "code": 3,
+          "ms": 2416,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog is open (\"audit2-alert-at-1500\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again.",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-1500",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=1500&rep=2"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "Error: a alert dialog is open (\"audit2-alert-at-1500\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again.",
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-1500\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=1500&rep=2\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1525,
+        "audit": {
+          "code": 3,
+          "ms": 2863,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog opened while \"audit\" was running and is blocking the page; \"audit\" did not complete (it may have partially run).",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-1525",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=1525&rep=2"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-1525\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=1525&rep=2\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1550,
+        "audit": {
+          "code": 3,
+          "ms": 2784,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "dialog-blocked-doc",
+          "schemaValid": null,
+          "blockedDoc": {
+            "error": "a alert dialog opened while \"audit\" was running and is blocking the page; \"audit\" did not complete (it may have partially run).",
+            "dialogPending": {
+              "type": "alert",
+              "message": "audit2-alert-at-1550",
+              "defaultValue": null,
+              "url": "http://127.0.0.1:64051/alertat?ms=1550&rep=2"
+            },
+            "dialogsHandled": []
+          },
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [
+            "dialogPending: {\"type\":\"alert\",\"message\":\"audit2-alert-at-1550\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64051/alertat?ms=1550&rep=2\"}",
+            "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+          ]
+        }
+      },
+      {
+        "alertAtMs": 1575,
+        "audit": {
+          "code": 0,
+          "ms": 2419,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "report",
+          "schemaValid": true,
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [],
+          "report": {
+            "url": "http://127.0.0.1:64051/alertat?ms=1575&rep=2",
+            "consoleErrors": [],
+            "brokenRequests": []
+          }
+        }
+      },
+      {
+        "alertAtMs": 1600,
+        "audit": {
+          "code": 0,
+          "ms": 2489,
+          "timedOut": false,
+          "stdoutIsSingleJson": true,
+          "stdoutKind": "report",
+          "schemaValid": true,
+          "rawDialogLinesOnStdout": 0,
+          "stderrDialogLines": [],
+          "report": {
+            "url": "http://127.0.0.1:64051/alertat?ms=1600&rep=2",
+            "consoleErrors": [],
+            "brokenRequests": []
+          }
+        }
+      }
+    ],
+    "leak": [
+      {
+        "t": 0,
+        "code": 0,
+        "leaks": 0,
+        "schemaValid": true,
+        "single": true
+      },
+      {
+        "t": 1,
+        "code": 0,
+        "leaks": 0,
+        "schemaValid": true,
+        "single": true
+      },
+      {
+        "t": 2,
+        "code": 0,
+        "leaks": 0,
+        "schemaValid": true,
+        "single": true
+      },
+      {
+        "t": 3,
+        "code": 0,
+        "leaks": 0,
+        "schemaValid": true,
+        "single": true
+      },
+      {
+        "t": 4,
+        "code": 0,
+        "leaks": 0,
+        "schemaValid": true,
+        "single": true
+      },
+      {
+        "t": 5,
+        "code": 0,
+        "leaks": 0,
+        "schemaValid": true,
+        "single": true
+      },
+      {
+        "t": 6,
+        "code": 0,
+        "leaks": 0,
+        "schemaValid": true,
+        "single": true
+      },
+      {
+        "t": 7,
+        "code": 0,
+        "leaks": 0,
+        "schemaValid": true,
+        "single": true
+      },
+      {
+        "t": 8,
+        "code": 0,
+        "leaks": 0,
+        "schemaValid": true,
+        "single": true
+      },
+      {
+        "t": 9,
+        "code": 0,
+        "leaks": 0,
+        "schemaValid": true,
+        "single": true
+      },
+      {
+        "t": 10,
+        "code": 0,
+        "leaks": 0,
+        "schemaValid": true,
+        "single": true
+      },
+      {
+        "t": 11,
+        "code": 0,
+        "leaks": 0,
+        "schemaValid": true,
+        "single": true
+      },
+      {
+        "t": 12,
+        "code": 0,
+        "leaks": 0,
+        "schemaValid": true,
+        "single": true
+      },
+      {
+        "t": 13,
+        "code": 0,
+        "leaks": 0,
+        "schemaValid": true,
+        "single": true
+      },
+      {
+        "t": 14,
+        "code": 0,
+        "leaks": 0,
+        "schemaValid": true,
+        "single": true
+      }
+    ],
+    "leakOwnKept": [
+      {
+        "ownKept": true,
+        "leaks": 0
+      },
+      {
+        "ownKept": true,
+        "leaks": 0
+      },
+      {
+        "ownKept": true,
+        "leaks": 0
+      }
+    ],
+    "spaReplaceStateFailOnDiff": [
+      {
+        "code": 1,
+        "ms": 2435,
+        "timedOut": false,
+        "stdoutIsSingleJson": true,
+        "stdoutKind": "report",
+        "schemaValid": true,
+        "rawDialogLinesOnStdout": 0,
+        "stderrDialogLines": [],
+        "report": {
+          "url": "http://127.0.0.1:64051/spa?hydrated=1",
+          "consoleErrors": [
+            "spa-own-error",
+            "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "Failed to load resource: the server responded with a status of 404 (Not Found)"
+          ],
+          "brokenRequests": [
+            "404 /missing-spa-asset.png",
+            "404 /missing-spa-api"
+          ]
+        }
+      },
+      {
+        "code": 1,
+        "ms": 1867,
+        "timedOut": false,
+        "stdoutIsSingleJson": true,
+        "stdoutKind": "report",
+        "schemaValid": true,
+        "rawDialogLinesOnStdout": 0,
+        "stderrDialogLines": [],
+        "report": {
+          "url": "http://127.0.0.1:64051/spa?hydrated=1",
+          "consoleErrors": [
+            "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "spa-own-error",
+            "Failed to load resource: the server responded with a status of 404 (Not Found)"
+          ],
+          "brokenRequests": [
+            "404 /missing-spa-asset.png",
+            "404 /missing-spa-api"
+          ]
+        }
+      },
+      {
+        "code": 1,
+        "ms": 1875,
+        "timedOut": false,
+        "stdoutIsSingleJson": true,
+        "stdoutKind": "report",
+        "schemaValid": true,
+        "rawDialogLinesOnStdout": 0,
+        "stderrDialogLines": [],
+        "report": {
+          "url": "http://127.0.0.1:64051/spa?hydrated=1",
+          "consoleErrors": [
+            "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "spa-own-error",
+            "Failed to load resource: the server responded with a status of 404 (Not Found)"
+          ],
+          "brokenRequests": [
+            "404 /missing-spa-asset.png",
+            "404 /missing-spa-api"
+          ]
+        }
+      }
+    ],
+    "main500": [
+      {
+        "code": 1,
+        "ms": 1857,
+        "timedOut": false,
+        "stdoutIsSingleJson": true,
+        "stdoutKind": "report",
+        "schemaValid": true,
+        "rawDialogLinesOnStdout": 0,
+        "stderrDialogLines": [],
+        "report": {
+          "url": "http://127.0.0.1:64051/main-500?t=0",
+          "consoleErrors": [
+            "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+          ],
+          "brokenRequests": [
+            "500 /main-500?t=0"
+          ]
+        }
+      },
+      {
+        "code": 1,
+        "ms": 1865,
+        "timedOut": false,
+        "stdoutIsSingleJson": true,
+        "stdoutKind": "report",
+        "schemaValid": true,
+        "rawDialogLinesOnStdout": 0,
+        "stderrDialogLines": [],
+        "report": {
+          "url": "http://127.0.0.1:64051/main-500?t=1",
+          "consoleErrors": [
+            "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+          ],
+          "brokenRequests": [
+            "500 /main-500?t=1"
+          ]
+        }
+      },
+      {
+        "code": 1,
+        "ms": 1859,
+        "timedOut": false,
+        "stdoutIsSingleJson": true,
+        "stdoutKind": "report",
+        "schemaValid": true,
+        "rawDialogLinesOnStdout": 0,
+        "stderrDialogLines": [],
+        "report": {
+          "url": "http://127.0.0.1:64051/main-500?t=2",
+          "consoleErrors": [
+            "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+          ],
+          "brokenRequests": [
+            "500 /main-500?t=2"
+          ]
+        }
+      }
+    ]
+  },
+  "finishedAt": "2026-09-27T23:38:50.409Z",
+  "leftoverChromeByTempDir": 0,
+  "newCliChromeRootsLeft": []
+}

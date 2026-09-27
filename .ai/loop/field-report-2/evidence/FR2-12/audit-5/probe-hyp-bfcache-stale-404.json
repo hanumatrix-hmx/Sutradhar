@@ -1,0 +1,168 @@
+{
+  "only": "bfcache-stale-404",
+  "trials": 5,
+  "preFixEmulation": false,
+  "results": {
+    "bfcache-stale-404": {
+      "trials": [
+        {
+          "persisted": true,
+          "state": {
+            "commitAt": "2026-09-27T21:27:09.220Z",
+            "docResp": {
+              "url": "http://127.0.0.1:54857/own404?t=0",
+              "status": 404,
+              "timestamp": "2026-09-27T21:27:08.894Z"
+            },
+            "goto": {
+              "url": "http://127.0.0.1:54857/own404?t=0",
+              "status": 404
+            }
+          },
+          "stale404Reported": true,
+          "audit": {
+            "url": "http://127.0.0.1:54857/bfAclean?t=0",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [],
+            "brokenRequests": [
+              {
+                "url": "http://127.0.0.1:54857/own404?t=0",
+                "status": 404
+              }
+            ],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:08.560Z"
+          }
+        },
+        {
+          "persisted": true,
+          "state": {
+            "commitAt": "2026-09-27T21:27:10.552Z",
+            "docResp": {
+              "url": "http://127.0.0.1:54857/own404?t=1",
+              "status": 404,
+              "timestamp": "2026-09-27T21:27:10.240Z"
+            },
+            "goto": {
+              "url": "http://127.0.0.1:54857/own404?t=1",
+              "status": 404
+            }
+          },
+          "stale404Reported": true,
+          "audit": {
+            "url": "http://127.0.0.1:54857/bfAclean?t=1",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [],
+            "brokenRequests": [
+              {
+                "url": "http://127.0.0.1:54857/own404?t=1",
+                "status": 404
+              }
+            ],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:09.915Z"
+          }
+        },
+        {
+          "persisted": true,
+          "state": {
+            "commitAt": "2026-09-27T21:27:11.874Z",
+            "docResp": {
+              "url": "http://127.0.0.1:54857/own404?t=2",
+              "status": 404,
+              "timestamp": "2026-09-27T21:27:11.562Z"
+            },
+            "goto": {
+              "url": "http://127.0.0.1:54857/own404?t=2",
+              "status": 404
+            }
+          },
+          "stale404Reported": true,
+          "audit": {
+            "url": "http://127.0.0.1:54857/bfAclean?t=2",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [],
+            "brokenRequests": [
+              {
+                "url": "http://127.0.0.1:54857/own404?t=2",
+                "status": 404
+              }
+            ],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:11.234Z"
+          }
+        },
+        {
+          "persisted": true,
+          "state": {
+            "commitAt": "2026-09-27T21:27:13.197Z",
+            "docResp": {
+              "url": "http://127.0.0.1:54857/own404?t=3",
+              "status": 404,
+              "timestamp": "2026-09-27T21:27:12.886Z"
+            },
+            "goto": {
+              "url": "http://127.0.0.1:54857/own404?t=3",
+              "status": 404
+            }
+          },
+          "stale404Reported": true,
+          "audit": {
+            "url": "http://127.0.0.1:54857/bfAclean?t=3",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [],
+            "brokenRequests": [
+              {
+                "url": "http://127.0.0.1:54857/own404?t=3",
+                "status": 404
+              }
+            ],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:12.556Z"
+          }
+        },
+        {
+          "persisted": true,
+          "state": {
+            "commitAt": "2026-09-27T21:27:14.497Z",
+            "docResp": {
+              "url": "http://127.0.0.1:54857/own404?t=4",
+              "status": 404,
+              "timestamp": "2026-09-27T21:27:14.185Z"
+            },
+            "goto": {
+              "url": "http://127.0.0.1:54857/own404?t=4",
+              "status": 404
+            }
+          },
+          "stale404Reported": true,
+          "audit": {
+            "url": "http://127.0.0.1:54857/bfAclean?t=4",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [],
+            "brokenRequests": [
+              {
+                "url": "http://127.0.0.1:54857/own404?t=4",
+                "status": 404
+              }
+            ],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:13.869Z"
+          }
+        }
+      ]
+    }
+  },
+  "origin": "http://127.0.0.1:54857",
+  "cdp": {
+    "created": 6,
+    "detached": 5,
+    "stillOpenObjects": 1,
+    "stillOpenConnected": 1
+  }
+}

@@ -1,0 +1,361 @@
+{
+  "origShas": {
+    "packages\\capability-runtime\\src\\runtime.ts": "4fb910ebbcb2b36c43b425c3b53cdbb0597d5a4676dad4eeae0743946039ff3e",
+    "packages\\browser\\src\\session\\browser-tab.ts": "e45ec9445d9f94018cd9a35edf88aa57fa4fa01763a9f9124eb3ac17376896c0",
+    "packages\\capability-runtime\\src\\audit\\site-audit.ts": "b8a419f8b771aa7d43487ddcd44eec195f964ba7735ffad51e349c1d4d44cbbd"
+  },
+  "results": [
+    {
+      "id": "M7-clear-client-in-catch",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "matches": 1,
+      "suites": {
+        "capability-runtime": {
+          "exit": 1,
+          "tests": "1 failed | 213 passed (214)",
+          "failing": [
+            "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA16 (GAP-280 M7 kill): the CDP session is still detached when client.on() itself throws synchronously right after the session was created -- kills a mutation that clears cdpClient inside that catch before the finally block runs"
+          ]
+        }
+      },
+      "killed": true,
+      "expectKilledBy": "RA16",
+      "restoredShaOk": true
+    },
+    {
+      "id": "M9-rejection-not-swallowed",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "matches": 1,
+      "suites": {
+        "capability-runtime": {
+          "exit": 1,
+          "tests": "1 failed | 213 passed (214)",
+          "failing": [
+            "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA18 (GAP-280 M9 kill): client.send() throwing synchronously (bypassing every inline `.catch()` inside the setup IIFE, since the throw happens before `.catch` is even reached) never becomes an unhandled promise rejection"
+          ]
+        }
+      },
+      "killed": true,
+      "expectKilledBy": "RA18",
+      "restoredShaOk": true
+    },
+    {
+      "id": "M10-no-Network.enable",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "matches": 1,
+      "suites": {
+        "capability-runtime": {
+          "exit": 1,
+          "tests": "1 failed | 213 passed (214)",
+          "failing": [
+            "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA17 (GAP-280 M10 kill): Network.enable is sent during the per-call commit-tracking setup, not just Page.enable -- kills a mutation that removes it entirely (audit-4: live GAP-273 shapes go to 0/2 under this mutation)"
+          ]
+        }
+      },
+      "killed": true,
+      "expectKilledBy": "RA17",
+      "restoredShaOk": true
+    },
+    {
+      "id": "N1-tab-no-subframe-filter",
+      "file": "packages\\browser\\src\\session\\browser-tab.ts",
+      "matches": 0,
+      "skipped": "anchor must match exactly once"
+    },
+    {
+      "id": "N2-tab-commit-never-recorded",
+      "file": "packages\\browser\\src\\session\\browser-tab.ts",
+      "matches": 1,
+      "suites": {
+        "browser": {
+          "exit": 1,
+          "tests": "2 failed | 505 passed (507)",
+          "failing": [
+            "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278) > CT2: records the main frame's commit instant via a dedicated CDP session created at construction, ignoring a sub-frame commit",
+            "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278) > CT4 (GAP-278 kill): a SECOND real commit updates getLastMainFrameCommitAt again -- this is what lets current-page-mode audit() scope to the NEWEST document, not the tab's very first one"
+          ]
+        }
+      },
+      "killed": true,
+      "restoredShaOk": true
+    },
+    {
+      "id": "N3-tab-first-commit-wins",
+      "file": "packages\\browser\\src\\session\\browser-tab.ts",
+      "matches": 1,
+      "suites": {
+        "browser": {
+          "exit": 1,
+          "tests": "1 failed | 506 passed (507)",
+          "failing": [
+            "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278) > CT4 (GAP-278 kill): a SECOND real commit updates getLastMainFrameCommitAt again -- this is what lets current-page-mode audit() scope to the NEWEST document, not the tab's very first one"
+          ]
+        }
+      },
+      "killed": true,
+      "restoredShaOk": true
+    },
+    {
+      "id": "N4-tab-no-Document-type-filter",
+      "file": "packages\\browser\\src\\session\\browser-tab.ts",
+      "matches": 1,
+      "suites": {
+        "browser": {
+          "exit": 0,
+          "tests": "507 passed (507)",
+          "failing": []
+        }
+      },
+      "killed": false,
+      "restoredShaOk": true
+    },
+    {
+      "id": "N5-tab-no-frameId-filter",
+      "file": "packages\\browser\\src\\session\\browser-tab.ts",
+      "matches": 1,
+      "suites": {
+        "browser": {
+          "exit": 1,
+          "tests": "1 failed | 506 passed (507)",
+          "failing": [
+            "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278) > CT3: records the main document's own live response, keyed by frameId -- never a non-Document resource, never a sub-frame's response"
+          ]
+        }
+      },
+      "killed": true,
+      "restoredShaOk": true
+    },
+    {
+      "id": "N6-tab-no-Network.enable",
+      "file": "packages\\browser\\src\\session\\browser-tab.ts",
+      "matches": 1,
+      "suites": {
+        "browser": {
+          "exit": 1,
+          "tests": "1 failed | 506 passed (507)",
+          "failing": [
+            "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278) > CT2: records the main frame's commit instant via a dedicated CDP session created at construction, ignoring a sub-frame commit"
+          ]
+        }
+      },
+      "killed": true,
+      "restoredShaOk": true
+    },
+    {
+      "id": "N7-tab-close-no-detach",
+      "file": "packages\\browser\\src\\session\\browser-tab.ts",
+      "matches": 1,
+      "suites": {
+        "browser": {
+          "exit": 1,
+          "tests": "2 failed | 505 passed (507)",
+          "failing": [
+            "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278) > CT6: close() detaches the commit-tracking CDP session",
+            "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278) > CT7 (GAP-280-style leak kill, tab-level): the CDP session is still detached at close() even when client.on() threw synchronously right after creation"
+          ]
+        }
+      },
+      "killed": true,
+      "restoredShaOk": true
+    },
+    {
+      "id": "N8-tab-tracking-never-started",
+      "file": "packages\\browser\\src\\session\\browser-tab.ts",
+      "matches": 1,
+      "suites": {
+        "browser": {
+          "exit": 1,
+          "tests": "5 failed | 502 passed (507)",
+          "failing": [
+            "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278) > CT2: records the main frame's commit instant via a dedicated CDP session created at construction, ignoring a sub-frame commit",
+            "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278) > CT3: records the main document's own live response, keyed by frameId -- never a non-Document resource, never a sub-frame's response",
+            "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278) > CT4 (GAP-278 kill): a SECOND real commit updates getLastMainFrameCommitAt again -- this is what lets current-page-mode audit() scope to the NEWEST document, not the tab's very first one",
+            "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278) > CT6: close() detaches the commit-tracking CDP session",
+            "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278) > CT7 (GAP-280-style leak kill, tab-level): the CDP session is still detached at close() even when client.on() threw synchronously right after creation"
+          ]
+        }
+      },
+      "killed": true,
+      "restoredShaOk": true
+    },
+    {
+      "id": "N9-goto-response-never-captured",
+      "file": "packages\\browser\\src\\session\\browser-tab.ts",
+      "matches": 1,
+      "suites": {
+        "browser": {
+          "exit": 1,
+          "tests": "1 failed | 506 passed (507)",
+          "failing": [
+            "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278) > CT8 (GAP-279): navigate() captures its own page.goto() response via getLastGotoResponse, independent of any CDP listener"
+          ]
+        }
+      },
+      "killed": true,
+      "restoredShaOk": true
+    },
+    {
+      "id": "N10-tab-docresp-getter-null",
+      "file": "packages\\browser\\src\\session\\browser-tab.ts",
+      "matches": 1,
+      "suites": {
+        "browser": {
+          "exit": 1,
+          "tests": "1 failed | 506 passed (507)",
+          "failing": [
+            "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278) > CT3: records the main document's own live response, keyed by frameId -- never a non-Document resource, never a sub-frame's response"
+          ]
+        }
+      },
+      "killed": true,
+      "restoredShaOk": true
+    },
+    {
+      "id": "N11-tab-also-counts-same-doc-navs",
+      "file": "packages\\browser\\src\\session\\browser-tab.ts",
+      "matches": 0,
+      "skipped": "anchor must match exactly once"
+    },
+    {
+      "id": "N12-tab-setup-bound-removed",
+      "file": "packages\\browser\\src\\session\\browser-tab.ts",
+      "matches": 1,
+      "suites": {
+        "browser": {
+          "exit": 0,
+          "tests": "507 passed (507)",
+          "failing": []
+        }
+      },
+      "killed": false,
+      "restoredShaOk": true
+    },
+    {
+      "id": "R1-currentpage-ignores-tab-commit",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "matches": 1,
+      "suites": {
+        "capability-runtime": {
+          "exit": 1,
+          "tests": "1 failed | 213 passed (214)",
+          "failing": [
+            "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA3b (GAP-278 escalation-1 kill): current-page mode scopes by the tab's own tracked main-frame COMMIT time, not performance.timeOrigin, when the tab exposes getLastMainFrameCommitAt"
+          ]
+        }
+      },
+      "killed": true,
+      "restoredShaOk": true
+    },
+    {
+      "id": "R2-no-goto-fallback-tier",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "matches": 1,
+      "suites": {
+        "capability-runtime": {
+          "exit": 1,
+          "tests": "1 failed | 213 passed (214)",
+          "failing": [
+            "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA13b (GAP-279): when live CDP capture never fires (e.g. Network.enable took effect too late, such as a dialog open when audit({url}) starts), the response navigate()'s own page.goto() returned is used instead of the URL-match ring-buffer fallback"
+          ]
+        }
+      },
+      "killed": true,
+      "restoredShaOk": true
+    },
+    {
+      "id": "R3-goto-fallback-in-currentpage-too",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "matches": 1,
+      "suites": {
+        "capability-runtime": {
+          "exit": 1,
+          "tests": "1 failed | 213 passed (214)",
+          "failing": [
+            "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA13d (GAP-279): getLastGotoResponse is never consulted in current-page mode"
+          ]
+        }
+      },
+      "killed": true,
+      "restoredShaOk": true
+    },
+    {
+      "id": "R4-goto-tier-before-live-capture",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "matches": 0,
+      "skipped": "anchor must match exactly once"
+    },
+    {
+      "id": "R5-no-currentpage-live-capture",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "matches": 1,
+      "suites": {
+        "capability-runtime": {
+          "exit": 0,
+          "tests": "214 passed (214)",
+          "failing": []
+        }
+      },
+      "killed": false,
+      "restoredShaOk": true
+    },
+    {
+      "id": "R6-tab-capture-used-in-url-mode-too",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "matches": 1,
+      "suites": {
+        "capability-runtime": {
+          "exit": 0,
+          "tests": "214 passed (214)",
+          "failing": []
+        }
+      },
+      "killed": false,
+      "restoredShaOk": true
+    },
+    {
+      "id": "R7-url-mode-uses-tab-commit",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "matches": 0,
+      "skipped": "anchor must match exactly once"
+    },
+    {
+      "id": "S1-currentpage-scopes-by-timeOrigin",
+      "file": "packages\\capability-runtime\\src\\audit\\site-audit.ts",
+      "matches": 1,
+      "suites": {
+        "capability-runtime": {
+          "exit": 1,
+          "tests": "1 failed | 213 passed (214)",
+          "failing": [
+            "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA3b (GAP-278 escalation-1 kill): current-page mode scopes by the tab's own tracked main-frame COMMIT time, not performance.timeOrigin, when the tab exposes getLastMainFrameCommitAt"
+          ]
+        }
+      },
+      "killed": true,
+      "restoredShaOk": true
+    },
+    {
+      "id": "S2-min-reintroduced",
+      "file": "packages\\capability-runtime\\src\\audit\\site-audit.ts",
+      "matches": 1,
+      "suites": {
+        "capability-runtime": {
+          "exit": 1,
+          "tests": "2 failed | 212 passed (214)",
+          "failing": [
+            "tests/unit/audit-report.spec.ts > @sutradhar/capability-runtime audit-report (FR2-12) > AR11: computeObservation > (b) GAP-262 fix-1: since = navCommittedAt even when documentStartedAt (timeOrigin) is EARLIER -- no longer min()d together",
+            "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA3b (GAP-278 escalation-1 kill): current-page mode scopes by the tab's own tracked main-frame COMMIT time, not performance.timeOrigin, when the tab exposes getLastMainFrameCommitAt"
+          ]
+        }
+      },
+      "killed": true,
+      "restoredShaOk": true
+    }
+  ],
+  "finalShas": {
+    "packages\\capability-runtime\\src\\runtime.ts": "4fb910ebbcb2b36c43b425c3b53cdbb0597d5a4676dad4eeae0743946039ff3e",
+    "packages\\browser\\src\\session\\browser-tab.ts": "e45ec9445d9f94018cd9a35edf88aa57fa4fa01763a9f9124eb3ac17376896c0",
+    "packages\\capability-runtime\\src\\audit\\site-audit.ts": "b8a419f8b771aa7d43487ddcd44eec195f964ba7735ffad51e349c1d4d44cbbd"
+  },
+  "allRestored": true
+}

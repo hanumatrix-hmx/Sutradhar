@@ -1,0 +1,31 @@
+{
+ "own404->about:blank": {
+  "n": 10,
+  "stale404Reported": 9,
+  "coversTrue": 10,
+  "errors": 0
+ },
+ "own404->neterror": {
+  "n": 10,
+  "stale404Reported": 10,
+  "coversTrue": 10,
+  "errors": 0
+ },
+ "home->click404->go_back": {
+  "n": 10,
+  "stale404Reported": 10,
+  "coversTrue": 10,
+  "errors": 0
+ },
+ "homeerr->clean->go_back": {
+  "n": 10,
+  "own404Dropped": 10,
+  "ownErrDropped": 0,
+  "coversTrue": 10,
+  "errors": 0
+ }
+}
+own404->about:blank {"navText":"{\n  \"tabId\": \"tab_sess_1790544834088_1_1\",\n  \"url\": \"about:blank\",\n  \"title\": \"\"","url":"about:blank","stale404":false,"covers":true}
+own404->neterror {"navText":"navigate failed: net::ERR_CONNECTION_REFUSED at /","url":"chrome-error://chromewebdata/","stale404":true,"covers":true}
+home->click404->go_back {"back":"{\n  \"tabId\": \"tab_sess_1790544834088_1_1\",\n  \"url\": \"/home","page":"MCP error -32602: Input validation error: Invalid arguments for tool browser.eva","url":"/home?t=0","stale404":true,"covers":true}
+homeerr->clean->go_back {"url":"/homeerr?t=0","ownErr":true,"own404":false,"covers":true}

@@ -1,0 +1,144 @@
+{
+  "only": "bfcache-stale-404",
+  "trials": 5,
+  "preFixEmulation": true,
+  "results": {
+    "bfcache-stale-404": {
+      "trials": [
+        {
+          "persisted": true,
+          "state": {
+            "commitAt": null,
+            "docResp": null,
+            "goto": null
+          },
+          "stale404Reported": true,
+          "audit": {
+            "url": "http://127.0.0.1:59875/bfAclean?t=0",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "Failed to load resource: the server responded with a status "
+            ],
+            "brokenRequests": [
+              {
+                "url": "http://127.0.0.1:59875/own404?t=0",
+                "status": 404
+              }
+            ],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:16.024Z"
+          }
+        },
+        {
+          "persisted": true,
+          "state": {
+            "commitAt": null,
+            "docResp": null,
+            "goto": null
+          },
+          "stale404Reported": true,
+          "audit": {
+            "url": "http://127.0.0.1:59875/bfAclean?t=1",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "Failed to load resource: the server responded with a status "
+            ],
+            "brokenRequests": [
+              {
+                "url": "http://127.0.0.1:59875/own404?t=1",
+                "status": 404
+              }
+            ],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:17.364Z"
+          }
+        },
+        {
+          "persisted": true,
+          "state": {
+            "commitAt": null,
+            "docResp": null,
+            "goto": null
+          },
+          "stale404Reported": true,
+          "audit": {
+            "url": "http://127.0.0.1:59875/bfAclean?t=2",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "Failed to load resource: the server responded with a status "
+            ],
+            "brokenRequests": [
+              {
+                "url": "http://127.0.0.1:59875/own404?t=2",
+                "status": 404
+              }
+            ],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:18.705Z"
+          }
+        },
+        {
+          "persisted": true,
+          "state": {
+            "commitAt": null,
+            "docResp": null,
+            "goto": null
+          },
+          "stale404Reported": true,
+          "audit": {
+            "url": "http://127.0.0.1:59875/bfAclean?t=3",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "Failed to load resource: the server responded with a status "
+            ],
+            "brokenRequests": [
+              {
+                "url": "http://127.0.0.1:59875/own404?t=3",
+                "status": 404
+              }
+            ],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:20.043Z"
+          }
+        },
+        {
+          "persisted": true,
+          "state": {
+            "commitAt": null,
+            "docResp": null,
+            "goto": null
+          },
+          "stale404Reported": true,
+          "audit": {
+            "url": "http://127.0.0.1:59875/bfAclean?t=4",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "Failed to load resource: the server responded with a status "
+            ],
+            "brokenRequests": [
+              {
+                "url": "http://127.0.0.1:59875/own404?t=4",
+                "status": 404
+              }
+            ],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:21.347Z"
+          }
+        }
+      ]
+    }
+  },
+  "preFixPatched": "E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\browser\\dist\\index.js",
+  "origin": "http://127.0.0.1:59875",
+  "cdp": {
+    "created": 6,
+    "detached": 5,
+    "stillOpenObjects": 1,
+    "stillOpenConnected": 1
+  }
+}

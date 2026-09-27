@@ -3107,3 +3107,59 @@ not investigated further as out of this escalation's scope.
 
 Sent to independent audit-5. This is escalation cycle 1 of 2 -- if audit-5 fails with a critical or
 major finding, one more escalation cycle remains before FR2-12 would be marked BLOCKED.
+
+## 2026-09-28 -- FR2-12 audit-5: FAILED (1 major, narrow). Escalation 1 of 2 used; entering ESCALATION CYCLE 2, the LAST cycle before BLOCKED.
+
+Strong result overall: escalation-1's GAP-278 fix and its new tab-lifetime tracking mechanism held
+up under very broad, adversarial attack -- a 60-navigation long-lived tab (commit time always correct,
+never moved by hash/pushState, 0 foreign findings, 0 session/listener leak across 260 total
+navigations); 4 concurrent tabs x 10 rounds with 0 cross-tab leakage; tab adoption (popups and
+attach()) correctly wired through the constructor; close races failing fast and cleanly; URL-mode's
+own per-call session and the tab-level session coexisting on the same tab with no conflict (8/8).
+GAP-279 (the disclosed-as-untested live dialog repro) is now independently confirmed fixed: 160/160
+across same-tab/other-tab/just-handled shapes, with a pre-fix emulation confirming the goto fallback
+tier is genuinely what closes it (only 6/30 without it). GAP-280's test fixes also independently
+re-verified by re-applying the exact named mutations.
+
+But one real, narrow regression: GAP-284 (major) -- the tab-level own-status capture is only ever
+OVERWRITTEN by the next Document response, never CLEARED when a subsequent commit has no response at
+all. Three real shapes trigger this: navigating to about:blank after an error page, navigating to a
+dead host (Chrome's own error page, no real response), and restoring a page from the back-forward
+cache via browser.go_back. In each case the PREVIOUS page's own 404/500 gets reported as the CURRENT
+page's status, with coversWholeDocument:true -- this is spec T11's own contamination scenario,
+recurring at the tab-tracking level instead of the audit-call level that was already fixed. Root
+cause and fix direction (from the auditor): invalidate the tab capture on every main-frame
+Page.frameNavigated unless its loaderId matches the frame's own loaderId -- both CDP events carry
+this field, so a fresh commit with no matching response means "nothing to report", not "keep
+whatever was there before".
+
+Minor: GAP-285 (a related regression -- a bfcache restore moves the commit time to the restore
+instant, dropping that page's own real load-time error, 10/10 MCP), GAP-286 (test-integrity, 5
+mutations including a recurrence of the GAP-266 same-document-nav bug now at the tab-tracking level,
+untested), GAP-287 (a pre-existing, unrelated hazard -- audit() on a background tab can stall
+indefinitely if a DIFFERENT tab has an open/just-handled dialog -- confirmed identical with tab
+tracking fully disabled, so explicitly NOT assigned as an escalation-1 defect, logged for separate
+tracking).
+
+Per the loop's rules, this was escalation cycle 1 of 2. FR2-12 now enters ESCALATION CYCLE 2, the
+LAST cycle before the item would be marked BLOCKED with a written diagnosis if this also fails.
+
+Decisions for escalation-2 (binding):
+1. GAP-284: on every main-frame Page.frameNavigated, invalidate the tab-level own-status capture
+   UNLESS the new frame event's loaderId matches a response's loaderId already captured for that
+   exact commit. Concretely: track loaderId alongside the captured response, and clear the captured
+   response whenever a NEW frameNavigated event carries a different loaderId with no corresponding
+   Document response received yet (or ever, for about:blank/error pages which produce no real
+   response). Add a unit test and live cases for all 3 audit-5 repro shapes: own-404 -> about:blank,
+   own-404 -> dead host, click-broken-link -> go_back (bfcache).
+2. GAP-285: on a BackForwardCacheRestore commit specifically, either report coversWholeDocument:false
+   for that audit, or re-scope by the restored document's ORIGINAL commit time rather than the
+   restore instant -- pick whichever is simpler given decision 1's loaderId-based redesign (a bfcache
+   restore likely reuses the original loaderId, so decision 1's fix may already resolve this as a side
+   effect -- verify whether it does before building a separate mechanism).
+3. GAP-286: add tests that kill N11 (same-document nav moving the tab-level commit time -- a direct
+   analog of the already-fixed GAP-266, now needed at this new layer too) and N4 (Document-type
+   filter removed). R5/R6/N12 are lower priority given N12 was confirmed harmless.
+This is the last escalation cycle. Re-run the full audit-1 through audit-5 attack surface, with
+particular attention to whether decision 1's loaderId-based redesign interacts correctly with
+GAP-266's same-document-nav fix (both concern when a commit should vs shouldn't reset tracked state).

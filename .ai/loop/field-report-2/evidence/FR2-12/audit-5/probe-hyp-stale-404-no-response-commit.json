@@ -1,0 +1,428 @@
+{
+  "only": "stale-404-no-response-commit",
+  "trials": 5,
+  "preFixEmulation": false,
+  "results": {
+    "stale-404-no-response-commit": {
+      "trials": [
+        {
+          "about:blank": {
+            "state": {
+              "commitAt": "2026-09-27T21:27:23.745Z",
+              "docResp": {
+                "url": "http://127.0.0.1:56824/own404?t=0",
+                "status": 404,
+                "timestamp": "2026-09-27T21:27:23.422Z"
+              },
+              "goto": null
+            },
+            "stale404Reported": true,
+            "audit": {
+              "url": "about:blank",
+              "oldConsole": 0,
+              "oldBroken": 0,
+              "consoleErrors": [],
+              "brokenRequests": [
+                {
+                  "url": "http://127.0.0.1:56824/own404?t=0",
+                  "status": 404
+                }
+              ],
+              "covers": true,
+              "documentStartedAt": "2026-09-27T21:27:23.744Z"
+            }
+          },
+          "data:text/h": {
+            "state": {
+              "commitAt": "2026-09-27T21:27:24.418Z",
+              "docResp": {
+                "url": "data:text/html,<title>d</title><h1>data</h1>",
+                "status": 200,
+                "timestamp": "2026-09-27T21:27:24.416Z"
+              },
+              "goto": {
+                "url": "data:text/html,<title>d</title><h1>data</h1>",
+                "status": 200
+              }
+            },
+            "stale404Reported": false,
+            "audit": {
+              "url": "data:text/html,<title>d</title><h1>data</h1>",
+              "oldConsole": 0,
+              "oldBroken": 0,
+              "consoleErrors": [],
+              "brokenRequests": [],
+              "covers": true,
+              "documentStartedAt": "2026-09-27T21:27:24.415Z"
+            }
+          },
+          "neterror": {
+            "navErr": "net::ERR_CONNECTION_REFUSED at http://127.0.0.1:56825/",
+            "state": {
+              "commitAt": "2026-09-27T21:27:25.110Z",
+              "docResp": {
+                "url": "http://127.0.0.1:56824/own404?t=0n",
+                "status": 404,
+                "timestamp": "2026-09-27T21:27:24.788Z"
+              },
+              "goto": {
+                "url": "http://127.0.0.1:56824/own404?t=0n",
+                "status": 404
+              }
+            },
+            "stale404Reported": true,
+            "audit": {
+              "url": "chrome-error://chromewebdata/",
+              "oldConsole": 0,
+              "oldBroken": 0,
+              "consoleErrors": [],
+              "brokenRequests": [
+                {
+                  "url": "http://127.0.0.1:56824/own404?t=0n",
+                  "status": 404
+                }
+              ],
+              "covers": true,
+              "documentStartedAt": "2026-09-27T21:27:25.103Z"
+            }
+          }
+        },
+        {
+          "about:blank": {
+            "state": {
+              "commitAt": "2026-09-27T21:27:26.118Z",
+              "docResp": {
+                "url": "http://127.0.0.1:56824/own404?t=1",
+                "status": 404,
+                "timestamp": "2026-09-27T21:27:25.790Z"
+              },
+              "goto": null
+            },
+            "stale404Reported": true,
+            "audit": {
+              "url": "about:blank",
+              "oldConsole": 0,
+              "oldBroken": 0,
+              "consoleErrors": [],
+              "brokenRequests": [
+                {
+                  "url": "http://127.0.0.1:56824/own404?t=1",
+                  "status": 404
+                }
+              ],
+              "covers": true,
+              "documentStartedAt": "2026-09-27T21:27:26.116Z"
+            }
+          },
+          "data:text/h": {
+            "state": {
+              "commitAt": "2026-09-27T21:27:26.787Z",
+              "docResp": {
+                "url": "data:text/html,<title>d</title><h1>data</h1>",
+                "status": 200,
+                "timestamp": "2026-09-27T21:27:26.785Z"
+              },
+              "goto": {
+                "url": "data:text/html,<title>d</title><h1>data</h1>",
+                "status": 200
+              }
+            },
+            "stale404Reported": false,
+            "audit": {
+              "url": "data:text/html,<title>d</title><h1>data</h1>",
+              "oldConsole": 0,
+              "oldBroken": 0,
+              "consoleErrors": [],
+              "brokenRequests": [],
+              "covers": true,
+              "documentStartedAt": "2026-09-27T21:27:26.784Z"
+            }
+          },
+          "neterror": {
+            "navErr": "net::ERR_CONNECTION_REFUSED at http://127.0.0.1:56825/",
+            "state": {
+              "commitAt": "2026-09-27T21:27:27.478Z",
+              "docResp": {
+                "url": "http://127.0.0.1:56824/own404?t=1n",
+                "status": 404,
+                "timestamp": "2026-09-27T21:27:27.156Z"
+              },
+              "goto": {
+                "url": "http://127.0.0.1:56824/own404?t=1n",
+                "status": 404
+              }
+            },
+            "stale404Reported": true,
+            "audit": {
+              "url": "chrome-error://chromewebdata/",
+              "oldConsole": 0,
+              "oldBroken": 0,
+              "consoleErrors": [],
+              "brokenRequests": [
+                {
+                  "url": "http://127.0.0.1:56824/own404?t=1n",
+                  "status": 404
+                }
+              ],
+              "covers": true,
+              "documentStartedAt": "2026-09-27T21:27:27.471Z"
+            }
+          }
+        },
+        {
+          "about:blank": {
+            "state": {
+              "commitAt": "2026-09-27T21:27:28.484Z",
+              "docResp": {
+                "url": "http://127.0.0.1:56824/own404?t=2",
+                "status": 404,
+                "timestamp": "2026-09-27T21:27:28.155Z"
+              },
+              "goto": null
+            },
+            "stale404Reported": true,
+            "audit": {
+              "url": "about:blank",
+              "oldConsole": 0,
+              "oldBroken": 0,
+              "consoleErrors": [],
+              "brokenRequests": [
+                {
+                  "url": "http://127.0.0.1:56824/own404?t=2",
+                  "status": 404
+                }
+              ],
+              "covers": true,
+              "documentStartedAt": "2026-09-27T21:27:28.482Z"
+            }
+          },
+          "data:text/h": {
+            "state": {
+              "commitAt": "2026-09-27T21:27:29.154Z",
+              "docResp": {
+                "url": "data:text/html,<title>d</title><h1>data</h1>",
+                "status": 200,
+                "timestamp": "2026-09-27T21:27:29.152Z"
+              },
+              "goto": {
+                "url": "data:text/html,<title>d</title><h1>data</h1>",
+                "status": 200
+              }
+            },
+            "stale404Reported": false,
+            "audit": {
+              "url": "data:text/html,<title>d</title><h1>data</h1>",
+              "oldConsole": 0,
+              "oldBroken": 0,
+              "consoleErrors": [],
+              "brokenRequests": [],
+              "covers": true,
+              "documentStartedAt": "2026-09-27T21:27:29.151Z"
+            }
+          },
+          "neterror": {
+            "navErr": "net::ERR_CONNECTION_REFUSED at http://127.0.0.1:56825/",
+            "state": {
+              "commitAt": "2026-09-27T21:27:29.834Z",
+              "docResp": {
+                "url": "http://127.0.0.1:56824/own404?t=2n",
+                "status": 404,
+                "timestamp": "2026-09-27T21:27:29.505Z"
+              },
+              "goto": {
+                "url": "http://127.0.0.1:56824/own404?t=2n",
+                "status": 404
+              }
+            },
+            "stale404Reported": true,
+            "audit": {
+              "url": "chrome-error://chromewebdata/",
+              "oldConsole": 0,
+              "oldBroken": 0,
+              "consoleErrors": [],
+              "brokenRequests": [
+                {
+                  "url": "http://127.0.0.1:56824/own404?t=2n",
+                  "status": 404
+                }
+              ],
+              "covers": true,
+              "documentStartedAt": "2026-09-27T21:27:29.827Z"
+            }
+          }
+        },
+        {
+          "about:blank": {
+            "state": {
+              "commitAt": "2026-09-27T21:27:30.826Z",
+              "docResp": {
+                "url": "http://127.0.0.1:56824/own404?t=3",
+                "status": 404,
+                "timestamp": "2026-09-27T21:27:30.513Z"
+              },
+              "goto": null
+            },
+            "stale404Reported": true,
+            "audit": {
+              "url": "about:blank",
+              "oldConsole": 0,
+              "oldBroken": 0,
+              "consoleErrors": [],
+              "brokenRequests": [
+                {
+                  "url": "http://127.0.0.1:56824/own404?t=3",
+                  "status": 404
+                }
+              ],
+              "covers": true,
+              "documentStartedAt": "2026-09-27T21:27:30.824Z"
+            }
+          },
+          "data:text/h": {
+            "state": {
+              "commitAt": "2026-09-27T21:27:31.495Z",
+              "docResp": {
+                "url": "data:text/html,<title>d</title><h1>data</h1>",
+                "status": 200,
+                "timestamp": "2026-09-27T21:27:31.493Z"
+              },
+              "goto": {
+                "url": "data:text/html,<title>d</title><h1>data</h1>",
+                "status": 200
+              }
+            },
+            "stale404Reported": false,
+            "audit": {
+              "url": "data:text/html,<title>d</title><h1>data</h1>",
+              "oldConsole": 0,
+              "oldBroken": 0,
+              "consoleErrors": [],
+              "brokenRequests": [],
+              "covers": true,
+              "documentStartedAt": "2026-09-27T21:27:31.492Z"
+            }
+          },
+          "neterror": {
+            "navErr": "net::ERR_CONNECTION_REFUSED at http://127.0.0.1:56825/",
+            "state": {
+              "commitAt": "2026-09-27T21:27:32.187Z",
+              "docResp": {
+                "url": "http://127.0.0.1:56824/own404?t=3n",
+                "status": 404,
+                "timestamp": "2026-09-27T21:27:31.856Z"
+              },
+              "goto": {
+                "url": "http://127.0.0.1:56824/own404?t=3n",
+                "status": 404
+              }
+            },
+            "stale404Reported": true,
+            "audit": {
+              "url": "chrome-error://chromewebdata/",
+              "oldConsole": 0,
+              "oldBroken": 0,
+              "consoleErrors": [],
+              "brokenRequests": [
+                {
+                  "url": "http://127.0.0.1:56824/own404?t=3n",
+                  "status": 404
+                }
+              ],
+              "covers": true,
+              "documentStartedAt": "2026-09-27T21:27:32.175Z"
+            }
+          }
+        },
+        {
+          "about:blank": {
+            "state": {
+              "commitAt": "2026-09-27T21:27:33.188Z",
+              "docResp": {
+                "url": "http://127.0.0.1:56824/own404?t=4",
+                "status": 404,
+                "timestamp": "2026-09-27T21:27:32.862Z"
+              },
+              "goto": null
+            },
+            "stale404Reported": true,
+            "audit": {
+              "url": "about:blank",
+              "oldConsole": 0,
+              "oldBroken": 0,
+              "consoleErrors": [],
+              "brokenRequests": [
+                {
+                  "url": "http://127.0.0.1:56824/own404?t=4",
+                  "status": 404
+                }
+              ],
+              "covers": true,
+              "documentStartedAt": "2026-09-27T21:27:33.187Z"
+            }
+          },
+          "data:text/h": {
+            "state": {
+              "commitAt": "2026-09-27T21:27:33.874Z",
+              "docResp": {
+                "url": "data:text/html,<title>d</title><h1>data</h1>",
+                "status": 200,
+                "timestamp": "2026-09-27T21:27:33.872Z"
+              },
+              "goto": {
+                "url": "data:text/html,<title>d</title><h1>data</h1>",
+                "status": 200
+              }
+            },
+            "stale404Reported": false,
+            "audit": {
+              "url": "data:text/html,<title>d</title><h1>data</h1>",
+              "oldConsole": 0,
+              "oldBroken": 0,
+              "consoleErrors": [],
+              "brokenRequests": [],
+              "covers": true,
+              "documentStartedAt": "2026-09-27T21:27:33.871Z"
+            }
+          },
+          "neterror": {
+            "navErr": "net::ERR_CONNECTION_REFUSED at http://127.0.0.1:56825/",
+            "state": {
+              "commitAt": "2026-09-27T21:27:34.567Z",
+              "docResp": {
+                "url": "http://127.0.0.1:56824/own404?t=4n",
+                "status": 404,
+                "timestamp": "2026-09-27T21:27:34.238Z"
+              },
+              "goto": {
+                "url": "http://127.0.0.1:56824/own404?t=4n",
+                "status": 404
+              }
+            },
+            "stale404Reported": true,
+            "audit": {
+              "url": "chrome-error://chromewebdata/",
+              "oldConsole": 0,
+              "oldBroken": 0,
+              "consoleErrors": [],
+              "brokenRequests": [
+                {
+                  "url": "http://127.0.0.1:56824/own404?t=4n",
+                  "status": 404
+                }
+              ],
+              "covers": true,
+              "documentStartedAt": "2026-09-27T21:27:34.559Z"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "origin": "http://127.0.0.1:56824",
+  "cdp": {
+    "created": 6,
+    "detached": 5,
+    "stillOpenObjects": 1,
+    "stillOpenConnected": 1
+  }
+}

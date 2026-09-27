@@ -1,0 +1,159 @@
+{
+  "only": "bfcache-own-errors",
+  "trials": 5,
+  "preFixEmulation": true,
+  "results": {
+    "bfcache-own-errors": {
+      "trials": [
+        {
+          "persisted": true,
+          "navType": "navigate",
+          "state": {
+            "commitAt": null,
+            "docResp": null,
+            "goto": null
+          },
+          "ownErrPresent": true,
+          "ownMissingPresent": true,
+          "audit": {
+            "url": "http://127.0.0.1:60668/bfA?t=0",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "A-OWN-ERR",
+              "Failed to load resource: the server responded with a status "
+            ],
+            "brokenRequests": [
+              {
+                "url": "http://127.0.0.1:60668/a-own-missing",
+                "status": 404
+              }
+            ],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:26:59.528Z"
+          }
+        },
+        {
+          "persisted": true,
+          "navType": "navigate",
+          "state": {
+            "commitAt": null,
+            "docResp": null,
+            "goto": null
+          },
+          "ownErrPresent": true,
+          "ownMissingPresent": true,
+          "audit": {
+            "url": "http://127.0.0.1:60668/bfA?t=1",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "A-OWN-ERR",
+              "Failed to load resource: the server responded with a status "
+            ],
+            "brokenRequests": [
+              {
+                "url": "http://127.0.0.1:60668/a-own-missing",
+                "status": 404
+              }
+            ],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:01.166Z"
+          }
+        },
+        {
+          "persisted": true,
+          "navType": "navigate",
+          "state": {
+            "commitAt": null,
+            "docResp": null,
+            "goto": null
+          },
+          "ownErrPresent": true,
+          "ownMissingPresent": true,
+          "audit": {
+            "url": "http://127.0.0.1:60668/bfA?t=2",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "A-OWN-ERR",
+              "Failed to load resource: the server responded with a status "
+            ],
+            "brokenRequests": [
+              {
+                "url": "http://127.0.0.1:60668/a-own-missing",
+                "status": 404
+              }
+            ],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:02.810Z"
+          }
+        },
+        {
+          "persisted": true,
+          "navType": "navigate",
+          "state": {
+            "commitAt": null,
+            "docResp": null,
+            "goto": null
+          },
+          "ownErrPresent": true,
+          "ownMissingPresent": true,
+          "audit": {
+            "url": "http://127.0.0.1:60668/bfA?t=3",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "A-OWN-ERR",
+              "Failed to load resource: the server responded with a status "
+            ],
+            "brokenRequests": [
+              {
+                "url": "http://127.0.0.1:60668/a-own-missing",
+                "status": 404
+              }
+            ],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:04.449Z"
+          }
+        },
+        {
+          "persisted": true,
+          "navType": "navigate",
+          "state": {
+            "commitAt": null,
+            "docResp": null,
+            "goto": null
+          },
+          "ownErrPresent": true,
+          "ownMissingPresent": true,
+          "audit": {
+            "url": "http://127.0.0.1:60668/bfA?t=4",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "A-OWN-ERR",
+              "Failed to load resource: the server responded with a status "
+            ],
+            "brokenRequests": [
+              {
+                "url": "http://127.0.0.1:60668/a-own-missing",
+                "status": 404
+              }
+            ],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:06.083Z"
+          }
+        }
+      ]
+    }
+  },
+  "preFixPatched": "E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\browser\\dist\\index.js",
+  "origin": "http://127.0.0.1:60668",
+  "cdp": {
+    "created": 6,
+    "detached": 5,
+    "stillOpenObjects": 1,
+    "stillOpenConnected": 1
+  }
+}

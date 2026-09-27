@@ -1,0 +1,38 @@
+{"timestamp":"2026-09-27T22:40:04.799Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-27T22:40:05.020Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790548804799_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-27T22:58:53.323Z","level":"info","message":"[BrowserSession] Closed session sess_1790548804799_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T22:58:53.323Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790548804799_1","context":{"reason":"Close all sessions requested"}}
+== sameTabDialogOpen: 26/50
+   hash-404: 2/5 ms~2567 pendingAtStart=5 FAIL e.g. {"url":"/h404?d=0#top","broken":[],"pending":true,"goto":null}
+   replaceState-404: 1/5 ms~2568 pendingAtStart=5 FAIL e.g. {"url":"/rewritten-0.24208783155659586","broken":[],"pending":true,"goto":null}
+   emptybody-404: 0/5 ms~2599 pendingAtStart=5 FAIL e.g. {"url":"chrome-error://chromewebdata/","broken":[],"pending":true,"goto":null}
+   emptybody-500: 0/5 ms~2592 pendingAtStart=5 FAIL e.g. {"url":"chrome-error://chromewebdata/","broken":[],"pending":true,"goto":null}
+   control-own404: 5/5 ms~2566 pendingAtStart=5
+   control-ok: 5/5 ms~2560 pendingAtStart=5
+   a-302-then-hash-404: 0/5 ms~2572 pendingAtStart=5 FAIL e.g. {"url":"/h404?from=r#top","broken":[],"pending":true,"goto":null}
+   a-js200-to-hash404: 3/5 ms~2571 pendingAtStart=5 FAIL e.g. {"url":"/h404?from=js#top","broken":[],"pending":true,"goto":null}
+   a-302-then-replaceState-200: 5/5 ms~2573 pendingAtStart=5
+   c-302>500(js)>302>404: 5/5 ms~2575 pendingAtStart=5
+== otherTabDialogOpen: 30/30
+   hash-404: 3/3 ms~29994
+   replaceState-404: 3/3 ms~30013
+   emptybody-404: 3/3 ms~30000
+   emptybody-500: 3/3 ms~30012
+   control-own404: 3/3 ms~30000
+   control-ok: 3/3 ms~30001
+   a-302-then-hash-404: 3/3 ms~29997
+   a-js200-to-hash404: 3/3 ms~30007
+   a-302-then-replaceState-200: 3/3 ms~30013
+   c-302>500(js)>302>404: 3/3 ms~29995
+== justHandledDialog: 30/30
+   hash-404: 3/3 ms~1562
+   replaceState-404: 3/3 ms~1555
+   emptybody-404: 3/3 ms~1583
+   emptybody-500: 3/3 ms~1585
+   control-own404: 3/3 ms~1552
+   control-ok: 3/3 ms~1551
+   a-302-then-hash-404: 3/3 ms~1549
+   a-js200-to-hash404: 3/3 ms~1572
+   a-302-then-replaceState-200: 3/3 ms~1562
+   c-302>500(js)>302>404: 3/3 ms~1562
+cdp {"created":251,"detached":250,"stillOpenObjects":1,"stillOpenConnected":1}
