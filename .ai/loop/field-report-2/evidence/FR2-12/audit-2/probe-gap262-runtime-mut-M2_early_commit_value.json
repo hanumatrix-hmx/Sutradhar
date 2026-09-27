@@ -1,0 +1,147 @@
+{
+  "origin": "http://127.0.0.1:54698",
+  "startedAt": "2026-09-27T16:17:41.254Z",
+  "cases": {
+    "core": [
+      {
+        "leaks": 19,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:41.572Z",
+            "url": "http://127.0.0.1:54698/noisy-interval?mt=0"
+          },
+          {
+            "at": "2026-09-27T16:17:41.827Z",
+            "url": "http://127.0.0.1:54698/clean-delayed?delayMs=150&mt=0"
+          }
+        ]
+      },
+      {
+        "leaks": 18,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:43.388Z",
+            "url": "http://127.0.0.1:54698/noisy-interval?mt=1"
+          },
+          {
+            "at": "2026-09-27T16:17:43.636Z",
+            "url": "http://127.0.0.1:54698/clean-delayed?delayMs=150&mt=1"
+          }
+        ]
+      },
+      {
+        "leaks": 18,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:45.186Z",
+            "url": "http://127.0.0.1:54698/noisy-interval?mt=2"
+          },
+          {
+            "at": "2026-09-27T16:17:45.431Z",
+            "url": "http://127.0.0.1:54698/clean-delayed?delayMs=150&mt=2"
+          }
+        ]
+      },
+      {
+        "leaks": 18,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:46.987Z",
+            "url": "http://127.0.0.1:54698/noisy-interval?mt=3"
+          },
+          {
+            "at": "2026-09-27T16:17:47.236Z",
+            "url": "http://127.0.0.1:54698/clean-delayed?delayMs=150&mt=3"
+          }
+        ]
+      },
+      {
+        "leaks": 19,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:48.786Z",
+            "url": "http://127.0.0.1:54698/noisy-interval?mt=4"
+          },
+          {
+            "at": "2026-09-27T16:17:49.042Z",
+            "url": "http://127.0.0.1:54698/clean-delayed?delayMs=150&mt=4"
+          }
+        ]
+      }
+    ],
+    "mainDoc404": [
+      {
+        "has404": true,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:50.586Z",
+            "url": "http://127.0.0.1:54698/main-404?mt=0"
+          }
+        ]
+      },
+      {
+        "has404": true,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:51.435Z",
+            "url": "http://127.0.0.1:54698/main-404?mt=1"
+          }
+        ]
+      }
+    ],
+    "spaReplace200": [
+      {
+        "ownKept": true,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:52.301Z",
+            "url": "http://127.0.0.1:54698/spa?kind=replace&at=200&mt=0"
+          },
+          {
+            "at": "2026-09-27T16:17:52.520Z",
+            "url": "http://127.0.0.1:54698/spa?kind=replace&at=200&mt=0&r=1"
+          }
+        ]
+      },
+      {
+        "ownKept": true,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:53.852Z",
+            "url": "http://127.0.0.1:54698/spa?kind=replace&at=200&mt=1"
+          },
+          {
+            "at": "2026-09-27T16:17:54.067Z",
+            "url": "http://127.0.0.1:54698/spa?kind=replace&at=200&mt=1&r=1"
+          }
+        ]
+      }
+    ],
+    "jsRedirect": [
+      {
+        "c": [
+          "ja-own",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "jb-own",
+          "jc-own"
+        ],
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:55.417Z",
+            "url": "http://127.0.0.1:54698/ja?mt=1"
+          },
+          {
+            "at": "2026-09-27T16:17:55.490Z",
+            "url": "http://127.0.0.1:54698/jb"
+          },
+          {
+            "at": "2026-09-27T16:17:55.554Z",
+            "url": "http://127.0.0.1:54698/jc"
+          }
+        ]
+      }
+    ]
+  },
+  "chromePid": 42004,
+  "finishedAt": "2026-09-27T16:17:56.962Z"
+}

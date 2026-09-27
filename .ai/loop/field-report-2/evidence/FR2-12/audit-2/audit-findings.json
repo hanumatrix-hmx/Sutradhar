@@ -1,0 +1,99 @@
+{
+  "item": "FR2-12",
+  "audit": "audit-2",
+  "head": "4461906",
+  "status": "COMPLETE",
+  "verdict": "FAIL",
+  "verification": {
+    "build": "turbo build --force: parallel run failed in @sutradhar/server (TS2307 cannot find @sutradhar/contracts -- concurrent sutradhar build-bundle touching contracts/dist, pre-existing build-orchestration race, fix-1 touched no build files); --concurrency=1 re-run: 20/20 OK",
+    "vitest": {
+      "capability-runtime": 193,
+      "browser": 498,
+      "cli": 161,
+      "mcp-server": 92,
+      "sutradhar": 20,
+      "allPassing": true
+    },
+    "liveVerify": "tools/scenario-suite/verify-fr2-12-audit.mjs full run: 29 PASS / 0 FAIL / 1 INFO (L15 GAP-038 expected-miss); no new Chrome root processes before vs after (GAP-265 N3 fixed). See live-rerun/.",
+    "regressionOfAudit1Passes": "Concurrent 2-tab audits: no cross-tab leakage 3/3, hidden tab flagged; web-vitals vs independent in-page observer exact 4/4 (CLS delta 0, LCP delta 0); B2 CLS identical over 3 URL audits, no injected global. EXCEPTION: audited-URL-itself 4xx/5xx edge case regressed (A2-F2)."
+  },
+  "findings": [
+    {
+      "id": "A2-F1",
+      "severity": "major",
+      "gap": "GAP-262 (new regression introduced by fix-1)",
+      "title": "False-clean report: any same-document navigation (history.replaceState / pushState / hash change) by the AUDITED page during its own load/settle window moves `since` forward, silently dropping the page's own console errors and broken requests from before it, while observation.coversWholeDocument stays true.",
+      "reproductionRate": "Controlled fixture (runtime-direct): own console.error dropped in 35/36 trials across replace/push/hash x at {sync,0,200,1000}ms; with the nav at 200ms or 1000ms, consoleErrors AND brokenRequests are both [] in 18/18 trials (page actually has 1 console.error + 2 404s). CLI: see probe-cli-false-clean.json. CLI: `audit /spa --json --fail-on-diff` (page with 1 console.error + 2 404s, replaceState at 200ms) exits 0 with consoleErrors [] and brokenRequests [] 3/3 -- a false CI pass.",
+      "realWorldPrevalence": "8/10 real sites audited live (nextjs.org, react.dev, vercel.com, github.com, npmjs.com, vuejs.org, angular.dev, svelte.dev) fire 2-5 main-frame framenavigated events during the audit window (same-document router/hydration navs at +7ms..+1047ms after commit); only developer.mozilla.org and wikipedia.org fire exactly one. So `since` lands 125ms-1047ms AFTER the real document commit on most modern SPA sites -- the initial-load window where most asset 404s and hydration errors happen. (These specific popular sites happened to be near-clean, measured drop 1 console error on npmjs.com; the mechanism, not the count, is the finding.)",
+      "mechanism": "runtime.audit keeps its framenavigated listener attached for the whole navigate()+settleMs window and overwrites navCommittedAt on EVERY main-frame event. Puppeteer 25.5.0 FrameManager#onFrameNavigatedWithinDocument emits FrameManagerEvent.FrameNavigated for Page.navigatedWithinDocument too (FrameManager.js:406-415). computeObservation no longer min()s against documentStartedAt, so nothing bounds it.",
+      "evidence": [
+        "probe-gap262-runtime-samedoc.json (spaSelf_*)",
+        "probe-gap262-runtime-realworld.json",
+        "probe-cli-false-clean.json"
+      ],
+      "fixDirection": "Record only cross-document commits (CDP Page.frameNavigated on the main frame, or ignore frames whose FrameEvent.FrameNavigatedWithinDocument fired / whose loaderId did not change); keep the LAST cross-document commit so JS redirect chains still work."
+    },
+    {
+      "id": "A2-F2",
+      "severity": "major",
+      "gap": "GAP-262 (new regression introduced by fix-1)",
+      "title": "The audited URL's own main-document HTTP error status (404/500, and a 302 -> 404 redirect) is no longer reported in brokenRequests -- the main-document 'response' event is timestamped just BEFORE framenavigated (commit), so commit-time scoping drops it. audit-1 listed 'audited URL itself 404 (reported as broken request)' as a PASSING edge case.",
+      "reproductionRate": "15/15 runtime-direct (main-404 x5, main-500 at 150ms x5, 302->404 x5): brokenRequests [] every time; only Chrome's generic 'Failed to load resource' console line survives. CLI main-500: missing from brokenRequests 2/3 (exit still 1 only because Chrome logs a generic \"Failed to load resource\" console error).",
+      "evidence": [
+        "probe-gap262-runtime-regress.json"
+      ]
+    },
+    {
+      "id": "A2-F3",
+      "severity": "major",
+      "gap": "GAP-261 (incomplete fix; new double-print introduced by fix-1)",
+      "title": "`audit --json` stdout is TWO concatenated JSON documents when a never-handled alert opens while the audit's capture phase (screenshot/evaluate) is in flight: withSession's pre-emption branch prints the blocked doc, then the ABANDONED runtime.audit() rejects ('Protocol error (Runtime.evaluate): Target closed') and fix-1's new cmdAudit catch prints a second blocked doc. JSON.parse(stdout) fails.",
+      "reproductionRate": "12/18 with alert at 1500-1575ms (3 reps x 6 offsets); 2/7 in the wider 0..1800ms sweep. Outside the capture window all shapes are single-doc (see below).",
+      "evidence": [
+        "probe-cli-boundary1500.json",
+        "probe-cli-dialogs.json S3_neverHandledMidAudit 1500/1550"
+      ],
+      "fixDirection": "cmdAudit's catch must not print when withSession already emitted the pre-empted doc (single writer / emitted flag), or the abandoned work must be muted after pre-emption -- exactly the hazard withSession's own comment warns about.",
+      "mutationNote": "M8b (delete the cmdAudit catch) does not fix it: the alert-at-D11-check shape then prints nothing/exit 1 and the 1575ms shape still double-prints -- two uncoordinated writers race."
+    },
+    {
+      "id": "A2-F4",
+      "severity": "minor",
+      "gap": "GAP-264 / test integrity",
+      "title": "Mutation survivors: M3 (drop the main-frame filter in the framenavigated handler) and M4 (keep FIRST event instead of LAST -- live-verified to break the JS redirect chain, reporting ja-own/jb-own of earlier documents) both pass all 193 capability-runtime tests. M8 (delete fix-1's cmdAudit dialog catch) passes all 161 cli tests; there are no CLI unit tests for any GAP-261 path. GAP-261 CLI mutations M6 (reportDialogs -> stdout), M7 (gate catch -> text lines), M9 (pre-empt doc removed) are all caught by the live probe/live-verify but by 0 unit tests.",
+      "evidence": [
+        "mutation-results.json"
+      ]
+    },
+    {
+      "id": "A2-F5",
+      "severity": "minor",
+      "title": "MCP/SDK: no output corruption (0 non-JSON MCP stdout lines; every call returns a schema-valid report or a clean isError / thrown error), but an alert on load makes browser.audit/Page.audit hang 30s and fail with a misleading \"Navigation timeout of 30000 ms exceeded\" instead of D11's fast dialog error; an alert opening during capture makes the SDK audit return a valid report after ~31.5s (auto-dismiss) with no mention of the dialog. Not the GAP-261 class; likely pre-existing navigate()/auto-dismiss behavior.",
+      "evidence": [
+        "probe-mcp-sdk-dialogs.json"
+      ]
+    },
+    {
+      "id": "A2-F6",
+      "severity": "info",
+      "title": "Stale comment in runtime.ts audit() (GAP-262 block) says the commit time is still min()d against performance.timeOrigin \"unchanged\" -- the min() was removed. Also: sameTabHashAudit (audit url = current page + #frag) reports only post-hash activity yet coversWholeDocument:true (5/5)."
+    },
+    {
+      "id": "A2-F7",
+      "severity": "info",
+      "title": "Pre-existing, not FR2-12: parallel `turbo build --force` fails in @sutradhar/server (contracts dist race; --concurrency=1 OK). CLI `close` leaves the sutradhar-cli-<ts> Chrome user-data-dir in os.tmpdir(); 94 such dirs from this audit's own CLI runs were removed by the auditor (no process referenced them)."
+    }
+  ],
+  "confirmedOk": {
+    "GAP-261_shapes": "CLI --json, default-policy leftover (2/2) + current-page variant (1/1): one blocked doc, exit 3, dialog text on stderr. accept flag / persisted accept / dismiss flag with alert at 0 and 600ms (6/6): one schema-valid report, exit 0, dialogHandled on stderr, 0 raw dialog lines on stdout. Never-handled alert at 0/600/1400ms and confirm-on-load: one blocked doc, exit 3. Non-dialog fatal keeps empty stdout + exit 1. Control OK.",
+    "GAP-262_core_runtime": "0/21 leaks (15 at 150ms + 0/25/50/400/800/1500ms), own error kept 5/5; cross-site (process swap) 0/10 leaks, own kept 10/10.",
+    "GAP-262_boundary": "tight MessageChannel-loop noise 0/20 leaks; pagehide-time noise (20 console.error + keepalive 404 in pagehide) 0/20 leaks.",
+    "redirects": "HTTP 302 chain r1->r2->final: framenavigated fires ONCE (final only), final page's own error + 404 reported 3/3. JS redirect chain ja->jb->jc: fires once per hop, LAST used, only jc-own reported 3/3 (earlier documents excluded, correct).",
+    "GAP-262_cli": "CLI nav /noisy-interval -> audit /clean-delayed?delayMs=150 --json --fail-on-diff: 0/15 leaks, exit 0, schema-valid single doc 15/15; own error kept 3/3.",
+    "GAP-263": "Plain Ajv 8.20 draft-07 + ajv-formats on the committed schema: status 400/404/599/600/999 valid; 1000, 399, -1, 404.5, \"404\" rejected (gap263-ajv.json)."
+  },
+  "probes": {},
+  "minDiagnosis": "CONFIRMED. site-audit.ts computeObservation navigated branch is exactly `since = input.navCommittedAt ?? documentStartedAt;` (no min). Mutation M1 (reintroduce min against documentStartedAt) -> live core repro leaks 12-13 entries 5/5 (performance.timeOrigin ~= navigation start). Stale comment remains in runtime.ts (~line 1602) claiming the commit time is still min()d against performance.timeOrigin \"unchanged\" -- false, doc-only.",
+  "gap264": "RA4b does exercise the commit-time boundary: M2 (commit value shifted 1s early) fails exactly RA4b (1 failed | 192 passed); M1 (min reintroduced) fails AR11(b). Sources restored, sha256 verified identical (pre-mutation-sha256.txt), package rebuilt.",
+  "sameDocResidualJudgment": "NOT narrow. The disclosed residual was framed as \"a same-document nav on the same tab followed by an audit\" -- that exact shape is rare and mostly benign. The real exposure is the audited page itself doing replaceState/pushState/hash during load, which 8/10 real modern sites do within 7-1047ms of commit. It must be fixed before DONE (A2-F1)."
+}

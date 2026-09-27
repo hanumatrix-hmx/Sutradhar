@@ -1,0 +1,111 @@
+{
+  "origin": "http://127.0.0.1:52330",
+  "startedAt": "2026-09-27T16:15:31.149Z",
+  "cases": {
+    "spaReplaceStateFailOnDiff": [
+      {
+        "code": 0,
+        "ms": 2418,
+        "timedOut": false,
+        "stdoutIsSingleJson": true,
+        "stdoutKind": "report",
+        "schemaValid": true,
+        "rawDialogLinesOnStdout": 0,
+        "stderrDialogLines": [],
+        "report": {
+          "url": "http://127.0.0.1:52330/spa?hydrated=1",
+          "consoleErrors": [],
+          "brokenRequests": []
+        }
+      },
+      {
+        "code": 0,
+        "ms": 1877,
+        "timedOut": false,
+        "stdoutIsSingleJson": true,
+        "stdoutKind": "report",
+        "schemaValid": true,
+        "rawDialogLinesOnStdout": 0,
+        "stderrDialogLines": [],
+        "report": {
+          "url": "http://127.0.0.1:52330/spa?hydrated=1",
+          "consoleErrors": [],
+          "brokenRequests": []
+        }
+      },
+      {
+        "code": 0,
+        "ms": 1828,
+        "timedOut": false,
+        "stdoutIsSingleJson": true,
+        "stdoutKind": "report",
+        "schemaValid": true,
+        "rawDialogLinesOnStdout": 0,
+        "stderrDialogLines": [],
+        "report": {
+          "url": "http://127.0.0.1:52330/spa?hydrated=1",
+          "consoleErrors": [],
+          "brokenRequests": []
+        }
+      }
+    ],
+    "main500": [
+      {
+        "code": 1,
+        "ms": 1835,
+        "timedOut": false,
+        "stdoutIsSingleJson": true,
+        "stdoutKind": "report",
+        "schemaValid": true,
+        "rawDialogLinesOnStdout": 0,
+        "stderrDialogLines": [],
+        "report": {
+          "url": "http://127.0.0.1:52330/main-500?t=0",
+          "consoleErrors": [
+            "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+          ],
+          "brokenRequests": [
+            "500 /main-500?t=0"
+          ]
+        }
+      },
+      {
+        "code": 1,
+        "ms": 1855,
+        "timedOut": false,
+        "stdoutIsSingleJson": true,
+        "stdoutKind": "report",
+        "schemaValid": true,
+        "rawDialogLinesOnStdout": 0,
+        "stderrDialogLines": [],
+        "report": {
+          "url": "http://127.0.0.1:52330/main-500?t=1",
+          "consoleErrors": [
+            "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+          ],
+          "brokenRequests": []
+        }
+      },
+      {
+        "code": 1,
+        "ms": 1835,
+        "timedOut": false,
+        "stdoutIsSingleJson": true,
+        "stdoutKind": "report",
+        "schemaValid": true,
+        "rawDialogLinesOnStdout": 0,
+        "stderrDialogLines": [],
+        "report": {
+          "url": "http://127.0.0.1:52330/main-500?t=2",
+          "consoleErrors": [
+            "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+          ],
+          "brokenRequests": []
+        }
+      }
+    ]
+  },
+  "finishedAt": "2026-09-27T16:15:43.244Z",
+  "leftoverChromeByTempDir": 0,
+  "newCliChromeRootsLeft": []
+}

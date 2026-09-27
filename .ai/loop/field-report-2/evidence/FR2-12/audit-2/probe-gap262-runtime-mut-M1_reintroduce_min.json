@@ -1,0 +1,144 @@
+{
+  "origin": "http://127.0.0.1:60544",
+  "startedAt": "2026-09-27T16:17:20.297Z",
+  "cases": {
+    "core": [
+      {
+        "leaks": 12,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:20.651Z",
+            "url": "http://127.0.0.1:60544/noisy-interval?mt=0"
+          },
+          {
+            "at": "2026-09-27T16:17:20.903Z",
+            "url": "http://127.0.0.1:60544/clean-delayed?delayMs=150&mt=0"
+          }
+        ]
+      },
+      {
+        "leaks": 12,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:22.453Z",
+            "url": "http://127.0.0.1:60544/noisy-interval?mt=1"
+          },
+          {
+            "at": "2026-09-27T16:17:22.696Z",
+            "url": "http://127.0.0.1:60544/clean-delayed?delayMs=150&mt=1"
+          }
+        ]
+      },
+      {
+        "leaks": 13,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:24.252Z",
+            "url": "http://127.0.0.1:60544/noisy-interval?mt=2"
+          },
+          {
+            "at": "2026-09-27T16:17:24.507Z",
+            "url": "http://127.0.0.1:60544/clean-delayed?delayMs=150&mt=2"
+          }
+        ]
+      },
+      {
+        "leaks": 12,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:26.051Z",
+            "url": "http://127.0.0.1:60544/noisy-interval?mt=3"
+          },
+          {
+            "at": "2026-09-27T16:17:26.297Z",
+            "url": "http://127.0.0.1:60544/clean-delayed?delayMs=150&mt=3"
+          }
+        ]
+      },
+      {
+        "leaks": 12,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:27.836Z",
+            "url": "http://127.0.0.1:60544/noisy-interval?mt=4"
+          },
+          {
+            "at": "2026-09-27T16:17:28.082Z",
+            "url": "http://127.0.0.1:60544/clean-delayed?delayMs=150&mt=4"
+          }
+        ]
+      }
+    ],
+    "mainDoc404": [
+      {
+        "has404": true,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:29.636Z",
+            "url": "http://127.0.0.1:60544/main-404?mt=0"
+          }
+        ]
+      },
+      {
+        "has404": true,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:30.502Z",
+            "url": "http://127.0.0.1:60544/main-404?mt=1"
+          }
+        ]
+      }
+    ],
+    "spaReplace200": [
+      {
+        "ownKept": true,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:31.352Z",
+            "url": "http://127.0.0.1:60544/spa?kind=replace&at=200&mt=0"
+          },
+          {
+            "at": "2026-09-27T16:17:31.562Z",
+            "url": "http://127.0.0.1:60544/spa?kind=replace&at=200&mt=0&r=1"
+          }
+        ]
+      },
+      {
+        "ownKept": true,
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:32.918Z",
+            "url": "http://127.0.0.1:60544/spa?kind=replace&at=200&mt=1"
+          },
+          {
+            "at": "2026-09-27T16:17:33.126Z",
+            "url": "http://127.0.0.1:60544/spa?kind=replace&at=200&mt=1&r=1"
+          }
+        ]
+      }
+    ],
+    "jsRedirect": [
+      {
+        "c": [
+          "jc-own"
+        ],
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:17:34.452Z",
+            "url": "http://127.0.0.1:60544/ja?mt=1"
+          },
+          {
+            "at": "2026-09-27T16:17:34.511Z",
+            "url": "http://127.0.0.1:60544/jb"
+          },
+          {
+            "at": "2026-09-27T16:17:34.578Z",
+            "url": "http://127.0.0.1:60544/jc"
+          }
+        ]
+      }
+    ]
+  },
+  "chromePid": 48796,
+  "finishedAt": "2026-09-27T16:17:36.013Z"
+}

@@ -1,0 +1,177 @@
+{
+  "origin": "http://127.0.0.1:57017",
+  "startedAt": "2026-09-27T16:06:40.927Z",
+  "cases": {
+    "httpRedirectChain": [
+      {
+        "url": "http://127.0.0.1:57017/final",
+        "requestedUrl": "http://127.0.0.1:57017/r1?t=0",
+        "consoleErrors": [
+          "final-own",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-final.png"
+        ],
+        "observation": {
+          "mode": "navigated",
+          "documentStartedAt": "2026-09-27T16:06:41.138Z",
+          "observingSince": "2026-09-27T16:06:41.134Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:06:41.252Z",
+            "url": "http://127.0.0.1:57017/final"
+          }
+        ]
+      },
+      {
+        "url": "http://127.0.0.1:57017/final",
+        "requestedUrl": "http://127.0.0.1:57017/r1?t=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "final-own"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-final.png"
+        ],
+        "observation": {
+          "mode": "navigated",
+          "documentStartedAt": "2026-09-27T16:06:43.659Z",
+          "observingSince": "2026-09-27T16:06:41.134Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:06:43.664Z",
+            "url": "http://127.0.0.1:57017/final"
+          }
+        ]
+      },
+      {
+        "url": "http://127.0.0.1:57017/final",
+        "requestedUrl": "http://127.0.0.1:57017/r1?t=2",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "final-own"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-final.png"
+        ],
+        "observation": {
+          "mode": "navigated",
+          "documentStartedAt": "2026-09-27T16:06:46.076Z",
+          "observingSince": "2026-09-27T16:06:41.134Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:06:46.083Z",
+            "url": "http://127.0.0.1:57017/final"
+          }
+        ]
+      }
+    ],
+    "jsRedirectChain": [
+      {
+        "url": "http://127.0.0.1:57017/jc",
+        "requestedUrl": "http://127.0.0.1:57017/ja?t=0",
+        "consoleErrors": [
+          "jc-own"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "observation": {
+          "mode": "navigated",
+          "documentStartedAt": "2026-09-27T16:06:42.233Z",
+          "observingSince": "2026-09-27T16:06:41.134Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:06:42.112Z",
+            "url": "http://127.0.0.1:57017/ja?t=0"
+          },
+          {
+            "at": "2026-09-27T16:06:42.172Z",
+            "url": "http://127.0.0.1:57017/jb"
+          },
+          {
+            "at": "2026-09-27T16:06:42.239Z",
+            "url": "http://127.0.0.1:57017/jc"
+          }
+        ]
+      },
+      {
+        "url": "http://127.0.0.1:57017/jc",
+        "requestedUrl": "http://127.0.0.1:57017/ja?t=1",
+        "consoleErrors": [
+          "jc-own"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "observation": {
+          "mode": "navigated",
+          "documentStartedAt": "2026-09-27T16:06:44.642Z",
+          "observingSince": "2026-09-27T16:06:41.134Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:06:44.527Z",
+            "url": "http://127.0.0.1:57017/ja?t=1"
+          },
+          {
+            "at": "2026-09-27T16:06:44.586Z",
+            "url": "http://127.0.0.1:57017/jb"
+          },
+          {
+            "at": "2026-09-27T16:06:44.649Z",
+            "url": "http://127.0.0.1:57017/jc"
+          }
+        ]
+      },
+      {
+        "url": "http://127.0.0.1:57017/jc",
+        "requestedUrl": "http://127.0.0.1:57017/ja?t=2",
+        "consoleErrors": [
+          "jc-own"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "observation": {
+          "mode": "navigated",
+          "documentStartedAt": "2026-09-27T16:06:47.064Z",
+          "observingSince": "2026-09-27T16:06:41.134Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "navEvents": [
+          {
+            "at": "2026-09-27T16:06:46.946Z",
+            "url": "http://127.0.0.1:57017/ja?t=2"
+          },
+          {
+            "at": "2026-09-27T16:06:47.007Z",
+            "url": "http://127.0.0.1:57017/jb"
+          },
+          {
+            "at": "2026-09-27T16:06:47.069Z",
+            "url": "http://127.0.0.1:57017/jc"
+          }
+        ]
+      }
+    ]
+  },
+  "chromePid": 30920,
+  "finishedAt": "2026-09-27T16:06:48.488Z"
+}

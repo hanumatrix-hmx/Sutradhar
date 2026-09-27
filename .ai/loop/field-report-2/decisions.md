@@ -2792,3 +2792,62 @@ git status matches the reported file list exactly; no leftover processes (Orches
 confirmed after killing the one hung revert-confirm process by PID).
 
 Sent to independent audit-2.
+
+## 2026-09-27 -- FR2-12 audit-2: FAILED (3 major). Cycle 2 of 4 standard.
+
+audit-2 confirmed both audit-1 findings are genuinely fixed (0/21 GAP-262 leaks runtime-direct
+across 6 different response delays, 0/15 via the real CLI; GAP-261's default/accept/persisted
+dialog shapes and most alert timings all give exactly one JSON document with dialog text on
+stderr) -- but fix-1's own changes introduced three NEW major defects, all root-caused with
+evidence, not just observed:
+
+1. GAP-266: fix-1's GAP-262 fix (dropping min(navCommittedAt, documentStartedAt)) over-corrected.
+   Puppeteer fires framenavigated for SAME-DOCUMENT navigations too (history.replaceState/
+   pushState, hash changes), and with no same-document filter, a page doing this during its own
+   load now has its OWN real errors/broken-requests silently dropped from the report, while
+   coversWholeDocument still claims true. This is NOT the narrow disclosed residual it was framed
+   as -- audit-2 live-audited 10 real sites and found 8 of them do exactly this during initial load
+   (nextjs.org, react.dev, vercel.com, github.com, npmjs.com, vuejs.org, angular.dev, svelte.dev),
+   which is precisely the window where most hydration errors and asset 404s happen. Causes a false
+   CI pass: `audit <page> --json --fail-on-diff` exits 0 on a page that genuinely has errors.
+2. GAP-267: same root cause, a different symptom -- the AUDITED PAGE'S OWN error status (a 404/500
+   on the page itself) is now missing from brokenRequests, because its response arrives just before
+   the commit event that the scope boundary is keyed on. Audit-1 had explicitly listed this case as
+   passing before fix-1 touched this code.
+3. GAP-268: GAP-261 is still incomplete for one specific timing window -- an alert opening during
+   the audit's OWN capture phase (screenshot/evaluate, not the initial wait) makes two separate code
+   paths both write a JSON document to stdout (the session's pre-emption branch, then fix-1's own
+   new catch handling the abandoned audit's later "Target closed" failure). Confirmed via mutation
+   that simply deleting fix-1's new catch does NOT fix this -- the two writers need actual
+   coordination, not one-sided removal.
+
+Plus minor test-integrity gaps (GAP-269: 3 mutations, including one that breaks JS redirect chains,
+survive every unit test) and a cosmetic pre-existing build race (GAP-271, already known elsewhere).
+
+Root-cause note for fix-2: GAP-266/267 are the SAME underlying mistake (a commit-time boundary with
+no same-document filter, applied without also explicitly capturing the main document's own response)
+manifesting two ways. audit-2's proposed fix direction: use CDP's actual cross-document navigation
+signal (Page.frameNavigated filtered to real document changes, not Puppeteer's framenavigated which
+fires for both), keep the LAST cross-document commit so multi-hop JS redirect chains still resolve
+to the final page, and separately, explicitly include the main document's own response in
+brokenRequests regardless of the scope boundary (its own load failure is definitionally part of
+"this page's audit", not contamination from a previous page).
+
+Decisions for fix-2:
+1. GAP-266/267: switch the navigation-event filter to real cross-document commits only (verify
+   which Puppeteer/CDP event actually distinguishes this -- audit-2's own probe data on JS redirect
+   chains and 302 chains is a good starting point for what already works). Explicitly capture the
+   main document's own response/status separately from the console/network scoping logic, so a
+   404/500 on the audited URL itself is never filtered out regardless of timing. Add live cases for:
+   a page doing replaceState/pushState/hash-change during its own load (with a real console error
+   before AND after the same-document nav, confirming both are kept); a page whose own response is
+   404/500; the 8-real-site sweep audit-2 ran, or an equivalent synthetic version of it.
+2. GAP-268: coordinate the two stdout-writing paths so exactly one writes when an alert opens during
+   capture -- add a live case with the alert specifically in the 1500-1600ms window (audit-2's own
+   repro), repeated enough times to be confident (10+).
+3. GAP-269: add unit tests that kill M3 (main-frame filter), M4 (last-vs-first event), and the
+   GAP-261 CLI-path mutations M6-M9.
+4. Given fix-1 already needed two internal passes and this is now audit-2's finding on top, fix-2
+   should re-run EVERY audit-1 AND audit-2 repro before reporting done, not just the newly-targeted
+   ones -- this loop's pattern on this item specifically is fixes that solve the named case while
+   quietly breaking an adjacent one.
