@@ -162,6 +162,18 @@ function ownStatusPage(n, status) {
     `<h1>Own-status ${status} fixture ${n}</h1><script>console.error('own-status-${status}-${n}');</script></body></html>` };
 }
 
+/** GAP-273 fix-3: the audited page's OWN 404, which THEN does a same-document navigation
+ *  (hash change or history.replaceState) shortly after load -- the exact shape that defeated
+ *  fix-2's final-`page.url()` string match (the final URL no longer equals the response URL,
+ *  even though the response itself really was this page's own 404). */
+function ownStatusThenSameDocPage(n, via) {
+  const navCall =
+    via === 'hash' ? `location.hash = 'sec-${n}'` : `history.replaceState({}, '', location.pathname + '?n=${n}&replaced=1')`;
+  const script = `console.error('own-status-samedoc-404-${n}'); setTimeout(function () { ${navCall}; }, 150);`;
+  return `<html lang="en"><head><meta charset="utf-8"><title>OwnStatusSameDoc ${n}</title></head><body style="margin:0">` +
+    `<h1>Own-status 404 + same-doc (${via}) fixture ${n}</h1><script>${script}</script></body></html>`;
+}
+
 /** GAP-268 fix-2: what would defeat a one-sided guard next -- TWO dialogs opening during
  *  capture, not just one (an alert followed almost immediately by a confirm). */
 function alertConfirmPage(n, delayMs) {
@@ -260,6 +272,29 @@ export async function startAuditFixtureServer() {
       const { status, body } = ownStatusPage(n, 500);
       res.writeHead(status, { 'Content-Type': 'text/html; charset=utf-8' });
       res.end(body);
+      return;
+    }
+    if (url.pathname === '/own-404-samedoc') {
+      // GAP-273 fix-3: hash-setting / replaceState 404.
+      const via = url.searchParams.get('via') ?? 'hash';
+      res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(ownStatusThenSameDocPage(n, via));
+      return;
+    }
+    if (url.pathname === '/own-404-emptybody') {
+      // GAP-273 fix-3: an error status with a Content-Length: 0 (truly empty) body -- the shape
+      // audit-3 found makes Chrome substitute its own "friendly" error document, so
+      // `page.url()` becomes `chrome-error://chromewebdata/` and never matches the real
+      // response URL. The real Network.responseReceived event for THIS response (status 404,
+      // frameId = main frame, type Document) still fires before Chrome swaps the document, which
+      // is exactly what fix-3's live capture is keyed on instead of the final page.url().
+      res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Length': '0' });
+      res.end();
+      return;
+    }
+    if (url.pathname === '/own-500-emptybody') {
+      res.writeHead(500, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Length': '0' });
+      res.end();
       return;
     }
     if (url.pathname === '/own-redirect-404') {

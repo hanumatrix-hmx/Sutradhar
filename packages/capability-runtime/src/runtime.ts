@@ -159,6 +159,50 @@ export interface SutradharRuntimeOptions {
 }
 
 /**
+ * FR2-12 fix-3 (GAP-274): the audit() CDP session's setup commands (`Page.enable`,
+ * `Network.enable`, `Page.getFrameTree`) can hang indefinitely — up to Puppeteer's own
+ * protocol timeout (audit-3 measured ~31s under an open dialog on the current page, and
+ * 180-200s+ after a previous navigation timed out with no response). `dialog-cdp.ts:425-427`
+ * already documents this exact hazard for a fresh `Page.enable` and deliberately doesn't
+ * await it past a bounded window. This helper applies the same pattern here: the work keeps
+ * running in the background (so a slow-but-eventually-successful setup still wires up its
+ * listeners), but the caller is never blocked past `boundMs`, and no rejection from the
+ * background work escapes as an unhandled rejection.
+ */
+function boundedFireAndForget(work: Promise<unknown>, boundMs: number): Promise<void> {
+  // Swallow immediately so a late rejection (e.g. the session detaches before Page.enable's
+  // response arrives) never surfaces as an unhandled rejection, independent of the race below.
+  const settled = work.then(
+    () => true,
+    () => false,
+  );
+  return new Promise((resolve) => {
+    let done = false;
+    const timer = setTimeout(() => {
+      if (!done) {
+        done = true;
+        resolve();
+      }
+    }, boundMs);
+    void settled.then(() => {
+      if (!done) {
+        done = true;
+        clearTimeout(timer);
+        resolve();
+      }
+    });
+  });
+}
+
+/** Bound for {@link boundedFireAndForget} when wiring up audit()'s commit-tracking CDP
+ *  session (GAP-274). Generous enough for a healthy target (this normally resolves in a few
+ *  ms) but short enough that a stuck dialog/navigation never turns audit() into a 30-200s+
+ *  stall — the worst case becomes "commit-tracking didn't finish wiring up in time", which
+ *  falls back to documentStartedAt-only scoping (the same fallback already used when
+ *  `createCDPSession` itself isn't available), not a hang. */
+const AUDIT_CDP_SETUP_BOUND_MS = 1000;
+
+/**
  * High-level browser automation runtime. One instance manages a pool of browser
  * sessions. Every method is a pure async verb — no transport, no protocol.
  *
@@ -1598,7 +1642,28 @@ export class SutradharRuntime {
     // correctly resolves to the final page; a first-wins policy would misattribute later hops'
     // findings to the first hop (GAP-269's M4 mutation).
     let navCommittedAt: string | null = null;
-    let navCdpSession: { detach: () => Promise<void> } | null = null;
+    // GAP-273 (fix-3): the main document's own response, captured LIVE off the CDP session
+    // during the navigation itself — keyed by the CDP frameId, never by comparing URLs after
+    // the fact. This is what makes it robust to the shapes that defeated fix-2's final-
+    // `page.url()` string match: a `history.replaceState`/hash change after the response
+    // arrives (the final URL no longer equals the response URL), and an empty-body error
+    // response where Chrome swaps in its own error page (`page.url()` becomes
+    // `chrome-error://chromewebdata/`, which never matches any real response URL at all).
+    let mainDocumentResponseCapture: { url: string; status: number; timestamp: string } | null = null;
+    let mainFrameId: string | null = null;
+    // `cdpClient` is ALWAYS detached in the `finally` below once `createCDPSession()` itself
+    // succeeds — independent of whether the setup commands below ever complete. fix-2's bug
+    // (GAP-274) was leaking this session: its `catch` block reset the tracking variable to
+    // `null` on ANY failure past creation (including a `Page.enable` that eventually
+    // rejected after its ~180-200s protocol timeout), discarding the only reference to a
+    // session that was never detached. Splitting "the session that must be detached" from
+    // "whether commit-tracking is usable" fixes that: this variable is set the instant
+    // `createCDPSession()` resolves and is never cleared before `finally` runs.
+    let cdpClient: {
+      send: (method: string) => Promise<unknown>;
+      on: (event: string, cb: (event: Record<string, unknown>) => void) => void;
+      detach: () => Promise<void>;
+    } | null = null;
     const canListenForCommit =
       options.url !== undefined && typeof (page as unknown as { createCDPSession?: unknown }).createCDPSession === 'function';
     try {
@@ -1608,26 +1673,69 @@ export class SutradharRuntime {
             page as unknown as {
               createCDPSession: () => Promise<{
                 send: (method: string) => Promise<unknown>;
-                on: (event: string, cb: (event: { frame?: { parentId?: string } }) => void) => void;
+                on: (event: string, cb: (event: Record<string, unknown>) => void) => void;
                 detach: () => Promise<void>;
               }>;
             }
           ).createCDPSession();
-          navCdpSession = client;
+          cdpClient = client; // always detached in `finally` from this point on, no matter what happens next
           client.on('Page.frameNavigated', (event) => {
-            if (event?.frame?.parentId) return; // ignore subframes — only the main frame's own commit counts
+            const frame = event?.frame as { id?: string; parentId?: string } | undefined;
+            if (frame?.parentId) return; // ignore subframes — only the main frame's own commit counts
             navCommittedAt = new Date().toISOString();
+            if (frame?.id) mainFrameId = frame.id; // main frame's own id — updated on every real commit
           });
           // Deliberately no listener on `Page.navigatedWithinDocument` — that's CDP's own signal
           // for a same-document navigation (hash change / pushState / replaceState), and it must
           // never move `since` (GAP-266/267).
-          await client.send('Page.enable');
+          client.on('Network.responseReceived', (event) => {
+            const type = event?.type as string | undefined;
+            const frameId = event?.frameId as string | undefined;
+            const response = event?.response as { url?: string; status?: number } | undefined;
+            if (type !== 'Document' || !response || typeof response.status !== 'number') return;
+            // Before the frame tree/first commit resolves, `mainFrameId` may still be null —
+            // in that case we can't yet tell a main-frame Document response from a subframe
+            // one, so it's dropped rather than risk misattributing a subframe's own error
+            // page as the audited document's. Once known, only that frame's responses count,
+            // and (matching the "keep the LAST cross-document commit" policy above) a later
+            // Document response for the same frame — e.g. a redirect hop — always overwrites
+            // an earlier one, so a chain correctly resolves to its final response.
+            if (!mainFrameId || frameId !== mainFrameId) return;
+            mainDocumentResponseCapture = {
+              url: response.url ?? '',
+              status: response.status,
+              timestamp: new Date().toISOString(),
+            };
+          });
+          // GAP-274 (fix-3): `Page.enable`/`Network.enable`/`Page.getFrameTree` can all hang
+          // indefinitely under an open dialog or a previous navigation that timed out with no
+          // response — `dialog-cdp.ts:425-427` already documents and works around this exact
+          // hazard for a fresh `Page.enable`. Never await this setup unboundedly: it keeps
+          // running in the background (so a slow-but-healthy target still gets its listeners
+          // wired up), but audit() itself is never blocked past AUDIT_CDP_SETUP_BOUND_MS.
+          await boundedFireAndForget(
+            (async () => {
+              await client.send('Page.enable').catch(() => {});
+              await client.send('Network.enable').catch(() => {});
+              try {
+                const tree = (await client.send('Page.getFrameTree')) as {
+                  frameTree?: { frame?: { id?: string } };
+                } | null;
+                const treeFrameId = tree?.frameTree?.frame?.id;
+                if (treeFrameId) mainFrameId = treeFrameId;
+              } catch {
+                // Frame tree unavailable within the bound — mainFrameId stays whatever
+                // Page.frameNavigated has set (or null, in which case Document responses are
+                // dropped above until a real commit arrives).
+              }
+            })(),
+            AUDIT_CDP_SETUP_BOUND_MS,
+          );
         } catch {
-          // A browser/Puppeteer build without `createCDPSession`, or a session that failed to
-          // attach: fall back to no commit-time tracking at all (documentStartedAt-only scoping,
-          // the same as current-page mode) rather than silently reintroducing either the
-          // GAP-262 leak or a same-document false negative.
-          navCdpSession = null;
+          // `createCDPSession()` itself failed (synchronously or otherwise) before `cdpClient`
+          // was ever assigned — nothing to detach. Fall back to no commit-time tracking at all
+          // (documentStartedAt-only scoping, the same as current-page mode) rather than
+          // silently reintroducing either the GAP-262 leak or a same-document false negative.
         }
       }
       if (options.url) {
@@ -1639,8 +1747,8 @@ export class SutradharRuntime {
         await new Promise((r) => setTimeout(r, options.settleMs ?? 1500));
       }
     } finally {
-      if (navCdpSession) {
-        await navCdpSession.detach().catch(() => {});
+      if (cdpClient) {
+        await cdpClient.detach().catch(() => {});
       }
     }
 
@@ -1684,18 +1792,29 @@ export class SutradharRuntime {
       .filter((n) => n.phase === 'response' && n.status !== undefined && n.status >= 400)
       .map((n) => ({ url: n.url, status: n.status! }));
 
-    // GAP-267 fix-2: the audited document's OWN HTTP response status is definitionally part of
-    // "this page's audit result" — never contamination from a previous page — so it must never be
-    // filterable by the `since` timing boundary at all, even if fix-2's own commit-time listener
-    // (above) still ends up racing that response by a few ms. Find it unscoped: the ring buffer's
-    // LAST 'document'-typed response entry whose url matches the final, post-redirect `url` (a
-    // redirect chain logs one 'document' response per hop, each at a different url, so matching on
-    // the final url picks the hop that's actually this page — same principle as "keep the last
-    // cross-document commit" above). If it's missing from the `since`-scoped list (because its
-    // timestamp fell just before `since`), add it back explicitly rather than dropping it.
-    const mainDocumentResponse = [...tab.getNetworkLog()]
-      .reverse()
-      .find((n) => n.phase === 'response' && n.resourceType === 'document' && n.url === url);
+    // GAP-267/GAP-273 (fix-2/fix-3): the audited document's OWN HTTP response status is
+    // definitionally part of "this page's audit result" — never contamination from a previous
+    // page — so it must never be filterable by the `since` timing boundary at all, even if the
+    // commit-time listener above still ends up racing that response by a few ms.
+    //
+    // Primary source (GAP-273 fix): `mainDocumentResponseCapture`, captured LIVE by the CDP
+    // session's `Network.responseReceived` listener during THIS navigation, keyed by CDP
+    // frameId. This never depends on the final `page.url()`, so it survives every shape that
+    // defeated fix-2's string match: a `history.replaceState`/hash change after the response
+    // (the final URL differs from the response URL), and an empty-body error response where
+    // Chrome swaps in `chrome-error://chromewebdata/` as `page.url()` (which never matches any
+    // real response URL).
+    //
+    // Fallback (only when the live capture isn't available — e.g. `createCDPSession` doesn't
+    // exist on this Puppeteer build, or the bounded setup above never got Network.enable
+    // processed before this audit's own navigation completed): the ring buffer's LAST
+    // 'document'-typed response entry whose url matches the final `url`. This is fix-2's
+    // original heuristic, kept only as a best-effort fallback for that fallback path — it
+    // still fails on the same shapes GAP-273 named, but no worse than before this fix in the
+    // already-degraded case where live tracking wasn't available at all.
+    const mainDocumentResponse =
+      mainDocumentResponseCapture ??
+      [...tab.getNetworkLog()].reverse().find((n) => n.phase === 'response' && n.resourceType === 'document' && n.url === url);
     if (
       mainDocumentResponse &&
       mainDocumentResponse.status !== undefined &&

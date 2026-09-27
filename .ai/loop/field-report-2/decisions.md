@@ -2955,3 +2955,54 @@ Decisions for fix-3:
    just the helper in isolation).
 Re-run the full audit-1/2/3 attack surface before reporting done, per this item's now-established
 pattern of a fix solving the named case while quietly leaving or creating an adjacent one.
+
+## 2026-09-28 -- FR2-12 fix-3 done; sent to independent audit-4 (cycle 4 of 4 standard, LAST STANDARD CYCLE)
+
+Executor (Sonnet) self-report, independently spot-checked by the Orchestrator (vitest
+capability-runtime 204 re-run directly: exact match; git status matches the reported file list
+exactly; 0 leftover processes).
+
+GAP-273: the own-response fallback now captures the main document's response LIVE off the CDP
+session (Network.responseReceived filtered to the main frame's Document-type response, tracked via
+Page.frameNavigated), keeping the last such response for redirect-chain correctness. This never
+depends on the final page.url() lookup that broke under hash-changes, replaceState, and Chrome's own
+chrome-error:// substitution for empty-body error responses. Live: 10/10 x4 audit-3 repro shapes via
+runtime.audit directly, 6/6 via the real CLI --json, plus 2 controls 10/10. Revert-confirm
+reproduces the exact original symptom (hit:false on hash-404 and empty-body-404) when reverted,
+sha-verified restore.
+
+GAP-274: Page.enable/Network.enable/getFrameTree are now raced against a 1s bound via a new
+boundedFireAndForget() helper, explicitly matching the EXISTING precedent for this exact hazard
+already in dialog-cdp.ts:425-427 (the executor was told to reuse that pattern, not invent a new one,
+and did). The session-leak bug (67 created/66 detached on audit-3's 180s path) is fixed by splitting
+"the client that must be detached" from "whether commit-tracking is usable" -- fix-2's bug cleared
+the only reference to an undetached session inside a catch block that ran on any post-creation
+failure.
+
+DISCLOSED EVIDENCE GAP, not hidden: the executor's live revert-confirm attempt for GAP-274 (removing
+the bound, then reproducing an open dialog / a timed-out prior nav) did NOT reproduce a hang in its
+environment -- both cases returned in ~2.5s even unbounded, which differs from audit-3's own
+measurement of a ~29.5s Page.enable hang under the same conditions. The executor could not pin down
+the environmental difference in its time budget. It substituted unit tests with a MOCKED
+never-resolving and a mocked rejecting Page.enable (both pass, both confirm the session is still
+detached and audit() still returns quickly) as deterministic evidence instead of the live repro. This
+is real engineering (the fix is correct either way -- near-zero overhead if no hang occurs, a hard
+cap if one does), but it means the ORIGINAL live hang from audit-3 has not been independently
+re-confirmed as actually fixed via a live run, only via a mock and via the (differently-timed) fix-2
+regression not reproducing this time. audit-4 must attempt this live repro independently, with its
+own timing measurements, before this can be considered closed.
+
+GAP-276's third item (cli.ts's 3 call-site mutations) was explicitly NOT done this cycle -- disclosed
+as out of time budget and orthogonal to this cycle's two targets, not silently dropped.
+
+Full re-verification: audit-1's live-verify (29/0/1, unchanged), fix-2's own live-verify script
+re-run via a copy with fix-3's own evidence dir (all pass -- GAP-266/267/268/262-not-reopened), and a
+new fix-3 sweep (18/18 twice). vitest capability-runtime 204 (+6, independently re-run and matching)
+/ cli 171 / browser 498 / mcp-server 92 / sutradhar 20, all green.
+
+Disclosed process-hygiene incident: an early version of the verify script used the wrong CLI
+state-dir env var, leaking one dialog-warden process into the shared default state dir; found via
+the baseline/after diff, killed by PID (command-line matched to this worktree), script fixed.
+
+Sent to independent audit-4 (LAST STANDARD CYCLE -- if this fails with a critical/major finding,
+FR2-12 moves to escalation per the loop's rules).

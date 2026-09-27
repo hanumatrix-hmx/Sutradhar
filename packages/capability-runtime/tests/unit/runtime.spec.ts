@@ -378,6 +378,19 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
         fireWithinDocument(): void {
           for (const cb of listeners.get('Page.navigatedWithinDocument') ?? []) cb({ frameId: 'main', url: URL_ });
         },
+        /** fix-3 (GAP-273): raises CDP's own `Network.responseReceived` event, the live signal
+         *  the fix now keys the main document's own response off of — frameId + `type:'Document'`,
+         *  never a post-hoc `page.url()` comparison. */
+        fireDocumentResponse(frameId: string, respUrl: string, status: number): void {
+          for (const cb of listeners.get('Network.responseReceived') ?? []) {
+            cb({ frameId, type: 'Document', response: { url: respUrl, status } });
+          }
+        },
+        fireNonDocumentResponse(frameId: string, respUrl: string, status: number): void {
+          for (const cb of listeners.get('Network.responseReceived') ?? []) {
+            cb({ frameId, type: 'Image', response: { url: respUrl, status } });
+          }
+        },
       };
       return session;
     }
@@ -611,6 +624,141 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
       const result = await runtime.audit('s');
 
       expect(result.brokenRequests).toEqual([{ url: URL_, status: 500 }]);
+    });
+
+    it('RA10 (GAP-273): the main document\'s own error response is captured LIVE off the CDP session and survives a final page.url() that no longer equals the response url (history.replaceState/hash-change-after-load shape)', async () => {
+      const cdp = fakeCdpSession();
+      const page = fakePage({
+        createCDPSession: vi.fn(async () => cdp),
+        // Final page.url() has since moved on (replaceState/hash-change after the response
+        // arrived, or Chrome's own chrome-error:// substitution) -- the OLD string-match
+        // fallback would miss this entirely.
+        url: () => `${URL_}#moved-on`,
+      });
+      const tab = fakeTab({
+        observingSince: '2020-01-01T00:00:00.000Z',
+        // Deliberately EMPTY -- the fallback (getNetworkLog url-match) would find nothing here,
+        // so this only passes if the LIVE capture path (Network.responseReceived) is what's
+        // actually feeding brokenRequests.
+        getNetworkLog: () => [],
+      });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+      vi.spyOn(runtime, 'navigate').mockImplementation(async () => {
+        cdp.fireMainFrameNavigated(); // sets mainFrameId = 'main'
+        cdp.fireDocumentResponse('main', URL_, 404); // the real response, at the real URL
+        return { tabId: 't', url: URL_, title: 'T' } as any;
+      });
+      page.evaluate.mockResolvedValue({ issues: [], webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 }, timeOrigin: Date.parse('2026-01-01T00:00:10.000Z'), pageWasHidden: false });
+
+      const result = await runtime.audit('s', { url: URL_, settleMs: 0 });
+
+      expect(result.brokenRequests).toEqual([{ url: URL_, status: 404 }]);
+    });
+
+    it('RA11 (GAP-273 mutation kill): a sub-frame\'s own Document response (different frameId) is never attributed to the main document', async () => {
+      const cdp = fakeCdpSession();
+      const page = fakePage({ createCDPSession: vi.fn(async () => cdp) });
+      const tab = fakeTab({ observingSince: '2020-01-01T00:00:00.000Z', getNetworkLog: () => [] });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+      vi.spyOn(runtime, 'navigate').mockImplementation(async () => {
+        cdp.fireMainFrameNavigated(); // mainFrameId = 'main'
+        cdp.fireDocumentResponse('an-iframe', 'http://127.0.0.1/iframe.html', 500); // a DIFFERENT frame's own error
+        return { tabId: 't', url: URL_, title: 'T' } as any;
+      });
+      page.evaluate.mockResolvedValue({ issues: [], webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 }, timeOrigin: Date.parse('2026-01-01T00:00:10.000Z'), pageWasHidden: false });
+
+      const result = await runtime.audit('s', { url: URL_, settleMs: 0 });
+
+      expect(result.brokenRequests).toEqual([]);
+    });
+
+    it('RA12 (GAP-273 mutation kill): a non-Document response type on the main frame is never attributed to the main document\'s own status', async () => {
+      const cdp = fakeCdpSession();
+      const page = fakePage({ createCDPSession: vi.fn(async () => cdp) });
+      const tab = fakeTab({ observingSince: '2020-01-01T00:00:00.000Z', getNetworkLog: () => [] });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+      vi.spyOn(runtime, 'navigate').mockImplementation(async () => {
+        cdp.fireMainFrameNavigated();
+        cdp.fireNonDocumentResponse('main', `${URL_}/some.png`, 404); // a sub-resource 404, not the document itself
+        return { tabId: 't', url: URL_, title: 'T' } as any;
+      });
+      page.evaluate.mockResolvedValue({ issues: [], webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 }, timeOrigin: Date.parse('2026-01-01T00:00:10.000Z'), pageWasHidden: false });
+
+      const result = await runtime.audit('s', { url: URL_, settleMs: 0 });
+
+      expect(result.brokenRequests).toEqual([]);
+    });
+
+    it('RA13 (GAP-273 mutation kill, redirect chain): multiple live main-frame Document responses -- the LAST one wins, matching the "keep the last commit" policy', async () => {
+      const cdp = fakeCdpSession();
+      const page = fakePage({ createCDPSession: vi.fn(async () => cdp) });
+      const tab = fakeTab({ observingSince: '2020-01-01T00:00:00.000Z', getNetworkLog: () => [] });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+      vi.spyOn(runtime, 'navigate').mockImplementation(async () => {
+        cdp.fireMainFrameNavigated();
+        cdp.fireDocumentResponse('main', 'http://127.0.0.1/before-redirect', 302);
+        cdp.fireDocumentResponse('main', URL_, 500); // the final hop -- this is "this page"
+        return { tabId: 't', url: URL_, title: 'T' } as any;
+      });
+      page.evaluate.mockResolvedValue({ issues: [], webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 }, timeOrigin: Date.parse('2026-01-01T00:00:10.000Z'), pageWasHidden: false });
+
+      const result = await runtime.audit('s', { url: URL_, settleMs: 0 });
+
+      expect(result.brokenRequests).toEqual([{ url: URL_, status: 500 }]);
+    });
+
+    it('RA14 (GAP-274): a Page.enable that never resolves does not block audit() past the bounded setup window, and the session is still detached', async () => {
+      const cdp = fakeCdpSession();
+      let neverResolves: Promise<unknown> | null = null;
+      cdp.send = vi.fn((method: string) => {
+        if (method === 'Page.enable') {
+          neverResolves = new Promise(() => {}); // simulates the GAP-274 hang
+          return neverResolves;
+        }
+        return Promise.resolve(undefined);
+      }) as any;
+      const page = fakePage({ createCDPSession: vi.fn(async () => cdp) });
+      const tab = fakeTab({ observingSince: '2020-01-01T00:00:00.000Z', getNetworkLog: () => [] });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+      vi.spyOn(runtime, 'navigate').mockResolvedValue({ tabId: 't', url: URL_, title: 'T' } as any);
+      page.evaluate.mockResolvedValue({ issues: [], webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 }, timeOrigin: Date.parse('2026-01-01T00:00:10.000Z'), pageWasHidden: false });
+
+      const start = Date.now();
+      const result = await runtime.audit('s', { url: URL_, settleMs: 0 });
+      const elapsedMs = Date.now() - start;
+
+      // Bounded well under the old ~31s/180s+ hangs -- generous margin for CI slowness, but a
+      // regression to an unbounded `await client.send('Page.enable')` would fail this outright
+      // (the test's own timeout would trip long before this assertion could even run).
+      expect(elapsedMs).toBeLessThan(5000);
+      expect(result.url).toBe(URL_);
+      expect(cdp.detach).toHaveBeenCalled();
+    });
+
+    it('RA15 (GAP-274 leak kill): the CDP session is detached even when Page.enable eventually REJECTS (not just hangs) -- kills a mutation that clears the session reference in the failure catch before detach runs', async () => {
+      const cdp = fakeCdpSession();
+      cdp.send = vi.fn((method: string) => (method === 'Page.enable' ? Promise.reject(new Error('protocol timeout')) : Promise.resolve(undefined))) as any;
+      const page = fakePage({ createCDPSession: vi.fn(async () => cdp) });
+      const tab = fakeTab({ observingSince: '2020-01-01T00:00:00.000Z', getNetworkLog: () => [] });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+      vi.spyOn(runtime, 'navigate').mockResolvedValue({ tabId: 't', url: URL_, title: 'T' } as any);
+      page.evaluate.mockResolvedValue({ issues: [], webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 }, timeOrigin: Date.parse('2026-01-01T00:00:10.000Z'), pageWasHidden: false });
+
+      await runtime.audit('s', { url: URL_, settleMs: 0 });
+
+      expect(cdp.detach).toHaveBeenCalled();
     });
 
     it('RA5: a successful baseline is folded in with compareUrls called with (sessionId, baselineUrl, url, {tabId})', async () => {
