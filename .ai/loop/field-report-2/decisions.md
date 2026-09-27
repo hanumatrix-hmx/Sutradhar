@@ -2693,3 +2693,64 @@ spec's list) so other packages' tests could reach it without a blocked deep-impo
 live-verify JSONL instead of three separate per-surface files.
 
 Sent to independent audit-1 (maker != checker).
+
+## 2026-09-27 -- FR2-12 audit-1: FAILED (1 critical, 1 major). Cycle 1 of 4 standard.
+
+Most of FR2-12 held up under an adversarial, live-reproducing audit: web-vitals numbers matched a
+live observer exactly across 18 trials (fast/slow/late-content/single-shift/10-shift pages, current-
+page mode); B2 (CLS accumulating across audits in one session) is genuinely fixed, confirmed 3/3;
+edge cases (redirects, about:blank, a page throwing errors, a 404'd audit target, an unreachable
+baseline, two concurrent audits with no cross-tab leakage, outDir pointing at a file) all behaved
+correctly; the committed JSON schema matches spec section 2.4 exactly and correctly accepts every
+real report and rejects 18/18 deliberately broken ones (except the status>599 case below); GAP-038
+being left open is legitimate (spec D7 forbids a private settle-logic copy before FR2-08 lands, and
+the auditor independently reproduced the miss). vitest counts matched exactly across all 5 packages,
+independently re-run by the auditor. 3 of the 4 disclosed deviations were judged reasonable.
+
+But two real defects, both against explicit spec requirements, not just nice-to-haves:
+
+1. GAP-261 (critical): 'audit --json''s output is not valid JSON whenever a dialog fires during the
+   audit. An accept policy appends a dialogHandled line after the JSON on stdout (breaking any
+   parser); a default policy replaces the JSON entirely with a dialogPending line and exit 3. The
+   spec's own risk R3 anticipated exactly this and said to stop and report if dialog output couldn't
+   be suppressed in JSON mode -- it shipped as an undisclosed-as-broken "deviation" instead, with the
+   changelog saying nothing about it. This is not an edge case for a tool meant to be driven by other
+   programs: any audited page that can show a dialog (which is most real pages) breaks the one-JSON-
+   document guarantee that's the entire point of a machine-readable audit.
+
+2. GAP-262 (major): B1 (a noisy page's console/network activity contaminating a later clean-page
+   audit) is only PARTLY fixed, not fixed as the changelog claims. The fix scopes by when navigation
+   STARTS, but the old page keeps running (and can keep logging/fetching) until the new page's first
+   response arrives -- so anything the old page does in that window is still wrongly attributed to
+   the new page's report. Reproduces 10/10 via the runtime directly and 3/3 via the CLI, and still
+   leaks at a completely ordinary 150ms response time (5/5), not just an artificially slow one. This
+   causes a real, false failure mode: `audit <clean-page> --json --fail-on-diff` exits 1 on a
+   genuinely clean page purely because of what ran on a PREVIOUS page in the same session. Spec
+   sections D9/D10 require this fixed in this item, not deferred -- there's no ambiguity to resolve
+   about scope here, it's an incomplete fix of something the spec already decided must be fixed.
+   The auditor verified a cheap correct fix: scope by the new page's main-frame COMMIT time
+   (framenavigated), not navigation-start -- 0/10 leaks with that change, and the clean page's own
+   real errors are still correctly kept every time.
+
+Minor: GAP-263 (schema rejects a real status code above 599, e.g. 999), GAP-264 (RA4 test-integrity
+gap -- removing navStartedAt from scoping passes all 192 tests), GAP-265 (the executor's own
+live-verify script leaks a headless Chrome in case N3, no close() call -- reproduced by the auditor,
+who killed it by PID and removed its temp dir; process hygiene note, not a product defect).
+
+Decisions for fix-1:
+1. GAP-261: keep dialog output off stdout entirely in --json mode. Either route dialogPending/
+   dialogHandled lines to stderr, or fold them into the report's own dialogPending/dialogsHandled
+   schema keys (which the schema already has room for, per the spec's own D2.4 -- the deviation note
+   said these keys are "left off every report" because FR2-07's JSON switch doesn't exist yet, but
+   that reasoning only explains omitting the KEYS, not explains printing raw dialog text to stdout
+   underneath valid JSON). Add live cases for both the accept-policy and default-policy shapes,
+   plus the mid-audit-alert case, all under --json.
+2. GAP-262: switch the contamination-prevention scope boundary from navigation-start to the new
+   page's main-frame commit time (framenavigated event). Add a live case with a noisy old page (logs
+   an error and fetches a 404 on a short interval) followed immediately by a clean page at a normal
+   (not artificially slow) response time, repeated enough times (at least 10) to catch the
+   flakiness the auditor found in the executor's own L12 case (failed 1/30 repeats).
+3. GAP-263: accept status codes above 599 in the schema (HTTP status is not actually bounded to 599
+   by any spec Sutradhar controls; sites like LinkedIn use codes like 999).
+4. GAP-264: strengthen RA4 to actually exercise the navigation-time scoping boundary.
+5. GAP-265: add the missing close() call to live-verify case N3.

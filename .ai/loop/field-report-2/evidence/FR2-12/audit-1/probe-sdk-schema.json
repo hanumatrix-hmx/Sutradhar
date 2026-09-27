@@ -1,0 +1,71 @@
+{
+  "origin": "http://127.0.0.1:50465",
+  "cases": {
+    "sdkWithBaseline": {
+      "valid": true,
+      "counts": {
+        "ce": 2,
+        "pe": 1,
+        "br": 1,
+        "a11y": [
+          "img-alt",
+          "input-label",
+          "missing-lang",
+          "button-name"
+        ]
+      },
+      "diffPath": "E:\\AI-Cache\\tmp\\fr212-audit1-sdk-1790497233758\\a\\b\\audit-baseline-diff.png",
+      "hasDiffB64": true
+    },
+    "sdkCurrentPage": {
+      "valid": true,
+      "path": null,
+      "mode": "current-page"
+    },
+    "executorCliReportL2": {
+      "valid": true
+    },
+    "sdkOutDirFile": {
+      "threw": true,
+      "msg": "Cannot create audit output directory \"E:\\AI-Cache\\tmp\\fr212-audit1-sdk-1790497233758\\afile\": path exists and is not a directory"
+    },
+    "sdkConcurrent": [
+      {
+        "ok": true,
+        "url": "http://127.0.0.1:50465/findings",
+        "ce": 2,
+        "br": 1,
+        "valid": true
+      },
+      {
+        "ok": true,
+        "url": "http://127.0.0.1:50465/clean",
+        "ce": 0,
+        "br": 0,
+        "valid": true
+      }
+    ],
+    "mutations": {
+      "missingRequired_url": "rejected",
+      "missingRequired_observation": "rejected",
+      "missingNested_screenshot_bytes": "rejected",
+      "wrongType_title_number": "rejected",
+      "wrongType_cls_string": "rejected",
+      "negative_lcp": "rejected",
+      "extraKey_top": "rejected",
+      "extraKey_nested_observation": "rejected",
+      "fullPage_false": "rejected",
+      "status_399": "rejected",
+      "status_float": "rejected",
+      "baseline_both_shapes": "rejected",
+      "baseline_diffPct_101": "rejected",
+      "rule_uppercase": "rejected",
+      "timestamp_no_tz": "rejected",
+      "coversWholeDocument_string": "rejected",
+      "screenshotBase64_added": "rejected",
+      "schemaVersion_2": "rejected"
+    },
+    "unmutatedValid": true,
+    "dialogKeysAccepted": true
+  }
+}

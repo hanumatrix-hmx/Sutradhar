@@ -1,0 +1,79 @@
+{
+  "item": "FR2-12",
+  "audit": "audit-1",
+  "head": "ddb98d9",
+  "status": "COMPLETE",
+  "verdict": "FAIL",
+  "notes": [
+    "The brief framed B1/B2 as 'found and NOT fixed / deferred'. That is inaccurate: spec D9/D10 require both fixed, and the executor claims both FIXED (changelog, live-summary L12/L13). Audited against the spec, so they must be fixed. B2 is fixed. B1 is only partly fixed (A1-F1)."
+  ],
+  "verification": {
+    "build": "forced turbo build 9/9 OK; typecheck 34/34 OK (--force)",
+    "vitest": { "capability-runtime": 192, "browser": 498, "cli": 161, "mcp-server": 92, "sutradhar": 20, "allPassing": true, "matchesSelfReport": true },
+    "schemaVsSpec": "committed schemas/audit-report.schema.json is deep-equal to spec section 2.4 (verbatim)",
+    "liveVerifyRerun": "24 pass / 1 FAIL (L12, B1-fixed) / 1 info (L15 GAP-038 expected-miss), out of 26. See live-rerun/",
+    "schemaValidation": "Plain Ajv draft-07 + ajv-formats (not the executor's wrapper): real SDK reports (baseline, current-page), the executor's real CLI report-L2.json and runtime reports from redirect/about:blank/throw-loop/404/baseline cases validate true. 18/18 independent negative mutations are rejected. Exception: a real report with an HTTP status > 599 is invalid (A1-F3).",
+    "mutationTesting": "11 auditor mutations. 9 caught. M11 survived but is an equivalent mutant (mkdir still fails on a file). M8 survived: a real test gap (A1-F4).",
+    "vitalsBranchB": "Buffered read vs a pre-injected live observer on the SAME document: exact LCP (<=1ms) and CLS (<0.001) on 15/15 runs over fast, slow-image LCP (~920ms), late-inserted LCP (~720ms), single-shift and 10-shift pages. Current-page mode was exact 3/3. The >150-shift page undercounts CLS by about 0.7% on 2/3 runs (the documented 150-entry buffer cap). A hidden tab gives pageWasHidden:true with lcp/fcp null (honestly flagged). Branch B is sound.",
+    "B2": "Fixed. 3 consecutive URL audits in one tab gave identical CLS, and typeof window.__sutradharVitals was 'undefined' afterwards. The injection code is deleted. The pre-change E1c showed 1x/2x/3x."
+  },
+  "findings": [
+    {
+      "id": "A1-F1",
+      "severity": "major",
+      "title": "B1 (cross-document contamination) is only partly fixed. Time-based scoping from navigation START keeps the previous document's errors and 4xx responses emitted during the next page's TTFB window, and the report still says coversWholeDocument:true.",
+      "reproductionRate": "10/10 at runtime level (5 current-page + 5 url-mode), 3/3 through the CLI, and 10/10 at 150ms TTFB in probe-commit-scope. The executor's own static L12 case failed 1/1 in the auditor's full live rerun and 1/30 in repeats (runtime 19/20, MCP 10/10).",
+      "evidence": [
+        "probe-runtime.json B1residual: previous page logs an error and fetches a 404 every 25ms, next page has 800ms TTFB. The audit of the CLEAN page reports ~64 console errors and 32 broken requests, all from the previous page, with coversWholeDocument:true.",
+        "probe-commit-scope.json: at a realistic 150ms TTFB, 13-14 leaked console errors and 6 leaked broken requests, 5/5.",
+        "probe-cli.json cliFailOnDiffFalseGate: `audit <clean url> --json --fail-on-diff` exits 1 with 25 console errors and 13 broken requests (300ms TTFB) that belong to the previous page. The control (same URL, no noisy predecessor) exits 0 with 0/0.",
+        "probe-l12-repeat.json: executor's exact L12 sequence. The failing run leaked '404 /missing-noisy-b0.png' from /noisy into a url-mode audit of /clean.",
+        "probe-runtime.json edge.jsRedirect: the pre-redirect document's console.error is attributed to the final page (same mechanism, minor)."
+      ],
+      "cheapFixAvailable": "Yes. probe-commit-scope.json filters the same raw ring buffers by the main frame's navigation COMMIT time (Node-side 'framenavigated' timestamp, same clock as the buffer entries). Leaks drop to 0 in 10/10 trials, and the clean page's own console.error is kept in 10/10, so there are no false negatives. This is a small BrowserTab change, and the file is already touched by this item.",
+      "notDisclosed": "The changelog says B1 is fixed ('no longer leak'). Its Known limits mention only clock skew, not in-flight events from the old document."
+    },
+    {
+      "id": "A1-F2",
+      "severity": "major",
+      "title": "`audit --json` stdout is not one JSON document when a dialog is handled by policy. FR2-04's reportDialogs appends `dialogHandled: {...}` after the report (exit 0). Under the default 'report' policy, stdout is a `dialogPending:` line (exit 3), not JSON and not empty.",
+      "reproductionRate": "3/3 policy cases: explicit --dialog accept on an alert-on-load page; a policy persisted by an earlier `nav --dialog accept`, then a plain `audit --json`; an alert that fires during the 1500ms dwell. Plus 1/1 for the default policy.",
+      "evidence": ["probe-cli.json dialogAcceptOnLoad / persistedAcceptPolicy / dialogAcceptLate / defaultPolicyAlertOnLoad: JSON.parse(stdout) fails with 'Unexpected non-whitespace character after JSON'."],
+      "specContext": "D2.1 requires stdout to be exactly one JSON document. D2.4 requires no dialog lines on stdout in --json mode. R3 says that if FR2-04's mechanism can't be switched without editing its code, the Executor stops and reports. The executor did not stop. It shipped the gap as 'Deviation 1' and described it as 'never observed corrupting --json stdout in practice here', only because no fixture opened a dialog. A policy persisted by any earlier command makes the gap sticky.",
+      "cheapFixAvailable": "Yes. reportDialogs and the gate's dialogHandled printing are in cli.ts, which this item already edits. In jsonMode, route those lines to stderr, or merge them into the report's dialogPending/dialogsHandled keys, which the schema already allows (validated in probe-sdk-schema.json dialogKeysAccepted)."
+    },
+    {
+      "id": "A1-F3",
+      "severity": "minor",
+      "title": "A real report violates its own schema when a subresource returns an HTTP status above 599. The schema caps status at 599, but brokenRequests passes any status >= 400 through.",
+      "reproductionRate": "1/1 (status 999, the code LinkedIn uses for request-denied)",
+      "evidence": ["probe-runtime.json edge.status999: 'data/brokenRequests/0/status must be <= 599'"]
+    },
+    {
+      "id": "A1-F4",
+      "severity": "minor",
+      "title": "Test gap: RA4 does not exercise navStartedAt. The spec asked that the navigate spy push a new entry; the test uses a fixed timeOrigin instead. Removing navStartedAt from computeObservation's input in runtime.audit (mutation M8) passes all 192 tests.",
+      "evidence": ["mutation-results-M8-M9.json"]
+    },
+    {
+      "id": "A1-F5",
+      "severity": "minor",
+      "title": "Process-hygiene leak in the executor's verify script. Case N3 (blocked-domain CLI audit) spawns a CLI Chrome session and never runs `close` for stateDirN3. It only deletes the state dir, so the headless Chrome stays running with no state pointing at it.",
+      "reproductionRate": "1/1 (auditor rerun left PID 64400, --user-data-dir sutradhar-cli-1790496733114 --headless=new, on a never-navigated tab; killed by PID tree and its dir removed by the auditor)",
+      "evidence": ["tools/scenario-suite/verify-fr2-12-audit.mjs:657-665"]
+    }
+  ],
+  "contaminationBugsJudgment": {
+    "B1": "Not a pre-existing bug that was deferred. The spec (T11, D9, L12) requires it fixed here, and the item claims it fixed. It is fixed for the simplest case, but it still leaks deterministically when the previous page is active during navigation (A1-F1), and the executor's own L12 is flaky. A cheap commit-time fix was demonstrated.",
+    "B2": "Genuinely fixed by deleting the injection (Branch B)."
+  },
+  "deviationsJudgment": {
+    "dialogKeysOmitted": "A real problem, not just an omission. Leaving the keys out would be fine, but leaving FR2-04's stdout lines unrouted breaks D2.1 (A1-F2). Spec R3 required the executor to stop rather than ship this.",
+    "AR7_chdir": "Reasonable. vitest workers can't chdir, and the rewritten test still pins path.resolve(cwd, rel). The auditor also confirmed it live: CLI `audit \"\" rel-out/x --json` wrote an absolute path under cwd.",
+    "AUDIT_REPORT_EXAMPLE_exported": "Reasonable. It is a test-only constant on capability-runtime's index, and the published SDK re-exports only type AuditReport.",
+    "combinedJsonl": "Reasonable. Cosmetic only."
+  },
+  "gap038Judgment": "Deferral is legitimate. Spec D7 explicitly forbids a private copy of settle and mandates keeping the fixed dwell until FR2-08 lands. A one-line puppeteer waitForNetworkIdle would be cheap, but it would contradict D7. Reproduced: the /slow-404 is missing in the auditor's rerun (L15).",
+  "edgeCasesPassing": ["302 redirect (url=final, requestedUrl=original)", "about:blank url and current-page (valid report, lcp/fcp null, cls 0)", "JS errors thrown during the audit window (pageErrors captured, 50-cap)", "audited URL itself 404 (reported as broken request, not a failure)", "baseline URL 404 (compared as a page; not an error)", "baseline unreachable (baseline.error, valid report)", "nav unreachable (throws)", "concurrent audits on two tabs of one session: no cross-tab leakage; the backgrounded tab is honestly flagged pageWasHidden:true", "concurrent SDK audits on two pages", "outDir is a file: CLI exit 1 with empty stdout under --json; SDK rejects before audit", "relative outDir under --json"],
+  "probes": ["probe-runtime.mjs/json", "probe-l12-repeat.mjs/json", "probe-cli.mjs/json", "probe-sdk-schema.mjs/json", "probe-commit-scope.mjs/json", "mutation-test.mjs + mutation-results*.json", "live-rerun/ (the executor's verify script run fresh)"]
+}

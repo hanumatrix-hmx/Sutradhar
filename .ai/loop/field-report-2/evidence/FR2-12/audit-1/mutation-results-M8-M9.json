@@ -1,0 +1,32 @@
+[
+  {
+    "id": "M8",
+    "desc": "runtime.audit: navStartedAt not passed (null) to computeObservation",
+    "file": "packages\\capability-runtime\\src\\runtime.ts",
+    "caught": false,
+    "runs": {
+      "capability-runtime": {
+        "exit": 0,
+        "summary": "Tests  192 passed (192)",
+        "failedNames": []
+      }
+    },
+    "restoredShaMatches": true
+  },
+  {
+    "id": "M9",
+    "desc": "runtime.audit: dialog fast-fail removed",
+    "file": "packages\\capability-runtime\\src\\runtime.ts",
+    "caught": true,
+    "runs": {
+      "capability-runtime": {
+        "exit": 1,
+        "summary": "Tests  1 failed | 191 passed (192)",
+        "failedNames": [
+          "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA2: an open dialog fails fast, before any screenshot/evaluate call"
+        ]
+      }
+    },
+    "restoredShaMatches": true
+  }
+]
