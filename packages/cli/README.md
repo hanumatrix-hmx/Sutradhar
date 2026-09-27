@@ -83,8 +83,8 @@ Run `sutradhar` with no arguments for the full command list.
 | `closetab <tabId>` | Close a specific tab. |
 | `download <ref> [dir]` | Click an element that triggers a download, print the saved path. |
 | `screenshot [path]` | Save a screenshot (default: `./screenshot.png`). |
-| `audit [url] [outDir]` | Screenshot + console/page/network errors + accessibility checks + Core Web Vitals for a page (current page if no url). |
-| `audit [url] [outDir] --baseline <url>` | Same, plus a visual pixel-diff against a known-good baseline URL — a one-command regression gate combining `audit` + `compare`. |
+| `audit [url] [outDir] [--json]` | Screenshot + console/page/network errors + accessibility heuristics + Web Vitals for a page (current page if no url; use `""` as url to also pass an outDir). `outDir` is created if missing. `--json` prints one machine-readable report (schemaVersion 1, see `packages/capability-runtime/schemas/audit-report.schema.json`) instead of the human-readable text; images are always written as files and referenced by absolute path, never inlined. Auditing the current page only sees errors/requests since this command attached — pass the url for full coverage. |
+| `audit [url] [outDir] --baseline <url>` | Same, plus a pixel-diff of `<url>` vs a fresh load of the audited url (viewport screenshots; the page is reloaded) — a one-command regression gate combining `audit` + `compare`. |
 | `compare <urlA> <urlB> [out]` | Visual regression: pixel-diff two pages, save a diff image. |
 | `dialog` | Show any open native dialog (alert/confirm/prompt/beforeunload), or "No dialog is open." |
 | `dialog accept [text]` | Accept the oldest open dialog (`text` = what to type into a `prompt()`; ignored for other dialog types). |
@@ -105,7 +105,7 @@ Run `sutradhar` with no arguments for the full command list.
 | `--profile <name>` | `nav` (new session only) | Launch as a named persistent profile (create one first via `profile create`). |
 | `--user-agent <ua>` | `nav` (new session only) | Launch with a custom `navigator.userAgent`. |
 | `--allowlist-domains <a.com,b.com>` | any command | Block navigation to any domain not in this comma-separated list (and their subdomains). Per-command, not persisted in session state — pass it on every command that might navigate. |
-| `--json` | `snap` | Additionally print structured per-element data as JSON. |
+| `--json` | `snap`, `audit` | `snap`: additionally print structured per-element data as JSON. `audit`: print the machine-readable JSON report instead of the human-readable text. |
 | `--no-text` | `snap` | Drop per-element text, keep tag+role+id. |
 | `--ids-only` | `snap` | Keep only the bracketed id, nothing else. |
 | `--baseline <url>` | `audit` | Also visually diff the audited page against this URL. |

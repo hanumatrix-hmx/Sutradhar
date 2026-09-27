@@ -67,10 +67,12 @@ import {
 import { ProfileManager } from './profiles/profile-manager.js';
 import {
   AUDIT_PAGE_SCRIPT,
-  VITALS_OBSERVER_SCRIPT,
+  scopeToDocument,
+  computeObservation,
   type A11yIssue,
   type WebVitals,
   type AuditResult,
+  type AuditBaselineOutcome,
 } from './audit/site-audit.js';
 import { compareScreenshots, type VisualCompareResult } from './audit/visual-compare.js';
 import { buildAxSnapshot, type AxSnapshotResult } from './snapshot/ax-snapshot.js';
@@ -1538,54 +1540,108 @@ export class SutradharRuntime {
   /**
    * A single-page audit bundling screenshot, console/page/network errors, basic accessibility
    * checks, and Core Web Vitals — mirrors what real Sutradhar's `sutradhar audit <url>` produces.
-   * If `url` is given, navigates there first and waits `settleMs` (default 1500ms) for the page
-   * to render and Web Vitals observers to collect data before capturing anything; omit it to
-   * audit whatever page the session is already on.
+   * If `url` is given, navigates there first and waits `settleMs` (default 1500ms) before
+   * capturing anything; omit it to audit whatever page the session is already on. `baselineUrl`
+   * additionally pixel-diffs a fresh load of it against the audited page (see `compareUrls`); a
+   * failed baseline comparison is reported in the return value's `baseline.error`, not thrown.
+   *
+   * FR2-12: console/page-error/network findings are scoped to the audited document (D9) — see
+   * `computeObservation`/`scopeToDocument` — fixing a real bug (B1) where a long-lived session's
+   * previous page's errors leaked into a later audit. Web Vitals are read via a buffered
+   * `PerformanceObserver` in `AUDIT_PAGE_SCRIPT` itself (Branch B, confirmed live by this item's
+   * Step 0 — see `site-audit.ts`'s doc comment), so there's no before-navigation script
+   * injection any more (that also fixes B2: CLS used to be multiplied by the number of URL
+   * audits run against the same tab, since each injection's listener was never removed). An open
+   * dialog fails the audit fast instead of hanging until its auto-dismiss (D11).
    */
-  public async audit(sessionId: string, options: { url?: string; tabId?: string; settleMs?: number } = {}): Promise<AuditResult> {
+  public async audit(
+    sessionId: string,
+    options: { url?: string; tabId?: string; settleMs?: number; baselineUrl?: string } = {},
+  ): Promise<AuditResult> {
+    if (options.url) this.assertNavigationAllowed(options.url);
+    // D14: asserted before any browser contact, right next to the `url` check — a baseline
+    // blocked by the allowlist is a thrown error (nothing was audited yet), not a `baseline.error`.
+    if (options.baselineUrl) this.assertNavigationAllowed(options.baselineUrl);
+
+    let navStartedAt: string | null = null;
     if (options.url) {
-      this.assertNavigationAllowed(options.url);
-      // Install the Web Vitals observers BEFORE navigating (not after) — LCP/CLS entries are
-      // only ever captured by an observer that was already listening when they occurred; a
-      // post-hoc performance.getEntriesByType() query, unlike for 'paint'/'navigation' entries,
-      // comes back empty for them otherwise. This only matters when we're doing the navigating
-      // ourselves; auditing a page the caller already loaded can't retroactively observe vitals
-      // that already happened, so lcpMs/cls legitimately come back null in that case.
-      const { tab: preNavTab } = this.resolveTab(sessionId, options.tabId);
-      const preNavPage = this.requirePage(preNavTab);
-      await preNavPage.evaluateOnNewDocument(VITALS_OBSERVER_SCRIPT);
+      navStartedAt = new Date().toISOString();
       await this.navigate(sessionId, options.url, options.tabId);
+      // GAP-038 (open): FR2-08's waitForPageSettle (DOM-quiet + network-idle, bounded) hasn't
+      // landed in this worktree yet, so this stays the pre-existing fixed dwell rather than a
+      // real settle condition — a request slower than this can still be missing from
+      // brokenRequests (see decisions.md's FR2-12 entry and the changelog fragment).
       await new Promise((r) => setTimeout(r, options.settleMs ?? 1500));
     }
 
     const { tab } = this.resolveTab(sessionId, options.tabId);
     const page = this.requirePage(tab);
 
+    // D11: after navigation+settle, before any page-touching call — an open dialog blocks
+    // page.evaluate/page.screenshot/page.title, so without this the audit would hang until the
+    // tab's own auto-dismiss timeout instead of failing fast with a clear message.
+    const pending = tab.getPendingDialog?.();
+    if (pending) {
+      const truncated = pending.message.length > 120 ? `${pending.message.slice(0, 120)}…` : pending.message;
+      throw new Error(
+        `a ${pending.dialogType} dialog is open ("${truncated}") and blocks the page, so it can't be audited. ` +
+          'Handle it first (browser.handle_dialog, or "sutradhar dialog accept|dismiss"), then audit again.',
+      );
+    }
+
     const [screenshotBase64, pageResult] = await Promise.all([
       page.screenshot({ type: 'png', encoding: 'base64', fullPage: true }) as Promise<string>,
-      page.evaluate(AUDIT_PAGE_SCRIPT) as Promise<{ issues: A11yIssue[]; webVitals: WebVitals }>,
+      page.evaluate(AUDIT_PAGE_SCRIPT) as Promise<{
+        issues: A11yIssue[];
+        webVitals: WebVitals;
+        timeOrigin: number | null;
+        pageWasHidden: boolean | null;
+      }>,
     ]);
 
-    const consoleErrors = tab
-      .getConsoleLogs()
+    const { observation, since } = computeObservation({
+      mode: options.url ? 'navigated' : 'current-page',
+      navStartedAt,
+      timeOrigin: typeof pageResult.timeOrigin === 'number' ? pageResult.timeOrigin : null,
+      observingSince: tab.observingSince ?? null,
+      pageWasHidden: pageResult.pageWasHidden ?? null,
+    });
+
+    const consoleErrors = scopeToDocument(tab.getConsoleLogs(), since)
       .filter((l) => l.logType === 'error')
       .map((l) => ({ text: l.text, timestamp: l.timestamp }));
-    const pageErrors = tab.getPageErrors().map((e) => ({ message: e.message, timestamp: e.timestamp }));
-    const brokenRequests = tab
-      .getNetworkLog()
+    const pageErrors = scopeToDocument(tab.getPageErrors(), since).map((e) => ({ message: e.message, timestamp: e.timestamp }));
+    const brokenRequests = scopeToDocument(tab.getNetworkLog(), since)
       .filter((n) => n.phase === 'response' && n.status !== undefined && n.status >= 400)
       .map((n) => ({ url: n.url, status: n.status! }));
 
+    const url = page.url();
+    const title = await this.readTitle(tab);
+    const timestamp = new Date().toISOString();
+
+    let baseline: AuditBaselineOutcome | null = null;
+    if (options.baselineUrl) {
+      try {
+        const cmp = await this.compareUrls(sessionId, options.baselineUrl, url, { tabId: options.tabId });
+        baseline = { url: options.baselineUrl, ...cmp };
+      } catch (e) {
+        baseline = { url: options.baselineUrl, error: (e as Error).message || String(e) };
+      }
+    }
+
     return {
-      url: page.url(),
-      title: await this.readTitle(tab),
-      timestamp: new Date().toISOString(),
+      url,
+      title,
+      timestamp,
       screenshotBase64,
       consoleErrors,
       pageErrors,
       brokenRequests,
       accessibilityIssues: pageResult.issues,
       webVitals: pageResult.webVitals,
+      requestedUrl: options.url ?? null,
+      observation,
+      baseline,
     };
   }
 

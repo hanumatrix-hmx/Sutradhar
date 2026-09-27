@@ -52,8 +52,8 @@ export interface CreateServerOptions {
    * configuration). Intended for handing an agent a logged-in internal session safely, and as
    * partial prompt-injection defense-in-depth for navigation specifically — see the equivalent
    * doc comment on `SutradharRuntimeOptions.allowedDomains` for what this does and does not
-   * cover (it gates `browser.navigate`/`launch`/`compare`/`new_tab`, not page-initiated
-   * navigation from a clicked link, which the browser performs client-side).
+   * cover (it gates `browser.navigate`/`launch`/`audit` (url/baselineUrl)/`new_tab`, not
+   * page-initiated navigation from a clicked link, which the browser performs client-side).
    */
   allowedDomains?: readonly string[];
   logger?: StructuredLogger;

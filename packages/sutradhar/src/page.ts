@@ -11,9 +11,30 @@ import type {
   StorageState,
   SettleSpec,
   WaitForSelectorState,
+  AuditReport,
 } from '@sutradhar/capability-runtime';
+import { prepareAuditOutDir, writeAuditArtifacts, buildAuditReport } from '@sutradhar/capability-runtime';
 
 export type { WaitForSelectorState } from '@sutradhar/capability-runtime';
+
+/** Options for {@link Page.audit}. */
+export interface PageAuditOptions {
+  /** Load this URL first (then wait for it to settle). Omit to audit the page as it is now. */
+  url?: string;
+  /** Write audit-screenshot.png (and audit-baseline-diff.png) here, creating it if needed;
+   *  the report's paths are then absolute. Omit to get the images back as base64 instead. */
+  outDir?: string;
+  /** Also pixel-diff this URL against a fresh load of the audited page (reloads this tab). */
+  baselineUrl?: string;
+}
+
+/** Return value of {@link Page.audit}. `report` is exactly the audit-report JSON Schema object
+ *  (`packages/capability-runtime/schemas/audit-report.schema.json`, schemaVersion 1). */
+export interface PageAuditResult {
+  report: AuditReport;
+  screenshotBase64: string;
+  baselineDiffBase64?: string;
+}
 
 /** Options accepted by {@link Page.waitForSelector} (Playwright-style names). */
 export interface WaitForSelectorOptions {
@@ -161,6 +182,32 @@ export class Page {
   public async screenshot(_options?: ScreenshotOptions): Promise<string> {
     const result = await this.runtime.screenshot(this.sessionId, this.tabId);
     return result.base64;
+  }
+
+  /**
+   * Audit this tab: console/page errors, broken requests, accessibility heuristics, Web Vitals
+   * and a full-page screenshot, as a machine-readable report (schemaVersion 1 — see
+   * `packages/capability-runtime/schemas/audit-report.schema.json`). Throws if the audit can't
+   * run at all (no live page, a blocked URL, an open dialog). A failed `baselineUrl` comparison
+   * is reported in `report.baseline.error`, not thrown — the audit itself still succeeded. Not
+   * an action: it doesn't update `lastResult`/FR2-07's verification contract.
+   */
+  public async audit(options: PageAuditOptions = {}): Promise<PageAuditResult> {
+    const dir = options.outDir !== undefined ? await prepareAuditOutDir(options.outDir) : undefined;
+    const result = await this.runtime.audit(this.sessionId, {
+      tabId: this.tabId,
+      ...(options.url !== undefined ? { url: options.url } : {}),
+      ...(options.baselineUrl !== undefined ? { baselineUrl: options.baselineUrl } : {}),
+    });
+    const report = dir
+      ? await writeAuditArtifacts(result, dir)
+      : buildAuditReport(result, { screenshotPath: null, diffPath: null });
+    const diff = result.baseline && 'diffImageBase64' in result.baseline ? result.baseline.diffImageBase64 : undefined;
+    return {
+      report,
+      screenshotBase64: result.screenshotBase64,
+      ...(diff !== undefined ? { baselineDiffBase64: diff } : {}),
+    };
   }
 
   /**

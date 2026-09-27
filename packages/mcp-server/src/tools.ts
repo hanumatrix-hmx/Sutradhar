@@ -13,6 +13,7 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { SutradharRuntime } from '@sutradhar/capability-runtime';
+import { buildAuditReport } from '@sutradhar/capability-runtime';
 import type { AgentCore } from '@sutradhar/agent';
 import { createGoalId } from '@sutradhar/contracts';
 import { WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT, WAIT_HIDDEN_HARD_FAILURE_PREFIX } from '@sutradhar/browser';
@@ -979,6 +980,54 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         return { content: [{ type: 'image' as const, data: base64, mimeType: 'image/png' }] };
       } catch (e) {
         return errorResult(`screenshot failed: ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
+    'browser.audit',
+    {
+      description:
+        'Audit a page and return a machine-readable report (JSON Schema: packages/capability-runtime/schemas/' +
+        'audit-report.schema.json, schemaVersion 1): console errors, uncaught page errors, broken requests ' +
+        '(HTTP 4xx/5xx), heuristic accessibility checks (img-alt, input-label, missing-title, missing-lang, ' +
+        'button-name; not a WCAG audit) and Web Vitals (LCP, CLS, FCP, TTFB), plus a full-page screenshot. ' +
+        'With url, loads it and waits before capturing; without url, audits the current page as-is. ' +
+        'Errors/requests are scoped to the current document and are complete only if this server was already ' +
+        'attached when it loaded (observation.coversWholeDocument). LCP/FCP can be null if the page was ' +
+        'hidden while loading (observation.pageWasHidden). Returns the JSON report first, then the screenshot ' +
+        "PNG, then (with baselineUrl) a diff PNG; includeImages:false omits the images. baselineUrl navigates " +
+        "to it and then reloads the audited URL to pixel-diff their viewports, discarding the page's current " +
+        'state. Findings never make this call fail; only an unusable session, a blocked URL, a failed ' +
+        'navigation to url, or an open dialog does. Not an action: no verification field.',
+      inputSchema: {
+        sessionId: z.string(),
+        url: z.string().min(1).optional().describe('Load this URL first. Omit to audit the current page as-is.'),
+        baselineUrl: z.string().min(1).optional().describe('Also pixel-diff this URL against a fresh load of the audited page.'),
+        includeImages: z.boolean().optional().describe('Default true. false omits the screenshot/diff image items (sizes still reported).'),
+        tabId: z.string().optional(),
+      },
+    },
+    async ({ sessionId, url, baselineUrl, includeImages, tabId }) => {
+      try {
+        const result = await runtime.audit(sessionId, {
+          ...(url !== undefined ? { url } : {}),
+          ...(tabId !== undefined ? { tabId } : {}),
+          ...(baselineUrl !== undefined ? { baselineUrl } : {}),
+        });
+        const report = buildAuditReport(result, { screenshotPath: null, diffPath: null });
+        const content: Array<{ type: 'text'; text: string } | { type: 'image'; data: string; mimeType: string }> = [
+          { type: 'text', text: JSON.stringify(report, null, 2) },
+        ];
+        if (includeImages !== false) {
+          content.push({ type: 'image', data: result.screenshotBase64, mimeType: 'image/png' });
+          if (result.baseline && 'diffImageBase64' in result.baseline) {
+            content.push({ type: 'image', data: result.baseline.diffImageBase64, mimeType: 'image/png' });
+          }
+        }
+        return { content };
+      } catch (e) {
+        return errorResult(`audit failed: ${(e as Error).message}`);
       }
     },
   );

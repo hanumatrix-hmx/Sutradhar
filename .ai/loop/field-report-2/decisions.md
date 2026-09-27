@@ -2662,3 +2662,34 @@ dependency risk -- not silently. If either item's own testing surfaces any inter
 blocking/attribution logic (e.g. a download that's gated behind an open dialog and hits GAP-256's
 lockout), that's a NEW finding against FR2-04, logged as its own GAP, not something FR2-05/14 are
 expected to fix.
+
+## 2026-09-27 -- FR2-12 DEVELOP run-1 done; sent to independent audit-1
+
+Executor (Sonnet) built FR2-12 (machine-readable audit) per its 1118-line implementation spec.
+Orchestrator independently re-ran vitest for all 4 touched packages: capability-runtime 192,
+cli 161, mcp-server 92, sutradhar 20 -- exact match to the self-report. Typecheck 34/34, full
+turbo build clean. git status matches the reported file list exactly, no leftover processes.
+
+Summary: audit-report.ts (new) defines the AuditReport shape and a committed JSON schema;
+site-audit.ts rewritten around a buffered PerformanceObserver read (Branch B, chosen via a
+mandatory Step-0 live experiment against the pre-change build, run BEFORE any code edit); CLI/MCP/
+SDK all wired (cmdAudit rewrite, browser.audit MCP tool, Page.audit() SDK method). Step-0 also
+independently reproduced two known contamination bugs (B1: a noisy page's console errors leak into
+a later clean-page audit; B2: CLS accumulates across audits within one MCP/SDK session, not the
+CLI) as real, live-confirmed findings rather than assumptions.
+
+Live verify: 25 pass, 0 fail, 1 info (GAP-038, correctly left open pending FR2-08, not asserted).
+Two real bugs were found and fixed during the executor's own live-verify pass rather than shipped:
+a missing /favicon.ico route polluting a "clean page" fixture, and a cross-process timing race on
+one layout-shift case. Revert-and-confirm: reverting the core scopeToDocument logic to a no-op
+makes RA3 and AR10 fail (confirmed real regression, not a type error), restored and re-passing,
+sha-verified.
+
+4 disclosed deviations from spec, stated plainly rather than hidden: FR2-07's JSON-output switch
+doesn't exist yet so dialogPending/dialogsHandled are left off every report (a pre-existing,
+whole-CLI gap, not introduced here); AR7 rewritten because process.chdir() isn't available in
+vitest workers; AUDIT_REPORT_EXAMPLE exported from capability-runtime's public index (not in the
+spec's list) so other packages' tests could reach it without a blocked deep-import; one combined
+live-verify JSONL instead of three separate per-surface files.
+
+Sent to independent audit-1 (maker != checker).

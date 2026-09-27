@@ -315,4 +315,36 @@ describe('@sutradhar/cli parseArgs', () => {
     expect(result.dialogFlag).toBe('accept');
     expect(result.cleanArgs).toEqual(['#x']);
   });
+
+  describe('P1/P2: baselineFlagGivenButInvalid (FR2-12, T22)', () => {
+    it('P1a: --baseline with nothing after it is invalid, baselineFlag stays undefined', () => {
+      const result = parseArgs(['audit', 'u', '--baseline']);
+      expect(result.baselineFlagGivenButInvalid).toBe(true);
+      expect(result.baselineFlag).toBeUndefined();
+    });
+
+    it('P1b: --baseline immediately followed by another flag is invalid, and that flag is not swallowed', () => {
+      const result = parseArgs(['audit', 'u', '--baseline', '--json']);
+      expect(result.baselineFlagGivenButInvalid).toBe(true);
+      expect(result.baselineFlag).toBeUndefined();
+      expect(result.jsonMode).toBe(true);
+    });
+
+    it('P1c: --baseline <url> is valid', () => {
+      const result = parseArgs(['audit', 'u', '--baseline', 'https://b']);
+      expect(result.baselineFlagGivenButInvalid).toBe(false);
+      expect(result.baselineFlag).toBe('https://b');
+    });
+
+    it('P1d: no --baseline flag at all is not invalid', () => {
+      const result = parseArgs(['audit', 'u']);
+      expect(result.baselineFlagGivenButInvalid).toBe(false);
+    });
+
+    it('P2: audit url outDir --json parses cleanArgs and jsonMode correctly', () => {
+      const result = parseArgs(['audit', 'u', 'out', '--json']);
+      expect(result.cleanArgs).toEqual(['u', 'out']);
+      expect(result.jsonMode).toBe(true);
+    });
+  });
 });

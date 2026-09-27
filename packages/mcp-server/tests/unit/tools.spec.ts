@@ -5,13 +5,26 @@
  */
 
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { SutradharRuntime } from '@sutradhar/capability-runtime';
+import { AjvJsonSchemaValidator } from '@modelcontextprotocol/sdk/validation/ajv';
+import { SutradharRuntime, buildAuditReport, AUDIT_REPORT_EXAMPLE } from '@sutradhar/capability-runtime';
 import {
   WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT,
   WAIT_HIDDEN_HARD_FAILURE_PREFIX,
   TAB_CLOSED_MID_WAIT_MESSAGE,
 } from '@sutradhar/browser';
 import { registerTools } from '../../src/tools.js';
+import { createRequire } from 'node:module';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+// FR2-12: pngjs is a dependency of @sutradhar/capability-runtime, not of mcp-server itself —
+// reached via createRequire against that package's own package.json (T18's technique), rather
+// than adding a new devDependency here just to build a tiny test PNG. Resolved by relative path
+// (not module resolution of a subpath) since capability-runtime's own `exports` map only exposes
+// ".", not "./package.json".
+const capabilityRuntimeDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'capability-runtime');
+const require_ = createRequire(path.join(capabilityRuntimeDir, 'package.json'));
 
 /** A minimal in-memory McpServer double that just records what was registered. */
 function createMockServer() {
@@ -54,6 +67,7 @@ const EXPECTED_BROWSER_TOOLS = [
   'browser.touch_tap',
   'browser.download_file',
   'browser.screenshot',
+  'browser.audit',
   'browser.eval',
   'browser.export_pdf',
   'browser.extract_data',
@@ -883,6 +897,185 @@ describe('FR2-10 optional sessionId', () => {
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain('No browser session "nope"');
     expect(listSessions).not.toHaveBeenCalled();
+  });
+});
+
+describe('browser.audit (FR2-12)', () => {
+  const { PNG } = require_('pngjs');
+  const schema = JSON.parse(readFileSync(path.join(capabilityRuntimeDir, 'schemas', 'audit-report.schema.json'), 'utf-8'));
+  const validate = new AjvJsonSchemaValidator().getValidator(schema);
+
+  function makePngBase64(w: number, h: number): string {
+    const png = new PNG({ width: w, height: h });
+    for (let i = 0; i < w * h; i++) {
+      png.data[i * 4] = 10;
+      png.data[i * 4 + 1] = 20;
+      png.data[i * 4 + 2] = 30;
+      png.data[i * 4 + 3] = 255;
+    }
+    return PNG.sync.write(png).toString('base64');
+  }
+
+  function fakeResult(overrides: Partial<any> = {}): any {
+    return {
+      url: 'http://127.0.0.1:1/audit',
+      title: 'T',
+      timestamp: '2026-01-01T00:00:00.000Z',
+      screenshotBase64: makePngBase64(5, 4),
+      consoleErrors: [],
+      pageErrors: [],
+      brokenRequests: [],
+      accessibilityIssues: [],
+      webVitals: { lcpMs: 10, cls: 0, fcpMs: 5, ttfbMs: 1 },
+      requestedUrl: 'http://127.0.0.1:1/audit',
+      observation: {
+        mode: 'navigated',
+        documentStartedAt: '2026-01-01T00:00:00.000Z',
+        observingSince: '2026-01-01T00:00:00.000Z',
+        coversWholeDocument: true,
+        pageWasHidden: false,
+      },
+      baseline: null,
+      ...overrides,
+    };
+  }
+
+  it('M1: EXPECTED_BROWSER_TOOLS contains browser.audit and the count test passes with it', () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    registerTools(server, { runtime });
+    expect(EXPECTED_BROWSER_TOOLS).toContain('browser.audit');
+    expect(tools.has('browser.audit')).toBe(true);
+    expect(tools.size).toBe(EXPECTED_BROWSER_TOOLS.length);
+  });
+
+  it('M2: the input schema accepts/rejects url, baselineUrl, includeImages, and has no outDir key', () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    registerTools(server, { runtime });
+    const inputSchema = tools.get('browser.audit')!.config.inputSchema;
+
+    expect(inputSchema.url.safeParse('').success).toBe(false);
+    expect(inputSchema.url.safeParse(undefined).success).toBe(true);
+    expect(inputSchema.baselineUrl.safeParse('').success).toBe(false);
+    expect(inputSchema.baselineUrl.safeParse(undefined).success).toBe(true);
+    expect(inputSchema.includeImages.safeParse('yes').success).toBe(false);
+    expect('outDir' in inputSchema).toBe(false);
+  });
+
+  it('M3: content is [text report, image screenshot] with no base64 leaked into the text', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const result = fakeResult();
+    vi.spyOn(runtime, 'audit').mockResolvedValue(result);
+    registerTools(server, { runtime });
+
+    const res = await tools.get('browser.audit')!.handler({ sessionId: 's1' });
+    expect(res.content.length).toBe(2);
+    expect(res.content[0].type).toBe('text');
+    const parsed = JSON.parse(res.content[0].text);
+    expect(parsed).toEqual(buildAuditReport(result, { screenshotPath: null, diffPath: null }));
+    expect(res.content[1]).toEqual({ type: 'image', data: result.screenshotBase64, mimeType: 'image/png' });
+    expect(res.content[0].text).not.toContain(result.screenshotBase64);
+  });
+
+  it('M4: a successful baseline adds a third image content item, diffPath null', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const diffBase64 = makePngBase64(5, 4);
+    const result = fakeResult({
+      baseline: { url: 'http://127.0.0.1:1/b', width: 5, height: 4, diffPixelCount: 1, totalPixels: 20, diffPercentage: 5, diffImageBase64: diffBase64 },
+    });
+    vi.spyOn(runtime, 'audit').mockResolvedValue(result);
+    registerTools(server, { runtime });
+
+    const res = await tools.get('browser.audit')!.handler({ sessionId: 's1' });
+    expect(res.content.length).toBe(3);
+    expect(res.content[2]).toEqual({ type: 'image', data: diffBase64, mimeType: 'image/png' });
+    const parsed = JSON.parse(res.content[0].text);
+    expect(parsed.baseline.diffPath).toBeNull();
+  });
+
+  it('M5: includeImages:false omits images; a baseline error omits isError and the diff image', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'audit').mockResolvedValue(fakeResult());
+    registerTools(server, { runtime });
+
+    const res1 = await tools.get('browser.audit')!.handler({ sessionId: 's1', includeImages: false });
+    expect(res1.content.length).toBe(1);
+
+    const runtime2 = new SutradharRuntime();
+    const errResult = fakeResult({ baseline: { url: 'http://127.0.0.1:1/b', error: 'boom' } });
+    vi.spyOn(runtime2, 'audit').mockResolvedValue(errResult);
+    const { server: server2, tools: tools2 } = createMockServer();
+    registerTools(server2, { runtime: runtime2 });
+    const res2 = await tools2.get('browser.audit')!.handler({ sessionId: 's1' });
+    expect(res2.content.length).toBe(2);
+    expect(res2.isError).toBeUndefined();
+    const parsed2 = JSON.parse(res2.content[0].text);
+    expect(parsed2.baseline).toEqual({ url: 'http://127.0.0.1:1/b', error: 'boom' });
+  });
+
+  it('M6: argument pass-through is exact', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const spy = vi.spyOn(runtime, 'audit').mockResolvedValue(fakeResult());
+    registerTools(server, { runtime });
+
+    await tools.get('browser.audit')!.handler({ sessionId: 's1', url: 'http://127.0.0.1/a' });
+    expect(spy).toHaveBeenCalledWith('s1', { url: 'http://127.0.0.1/a' });
+
+    spy.mockClear();
+    await tools.get('browser.audit')!.handler({ sessionId: 's1' });
+    expect(spy).toHaveBeenCalledWith('s1', {});
+
+    spy.mockClear();
+    await tools.get('browser.audit')!.handler({ sessionId: 's1', url: 'http://127.0.0.1/a', baselineUrl: 'http://127.0.0.1/b', tabId: 't1' });
+    expect(spy).toHaveBeenCalledWith('s1', { url: 'http://127.0.0.1/a', tabId: 't1', baselineUrl: 'http://127.0.0.1/b' });
+  });
+
+  it('M7: an unknown session is isError with the "audit failed:" prefix and the existing hint', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'audit').mockRejectedValue(new Error('No browser session "x"'));
+    registerTools(server, { runtime });
+
+    const res = await tools.get('browser.audit')!.handler({ sessionId: 'x' });
+    expect(res.isError).toBe(true);
+    expect(res.content[0].text).toMatch(/^audit failed: No browser session/);
+    expect(res.content[0].text).toContain('Hint:');
+  });
+
+  it('M8: the schema validates real output and rejects known mutations; the example itself is valid', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const withBaseline = fakeResult({
+      baseline: { url: 'http://127.0.0.1:1/b', width: 5, height: 4, diffPixelCount: 1, totalPixels: 20, diffPercentage: 5, diffImageBase64: makePngBase64(5, 4) },
+    });
+    vi.spyOn(runtime, 'audit').mockResolvedValue(withBaseline);
+    registerTools(server, { runtime });
+
+    const res = await tools.get('browser.audit')!.handler({ sessionId: 's1' });
+    const report = JSON.parse(res.content[0].text);
+    expect(validate(report).valid).toBe(true);
+
+    const mutations: Array<(r: any) => any> = [
+      (r) => ({ ...r, screenshotBase64: 'x' }),
+      (r) => ({ ...r, brokenRequests: [{ url: 'http://x', status: 200 }] }),
+      (r) => { const c = { ...r }; delete c.webVitals; return c; },
+      (r) => ({ ...r, observation: { ...r.observation, mode: 'other' } }),
+      (r) => ({ ...r, schemaVersion: 2 }),
+      (r) => ({ ...r, baseline: { url: 'u' } }),
+      (r) => ({ ...r, timestamp: 'yesterday' }),
+      (r) => ({ ...r, accessibilityIssues: [{ rule: 'img-alt', description: 'x', count: 0 }] }),
+    ];
+    for (const mutate of mutations) {
+      const mutated = mutate(JSON.parse(JSON.stringify(report)));
+      expect(validate(mutated).valid, JSON.stringify(mutated)).toBe(false);
+    }
+
+    expect(validate(AUDIT_REPORT_EXAMPLE).valid).toBe(true);
   });
 });
 

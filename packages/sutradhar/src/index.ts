@@ -72,6 +72,8 @@ export {
   type ViewportInfo,
   type WaitForSelectorOptions,
   type WaitForSelectorState,
+  type PageAuditOptions,
+  type PageAuditResult,
 } from './page.js';
 export {
   SutradharRuntime,
@@ -79,4 +81,5 @@ export {
   ProfileManager,
   type ProfileInfo,
   type StorageState,
+  type AuditReport,
 } from '@sutradhar/capability-runtime';

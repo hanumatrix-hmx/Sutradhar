@@ -132,6 +132,7 @@ if auto-detection fails.
 | `waitForSelector(selector, options?)` | Wait for `selector` to reach `options.state` — `"visible"` (default), `"attached"` (just in the DOM), or `"hidden"` (removed or not visible). "Visible" is a non-empty box AND visibility not hidden/collapse, checked on the FIRST match — `opacity:0`/off-screen still count as visible; zero-size/`display:none`/`visibility:hidden` count as hidden. `"hidden"` succeeds immediately if nothing matches. `options.timeout` is per attempt; retries can extend the real total wait. `options.timeout <= 0` checks the current state once, immediately, with no waiting or retrying. Waiting states poll roughly every 100ms, so a state that's only true for less than ~100ms (a fast visibility flicker) may be missed. Throws on timeout. |
 | `scroll(direction?, amount?)` | Scroll up/down/top/bottom. |
 | `screenshot()` | Full-page PNG as base64. |
+| `audit(options?)` | JSON audit report (errors, broken requests, a11y heuristics, Web Vitals) + `screenshotBase64` (+ files/absolute paths when `outDir` is given). Throws if the audit can't run; a failed `baselineUrl` comparison is reported in `report.baseline.error` instead. |
 | `evaluate(expression)` | Run JS in the page; return serialized result. |
 | `cookies()` | Read cookies for this tab's URL. |
 | `bringToFront()` | Make this the active tab. |

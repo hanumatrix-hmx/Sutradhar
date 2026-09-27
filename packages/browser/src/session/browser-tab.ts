@@ -190,11 +190,20 @@ export interface IBrowserTab {
   getLock(): TabLockInfo | undefined;
   acquireLock(owner: string, ttlMs: number): boolean;
   releaseLock(owner: string): boolean;
+  /** FR2-12. ISO time this tab's console/page-error/network listeners were attached. Optional so
+   *  existing `IBrowserTab` literal mocks keep compiling unchanged. */
+  readonly observingSince?: string;
 }
 
 export class BrowserTab implements IBrowserTab {
   public readonly id: TabId;
   public readonly page?: Page;
+  /** FR2-12. ISO time this tab's console/page-error/network listeners were attached (set right
+   *  before {@link attachPageListeners} runs). Used by `SutradharRuntime.audit` to tell whether
+   *  the audit's console/page-error/network findings cover the whole document (this tab was
+   *  already observing before the document started) or only partial activity (e.g. a CLI process
+   *  that attached to an already-loaded page). */
+  public readonly observingSince: string;
   private currentUrl: string;
   private currentTitle: string;
   private activeState: boolean;
@@ -233,6 +242,7 @@ export class BrowserTab implements IBrowserTab {
     this.sessionId = sessionId;
     this.eventBus = eventBus;
     this.dialogPolicy = dialogPolicy;
+    this.observingSince = new Date().toISOString();
 
     if (this.page) {
       this.attachPageListeners(this.page);

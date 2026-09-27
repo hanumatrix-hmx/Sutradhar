@@ -547,3 +547,17 @@ describe('@sutradhar/browser BrowserTab dialog policy (FR2-04)', () => {
     expect(typeof detail?.openedAt).toBe('string');
   });
 });
+
+describe('@sutradhar/browser BrowserTab observingSince (FR2-12)', () => {
+  it('BT1: is set to an ISO timestamp close to construction time, even with no page', () => {
+    const before = Date.now();
+    const tab = new BrowserTab(createTabId('tab_1'));
+    const after = Date.now();
+
+    expect(typeof tab.observingSince).toBe('string');
+    const parsed = Date.parse(tab.observingSince);
+    expect(Number.isNaN(parsed)).toBe(false);
+    expect(parsed).toBeGreaterThanOrEqual(before);
+    expect(parsed).toBeLessThanOrEqual(after + 1000);
+  });
+});

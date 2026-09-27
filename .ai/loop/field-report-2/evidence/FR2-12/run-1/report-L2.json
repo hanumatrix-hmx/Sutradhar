@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "url": "http://127.0.0.1:61218/audit?n=12&slow=2500",
+  "requestedUrl": "http://127.0.0.1:61218/audit?n=12&slow=2500",
+  "title": "FR2-12 audit 12",
+  "timestamp": "2026-09-27T07:59:56.007Z",
+  "screenshot": {
+    "path": "E:\\AI-Cache\\tmp\\fr212-l2-1790495993548-mqg8wqjz47\\audit-screenshot.png",
+    "width": 785,
+    "height": 1581,
+    "bytes": 15431,
+    "fullPage": true
+  },
+  "consoleErrors": [
+    {
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "timestamp": "2026-09-27T07:59:54.379Z"
+    },
+    {
+      "text": "fr2-12-console-12",
+      "timestamp": "2026-09-27T07:59:54.380Z"
+    },
+    {
+      "text": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "timestamp": "2026-09-27T07:59:54.390Z"
+    }
+  ],
+  "pageErrors": [
+    {
+      "message": "fr2-12-pageerror-12",
+      "timestamp": "2026-09-27T07:59:54.381Z"
+    }
+  ],
+  "brokenRequests": [
+    {
+      "url": "http://127.0.0.1:61218/missing-12.png",
+      "status": 404
+    },
+    {
+      "url": "http://127.0.0.1:61218/api/fail-12",
+      "status": 500
+    }
+  ],
+  "accessibilityIssues": [
+    {
+      "rule": "img-alt",
+      "description": "Images missing an alt attribute",
+      "count": 1
+    },
+    {
+      "rule": "input-label",
+      "description": "Form inputs with no accessible label (no <label>, aria-label, or aria-labelledby)",
+      "count": 1
+    },
+    {
+      "rule": "missing-lang",
+      "description": "Root <html> has no lang attribute",
+      "count": 1
+    },
+    {
+      "rule": "button-name",
+      "description": "Buttons/links with no accessible name (no text content, aria-label, or title)",
+      "count": 1
+    }
+  ],
+  "webVitals": {
+    "lcpMs": 40,
+    "cls": 0.27996762208067943,
+    "fcpMs": 40,
+    "ttfbMs": 2
+  },
+  "observation": {
+    "mode": "navigated",
+    "documentStartedAt": "2026-09-27T07:59:54.367Z",
+    "observingSince": "2026-09-27T07:59:54.030Z",
+    "coversWholeDocument": true,
+    "pageWasHidden": false
+  },
+  "baseline": null
+}

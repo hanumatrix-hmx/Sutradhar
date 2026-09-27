@@ -21,6 +21,12 @@ export interface ParsedArgs {
   /** Parsed from `--baseline <url>` — undefined when the flag isn't given. Used by `audit` to
    *  also run a visual compare against a known-good baseline URL in the same command. */
   baselineFlag: string | undefined;
+  /** FR2-12/T22: true when `--baseline` was given but its next argument is missing or itself
+   *  looks like a flag (e.g. `audit <url> --baseline` with nothing after it, or `audit <url>
+   *  --baseline --json`, which would otherwise silently consume `--json` as the baseline URL).
+   *  `baselineFlag` is `undefined` whenever this is true — the caller rejects it with a clear
+   *  usage message instead of silently skipping the comparison or misparsing another flag. */
+  baselineFlagGivenButInvalid: boolean;
   /** `--settle` — used by `click`/`type` to wait for the page to stop actively changing
    *  (DOM-quiet + network-idle) before returning. Off by default. */
   settle: boolean;
@@ -118,7 +124,9 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
         .filter((d) => d.length > 0)
     : undefined;
   const baselineFlagIndex = args.indexOf('--baseline');
-  const baselineFlag = baselineFlagIndex !== -1 ? args[baselineFlagIndex + 1] : undefined;
+  const baselineRaw = baselineFlagIndex !== -1 ? args[baselineFlagIndex + 1] : undefined;
+  const baselineFlagGivenButInvalid = baselineFlagIndex !== -1 && (baselineRaw === undefined || baselineRaw.startsWith('--'));
+  const baselineFlag = baselineFlagGivenButInvalid ? undefined : baselineRaw;
   const modifiersFlagIndex = args.indexOf('--modifiers');
   const modifiersRaw = modifiersFlagIndex !== -1 ? args[modifiersFlagIndex + 1] : undefined;
   const VALID_MODIFIERS = new Set(['Control', 'Shift', 'Alt', 'Meta']);
@@ -173,7 +181,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     (profileFlagIndex !== -1 && i === profileFlagIndex + 1) ||
     (userAgentFlagIndex !== -1 && i === userAgentFlagIndex + 1) ||
     (allowlistDomainsFlagIndex !== -1 && i === allowlistDomainsFlagIndex + 1) ||
-    (baselineFlagIndex !== -1 && i === baselineFlagIndex + 1) ||
+    (baselineFlagIndex !== -1 && !baselineFlagGivenButInvalid && i === baselineFlagIndex + 1) ||
     (modifiersFlagIndex !== -1 && i === modifiersFlagIndex + 1) ||
     (frameFlagIndex !== -1 && i === frameFlagIndex + 1) ||
     (viewportFlagIndex !== -1 && i === viewportFlagIndex + 1) ||
@@ -195,6 +203,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     userAgentFlag,
     allowlistDomainsFlag,
     baselineFlag,
+    baselineFlagGivenButInvalid,
     settle,
     noText,
     idsOnly,

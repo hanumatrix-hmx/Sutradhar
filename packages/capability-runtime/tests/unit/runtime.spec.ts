@@ -246,6 +246,163 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
     });
   });
 
+  describe('audit (FR2-12)', () => {
+    const TIME_ORIGIN = Date.parse('2026-01-01T00:00:10.000Z');
+    const URL_ = 'http://127.0.0.1:1/audit';
+
+    function fakePage(overrides: Partial<any> = {}) {
+      return {
+        isClosed: () => false,
+        url: () => URL_,
+        title: async () => 'T',
+        screenshot: vi.fn(async () => 'AAAA'),
+        evaluate: vi.fn(async () => ({ issues: [], webVitals: { lcpMs: 10, cls: 0, fcpMs: 5, ttfbMs: 1 }, timeOrigin: TIME_ORIGIN, pageWasHidden: false })),
+        evaluateOnNewDocument: vi.fn(),
+        removeScriptToEvaluateOnNewDocument: vi.fn(),
+        ...overrides,
+      };
+    }
+
+    function fakeTab(overrides: Partial<any> = {}) {
+      return {
+        id: 't',
+        url: URL_,
+        observingSince: new Date(TIME_ORIGIN - 60000).toISOString(),
+        getConsoleLogs: () => [],
+        getPageErrors: () => [],
+        getNetworkLog: () => [],
+        getPendingDialog: () => undefined,
+        ...overrides,
+      };
+    }
+
+    it('RA1: a blocked baselineUrl rejects with the allowlist message, not BrowserNotAvailableError (D14 ordering)', async () => {
+      const runtime = new SutradharRuntime({ restrictNavigationToLocal: true });
+      await expect(runtime.audit('nope', { baselineUrl: 'https://example.com' })).rejects.toThrow(
+        /restrictNavigationToLocal is enabled/,
+      );
+    });
+
+    it('RA2: an open dialog fails fast, before any screenshot/evaluate call', async () => {
+      const page = fakePage();
+      const tab = fakeTab({ getPendingDialog: () => ({ dialogType: 'alert', message: 'hi' }) });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+
+      await expect(runtime.audit('s')).rejects.toThrow(/a alert dialog is open \("hi"\)/);
+      expect(page.screenshot).not.toHaveBeenCalled();
+      expect(page.evaluate).not.toHaveBeenCalled();
+    });
+
+    it('RA3: current-page mode scopes console errors and broken requests to since observingSince/timeOrigin', async () => {
+      const page = fakePage();
+      const tab = fakeTab({
+        observingSince: '2026-01-01T00:00:20.000Z',
+        getConsoleLogs: () => [
+          { logType: 'error', text: 'old', timestamp: '2026-01-01T00:00:05.000Z' },
+          { logType: 'error', text: 'new', timestamp: '2026-01-01T00:00:11.000Z' },
+        ],
+        getNetworkLog: () => [
+          { phase: 'response', url: 'http://x/404', status: 404, timestamp: '2026-01-01T00:00:05.000Z' },
+          { phase: 'response', url: 'http://x/500', status: 500, timestamp: '2026-01-01T00:00:11.000Z' },
+        ],
+      });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+
+      const result = await runtime.audit('s');
+
+      expect(result.consoleErrors).toEqual([{ text: 'new', timestamp: '2026-01-01T00:00:11.000Z' }]);
+      expect(result.brokenRequests).toEqual([{ url: 'http://x/500', status: 500 }]);
+      expect(result.observation.mode).toBe('current-page');
+      expect(result.observation.coversWholeDocument).toBe(false);
+      expect(result.requestedUrl).toBeNull();
+      expect(result.baseline).toBeNull();
+    });
+
+    it('RA4: navigated mode only keeps entries at/after the navigate call, coversWholeDocument true', async () => {
+      const page = fakePage();
+      const tab = fakeTab({
+        observingSince: '2020-01-01T00:00:00.000Z',
+        getConsoleLogs: () => [
+          { logType: 'error', text: 'before-nav', timestamp: '2020-06-01T00:00:00.000Z' },
+          { logType: 'error', text: 'after-nav', timestamp: '2027-01-01T00:00:00.000Z' },
+        ],
+      });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+      vi.spyOn(runtime, 'navigate').mockResolvedValue({ tabId: 't', url: URL_, title: 'T' } as any);
+      // Simulate the navigated document's timeOrigin as being AFTER 'before-nav' but before
+      // 'after-nav', so only 'after-nav' should survive scoping.
+      page.evaluate.mockResolvedValue({ issues: [], webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 }, timeOrigin: Date.parse('2026-06-01T00:00:00.000Z'), pageWasHidden: false });
+
+      const result = await runtime.audit('s', { url: URL_ });
+
+      expect(result.consoleErrors.map((e) => e.text)).toEqual(['after-nav']);
+      expect(result.observation.coversWholeDocument).toBe(true);
+      expect(result.requestedUrl).toBe(URL_);
+    });
+
+    it('RA5: a successful baseline is folded in with compareUrls called with (sessionId, baselineUrl, url, {tabId})', async () => {
+      const page = fakePage();
+      const tab = fakeTab();
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+      const compareSpy = vi
+        .spyOn(runtime, 'compareUrls')
+        .mockResolvedValue({ width: 4, height: 3, diffPixelCount: 1, totalPixels: 12, diffPercentage: 8.33, diffImageBase64: 'x' });
+
+      const result = await runtime.audit('s', { baselineUrl: 'http://127.0.0.1/b' });
+
+      expect(compareSpy).toHaveBeenCalledWith('s', 'http://127.0.0.1/b', URL_, { tabId: undefined });
+      expect(result.baseline).toMatchObject({ url: 'http://127.0.0.1/b', diffPercentage: 8.33 });
+    });
+
+    it('RA6: a rejected baseline resolves the audit with baseline.error instead of throwing', async () => {
+      const page = fakePage();
+      const tab = fakeTab();
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+      vi.spyOn(runtime, 'compareUrls').mockRejectedValue(new Error('boom'));
+
+      const result = await runtime.audit('s', { baselineUrl: 'http://127.0.0.1/b' });
+
+      expect(result.baseline).toEqual({ url: 'http://127.0.0.1/b', error: 'boom' });
+    });
+
+    it('RA8: the dwell floor (settleMs) is honored in URL mode', async () => {
+      const page = fakePage();
+      const tab = fakeTab();
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+      vi.spyOn(runtime, 'navigate').mockResolvedValue({ tabId: 't', url: URL_, title: 'T' } as any);
+
+      const start = Date.now();
+      await runtime.audit('s', { url: URL_, settleMs: 60 });
+      expect(Date.now() - start).toBeGreaterThanOrEqual(55);
+    });
+
+    it('RA9: no evaluateOnNewDocument/removeScriptToEvaluateOnNewDocument calls (Branch B — no injection)', async () => {
+      const page = fakePage();
+      const tab = fakeTab();
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+      vi.spyOn(runtime, 'navigate').mockResolvedValue({ tabId: 't', url: URL_, title: 'T' } as any);
+
+      await runtime.audit('s', { url: URL_, settleMs: 0 });
+
+      expect(page.evaluateOnNewDocument).not.toHaveBeenCalled();
+      expect(page.removeScriptToEvaluateOnNewDocument).not.toHaveBeenCalled();
+    });
+  });
+
   describe('compareUrls', () => {
     it('throws BrowserNotAvailableError for an unknown session', async () => {
       const runtime = new SutradharRuntime();

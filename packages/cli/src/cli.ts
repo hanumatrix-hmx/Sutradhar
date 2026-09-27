@@ -7,10 +7,11 @@
  * same browser's CDP wsEndpoint, persisted per-project-directory under
  * ~/.sutradhar-cli/<hash-of-cwd>/state.json between calls (see state.ts).
  */
-import { SutradharRuntime } from '@sutradhar/capability-runtime';
+import { SutradharRuntime, writeAuditArtifacts, prepareAuditOutDir } from '@sutradhar/capability-runtime';
 import { StructuredLogger } from '@sutradhar/observability';
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { formatAuditText, auditNotes, auditExitCode } from './audit-output.js';
 import { readState, writeState, clearState, STATE_DIR, type CliState } from './state.js';
 import { spawnDetachedChrome, killChromeTree } from './spawn-chrome.js';
 import { createSessionId } from '@sutradhar/contracts';
@@ -57,6 +58,7 @@ const {
   userAgentFlag,
   allowlistDomainsFlag,
   baselineFlag,
+  baselineFlagGivenButInvalid,
   settle,
   noText,
   idsOnly,
@@ -690,56 +692,43 @@ async function cmdScreenshot(outPath: string | undefined) {
   });
 }
 
+/**
+ * FR2-12. `--json` prints exactly one pretty-printed `AuditReport` document (D2.1/D2.2) — no
+ * partial output on a fatal error (D2.6). D2.7: the outDir is created BEFORE any session work,
+ * so a bad outDir (T4) fails fast instead of wasting a whole audit run on Chrome.
+ *
+ * D2.4 (FR2-04 dialog lines in --json mode): FR2-07's `{json:true}` verb-level switch this was
+ * meant to piggy-back on hasn't landed in this worktree (still at SPEC), so `dialogPending`/
+ * `dialogsHandled` are simply left off the report — the spec's own documented fallback for "FR2-04
+ * isn't there" also covers "FR2-04 is there but its --json switch isn't". `reportDialogs` itself
+ * (FR2-04, untouched by this item) still unconditionally logs `dialogPending:`/`dialogHandled:`
+ * lines when a dialog actually exists, independent of `--json` — a pre-existing, whole-CLI gap
+ * this item doesn't introduce or attempt to fix; none of this item's own fixtures open a dialog
+ * during a normal audit run, so it never corrupts `--json` stdout in practice here (see the final
+ * report's deviations section).
+ */
 async function cmdAudit(url: string | undefined, outDir: string | undefined) {
+  let dir: string;
+  try {
+    dir = await prepareAuditOutDir(outDir ?? '.');
+  } catch (e) {
+    printErrorAndExit((e as Error).message);
+  }
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.audit(sessionId, { url });
-    const dir = path.resolve(outDir ?? '.');
-    const screenshotPath = path.join(dir, 'audit-screenshot.png');
-    await writeFile(screenshotPath, Buffer.from(result.screenshotBase64, 'base64'));
+    const result = await runtime.audit(sessionId, {
+      ...(url ? { url } : {}),
+      ...(baselineFlag ? { baselineUrl: baselineFlag } : {}),
+    });
+    const report = await writeAuditArtifacts(result, dir);
 
-    console.log(`URL: ${result.url}`);
-    console.log(`Title: ${result.title}`);
-    console.log(`Screenshot: ${screenshotPath}`);
-    console.log(`\nWeb Vitals:`);
-    console.log(`  LCP: ${result.webVitals.lcpMs ?? 'n/a'}ms`);
-    console.log(`  CLS: ${result.webVitals.cls ?? 'n/a'}`);
-    console.log(`  FCP: ${result.webVitals.fcpMs ?? 'n/a'}ms`);
-    console.log(`  TTFB: ${result.webVitals.ttfbMs ?? 'n/a'}ms`);
-    console.log(`\nConsole errors: ${result.consoleErrors.length}`);
-    for (const e of result.consoleErrors) console.log(`  - ${e.text}`);
-    console.log(`Page errors: ${result.pageErrors.length}`);
-    for (const e of result.pageErrors) console.log(`  - ${e.message}`);
-    console.log(`Broken requests (4xx/5xx): ${result.brokenRequests.length}`);
-    for (const r of result.brokenRequests) console.log(`  - [${r.status}] ${r.url}`);
-    console.log(`\nAccessibility issues: ${result.accessibilityIssues.length}`);
-    for (const issue of result.accessibilityIssues) {
-      console.log(`  - ${issue.description} (${issue.count})`);
+    for (const note of auditNotes(report)) console.error(note);
+    if (jsonMode) {
+      console.log(JSON.stringify(report, null, 2));
+    } else {
+      for (const line of formatAuditText(report)) console.log(line);
     }
-
-    let visualDiffPercentage = 0;
-    if (baselineFlag) {
-      // One-command regression gate: audit's own findings (Web Vitals/console/page/a11y) plus
-      // a visual pixel-diff against a known-good baseline URL, instead of running "audit" and
-      // "compare" as two separate commands and correlating their output by hand.
-      const compareResult = await runtime.compareUrls(sessionId, baselineFlag, result.url);
-      const diffPath = path.join(dir, 'audit-baseline-diff.png');
-      await writeFile(diffPath, Buffer.from(compareResult.diffImageBase64, 'base64'));
-      visualDiffPercentage = compareResult.diffPercentage;
-      console.log(`\nVisual diff vs baseline (${baselineFlag}):`);
-      console.log(
-        `  ${compareResult.diffPixelCount} / ${compareResult.totalPixels} pixels (${compareResult.diffPercentage.toFixed(2)}%)`,
-      );
-      console.log(`  Diff image: ${diffPath}`);
-    }
-
-    if (
-      failOnDiff &&
-      (result.consoleErrors.length > 0 ||
-        result.pageErrors.length > 0 ||
-        result.brokenRequests.length > 0 ||
-        visualDiffPercentage > 0)
-    ) {
-      process.exitCode = 1; // CI-friendly gate, opt-in only — same convention as "compare --fail-on-diff"
+    if (auditExitCode(report, failOnDiff) === 1) {
+      process.exitCode = 1; // CI-friendly gate — same convention as "compare --fail-on-diff"
     }
   });
 }
@@ -1297,6 +1286,9 @@ async function main() {
   if (stateFlagGivenButInvalid) {
     printErrorAndExit('--state must be one of: visible, attached, hidden (e.g. wait "#toast" --state hidden)');
   }
+  if (baselineFlagGivenButInvalid) {
+    printErrorAndExit('--baseline requires a URL (e.g. audit <url> --baseline https://prod.example.com)');
+  }
   const dialogErr = dialogFlagError({ verb, dialogFlag, dialogFlagGivenButInvalid, dialogTextFlag });
   if (dialogErr) {
     printErrorAndExit(dialogErr);
@@ -1449,11 +1441,20 @@ Commands:
   closetab <tabId>              Close a specific tab
   download <ref> [dir]         Click an element that triggers a download, print the saved path
   screenshot [path]            Save a screenshot (default: ./screenshot.png)
-  audit [url] [outDir]         Screenshot + console/page/network errors + accessibility
-                                checks + Core Web Vitals for a page (current page if no url)
+  audit [url] [outDir] [--json]
+                                Screenshot + console/page/network errors + accessibility
+                                heuristics + Web Vitals for a page. With a url, loads it and
+                                waits for it to settle; without one, audits the current page
+                                (use "" as url to also pass an outDir). outDir is created if
+                                missing. --json prints one JSON report (schemaVersion 1, see
+                                packages/capability-runtime/schemas/audit-report.schema.json);
+                                images are written as files and referenced by absolute path.
+                                Auditing the current page only sees errors/requests since this
+                                command attached; pass the url for full coverage.
   audit [url] [outDir] --baseline <baselineUrl>
-                                Same, plus a visual pixel-diff against a known-good baseline
-                                URL — a one-command regression gate combining audit + compare
+                                Same, plus a pixel-diff of baselineUrl vs a fresh load of the
+                                audited url (viewport screenshots; the page is reloaded) — a
+                                one-command regression gate combining audit + compare
   compare <urlA> <urlB> [out]  Visual regression: pixel-diff two pages, save a diff image
   dialog                       Show any open native dialog (alert/confirm/prompt/beforeunload)
   dialog accept [text]         Accept the oldest open dialog (text = what to type into a prompt)
@@ -1482,7 +1483,8 @@ Flags:
   --viewport <WxH>      Set the CDP viewport (e.g. --viewport 390x844) and, when --headed, the
                         real OS window's size too. Applies at session creation and persists
                         across later commands until a new --viewport is given
-  --json                "snap" additionally prints structured per-element data as JSON
+  --json                "snap" additionally prints structured per-element data as JSON;
+                        "audit" prints the machine-readable JSON report (see "audit" above)
   --fail-on-diff        "compare" exits nonzero if any pixel difference is found (CI gating);
                         "audit" exits nonzero if any console/page/broken-request error was
                         found, or (with --baseline) any visual diff from the baseline
