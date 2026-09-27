@@ -167,7 +167,12 @@ export class DirectCdpBroker implements DialogBroker {
     const blockedInfos = probeable
       .filter(({ info }) => states.get(info.targetId) === 'blocked')
       .map(({ info }) => ({ targetId: info.targetId, openerTargetId: info.openerTargetId }));
-    const attribution = attributeDialogHolders(blockedInfos);
+    // FR2-04 escalation-2 (GAP-252): same fix as `DialogWarden.listWithLiveness` — pass every
+    // known target (blocked or not) so two blocked siblings sharing an UNBLOCKED opener still get
+    // attributed against each other instead of each becoming an independent "holder". This mode has
+    // no tracking history at all (see the class doc comment), so the resulting `blockedBy` split is
+    // still listing/messaging-only here — `handle()` below never acts on it to close anything.
+    const attribution = attributeDialogHolders(blockedInfos, candidates.map(({ info }) => ({ targetId: info.targetId, openerTargetId: info.openerTargetId })));
     for (const { info } of probeable) {
       const state = states.get(info.targetId);
       if (state !== 'blocked') continue;
@@ -179,6 +184,10 @@ export class DirectCdpBroker implements DialogBroker {
           defaultValue: this.hint.defaultValue,
           url: info.url,
           openedAt: this.hint.openedAt,
+          // FR2-04 escalation-2 (GAP-254): marked even on a hint-matched (real type/message)
+          // entry — `handle()` below still tries `Page.handleJavaScriptDialog` first for these, but
+          // falls back to the same no-warden refusal path as any other entry if that fails.
+          wardenDown: true,
         });
       } else {
         // No hint to identify what's blocking this target — report it as an unknown dialog
@@ -192,6 +201,7 @@ export class DirectCdpBroker implements DialogBroker {
           url: info.url,
           openedAt: new Date().toISOString(),
           blockedBy: attribution.get(info.targetId)?.blockedBy,
+          wardenDown: true,
         });
       }
     }
@@ -251,7 +261,13 @@ export class DirectCdpBroker implements DialogBroker {
             `Tab ${targetId} is unresponsive, sharing a browser process with tab ${mine.blockedBy}` +
             `${holder?.url ? ` (${holder.url})` : ''} — but the dialog warden is not running, so which of the two ` +
             'actually holds the dialog cannot be proven without its tracking history. No automatic recovery was ' +
-            'attempted. Run "sutradhar close" to end the session, or retry once a warden is available.',
+            // FR2-04 escalation-2 (GAP-254, audit-5): dropped "or retry once a warden is available"
+            // — nothing can start a fresh warden that would help here. A warden that attaches AFTER
+            // the dialog opened has exactly the same problem this whole broker exists to work
+            // around (Step 1 O1/O2 both false: a fresh session can neither see nor handle a dialog
+            // it wasn't already watching for) — restarting the warden buys no new information while
+            // this page stays blocked. "sutradhar close" is the one thing that actually works.
+            'attempted. Run "sutradhar close" to end the session.',
         };
       }
       return {
@@ -260,7 +276,7 @@ export class DirectCdpBroker implements DialogBroker {
           `Tab ${targetId} is unresponsive, but the dialog warden is not running, so this dialog cannot be ` +
           'safely attributed to one specific tab without guessing (guessing here has been measured to close ' +
           'the wrong, innocent tab) — no automatic recovery was attempted. Run "sutradhar close" to end the ' +
-          'session, or retry once a warden is available.',
+          'session.',
       };
     }
   }

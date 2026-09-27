@@ -1,0 +1,53 @@
+{
+  "point": "point2-gap252",
+  "fromRef": "652124a",
+  "files": [
+    "packages/browser/src/session/dialog-cdp.ts"
+  ],
+  "at": "2026-09-27T04:42:37.507Z",
+  "originalShas": [
+    {
+      "file": "packages\\browser\\src\\session\\dialog-cdp.ts",
+      "sha256": "571eef7dba68b8a28affa34be6bdb5638365ba05fe2f23ae93d1ea50ad0f4702",
+      "sha256_normalized_eol": "571eef7dba68b8a28affa34be6bdb5638365ba05fe2f23ae93d1ea50ad0f4702",
+      "bytes": 29224
+    }
+  ],
+  "beforeRevert": {
+    "label": "fixed-code (baseline, should be all-pass)",
+    "exitCode": 0,
+    "summary": "Tests  31 passed (31)",
+    "failedCount": 0,
+    "failedNames": [],
+    "outTail": "\n RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser\n\n ✓ tests/unit/dialog-cdp.spec.ts  (31 tests) 9ms\n\n Test Files  1 passed (1)\n      Tests  31 passed (31)\n   Start at  10:12:37\n   Duration  396ms (transform 32ms, setup 0ms, collect 34ms, tests 9ms, environment 0ms, prepare 127ms)\n\nThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\n"
+  },
+  "afterRevert": {
+    "label": "reverted-to-652124a (should show NEW failures)",
+    "exitCode": 1,
+    "summary": "Tests  4 failed | 27 passed (31)",
+    "failedCount": 4,
+    "failedNames": [
+      "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (escalation-2): the allKnown parameter lin",
+      "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (escalation-2): the allKnown parameter lin",
+      "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (escalation-2): the allKnown parameter lin",
+      "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (escalation-2): the allKnown parameter lin"
+    ],
+    "outTail": " (31)\n   Start at  10:12:38\n   Duration  354ms (transform 31ms, setup 0ms, collect 30ms, tests 13ms, environment 0ms, prepare 124ms)\n\nThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (escalation-2): the allKnown parameter links siblings through an UNBLOCKED opener > WITH allKnown naming the unblocked opener: the two siblings are attributed against each other — only the newer is the presumed holder, the older defers to it\nAssertionError: expected { blockedBy: undefined, …(1) } to deeply equal { blockedBy: 'popup-new', …(1) }\n\n- Expected\n+ Received\n\n  Object {\n-   \"blockedBy\": \"popup-new\",\n+   \"blockedBy\": undefined,\n    \"confirmedSafe\": false,\n  }\n\n ❯ tests/unit/dialog-cdp.spec.ts:292:41\n    290|         );\n    291|         expect(result.get('popup-new')).toEqual({ blockedBy: undefined…\n    292|         expect(result.get('popup-old')).toEqual({ blockedBy: 'popup-ne…\n       |                                         ^\n    293|       });\n    294| \n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯\n\n FAIL  tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (escalation-2): the allKnown parameter links siblings through an UNBLOCKED opener > the exact GAP-252 shape (audit-5 A5-03): opener responsive, two cross-site popups, the OLDER one never gets closed as an independent holder\nAssertionError: expected [ 'p0', 'p1' ] to deeply equal [ 'p1' ]\n\n- Expected\n+ Received\n\n  Array [\n+   \"p0\",\n    \"p1\",\n  ]\n\n ❯ tests/unit/dialog-cdp.spec.ts:307:29\n    305|         );\n    306|         const addressable = ['p0', 'p1'].filter((id) => !result.get(id…\n    307|         expect(addressable).toEqual(['p1']); // exactly ONE addressabl…\n       |                             ^\n    308|       });\n    309| \n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯\n\n FAIL  tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (escalation-2): the allKnown parameter links siblings through an UNBLOCKED opener > three-way cross-site siblings sharing one unblocked opener: still exactly one addressable holder (the newest), not three\nAssertionError: expected [ 'p0', 'p1', 'p2' ] to deeply equal [ 'p2' ]\n\n- Expected\n+ Received\n\n  Array [\n+   \"p0\",\n+   \"p1\",\n    \"p2\",\n  ]\n\n ❯ tests/unit/dialog-cdp.spec.ts:337:29\n    335|         );\n    336|         const addressable = ['p0', 'p1', 'p2'].filter((id) => !result.…\n    337|         expect(addressable).toEqual(['p2']);\n       |                             ^\n    338|       });\n    339| \n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯\n\n FAIL  tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (escalation-2): the allKnown parameter links siblings through an UNBLOCKED opener > a confirmed-safe sibling among cross-site popups is still never a holder, and the unblocked opener still connects the remaining candidates\nAssertionError: expected { blockedBy: undefined, …(1) } to deeply equal { Object (blockedBy, confirmedSafe) }\n\n- Expected\n+ Received\n\n  Object {\n-   \"blockedBy\": \"p1\",\n+   \"blockedBy\": undefined,\n    \"confirmedSafe\": true,\n  }\n\n ❯ tests/unit/dialog-cdp.spec.ts:350:34\n    348|         // p0 is confirmed-safe: never itself a holder, but (like the …\n    349|         // its `blockedBy` still names the remaining real candidate in…\n    350|         expect(result.get('p0')).toEqual({ blockedBy: 'p1', confirmedS…\n       |                                  ^\n    351|         expect(result.get('p1')).toEqual({ blockedBy: undefined, confi…\n    352|       });\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯\n\n"
+  },
+  "restore": [
+    {
+      "file": "packages\\browser\\src\\session\\dialog-cdp.ts",
+      "sha256": "571eef7dba68b8a28affa34be6bdb5638365ba05fe2f23ae93d1ea50ad0f4702",
+      "matches": true
+    }
+  ],
+  "restoreOk": true,
+  "afterRestore": {
+    "label": "restored (should be all-pass again, same as baseline)",
+    "exitCode": 0,
+    "summary": "Tests  31 passed (31)",
+    "failedCount": 0,
+    "failedNames": [],
+    "outTail": "\n RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser\n\n ✓ tests/unit/dialog-cdp.spec.ts  (31 tests) 8ms\n\n Test Files  1 passed (1)\n      Tests  31 passed (31)\n   Start at  10:12:39\n   Duration  333ms (transform 33ms, setup 0ms, collect 31ms, tests 8ms, environment 0ms, prepare 123ms)\n\nThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\n"
+  }
+}

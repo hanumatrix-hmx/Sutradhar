@@ -88,15 +88,26 @@ export function formatDialogHandled(d: DialogHandledLike): string {
  *  it just can no longer be used AS the recovery tool for learning a tab id while still blocked.
  *  That's an acceptable trade now that `dialog accept|dismiss` recovers an `unknown` dialog by
  *  identifying and naming the actual holder tab itself (fix-3 points 1+3), which is what `tabs`
- *  was mainly needed for in the first place. */
+ *  was mainly needed for in the first place.
+ *
+ *  FR2-04 escalation-2 (GAP-254, audit-5): this used to promise, unconditionally, that the same
+ *  command "identifies and names the specific tab actually holding the dialog and recovers by
+ *  closing just that tab" — true only while the dialog warden is up (decision 1/2/GAP-245/246).
+ *  With the warden DOWN, `DirectCdpBroker` has no per-target history to attribute from at all and
+ *  REFUSES every destructive recovery for an `unknown` dialog by design (GAP-247) — it never closes
+ *  anything, so the old text was actively contradicted in that mode, and its own refusal message
+ *  used to compound the confusion by suggesting a retry that can't help (nothing can start a warden
+ *  that would help once the page is already blocked). Softened to describe what actually happens in
+ *  BOTH modes rather than promising the warden-only behavior unconditionally. */
 export const DIALOG_HINT =
   (type: string) =>
     `Hint: a ${type} dialog is open and blocking the page. Run "sutradhar dialog accept [text]" or ` +
     `"sutradhar dialog dismiss", or set a policy with --dialog accept|dismiss. For a dialog type ` +
-    `"unknown", that same command identifies and names the specific tab actually holding the ` +
-    `dialog and recovers by closing just that tab (never a different, healthy tab it merely shares ` +
-    `a browser process with). If nothing else works, "sutradhar close" ends the whole session so ` +
-    `you can start a fresh one.`;
+    `"unknown", that same command identifies the specific tab that may be holding it and, when the ` +
+    `dialog warden can prove which one it actually is, recovers by closing just that tab (never a ` +
+    `different, healthy tab it merely shares a browser process with) — otherwise it explains why it ` +
+    `won't guess and leaves every tab open. If nothing else works, "sutradhar close" ends the whole ` +
+    `session so you can start a fresh one.`;
 
 export function beforeunloadCancelMessage(url: string): string {
   return (
@@ -178,6 +189,13 @@ export interface PendingDialogEntry {
    *  (dialog-cdp.ts) — true means this target's own history proves it cannot be hiding a dialog.
    *  Never eligible for `selectDialog`, regardless of `blockedBy`. */
   readonly confirmedSafe?: boolean;
+  /** FR2-04 escalation-2 (GAP-254): true only for an entry `DirectCdpBroker` produced (i.e. the
+   *  dialog warden is unreachable). `DirectCdpBroker` has no per-target tracking history at all, so
+   *  by design (GAP-247) it REFUSES every destructive recovery for an `unknown` dialog — a
+   *  `blockedBy`/holder guess it reports in this mode is listing/messaging-only and will never
+   *  actually be acted on by `dialog accept|dismiss`. `describeUnknownDialog` (cli.ts) uses this to
+   *  avoid claiming a close will happen when it provably won't. */
+  readonly wardenDown?: boolean;
 }
 
 /** FIFO selection (§2.9/D-8): the OLDEST pending dialog by `openedAt`, plus the rest.
@@ -200,6 +218,73 @@ export function selectDialog<T extends PendingDialogEntry>(pending: readonly T[]
   const target = sorted.find((d) => !d.blockedBy && !d.confirmedSafe);
   if (!target) return { target: undefined, rest: sorted };
   return { target, rest: sorted.filter((d) => d !== target) };
+}
+
+/** FR2-04 escalation-1, GAP-248(b): "dialog"'s own output must show WHICH tab any following
+ *  `dialog accept|dismiss` would actually act on, before that command runs — a liveness-inferred
+ *  `unknown` entry alone (just a type/message/url, per §2.8.5's frozen `dialogPending:` contract)
+ *  gives an agent no way to tell a real, addressable holder apart from a collateral/confirmed-safe
+ *  entry it would never act on. Printed by the caller (cli.ts) as extra `Note:` lines (stderr, so
+ *  §2.8.5's exact stdout contract is untouched) rather than changing `formatDialogPending`'s frozen
+ *  key set. Returns `[]` for anything that isn't a liveness-inferred entry (a real, tracked dialog
+ *  needs no such note).
+ *
+ *  FR2-04 escalation-2: moved here from cli.ts (was a private, untestable function) specifically so
+ *  the GAP-253/254 message-accuracy fixes below have real unit coverage instead of only being
+ *  exercised by live/process-spawn scenarios.
+ *
+ *  FR2-04 escalation-2 (GAP-253, audit-5 A5-01): this used to decide its message from `d` ALONE —
+ *  "appears to be the actual dialog holder" whenever `d` itself had no `blockedBy`/`confirmedSafe`.
+ *  That's wrong whenever a REAL, TRACKED (`source:'event'`) dialog exists elsewhere in the same
+ *  listing: `selectDialog`'s global FIFO-by-`openedAt` almost always picks the tracked dialog first
+ *  (its `openedAt` is when it actually opened; a liveness-inferred `unknown` entry's `openedAt` is
+ *  synthesized at LIST time, i.e. "now", which sorts later) — so `dialog accept` resolves that
+ *  tracked dialog, never `d`. Confirmed live: 21/21 (older-fresh-alerts), 12/12 (chain-middle-
+ *  fresh), 9/9 (opener-alerts-fresh) printed the false "would act on this tab" note while accept
+ *  correctly (and harmlessly) resolved the tracked dialog instead — no wrong close ever happened,
+ *  but the note contradicted what `accept` was about to do. Fixed by computing what `selectDialog`
+ *  would ACTUALLY pick from the full current listing and describing that, not assuming `d` is it.
+ *
+ *  FR2-04 escalation-2 (GAP-254, audit-5): also stops claiming a close "would" happen when `d`
+ *  (or the target `selectDialog` would actually pick) came from `DirectCdpBroker` (`wardenDown:
+ *  true`) — that broker has no per-target history at all and REFUSES every destructive recovery
+ *  for an `unknown` dialog by design (GAP-247), so a `blockedBy`/holder guess in that mode is
+ *  listing/messaging-only and will never actually be acted on. */
+export function describeUnknownDialog(d: PendingDialogEntry, allDialogs: readonly PendingDialogEntry[]): string[] {
+  if (d.dialogType !== 'unknown') return [];
+  const tab = d.targetId ? `tab ${d.targetId}` : 'this tab';
+  if (d.confirmedSafe && d.blockedBy) {
+    return [`  Note: ${tab} is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab ${d.blockedBy}.`];
+  }
+  if (d.confirmedSafe) {
+    return [`  Note: ${tab} is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- "dialog accept/dismiss" will not act on it.`];
+  }
+  if (d.blockedBy) {
+    if (d.wardenDown) {
+      return [`  Note: ${tab} is unresponsive only because it shares a browser process with tab ${d.blockedBy}, which may hold the dialog -- but the dialog warden is not running, so "dialog accept/dismiss" cannot safely act on either tab and will refuse.`];
+    }
+    return [`  Note: ${tab} is unresponsive only because it shares a browser process with tab ${d.blockedBy}, which appears to actually hold the dialog -- "dialog accept/dismiss" would act on tab ${d.blockedBy}, not this one.`];
+  }
+  // `d` is itself a candidate root (no blockedBy, not confirmed-safe) — but that alone doesn't mean
+  // `selectDialog` would pick IT: a real, tracked dialog elsewhere (or another eligible candidate
+  // that opened earlier) sorts first by FIFO. Only claim "would act on this tab" when `d` is
+  // actually what selection would return right now.
+  const { target } = selectDialog(allDialogs);
+  const isActualTarget = target !== undefined && target.targetId === d.targetId && target.openedAt === d.openedAt;
+  if (isActualTarget) {
+    if (d.wardenDown) {
+      return [`  Note: ${tab} may be the dialog holder, but the dialog warden is not running, so "dialog accept/dismiss" cannot safely confirm or close it -- it will refuse rather than guess.`];
+    }
+    return [`  Note: ${tab} appears to be the actual dialog holder -- "dialog accept/dismiss" would act on this tab.`];
+  }
+  if (target) {
+    const otherTab = target.targetId ? `tab ${target.targetId}` : 'another tab';
+    return [
+      `  Note: ${tab} appears to be a candidate dialog holder, but "dialog accept/dismiss" would currently act on the ` +
+        `earlier ${target.dialogType} dialog on ${otherTab} first, not this one.`,
+    ];
+  }
+  return [`  Note: ${tab} appears to be the actual dialog holder -- "dialog accept/dismiss" would act on this tab.`];
 }
 
 export type RaceResult<T> = { kind: 'done'; value: T } | { kind: 'dialog'; pending: PendingDialogEntry[] };

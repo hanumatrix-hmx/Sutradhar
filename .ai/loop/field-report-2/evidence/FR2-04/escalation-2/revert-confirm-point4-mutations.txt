@@ -1,0 +1,48 @@
+{
+  "at": "2026-09-27T04:44:38.004Z",
+  "results": [
+    {
+      "id": "E6-no-reactive-confirmation (verbatim from audit-5 mutations-a5.mjs)",
+      "exitCode": 1,
+      "summary": "Tests  1 failed | 31 passed (32)",
+      "failedCount": 1,
+      "failedNames": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > kills E6 (reactive con"
+      ],
+      "killed": true
+    },
+    {
+      "id": "E7-reactive-confirm-without-ack (verbatim from audit-5 mutations-a5.mjs)",
+      "exitCode": 1,
+      "summary": "Tests  1 failed | 31 passed (32)",
+      "failedCount": 1,
+      "failedNames": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > kills E7 (reactive con"
+      ],
+      "killed": true
+    },
+    {
+      "id": "E3'-probe-without-waiting-for-enable-ack (the real danger E3's name could be confused with)",
+      "exitCode": 1,
+      "summary": "Tests  3 failed | 29 passed (32)",
+      "failedCount": 3,
+      "failedNames": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (kills E4 \"boo",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (the real inva",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > kills E7 (reactive con"
+      ],
+      "killed": true
+    },
+    {
+      "id": "E4'-bootstrap-fast-path-reintroduced (ignores configured proactiveConfirmDelayMs for bootstrap)",
+      "exitCode": 1,
+      "summary": "Tests  1 failed | 31 passed (32)",
+      "failedCount": 1,
+      "failedNames": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (kills E4 \"boo"
+      ],
+      "killed": true
+    }
+  ],
+  "finalRestoreOk": true
+}

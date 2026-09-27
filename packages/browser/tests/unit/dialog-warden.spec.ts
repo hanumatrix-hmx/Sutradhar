@@ -1066,4 +1066,322 @@ describe('@sutradhar/browser DialogWarden (FR2-04 Branch W)', () => {
       await warden.stop('test-teardown');
     }
   });
+
+  // FR2-04 escalation-2 (GAP-251/255): the 500ms proactive-confirm delay is gone (default 0) —
+  // every new target (bootstrap or not) is now probed as soon as its Page.enable acks, never
+  // before. These tests pin: (1) the DEFAULT (no explicit `proactiveConfirmDelayMs` at all) still
+  // lets a genuinely idle target become confirmedSafe fast, with no bootstrap/non-bootstrap
+  // distinction any more (kills audit-5's E4 "bootstrap exception removed" mutation — that mutation
+  // no longer even exists as a distinct code path, since the ternary itself is gone); (2) the
+  // Page.enable-ACK precondition the proactive/reactive probes both still require is a real,
+  // load-bearing invariant, not just an artifact of the delay that got removed (distinguishing the
+  // CORRECT "probe immediately after Page.enable acks" from the DIFFERENT, still-bad "probe without
+  // ever waiting for the ack" — audit-5's E3 mutation, on inspection of mutations-a5.mjs, only ever
+  // set the delay to 0 INSIDE the same Page.enable-ack `.then()`, i.e. exactly what escalation-2
+  // now ships as the intended fix; a probe that instead ran BEFORE/without the ack is the real,
+  // categorically different risk these tests guard against); and (3) the REACTIVE confirmation path
+  // (`listWithLiveness`'s own loop, separate from the proactive one-shot probe) is independently
+  // load-bearing and still requires the same ack precondition (kills E6/E7).
+  describe('FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved', () => {
+    function toggleableSession(targetId: string) {
+      const s = fakeSession(targetId);
+      let blocked = false;
+      s.send.mockImplementation((method: string) =>
+        method === 'Performance.getMetrics'
+          ? blocked
+            ? Promise.reject(new Error('ProtocolError: operation timed out'))
+            : Promise.resolve({ metrics: [] })
+          : Promise.resolve(undefined),
+      );
+      return { session: s, setBlocked: (v: boolean) => (blocked = v) };
+    }
+
+    /** A session whose `Page.enable` NEVER resolves (models a target the warden attached to but
+     *  whose enable ack is still genuinely in flight) while `Performance.getMetrics` answers
+     *  'responsive' immediately — used to prove neither the proactive NOR the reactive path ever
+     *  marks such a target confirmed-safe, no matter how "responsive" its liveness probe looks. */
+    function neverAckingResponsiveSession(targetId: string) {
+      const emitter = new EventEmitter();
+      let blocked = false;
+      const send = vi.fn().mockImplementation((method: string) => {
+        if (method === 'Page.enable') return new Promise(() => {}); // never resolves
+        if (method === 'Performance.getMetrics') {
+          return blocked ? Promise.reject(new Error('ProtocolError: operation timed out')) : Promise.resolve({ metrics: [] });
+        }
+        return Promise.resolve(undefined);
+      });
+      return {
+        session: {
+          targetId,
+          send,
+          on: (event: string, cb: (...args: any[]) => void) => emitter.on(event, cb),
+          off: (event: string, cb: (...args: any[]) => void) => emitter.off(event, cb),
+          detach: vi.fn().mockResolvedValue(undefined),
+          emitOpening: (payload: { type: string; message: string; defaultPrompt?: string }) =>
+            emitter.emit('Page.javascriptDialogOpening', payload),
+          emitClosed: () => emitter.emit('Page.javascriptDialogClosed', {}),
+        },
+        setBlocked: (v: boolean) => (blocked = v),
+      };
+    }
+
+    // NOTE on what this unit test can and cannot prove: this suite mocks every CDP call as a
+    // near-instantly-resolving Promise, so unlike real Chrome (where a genuine WebSocket round
+    // trip for Page.enable/Performance.getMetrics costs real wall-clock time an attacker's very
+    // next synchronous JS statement does not), there is no real ordering guarantee left to
+    // reproduce a literal 0ms gap here — two same-delay (0ms) timers race on REGISTRATION order in
+    // Node, not on which one models "the real world's CDP latency head start". The actual proof
+    // that the real, live gap=0 case is safe is audit-5's own live data (`a5-E3live.json`: 36/36
+    // clean with the delay forced to 0 in real Chrome) plus this cycle's own live re-verification
+    // (escalation-2/live sweep, see the final report). What THIS test proves at the unit level is
+    // the narrower, still-real claim: with the delay's PRODUCTION DEFAULT (0, no override) and a
+    // small but nonzero amount of async settle time (modeling the real CDP round-trip slack), the
+    // confirmedSafe mechanism itself works exactly as before — i.e. removing the 500ms constant
+    // didn't break the underlying design, only the unnecessary wait.
+    it('point 1 (GAP-251 pin): with NO explicit proactiveConfirmDelayMs (the new production default), a genuinely idle popup and its opener both become confirmedSafe fast enough to survive a same-renderer block that arrives moments later, at realistic small gaps', async () => {
+      for (const gapMs of [5, 15, 30]) {
+        const openerToggle = toggleableSession(`opener-${gapMs}`);
+        const popupToggle = toggleableSession(`popup-${gapMs}`);
+        const openerTarget = fakeTarget(`opener-${gapMs}`, 'https://opener/', openerToggle.session);
+        const targets = [openerTarget];
+        const browser = fakeBrowser(targets);
+        let readyInfo: { port: number; token: string } | undefined;
+        const warden = new DialogWarden({
+          wsEndpoint: 'ws://x',
+          readPolicy: async () => undefined,
+          isStillCurrent: async () => true,
+          onReady: (info) => {
+            readyInfo = info;
+          },
+          onExit: () => {},
+          connect: async () => browser as any,
+          // Deliberately NOT set — proves the PRODUCTION default (0) is what's under test here,
+          // not a test-only override.
+        });
+        await warden.start(); // opener tracked (bootstrap) here
+        try {
+          await new Promise((r) => setTimeout(r, 10)); // opener's own proactive probe settles
+          const popupTarget = fakeTarget(`popup-${gapMs}`, 'about:blank', popupToggle.session, openerTarget);
+          targets.push(popupTarget);
+          (browser as any)._emit('targetcreated', popupTarget);
+          // The exact GAP-251 attack: the opener starts blocking the shared renderer only `gapMs`
+          // after the popup was created — 0ms included, matching audit-5's own g0 trial.
+          await new Promise((r) => setTimeout(r, gapMs));
+          openerToggle.setBlocked(true);
+          popupToggle.setBlocked(true);
+          // Give both targets' async Page.enable-then-probe chains a moment to actually run before
+          // asserting — this models the same real CDP round-trip slack the live 36/36-clean result
+          // relied on, not an artificial protective delay in the PRODUCT code itself.
+          await new Promise((r) => setTimeout(r, 30));
+          for (const targetId of [`opener-${gapMs}`, `popup-${gapMs}`]) {
+            const res = await req(readyInfo!.port, '/v1/dialogs/handle', readyInfo!.token, {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({ targetId, accept: true }),
+            });
+            expect(res.status).toBe(409); // refused, never closed
+            expect((await res.json()).confirmedSafe).toBe(true);
+          }
+          expect(browser.closeTargetCalls).toEqual([]); // 0 wrong closes at this gap
+        } finally {
+          await warden.stop('test-teardown');
+        }
+      }
+    });
+
+    it('point 1 (kills E4 "bootstrap exception removed"): with a configured NON-ZERO delay, a bootstrap target waits the SAME delay as a non-bootstrap one — bootstrap no longer has its own silent 0ms fast path', async () => {
+      const bootToggle = toggleableSession('boot');
+      const laterToggle = toggleableSession('later');
+      const bootTarget = fakeTarget('boot', 'https://boot/', bootToggle.session);
+      const targets = [bootTarget];
+      const browser = fakeBrowser(targets);
+      let readyInfo: { port: number; token: string } | undefined;
+      const DELAY_MS = 60;
+      const warden = new DialogWarden({
+        wsEndpoint: 'ws://x',
+        readPolicy: async () => undefined,
+        isStillCurrent: async () => true,
+        onReady: (info) => {
+          readyInfo = info;
+        },
+        onExit: () => {},
+        connect: async () => browser as any,
+        proactiveConfirmDelayMs: DELAY_MS,
+      });
+      await warden.start(); // `boot` is a bootstrap target — old code probed it at delay 0 regardless
+      const laterTarget = fakeTarget('later', 'https://later/', laterToggle.session);
+      targets.push(laterTarget);
+      (browser as any)._emit('targetcreated', laterTarget); // `later` is NOT a bootstrap target
+      try {
+        // Well BEFORE the configured delay elapses for either: if `boot` still had the old
+        // `bootstrap ? 0 : delay` fast path, it would already be confirmed-safe here while `later`
+        // is not — assert BOTH are still un-confirmed (closable) at this point, proving neither got
+        // a shortcut.
+        await new Promise((r) => setTimeout(r, 15));
+        bootToggle.setBlocked(true);
+        laterToggle.setBlocked(true);
+        for (const targetId of ['boot', 'later']) {
+          const res = await req(readyInfo!.port, '/v1/dialogs/handle', readyInfo!.token, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ targetId, accept: true }),
+          });
+          expect(res.status).toBe(200); // still eligible/closable — neither confirmed yet
+          expect((await res.json()).closedTarget).toBe(true);
+        }
+      } finally {
+        await warden.stop('test-teardown');
+      }
+    });
+
+    it('point 1 (E4 contrast, confirms the delay DOES still apply uniformly): both a bootstrap and a non-bootstrap target eventually become confirmed-safe once the SAME configured delay elapses', async () => {
+      const bootToggle = toggleableSession('boot2');
+      const laterToggle = toggleableSession('later2');
+      const bootTarget = fakeTarget('boot2', 'https://boot2/', bootToggle.session);
+      const targets = [bootTarget];
+      const browser = fakeBrowser(targets);
+      let readyInfo: { port: number; token: string } | undefined;
+      const warden = new DialogWarden({
+        wsEndpoint: 'ws://x',
+        readPolicy: async () => undefined,
+        isStillCurrent: async () => true,
+        onReady: (info) => {
+          readyInfo = info;
+        },
+        onExit: () => {},
+        connect: async () => browser as any,
+        proactiveConfirmDelayMs: 15,
+      });
+      await warden.start();
+      const laterTarget = fakeTarget('later2', 'https://later2/', laterToggle.session);
+      targets.push(laterTarget);
+      (browser as any)._emit('targetcreated', laterTarget);
+      try {
+        await new Promise((r) => setTimeout(r, 60)); // past the configured delay for both
+        bootToggle.setBlocked(true);
+        laterToggle.setBlocked(true);
+        for (const targetId of ['boot2', 'later2']) {
+          const res = await req(readyInfo!.port, '/v1/dialogs/handle', readyInfo!.token, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ targetId, accept: true }),
+          });
+          expect(res.status).toBe(409);
+          expect((await res.json()).confirmedSafe).toBe(true);
+        }
+      } finally {
+        await warden.stop('test-teardown');
+      }
+    });
+
+    it('point 1 (the real invariant behind E3\'s name): a target whose Page.enable ack is still pending NEVER becomes confirmed-safe via the PROACTIVE probe, even though its liveness probe alone would report "responsive"', async () => {
+      const { session, setBlocked } = neverAckingResponsiveSession('t1');
+      const target = fakeTarget('t1', 'https://t1/', session);
+      const browser = fakeBrowser([target]);
+      let readyInfo: { port: number; token: string } | undefined;
+      const warden = new DialogWarden({
+        wsEndpoint: 'ws://x',
+        readPolicy: async () => undefined,
+        isStillCurrent: async () => true,
+        onReady: (info) => {
+          readyInfo = info;
+        },
+        onExit: () => {},
+        connect: async () => browser as any,
+        proactiveConfirmDelayMs: 5,
+      });
+      await warden.start();
+      try {
+        await new Promise((r) => setTimeout(r, 50)); // well past where the proactive probe WOULD fire, if it ever could
+        setBlocked(true); // now it goes busy — if it had been wrongly marked safe, this would refuse
+        const res = await req(readyInfo!.port, '/v1/dialogs/handle', readyInfo!.token, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ targetId: 't1', accept: true }),
+        });
+        // Never confirmed (Page.enable never acked, so the proactive probe's `.then()` never even
+        // fires) -> still eligible for recovery (GAP-246 decision 2) -> CLOSED, not refused.
+        expect(res.status).toBe(200);
+        expect((await res.json()).closedTarget).toBe(true);
+      } finally {
+        await warden.stop('test-teardown');
+      }
+    });
+
+    it('kills E6 (reactive confirmation removed): a target BUSY during its one proactive probe attempt only ever becomes confirmed-safe later, via a REACTIVE /v1/dialogs call once it turns responsive', async () => {
+      const { session, setBlocked } = toggleableSession('t1');
+      setBlocked(true); // busy from the very start — the one proactive attempt will see 'blocked'
+      const target = fakeTarget('t1', 'https://t1/', session);
+      const browser = fakeBrowser([target]);
+      let readyInfo: { port: number; token: string } | undefined;
+      const warden = new DialogWarden({
+        wsEndpoint: 'ws://x',
+        readPolicy: async () => undefined,
+        isStillCurrent: async () => true,
+        onReady: (info) => {
+          readyInfo = info;
+        },
+        onExit: () => {},
+        connect: async () => browser as any,
+        proactiveConfirmDelayMs: 5,
+      });
+      await warden.start();
+      try {
+        await new Promise((r) => setTimeout(r, 40)); // the one proactive attempt fires and fails (still busy)
+        setBlocked(false); // now it turns genuinely idle/responsive
+        // ONLY a live /v1/dialogs call re-probes it now — nothing else does (the proactive probe
+        // was a single one-shot attempt that already fired and lost).
+        const listRes = await req(readyInfo!.port, '/v1/dialogs', readyInfo!.token);
+        expect(listRes.status).toBe(200);
+        setBlocked(true); // goes busy again (e.g. a slow script) — must now be protected
+        const res = await req(readyInfo!.port, '/v1/dialogs/handle', readyInfo!.token, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ targetId: 't1', accept: true }),
+        });
+        expect(res.status).toBe(409); // refused: the reactive list() call above proved it safe
+        expect((await res.json()).confirmedSafe).toBe(true);
+      } finally {
+        await warden.stop('test-teardown');
+      }
+    });
+
+    it('kills E7 (reactive confirmation without the Page.enable-ack precondition): a target whose enable ack is still pending is NEVER marked confirmed-safe by a reactive /v1/dialogs call either, even when its liveness probe reports "responsive"', async () => {
+      const { session, setBlocked } = neverAckingResponsiveSession('t1');
+      const target = fakeTarget('t1', 'https://t1/', session);
+      const browser = fakeBrowser([target]);
+      let readyInfo: { port: number; token: string } | undefined;
+      const warden = new DialogWarden({
+        wsEndpoint: 'ws://x',
+        readPolicy: async () => undefined,
+        isStillCurrent: async () => true,
+        onReady: (info) => {
+          readyInfo = info;
+        },
+        onExit: () => {},
+        connect: async () => browser as any,
+      });
+      await warden.start();
+      try {
+        // Reactively list while responsive and the ack is still pending — the correct code must
+        // NOT set confirmedResponsiveSince here (pageEnableAckedAt.has(id) is false).
+        const listRes = await req(readyInfo!.port, '/v1/dialogs', readyInfo!.token);
+        expect(listRes.status).toBe(200);
+        setBlocked(true); // now genuinely busy, no dialog ever tracked
+        const res = await req(readyInfo!.port, '/v1/dialogs/handle', readyInfo!.token, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ targetId: 't1', accept: true }),
+        });
+        // Never confirmed (the reactive branch correctly refused to trust "responsive" without the
+        // ack) -> still eligible for recovery (GAP-246 decision 2) -> CLOSED, not refused. Under
+        // E7's mutation (drops the `pageEnableAckedAt.has(...)` check), the earlier list() call
+        // above would have wrongly set confirmedSafe, and this would come back 409/refused instead.
+        expect(res.status).toBe(200);
+        expect((await res.json()).closedTarget).toBe(true);
+      } finally {
+        await warden.stop('test-teardown');
+      }
+    });
+  });
 });

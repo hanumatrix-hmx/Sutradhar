@@ -30,6 +30,7 @@ import {
   DialogBlockedError,
   PREEMPT_GRACE_MS,
   TRIGGER_PREEMPT_GRACE_MS,
+  describeUnknownDialog,
   type PendingDialogEntry,
 } from './dialog-cli.js';
 import { DirectCdpBroker, WardenBroker, runDialogGate, type DialogBroker, type BrokerDialog } from './dialog-broker.js';
@@ -1082,7 +1083,7 @@ async function cmdDialog(sub: string | undefined, rest: string[]): Promise<void>
     }
     for (const d of dialogs) {
       console.log(formatDialogPending({ type: d.dialogType, message: d.message, defaultValue: d.defaultValue, url: d.url }));
-      describeUnknownDialog(d).forEach((line) => console.error(line));
+      describeUnknownDialog(d, dialogs).forEach((line) => console.error(line));
     }
     return;
   }
@@ -1176,31 +1177,12 @@ async function cmdDialog(sub: string | undefined, rest: string[]): Promise<void>
   }
   for (const d of finalPending) {
     console.log(formatDialogPending({ type: d.dialogType, message: d.message, defaultValue: d.defaultValue, url: d.url }));
-    describeUnknownDialog(d).forEach((line) => console.error(line));
+    describeUnknownDialog(d, finalPending).forEach((line) => console.error(line));
   }
 }
 
-/** FR2-04 escalation-1, GAP-248(b): "dialog"'s own output must show WHICH tab any following
- *  `dialog accept|dismiss` would actually act on, before that command runs — a liveness-inferred
- *  `unknown` entry alone (just a type/message/url, per §2.8.5's frozen `dialogPending:` contract)
- *  gives an agent no way to tell a real, addressable holder apart from a collateral/confirmed-safe
- *  entry it would never act on. Printed as extra `Note:` lines (stderr, so §2.8.5's exact stdout
- *  contract is untouched) rather than changing `formatDialogPending`'s frozen key set. Returns []
- *  for anything that isn't a liveness-inferred entry (a real, tracked dialog needs no such note). */
-function describeUnknownDialog(d: PendingDialogEntry): string[] {
-  if (d.dialogType !== 'unknown') return [];
-  const tab = d.targetId ? `tab ${d.targetId}` : 'this tab';
-  if (d.confirmedSafe && d.blockedBy) {
-    return [`  Note: ${tab} is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab ${d.blockedBy}.`];
-  }
-  if (d.confirmedSafe) {
-    return [`  Note: ${tab} is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- "dialog accept/dismiss" will not act on it.`];
-  }
-  if (d.blockedBy) {
-    return [`  Note: ${tab} is unresponsive only because it shares a browser process with tab ${d.blockedBy}, which appears to actually hold the dialog -- "dialog accept/dismiss" would act on tab ${d.blockedBy}, not this one.`];
-  }
-  return [`  Note: ${tab} appears to be the actual dialog holder -- "dialog accept/dismiss" would act on this tab.`];
-}
+// describeUnknownDialog moved to dialog-cli.ts (FR2-04 escalation-2, GAP-253/254) — pure logic,
+// unit-tested there instead of only via live/process-spawn scenarios.
 
 async function cmdClose() {
   const state = await readState();

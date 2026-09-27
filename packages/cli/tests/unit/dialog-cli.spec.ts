@@ -13,6 +13,8 @@ import {
   DialogBlockedError,
   beforeunloadCancelMessage,
   isBeforeunloadCancel,
+  describeUnknownDialog,
+  type PendingDialogEntry,
 } from '../../src/dialog-cli.js';
 
 describe('@sutradhar/cli dialog-cli (FR2-04)', () => {
@@ -224,5 +226,80 @@ describe('@sutradhar/cli dialog-cli (FR2-04)', () => {
     expect(isBeforeunloadCancel(new Error('some other error'), history, Date.parse('2026-01-01T00:00:00.000Z'))).toBe(
       false,
     );
+  });
+
+  describe('D11 (FR2-04 escalation-2, GAP-253): describeUnknownDialog reflects what selectDialog would ACTUALLY act on', () => {
+    it('a real, tracked dialog only: no note at all (not a liveness-inferred entry)', () => {
+      const real: PendingDialogEntry = { dialogType: 'confirm', message: 'm', url: 'u', openedAt: '2026-01-01T00:00:01Z', targetId: 't1' };
+      expect(describeUnknownDialog(real, [real])).toEqual([]);
+    });
+
+    it('a lone "unknown" candidate that IS what selectDialog would pick: the original "would act on this tab" note', () => {
+      const only: PendingDialogEntry = { dialogType: 'unknown', message: '', url: 'u', openedAt: '2026-01-01T00:00:01Z', targetId: 'p1' };
+      expect(describeUnknownDialog(only, [only])).toEqual([
+        '  Note: tab p1 appears to be the actual dialog holder -- "dialog accept/dismiss" would act on this tab.',
+      ]);
+    });
+
+    // GAP-253's exact finding (audit-5 A5-01): a real tracked dialog opened BEFORE a fresh,
+    // never-confirmed collateral/candidate popup exists. The old code looked at the "unknown"
+    // entry alone and said "would act on this tab" even though selectDialog's global FIFO always
+    // picks the earlier, real dialog first.
+    it('a real tracked dialog co-exists with a later "unknown" candidate: the candidate note says accept acts on the tracked dialog FIRST, not itself', () => {
+      const real: PendingDialogEntry = { dialogType: 'alert', message: 'hi', url: 'u', openedAt: '2026-01-01T00:00:01Z', targetId: 'real-1' };
+      // Liveness-inferred entries are synthesized with "now" as openedAt (see dialog-broker.ts /
+      // dialog-warden.ts) which always sorts AFTER a dialog that genuinely opened earlier.
+      const candidate: PendingDialogEntry = { dialogType: 'unknown', message: '', url: 'u', openedAt: '2026-01-01T00:00:02Z', targetId: 'p1' };
+      const notes = describeUnknownDialog(candidate, [real, candidate]);
+      expect(notes).toHaveLength(1);
+      expect(notes[0]).toContain('would currently act on the earlier alert dialog on tab real-1 first, not this one');
+      expect(notes[0]).not.toContain('would act on this tab');
+    });
+
+    it('two never-confirmed "unknown" candidates: the OLDER one\'s note defers to the younger, FIFO-selected one, never claiming the close for itself', () => {
+      const older: PendingDialogEntry = { dialogType: 'unknown', message: '', url: 'u', openedAt: '2026-01-01T00:00:01Z', targetId: 'older' };
+      const younger: PendingDialogEntry = { dialogType: 'unknown', message: '', url: 'u', openedAt: '2026-01-01T00:00:02Z', targetId: 'younger' };
+      // selectDialog is plain FIFO among un-blockedBy/un-confirmedSafe entries, so with neither
+      // linked to the other via blockedBy, it picks the OLDER one — the note on `older` must claim
+      // the close, and the note on `younger` must defer to it (not the other way around).
+      const olderNotes = describeUnknownDialog(older, [older, younger]);
+      expect(olderNotes[0]).toContain('would act on this tab');
+      const youngerNotes = describeUnknownDialog(younger, [older, younger]);
+      expect(youngerNotes[0]).toContain('would currently act on the earlier unknown dialog on tab older first');
+    });
+
+    it('confirmedSafe/blockedBy entries are unaffected by the GAP-253 fix (unchanged messages)', () => {
+      const safe: PendingDialogEntry = { dialogType: 'unknown', message: '', url: 'u', openedAt: '2026-01-01T00:00:01Z', targetId: 's1', confirmedSafe: true };
+      expect(describeUnknownDialog(safe, [safe])[0]).toContain('history proves it cannot be hiding a dialog (likely just a slow script)');
+      const collateral: PendingDialogEntry = { dialogType: 'unknown', message: '', url: 'u', openedAt: '2026-01-01T00:00:01Z', targetId: 'c1', blockedBy: 'holder-1' };
+      expect(describeUnknownDialog(collateral, [collateral])[0]).toContain('would act on tab holder-1, not this one');
+    });
+  });
+
+  describe('D12 (FR2-04 escalation-2, GAP-254): describeUnknownDialog never claims a close will happen when the warden is down', () => {
+    it('a wardenDown candidate that would otherwise be "the holder" gets a refusal note, not a close promise', () => {
+      const d: PendingDialogEntry = { dialogType: 'unknown', message: '', url: 'u', openedAt: '2026-01-01T00:00:01Z', targetId: 'p1', wardenDown: true };
+      const notes = describeUnknownDialog(d, [d]);
+      expect(notes[0]).toContain('cannot safely confirm or close it -- it will refuse rather than guess');
+      expect(notes[0]).not.toContain('would act on this tab');
+    });
+
+    it('a wardenDown collateral entry gets a refusal note naming both tabs, not a "would act on tab X" promise', () => {
+      const d: PendingDialogEntry = { dialogType: 'unknown', message: '', url: 'u', openedAt: '2026-01-01T00:00:01Z', targetId: 'c1', blockedBy: 'holder-1', wardenDown: true };
+      const notes = describeUnknownDialog(d, [d]);
+      expect(notes[0]).toContain('the dialog warden is not running, so "dialog accept/dismiss" cannot safely act on either tab and will refuse');
+      expect(notes[0]).not.toContain('would act on tab holder-1');
+    });
+
+    it('without wardenDown, the ORIGINAL unconditional messages are preserved (regression guard)', () => {
+      const holder: PendingDialogEntry = { dialogType: 'unknown', message: '', url: 'u', openedAt: '2026-01-01T00:00:01Z', targetId: 'p1' };
+      expect(describeUnknownDialog(holder, [holder])[0]).toBe(
+        '  Note: tab p1 appears to be the actual dialog holder -- "dialog accept/dismiss" would act on this tab.',
+      );
+      const collateral: PendingDialogEntry = { dialogType: 'unknown', message: '', url: 'u', openedAt: '2026-01-01T00:00:01Z', targetId: 'c1', blockedBy: 'holder-1' };
+      expect(describeUnknownDialog(collateral, [collateral])[0]).toBe(
+        '  Note: tab c1 is unresponsive only because it shares a browser process with tab holder-1, which appears to actually hold the dialog -- "dialog accept/dismiss" would act on tab holder-1, not this one.',
+      );
+    });
   });
 });

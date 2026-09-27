@@ -261,6 +261,96 @@ describe('@sutradhar/browser dialog-cdp (FR2-04)', () => {
       expect(result.get('mid')).toEqual({ blockedBy: 'leaf', confirmedSafe: true });
       expect(result.get('grand')).toEqual({ blockedBy: 'leaf', confirmedSafe: false });
     });
+
+    // FR2-04 escalation-2 (GAP-252, audit-5 A5-03): two popups whose shared opener is NOT itself
+    // blocked (a cross-site popup pair — the opener stays responsive in its own process) had NO
+    // edge between them at all before this fix, because the old code only ever linked a blocked
+    // child to a blocked opener. Each independently resolved to itself, so BOTH were reported as
+    // "the holder" and `dialog accept` closed the innocent older one first (3/3 live, reachable via
+    // ordinary CLI use). The fix is the optional `allKnown` second argument.
+    describe('GAP-252 (escalation-2): the allKnown parameter links siblings through an UNBLOCKED opener', () => {
+      it('without allKnown (old call signature), two blocked siblings of an unblocked opener are each their own holder — this IS the bug, kept as a regression baseline', () => {
+        const result = attributeDialogHolders([
+          { targetId: 'popup-old', openerTargetId: 'opener', discoveredAt: 100 },
+          { targetId: 'popup-new', openerTargetId: 'opener', discoveredAt: 200 },
+        ]);
+        // Both come back as "the holder" (blockedBy undefined) with no allKnown — this is exactly
+        // the GAP-252 shape; the test below shows the fix.
+        expect(result.get('popup-old')?.blockedBy).toBeUndefined();
+        expect(result.get('popup-new')?.blockedBy).toBeUndefined();
+      });
+
+      it('WITH allKnown naming the unblocked opener: the two siblings are attributed against each other — only the newer is the presumed holder, the older defers to it', () => {
+        const result = attributeDialogHolders(
+          [
+            { targetId: 'popup-old', openerTargetId: 'opener', discoveredAt: 100 },
+            { targetId: 'popup-new', openerTargetId: 'opener', discoveredAt: 200 },
+          ],
+          [{ targetId: 'opener' }], // opener is KNOWN but not itself blocked
+        );
+        expect(result.get('popup-new')).toEqual({ blockedBy: undefined, confirmedSafe: false });
+        expect(result.get('popup-old')).toEqual({ blockedBy: 'popup-new', confirmedSafe: false });
+      });
+
+      it('the exact GAP-252 shape (audit-5 A5-03): opener responsive, two cross-site popups, the OLDER one never gets closed as an independent holder', () => {
+        // Ground truth in the live repro: only the newer popup actually has the untracked dialog.
+        // The fix must never let BOTH be independently addressable — this is the core safety
+        // property (0 wrong closes).
+        const result = attributeDialogHolders(
+          [
+            { targetId: 'p0', openerTargetId: 'O', discoveredAt: 1000 },
+            { targetId: 'p1', openerTargetId: 'O', discoveredAt: 1300 },
+          ],
+          [{ targetId: 'O' }],
+        );
+        const addressable = ['p0', 'p1'].filter((id) => !result.get(id)?.blockedBy && !result.get(id)?.confirmedSafe);
+        expect(addressable).toEqual(['p1']); // exactly ONE addressable holder, never both
+      });
+
+      it('a genuine SINGLE popup (no sibling at all) is unaffected by allKnown — still its own eligible holder (no GAP-236/246 regression)', () => {
+        const result = attributeDialogHolders(
+          [{ targetId: 'lone', openerTargetId: 'opener', confirmedSafe: false }],
+          [{ targetId: 'opener' }],
+        );
+        expect(result.get('lone')).toEqual({ blockedBy: undefined, confirmedSafe: false });
+      });
+
+      it('a single popup whose opener actually IS blocked (GAP-236 shape) is unaffected by passing allKnown redundantly', () => {
+        const result = attributeDialogHolders(
+          [{ targetId: 'opener' }, { targetId: 'popup', openerTargetId: 'opener' }],
+          [{ targetId: 'opener' }, { targetId: 'popup' }],
+        );
+        expect(result.get('popup')?.blockedBy).toBeUndefined();
+        expect(result.get('opener')?.blockedBy).toBe('popup');
+      });
+
+      it('three-way cross-site siblings sharing one unblocked opener: still exactly one addressable holder (the newest), not three', () => {
+        const result = attributeDialogHolders(
+          [
+            { targetId: 'p0', openerTargetId: 'O', discoveredAt: 100 },
+            { targetId: 'p1', openerTargetId: 'O', discoveredAt: 200 },
+            { targetId: 'p2', openerTargetId: 'O', discoveredAt: 300 },
+          ],
+          [{ targetId: 'O' }],
+        );
+        const addressable = ['p0', 'p1', 'p2'].filter((id) => !result.get(id)?.blockedBy && !result.get(id)?.confirmedSafe);
+        expect(addressable).toEqual(['p2']);
+      });
+
+      it('a confirmed-safe sibling among cross-site popups is still never a holder, and the unblocked opener still connects the remaining candidates', () => {
+        const result = attributeDialogHolders(
+          [
+            { targetId: 'p0', openerTargetId: 'O', discoveredAt: 100, confirmedSafe: true },
+            { targetId: 'p1', openerTargetId: 'O', discoveredAt: 200, confirmedSafe: false },
+          ],
+          [{ targetId: 'O' }],
+        );
+        // p0 is confirmed-safe: never itself a holder, but (like the GAP-245-variant case above)
+        // its `blockedBy` still names the remaining real candidate informationally.
+        expect(result.get('p0')).toEqual({ blockedBy: 'p1', confirmedSafe: true });
+        expect(result.get('p1')).toEqual({ blockedBy: undefined, confirmedSafe: false });
+      });
+    });
   });
 
   it('B8 (FR2-04 fix-3/GAP-241): probeTargetsConcurrently probes every entry at once, not one after another', async () => {

@@ -28,14 +28,33 @@ import type { DialogPolicy } from './browser-tab.js';
 
 const DEFAULT_POLICY_GRACE_MS = 300;
 const DEFAULT_STATE_POLL_MS = 2000;
-/** FR2-04 escalation-1: how long `track()` waits after a target's `Page.enable` acks before its
- *  one proactive "is this target confirmed safe" probe fires — see that probe's own doc comment
- *  (inside `track()`) for why this must NOT be zero/immediate. Independent of
- *  `DEFAULT_POLICY_GRACE_MS` (a different concern: how long to wait before auto-applying a
- *  policy to an ALREADY-OPEN, already-tracked dialog) even though the values happen to be close in
- *  magnitude — kept as its own constant/option so a test tuning one never accidentally changes
- *  the other. */
-const DEFAULT_PROACTIVE_CONFIRM_DELAY_MS = 500;
+/** FR2-04 escalation-2 (GAP-251), SUPERSEDES escalation-1's 500ms default: how long `track()`
+ *  waits after a target's `Page.enable` acks before its one proactive "is this target confirmed
+ *  safe" probe fires. escalation-1 set this to 500ms (0 for the bootstrap tab only) to protect
+ *  against a hypothesized race — marking a target confirmed-safe moments before its own
+ *  synchronous first-script dialog would have opened. audit-5 (`.ai/loop/field-report-2/evidence/
+ *  FR2-04/audit-5/audit-findings.json`, A5-02) fired 63 real dialogs at delays from 300ms-1000ms
+ *  plus 15 rapid reactive-poll trials and found ZERO cases of that race actually happening — every
+ *  real dialog arrives as a tracked, typed `Page.javascriptDialogOpening` event regardless of
+ *  timing, because the event and the `Page.enable` ack both come from the SAME renderer round trip
+ *  and the event fires (or the renderer blocks) before this timer could ever mark the target safe.
+ *  The auditor then set this to 0 for EVERY target (not just bootstrap) and re-ran every shape that
+ *  motivated the 500ms value: 36/36 clean (0 misattributions) — see `a5-E3live.json`/
+ *  `attrib-attack-E3live.json` in that evidence dir. The delay itself turned out to be the bug: it
+ *  is exactly the window GAP-251's two attacks (a same-renderer popup younger than the delay, whose
+ *  opener starts a slow synchronous XHR) exploited to get a healthy popup wrongly closed — 12/12 at
+ *  gaps of 0-450ms in audit-5's own live run. escalation-2's binding decision
+ *  (decisions.md 2026-09-27) is to remove the delay: default 0, probing every new target
+ *  (bootstrap or not) as soon as its `Page.enable` has ack'd, never before. The underlying
+ *  `confirmedResponsiveSince`/transparent-pass-through DESIGN from escalation-1 is unchanged — only
+ *  this delay's value (and the bootstrap/non-bootstrap distinction it required) is gone. Kept as
+ *  its own constant/option (rather than folded into `DEFAULT_POLICY_GRACE_MS`, a different concern:
+ *  how long to wait before auto-applying a policy to an ALREADY-OPEN, already-tracked dialog) purely
+ *  so a test can still override it to simulate the old delayed behavior without touching the policy
+ *  grace period. See escalation-2's own live re-verification
+ *  (`.ai/loop/field-report-2/evidence/FR2-04/escalation-2/`) for the full re-run of every prior
+ *  audit's timing sweep at 0 delay. */
+const DEFAULT_PROACTIVE_CONFIRM_DELAY_MS = 0;
 /** Every warden HTTP call's own budget (WARDEN_HTTP_TIMEOUT_MS, FR2-04 spec §0.4) — the CLI side
  *  (warden-control.ts) applies this per-request; kept here too as the doc-of-record. */
 export const WARDEN_HTTP_TIMEOUT_MS = 500;
@@ -222,7 +241,13 @@ export class DialogWarden {
         discoveredAt: this.discoveredAt.get(info.targetId),
         confirmedSafe: this.confirmedResponsiveSince.has(info.targetId),
       }));
-    const attribution = attributeDialogHolders(blockedInfos);
+    // FR2-04 escalation-2 (GAP-252): every real page target this warden currently knows about
+    // (blocked or not, tracked-real-dialog or not) — lets `attributeDialogHolders` connect two
+    // blocked siblings through their shared opener even when that opener itself never blocked (a
+    // cross-site popup pair, the exact GAP-252 shape). Cheap: `listPageTargets` reads only
+    // browser-level `Target` fields, no CDP round trip.
+    const allTargets = listPageTargets(this.browser).map(({ info }) => ({ targetId: info.targetId, openerTargetId: info.openerTargetId }));
+    const attribution = attributeDialogHolders(blockedInfos, allTargets);
     for (const { info } of probeable) {
       const state = states.get(info.targetId);
       if (state === 'responsive') continue;
@@ -283,7 +308,7 @@ export class DialogWarden {
     // blank or not, so the common case (single already-open tab) gets a proper bootstrap-time
     // `discoveredAt` and ages out of the liveness-probe window normally.
     for (const target of browser.targets()) {
-      if (target.type() === 'page') await this.track(target, /* bootstrap */ true);
+      if (target.type() === 'page') await this.track(target);
     }
 
     await this.listen();
@@ -316,7 +341,7 @@ export class DialogWarden {
    * method (or Puppeteer's own release) loses the race on still gets caught there and reported as
    * an `unknown` blocking dialog rather than silently treated as clear.
    */
-  private async track(target: Target, bootstrap = false): Promise<void> {
+  private async track(target: Target): Promise<void> {
     if (this.stopped) return;
     const targetId = idOf(target);
     if (!this.discoveredAt.has(targetId)) this.discoveredAt.set(targetId, Date.now());
@@ -398,36 +423,28 @@ export class DialogWarden {
           // GAP-245 reopens for the popup AND (since even the long-lived opener's very first probe
           // this session also happens to land after the block) the opener too.
           //
-          // Probe proactively, but ONLY after `PROACTIVE_CONFIRM_DELAY_MS` — never immediately.
-          // Probing right away would race the EXACT SAME window GAP-220/236 are built on: an
-          // `about:blank` popup that alerts synchronously during its OWN construction (audit-2's
-          // original finding) is often still nominally "responsive" for a few ms right after
-          // Page.enable acks, before its first script (which may itself be the navigation to a
-          // page whose inline script alerts on load) has actually run — probing instantly would
-          // risk marking exactly that popup `confirmedSafe` moments before its real, untracked
-          // dialog opens, which would be a NEW regression (found live re-verifying
-          // opener-same-origin-url/opener-cross-site: those alert fast enough that an immediate
-          // probe could beat the alert). Waiting a short grace period first (same order of
-          // magnitude as `DEFAULT_POLICY_GRACE_MS`/`GATE_LISTEN_MS` elsewhere in this file) gives a
-          // synchronous first-script dialog a real chance to either already be a TRACKED event (in
-          // which case `this.dialogs.has(targetId)` is checked below and the probe is skipped
-          // entirely) or to already be blocking the probe itself (so it correctly comes back
-          // non-responsive, never marked safe). Fire-and-forget either way: losing this race just
-          // leaves the target a candidate, exactly as before this addition.
-          //
-          // `bootstrap` targets (already existing when `start()` enumerated them, per the doc
-          // comment above that loop) are a DIFFERENT case: they are not racing a synchronous
-          // first-script dialog at all — they already loaded and settled before the warden ever
-          // attached, so there is no "did the listener win the race" question to wait out. Probe
-          // them near-immediately instead: found live (attrib-attack-probe.mjs's
-          // `xhr-isolated-manual`, re-verifying GAP-240's already-fixed "never close an isolated
-          // busy tab" guarantee) that waiting the full delay for the session's PRIMARY tab left a
-          // real window — a script that starts running on it within the delay window (before this
-          // probe ever got to run) found it still "never confirmed", making it wrongly eligible
-          // for the decision-2 recovery path even though it had been sitting idle the entire
-          // session before that.
-          if (!this.confirmedResponsiveSince.has(targetId)) {
-            const delayMs = bootstrap ? 0 : (this.opts.proactiveConfirmDelayMs ?? DEFAULT_PROACTIVE_CONFIRM_DELAY_MS);
+          // FR2-04 escalation-2 (GAP-251), SUPERSEDES the paragraph this replaces: escalation-1
+          // reasoned that probing right away would race an `about:blank` popup that alerts
+          // synchronously during its OWN construction (audit-2's original finding) — nominally
+          // "responsive" for a few ms right after `Page.enable` acks, before its first script has
+          // actually run — and added a delay (bootstrap targets exempted) to give that first script
+          // a chance to either become a TRACKED event or already be blocking the probe. audit-5
+          // proved this reasoning wrong with live data (see `DEFAULT_PROACTIVE_CONFIRM_DELAY_MS`'s
+          // doc comment for the full evidence): the event and the ack come from the same renderer
+          // round trip, so a real dialog is ALWAYS either already a tracked event or already
+          // blocking this very probe by the time it runs, at delay 0 — 63 real dialogs fired at
+          // 300-1000ms plus 36/36 clean at delay 0 across every shape that motivated the delay in
+          // the first place. The delay bought no protection and was itself the bug: it's the exact
+          // window GAP-251's attacks (a same-renderer popup younger than the delay, whose opener
+          // starts a slow synchronous XHR) used to get a healthy popup wrongly closed. There is no
+          // longer a bootstrap/non-bootstrap distinction — every target (the session's pre-existing
+          // primary tab or a brand-new one) is probed the same way, immediately once `Page.enable`
+          // has ack'd. `this.dialogs.has(targetId)` is still checked below (and again inside the
+          // probe's own callback) so a dialog that DID arrive as a tracked event in the meantime is
+          // never overridden. Fire-and-forget either way: losing this race just leaves the target a
+          // candidate, exactly as before this addition.
+          if (!this.confirmedResponsiveSince.has(targetId) && !this.dialogs.has(targetId)) {
+            const delayMs = this.opts.proactiveConfirmDelayMs ?? DEFAULT_PROACTIVE_CONFIRM_DELAY_MS;
             setTimeout(() => {
               if (this.stopped || this.confirmedResponsiveSince.has(targetId) || this.dialogs.has(targetId)) return;
               livenessProbe(session, LIVENESS_PROBE_MS)

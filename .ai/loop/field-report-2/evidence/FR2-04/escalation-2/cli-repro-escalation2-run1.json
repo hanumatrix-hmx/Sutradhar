@@ -1,0 +1,1885 @@
+{
+  "at": "2026-09-27T04:45:25.028Z",
+  "results": [
+    {
+      "variant": "xhr-after-open",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63580/xhr-after-open?t=0",
+          "code": 0,
+          "ms": 861,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63580/xhr-after-open?t=0\nTitle: xhr-after-open",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 6329,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 691,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open?t=0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 666,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open?t=0\"}",
+          "err": "Note: tab 36B9437808127518C4CAFC3799F6826A is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 674,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 696,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open?t=0\"}",
+          "err": "Note: tab 36B9437808127518C4CAFC3799F6826A is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 671,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 671,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open?t=0\"}",
+          "err": "Note: tab 36B9437808127518C4CAFC3799F6826A is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 659,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 273,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 267,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 262,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 267,
+          "cap": false,
+          "out": "* tab_sess_1790483974585_1_1  page popup-target  http://127.0.0.1:63580/?n=popup-target",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 409,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "xhr-after-open",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63580/xhr-after-open?t=1",
+          "code": 0,
+          "ms": 863,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63580/xhr-after-open?t=1\nTitle: xhr-after-open",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 6334,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 674,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open?t=1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 666,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open?t=1\"}",
+          "err": "Note: tab 0E046A4E77E2DC7ACA63139F0656FAF8 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 659,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 670,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open?t=1\"}",
+          "err": "Note: tab 0E046A4E77E2DC7ACA63139F0656FAF8 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 671,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 678,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open?t=1\"}",
+          "err": "Note: tab 0E046A4E77E2DC7ACA63139F0656FAF8 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 665,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 264,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 268,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 274,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 258,
+          "cap": false,
+          "out": "* tab_sess_1790484001220_1_1  page popup-target  http://127.0.0.1:63580/?n=popup-target",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 459,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "xhr-after-open",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63580/xhr-after-open?t=2",
+          "code": 0,
+          "ms": 849,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63580/xhr-after-open?t=2\nTitle: xhr-after-open",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 6329,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 673,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open?t=2\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 688,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open?t=2\"}",
+          "err": "Note: tab E027A928D8F51BAECF513E0530EA3D24 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 675,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 672,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open?t=2\"}",
+          "err": "Note: tab E027A928D8F51BAECF513E0530EA3D24 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 670,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 669,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open?t=2\"}",
+          "err": "Note: tab E027A928D8F51BAECF513E0530EA3D24 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 676,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 273,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 267,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 268,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 279,
+          "cap": false,
+          "out": "* tab_sess_1790484027840_1_1  page popup-target  http://127.0.0.1:63580/?n=popup-target",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 474,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "xhr-after-open-timer",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63580/xhr-after-open-timer?t=0",
+          "code": 0,
+          "ms": 875,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63580/xhr-after-open-timer?t=0\nTitle: xhr-after-open-timer",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3363,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 716,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 688,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=0\"}",
+          "err": "Note: tab 55E2DC6896B44482D6F3F6D8BBB02554 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 674,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 671,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=0\"}",
+          "err": "Note: tab 55E2DC6896B44482D6F3F6D8BBB02554 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 666,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 686,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=0\"}",
+          "err": "Note: tab 55E2DC6896B44482D6F3F6D8BBB02554 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 710,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 673,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=0\"}",
+          "err": "Note: tab 55E2DC6896B44482D6F3F6D8BBB02554 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 686,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 672,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=0\"}",
+          "err": "Note: tab 55E2DC6896B44482D6F3F6D8BBB02554 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 266,
+          "cap": false,
+          "out": "* tab_sess_1790484054528_1_1  page popup-target  http://127.0.0.1:63580/?n=popup-target",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 409,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "xhr-after-open-timer",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63580/xhr-after-open-timer?t=1",
+          "code": 0,
+          "ms": 909,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63580/xhr-after-open-timer?t=1\nTitle: xhr-after-open-timer",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3329,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 683,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 674,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=1\"}",
+          "err": "Note: tab 632C51EDABF8B9AE3C4E024F98AA5F91 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 673,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 671,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=1\"}",
+          "err": "Note: tab 632C51EDABF8B9AE3C4E024F98AA5F91 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 657,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 669,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=1\"}",
+          "err": "Note: tab 632C51EDABF8B9AE3C4E024F98AA5F91 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 678,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 671,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=1\"}",
+          "err": "Note: tab 632C51EDABF8B9AE3C4E024F98AA5F91 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 655,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 672,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=1\"}",
+          "err": "Note: tab 632C51EDABF8B9AE3C4E024F98AA5F91 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 266,
+          "cap": false,
+          "out": "* tab_sess_1790484079529_1_1  page popup-target  http://127.0.0.1:63580/?n=popup-target",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 474,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "xhr-after-open-timer",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63580/xhr-after-open-timer?t=2",
+          "code": 0,
+          "ms": 848,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63580/xhr-after-open-timer?t=2\nTitle: xhr-after-open-timer",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3368,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 704,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=2\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 673,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=2\"}",
+          "err": "Note: tab 312A42654D10816ED292DE766C3A4875 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 671,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 675,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=2\"}",
+          "err": "Note: tab 312A42654D10816ED292DE766C3A4875 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 675,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 712,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=2\"}",
+          "err": "Note: tab 312A42654D10816ED292DE766C3A4875 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 693,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 659,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=2\"}",
+          "err": "Note: tab 312A42654D10816ED292DE766C3A4875 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 712,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 669,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/xhr-after-open-timer?t=2\"}",
+          "err": "Note: tab 312A42654D10816ED292DE766C3A4875 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 265,
+          "cap": false,
+          "out": "* tab_sess_1790484104391_1_1  page popup-target  http://127.0.0.1:63580/?n=popup-target",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 418,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "delayed-open-xhr",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63580/delayed-open-xhr?t=0",
+          "code": 0,
+          "ms": 866,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63580/delayed-open-xhr?t=0\nTitle: delayed-open-xhr",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3335,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 683,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 673,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=0\"}",
+          "err": "Note: tab CB28EFC9C51E05E6CF32EA2A48EBF768 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 686,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 673,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=0\"}",
+          "err": "Note: tab CB28EFC9C51E05E6CF32EA2A48EBF768 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 669,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 671,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=0\"}",
+          "err": "Note: tab CB28EFC9C51E05E6CF32EA2A48EBF768 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 674,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 691,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=0\"}",
+          "err": "Note: tab CB28EFC9C51E05E6CF32EA2A48EBF768 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 664,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 672,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=0\"}",
+          "err": "Note: tab CB28EFC9C51E05E6CF32EA2A48EBF768 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 272,
+          "cap": false,
+          "out": "* tab_sess_1790484129374_1_1  page popup-target  http://127.0.0.1:63580/?n=popup-target",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 481,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "delayed-open-xhr",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63580/delayed-open-xhr?t=1",
+          "code": 0,
+          "ms": 930,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63580/delayed-open-xhr?t=1\nTitle: delayed-open-xhr",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3335,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 677,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 687,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=1\"}",
+          "err": "Note: tab 4DC85F55B77B134FA4C461C06D2DBD45 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 676,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 672,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=1\"}",
+          "err": "Note: tab 4DC85F55B77B134FA4C461C06D2DBD45 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 685,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 696,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=1\"}",
+          "err": "Note: tab 4DC85F55B77B134FA4C461C06D2DBD45 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 688,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 668,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=1\"}",
+          "err": "Note: tab 4DC85F55B77B134FA4C461C06D2DBD45 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 673,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 698,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=1\"}",
+          "err": "Note: tab 4DC85F55B77B134FA4C461C06D2DBD45 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 269,
+          "cap": false,
+          "out": "* tab_sess_1790484157912_1_1  page popup-target  http://127.0.0.1:63580/?n=popup-target",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 432,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "delayed-open-xhr",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63580/delayed-open-xhr?t=2",
+          "code": 0,
+          "ms": 882,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63580/delayed-open-xhr?t=2\nTitle: delayed-open-xhr",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3487,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 686,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=2\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 669,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=2\"}",
+          "err": "Note: tab FA643F71FAEEA422CD3EC670EE9C7550 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 665,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 673,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=2\"}",
+          "err": "Note: tab FA643F71FAEEA422CD3EC670EE9C7550 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 660,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 669,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=2\"}",
+          "err": "Note: tab FA643F71FAEEA422CD3EC670EE9C7550 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 672,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 685,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=2\"}",
+          "err": "Note: tab FA643F71FAEEA422CD3EC670EE9C7550 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 669,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 670,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/delayed-open-xhr?t=2\"}",
+          "err": "Note: tab FA643F71FAEEA422CD3EC670EE9C7550 is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 265,
+          "cap": false,
+          "out": "* tab_sess_1790484186518_1_1  page popup-target  http://127.0.0.1:63580/?n=popup-target",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 425,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "url-open-xhr",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63580/url-open-xhr?t=0",
+          "code": 0,
+          "ms": 904,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63580/url-open-xhr?t=0\nTitle: url-open-xhr",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3340,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 688,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=0\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 684,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=0\"}",
+          "err": "Note: tab E5D7047095CA8F7C99235D438072893A is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 673,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 660,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=0\"}",
+          "err": "Note: tab E5D7047095CA8F7C99235D438072893A is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 681,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 686,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=0\"}",
+          "err": "Note: tab E5D7047095CA8F7C99235D438072893A is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 670,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 680,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=0\"}",
+          "err": "Note: tab E5D7047095CA8F7C99235D438072893A is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 675,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 674,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=0\"}",
+          "err": "Note: tab E5D7047095CA8F7C99235D438072893A is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 268,
+          "cap": false,
+          "out": "* tab_sess_1790484215122_1_1  (no title)  http://127.0.0.1:63580/url-open-xhr?t=0",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 417,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "url-open-xhr",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63580/url-open-xhr?t=1",
+          "code": 0,
+          "ms": 884,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63580/url-open-xhr?t=1\nTitle: url-open-xhr",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3337,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 757,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=1\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 675,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=1\"}",
+          "err": "Note: tab 0C8FFB8E07776BE79EAE4DF3A2F3F81F is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 674,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 672,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=1\"}",
+          "err": "Note: tab 0C8FFB8E07776BE79EAE4DF3A2F3F81F is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 661,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 673,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=1\"}",
+          "err": "Note: tab 0C8FFB8E07776BE79EAE4DF3A2F3F81F is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 672,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 674,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=1\"}",
+          "err": "Note: tab 0C8FFB8E07776BE79EAE4DF3A2F3F81F is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 670,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 658,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=1\"}",
+          "err": "Note: tab 0C8FFB8E07776BE79EAE4DF3A2F3F81F is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 285,
+          "cap": false,
+          "out": "* tab_sess_1790484240022_1_1  (no title)  http://127.0.0.1:63580/url-open-xhr?t=1",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 419,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "url-open-xhr",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63580/url-open-xhr?t=2",
+          "code": 0,
+          "ms": 878,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63580/url-open-xhr?t=2\nTitle: url-open-xhr",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3328,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 689,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=2\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 811,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=2\"}",
+          "err": "Note: tab 72CC456427F407EEDCE4BD2BF0E1978C is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 682,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 719,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=2\"}",
+          "err": "Note: tab 72CC456427F407EEDCE4BD2BF0E1978C is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 760,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 697,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=2\"}",
+          "err": "Note: tab 72CC456427F407EEDCE4BD2BF0E1978C is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 686,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 708,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=2\"}",
+          "err": "Note: tab 72CC456427F407EEDCE4BD2BF0E1978C is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 669,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 796,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63580/url-open-xhr?t=2\"}",
+          "err": "Note: tab 72CC456427F407EEDCE4BD2BF0E1978C is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- \"dialog accept/dismiss\" will not act on it."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 272,
+          "cap": false,
+          "out": "* tab_sess_1790484264941_1_1  (no title)  http://127.0.0.1:63580/url-open-xhr?t=2",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 420,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "type-two-popups",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63580/type-two-popups?t=0",
+          "code": 0,
+          "ms": 875,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63580/type-two-popups?t=0\nTitle: type",
+          "err": ""
+        },
+        {
+          "args": "type #in ab",
+          "code": 1,
+          "ms": 338,
+          "cap": false,
+          "out": "Typed into #in",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15:15)\r\n    at FrameManager.mainFrame (file:///E:/HMX_Projects/Inter"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 686,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/alert-inline?n=second-holder\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 713,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/alert-inline?n=second-holder\"}",
+          "err": "Note: tab 9B359F1244F0D25867502A37653A8221 is unresponsive only because it shares a browser process with tab 81E7234870969FAA2CD86513B4D304A7, which appears to actually hold the dialog -- \"dialog accept/dismiss\" would act on tab 81E7234870969FAA2CD86513B4D304A7, not this one.\n  Note: tab 81E7234870969FAA2CD86513B4D304A7 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1197,
+          "cap": false,
+          "out": "Tab 81E7234870969FAA2CD86513B4D304A7 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 696,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/alert-inline?n=second-holder\"}",
+          "err": "Note: tab 9B359F1244F0D25867502A37653A8221 is unresponsive only because it shares a browser process with tab AC5952244108D7A83301C2C9E4007466, which appears to actually hold the dialog -- \"dialog accept/dismiss\" would act on tab AC5952244108D7A83301C2C9E4007466, not this one.\n  Note: tab AC5952244108D7A83301C2C9E4007466 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1082,
+          "cap": false,
+          "out": "Tab AC5952244108D7A83301C2C9E4007466 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 267,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 251,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 272,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 276,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 266,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 268,
+          "cap": false,
+          "out": "tab_sess_1790484290296_1_1  page first-innocent  http://localhost:63580/?n=first-innocent\n* tab_sess_1790484290296_1_2  type  http://127.0.0.1:63580/type-two-popups?t=0",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 418,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        "closed(no url)",
+        "closed(no url)",
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "type-two-popups",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63580/type-two-popups?t=1",
+          "code": 0,
+          "ms": 880,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63580/type-two-popups?t=1\nTitle: type",
+          "err": ""
+        },
+        {
+          "args": "type #in ab",
+          "code": 1,
+          "ms": 343,
+          "cap": false,
+          "out": "Typed into #in",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15:15)\r\n    at FrameManager.mainFrame (file:///E:/HMX_Projects/Inter"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 672,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/alert-inline?n=second-holder\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 679,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/alert-inline?n=second-holder\"}",
+          "err": "Note: tab 9796BEF9F2D3EA550711A61ECDA3CF8E is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab EA9E60C9B44E40CB9374B467D10BD1E1.\n  Note: tab EA9E60C9B44E40CB9374B467D10BD1E1 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1185,
+          "cap": false,
+          "out": "Tab EA9E60C9B44E40CB9374B467D10BD1E1 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 688,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/alert-inline?n=second-holder\"}",
+          "err": "Note: tab 9796BEF9F2D3EA550711A61ECDA3CF8E is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab CBD177078F67E264CB488E087562141B.\n  Note: tab CBD177078F67E264CB488E087562141B appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1087,
+          "cap": false,
+          "out": "Tab CBD177078F67E264CB488E087562141B was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 270,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 258,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 264,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 267,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 258,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 268,
+          "cap": false,
+          "out": "tab_sess_1790484299622_1_1  page first-innocent  http://localhost:63580/?n=first-innocent\n* tab_sess_1790484299622_1_2  type  http://127.0.0.1:63580/type-two-popups?t=1",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 414,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        "closed(no url)",
+        "closed(no url)",
+        null,
+        null
+      ],
+      "closeCode": 0
+    },
+    {
+      "variant": "type-two-popups",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63580/type-two-popups?t=2",
+          "code": 0,
+          "ms": 881,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63580/type-two-popups?t=2\nTitle: type",
+          "err": ""
+        },
+        {
+          "args": "type #in ab",
+          "code": 1,
+          "ms": 350,
+          "cap": false,
+          "out": "Typed into #in",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15:15)\r\n    at FrameManager.mainFrame (file:///E:/HMX_Projects/Inter"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 673,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/alert-inline?n=second-holder\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 671,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/alert-inline?n=second-holder\"}",
+          "err": "Note: tab A117D796050C4F13849E22B95B14BD60 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab EA6A82B3679531E61F16FA3CDDE8CAAE.\n  Note: tab EA6A82B3679531E61F16FA3CDDE8CAAE appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1114,
+          "cap": false,
+          "out": "Tab EA6A82B3679531E61F16FA3CDDE8CAAE was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 675,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/?n=first-innocent\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63580/alert-inline?n=second-holder\"}",
+          "err": "Note: tab A117D796050C4F13849E22B95B14BD60 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab A6D96683C6F05E4F204EFA88F735B6B0.\n  Note: tab A6D96683C6F05E4F204EFA88F735B6B0 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1090,
+          "cap": false,
+          "out": "Tab A6D96683C6F05E4F204EFA88F735B6B0 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 303,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 257,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 260,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 263,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 260,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 265,
+          "cap": false,
+          "out": "tab_sess_1790484308869_1_1  page first-innocent  http://localhost:63580/?n=first-innocent\n* tab_sess_1790484308869_1_2  type  http://127.0.0.1:63580/type-two-popups?t=2",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 435,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "closedUrls": [
+        "closed(no url)",
+        "closed(no url)",
+        null,
+        null
+      ],
+      "closeCode": 0
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

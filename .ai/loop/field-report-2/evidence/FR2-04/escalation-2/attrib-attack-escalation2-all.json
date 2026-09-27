@@ -1,0 +1,2181 @@
+{
+  "at": "2026-09-27T04:57:15.272Z",
+  "results": [
+    {
+      "scenario": "single-sync",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 917
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=single-sync-0-38480",
+          "opener": null
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P0",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "confirmedSafe": false
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=single-sync-0-38480\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1083,
+          "closed": "P0",
+          "stdout": "Tab 56850E3856C26606C208E584CC0C0398 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P0"
+      ],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 319,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=single-sync-0-38480 | Title: opener single-sync-0-38480",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "gone"
+      }
+    },
+    {
+      "scenario": "older-sibling-newer-alerts",
+      "trial": 0,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 901
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=older-sibling-newer-alerts-0-48404",
+          "opener": null
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown",
+          "confirmedSafe": false
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=older-sibling-newer-alerts-0-48404\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1106,
+          "closed": "P1",
+          "stdout": "Tab F7192831850E501F7F9D896BDCA904F3 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P1"
+      ],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 291,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=older-sibling-newer-alerts-0-48404 | Title: opener older-sibling-newer-alerts-0-48404",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "gone"
+      }
+    },
+    {
+      "scenario": "older-sibling-alerts-tracked",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 934
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=older-sibling-alerts-tracked-0-60358",
+          "opener": null
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown",
+          "confirmedSafe": false
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=older-sibling-alerts-tracked-0-60358\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1122,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 299,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=older-sibling-alerts-tracked-0-60358 | Title: opener older-sibling-alerts-tracked-0-60358",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "responsive"
+      }
+    },
+    {
+      "scenario": "chain-leaf-sync",
+      "trial": 0,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 921
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "P0"
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=chain-leaf-sync-0-72546",
+          "opener": null
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown",
+          "confirmedSafe": false
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=chain-leaf-sync-0-72546\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1105,
+          "closed": "P1",
+          "stdout": "Tab 5314B14447556F94876C12DFADE22507 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P1"
+      ],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 289,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=chain-leaf-sync-0-72546 | Title: opener chain-leaf-sync-0-72546",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "gone"
+      }
+    },
+    {
+      "scenario": "chain-middle-alerts",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 919
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=chain-middle-alerts-0-84589",
+          "opener": null
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "P0"
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        },
+        {
+          "label": "O",
+          "type": "unknown",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown",
+          "confirmedSafe": false
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=chain-middle-alerts-0-84589\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1142,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 270,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=chain-middle-alerts-0-84589 | Title: opener chain-middle-alerts-0-84589",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "responsive"
+      }
+    },
+    {
+      "scenario": "opener-alerts-with-popup",
+      "trial": 0,
+      "holderLabel": "O",
+      "nav": {
+        "code": 0,
+        "ms": 911
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=opener-alerts-with-popup-0-96678",
+          "opener": null
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "alert"
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "confirmedSafe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"X\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=opener-alerts-with-popup-0-96678\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1129,
+          "closed": null,
+          "stdout": "Accepted alert \"X\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 263,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=opener-alerts-with-popup-0-96678 | Title: opener opener-alerts-with-popup-0-96678",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "rapid2-newer-alerts",
+      "trial": 0,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 945
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=rapid2-newer-alerts-0-6527",
+          "opener": null
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "responsive",
+        "P0": "responsive"
+      },
+      "warden": [],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "No dialog is open."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 268,
+          "closed": null,
+          "stdout": "",
+          "stderr": "Error: no dialog is open to accept.",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 305,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=rapid2-newer-alerts-0-6527 | Title: opener rapid2-newer-alerts-0-6527",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "rapid4-last-alerts",
+      "trial": 0,
+      "holderLabel": "P3",
+      "nav": {
+        "code": 0,
+        "ms": 1024
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=rapid4-last-alerts-0-12230",
+          "opener": null
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "responsive",
+        "P0": "responsive"
+      },
+      "warden": [],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "No dialog is open."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 294,
+          "closed": null,
+          "stdout": "",
+          "stderr": "Error: no dialog is open to accept.",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 292,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=rapid4-last-alerts-0-12230 | Title: opener rapid4-last-alerts-0-12230",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "rapid-gap30",
+      "trial": 0,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 1159
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=rapid-gap30-0-17932",
+          "opener": null
+        },
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown",
+          "confirmedSafe": false
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=rapid-gap30-0-17932\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1156,
+          "closed": "P1",
+          "stdout": "Tab 92042778B198C9A312C33C58034785CB was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P1"
+      ],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 279,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=rapid-gap30-0-17932 | Title: opener rapid-gap30-0-17932",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "gone"
+      }
+    },
+    {
+      "scenario": "rapid-gap10",
+      "trial": 0,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 1062
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=rapid-gap10-0-28728",
+          "opener": null
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown",
+          "confirmedSafe": false
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=rapid-gap10-0-28728\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1122,
+          "closed": "P1",
+          "stdout": "Tab C616B7B00EA4D02DFA61F7849A8D64FD was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P1"
+      ],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 276,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=rapid-gap10-0-28728 | Title: opener rapid-gap10-0-28728",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "gone"
+      }
+    },
+    {
+      "scenario": "rapid-gap50",
+      "trial": 0,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 972
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=rapid-gap50-0-39318",
+          "opener": null
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown",
+          "confirmedSafe": false
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=rapid-gap50-0-39318\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1081,
+          "closed": "P1",
+          "stdout": "Tab 650F6709BFF91B19001C812D20CA00BE was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P1"
+      ],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 291,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=rapid-gap50-0-39318 | Title: opener rapid-gap50-0-39318",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "gone"
+      }
+    },
+    {
+      "scenario": "rapid-gap100",
+      "trial": 0,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 956
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=rapid-gap100-0-49859",
+          "opener": null
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O"
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown",
+          "confirmedSafe": false
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=rapid-gap100-0-49859\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1097,
+          "closed": "P1",
+          "stdout": "Tab 66F5D4AE84CE27E3B12F015F9D427695 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P1"
+      ],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 291,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=rapid-gap100-0-49859 | Title: opener rapid-gap100-0-49859",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "gone"
+      }
+    },
+    {
+      "scenario": "rapid-gap0-awaited",
+      "trial": 0,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 928
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=rapid-gap0-awaited-0-60670",
+          "opener": null
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O"
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown",
+          "confirmedSafe": false
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=rapid-gap0-awaited-0-60670\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1136,
+          "closed": "P1",
+          "stdout": "Tab E83833A680E0DF795321C86296A3B726 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P1"
+      ],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 305,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=rapid-gap0-awaited-0-60670 | Title: opener rapid-gap0-awaited-0-60670",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "gone"
+      }
+    },
+    {
+      "scenario": "orphan",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 945
+      },
+      "stepLog": [
+        {
+          "closeTarget": "O",
+          "r": {
+            "success": true
+          }
+        }
+      ],
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": null
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "gone",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "unknown",
+          "confirmedSafe": false
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1113,
+          "closed": "P0",
+          "stdout": "Tab 3F57203F35AF5E0033085E9B69C34628 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "gone",
+            "P0": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P0"
+      ],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 457,
+        "killedAtCap": false,
+        "head": "URL: about:blank | Title: ",
+        "err": ""
+      },
+      "end": {
+        "O": "gone",
+        "P0": "gone"
+      }
+    },
+    {
+      "scenario": "warden-down-opener-alerts",
+      "trial": 0,
+      "holderLabel": "O",
+      "nav": {
+        "code": 0,
+        "ms": 1020
+      },
+      "stepLog": [
+        {
+          "killWarden": 57568,
+          "ours": true
+        }
+      ],
+      "targets": [
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=warden-down-opener-alerts-0-82134",
+          "opener": null
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": {
+        "error": "TypeError: fetch failed"
+      },
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=warden-down-opener-alerts-0-82134\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 6364,
+          "closed": null,
+          "stdout": "Tab 4152BF343868CADA83222EFEAFA70C89 is unresponsive, but the dialog warden is not running, so this dialog cannot be safely attributed to one specific tab without guessing (guessing here has been measured to close the wrong, innocent tab) — no automatic recovery was attempted. Run \"sutradhar close\" to end the session.",
+          "stderr": "",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [
+        "O",
+        "P0"
+      ],
+      "snapAfter": {
+        "code": 3,
+        "ms": 4359,
+        "killedAtCap": false,
+        "head": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=warden-down-opener-alerts-0-82134\"} | dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":nu",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identif"
+      },
+      "end": {
+        "O": "blocked",
+        "P0": "blocked"
+      }
+    },
+    {
+      "scenario": "warden-down-newer-sibling-alerts",
+      "trial": 0,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 877
+      },
+      "stepLog": [
+        {
+          "killWarden": 39664,
+          "ours": true
+        }
+      ],
+      "targets": [
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=warden-down-newer-sibling-alerts-0-12212",
+          "opener": null
+        },
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": {
+        "error": "TypeError: fetch failed"
+      },
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=warden-down-newer-sibling-alerts-0-12212\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 6314,
+          "closed": null,
+          "stdout": "Tab FDD7F64CF5AEF8FBDD679AA48BFD4FA3 is unresponsive, but the dialog warden is not running, so this dialog cannot be safely attributed to one specific tab without guessing (guessing here has been measured to close the wrong, innocent tab) — no automatic recovery was attempted. Run \"sutradhar close\" to end the session.",
+          "stderr": "",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked",
+            "P1": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [
+        "O",
+        "P0",
+        "P1"
+      ],
+      "snapAfter": {
+        "code": 3,
+        "ms": 4272,
+        "killedAtCap": false,
+        "head": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"} | dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identif"
+      },
+      "end": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      }
+    },
+    {
+      "scenario": "warden-down-older-sibling-alerts",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 1398
+      },
+      "stepLog": [
+        {
+          "killWarden": 52452,
+          "ours": true
+        }
+      ],
+      "targets": [
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=warden-down-older-sibling-alerts-0-45388",
+          "opener": null
+        },
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": {
+        "error": "TypeError: fetch failed"
+      },
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=warden-down-older-sibling-alerts-0-45388\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 6303,
+          "closed": null,
+          "stdout": "Tab 93172E2A1ED15A72B27A3BDCF12C23BF is unresponsive, but the dialog warden is not running, so this dialog cannot be safely attributed to one specific tab without guessing (guessing here has been measured to close the wrong, innocent tab) — no automatic recovery was attempted. Run \"sutradhar close\" to end the session.",
+          "stderr": "",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked",
+            "P1": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [
+        "O",
+        "P0",
+        "P1"
+      ],
+      "snapAfter": {
+        "code": 3,
+        "ms": 4287,
+        "killedAtCap": false,
+        "head": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"} | dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identif"
+      },
+      "end": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      }
+    },
+    {
+      "scenario": "warden-down-chain-middle-alerts",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 997
+      },
+      "stepLog": [
+        {
+          "killWarden": 62848,
+          "ours": true
+        }
+      ],
+      "targets": [
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=warden-down-chain-middle-alerts-0-77702",
+          "opener": null
+        },
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "P0"
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": {
+        "error": "TypeError: fetch failed"
+      },
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=warden-down-chain-middle-alerts-0-77702\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 6340,
+          "closed": null,
+          "stdout": "Tab 396227D08F62D0BE00D5DD1D095B734A is unresponsive, but the dialog warden is not running, so this dialog cannot be safely attributed to one specific tab without guessing (guessing here has been measured to close the wrong, innocent tab) — no automatic recovery was attempted. Run \"sutradhar close\" to end the session.",
+          "stderr": "",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked",
+            "P1": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [
+        "O",
+        "P0",
+        "P1"
+      ],
+      "snapAfter": {
+        "code": 3,
+        "ms": 4314,
+        "killedAtCap": false,
+        "head": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=warden-down-chain-middle-alerts-0-77702\"} | dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultVal",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identif"
+      },
+      "end": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      }
+    },
+    {
+      "scenario": "noopener-same-origin",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 920
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "P0",
+          "url": "http://127.0.0.1:56425/alert-inline?n=a",
+          "opener": "O"
+        },
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=noopener-same-origin-0-9814",
+          "opener": null
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "responsive",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "unknown",
+          "confirmedSafe": false
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/alert-inline?n=a\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1089,
+          "closed": "P0",
+          "stdout": "Tab 99B376A55A1BFF5171B8F1579DCEE20B was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P0"
+      ],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 269,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=noopener-same-origin-0-9814 | Title: opener noopener-same-origin-0-9814",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "gone"
+      }
+    },
+    {
+      "scenario": "noopener-cross-site",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 906
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "P0",
+          "url": "http://localhost:56425/alert-inline?n=a",
+          "opener": "O"
+        },
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=noopener-cross-site-0-17524",
+          "opener": null
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "responsive",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "unknown",
+          "confirmedSafe": false
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:56425/alert-inline?n=a\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1085,
+          "closed": "P0",
+          "stdout": "Tab 6115D41C57A422A66F3AD6A802E2B083 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P0"
+      ],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 277,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=noopener-cross-site-0-17524 | Title: opener noopener-cross-site-0-17524",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "gone"
+      }
+    },
+    {
+      "scenario": "opener-cross-site",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 919
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "P0",
+          "url": "http://localhost:56425/alert-inline?n=a",
+          "opener": "O"
+        },
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=opener-cross-site-0-25178",
+          "opener": null
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "responsive",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "alert"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"inline-a\",\"defaultValue\":null,\"url\":\"http://localhost:56425/alert-inline?n=a\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 719,
+          "closed": null,
+          "stdout": "Accepted alert \"inline-a\"",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 289,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=opener-cross-site-0-25178 | Title: opener opener-cross-site-0-25178",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "opener-same-origin-url",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 912
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "P0",
+          "url": "http://127.0.0.1:56425/alert-inline?n=a",
+          "opener": "O"
+        },
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=opener-same-origin-url-0-31708",
+          "opener": null
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P0",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "confirmedSafe": false
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=opener-same-origin-url-0-31708\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/alert-inline?n=a\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1094,
+          "closed": "P0",
+          "stdout": "Tab 7ECB3BD8EAF7C8109D705553E487440A was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P0"
+      ],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 276,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=opener-same-origin-url-0-31708 | Title: opener opener-same-origin-url-0-31708",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "gone"
+      }
+    },
+    {
+      "scenario": "two-tabs-same-site",
+      "trial": 0,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 859
+      },
+      "stepLog": [
+        {
+          "cli": [
+            "newtab",
+            "__BASE__/?n=second"
+          ],
+          "code": 0,
+          "out": "New tab tab_sess_1790484940420_1_2 opened at http://127.0.0.1:56425/?n=second"
+        }
+      ],
+      "targets": [
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "P0"
+        },
+        {
+          "label": "P0",
+          "url": "http://127.0.0.1:56425/?n=second",
+          "opener": null
+        },
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=two-tabs-same-site-0-39994",
+          "opener": null
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "responsive",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "P0",
+          "type": "unknown",
+          "blockedBy": "P1",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P1",
+          "type": "unknown",
+          "confirmedSafe": false
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=second\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1098,
+          "closed": "P1",
+          "stdout": "Tab C47499BBCBEE35FF9E467B9231AFED44 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "responsive",
+            "P1": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P1"
+      ],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 286,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=second | Title: opener second",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive",
+        "P1": "gone"
+      }
+    },
+    {
+      "scenario": "xhr-popup-manual",
+      "trial": 0,
+      "holderLabel": "NONE",
+      "nav": {
+        "code": 0,
+        "ms": 883
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=xhr-popup-manual-0-50906",
+          "opener": null
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "confirmedSafe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=xhr-popup-manual-0-50906\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 689,
+          "closed": null,
+          "stdout": "",
+          "stderr": "Error: no dialog is open to accept.",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [
+        "O",
+        "P0"
+      ],
+      "snapAfter": {
+        "code": 3,
+        "ms": 671,
+        "killedAtCap": false,
+        "head": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=xhr-popup-manual-0-50906\"} | dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identif"
+      },
+      "end": {
+        "O": "blocked",
+        "P0": "blocked"
+      }
+    },
+    {
+      "scenario": "xhr-popup-policy",
+      "trial": 0,
+      "holderLabel": "NONE",
+      "nav": {
+        "code": 0,
+        "ms": 905
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=xhr-popup-policy-0-63237",
+          "opener": null
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "confirmedSafe": true
+        },
+        {
+          "label": "P0",
+          "type": "unknown",
+          "confirmedSafe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=xhr-popup-policy-0-63237\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "snap --dialog accept",
+          "code": 3,
+          "ms": 3477,
+          "closed": null,
+          "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=xhr-popup-policy-0-63237\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+          "stderr": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. the page is busy or blocked and did not respond in time — this may not be an actual dialog, so no automatic recovery was attempted.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\"",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        },
+        {
+          "args": "snap --dialog dismiss",
+          "code": 3,
+          "ms": 3510,
+          "closed": null,
+          "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=xhr-popup-policy-0-63237\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}",
+          "stderr": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. the page is busy or blocked and did not respond in time — this may not be an actual dialog, so no automatic recovery was attempted.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\"",
+          "after": {
+            "O": "blocked",
+            "P0": "responsive"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [
+        "O"
+      ],
+      "snapAfter": {
+        "code": 0,
+        "ms": 270,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=xhr-popup-policy-0-63237 | Title: opener xhr-popup-policy-0-63237",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    },
+    {
+      "scenario": "xhr-isolated-manual",
+      "trial": 0,
+      "holderLabel": "NONE",
+      "nav": {
+        "code": 0,
+        "ms": 874
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=xhr-isolated-manual-0-81508",
+          "opener": null
+        }
+      ],
+      "popupCount": 0,
+      "before": {
+        "O": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "confirmedSafe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=xhr-isolated-manual-0-81508\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 674,
+          "closed": null,
+          "stdout": "",
+          "stderr": "Error: no dialog is open to accept.",
+          "after": {
+            "O": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [
+        "O"
+      ],
+      "snapAfter": {
+        "code": 3,
+        "ms": 685,
+        "killedAtCap": false,
+        "head": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=xhr-isolated-manual-0-81508\"} | ",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identif"
+      },
+      "end": {
+        "O": "blocked"
+      }
+    },
+    {
+      "scenario": "xhr-isolated-policy",
+      "trial": 0,
+      "holderLabel": "NONE",
+      "nav": {
+        "code": 0,
+        "ms": 902
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=xhr-isolated-policy-0-90775",
+          "opener": null
+        }
+      ],
+      "popupCount": 0,
+      "before": {
+        "O": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "confirmedSafe": true
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=xhr-isolated-policy-0-90775\"}"
+      },
+      "accepts": [
+        {
+          "args": "snap --dialog accept",
+          "code": 3,
+          "ms": 3460,
+          "closed": null,
+          "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=xhr-isolated-policy-0-90775\"}",
+          "stderr": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. the page is busy or blocked and did not respond in time — this may not be an actual dialog, so no automatic recovery was attempted.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\"",
+          "after": {
+            "O": "blocked"
+          }
+        },
+        {
+          "args": "snap --dialog dismiss",
+          "code": 3,
+          "ms": 3481,
+          "closed": null,
+          "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=xhr-isolated-policy-0-90775\"}",
+          "stderr": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. the page is busy or blocked and did not respond in time — this may not be an actual dialog, so no automatic recovery was attempted.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\"",
+          "after": {
+            "O": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [
+        "O"
+      ],
+      "snapAfter": {
+        "code": 3,
+        "ms": 725,
+        "killedAtCap": false,
+        "head": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56425/?n=xhr-isolated-policy-0-90775\"} | ",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identif"
+      },
+      "end": {
+        "O": "blocked"
+      }
+    },
+    {
+      "scenario": "layout-popup-manual",
+      "trial": 0,
+      "holderLabel": "NONE",
+      "nav": {
+        "code": 0,
+        "ms": 915
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56425/?n=layout-popup-manual-0-7212",
+          "opener": null
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "No dialog is open."
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 456,
+          "closed": null,
+          "stdout": "",
+          "stderr": "Error: no dialog is open to accept.",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [
+        "O",
+        "P0"
+      ],
+      "snapAfter": {
+        "code": 0,
+        "ms": 6500,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56425/?n=layout-popup-manual-0-7212 | Title: opener layout-popup-manual-0-7212",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "responsive"
+      }
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

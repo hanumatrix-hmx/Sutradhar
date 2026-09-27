@@ -2494,3 +2494,45 @@ Decisions for escalation-2 (binding):
 Escalation-2 should re-run the FULL audit-3/4/5 attack surface (not just the new targets), since
 removing the delay changes proactive-probe timing for every path, and the GAP-252 fix touches the
 attribution graph itself.
+
+## 2026-09-27 -- FR2-04 escalation-2 (LAST CYCLE) executed; sent to independent audit-6 (FINAL)
+
+Executor (Sonnet) self-report, spot-checked by the Orchestrator (vitest browser 497 and cli 144
+re-run directly: exact match). The Orchestrator also found and cleaned up two of the executor's own
+leftover polling shells (stale watchers checking for a marker string that didn't match the actual
+output format -- harmless, not wardens or Chrome, killed by specific PID after confirming their
+command lines, not by image name).
+
+Point 1 (GAP-251): the 500ms proactive-probe delay is removed entirely -- audit-5's own live
+experiment (0 delay, 36/36 clean) is the direct basis. The probe still only fires after Page.enable
+acks (the precondition kept); only the wait was removed. Re-verified across the full audit-5 timing
+sweep (0/300/450/500/550/600/700/1000ms): 0 wrong closes, real dialogs always arrive as tracked
+events.
+
+Point 2 (GAP-252): chose linking (option b) over refuse-both -- an opener that is known but never
+itself blocked is now a transparent pass-through anchor in attributeDialogHolders, the same
+treatment escalation-1 gave a confirmed-safe node. This lets siblings anchor against each other
+through it without requiring the opener to BE confirmed-safe. Verified against the exact
+CLI-reachable repro (typing into a field that opens one cross-site popup per keystroke): 0/2 wrong
+closes, the innocent tab survives.
+
+Points 3/4: message accuracy fixed (a note never claims accept will act on a tab it won't); the
+named audit-5 mutation survivors (E3/E4/E6/E7, reconstructed as equivalents since the literal code
+they targeted no longer exists after the point-1 fix) are all now killed.
+
+Full re-verification: audit-3/4 attack surface 28/28 (0 innocent closes); audit-5 surface 58/61
+clean, 3/61 hit a residual (below); vitest 904 total (browser 497 + cli 144 + capability-runtime
+164 + mcp-server 84 + sutradhar 15), 0 failures; full live scenario suite (not --skip-slow) 111
+pass / 0 fail / 2 skip -- identical counts to audit-4 and audit-5.
+
+RESIDUAL, carried forward unchanged, NOT new: a popup whose own first script (parsed synchronously,
+zero elapsed time after creation) starts blocking work is still closed as an apparent dialog holder
+even though none exists. This is structurally unfixable by any probe delay, including zero, because
+it requires zero real time to exist. It is exactly escalation-1's original disclosed residual #1,
+untouched by this cycle, and was not one of GAP-251 or GAP-252's targeted shapes. The Orchestrator
+flags this explicitly for audit-6 to judge, since this is the last chance before BLOCKED and the
+Orchestrator does not get to decide DONE-worthiness unilaterally on the last cycle.
+
+This is escalation cycle 2 of 2 (the last one). If audit-6 finds a critical or major defect, FR2-04
+is marked BLOCKED with a written diagnosis per the loop's rules -- no further cycles. If audit-6
+passes, FR2-04 is DONE and the loop moves to the next item.

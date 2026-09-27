@@ -241,4 +241,61 @@ describe('@sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222)', () =>
     }
     expect(state.closeCalls).toEqual([]);
   });
+
+  // FR2-04 escalation-2 (GAP-252, audit-5 A5-03): two popups sharing an UNBLOCKED (responsive)
+  // opener used to have NO edge between them at all in list()'s attribution (only opener<->child
+  // links were built, and only among BLOCKED targets) — both came back with blockedBy:undefined,
+  // i.e. both "look like" the holder. `DirectCdpBroker` never closes anything for an unattributed
+  // dialog anyway (GAP-247), so this is a LISTING/messaging fix here, not a close-safety one — but
+  // the listing must still stop claiming two independent holders exist.
+  it('GAP-252: list() attributes two blocked siblings of an UNRESPONSIVE... responsive opener against each other, not as two independent holders', async () => {
+    state.targets = [
+      fakeTarget('opener', 'https://opener/'), // NOT in livenessResults as 'blocked' -> responsive
+      fakeTarget('p0', 'https://p0.example/', 'opener'),
+      fakeTarget('p1', 'https://p1.example/', 'opener'),
+    ];
+    state.livenessResults.set('opener', 'responsive');
+    state.livenessResults.set('p0', 'blocked');
+    state.livenessResults.set('p1', 'blocked');
+    const broker = new DirectCdpBroker('ws://x');
+    const result = await broker.list();
+    if (result.status !== 'ok') throw new Error('unreachable');
+    const p0 = result.dialogs.find((d) => d.targetId === 'p0');
+    const p1 = result.dialogs.find((d) => d.targetId === 'p1');
+    // Exactly one of the two is reported as the (still-unaddressed, per GAP-247) holder; the other
+    // must point at it via blockedBy — never both independently "holding" the dialog.
+    const holders = [p0, p1].filter((d) => d && !d.blockedBy);
+    expect(holders).toHaveLength(1);
+    const collateral = [p0, p1].find((d) => d?.blockedBy);
+    expect(collateral?.blockedBy).toBe(holders[0]!.targetId);
+  });
+
+  it('GAP-252 contrast: a genuine single popup with a responsive (unblocked) opener is unaffected — still its own listed holder, no regression', async () => {
+    state.targets = [fakeTarget('opener', 'https://opener/'), fakeTarget('popup', 'about:blank', 'opener')];
+    state.livenessResults.set('opener', 'responsive');
+    state.livenessResults.set('popup', 'blocked');
+    const broker = new DirectCdpBroker('ws://x');
+    const result = await broker.list();
+    if (result.status !== 'ok') throw new Error('unreachable');
+    const popup = result.dialogs.find((d) => d.targetId === 'popup');
+    expect(popup?.blockedBy).toBeUndefined();
+  });
+
+  // FR2-04 escalation-2 (GAP-254): every entry `DirectCdpBroker` produces must carry `wardenDown:
+  // true` — `describeUnknownDialog` (dialog-cli.ts) uses this to avoid ever claiming a close will
+  // happen in a mode that always refuses (GAP-247).
+  it('GAP-254: every dialog list() reports (hinted or unknown) is marked wardenDown:true', async () => {
+    state.targets = [fakeTarget('t1', 'https://x/'), fakeTarget('t2', 'https://y/')];
+    state.livenessResults.set('t1', 'blocked');
+    state.livenessResults.set('t2', 'blocked');
+    const broker = new DirectCdpBroker('ws://x', {
+      type: 'confirm',
+      message: 'hi',
+      url: 'https://x/',
+      openedAt: '2020-01-01T00:00:00.000Z',
+    });
+    const result = await broker.list();
+    if (result.status !== 'ok') throw new Error('unreachable');
+    expect(result.dialogs.every((d) => d.wardenDown)).toBe(true);
+  });
 });

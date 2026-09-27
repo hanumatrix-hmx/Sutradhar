@@ -174,6 +174,20 @@ export interface DialogAttributionInput {
   readonly confirmedSafe?: boolean;
 }
 
+/** FR2-04 escalation-2 (GAP-252): one entry of the OPTIONAL second argument to
+ *  {@link attributeDialogHolders} — every other currently-known real page target, blocked or not.
+ *  Only `targetId`/`openerTargetId` are needed: this is used purely to let a blocked candidate's
+ *  opener-chain walk continue THROUGH a target that is known to exist but is not itself in the
+ *  `blocked` array (almost always because it answered its liveness probe just fine). Without this,
+ *  two same-renderer popups whose shared opener never blocked have no edge connecting them at all
+ *  (see that function's doc comment for the exact GAP-252 shape and why this fixes it). A `blocked`
+ *  entry doubles as its own `KnownTargetLink`, so callers only need to pass the targets that are
+ *  NOT in `blocked` here (though passing the full known set is harmless — see the implementation). */
+export interface KnownTargetLink {
+  readonly targetId: string;
+  readonly openerTargetId?: string;
+}
+
 /** Output of {@link attributeDialogHolders} for one currently-blocked target. */
 export interface DialogAttribution {
   /** Set when this target is not itself eligible to be treated as the dialog holder — points at
@@ -257,24 +271,60 @@ export interface DialogAttribution {
  * still connect two candidates on either side of it) but is never itself an acceptable answer,
  * so the recursion transparently skips over it and keeps searching its children for a real
  * candidate — preserving both fix-3's original connectivity and decision 1's safety rule.
+ *
+ * **Escalation-2 fix (GAP-252, audit-5 A5-03): two popups whose shared opener never blocks at
+ * all.** Everything above still assumes the opener chain is built purely from the `blocked` array
+ * — fine for "a popup and its opener", where the opener is usually blocked too (it shares the same
+ * renderer). audit-5 found a shape that breaks that assumption: two popups opened to a DIFFERENT
+ * origin than their (unblocked, still perfectly responsive) opener share a renderer WITH EACH
+ * OTHER, but the opener itself never blocks — it's a separate process. Since the opener was never
+ * in `blocked` at all, the old code never built an edge from it to either popup, so the two popups
+ * had no connection to each other whatsoever: each resolved to itself, both got reported as "the
+ * holder", and `dialog accept` closed the innocent older one first (3/3 live, reachable via
+ * ordinary CLI use — typing into a field that opens one same-site popup per keystroke). The fix is
+ * the optional `allKnown` parameter: it lets `findRoot`'s walk continue through an opener id that
+ * is KNOWN (the caller just probed it and found it responsive) even though it isn't itself
+ * BLOCKED, and `resolve()` treats such a node exactly like a confirmed-safe one — a transparent
+ * pass-through, never itself a candidate answer, because a target that just answered its own
+ * liveness probe cannot simultaneously be hiding an open dialog. This restores a single,
+ * deterministic holder among the sibling popups (the newest, same premise as everywhere else in
+ * this function) instead of two independent "holders" that both get closed in turn. A genuinely
+ * isolated single popup (no sibling, opener present or not) is unaffected — `findRoot`/`resolve`
+ * reduce to exactly their pre-fix behavior when there is only one blocked candidate in the
+ * component, preserving GAP-236/246.
  */
-export function attributeDialogHolders(blocked: readonly DialogAttributionInput[]): Map<string, DialogAttribution> {
+export function attributeDialogHolders(
+  blocked: readonly DialogAttributionInput[],
+  allKnown: readonly KnownTargetLink[] = [],
+): Map<string, DialogAttribution> {
   const byId = new Map(blocked.map((b) => [b.targetId, b] as const));
+  // FR2-04 escalation-2 (GAP-252): `linkById` is the union of every BLOCKED target plus every
+  // OTHER currently-known target `allKnown` names (typically every real page target the caller
+  // just probed, blocked or not) — used only to decide whether an opener id is a real, known
+  // target worth walking the chain through. A responsive (non-blocked) opener is real and known,
+  // it just isn't itself a `DialogAttribution` candidate.
+  const linkById = new Map<string, KnownTargetLink>();
+  for (const k of allKnown) linkById.set(k.targetId, k);
+  for (const b of blocked) linkById.set(b.targetId, b);
+  const openerOf = (id: string): string | undefined => linkById.get(id)?.openerTargetId;
+
   const childrenByOpener = new Map<string, DialogAttributionInput[]>();
   for (const b of blocked) {
-    if (b.openerTargetId && byId.has(b.openerTargetId)) {
+    if (b.openerTargetId && linkById.has(b.openerTargetId)) {
       const arr = childrenByOpener.get(b.openerTargetId) ?? [];
       arr.push(b);
       childrenByOpener.set(b.openerTargetId, arr);
     }
   }
 
-  // For `id`: which CANDIDATE (never-confirmed-safe) target, among `id` itself and everything
-  // reachable through its blocked-children subtree, is the presumed dialog holder — `undefined`
-  // if the WHOLE subtree (every candidate-eligible node in it) is confirmed-safe. Among several
-  // children, prefer whichever child's OWN resolved answer belongs to the newest child (fix-3's
-  // original newest-leaf premise) — a child whose subtree resolves to `undefined` (all
-  // confirmed-safe) is skipped entirely rather than treated as a tie-breaking candidate itself.
+  // For `id`: which CANDIDATE (never-confirmed-safe, actually BLOCKED) target, among `id` itself
+  // and everything reachable through its blocked-children subtree, is the presumed dialog holder —
+  // `undefined` if the WHOLE subtree (every candidate-eligible node in it) is confirmed-safe OR
+  // `id` itself isn't even a blocked target (GAP-252: a responsive opener reached only via
+  // `findRoot`'s walk — see that function). Among several children, prefer whichever child's OWN
+  // resolved answer belongs to the newest child (fix-3's original newest-leaf premise) — a child
+  // whose subtree resolves to `undefined` (all confirmed-safe) is skipped entirely rather than
+  // treated as a tie-breaking candidate itself.
   const memo = new Map<string, string | undefined>();
   const visiting = new Set<string>();
   function resolve(id: string): string | undefined {
@@ -286,23 +336,31 @@ export function attributeDialogHolders(blocked: readonly DialogAttributionInput[
       .map((child) => ({ child, holder: resolve(child.targetId) }))
       .filter((x): x is { child: DialogAttributionInput; holder: string } => x.holder !== undefined)
       .sort((a, b) => (b.child.discoveredAt ?? 0) - (a.child.discoveredAt ?? 0));
-    const result = resolvedChildren.length > 0 ? resolvedChildren[0]!.holder : byId.get(id)!.confirmedSafe ? undefined : id;
+    // `info` is `undefined` exactly when `id` is a real, KNOWN target that is not itself in the
+    // blocked set — i.e. a currently-responsive opener reached only through `findRoot`'s walk
+    // (GAP-252). Being responsive right now is direct proof it isn't hiding an unresolved dialog,
+    // so it's treated exactly like a confirmed-safe blocked node: never itself a result, but still
+    // a transparent pass-through connecting its candidate children to each other.
+    const info = byId.get(id);
+    const result = resolvedChildren.length > 0 ? resolvedChildren[0]!.holder : info && !info.confirmedSafe ? id : undefined;
     visiting.delete(id);
     memo.set(id, result);
     return result;
   }
 
-  // The topmost ancestor of `id` within the blocked set (its own opener chain, followed as far as
-  // it still leads to another blocked target) — every member of one opener-chain component shares
-  // exactly one root, so resolving from the root once (memoized) gives every member the SAME
-  // answer, which is what makes a confirmed-safe pass-through node connect its candidate children
-  // correctly instead of splitting them into separate, independently-resolved subtrees.
+  // The topmost ancestor of `id` within the KNOWN set (its own opener chain, followed as far as it
+  // still leads to another KNOWN target — GAP-252: not just another BLOCKED one, so a chain that
+  // passes through a currently-responsive-but-known opener still reaches its true root instead of
+  // stopping short at that opener). Every member of one opener-chain component shares exactly one
+  // root, so resolving from the root once (memoized) gives every member the SAME answer, which is
+  // what makes a confirmed-safe (or merely responsive) pass-through node connect its candidate
+  // children correctly instead of splitting them into separate, independently-resolved subtrees.
   function findRoot(id: string): string {
     let cur = id;
-    for (let i = 0; i <= blocked.length; i++) {
-      const info = byId.get(cur);
-      if (info?.openerTargetId && byId.has(info.openerTargetId) && info.openerTargetId !== cur) {
-        cur = info.openerTargetId;
+    for (let i = 0; i <= blocked.length + allKnown.length; i++) {
+      const opener = openerOf(cur);
+      if (opener && linkById.has(opener) && opener !== cur) {
+        cur = opener;
       } else {
         return cur;
       }
