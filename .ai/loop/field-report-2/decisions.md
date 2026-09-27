@@ -2624,11 +2624,41 @@ new, differently-scoped item (e.g. "dialog gate: bounded busy/dead detection + n
 tabs/closetab" as its own spec) rather than another patch cycle on the current design, per CLAUDE.md's
 guidance that a multi-day rework belongs in the backlog rather than being built reflexively.
 
-The FR2-04 branch changes remain uncommitted product code in the working tree (36eefa4 is the last
-commit; escalation-2's actual source diff was never committed on its own, only its evidence -- check
-'git status' before touching packages/browser or packages/cli for the next item, since FR2-04's
-in-progress code is still sitting there). The Orchestrator will decide, when preparing the final PR,
+CORRECTION (2026-09-27): the line below originally claimed escalation-2's source diff was never
+committed -- that was wrong. `git show --stat 36eefa4` confirms the actual dialog-cdp.ts/dialog-warden.ts/
+cli.ts/dialog-broker.ts/dialog-cli.ts source changes from escalation-2 ARE committed at 36eefa4, same
+as every other cycle's code. Only the diagnosis/evidence commit (3bd520c) added no further source
+changes. FR2-04's dialog machinery (DialogPolicy, resolveDialogPolicy, session-flow.ts, dialog-cli.ts,
+etc.) is present on disk at HEAD, unlike FR2-03's fix-4 (genuinely never committed) which the original
+sentence below was probably echoing from memory of a different item. The Orchestrator will decide, when preparing the final PR,
 whether to ship FR2-04 in its current (escalation-2) state with GAP-256/257 documented as known
 issues, revert it to pre-FR2-04 behavior, or leave it out of the PR entirely -- this needs a
 decision at PR-prep time, not now, since other FR2 items are unblocked by FR2-04 landing at all
 (FR2-05/07/08/13/14 per spec-amendment-1) regardless of whether the dialog warden itself is perfect.
+
+## 2026-09-27 -- FR2-05/FR2-14's hard dependency on FR2-04's code: proceed, don't hold
+
+Correction first: the BLOCKED entry above wrongly said escalation-2's source was never committed.
+It was, at 36eefa4 -- FR2-04's dialog machinery (DialogPolicy, resolveDialogPolicy, dialog-cli.ts,
+session-flow.ts, warden-control.ts, dialog-warden.ts, dialog-cdp.ts, dialog-broker.ts) is present and
+committed at HEAD, same as every prior cycle. Confirmed via `git diff HEAD` on those files (empty).
+
+FR2-05's spec (section on merge touchpoints with FR2-03/FR2-04) and FR2-14's spec (dependency table,
+row FR2-04: HARD for the `dialog` key, needs DialogPolicy/DialogPolicyMode/SutradharRuntimeOptions.
+dialogPolicy/CliState.dialogPolicy/resolveDialogPolicy) both have a HARD dependency on this code
+EXISTING, not on FR2-04 being bug-free. Neither spec touches the dialog gate's blocking/attribution
+logic (dialog-warden.ts's liveness probe, attributeDialogHolders, or the crash-lockout path) --
+FR2-05 only needs `SutradharRuntimeOptions.dialogPolicy` as a config field to plumb its own download/
+upload root options alongside; FR2-14 only needs the same shape to map its `.sutradhar.json` `dialog`
+key onto. GAP-256 (crashed tab locks the session) and GAP-257 (opener-closed sibling misattribution)
+are both specifically in the blocking/attribution decision, not in the config surface these two items
+read from.
+
+Decision (Orchestrator, user explicitly delegated this call): FR2-05 and FR2-14 PROCEED on top of
+FR2-04's code as committed, once they're otherwise ready to develop. Each item's own evidence
+directory must note, at DEVELOP time, that it depends on FR2-04 (BLOCKED, GAP-256/257 unresolved in
+the dialog gate itself, unrelated to what this item reads from that code) as a known, accepted
+dependency risk -- not silently. If either item's own testing surfaces any interaction with the
+blocking/attribution logic (e.g. a download that's gated behind an open dialog and hits GAP-256's
+lockout), that's a NEW finding against FR2-04, logged as its own GAP, not something FR2-05/14 are
+expected to fix.
