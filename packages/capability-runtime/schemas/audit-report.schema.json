@@ -34,7 +34,7 @@
       "properties": { "message": { "type": "string" }, "timestamp": { "$ref": "#/definitions/iso" } } } },
     "brokenRequests": { "type": "array", "description": "HTTP responses with status >= 400. Network-level failures (DNS, refused, blocked) are not included.",
       "items": { "type": "object", "additionalProperties": false, "required": ["url", "status"],
-        "properties": { "url": { "type": "string" }, "status": { "type": "integer", "minimum": 400, "maximum": 599 } } } },
+        "properties": { "url": { "type": "string" }, "status": { "type": "integer", "minimum": 400, "maximum": 999, "description": "GAP-263: HTTP status is not actually bounded to 599 by any spec Sutradhar controls -- some real sites (e.g. LinkedIn) respond with non-standard codes like 999 to deny requests. Bounded to 999 (three decimal digits) rather than left unbounded, since Chrome's own network stack never reports anything larger for an HTTP response." } } } },
     "accessibilityIssues": { "type": "array", "description": "Heuristic rules; current ids: img-alt, input-label, missing-title, missing-lang, button-name. Only rules with count >= 1 are listed.",
       "items": { "type": "object", "additionalProperties": false, "required": ["rule", "description", "count"],
         "properties": { "rule": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }, "description": { "type": "string", "minLength": 1 }, "count": { "type": "integer", "minimum": 1 } } } },

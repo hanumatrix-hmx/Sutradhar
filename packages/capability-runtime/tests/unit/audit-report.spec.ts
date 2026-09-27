@@ -274,10 +274,10 @@ describe('@sutradhar/capability-runtime audit-report (FR2-12)', () => {
     const Tminus60000 = new Date(Date.parse(T) - 60000).toISOString();
     const Tminus5000 = new Date(Date.parse(T) - 5000).toISOString();
 
-    it('(a) navigated: since = navStartedAt (the min), coversWholeDocument true', () => {
+    it('(a) navigated: since = navCommittedAt, coversWholeDocument true', () => {
       const { observation, since } = computeObservation({
         mode: 'navigated',
-        navStartedAt: T,
+        navCommittedAt: T,
         timeOrigin: Date.parse(T) + 100,
         observingSince: Tminus5000,
         pageWasHidden: false,
@@ -287,22 +287,28 @@ describe('@sutradhar/capability-runtime audit-report (FR2-12)', () => {
       expect(observation.documentStartedAt).toBe(Tplus100);
     });
 
-    it('(b) navigated same-document: since = documentStartedAt (the earlier one)', () => {
+    it('(b) GAP-262 fix-1: since = navCommittedAt even when documentStartedAt (timeOrigin) is EARLIER -- no longer min()d together', () => {
+      // audit-1 found the old min() logic defeats the whole GAP-262 fix for any real
+      // cross-document navigation with network latency: `performance.timeOrigin` reflects
+      // roughly when the navigation STARTED (often earlier than the real commit for a slow
+      // response), so min() kept picking that too-early value over the true, later commit time
+      // and reopened the contamination window. `since` is now navCommittedAt directly.
       const { since } = computeObservation({
         mode: 'navigated',
-        navStartedAt: T,
+        navCommittedAt: T,
         timeOrigin: Date.parse(T) - 60000,
         observingSince: Tminus5000,
         pageWasHidden: null,
       });
-      expect(since).toBe(Tminus60000);
+      expect(since).toBe(T);
+      expect(since).not.toBe(Tminus60000);
     });
 
     it('(c) current-page: observingSince later than timeOrigin -> coversWholeDocument false, since = timeOrigin ISO', () => {
       const timeOrigin = Date.parse(T);
       const { observation, since } = computeObservation({
         mode: 'current-page',
-        navStartedAt: null,
+        navCommittedAt: null,
         timeOrigin,
         observingSince: new Date(timeOrigin + 1000).toISOString(),
         pageWasHidden: false,
@@ -314,7 +320,7 @@ describe('@sutradhar/capability-runtime audit-report (FR2-12)', () => {
     it('(d) observingSince null -> coversWholeDocument false', () => {
       const { observation } = computeObservation({
         mode: 'current-page',
-        navStartedAt: null,
+        navCommittedAt: null,
         timeOrigin: Date.parse(T),
         observingSince: null,
         pageWasHidden: false,
@@ -325,7 +331,7 @@ describe('@sutradhar/capability-runtime audit-report (FR2-12)', () => {
     it('(e) timeOrigin null in current-page mode -> since null, coversWholeDocument false', () => {
       const { observation, since } = computeObservation({
         mode: 'current-page',
-        navStartedAt: null,
+        navCommittedAt: null,
         timeOrigin: null,
         observingSince: Tminus5000,
         pageWasHidden: null,
@@ -336,7 +342,7 @@ describe('@sutradhar/capability-runtime audit-report (FR2-12)', () => {
 
     it('(f) pageWasHidden passes through true/false/null', () => {
       for (const v of [true, false, null] as const) {
-        const { observation } = computeObservation({ mode: 'current-page', navStartedAt: null, timeOrigin: Date.parse(T), observingSince: null, pageWasHidden: v });
+        const { observation } = computeObservation({ mode: 'current-page', navCommittedAt: null, timeOrigin: Date.parse(T), observingSince: null, pageWasHidden: v });
         expect(observation.pageWasHidden).toBe(v);
       }
     });

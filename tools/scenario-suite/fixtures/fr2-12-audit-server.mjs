@@ -64,6 +64,33 @@ function noisyPage(n) {
     `<img src="/missing-noisy-${n}.png" alt="x"><script>${script}</script></body></html>`;
 }
 
+/** GAP-262 fix-1: an "old page" that keeps logging a console error and fetching a 404 on a
+ *  short (25ms) interval for as long as it's alive -- used to prove the contamination-scope fix
+ *  actually closes the whole navigate-call-to-commit window, not just the single-shot noise the
+ *  original `/noisy` page produces (which a slow enough "clean" response could dodge by luck). */
+function noisyIntervalPage(n) {
+  const script = `
+    var i = 0;
+    var t = setInterval(function () {
+      i++;
+      console.error('noisy-interval-${n}-' + i);
+      fetch('/missing-noisy-interval-${n}-' + i).catch(function () {});
+    }, 25);
+    window.addEventListener('pagehide', function () { clearInterval(t); });
+  `;
+  return `<html lang="en"><head><meta charset="utf-8"><title>NoisyInterval ${n}</title></head><body style="margin:0">` +
+    `<script>${script}</script></body></html>`;
+}
+
+/** A dialog fixture: fires a native `alert()` a short, controllable delay after load -- used to
+ *  reproduce GAP-261's "mid-audit alert" shape (the dialog opens sometime after navigation has
+ *  already settled, while the audit itself is running against the page). */
+function alertPage(n, delayMs) {
+  const script = `setTimeout(function () { alert('fr2-12-audit-alert-${n}'); }, ${delayMs});`;
+  return `<html lang="en"><head><meta charset="utf-8"><title>Alert ${n}</title></head><body style="margin:0">` +
+    `<h1>Alert fixture ${n}</h1><script>${script}</script></body></html>`;
+}
+
 function shiftPage(n) {
   const script = `setTimeout(()=>{ var s=document.getElementById('slot'); if (s) s.style.height='200px'; window.__fr212ShiftDone=true; },300);`;
   return `<html lang="en"><head><meta charset="utf-8"><title>Shift ${n}</title></head><body style="margin:0">` +
@@ -94,6 +121,27 @@ export async function startAuditFixtureServer() {
     if (url.pathname === '/noisy') {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       res.end(noisyPage(n));
+      return;
+    }
+    if (url.pathname === '/noisy-interval') {
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(noisyIntervalPage(n));
+      return;
+    }
+    if (url.pathname === '/alert') {
+      const delayMs = Number(url.searchParams.get('delayMs') ?? '0');
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(alertPage(n, delayMs));
+      return;
+    }
+    if (url.pathname === '/clean-delayed') {
+      // GAP-262: a "normal" (not artificially slow) response delay for the NEW page -- audit-1
+      // found the contamination leak persists even at ~150ms, not just a pathologically slow one.
+      const delayMs = Number(url.searchParams.get('delayMs') ?? '150');
+      setTimeout(() => {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+        res.end(cleanPage(n));
+      }, delayMs);
       return;
     }
     if (url.pathname === '/shift') {

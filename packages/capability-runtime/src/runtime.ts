@@ -1563,19 +1563,57 @@ export class SutradharRuntime {
     // blocked by the allowlist is a thrown error (nothing was audited yet), not a `baseline.error`.
     if (options.baselineUrl) this.assertNavigationAllowed(options.baselineUrl);
 
-    let navStartedAt: string | null = null;
-    if (options.url) {
-      navStartedAt = new Date().toISOString();
-      await this.navigate(sessionId, options.url, options.tabId);
-      // GAP-038 (open): FR2-08's waitForPageSettle (DOM-quiet + network-idle, bounded) hasn't
-      // landed in this worktree yet, so this stays the pre-existing fixed dwell rather than a
-      // real settle condition — a request slower than this can still be missing from
-      // brokenRequests (see decisions.md's FR2-12 entry and the changelog fragment).
-      await new Promise((r) => setTimeout(r, options.settleMs ?? 1500));
-    }
-
+    // Resolved BEFORE navigating (GAP-262 fix-1): we need the tab's live Puppeteer `page` object
+    // in hand so a `framenavigated` listener can be attached before `navigate()` is even called —
+    // it's the same `page` instance across a same-tab navigation, so resolving it early changes
+    // nothing else about what gets read later.
     const { tab } = this.resolveTab(sessionId, options.tabId);
     const page = this.requirePage(tab);
+
+    // GAP-262 fix-1 (audit-1 finding, decisions.md 2026-09-27): the scoping boundary for "this
+    // document's own activity" must be the NEW page's main-frame COMMIT time, not merely the
+    // moment `navigate()` was CALLED. Between those two instants the OLD page is still alive and
+    // can keep logging console errors / firing requests, and the earlier (B1) fix — which scoped
+    // by call time — still attributed every bit of that leftover old-page activity to the new
+    // page's report. audit-1 reproduced this live 10/10 via the runtime directly (3/3 via the
+    // CLI), even at an ordinary ~150ms response time, not just an artificially slow one.
+    // `framenavigated` fires once per real navigation of a frame; tracking the LAST time it fires
+    // for the page's own main frame (there can be more than one, e.g. a redirect chain) gives the
+    // true commit instant, in the same Node clock domain `computeObservation` already uses
+    // everywhere else in this scoping calculation (`min()`'d against the page's own
+    // `performance.timeOrigin` below for robustness to browser/Node clock skew — unchanged).
+    let navCommittedAt: string | null = null;
+    const onFrameNavigated = (frame: unknown): void => {
+      if (typeof page.mainFrame === 'function' && frame !== page.mainFrame()) return; // ignore subframes
+      navCommittedAt = new Date().toISOString();
+    };
+    const canListenForCommit =
+      options.url !== undefined &&
+      typeof (page as unknown as { on?: unknown }).on === 'function' &&
+      typeof (page as unknown as { off?: unknown }).off === 'function';
+    if (canListenForCommit) {
+      (page as unknown as { on: (event: string, cb: (frame: unknown) => void) => void }).on(
+        'framenavigated',
+        onFrameNavigated,
+      );
+    }
+    try {
+      if (options.url) {
+        await this.navigate(sessionId, options.url, options.tabId);
+        // GAP-038 (open): FR2-08's waitForPageSettle (DOM-quiet + network-idle, bounded) hasn't
+        // landed in this worktree yet, so this stays the pre-existing fixed dwell rather than a
+        // real settle condition — a request slower than this can still be missing from
+        // brokenRequests (see decisions.md's FR2-12 entry and the changelog fragment).
+        await new Promise((r) => setTimeout(r, options.settleMs ?? 1500));
+      }
+    } finally {
+      if (canListenForCommit) {
+        (page as unknown as { off: (event: string, cb: (frame: unknown) => void) => void }).off(
+          'framenavigated',
+          onFrameNavigated,
+        );
+      }
+    }
 
     // D11: after navigation+settle, before any page-touching call — an open dialog blocks
     // page.evaluate/page.screenshot/page.title, so without this the audit would hang until the
@@ -1601,7 +1639,7 @@ export class SutradharRuntime {
 
     const { observation, since } = computeObservation({
       mode: options.url ? 'navigated' : 'current-page',
-      navStartedAt,
+      navCommittedAt,
       timeOrigin: typeof pageResult.timeOrigin === 'number' ? pageResult.timeOrigin : null,
       observingSince: tab.observingSince ?? null,
       pageWasHidden: pageResult.pageWasHidden ?? null,

@@ -662,7 +662,87 @@ async function runPostChange(origin) {
     );
     const pass3 = rN3.code === 1 && rN3.stdout.trim() === '' && /Fatal:/.test(rN3.stderr);
     record('live', { case: 'N3', pass: pass3, detail: `exit=${rN3.code} stdoutEmpty=${rN3.stdout.trim() === ''} fatal=${/Fatal:/.test(rN3.stderr)}` });
+    // GAP-265: this case's `audit` call above rejects before any real navigation happens (the
+    // allowlist blocks it), but `withSession` still spawns/attaches a real headless Chrome to get
+    // there — audit-1 found this session was never closed, leaking a headless Chrome per run.
+    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDirN3 } }).catch(() => {});
     cleanupDirs.push(stateDirN3);
+  }
+
+  // ── L21/L22/L23 (GAP-261 fix-1): `audit --json` must print exactly one parseable JSON
+  // document on stdout across all 3 dialog shapes audit-1 found broken ─────────────────────────
+  function tryParseJson(s) {
+    try {
+      return { ok: true, value: JSON.parse(s) };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
+  }
+
+  // L21: default/report policy, a dialog LEFT OPEN by an earlier command blocks the next
+  // `audit --json` outright (was: JSON replaced entirely by a raw `dialogPending:` line, exit 3).
+  {
+    const tmp = await tmpDir('fr212-l21');
+    const stateDir = await freshCliStateDir();
+    await runCli(['nav', freshUrl(origin, '/clean', 211)], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+    // Fire a real alert() and let the CLI process exit while it's still open -- this is the exact
+    // "left over from an earlier command" shape the gate has to detect on the NEXT command.
+    await runCli(['eval', "setTimeout(()=>alert('gap261-l21'),0); 1"], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+    await delay(300);
+    const r = await runCli(['audit', freshUrl(origin, '/clean', 212), tmp, '--json'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+    const parsed = tryParseJson(r.stdout);
+    const pass =
+      r.code === 3 &&
+      parsed.ok &&
+      typeof parsed.value.error === 'string' &&
+      parsed.value.dialogPending !== null &&
+      parsed.value.dialogPending.type === 'alert';
+    record('live', { case: 'L21 (GAP-261, default-policy leftover dialog)', pass, detail: `exit=${r.code} stdoutParses=${parsed.ok} dialogPending=${JSON.stringify(parsed.value?.dialogPending)}` });
+    await runCli(['dialog', 'dismiss'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } }).catch(() => {});
+    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } }).catch(() => {});
+    cleanupDirs.push(stateDir);
+  }
+
+  // L22: accept policy, a dialog opens (and is auto-handled) WHILE `audit --json` itself is
+  // running -- was: a `dialogHandled:` line appended raw AFTER the JSON on stdout.
+  {
+    const tmp = await tmpDir('fr212-l22');
+    const stateDir = await freshCliStateDir();
+    await runCli(['nav', freshUrl(origin, '/clean', 220), '--dialog', 'accept'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+    const r = await runCli(
+      ['audit', `${freshUrl(origin, '/alert', 221)}&delayMs=200`, tmp, '--json'],
+      { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } },
+    );
+    const parsed = tryParseJson(r.stdout);
+    const parseOk = parsed.ok && JSON.stringify(parsed.value, null, 2).replace(/\r\n/g, '\n') + '\n' === r.stdout.replace(/\r\n/g, '\n');
+    const pass = r.code === 0 && parseOk && typeof parsed.value.schemaVersion === 'number' && /dialogHandled:/.test(r.stderr);
+    record('live', { case: 'L22 (GAP-261, accept-policy mid-audit dialog)', pass, detail: `exit=${r.code} stdoutIsExactlyOneJsonDoc=${parseOk} dialogHandledOnStderr=${/dialogHandled:/.test(r.stderr)}` });
+    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } }).catch(() => {});
+    cleanupDirs.push(stateDir);
+  }
+
+  // L23: default/report policy, a dialog opens WHILE `audit --json` is running and is never
+  // handled -- was: either an empty stdout + generic "Fatal:" (D11's own throw), or (once past the
+  // pre-emption grace) the same broken-JSON shape as L21. Either way stdout must still be exactly
+  // one parseable document.
+  {
+    const tmp = await tmpDir('fr212-l23');
+    const stateDir = await freshCliStateDir();
+    const r = await runCli(
+      ['audit', `${freshUrl(origin, '/alert', 231)}&delayMs=100`, tmp, '--json'],
+      { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } },
+    );
+    const parsed = tryParseJson(r.stdout);
+    const pass =
+      r.code === 3 &&
+      parsed.ok &&
+      typeof parsed.value.error === 'string' &&
+      parsed.value.dialogPending !== null &&
+      parsed.value.dialogPending.type === 'alert';
+    record('live', { case: 'L23 (GAP-261, mid-audit alert, never handled)', pass, detail: `exit=${r.code} stdoutParses=${parsed.ok} dialogPending=${JSON.stringify(parsed.value?.dialogPending)}` });
+    await runCli(['dialog', 'dismiss'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } }).catch(() => {});
+    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } }).catch(() => {});
+    cleanupDirs.push(stateDir);
   }
 
   // ── L9-L15: MCP surface ────────────────────────────────────────────────────────────────────
@@ -716,7 +796,7 @@ async function runPostChange(origin) {
     const pass11 = r11.content.length === 3 && diffMatch && report11.baseline?.diffPath === null && report11.baseline?.diffPercentage > 0;
     record('live', { case: 'L11', pass: pass11, detail: `contentLength=${r11.content.length} diffPct=${report11.baseline?.diffPercentage}` });
 
-    // L12: B1 fixed
+    // L12: B1 fixed (single-shot /noisy -> /clean, both current-page and url-mode audits)
     await client.callTool('browser.navigate', { sessionId: S, url: freshUrl(origin, '/noisy', 21) });
     await client.callTool('browser.navigate', { sessionId: S, url: freshUrl(origin, '/clean', 21) });
     const r12a = jsonOf(await client.callTool('browser.audit', { sessionId: S }));
@@ -731,6 +811,38 @@ async function runPostChange(origin) {
       r12b.pageErrors.length === 0 &&
       r12b.brokenRequests.length === 0;
     record('live', { case: 'L12 (B1 fixed, N9)', pass: pass12, detail: `r12a=${JSON.stringify(r12a.consoleErrors)} r12b=${JSON.stringify(r12b.consoleErrors)}` });
+
+    // L12b (GAP-262 fix-1): audit-1 found L12's single-shot noise missed the REAL contamination
+    // window (old page alive between navigate()-call and the new page's frame commit) because a
+    // single console.error/fetch can land before or after that narrow window by luck -- and
+    // found the old (call-time-scoped) fix flaky here, failing 1/30 repeats. Replace it with a
+    // page that keeps emitting noise on a 25ms interval for as long as it's alive
+    // (`/noisy-interval`) immediately followed by a clean page at an ORDINARY (not artificially
+    // slow) ~150ms response time (`/clean-delayed`), repeated well past audit-1's 30-repeat find,
+    // asserting zero leakage on every single repeat (not just on average).
+    const GAP262_REPEATS = 15;
+    const gap262Leaks = [];
+    for (let i = 0; i < GAP262_REPEATS; i++) {
+      await client.callTool('browser.navigate', { sessionId: S, url: freshUrl(origin, '/noisy-interval', `262-${i}`) });
+      // Give the interval a few ticks to actually start producing noise before navigating away —
+      // otherwise this repeat could pass by luck (nothing logged yet), not because the fix works.
+      await delay(80);
+      const rep = jsonOf(
+        await client.callTool('browser.audit', { sessionId: S, url: `${freshUrl(origin, '/clean-delayed', `262-${i}`)}&delayMs=150` }),
+      );
+      const leaked =
+        rep.consoleErrors.length > 0 ||
+        rep.pageErrors.length > 0 ||
+        rep.brokenRequests.some((b) => b.url.includes('noisy-interval'));
+      if (leaked) {
+        gap262Leaks.push({ i, consoleErrors: rep.consoleErrors, brokenRequests: rep.brokenRequests });
+      }
+    }
+    record('live', {
+      case: 'L12b (GAP-262 fix-1, 15 repeats)',
+      pass: gap262Leaks.length === 0,
+      detail: `leaks=${gap262Leaks.length}/${GAP262_REPEATS} ${gap262Leaks.length ? JSON.stringify(gap262Leaks.slice(0, 3)) : ''}`,
+    });
 
     // L13: B2 fixed
     const clsSeries = [];

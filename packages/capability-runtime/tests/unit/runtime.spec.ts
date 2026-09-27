@@ -259,6 +259,10 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
         evaluate: vi.fn(async () => ({ issues: [], webVitals: { lcpMs: 10, cls: 0, fcpMs: 5, ttfbMs: 1 }, timeOrigin: TIME_ORIGIN, pageWasHidden: false })),
         evaluateOnNewDocument: vi.fn(),
         removeScriptToEvaluateOnNewDocument: vi.fn(),
+        // GAP-262: `audit()` conditionally attaches/detaches a `framenavigated` listener on the
+        // page to capture the new document's commit time. Most fakes here don't care and never
+        // provide `on`/`off`, which `audit()` must tolerate (falls back to scoping by
+        // `documentStartedAt` alone) — only RA4 below actually exercises the listener.
         ...overrides,
       };
     }
@@ -322,7 +326,7 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
       expect(result.baseline).toBeNull();
     });
 
-    it('RA4: navigated mode only keeps entries at/after the navigate call, coversWholeDocument true', async () => {
+    it('RA4: navigated mode only keeps entries at/after the navigated document\'s own start, coversWholeDocument true', async () => {
       const page = fakePage();
       const tab = fakeTab({
         observingSince: '2020-01-01T00:00:00.000Z',
@@ -336,7 +340,9 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
       vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
       vi.spyOn(runtime, 'navigate').mockResolvedValue({ tabId: 't', url: URL_, title: 'T' } as any);
       // Simulate the navigated document's timeOrigin as being AFTER 'before-nav' but before
-      // 'after-nav', so only 'after-nav' should survive scoping.
+      // 'after-nav', so only 'after-nav' should survive scoping. (This fake page has no
+      // `on`/`off`, so `navCommittedAt` stays null and scoping falls back to documentStartedAt
+      // alone — see RA4b below for the case that actually exercises the commit-time listener.)
       page.evaluate.mockResolvedValue({ issues: [], webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 }, timeOrigin: Date.parse('2026-06-01T00:00:00.000Z'), pageWasHidden: false });
 
       const result = await runtime.audit('s', { url: URL_ });
@@ -344,6 +350,66 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
       expect(result.consoleErrors.map((e) => e.text)).toEqual(['after-nav']);
       expect(result.observation.coversWholeDocument).toBe(true);
       expect(result.requestedUrl).toBe(URL_);
+    });
+
+    it("RA4b (GAP-262/GAP-264): scopes to the new page's main-frame COMMIT time, not the earlier navigate()-call time -- catches a regression to call-time scoping", async () => {
+      vi.useFakeTimers();
+      try {
+        // "Now" at the instant navigate() is about to be called.
+        vi.setSystemTime(new Date('2026-03-01T00:00:00.000Z'));
+        const mainFrame = {};
+        let framenavigatedCb: ((frame: unknown) => void) | undefined;
+        const page = fakePage({
+          on: vi.fn((event: string, cb: (frame: unknown) => void) => {
+            if (event === 'framenavigated') framenavigatedCb = cb;
+          }),
+          off: vi.fn(),
+          mainFrame: () => mainFrame,
+        });
+        const tab = fakeTab({
+          observingSince: '2020-01-01T00:00:00.000Z',
+          getConsoleLogs: () => [
+            // Logged by the OLD page, in the exact GAP-262 contamination window: AFTER
+            // navigate() is called but BEFORE the new document's frame actually commits. Must
+            // be EXCLUDED now that scoping uses commit time instead of call time -- under the
+            // old (reverted) call-time scoping this timestamp is >= call time and would wrongly
+            // survive.
+            { logType: 'error', text: 'old-page-during-transition', timestamp: '2026-03-01T00:00:00.250Z' },
+            { logType: 'error', text: 'new-page-after-commit', timestamp: '2026-03-01T00:00:01.000Z' },
+          ],
+        });
+        const runtime = new SutradharRuntime();
+        vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+        vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+        vi.spyOn(runtime, 'navigate').mockImplementation(async () => {
+          // Simulate real Puppeteer: the frame commits 500ms into navigate()'s own await --
+          // well after the old page's console error above, and well after call time.
+          vi.setSystemTime(new Date('2026-03-01T00:00:00.500Z'));
+          framenavigatedCb?.(mainFrame);
+          return { tabId: 't', url: URL_, title: 'T' } as any;
+        });
+        // documentStartedAt just after the real commit time, as it would be for real.
+        page.evaluate.mockResolvedValue({
+          issues: [],
+          webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 },
+          timeOrigin: Date.parse('2026-03-01T00:00:00.600Z'),
+          pageWasHidden: false,
+        });
+
+        // settleMs:0 still schedules a 0ms setTimeout inside audit() -- with fake timers active
+        // that never fires on its own, so drive it forward explicitly instead of awaiting the
+        // promise directly (which would hang for the test's whole timeout and leave fake timers
+        // stuck on for every test that runs after it).
+        const resultPromise = runtime.audit('s', { url: URL_, settleMs: 0 });
+        await vi.runAllTimersAsync();
+        const result = await resultPromise;
+
+        expect(result.consoleErrors.map((e) => e.text)).toEqual(['new-page-after-commit']);
+        expect(page.on).toHaveBeenCalledWith('framenavigated', expect.any(Function));
+        expect(page.off).toHaveBeenCalledWith('framenavigated', expect.any(Function));
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('RA5: a successful baseline is folded in with compareUrls called with (sessionId, baselineUrl, url, {tabId})', async () => {

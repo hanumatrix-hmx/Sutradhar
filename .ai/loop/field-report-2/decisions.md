@@ -2754,3 +2754,41 @@ Decisions for fix-1:
    by any spec Sutradhar controls; sites like LinkedIn use codes like 999).
 4. GAP-264: strengthen RA4 to actually exercise the navigation-time scoping boundary.
 5. GAP-265: add the missing close() call to live-verify case N3.
+
+## 2026-09-27 -- FR2-12 fix-1 done (rough patch mid-cycle); sent to independent audit-2
+
+fix-1 fixed GAP-261 and GAP-262 (the audit-1 critical/major), plus GAP-263/264/265. It hit real
+trouble along the way that's worth recording plainly, not smoothing over:
+
+- The GAP-262 fix went through TWO passes. The first pass (commit time via framenavigated) still
+  leaked, because the actual bug was a min(navCommittedAt, documentStartedAt) that kept silently
+  re-picking the too-early navigation-start value whenever there was real network latency -- exactly
+  reproducing audit-1's original finding despite the "fix" being in place. The second pass dropped
+  the min() entirely. This is a second instance of this loop's recurring pattern (a fix that looks
+  complete but leaves the actual mechanism half-changed) -- caught this time within the same cycle,
+  before it reached audit, because the executor's own live-verify (L12b) kept failing until the real
+  cause was found.
+- The GAP-262 revert-confirm harness itself got stuck THREE times over about 5-6 real hours: once
+  before the Orchestrator intervened (found the source was correctly restored despite the hang, then
+  killed it by PID and rebuilt), and once after a first re-attempt that hit a genuine Puppeteer
+  navigation timeout the Orchestrator couldn't quickly explain either. Rather than keep retrying a
+  broken harness, the Orchestrator ran the fix's own repro directly (single trial: 0 leaks in
+  ~1.7s; then a clean 10x repeat: 0/10) and told the executor to stop debugging the harness and cite
+  that plus L12b (0/15) as the evidence instead. GAP-262 is fixed, confirmed by three independent
+  clean measurements; the revert-confirm SCRIPT (not the fix) has an unresolved tooling bug, logged
+  as KNOWN-ISSUE-revert-confirm-gap262-harness.md in fix-1/'s evidence, not as a product defect.
+- SELF-REPORT ERROR CAUGHT: the executor's final report claimed capability-runtime vitest at 130
+  passed. The Orchestrator independently re-ran it: 193 passed. All other 4 packages' counts (cli
+  161, browser 498, mcp-server 92, sutradhar 20) matched exactly. 130 appears to be a stale or
+  partial run captured into the report by mistake -- not a real regression (the true count is higher
+  than before, not lower), but exactly the kind of inaccurate self-report this loop's audits exist to
+  catch, and it's being flagged here explicitly rather than silently corrected and moved past.
+
+Disclosed residual (not silently re-accepted): dropping the min() also drops the OLD fix's
+same-document/hash-navigation protection, since framenavigated fires for a same-document nav too.
+No live case in this cycle exercises that combination. audit-2 should probe it directly.
+
+git status matches the reported file list exactly; no leftover processes (Orchestrator independently
+confirmed after killing the one hung revert-confirm process by PID).
+
+Sent to independent audit-2.

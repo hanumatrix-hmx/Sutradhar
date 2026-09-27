@@ -273,12 +273,21 @@ async function getBroker(state: CliState): Promise<DialogBroker> {
 
 /** FR2-04: prints every `dialogHandled:`/`dialogPending:` line for this command (§2.8.4) and
  *  updates `state.lastPendingDialog`. Called at the end of every session verb, whether the verb
- *  finished normally or was pre-empted by a dialog. */
+ *  finished normally or was pre-empted by a dialog.
+ *
+ *  GAP-261 (FR2-12 audit-1, fix-1): in `--json` mode, `dialogHandled:`/`dialogPending:` lines must
+ *  NEVER reach stdout — a command like `audit --json` promises stdout is exactly one parseable
+ *  JSON document, and these plain-text lines (an accept policy handling a dialog mid-command, or
+ *  an alert opening and clearing again before the command finishes) would otherwise get appended
+ *  after that document, breaking any parser. They still carry real information, so they go to
+ *  stderr instead of being dropped — the same "notes never pollute --json stdout" precedent this
+ *  file's own `auditNotes` already established for D9's coverage caveats. */
 async function reportDialogs(runtime: SutradharRuntime, sessionId: string): Promise<void> {
+  const dialogLog = jsonMode ? console.error : console.log;
   const history = runtime.getDialogHistory(sessionId);
   for (const record of history) {
     if (record.handledAt && record.handledAt >= COMMAND_START_ISO) {
-      console.log(
+      dialogLog(
         formatDialogHandled({
           type: record.dialogType,
           message: record.message,
@@ -291,7 +300,7 @@ async function reportDialogs(runtime: SutradharRuntime, sessionId: string): Prom
   }
   const pending = runtime.getPendingDialogs(sessionId);
   for (const p of pending) {
-    console.log(formatDialogPending({ type: p.dialogType, message: p.message, defaultValue: p.defaultValue, url: p.url }));
+    dialogLog(formatDialogPending({ type: p.dialogType, message: p.message, defaultValue: p.defaultValue, url: p.url }));
   }
   if (pending.length > 0) {
     console.error(DIALOG_HINT(pending[0]!.dialogType));
@@ -309,6 +318,38 @@ async function reportDialogs(runtime: SutradharRuntime, sessionId: string): Prom
   }
 }
 
+/** GAP-261: the single JSON document printed to stdout, in `--json` mode only, when a dialog
+ *  blocks a command entirely (either the gate refused to even start it, or it pre-empted a
+ *  running command past its grace period) — the schema's own `dialogPending`/`dialogsHandled`
+ *  keys (audit-report.schema.json, D2.4), but standalone rather than nested in a full
+ *  `AuditReport` (there is no report at all in the blocked case: the command never got far enough
+ *  to produce one). Not audit-specific — `jsonMode` is a global CLI flag, and any `--json` command
+ *  a dialog blocks must keep the same "stdout is always exactly one parseable document" guarantee. */
+function dialogBlockedJsonDoc(
+  message: string,
+  dialogs: readonly PendingDialogEntry[],
+  handled: readonly { dialog: PendingDialogEntry; action: 'accept' | 'dismiss'; promptText?: string }[] = [],
+): string {
+  const first = dialogs[0];
+  return JSON.stringify(
+    {
+      error: message,
+      dialogPending: first
+        ? { type: first.dialogType, message: first.message, defaultValue: first.defaultValue ?? null, url: first.url }
+        : null,
+      dialogsHandled: handled.map((r) => ({
+        type: r.dialog.dialogType,
+        message: r.dialog.message,
+        action: r.action,
+        promptText: r.promptText ?? null,
+        by: 'policy',
+      })),
+    },
+    null,
+    2,
+  );
+}
+
 async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string) => Promise<T>): Promise<T> {
   const runtime = new SutradharRuntime({ logger, allowedDomains: allowlistDomainsFlag });
   activeRuntime = runtime;
@@ -324,8 +365,12 @@ async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string)
       const broker = await getBroker(state);
       const result = await runDialogGate(verb, broker, policy, 'command');
       if (result.status === 'handled') {
+        // GAP-261: same stdout/stderr split as `reportDialogs` — an accept/dismiss policy
+        // resolving a dialog LEFT OVER from an earlier command must never print to stdout ahead
+        // of a `--json` command's own JSON document.
+        const dialogLog = jsonMode ? console.error : console.log;
         for (const r of result.records) {
-          console.log(
+          dialogLog(
             formatDialogHandled({ type: r.dialog.dialogType, message: r.dialog.message, action: r.action, promptText: r.promptText, by: 'policy' }),
           );
         }
@@ -415,11 +460,21 @@ async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string)
       finalExitCode = 0;
       return undefined as T;
     }
-    if (verb === 'nav') {
+    if (verb === 'nav' && !jsonMode) {
       console.log(`Navigation to ${cleanArgs[0] ?? ''} started, but the page opened a ${dialogType} dialog while loading.`);
     }
     await reportDialogs(runtime, sessionId);
-    console.error(`Error: a ${dialogType} dialog opened while "${verb}" was running and is blocking the page; "${verb}" did not complete (it may have partially run).`);
+    const blockedMessage = `a ${dialogType} dialog opened while "${verb}" was running and is blocking the page; "${verb}" did not complete (it may have partially run).`;
+    // GAP-261 ("mid-audit alert" shape): a dialog that opens WHILE a guarded command (e.g.
+    // `audit --json`) is already running and stays open past the pre-emption grace period lands
+    // here. In `--json` mode stdout must still be exactly one parseable document — print the
+    // blocked-JSON shape instead of leaving stdout empty (empty stdout is not a valid document
+    // either) and keep the human-readable message on stderr as before.
+    if (jsonMode) {
+      console.log(dialogBlockedJsonDoc(blockedMessage, raced.pending));
+    } else {
+      console.error(`Error: ${blockedMessage}`);
+    }
     finalExitCode = 3;
     return undefined as T;
   }
@@ -697,15 +752,14 @@ async function cmdScreenshot(outPath: string | undefined) {
  * partial output on a fatal error (D2.6). D2.7: the outDir is created BEFORE any session work,
  * so a bad outDir (T4) fails fast instead of wasting a whole audit run on Chrome.
  *
- * D2.4 (FR2-04 dialog lines in --json mode): FR2-07's `{json:true}` verb-level switch this was
- * meant to piggy-back on hasn't landed in this worktree (still at SPEC), so `dialogPending`/
- * `dialogsHandled` are simply left off the report — the spec's own documented fallback for "FR2-04
- * isn't there" also covers "FR2-04 is there but its --json switch isn't". `reportDialogs` itself
- * (FR2-04, untouched by this item) still unconditionally logs `dialogPending:`/`dialogHandled:`
- * lines when a dialog actually exists, independent of `--json` — a pre-existing, whole-CLI gap
- * this item doesn't introduce or attempt to fix; none of this item's own fixtures open a dialog
- * during a normal audit run, so it never corrupts `--json` stdout in practice here (see the final
- * report's deviations section).
+ * D2.4/GAP-261 (fix-1): dialog output must NEVER reach stdout in `--json` mode. `reportDialogs`
+ * and the session gate now route `dialogPending:`/`dialogHandled:` lines to stderr instead of
+ * stdout whenever `jsonMode` is set (see `reportDialogs`'s own doc comment) — covers a dialog
+ * left over from an earlier command (gate, `withSession`'s pre-emption branches) and one an
+ * accept policy resolves mid-command. The one shape neither of those covers is `runtime.audit()`
+ * itself throwing because the audited page already has (or opens) a dialog it can't get past
+ * (D11) — caught below so a `--json` run still prints exactly one JSON document on stdout
+ * instead of leaving it empty and falling through to `main().catch`'s generic `Fatal:` path.
  */
 async function cmdAudit(url: string | undefined, outDir: string | undefined) {
   let dir: string;
@@ -715,10 +769,30 @@ async function cmdAudit(url: string | undefined, outDir: string | undefined) {
     printErrorAndExit((e as Error).message);
   }
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.audit(sessionId, {
-      ...(url ? { url } : {}),
-      ...(baselineFlag ? { baselineUrl: baselineFlag } : {}),
-    });
+    let result;
+    try {
+      result = await runtime.audit(sessionId, {
+        ...(url ? { url } : {}),
+        ...(baselineFlag ? { baselineUrl: baselineFlag } : {}),
+      });
+    } catch (err) {
+      // GAP-261 ("mid-audit alert" shape, D11): a dialog blocked the audit itself, not the CLI's
+      // own gate — no `DialogBlockedError` involved, so `main().catch` would otherwise never see
+      // this as a dialog case at all. Reconstruct the same blocked-JSON shape directly here, but
+      // ONLY when a dialog is actually why it failed — any other failure (a blocked-domain
+      // allowlist rejection, a closed tab, etc.) must keep going through the normal `throw` below
+      // so `main().catch`'s existing "empty stdout, Fatal: on stderr, exit 1" contract for a
+      // genuinely fatal (non-dialog) error is unchanged.
+      const pending = jsonMode ? (runtime.getPendingDialogs(sessionId) as PendingDialogEntry[]) : [];
+      if (jsonMode && pending.length > 0) {
+        console.log(dialogBlockedJsonDoc((err as Error).message, pending));
+        console.error(`Error: ${(err as Error).message}`);
+        finalExitCode = 3;
+        process.exitCode = 3;
+        return;
+      }
+      throw err;
+    }
     const report = await writeAuditArtifacts(result, dir);
 
     for (const note of auditNotes(report)) console.error(note);
@@ -1565,11 +1639,21 @@ if (verb === '__dialog-warden') {
   main()
     .catch((err) => {
       if (err instanceof DialogBlockedError) {
-        // FR2-04 fix-3/GAP-242: print any dialogs THIS gate run already resolved before it hit
-        // the condition that made it block anyway (a chain limit, a probe timeout) — dropping
-        // these silently would make real, completed work invisible to the caller.
-        for (const line of err.handledStdoutLines()) console.log(line);
-        for (const line of err.stdoutLines()) console.log(line);
+        // GAP-261 (default-policy shape): the gate refuses to even start the command while a
+        // dialog is open (or the report/default policy just leaves it reported). In `--json` mode
+        // this used to REPLACE the JSON document with raw `dialogPending:`/`dialogHandled:` text
+        // lines on stdout — exactly the "stdout isn't valid JSON any more" bug this fixes. stdout
+        // must still carry exactly one parseable document, so print the blocked-JSON shape there
+        // instead and move the human-readable lines to stderr.
+        if (jsonMode) {
+          console.log(dialogBlockedJsonDoc(err.message, err.dialogs, err.handledRecords));
+        } else {
+          // FR2-04 fix-3/GAP-242: print any dialogs THIS gate run already resolved before it hit
+          // the condition that made it block anyway (a chain limit, a probe timeout) — dropping
+          // these silently would make real, completed work invisible to the caller.
+          for (const line of err.handledStdoutLines()) console.log(line);
+          for (const line of err.stdoutLines()) console.log(line);
+        }
         console.error(`Error: ${err.message}`);
         console.error(DIALOG_HINT(err.dialogs[0]?.dialogType ?? 'unknown'));
         finalExitCode = err.exitCode;

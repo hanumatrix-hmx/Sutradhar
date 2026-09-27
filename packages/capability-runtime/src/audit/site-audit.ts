@@ -175,8 +175,11 @@ export function scopeToDocument<T extends { readonly timestamp: string }>(
  *  (see `SutradharRuntime.audit`'s D9 comment for the exact rule). */
 export function computeObservation(input: {
   readonly mode: 'navigated' | 'current-page';
-  /** Node ISO time taken immediately before `navigate()`, navigated mode only. */
-  readonly navStartedAt: string | null;
+  /** GAP-262 fix-1: Node ISO time of the new page's main-frame COMMIT (`framenavigated`),
+   *  navigated mode only — NOT when `navigate()` was merely called. Scoping by call time left a
+   *  real contamination window open (the old page keeps running until the new one actually
+   *  commits); see `SutradharRuntime.audit`'s doc comment for the full history (B1 -> GAP-262). */
+  readonly navCommittedAt: string | null;
   /** `performance.timeOrigin` (epoch ms) read from the page, or null if unavailable. */
   readonly timeOrigin: number | null;
   /** `BrowserTab.observingSince`, or null if the tab implementation doesn't expose it. */
@@ -190,14 +193,25 @@ export function computeObservation(input: {
 
   let since: string | null;
   if (input.mode === 'navigated') {
-    // min(navStartedAt, documentStartedAt): keeps the whole document on a same-document (hash)
-    // navigation (documentStartedAt predates navStartedAt there), and is robust to a browser
-    // clock running ahead of Node (documentStartedAt would otherwise look "later" than reality).
-    if (input.navStartedAt !== null && documentStartedAt !== null) {
-      since = input.navStartedAt <= documentStartedAt ? input.navStartedAt : documentStartedAt;
-    } else {
-      since = input.navStartedAt ?? documentStartedAt;
-    }
+    // GAP-262 fix-1 (audit-1 finding, decisions.md 2026-09-27): `since` is `navCommittedAt`
+    // DIRECTLY when available -- NOT `min()`'d against `documentStartedAt` as the original (B1)
+    // fix did. `performance.timeOrigin` reflects roughly when the browser STARTED the navigation
+    // (close to the old, buggy call-time value), not when the new document actually committed --
+    // for any response with real network latency, `min()` kept picking that too-early start time
+    // over the real (later) commit instant, silently reopening the exact contamination window
+    // this fix exists to close. audit-1 verified live that only the direct commit-time value
+    // eliminates the leak (0/10 repeats; `min()` still leaked 15/15 in this worktree's own
+    // fix-1 live-verify, matching audit-1's original finding of a leak at ~150ms).
+    //
+    // Trade-off, disclosed rather than silently accepted: the old `min()` also protected a
+    // same-document (hash/pushState) navigation, where `documentStartedAt` legitimately predates
+    // the moment `framenavigated` fires again for that same document -- `since` could exclude
+    // real, still-relevant activity from earlier in that document's life. Puppeteer's own
+    // `framenavigated` fires for a same-document navigation too, so `navCommittedAt` updates on
+    // one of those the same as a real cross-document navigation. No live case in this fix-1 round
+    // exercises that specific combination; flagged as a residual for a future item rather than
+    // re-introducing the leak to guard against it here.
+    since = input.navCommittedAt ?? documentStartedAt;
   } else {
     since = documentStartedAt;
   }
