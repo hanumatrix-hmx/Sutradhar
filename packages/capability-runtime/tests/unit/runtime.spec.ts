@@ -327,6 +327,102 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
       expect(result.baseline).toBeNull();
     });
 
+    it('RA3b (GAP-278 escalation-1 kill): current-page mode scopes by the tab\'s own tracked main-frame COMMIT time, not performance.timeOrigin, when the tab exposes getLastMainFrameCommitAt', async () => {
+      // The exact GAP-278 shape: a previous page's own console error/broken-request, timestamped
+      // by Node AFTER the new document's `performance.timeOrigin` (navigation START) but BEFORE
+      // its real commit -- e.g. because the CDP message carrying it was delayed in flight. A
+      // regression to `documentStartedAt`-only scoping in current-page mode would wrongly keep
+      // this (it's >= timeOrigin), exactly like B1/GAP-262 did for navigated mode before fix-1.
+      const page = fakePage(); // timeOrigin: TIME_ORIGIN = 2026-01-01T00:00:10.000Z
+      const realCommitAt = '2026-01-01T00:00:12.000Z'; // after timeOrigin, the real commit instant
+      const tab = fakeTab({
+        observingSince: '2020-01-01T00:00:00.000Z',
+        getLastMainFrameCommitAt: () => realCommitAt,
+        getConsoleLogs: () => [
+          // Timestamped after timeOrigin but before the real commit -- must be EXCLUDED now.
+          { logType: 'error', text: 'old-page-in-contamination-window', timestamp: '2026-01-01T00:00:11.000Z' },
+          { logType: 'error', text: 'new-page-after-commit', timestamp: '2026-01-01T00:00:13.000Z' },
+        ],
+        getNetworkLog: () => [
+          { phase: 'response', url: 'http://x/old-404', status: 404, timestamp: '2026-01-01T00:00:11.500Z' },
+          { phase: 'response', url: 'http://x/new-500', status: 500, timestamp: '2026-01-01T00:00:13.500Z' },
+        ],
+      });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+
+      const result = await runtime.audit('s');
+
+      expect(result.consoleErrors.map((e) => e.text)).toEqual(['new-page-after-commit']);
+      expect(result.brokenRequests).toEqual([{ url: 'http://x/new-500', status: 500 }]);
+      expect(result.observation.mode).toBe('current-page');
+      // Real commit is after observingSince, so this document's activity is fully covered.
+      expect(result.observation.coversWholeDocument).toBe(true);
+    });
+
+    it('RA3c (GAP-278): current-page mode falls back to documentStartedAt when the tab has no getLastMainFrameCommitAt at all (mock-compatibility / older BrowserTab)', async () => {
+      const page = fakePage();
+      const tab = fakeTab({
+        observingSince: '2020-01-01T00:00:00.000Z',
+        getConsoleLogs: () => [
+          { logType: 'error', text: 'before-timeorigin', timestamp: '2026-01-01T00:00:09.000Z' },
+          { logType: 'error', text: 'after-timeorigin', timestamp: '2026-01-01T00:00:11.000Z' },
+        ],
+      });
+      delete (tab as any).getLastMainFrameCommitAt;
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+
+      const result = await runtime.audit('s');
+
+      expect(result.consoleErrors.map((e) => e.text)).toEqual(['after-timeorigin']);
+    });
+
+    it('RA3d (GAP-278): current-page mode falls back to documentStartedAt when getLastMainFrameCommitAt exists but returns null (tracking not wired up in time)', async () => {
+      const page = fakePage();
+      const tab = fakeTab({
+        observingSince: '2020-01-01T00:00:00.000Z',
+        getLastMainFrameCommitAt: () => null,
+        getConsoleLogs: () => [
+          { logType: 'error', text: 'before-timeorigin', timestamp: '2026-01-01T00:00:09.000Z' },
+          { logType: 'error', text: 'after-timeorigin', timestamp: '2026-01-01T00:00:11.000Z' },
+        ],
+      });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+
+      const result = await runtime.audit('s');
+
+      expect(result.consoleErrors.map((e) => e.text)).toEqual(['after-timeorigin']);
+    });
+
+    it('RA3e (GAP-278): current-page mode never reads getLastMainFrameCommitAt/getLastMainDocumentResponse in NAVIGATED mode -- those stay the tab-level source exclusively for current-page mode', async () => {
+      const cdp = { send: vi.fn(async () => undefined), on: vi.fn(), detach: vi.fn(async () => undefined) };
+      const page = fakePage({ createCDPSession: vi.fn(async () => cdp) });
+      const tabLevelCommitAt = vi.fn(() => '2099-01-01T00:00:00.000Z'); // absurd value -- must NOT be used
+      const tab = fakeTab({
+        observingSince: '2020-01-01T00:00:00.000Z',
+        getLastMainFrameCommitAt: tabLevelCommitAt,
+        getConsoleLogs: () => [{ logType: 'error', text: 'e', timestamp: '2026-01-01T00:00:10.500Z' }],
+      });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+      vi.spyOn(runtime, 'navigate').mockResolvedValue({ tabId: 't', url: URL_, title: 'T' } as any);
+
+      const result = await runtime.audit('s', { url: URL_, settleMs: 0 });
+
+      // If navigated mode wrongly consulted the tab-level getter, `since` would jump to
+      // 2099-01-01 and drop the console error above; navigated mode's own per-call
+      // `navCommittedAt` (null here, no CDP events fired) means it falls back to
+      // documentStartedAt (TIME_ORIGIN) instead, which keeps it.
+      expect(result.consoleErrors.map((e) => e.text)).toEqual(['e']);
+      expect(tabLevelCommitAt).not.toHaveBeenCalled();
+    });
+
     it('RA4: navigated mode only keeps entries at/after the navigated document\'s own start, coversWholeDocument true', async () => {
       const page = fakePage();
       const tab = fakeTab({
@@ -715,6 +811,70 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
       expect(result.brokenRequests).toEqual([{ url: URL_, status: 500 }]);
     });
 
+    it('RA13b (GAP-279): when live CDP capture never fires (e.g. Network.enable took effect too late, such as a dialog open when audit({url}) starts), the response navigate()\'s own page.goto() returned is used instead of the URL-match ring-buffer fallback', async () => {
+      const cdp = fakeCdpSession(); // fires no events at all -- simulates live capture never getting set up in time
+      const page = fakePage({
+        createCDPSession: vi.fn(async () => cdp),
+        // Final page.url() has moved on, exactly the GAP-273 shape the URL-match fallback fails
+        // on -- this test only passes if getLastGotoResponse (not the URL match) is what feeds
+        // brokenRequests here.
+        url: () => `${URL_}#moved-on`,
+      });
+      const tab = fakeTab({
+        observingSince: '2020-01-01T00:00:00.000Z',
+        getNetworkLog: () => [], // deliberately empty -- the URL-match fallback finds nothing
+        getLastGotoResponse: () => ({ url: URL_, status: 404 }),
+      });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+      vi.spyOn(runtime, 'navigate').mockResolvedValue({ tabId: 't', url: URL_, title: 'T' } as any); // no CDP events fired
+      page.evaluate.mockResolvedValue({ issues: [], webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 }, timeOrigin: Date.parse('2026-01-01T00:00:10.000Z'), pageWasHidden: false });
+
+      const result = await runtime.audit('s', { url: URL_, settleMs: 0 });
+
+      expect(result.brokenRequests).toEqual([{ url: URL_, status: 404 }]);
+    });
+
+    it('RA13c (GAP-279): the live CDP capture still wins over getLastGotoResponse when both are available', async () => {
+      const cdp = fakeCdpSession();
+      const page = fakePage({ createCDPSession: vi.fn(async () => cdp) });
+      const tab = fakeTab({
+        observingSince: '2020-01-01T00:00:00.000Z',
+        getNetworkLog: () => [],
+        getLastGotoResponse: () => ({ url: URL_, status: 599 }), // must NOT be used
+      });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+      vi.spyOn(runtime, 'navigate').mockImplementation(async () => {
+        cdp.fireMainFrameNavigated();
+        cdp.fireDocumentResponse('main', URL_, 404); // the real live-captured response
+        return { tabId: 't', url: URL_, title: 'T' } as any;
+      });
+      page.evaluate.mockResolvedValue({ issues: [], webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 }, timeOrigin: Date.parse('2026-01-01T00:00:10.000Z'), pageWasHidden: false });
+
+      const result = await runtime.audit('s', { url: URL_, settleMs: 0 });
+
+      expect(result.brokenRequests).toEqual([{ url: URL_, status: 404 }]);
+    });
+
+    it('RA13d (GAP-279): getLastGotoResponse is never consulted in current-page mode', async () => {
+      const page = fakePage();
+      const tab = fakeTab({
+        observingSince: '2020-01-01T00:00:00.000Z',
+        getNetworkLog: () => [],
+        getLastGotoResponse: () => ({ url: URL_, status: 599 }), // must NOT be used -- no navigate() happened
+      });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+
+      const result = await runtime.audit('s');
+
+      expect(result.brokenRequests).toEqual([]);
+    });
+
     it('RA14 (GAP-274): a Page.enable that never resolves does not block audit() past the bounded setup window, and the session is still detached', async () => {
       const cdp = fakeCdpSession();
       let neverResolves: Promise<unknown> | null = null;
@@ -760,6 +920,87 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
 
       expect(cdp.detach).toHaveBeenCalled();
     });
+
+    it('RA16 (GAP-280 M7 kill): the CDP session is still detached when client.on() itself throws synchronously right after the session was created -- kills a mutation that clears cdpClient inside that catch before the finally block runs', async () => {
+      // audit-4's own finding: RA15 rejects INSIDE boundedFireAndForget's swallowed inner catch,
+      // which never reaches the outer `try { const client = await createCDPSession(); ... }
+      // catch { ... }` block at all -- so a mutation that nulls `cdpClient` inside THAT outer
+      // catch survives RA15 untouched. This forces that exact catch to run AFTER `cdpClient` has
+      // already been assigned, by making `client.on()` throw synchronously (a plausible failure
+      // mode -- a Puppeteer/CDP transport in a bad state).
+      const cdp = fakeCdpSession();
+      const originalOn = cdp.on;
+      cdp.on = vi.fn((event: string, cb: (event: unknown) => void) => {
+        if (event === 'Page.frameNavigated') {
+          throw new Error('boom - client.on threw synchronously');
+        }
+        return originalOn(event, cb);
+      }) as any;
+      const page = fakePage({ createCDPSession: vi.fn(async () => cdp) });
+      const tab = fakeTab({ observingSince: '2020-01-01T00:00:00.000Z', getNetworkLog: () => [] });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+      vi.spyOn(runtime, 'navigate').mockResolvedValue({ tabId: 't', url: URL_, title: 'T' } as any);
+      page.evaluate.mockResolvedValue({ issues: [], webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 }, timeOrigin: Date.parse('2026-01-01T00:00:10.000Z'), pageWasHidden: false });
+
+      const result = await runtime.audit('s', { url: URL_, settleMs: 0 });
+
+      expect(result.url).toBe(URL_);
+      expect(cdp.detach).toHaveBeenCalled();
+    });
+
+    it('RA17 (GAP-280 M10 kill): Network.enable is sent during the per-call commit-tracking setup, not just Page.enable -- kills a mutation that removes it entirely (audit-4: live GAP-273 shapes go to 0/2 under this mutation)', async () => {
+      const cdp = fakeCdpSession();
+      const page = fakePage({ createCDPSession: vi.fn(async () => cdp) });
+      const tab = fakeTab({ observingSince: '2020-01-01T00:00:00.000Z', getNetworkLog: () => [] });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+      vi.spyOn(runtime, 'navigate').mockResolvedValue({ tabId: 't', url: URL_, title: 'T' } as any);
+      page.evaluate.mockResolvedValue({ issues: [], webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 }, timeOrigin: Date.parse('2026-01-01T00:00:10.000Z'), pageWasHidden: false });
+
+      await runtime.audit('s', { url: URL_, settleMs: 0 });
+
+      expect(cdp.send).toHaveBeenCalledWith('Page.enable');
+      expect(cdp.send).toHaveBeenCalledWith('Network.enable');
+    });
+
+    it('RA18 (GAP-280 M9 kill): client.send() throwing synchronously (bypassing every inline `.catch()` inside the setup IIFE, since the throw happens before `.catch` is even reached) never becomes an unhandled promise rejection', async () => {
+      // audit-4's own live repro for M9 (probe-leak-paths.mjs's "send throws synchronously"
+      // case) is what actually distinguishes this mutation: a LATE rejection of the
+      // `client.send('Page.enable')` promise itself is already caught by that call's own inline
+      // `.catch(() => {})` regardless of M9 -- that's a different, already-handled layer. M9's
+      // mutation only matters for the IIFE's own aggregate `work` promise, which only ever
+      // rejects when something throws BEFORE any `.catch()`/try-catch inside it can attach --
+      // e.g. `client.send` itself throwing synchronously rather than returning a promise.
+      const unhandled: unknown[] = [];
+      const onUnhandled = (reason: unknown) => unhandled.push(reason);
+      process.on('unhandledRejection', onUnhandled);
+      try {
+        const cdp = fakeCdpSession();
+        cdp.send = vi.fn(() => {
+          throw new Error('sync send throw');
+        }) as any;
+        const page = fakePage({ createCDPSession: vi.fn(async () => cdp) });
+        const tab = fakeTab({ observingSince: '2020-01-01T00:00:00.000Z', getNetworkLog: () => [] });
+        const runtime = new SutradharRuntime();
+        vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+        vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+        vi.spyOn(runtime, 'navigate').mockResolvedValue({ tabId: 't', url: URL_, title: 'T' } as any);
+        page.evaluate.mockResolvedValue({ issues: [], webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 }, timeOrigin: Date.parse('2026-01-01T00:00:10.000Z'), pageWasHidden: false });
+
+        const result = await runtime.audit('s', { url: URL_, settleMs: 0 });
+        expect(result.url).toBe(URL_);
+
+        // Give Node's unhandledRejection detection a chance to run (it's queued, not synchronous).
+        await new Promise((r) => setTimeout(r, 50));
+
+        expect(unhandled).toEqual([]);
+      } finally {
+        process.off('unhandledRejection', onUnhandled);
+      }
+    }, 10000);
 
     it('RA5: a successful baseline is folded in with compareUrls called with (sessionId, baselineUrl, url, {tabId})', async () => {
       const page = fakePage();

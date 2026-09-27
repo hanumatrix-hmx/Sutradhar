@@ -3063,3 +3063,47 @@ Decisions for escalation-1 (binding):
 Escalation-1 should re-run the FULL audit-1 through audit-4 attack surface, given this item's
 established pattern, with particular attention to whether the current-page fix interacts with
 anything URL-mode's fixes depend on (they share runtime.ts's audit() method).
+
+## 2026-09-28 -- FR2-12 escalation-1 done; sent to independent audit-5
+
+Executor (Sonnet) self-report, independently spot-checked by the Orchestrator (vitest browser 507
+and capability-runtime 214 re-run directly: exact match; git status matches the reported file list
+exactly; 0 leftover processes).
+
+GAP-278: fixed by making the tab itself track its own last main-frame commit time continuously
+(a tab-LIFETIME CDP session, fire-and-forget from the BrowserTab constructor, not a per-audit-call
+session), and having current-page mode read that instead of leaving navCommittedAt null. This
+deliberately reuses URL-mode's already-proven Page.frameNavigated-based mechanism rather than
+building a second, parallel implementation of the same concept -- the executor investigated the
+alternative (an in-page performance.timeOrigin + responseStart read) and preferred the shared
+mechanism as decisions.md directed. Live: 0/5 leaked at each of runtime x150ms, runtime x800ms,
+MCP x150ms, MCP x800ms (was 15/15 runtime realistic, 10/10 MCP); 0/15 at instant response (audit-4's
+hardest case, was 4/10). Revert-confirm reproduces 5/5 leaked in all 4 mode/timing combinations when
+neutralized, sha-verified restore.
+
+GAP-279: page.goto()'s own return value added as a fallback tier before the URL-match last resort,
+so a missed live-capture window no longer falls all the way back to the fragile URL-match approach.
+DISCLOSED LIMITATION, not hidden: this is proven at the unit level (RA13b/c/d) and via revert-confirm,
+but the executor did NOT re-run a fresh live-browser dialog-open repro this cycle (time-boxed).
+audit-5 should attempt that live repro independently before treating GAP-279 as fully closed.
+
+GAP-280: RA16/17/18 added, killing M7/M9/M10. Root-caused why the ORIGINAL RA15 test (from fix-3)
+didn't already catch M9: an inner .catch already swallows a late rejection at a lower layer, so the
+bounded-timeout helper's own rejection handler can only ever see a rejection when something throws
+BEFORE that inner catch attaches -- confirmed live via audit-4's own probe-leak-paths.mjs
+synchronous-throw case, then encoded as the new RA18.
+
+Full test suite: browser 507 (+9) / capability-runtime 214 (+10) / cli 171 / mcp-server 92 /
+sutradhar 20 = 1004 total, independently re-run for browser+capability-runtime and matching exactly.
+Re-verification: audit-1's own comprehensive probe re-run unmodified against the fixed build (B2,
+the original B1 residual shape, all edge cases) all pass; new browser-package tests (CT1-9)
+independently exercise the new tab-level tracking (sub-frame exclusion, frameId-keyed document
+response with last-wins, detach-on-close, detach-survives-a-throwing-listener). DISCLOSED, not
+hidden: did not exhaustively re-run every individual audit-2/3/4 probe script by name this cycle
+(dozens of files) -- relied on the master repros plus the now-1004-test unit suite, which encodes
+those cycles' fixes as RA4b-RA18. One pre-existing, unrelated flake noted in a CLS-precision check
+(/manyshift, a numeric-tolerance timing variance in web-vitals capture, not a contamination issue),
+not investigated further as out of this escalation's scope.
+
+Sent to independent audit-5. This is escalation cycle 1 of 2 -- if audit-5 fails with a critical or
+major finding, one more escalation cycle remains before FR2-12 would be marked BLOCKED.

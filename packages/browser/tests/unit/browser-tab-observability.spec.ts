@@ -561,3 +561,178 @@ describe('@sutradhar/browser BrowserTab observingSince (FR2-12)', () => {
     expect(parsed).toBeLessThanOrEqual(after + 1000);
   });
 });
+
+/** FR2-12 escalation-1 (GAP-278). A fake CDPSession standing in for `page.createCDPSession()` --
+ *  mirrors capability-runtime's own `fakeCdpSession()` helper (runtime.spec.ts) exactly, since
+ *  this is testing the SAME mechanism generalized to tab-lifetime scope. */
+function fakeCdpSession() {
+  const listeners = new Map<string, ((event: unknown) => void)[]>();
+  const session = {
+    send: vi.fn(async () => undefined),
+    on: vi.fn((event: string, cb: (event: unknown) => void) => {
+      const arr = listeners.get(event) ?? [];
+      arr.push(cb);
+      listeners.set(event, arr);
+    }),
+    detach: vi.fn(async () => undefined),
+    fireMainFrameNavigated(frameId = 'main'): void {
+      for (const cb of listeners.get('Page.frameNavigated') ?? []) cb({ frame: { id: frameId } });
+    },
+    fireSubFrameNavigated(): void {
+      for (const cb of listeners.get('Page.frameNavigated') ?? []) cb({ frame: { id: 'child', parentId: 'main' } });
+    },
+    fireDocumentResponse(frameId: string, respUrl: string, status: number): void {
+      for (const cb of listeners.get('Network.responseReceived') ?? []) {
+        cb({ frameId, type: 'Document', response: { url: respUrl, status } });
+      }
+    },
+  };
+  return session;
+}
+
+describe('@sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278)', () => {
+  it('CT1: getLastMainFrameCommitAt is null before any commit is observed, and before commit-tracking has finished wiring up', () => {
+    const { page } = mockPage();
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+
+    expect(tab.getLastMainFrameCommitAt()).toBeNull();
+    expect(tab.getLastMainDocumentResponse()).toBeNull();
+  });
+
+  it('CT2: records the main frame\'s commit instant via a dedicated CDP session created at construction, ignoring a sub-frame commit', async () => {
+    const cdp = fakeCdpSession();
+    const { page } = mockPage({ createCDPSession: vi.fn(async () => cdp) });
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+
+    // setupCommitTracking is fire-and-forget from the constructor -- let its awaits
+    // (createCDPSession, the two client.on registrations, Page.enable, Network.enable) actually
+    // run before firing events or asserting on `cdp.send`.
+    await new Promise((r) => setTimeout(r, 0));
+
+    cdp.fireSubFrameNavigated();
+    expect(tab.getLastMainFrameCommitAt()).toBeNull();
+
+    const before = Date.now();
+    cdp.fireMainFrameNavigated();
+    const after = Date.now();
+
+    const commitAt = tab.getLastMainFrameCommitAt();
+    expect(commitAt).not.toBeNull();
+    const parsed = Date.parse(commitAt!);
+    expect(parsed).toBeGreaterThanOrEqual(before);
+    expect(parsed).toBeLessThanOrEqual(after);
+    expect(cdp.send).toHaveBeenCalledWith('Page.enable');
+    expect(cdp.send).toHaveBeenCalledWith('Network.enable');
+  });
+
+  it("CT3: records the main document's own live response, keyed by frameId -- never a non-Document resource, never a sub-frame's response", async () => {
+    const cdp = fakeCdpSession();
+    const { page } = mockPage({ createCDPSession: vi.fn(async () => cdp) });
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    cdp.fireMainFrameNavigated('main');
+    cdp.fireDocumentResponse('other-frame', 'https://example.com/iframe', 500);
+    expect(tab.getLastMainDocumentResponse()).toBeNull();
+
+    cdp.fireDocumentResponse('main', 'https://example.com/', 404);
+    expect(tab.getLastMainDocumentResponse()).toMatchObject({ url: 'https://example.com/', status: 404 });
+
+    // A later hop for the same frame (e.g. a redirect chain's final leg) overwrites the earlier
+    // one -- "keep the LAST" policy, matching runtime.ts's per-call tracking exactly.
+    cdp.fireDocumentResponse('main', 'https://example.com/final', 200);
+    expect(tab.getLastMainDocumentResponse()).toMatchObject({ url: 'https://example.com/final', status: 200 });
+  });
+
+  it('CT4 (GAP-278 kill): a SECOND real commit updates getLastMainFrameCommitAt again -- this is what lets current-page-mode audit() scope to the NEWEST document, not the tab\'s very first one', async () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date('2026-09-01T00:00:00.000Z'));
+      const cdp = fakeCdpSession();
+      const { page } = mockPage({ createCDPSession: vi.fn(async () => cdp) });
+      const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+      await vi.advanceTimersByTimeAsync(0);
+
+      cdp.fireMainFrameNavigated();
+      expect(tab.getLastMainFrameCommitAt()).toBe('2026-09-01T00:00:00.000Z');
+
+      vi.setSystemTime(new Date('2026-09-01T00:00:05.000Z'));
+      cdp.fireMainFrameNavigated();
+      expect(tab.getLastMainFrameCommitAt()).toBe('2026-09-01T00:00:05.000Z');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('CT5: when createCDPSession is unavailable, both getters simply stay null forever (no throw, no crash)', async () => {
+    const { page } = mockPage(); // no createCDPSession
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(tab.getLastMainFrameCommitAt()).toBeNull();
+    expect(tab.getLastMainDocumentResponse()).toBeNull();
+  });
+
+  it('CT6: close() detaches the commit-tracking CDP session', async () => {
+    const cdp = fakeCdpSession();
+    const { page } = mockPage({
+      createCDPSession: vi.fn(async () => cdp),
+      close: vi.fn().mockResolvedValue(undefined),
+    });
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    await tab.close();
+
+    expect(cdp.detach).toHaveBeenCalled();
+  });
+
+  it('CT7 (GAP-280-style leak kill, tab-level): the CDP session is still detached at close() even when client.on() threw synchronously right after creation', async () => {
+    const cdp = fakeCdpSession();
+    const originalOn = cdp.on;
+    cdp.on = vi.fn((event: string, cb: (event: unknown) => void) => {
+      if (event === 'Page.frameNavigated') {
+        throw new Error('boom - client.on threw synchronously');
+      }
+      return originalOn(event, cb);
+    }) as any;
+    const { page } = mockPage({
+      createCDPSession: vi.fn(async () => cdp),
+      close: vi.fn().mockResolvedValue(undefined),
+    });
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    await tab.close();
+
+    expect(cdp.detach).toHaveBeenCalled();
+  });
+
+  it('CT8 (GAP-279): navigate() captures its own page.goto() response via getLastGotoResponse, independent of any CDP listener', async () => {
+    const gotoResponse = { url: () => 'https://example.com/final', status: () => 404 };
+    const { page } = mockPage({ goto: vi.fn().mockResolvedValue(gotoResponse), title: vi.fn().mockResolvedValue('T') });
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+
+    expect(tab.getLastGotoResponse()).toBeNull();
+
+    await tab.navigate('https://example.com/start');
+
+    expect(tab.getLastGotoResponse()).toEqual({ url: 'https://example.com/final', status: 404 });
+  });
+
+  it('CT9: getLastGotoResponse is null when goto() itself resolves to null (e.g. a same-document navigation)', async () => {
+    const { page } = mockPage({ goto: vi.fn().mockResolvedValue(null), title: vi.fn().mockResolvedValue('T') });
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+
+    await tab.navigate('https://example.com/start#hash');
+
+    expect(tab.getLastGotoResponse()).toBeNull();
+  });
+});

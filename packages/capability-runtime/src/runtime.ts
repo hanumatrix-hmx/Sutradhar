@@ -1774,9 +1774,22 @@ export class SutradharRuntime {
       }>,
     ]);
 
+    // GAP-278 (escalation-1): current-page mode has no per-call CDP session of its own (it never
+    // navigates inside this `audit()` call), so it reads the tab's own CONTINUOUSLY-tracked
+    // main-frame commit instant instead -- the same raw-CDP `Page.frameNavigated`-based
+    // mechanism URL-mode's `navCommittedAt` above already uses, just tracked at tab level from
+    // tab construction (`BrowserTab.setupCommitTracking`) rather than created and torn down per
+    // audit() call. `tab.getLastMainFrameCommitAt` is optional on `IBrowserTab` (existing mock
+    // literals stay compiling); when absent or still null (tracking not wired up in time, or no
+    // real commit observed yet), this falls back to `documentStartedAt` exactly as before this
+    // fix, same as URL-mode's own fallback when `createCDPSession` isn't available.
+    const effectiveNavCommittedAt = options.url
+      ? navCommittedAt
+      : (tab.getLastMainFrameCommitAt?.() ?? null);
+
     const { observation, since } = computeObservation({
       mode: options.url ? 'navigated' : 'current-page',
-      navCommittedAt,
+      navCommittedAt: effectiveNavCommittedAt,
       timeOrigin: typeof pageResult.timeOrigin === 'number' ? pageResult.timeOrigin : null,
       observingSince: tab.observingSince ?? null,
       pageWasHidden: pageResult.pageWasHidden ?? null,
@@ -1812,8 +1825,25 @@ export class SutradharRuntime {
     // original heuristic, kept only as a best-effort fallback for that fallback path — it
     // still fails on the same shapes GAP-273 named, but no worse than before this fix in the
     // already-degraded case where live tracking wasn't available at all.
+    // GAP-278 (escalation-1): current-page mode has its own live-captured source too now, the
+    // tab-level counterpart of `mainDocumentResponseCapture` above (which is only ever populated
+    // in URL mode's per-call CDP session). Same fallback order as before this fix for whichever
+    // one applies to the current mode: live capture first, then the URL-match heuristic.
+    const currentPageLiveCapture = options.url ? null : (tab.getLastMainDocumentResponse?.() ?? null);
+    // GAP-279 (escalation-1): when the CDP-level live capture (`mainDocumentResponseCapture`)
+    // didn't get set up in time — the named repro is a dialog already open as `audit({url})`
+    // starts, which delays `Network.enable` past the main document's own response — fall back
+    // to the response `navigate()`'s own `page.goto()` call returned (`getLastGotoResponse`)
+    // BEFORE the URL-match ring-buffer search. This is immune to the exact shapes that defeated
+    // the URL-match fallback (GAP-273): a `history.replaceState`/hash change after the response
+    // arrives, and an empty-body error response where Chrome swaps in `chrome-error://
+    // chromewebdata/` as `page.url()` — `getLastGotoResponse` never depends on `page.url()` at
+    // all, only on what `goto()` itself resolved to.
+    const gotoResponseFallback = options.url ? (tab.getLastGotoResponse?.() ?? null) : null;
     const mainDocumentResponse =
       mainDocumentResponseCapture ??
+      currentPageLiveCapture ??
+      gotoResponseFallback ??
       [...tab.getNetworkLog()].reverse().find((n) => n.phase === 'response' && n.resourceType === 'document' && n.url === url);
     if (
       mainDocumentResponse &&

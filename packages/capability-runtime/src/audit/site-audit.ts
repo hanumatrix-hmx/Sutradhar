@@ -185,6 +185,10 @@ export function computeObservation(input: {
    *  `SutradharRuntime.audit`'s doc comment for exactly how fix-2 sources this value (a dedicated
    *  CDPSession's `Page.frameNavigated`, filtered to the main frame, with no listener at all on
    *  `Page.navigatedWithinDocument`). */
+  /** FR2-12 escalation-1 (GAP-278): also used in `current-page` mode now, sourced from
+   *  `BrowserTab.getLastMainFrameCommitAt()` — the same raw-CDP `Page.frameNavigated`-based
+   *  tracking as navigated mode, just tracked continuously at tab level instead of per-call,
+   *  since current-page mode never calls `navigate()` inside `audit()` itself. */
   readonly navCommittedAt: string | null;
   /** `performance.timeOrigin` (epoch ms) read from the page, or null if unavailable. */
   readonly timeOrigin: number | null;
@@ -197,23 +201,29 @@ export function computeObservation(input: {
       ? new Date(Math.floor(input.timeOrigin)).toISOString()
       : null;
 
-  let since: string | null;
-  if (input.mode === 'navigated') {
-    // GAP-262 fix-1 (audit-1) / GAP-266+GAP-267 fix-2 (audit-2): `since` is `navCommittedAt`
-    // directly when available -- NOT `min()`'d against `documentStartedAt` (the original B1 fix
-    // did that, and it silently reopened the leak: `performance.timeOrigin` is close to when the
-    // navigation merely STARTED, so for any response with real network latency, `min()` kept
-    // re-picking that too-early value over the real commit instant). `navCommittedAt` is now
-    // sourced from a REAL cross-document commit only (fix-2, see `SutradharRuntime.audit`) -- a
-    // same-document navigation (hash change / pushState / replaceState) during the page's own
-    // load never updates it, so it can no longer push `since` later than that document's own
-    // early console errors / broken requests (GAP-266), and the audited page's own response
-    // status is additionally always captured regardless of this boundary (GAP-267, done in
-    // `SutradharRuntime.audit` directly, not here).
-    since = input.navCommittedAt ?? documentStartedAt;
-  } else {
-    since = documentStartedAt;
-  }
+  // GAP-262 fix-1 (audit-1) / GAP-266+GAP-267 fix-2 (audit-2) / GAP-278 escalation-1: `since` is
+  // `navCommittedAt` directly when available -- NOT `min()`'d against `documentStartedAt` (the
+  // original B1 fix did that, and it silently reopened the leak: `performance.timeOrigin` is
+  // close to when the navigation merely STARTED, so for any response with real network latency,
+  // `min()` kept re-picking that too-early value over the real commit instant). `navCommittedAt`
+  // is sourced from a REAL cross-document commit only -- a same-document navigation (hash change
+  // / pushState / replaceState) during the page's own load never updates it, so it can no longer
+  // push `since` later than that document's own early console errors / broken requests
+  // (GAP-266), and the audited page's own response status is additionally always captured
+  // regardless of this boundary (GAP-267, done in `SutradharRuntime.audit` directly, not here).
+  //
+  // GAP-278 (escalation-1): this used to only apply to `navigated` mode, with `current-page`
+  // mode always using `documentStartedAt` (navigation START) directly. That's the exact same
+  // mistake B1 was: a document whose commit hasn't happened yet still leaves the PREVIOUS
+  // document's own late-arriving events (queued CDP messages timestamped by Node at arrival
+  // time, not at browser-side occurrence time) inside the `since >= documentStartedAt` window,
+  // because `documentStartedAt` is too early relative to the real commit. Both modes now use
+  // the identical rule -- `current-page` mode's `navCommittedAt` comes from
+  // `BrowserTab.getLastMainFrameCommitAt()` (tracked continuously at tab level, since
+  // current-page mode never calls `navigate()` inside `audit()` itself) rather than a per-call
+  // CDP session the way `navigated` mode's does, but the scoping arithmetic is shared here so a
+  // future third mode/caller can't reintroduce this divergence by accident.
+  const since = input.navCommittedAt ?? documentStartedAt;
 
   const coversWholeDocument =
     input.observingSince !== null && since !== null && input.observingSince <= since;
