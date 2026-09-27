@@ -1,0 +1,198 @@
+{
+  "group": "concurrent",
+  "origin": "http://127.0.0.1:58527",
+  "startedAt": "2026-09-27T18:40:16.633Z",
+  "rows": [
+    {
+      "tag": "sepState-pair0-A",
+      "code": 3,
+      "ms": 2831,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "blocked"
+      ]
+    },
+    {
+      "tag": "sepState-pair0-B",
+      "code": 1,
+      "ms": 10400,
+      "timedOut": false,
+      "docCount": 0,
+      "kinds": [],
+      "stderrHead": "Error: Timed out waiting for Chrome to start on port 58531.\n"
+    },
+    {
+      "tag": "sepState-pair1-A",
+      "code": 3,
+      "ms": 2875,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "blocked"
+      ]
+    },
+    {
+      "tag": "sepState-pair1-B",
+      "code": 3,
+      "ms": 2952,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "blocked"
+      ]
+    },
+    {
+      "tag": "sepState-pair2-A",
+      "code": 3,
+      "ms": 2852,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "blocked"
+      ]
+    },
+    {
+      "tag": "sepState-pair2-B",
+      "code": 1,
+      "ms": 10414,
+      "timedOut": false,
+      "docCount": 0,
+      "kinds": [],
+      "stderrHead": "Error: Timed out waiting for Chrome to start on port 58960.\n"
+    },
+    {
+      "tag": "sepState-pair3-A",
+      "code": 3,
+      "ms": 3037,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "blocked"
+      ]
+    },
+    {
+      "tag": "sepState-pair3-B",
+      "code": 3,
+      "ms": 3030,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "blocked"
+      ]
+    },
+    {
+      "tag": "sepState-pair4-A",
+      "code": 1,
+      "ms": 10392,
+      "timedOut": false,
+      "docCount": 0,
+      "kinds": [],
+      "stderrHead": "Error: Timed out waiting for Chrome to start on port 59789.\n"
+    },
+    {
+      "tag": "sepState-pair4-B",
+      "code": 3,
+      "ms": 2824,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "blocked"
+      ]
+    },
+    {
+      "tag": "sharedState-pair0-A",
+      "code": 0,
+      "ms": 1886,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "report"
+      ]
+    },
+    {
+      "tag": "sharedState-pair0-B",
+      "code": 0,
+      "ms": 1882,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "report"
+      ]
+    },
+    {
+      "tag": "sharedState-pair1-A",
+      "code": 0,
+      "ms": 1907,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "report"
+      ]
+    },
+    {
+      "tag": "sharedState-pair1-B",
+      "code": 0,
+      "ms": 1901,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "report"
+      ]
+    },
+    {
+      "tag": "sharedState-pair2-A",
+      "code": 1,
+      "ms": 286,
+      "timedOut": false,
+      "docCount": 0,
+      "kinds": [],
+      "fatal": true,
+      "stderrHead": "Fatal: net::ERR_ABORTED at http://127.0.0.1:58527/alertat?ms=1550&p=2a\n"
+    },
+    {
+      "tag": "sharedState-pair2-B",
+      "code": 0,
+      "ms": 1858,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "report"
+      ]
+    }
+  ],
+  "summary": {
+    "total": 16,
+    "exactlyOneDoc": 12,
+    "zeroDocs": 4,
+    "multiDocs": 0,
+    "badRows": [
+      {
+        "tag": "sepState-pair0-B",
+        "docCount": 0,
+        "kinds": [],
+        "code": 1
+      },
+      {
+        "tag": "sepState-pair2-B",
+        "docCount": 0,
+        "kinds": [],
+        "code": 1
+      },
+      {
+        "tag": "sepState-pair4-A",
+        "docCount": 0,
+        "kinds": [],
+        "code": 1
+      },
+      {
+        "tag": "sharedState-pair2-A",
+        "docCount": 0,
+        "kinds": [],
+        "code": 1,
+        "fatal": true
+      }
+    ]
+  },
+  "tmpRemoved": true
+}

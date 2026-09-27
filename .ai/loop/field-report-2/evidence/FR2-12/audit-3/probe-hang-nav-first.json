@@ -1,0 +1,33 @@
+{
+  "order": "nav-first",
+  "steps": [
+    {
+      "label": "nav hang#0",
+      "ms": 30003,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "nav hang#1",
+      "ms": 30010,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "nav ok",
+      "ms": 12,
+      "ok": true,
+      "r": "http://127.0.0.1:61821/ok"
+    },
+    {
+      "label": "nav 404-partial#0",
+      "ms": 30003,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "nav ok 2",
+      "ms": 11,
+      "ok": true,
+      "r": "http://127.0.0.1:61821/ok?2"
+    }
+  ],
+  "cdp": []
+}

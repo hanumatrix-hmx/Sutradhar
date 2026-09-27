@@ -2895,3 +2895,63 @@ own success write isn't routed through the new guard -- not touched by any FR2-1
 for a future item rather than scope-creeped into this one.
 
 Sent to independent audit-3.
+
+## 2026-09-28 -- FR2-12 audit-3: FAILED (2 major, 2 minor, 1 tracking). Cycle 3 of 4 standard.
+
+audit-3 confirmed fix-2's CDP-based mechanism genuinely fixed GAP-266 (same-document nav no longer
+drops the page's own errors) under very broad attack -- interleaved same/cross-document navs,
+sub-frame navigations happening concurrently, meta-refresh/JS/HTTP redirect chains including mixed
+shapes, 25 repeated audits in one session with no CDP session leak, GAP-262 not reopened, the 8
+real sites and their synthetic equivalent all correct (395 sessions created across all runs, all but
+one detached cleanly -- the one exception is A3-3 below). GAP-268's fix also held up to a much wider
+sweep than fix-2's own 1500-1595ms window (0-3000ms in 100ms steps, 93/93 exactly one document) and
+a 4th shape search (a dialog racing the write itself is structurally impossible -- the guard is a
+synchronous check-and-set and console.log to a pipe is synchronous on Windows). Everything audit-1/
+audit-2 had confirmed solid (web-vitals, B2, concurrency, schema) still holds.
+
+But two real defects:
+
+1. GAP-273 (major): GAP-267's fix (fix-2's own-response fallback) matches by exact STRING EQUALITY
+   against the final page.url() -- so it still drops the page's own 404/500 whenever the final URL
+   differs from the response URL, which happens in ordinary shapes: the page sets location.hash,
+   calls history.replaceState, or Chrome shows its own error page for an empty-body error response
+   (report.url becomes chrome-error://chromewebdata/, which obviously never matches any real response
+   URL). 0/10 or 0/6 across 4 such shapes, all previously working before fix-1 touched this code. This
+   is the SAME underlying defect class as the original GAP-267 finding, just a shape the string-match
+   approach didn't anticipate -- the fix needs to identify the main document's response by the
+   navigation ITSELF (the response object page.goto() returns, or watching for a main-frame Document
+   response on the CDP session), not by comparing URLs after the fact.
+2. GAP-274 (major, a NEW regression introduced by fix-2's own change): the new per-audit CDP session
+   waits on Page.enable before proceeding, and Chrome can hold that indefinitely under two real
+   conditions -- an open dialog on the current page (~31s hang, until the CDP default dialog-dismiss
+   timeout) or a previous navigation that timed out with no response (180-200s+ hang, even for a
+   healthy next target). The error path also leaks the session on the 180s case (cleared before
+   detach runs). This exact hazard -- a fresh Page.enable blocking under these conditions -- is
+   ALREADY DOCUMENTED elsewhere in this codebase (dialog-cdp.ts:425-427 deliberately doesn't await it
+   for precisely this reason) -- fix-2 re-introduced the hazard that other code in this same repo
+   already knows to avoid.
+
+Plus GAP-275 (minor, pre-existing ring-buffer-size limitation newly exposed by GAP-267's fix
+depending on that buffer) and GAP-276 (minor test-integrity -- several mutations, including removing
+the entire commit-boundary mechanism, pass every unit test and are only caught by live scripts).
+GAP-277 (cosmetic/tracking): confirmed the disclosed snap --json latent bug is real and accurately
+characterized as out of scope; logged to gaps.md so it isn't lost, not assigned to this item.
+
+Decisions for fix-3:
+1. GAP-273: replace the final-URL string-match with identification by NAVIGATION -- either capture
+   the response object that page.goto()/the navigation promise itself returns, or watch the CDP
+   session for the main-frame's own Document-type response directly (not a look-up after the fact).
+   Add live cases for all 4 of audit-3's exact repro shapes: hash-setting 404, replaceState 404,
+   empty-body 404, empty-body 500 (chrome-error:// case).
+2. GAP-274: don't block on Page.enable without a bound -- either fire-and-forget it (matching
+   dialog-cdp.ts's existing precedent for exactly this hazard) or race it against a short timeout and
+   proceed regardless. Fix the session leak on every error path (detach must run even when the
+   session reference would otherwise be cleared first). Add live cases for both hang shapes (open
+   dialog before audit(); a timed-out prior navigation before audit()) confirming audit() no longer
+   stalls beyond a bounded, short window.
+3. GAP-276: add tests that kill the specific survivors named: removing the whole commit-boundary
+   mechanism, the 3 own-status lookup variants, dropping resourceType from response-log entries, and
+   bypassing the guard at cli.ts's 3 call sites specifically (test how cli.ts calls the helper, not
+   just the helper in isolation).
+Re-run the full audit-1/2/3 attack surface before reporting done, per this item's now-established
+pattern of a fix solving the named case while quietly leaving or creating an adjacent one.

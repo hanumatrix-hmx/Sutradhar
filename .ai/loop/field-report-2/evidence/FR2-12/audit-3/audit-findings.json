@@ -1,0 +1,227 @@
+{
+  "auditor": "FR2-12 audit-3 (independent, maker != checker)",
+  "head": "ecae543",
+  "status": "COMPLETE",
+  "build": "turbo build --force: 9/9 tasks, 0 cached, exit 0 (build.log)",
+  "vitest": {
+    "capability-runtime": 198,
+    "browser": 498,
+    "cli": 171,
+    "mcp-server": 92,
+    "sutradhar": 20,
+    "allGreen": true
+  },
+  "findings": [
+    {
+      "id": "A3-1",
+      "severity": "major (incomplete fix of GAP-267; regression vs run-1 navStartedAt scoping)",
+      "title": "GAP-267's unscoped main-document lookup is keyed on exact equality with the FINAL page.url(), so the audited page's own 4xx/5xx is still dropped whenever the final URL differs from the response URL",
+      "repro": {
+        "own404_pageSetsHash (404 page runs location.hash='top')": "0/10 reported",
+        "own404_pageReplaceState (404 page rewrites URL via history.replaceState)": "0/10 reported",
+        "own404_emptyBody (404 with Content-Length 0 -> Chrome commits chrome-error://chromewebdata/, which becomes report.url)": "0/10 reported",
+        "control: own404_fragmentInRequest (requested URL carries #top)": "10/10 reported",
+        "CLI --json (probe-cli-own404.json)": "own-404 6/6 reported; own-404-empty 0/6, own-500-empty 0/6, own-404-hash 0/6 (report.url is chrome-error://chromewebdata/ for the empty-body cases). Exit 0 without --fail-on-diff; exit 1 with it only because of Chrome's generic console error."
+      },
+      "cause": "runtime.ts audit(): mainDocumentResponse = last network entry with resourceType==='document' && n.url === page.url(). The response was logged before the cross-document commit, so scopeToDocument drops it, and the fallback lookup can't find it because page.url() has since changed (same-document hash/replaceState) or is chrome-error://chromewebdata/. Before fix-1 (run-1's navStartedAt-based scoping) these responses were inside the scope window.",
+      "evidence": "probe-runtime-mismatch.json (probe-runtime.mjs mismatch 10)",
+      "mitigation_observed": "Chrome's own 'Failed to load resource ... 404' console error is still in consoleErrors, so --fail-on-diff still exits 1; brokenRequests is still wrong for any machine consumer.",
+      "fixDirection": "identify the main document response by navigation identity (page.goto's returned HTTPResponse, or Network.responseReceived type Document for the main frame/loaderId on the dedicated CDP session), not by string equality with the post-load page.url()"
+    },
+    {
+      "id": "A3-2",
+      "severity": "minor (pre-existing GAP-new-E, but it defeats GAP-267 on a top real site)",
+      "title": "The page's own 404 is evicted from the 200-entry network ring buffer on heavy pages, so GAP-267's 'captured unscoped' claim fails there while coversWholeDocument stays true",
+      "repro": {
+        "synthetic own-404 + 20 subresources": "3/3 reported",
+        "synthetic own-404 + 90 subresources": "3/3 reported",
+        "synthetic own-404 + 150 subresources": "0/3 reported (doc entry evicted; netLogLen 200)",
+        "real https://github.com/<nonexistent>/nope (true status 404, final url identical)": "0/3 + 0/2 reported; doc entry not in buffer"
+      },
+      "evidence": "probe-runtime-heavy.json, probe-real-docstatus.json",
+      "note": "11 other real 404 URLs (nextjs, react, vue, svelte, mdn, python, wikipedia, stackoverflow, docs.github, w3, npm 403) were reported correctly 3/3 each."
+    },
+    {
+      "id": "A3-3",
+      "severity": "major (regression introduced by fix-2 mechanism)",
+      "title": "fix-2 awaits Page.enable on a brand-new CDPSession before every audit({url}); Chrome holds that call when the tab has an open JS dialog or an uncommitted pending navigation, stalling the audit for up to the dialog auto-dismiss (30s) or the full protocolTimeout (180s), and on the 180s path the session is never detached",
+      "repro": {
+        "open alert on current page, then audit({url:/ok})": "3/3: 31051/31058/31060ms (Page.enable alone 29.5s) vs plain runtime.navigate to the same url 11-12ms and a normal audit ~1555ms",
+        "previous navigation timed out with no response (server never answers), then audit({url})": "182s-200s+ in 5/5 occurrences (probe-hang-audit-first, probe-hang-hangcontam, probe-runtime-redirects hang_* rows); Page.enable 180003-180012ms; plain navigate in the same situation 10-30010ms",
+        "same, even when the NEXT audit target is a perfectly healthy page": "audit ok = 181551ms (probe-hang-audit-first)",
+        "CDP session leak on that path": "created 67 / detached 66 in probe-runtime-redirects; probe-hang cdp records show no detach after the 180s Page.enable timeout (catch sets navCdpSession=null before finally, so detach is skipped)",
+        "committed-but-still-loading pages (hung image, streaming body)": "NOT affected (Page.enable 0-1ms, audits ~1.5s)",
+        "result correctness on the stalled path": "report still correct (no GAP-262 contamination seen, probe-hang-hangcontam)"
+      },
+      "cause": "runtime.ts audit(): await client.send(\"Page.enable\") on the fresh session. packages/browser/src/session/dialog-cdp.ts:425-427 already documents that a fresh Page.enable blocks for the full protocolTimeout while a dialog is open and deliberately does not await it there. fix-1 (puppeteer framenavigated) had no such call.",
+      "evidence": [
+        "probe-hang.mjs",
+        "probe-hang-audit-first.json",
+        "probe-hang-dialog.json",
+        "probe-hang-dialog-run2.json",
+        "probe-hang-dialog-run3.json",
+        "probe-hang-hangcontam.json",
+        "probe-hang-loading.json",
+        "probe-hang-nav-first.json",
+        "probe-runtime-redirects.json"
+      ],
+      "fixDirection": "do not await Page.enable unboundedly (fire-and-forget like dialog-cdp.ts, or race it with a short timeout), and detach the session in every path including the catch"
+    },
+    {
+      "id": "A3-4",
+      "severity": "minor (test integrity, GAP-269 recurrence)",
+      "title": "Auditor mutations of fix-2 code that survive every unit test",
+      "survivors": {
+        "A10 pass navCommittedAt:null into computeObservation (removes the whole GAP-262 commit boundary)": "capability-runtime 198/198 pass",
+        "A6 lookup keeps FIRST matching document response, A7 ignores resourceType, A8 ignores url": "198/198 pass",
+        "B3 cmdAudit success path back to bare console.log, B4 withSession pre-emption bypasses guard, B5 cmdAudit catch bypasses guard": "cli 171/171 pass (dialog-json-routing.spec tests the helper, not its wiring in cli.ts)",
+        "C1 response entries lose resourceType (browser-tab.ts)": "browser 498/498 pass"
+      },
+      "killed": [
+        "A1 no main-frame filter",
+        "A2 also listen to navigatedWithinDocument",
+        "A3 first commit wins",
+        "A4 no detach",
+        "A5 drop unscoped push",
+        "B1/B2 guard broken"
+      ],
+      "note": "Live-verify and the live probes do catch the GAP-262 and GAP-268 regressions; unit tests alone do not."
+    },
+    {
+      "id": "A3-5",
+      "severity": "info (disclosed out-of-scope bug, confirmed accurate)",
+      "title": "snap --json prints two JSON documents when an alert opens during the snapshot",
+      "repro": "alert@400ms: 3/3 two docs (blocked + snap, exit 3); alert@200: 3/3 one blocked doc; alert@600-2000: 18/18 one snap doc (probe-cli-snap.json)",
+      "cause": "cmdSnap success path uses bare console.log, not writeJsonStdoutOnce; the pre-emption branch writes the blocked doc through the guard",
+      "scope": "Outside FR2-12: the spec and GAP-261/268 cover audit --json only. It should be logged as its own gap (not in gaps.md yet at HEAD)."
+    }
+  ],
+  "probes": {
+    "runtimeCore": {
+      "src": "probe-runtime-core.json",
+      "verdicts": {
+        "spa_replace_at-1": "10/10",
+        "spa_replace_at0": "10/10",
+        "spa_replace_at30": "10/10",
+        "spa_replace_at200": "10/10",
+        "spa_push_at-1": "10/10",
+        "spa_push_at0": "10/10",
+        "spa_push_at30": "10/10",
+        "spa_push_at200": "10/10",
+        "spa_hash_at-1": "10/10",
+        "spa_hash_at0": "10/10",
+        "spa_hash_at30": "10/10",
+        "spa_hash_at200": "10/10",
+        "sitePattern": "10/10",
+        "burst": "10/10",
+        "own404": "10/10",
+        "own500": "10/10",
+        "r302to404": "10/10"
+      }
+    },
+    "newMechanism": {
+      "src": "probe-runtime-newmech.json",
+      "verdicts": {
+        "x1x2_click0": "10/10",
+        "x1x2_click200": "10/10",
+        "x1x2_click800": "10/10",
+        "iframe_cross": "10/10",
+        "iframe_same": "10/10",
+        "iframe_oopif": "10/10"
+      }
+    },
+    "redirects": {
+      "src": "probe-runtime-redirects.json",
+      "verdicts": {
+        "metaRefresh_d0": "10/10",
+        "metaRefresh_d1": "10/10",
+        "jsChain": "10/10",
+        "mixed302_replace_js_push": "10/10",
+        "hop3_to_404": "10/10",
+        "hop_to_slow500": "10/10",
+        "afterHang_own404": "3/3"
+      },
+      "note": "hang cases under investigation (probe-hang.mjs)"
+    },
+    "sessionLeak": {
+      "src": "probe-runtime-leak.json",
+      "stats": {
+        "created": 25,
+        "detachOk": 25,
+        "detachErr": 0
+      },
+      "verdict": "25/25",
+      "timingFlat": "first5 avg 1578ms, last5 avg 1560ms"
+    },
+    "regress": {
+      "src": "probe-runtime-regress.json",
+      "verdicts": {
+        "gap262_noisyThenClean_0": "10/10",
+        "gap262_noisyThenClean_150": "10/10",
+        "gap262_noisyThenClean_600": "10/10",
+        "b2": "PASS"
+      }
+    },
+    "mutations": {
+      "src": [
+        "mutation-results.json",
+        "mutation-results-rerun.json"
+      ],
+      "killed": [
+        "A1 no main-frame filter",
+        "A2 also listen navigatedWithinDocument",
+        "A3 first commit wins",
+        "A4 no detach",
+        "A5 drop unscoped push",
+        "B1/B2 guard broken"
+      ],
+      "survived": [
+        "A6 lookup first-not-last",
+        "A7 lookup ignores resourceType",
+        "A8 lookup ignores url",
+        "A9 listener in current-page mode (near-equivalent)",
+        "A10 since ignores navCommittedAt entirely (reverts GAP-262 boundary)",
+        "B3/B4/B5 cli.ts call sites bypass guard",
+        "C1 response resourceType dropped (browser suite)"
+      ],
+      "sourcesRestoredIdentical": true
+    },
+    "cliSweep0to3000": {
+      "src": "probe-cli-sweep.json",
+      "result": "93/93 exactly one JSON document (45 report exit 0, 48 blocked-doc exit 3), 0 zero-doc, 0 multi-doc"
+    },
+    "cliFine": {
+      "src": "probe-cli-fine.json",
+      "result": "52/52 exactly one doc (1400-1800ms step 20 x2 + alert+confirm x10)"
+    },
+    "cliShapes": {
+      "src": "probe-cli-shapes.json",
+      "result": "12/12 exactly one doc (GAP-261 default-leftover x3, accept flag/persisted accept/dismiss flag at 0/600/1550ms)"
+    },
+    "cliConcurrent": {
+      "src": "probe-cli-concurrent.json",
+      "result": "separate-process pairs: 7 exactly one doc; 3 zero-doc rows were fatal Chrome start timeouts under load (empty stdout + exit 1 = spec D2.6). Shared-state pairs: 5 one doc, 1 fatal net::ERR_ABORTED (two processes navigating the same tab). 0 multi-doc. Guard is a module-level let in dialog-json-routing.ts, per process, no file or shared state."
+    },
+    "realSitesGap266": {
+      "src": "probe-runtime-realsites.json",
+      "result": "8 sites x5 = 40/40 match independent ground truth (last main-frame Page.frameNavigated), npm had real errors inside the GAP-266 window and kept them"
+    },
+    "regressConcurrentVitals": {
+      "src": "probe-regress-concurrent-vitals.json",
+      "result": "concurrent 2-tab audits 3/3 no leakage; CLS/LCP delta 0 vs independent observer 4/4; B2 CLS equal 3/3; no leaked global"
+    },
+    "liveVerify": {
+      "src": "live-rerun/",
+      "result": "29 pass, 0 fail, 1 info (GAP-038) of 30; full script, no skip flag; SUTRADHAR_FR2_12_EVIDENCE_DIR=audit-3/live-rerun"
+    }
+  },
+  "verdict": "FAIL",
+  "hygiene": {
+    "processBaseline": "process-baseline.txt",
+    "processAfter": "process-after.txt",
+    "newProcessesAfter": 0,
+    "tempDirsRemoved": true,
+    "protectedDirsUntouched": "git status shows only audit-3/ untracked",
+    "sourcesRestoredAfterMutation": true
+  }
+}
