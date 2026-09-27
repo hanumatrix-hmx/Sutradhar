@@ -5,7 +5,7 @@
  * the underlying browser's `disconnect()` — see DirectCdpBroker/WardenBroker) is asserted called
  * exactly once per path: clear, handled, blocked, and a thrown exception.
  */
-import { runDialogGate, type DialogBroker } from '../../src/dialog-broker.js';
+import { runDialogGate, WardenBroker, type DialogBroker } from '../../src/dialog-broker.js';
 import { DialogBlockedError } from '../../src/dialog-cli.js';
 
 function fakeBroker(overrides: Partial<DialogBroker> = {}): DialogBroker & { disposeCalls: number } {
@@ -278,5 +278,52 @@ describe('@sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per
     if (result.status === 'blocked') {
       expect(result.records?.length).toBe(5);
     }
+  });
+});
+
+// FR2-04 escalation-1, GAP-250: audit-4's M26 (WardenBroker silently drops the `closedTarget`/
+// `message` fields from a successful `/v1/dialogs/handle` response) survived vitest because
+// nothing exercised `WardenBroker.handle()` directly — only the warden's OWN HTTP handler
+// (dialog-warden.spec.ts) and cli.ts's end-to-end wiring were covered. This closes that gap.
+describe('@sutradhar/cli WardenBroker.handle (FR2-04 GAP-230/GAP-250 M26)', () => {
+  it('surfaces closedTarget + message from a 200 response body (recovery-by-close)', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ handled: true, closedTarget: true, message: 'Tab t1 (https://x/) was closed because its dialog could not be addressed directly (unknown dialog).' }),
+    });
+    const broker = new WardenBroker('http://127.0.0.1:1', 'tok', fetchImpl as any);
+    const outcome = await broker.handle('t1', true, undefined);
+    expect(outcome).toEqual({ closedTarget: true, message: expect.stringContaining('was closed') });
+  });
+
+  it('returns undefined (a real Page.handleJavaScriptDialog resolution, nothing to surface) for a 200 with no closedTarget', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ handled: true }) });
+    const broker = new WardenBroker('http://127.0.0.1:1', 'tok', fetchImpl as any);
+    const outcome = await broker.handle('t1', true, undefined);
+    expect(outcome).toBeUndefined();
+  });
+
+  it('surfaces a confirmedSafe 409 refusal (escalation-1 decision 1) distinctly from a plain holderTargetId redirect', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 409,
+      json: async () => ({ error: 'busy but confirmed safe', confirmedSafe: true, holderTargetId: 'candidate' }),
+    });
+    const broker = new WardenBroker('http://127.0.0.1:1', 'tok', fetchImpl as any);
+    const outcome = await broker.handle('t1', true, undefined);
+    expect(outcome).toEqual({ refused: true, redirectTo: 'candidate', message: 'busy but confirmed safe' });
+  });
+
+  it('surfaces a plain holderTargetId 409 redirect (collateral, real holder named) without refused set', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 409,
+      json: async () => ({ error: 'shares a browser process', holderTargetId: 'popup' }),
+    });
+    const broker = new WardenBroker('http://127.0.0.1:1', 'tok', fetchImpl as any);
+    const outcome = await broker.handle('t1', true, undefined);
+    expect(outcome).toEqual({ redirectTo: 'popup', message: 'shares a browser process' });
+    expect((outcome as any)?.refused).toBeUndefined();
   });
 });

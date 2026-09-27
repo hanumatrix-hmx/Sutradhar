@@ -1,0 +1,206 @@
+=== link-deadend (GAP-246) ===
+{"variant":"xsite","t":0,"codes":"nav=0 click=0 snap=3 dialog=0 dialog+a=0 dialog=1 snap+a=0 tabs=0 snap=0 close=0","deadEnd":false}
+{"variant":"xsite","t":1,"codes":"nav=0 click=0 snap=3 dialog=0 dialog+a=0 dialog=1 snap+a=0 tabs=0 snap=0 close=0","deadEnd":false}
+{"variant":"xsite","t":2,"codes":"nav=0 click=0 snap=3 dialog=0 dialog+a=0 dialog=1 snap+a=0 tabs=0 snap=0 close=0","deadEnd":false}
+{"variant":"same","t":0,"codes":"nav=0 click=0 snap=3 dialog=0 dialog+a=0 dialog=1 snap+a=0 tabs=0 snap=0 close=0","deadEnd":false}
+{"variant":"same","t":1,"codes":"nav=0 click=0 snap=3 dialog=0 dialog+a=0 dialog=1 snap+a=0 tabs=0 snap=0 close=0","deadEnd":false}
+{"variant":"same","t":2,"codes":"nav=0 click=0 snap=3 dialog=0 dialog+a=0 dialog=1 snap+a=0 tabs=0 snap=0 close=0","deadEnd":false}
+{"variant":"sameopener","t":0,"codes":"nav=0 click=0 snap=3 dialog=0 dialog+a=0 dialog=1 snap+a=0 tabs=0 snap=0 close=0","deadEnd":false}
+{"variant":"sameopener","t":1,"codes":"nav=0 click=0 snap=3 dialog=0 dialog+a=0 dialog=1 snap+a=0 tabs=0 snap=0 close=0","deadEnd":false}
+{"variant":"sameopener","t":2,"codes":"nav=0 click=0 snap=3 dialog=0 dialog+a=0 dialog=1 snap+a=0 tabs=0 snap=0 close=0","deadEnd":false}
+leftovers {"wardens":[],"chrome":[],"cliChildren":[]}
+=== recovery-wrongtab (audit-3 GAP-236) ===
+{"t":0,"c":"urlpopup/accept-then-tabs","closed":"POPUP","next":"0/276ms","out":"* tab_sess_1790474467223_1_1  opener r0x66794  http://127.0.0.1:51728/?n=r0x66794","err":"","urls":["http://127.0.0.1:51728/?n=r0x66794"]}
+{"t":0,"c":"urlpopup/accept-then-snap","closed":"POPUP","next":"0/274ms","out":"URL: http://127.0.0.1:51728/?n=r0x71918 | Title: opener r0x71918","err":"","urls":["http://127.0.0.1:51728/?n=r0x71918"]}
+{"t":0,"c":"urlpopup/accept-then-eval","closed":"POPUP","next":"0/284ms","out":"opener r0x77068","err":"","urls":["http://127.0.0.1:51728/?n=r0x77068"]}
+{"t":0,"c":"urlpopup/accept-then-nav","closed":"POPUP","next":"0/279ms","out":"Navigated to http://127.0.0.1:51728/?n=r0x82225-after | Title: opener r0x82225-after","err":"","urls":["http://127.0.0.1:51728/?n=r0x82225-after"]}
+{"t":0,"c":"blankpopup/accept-then-tabs","closed":"POPUP","next":"0/271ms","out":"* tab_sess_1790474487818_1_1  opener r0x87318  http://127.0.0.1:51728/?n=r0x87318","err":"","urls":["http://127.0.0.1:51728/?n=r0x87318"]}
+{"t":0,"c":"blankpopup/accept-then-snap","closed":"POPUP","next":"0/274ms","out":"URL: http://127.0.0.1:51728/?n=r0x95387 | Title: opener r0x95387","err":"","urls":["http://127.0.0.1:51728/?n=r0x95387"]}
+{"t":0,"c":"blankpopup/accept-then-eval","closed":"POPUP","next":"0/261ms","out":"opener r0x3395","err":"","urls":["http://127.0.0.1:51728/?n=r0x3395"]}
+{"t":0,"c":"blankpopup/accept-then-nav","closed":"POPUP","next":"0/285ms","out":"Navigated to http://127.0.0.1:51728/?n=r0x11370-after | Title: opener r0x11370-after","err":"","urls":["http://127.0.0.1:51728/?n=r0x11370-after"]}
+{"t":0,"c":"plain-orphan-alert/tabs","next":"3/258ms","out":"dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r0x19335\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51728/fx.html?n=r0x19335\"}","err":"Error: a alert dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a alert dialog is open and blocking th","urls":["http://127.0.0.1:51728/fx.html?n=r0x19335"]}
+{"t":0,"c":"plain-orphan-alert/dialog-accept-then-tabs","closed":"none","next":"0/266ms","out":"* tab_sess_1790474529560_1_1  fr2-04 r0x29133  http://127.0.0.1:51728/fx.html?n=r0x29133","err":"","urls":["http://127.0.0.1:51728/fx.html?n=r0x29133"]}
+{"t":1,"c":"urlpopup/accept-then-tabs","closed":"POPUP","next":"0/259ms","out":"* tab_sess_1790474539578_1_1  opener r1x39153  http://127.0.0.1:51728/?n=r1x39153","err":"","urls":["http://127.0.0.1:51728/?n=r1x39153"]}
+{"t":1,"c":"urlpopup/accept-then-snap","closed":"POPUP","next":"0/273ms","out":"URL: http://127.0.0.1:51728/?n=r1x44220 | Title: opener r1x44220","err":"","urls":["http://127.0.0.1:51728/?n=r1x44220"]}
+{"t":1,"c":"urlpopup/accept-then-eval","closed":"POPUP","next":"0/264ms","out":"opener r1x49306","err":"","urls":["http://127.0.0.1:51728/?n=r1x49306"]}
+{"t":1,"c":"urlpopup/accept-then-nav","closed":"POPUP","next":"0/272ms","out":"Navigated to http://127.0.0.1:51728/?n=r1x54390-after | Title: opener r1x54390-after","err":"","urls":["http://127.0.0.1:51728/?n=r1x54390-after"]}
+{"t":1,"c":"blankpopup/accept-then-tabs","closed":"POPUP","next":"0/277ms","out":"* tab_sess_1790474559896_1_1  opener r1x59449  http://127.0.0.1:51728/?n=r1x59449","err":"","urls":["http://127.0.0.1:51728/?n=r1x59449"]}
+{"t":1,"c":"blankpopup/accept-then-snap","closed":"POPUP","next":"0/273ms","out":"URL: http://127.0.0.1:51728/?n=r1x67424 | Title: opener r1x67424","err":"","urls":["http://127.0.0.1:51728/?n=r1x67424"]}
+{"t":1,"c":"blankpopup/accept-then-eval","closed":"POPUP","next":"0/273ms","out":"opener r1x75539","err":"","urls":["http://127.0.0.1:51728/?n=r1x75539"]}
+{"t":1,"c":"blankpopup/accept-then-nav","closed":"POPUP","next":"0/276ms","out":"Navigated to http://127.0.0.1:51728/?n=r1x83550-after | Title: opener r1x83550-after","err":"","urls":["http://127.0.0.1:51728/?n=r1x83550-after"]}
+{"t":1,"c":"plain-orphan-alert/tabs","next":"3/262ms","out":"dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r1x91497\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51728/fx.html?n=r1x91497\"}","err":"Error: a alert dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a alert dialog is open and blocking th","urls":["http://127.0.0.1:51728/fx.html?n=r1x91497"]}
+{"t":1,"c":"plain-orphan-alert/dialog-accept-then-tabs","closed":"none","next":"0/259ms","out":"* tab_sess_1790474601716_1_1  fr2-04 r1x1286  http://127.0.0.1:51728/fx.html?n=r1x1286","err":"","urls":["http://127.0.0.1:51728/fx.html?n=r1x1286"]}
+leftovers {"wardens":[],"chrome":[],"cliChildren":[]}
+=== blank-escape (audit-3 GAP-238) ===
+{"t":0,"v":"xsite-nav","targets":["http://localhost:65382/other?n=be0x19796:responsive"],"warden":[],"snap":"0/278","first":"URL: http://localhost:65382/other?n=be0x19796 | Title: other be0x19796","verdict":"NOT-BLOCKED(no test)"}
+{"t":0,"v":"xsite-nav-w.setTimeout","targets":["http://localhost:65382/other?n=be0x24377:responsive"],"warden":[],"snap":"0/273","first":"URL: http://localhost:65382/other?n=be0x24377 | Title: other be0x24377","verdict":"NOT-BLOCKED(no test)"}
+{"t":0,"v":"xsite-nav-docwrite-timer","targets":["http://localhost:65382/other?n=be0x28981:responsive","about:blank:blocked"],"warden":["alert:about:blank"],"snap":"3/259","first":"dialogPending: {\"type\":\"alert\",\"message\":\"ESC2-be0x28981\",\"defaultValue\":null,\"url\":\"about:blank\"}","verdict":"CAUGHT"}
+{"t":0,"v":"same-site-control","targets":["http://127.0.0.1:65382/?n=be0x34074:blocked","about:blank:blocked"],"warden":["unknown:http://127.0.0.1:65382/?n=be0x34074","unknown:about:blank"],"snap":"3/673","first":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65382/?n=b","verdict":"CAUGHT"}
+{"t":1,"v":"xsite-nav","targets":["http://localhost:65382/other?n=be1x43869:responsive"],"warden":[],"snap":"0/286","first":"URL: http://localhost:65382/other?n=be1x43869 | Title: other be1x43869","verdict":"NOT-BLOCKED(no test)"}
+{"t":1,"v":"xsite-nav-w.setTimeout","targets":["http://localhost:65382/other?n=be1x48464:responsive"],"warden":[],"snap":"0/267","first":"URL: http://localhost:65382/other?n=be1x48464 | Title: other be1x48464","verdict":"NOT-BLOCKED(no test)"}
+{"t":1,"v":"xsite-nav-docwrite-timer","targets":["http://localhost:65382/other?n=be1x53035:responsive","about:blank:blocked"],"warden":["alert:about:blank"],"snap":"3/276","first":"dialogPending: {\"type\":\"alert\",\"message\":\"ESC2-be1x53035\",\"defaultValue\":null,\"url\":\"about:blank\"}","verdict":"CAUGHT"}
+{"t":1,"v":"same-site-control","targets":["http://127.0.0.1:65382/?n=be1x58165:blocked","about:blank:blocked"],"warden":["unknown:http://127.0.0.1:65382/?n=be1x58165","unknown:about:blank"],"snap":"3/692","first":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65382/?n=b","verdict":"CAUGHT"}
+{"t":2,"v":"xsite-nav","targets":["http://localhost:65382/other?n=be2x68027:responsive"],"warden":[],"snap":"0/273","first":"URL: http://localhost:65382/other?n=be2x68027 | Title: other be2x68027","verdict":"NOT-BLOCKED(no test)"}
+{"t":2,"v":"xsite-nav-w.setTimeout","targets":["http://localhost:65382/other?n=be2x72796:responsive"],"warden":[],"snap":"0/268","first":"URL: http://localhost:65382/other?n=be2x72796 | Title: other be2x72796","verdict":"NOT-BLOCKED(no test)"}
+{"t":2,"v":"xsite-nav-docwrite-timer","targets":["http://localhost:65382/other?n=be2x77363:responsive","about:blank:blocked"],"warden":["alert:about:blank"],"snap":"3/273","first":"dialogPending: {\"type\":\"alert\",\"message\":\"ESC2-be2x77363\",\"defaultValue\":null,\"url\":\"about:blank\"}","verdict":"CAUGHT"}
+{"t":2,"v":"same-site-control","targets":["http://127.0.0.1:65382/?n=be2x82558:blocked","about:blank:blocked"],"warden":["unknown:http://127.0.0.1:65382/?n=be2x82558","unknown:about:blank"],"snap":"3/684","first":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:65382/?n=b","verdict":"CAUGHT"}
+{"xsite-nav":{"NOT-BLOCKED(no test)":3},"xsite-nav-w.setTimeout":{"NOT-BLOCKED(no test)":3},"xsite-nav-docwrite-timer":{"CAUGHT":3},"same-site-control":{"CAUGHT":3}}
+leftovers {"wardens":[],"chrome":[],"cliChildren":[]}
+=== policy-sibling (audit-3 GAP-239) ===
+{"t":0,"cmd":"snap --dialog accept","warden":["POP:alert","OPENER:unknown"],"code":0,"ms":825,"openerAlive":true,"err":"Note: dialog policy for this session is now \"accept\".","out":"dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps0x98967\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}","verdict":"OK"}
+{"t":0,"cmd":"snap --dialog dismiss","warden":["POP:alert","OPENER:unknown"],"code":0,"ms":841,"openerAlive":true,"err":"Note: dialog policy for this session is now \"dismiss\".","out":"dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps0x2855\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}","verdict":"OK"}
+{"t":0,"cmd":"dialog accept","warden":["POP:alert","OPENER:unknown"],"code":0,"ms":1149,"openerAlive":true,"err":"","out":"Accepted alert \"PS-ps0x6766\"","verdict":"OK"}
+{"t":1,"cmd":"snap --dialog accept","warden":["POP:alert","OPENER:unknown"],"code":0,"ms":827,"openerAlive":true,"err":"Note: dialog policy for this session is now \"accept\".","out":"dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps1x10936\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}","verdict":"OK"}
+{"t":1,"cmd":"snap --dialog dismiss","warden":["POP:alert","OPENER:unknown"],"code":0,"ms":844,"openerAlive":true,"err":"Note: dialog policy for this session is now \"dismiss\".","out":"dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps1x14777\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}","verdict":"OK"}
+{"t":1,"cmd":"dialog accept","warden":["POP:alert","OPENER:unknown"],"code":0,"ms":1122,"openerAlive":true,"err":"","out":"Accepted alert \"PS-ps1x18670\"","verdict":"OK"}
+{"t":2,"cmd":"snap --dialog accept","warden":["POP:alert","OPENER:unknown"],"code":0,"ms":827,"openerAlive":true,"err":"Note: dialog policy for this session is now \"accept\".","out":"dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps2x22836\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}","verdict":"OK"}
+{"t":2,"cmd":"snap --dialog dismiss","warden":["POP:alert","OPENER:unknown"],"code":0,"ms":843,"openerAlive":true,"err":"Note: dialog policy for this session is now \"dismiss\".","out":"dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps2x26737\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}","verdict":"OK"}
+{"t":2,"cmd":"dialog accept","warden":["POP:alert","OPENER:unknown"],"code":0,"ms":1116,"openerAlive":true,"err":"","out":"Accepted alert \"PS-ps2x30597\"","verdict":"OK"}
+{"t":3,"cmd":"snap --dialog accept","warden":["POP:alert","OPENER:unknown"],"code":0,"ms":844,"openerAlive":true,"err":"Note: dialog policy for this session is now \"accept\".","out":"dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps3x34723\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}","verdict":"OK"}
+{"t":3,"cmd":"snap --dialog dismiss","warden":["POP:alert","OPENER:unknown"],"code":0,"ms":831,"openerAlive":true,"err":"Note: dialog policy for this session is now \"dismiss\".","out":"dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps3x38590\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}","verdict":"OK"}
+{"t":3,"cmd":"dialog accept","warden":["POP:alert","OPENER:unknown"],"code":0,"ms":1129,"openerAlive":true,"err":"","out":"Accepted alert \"PS-ps3x42453\"","verdict":"OK"}
+{"t":4,"cmd":"snap --dialog accept","warden":["POP:alert","OPENER:unknown"],"code":0,"ms":846,"openerAlive":true,"err":"Note: dialog policy for this session is now \"accept\".","out":"dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps4x46702\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}","verdict":"OK"}
+{"t":4,"cmd":"snap --dialog dismiss","warden":["POP:alert","OPENER:unknown"],"code":0,"ms":845,"openerAlive":true,"err":"Note: dialog policy for this session is now \"dismiss\".","out":"dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps4x50589\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}","verdict":"OK"}
+{"t":4,"cmd":"dialog accept","warden":["POP:alert","OPENER:unknown"],"code":0,"ms":1129,"openerAlive":true,"err":"","out":"Accepted alert \"PS-ps4x54491\"","verdict":"OK"}
+{"snap --dialog accept":{"OK":5},"snap --dialog dismiss":{"OK":5},"dialog accept":{"OK":5}}
+leftovers {"wardens":[],"chrome":[],"cliChildren":[]}
+=== many-blocked (audit-3 GAP-241) ===
+{"accept":{"code":0,"ms":1107,"first":"Accepted alert \"MB-mb0x4x65475\"","pendingLinesAfter":0},"snapAfterAccept":{"code":0,"ms":283,"killedAtCap":false,"first":"URL: http://127.0.0.1:59808/?n=mb0x4x65475"}}
+{"t":0,"K":4,"pages":5,"warden":{"ms":423,"n":5,"types":["alert","unknown"]},"snap":"3/681","first":"dialogPending: {\"type\":\"alert\",\"message\":\"MB-mb0x4x65475\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:59808/?n=mb0x4x65475\"}","verdict":"EXIT3"}
+{"accept":{"code":0,"ms":1104,"first":"Accepted alert \"MB-mb0x14x72073\"","pendingLinesAfter":0},"snapAfterAccept":{"code":0,"ms":290,"killedAtCap":false,"first":"URL: http://127.0.0.1:59808/kid?i=2"}}
+{"t":0,"K":14,"pages":15,"warden":{"ms":407,"n":15,"types":["alert","unknown"]},"snap":"3/693","first":"dialogPending: {\"type\":\"alert\",\"message\":\"MB-mb0x14x72073\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:59808/?n=mb0x14x72073\"}","verdict":"EXIT3"}
+{"accept":{"code":0,"ms":1109,"first":"Accepted alert \"MB-mb1x4x78770\"","pendingLinesAfter":0},"snapAfterAccept":{"code":0,"ms":261,"killedAtCap":false,"first":"URL: http://127.0.0.1:59808/?n=mb1x4x78770"}}
+{"t":1,"K":4,"pages":5,"warden":{"ms":408,"n":5,"types":["alert","unknown"]},"snap":"3/670","first":"dialogPending: {\"type\":\"alert\",\"message\":\"MB-mb1x4x78770\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:59808/?n=mb1x4x78770\"}","verdict":"EXIT3"}
+{"accept":{"code":0,"ms":1113,"first":"Accepted alert \"MB-mb1x14x85326\"","pendingLinesAfter":0},"snapAfterAccept":{"code":0,"ms":287,"killedAtCap":false,"first":"URL: http://127.0.0.1:59808/kid?i=9"}}
+{"t":1,"K":14,"pages":15,"warden":{"ms":409,"n":15,"types":["alert","unknown"]},"snap":"3/670","first":"dialogPending: {\"type\":\"alert\",\"message\":\"MB-mb1x14x85326\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:59808/?n=mb1x14x85326\"}","verdict":"EXIT3"}
+leftovers {"wardens":[],"chrome":[],"cliChildren":[]}
+=== signal-attack (audit-3/4 GAP-240) ===
+{"t":0,"state":"control/idle","gm":"r0,r0,r1","rt":"responsive","warden":{"ms":8,"dialogs":[]},"snap":"0/267ms","verdict":"OK"}
+{"t":0,"state":"control/alert(dialog)","gm":"b408,b408,b406","rt":"blocked","warden":{"ms":2,"dialogs":["TGT:alert"]},"snap":"3/253ms","verdict":"DIALOG-CAUGHT"}
+{"t":0,"state":"busy-js-6s","gm":"r1,r1,r0","rt":"blocked","warden":{"ms":3,"dialogs":[]},"snap":"0/5298ms","verdict":"OK"}
+{"t":0,"state":"sync-xhr-10s","gm":"b406,b407,b404","rt":"blocked","warden":{"ms":407,"dialogs":["TGT:unknown"]},"snap":"3/685ms","rec":"","verdict":"FALSE-BLOCK"}
+{"t":0,"state":"huge-dom-parse+layout","gm":"b407,r309,r0","rt":"responsive","warden":{"ms":7,"dialogs":[]},"snap":"0/451ms","busy":824,"verdict":"OK"}
+{"t":0,"state":"huge-dom-big(600k)-snap-now","gm":"b406,b407,b407","rt":"blocked","warden":{"ms":409,"dialogs":["TGT:unknown"]},"snap":"0/780ms","busy":1894,"verdict":"OK"}
+{"t":0,"state":"repeated-forced-layout","gm":"r38,r136,r84","rt":"blocked","warden":{"ms":40,"dialogs":[]},"snap":"0/4651ms","busy":5038,"verdict":"OK"}
+{"t":0,"state":"alloc-heavy-gc","gm":"r0,r1,r0","rt":"blocked","warden":{"ms":3,"dialogs":[]},"snap":"0/4200ms","busy":5000,"verdict":"OK"}
+{"t":0,"state":"mid-navigation-slow-response","gm":"r1,r0,r0","rt":"blocked","warden":{"ms":3,"dialogs":[]},"snap":"0/5136ms","verdict":"OK"}
+{"t":0,"state":"debugger-paused","gm":"r1,r0,r0","rt":"responsive","warden":{"ms":2,"dialogs":[]},"snap":"1(CAP)/60173ms","verdict":"OK"}
+{"t":0,"state":"print-preview","gm":"r1,r0,r1","rt":"responsive","warden":{"ms":2,"dialogs":[]},"snap":"0/262ms","verdict":"OK"}
+{"t":0,"state":"background-tab-busy","gm":"r1,r1,r0","rt":"responsive","warden":{"ms":2,"dialogs":[]},"snap":"0/267ms","verdict":"OK"}
+{"t":0,"state":"renderer-crashed(aw-snap)","gm":"b407,b408,b408","rt":"blocked","warden":{"ms":409,"dialogs":["TGT:unknown"]},"snap":"3/718ms","rec":"","verdict":"FALSE-BLOCK"}
+{"t":0,"state":"renderer-hung(chrome://hang)","gm":"b411,b406,b406","rt":"blocked","warden":{"ms":408,"dialogs":["TGT:unknown"]},"snap":"3/690ms","rec":"","verdict":"FALSE-BLOCK"}
+{
+ "control/idle": {
+  "OK": 1
+ },
+ "control/alert(dialog)": {
+  "DIALOG-CAUGHT": 1
+ },
+ "busy-js-6s": {
+  "OK": 1
+ },
+ "sync-xhr-10s": {
+  "FALSE-BLOCK": 1
+ },
+ "huge-dom-parse+layout": {
+  "OK": 1
+ },
+ "huge-dom-big(600k)-snap-now": {
+  "OK": 1
+ },
+ "repeated-forced-layout": {
+  "OK": 1
+ },
+ "alloc-heavy-gc": {
+  "OK": 1
+ },
+ "mid-navigation-slow-response": {
+  "OK": 1
+ },
+ "debugger-paused": {
+  "OK": 1
+ },
+ "print-preview": {
+  "OK": 1
+ },
+ "background-tab-busy": {
+  "OK": 1
+ },
+ "renderer-crashed(aw-snap)": {
+  "FALSE-BLOCK": 1
+ },
+ "renderer-hung(chrome://hang)": {
+  "FALSE-BLOCK": 1
+ }
+}
+leftovers {"wardens":[],"chrome":[],"cliChildren":[]}
+=== chain-bound (audit-3 GAP-242) ===
+{"t":0,"c":"c2/snap-accept","click":0,"code":0,"ms":607,"cap":false,"handled":2,"blockedAfter":false,"err":"Note: dialog policy for this session is now \"accept\".","first":"URL: http://127.0.0.1:51978/?n=cb0x98123","verdict":"RAN-CLEAN"}
+{"t":0,"c":"c2/eval-dismiss","click":0,"code":0,"ms":595,"cap":false,"handled":2,"blockedAfter":false,"err":"Note: dialog policy for this session is now \"dismiss\".","first":"done2","verdict":"RAN-CLEAN"}
+{"t":0,"c":"c6/snap-accept","click":0,"code":3,"ms":1041,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a alert dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"alert\",\"message\":\"c6-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978/?n","verdict":"EXIT3-OK"}
+{"t":0,"c":"c6/eval-dismiss","click":0,"code":3,"ms":1031,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a alert dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"alert\",\"message\":\"c6-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978/?n","verdict":"EXIT3-OK"}
+{"t":0,"c":"c12/snap-accept","click":0,"code":3,"ms":1037,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a confirm dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"confirm\",\"message\":\"c12-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978","verdict":"EXIT3-OK"}
+{"t":0,"c":"c12/eval-dismiss","click":0,"code":3,"ms":1041,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a confirm dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"confirm\",\"message\":\"c12-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978","verdict":"EXIT3-OK"}
+{"t":0,"c":"inf/snap-accept","click":0,"code":3,"ms":1041,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a alert dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"alert\",\"message\":\"inf-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978/?","verdict":"EXIT3-OK"}
+{"t":0,"c":"inf/eval-dismiss","click":0,"code":3,"ms":1037,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a alert dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"alert\",\"message\":\"inf-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978/?","verdict":"EXIT3-OK"}
+{"t":0,"c":"infslow/snap-accept","click":0,"code":0,"ms":427,"cap":false,"handled":1,"blockedAfter":false,"err":"Note: dialog policy for this session is now \"accept\".","first":"URL: http://127.0.0.1:51978/?n=cb0x73586","verdict":"RAN-CLEAN"}
+{"t":0,"c":"infslow/eval-dismiss","click":0,"code":0,"ms":421,"cap":false,"handled":1,"blockedAfter":false,"err":"Note: dialog policy for this session is now \"dismiss\".","first":"chain cb0x82078","verdict":"RAN-CLEAN"}
+{"t":1,"c":"c2/snap-accept","click":0,"code":0,"ms":623,"cap":false,"handled":2,"blockedAfter":false,"err":"Note: dialog policy for this session is now \"accept\".","first":"URL: http://127.0.0.1:51978/?n=cb1x90540","verdict":"RAN-CLEAN"}
+{"t":1,"c":"c2/eval-dismiss","click":0,"code":0,"ms":606,"cap":false,"handled":2,"blockedAfter":false,"err":"Note: dialog policy for this session is now \"dismiss\".","first":"done2","verdict":"RAN-CLEAN"}
+{"t":1,"c":"c6/snap-accept","click":0,"code":3,"ms":1040,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a alert dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"alert\",\"message\":\"c6-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978/?n","verdict":"EXIT3-OK"}
+{"t":1,"c":"c6/eval-dismiss","click":0,"code":3,"ms":1025,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a alert dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"alert\",\"message\":\"c6-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978/?n","verdict":"EXIT3-OK"}
+{"t":1,"c":"c12/snap-accept","click":0,"code":3,"ms":1031,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a confirm dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"confirm\",\"message\":\"c12-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978","verdict":"EXIT3-OK"}
+{"t":1,"c":"c12/eval-dismiss","click":0,"code":3,"ms":1027,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a confirm dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"confirm\",\"message\":\"c12-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978","verdict":"EXIT3-OK"}
+{"t":1,"c":"inf/snap-accept","click":0,"code":3,"ms":1033,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a alert dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"alert\",\"message\":\"inf-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978/?","verdict":"EXIT3-OK"}
+{"t":1,"c":"inf/eval-dismiss","click":0,"code":3,"ms":1041,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a alert dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"alert\",\"message\":\"inf-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978/?","verdict":"EXIT3-OK"}
+{"t":1,"c":"infslow/snap-accept","click":0,"code":0,"ms":443,"cap":false,"handled":1,"blockedAfter":false,"err":"Note: dialog policy for this session is now \"accept\".","first":"URL: http://127.0.0.1:51978/?n=cb1x66187","verdict":"RAN-CLEAN"}
+{"t":1,"c":"infslow/eval-dismiss","click":0,"code":0,"ms":425,"cap":false,"handled":1,"blockedAfter":false,"err":"Note: dialog policy for this session is now \"dismiss\".","first":"chain cb1x74719","verdict":"RAN-CLEAN"}
+{"t":2,"c":"c2/snap-accept","click":0,"code":0,"ms":585,"cap":false,"handled":2,"blockedAfter":false,"err":"Note: dialog policy for this session is now \"accept\".","first":"URL: http://127.0.0.1:51978/?n=cb2x83192","verdict":"RAN-CLEAN"}
+{"t":2,"c":"c2/eval-dismiss","click":0,"code":0,"ms":579,"cap":false,"handled":2,"blockedAfter":false,"err":"Note: dialog policy for this session is now \"dismiss\".","first":"done2","verdict":"RAN-CLEAN"}
+{"t":2,"c":"c6/snap-accept","click":0,"code":3,"ms":1030,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a alert dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"alert\",\"message\":\"c6-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978/?n","verdict":"EXIT3-OK"}
+{"t":2,"c":"c6/eval-dismiss","click":0,"code":3,"ms":1023,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a alert dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"alert\",\"message\":\"c6-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978/?n","verdict":"EXIT3-OK"}
+{"t":2,"c":"c12/snap-accept","click":0,"code":3,"ms":1047,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a confirm dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"confirm\",\"message\":\"c12-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978","verdict":"EXIT3-OK"}
+{"t":2,"c":"c12/eval-dismiss","click":0,"code":3,"ms":1100,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a confirm dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"confirm\",\"message\":\"c12-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978","verdict":"EXIT3-OK"}
+{"t":2,"c":"inf/snap-accept","click":0,"code":3,"ms":1037,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a alert dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"alert\",\"message\":\"inf-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978/?","verdict":"EXIT3-OK"}
+{"t":2,"c":"inf/eval-dismiss","click":0,"code":3,"ms":1021,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a alert dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"alert\",\"message\":\"inf-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51978/?","verdict":"EXIT3-OK"}
+{"t":2,"c":"infslow/snap-accept","click":0,"code":0,"ms":453,"cap":false,"handled":1,"blockedAfter":false,"err":"Note: dialog policy for this session is now \"accept\".","first":"URL: http://127.0.0.1:51978/?n=cb2x58567","verdict":"RAN-CLEAN"}
+{"t":2,"c":"infslow/eval-dismiss","click":0,"code":0,"ms":425,"cap":false,"handled":1,"blockedAfter":false,"err":"Note: dialog policy for this session is now \"dismiss\".","first":"chain cb2x67061","verdict":"RAN-CLEAN"}
+{
+ "c2/snap-accept": {
+  "RAN-CLEAN": 3
+ },
+ "c2/eval-dismiss": {
+  "RAN-CLEAN": 3
+ },
+ "c6/snap-accept": {
+  "EXIT3-OK": 3
+ },
+ "c6/eval-dismiss": {
+  "EXIT3-OK": 3
+ },
+ "c12/snap-accept": {
+  "EXIT3-OK": 3
+ },
+ "c12/eval-dismiss": {
+  "EXIT3-OK": 3
+ },
+ "inf/snap-accept": {
+  "EXIT3-OK": 3
+ },
+ "inf/eval-dismiss": {
+  "EXIT3-OK": 3
+ },
+ "infslow/snap-accept": {
+  "RAN-CLEAN": 3
+ },
+ "infslow/eval-dismiss": {
+  "RAN-CLEAN": 3
+ }
+}
+leftovers {"wardens":[],"chrome":[],"cliChildren":[]}
+=== multi-unknown ===
+{"t":0,"closed":["P1","P2"],"wrong":[],"alive":["B2","A","B1"],"final":"0/274"}
+{"t":1,"closed":["P1","P2"],"wrong":[],"alive":["A","B1","B2"],"final":"0/304"}
+{"t":2,"closed":["P1","P2"],"wrong":[],"alive":["B1","chrome://newtab/","A","B2"],"final":"0/267"}
+leftovers {"wardens":[],"chrome":[],"cliChildren":[]}
+=== SWEEP DONE ===

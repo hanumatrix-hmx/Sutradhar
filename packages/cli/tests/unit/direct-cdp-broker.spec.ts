@@ -158,26 +158,87 @@ describe('@sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222)', () =>
     expect(state.closeCalls).toEqual([]); // never closed the wrong tab
   });
 
-  it('FR2-04 fix-3/GAP-236, decision point 3: handle() on the actual holder closes it and names it (GAP-244)', async () => {
+  // FR2-04 escalation-1, decision 3 (GAP-247): SUPERSEDES fix-3's "handle() on the actual holder
+  // closes it" behavior. audit-4's A4-01 measured that exact behavior closing the WRONG, innocent
+  // tab first for a dialog on the opener (3/3) or the middle of a 3-target chain (3/3) — because
+  // `DirectCdpBroker` only runs when the warden is unreachable, so it has NO per-target history
+  // (`confirmedSafe`) to ground "newest target holds it" in (that premise needs every OLDER target
+  // to have been tracked continuously from before the dialog opened, which nothing guarantees once
+  // the warden is down). `DirectCdpBroker` must now refuse ALL destructive recovery, unconditionally
+  // — proven here for the exact "topology says THIS one is the holder" shape that used to close it.
+  it('FR2-04 escalation-1/GAP-247: handle() on what topology alone would call "the holder" still refuses to close it — DirectCdpBroker has no history to trust that guess', async () => {
     state.targets = [fakeTarget('opener', 'https://opener/'), fakeTarget('popup', 'about:blank', 'opener')];
     state.livenessResults.set('opener', 'blocked');
     state.livenessResults.set('popup', 'blocked');
     state.handleShouldFail = true;
     const broker = new DirectCdpBroker('ws://x');
     const outcome = await broker.handle('popup', true, undefined);
-    expect(outcome?.closedTarget).toBe(true);
-    expect(outcome?.message).toContain('popup');
-    expect(state.closeCalls).toEqual(['popup']);
+    expect(outcome?.closedTarget).toBeFalsy();
+    expect(outcome?.refused).toBe(true);
+    expect(outcome?.message).toMatch(/warden is not running/i);
+    expect(state.closeCalls).toEqual([]);
   });
 
-  it('FR2-04 fix-3/GAP-240, decision point 6: handle() on an ISOLATED blocked target (no sibling relationship) refuses to close it', async () => {
+  it('FR2-04 escalation-1/GAP-247: handle() on an ISOLATED blocked target (no sibling relationship) also refuses to close it', async () => {
     state.targets = [fakeTarget('solo', 'https://solo/')]; // no opener, no siblings — the sync-XHR shape
     state.livenessResults.set('solo', 'blocked');
     state.handleShouldFail = true;
     const broker = new DirectCdpBroker('ws://x');
     const outcome = await broker.handle('solo', true, undefined);
-    expect(outcome?.isolated).toBe(true);
+    expect(outcome?.refused).toBe(true);
     expect(outcome?.closedTarget).toBeFalsy();
-    expect(state.closeCalls).toEqual([]); // GAP-240: never close a target we can't distinguish from a busy script
+    expect(state.closeCalls).toEqual([]); // never close a target we can't distinguish from a busy script
+  });
+
+  // FR2-04 escalation-1, decision 3: the three specific warden-down attribution attacks audit-4's
+  // A4-01 named (opener-held, chain-middle, older-sibling) — zero wrong-tab closes in all three, by
+  // construction (DirectCdpBroker never closes anything for an unattributed dialog at all).
+  it('GAP-247 attack 1: dialog on the OPENER of a chain — handle() on ANY target in the blocked set never closes anything', async () => {
+    state.targets = [fakeTarget('opener', 'https://opener/'), fakeTarget('popup', 'about:blank', 'opener')];
+    state.livenessResults.set('opener', 'blocked'); // the opener actually holds the (unobserved) dialog
+    state.livenessResults.set('popup', 'blocked'); // the popup is only busy because it shares the renderer
+    state.handleShouldFail = true;
+    const broker = new DirectCdpBroker('ws://x');
+    for (const targetId of ['opener', 'popup']) {
+      const outcome = await broker.handle(targetId, true, undefined);
+      expect(outcome?.closedTarget).toBeFalsy();
+    }
+    expect(state.closeCalls).toEqual([]);
+  });
+
+  it('GAP-247 attack 2: dialog on the MIDDLE of a 3-target chain — handle() on any target never closes anything', async () => {
+    state.targets = [
+      fakeTarget('grand', 'https://grand/'),
+      fakeTarget('mid', 'https://mid/', 'grand'),
+      fakeTarget('leaf', 'about:blank', 'mid'),
+    ];
+    state.livenessResults.set('grand', 'blocked');
+    state.livenessResults.set('mid', 'blocked'); // mid actually holds the (unobserved) dialog
+    state.livenessResults.set('leaf', 'blocked');
+    state.handleShouldFail = true;
+    const broker = new DirectCdpBroker('ws://x');
+    for (const targetId of ['grand', 'mid', 'leaf']) {
+      const outcome = await broker.handle(targetId, true, undefined);
+      expect(outcome?.closedTarget).toBeFalsy();
+    }
+    expect(state.closeCalls).toEqual([]);
+  });
+
+  it('GAP-247 attack 3: dialog on the OLDER of two siblings — handle() on any target never closes anything', async () => {
+    state.targets = [
+      fakeTarget('opener', 'https://opener/'),
+      fakeTarget('older', 'about:blank', 'opener'),
+      fakeTarget('newer', 'about:blank', 'opener'),
+    ];
+    state.livenessResults.set('opener', 'blocked');
+    state.livenessResults.set('older', 'blocked'); // older actually holds the (unobserved) dialog
+    state.livenessResults.set('newer', 'blocked'); // newer is merely a sibling — topology would wrongly prefer it
+    state.handleShouldFail = true;
+    const broker = new DirectCdpBroker('ws://x');
+    for (const targetId of ['opener', 'older', 'newer']) {
+      const outcome = await broker.handle(targetId, true, undefined);
+      expect(outcome?.closedTarget).toBeFalsy();
+    }
+    expect(state.closeCalls).toEqual([]);
   });
 });

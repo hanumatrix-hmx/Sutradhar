@@ -1,0 +1,575 @@
+{
+  "at": "2026-09-27T02:09:57.886Z",
+  "headed": false,
+  "rows": [
+    {
+      "t": 0,
+      "state": "control/idle",
+      "n": "g0x96331",
+      "getMetrics": [
+        {
+          "state": "responsive",
+          "ms": 0
+        },
+        {
+          "state": "responsive",
+          "ms": 0
+        },
+        {
+          "state": "responsive",
+          "ms": 1
+        }
+      ],
+      "runtimeEval": "responsive",
+      "warden": {
+        "ms": 8,
+        "dialogs": []
+      },
+      "snap": {
+        "code": 0,
+        "ms": 267,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:50497/?n=g0x96331 | Title: sig g0x96331",
+        "err": ""
+      },
+      "elapsedSinceMeasureStart": 278,
+      "verdict": "OK"
+    },
+    {
+      "t": 0,
+      "state": "control/alert(dialog)",
+      "n": "g0x98181",
+      "getMetrics": [
+        {
+          "state": "blocked",
+          "ms": 408,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "blocked",
+          "ms": 408,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "blocked",
+          "ms": 406,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        }
+      ],
+      "runtimeEval": "blocked",
+      "warden": {
+        "ms": 2,
+        "dialogs": [
+          "TGT:alert"
+        ]
+      },
+      "snap": {
+        "code": 3,
+        "ms": 253,
+        "killedAtCap": false,
+        "first": "dialogPending: {\"type\":\"alert\",\"message\":\"real dialog\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:50497/?n=g0x98181\"} | ",
+        "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a di"
+      },
+      "elapsedSinceMeasureStart": 1886,
+      "verdict": "DIALOG-CAUGHT"
+    },
+    {
+      "t": 0,
+      "state": "busy-js-6s",
+      "n": "g0x1796",
+      "getMetrics": [
+        {
+          "state": "responsive",
+          "ms": 1
+        },
+        {
+          "state": "responsive",
+          "ms": 1
+        },
+        {
+          "state": "responsive",
+          "ms": 0
+        }
+      ],
+      "runtimeEval": "blocked",
+      "warden": {
+        "ms": 3,
+        "dialogs": []
+      },
+      "snap": {
+        "code": 0,
+        "ms": 5298,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:50497/?n=g0x1796 | Title: sig g0x1796",
+        "err": ""
+      },
+      "elapsedSinceMeasureStart": 5707,
+      "verdict": "OK"
+    },
+    {
+      "t": 0,
+      "state": "sync-xhr-10s",
+      "n": "g0x9128",
+      "getMetrics": [
+        {
+          "state": "blocked",
+          "ms": 406,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "blocked",
+          "ms": 407,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "blocked",
+          "ms": 404,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        }
+      ],
+      "runtimeEval": "blocked",
+      "warden": {
+        "ms": 407,
+        "dialogs": [
+          "TGT:unknown"
+        ]
+      },
+      "snap": {
+        "code": 3,
+        "ms": 685,
+        "killedAtCap": false,
+        "first": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:50497/?n=g0x9128\"} | ",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For "
+      },
+      "elapsedSinceMeasureStart": 2717,
+      "recovery": {
+        "code": 1,
+        "ms": 694,
+        "out": "",
+        "err": "Error: no dialog is open to accept."
+      },
+      "targetStillExists": true,
+      "targetGoneAfterMs": null,
+      "targetStillExistsAfter15s": true,
+      "verdict": "FALSE-BLOCK"
+    },
+    {
+      "t": 0,
+      "state": "huge-dom-parse+layout",
+      "n": "g0x29458",
+      "getMetrics": [
+        {
+          "state": "blocked",
+          "ms": 407,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "responsive",
+          "ms": 309
+        },
+        {
+          "state": "responsive",
+          "ms": 0
+        }
+      ],
+      "runtimeEval": "responsive",
+      "warden": {
+        "ms": 7,
+        "dialogs": []
+      },
+      "snap": {
+        "code": 0,
+        "ms": 451,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:50497/?n=g0x29458 | Title: sig g0x29458",
+        "err": ""
+      },
+      "elapsedSinceMeasureStart": 1177,
+      "pageBusyMs": 824,
+      "verdict": "OK"
+    },
+    {
+      "t": 0,
+      "state": "huge-dom-big(600k)-snap-now",
+      "n": "g0x38264",
+      "getMetrics": [
+        {
+          "state": "blocked",
+          "ms": 406,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "blocked",
+          "ms": 407,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "blocked",
+          "ms": 407,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        }
+      ],
+      "runtimeEval": "blocked",
+      "warden": {
+        "ms": 409,
+        "dialogs": [
+          "TGT:unknown"
+        ]
+      },
+      "snap": {
+        "code": 0,
+        "ms": 780,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:50497/?n=g0x38264 | Title: sig g0x38264",
+        "err": ""
+      },
+      "elapsedSinceMeasureStart": 2816,
+      "pageBusyMs": 1894,
+      "verdict": "OK"
+    },
+    {
+      "t": 0,
+      "state": "repeated-forced-layout",
+      "n": "g0x48398",
+      "getMetrics": [
+        {
+          "state": "responsive",
+          "ms": 38
+        },
+        {
+          "state": "responsive",
+          "ms": 136
+        },
+        {
+          "state": "responsive",
+          "ms": 84
+        }
+      ],
+      "runtimeEval": "blocked",
+      "warden": {
+        "ms": 40,
+        "dialogs": []
+      },
+      "snap": {
+        "code": 0,
+        "ms": 4651,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:50497/?n=g0x48398 | Title: sig g0x48398",
+        "err": ""
+      },
+      "elapsedSinceMeasureStart": 5364,
+      "pageBusyMs": 5038,
+      "verdict": "OK"
+    },
+    {
+      "t": 0,
+      "state": "alloc-heavy-gc",
+      "n": "g0x61702",
+      "getMetrics": [
+        {
+          "state": "responsive",
+          "ms": 0
+        },
+        {
+          "state": "responsive",
+          "ms": 1
+        },
+        {
+          "state": "responsive",
+          "ms": 0
+        }
+      ],
+      "runtimeEval": "blocked",
+      "warden": {
+        "ms": 3,
+        "dialogs": []
+      },
+      "snap": {
+        "code": 0,
+        "ms": 4200,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:50497/?n=g0x61702 | Title: sig g0x61702",
+        "err": ""
+      },
+      "elapsedSinceMeasureStart": 4612,
+      "pageBusyMs": 5000,
+      "verdict": "OK"
+    },
+    {
+      "t": 0,
+      "state": "mid-navigation-slow-response",
+      "n": "g0x74061",
+      "getMetrics": [
+        {
+          "state": "responsive",
+          "ms": 1
+        },
+        {
+          "state": "responsive",
+          "ms": 0
+        },
+        {
+          "state": "responsive",
+          "ms": 0
+        }
+      ],
+      "runtimeEval": "blocked",
+      "warden": {
+        "ms": 3,
+        "dialogs": []
+      },
+      "snap": {
+        "code": 0,
+        "ms": 5136,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:50497/slow?ms=6000 | Title: ",
+        "err": ""
+      },
+      "elapsedSinceMeasureStart": 5545,
+      "verdict": "OK"
+    },
+    {
+      "t": 0,
+      "state": "debugger-paused",
+      "n": "g0x81398",
+      "getMetrics": [
+        {
+          "state": "responsive",
+          "ms": 1
+        },
+        {
+          "state": "responsive",
+          "ms": 0
+        },
+        {
+          "state": "responsive",
+          "ms": 0
+        }
+      ],
+      "runtimeEval": "responsive",
+      "warden": {
+        "ms": 2,
+        "dialogs": []
+      },
+      "snap": {
+        "code": 1,
+        "ms": 60173,
+        "killedAtCap": true,
+        "first": "",
+        "err": ""
+      },
+      "elapsedSinceMeasureStart": 60178,
+      "verdict": "OK"
+    },
+    {
+      "t": 0,
+      "state": "print-preview",
+      "n": "g0x43166",
+      "getMetrics": [
+        {
+          "state": "responsive",
+          "ms": 1
+        },
+        {
+          "state": "responsive",
+          "ms": 0
+        },
+        {
+          "state": "responsive",
+          "ms": 1
+        }
+      ],
+      "runtimeEval": "responsive",
+      "warden": {
+        "ms": 2,
+        "dialogs": []
+      },
+      "snap": {
+        "code": 0,
+        "ms": 262,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:50497/?n=g0x43166 | Title: sig g0x43166",
+        "err": ""
+      },
+      "elapsedSinceMeasureStart": 268,
+      "verdict": "OK"
+    },
+    {
+      "t": 0,
+      "state": "background-tab-busy",
+      "n": "g0x45520",
+      "newtab": 0,
+      "getMetrics": [
+        {
+          "state": "responsive",
+          "ms": 1
+        },
+        {
+          "state": "responsive",
+          "ms": 1
+        },
+        {
+          "state": "responsive",
+          "ms": 0
+        }
+      ],
+      "runtimeEval": "responsive",
+      "warden": {
+        "ms": 2,
+        "dialogs": []
+      },
+      "snap": {
+        "code": 0,
+        "ms": 267,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:50497/?n=g0x45520-fg | Title: sig g0x45520-fg",
+        "err": ""
+      },
+      "elapsedSinceMeasureStart": 570,
+      "verdict": "OK"
+    },
+    {
+      "t": 0,
+      "state": "renderer-crashed(aw-snap)",
+      "n": "g0x48219",
+      "getMetrics": [
+        {
+          "state": "blocked",
+          "ms": 407,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "blocked",
+          "ms": 408,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "blocked",
+          "ms": 408,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        }
+      ],
+      "runtimeEval": "blocked",
+      "warden": {
+        "ms": 409,
+        "dialogs": [
+          "TGT:unknown"
+        ]
+      },
+      "snap": {
+        "code": 3,
+        "ms": 718,
+        "killedAtCap": false,
+        "first": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:50497/?n=g0x48219\"} | ",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For "
+      },
+      "elapsedSinceMeasureStart": 2760,
+      "recovery": {
+        "code": 1,
+        "ms": 673,
+        "out": "",
+        "err": "Error: no dialog is open to accept."
+      },
+      "targetStillExists": true,
+      "targetGoneAfterMs": null,
+      "targetStillExistsAfter15s": true,
+      "verdict": "FALSE-BLOCK"
+    },
+    {
+      "t": 0,
+      "state": "renderer-hung(chrome://hang)",
+      "n": "g0x69282",
+      "getMetrics": [
+        {
+          "state": "blocked",
+          "ms": 411,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "blocked",
+          "ms": 406,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        },
+        {
+          "state": "blocked",
+          "ms": 406,
+          "err": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if"
+        }
+      ],
+      "runtimeEval": "blocked",
+      "warden": {
+        "ms": 408,
+        "dialogs": [
+          "TGT:unknown"
+        ]
+      },
+      "snap": {
+        "code": 3,
+        "ms": 690,
+        "killedAtCap": false,
+        "first": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:50497/?n=g0x69282\"} | ",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For "
+      },
+      "elapsedSinceMeasureStart": 2730,
+      "recovery": {
+        "code": 1,
+        "ms": 686,
+        "out": "",
+        "err": "Error: no dialog is open to accept."
+      },
+      "targetStillExists": true,
+      "targetGoneAfterMs": null,
+      "targetStillExistsAfter15s": true,
+      "verdict": "FALSE-BLOCK"
+    }
+  ],
+  "summary": {
+    "control/idle": {
+      "OK": 1
+    },
+    "control/alert(dialog)": {
+      "DIALOG-CAUGHT": 1
+    },
+    "busy-js-6s": {
+      "OK": 1
+    },
+    "sync-xhr-10s": {
+      "FALSE-BLOCK": 1
+    },
+    "huge-dom-parse+layout": {
+      "OK": 1
+    },
+    "huge-dom-big(600k)-snap-now": {
+      "OK": 1
+    },
+    "repeated-forced-layout": {
+      "OK": 1
+    },
+    "alloc-heavy-gc": {
+      "OK": 1
+    },
+    "mid-navigation-slow-response": {
+      "OK": 1
+    },
+    "debugger-paused": {
+      "OK": 1
+    },
+    "print-preview": {
+      "OK": 1
+    },
+    "background-tab-busy": {
+      "OK": 1
+    },
+    "renderer-crashed(aw-snap)": {
+      "FALSE-BLOCK": 1
+    },
+    "renderer-hung(chrome://hang)": {
+      "FALSE-BLOCK": 1
+    }
+  },
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

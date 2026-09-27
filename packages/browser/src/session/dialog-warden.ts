@@ -28,6 +28,14 @@ import type { DialogPolicy } from './browser-tab.js';
 
 const DEFAULT_POLICY_GRACE_MS = 300;
 const DEFAULT_STATE_POLL_MS = 2000;
+/** FR2-04 escalation-1: how long `track()` waits after a target's `Page.enable` acks before its
+ *  one proactive "is this target confirmed safe" probe fires — see that probe's own doc comment
+ *  (inside `track()`) for why this must NOT be zero/immediate. Independent of
+ *  `DEFAULT_POLICY_GRACE_MS` (a different concern: how long to wait before auto-applying a
+ *  policy to an ALREADY-OPEN, already-tracked dialog) even though the values happen to be close in
+ *  magnitude — kept as its own constant/option so a test tuning one never accidentally changes
+ *  the other. */
+const DEFAULT_PROACTIVE_CONFIRM_DELAY_MS = 500;
 /** Every warden HTTP call's own budget (WARDEN_HTTP_TIMEOUT_MS, FR2-04 spec §0.4) — the CLI side
  *  (warden-control.ts) applies this per-request; kept here too as the doc-of-record. */
 export const WARDEN_HTTP_TIMEOUT_MS = 500;
@@ -69,6 +77,10 @@ export interface WardenOptions {
   readonly onExit: (reason: string) => Promise<void> | void;
   readonly policyGraceMs?: number;
   readonly statePollMs?: number;
+  /** FR2-04 escalation-1: overrides `DEFAULT_PROACTIVE_CONFIRM_DELAY_MS` — test-only knob so a
+   *  unit test can make the proactive confirm probe fire (near-)immediately instead of waiting
+   *  500ms of real (or advanced fake) timer time. */
+  readonly proactiveConfirmDelayMs?: number;
   readonly connect?: typeof connectForDialogs;
 }
 
@@ -92,6 +104,13 @@ export class DialogWarden {
   private readonly discoveredAt = new Map<string, number>();
   /** When each target's `Page.enable` last ACKed — see `PAGE_ENABLE_GRACE_MS`. */
   private readonly pageEnableAckedAt = new Map<string, number>();
+  /** FR2-04 escalation-1, decision 1 (GAP-245/246/247): when a liveness probe TAKEN AFTER this
+   *  target's `Page.enable` acked first found it responsive — i.e. the moment history proves this
+   *  target's dialog listener has been live and silent. Set once, never cleared until the target
+   *  itself is destroyed. See `attributeDialogHolders`'s `confirmedSafe` doc comment for why this
+   *  (history), not current topology, is the right thing to key "definitely not a dialog holder"
+   *  off of. */
+  private readonly confirmedResponsiveSince = new Map<string, number>();
   private readonly graceTimers = new Map<string, ReturnType<typeof setTimeout>>();
   private pollTimer?: ReturnType<typeof setInterval>;
   private stopped = false;
@@ -174,24 +193,41 @@ export class DialogWarden {
       ),
     );
 
-    // FR2-04 fix-3, decision point 1 (GAP-236): among everything that just came back non-
-    // responsive, figure out which target actually HOLDS the dialog versus which is merely
-    // collaterally blocked by sharing a renderer with the holder (a popup and its opener being
-    // the concrete, evidenced case) — see `attributeDialogHolders`'s doc comment for the full
-    // reasoning. Only the holder is reported as its own `unknown` dialog; a collateral target is
-    // reported with `blockedBy` set instead, so the gate still blocks (the shared renderer really
-    // is unresponsive) but recovery/auto-policy code never treats it as independently
-    // addressable — never its own "unknown dialog" that a generic `accept`/`dismiss` might land on
-    // (that indirection is exactly how GAP-236 closed the wrong tab).
+    // FR2-04 escalation-1, decision 1: the FIRST time a probe finds a target responsive AFTER its
+    // Page.enable acked, that target's history is settled for good — record it. This is the ONLY
+    // place `confirmedResponsiveSince` is ever set (never by mere Page.enable ack alone — Step 1's
+    // E2/E4 showed enable can ack with a dialog already open, and GAP-228 showed enable can ack on
+    // a target whose FIRST script already opened a dialog before this probe ever ran — a target
+    // must actually be OBSERVED responsive, not just enabled, to be provably safe).
+    for (const { info } of probeable) {
+      if (states.get(info.targetId) === 'responsive' && this.pageEnableAckedAt.has(info.targetId) && !this.confirmedResponsiveSince.has(info.targetId)) {
+        this.confirmedResponsiveSince.set(info.targetId, Date.now());
+      }
+    }
+
+    // FR2-04 fix-3, decision point 1 (GAP-236) / escalation-1 decision 1 (GAP-245/246/247): among
+    // everything that just came back non-responsive, figure out which target actually HOLDS the
+    // dialog versus which is merely collaterally blocked by sharing a renderer with the holder (a
+    // popup and its opener being the concrete, evidenced case) — see `attributeDialogHolders`'s doc
+    // comment for the full reasoning, in particular why this is now HISTORY-based
+    // (`confirmedSafe`), not purely topology-based. Only a non-confirmed-safe holder is reported as
+    // addressable; a collateral OR confirmed-safe target is reported with `blockedBy`/
+    // `confirmedSafe` set instead, so the gate still blocks (the shared renderer really is
+    // unresponsive) but recovery/auto-policy code never treats it as independently addressable.
     const blockedInfos = probeable
       .filter(({ info }) => states.get(info.targetId) !== 'responsive')
-      .map(({ info }) => ({ targetId: info.targetId, openerTargetId: info.openerTargetId, discoveredAt: this.discoveredAt.get(info.targetId) }));
+      .map(({ info }) => ({
+        targetId: info.targetId,
+        openerTargetId: info.openerTargetId,
+        discoveredAt: this.discoveredAt.get(info.targetId),
+        confirmedSafe: this.confirmedResponsiveSince.has(info.targetId),
+      }));
     const attribution = attributeDialogHolders(blockedInfos);
     for (const { info } of probeable) {
       const state = states.get(info.targetId);
       if (state === 'responsive') continue;
       busy.push(info.targetId);
-      const blockedBy = attribution.get(info.targetId);
+      const attr = attribution.get(info.targetId);
       dialogs.push({
         targetId: info.targetId,
         url: info.url,
@@ -199,7 +235,8 @@ export class DialogWarden {
         message: '',
         openedAt: new Date().toISOString(),
         source: 'hint',
-        blockedBy,
+        blockedBy: attr?.blockedBy,
+        confirmedSafe: attr?.confirmedSafe,
       });
     }
     return { dialogs, busy };
@@ -230,6 +267,7 @@ export class DialogWarden {
       }
       this.discoveredAt.delete(targetId);
       this.pageEnableAckedAt.delete(targetId);
+      this.confirmedResponsiveSince.delete(targetId);
     });
 
     // Deliberately NOT `listPageTargets(browser)` here — that helper filters out `about:blank`
@@ -245,7 +283,7 @@ export class DialogWarden {
     // blank or not, so the common case (single already-open tab) gets a proper bootstrap-time
     // `discoveredAt` and ages out of the liveness-probe window normally.
     for (const target of browser.targets()) {
-      if (target.type() === 'page') await this.track(target);
+      if (target.type() === 'page') await this.track(target, /* bootstrap */ true);
     }
 
     await this.listen();
@@ -278,7 +316,7 @@ export class DialogWarden {
    * method (or Puppeteer's own release) loses the race on still gets caught there and reported as
    * an `unknown` blocking dialog rather than silently treated as clear.
    */
-  private async track(target: Target): Promise<void> {
+  private async track(target: Target, bootstrap = false): Promise<void> {
     if (this.stopped) return;
     const targetId = idOf(target);
     if (!this.discoveredAt.has(targetId)) this.discoveredAt.set(targetId, Date.now());
@@ -348,6 +386,59 @@ export class DialogWarden {
           // `PAGE_ENABLE_GRACE_MS`'s doc comment for why this is measured from HERE, not from
           // when the target was merely discovered.
           this.pageEnableAckedAt.set(targetId, Date.now());
+          // FR2-04 escalation-1 (found live, re-verifying GAP-245's xhr-popup-manual shape): a
+          // target only ever gets liveness-probed (the thing that actually sets
+          // `confirmedResponsiveSince`, see `listWithLiveness`) REACTIVELY, when some later CLI
+          // command's gate happens to call `/v1/dialogs` — decision 1's history rule was proven
+          // sound at the unit level (dialog-cdp.spec.ts's mocked timeline), but a live attack that
+          // creates a popup and blocks its shared renderer with NO intervening CLI command in
+          // between (this scenario's exact shape: two raw-CDP `Runtime.evaluate` steps with no
+          // `cli(...)` call between them) never gives the warden a chance to observe EITHER target
+          // responsive before everything blocks — so neither ever earns `confirmedSafe`, and
+          // GAP-245 reopens for the popup AND (since even the long-lived opener's very first probe
+          // this session also happens to land after the block) the opener too.
+          //
+          // Probe proactively, but ONLY after `PROACTIVE_CONFIRM_DELAY_MS` — never immediately.
+          // Probing right away would race the EXACT SAME window GAP-220/236 are built on: an
+          // `about:blank` popup that alerts synchronously during its OWN construction (audit-2's
+          // original finding) is often still nominally "responsive" for a few ms right after
+          // Page.enable acks, before its first script (which may itself be the navigation to a
+          // page whose inline script alerts on load) has actually run — probing instantly would
+          // risk marking exactly that popup `confirmedSafe` moments before its real, untracked
+          // dialog opens, which would be a NEW regression (found live re-verifying
+          // opener-same-origin-url/opener-cross-site: those alert fast enough that an immediate
+          // probe could beat the alert). Waiting a short grace period first (same order of
+          // magnitude as `DEFAULT_POLICY_GRACE_MS`/`GATE_LISTEN_MS` elsewhere in this file) gives a
+          // synchronous first-script dialog a real chance to either already be a TRACKED event (in
+          // which case `this.dialogs.has(targetId)` is checked below and the probe is skipped
+          // entirely) or to already be blocking the probe itself (so it correctly comes back
+          // non-responsive, never marked safe). Fire-and-forget either way: losing this race just
+          // leaves the target a candidate, exactly as before this addition.
+          //
+          // `bootstrap` targets (already existing when `start()` enumerated them, per the doc
+          // comment above that loop) are a DIFFERENT case: they are not racing a synchronous
+          // first-script dialog at all — they already loaded and settled before the warden ever
+          // attached, so there is no "did the listener win the race" question to wait out. Probe
+          // them near-immediately instead: found live (attrib-attack-probe.mjs's
+          // `xhr-isolated-manual`, re-verifying GAP-240's already-fixed "never close an isolated
+          // busy tab" guarantee) that waiting the full delay for the session's PRIMARY tab left a
+          // real window — a script that starts running on it within the delay window (before this
+          // probe ever got to run) found it still "never confirmed", making it wrongly eligible
+          // for the decision-2 recovery path even though it had been sitting idle the entire
+          // session before that.
+          if (!this.confirmedResponsiveSince.has(targetId)) {
+            const delayMs = bootstrap ? 0 : (this.opts.proactiveConfirmDelayMs ?? DEFAULT_PROACTIVE_CONFIRM_DELAY_MS);
+            setTimeout(() => {
+              if (this.stopped || this.confirmedResponsiveSince.has(targetId) || this.dialogs.has(targetId)) return;
+              livenessProbe(session, LIVENESS_PROBE_MS)
+                .then((state) => {
+                  if (state === 'responsive' && !this.confirmedResponsiveSince.has(targetId) && !this.dialogs.has(targetId)) {
+                    this.confirmedResponsiveSince.set(targetId, Date.now());
+                  }
+                })
+                .catch(() => {});
+            }, delayMs).unref?.();
+          }
         })
         .catch(() => {})
         .finally(() => clearTimeout(enableTimeout));
@@ -413,42 +504,44 @@ export class DialogWarden {
    * (the exact GAP-236 shape — a popup's opener sharing its renderer), this refuses to close it
    * and returns the real holder's id/url instead, so the caller can report which tab it should
    * have asked about (decision point 3: recovery must never be the implicit side effect of
-   * closing whatever target merely sorted first). `{closed:false}` with no `redirectTo`/`isolated`
+   * closing whatever target merely sorted first). `{closed:false}` with no `redirectTo`/`refused`
    * means the target isn't blocked at all any more (it cleared on its own) or no longer exists —
    * nothing to recover either way.
    *
-   * FR2-04 fix-3, decision point 6 (GAP-240): live re-verification found that scoping recovery to
-   * the identified holder (points 1+3) was NECESSARY but not SUFFICIENT to retire GAP-240 — a
-   * target with no sibling relationship at all (the sync-XHR/heavy-script shape: one isolated tab,
-   * `Performance.getMetrics` timing out with nothing else to attribute it against) still passed
-   * straight through as "the holder of its own dialog" and got closed exactly like a real orphaned
-   * popup would (signal-attack-probe.mjs, `sync-xhr-10s`: FALSE-BLOCK+TAB-CLOSED, ~510ms). An
-   * isolated hint entry has ZERO structural evidence it's an actual dialog rather than a slow
-   * script — `blockedBy` only exists for a target with at least one sibling in the SAME
-   * probe round, which is real evidence of the popup/opener shape this item's audits demonstrated.
-   * Refuse to close an isolated target under ANY path (this method is shared by both the automatic
-   * policy's — which fix-3 already never calls into for a hint entry, see runDialogGate — and the
-   * explicit `sutradhar dialog accept|dismiss` command, which fix-2 left free to close it). The
-   * accepted trade (decision point 6): a busy-but-healthy isolated tab stays blocked with a plain
-   * "not necessarily a dialog" message and NO destructive action; `sutradhar close` remains the
-   * escape hatch for a genuinely stuck, unobservable, isolated dialog, exactly as before Branch W
-   * existed at all.
+   * FR2-04 fix-3, decision point 6 (GAP-240) — SUPERSEDED by escalation-1 decision 1+2
+   * (GAP-245/246): fix-3's rule was "no sibling relationship at all -> refuse" (an `isolated`
+   * flag), reasoning that a lone blocked target has zero structural evidence it's an actual dialog
+   * rather than a slow script. audit-4 found this wrong in BOTH directions: GAP-245, a target that
+   * merely shares a renderer with a confirmed-safe (history-proven non-dialog) sibling still got
+   * closed just because a sibling existed; GAP-246, a REAL dialog in a genuinely isolated new tab
+   * (no sibling to attribute against at all — the common `target=_blank`/cross-site-popup shape)
+   * could never be recovered at all. The fix is `confirmedSafe` (see `attributeDialogHolders`'s doc
+   * comment): a target the warden has actually watched respond since its listener went live cannot
+   * be hiding a dialog, so it's excluded from candidacy regardless of siblings (fixes GAP-245); a
+   * target that was NEVER confirmed responsive remains an eligible candidate holder EVEN with no
+   * sibling at all (fixes GAP-246, decision 2) — the accepted residual (decision 2) is narrower
+   * than the old blanket rule: only a brand-new tab that is busy from the very instant of its
+   * creation (never had a chance to be probed responsive) is indistinguishable from a real dialog.
    */
   private async tryRecoverUnknownTarget(
     targetId: string,
-  ): Promise<{ closed: boolean; redirectTo?: string; redirectUrl?: string; isolated?: boolean }> {
+  ): Promise<{ closed: boolean; redirectTo?: string; redirectUrl?: string; refused?: boolean }> {
     if (!this.browser) return { closed: false };
     const { dialogs } = await this.listWithLiveness();
     const entry = dialogs.find((d) => d.targetId === targetId && d.source === 'hint');
     if (!entry) return { closed: false }; // not currently probed as blocked — nothing to recover
+    if (entry.confirmedSafe) {
+      // History proves this target cannot be hiding a dialog — never close it, and never point at
+      // it as if it were a redirect target for someone else either (its own `blockedBy`, if set,
+      // only names a still-in-question candidate for MESSAGING — see attributeDialogHolders).
+      return { closed: false, refused: true, redirectTo: entry.blockedBy, redirectUrl: entry.blockedBy ? dialogs.find((d) => d.targetId === entry.blockedBy)?.url : undefined };
+    }
     if (entry.blockedBy) {
       const holder = dialogs.find((d) => d.targetId === entry.blockedBy);
       return { closed: false, redirectTo: entry.blockedBy, redirectUrl: holder?.url };
     }
-    const hasCollateralSibling = dialogs.some((d) => d.blockedBy === targetId);
-    if (!hasCollateralSibling) {
-      return { closed: false, isolated: true };
-    }
+    // Never confirmed responsive, and not collateral to another still-in-question candidate — this
+    // is the presumed holder, eligible for recovery even with no sibling at all (decision 2).
     try {
       await closeTargetAtBrowserLevel(this.browser, targetId);
       return { closed: true };
@@ -527,11 +620,33 @@ export class DialogWarden {
               );
             return;
           }
+          if (recovery.refused) {
+            // FR2-04 escalation-1, decision 1+2 (GAP-245/246): `targetId`'s history PROVES it
+            // cannot be hiding a dialog (it was observed responding at some point after its
+            // listener went live) — never close it, regardless of whether a still-in-question
+            // candidate exists elsewhere.
+            res
+              .writeHead(409, { 'content-type': 'application/json' })
+              .end(
+                JSON.stringify({
+                  error: recovery.redirectTo
+                    ? `tab ${targetId} is busy, but its own history proves it cannot be hiding a dialog (it was ` +
+                      `observed responding earlier) — the still-unresolved candidate is tab ${recovery.redirectTo}` +
+                      `${recovery.redirectUrl ? ` (${recovery.redirectUrl})` : ''} — re-run "sutradhar dialog" and target that tab instead.`
+                    : `tab ${targetId} is busy or unresponsive, but its own history proves it cannot be hiding a ` +
+                      'dialog (it was observed responding earlier, likely just a slow script now) — no automatic ' +
+                      'recovery was attempted. If you are sure it is a stuck dialog, "sutradhar close" ends the session.',
+                  confirmedSafe: true,
+                  holderTargetId: recovery.redirectTo,
+                }),
+              );
+            return;
+          }
           if (recovery.redirectTo) {
             // FR2-04 fix-3/GAP-236, decision point 3: `targetId` is only collaterally blocked by
-            // sharing a renderer with the ACTUAL holder — refuse to close it, and name the real
-            // holder so the caller (cmdDialog) can report it plainly rather than silently acting
-            // on whichever tab it happened to be asked about.
+            // sharing a renderer with the ACTUAL (never-confirmed, still-in-question) holder —
+            // refuse to close it, and name the real holder so the caller (cmdDialog) can report it
+            // plainly rather than silently acting on whichever tab it happened to be asked about.
             res
               .writeHead(409, { 'content-type': 'application/json' })
               .end(
@@ -541,23 +656,6 @@ export class DialogWarden {
                     `${recovery.redirectTo}${recovery.redirectUrl ? ` (${recovery.redirectUrl})` : ''}, which actually holds the ` +
                     'dialog — re-run "sutradhar dialog" and target that tab instead.',
                   holderTargetId: recovery.redirectTo,
-                }),
-              );
-            return;
-          }
-          if (recovery.isolated) {
-            // FR2-04 fix-3/GAP-240, decision point 6: no sibling relationship at all — nothing
-            // distinguishes this from a healthy tab running a slow script. Never close it
-            // automatically; report plainly instead so the caller knows why nothing happened.
-            res
-              .writeHead(409, { 'content-type': 'application/json' })
-              .end(
-                JSON.stringify({
-                  error:
-                    `tab ${targetId} is busy or unresponsive, but nothing identifies this as an actual dialog ` +
-                    '(it may just be running a slow script) — no automatic recovery was attempted. If you are ' +
-                    'sure it is a stuck dialog, "sutradhar close" ends the session.',
-                  isolated: true,
                 }),
               );
             return;

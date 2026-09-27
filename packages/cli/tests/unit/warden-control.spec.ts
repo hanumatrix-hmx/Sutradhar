@@ -6,7 +6,7 @@
 import { mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { ensureWarden, stopWarden, readWardenFile, writeWardenFile } from '../../src/warden-control.js';
+import { ensureWarden, stopWarden, readWardenFile, writeWardenFile, isRivalWardenAlive } from '../../src/warden-control.js';
 
 async function scratchDir(): Promise<string> {
   return mkdtemp(path.join(os.tmpdir(), 'fr2-04-wc-'));
@@ -167,6 +167,53 @@ describe('@sutradhar/cli warden-control (FR2-04 Branch W)', () => {
       const result = await ensureWarden({ stateDir: dir, wsEndpoint: 'ws://stale-lock', spawnFn: spawnFn as any, fetchImpl: fetchImpl as any });
       expect(spawnFn).toHaveBeenCalledTimes(1);
       expect(result).toEqual({ port: 8888, token: 'recovered', reused: false });
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
+  // FR2-04 escalation-1, GAP-250: audit-4 found M22 (the lock read-back check) and M23
+  // (isRivalWardenAlive's singleton check) survive vitest because nothing tests either function
+  // DIRECTLY — WC5/WC6 above only exercise them indirectly through `ensureWarden`'s spawn path,
+  // which happens to converge on one winner even without them (the spawned process's OWN
+  // `warden.json` write is what those tests actually assert on). M22's own direct test lives in
+  // warden-control-lock-raceback.spec.ts (a separate file — it mocks `node:fs/promises`, which
+  // would break every real-directory test in THIS file if done here). M23's tests are here,
+  // since they need no fs mocking.
+
+  it('WC8 (GAP-250/M23): isRivalWardenAlive reports true for a live, healthy warden on the SAME wsEndpoint that is not this process', async () => {
+    const dir = await scratchDir();
+    try {
+      await writeWardenFile(dir, { v: 1, pid: 424242, port: 1, token: 't', wsEndpoint: 'ws://shared', startedAt: 'x' });
+      const fetchImpl = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ pid: 424242, wsEndpoint: 'ws://shared' }) });
+      const killSpy = vi.spyOn(process, 'kill').mockImplementation(() => true as any); // pretend the rival pid is alive
+      const result = await isRivalWardenAlive(dir, 'ws://shared', /* selfPid */ 1, fetchImpl as any);
+      expect(result).toBe(true);
+      killSpy.mockRestore();
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('WC9 (GAP-250/M23): isRivalWardenAlive reports false when the rival is for a DIFFERENT wsEndpoint, IS this process, or its pid is dead', async () => {
+    const dir = await scratchDir();
+    try {
+      await writeWardenFile(dir, { v: 1, pid: 424242, port: 1, token: 't', wsEndpoint: 'ws://shared', startedAt: 'x' });
+      const fetchImpl = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ pid: 424242, wsEndpoint: 'ws://shared' }) });
+
+      // Different wsEndpoint: even a live rival for a different browser isn't a rival for THIS one.
+      const killSpy = vi.spyOn(process, 'kill').mockImplementation(() => true as any);
+      expect(await isRivalWardenAlive(dir, 'ws://different', 1, fetchImpl as any)).toBe(false);
+      // Self pid: warden.json already names THIS process — never a rival to itself.
+      expect(await isRivalWardenAlive(dir, 'ws://shared', 424242, fetchImpl as any)).toBe(false);
+      killSpy.mockRestore();
+
+      // Dead pid: process.kill(pid, 0) throws for a pid that doesn't exist.
+      const deadKillSpy = vi.spyOn(process, 'kill').mockImplementation(() => {
+        throw new Error('ESRCH');
+      });
+      expect(await isRivalWardenAlive(dir, 'ws://shared', 1, fetchImpl as any)).toBe(false);
+      deadKillSpy.mockRestore();
     } finally {
       await rm(dir, { recursive: true, force: true });
     }

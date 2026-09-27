@@ -174,6 +174,10 @@ export interface PendingDialogEntry {
    *  the full reasoning — mirrored here so pure CLI-side code (`selectDialog`, `runDialogGate`)
    *  never needs to import from `@sutradhar/browser` just to check this. */
   readonly blockedBy?: string;
+  /** FR2-04 escalation-1, decision 1 (GAP-245/246): mirrors `ObservedDialog.confirmedSafe`
+   *  (dialog-cdp.ts) — true means this target's own history proves it cannot be hiding a dialog.
+   *  Never eligible for `selectDialog`, regardless of `blockedBy`. */
+  readonly confirmedSafe?: boolean;
 }
 
 /** FIFO selection (§2.9/D-8): the OLDEST pending dialog by `openedAt`, plus the rest.
@@ -184,11 +188,16 @@ export interface PendingDialogEntry {
  * on — accepting/dismissing it would either 404 (nothing to resolve there) or, worse, recover by
  * closing the wrong tab (exactly GAP-236). Filtered out before the FIFO sort so a real holder
  * that opened slightly later than a collateral entry is still preferred over it; `rest` still
- * includes any collateral entries so callers can report them as informational context. */
+ * includes any collateral entries so callers can report them as informational context.
+ *
+ * FR2-04 escalation-1, decision 1 (GAP-245/GAP-249's A20): a `confirmedSafe` entry is excluded the
+ * same way — its own history proves it cannot be a dialog holder, so it must never be selected
+ * regardless of `blockedBy` (which, on a confirmed-safe entry, only names a still-in-question
+ * candidate for messaging, not something `selectDialog` should ever treat as "this is the one"). */
 export function selectDialog<T extends PendingDialogEntry>(pending: readonly T[]): { target: T | undefined; rest: T[] } {
   if (pending.length === 0) return { target: undefined, rest: [] };
   const sorted = [...pending].sort((a, b) => a.openedAt.localeCompare(b.openedAt));
-  const target = sorted.find((d) => !d.blockedBy);
+  const target = sorted.find((d) => !d.blockedBy && !d.confirmedSafe);
   if (!target) return { target: undefined, rest: sorted };
   return { target, rest: sorted.filter((d) => d !== target) };
 }

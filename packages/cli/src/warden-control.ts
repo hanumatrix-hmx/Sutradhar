@@ -67,7 +67,10 @@ function isPidAlive(pid: number): boolean {
  * challenger's rename landed after ours, our read-back fails and we correctly report we do not
  * own the lock, rather than assuming the rename alone proved ownership.
  */
-async function tryAcquireSpawnLock(stateDir: string): Promise<boolean> {
+/** Exported ONLY for GAP-250's direct unit test (warden-control.spec.ts WC7) — production code
+ *  only ever calls this internally via `ensureWarden`. Visibility change alone, no behavior
+ *  change. */
+export async function tryAcquireSpawnLock(stateDir: string): Promise<boolean> {
   const lockPath = spawnLockPath(stateDir);
   const payload: SpawnLockFile = { pid: process.pid, startedAt: Date.now() };
 

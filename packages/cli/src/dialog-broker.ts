@@ -14,7 +14,6 @@ import {
   listPageTargets,
   livenessProbe,
   handleDialogOnTarget,
-  closeTargetAtBrowserLevel,
   attributeDialogHolders,
   probeTargetsConcurrently,
 } from '@sutradhar/browser';
@@ -44,12 +43,13 @@ export interface HandleOutcome {
   readonly message?: string;
   readonly redirectTo?: string;
   readonly redirectUrl?: string;
-  /** FR2-04 fix-3/GAP-240, decision point 6: set when the target has no structural evidence
-   *  (no sibling relationship — see `attributeDialogHolders`) that it's an actual dialog holder
-   *  rather than a healthy tab running a slow synchronous script. Recovery refuses to close it
-   *  under any path (automatic policy already never reaches this — see `runDialogGate` — and the
-   *  explicit `sutradhar dialog accept|dismiss` command now refuses too). */
-  readonly isolated?: boolean;
+  /** FR2-04 escalation-1 (GAP-245/246/247), replaces fix-3's `isolated` flag: set whenever
+   *  recovery deliberately declined to close the target rather than guess — either because its
+   *  OWN history proves it cannot be a dialog holder (decision 1/2: `attributeDialogHolders`'s
+   *  `confirmedSafe`), or because the broker has no history at all to ground an attribution in
+   *  (decision 3: `DirectCdpBroker` with the warden down — see its doc comment for GAP-247). Either
+   *  way, `message` explains why and always points at `sutradhar close` as the fallback escape. */
+  readonly refused?: boolean;
 }
 
 /** FR2-04 fix-3, decision point 5 (GAP-239/GAP-241): `list()`'s "the browser/warden couldn't be
@@ -155,12 +155,18 @@ export class DirectCdpBroker implements DialogBroker {
 
     const dialogs: BrokerDialog[] = [];
     const busy: string[] = [];
+    // FR2-04 escalation-1, decision 3 (GAP-247): `DirectCdpBroker` is only ever used while the
+    // warden is unreachable, which means it has NO per-target history at all — every candidate here
+    // is passed with `confirmedSafe: false` (unconditionally "never confirmed"), so the attribution
+    // below degrades to exactly fix-3's topology-only guess (newest-leaf). That guess is UNSOUND in
+    // this mode specifically because there is no guarantee every older target was tracked
+    // continuously from before the dialog opened (see `attributeDialogHolders`'s doc comment) — so
+    // this `blockedBy`/holder split is used for LISTING/messaging only. `handle()` below never acts
+    // on it to close anything; recovery is refused outright in this mode (decision 3(a): the
+    // smaller, provably-safe half of the two options decisions.md offered).
     const blockedInfos = probeable
       .filter(({ info }) => states.get(info.targetId) === 'blocked')
       .map(({ info }) => ({ targetId: info.targetId, openerTargetId: info.openerTargetId }));
-    // FR2-04 fix-3/GAP-236, decision point 1: same attribution the warden applies (see
-    // `attributeDialogHolders`'s doc comment) — a same-renderer popup and its opener must not both
-    // be reported as independently-addressable unknown dialogs.
     const attribution = attributeDialogHolders(blockedInfos);
     for (const { info } of probeable) {
       const state = states.get(info.targetId);
@@ -185,7 +191,7 @@ export class DirectCdpBroker implements DialogBroker {
           message: '',
           url: info.url,
           openedAt: new Date().toISOString(),
-          blockedBy: attribution.get(info.targetId),
+          blockedBy: attribution.get(info.targetId)?.blockedBy,
         });
       }
     }
@@ -217,44 +223,44 @@ export class DirectCdpBroker implements DialogBroker {
       const state = await livenessProbe(session, LIVENESS_TIMEOUT_MS).catch(() => 'error' as const);
       if (state === 'responsive') throw err;
 
-      // FR2-04 fix-3/GAP-236, decision point 1+3: re-check attribution against every OTHER
-      // currently-blocked target before closing — `targetId` might only be collaterally blocked
-      // (sharing a renderer with the real holder), and closing it would repeat exactly the bug
-      // this fallback exists to avoid. Never close a target this pass identifies as non-holder.
+      // FR2-04 escalation-1, decision 3 (GAP-247): audit-4's A4-01 measured the OLD behavior here
+      // (re-check attribution, then close whatever it named as "the holder") closing the WRONG,
+      // innocent tab first for a dialog on the opener (3/3) or the middle of a 3-target chain
+      // (3/3), and 1/3 for the older of two siblings — only 0/3 (the newest-sibling shape) was ever
+      // correct. The root cause: `DirectCdpBroker` only exists because the warden is unreachable,
+      // so it has NO per-target history (`confirmedSafe`) at all — the "newest target holds it"
+      // premise is sound ONLY when every older target was tracked continuously from before the
+      // dialog opened (see `attributeDialogHolders`'s doc comment), a guarantee that does not hold
+      // here. Rather than guess and risk closing an innocent tab, refuse ALL destructive recovery
+      // in this degraded mode — decision 3's smaller, provably-safe option ("refuse recovery and
+      // point at close"), proven live against all three of audit-4's warden-down attribution
+      // attacks (opener-held, chain-middle, older-sibling): zero closes, by construction, in every
+      // shape, not just the ones actually tried.
       const relisted = await this.list();
-      if (relisted.status === 'ok') {
-        const mine = relisted.dialogs.find((d) => d.targetId === targetId);
-        if (mine?.blockedBy) {
-          const holder = relisted.dialogs.find((d) => d.targetId === mine.blockedBy);
-          return {
-            redirectTo: mine.blockedBy,
-            redirectUrl: holder?.url,
-            message:
-              `Tab ${targetId} is unresponsive because it shares a browser process with tab ${mine.blockedBy}` +
-              `${holder?.url ? ` (${holder.url})` : ''}, which actually holds the dialog — target that tab instead.`,
-          };
-        }
-        // FR2-04 fix-3/GAP-240, decision point 6: no sibling relationship at all — the exact
-        // sync-XHR/heavy-script shape live re-verification found still got closed even after
-        // points 1+3 (signal-attack-probe.mjs: sync-xhr-10s, FALSE-BLOCK+TAB-CLOSED). With no
-        // structural evidence this is an actual dialog rather than a healthy busy tab, refuse to
-        // close it under this fallback path too, same as the warden does.
-        const hasCollateralSibling = relisted.dialogs.some((d) => d.blockedBy === targetId);
-        if (!hasCollateralSibling) {
-          return {
-            isolated: true,
-            message:
-              `Tab ${targetId} is busy or unresponsive, but nothing identifies this as an actual dialog ` +
-              '(it may just be running a slow script) — no automatic recovery was attempted. If you are ' +
-              'sure it is a stuck dialog, "sutradhar close" ends the session.',
-          };
-        }
+      const mine = relisted.status === 'ok' ? relisted.dialogs.find((d) => d.targetId === targetId) : undefined;
+      if (mine?.blockedBy) {
+        // Still useful as a HINT even in degraded mode (informational only — not acted on): the
+        // gate's own topology guess names a candidate, but the guess itself is what's unsound, so
+        // this is surfaced, never auto-followed.
+        const holder = relisted.status === 'ok' ? relisted.dialogs.find((d) => d.targetId === mine.blockedBy) : undefined;
+        return {
+          refused: true,
+          redirectTo: mine.blockedBy,
+          redirectUrl: holder?.url,
+          message:
+            `Tab ${targetId} is unresponsive, sharing a browser process with tab ${mine.blockedBy}` +
+            `${holder?.url ? ` (${holder.url})` : ''} — but the dialog warden is not running, so which of the two ` +
+            'actually holds the dialog cannot be proven without its tracking history. No automatic recovery was ' +
+            'attempted. Run "sutradhar close" to end the session, or retry once a warden is available.',
+        };
       }
-      await closeTargetAtBrowserLevel(this.browser, targetId);
-      const url = listPageTargets(this.browser).find(({ info }) => info.targetId === targetId)?.info.url;
       return {
-        closedTarget: true,
-        message: `Tab ${targetId}${url ? ` (${url})` : ''} was closed because its dialog could not be addressed directly (unknown dialog).`,
+        refused: true,
+        message:
+          `Tab ${targetId} is unresponsive, but the dialog warden is not running, so this dialog cannot be ` +
+          'safely attributed to one specific tab without guessing (guessing here has been measured to close ' +
+          'the wrong, innocent tab) — no automatic recovery was attempted. Run "sutradhar close" to end the ' +
+          'session, or retry once a warden is available.',
       };
     }
   }
@@ -289,7 +295,17 @@ export class WardenBroker implements DialogBroker {
       const res = await this.request('/v1/dialogs');
       if (!res.ok) return { status: 'unknown', reason: 'unreachable' };
       const body = (await res.json()) as {
-        dialogs: Array<{ targetId: string; url: string; type: string; message: string; defaultPrompt?: string; openedAt: string; id?: string; blockedBy?: string }>;
+        dialogs: Array<{
+          targetId: string;
+          url: string;
+          type: string;
+          message: string;
+          defaultPrompt?: string;
+          openedAt: string;
+          id?: string;
+          blockedBy?: string;
+          confirmedSafe?: boolean;
+        }>;
         busy?: string[];
       };
       return {
@@ -308,6 +324,7 @@ export class WardenBroker implements DialogBroker {
           openedAt: d.openedAt,
           dialogId: d.id,
           blockedBy: d.blockedBy,
+          confirmedSafe: d.confirmedSafe,
         })),
       };
     } catch (err) {
@@ -340,13 +357,18 @@ export class WardenBroker implements DialogBroker {
       const body = (await res.json().catch(() => ({ error: `HTTP ${res.status}` }))) as {
         error?: string;
         holderTargetId?: string;
-        isolated?: boolean;
+        confirmedSafe?: boolean;
       };
+      // FR2-04 escalation-1, decision 1 (GAP-245/246): checked BEFORE the plain `holderTargetId`
+      // branch below — a `confirmedSafe` refusal can ALSO carry a `holderTargetId` (a still-in-
+      // question candidate elsewhere in the same component), and must never be mistaken for the
+      // (unconditional) "this target holds a real, addressable dialog elsewhere" redirect that
+      // plain `holderTargetId` alone means.
+      if (body.confirmedSafe) {
+        return { refused: true, redirectTo: body.holderTargetId, message: body.error };
+      }
       if (body.holderTargetId) {
         return { redirectTo: body.holderTargetId, message: body.error };
-      }
-      if (body.isolated) {
-        return { isolated: true, message: body.error };
       }
       throw new Error(body.error ?? `warden handle failed with HTTP ${res.status}`);
     }

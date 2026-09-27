@@ -55,6 +55,11 @@ export interface ObservedDialog {
    *  auto-select it as "the" dialog to accept/dismiss (see `dialog-cli.ts`'s `selectDialog` and
    *  `dialog-broker.ts`'s `runDialogGate`, both of which skip a `blockedBy`-tagged entry). */
   readonly blockedBy?: string;
+  /** FR2-04 escalation-1, decision 1: mirrors {@link DialogAttribution.confirmedSafe} — true means
+   *  history proves this target cannot be hiding a dialog (see that doc comment). Only ever set on
+   *  a `source: 'hint'` entry (a real, tracked `source: 'event'` dialog is never liveness-inferred
+   *  in the first place). Never selected/closed as a dialog holder. */
+  readonly confirmedSafe?: boolean;
 }
 
 export type LivenessState = 'responsive' | 'blocked' | 'error';
@@ -154,6 +159,36 @@ export async function livenessProbe(session: CDPSession, ms: number): Promise<Li
   }
 }
 
+/** Input to {@link attributeDialogHolders} for one currently-blocked target. */
+export interface DialogAttributionInput {
+  readonly targetId: string;
+  readonly openerTargetId?: string;
+  readonly discoveredAt?: number;
+  /** FR2-04 escalation-1, decision 1 (GAP-245/246/247): true when THIS target's `Page.enable`
+   *  ack'd AND at least one liveness probe taken after that ack found it responsive, at any point
+   *  since (see `DialogWarden`'s `confirmedResponsiveSince`). Such a target's dialog listener has
+   *  been live and silent the whole time it could have hidden something — any dialog opening on it
+   *  would already exist as a tracked, typed `Page.javascriptDialogOpening` event, so it
+   *  STRUCTURALLY cannot be the source of an untracked "unknown" dialog. `false`/`undefined` means
+   *  "never confirmed" — the target could genuinely be hiding a dialog the warden missed. */
+  readonly confirmedSafe?: boolean;
+}
+
+/** Output of {@link attributeDialogHolders} for one currently-blocked target. */
+export interface DialogAttribution {
+  /** Set when this target is not itself eligible to be treated as the dialog holder — points at
+   *  whichever target (a candidate holder still in question) actually is, when one exists in the
+   *  same opener-chain component. `undefined` with `confirmedSafe: false` means THIS target is the
+   *  presumed holder — the only entry `handleDialogOnTarget`/`closeTargetAtBrowserLevel` may ever
+   *  be aimed at for a liveness-inferred ("unknown") dialog. */
+  readonly blockedBy?: string;
+  /** Mirrors the input's `confirmedSafe` (see {@link DialogAttributionInput}) — carried onto the
+   *  output so callers never need to re-cross-reference the input array. A target with
+   *  `confirmedSafe: true` must NEVER be selected/closed as a dialog holder, regardless of
+   *  `blockedBy` (which is purely informational for it — see doc comment below). */
+  readonly confirmedSafe: boolean;
+}
+
 /**
  * FR2-04 fix-3, decision point 1 (GAP-236): a same-renderer popup and its opener both time out on
  * {@link livenessProbe} identically — the probe is a renderer-level signal (Chromium suspends
@@ -167,34 +202,65 @@ export async function livenessProbe(session: CDPSession, ms: number): Promise<Li
  * `openerId` (a BROWSER-level field — `Target.getTargetInfo`, no renderer round trip, so it's
  * always readable even while the renderer is fully wedged) gives a real, structural way to break
  * the tie for the specific relationship this item's own evidence is built on (a popup and the
- * page that opened it): given a set of targets that are ALL blocked right now, walk each target's
- * opener chain — if target A's opener B is ALSO in the blocked set, A is presumed the actual
+ * page that opened it): among the targets that are still CANDIDATES (see below), walk each
+ * target's opener chain — if target A's opener B is ALSO a candidate, A is presumed the actual
  * holder (a popup script commonly starts running, and can alert()/confirm() synchronously, before
  * the popup has navigated anywhere) and B is reported as merely collaterally blocked BY A, never
  * as its own independent "unknown" dialog (decision point 1's exact requirement). The walk repeats
  * for a longer chain (grandparent -> parent -> child, all sharing one renderer) until it reaches a
- * target that isn't the opener of any other still-blocked target — that leaf is the holder.
+ * target that isn't the opener of any other still-candidate target — that leaf is the holder.
  *
- * A blocked target with no opener relationship to any OTHER blocked target (the common case: one
- * tab, one dialog; or two genuinely independent popups from unrelated `window.open()` calls, each
- * in their own renderer) is its own holder, exactly like before this function existed — this is
- * deliberately a narrow, additive fix for the one relationship this item's evidence demonstrates
- * (opener/popup), not a claim that it resolves every conceivable multi-target ambiguity.
+ * **FR2-04 escalation-1 (audit-4 GAP-245/246/247): this "current topology" reasoning alone is not
+ * sufficient — it was fix-3's whole design, and audit-4 found it wrong in both directions:**
+ * - GAP-245: a target that merely SHARES a blocked renderer with a genuinely busy (not
+ *   dialog-holding) sibling — e.g. an opener running a slow synchronous XHR with an idle
+ *   same-renderer popup — looks structurally identical to a real popup/opener dialog pair. Fix-3
+ *   picked "the newest" as the holder and closed it, even though nothing there was ever a dialog.
+ * - GAP-246: fix-3's flip-side "isolated = safe, refuse recovery" rule (formerly implemented by
+ *   the caller, not this function) then made a REAL dialog in a genuinely isolated new tab (e.g. an
+ *   ordinary `target=_blank` link, always its own renderer) permanently unrecoverable, because it
+ *   has no sibling to be "attributed" against at all.
  *
- * Returns a map from every blocked target's id to either `undefined` (this target IS the holder —
- * report/recover it as its own dialog) or the holder's target id (this target is collaterally
- * blocked — report it as "blocked by tab <holder>", never hand it to `handleDialogOnTarget` or
- * `closeTargetAtBrowserLevel` as if it had a dialog of its own).
+ * The fix is `confirmedSafe` (decision 1): a target the warden has ACTUALLY watched respond at
+ * least once since its dialog listener went live cannot be hiding a dialog — it is excluded from
+ * being a `candidate` holder entirely (its dialog listener would have already turned any dialog on
+ * it into a real, typed, tracked event). A target that has NEVER been confirmed responsive remains
+ * a `candidate` — including one with no sibling at all (decision 2: GAP-246's exact fix, replacing
+ * fix-3's blanket "isolated = refuse"). Confirmed-safe targets are never candidates, so a busy but
+ * confirmed-safe sibling can no longer make an innocent candidate look like a holder by mere
+ * association (GAP-245's fix) — see `whyItHoldsWithWardenUp`/GAP-247 in
+ * `.ai/loop/field-report-2/evidence/FR2-04/audit-4/audit-findings.json` for why the ORIGINAL
+ * newest-leaf premise ("nothing in a blocked renderer can create a newer target, so an unobserved
+ * dialog is always in the newest target — PROVIDED every older target was tracked continuously
+ * from before the dialog opened") still holds among candidates alone: a confirmed-safe target
+ * proves it WAS tracked and silent, so removing it from consideration doesn't create a new gap; a
+ * never-confirmed target is exactly the case the original premise already covered.
+ *
+ * Returns, for every blocked target: `confirmedSafe` (mirrors the input) and `blockedBy` — set to
+ * the id of a still-in-question candidate holder that shares this target's opener-chain component
+ * (informational once `confirmedSafe` is true — a confirmed-safe target is never itself a holder
+ * regardless of `blockedBy`), or `undefined` when this target has no such candidate anywhere in
+ * its component (a confirmed-safe target with `blockedBy: undefined` is safe with no known cause;
+ * a NON-confirmed-safe target with `blockedBy: undefined` IS the presumed holder — the only kind
+ * of entry recovery may ever act on).
+ *
+ * **Escalation-1 correction (found LIVE re-verifying GAP-245, attrib-attack-probe.mjs's
+ * `rapid-gap100`):** an earlier version of this function built TWO separate graphs — one over
+ * candidates only (for deciding the holder) and one over the full blocked set (for messaging).
+ * That silently broke sibling attribution whenever the SHARED OPENER happened to be confirmed-safe:
+ * excluding it from the candidate-only graph didn't just stop IT from being a holder (correct) — it
+ * also deleted the EDGE connecting its two candidate children to each other, so two genuine
+ * siblings (an older, innocent popup and a newer one that actually alerts) stopped being attributed
+ * against each other at all and each became its own independent "holder", making `dialog accept`
+ * close the innocent one FIRST (3/3 live). The fix below uses ONE graph, built from the FULL
+ * blocked set exactly like fix-3's original — a confirmed-safe node is walked THROUGH (it can
+ * still connect two candidates on either side of it) but is never itself an acceptable answer,
+ * so the recursion transparently skips over it and keeps searching its children for a real
+ * candidate — preserving both fix-3's original connectivity and decision 1's safety rule.
  */
-export function attributeDialogHolders(
-  blocked: ReadonlyArray<{ readonly targetId: string; readonly openerTargetId?: string; readonly discoveredAt?: number }>,
-): Map<string, string | undefined> {
-  type Entry = (typeof blocked)[number];
+export function attributeDialogHolders(blocked: readonly DialogAttributionInput[]): Map<string, DialogAttribution> {
   const byId = new Map(blocked.map((b) => [b.targetId, b] as const));
-  // Group every blocked target that has a BLOCKED opener under that opener's id — only a
-  // relationship where BOTH ends are currently blocked is evidence of anything (an opener whose
-  // popup is fine is just an ordinary responsive-or-not target on its own).
-  const childrenByOpener = new Map<string, Entry[]>();
+  const childrenByOpener = new Map<string, DialogAttributionInput[]>();
   for (const b of blocked) {
     if (b.openerTargetId && byId.has(b.openerTargetId)) {
       const arr = childrenByOpener.get(b.openerTargetId) ?? [];
@@ -202,50 +268,52 @@ export function attributeDialogHolders(
       childrenByOpener.set(b.openerTargetId, arr);
     }
   }
-  const isOpenerOfBlocked = new Set(childrenByOpener.keys());
 
-  // The ultimate holder of everything rooted at `id`: if `id` has blocked children, it's whatever
-  // the newest child's OWN subtree ultimately resolves to (handles a chain of any depth); a target
-  // with no blocked children is a leaf and holds its own dialog.
-  const memo = new Map<string, string>();
+  // For `id`: which CANDIDATE (never-confirmed-safe) target, among `id` itself and everything
+  // reachable through its blocked-children subtree, is the presumed dialog holder — `undefined`
+  // if the WHOLE subtree (every candidate-eligible node in it) is confirmed-safe. Among several
+  // children, prefer whichever child's OWN resolved answer belongs to the newest child (fix-3's
+  // original newest-leaf premise) — a child whose subtree resolves to `undefined` (all
+  // confirmed-safe) is skipped entirely rather than treated as a tie-breaking candidate itself.
+  const memo = new Map<string, string | undefined>();
   const visiting = new Set<string>();
-  function ultimateHolder(id: string): string {
-    const cached = memo.get(id);
-    if (cached !== undefined) return cached;
-    if (visiting.has(id)) return id; // cycle guard — never actually reachable via real openerId chains
+  function resolve(id: string): string | undefined {
+    if (memo.has(id)) return memo.get(id);
+    if (visiting.has(id)) return undefined; // cycle guard — never actually reachable via real openerId chains
     visiting.add(id);
-    const children = childrenByOpener.get(id);
-    const result =
-      !children || children.length === 0
-        ? id
-        : ultimateHolder([...children].sort((x, y) => (y.discoveredAt ?? 0) - (x.discoveredAt ?? 0))[0]!.targetId);
+    const children = childrenByOpener.get(id) ?? [];
+    const resolvedChildren = children
+      .map((child) => ({ child, holder: resolve(child.targetId) }))
+      .filter((x): x is { child: DialogAttributionInput; holder: string } => x.holder !== undefined)
+      .sort((a, b) => (b.child.discoveredAt ?? 0) - (a.child.discoveredAt ?? 0));
+    const result = resolvedChildren.length > 0 ? resolvedChildren[0]!.holder : byId.get(id)!.confirmedSafe ? undefined : id;
     visiting.delete(id);
     memo.set(id, result);
     return result;
   }
 
-  const result = new Map<string, string | undefined>();
-  for (const b of blocked) {
-    let holder: string;
-    if (isOpenerOfBlocked.has(b.targetId)) {
-      // An opener (of at least one blocked child): defer entirely to its subtree's holder.
-      holder = ultimateHolder(b.targetId);
-    } else if (b.openerTargetId && byId.has(b.openerTargetId)) {
-      // A leaf that itself has a blocked opener: it's the holder only if it's the newest among
-      // its OWN siblings under that same opener; otherwise every sibling defers to whichever one
-      // the newest sibling's subtree ultimately resolves to (kept consistent with `ultimateHolder`
-      // rather than pointing at the raw newest sibling directly, so a longer chain still resolves
-      // to one single leaf everyone agrees on).
-      const siblings = childrenByOpener.get(b.openerTargetId)!;
-      const newestSibling = [...siblings].sort((x, y) => (y.discoveredAt ?? 0) - (x.discoveredAt ?? 0))[0]!;
-      holder = newestSibling.targetId === b.targetId ? b.targetId : ultimateHolder(newestSibling.targetId);
-    } else {
-      // No opener relationship to any other currently-blocked target at all — its own holder,
-      // exactly like before this function existed (the common single-tab, or independent-popups,
-      // case).
-      holder = b.targetId;
+  // The topmost ancestor of `id` within the blocked set (its own opener chain, followed as far as
+  // it still leads to another blocked target) — every member of one opener-chain component shares
+  // exactly one root, so resolving from the root once (memoized) gives every member the SAME
+  // answer, which is what makes a confirmed-safe pass-through node connect its candidate children
+  // correctly instead of splitting them into separate, independently-resolved subtrees.
+  function findRoot(id: string): string {
+    let cur = id;
+    for (let i = 0; i <= blocked.length; i++) {
+      const info = byId.get(cur);
+      if (info?.openerTargetId && byId.has(info.openerTargetId) && info.openerTargetId !== cur) {
+        cur = info.openerTargetId;
+      } else {
+        return cur;
+      }
     }
-    result.set(b.targetId, holder === b.targetId ? undefined : holder);
+    return cur; // defensive only — real openerId chains are always acyclic and finite
+  }
+
+  const result = new Map<string, DialogAttribution>();
+  for (const b of blocked) {
+    const holder = resolve(findRoot(b.targetId));
+    result.set(b.targetId, { blockedBy: holder === b.targetId ? undefined : holder, confirmedSafe: !!b.confirmedSafe });
   }
   return result;
 }

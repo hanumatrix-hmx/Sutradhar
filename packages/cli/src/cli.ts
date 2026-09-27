@@ -1073,7 +1073,7 @@ async function cmdDialog(sub: string | undefined, rest: string[]): Promise<void>
     return dialogErrorAndReturn('usage: sutradhar dialog dismiss  (takes no extra arguments)');
   }
 
-  let dialogs = await listDialogs(state);
+  const dialogs = await listDialogs(state);
 
   if (sub === undefined) {
     if (dialogs.length === 0) {
@@ -1082,11 +1082,15 @@ async function cmdDialog(sub: string | undefined, rest: string[]): Promise<void>
     }
     for (const d of dialogs) {
       console.log(formatDialogPending({ type: d.dialogType, message: d.message, defaultValue: d.defaultValue, url: d.url }));
+      describeUnknownDialog(d).forEach((line) => console.error(line));
     }
     return;
   }
 
-  const { target, rest: remaining } = selectDialog(dialogs);
+  // GAP-248(a): `rest` (the pre-handle snapshot's collateral/confirmed-safe entries) is
+  // deliberately unused here — see the fresh re-list after handling below, which replaces it
+  // entirely rather than trusting a snapshot that predates the actual accept/dismiss.
+  const { target } = selectDialog(dialogs);
   if (!target) {
     return dialogErrorAndReturn(`no dialog is open to ${sub}.`);
   }
@@ -1100,7 +1104,7 @@ async function cmdDialog(sub: string | undefined, rest: string[]): Promise<void>
   // on its own — found live: an undefined promptText resolved the prompt with an EMPTY string,
   // not the dialog's actual default).
   const effectivePromptText = accept && target.dialogType === 'prompt' ? (text ?? target.defaultValue) : undefined;
-  let outcome: { closedTarget?: boolean; message?: string; redirectTo?: string; redirectUrl?: string; isolated?: boolean } | void;
+  let outcome: { closedTarget?: boolean; message?: string; redirectTo?: string; redirectUrl?: string; refused?: boolean } | void;
   try {
     const broker2 = await getBroker(state);
     try {
@@ -1127,14 +1131,13 @@ async function cmdDialog(sub: string | undefined, rest: string[]): Promise<void>
     console.log(outcome.message ?? `Tab ${target.targetId} is not the dialog holder; run "sutradhar dialog" again.`);
     return;
   }
-  // FR2-04 fix-3/GAP-240, decision point 6: live re-verification found that scoping recovery to
-  // the identified holder (points 1+3) was not enough on its own — an ISOLATED unknown dialog (no
-  // sibling relationship at all, e.g. a healthy tab running a slow synchronous script) still got
-  // closed here every time, because a generic accept/dismiss dead-ends into the same
-  // Target.closeTarget recovery GAP-230 built. There is no way to tell that case apart from a
-  // genuinely stuck, unobserved dialog, so this refuses to act rather than risk closing a healthy
-  // tab — `sutradhar close` remains the escape hatch for a real stuck dialog with no evidence.
-  if (outcome?.isolated) {
+  // FR2-04 escalation-1, decision 1+3 (GAP-245/246/247), supersedes fix-3's `isolated` refusal:
+  // recovery declined to act — either this target's OWN history proves it cannot be hiding a
+  // dialog (the warden's `confirmedSafe`), or the broker has no history at all to ground a
+  // decision in (`DirectCdpBroker` with the warden down) — either way, closing something here would
+  // be a guess, and guessing has been measured to close the wrong, innocent tab. `sutradhar close`
+  // remains the escape hatch for a real stuck dialog with no provable evidence.
+  if (outcome?.refused) {
     console.log(
       outcome.message ??
         `Tab ${target.targetId} is busy or unresponsive, but nothing identifies this as an actual dialog — no automatic recovery was attempted.`,
@@ -1155,18 +1158,48 @@ async function cmdDialog(sub: string | undefined, rest: string[]): Promise<void>
     console.log(`Dismissed ${target.dialogType} "${target.message}"`);
   }
 
-  // A "remaining" dialog can be one that hadn't opened YET at handle time — e.g. a chained
-  // alert->confirm, where the confirm() call only runs once the page's own JS resumes after the
-  // alert returns. Poll briefly rather than a single immediate re-list (found live: an immediate
-  // re-list after the FIRST accept of a chain missed the second dialog entirely).
-  for (let i = 0; i < 5 && remaining.length === 0; i++) {
+  // FR2-04 escalation-1, GAP-248(a): `remaining` is a snapshot taken BEFORE `target` was actually
+  // handled — any entry in it that was only reported because it shared a blocked renderer with
+  // `target` (a `blockedBy`/`confirmedSafe`-attributed collateral entry, the common case at scale:
+  // audit-4 measured K=40 stale 'unknown' lines printed after a clean accept) may have become fully
+  // responsive the instant the real dialog was resolved above. Never trust that stale snapshot for
+  // what to print — always re-verify with a fresh list. This ALSO still needs to poll (not a single
+  // immediate re-list) because a "remaining" dialog can instead be one that hadn't opened YET at
+  // handle time — e.g. a chained alert->confirm, where the confirm() call only runs once the page's
+  // own JS resumes after the alert returns (found live: an immediate re-list after the FIRST accept
+  // of a chain missed the second dialog entirely).
+  let finalPending: PendingDialogEntry[] = [];
+  for (let i = 0; i < 5; i++) {
     await new Promise((r) => setTimeout(r, 80));
-    dialogs = (await listDialogs(state)).filter((d) => d.targetId !== target.targetId || d.openedAt !== target.openedAt);
-    if (dialogs.length > 0) remaining.push(...dialogs);
+    finalPending = (await listDialogs(state)).filter((d) => d.targetId !== target.targetId || d.openedAt !== target.openedAt);
+    if (finalPending.length > 0) break;
   }
-  for (const d of remaining) {
+  for (const d of finalPending) {
     console.log(formatDialogPending({ type: d.dialogType, message: d.message, defaultValue: d.defaultValue, url: d.url }));
+    describeUnknownDialog(d).forEach((line) => console.error(line));
   }
+}
+
+/** FR2-04 escalation-1, GAP-248(b): "dialog"'s own output must show WHICH tab any following
+ *  `dialog accept|dismiss` would actually act on, before that command runs — a liveness-inferred
+ *  `unknown` entry alone (just a type/message/url, per §2.8.5's frozen `dialogPending:` contract)
+ *  gives an agent no way to tell a real, addressable holder apart from a collateral/confirmed-safe
+ *  entry it would never act on. Printed as extra `Note:` lines (stderr, so §2.8.5's exact stdout
+ *  contract is untouched) rather than changing `formatDialogPending`'s frozen key set. Returns []
+ *  for anything that isn't a liveness-inferred entry (a real, tracked dialog needs no such note). */
+function describeUnknownDialog(d: PendingDialogEntry): string[] {
+  if (d.dialogType !== 'unknown') return [];
+  const tab = d.targetId ? `tab ${d.targetId}` : 'this tab';
+  if (d.confirmedSafe && d.blockedBy) {
+    return [`  Note: ${tab} is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab ${d.blockedBy}.`];
+  }
+  if (d.confirmedSafe) {
+    return [`  Note: ${tab} is busy, but its own history proves it cannot be hiding a dialog (likely just a slow script) -- "dialog accept/dismiss" will not act on it.`];
+  }
+  if (d.blockedBy) {
+    return [`  Note: ${tab} is unresponsive only because it shares a browser process with tab ${d.blockedBy}, which appears to actually hold the dialog -- "dialog accept/dismiss" would act on tab ${d.blockedBy}, not this one.`];
+  }
+  return [`  Note: ${tab} appears to be the actual dialog holder -- "dialog accept/dismiss" would act on this tab.`];
 }
 
 async function cmdClose() {

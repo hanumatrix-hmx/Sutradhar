@@ -2375,3 +2375,57 @@ Decisions for escalation-1 (binding):
    GAP230 case assert WHICH tab was closed, not just that a close happened.
 Escalation should re-run every attribution attack from audit-3 AND audit-4 (not just the new
 decisions' own targets), since decision 1's history rule changes the safety logic for every path.
+
+## 2026-09-27 -- FR2-04 escalation-1 executed; sent to independent audit-5
+
+Executor (Sonnet) self-report, spot-checked by the Orchestrator (vitest browser 484 and cli 133
+re-run directly: exact match; 0 leftover processes; git status matches the reported file list).
+
+Core change: attributeDialogHolders no longer infers "safe to close" from CURRENT TOPOLOGY (has a
+sibling? is it newest?). It now tracks, per target, whether the warden's Page.enable ack'd AND a
+liveness probe afterward found it responsive at least once (confirmedResponsiveSince). A
+confirmed-safe target is treated as a transparent pass-through in the attribution walk: never
+itself a dialog holder, but it still connects its candidate children, so it can't accidentally
+disconnect a real popup from consideration.
+
+Notably, the executor found and fixed two of its own regressions mid-cycle rather than shipping a
+narrower self-report than reality, which is exactly the failure pattern that has cost this item three
+audits already:
+- The first pass was reactive-only (confirmedSafe only set inside a CLI-triggered check). Its own
+  live re-run caught rapid-gap100 closing an innocent sibling, because excluding a confirmed-safe
+  opener from the graph also silently disconnected two candidate siblings from each other. Fixed by
+  rewriting attribution as one resolve()/findRoot() walk.
+- The GAP-246 fix (allow recovery for never-confirmed isolated targets) initially still failed
+  xhr-isolated-manual (a busy isolated tab wrongly closed 3/3), because nothing proactively probes
+  an idle target absent a CLI command. Fixed with a proactive probe: 500ms-delayed for new targets
+  (so it doesn't reopen GAP-236's original attach race) but near-immediate for the session's
+  pre-existing bootstrap tab (which isn't racing a first-script dialog).
+
+GAP-247: chose to have DirectCdpBroker refuse ALL destructive recovery when the warden is down,
+having confirmed live that the alternative (respawn-then-act) can't actually help -- Page.enable
+can't ack a wedged renderer either way, so respawning buys no attribution information. Disclosed
+trade: the one warden-down shape that used to work by luck (newer-sibling) is now also refused.
+Zero wrong-tab closes across all 4 warden-down shapes tested (12/12), vs audit-4's wrong-tab-first
+on 3 of them.
+
+Full re-verification swept every audit-3 AND audit-4 attribution attack, not just the new GAP-245..
+250 targets, per the escalation's broadened scope: 0 innocent closes, 0 wrong closes anywhere across
+57 attribution trials, plus GAP-236/238/239/240/241/242 all re-confirmed holding.
+
+Verification: forced build clean. vitest browser 484 / cli 133 / capability-runtime 164 /
+mcp-server 84 / sutradhar 15 = 880, 0 failures (Orchestrator re-ran browser+cli independently,
+exact match). Full live verify (not --skip-slow) 111 pass / 0 fail / 2 skip (same 2 parked skips as
+audit-4). Process hygiene clean, no leftover wardens or temp dirs.
+
+Residuals, disclosed up front:
+1. A brand-new tab busy from the literal instant of creation (no chance to ever be probed
+   responsive, even proactively) is still indistinguishable from a real dialog and remains
+   recoverable/closable. Narrower than fix-3's blanket isolated-rule, not eliminated by
+   construction -- audit-5 should try to reproduce this specific shape and judge if it's acceptable.
+2. Warden-down: ALL destructive recovery is now refused unconditionally, including the one shape
+   that used to work by luck. No wrong-tab closes in exchange -- audit-5 should judge if "always
+   tell the user to use close when the warden is down" is an acceptable floor.
+
+This is escalation cycle 1 of 2. If audit-5 fails with a critical or major finding, FR2-04 gets one
+more escalation cycle (cycle 2 of 2); if that also fails, FR2-04 is marked BLOCKED with a written
+diagnosis per the loop's rules.

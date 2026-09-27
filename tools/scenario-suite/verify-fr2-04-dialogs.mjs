@@ -1261,11 +1261,31 @@ try {
     // for end-to-end (matches fix-2/unknown-recovery-probe-fix2.mjs's repro, also 3/3 clean).
     await os_.send('Runtime.evaluate', { expression: `void window.open(${JSON.stringify(popupBase + n)})`, userGesture: true }).catch(() => {});
     await delay(800);
+    // FR2-04 escalation-1, GAP-249/decision 5: assert WHICH tab `dialog accept` actually closed,
+    // not just that SOME close happened — audit-4 found the previous version of this case would
+    // also have passed under audit-3's wrong-tab-close bug (it only checked the stdout phrase
+    // "closed because its dialog", never the target id). Resolve the popup's real CDP target id
+    // independently (the observer connection, never through the gated CLI) BEFORE `dialog accept`
+    // runs, then require the accept's own stdout to name exactly that id, AND independently confirm
+    // the opener is still alive afterwards (never the one that got closed).
+    const popupTarget = await waitForTarget(obs, `/pop?n=${n}`, 5000).catch(() => undefined);
+    const popupTargetId = popupTarget ? popupTarget._targetId : undefined;
     const acc = await cli(['dialog', 'accept'], caseDir, { capMs: 20000 });
+    const closedIdMatch = /Tab (\S+?)(?:\s|\)|$)/.exec(acc.stdout ?? '');
+    const closedId = closedIdMatch?.[1];
+    const openerStillAlive = await os_
+      .send('Runtime.evaluate', { expression: '1', returnByValue: true }, { timeout: 3000 })
+      .then(() => true)
+      .catch(() => false);
     record({
       case: 'GAP230.unknown-recovered-via-dialog-accept',
-      pass: acc.code === 0 && /closed because its dialog/.test(acc.stdout ?? ''),
-      detail: { acceptOut: (acc.stdout ?? '').slice(0, 200) },
+      pass:
+        acc.code === 0 &&
+        /closed because its dialog/.test(acc.stdout ?? '') &&
+        !!popupTargetId &&
+        closedId === popupTargetId &&
+        openerStillAlive,
+      detail: { acceptOut: (acc.stdout ?? '').slice(0, 200), popupTargetId, closedId, openerStillAlive },
     });
     // FR2-04 fix-3/GAP-237 (audit-3 root-caused fix-2's disclosed "tabs immediately after recovery
     // hangs" residual as GAP-237, not something specific to this ordering): `tabs` was exempt from

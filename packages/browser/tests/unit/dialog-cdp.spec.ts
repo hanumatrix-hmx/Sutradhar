@@ -142,16 +142,16 @@ describe('@sutradhar/browser dialog-cdp (FR2-04)', () => {
     expect(result.find((r) => r.info.targetId === 'x')?.info.openerTargetId).toBeUndefined();
   });
 
-  describe('B7 (FR2-04 fix-3/GAP-236): attributeDialogHolders', () => {
+  describe('B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders', () => {
     it('an isolated blocked target (no opener relation to any other blocked target) is its own holder', () => {
       const result = attributeDialogHolders([{ targetId: 't1' }]);
-      expect(result.get('t1')).toBeUndefined();
+      expect(result.get('t1')).toEqual({ blockedBy: undefined, confirmedSafe: false });
     });
 
     it('two independent blocked targets with no opener relation are both their own holders (the multi-unknown shape)', () => {
       const result = attributeDialogHolders([{ targetId: 't1' }, { targetId: 't2' }]);
-      expect(result.get('t1')).toBeUndefined();
-      expect(result.get('t2')).toBeUndefined();
+      expect(result.get('t1')?.blockedBy).toBeUndefined();
+      expect(result.get('t2')?.blockedBy).toBeUndefined();
     });
 
     it('a popup and its blocked opener: the popup (child) is the holder, the opener is attributed to it — GAP-236\'s exact shape', () => {
@@ -159,8 +159,10 @@ describe('@sutradhar/browser dialog-cdp (FR2-04)', () => {
         { targetId: 'opener' },
         { targetId: 'popup', openerTargetId: 'opener' },
       ]);
-      expect(result.get('popup')).toBeUndefined(); // popup is the holder
-      expect(result.get('opener')).toBe('popup'); // opener is collaterally blocked BY the popup
+      expect(result.get('popup')?.blockedBy).toBeUndefined(); // popup is the holder
+      expect(result.get('opener')?.blockedBy).toBe('popup'); // opener is collaterally blocked BY the popup
+      expect(result.get('popup')?.confirmedSafe).toBe(false);
+      expect(result.get('opener')?.confirmedSafe).toBe(false);
     });
 
     it('a 3-level chain (grandopener -> opener -> popup, all blocked) resolves to the leaf popup as the holder', () => {
@@ -169,14 +171,14 @@ describe('@sutradhar/browser dialog-cdp (FR2-04)', () => {
         { targetId: 'opener', openerTargetId: 'grand' },
         { targetId: 'popup', openerTargetId: 'opener' },
       ]);
-      expect(result.get('popup')).toBeUndefined();
-      expect(result.get('opener')).toBe('popup');
-      expect(result.get('grand')).toBe('popup');
+      expect(result.get('popup')?.blockedBy).toBeUndefined();
+      expect(result.get('opener')?.blockedBy).toBe('popup');
+      expect(result.get('grand')?.blockedBy).toBe('popup');
     });
 
     it('an opener with an UNBLOCKED popup (not in the blocked set) is its own holder — the opener relation only matters when both are actually blocked', () => {
       const result = attributeDialogHolders([{ targetId: 'opener' }]);
-      expect(result.get('opener')).toBeUndefined();
+      expect(result.get('opener')?.blockedBy).toBeUndefined();
     });
 
     it('several blocked children of one blocked opener: the newest (by discoveredAt) is preferred as the holder', () => {
@@ -185,9 +187,79 @@ describe('@sutradhar/browser dialog-cdp (FR2-04)', () => {
         { targetId: 'popup-old', openerTargetId: 'opener', discoveredAt: 100 },
         { targetId: 'popup-new', openerTargetId: 'opener', discoveredAt: 200 },
       ]);
-      expect(result.get('popup-new')).toBeUndefined();
-      expect(result.get('popup-old')).toBe('popup-new');
-      expect(result.get('opener')).toBe('popup-new');
+      expect(result.get('popup-new')?.blockedBy).toBeUndefined();
+      expect(result.get('popup-old')?.blockedBy).toBe('popup-new');
+      expect(result.get('opener')?.blockedBy).toBe('popup-new');
+    });
+
+    // FR2-04 escalation-1, decision 1 (GAP-245): a confirmed-safe target must NEVER be treated as
+    // (or point to) a holder just because a sibling exists — this is the exact xhr-popup-manual
+    // shape audit-4's A4-02 found: a same-renderer popup (here confirmed-safe, having been probed
+    // responsive before the opener's blocking script ran) and its busy opener, with no dialog
+    // anywhere. GAP-249's A13 (warden drops discoveredAt) and A20 (selectDialog picks a collateral
+    // entry) are also killed by these same assertions failing if either regresses.
+    it('GAP-245: a confirmed-safe target is never a holder, even with a never-confirmed sibling relationship', () => {
+      const result = attributeDialogHolders([
+        { targetId: 'opener', confirmedSafe: true },
+        { targetId: 'popup', openerTargetId: 'opener', confirmedSafe: true },
+      ]);
+      expect(result.get('opener')).toEqual({ blockedBy: undefined, confirmedSafe: true });
+      expect(result.get('popup')).toEqual({ blockedBy: undefined, confirmedSafe: true });
+    });
+
+    it('GAP-245 variant: a confirmed-safe opener with a NEVER-CONFIRMED popup — the popup remains the candidate holder, the opener stays confirmed-safe and points at it only informationally', () => {
+      const result = attributeDialogHolders([
+        { targetId: 'opener', confirmedSafe: true },
+        { targetId: 'popup', openerTargetId: 'opener', confirmedSafe: false },
+      ]);
+      expect(result.get('popup')).toEqual({ blockedBy: undefined, confirmedSafe: false });
+      expect(result.get('opener')).toEqual({ blockedBy: 'popup', confirmedSafe: true });
+    });
+
+    // FR2-04 escalation-1, decision 2 (GAP-246): a never-confirmed target with NO sibling at all is
+    // now eligible to be its OWN holder (fix-3's old "isolated -> refuse" rule is gone) — this is
+    // the target=_blank / cross-site-popup shape that alerts during its very first script, which
+    // the warden's Page.enable race can miss entirely.
+    it('GAP-246: an isolated, never-confirmed target is still its own eligible holder (no longer refused for lack of a sibling)', () => {
+      const result = attributeDialogHolders([{ targetId: 'lone', confirmedSafe: false }]);
+      expect(result.get('lone')).toEqual({ blockedBy: undefined, confirmedSafe: false });
+    });
+
+    it('GAP-246 contrast: an isolated, CONFIRMED-safe target is never eligible (busy, but proven not a dialog)', () => {
+      const result = attributeDialogHolders([{ targetId: 'lone', confirmedSafe: true }]);
+      expect(result.get('lone')).toEqual({ blockedBy: undefined, confirmedSafe: true });
+    });
+
+    // FR2-04 escalation-1: found LIVE (attrib-attack-probe.mjs's rapid-gap100, re-verifying
+    // GAP-245) — an EARLIER version of this function built the attribution graph over candidates
+    // only, which silently dropped the EDGE between two candidate siblings whenever their shared
+    // opener was confirmed-safe (excluded from that graph entirely), so each sibling resolved to
+    // itself instead of correctly deferring to the newer one — `dialog accept` closed the older,
+    // innocent sibling FIRST (3/3 live) before ever reaching the real holder. A confirmed-safe
+    // opener must still connect its candidate children to each other; it just can never be the
+    // answer itself.
+    it('GAP-245 regression (rapid-gap100 live shape): a CONFIRMED-SAFE opener still connects two never-confirmed siblings — the newer one is correctly preferred, not each one independently', () => {
+      const result = attributeDialogHolders([
+        { targetId: 'opener', confirmedSafe: true },
+        { targetId: 'popup-old', openerTargetId: 'opener', confirmedSafe: false, discoveredAt: 100 },
+        { targetId: 'popup-new', openerTargetId: 'opener', confirmedSafe: false, discoveredAt: 200 },
+      ]);
+      expect(result.get('popup-new')).toEqual({ blockedBy: undefined, confirmedSafe: false }); // the holder
+      expect(result.get('popup-old')).toEqual({ blockedBy: 'popup-new', confirmedSafe: false }); // defers to it
+      expect(result.get('opener')).toEqual({ blockedBy: 'popup-new', confirmedSafe: true }); // safe, informational pointer
+    });
+
+    it('GAP-245 regression, deeper chain: a confirmed-safe MIDDLE node still connects a candidate grandparent to a candidate child', () => {
+      const result = attributeDialogHolders([
+        { targetId: 'grand', confirmedSafe: false },
+        { targetId: 'mid', openerTargetId: 'grand', confirmedSafe: true },
+        { targetId: 'leaf', openerTargetId: 'mid', confirmedSafe: false },
+      ]);
+      // `leaf` is the only real candidate anywhere in the chain -> it holds, regardless of the
+      // confirmed-safe node sitting between it and the root.
+      expect(result.get('leaf')).toEqual({ blockedBy: undefined, confirmedSafe: false });
+      expect(result.get('mid')).toEqual({ blockedBy: 'leaf', confirmedSafe: true });
+      expect(result.get('grand')).toEqual({ blockedBy: 'leaf', confirmedSafe: false });
     });
   });
 

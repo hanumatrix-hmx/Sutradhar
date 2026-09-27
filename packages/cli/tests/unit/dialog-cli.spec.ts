@@ -87,6 +87,34 @@ describe('@sutradhar/cli dialog-cli (FR2-04)', () => {
     expect(rest).toEqual([t2]);
   });
 
+  // FR2-04 escalation-1, GAP-249 (audit-4's A20): selectDialog must SKIP a `blockedBy` or
+  // `confirmedSafe` entry even when it's the OLDEST by openedAt — a mutation that picks
+  // `sorted[0]` unconditionally (audit-4's exact A20) survived vitest here before this test
+  // existed, because D6 above never gives it an entry with blockedBy/confirmedSafe set at all.
+  it('D6b (GAP-236/GAP-249 A20): selectDialog skips an OLDER blockedBy entry and picks the real (younger) holder instead', () => {
+    const collateral = { dialogType: 'unknown', message: '', url: 'u', openedAt: '2026-01-01T00:00:01Z', blockedBy: 'holder-1', targetId: 'opener' };
+    const holder = { dialogType: 'unknown', message: '', url: 'u', openedAt: '2026-01-01T00:00:02Z', targetId: 'holder-1' };
+    const { target, rest } = selectDialog([collateral, holder]);
+    expect(target).toBe(holder);
+    expect(rest).toEqual([collateral]);
+  });
+
+  it('D6c (escalation-1 decision 1, GAP-249 A20): selectDialog skips an OLDER confirmedSafe entry too, even with no blockedBy', () => {
+    const safe = { dialogType: 'unknown', message: '', url: 'u', openedAt: '2026-01-01T00:00:01Z', confirmedSafe: true, targetId: 'safe-tab' };
+    const holder = { dialogType: 'unknown', message: '', url: 'u', openedAt: '2026-01-01T00:00:02Z', targetId: 'holder-1' };
+    const { target, rest } = selectDialog([safe, holder]);
+    expect(target).toBe(holder);
+    expect(rest).toEqual([safe]);
+  });
+
+  it('D6d: when EVERY entry is blockedBy/confirmedSafe (no addressable holder at all), selectDialog returns no target', () => {
+    const collateral = { dialogType: 'unknown', message: '', url: 'u', openedAt: '2026-01-01T00:00:01Z', blockedBy: 'holder-1', targetId: 'opener' };
+    const safe = { dialogType: 'unknown', message: '', url: 'u', openedAt: '2026-01-01T00:00:02Z', confirmedSafe: true, targetId: 'safe-tab' };
+    const { target, rest } = selectDialog([collateral, safe]);
+    expect(target).toBeUndefined();
+    expect(rest).toEqual([collateral, safe]);
+  });
+
   describe('D7: raceWithDialog', () => {
     beforeEach(() => vi.useFakeTimers());
     afterEach(() => vi.useRealTimers());

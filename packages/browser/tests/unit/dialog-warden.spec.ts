@@ -725,8 +725,8 @@ describe('@sutradhar/browser DialogWarden (FR2-04 Branch W)', () => {
     }
   });
 
-  it('FR2-04-fix3-B (GAP-240): an ISOLATED busy target with no sibling relationship is never closed by recovery — reports isolated:true and takes no action', async () => {
-    const session = busySession();
+  it('FR2-04-escalation-1-B (GAP-246, supersedes fix-3\'s isolated refusal): a NEVER-CONFIRMED isolated target IS now recovered — the fix-3 "isolated = always refuse" rule regressed exactly the real-dialog shape this item exists to fix', async () => {
+    const session = busySession(); // busy from the very first probe — never confirmed responsive
     const target = fakeTarget('solo', 'https://solo/', session); // no opener — nothing to attribute against
     const browser = fakeBrowser([target]);
     let readyInfo: { port: number; token: string } | undefined;
@@ -747,13 +747,279 @@ describe('@sutradhar/browser DialogWarden (FR2-04 Branch W)', () => {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ targetId: 'solo', accept: true }),
       });
-      expect(res.status).toBe(409);
+      expect(res.status).toBe(200);
       const body = await res.json();
-      expect(body.isolated).toBe(true);
-      expect(browser.closeTargetCalls).toEqual([]); // never closed — no evidence it's an actual dialog
+      expect(body.closedTarget).toBe(true);
+      expect(browser.closeTargetCalls).toEqual(['solo']);
     } finally {
       await warden.stop('test-teardown');
     }
+  });
+
+  it('FR2-04-escalation-1-B2 (GAP-245, decision 1): a CONFIRMED-SAFE isolated target is still never closed — its history alone (not sibling topology) proves it cannot be a dialog', async () => {
+    let blocked = false; // starts responsive so the first /v1/dialogs probe confirms it safe
+    const session = fakeSession('solo');
+    session.send.mockImplementation((method: string) =>
+      method === 'Performance.getMetrics'
+        ? blocked
+          ? Promise.reject(new Error('ProtocolError: operation timed out'))
+          : Promise.resolve({ metrics: [] })
+        : Promise.resolve(undefined),
+    );
+    const target = fakeTarget('solo', 'https://solo/', session); // no opener — nothing to attribute against
+    const browser = fakeBrowser([target]);
+    let readyInfo: { port: number; token: string } | undefined;
+    const warden = new DialogWarden({
+      wsEndpoint: 'ws://x',
+      readPolicy: async () => undefined,
+      isStillCurrent: async () => true,
+      onReady: (info) => {
+        readyInfo = info;
+      },
+      onExit: () => {},
+      connect: async () => browser as any,
+    });
+    await warden.start();
+    try {
+      // Settle round while responsive — this is what sets `confirmedResponsiveSince` (history).
+      const first = await req(readyInfo!.port, '/v1/dialogs', readyInfo!.token);
+      expect(((await first.json()) as { dialogs: unknown[] }).dialogs).toEqual([]);
+
+      // Now it goes busy (a slow script, NOT a dialog) — its EARLIER confirmed-responsive history
+      // must still protect it from being treated as a holder, even though it's isolated (no
+      // sibling) exactly like the old fix-3 "isolated" test.
+      blocked = true;
+      const res = await req(readyInfo!.port, '/v1/dialogs/handle', readyInfo!.token, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ targetId: 'solo', accept: true }),
+      });
+      expect(res.status).toBe(409);
+      const body = await res.json();
+      expect(body.confirmedSafe).toBe(true);
+      expect(browser.closeTargetCalls).toEqual([]); // never closed — history proves it's not a dialog
+    } finally {
+      await warden.stop('test-teardown');
+    }
+  });
+
+  // FR2-04 escalation-1, GAP-249 (audit-4's A13): the warden must feed its OWN real `discoveredAt`
+  // map into `attributeDialogHolders` — audit-4 found a mutation that replaces it with `undefined`
+  // survives vitest (only caught live), because every prior direct test either called
+  // `attributeDialogHolders` itself with explicit `discoveredAt` values (dialog-cdp.spec.ts, never
+  // exercises the warden's wiring) or only had a single opener/child pair (dialog-warden.spec.ts's
+  // FR2-04-fix3-A, where discoveredAt never needs to break a tie). This test creates two REAL
+  // siblings a measurable time apart so the warden's own clock-based discoveredAt actually differs,
+  // and asserts the genuinely newer one wins — a mutation dropping discoveredAt would make the sort
+  // fall back to `?? 0` for both, which (depending on JS's stable-sort tie-break) can pick the WRONG
+  // (older) sibling as holder instead.
+  it('FR2-04-escalation-1-A13 (GAP-249): the warden feeds its own real discoveredAt into attribution — the genuinely newer sibling wins', async () => {
+    const openerSession = busySession();
+    const oldSession = busySession();
+    const newSession = busySession();
+    const openerTarget = fakeTarget('opener', 'https://opener/', openerSession);
+    const oldTarget = fakeTarget('popup-old', 'about:blank', oldSession, openerTarget);
+    const targets = [openerTarget, oldTarget];
+    const browser = fakeBrowser(targets);
+    let readyInfo: { port: number; token: string } | undefined;
+    const warden = new DialogWarden({
+      wsEndpoint: 'ws://x',
+      readPolicy: async () => undefined,
+      isStillCurrent: async () => true,
+      onReady: (info) => {
+        readyInfo = info;
+      },
+      onExit: () => {},
+      connect: async () => browser as any,
+    });
+    await warden.start(); // opener + popup-old discovered here, at T0
+    try {
+      await new Promise((r) => setTimeout(r, 30)); // a real, measurable gap before the newer sibling
+      const newTarget = fakeTarget('popup-new', 'about:blank', newSession, openerTarget);
+      targets.push(newTarget);
+      (browser as any)._emit('targetcreated', newTarget); // discovered at T0+30ms
+      await new Promise((r) => setTimeout(r, 20)); // let track()'s attach/enable settle
+      const res = await req(readyInfo!.port, '/v1/dialogs', readyInfo!.token);
+      const body = (await res.json()) as { dialogs: Array<{ targetId: string; blockedBy?: string }> };
+      const byId = (id: string) => body.dialogs.find((d) => d.targetId === id);
+      expect(byId('popup-new')?.blockedBy).toBeUndefined(); // the genuinely newer one holds it
+      expect(byId('popup-old')?.blockedBy).toBe('popup-new');
+      expect(byId('opener')?.blockedBy).toBe('popup-new');
+    } finally {
+      await warden.stop('test-teardown');
+    }
+  });
+
+  // FR2-04 escalation-1: found LIVE (attrib-attack-probe.mjs's xhr-popup-manual, re-verifying
+  // GAP-245) that decision 1's history rule as first implemented was PURELY REACTIVE — it only
+  // ever set `confirmedResponsiveSince` inside `listWithLiveness`, which only runs when some CLI
+  // command's gate happens to call `/v1/dialogs`. An attack that creates a popup and later blocks
+  // its shared renderer with NO intervening CLI command (only raw-CDP `Runtime.evaluate` calls in
+  // between, exactly like a determined adversary probing over the wire) never gave the warden a
+  // chance to observe EITHER target responsive before everything blocked, so `dialog accept`
+  // closed BOTH the popup and the opener across two calls even though neither ever held a dialog
+  // -- GAP-245 was NOT actually fixed by the reactive-only version, despite passing the (weaker)
+  // scripted-timeline unit tests above. The fix is a PROACTIVE probe, delayed (never immediate --
+  // see track()'s own doc comment for why) after Page.enable acks. These tests exercise that
+  // proactive path directly, with NO `/v1/dialogs` call before the assertion.
+  describe('FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirmedSafe without any prior /v1/dialogs call', () => {
+    function toggleableSession(targetId: string) {
+      const s = fakeSession(targetId);
+      let blocked = false;
+      s.send.mockImplementation((method: string) =>
+        method === 'Performance.getMetrics'
+          ? blocked
+            ? Promise.reject(new Error('ProtocolError: operation timed out'))
+            : Promise.resolve({ metrics: [] })
+          : Promise.resolve(undefined),
+      );
+      return { session: s, setBlocked: (v: boolean) => (blocked = v) };
+    }
+
+    it('a genuinely idle target becomes confirmedSafe on its own, proactively, with zero /v1/dialogs calls made before it goes busy', async () => {
+      const { session, setBlocked } = toggleableSession('solo');
+      const target = fakeTarget('solo', 'https://solo/', session); // isolated: no opener, no siblings
+      const browser = fakeBrowser([target]);
+      let readyInfo: { port: number; token: string } | undefined;
+      const warden = new DialogWarden({
+        wsEndpoint: 'ws://x',
+        readPolicy: async () => undefined,
+        isStillCurrent: async () => true,
+        onReady: (info) => {
+          readyInfo = info;
+        },
+        onExit: () => {},
+        connect: async () => browser as any,
+        proactiveConfirmDelayMs: 20, // real timer, kept short for a fast test
+      });
+      await warden.start();
+      try {
+        // No /v1/dialogs call here at all — the ONLY thing that can have set confirmedSafe by now
+        // is the proactive probe inside track()'s Page.enable handler.
+        await new Promise((r) => setTimeout(r, 60)); // past the 20ms proactive delay
+        setBlocked(true); // NOW it goes busy (a slow script, never a dialog)
+        const res = await req(readyInfo!.port, '/v1/dialogs/handle', readyInfo!.token, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ targetId: 'solo', accept: true }),
+        });
+        expect(res.status).toBe(409);
+        const body = await res.json();
+        expect(body.confirmedSafe).toBe(true); // proactively confirmed, not via any prior list()
+        expect(browser.closeTargetCalls).toEqual([]); // never closed
+      } finally {
+        await warden.stop('test-teardown');
+      }
+    });
+
+    it('the xhr-popup shape (GAP-245): opener AND its popup both become proactively confirmedSafe before a later shared-renderer block, so dialog accept refuses on BOTH — no /v1/dialogs call happens until AFTER the block, exactly like the live attack', async () => {
+      const openerToggle = toggleableSession('opener');
+      const popupToggle = toggleableSession('popup');
+      const openerTarget = fakeTarget('opener', 'https://opener/', openerToggle.session);
+      const targets = [openerTarget];
+      const browser = fakeBrowser(targets);
+      let readyInfo: { port: number; token: string } | undefined;
+      const warden = new DialogWarden({
+        wsEndpoint: 'ws://x',
+        readPolicy: async () => undefined,
+        isStillCurrent: async () => true,
+        onReady: (info) => {
+          readyInfo = info;
+        },
+        onExit: () => {},
+        connect: async () => browser as any,
+        proactiveConfirmDelayMs: 20,
+      });
+      await warden.start(); // opener tracked here
+      try {
+        await new Promise((r) => setTimeout(r, 40)); // opener's proactive probe settles
+        // The popup is created well before anything blocks (mirrors the live attack's 1200ms gap),
+        // still with NO CLI command / /v1/dialogs call anywhere in this sequence.
+        const popupTarget = fakeTarget('popup', 'about:blank', popupToggle.session, openerTarget);
+        targets.push(popupTarget);
+        (browser as any)._emit('targetcreated', popupTarget);
+        await new Promise((r) => setTimeout(r, 40)); // popup's own proactive probe settles too
+        // NOW the shared renderer blocks (the opener's synchronous XHR in the live attack).
+        openerToggle.setBlocked(true);
+        popupToggle.setBlocked(true);
+        for (const targetId of ['opener', 'popup']) {
+          const res = await req(readyInfo!.port, '/v1/dialogs/handle', readyInfo!.token, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ targetId, accept: true }),
+          });
+          expect(res.status).toBe(409);
+          expect((await res.json()).confirmedSafe).toBe(true);
+        }
+        expect(browser.closeTargetCalls).toEqual([]); // GAP-245: zero closes, neither tab
+      } finally {
+        await warden.stop('test-teardown');
+      }
+    });
+
+    it('a target busy from the instant Page.enable acks NEVER becomes confirmedSafe, even after the proactive delay elapses (the accepted decision-2 residual)', async () => {
+      const session = busySession(); // always blocked, from the very first probe
+      const target = fakeTarget('solo', 'https://solo/', session);
+      const browser = fakeBrowser([target]);
+      let readyInfo: { port: number; token: string } | undefined;
+      const warden = new DialogWarden({
+        wsEndpoint: 'ws://x',
+        readPolicy: async () => undefined,
+        isStillCurrent: async () => true,
+        onReady: (info) => {
+          readyInfo = info;
+        },
+        onExit: () => {},
+        connect: async () => browser as any,
+        proactiveConfirmDelayMs: 10,
+      });
+      await warden.start();
+      try {
+        await new Promise((r) => setTimeout(r, 50)); // well past the proactive delay
+        const res = await req(readyInfo!.port, '/v1/dialogs/handle', readyInfo!.token, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ targetId: 'solo', accept: true }),
+        });
+        // Never confirmed -> still eligible for recovery (decision 2, GAP-246) -> CLOSED, not refused.
+        expect(res.status).toBe(200);
+        expect((await res.json()).closedTarget).toBe(true);
+      } finally {
+        await warden.stop('test-teardown');
+      }
+    });
+
+    it('a target with an already-tracked REAL dialog is never proactively probed at all (no false confirmedSafe on a target mid-dialog)', async () => {
+      const session = fakeSession('t1');
+      session.send.mockResolvedValue(undefined); // Page.enable + Performance.getMetrics both "succeed" instantly
+      const target = fakeTarget('t1', 'https://t1/', session);
+      const browser = fakeBrowser([target]);
+      let readyInfo: { port: number; token: string } | undefined;
+      const warden = new DialogWarden({
+        wsEndpoint: 'ws://x',
+        readPolicy: async () => undefined,
+        isStillCurrent: async () => true,
+        onReady: (info) => {
+          readyInfo = info;
+        },
+        onExit: () => {},
+        connect: async () => browser as any,
+        proactiveConfirmDelayMs: 15,
+      });
+      await warden.start();
+      try {
+        // A REAL dialog opens before the proactive probe's delay elapses.
+        session.emitOpening({ type: 'confirm', message: 'real' });
+        await new Promise((r) => setTimeout(r, 50)); // past the proactive delay
+        const res = await req(readyInfo!.port, '/v1/dialogs', readyInfo!.token);
+        const body = (await res.json()) as { dialogs: Array<{ targetId: string; type: string; confirmedSafe?: boolean }> };
+        const entry = body.dialogs.find((d) => d.targetId === 't1');
+        expect(entry?.type).toBe('confirm'); // reported as the REAL tracked dialog
+        expect(entry?.confirmedSafe).toBeUndefined(); // never marked safe out from under a real dialog
+      } finally {
+        await warden.stop('test-teardown');
+      }
+    });
   });
 
   it('FR2-04-fix3-C (GAP-230 re-probe, M21 shape): a target that recovers on its own between list() and the recovery call is never closed', async () => {
