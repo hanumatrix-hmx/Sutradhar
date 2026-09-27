@@ -1,0 +1,811 @@
+{
+  "at": "2026-09-26T23:32:21.225Z",
+  "results": [
+    {
+      "variant": "xsite",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63227/?t=0",
+          "code": 0,
+          "ms": 887,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63227/?t=0\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #xsite",
+          "code": 0,
+          "ms": 3361,
+          "cap": false,
+          "out": "Clicked #xsite",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 273,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"on-load xsite\",\"defaultValue\":null,\"url\":\"http://localhost:63227/alert-inline?n=xsite\"}",
+          "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (never "
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 272,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"on-load xsite\",\"defaultValue\":null,\"url\":\"http://localhost:63227/alert-inline?n=xsite\"}",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 713,
+          "cap": false,
+          "out": "Accepted alert \"on-load xsite\"",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 263,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to dismiss."
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 0,
+          "ms": 279,
+          "cap": false,
+          "out": "URL: http://localhost:63227/alert-inline?n=xsite\nTitle: inline\nInteractive elements (0):",
+          "err": "Note: dialog policy for this session is now \"accept\"."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 278,
+          "cap": false,
+          "out": "tab_sess_1790465424455_1_1  links  http://127.0.0.1:63227/?t=0\n* tab_sess_1790465424455_1_2  inline  http://localhost:63227/alert-inline?n=xsite",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 0,
+          "ms": 270,
+          "cap": false,
+          "out": "URL: http://localhost:63227/alert-inline?n=xsite\nTitle: inline\nInteractive elements (0):",
+          "err": "Note: dialog policy for this session is now \"report\"."
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 470,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "deadEnd": false,
+      "chromePid": 30820,
+      "closeCode": 0
+    },
+    {
+      "variant": "xsite",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63227/?t=1",
+          "code": 0,
+          "ms": 885,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63227/?t=1\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #xsite",
+          "code": 0,
+          "ms": 3369,
+          "cap": false,
+          "out": "Clicked #xsite",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 673,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63227/alert-inline?n=xsite\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 696,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63227/alert-inline?n=xsite\"}",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 1080,
+          "cap": false,
+          "out": "tab 8A2B46969FF1BB3E41755513F992992A is busy or unresponsive, but nothing identifies this as an actual dialog (it may just be running a slow script) — no automatic recovery was attempted. If you are sure it is a stuck dialog, \"sutradhar close\" ends the session.",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 1098,
+          "cap": false,
+          "out": "tab 8A2B46969FF1BB3E41755513F992992A is busy or unresponsive, but nothing identifies this as an actual dialog (it may just be running a slow script) — no automatic recovery was attempted. If you are sure it is a stuck dialog, \"sutradhar close\" ends the session.",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 3,
+          "ms": 3481,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63227/alert-inline?n=xsite\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. the page is busy or blocked and did not respond in time — this may not be an actual dialog, so no automatic recovery was attempted.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unk"
+        },
+        {
+          "args": "tabs",
+          "code": 3,
+          "ms": 707,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63227/alert-inline?n=xsite\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 3,
+          "ms": 688,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63227/alert-inline?n=xsite\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 889,
+          "cap": false,
+          "out": "Session closed.",
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ],
+      "deadEnd": true,
+      "chromePid": 46024,
+      "closeCode": 0
+    },
+    {
+      "variant": "xsite",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63227/?t=2",
+          "code": 0,
+          "ms": 907,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63227/?t=2\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #xsite",
+          "code": 0,
+          "ms": 3382,
+          "cap": false,
+          "out": "Clicked #xsite",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 686,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63227/alert-inline?n=xsite\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 690,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63227/alert-inline?n=xsite\"}",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 1073,
+          "cap": false,
+          "out": "tab 7C146969BA4437988000247116A8A9B9 is busy or unresponsive, but nothing identifies this as an actual dialog (it may just be running a slow script) — no automatic recovery was attempted. If you are sure it is a stuck dialog, \"sutradhar close\" ends the session.",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 1077,
+          "cap": false,
+          "out": "tab 7C146969BA4437988000247116A8A9B9 is busy or unresponsive, but nothing identifies this as an actual dialog (it may just be running a slow script) — no automatic recovery was attempted. If you are sure it is a stuck dialog, \"sutradhar close\" ends the session.",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 3,
+          "ms": 3497,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63227/alert-inline?n=xsite\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. the page is busy or blocked and did not respond in time — this may not be an actual dialog, so no automatic recovery was attempted.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unk"
+        },
+        {
+          "args": "tabs",
+          "code": 3,
+          "ms": 714,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63227/alert-inline?n=xsite\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 3,
+          "ms": 691,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:63227/alert-inline?n=xsite\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 889,
+          "cap": false,
+          "out": "Session closed.",
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ],
+      "deadEnd": true,
+      "chromePid": 42076,
+      "closeCode": 0
+    },
+    {
+      "variant": "same",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63227/?t=0",
+          "code": 0,
+          "ms": 906,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63227/?t=0\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #same",
+          "code": 0,
+          "ms": 3390,
+          "cap": false,
+          "out": "Clicked #same",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 682,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=same\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 685,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=same\"}",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 1094,
+          "cap": false,
+          "out": "tab 20A274D0B821CBF3C9DF9754054EBB21 is busy or unresponsive, but nothing identifies this as an actual dialog (it may just be running a slow script) — no automatic recovery was attempted. If you are sure it is a stuck dialog, \"sutradhar close\" ends the session.",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 1091,
+          "cap": false,
+          "out": "tab 20A274D0B821CBF3C9DF9754054EBB21 is busy or unresponsive, but nothing identifies this as an actual dialog (it may just be running a slow script) — no automatic recovery was attempted. If you are sure it is a stuck dialog, \"sutradhar close\" ends the session.",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 3,
+          "ms": 3497,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=same\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. the page is busy or blocked and did not respond in time — this may not be an actual dialog, so no automatic recovery was attempted.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unk"
+        },
+        {
+          "args": "tabs",
+          "code": 3,
+          "ms": 692,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=same\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 3,
+          "ms": 674,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=same\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 883,
+          "cap": false,
+          "out": "Session closed.",
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ],
+      "deadEnd": true,
+      "chromePid": 66016,
+      "closeCode": 0
+    },
+    {
+      "variant": "same",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63227/?t=1",
+          "code": 0,
+          "ms": 952,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63227/?t=1\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #same",
+          "code": 0,
+          "ms": 3405,
+          "cap": false,
+          "out": "Clicked #same",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 698,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=same\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 685,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=same\"}",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 1071,
+          "cap": false,
+          "out": "tab 15F3CD08EA82FECCC18F4E8AA990275C is busy or unresponsive, but nothing identifies this as an actual dialog (it may just be running a slow script) — no automatic recovery was attempted. If you are sure it is a stuck dialog, \"sutradhar close\" ends the session.",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 1063,
+          "cap": false,
+          "out": "tab 15F3CD08EA82FECCC18F4E8AA990275C is busy or unresponsive, but nothing identifies this as an actual dialog (it may just be running a slow script) — no automatic recovery was attempted. If you are sure it is a stuck dialog, \"sutradhar close\" ends the session.",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 3,
+          "ms": 3492,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=same\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. the page is busy or blocked and did not respond in time — this may not be an actual dialog, so no automatic recovery was attempted.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unk"
+        },
+        {
+          "args": "tabs",
+          "code": 3,
+          "ms": 730,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=same\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 3,
+          "ms": 699,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=same\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 918,
+          "cap": false,
+          "out": "Session closed.",
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ],
+      "deadEnd": true,
+      "chromePid": 58092,
+      "closeCode": 0
+    },
+    {
+      "variant": "same",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63227/?t=2",
+          "code": 0,
+          "ms": 897,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63227/?t=2\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #same",
+          "code": 0,
+          "ms": 3382,
+          "cap": false,
+          "out": "Clicked #same",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 716,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=same\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 687,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=same\"}",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 1082,
+          "cap": false,
+          "out": "tab 078CCDE0D3571440FA2760A492620A46 is busy or unresponsive, but nothing identifies this as an actual dialog (it may just be running a slow script) — no automatic recovery was attempted. If you are sure it is a stuck dialog, \"sutradhar close\" ends the session.",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 1074,
+          "cap": false,
+          "out": "tab 078CCDE0D3571440FA2760A492620A46 is busy or unresponsive, but nothing identifies this as an actual dialog (it may just be running a slow script) — no automatic recovery was attempted. If you are sure it is a stuck dialog, \"sutradhar close\" ends the session.",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 3,
+          "ms": 3478,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=same\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run. the page is busy or blocked and did not respond in time — this may not be an actual dialog, so no automatic recovery was attempted.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unk"
+        },
+        {
+          "args": "tabs",
+          "code": 3,
+          "ms": 678,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=same\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 3,
+          "ms": 686,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=same\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 935,
+          "cap": false,
+          "out": "Session closed.",
+          "err": "Warning: a unknown dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+        }
+      ],
+      "deadEnd": true,
+      "chromePid": 30604,
+      "closeCode": 0
+    },
+    {
+      "variant": "sameopener",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63227/?t=0",
+          "code": 0,
+          "ms": 1059,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63227/?t=0\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #sameopener",
+          "code": 0,
+          "ms": 3382,
+          "cap": false,
+          "out": "Clicked #sameopener",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 686,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/?t=0\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=sameopener\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 683,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/?t=0\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=sameopener\"}",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1099,
+          "cap": false,
+          "out": "Tab B836B6D6A03CEAAD6604D8CE446DB2E8 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 280,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to dismiss."
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 0,
+          "ms": 289,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:63227/?t=0\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"accept\"."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 281,
+          "cap": false,
+          "out": "* tab_sess_1790465508735_1_1  links  http://127.0.0.1:63227/?t=0",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 0,
+          "ms": 280,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:63227/?t=0\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"report\"."
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 504,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "deadEnd": false,
+      "chromePid": 66520,
+      "closeCode": 0
+    },
+    {
+      "variant": "sameopener",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63227/?t=1",
+          "code": 0,
+          "ms": 911,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63227/?t=1\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #sameopener",
+          "code": 1,
+          "ms": 375,
+          "cap": false,
+          "out": "Clicked #sameopener",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 684,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/?t=1\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=sameopener\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 689,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/?t=1\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=sameopener\"}",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1109,
+          "cap": false,
+          "out": "Tab A1BC43535BDB06ADF073FCEBB6F6A7EE was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 279,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to dismiss."
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 0,
+          "ms": 348,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:63227/?t=1\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"accept\"."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 303,
+          "cap": false,
+          "out": "* tab_sess_1790465518758_1_1  links  http://127.0.0.1:63227/?t=1",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 0,
+          "ms": 316,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:63227/?t=1\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"report\"."
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 513,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "deadEnd": false,
+      "chromePid": 58812,
+      "closeCode": 0
+    },
+    {
+      "variant": "sameopener",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:63227/?t=2",
+          "code": 0,
+          "ms": 899,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:63227/?t=2\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #sameopener",
+          "code": 0,
+          "ms": 3368,
+          "cap": false,
+          "out": "Clicked #sameopener",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 731,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/?t=2\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=sameopener\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (ne"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 687,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/?t=2\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:63227/alert-inline?n=sameopener\"}",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1110,
+          "cap": false,
+          "out": "Tab E9EFEADBC41C5BFB37175177792F0990 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 279,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to dismiss."
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 0,
+          "ms": 287,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:63227/?t=2\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"accept\"."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 284,
+          "cap": false,
+          "out": "* tab_sess_1790465525791_1_1  links  http://127.0.0.1:63227/?t=2",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 0,
+          "ms": 277,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:63227/?t=2\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"report\"."
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 473,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "deadEnd": false,
+      "chromePid": 62136,
+      "closeCode": 0
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

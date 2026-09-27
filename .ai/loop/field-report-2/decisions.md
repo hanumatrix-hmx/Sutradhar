@@ -2307,3 +2307,71 @@ Target.opener()-based attribution generalizes beyond the popup/opener shape audi
 (e.g. iframes, multiple popups from one opener, a popup that opens its own popup); whether GAP-240's
 re-scoped false-block-without-close is actually livable for an agent driving the CLI; and whether
 GAP-244's disclosed identity limitation is acceptable.
+
+## 2026-09-27 -- FR2-04 audit-4: FAILED (3 major). All 4 standard cycles used; entering ESCALATION cycle 1 of 2.
+
+audit-4 wrote findings progressively (audit-4/audit-findings.json), confirmed no leftover processes
+or temp dirs, and independently re-measured everything rather than trusting fix-3's self-report.
+
+The good news first: fix-3's Target.opener()-based attribution genuinely fixed all seven audit-3
+defects it targeted (GAP-236..242), and held under a real attack pass beyond the shape it was built
+for -- 3-level opener chains, two siblings with only one dialog, rapid-fire popups, noopener. The
+underlying insight (a renderer blocked by a dialog can't create a newer target, so a missed dialog
+is always in the newest target IF the warden is up and the dialog is real) is sound and was verified
+directly: 18/21 attribution mutations killed by vitest, 2 more killed by audit-4's own live probe.
+
+But the fix's OTHER half -- deciding a target is "isolated" (safe to leave alone) whenever it has no
+blocked sibling -- turned out to encode an assumption that breaks in exactly the cases outside its
+happy path:
+- GAP-245 (major): when a sibling IS blocked but for an innocent reason (a slow sync XHR, no dialog
+  anywhere), the "has a sibling" test alone still lets `dialog accept` close the healthy popup.
+  Sibling-existence was being used as a proxy for "the sibling has a real dialog", and that proxy is
+  wrong exactly when GAP-240 said it would be.
+- GAP-246 (major): the flip side. A REAL dialog in a genuinely isolated renderer (an ordinary
+  target=_blank link, or a cross-site popup that alerts during load, both of which the warden
+  routinely misses) is now indistinguishable from a busy isolated script, so recovery refuses it
+  entirely. Only `close` escapes, ending the whole session. This regresses fix-2's GAP-230 recovery
+  for precisely the case FR2-04 exists to solve -- the isolated rule, built to stop GAP-240 from
+  destroying tabs, went too far and now leaves real dialogs unrecoverable.
+- GAP-247 (major): with the warden down, DirectCdpBroker has no per-target history at all, so
+  "newest leaf holds it" degrades to a guess that is wrong whenever the dialog isn't in the newest
+  leaf -- closing an innocent tab before eventually reaching the right one.
+
+The common root: fix-3 tried to infer "safe to close" from CURRENT topology (has a sibling? is it
+the newest?) instead of from HISTORY (has the warden's own dialog listener been confirmed active and
+silent on this specific target?). audit-4's proposed fix for escalation is exactly that shift.
+
+Also confirmed: GAP-243 (test integrity) was only partly closed -- 3 of audit-3's originally-named
+surviving mutations (M22 lock read-back, M23 warden singleton, M26 closedTarget message) still
+survive, because fix-3's own revert-confirm covered its OWN new changes, not the specific audit-3
+mutations it was asked to kill. GAP-244's disclosed identity gap is real but judged minor and
+acceptable once GAP-248 (stale pending lines after a handle) is cleaned up.
+
+Per the loop's rules, FR2-04 has now used all 4 standard cycles (audit-1..4, fix-1..3) and enters
+2 ESCALATION cycles. If escalation also fails, FR2-04 is marked BLOCKED with a written diagnosis
+rather than continuing indefinitely.
+
+Decisions for escalation-1 (binding):
+1. Replace "has a blocked sibling / is the newest leaf" with a HISTORY-based rule: a target is
+   safe to close (never a dialog holder) if the warden's Page.enable ack'd successfully AND at
+   least one liveness probe after that ack found it responsive, at any point since. Such a target's
+   dialog listener was live and silent, so any dialog on it would already be a tracked, typed event
+   -- it structurally cannot be an untracked "unknown". This directly fixes GAP-245 (the busy
+   opener/sibling has this history, so it's provably safe) without reopening GAP-236/238 (a genuine
+   popup that has NEVER been confirmed responsive still gets attributed correctly).
+2. Allow recovery for a target that has been unresponsive since the warden FIRST SAW it (never had
+   the history from decision 1), even if it looks isolated -- this fixes GAP-246. The remaining,
+   accepted false-positive is a brand-new tab that is busy from the instant of creation, which is a
+   much narrower and rarer shape than "any isolated unknown".
+3. GAP-247: with the warden down, DirectCdpBroker must not perform destructive recovery via a
+   topology guess. Either refuse recovery and point at `close` (safe, minimal), or have `dialog`
+   respawn/reattach to the warden before acting (better, matches the spirit of "the warden is the
+   source of truth"). Pick whichever is smaller and prove it live across all three of audit-4's
+   warden-down attribution attacks (opener, middle-of-chain, older-sibling).
+4. GAP-248: don't reprint a dialog as pending after it has actually been handled; carry the
+   holder/collateral distinction into `dialog`'s own output so an agent can see, before acting,
+   which tab `accept` will close.
+5. GAP-249/250: add tests that kill A13, A20, M22, M23 and M26 by name; make the verify script's
+   GAP230 case assert WHICH tab was closed, not just that a close happened.
+Escalation should re-run every attribution attack from audit-3 AND audit-4 (not just the new
+decisions' own targets), since decision 1's history rule changes the safety logic for every path.

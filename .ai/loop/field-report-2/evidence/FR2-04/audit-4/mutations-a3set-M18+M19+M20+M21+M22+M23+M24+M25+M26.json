@@ -1,0 +1,123 @@
+{
+  "at": "2026-09-27T00:16:44.899Z",
+  "results": [
+    {
+      "id": "M18-probe-signal-back-to-Runtime.evaluate",
+      "file": "packages/browser/src/session/dialog-cdp.ts",
+      "eol": "LF",
+      "expect": "GAP-228 signal",
+      "verdict": "KILLED",
+      "tests": "Tests  6 failed | 466 passed (472)",
+      "failed": [
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B2: livenessProbe > resolves -> responsive",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD9 (GAP-220/228 defensive layer): a target whose Page.enable NEVER acked",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD11 (GAP-228 regression guard, N9/N10 shape): an ESTABLISHED target runn",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD12 (regression guard): a tab that starts as about:blank at warden start",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-fix3-A (GAP-236): a popup and its blocked opener — /v1/dialogs rep",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-fix3-B (GAP-240): an ISOLATED busy target with no sibling relation"
+      ],
+      "ms": 19081,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M19-regate-single-round",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "eol": "LF",
+      "expect": "GAP-229 chain loop",
+      "verdict": "KILLED",
+      "tests": "Tests  3 failed | 116 passed (119)",
+      "failed": [
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > GAP-229: a chained second dialog (e.g. alert->",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > decision point 7 (GAP-242): dialogs already ha",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > decision point 7: \"close\" mode also preserves"
+      ],
+      "ms": 4867,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M20-no-final-fail-closed",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "eol": "LF",
+      "expect": "GAP-229 fail closed",
+      "verdict": "KILLED",
+      "tests": "Tests  4 failed | 115 passed (119)",
+      "failed": [
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > GAP-229: a dialog chain that never stops openi",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > decision point 6 (GAP-240): a liveness-inferre",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > decision point 7 (GAP-242): dialogs already ha",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > decision point 7: \"close\" mode also preserves"
+      ],
+      "ms": 5753,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M20b-regate-loop-returns-after-first-handle",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "eol": "LF",
+      "expect": "GAP-229 re-list",
+      "verdict": "KILLED",
+      "tests": "Tests  4 failed | 115 passed (119)",
+      "failed": [
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > GAP-229: a chained second dialog (e.g. alert->",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > GAP-229: a dialog chain that never stops openi",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > decision point 7 (GAP-242): dialogs already ha",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > decision point 7: \"close\" mode also preserves"
+      ],
+      "ms": 4724,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M21-recover-without-reprobe",
+      "error": "find matched 0 times"
+    },
+    {
+      "id": "M21b-no-recovery-at-all",
+      "error": "find matched 0 times"
+    },
+    {
+      "id": "M22-lock-no-readback",
+      "file": "packages/cli/src/warden-control.ts",
+      "eol": "LF",
+      "expect": "GAP-231 read-back",
+      "verdict": "SURVIVED",
+      "tests": "Tests  119 passed (119)",
+      "failed": [],
+      "ms": 5691,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M23-rival-check-disabled",
+      "file": "packages/cli/src/warden-control.ts",
+      "eol": "LF",
+      "expect": "GAP-231 singleton",
+      "verdict": "SURVIVED",
+      "tests": "Tests  119 passed (119)",
+      "failed": [],
+      "ms": 5763,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M24-direct-no-recovery",
+      "error": "find matched 0 times"
+    },
+    {
+      "id": "M24b-direct-recovery-no-reprobe",
+      "error": "find matched 0 times"
+    },
+    {
+      "id": "M25-tabs-gated-again",
+      "error": "find matched 0 times"
+    },
+    {
+      "id": "M26-closedTarget-not-surfaced",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "eol": "LF",
+      "expect": "GAP-230 honest message",
+      "verdict": "SURVIVED",
+      "tests": "Tests  119 passed (119)",
+      "failed": [],
+      "ms": 5777,
+      "restoredShaOk": true
+    }
+  ]
+}
