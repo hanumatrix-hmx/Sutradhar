@@ -1564,40 +1564,72 @@ export class SutradharRuntime {
     if (options.baselineUrl) this.assertNavigationAllowed(options.baselineUrl);
 
     // Resolved BEFORE navigating (GAP-262 fix-1): we need the tab's live Puppeteer `page` object
-    // in hand so a `framenavigated` listener can be attached before `navigate()` is even called —
-    // it's the same `page` instance across a same-tab navigation, so resolving it early changes
+    // in hand so a commit-time listener can be attached before `navigate()` is even called — it's
+    // the same `page` instance across a same-tab navigation, so resolving it early changes
     // nothing else about what gets read later.
     const { tab } = this.resolveTab(sessionId, options.tabId);
     const page = this.requirePage(tab);
 
-    // GAP-262 fix-1 (audit-1 finding, decisions.md 2026-09-27): the scoping boundary for "this
-    // document's own activity" must be the NEW page's main-frame COMMIT time, not merely the
-    // moment `navigate()` was CALLED. Between those two instants the OLD page is still alive and
-    // can keep logging console errors / firing requests, and the earlier (B1) fix — which scoped
-    // by call time — still attributed every bit of that leftover old-page activity to the new
-    // page's report. audit-1 reproduced this live 10/10 via the runtime directly (3/3 via the
-    // CLI), even at an ordinary ~150ms response time, not just an artificially slow one.
-    // `framenavigated` fires once per real navigation of a frame; tracking the LAST time it fires
-    // for the page's own main frame (there can be more than one, e.g. a redirect chain) gives the
-    // true commit instant, in the same Node clock domain `computeObservation` already uses
-    // everywhere else in this scoping calculation (`min()`'d against the page's own
-    // `performance.timeOrigin` below for robustness to browser/Node clock skew — unchanged).
+    // GAP-262 fix-1 (audit-1) / GAP-266+GAP-267 fix-2 (audit-2): the scoping boundary for "this
+    // document's own activity" must be the NEW page's main-frame CROSS-DOCUMENT commit time, not
+    // merely the moment `navigate()` was called, and not just "whatever fires next".
+    //
+    // fix-1 tracked Puppeteer's own `page.on('framenavigated', ...)` event, keeping the LAST fire
+    // for the main frame. That closed the B1 contamination window (audit-1), but audit-2 found
+    // Puppeteer's `framenavigated` fires for BOTH a real (cross-document) navigation AND a
+    // same-document one (`history.pushState`/`replaceState`, or a hash change) — Puppeteer's
+    // `FrameManager` emits the same public event from `Page.frameNavigated` (CDP) and from
+    // `Page.navigatedWithinDocument` (CDP) alike (`puppeteer-core/lib/puppeteer/cdp/
+    // FrameManager.js`: `#onFrameNavigatedWithinDocument` re-emits `FrameManagerEvent
+    // .FrameNavigated`, which `Page.js` re-emits as the public `framenavigated`). A page that does
+    // a same-document nav during its own load — common: audit-2's live sweep found 8 of 10 real
+    // sites do this — pushed `since` later than the page's own early console errors/broken
+    // requests, silently dropping them (GAP-266) and, for the same reason, could drop the audited
+    // page's own 404/500 response too (GAP-267, when that response logs just before whichever
+    // event won).
+    //
+    // fix-2 listens at the raw CDP level instead of through Puppeteer's merged event, on a
+    // dedicated `CDPSession` (so this doesn't disturb whatever domains the tab's own session has
+    // enabled): only `Page.frameNavigated` with no `frame.parentId` (i.e. the main frame) counts
+    // as a commit. `Page.navigatedWithinDocument` — CDP's own signal for same-document
+    // navigations — is never subscribed to, so those navigations simply don't move `since`.
+    // Still keeping the LAST such commit (not the first) — audit-2 confirmed a multi-hop JS
+    // redirect chain fires several real `Page.frameNavigated` events and "keep the last" is what
+    // correctly resolves to the final page; a first-wins policy would misattribute later hops'
+    // findings to the first hop (GAP-269's M4 mutation).
     let navCommittedAt: string | null = null;
-    const onFrameNavigated = (frame: unknown): void => {
-      if (typeof page.mainFrame === 'function' && frame !== page.mainFrame()) return; // ignore subframes
-      navCommittedAt = new Date().toISOString();
-    };
+    let navCdpSession: { detach: () => Promise<void> } | null = null;
     const canListenForCommit =
-      options.url !== undefined &&
-      typeof (page as unknown as { on?: unknown }).on === 'function' &&
-      typeof (page as unknown as { off?: unknown }).off === 'function';
-    if (canListenForCommit) {
-      (page as unknown as { on: (event: string, cb: (frame: unknown) => void) => void }).on(
-        'framenavigated',
-        onFrameNavigated,
-      );
-    }
+      options.url !== undefined && typeof (page as unknown as { createCDPSession?: unknown }).createCDPSession === 'function';
     try {
+      if (canListenForCommit) {
+        try {
+          const client = await (
+            page as unknown as {
+              createCDPSession: () => Promise<{
+                send: (method: string) => Promise<unknown>;
+                on: (event: string, cb: (event: { frame?: { parentId?: string } }) => void) => void;
+                detach: () => Promise<void>;
+              }>;
+            }
+          ).createCDPSession();
+          navCdpSession = client;
+          client.on('Page.frameNavigated', (event) => {
+            if (event?.frame?.parentId) return; // ignore subframes — only the main frame's own commit counts
+            navCommittedAt = new Date().toISOString();
+          });
+          // Deliberately no listener on `Page.navigatedWithinDocument` — that's CDP's own signal
+          // for a same-document navigation (hash change / pushState / replaceState), and it must
+          // never move `since` (GAP-266/267).
+          await client.send('Page.enable');
+        } catch {
+          // A browser/Puppeteer build without `createCDPSession`, or a session that failed to
+          // attach: fall back to no commit-time tracking at all (documentStartedAt-only scoping,
+          // the same as current-page mode) rather than silently reintroducing either the
+          // GAP-262 leak or a same-document false negative.
+          navCdpSession = null;
+        }
+      }
       if (options.url) {
         await this.navigate(sessionId, options.url, options.tabId);
         // GAP-038 (open): FR2-08's waitForPageSettle (DOM-quiet + network-idle, bounded) hasn't
@@ -1607,11 +1639,8 @@ export class SutradharRuntime {
         await new Promise((r) => setTimeout(r, options.settleMs ?? 1500));
       }
     } finally {
-      if (canListenForCommit) {
-        (page as unknown as { off: (event: string, cb: (frame: unknown) => void) => void }).off(
-          'framenavigated',
-          onFrameNavigated,
-        );
+      if (navCdpSession) {
+        await navCdpSession.detach().catch(() => {});
       }
     }
 
@@ -1645,6 +1674,8 @@ export class SutradharRuntime {
       pageWasHidden: pageResult.pageWasHidden ?? null,
     });
 
+    const url = page.url();
+
     const consoleErrors = scopeToDocument(tab.getConsoleLogs(), since)
       .filter((l) => l.logType === 'error')
       .map((l) => ({ text: l.text, timestamp: l.timestamp }));
@@ -1653,7 +1684,27 @@ export class SutradharRuntime {
       .filter((n) => n.phase === 'response' && n.status !== undefined && n.status >= 400)
       .map((n) => ({ url: n.url, status: n.status! }));
 
-    const url = page.url();
+    // GAP-267 fix-2: the audited document's OWN HTTP response status is definitionally part of
+    // "this page's audit result" — never contamination from a previous page — so it must never be
+    // filterable by the `since` timing boundary at all, even if fix-2's own commit-time listener
+    // (above) still ends up racing that response by a few ms. Find it unscoped: the ring buffer's
+    // LAST 'document'-typed response entry whose url matches the final, post-redirect `url` (a
+    // redirect chain logs one 'document' response per hop, each at a different url, so matching on
+    // the final url picks the hop that's actually this page — same principle as "keep the last
+    // cross-document commit" above). If it's missing from the `since`-scoped list (because its
+    // timestamp fell just before `since`), add it back explicitly rather than dropping it.
+    const mainDocumentResponse = [...tab.getNetworkLog()]
+      .reverse()
+      .find((n) => n.phase === 'response' && n.resourceType === 'document' && n.url === url);
+    if (
+      mainDocumentResponse &&
+      mainDocumentResponse.status !== undefined &&
+      mainDocumentResponse.status >= 400 &&
+      !brokenRequests.some((b) => b.url === mainDocumentResponse.url && b.status === mainDocumentResponse.status)
+    ) {
+      brokenRequests.push({ url: mainDocumentResponse.url, status: mainDocumentResponse.status });
+    }
+
     const title = await this.readTitle(tab);
     const timestamp = new Date().toISOString();
 

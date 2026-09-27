@@ -12,6 +12,7 @@ import { StructuredLogger } from '@sutradhar/observability';
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { formatAuditText, auditNotes, auditExitCode } from './audit-output.js';
+import { dialogOutputSink, dialogBlockedJsonDoc, printDialogBlockedJsonOnce, writeJsonStdoutOnce } from './dialog-json-routing.js';
 import { readState, writeState, clearState, STATE_DIR, type CliState } from './state.js';
 import { spawnDetachedChrome, killChromeTree } from './spawn-chrome.js';
 import { createSessionId } from '@sutradhar/contracts';
@@ -283,7 +284,7 @@ async function getBroker(state: CliState): Promise<DialogBroker> {
  *  stderr instead of being dropped — the same "notes never pollute --json stdout" precedent this
  *  file's own `auditNotes` already established for D9's coverage caveats. */
 async function reportDialogs(runtime: SutradharRuntime, sessionId: string): Promise<void> {
-  const dialogLog = jsonMode ? console.error : console.log;
+  const dialogLog = dialogOutputSink(jsonMode);
   const history = runtime.getDialogHistory(sessionId);
   for (const record of history) {
     if (record.handledAt && record.handledAt >= COMMAND_START_ISO) {
@@ -318,38 +319,6 @@ async function reportDialogs(runtime: SutradharRuntime, sessionId: string): Prom
   }
 }
 
-/** GAP-261: the single JSON document printed to stdout, in `--json` mode only, when a dialog
- *  blocks a command entirely (either the gate refused to even start it, or it pre-empted a
- *  running command past its grace period) — the schema's own `dialogPending`/`dialogsHandled`
- *  keys (audit-report.schema.json, D2.4), but standalone rather than nested in a full
- *  `AuditReport` (there is no report at all in the blocked case: the command never got far enough
- *  to produce one). Not audit-specific — `jsonMode` is a global CLI flag, and any `--json` command
- *  a dialog blocks must keep the same "stdout is always exactly one parseable document" guarantee. */
-function dialogBlockedJsonDoc(
-  message: string,
-  dialogs: readonly PendingDialogEntry[],
-  handled: readonly { dialog: PendingDialogEntry; action: 'accept' | 'dismiss'; promptText?: string }[] = [],
-): string {
-  const first = dialogs[0];
-  return JSON.stringify(
-    {
-      error: message,
-      dialogPending: first
-        ? { type: first.dialogType, message: first.message, defaultValue: first.defaultValue ?? null, url: first.url }
-        : null,
-      dialogsHandled: handled.map((r) => ({
-        type: r.dialog.dialogType,
-        message: r.dialog.message,
-        action: r.action,
-        promptText: r.promptText ?? null,
-        by: 'policy',
-      })),
-    },
-    null,
-    2,
-  );
-}
-
 async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string) => Promise<T>): Promise<T> {
   const runtime = new SutradharRuntime({ logger, allowedDomains: allowlistDomainsFlag });
   activeRuntime = runtime;
@@ -368,7 +337,7 @@ async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string)
         // GAP-261: same stdout/stderr split as `reportDialogs` — an accept/dismiss policy
         // resolving a dialog LEFT OVER from an earlier command must never print to stdout ahead
         // of a `--json` command's own JSON document.
-        const dialogLog = jsonMode ? console.error : console.log;
+        const dialogLog = dialogOutputSink(jsonMode);
         for (const r of result.records) {
           dialogLog(
             formatDialogHandled({ type: r.dialog.dialogType, message: r.dialog.message, action: r.action, promptText: r.promptText, by: 'policy' }),
@@ -471,7 +440,7 @@ async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string)
     // blocked-JSON shape instead of leaving stdout empty (empty stdout is not a valid document
     // either) and keep the human-readable message on stderr as before.
     if (jsonMode) {
-      console.log(dialogBlockedJsonDoc(blockedMessage, raced.pending));
+      printDialogBlockedJsonOnce(blockedMessage, raced.pending);
     } else {
       console.error(`Error: ${blockedMessage}`);
     }
@@ -785,8 +754,13 @@ async function cmdAudit(url: string | undefined, outDir: string | undefined) {
       // genuinely fatal (non-dialog) error is unchanged.
       const pending = jsonMode ? (runtime.getPendingDialogs(sessionId) as PendingDialogEntry[]) : [];
       if (jsonMode && pending.length > 0) {
-        console.log(dialogBlockedJsonDoc((err as Error).message, pending));
-        console.error(`Error: ${(err as Error).message}`);
+        // GAP-268 fix-2: this catch can fire AFTER `withSession`'s own pre-emption branch has
+        // already written the blocked-JSON document for this same command (see
+        // `printDialogBlockedJsonOnce`'s doc comment) — only actually write, and only actually
+        // report the error line, when this call site is the one that wins the guard.
+        if (printDialogBlockedJsonOnce((err as Error).message, pending)) {
+          console.error(`Error: ${(err as Error).message}`);
+        }
         finalExitCode = 3;
         process.exitCode = 3;
         return;
@@ -797,7 +771,12 @@ async function cmdAudit(url: string | undefined, outDir: string | undefined) {
 
     for (const note of auditNotes(report)) console.error(note);
     if (jsonMode) {
-      console.log(JSON.stringify(report, null, 2));
+      // GAP-268 fix-2 (widened): this "the audit actually succeeded" path is itself one of the
+      // possible SECOND writers when this command's `work` was abandoned by `withSession`'s own
+      // pre-emption branch and then went on to succeed anyway (see `writeJsonStdoutOnce`'s doc
+      // comment) — go through the same shared guard as the blocked-JSON paths, not a bare
+      // `console.log`, so whichever write happens first for this invocation is the only one.
+      writeJsonStdoutOnce(JSON.stringify(report, null, 2));
     } else {
       for (const line of formatAuditText(report)) console.log(line);
     }

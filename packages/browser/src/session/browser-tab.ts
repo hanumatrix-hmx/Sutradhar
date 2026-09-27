@@ -909,10 +909,22 @@ export class BrowserTab implements IBrowserTab {
     });
 
     page.on('response', (res) => {
+      // FR2-12 fix-2 (GAP-267): `resourceType` was previously only recorded on the 'request'
+      // phase entry, never on 'response' — `SutradharRuntime.audit`'s "always include the main
+      // document's own response status" path needs to tell a top-level document response apart
+      // from a same-URL sub-resource one without that. `res.request()` is the same Puppeteer
+      // `HTTPRequest` the 'request' listener above already read `resourceType()` from.
+      let resourceType: string | undefined;
+      try {
+        resourceType = res.request().resourceType();
+      } catch {
+        resourceType = undefined;
+      }
       const entry: NetworkLogEntry = {
         phase: 'response',
         url: res.url(),
         status: res.status(),
+        resourceType,
         timestamp: new Date().toISOString(),
       };
       this.networkLog.push(entry);

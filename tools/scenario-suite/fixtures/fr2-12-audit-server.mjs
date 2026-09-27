@@ -91,6 +91,85 @@ function alertPage(n, delayMs) {
     `<h1>Alert fixture ${n}</h1><script>${script}</script></body></html>`;
 }
 
+/** GAP-266 fix-2 repro: a real console error BEFORE a same-document navigation, a same-document
+ *  navigation (history.replaceState / pushState / a hash change, chosen by `via`) partway through
+ *  the page's own life, and a real console error + a real 404 fetch AFTER it. The fix under test
+ *  is that NEITHER error, nor the 404, is dropped just because a same-document nav happened
+ *  in between -- `since` must never move because of it. */
+function sameDocPage(n, via) {
+  const navCall =
+    via === 'pushState'
+      ? `history.pushState({}, '', location.pathname + '?n=${n}&pushed=1')`
+      : via === 'hash'
+        ? `location.hash = 'section-${n}'`
+        : `history.replaceState({}, '', location.pathname + '?n=${n}&replaced=1')`;
+  const script = `
+    console.error('samedoc-before-${n}');
+    setTimeout(function () {
+      ${navCall};
+      setTimeout(function () {
+        console.error('samedoc-after-${n}');
+        fetch('/missing-samedoc-${n}.png').catch(function () {});
+      }, 150);
+    }, 150);
+  `;
+  return `<html lang="en"><head><meta charset="utf-8"><title>SameDoc ${n}</title></head><body style="margin:0">` +
+    `<h1>SameDoc fixture ${n}</h1><script>${script}</script></body></html>`;
+}
+
+/** GAP-266 fix-2, multi-hop variant: THREE same-document navigations in a row (replaceState,
+ *  then pushState, then a hash change), each separated by a real console error -- kills a fix
+ *  that only guards against a single same-document nav. */
+function sameDocMultiPage(n) {
+  const script = `
+    console.error('samedoc-multi-0-${n}');
+    setTimeout(function () {
+      history.replaceState({}, '', location.pathname + '?n=${n}&r=1');
+      console.error('samedoc-multi-1-${n}');
+      setTimeout(function () {
+        history.pushState({}, '', location.pathname + '?n=${n}&p=1');
+        console.error('samedoc-multi-2-${n}');
+        setTimeout(function () {
+          location.hash = 'sec-${n}';
+          console.error('samedoc-multi-3-${n}');
+          fetch('/missing-samedoc-multi-${n}.png').catch(function () {});
+        }, 100);
+      }, 100);
+    }, 100);
+  `;
+  return `<html lang="en"><head><meta charset="utf-8"><title>SameDocMulti ${n}</title></head><body style="margin:0">` +
+    `<h1>SameDocMulti fixture ${n}</h1><script>${script}</script></body></html>`;
+}
+
+/** GAP-266 fix-2: a synthetic stand-in for what audit-2's live sweep found on 8/10 real sites --
+ *  a same-document `history.replaceState` fired very shortly (well inside the settle window)
+ *  after the page's own load, the way a hydrating SPA framework commonly does, WITH a real error
+ *  on either side of it. */
+function spaLikePage(n) {
+  const script = `
+    console.error('spa-like-hydration-error-${n}');
+    history.replaceState({}, '', location.pathname + '?n=${n}&hydrated=1');
+    setTimeout(function () { console.error('spa-like-post-hydration-error-${n}'); }, 50);
+  `;
+  return `<html lang="en"><head><meta charset="utf-8"><title>SpaLike ${n}</title></head><body style="margin:0">` +
+    `<h1>SpaLike fixture ${n}</h1><script>${script}</script></body></html>`;
+}
+
+/** GAP-267 fix-2: the audited page's OWN main-document HTTP response is itself an error status
+ *  (a real 404/500 on the requested URL, not just a sub-resource 404 the page fetches). */
+function ownStatusPage(n, status) {
+  return { status, body: `<html lang="en"><head><meta charset="utf-8"><title>OwnStatus ${n}</title></head><body style="margin:0">` +
+    `<h1>Own-status ${status} fixture ${n}</h1><script>console.error('own-status-${status}-${n}');</script></body></html>` };
+}
+
+/** GAP-268 fix-2: what would defeat a one-sided guard next -- TWO dialogs opening during
+ *  capture, not just one (an alert followed almost immediately by a confirm). */
+function alertConfirmPage(n, delayMs) {
+  const script = `setTimeout(function () { alert('fr2-12-audit-alert-${n}'); confirm('fr2-12-audit-confirm-${n}'); }, ${delayMs});`;
+  return `<html lang="en"><head><meta charset="utf-8"><title>AlertConfirm ${n}</title></head><body style="margin:0">` +
+    `<h1>AlertConfirm fixture ${n}</h1><script>${script}</script></body></html>`;
+}
+
 function shiftPage(n) {
   const script = `setTimeout(()=>{ var s=document.getElementById('slot'); if (s) s.style.height='200px'; window.__fr212ShiftDone=true; },300);`;
   return `<html lang="en"><head><meta charset="utf-8"><title>Shift ${n}</title></head><body style="margin:0">` +
@@ -134,6 +213,12 @@ export async function startAuditFixtureServer() {
       res.end(alertPage(n, delayMs));
       return;
     }
+    if (url.pathname === '/alert-confirm') {
+      const delayMs = Number(url.searchParams.get('delayMs') ?? '0');
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(alertConfirmPage(n, delayMs));
+      return;
+    }
     if (url.pathname === '/clean-delayed') {
       // GAP-262: a "normal" (not artificially slow) response delay for the NEW page -- audit-1
       // found the contamination leak persists even at ~150ms, not just a pathologically slow one.
@@ -147,6 +232,41 @@ export async function startAuditFixtureServer() {
     if (url.pathname === '/shift') {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       res.end(shiftPage(n));
+      return;
+    }
+    if (url.pathname === '/samedoc') {
+      const via = url.searchParams.get('via') ?? 'replaceState';
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(sameDocPage(n, via));
+      return;
+    }
+    if (url.pathname === '/samedoc-multi') {
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(sameDocMultiPage(n));
+      return;
+    }
+    if (url.pathname === '/spa-like') {
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(spaLikePage(n));
+      return;
+    }
+    if (url.pathname === '/own-404') {
+      const { status, body } = ownStatusPage(n, 404);
+      res.writeHead(status, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(body);
+      return;
+    }
+    if (url.pathname === '/own-500') {
+      const { status, body } = ownStatusPage(n, 500);
+      res.writeHead(status, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(body);
+      return;
+    }
+    if (url.pathname === '/own-redirect-404') {
+      // A 302 chain whose FINAL hop is the audited page's own 404 (GAP-267's "302 chain ending in
+      // a 404" shape) -- Location is relative so it stays on the same fixture origin.
+      res.writeHead(302, { Location: `/own-404?n=${n}` });
+      res.end();
       return;
     }
     if (url.pathname === '/img/ok.png' || url.pathname === '/favicon.ico') {

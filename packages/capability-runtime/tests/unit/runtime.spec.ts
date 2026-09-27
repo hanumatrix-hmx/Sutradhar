@@ -259,10 +259,11 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
         evaluate: vi.fn(async () => ({ issues: [], webVitals: { lcpMs: 10, cls: 0, fcpMs: 5, ttfbMs: 1 }, timeOrigin: TIME_ORIGIN, pageWasHidden: false })),
         evaluateOnNewDocument: vi.fn(),
         removeScriptToEvaluateOnNewDocument: vi.fn(),
-        // GAP-262: `audit()` conditionally attaches/detaches a `framenavigated` listener on the
-        // page to capture the new document's commit time. Most fakes here don't care and never
-        // provide `on`/`off`, which `audit()` must tolerate (falls back to scoping by
-        // `documentStartedAt` alone) — only RA4 below actually exercises the listener.
+        // GAP-262/GAP-266/GAP-267: `audit()` conditionally opens a dedicated CDPSession (via
+        // `page.createCDPSession()`) to capture the new document's real cross-document commit
+        // time. Most fakes here don't care and never provide `createCDPSession`, which `audit()`
+        // must tolerate (falls back to scoping by `documentStartedAt` alone) — RA4b/c/d/e below
+        // are the cases that actually exercise it.
         ...overrides,
       };
     }
@@ -352,20 +353,42 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
       expect(result.requestedUrl).toBe(URL_);
     });
 
+    /** fix-2 (GAP-266/267): a fake CDPSession -- `send`/`on`/`detach` -- standing in for
+     *  `page.createCDPSession()`. `fireMainFrameNavigated`/`fireWithinDocument` let a test raise
+     *  the two CDP events fix-2's listener actually distinguishes: `Page.frameNavigated` (real,
+     *  cross-document commit -- only counts with no `frame.parentId`) and
+     *  `Page.navigatedWithinDocument` (same-document; deliberately never subscribed to, so firing
+     *  it here is a no-op unless a regression adds a listener for it). */
+    function fakeCdpSession() {
+      const listeners = new Map<string, ((event: unknown) => void)[]>();
+      const session = {
+        send: vi.fn(async () => undefined),
+        on: vi.fn((event: string, cb: (event: unknown) => void) => {
+          const arr = listeners.get(event) ?? [];
+          arr.push(cb);
+          listeners.set(event, arr);
+        }),
+        detach: vi.fn(async () => undefined),
+        fireMainFrameNavigated(): void {
+          for (const cb of listeners.get('Page.frameNavigated') ?? []) cb({ frame: { id: 'main' } });
+        },
+        fireSubFrameNavigated(): void {
+          for (const cb of listeners.get('Page.frameNavigated') ?? []) cb({ frame: { id: 'child', parentId: 'main' } });
+        },
+        fireWithinDocument(): void {
+          for (const cb of listeners.get('Page.navigatedWithinDocument') ?? []) cb({ frameId: 'main', url: URL_ });
+        },
+      };
+      return session;
+    }
+
     it("RA4b (GAP-262/GAP-264): scopes to the new page's main-frame COMMIT time, not the earlier navigate()-call time -- catches a regression to call-time scoping", async () => {
       vi.useFakeTimers();
       try {
         // "Now" at the instant navigate() is about to be called.
         vi.setSystemTime(new Date('2026-03-01T00:00:00.000Z'));
-        const mainFrame = {};
-        let framenavigatedCb: ((frame: unknown) => void) | undefined;
-        const page = fakePage({
-          on: vi.fn((event: string, cb: (frame: unknown) => void) => {
-            if (event === 'framenavigated') framenavigatedCb = cb;
-          }),
-          off: vi.fn(),
-          mainFrame: () => mainFrame,
-        });
+        const cdp = fakeCdpSession();
+        const page = fakePage({ createCDPSession: vi.fn(async () => cdp) });
         const tab = fakeTab({
           observingSince: '2020-01-01T00:00:00.000Z',
           getConsoleLogs: () => [
@@ -382,10 +405,13 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
         vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
         vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
         vi.spyOn(runtime, 'navigate').mockImplementation(async () => {
-          // Simulate real Puppeteer: the frame commits 500ms into navigate()'s own await --
-          // well after the old page's console error above, and well after call time.
+          // Simulate real Chrome: an unrelated sub-frame commits first (must be ignored), THEN
+          // the main frame commits 500ms into navigate()'s own await -- well after the old
+          // page's console error above, and well after call time.
+          vi.setSystemTime(new Date('2026-03-01T00:00:00.300Z'));
+          cdp.fireSubFrameNavigated();
           vi.setSystemTime(new Date('2026-03-01T00:00:00.500Z'));
-          framenavigatedCb?.(mainFrame);
+          cdp.fireMainFrameNavigated();
           return { tabId: 't', url: URL_, title: 'T' } as any;
         });
         // documentStartedAt just after the real commit time, as it would be for real.
@@ -405,11 +431,186 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
         const result = await resultPromise;
 
         expect(result.consoleErrors.map((e) => e.text)).toEqual(['new-page-after-commit']);
-        expect(page.on).toHaveBeenCalledWith('framenavigated', expect.any(Function));
-        expect(page.off).toHaveBeenCalledWith('framenavigated', expect.any(Function));
+        expect(page.createCDPSession).toHaveBeenCalled();
+        expect(cdp.send).toHaveBeenCalledWith('Page.enable');
+        expect(cdp.on).toHaveBeenCalledWith('Page.frameNavigated', expect.any(Function));
+        // GAP-269 M3 kill: a regression that drops the main-frame filter would let the sub-frame
+        // event above win instead, moving `since` to 00:00:00.300Z -- still excludes nothing new
+        // here, so this alone wouldn't catch M3; RA4d below (which has real activity IN that
+        // window) is the actual M3 kill.
+        expect(cdp.detach).toHaveBeenCalled();
       } finally {
         vi.useRealTimers();
       }
+    });
+
+    it('RA4c (GAP-266): a same-document navigation (history.replaceState/pushState/hash change) during the page\'s own load does NOT move `since` -- kills a regression that listens to Page.navigatedWithinDocument or drops the main-frame filter', async () => {
+      vi.useFakeTimers();
+      try {
+        vi.setSystemTime(new Date('2026-04-01T00:00:00.000Z'));
+        const cdp = fakeCdpSession();
+        const page = fakePage({ createCDPSession: vi.fn(async () => cdp) });
+        const tab = fakeTab({
+          observingSince: '2020-01-01T00:00:00.000Z',
+          getConsoleLogs: () => [
+            // Real error from BEFORE the same-document nav -- must survive (GAP-266's exact
+            // failure mode: fix-1 dropped this).
+            { logType: 'error', text: 'error-before-samedoc-nav', timestamp: '2026-04-01T00:00:00.550Z' },
+            // Real error from AFTER the same-document nav -- must also survive.
+            { logType: 'error', text: 'error-after-samedoc-nav', timestamp: '2026-04-01T00:00:00.700Z' },
+          ],
+        });
+        const runtime = new SutradharRuntime();
+        vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+        vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+        vi.spyOn(runtime, 'navigate').mockImplementation(async () => {
+          vi.setSystemTime(new Date('2026-04-01T00:00:00.500Z'));
+          cdp.fireMainFrameNavigated(); // the real cross-document commit
+          vi.setSystemTime(new Date('2026-04-01T00:00:00.650Z'));
+          cdp.fireWithinDocument(); // e.g. a hydration framework's router calling history.replaceState
+          return { tabId: 't', url: URL_, title: 'T' } as any;
+        });
+        page.evaluate.mockResolvedValue({
+          issues: [],
+          webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 },
+          timeOrigin: Date.parse('2026-04-01T00:00:00.500Z'),
+          pageWasHidden: false,
+        });
+
+        const resultPromise = runtime.audit('s', { url: URL_, settleMs: 0 });
+        await vi.runAllTimersAsync();
+        const result = await resultPromise;
+
+        expect(result.consoleErrors.map((e) => e.text).sort()).toEqual(
+          ['error-after-samedoc-nav', 'error-before-samedoc-nav'].sort(),
+        );
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('RA4d (GAP-269 M3 kill): ignores a sub-frame Page.frameNavigated event even when it is the LAST one -- kills a mutation that removes the main-frame (`!frame.parentId`) filter', async () => {
+      vi.useFakeTimers();
+      try {
+        vi.setSystemTime(new Date('2026-05-01T00:00:00.000Z'));
+        const cdp = fakeCdpSession();
+        const page = fakePage({ createCDPSession: vi.fn(async () => cdp) });
+        const tab = fakeTab({
+          observingSince: '2020-01-01T00:00:00.000Z',
+          getConsoleLogs: () => [
+            // Real, on the actual page, logged between the main-frame commit and the LATER
+            // sub-frame (e.g. an ad iframe) commit. A mutant with no main-frame filter would move
+            // `since` to the sub-frame's later commit time and wrongly drop this.
+            { logType: 'error', text: 'main-page-error', timestamp: '2026-05-01T00:00:00.550Z' },
+          ],
+        });
+        const runtime = new SutradharRuntime();
+        vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+        vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+        vi.spyOn(runtime, 'navigate').mockImplementation(async () => {
+          vi.setSystemTime(new Date('2026-05-01T00:00:00.500Z'));
+          cdp.fireMainFrameNavigated();
+          vi.setSystemTime(new Date('2026-05-01T00:00:00.900Z'));
+          cdp.fireSubFrameNavigated(); // an iframe loading later -- must not move `since`
+          return { tabId: 't', url: URL_, title: 'T' } as any;
+        });
+        page.evaluate.mockResolvedValue({
+          issues: [],
+          webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 },
+          timeOrigin: Date.parse('2026-05-01T00:00:00.500Z'),
+          pageWasHidden: false,
+        });
+
+        const resultPromise = runtime.audit('s', { url: URL_, settleMs: 0 });
+        await vi.runAllTimersAsync();
+        const result = await resultPromise;
+
+        expect(result.consoleErrors.map((e) => e.text)).toEqual(['main-page-error']);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('RA4e (GAP-269 M4 kill): keeps the LAST main-frame commit, not the first -- kills a mutation that keeps the first framenavigated/commit event (breaks multi-hop JS redirect chains)', async () => {
+      vi.useFakeTimers();
+      try {
+        vi.setSystemTime(new Date('2026-06-01T00:00:00.000Z'));
+        const cdp = fakeCdpSession();
+        const page = fakePage({ createCDPSession: vi.fn(async () => cdp) });
+        const tab = fakeTab({
+          observingSince: '2020-01-01T00:00:00.000Z',
+          getConsoleLogs: () => [
+            // Logged by the FIRST hop of a JS redirect chain -- must be excluded once the chain
+            // resolves to its final page. A "keep the first" mutant would wrongly keep this.
+            { logType: 'error', text: 'first-hop-error', timestamp: '2026-06-01T00:00:00.300Z' },
+            // Logged by the FINAL page after the chain settles -- must survive.
+            { logType: 'error', text: 'final-hop-error', timestamp: '2026-06-01T00:00:00.900Z' },
+          ],
+        });
+        const runtime = new SutradharRuntime();
+        vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+        vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+        vi.spyOn(runtime, 'navigate').mockImplementation(async () => {
+          // Two real cross-document commits, simulating a JS redirect chain (hop 1 -> hop 2).
+          vi.setSystemTime(new Date('2026-06-01T00:00:00.200Z'));
+          cdp.fireMainFrameNavigated();
+          vi.setSystemTime(new Date('2026-06-01T00:00:00.800Z'));
+          cdp.fireMainFrameNavigated();
+          return { tabId: 't', url: URL_, title: 'T' } as any;
+        });
+        page.evaluate.mockResolvedValue({
+          issues: [],
+          webVitals: { lcpMs: 1, cls: 0, fcpMs: 1, ttfbMs: 1 },
+          timeOrigin: Date.parse('2026-06-01T00:00:00.800Z'),
+          pageWasHidden: false,
+        });
+
+        const resultPromise = runtime.audit('s', { url: URL_, settleMs: 0 });
+        await vi.runAllTimersAsync();
+        const result = await resultPromise;
+
+        expect(result.consoleErrors.map((e) => e.text)).toEqual(['final-hop-error']);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('RA5 (GAP-267): the audited page\'s own 404 response is always included in brokenRequests even when its timestamp falls just before `since`', async () => {
+      const page = fakePage();
+      const tab = fakeTab({
+        observingSince: '2020-01-01T00:00:00.000Z',
+        getNetworkLog: () => [
+          // The page's OWN document response, timestamped a moment before `since` (the fix-2
+          // commit-time boundary) -- must be included anyway, per-request, not filtered by the
+          // timing boundary at all.
+          { phase: 'response', url: URL_, status: 404, resourceType: 'document', timestamp: '2026-01-01T00:00:09.900Z' },
+        ],
+      });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+
+      const result = await runtime.audit('s'); // current-page mode; since = documentStartedAt = TIME_ORIGIN (…10.000Z)
+
+      expect(result.brokenRequests).toEqual([{ url: URL_, status: 404 }]);
+    });
+
+    it('RA6 (GAP-267): a 302 chain ending in a 500 on the audited page itself is captured by matching the FINAL url, not an intermediate redirect hop', async () => {
+      const page = fakePage();
+      const tab = fakeTab({
+        observingSince: '2020-01-01T00:00:00.000Z',
+        getNetworkLog: () => [
+          { phase: 'response', url: 'http://127.0.0.1:1/before-redirect', status: 302, resourceType: 'document', timestamp: '2026-01-01T00:00:09.800Z' },
+          { phase: 'response', url: URL_, status: 500, resourceType: 'document', timestamp: '2026-01-01T00:00:09.900Z' },
+        ],
+      });
+      const runtime = new SutradharRuntime();
+      vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab });
+      vi.spyOn(runtime as any, 'requirePage').mockReturnValue(page);
+
+      const result = await runtime.audit('s');
+
+      expect(result.brokenRequests).toEqual([{ url: URL_, status: 500 }]);
     });
 
     it('RA5: a successful baseline is folded in with compareUrls called with (sessionId, baselineUrl, url, {tabId})', async () => {

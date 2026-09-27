@@ -1,0 +1,38 @@
+[fixture] listening on http://127.0.0.1:54222
+[live] PASS L1 — exit=0 screenshot=E:\AI-Cache\tmp\fr212-l1-1790528556906-fu3cdy90bn\a\b\c\audit-screenshot.png
+[live] PASS L2 — exit=0 schemaValid=true a11yOk=true vitalsOk=true slow404(expected-miss, GAP-038)=false
+[live] PASS L3 — exit=1 validStdout=true
+[live] PASS L4a — exit=0 diffPct=3.1610416666666667
+[live] PASS L4b (N14) — exit=0 diffPct=0
+[live] PASS L5 — exit=1 baselineError=net::ERR_UNSAFE_PORT at http://127.0.0.1:1/
+[live] PASS N4a (--baseline no value) — Error: --baseline requires a URL (e.g. audit <url> --baseline https://prod.example.com)
+[live] PASS N4b (--baseline then flag) — Error: --baseline requires a URL (e.g. audit <url> --baseline https://prod.example.com)
+[live] PASS L6 (N11) — lcpMs=36 cls=0.27996762208067943 note=true
+[live] PASS L7 — labels=["URL","Title","Screenshot","Web Vitals","LCP","CLS","FCP","TTFB","Console errors","Page errors","Broken requests (4xx/5xx)","Accessibility issues"]
+[live] PASS L8 (N2) — exit=1 stateFileExists=false
+[live] PASS N3 — exit=1 stdoutEmpty=true fatal=true
+[live] PASS L21 (GAP-261, default-policy leftover dialog) — exit=3 stdoutParses=true dialogPending={"type":"alert","message":"gap261-l21","defaultValue":null,"url":"http://127.0.0.1:54222/clean?n=211"}
+[live] PASS L22 (GAP-261, accept-policy mid-audit dialog) — exit=0 stdoutIsExactlyOneJsonDoc=true dialogHandledOnStderr=true
+[live] PASS L23 (GAP-261, mid-audit alert, never handled) — exit=3 stdoutParses=true dialogPending={"type":"alert","message":"fr2-12-audit-alert-231","defaultValue":null,"url":"http://127.0.0.1:54222/alert?n=231&delayMs=100"}
+[live] PASS L9 — schemaValid=true pngMatch=true
+[live] INFO L15 (GAP-038, expected-miss) — slow-404-19 present=false (FR2-08 not landed; documented as expected-miss)
+[live] PASS L10 — contentLength=1
+[live] PASS L11 — contentLength=3 diffPct=0.7190950713708592
+[live] PASS L12 (B1 fixed, N9) — r12a=[] r12b=[]
+[live] PASS L12b (GAP-262 fix-1, 15 repeats) — leaks=0/15 
+[live] PASS L13 (B2 fixed, N10) — clsSeries=[0.028657405848819463,0.028657405848819463,0.028657405848819463] spread=0 typeofVitals=undefined
+[live] PASS L14 (N8) — isError=true elapsed=1ms text=audit failed: a alert dialog is open ("fr212") and blocks the page, so it can't be audited. Handle i
+[live] PASS L20 (informational) — pageWasHidden=true fcpMs=null newTab=tab_sess_1790528598979_1_2
+[live] PASS N18 — audit failed: No browser session "no-such-session". Call launch() first.
+Hint: Call browser.launch first to create a session.
+{"timestamp":"2026-09-27T17:03:57.993Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-27T17:03:58.199Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790528637993_1","context":{"isIncognito":false}}
+[live] PASS L16a — schemaValid=true bytesMatch=true
+[live] PASS L16b — {"mode":"current-page","documentStartedAt":"2026-09-27T17:03:58.233Z","observingSince":"2026-09-27T17:03:58.222Z","coversWholeDocument":true,"pageWasHidden":false}
+[live] PASS L17 — diffExists=true diffBytesMatch=true
+{"timestamp":"2026-09-27T17:04:02.765Z","level":"info","message":"[BrowserSession] Closed session sess_1790528637993_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-27T17:04:02.765Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790528637993_1","context":{"reason":"Runtime shutdown"}}
+[live] PASS L18 (N13) — allMutationsRejected=true unmutatedValid=true
+[live] PASS L19 — exit=0 valid=true
+
+Live-verify: 29 pass, 0 fail, 1 info, out of 30

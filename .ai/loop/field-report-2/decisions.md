@@ -2851,3 +2851,47 @@ Decisions for fix-2:
    should re-run EVERY audit-1 AND audit-2 repro before reporting done, not just the newly-targeted
    ones -- this loop's pattern on this item specifically is fixes that solve the named case while
    quietly breaking an adjacent one.
+
+## 2026-09-27 -- FR2-12 fix-2 done; sent to independent audit-3 (cycle 3 of 4 standard)
+
+Executor (Sonnet) self-report, independently spot-checked by the Orchestrator (vitest
+capability-runtime 198 and cli 171 re-run directly: exact match; git status matches the reported
+file list exactly, including that run-1/audit-1/audit-2/fix-1/spec.md are untouched; 0 leftover
+processes).
+
+GAP-266/267 (one root cause): the navigation-event listener now uses a raw CDP session subscribed
+ONLY to Page.frameNavigated on the main frame, never Page.navigatedWithinDocument (CDP's own
+same-document-nav signal) -- so history.replaceState/pushState/hash changes can no longer move the
+scoping boundary. Separately, the main document's own HTTP response is now captured UNSCOPED
+(immune to any timing boundary), fixing GAP-267 independently of the same-document-nav fix. Found
+along the way: browser-tab.ts's response log was missing resourceType on response entries (only
+request entries had it) -- without this the GAP-267 lookup could never match a document response;
+fixed live, not something the original plan anticipated. Live: 10/10 x3 same-doc shapes (replaceState/
+pushState/hash), 5/5 multi-hop, 10/10 synthetic 8-real-site pattern, 10/10 own-404, 10/10 own-500,
+10/10 302-chain, 5/5 JS-redirect-chain-still-resolves-correctly, 0/10 GAP-262 not reopened.
+
+GAP-268: during its OWN re-verification, the executor found fix-1's framing (two writers) was
+incomplete -- there's a THIRD shape where the pre-empted work actually SUCCEEDS (not just fails with
+"Target closed") after a dialog opens, because headless Chrome can complete a screenshot/evaluate
+even under an open alert. That success path's own console.log was an unguarded third writer, caught
+live at 2/15 trials. Fixed by unifying ALL of --json's stdout-writing through one
+writeJsonStdoutOnce() guard, not just coordinating the two originally-named writers. This is exactly
+the kind of adjacent-bug-while-fixing-the-named-one pattern decisions.md flagged for this cycle to
+watch for -- caught by the executor's own thoroughness before it reached audit-3, not by another
+audit finding it. Live: 30/30 exactly one doc across the 1500-1595ms sweep, 10/10 with two dialogs
+(alert+confirm) during capture.
+
+GAP-269/271 also fixed, with mutation-kill evidence.
+
+Full re-verification: audit-1's full live-verify script re-run twice (mid-fix and final): 29 pass /
+0 fail / 1 info (GAP-038, unchanged), identical both times. vitest capability-runtime 198 (+5) / cli
+171 (+10) / browser 498 / mcp-server 92 / sutradhar 20, all green.
+
+Disclosed, not hidden: a process-hygiene incident (a malformed background command wrote into the
+protected run-1/ directory; caught via git status, restored via git checkout, confirmed clean
+afterward -- no evidence file was actually left modified). A latent, same-shaped bug NOTED but left
+unfixed as genuinely out of this item's scope: `snap --json` has the same withSession race but its
+own success write isn't routed through the new guard -- not touched by any FR2-12 spec/gap, flagged
+for a future item rather than scope-creeped into this one.
+
+Sent to independent audit-3.
