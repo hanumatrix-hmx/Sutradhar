@@ -3431,3 +3431,43 @@ Decisions for fix-1:
 Given the severity of the confirmed CRITICAL finding, fix-1 must re-run the FULL containment attack
 surface from audit-1 (not just the newly-found bugs) before reporting done, including re-running the
 live trailing-dot confirmation script itself to prove 0/N escapes after the fix.
+
+## 2026-09-28 -- FR2-05 fix-1 done (critical vuln fixed); sent to independent audit-2
+
+Executor (Sonnet) self-report, independently spot-checked by the Orchestrator (vitest browser 540,
+capability-runtime 228, mcp-server 101, cli 175, sutradhar 25 -- all 5 re-run directly, exact match;
+git status matches the reported file list exactly; 0 leftover processes).
+
+GAP-294 (CRITICAL): fixed by rejecting any Windows path component ending in a trailing dot or space,
+fail-closed, before any filesystem existence check -- applied to every component of the candidate
+path AND every configured root. Re-used audit-1's own live-Chrome escape-confirmation script,
+adapted into a permanent regression test: 70/70 live trials across this cycle, 0 escapes. Revert-
+confirm reproduces the exact original escape (3/3) when disabled, sha-verified restore. The executor
+actively tried to defeat its own fix (dot+space combined, multiple dots, the trick planted mid-path
+not just at the end, fullwidth Unicode lookalike characters -- confirmed NOT a real Windows
+normalization behavior, correctly out of scope) before reporting done.
+
+GAP-295: isPathWithinRoot no longer calls path.relative at all, having confirmed live that Node's
+own path.relative performs Unicode case-folding internally REGARDLESS of how the inputs were
+pre-folded (a subtlety the original fix missed) -- replaced with a manual, ASCII-only segment
+comparison. Live Kelvin-sign repro rejected 4/4.
+
+GAP-296: notable, disclosed-not-hidden escalation. The binding decision only asked for deny-not-
+default on the reset. The executor implemented that, then LIVE-TESTED it under genuine two-tab
+concurrency and found it insufficient -- a real escape to the OS's actual platform Downloads folder
+reproduced 2/2 times, because Browser.setDownloadBehavior is browser-WIDE, not per-tab, so two
+concurrent calls race on the one shared setting regardless of what either resets it to afterward. Add
+a per-browser serialization lock in response, live-confirmed 4/4 with zero escapes. Disclosed
+residual: concurrent downloads now more often hit the pre-existing GAP-020 retry loop instead of
+racing -- a reliability tradeoff for the security fix, not itself a security issue, flagged as a new
+interaction for a future item rather than silently left unmentioned.
+
+GAP-297/298 fixed with live + unit evidence. GAP-299 improved (leftover temp dirs reduced from up to
+9 to 0-1 per run, self-healing) but not fully eliminated -- disclosed honestly as a residual rather
+than claimed fixed.
+
+Full re-verification: all of audit-1's original attack surface (symlinks, junctions, chains, dangling
+links, ELOOP, traversal, UNC/extended paths, ADS trick, legitimate paths) re-confirmed with no
+regressions via the existing unit suite plus 8 new tests.
+
+Sent to independent audit-2 (maker != checker), given the severity of what was found in audit-1.

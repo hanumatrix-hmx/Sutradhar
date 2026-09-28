@@ -2014,7 +2014,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       expect(result.error).toContain('outside the download directory');
     });
 
-    it('E8: resets Browser.setDownloadBehavior to default before detaching, on both success and cancellation', async () => {
+    it('E8: resets Browser.setDownloadBehavior to deny (fail closed, fix-1/GAP-296) before detaching, on both success and cancellation', async () => {
       const dir = path.join(tmpRoot, 'dir');
       mkdirSync(dir, { recursive: true });
       const handle = mockHandle();
@@ -2038,7 +2038,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
         await promise;
 
         const resetCall = client.send.mock.calls.find(
-          (c: any[]) => c[0] === 'Browser.setDownloadBehavior' && c[1]?.behavior === 'default',
+          (c: any[]) => c[0] === 'Browser.setDownloadBehavior' && c[1]?.behavior === 'deny',
         );
         expect(resetCall).toBeDefined();
         const resetOrder = client.send.mock.invocationCallOrder[client.send.mock.calls.indexOf(resetCall)];
@@ -2062,7 +2062,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
         await promise;
 
         const resetCall = client.send.mock.calls.find(
-          (c: any[]) => c[0] === 'Browser.setDownloadBehavior' && c[1]?.behavior === 'default',
+          (c: any[]) => c[0] === 'Browser.setDownloadBehavior' && c[1]?.behavior === 'deny',
         );
         expect(resetCall).toBeDefined();
         const resetOrder = client.send.mock.invocationCallOrder[client.send.mock.calls.indexOf(resetCall)];

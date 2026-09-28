@@ -54,3 +54,33 @@ reset can land mid-way through a second, concurrent download on the same browser
 `agent.runGoal` and `apps/server` are unaffected — they keep constructing `SutradharRuntime` (and
 `BrowserActionEngine`, in `agent`/`skills`) with no `allowedDownloadRoots`/`allowedUploadRoots`,
 so they keep the default sandbox (stricter, fail-safe), and ignore the new env vars.
+
+## fix-1 (audit-1 CRITICAL/major corrections)
+
+10. **CRITICAL security fix (GAP-294):** the containment check now rejects, outright and before
+    any filesystem existence check, any path component ending in a trailing `.` or trailing ` `
+    (space), on win32 — applied to every component of both the requested path and every
+    configured root, not just the final component. This closes a real, confirmed containment
+    escape: a Windows junction/symlink named e.g. `jn.` inside an allowed root, pointing outside
+    it, used to bypass the check entirely (Node's `fs.realpath`/`fs.lstat` look such a component
+    up literally and see "not yet created", but Chrome's real Windows download-directory creation
+    silently strips the trailing dot/space and writes through the junction to its real, outside
+    target). Confirmed end-to-end through the real CLI + real Chrome, 3/3 escapes reproduced when
+    the fix is reverted, 0/30 escapes across three variants (10 trials each) with it restored.
+11. **Security fix (GAP-295):** the containment check's case-insensitive comparison (win32 only)
+    no longer uses `String.prototype.toLowerCase()` or delegates to `path.win32.relative` (both
+    perform full-Unicode case folding, which maps certain visually-distinct characters — e.g. the
+    Kelvin sign U+212A — onto plain ASCII letters even though NTFS treats them as genuinely
+    different directory names). The comparison is now done manually, segment-by-segment, with an
+    ASCII-only fold (`A`-`Z` only), never calling any Node API that might refold non-ASCII
+    characters internally.
+12. **Security fix (GAP-296, regression from item 5 above):** the `finally`-block reset of
+    `Browser.setDownloadBehavior` now resets to `{behavior:'deny'}` (fail closed) instead of
+    `{behavior:'default'}` (fail open to Chrome's platform-default download location). A
+    straggler download (a retry, or a genuinely concurrent second download on the same browser)
+    that completes after this cleanup runs is now refused outright rather than silently written
+    outside every configured allowed root.
+13. Minor (GAP-297/298/299): the live-verify suite now runs the spec's own N1-N11 negative cases,
+    adds a case using a download root that is itself a symlink/junction, and the live-verify
+    scripts' own process/temp-dir cleanup is hardened (wait for real child-process exit, with a
+    PID-scoped `taskkill /T /F` escalation on win32, before retrying directory removal).

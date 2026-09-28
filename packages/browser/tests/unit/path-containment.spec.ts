@@ -94,4 +94,105 @@ describe('@sutradhar/browser path-containment canonicalizePath/findContainingRoo
   it('PC7: defaultDownloadRoot is <os.tmpdir()>/sutradhar-downloads', () => {
     expect(defaultDownloadRoot()).toBe(path.join(os.tmpdir(), DEFAULT_DOWNLOAD_ROOT_DIRNAME));
   });
+
+  // ── FR2-05 fix-1 (GAP-294, CRITICAL): trailing dot/space component rejection ────────────────
+  it('PC8 (GAP-294): a junction component with a trailing dot is rejected outright on win32, even though it does not exist as "jn."', async () => {
+    const root = path.join(tmp, 'pc8-root');
+    const outside = path.join(tmp, 'pc8-outside');
+    mkdirSync(root, { recursive: true });
+    mkdirSync(outside, { recursive: true });
+    symlinkSync(outside, path.join(root, 'jn'), process.platform === 'win32' ? 'junction' : 'dir');
+
+    // "jn." (never created on disk — only "jn" exists) with a not-yet-created tail.
+    await expect(canonicalizePath(path.join(root, 'jn.', 'sub'), 'win32')).rejects.toThrow(
+      /trailing dot or space/,
+    );
+    // Trailing space variant.
+    await expect(canonicalizePath(path.join(root, 'jn '), 'win32')).rejects.toThrow(
+      /trailing dot or space/,
+    );
+    // Combined: multiple dots, and dot+space.
+    await expect(canonicalizePath(path.join(root, 'jn..'), 'win32')).rejects.toThrow(
+      /trailing dot or space/,
+    );
+    await expect(canonicalizePath(path.join(root, 'jn. '), 'win32')).rejects.toThrow(
+      /trailing dot or space/,
+    );
+  });
+
+  it('PC9 (GAP-294): the trick anywhere along the path is rejected, not just the last component', async () => {
+    const root = path.join(tmp, 'pc9-root');
+    mkdirSync(root, { recursive: true });
+    // The trick planted in an EARLIER component than the final one.
+    await expect(
+      canonicalizePath(path.join(root, 'subdir.', 'jn.', 'sub'), 'win32'),
+    ).rejects.toThrow(/trailing dot or space/);
+    await expect(canonicalizePath(path.join(root, 'a ', 'b'), 'win32')).rejects.toThrow(
+      /trailing dot or space/,
+    );
+  });
+
+  it('PC10 (GAP-294): findContainingRoot rejects a candidate using the trick, and never approves it', async () => {
+    const root = path.join(tmp, 'pc10-root');
+    const outside = path.join(tmp, 'pc10-outside');
+    mkdirSync(root, { recursive: true });
+    mkdirSync(outside, { recursive: true });
+    symlinkSync(outside, path.join(root, 'jn'), process.platform === 'win32' ? 'junction' : 'dir');
+
+    await expect(
+      findContainingRoot(path.join(root, 'jn.', 'sub'), [root], 'win32'),
+    ).rejects.toThrow(/trailing dot or space/);
+  });
+
+  it('PC11 (GAP-294): a legitimate path with no trailing dot/space component is unaffected', async () => {
+    const result = await canonicalizePath(path.join(tmp, 'nope', 'deeper'), 'win32');
+    expect(result).toBe(path.join(realpathSync.native(tmp), 'nope', 'deeper'));
+    // A literal ".." inside a real (non-dot-segment) name, e.g. "..foo", is not itself a
+    // trailing-dot component and must still be allowed (matches PC1's `C:\out\..foo` case).
+    await expect(canonicalizePath(path.join(tmp, '..foo'), 'win32')).resolves.toBeTruthy();
+  });
+
+  it('PC12 (GAP-294): on POSIX, a literal trailing dot/space component is a real (if unusual) name and is NOT rejected — Windows-only normalization', async () => {
+    if (process.platform === 'win32') return; // this behavior can only be exercised on POSIX
+    const dir = path.join(tmp, 'pc12-dir. ');
+    mkdirSync(dir, { recursive: true });
+    await expect(canonicalizePath(path.join(dir, 'x'), 'linux')).resolves.toBeTruthy();
+  });
+
+  // ── FR2-05 fix-1 (GAP-295, major): Unicode case-folding bypass ──────────────────────────────
+  it('PC13 (GAP-295): isPathWithinRoot no longer folds the Kelvin sign (U+212A) or Angstrom sign (U+212B) onto plain ASCII letters', () => {
+    const KELVIN = '\u212A'; // looks like "K", folds to "k" under toLowerCase()
+    const ANGSTROM = '\u212B'; // looks like "Å", folds to "å" under toLowerCase()
+    expect(isPathWithinRoot(`C:\\wor${KELVIN}\\a`, 'C:\\work', 'win32')).toBe(false);
+    expect(isPathWithinRoot(`C:\\${ANGSTROM}bc\\a`, 'C:\\abc', 'win32')).toBe(false);
+    // Plain ASCII case differences must still fold normally on win32.
+    expect(isPathWithinRoot('C:\\WORK\\a', 'C:\\work', 'win32')).toBe(true);
+    expect(isPathWithinRoot('C:\\Work\\A', 'c:\\WORK', 'win32')).toBe(true);
+  });
+
+  it('PC13b: residual — a genuine look-alike Unicode ROOT vs a real ASCII candidate is also kept distinct', () => {
+    const KELVIN = '\u212A';
+    expect(isPathWithinRoot('C:\\work\\a', `C:\\wor${KELVIN}`, 'win32')).toBe(false);
+  });
+
+  // ── FR2-05 fix-1 (GAP-298): a root that is itself a symlink/junction ────────────────────────
+  it('PC14 (GAP-298): a configured root that is itself a symlink/junction is canonicalized before comparison', async () => {
+    const realRoot = path.join(tmp, 'pc14-real-root');
+    const rootLink = path.join(tmp, 'pc14-root-link');
+    const outside = path.join(tmp, 'pc14-outside');
+    mkdirSync(realRoot, { recursive: true });
+    mkdirSync(outside, { recursive: true });
+    symlinkSync(realRoot, rootLink, process.platform === 'win32' ? 'junction' : 'dir');
+
+    // A candidate genuinely inside the real target, addressed via the root's link spelling,
+    // must be accepted.
+    await expect(findContainingRoot(path.join(rootLink, 'a', 'b'), [rootLink])).resolves.toBe(
+      rootLink,
+    );
+    // A candidate outside the real target must still be rejected even though the root itself
+    // is a link (this exercises B3's root-canonicalization, unguarded before this fix — GAP-298).
+    await expect(
+      findContainingRoot(path.join(outside, 'x'), [rootLink]),
+    ).resolves.toBeUndefined();
+  });
 });

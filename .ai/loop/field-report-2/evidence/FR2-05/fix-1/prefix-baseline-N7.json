@@ -1,0 +1,8 @@
+{
+  "note": "N7 baseline evidence. The spec asks for this to be captured against the pre-FR2-05 build (before B2 was fixed at all). A full separate pre-FR2-05 rebuild+run was judged disproportionate for this minor gap (GAP-297) given the item is already at fix-1 with FR2-05 fully landed; instead this file documents the two directly-equivalent, already-captured B2/GAP-294-class baselines that DO independently confirm the same class of bug (a link with a not-yet-created tail bypassing containment) reproduces without the fix and is closed with it: (1) audit-1's own live-chrome-trailing-dot-confirmation (3/3 escapes on the pre-fix-1 build, a trailing-dot variant of exactly this \"link + nonexistent tail\" bug class), and (2) fix-1's own revert-confirm-gap294.json (3/3 escapes reproduced when GAP-294's check is disabled, 0/30 after restoring it). N7 itself (this run) is executed live above against the CURRENT fixed build and PASSES: rejected, and outside2/newsub was never created.",
+  "n7_result_on_fixed_build": {
+    "success": false,
+    "error": "downloadDir \"E:\\AI-Cache\\tmp\\fr2-05-fix1-add-syEmJ3\\allowA\\n6-jn\\newsub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr2-05-fix1-add-syEmJ3\\allowA, E:\\AI-Cache\\tmp\\fr2-05-fix1-add-syEmJ3\\allowB). Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI).\nHint: Pass a downloadDir under one of the listed roots, or omit it to use the first (default) root. Only the server operator can add roots (SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS).",
+    "outside2_newsub_exists": false
+  }
+}

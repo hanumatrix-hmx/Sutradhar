@@ -35,17 +35,26 @@ function record(entry) {
   console.log(`[${tag}] ${entry.id}${entry.detail ? ' — ' + entry.detail : ''}`);
 }
 
-async function rmWithRetry(dir, attempts = 5) {
+async function rmWithRetry(dir, attempts = 15) {
   for (let i = 0; i < attempts; i++) {
     try {
       await fs.rm(dir, { recursive: true, force: true });
-      return;
+      return true;
     } catch (e) {
       if (i === attempts - 1) {
         console.warn(`[cleanup] could not remove ${dir}: ${e.message}`);
-        return;
+        return false;
       }
-      await delay(300);
+      // FR2-05 fix-1 (GAP-299): the CLI/MCP child processes we spawn each launch their own real
+      // Chrome subprocess, which can briefly hold a filesystem lock on a file/dir under `dir`
+      // even after the CLI/MCP process itself has exited — killTrackedChildren() below now waits
+      // for real process exit before this is called, but a laggy Chrome shutdown can still leave
+      // a short EBUSY/EPERM window on Windows. Retry longer (15x400ms = 6s) than before (5x300ms
+      // = 1.5s), which is what audit-1 found insufficient (3 leftover fr2-05-* dirs from run-1).
+      // fix-1's own dogfooding still found occasional empty leftover `<R>/temp` dirs even at
+      // 10x300ms=3s (cleared instantly by hand seconds later, consistent with a transient
+      // post-exit AV/indexer lock rather than a genuine stuck handle) — 6s gives more margin.
+      await delay(400);
     }
   }
 }
@@ -57,14 +66,44 @@ function trackChild(cp) {
   cp.on('exit', () => spawnedChildren.delete(cp));
   return cp;
 }
+/**
+ * FR2-05 fix-1 (GAP-299): the old version fired `process.kill(pid)` and returned immediately,
+ * without ever waiting for the child to actually exit. On Windows, a spawned CLI/MCP process
+ * that itself launched a real headless Chrome subprocess can take a moment to tear that
+ * subprocess down after receiving the signal — audit-1 found 3 leftover `fr2-05-*` temp dirs
+ * from run-1's own executions, i.e. `rmWithRetry`'s 1.5s of total retry time (5 x 300ms) was
+ * exhausted while a child (or its own Chrome child) still held a handle inside the temp dir.
+ * This now waits, per tracked child, for a real `exit` event (with a bounded timeout), and on
+ * win32 escalates to `taskkill /PID <pid> /T /F` (kill the process TREE, so a still-alive Chrome
+ * grandchild is also reaped) if the child hasn't exited on its own within that window — always
+ * scoped to a PID this script itself spawned, never by image name, per this project's hard
+ * process-hygiene rule.
+ */
 async function killTrackedChildren() {
-  for (const cp of [...spawnedChildren]) {
-    try {
-      if (cp.pid && !cp.killed) process.kill(cp.pid);
-    } catch {
-      // already gone
-    }
-  }
+  const children = [...spawnedChildren];
+  await Promise.all(
+    children.map(async (cp) => {
+      if (!cp.pid || cp.killed || cp.exitCode !== null) return;
+      const exited = new Promise((resolve) => cp.once('exit', resolve));
+      try {
+        process.kill(cp.pid);
+      } catch {
+        return; // already gone
+      }
+      const timedOut = await Promise.race([
+        exited.then(() => false),
+        new Promise((resolve) => setTimeout(() => resolve(true), 3000)),
+      ]);
+      if (timedOut && process.platform === 'win32') {
+        try {
+          execFileSync('taskkill', ['/PID', String(cp.pid), '/T', '/F'], { stdio: 'ignore' });
+        } catch {
+          // already gone, or never existed under that pid anymore
+        }
+        await Promise.race([exited, new Promise((resolve) => setTimeout(resolve, 2000))]);
+      }
+    }),
+  );
 }
 
 async function listProcessesByNeedle(needle) {

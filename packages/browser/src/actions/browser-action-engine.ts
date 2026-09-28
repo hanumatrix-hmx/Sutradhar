@@ -208,6 +208,36 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    *  debug (a `type` racing a `navigate`, for instance). Different tabs are never serialized
    *  against each other. */
   private readonly tabQueues = new Map<string, Promise<unknown>>();
+  /**
+   * key: the real Puppeteer `Browser` object -> a promise chain serializing every `download_file`
+   * call against that SAME browser instance, end to end (from `Browser.setDownloadBehavior({allow,
+   * downloadPath})` through the `finally` reset).
+   *
+   * FR2-05 fix-1, GAP-296 (live-confirmed residual beyond the `finally`-reset-to-`'deny'` fix):
+   * `Browser.setDownloadBehavior` is a BROWSER-wide CDP setting, not per-tab/per-session. Two
+   * `download_file` calls on different tabs of the SAME browser, run concurrently (not merely
+   * "the second happens to complete after the first's cleanup", but genuinely overlapping), race
+   * on that one shared setting — whichever call's `setDownloadBehavior('allow', dirA)` executes
+   * last wins for BOTH calls' underlying Chrome-side downloads, and whichever call's `finally`
+   * reset (`'deny'`) executes while the OTHER call's download is still physically in flight can
+   * still let Chrome fall through to ITS OWN platform-default download location for that other
+   * download. This was live-confirmed (not theoretical): two genuinely concurrent `download_file`
+   * calls against one browser, `evidence/FR2-05/fix-1/verify-fr2-05-fix1-additions.mjs`'s
+   * GAP-296-concurrent case, 2/2 runs produced a real file written to the OS's actual Downloads
+   * folder — outside every configured allowed root — even with the `'deny'`-on-cleanup fix in
+   * place, because the reset-to-`'deny'` from ONE call's cleanup can race the OTHER call's
+   * in-flight Chrome-side write decision.
+   *
+   * `'deny'`-on-cleanup alone cannot close this: the race is in what `Browser.setDownloadBehavior`
+   * is set to AT THE MOMENT Chrome commits to a download's destination, and two independent CDP
+   * sessions calling that browser-wide setter have no ordering guarantee relative to each other.
+   * The only structural fix is to never let two `download_file` calls against the same browser be
+   * "in flight" (from their own `setDownloadBehavior('allow', ...)` through their own cleanup) at
+   * the same time — serializing them here means the second call's `setDownloadBehavior('allow',
+   * ...)` can only run after the first call's `finally` reset (to `'deny'`) has already completed,
+   * so there is no window where both calls' browser-wide settings can interleave.
+   */
+  private readonly downloadLocks = new WeakMap<object, Promise<unknown>>();
 
   public constructor(
     eventBus?: EventBus,
@@ -1160,89 +1190,18 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         }
 
         const downloadDir = await this.resolveDownloadDir(params.downloadDir);
-        // Downloads must be configured on a *browser*-level CDP session, not a page-level one —
-        // `Page.setDownloadBehavior`/`Page.downloadWillBegin`/`Page.downloadProgress` are
-        // deprecated and don't fire in Chrome's current ("new") headless mode; the replacement
-        // `Browser.*` equivalents only exist on the browser target's own session.
-        const client = await page.browser().target().createCDPSession();
-        await client.send('Browser.setDownloadBehavior', {
-          behavior: 'allow',
-          downloadPath: downloadDir,
-          eventsEnabled: true,
-        });
 
-        const downloadTimeoutMs = params.timeoutMs ?? 30000;
-        let cleanup = (): void => {};
-        // Tracks the guid of the FIRST download this call's click triggered so a later
-        // `Browser.downloadProgress` event for a DIFFERENT download (another tab/page in the
-        // same browser completing a download concurrently) is ignored rather than resolving
-        // this call with someone else's file (FR2-05 B6).
-        let beganGuid: string | undefined;
-        const downloadPromise = new Promise<{ filename: string; path: string }>((resolve, reject) => {
-          let suggestedFilename: string | undefined;
-          const timer = setTimeout(() => {
-            cleanup();
-            reject(new Error(`Download did not complete within ${downloadTimeoutMs}ms`));
-          }, downloadTimeoutMs);
-
-          const onWillBegin = (evt: { guid: string; suggestedFilename: string }): void => {
-            if (beganGuid === undefined) beganGuid = evt.guid;
-            if (evt.guid !== beganGuid) return;
-            suggestedFilename = evt.suggestedFilename;
-          };
-          const onProgress = (evt: { state: string; guid: string; filePath?: string }): void => {
-            if (beganGuid !== undefined && evt.guid !== beganGuid) return;
-            if (evt.state === 'completed') {
-              cleanup();
-              // Prefer CDP's own `filePath` (the actual on-disk destination, which may differ
-              // from `suggestedFilename` if Chrome uniquified the name on a conflict) over
-              // reconstructing it from the suggested name — FR2-05 B6.
-              const name = path.basename(suggestedFilename ?? evt.guid);
-              const full = evt.filePath ? path.resolve(evt.filePath) : path.join(downloadDir, name);
-              resolve({ filename: path.basename(full), path: full });
-            } else if (evt.state === 'canceled') {
-              cleanup();
-              reject(new Error('Download was canceled'));
-            }
-          };
-          client.on('Browser.downloadWillBegin', onWillBegin);
-          client.on('Browser.downloadProgress', onProgress);
-          cleanup = () => {
-            clearTimeout(timer);
-            client.off('Browser.downloadWillBegin', onWillBegin);
-            client.off('Browser.downloadProgress', onProgress);
-          };
-        });
-        // If verifiedClick throws below (e.g. the trigger element isn't found), this promise
-        // is never awaited — without a handler attached now, its eventual timeout rejection
-        // (up to `downloadTimeoutMs` later) would surface as an unhandled promise rejection
-        // and crash the process. This no-op catch only suppresses that Node-level warning; it
-        // doesn't affect the real `await downloadPromise` below, which still observes the
-        // rejection normally.
-        downloadPromise.catch(() => {});
-
-        try {
-          await this.verifiedClick(page, params.selector, 'left');
-          const downloaded = await downloadPromise;
-          const reportedPath = path.resolve(downloaded.path);
-          // Defense in depth: even a `filePath` CDP reports should land inside `downloadDir`.
-          // A mismatch here means Chrome/CDP put the file somewhere this call didn't ask for —
-          // fail rather than hand back a path outside the sandbox this action promised.
-          if (!isPathWithinRoot(reportedPath, path.resolve(downloadDir)) && !(await findContainingRoot(reportedPath, [downloadDir]))) {
-            throw new Error(
-              `Download reported a file outside the download directory "${downloadDir}": ${reportedPath}`,
-            );
-          }
-          return { downloadedFilename: downloaded.filename, downloadedPath: reportedPath, downloadDir };
-        } catch (err) {
-          cleanup();
-          throw err;
-        } finally {
-          // Reset Chrome's browser-wide download target so a destination granted for this one
-          // action doesn't keep receiving later, page-initiated downloads (FR2-05 B7).
-          await client.send('Browser.setDownloadBehavior', { behavior: 'default' }).catch(() => {});
-          await client.detach().catch(() => {});
-        }
+        // FR2-05 fix-1 (GAP-296): serialize every `download_file` call against this SAME browser
+        // instance — see {@link downloadLocks}'s own doc comment for why a per-call `finally`
+        // reset alone (even to `'deny'`) cannot close the race between two genuinely concurrent
+        // calls sharing one browser-wide `Browser.setDownloadBehavior` setting.
+        const browserObj: object = page.browser();
+        const previousDownload = this.downloadLocks.get(browserObj) ?? Promise.resolve();
+        const thisDownload = previousDownload.catch(() => {}).then(() => this.runDownloadFileLocked(page!, params, downloadDir));
+        // Always store a variant that never rejects, so a failed download doesn't wedge the next
+        // queued call on this browser forever.
+        this.downloadLocks.set(browserObj, thisDownload.catch(() => {}));
+        return await thisDownload;
       }
 
       case 'upload_file': {
@@ -1276,6 +1235,118 @@ export class BrowserActionEngine implements IBrowserActionEngine {
 
       default:
         throw new Error(`Unsupported action type ${params.actionType}`);
+    }
+  }
+
+  /**
+   * The actual `download_file` CDP work (browser-wide `setDownloadBehavior`, click, wait for
+   * completion, containment re-check, and cleanup) — split out of {@link dispatchAction}'s main
+   * switch so it can be queued per-browser via {@link downloadLocks} (FR2-05 fix-1, GAP-296).
+   * Only one call for a given real browser instance runs this at a time.
+   */
+  private async runDownloadFileLocked(
+    page: Page,
+    params: ActionParams,
+    downloadDir: string,
+  ): Promise<Record<string, unknown>> {
+    // Downloads must be configured on a *browser*-level CDP session, not a page-level one —
+    // `Page.setDownloadBehavior`/`Page.downloadWillBegin`/`Page.downloadProgress` are
+    // deprecated and don't fire in Chrome's current ("new") headless mode; the replacement
+    // `Browser.*` equivalents only exist on the browser target's own session.
+    const client = await page.browser().target().createCDPSession();
+    await client.send('Browser.setDownloadBehavior', {
+      behavior: 'allow',
+      downloadPath: downloadDir,
+      eventsEnabled: true,
+    });
+
+    const downloadTimeoutMs = params.timeoutMs ?? 30000;
+    let cleanup = (): void => {};
+    // Tracks the guid of the FIRST download this call's click triggered so a later
+    // `Browser.downloadProgress` event for a DIFFERENT download (another tab/page in the
+    // same browser completing a download concurrently) is ignored rather than resolving
+    // this call with someone else's file (FR2-05 B6).
+    let beganGuid: string | undefined;
+    const downloadPromise = new Promise<{ filename: string; path: string }>((resolve, reject) => {
+      let suggestedFilename: string | undefined;
+      const timer = setTimeout(() => {
+        cleanup();
+        reject(new Error(`Download did not complete within ${downloadTimeoutMs}ms`));
+      }, downloadTimeoutMs);
+
+      const onWillBegin = (evt: { guid: string; suggestedFilename: string }): void => {
+        if (beganGuid === undefined) beganGuid = evt.guid;
+        if (evt.guid !== beganGuid) return;
+        suggestedFilename = evt.suggestedFilename;
+      };
+      const onProgress = (evt: { state: string; guid: string; filePath?: string }): void => {
+        if (beganGuid !== undefined && evt.guid !== beganGuid) return;
+        if (evt.state === 'completed') {
+          cleanup();
+          // Prefer CDP's own `filePath` (the actual on-disk destination, which may differ
+          // from `suggestedFilename` if Chrome uniquified the name on a conflict) over
+          // reconstructing it from the suggested name — FR2-05 B6.
+          const name = path.basename(suggestedFilename ?? evt.guid);
+          const full = evt.filePath ? path.resolve(evt.filePath) : path.join(downloadDir, name);
+          resolve({ filename: path.basename(full), path: full });
+        } else if (evt.state === 'canceled') {
+          cleanup();
+          reject(new Error('Download was canceled'));
+        }
+      };
+      client.on('Browser.downloadWillBegin', onWillBegin);
+      client.on('Browser.downloadProgress', onProgress);
+      cleanup = () => {
+        clearTimeout(timer);
+        client.off('Browser.downloadWillBegin', onWillBegin);
+        client.off('Browser.downloadProgress', onProgress);
+      };
+    });
+    // If verifiedClick throws below (e.g. the trigger element isn't found), this promise
+    // is never awaited — without a handler attached now, its eventual timeout rejection
+    // (up to `downloadTimeoutMs` later) would surface as an unhandled promise rejection
+    // and crash the process. This no-op catch only suppresses that Node-level warning; it
+    // doesn't affect the real `await downloadPromise` below, which still observes the
+    // rejection normally.
+    downloadPromise.catch(() => {});
+
+    try {
+      await this.verifiedClick(page, params.selector!, 'left');
+      const downloaded = await downloadPromise;
+      const reportedPath = path.resolve(downloaded.path);
+      // Defense in depth: even a `filePath` CDP reports should land inside `downloadDir`.
+      // A mismatch here means Chrome/CDP put the file somewhere this call didn't ask for —
+      // fail rather than hand back a path outside the sandbox this action promised.
+      if (!isPathWithinRoot(reportedPath, path.resolve(downloadDir)) && !(await findContainingRoot(reportedPath, [downloadDir]))) {
+        throw new Error(
+          `Download reported a file outside the download directory "${downloadDir}": ${reportedPath}`,
+        );
+      }
+      return { downloadedFilename: downloaded.filename, downloadedPath: reportedPath, downloadDir };
+    } catch (err) {
+      cleanup();
+      throw err;
+    } finally {
+      // Reset Chrome's browser-wide download target so a destination granted for this one
+      // action doesn't keep receiving later, page-initiated downloads (FR2-05 B7).
+      //
+      // FR2-05 audit-1 GAP-296: resetting to `behavior:'default'` was a REGRESSION. Before
+      // this reset existed, `Browser.setDownloadBehavior` was never touched again, so a
+      // straggler download (a retry of a rejected download, or a genuinely concurrent
+      // second download on the same browser) that completes its network response AFTER this
+      // cleanup runs would still land in the last sandboxed `downloadPath` — outside this
+      // call's own accounting, but still inside SOME configured allowed root. Resetting to
+      // `'default'` instead sends that straggler to Chrome's platform default download
+      // location, which is not necessarily inside any configured root at all — fail OPEN.
+      // `'deny'` fails CLOSED instead: a straggler that completes after this cleanup is
+      // refused outright rather than silently written somewhere unsandboxed.
+      //
+      // FR2-05 fix-1 (GAP-296): this reset alone is no longer the only protection — this whole
+      // method now only ever runs one-at-a-time per real browser instance (see
+      // {@link downloadLocks}), so there is no other in-flight `download_file` call on this
+      // browser whose `setDownloadBehavior('allow', ...)` this reset could race against.
+      await client.send('Browser.setDownloadBehavior', { behavior: 'deny' }).catch(() => {});
+      await client.detach().catch(() => {});
     }
   }
 
