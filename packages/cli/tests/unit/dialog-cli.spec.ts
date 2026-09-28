@@ -3,6 +3,7 @@
  * @description FR2-04: unit tests for dialog-cli.ts's pure policy/formatting/racing logic.
  */
 import {
+  DIALOG_HINT,
   resolveDialogPolicy,
   formatDialogPending,
   formatDialogHandled,
@@ -301,5 +302,14 @@ describe('@sutradhar/cli dialog-cli (FR2-04)', () => {
         '  Note: tab c1 is unresponsive only because it shares a browser process with tab holder-1, which appears to actually hold the dialog -- "dialog accept/dismiss" would act on tab holder-1, not this one.',
       );
     });
+  });
+});
+
+describe('GAP-256-fix (b): the exit-3 hint names the recovery commands that work while blocked', () => {
+  it('DIALOG_HINT points at tabs and closetab <id> (browser-level, never attach) before the last-resort close', () => {
+    const hint = DIALOG_HINT('unknown');
+    expect(hint).toContain('sutradhar tabs');
+    expect(hint).toContain('sutradhar closetab <id>');
+    expect(hint.indexOf('closetab')).toBeLessThan(hint.indexOf('"sutradhar close" ends'));
   });
 });

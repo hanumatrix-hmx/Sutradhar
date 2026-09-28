@@ -89,6 +89,33 @@ export async function connectForDialogs(
   }
 }
 
+/**
+ * GAP-256-fix (b): connect for BROWSER-LEVEL commands only (`Target.getTargets`/`Target.closeTarget`
+ * over `_connection`). `targetFilter: () => false` tells Puppeteer not to attach to (or wait on) ANY
+ * target, so this connection never touches a blocked, busy or crashed page -- and, measured live,
+ * is much faster than a normal `connectForDialogs` while such a page exists. Same timeout/`undefined`
+ * contract as {@link connectForDialogs}.
+ */
+export async function connectAtBrowserLevel(wsEndpoint: string, timeoutMs: number): Promise<Browser | undefined> {
+  // The timeout timer is cleared in `finally`: `connectForDialogs`'s own race leaves its timer armed
+  // after a successful connect, which keeps a one-shot CLI process alive ~3s until its force-exit
+  // (measured live: every browser-level `tabs`/`closetab` cost ~3.2s for no reason).
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    const puppeteer = await import('puppeteer-core');
+    return await Promise.race([
+      puppeteer.connect({ browserWSEndpoint: wsEndpoint, defaultViewport: null, targetFilter: () => false }),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error('connectAtBrowserLevel timeout')), timeoutMs);
+      }),
+    ]);
+  } catch {
+    return undefined;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 /** Every real page target on `browser`, in `targets()` order (the same order `attach()` adopts
  *  pages in) — non-page targets (service workers, background pages, the browser target itself)
  *  are dropped, since a gate/warden has nothing useful to check on them.
@@ -459,4 +486,35 @@ export async function closeTargetAtBrowserLevel(browser: Browser, targetId: stri
     ._connection;
   if (!connection) throw new Error('no browser-level CDP connection available to close the target');
   await connection.send('Target.closeTarget', { targetId });
+}
+
+/** GAP-256-fix (b): one real page target as reported by the browser process itself. */
+export interface BrowserLevelTab {
+  readonly targetId: string;
+  readonly url: string;
+  readonly title: string;
+}
+
+type RawConnection = { send: (method: string, params?: unknown) => Promise<unknown> };
+
+function rawConnection(browser: Browser): RawConnection | undefined {
+  return (browser as unknown as { _connection?: RawConnection })._connection;
+}
+
+/**
+ * GAP-256-fix (b): every page target, listed with `Target.getTargets` on the browser's own root
+ * connection. This never attaches to a target and never touches a renderer, so it answers
+ * immediately even when a tab is blocked by a native dialog, wedged in a busy script, or crashed
+ * (`browser.pages()`/`runtime.attach()`, the normal listing path, can block on any of those).
+ * Order is Chrome's own target order (oldest first).
+ */
+export async function listTabsAtBrowserLevel(browser: Browser): Promise<BrowserLevelTab[]> {
+  const connection = rawConnection(browser);
+  if (!connection) throw new Error('no browser-level CDP connection available to list the targets');
+  const res = (await connection.send('Target.getTargets')) as {
+    targetInfos?: Array<{ targetId: string; type: string; url: string; title: string }>;
+  };
+  return (res.targetInfos ?? [])
+    .filter((t) => t.type === 'page')
+    .map((t) => ({ targetId: t.targetId, url: t.url, title: t.title }));
 }

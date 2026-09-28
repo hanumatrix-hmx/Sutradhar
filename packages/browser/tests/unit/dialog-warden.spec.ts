@@ -34,6 +34,7 @@ function fakeTarget(targetId: string, url: string, session: ReturnType<typeof fa
 
 function fakeBrowser(targets: any[]) {
   const emitter = new EventEmitter();
+  const connEmitter = new EventEmitter(); // GAP-256-fix: the browser CONNECTION's own events (Target.targetCrashed)
   let connected = true;
   const closeTargetCalls: string[] = [];
   return {
@@ -46,9 +47,11 @@ function fakeBrowser(targets: any[]) {
       connected = false;
     }),
     _emit: (event: string, ...args: any[]) => emitter.emit(event, ...args),
+    _emitConnection: (event: string, ...args: any[]) => connEmitter.emit(event, ...args),
     // `closeTargetAtBrowserLevel` (dialog-cdp.ts) reads this internal Puppeteer field directly —
     // mocked here so recovery-close tests can run against the real function, not a stub of it.
     _connection: {
+      on: (event: string, cb: (...args: any[]) => void) => connEmitter.on(event, cb),
       send: vi.fn(async (method: string, params: { targetId: string }) => {
         if (method === 'Target.closeTarget') closeTargetCalls.push(params.targetId);
       }),
@@ -1383,5 +1386,139 @@ describe('@sutradhar/browser DialogWarden (FR2-04 Branch W)', () => {
         await warden.stop('test-teardown');
       }
     });
+  });
+});
+
+// GAP-256-fix (a): a CRASHED renderer never answers the liveness probe, exactly like a real dialog
+// does not -- but it must be reported as crashed, never as an `unknown` dialog (which locks the CLI
+// gate forever). The negative controls (a real dialog / busy script must STILL be reported as
+// blocked) are the tests that would catch an over-broad crash exclusion.
+describe('@sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs', () => {
+  const TIMED_OUT = () => Promise.reject(new Error('Performance.getMetrics timed out. Increase the protocolTimeout'));
+
+  /** One tracked target `t1` whose LONG-LIVED session (`old`) times out on the liveness probe and
+   *  whose FRESH sessions (`fresh`, what `corroborateCrash` attaches) answer or not per the test. */
+  async function setup(opts: { freshAnswers: boolean }) {
+    const old = fakeSession('t1');
+    const fresh = fakeSession('t1');
+    const state = { oldBlocked: true };
+    old.send.mockImplementation((method: string) => (method === 'Performance.getMetrics' && state.oldBlocked ? TIMED_OUT() : Promise.resolve(undefined)));
+    fresh.send.mockImplementation((method: string) => {
+      if (method === 'Performance.getMetrics') {
+        if (!opts.freshAnswers) return TIMED_OUT();
+        return Promise.resolve({ metrics: [] });
+      }
+      return Promise.resolve(undefined);
+    });
+    const target = fakeTarget('t1', 'https://victim/', old);
+    target.createCDPSession = vi.fn().mockResolvedValueOnce(old).mockResolvedValue(fresh);
+    const browser = fakeBrowser([target]);
+    let readyInfo: { port: number; token: string } | undefined;
+    const warden = new DialogWarden({
+      wsEndpoint: 'ws://x',
+      readPolicy: async () => undefined,
+      isStillCurrent: async () => true,
+      onReady: (info) => {
+        readyInfo = info;
+      },
+      onExit: () => {},
+      connect: async () => browser as any,
+    });
+    await warden.start();
+    await new Promise((r) => setTimeout(r, 10)); // let track()'s Page.enable ack settle
+    const list = async () => (await req(readyInfo!.port, '/v1/dialogs', readyInfo!.token)).json();
+    return { warden, browser, old, fresh, state, list, readyInfo: readyInfo! };
+  }
+
+  it('GC1: a target Chrome announced as crashed (Target.targetCrashed) is reported in `crashed`, NOT as an unknown dialog, and NOT in busy', async () => {
+    const { warden, browser, list } = await setup({ freshAnswers: false }); // corroboration alone could not classify it
+    try {
+      browser._emitConnection('Target.targetCrashed', { targetId: 't1', status: 'crashed' });
+      const body = await list();
+      expect(body.dialogs).toEqual([]);
+      expect(body.busy).toEqual([]);
+      expect(body.crashed).toEqual([{ targetId: 't1', url: 'https://victim/' }]);
+    } finally {
+      await warden.stop('test-teardown');
+    }
+  });
+
+  it('GC2 (NEGATIVE CONTROL): a target that is blocked by a real dialog / busy script (no crash event, fresh session ALSO times out) is STILL reported as an unknown blocking dialog, never as crashed', async () => {
+    const { warden, list } = await setup({ freshAnswers: false });
+    try {
+      const body = await list();
+      expect(body.dialogs).toHaveLength(1);
+      expect(body.dialogs[0]).toMatchObject({ targetId: 't1', type: 'unknown' });
+      expect(body.busy).toEqual(['t1']);
+      expect(body.crashed).toEqual([]);
+    } finally {
+      await warden.stop('test-teardown');
+    }
+  });
+
+  it('GC3 (missed event): no crash event ever seen, but a FRESH session answers while the long-lived one still times out on the re-probe -> classified crashed', async () => {
+    const { warden, list } = await setup({ freshAnswers: true });
+    try {
+      const body = await list();
+      expect(body.dialogs).toEqual([]);
+      expect(body.busy).toEqual([]);
+      expect(body.crashed).toEqual([{ targetId: 't1', url: 'https://victim/' }]);
+    } finally {
+      await warden.stop('test-teardown');
+    }
+  });
+
+  it('GC4 (race guard): a busy script that FINISHES between the two probes (the long-lived session answers the re-probe) is not classified crashed', async () => {
+    const { warden, state, fresh, list } = await setup({ freshAnswers: true });
+    // the moment the fresh session is asked, the "busy script" ends -> the old session recovers
+    fresh.send.mockImplementation((method: string) => {
+      if (method === 'Performance.getMetrics') {
+        state.oldBlocked = false;
+        return Promise.resolve({ metrics: [] });
+      }
+      return Promise.resolve(undefined);
+    });
+    try {
+      const body = await list();
+      expect(body.crashed).toEqual([]);
+    } finally {
+      await warden.stop('test-teardown');
+    }
+  });
+
+  it('GC5: a crashed target that answers again (reloaded) is cleared, so a LATER real block on it is an unknown dialog again, not excluded', async () => {
+    const { warden, browser, state, fresh, list } = await setup({ freshAnswers: false });
+    try {
+      browser._emitConnection('Target.targetCrashed', { targetId: 't1' });
+      expect((await list()).crashed).toHaveLength(1);
+      state.oldBlocked = false; // reloaded: the long-lived session answers again
+      const recovered = await list();
+      expect(recovered.crashed).toEqual([]);
+      expect(recovered.dialogs).toEqual([]);
+      state.oldBlocked = true; // now a genuine block (fresh also times out), no new crash event
+      fresh.send.mockImplementation(() => TIMED_OUT());
+      const blocked = await list();
+      expect(blocked.crashed).toEqual([]);
+      expect(blocked.dialogs).toHaveLength(1);
+      expect(blocked.dialogs[0]).toMatchObject({ targetId: 't1', type: 'unknown' });
+    } finally {
+      await warden.stop('test-teardown');
+    }
+  });
+
+  it('GC6: `dialog accept/dismiss` on a crashed target never closes it (nothing to guess at: it is not a dialog) -- 404, zero Target.closeTarget calls', async () => {
+    const { warden, browser, readyInfo } = await setup({ freshAnswers: false });
+    try {
+      browser._emitConnection('Target.targetCrashed', { targetId: 't1' });
+      const res = await req(readyInfo.port, '/v1/dialogs/handle', readyInfo.token, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ targetId: 't1', accept: true }),
+      });
+      expect(res.status).toBe(404);
+      expect(browser.closeTargetCalls).toEqual([]);
+    } finally {
+      await warden.stop('test-teardown');
+    }
   });
 });

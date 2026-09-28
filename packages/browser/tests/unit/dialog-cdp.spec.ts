@@ -12,6 +12,8 @@ import {
   handleDialogOnTarget,
   attributeDialogHolders,
   probeTargetsConcurrently,
+  listTabsAtBrowserLevel,
+  closeTargetAtBrowserLevel,
 } from '../../src/session/dialog-cdp.js';
 
 function fakeSession() {
@@ -384,5 +386,35 @@ describe('@sutradhar/browser dialog-cdp (FR2-04)', () => {
     expect(result.get('t1')).toBe('responsive');
     expect(result.get('t2')).toBe('responsive');
     expect(result.get('t3')).toBe('responsive');
+  });
+});
+
+describe('@sutradhar/browser dialog-cdp GAP-256-fix (b): browser-level tab listing/closing', () => {
+  it('BL1: listTabsAtBrowserLevel returns ONLY page targets, with id/url/title, from a single Target.getTargets on the root connection (no per-target attach)', async () => {
+    const send = vi.fn(async () => ({
+      targetInfos: [
+        { targetId: 'P1', type: 'page', url: 'https://a/', title: 'A' },
+        { targetId: 'SW', type: 'service_worker', url: 'https://sw/', title: 'sw' },
+        { targetId: 'P2', type: 'page', url: 'chrome://crash/', title: '' },
+        { targetId: 'BG', type: 'background_page', url: 'x', title: 'bg' },
+      ],
+    }));
+    const browser = { _connection: { send } } as any;
+    expect(await listTabsAtBrowserLevel(browser)).toEqual([
+      { targetId: 'P1', url: 'https://a/', title: 'A' },
+      { targetId: 'P2', url: 'chrome://crash/', title: '' },
+    ]);
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith('Target.getTargets');
+  });
+
+  it('BL2: listTabsAtBrowserLevel fails loudly (never returns a misleading empty list) when there is no browser-level connection', async () => {
+    await expect(listTabsAtBrowserLevel({} as any)).rejects.toThrow(/no browser-level CDP connection/);
+  });
+
+  it('BL3: closeTargetAtBrowserLevel sends Target.closeTarget on the ROOT connection with the target id', async () => {
+    const send = vi.fn(async () => ({}));
+    await closeTargetAtBrowserLevel({ _connection: { send } } as any, 'T9');
+    expect(send).toHaveBeenCalledWith('Target.closeTarget', { targetId: 'T9' });
   });
 });

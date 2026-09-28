@@ -1,0 +1,137 @@
+{
+  "final-c1": {
+    "trials": 5,
+    "pass": 5,
+    "checks": [
+      "tabsExit0",
+      "tabsListsCrashedTab",
+      "tabsFlagsCrashed",
+      "notReportedAsDialog",
+      "dialogVerbSaysCrashedNotDialog",
+      "closetabExit0",
+      "crashedTargetGoneFromBrowser",
+      "navExit0",
+      "snapExit0",
+      "sessionSurvives"
+    ],
+    "extra": "||||",
+    "tabsClosetabMs": {
+      "min": 355,
+      "max": 698
+    }
+  },
+  "final-c2": {
+    "trials": 6,
+    "pass": 6,
+    "checks": [
+      "crashActuallyHappened",
+      "dialogSaysNone",
+      "crashNoted",
+      "tabsExit0",
+      "tabsFlagsVictimCrashed",
+      "closetabExit0",
+      "crashedTargetGoneFromBrowser",
+      "navExit0",
+      "snapExit0",
+      "sessionSurvives"
+    ],
+    "extra": "Page.navigate-chrome-crash|Page.crash|Page.navigate-chrome-crash|Page.crash|Page.navigate-chrome-crash|Page.crash",
+    "tabsClosetabMs": {
+      "min": 257,
+      "max": 690
+    }
+  },
+  "final-c2g": {
+    "trials": 6,
+    "pass": 6,
+    "checks": [
+      "crashActuallyHappened",
+      "gateDoesNotBlock",
+      "crashNoted",
+      "notReportedAsDialog"
+    ],
+    "extra": "hang-in-attach (killed at 20s cap)|exit 0|hang-in-attach (killed at 20s cap)|exit 0|hang-in-attach (killed at 20s cap)|exit 0"
+  },
+  "final-c3a": {
+    "trials": 5,
+    "pass": 5,
+    "checks": [
+      "negativeControl_blocksExit3",
+      "notMisreportedAsCrash"
+    ],
+    "extra": "||||"
+  },
+  "final-c3b": {
+    "trials": 5,
+    "pass": 5,
+    "checks": [
+      "completesExit0",
+      "notMisreportedAsCrash"
+    ],
+    "extra": "||||"
+  },
+  "final-c3c": {
+    "trials": 5,
+    "pass": 5,
+    "checks": [
+      "negativeControl_blocksExit3",
+      "notMisreportedAsCrash"
+    ],
+    "extra": "||||"
+  },
+  "final-c4a": {
+    "trials": 5,
+    "pass": 5,
+    "checks": [
+      "negativeControl_blocksExit3",
+      "notMisreportedAsCrash",
+      "tabsExit0WhileBlocked",
+      "tabsFlagsDialogTab",
+      "closetabExit0",
+      "dialogTabGoneFromBrowser",
+      "sessionFreedSnapExit0",
+      "navExit0"
+    ],
+    "extra": "||||",
+    "tabsClosetabMs": {
+      "min": 257,
+      "max": 285
+    }
+  },
+  "final-c4c": {
+    "trials": 5,
+    "pass": 5,
+    "checks": [
+      "negativeControl_blocksExit3",
+      "tabsExit0WhileBlocked",
+      "tabsFlagsBlockedTabs",
+      "closetabExit0ForEach",
+      "blockedTabsGoneFromBrowser",
+      "sessionFreedSnapExit0"
+    ],
+    "extra": "3|3|3|3|3",
+    "tabsClosetabMs": {
+      "min": 252,
+      "max": 1168
+    }
+  },
+  "live-c1-master": {
+    "trials": 5,
+    "pass": 5,
+    "checks": [
+      "masterInfoOnly"
+    ],
+    "extra": "||||",
+    "masterCodes": [
+      "{\"tabs\":1,\"snap0\":1,\"nav\":0,\"snap\":0}",
+      "{\"tabs\":1,\"snap0\":1,\"nav\":0,\"snap\":0}",
+      "{\"tabs\":1,\"snap0\":1,\"nav\":0,\"snap\":0}",
+      "{\"tabs\":1,\"snap0\":1,\"nav\":0,\"snap\":0}",
+      "{\"tabs\":1,\"snap0\":1,\"nav\":0,\"snap\":0}"
+    ],
+    "tabsClosetabMs": {
+      "min": 60184,
+      "max": 60228
+    }
+  }
+}

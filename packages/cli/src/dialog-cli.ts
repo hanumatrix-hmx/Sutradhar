@@ -106,8 +106,10 @@ export const DIALOG_HINT =
     `"unknown", that same command identifies the specific tab that may be holding it and, when the ` +
     `dialog warden can prove which one it actually is, recovers by closing just that tab (never a ` +
     `different, healthy tab it merely shares a browser process with) — otherwise it explains why it ` +
-    `won't guess and leaves every tab open. If nothing else works, "sutradhar close" ends the whole ` +
-    `session so you can start a fresh one.`;
+    `won't guess and leaves every tab open. "sutradhar tabs" and "sutradhar closetab <id>" keep working ` +
+    `while a page is blocked or has crashed (they list and close tabs at the browser level and never ` +
+    `attach to the blocked page), so a stuck tab can always be closed without ending the session. If ` +
+    `nothing else works, "sutradhar close" ends the whole session so you can start a fresh one.`;
 
 export function beforeunloadCancelMessage(url: string): string {
   return (

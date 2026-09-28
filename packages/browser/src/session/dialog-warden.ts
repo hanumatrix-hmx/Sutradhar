@@ -130,6 +130,11 @@ export class DialogWarden {
    *  (history), not current topology, is the right thing to key "definitely not a dialog holder"
    *  off of. */
   private readonly confirmedResponsiveSince = new Map<string, number>();
+  /** GAP-256-fix (a): targets Chrome has reported as CRASHED (`Target.targetCrashed` on the browser
+   *  connection). A crashed renderer never answers the liveness probe, so without this it would be
+   *  reported as an `unknown` dialog forever and lock the whole CLI session. Cleared when the
+   *  target is destroyed, or when a later probe finds it responsive again (it was reloaded). */
+  private readonly crashedTargets = new Set<string>();
   private readonly graceTimers = new Map<string, ReturnType<typeof setTimeout>>();
   private pollTimer?: ReturnType<typeof setInterval>;
   private stopped = false;
@@ -168,10 +173,11 @@ export class DialogWarden {
    * `LIVENESS_PROBE_MS` per target so a session with a normal number of tabs doesn't make every
    * gated command noticeably slower (measured in fix-2/gate-overhead.json).
    */
-  public async listWithLiveness(): Promise<{ dialogs: ObservedDialog[]; busy: string[] }> {
+  public async listWithLiveness(): Promise<{ dialogs: ObservedDialog[]; busy: string[]; crashed: Array<{ targetId: string; url: string }> }> {
     const dialogs = this.pending();
     const busy: string[] = [];
-    if (!this.browser) return { dialogs, busy };
+    const crashed: Array<{ targetId: string; url: string }> = [];
+    if (!this.browser) return { dialogs, busy, crashed };
     const trackedIds = new Set(dialogs.map((d) => d.targetId));
     const candidates = listPageTargets(this.browser).filter(({ info }) => !trackedIds.has(info.targetId));
 
@@ -212,6 +218,40 @@ export class DialogWarden {
       ),
     );
 
+    // GAP-256-fix (a): a target that stopped answering because its RENDERER CRASHED is not a dialog
+    // and not a slow script -- it will never answer again until it is reloaded or closed, so it must
+    // never be reported as an `unknown` dialog (which blocks the CLI gate forever and lets
+    // `dialog accept|dismiss` refuse to close it). Two signals, either is enough:
+    //  1. Chrome's own `Target.targetCrashed` event, recorded in `crashedTargets` (start()).
+    //  2. Corroboration for a crash whose event this warden never saw (warden started after the
+    //     crash, reconnect): a FRESH session on the target answers `Performance.getMetrics`
+    //     immediately (Chrome serves a crashed target from the browser process; measured live in
+    //     explore-signals.json: crash=ok, real alert=TIMEOUT, busy script=TIMEOUT on a fresh
+    //     session) while this warden's long-lived session STILL times out on a re-probe. A real
+    //     dialog or a busy script times out on BOTH, so neither is ever classified as crashed.
+    const crashedIds = new Set<string>();
+    for (const { info } of probeable) {
+      const state = states.get(info.targetId);
+      if (state === 'responsive') {
+        this.crashedTargets.delete(info.targetId); // it answered: reloaded/recovered
+        continue;
+      }
+      if (this.crashedTargets.has(info.targetId)) crashedIds.add(info.targetId);
+    }
+    await Promise.all(
+      probeable.map(async ({ info, target }) => {
+        const { session, ownSession } = sessionInfo.get(info.targetId)!;
+        if (states.get(info.targetId) === 'responsive' || crashedIds.has(info.targetId) || ownSession) return;
+        if (await this.corroborateCrash(target, session)) {
+          this.crashedTargets.add(info.targetId);
+          crashedIds.add(info.targetId);
+        }
+      }),
+    );
+    for (const { info } of probeable) {
+      if (crashedIds.has(info.targetId)) crashed.push({ targetId: info.targetId, url: info.url });
+    }
+
     // FR2-04 escalation-1, decision 1: the FIRST time a probe finds a target responsive AFTER its
     // Page.enable acked, that target's history is settled for good — record it. This is the ONLY
     // place `confirmedResponsiveSince` is ever set (never by mere Page.enable ack alone — Step 1's
@@ -234,7 +274,7 @@ export class DialogWarden {
     // `confirmedSafe` set instead, so the gate still blocks (the shared renderer really is
     // unresponsive) but recovery/auto-policy code never treats it as independently addressable.
     const blockedInfos = probeable
-      .filter(({ info }) => states.get(info.targetId) !== 'responsive')
+      .filter(({ info }) => states.get(info.targetId) !== 'responsive' && !crashedIds.has(info.targetId))
       .map(({ info }) => ({
         targetId: info.targetId,
         openerTargetId: info.openerTargetId,
@@ -250,7 +290,7 @@ export class DialogWarden {
     const attribution = attributeDialogHolders(blockedInfos, allTargets);
     for (const { info } of probeable) {
       const state = states.get(info.targetId);
-      if (state === 'responsive') continue;
+      if (state === 'responsive' || crashedIds.has(info.targetId)) continue;
       busy.push(info.targetId);
       const attr = attribution.get(info.targetId);
       dialogs.push({
@@ -264,7 +304,24 @@ export class DialogWarden {
         confirmedSafe: attr?.confirmedSafe,
       });
     }
-    return { dialogs, busy };
+    return { dialogs, busy, crashed };
+  }
+
+  /** GAP-256-fix (a): see the comment in `listWithLiveness`. True only when a fresh session on
+   *  `target` answers the liveness probe while `oldSession` (already found non-responsive by the
+   *  caller) STILL does not on an immediate re-probe -- the re-probe rules out the race where a
+   *  busy script simply finished between the two probes. */
+  private async corroborateCrash(target: Target, oldSession: CDPSession): Promise<boolean> {
+    let fresh: CDPSession | undefined;
+    try {
+      fresh = await target.createCDPSession();
+      if ((await livenessProbe(fresh, LIVENESS_PROBE_MS)) !== 'responsive') return false;
+      return (await livenessProbe(oldSession, 300)) !== 'responsive';
+    } catch {
+      return false;
+    } finally {
+      if (fresh) void fresh.detach().catch(() => {});
+    }
   }
 
   public async start(): Promise<void> {
@@ -279,6 +336,14 @@ export class DialogWarden {
     browser.on('targetcreated', (target) => {
       if (target.type() === 'page') void this.track(target);
     });
+    // GAP-256-fix (a): Chrome announces a renderer crash on the browser connection. Optional-chained
+    // because unit-test doubles for `Browser` predate (and do not implement) `_connection`.
+    (browser as unknown as { _connection?: { on?: (ev: string, fn: (e: { targetId?: string }) => void) => void } })._connection?.on?.(
+      'Target.targetCrashed',
+      (e) => {
+        if (e?.targetId) this.crashedTargets.add(e.targetId);
+      },
+    );
     browser.on('targetdestroyed', (target) => {
       const targetId = idOf(target);
       this.dialogs.delete(targetId);
@@ -293,6 +358,7 @@ export class DialogWarden {
       this.discoveredAt.delete(targetId);
       this.pageEnableAckedAt.delete(targetId);
       this.confirmedResponsiveSince.delete(targetId);
+      this.crashedTargets.delete(targetId);
     });
 
     // Deliberately NOT `listPageTargets(browser)` here — that helper filters out `about:blank`
@@ -593,8 +659,8 @@ export class DialogWarden {
       return;
     }
     if (req.method === 'GET' && url.pathname === '/v1/dialogs') {
-      const { dialogs, busy } = await this.listWithLiveness();
-      res.writeHead(200, { 'content-type': 'application/json' }).end(JSON.stringify({ dialogs, busy }));
+      const { dialogs, busy, crashed } = await this.listWithLiveness();
+      res.writeHead(200, { 'content-type': 'application/json' }).end(JSON.stringify({ dialogs, busy, crashed }));
       return;
     }
     if (req.method === 'POST' && url.pathname === '/v1/dialogs/handle') {

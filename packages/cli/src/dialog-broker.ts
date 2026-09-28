@@ -62,8 +62,24 @@ export interface HandleOutcome {
  *    (block, exit 3, type unknown) rather than the old behavior of treating any `'unknown'` the
  *    same as "nothing to worry about".
  */
+/** GAP-256-fix (a): a tab whose renderer crashed. NOT a dialog and never blocks the gate -- it is
+ *  reported separately so the CLI can say so and point at the commands that recover it. */
+export interface CrashedTab {
+  readonly targetId: string;
+  readonly url: string;
+}
+
+/** The one-line stderr note for a crashed tab (used by the gate and by `dialog`). */
+export function formatCrashNote(c: CrashedTab): string {
+  return (
+    `Note: tab ${c.targetId}${c.url ? ` (${c.url})` : ''} has crashed (its renderer is gone) -- this is not a dialog. ` +
+    `Close it with "sutradhar closetab ${c.targetId}", or reload it with "sutradhar nav <url>" while it is the active tab; ` +
+    '"sutradhar tabs" lists every tab without attaching to the crashed one.'
+  );
+}
+
 export type ListStatus =
-  | { status: 'ok'; dialogs: BrokerDialog[]; busy: string[] }
+  | { status: 'ok'; dialogs: BrokerDialog[]; busy: string[]; crashed?: CrashedTab[] }
   | { status: 'unknown'; reason?: 'unreachable' | 'timeout' };
 
 export interface DialogBroker {
@@ -323,10 +339,12 @@ export class WardenBroker implements DialogBroker {
           confirmedSafe?: boolean;
         }>;
         busy?: string[];
+        crashed?: CrashedTab[];
       };
       return {
         status: 'ok',
         busy: body.busy ?? [],
+        crashed: body.crashed ?? [],
         dialogs: body.dialogs.map((d) => ({
           targetId: d.targetId,
           dialogType: d.type,
@@ -474,6 +492,7 @@ export async function runDialogGate(
 ): Promise<GateResult> {
   const records: GateHandledRecord[] = [];
   const startedAt = Date.now();
+  let crashNoted = false;
   const blockWith = (dialogs: BrokerDialog[], extra?: string): GateResult => {
     if (mode === 'close') return { status: 'blocked', dialogs, records };
     throw new DialogBlockedError(verb, dialogs, 'blocked', extra, records);
@@ -489,6 +508,12 @@ export async function runDialogGate(
       }
       // decision point 6 (GAP-240): split what `list()` found into real, observed dialogs vs
       // liveness-inferred `unknown` entries — the latter never get an automatic accept/dismiss.
+      // GAP-256-fix (a): a CRASHED tab is never a dialog -- it does not block the gate. Say so once,
+      // on stderr, with the recovery commands that work without attaching to it.
+      if (!crashNoted && listed.crashed && listed.crashed.length > 0) {
+        crashNoted = true;
+        for (const c of listed.crashed) console.error(formatCrashNote(c));
+      }
       const real = listed.dialogs.filter((d) => d.dialogType !== 'unknown');
       const hint = listed.dialogs.filter((d) => d.dialogType === 'unknown');
       if (real.length === 0 && hint.length === 0) {

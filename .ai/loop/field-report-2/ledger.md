@@ -21,7 +21,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 | FR2-15 | Playwright migration guide | 4 | BLOCKED-BY-DEPENDENCY (hard dep FR2-01 DONE, which is now itself BLOCKED) | 0 | evidence/FR2-15/spec.md | - |
 | FR2-16 | Stealth boundary honesty | 4 | **BLOCKED** [5 audits, 4 fix cycles, 2 Orchestrator-supervised escalation cycles exhausted per loop's own retry bound -- audit-5 found the allow-list redesign itself is bypassable 102/118 times via untriggered vocabulary and gameable narrative exemptions] | 9 | See decisions.md 'FR2-16 BLOCKED' entry for the full diagnosis. GAP-138..143 logged, unresolved. The dead-code removal (StealthEngine/enableStealth) and the honest core boundary sentences that DO exist are real and correct -- only the enforcement mechanism (a CI check meant to guarantee no regression) is what's BLOCKED. | fd152e7 (last landed audit-logging commit; the fix-5 code changes themselves were never committed)
 | FR2-17 | Docs sweep | 4 | TODO | 0 | - | - |
-| GAP-256-fix | FR2-04 scoped follow-up: crashed tab must not lock the session | - | DEV | 0 | evidence/GAP-256-fix/ | - |
+| GAP-256-fix | FR2-04 scoped follow-up: crashed tab must not lock the session | - | AUDIT-1 pending | 1 | evidence/GAP-256-fix/run-1/ | - |
 
 ## Baseline
 

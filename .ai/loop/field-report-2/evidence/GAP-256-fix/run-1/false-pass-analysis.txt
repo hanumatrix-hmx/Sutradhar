@@ -1,0 +1,34 @@
+GAP-256-fix false-pass analysis (executor, run-1)
+
+AC-a  crashed tab is never a blocking "unknown" dialog
+  false pass: crash never really happened / tab revived, so "gate passes" proves nothing.
+    ruled out: c2/c2g assert crashActuallyHappened (independent Target.targetCrashed seen by a separate observer connection);
+    c1 uses chrome://crash and tabs prints [crashed] from the warden's classification, tab stays crashed until closetab.
+  false pass: everything-blocked-is-now-clear (over-broad exclusion).
+    ruled out: negative controls c3a (real alert, exit 3), c3c (popup dialogs, type unknown, exit 3) 5/5 each;
+    live mutant "crashedIds.add for every non-responsive target" -> c3c 0/2 (snap exit 1/143 instead of 3), 18 vitest failures
+    (revert-confirm/mutant-overbroad-*).
+  false pass: stale build. ruled out: rm -rf dist + tsc for browser and cli before the final matrix; sha256 of src+dist recorded
+    (sha-final-build.txt), restored builds sha-identical after each revert (revert-confirm/restore-*-sha.txt).
+  false pass: warden classification only tested through mocks. ruled out: real Chrome, real CLI child processes, real warden.
+
+AC-b  tabs / closetab work while a tab is blocked or crashed, without attaching
+  false pass: normal attach path happened to work. ruled out: revert-b (cli.ts from HEAD) -> c4a tabs exit 3 (2/2), c1 tabs
+    hangs to the 60s cap; restoring makes them pass.
+  false pass: "Closed tab" printed but tab still open. ruled out: every case re-reads Target.getTargets from a FRESH CDP
+    connection after closetab and asserts the id is gone; c4c originally exposed exactly this (page opened extra popups) and the
+    harness was fixed to loop tabs->closetab, the earlier run kept as *-INVALID-* evidence.
+  false pass: session "survives" only because a fresh one was spawned (master's behaviour). ruled out: c1/c2 assert the state's
+    wsEndpoint session accepts nav+snap AND independent target list has the after-URL and no crash URL; master c1 shows the
+    self-heal path differs (nav chrome://crash exit 1 "starting a fresh session").
+  false pass: latency hides a connect failure. tabs/closetab ms recorded (255-1170ms); found+fixed a 3s process-linger (timer
+    leak in the connect race), rebuilt, and re-ran the WHOLE matrix on the final build.
+
+Plausible mutants the tests catch (ONLY #4 and the two reverts were actually executed; #1-#3 and #5 are by test design, not run): (1) drop the Target.targetCrashed listener -> GC1 fails; (2) drop the re-probe in
+corroborateCrash -> GC4 fails; (3) never clear on recovery -> GC5 fails; (4) exclude all non-responsive -> GC2 + 17 pre-existing
+warden tests + live c3c; (5) tabs/closetab routed through withSession -> live c4a/c4c.
+
+Harness bugs found and fixed (all superseded runs retained under superseded-pre-final-build/ or named *-INVALID-*):
+  c2 first run: location.href='chrome://crash' from page JS does not crash (blocked for web content); switched to Page.navigate.
+  c3/c4 first run: "has crashed" regex matched the new DIALOG_HINT text; switched to "renderer is gone".
+  c3b/c4b: a busy script is NOT a blocking state by design (GAP-240), so it is not a negative control; reclassified.

@@ -33,10 +33,19 @@ import {
   DialogBlockedError,
   PREEMPT_GRACE_MS,
   TRIGGER_PREEMPT_GRACE_MS,
+  GATE_CONNECT_TIMEOUT_MS,
   describeUnknownDialog,
   type PendingDialogEntry,
 } from './dialog-cli.js';
-import { DirectCdpBroker, WardenBroker, runDialogGate, type DialogBroker, type BrokerDialog } from './dialog-broker.js';
+import {
+  DirectCdpBroker,
+  WardenBroker,
+  runDialogGate,
+  formatCrashNote,
+  type DialogBroker,
+  type BrokerDialog,
+  type CrashedTab,
+} from './dialog-broker.js';
 import { withSessionFlow } from './session-flow.js';
 import {
   ensureWarden,
@@ -47,7 +56,7 @@ import {
   policyFromState,
   isRivalWardenAlive,
 } from './warden-control.js';
-import { DialogWarden } from '@sutradhar/browser';
+import { DialogWarden, connectAtBrowserLevel, listTabsAtBrowserLevel, closeTargetAtBrowserLevel } from '@sutradhar/browser';
 
 const logger = new StructuredLogger({ minLevel: 'error' }); // CLI output IS the log; keep engine logs quiet
 const {
@@ -1020,7 +1029,120 @@ async function cmdGrant(origin: string | undefined, permissions: string[]) {
   });
 }
 
+/** GAP-256-fix (b): is the prior session's browser in a state where the NORMAL attach path
+ *  (`runtime.attach()` -> `browser.pages()`) can hang or fail -- a tab blocked by a dialog (real or
+ *  inferred), a check that could not finish, or a CRASHED tab? `undefined` when there is no such
+ *  problem, or the browser/warden is simply unreachable (the normal path then self-heals as before). */
+async function blockedOrCrashedState(
+  state: CliState,
+): Promise<{ dialogs: BrokerDialog[]; crashed: CrashedTab[]; timedOut: boolean } | undefined> {
+  const broker = await getBroker(state);
+  try {
+    const listed = await broker.list();
+    if (listed.status === 'unknown') return listed.reason === 'timeout' ? { dialogs: [], crashed: [], timedOut: true } : undefined;
+    const crashed = listed.crashed ?? [];
+    if (listed.dialogs.length === 0 && crashed.length === 0) return undefined;
+    return { dialogs: listed.dialogs, crashed, timedOut: false };
+  } catch {
+    return undefined;
+  } finally {
+    await broker.dispose();
+  }
+}
+
+/** A raw CDP target id (what `tabs` prints in browser-level mode): 32 hex chars. */
+const TARGET_ID_RE = /^[0-9A-F]{32}$/i;
+
+/** GAP-256-fix (b): `tabs` served from the browser process itself (`Target.getTargets`) -- never
+ *  attaches to any tab, so it works while a tab is blocked by a dialog or crashed. */
+async function cmdTabsAtBrowserLevel(
+  state: CliState,
+  why: { dialogs: BrokerDialog[]; crashed: CrashedTab[]; timedOut: boolean },
+): Promise<void> {
+  const browser = await connectAtBrowserLevel(state.wsEndpoint, GATE_CONNECT_TIMEOUT_MS);
+  if (!browser) {
+    console.error('Error: could not reach the browser to list its tabs.');
+    process.exitCode = 1;
+    return;
+  }
+  try {
+    const tabs = await listTabsAtBrowserLevel(browser);
+    console.error(
+      'Note: a tab is blocked or crashed, so the tabs below were listed at the browser level without attaching to any page. ' +
+        'The ids are browser target ids: "sutradhar closetab <id>" closes one without touching the blocked page.',
+    );
+    if (tabs.length === 0) {
+      console.log('No tabs.');
+      return;
+    }
+    for (const tab of tabs) {
+      const crashed = why.crashed.some((c) => c.targetId === tab.targetId);
+      const dialog = why.dialogs.find((d) => d.targetId === tab.targetId);
+      const flag = crashed
+        ? '  [crashed]'
+        : dialog
+          ? dialog.dialogType === 'unknown'
+            ? '  [blocked: unresponsive, possibly a dialog]'
+            : `  [blocked: ${dialog.dialogType} dialog]`
+          : '';
+      console.log(`  ${tab.targetId}  ${tab.title || '(no title)'}  ${tab.url}${flag}`);
+    }
+  } finally {
+    if (browser.connected) await browser.disconnect().catch(() => {});
+  }
+}
+
+/** GAP-256-fix (b): `closetab` at the browser level (`Target.closeTarget`), never attaching. */
+async function cmdCloseTabAtBrowserLevel(state: CliState, tabId: string): Promise<void> {
+  if (!TARGET_ID_RE.test(tabId)) {
+    console.log(
+      'Close tab failed: a tab is blocked or crashed right now, so tab ids from the normal listing cannot be resolved. ' +
+        'Run "sutradhar tabs" and pass one of the browser target ids it prints.',
+    );
+    process.exitCode = 1;
+    return;
+  }
+  const browser = await connectAtBrowserLevel(state.wsEndpoint, GATE_CONNECT_TIMEOUT_MS);
+  if (!browser) {
+    console.log('Close tab failed: could not reach the browser.');
+    process.exitCode = 1;
+    return;
+  }
+  try {
+    const before = await listTabsAtBrowserLevel(browser);
+    if (!before.some((t) => t.targetId.toUpperCase() === tabId.toUpperCase())) {
+      console.log(`Close tab failed: no tab with id ${tabId}`);
+      process.exitCode = 1;
+      return;
+    }
+    await closeTargetAtBrowserLevel(browser, tabId);
+    // Re-read from the browser until the target is really gone (monotonic clock, hard bound).
+    const t0 = performance.now();
+    for (;;) {
+      const now = await listTabsAtBrowserLevel(browser);
+      if (!now.some((t) => t.targetId.toUpperCase() === tabId.toUpperCase())) break;
+      if (performance.now() - t0 > 4000) {
+        console.log(`Close tab failed: tab ${tabId} is still open after 4s`);
+        process.exitCode = 1;
+        return;
+      }
+      await new Promise((r) => setTimeout(r, 100));
+    }
+    console.log(`Closed tab ${tabId}`);
+  } catch (err) {
+    console.log(`Close tab failed: ${(err as Error).message}`);
+    process.exitCode = 1;
+  } finally {
+    if (browser.connected) await browser.disconnect().catch(() => {});
+  }
+}
+
 async function cmdTabs() {
+  const prior = await readState();
+  if (prior) {
+    const why = await blockedOrCrashedState(prior);
+    if (why) return cmdTabsAtBrowserLevel(prior, why);
+  }
   await withSession(async (runtime, sessionId) => {
     const tabs = await runtime.listTabs(sessionId);
     if (tabs.length === 0) {
@@ -1064,6 +1186,12 @@ async function cmdFocusTab(tabId: string | undefined) {
 
 async function cmdCloseTab(tabId: string | undefined) {
   if (!tabId) printErrorAndExit('usage: sutradhar closetab <tabId>  (see "tabs" for the list of open tab ids)');
+  const prior = await readState();
+  if (prior) {
+    // A raw browser target id (printed by browser-level `tabs`) is always closed at the browser
+    // level. Any other id needs the normal attach path -- unless something is blocked or crashed.
+    if (TARGET_ID_RE.test(tabId!) || (await blockedOrCrashedState(prior))) return cmdCloseTabAtBrowserLevel(prior, tabId!);
+  }
   await withSession(async (runtime, sessionId) => {
     try {
       await runtime.closeTab(sessionId, tabId!);
@@ -1123,6 +1251,8 @@ async function listDialogs(state: CliState): Promise<PendingDialogEntry[]> {
   const broker = await getBroker(state);
   try {
     const listed = await broker.list();
+    // GAP-256-fix (a): a crashed tab is not a dialog -- say what it is instead of staying silent.
+    if (listed.status === 'ok') for (const c of listed.crashed ?? []) console.error(formatCrashNote(c));
     return listed.status === 'ok' ? listed.dialogs : [];
   } finally {
     await broker.dispose();
@@ -1516,10 +1646,11 @@ Commands:
   setclipboard <text>          Set the system clipboard (e.g. to then paste into a rich-text
                                 editor via press <ref> v --modifiers Control)
   getclipboard                 Print the current system clipboard contents
-  tabs                         List open tabs (id, title, url) — * marks the active one
+  tabs                         List open tabs (id, title, url) — * marks the active one. Still works when a
+                               tab is blocked by a dialog or has crashed (then it lists browser target ids)
   newtab [url]                 Open a new tab, optionally navigating it immediately
   focustab <tabId>             Switch the active tab (e.g. after a link opened target=_blank)
-  closetab <tabId>              Close a specific tab
+  closetab <tabId>              Close a specific tab (also works on a blocked or crashed tab)
   download <ref> [dir]         Click an element that triggers a download; print the saved file's absolute
                                 path. [dir] (relative to the current directory) is always allowed for this
                                 command; without it the file goes to the first allowed download root.

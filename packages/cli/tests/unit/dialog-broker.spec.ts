@@ -327,3 +327,51 @@ describe('@sutradhar/cli WardenBroker.handle (FR2-04 GAP-230/GAP-250 M26)', () =
     expect((outcome as any)?.refused).toBeUndefined();
   });
 });
+
+// GAP-256-fix (a): a crashed tab is reported separately from dialogs and never blocks the gate.
+describe('@sutradhar/cli runDialogGate GAP-256-fix: crashed tabs', () => {
+  const crashed = [{ targetId: 'T-CRASHED', url: 'chrome://crash/' }];
+
+  it('GC-CLI1: only a crashed tab (no dialog) -> gate is clear (does NOT throw DialogBlockedError) and says on stderr it is a crash, not a dialog, naming closetab', async () => {
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      const broker = fakeBroker({ list: async () => ({ status: 'ok', dialogs: [], busy: [], crashed }) });
+      const result = await runDialogGate('snap', broker, { mode: 'report' }, 'command');
+      expect(result).toEqual({ status: 'clear' });
+      const text = errSpy.mock.calls.map((c) => String(c[0])).join('\n');
+      expect(text).toContain('T-CRASHED');
+      expect(text).toContain('has crashed');
+      expect(text).toContain('not a dialog');
+      expect(text).toContain('closetab T-CRASHED');
+      expect(broker.disposeCalls).toBe(1);
+    } finally {
+      errSpy.mockRestore();
+    }
+  });
+
+  it('GC-CLI2 (NEGATIVE CONTROL): a crashed tab alongside a REAL dialog still blocks (exit-3 error) -- the crash exclusion never lets a genuine dialog through', async () => {
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      const dialog = { targetId: 't1', dialogType: 'alert', message: 'm', url: 'u', openedAt: 'o1' };
+      const broker = fakeBroker({ list: async () => ({ status: 'ok', dialogs: [dialog], busy: [], crashed }) });
+      await expect(runDialogGate('snap', broker, { mode: 'report' }, 'command')).rejects.toThrow(DialogBlockedError);
+    } finally {
+      errSpy.mockRestore();
+    }
+  });
+
+  it('GC-CLI3 (NEGATIVE CONTROL): an `unknown` (liveness-inferred) entry with NO crashed tab still blocks', async () => {
+    const hint = { targetId: 't2', dialogType: 'unknown', message: '', url: 'u', openedAt: 'o1' };
+    const broker = fakeBroker({ list: async () => ({ status: 'ok', dialogs: [hint], busy: ['t2'], crashed: [] }) });
+    await expect(runDialogGate('snap', broker, { mode: 'report' }, 'command')).rejects.toThrow(DialogBlockedError);
+  });
+
+  it('GC-CLI4: WardenBroker.list() passes the warden\'s `crashed` array through (and defaults to [] for an older warden that omits it)', async () => {
+    const withCrashed = new WardenBroker('http://127.0.0.1:1', 'tok', (async () =>
+      new Response(JSON.stringify({ dialogs: [], busy: [], crashed }), { status: 200 })) as any);
+    expect(await withCrashed.list()).toEqual({ status: 'ok', dialogs: [], busy: [], crashed });
+    const legacy = new WardenBroker('http://127.0.0.1:1', 'tok', (async () =>
+      new Response(JSON.stringify({ dialogs: [], busy: [] }), { status: 200 })) as any);
+    expect(await legacy.list()).toEqual({ status: 'ok', dialogs: [], busy: [], crashed: [] });
+  });
+});

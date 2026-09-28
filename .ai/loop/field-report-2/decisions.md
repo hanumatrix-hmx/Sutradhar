@@ -3695,3 +3695,34 @@ Decision 2 -- FR2-04: a scoped GAP-256 fix, not a full reopen and not a revert.
 
 Then: FR2-17 docs sweep (including FR2-05's and FR2-04's documented limitations), version 0.5.0,
 temp cleanup, and the PR to master with an honest done/partial/blocked report. Nothing published.
+
+## 2026-09-29 -- GAP-256-fix run-1 done; sent to independent audit-1
+
+Executor self-report, spot-checked by the Orchestrator: cli vitest 180/180 re-run directly; git
+status matches the reported file list (5 source files + 4 spec files, all dialog/CLI code, nothing
+in the download path); 0 leftover processes tied to the run's temp roots.
+
+(a) Crashed targets: the warden records Chrome's browser-level Target.targetCrashed event and
+excludes crashed targets from the gate's blocking decision; a fresh-session probe corroborates a
+crash the event might have missed. The gate prints a "crashed, not a dialog, use closetab" note and
+does not block. (b) tabs/closetab: served from a browser-level connection that attaches to no
+target (Target.getTargets / Target.closeTarget) whenever something is blocked or crashed, so a
+stuck tab can always be listed and closed. The exit-3 hint names them.
+
+Live (real CLI, real headless Chrome, each re-checked from a separate connection): crash of the
+active tab 5/5 and of a background tab 6/6 recoverable; the gate does not block on a crashed
+background tab 6/6; NEGATIVE CONTROLS hold -- a real alert still blocks with exit 3 5/5, a
+popup-born unknown dialog still blocks 5/5, a busy script is never labelled crashed 5/5;
+tabs/closetab recover a session with a real open dialog 5/5 and with popup dialogs 5/5. Master
+comparison: master's tabs hangs 5/5 in the same crash case. Both reverts and an over-broad mutant
+fail as expected, sha-verified restores. FR2-04's 113-case regression suite unchanged (111/0/2).
+
+Disclosed residuals: after the ACTIVE tab crashes via chrome://crash, other gated commands (nav,
+snap) still hang in attach until the crashed tab is closed -- identical on master, and the gate's
+note tells the user to closetab first; the new tabs/closetab path only engages when the warden
+reports something wrong; crash detection needs the warden up; --dialog policies are not applied on
+the tabs/closetab path.
+
+Separate finding the Orchestrator reproduced while verifying (not caused by this fix): the
+download_file unit tests are flaky -- logged as GAP-307 against FR2-05, to be handled as its own
+scoped item after this audit, since both touch the browser package's test runs.
