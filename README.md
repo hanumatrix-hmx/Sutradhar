@@ -30,14 +30,28 @@ The per-package READMEs cover the pre-bundling, workspace-internal view:
 agent loop + web inspector dashboard) — this monorepo's `apps/server` + `packages/frontend`,
 see [Quickstart & Development](#-quickstart--development) below.
 
+### Status of this branch (0.5.0, unreleased) and known limitations
+
+The next release (0.5.0) is not published; `sutradhar` on npm is still 0.4.3. The branch adds, among
+other things, an optional MCP `sessionId` (71 `browser.*` tools plus `agent.runGoal`), a machine-readable
+`browser.audit` / `audit --json`, `wait_for_selector` states, live-value `extract_data`, iframe/shadow
+labels in snapshots, download/upload allow-list env vars, and CLI native-dialog handling. Several of
+these did not pass every independent audit and ship with documented limitations: CLI dialogs (a
+crashed tab needs `sutradhar tabs` then `closetab <id>`; wrong-popup closes are possible), downloads
+(one `download_file` per browser at a time; cross-process protection is best effort), `audit` (it can
+miss the first navigation's error status on a brand-new tab), and `wait_for_selector --state hidden`
+(best effort). The full list is in [docs/22-changelog.md](./docs/22-changelog.md) under "0.5.0
+(Unreleased)" and in [AGENT_SETUP.md](./AGENT_SETUP.md)'s "Known limitations". Sutradhar does no
+stealth or bot-detection evasion; Cloudflare, CAPTCHA and IP blocks stop it like any other automation tool.
+
 ---
 
 ## 🌟 Key Capabilities
 
-- **Universal Browser Control**: Native integration with Puppeteer, Chrome DevTools Protocol (CDP), and cloud browser providers.
-- **Dynamic LLM Orchestration**: Unified gateway supporting OpenRouter (200+ cloud models), Ollama (local LLMs), OpenAI, and Anthropic with automatic failover and capability matching.
-- **Multi-Tier Memory Engine**: Working memory context buffer, episodic action traces, procedural skill scripts, and semantic fact knowledge base.
-- **Deterministic Workflows & Tools**: Extensible tool execution system (Browser, Shell, Filesystem, HTTP) guarded by strict security policies and visual DAG workflow graphs.
+- **Real Browser Control**: Puppeteer and the Chrome DevTools Protocol (CDP) driving a local Chrome or Edge (or one you `attach` to over CDP). There is no built-in cloud-browser execution.
+- **LLM Gateway (for `agent.runGoal` and the reference app only)**: OpenRouter, Ollama and any other OpenAI-compatible `/v1/chat/completions` endpoint, with a fallback-provider wrapper. There are no dedicated OpenAI or Anthropic adapters, and the `browser.*` tools need no LLM at all.
+- **Multi-Tier Memory Engine**: Working, episodic, procedural and semantic memory stores exist and compile, but the agent loop does not consult them yet (see `.ai/known-problems.md`).
+- **Workflows**: a DAG workflow runner exists (builds and tests pass) but is scaffolding, not a shipped feature.
 - **Real-Time Web Inspector**: Vite + React dashboard providing live page canvas view, DOM accessibility tree inspection, agent reasoning trace visualization, and real-time WebSocket event streams.
 
 ---
@@ -61,7 +75,7 @@ packages/
 ├── observability/             # Structured logger (+ studio/devtools scaffolding)
 ├── events/                    # Typed EventBus (in-process; EventStore hooks)
 ├── capability/                # Capability matrix declarations
-├── browser/                   # REAL browser automation: Puppeteer launcher, 19-action
+├── browser/                   # REAL browser automation: Puppeteer launcher, 18-action
 │                              #   engine, DOM semantic engine (data-sd-node-id grounding),
 │                              #   snapshot generator, verifier, skills
 ├── capability-runtime/        # SutradharRuntime facade — the single high-level entry point

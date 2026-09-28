@@ -1,0 +1,43 @@
+## defaultDownloadRoot
+packages/browser/src/actions/path-containment.ts:26:export function defaultDownloadRoot(): string {
+packages/browser/src/actions/path-containment.ts-27-  return path.join(os.tmpdir(), DEFAULT_DOWNLOAD_ROOT_DIRNAME);
+packages/browser/src/actions/path-containment.ts-28-}
+packages/browser/src/actions/path-containment.ts-29-
+packages/browser/src/actions/path-containment.ts-30-/**
+packages/browser/src/actions/path-containment.ts-31- * ASCII-only case fold: lower-cases `A`-`Z` (0x41-0x5A) only, leaving every other code point —
+packages/browser/src/actions/path-containment.ts-32- * including non-ASCII letters — untouched.
+## cmdWait output
+863:        ? `${ref} is ${state === 'hidden' ? 'hidden or absent' : state} (state=${state})`
+## baseline usage error
+21:  /** Parsed from `--baseline <url>` — undefined when the flag isn't given. Used by `audit` to
+22:   *  also run a visual compare against a known-good baseline URL in the same command. */
+23:  baselineFlag: string | undefined;
+24:  /** FR2-12/T22: true when `--baseline` was given but its next argument is missing or itself
+25:   *  looks like a flag (e.g. `audit <url> --baseline` with nothing after it, or `audit <url>
+26:   *  --baseline --json`, which would otherwise silently consume `--json` as the baseline URL).
+27:   *  `baselineFlag` is `undefined` whenever this is true — the caller rejects it with a clear
+29:  baselineFlagGivenButInvalid: boolean;
+93:   *  isn't a consumed value of one, e.g. the URL after `--baseline`). Found live (external field
+126:  const baselineFlagIndex = args.indexOf('--baseline');
+## outDir mkdir
+packages/capability-runtime/src/audit/audit-report.ts:21:import { mkdir, stat, writeFile } from 'node:fs/promises';
+packages/capability-runtime/src/audit/audit-report.ts:181:/** `mkdir -p outDir`; returns its absolute path. D2.7: called BEFORE any browser session work
+packages/capability-runtime/src/audit/audit-report.ts:184: *  exists as a non-directory (e.g. a plain file), or the underlying `mkdir` fails for any other
+packages/capability-runtime/src/audit/audit-report.ts:194:    await mkdir(abs, { recursive: true });
+## path-containment win32 trailing
+130: * trailing `.` or trailing ` ` (space) at the end of a component. Node's `fs.realpath`/`fs.lstat`
+136: * strips the trailing dot/space and resolves straight through `jn` — a junction that can point
+140: * essentially never have a trailing dot/space in their name (the OS strips it on creation for
+149: * win32 only: POSIX filesystems perform no such normalization, so a literal trailing dot/space
+162:    // non-dot-segment component with a trailing dot/space — exactly what Windows strips.
+92:  caseSensitive?: boolean,
+95:  const effectiveCaseSensitive = caseSensitive === undefined ? platform !== 'win32' : caseSensitive;
+182: * 1. `fsutil file queryCaseSensitiveInfo <dir>` — the documented Windows 10+ API for a
+184: *    admin rights (`fsutil file setCaseSensitiveInfo <dir> enable`) and the mechanism WSL uses
+186: *    can fail (fsutil missing from PATH, spawn blocked, non-Windows, unexpected output).
+## frame scrape bound
+129:const FRAME_SCRAPE_TIMEOUT_MS = 5000;
+407:          const frameNodes = isMain ? await scrape : await raceFrameTimeout(scrape, FRAME_SCRAPE_TIMEOUT_MS);
+428:            skipped.push(skippedOf(frame, 'timeout', String(FRAME_SCRAPE_TIMEOUT_MS)));
+## extract password
+## self heal GAP-006/017

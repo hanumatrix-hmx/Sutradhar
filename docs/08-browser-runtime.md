@@ -14,6 +14,8 @@ Related Packages:
 
 # Browser Runtime & Lifecycle Architecture
 
+> **Status note (2026-09-29):** this is the original design target. In the shipped code the per-tab memory limit (500 MB) described below is not enforced, and the idle-session reaper is off by default in the runtime (the MCP server turns it on with a 30-minute default, `SUTRADHAR_IDLE_TIMEOUT_MS`). For current behavior see [ARCHITECTURE.md](./ARCHITECTURE.md), `packages/browser/README.md` and `packages/capability-runtime`.
+
 ## 1. Overview
 
 The Browser Runtime manages browser instances, context isolation, tab navigation, DOM snapshot extraction, and element interaction lifecycles.

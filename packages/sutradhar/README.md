@@ -109,6 +109,7 @@ Use that `[#id]` as the selector for `page.click('4')` or `page.type('4', '...')
 | `allowedDomains` | `readonly string[]` | — | Restrict navigation (`page.goto`, the initial `url`, `browser.compare`, `newPage`'s `url`) to these domains (and their subdomains) — anything else throws. Useful for handing an agent a logged-in internal session safely; does **not** intercept page-initiated navigation from a clicked link (client-side, not routed through this check). |
 | `allowedDownloadRoots` | `readonly string[]` | `[<OS temp>/sutradhar-downloads]` | Directories `page.download()` may write into. Replaces the default; the first entry becomes the destination when `downloadDir` is omitted. The SDK does **not** read `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` or any other `SUTRADHAR_ALLOWED_*` env var — pass this option explicitly. |
 | `allowedUploadRoots` | `readonly string[]` | — (unrestricted) | If set, `page.uploadFile()` may only read files under these directories. |
+| `viewport` | `{width, height}` | — | Initial CDP viewport for the first tab. |
 
 Throws if no real browser is available. Set `CHROME_PATH` to point at a Chrome/Edge executable
 if auto-detection fails.
@@ -118,7 +119,8 @@ if auto-detection fails.
 | Method | Returns | Description |
 |---|---|---|
 | `newPage(url?)` | `Promise<Page>` | Open a new tab. |
-| `pages()` | `Page[]` | All tabs, as `Page` handles. |
+| `pages()` | `Promise<Page[]>` | All tabs, as `Page` handles (async: titles are read live). |
+| `getWsEndpoint()` | `string | undefined` | The session's CDP WebSocket endpoint, so a separate process can attach to the same browser. |
 | `close()` | `Promise<void>` | Close every tab and release the browser. |
 | `sessionId` | `string` | The underlying Sutradhar session id. |
 
@@ -128,20 +130,48 @@ if auto-detection fails.
 |---|---|
 | `goto(url)` | Navigate this tab to a URL. |
 | `snapshot()` | Interactive-element listing (`[#id]` stamped) + page text. |
-| `click(selector)` | Click by CSS selector **or** `[#id]` from a snapshot. |
+| `click(selector, options?)` | Click by CSS selector **or** `[#id]` from a snapshot. `options.settle` waits for the page to stop changing before returning. A Playwright-style selector (`text=...`) throws `InvalidSelectorError`. |
 | `type(selector, text)` | Type into an input (selector or `[#id]`). |
 | `press(key)` | Press a keyboard key (`"Enter"`, `"Escape"`, …). |
 | `waitForSelector(selector, options?)` | Wait for `selector` to reach `options.state` — `"visible"` (default), `"attached"` (just in the DOM), or `"hidden"` (removed or not visible). "Visible" is a non-empty box AND visibility not hidden/collapse, checked on the FIRST match — `opacity:0`/off-screen still count as visible; zero-size/`display:none`/`visibility:hidden` count as hidden. `"hidden"` succeeds immediately if nothing matches. `options.timeout` is per attempt; retries can extend the real total wait. `options.timeout <= 0` checks the current state once, immediately, with no waiting or retrying. Waiting states poll roughly every 100ms, so a state that's only true for less than ~100ms (a fast visibility flicker) may be missed. Throws on timeout. |
 | `scroll(direction?, amount?)` | Scroll up/down/top/bottom. |
 | `screenshot()` | Full-page PNG as base64. |
 | `audit(options?)` | JSON audit report (errors, broken requests, a11y heuristics, Web Vitals) + `screenshotBase64` (+ files/absolute paths when `outDir` is given). Throws if the audit can't run; a failed `baselineUrl` comparison is reported in `report.baseline.error` instead. |
-| `evaluate(expression)` | Run JS in the page; return serialized result. |
+| `evaluate(expression, frameSelector?)` | Run JS in the page (or, with `frameSelector`, inside that `<iframe>`, including a cross-origin one); return the serialized result. |
+| `getStorageState()` / `setStorageState(state)` | Export / restore cookies + localStorage + sessionStorage as one blob (log in once, reuse later). |
+| `setViewport({width, height, isMobile?, deviceScaleFactor?, hasTouch?})` / `getViewport()` | Set this tab's viewport, read back the metrics in effect (`null` if never set). |
 | `download(selector, options?)` | Click `selector` (the download-triggering element) and wait for it to finish on disk. `options.downloadDir` must resolve inside an allowed root (`LaunchOptions.allowedDownloadRoots`) or this throws. Returns `{filename, path, downloadDir}`. |
 | `uploadFile(selector, filePath)` | Upload a local file into an `<input type="file">` targeted by `selector`. `filePath` is resolved to an absolute path. Unrestricted unless `LaunchOptions.allowedUploadRoots` was set, in which case it must be under one of those directories, or this throws. |
 | `cookies()` | Read cookies for this tab's URL. |
 | `bringToFront()` | Make this the active tab. |
 | `close()` | Close this tab. |
 | `tabId` | This tab's id within the session. |
+
+## Known limitations
+
+These are open on the current branch (0.5.0, not yet published):
+
+- **Downloads:** `page.download()` only writes inside `allowedDownloadRoots` (default
+  `<OS temp>/sutradhar-downloads`). Do one download per browser at a time: a second overlapping
+  `page.download()` on the same browser is refused immediately, and the cross-process protection is
+  best effort (a lock file in the process temp directory keyed by the browser endpoint, so
+  separate processes may not share it). A download the page starts by itself is not governed by the
+  roots and can land in Chrome's default download location.
+- **`page.audit()`:** auditing the current page (no `url`) of a brand-new tab immediately after its
+  first navigation can miss the page's own HTTP error status while still reporting
+  `coversWholeDocument: true`. The settle wait is a fixed 1500 ms, so a slower request can be missing;
+  a page restored from the back/forward cache reports `coversWholeDocument: false`. Only HTTP 400+
+  responses count as broken requests, and the accessibility checks are heuristics, not a WCAG audit.
+  The report's JSON Schema is in the repository, not in the npm package.
+- **`page.waitForSelector()`:** a `state: "hidden"` success is best effort (that code path produced false
+  answers in several audit rounds; the known ones are fixed). Only the first matching element is
+  checked, `opacity: 0` counts as visible, and a failed visible-wait can take about 3 x `timeout`
+  because the engine retries twice (`timeout <= 0` does not retry).
+- **Selectors:** Playwright syntax (`text=`, `role=`, `>>`, `:has-text()`, `getBy*()`) throws
+  `InvalidSelectorError` immediately; use CSS, a snapshot `[#id]`, or Puppeteer's `pierce/`,
+  `xpath/`, `aria/`, `text/` prefixes.
+- Native dialogs keep the `auto` policy in the SDK (auto-dismissed after 30 s); the CLI's dialog
+  warden and exit code 3 do not apply. No stealth or bot-detection evasion.
 
 ## Requirements
 

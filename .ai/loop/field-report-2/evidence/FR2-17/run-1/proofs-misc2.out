@@ -1,0 +1,22 @@
+$ git diff --stat master..HEAD -- packages/browser/src/stealth packages/browser/src/index.ts
+ packages/browser/src/index.ts                   |  1 -
+ packages/browser/src/stealth/index.ts           |  8 ----
+ packages/browser/src/stealth/stealth-engine.ts  | 52 -------------------------
+ packages/browser/src/stealth/stealth-options.ts | 25 ------------
+ packages/browser/src/stealth/stealth-scripts.ts | 48 -----------------------
+ 5 files changed, 134 deletions(-)
+
+$ grep -rn SUTRADHAR_ALLOWED packages/sutradhar/src
+packages/sutradhar/src/browser.ts:55:   * `downloadDir` is omitted. The SDK does NOT read `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` (or any
+packages/sutradhar/src/browser.ts:56:   * other `SUTRADHAR_ALLOWED_*` env var) — a library silently changing its sandbox based on the
+
+$ grep -n "resolveFsRoots" -A3 packages/sutradhar/src/index.ts | head
+45:  const fsRoots = resolveFsRoots({
+46-    options: { allowedDownloadRoots: options.allowedDownloadRoots, allowedUploadRoots: options.allowedUploadRoots },
+47-  });
+
+$ grep -rli anthropic packages/llm/src
+(none)
+
+$ ls packages | grep -E "policy|tools"
+(none)

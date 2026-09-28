@@ -18,6 +18,8 @@ Related Packages:
 
 # Security Architecture & Threat Model
 
+> **Status note (2026-09-29):** this document is the original design target from the planning phase. The `@sutradhar/policy` and `@sutradhar/tools` packages it names do not exist in this repository, and the child-process sandbox, domain allow/deny-list and secret-redaction described below are not implemented as written. What is actually enforced today (download/upload allow-lists, navigation restrictions, no authentication layer, no stealth, no multi-tenant isolation) is in [SECURITY.md](../SECURITY.md); treat that file as authoritative.
+
 ## 1. Executive Summary
 
 This document specifies the security architecture, threat model, and defense mechanisms for the Sutradhar AI Browser Runtime Platform.

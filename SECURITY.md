@@ -36,9 +36,35 @@ public internet. This document lists what's enforced by default today and what's
   `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` env var, if the calling LLM might act on untrusted page
   content (prompt injection) telling it to upload something sensitive — setting this env var is
   what turns the restriction on.
+- **Known limitations of the download sandbox (status: partial, on the unreleased 0.5.0 branch).**
+  Path containment is verified: symlinks and junctions (including a not-yet-created target reached
+  through one), trailing-dot/space path components and Unicode look-alike folding on Windows, and
+  case-sensitive Windows folders are handled fail-closed. What is *not* fully verified is protection
+  against overlapping downloads. `Browser.setDownloadBehavior` is a browser-wide setting, so two
+  overlapping downloads on one browser could write into each other's directory, or outside every
+  allowed root. A second `download_file` on a browser that already has one in flight is refused
+  immediately, but that lock is best effort across processes: it is a file in the process temp
+  directory keyed by the exact browser endpoint string, so separate processes (two MCP servers, or
+  the CLI, where every command is its own process) may not share it. Recommendation: drive downloads
+  for a given browser from a single process, one at a time. Downloads a page starts on its own (not
+  through `download_file`) are not governed by the allowed roots and can land in Chrome's default
+  download location. Two minor open items: a stale case-sensitivity cache entry can be wrong in the
+  unsafe direction when a directory is switched to case-sensitive while empty (narrow), and a foreign
+  download that begins before this call's own can still be attributed to it (mitigated by the lock).
 - The SDK (`sutradhar` npm package) does NOT read either `SUTRADHAR_ALLOWED_*` env var — pass
   `allowedDownloadRoots`/`allowedUploadRoots` to `launch()` explicitly. A library silently
   changing its sandbox based on the host application's ambient environment would be surprising.
+
+## CLI dialog helper process
+
+The `sutradhar` CLI starts one small detached helper process per session (the "dialog warden") so a
+native dialog left open by one command can be handled by the next. It listens only on `127.0.0.1`
+(random port) and requires a random 32-byte bearer token; the port and token are stored in a
+`warden.json` file next to the session's `state.json` (under `~/.sutradhar-cli/` by default), so
+anyone who can read that directory can drive the session's dialogs, exactly as they could already read
+the browser's CDP endpoint from `state.json`. It is not started by the MCP server or the SDK. Known
+limitations of the dialog handling (wrong-popup closes after an opener closes, hangs after a tab crash
+until `sutradhar tabs` then `closetab <id>`) are listed in `packages/cli/README.md`.
 
 ## Navigation
 

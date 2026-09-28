@@ -1,0 +1,4 @@
+defaultDownloadRoot() = E:\AI-Cache\tmp\sutradhar-downloads | os.tmpdir() = E:\AI-Cache\tmp
+unset env  => download ["E:\\AI-Cache\\tmp\\sutradhar-downloads"] upload undefined
+env set    => download ["E:\\AI-Cache\\tmp"] upload ["C:\\Users\\Varad M"]
+relative entry => throws: SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS: entry "relative/dir" must be an absolute path (entries are separated by ";")

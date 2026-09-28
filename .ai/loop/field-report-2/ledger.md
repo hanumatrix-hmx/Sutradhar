@@ -20,7 +20,7 @@ Statuses: `TODO -> SPEC -> DEV -> VERIFY -> AUDIT -> FIX(n) -> DONE | BLOCKED | 
 | FR2-14 | `.sutradhar.json` project config | 3 | SPEC (waits for FR2-05 DONE; FR2-04 code dependency accepted despite BLOCKED status -- decided 2026-09-27, see decisions.md) | 0 | evidence/FR2-14/spec.md | - |
 | FR2-15 | Playwright migration guide | 4 | BLOCKED-BY-DEPENDENCY (hard dep FR2-01 DONE, which is now itself BLOCKED) | 0 | evidence/FR2-15/spec.md | - |
 | FR2-16 | Stealth boundary honesty | 4 | **BLOCKED** [5 audits, 4 fix cycles, 2 Orchestrator-supervised escalation cycles exhausted per loop's own retry bound -- audit-5 found the allow-list redesign itself is bypassable 102/118 times via untriggered vocabulary and gameable narrative exemptions] | 9 | See decisions.md 'FR2-16 BLOCKED' entry for the full diagnosis. GAP-138..143 logged, unresolved. The dead-code removal (StealthEngine/enableStealth) and the honest core boundary sentences that DO exist are real and correct -- only the enforcement mechanism (a CI check meant to guarantee no regression) is what's BLOCKED. | fd152e7 (last landed audit-logging commit; the fix-5 code changes themselves were never committed)
-| FR2-17 | Docs sweep | 4 | TODO | 0 | - | - |
+| FR2-17 | Docs sweep | 4 | **DONE** -- 11 docs updated to match the branch, 63 claims each backed by a proof command (evidence/FR2-17/run-1/claims.md); known limitations documented for FR2-01/04/05/12/16 | 1 | evidence/FR2-17/run-1/ | pending |
 | GAP-256-fix | FR2-04 scoped follow-up: crashed tab must not lock the session | - | **DONE** (audit-1 PASS; 5 minor follow-ups GAP-308..312) | 1 | evidence/GAP-256-fix/run-1/ + audit-1/ | 8d43b8f |
 
 ## Baseline
