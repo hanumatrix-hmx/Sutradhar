@@ -3348,3 +3348,86 @@ setDownloadBehavior reset can land mid-way through a second concurrent download 
 browser).
 
 Sent to independent audit-1 (maker != checker).
+
+## 2026-09-28 -- FR2-05 audit-1: FAILED (1 CRITICAL, confirmed real; 2 major, 3 minor). Cycle 1 of 4 standard.
+
+audit-1 found a real containment escape in a from-scratch filesystem security boundary. Given the
+severity of the initial claim (unconfirmed whether it reached the real product), the Orchestrator
+dispatched a SEPARATE, narrowly-scoped follow-up specifically to settle that one question with a
+live test before logging this as final -- that follow-up drove the ACTUAL sutradhar CLI (nav +
+download commands) against a real fixture server and real headless Chrome, 3/3 trials, and confirmed
+the escape is real end-to-end: the downloaded file physically lands OUTSIDE the allowed root, at a
+junction's real target, verified by SHA-256 match against the server's own independently recorded
+ground truth (not just filename/size, ruling out a coincidental match). This is not a theoretical or
+OS-API-only finding -- it reproduces through the real download_file action a user or MCP/SDK caller
+would actually invoke.
+
+**GAP-294 (CRITICAL): a Windows junction named with a trailing dot or space (e.g. 'jn.')
+inside an allowed root, itself pointing OUTSIDE that root, bypasses the containment check entirely.**
+Root cause: canonicalizePath's containment check uses Node's fs.realpath/fs.lstat, which look up a
+path component like 'jn.' LITERALLY (Node does not replicate Windows' own path-normalization, which
+silently strips a trailing dot/space from a path component) -- so the check sees a nonexistent path
+and treats it as "safe, not yet created", approving the whole path as contained. But Chrome's actual
+Windows download-directory-creation API DOES strip the trailing dot/space (confirmed identical to
+plain Win32 CreateDirectoryW/Python os.makedirs behavior), silently walking through the real junction
+and writing the file at its actual, unsandboxed target. The allowed root's own directory listing
+never shows a 'jn.' entry -- nothing is ever created there; Chrome writes straight through.
+
+The rest of the containment boundary held up well under a wide attack: symlinks, junctions, 3-hop
+symlink/junction chains, relative symlink targets that climb out, dangling symlinks/junctions
+(correctly rejected, including at the end of a chain), symlink loops (ELOOP, correctly rejected),
+'../' traversal, UNC/\\.\\/\\?\\ path spellings, an alternate-data-stream trick on a junction,
+forward slashes, doubled separators and drive-relative paths -- all correctly rejected. 5 of 7
+mutations were killed by existing tests (a naive startsWith check, the dangling-link check disabled,
+falling back to the literal path on error, dropping the other-drive check, dropping the '..' check).
+
+Two more real findings, one confirmed and one reassessed as more severe than originally disclosed:
+
+**GAP-295 (major): a Unicode case-folding bypass** -- certain visually-distinct Unicode
+characters (e.g. the Kelvin sign U+212A, the Angstrom sign) fold to ordinary ASCII letters under the
+containment check's case-insensitive comparison, but NTFS treats them as genuinely different
+directory names, so a look-alike path can point to a separate, real directory outside the root.
+Confirmed at the OS level; narrower in real-world reach than the trailing-dot bug since it requires
+the operator's chosen root path to contain one of the affected characters.
+
+**GAP-296 (major, reassessed up from the item's own "cosmetic" self-disclosure of
+GAP-020/022): the download-behavior finally-block reset is a REGRESSION, not a cosmetic issue.**
+Before this item, Browser.setDownloadBehavior was never reset, so a straggler download (a retry of a
+rejected download, or a genuinely concurrent second download) that completes after the main flow's
+cleanup would have stayed inside the sandboxed location. This item's finally-block reset to 'default'
+means such a straggler now lands at Chrome's PLATFORM DEFAULT download location -- outside the
+configured allowed roots entirely. This is a real containment bypass this item's own change
+introduces, confirmed by code-reading; not yet independently live-verified end-to-end the way the
+trailing-dot bug was, but the mechanism is clear and the severity assessment (major, not cosmetic)
+stands on the code alone.
+
+Minor: GAP-297 (spec's own required negative-case suite N1-N11 entirely absent from the
+live-verify script, plus a missing required evidence file), GAP-298 (no test uses a root
+that is itself a symlink/short-name, confirmed unguarded by mutation), GAP-299 (a
+live-verify cleanup gap, process hygiene not security).
+
+Decisions for fix-1:
+1. GAP-294 (CRITICAL, fix first): the containment check must reject, or correctly resolve,
+   any path component that Windows would normalize away (a trailing dot or trailing space). The
+   safest fix: after Node's own resolution, compare the RESOLVED path's actual on-disk representation
+   (e.g. re-derive it via a Windows API that performs the same normalization Chrome uses, or simply
+   REJECT any path component ending in '.' or ' ' outright before any existence check -- Windows
+   filesystems essentially never have real files/folders named with a trailing dot/space, since the
+   OS itself strips them on creation, so rejecting them outright has near-zero legitimate-use cost).
+   Add a live case reproducing the EXACT confirmed escape (a junction 'jn.' inside an allowed root
+   pointing outside it, then a real download attempt through it) -- this exact live-Chrome
+   confirmation script already exists at evidence/FR2-05/audit-1/live-chrome-trailing-dot-confirmation/
+   live-trailing-dot.mjs and can be reused/adapted directly as a permanent regression test.
+2. GAP-295: fold Unicode characters ASCII-only (or use NFC-normalized, on-disk-case-matched
+   comparison only for the portion of the path that actually exists on disk, never for user-supplied
+   components), so case-insensitivity doesn't accidentally treat two genuinely different Unicode
+   characters as equal.
+3. GAP-296: reset Browser.setDownloadBehavior to 'deny' (fail closed) rather than 'default'
+   (fail open to the platform's own default location) in the finally block, or otherwise ensure no
+   download can ever land outside a configured root after the main flow completes. Add a live case
+   with a genuinely concurrent second download that completes after the first's cleanup.
+4. GAP-297/298: add the spec's own required N1-N11 live cases and the N7 baseline
+   evidence file; add a test with a root that is itself a symlink.
+Given the severity of the confirmed CRITICAL finding, fix-1 must re-run the FULL containment attack
+surface from audit-1 (not just the newly-found bugs) before reporting done, including re-running the
+live trailing-dot confirmation script itself to prove 0/N escapes after the fix.

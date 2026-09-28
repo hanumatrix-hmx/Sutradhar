@@ -1,0 +1,9 @@
+orig sha256 013e4bebba9176d2ac8c2862b39d51142b78310d5c66face6e562d00eeb8f226
+M1 naive startsWith (no separator boundary): KILLED | Tests  3 failed | 177 passed (180)
+M2 no win32 case-fold: SURVIVED | Tests  180 passed (180)
+M3 dangling-link check disabled: KILLED | Tests  1 failed | 179 passed (180)
+M4 fall back to literal on any error (old B2 bug): KILLED | Tests  4 failed | 176 passed (180)
+M5 drop isAbsolute(rel) check (other drive / device path): KILLED | Tests  1 failed | 179 passed (180)
+M6 drop dotdot check: KILLED | Tests  10 failed | 170 passed (180)
+M7 skip root canonicalization (compare literal root): SURVIVED | Tests  180 passed (180)
+restored sha256 013e4bebba9176d2ac8c2862b39d51142b78310d5c66face6e562d00eeb8f226 match=true
