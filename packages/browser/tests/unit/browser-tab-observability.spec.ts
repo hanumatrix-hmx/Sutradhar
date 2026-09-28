@@ -575,16 +575,31 @@ function fakeCdpSession() {
       listeners.set(event, arr);
     }),
     detach: vi.fn(async () => undefined),
-    fireMainFrameNavigated(frameId = 'main'): void {
-      for (const cb of listeners.get('Page.frameNavigated') ?? []) cb({ frame: { id: frameId } });
+    /** `loaderId`/`navType` are optional so every pre-escalation-2 call site (which never passed
+     *  either) keeps behaving exactly as before: `loaderId` stays `undefined` throughout, so the
+     *  GAP-284 loaderId-mismatch check (`undefined !== undefined` is always false) never fires a
+     *  clear, matching this fixture's original "commit tracking with no loaderId concept" shape. */
+    fireMainFrameNavigated(frameId = 'main', loaderId?: string, navType?: string): void {
+      for (const cb of listeners.get('Page.frameNavigated') ?? []) {
+        cb({ frame: { id: frameId, loaderId }, type: navType });
+      }
     },
     fireSubFrameNavigated(): void {
       for (const cb of listeners.get('Page.frameNavigated') ?? []) cb({ frame: { id: 'child', parentId: 'main' } });
     },
-    fireDocumentResponse(frameId: string, respUrl: string, status: number): void {
+    fireDocumentResponse(frameId: string, respUrl: string, status: number, loaderId?: string): void {
       for (const cb of listeners.get('Network.responseReceived') ?? []) {
-        cb({ frameId, type: 'Document', response: { url: respUrl, status } });
+        cb({ frameId, type: 'Document', response: { url: respUrl, status }, loaderId });
       }
+    },
+    /** GAP-286 (N4 kill): fires a non-Document response so a test can confirm it's never captured. */
+    fireNonDocumentResponse(frameId: string, respUrl: string, status: number, loaderId?: string): void {
+      for (const cb of listeners.get('Network.responseReceived') ?? []) {
+        cb({ frameId, type: 'Image', response: { url: respUrl, status }, loaderId });
+      }
+    },
+    listenerCount(event: string): number {
+      return (listeners.get(event) ?? []).length;
     },
   };
   return session;
@@ -735,4 +750,174 @@ describe('@sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-
 
     expect(tab.getLastGotoResponse()).toBeNull();
   });
+});
+
+describe('@sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286)', () => {
+  it('CT10 (GAP-284 kill): a commit to a DIFFERENT loaderId with no response of its own clears the stale capture immediately, without waiting for a response that never arrives', async () => {
+    const cdp = fakeCdpSession();
+    const { page } = mockPage({ createCDPSession: vi.fn(async () => cdp) });
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    // Page A commits and gets its own 404.
+    cdp.fireMainFrameNavigated('main', 'loaderA');
+    cdp.fireDocumentResponse('main', 'https://example.com/a', 404, 'loaderA');
+    expect(tab.getLastMainDocumentResponse()).toMatchObject({ url: 'https://example.com/a', status: 404 });
+
+    // Navigate to about:blank (or a dead host's synthetic error page) -- a real commit with a
+    // NEW loaderId, but no Document response ever arrives for it. The stale 404 must be gone
+    // the instant the commit fires, not still sitting there because nothing overwrote it.
+    cdp.fireMainFrameNavigated('main', 'loaderB');
+    expect(tab.getLastMainDocumentResponse()).toBeNull();
+  });
+
+  it('CT11 (GAP-284): a commit that DOES get a matching Document response for its own loaderId keeps reporting it normally (no false clear survives)', async () => {
+    const cdp = fakeCdpSession();
+    const { page } = mockPage({ createCDPSession: vi.fn(async () => cdp) });
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    cdp.fireMainFrameNavigated('main', 'loaderA');
+    cdp.fireDocumentResponse('main', 'https://example.com/a', 200, 'loaderA');
+
+    cdp.fireMainFrameNavigated('main', 'loaderB');
+    expect(tab.getLastMainDocumentResponse()).toBeNull(); // cleared immediately on commit
+
+    // The new page's own response arrives afterward (this is the common ordering: Network
+    // events for a document typically precede its Page.frameNavigated, but this asserts the
+    // reverse order too, since CDP doesn't guarantee it).
+    cdp.fireDocumentResponse('main', 'https://example.com/b', 500, 'loaderB');
+    expect(tab.getLastMainDocumentResponse()).toMatchObject({ url: 'https://example.com/b', status: 500 });
+  });
+
+  it('CT12 (GAP-284 residual check: redirect chain): a response for the SAME loaderId as the commit that follows it is never wrongly cleared -- an intermediate hop\'s response and the final commit share one loaderId', async () => {
+    const cdp = fakeCdpSession();
+    const { page } = mockPage({ createCDPSession: vi.fn(async () => cdp) });
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    // Establish the main frame id first (mirrors the real session's `Page.getFrameTree` bootstrap
+    // -- `Network.responseReceived` is only accepted once `lastMainFrameIdForCommitTracking` is
+    // known, same as production).
+    cdp.fireMainFrameNavigated('main', 'loaderInitial');
+
+    // The redirect's intermediate 30x hop and the final document share the navigation's ONE
+    // loaderId (CDP scopes loaderId to the navigation attempt, not the individual HTTP hop) --
+    // so the response can legitimately arrive before OR after the frame's single frameNavigated
+    // commit for that loaderId without ever seeing a loaderId change in between.
+    cdp.fireDocumentResponse('main', 'https://example.com/redirect-hop', 302, 'loaderRedirect');
+    cdp.fireMainFrameNavigated('main', 'loaderRedirect');
+    expect(tab.getLastMainDocumentResponse()).toMatchObject({ url: 'https://example.com/redirect-hop', status: 302 });
+
+    cdp.fireDocumentResponse('main', 'https://example.com/final', 200, 'loaderRedirect');
+    expect(tab.getLastMainDocumentResponse()).toMatchObject({ url: 'https://example.com/final', status: 200 });
+  });
+
+  it('CT13 (GAP-286, N4 kill): a non-Document response is never captured as the main document response', async () => {
+    const cdp = fakeCdpSession();
+    const { page } = mockPage({ createCDPSession: vi.fn(async () => cdp) });
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    cdp.fireMainFrameNavigated('main', 'loaderA');
+    cdp.fireNonDocumentResponse('main', 'https://example.com/img.png', 404, 'loaderA');
+
+    expect(tab.getLastMainDocumentResponse()).toBeNull();
+  });
+
+  it('CT14 (GAP-286, N11 kill): no listener is ever registered for a same-document-navigation CDP event -- a hash/pushState/replaceState change must never move the tracked commit time or clear the response capture', async () => {
+    const cdp = fakeCdpSession();
+    const { page } = mockPage({ createCDPSession: vi.fn(async () => cdp) });
+    new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    // CDP reports a same-document navigation (hash change / history.pushState / replaceState)
+    // via `Page.navigatedWithinDocument`, never `Page.frameNavigated`. If a future change
+    // subscribed to it and treated it like a real commit, GAP-266's already-fixed bug would
+    // recur at this tab-tracking layer: a same-document nav would wrongly move `since` forward
+    // and drop the new document's own early console errors / broken requests, or wrongly clear
+    // a still-valid own-status capture. Asserting the listener was never registered kills that
+    // mutation directly, independent of any particular event shape a mutant might choose.
+    expect(cdp.listenerCount('Page.navigatedWithinDocument')).toBe(0);
+  });
+
+  it('CT15 (GAP-285): a BackForwardCacheRestore commit moves lastMainFrameCommitAt to the restore instant, same as any other commit -- and sets wasLastMainFrameCommitBfcacheRestore so the caller can report reduced coverage honestly instead of rescoping (see that method\'s doc comment for why: an earlier rescoping design reopened GAP-284\'s contamination window through the general ring-buffer scope, confirmed live in escalation-2 -- `home->click404->go_back`, 12/12 stale before this was corrected)', async () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date('2026-09-01T00:00:00.000Z'));
+      const cdp = fakeCdpSession();
+      const { page } = mockPage({ createCDPSession: vi.fn(async () => cdp) });
+      const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+      await vi.advanceTimersByTimeAsync(0);
+
+      // Page A commits (real navigation) at t=0.
+      cdp.fireMainFrameNavigated('main', 'loaderA');
+      expect(tab.getLastMainFrameCommitAt()).toBe('2026-09-01T00:00:00.000Z');
+      expect(tab.wasLastMainFrameCommitBfcacheRestore()).toBe(false);
+
+      // Navigate away to page B at t=5s (real navigation, different loaderId).
+      vi.setSystemTime(new Date('2026-09-01T00:00:05.000Z'));
+      cdp.fireMainFrameNavigated('main', 'loaderB');
+      expect(tab.getLastMainFrameCommitAt()).toBe('2026-09-01T00:00:05.000Z');
+      expect(tab.wasLastMainFrameCommitBfcacheRestore()).toBe(false);
+
+      // go_back restores A from bfcache at t=8s -- CDP reuses loaderA (same document reactivated,
+      // not a fresh navigation) and reports it via the 'BackForwardCacheRestore' navigation type.
+      vi.setSystemTime(new Date('2026-09-01T00:00:08.000Z'));
+      cdp.fireMainFrameNavigated('main', 'loaderA', 'BackForwardCacheRestore');
+
+      expect(tab.getLastMainFrameCommitAt()).toBe('2026-09-01T00:00:08.000Z');
+      expect(tab.wasLastMainFrameCommitBfcacheRestore()).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('CT16 (GAP-285): wasLastMainFrameCommitBfcacheRestore reverts to false once a REAL (non-restore) commit follows a restore', async () => {
+    const cdp = fakeCdpSession();
+    const { page } = mockPage({ createCDPSession: vi.fn(async () => cdp) });
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    cdp.fireMainFrameNavigated('main', 'loaderA');
+    cdp.fireMainFrameNavigated('main', 'loaderB');
+    cdp.fireMainFrameNavigated('main', 'loaderA', 'BackForwardCacheRestore');
+    expect(tab.wasLastMainFrameCommitBfcacheRestore()).toBe(true);
+
+    cdp.fireMainFrameNavigated('main', 'loaderC'); // a fresh, real navigation
+    expect(tab.wasLastMainFrameCommitBfcacheRestore()).toBe(false);
+  });
+
+  it('CT17 (GAP-284/285 interaction): restoring a DIFFERENT document than the one the own-status capture belongs to still clears the stale capture', async () => {
+    const cdp = fakeCdpSession();
+    const { page } = mockPage({ createCDPSession: vi.fn(async () => cdp) });
+    const tab = new BrowserTab(createTabId('tab_1'), 'https://example.com', 'Example', true, page);
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    // bfAclean (loaderA, clean 200) -> own404 (loaderB, 404) -> go_back restores bfAclean
+    // (loaderA, BackForwardCacheRestore). own404's 404 must never leak onto bfAclean's audit.
+    cdp.fireMainFrameNavigated('main', 'loaderA');
+    cdp.fireDocumentResponse('main', 'https://example.com/bfAclean', 200, 'loaderA');
+    cdp.fireMainFrameNavigated('main', 'loaderB');
+    cdp.fireDocumentResponse('main', 'https://example.com/own404', 404, 'loaderB');
+    expect(tab.getLastMainDocumentResponse()).toMatchObject({ url: 'https://example.com/own404', status: 404 });
+
+    cdp.fireMainFrameNavigated('main', 'loaderA', 'BackForwardCacheRestore');
+    expect(tab.getLastMainDocumentResponse()).toBeNull();
+  });
+
 });

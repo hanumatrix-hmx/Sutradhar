@@ -220,6 +220,14 @@ export interface IBrowserTab {
    *  this tab's most recent `navigate()` call (url/status only), or null if `goto()` returned
    *  null (e.g. a same-document navigation). Optional for the same mock-compatibility reason. */
   getLastGotoResponse?(): { readonly url: string; readonly status: number } | null;
+  /** FR2-12 escalation-2 (GAP-285). True if the main frame's LAST commit was a bfcache restore
+   *  (CDP `Page.frameNavigated` with `type: 'BackForwardCacheRestore'`). A restored document's
+   *  own pre-restore console/page-error/network activity is not reliably scoped by `since`
+   *  (see {@link BrowserTab}'s `lastCommitWasBfcacheRestore` doc comment for why), so
+   *  `SutradharRuntime.audit` uses this to report `coversWholeDocument:false` honestly for such
+   *  an audit instead of implying complete coverage. Optional for the same mock-compatibility
+   *  reason as the other getters here. */
+  wasLastMainFrameCommitBfcacheRestore?(): boolean;
 }
 
 export class BrowserTab implements IBrowserTab {
@@ -235,6 +243,32 @@ export class BrowserTab implements IBrowserTab {
   private lastMainFrameCommitAt: string | null = null;
   private lastMainFrameIdForCommitTracking: string | null = null;
   private lastMainDocumentResponseCapture: { url: string; status: number; timestamp: string } | null = null;
+  /** FR2-12 escalation-2 (GAP-284). The `loaderId` {@link lastMainDocumentResponseCapture} was
+   *  captured for, or `null` if nothing has been captured yet (or the capture was just
+   *  invalidated). See {@link setupCommitTracking}'s `Page.frameNavigated` handler. */
+  private lastMainDocumentResponseLoaderId: string | null = null;
+  /** FR2-12 escalation-2 (GAP-285). True when the main frame's LAST commit was a
+   *  `Page.frameNavigated` whose CDP `type` was `'BackForwardCacheRestore'`. See
+   *  {@link IBrowserTab.wasLastMainFrameCommitBfcacheRestore}.
+   *
+   *  An earlier version of this fix rescoped `lastMainFrameCommitAt` BACKWARD to the restored
+   *  document's original commit instant on this event (looking it up from a small per-loaderId
+   *  history map), reasoning that the restored page's own load-time errors shouldn't fall outside
+   *  `since`. Live verification (escalation-2 probe `home->click404->go_back`, 12/12) found this
+   *  reopens exactly the contamination window GAP-284 (and every fix before it) closes: moving
+   *  `since` back to BEFORE the intervening page's own navigation also un-scopes THAT page's own
+   *  ring-buffer entries (console errors, page errors, broken requests — not just the single
+   *  `lastMainDocumentResponseCapture` value GAP-284 targets), so an intervening own-404's status
+   *  reappeared via the general `scopeToDocument` ring-buffer filter in `runtime.ts`, not via the
+   *  capture GAP-284 fixed. Correctly closing that would need a two-window scope (the document's
+   *  original [commit, navigated-away] span plus [restore, now]), which is a real, multi-day
+   *  rework of `scopeToDocument`'s single-boundary model — out of scope for this cycle. Instead,
+   *  `lastMainFrameCommitAt` is left exactly as before this fix (it moves to the restore instant,
+   *  same as any other commit), and this flag lets `SutradharRuntime.audit` report
+   *  `coversWholeDocument:false` honestly for a bfcache-restored current-page audit instead of
+   *  silently implying complete coverage while the restored document's own pre-restore activity
+   *  is not reliably scoped. See the escalation-2 evidence for the residual this leaves open. */
+  private lastCommitWasBfcacheRestore = false;
   /** FR2-12 escalation-1 (GAP-279). The `HTTPResponse` Puppeteer's own `page.goto()` call
    *  returned for this tab's most recent `navigate()`, captured directly from that call's own
    *  return value rather than any listener. See {@link IBrowserTab.getLastGotoResponse}. */
@@ -336,22 +370,57 @@ export class BrowserTab implements IBrowserTab {
       // cleared on a later failure, so a session is never leaked.
       this.commitTrackingCdpClient = client;
       client.on('Page.frameNavigated', (event) => {
-        const frame = event?.frame as { id?: string; parentId?: string } | undefined;
+        const frame = event?.frame as { id?: string; parentId?: string; loaderId?: string } | undefined;
         if (frame?.parentId) return; // ignore subframes
+        const navType = event?.type as string | undefined; // CDP: 'Navigation' | 'BackForwardCacheRestore' | 'Prerender'
+        const newLoaderId = frame?.loaderId ?? null;
+
+        // GAP-285 (escalation-2): record whether THIS commit was a bfcache restore so
+        // `SutradharRuntime.audit` can report `coversWholeDocument:false` for it (see
+        // {@link lastCommitWasBfcacheRestore}'s doc comment for why the commit instant itself is
+        // deliberately NOT rescoped backward here, unlike a first attempt at this fix).
+        this.lastCommitWasBfcacheRestore = navType === 'BackForwardCacheRestore';
         this.lastMainFrameCommitAt = new Date().toISOString();
         if (frame?.id) this.lastMainFrameIdForCommitTracking = frame.id;
+
+        // GAP-284 (escalation-2): `lastMainDocumentResponseCapture` below is only ever
+        // OVERWRITTEN by the next Document response — it was never CLEARED when a subsequent
+        // commit produced no response of its own at all (navigating to about:blank, a dead host
+        // that Chrome answers with its own synthetic error page and no real network response, or
+        // — per the branch above — a bfcache restore of a document OTHER than the one the
+        // capture belongs to). That let a previous page's own HTTP status get reported as the
+        // CURRENT page's status. Invalidate immediately on every main-frame commit whose
+        // loaderId doesn't match the loaderId the capture was recorded for — don't wait for a
+        // new response that may never arrive. A same-document navigation (hash/pushState/
+        // replaceState) never reaches this handler at all (CDP reports those via
+        // `Page.navigatedWithinDocument`, not `Page.frameNavigated`), so it can never trigger
+        // this clear — matching the GAP-266 rule this same file already relies on above.
+        if (this.lastMainDocumentResponseLoaderId !== newLoaderId) {
+          this.lastMainDocumentResponseCapture = null;
+          this.lastMainDocumentResponseLoaderId = null;
+        }
       });
       client.on('Network.responseReceived', (event) => {
         const type = event?.type as string | undefined;
         const frameId = event?.frameId as string | undefined;
+        const loaderId = (event?.loaderId as string | undefined) ?? null;
         const response = event?.response as { url?: string; status?: number } | undefined;
         if (type !== 'Document' || !response || typeof response.status !== 'number') return;
         if (!this.lastMainFrameIdForCommitTracking || frameId !== this.lastMainFrameIdForCommitTracking) return;
+        // Deliberately NOT gated on the frame's currently-tracked loaderId here: CDP doesn't
+        // guarantee `Network.responseReceived` fires AFTER `Page.frameNavigated` for the SAME
+        // navigation — in practice the response for a new document typically arrives BEFORE its
+        // frame commits, while the tracked commit is still the PREVIOUS page's. The
+        // `Page.frameNavigated` handler above is what reconciles this — it clears the capture
+        // whenever the loaderId it just committed doesn't match `lastMainDocumentResponseLoaderId`,
+        // so a response captured for a since-superseded loaderId that a commit never confirms
+        // gets invalidated there instead of being gated out here.
         this.lastMainDocumentResponseCapture = {
           url: response.url ?? '',
           status: response.status,
           timestamp: new Date().toISOString(),
         };
+        this.lastMainDocumentResponseLoaderId = loaderId;
       });
       // Bounded the same way as runtime.ts's per-call setup (GAP-274): these commands can hang
       // indefinitely (e.g. an already-open dialog on the very page this tab was constructed
@@ -406,6 +475,11 @@ export class BrowserTab implements IBrowserTab {
   /** FR2-12 escalation-1 (GAP-278). See {@link IBrowserTab.getLastMainDocumentResponse}. */
   public getLastMainDocumentResponse(): { readonly url: string; readonly status: number; readonly timestamp: string } | null {
     return this.lastMainDocumentResponseCapture;
+  }
+
+  /** FR2-12 escalation-2 (GAP-285). See {@link IBrowserTab.wasLastMainFrameCommitBfcacheRestore}. */
+  public wasLastMainFrameCommitBfcacheRestore(): boolean {
+    return this.lastCommitWasBfcacheRestore;
   }
 
   /** FR2-12 escalation-1 (GAP-279). See {@link IBrowserTab.getLastGotoResponse}. */

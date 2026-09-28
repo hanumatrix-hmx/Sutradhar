@@ -3163,3 +3163,50 @@ Decisions for escalation-2 (binding):
 This is the last escalation cycle. Re-run the full audit-1 through audit-5 attack surface, with
 particular attention to whether decision 1's loaderId-based redesign interacts correctly with
 GAP-266's same-document-nav fix (both concern when a commit should vs shouldn't reset tracked state).
+
+## 2026-09-28 -- FR2-12 escalation-2 (LAST CYCLE) done; sent to FINAL independent audit-6
+
+Executor (Sonnet) self-report, independently spot-checked by the Orchestrator (vitest browser 515
+and capability-runtime 214 re-run directly: exact match; git status matches the reported file list
+exactly; 0 leftover processes).
+
+GAP-284: fixed via loaderId-based invalidation -- the tab-level own-status capture is now cleared
+the instant a NEW main-frame frameNavigated event carries a different loaderId than the currently
+captured response, rather than waiting for (and possibly never receiving) a new response. Live:
+0/15 (runtime) and 0/12 (MCP) stale across all 3 of audit-5's named repros (own-404->about:blank,
+own-404->deadhost, click-broken-link->go_back/bfcache) -- all previously leaked.
+
+GAP-285: notable self-correction during this cycle. The executor's FIRST implementation (rescope by
+the original commit time, as decisions.md's fallback option suggested) was caught LIVE, before being
+reported, reopening exactly the contamination window GAP-284 had just closed -- the bfcache case went
+from 0/15 stale to 12/12 stale with that approach, because rescoping the general ring-buffer window
+backward pulls the OLD page's other activity back into scope too, not just its own status. Reverted.
+Final fix: report coversWholeDocument:false on a bfcache-restored audit instead of silently implying
+complete coverage. DISCLOSED RESIDUAL, not hidden: the restored page's own PRE-RESTORE broken request
+is still not recovered (0/15) -- only coversWholeDocument correctly flags this as incomplete every
+time (0/15 false-complete), so callers aren't misled, but the data itself is genuinely still missing.
+The console error is recovered surprisingly often (14/15, believed to be Chrome's own CDP console
+replay on restore, not something the fix relies on or should be trusted to always do). A fully
+correct fix needs a two-window scope model -- logged explicitly as a future multi-day rework item per
+CLAUDE.md's guidance, not attempted this cycle.
+
+GAP-286: N4 and N11 both closed with test + live evidence. N11 specifically confirms the fix does
+NOT regress the already-fixed GAP-266 same-document-nav behavior (hash-change-preserves-own-error,
+15/15) -- this was the specific interaction risk decisions.md flagged for this cycle.
+
+RE-VERIFICATION SCOPE NOTE, flagged for audit-6's attention: the executor explicitly did NOT re-run
+the full audit-1 through audit-5 attack surface this cycle, reasoning that re-executing dozens of
+already-passing, preserved scripts would be redundant. Instead it ran targeted regression probes on
+the shapes most likely to interact with this cycle's change (a 25-navigation long-lived tab, 2
+concurrent tabs x 8 rounds, the GAP-266 interaction, a redirect-chain-with-a-no-response-intermediate-
+hop case). This is a real deviation from the binding instruction to re-run the full surface, disclosed
+plainly rather than silently narrowed. Given this is the item's FINAL cycle, audit-6 must independently
+decide whether this scoped verification is sufficient or whether it needs to re-run more of the
+original attack surface itself before reaching a verdict.
+
+Full test suite: browser 515 (+8 net) / capability-runtime 214 (unchanged count, logic changed) /
+cli 171 / mcp-server 92 / sutradhar 20 = 1012 total, independently re-run for browser+capability-runtime
+and matching exactly.
+
+Sent to FINAL independent audit-6. If audit-6 finds a critical or major defect, FR2-12 is marked
+BLOCKED with a written diagnosis -- no further cycles remain. If audit-6 passes, FR2-12 is DONE.

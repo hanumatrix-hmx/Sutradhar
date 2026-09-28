@@ -195,6 +195,16 @@ export function computeObservation(input: {
   /** `BrowserTab.observingSince`, or null if the tab implementation doesn't expose it. */
   readonly observingSince: string | null;
   readonly pageWasHidden: boolean | null;
+  /** FR2-12 escalation-2 (GAP-285). True when `current-page` mode's tab-level commit tracking
+   *  reports its LAST commit was a bfcache restore (`BrowserTab.wasLastMainFrameCommitBfcacheRestore`).
+   *  A restored document's own pre-restore console/page-error/network activity happened well
+   *  before `since` (which is the restore instant, same as any other commit -- see that method's
+   *  doc comment for why it's deliberately not rescoped backward), so it's out of this audit's
+   *  scoped window even though it's the audited document's own activity, not contamination from a
+   *  different page. This forces `coversWholeDocument:false` so the report says so honestly
+   *  instead of implying complete coverage. Always `false`/absent in `navigated` mode (a bfcache
+   *  restore can't happen from `page.goto()`, `audit({url})`'s own navigation). */
+  readonly wasBfcacheRestore?: boolean;
 }): { readonly observation: AuditObservation; readonly since: string | null } {
   const documentStartedAt =
     typeof input.timeOrigin === 'number' && Number.isFinite(input.timeOrigin)
@@ -226,7 +236,7 @@ export function computeObservation(input: {
   const since = input.navCommittedAt ?? documentStartedAt;
 
   const coversWholeDocument =
-    input.observingSince !== null && since !== null && input.observingSince <= since;
+    !input.wasBfcacheRestore && input.observingSince !== null && since !== null && input.observingSince <= since;
 
   return {
     observation: {

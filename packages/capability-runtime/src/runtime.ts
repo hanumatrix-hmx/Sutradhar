@@ -1787,12 +1787,18 @@ export class SutradharRuntime {
       ? navCommittedAt
       : (tab.getLastMainFrameCommitAt?.() ?? null);
 
+    // GAP-285 (escalation-2): only meaningful in current-page mode -- `options.url` mode always
+    // navigates via `this.navigate()`/`page.goto()` inside this very call, which can never be a
+    // bfcache restore.
+    const wasBfcacheRestore = options.url ? false : (tab.wasLastMainFrameCommitBfcacheRestore?.() ?? false);
+
     const { observation, since } = computeObservation({
       mode: options.url ? 'navigated' : 'current-page',
       navCommittedAt: effectiveNavCommittedAt,
       timeOrigin: typeof pageResult.timeOrigin === 'number' ? pageResult.timeOrigin : null,
       observingSince: tab.observingSince ?? null,
       pageWasHidden: pageResult.pageWasHidden ?? null,
+      wasBfcacheRestore,
     });
 
     const url = page.url();
