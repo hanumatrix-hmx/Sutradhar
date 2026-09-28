@@ -3314,3 +3314,37 @@ limitation (audit-6's own numbers show the defect requires a specific, uncommon 
 auditing the CURRENT page immediately after creating a brand-new tab and navigating it, rather than
 the far more common "navigate, wait, then audit" or "audit({url})" patterns, both unaffected), revert
 FR2-12 entirely, or leave it out of the PR -- this needs a decision at PR-prep time, not now.
+
+## 2026-09-28 -- FR2-05 DEVELOP run-1 done; sent to independent audit-1
+
+Executor (Sonnet) built FR2-05 (download directory / upload roots wiring) per its 537-line
+implementation spec. Orchestrator independently re-ran vitest for all 5 touched packages: browser
+532, capability-runtime 228, mcp-server 101, cli 175, sutradhar 25 -- exact match to the self-report.
+Typecheck 34/34, full turbo build clean. git status matches the reported file list exactly (32
+files), no leftover processes. Confirmed no FR2-04/FR2-12 files were touched.
+
+Summary: path-containment.ts (new, @sutradhar/browser) provides symlink-safe path containment
+checks (canonicalizePath walks to the deepest existing ancestor and rejects dangling links);
+fs-roots.ts (new, @sutradhar/capability-runtime) resolves allowed download/upload roots from env
+vars and options; the engine's download_file gains guid filtering, filePath preference, and a
+post-download containment assertion with a finally-block reset of Browser.setDownloadBehavior; CLI/
+MCP/SDK all wired (cliDownloadGrant, browser.download_file's ERROR_HINTS reworded, Page.download()/
+Page.uploadFile() on the SDK).
+
+Live verify: 25/25 pass, 0 leaked processes. Revert-and-confirm: reverting canonicalizePath's
+symlink-safe walk back to a fall-back-to-literal bug reproduces real test failures (PC4/E1/E10) and
+a live junction-escape case; reverting the constructor's empty-array default similarly fails;
+sha-verified restore both times.
+
+3 disclosed deviations, stated plainly: a Windows-vs-POSIX path assumption in one test corrected
+in-line; extra delays added to live-verify to clear an unrelated, correct FR2-01 duplicate-action
+guard (a test-harness necessity, not a product bug); a param-name fix (code vs expression) found
+while debugging the live-verify script itself.
+
+3 residual gaps disclosed, not fixed (explicitly out of this item's scope per spec): GAP-020
+(download_file's generic retry loop can retry a policy rejection or re-click a timed-out download),
+GAP-021 (inner CDP timeout and outer engine timeout both exactly 30000ms, no margin), GAP-022 (the
+setDownloadBehavior reset can land mid-way through a second concurrent download on the same
+browser).
+
+Sent to independent audit-1 (maker != checker).

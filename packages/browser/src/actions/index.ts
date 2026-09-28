@@ -5,4 +5,5 @@
 
 export * from './action-types.js';
 export * from './browser-action-engine.js';
+export * from './path-containment.js';
 export * from './selector-dialect.js';

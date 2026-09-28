@@ -82,7 +82,14 @@ const ERROR_HINTS: ReadonlyArray<readonly [pattern: string, hint: string, unless
   ['no live browser page', 'Call browser.launch (or browser.health to check availability) before acting on this session.'],
   ['no browser session', 'Call browser.launch first to create a session.'],
   ['occluded', 'Another element is covering the target — try scrolling it into view or re-snapshot the page.'],
-  ['outside the allowed download directories', 'Pass a downloadDir under an allowed root, or omit it to use the default.'],
+  [
+    'outside the allowed download directories',
+    'Pass a downloadDir under one of the listed roots, or omit it to use the first (default) root. Only the server operator can add roots (SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS).',
+  ],
+  [
+    'outside the allowed upload directories',
+    'Uploads are restricted by the server operator (SUTRADHAR_ALLOWED_UPLOAD_ROOTS); use a file under one of the listed directories.',
+  ],
 ];
 
 /** Appends a one-line remediation hint to `message` for well-known error patterns, when one
@@ -870,7 +877,10 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
       inputSchema: {
         sessionId: z.string(),
         target: z.string().describe(targetDesc),
-        filePath: z.string().describe('Absolute path to the local file to upload.'),
+        filePath: z.string().describe(
+          'Absolute path to the local file to upload. Unrestricted unless the operator set ' +
+            'SUTRADHAR_ALLOWED_UPLOAD_ROOTS, in which case it must be under one of those directories.',
+        ),
         tabId: z.string().optional(),
       },
     },
@@ -946,11 +956,17 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
     'browser.download_file',
     {
       description:
-        'Click an element that triggers a file download and wait for the download to complete on disk.',
+        'Click an element that triggers a file download and wait for it to finish on disk. Returns ' +
+        'output.downloadedPath (absolute path of the saved file). The destination must be inside an ' +
+        'allowed download root; anything else is rejected.',
       inputSchema: {
         sessionId: z.string(),
         target: z.string().describe(`The download-triggering element. ${targetDesc}`),
-        downloadDir: z.string().optional().describe('Destination directory. Defaults to the OS temp directory.'),
+        downloadDir: z.string().optional().describe(
+          'Destination directory. Must resolve (symlinks/junctions followed) inside an allowed root. ' +
+            'Defaults to the first allowed root: <OS temp>/sutradhar-downloads unless the operator set ' +
+            'SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS.',
+        ),
         tabId: z.string().optional(),
       },
     },
@@ -1575,7 +1591,10 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
       inputSchema: {
         sessionId: z.string(),
         target: z.string().describe(`The element that triggers the file picker when clicked. ${targetDesc}`),
-        filePath: z.string().describe('Absolute path to the local file to upload.'),
+        filePath: z.string().describe(
+          'Absolute path to the local file to upload. Unrestricted unless the operator set ' +
+            'SUTRADHAR_ALLOWED_UPLOAD_ROOTS, in which case it must be under one of those directories.',
+        ),
         tabId: z.string().optional(),
       },
     },

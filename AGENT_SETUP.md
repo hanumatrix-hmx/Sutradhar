@@ -115,8 +115,11 @@ canvas-rendered UI with nothing DOM-addressable), tab management (`tabs`/`newtab
 `scroll` (waits for the page to stop actively changing before returning), a `--modifiers` flag
 for `press` (hold modifier keys, e.g. Ctrl+Shift+ArrowRight to select a word),
 `--no-text`/`--ids-only`/`--scan-listeners` flags for `snap`, and an `--allowlist-domains`
-navigation guardrail. Run `sutradhar` with no arguments for the complete, current command and
-flag list straight from the binary — that's the authoritative reference, not this file.
+navigation guardrail. `download` defaults to `<OS temp>/sutradhar-downloads` (configurable via
+`SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`), and `upload` is unrestricted unless
+`SUTRADHAR_ALLOWED_UPLOAD_ROOTS` is set. Run `sutradhar` with no arguments for the complete,
+current command and flag list straight from the binary — that's the authoritative reference,
+not this file.
 
 Native dialogs (`alert`/`confirm`/`prompt`/`beforeunload`) are the one place the CLI's default
 behavior differs from the MCP server and SDK: by default a session leaves a dialog open and

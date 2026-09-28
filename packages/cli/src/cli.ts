@@ -7,7 +7,8 @@
  * same browser's CDP wsEndpoint, persisted per-project-directory under
  * ~/.sutradhar-cli/<hash-of-cwd>/state.json between calls (see state.ts).
  */
-import { SutradharRuntime, writeAuditArtifacts, prepareAuditOutDir } from '@sutradhar/capability-runtime';
+import { SutradharRuntime, writeAuditArtifacts, prepareAuditOutDir, resolveFsRoots, type ResolvedFsRoots } from '@sutradhar/capability-runtime';
+import { cliDownloadGrant, assertDownloadDirUsable } from './download-roots.js';
 import { StructuredLogger } from '@sutradhar/observability';
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -319,8 +320,23 @@ async function reportDialogs(runtime: SutradharRuntime, sessionId: string): Prom
   }
 }
 
-async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string) => Promise<T>): Promise<T> {
-  const runtime = new SutradharRuntime({ logger, allowedDomains: allowlistDomainsFlag });
+async function withSession<T>(
+  fn: (runtime: SutradharRuntime, sessionId: string) => Promise<T>,
+  opts?: { extraDownloadRoots?: readonly string[] },
+): Promise<T> {
+  let fsRoots: ResolvedFsRoots;
+  try {
+    fsRoots = resolveFsRoots({ env: process.env });
+  } catch (e) {
+    printErrorAndExit((e as Error).message);
+  }
+  for (const w of fsRoots.warnings) console.error(`Warning: ${w}`);
+  const runtime = new SutradharRuntime({
+    logger,
+    allowedDomains: allowlistDomainsFlag,
+    allowedDownloadRoots: [...fsRoots.allowedDownloadRoots, ...(opts?.extraDownloadRoots ?? [])],
+    allowedUploadRoots: fsRoots.allowedUploadRoots,
+  });
   activeRuntime = runtime;
   const verbClass = classifyVerb(verb);
 
@@ -1063,16 +1079,28 @@ async function cmdDownload(ref: string | undefined, downloadDir: string | undefi
   if (!ref) printErrorAndExit('usage: sutradhar download <ref> [downloadDir]  (ref = the element that triggers the download, a selector or a numeric id from "snap")');
   const selectorErr = validateSelectorArgs([ref]);
   if (selectorErr) printErrorAndExit(selectorErr);
-  await withSession(async (runtime, sessionId) => {
-    const result = await runtime.downloadFile(sessionId, ref!, downloadDir ? path.resolve(downloadDir) : undefined);
-    if (result.success) {
-      const output = result.output as { downloadedFilename?: string; downloadedPath?: string } | undefined;
-      console.log(`Downloaded "${output?.downloadedFilename}" to ${output?.downloadedPath}`);
-    } else {
-      console.log(`Download failed: ${result.error}`);
-      process.exitCode = 1;
+  const grant = cliDownloadGrant([], downloadDir, process.cwd());
+  const dir = grant.downloadDir;
+  if (dir) {
+    try {
+      await assertDownloadDirUsable(dir);
+    } catch (e) {
+      printErrorAndExit((e as Error).message);
     }
-  });
+  }
+  await withSession(
+    async (runtime, sessionId) => {
+      const result = await runtime.downloadFile(sessionId, ref!, dir);
+      if (result.success) {
+        const output = result.output as { downloadedFilename?: string; downloadedPath?: string } | undefined;
+        console.log(`Downloaded "${output?.downloadedFilename}" to ${path.resolve(output?.downloadedPath ?? '')}`);
+      } else {
+        console.log(`Download failed: ${result.error}`);
+        process.exitCode = 1;
+      }
+    },
+    { extraDownloadRoots: dir ? [dir] : [] },
+  );
 }
 
 /** FR2-04 §2.9: status/accept/dismiss the OLDEST open native dialog. Gate-exempt — this verb
@@ -1492,7 +1520,9 @@ Commands:
   newtab [url]                 Open a new tab, optionally navigating it immediately
   focustab <tabId>             Switch the active tab (e.g. after a link opened target=_blank)
   closetab <tabId>              Close a specific tab
-  download <ref> [dir]         Click an element that triggers a download, print the saved path
+  download <ref> [dir]         Click an element that triggers a download; print the saved file's absolute
+                                path. [dir] (relative to the current directory) is always allowed for this
+                                command; without it the file goes to the first allowed download root.
   screenshot [path]            Save a screenshot (default: ./screenshot.png)
   audit [url] [outDir] [--json]
                                 Screenshot + console/page/network errors + accessibility
@@ -1587,7 +1617,12 @@ unmasked.
 
 Session state persists across commands, scoped to this directory, in
 ~/.sutradhar-cli/<hash-of-cwd>/state.json — run "close" when done. Override with
-SUTRADHAR_CLI_STATE_DIR to share state across directories or use a custom path.`);
+SUTRADHAR_CLI_STATE_DIR to share state across directories or use a custom path.
+
+Environment:
+  SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS  Directories downloads may go to, separated by ";" on Windows or ":" elsewhere; absolute paths or ~.
+                                     Replaces the default <temp>/sutradhar-downloads; the first entry is the default destination.
+  SUTRADHAR_ALLOWED_UPLOAD_ROOTS    If set, "upload" may only read files under these directories (off by default).`);
       process.exitCode = verb ? 1 : 0;
   }
 }

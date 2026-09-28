@@ -169,6 +169,46 @@ describe('sutradhar SDK public API', () => {
     });
   });
 
+  describe('Page.download / Page.uploadFile (FR2-05)', () => {
+    it('SD1: download() forwards to runtime.downloadFile and returns the DownloadResult shape', async () => {
+      const stub = {
+        downloadFile: vi.fn().mockResolvedValue({
+          success: true,
+          actionType: 'download_file',
+          executionTimeMs: 1,
+          output: { downloadedFilename: 'a.txt', downloadedPath: '/x/a.txt', downloadDir: '/x' },
+        }),
+      };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      const result = await page.download('#dl', { downloadDir: '/x' });
+
+      expect(stub.downloadFile).toHaveBeenCalledWith('sess-1', '#dl', '/x', 'tab-1');
+      expect(result).toEqual({ filename: 'a.txt', path: '/x/a.txt', downloadDir: '/x' });
+    });
+
+    it('SD2: download() rejects with the runtime\'s error message on failure', async () => {
+      const stub = {
+        downloadFile: vi.fn().mockResolvedValue({ success: false, actionType: 'download_file', executionTimeMs: 1, error: 'E' }),
+      };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      await expect(page.download('#dl')).rejects.toThrow('E');
+    });
+
+    it('SD3: uploadFile() resolves filePath to an absolute path and forwards to runtime.uploadFile; rejects on failure', async () => {
+      const stub = { uploadFile: vi.fn().mockResolvedValue({ success: true, actionType: 'upload_file', executionTimeMs: 1 }) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      await page.uploadFile('#f', 'rel.txt');
+      expect(stub.uploadFile).toHaveBeenCalledWith('sess-1', '#f', path.resolve('rel.txt'), 'tab-1');
+
+      const failing = { uploadFile: vi.fn().mockResolvedValue({ success: false, actionType: 'upload_file', executionTimeMs: 1, error: 'E' }) };
+      const page2 = new Page(failing as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+      await expect(page2.uploadFile('#f', 'rel.txt')).rejects.toThrow('E');
+    });
+  });
+
   describe('Page.audit (FR2-12)', () => {
     function fakeResult(overrides: Partial<any> = {}): any {
       return {

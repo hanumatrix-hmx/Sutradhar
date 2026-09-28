@@ -5,14 +5,16 @@
  * and the honest-error tab-lifecycle stubs.
  */
 
-import { BrowserActionEngine, IBrowserTab } from '../../src/index.js';
+import { BrowserActionEngine, IBrowserTab, defaultDownloadRoot } from '../../src/index.js';
 // Test-only hook (FR2-01 fix-1, GAP-013) — not part of the package's public surface, so it's
 // imported directly from the source module rather than re-exported via index.ts.
 import { __TEST_ONLY_setWaitForSelectorOuterGraceMs } from '../../src/actions/browser-action-engine.js';
 import { createTabId } from '@sutradhar/contracts';
 import type { Page, Frame, ElementHandle } from 'puppeteer-core';
 import path from 'node:path';
+import os from 'node:os';
 import { fileURLToPath } from 'node:url';
+import { existsSync, rmSync, mkdtempSync, mkdirSync, symlinkSync, writeFileSync, unlinkSync } from 'node:fs';
 
 /** A real, guaranteed-to-exist file path (this spec file itself) for tests that need
  *  `assertUploadPathAllowed`'s existence check to pass so they can exercise other logic. */
@@ -1822,6 +1824,299 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
     } finally {
       process.off('unhandledRejection', onUnhandled);
     }
+  });
+
+  // FR2-05 additions: symlink/junction escape (B2), guid filtering and filePath reporting (B6),
+  // the setDownloadBehavior reset (B7), and the constructor's empty-array default (B12-adjacent).
+  describe('FR2-05: containment, reporting and cleanup', () => {
+    let tmpRoot: string;
+
+    beforeEach(() => {
+      tmpRoot = mkdtempSync(path.join(os.tmpdir(), 'fr2-05-engine-'));
+    });
+
+    afterEach(() => {
+      rmSync(tmpRoot, { recursive: true, force: true });
+    });
+
+    it('E1: rejects a downloadDir reached through a junction/symlink with a not-yet-created tail, without ever creating a CDP session', async () => {
+      const root = path.join(tmpRoot, 'root');
+      const outside = path.join(tmpRoot, 'outside');
+      mkdirSync(root, { recursive: true });
+      mkdirSync(outside, { recursive: true });
+      symlinkSync(outside, path.join(root, 'jn'), process.platform === 'win32' ? 'junction' : 'dir');
+
+      const handle = mockHandle();
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const createCDPSession = vi.fn();
+      (page as any).browser = vi.fn().mockReturnValue({ target: vi.fn().mockReturnValue({ createCDPSession }) });
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [root]);
+      const result = await engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: path.join(root, 'jn', 'newsub'),
+        maxRetries: 0,
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('outside the allowed download directories');
+      expect(createCDPSession).not.toHaveBeenCalled();
+      expect(existsSync(path.join(outside, 'newsub'))).toBe(false);
+    });
+
+    it('E2: rejects a downloadDir whose literal spelling is a prefix-lookalike of an allowed root', async () => {
+      const root = path.join(tmpRoot, 'root');
+      mkdirSync(root, { recursive: true });
+      const handle = mockHandle();
+      const page = singleFramePage(() => Promise.resolve(handle));
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [root]);
+      const result = await engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: root + '-evil',
+        maxRetries: 0,
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('outside the allowed download directories');
+    });
+
+    it('E3: rejects a downloadDir that traverses out of the allowed root via ..', async () => {
+      const root = path.join(tmpRoot, 'root');
+      mkdirSync(root, { recursive: true });
+      const handle = mockHandle();
+      const page = singleFramePage(() => Promise.resolve(handle));
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [root]);
+      const result = await engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: path.join(root, '..', 'x'),
+        maxRetries: 0,
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('outside the allowed download directories');
+    });
+
+    it("E4: prefers CDP's filePath over the suggested filename when it differs (e.g. Chrome uniquified the name)", async () => {
+      const dir = path.join(tmpRoot, 'dir');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true);
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      (page as any).browser = vi.fn().mockReturnValue({ target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+      const promise = engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+      });
+
+      await new Promise((r) => setTimeout(r, 50));
+      client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'r.pdf' });
+      client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed', filePath: path.join(dir, 'r (1).pdf') });
+
+      const result = await promise;
+      expect(result.success).toBe(true);
+      expect(result.outputData).toMatchObject({
+        downloadedPath: path.join(dir, 'r (1).pdf'),
+        downloadedFilename: 'r (1).pdf',
+      });
+    });
+
+    it('E5: ignores progress events for a different guid (a concurrent download in the same browser)', async () => {
+      const dir = path.join(tmpRoot, 'dir');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true);
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      (page as any).browser = vi.fn().mockReturnValue({ target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+      const promise = engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+      });
+
+      await new Promise((r) => setTimeout(r, 50));
+      client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'a.pdf' });
+      client.emit('Browser.downloadProgress', { guid: 'g2', state: 'completed' });
+
+      let settled = false;
+      void promise.then(() => (settled = true));
+      await new Promise((r) => setTimeout(r, 20));
+      expect(settled).toBe(false);
+
+      client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed' });
+      const result = await promise;
+      expect(result.success).toBe(true);
+      expect(result.outputData).toMatchObject({ downloadedFilename: 'a.pdf' });
+    });
+
+    it('E6: sanitizes a hostile suggestedFilename with path.basename when there is no filePath', async () => {
+      const dir = path.join(tmpRoot, 'dir');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true);
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      (page as any).browser = vi.fn().mockReturnValue({ target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+      const promise = engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+      });
+
+      await new Promise((r) => setTimeout(r, 50));
+      client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: '../../evil.txt' });
+      client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed' });
+
+      const result = await promise;
+      expect(result.success).toBe(true);
+      expect(result.outputData).toMatchObject({ downloadedPath: path.join(dir, 'evil.txt') });
+    });
+
+    it('E7: fails when CDP reports a filePath outside the download directory', async () => {
+      const dir = path.join(tmpRoot, 'dir');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true);
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      (page as any).browser = vi.fn().mockReturnValue({ target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+      const promise = engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+      });
+
+      await new Promise((r) => setTimeout(r, 50));
+      client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'x.bin' });
+      client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed', filePath: path.join(tmpRoot, 'elsewhere', 'x.bin') });
+
+      const result = await promise;
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('outside the download directory');
+    });
+
+    it('E8: resets Browser.setDownloadBehavior to default before detaching, on both success and cancellation', async () => {
+      const dir = path.join(tmpRoot, 'dir');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true);
+
+      // Success path.
+      {
+        const page = singleFramePage(() => Promise.resolve(handle));
+        const client = mockCdpClient();
+        (page as any).browser = vi.fn().mockReturnValue({ target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+        const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+        const promise = engine.executeAction(mockTab(page), {
+          actionType: 'download_file',
+          selector: '#download-link',
+          downloadDir: dir,
+          maxRetries: 0,
+        });
+        await new Promise((r) => setTimeout(r, 50));
+        client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'a.pdf' });
+        client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed' });
+        await promise;
+
+        const resetCall = client.send.mock.calls.find(
+          (c: any[]) => c[0] === 'Browser.setDownloadBehavior' && c[1]?.behavior === 'default',
+        );
+        expect(resetCall).toBeDefined();
+        const resetOrder = client.send.mock.invocationCallOrder[client.send.mock.calls.indexOf(resetCall)];
+        expect(resetOrder).toBeLessThan(client.detach.mock.invocationCallOrder[0]);
+      }
+
+      // Cancellation path.
+      {
+        const page = singleFramePage(() => Promise.resolve(handle));
+        const client = mockCdpClient();
+        (page as any).browser = vi.fn().mockReturnValue({ target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+        const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+        const promise = engine.executeAction(mockTab(page), {
+          actionType: 'download_file',
+          selector: '#download-link',
+          downloadDir: dir,
+          maxRetries: 0,
+        });
+        await new Promise((r) => setTimeout(r, 50));
+        client.emit('Browser.downloadProgress', { guid: 'g1', state: 'canceled' });
+        await promise;
+
+        const resetCall = client.send.mock.calls.find(
+          (c: any[]) => c[0] === 'Browser.setDownloadBehavior' && c[1]?.behavior === 'default',
+        );
+        expect(resetCall).toBeDefined();
+        const resetOrder = client.send.mock.invocationCallOrder[client.send.mock.calls.indexOf(resetCall)];
+        expect(resetOrder).toBeLessThan(client.detach.mock.invocationCallOrder[0]);
+      }
+    });
+
+    it('E9: upload_file rejects a filePath reached through a link that escapes the allowed upload roots', async () => {
+      const root = path.join(tmpRoot, 'root');
+      const outside = path.join(tmpRoot, 'outside');
+      mkdirSync(root, { recursive: true });
+      mkdirSync(outside, { recursive: true });
+      writeFileSync(path.join(outside, 'secret.txt'), 'shh');
+      symlinkSync(outside, path.join(root, 'jn'), process.platform === 'win32' ? 'junction' : 'dir');
+
+      const handle = mockHandle();
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, undefined, [root]);
+      const result = await engine.executeAction(mockTab(page), {
+        actionType: 'upload_file',
+        selector: '#f',
+        filePath: path.join(root, 'jn', 'secret.txt'),
+        maxRetries: 0,
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('outside the allowed upload directories');
+    });
+
+    it('E10: an explicit empty allowedDownloadRoots array behaves like the default, not a crash', async () => {
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true);
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      (page as any).browser = vi.fn().mockReturnValue({ target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, []);
+      const promise = engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        maxRetries: 0,
+      });
+
+      await new Promise((r) => setTimeout(r, 50));
+      client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'a.pdf' });
+      client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed' });
+
+      const result = await promise;
+      expect(result.success).toBe(true);
+      expect(client.send).toHaveBeenCalledWith(
+        'Browser.setDownloadBehavior',
+        expect.objectContaining({ downloadPath: defaultDownloadRoot() }),
+      );
+    });
   });
 });
 

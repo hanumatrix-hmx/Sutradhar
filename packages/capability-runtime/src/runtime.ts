@@ -21,6 +21,7 @@ import {
   formatGraphForLlm,
   selectorForNodeId,
   invalidSelectorSyntaxError,
+  findContainingRoot,
   type ActionHistoryEntry,
   type DialogPolicy,
   type DialogRecord,
@@ -30,7 +31,7 @@ import {
   type WaitForSelectorState,
 } from '@sutradhar/browser';
 import path from 'node:path';
-import { access, realpath } from 'node:fs/promises';
+import { access } from 'node:fs/promises';
 import { createSessionId, createTabId } from '@sutradhar/contracts';
 import { EventBus } from '@sutradhar/events';
 import { type StructuredLogger } from '@sutradhar/observability';
@@ -104,10 +105,11 @@ export interface SutradharRuntimeOptions {
   /** Reuse an existing event bus. A default one is created otherwise. */
   eventBus?: EventBus;
   /**
-   * Directories `browser.download_file` is allowed to write into. Defaults to just the OS
-   * temp directory — a caller-supplied `downloadDir` that resolves outside every allowed root
-   * is rejected. Add project-specific scratch directories here if you need downloads to land
-   * somewhere other than the OS temp dir.
+   * Directories `browser.download_file` is allowed to write into. Defaults to a dedicated
+   * `sutradhar-downloads` subdirectory of the OS temp directory (never the bare temp root
+   * itself) — a caller-supplied `downloadDir` that resolves outside every allowed root is
+   * rejected. Add project-specific scratch directories here if you need downloads to land
+   * somewhere other than that default.
    */
   allowedDownloadRoots?: readonly string[];
   /**
@@ -922,7 +924,8 @@ export class SutradharRuntime {
 
   /**
    * Trigger a file download by clicking `target` and wait for it to land on disk.
-   * `downloadDir` defaults to the OS temp directory.
+   * `downloadDir` defaults to the first allowed download root (a `sutradhar-downloads`
+   * subdirectory of the OS temp directory, unless configured otherwise).
    */
   public async downloadFile(
     sessionId: string,
@@ -1547,15 +1550,17 @@ export class SutradharRuntime {
 
     if (!this.allowedUploadRoots || this.allowedUploadRoots.length === 0) return;
 
-    const canonical = await realpath(resolved).catch(() => resolved);
-    for (const root of this.allowedUploadRoots) {
-      const resolvedRoot = path.resolve(root);
-      const canonicalRoot = await realpath(resolvedRoot).catch(() => resolvedRoot);
-      if (canonical === canonicalRoot || canonical.startsWith(canonicalRoot + path.sep)) return;
+    let hit: string | undefined;
+    let why = '';
+    try {
+      hit = await findContainingRoot(resolved, this.allowedUploadRoots);
+    } catch (e) {
+      why = `: ${(e as Error).message}`;
     }
+    if (hit) return;
     throw new Error(
       `Upload file "${filePath}" is outside the allowed upload directories ` +
-        `(${this.allowedUploadRoots.join(', ')}).`,
+        `(${this.allowedUploadRoots.join(', ')})${why}.`,
     );
   }
 

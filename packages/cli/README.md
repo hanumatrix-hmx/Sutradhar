@@ -70,7 +70,7 @@ Run `sutradhar` with no arguments for the full command list.
 | `hover <ref>` | Hover an element. |
 | `scroll [dir] [amountPx]` | Scroll the page (`dir`: up/down/top/bottom, default down 500px). |
 | `scroll [dir] [amountPx] [targetRef]` | Scroll a specific element's own scroll container instead of the window (a data grid's rows, a chat pane, a modal body) — pair with `--settle` to reliably see newly-revealed content. |
-| `upload <ref> <filePath>` | Upload a local file into an `<input type="file">`. |
+| `upload <ref> <filePath>` | Upload a local file into an `<input type="file">`. Unrestricted unless `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` is set. |
 | `drag <sourceRef> <destRef>` | Drag one element onto another. |
 | `clickpoint <x> <y>` | Click at an absolute viewport coordinate — no element/selector, for canvas-rendered UI with nothing DOM-addressable to target. |
 | `dragpoints <fromX> <fromY> <toX> <toY>` | Real mouse-down→move→up drag between two absolute viewport coordinates — for canvas-rendered drag targets (a signature pad, a slider/chart handle drawn on a `<canvas>`). |
@@ -81,7 +81,7 @@ Run `sutradhar` with no arguments for the full command list.
 | `newtab [url]` | Open a new tab, optionally navigating it immediately. |
 | `focustab <tabId>` | Switch the active tab (e.g. after a link opened `target="_blank"`). |
 | `closetab <tabId>` | Close a specific tab. |
-| `download <ref> [dir]` | Click an element that triggers a download, print the saved path. |
+| `download <ref> [dir]` | Click an element that triggers a download, print the saved absolute path. `[dir]` (relative to the current directory) is always allowed for this command; without it the file goes to the first allowed download root (`<OS temp>/sutradhar-downloads` by default, or `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`'s first entry). |
 | `screenshot [path]` | Save a screenshot (default: `./screenshot.png`). |
 | `audit [url] [outDir] [--json]` | Screenshot + console/page/network errors + accessibility heuristics + Web Vitals for a page (current page if no url; use `""` as url to also pass an outDir). `outDir` is created if missing. `--json` prints one machine-readable report (schemaVersion 1, see `packages/capability-runtime/schemas/audit-report.schema.json`) instead of the human-readable text; images are always written as files and referenced by absolute path, never inlined. Auditing the current page only sees errors/requests since this command attached — pass the url for full coverage. |
 | `audit [url] [outDir] --baseline <url>` | Same, plus a pixel-diff of `<url>` vs a fresh load of the audited url (viewport screenshots; the page is reloaded) — a one-command regression gate combining `audit` + `compare`. |
@@ -117,6 +117,14 @@ Run `sutradhar` with no arguments for the full command list.
 | `--dialog-text <text>` | any session command, with `--dialog accept` | The text entered into `prompt()` dialogs when the session's policy auto-accepts one (default: the prompt's own default value). |
 
 Run `sutradhar` with no arguments for this same list straight from the binary.
+
+## Environment
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` | `<OS temp>/sutradhar-downloads` | Directories `download` may write into, separated by `;` (Windows) or `:` (elsewhere); absolute paths, or `~` for the home directory. Replaces the default; the first entry becomes the destination when `download`'s `[dir]` is omitted. The directory named on `download <ref> <dir>` itself is always allowed too, for that one invocation only — it is not written to session state and does not widen later commands. |
+| `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` | _(unset — unrestricted)_ | If set, `upload` may only read files under these directories (off by default). |
+| `SUTRADHAR_CLI_STATE_DIR` | per-project-directory hash | Where session state (`state.json`) is stored — see above. |
 
 ## Native dialogs (alert / confirm / prompt / beforeunload)
 

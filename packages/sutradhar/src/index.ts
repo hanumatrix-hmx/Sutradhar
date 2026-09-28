@@ -21,7 +21,7 @@
  * await browser.close();
  */
 
-import { SutradharRuntime } from '@sutradhar/capability-runtime';
+import { SutradharRuntime, resolveFsRoots } from '@sutradhar/capability-runtime';
 import { Browser, type LaunchOptions } from './browser.js';
 
 export const SUTRADHAR_VERSION = '0.4.3';
@@ -42,7 +42,14 @@ export async function launch(options: LaunchOptions = {}): Promise<Browser> {
         'browser.close() when done or Chrome processes will leak.',
     );
   }
-  const runtime = new SutradharRuntime({ allowedDomains: options.allowedDomains });
+  const fsRoots = resolveFsRoots({
+    options: { allowedDownloadRoots: options.allowedDownloadRoots, allowedUploadRoots: options.allowedUploadRoots },
+  });
+  const runtime = new SutradharRuntime({
+    allowedDomains: options.allowedDomains,
+    allowedDownloadRoots: fsRoots.allowedDownloadRoots,
+    allowedUploadRoots: fsRoots.allowedUploadRoots,
+  });
   const result = await runtime.launch({
     initialUrl: options.url,
     isIncognito: options.isIncognito,
@@ -74,6 +81,7 @@ export {
   type WaitForSelectorState,
   type PageAuditOptions,
   type PageAuditResult,
+  type PageDownloadOptions,
 } from './page.js';
 export {
   SutradharRuntime,
@@ -82,4 +90,5 @@ export {
   type ProfileInfo,
   type StorageState,
   type AuditReport,
+  type DownloadResult,
 } from '@sutradhar/capability-runtime';

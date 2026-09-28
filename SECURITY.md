@@ -18,14 +18,27 @@ public internet. This document lists what's enforced by default today and what's
 
 ## Filesystem access
 
-- **Downloads** (`browser.download_file`) default-sandbox to the OS temp directory
-  (`allowedDownloadRoots`); a caller-supplied `downloadDir` outside every allowed root is
-  rejected (symlink-resolved, not just string-prefix-checked — see
-  `packages/browser/src/actions/browser-action-engine.ts`).
-- **Uploads** (`browser.upload_file`) are unrestricted by default — uploading an arbitrary local
-  file the caller specifies is the intended feature. Set `allowedUploadRoots` on
-  `SutradharRuntime`/`BrowserActionEngine` if the calling LLM might act on untrusted page content
-  (prompt injection) telling it to upload something sensitive.
+- **Downloads** (`browser.download_file`) default-sandbox to a dedicated `sutradhar-downloads`
+  subdirectory of the OS temp directory (`allowedDownloadRoots`; never the bare temp root
+  itself — Chrome cancels downloads targeted directly at it); a caller-supplied `downloadDir`
+  outside every allowed root is rejected. Containment is symlink/junction-safe, including a
+  not-yet-created target reached through a link — see
+  `packages/browser/src/actions/path-containment.ts`. Configure additional roots with
+  `SutradharRuntimeOptions.allowedDownloadRoots`, or (for `sutradhar-mcp` and the `sutradhar`
+  CLI) the `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` env var (`path.delimiter`-separated absolute
+  paths; `~` expands to the home directory) — this REPLACES the default, and the first entry
+  becomes the destination when `downloadDir` is omitted. The `sutradhar` CLI additionally
+  grants the directory named on `sutradhar download <ref> <dir>` for that single invocation
+  only (the operator running the shell command can already write anywhere).
+- **Uploads** (`browser.upload_file`/`browser.upload_file_via_trigger`) are unrestricted by
+  default — uploading an arbitrary local file the caller specifies is the intended feature. Set
+  `allowedUploadRoots` on `SutradharRuntime`/`BrowserActionEngine`, or the
+  `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` env var, if the calling LLM might act on untrusted page
+  content (prompt injection) telling it to upload something sensitive — setting this env var is
+  what turns the restriction on.
+- The SDK (`sutradhar` npm package) does NOT read either `SUTRADHAR_ALLOWED_*` env var — pass
+  `allowedDownloadRoots`/`allowedUploadRoots` to `launch()` explicitly. A library silently
+  changing its sandbox based on the host application's ambient environment would be surprising.
 
 ## Navigation
 

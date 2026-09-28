@@ -1154,3 +1154,54 @@ describe('@sutradhar/mcp-server FR2-06 selector dialect', () => {
     expect(tools.size).toBe(EXPECTED_BROWSER_TOOLS.length);
   });
 });
+
+describe('@sutradhar/mcp-server FR2-05 download/upload root hints and descriptions', () => {
+  it('T1: a download-outside-roots error gets a Hint naming SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'downloadFile').mockResolvedValue({
+      success: false,
+      actionType: 'download_file',
+      executionTimeMs: 1,
+      error: 'downloadDir "X" is outside the allowed download directories (Y). Pass a path under one of these.',
+    });
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.download_file')!.handler({ sessionId: 's1', target: '#dl', downloadDir: 'X' });
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed.error).toContain('Hint:');
+    expect(parsed.error).toContain('SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS');
+  });
+
+  it('T2: an upload-outside-roots error gets a Hint naming SUTRADHAR_ALLOWED_UPLOAD_ROOTS', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'uploadFile').mockResolvedValue({
+      success: false,
+      actionType: 'upload_file',
+      executionTimeMs: 1,
+      error: 'Upload file "X" is outside the allowed upload directories (Y).',
+    });
+
+    registerTools(server, { runtime });
+    const result = await tools.get('browser.upload_file')!.handler({ sessionId: 's1', target: '#f', filePath: 'X' });
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed.error).toContain('Hint:');
+    expect(parsed.error).toContain('SUTRADHAR_ALLOWED_UPLOAD_ROOTS');
+  });
+
+  it('T3: the download_file/downloadDir descriptions describe the real default, not the old wrong one', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    registerTools(server, { runtime });
+    const config = tools.get('browser.download_file')!.config;
+    const description = config.description as string;
+    const downloadDirSchema = config.inputSchema.downloadDir as { description?: string };
+    const downloadDirDescription = downloadDirSchema.description ?? '';
+    const combined = `${description}\n${downloadDirDescription}`;
+
+    expect(combined).not.toContain('Defaults to the OS temp directory.');
+    expect(description).toContain('downloadedPath');
+    expect(combined).toContain('sutradhar-downloads');
+  });
+});

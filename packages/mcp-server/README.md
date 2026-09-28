@@ -58,7 +58,7 @@ Grouped here by category, matching `tools.ts`'s own section layout.
 | `browser.touch_tap` | Simulate a touch tap (mobile emulation). |
 | `browser.upload_file` | Set a file input's value. |
 | `browser.upload_file_via_trigger` | For JS-triggered file choosers not backed by a plain `<input type=file>` — races `waitForFileChooser()` against clicking the triggering selector. |
-| `browser.download_file` | Trigger and wait for a file download; saves under an allow-listed directory. |
+| `browser.download_file` | Trigger and wait for a file download; saves under an allow-listed directory (`SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`). |
 | `browser.wait_for_selector` | Wait for an element to reach a state: `visible` (default), `attached` (just in the DOM), or `hidden` (removed or not visible). "Visible" is a non-empty box AND visibility not hidden/collapse, checked on the FIRST match — `opacity:0`/off-screen still count as visible; zero-size/`display:none`/`visibility:hidden` count as hidden. `hidden` succeeds immediately if nothing matches. `timeoutMs` is per attempt; retries can extend the real total wait. `timeoutMs <= 0` checks the current state once, immediately, with no waiting or retrying. Waiting states poll roughly every 100ms, so a state that's only true for less than ~100ms (a fast visibility flicker) may be missed. |
 | `browser.fill_form` | Bulk multi-field form fill — an object of `{target: value}` pairs in one call instead of N `type` round-trips; a field that fails doesn't stop the rest. |
 | `browser.click_at_point` | Click a raw viewport `(x, y)` coordinate with no element/selector at all — the escape hatch for canvas-heavy or custom-rendered UI with nothing addressable via DOM. |
@@ -185,6 +185,8 @@ All config is via environment variables (matching the Sutradhar server):
 | `SUTRADHAR_MODEL` | `qwen3.5:9b` | Model id (Ollama tag or OpenRouter model). |
 | `SUTRADHAR_LLM_BASE` | `http://localhost:11434` | Ollama host (or any OpenAI-compatible base). |
 | `CHROME_PATH` | _(auto-detected)_ | Path to Chrome/Edge executable if not found. |
+| `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` | `<OS temp>/sutradhar-downloads` | Directories `browser.download_file` may write into, separated by `;` (Windows) or `:` (elsewhere); absolute paths, or `~` for the home directory. Replaces the default; the first entry is the destination when `downloadDir` is omitted. |
+| `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` | _(unset — unrestricted)_ | If set, `browser.upload_file`/`browser.upload_file_via_trigger` may only read files under these directories. Setting this turns the restriction on. |
 
 ## Programmatic API
 

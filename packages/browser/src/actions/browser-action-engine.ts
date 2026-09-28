@@ -6,9 +6,8 @@
  * any nesting depth) and through open shadow roots within each frame — see {@link resolveElement}.
  */
 
-import os from 'node:os';
 import path from 'node:path';
-import { realpath, access } from 'node:fs/promises';
+import { access } from 'node:fs/promises';
 import { EventBus } from '@sutradhar/events';
 import { StructuredLogger } from '@sutradhar/observability';
 import { SessionId } from '@sutradhar/contracts';
@@ -16,6 +15,7 @@ import { ElementHandle, Frame, KeyInput, Page } from 'puppeteer-core';
 import { IBrowserTab } from '../session/browser-tab.js';
 import { ExecutionVerifier } from '../verifier/execution-verifier.js';
 import { SD_GENERATION_ATTR, SD_CURRENT_GENERATION_ATTR, SD_FINGERPRINT_ATTR } from '../dom/dom-semantic-engine.js';
+import { defaultDownloadRoot, findContainingRoot, isPathWithinRoot } from './path-containment.js';
 import {
   ActionParams,
   ActionResultDto,
@@ -37,24 +37,6 @@ import {
 
 export interface IBrowserActionEngine {
   executeAction(tab: IBrowserTab, params: ActionParams): Promise<ActionResultDto>;
-}
-
-/**
- * True if `candidate` is `root` itself or nested under it. Windows' filesystem is
- * case-insensitive (NTFS preserves case but doesn't distinguish it), but `fs.realpath` only
- * normalizes a path to its on-disk case when the target actually **exists** — a not-yet-created
- * subdirectory falls back to whatever case the caller happened to pass in. Found live: requesting
- * a new subdirectory under an allowed root whose case differs from the root's own on-disk case
- * (e.g. the root resolves to `C:\WINDOWS\TEMP` but the caller's literal string starts
- * `C:\Windows\Temp\...`) made this comparison — plain `===`/`startsWith` on the two strings —
- * false-reject a request that was genuinely inside the allowed root. Comparing case-insensitively
- * on Windows only (POSIX filesystems are case-sensitive by default, and a case-insensitive check
- * there could wrongly ALLOW a path that is actually a different, disallowed file) fixes it without
- * weakening the containment check itself.
- */
-function isPathWithinRoot(candidate: string, root: string): boolean {
-  const [c, r] = process.platform === 'win32' ? [candidate.toLowerCase(), root.toLowerCase()] : [candidate, root];
-  return c === r || c.startsWith(r + path.sep);
 }
 
 /** Action types that mutate page state — subject to the duplicate-action guard.
@@ -237,7 +219,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     this.eventBus = eventBus;
     this.logger = logger ?? new StructuredLogger({ minLevel: 'info' });
     this.verifier = verifier ?? new ExecutionVerifier();
-    this.allowedDownloadRoots = (allowedDownloadRoots ?? [path.join(os.tmpdir(), 'sutradhar-downloads')]).map(
+    this.allowedDownloadRoots = (allowedDownloadRoots?.length ? allowedDownloadRoots : [defaultDownloadRoot()]).map(
       (root) => path.resolve(root),
     );
     this.allowedUploadRoots = allowedUploadRoots?.map((root) => path.resolve(root));
@@ -259,14 +241,17 @@ export class BrowserActionEngine implements IBrowserActionEngine {
 
     if (!this.allowedUploadRoots || this.allowedUploadRoots.length === 0) return;
 
-    const canonical = await realpath(resolved).catch(() => resolved);
-    for (const root of this.allowedUploadRoots) {
-      const canonicalRoot = await realpath(root).catch(() => root);
-      if (isPathWithinRoot(canonical, canonicalRoot)) return;
+    let hit: string | undefined;
+    let why = '';
+    try {
+      hit = await findContainingRoot(resolved, this.allowedUploadRoots);
+    } catch (e) {
+      why = `: ${(e as Error).message}`;
     }
+    if (hit) return;
     throw new Error(
       `Upload file "${filePath}" is outside the allowed upload directories ` +
-        `(${this.allowedUploadRoots.join(', ')}).`,
+        `(${this.allowedUploadRoots.join(', ')})${why}.`,
     );
   }
 
@@ -287,19 +272,21 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    */
   private async resolveDownloadDir(requested: string | undefined): Promise<string> {
     const resolved = requested ? path.resolve(requested) : this.allowedDownloadRoots[0]!;
-    const canonical = await realpath(resolved).catch(() => resolved);
 
-    for (const root of this.allowedDownloadRoots) {
-      const canonicalRoot = await realpath(root).catch(() => root);
-      if (isPathWithinRoot(canonical, canonicalRoot)) {
-        return resolved;
-      }
+    let hit: string | undefined;
+    let why = '';
+    try {
+      hit = await findContainingRoot(resolved, this.allowedDownloadRoots);
+    } catch (e) {
+      why = `: ${(e as Error).message}`;
     }
+    if (hit) return resolved; // CDP still gets `resolved`, not the canonical form (D3)
 
     throw new Error(
-      `downloadDir "${requested}" is outside the allowed download directories ` +
-        `(${this.allowedDownloadRoots.join(', ')}). Pass a path under one of these, or configure ` +
-        'additional allowed roots when constructing the runtime.',
+      `downloadDir "${requested ?? resolved}" is outside the allowed download directories ` +
+        `(${this.allowedDownloadRoots.join(', ')})${why}. Pass a path under one of these, or configure more ` +
+        'roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the ' +
+        'sutradhar-mcp server and CLI).',
     );
   }
 
@@ -1186,6 +1173,11 @@ export class BrowserActionEngine implements IBrowserActionEngine {
 
         const downloadTimeoutMs = params.timeoutMs ?? 30000;
         let cleanup = (): void => {};
+        // Tracks the guid of the FIRST download this call's click triggered so a later
+        // `Browser.downloadProgress` event for a DIFFERENT download (another tab/page in the
+        // same browser completing a download concurrently) is ignored rather than resolving
+        // this call with someone else's file (FR2-05 B6).
+        let beganGuid: string | undefined;
         const downloadPromise = new Promise<{ filename: string; path: string }>((resolve, reject) => {
           let suggestedFilename: string | undefined;
           const timer = setTimeout(() => {
@@ -1193,14 +1185,21 @@ export class BrowserActionEngine implements IBrowserActionEngine {
             reject(new Error(`Download did not complete within ${downloadTimeoutMs}ms`));
           }, downloadTimeoutMs);
 
-          const onWillBegin = (evt: { suggestedFilename: string }): void => {
+          const onWillBegin = (evt: { guid: string; suggestedFilename: string }): void => {
+            if (beganGuid === undefined) beganGuid = evt.guid;
+            if (evt.guid !== beganGuid) return;
             suggestedFilename = evt.suggestedFilename;
           };
-          const onProgress = (evt: { state: string; guid: string }): void => {
+          const onProgress = (evt: { state: string; guid: string; filePath?: string }): void => {
+            if (beganGuid !== undefined && evt.guid !== beganGuid) return;
             if (evt.state === 'completed') {
               cleanup();
-              const filename = suggestedFilename ?? evt.guid;
-              resolve({ filename, path: path.join(downloadDir, filename) });
+              // Prefer CDP's own `filePath` (the actual on-disk destination, which may differ
+              // from `suggestedFilename` if Chrome uniquified the name on a conflict) over
+              // reconstructing it from the suggested name — FR2-05 B6.
+              const name = path.basename(suggestedFilename ?? evt.guid);
+              const full = evt.filePath ? path.resolve(evt.filePath) : path.join(downloadDir, name);
+              resolve({ filename: path.basename(full), path: full });
             } else if (evt.state === 'canceled') {
               cleanup();
               reject(new Error('Download was canceled'));
@@ -1225,11 +1224,23 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         try {
           await this.verifiedClick(page, params.selector, 'left');
           const downloaded = await downloadPromise;
-          return { downloadedFilename: downloaded.filename, downloadedPath: downloaded.path, downloadDir };
+          const reportedPath = path.resolve(downloaded.path);
+          // Defense in depth: even a `filePath` CDP reports should land inside `downloadDir`.
+          // A mismatch here means Chrome/CDP put the file somewhere this call didn't ask for —
+          // fail rather than hand back a path outside the sandbox this action promised.
+          if (!isPathWithinRoot(reportedPath, path.resolve(downloadDir)) && !(await findContainingRoot(reportedPath, [downloadDir]))) {
+            throw new Error(
+              `Download reported a file outside the download directory "${downloadDir}": ${reportedPath}`,
+            );
+          }
+          return { downloadedFilename: downloaded.filename, downloadedPath: reportedPath, downloadDir };
         } catch (err) {
           cleanup();
           throw err;
         } finally {
+          // Reset Chrome's browser-wide download target so a destination granted for this one
+          // action doesn't keep receiving later, page-initiated downloads (FR2-05 B7).
+          await client.send('Browser.setDownloadBehavior', { behavior: 'default' }).catch(() => {});
           await client.detach().catch(() => {});
         }
       }

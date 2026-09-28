@@ -5,6 +5,7 @@
  * MCP server and the REST API.
  */
 
+import path from 'node:path';
 import type {
   SutradharRuntime,
   SnapshotResult,
@@ -12,8 +13,16 @@ import type {
   SettleSpec,
   WaitForSelectorState,
   AuditReport,
+  DownloadResult,
 } from '@sutradhar/capability-runtime';
 import { prepareAuditOutDir, writeAuditArtifacts, buildAuditReport } from '@sutradhar/capability-runtime';
+
+/** Options accepted by {@link Page.download}. */
+export interface PageDownloadOptions {
+  /** Destination directory. Must resolve inside an allowed download root (see `LaunchOptions`'s
+   *  `allowedDownloadRoots`). Defaults to the first allowed root when omitted. */
+  downloadDir?: string;
+}
 
 export type { WaitForSelectorState } from '@sutradhar/capability-runtime';
 
@@ -163,6 +172,28 @@ export class Page {
   public async waitForSelector(selector: string, options?: WaitForSelectorOptions): Promise<void> {
     const r = await this.runtime.waitForSelector(this.sessionId, selector, options?.timeout, this.tabId, options?.state);
     if (!r.success) throw new Error(r.error ?? `waitForSelector("${selector}") failed`);
+  }
+
+  /**
+   * Click `selector` (the element that triggers a download) and wait for the file to finish
+   * landing on disk. `options.downloadDir` must resolve inside an allowed download root — see
+   * `LaunchOptions.allowedDownloadRoots` — or this throws.
+   */
+  public async download(selector: string, options?: PageDownloadOptions): Promise<DownloadResult> {
+    const r = await this.runtime.downloadFile(this.sessionId, selector, options?.downloadDir, this.tabId);
+    if (!r.success) throw new Error(r.error ?? `download("${selector}") failed`);
+    const o = r.output as { downloadedFilename: unknown; downloadedPath: unknown; downloadDir: unknown };
+    return { filename: String(o.downloadedFilename), path: String(o.downloadedPath), downloadDir: String(o.downloadDir) };
+  }
+
+  /**
+   * Upload a local file into a `<input type="file">` targeted by `selector`. `filePath` is
+   * resolved to an absolute path. Unrestricted unless `LaunchOptions.allowedUploadRoots` was
+   * set, in which case it must be under one of those directories, or this throws.
+   */
+  public async uploadFile(selector: string, filePath: string): Promise<void> {
+    const r = await this.runtime.uploadFile(this.sessionId, selector, path.resolve(filePath), this.tabId);
+    if (!r.success) throw new Error(r.error ?? `uploadFile("${selector}", "${filePath}") failed`);
   }
 
   /** Press a keyboard key (e.g. `"Enter"`, `"Escape"`). */

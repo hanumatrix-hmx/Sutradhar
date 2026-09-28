@@ -1908,3 +1908,57 @@ describe('@sutradhar/capability-runtime dialog policy plumbing (FR2-04)', () => 
     expect(narrowed[0]?.tabId).toBe(tab2.id);
   });
 });
+
+describe('@sutradhar/capability-runtime SutradharRuntime.assertUploadPathAllowed (FR2-05)', () => {
+  function noBrowserRuntime(options: ConstructorParameters<typeof SutradharRuntime>[0] = {}) {
+    const launcher = new BrowserLauncher();
+    vi.spyOn(launcher, 'findExecutablePath').mockReturnValue(undefined);
+    return new SutradharRuntime({ launcher, rateLimiter: null, ...options });
+  }
+
+  let tmp: string;
+
+  beforeEach(async () => {
+    tmp = await mkdtemp(path.join(os.tmpdir(), 'sutradhar-runtime-upload-'));
+  });
+
+  afterEach(async () => {
+    await rm(tmp, { recursive: true, force: true });
+  });
+
+  it('RT1: rejects a path reached through a link escaping the allowed upload roots', async () => {
+    const fs = await import('node:fs/promises');
+    const root = path.join(tmp, 'root');
+    const outside = path.join(tmp, 'outside');
+    await fs.mkdir(root, { recursive: true });
+    await fs.mkdir(outside, { recursive: true });
+    await fs.symlink(outside, path.join(root, 'jn'), process.platform === 'win32' ? 'junction' : 'dir');
+    await fs.writeFile(path.join(outside, 'secret.txt'), 'shh');
+
+    const runtime = noBrowserRuntime({ allowedUploadRoots: [root] });
+    await expect((runtime as any).assertUploadPathAllowed(path.join(root, 'jn', 'secret.txt'))).rejects.toThrow(
+      /outside the allowed upload directories/,
+    );
+  });
+
+  it('RT2: resolves for a path genuinely inside an allowed root', async () => {
+    const fs = await import('node:fs/promises');
+    const root = path.join(tmp, 'root2');
+    await fs.mkdir(root, { recursive: true });
+    await fs.writeFile(path.join(root, 'ok.txt'), 'ok');
+
+    const runtime = noBrowserRuntime({ allowedUploadRoots: [root] });
+    await expect((runtime as any).assertUploadPathAllowed(path.join(root, 'ok.txt'))).resolves.toBeUndefined();
+  });
+
+  it('RT3 (win32 only): a root passed in a different case still accepts a file under it — B5 regression', async () => {
+    if (process.platform !== 'win32') return;
+    const fs = await import('node:fs/promises');
+    const root = path.join(tmp, 'root3');
+    await fs.mkdir(root, { recursive: true });
+    await fs.writeFile(path.join(root, 'ok.txt'), 'ok');
+
+    const runtime = noBrowserRuntime({ allowedUploadRoots: [root.toUpperCase()] });
+    await expect((runtime as any).assertUploadPathAllowed(path.join(root, 'ok.txt'))).resolves.toBeUndefined();
+  });
+});
