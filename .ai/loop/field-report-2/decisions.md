@@ -3210,3 +3210,107 @@ and matching exactly.
 
 Sent to FINAL independent audit-6. If audit-6 finds a critical or major defect, FR2-12 is marked
 BLOCKED with a written diagnosis -- no further cycles remain. If audit-6 passes, FR2-12 is DONE.
+
+## 2026-09-28 -- FR2-12: BLOCKED. Final audit (audit-6) FAILED after 4 standard + 2 escalation cycles. Written diagnosis below.
+
+audit-6 was the last cycle available under the loop's rules. It found that escalation-2's SCOPED
+(not full) re-verification was NOT sufficient -- audit-6 independently re-ran essentially the entire
+audit-1 through audit-5 attack surface itself (dialogs, the full stdout sweeps, same-doc/redirect
+chains, the 8 real sites, web-vitals against a live observer, B2, concurrency, the 25-repeat
+session-leak check, the 60-navigation tab, 4 concurrent tabs, tab adoption, GAP-279, the GAP-274 hang
+bound in genuinely fresh child processes) and confirmed everything from escalation-1/2 still holds --
+including GAP-284's own 3 named repros, now 0/15+0/12 stale across both runtime and MCP, and GAP-285's
+residual confirmed exactly as narrow and honestly described as escalation-2 disclosed it, with no
+false-negative regression on ordinary audits (covers:true correctly on 15/15 x7 ordinary shapes).
+
+But ONE genuinely new instance of the SAME recurring defect class (GAP-267 -> GAP-273 -> now this) was
+found in a timing window none of the prior 5 audits or 2 escalation cycles happened to construct:
+
+**GAP-288 (major): current-page audit of a freshly created tab's very FIRST navigation still
+drops the page's own error status.** The tab-level CDP tracking session (built in escalation-1 to fix
+GAP-278) attaches in the BACKGROUND when a tab is created. If that tab is navigated IMMEDIATELY
+(before the tracking session has resolved which frame is the main frame), the live capture of the
+page's own response is dropped -- and escalation-1's own commit-time scoping boundary then ALSO moves
+the ring-buffer's independent copy of that same response out of scope, leaving literally no
+recoverable source except the URL-match fallback, which GAP-273 already demonstrated fails for
+exactly the hash/replaceState/empty-body shapes that keep recurring throughout this item's history.
+Reproduces 30/30 (runtime, two independent probes) and 9/10 (MCP, launch->navigate->audit
+back-to-back). The SAME shapes on an already-established tab (not its first navigation), or with
+just a 1000ms gap after tab creation, are 85/85 and 30/30 CORRECT -- this is narrowly the
+first-navigation-on-a-brand-new-tab race window, which is exactly why 6 straight audits missed it:
+every prior probe either navigated an already-existing tab, or used new_tab{url} (a different,
+unaffected code path, 40/40 correct).
+
+Minor, all logged for completeness: GAP-289 (a 1/80 flood-timing leak, pre-existing since
+fix-3, unrelated to this cycle's changes), GAP-290 (a non-committing navigation, e.g. a 204
+response or a download link, leaves the tab capture pointing at the PREVIOUS commit -- pre-existing
+since escalation-1), GAP-291 (a bfcache restore's URL-match fallback can pin a LATER
+same-URL response onto the restored page -- pre-existing since escalation-1, at least honestly
+flagged coversWholeDocument:false), GAP-292 (4 more untested mutations, including the
+GAP-285 coversWholeDocument:false path having zero capability-runtime-level unit coverage), and
+GAP-293 (an evidence-integrity issue: escalation-2's own revert-confirm script overwrote its
+own preserved fixed-build result file with the reverted-build's numbers before committing -- the
+underlying GAP-284 fix is not in question, since audit-6 independently re-measured it clean, but the
+evidence file that was supposed to preserve escalation-2's own claim doesn't actually support it).
+
+**Root cause, spanning GAP-267/273/288 as one family**: every fix in this family has
+addressed "how do we recover the audited page's own error status" for one more specific TIMING WINDOW
+in which the live CDP capture can miss it (the original per-call session's setup race, then the
+tab-lifetime session's own setup race on a tab's first navigation). Each fix closes the window it
+was built for and is then found, later, not to cover a DIFFERENT window. The recurring proof that the
+URL-match fallback cannot substitute for live capture (GAP-273 demonstrated this concretely: hash
+changes, replaceState, and Chrome's own chrome-error:// substitution all defeat it) means this family
+of bugs will keep recurring in new timing shapes for as long as the design relies on "catch the
+response live, or fall back to a URL match that provably doesn't work for common shapes."
+
+**Architectural change that would actually close this family (recorded for whoever picks this up
+next, per CLAUDE.md's guidance that a multi-day rework belongs in the backlog, not another patch
+cycle on the same design)**: audit-6's own diagnosis, which the Orchestrator endorses as the correct
+direction --
+1. Attach BrowserTab's own Puppeteer-level navigation listeners SYNCHRONOUSLY in the tab's
+   constructor (not the current CDP session, which is created asynchronously and races the tab's
+   first navigation) -- Puppeteer's own `page.on('response', ...)` and `page.on('framenavigated', ...)`
+   are available from the instant a Page object exists, with no CDP handshake to race.
+2. Key every captured main-document response by the navigation's loaderId (available from both
+   Puppeteer's own frame object and the raw CDP layer), and only ever report a captured response
+   when its loaderId matches the frame's CURRENTLY COMMITTED loaderId -- this single invariant, applied
+   consistently, would also structurally close GAP-290 (non-committing navigations) and
+   GAP-291 (bfcache misattribution) as the same fix, not three separate patches.
+3. Alternatively or additionally: have BrowserTab.navigate() await the tracking setup's own readiness
+   (bounded, per the existing dialog-cdp.ts precedent already reused elsewhere in this item) BEFORE
+   calling goto(), and have current-page mode read goto()'s own returned response as ANOTHER layer
+   before ever falling back to URL-matching -- this was already partially done for GAP-279's fallback
+   chain; extending it to current-page mode's OWN navigation call (not just audit({url})'s) may close
+   most of this defect family without even needing the loaderId redesign, though (2) is more robust
+   long-term since it removes the URL-match fallback's provably-broken role entirely.
+
+**What holds, confirmed one final time by audit-6's independent, near-total re-run of the entire
+attack surface**: GAP-236/238/239/241/242/246/253/254/261/262/263/266/268/269/273/274/276(N4,N11 parts)/
+278/279/280/284/285(as disclosed) are all independently re-verified as genuinely fixed. vitest
+1012/1012 across all 5 packages. Full live scenario suite 29/0/1 (GAP-038's expected miss), unchanged
+across the last 4 audits. Spec compliance: every numbered requirement is met except the newly-found
+GAP-288 regression against D9's intent and section 4.8's coverage-honesty requirement, plus
+the already-disclosed FR2-08-dependent deviations.
+
+**Limitations this item ships with, if unblocked in the future**: GAP-038 (fixed dwell, needs FR2-08),
+GAP-285's residual (a bfcache-restored page's pre-restore broken-request isn't recovered, though
+honestly flagged), GAP-277 (snap --json's unrelated double-JSON-doc bug, out of this item's scope but
+never fixed), GAP-276/282 (cli.ts's stdout-guard call sites still untested), GAP-287 (a pre-existing,
+unrelated background-tab-audit-stalls-under-another-tabs-dialog hazard), and now the whole
+GAP-267/273/288 family above.
+
+**Status: FR2-12 is BLOCKED.** Per the loop's rules (4 standard cycles + 2 escalation cycles, then
+BLOCKED with a diagnosis), no further fix cycle is being dispatched. This diagnosis and the
+architectural direction above are the handoff for whenever this item is picked up again -- likely as
+a rescoped item focused specifically on "own-document-status capture: synchronous listener attach +
+loaderId-keyed invariant" rather than another patch cycle on the current lazy-CDP-session design.
+
+The FR2-12 branch's product code (packages/browser, packages/capability-runtime, packages/cli,
+packages/mcp-server, packages/sutradhar changes across all 6 landed commits: ddb98d9, ecae543,
+2d69701, da843dc, cba3339, plus 4461906/570988c/8c45c7a's audit-only commits) remains committed on
+this branch. The Orchestrator will decide at PR-prep time whether to ship FR2-12 in its current
+(escalation-2) state with the GAP-267/273/288 family documented as a known, narrow-window
+limitation (audit-6's own numbers show the defect requires a specific, uncommon usage pattern --
+auditing the CURRENT page immediately after creating a brand-new tab and navigating it, rather than
+the far more common "navigate, wait, then audit" or "audit({url})" patterns, both unaffected), revert
+FR2-12 entirely, or leave it out of the PR -- this needs a decision at PR-prep time, not now.

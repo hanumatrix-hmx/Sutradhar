@@ -1,0 +1,470 @@
+{
+  "part": "all",
+  "trials": 10,
+  "preFixEmulation": false,
+  "results": {
+    "nodialog": {
+      "hash-404": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      },
+      "replaceState-404": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      },
+      "emptybody-404": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      },
+      "emptybody-500": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      },
+      "control-own404": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      },
+      "control-ok": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      },
+      "a-302-then-replaceState-404": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      },
+      "a-302-then-hash-404": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      },
+      "a-302-then-replaceState-200": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      },
+      "a-js200-to-hash404": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      },
+      "a-js404-to-200": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      },
+      "b-slow-body-404": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      },
+      "b-5MB-body-404": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      },
+      "b-slow-headers-500": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      },
+      "c-302>500(js)>302>200": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      },
+      "c-302>500(js)>302>404": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      },
+      "subframe-emptybody-404": {
+        "pass": 10,
+        "n": 10,
+        "fails": [],
+        "ms": []
+      }
+    },
+    "sameTabDialogOpen": {
+      "hash-404": {
+        "pass": 8,
+        "n": 8,
+        "fails": [],
+        "ms": [
+          2559,
+          2568,
+          2556,
+          2574,
+          2582,
+          2560,
+          2580,
+          2562
+        ],
+        "pendingAtStart": 8
+      },
+      "replaceState-404": {
+        "pass": 8,
+        "n": 8,
+        "fails": [],
+        "ms": [
+          2557,
+          2572,
+          2558,
+          2574,
+          2578,
+          2548,
+          2564,
+          2563
+        ],
+        "pendingAtStart": 8
+      },
+      "emptybody-404": {
+        "pass": 7,
+        "n": 7,
+        "fails": [],
+        "ms": [
+          2594,
+          2604,
+          2583,
+          2598,
+          2589,
+          2599,
+          2594
+        ],
+        "pendingAtStart": 7
+      },
+      "emptybody-500": {
+        "pass": 7,
+        "n": 7,
+        "fails": [],
+        "ms": [
+          2609,
+          2587,
+          2591,
+          2600,
+          2598,
+          2595,
+          2592
+        ],
+        "pendingAtStart": 7
+      },
+      "control-own404": {
+        "pass": 7,
+        "n": 7,
+        "fails": [],
+        "ms": [
+          2568,
+          2581,
+          2563,
+          2557,
+          2573,
+          2557,
+          2580
+        ],
+        "pendingAtStart": 7
+      },
+      "control-ok": {
+        "pass": 7,
+        "n": 7,
+        "fails": [],
+        "ms": [
+          2585,
+          2564,
+          2560,
+          2559,
+          2563,
+          2555,
+          2561
+        ],
+        "pendingAtStart": 7
+      },
+      "a-302-then-hash-404": {
+        "pass": 7,
+        "n": 7,
+        "fails": [],
+        "ms": [
+          2574,
+          2556,
+          2561,
+          2575,
+          2551,
+          2566,
+          2585
+        ],
+        "pendingAtStart": 7
+      },
+      "a-js200-to-hash404": {
+        "pass": 7,
+        "n": 7,
+        "fails": [],
+        "ms": [
+          2571,
+          2568,
+          2578,
+          2575,
+          2570,
+          2585,
+          2572
+        ],
+        "pendingAtStart": 7
+      },
+      "a-302-then-replaceState-200": {
+        "pass": 7,
+        "n": 7,
+        "fails": [],
+        "ms": [
+          2592,
+          2570,
+          2564,
+          2563,
+          2583,
+          2585,
+          2583
+        ],
+        "pendingAtStart": 7
+      },
+      "c-302>500(js)>302>404": {
+        "pass": 7,
+        "n": 7,
+        "fails": [],
+        "ms": [
+          2580,
+          2575,
+          2587,
+          2568,
+          2581,
+          2573,
+          2575
+        ],
+        "pendingAtStart": 7
+      }
+    },
+    "otherTabDialogOpen": {
+      "hash-404": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          29996,
+          29992,
+          30002
+        ]
+      },
+      "replaceState-404": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          30002,
+          30007,
+          30008
+        ]
+      },
+      "emptybody-404": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          30006,
+          30020,
+          30018
+        ]
+      },
+      "emptybody-500": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          30023,
+          29996,
+          30004
+        ]
+      },
+      "control-own404": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          30009,
+          29997,
+          29989
+        ]
+      },
+      "control-ok": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          30018,
+          30003,
+          30023
+        ]
+      },
+      "a-302-then-hash-404": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          30013,
+          29993,
+          30019
+        ]
+      },
+      "a-js200-to-hash404": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          29998,
+          30010,
+          30016
+        ]
+      },
+      "a-302-then-replaceState-200": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          30011,
+          30023,
+          30022
+        ]
+      },
+      "c-302>500(js)>302>404": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          30009,
+          30005,
+          29994
+        ]
+      }
+    },
+    "justHandledDialog": {
+      "hash-404": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          1556,
+          1564,
+          1559
+        ]
+      },
+      "replaceState-404": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          1562,
+          1558,
+          1551
+        ]
+      },
+      "emptybody-404": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          1586,
+          1573,
+          1599
+        ]
+      },
+      "emptybody-500": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          1581,
+          1578,
+          1580
+        ]
+      },
+      "control-own404": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          1543,
+          1569,
+          1553
+        ]
+      },
+      "control-ok": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          1557,
+          1557,
+          1567
+        ]
+      },
+      "a-302-then-hash-404": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          1560,
+          1557,
+          1560
+        ]
+      },
+      "a-js200-to-hash404": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          1555,
+          1570,
+          1587
+        ]
+      },
+      "a-302-then-replaceState-200": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          1552,
+          1572,
+          1566
+        ]
+      },
+      "c-302>500(js)>302>404": {
+        "pass": 3,
+        "n": 3,
+        "fails": [],
+        "ms": [
+          1578,
+          1567,
+          1565
+        ]
+      }
+    }
+  },
+  "watchdog": true
+}

@@ -1,0 +1,71 @@
+[
+  {
+    "id": "L1-no-clear-at-all",
+    "pkg": "browser",
+    "killed": true,
+    "tests": "3 failed | 512 passed (515)",
+    "failed": [
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286) > CT10 (GAP-284 kill): a commit to a DIFFERENT loaderId with no response of its own clears the stale capture immediately, without waiting for a response that never arrives",
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286) > CT11 (GAP-284): a commit that DOES get a matching Document response for its own loaderId keeps reporting it normally (no false clear survives)",
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286) > CT17 (GAP-284/285 interaction): restoring a DIFFERENT document than the one the own-status capture belongs to still clears the stale capture"
+    ],
+    "restored": true
+  },
+  {
+    "id": "L3-response-never-records-loaderId",
+    "pkg": "browser",
+    "killed": true,
+    "tests": "1 failed | 514 passed (515)",
+    "failed": [
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286) > CT12 (GAP-284 residual check: redirect chain): a response for the SAME loaderId as the commit that follows it is never wrongly cleared -- an intermediate hop's response and the final commit share one loaderId"
+    ],
+    "restored": true
+  },
+  {
+    "id": "L6-response-gated-on-current-commit-loaderId(drops pre-commit responses)",
+    "pkg": "browser",
+    "killed": false,
+    "tests": "515 passed (515)",
+    "failed": [],
+    "restored": true
+  },
+  {
+    "id": "N4-no-Document-type-filter(tab)",
+    "pkg": "browser",
+    "killed": true,
+    "tests": "1 failed | 514 passed (515)",
+    "failed": [
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286) > CT13 (GAP-286, N4 kill): a non-Document response is never captured as the main document response"
+    ],
+    "restored": true
+  },
+  {
+    "id": "N11-samedoc-nav-moves-commit(tab)",
+    "pkg": "browser",
+    "killed": true,
+    "tests": "1 failed | 514 passed (515)",
+    "failed": [
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286) > CT14 (GAP-286, N11 kill): no listener is ever registered for a same-document-navigation CDP event -- a hash/pushState/replaceState change must never move the tracked commit time or clear the response capture"
+    ],
+    "restored": true
+  },
+  {
+    "id": "N11b-samedoc-nav-moves-commit-via-frameNavigated-shape(tab)",
+    "pkg": "browser",
+    "killed": false,
+    "tests": "515 passed (515)",
+    "failed": [],
+    "restored": true,
+    "note": "control: a no-op edit; must SURVIVE (sanity check that the harness does not report false kills)"
+  },
+  {
+    "id": "final-unmutated-browser",
+    "status": 0,
+    "tests": "515 passed (515)"
+  },
+  {
+    "id": "final-unmutated-capability-runtime",
+    "status": 0,
+    "tests": "214 passed (214)"
+  }
+]
