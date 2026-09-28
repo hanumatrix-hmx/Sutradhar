@@ -3750,3 +3750,29 @@ will be corrected in the FR2-17 docs sweep.
 Decision: FR2-04 ships in the PR with GAP-256-fix, with its remaining known limitations documented
 (GAP-257, the busy-from-birth residual, and the minors above). Next: GAP-307 (flaky download_file
 unit tests / first-event attribution race in FR2-05), as its own scoped item.
+
+## 2026-09-29 -- GAP-307 fixed: flaky download_file tests (two causes, both addressed)
+
+Executor findings, with before/after data in evidence/GAP-307-fix/run-1/:
+- Main cause, test-side: the download tests fired their mock CDP events after a fixed 50 ms sleep,
+  but the engine only registers its listeners after the real lock-file acquisition, the
+  case-sensitivity check and setDownloadBehavior. Under load the events fired before anyone was
+  listening and were silently dropped. A test-only fix (event-based whenListening with a 10 s hard
+  bound replacing 13 fixed sleeps, a unique lock endpoint per mock browser, and three cancel tests
+  now emitting downloadWillBegin first) gave 20/20 clean runs on its own.
+- Real product race, confirmed by a new deterministic test: a completed or canceled progress event
+  for a FOREIGN guid arriving before this call's own downloadWillBegin resolved or rejected this
+  call. Fixed with an explicit "began" flag in runDownloadFileLocked. Two new timer-free tests
+  cover the completed and canceled variants; reverting the product fix makes both fail.
+- Before: download_file tests failed 9/20 runs, full browser package 4/5. After: 0/20 and 0/5.
+- No assertions removed or weakened (Orchestrator checked the diff for deleted expect lines: none).
+
+Orchestrator verification (fresh): 5/5 full browser-package runs, 568/568 each (before the fix the
+Orchestrator had reproduced failures 3/3). Other packages per executor: capability-runtime 228,
+mcp-server 101, cli 180, sutradhar 25.
+
+Not independently audited by a separate agent: the change is a 3-line product guard plus test
+harness changes, with a deterministic failing-then-passing test, revert-confirm, and the
+Orchestrator's own fresh repeated runs -- judged sufficient for a scoped test-stability fix.
+Residual logged as GAP-313 (a foreign download that BEGINS first still wins attribution;
+mitigated by the one-download-per-browser lock).

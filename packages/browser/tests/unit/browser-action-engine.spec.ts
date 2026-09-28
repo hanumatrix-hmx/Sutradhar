@@ -1668,14 +1668,47 @@ describe('@sutradhar/browser BrowserActionEngine screenshot-on-failure', () => {
 });
 
 describe('@sutradhar/browser BrowserActionEngine download_file', () => {
+  // GAP-307: download_file takes a real on-disk lock file (os.tmpdir()) keyed by the browser's
+  // wsEndpoint. A constant endpoint made every test - and every concurrently running vitest
+  // process on the machine - contend for the SAME lock file, so give each mock browser its own.
+  let wsCounter = 0;
+  function uniqueWs(tag = 'mock-browser'): string {
+    return `ws://${tag}-${process.pid}-${Date.now()}-${wsCounter++}`;
+  }
+
   function mockCdpClient() {
     const handlers = new Map<string, (evt: any) => void>();
+    const waiters = new Map<string, Array<() => void>>();
     return {
       send: vi.fn().mockResolvedValue(undefined),
-      on: vi.fn((evt: string, cb: (evt: any) => void) => handlers.set(evt, cb)),
+      on: vi.fn((evt: string, cb: (evt: any) => void) => {
+        handlers.set(evt, cb);
+        for (const w of waiters.get(evt) ?? []) w();
+        waiters.delete(evt);
+      }),
       off: vi.fn((evt: string) => handlers.delete(evt)),
       detach: vi.fn().mockResolvedValue(undefined),
       emit: (evt: string, payload: any) => handlers.get(evt)?.(payload),
+      // GAP-307: resolves once the engine has registered a listener for `evt` (event-based, not
+      // a fixed sleep). The engine registers its listeners only after a real lock-file
+      // acquisition + CDP calls, whose latency varies with machine load; emitting before that
+      // silently dropped the event and the test then hung until the action timeout.
+      // Hard-bounded so a real regression fails fast instead of hanging.
+      whenListening: (evt: string): Promise<void> =>
+        handlers.has(evt)
+          ? Promise.resolve()
+          : new Promise<void>((resolve, reject) => {
+              const t = setTimeout(
+                () => reject(new Error(`engine never registered a listener for ${evt}`)),
+                10000,
+              );
+              const list = waiters.get(evt) ?? [];
+              list.push(() => {
+                clearTimeout(t);
+                resolve();
+              });
+              waiters.set(evt, list);
+            }),
     };
   }
 
@@ -1685,7 +1718,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
     const page = singleFramePage(() => Promise.resolve(handle));
     const client = mockCdpClient();
     (page as any).browser = vi.fn().mockReturnValue({
-      wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+      wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
     });
 
     const allowedDir = path.resolve('/tmp/downloads');
@@ -1699,7 +1732,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
 
     // Give verifiedClick's internal races (real setTimeout-based) time to settle, then fire
     // the CDP download events.
-    await new Promise((r) => setTimeout(r, 50));
+    await client.whenListening('Browser.downloadProgress');
     client.emit('Browser.downloadWillBegin', { suggestedFilename: 'report.pdf' });
     client.emit('Browser.downloadProgress', { state: 'completed' });
 
@@ -1740,7 +1773,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
     const page = singleFramePage(() => Promise.resolve(handle));
     const client = mockCdpClient();
     (page as any).browser = vi.fn().mockReturnValue({
-      wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+      wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
     });
 
     // Neither path exists on disk, so `realpath` throws for both and each falls back to its own
@@ -1757,7 +1790,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       maxRetries: 0,
     });
 
-    await new Promise((r) => setTimeout(r, 50));
+    await client.whenListening('Browser.downloadProgress');
     client.emit('Browser.downloadWillBegin', { suggestedFilename: 'report.pdf' });
     client.emit('Browser.downloadProgress', { state: 'completed' });
 
@@ -1773,7 +1806,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
     const page = singleFramePage(() => Promise.resolve(handle));
     const client = mockCdpClient();
     (page as any).browser = vi.fn().mockReturnValue({
-      wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+      wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
     });
 
     const engine = new BrowserActionEngine();
@@ -1783,8 +1816,9 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       maxRetries: 0,
     });
 
-    await new Promise((r) => setTimeout(r, 50));
-    client.emit('Browser.downloadProgress', { state: 'canceled' });
+    await client.whenListening('Browser.downloadProgress');
+    client.emit('Browser.downloadWillBegin', { guid: 'gc', suggestedFilename: 'c.pdf' });
+    client.emit('Browser.downloadProgress', { guid: 'gc', state: 'canceled' });
 
     const result = await promise;
 
@@ -1804,7 +1838,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
     const page = singleFramePage(() => Promise.reject(new Error('not found')));
     const client = mockCdpClient();
     (page as any).browser = vi.fn().mockReturnValue({
-      wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+      wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
     });
 
     const unhandled: unknown[] = [];
@@ -1855,7 +1889,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       const handle = mockHandle();
       const page = singleFramePage(() => Promise.resolve(handle));
       const createCDPSession = vi.fn();
-      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession }) });
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession }) });
 
       const engine = new BrowserActionEngine(undefined, undefined, undefined, [root]);
       const result = await engine.executeAction(mockTab(page), {
@@ -1914,7 +1948,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       handle.evaluate.mockResolvedValue(true);
       const page = singleFramePage(() => Promise.resolve(handle));
       const client = mockCdpClient();
-      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
 
       const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
       const promise = engine.executeAction(mockTab(page), {
@@ -1924,7 +1958,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
         maxRetries: 0,
       });
 
-      await new Promise((r) => setTimeout(r, 50));
+      await client.whenListening('Browser.downloadProgress');
       client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'r.pdf' });
       client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed', filePath: path.join(dir, 'r (1).pdf') });
 
@@ -1943,7 +1977,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       handle.evaluate.mockResolvedValue(true);
       const page = singleFramePage(() => Promise.resolve(handle));
       const client = mockCdpClient();
-      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
 
       const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
       const promise = engine.executeAction(mockTab(page), {
@@ -1953,7 +1987,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
         maxRetries: 0,
       });
 
-      await new Promise((r) => setTimeout(r, 50));
+      await client.whenListening('Browser.downloadProgress');
       client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'a.pdf' });
       client.emit('Browser.downloadProgress', { guid: 'g2', state: 'completed' });
 
@@ -1968,14 +2002,18 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       expect(result.outputData).toMatchObject({ downloadedFilename: 'a.pdf' });
     });
 
-    it('E6: sanitizes a hostile suggestedFilename with path.basename when there is no filePath', async () => {
+    // GAP-307: ordering race. A progress event for a DIFFERENT download (another tab/process in
+    // the same browser) that arrives BEFORE this call's own downloadWillBegin used to be accepted
+    // as this call's result (beganGuid was still unset). Fully deterministic: no timers - every
+    // event is emitted synchronously once the engine has registered its listeners.
+    it("GAP-307: a foreign guid's 'completed' progress delivered BEFORE this call's own downloadWillBegin is ignored, not accepted as this call's file", async () => {
       const dir = path.join(tmpRoot, 'dir');
       mkdirSync(dir, { recursive: true });
       const handle = mockHandle();
       handle.evaluate.mockResolvedValue(true);
       const page = singleFramePage(() => Promise.resolve(handle));
       const client = mockCdpClient();
-      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
 
       const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
       const promise = engine.executeAction(mockTab(page), {
@@ -1985,7 +2023,66 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
         maxRetries: 0,
       });
 
-      await new Promise((r) => setTimeout(r, 50));
+      await client.whenListening('Browser.downloadProgress');
+      // Foreign download finishes first, with its own filePath inside the dir.
+      client.emit('Browser.downloadProgress', { guid: 'foreign', state: 'completed', filePath: path.join(dir, 'foreign.bin') });
+      // Then this call's own download begins and completes.
+      client.emit('Browser.downloadWillBegin', { guid: 'mine', suggestedFilename: 'mine.pdf' });
+      client.emit('Browser.downloadProgress', { guid: 'mine', state: 'completed' });
+
+      const result = await promise;
+      expect(result.success).toBe(true);
+      expect(result.outputData).toMatchObject({
+        downloadedFilename: 'mine.pdf',
+        downloadedPath: path.join(dir, 'mine.pdf'),
+      });
+    });
+
+    it("GAP-307: a foreign guid's 'canceled' progress delivered BEFORE this call's own downloadWillBegin does not fail this call", async () => {
+      const dir = path.join(tmpRoot, 'dir');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true);
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+      const promise = engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+      });
+
+      await client.whenListening('Browser.downloadProgress');
+      client.emit('Browser.downloadProgress', { guid: 'foreign', state: 'canceled' });
+      client.emit('Browser.downloadWillBegin', { guid: 'mine', suggestedFilename: 'mine.pdf' });
+      client.emit('Browser.downloadProgress', { guid: 'mine', state: 'completed' });
+
+      const result = await promise;
+      expect(result.success).toBe(true);
+      expect(result.outputData).toMatchObject({ downloadedFilename: 'mine.pdf' });
+    });
+
+    it('E6: sanitizes a hostile suggestedFilename with path.basename when there is no filePath', async () => {
+      const dir = path.join(tmpRoot, 'dir');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true);
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+      const promise = engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+      });
+
+      await client.whenListening('Browser.downloadProgress');
       client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: '../../evil.txt' });
       client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed' });
 
@@ -2001,7 +2098,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       handle.evaluate.mockResolvedValue(true);
       const page = singleFramePage(() => Promise.resolve(handle));
       const client = mockCdpClient();
-      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
 
       const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
       const promise = engine.executeAction(mockTab(page), {
@@ -2011,7 +2108,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
         maxRetries: 0,
       });
 
-      await new Promise((r) => setTimeout(r, 50));
+      await client.whenListening('Browser.downloadProgress');
       client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'x.bin' });
       client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed', filePath: path.join(tmpRoot, 'elsewhere', 'x.bin') });
 
@@ -2030,7 +2127,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       {
         const page = singleFramePage(() => Promise.resolve(handle));
         const client = mockCdpClient();
-        (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+        (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
         const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
         const promise = engine.executeAction(mockTab(page), {
           actionType: 'download_file',
@@ -2038,7 +2135,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
           downloadDir: dir,
           maxRetries: 0,
         });
-        await new Promise((r) => setTimeout(r, 50));
+        await client.whenListening('Browser.downloadProgress');
         client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'a.pdf' });
         client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed' });
         await promise;
@@ -2054,7 +2151,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       {
         const page = singleFramePage(() => Promise.resolve(handle));
         const client = mockCdpClient();
-        (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+        (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
         const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
         const promise = engine.executeAction(mockTab(page), {
           actionType: 'download_file',
@@ -2062,7 +2159,8 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
           downloadDir: dir,
           maxRetries: 0,
         });
-        await new Promise((r) => setTimeout(r, 50));
+        await client.whenListening('Browser.downloadProgress');
+        client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'a.pdf' });
         client.emit('Browser.downloadProgress', { guid: 'g1', state: 'canceled' });
         await promise;
 
@@ -2101,7 +2199,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       handle.evaluate.mockResolvedValue(true);
       const page = singleFramePage(() => Promise.resolve(handle));
       const client = mockCdpClient();
-      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
 
       const engine = new BrowserActionEngine(undefined, undefined, undefined, []);
       const promise = engine.executeAction(mockTab(page), {
@@ -2110,7 +2208,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
         maxRetries: 0,
       });
 
-      await new Promise((r) => setTimeout(r, 50));
+      await client.whenListening('Browser.downloadProgress');
       client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'a.pdf' });
       client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed' });
 
@@ -2133,7 +2231,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       const page = singleFramePage(() => Promise.resolve(handle));
       const client = mockCdpClient();
       const browserMock = {
-        wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser-e11'),
+        wsEndpoint: vi.fn().mockReturnValue(uniqueWs('e11')),
         target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
       };
       (page as any).browser = vi.fn().mockReturnValue(browserMock);
@@ -2158,7 +2256,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
         maxRetries: 0,
         timeoutMs: 5000,
       });
-      await new Promise((r) => setTimeout(r, 300));
+      await client.whenListening('Browser.downloadProgress');
 
       const start = Date.now();
       const second = await engine.executeAction(tab2, {
@@ -2176,6 +2274,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       expect(second.error).toContain('already in progress');
 
       // Clean up the first, still-pending call.
+      client.emit('Browser.downloadWillBegin', { guid: 'anything', suggestedFilename: 'x.pdf' });
       client.emit('Browser.downloadProgress', { guid: 'anything', state: 'canceled' });
       await first;
     });
@@ -2189,7 +2288,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       const client = mockCdpClient();
       const createCDPSession = vi.fn().mockResolvedValue(client);
       const browserMock = {
-        wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser-e12'),
+        wsEndpoint: vi.fn().mockReturnValue(uniqueWs('e12')),
         target: vi.fn().mockReturnValue({ createCDPSession }),
       };
       (page as any).browser = vi.fn().mockReturnValue(browserMock);
@@ -2209,7 +2308,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
           maxRetries: 0,
           timeoutMs: 2000,
         });
-        await new Promise((r) => setTimeout(r, 200));
+        await client.whenListening('Browser.downloadProgress');
         client.emit('Browser.downloadWillBegin', { guid, suggestedFilename: 'a.pdf' });
         client.emit('Browser.downloadProgress', { guid, state: 'completed' });
         return promise;
@@ -2250,7 +2349,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       });
       const client = mockCdpClient();
       const browserMock = {
-        wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser-e13'),
+        wsEndpoint: vi.fn().mockReturnValue(uniqueWs('e13')),
         target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
       };
       (page as any).browser = vi.fn().mockReturnValue(browserMock);
@@ -2291,7 +2390,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       // `_clearCaseSensitivityCacheForTests`) so the second call on the SAME directory is fast,
       // but give the first real detection call (paid once by the FIRST download_file above) a
       // realistic amount of headroom rather than racing it.
-      await new Promise((r) => setTimeout(r, 150));
+      await client.whenListening('Browser.downloadProgress');
       client.emit('Browser.downloadWillBegin', { guid: 'g-e13-2', suggestedFilename: 'b.pdf' });
       client.emit('Browser.downloadProgress', { guid: 'g-e13-2', state: 'completed' });
       const secondResult = await second;

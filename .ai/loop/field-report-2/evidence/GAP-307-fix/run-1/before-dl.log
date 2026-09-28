@@ -1,0 +1,34 @@
+PID 6768 start 03:54:47
+run 1 passed=176 failed=0 total=176
+run 2 passed=175 failed=1 total=176
+  E4: prefers CDP's filePath over the suggested filename when it differs (e.g. Chrome uniquified the name) :: expected false to be true // Object.is equality
+run 3 passed=174 failed=2 total=176
+  E5: ignores progress events for a different guid (a concurrent download in the same browser) :: expected { downloadedFilename: 'g1', …(2) } to match object { downloadedFilename: 'a.pdf' }
+  E8: resets Browser.setDownloadBehavior to deny (fail closed) on both success and cancellation, WITHOUT detaching the session (fix-2/GAP-301: detaching was the reason the reset did not stick live) :: expected undefined not to be undefined
+run 4 passed=175 failed=1 total=176
+  fails cleanly when the download is canceled :: expected 'Action download_file timed out after …' to contain 'canceled'
+run 5 passed=176 failed=0 total=176
+run 6 passed=176 failed=0 total=176
+run 7 passed=176 failed=0 total=176
+run 8 passed=176 failed=0 total=176
+run 9 passed=176 failed=0 total=176
+run 10 passed=173 failed=3 total=176
+  fails cleanly when the download is canceled :: expected 'Action download_file timed out after …' to contain 'canceled'
+  E4: prefers CDP's filePath over the suggested filename when it differs (e.g. Chrome uniquified the name) :: expected false to be true // Object.is equality
+  E6: sanitizes a hostile suggestedFilename with path.basename when there is no filePath :: expected false to be true // Object.is equality
+run 11 passed=176 failed=0 total=176
+run 12 passed=176 failed=0 total=176
+run 13 passed=176 failed=0 total=176
+run 14 passed=175 failed=1 total=176
+  E7: fails when CDP reports a filePath outside the download directory :: expected 'Action download_file timed out after …' to contain 'outside the download directory'
+run 15 passed=176 failed=0 total=176
+run 16 passed=175 failed=1 total=176
+  E6: sanitizes a hostile suggestedFilename with path.basename when there is no filePath :: expected false to be true // Object.is equality
+run 17 passed=174 failed=2 total=176
+  fails cleanly when the download is canceled :: expected 'Action download_file timed out after …' to contain 'canceled'
+  E8: resets Browser.setDownloadBehavior to deny (fail closed) on both success and cancellation, WITHOUT detaching the session (fix-2/GAP-301: detaching was the reason the reset did not stick live) :: expected undefined not to be undefined
+run 18 passed=176 failed=0 total=176
+run 19 passed=175 failed=1 total=176
+  E6: sanitizes a hostile suggestedFilename with path.basename when there is no filePath :: expected false to be true // Object.is equality
+run 20 passed=176 failed=0 total=176
+DONE 04:00:27

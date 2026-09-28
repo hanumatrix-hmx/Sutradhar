@@ -1,0 +1,25 @@
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/browser-action-engine.spec.ts[2m > [22m@sutradhar/browser BrowserActionEngine download_file[2m > [22mFR2-05: containment, reporting and cleanup[2m > [22mGAP-307: a foreign guid's 'canceled' progress delivered BEFORE this call's own downloadWillBegin does not fail this call
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/unit/browser-action-engine.spec.ts:[2m2064:30[22m[39m
+    [90m2062| [39m
+    [90m2063| [39m      const result = await promise;
+    [90m2064| [39m      expect(result.success).toBe(true);
+    [90m   | [39m                             [31m^[39m
+    [90m2065| [39m      expect(result.outputData).toMatchObject({ downloadedFilename: 'm…
+    [90m2066| [39m    });
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[33m176 skipped[39m[90m (178)[39m
+[2m   Start at [22m 04:06:48
+[2m   Duration [22m 949ms[2m (transform 307ms, setup 0ms, collect 558ms, tests 102ms, environment 0ms, prepare 109ms)[22m
+

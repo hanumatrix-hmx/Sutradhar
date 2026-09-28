@@ -1,0 +1,11 @@
+PID 6767 start 04:00:27
+run 1 passed=565 failed=1 total=566
+  E7: fails when CDP reports a filePath outside the download directory :: expected 'Action download_file timed out after …' to contain 'outside the download directory'
+run 2 passed=566 failed=0 total=566
+run 3 passed=566 failed=0 total=566
+run 4 passed=564 failed=2 total=566
+  fails cleanly when the download is canceled :: expected 'Action download_file timed out after …' to contain 'canceled'
+  E5: ignores progress events for a different guid (a concurrent download in the same browser) :: expected { downloadedFilename: 'g1', …(2) } to match object { downloadedFilename: 'a.pdf' }
+run 5 passed=565 failed=1 total=566
+  E5: ignores progress events for a different guid (a concurrent download in the same browser) :: expected { downloadedFilename: 'g1', …(2) } to match object { downloadedFilename: 'a.pdf' }
+DONE 04:03:06
