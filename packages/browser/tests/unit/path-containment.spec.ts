@@ -8,13 +8,30 @@
 import os from 'node:os';
 import path from 'node:path';
 import { mkdtempSync, mkdirSync, symlinkSync, rmSync, realpathSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import {
   isPathWithinRoot,
   canonicalizePath,
   findContainingRoot,
   defaultDownloadRoot,
+  detectCaseSensitivity,
+  isRootCaseSensitive,
   DEFAULT_DOWNLOAD_ROOT_DIRNAME,
 } from '../../src/actions/path-containment.js';
+
+/** Best-effort: enables NTFS per-directory case sensitivity via `fsutil` (no admin rights
+ *  required on modern Windows; this is also how WSL-created directories get it by default).
+ *  Returns false (rather than throwing) when unavailable, so GAP-300 tests that need a REAL
+ *  case-sensitive directory can skip themselves cleanly on a machine/CI image without it. */
+function tryEnableCaseSensitive(dir: string): boolean {
+  if (process.platform !== 'win32') return false;
+  try {
+    execFileSync('fsutil', ['file', 'setCaseSensitiveInfo', dir, 'enable'], { stdio: 'pipe' });
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 describe('@sutradhar/browser path-containment isPathWithinRoot', () => {
   it('PC1: win32 semantics (platform injected)', () => {
@@ -194,5 +211,98 @@ describe('@sutradhar/browser path-containment canonicalizePath/findContainingRoo
     await expect(
       findContainingRoot(path.join(outside, 'x'), [rootLink]),
     ).resolves.toBeUndefined();
+  });
+
+  // ── FR2-05 fix-2 (GAP-300, CRITICAL): case-sensitive-directory containment escape ───────────
+  describe('GAP-300: case-sensitive directories', () => {
+    let csRoot: string;
+    let haveRealCaseSensitiveDir = false;
+
+    beforeAll(() => {
+      csRoot = mkdtempSync(path.join(os.tmpdir(), 'fr2-05-cs-'));
+      haveRealCaseSensitiveDir = tryEnableCaseSensitive(csRoot);
+    });
+
+    afterAll(() => {
+      rmSync(csRoot, { recursive: true, force: true });
+    });
+
+    it('PC15: isPathWithinRoot with an explicit caseSensitive=true never folds ASCII case, on any platform', () => {
+      expect(isPathWithinRoot('C:\\OUT\\a', 'C:\\out', 'win32', true)).toBe(false);
+      expect(isPathWithinRoot('C:\\out\\a', 'C:\\out', 'win32', true)).toBe(true);
+      expect(isPathWithinRoot('/OUT/a', '/out', 'linux', true)).toBe(false);
+    });
+
+    it('PC16: isPathWithinRoot with an explicit caseSensitive=false folds ASCII case even on POSIX', () => {
+      expect(isPathWithinRoot('/OUT/a', '/out', 'linux', false)).toBe(true);
+    });
+
+    it('PC17: detectCaseSensitivity reports true (case-sensitive) for a real fsutil-enabled directory, false for an ordinary one', () => {
+      if (!haveRealCaseSensitiveDir) {
+        console.warn('PC17 skipped: fsutil setCaseSensitiveInfo unavailable in this environment');
+        return;
+      }
+      return Promise.all([
+        expect(detectCaseSensitivity(csRoot, 'win32')).resolves.toBe(true),
+        expect(detectCaseSensitivity(os.tmpdir(), 'win32')).resolves.toBe(false),
+      ]);
+    });
+
+    it('PC18: detectCaseSensitivity is non-win32 case-sensitive by default (POSIX) without touching disk', async () => {
+      await expect(detectCaseSensitivity('/does/not/exist', 'linux')).resolves.toBe(true);
+    });
+
+    it('PC19 (GAP-300 exact repro shape 1 — NEW look-alike sibling): findContainingRoot rejects a case-different NEW directory inside a real case-sensitive parent', async () => {
+      if (!haveRealCaseSensitiveDir) {
+        console.warn('PC19 skipped: no real case-sensitive test directory available');
+        return;
+      }
+      const root = path.join(csRoot, 'dlroot');
+      mkdirSync(root, { recursive: true });
+      // The attacker path never creates `DLROOT` — it doesn't exist yet, matching the live
+      // repro (a NEW look-alike folder Chrome would create through `Browser.setDownloadBehavior`).
+      const attacker = path.join(csRoot, 'DLROOT', 'sub');
+      await expect(findContainingRoot(attacker, [root], 'win32')).resolves.toBeUndefined();
+    });
+
+    it('PC20 (GAP-300 exact repro shape 2 — EXISTING look-alike sibling): findContainingRoot rejects a case-different EXISTING directory inside a real case-sensitive parent', async () => {
+      if (!haveRealCaseSensitiveDir) {
+        console.warn('PC20 skipped: no real case-sensitive test directory available');
+        return;
+      }
+      const root = path.join(csRoot, 'uproot2');
+      const lookalike = path.join(csRoot, 'UPROOT2');
+      mkdirSync(root, { recursive: true });
+      mkdirSync(lookalike, { recursive: true }); // genuinely a DIFFERENT real directory here
+      await expect(
+        findContainingRoot(path.join(lookalike, 'secret.txt'), [root], 'win32'),
+      ).resolves.toBeUndefined();
+      // The real, same-case path must still resolve normally.
+      await expect(findContainingRoot(path.join(root, 'ok.txt'), [root], 'win32')).resolves.toBe(
+        root,
+      );
+    });
+
+    it('PC21: legitimate ASCII case differences are still allowed under an ORDINARY (case-insensitive) directory', async () => {
+      const root = path.join(csRoot, '..', 'fr2-05-cs-ordinary-parent');
+      mkdirSync(root, { recursive: true });
+      try {
+        // No fsutil enable here — this parent is whatever the OS default is (case-insensitive
+        // on a stock Windows install). A differently-cased spelling of the SAME directory must
+        // still be accepted, or every normal Windows caller would start seeing false rejects.
+        const upper = root.toUpperCase();
+        if (upper !== root) {
+          await expect(findContainingRoot(path.join(upper, 'x'), [root], 'win32')).resolves.toBe(
+            root,
+          );
+        }
+      } finally {
+        rmSync(root, { recursive: true, force: true });
+      }
+    });
+
+    it('PC22: isRootCaseSensitive returns true for a root whose deepest existing ancestor cannot be probed (defensive fail-closed default)', async () => {
+      await expect(isRootCaseSensitive('/definitely/does/not/exist', 'linux')).resolves.toBe(true);
+    });
   });
 });

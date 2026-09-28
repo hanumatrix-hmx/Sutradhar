@@ -1,0 +1,224 @@
+{
+  "TAG": "a2mul52jcs",
+  "results": [
+    {
+      "id": "AFTERDENY-plain-click-t0",
+      "pass": true,
+      "detail": "download_file ok=true; then plain click ok=true served=1 inRoots=[] inUserDownloads=[]"
+    },
+    {
+      "id": "AFTERDENY-plain-click-t1",
+      "pass": true,
+      "detail": "download_file ok=true; then plain click ok=true served=1 inRoots=[] inUserDownloads=[]"
+    },
+    {
+      "id": "AFTERDENY-plain-click-t2",
+      "pass": true,
+      "detail": "download_file ok=true; then plain click ok=true served=1 inRoots=[] inUserDownloads=[]"
+    },
+    {
+      "id": "CONC-c2-2tabs-x10",
+      "pass": true,
+      "detail": "ok=0 fail=20 escapesToUserDownloads=0 crossDir=0 latencyMs(max)=97661"
+    },
+    {
+      "id": "CONC-c3-3tabs-x5",
+      "pass": true,
+      "detail": "ok=1 fail=14 escapesToUserDownloads=0 crossDir=0 latencyMs(max)=97659"
+    },
+    {
+      "id": "CONC-c4-4tabs-x3",
+      "pass": true,
+      "detail": "ok=0 fail=12 escapesToUserDownloads=0 crossDir=0 latencyMs(max)=100558"
+    },
+    {
+      "id": "CONC-lock-held-by-nondownload-t0",
+      "pass": true,
+      "detail": "A: success=false ms=19563 retries=2 | B: success=false ms=1861 retries=2 err=download_file is already in progress on this browser instance. Concurrent download_file ca | B served at return=0, after drain=0, B files on disk=0"
+    },
+    {
+      "id": "CONC-lock-held-by-nondownload-t1",
+      "pass": true,
+      "detail": "A: success=false ms=19568 retries=2 | B: success=false ms=1859 retries=2 err=download_file is already in progress on this browser instance. Concurrent download_file ca | B served at return=0, after drain=0, B files on disk=0"
+    },
+    {
+      "id": "MULTIPROC-two-mcp-servers-one-chrome-x10",
+      "pass": true,
+      "detail": "okA=0 okB=6 trialsWithFileInUserDownloads=0 A-files-outside-A-roots=0 B-files-outside-B-roots=0",
+      "rows": [
+        {
+          "t": 0,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [],
+            "userDl": false
+          },
+          "B": {
+            "success": true,
+            "err": "",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-P8LB8W\\allowB\\mp0\\a2mul52jcs-mpB0-59.bin"
+            ],
+            "userDl": false
+          }
+        },
+        {
+          "t": 1,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [],
+            "userDl": false
+          },
+          "B": {
+            "success": true,
+            "err": "",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-P8LB8W\\allowB\\mp1\\a2mul52jcs-mpB1-61.bin"
+            ],
+            "userDl": false
+          }
+        },
+        {
+          "t": 2,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [],
+            "userDl": false
+          },
+          "B": {
+            "success": true,
+            "err": "",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-P8LB8W\\allowB\\mp2\\a2mul52jcs-mpB2-63.bin"
+            ],
+            "userDl": false
+          }
+        },
+        {
+          "t": 3,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [],
+            "userDl": false
+          },
+          "B": {
+            "success": true,
+            "err": "",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-P8LB8W\\allowB\\mp3\\a2mul52jcs-mpB3-65.bin"
+            ],
+            "userDl": false
+          }
+        },
+        {
+          "t": 4,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [],
+            "userDl": false
+          },
+          "B": {
+            "success": false,
+            "err": "download_file is already in progress on this browser instance. Concurrent downlo",
+            "hits": [],
+            "userDl": false
+          }
+        },
+        {
+          "t": 5,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [],
+            "userDl": false
+          },
+          "B": {
+            "success": false,
+            "err": "download_file is already in progress on this browser instance. Concurrent downlo",
+            "hits": [],
+            "userDl": false
+          }
+        },
+        {
+          "t": 6,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [],
+            "userDl": false
+          },
+          "B": {
+            "success": false,
+            "err": "download_file is already in progress on this browser instance. Concurrent downlo",
+            "hits": [],
+            "userDl": false
+          }
+        },
+        {
+          "t": 7,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [],
+            "userDl": false
+          },
+          "B": {
+            "success": true,
+            "err": "",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-P8LB8W\\allowB\\mp7\\a2mul52jcs-mpB7-73.bin"
+            ],
+            "userDl": false
+          }
+        },
+        {
+          "t": 8,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [],
+            "userDl": false
+          },
+          "B": {
+            "success": false,
+            "err": "download_file is already in progress on this browser instance. Concurrent downlo",
+            "hits": [],
+            "userDl": false
+          }
+        },
+        {
+          "t": 9,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [],
+            "userDl": false
+          },
+          "B": {
+            "success": true,
+            "err": "",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-P8LB8W\\allowB\\mp9\\a2mul52jcs-mpB9-77.bin"
+            ],
+            "userDl": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "cleanup-user-downloads",
+      "pass": true,
+      "detail": "tagged strays found+removed=[]"
+    },
+    {
+      "id": "cleanup-temp",
+      "pass": true,
+      "detail": "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-P8LB8W"
+    }
+  ]
+}

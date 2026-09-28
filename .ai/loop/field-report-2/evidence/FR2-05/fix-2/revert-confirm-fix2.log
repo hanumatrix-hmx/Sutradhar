@@ -1,0 +1,16 @@
+[revert-confirm] original sha256(path-containment.ts) = 7a55013f8ccdc798e80c5de441ef119711660dd3de1e93f678c25a97b2ee6255
+[revert-confirm] GAP-300: reverted findContainingRoot to unconditional case-insensitive fold. Building...
+[revert-confirm] build (reverted): OK
+[revert-confirm] GAP-300 tests on REVERTED code: FAILED (expected -- proves the fix is load-bearing)
+[revert-confirm] GAP-300: restored file, sha256 matches original = true
+[revert-confirm] GAP-300: rebuild after restore: OK
+[revert-confirm] GAP-300 tests on RESTORED code: PASSED (confirmed)
+[revert-confirm] original sha256(browser-action-engine.ts) = 314865f1ca80bed944dda848dc2e5a0c63dd8d24b6d2d58e2b4b388ef5a08368
+[revert-confirm] GAP-301: reverted to detach-after-reset + no real lock. Building...
+[revert-confirm] build (reverted): OK
+[revert-confirm] GAP-301 tests (E8 detach-assert, E11 fail-fast-lock) on REVERTED code: FAILED (expected)
+[revert-confirm] GAP-301: restored file, sha256 matches original = true
+[revert-confirm] GAP-301: rebuild after restore: OK
+[revert-confirm] GAP-301 tests on RESTORED code: PASSED (confirmed)
+
+[revert-confirm] OVERALL: PASS

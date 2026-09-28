@@ -3552,3 +3552,49 @@ Decisions for fix-2:
 Given TWO critical findings this cycle (one carried over from before fix-1 even started, one in
 fix-1's own remedy), fix-2 must re-run the ENTIRE audit-1 and audit-2 attack surface, with particular
 emphasis on GAP-300/301's live repros, before reporting done.
+
+## 2026-09-28 -- FR2-05 fix-2 done (2 more critical vulns fixed); sent to independent audit-3
+
+Executor (Sonnet) self-report, independently spot-checked by the Orchestrator (vitest browser 557,
+capability-runtime 228, mcp-server 101, cli 175, sutradhar 25 -- all 5 re-run directly, exact match;
+git status matches; real ~/Downloads folder checked directly by the Orchestrator, 0 stray files in
+the last 2 hours; 2 stale leftover polling shells from the executor's own background monitoring
+found and killed by the Orchestrator, harmless -- not Chrome/download processes despite matching the
+grep pattern).
+
+GAP-300: real case-sensitivity detection per directory (fsutil, with a write-probe fallback), fails
+CLOSED to case-sensitive when undetectable (the safe direction -- a false "different" rejection is
+safe, a false "same" approval is the vulnerability), with a result cache since detection costs
+100-300ms per call. Live: 9/9 across all 3 confirmed audit-2 escape shapes (new look-alike sibling,
+existing look-alike sibling, upload-read-through-case-variant), plus the legitimate control still
+works. Revert-confirm reproduces the escape when forced back to unconditional case-insensitivity.
+
+GAP-301: three coordinated fixes for the three root causes audit-2 identified. (a) One never-
+detached CDP session per browser -- audit-2's own hypothesis (that client.detach() was why 'deny'
+didn't stick) is now confirmed correct by this fix actually working. (b) A real OS-level file lock
+keyed by the browser's own websocket endpoint, visible across processes, not the old per-process
+WeakMap -- and FAIL-FAST (reject immediately) rather than queue, the smaller-scope alternative
+decisions.md explicitly allowed over a true cross-process wait-lock. (c) AbortController cancellation
+so an abandoned, timed-out call's cleanup runs immediately instead of only after its own inner
+timeout, closing the stale-config window. Re-ran EVERY one of audit-2's specific attacks against the
+fix: the after-deny-detach escape (0/3, was 3/3), same-process 2/3/4-tab concurrency (0 escapes/0
+cross-contamination across 18 trials, was 8/18 escaped and 14/18 cross-contaminated), and genuine
+cross-process concurrency with two real separate MCP server processes on one Chrome (0/10, was
+2/10 escaped + 2/10 cross-wrote). Disclosed, not hidden: concurrent downloads on one browser now
+mostly FAIL rather than race (0/20, 1/15, 0/12 succeeded across trials) -- a deliberate safety-over-
+availability tradeoff, with a clear error message, not a silent regression.
+
+The 3 stale/false code comments fixed, including the exact "fails closed" claim that GAP-301
+disproved -- now actually true and its comment describes why.
+
+Full re-verification: every audit-1 attack (trailing-dot/space, Unicode folding) re-run, 37/37 MCP +
+30/30 CLI. Every audit-2 attack re-run per the tables above. The main live-verify script and fix-1's
+own N1-N11 additions script both re-run clean (25/25 and 16/16) after one transient environment
+flake was confirmed not a real regression on retry.
+
+One process-hygiene mistake self-caught and corrected: running scripts unredirected briefly wrote
+into fix-1/'s and run-1/'s protected evidence dirs -- caught via git status, restored via git
+checkout before continuing.
+
+Sent to independent audit-3, given this item's history of 3 confirmed critical findings across the
+first 2 audit cycles.

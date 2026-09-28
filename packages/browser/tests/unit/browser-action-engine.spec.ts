@@ -1685,7 +1685,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
     const page = singleFramePage(() => Promise.resolve(handle));
     const client = mockCdpClient();
     (page as any).browser = vi.fn().mockReturnValue({
-      target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+      wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
     });
 
     const allowedDir = path.resolve('/tmp/downloads');
@@ -1740,7 +1740,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
     const page = singleFramePage(() => Promise.resolve(handle));
     const client = mockCdpClient();
     (page as any).browser = vi.fn().mockReturnValue({
-      target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+      wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
     });
 
     // Neither path exists on disk, so `realpath` throws for both and each falls back to its own
@@ -1773,7 +1773,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
     const page = singleFramePage(() => Promise.resolve(handle));
     const client = mockCdpClient();
     (page as any).browser = vi.fn().mockReturnValue({
-      target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+      wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
     });
 
     const engine = new BrowserActionEngine();
@@ -1792,14 +1792,19 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
     expect(result.error).toContain('canceled');
   });
 
-  it('detaches the CDP session and does not leave a dangling unhandled rejection when the trigger click fails', async () => {
+  it('resets the download session to deny (without detaching it, FR2-05 fix-2/GAP-301) and does not leave a dangling unhandled rejection when the trigger click fails', async () => {
     // Regression test: if verifiedClick throws (e.g. trigger element not found) before the
     // download promise is awaited, its own timeout timer must not fire an unobserved
-    // rejection later, and the CDP session must be cleaned up rather than leaked.
+    // rejection later, and the CDP session's download behavior must be reset.
+    //
+    // FR2-05 fix-2 (GAP-301): the session is no longer detached at all — audit-2 confirmed
+    // live that detaching right after the 'deny' reset made Chrome silently revert the
+    // browser-wide download setting anyway, so this engine now keeps ONE never-detached
+    // session per browser for download-behavior management instead.
     const page = singleFramePage(() => Promise.reject(new Error('not found')));
     const client = mockCdpClient();
     (page as any).browser = vi.fn().mockReturnValue({
-      target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+      wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
     });
 
     const unhandled: unknown[] = [];
@@ -1816,7 +1821,8 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       });
 
       expect(result.success).toBe(false);
-      expect(client.detach).toHaveBeenCalled();
+      expect(client.send).toHaveBeenCalledWith('Browser.setDownloadBehavior', { behavior: 'deny' });
+      expect(client.detach).not.toHaveBeenCalled();
 
       // Give any dangling timer/microtask a chance to surface before asserting none did.
       await new Promise((r) => setTimeout(r, 50));
@@ -1849,7 +1855,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       const handle = mockHandle();
       const page = singleFramePage(() => Promise.resolve(handle));
       const createCDPSession = vi.fn();
-      (page as any).browser = vi.fn().mockReturnValue({ target: vi.fn().mockReturnValue({ createCDPSession }) });
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession }) });
 
       const engine = new BrowserActionEngine(undefined, undefined, undefined, [root]);
       const result = await engine.executeAction(mockTab(page), {
@@ -1908,7 +1914,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       handle.evaluate.mockResolvedValue(true);
       const page = singleFramePage(() => Promise.resolve(handle));
       const client = mockCdpClient();
-      (page as any).browser = vi.fn().mockReturnValue({ target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
 
       const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
       const promise = engine.executeAction(mockTab(page), {
@@ -1937,7 +1943,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       handle.evaluate.mockResolvedValue(true);
       const page = singleFramePage(() => Promise.resolve(handle));
       const client = mockCdpClient();
-      (page as any).browser = vi.fn().mockReturnValue({ target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
 
       const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
       const promise = engine.executeAction(mockTab(page), {
@@ -1969,7 +1975,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       handle.evaluate.mockResolvedValue(true);
       const page = singleFramePage(() => Promise.resolve(handle));
       const client = mockCdpClient();
-      (page as any).browser = vi.fn().mockReturnValue({ target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
 
       const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
       const promise = engine.executeAction(mockTab(page), {
@@ -1995,7 +2001,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       handle.evaluate.mockResolvedValue(true);
       const page = singleFramePage(() => Promise.resolve(handle));
       const client = mockCdpClient();
-      (page as any).browser = vi.fn().mockReturnValue({ target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
 
       const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
       const promise = engine.executeAction(mockTab(page), {
@@ -2014,7 +2020,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       expect(result.error).toContain('outside the download directory');
     });
 
-    it('E8: resets Browser.setDownloadBehavior to deny (fail closed, fix-1/GAP-296) before detaching, on both success and cancellation', async () => {
+    it('E8: resets Browser.setDownloadBehavior to deny (fail closed) on both success and cancellation, WITHOUT detaching the session (fix-2/GAP-301: detaching was the reason the reset did not stick live)', async () => {
       const dir = path.join(tmpRoot, 'dir');
       mkdirSync(dir, { recursive: true });
       const handle = mockHandle();
@@ -2024,7 +2030,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       {
         const page = singleFramePage(() => Promise.resolve(handle));
         const client = mockCdpClient();
-        (page as any).browser = vi.fn().mockReturnValue({ target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+        (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
         const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
         const promise = engine.executeAction(mockTab(page), {
           actionType: 'download_file',
@@ -2041,15 +2047,14 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
           (c: any[]) => c[0] === 'Browser.setDownloadBehavior' && c[1]?.behavior === 'deny',
         );
         expect(resetCall).toBeDefined();
-        const resetOrder = client.send.mock.invocationCallOrder[client.send.mock.calls.indexOf(resetCall)];
-        expect(resetOrder).toBeLessThan(client.detach.mock.invocationCallOrder[0]);
+        expect(client.detach).not.toHaveBeenCalled();
       }
 
       // Cancellation path.
       {
         const page = singleFramePage(() => Promise.resolve(handle));
         const client = mockCdpClient();
-        (page as any).browser = vi.fn().mockReturnValue({ target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+        (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
         const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
         const promise = engine.executeAction(mockTab(page), {
           actionType: 'download_file',
@@ -2065,8 +2070,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
           (c: any[]) => c[0] === 'Browser.setDownloadBehavior' && c[1]?.behavior === 'deny',
         );
         expect(resetCall).toBeDefined();
-        const resetOrder = client.send.mock.invocationCallOrder[client.send.mock.calls.indexOf(resetCall)];
-        expect(resetOrder).toBeLessThan(client.detach.mock.invocationCallOrder[0]);
+        expect(client.detach).not.toHaveBeenCalled();
       }
     });
 
@@ -2097,7 +2101,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       handle.evaluate.mockResolvedValue(true);
       const page = singleFramePage(() => Promise.resolve(handle));
       const client = mockCdpClient();
-      (page as any).browser = vi.fn().mockReturnValue({ target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser'), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
 
       const engine = new BrowserActionEngine(undefined, undefined, undefined, []);
       const promise = engine.executeAction(mockTab(page), {
@@ -2117,6 +2121,182 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
         expect.objectContaining({ downloadPath: defaultDownloadRoot() }),
       );
     });
+
+    // ── FR2-05 fix-2 (GAP-301/GAP-302): fail-fast cross-process lock + session reuse ─────────
+    it('E11 (GAP-301/302): a second download_file on the SAME browser while one is in flight fails FAST with a clear error, not a queue/timeout', async () => {
+      const dir = path.join(tmpRoot, 'e11');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true); // not stale / not occluded / delivered — so the
+      // first call's click actually succeeds and it's genuinely awaiting the download (holding
+      // the lock), not failing fast on its own for an unrelated reason.
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      const browserMock = {
+        wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser-e11'),
+        target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+      };
+      (page as any).browser = vi.fn().mockReturnValue(browserMock);
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+      // Two DIFFERENT tabs of the SAME browser — the duplicate-action guard is per-tab, so this
+      // must not be masked by that unrelated guard; the lock this test exercises is per-BROWSER
+      // (keyed by wsEndpoint), exactly matching the real GAP-301 concurrency shape (different
+      // tabs/processes, one shared browser-wide setDownloadBehavior).
+      const tab1 = mockTab(page);
+      const tab2 = mockTab(page);
+      (tab2 as any).id = createTabId('tab_2_e11');
+      // First call: never completes (no downloadWillBegin/downloadProgress emitted), so it's
+      // still holding the lock when the second call starts. Give it enough headroom to clear
+      // its own real on-disk case-sensitivity detection (GAP-300 — a real `fsutil` subprocess
+      // spawn, cached per-directory afterward) and actually reach the lock before we start
+      // timing the second call's fail-fast behavior.
+      const first = engine.executeAction(tab1, {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+        timeoutMs: 5000,
+      });
+      await new Promise((r) => setTimeout(r, 300));
+
+      const start = Date.now();
+      const second = await engine.executeAction(tab2, {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+        timeoutMs: 5000,
+      });
+      // "Fails fast": well under the 5000ms timeoutMs each call was given, and specifically
+      // fast because the directory's case-sensitivity is already cached by the first call — not
+      // an assertion that ties this test to a specific fsutil subprocess latency.
+      expect(Date.now() - start).toBeLessThan(2000);
+      expect(second.success).toBe(false);
+      expect(second.error).toContain('already in progress');
+
+      // Clean up the first, still-pending call.
+      client.emit('Browser.downloadProgress', { guid: 'anything', state: 'canceled' });
+      await first;
+    });
+
+    it('E12 (GAP-301 cause 1): reuses ONE CDP session across sequential download_file calls on the same browser and never detaches it', async () => {
+      const dir = path.join(tmpRoot, 'e12');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true); // not stale / not occluded / marker delivered, every call
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      const createCDPSession = vi.fn().mockResolvedValue(client);
+      const browserMock = {
+        wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser-e12'),
+        target: vi.fn().mockReturnValue({ createCDPSession }),
+      };
+      (page as any).browser = vi.fn().mockReturnValue(browserMock);
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+
+      let driveCount = 0;
+      const drive = async () => {
+        driveCount++;
+        const guid = `g-${driveCount}`;
+        const tab = mockTab(page);
+        (tab as any).id = createTabId(`tab_e12_${driveCount}`);
+        const promise = engine.executeAction(tab, {
+          actionType: 'download_file',
+          selector: '#download-link',
+          downloadDir: dir,
+          maxRetries: 0,
+          timeoutMs: 2000,
+        });
+        await new Promise((r) => setTimeout(r, 200));
+        client.emit('Browser.downloadWillBegin', { guid, suggestedFilename: 'a.pdf' });
+        client.emit('Browser.downloadProgress', { guid, state: 'completed' });
+        return promise;
+      };
+
+      const r1 = await drive();
+      const r2 = await drive();
+      expect(r1.success).toBe(true);
+      expect(r2.success).toBe(true);
+      // ONE session created for this browser across BOTH calls — the whole point of GAP-301's
+      // never-detached-session fix.
+      expect(createCDPSession).toHaveBeenCalledTimes(1);
+      expect(client.detach).not.toHaveBeenCalled();
+      // Both calls reset to 'deny' — twice, once per call.
+      const denyCalls = client.send.mock.calls.filter(
+        (c: any[]) => c[0] === 'Browser.setDownloadBehavior' && c[1]?.behavior === 'deny',
+      );
+      expect(denyCalls.length).toBe(2);
+    });
+
+    it('E13 (GAP-301 cause 3): an abandoned dispatch (aborted by the outer timeout) releases the lock promptly instead of holding it until its own inner timeout', async () => {
+      const dir = path.join(tmpRoot, 'e13');
+      mkdirSync(dir, { recursive: true });
+      // Every evaluate() call hangs forever — assertNotStale (the very first thing
+      // verifiedClick does) therefore never resolves on its own, since (unlike the later
+      // occlusion/delivery checks) it has no internal race/timeout of its own. This makes the
+      // real in-flight dispatch work TRULY unable to settle by itself, so the only thing that
+      // can ever end it is this engine's own outer-timeout abandonment/abort path — exactly
+      // what this test needs to isolate and verify.
+      const hungHandle = mockHandle();
+      hungHandle.evaluate = vi.fn().mockImplementation(() => new Promise(() => {}));
+      const normalHandle = mockHandle();
+      normalHandle.evaluate.mockResolvedValue(true);
+      let resolveCalls = 0;
+      const page = singleFramePage(() => {
+        resolveCalls++;
+        return Promise.resolve(resolveCalls === 1 ? hungHandle : normalHandle);
+      });
+      const client = mockCdpClient();
+      const browserMock = {
+        wsEndpoint: vi.fn().mockReturnValue('ws://mock-browser-e13'),
+        target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+      };
+      (page as any).browser = vi.fn().mockReturnValue(browserMock);
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+      const tab1 = mockTab(page);
+      const result = await engine.executeAction(tab1, {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+        timeoutMs: 100,
+      });
+      expect(result.success).toBe(false);
+
+      // The FIRST dispatch's real in-flight work can NEVER settle on its own (its evaluate()
+      // hangs forever, unconditionally) — so if the lock were only released when that work
+      // naturally finishes, it would never be released at all. Wait past the outer engine's own
+      // abandonment grace period (TIMEOUT_SETTLEMENT_GRACE_MS = 2000ms, from when the 100ms
+      // outer timeout fired) before trying the second call — proving the lock was released by
+      // the ABORT path, not by the abandoned work completing.
+      await new Promise((r) => setTimeout(r, 2300));
+
+      // A different tab (same browser) so the unrelated per-tab duplicate-action guard can't
+      // mask this.
+      const tab2 = mockTab(page);
+      (tab2 as any).id = createTabId('tab_2_e13');
+      const second = engine.executeAction(tab2, {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+        timeoutMs: 2000,
+      });
+      // FR2-05 fix-2 (GAP-300): resolveDownloadDir now does REAL on-disk case-sensitivity
+      // detection (a real `fsutil` subprocess spawn, or a filesystem probe as fallback) before
+      // the lock is even acquired. That's cached per-directory (see
+      // `_clearCaseSensitivityCacheForTests`) so the second call on the SAME directory is fast,
+      // but give the first real detection call (paid once by the FIRST download_file above) a
+      // realistic amount of headroom rather than racing it.
+      await new Promise((r) => setTimeout(r, 150));
+      client.emit('Browser.downloadWillBegin', { guid: 'g-e13-2', suggestedFilename: 'b.pdf' });
+      client.emit('Browser.downloadProgress', { guid: 'g-e13-2', state: 'completed' });
+      const secondResult = await second;
+      expect(secondResult.success).toBe(true);
+    }, 10000);
   });
 });
 

@@ -11,11 +11,12 @@ import { access } from 'node:fs/promises';
 import { EventBus } from '@sutradhar/events';
 import { StructuredLogger } from '@sutradhar/observability';
 import { SessionId } from '@sutradhar/contracts';
-import { ElementHandle, Frame, KeyInput, Page } from 'puppeteer-core';
+import { Browser, CDPSession, ElementHandle, Frame, KeyInput, Page } from 'puppeteer-core';
 import { IBrowserTab } from '../session/browser-tab.js';
 import { ExecutionVerifier } from '../verifier/execution-verifier.js';
 import { SD_GENERATION_ATTR, SD_CURRENT_GENERATION_ATTR, SD_FINGERPRINT_ATTR } from '../dom/dom-semantic-engine.js';
 import { defaultDownloadRoot, findContainingRoot, isPathWithinRoot } from './path-containment.js';
+import { acquireDownloadLock } from './download-lock.js';
 import {
   ActionParams,
   ActionResultDto,
@@ -209,35 +210,26 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    *  against each other. */
   private readonly tabQueues = new Map<string, Promise<unknown>>();
   /**
-   * key: the real Puppeteer `Browser` object -> a promise chain serializing every `download_file`
-   * call against that SAME browser instance, end to end (from `Browser.setDownloadBehavior({allow,
-   * downloadPath})` through the `finally` reset).
+   * key: the real Puppeteer `Browser` object -> a lazily-created, NEVER-DETACHED CDP session
+   * dedicated to that browser's download behavior (`Browser.setDownloadBehavior`,
+   * `Browser.downloadWillBegin`/`downloadProgress`).
    *
-   * FR2-05 fix-1, GAP-296 (live-confirmed residual beyond the `finally`-reset-to-`'deny'` fix):
-   * `Browser.setDownloadBehavior` is a BROWSER-wide CDP setting, not per-tab/per-session. Two
-   * `download_file` calls on different tabs of the SAME browser, run concurrently (not merely
-   * "the second happens to complete after the first's cleanup", but genuinely overlapping), race
-   * on that one shared setting — whichever call's `setDownloadBehavior('allow', dirA)` executes
-   * last wins for BOTH calls' underlying Chrome-side downloads, and whichever call's `finally`
-   * reset (`'deny'`) executes while the OTHER call's download is still physically in flight can
-   * still let Chrome fall through to ITS OWN platform-default download location for that other
-   * download. This was live-confirmed (not theoretical): two genuinely concurrent `download_file`
-   * calls against one browser, `evidence/FR2-05/fix-1/verify-fr2-05-fix1-additions.mjs`'s
-   * GAP-296-concurrent case, 2/2 runs produced a real file written to the OS's actual Downloads
-   * folder — outside every configured allowed root — even with the `'deny'`-on-cleanup fix in
-   * place, because the reset-to-`'deny'` from ONE call's cleanup can race the OTHER call's
-   * in-flight Chrome-side write decision.
+   * FR2-05 audit-2 (GAP-301, cause 1, live-confirmed): fix-1 created a FRESH `CDPSession` per
+   * `download_file` call and `client.detach()`ed it in the `finally` block, right after
+   * resetting `Browser.setDownloadBehavior` to `'deny'`. Live-tested end-to-end: after a
+   * successful `download_file`, a plain, unrelated `browser.click` on a download link still
+   * landed the file in the real OS Downloads folder 3/3 — the `'deny'` reset did not stick.
+   * Root cause: detaching the session that last configured `Browser.setDownloadBehavior`
+   * appears to make Chrome silently revert that browser-wide setting to its own platform
+   * default, undoing the reset moments after it "succeeded". fix-1's own code comment claiming
+   * the reset "fails closed" was therefore false in practice.
    *
-   * `'deny'`-on-cleanup alone cannot close this: the race is in what `Browser.setDownloadBehavior`
-   * is set to AT THE MOMENT Chrome commits to a download's destination, and two independent CDP
-   * sessions calling that browser-wide setter have no ordering guarantee relative to each other.
-   * The only structural fix is to never let two `download_file` calls against the same browser be
-   * "in flight" (from their own `setDownloadBehavior('allow', ...)` through their own cleanup) at
-   * the same time — serializing them here means the second call's `setDownloadBehavior('allow',
-   * ...)` can only run after the first call's `finally` reset (to `'deny'`) has already completed,
-   * so there is no window where both calls' browser-wide settings can interleave.
+   * The fix is structural, not another reset: keep ONE CDP session per browser instance for
+   * download-behavior management and never detach it for the lifetime of that browser (Chrome/
+   * Puppeteer detaches it automatically when the browser itself closes) — so there is no
+   * detach event to trigger Chrome's own reversion, ever.
    */
-  private readonly downloadLocks = new WeakMap<object, Promise<unknown>>();
+  private readonly downloadSessions = new WeakMap<object, Promise<CDPSession>>();
 
   public constructor(
     eventBus?: EventBus,
@@ -291,14 +283,15 @@ export class BrowserActionEngine implements IBrowserActionEngine {
    * — prevents an MCP caller from directing a real CDP download to an arbitrary filesystem
    * location.
    *
-   * Containment is checked against the REAL (symlink-resolved) path of both the requested
-   * directory and each allowed root, not just the literal string — a plain prefix check on
-   * the un-resolved paths can be defeated by a symlink/junction sitting inside (or standing
-   * in for) an allowed root that actually points somewhere else entirely (e.g. a shared temp
-   * dir containing a junction to a sensitive location). `fs.realpath` requires the target to
-   * exist; a directory that doesn't exist yet can't meaningfully be symlink-checked, so it
-   * falls back to the literal resolved path — a nonexistent target fails loudly downstream
-   * (CDP/fs) instead of silently bypassing this check either way.
+   * Containment is checked against the REAL (symlink/junction-resolved, and — since FR2-05
+   * fix-2, GAP-300 — on-disk-case-corrected) path of both the requested directory and each
+   * allowed root, not just the literal string. This goes through {@link findContainingRoot},
+   * which walks up to the deepest EXISTING ancestor for a not-yet-created target (rather than
+   * falling back to the literal string the moment the full path doesn't exist — the original
+   * B2/GAP-294 bug, which let a link with a nonexistent tail escape), and which compares
+   * segments case-sensitively whenever the real on-disk directory is confirmed case-sensitive
+   * (GAP-300 — a folder can be marked case-sensitive without admin rights, e.g. WSL-created
+   * ones default to it, and a blanket case-insensitive assumption let `root` vs `ROOT` escape).
    */
   private async resolveDownloadDir(requested: string | undefined): Promise<string> {
     const resolved = requested ? path.resolve(requested) : this.allowedDownloadRoots[0]!;
@@ -402,8 +395,20 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     let inFlightDispatch: Promise<unknown> | undefined;
 
     while (attempt <= maxRetries) {
+      // FR2-05 fix-2 (GAP-301 cause 3): a fresh controller per attempt, so a timed-out attempt's
+      // signal can be aborted without affecting a later retry's own dispatch.
+      const abortController = new AbortController();
+      let dispatchSettled = false;
       try {
-        const dispatchPromise = this.dispatchAction(tab, params);
+        const dispatchPromise = this.dispatchAction(tab, params, abortController.signal);
+        dispatchPromise.then(
+          () => {
+            dispatchSettled = true;
+          },
+          () => {
+            dispatchSettled = true;
+          },
+        );
         inFlightDispatch = dispatchPromise;
         const resultData = await this.raceWithTimeout(dispatchPromise, params.actionType, timeoutMs);
         if (params.settle && tab.page) {
@@ -470,6 +475,14 @@ export class BrowserActionEngine implements IBrowserActionEngine {
             inFlightDispatch.catch(() => {}),
             new Promise((r) => setTimeout(r, TIMEOUT_SETTLEMENT_GRACE_MS)),
           ]);
+          // FR2-05 fix-2 (GAP-301 cause 3): the grace period elapsed and this dispatch STILL
+          // hasn't settled — it's now genuinely abandoned. Abort its signal so `download_file`
+          // (the only action type that consults it) stops driving shared browser-wide state in
+          // the background instead of running unattended until its own inner timeout, possibly
+          // clobbering a later retry's/call's download configuration in the meantime.
+          if (!dispatchSettled) {
+            abortController.abort();
+          }
         }
 
         this.logger.warn(
@@ -762,6 +775,13 @@ export class BrowserActionEngine implements IBrowserActionEngine {
   private async dispatchAction(
     tab: IBrowserTab,
     params: ActionParams,
+    /** FR2-05 fix-2 (GAP-301, cause 3): only consulted by `download_file`. When the OUTER retry
+     *  loop in {@link executeActionSerialized} gives up waiting on this dispatch (its bounded
+     *  grace period after a timeout elapses with the dispatch still unsettled), it aborts this
+     *  signal so the abandoned in-flight download work stops touching shared browser-wide
+     *  state (the click, and any further wait) instead of running to completion in the
+     *  background and clobbering a LATER call's download-behavior configuration. */
+    signal?: AbortSignal,
   ): Promise<Record<string, unknown>> {
     const page = tab.page;
 
@@ -1191,17 +1211,19 @@ export class BrowserActionEngine implements IBrowserActionEngine {
 
         const downloadDir = await this.resolveDownloadDir(params.downloadDir);
 
-        // FR2-05 fix-1 (GAP-296): serialize every `download_file` call against this SAME browser
-        // instance — see {@link downloadLocks}'s own doc comment for why a per-call `finally`
-        // reset alone (even to `'deny'`) cannot close the race between two genuinely concurrent
-        // calls sharing one browser-wide `Browser.setDownloadBehavior` setting.
-        const browserObj: object = page.browser();
-        const previousDownload = this.downloadLocks.get(browserObj) ?? Promise.resolve();
-        const thisDownload = previousDownload.catch(() => {}).then(() => this.runDownloadFileLocked(page!, params, downloadDir));
-        // Always store a variant that never rejects, so a failed download doesn't wedge the next
-        // queued call on this browser forever.
-        this.downloadLocks.set(browserObj, thisDownload.catch(() => {}));
-        return await thisDownload;
+        // FR2-05 fix-2 (GAP-301/GAP-302): fail FAST if another `download_file` call is already
+        // in flight against this SAME browser instance — same-process OR cross-process (see
+        // {@link ./download-lock.ts}). fix-1's in-process WeakMap queue gave zero protection
+        // across processes and let a caller wait, unbounded in practice, behind an abandoned
+        // dispatch; this rejects immediately instead, with a clear error, matching the fix-2
+        // binding decision's smaller-scope alternative to a true cross-process wait-lock.
+        const browser = page.browser();
+        const lock = await acquireDownloadLock(browser.wsEndpoint());
+        try {
+          return await this.runDownloadFileLocked(page, params, downloadDir, signal);
+        } finally {
+          await lock.release();
+        }
       }
 
       case 'upload_file': {
@@ -1239,21 +1261,45 @@ export class BrowserActionEngine implements IBrowserActionEngine {
   }
 
   /**
+   * Returns (creating if necessary) the ONE long-lived CDP session this engine uses to manage
+   * `browser`'s download behavior, and never detaches it — see {@link downloadSessions}'s doc
+   * comment for why (FR2-05 fix-2, GAP-301 cause 1).
+   */
+  private async getDownloadSession(browser: Browser): Promise<CDPSession> {
+    const existing = this.downloadSessions.get(browser);
+    if (existing) return existing;
+    // Downloads must be configured on a *browser*-level CDP session, not a page-level one —
+    // `Page.setDownloadBehavior`/`Page.downloadWillBegin`/`Page.downloadProgress` are
+    // deprecated and don't fire in Chrome's current ("new") headless mode; the replacement
+    // `Browser.*` equivalents only exist on the browser target's own session.
+    const created = browser.target().createCDPSession();
+    this.downloadSessions.set(browser, created);
+    created.catch(() => {
+      // Creation failed — don't leave a permanently-rejected promise cached for this browser.
+      if (this.downloadSessions.get(browser) === created) this.downloadSessions.delete(browser);
+    });
+    return created;
+  }
+
+  /**
    * The actual `download_file` CDP work (browser-wide `setDownloadBehavior`, click, wait for
    * completion, containment re-check, and cleanup) — split out of {@link dispatchAction}'s main
-   * switch so it can be queued per-browser via {@link downloadLocks} (FR2-05 fix-1, GAP-296).
-   * Only one call for a given real browser instance runs this at a time.
+   * switch so it can be gated by the cross-process fail-fast lock (FR2-05 fix-2, GAP-301/302;
+   * see `./download-lock.ts`). Only one call for a given real browser instance holds the lock
+   * — and therefore runs this — at a time, whether that other caller is in this same process
+   * or a separate one.
    */
   private async runDownloadFileLocked(
     page: Page,
     params: ActionParams,
     downloadDir: string,
+    signal?: AbortSignal,
   ): Promise<Record<string, unknown>> {
-    // Downloads must be configured on a *browser*-level CDP session, not a page-level one —
-    // `Page.setDownloadBehavior`/`Page.downloadWillBegin`/`Page.downloadProgress` are
-    // deprecated and don't fire in Chrome's current ("new") headless mode; the replacement
-    // `Browser.*` equivalents only exist on the browser target's own session.
-    const client = await page.browser().target().createCDPSession();
+    if (signal?.aborted) {
+      throw new Error('download_file abandoned before it started (outer retry/timeout already gave up on it)');
+    }
+
+    const client = await this.getDownloadSession(page.browser());
     await client.send('Browser.setDownloadBehavior', {
       behavior: 'allow',
       downloadPath: downloadDir,
@@ -1310,9 +1356,34 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     // rejection normally.
     downloadPromise.catch(() => {});
 
-    try {
+    // FR2-05 fix-2 (GAP-301 cause 3): if the OUTER retry loop already gave up on THIS dispatch
+    // (its bounded grace period elapsed with this call still unsettled) before the click or the
+    // download itself completes, stop here rather than letting the click/wait run to completion
+    // in the background — an abandoned call must not still be the one holding the lock and
+    // driving `Browser.setDownloadBehavior` by the time a later call wants to start. Racing an
+    // abort promise alongside the real work (rather than trying to cancel the underlying CDP
+    // calls, which Puppeteer doesn't expose a cancellation path for) means the `finally` below
+    // still runs immediately, releasing the lock and resetting the download behavior.
+    const abortError = new Error(
+      'download_file abandoned by the outer retry/timeout — this attempt is no longer awaited',
+    );
+    const racedWork = async (): Promise<{ filename: string; path: string }> => {
       await this.verifiedClick(page, params.selector!, 'left');
-      const downloaded = await downloadPromise;
+      return downloadPromise;
+    };
+    let onAbort: (() => void) | undefined;
+    try {
+      const downloaded = signal
+        ? await new Promise<{ filename: string; path: string }>((resolve, reject) => {
+            racedWork().then(resolve, reject);
+            if (signal.aborted) {
+              reject(abortError);
+              return;
+            }
+            onAbort = () => reject(abortError);
+            signal.addEventListener('abort', onAbort, { once: true });
+          })
+        : await racedWork();
       const reportedPath = path.resolve(downloaded.path);
       // Defense in depth: even a `filePath` CDP reports should land inside `downloadDir`.
       // A mismatch here means Chrome/CDP put the file somewhere this call didn't ask for —
@@ -1327,26 +1398,23 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       cleanup();
       throw err;
     } finally {
+      if (onAbort) signal?.removeEventListener('abort', onAbort);
       // Reset Chrome's browser-wide download target so a destination granted for this one
       // action doesn't keep receiving later, page-initiated downloads (FR2-05 B7).
       //
-      // FR2-05 audit-1 GAP-296: resetting to `behavior:'default'` was a REGRESSION. Before
-      // this reset existed, `Browser.setDownloadBehavior` was never touched again, so a
-      // straggler download (a retry of a rejected download, or a genuinely concurrent
-      // second download on the same browser) that completes its network response AFTER this
-      // cleanup runs would still land in the last sandboxed `downloadPath` — outside this
-      // call's own accounting, but still inside SOME configured allowed root. Resetting to
-      // `'default'` instead sends that straggler to Chrome's platform default download
-      // location, which is not necessarily inside any configured root at all — fail OPEN.
-      // `'deny'` fails CLOSED instead: a straggler that completes after this cleanup is
-      // refused outright rather than silently written somewhere unsandboxed.
-      //
-      // FR2-05 fix-1 (GAP-296): this reset alone is no longer the only protection — this whole
-      // method now only ever runs one-at-a-time per real browser instance (see
-      // {@link downloadLocks}), so there is no other in-flight `download_file` call on this
-      // browser whose `setDownloadBehavior('allow', ...)` this reset could race against.
+      // FR2-05 audit-1 GAP-296 / audit-2 GAP-301: resetting to `behavior:'default'` was a
+      // regression (fail-open, to Chrome's own platform default location). fix-1 reset to
+      // `'deny'` instead, but that reset did NOT actually stick live: `client.detach()`,
+      // called right after, made Chrome silently revert the setting to platform-default
+      // anyway (confirmed 3/3: a later, unrelated click still landed a file in the real OS
+      // Downloads folder). This session is now the ONE long-lived, never-detached session for
+      // this browser (see {@link getDownloadSession}), so there is no detach here to trigger
+      // that reversion — the `'deny'` reset below actually holds. Combined with the
+      // cross-process fail-fast lock in {@link dispatchAction}'s `download_file` case, no other
+      // `download_file` call (same- or cross-process) can be mid-flight on this browser while
+      // this reset runs, so there's also no other in-flight call's `setDownloadBehavior('allow',
+      // ...)` for this reset to race against.
       await client.send('Browser.setDownloadBehavior', { behavior: 'deny' }).catch(() => {});
-      await client.detach().catch(() => {});
     }
   }
 

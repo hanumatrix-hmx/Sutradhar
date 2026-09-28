@@ -11,7 +11,12 @@
 
 import os from 'node:os';
 import path from 'node:path';
-import { realpath, lstat } from 'node:fs/promises';
+import crypto from 'node:crypto';
+import { realpath, lstat, writeFile, unlink, stat } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+
+const execFileAsync = promisify(execFile);
 
 /** Name of the directory (under `os.tmpdir()`) downloads land in when no roots are configured. */
 export const DEFAULT_DOWNLOAD_ROOT_DIRNAME = 'sutradhar-downloads';
@@ -71,9 +76,24 @@ export function isPathWithinRoot(
   candidate: string,
   root: string,
   platform: NodeJS.Platform = process.platform,
+  /**
+   * FR2-05 audit-2 GAP-300 (CRITICAL): whether the comparison should fold ASCII case
+   * (`undefined`/`true` semantics below preserve fix-1's default win32 behavior for callers —
+   * e.g. the PC1/PC2 pure unit tests — that don't have real disk state to check case-sensitivity
+   * against). {@link findContainingRoot}, which DOES touch the real filesystem, always passes an
+   * explicit value here, derived from {@link detectCaseSensitivity} against the real on-disk
+   * root — never left to this default — because a blanket "win32 is always case-insensitive"
+   * assumption is exactly the GAP-300 vulnerability: a folder can be marked case-sensitive
+   * (enablable without admin rights; WSL-created folders default to it) so `root` and `ROOT`
+   * are genuinely different real directories, but the old unconditional ASCII fold treated them
+   * as the same, allowed directory. When explicitly `false` (case-sensitive), segments are
+   * compared byte-for-byte with no folding at all, on any platform.
+   */
+  caseSensitive?: boolean,
 ): boolean {
   const p = platform === 'win32' ? path.win32 : path.posix;
-  const fold = (s: string): string => (platform === 'win32' ? foldAsciiCase(s) : s);
+  const effectiveCaseSensitive = caseSensitive === undefined ? platform !== 'win32' : caseSensitive;
+  const fold = (s: string): string => (effectiveCaseSensitive ? s : foldAsciiCase(s));
 
   const resolvedRoot = p.resolve(root);
   const resolvedCandidate = p.resolve(candidate);
@@ -148,6 +168,164 @@ function rejectWindowsTrimmedComponents(absPath: string, platform: NodeJS.Platfo
       );
     }
   }
+}
+
+/**
+ * FR2-05 audit-2 GAP-300: determine whether directory `dir` (which must exist) is
+ * case-SENSITIVE on disk — i.e. whether `dir/foo` and `dir/FOO` are two different real
+ * children. Returns `true` (case-sensitive) whenever this can't be determined, per the
+ * fix-2 binding decision: "a false 'different' rejection is safe but a false 'same' approval
+ * is the actual vulnerability" — so an undetectable directory is treated as the STRICTER
+ * (case-sensitive) mode, never silently assumed case-insensitive.
+ *
+ * Two detection strategies, tried in order:
+ * 1. `fsutil file queryCaseSensitiveInfo <dir>` — the documented Windows 10+ API for a
+ *    per-directory case-sensitivity flag (NTFS `FILE_CASE_SENSITIVE_DIR`), settable without
+ *    admin rights (`fsutil file setCaseSensitiveInfo <dir> enable`) and the mechanism WSL uses
+ *    by default for directories it creates. No native addon needed, but this shells out, so it
+ *    can fail (fsutil missing from PATH, spawn blocked, non-Windows, unexpected output).
+ * 2. A real filesystem probe: create a uniquely-named file, then check whether an
+ *    upper-cased spelling of that same name resolves to the SAME file (case-insensitive) or
+ *    nothing at all (case-sensitive). This needs write access to `dir` but no shell/subprocess,
+ *    so it's a robust fallback when `fsutil` is unavailable or its output can't be parsed.
+ *
+ * If BOTH fail (e.g. `dir` isn't writable and `fsutil` isn't available either), the directory's
+ * case-sensitivity is genuinely undetectable and this returns `true` (fail closed/strict).
+ */
+/**
+ * Per-directory result cache. `detectCaseSensitivity` shells out to `fsutil` (a real, slow-ish
+ * subprocess spawn — tens to a couple hundred ms) or falls back to a real filesystem write
+ * probe; both are far too slow to pay on every single `download_file`/upload containment check
+ * (FR2-05 fix-2 audit self-check: this was found live to slow every call by ~100-300ms, which
+ * compounds badly given GAP-301/GAP-302's history of download-path latency problems). A
+ * directory's on-disk case-sensitivity mode is not expected to change while this process is
+ * running (changing it requires `fsutil ... setCaseSensitiveInfo`, an explicit administrative
+ * action, and even then only applies going forward) — so this process-lifetime cache is safe:
+ * the worst case is a stale `true`/`false` from before an out-of-band change, and fix-2's own
+ * fail-closed default (case-sensitive when undetectable) means a stale entry can only ever be
+ * wrong in the SAFE direction if it goes stale from sensitive->insensitive (would then over-
+ * reject, not under-reject); the reverse (insensitive->sensitive) is the same direction fresh
+ * detection already defaults to on any failure, so it's never less safe than a fresh check.
+ */
+const caseSensitivityCache = new Map<string, boolean>();
+
+/** Test-only: clears the cache so unit tests exercising different directories don't see stale
+ *  results across cases/files that happen to reuse a path or mocked directory string. */
+export function _clearCaseSensitivityCacheForTests(): void {
+  caseSensitivityCache.clear();
+}
+
+export async function detectCaseSensitivity(
+  dir: string,
+  platform: NodeJS.Platform = process.platform,
+): Promise<boolean> {
+  if (platform !== 'win32') {
+    // POSIX default (ext4 and most Linux filesystems) is case-sensitive; the existing
+    // `isPathWithinRoot` default already never folds case on non-win32, so this is consistent
+    // with prior behavior. (macOS's default case-INsensitive APFS/HFS+ is a known, disclosed
+    // gap — this project targets win32 for FR2-05's live verification, and out-of-scope
+    // platforms fail toward the stricter comparison, which is safe.)
+    return true;
+  }
+
+  const cacheKey = path.resolve(dir);
+  const cached = caseSensitivityCache.get(cacheKey);
+  if (cached !== undefined) return cached;
+
+  const result = await detectCaseSensitivityUncached(dir);
+  caseSensitivityCache.set(cacheKey, result);
+  return result;
+}
+
+async function detectCaseSensitivityUncached(dir: string): Promise<boolean> {
+  const viaFsutil = await detectViaFsutil(dir);
+  if (viaFsutil !== undefined) return viaFsutil;
+
+  try {
+    return await detectViaProbe(dir);
+  } catch {
+    return true; // undetectable -> fail closed (case-sensitive / stricter)
+  }
+}
+
+async function detectViaFsutil(dir: string): Promise<boolean | undefined> {
+  try {
+    const { stdout } = await execFileAsync('fsutil', ['file', 'queryCaseSensitiveInfo', dir], {
+      timeout: 5000,
+      windowsHide: true,
+    });
+    // Observed real output: "Case sensitive attribute: Enabled" / "... Disabled". Match loosely
+    // on "enabled"/"disabled" so minor wording differences across Windows builds still parse.
+    if (/enabled/i.test(stdout)) return true;
+    if (/disabled/i.test(stdout)) return false;
+    return undefined; // unparseable — fall through to the probe
+  } catch {
+    return undefined; // fsutil missing/blocked/errored — fall through to the probe
+  }
+}
+
+async function detectViaProbe(dir: string): Promise<boolean> {
+  const rand = crypto.randomBytes(8).toString('hex');
+  const lowerName = `.sutradhar-cs-probe-${rand}`;
+  const upperName = lowerName.toUpperCase();
+  const lowerPath = path.join(dir, lowerName);
+  await writeFile(lowerPath, '');
+  try {
+    const lowerStat = await stat(lowerPath);
+    const upperStat = await stat(path.join(dir, upperName)).catch(() => undefined);
+    if (!upperStat) return true; // the upper-cased spelling doesn't resolve at all -> case-sensitive
+    // Same underlying file (device+inode match) under both spellings -> case-insensitive.
+    return !(lowerStat.dev === upperStat.dev && lowerStat.ino === upperStat.ino);
+  } finally {
+    await unlink(lowerPath).catch(() => {});
+  }
+}
+
+/** Walks up from `p` to the deepest ancestor that actually exists (bounded by the filesystem
+ *  root). Used to find the real directory whose on-disk case-sensitivity flag governs whether
+ *  a candidate path's case matters when comparing it against a configured root — see GAP-300. */
+async function deepestExistingAncestor(p: string): Promise<string> {
+  let cur = path.resolve(p);
+  for (;;) {
+    try {
+      await stat(cur);
+      return cur;
+    } catch {
+      const parent = path.dirname(cur);
+      if (parent === cur) return cur;
+      cur = parent;
+    }
+  }
+}
+
+/**
+ * FR2-05 audit-2 GAP-300: whether comparing paths against `root` should be case-sensitive,
+ * determined from REAL on-disk state rather than assumed from the platform. The confirmed
+ * escape shape is a case-different SIBLING of `root` under a directory whose case-sensitivity
+ * flag governs its immediate children (e.g. `root`'s parent enabled via `fsutil
+ * setCaseSensitiveInfo`) — so this checks both `root`'s own deepest existing ancestor AND that
+ * ancestor's parent (covering both "the root itself sits inside a case-sensitive directory" and
+ * "the root's existing ancestor's parent is the case-sensitive one" — the exact GAP-300 repro
+ * shape). If EITHER check reports case-sensitive, or either check is itself undetectable, the
+ * overall result is case-sensitive (the stricter, safe default) — only when both checks
+ * positively confirm case-INsensitivity does this return `false`.
+ */
+export async function isRootCaseSensitive(
+  root: string,
+  platform: NodeJS.Platform = process.platform,
+): Promise<boolean> {
+  if (platform !== 'win32') return true;
+  const ancestor = await deepestExistingAncestor(root);
+  const parent = path.dirname(ancestor);
+  const dirsToCheck = parent === ancestor ? [ancestor] : [ancestor, parent];
+  for (const dir of dirsToCheck) {
+    try {
+      if (await detectCaseSensitivity(dir, platform)) return true;
+    } catch {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -229,7 +407,12 @@ export async function findContainingRoot(
     } catch {
       continue;
     }
-    if (isPathWithinRoot(c, r, platform)) return root;
+    // FR2-05 audit-2 GAP-300: never assume case-insensitivity as a blanket win32 default (the
+    // old bug) — determine it from the REAL on-disk state of this specific root and pass it
+    // explicitly, so a case-sensitive folder (enablable without admin rights; WSL-created
+    // folders default to it) is compared exactly, not folded into a false match.
+    const caseSensitive = await isRootCaseSensitive(root, platform);
+    if (isPathWithinRoot(c, r, platform, caseSensitive)) return root;
   }
   return undefined;
 }

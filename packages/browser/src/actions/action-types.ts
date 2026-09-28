@@ -105,7 +105,11 @@ export interface ActionParams {
   readonly offset?: { readonly x: number; readonly y: number };
   /** Drop-target selector for 'drag_and_drop' (source is `selector`). */
   readonly targetSelector?: string;
-  /** Destination directory for 'download_file'. Defaults to the OS temp directory. */
+  /** Destination directory for 'download_file'. Must resolve inside an allowed download root
+   *  (symlinks/junctions followed, and case-corrected against the real on-disk directory — see
+   *  `path-containment.ts`'s `findContainingRoot`); an outside path is rejected. Defaults to the
+   *  first allowed download root, which itself defaults to `<os.tmpdir()>/sutradhar-downloads`
+   *  (NOT the bare OS temp directory) unless the operator configured otherwise. */
   readonly downloadDir?: string;
   /** Owning session id, used only for event-bus correlation. */
   readonly sessionId?: string;
