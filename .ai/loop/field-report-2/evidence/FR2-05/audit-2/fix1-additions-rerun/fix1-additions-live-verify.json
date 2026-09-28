@@ -1,0 +1,82 @@
+[
+  {
+    "id": "N1",
+    "pass": true,
+    "detail": "downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\outside\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\allowA, E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\allow"
+  },
+  {
+    "id": "N2",
+    "pass": true,
+    "detail": "downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\allowA-evil\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\allowA, E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\a"
+  },
+  {
+    "id": "N3",
+    "pass": true,
+    "detail": "{\"success\":true,\"actionType\":\"download_file\",\"executionTimeMs\":187,\"currentUrl\":\"http://127.0.0.1:59278/page?case=N3&name=n3-1790590558627.bin\",\"title\":\"FR2-05 case N3\",\"output\":{\"downloadedFilename\":"
+  },
+  {
+    "id": "N4",
+    "pass": true,
+    "detail": "downloadDir \"some-relative-dir-n4\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\allowA, E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\allowB). Pass a path under one o"
+  },
+  {
+    "id": "N5",
+    "pass": true,
+    "detail": "success=false (no-crash requirement met; verdict=rejected)"
+  },
+  {
+    "id": "N6",
+    "pass": true,
+    "detail": "downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\allowA\\n6-jn\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\allowA, E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\"
+  },
+  {
+    "id": "N7",
+    "pass": true,
+    "detail": "success=false, outside2/newsub exists=false"
+  },
+  {
+    "id": "N8",
+    "pass": true,
+    "detail": "downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\allowA\\n8-dj\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\allowA, E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\allowB): broken symlink/junction at \"E:\\AI-Cac"
+  },
+  {
+    "id": "N9",
+    "pass": true,
+    "detail": "landedInside=true noEvilOutside=true path=E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\allowB\\n9out\\_.._evil-N9.txt"
+  },
+  {
+    "id": "N10",
+    "pass": true,
+    "detail": "{\"success\":false,\"actionType\":\"upload_file\",\"executionTimeMs\":1513,\"currentUrl\":\"http://127.0.0.1:59278/page?case=N9&name=n9-1790590558627.bin\",\"title\":\"FR2-05 case N9\",\"error\":\"Upload file \\\"E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-add-KzTLn1\\\\up\\\\n10-jn\\\\se"
+  },
+  {
+    "id": "GAP298-root-is-symlink",
+    "pass": true,
+    "detail": "E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\gap298-link\\g298-1790590558627.bin"
+  },
+  {
+    "id": "GAP295-kelvin-signs-lookalike",
+    "pass": true,
+    "detail": "success=false error=downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-add-KzTLn1\\worK-root295\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-add-K lookalikeSubCreated=false"
+  },
+  {
+    "id": "GAP296-concurrent-fast-result",
+    "pass": true,
+    "detail": "success=false err=Action download_file timed out after 30000ms\nHint: The page may still be loading — retry, or raise timeoutMs on this call. landedInOwnDir=false"
+  },
+  {
+    "id": "GAP296-concurrent-slow-result",
+    "pass": true,
+    "detail": "success=false err=Action download_file timed out after 30000ms\nHint: The page may still be loading — retry, or raise timeoutMs on this call. landedInOwnDir=true"
+  },
+  {
+    "id": "GAP296-no-cross-contamination-or-platform-default-escape",
+    "pass": true,
+    "detail": "fast->platformDefault=false slow->platformDefault=false fast->slowDir=false slow->fastDir=false (this is the fail-closed guarantee GAP-296 is about: neither file ever appears in the OTHER download's dir or in Chrome's platform-default Downloads folder, regardless of which call's cleanup ran first)"
+  },
+  {
+    "id": "no-leaked-processes-additions",
+    "pass": true,
+    "detail": "count=0"
+  }
+]

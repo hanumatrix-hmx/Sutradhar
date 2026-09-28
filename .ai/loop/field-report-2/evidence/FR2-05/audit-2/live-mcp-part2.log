@@ -1,0 +1,11 @@
+[FAIL] CONC-c2-2tabs-x10 -- ok=0 fail=20 escapesToUserDownloads=5 crossDir=9 latencyMs(max)=97689
+[FAIL] CONC-c3-3tabs-x5 -- ok=0 fail=15 escapesToUserDownloads=2 crossDir=4 latencyMs(max)=97744
+[FAIL] CONC-c4-4tabs-x3 -- ok=0 fail=12 escapesToUserDownloads=1 crossDir=1 latencyMs(max)=100573
+[PASS] CONC-lock-held-by-nondownload-t0 -- A: success=false ms=19553 retries=2 | B: success=true ms=5116 retries=0 err= | B served at return=1, after drain=1, B files on disk=1
+[PASS] CONC-lock-held-by-nondownload-t1 -- A: success=false ms=19561 retries=2 | B: success=true ms=5116 retries=0 err= | B served at return=1, after drain=1, B files on disk=1
+[FAIL] MULTIPROC-two-mcp-servers-one-chrome-x10 -- okA=0 okB=10 trialsWithFileInUserDownloads=2 A-files-outside-A-roots=0 B-files-outside-B-roots=2
+[PASS] cleanup-user-downloads -- tagged strays found+removed=["a2mul153qx-c2t1i0-3.bin","a2mul153qx-c2t2i0-5.bin","a2mul153qx-c2t4i0-9.bin","a2mul153qx-c2t5i0-11.bin","a2mul153qx-c2t7i0-15.bin","a2mul153qx-c3t2i0-27.bin","a2mul153qx-c3t4i0-33.bin","a2mul153qx-c4t0i0-36.bin","a2mul153qx-mpA0-52.bin","a2mul153qx-mpA2-56.bin"]
+[PASS] cleanup-temp -- E:\AI-Cache\tmp\fr205-audit2-mcp-poi3yb
+
+4/8 passed
+exit=0

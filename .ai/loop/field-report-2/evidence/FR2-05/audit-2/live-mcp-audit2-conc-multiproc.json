@@ -1,0 +1,237 @@
+{
+  "TAG": "a2mul153qx",
+  "results": [
+    {
+      "id": "CONC-c2-2tabs-x10",
+      "pass": false,
+      "detail": "ok=0 fail=20 escapesToUserDownloads=5 crossDir=9 latencyMs(max)=97689"
+    },
+    {
+      "id": "CONC-c3-3tabs-x5",
+      "pass": false,
+      "detail": "ok=0 fail=15 escapesToUserDownloads=2 crossDir=4 latencyMs(max)=97744"
+    },
+    {
+      "id": "CONC-c4-4tabs-x3",
+      "pass": false,
+      "detail": "ok=0 fail=12 escapesToUserDownloads=1 crossDir=1 latencyMs(max)=100573"
+    },
+    {
+      "id": "CONC-lock-held-by-nondownload-t0",
+      "pass": true,
+      "detail": "A: success=false ms=19553 retries=2 | B: success=true ms=5116 retries=0 err= | B served at return=1, after drain=1, B files on disk=1"
+    },
+    {
+      "id": "CONC-lock-held-by-nondownload-t1",
+      "pass": true,
+      "detail": "A: success=false ms=19561 retries=2 | B: success=true ms=5116 retries=0 err= | B served at return=1, after drain=1, B files on disk=1"
+    },
+    {
+      "id": "MULTIPROC-two-mcp-servers-one-chrome-x10",
+      "pass": false,
+      "detail": "okA=0 okB=10 trialsWithFileInUserDownloads=2 A-files-outside-A-roots=0 B-files-outside-B-roots=2",
+      "rows": [
+        {
+          "t": 0,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowA\\mp0\\a2mul153qx-mpA0-52.bin"
+            ],
+            "userDl": true
+          },
+          "B": {
+            "success": true,
+            "err": "",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowA\\mp0\\a2mul153qx-mpB0-53.bin",
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowB\\mp0\\a2mul153qx-mpB0-53.bin"
+            ],
+            "userDl": false
+          }
+        },
+        {
+          "t": 1,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [],
+            "userDl": false
+          },
+          "B": {
+            "success": true,
+            "err": "",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowA\\mp1\\a2mul153qx-mpB1-55.bin",
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowB\\mp1\\a2mul153qx-mpB1-55.bin"
+            ],
+            "userDl": false
+          }
+        },
+        {
+          "t": 2,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowA\\mp2\\a2mul153qx-mpA2-56.bin"
+            ],
+            "userDl": true
+          },
+          "B": {
+            "success": true,
+            "err": "",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowB\\mp2\\a2mul153qx-mpB2-57.bin"
+            ],
+            "userDl": false
+          }
+        },
+        {
+          "t": 3,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowA\\mp3\\a2mul153qx-mpA3-58.bin"
+            ],
+            "userDl": false
+          },
+          "B": {
+            "success": true,
+            "err": "",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowB\\mp3\\a2mul153qx-mpB3-59.bin"
+            ],
+            "userDl": false
+          }
+        },
+        {
+          "t": 4,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowA\\mp4\\a2mul153qx-mpA4-60.bin"
+            ],
+            "userDl": false
+          },
+          "B": {
+            "success": true,
+            "err": "",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowB\\mp4\\a2mul153qx-mpB4-61.bin"
+            ],
+            "userDl": false
+          }
+        },
+        {
+          "t": 5,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowA\\mp5\\a2mul153qx-mpA5-62.bin"
+            ],
+            "userDl": false
+          },
+          "B": {
+            "success": true,
+            "err": "",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowB\\mp5\\a2mul153qx-mpB5-63.bin"
+            ],
+            "userDl": false
+          }
+        },
+        {
+          "t": 6,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowA\\mp6\\a2mul153qx-mpA6-64.bin"
+            ],
+            "userDl": false
+          },
+          "B": {
+            "success": true,
+            "err": "",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowB\\mp6\\a2mul153qx-mpB6-65.bin"
+            ],
+            "userDl": false
+          }
+        },
+        {
+          "t": 7,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowA\\mp7\\a2mul153qx-mpA7-66.bin"
+            ],
+            "userDl": false
+          },
+          "B": {
+            "success": true,
+            "err": "",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowB\\mp7\\a2mul153qx-mpB7-67.bin"
+            ],
+            "userDl": false
+          }
+        },
+        {
+          "t": 8,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowA\\mp8\\a2mul153qx-mpA8-68.bin"
+            ],
+            "userDl": false
+          },
+          "B": {
+            "success": true,
+            "err": "",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowB\\mp8\\a2mul153qx-mpB8-69.bin"
+            ],
+            "userDl": false
+          }
+        },
+        {
+          "t": 9,
+          "A": {
+            "success": false,
+            "err": "Action download_file timed out after 30000ms\nHint: The page may still be loading",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowA\\mp9\\a2mul153qx-mpA9-70.bin"
+            ],
+            "userDl": false
+          },
+          "B": {
+            "success": true,
+            "err": "",
+            "hits": [
+              "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb\\allowB\\mp9\\a2mul153qx-mpB9-71.bin"
+            ],
+            "userDl": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "cleanup-user-downloads",
+      "pass": true,
+      "detail": "tagged strays found+removed=[\"a2mul153qx-c2t1i0-3.bin\",\"a2mul153qx-c2t2i0-5.bin\",\"a2mul153qx-c2t4i0-9.bin\",\"a2mul153qx-c2t5i0-11.bin\",\"a2mul153qx-c2t7i0-15.bin\",\"a2mul153qx-c3t2i0-27.bin\",\"a2mul153qx-c3t4i0-33.bin\",\"a2mul153qx-c4t0i0-36.bin\",\"a2mul153qx-mpA0-52.bin\",\"a2mul153qx-mpA2-56.bin\"]"
+    },
+    {
+      "id": "cleanup-temp",
+      "pass": true,
+      "detail": "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-poi3yb"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+ok         dot (audit-1 original)             product=rejected(throw: path component "jn." in  win32Outside=true mkdirOk=true
+ok         space                              product=rejected(throw: path component "jn " in  win32Outside=false mkdirOk=false
+ok         dot-dot                            product=rejected(throw: path component "jn.." in win32Outside=false mkdirOk=false
+ok         dot-space-dot                      product=rejected(throw: path component "jn. ." i win32Outside=false mkdirOk=false
+ok         three-dots                         product=rejected(throw: path component "jn..." i win32Outside=false mkdirOk=false
+ok         ZWSP only                          product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         dot+ZWSP                           product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         ZWSP+dot                           product=rejected(throw: path component "jn​." in win32Outside=false mkdirOk=true
+ok         dot+ZWNJ                           product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         dot+ZWJ                            product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         dot+BOM/ZWNBSP                     product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         dot+word-joiner                    product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         dot+combining-acute                product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         dot+combining-dot-above            product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         NBSP                               product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         dot+NBSP                           product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         ideographic space                  product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         en space                           product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         mongolian vowel sep                product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         one-dot-leader                     product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         fullwidth full stop                product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         ideographic full stop              product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         arabic decimal separator           product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         arabic full stop                   product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         syriac full stop                   product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         halfwidth ideographic full stop    product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         small full stop                    product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         dot+LRM                            product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         dot+RLO                            product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         ADS ::$INDEX_ALLOCATION            product=rejected(outside)                        win32Outside=true mkdirOk=true
+ok         ADS :$I30:$INDEX_ALLOCATION        product=rejected(outside)                        win32Outside=true mkdirOk=true
+ok         dot + ADS                          product=ALLOWED                                  win32Outside=false mkdirOk=true
+ok         dot+colon                          product=ALLOWED                                  win32Outside=false mkdirOk=false
+ok         trailing dot then slash-dot        product=rejected(throw: path component "jn." in  win32Outside=true mkdirOk=true
+PASS legit: root\a\..\b (.. before containment)         -> ALLOWED
+PASS legit: root\.\a\.\x (. segments)                   -> ALLOWED
+PASS legit: forward slashes root/a/x                    -> ALLOWED
+PASS legit: doubled separators                          -> ALLOWED
+PASS legit: dotted name my.folder\v1.2                  -> ALLOWED
+PASS legit: .hidden dir                                 -> ALLOWED
+PASS legit: name with inner space                       -> ALLOWED
+PASS legit: root itself                                 -> ALLOWED
+PASS legit: root with trailing sep                      -> ALLOWED
+PASS legit: uppercase root spelling                     -> ALLOWED
+PASS attack: root\..\outside                            -> rejected(outside)
+PASS attack: root\a\..\..\outside                       -> rejected(outside)
+PASS attack: root\jn\..\..\outside (lexical)            -> rejected(outside)
+PASS attack: root\jn\x (existing junction, new tail)    -> rejected(outside)
+PASS attack: root\...\x (all-dots comp)                 -> rejected(throw: path component "..." in "E:\AI-Cache\tmp\fr205-audit2-attack-GqZ4bb\comp\root\...\x" ends )
+PASS attack: root\ \x (all-space comp)                  -> rejected(throw: path component " " in "E:\AI-Cache\tmp\fr205-audit2-attack-GqZ4bb\comp\root\ \x" ends with)
+PASS attack: root\. .\x                                 -> rejected(throw: path component ". ." in "E:\AI-Cache\tmp\fr205-audit2-attack-GqZ4bb\comp\root\. .\x" ends )
+PASS attack: root-evil prefix                           -> rejected(outside)
+PASS legit relative ..\root\x from sibling cwd          -> ALLOWED
+PASS attack relative ..\outside\x                       -> rejected(outside)
+PASS attack relative ..\root\jn.\x                      -> rejected(throw: path component "jn." in "E:\AI-Cache\tmp\fr205-audit2-attack-GqZ4bb\comp\root\jn.\x" ends )
+PASS root configured as root. (trailing dot)            outside->rejected(outside) inside->rejected(outside)
+PASS root configured as root<space>                     outside->rejected(outside) inside->rejected(outside)
+PASS root configured as jn.                             outside->rejected(outside) inside->rejected(outside)
+shortname=null -> n/a (8.3 names not generated on this volume)
+case-sensitive dir: {"setCaseSensitive":{"ok":true,"out":"Case sensitive attribute on directory E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\cs is enabled."},"dirEntries":["ROOT","root"],"siblingDecision":"ALLOWED","ESCAPE":true}
+ok         Kelvin K U+212A                distinct=true product=rejected(outside) pure=false ghost=rejected(outside)
+ok         Angstrom U+212B                distinct=true product=rejected(outside) pure=false ghost=rejected(outside)
+ok         Turkish dotless i U+0131       distinct=true product=rejected(outside) pure=false ghost=rejected(outside)
+ok         Turkish dotted I U+0130        distinct=true product=rejected(outside) pure=false ghost=rejected(outside)
+ok         long s U+017F                  distinct=true product=rejected(outside) pure=false ghost=rejected(outside)
+ok         sharp s vs ss                  distinct=true product=rejected(outside) pure=false ghost=rejected(outside)
+ok         capital sharp s U+1E9E         distinct=true product=rejected(outside) pure=false ghost=rejected(outside)
+ok         ohm sign U+2126                distinct=true product=rejected(outside) pure=false ghost=rejected(outside)
+ok         fullwidth A                    distinct=true product=rejected(outside) pure=false ghost=rejected(outside)
+ok         greek final sigma              distinct=true product=rejected(outside) pure=false ghost=rejected(outside)
+ok         ligature fi U+FB01             distinct=true product=rejected(outside) pure=false ghost=rejected(outside)
+ok         e-acute NFC vs NFD             distinct=true product=rejected(outside) pure=false ghost=rejected(outside)
+ok         Cyrillic a lookalike           distinct=true product=rejected(outside) pure=false ghost=rejected(outside)
+ok         non-ASCII case: E-acute upper  distinct=false product=ALLOWED pure=false ghost=rejected(outside)
+cleanup: R exists after = false
+
+ESCAPES: 1  expectation-FAILs: 0  total rows: 74

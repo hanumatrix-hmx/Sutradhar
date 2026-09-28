@@ -3471,3 +3471,84 @@ links, ELOOP, traversal, UNC/extended paths, ADS trick, legitimate paths) re-con
 regressions via the existing unit suite plus 8 new tests.
 
 Sent to independent audit-2 (maker != checker), given the severity of what was found in audit-1.
+
+## 2026-09-28 -- FR2-05 audit-2: FAILED (2 CRITICAL, 1 major, 3 minor). Cycle 2 of 4 standard.
+
+audit-2 confirmed GAP-294 (the original trailing-dot escape) and GAP-295 (Kelvin-sign Unicode
+folding) are genuinely fixed under very heavy attack -- 15/15 across 3 escape variants through both
+the real CLI and real MCP, 6 more variants 3/3 each (dot-space combined, three dots, forward
+slashes, the \\?\\ prefix, a plain junction), a 34-spelling Unicode/whitespace survey against a
+real Windows normalization oracle (none escaped -- confirmed Windows only strips ASCII '.'/' ',
+never zero-width chars, combining marks, non-breaking space, or other-script periods), and every
+GAP-295 case the executor tested (Kelvin, Turkish dotless/dotted I, long s) plus 14 unit-level fold
+pairs (ß, Ω, ligatures, NFC/NFD, Cyrillic lookalikes) -- all correctly rejected. Legitimate paths
+('..' resolution, relative traversal within a root, normal uploads/downloads) all still work. 13 of
+16 of audit-2's own mutations were killed, including moving the check after the existence test and
+applying it only to the candidate path but not the configured roots. GAP-297/298/299 all confirmed.
+
+But TWO NEW CRITICAL findings, both real, physical escapes confirmed live through real MCP and real
+Chrome (files placed in the actual user's ~/Downloads folder during testing, all confirmed cleaned
+up afterward):
+
+**GAP-300 (CRITICAL, pre-existing since develop, not introduced by fix-1): a
+CASE-SENSITIVE-FOLDER escape.** Windows folders can be marked case-sensitive (WSL-created folders
+default to this, and it's enablable without admin rights). Inside such a folder, 'root' and 'ROOT'
+are genuinely different directories on disk, but fix-1's own ASCII-only case-folding (built to fix
+GAP-295's Unicode issue) still treats them as equal -- so a request naming a differently-cased
+version of an allowed root's path escapes containment. 3/3 to a new look-alike folder, 1/1 to an
+existing one, 1/1 on the UPLOAD path (a secret file outside the upload root was successfully read
+by a page). This is the SAME underlying boundary GAP-295 fixed for Unicode lookalikes, just a
+different mechanism (filesystem case-sensitivity mode, not character folding) reaching the same
+"the check thinks two different real directories are the same" failure.
+
+**GAP-301 (CRITICAL): GAP-296's fix-1 remedy is confirmed NOT actually closed.** Three
+compounding problems, each confirmed live: (1) the deny-not-default reset does NOT actually stick --
+after a successful download, a later browser.click on a download link lands in ~/Downloads anyway,
+most likely because the CDP session's own detach() causes Chrome to silently revert its download
+behavior to platform-default; fix-1's own code comment claiming this "fails closed" is factually
+false. (2) The serialization lock is scoped PER-PROCESS only -- two separate MCP server processes
+(or, equivalently, separate CLI invocations, since every CLI verb is its own process) attached to
+the SAME Chrome instance get zero protection from it, 2/10 escaped and 2/10 cross-contaminated in
+that exact shape. (3) A call abandoned by the engine's own 30s outer timeout keeps running INSIDE
+the lock and can still fire a click with a now-stale configuration. Combined, same-process 2-4-tab
+concurrency escaped to ~/Downloads in 8/18 trials with cross-contamination in 14/18. fix-1's own
+GAP-296 live test missed all of this because it counted a total failure (both downloads timing out)
+as "no escape observed", and only checked ~/Downloads 500ms after the calls returned -- before
+Chrome's own detach-triggered reversion had time to fire.
+
+Plus GAP-302 (major, reliability -- concurrent downloads are not just slower as disclosed,
+they are EFFECTIVELY BROKEN: 0/47 same-process concurrent trials succeeded, each burning ~100s
+before failing) and 3 minor findings (the lock has zero unit test coverage, 3 stale/false code
+comments left after fix-1 including the exact "fails closed" claim GAP-301 disproves, and a
+scope note that the CLI's own "always allow the folder you typed" design means CLI-based tests never
+actually exercised configured-root containment -- MCP/SDK is where this item's real security
+boundary lives and must be tested).
+
+Decisions for fix-2:
+1. GAP-300: case-sensitivity cannot be assumed either way -- compare path components
+   case-SENSITIVELY whenever the actual on-disk directory is confirmed to be case-sensitive (check
+   via the platform API, e.g. Windows' own case-sensitivity flag/attribute on the directory), and
+   fall back to case-insensitive comparison only when the directory is confirmed case-insensitive
+   (the Windows default). Never assume case-insensitivity as a blanket rule the way ASCII-only
+   folding currently does. Add a live case that creates a real case-sensitive folder and confirms
+   both the look-alike-new-folder and look-alike-existing-folder attacks are rejected, for both
+   download and upload.
+2. GAP-301: this needs real architectural attention, not another patch on the same
+   design -- (a) keep ONE long-lived, never-detached CDP session per browser instance specifically
+   for managing download behavior, so Chrome's own detach-triggered reversion can never fire; (b)
+   make the per-browser lock actually cross-process (e.g. a real OS-level file lock or a shared lock
+   server, not an in-process WeakMap) if concurrent downloads across separate CLI/MCP processes on
+   one Chrome instance must be supported at all -- or, if that's too large a rework for this cycle,
+   explicitly document and enforce that concurrent downloads on the SAME browser are unsupported
+   and must be refused/serialized at a coarser grain (e.g. reject a second download_file call
+   outright while one is in flight on the same browser, rather than silently queueing it into a lock
+   that doesn't actually protect anything); (c) make an abandoned (timed-out) call's in-flight work
+   unable to affect a later call's download-behavior configuration -- cancel it, don't just let it
+   keep running inside the lock. Add a live test that requires SUCCESS (not just "no escape
+   observed on a failure"), and re-checks ~/Downloads after a real drain period, not just 500ms.
+3. GAP-302: whatever fixes GAP-301 should also resolve this, since the timeout-
+   churn is a symptom of the same broken concurrency model, not a separate issue.
+4. Fix the 3 stale/false comments.
+Given TWO critical findings this cycle (one carried over from before fix-1 even started, one in
+fix-1's own remedy), fix-2 must re-run the ENTIRE audit-1 and audit-2 attack surface, with particular
+emphasis on GAP-300/301's live repros, before reporting done.

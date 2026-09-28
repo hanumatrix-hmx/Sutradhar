@@ -1,0 +1,407 @@
+{
+  "tmpRoot": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs",
+  "short": "E:\\\"E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\longjunctionname\\\"",
+  "results": [
+    {
+      "id": "a1-junction-existing",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\jn",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "a2-junction-newtail",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\jn\\newsub\\deeper",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\newsub\\deeper",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "a3-dirsymlink-existing",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\sd",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "a4-dirsymlink-newtail",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\sd\\newsub",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\newsub",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "a5-filesymlink",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\sf.txt",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\secret.txt",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "a6-filesymlink-as-dir-tail",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\sf.txt\\sub",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\secret.txt\\sub",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "a7-real-file-inside",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\ok.txt",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\ok.txt",
+      "accepted": true,
+      "expectAccepted": true,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "a8-new-subdir-inside",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\new\\deeper",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\new\\deeper",
+      "accepted": true,
+      "expectAccepted": true,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "d1-dangling-junction",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\dj\\sub",
+      "canonical": "THROW: broken symlink/junction at \"E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\dj\"",
+      "accepted": false,
+      "error": "broken symlink/junction at \"E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\dj\"",
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "d2-dangling-dirsymlink",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\ds\\sub",
+      "canonical": "THROW: broken symlink/junction at \"E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\ds\"",
+      "accepted": false,
+      "error": "broken symlink/junction at \"E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\ds\"",
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "d3-symlink-chain-3hop",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\chainA\\newsub",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\newsub",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "d4-junction-chain",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\jB\\newsub",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\newsub",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "d5-relative-symlink-up",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\relsd\\x",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\x",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "d6-chain-to-dangling",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\dy\\x",
+      "canonical": "THROW: broken symlink/junction at \"E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\dy\"",
+      "accepted": false,
+      "error": "broken symlink/junction at \"E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\dy\"",
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "d7-symlink-loop",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\loopA\\x",
+      "canonical": "THROW: ELOOP: too many symbolic links encountered, realpath 'E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\loopA\\x'",
+      "accepted": false,
+      "error": "ELOOP: too many symbolic links encountered, realpath 'E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\loopA\\x'",
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "c1-dotdot",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\x",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\x",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "c2-dotdot-literal",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\sub\\..\\..\\outside",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "c3-prefix-evil",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root-evil\\x",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root-evil\\x",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "c4-unc-localhost-admin-share",
+      "candidate": "\\\\localhost\\E$\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\x",
+      "canonical": "\\\\localhost\\E$\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\x",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "c5-unc-localhost-admin-share-inside",
+      "candidate": "\\\\localhost\\E$\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\x",
+      "canonical": "\\\\localhost\\E$\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\x",
+      "accepted": false,
+      "expectAccepted": true,
+      "verdict": "UNEXPECTED",
+      "note": "contained spelled via UNC: accept or reject both safe"
+    },
+    {
+      "id": "c6-device-path-inside",
+      "candidate": "\\\\?\\E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\sub",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\sub",
+      "accepted": true,
+      "expectAccepted": true,
+      "verdict": "as-expected",
+      "note": "genuinely inside; spec N5 expected reject, acceptance is not an escape"
+    },
+    {
+      "id": "c7-device-path-outside",
+      "candidate": "\\\\?\\E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\sub",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\sub",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "c8-dotdevice-outside",
+      "candidate": "\\\\.\\E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\sub",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\sub",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "c9-trailing-dot-root",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root.\\sub",
+      "canonical": "THROW: path component \"root.\" in \"E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).",
+      "accepted": false,
+      "error": "path component \"root.\" in \"E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).",
+      "expectAccepted": true,
+      "verdict": "UNEXPECTED",
+      "note": "Win32 strips trailing dot: allowA. == allowA"
+    },
+    {
+      "id": "c10-trailing-dot-junction",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\jn.\\newsub",
+      "canonical": "THROW: path component \"jn.\" in \"E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\jn.\\newsub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).",
+      "accepted": false,
+      "error": "path component \"jn.\" in \"E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\jn.\\newsub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).",
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "c11-trailing-space-junction",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\jn \\newsub",
+      "canonical": "THROW: path component \"jn \" in \"E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\jn \\newsub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).",
+      "accepted": false,
+      "error": "path component \"jn \" in \"E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\jn \\newsub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).",
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "c12-ads-on-root",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root:stream",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root:stream",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "c13-ads-in-tail",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\x:stream",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\x:stream",
+      "accepted": true,
+      "expectAccepted": true,
+      "verdict": "as-expected",
+      "note": "inside; Chrome will fail, not escape"
+    },
+    {
+      "id": "c14-ads-on-junction",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\jn:$I30:$INDEX_ALLOCATION\\newsub",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\newsub",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "c15-case-variant",
+      "candidate": "E:\\AI-CACHE\\TMP\\FR205A1-PROBE-VFVNAS\\ROOT\\SUB",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\SUB",
+      "accepted": true,
+      "expectAccepted": true,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "c16-drive-relative",
+      "candidate": "E:relative\\x",
+      "canonical": "E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\.ai\\loop\\field-report-2\\evidence\\FR2-05\\relative\\x",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": "drive-relative resolved against cwd of drive"
+    },
+    {
+      "id": "c17-forward-slashes-junction",
+      "candidate": "E:/AI-Cache/tmp/fr205a1-probe-vfVNAs/root/jn/newsub",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\newsub",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "c18-double-sep",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\\\jn\\\\newsub",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\outside\\newsub",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": ""
+    },
+    {
+      "id": "c19-dos-device-CON",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\CON",
+      "canonical": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\CON",
+      "accepted": true,
+      "expectAccepted": true,
+      "verdict": "as-expected",
+      "note": "device name; not a directory escape"
+    },
+    {
+      "id": "c20-8dot3-of-junction",
+      "candidate": "E:\\\"E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\longjunctionname\\\"\\newsub",
+      "canonical": "E:\\\"E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\longjunctionname\\\"\\newsub",
+      "accepted": false,
+      "expectAccepted": false,
+      "verdict": "as-expected",
+      "note": "short=E:\\\"E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\root\\longjunctionname\\\""
+    },
+    {
+      "id": "c21-unicode-kelvin-casefold",
+      "root": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\work",
+      "candidate": "E:\\AI-Cache\\tmp\\fr205a1-probe-vfVNAs\\worK\\sub",
+      "accepted": false,
+      "distinctDirectoriesOnDisk": true,
+      "sameInode": false,
+      "expectAccepted": false,
+      "verdict": "as-expected"
+    },
+    {
+      "id": "c22-unicode-kelvin-existing-sibling",
+      "accepted": false,
+      "expectAccepted": false
+    },
+    {
+      "id": "c23-unicode-angstrom-casefold",
+      "accepted": false,
+      "expectAccepted": false
+    },
+    {
+      "id": "c24-unicode-nfd-vs-nfc",
+      "accepted": false,
+      "expectAccepted": false,
+      "note": "NTFS does not normalize; rejection is correct"
+    },
+    {
+      "id": "e1-root-is-junction",
+      "accepted": true,
+      "note": "operator root is a link; target counts as inside (by design)"
+    },
+    {
+      "id": "pure:[\"C:\\\\out\\\\a\",\"C:\\\\out\"]",
+      "got": true,
+      "expect": true,
+      "verdict": "as-expected"
+    },
+    {
+      "id": "pure:[\"C:\\\\out-evil\",\"C:\\\\out\"]",
+      "got": false,
+      "expect": false,
+      "verdict": "as-expected"
+    },
+    {
+      "id": "pure:[\"C:\\\\x\",\"C:\\\\\"]",
+      "got": true,
+      "expect": true,
+      "verdict": "as-expected"
+    },
+    {
+      "id": "pure:[\"\\\\\\\\?\\\\C:\\\\out\\\\a\",\"C:\\\\out\"]",
+      "got": false,
+      "expect": false,
+      "verdict": "as-expected"
+    },
+    {
+      "id": "pure:[\"D:\\\\out\",\"C:\\\\out\"]",
+      "got": false,
+      "expect": false,
+      "verdict": "as-expected"
+    },
+    {
+      "id": "pure:[\"C:\\\\out\\\\..\\\\x\",\"C:\\\\out\"]",
+      "got": false,
+      "expect": false,
+      "verdict": "as-expected"
+    },
+    {
+      "id": "pure:[\"C:\\\\worK\\\\a\",\"C:\\\\work\"]",
+      "got": false,
+      "expect": false,
+      "verdict": "as-expected"
+    },
+    {
+      "id": "pure:[\"C:\\\\OUTİ\\\\a\",\"C:\\\\outi\"]",
+      "got": false,
+      "expect": false,
+      "verdict": "as-expected"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+[PASS] GAP294-mcp-dot -- containmentRejected=15/15 other=[] escapes=0 outsideEntries=[]
+[PASS] GAP294-mcp-space -- containmentRejected=5/5 other=[] escapes=0 outsideEntries=[]
+[PASS] GAP294-mcp-anywhere -- containmentRejected=5/5 other=[] escapes=0 outsideEntries=[]
+[PASS] GAP294-mcp-dotspace -- containmentRejected=3/3 other=[] escapes=0 outsideEntries=[]
+[PASS] GAP294-mcp-threedots -- containmentRejected=3/3 other=[] escapes=0 outsideEntries=[]
+[PASS] GAP294-mcp-leafdot -- containmentRejected=3/3 other=[] escapes=0 outsideEntries=[]
+[PASS] GAP294-mcp-fwdslash -- containmentRejected=3/3 other=[] escapes=0 outsideEntries=[]
+[PASS] GAP294-mcp-extended -- containmentRejected=3/3 other=[] escapes=0 outsideEntries=[]
+[PASS] GAP294-mcp-plainJunction -- containmentRejected=3/3 other=[] escapes=0 outsideEntries=[]
+[PASS] CS-setup -- Case sensitive attribute on directory E:\AI-Cache\tmp\fr205-audit2-mcp-6vsUMY\cs is enabled.
+[FAIL] CS-download-new-case-variant-sibling-t0 -- success=true landed=["E:\\AI-Cache\\tmp\\fr205-audit2-mcp-6vsUMY\\cs\\DLROOT\\sub0\\a2mul0tvrz-csNew-44.bin"] shaMatchesServed=true csParentEntries=["DLROOT","dlroot","uproot"] err=
+[FAIL] CS-download-new-case-variant-sibling-t1 -- success=true landed=["E:\\AI-Cache\\tmp\\fr205-audit2-mcp-6vsUMY\\cs\\DLROOT\\sub1\\a2mul0tvrz-csNew-45.bin"] shaMatchesServed=true csParentEntries=["DLROOT","dlroot","uproot"] err=
+[FAIL] CS-download-new-case-variant-sibling-t2 -- success=true landed=["E:\\AI-Cache\\tmp\\fr205-audit2-mcp-6vsUMY\\cs\\DLROOT\\sub2\\a2mul0tvrz-csNew-46.bin"] shaMatchesServed=true csParentEntries=["DLROOT","dlroot","uproot"] err=
+[FAIL] CS-download-into-existing-case-variant-sibling -- success=true landed=["E:\\AI-Cache\\tmp\\fr205-audit2-mcp-6vsUMY\\cs\\Dlroot\\a2mul0tvrz-csExisting-47.bin"] err=
+[FAIL] CS-upload-from-case-variant-sibling -- uploadSuccess=true pageSaw="secret-cs.txt:26" err=
+[PASS] CS-control-normal-dir-case-variant-allowed-inside -- ["E:\\AI-Cache\\tmp\\fr205-audit2-mcp-6vsUMY\\allowA\\ctl\\a2mul0tvrz-csControl-49.bin"]
+[PASS] FOLD-kelvin -- rejected=10/10 lookalikeDirCreated=false
+[PASS] FOLD-dotless-i -- rejected=3/3 lookalikeDirCreated=false
+[PASS] FOLD-long-s -- rejected=3/3 lookalikeDirCreated=false
+[PASS] FOLD-turkish-dotted-I -- rejected=3/3 lookalikeDirCreated=false
+[PASS] UPLOAD-jn-trailing-dot -- upload_file=false via_trigger={"success":false,"error":"upload_file_via_trigger failed: Upload file \"E:\\AI-Cache\\tmp\\fr205-aud err=Upload file "E:\AI-Cache\tmp\fr205-audit2-mcp-6vsUMY\up\jn.\secret-up.txt" does not exist or is not 
+[PASS] UPLOAD-jn-trailing-space -- upload_file=false via_trigger={"success":false,"error":"upload_file_via_trigger failed: Upload file \"E:\\AI-Cache\\tmp\\fr205-aud err=Upload file "E:\AI-Cache\tmp\fr205-audit2-mcp-6vsUMY\up\jn \secret-up.txt" does not exist or is not 
+[PASS] UPLOAD-jn-plain -- upload_file=false via_trigger={"success":false,"error":"upload_file_via_trigger failed: Upload file \"E:\\AI-Cache\\tmp\\fr205-aud err=Upload file "E:\AI-Cache\tmp\fr205-audit2-mcp-6vsUMY\up\jn\secret-up.txt" is outside the allowed upl
+[PASS] UPLOAD-traversal -- upload_file=false via_trigger={"success":false,"error":"upload_file_via_trigger failed: Upload file \"E:\\AI-Cache\\tmp\\fr205-aud err=Upload file "E:\AI-Cache\tmp\fr205-audit2-mcp-6vsUMY\upOutside\secret-up.txt" is outside the allowed
+[PASS] UPLOAD-direct-outside -- upload_file=false via_trigger={"success":false,"error":"upload_file_via_trigger failed: Upload file \"E:\\AI-Cache\\tmp\\fr205-aud err=Upload file "E:\AI-Cache\tmp\fr205-audit2-mcp-6vsUMY\upOutside\secret-up.txt" is outside the allowed
+[PASS] UPLOAD-legit -- upload_file=true via_trigger={"success":true,"filePath":"E:\\AI-Cache\\tmp\\fr205-audit2-mcp-6vsUMY\\up\\legit file.v1.txt"} err=
+[PASS] UPLOAD-legit-dotted-dir -- upload_file=true via_trigger={"success":true,"filePath":"E:\\AI-Cache\\tmp\\fr205-audit2-mcp-6vsUMY\\up\\my.dir\\b.txt"} err=
+[PASS] UPLOAD-legit-forward-slashes -- upload_file=true via_trigger={"success":true,"filePath":"E:/AI-Cache/tmp/fr205-audit2-mcp-6vsUMY/up/my.dir/b.txt"} err=
+[PASS] UPLOAD-legit-with-dotdot -- upload_file=true via_trigger={"success":true,"filePath":"E:\\AI-Cache\\tmp\\fr205-audit2-mcp-6vsUMY\\up\\legit file.v1.txt"} err=
+[PASS] LEGIT-default-root (no downloadDir) -- success=true at=E:\AI-Cache\tmp\fr205-audit2-mcp-6vsUMY\allowA\a2mul0tvrz-legit-69.bin ms=105 err=
+[PASS] LEGIT-root itself -- success=true at=E:\AI-Cache\tmp\fr205-audit2-mcp-6vsUMY\allowA\a2mul0tvrz-legit-70.bin ms=114 err=
+[PASS] LEGIT-second root -- success=true at=E:\AI-Cache\tmp\fr205-audit2-mcp-6vsUMY\allowB\a2mul0tvrz-legit-71.bin ms=101 err=
+[PASS] LEGIT-nested new dirs -- success=true at=E:\AI-Cache\tmp\fr205-audit2-mcp-6vsUMY\allowA\a\b\c\a2mul0tvrz-legit-72.bin ms=109 err=
+[PASS] LEGIT-dotted dir names -- success=true at=E:\AI-Cache\tmp\fr205-audit2-mcp-6vsUMY\allowA\v1.2\my.files\a2mul0tvrz-legit-73.bin ms=119 err=
+[PASS] LEGIT-dir with spaces -- success=true at=E:\AI-Cache\tmp\fr205-audit2-mcp-6vsUMY\allowB\my downloads\x y\a2mul0tvrz-legit-74.bin ms=105 err=
+[PASS] LEGIT-forward slashes -- success=true at=E:\AI-Cache\tmp\fr205-audit2-mcp-6vsUMY\allowB\fs\q\a2mul0tvrz-legit-75.bin ms=110 err=
+[PASS] LEGIT-dotdot inside root -- success=true at=E:\AI-Cache\tmp\fr205-audit2-mcp-6vsUMY\allowA\dd\a2mul0tvrz-legit-76.bin ms=114 err=
+[PASS] LEGIT-uppercase root spelling -- success=true at=E:\AI-Cache\tmp\fr205-audit2-mcp-6vsUMY\allowA\UP\a2mul0tvrz-legit-77.bin ms=101 err=
+[PASS] cleanup-user-downloads -- tagged strays found+removed=[]
+[PASS] cleanup-temp -- E:\AI-Cache\tmp\fr205-audit2-mcp-6vsUMY
+
+35/40 passed
