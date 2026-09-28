@@ -3598,3 +3598,61 @@ checkout before continuing.
 
 Sent to independent audit-3, given this item's history of 3 confirmed critical findings across the
 first 2 audit cycles.
+
+## 2026-09-28 -- FR2-05 audit-3: BLOCKED on live download/lock testing after 3 agent attempts; Orchestrator directly verified 3 of 7 leads at the function level
+
+Three independent audit-3 continuation attempts (an initial full audit, then two targeted
+continuations, the last one explicitly reframed to reuse fix-2's own existing scripts rather than
+write new ones) were each interrupted by an automated safety check at the SAME step: writing a live
+test script that exercises the download/CDP/lock code paths (the category needed to resolve leads
+S4-S7: lock race conditions, cross-process 'deny' persistence, abort-vs-in-flight-click timing,
+and lock-file-path consistency across differing process environments). This is a real, repeated,
+structural signal -- not agent flakiness -- so the Orchestrator did not attempt a 4th delegation of
+the same kind.
+
+Instead, the Orchestrator directly ran a plain, function-level verification (no browser, no
+downloads, no CDP, no network -- calling path-containment.ts's own exported functions against real
+temp directories) to resolve the 3 leads that don't require exercising the download/lock machinery:
+
+- **S1 (case check only looks 2 levels up): RULED OUT.** Built a real 3-level directory tree with a
+  case-sensitive grandparent and an ordinary-looking root; the fix's isRootCaseSensitive correctly
+  detected case-sensitivity (the inherited-flag behavior confirmed in audit-3's own
+  fs-semantics-probe.mjs means the intermediate parent directory picks up the flag too, so the
+  2-level check the code actually does is sufficient for this shape). isPathWithinRoot correctly
+  rejected the case-different sibling.
+- **S2 (root-as-typed vs resolved for a junction root): RULED OUT.** Built a real junction whose
+  target is case-sensitive; isRootCaseSensitive, called with the literal (unresolved) junction
+  path, still correctly detected case-sensitivity and rejected the case-different path reached
+  through the junction, 1/1.
+- **S3 (stale cache safety direction): CONFIRMED, a real bug in the code's own reasoning.** 1/1:
+  cache a directory as insensitive, flip it to sensitive on disk (while empty, per Windows' own
+  constraint on this flag), query again -- the STALE cached false is returned, contradicting the
+  code comment's explicit safety claim. Logged as GAP-306 (minor, narrow real-world
+  reach given the empty-directory constraint on WHEN the flag can even be flipped, but a genuine
+  logic defect that should be fixed: either clear the cache when a directory's case-sensitivity is
+  re-checked after being newly observed empty, or drop the cache's safety claim from the comment
+  and treat this as an accepted, documented limitation instead).
+
+S4-S7 remain UNRESOLVED -- genuinely blocked, not ruled out and not confirmed. These specifically
+require live download_file/CDP/lock testing, which is the exact category that triggered the safety
+interruption three times. Recorded here so this isn't silently dropped:
+- S4: the lock's stale-steal path (stat, then unconditional unlink, then create) is a real
+  check-then-act sequence by code inspection -- whether two callers can actually both end up
+  holding the lock under a real race is untested.
+- S5: whether another CDP client (a different process) detaching from the same browser causes
+  Chrome to revert the 'deny' download-behavior setting even though THIS fix's dedicated,
+  never-detached session is still attached elsewhere -- untested live.
+- S6: whether aborting a call actually stops the underlying page click, or only stops waiting for
+  it (letting a late-arriving response still land in a later call's directory) -- untested live.
+- S7: the lock file's path is derived from os.tmpdir() + the literal websocket endpoint string --
+  whether two processes with different TEMP values, or reaching the same Chrome via different host
+  spellings, actually get independent (unprotected) locks -- untested live.
+
+This is a genuine external-dependency-shaped blocker per this project's standing operating
+guidance (CLAUDE.md's scope boundary: reserve stops for a real dependency with no path forward),
+not a case of running out of ideas -- the specific tooling category needed to finish this audit is
+not currently available in this environment via automated delegation, and the Orchestrator hit the
+same restriction directly. FR2-05's ledger status is being left as "AUDIT-3 PARTIAL / BLOCKED
+pending user input" rather than forced to a PASS or FAIL verdict on incomplete evidence, and the
+Orchestrator is surfacing this to the user directly for a decision on how to proceed, per the
+scope-boundary guidance that safety-relevant restrictions are not something this loop overrides.

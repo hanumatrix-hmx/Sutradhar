@@ -1,0 +1,118 @@
+{
+  "item": "FR2-05",
+  "audit": "audit-3",
+  "head": "99bb0b9",
+  "status": "INCOMPLETE -- NO VERDICT. Continuation attempt (2) halted: authoring the live case-sensitivity attack harness was stopped by a safety classifier; per instruction that content was not re-attempted in any form. Leads 1-7 remain unverified live.",
+  "probes": [
+    {
+      "id": "build",
+      "result": "forced 2-phase turbo build (--force): phase1 19/19, phase2 9/9, 0 cached, both exit 0",
+      "evidence": [
+        "build.log",
+        "build-sutradhar.log"
+      ]
+    },
+    {
+      "id": "vitest",
+      "result": "browser 557, capability-runtime 228, mcp-server 101, cli 175, sutradhar 25 = 1086, all pass, all exit 0 (matches fix-2's self-report exactly)",
+      "evidence": [
+        "vitest-*.log",
+        "vitest-exits.txt"
+      ]
+    },
+    {
+      "id": "hygiene",
+      "result": "No temp dirs, junctions, lock files or processes created by this audit. ~/Downloads entry count 181 before and after. Pre-existing leftover E:/AI-Cache/tmp/fr2-05-fix1-add-LNCO7U from fix-2's run was noted and not touched (not created by this audit)",
+      "evidence": [
+        "process-baseline.txt",
+        "process-after.txt",
+        "downloads-baseline.txt"
+      ]
+    },
+    {
+      "id": "live-probes",
+      "result": "NOT RUN: GAP-300/GAP-301 repro, detector attacks, lock attacks, audit-1/2 re-sweep, live-verify scripts and mutation testing were not executed"
+    },
+    {
+      "id": "fs-semantics",
+      "result": "Ran (own mkdtemp dir only, flags/dir removed after): fsutil enable works only on EMPTY dirs (0x91 otherwise); children created after enable INHERIT the flag; fsutil on a junction reports the TARGET dir flag; Node realpath returns on-disk case in an insensitive dir. ~/Downloads 181 before/after; 0 fr205-a3-* temp dirs left; no processes spawned.",
+      "evidence": [
+        "fs-semantics-probe.mjs",
+        "fs-semantics-probe.log",
+        "fs-semantics-probe.json"
+      ]
+    },
+    {
+      "id": "live-attacks",
+      "result": "NOT RUN. a3lib.mjs (shared harness: fixture, MCP client, PID-scoped cleanup) was written but never executed."
+    }
+  ],
+  "code_review_suspicions_unconfirmed": [
+    {
+      "id": "S1",
+      "area": "path-containment.ts findContainingRoot",
+      "note": "isRootCaseSensitive is passed the literal `root`, not the canonicalized `r`. For a root that is itself a junction/symlink, the directories checked for case-sensitivity may not be the real parent of the canonical root that containment actually compares against."
+    },
+    {
+      "id": "S2",
+      "area": "path-containment.ts isRootCaseSensitive",
+      "note": "Only the root's deepest existing ancestor and that ancestor's immediate parent are checked. A case-sensitive directory higher up, with case-insensitive children created before the flag was set, is not examined, yet the resulting fold decision applies to every segment."
+    },
+    {
+      "id": "S3",
+      "area": "path-containment.ts caseSensitivityCache",
+      "note": "The process-lifetime cache has no invalidation. The doc comment says staleness can only err in the safe direction, but a directory cached as insensitive and later flagged sensitive (no admin rights needed) keeps returning the stale `false`, which is the unsafe direction. The comment's reasoning looks incorrect."
+    },
+    {
+      "id": "S4",
+      "area": "download-lock.ts acquireDownloadLock",
+      "note": "The stale/vanished path is check-then-act: stat, then an unconditional unlink, then create. Two contenders that both judge the lock stale, or a third caller that creates between another caller's ENOENT stat and its unlink, can both end up holding the lock. The payload `${pid}:${Date.now()}` can also collide within one process."
+    },
+    {
+      "id": "S5",
+      "area": "download-lock.ts lockPathFor / locksDir",
+      "note": "The lock is keyed by os.tmpdir() and the literal wsEndpoint string. Processes with different TEMP values, or that reach the same Chrome by a different host spelling, would not share a lock."
+    },
+    {
+      "id": "S6",
+      "area": "browser-action-engine.ts runDownloadFileLocked abort path",
+      "note": "Abort only rejects the wrapper promise. The background verifiedClick is not cancelled, and Chrome picks a download's destination when the response arrives. An abandoned click, or a slow response, can therefore land under a later call's 'allow' setting after the lock was released."
+    },
+    {
+      "id": "S7",
+      "area": "never-detached session",
+      "note": "The session still detaches when a process exits or disconnects. Every CLI verb is its own process, and if Chrome resets overridden download behavior when an overriding session detaches, one process exiting could revert another process's setting."
+    }
+  ],
+  "findings": [],
+  "lead_assessments_code_reading_only": [
+    {
+      "lead": 1,
+      "assessment": "Likely real. isRootCaseSensitive checks only the root deepest existing ancestor and its parent, but isPathWithinRoot folds EVERY root segment when it returns false. A sensitive grandparent with insensitive children (reachable by moving an ordinary folder into a sensitive dir, or an explicit disable) is not examined. UNVERIFIED live."
+    },
+    {
+      "lead": 2,
+      "assessment": "Likely real. findContainingRoot passes the literal root, not canonical r, to isRootCaseSensitive; for a junction root, dirname(junction) is checked instead of the real target parent. Needs an insensitive target inside a sensitive parent. UNVERIFIED live."
+    },
+    {
+      "lead": 3,
+      "assessment": "Cache comment reasoning is wrong by inspection: a stale false (insensitive) means folding = permissive, the unsafe direction. Exploit needs the flag enabled on an EMPTY cached dir mid-process (fs-semantics probe confirms enable requires empty). Stale-comment defect certain; escape UNVERIFIED live."
+    },
+    {
+      "lead": 4,
+      "assessment": "Check-then-act: stale/vanished path does stat -> unconditional unlink -> create; interleavings exist where two holders coexist. Requires a 5-min-old lock or a tight 3-party race. UNVERIFIED live."
+    },
+    {
+      "lead": 5,
+      "assessment": "Plausible per Chrome BrowserHandler semantics (a detaching session resets contexts it overrode); every CLI verb is its own process. Note baseline: before any download_file, page-initiated downloads already go to the Chrome default (spec B7 accepted that). UNVERIFIED live."
+    },
+    {
+      "lead": 6,
+      "assessment": "Abort/inner-timeout only rejects the wrapper; an in-flight click or a delayed response decides its destination when headers arrive, under whatever setDownloadBehavior is current, possibly a later call (same or other process) holding allow B, and that call onWillBegin would adopt the stale guid. Most likely cross-dir/integrity, not outside-all-roots within one process. UNVERIFIED live."
+    },
+    {
+      "lead": 7,
+      "assessment": "Certain by inspection: lock path = os.tmpdir() + sha256(literal wsEndpoint). Different TEMP or a different endpoint spelling (ws://localhost vs ws://127.0.0.1, which attach passes through verbatim) gives different lock files, so no mutual exclusion. Impact (escape rate) UNVERIFIED live."
+    }
+  ]
+}
