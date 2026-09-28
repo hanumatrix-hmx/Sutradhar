@@ -3656,3 +3656,42 @@ same restriction directly. FR2-05's ledger status is being left as "AUDIT-3 PART
 pending user input" rather than forced to a PASS or FAIL verdict on incomplete evidence, and the
 Orchestrator is surfacing this to the user directly for a decision on how to proceed, per the
 scope-boundary guidance that safety-relevant restrictions are not something this loop overrides.
+
+## 2026-09-29 -- User delegated the FR2-05 and FR2-04 decisions to the Orchestrator ("You decide")
+
+Context: the user's global rules now say an item that fails independent audit twice must stop
+fixing and be re-planned, and after three failed cycles it is BLOCKED. FR2-05 has failed audit-1
+and audit-2; audit-3 could not complete (the live concurrency/lock tests were interrupted by an
+automated safety check four times, including once when the Orchestrator attempted them directly).
+
+Decision 1 -- FR2-05: ship the current code, status PARTIAL (not DONE).
+- Why ship: the branch's path containment is strictly safer than master, which still has the
+  original literal-path fallback (spec B2) that let a folder link escape the allowed root. Every
+  confirmed escape found during this item is fixed on the branch.
+- What is verified: GAP-294 (trailing dot/space) and GAP-295 (Unicode look-alike folding)
+  independently re-verified by audit-2 through real CLI and MCP; GAP-300 (case-sensitive folders)
+  fixed with the executor's live evidence and supported by the Orchestrator's own function-level
+  checks (S1 and S2 ruled out).
+- What is NOT verified, documented as a limitation: overlapping download_file calls on one
+  browser. fix-2's cross-process lock is best-effort. By code reading, the stale-lock takeover is
+  a check-then-act sequence (S4) and the lock file location depends on the process temp directory
+  and the literal endpoint spelling (S7), so separate processes may not share it. S5 (another
+  client disconnecting) and S6 (a cancelled call's click still completing) are untested.
+  Guidance to ship in docs: drive downloads for a given browser from one process at a time.
+- No further lock code is written: it cannot be verified in this environment, and the user's
+  rules require fresh evidence before any fix counts.
+- GAP-306 (stale case-sensitivity cache) stays open as a minor known issue.
+
+Decision 2 -- FR2-04: a scoped GAP-256 fix, not a full reopen and not a revert.
+- Why: FR2-04 is on the branch and introduced a regression versus master -- a crashed tab locks
+  the whole CLI session (GAP-256). Shipping that is not acceptable. Reverting FR2-04 is messier
+  because FR2-05 and FR2-14 build on its code. A narrowly scoped fix has precedent (GAP-132-fix).
+- Scope, from audit-6's own diagnosis: (a) a crashed target must never be treated as a blocking
+  unknown dialog; (b) tabs and closetab must work without attaching to a blocked tab, served from
+  browser-level target listing and closing. Nothing else in FR2-04 is reopened. GAP-257 stays a
+  documented limitation.
+- It gets its own independent audit. Per the user's rules, if it fails audit twice it stops and
+  FR2-04 is left out of the PR instead.
+
+Then: FR2-17 docs sweep (including FR2-05's and FR2-04's documented limitations), version 0.5.0,
+temp cleanup, and the PR to master with an honest done/partial/blocked report. Nothing published.
