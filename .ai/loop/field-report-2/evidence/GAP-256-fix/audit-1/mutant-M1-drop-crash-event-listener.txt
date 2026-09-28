@@ -1,0 +1,86 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser
+
+ ❯ tests/unit/dialog-warden.spec.ts  (38 tests | 3 failed) 1189ms
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC1: a target Chrome announced as crashed (Target.targetCrashed) is reported in `crashed`, NOT as an unknown dialog, and NOT in busy
+     → expected [ { targetId: 't1', …(6) } ] to deeply equal []
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC5: a crashed target that answers again (reloaded) is cleared, so a LATER real block on it is an unknown dialog again, not excluded
+     → expected [] to have a length of 1 but got +0
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC6: `dialog accept/dismiss` on a crashed target never closes it (nothing to guess at: it is not a dialog) -- 404, zero Target.closeTarget calls
+     → expected 200 to be 404 // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 35 passed (38)
+   Start at  03:47:25
+   Duration  1.56s (transform 58ms, setup 0ms, collect 65ms, tests 1.19s, environment 0ms, prepare 125ms)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC1: a target Chrome announced as crashed (Target.targetCrashed) is reported in `crashed`, NOT as an unknown dialog, and NOT in busy
+AssertionError: expected [ { targetId: 't1', …(6) } ] to deeply equal []
+
+- Expected
++ Received
+
+- Array []
++ Array [
++   Object {
++     "confirmedSafe": false,
++     "message": "",
++     "openedAt": "2026-09-28T22:17:26.484Z",
++     "source": "hint",
++     "targetId": "t1",
++     "type": "unknown",
++     "url": "https://victim/",
++   },
++ ]
+
+ ❯ tests/unit/dialog-warden.spec.ts:1438:28
+    1436|       browser._emitConnection('Target.targetCrashed', { targetId: 't1'…
+    1437|       const body = await list();
+    1438|       expect(body.dialogs).toEqual([]);
+       |                            ^
+    1439|       expect(body.busy).toEqual([]);
+    1440|       expect(body.crashed).toEqual([{ targetId: 't1', url: 'https://vi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC5: a crashed target that answers again (reloaded) is cleared, so a LATER real block on it is an unknown dialog again, not excluded
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/unit/dialog-warden.spec.ts:1493:38
+    1491|     try {
+    1492|       browser._emitConnection('Target.targetCrashed', { targetId: 't1'…
+    1493|       expect((await list()).crashed).toHaveLength(1);
+       |                                      ^
+    1494|       state.oldBlocked = false; // reloaded: the long-lived session an…
+    1495|       const recovered = await list();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC6: `dialog accept/dismiss` on a crashed target never closes it (nothing to guess at: it is not a dialog) -- 404, zero Target.closeTarget calls
+AssertionError: expected 200 to be 404 // Object.is equality
+
+- Expected
++ Received
+
+- 404
++ 200
+
+ ❯ tests/unit/dialog-warden.spec.ts:1518:26
+    1516|         body: JSON.stringify({ targetId: 't1', accept: true }),
+    1517|       });
+    1518|       expect(res.status).toBe(404);
+       |                          ^
+    1519|       expect(browser.closeTargetCalls).toEqual([]);
+    1520|     } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

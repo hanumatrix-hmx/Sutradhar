@@ -1,0 +1,88 @@
+{
+  "item": "GAP-256-fix",
+  "audit": "audit-1",
+  "status": "COMPLETE",
+  "verdict": "PASS (no critical/major defect reproduced; 3 minor findings + info notes)",
+  "head": "8d43b8ff6509df4f3bf68a832790cf1d195c1ea1",
+  "branch": "claude/field-report-2-loop",
+  "worktree": "E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041",
+  "build": "rm -rf dist + tsc for packages/browser and packages/cli before any live run (build.txt); src+dist sha256 in sha-baseline.txt, re-verified OK after every mutation (sha256sum -c, restore-sha-after-M16.txt)",
+  "master_comparator": "E:/HMX_Projects/Internal_Projects/PinchTab/packages/cli/dist/cli.js (main checkout on master 7073142, dist built Aug 20 (file mtime), pre-FR2-04 CLI) -- read-only use",
+  "points": {
+    "1_core_repro": {
+      "result": "PASS",
+      "A1_active_tab_chrome_crash": "6/6 pass (+1/1 post-restore): independent raw-CDP witness saw Target.targetCrashed for the tab the CLI crashed; tabs exit 0 in ~0.7s and flags exactly that id [crashed]; closetab <id> exit 0 and the id is gone on a fresh Target.getTargets; nav + snap exit 0 on the SAME browser (same surviving target id), no self-heal. live-A.jsonl",
+      "A2_background_crash": "6/6 recover (3 Page.crash, 3 chrome://crash): gate never exit 3, crash note names the victim id 6/6, tabs exit 0, closetab removes exactly the victim, the two other tabs stay, nav+snap exit 0. BUT the first gated snap on the healthy active tab hangs to the 25s cap in 3/3 chrome://crash trials (see F3). live-A.jsonl"
+    },
+    "2_negative_controls": {
+      "result": "PASS",
+      "N1_real_alert": "5/5 exit 3 'alert dialog is open and blocking', nav also exit 3, tabs flags [blocked: alert dialog] never [crashed], observer Runtime.evaluate still TIMEOUT (dialog genuinely open)",
+      "N2_popup_born_unknown": "5/5 exit 3, no crash note in snap/dialog/tabs",
+      "N2b_same_renderer_blank_popup_alert": "5/5 exit 3, holder and collateral opener both [blocked: unresponsive...], never [crashed]",
+      "N3_busy_script": "5/5 never labelled crashed (dialog, tabs, snap); tabs took the normal path and waited ~24s for the script (busy is non-blocking by design)",
+      "N4_crash_then_reloaded_into_alert (auditor shape)": "5/5 exit 3 and dialog lists the typed alert; 2 of the 5 had the warden list the tab as crashed first -- the stale crash record never hides a real dialog",
+      "in_process_warden_shapes": "0/105 classifications of alert/confirm/prompt/beforeunload/busy/popup (holder+opener) as CRASHED across 5 trials, warden started AFTER the dialog/busy state (worst case for the corroboration path). warden-shapes.jsonl"
+    },
+    "3_crash_detection_robustness": {
+      "result": "event path works; missed-event corroboration fallback is non-functional in real Chrome (F1)",
+      "event_path": "warden up at crash time: CRASHED 15/15; reload into alert -> typed alert 15/15",
+      "missed_event": "warden started after crash: chrome://crash -> dialog:unknown 15/15 (never corroborated); Page.crash -> 'clear' 15/15",
+      "raw_signal": "signals.jsonl: on a genuinely crashed target Performance.getMetrics TIMES OUT on a FRESH session too, 6/6 (both methods, re-checked after 5s: 6/6). The fallback requires fresh=responsive, so it can never fire.",
+      "cli_warden_down": "W2 (warden killed, chrome://crash): gate exit 3 'a unknown dialog is open' 5/5 (misreport) but tabs 5/5 + closetab 5/5 + snap 5/5 recover the SAME session. W1 (Page.crash): snap exit 0 5/5.",
+      "misclassification_of_busy_or_dialog_as_crashed": "never observed (0/105 in-process, 0/25 CLI N1-N4). By reading: crashedIds only from the Target.targetCrashed event or from fresh-responsive+old-timeout, and a real dialog/busy script times out on both (and crash record is cleared on the next responsive probe)."
+    },
+    "4_tabs_closetab_path": {
+      "result": "PASS with minor F4",
+      "engages": "chrome://crash crashed tab, alert, popup dialogs -> browser-level listing; healthy session, busy tab, Page.crash tab after first listing -> normal path (works). W2: normal path answered in ~3.6s.",
+      "closetab": "T1 5/5: raw id in healthy session closes exactly that tab (others remain on fresh re-read); bogus 32-hex refused exit 1 'no tab with id'; 'keep' tab never closed. Only type=page targets from Target.getTargets are closable (by code + BL1 + mutant M9 killed). No wrong-tab close observed in any run.",
+      "lowercase_id": "F4: accepted by the /i regex but sent unchanged -> exit 1 'No target with given id found' 5/5 (no false success)",
+      "non_hex_ids": "info F5: when nothing is flagged, 'tab_sess_1_1_1' / 31-char id go to the normal path which prints 'Closed tab X' exit 0 for a nonexistent id -- pre-existing: master does this for ANY id 4/4 (live-R-master.jsonl T1)"
+    },
+    "5_regression": {
+      "fr2_04_suite": "111 pass / 0 fail / 2 skip (113) -- regression-suite/live-summary.json",
+      "vitest_cli": "180/180 (vitest-cli.txt)",
+      "vitest_browser": "565/566 twice; the single failure is a different download_file test each run (E6 hostile suggestedFilename; 'fails cleanly when canceled') = GAP-307, not this fix: 'git diff --name-only 454cf07 8d43b8f -- packages | grep -i download' -> none. dialog-warden+dialog-cdp specs alone: 72/72"
+    },
+    "6_residuals": {
+      "result": "confirmed matches master; disclosure slightly under-scoped (F3) and the crash note's own advice is wrong (F2)",
+      "R1_active_crash_then_gated_verb_without_closetab": "cur 4/4 hang to 45s cap (nav 2, snap 2); master 4/4 identical hang. cur gate note names closetab 4/4.",
+      "R2_background_crash_then_snap": "chrome://crash: cur 2/2 hang, master 2/2 hang; Page.crash: cur 2/2 exit 0, master 2/2 exit 0"
+    },
+    "7_mutation": {
+      "vitest_killed": "11/13: M1 listener dropped (GC1,GC5,GC6), M2 no re-probe (GC4), M3 never clear (GC5), M4 corroboration off (GC3), M5 crashed still reported as unknown (GC1,GC3,GC6), M6 over-broad (18 tests), M9 no page filter (BL1), M10 silent empty list (BL2), M11 gate clears on any crash (GC-CLI2), M12 broker drops crashed (GC-CLI4), M13 no crash note (GC-CLI1)",
+      "vitest_survived": "M7 (crashed not excluded from attribution input) and M8 (crash record not cleared on targetdestroyed) -- untested, low risk",
+      "live_killed": "M16 (cli.ts blockedOrCrashedState ignores crashed-only state): A1 tabs hangs to 30s cap 2/2; restored + rebuilt sha-identical, A1 1/1 pass after restore",
+      "note": "M4 is killed only by a mock (GC3) that asserts a signal real Chrome does not produce (F1). cli.ts routing (tabs/closetab browser-level) has no unit test; it is covered only live."
+    }
+  },
+  "findings": [
+    { "id": "A1-F1", "severity": "minor", "title": "Missed-event crash corroboration never fires in real Chrome; its basis was measured on a tab that never crashed",
+      "detail": "corroborateCrash needs a FRESH session to answer Performance.getMetrics on the crashed target. Real crash (Page.crash and chrome://crash): fresh session TIMEOUT 6/6 (signals.jsonl). The executor's explore-signals.json 'crash' row was taken on location.href='chrome://crash' from page JS, which its own false-pass-analysis says does NOT crash. Result: a warden started after a chrome://crash crash reports it as an unknown dialog 15/15; with the CLI warden down the gate exits 3 'unknown dialog' 5/5. Bounded: tabs/closetab still recover the same session 5/5 (no GAP-256 lock), and 'crash detection needs the warden up' is disclosed. Fix: drop the fallback or replace it (e.g. Target.getTargets/other browser-side crash state), correct the code comment and GC3." },
+    { "id": "A1-F2", "severity": "minor", "title": "Crash note recommends a recovery that hangs",
+      "detail": "formatCrashNote says 'or reload it with \"sutradhar nav <url>\" while it is the active tab'. For the GAP-256 shape (chrome://crash) that nav hangs to the 45s cap 2/2 (live-R-cur R1 trials 0,2) -- the executor's own residual says nav hangs until closetab. Recommend: closetab only." },
+    { "id": "A1-F3", "severity": "minor (docs)", "title": "Residual disclosure under-scoped",
+      "detail": "Disclosed as 'after the ACTIVE tab crashes via chrome://crash'. A BACKGROUND tab crashed via chrome://crash also makes gated commands on the healthy active tab hang (cur A2 3/3, R2 2/2). Identical on master (R2 2/2), so not a regression." },
+    { "id": "A1-F4", "severity": "minor", "title": "closetab accepts lowercase target ids but cannot close them",
+      "detail": "TARGET_ID_RE is /i and the existence check upper-cases, but Target.closeTarget gets the id as typed -> exit 1 'No target with given id found' 5/5. No false success, no wrong close." },
+    { "id": "A1-I1", "severity": "info (pre-existing)", "title": "Normal-path closetab reports success for nonexistent ids",
+      "detail": "'Closed tab tab_sess_1_1_1' exit 0 when nothing is flagged (cur 5/5); master does this for any id (4/4). Not caused by this fix." },
+    { "id": "A1-I2", "severity": "info", "title": "Mutation survivors M7, M8; no unit tests for cli.ts browser-level routing (live-only coverage)" }
+  ],
+  "false_pass_analysis": {
+    "AC1_crash_recovers": "Could pass if the tab never crashed (executor's own earlier harness bug). Ruled out: independent raw WebSocket CDP witness armed BEFORE the crash saw Target.targetCrashed for the crashed id (A1 6/6 crashWitnessed, A2 6/6, R 16/16). Could pass on a self-healed fresh browser: ruled out -- sameBrowserHasAfter asserts the surviving target id after nav/snap equals the id present before, and no 'fresh session' note.",
+    "AC2_negative_controls": "Could pass if the dialog had already been dismissed and exit 3 came from something else. Ruled out: N1 asserts the exact 'alert dialog is open and blocking' text AND an observer Runtime.evaluate on that target still TIMEOUTs after the CLI ran (5/5). Over-broad exclusion would pass if tests only used tracked dialogs: ruled out with untracked shapes (N2/N2b popups, in-process warden started after the dialog: 0/105 CRASHED) and mutant M6 killed (18 tests).",
+    "AC3_crash_detection": "Could pass via mocks only (GC3). Ruled out by testing real Chrome signals directly: signals.jsonl shows the fallback's premise is false -> reported as F1 instead of PASS.",
+    "AC4_closetab": "'Closed tab' could be printed with the tab still open. Ruled out: every closetab verdict re-reads Target.getTargets on a separate connection afterward (victimGone / rawIdClosesExactlyThat / keepNeverClosed).",
+    "AC5_regression": "Stale dist could make live runs test old code. Ruled out: dist deleted and rebuilt at start; sha256 of src+dist recorded and re-verified OK after all mutations and the M16 rebuild (sha256sum -c). Suite totals read from regression-suite/live-summary.json written by this run (at 2026-09-28T21:36:41Z).",
+    "AC6_residual_matches_master": "Could 'match' because both harness runs failed identically for a harness reason. Ruled out: crash witnessed 16/16 on both builds, and the Page.crash control completes exit 0 on both (R2 odd trials), so the harness can observe success.",
+    "AC7_mutation": "A mutant could look killed because of an unrelated flaky test. Ruled out: mutants run only the dialog spec files (72/72 green unmutated), and the failing test names are the targeted GC/BL tests (mutation-results.json)."
+  },
+  "processes": {
+    "started": [
+      "PID 6294: node tools/scenario-suite/verify-fr2-04-dialogs.mjs (timeout 1200s) -- exited, ALL PASS",
+      "bash task b9bikyqil: acases R1,R2 cur + R1,R2,T1 master -- exited 0",
+      "all other runs foreground with timeout <= 1200s; each harness killed only its own CLI children / wardens / chrome under its own g256aud-* temp root; every run's leftovers record = {wardens:[],chrome:[],cliChildren:[],rootRemoved:true}"
+    ],
+    "after": "process-after.txt: 0 processes referencing g256aud-/fr2-04- roots, 0 wardens; no g256aud-* dirs left in E:\\AI-Cache\\tmp"
+  }
+}

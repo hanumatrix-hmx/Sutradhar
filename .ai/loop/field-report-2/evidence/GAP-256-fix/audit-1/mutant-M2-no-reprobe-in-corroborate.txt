@@ -1,0 +1,39 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser
+
+ ❯ tests/unit/dialog-warden.spec.ts  (38 tests | 1 failed) 1168ms
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC4 (race guard): a busy script that FINISHES between the two probes (the long-lived session answers the re-probe) is not classified crashed
+     → expected [ { targetId: 't1', …(1) } ] to deeply equal []
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 37 passed (38)
+   Start at  03:47:27
+   Duration  1.52s (transform 51ms, setup 1ms, collect 55ms, tests 1.17s, environment 0ms, prepare 105ms)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC4 (race guard): a busy script that FINISHES between the two probes (the long-lived session answers the re-probe) is not classified crashed
+AssertionError: expected [ { targetId: 't1', …(1) } ] to deeply equal []
+
+- Expected
++ Received
+
+- Array []
++ Array [
++   Object {
++     "targetId": "t1",
++     "url": "https://victim/",
++   },
++ ]
+
+ ❯ tests/unit/dialog-warden.spec.ts:1483:28
+    1481|     try {
+    1482|       const body = await list();
+    1483|       expect(body.crashed).toEqual([]);
+       |                            ^
+    1484|     } finally {
+    1485|       await warden.stop('test-teardown');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

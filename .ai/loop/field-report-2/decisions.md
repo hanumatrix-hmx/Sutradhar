@@ -3726,3 +3726,27 @@ the tabs/closetab path.
 Separate finding the Orchestrator reproduced while verifying (not caused by this fix): the
 download_file unit tests are flaky -- logged as GAP-307 against FR2-05, to be handled as its own
 scoped item after this audit, since both touch the browser package's test runs.
+
+## 2026-09-29 -- GAP-256-fix: independent audit-1 PASSED. FR2-04 can ship with it.
+
+Independent audit (Opus), real CLI + real headless Chrome, dist rebuilt from HEAD first:
+- Core repro: an active-tab chrome://crash is recoverable 6/6 (+1/1 after mutation restore),
+  confirmed by a separate CDP connection; a background crash 6/6; the gate never exits 3 on a crash.
+- Negative controls hold: a real alert still blocks with exit 3 (5/5, dialog confirmed still open
+  afterwards), a popup-born unknown dialog 5/5, a blank popup sharing its opener's renderer 5/5, a
+  busy script never labelled crashed 5/5, a crashed tab reloaded into an alerting page 5/5; the real
+  warden classified 0/105 dialog/busy states as crashed.
+- closetab closes exactly the requested tab (5/5), refuses a made-up id (5/5), no wrong-tab close.
+- Regression: FR2-04 suite 111/0/2 unchanged; cli vitest 180/180; browser 565/566 with the one
+  failure in each run being the pre-existing, unrelated GAP-307 download flakiness.
+- Residuals match master. 11/13 unit mutants killed plus a live cli.ts mutant caught.
+
+Five minor follow-ups logged as GAP-308..312 (the missed-crash fallback never fires in
+real Chrome -- bounded, recovery still works; the crash note's nav advice is wrong for chrome://crash;
+the residual also applies to background crashes; closetab lowercase ids; two surviving mutants and
+no unit tests for the cli.ts routing). None blocks the PR; the note wording and the residual docs
+will be corrected in the FR2-17 docs sweep.
+
+Decision: FR2-04 ships in the PR with GAP-256-fix, with its remaining known limitations documented
+(GAP-257, the busy-from-birth residual, and the minors above). Next: GAP-307 (flaky download_file
+unit tests / first-event attribution race in FR2-05), as its own scoped item.
