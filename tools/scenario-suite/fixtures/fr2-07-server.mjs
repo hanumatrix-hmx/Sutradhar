@@ -32,6 +32,7 @@ function navPage(title) {
 export async function startFr207Server() {
   const pageHtml = await fs.readFile(path.join(here, 'fr2-07-verification.html'), 'utf-8');
   const frameHtml = await fs.readFile(path.join(here, 'fr2-07-frame.html'), 'utf-8');
+  const hiddenTextHtml = await fs.readFile(path.join(here, 'fr2-07-hidden-text.html'), 'utf-8');
   const prob043Html = await fs.readFile(path.join(here, 'prob043-keyboard.html'), 'utf-8');
   let port = 0;
 
@@ -49,6 +50,8 @@ export async function startFr207Server() {
       }
       case '/frame.html':
         return send(200, frameHtml);
+      case '/hidden-text.html':
+        return send(200, hiddenTextHtml.replaceAll('__XO_ORIGIN__', `http://localhost:${port}`));
       case '/textframe.html': {
         const t = (u.searchParams.get('text') ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
         return send(200, `<!doctype html><html><body><p>${t}</p></body></html>`);

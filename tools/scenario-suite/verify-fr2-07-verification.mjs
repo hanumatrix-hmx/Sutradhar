@@ -201,9 +201,7 @@ async function runMcpCases(surface, serverPath, ctx) {
     const t0 = performance.now();
     for (;;) {
       const fr = page.frames().find((f) => f.url().startsWith(server.crossOrigin));
-      const tf = page.frames().filter((x) => x.url().includes('/textframe.html'));
-      const tfLive = tf.length === 2 ? await Promise.all(tf.map((x) => Promise.race([x.evaluate(() => document.body.innerText).then(() => true), delay(1000).then(() => false)]).catch(() => false))) : [];
-      if (fr && (await fr.$('#xo-btn').catch(() => null)) && tfLive.length === 2 && tfLive.every(Boolean)) break;
+      if (fr && (await fr.$('#xo-btn').catch(() => null))) break;
       if (performance.now() - t0 > 8000) break;
       await delay(100);
     }
@@ -755,9 +753,25 @@ async function runMcpCases(surface, serverPath, ctx) {
         const p = document.querySelector(sel).shadowRoot.firstElementChild;
         return { innerText: p.innerText, textContent: p.textContent, checkVisibility: p.checkVisibility() };
       }, hostSel);
+    /** Navigates to the dedicated F1 page and waits until every cross-origin text frame is live. */
+    const freshHT = async () => {
+      await tool('browser.navigate', { url: server.url('/hidden-text.html') });
+      const pages = await observer.pages();
+      const page = pages.find((p) => p.url().includes('/hidden-text.html')) ?? pages[pages.length - 1];
+      await page.waitForFunction(() => window.__ht && window.__ht.ready, { timeout: 8000 });
+      const t0 = performance.now();
+      for (;;) {
+        const tf = page.frames().filter((x) => x.url().includes('/textframe.html'));
+        const live = tf.length === 2 ? await Promise.all(tf.map((x) => Promise.race([x.evaluate(() => document.body.innerText).then(() => true), delay(1000).then(() => false)]).catch(() => false))) : [];
+        if (live.length === 2 && live.every(Boolean)) break;
+        if (performance.now() - t0 > 8000) throw new Error('cross-origin text frames never became live');
+        await delay(100);
+      }
+      return page;
+    };
     const negText = (id, text, what, truthFn) =>
       C(id, async (cid) => {
-        const page = await fresh();
+        const page = await freshHT();
         const r = (await tool('browser.click', { target: '#noop', expect: { text } })).json;
         await delay(1200); // the engine rejects a duplicate click on the same target within 1000ms; keep the next case clear of it
         const t = await truthFn(page);
@@ -768,7 +782,7 @@ async function runMcpCases(surface, serverPath, ctx) {
       });
     const posText = (id, text, what, truthFn) =>
       C(id, async (cid) => {
-        const page = await fresh();
+        const page = await freshHT();
         const r = (await tool('browser.click', { target: '#noop', expect: { text } })).json;
         await delay(1200); // the engine rejects a duplicate click on the same target within 1000ms; keep the next case clear of it
         const t = await truthFn(page);
