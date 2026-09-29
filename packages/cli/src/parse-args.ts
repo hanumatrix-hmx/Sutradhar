@@ -5,6 +5,8 @@
  * CLI entrypoint), which would spawn/attach to a real Chrome the moment a test imported it.
  */
 
+import type { ActionExpectation } from '@sutradhar/capability-runtime';
+
 export interface ParsedArgs {
   /** The subcommand, e.g. "snap", "click", "nav". `undefined` when no argument was given. */
   verb: string | undefined;
@@ -89,6 +91,14 @@ export interface ParsedArgs {
    *  looks like a flag (e.g. `--dialog-text --weird` is a literal prompt answer of "--weird",
    *  not a second flag). Only meaningful with `--dialog accept`. */
   dialogTextFlag: string | undefined;
+  /** FR2-07: `--expect-text <t>` / `--expect-url <s>` / `--expect-url-changed` /
+   *  `--expect-url-unchanged`, folded into the runtime's `ActionExpectation` shape. `undefined`
+   *  when none was given. Validated by {@link expectFlagError}. */
+  expectFlag: ActionExpectation | undefined;
+  /** FR2-07: true when `--expect-text`/`--expect-url` was given with no value. */
+  expectValueMissing: string | undefined;
+  /** FR2-07: true when both `--expect-url-changed` and `--expect-url-unchanged` were given. */
+  expectUrlChangedConflict: boolean;
   /** Any `--something`-shaped argument that isn't one of the flags this parser recognizes (and
    *  isn't a consumed value of one, e.g. the URL after `--baseline`). Found live (external field
    *  report, PROB-042): a typo'd or misplaced flag like `sutradhar screenshot --help` was
@@ -158,7 +168,45 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
   const dialogFlagGivenButInvalid = dialogFlagIndex !== -1 && !dialogFlag;
   const dialogTextFlagIndex = args.indexOf('--dialog-text');
   const dialogTextFlag = dialogTextFlagIndex !== -1 ? args[dialogTextFlagIndex + 1] : undefined;
+  const expectTextIndex = args.indexOf('--expect-text');
+  const expectUrlIndex = args.indexOf('--expect-url');
+  const expectUrlChanged = args.includes('--expect-url-changed');
+  const expectUrlUnchanged = args.includes('--expect-url-unchanged');
+  const EXPECT_KNOWN = new Set([
+    '--headed', '--fail-on-diff', '--json', '--viewport', '--settle', '--no-text', '--ids-only', '--scan-listeners',
+    '--profile', '--user-agent', '--allowlist-domains', '--baseline', '--modifiers', '--frame', '--state', '--dialog',
+    '--dialog-text', '--expect-text', '--expect-url', '--expect-url-changed', '--expect-url-unchanged',
+  ]);
+  // A value that is missing, or is itself one of OUR flags, means the flag was given without one
+  // (`--expect-text --json`); any other `--...`-looking text is a literal value, like `--dialog-text`.
+  const expectValueOf = (i: number): string | undefined => {
+    if (i === -1) return undefined;
+    const v = args[i + 1];
+    return v === undefined || EXPECT_KNOWN.has(v) ? undefined : v;
+  };
+  const expectTextValue = expectValueOf(expectTextIndex);
+  const expectUrlValue = expectValueOf(expectUrlIndex);
+  const expectValueMissing =
+    expectTextIndex !== -1 && expectTextValue === undefined
+      ? '--expect-text needs a value (e.g. --expect-text "Saved")'
+      : expectUrlIndex !== -1 && expectUrlValue === undefined
+        ? '--expect-url needs a value (e.g. --expect-url /dashboard)'
+        : undefined;
+  const expectUrlChangedConflict = expectUrlChanged && expectUrlUnchanged;
+  const expectFlag: ActionExpectation | undefined =
+    expectTextValue !== undefined || expectUrlValue !== undefined || expectUrlChanged || expectUrlUnchanged
+      ? {
+          ...(expectTextValue !== undefined ? { text: expectTextValue } : {}),
+          ...(expectUrlValue !== undefined ? { url: expectUrlValue } : {}),
+          ...(expectUrlChanged && !expectUrlUnchanged ? { urlChanged: true } : {}),
+          ...(expectUrlUnchanged && !expectUrlChanged ? { urlChanged: false } : {}),
+        }
+      : undefined;
   const KNOWN_FLAGS = new Set([
+    '--expect-text',
+    '--expect-url',
+    '--expect-url-changed',
+    '--expect-url-unchanged',
     '--headed',
     '--fail-on-diff',
     '--json',
@@ -187,7 +235,9 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     (viewportFlagIndex !== -1 && i === viewportFlagIndex + 1) ||
     (stateFlagIndex !== -1 && i === stateFlagIndex + 1) ||
     (dialogFlagIndex !== -1 && i === dialogFlagIndex + 1) ||
-    (dialogTextFlagIndex !== -1 && i === dialogTextFlagIndex + 1);
+    (dialogTextFlagIndex !== -1 && i === dialogTextFlagIndex + 1) ||
+    (expectTextIndex !== -1 && expectTextValue !== undefined && i === expectTextIndex + 1) ||
+    (expectUrlIndex !== -1 && expectUrlValue !== undefined && i === expectUrlIndex + 1);
   const cleanArgs = args.filter((a, i) => !KNOWN_FLAGS.has(a) && !isConsumedValue(i));
   // Anything left that's still shaped like a flag (`--foo`) is almost certainly a typo'd or
   // misplaced flag, not literal positional data — see `unrecognizedFlags`'s doc comment.
@@ -217,8 +267,22 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     dialogFlag,
     dialogFlagGivenButInvalid,
     dialogTextFlag,
+    expectFlag,
+    expectValueMissing,
+    expectUrlChangedConflict,
     unrecognizedFlags,
   };
+}
+
+/**
+ * FR2-07: validates the `--expect-*` flags. Returns the exact user-facing message, or `undefined`
+ * when they are valid (or absent).
+ */
+export function expectFlagError(
+  p: Pick<ParsedArgs, 'expectValueMissing' | 'expectUrlChangedConflict'>,
+): string | undefined {
+  if (p.expectUrlChangedConflict) return '--expect-url-changed and --expect-url-unchanged are mutually exclusive';
+  return p.expectValueMissing;
 }
 
 /**

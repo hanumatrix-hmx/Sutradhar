@@ -4,7 +4,7 @@
  * (which runs main() immediately at module load) specifically so it's independently testable.
  */
 
-import { parseArgs, dialogFlagError } from '../../src/parse-args.js';
+import { parseArgs, dialogFlagError, expectFlagError } from '../../src/parse-args.js';
 
 describe('@sutradhar/cli parseArgs', () => {
   it('parses a bare verb with no flags or positional args', () => {
@@ -346,5 +346,46 @@ describe('@sutradhar/cli parseArgs', () => {
       expect(result.cleanArgs).toEqual(['u', 'out']);
       expect(result.jsonMode).toBe(true);
     });
+  });
+});
+
+describe('@sutradhar/cli parseArgs: FR2-07 --expect-* flags', () => {
+  it('C1: --expect-text / --expect-url take a value and keep it out of cleanArgs', () => {
+    const t = parseArgs(['click', '#a', '--expect-text', 'Saved']);
+    expect(t.expectFlag).toEqual({ text: 'Saved' });
+    expect(t.cleanArgs).toEqual(['#a']);
+    const u = parseArgs(['nav', 'https://x', '--expect-url', '/b']);
+    expect(u.expectFlag).toEqual({ url: '/b' });
+    expect(u.cleanArgs).toEqual(['https://x']);
+    const both = parseArgs(['click', '#a', '--expect-text', 'A B', '--expect-url', '/z']);
+    expect(both.expectFlag).toEqual({ text: 'A B', url: '/z' });
+  });
+
+  it('C1: a value that looks like a flag but is not one of ours is a literal value', () => {
+    expect(parseArgs(['click', '#a', '--expect-text', '--weird']).expectFlag).toEqual({ text: '--weird' });
+  });
+
+  it('C2: --expect-url-changed / --expect-url-unchanged, and their conflict', () => {
+    expect(parseArgs(['click', '#a', '--expect-url-changed']).expectFlag).toEqual({ urlChanged: true });
+    expect(parseArgs(['click', '#a', '--expect-url-unchanged']).expectFlag).toEqual({ urlChanged: false });
+    const both = parseArgs(['click', '#a', '--expect-url-changed', '--expect-url-unchanged']);
+    expect(expectFlagError(both)).toBe('--expect-url-changed and --expect-url-unchanged are mutually exclusive');
+    expect(parseArgs(['click', '#a', '--expect-url-changed']).cleanArgs).toEqual(['#a']);
+  });
+
+  it('C3: a value-less --expect-text / --expect-url is an error; no flag means expectFlag is undefined', () => {
+    expect(expectFlagError(parseArgs(['click', '#a', '--expect-text']))).toBe(
+      '--expect-text needs a value (e.g. --expect-text "Saved")',
+    );
+    expect(expectFlagError(parseArgs(['click', '#a', '--expect-text', '--json']))).toContain('--expect-text needs a value');
+    expect(expectFlagError(parseArgs(['click', '#a', '--expect-url']))).toContain('--expect-url needs a value');
+    expect(parseArgs(['click', '#a', '--expect-text', '--json']).jsonMode).toBe(true); // --json not swallowed
+    expect(parseArgs(['click', '#a']).expectFlag).toBeUndefined();
+    expect(expectFlagError(parseArgs(['click', '#a']))).toBeUndefined();
+  });
+
+  it('C3: unrecognised-flag detection is unchanged and does not flag the expect flags', () => {
+    expect(parseArgs(['click', '#a', '--expect-text', 'x', '--expect-url-changed']).unrecognizedFlags).toEqual([]);
+    expect(parseArgs(['click', '#a', '--bogus']).unrecognizedFlags).toEqual(['--bogus']);
   });
 });

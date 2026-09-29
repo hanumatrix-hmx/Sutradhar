@@ -7,7 +7,15 @@
  * same browser's CDP wsEndpoint, persisted per-project-directory under
  * ~/.sutradhar-cli/<hash-of-cwd>/state.json between calls (see state.ts).
  */
-import { SutradharRuntime, writeAuditArtifacts, prepareAuditOutDir, resolveFsRoots, type ResolvedFsRoots } from '@sutradhar/capability-runtime';
+import {
+  SutradharRuntime,
+  writeAuditArtifacts,
+  prepareAuditOutDir,
+  resolveFsRoots,
+  failedExpectations,
+  type ResolvedFsRoots,
+  type VerificationResultDto,
+} from '@sutradhar/capability-runtime';
 import { cliDownloadGrant, assertDownloadDirUsable } from './download-roots.js';
 import { StructuredLogger } from '@sutradhar/observability';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -17,7 +25,8 @@ import { dialogOutputSink, dialogBlockedJsonDoc, printDialogBlockedJsonOnce, wri
 import { readState, writeState, clearState, STATE_DIR, type CliState } from './state.js';
 import { spawnDetachedChrome, killChromeTree } from './spawn-chrome.js';
 import { createSessionId } from '@sutradhar/contracts';
-import { parseArgs, dialogFlagError } from './parse-args.js';
+import { parseArgs, dialogFlagError, expectFlagError } from './parse-args.js';
+import { formatVerificationLine, exitCodeForResult, toCliJson, EXIT_EXPECTATION_FAILED } from './verification-output.js';
 import { validateSelectorArgs, validateFrameChain } from './selector-args.js';
 import {
   resolveDialogPolicy,
@@ -83,6 +92,9 @@ const {
   dialogFlag,
   dialogFlagGivenButInvalid,
   dialogTextFlag,
+  expectFlag,
+  expectValueMissing,
+  expectUrlChangedConflict,
   unrecognizedFlags,
 } = parseArgs(process.argv.slice(2));
 
@@ -477,6 +489,35 @@ async function withSession<T>(
   return raced.value;
 }
 
+/**
+ * FR2-07: the one place every action verb reports its result.
+ *  - text mode: the verb's own status line, then `Verification: ...` (stdout, only when the action
+ *    succeeded);
+ *  - `--json`: the full result JSON (verification, dialogPending, ...) INSTEAD of the status line;
+ *  - exit code: 1 = the action failed, 4 = an `--expect-*` check failed or couldn't be evaluated
+ *    (with the reason on stderr), else 0. A built-in contradiction with no `--expect-*` is stated on
+ *    the Verification line but does not change the exit code.
+ */
+function reportActionResult(
+  result: { success: boolean; verification?: VerificationResultDto; error?: string },
+  okLine: string,
+  failLine: string,
+): void {
+  if (jsonMode) {
+    console.log(JSON.stringify(toCliJson(result), null, 2));
+  } else {
+    console.log(result.success ? okLine : failLine);
+    if (result.success) console.log(formatVerificationLine(result.verification));
+  }
+  const code = exitCodeForResult(result, !!expectFlag);
+  if (code === EXIT_EXPECTATION_FAILED) {
+    console.error(
+      `Error: expectation failed: ${failedExpectations(result.verification).join(', ')} — ${result.verification?.reason ?? 'no reason reported'}`,
+    );
+  }
+  if (code !== 0) process.exitCode = code;
+}
+
 async function cmdProfile(sub: string | undefined, name: string | undefined, rest: string[]) {
   const runtime = new SutradharRuntime({ logger });
   const profiles = runtime.getProfileManager();
@@ -575,7 +616,7 @@ async function cmdNav(url: string | undefined) {
   await withSession(async (runtime, sessionId) => {
     let result;
     try {
-      result = await runtime.navigate(sessionId, url!);
+      result = await runtime.navigate(sessionId, url!, undefined, expectFlag);
     } catch (err) {
       // FR2-04 D-5: under --dialog dismiss, a beforeunload prompt is dismissed at once, which
       // aborts the navigation Puppeteer-side (net::ERR_ABORTED) — report that as the specific,
@@ -596,8 +637,11 @@ async function cmdNav(url: string | undefined) {
       }
       throw err;
     }
-    console.log(`Navigated to ${result.url}`);
-    console.log(`Title: ${result.title}`);
+    reportActionResult(
+      { ...result, success: true },
+      `Navigated to ${result.url}\nTitle: ${result.title}`,
+      '',
+    );
 
     // Restore a profile's saved storage state after navigating, mirroring what
     // SutradharRuntime.launch({profileName, initialUrl}) does internally — but the CLI never
@@ -677,27 +721,24 @@ async function cmdClick(ref: string | undefined) {
   const selectorErr = validateSelectorArgs([ref]);
   if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.click(sessionId, ref!, undefined, undefined, undefined, settle);
-    console.log(result.success ? `Clicked ${ref}` : `Click failed: ${result.error}`);
-    if (!result.success) process.exitCode = 1;
+    const result = await runtime.click(sessionId, ref!, undefined, undefined, undefined, settle, expectFlag);
+    reportActionResult(result, `Clicked ${ref}`, `Click failed: ${result.error}`);
   });
 }
 
 async function cmdClickText(text: string | undefined) {
   if (!text) printErrorAndExit('usage: sutradhar clicktext <text>  (matches an element containing this text, from "sutradhar axsnap")');
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.clickByText(sessionId, text!);
-    console.log(result.success ? `Clicked element containing "${text}"` : `Click failed: ${result.error}`);
-    if (!result.success) process.exitCode = 1;
+    const result = await runtime.clickByText(sessionId, text!, undefined, expectFlag);
+    reportActionResult(result, `Clicked element containing "${text}"`, `Click failed: ${result.error}`);
   });
 }
 
 async function cmdClickRole(role: string | undefined, name: string | undefined) {
   if (!role) printErrorAndExit('usage: sutradhar clickrole <role> [name]  (role from "sutradhar axsnap", e.g. button)');
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.clickByRole(sessionId, role!, name);
-    console.log(result.success ? `Clicked role "${role}"${name ? ` "${name}"` : ''}` : `Click failed: ${result.error}`);
-    if (!result.success) process.exitCode = 1;
+    const result = await runtime.clickByRole(sessionId, role!, name, undefined, expectFlag);
+    reportActionResult(result, `Clicked role "${role}"${name ? ` "${name}"` : ''}`, `Click failed: ${result.error}`);
   });
 }
 
@@ -706,9 +747,8 @@ async function cmdType(ref: string | undefined, text: string | undefined) {
   const selectorErr = validateSelectorArgs([ref]);
   if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.type(sessionId, ref!, text!, undefined, settle);
-    console.log(result.success ? `Typed into ${ref}` : `Type failed: ${result.error}`);
-    if (!result.success) process.exitCode = 1;
+    const result = await runtime.type(sessionId, ref!, text!, undefined, settle, expectFlag);
+    reportActionResult(result, `Typed into ${ref}`, `Type failed: ${result.error}`);
   });
 }
 
@@ -722,13 +762,33 @@ async function cmdPress(ref: string | undefined, key: string | undefined) {
   const selectorErr = validateSelectorArgs([ref]);
   if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
-    // Focus (not click) the target first, best-effort — a real click would reset any cursor/
-    // selection position a prior `press` in the same sequence already established (e.g. Home,
-    // then Ctrl+Shift+Right to select a word); .focus() doesn't move the cursor at all.
-    await runtime.focus(sessionId, ref!).catch(() => {});
-    const result = await runtime.pressKey(sessionId, key!, undefined, modifiersFlag);
-    console.log(result.success ? `Pressed ${key}` : `Press failed: ${result.error}`);
-    if (!result.success) process.exitCode = 1;
+    // Focus (not click) the target first — a real click would reset any cursor/selection position
+    // a prior `press` in the same sequence already established (e.g. Home, then Ctrl+Shift+Right
+    // to select a word); .focus() doesn't move the cursor at all.
+    //
+    // FR2-07 (GAP-025): the focus is no longer best-effort. Pressing a key after a FAILED or
+    // CONTRADICTED focus would send it to whatever else happens to hold focus, and the press
+    // verification would then certify a key delivered to the wrong element. An `unverifiable` focus
+    // (nothing could be checked) still proceeds.
+    let focus: Awaited<ReturnType<typeof runtime.focus>> | undefined;
+    let focusThrew: string | undefined;
+    try {
+      focus = await runtime.focus(sessionId, ref!);
+    } catch (err) {
+      focusThrew = (err as Error).message;
+    }
+    if (focusThrew !== undefined || !focus?.success) {
+      console.log(`Press aborted: could not focus ${ref}: ${focusThrew ?? focus?.error}`);
+      process.exitCode = 1;
+      return;
+    }
+    if (focus.verification?.evidence.tier === 'contradicted') {
+      console.log(`Press aborted: focus did not land on ${ref}: ${focus.verification.reason}`);
+      process.exitCode = 1;
+      return;
+    }
+    const result = await runtime.pressKey(sessionId, key!, undefined, modifiersFlag, expectFlag);
+    reportActionResult(result, `Pressed ${key}`, `Press failed: ${result.error}`);
   });
 }
 
@@ -737,7 +797,12 @@ async function cmdScreenshot(outPath: string | undefined) {
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.screenshot(sessionId);
     await writeFile(dest, Buffer.from(result.base64, 'base64'));
-    console.log(`Saved screenshot to ${dest}`);
+    if (jsonMode) {
+      console.log(JSON.stringify({ success: true, actionType: 'screenshot', path: dest, verification: result.verification }, null, 2));
+    } else {
+      console.log(`Saved screenshot to ${dest}`);
+      console.log(formatVerificationLine(result.verification));
+    }
   });
 }
 
@@ -830,9 +895,8 @@ async function cmdSelect(ref: string | undefined, value: string | undefined) {
   const selectorErr = validateSelectorArgs([ref]);
   if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.selectOption(sessionId, ref!, value!);
-    console.log(result.success ? `Selected "${value}" on ${ref}` : `Select failed: ${result.error}`);
-    if (!result.success) process.exitCode = 1;
+    const result = await runtime.selectOption(sessionId, ref!, value!, undefined, expectFlag);
+    reportActionResult(result, `Selected "${value}" on ${ref}`, `Select failed: ${result.error}`);
   });
 }
 
@@ -857,13 +921,12 @@ async function cmdWait(ref: string | undefined, timeoutMsArg: string | undefined
   const selectorErr = validateSelectorArgs([ref]);
   if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.waitForSelector(sessionId, ref!, timeoutMs, undefined, stateFlag);
-    console.log(
-      result.success
-        ? `${ref} is ${state === 'hidden' ? 'hidden or absent' : state} (state=${state})`
-        : `Wait failed: ${result.error}`,
+    const result = await runtime.waitForSelector(sessionId, ref!, timeoutMs, undefined, stateFlag, expectFlag);
+    reportActionResult(
+      result,
+      `${ref} is ${state === 'hidden' ? 'hidden or absent' : state} (state=${state})`,
+      `Wait failed: ${result.error}`,
     );
-    if (!result.success) process.exitCode = 1;
   });
 }
 
@@ -894,9 +957,8 @@ async function cmdHover(ref: string | undefined) {
   const selectorErr = validateSelectorArgs([ref]);
   if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.hover(sessionId, ref!);
-    console.log(result.success ? `Hovered ${ref}` : `Hover failed: ${result.error}`);
-    if (!result.success) process.exitCode = 1;
+    const result = await runtime.hover(sessionId, ref!, undefined, undefined, expectFlag);
+    reportActionResult(result, `Hovered ${ref}`, `Hover failed: ${result.error}`);
   });
 }
 
@@ -909,13 +971,12 @@ async function cmdScroll(direction: string | undefined, amountArg: string | unde
   const selectorErr = validateSelectorArgs([target]);
   if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.scroll(sessionId, dir, amount, undefined, target, settle);
-    console.log(
-      result.success
-        ? `Scrolled ${dir}${target ? ` within ${target}` : ''}`
-        : `Scroll failed: ${result.error}`,
+    const result = await runtime.scroll(sessionId, dir, amount, undefined, target, settle, expectFlag);
+    reportActionResult(
+      result,
+      `Scrolled ${dir}${target ? ` within ${target}` : ''}`,
+      `Scroll failed: ${result.error}`,
     );
-    if (!result.success) process.exitCode = 1;
   });
 }
 
@@ -924,9 +985,8 @@ async function cmdUpload(ref: string | undefined, filePath: string | undefined) 
   const selectorErr = validateSelectorArgs([ref]);
   if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.uploadFile(sessionId, ref!, path.resolve(filePath!));
-    console.log(result.success ? `Uploaded ${filePath} to ${ref}` : `Upload failed: ${result.error}`);
-    if (!result.success) process.exitCode = 1;
+    const result = await runtime.uploadFile(sessionId, ref!, path.resolve(filePath!), undefined, expectFlag);
+    reportActionResult(result, `Uploaded ${filePath} to ${ref}`, `Upload failed: ${result.error}`);
   });
 }
 
@@ -935,9 +995,8 @@ async function cmdDrag(sourceRef: string | undefined, destRef: string | undefine
   const selectorErr = validateSelectorArgs([sourceRef, destRef]);
   if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.dragAndDrop(sessionId, sourceRef!, destRef!);
-    console.log(result.success ? `Dragged ${sourceRef} onto ${destRef}` : `Drag failed: ${result.error}`);
-    if (!result.success) process.exitCode = 1;
+    const result = await runtime.dragAndDrop(sessionId, sourceRef!, destRef!, undefined, expectFlag);
+    reportActionResult(result, `Dragged ${sourceRef} onto ${destRef}`, `Drag failed: ${result.error}`);
   });
 }
 
@@ -948,9 +1007,8 @@ async function cmdClickPoint(x: string | undefined, y: string | undefined) {
     printErrorAndExit('usage: sutradhar clickpoint <x> <y>  (absolute viewport coordinates — for canvas-rendered UI with no addressable element)');
   }
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.clickAtPoint(sessionId, xNum, yNum);
-    console.log(result.success ? `Clicked at (${xNum}, ${yNum})` : `Click failed: ${result.error}`);
-    if (!result.success) process.exitCode = 1;
+    const result = await runtime.clickAtPoint(sessionId, xNum, yNum, undefined, 'left', expectFlag);
+    reportActionResult(result, `Clicked at (${xNum}, ${yNum})`, `Click failed: ${result.error}`);
   });
 }
 
@@ -970,9 +1028,8 @@ async function cmdDragPoints(
   }
   const [fx, fy, tx, ty] = nums;
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.dragAtPoints(sessionId, fx!, fy!, tx!, ty!);
-    console.log(result.success ? `Dragged (${fx}, ${fy}) -> (${tx}, ${ty})` : `Drag failed: ${result.error}`);
-    if (!result.success) process.exitCode = 1;
+    const result = await runtime.dragAtPoints(sessionId, fx!, fy!, tx!, ty!, undefined, expectFlag);
+    reportActionResult(result, `Dragged (${fx}, ${fy}) -> (${tx}, ${ty})`, `Drag failed: ${result.error}`);
   });
 }
 
@@ -980,8 +1037,13 @@ async function cmdSetClipboard(text: string | undefined) {
   if (text === undefined) printErrorAndExit('usage: sutradhar setclipboard <text>  (requires clipboard permission — see "grant")');
   await withSession(async (runtime, sessionId) => {
     try {
-      await runtime.setClipboard(sessionId, text!);
-      console.log(`Set clipboard to ${JSON.stringify(text)}`);
+      const result = await runtime.setClipboard(sessionId, text!);
+      if (jsonMode) {
+        console.log(JSON.stringify(toCliJson(result), null, 2));
+      } else {
+        console.log(`Set clipboard to ${JSON.stringify(text)}`);
+        console.log(formatVerificationLine(result.verification));
+      }
     } catch (err) {
       console.log(`Set clipboard failed: ${(err as Error).message}`);
       process.exitCode = 1;
@@ -992,8 +1054,14 @@ async function cmdSetClipboard(text: string | undefined) {
 async function cmdGetClipboard() {
   await withSession(async (runtime, sessionId) => {
     try {
-      const text = await runtime.getClipboard(sessionId);
-      console.log(text);
+      const { text, verification } = await runtime.readClipboard(sessionId);
+      if (jsonMode) {
+        console.log(JSON.stringify({ text, verification }, null, 2));
+      } else {
+        // stdout stays EXACTLY the clipboard text (callers pipe it); the verification goes to stderr.
+        console.log(text);
+        console.error(formatVerificationLine(verification));
+      }
     } catch (err) {
       console.log(`Get clipboard failed: ${(err as Error).message}`);
       process.exitCode = 1;
@@ -1218,14 +1286,13 @@ async function cmdDownload(ref: string | undefined, downloadDir: string | undefi
   }
   await withSession(
     async (runtime, sessionId) => {
-      const result = await runtime.downloadFile(sessionId, ref!, dir);
-      if (result.success) {
-        const output = result.output as { downloadedFilename?: string; downloadedPath?: string } | undefined;
-        console.log(`Downloaded "${output?.downloadedFilename}" to ${path.resolve(output?.downloadedPath ?? '')}`);
-      } else {
-        console.log(`Download failed: ${result.error}`);
-        process.exitCode = 1;
-      }
+      const result = await runtime.downloadFile(sessionId, ref!, dir, undefined, expectFlag);
+      const output = result.output as { downloadedFilename?: string; downloadedPath?: string } | undefined;
+      reportActionResult(
+        result,
+        `Downloaded "${output?.downloadedFilename}" to ${path.resolve(output?.downloadedPath ?? '')}`,
+        `Download failed: ${result.error}`,
+      );
     },
     { extraDownloadRoots: dir ? [dir] : [] },
   );
@@ -1504,6 +1571,10 @@ async function main() {
   if (dialogErr) {
     printErrorAndExit(dialogErr);
   }
+  const expectErr = expectFlagError({ expectValueMissing, expectUrlChangedConflict });
+  if (expectErr) {
+    printErrorAndExit(expectErr);
+  }
   switch (verb) {
     case 'dialog':
       return cmdDialog(cleanArgs[0], cleanArgs.slice(1));
@@ -1698,7 +1769,13 @@ Flags:
                         real OS window's size too. Applies at session creation and persists
                         across later commands until a new --viewport is given
   --json                "snap" additionally prints structured per-element data as JSON;
-                        "audit" prints the machine-readable JSON report (see "audit" above)
+                        "audit" prints the machine-readable JSON report (see "audit" above);
+                        action verbs (click, type, press, nav, ...) print the full result JSON,
+                        including verification, instead of the one-line status
+  --expect-text <t>     After the action, require this visible text on the page (exit 4 if absent)
+  --expect-url <s>      After the action, require the URL to contain <s> (exit 4 if not)
+  --expect-url-changed / --expect-url-unchanged
+                        Require the URL to have changed / stayed the same (exit 4 otherwise)
   --fail-on-diff        "compare" exits nonzero if any pixel difference is found (CI gating);
                         "audit" exits nonzero if any console/page/broken-request error was
                         found, or (with --baseline) any visual diff from the baseline
@@ -1734,7 +1811,12 @@ Flags:
   --dialog-text <text>  With --dialog accept: the text entered into prompt() dialogs (default:
                         the prompt's own default value)
 
-Exit codes: 0 ok, 1 failure, 3 blocked by or interrupted by an open dialog.
+Every action prints a "Verification:" line. "NOT verified — unverifiable" means nothing could be
+checked (the reason says why), not that the action failed; "contradicted" means a check ran and the
+effect did NOT happen.
+
+Exit codes: 0 ok, 1 action failed, 3 blocked by or interrupted by an open dialog, 4 an --expect-*
+check failed or couldn't be evaluated.
 
 Boundary: Sutradhar does not attempt to evade bot-detection or solve CAPTCHAs, and Cloudflare
 challenges, CAPTCHA walls, and IP-level blocks stop it exactly as they would stop any other
