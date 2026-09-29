@@ -1328,7 +1328,11 @@ describe('FR2-07: the expect option and the verification contract on MCP results
     const d: string = tools.get('browser.click')!.config.inputSchema.expect.description;
     expect(d).toContain('does NOT fail the action');
     expect(d).toContain('unverifiable');
-    expect(d).toContain('hidden/display:none text does not count');
+    // fix-2: the description states the precise rendered-text contract, including what still counts
+    expect(d).toContain('RENDERED text');
+    expect(d).toContain('display:none / content-visibility:hidden / a closed <details>');
+    expect(d).toContain('every enclosing iframe itself visible');
+    expect(d).toContain('opacity:0, aria-hidden and off-screen text still count');
   });
 
   it('M7: a runtime TypeError from a bad expect is reported as an isError result, not a crash', async () => {

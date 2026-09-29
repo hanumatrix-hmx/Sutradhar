@@ -103,8 +103,8 @@ For anything where the *result* matters, assert it with `expect`.
 
 **`expect: {text?, url?, urlChanged?}`** (on the 24 state-changing tools; CLI: `--expect-text`, `--expect-url`,
 `--expect-url-changed`/`--expect-url-unchanged`; SDK: `options.expect`) is checked once, right after the action
-(after `settle`, if requested). `text` is *visible* text in any frame or open shadow root (case-sensitive
-substring; `display:none` and script text don't count); `url` is a substring of the final URL; `urlChanged:false`
+(after `settle`, if requested). `text` is *rendered* text: laid out, `visibility:visible`, not under `display:none` / `content-visibility:hidden` / a closed `<details>`, and every enclosing `<iframe>` itself rendered and visible. `opacity:0`, `aria-hidden`, off-screen and clipped text still count ("rendered", not "perceivable"), in any frame or open shadow root (case-sensitive
+substring; script text never counts); `url` is a substring of the final URL; `urlChanged:false`
 means the URL must be identical. A failed `expect` does **not** fail the action: `success` stays true and
 `verification.verified` is false with `tier:"contradicted"` and a failing `expect.*` check. Note it is checked
 *once*: text that appears 800 ms later (a `setTimeout` toast) is missed. Use `wait_for_selector` for that.

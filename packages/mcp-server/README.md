@@ -38,8 +38,7 @@ The 24 state-changing tools (`navigate`, `go_back`, `go_forward`, `reload`, `cli
 `drag_at_points`, `type`, `press_key`, `focus`, `scroll`, `hover`, `select_option`, `select_options`,
 `wait_for_selector`, `click_by_text`, `click_by_role`, `type_by_label`, `upload_file`, `right_click`,
 `drag_and_drop`, `touch_tap`, `download_file`, `upload_file_via_trigger`) accept an optional strict
-`expect: {text?, url?, urlChanged?}` checked once right after the action: `text` is *visible* text (any frame,
-open shadow roots; hidden/`display:none` text doesn't count), `url` a substring of the final URL, `urlChanged`
+`expect: {text?, url?, urlChanged?}` checked once right after the action: `text` is *rendered* text: laid out, `visibility:visible`, not under `display:none` / `content-visibility:hidden` / a closed `<details>`, and every enclosing `<iframe>` itself rendered and visible. `opacity:0`, `aria-hidden`, off-screen and clipped text still count ("rendered", not "perceivable") (any frame, open shadow roots; case-sensitive), `url` a substring of the final URL, `urlChanged`
 true/false. A failed `expect` never fails the action: `success` stays true, `verified` is false, `tier` is
 `contradicted` with a failing `expect.*` check. While a native dialog is open every result also carries
 `dialogPending: {type, message, defaultValue, url}`.

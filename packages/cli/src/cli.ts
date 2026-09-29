@@ -1772,7 +1772,10 @@ Flags:
                         "audit" prints the machine-readable JSON report (see "audit" above);
                         action verbs (click, type, press, nav, ...) print the full result JSON,
                         including verification, instead of the one-line status
-  --expect-text <t>     After the action, require this visible text on the page (exit 4 if absent)
+  --expect-text <t>     After the action, require this RENDERED text on the page (exit 4 if absent): laid
+                        out, visibility:visible, not under display:none / content-visibility:hidden / a
+                        closed <details>, every enclosing iframe visible; opacity:0, aria-hidden and
+                        off-screen text still count
   --expect-url <s>      After the action, require the URL to contain <s> (exit 4 if not)
   --expect-url-changed / --expect-url-unchanged
                         Require the URL to have changed / stayed the same (exit 4 otherwise)

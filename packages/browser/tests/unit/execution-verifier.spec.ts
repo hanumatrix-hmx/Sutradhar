@@ -8,7 +8,6 @@ import {
   ExecutionVerifier,
   failedVerification,
   pageContainsVisibleText,
-  visibleTextContainsInPage,
   type BuiltInVerdict,
   type IBrowserTab,
 } from '../../src/index.js';
@@ -25,8 +24,11 @@ function tab(stub: TabStub): IBrowserTab {
 
 /** A page whose frames answer `evaluate` with the scripted value(s). */
 function pageWithFrames(...answers: Array<boolean | 'hang' | 'throw'>) {
-  const frames = answers.map((a) => ({
+  const shownEl = { evaluate: async () => true, dispose: async () => undefined };
+  const frames: any[] = answers.map((a, i) => ({
     isDetached: () => false,
+    parentFrame: () => (i === 0 ? null : frames[0]),
+    frameElement: async () => shownEl,
     evaluate: vi.fn().mockImplementation(() => {
       if (a === 'hang') return new Promise(() => {});
       if (a === 'throw') return Promise.reject(new Error('frame gone'));
@@ -242,111 +244,7 @@ describe('FR2-07 ExecutionVerifier: the verification contract', () => {
     expect(found.result).toBe('found');
   });
 
-  describe('V13: visibleTextContainsInPage', () => {
-    afterEach(() => vi.unstubAllGlobals());
-    const shadowChild = (innerText: string) => ({ shadowRoot: { children: [{ innerText }], querySelectorAll: () => [] } });
-    const stub = (bodyText: string, hosts: unknown[]) =>
-      vi.stubGlobal('document', { body: { innerText: bodyText }, querySelectorAll: () => hosts });
-
-    it('finds text in body.innerText', () => {
-      stub('hello TARGET world', []);
-      expect(visibleTextContainsInPage('TARGET')).toBe(true);
-    });
-    it('finds text only in a shadow child innerText', () => {
-      stub('nothing here', [shadowChild('in shadow TARGET')]);
-      expect(visibleTextContainsInPage('TARGET')).toBe(true);
-    });
-    it('is false when neither has it', () => {
-      stub('nothing here', [shadowChild('nor here')]);
-      expect(visibleTextContainsInPage('TARGET')).toBe(false);
-    });
-    it('is fully self-contained: re-created from toString() it behaves identically', () => {
-      const clone = new Function(`return (${visibleTextContainsInPage.toString()})`)() as typeof visibleTextContainsInPage;
-      stub('nothing', [shadowChild('shadow TARGET')]);
-      expect(clone('TARGET')).toBe(true);
-      stub('nothing', []);
-      expect(clone('TARGET')).toBe(false);
-    });
-  });
-
-  describe('V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing', () => {
-    afterEach(() => vi.unstubAllGlobals());
-    type FakeEl = Record<string, any>;
-    const el = (display = 'block', extra: FakeEl = {}): FakeEl => ({
-      parentElement: null,
-      style: { display, contentVisibility: 'visible' },
-      getRootNode: () => ({}),
-      ...extra,
-    });
-    /** A fake page: `body` text, optional shadow hosts, an optional embedding <iframe> element, doc rects. */
-    const page = (o: { bodyText?: string; body?: FakeEl; hosts?: FakeEl[]; rects?: number; frameElement?: FakeEl | null }) => {
-      const body = o.body ?? el('block', { innerText: o.bodyText ?? '' });
-      vi.stubGlobal('window', { getComputedStyle: (e: FakeEl) => e.style, frameElement: o.frameElement ?? null });
-      vi.stubGlobal('document', {
-        body,
-        documentElement: { getClientRects: () => Array.from({ length: o.rects ?? 1 }) },
-        querySelectorAll: () => o.hosts ?? [],
-      });
-    };
-    /** A shadow host (`hostStyle`) whose shadow root holds one child with `text`. */
-    const shadowHost = (text: string, hostStyle: FakeEl['style'], hostParent: FakeEl | null = null): FakeEl => {
-      const host: FakeEl = el('block', { parentElement: hostParent });
-      host.style = { display: 'block', contentVisibility: 'visible', ...hostStyle };
-      const root = { host };
-      host.shadowRoot = { children: [el('block', { innerText: text, getRootNode: () => root })], querySelectorAll: () => [] };
-      return host;
-    };
-
-    it('NEG: text in an open shadow root whose host is display:none does NOT count (innerText would fall back to textContent)', () => {
-      page({ bodyText: 'nothing', hosts: [shadowHost('SHADOW-HIDDEN TARGET', { display: 'none' })] });
-      expect(visibleTextContainsInPage('TARGET')).toBe(false);
-    });
-    it('NEG: the shadow host sits inside a display:none light-DOM ancestor', () => {
-      const hiddenDiv = el('none');
-      page({ bodyText: 'nothing', hosts: [shadowHost('TARGET', {}, hiddenDiv)] });
-      expect(visibleTextContainsInPage('TARGET')).toBe(false);
-    });
-    it('NEG: the shadow host is under a content-visibility:hidden ancestor', () => {
-      const skipped = el('block');
-      skipped.style.contentVisibility = 'hidden';
-      page({ bodyText: 'nothing', hosts: [shadowHost('TARGET', {}, skipped)] });
-      expect(visibleTextContainsInPage('TARGET')).toBe(false);
-    });
-    it('POS: text in a visible shadow root still counts, including a display:contents host (which has no box of its own)', () => {
-      page({ bodyText: 'nothing', hosts: [shadowHost('in shadow TARGET', {})] });
-      expect(visibleTextContainsInPage('TARGET')).toBe(true);
-      page({ bodyText: 'nothing', hosts: [shadowHost('in shadow TARGET', { display: 'contents' })] });
-      expect(visibleTextContainsInPage('TARGET')).toBe(true);
-    });
-    it('NEG: a display:none iframe document (no box: documentElement has no client rects) contributes nothing, even though body.innerText holds the text', () => {
-      page({ bodyText: 'IFRAME-HIDDEN TARGET', rects: 0 });
-      expect(visibleTextContainsInPage('TARGET')).toBe(false);
-    });
-    it('NEG: a same-origin iframe whose embedding <iframe> element is display:none contributes nothing', () => {
-      page({ bodyText: 'IFRAME-HIDDEN TARGET', frameElement: el('none') });
-      expect(visibleTextContainsInPage('TARGET')).toBe(false);
-    });
-    it('POS: a visible iframe document (rects present, embedding element rendered) still counts', () => {
-      page({ bodyText: 'IFRAME TARGET', rects: 1, frameElement: el('block') });
-      expect(visibleTextContainsInPage('TARGET')).toBe(true);
-    });
-    it('NEG: a display:none body (innerText falls back to textContent) does not count', () => {
-      page({ body: el('none', { innerText: 'TARGET' }) });
-      expect(visibleTextContainsInPage('TARGET')).toBe(false);
-    });
-    it('the confirmation runs only for matches: a text that is absent never calls getComputedStyle', () => {
-      const gcs = vi.fn();
-      page({ bodyText: 'nothing', hosts: [shadowHost('nor here', { display: 'none' })] });
-      vi.stubGlobal('window', { getComputedStyle: gcs, frameElement: null });
-      expect(visibleTextContainsInPage('TARGET')).toBe(false);
-      expect(gcs).not.toHaveBeenCalled();
-    });
-    it('is self-contained: re-created from toString() it rejects the hidden-host case too', () => {
-      const clone = new Function(`return (${visibleTextContainsInPage.toString()})`)() as typeof visibleTextContainsInPage;
-      page({ bodyText: 'nothing', hosts: [shadowHost('TARGET', { display: 'none' })] });
-      expect(clone('TARGET')).toBe(false);
-    });
-  });
+  // V13/V13b (in-page text predicate) moved to expect-text-matrix.spec.ts as a generated mechanism x placement matrix
 
   it('V14: evidence is capped: strings to 200 chars, checks to 8 with an omission note', async () => {
     const long = 'z'.repeat(1000);

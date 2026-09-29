@@ -158,9 +158,10 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
 
   // FR2-07: the one public post-action assertion, on every state-changing tool.
   const expectDesc =
-    'Optional assertion checked once, right after the action (after settle, if requested). text: visible text ' +
-    'that must appear on the page (any frame, open shadow roots; case-sensitive substring; hidden/display:none ' +
-    'text does not count). url: substring the final URL must contain. urlChanged: true = URL must differ from ' +
+    'Optional assertion checked once, right after the action (after settle, if requested). text: RENDERED text ' +
+    'that must appear on the page (any frame, open shadow roots; case-sensitive substring): laid out, ' +
+    'visibility:visible, not under display:none / content-visibility:hidden / a closed <details>, and every ' +
+    'enclosing iframe itself visible; opacity:0, aria-hidden and off-screen text still count. url: substring the final URL must contain. urlChanged: true = URL must differ from ' +
     'before, false = must be identical. A failed expectation does NOT fail the action: success stays true and ' +
     'verification.verified is false with evidence.tier "contradicted" and a failing expect.* check. Every result ' +
     'carries verification {verified, confidence, reason, evidence:{tier, checks}} — tier "unverifiable" means ' +

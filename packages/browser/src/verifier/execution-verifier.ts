@@ -13,6 +13,7 @@
  *   action-failed   false     0
  */
 
+import type { Frame } from 'puppeteer-core';
 import { IBrowserTab } from '../session/browser-tab.js';
 import type {
   BuiltInVerdict,
@@ -125,77 +126,251 @@ function unverifiableDefault(type: string): BuiltInVerdict {
 export type VisibleTextResult = { result: 'found' | 'not-found'; detail?: undefined } | { result: 'unavailable'; detail: string };
 
 /**
- * In-page (self-contained; serialised by Puppeteer): does the VISIBLE text of this document
- * contain `t`? `innerText` excludes `display:none`, `<script>` and `<style>` text. Open shadow
- * roots are searched recursively through their child elements' `innerText`.
+ * `expect.text` CONTRACT (FR2-07 fix-2): the text must be RENDERED, not "perceivable".
  *
- * `innerText` of a node that is NOT RENDERED falls back to its `textContent` (the text of a
- * `display:none` shadow host's shadow tree, or of a `display:none` iframe's body, would otherwise
- * count as "visible"), so every candidate match is confirmed rendered: no ancestor along the FLAT
- * tree (parent element, else shadow host, else the embedding `<iframe>` element when same-origin)
- * has `display:none` or, above the node itself, `content-visibility:hidden`; and the document
- * itself has a box (a frame that is display:none — including a cross-origin one whose embedding
- * element we cannot reach — has no layout, so its `documentElement` has no client rects).
- * Confirmation runs only on a text match, so the cost is bounded by the number of matches.
- * (`checkVisibility()` is deliberately not used: it reports false for `display:contents` hosts
- * whose children ARE rendered.)
+ * A text node counts only if ALL hold:
+ *  (i)   its Range has a client rect with a non-zero area (it is laid out: `display:none`, `[hidden]`,
+ *        `<template>`, `<script>`/`<style>`, unslotted light DOM have none);
+ *  (ii)  its container's computed `visibility` is `visible` (visibility is inherited, so this is the
+ *        whole ancestor story: no ancestor walk);
+ *  (iii) `Element.checkVisibility()` is true for the nearest non-`display:contents` flat-tree ancestor
+ *        (false under a `content-visibility:hidden` ancestor and inside a closed `<details>`), and that
+ *        element does not itself skip its contents (`content-visibility:hidden`);
+ *  (iv)  every embedding frame up the chain has a frame element that is rendered and `visibility:visible`,
+ *        judged from the PARENT side (see {@link frameElementRendered}); text in a hidden frame is not
+ *        visible even though the frame's own document looks fine from the inside.
+ *
+ * COUNTED (documented, deliberately): `opacity:0`, `aria-hidden`, off-screen / scrolled-out text,
+ * text clipped by `overflow`/`clip`, `content-visibility:auto` off-screen, text the same colour as its
+ * background. Not reachable: text inside a CLOSED shadow root.
+ * FAIL CLOSED: anything that cannot be judged throws (the caller reports `unavailable`), never "visible".
+ *
+ * Matching is over the FLAT tree (open shadow roots, slots) text nodes, whitespace-collapsed, with
+ * `text-transform` applied, and may span inline siblings of one block (`a<b>c</b>` matches "ac") but
+ * never a block boundary or `<br>` (innerText would put a newline there).
+ */
+export const EXPECT_TEXT_CONTRACT =
+  'rendered text: laid out (non-empty client rects), computed visibility:visible, not under display:none / ' +
+  'content-visibility:hidden / a closed <details>, and every embedding <iframe> itself rendered and visible; ' +
+  'opacity:0, aria-hidden, off-screen and clipped text still count';
+
+/**
+ * In-page (self-contained; serialised by Puppeteer): does this document (not its child frames)
+ * contain RENDERED text `t`? See the contract above. Returns a boolean; THROWS when the page cannot
+ * be judged (no `checkVisibility`, work budget exhausted), which the caller turns into `unavailable`.
  */
 export function visibleTextContainsInPage(t: string): boolean {
-  const styleOf = (e: Element): { display: string; contentVisibility?: string } | undefined => {
-    try {
-      const w: Window = (e.ownerDocument && e.ownerDocument.defaultView) || window;
-      return w.getComputedStyle(e) as unknown as { display: string; contentVisibility?: string };
-    } catch {
-      return undefined;
+  const BUDGET = 400000;
+  let spent = 0;
+  const norm = (s: string): string => s.replace(/\s+/g, ' ');
+  const want = norm(t);
+  if (want.length === 0) return false;
+  const wantLower = want.toLowerCase();
+  const wantUpper = want.toUpperCase();
+
+  // 1. collect the text nodes of the FLAT tree, in order; `null` marks a hard line break
+  const items: Array<Text | null> = [];
+  const stack: Node[] = [document];
+  while (stack.length > 0) {
+    const n = stack.pop() as Node;
+    if (n.nodeType === 3) {
+      items.push(n as Text);
+      continue;
     }
+    let kids: Node[];
+    if (n.nodeType === 1) {
+      const el = n as Element;
+      const tag = el.tagName;
+      if (tag === 'SCRIPT' || tag === 'STYLE') continue;
+      if (tag === 'BR') items.push(null);
+      const sr = (el as HTMLElement).shadowRoot;
+      if (sr) kids = Array.from(sr.childNodes);
+      else if (tag === 'SLOT' && typeof (el as HTMLSlotElement).assignedNodes === 'function') {
+        const assigned = (el as HTMLSlotElement).assignedNodes();
+        kids = assigned.length > 0 ? assigned : Array.from(el.childNodes);
+      } else kids = Array.from(el.childNodes);
+    } else kids = Array.from(n.childNodes);
+    for (let i = kids.length - 1; i >= 0; i--) stack.push(kids[i] as Node);
+  }
+
+  // 2. cheap, style-free prefilter over the raw text: no candidate, no work
+  let raw = '';
+  for (const it of items) raw += it === null ? '\n' : it.data;
+  raw = norm(raw);
+  if (!raw.toLowerCase().includes(wantLower) && !raw.toUpperCase().includes(wantUpper)) return false;
+
+  const flatParent = (n: Node): Element | null => {
+    const slot = (n as Text | Element).assignedSlot;
+    if (slot) return slot;
+    if (n.parentElement) return n.parentElement;
+    const root = n.getRootNode() as Node & { host?: Element };
+    return root && root.host ? root.host : null;
   };
-  const rendered = (start: Element): boolean => {
-    const de = document.documentElement as HTMLElement | null;
-    if (de && typeof de.getClientRects === 'function' && de.getClientRects().length === 0) return false;
-    let e: Element | null = start;
-    for (let guard = 0; e && guard < 10000; guard++) {
-      const cs = styleOf(e);
-      if (cs && (cs.display === 'none' || (e !== start && cs.contentVisibility === 'hidden'))) return false;
-      let next: Element | null = e.parentElement;
-      if (!next) {
-        const root: (Node & { host?: Element }) | undefined =
-          typeof e.getRootNode === 'function' ? (e.getRootNode() as Node & { host?: Element }) : undefined;
-        if (root && root.host) next = root.host;
-        else {
-          try {
-            const w: Window = (e.ownerDocument && e.ownerDocument.defaultView) || window;
-            next = (w.frameElement as Element | null) ?? null;
-          } catch {
-            next = null;
-          }
+  const viewOf = (e: Element): Window => (e.ownerDocument && e.ownerDocument.defaultView) || window;
+  const tick = (): void => {
+    if (++spent > BUDGET) throw new Error('the text check exceeded its work budget; page too large to judge');
+  };
+  const styleOf = (e: Element): CSSStyleDeclaration & { contentVisibility?: string } => viewOf(e).getComputedStyle(e);
+
+  // 3. is this text node rendered? (memoised)
+  const memo = new Map<Text, boolean>();
+  const rendered = (n: Text): boolean => {
+    const known = memo.get(n);
+    if (known !== undefined) return known;
+    tick();
+    let ok = false;
+    const c = flatParent(n);
+    if (c) {
+      const rg = (n.ownerDocument || document).createRange();
+      rg.selectNodeContents(n);
+      const rects = rg.getClientRects();
+      let laidOut = false;
+      for (let i = 0; i < rects.length; i++) {
+        const r = rects[i] as DOMRect;
+        if (r.width > 0 && r.height > 0) {
+          laidOut = true;
+          break;
         }
       }
-      e = next;
-    }
-    return true;
-  };
-  const body = document.body as HTMLElement | null;
-  if (body && typeof body.innerText === 'string' && body.innerText.includes(t) && rendered(body)) return true;
-  const walk = (root: ParentNode): boolean => {
-    const all = Array.from(root.querySelectorAll('*'));
-    for (const el of all) {
-      const sr = (el as HTMLElement).shadowRoot;
-      if (!sr) continue;
-      for (const child of Array.from(sr.children)) {
-        const it = (child as HTMLElement).innerText;
-        if (typeof it === 'string' && it.includes(t) && rendered(child)) return true;
+      if (laidOut && styleOf(c).visibility === 'visible') {
+        let e: Element | null = c;
+        while (e && styleOf(e).display === 'contents') e = flatParent(e);
+        if (e) {
+          if (typeof (e as Element & { checkVisibility?: unknown }).checkVisibility !== 'function') {
+            throw new Error('Element.checkVisibility is unavailable in this browser; cannot judge rendering');
+          }
+          ok = e.checkVisibility() && styleOf(e).contentVisibility !== 'hidden';
+        }
       }
-      if (walk(sr)) return true;
     }
-    return false;
+    memo.set(n, ok);
+    return ok;
   };
-  return walk(document);
+
+  // 4. displayed text of a node (text-transform applied), and its block container
+  const displayed = (n: Text): string => {
+    const base = norm(n.data);
+    const c = flatParent(n);
+    const tt = c ? styleOf(c).textTransform : 'none';
+    if (tt === 'uppercase') return base.toUpperCase();
+    if (tt === 'lowercase') return base.toLowerCase();
+    if (tt === 'capitalize') return base.replace(/(^|\s)(\S)/g, (_m: string, a: string, b: string) => a + b.toUpperCase());
+    return base;
+  };
+  const blockOf = (n: Text): Element | null => {
+    let e = flatParent(n);
+    while (e) {
+      const d = styleOf(e).display;
+      if (d !== 'inline' && d !== 'contents') return e;
+      e = flatParent(e);
+    }
+    return null;
+  };
+
+  // 5. match: a run of adjacent text nodes of ONE block, every non-blank node of the match rendered
+  for (let i = 0; i < items.length; i++) {
+    const first = items[i];
+    if (!first) continue;
+    const rawFirst = norm(first.data).toLowerCase();
+    let startsHere = rawFirst.includes(wantLower);
+    for (let k = Math.min(rawFirst.length, wantLower.length); !startsHere && k > 0; k--) {
+      if (rawFirst.endsWith(wantLower.slice(0, k))) startsHere = true;
+    }
+    if (!startsHere && !norm(first.data).toUpperCase().includes(wantUpper)) continue;
+    tick();
+    const block = blockOf(first);
+    const segs: Array<{ node: Text; from: number; to: number }> = [];
+    let acc = '';
+    for (let j = i; j < items.length; j++) {
+      const it = items[j];
+      if (!it) break;
+      if (j > i && blockOf(it) !== block) break;
+      let d = displayed(it);
+      if (acc.endsWith(' ') && d.startsWith(' ')) d = d.slice(1);
+      segs.push({ node: it, from: acc.length, to: acc.length + d.length });
+      acc += d;
+      const firstEnd = segs[0]!.to;
+      // every occurrence that STARTS inside the first node
+      for (let p = acc.indexOf(want); p >= 0 && p < firstEnd; p = acc.indexOf(want, p + 1)) {
+        const end = p + want.length;
+        let allRendered = true;
+        for (const sg of segs) {
+          if (sg.to <= p || sg.from >= end) continue;
+          if (sg.node.data.trim() === '') continue;
+          if (!rendered(sg.node)) {
+            allRendered = false;
+            break;
+          }
+        }
+        if (allRendered) return true;
+      }
+      if (acc.length >= want.length + firstEnd) break;
+    }
+  }
+  return false;
 }
 
 /**
- * Best-effort, BOUNDED check that `text` appears in the page's visible text — any live frame
- * (main first), including open shadow roots. Never uses `page.evaluate` (a pending dialog freezes
- * the main thread: it would hang until the 30 s auto-dismiss), so every evaluation goes through a
+ * In-page, run on a FRAME ELEMENT (`<iframe>`/`<frame>`/`<object>`) in its PARENT document: is the
+ * embedded frame shown? Rendered (non-zero box, not `display:none`, not under `content-visibility:hidden`
+ * or a closed `<details>`) and `visibility:visible`. This is the only place a hidden CROSS-ORIGIN frame
+ * can be recognised; text inside it never counts otherwise. Throws when it cannot judge.
+ */
+export function frameElementRendered(el: Element): boolean {
+  const w: Window = (el.ownerDocument && el.ownerDocument.defaultView) || window;
+  const cs: CSSStyleDeclaration & { contentVisibility?: string } = w.getComputedStyle(el);
+  if (cs.visibility !== 'visible') return false;
+  if (typeof (el as Element & { checkVisibility?: unknown }).checkVisibility !== 'function') {
+    throw new Error('Element.checkVisibility is unavailable in this browser; cannot judge rendering');
+  }
+  if (!el.checkVisibility() || cs.contentVisibility === 'hidden') return false;
+  const r = el.getBoundingClientRect();
+  return r.width > 0 && r.height > 0 && el.getClientRects().length > 0;
+}
+
+/** Verdict on whether a frame's document is shown, judged from the parent side. */
+type FrameShown = 'shown' | 'hidden' | 'unjudgeable';
+
+/**
+ * Is this frame shown? The top frame is. Any other frame needs a reachable frame element (Puppeteer
+ * `frame.frameElement()` works for same-origin, srcdoc, sandboxed AND out-of-process frames) that passes
+ * {@link frameElementRendered} in its parent, and a shown parent, recursively. `hidden` dominates
+ * `unjudgeable` (a hidden link in the chain hides everything below it whatever else is unknown).
+ */
+async function frameShown(f: Frame, main: Frame | undefined, memo: Map<Frame, Promise<FrameShown>>): Promise<FrameShown> {
+  if (f === main) return 'shown';
+  const known = memo.get(f);
+  if (known) return known;
+  const p = (async (): Promise<FrameShown> => {
+    const parent = typeof f.parentFrame === 'function' ? f.parentFrame() : null;
+    if (!parent || typeof f.frameElement !== 'function') return 'unjudgeable';
+    let own: FrameShown = 'unjudgeable';
+    let handle: Awaited<ReturnType<Frame['frameElement']>> | undefined;
+    try {
+      handle = await f.frameElement();
+      if (handle) own = (await handle.evaluate(frameElementRendered)) === true ? 'shown' : 'hidden';
+    } catch {
+      own = 'unjudgeable';
+    } finally {
+      try {
+        await handle?.dispose();
+      } catch {
+        /* ignore */
+      }
+    }
+    if (own === 'hidden') return 'hidden';
+    const up = await frameShown(parent, main, memo);
+    if (up === 'hidden') return 'hidden';
+    return own === 'shown' && up === 'shown' ? 'shown' : 'unjudgeable';
+  })();
+  memo.set(f, p);
+  return p;
+}
+
+/**
+ * Best-effort, BOUNDED check that `text` appears in the page's RENDERED text ({@link EXPECT_TEXT_CONTRACT})
+ * — any live frame (main first), including open shadow roots. Never uses `page.evaluate` (a pending dialog
+ * freezes the main thread: it would hang until the 30 s auto-dismiss), so every evaluation goes through a
  * frame and the whole loop races {@link EXPECT_TEXT_TIMEOUT_MS}.
  */
 export async function pageContainsVisibleText(tab: IBrowserTab, text: string): Promise<VisibleTextResult> {
@@ -215,11 +390,19 @@ export async function pageContainsVisibleText(tab: IBrowserTab, text: string): P
     if (frames.length === 0) return { result: 'unavailable', detail: 'the page exposes no frames to inspect' };
     const main = typeof page.mainFrame === 'function' ? page.mainFrame() : undefined;
     frames.sort((a, b) => Number(b === main) - Number(a === main));
+    const shown = new Map<Frame, Promise<FrameShown>>();
     let failed = 0;
+    let unjudged = 0;
     let anyFound = false;
     await Promise.all(
       frames.map(async (f) => {
         try {
+          const s = await frameShown(f, main, shown);
+          if (s === 'hidden') return;
+          if (s === 'unjudgeable') {
+            unjudged++;
+            return;
+          }
           if (await f.evaluate(visibleTextContainsInPage, text)) anyFound = true;
         } catch {
           failed++;
@@ -227,7 +410,12 @@ export async function pageContainsVisibleText(tab: IBrowserTab, text: string): P
       }),
     );
     if (anyFound) return { result: 'found' };
-    if (failed > 0) return { result: 'unavailable', detail: `${failed} of ${frames.length} frames could not be inspected` };
+    if (failed + unjudged > 0) {
+      return {
+        result: 'unavailable',
+        detail: `${failed + unjudged} of ${frames.length} frames could not be inspected${unjudged > 0 ? ` (${unjudged} could not be judged as shown)` : ''}`,
+      };
+    }
     return { result: 'not-found' };
   };
   const r = await bounded(run(), EXPECT_TEXT_TIMEOUT_MS);

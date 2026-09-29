@@ -45,7 +45,9 @@ export interface ActionOptions {
   /**
    * Assert the effect: `{text?, url?, urlChanged?}`, checked once right after the action (after
    * settle, if requested). A failed expectation throws {@link ExpectationFailedError}; the action
-   * itself is NOT undone. `text` is VISIBLE text (hidden/display:none text does not count).
+   * itself is NOT undone. `text` is RENDERED text: laid out, `visibility:visible`, not under `display:none` /
+   * `content-visibility:hidden` / a closed `<details>`, and every enclosing `<iframe>` itself visible
+   * (`opacity:0`, `aria-hidden`, off-screen and clipped text still count).
    */
   expect?: ActionExpectation;
 }

@@ -109,9 +109,11 @@ export interface ClipboardReadResult {
  * verification reports `verified:false, tier:'contradicted'` with a failing `expect.*` check.
  */
 export interface ActionExpectation {
-  /** VISIBLE text that must appear somewhere on the page after the action (any frame, open shadow
-   *  roots; case-sensitive substring; `display:none` / script text does not count). Checked once,
-   *  right after the action (and after settle, if requested). */
+  /** RENDERED text that must appear somewhere on the page after the action (any frame, open shadow
+   *  roots; case-sensitive substring). Rendered = laid out, `visibility:visible`, not under `display:none` /
+   *  `content-visibility:hidden` / a closed `<details>`, and every enclosing `<iframe>` itself rendered and
+   *  visible; script/style text never counts. `opacity:0`, `aria-hidden`, off-screen and clipped text DO count.
+   *  Checked once, right after the action (and after settle, if requested). */
   text?: string;
   /** Substring the tab's final URL must contain. */
   url?: string;

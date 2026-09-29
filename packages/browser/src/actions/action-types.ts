@@ -56,8 +56,10 @@ export type WaitForSelectorState = 'visible' | 'attached' | 'hidden';
 /** Optional expectations an action's caller can assert; checked post-hoc by {@link ExecutionVerifier}. */
 export interface VerificationSpec {
   readonly expectedUrlSubstring?: string;
-  /** Must appear in the page's VISIBLE text (any live frame, open shadow roots) — FR2-07: this
-   *  used to be `textContent`, which counted `display:none` and `<script>` text. */
+  /** Must appear in the page's RENDERED text (any live frame, open shadow roots): laid out, `visibility:visible`,
+   *  not under `display:none` / `content-visibility:hidden` / a closed `<details>`, and every enclosing `<iframe>`
+   *  rendered and visible. `opacity:0`, `aria-hidden`, off-screen and clipped text still count. FR2-07: this used
+   *  to be `textContent`, which counted `display:none` and `<script>` text. */
   readonly expectedElementText?: string;
   /** true: the URL must differ from the pre-action URL. false (FR2-07): the URL must be
    *  identical (it used to be silently ignored). undefined: not checked. */
