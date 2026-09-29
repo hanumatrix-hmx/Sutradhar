@@ -1333,6 +1333,7 @@ describe('FR2-07: the expect option and the verification contract on MCP results
     expect(d).toContain('display:none / content-visibility:hidden / a closed <details>');
     expect(d).toContain('every enclosing iframe itself visible');
     expect(d).toContain('opacity:0, aria-hidden and off-screen text still count');
+    expect(d).toContain('never-painted SVG containers');
   });
 
   it('M7: a runtime TypeError from a bad expect is reported as an isError result, not a crash', async () => {

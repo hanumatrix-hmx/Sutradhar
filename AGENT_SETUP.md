@@ -108,6 +108,9 @@ substring; script text never counts); `url` is a substring of the final URL; `ur
 means the URL must be identical. A failed `expect` does **not** fail the action: `success` stays true and
 `verification.verified` is false with `tier:"contradicted"` and a failing `expect.*` check. Note it is checked
 *once*: text that appears 800 ms later (a `setTimeout` toast) is missed. Use `wait_for_selector` for that.
+It is best effort, not a paint check: text inside SVG containers that are never painted (`<defs>`, an unused
+`<symbol>`, `<mask>`, `<clipPath>`, `<pattern>`, `<marker>`) still counts, because Chrome reports it as laid
+out and visible; visible text split across `inline-block`/flex items, or inside a `<textarea>`, can be missed.
 
 Every result also carries `dialogPending: {type, message, defaultValue, url}` **while** a native dialog is open
 on the tab (the key is absent otherwise). The page is frozen until you `handle_dialog`; checks that need the page

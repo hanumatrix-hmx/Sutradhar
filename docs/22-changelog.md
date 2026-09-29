@@ -20,10 +20,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **One verification contract (FR2-07).** Every MCP, CLI and SDK action result carries
+  `verification: {verified, confidence, reason, evidence}`, with real post-condition checks for
+  `press_key`, `focus`, `touch_tap`, `download_file` (file size on disk), `wait_for_selector`,
+  `navigate`/back/forward/reload, `set_clipboard` (read back), `click_at_point`, `drag_at_points` and
+  `upload_file_via_trigger`, plus a public `expect: {text?, url?, urlChanged?}` option. Anything that
+  cannot be checked says why and is never reported as verified. Details: `.ai/loop/field-report-2/evidence/FR2-07/changelog-fragment.md`.
+  Status: **PARTIAL** (ships with documented limitations; the `expect.text` check failed three audits,
+  every other part passed all three).
+
+### Known limitations
+- **`expect.text` is best-effort "rendered text", not a paint check (FR2-07).** Text inside SVG
+  containers that are never painted (`<defs>`, an unused `<symbol>`, `<mask>`, `<clipPath>`,
+  `<pattern>`, `<marker>`) is still counted, because Chrome reports it as laid out and visible
+  (GAP-329). Visible text split across `inline-block`/flex items, or inside a `<textarea>`, can be
+  reported as missing (GAP-331). A cross-origin frame that the browser never attaches makes the check
+  `unverifiable` (named in the reason), never verified (GAP-325).
+
 ## [0.5.0] - 2026-09-29
 
-Nothing here is published yet: no package version has been bumped (`sutradhar` on npm is still
-0.4.3) and this section describes the `claude/field-report-2-loop` branch only. This file has no
+Published to npm as `sutradhar@0.5.0` on 2026-09-29. This file has no
 entries between 0.1.0 and 0.5.0; the published 0.2.0 through 0.4.3 releases are not itemised
 here. Items are labelled DONE (independently audited and passed), PARTIAL or BLOCKED (code is on
 the branch, but the item did not pass its audits) so nobody reads a shipped feature as a proven

@@ -161,7 +161,7 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
     'Optional assertion checked once, right after the action (after settle, if requested). text: RENDERED text ' +
     'that must appear on the page (any frame, open shadow roots; case-sensitive substring): laid out, ' +
     'visibility:visible, not under display:none / content-visibility:hidden / a closed <details>, and every ' +
-    'enclosing iframe itself visible; opacity:0, aria-hidden and off-screen text still count. url: substring the final URL must contain. urlChanged: true = URL must differ from ' +
+    'enclosing iframe itself visible; opacity:0, aria-hidden and off-screen text still count; best effort: text in never-painted SVG containers (<defs>, unused <symbol>, <mask>, <clipPath>, <pattern>, <marker>) also counts. url: substring the final URL must contain. urlChanged: true = URL must differ from ' +
     'before, false = must be identical. A failed expectation does NOT fail the action: success stays true and ' +
     'verification.verified is false with evidence.tier "contradicted" and a failing expect.* check. Every result ' +
     'carries verification {verified, confidence, reason, evidence:{tier, checks}} — tier "unverifiable" means ' +

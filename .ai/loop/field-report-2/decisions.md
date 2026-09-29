@@ -3942,3 +3942,17 @@ Everything else PASSED in all three audits: the {verified,confidence,reason,evid
 Root-cause hypothesis: "is this text on screen?" cannot be decided by DOM/CSS predicates in the browser -- each cycle the audit found a new class of text that Chrome's own APIs describe as rendered but that is never painted (CSS hiding, frame-element hiding, now SVG non-rendered containers). The predicate set converges only if it follows the paint model, which the web platform does not expose. The expect.text criterion as specified ("visible text") is therefore the defect, not a patchable bug.
 
 Decision needed from the user (see chat): ship the verification contract with expect.text re-scoped/documented, or hold FR2-07 entirely.
+
+## 2026-09-30 -- FR2-07: user decision "ship, limit documented"
+
+The user chose to ship FR2-07 with the expect.text limits documented rather than hold it. Ledger -> PARTIAL (ships).
+Documented in: the MCP `expect` description (all 24 tools; asserted in tools.spec.ts), packages/cli/README.md
+(--expect-text), AGENT_SETUP.md (mirrored into the npm package at build), docs/22-changelog.md [Unreleased]
+Known limitations. New gaps GAP-329 (SVG never-painted containers), GAP-330 (harness/unit coverage),
+GAP-331 (split inline-block text, <textarea>), GAP-332 (silent OOPIF rate; focus-into-OOPIF pre-existing).
+Verified after the edit: mcp-server vitest 108/108, sutradhar vitest 34/34, cli tsc clean; the built bundle's
+tools/list serves the new text on 24 of 72 tools (94,285 UTF-8 bytes for the tools array).
+Note: a plain `pnpm run build` replayed a stale turbo cache for the `sutradhar` bundle after an mcp-server
+source change; `--force` was needed. check-release-ready.mjs guards publishing, but the stale-bundle replay is
+worth a follow-up.
+
