@@ -42,6 +42,9 @@ const require_ = createRequire(path.join(repoRoot, 'packages', 'browser', 'packa
 const puppeteer = require_('puppeteer-core');
 
 const delay = (ms) => new Promise((r) => setTimeout(r, ms));
+// GAP-322 / K11: the cross-origin TARGET frame is picked by a unique token in ITS url, never by "the first frame with the right origin"
+// (any extra frame from the same origin, listed earlier, made $eval look for #xo-in in the wrong document).
+const XO_TARGET = 'role=xo-target';
 // audit-2 regression shapes replayed on the CLI and SDK surfaces (the MCP/bundle surfaces run the whole generated matrix)
 const SURFACE_MATRIX_IDS = [
   'iframe-cross-origin|visibility-hidden|inner',
@@ -214,7 +217,7 @@ async function runMcpCases(surface, serverPath, ctx) {
     // The cross-origin (out-of-process) frame attaches asynchronously: wait until it is live and its button exists.
     const t0 = performance.now();
     for (;;) {
-      const fr = page.frames().find((f) => f.url().startsWith(server.crossOrigin));
+      const fr = page.frames().find((f) => f.url().includes(XO_TARGET));
       if (fr && (await fr.$('#xo-btn').catch(() => null))) break;
       if (performance.now() - t0 > 8000) break;
       await delay(100);
@@ -315,7 +318,7 @@ async function runMcpCases(surface, serverPath, ctx) {
       return fr ? fr.$eval('#in-frame', (e) => e.value) : 'no-frame';
     }));
     C('K11', (id) => inFrame(id, '#xo-in', null, async (p) => {
-      const fr = p.frames().find((f) => f.url().startsWith(server.crossOrigin));
+      const fr = p.frames().find((f) => f.url().includes(XO_TARGET));
       return fr ? fr.$eval('#xo-in', (e) => e.value) : 'no-frame';
     }));
     C('K12', async (id) => {
@@ -387,7 +390,7 @@ async function runMcpCases(surface, serverPath, ctx) {
     }
     for (const [id, sel, finder] of [
       ['F4', '#in-frame', (p) => p.frames().find((f) => f !== p.mainFrame() && f.url().startsWith('about:srcdoc'))],
-      ['F5', '#xo-in', (p) => p.frames().find((f) => f.url().startsWith(server.crossOrigin))],
+      ['F5', '#xo-in', (p) => p.frames().find((f) => f.url().includes(XO_TARGET))],
     ]) {
       C(id, async (cid) => {
         const page = await fresh();
@@ -647,7 +650,7 @@ async function runMcpCases(surface, serverPath, ctx) {
     });
     C('P5', async (id) => {
       const page = await fresh();
-      const fr = page.frames().find((f) => f.url().startsWith(server.crossOrigin));
+      const fr = page.frames().find((f) => f.url().includes(XO_TARGET));
       const iframeEl = await fr.frameElement();
       const ib = await iframeEl.boundingBox();
       const bb = await (await fr.$('#xo-btn')).boundingBox();
@@ -823,9 +826,10 @@ async function runMcpCases(surface, serverPath, ctx) {
     });
     negText('X11', 'FR2-07 IFRAME-HIDDEN-XO', 'a display:none CROSS-ORIGIN (out-of-process) iframe', async (page) => {
       const own = await page.evaluate(() => ({ frameRects: document.getElementById('hid-xo').getClientRects().length }));
+      // never evaluate INSIDE a hidden out-of-process frame: it may never answer (the old X11 flake was this observer
+      // read hanging, not the product). Its element having no box, judged from the parent side, is the ground truth.
       const fr = page.frames().find((f) => f.url().includes('IFRAME-HIDDEN-XO'));
-      const inner = fr ? await fr.evaluate(() => document.body.innerText).catch((e) => 'ERR ' + e.message) : null;
-      return { ...own, frameListed: !!fr, innerTextInsideFrame: inner, ok: own.frameRects === 0 };
+      return { ...own, frameListed: !!fr, ok: own.frameRects === 0 };
     });
     posText('X12', 'FR2-07 IFRAME-VISIBLE-SAME', 'a visible same-origin iframe', async (page) => {
       const own = await page.evaluate(() => ({ frameRects: document.getElementById('vis-same').getClientRects().length, inner: document.getElementById('vis-same').contentDocument.body.innerText }));

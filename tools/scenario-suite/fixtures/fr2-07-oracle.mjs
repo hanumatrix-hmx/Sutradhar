@@ -63,7 +63,8 @@ export function oracleFrameShown(el) {
   for (let a = el; a; prev = a, a = flatParent(a)) {
     const cs = getComputedStyle(a);
     if (cs.display === 'none') return false;
-    if (a !== el && cs.contentVisibility === 'hidden') return false;
+    // content-visibility:hidden on the <iframe> ITSELF also hides it (spike3-cv-iframe: Chrome paints nothing for it)
+    if (cs.contentVisibility === 'hidden') return false;
     if (a.localName === 'details' && !a.open && !(prev && prev.localName === 'summary' && prev.parentElement === a)) return false;
   }
   return true;
