@@ -1,0 +1,91 @@
+{
+  "before": "b7b7630127a75b5e8191d78c65281408678879b021594d5f68dcb8f3aca96ba0",
+  "after": "b7b7630127a75b5e8191d78c65281408678879b021594d5f68dcb8f3aca96ba0",
+  "res": [
+    {
+      "id": "M1",
+      "why": "drop the parent-side frame check (hidden frame treated as shown)",
+      "filter": "M:iframe-cross-origin,M:iframe-same-origin,M:nested",
+      "tscExit": 0,
+      "caughtLive": true,
+      "summary": "[fr2-07] 64/85 passed; FAILED: mcp:M:iframe-same-origin|visibility-hidden|inner, mcp:M:iframe-same-origin|visibility-hidden|outer, mcp:M:iframe-same-origin|content-visibility-hidden|inner, mcp:M:iframe-same-origin|content-visibility-hidden|outer, mcp:M:iframe-same-origin|zero-area|inner, mcp:M:iframe-same-origin|closed-details|outer, mcp:M:iframe-cross-origin|visibility-hidden|inner, mcp:M:iframe-cross-origin|visibility-hidden|outer, mcp:M:iframe-cross-origin|content-visibility-hidden|inner, mcp:M:iframe-cross-origin|content-visibility-hidden|outer, mcp:M:iframe-cross-origin|zero-area|inner, mcp:M:iframe-cross-origin|closed-details|outer, mcp:M:nested-iframes|visibility-hidden|outer-frame-element, mcp:M:nested-iframes|visibility-hidden|inner-frame-element, mcp:M:nested-iframes|visibility-hidden|ancestor-of-outer-frame-element, mcp:M:nested-iframes|content-visibility-hidden|outer-frame-element, mcp:M:nested-iframes|content-visibility-hidden|inner-frame-element, mcp:M:nested-iframes|content-visibility-hidden|ancestor-of-outer-frame-element, mcp:M:nested-iframes|zero-area|outer-frame-element, mcp:M:nested-iframes|zero-area|inner-frame-element, mcp:M:nested-iframes|closed-details|ancestor-of-outer-frame-element",
+      "failCount": 22,
+      "firstFails": [
+        "[mcp] FAIL M:iframe-same-origin|visibility-hidden|inner — {\"verified\":true,\"tier\":\"verified\",\"expectOutcome\":\"pass\",\"reason\":\"Action execution verified successf",
+        "[mcp] FAIL M:iframe-same-origin|visibility-hidden|outer — {\"verified\":true,\"tier\":\"verified\",\"expectOutcome\":\"pass\",\"reason\":\"Action execution verified successf",
+        "[mcp] FAIL M:iframe-same-origin|content-visibility-hidden|inner — {\"verified\":true,\"tier\":\"verified\",\"expectOutcome\":\"pass\",\"reason\":\"Action execution verified "
+      ],
+      "restored": true
+    },
+    {
+      "id": "M2",
+      "why": "drop the visibility-inheritance check",
+      "filter": "M:main-element,M:shadow-element",
+      "tscExit": 0,
+      "caughtLive": true,
+      "summary": "[fr2-07] 36/40 passed; FAILED: mcp:M:main-element|visibility-hidden|inner, mcp:M:main-element|visibility-hidden|outer, mcp:M:shadow-element|visibility-hidden|inner, mcp:M:shadow-element|visibility-hidden|outer",
+      "failCount": 5,
+      "firstFails": [
+        "[mcp] FAIL M:main-element|visibility-hidden|inner — {\"verified\":true,\"tier\":\"verified\",\"expectOutcome\":\"pass\",\"reason\":\"Action execution verified successfully w",
+        "[mcp] FAIL M:main-element|visibility-hidden|outer — {\"verified\":true,\"tier\":\"verified\",\"expectOutcome\":\"pass\",\"reason\":\"Action execution verified successfully w",
+        "[mcp] FAIL M:shadow-element|visibility-hidden|inner — {\"verified\":true,\"tier\":\"verified\",\"expectOutcome\":\"pass\",\"reason\":\"Action execution verified successfully"
+      ],
+      "restored": true
+    },
+    {
+      "id": "M4",
+      "why": "drop the Range client-rects check",
+      "filter": "M:main-element|zero-area,M:shadow-element|zero-area",
+      "tscExit": 2,
+      "caughtLive": true,
+      "summary": "[fr2-07] 0/4 passed; FAILED: mcp:M:main-element|zero-area|inner, mcp:M:main-element|zero-area|outer, mcp:M:shadow-element|zero-area|inner, mcp:M:shadow-element|zero-area|outer",
+      "failCount": 5,
+      "firstFails": [
+        "[mcp] FAIL M:main-element|zero-area|inner — {\"verified\":true,\"tier\":\"verified\",\"expectOutcome\":\"pass\",\"reason\":\"Action execution verified successfully with conf",
+        "[mcp] FAIL M:main-element|zero-area|outer — {\"verified\":true,\"tier\":\"verified\",\"expectOutcome\":\"pass\",\"reason\":\"Action execution verified successfully with conf",
+        "[mcp] FAIL M:shadow-element|zero-area|inner — {\"verified\":true,\"tier\":\"verified\",\"expectOutcome\":\"pass\",\"reason\":\"Action execution verified successfully with co"
+      ],
+      "restored": true
+    },
+    {
+      "id": "M6",
+      "why": "aggregation: ANY hung/failed frame makes the result unavailable even when the text was found elsewhere",
+      "filter": "H",
+      "tscExit": 0,
+      "caughtLive": true,
+      "summary": "[fr2-07] 2/3 passed; FAILED: mcp:H1",
+      "failCount": 2,
+      "firstFails": [
+        "[mcp] FAIL H1 — {\"verified\":false,\"tier\":\"unverifiable\",\"expectOutcome\":\"not-run\",\"detail\":\"only 7 of 9 frames answered (1 did not answer within 1500ms; hung:ht",
+        "[fr2-07] 2/3 passed; FAILED: mcp:H1"
+      ],
+      "restored": true
+    },
+    {
+      "id": "M7",
+      "why": "walk elements, not text nodes: bare text in a shadow root is never collected",
+      "filter": "M:shadow-bare-text",
+      "tscExit": 0,
+      "caughtLive": true,
+      "summary": "[fr2-07] 11/20 passed; FAILED: mcp:M:shadow-bare-text|opacity-0|inner, mcp:M:shadow-bare-text|opacity-0|outer, mcp:M:shadow-bare-text|aria-hidden|inner, mcp:M:shadow-bare-text|aria-hidden|outer, mcp:M:shadow-bare-text|off-screen|inner, mcp:M:shadow-bare-text|off-screen|outer, mcp:M:shadow-bare-text|clipped-0x0-box|inner, mcp:M:shadow-bare-text|clipped-0x0-box|outer, mcp:M:shadow-bare-text|none|-",
+      "failCount": 10,
+      "firstFails": [
+        "[mcp] FAIL M:shadow-bare-text|opacity-0|inner — {\"verified\":false,\"tier\":\"contradicted\",\"expectOutcome\":\"fail\",\"reason\":\"Expected text \\\"QZ012K9SKT\\\" was not fo",
+        "[mcp] FAIL M:shadow-bare-text|opacity-0|outer — {\"verified\":false,\"tier\":\"contradicted\",\"expectOutcome\":\"fail\",\"reason\":\"Expected text \\\"QZ013K8KH0\\\" was not fo",
+        "[mcp] FAIL M:shadow-bare-text|aria-hidden|inner — {\"verified\":false,\"tier\":\"contradicted\",\"expectOutcome\":\"fail\",\"reason\":\"Expected text \\\"QZ014K0BXO\\\" was not "
+      ],
+      "restored": true
+    },
+    {
+      "id": "M8",
+      "why": "flip the fail-closed default: an unjudgeable frame is entered and trusted",
+      "filter": "M:nested",
+      "tscExit": 0,
+      "caughtLive": false,
+      "summary": "[fr2-07] 47/47 passed",
+      "failCount": 0,
+      "firstFails": [],
+      "restored": true
+    }
+  ]
+}

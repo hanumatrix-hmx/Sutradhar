@@ -1,0 +1,188 @@
+{
+  "startedAt": "2026-09-29T20:07:08.233Z",
+  "finishedAt": "2026-09-29T20:07:12.090Z",
+  "total": 4,
+  "passed": 0,
+  "failed": [
+    "mcp:M:main-element|zero-area|inner",
+    "mcp:M:main-element|zero-area|outer",
+    "mcp:M:shadow-element|zero-area|inner",
+    "mcp:M:shadow-element|zero-area|outer"
+  ],
+  "overhead": null,
+  "hygiene": {
+    "lingeringChromeWithScratchProfile": 0,
+    "lingeringMatches": [],
+    "newSutradharCliTempDirs": [],
+    "childPidsStarted": [
+      49720,
+      57468
+    ]
+  },
+  "cases": [
+    {
+      "surface": "mcp",
+      "case": "M:main-element|zero-area|inner",
+      "expected": "contradicted (not rendered); intended label excluded; observer agrees",
+      "observed": {
+        "verified": true,
+        "tier": "verified",
+        "expectOutcome": "pass",
+        "reason": "Action execution verified successfully with confidence 0.90"
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:54834/matrix?case=main-element%7Czero-area%7Cinner&tok=QZ001KMANG",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:54834/matrix?case=main-element%7Czero-area%7Cinner&tok=QZ001KMANG",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "M:main-element|zero-area|outer",
+      "expected": "contradicted (not rendered); intended label excluded; observer agrees",
+      "observed": {
+        "verified": true,
+        "tier": "verified",
+        "expectOutcome": "pass",
+        "reason": "Action execution verified successfully with confidence 0.90"
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:54834/matrix?case=main-element%7Czero-area%7Couter&tok=QZ002KGT45",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:54834/matrix?case=main-element%7Czero-area%7Couter&tok=QZ002KGT45",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-element|zero-area|inner",
+      "expected": "contradicted (not rendered); intended label excluded; observer agrees",
+      "observed": {
+        "verified": true,
+        "tier": "verified",
+        "expectOutcome": "pass",
+        "reason": "Action execution verified successfully with confidence 0.90"
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:54834/matrix?case=shadow-element%7Czero-area%7Cinner&tok=QZ003KN4F2",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:54834/matrix?case=shadow-element%7Czero-area%7Cinner&tok=QZ003KN4F2",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-element|zero-area|outer",
+      "expected": "contradicted (not rendered); intended label excluded; observer agrees",
+      "observed": {
+        "verified": true,
+        "tier": "verified",
+        "expectOutcome": "pass",
+        "reason": "Action execution verified successfully with confidence 0.90"
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:54834/matrix?case=shadow-element%7Czero-area%7Couter&tok=QZ004KVWND",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:54834/matrix?case=shadow-element%7Czero-area%7Couter&tok=QZ004KVWND",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": false
+    }
+  ]
+}

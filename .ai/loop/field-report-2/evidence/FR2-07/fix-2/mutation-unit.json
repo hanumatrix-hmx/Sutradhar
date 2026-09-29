@@ -1,0 +1,217 @@
+{
+  "shaBefore": "b7b7630127a75b5e8191d78c65281408678879b021594d5f68dcb8f3aca96ba0",
+  "shaAfter": "b7b7630127a75b5e8191d78c65281408678879b021594d5f68dcb8f3aca96ba0",
+  "identical": true,
+  "results": [
+    {
+      "id": "M1",
+      "why": "drop the parent-side frame check (hidden frame treated as shown)",
+      "unitCaught": true,
+      "exit": 1,
+      "summary": "Tests  54 failed | 162 passed (216)",
+      "firstFailures": [
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > same-origin iframe x display:none on the iframe element: not-found (answered, neve",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > same-origin iframe x display:none on an ancestor of the iframe element: not-found ",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > same-origin iframe x visibility:hidden on the iframe element: not-found (answered,",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > same-origin iframe x visibility:hidden on an ancestor of the iframe element: not-f"
+      ],
+      "failedCount": 54,
+      "restoredIdentical": true,
+      "ms": 27300
+    },
+    {
+      "id": "M2",
+      "why": "drop the visibility-inheritance check",
+      "unitCaught": true,
+      "exit": 1,
+      "summary": "Tests  9 failed | 207 passed (216)",
+      "firstFailures": [
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > main frame, element x visibility:hidden: excluded (on every target)",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > open shadow root, element x visibility:hidden: excluded (on every target)",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > open shadow root, BARE text node (audit A2-4) x visibility:hidden: excluded (on every target",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > slotted element into a visible host x visibility:hidden: excluded (on every target)"
+      ],
+      "failedCount": 9,
+      "restoredIdentical": true,
+      "ms": 5903
+    },
+    {
+      "id": "M3a",
+      "why": "fail OPEN: no checkVisibility => treat as rendered (instead of throwing)",
+      "unitCaught": true,
+      "exit": 1,
+      "summary": "Tests  2 failed | 214 passed (216)",
+      "firstFailures": [
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > FAIL CLOSED: an environment without checkVisibility THROWS instead of answering \"visible\"",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > an in-frame judgement that throws (no checkVisibility / budget) is unavailable, no"
+      ],
+      "failedCount": 2,
+      "restoredIdentical": true,
+      "ms": 5830
+    },
+    {
+      "id": "M3b",
+      "why": "guard fails OPEN: an exhausted work budget silently continues instead of failing closed",
+      "unitCaught": true,
+      "exit": 1,
+      "summary": "Tests  1 failed | 215 passed (216)",
+      "firstFailures": [
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > FAIL CLOSED: a work budget that runs out THROWS (never \"visible\" from an exhausted guard)"
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 6064
+    },
+    {
+      "id": "M4",
+      "why": "drop the Range client-rects check",
+      "unitCaught": true,
+      "exit": 1,
+      "summary": "Tests  7 failed | 209 passed (216)",
+      "firstFailures": [
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > main frame, element x zero-area (font-size:0 / 0x0 frame): excluded (on every target)",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > open shadow root, element x zero-area (font-size:0 / 0x0 frame): excluded (on every target)",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > open shadow root, BARE text node (audit A2-4) x zero-area (font-size:0 / 0x0 frame): exclude",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > slotted element into a visible host x zero-area (font-size:0 / 0x0 frame): excluded (on ever"
+      ],
+      "failedCount": 7,
+      "restoredIdentical": true,
+      "ms": 5836
+    },
+    {
+      "id": "M5",
+      "why": "aggregation waits for every frame before answering (no short-circuit on found)",
+      "unitCaught": true,
+      "exit": 1,
+      "summary": "Tests  2 failed | 214 passed (216)",
+      "firstFailures": [
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: aggregation across frames > found in the main frame although 8 cross-origin frames never answer (the audit-2 SDK repro): found, without waiting for ",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: aggregation across frames > found in a LATER frame while an EARLIER frame hangs"
+      ],
+      "failedCount": 2,
+      "restoredIdentical": true,
+      "ms": 8950
+    },
+    {
+      "id": "M6",
+      "why": "aggregation: ANY hung/failed frame makes the result unavailable even when the text was found elsewhere",
+      "unitCaught": true,
+      "exit": 1,
+      "summary": "Tests  4 failed | 212 passed (216)",
+      "firstFailures": [
+        "FAIL  tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V12b: some frames throwing and none finding the text is unavailable, never not-found",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: aggregation across frames > found in the main frame although 8 cross-origin frames never answer (the audit-2 SDK repro): found, without waiting for ",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: aggregation across frames > found in a LATER frame while an EARLIER frame hangs",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: aggregation across frames > found even if another frame REJECTS"
+      ],
+      "failedCount": 4,
+      "restoredIdentical": true,
+      "ms": 11181
+    },
+    {
+      "id": "M7",
+      "why": "walk elements, not text nodes: bare text in a shadow root is never collected",
+      "unitCaught": true,
+      "exit": 1,
+      "summary": "Tests  5 failed | 211 passed (216)",
+      "firstFailures": [
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > open shadow root, BARE text node (audit A2-4): unhidden text is found",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > open shadow root, BARE text node (audit A2-4) x opacity:0 (counted): COUNTED (on every targe",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > open shadow root, BARE text node (audit A2-4) x aria-hidden (counted): COUNTED (on every tar",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > open shadow root, BARE text node (audit A2-4) x off-screen (counted): COUNTED (on every targ"
+      ],
+      "failedCount": 5,
+      "restoredIdentical": true,
+      "ms": 5874
+    },
+    {
+      "id": "M8",
+      "why": "flip the fail-closed default: an unjudgeable frame is entered and trusted",
+      "unitCaught": true,
+      "exit": 1,
+      "summary": "Tests  3 failed | 213 passed (216)",
+      "firstFailures": [
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > FAIL CLOSED: a frame whose frame element is unreachable is unavailable, never foun",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > FAIL CLOSED: a non-main frame with no parent frame cannot be judged",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > FAIL CLOSED: a frame whose parent chain cannot be judged is unavailable"
+      ],
+      "failedCount": 3,
+      "restoredIdentical": true,
+      "ms": 5887
+    },
+    {
+      "id": "M9",
+      "why": "drop the closed-details rule for direct text",
+      "unitCaught": true,
+      "exit": 1,
+      "summary": "Tests  1 failed | 215 passed (216)",
+      "firstFailures": [
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > text that is a DIRECT child of a closed <details> is excluded (checkVisibility() is true for"
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 5784
+    },
+    {
+      "id": "M10",
+      "why": "drop the checkVisibility() judgement (content-visibility:hidden / closed <details> ancestors)",
+      "unitCaught": true,
+      "exit": 1,
+      "summary": "Tests  14 failed | 202 passed (216)",
+      "firstFailures": [
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > main frame, element x content-visibility:hidden: excluded (on every target)",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > main frame, element x closed <details> (contents skipped): excluded (on every target)",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > open shadow root, element x content-visibility:hidden: excluded (on every target)",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > open shadow root, element x closed <details> (contents skipped): excluded (on every target)"
+      ],
+      "failedCount": 14,
+      "restoredIdentical": true,
+      "ms": 5766
+    },
+    {
+      "id": "M11",
+      "why": "bare shadow text: ignore the shadow host as container",
+      "unitCaught": true,
+      "exit": 1,
+      "summary": "Tests  5 failed | 211 passed (216)",
+      "firstFailures": [
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > open shadow root, BARE text node (audit A2-4): unhidden text is found",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > open shadow root, BARE text node (audit A2-4) x opacity:0 (counted): COUNTED (on every targe",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > open shadow root, BARE text node (audit A2-4) x aria-hidden (counted): COUNTED (on every tar",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > open shadow root, BARE text node (audit A2-4) x off-screen (counted): COUNTED (on every targ"
+      ],
+      "failedCount": 5,
+      "restoredIdentical": true,
+      "ms": 5833
+    },
+    {
+      "id": "M12",
+      "why": "a hidden link in the frame chain no longer dominates (hidden parent, shown child => shown)",
+      "unitCaught": true,
+      "exit": 1,
+      "summary": "Tests  6 failed | 210 passed (216)",
+      "firstFailures": [
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > nested iframes x display:none: applied to the OUTER frame element hides the text i",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > nested iframes x visibility:hidden: applied to the OUTER frame element hides the t",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > nested iframes x content-visibility:hidden: applied to the OUTER frame element hid",
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > nested iframes x hidden attribute (UA display:none): applied to the OUTER frame el"
+      ],
+      "failedCount": 6,
+      "restoredIdentical": true,
+      "ms": 5766
+    },
+    {
+      "id": "M13",
+      "why": "per-frame bound removed: frame waits are unbounded (only the backstop remains)",
+      "unitCaught": true,
+      "exit": 1,
+      "summary": "Tests  1 failed | 215 passed (216)",
+      "firstFailures": [
+        "FAIL  tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: aggregation across frames > text absent everywhere but one frame hung: UNAVAILABLE naming how many answered (never not-found)"
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 6829
+    }
+  ]
+}

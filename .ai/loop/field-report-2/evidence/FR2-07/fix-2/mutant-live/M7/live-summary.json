@@ -1,0 +1,849 @@
+{
+  "startedAt": "2026-09-29T20:07:44.550Z",
+  "finishedAt": "2026-09-29T20:07:53.457Z",
+  "total": 20,
+  "passed": 11,
+  "failed": [
+    "mcp:M:shadow-bare-text|opacity-0|inner",
+    "mcp:M:shadow-bare-text|opacity-0|outer",
+    "mcp:M:shadow-bare-text|aria-hidden|inner",
+    "mcp:M:shadow-bare-text|aria-hidden|outer",
+    "mcp:M:shadow-bare-text|off-screen|inner",
+    "mcp:M:shadow-bare-text|off-screen|outer",
+    "mcp:M:shadow-bare-text|clipped-0x0-box|inner",
+    "mcp:M:shadow-bare-text|clipped-0x0-box|outer",
+    "mcp:M:shadow-bare-text|none|-"
+  ],
+  "overhead": null,
+  "hygiene": {
+    "lingeringChromeWithScratchProfile": 0,
+    "lingeringMatches": [],
+    "newSutradharCliTempDirs": [],
+    "childPidsStarted": [
+      30792,
+      25100
+    ]
+  },
+  "cases": [
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|display-none|inner",
+      "expected": "contradicted (not rendered); intended label excluded; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ001K4GCK\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Cdisplay-none%7Cinner&tok=QZ001K4GCK",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Cdisplay-none%7Cinner&tok=QZ001K4GCK",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|display-none|outer",
+      "expected": "contradicted (not rendered); intended label excluded; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ002KH6MJ\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Cdisplay-none%7Couter&tok=QZ002KH6MJ",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Cdisplay-none%7Couter&tok=QZ002KH6MJ",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|visibility-hidden|inner",
+      "expected": "contradicted (not rendered); intended label excluded; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ003KUZU6\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Cvisibility-hidden%7Cinner&tok=QZ003K",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Cvisibility-hidden%7Cinner&tok=QZ003K",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|visibility-hidden|outer",
+      "expected": "contradicted (not rendered); intended label excluded; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ004KCMG9\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Cvisibility-hidden%7Couter&tok=QZ004K",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Cvisibility-hidden%7Couter&tok=QZ004K",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|content-visibility-hidden|inner",
+      "expected": "contradicted (not rendered); intended label excluded; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ005KLYKC\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Ccontent-visibility-hidden%7Cinner&to",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Ccontent-visibility-hidden%7Cinner&to",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|content-visibility-hidden|outer",
+      "expected": "contradicted (not rendered); intended label excluded; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ006KHC4A\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Ccontent-visibility-hidden%7Couter&to",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Ccontent-visibility-hidden%7Couter&to",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|hidden-attr|inner",
+      "expected": "contradicted (not rendered); intended label excluded; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ007K259N\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Chidden-attr%7Cinner&tok=QZ007K259N",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Chidden-attr%7Cinner&tok=QZ007K259N",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|hidden-attr|outer",
+      "expected": "contradicted (not rendered); intended label excluded; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ008KQRG1\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Chidden-attr%7Couter&tok=QZ008KQRG1",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Chidden-attr%7Couter&tok=QZ008KQRG1",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|zero-area|inner",
+      "expected": "contradicted (not rendered); intended label excluded; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ009K30EI\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Czero-area%7Cinner&tok=QZ009K30EI",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Czero-area%7Cinner&tok=QZ009K30EI",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|zero-area|outer",
+      "expected": "contradicted (not rendered); intended label excluded; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ010KLYLV\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Czero-area%7Couter&tok=QZ010KLYLV",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Czero-area%7Couter&tok=QZ010KLYLV",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|closed-details|outer",
+      "expected": "contradicted (not rendered); intended label excluded; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ011KT0JZ\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Cclosed-details%7Couter&tok=QZ011KT0J",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Cclosed-details%7Couter&tok=QZ011KT0J",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|opacity-0|inner",
+      "expected": "verified (rendered); intended label counted; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ012K9SKT\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Copacity-0%7Cinner&tok=QZ012K9SKT",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Copacity-0%7Cinner&tok=QZ012K9SKT",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|opacity-0|outer",
+      "expected": "verified (rendered); intended label counted; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ013K8KH0\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Copacity-0%7Couter&tok=QZ013K8KH0",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Copacity-0%7Couter&tok=QZ013K8KH0",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|aria-hidden|inner",
+      "expected": "verified (rendered); intended label counted; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ014K0BXO\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Caria-hidden%7Cinner&tok=QZ014K0BXO",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Caria-hidden%7Cinner&tok=QZ014K0BXO",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|aria-hidden|outer",
+      "expected": "verified (rendered); intended label counted; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ015K5ND5\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Caria-hidden%7Couter&tok=QZ015K5ND5",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Caria-hidden%7Couter&tok=QZ015K5ND5",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|off-screen|inner",
+      "expected": "verified (rendered); intended label counted; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ016K0AQT\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Coff-screen%7Cinner&tok=QZ016K0AQT",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Coff-screen%7Cinner&tok=QZ016K0AQT",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|off-screen|outer",
+      "expected": "verified (rendered); intended label counted; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ017KBRAC\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Coff-screen%7Couter&tok=QZ017KBRAC",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Coff-screen%7Couter&tok=QZ017KBRAC",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|clipped-0x0-box|inner",
+      "expected": "verified (rendered); intended label counted; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ018KDWBK\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Cclipped-0x0-box%7Cinner&tok=QZ018KDW",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Cclipped-0x0-box%7Cinner&tok=QZ018KDW",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|clipped-0x0-box|outer",
+      "expected": "verified (rendered); intended label counted; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ019KR84N\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Cclipped-0x0-box%7Couter&tok=QZ019KR8",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Cclipped-0x0-box%7Couter&tok=QZ019KR8",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "M:shadow-bare-text|none|-",
+      "expected": "verified (rendered); intended label counted; observer agrees",
+      "observed": {
+        "verified": false,
+        "tier": "contradicted",
+        "expectOutcome": "fail",
+        "reason": "Expected text \"QZ020K0K51\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "before": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Cnone%7C-&tok=QZ020K0K51",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56680/matrix?case=shadow-bare-text%7Cnone%7C-&tok=QZ020K0K51",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "pass": false
+    }
+  ]
+}
