@@ -1,0 +1,227 @@
+[
+  {
+    "id": "R-F2-clipboard-length-only",
+    "file": "packages/browser/src/verifier/post-conditions.ts",
+    "find": "if (r.text === written) {",
+    "repl": "if (r.text.length === written.length) {",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  1 failed | 658 passed (659)",
+    "failedNames": [
+      "tests/unit/post-conditions.spec.ts > FR2-07 fix-1 F2: clipboard read-back compares TEXT, not length > a same-length but different read-back is fail, and an identical one is pass (kills the length-only mutant)"
+    ],
+    "shaBefore": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "shaAfter": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "restored": true,
+    "distShaBefore": "77ba0715267417d3fdd1394147a76f157e73489415118d41da831ba1c0315ad6",
+    "distShaAfter": "77ba0715267417d3fdd1394147a76f157e73489415118d41da831ba1c0315ad6",
+    "distRestored": true
+  },
+  {
+    "id": "R-F3-focus-any-active-element",
+    "file": "packages/browser/src/verifier/post-conditions.ts",
+    "find": "return { ok: a === el, observed:",
+    "repl": "return { ok: a !== null, observed:",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  1 failed | 658 passed (659)",
+    "failedNames": [
+      "tests/unit/post-conditions.spec.ts > FR2-07 fix-1 F3: checkFocus in-page predicate > a DIFFERENT element being active is contradicted (kills the a-is-non-null mutant)"
+    ],
+    "shaBefore": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "shaAfter": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "restored": true,
+    "distShaBefore": "77ba0715267417d3fdd1394147a76f157e73489415118d41da831ba1c0315ad6",
+    "distShaAfter": "77ba0715267417d3fdd1394147a76f157e73489415118d41da831ba1c0315ad6",
+    "distRestored": true
+  },
+  {
+    "id": "N1-drop-document-box-check",
+    "file": "packages/browser/src/verifier/execution-verifier.ts",
+    "find": "de.getClientRects().length === 0) return false;",
+    "repl": "de.getClientRects().length === -1) return false;",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  1 failed | 658 passed (659)",
+    "failedNames": [
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > NEG: a display:none iframe document (no box: documentElement has no client rects) contributes nothing, even though body.innerText holds the text"
+    ],
+    "shaBefore": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "shaAfter": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "restored": true,
+    "distShaBefore": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distShaAfter": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distRestored": true
+  },
+  {
+    "id": "N2-drop-frameElement-hop",
+    "file": "packages/browser/src/verifier/execution-verifier.ts",
+    "find": "next = (w.frameElement as Element | null) ?? null;",
+    "repl": "next = null; void w;",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  1 failed | 658 passed (659)",
+    "failedNames": [
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > NEG: a same-origin iframe whose embedding <iframe> element is display:none contributes nothing"
+    ],
+    "shaBefore": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "shaAfter": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "restored": true,
+    "distShaBefore": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distShaAfter": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distRestored": true
+  },
+  {
+    "id": "N3-drop-shadow-host-hop",
+    "file": "packages/browser/src/verifier/execution-verifier.ts",
+    "find": "if (root && root.host) next = root.host;",
+    "repl": "if (root && root.host) next = null;",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  4 failed | 655 passed (659)",
+    "failedNames": [
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > NEG: text in an open shadow root whose host is display:none does NOT count (innerText would fall back to textContent)",
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > NEG: the shadow host sits inside a display:none light-DOM ancestor",
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > NEG: the shadow host is under a content-visibility:hidden ancestor",
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > is self-contained: re-created from toString() it rejects the hidden-host case too"
+    ],
+    "shaBefore": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "shaAfter": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "restored": true,
+    "distShaBefore": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distShaAfter": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distRestored": true
+  },
+  {
+    "id": "N4-skip-start-display-check",
+    "file": "packages/browser/src/verifier/execution-verifier.ts",
+    "find": "if (cs && (cs.display === 'none' || (e !== start",
+    "repl": "if (cs && ((e !== start && cs.display === 'none') || (e !== start",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  1 failed | 658 passed (659)",
+    "failedNames": [
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > NEG: a display:none body (innerText falls back to textContent) does not count"
+    ],
+    "shaBefore": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "shaAfter": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "restored": true,
+    "distShaBefore": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distShaAfter": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distRestored": true
+  },
+  {
+    "id": "N5-body-match-not-confirmed",
+    "file": "packages/browser/src/verifier/execution-verifier.ts",
+    "find": "body.innerText.includes(t) && rendered(body)) return true;",
+    "repl": "body.innerText.includes(t)) return true;",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  3 failed | 656 passed (659)",
+    "failedNames": [
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > NEG: a display:none iframe document (no box: documentElement has no client rects) contributes nothing, even though body.innerText holds the text",
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > NEG: a same-origin iframe whose embedding <iframe> element is display:none contributes nothing",
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > NEG: a display:none body (innerText falls back to textContent) does not count"
+    ],
+    "shaBefore": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "shaAfter": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "restored": true,
+    "distShaBefore": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distShaAfter": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distRestored": true
+  },
+  {
+    "id": "N6-shadow-match-not-confirmed",
+    "file": "packages/browser/src/verifier/execution-verifier.ts",
+    "find": "it.includes(t) && rendered(child)) return true;",
+    "repl": "it.includes(t)) return true;",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  4 failed | 655 passed (659)",
+    "failedNames": [
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > NEG: text in an open shadow root whose host is display:none does NOT count (innerText would fall back to textContent)",
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > NEG: the shadow host sits inside a display:none light-DOM ancestor",
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > NEG: the shadow host is under a content-visibility:hidden ancestor",
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > is self-contained: re-created from toString() it rejects the hidden-host case too"
+    ],
+    "shaBefore": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "shaAfter": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "restored": true,
+    "distShaBefore": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distShaAfter": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distRestored": true
+  },
+  {
+    "id": "N7-shallow-guard-fails-open",
+    "file": "packages/browser/src/verifier/execution-verifier.ts",
+    "find": "guard < 10000; guard++",
+    "repl": "guard < 2; guard++",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  2 failed | 657 passed (659)",
+    "failedNames": [
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > NEG: the shadow host sits inside a display:none light-DOM ancestor",
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > NEG: the shadow host is under a content-visibility:hidden ancestor"
+    ],
+    "shaBefore": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "shaAfter": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "restored": true,
+    "distShaBefore": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distShaAfter": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distRestored": true
+  },
+  {
+    "id": "N8-drop-content-visibility-check",
+    "file": "packages/browser/src/verifier/execution-verifier.ts",
+    "find": "(e !== start && cs.contentVisibility === 'hidden')",
+    "repl": "(false)",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  1 failed | 658 passed (659)",
+    "failedNames": [
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13b (fix-1 F1): unrendered shadow hosts / frames contribute nothing > NEG: the shadow host is under a content-visibility:hidden ancestor"
+    ],
+    "shaBefore": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "shaAfter": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "restored": true,
+    "distShaBefore": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distShaAfter": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distRestored": true
+  },
+  {
+    "id": "N9-F4-notrun-labelled-as-builtin-pass",
+    "file": "packages/browser/src/verifier/execution-verifier.ts",
+    "find": "} else if (bi.outcome === 'pass') {",
+    "repl": "} else if (bi.outcome !== 'fail') {",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  1 failed | 658 passed (659)",
+    "failedNames": [
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V6b (fix-1 F4): a not-run builtIn plus a passing (even trivially true) expectation still names the built-in outcome in the reason"
+    ],
+    "shaBefore": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "shaAfter": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "restored": true,
+    "distShaBefore": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distShaAfter": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distRestored": true
+  },
+  {
+    "id": "N10-failed-frames-reported-not-found",
+    "file": "packages/browser/src/verifier/execution-verifier.ts",
+    "find": "if (failed > 0) return {",
+    "repl": "if (failed > frames.length) return {",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  1 failed | 658 passed (659)",
+    "failedNames": [
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V12b: some frames throwing and none finding the text is unavailable, never not-found"
+    ],
+    "shaBefore": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "shaAfter": "8d5c4484cab2b14fd64cdeb80ad48cea676c211e5f6ff39de15a2ece83f4752d",
+    "restored": true,
+    "distShaBefore": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distShaAfter": "50ba531c150dd1ded1647c4e97034ffdd25e0c3d3755012cbf2cfa66729cb944",
+    "distRestored": true
+  }
+]

@@ -1,0 +1,148 @@
+{
+  "startedAt": "2026-09-29T15:31:53.613Z",
+  "finishedAt": "2026-09-29T15:31:59.322Z",
+  "total": 3,
+  "passed": 3,
+  "failed": [],
+  "overhead": null,
+  "hygiene": {
+    "lingeringChromeWithScratchProfile": 0,
+    "lingeringMatches": [],
+    "newSutradharCliTempDirs": [],
+    "childPidsStarted": [
+      76172,
+      76584
+    ]
+  },
+  "cases": [
+    {
+      "surface": "mcp",
+      "case": "K9",
+      "expected": "focus + press verified; observer reads \"b\" through the frame/shadow boundary",
+      "observed": {
+        "focusTier": "verified",
+        "tier": "verified",
+        "reason": "'press_key' verified: keydown 'b' reached the focused input#shadow-in and its value changed (length 0→1)"
+      },
+      "observerTruth": {
+        "value": "b"
+      },
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'press_key' verified: keydown 'b' reached the focused input#shadow-in and its value changed (length 0→1)",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "press_key.focused-target",
+              "outcome": "pass",
+              "observed": "input#shadow-in"
+            },
+            {
+              "check": "press_key.key-delivered",
+              "outcome": "pass",
+              "expected": "trusted keydown 'b'",
+              "observed": "delivered"
+            },
+            {
+              "check": "press_key.effect",
+              "outcome": "pass",
+              "expected": "value-changed",
+              "observed": "length 0→1"
+            }
+          ]
+        }
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "K10",
+      "expected": "focus + press verified; observer reads \"b\" through the frame/shadow boundary",
+      "observed": {
+        "focusTier": "verified",
+        "tier": "verified",
+        "reason": "'press_key' verified: keydown 'b' reached the focused input#in-frame and its value changed (length 0→1)"
+      },
+      "observerTruth": {
+        "value": "b"
+      },
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'press_key' verified: keydown 'b' reached the focused input#in-frame and its value changed (length 0→1)",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "press_key.focused-target",
+              "outcome": "pass",
+              "observed": "input#in-frame"
+            },
+            {
+              "check": "press_key.key-delivered",
+              "outcome": "pass",
+              "expected": "trusted keydown 'b'",
+              "observed": "delivered"
+            },
+            {
+              "check": "press_key.effect",
+              "outcome": "pass",
+              "expected": "value-changed",
+              "observed": "length 0→1"
+            }
+          ]
+        }
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "K11",
+      "expected": "focus + press verified; observer reads \"b\" through the frame/shadow boundary",
+      "observed": {
+        "focusTier": "verified",
+        "tier": "verified",
+        "reason": "'press_key' verified: keydown 'b' reached the focused input#xo-in and its value changed (length 0→1)"
+      },
+      "observerTruth": {
+        "value": "b"
+      },
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'press_key' verified: keydown 'b' reached the focused input#xo-in and its value changed (length 0→1)",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "press_key.focused-target",
+              "outcome": "pass",
+              "observed": "input#xo-in"
+            },
+            {
+              "check": "press_key.key-delivered",
+              "outcome": "pass",
+              "expected": "trusted keydown 'b'",
+              "observed": "delivered"
+            },
+            {
+              "check": "press_key.effect",
+              "outcome": "pass",
+              "expected": "value-changed",
+              "observed": "length 0→1"
+            }
+          ]
+        }
+      },
+      "pass": true
+    }
+  ]
+}

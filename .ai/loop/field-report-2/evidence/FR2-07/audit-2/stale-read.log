@@ -1,0 +1,9 @@
+PIDS {"mcp":72556,"self":51096,"sessionId":"sess_1790695850875_1"}
+PASS removed-text want=contradicted got=contradicted :: Expected text "OLDTEXTQQ1" was not found in the page's visible text after the action
+PASS hidden-by-action want=contradicted got=contradicted :: Expected text "HIDETEXTQQ2" was not found in the page's visible text after the action
+PASS added-text want=verified got=verified :: Action execution verified successfully with confidence 0.90
+PASS late-text-no-settle want=contradicted got=contradicted :: Expected text "LATETEXTQQ4" was not found in the page's visible text after the action
+PASS nav-away-old-text want=contradicted got=contradicted :: Expected text "OLDTEXTQQ1" was not found in the page's visible text after the action
+PASS nav-new-text want=verified got=verified :: 'navigate' verified: a new document committed at http://127.0.0.1:53563/other?x=2 Expectations met: text.
+PASS link-click-old-text want=contradicted got=contradicted :: Expected text "OLDTEXTQQ1" was not found in the page's visible text after the action
+SUMMARY 7 / 7

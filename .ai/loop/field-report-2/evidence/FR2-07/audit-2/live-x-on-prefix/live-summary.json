@@ -1,0 +1,457 @@
+{
+  "startedAt": "2026-09-29T15:12:59.760Z",
+  "finishedAt": "2026-09-29T15:13:28.905Z",
+  "total": 12,
+  "passed": 8,
+  "failed": [
+    "mcp:X8",
+    "mcp:X10",
+    "mcp:X11",
+    "mcp:K15"
+  ],
+  "overhead": null,
+  "hygiene": {
+    "lingeringChromeWithScratchProfile": 0,
+    "lingeringMatches": [],
+    "newSutradharCliTempDirs": [],
+    "childPidsStarted": [
+      55032,
+      72128
+    ]
+  },
+  "cases": [
+    {
+      "surface": "mcp",
+      "case": "X8",
+      "expected": "NEG: text only in an open shadow root whose host is display:none (in the DOM, NOT rendered) -> contradicted; the observer confirms it is unrendered",
+      "observed": {
+        "tier": "verified",
+        "verified": true,
+        "reason": "Action execution verified successfully with confidence 0.90"
+      },
+      "observerTruth": {
+        "innerText": "FR2-07 SHADOW-HIDDEN",
+        "textContent": "FR2-07 SHADOW-HIDDEN",
+        "checkVisibility": false,
+        "ok": true
+      },
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "Action execution verified successfully with confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            },
+            {
+              "check": "expect.text",
+              "outcome": "pass",
+              "expected": "FR2-07 SHADOW-HIDDEN",
+              "observed": "found"
+            }
+          ]
+        }
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "X9",
+      "expected": "POS: text in a visible open shadow root (rendered) -> verified; the observer confirms it is rendered",
+      "observed": {
+        "tier": "verified",
+        "verified": true,
+        "reason": "Action execution verified successfully with confidence 0.90"
+      },
+      "observerTruth": {
+        "innerText": "FR2-07 SHADOW-VISIBLE",
+        "textContent": "FR2-07 SHADOW-VISIBLE",
+        "checkVisibility": true,
+        "ok": true
+      },
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "Action execution verified successfully with confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            },
+            {
+              "check": "expect.text",
+              "outcome": "pass",
+              "expected": "FR2-07 SHADOW-VISIBLE",
+              "observed": "found"
+            }
+          ]
+        }
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "X10",
+      "expected": "NEG: text only in a display:none same-origin iframe (in the DOM, NOT rendered) -> contradicted; the observer confirms it is unrendered",
+      "observed": {
+        "tier": "verified",
+        "verified": true,
+        "reason": "Action execution verified successfully with confidence 0.90"
+      },
+      "observerTruth": {
+        "frameRects": 0,
+        "innerTextInsideHasIt": true,
+        "mainInnerHasIt": false,
+        "ok": true
+      },
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "Action execution verified successfully with confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            },
+            {
+              "check": "expect.text",
+              "outcome": "pass",
+              "expected": "FR2-07 IFRAME-HIDDEN-SAME",
+              "observed": "found"
+            }
+          ]
+        }
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "X11",
+      "expected": "NEG: text only in a display:none CROSS-ORIGIN (out-of-process) iframe (in the DOM, NOT rendered) -> contradicted; the observer confirms it is unrendered",
+      "observed": {
+        "tier": "verified",
+        "verified": true,
+        "reason": "Action execution verified successfully with confidence 0.90"
+      },
+      "observerTruth": {
+        "frameRects": 0,
+        "frameListed": true,
+        "innerTextInsideFrame": "FR2-07 IFRAME-HIDDEN-XO",
+        "ok": true
+      },
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "Action execution verified successfully with confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            },
+            {
+              "check": "expect.text",
+              "outcome": "pass",
+              "expected": "FR2-07 IFRAME-HIDDEN-XO",
+              "observed": "found"
+            }
+          ]
+        }
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "X12",
+      "expected": "POS: text in a visible same-origin iframe (rendered) -> verified; the observer confirms it is rendered",
+      "observed": {
+        "tier": "verified",
+        "verified": true,
+        "reason": "Action execution verified successfully with confidence 0.90"
+      },
+      "observerTruth": {
+        "frameRects": 1,
+        "inner": "FR2-07 IFRAME-VISIBLE-SAME",
+        "ok": true
+      },
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "Action execution verified successfully with confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            },
+            {
+              "check": "expect.text",
+              "outcome": "pass",
+              "expected": "FR2-07 IFRAME-VISIBLE-SAME",
+              "observed": "found"
+            }
+          ]
+        }
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "X13",
+      "expected": "POS: text in a visible cross-origin (out-of-process) iframe (rendered) -> verified; the observer confirms it is rendered",
+      "observed": {
+        "tier": "verified",
+        "verified": true,
+        "reason": "Action execution verified successfully with confidence 0.90"
+      },
+      "observerTruth": {
+        "frameFound": true,
+        "inner": "FR2-07 IFRAME-VISIBLE-XO",
+        "ok": true
+      },
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "Action execution verified successfully with confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            },
+            {
+              "check": "expect.text",
+              "outcome": "pass",
+              "expected": "FR2-07 IFRAME-VISIBLE-XO",
+              "observed": "found"
+            }
+          ]
+        }
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "K15",
+      "expected": "built-in not-run + passing expect.urlChanged:false -> verified:true, and the reason still names the built-in outcome and the expectation",
+      "observed": {
+        "tier": "verified",
+        "reason": "Action execution verified successfully with confidence 0.90",
+        "notRunCheck": "press_key.focused-target"
+      },
+      "observerTruth": {
+        "activeElementTag": "BODY"
+      },
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "Action execution verified successfully with confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "press_key.focused-target",
+              "outcome": "not-run",
+              "observed": "body"
+            },
+            {
+              "check": "press_key.key-delivered",
+              "outcome": "not-run",
+              "detail": "no focused element to observe"
+            },
+            {
+              "check": "expect.urlChanged",
+              "outcome": "pass",
+              "expected": false,
+              "observed": false
+            }
+          ]
+        }
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "X1",
+      "expected": "expect.text present -> verified",
+      "observed": {
+        "tier": "verified"
+      },
+      "observerTruth": {
+        "toast": "FR2-07 SAVED"
+      },
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "Action execution verified successfully with confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            },
+            {
+              "check": "expect.text",
+              "outcome": "pass",
+              "expected": "FR2-07 SAVED",
+              "observed": "found"
+            }
+          ]
+        }
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "X2",
+      "expected": "NEG: text only in a display:none element -> contradicted (the pre-FR2-07 build said verified:true: B-X2)",
+      "observed": {
+        "tier": "contradicted",
+        "reason": "Expected text \"FR2-07 SAVED\" was not found in the page's visible text after the action"
+      },
+      "observerTruth": {
+        "hiddenHasIt": true,
+        "hiddenInnerText": "FR2-07 SAVED",
+        "bodyInnerHasIt": false,
+        "bodyTextContentHasIt": true
+      },
+      "verification": {
+        "verified": false,
+        "urlChanged": false,
+        "elementFound": false,
+        "confidence": 0.09000000000000001,
+        "reason": "Expected text \"FR2-07 SAVED\" was not found in the page's visible text after the action",
+        "evidence": {
+          "tier": "contradicted",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            },
+            {
+              "check": "expect.text",
+              "outcome": "fail",
+              "expected": "FR2-07 SAVED",
+              "observed": "not-found"
+            }
+          ]
+        }
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "X3",
+      "expected": "text appearing 800ms later -> contradicted (expect is checked ONCE; documented); observer sees the toast afterwards",
+      "observed": {
+        "tier": "contradicted"
+      },
+      "observerTruth": {
+        "laterToast": "FR2-07 SAVED"
+      },
+      "verification": {
+        "verified": false,
+        "urlChanged": false,
+        "elementFound": false,
+        "confidence": 0.09000000000000001,
+        "reason": "Expected text \"FR2-07 SAVED\" was not found in the page's visible text after the action",
+        "evidence": {
+          "tier": "contradicted",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            },
+            {
+              "check": "expect.text",
+              "outcome": "fail",
+              "expected": "FR2-07 SAVED",
+              "observed": "not-found"
+            }
+          ]
+        }
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "X4",
+      "expected": "action failure: success:false, action-failed, expect.text not-run, result is NOT isError",
+      "observed": {
+        "success": false,
+        "tier": "action-failed",
+        "isError": false
+      },
+      "verification": {
+        "verified": false,
+        "urlChanged": false,
+        "elementFound": false,
+        "confidence": 0,
+        "reason": "Action failed: No visible element found for selector: #does-not-exist",
+        "evidence": {
+          "tier": "action-failed",
+          "checks": [
+            {
+              "check": "expect.text",
+              "outcome": "not-run",
+              "detail": "the action failed; expectations were not evaluated"
+            }
+          ]
+        }
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "X7",
+      "expected": "expect {text:\"\"} and {bogus:1} are rejected by schema validation",
+      "observed": {
+        "empty": {
+          "isError": true,
+          "text": "MCP error -32602: Input validation error: Invalid arguments for tool browser.click: String must contain at least 1 character(s) at expect.text"
+        },
+        "bogus": {
+          "isError": true,
+          "text": "MCP error -32602: Input validation error: Invalid arguments for tool browser.click: Unrecognized key(s) in object: 'bogus' at expect"
+        }
+      },
+      "pass": true
+    }
+  ]
+}

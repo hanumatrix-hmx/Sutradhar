@@ -1,0 +1,101 @@
+{
+  "item": "FR2-07 A single verification contract (re-audit #2, after fix cycle 1)",
+  "audited_range": "c83c220..6a51708 on claude/fr2-07-verification-contract (fix commits 0ca99e5, 90cc131, d978af2, 1efce4f, 9b10587, 6a51708)",
+  "verdict": "REOPEN",
+  "audit_cycle": 2,
+  "build": {
+    "method": "rm -rf packages/*/dist apps/server/dist; turbo run build --force (19/19, 0 cached) + sutradhar bundle (9/9, 0 cached); master c83c220 and pre-fix 4705e73 built from git archive in scratch with pnpm install --offline",
+    "evidence": ["build-forced.log", "typecheck.log (34/34)", "turbo-test-all.log (32/32, 0 cached)"]
+  },
+  "unit_tests": {"browser": "659/659", "capability-runtime": "244/244", "mcp-server": "108/108", "cli": "193/193", "sutradhar": "34/34", "agent": "56/56", "apps/server": "28/28", "evidence": "vitest-*.log"},
+  "existing_tests_weakened": "No. Against master the only removed lines in pre-existing spec files are 3 import lines, each re-added with extra names. In fix-1, the removed lines are upper wall-time bounds only (the F5 fix); E1 now asserts on the reason instead of wall time, and the lower bounds use performance.now (monotonic).",
+  "ac_results": [
+    {"ac": "Every MCP/CLI/SDK action result carries verification {verified, confidence, reason, evidence}", "verdict": "PASS", "evidence_cmd": "SUTRADHAR_FR2_07_EVIDENCE_DIR=audit-2/live node tools/scenario-suite/verify-fr2-07-verification.mjs", "output_excerpt": "109/110 passed; FAILED: bundle:X10 (harness precondition 'cross-origin text frames never became live', see A2-2). mcp 76/76, cli 13/13, sdk 8/8, bundle 12/13", "required_fix": ""},
+    {"ac": "Real checks: press_key, download fs.stat, wait_for_selector, focus, navigate/back/forward/reload, set_clipboard read-back, click_at_point, upload_via_trigger", "verdict": "PASS", "evidence_cmd": "same live run (K, D, W, F, N, C, P, U, G, T cases) + mutation-unit.json R-F2/R-F3", "output_excerpt": "all K/D/W/F/N/C/P/U cases PASS on mcp; clipboard length-only and focus any-active-element mutants now caught by unit tests", "required_fix": ""},
+    {"ac": "Anything still unverifiable says exactly why", "verdict": "PASS", "evidence_cmd": "node audit-2/probes/multi-oopif-sdk.mjs <root> out 8", "output_excerpt": "caveat (A2-2): the reason is 'the page did not answer the text check within 1500ms' even when only ONE out-of-process frame hung and the main frame had the text", "required_fix": "see A2-2"},
+    {"ac": "Public expect {text,url,urlChanged} on MCP/CLI/SDK maps to verificationSpec (text = visible text; hidden/display:none text does not count)", "verdict": "FAIL", "evidence_cmd": "node audit-2/probes/vis-matrix-mcp.mjs <root> vis-matrix-mcp.jsonl (and --server=packages/sutradhar/dist/mcp-cli.js; vis-cli-sdk.mjs)", "output_excerpt": "falseVerified: iframe-srcdoc-vis-hidden, iframe-in-vis-hidden-div, iframe-sandbox-vis-hidden, xo-vis-hidden, xo-in-vis-hidden-div, deep-none-10050; CLI exit 0 and SDK no throw on the vis-hidden iframes", "required_fix": "A2-1 and A2-3"}
+  ],
+  "prior_findings": [
+    {"id": "F1", "severity_was": "major", "status": "FIXED for the reported display:none family, but the class is not closed (A2-1)", "evidence": "vis-matrix-mcp-prefix.log (pre-fix: 24 false verified:true) vs vis-matrix-mcp.log (HEAD: 6). HEAD harness X8/X10/X11/K15 FAIL on the pre-fix build (live-x-on-prefix.log) and PASS on HEAD. Bundle identical to workspace (vis-matrix-bundle.log BUNDLE_IDENTICAL)."},
+    {"id": "F2", "status": "FIXED", "evidence": "mutation-unit.json R-F2-clipboard-length-only caught (post-conditions.spec F2 test)"},
+    {"id": "F3", "status": "FIXED", "evidence": "mutation-unit.json R-F3-focus-any-active-element caught (post-conditions.spec F3 test)"},
+    {"id": "F4", "status": "FIXED", "evidence": "live K15 mcp+bundle reason: 'press_key' verified by expectation only: its built-in post-condition check could not run: no element had focus ... Expectations met: urlChanged. Mutant N9 caught by V6b. The legacy sentence is reachable only when no built-in verdict was supplied, which in production means a self-verifying type (its built-in ran)."},
+    {"id": "F5", "status": "FIXED", "evidence": "git diff c83c220..HEAD -- '*.spec.ts' | grep toBeLessThan: only a string-length bound remains; lower bounds use performance.now"},
+    {"id": "F6-F8", "status": "accepted/documented; not re-litigated"}
+  ],
+  "findings": [
+    {"id": "A2-1", "severity": "major", "title": "expect.text returns verified:true for text inside visibility:hidden iframes (same-origin, sandboxed, cross-origin) and iframes under a visibility:hidden ancestor",
+     "repro": "Page: <button id=noop>; <iframe style='visibility:hidden' src='http://localhost:P/xo?t=TOKEN'>. Call browser.click {target:'#noop', expect:{text:'TOKEN'}}. Result: verified:true, tier verified. Main-document visibility:hidden text is correctly rejected.",
+     "surfaces": "MCP workspace, sutradhar bundle MCP, CLI (exit 0 instead of 4), SDK (no ExpectationFailedError)",
+     "pre_existing": "yes (also on 4705e73). This is the same class as F1 (the content of an unrendered frame counts as visible). It is not listed in GAP-323.",
+     "why_major": "It breaks the documented promise in tools.ts expectDesc and the CLI README ('hidden/display:none text does not count') and decision 4.8. Realistic case: hidden challenge/controller iframes such as reCAPTCHA's bframe container, which is visibility:hidden.",
+     "required_fix": "Decide a frame's renderedness from the PARENT side. For each non-main frame, use frame.frameElement() (Puppeteer supports it for out-of-process iframes) and require the owner <iframe> to be rendered and visible (computed visibility 'visible', non-zero box, checkVisibility({visibilityProperty:true}) on the iframe element), up the owner chain. In the in-page walk, also treat computed visibility != 'visible' on an embedding frameElement as not rendered. Add unit tests plus live negatives for same-origin and cross-origin visibility:hidden iframes.",
+     "evidence": ["vis-matrix-mcp.log", "vis-matrix-bundle.log", "vis-cli-sdk.log", "probes/vis-server.mjs"]},
+    {"id": "A2-2", "severity": "major", "title": "One out-of-process frame that never answers makes expect.text unverifiable for the whole page, including text in the main frame (GAP-322 second half; the SDK throws ExpectationFailedError)",
+     "repro": "node probes/multi-oopif-sdk.mjs <root> out 8: SDK launch (single CDP client), a page with 8 cross-origin iframes, page.click('#noop',{expect:{text:'MAINTEXTOK'}}). Result: 8/12 calls unverifiable ('the page did not answer the text check within 1500ms'); 4 of 6 pages affected. The raw Puppeteer control (multi-oopif-raw.mjs) shows only ONE frame hanging on 2 of 6 pages while the main frame always answers.",
+     "also": "Attach mode with 3 out-of-process frames: 2 of 3 pages unverifiable (k11-repro-head.log mode=parse). The builder's own live X11 flaked in 1 of 3 isolated reruns (live-x-rerun-1.log). The full run failed bundle:X10 on the harness's frame-liveness precondition. So the claimed 110/110 is not stable.",
+     "why_major": "The result is honest (not a false pass), but the new public expect.text fails on common real pages (ad or embed-heavy pages with several cross-origin iframes), and the SDK turns that into a thrown error. The fix is small.",
+     "required_fix": "In pageContainsVisibleText, resolve 'found' on the first frame that finds the text, and apply the bound PER FRAME. Report unavailable only if no frame found the text AND some frame did not answer. Name the frame count in the reason, e.g. '1 of 9 frames did not answer'.",
+     "evidence": ["multi-oopif-sdk-8.log", "multi-oopif-sdk-3.log", "multi-oopif-raw-8.log", "k11-repro-head.log", "live-x-rerun-1.log", "live-verify.log"]},
+    {"id": "A2-3", "severity": "minor", "title": "The rendered() ancestor walk fails OPEN when the guard is exhausted (more than 10000 ancestors)",
+     "repro": "A display:none div, then 10050 nested divs, then a shadow host whose open shadow root holds <p>TOKEN</p>. Result: expect.text verified:true (848 ms). With a depth of 2000 it is correctly contradicted.",
+     "required_fix": "When the guard runs out, return false (not rendered) or report the frame as not inspectable. Never return true.",
+     "evidence": ["vis-matrix-mcp.log deep-none-10050 / deep-none-2000"]},
+    {"id": "A2-4", "severity": "minor", "title": "False contradiction: visible text that is a direct Text child of an open shadow root is never seen",
+     "repro": "host.attachShadow({mode:'open'}).appendChild(document.createTextNode('TOKEN')), then click with expect text TOKEN. Result: tier contradicted, CLI exit 4, SDK ExpectationFailedError, although the text is rendered. This pattern is common in Lit templates.",
+     "pre_existing": "yes (run-1 code; audit-1 did not test it)",
+     "required_fix": "Walk sr.childNodes. For Text nodes, confirm the host is rendered and its computed visibility is 'visible'.",
+     "evidence": ["vis-matrix-mcp.log shadow-direct-text", "vis-cli-sdk.log"]},
+    {"id": "A2-5", "severity": "minor", "title": "Doc and gap-log accuracy",
+     "detail": "(a) GAP-323 says closed <details> content is not modelled, but it is correctly rejected live (Chromium innerText excludes it); GAP-323 also omits the visibility:hidden iframe blind spot. (b) The GAP-322 and GAP-323 rows sit after a blank line, which breaks the gaps.md table, and GAP-322 has no status or owner columns. (c) The changelog's tools/list '64,950 -> 87,093 bytes' are UTF-16 character counts (JSON.stringify(tools).length). The UTF-8 byte counts are 65,088 -> 87,277 for the tools array. +34%, 72 tools, 24 with expect and identical names are all confirmed.",
+     "evidence": ["toolslist-size.log", "vis-matrix-mcp.log details-closed"]},
+    {"id": "A2-6", "severity": "info", "title": "Documented or consistent-by-design behaviours worth a doc line",
+     "detail": "expect.text counts opacity:0, off-screen, zero-size, clip-rect and aria-hidden text as visible, and also zero-size and off-screen cross-origin frames (GAP-323). wait_for_selector treats zero-size as hidden, so the product's two visibility definitions differ. Input values are not counted. Text split across block elements has to be matched with a newline, not a space. text-transform changes the string that gets matched."}
+  ],
+  "gap_322_k11_investigation": {
+    "result": "The K11 'failed to find element matching selector' failure is a harness artifact. The second half of GAP-322 (a hung frame makes the result unverifiable) is a real product issue (A2-2).",
+    "evidence": "The message is thrown only by Puppeteer's $eval (ElementHandle.js:495), and grep finds no $eval in packages/*/src. probes/k11-repro.mjs mode=parse-before (extra cross-origin frames ahead of frame.html): the harness-style read (first frame whose URL starts with the cross origin, then $eval '#xo-in') throws exactly that message 3/3 on HEAD, 3/3 on 4705e73 and 3/3 on master c83c220. Meanwhile browser.focus and press_key succeed (verified on HEAD and 4705e73), and a read that searches every frame sees 'b'. The d978af2 harness and fixture run in isolation (K9-K11): 2/2 PASS, not reproduced.",
+    "files": ["k11-repro-head.log", "k11-repro-4705e73.log", "k11-repro-c83c220.log", "k11-d978af2-harness-1.log", "k11-d978af2-harness-2.log"]
+  },
+  "master_comparison": {
+    "fr2_04": "HEAD 111 passed / 0 failed / 2 skipped; master identical (fr2-04-head.log, fr2-04-master.log). L13 did not fail on either.",
+    "cli_scenarios": "HEAD 12/14 and master 12/14. UC-05 and UC-12 fail identically on both; UC-12 is a harness badge-regex issue and the snap shows 'Cart, 1 items'. UC-08 passed on both. (scenario-cli-head.json, scenario-cli-master.json)",
+    "tools_list": "72 tools, identical names; +24 expect schemas",
+    "regressions_attributable_to_fr2_07": []
+  },
+  "mutants": {
+    "driver": "probes/mutate2.mjs (exact-string mutant, browser vitest, restore, sha256 before/after for source and dist)",
+    "results": [
+      {"id": "R-F2-clipboard-length-only", "caught": true},
+      {"id": "R-F3-focus-any-active-element", "caught": true},
+      {"id": "N1-drop-document-box-check", "caught": true},
+      {"id": "N2-drop-frameElement-hop", "caught": true},
+      {"id": "N3-drop-shadow-host-hop", "caught": true},
+      {"id": "N4-skip-start-display-check", "caught": true},
+      {"id": "N5-body-match-not-confirmed", "caught": true},
+      {"id": "N6-shadow-match-not-confirmed", "caught": true},
+      {"id": "N7-shallow-guard-fails-open", "caught": true},
+      {"id": "N8-drop-content-visibility-check", "caught": true},
+      {"id": "N9-F4-notrun-labelled-as-builtin-pass", "caught": true},
+      {"id": "N10-failed-frames-reported-not-found", "caught": true}
+    ],
+    "restoration": "All source and dist files match sha-before-mutation.txt (sha256sum -c: 6/6 OK)",
+    "evidence": ["mutation-unit.json", "mutation-unit.log", "sha-before-mutation.txt"]
+  },
+  "false_pass_hunt": {
+    "stale_or_snapshot_reads": "stale-read.log 7/7 (MCP launch mode): text the action removes or hides is contradicted, added text is verified, text that arrives 400 ms later without settle is contradicted, and the old page's text after navigate or a link click is contradicted",
+    "mocked_paths": "The unit F1 tests use fake DOM objects. Every behaviour claim above was re-checked on real Chrome over MCP (attach and launch), the bundle, the CLI and the SDK.",
+    "cached_build": "dist deleted and turbo --force used (0 cached). Bundle and workspace give identical per-case results (vis-matrix-bundle.log).",
+    "clock_mixing": "download mtime is compared with Date.now() (both wall clock, with a tolerance). Test timing uses performance.now lower bounds only.",
+    "auth": "not applicable (no auth surface). Production MCP, CLI, SDK and bundle entry points were used.",
+    "harness_side_effect": "tools/scenario-suite/run-cli.mjs overwrites the tracked tools/scenario-suite/results/uc06-modal-after-clicktext.png. The auditor restored it byte-identically (git hash-object matches HEAD blob 3dc5f41b)."
+  },
+  "not_verified": [
+    "Headed-mode behaviour (all runs headless)",
+    "Download or lock path containment attacks (excluded by instruction; not attempted)",
+    "The builder's exact K11 failing state (their failing log was not kept); reproduced the mechanism instead",
+    "Real-world reCAPTCHA or Stripe pages (not driven; external, anti-bot scope)"
+  ],
+  "blocked_assessment": "Not BLOCKED: this is the second failed audit, not the third. Per the escalation rule, the builder should re-derive the root cause before patching. Root-cause hypothesis: renderedness is decided inside each frame by a hand-written ancestor walk. From inside a frame, the owner <iframe>'s visibility, size and clipping cannot be seen (cross-origin) or are not checked (same-origin visibility). The spec is fine and the tests are good at catching mutants of what exists. The implementation is incomplete: frame renderedness should be decided from the parent side via frame.frameElement(), and the per-frame aggregation should short-circuit.",
+  "regressions": []
+}

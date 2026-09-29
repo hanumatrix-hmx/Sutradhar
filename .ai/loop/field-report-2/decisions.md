@@ -3851,3 +3851,54 @@ Findings F1..F8 from `evidence/FR2-07/audit-1/verdict.md`.
   stated in the changelog fragment.
 - **Test-harness note.** The live F1 fixtures live on their own page (`fr2-07-hidden-text.html`): adding two more
   out-of-process frames to `page.html` broke the pre-existing K11 (see GAP-322).
+
+## 2026-09-29 -- FR2-07: two failed audits; ROOT-CAUSE RE-DERIVATION and revised plan (before any more code)
+
+Audits: audit-1 REOPEN (F1 major), audit-2 REOPEN (A2-1, A2-2 major). Everything except the
+`expect.text` "visible text" semantic PASSED in both audits (the verification contract, all real
+post-condition checks, negatives, master comparison, mutants). So the item is not failing broadly;
+one secondary acceptance criterion keeps failing in a new place each cycle.
+
+Root cause (spec, tests and implementation are each partly at fault):
+1. IMPLEMENTATION: "is this text visible?" is decided by enumerating CSS hiding mechanisms
+   (display:none, content-visibility:hidden) in a hand-written ancestor walk, run from INSIDE each
+   frame. Two structural defects follow: (a) a frame cannot see from inside whether its own
+   <iframe> element is visibility:hidden / clipped (cross-origin: not reachable at all) so
+   hidden-frame text is judged visible (A2-1); (b) a bounded walk (10000 levels) that fails OPEN
+   returns "visible" when it runs out (A2-3). Each fix cycle patched one mechanism; the next
+   audit found the next. That is whack-a-mole, not convergence.
+2. IMPLEMENTATION: cross-frame aggregation is all-or-nothing under one timeout race, so one hung
+   out-of-process frame makes the whole page "unverifiable" even when the main frame has the text
+   (A2-2). Also text placed as a bare text node in a shadow root is missed (A2-4) because only
+   child ELEMENTS' innerText is read.
+3. SPEC: "visible text; hidden text does not count" is unbounded. It never says whether opacity:0,
+   aria-hidden, off-screen or zero-size text counts, so no implementation can be finished.
+4. TESTS: negatives were written one per mechanism the previous audit named (example-driven),
+   so they proved those examples, not the property.
+
+Revised plan (fix cycle 2; scope limited to expect.text visibility + aggregation + doc/harness fixes):
+- Define the contract precisely as RENDERED text: text that is laid out (non-empty Range client
+  rects) with computed visibility:visible on its parent (visibility is inherited, so no ancestor
+  walk), AND every embedding frame has a reachable frame element (Puppeteer frame.frameElement())
+  that is itself rendered and visibility:visible, judged from the PARENT side, recursively.
+  opacity:0, aria-hidden, off-screen text are documented as counted (rendered, not "perceivable").
+- FAIL CLOSED: anything that cannot be judged (frame element unreachable, guard exhausted, frame
+  hung) yields 'unavailable'/not-found with a reason, never 'visible'.
+- Walk TEXT NODES (TreeWalker) through open shadow roots, not child elements' innerText.
+- Aggregation: 'found' short-circuits as soon as any frame confirms; per-frame time bound; the
+  conclusion 'not-found' only if every frame answered; otherwise 'unavailable' naming how many
+  frames answered/hung.
+- Replace example-driven negatives with a generated matrix test in real Chrome: hiding mechanisms
+  x placements (main, open shadow incl. bare text node, slotted, same-origin iframe, srcdoc,
+  sandboxed, cross-origin, nested, very deep), each verdict compared with a ground truth taken
+  from an independent observer; audit-2's probes (audit-2/probes/vis-matrix-*.mjs, multi-oopif-*,
+  vis-cli-sdk) become permanent regression cases.
+- Step 0 spike first (own commit, with evidence): confirm frame.frameElement() reaches
+  same-origin, srcdoc, sandboxed and cross-origin (OOPIF) frames and that Range rects are empty
+  for display:none and content-visibility:hidden. If frameElement() cannot reach OOPIF frames,
+  fall back to fail-closed 'unavailable' for those, and record it as a documented limit.
+- Fix K11 harness (GAP-322): select the target frame by a unique token in its URL, not the first
+  frame with the right origin. Correct GAP-323 (closed <details> IS excluded), repair the gaps.md
+  table rows, and report tools/list growth in UTF-8 bytes (65,088 -> 87,277 tools array).
+- After this, audit-3 is the LAST standard-cycle audit for this item; if it fails, FR2-07 is
+  marked BLOCKED with this diagnosis and only the passing parts ship.
