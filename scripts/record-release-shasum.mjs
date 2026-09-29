@@ -21,10 +21,11 @@ import { readdirSync, readFileSync, appendFileSync, existsSync, writeFileSync, s
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const packageDir = path.resolve(__dirname, '..', 'packages', 'sutradhar');
 
-// npm pack/publish write the tarball as `<name>-<version>.tgz` in the current working
-// directory by default (no --pack-destination override here) — find the newest .tgz there.
-const expectedName = `${JSON.parse(readFileSync(path.join(packageDir, 'package.json'), 'utf-8')).name}-${JSON.parse(readFileSync(path.join(packageDir, 'package.json'), 'utf-8')).version}.tgz`;
-// Only the tarball for THIS version counts: a stale older .tgz in the folder was once recorded under a new version.
+// npm pack/publish write the tarball as `<name>-<version>.tgz` in the package folder. Only the
+// tarball for THIS version counts: matching "newest .tgz" once recorded a stale 0.4.3 tarball
+// under the 0.5.0 row.
+const pkgMeta = JSON.parse(readFileSync(path.join(packageDir, 'package.json'), 'utf-8'));
+const expectedName = `${pkgMeta.name}-${pkgMeta.version}.tgz`;
 const tgzCandidates = readdirSync(packageDir)
   .filter((f) => f === expectedName)
   .map((f) => ({ f, mtime: statSync(path.join(packageDir, f)).mtimeMs }))
