@@ -55,4 +55,4 @@ Related Packages:
 - Download/upload path containment is verified, but overlapping `download_file` calls on one browser are only guarded on a best-effort basis (the lock file lives in the process temp directory and is keyed by the exact browser endpoint string, so separate processes may not share it); page-initiated downloads outside `download_file` are not covered by the roots.
 - The dialog warden's attribution of a blocking dialog to a tab is heuristic: popups that share a renderer with an opener that has since closed cannot be told apart, and a tab that is busy from birth is indistinguishable from one holding a dialog.
 - `wait_for_selector` `state: "hidden"` answers come from a code path that produced false results in several audit rounds; the known ones are fixed, the class is not mechanically prevented.
-- See `docs/22-changelog.md` ("0.5.0 (Unreleased)") for the complete list.
+- See `docs/22-changelog.md` ("0.5.0 (2026-09-29)") for the complete list.
