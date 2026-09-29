@@ -198,4 +198,4 @@ The complete documentation suite lives in the [`docs/`](./docs) directory and se
 
 All development in this repository is strictly governed by the [Project Constitution](./PROJECT_CONSTITUTION.md).
 
-Proprietary & Confidential — All rights reserved.
+Copyright 2026 Hanumatrix. Licensed under the [Functional Source License 1.1 (FSL-1.1-ALv2)](./LICENSE): the source is public, and you may use, modify and redistribute it for any purpose **except** offering a product or service that competes with Sutradhar. Each release converts to the Apache License 2.0 two years after it is published. The same license applies to the published `sutradhar` npm package.
