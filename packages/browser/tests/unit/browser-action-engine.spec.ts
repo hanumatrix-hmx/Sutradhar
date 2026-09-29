@@ -14,7 +14,7 @@ import type { Page, Frame, ElementHandle } from 'puppeteer-core';
 import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
-import { existsSync, rmSync, mkdtempSync, mkdirSync, symlinkSync, writeFileSync, unlinkSync } from 'node:fs';
+import { existsSync, rmSync, mkdtempSync, mkdirSync, symlinkSync, writeFileSync, unlinkSync, utimesSync } from 'node:fs';
 
 /** A real, guaranteed-to-exist file path (this spec file itself) for tests that need
  *  `assertUploadPathAllowed`'s existence check to pass so they can exercise other logic. */
@@ -4499,5 +4499,359 @@ describe('@sutradhar/browser BrowserActionEngine FR2-06 caller-selector syntax p
     expect(r1.error).toContain('Invalid selector');
     expect(r2.error).toContain('Invalid selector');
     expect(r2.error).not.toContain('Duplicate');
+  });
+});
+
+describe('@sutradhar/browser BrowserActionEngine FR2-07 built-in post-conditions', () => {
+  const PNG_1x1 =
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+
+  /** A page whose main frame answers `evaluate` from a script, with a real `keyboard.press`. */
+  function keyPage(evaluate: (...args: any[]) => any, opts: { withPageEvaluate?: boolean } = {}) {
+    const mainFrame = {
+      isDetached: () => false,
+      evaluate: vi.fn().mockImplementation(evaluate),
+      childFrames: () => [],
+    };
+    const press = vi.fn().mockResolvedValue(undefined);
+    const pageEvaluate = vi.fn().mockResolvedValue(undefined);
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+      keyboard: { press },
+      ...(opts.withPageEvaluate ? { evaluate: pageEvaluate } : {}),
+    } as unknown as Page;
+    return { page, mainFrame, press, pageEvaluate };
+  }
+
+  const inputInfo = { isFrameElement: false, kind: 'element', desc: 'input#q', textEntry: true, readOnly: false, selStart: 0, selEnd: 0, valueLen: 0 };
+
+  function scriptedKeyPage(read: unknown) {
+    let n = 0;
+    return keyPage(() => {
+      n++;
+      if (n === 1) return Promise.resolve(inputInfo);
+      if (n === 2) return Promise.resolve(undefined);
+      return typeof read === 'function' ? (read as () => Promise<unknown>)() : Promise.resolve(read);
+    });
+  }
+
+  it('E1: press_key on a page with no mainFrame is unverifiable with a specific reason, presses once, and adds no delay', async () => {
+    const press = vi.fn().mockResolvedValue(undefined);
+    const page = { frames: vi.fn().mockReturnValue([]), keyboard: { press } } as unknown as Page;
+    const t0 = performance.now();
+    const result = await new BrowserActionEngine().executeAction(mockTab(page), { actionType: 'press_key', key: 'Enter', maxRetries: 0 });
+    expect(performance.now() - t0).toBeLessThan(500); // generous: the point is "no 1000ms observation timeout"
+    expect(result.success).toBe(true);
+    expect(result.verification?.evidence.tier).toBe('unverifiable');
+    expect(result.verification?.reason).toContain('no built-in');
+    expect(result.verification?.reason).toContain("could not observe the page's focused element");
+    expect(press).toHaveBeenCalledTimes(1);
+  });
+
+  it('E2: press_key with a delivered key whose value changed is verified, with the three stable checks', async () => {
+    const { page } = scriptedKeyPage({ delivered: true, onTarget: true, valueChanged: true, afterValueLen: 1, focusMoved: false });
+    const result = await new BrowserActionEngine().executeAction(mockTab(page), { actionType: 'press_key', key: 'a', maxRetries: 0 });
+    expect(result.verification?.evidence.tier).toBe('verified');
+    const byId = Object.fromEntries((result.verification?.evidence.checks ?? []).map((c) => [c.check, c.outcome]));
+    expect(byId['press_key.key-delivered']).toBe('pass');
+    expect(byId['press_key.effect']).toBe('pass');
+    expect(byId['press_key.focused-target']).toBe('pass');
+  });
+
+  it('E3: a key that was delivered but changed nothing is contradicted at 0.09, success stays true, and the key is pressed ONCE (no retry)', async () => {
+    const { page, press } = scriptedKeyPage({ delivered: true, onTarget: true, valueChanged: false, afterValueLen: 0, focusMoved: false });
+    const result = await new BrowserActionEngine().executeAction(mockTab(page), { actionType: 'press_key', key: 'a' }); // default maxRetries (2)
+    expect(result.success).toBe(true);
+    expect(result.retriesUsed).toBe(0);
+    expect(press).toHaveBeenCalledTimes(1);
+    expect(result.verification?.evidence.tier).toBe('contradicted');
+    expect(result.verification?.confidence).toBeCloseTo(0.09, 5);
+    expect(result.verification?.reason).toContain('value did not change');
+  });
+
+  it('E4: nothing focused (body) is unverifiable: "no element had focus"', async () => {
+    const { page } = keyPage(() => Promise.resolve({ kind: 'body' }));
+    const result = await new BrowserActionEngine().executeAction(mockTab(page), { actionType: 'press_key', key: 'a', maxRetries: 0 });
+    expect(result.verification?.evidence.tier).toBe('unverifiable');
+    expect(result.verification?.reason).toContain('no element had focus');
+  });
+
+  it('E5: a context-destroyed read after the press means the page navigated: verified', async () => {
+    const { page } = scriptedKeyPage(() => Promise.reject(new Error('Execution context was destroyed, most likely because of a navigation.')));
+    const result = await new BrowserActionEngine().executeAction(mockTab(page), { actionType: 'press_key', key: 'Enter', maxRetries: 0 });
+    expect(result.verification?.evidence.tier).toBe('verified');
+    expect(result.verification?.reason).toContain('navigated');
+  });
+
+  it('E6: a read that never resolves is bounded (monotonic clock) and reported not-run, and a pending dialog is named', async () => {
+    const { page } = scriptedKeyPage(() => new Promise(() => {}));
+    const t0 = performance.now();
+    const result = await new BrowserActionEngine().executeAction(mockTab(page), { actionType: 'press_key', key: 'a', maxRetries: 0 });
+    const elapsed = performance.now() - t0;
+    expect(elapsed).toBeLessThan(5000);
+    expect(result.success).toBe(true);
+    expect(result.verification?.evidence.tier).toBe('unverifiable');
+    expect(result.verification?.reason).toContain('the page did not answer');
+
+    // N6: the same hang, but a dialog opened after the press -> named, and dialogPending is the caller's cue.
+    const second = scriptedKeyPage(() => new Promise(() => {}));
+    const tab = mockTab(second.page);
+    let asked = 0;
+    (tab as any).getPendingDialog = () => (++asked > 1 ? { dialogType: 'alert', message: 'hi' } : undefined);
+    const r2 = await new BrowserActionEngine().executeAction(tab, { actionType: 'press_key', key: 'Enter', maxRetries: 0 });
+    expect(r2.verification?.reason).toContain('an alert dialog opened after the press');
+  });
+
+  it('E7: press_key observation never calls page.evaluate (only frame evaluate)', async () => {
+    const { page, pageEvaluate, mainFrame } = keyPage(
+      (() => {
+        let n = 0;
+        return () => {
+          n++;
+          if (n === 1) return Promise.resolve(inputInfo);
+          if (n === 2) return Promise.resolve(undefined);
+          return Promise.resolve({ delivered: true, onTarget: true, valueChanged: true, afterValueLen: 1, focusMoved: false });
+        };
+      })(),
+      { withPageEvaluate: true },
+    );
+    await new BrowserActionEngine().executeAction(mockTab(page), { actionType: 'press_key', key: 'a', maxRetries: 0 });
+    expect(pageEvaluate).not.toHaveBeenCalled();
+    expect(mainFrame.evaluate).toHaveBeenCalledTimes(3);
+  });
+
+  it('E8: focus is verified when the element is its own document\'s activeElement, contradicted (no retry) when it is not', async () => {
+    const good = mockHandle();
+    good.evaluate.mockResolvedValueOnce(false).mockResolvedValueOnce({ ok: true, observed: 'input#a', desc: 'input#a' });
+    const okPage = singleFramePage(() => Promise.resolve(good));
+    const ok = await new BrowserActionEngine().executeAction(mockTab(okPage), { actionType: 'focus', selector: '#a', maxRetries: 0 });
+    expect(ok.verification?.evidence.tier).toBe('verified');
+
+    const bad = mockHandle();
+    bad.evaluate.mockResolvedValueOnce(false).mockResolvedValueOnce({ ok: false, observed: 'body', desc: 'div#x' });
+    const badPage = singleFramePage(() => Promise.resolve(bad));
+    const r = await new BrowserActionEngine().executeAction(mockTab(badPage), { actionType: 'focus', selector: '#x' });
+    expect(r.success).toBe(true);
+    expect(r.verification?.evidence.tier).toBe('contradicted');
+    expect(r.verification?.reason).toContain('not div#x');
+    expect(bad.focus).toHaveBeenCalledTimes(1);
+  });
+
+  it('E9: touch_tap is verified when a trusted event arrived, contradicted (occluded) when not; tap runs once', async () => {
+    const good = mockHandle();
+    (good as any).tap = vi.fn().mockResolvedValue(undefined);
+    good.evaluate
+      .mockResolvedValueOnce(false) // assertNotStale
+      .mockResolvedValueOnce({ isHit: true, desc: 'button#t', topDesc: 'button#t' }) // arm
+      .mockResolvedValueOnce({ trusted: true, type: 'touchend' }); // read
+    const r1 = await new BrowserActionEngine().executeAction(mockTab(singleFramePage(() => Promise.resolve(good))), { actionType: 'touch_tap', selector: '#t', maxRetries: 0 });
+    expect(r1.verification?.evidence.tier).toBe('verified');
+
+    const bad = mockHandle();
+    (bad as any).tap = vi.fn().mockResolvedValue(undefined);
+    bad.evaluate
+      .mockResolvedValueOnce(false)
+      .mockResolvedValueOnce({ isHit: false, desc: 'button#t', topDesc: 'div#o' })
+      .mockResolvedValueOnce(null);
+    const r2 = await new BrowserActionEngine().executeAction(mockTab(singleFramePage(() => Promise.resolve(bad))), { actionType: 'touch_tap', selector: '#t' });
+    expect(r2.success).toBe(true);
+    expect(r2.verification?.evidence.tier).toBe('contradicted');
+    expect(r2.verification?.reason).toContain('occluded by div#o');
+    expect((bad as any).tap).toHaveBeenCalledTimes(1);
+  });
+
+  describe('E10: download_file evidence (real files in a temp dir)', () => {
+    let wsN = 0;
+    function cdp() {
+      const handlers = new Map<string, (e: any) => void>();
+      const waiters = new Map<string, Array<() => void>>();
+      return {
+        send: vi.fn().mockResolvedValue(undefined),
+        on: vi.fn((evt: string, cb: (e: any) => void) => {
+          handlers.set(evt, cb);
+          for (const w of waiters.get(evt) ?? []) w();
+          waiters.delete(evt);
+        }),
+        off: vi.fn((evt: string) => handlers.delete(evt)),
+        detach: vi.fn().mockResolvedValue(undefined),
+        emit: (evt: string, p: any) => handlers.get(evt)?.(p),
+        whenListening: (evt: string): Promise<void> =>
+          handlers.has(evt)
+            ? Promise.resolve()
+            : new Promise<void>((resolve, reject) => {
+                const t = setTimeout(() => reject(new Error('never listened')), 10000);
+                const l = waiters.get(evt) ?? [];
+                l.push(() => {
+                  clearTimeout(t);
+                  resolve();
+                });
+                waiters.set(evt, l);
+              }),
+      };
+    }
+    async function run(prepare: (dir: string) => void, ws?: string) {
+      const dir = mkdtempSync(path.join(os.tmpdir(), 'fr2-07-dl-'));
+      try {
+        prepare(dir);
+        const handle = mockHandle();
+        handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true);
+        const page = singleFramePage(() => Promise.resolve(handle));
+        const client = cdp();
+        (page as any).browser = vi.fn().mockReturnValue({
+          wsEndpoint: vi.fn().mockReturnValue(ws ?? `ws://127.0.0.1:${process.pid}-${Date.now()}-${wsN++}`),
+          target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+        });
+        const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+        const p = engine.executeAction(mockTab(page), { actionType: 'download_file', selector: '#dl', downloadDir: dir, maxRetries: 0 });
+        await client.whenListening('Browser.downloadProgress');
+        client.emit('Browser.downloadWillBegin', { guid: 'g', suggestedFilename: 'report.pdf' });
+        client.emit('Browser.downloadProgress', { guid: 'g', state: 'completed', filePath: path.join(dir, 'report.pdf') });
+        return { result: await p, dir };
+      } finally {
+        rmSync(dir, { recursive: true, force: true });
+      }
+    }
+
+    it('a real 10-byte file is verified and its size is reported', async () => {
+      const { result } = await run((d) => writeFileSync(path.join(d, 'report.pdf'), '0123456789'));
+      expect(result.verification?.evidence.tier).toBe('verified');
+      expect(result.outputData?.downloadedSizeBytes).toBe(10);
+    });
+    it('a 0-byte file is contradicted, success stays true', async () => {
+      const { result } = await run((d) => writeFileSync(path.join(d, 'report.pdf'), ''));
+      expect(result.success).toBe(true);
+      expect(result.verification?.evidence.tier).toBe('contradicted');
+      expect(result.verification?.reason).toContain('0 bytes');
+    });
+    it('a missing file is contradicted', async () => {
+      const { result } = await run(() => {});
+      expect(result.success).toBe(true);
+      expect(result.verification?.evidence.tier).toBe('contradicted');
+      expect(result.verification?.reason).toContain('no file exists');
+    });
+    it('a stale (one hour old) file is contradicted: "predates"', async () => {
+      const { result } = await run((d) => {
+        const f = path.join(d, 'report.pdf');
+        writeFileSync(f, '0123456789');
+        const old = new Date(Date.now() - 3_600_000);
+        utimesSync(f, old, old);
+      });
+      expect(result.verification?.evidence.tier).toBe('contradicted');
+      expect(result.verification?.reason).toContain('predates');
+    });
+    it('a remote browser endpoint is unverifiable, never a false pass or fail', async () => {
+      const { result } = await run((d) => writeFileSync(path.join(d, 'report.pdf'), '0123456789'), 'ws://10.1.2.3:9222/x');
+      expect(result.verification?.evidence.tier).toBe('unverifiable');
+      expect(result.verification?.reason).toContain('another host');
+    });
+  });
+
+  it('E11: wait_for_selector evidence comes from its own output: visible verified, a vacuous hidden (typo) unverifiable', async () => {
+    const handle = mockHandle();
+    (handle as any).evaluate = vi.fn().mockResolvedValue(true);
+    const dollar = vi.fn().mockResolvedValue(handle);
+    const mainFrame = { isDetached: () => false, $: dollar } as unknown as Frame;
+    const page = { frames: vi.fn().mockReturnValue([mainFrame]), mainFrame: vi.fn().mockReturnValue(mainFrame) } as unknown as Page;
+    const r1 = await new BrowserActionEngine().executeAction(mockTab(page), { actionType: 'wait_for_selector', selector: '#t', maxRetries: 0 });
+    expect(r1.success).toBe(true);
+    expect(r1.verification?.evidence.tier).toBe('verified');
+    expect(r1.verification?.evidence.checks[0]).toMatchObject({ check: 'wait_for_selector.state-matched', outcome: 'pass', expected: 'visible' });
+
+    const none = vi.fn().mockResolvedValue(null);
+    const emptyFrame = { isDetached: () => false, $: none, $$: vi.fn().mockResolvedValue([]), evaluate: vi.fn().mockResolvedValue(false) } as unknown as Frame;
+    const emptyPage = { frames: vi.fn().mockReturnValue([emptyFrame]), mainFrame: vi.fn().mockReturnValue(emptyFrame) } as unknown as Page;
+    const r2 = await new BrowserActionEngine().executeAction(mockTab(emptyPage), { actionType: 'wait_for_selector', selector: '#typo', state: 'hidden', timeoutMs: 500, maxRetries: 0 });
+    expect(r2.success).toBe(true);
+    expect(r2.verification?.evidence.tier).toBe('unverifiable');
+    expect(r2.verification?.reason).toContain('vacuously');
+  });
+
+  it('E12: take_screenshot: a valid PNG is unverifiable-by-design with png-well-formed pass; garbage is contradicted', async () => {
+    const ok = { frames: vi.fn().mockReturnValue([]), screenshot: vi.fn().mockResolvedValue(PNG_1x1) } as unknown as Page;
+    const r1 = await new BrowserActionEngine().executeAction(mockTab(ok), { actionType: 'take_screenshot', maxRetries: 0 });
+    expect(r1.verification?.evidence.tier).toBe('unverifiable');
+    expect(r1.verification?.evidence.checks[0]).toMatchObject({ check: 'screenshot.png-well-formed', outcome: 'pass', observed: '1x1' });
+    const bad = { frames: vi.fn().mockReturnValue([]), screenshot: vi.fn().mockResolvedValue('bm90IGEgcG5n') } as unknown as Page;
+    const r2 = await new BrowserActionEngine().executeAction(mockTab(bad), { actionType: 'take_screenshot', maxRetries: 0 });
+    expect(r2.success).toBe(true);
+    expect(r2.verification?.evidence.tier).toBe('contradicted');
+    expect(r2.verification?.reason).toContain('not a valid PNG');
+  });
+
+  describe('E13: navigate identity via CDP (loaderId + history)', () => {
+    function navPage(loaders: string[], opts: { status?: number; noCdp?: boolean } = {}) {
+      let frameTreeCalls = 0;
+      const send = vi.fn().mockImplementation(async (method: string) => {
+        if (method === 'Page.getNavigationHistory') return { currentIndex: 0, entries: [{ id: 1 }] };
+        if (method === 'Page.getFrameTree') return { frameTree: { frame: { loaderId: loaders[Math.min(frameTreeCalls++, loaders.length - 1)] } } };
+        return {};
+      });
+      const mainFrame = { isDetached: () => false, evaluate: vi.fn().mockResolvedValue(opts.status ?? 200), childFrames: () => [] };
+      const page: any = {
+        frames: vi.fn().mockReturnValue([mainFrame]),
+        mainFrame: vi.fn().mockReturnValue(mainFrame),
+        url: () => 'https://example.com',
+        ...(opts.noCdp ? {} : { createCDPSession: vi.fn().mockResolvedValue({ send, detach: vi.fn().mockResolvedValue(undefined) }) }),
+      };
+      return page as Page;
+    }
+    it('a changed loader is verified; an unchanged loader at an unchanged URL is contradicted; a 404 is contradicted', async () => {
+      const tab1 = mockTab(navPage(['L1', 'L2']));
+      (tab1 as any).navigate = async () => { (tab1 as any).url = 'https://example.com/next'; return {}; };
+      const r1 = await new BrowserActionEngine().executeAction(tab1, { actionType: 'navigate', url: 'https://example.com/next', maxRetries: 0 });
+      expect(r1.verification?.evidence.tier).toBe('verified');
+
+      const r2 = await new BrowserActionEngine().executeAction(mockTab(navPage(['L1', 'L1'])), { actionType: 'navigate', url: 'https://example.com/other', maxRetries: 0 });
+      expect(r2.success).toBe(true);
+      expect(r2.verification?.evidence.tier).toBe('contradicted');
+
+      const tab3 = mockTab(navPage(['L1', 'L2'], { status: 404 }));
+      const r3 = await new BrowserActionEngine().executeAction(tab3, { actionType: 'navigate', url: 'https://example.com/missing', maxRetries: 0 });
+      expect(r3.verification?.evidence.tier).toBe('contradicted');
+      expect(r3.verification?.reason).toContain('HTTP 404');
+    });
+    it('a page with no CDP session is unverifiable: baseline could not be captured', async () => {
+      const r = await new BrowserActionEngine().executeAction(mockTab(navPage(['L1'], { noCdp: true })), { actionType: 'navigate', url: 'https://example.com/x', maxRetries: 0 });
+      expect(r.success).toBe(true);
+      expect(r.verification?.evidence.tier).toBe('unverifiable');
+      expect(r.verification?.reason).toContain("baseline couldn't be captured");
+    });
+  });
+
+  it('E14: the duplicate-guard rejection carries an action-failed verification', async () => {
+    const engine = new BrowserActionEngine();
+    const tab = mockTab(singleFramePage(() => Promise.resolve(null)));
+    await engine.executeAction(tab, { actionType: 'click', selector: '#dup', maxRetries: 0, timeoutMs: 1000 });
+    const second = await engine.executeAction(tab, { actionType: 'click', selector: '#dup', maxRetries: 0, verificationSpec: { expectedElementText: 'x' } });
+    expect(second.success).toBe(false);
+    expect(second.error).toContain('Duplicate');
+    expect(second.verification?.evidence.tier).toBe('action-failed');
+    expect(second.verification?.reason.startsWith('Action failed: Duplicate')).toBe(true);
+    expect(second.verification?.evidence.checks).toEqual([
+      { check: 'expect.text', outcome: 'not-run', detail: 'the action failed; expectations were not evaluated' },
+    ]);
+  });
+
+  it('E15: verificationSpec flows through the success path: a self-verifying click with shouldUrlChange:false and an unchanged URL is verified with expect.urlChanged pass', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true);
+    const result = await new BrowserActionEngine().executeAction(mockTab(singleFramePage(() => Promise.resolve(handle))), {
+      actionType: 'click',
+      selector: '#b',
+      maxRetries: 0,
+      verificationSpec: { shouldUrlChange: false },
+    });
+    expect(result.verification?.evidence.tier).toBe('verified');
+    expect(result.verification?.evidence.checks.find((c) => c.check === 'expect.urlChanged')).toMatchObject({ outcome: 'pass' });
+  });
+
+  it('E16: every verification produced above survives a JSON round trip unchanged', async () => {
+    const { page } = scriptedKeyPage({ delivered: true, onTarget: true, valueChanged: false, afterValueLen: 0, focusMoved: false });
+    const r = await new BrowserActionEngine().executeAction(mockTab(page), { actionType: 'press_key', key: 'a', maxRetries: 0 });
+    expect(JSON.parse(JSON.stringify(r.verification))).toEqual(r.verification);
+    const failed = await new BrowserActionEngine().executeAction(mockTab(singleFramePage(() => Promise.reject(new Error('x')))), { actionType: 'click', selector: '#z', maxRetries: 0 });
+    expect(JSON.parse(JSON.stringify(failed.verification))).toEqual(failed.verification);
+    expect(failed.verification?.evidence.tier).toBe('action-failed');
   });
 });

@@ -22,7 +22,7 @@ import type {
   VerificationResultDto,
   VerificationTier,
 } from '../actions/action-types.js';
-import { EXPECT_TEXT_TIMEOUT_MS, bounded, capEvidence, pendingDialogType } from './post-conditions.js';
+import { EXPECT_TEXT_TIMEOUT_MS, aDialog, bounded, capEvidence, pendingDialogType } from './post-conditions.js';
 
 export type { VerificationSpec, VerificationResultDto };
 
@@ -155,7 +155,7 @@ export async function pageContainsVisibleText(tab: IBrowserTab, text: string): P
   if (dialog) {
     return {
       result: 'unavailable',
-      detail: `a ${dialog} dialog is open (see dialogPending); the page can't be inspected until it's handled`,
+      detail: `${aDialog(dialog)} is open (see dialogPending); the page can't be inspected until it's handled`,
     };
   }
   const page = tab.page;

@@ -57,6 +57,11 @@ export interface ObservedTab {
   getPendingDialog?(): { dialogType: string; message?: string } | undefined;
 }
 
+/** `an alert dialog` / `a confirm dialog` (used inside reasons). */
+export function aDialog(type: string): string {
+  return `${/^[aeiou]/i.test(type) ? 'an' : 'a'} ${type} dialog`;
+}
+
 /** The type of the tab's currently-pending dialog, or undefined (also when the tab can't say). */
 export function pendingDialogType(tab: ObservedTab | undefined): string | undefined {
   try {
@@ -92,6 +97,12 @@ export function bounded<T>(p: Promise<T>, ms: number): Promise<BoundedResult<T>>
   return Promise.race([guarded, timeout]).finally(() => {
     if (timer) clearTimeout(timer);
   });
+}
+
+/** Copies a decider's verdict (checks + conclusion) into a recorder. */
+export function applyVerdict(rec: PostConditionRecorder, v: BuiltInVerdict): void {
+  for (const c of v.checks) rec.check(c);
+  rec.verdict(v.outcome, v.reason);
 }
 
 /** Accumulates the checks and the conclusion of ONE dispatch attempt (fresh per attempt). */
@@ -196,6 +207,22 @@ export function describeElementInPage(el: Element | null): string {
 
 /** A descend-to-the-frame helper result: the frame owning the focused/pointed element. */
 type FrameLike = Pick<Frame, 'evaluate' | 'childFrames'> & Partial<Pick<Frame, 'isDetached'>>;
+
+/**
+ * True only when the page hands back a REAL frame: one with both `evaluate` and `childFrames`
+ * (frame descent needs the latter). A partial double (a mock exposing only `evaluate`) is treated
+ * as "no frame API", so no observation is attempted and no renderer call is made.
+ */
+export function hasFrameApi(page: Page | undefined): page is Page {
+  if (!page || typeof page.mainFrame !== 'function') return false;
+  let frame: Frame | undefined;
+  try {
+    frame = page.mainFrame();
+  } catch {
+    return false;
+  }
+  return !!frame && typeof frame.evaluate === 'function' && typeof frame.childFrames === 'function';
+}
 
 /** The frame whose `<iframe>` element is marked (via `predicate` evaluated on its owner element). */
 async function matchChildFrame(frame: FrameLike, predicate: (el: Element) => boolean): Promise<FrameLike | undefined> {
@@ -339,10 +366,10 @@ export function decideKeyVerdict(obs: KeyObservation): BuiltInVerdict {
   }
   if (obs.postTimedOut || obs.postError !== undefined || !post) {
     if (obs.dialogAfter) {
-      checks.push({ check: 'press_key.key-delivered', outcome: 'not-run', detail: `a ${obs.dialogAfter} dialog opened` });
+      checks.push({ check: 'press_key.key-delivered', outcome: 'not-run', detail: `${aDialog(obs.dialogAfter)} opened` });
       return done(
         'not-run',
-        `a ${obs.dialogAfter} dialog opened after the press (see dialogPending); the page can't be inspected until it's handled`,
+        `${aDialog(obs.dialogAfter)} opened after the press (see dialogPending); the page can't be inspected until it's handled`,
       );
     }
     const why = obs.postTimedOut
@@ -559,7 +586,7 @@ export function readKeyObservationInPage(token: string, requested: string): KeyP
 export async function observeFocusForKey(tab: ObservedTab): Promise<KeyPre> {
   if (pendingDialogType(tab)) return { skipped: 'dialog' };
   const page = tab.page;
-  if (!page || typeof page.mainFrame !== 'function') return { skipped: 'no-frame-api' };
+  if (!hasFrameApi(page)) return { skipped: 'no-frame-api' };
   const token = `__sdKey_${Math.random().toString(36).slice(2)}`;
   const run = async (): Promise<KeyPre> => {
     let frame: FrameLike = page.mainFrame();
@@ -581,6 +608,12 @@ export async function observeFocusForKey(tab: ObservedTab): Promise<KeyPre> {
   const r = await bounded(run(), OBSERVE_BEFORE_TIMEOUT_MS);
   if (!r.ok) return { error: r.timedOut ? `no answer within ${OBSERVE_BEFORE_TIMEOUT_MS}ms` : (r.error ?? 'unknown error') };
   return r.value;
+}
+
+/** Best-effort removal of an armed key listener when the press itself threw (never throws). */
+export async function disposeKeyObservation(pre: KeyPre): Promise<void> {
+  if (!pre.frame || !pre.token || pre.target?.kind !== 'element') return;
+  await bounded(pre.frame.evaluate(readKeyObservationInPage, pre.token, ''), OBSERVE_AFTER_TIMEOUT_MS);
 }
 
 /** Reads the armed observation back after the press and returns the verdict inputs. */
@@ -628,8 +661,8 @@ export function decideFocusVerdict(o: FocusObservation): BuiltInVerdict {
   if (o.dialog) {
     return {
       outcome: 'not-run',
-      reason: `a ${o.dialog} dialog is open (see dialogPending)`,
-      checks: [{ check: 'focus.active-element', outcome: 'not-run', detail: `a ${o.dialog} dialog is open` }],
+      reason: `${aDialog(o.dialog)} is open (see dialogPending)`,
+      checks: [{ check: 'focus.active-element', outcome: 'not-run', detail: `${aDialog(o.dialog)} is open` }],
     };
   }
   if (o.timedOut || o.error !== undefined || o.ok === undefined) {
@@ -719,8 +752,8 @@ export function decideTouchVerdict(o: TouchObservation): BuiltInVerdict {
   if (o.dialog) {
     return {
       outcome: 'not-run',
-      reason: `a ${o.dialog} dialog is open (see dialogPending)`,
-      checks: [{ check: 'touch_tap.touch-delivered', outcome: 'not-run', detail: `a ${o.dialog} dialog is open` }],
+      reason: `${aDialog(o.dialog)} is open (see dialogPending)`,
+      checks: [{ check: 'touch_tap.touch-delivered', outcome: 'not-run', detail: `${aDialog(o.dialog)} is open` }],
     };
   }
   if (o.timedOut || o.error !== undefined || o.isHit === undefined) {
@@ -995,7 +1028,7 @@ export function decideNavigationVerdict(o: NavObservation): BuiltInVerdict {
   }
   const before = o.before;
   if (o.dialog) {
-    const reason = `a ${o.dialog} dialog is open (see dialogPending)`;
+    const reason = `${aDialog(o.dialog)} is open (see dialogPending)`;
     const checks: EvidenceCheck[] = [{ check: doc, outcome: 'not-run', detail: reason }];
     if (o.after && (t === 'go_back' || t === 'go_forward')) {
       checks.push({ check: `${t}.history-index`, outcome: 'not-run', expected: before.index + (t === 'go_back' ? -1 : 1), observed: o.after.index });
@@ -1211,7 +1244,7 @@ export function decidePointVerdict(o: PointObservation): BuiltInVerdict {
     observed,
   });
   if (o.dialogAfter) {
-    const reason = `a ${o.dialogAfter} dialog opened (see dialogPending); delivery couldn't be read`;
+    const reason = `${aDialog(o.dialogAfter)} opened (see dialogPending); delivery couldn't be read`;
     return { outcome: 'not-run', reason, checks: [hitCheck('not-run', 'dialog', reason)] };
   }
   if (o.skipped || o.error !== undefined) {
@@ -1271,7 +1304,7 @@ export function decideDragVerdict(o: PointObservation): BuiltInVerdict {
     return { outcome: 'not-run', reason, checks: [c('down-delivered', 'not-run', 'in-frame')] };
   }
   if (o.dialogAfter) {
-    const reason = `a ${o.dialogAfter} dialog opened (see dialogPending); delivery couldn't be read`;
+    const reason = `${aDialog(o.dialogAfter)} opened (see dialogPending); delivery couldn't be read`;
     return { outcome: 'not-run', reason, checks: [c('down-delivered', 'not-run', 'dialog')] };
   }
   if (o.skipped || o.error !== undefined) {
@@ -1410,7 +1443,7 @@ export interface PointArm {
 export async function observePoint(tab: ObservedTab, x: number, y: number, events: string[]): Promise<PointArm> {
   if (pendingDialogType(tab)) return { skipped: 'dialog' };
   const page = tab.page;
-  if (!page || typeof page.mainFrame !== 'function') return { skipped: 'no-frame-api' };
+  if (!hasFrameApi(page)) return { skipped: 'no-frame-api' };
   const token = `__sdPt_${Math.random().toString(36).slice(2)}`;
   const run = async (): Promise<PointArm> => {
     let frame: FrameLike = page.mainFrame();
@@ -1641,7 +1674,7 @@ export interface UploadArm {
 export async function observeUploadTargets(tab: ObservedTab): Promise<UploadArm> {
   if (pendingDialogType(tab)) return { skipped: 'dialog' };
   const page = tab.page;
-  if (!page || typeof page.mainFrame !== 'function') return { skipped: 'no-frame-api' };
+  if (!hasFrameApi(page)) return { skipped: 'no-frame-api' };
   const token = `__sdUp_${Math.random().toString(36).slice(2)}`;
   const frame: FrameLike = page.mainFrame();
   const r = await bounded(frame.evaluate(armUploadListenerInPage, token), OBSERVE_BEFORE_TIMEOUT_MS);
