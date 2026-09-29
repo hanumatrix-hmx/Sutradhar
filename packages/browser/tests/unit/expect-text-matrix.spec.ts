@@ -421,3 +421,83 @@ describe('FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mech
     expect(r.result).toBe('unavailable');
   });
 });
+
+// ---------------------------------------------------------------------------------------------
+// Aggregation (audit-2 A2-2): one hung frame must not mask text another frame has.
+// ---------------------------------------------------------------------------------------------
+
+describe('FR2-07 fix-2 expect.text: aggregation across frames', () => {
+  const textDoc = (t: string): FDoc => {
+    const d = makeDoc();
+    page(d, [el(d, 'p', {}, [text(d, t)])]);
+    return d;
+  };
+  /** A page: a main frame plus N child frames, every child's frame element rendered. */
+  function world(childSpecs: FrameOpts[], mainText = TOKEN) {
+    const mainDoc = makeDoc();
+    const iframes = childSpecs.map(() => el(mainDoc, 'iframe'));
+    page(mainDoc, [el(mainDoc, 'p', {}, [text(mainDoc, mainText)]), ...iframes]);
+    const main = mkFrame(mainDoc);
+    const kids = childSpecs.map((o, i) => mkFrame(textDoc('child text ' + i), { parent: main, element: iframes[i]!, ...o }));
+    return { main, kids, tab: tabOf(pageOf(main, kids)) };
+  }
+
+  it('found in the main frame although 8 cross-origin frames never answer (the audit-2 SDK repro): found, without waiting for them', async () => {
+    const w = world(Array.from({ length: 8 }, () => ({ hang: true })));
+    const t0 = performance.now();
+    const r = await pageContainsVisibleText(w.tab, TOKEN);
+    const elapsed = performance.now() - t0;
+    expect(r.result).toBe('found');
+    // generous bound: the per-frame bound is 1500 ms and must NOT have been waited out
+    expect(elapsed).toBeLessThan(1200);
+  });
+
+  it('found in a LATER frame while an EARLIER frame hangs', async () => {
+    const mainDoc = makeDoc();
+    const i1 = el(mainDoc, 'iframe');
+    const i2 = el(mainDoc, 'iframe');
+    page(mainDoc, [i1, i2]);
+    const main = mkFrame(mainDoc);
+    const hung = mkFrame(textDoc('x'), { parent: main, element: i1, hang: true });
+    const good = mkFrame(textDoc(TOKEN), { parent: main, element: i2 });
+    const t0 = performance.now();
+    const r = await pageContainsVisibleText(tabOf(pageOf(main, [hung, good])), TOKEN);
+    expect(r.result).toBe('found');
+    expect(performance.now() - t0).toBeLessThan(1200);
+  });
+
+  it('found even if another frame REJECTS', async () => {
+    const w = world([{ fail: true }, {}], 'nothing');
+    const good = w.kids[1]!;
+    good._doc.childNodes.length = 0;
+    page(good._doc, [el(good._doc, 'p', {}, [text(good._doc, TOKEN)])]);
+    expect((await pageContainsVisibleText(w.tab, TOKEN)).result).toBe('found');
+  });
+
+  it('text absent everywhere but one frame hung: UNAVAILABLE naming how many answered (never not-found)', async () => {
+    const w = world([{ hang: true }, {}], 'nothing here');
+    const r = await pageContainsVisibleText(w.tab, TOKEN);
+    expect(r.result).toBe('unavailable');
+    expect(r.detail).toContain('only 2 of 3 frames answered');
+    expect(r.detail).toContain('1 did not answer within 1500ms');
+  }, 10000);
+
+  it('text absent and every frame answered: not-found', async () => {
+    const w = world([{}, {}], 'nothing here');
+    expect((await pageContainsVisibleText(w.tab, TOKEN)).result).toBe('not-found');
+  });
+
+  it('a hung frame leaves no unhandled rejection behind', async () => {
+    const unhandled: unknown[] = [];
+    const on = (e: unknown): void => void unhandled.push(e);
+    process.on('unhandledRejection', on);
+    try {
+      const w = world([{ hang: true }, { fail: true }], 'nothing here');
+      await pageContainsVisibleText(w.tab, TOKEN);
+      await new Promise((r) => setTimeout(r, 30));
+      expect(unhandled).toEqual([]);
+    } finally {
+      process.off('unhandledRejection', on);
+    }
+  }, 10000);
+});

@@ -239,7 +239,7 @@ describe('FR2-07 ExecutionVerifier: the verification contract', () => {
 
   it('V12b: some frames throwing and none finding the text is unavailable, never not-found', async () => {
     const r = await pageContainsVisibleText(tab({ url: 'u', page: pageWithFrames(false, 'throw') }), 'x');
-    expect(r).toEqual({ result: 'unavailable', detail: '1 of 2 frames could not be inspected' });
+    expect(r).toEqual({ result: 'unavailable', detail: 'only 1 of 2 frames answered (1 failed)' });
     const found = await pageContainsVisibleText(tab({ url: 'u', page: pageWithFrames('throw', true) }), 'x');
     expect(found.result).toBe('found');
   });

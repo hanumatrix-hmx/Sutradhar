@@ -328,6 +328,9 @@ export function frameElementRendered(el: Element): boolean {
   return r.width > 0 && r.height > 0 && el.getClientRects().length > 0;
 }
 
+/** What one frame contributed to an `expect.text` check. */
+type FrameOutcome = 'found' | 'absent' | 'hung' | 'failed' | 'unjudged';
+
 /** Verdict on whether a frame's document is shown, judged from the parent side. */
 type FrameShown = 'shown' | 'hidden' | 'unjudgeable';
 
@@ -371,7 +374,9 @@ async function frameShown(f: Frame, main: Frame | undefined, memo: Map<Frame, Pr
  * Best-effort, BOUNDED check that `text` appears in the page's RENDERED text ({@link EXPECT_TEXT_CONTRACT})
  * — any live frame (main first), including open shadow roots. Never uses `page.evaluate` (a pending dialog
  * freezes the main thread: it would hang until the 30 s auto-dismiss), so every evaluation goes through a
- * frame and the whole loop races {@link EXPECT_TEXT_TIMEOUT_MS}.
+ * frame. Each frame is bounded by {@link EXPECT_TEXT_TIMEOUT_MS} on its own; `found` returns as soon as ANY
+ * frame confirms (an unrelated out-of-process frame that never answers cannot mask text the main frame has);
+ * `not-found` needs every frame to have answered, otherwise `unavailable` says how many did.
  */
 export async function pageContainsVisibleText(tab: IBrowserTab, text: string): Promise<VisibleTextResult> {
   const dialog = pendingDialogType(tab);
@@ -391,34 +396,43 @@ export async function pageContainsVisibleText(tab: IBrowserTab, text: string): P
     const main = typeof page.mainFrame === 'function' ? page.mainFrame() : undefined;
     frames.sort((a, b) => Number(b === main) - Number(a === main));
     const shown = new Map<Frame, Promise<FrameShown>>();
-    let failed = 0;
-    let unjudged = 0;
-    let anyFound = false;
-    await Promise.all(
-      frames.map(async (f) => {
-        try {
+    // One frame: judged from the parent side first (a hidden frame is answered without entering it: an
+    // out-of-process frame that is hidden may never answer an evaluate), then asked, all under its OWN bound.
+    const inspect = async (f: Frame): Promise<FrameOutcome> => {
+      const r = await bounded(
+        (async (): Promise<FrameOutcome> => {
           const s = await frameShown(f, main, shown);
-          if (s === 'hidden') return;
-          if (s === 'unjudgeable') {
-            unjudged++;
-            return;
-          }
-          if (await f.evaluate(visibleTextContainsInPage, text)) anyFound = true;
-        } catch {
-          failed++;
-        }
-      }),
-    );
-    if (anyFound) return { result: 'found' };
-    if (failed + unjudged > 0) {
-      return {
-        result: 'unavailable',
-        detail: `${failed + unjudged} of ${frames.length} frames could not be inspected${unjudged > 0 ? ` (${unjudged} could not be judged as shown)` : ''}`,
-      };
-    }
-    return { result: 'not-found' };
+          if (s === 'hidden') return 'absent';
+          if (s === 'unjudgeable') return 'unjudged';
+          return (await f.evaluate(visibleTextContainsInPage, text)) ? 'found' : 'absent';
+        })(),
+        EXPECT_TEXT_TIMEOUT_MS,
+      );
+      if (r.ok) return r.value;
+      return r.timedOut ? 'hung' : 'failed';
+    };
+    // 'found' short-circuits the moment ANY frame confirms; 'not-found' needs EVERY frame to have answered.
+    return new Promise<VisibleTextResult>((resolve) => {
+      const tally: Record<FrameOutcome, number> = { found: 0, absent: 0, hung: 0, failed: 0, unjudged: 0 };
+      let pending = frames.length;
+      for (const f of frames) {
+        void inspect(f).then((o) => {
+          tally[o]++;
+          if (o === 'found') return resolve({ result: 'found' });
+          if (--pending > 0) return;
+          if (tally.absent === frames.length) return resolve({ result: 'not-found' });
+          const why = [
+            tally.hung > 0 ? `${tally.hung} did not answer within ${EXPECT_TEXT_TIMEOUT_MS}ms` : '',
+            tally.failed > 0 ? `${tally.failed} failed` : '',
+            tally.unjudged > 0 ? `${tally.unjudged} could not be judged as shown` : '',
+          ].filter(Boolean);
+          resolve({ result: 'unavailable', detail: `only ${tally.absent} of ${frames.length} frames answered (${why.join(', ')})` });
+        });
+      }
+    });
   };
-  const r = await bounded(run(), EXPECT_TEXT_TIMEOUT_MS);
+  // backstop only: every frame is already bounded on its own
+  const r = await bounded(run(), EXPECT_TEXT_TIMEOUT_MS + 500);
   if (r.ok) return r.value;
   return {
     result: 'unavailable',
