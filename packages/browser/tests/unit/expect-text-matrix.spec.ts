@@ -177,6 +177,16 @@ describe('FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x p
     expect(runIn(doc, visibleTextContainsInPage, TOKEN)).toBe(false);
   });
 
+  it('text that is a DIRECT child of a closed <details> is excluded (checkVisibility() is true for the details itself); its <summary> text and an open details count', () => {
+    const closed = makeDoc();
+    page(closed, [el(closed, 'details', {}, [text(closed, 'DIRECT-' + TOKEN), el(closed, 'summary', {}, [text(closed, 'SUMMARY-' + TOKEN)])], { open: false })]);
+    expect(runIn(closed, visibleTextContainsInPage, 'DIRECT-' + TOKEN)).toBe(false);
+    expect(runIn(closed, visibleTextContainsInPage, 'SUMMARY-' + TOKEN)).toBe(true);
+    const open = makeDoc();
+    page(open, [el(open, 'details', {}, [text(open, 'DIRECT-' + TOKEN)], { open: true })]);
+    expect(runIn(open, visibleTextContainsInPage, 'DIRECT-' + TOKEN)).toBe(true);
+  });
+
   it('a visibility:visible child inside a visibility:hidden parent IS rendered (override), its hidden sibling is not', () => {
     const doc = makeDoc();
     page(doc, [

@@ -239,7 +239,11 @@ export function visibleTextContainsInPage(t: string): boolean {
           if (typeof (e as Element & { checkVisibility?: unknown }).checkVisibility !== 'function') {
             throw new Error('Element.checkVisibility is unavailable in this browser; cannot judge rendering');
           }
-          ok = e.checkVisibility() && styleOf(e).contentVisibility !== 'hidden';
+          // a closed <details> skips everything but its <summary>; text that is a direct child of the <details>
+          // (or of a display:contents child of it) is never in the summary, and checkVisibility() is true for the
+          // <details> itself, so it is excluded here
+          const closedDetails = e.tagName === 'DETAILS' && (e as HTMLDetailsElement).open === false;
+          ok = !closedDetails && e.checkVisibility() && styleOf(e).contentVisibility !== 'hidden';
         }
       }
     }

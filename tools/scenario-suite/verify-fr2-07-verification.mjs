@@ -23,6 +23,8 @@ import { createRequire } from 'node:module';
 import { spawn, spawnSync } from 'node:child_process';
 import { startFr207Server } from './fixtures/fr2-07-server.mjs';
 import { startDownloadServer } from './fixtures/fr2-05-download-server.mjs';
+import { matrixCases } from './fixtures/fr2-07-matrix.mjs';
+import { oracleTruth } from './fixtures/fr2-07-oracle.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.join(here, '..', '..');
@@ -40,6 +42,18 @@ const require_ = createRequire(path.join(repoRoot, 'packages', 'browser', 'packa
 const puppeteer = require_('puppeteer-core');
 
 const delay = (ms) => new Promise((r) => setTimeout(r, ms));
+// audit-2 regression shapes replayed on the CLI and SDK surfaces (the MCP/bundle surfaces run the whole generated matrix)
+const SURFACE_MATRIX_IDS = [
+  'iframe-cross-origin|visibility-hidden|inner',
+  'iframe-same-origin|visibility-hidden|inner',
+  'iframe-sandboxed|visibility-hidden|inner',
+  'iframe-cross-origin|visibility-hidden|outer',
+  'iframe-cross-origin|display-none|inner',
+  'iframe-cross-origin|none|-',
+  'shadow-bare-text|none|-',
+  'shadow-bare-text|display-none|outer',
+  'deep-dom|display-none|outer',
+];
 const results = []; // {surface, case, expected, observed, observerTruth, verification, pass}
 const baselineRows = [];
 let overallOk = true;
@@ -846,6 +860,94 @@ async function runMcpCases(surface, serverPath, ctx) {
     });
   }
 
+  // ── fix-2: the GENERATED expect.text matrix (hiding mechanism x placement), each verdict compared with an
+  //    INDEPENDENT observer (fixtures/fr2-07-oracle.mjs) and the case label compared with the observer too ─────
+  {
+    const all = matrixCases();
+    // the bundle runs the same code path; a deterministic third of the matrix is enough there
+    const list = surface === 'bundle' ? all.filter((c, i) => i % 3 === 0) : all;
+    let seq = 0;
+    const tokFor = () => `QZ${String(++seq).padStart(3, '0')}K${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+    const pageFor = async (url) => {
+      const t0 = performance.now();
+      for (;;) {
+        const p = (await observer.pages()).find((x) => x.url() === url);
+        if (p) return p;
+        if (performance.now() - t0 > 8000) throw new Error('observer never saw ' + url);
+        await delay(50);
+      }
+    };
+    const settle = async (p, framesExpected) => {
+      await p.waitForFunction(() => window.__mx === 1 && document.readyState === 'complete', { timeout: 10000 });
+      const t0 = performance.now();
+      while (p.frames().length < 1 + framesExpected && performance.now() - t0 < 8000) await delay(50);
+    };
+    /** Observer truth, re-read until no frame is "unknown/hung" unless the case EXPECTS a hung frame. */
+    const truthOf = async (p, tok, expectText, mode, allowHung) => {
+      for (let attempt = 0; ; attempt++) {
+        let t;
+        if (mode === 'innerText') {
+          const found = await p.evaluate((s) => document.body.innerText.includes(s), expectText);
+          t = { found, frames: [], hung: 0 };
+        } else t = await oracleTruth(p, tok);
+        if (allowHung || t.hung === 0 || attempt >= 3) return t;
+        await delay(400);
+      }
+    };
+    const runOne = async (id, opts) => {
+      try {
+        await runOneInner(id, opts);
+      } finally {
+        server.releaseHeld(); // un-hang any frame parked in the held sync XHR before the next case
+        await delay(150);
+      }
+    };
+    const runOneInner = async (id, { url, tok, expectText, label, framesExpected, mode, allowHung, expectHung, relaxedFound, extra }) => {
+      await tool('browser.navigate', { url });
+      const p = await pageFor(url);
+      await settle(p, framesExpected);
+      const t1 = await truthOf(p, tok, expectText, mode, allowHung);
+      const r = (await tool('browser.click', { target: `#go-${tok}`, expect: { text: expectText } })).json;
+      const t2 = await truthOf(p, tok, expectText, mode, allowHung); // re-read AFTER the action: no stale ground truth
+      const ec = checkOf(r, 'expect.text');
+      const stable = t1.found === t2.found;
+      const labelOk = label === undefined || label === t2.found;
+      const inconclusive = !allowHung && t2.hung > 0;
+      let productOk;
+      if (expectHung) {
+        // text absent everywhere but an unrelated frame never answers: fail closed, never verified, never "not found"
+        productOk = r.success === true && r.verification?.verified === false && tierOf(r) === 'unverifiable' && ec?.outcome === 'not-run' && /did not answer/.test(ec?.detail ?? '');
+      } else if (t2.found && relaxedFound) {
+        // the frame holding the text may itself be one of the (natural) parse-time out-of-process frames that never answers
+        // for THIS client: verified is right when it answered, fail-closed unavailable when it did not; never a false not-found
+        productOk = r.success === true && ((r.verification?.verified === true && tierOf(r) === 'verified' && ec?.outcome === 'pass') || (r.verification?.verified === false && tierOf(r) === 'unverifiable' && ec?.outcome === 'not-run' && /did not answer/.test(ec?.detail ?? '')));
+      } else if (t2.found) {
+        productOk = r.success === true && r.verification?.verified === true && tierOf(r) === 'verified' && ec?.outcome === 'pass';
+      } else {
+        productOk = r.success === true && r.verification?.verified === false && tierOf(r) === 'contradicted' && ec?.outcome === 'fail';
+      }
+      record(surface, id, productOk && stable && labelOk && !inconclusive, {
+        expected: `${expectHung ? 'UNAVAILABLE (a frame hung, text nowhere else)' : t2.found ? 'verified (rendered)' : 'contradicted (not rendered)'}; intended label ${label === undefined ? 'n/a' : label ? 'counted' : 'excluded'}; observer agrees`,
+        observed: { verified: r.verification?.verified, tier: tierOf(r), expectOutcome: ec?.outcome, detail: ec?.detail, reason: reasonOf(r) },
+        observerTruth: { before: t1, after: t2, stable, labelMatchesObserver: labelOk, inconclusive },
+        ...extra,
+      });
+    };
+    for (const c of list) {
+      C(`M:${c.id}`, async (cid) => {
+        const tok = tokFor();
+        const expectText = c.expectText ? c.expectText(tok) : tok;
+        const url = `${server.origin}/matrix?case=${encodeURIComponent(c.id)}&tok=${tok}`;
+        await runOne(cid, { url, tok, expectText, label: c.counted, framesExpected: c.frames, mode: c.expectText || /split-over|whitespace/.test(c.id) ? 'innerText' : 'oracle', allowHung: false });
+      });
+    }
+    // audit-2 regression: ONE unrelated out-of-process frame never answers (infinite loop); 8 cross-origin frames.
+    const hungUrl = (tok, q) => `${server.origin}/matrix-hung?tok=${tok}&n=8&hung=3&${q}`;
+    C('H1', (cid) => { const tok = tokFor(); return runOne(cid, { url: hungUrl(tok, 'tokIn=main'), tok, expectText: tok, label: true, framesExpected: 8, allowHung: true, extra: { note: 'text in the main frame, 1 of 8 cross-origin frames hung: must still be verified' } }); });
+    C('H2', (cid) => { const tok = tokFor(); return runOne(cid, { url: hungUrl(tok, 'tokIn=5'), tok, expectText: tok, label: true, framesExpected: 8, allowHung: true, relaxedFound: true, extra: { note: 'text only in cross-origin frame 5, frame 3 hung (own process): verified, or unavailable if frame 5 itself never answered; never contradicted' } }); });
+    C('H3', (cid) => { const tok = tokFor(); return runOne(cid, { url: hungUrl(tok, 'tokIn=none'), tok, expectText: tok, label: false, framesExpected: 8, allowHung: true, expectHung: true, extra: { note: 'text nowhere, frame 3 hung: fail closed (unavailable), never verified, never not-found' } }); });
+  }
+
   // ── W / S / X / L: wait, screenshot, expect semantics, sweep ─────────────────────────────
   if (surface !== 'bundle') {
     const waitUrl = (hash = '#auto') => `${pathToFileURL(path.join(here, 'fixtures', 'fr2-01-wait-states.html')).href}?t=${Date.now()}-${Math.random().toString(36).slice(2)}${hash}`;
@@ -1127,6 +1229,28 @@ async function runCliCases(ctx) {
     record(surface, id, a.code === 1 && /mutually exclusive/.test(a.stderr) && b.code === 1 && /needs a value/.test(b.stderr), { expected: 'bad --expect-* flag combinations are rejected before any browser contact', observed: { a: a.stderr, b: b.stderr } });
   });
 
+  {
+    const all = new Map(matrixCases().map((c) => [c.id, c]));
+    let n = 0;
+    for (const id of SURFACE_MATRIX_IDS) {
+      C('M:' + id, async (cid) => {
+        const c = all.get(id);
+        const tok = 'QZC' + String(++n).padStart(2, '0') + 'K' + Math.random().toString(36).slice(2, 6).toUpperCase();
+        const url = server.origin + '/matrix?case=' + encodeURIComponent(id) + '&tok=' + tok;
+        await nav(url);
+        const p = await page();
+        await p.waitForFunction(() => window.__mx === 1 && document.readyState === 'complete', { timeout: 10000 });
+        const t0 = performance.now();
+        while (p.frames().length < 1 + c.frames && performance.now() - t0 < 8000) await delay(50);
+        const truth = await oracleTruth(p, tok);
+        const r = await cli(['click', '#go-' + tok, '--expect-text', tok]);
+        const after = await oracleTruth(p, tok);
+        const ok = truth.found === c.counted && after.found === truth.found && (truth.found ? r.code === 0 : r.code === 4);
+        record(surface, cid, ok, { expected: 'CLI exit ' + (c.counted ? '0 (rendered)' : '4 (not rendered)') + '; the observer agrees', observed: { code: r.code, stdout: r.stdout.split(String.fromCharCode(10)).filter((l) => /Verification/.test(l)), stderr: r.stderr.slice(0, 200) }, observerTruth: { truth, after } });
+      });
+    }
+  }
+
   for (const c of cases) await c();
   await cli(['close']);
   await observer?.disconnect().catch(() => {});
@@ -1222,6 +1346,53 @@ async function runSdkCases(ctx) {
       await rt.shutdown(launched.sessionId).catch(() => {});
     }
   });
+
+  {
+    const all = new Map(matrixCases().map((c) => [c.id, c]));
+    let n = 0;
+    const oneSdk = async (cid, url, tok, label, framesExpected, opts = {}) => {
+      try {
+        await oneSdkInner(cid, url, tok, label, framesExpected, opts);
+      } finally {
+        server.releaseHeld();
+        await delay(150);
+      }
+    };
+    const oneSdkInner = async (cid, url, tok, label, framesExpected, opts = {}) => {
+      await page.goto(url);
+      const p = await obsPage();
+      await p.waitForFunction(() => window.__mx === 1 && document.readyState === 'complete', { timeout: 10000 });
+      const t0 = performance.now();
+      while (p.frames().length < 1 + framesExpected && performance.now() - t0 < 8000) await delay(50);
+      const truth = await oracleTruth(p, tok);
+      let res; let err;
+      try { res = await page.click('#go-' + tok, { expect: { text: tok } }); } catch (e) { err = e; }
+      const v = (res ?? err?.result)?.verification;
+      const after = await oracleTruth(p, tok);
+      let ok;
+      if (opts.expectNeverVerified) ok = v?.verified === false && !(res && v.verified);
+      else if (truth.found) ok = !err && v?.verified === true && v?.evidence?.tier === 'verified';
+      else ok = err instanceof sdk.ExpectationFailedError && v?.verified === false;
+      ok = ok && (opts.skipLabel || label === truth.found) && after.found === truth.found;
+      record(surface, cid, ok, { expected: opts.expectNeverVerified ? 'never verified (fail closed)' : truth.found ? 'resolves verified (NO ExpectationFailedError)' : 'ExpectationFailedError, not verified', observed: { threw: err?.name, tier: v?.evidence?.tier, verified: v?.verified, detail: v?.evidence?.checks?.find((c) => c.check === 'expect.text')?.detail }, observerTruth: { truth, after } });
+    };
+    for (const id of SURFACE_MATRIX_IDS) {
+      C('M:' + id, async (cid) => {
+        const c = all.get(id);
+        const tok = 'QZS' + String(++n).padStart(2, '0') + 'K' + Math.random().toString(36).slice(2, 6).toUpperCase();
+        await oneSdk(cid, server.origin + '/matrix?case=' + encodeURIComponent(id) + '&tok=' + tok, tok, c.counted, c.frames);
+      });
+    }
+    // audit-2 A2-2 on the SDK (Sutradhar attached as a second CDP client next to the observer): 1 of 8 cross-origin frames hangs
+    C('H1', async (cid) => {
+      const tok = 'QZSH1K' + Math.random().toString(36).slice(2, 6).toUpperCase();
+      await oneSdk(cid, server.origin + '/matrix-hung?tok=' + tok + '&n=8&hung=3&tokIn=main', tok, true, 8);
+    });
+    C('H3', async (cid) => {
+      const tok = 'QZSH3K' + Math.random().toString(36).slice(2, 6).toUpperCase();
+      await oneSdk(cid, server.origin + '/matrix-hung?tok=' + tok + '&n=8&hung=3&tokIn=none', tok, false, 8, { expectNeverVerified: true, skipLabel: true });
+    });
+  }
 
   for (const c of cases) await c();
   await observer.disconnect().catch(() => {});

@@ -11,6 +11,7 @@ import http from 'node:http';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { HUNG_FRAME_PAGE, hungPage, matrixCases, shell } from './fr2-07-matrix.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
@@ -35,6 +36,15 @@ export async function startFr207Server() {
   const hiddenTextHtml = await fs.readFile(path.join(here, 'fr2-07-hidden-text.html'), 'utf-8');
   const prob043Html = await fs.readFile(path.join(here, 'prob043-keyboard.html'), 'utf-8');
   let port = 0;
+  /** responses of /matrix-hold parked until releaseHeld() (the hung-frame fixture) */
+  const held = new Set();
+  const releaseHeld = () => {
+    for (const r of held) {
+      try { r.writeHead(200, { 'Content-Type': 'text/plain', 'Cache-Control': 'no-store' }); r.end('released'); } catch { /* client gone */ }
+    }
+    held.clear();
+  };
+  const matrix = new Map(matrixCases().map((c) => [c.id, c]));
 
   const handler = (req, res) => {
     const u = new URL(req.url ?? '/', 'http://localhost');
@@ -55,6 +65,32 @@ export async function startFr207Server() {
       case '/textframe.html': {
         const t = (u.searchParams.get('text') ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
         return send(200, `<!doctype html><html><body><p>${t}</p></body></html>`);
+      }
+      case '/matrix': {
+        const c = matrix.get(u.searchParams.get('case') ?? '');
+        if (!c) return send(404, 'no such matrix case', { 'Content-Type': 'text/plain' });
+        const tok = (u.searchParams.get('tok') ?? '').replace(/[^A-Za-z0-9_-]/g, '');
+        return send(200, shell(c.html(`http://localhost:${port}`, tok), tok));
+      }
+      case '/matrix-frame':
+        return send(200, `<!doctype html><html><body><p>${(u.searchParams.get('tok') ?? '').replace(/[^A-Za-z0-9_-]/g, '')}</p></body></html>`);
+      case '/matrix-mid': {
+        const c = matrix.get(u.searchParams.get('case') ?? '');
+        if (!c?.mid) return send(404, 'no such matrix mid page', { 'Content-Type': 'text/plain' });
+        return send(200, `<!doctype html><html><body>${c.mid(`http://localhost:${port}`, u.searchParams.get('tok') ?? '')}</body></html>`);
+      }
+      case '/matrix-hold': {
+        held.add(res);
+        const t = setTimeout(releaseHeld, 90000); // hard stop: never hold a renderer longer than 90 s
+        t.unref();
+        res.on('close', () => held.delete(res));
+        return;
+      }
+      case '/matrix-hang':
+        return send(200, HUNG_FRAME_PAGE);
+      case '/matrix-hung': {
+        const tokIn = u.searchParams.get('tokIn') ?? 'main';
+        return send(200, hungPage(`http://localhost:${port}`, u.searchParams.get('tok') ?? '', { n: Number(u.searchParams.get('n') ?? 8), hungIndex: Number(u.searchParams.get('hung') ?? 3), hangOrigin: v6Listening ? `http://[::1]:${port}` : `http://localhost:${port}`, tokIn: tokIn === 'main' ? 'main' : Number(tokIn) }));
       }
       case '/prob043.html':
         return send(200, prob043Html);
@@ -106,13 +142,16 @@ export async function startFr207Server() {
     origin,
     crossOrigin: `http://localhost:${port}`,
     v6Listening,
+    releaseHeld,
     /** `url('/page.html', 'n1', 'spoofClipboard=1')` -> origin + path + ?n=<nonce>[&extra] */
     url: (p, nonce = `${Date.now()}-${Math.random().toString(36).slice(2)}`, extra = '') =>
       `${origin}${p}?n=${encodeURIComponent(nonce)}${extra ? `&${extra}` : ''}`,
-    close: () =>
-      Promise.all([
+    close: () => {
+      releaseHeld();
+      return Promise.all([
         new Promise((resolve) => v4.close(() => resolve(undefined))),
         v6Listening ? new Promise((resolve) => v6.close(() => resolve(undefined))) : Promise.resolve(),
-      ]).then(() => undefined),
+      ]).then(() => undefined);
+    },
   };
 }
