@@ -1,0 +1,23 @@
+{"timestamp":"2026-09-29T11:39:08.548Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-29T11:39:08.746Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790681948548_1","context":{"isIncognito":false}}
+[11:39:08.958] [1] keyboard modifiers (Ctrl+A select-all)...
+{"timestamp":"2026-09-29T11:39:08.963Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790681948548_1_1","selector":"#kbtest"}}
+{"timestamp":"2026-09-29T11:39:09.044Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_sess_1790681948548_1_1"}}
+[11:39:09.049]     selection=0-11
+[11:39:09.049] [2] multi-select...
+{"timestamp":"2026-09-29T11:39:09.050Z","level":"info","message":"[BrowserActionEngine] Executing action select_option","context":{"tabId":"tab_sess_1790681948548_1_1","selector":"#multisel"}}
+[11:39:09.055]     selected=["a","c"]
+[11:39:09.055] [3] viewport resize...
+[11:39:09.059]     dims=500x400
+[11:39:09.059] [4] clipboard...
+[11:39:09.065]     clip=sutradhar wave 12
+[11:39:09.065] [5] emulation (timezone/locale/color-scheme)...
+[11:39:09.074]     tz=America/New_York locale=fr-FR prefersDark=true
+[11:39:09.074] [6] upload_file_via_trigger...
+[11:39:09.098]     uploadedName=upload-me.txt
+[11:39:09.098] [7] shadow-DOM text verification...
+{"timestamp":"2026-09-29T11:39:09.099Z","level":"info","message":"[BrowserActionEngine] Executing action scroll","context":{"tabId":"tab_sess_1790681948548_1_1"}}
+[11:39:09.101]     verified=true reason=Action execution verified successfully with confidence 0.90
+[11:39:09.101] ✅ WAVE 12 LIVE CHECKS PASSED
+{"timestamp":"2026-09-29T11:39:09.215Z","level":"info","message":"[BrowserSession] Closed session sess_1790681948548_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-29T11:39:09.215Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790681948548_1","context":{"reason":"Runtime shutdown"}}

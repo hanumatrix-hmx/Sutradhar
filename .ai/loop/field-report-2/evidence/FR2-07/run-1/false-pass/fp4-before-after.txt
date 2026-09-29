@@ -1,0 +1,23 @@
+== FP-4 the pre-change build's false positive vs the same case now (B-X2 vs X2), and the generic-0.45 rows
+BEFORE B-K2 {"verified":false,"confidence":0.45,"reason":"'press_key' completed without throwing, but has no built-in post-condi"}
+BEFORE B-F2 {"verified":false,"confidence":0.45,"reason":"'focus' completed without throwing, but has no built-in post-condition"}
+BEFORE B-D2 {"verified":false,"confidence":0.45,"reason":"'download_file' completed without throwing, but has no built-in post-c"}
+BEFORE B-N4 "go_back failed: History entry to navigate to not found."
+BEFORE B-N8 {"tabId":"tab_sess_1790680439267_1_1","url":"http://127.0.0.1:53184/nav/missing?n=1790680439757-epguvf2r64p","title":"Not found (404)"}
+BEFORE B-C2 {"success":true}
+BEFORE B-P3 {"success":true,"actionType":"click_at_point","executionTimeMs":1,"currentUrl":"http://127.0.0.1:53184/page.html?n=1790680439798-pvvg0faleqt","title":"FR2-07 verification fixture","output":{"x":420,"y
+BEFORE B-P4 {"success":true,"actionType":"click_at_point","executionTimeMs":1,"currentUrl":"http://127.0.0.1:53184/page.html?n=1790680439798-pvvg0faleqt","title":"FR2-07 verification fixture","output":{"x":5000,"
+BEFORE B-U3 {"success":true,"filePath":"E:\\AI-Cache\\tmp\\fr2-07-bl-obs-R5SGEY\\bl-up.txt"}
+BEFORE B-W1 {"verified":false,"confidence":0.45,"reason":"'wait_for_selector' completed without throwing, but has no built-in po"}
+BEFORE B-X2 {"verified":true,"confidence":0.9,"reason":"Action execution verified successfully with confidence 0.90"}
+AFTER  K2 {"tier":"contradicted","verified":false,"confidence":0.09000000000000001}
+AFTER  F2 {"tier":"contradicted","verified":false,"confidence":0.09000000000000001}
+AFTER  D2 {"tier":"contradicted","verified":false,"confidence":0.09000000000000001}
+AFTER  N4 {"tier":"contradicted","verified":false,"confidence":0.09000000000000001}
+AFTER  N8 {"tier":"contradicted","verified":false,"confidence":0.09000000000000001}
+AFTER  C2 {"tier":"contradicted","verified":false,"confidence":0.09000000000000001}
+AFTER  P3 {"tier":"contradicted","verified":false,"confidence":0.09000000000000001}
+AFTER  P4 {"tier":"contradicted","verified":false,"confidence":0.09000000000000001}
+AFTER  U3 {"tier":"unverifiable","verified":false,"confidence":0.45}
+AFTER  W1 {"tier":"verified","verified":true,"confidence":0.9}
+AFTER  X2 {"tier":"contradicted","verified":false,"confidence":0.09000000000000001}

@@ -1,0 +1,39 @@
+== FP-3 the live NEG cases: each must be success:true (where the action ran) && verified:false with the OBSERVER's truth alongside
+mcp:K2 pass=true tier=contradicted verified=false observerTruth={"ok":true,"value":""}
+mcp:K3 pass=true tier=contradicted verified=false observerTruth={"ok":true,"value":"x"}
+mcp:K5 pass=true tier=contradicted verified=false observerTruth={"ok":true,"value":""}
+mcp:K7 pass=true tier=contradicted verified=false observerTruth={"ok":true,"activeElement":"trap"}
+mcp:K4 pass=true tier=unverifiable verified=false observerTruth={"value":""}
+mcp:K12 pass=true tier=undefined verified=undefined observerTruth=undefined
+mcp:K13 pass=true tier=contradicted verified=false observerTruth={"toastVisible":"FR2-07 SAVED"}
+mcp:F2 pass=true tier=contradicted verified=false observerTruth={"active":"body"}
+mcp:F3 pass=true tier=contradicted verified=false observerTruth={"active":"body"}
+mcp:D2 pass=true tier=contradicted verified=false observerTruth={"fsSize":0}
+mcp:N4 pass=true tier=contradicted verified=false observerTruth={"before":["about:blank","http://127.0.0.1:54695/nav/a?n=n4","about:blank"],"after":["about:blank","http://127.0.0.1:54695/nav/a?n=n4","abou
+mcp:N5 pass=true tier=contradicted verified=false observerTruth=undefined
+mcp:N8 pass=true tier=contradicted verified=false observerTruth=undefined
+mcp:N10 pass=true tier=undefined verified=undefined observerTruth=undefined
+mcp:C2 pass=true tier=contradicted verified=false observerTruth={"mainWorldEqualsNew":true,"isolatedEqualsSentinel":true}
+mcp:C3 pass=true tier=unverifiable verified=false observerTruth=undefined
+mcp:C4a pass=true tier=unverifiable verified=false observerTruth=undefined
+mcp:P2 pass=true tier=contradicted verified=false observerTruth={"decoy":1}
+mcp:P3 pass=true tier=contradicted verified=false observerTruth={"elementRemoved":true}
+mcp:P4 pass=true tier=contradicted verified=false observerTruth=undefined
+mcp:P5 pass=true tier=verified verified=true observerTruth={"before":0,"after":1}
+mcp:P7 pass=true tier=unverifiable verified=false observerTruth=undefined
+mcp:G2 pass=true tier=contradicted verified=false observerTruth=undefined
+mcp:T1 pass=true tier=verified verified=true observerTruth={"trustedEvents":["pointerdown","touchstart","pointerup","touchend","click"]}
+mcp:T2 pass=true tier=contradicted verified=false observerTruth={"trustedOnCovered":0}
+mcp:U3 pass=true tier=unverifiable verified=false observerTruth={"detachedGot":"fr207-1790686777455.txt"}
+mcp:U4 pass=true tier=unverifiable verified=false observerTruth=undefined
+mcp:W2 pass=true tier=unverifiable verified=false observerTruth=undefined
+mcp:S1 pass=true tier=unverifiable verified=false observerTruth={"ihdr":"1100x900","observerViewport":{"innerWidth":800,"scrollHeight":600}}
+mcp:X2 pass=true tier=contradicted verified=false observerTruth={"hiddenHasIt":true,"hiddenInnerText":"FR2-07 SAVED","bodyInnerHasIt":false,"bodyTextContentHasIt":true}
+mcp:X3 pass=true tier=contradicted verified=false observerTruth={"laterToast":"FR2-07 SAVED"}
+cli:K14 pass=true tier=undefined verified=undefined observerTruth={"active":"body","txtValue":""}
+cli:N12 pass=true tier=undefined verified=undefined observerTruth=undefined
+cli:S1 pass=true tier=undefined verified=undefined observerTruth=undefined
+sdk:S1 pass=true tier=unverifiable verified=false observerTruth=undefined
+bundle:N4 pass=true tier=contradicted verified=false observerTruth={"before":["about:blank","http://127.0.0.1:54695/nav/a?n=n4","about:blank"],"after":["about:blank","http://127.0.0.1:54695/nav/a?n=n4","abou
+bundle:C2 pass=true tier=contradicted verified=false observerTruth={"mainWorldEqualsNew":true,"isolatedEqualsSentinel":true}
+total cases 96 passed 96 failed []

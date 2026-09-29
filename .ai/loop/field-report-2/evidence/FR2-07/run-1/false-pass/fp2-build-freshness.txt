@@ -1,0 +1,18 @@
+== FP-2 stale/cached build: HEAD, clean src, dist newer than src, new symbols present in the dist the live script drives
+f291ee471d3ec2c086485657d945e2acdd3f8fb4
+uncommitted changes under packages/ (expect none): 0
+packages/browser/verifier/post-conditions dist newer than src: true
+packages/browser/verifier/execution-verifier dist newer than src: true
+packages/browser/actions/browser-action-engine dist newer than src: true
+packages/capability-runtime/runtime dist newer than src: true
+packages/mcp-server/tools dist newer than src: true
+packages/cli/cli dist newer than src: true
+packages/cli/verification-output dist newer than src: true
+sdk bundle index.js has ActionFailedError: true | lastResult: true
+bundle mcp-cli.js has press_key.key-delivered: true | sutradhar-verify isolated world: true
+    M .ai/loop/field-report-2/gaps.md
+    ?? .ai/loop/field-report-2/evidence/FR2-07/run-1/
+  Commit or stash them before publishing — a published artifact must be traceable to a real commit.
+
+  Run `node scripts/build-bundle.mjs` (or `npm run build` in packages/sutradhar) for a real, clean rebuild, commit any resulting changes, then try publishing again.
+

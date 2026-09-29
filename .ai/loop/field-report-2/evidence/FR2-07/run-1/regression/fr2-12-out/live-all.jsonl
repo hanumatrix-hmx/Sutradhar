@@ -1,0 +1,30 @@
+{"case":"L1","pass":true,"detail":"exit=0 screenshot=E:\\AI-Cache\\tmp\\fr212-l1-1790681808283-svaeqvwwnf\\a\\b\\c\\audit-screenshot.png"}
+{"case":"L2","pass":true,"detail":"exit=0 schemaValid=true a11yOk=true vitalsOk=true slow404(expected-miss, GAP-038)=false"}
+{"case":"L3","pass":true,"detail":"exit=1 validStdout=true"}
+{"case":"L4a","pass":true,"detail":"exit=0 diffPct=3.1610416666666667"}
+{"case":"L4b (N14)","pass":true,"detail":"exit=0 diffPct=0"}
+{"case":"L5","pass":true,"detail":"exit=1 baselineError=net::ERR_UNSAFE_PORT at http://127.0.0.1:1/"}
+{"case":"N4a (--baseline no value)","pass":true,"detail":"Error: --baseline requires a URL (e.g. audit <url> --baseline https://prod.example.com)"}
+{"case":"N4b (--baseline then flag)","pass":true,"detail":"Error: --baseline requires a URL (e.g. audit <url> --baseline https://prod.example.com)"}
+{"case":"L6 (N11)","pass":true,"detail":"lcpMs=36 cls=0.27996762208067943 note=true"}
+{"case":"L7","pass":true,"detail":"labels=[\"URL\",\"Title\",\"Screenshot\",\"Web Vitals\",\"LCP\",\"CLS\",\"FCP\",\"TTFB\",\"Console errors\",\"Page errors\",\"Broken requests (4xx/5xx)\",\"Accessibility issues\"]"}
+{"case":"L8 (N2)","pass":true,"detail":"exit=1 stateFileExists=false"}
+{"case":"N3","pass":true,"detail":"exit=1 stdoutEmpty=true fatal=true"}
+{"case":"L21 (GAP-261, default-policy leftover dialog)","pass":true,"detail":"exit=3 stdoutParses=true dialogPending={\"type\":\"alert\",\"message\":\"gap261-l21\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57895/clean?n=211\"}"}
+{"case":"L22 (GAP-261, accept-policy mid-audit dialog)","pass":true,"detail":"exit=0 stdoutIsExactlyOneJsonDoc=true dialogHandledOnStderr=true"}
+{"case":"L23 (GAP-261, mid-audit alert, never handled)","pass":true,"detail":"exit=3 stdoutParses=true dialogPending={\"type\":\"alert\",\"message\":\"fr2-12-audit-alert-231\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57895/alert?n=231&delayMs=100\"}"}
+{"case":"L9","pass":true,"detail":"schemaValid=true pngMatch=true"}
+{"case":"L15 (GAP-038, expected-miss)","detail":"slow-404-19 present=false (FR2-08 not landed; documented as expected-miss)"}
+{"case":"L10","pass":true,"detail":"contentLength=1"}
+{"case":"L11","pass":true,"detail":"contentLength=3 diffPct=0.7190950713708592"}
+{"case":"L12 (B1 fixed, N9)","pass":true,"detail":"r12a=[] r12b=[]"}
+{"case":"L12b (GAP-262 fix-1, 15 repeats)","pass":true,"detail":"leaks=0/15 "}
+{"case":"L13 (B2 fixed, N10)","pass":true,"detail":"clsSeries=[0.028657405848819463,0.028657405848819463,0.028657405848819463] spread=0 typeofVitals=undefined"}
+{"case":"L14 (N8)","pass":true,"detail":"isError=true elapsed=1ms text=audit failed: a alert dialog is open (\"fr212\") and blocks the page, so it can't be audited. Handle i"}
+{"case":"L20 (informational)","pass":true,"detail":"pageWasHidden=true fcpMs=null newTab=tab_sess_1790681849390_1_2"}
+{"case":"N18","pass":true,"detail":"audit failed: No browser session \"no-such-session\". Call launch() first.\nHint: Call browser.launch first to create a session."}
+{"case":"L16a","pass":true,"detail":"schemaValid=true bytesMatch=true"}
+{"case":"L16b","pass":true,"detail":"{\"mode\":\"current-page\",\"documentStartedAt\":\"2026-09-29T11:38:08.931Z\",\"observingSince\":\"2026-09-29T11:38:08.919Z\",\"coversWholeDocument\":true,\"pageWasHidden\":false}"}
+{"case":"L17","pass":true,"detail":"diffExists=true diffBytesMatch=true"}
+{"case":"L18 (N13)","pass":true,"detail":"allMutationsRejected=true unmutatedValid=true"}
+{"case":"L19","pass":true,"detail":"exit=0 valid=true"}

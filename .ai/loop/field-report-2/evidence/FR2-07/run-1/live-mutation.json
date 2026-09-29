@@ -1,0 +1,75 @@
+[
+  {
+    "id": "L1-press-value-unchanged-reported-verified",
+    "file": "packages/browser/dist/verifier/post-conditions.js",
+    "sha_original": "77ba0715267417d3fdd1394147a76f157e73489415118d41da831ba1c0315ad6",
+    "restored_exact": true,
+    "clean": {
+      "K2": "PASS",
+      "K3": "PASS"
+    },
+    "mutated": {
+      "K2": "FAIL",
+      "K3": "FAIL"
+    },
+    "restored": {
+      "K2": "PASS",
+      "K3": "PASS"
+    },
+    "caught": true
+  },
+  {
+    "id": "L2-expect-text-uses-textContent",
+    "file": "packages/browser/dist/verifier/execution-verifier.js",
+    "sha_original": "5b33199f3341587fa55114527e3d23181b67a98a43b15acbdd9375fbdfb5e718",
+    "restored_exact": true,
+    "clean": {
+      "X2": "PASS"
+    },
+    "mutated": {
+      "X2": "FAIL"
+    },
+    "restored": {
+      "X2": "PASS"
+    },
+    "caught": true
+  },
+  {
+    "id": "L3-zero-byte-download-passes",
+    "file": "packages/browser/dist/verifier/post-conditions.js",
+    "sha_original": "77ba0715267417d3fdd1394147a76f157e73489415118d41da831ba1c0315ad6",
+    "restored_exact": true,
+    "clean": {
+      "D2": "PASS"
+    },
+    "mutated": {
+      "D2": "FAIL"
+    },
+    "restored": {
+      "D2": "PASS"
+    },
+    "caught": true
+  },
+  {
+    "id": "L4-isolated-clipboard-read-replaced-by-main-world",
+    "file": "packages/browser/dist/verifier/post-conditions.js",
+    "sha_original": "77ba0715267417d3fdd1394147a76f157e73489415118d41da831ba1c0315ad6",
+    "restored_exact": true,
+    "clean": {
+      "C2": "PASS",
+      "C5-C2-SENTINEL-179": "PASS",
+      "C5-C2-NEW-17906867": "PASS"
+    },
+    "mutated": {
+      "C2": "FAIL",
+      "C5-C2-SENTINEL-179": "PASS",
+      "C5-C2-NEW-17906867": "PASS"
+    },
+    "restored": {
+      "C2": "PASS",
+      "C5-C2-SENTINEL-179": "PASS",
+      "C5-C2-NEW-17906867": "PASS"
+    },
+    "caught": true
+  }
+]

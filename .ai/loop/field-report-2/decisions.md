@@ -3776,3 +3776,52 @@ harness changes, with a deterministic failing-then-passing test, revert-confirm,
 Orchestrator's own fresh repeated runs -- judged sufficient for a scoped test-stability fix.
 Residual logged as GAP-313 (a foreign download that BEGINS first still wins attribution;
 mitigated by the one-download-per-browser lock).
+
+## 2026-09-29 -- FR2-07 Executor run-1 (DEV + VERIFY): single verification contract implemented; awaiting independent audit
+
+Branch `claude/fr2-07-verification-contract` (from master c83c220), 8 commits, one per plan step:
+6b8f48a types/verifier/post-conditions, d85b139 engine wiring, 999ee2c runtime, 751d2e0 MCP, dfd4157 CLI,
+fca76f3 SDK, f24ec4e live-verify harness + fixtures + docs + fixes the live run found, f291ee4 N11 case
+(+ one evidence commit). Full detail: evidence/FR2-07/run-1/ (deviations.md, false-pass-analysis.md).
+
+Results (all re-run after the last code change): live verify 96/96 across MCP (69), CLI (13), SDK (8) and the
+esbuild bundle (6) with an independent puppeteer observer as ground truth; vitest browser 644, capability-runtime
+244, mcp-server 108, cli 193, sutradhar 34, agent 56, apps/server 28; tsc clean on 7 packages; lint clean on the
+4 packages this item edits; 12/12 unit mutants and 4/4 live (built-dist) mutants caught and restored to identical
+bytes; 20-minute PROB-043 soak 43503 calls, 0 mismatches; overhead medians +2/+1/0/+2.5 ms (press/focus/point/nav).
+Baseline (pre-change build, run from `git archive c83c220`) reproduced the false positives the item targets:
+B-X2 `verified:true 0.9` for text present only in a display:none element; B-C2/B-P3/B-P4/B-U3 no verification.
+
+Autonomous decisions (each recorded in deviations.md with reasons):
+1. Puppeteer 25 THROWS at the history edge instead of resolving null (spec section 0.2 assumed null; the pre-change
+   build returned an error, not a silent success). `historyStep` maps exactly that message to the same
+   `contradicted` "no history entry" result; every other error still propagates.
+2. SDK `waitForSelector` keeps resolving `undefined` (existing FR2-01 test S4 pins it; spec rule 4.0 forbids editing
+   an existing assertion), so its verification is read from the new `page.lastResult`.
+3. Observers require a real frame (`evaluate` + `childFrames`): FR2-06's E6 pins that press_key never calls
+   `mainFrame().evaluate` on a partial mock.
+4. Cross-frame identity for points uses the frame's bounding box (Puppeteer's frameElement() handle lives in the
+   isolated world where a main-world expando is invisible; found live: first P5 run was unverifiable).
+5. D15 gate resolved by evidence: real Chrome delivers trusted touchstart/touchend/pointer/click events to a tapped,
+   unoccluded element without touch emulation, so `touch_tap` ships as verifiable (live T1/T2).
+6. Wording/robustness fixes found live: K5 reason now says "no trusted keydown"; click_at_point names where a click
+   landed when the element removes itself on mousedown; click_at_point/drag no longer block on page.title() behind a
+   dialog; the "Pass expect" coaching sentence is omitted for actions that accept no expect.
+
+Not done / not verifiable here (also in false-pass-analysis.md): live remote-browser download and live download
+containment attacks (safety-classifier rule; function-level tests only), headed/non-Windows/non-Chrome, sample-only
+mutation coverage. Pre-existing, reproduced on the pre-change build and NOT caused by FR2-07: FR2-04 verify case
+L13.headed.click-exit0 (GAP-316), CLI scenario suite 11/14 with UC-08 batch hang (GAP-321), mcp-server lint errors
+in FR2-10's session-resolution.ts (GAP-314), `close` leaves a sutradhar-cli-* profile dir (GAP-315).
+New gaps GAP-314..GAP-321; GAP-018/019/024/025 marked FIXED pending audit. GAP-027/028/029 (state setters outside
+the contract, no CLI/SDK back/forward/reload, drag delivery in frames) remain open by design.
+
+Housekeeping incident, disclosed: `verify-fr2-10-optional-session.mjs` overwrites its committed evidence files when
+run (no evidence-dir env var); I ran it as a regression gate, noticed 4 modified tracked files under
+evidence/FR2-10/run-1/, and restored exactly those with `git restore -- <that dir>` (no other paths touched). The
+scenario-suite drivers likewise rewrite one tracked PNG (results/uc06-modal-after-clicktext.png), restored the same way.
+Two Chrome roots I had leaked from aborted CLI attempts (16:42) were killed by PID; another session's leaked Chrome
+(PID 73480) was left alone.
+
+Sequencing note for FR2-08: `pageContainsVisibleText(tab, text)` and `visibleTextContainsInPage` are exported from
+@sutradhar/browser for reuse; the contract requires that `expect` keep being checked AFTER settle.
