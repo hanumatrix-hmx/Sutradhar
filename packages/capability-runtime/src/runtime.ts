@@ -18,11 +18,28 @@ import {
   BrowserLauncher,
   BrowserSessionManager,
   DOMSemanticEngine,
+  ExecutionVerifier,
+  NavigationProbe,
+  PostConditionRecorder,
+  applyVerdict,
+  decideClipboardVerdict,
+  decideDragVerdict,
+  decidePointVerdict,
+  failedVerification,
+  finishPointObservation,
+  finishUploadObservation,
   formatGraphForLlm,
+  observePoint,
+  observeUploadTargets,
+  readClipboardIsolated,
+  recordScreenshotEvidence,
+  removeUploadListener,
   selectorForNodeId,
+  specKeys,
   invalidSelectorSyntaxError,
   findContainingRoot,
   type ActionHistoryEntry,
+  type VerificationSpec,
   type DialogPolicy,
   type DialogRecord,
   type IBrowserSession,
@@ -31,14 +48,17 @@ import {
   type WaitForSelectorState,
 } from '@sutradhar/browser';
 import path from 'node:path';
-import { access } from 'node:fs/promises';
+import { access, stat } from 'node:fs/promises';
 import { createSessionId, createTabId } from '@sutradhar/contracts';
 import { EventBus } from '@sutradhar/events';
 import { type StructuredLogger } from '@sutradhar/observability';
 import { RateLimiter } from '@sutradhar/utils';
 import type {
+  ActionExpectation,
   ActionResult,
   AttachOptions,
+  ClipboardReadResult,
+  DialogPendingInfo,
   LaunchOptions,
   LaunchResult,
   LiveSessionInfo,
@@ -52,6 +72,7 @@ import type {
 } from './types.js';
 import {
   BrowserNotAvailableError,
+  toVerificationSpec,
   normalizeTarget,
   selectorSyntaxDetail,
   SELECTOR_SYNTAX_HINT,
@@ -234,6 +255,9 @@ export class SutradharRuntime {
    *  state to persist. Only sessions launched via `launch({profileName})` get an entry; a
    *  plain/unnamed launch never touches this. Entries are removed on shutdown regardless of
    *  outcome, so this never grows across a long-lived runtime's full session history. */
+  /** FR2-07: composes the verification contract for runtime-level actions that bypass the engine
+   *  (navigation, click_at_point, clipboard, upload-via-trigger, screenshot). */
+  private readonly verifier = new ExecutionVerifier();
   private readonly sessionProfiles = new Map<string, string>();
   /** `${sessionId}::${origin}` -> the full set of permissions currently granted there. CDP's
    *  `Browser.grantPermissions` (Puppeteer's `overridePermissions`) does NOT add to a prior
@@ -483,38 +507,97 @@ export class SutradharRuntime {
   // Navigation
   // ─────────────────────────────────────────────────────────────────────────
 
-  /** Navigate a tab to a URL. Creates a tab in the session if none is specified. */
+  /**
+   * Navigate a tab to a URL. Creates a tab in the session if none is specified.
+   *
+   * FR2-07: the result's `verification` says whether a new document (or a same-document
+   * navigation) really committed, from CDP loader/history identity — not from "goto didn't throw"
+   * — and flags an HTTP >= 400 answer. `expect` adds caller assertions (`url`, `text`, `urlChanged`).
+   */
   public async navigate(
     sessionId: string,
     url: string,
     tabId?: string,
+    expect?: ActionExpectation,
   ): Promise<NavigateResult> {
+    const spec = toVerificationSpec(expect);
     this.assertNavigationAllowed(url);
     await this.rateLimiter?.removeToken();
     const { tab } = this.resolveTab(sessionId, tabId, /* createIfMissing */ true);
+    const previousUrl = tab.url;
+    const rec = new PostConditionRecorder('navigate');
+    const probe = await NavigationProbe.begin(tab.page, tab);
     const dto = await tab.navigate(url);
-    return { tabId: dto.id, url: dto.url, title: dto.title };
+    await probe.finish('navigate', url, rec);
+    const verification = await this.verifier.verifyAction(
+      tab,
+      previousUrl,
+      { success: true, actionType: 'navigate' },
+      spec,
+      rec.toBuiltIn(),
+    );
+    return { tabId: dto.id, url: dto.url, title: dto.title, verification, ...this.dialogPendingOf(tab) };
   }
 
-  public async goBack(sessionId: string, tabId?: string): Promise<NavigateResult> {
+  /**
+   * FR2-07: `page.goBack()` resolves `null` when there is no history entry — which used to be
+   * reported as a silent success. The verification now says `contradicted` in that case.
+   */
+  public async goBack(sessionId: string, tabId?: string, expect?: ActionExpectation): Promise<NavigateResult> {
+    const spec = toVerificationSpec(expect);
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
+    const previousUrl = tab.url;
+    const rec = new PostConditionRecorder('go_back');
+    const probe = await NavigationProbe.begin(page, tab);
     await page.goBack();
-    return { tabId: tab.id, url: page.url(), title: await this.readTitle(tab) };
+    await probe.finish('go_back', undefined, rec);
+    const verification = await this.verifier.verifyAction(
+      tab,
+      previousUrl,
+      { success: true, actionType: 'go_back' },
+      spec,
+      rec.toBuiltIn(),
+    );
+    return { tabId: tab.id, url: page.url(), title: await this.readTitle(tab), verification, ...this.dialogPendingOf(tab) };
   }
 
-  public async goForward(sessionId: string, tabId?: string): Promise<NavigateResult> {
+  public async goForward(sessionId: string, tabId?: string, expect?: ActionExpectation): Promise<NavigateResult> {
+    const spec = toVerificationSpec(expect);
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
+    const previousUrl = tab.url;
+    const rec = new PostConditionRecorder('go_forward');
+    const probe = await NavigationProbe.begin(page, tab);
     await page.goForward();
-    return { tabId: tab.id, url: page.url(), title: await this.readTitle(tab) };
+    await probe.finish('go_forward', undefined, rec);
+    const verification = await this.verifier.verifyAction(
+      tab,
+      previousUrl,
+      { success: true, actionType: 'go_forward' },
+      spec,
+      rec.toBuiltIn(),
+    );
+    return { tabId: tab.id, url: page.url(), title: await this.readTitle(tab), verification, ...this.dialogPendingOf(tab) };
   }
 
-  public async reload(sessionId: string, tabId?: string): Promise<NavigateResult> {
+  public async reload(sessionId: string, tabId?: string, expect?: ActionExpectation): Promise<NavigateResult> {
+    const spec = toVerificationSpec(expect);
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
+    const previousUrl = tab.url;
+    const rec = new PostConditionRecorder('reload');
+    const probe = await NavigationProbe.begin(page, tab);
     await page.reload({ waitUntil: 'domcontentloaded' });
-    return { tabId: tab.id, url: page.url(), title: await this.readTitle(tab) };
+    await probe.finish('reload', undefined, rec);
+    const verification = await this.verifier.verifyAction(
+      tab,
+      previousUrl,
+      { success: true, actionType: 'reload' },
+      spec,
+      rec.toBuiltIn(),
+    );
+    return { tabId: tab.id, url: page.url(), title: await this.readTitle(tab), verification, ...this.dialogPendingOf(tab) };
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -598,10 +681,13 @@ export class SutradharRuntime {
      *  override individual fields. Useful when a click triggers a menu/modal/toast that takes
      *  a moment to finish rendering and the very next call needs to see the settled result. */
     settle?: boolean | SettleSpec,
+    /** FR2-07: caller assertion checked once, right after the action (and after settle). */
+    expect?: ActionExpectation,
   ): Promise<ActionResult> {
+    const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'click', selector: normalizeTarget(target), modifiers, offset, settle },
+      { actionType: 'click', selector: normalizeTarget(target), modifiers, offset, settle, ...this.specParam(spec) },
       tabId,
     );
   }
@@ -616,8 +702,18 @@ export class SutradharRuntime {
    * `press` command previously used `click` to focus, which broke exactly this pattern when
    * testing a real rich-text-editor's word-select-then-format toolbar workflow).
    */
-  public async focus(sessionId: string, target: string, tabId?: string): Promise<ActionResult> {
-    return this.runAction(sessionId, { actionType: 'focus', selector: normalizeTarget(target) }, tabId);
+  public async focus(
+    sessionId: string,
+    target: string,
+    tabId?: string,
+    expect?: ActionExpectation,
+  ): Promise<ActionResult> {
+    const spec = toVerificationSpec(expect);
+    return this.runAction(
+      sessionId,
+      { actionType: 'focus', selector: normalizeTarget(target), ...this.specParam(spec) },
+      tabId,
+    );
   }
 
   /**
@@ -633,12 +729,32 @@ export class SutradharRuntime {
     y: number,
     tabId?: string,
     button: 'left' | 'right' | 'middle' = 'left',
+    expect?: ActionExpectation,
   ): Promise<ActionResult> {
+    const spec = toVerificationSpec(expect);
     const start = Date.now();
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
+    const previousUrl = tab.url;
+    const rec = new PostConditionRecorder('click_at_point');
+    // FR2-07: hit-test the point (through open shadow roots and frames) and arm a trusted-event
+    // listener BEFORE clicking, so the result can say which element was actually there and whether
+    // a real click reached it.
+    const eventName = button === 'right' ? 'contextmenu' : button === 'middle' ? 'auxclick' : 'click';
+    const arm = await observePoint(tab, x, y, [eventName]);
     try {
-      await page.mouse.click(x, y, { button });
+      // GAP-019: a click that opens a native dialog blocks Input.dispatchMouseEvent until the
+      // dialog is handled (30 s auto-dismiss) — race it, exactly like verifiedClickOnHandle does.
+      await this.raceStep(page.mouse.click(x, y, { button }));
+      const obs = await finishPointObservation(tab, arm, { x, y, event: eventName }, previousUrl);
+      applyVerdict(rec, decidePointVerdict(obs));
+      const verification = await this.verifier.verifyAction(
+        tab,
+        previousUrl,
+        { success: true, actionType: 'click_at_point' },
+        spec,
+        rec.toBuiltIn(),
+      );
       return {
         success: true,
         actionType: 'click_at_point',
@@ -646,14 +762,30 @@ export class SutradharRuntime {
         currentUrl: page.url(),
         title: await this.readTitle(tab),
         output: { x, y, button },
+        verification,
+        ...this.dialogPendingOf(tab),
       };
     } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
       return {
         success: false,
         actionType: 'click_at_point',
         executionTimeMs: Date.now() - start,
-        error: err instanceof Error ? err.message : String(err),
+        error,
+        verification: failedVerification(error, specKeys(spec)),
+        ...this.dialogPendingOf(tab),
       };
+    }
+  }
+
+  /** Awaits `p`, but stops waiting after 1500 ms (leaving `p` running, its late rejection swallowed). */
+  private async raceStep(p: Promise<unknown>): Promise<void> {
+    p.catch(() => {});
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      await Promise.race([p, new Promise<void>((resolve) => (timer = setTimeout(resolve, 1500)))]);
+    } finally {
+      if (timer) clearTimeout(timer);
     }
   }
 
@@ -672,15 +804,29 @@ export class SutradharRuntime {
     toX: number,
     toY: number,
     tabId?: string,
+    expect?: ActionExpectation,
   ): Promise<ActionResult> {
+    const spec = toVerificationSpec(expect);
     const start = Date.now();
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
+    const previousUrl = tab.url;
+    const rec = new PostConditionRecorder('drag_at_points');
+    const arm = await observePoint(tab, fromX, fromY, ['mousedown', 'mouseup']);
     try {
-      await page.mouse.move(fromX, fromY);
-      await page.mouse.down();
-      await page.mouse.move(toX, toY);
-      await page.mouse.up();
+      await this.raceStep(page.mouse.move(fromX, fromY));
+      await this.raceStep(page.mouse.down());
+      await this.raceStep(page.mouse.move(toX, toY));
+      await this.raceStep(page.mouse.up());
+      const obs = await finishPointObservation(tab, arm, { x: fromX, y: fromY, toX, toY, event: 'mousedown' }, previousUrl);
+      applyVerdict(rec, decideDragVerdict(obs));
+      const verification = await this.verifier.verifyAction(
+        tab,
+        previousUrl,
+        { success: true, actionType: 'drag_at_points' },
+        spec,
+        rec.toBuiltIn(),
+      );
       return {
         success: true,
         actionType: 'drag_at_points',
@@ -688,13 +834,18 @@ export class SutradharRuntime {
         currentUrl: page.url(),
         title: await this.readTitle(tab),
         output: { fromX, fromY, toX, toY },
+        verification,
+        ...this.dialogPendingOf(tab),
       };
     } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
       return {
         success: false,
         actionType: 'drag_at_points',
         executionTimeMs: Date.now() - start,
-        error: err instanceof Error ? err.message : String(err),
+        error,
+        verification: failedVerification(error, specKeys(spec)),
+        ...this.dialogPendingOf(tab),
       };
     }
   }
@@ -709,10 +860,12 @@ export class SutradharRuntime {
      *  for what this does. Useful when typing triggers an async autocomplete/validation UI
      *  that takes a moment to render and the next call needs to see it. */
     settle?: boolean | SettleSpec,
+    expect?: ActionExpectation,
   ): Promise<ActionResult> {
+    const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'type', selector: normalizeTarget(target), value, settle },
+      { actionType: 'type', selector: normalizeTarget(target), value, settle, ...this.specParam(spec) },
       tabId,
     );
   }
@@ -731,15 +884,17 @@ export class SutradharRuntime {
   ): Promise<Record<string, ActionResult>> {
     const results: Record<string, ActionResult> = {};
     for (const [target, value] of Object.entries(fields)) {
-      results[target] = await this.type(sessionId, target, value, tabId).catch(
-        (err: unknown) =>
-          ({
-            success: false,
-            actionType: 'type',
-            executionTimeMs: 0,
-            error: err instanceof Error ? err.message : String(err),
-          }) satisfies ActionResult,
-      );
+      results[target] = await this.type(sessionId, target, value, tabId).catch((err: unknown): ActionResult => {
+        const error = err instanceof Error ? err.message : String(err);
+        return {
+          success: false,
+          actionType: 'type',
+          executionTimeMs: 0,
+          error,
+          // FR2-07: every result carries a verification, including a thrown per-field failure.
+          verification: failedVerification(error),
+        };
+      });
     }
     return results;
   }
@@ -750,8 +905,10 @@ export class SutradharRuntime {
     key: string,
     tabId?: string,
     modifiers?: readonly ('Control' | 'Shift' | 'Alt' | 'Meta')[],
+    expect?: ActionExpectation,
   ): Promise<ActionResult> {
-    return this.runAction(sessionId, { actionType: 'press_key', key, modifiers }, tabId);
+    const spec = toVerificationSpec(expect);
+    return this.runAction(sessionId, { actionType: 'press_key', key, modifiers, ...this.specParam(spec) }, tabId);
   }
 
   /** Scroll the page. direction defaults to "down"; amount defaults to 500px. */
@@ -775,10 +932,19 @@ export class SutradharRuntime {
      *  debounce after the real scroll event, not synchronously — reading the DOM immediately
      *  after `scroll` returns can still show the pre-scroll rows. */
     settle?: boolean | SettleSpec,
+    expect?: ActionExpectation,
   ): Promise<ActionResult> {
+    const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'scroll', direction, amount, selector: target ? normalizeTarget(target) : undefined, settle },
+      {
+        actionType: 'scroll',
+        direction,
+        amount,
+        selector: target ? normalizeTarget(target) : undefined,
+        settle,
+        ...this.specParam(spec),
+      },
       tabId,
     );
   }
@@ -790,8 +956,14 @@ export class SutradharRuntime {
     target: string,
     tabId?: string,
     offset?: { x: number; y: number },
+    expect?: ActionExpectation,
   ): Promise<ActionResult> {
-    return this.runAction(sessionId, { actionType: 'hover', selector: normalizeTarget(target), offset }, tabId);
+    const spec = toVerificationSpec(expect);
+    return this.runAction(
+      sessionId,
+      { actionType: 'hover', selector: normalizeTarget(target), offset, ...this.specParam(spec) },
+      tabId,
+    );
   }
 
   /** Select an `<option>` by value on a `<select>` targeted by selector or sd-node-id. */
@@ -800,10 +972,12 @@ export class SutradharRuntime {
     target: string,
     value: string,
     tabId?: string,
+    expect?: ActionExpectation,
   ): Promise<ActionResult> {
+    const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'select_option', selector: normalizeTarget(target), value },
+      { actionType: 'select_option', selector: normalizeTarget(target), value, ...this.specParam(spec) },
       tabId,
     );
   }
@@ -814,10 +988,12 @@ export class SutradharRuntime {
     target: string,
     values: readonly string[],
     tabId?: string,
+    expect?: ActionExpectation,
   ): Promise<ActionResult> {
+    const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'select_option', selector: normalizeTarget(target), values },
+      { actionType: 'select_option', selector: normalizeTarget(target), values, ...this.specParam(spec) },
       tabId,
     );
   }
@@ -834,17 +1010,25 @@ export class SutradharRuntime {
     timeoutMs?: number,
     tabId?: string,
     state?: WaitForSelectorState,
+    expect?: ActionExpectation,
   ): Promise<ActionResult> {
+    const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'wait_for_selector', selector: normalizeTarget(target), timeoutMs, state },
+      { actionType: 'wait_for_selector', selector: normalizeTarget(target), timeoutMs, state, ...this.specParam(spec) },
       tabId,
     );
   }
 
   /** Click the first element whose visible text contains `text`. */
-  public async clickByText(sessionId: string, text: string, tabId?: string): Promise<ActionResult> {
-    return this.runAction(sessionId, { actionType: 'click_by_text', text }, tabId);
+  public async clickByText(
+    sessionId: string,
+    text: string,
+    tabId?: string,
+    expect?: ActionExpectation,
+  ): Promise<ActionResult> {
+    const spec = toVerificationSpec(expect);
+    return this.runAction(sessionId, { actionType: 'click_by_text', text, ...this.specParam(spec) }, tabId);
   }
 
   /** Click an element by its ARIA `role` attribute (optionally narrowed by accessible `name`). */
@@ -853,8 +1037,10 @@ export class SutradharRuntime {
     role: string,
     name?: string,
     tabId?: string,
+    expect?: ActionExpectation,
   ): Promise<ActionResult> {
-    return this.runAction(sessionId, { actionType: 'click_by_role', role, name }, tabId);
+    const spec = toVerificationSpec(expect);
+    return this.runAction(sessionId, { actionType: 'click_by_role', role, name, ...this.specParam(spec) }, tabId);
   }
 
   /** Type into the input whose `aria-label` or `placeholder` matches `label`. */
@@ -863,8 +1049,10 @@ export class SutradharRuntime {
     label: string,
     value: string,
     tabId?: string,
+    expect?: ActionExpectation,
   ): Promise<ActionResult> {
-    return this.runAction(sessionId, { actionType: 'type_by_label', label, value }, tabId);
+    const spec = toVerificationSpec(expect);
+    return this.runAction(sessionId, { actionType: 'type_by_label', label, value, ...this.specParam(spec) }, tabId);
   }
 
   /** Upload a local file into a `<input type="file">` targeted by selector or sd-node-id. */
@@ -873,10 +1061,12 @@ export class SutradharRuntime {
     target: string,
     filePath: string,
     tabId?: string,
+    expect?: ActionExpectation,
   ): Promise<ActionResult> {
+    const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'upload_file', selector: normalizeTarget(target), filePath },
+      { actionType: 'upload_file', selector: normalizeTarget(target), filePath, ...this.specParam(spec) },
       tabId,
     );
   }
@@ -887,10 +1077,12 @@ export class SutradharRuntime {
     target: string,
     button: 'left' | 'right' | 'middle',
     tabId?: string,
+    expect?: ActionExpectation,
   ): Promise<ActionResult> {
+    const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'click', selector: normalizeTarget(target), button },
+      { actionType: 'click', selector: normalizeTarget(target), button, ...this.specParam(spec) },
       tabId,
     );
   }
@@ -901,23 +1093,32 @@ export class SutradharRuntime {
     sourceTarget: string,
     destTarget: string,
     tabId?: string,
+    expect?: ActionExpectation,
   ): Promise<ActionResult> {
+    const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
       {
         actionType: 'drag_and_drop',
         selector: normalizeTarget(sourceTarget),
         targetSelector: normalizeTarget(destTarget),
+        ...this.specParam(spec),
       },
       tabId,
     );
   }
 
   /** Simulate a touchscreen tap on an element targeted by selector or sd-node-id. */
-  public async touchTap(sessionId: string, target: string, tabId?: string): Promise<ActionResult> {
+  public async touchTap(
+    sessionId: string,
+    target: string,
+    tabId?: string,
+    expect?: ActionExpectation,
+  ): Promise<ActionResult> {
+    const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'touch_tap', selector: normalizeTarget(target) },
+      { actionType: 'touch_tap', selector: normalizeTarget(target), ...this.specParam(spec) },
       tabId,
     );
   }
@@ -932,10 +1133,18 @@ export class SutradharRuntime {
     target: string,
     downloadDir?: string,
     tabId?: string,
+    expect?: ActionExpectation,
   ): Promise<ActionResult> {
+    const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'download_file', selector: normalizeTarget(target), downloadDir, timeoutMs: 30000 },
+      {
+        actionType: 'download_file',
+        selector: normalizeTarget(target),
+        downloadDir,
+        timeoutMs: 30000,
+        ...this.specParam(spec),
+      },
       tabId,
     );
   }
@@ -955,8 +1164,24 @@ export class SutradharRuntime {
   ): Promise<ScreenshotResult> {
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
+    const previousUrl = tab.url;
     const base64 = (await page.screenshot({ type: 'png', encoding: 'base64', fullPage })) as string;
-    return { base64 };
+    // FR2-07: a screenshot has no post-condition to verify; the capture itself is checked to be a
+    // well-formed PNG, and the result says so honestly (unverifiable unless the capture is broken).
+    const rec = new PostConditionRecorder('screenshot');
+    try {
+      recordScreenshotEvidence(base64, rec);
+    } catch (err) {
+      rec.verdict('not-run', `the post-condition check itself failed: ${(err as Error)?.message ?? String(err)}`);
+    }
+    const verification = await this.verifier.verifyAction(
+      tab,
+      previousUrl,
+      { success: true, actionType: 'screenshot' },
+      undefined,
+      rec.toBuiltIn(),
+    );
+    return { base64, verification };
   }
 
   /** Export the current page as a PDF. Returns raw base64 (no data-URI prefix). */
@@ -1451,16 +1676,61 @@ export class SutradharRuntime {
   }
 
   /** Read the current clipboard text. Requires the 'clipboard-read' permission — grant it
-   *  first via {@link grantPermissions} if this throws a permission error. */
+   *  first via {@link grantPermissions}. FR2-07: still resolves a plain string (`readClipboard`
+   *  is the richer form and the one that says whether an empty string was a BLOCKED read). */
   public async getClipboard(sessionId: string, tabId?: string): Promise<string> {
+    return (await this.readClipboard(sessionId, tabId)).text;
+  }
+
+  /**
+   * FR2-07: reads the clipboard from a CDP ISOLATED world (a page that monkey-patches
+   * `navigator.clipboard` in its own world can't spoof it). When both read paths are blocked the
+   * text is `''` and the verification is `unverifiable` — the empty string is NOT the clipboard's
+   * content, which used to be indistinguishable from a genuinely empty clipboard.
+   */
+  public async readClipboard(sessionId: string, tabId?: string): Promise<ClipboardReadResult> {
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
+    const previousUrl = tab.url;
     // The async Clipboard API requires the document to have focus, and in practice still
     // throws NotAllowedError in some headless Chrome configurations even with the
-    // 'clipboard-read' permission granted and the page focused — fall back to the older
-    // execCommand('paste') path (via a scratch textarea), which headless Chrome honors
-    // more reliably.
+    // 'clipboard-read' permission granted and the page focused — the isolated read falls back to
+    // the older execCommand('paste') path (via a scratch textarea) exactly like the old code did.
     await page.bringToFront();
+    const r = await readClipboardIsolated(page);
+    const rec = new PostConditionRecorder('get_clipboard');
+    let text = '';
+    if (r.path === 'clipboard-api' || r.path === 'execCommand-paste') {
+      text = r.text ?? '';
+      rec.check({ check: 'get_clipboard.read', outcome: 'pass', observed: text.length, detail: `read via ${r.path} in an isolated world` });
+      rec.verdict('pass', `read via ${r.path} in an isolated world`);
+    } else if (r.path === 'blocked') {
+      rec.check({ check: 'get_clipboard.read', outcome: 'not-run', observed: 'blocked', detail: 'clipboard-read permission not granted' });
+      rec.verdict(
+        'not-run',
+        "the clipboard could not be read (permission not granted); the returned empty text is NOT the clipboard's content",
+      );
+    } else {
+      // The isolated read couldn't run at all: fall back to today's main-world read, honestly labelled.
+      text = await this.readClipboardMainWorld(page).catch(() => '');
+      rec.check({ check: 'get_clipboard.read', outcome: 'not-run', observed: 'main-world', detail: r.error });
+      rec.verdict(
+        'not-run',
+        "read in the page's main world because the isolated read couldn't run; page scripts could alter this value",
+      );
+    }
+    const verification = await this.verifier.verifyAction(
+      tab,
+      previousUrl,
+      { success: true, actionType: 'get_clipboard' },
+      undefined,
+      rec.toBuiltIn(),
+    );
+    return { text, verification, ...this.dialogPendingOf(tab) };
+  }
+
+  /** Today's (pre-FR2-07) main-world read — kept only as the labelled fallback for `readClipboard`. */
+  private async readClipboardMainWorld(page: NonNullable<IBrowserTab['page']>): Promise<string> {
     try {
       return await page.evaluate(() => navigator.clipboard.readText());
     } catch {
@@ -1478,16 +1748,24 @@ export class SutradharRuntime {
     }
   }
 
-  /** Write text to the clipboard. Requires the 'clipboard-write' permission (granted by
-   *  default in most browsers for the active tab, but not guaranteed headless). */
-  public async setClipboard(sessionId: string, text: string, tabId?: string): Promise<void> {
+  /**
+   * Write text to the clipboard. Requires the 'clipboard-write' permission (granted by default in
+   * most browsers for the active tab, but not guaranteed headless).
+   *
+   * FR2-07: the write is followed by a read-back from a CDP isolated world, so a page that
+   * monkey-patches `navigator.clipboard.writeText` into a silent no-op is caught (`contradicted`),
+   * and a read-back the browser blocks is honestly `unverifiable` with a grant hint.
+   */
+  public async setClipboard(sessionId: string, text: string, tabId?: string): Promise<ActionResult> {
+    const start = Date.now();
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
+    const previousUrl = tab.url;
     await page.bringToFront();
     try {
       await page.evaluate((t) => navigator.clipboard.writeText(t), text);
     } catch {
-      // See getClipboard's comment — same headless-Chrome fallback.
+      // See readClipboard's comment — same headless-Chrome fallback.
       await page.evaluate((t) => {
         const ta = document.createElement('textarea');
         ta.value = t;
@@ -1500,6 +1778,24 @@ export class SutradharRuntime {
         document.body.removeChild(ta);
       }, text);
     }
+    const rec = new PostConditionRecorder('set_clipboard');
+    applyVerdict(rec, decideClipboardVerdict(text, await readClipboardIsolated(page)));
+    const verification = await this.verifier.verifyAction(
+      tab,
+      previousUrl,
+      { success: true, actionType: 'set_clipboard' },
+      undefined,
+      rec.toBuiltIn(),
+    );
+    return {
+      success: true,
+      actionType: 'set_clipboard',
+      executionTimeMs: Date.now() - start,
+      currentUrl: page.url(),
+      output: { length: text.length },
+      verification,
+      ...this.dialogPendingOf(tab),
+    };
   }
 
   /**
@@ -1513,7 +1809,10 @@ export class SutradharRuntime {
     triggerTarget: string,
     filePath: string,
     tabId?: string,
-  ): Promise<void> {
+    expect?: ActionExpectation,
+  ): Promise<ActionResult> {
+    const spec = toVerificationSpec(expect);
+    const start = Date.now();
     const { tab } = this.resolveTab(sessionId, tabId); // unchanged order: unknown session still throws first
     const page = this.requirePage(tab);
     // FR2-06: normalized (and so checked for Playwright syntax) BEFORE the fs allowlist check —
@@ -1524,10 +1823,22 @@ export class SutradharRuntime {
     // applies — otherwise this path would read an arbitrary host file with no validation at
     // all, unlike its sibling.
     await this.assertUploadPathAllowed(filePath);
+    const previousUrl = tab.url;
+    const fileName = path.basename(filePath);
+    let fileSize: number | undefined;
+    try {
+      fileSize = (await stat(filePath)).size;
+    } catch {
+      fileSize = undefined;
+    }
+    // FR2-07: record every file input + start capturing `change` events BEFORE the chooser opens,
+    // so the accepted file can be read back afterwards.
+    const arm = await observeUploadTargets(tab);
     let fileChooser: Awaited<ReturnType<typeof page.waitForFileChooser>>;
     try {
       [fileChooser] = await Promise.all([page.waitForFileChooser(), page.click(selector)]);
     } catch (e) {
+      await removeUploadListener(arm);
       const msg = (e as Error)?.message ?? String(e);
       if (/is not a valid selector|is not a valid XPath expression/i.test(msg)) {
         // No `enginePath`: Puppeteer P-selectors (>>>, ::-p-*()) DO work on this unprefixed path.
@@ -1536,6 +1847,30 @@ export class SutradharRuntime {
       throw e; // same object — anything else (no chooser opened, navigation, ...) passes through
     }
     await fileChooser.accept([filePath]);
+    const rec = new PostConditionRecorder('upload_file_via_trigger');
+    if (fileSize === undefined) {
+      await removeUploadListener(arm);
+      rec.check({ check: 'upload_file_via_trigger.files-read-back', outcome: 'not-run', detail: 'the file size could not be read' });
+      rec.verdict('not-run', 'the uploaded file could not be stat-ed, so its read-back could not be compared');
+    } else {
+      applyVerdict(rec, await finishUploadObservation(arm, fileName, fileSize));
+    }
+    const verification = await this.verifier.verifyAction(
+      tab,
+      previousUrl,
+      { success: true, actionType: 'upload_file_via_trigger' },
+      spec,
+      rec.toBuiltIn(),
+    );
+    return {
+      success: true,
+      actionType: 'upload_file_via_trigger',
+      executionTimeMs: Date.now() - start,
+      currentUrl: page.url(),
+      output: { filePath, fileName, ...(fileSize !== undefined ? { fileSizeBytes: fileSize } : {}) },
+      verification,
+      ...this.dialogPendingOf(tab),
+    };
   }
 
   /** Shared with {@link uploadFileViaTrigger} — mirrors `BrowserActionEngine`'s
@@ -2183,7 +2518,34 @@ export class SutradharRuntime {
       retriesUsed: result.retriesUsed,
       verification: result.verification,
       failureScreenshot: result.failureScreenshot,
+      ...this.dialogPendingOf(tab),
     };
+  }
+
+  /** `{verificationSpec}` only when an expectation was given — the params object must NOT gain a
+   *  `verificationSpec` key otherwise (callers/tests compare it structurally). */
+  private specParam(spec: VerificationSpec | undefined): { verificationSpec?: VerificationSpec } {
+    return spec ? { verificationSpec: spec } : {};
+  }
+
+  /**
+   * FR2-07 (closes GAP-018): `{dialogPending}` while a native dialog is open on `tab`, else `{}`
+   * (the key is ABSENT, not null). Same shape and key order as FR2-04's CLI `dialogPending:` line.
+   */
+  private dialogPendingOf(tab: IBrowserTab): { dialogPending?: DialogPendingInfo } {
+    try {
+      const d = tab.getPendingDialogDetail?.();
+      if (d) {
+        return { dialogPending: { type: d.dialogType, message: d.message, defaultValue: d.defaultValue ?? null, url: d.url } };
+      }
+      const p = tab.getPendingDialog?.();
+      if (p) {
+        return { dialogPending: { type: p.dialogType, message: p.message, defaultValue: p.defaultValue ?? null, url: tab.url } };
+      }
+    } catch {
+      /* a tab that can't answer has no reportable dialog */
+    }
+    return {};
   }
 
   private requireSession(sessionId: string): IBrowserSession {

@@ -14,6 +14,7 @@ import type {
   SemanticNode,
   SkippedFrame,
   VerificationResultDto,
+  VerificationSpec,
 } from '@sutradhar/browser';
 import { assertSupportedSelectorDialect, InvalidSelectorError, SELECTOR_SYNTAX_HINT, selectorSyntaxDetail } from '@sutradhar/browser';
 import type { SessionId, TabId } from '@sutradhar/contracts';
@@ -63,17 +64,102 @@ export interface AttachOptions {
   dialogPolicy?: DialogPolicy;
 }
 
-/** Result of {@link SutradharRuntime.navigate}. */
+/**
+ * FR2-07: the native dialog currently blocking a tab, exactly as FR2-04's CLI `dialogPending:` line
+ * prints it (same keys, same order) so there is one contract across CLI, MCP and SDK.
+ */
+export interface DialogPendingInfo {
+  type: string;
+  message: string;
+  defaultValue: string | null;
+  url: string;
+}
+
+/** Result of {@link SutradharRuntime.navigate} / goBack / goForward / reload. */
 export interface NavigateResult {
   tabId: string;
   url: string;
   title: string;
+  /** FR2-07: did the navigation really commit? See `verification.evidence`. */
+  verification?: VerificationResultDto;
+  /** FR2-07: present only while a native dialog is open on the tab. */
+  dialogPending?: DialogPendingInfo;
 }
 
 /** Result of {@link SutradharRuntime.screenshot}. */
 export interface ScreenshotResult {
   /** Base64-encoded PNG bytes, WITHOUT the `data:image/png;base64,` prefix. */
   base64: string;
+  /** FR2-07: a screenshot has no post-condition; the capture is checked to be a well-formed PNG. */
+  verification?: VerificationResultDto;
+}
+
+/** Result of {@link SutradharRuntime.readClipboard}. */
+export interface ClipboardReadResult {
+  /** The clipboard text. `''` with an `unverifiable` verification means the read was BLOCKED, not
+   *  that the clipboard is empty. */
+  text: string;
+  verification: VerificationResultDto;
+  dialogPending?: DialogPendingInfo;
+}
+
+/**
+ * FR2-07: the public, caller-facing post-action assertion (MCP `expect`, CLI `--expect-*`, SDK
+ * `options.expect`). A failed expectation never fails the action: `success` stays true and the
+ * verification reports `verified:false, tier:'contradicted'` with a failing `expect.*` check.
+ */
+export interface ActionExpectation {
+  /** VISIBLE text that must appear somewhere on the page after the action (any frame, open shadow
+   *  roots; case-sensitive substring; `display:none` / script text does not count). Checked once,
+   *  right after the action (and after settle, if requested). */
+  text?: string;
+  /** Substring the tab's final URL must contain. */
+  url?: string;
+  /** true: the URL must differ from the pre-action URL. false: it must be identical (string
+   *  compare, fragment included). */
+  urlChanged?: boolean;
+}
+
+const EXPECTATION_KEYS = ['text', 'url', 'urlChanged'];
+
+/**
+ * Maps an {@link ActionExpectation} onto the engine's `VerificationSpec`. Throws `TypeError` on a
+ * non-object, an unknown key, a `text`/`url` that isn't a non-empty string, or a non-boolean
+ * `urlChanged` — before any browser contact. Returns `undefined` for `undefined`.
+ */
+export function toVerificationSpec(e: ActionExpectation | undefined): VerificationSpec | undefined {
+  if (e === undefined) return undefined;
+  if (e === null || typeof e !== 'object' || Array.isArray(e)) {
+    throw new TypeError('expect must be an object: {text?: string, url?: string, urlChanged?: boolean}');
+  }
+  for (const k of Object.keys(e)) {
+    if (!EXPECTATION_KEYS.includes(k)) {
+      throw new TypeError(`expect has an unknown key "${k}" — allowed keys: text, url, urlChanged`);
+    }
+  }
+  const { text, url, urlChanged } = e;
+  if (text !== undefined && (typeof text !== 'string' || text.length === 0)) {
+    throw new TypeError('expect.text must be a non-empty string');
+  }
+  if (url !== undefined && (typeof url !== 'string' || url.length === 0)) {
+    throw new TypeError('expect.url must be a non-empty string');
+  }
+  if (urlChanged !== undefined && typeof urlChanged !== 'boolean') {
+    throw new TypeError('expect.urlChanged must be a boolean');
+  }
+  return {
+    ...(text !== undefined ? { expectedElementText: text } : {}),
+    ...(url !== undefined ? { expectedUrlSubstring: url } : {}),
+    ...(urlChanged !== undefined ? { shouldUrlChange: urlChanged } : {}),
+  };
+}
+
+/** The `expect.*` keys whose check did not pass (`'text' | 'url' | 'urlChanged'`); `[]` when none were given. */
+export function failedExpectations(v: VerificationResultDto | undefined): string[] {
+  if (!v) return [];
+  return v.evidence.checks
+    .filter((c) => c.check.startsWith('expect.') && c.outcome !== 'pass')
+    .map((c) => c.check.slice('expect.'.length));
 }
 
 /** A rendered view of the page suitable for an LLM to reason over. */
@@ -112,10 +198,13 @@ export interface ActionResult {
   output?: Record<string, unknown>;
   error?: string;
   retriesUsed?: number;
-  /** Post-action verification signal — did the action's observable effect match expectations? */
+  /** Post-action verification signal — did the action's observable effect match expectations?
+   *  FR2-07: always present on a result the runtime produced; see `verification.evidence.tier`. */
   verification?: VerificationResultDto;
   /** Base64 PNG captured automatically when the action ultimately failed, for debugging. */
   failureScreenshot?: string;
+  /** FR2-07: present only while a native dialog is open on the tab (closes GAP-018). */
+  dialogPending?: DialogPendingInfo;
 }
 
 /** Result of {@link SutradharRuntime.exportPdf}. */
@@ -148,6 +237,8 @@ export interface DownloadResult {
   filename: string;
   path: string;
   downloadDir: string;
+  /** FR2-07: the fs.stat-backed verification of the downloaded file. */
+  verification?: VerificationResultDto;
 }
 
 export { type ActionHistoryEntry };

@@ -624,7 +624,11 @@ export async function finishKeyObservation(
   urlBefore: string | undefined,
 ): Promise<BuiltInVerdict> {
   const obs: KeyObservation = { key: params.key, modifiers: params.modifiers, pre };
-  if (pre.frame && pre.token && pre.target?.kind === 'element') {
+  const dialogNow = pendingDialogType(tab);
+  if (pre.frame && pre.token && pre.target?.kind === 'element' && dialogNow) {
+    // A dialog froze the renderer's main thread: reading would hang until the bound expires.
+    obs.dialogAfter = dialogNow;
+  } else if (pre.frame && pre.token && pre.target?.kind === 'element') {
     const r = await bounded(pre.frame.evaluate(readKeyObservationInPage, pre.token, params.key), OBSERVE_AFTER_TIMEOUT_MS);
     if (r.ok) {
       if ('missing' in r.value) obs.navigated = true;
@@ -1491,7 +1495,11 @@ export async function finishPointObservation(
     innerY: arm.innerY,
     fromInFrame: arm.fromInFrame,
   };
-  if (arm.frame && arm.token && arm.hit) {
+  const dialogNow = pendingDialogType(tab);
+  if (arm.frame && arm.token && arm.hit && dialogNow) {
+    // The click/drag opened a dialog (GAP-019): the renderer is frozen, so don't wait to read.
+    obs.dialogAfter = dialogNow;
+  } else if (arm.frame && arm.token && arm.hit) {
     const r = await bounded(arm.frame.evaluate(readPointInPage, arm.token), OBSERVE_AFTER_TIMEOUT_MS);
     if (r.ok) {
       if ('missing' in r.value) obs.navigated = true;

@@ -69,6 +69,10 @@ export function failedVerification(error: string, expectKeys: readonly string[] 
   };
 }
 
+/** Action types that accept no `expect` on any surface, so the "pass expect:{...}" coaching
+ *  sentence would point at something the caller cannot do. */
+const EXPECT_UNSUPPORTED = new Set(['wait', 'screenshot', 'take_screenshot', 'set_clipboard', 'get_clipboard']);
+
 const UNVERIFIABLE_WHY_DEFAULT = 'this action type has no built-in post-condition check';
 const NO_OBSERVATION_SUPPLIED =
   'no observation was supplied to the verifier for this action (it was verified outside the engine path that records one)';
@@ -301,7 +305,7 @@ export class ExecutionVerifier {
       const reason = anyExpectNotRun
         ? `Expectation could not be evaluated: ${expectNotRunDetail ?? 'no detail'}`
         : `'${type}' completed, but no built-in post-condition check could run: ${bi.reason}.` +
-          (specKeys(spec).length === 0
+          (specKeys(spec).length === 0 && !EXPECT_UNSUPPORTED.has(type)
             ? ' Pass expect:{text|url|urlChanged} to assert the effect you intended.'
             : '');
       return make('unverifiable', false, candidate * UNVERIFIABLE_FACTOR, reason);

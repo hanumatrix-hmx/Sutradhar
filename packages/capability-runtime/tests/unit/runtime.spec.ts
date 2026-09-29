@@ -13,6 +13,8 @@ import {
   BrowserNotAvailableError,
   InvalidSelectorError,
   CAPABILITY_RUNTIME_VERSION,
+  toVerificationSpec,
+  failedExpectations,
 } from '../../src/index.js';
 import { RateLimiter } from '@sutradhar/utils';
 import { mkdtemp, rm } from 'node:fs/promises';
@@ -1960,5 +1962,291 @@ describe('@sutradhar/capability-runtime SutradharRuntime.assertUploadPathAllowed
 
     const runtime = noBrowserRuntime({ allowedUploadRoots: [root.toUpperCase()] });
     await expect((runtime as any).assertUploadPathAllowed(path.join(root, 'ok.txt'))).resolves.toBeUndefined();
+  });
+});
+
+describe('@sutradhar/capability-runtime FR2-07 verification contract', () => {
+  const PNG_1x1 =
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+
+  /** A CDP session double whose `send` is scripted by method name. */
+  function cdp(handlers: Record<string, (params?: any) => any>) {
+    const send = vi.fn().mockImplementation(async (method: string, params?: any) => {
+      const h = handlers[method];
+      return h ? h(params) : {};
+    });
+    return { send, detach: vi.fn().mockResolvedValue(undefined) };
+  }
+
+  function stubTab(runtime: SutradharRuntime, tab: Record<string, unknown>) {
+    return vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ session: {} as any, tab: { id: 'tab_1', url: 'https://a.test/', ...tab } as any });
+  }
+
+  it('R1: toVerificationSpec maps 1:1 and rejects bad shapes with TypeError', () => {
+    expect(toVerificationSpec({ text: 'a', url: 'b', urlChanged: false })).toEqual({
+      expectedElementText: 'a',
+      expectedUrlSubstring: 'b',
+      shouldUrlChange: false,
+    });
+    expect(toVerificationSpec({})).toEqual({});
+    expect(toVerificationSpec(undefined)).toBeUndefined();
+    for (const bad of [{ text: '' }, { url: 5 }, { urlChanged: 'yes' }, { bogus: 1 }, 'str', null, []] as any[]) {
+      expect(() => toVerificationSpec(bad), JSON.stringify(bad)).toThrow(TypeError);
+    }
+  });
+
+  it('R2: an expect becomes params.verificationSpec; no expect leaves the key OUT of params', async () => {
+    const runtime = new SutradharRuntime();
+    const spy = vi.spyOn(runtime as any, 'runAction').mockResolvedValue({ success: true, actionType: 'click', executionTimeMs: 1 });
+    await runtime.click('s1', '#a', undefined, undefined, undefined, undefined, { text: 'x' });
+    expect(spy.mock.calls[0]![1]).toMatchObject({ verificationSpec: { expectedElementText: 'x' } });
+    await runtime.click('s1', '#a');
+    expect('verificationSpec' in (spy.mock.calls[1]![1] as object)).toBe(false);
+    await runtime.pressKey('s1', 'a', undefined, undefined, { urlChanged: true });
+    expect(spy.mock.calls[2]![1]).toMatchObject({ verificationSpec: { shouldUrlChange: true } });
+  });
+
+  it('R3: an invalid expect on an unknown session is a TypeError, NOT BrowserNotAvailableError, with no session lookup', async () => {
+    const runtime = new SutradharRuntime();
+    const resolve = vi.spyOn(runtime as any, 'resolveTab');
+    await expect(runtime.click('nope', '#a', undefined, undefined, undefined, undefined, { text: '' })).rejects.toThrow(TypeError);
+    await expect(runtime.navigate('nope', 'https://x.test', undefined, { urlChanged: 'yes' as any })).rejects.toThrow(TypeError);
+    await expect(runtime.uploadFileViaTrigger('nope', '#b', '/tmp/x', undefined, { bogus: 1 } as any)).rejects.toThrow(TypeError);
+    expect(resolve).not.toHaveBeenCalled();
+  });
+
+  it('R4: runAction adds dialogPending (FR2-04 shape and key order) only while a dialog is open', async () => {
+    const runtime = new SutradharRuntime();
+    (runtime as any).actionEngine = { executeAction: vi.fn().mockResolvedValue({ success: true, actionType: 'click', executionTimeMs: 1 }) };
+    stubTab(runtime, { getPendingDialog: () => ({ dialogType: 'confirm', message: 'm' }) });
+    const withDialog = await runtime.click('s1', '#a');
+    expect(withDialog.dialogPending).toEqual({ type: 'confirm', message: 'm', defaultValue: null, url: 'https://a.test/' });
+    expect(Object.keys(withDialog.dialogPending!)).toEqual(['type', 'message', 'defaultValue', 'url']);
+
+    const runtime2 = new SutradharRuntime();
+    (runtime2 as any).actionEngine = { executeAction: vi.fn().mockResolvedValue({ success: true, actionType: 'click', executionTimeMs: 1 }) };
+    stubTab(runtime2, { getPendingDialog: () => undefined });
+    expect('dialogPending' in (await runtime2.click('s1', '#a'))).toBe(false);
+
+    // FR2-04's richer accessor wins when present
+    const runtime3 = new SutradharRuntime();
+    (runtime3 as any).actionEngine = { executeAction: vi.fn().mockResolvedValue({ success: true, actionType: 'click', executionTimeMs: 1 }) };
+    stubTab(runtime3, {
+      url: 'https://z.test/',
+      getPendingDialog: () => ({ dialogType: 'prompt', message: 'q', defaultValue: 'd' }),
+      getPendingDialogDetail: () => ({ dialogType: 'prompt', message: 'q', defaultValue: 'd', url: 'https://detail.test/', openedAt: 't' }),
+    });
+    expect((await runtime3.click('s1', '#a')).dialogPending).toEqual({ type: 'prompt', message: 'q', defaultValue: 'd', url: 'https://detail.test/' });
+  });
+
+  it('R5: fillForm gives a thrown per-field failure an action-failed verification', async () => {
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'type').mockRejectedValue(new Error('field exploded'));
+    const results = await runtime.fillForm('s1', { '#a': 'x' });
+    expect(results['#a']!.success).toBe(false);
+    expect(results['#a']!.verification?.evidence.tier).toBe('action-failed');
+    expect(results['#a']!.verification?.reason).toBe('Action failed: field exploded');
+  });
+
+  it('R6: goBack with no history entry is contradicted (Puppeteer resolves null), never a silent success', async () => {
+    const runtime = new SutradharRuntime();
+    const session = cdp({
+      'Page.getNavigationHistory': () => ({ currentIndex: 0, entries: [{ id: 1 }] }),
+      'Page.getFrameTree': () => ({ frameTree: { frame: { loaderId: 'L1', id: 'F' } } }),
+    });
+    const page = {
+      isClosed: () => false,
+      url: () => 'https://a.test/',
+      title: async () => 'A',
+      goBack: vi.fn().mockResolvedValue(null),
+      createCDPSession: vi.fn().mockResolvedValue(session),
+    };
+    stubTab(runtime, { page });
+    const result = await runtime.goBack('s1');
+    expect(page.goBack).toHaveBeenCalledTimes(1);
+    expect(result.verification?.evidence.tier).toBe('contradicted');
+    expect(result.verification?.reason).toContain('no history entry');
+    expect(result.url).toBe('https://a.test/');
+    expect('dialogPending' in result).toBe(false);
+  });
+
+  it('R7: setClipboard returns an ActionResult; a blocked read-back is unverifiable with a grant hint', async () => {
+    const runtime = new SutradharRuntime();
+    const session = cdp({
+      'Page.getFrameTree': () => ({ frameTree: { frame: { id: 'F' } } }),
+      'Page.createIsolatedWorld': () => ({ executionContextId: 7 }),
+      'Runtime.evaluate': () => ({ result: { value: { path: 'blocked', error: 'NotAllowedError' } } }),
+    });
+    const page = {
+      isClosed: () => false,
+      url: () => 'https://a.test/',
+      bringToFront: vi.fn().mockResolvedValue(undefined),
+      evaluate: vi.fn().mockResolvedValue(undefined),
+      createCDPSession: vi.fn().mockResolvedValue(session),
+    };
+    stubTab(runtime, { page });
+    const r = await runtime.setClipboard('s1', 'SECRET-CLIP-1');
+    expect(r.success).toBe(true);
+    expect(r.actionType).toBe('set_clipboard');
+    expect(r.verification?.evidence.tier).toBe('unverifiable');
+    expect(r.verification?.reason).toContain('grant_permissions');
+    expect(JSON.stringify(r)).not.toContain('SECRET-CLIP-1');
+    // the isolated world was really used: a NAMED world, no universal access
+    expect(session.send).toHaveBeenCalledWith('Page.createIsolatedWorld', expect.objectContaining({ worldName: 'sutradhar-verify', grantUniveralAccess: false }));
+    expect(session.send).toHaveBeenCalledWith('Runtime.evaluate', expect.objectContaining({ contextId: 7, awaitPromise: true }));
+    expect(session.detach).toHaveBeenCalled();
+  });
+
+  it('R7b: a page that lies about clipboard contents (the isolated read differs) is contradicted', async () => {
+    const runtime = new SutradharRuntime();
+    const session = cdp({
+      'Page.getFrameTree': () => ({ frameTree: { frame: { id: 'F' } } }),
+      'Page.createIsolatedWorld': () => ({ executionContextId: 7 }),
+      'Runtime.evaluate': () => ({ result: { value: { path: 'clipboard-api', text: 'OLD-CONTENT' } } }),
+    });
+    const page = {
+      isClosed: () => false,
+      url: () => 'https://a.test/',
+      bringToFront: vi.fn().mockResolvedValue(undefined),
+      evaluate: vi.fn().mockResolvedValue(undefined), // the page's own (patched) writeText "succeeds"
+      createCDPSession: vi.fn().mockResolvedValue(session),
+    };
+    stubTab(runtime, { page });
+    const r = await runtime.setClipboard('s1', 'NEW-CONTENT');
+    expect(r.success).toBe(true);
+    expect(r.verification?.evidence.tier).toBe('contradicted');
+    expect(r.verification?.reason).toContain('may have been intercepted');
+  });
+
+  it("R8: readClipboard blocked -> text '' + unverifiable \"NOT the clipboard's content\"; getClipboard still resolves a string", async () => {
+    const runtime = new SutradharRuntime();
+    const session = cdp({
+      'Page.getFrameTree': () => ({ frameTree: { frame: { id: 'F' } } }),
+      'Page.createIsolatedWorld': () => ({ executionContextId: 7 }),
+      'Runtime.evaluate': () => ({ result: { value: { path: 'blocked' } } }),
+    });
+    const page = { isClosed: () => false, url: () => 'u', bringToFront: vi.fn().mockResolvedValue(undefined), createCDPSession: vi.fn().mockResolvedValue(session) };
+    stubTab(runtime, { page });
+    const r = await runtime.readClipboard('s1');
+    expect(r.text).toBe('');
+    expect(r.verification.evidence.tier).toBe('unverifiable');
+    expect(r.verification.reason).toContain("NOT the clipboard's content");
+    expect(r.verification.reason).not.toContain('Pass expect'); // get_clipboard has no expect
+    expect(await runtime.getClipboard('s1')).toBe('');
+
+    const okSession = cdp({
+      'Page.getFrameTree': () => ({ frameTree: { frame: { id: 'F' } } }),
+      'Page.createIsolatedWorld': () => ({ executionContextId: 7 }),
+      'Runtime.evaluate': () => ({ result: { value: { path: 'clipboard-api', text: 'hello' } } }),
+    });
+    stubTab(runtime, { page: { ...page, createCDPSession: vi.fn().mockResolvedValue(okSession) } });
+    const ok = await runtime.readClipboard('s1');
+    expect(ok.text).toBe('hello');
+    expect(ok.verification.evidence.tier).toBe('verified');
+    expect(await runtime.getClipboard('s1')).toBe('hello');
+  });
+
+  it('R8b: an unavailable isolated read falls back to the main world, labelled unverifiable', async () => {
+    const runtime = new SutradharRuntime();
+    const page = {
+      isClosed: () => false,
+      url: () => 'u',
+      bringToFront: vi.fn().mockResolvedValue(undefined),
+      evaluate: vi.fn().mockResolvedValue('main-world-text'),
+      createCDPSession: vi.fn().mockRejectedValue(new Error('no cdp')),
+    };
+    stubTab(runtime, { page });
+    const r = await runtime.readClipboard('s1');
+    expect(r.text).toBe('main-world-text');
+    expect(r.verification.evidence.tier).toBe('unverifiable');
+    expect(r.verification.reason).toContain("page's main world");
+  });
+
+  it('R9: uploadFileViaTrigger returns an ActionResult (actionType upload_file_via_trigger) with a verification', async () => {
+    const dir = await mkdtemp(path.join(os.tmpdir(), 'fr2-07-up-'));
+    try {
+      const file = path.join(dir, 'a.txt');
+      await (await import('node:fs/promises')).writeFile(file, 'hello');
+      const runtime = new SutradharRuntime();
+      const accept = vi.fn().mockResolvedValue(undefined);
+      const page = {
+        isClosed: () => false,
+        url: () => 'u',
+        click: vi.fn().mockResolvedValue(undefined),
+        waitForFileChooser: vi.fn().mockResolvedValue({ accept }),
+      };
+      stubTab(runtime, { page });
+      vi.spyOn(runtime as any, 'assertUploadPathAllowed').mockResolvedValue(undefined);
+      const r = await runtime.uploadFileViaTrigger('s1', '#browse', file);
+      expect(accept).toHaveBeenCalledWith([file]);
+      expect(r.success).toBe(true);
+      expect(r.actionType).toBe('upload_file_via_trigger');
+      expect(r.output).toMatchObject({ filePath: file, fileName: 'a.txt', fileSizeBytes: 5 });
+      expect(r.verification?.evidence.tier).toBe('unverifiable'); // a mock page has no frame API
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('R10: screenshot resolves {base64, verification} — unverifiable by design for a good PNG', async () => {
+    const runtime = new SutradharRuntime();
+    const page = { isClosed: () => false, screenshot: vi.fn().mockResolvedValue(PNG_1x1) };
+    stubTab(runtime, { page });
+    const r = await runtime.screenshot('s1');
+    expect(r.base64).toBe(PNG_1x1);
+    expect(r.verification?.evidence.tier).toBe('unverifiable');
+    expect(r.verification?.evidence.checks[0]).toMatchObject({ check: 'screenshot.png-well-formed', outcome: 'pass', observed: '1x1' });
+    expect(r.verification?.reason).not.toContain('Pass expect');
+  });
+
+  it('R11 (GAP-019): clickAtPoint returns even when mouse.click never resolves (a dialog blocks it), naming the dialog', async () => {
+    const runtime = new SutradharRuntime();
+    const page = {
+      isClosed: () => false,
+      url: () => 'u',
+      title: async () => 't',
+      mouse: { click: vi.fn().mockImplementation(() => new Promise(() => {})) },
+    };
+    stubTab(runtime, { page, getPendingDialog: () => ({ dialogType: 'alert', message: 'boo' }) });
+    const t0 = performance.now();
+    const r = await runtime.clickAtPoint('s1', 10, 10);
+    const elapsed = performance.now() - t0;
+    expect(elapsed).toBeLessThan(2500);
+    expect(elapsed).toBeGreaterThan(1000); // it really did wait the bounded race, not skip the click
+    expect(r.success).toBe(true);
+    expect(r.dialogPending?.type).toBe('alert');
+  });
+
+  it('clickAtPoint / dragAtPoints failures carry an action-failed verification', async () => {
+    const runtime = new SutradharRuntime();
+    const page = {
+      isClosed: () => false,
+      url: () => 'u',
+      mouse: { click: vi.fn().mockRejectedValue(new Error('boom')), move: vi.fn().mockRejectedValue(new Error('boom2')) },
+    };
+    stubTab(runtime, { page });
+    const c = await runtime.clickAtPoint('s1', 1, 1, undefined, 'left', { text: 'x' });
+    expect(c.success).toBe(false);
+    expect(c.verification?.evidence.tier).toBe('action-failed');
+    expect(c.verification?.evidence.checks).toEqual([{ check: 'expect.text', outcome: 'not-run', detail: 'the action failed; expectations were not evaluated' }]);
+    const d = await runtime.dragAtPoints('s1', 1, 1, 2, 2);
+    expect(d.success).toBe(false);
+    expect(d.verification?.evidence.tier).toBe('action-failed');
+  });
+
+  it('failedExpectations lists the expect.* keys that did not pass', () => {
+    expect(failedExpectations(undefined)).toEqual([]);
+    const v: any = {
+      evidence: {
+        tier: 'contradicted',
+        checks: [
+          { check: 'press_key.effect', outcome: 'fail' },
+          { check: 'expect.text', outcome: 'fail' },
+          { check: 'expect.url', outcome: 'pass' },
+          { check: 'expect.urlChanged', outcome: 'not-run' },
+        ],
+      },
+    };
+    expect(failedExpectations(v)).toEqual(['text', 'urlChanged']);
   });
 });

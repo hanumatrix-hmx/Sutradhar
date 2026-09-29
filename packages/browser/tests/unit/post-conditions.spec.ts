@@ -17,6 +17,8 @@ import {
   decidePointVerdict,
   decideTouchVerdict,
   decideUploadVerdict,
+  finishKeyObservation,
+  finishPointObservation,
   inspectPng,
   keyEffectRule,
   keyMatches,
@@ -180,6 +182,31 @@ describe('FR2-07 in-page key observers (behaviour on a fake DOM)', () => {
     const info = activeInfoInPage();
     expect(info).toMatchObject({ kind: 'element', textEntry: true, valueLen: SENTINEL.length, desc: 'input#pw.a.b' });
     expect(JSON.stringify(info)).not.toContain(SENTINEL);
+  });
+});
+
+describe('FR2-07 observers skip renderer reads while a dialog is open', () => {
+  it('finishPointObservation names the dialog and never evaluates (the renderer is frozen)', async () => {
+    const evaluate = vi.fn().mockResolvedValue({ events: [] });
+    const tab = { url: 'u', getPendingDialog: () => ({ dialogType: 'alert' }) } as any;
+    const obs = await finishPointObservation(
+      tab,
+      { hit: { desc: 'button#b' }, frame: { evaluate } as any, token: 't', innerX: 1, innerY: 1 },
+      { x: 1, y: 1, event: 'click' },
+      'u',
+    );
+    expect(evaluate).not.toHaveBeenCalled();
+    expect(decidePointVerdict(obs)).toMatchObject({ outcome: 'not-run' });
+    expect(decidePointVerdict(obs).reason).toContain('an alert dialog opened');
+  });
+
+  it('finishKeyObservation names the dialog and never evaluates', async () => {
+    const evaluate = vi.fn().mockResolvedValue({});
+    const tab = { url: 'u', getPendingDialog: () => ({ dialogType: 'confirm' }) } as any;
+    const v = await finishKeyObservation(tab, { target: textInput(), frame: { evaluate } as any, token: 't' }, { key: 'Enter' }, 'u');
+    expect(evaluate).not.toHaveBeenCalled();
+    expect(v.outcome).toBe('not-run');
+    expect(v.reason).toContain('a confirm dialog opened after the press');
   });
 });
 

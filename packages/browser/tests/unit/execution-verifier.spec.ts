@@ -271,6 +271,8 @@ describe('FR2-07 ExecutionVerifier: the verification contract', () => {
     const v = await verifier.verifyAction(tab({ url: 'u' }), 'u', { success: true, actionType: 'wait' });
     expect(v.evidence.tier).toBe('unverifiable');
     expect(v.reason).toContain('a fixed-duration sleep has no post-condition');
+    // `wait` accepts no expect on any surface, so it must not coach toward one
+    expect(v.reason).not.toContain('Pass expect');
   });
 
   it('V16: every tier survives a JSON round trip', async () => {
