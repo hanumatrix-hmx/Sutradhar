@@ -1,0 +1,12 @@
+{"id":"SDK.exports","exp":"ActionFailedError and ExpectationFailedError exported","pass":true}
+{"id":"SDK.click-missing","exp":"rejects ActionFailedError, tier action-failed","pass":true,"name":"ActionFailedError","tier":"action-failed"}
+{"id":"SDK.click-expect-hidden-NEG","exp":"rejects ExpectationFailedError failed=[text]","pass":true,"name":"ExpectationFailedError","failed":["text"]}
+{"id":"SDK.click-ok","exp":"returns result, verified","pass":true,"tier":"verified"}
+{"id":"SDK.press-body-NEG","exp":"press with no text focus -> not verified, no throw","pass":false,"tier":"verified","reason":"'press_key' verified: keydown 'q' was delivered to the focused button#real; no deterministic effect is defined for this key, so only delivery was verified"}
+{"id":"SDK.press-typed","exp":"press after type -> verified (focus on #txt)","pass":true,"tier":"verified","reason":"'press_key' verified: keydown 'c' reached the focused input#txt and its value changed (length 2→3)"}
+{"id":"SDK.waitForSelector","exp":"resolves (void) and lastResult verified","pass":true,"tier":"verified"}
+{"id":"SDK.screenshot","exp":"string, lastResult unverifiable","pass":true,"tier":"unverifiable"}
+{"id":"SDK.goto404-NEG","exp":"returns Page, lastResult contradicted","pass":true,"tier":"contradicted","reason":"'navigate' completed, but its post-condition check failed: the navigation committed, but the server answered HTTP 404."}
+{"id":"SDK.goto-expect-NEG","exp":"rejects ExpectationFailedError, result.url ends /a?from=redirect","pass":true,"name":"ExpectationFailedError","url":"http://127.0.0.1:59892/a?from=redirect"}
+{"id":"SDK.download0-NEG","exp":"returns with verification contradicted (no expect -> no throw); fs size 0","pass":true,"tier":"contradicted","size":0}
+{"id":"SDK.download","exp":"verified, fs size 4321","pass":true,"tier":"verified","size":4321}
