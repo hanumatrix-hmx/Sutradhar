@@ -1,0 +1,27 @@
+PASS cli ctl-plain want=visible exit=0 ["Verification: verified (confidence 0.90) — Action execution verified successfully with confidence 0.90"]
+PASS cli shadow-host-none want=hidden exit=4 ["Verification: NOT verified — contradicted (confidence 0.09) — Expected text \"QZ24VXKWRT13WV\" was not found in the page's visible text after the action"]
+PASS cli iframe-srcdoc-none want=hidden exit=4 ["Verification: NOT verified — contradicted (confidence 0.09) — Expected text \"QZ40VXKWRTW3NP\" was not found in the page's visible text after the action"]
+PASS cli xo-none want=hidden exit=4 ["Verification: NOT verified — contradicted (confidence 0.09) — Expected text \"QZ52VXKWRTG0UD\" was not found in the page's visible text after the action"]
+PASS cli iframe-srcdoc-vis-hidden want=hidden exit=4 ["Verification: NOT verified — contradicted (confidence 0.09) — Expected text \"QZ41VXKWRTGATD\" was not found in the page's visible text after the action"]
+PASS cli xo-vis-hidden want=hidden exit=4 ["Verification: NOT verified — contradicted (confidence 0.09) — Expected text \"QZ54VXKWRTOQQM\" was not found in the page's visible text after the action"]
+PASS cli shadow-direct-text want=visible exit=0 ["Verification: verified (confidence 0.90) — Action execution verified successfully with confidence 0.90"]
+cli close exit 0
+{"timestamp":"2026-09-29T20:33:39.988Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-29T20:33:40.180Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790714019988_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-29T20:33:41.344Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790714019988_1_2","selector":"#noop"}}
+PASS sdk ctl-plain want=visible threw=none tier=verified
+{"timestamp":"2026-09-29T20:33:42.461Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790714019988_1_3","selector":"#noop"}}
+PASS sdk shadow-host-none want=hidden threw=ExpectationFailedError tier=contradicted
+{"timestamp":"2026-09-29T20:33:43.562Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790714019988_1_4","selector":"#noop"}}
+PASS sdk iframe-srcdoc-none want=hidden threw=ExpectationFailedError tier=contradicted
+{"timestamp":"2026-09-29T20:33:44.698Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790714019988_1_5","selector":"#noop"}}
+PASS sdk xo-none want=hidden threw=ExpectationFailedError tier=contradicted
+{"timestamp":"2026-09-29T20:33:45.830Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790714019988_1_6","selector":"#noop"}}
+PASS sdk iframe-srcdoc-vis-hidden want=hidden threw=ExpectationFailedError tier=contradicted
+{"timestamp":"2026-09-29T20:33:46.938Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790714019988_1_7","selector":"#noop"}}
+PASS sdk xo-vis-hidden want=hidden threw=ExpectationFailedError tier=contradicted
+{"timestamp":"2026-09-29T20:33:48.043Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790714019988_1_8","selector":"#noop"}}
+PASS sdk shadow-direct-text want=visible threw=none tier=verified
+{"timestamp":"2026-09-29T20:33:48.229Z","level":"info","message":"[BrowserSession] Closed session sess_1790714019988_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-29T20:33:48.229Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790714019988_1","context":{"reason":"Runtime shutdown"}}
+SUMMARY 14 / 14

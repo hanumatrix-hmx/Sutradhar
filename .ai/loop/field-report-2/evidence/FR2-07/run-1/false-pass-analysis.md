@@ -181,3 +181,35 @@ out-of-process frames on `page.html` never answered; the fixtures were moved to 
 four surfaces) was repeated: 110/110 (`live-verify.log`). The one auditor probe that fails, `SDK.press-body-NEG`, fails identically in
 audit-1's own log (`audit-1/sdk-probes.log`): after `page.click('#real')` the button holds focus, so `verified` is the correct answer; it is
 a wrong assumption in the probe, not a regression.
+
+
+---
+
+## fix-2 (RENDERED-text contract, aggregation, harness) false-pass analysis
+
+For each AC: one way the check could pass while the behaviour is broken, and the command/output that rules it out.
+
+**AC: hidden text never verifies (display:none, visibility:hidden, content-visibility:hidden, [hidden], closed <details>, zero-area, hidden/ancestor-hidden frames of every kind, 10050-deep host under display:none).**
+- False-pass route A: the label and the product share one wrong belief (the live matrix labels are hand-written). Ruled out: every live case compares the product with an INDEPENDENT observer (fixtures/fr2-07-oracle.mjs: ancestor walk + Range rects, own frame judgement, never calls the product function) and asserts label == observer. It caught its own defect: evidence/FR2-07/fix-2/flake-x10/live-0-oracle-defect.log (9 FAIL where the ORACLE ignored content-visibility:hidden on the iframe itself; settled by pixels in spike3-cv-iframe.log: "cv:hidden looks like display:none (BLUE only)? true").
+- False-pass route B: stale ground truth. Ruled out: the observer is read before AND after the product call and the case fails if they differ (observerTruth.stable in live-N/live-summary.json).
+- False-pass route C: a mutant that lets hidden text through still passes. Ruled out: mutation-unit.log (14/14 mutants caught, e.g. "M1 CAUGHT Tests 54 failed") and mutation-live.log ("M1 CAUGHT LIVE ... 64/85 passed; FAILED: mcp:M:iframe-same-origin|visibility-hidden|inner ..."). M8 (unjudgeable frame trusted) is NOT reachable live (frameElement always works in real Chrome; live "M8 NOT CAUGHT 47/47 passed") and is caught by unit tests only.
+- Audit-2 probes rerun UNMODIFIED against the worktree build and the sutradhar bundle: probe-reruns/vis-matrix-mcp.log and vis-matrix-bundle.log both "SUMMARY scored 56 / 56 falseVerified [] falseNegative []"; vis-cli-sdk.log "SUMMARY 14 / 14" (audit-2 on the pre-fix build: 6 falseVerified).
+
+**AC: rendered text verifies (no false negatives; opacity:0, aria-hidden, off-screen, clipped DO count; bare text in shadow roots counts).**
+- False-pass route: an implementation that answers "not found" for everything passes all negatives. Ruled out: positive controls in every placement (matrix rows "|none|-" and the "counted" mechanisms) and mutants M4/M7/M11 fail positives: mutation-live.log M7 "11/20 passed; FAILED: mcp:M:shadow-bare-text|opacity-0|inner ...".
+
+**AC: one silent (hung) frame must not mask text another frame has; nothing is verified or contradicted from partial information.**
+- False-pass route: the hung frame in the test is not really hung, or the test passes because everything is fast. Ruled out: the hung frame is a real renderer blocked in a synchronous XHR held by the fixture server on its own site (H1-H3 in live-N/live-mcp.jsonl: H1 verified with 1 hung frame; H3 "only 8 of 9 frames answered (1 did not answer within 1500ms; ...)" unverifiable); the unit test uses a frame whose evaluate never resolves and asserts a monotonic-clock bound (< 1200 ms vs the 1500 ms per-frame bound). Mutants M5/M6/M13 caught (unit 2/4/1 failures; live M6 "2/3 passed; FAILED: mcp:H1"). SDK repro of audit A2-2: probe-reruns/multi-oopif-sdk-8.jsonl: every main-frame-text call verified (was 8 of 12 unverifiable); the single unverifiable call is text that lives ONLY in a silent cross-origin frame (fail closed, detail names the frame).
+
+**AC: fail closed (unjudgeable / exhausted => never "visible").**
+- False-pass route: guard exhaustion returns true. Ruled out: unit tests "FAIL CLOSED: ... THROWS" (checkVisibility missing, work budget) and mutants M3a/M3b caught; deep DOM 10050 under display:none is NOT verified live (matrix deep-dom|display-none|outer PASS in every run).
+
+**AC: the harness is stable (X10/X11/X12/K11), 3 consecutive identical green runs.**
+- False-pass route: green by retrying or by loosening. Ruled out: no retries. Two flake causes were fixed in the harness (the readiness wait needed an evaluate answer from a display:none out-of-process frame; K11 picked the first same-origin frame instead of one with a URL token) and one (X10, GAP-325) was root-caused to the client not attaching a cross-origin frame target (flake-x10/diag-two-clients-alt.log; diag-x10-mcp-200.log reproduces 1/200). Final: live-1/2/3 logs each "488/488 passed", per-surface case counts identical (mcp 342, cli 22, sdk 19, bundle 105); the only differing case ids are the two C5 clipboard-leak checks whose id embeds a timestamp. GAP-325 tolerances that fired: NONE in any run (Z-gap325-budget observed.tolerated is [] for mcp and bundle in runs 1-3).
+
+**Why the GAP-325 harness tolerance is honest and not a loosened test hiding a product bug.**
+1. What is tolerated is exactly one product outcome: tier 'unverifiable', expect.text 'not-run', detail naming a silent cross-origin frame (hung:http://localhost:...), success true, verified:false. verified:true is never accepted, and it does not accept a false 'contradicted' either (the tolerance replaces the verdict, it does not add one).
+2. That outcome is the specified fail-closed answer when a frame cannot be inspected: the product cannot conclude "absent" or "present" about a document its client cannot reach. Requiring 'contradicted' there would demand the product claim something it cannot know.
+3. The cause is outside the product: the client never attached that frame's target (frame.client is the parent's session; a raw Runtime.evaluate there answered with the MAIN frame's text, proving a raw fallback would answer for the wrong document). Evidence: flake-x10/diag-two-clients-alt.log, diag-x10-mcp-200.log (1/200), diag-x10-500.log (0/500 with an in-process client).
+4. It cannot silently mask a product bug: capped at 3 per surface run (Z-gap325-budget fails otherwise), every firing is listed in live-summary.json, and it fired 0 times in the 3 final runs. Blanket-unavailable behaviour would be caught by the definitive verdicts asserted in the other 480+ cases.
+5. It applies only where a cross-origin (localhost) frame is named as silent; same-origin, srcdoc and main-frame cases have no tolerance.

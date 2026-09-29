@@ -69,3 +69,10 @@ frames.
 a 1-1.5 s timeout (measured in `run-1/live-summary.json`).
 
 **`tools/list` size:** the payload grows from 64,950 to 87,093 bytes (+34%) because the `expect` description is repeated on 24 tools. The tool count is unchanged (72) and the tool names are identical.
+
+- (fix-2) `expect.text` aggregation: a frame that never answers no longer makes the whole page unverifiable. `found` returns as soon as
+  any frame confirms; each frame has its own 1.5 s bound; "not found" needs every frame to have answered, otherwise the result is
+  `unverifiable` with `only N of M frames answered (K did not answer within 1500ms; hung:<frame url>)`.
+- (fix-2) Text inside a `visibility:hidden` iframe (or one under a hidden ancestor), including cross-origin frames, no longer verifies;
+  bare text nodes in open shadow roots now count; text under a 10000+ level deep hidden tree no longer counts as visible.
+- (fix-2) `tools/list`: the `expect` description is longer (precise contract); the tools array is 91,165 bytes (was 65,088 before FR2-07).
