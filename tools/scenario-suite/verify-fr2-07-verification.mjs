@@ -778,9 +778,14 @@ async function runMcpCases(surface, serverPath, ctx) {
       await page.waitForFunction(() => window.__ht && window.__ht.ready, { timeout: 8000 });
       const t0 = performance.now();
       for (;;) {
+        // ROOT CAUSE of the X10/X11/X12 flake (audit-2 + fix-2): this used to require an evaluate ANSWER from BOTH cross-origin
+        // frames, but one of them is display:none, and Chrome does not reliably schedule a hidden out-of-process frame, so the
+        // evaluate hung for the whole budget on some runs. Readiness is now: both frames are attached (url known) and the VISIBLE
+        // one answers; the hidden one is judged from the parent side only (never entered).
         const tf = page.frames().filter((x) => x.url().includes('/textframe.html'));
-        const live = tf.length === 2 ? await Promise.all(tf.map((x) => Promise.race([x.evaluate(() => document.body.innerText).then(() => true), delay(1000).then(() => false)]).catch(() => false))) : [];
-        if (live.length === 2 && live.every(Boolean)) break;
+        const visible = tf.find((x) => x.url().includes('IFRAME-VISIBLE-XO'));
+        const live = tf.length === 2 && visible ? await Promise.race([visible.evaluate(() => document.body.innerText).then(() => true), delay(1000).then(() => false)]).catch(() => false) : false;
+        if (live) break;
         if (performance.now() - t0 > 8000) throw new Error('cross-origin text frames never became live');
         await delay(100);
       }
