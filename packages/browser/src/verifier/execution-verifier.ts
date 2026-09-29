@@ -418,10 +418,20 @@ export async function pageContainsVisibleText(tab: IBrowserTab, text: string): P
     // 'found' short-circuits the moment ANY frame confirms; 'not-found' needs EVERY frame to have answered.
     return new Promise<VisibleTextResult>((resolve) => {
       const tally: Record<FrameOutcome, number> = { found: 0, absent: 0, hung: 0, failed: 0, unjudged: 0 };
+      const silent: string[] = []; // which frames did not answer (diagnosability: a bare count hid the culprit)
       let pending = frames.length;
       for (const f of frames) {
         void inspect(f).then((o) => {
           tally[o]++;
+          if (o === 'hung' || o === 'failed' || o === 'unjudged') {
+            let u = '';
+            try {
+              u = f.url().slice(0, 80);
+            } catch {
+              /* detached */
+            }
+            silent.push(`${o}:${u || 'frame'}`);
+          }
           if (o === 'found') return resolve({ result: 'found' });
           if (--pending > 0) return;
           if (tally.absent === frames.length) return resolve({ result: 'not-found' });
@@ -430,7 +440,10 @@ export async function pageContainsVisibleText(tab: IBrowserTab, text: string): P
             tally.failed > 0 ? `${tally.failed} failed` : '',
             tally.unjudged > 0 ? `${tally.unjudged} could not be judged as shown` : '',
           ].filter(Boolean);
-          resolve({ result: 'unavailable', detail: `only ${tally.absent} of ${frames.length} frames answered (${why.join(', ')})` });
+          resolve({
+            result: 'unavailable',
+            detail: `only ${tally.absent} of ${frames.length} frames answered (${why.join(', ')}; ${silent.slice(0, 3).join(' | ')}${silent.length > 3 ? ' | ...' : ''})`,
+          });
         });
       }
     });

@@ -490,6 +490,7 @@ describe('FR2-07 fix-2 expect.text: aggregation across frames', () => {
     expect(r.result).toBe('unavailable');
     expect(r.detail).toContain('only 2 of 3 frames answered');
     expect(r.detail).toContain('1 did not answer within 1500ms');
+    expect(r.detail).toContain('hung:'); // names WHICH frame went silent (a bare count hid the culprit in the X10 flake)
   }, 10000);
 
   it('text absent and every frame answered: not-found', async () => {
