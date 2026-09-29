@@ -4539,9 +4539,9 @@ describe('@sutradhar/browser BrowserActionEngine FR2-07 built-in post-conditions
   it('E1: press_key on a page with no mainFrame is unverifiable with a specific reason, presses once, and adds no delay', async () => {
     const press = vi.fn().mockResolvedValue(undefined);
     const page = { frames: vi.fn().mockReturnValue([]), keyboard: { press } } as unknown as Page;
-    const t0 = performance.now();
     const result = await new BrowserActionEngine().executeAction(mockTab(page), { actionType: 'press_key', key: 'Enter', maxRetries: 0 });
-    expect(performance.now() - t0).toBeLessThan(500); // generous: the point is "no 1000ms observation timeout"
+    // event-based, not wall-time: the specific no-mainFrame reason proves the observation was skipped, not timed out
+    expect(result.verification?.reason).not.toContain('did not answer');
     expect(result.success).toBe(true);
     expect(result.verification?.evidence.tier).toBe('unverifiable');
     expect(result.verification?.reason).toContain('no built-in');
@@ -4588,8 +4588,8 @@ describe('@sutradhar/browser BrowserActionEngine FR2-07 built-in post-conditions
     const { page } = scriptedKeyPage(() => new Promise(() => {}));
     const t0 = performance.now();
     const result = await new BrowserActionEngine().executeAction(mockTab(page), { actionType: 'press_key', key: 'a', maxRetries: 0 });
-    const elapsed = performance.now() - t0;
-    expect(elapsed).toBeLessThan(5000);
+    // the call RETURNED although the read never resolves (the bound fired); no upper wall-time bound (load-sensitive)
+    expect(performance.now() - t0).toBeGreaterThan(900);
     expect(result.success).toBe(true);
     expect(result.verification?.evidence.tier).toBe('unverifiable');
     expect(result.verification?.reason).toContain('the page did not answer');

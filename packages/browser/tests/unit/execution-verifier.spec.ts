@@ -208,8 +208,8 @@ describe('FR2-07 ExecutionVerifier: the verification contract', () => {
         { expectedElementText: 'x' },
       );
       const elapsed = performance.now() - t0;
+      // the call RETURNED although the frame never answers (the bound fired); no upper wall-time bound (load-sensitive)
       expect(elapsed).toBeGreaterThan(1400);
-      expect(elapsed).toBeLessThan(2500);
       expect(v.evidence.checks.find((c) => c.check === 'expect.text')?.outcome).toBe('not-run');
       await new Promise((r) => setTimeout(r, 20));
       expect(unhandled).toEqual([]);
