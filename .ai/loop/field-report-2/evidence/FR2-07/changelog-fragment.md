@@ -36,8 +36,9 @@ check, some a generic 0.45 "unverified", some nothing).
 **Changed (behavior):**
 - Confidence for a failed check drops from 0.45/0.36 to **0.09** (the `contradicted` tier). Confidence is
   0.45 only where no real check could run, and its `reason` now names exactly why.
-- `expect.text` / `expectedElementText` now means **visible** text across all live frames and open shadow
-  roots, bounded to 1.5 s. It used to be `textContent` (main frame only, unbounded), which counted
+- `expect.text` / `expectedElementText` now means **rendered, visible** text across all live frames and open shadow
+  roots, bounded to 1.5 s. (Fix-cycle correction: text inside an open shadow root whose host is `display:none`, or inside a
+  `display:none` iframe, does not count either.) It used to be `textContent` (main frame only, unbounded), which counted
   `display:none` and `<script>` text: a real false positive, pinned live before the change.
 - `shouldUrlChange:false` now asserts the URL is unchanged. It used to be silently ignored.
 - SDK `click`/`type`/`press`/`scroll` now **throw `ActionFailedError`** on `success:false` (closes GAP-024;
@@ -62,3 +63,5 @@ frames.
 
 **Cost:** about 2-4 extra CDP round trips per press/focus/tap/point action and 4 per navigation, each bounded by
 a 1-1.5 s timeout (measured in `run-1/live-summary.json`).
+
+**`tools/list` size:** the payload grows from 64,950 to 87,093 bytes (+34%) because the `expect` description is repeated on 24 tools. The tool count is unchanged (72) and the tool names are identical.

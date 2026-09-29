@@ -3825,3 +3825,29 @@ Two Chrome roots I had leaked from aborted CLI attempts (16:42) were killed by P
 
 Sequencing note for FR2-08: `pageContainsVisibleText(tab, text)` and `visibleTextContainsInPage` are exported from
 @sutradhar/browser for reuse; the contract requires that `expect` keep being checked AFTER settle.
+
+## 2026-09-29 -- FR2-07 fix-cycle 1 (audit-1 REOPEN): F1-F5 fixed, F6-F8 accepted
+
+Findings F1..F8 from `evidence/FR2-07/audit-1/verdict.md`.
+
+- **F1 (major) fixed.** `expect.text` counted text in an open shadow root whose host is `display:none` and in a
+  `display:none` iframe because `innerText` of an unrendered node falls back to `textContent`. `visibleTextContainsInPage`
+  now confirms every match is rendered: no `display:none` / (above the node) `content-visibility:hidden` ancestor along the
+  flat tree (parent element, else shadow host, else the same-origin embedding `<iframe>`), and `documentElement` has client
+  rects (covers a cross-origin hidden frame, whose embedding element is unreachable). `Element.checkVisibility()` was NOT used:
+  it returns false for `display:contents` hosts whose children are rendered (a common custom-element pattern), which would
+  be a false negative. The confirmation runs only on a text match, so the cost is bounded by the number of matches.
+- **F2/F3 fixed (test gaps).** Unit tests now kill the clipboard length-only and the focus `a === el` -> `a !== null` mutants;
+  live C2 uses same-length strings.
+- **F4 fixed.** With an engine-supplied built-in verdict of `not-run` and a passing `expect`, the reason is now
+  "'<type>' verified by expectation only: its built-in post-condition check could not run: <why>. Expectations met: <keys>."
+  Spec rule 9's legacy sentence is kept only when NO built-in verdict was supplied (iba-acceptance compatibility).
+- **F5 fixed.** Upper wall-time bounds removed from the new unit tests (V12, R11, E1, E6); the assertions are "the call
+  returned although the dependency never answers" (event-based) plus a monotonic LOWER bound.
+- **F6 (mixed commit f24ec4e) accepted, history is not rewritten.** The commit stays as is; the fix-cycle commits are one step each.
+- **F7 (tools/list +34%) accepted.** `tools/list` grew from 64,950 to 87,093 bytes because `expectDesc` is repeated on 24
+  tools; the tool count is unchanged (72) and the names are identical. Noted in the changelog fragment.
+- **F8 (SDK `waitForSelector` resolves `undefined`) is a documented limitation.** Verification is on `page.lastResult`; already
+  stated in the changelog fragment.
+- **Test-harness note.** The live F1 fixtures live on their own page (`fr2-07-hidden-text.html`): adding two more
+  out-of-process frames to `page.html` broke the pre-existing K11 (see GAP-322).

@@ -128,3 +128,56 @@ unit level where it cannot be (N35 duplicate guard = E14; N37 malformed PNG = E1
   `reportActionResult` printing order, `dialogPendingOf` key order at the MCP boundary (unit R4 covers the runtime; no live MCP case with a dialog on an *engine-routed* tool), and `capEvidence` truncation of a real over-long reason.
 - **Soak raw log** (40 MB) is kept outside the repo (`E:/AI-Cache/tmp/fr207-soak-raw.jsonl`); `regression/soak-summary.json` holds its sha256 and counts.
 - **Scenario-suite results** are external-site dependent; they are recorded, not gated.
+
+---
+
+# Fix-cycle 1 (audit-1 REOPEN): false-pass analysis
+
+Evidence directory: `evidence/FR2-07/fix-1/`. Every command below was re-run live after the fixes, on a forced rebuild
+(`build-forced.log`: 9/9 tasks, 0 cached; typecheck 34/34).
+
+**F1 (hidden shadow host / hidden iframe).**
+- *False pass:* the live negative passes because of a stale `dist` (the old code's answer) or because the fixture page has nothing
+  hidden; or the unit negatives pass against a fake DOM that does not resemble Chrome.
+- *Ruled out:* (1) live X8, X10, X11 (mcp and bundle) assert `contradicted` AND the observer's own reads prove the trap is real
+  (`checkVisibility()===false` while `textContent` has the text; hidden iframe `getClientRects().length===0` while its
+  `body.innerText` has the text). (2) Mutant: with the two `rendered(...)` gates removed (plain innerText walk) and dist rebuilt,
+  the same live run FAILS X8/X10/X11 (`verified:true, "Action execution verified successfully"`) and passes X9/X12/X13
+  (`live-F1-mutant-plain-innertext-mcp.jsonl`); restored source sha256 3d9e548d... equal before/after
+  (`build-forced.log` is from the restored tree). (3) Positives X9, X12, X13 prove visible shadow, same-origin and cross-origin
+  iframe text still count, so the fix did not just return false. (4) The auditor's own probes, unmodified, on the rebuilt worktree
+  AND the sutradhar bundle: `X.shadow-in-hidden-host-NEG` and `X.hidden-iframe-NEG` now `contradicted`
+  (`audit-probes-mcp.log`, `audit-probes-bundle.log`: 49 PASS, 0 FAIL each). (5) Unit: 7 verifier mutants (no body gate, no child
+  gate, no frame-rect gate, no content-visibility, no shadow-host hop, no frameElement hop, display flip) each fail >=1 new test
+  (`mutants.jsonl`).
+
+**F2 (clipboard length-only mutant).**
+- *False pass:* the new unit test uses strings of different length, so it would not catch a length comparison.
+- *Ruled out:* the test asserts `written.length === spoof.length` before deciding; mutant `r.text.length === written.length` FAILS it
+  ("expected 'pass' to be 'fail'", `mutants.jsonl` M3, sha256 3e51cb34... before == after). Live C2 now uses `AAAA-<n>` vs `BBBB-<n>`;
+  the auditor's same-length live probe (`live-mutant-control.jsonl`): `clipSpoofSameLength: contradicted`.
+
+**F3 (focus any-active-element mutant).**
+- *False pass:* the fake element's root reports the wrong active element for both branches.
+- *Ruled out:* three cases (self active -> pass; a different element active -> fail; null -> fail) run the REAL in-page function
+  through `checkFocus`; mutant `a !== null` FAILS the "DIFFERENT element" test (M5, restored byte-identically). Live control
+  `focusNoFocus: contradicted`.
+
+**F4 (built-in not-run + trivially true expect).**
+- *False pass:* the reason contains "no element had focus" only because the fixture's press failed differently.
+- *Ruled out:* unit V6b failed BEFORE the change ("expected 'Action execution verified successfully…' not to match") and passes
+  after; live K15 (mcp and bundle) has the observer confirm `document.activeElement` is BODY and the `press_key.*` check is
+  `not-run`. Auditor probe `K.body+trivial-expect` now reads "'press_key' verified by expectation only: its built-in
+  post-condition check could not run: no element had focus ...".
+
+**F5 (wall-time bounds).**
+- *False pass:* the upper bound was removed but the test now proves nothing about boundedness.
+- *Ruled out:* each test still awaits a dependency that NEVER resolves (`new Promise(() => {})`); the call returning at all is the
+  assertion, and a monotonic lower bound (`performance.now`) shows the bound really fired. `git grep -n "toBeLessThan" ` over the
+  FR2-07 hunks shows no remaining wall-time upper bound.
+
+**Regression false-pass.** The first live attempt after the F1 change failed X1/X2 as well ("did not answer within 1500ms") because two extra
+out-of-process frames on `page.html` never answered; the fixtures were moved to their own page and the FULL live run (all cases, all
+four surfaces) was repeated: 110/110 (`live-verify.log`). The one auditor probe that fails, `SDK.press-body-NEG`, fails identically in
+audit-1's own log (`audit-1/sdk-probes.log`): after `page.click('#real')` the button holds focus, so `verified` is the correct answer; it is
+a wrong assumption in the probe, not a regression.
