@@ -9,6 +9,7 @@ import {
   activeInfoInPage,
   armKeyListenerInPage,
   bounded,
+  checkFocus,
   decideClipboardVerdict,
   decideDragVerdict,
   decideFocusVerdict,
@@ -485,6 +486,43 @@ describe('FR2-07 decideClipboardVerdict', () => {
       expect(s).not.toContain(WRITTEN);
       expect(s).not.toContain(READ);
     }
+  });
+});
+
+describe('FR2-07 fix-1 F2: clipboard read-back compares TEXT, not length', () => {
+  it('a same-length but different read-back is fail, and an identical one is pass (kills the length-only mutant)', () => {
+    const written = 'AAAA-1111-BBBB';
+    const spoof = 'ZZZZ-9999-YYYY';
+    expect(spoof.length).toBe(written.length);
+    expect(decideClipboardVerdict(written, { path: 'clipboard-api', text: spoof }).outcome).toBe('fail');
+    expect(decideClipboardVerdict(written, { path: 'execCommand-paste', text: spoof }).outcome).toBe('fail');
+    expect(decideClipboardVerdict(written, { path: 'clipboard-api', text: written }).outcome).toBe('pass');
+  });
+});
+
+describe('FR2-07 fix-1 F3: checkFocus in-page predicate', () => {
+  /** Runs the REAL in-page function of checkFocus against a fake element whose root has `active` focused. */
+  async function run(active: unknown, self: Record<string, unknown>) {
+    const el = { tagName: 'DIV', id: 'target', className: '', getAttribute: () => null, ...self } as any;
+    const root = { activeElement: active === 'self' ? el : active };
+    el.getRootNode = () => root;
+    const handle = { evaluate: (fn: (e: unknown) => unknown) => Promise.resolve(fn(el)) } as any;
+    const rec = new PostConditionRecorder('focus');
+    await checkFocus(handle, {}, rec);
+    return rec.toBuiltIn()!;
+  }
+  const other = { tagName: 'INPUT', id: 'other', className: '', getAttribute: () => null };
+
+  it('the target being the active element passes', async () => {
+    expect((await run('self', {})).outcome).toBe('pass');
+  });
+  it('a DIFFERENT element being active is contradicted (kills the a-is-non-null mutant)', async () => {
+    const v = await run(other, {});
+    expect(v.outcome).toBe('fail');
+    expect(v.checks[0]).toMatchObject({ check: 'focus.active-element', observed: 'input#other' });
+  });
+  it('nothing active (null) is contradicted', async () => {
+    expect((await run(null, {})).outcome).toBe('fail');
   });
 });
 

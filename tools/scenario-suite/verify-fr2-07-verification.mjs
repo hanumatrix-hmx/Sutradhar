@@ -532,10 +532,10 @@ async function runMcpCases(surface, serverPath, ctx) {
   C('C2', async (id) => {
     await grant();
     await fresh();
-    const sentinel = `SENTINEL-${NONCE}`;
+    const sentinel = `AAAA-${NONCE}`; // same length as nv: a length-only comparison must not pass (fix-1 F2)
     const first = (await tool('browser.set_clipboard', { text: sentinel })).json;
     const page = await fresh('spoofClipboard=1');
-    const nv = `NEW-${NONCE}`;
+    const nv = `BBBB-${NONCE}`;
     const r = (await tool('browser.set_clipboard', { text: nv })).json;
     const mainWorld = await page.evaluate(() => navigator.clipboard.readText()).catch((e) => `ERR ${e.message}`);
     const cdp = await page.createCDPSession();
