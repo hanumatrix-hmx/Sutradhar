@@ -113,7 +113,9 @@ describe('@sutradhar/browser path-containment canonicalizePath/findContainingRoo
   });
 
   // ── FR2-05 fix-1 (GAP-294, CRITICAL): trailing dot/space component rejection ────────────────
-  it('PC8 (GAP-294): a junction component with a trailing dot is rejected outright on win32, even though it does not exist as "jn."', async () => {
+  // PC8-PC10 exercise Windows' own trailing-dot/space path normalization against the real
+  // filesystem, so they can only run on Windows (PC12 covers the POSIX side).
+  it.runIf(process.platform === 'win32')('PC8 (GAP-294): a junction component with a trailing dot is rejected outright on win32, even though it does not exist as "jn."', async () => {
     const root = path.join(tmp, 'pc8-root');
     const outside = path.join(tmp, 'pc8-outside');
     mkdirSync(root, { recursive: true });
@@ -137,7 +139,7 @@ describe('@sutradhar/browser path-containment canonicalizePath/findContainingRoo
     );
   });
 
-  it('PC9 (GAP-294): the trick anywhere along the path is rejected, not just the last component', async () => {
+  it.runIf(process.platform === 'win32')('PC9 (GAP-294): the trick anywhere along the path is rejected, not just the last component', async () => {
     const root = path.join(tmp, 'pc9-root');
     mkdirSync(root, { recursive: true });
     // The trick planted in an EARLIER component than the final one.
@@ -149,7 +151,7 @@ describe('@sutradhar/browser path-containment canonicalizePath/findContainingRoo
     );
   });
 
-  it('PC10 (GAP-294): findContainingRoot rejects a candidate using the trick, and never approves it', async () => {
+  it.runIf(process.platform === 'win32')('PC10 (GAP-294): findContainingRoot rejects a candidate using the trick, and never approves it', async () => {
     const root = path.join(tmp, 'pc10-root');
     const outside = path.join(tmp, 'pc10-outside');
     mkdirSync(root, { recursive: true });
@@ -283,7 +285,9 @@ describe('@sutradhar/browser path-containment canonicalizePath/findContainingRoo
       );
     });
 
-    it('PC21: legitimate ASCII case differences are still allowed under an ORDINARY (case-insensitive) directory', async () => {
+    // Windows-only: on POSIX the filesystem itself is case-sensitive, so a differently-cased
+    // spelling is genuinely a different directory and is correctly rejected.
+    it.runIf(process.platform === 'win32')('PC21: legitimate ASCII case differences are still allowed under an ORDINARY (case-insensitive) directory', async () => {
       const root = path.join(csRoot, '..', 'fr2-05-cs-ordinary-parent');
       mkdirSync(root, { recursive: true });
       try {
