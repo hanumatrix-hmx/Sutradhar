@@ -1,0 +1,26 @@
+PIDS {"chrome":11592,"self":17400}
+(a)+(d) frameElement() per frame, judged from parent side:
+{"url":"http://127.0.0.1:57688/inner?n=same","r":{"ok":true,"info":{"id":"same","tag":"IFRAME","visibility":"visible","display":"inline","rects":1,"w":304}}}
+{"url":"about:srcdoc","r":{"ok":true,"info":{"id":"srcdoc","tag":"IFRAME","visibility":"visible","display":"inline","rects":1,"w":304}}}
+{"url":"about:srcdoc","r":{"ok":true,"info":{"id":"sandbox","tag":"IFRAME","visibility":"visible","display":"inline","rects":1,"w":304}}}
+{"url":"http://localhost:57688/inner?n=xo","r":{"ok":true,"info":{"id":"xo","tag":"IFRAME","visibility":"visible","display":"inline","rects":1,"w":304}}}
+{"url":"http://localhost:57688/inner?n=xovh","r":{"ok":true,"info":{"id":"xo-vh","tag":"IFRAME","visibility":"hidden","display":"inline","rects":1,"w":304}}}
+{"url":"http://127.0.0.1:57688/inner?n=samevh","r":{"ok":true,"info":{"id":"same-vh","tag":"IFRAME","visibility":"hidden","display":"inline","rects":1,"w":304}}}
+{"url":"http://localhost:57688/inner?n=xodn","r":{"ok":true,"info":{"id":"xo-dn","tag":"IFRAME","visibility":"visible","display":"none","rects":0,"w":0}}}
+{"url":"http://localhost:57688/inner?n=xoancvh","r":{"ok":true,"info":{"id":"xo-anc-vh","tag":"IFRAME","visibility":"hidden","display":"inline","rects":1,"w":304}}}
+(b)+(c) text node Range rects and parent visibility (main frame):
+{"id":"rendered","text":"RENDEREDTXT","rangeRects":1,"parentVisibility":"visible","parentDisplay":"block","elementRects":1}
+{"id":"dn","text":"DISPLAYNONETXT","rangeRects":0,"parentVisibility":"visible","parentDisplay":"none","elementRects":0}
+{"id":"cv","text":"CVHIDDENTXT","rangeRects":1,"parentVisibility":"visible","parentDisplay":"block","elementRects":1}
+{"id":"vh","text":"VISHIDDENTXT","rangeRects":1,"parentVisibility":"hidden","parentDisplay":"block","elementRects":1}
+{"id":"vhchild","text":"CHILDINHERITS","rangeRects":1,"parentVisibility":"hidden","parentDisplay":"inline","elementRects":1}
+{"id":"vhvis","text":"CHILDOVERRIDES","rangeRects":1,"parentVisibility":"visible","parentDisplay":"inline","elementRects":1}
+(b) in-frame Range rects of the frame own text (frame is judged separately from parent):
+{"url":"http://127.0.0.1:57688/inner?n=same","r":{"text":"INNER-same","rangeRects":1,"visibility":"visible"}}
+{"url":"about:srcdoc","r":{"text":"INNER-srcdoc","rangeRects":1,"visibility":"visible"}}
+{"url":"about:srcdoc","r":{"text":"INNER-sandbox","rangeRects":1,"visibility":"visible"}}
+{"url":"http://localhost:57688/inner?n=xo","r":{"text":"INNER-xo","rangeRects":1,"visibility":"visible"}}
+{"url":"http://localhost:57688/inner?n=xovh","r":{"text":"INNER-xovh","rangeRects":1,"visibility":"visible"}}
+{"url":"http://127.0.0.1:57688/inner?n=samevh","r":{"text":"INNER-samevh","rangeRects":1,"visibility":"visible"}}
+{"url":"http://localhost:57688/inner?n=xodn","r":"HANG"}
+{"url":"http://localhost:57688/inner?n=xoancvh","r":"HANG"}

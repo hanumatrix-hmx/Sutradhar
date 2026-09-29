@@ -3902,3 +3902,23 @@ Revised plan (fix cycle 2; scope limited to expect.text visibility + aggregation
   table rows, and report tools/list growth in UTF-8 bytes (65,088 -> 87,277 tools array).
 - After this, audit-3 is the LAST standard-cycle audit for this item; if it fails, FR2-07 is
   marked BLOCKED with this diagnosis and only the passing parts ship.
+
+## 2026-09-29 -- FR2-07 fix-2 step 0: SPIKE result (Chrome 153, puppeteer-core 25.5.0; evidence/FR2-07/fix-2/spike*.{mjs,log})
+
+- (a) CONFIRMED: `frame.frameElement()` returns a live handle for same-origin, srcdoc, sandboxed (`sandbox=""`)
+  AND cross-origin out-of-process frames (localhost vs 127.0.0.1), and for frames hidden by
+  display:none / visibility:hidden / an ancestor with visibility:hidden. No documented-limit fallback is needed for OOPIFs.
+- (d) CONFIRMED: from the PARENT side the frame element reports computed `visibility:hidden` (own or inherited via an
+  ancestor) and `display:none` (0 client rects) for all four kinds of frame, so hidden-frame text can be rejected without
+  entering the frame. Side finding: `frame.evaluate` on a display:none OOPIF and on an OOPIF under a visibility:hidden
+  ancestor HUNG (3 s) in this run, so the parent-side verdict is taken BEFORE any evaluate (a hidden frame is answered
+  "not visible" without an evaluate that could hang).
+- (c) CONFIRMED: computed `visibility` is inherited (child of visibility:hidden reports hidden; `visibility:visible` on a
+  child overrides), so the text's parent element suffices; no ancestor walk.
+- (b) PARTLY REFUTED (plan premise corrected): Range.getClientRects() is empty for display:none / [hidden] (0 rects) but
+  NON-EMPTY (1 rect) for content-visibility:hidden text and for closed-<details> content. So the Range check alone does not
+  exclude those. The platform primitive that does is `Element.checkVisibility()` (false for a descendant of a
+  content-visibility:hidden ancestor and for closed-details content), applied to the nearest non-`display:contents` flat-tree
+  ancestor (checkVisibility is false for display:contents itself), plus `content-visibility !== 'hidden'` on that element
+  (checkVisibility is true for the skipping element itself, whose own text is skipped). Bare text in a shadow root has no
+  parentElement: its container is the shadow host. These stay platform primitives (no hand-written hiding-mechanism list).
