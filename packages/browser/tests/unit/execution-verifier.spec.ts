@@ -120,6 +120,23 @@ describe('FR2-07 ExecutionVerifier: the verification contract', () => {
     expect(v.reason).not.toContain('Pass expect');
   });
 
+  it('V6b (fix-1 F4): a not-run builtIn plus a passing (even trivially true) expectation still names the built-in outcome in the reason', async () => {
+    const v = await verifier.verifyAction(
+      tab({ url: 'https://a' }),
+      'https://a',
+      { success: true, actionType: 'press_key' },
+      { shouldUrlChange: false },
+      notRunVerdict,
+    );
+    expect(v.evidence.tier).toBe('verified');
+    expect(v.verified).toBe(true);
+    expect(v.reason).not.toMatch(/^Action execution verified successfully/);
+    expect(v.reason).toContain('no element had focus');
+    expect(v.reason).toContain('could not run');
+    expect(v.reason).toContain('Expectations met: urlChanged');
+    expect(v.evidence.checks.map((c) => c.outcome)).toContain('not-run');
+  });
+
   it('V7: text absent from every frame is contradicted, and the reason keeps the historic prefix', async () => {
     const page = pageWithFrames(false, false);
     const v = await verifier.verifyAction(

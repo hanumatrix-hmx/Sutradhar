@@ -366,7 +366,11 @@ export class ExecutionVerifier {
       const met = orderedExpect.filter((c) => c.outcome === 'pass').map((c) => c.check.replace('expect.', ''));
       reason = `'${type}' verified: ${bi.reason}${met.length > 0 ? ` Expectations met: ${met.join(', ')}.` : ''}`;
     } else {
-      reason = `Action execution verified successfully with confidence ${candidate.toFixed(2)}`;
+      // The action's own check could not run (not-run) and a caller expectation passed: say both.
+      const met = orderedExpect.filter((c) => c.outcome === 'pass').map((c) => c.check.replace('expect.', ''));
+      reason =
+        `'${type}' verified by expectation only: its built-in post-condition check could not run: ${bi.reason}.` +
+        (met.length > 0 ? ` Expectations met: ${met.join(', ')}.` : '');
     }
     return make('verified', true, candidate * VERIFIED_FACTOR, reason);
   }

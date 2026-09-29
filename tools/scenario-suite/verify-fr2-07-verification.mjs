@@ -829,6 +829,23 @@ async function runMcpCases(surface, serverPath, ctx) {
     });
   }
 
+  // ── fix-1 F4: built-in not-run + a passing expect must still name the built-in outcome (bundle too)
+  {
+    // F4: the built-in press_key check could not run (nothing focused) and a trivially-true expect passes:
+    // the reason must still say the built-in check did not run (spec rule 9), not the generic sentence.
+    C('K15', async (id) => {
+      const page = await fresh();
+      await page.evaluate(() => document.activeElement && document.activeElement.blur());
+      const focusedTag = await page.evaluate(() => document.activeElement && document.activeElement.tagName);
+      const r = (await tool('browser.press_key', { key: 'q', expect: { urlChanged: false } })).json;
+      const bi = r.verification?.evidence?.checks?.find((c) => c.check.startsWith('press_key.') && c.outcome === 'not-run');
+      record(surface, id, r.success === true && r.verification?.verified === true && !!bi && !/^Action execution verified successfully/.test(reasonOf(r)) && /no element had focus/.test(reasonOf(r)) && /Expectations met: urlChanged/.test(reasonOf(r)) && focusedTag === 'BODY', {
+        expected: 'built-in not-run + passing expect.urlChanged:false -> verified:true, and the reason still names the built-in outcome and the expectation',
+        observed: { tier: tierOf(r), reason: reasonOf(r), notRunCheck: bi?.check }, observerTruth: { activeElementTag: focusedTag }, verification: r.verification,
+      });
+    });
+  }
+
   // ── W / S / X / L: wait, screenshot, expect semantics, sweep ─────────────────────────────
   if (surface !== 'bundle') {
     const waitUrl = (hash = '#auto') => `${pathToFileURL(path.join(here, 'fixtures', 'fr2-01-wait-states.html')).href}?t=${Date.now()}-${Math.random().toString(36).slice(2)}${hash}`;
