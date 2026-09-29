@@ -1096,6 +1096,31 @@ async function runSdkCases(ctx) {
     record(surface, id, typeof b64 === 'string' && last?.verification?.evidence?.tier === 'unverifiable', { expected: 'screenshot returns base64; lastResult.verification.tier unverifiable', observed: { tier: last?.verification?.evidence?.tier }, verification: last?.verification });
   });
 
+  // N11 (FR2-04's setDialogPolicy exists): a beforeunload armed on the page + policy 'dismiss' cancels the
+  // navigation. Whatever the runtime then does (throw, or resolve), it must NEVER report verified:true.
+  C('N11', async (id) => {
+    const rt = new sdk.SutradharRuntime();
+    const launched = await rt.launch({ launch: { headless: true } });
+    try {
+      rt.setDialogPolicy(launched.sessionId, { mode: 'dismiss' });
+      const fixture = pathToFileURL(path.join(here, 'fixtures', 'fr2-04-dialogs.html')).href + `?n=n11-${Date.now()}`;
+      await rt.navigate(launched.sessionId, fixture);
+      const armed = await rt.click(launched.sessionId, '#arm-bu'); // a real click gives the page user activation
+      let outcome;
+      try {
+        const nav = await rt.navigate(launched.sessionId, server.url('/nav/a', 'n11'));
+        outcome = { resolved: true, verified: nav.verification?.verified, tier: nav.verification?.evidence?.tier, reason: nav.verification?.reason, url: nav.url };
+      } catch (e) {
+        outcome = { resolved: false, error: e.message.slice(0, 200) };
+      }
+      record(surface, id, armed.success === true && !(outcome.resolved && outcome.verified === true), {
+        expected: 'beforeunload cancelled by policy dismiss: navigate throws or reports not-verified, NEVER verified:true', observed: outcome,
+      });
+    } finally {
+      await rt.shutdown(launched.sessionId).catch(() => {});
+    }
+  });
+
   for (const c of cases) await c();
   await observer.disconnect().catch(() => {});
   await browser.close().catch(() => {});
