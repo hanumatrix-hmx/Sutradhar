@@ -41,7 +41,7 @@ crashed tab needs `sutradhar tabs` then `closetab <id>`; wrong-popup closes are 
 (one `download_file` per browser at a time; cross-process protection is best effort), `audit` (it can
 miss the first navigation's error status on a brand-new tab), and `wait_for_selector --state hidden`
 (best effort). The full list is in [docs/22-changelog.md](./docs/22-changelog.md) under "0.5.0
-(Unreleased)" and in [AGENT_SETUP.md](./AGENT_SETUP.md)'s "Known limitations". Sutradhar does no
+(2026-09-29)" and in [AGENT_SETUP.md](./AGENT_SETUP.md)'s "Known limitations". Sutradhar does no
 stealth or bot-detection evasion; Cloudflare, CAPTCHA and IP blocks stop it like any other automation tool.
 
 ---

@@ -23,8 +23,10 @@ const packageDir = path.resolve(__dirname, '..', 'packages', 'sutradhar');
 
 // npm pack/publish write the tarball as `<name>-<version>.tgz` in the current working
 // directory by default (no --pack-destination override here) — find the newest .tgz there.
+const expectedName = `${JSON.parse(readFileSync(path.join(packageDir, 'package.json'), 'utf-8')).name}-${JSON.parse(readFileSync(path.join(packageDir, 'package.json'), 'utf-8')).version}.tgz`;
+// Only the tarball for THIS version counts: a stale older .tgz in the folder was once recorded under a new version.
 const tgzCandidates = readdirSync(packageDir)
-  .filter((f) => f.endsWith('.tgz'))
+  .filter((f) => f === expectedName)
   .map((f) => ({ f, mtime: statSync(path.join(packageDir, f)).mtimeMs }))
   .sort((a, b) => b.mtime - a.mtime);
 
