@@ -20,6 +20,7 @@ import {
   finishKeyObservation,
   finishPointObservation,
   inspectPng,
+  observePoint,
   keyEffectRule,
   keyMatches,
   readKeyObservationInPage,
@@ -104,6 +105,7 @@ describe('FR2-07 decideKeyVerdict', () => {
       ['body', base({ pre: { target: textInput({ kind: 'body' }) }, post: undefined }), 'not-run', 'no element had focus'],
       ['value changed', base(), 'pass', 'its value changed (length 3→4)'],
       ['value unchanged', base({ post: post({ valueChanged: false, afterValueLen: 3 }) }), 'fail', 'value did not change (length 3→3)'],
+      ['value unchanged, key never delivered (swallowed)', base({ post: post({ delivered: false, onTarget: false, valueChanged: false, afterValueLen: 3 }) }), 'fail', 'no trusted keydown'],
       ['readonly', base({ pre: { target: textInput({ readOnly: true }) }, post: post({ valueChanged: false, afterValueLen: 3 }) }), 'fail', 'the field is readonly'],
       ['tab moved', base({ key: 'Tab', post: post({ focusMoved: true }) }), 'pass', 'Tab moved focus from input#q to input#b'],
       ['tab stuck', base({ key: 'Tab', post: post({ focusMoved: false }) }), 'fail', 'Tab did not move focus away from input#q'],
@@ -182,6 +184,31 @@ describe('FR2-07 in-page key observers (behaviour on a fake DOM)', () => {
     const info = activeInfoInPage();
     expect(info).toMatchObject({ kind: 'element', textEntry: true, valueLen: SENTINEL.length, desc: 'input#pw.a.b' });
     expect(JSON.stringify(info)).not.toContain(SENTINEL);
+  });
+});
+
+describe('FR2-07 observePoint frame descent', () => {
+  it('matches the child frame by bounding box (no expando on the page), then arms inside it and reports inner coordinates', async () => {
+    const child = { evaluate: vi.fn().mockResolvedValueOnce({ armed: true, desc: 'button#xo-btn' }), childFrames: () => [] };
+    const box = { left: 10, top: 20, width: 200, height: 44 };
+    const ownerHit = vi.fn().mockResolvedValue(true);
+    const decoy = { frameElement: async () => ({ evaluate: vi.fn().mockResolvedValue(false) }), evaluate: vi.fn(), childFrames: () => [] };
+    const real = { frameElement: async () => ({ evaluate: ownerHit }), ...child };
+    const main = {
+      evaluate: vi.fn().mockResolvedValueOnce({ frame: true, innerX: 40, innerY: 12, box }),
+      childFrames: () => [decoy, real],
+    };
+    const page = { mainFrame: () => main } as any;
+    const arm = await observePoint({ url: 'u', page }, 60, 40, ['click']);
+    expect(arm).toMatchObject({ hit: { desc: 'button#xo-btn' }, innerX: 40, innerY: 12, fromInFrame: true });
+    expect(arm.frame).toBe(real);
+    expect(ownerHit).toHaveBeenCalledWith(expect.any(Function), box); // matched by the box argument, not a mark
+  });
+
+  it('an unmatched frame is frameUnreachable (not-run), never a guess', async () => {
+    const main = { evaluate: vi.fn().mockResolvedValue({ frame: true, innerX: 1, innerY: 1, box: { left: 0, top: 0, width: 5, height: 5 } }), childFrames: () => [] };
+    const arm = await observePoint({ url: 'u', page: { mainFrame: () => main } as any }, 1, 1, ['click']);
+    expect(arm).toMatchObject({ frameUnreachable: true });
   });
 });
 
@@ -394,6 +421,11 @@ describe('FR2-07 decidePointVerdict / decideDragVerdict', () => {
     expect(other.outcome).toBe('fail');
     expect(other.reason).toContain('landed on body, not on button#b');
     expect(decidePointVerdict({ ...base, events: [] }).reason).toContain('no trusted click reached the page');
+    // the element removed itself on mousedown: Chrome drops the click, the mouseup shows where the press ended
+    const vanish = decidePointVerdict({ ...base, events: [ev({ type: 'mousedown' }), ev({ type: 'mouseup', onHit: false, targetDesc: 'html' })] });
+    expect(vanish.outcome).toBe('fail');
+    expect(vanish.reason).toContain('landed on html, not on button#b');
+    expect(decidePointVerdict({ ...base, events: [ev({ type: 'mousedown' })] }).reason).toContain('mousedown reached button#b but no click followed');
     expect(decidePointVerdict({ ...base, events: [ev({ trusted: false })] }).outcome).toBe('fail');
     expect(decidePointVerdict({ ...base, frameUnreachable: true, hit: undefined }).outcome).toBe('not-run');
     expect(decidePointVerdict({ ...base, navigated: true }).outcome).toBe('pass');

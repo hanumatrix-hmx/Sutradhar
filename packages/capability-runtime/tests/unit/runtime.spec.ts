@@ -2070,6 +2070,37 @@ describe('@sutradhar/capability-runtime FR2-07 verification contract', () => {
     expect('dialogPending' in result).toBe(false);
   });
 
+  it('R6b: Puppeteer 25 THROWS "History entry to navigate to not found." at the history edge: same contradicted result, other errors still propagate', async () => {
+    const mkSession = () =>
+      cdp({
+        'Page.getNavigationHistory': () => ({ currentIndex: 0, entries: [{ id: 1 }] }),
+        'Page.getFrameTree': () => ({ frameTree: { frame: { loaderId: 'L1', id: 'F' } } }),
+      });
+    const mkPage = (goBack: () => Promise<unknown>, goForward: () => Promise<unknown>) => ({
+      isClosed: () => false,
+      url: () => 'https://a.test/',
+      title: async () => 'A',
+      goBack: vi.fn().mockImplementation(goBack),
+      goForward: vi.fn().mockImplementation(goForward),
+      createCDPSession: vi.fn().mockResolvedValue(mkSession()),
+    });
+    const edge = () => Promise.reject(new Error('History entry to navigate to not found.'));
+    const runtime = new SutradharRuntime();
+    stubTab(runtime, { page: mkPage(edge, edge) });
+    const back = await runtime.goBack('s1');
+    expect(back.verification?.evidence.tier).toBe('contradicted');
+    expect(back.verification?.reason).toContain('no history entry');
+    const fwd = await runtime.goForward('s1');
+    expect(fwd.verification?.evidence.tier).toBe('contradicted');
+    expect(fwd.verification?.reason).toContain('no forward history entry');
+
+    const other = new Error('Navigation failed because browser has disconnected!');
+    const runtime2 = new SutradharRuntime();
+    stubTab(runtime2, { page: mkPage(() => Promise.reject(other), () => Promise.reject(other)) });
+    await expect(runtime2.goBack('s1')).rejects.toBe(other);
+    await expect(runtime2.goForward('s1')).rejects.toBe(other);
+  });
+
   it('R7: setClipboard returns an ActionResult; a blocked read-back is unverifiable with a grant hint', async () => {
     const runtime = new SutradharRuntime();
     const session = cdp({

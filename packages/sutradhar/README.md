@@ -128,24 +128,33 @@ if auto-detection fails.
 
 | Method | Description |
 |---|---|
-| `goto(url)` | Navigate this tab to a URL. |
+| `goto(url, options?)` | Navigate this tab to a URL; still returns the `Page` (chaining). The navigation's verification (did a new document commit? HTTP status?) is on `page.lastResult`. `options.expect` throws `ExpectationFailedError` when it doesn't hold. |
 | `snapshot()` | Interactive-element listing (`[#id]` stamped) + page text. |
-| `click(selector, options?)` | Click by CSS selector **or** `[#id]` from a snapshot. `options.settle` waits for the page to stop changing before returning. A Playwright-style selector (`text=...`) throws `InvalidSelectorError`. |
-| `type(selector, text)` | Type into an input (selector or `[#id]`). |
-| `press(key)` | Press a keyboard key (`"Enter"`, `"Escape"`, …). |
+| `click(selector, options?)` | Click by CSS selector **or** `[#id]` from a snapshot. Returns the result (`{success, verification, …}`); throws `ActionFailedError` when the action failed. `options.settle` waits for the page to stop changing before returning; `options.expect` (`{text?, url?, urlChanged?}`) is checked once after the action and throws `ExpectationFailedError` when it doesn't hold. A Playwright-style selector (`text=...`) throws `InvalidSelectorError`. |
+| `type(selector, text, options?)` | Type into an input (selector or `[#id]`). Same result/throw contract as `click`. |
+| `press(key, options?)` | Press a keyboard key (`"Enter"`, `"Escape"`, …). Same contract as `click`; the result's `verification` says whether the key reached the focused element and changed it (`contradicted` if not, `unverifiable` if nothing had focus). |
 | `waitForSelector(selector, options?)` | Wait for `selector` to reach `options.state` — `"visible"` (default), `"attached"` (just in the DOM), or `"hidden"` (removed or not visible). "Visible" is a non-empty box AND visibility not hidden/collapse, checked on the FIRST match — `opacity:0`/off-screen still count as visible; zero-size/`display:none`/`visibility:hidden` count as hidden. `"hidden"` succeeds immediately if nothing matches. `options.timeout` is per attempt; retries can extend the real total wait. `options.timeout <= 0` checks the current state once, immediately, with no waiting or retrying. Waiting states poll roughly every 100ms, so a state that's only true for less than ~100ms (a fast visibility flicker) may be missed. Throws on timeout. |
-| `scroll(direction?, amount?)` | Scroll up/down/top/bottom. |
-| `screenshot()` | Full-page PNG as base64. |
+| `scroll(direction?, amount?, options?)` | Scroll up/down/top/bottom. Same contract as `click`. |
+| `screenshot()` | Full-page PNG as base64. Its verification (on `page.lastResult`) is `unverifiable` by design: a screenshot has no post-condition. |
+| `lastResult` | The full result of this page's most recent action call (`goto`, `screenshot`, `waitForSelector`, … included), the uniform way to read `verification`. |
 | `audit(options?)` | JSON audit report (errors, broken requests, a11y heuristics, Web Vitals) + `screenshotBase64` (+ files/absolute paths when `outDir` is given). Throws if the audit can't run; a failed `baselineUrl` comparison is reported in `report.baseline.error` instead. |
 | `evaluate(expression, frameSelector?)` | Run JS in the page (or, with `frameSelector`, inside that `<iframe>`, including a cross-origin one); return the serialized result. |
 | `getStorageState()` / `setStorageState(state)` | Export / restore cookies + localStorage + sessionStorage as one blob (log in once, reuse later). |
 | `setViewport({width, height, isMobile?, deviceScaleFactor?, hasTouch?})` / `getViewport()` | Set this tab's viewport, read back the metrics in effect (`null` if never set). |
-| `download(selector, options?)` | Click `selector` (the download-triggering element) and wait for it to finish on disk. `options.downloadDir` must resolve inside an allowed root (`LaunchOptions.allowedDownloadRoots`) or this throws. Returns `{filename, path, downloadDir}`. |
+| `download(selector, options?)` | Click `selector` (the download-triggering element) and wait for it to finish on disk. `options.downloadDir` must resolve inside an allowed root (`LaunchOptions.allowedDownloadRoots`) or this throws. Returns `{filename, path, downloadDir, verification}`; `verification` is backed by an `fs.stat` of the saved file (non-empty, written during this call). `options.expect` is supported. |
 | `uploadFile(selector, filePath)` | Upload a local file into an `<input type="file">` targeted by `selector`. `filePath` is resolved to an absolute path. Unrestricted unless `LaunchOptions.allowedUploadRoots` was set, in which case it must be under one of those directories, or this throws. |
 | `cookies()` | Read cookies for this tab's URL. |
 | `bringToFront()` | Make this the active tab. |
 | `close()` | Close this tab. |
 | `tabId` | This tab's id within the session. |
+
+**Results and errors (FR2-07).** `click`/`type`/`press`/`scroll` return the runtime result and throw
+`ActionFailedError` (with `.result`) when `success` is false; before, they silently swallowed the failure.
+`options.expect` throws `ExpectationFailedError` (with `.failed` and `.result`) when the action succeeded but the
+assertion did not hold; a built-in `contradicted` verification with no `expect` is *returned*, not thrown, so read
+`result.verification.evidence.tier`. `waitForSelector` keeps its contract (throws a plain `Error` naming the state it
+waited for, resolves `undefined`); its verification is on `page.lastResult`. Both error classes are exported from
+`sutradhar`.
 
 ## Known limitations
 

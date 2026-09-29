@@ -72,6 +72,47 @@ at all since you already are one).
 | **Tabs** | `list_tabs`, `new_tab`, `focus_tab`, `close_tab`, `lock_tab`/`unlock_tab`/`get_tab_lock` | Multi-tab handling. The lock tools are an advisory owner+TTL mechanism if multiple concurrent callers need to coordinate driving the same session. |
 | **Autonomous agent** | `agent.runGoal` | Optional. Hands a natural-language goal to Sutradhar's own loop. Only registered if an LLM provider (Ollama or an OpenRouter key) is separately configured for the server. |
 
+## Reading results: `success` vs `verification`
+
+Every action result (`click`, `type`, `press_key`, `focus`, `navigate`, `go_back`, `set_clipboard`,
+`click_at_point`, `download_file`, `upload_file_via_trigger`, `screenshot`, …) carries two separate answers,
+and you should read both:
+
+- **`success`** (true/false) — did the primitive run? `false` means the action did not happen: the element
+  was missing, occluded, the download timed out. `error` says why.
+- **`verification`** — was its *effect* observed? `{verified, confidence, reason, evidence:{tier, checks[]}}`.
+  Branch on `evidence.tier`, never on the confidence number:
+
+| `tier` | Meaning | `verified` | `confidence` |
+|---|---|---|---|
+| `verified` | A real post-condition check ran and passed. | true | 0.90 |
+| `contradicted` | A check ran and found the effect did **not** happen (a key delivered but the field didn't change; a 0-byte download; a `go_back` with no history; a clipboard write the page intercepted). The action itself still reports `success:true`. | false | 0.09 |
+| `unverifiable` | Nothing could be checked, and `reason` says exactly why (no element had focus, the clipboard read was blocked, a screenshot has no post-condition). It does **not** mean the action failed. | false | 0.45 |
+| `low-confidence` | The target was a fuzzy match. | false | as given |
+| `action-failed` | `success:false`; nothing to verify. | false | 0 |
+
+`evidence.checks[]` lists each check with a stable id (`press_key.effect`, `download_file.file-on-disk`,
+`navigate.document`, `expect.text`, …) and what was expected vs observed. It never contains field values or
+clipboard contents.
+
+A failed `contradicted` verification is the honest signal that a "successful" action did nothing. Three cases
+to know: `press_key` is only verified against the *focused* element (`focus` first, or pass `expect`);
+`click_at_point` verifies that a trusted click reached *some* element and names it, but cannot know which one
+you *meant* (a transparent overlay is named in the reason); an `Enter` key is "delivered", not "form submitted".
+For anything where the *result* matters, assert it with `expect`.
+
+**`expect: {text?, url?, urlChanged?}`** (on the 24 state-changing tools; CLI: `--expect-text`, `--expect-url`,
+`--expect-url-changed`/`--expect-url-unchanged`; SDK: `options.expect`) is checked once, right after the action
+(after `settle`, if requested). `text` is *visible* text in any frame or open shadow root (case-sensitive
+substring; `display:none` and script text don't count); `url` is a substring of the final URL; `urlChanged:false`
+means the URL must be identical. A failed `expect` does **not** fail the action: `success` stays true and
+`verification.verified` is false with `tier:"contradicted"` and a failing `expect.*` check. Note it is checked
+*once*: text that appears 800 ms later (a `setTimeout` toast) is missed. Use `wait_for_selector` for that.
+
+Every result also carries `dialogPending: {type, message, defaultValue, url}` **while** a native dialog is open
+on the tab (the key is absent otherwise). The page is frozen until you `handle_dialog`; checks that need the page
+report `unverifiable` with the dialog named instead of hanging.
+
 ## Grounding: `snapshot` vs `ax_snapshot` — read this before driving anything
 
 - **`browser.snapshot`** — DOM-attribute grounding. Returns a compact interactive-element

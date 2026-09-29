@@ -105,7 +105,10 @@ Run `sutradhar` with no arguments for the full command list.
 | `--profile <name>` | `nav` (new session only) | Launch as a named persistent profile (create one first via `profile create`). |
 | `--user-agent <ua>` | `nav` (new session only) | Launch with a custom `navigator.userAgent`. |
 | `--allowlist-domains <a.com,b.com>` | any command | Block navigation to any domain not in this comma-separated list (and their subdomains). Per-command, not persisted in session state — pass it on every command that might navigate. |
-| `--json` | `snap`, `audit` | `snap`: additionally print structured per-element data as JSON. `audit`: print the machine-readable JSON report instead of the human-readable text. |
+| `--json` | `snap`, `audit`, action verbs | `snap`: additionally print structured per-element data as JSON. `audit`: print the machine-readable JSON report instead of the human-readable text. Action verbs (`click`, `type`, `press`, `nav`, `download`, …): print the full result JSON (including `verification`) instead of the one-line status. |
+| `--expect-text <t>` | action verbs | After the action, require this **visible** text on the page (any frame, open shadow roots; case-sensitive; hidden text doesn't count). Exit **4** if absent. Checked once. |
+| `--expect-url <s>` | action verbs | Require the final URL to contain `<s>` (exit 4 if not). |
+| `--expect-url-changed` / `--expect-url-unchanged` | action verbs | Require the URL to have changed / stayed identical (exit 4 otherwise). Mutually exclusive. |
 | `--no-text` | `snap` | Drop per-element text, keep tag+role+id. |
 | `--ids-only` | `snap` | Keep only the bracketed id, nothing else. |
 | `--baseline <url>` | `audit` | Also visually diff the audited page against this URL. |
@@ -118,6 +121,16 @@ Run `sutradhar` with no arguments for the full command list.
 | `--modifiers <Control,Shift>` | `press` | Hold modifier keys while pressing the given key. |
 | `--dialog <accept\|dismiss\|report>` | any session command | Sets this session's default policy for native dialogs (alert/confirm/prompt/beforeunload), **persisted** across later commands until changed again — including `--dialog report`, which explicitly persists back to the default "leave it open and report it" behavior (it does not merely clear a previous `accept`/`dismiss`). `report` (the CLI's own default) never auto-resolves alert/confirm/prompt; while one is open, other commands exit with code **3** until you run `sutradhar dialog accept\|dismiss`. `beforeunload` during a navigation is still auto-accepted after 3s under `report`, so a page-initiated "leave this page?" prompt can't hang a `nav` forever. |
 | `--dialog-text <text>` | any session command, with `--dialog accept` | The text entered into `prompt()` dialogs when the session's policy auto-accepts one (default: the prompt's own default value). |
+
+**Verification and exit codes.** Every action verb prints its status line and then a `Verification:` line, e.g.
+`Verification: verified (confidence 0.90) — keydown 'a' reached the focused input#q and its value changed` or
+`Verification: NOT verified — contradicted (confidence 0.09) — …`. `NOT verified — unverifiable` means nothing could
+be checked (the reason says why), **not** that the action failed; `contradicted` means a check ran and the effect did
+not happen (the exit code is still 0 unless you asked for an `--expect-*`). Exit codes: **0** ok, **1** the action
+failed, **3** blocked by an open dialog, **4** an `--expect-*` check failed or couldn't be evaluated (the reason is on
+stderr). `getclipboard` keeps stdout as just the clipboard text and prints its verification line on stderr. `press`
+now aborts (`Press aborted: …`, exit 1, no key sent) when focusing the target fails or lands elsewhere, instead of
+pressing into whatever holds focus.
 
 **Selectors.** Selectors are CSS (shadow roots crossed for element actions), a numeric id from `snap`, or Puppeteer's `pierce/`, `xpath/`, `aria/` and `text/` prefixes. Playwright syntax (`text=`, `role=`, `>>`, `:has-text()`, `getBy*()`, `internal:`) and the old `xpath=`/`aria=`/`pierce=` forms are rejected immediately with a hint instead of failing slowly — use `clicktext`/`clickrole` to target by visible text or accessible role. Invalid CSS/XPath fails in one round trip with the browser's own parser message.
 

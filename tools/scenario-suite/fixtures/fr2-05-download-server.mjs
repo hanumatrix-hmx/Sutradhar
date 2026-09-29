@@ -21,10 +21,12 @@ export async function startDownloadServer() {
     if (url.pathname === '/page') {
       const caseId = url.searchParams.get('case') ?? '0';
       const name = url.searchParams.get('name') ?? `file-${caseId}.bin`;
+      // FR2-07 (additive): `empty=1` makes the download link ask /file for a 0-byte body.
+      const emptyQs = url.searchParams.get('empty') === '1' ? '&empty=1' : '';
       const html =
         `<!DOCTYPE html><html><head><meta charset="utf-8"><title>FR2-05 case ${caseId}</title></head>` +
         `<body>` +
-        `<a id="dl" href="/file?case=${encodeURIComponent(caseId)}&name=${encodeURIComponent(name)}">download</a>` +
+        `<a id="dl" href="/file?case=${encodeURIComponent(caseId)}&name=${encodeURIComponent(name)}${emptyQs}">download</a>` +
         `<a id="dl-evil" href="/file?case=${encodeURIComponent(caseId)}&name=${encodeURIComponent('../../evil-' + caseId + '.txt')}">evil</a>` +
         `<input type="file" id="f">` +
         `<button id="pick" onclick="document.getElementById('f').click()">pick</button>` +
@@ -47,7 +49,9 @@ export async function startDownloadServer() {
       reqCounter += 1;
       const n = reqCounter;
       const header = Buffer.from(`fr2-05 case=${caseId} req=${n}\n`, 'utf-8');
-      const body = Buffer.concat([header, crypto.randomBytes(65536)]);
+      // FR2-07 (additive): `empty=1` -> Content-Length 0 (a server that "succeeds" with no bytes).
+      const body =
+        url.searchParams.get('empty') === '1' ? Buffer.alloc(0) : Buffer.concat([header, crypto.randomBytes(65536)]);
       const sha256 = crypto.createHash('sha256').update(body).digest('hex');
       served.push({ caseId, req: n, name, size: body.length, sha256 });
       res.writeHead(200, {
@@ -74,7 +78,7 @@ export async function startDownloadServer() {
   return {
     origin,
     pageUrl: (caseId, opts = {}) =>
-      `${origin}/page?case=${encodeURIComponent(caseId)}&name=${encodeURIComponent(opts.name ?? `${caseId}.bin`)}`,
+      `${origin}/page?case=${encodeURIComponent(caseId)}&name=${encodeURIComponent(opts.name ?? `${caseId}.bin`)}${opts.empty ? '&empty=1' : ''}`,
     served,
     close: () =>
       new Promise((resolve) => {

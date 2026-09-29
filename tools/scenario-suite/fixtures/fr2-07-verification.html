@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>FR2-07 verification fixture</title>
+    <style>
+      body { margin: 0; font: 12px sans-serif; }
+      #flow { position: absolute; left: 0; top: 0; width: 780px; height: 290px; overflow: hidden; }
+      #flow > * { display: inline-block; margin: 2px; vertical-align: top; }
+      #flow input { width: 84px; }
+      iframe { width: 200px; height: 44px; border: 1px solid #999; }
+      .abs { position: absolute; }
+      #hidden-template { display: none; }
+    </style>
+    <!--SPOOF-->
+    <script>
+      // The window-capture keydown swallower: registered in <head>, so it runs BEFORE any listener
+      // an observer adds later. It stops propagation for keys typed into #swallow (case K5).
+      window.addEventListener(
+        'keydown',
+        function (e) {
+          if (e.target && e.target.id === 'swallow') {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+          }
+        },
+        true,
+      );
+    </script>
+  </head>
+  <body>
+    <div id="flow">
+      <form id="txt-form" onsubmit="return submitTxt(event)">
+        <input id="txt" aria-label="txt" />
+      </form>
+      <input id="blocked" aria-label="blocked" />
+      <input id="ro" readonly value="x" aria-label="ro" />
+      <input id="swallow" aria-label="swallow" />
+      <input id="tab-a" aria-label="tab-a" />
+      <input id="tab-b" aria-label="tab-b" />
+      <input id="trap" aria-label="trap" />
+      <textarea id="ta" rows="1" cols="10"></textarea>
+      <div id="ce" contenteditable="true" style="width:80px;border:1px solid #999">ce</div>
+      <div id="nofocus" style="border:1px solid #999;width:70px">no focus</div>
+      <select id="sel"><option value="a">A</option><option value="b">B</option></select>
+      <select id="msel" multiple size="2"><option value="x">X</option><option value="y">Y</option></select>
+      <input id="blur-on-focus" aria-label="blur-on-focus" />
+      <div id="host"></div>
+      <iframe id="same" srcdoc="<input id='in-frame' aria-label='in-frame'>"></iframe>
+      <iframe id="xo" src="__XO_ORIGIN__/frame.html"></iframe>
+      <button id="show-saved">show saved</button>
+      <button id="show-late">show late</button>
+      <button id="noop">noop</button>
+      <button id="push-same">push same</button>
+      <a id="hash-link" href="#section">hash</a>
+      <button id="browse">Browse A</button>
+      <input type="file" id="file-a" style="display:none" />
+      <button id="browse-reset">Browse B</button>
+      <input type="file" id="file-b" style="display:none" />
+      <button id="browse-detached">Browse detached</button>
+      <div id="hidden-template">FR2-07 SAVED</div>
+      <div id="upload-out"></div>
+      <div id="upload-out-b"></div>
+      <div id="result"></div>
+      <div id="section"></div>
+    </div>
+
+    <button id="real-btn" class="abs" style="left:40px;top:300px;width:120px;height:40px">real</button>
+    <button id="covered-btn" class="abs" style="left:200px;top:300px;width:120px;height:40px">covered</button>
+    <div id="decoy-overlay" class="abs" style="left:200px;top:300px;width:120px;height:40px;z-index:10;background:transparent"></div>
+    <button id="vanish" class="abs" style="left:360px;top:300px;width:120px;height:40px">vanish</button>
+    <div id="ctx-target" class="abs" style="left:40px;top:360px;width:120px;height:40px;background:#eef">ctx</div>
+    <button id="alert-btn" class="abs" style="left:200px;top:360px;width:120px;height:40px">alert</button>
+    <div id="drag-pad" class="abs" style="left:40px;top:420px;width:300px;height:150px;background:#efe">drag pad</div>
+    <button id="tap-target" class="abs" style="left:400px;top:420px;width:120px;height:40px">tap</button>
+    <button id="tap-covered" class="abs" style="left:540px;top:420px;width:120px;height:40px">tap covered</button>
+    <div id="tap-overlay" class="abs" style="left:540px;top:420px;width:120px;height:40px;z-index:10;background:transparent"></div>
+
+    <script>
+      window.__fx7 = { clicks: {}, events: [], xoClicks: 0, ready: false };
+      var fx = window.__fx7;
+      function bump(k) { fx.clicks[k] = (fx.clicks[k] || 0) + 1; }
+
+      // keydown behaviours
+      document.getElementById('blocked').addEventListener('keydown', function (e) { e.preventDefault(); });
+      document.getElementById('trap').addEventListener('keydown', function (e) { if (e.key === 'Tab') e.preventDefault(); });
+      var bof = document.getElementById('blur-on-focus');
+      bof.addEventListener('focus', function () { bof.blur(); });
+
+      // open shadow root
+      var host = document.getElementById('host');
+      var sr = host.attachShadow({ mode: 'open' });
+      var sIn = document.createElement('input');
+      sIn.id = 'shadow-in';
+      sIn.setAttribute('aria-label', 'shadow-in');
+      sr.appendChild(sIn);
+
+      // The literal must NOT appear in any script: build it (the old textContent-based expect.text
+      // would otherwise match <script> source). It appears in #hidden-template only.
+      var SAVED = 'FR2-07 ' + 'SAVED';
+      function showSaved() {
+        if (document.getElementById('toast')) return;
+        var d = document.createElement('div');
+        d.id = 'toast';
+        d.textContent = SAVED;
+        document.body.appendChild(d);
+      }
+      function submitTxt(e) { e.preventDefault(); showSaved(); return false; }
+      window.submitTxt = submitTxt;
+      document.getElementById('show-saved').addEventListener('click', showSaved);
+      document.getElementById('show-late').addEventListener('click', function () { setTimeout(showSaved, 800); });
+      document.getElementById('push-same').addEventListener('click', function () { history.pushState({}, '', location.href); });
+
+      // click_at_point targets
+      document.getElementById('real-btn').addEventListener('click', function () { bump('real'); });
+      document.getElementById('covered-btn').addEventListener('click', function () {
+        bump('covered');
+        document.getElementById('result').textContent = 'COVERED CLICKED';
+      });
+      document.getElementById('decoy-overlay').addEventListener('click', function () { bump('decoy'); });
+      document.getElementById('vanish').addEventListener('mousedown', function () { this.remove(); });
+      document.getElementById('ctx-target').addEventListener('contextmenu', function (e) { e.preventDefault(); bump('ctx'); });
+      document.getElementById('alert-btn').addEventListener('click', function () { alert('fr2-07'); });
+
+      // drag pad + touch recorders (trusted events only are meaningful; everything is recorded)
+      var pad = document.getElementById('drag-pad');
+      ['mousedown', 'mouseup'].forEach(function (t) {
+        pad.addEventListener(t, function (e) { fx.events.push({ target: 'drag-pad', type: t, trusted: e.isTrusted, x: e.clientX, y: e.clientY }); });
+      });
+      ['mouseup'].forEach(function (t) {
+        window.addEventListener(t, function (e) { fx.events.push({ target: 'window', type: t, trusted: e.isTrusted, x: e.clientX, y: e.clientY }); }, true);
+      });
+      ['tap-target', 'tap-covered'].forEach(function (id) {
+        var el = document.getElementById(id);
+        ['touchstart', 'touchend', 'pointerdown', 'pointerup', 'click'].forEach(function (t) {
+          el.addEventListener(t, function (e) { fx.events.push({ target: id, type: t, trusted: e.isTrusted, pointerType: e.pointerType }); });
+        });
+      });
+
+      // file pickers
+      var fileA = document.getElementById('file-a');
+      document.getElementById('browse').addEventListener('click', function () { fileA.click(); });
+      fileA.addEventListener('change', function () {
+        var f = fileA.files[0];
+        document.getElementById('upload-out').textContent = f ? f.name + ':' + f.size : '';
+      });
+      var fileB = document.getElementById('file-b');
+      document.getElementById('browse-reset').addEventListener('click', function () { fileB.click(); });
+      fileB.addEventListener('change', function () {
+        var f = fileB.files[0];
+        document.getElementById('upload-out-b').textContent = f ? f.name + ':' + f.size : '';
+        this.value = ''; // a page that clears its input: only the change event proves the upload
+      });
+      document.getElementById('browse-detached').addEventListener('click', function () {
+        var i = document.createElement('input');
+        i.type = 'file';
+        i.onchange = function () { window.__detachedGot = i.files[0] && i.files[0].name; };
+        i.click(); // never attached to the document
+      });
+
+      window.addEventListener('message', function (e) {
+        if (e.data && typeof e.data.xoClicks === 'number') fx.xoClicks = e.data.xoClicks;
+      });
+      fx.ready = true;
+    </script>
+  </body>
+</html>

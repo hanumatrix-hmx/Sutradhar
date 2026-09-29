@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>FR2-07 cross-origin frame</title>
+    <style>
+      body { margin: 4px; font: 12px sans-serif; }
+      input { width: 110px; }
+      button { width: 70px; height: 30px; }
+    </style>
+  </head>
+  <body>
+    <input id="xo-in" aria-label="xo-in" />
+    <button id="xo-btn">go</button>
+    <script>
+      var count = 0;
+      document.getElementById('xo-btn').addEventListener('click', function (e) {
+        // Only a trusted click counts; the parent listens for this message.
+        if (!e.isTrusted) return;
+        count++;
+        parent.postMessage({ xoClicks: count }, '*');
+      });
+    </script>
+  </body>
+</html>

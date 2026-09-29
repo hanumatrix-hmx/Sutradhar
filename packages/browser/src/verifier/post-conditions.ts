@@ -225,13 +225,18 @@ export function hasFrameApi(page: Page | undefined): page is Page {
 }
 
 /** The frame whose `<iframe>` element is marked (via `predicate` evaluated on its owner element). */
-async function matchChildFrame(frame: FrameLike, predicate: (el: Element) => boolean): Promise<FrameLike | undefined> {
+async function matchChildFrame(
+  frame: FrameLike,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- serialised into the page; `arg` is a plain JSON value
+  predicate: (el: any, arg: any) => boolean,
+  arg?: unknown,
+): Promise<FrameLike | undefined> {
   const children = typeof frame.childFrames === 'function' ? frame.childFrames() : [];
   for (const c of children) {
     try {
       const owner = await c.frameElement();
       if (!owner) continue;
-      const hit = await owner.evaluate(predicate);
+      const hit = await owner.evaluate(predicate, arg);
       if (hit) return c;
     } catch {
       /* a frame we can't reach is simply not the match */
@@ -399,9 +404,18 @@ export function decideKeyVerdict(obs: KeyObservation): BuiltInVerdict {
     if (post.valueChanged) {
       return done('pass', `keydown '${key}' reached the focused ${desc} and its value changed (length ${before}→${after})`);
     }
+    if (!post.delivered) {
+      // No trusted keydown was seen at all: say so (the swallowed-at-window-capture case, K5).
+      return done(
+        'fail',
+        `no trusted keydown '${key}' reached the page while ${desc} had focus, and its value did not change ` +
+          `(length ${before}→${after}); the key may not have been delivered (a page listener that stops ` +
+          'propagation at window capture can also hide it)',
+      );
+    }
     return done(
       'fail',
-      `keydown '${key}' ${post.delivered && post.onTarget ? 'reached' : 'did not reach'} the focused ${desc}, ` +
+      `keydown '${key}' ${post.onTarget ? 'reached' : 'did not reach'} the focused ${desc}, ` +
         `but its value did not change (length ${before}→${after})${target.readOnly ? '; the field is readonly' : ''}`,
     );
   }
@@ -531,6 +545,7 @@ export function armKeyListenerInPage(token: string): void {
 
 /** In-page: read what the armed listener saw, then remove every trace of it. */
 export function readKeyObservationInPage(token: string, requested: string): KeyPost | { missing: true } {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the page-side state bag is untyped by nature (self-contained function)
   const w = window as unknown as Record<string, any>;
   const s = w[token];
   if (!s) return { missing: true };
@@ -1117,6 +1132,7 @@ export function decideNavigationVerdict(o: NavObservation): BuiltInVerdict {
 }
 
 interface CdpLike {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- CDP responses are protocol-shaped JSON, read defensively
   send(method: string, params?: Record<string, unknown>): Promise<any>;
   detach(): Promise<void>;
 }
@@ -1283,17 +1299,28 @@ export function decidePointVerdict(o: PointObservation): BuiltInVerdict {
     checks.push(delivered('pass', 'delivered'));
     return { outcome: 'pass', reason: `a trusted ${o.event} landed on ${desc}, the element at (${o.x}, ${o.y})`, checks };
   }
+  const wrongPlace = (e: PointEvent): string => {
+    checks.push(delivered('fail', `landed on ${e.targetDesc}`));
+    return `the click at (${o.x}, ${o.y}) landed on ${e.targetDesc}, not on ${desc}, which was at that point when it was dispatched`;
+  };
   if (trusted.length > 0) {
-    const other = trusted[0]!;
-    checks.push(delivered('fail', `landed on ${other.targetDesc}`));
-    return {
-      outcome: 'fail',
-      reason: `the click at (${o.x}, ${o.y}) landed on ${other.targetDesc}, not on ${desc}, which was at that point when it was dispatched`,
-      checks,
-    };
+    return { outcome: 'fail', reason: wrongPlace(trusted[0]!), checks };
   }
+  // No click-type event at all. A page that removes/replaces the element on mousedown makes Chrome
+  // drop the click entirely, but the trusted mouseup still shows where the press actually ended.
+  const upElsewhere = o.events.find((e) => e.trusted && e.type === 'mouseup' && !e.onHit);
+  if (upElsewhere) {
+    return { outcome: 'fail', reason: wrongPlace(upElsewhere), checks };
+  }
+  const downOnHit = o.events.some((e) => e.trusted && e.type === 'mousedown' && e.onHit);
   checks.push(delivered('fail', 'not seen'));
-  return { outcome: 'fail', reason: `no trusted ${o.event} reached the page at (${o.x}, ${o.y})`, checks };
+  return {
+    outcome: 'fail',
+    reason:
+      `no trusted ${o.event} reached the page at (${o.x}, ${o.y})` +
+      (downOnHit ? `; mousedown reached ${desc} but no ${o.event} followed (the element may have been removed or replaced on mousedown)` : ''),
+    checks,
+  };
 }
 
 export function decideDragVerdict(o: PointObservation): BuiltInVerdict {
@@ -1368,7 +1395,10 @@ export function armPointInPage(
   y: number,
   events: string[],
   token: string,
-): { hit: null } | { frame: true; innerX: number; innerY: number } | { armed: true; desc: string } {
+):
+  | { hit: null }
+  | { frame: true; innerX: number; innerY: number; box: { left: number; top: number; width: number; height: number } }
+  | { armed: true; desc: string } {
   const d = (e: Element | null): string => {
     if (!e) return 'null';
     const tag = e.tagName.toLowerCase();
@@ -1392,9 +1422,17 @@ export function armPointInPage(
   if (!el) return { hit: null };
   if (el.tagName === 'IFRAME' || el.tagName === 'FRAME') {
     const r = el.getBoundingClientRect();
-    (el as unknown as Record<string, unknown>).__sdPointMark = token;
-    return { frame: true, innerX: x - r.left - el.clientLeft, innerY: y - r.top - el.clientTop };
+    // No expando mark on the page's element: the frame is matched afterwards by its bounding box
+    // (Puppeteer's frameElement() handle lives in its own isolated world, where a main-world
+    // expando would be invisible anyway).
+    return {
+      frame: true,
+      innerX: x - r.left - el.clientLeft,
+      innerY: y - r.top - el.clientTop,
+      box: { left: r.left, top: r.top, width: r.width, height: r.height },
+    };
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the page-side state bag is untyped by nature (self-contained function)
   const w = window as unknown as Record<string, any>;
   const state: {
     hit: Element;
@@ -1423,6 +1461,7 @@ export function armPointInPage(
 
 /** In-page: read (and remove) what {@link armPointInPage} recorded. */
 export function readPointInPage(token: string): { missing: true } | { events: PointEvent[] } {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the page-side state bag is untyped by nature (self-contained function)
   const w = window as unknown as Record<string, any>;
   const s = w[token];
   if (!s) return { missing: true };
@@ -1459,13 +1498,19 @@ export async function observePoint(tab: ObservedTab, x: number, y: number, event
       if ('hit' in r) return { hit: null, fromInFrame: inFrame };
       if ('armed' in r) return { hit: { desc: r.desc }, innerX: cx, innerY: cy, frame, token, fromInFrame: inFrame };
       inFrame = true;
-      const child = await matchChildFrame(frame, (el) => (el as unknown as Record<string, unknown>).__sdPointMark === token);
-      // clear the mark best-effort (the marked element lives in the parent frame)
-      await frame.evaluate((t) => {
-        for (const f of Array.from(document.querySelectorAll('iframe,frame'))) {
-          if ((f as unknown as Record<string, unknown>).__sdPointMark === t) delete (f as unknown as Record<string, unknown>).__sdPointMark;
-        }
-      }, token).catch(() => {});
+      const child = await matchChildFrame(
+        frame,
+        (el, box) => {
+          const b = el.getBoundingClientRect();
+          return (
+            Math.abs(b.left - box.left) < 1 &&
+            Math.abs(b.top - box.top) < 1 &&
+            Math.abs(b.width - box.width) < 1 &&
+            Math.abs(b.height - box.height) < 1
+          );
+        },
+        r.box,
+      );
       if (!child) return { frameUnreachable: true, fromInFrame: true };
       frame = child;
       cx = r.innerX;
@@ -1601,6 +1646,7 @@ export function armUploadListenerInPage(token: string): number {
   };
   collect(document);
   const names = (i: HTMLInputElement): string[] => Array.from(i.files ?? []).map((f) => f.name);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the page-side state bag is untyped by nature (self-contained function)
   const w = window as unknown as Record<string, any>;
   const state: {
     inputs: HTMLInputElement[];
@@ -1631,6 +1677,7 @@ export function readUploadObservationInPage(
   token: string,
   remove: boolean,
 ): { missing: true } | { event: { trusted: boolean; names: string[]; sizes: number[] } | null; inputs: UploadInputState[] } {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the page-side state bag is untyped by nature (self-contained function)
   const w = window as unknown as Record<string, any>;
   const s = w[token];
   if (!s) return { missing: true };

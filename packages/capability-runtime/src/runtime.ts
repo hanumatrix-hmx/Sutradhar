@@ -550,7 +550,7 @@ export class SutradharRuntime {
     const previousUrl = tab.url;
     const rec = new PostConditionRecorder('go_back');
     const probe = await NavigationProbe.begin(page, tab);
-    await page.goBack();
+    await this.historyStep(() => page.goBack());
     await probe.finish('go_back', undefined, rec);
     const verification = await this.verifier.verifyAction(
       tab,
@@ -569,7 +569,7 @@ export class SutradharRuntime {
     const previousUrl = tab.url;
     const rec = new PostConditionRecorder('go_forward');
     const probe = await NavigationProbe.begin(page, tab);
-    await page.goForward();
+    await this.historyStep(() => page.goForward());
     await probe.finish('go_forward', undefined, rec);
     const verification = await this.verifier.verifyAction(
       tab,
@@ -741,7 +741,7 @@ export class SutradharRuntime {
     // listener BEFORE clicking, so the result can say which element was actually there and whether
     // a real click reached it.
     const eventName = button === 'right' ? 'contextmenu' : button === 'middle' ? 'auxclick' : 'click';
-    const arm = await observePoint(tab, x, y, [eventName]);
+    const arm = await observePoint(tab, x, y, [eventName, 'mousedown', 'mouseup']);
     try {
       // GAP-019: a click that opens a native dialog blocks Input.dispatchMouseEvent until the
       // dialog is handled (30 s auto-dismiss) — race it, exactly like verifiedClickOnHandle does.
@@ -760,7 +760,7 @@ export class SutradharRuntime {
         actionType: 'click_at_point',
         executionTimeMs: Date.now() - start,
         currentUrl: page.url(),
-        title: await this.readTitle(tab),
+        title: await this.readTitleUnlessDialog(tab),
         output: { x, y, button },
         verification,
         ...this.dialogPendingOf(tab),
@@ -775,6 +775,22 @@ export class SutradharRuntime {
         verification: failedVerification(error, specKeys(spec)),
         ...this.dialogPendingOf(tab),
       };
+    }
+  }
+
+  /**
+   * `page.goBack()`/`goForward()` with no history entry in that direction: older Puppeteer
+   * resolved `null` (silently reported as success before FR2-07), Puppeteer 25 throws "History
+   * entry to navigate to not found." Both mean the same thing — nothing happened — so neither
+   * aborts the call: the navigation probe then sees an unmoved history index and the result is
+   * `contradicted` with "no history entry", instead of an opaque throw (or a silent success).
+   * Every other error propagates unchanged.
+   */
+  private async historyStep(step: () => Promise<unknown>): Promise<void> {
+    try {
+      await step();
+    } catch (e) {
+      if (!/history entry to navigate to not found/i.test((e as Error)?.message ?? '')) throw e;
     }
   }
 
@@ -832,7 +848,7 @@ export class SutradharRuntime {
         actionType: 'drag_at_points',
         executionTimeMs: Date.now() - start,
         currentUrl: page.url(),
-        title: await this.readTitle(tab),
+        title: await this.readTitleUnlessDialog(tab),
         output: { fromX, fromY, toX, toY },
         verification,
         ...this.dialogPendingOf(tab),
@@ -2658,6 +2674,13 @@ export class SutradharRuntime {
         );
       }
     }
+  }
+
+  /** `page.title()` is a main-thread evaluate: while a native dialog is open it would block until
+   *  the dialog's 30 s auto-dismiss (the GAP-019 hang, one call later). Use the tab's cached title then. */
+  private async readTitleUnlessDialog(tab: IBrowserTab): Promise<string> {
+    if (this.dialogPendingOf(tab).dialogPending) return tab.title ?? '';
+    return this.readTitle(tab);
   }
 
   private async readTitle(tab: IBrowserTab): Promise<string> {
