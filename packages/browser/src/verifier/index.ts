@@ -4,3 +4,4 @@
  */
 
 export * from './execution-verifier.js';
+export * from './post-conditions.js';
