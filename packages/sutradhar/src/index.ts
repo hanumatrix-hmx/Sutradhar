@@ -71,8 +71,12 @@ export async function launch(options: LaunchOptions = {}): Promise<Browser> {
 }
 
 export { Browser, type LaunchOptions } from './browser.js';
+export { ActionFailedError, ExpectationFailedError } from './errors.js';
 export {
   Page,
+  type ActionOptions,
+  type GotoOptions,
+  type LastResult,
   type ElementOptions,
   type ScreenshotOptions,
   type SetViewportOptions,
@@ -91,4 +95,8 @@ export {
   type StorageState,
   type AuditReport,
   type DownloadResult,
+  type ActionExpectation,
+  type ActionResult,
+  type VerificationResultDto,
+  type VerificationEvidence,
 } from '@sutradhar/capability-runtime';
