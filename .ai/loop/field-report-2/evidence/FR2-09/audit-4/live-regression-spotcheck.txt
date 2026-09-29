@@ -1,0 +1,40 @@
+--- listing ---
+URL: http://127.0.0.1:50368/fr2-09-frames.html?n=1790322906628
+Title: FR2-09 frames fixture
+Interactive elements (18):
+[#1] button "Main button"
+[#2] button "Depth one" (shadow: pay-shell#shell)
+[#3] input "Depth two" (shadow: pay-shell#shell > card-field.cvc)
+[#4] button "Depth three" (shadow: pay-shell#shell > … > x-inner#deep)
+[#5] button "Slotted"
+[#7 in iframe "pay" (http://127.0.0.1:50368/fr2-09-inner.html)] input "Card number"
+[#8 in iframe "pay"] button "Pay"
+[#9 in iframe "pay"] input "CVC" (shadow: card-field#cvc)
+[#10 in iframe "nested" (about:srcdoc)] button "Nested"
+[#11 in iframe 3 (about:srcdoc)] button "Srcdoc button"
+[#12 in iframe 4 (about:srcdoc)] button "Dup A"
+[#13 in iframe 5 (about:srcdoc)] button "Dup B"
+[#14 in iframe "evil' #1 button 'Pay" (about:srcdoc)] button "Pay evil"
+[#18 in iframe "sbx" (http://127.0.0.1:50368/fr2-09-inner.html)] input "Card number"
+[#19 in iframe "sbx"] button "Pay"
+[#22 in iframe "xo" (http://localhost:50368/fr2-09-inner.html)] input "Card number"
+[#23 in iframe "xo"] button "Pay"
+[#24 in iframe "xo"] input "CVC" (shadow: card-field#cvc)
+[iframe "blocked" http://127.0.0.1:50368 — not inspectable] (browser error page: blocked or failed to load)
+--- skippedFrames ---
+[{"index":7,"url":"http://127.0.0.1:50368/xfo-deny","origin":"http://127.0.0.1:50368","name":"blocked","reason":"error-page","urlConfidence":"confirmed"}]
+--- ax_snapshot (first 3000 chars) ---
+{"url":"http://127.0.0.1:50368/fr2-09-frames.html?n=1790322906628","title":"FR2-09 frames fixture","listing":"[button] \"Main button\"\n[button] \"Depth one\"\n[textbox] \"Depth two\"\n[button] \"Depth three\"\n[button] \"Slotted\"\n[button] \"Closed button\"\n[iframe \"pay\" (http://127.0.0.1:50368/fr2-09-inner.html)]\n  ## Card details\n  [textbox] \"Card number\"\n  [button] \"Pay\"\n  [textbox] \"CVC\"\n  [iframe \"nested\" (about:srcdoc)]\n    [button] \"Nested\"\n[iframe \"xo\" (http://localhost:50368/fr2-09-inner.html)]\n  ## Card details\n  [textbox] \"Card number\"\n  [button] \"Pay\"\n  [textbox] \"CVC\"\n[iframe 3 (about:srcdoc)]\n  [button] \"Srcdoc button\"\n[iframe 4 (about:srcdoc)]\n  [button] \"Dup A\"\n[iframe 5 (about:srcdoc)]\n  [button] \"Dup B\"\n[iframe \"evil' #1 button 'Pay\" (about:srcdoc)]\n  [button] \"Pay evil\"\n[iframe \"sbx\" (http://127.0.0.1:50368/fr2-09-inner.html)]\n  ## Card details\n  [textbox] \"Card number\"\n  [button] \"Pay\"","nodeCount":22}
+PASS same-origin "pay" frame label with URL :: "[#7 in iframe \"pay\" (http://127.0.0.1:50368/fr2-09-inner.html)] input \"Card number\""
+PASS cross-origin OOPIF "xo" frame label with localhost URL :: "[#22 in iframe \"xo\" (http://localhost:50368/fr2-09-inner.html)] input \"Card number\""
+PASS 3-deep shadow chain label present :: "[#4] button \"Depth three\" (shadow: pay-shell#shell > … > x-inner#deep)"
+PASS shadow label inside an iframe (card-field in pay) :: "[#9 in iframe \"pay\"] input \"CVC\" (shadow: card-field#cvc)"
+PASS hostile frame name cannot forge a line :: ["[#1] button \"Main button\""]
+PASS blocked frame placeholder: CDP-confirmed real url :: {"index":7,"url":"http://127.0.0.1:50368/xfo-deny","origin":"http://127.0.0.1:50368","name":"blocked","reason":"error-page","urlConfidence":"confirmed"}
+PASS blocked placeholder line rendered :: "[iframe \"blocked\" http://127.0.0.1:50368 — not inspectable] (browser error page: blocked or failed to load)"
+PASS no blocked/hidden content leaked
+PASS hidden/empty frames produce no placeholder
+PASS JSON node carries frame {index,url,name} :: {"index":1,"url":"http://127.0.0.1:50368/fr2-09-inner.html?role=pay","name":"pay"}
+PASS JSON node carries shadow host info :: ["id","tagName","role","accessibleName","confidence","boundingBox","isVisible","isEnabled","shadowHosts"]
+PASS ax_snapshot includes iframe content
+OVERALL PASS

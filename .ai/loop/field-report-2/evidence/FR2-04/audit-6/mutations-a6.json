@@ -1,0 +1,337 @@
+{
+  "at": "2026-09-27T05:14:55.697Z",
+  "results": [
+    {
+      "id": "C1 allKnown ignored (GAP-252 plumbing dropped inside the function)",
+      "file": "packages/browser/src/session/dialog-cdp.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  4 failed | 59 passed (63)",
+      "failedNames": [
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (e",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (e",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (e",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (e"
+      ],
+      "restoredSha": "571eef7dba68b8a28affa34be6bdb5638365ba05fe2f23ae93d1ea50ad0f4702"
+    },
+    {
+      "id": "C2 responsive (non-blocked) known opener becomes a candidate holder",
+      "file": "packages/browser/src/session/dialog-cdp.ts",
+      "killed": false,
+      "exitCode": 0,
+      "summary": "Tests  63 passed (63)",
+      "failedNames": [],
+      "restoredSha": "571eef7dba68b8a28affa34be6bdb5638365ba05fe2f23ae93d1ea50ad0f4702"
+    },
+    {
+      "id": "C3 oldest child preferred instead of newest",
+      "file": "packages/browser/src/session/dialog-cdp.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  6 failed | 57 passed (63)",
+      "failedNames": [
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > several bl",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-245 re",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (e",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (e",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (e",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-A13 (GAP-249): the warden feeds its own real discover"
+      ],
+      "restoredSha": "571eef7dba68b8a28affa34be6bdb5638365ba05fe2f23ae93d1ea50ad0f4702"
+    },
+    {
+      "id": "C4 confirmedSafe ignored in resolve()",
+      "file": "packages/browser/src/session/dialog-cdp.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  1 failed | 62 passed (63)",
+      "failedNames": [
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-245: a"
+      ],
+      "restoredSha": "571eef7dba68b8a28affa34be6bdb5638365ba05fe2f23ae93d1ea50ad0f4702"
+    },
+    {
+      "id": "C5 findRoot only walks through BLOCKED openers (pre-esc2)",
+      "file": "packages/browser/src/session/dialog-cdp.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  4 failed | 59 passed (63)",
+      "failedNames": [
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (e",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (e",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (e",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (e"
+      ],
+      "restoredSha": "571eef7dba68b8a28affa34be6bdb5638365ba05fe2f23ae93d1ea50ad0f4702"
+    },
+    {
+      "id": "C6 childrenByOpener keyed only on blocked openers (pre-esc2)",
+      "file": "packages/browser/src/session/dialog-cdp.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  4 failed | 59 passed (63)",
+      "failedNames": [
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (e",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (e",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (e",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-252 (e"
+      ],
+      "restoredSha": "571eef7dba68b8a28affa34be6bdb5638365ba05fe2f23ae93d1ea50ad0f4702"
+    },
+    {
+      "id": "C7 blockedBy never set",
+      "file": "packages/browser/src/session/dialog-cdp.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  13 failed | 50 passed (63)",
+      "failedNames": [
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > a popup an",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > a 3-level",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > several bl",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-245 va",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-245 re",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-245 re"
+      ],
+      "restoredSha": "571eef7dba68b8a28affa34be6bdb5638365ba05fe2f23ae93d1ea50ad0f4702"
+    },
+    {
+      "id": "C8 findRoot walks only one level up",
+      "file": "packages/browser/src/session/dialog-cdp.ts",
+      "killed": false,
+      "exitCode": 0,
+      "summary": "Tests  63 passed (63)",
+      "failedNames": [],
+      "restoredSha": "571eef7dba68b8a28affa34be6bdb5638365ba05fe2f23ae93d1ea50ad0f4702"
+    },
+    {
+      "id": "C9 resolve ignores children entirely (every blocked node its own holder)",
+      "file": "packages/browser/src/session/dialog-cdp.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  13 failed | 50 passed (63)",
+      "failedNames": [
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > a popup an",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > a 3-level",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > several bl",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-245 va",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-245 re",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-245 re"
+      ],
+      "restoredSha": "571eef7dba68b8a28affa34be6bdb5638365ba05fe2f23ae93d1ea50ad0f4702"
+    },
+    {
+      "id": "W1 proactive probe never scheduled",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  4 failed | 59 passed (63)",
+      "failedNames": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirm",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirm",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precond",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precond"
+      ],
+      "restoredSha": "a659a7259e0942c4de5ae932ca05b09620564528dee4dcfba22eb90e08d3205d"
+    },
+    {
+      "id": "W2 proactive probe confirms even if a tracked dialog arrived meanwhile",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "killed": false,
+      "exitCode": 0,
+      "summary": "Tests  63 passed (63)",
+      "failedNames": [],
+      "restoredSha": "a659a7259e0942c4de5ae932ca05b09620564528dee4dcfba22eb90e08d3205d"
+    },
+    {
+      "id": "W3 warden does not pass allTargets (GAP-252 plumbing dropped at the call site)",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "killed": false,
+      "exitCode": 0,
+      "summary": "Tests  63 passed (63)",
+      "failedNames": [],
+      "restoredSha": "a659a7259e0942c4de5ae932ca05b09620564528dee4dcfba22eb90e08d3205d"
+    },
+    {
+      "id": "W4 targetdestroyed keeps confirmedResponsiveSince (expected near-equivalent)",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "killed": false,
+      "exitCode": 0,
+      "summary": "Tests  63 passed (63)",
+      "failedNames": [],
+      "restoredSha": "a659a7259e0942c4de5ae932ca05b09620564528dee4dcfba22eb90e08d3205d"
+    },
+    {
+      "id": "W5 recovery ignores confirmedSafe (closes a history-proven target)",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  6 failed | 57 passed (63)",
+      "failedNames": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-B2 (GAP-245, decision 1): a CONFIRMED-SAFE isolated t",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirm",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirm",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precond",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precond",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precond"
+      ],
+      "restoredSha": "a659a7259e0942c4de5ae932ca05b09620564528dee4dcfba22eb90e08d3205d"
+    },
+    {
+      "id": "W6 recovery ignores blockedBy (closes collateral)",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  1 failed | 62 passed (63)",
+      "failedNames": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-fix3-A (GAP-236): a popup and its blocked opener — /v1/dialogs rep"
+      ],
+      "restoredSha": "a659a7259e0942c4de5ae932ca05b09620564528dee4dcfba22eb90e08d3205d"
+    },
+    {
+      "id": "W7 listWithLiveness never passes confirmedSafe to attribution",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  6 failed | 57 passed (63)",
+      "failedNames": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-B2 (GAP-245, decision 1): a CONFIRMED-SAFE isolated t",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirm",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirm",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precond",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precond",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precond"
+      ],
+      "restoredSha": "a659a7259e0942c4de5ae932ca05b09620564528dee4dcfba22eb90e08d3205d"
+    },
+    {
+      "id": "W8 proactive delay back to 500ms (GAP-251 regression)",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  1 failed | 62 passed (63)",
+      "failedNames": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precond"
+      ],
+      "restoredSha": "a659a7259e0942c4de5ae932ca05b09620564528dee4dcfba22eb90e08d3205d"
+    },
+    {
+      "id": "W9 an 'error' probe result is not treated as blocked",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "killed": false,
+      "exitCode": 0,
+      "summary": "Tests  63 passed (63)",
+      "failedNames": [],
+      "restoredSha": "a659a7259e0942c4de5ae932ca05b09620564528dee4dcfba22eb90e08d3205d"
+    },
+    {
+      "id": "W10 proactive probe fires without the Page.enable ack (moved before the send)",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  3 failed | 60 passed (63)",
+      "failedNames": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precond",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precond",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precond"
+      ],
+      "restoredSha": "a659a7259e0942c4de5ae932ca05b09620564528dee4dcfba22eb90e08d3205d"
+    },
+    {
+      "id": "W11 proactive probe confirms regardless of result",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  4 failed | 59 passed (63)",
+      "failedNames": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-fix3-A (GAP-236): a popup and its blocked opener — /v1/dialogs rep",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-B (GAP-246, supersedes fix-3's isolated refusal): a N",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-A13 (GAP-249): the warden feeds its own real discover",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirm"
+      ],
+      "restoredSha": "a659a7259e0942c4de5ae932ca05b09620564528dee4dcfba22eb90e08d3205d"
+    },
+    {
+      "id": "B1 DirectCdpBroker does not pass allKnown",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  1 failed | 143 passed (144)",
+      "failedNames": [
+        "tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > GAP-252: list() attributes two blocked siblings of an UN"
+      ],
+      "restoredSha": "45bf9cbc3ee492de21d6d9f62bd2a6ecad18c7d2fecc300099555a214c38741f"
+    },
+    {
+      "id": "B2 DirectCdpBroker drops wardenDown marker on unknown entries",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  1 failed | 143 passed (144)",
+      "failedNames": [
+        "tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > GAP-254: every dialog list() reports (hinted or unknown)"
+      ],
+      "restoredSha": "45bf9cbc3ee492de21d6d9f62bd2a6ecad18c7d2fecc300099555a214c38741f"
+    },
+    {
+      "id": "B3 gate auto-handles unknown entries under a policy (GAP-240 regression)",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  2 failed | 142 passed (144)",
+      "failedNames": [
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > decision point 6 (GAP-240): a liveness-inferre",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > decision point 6: a real dialog is still auto-"
+      ],
+      "restoredSha": "45bf9cbc3ee492de21d6d9f62bd2a6ecad18c7d2fecc300099555a214c38741f"
+    },
+    {
+      "id": "D1 describeUnknownDialog: always claims this tab is the actual target",
+      "file": "packages/cli/src/dialog-cli.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  2 failed | 142 passed (144)",
+      "failedNames": [
+        "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D11 (FR2-04 escalation-2, GAP-253): describeUnknownDialog reflects what selectDialog would",
+        "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D11 (FR2-04 escalation-2, GAP-253): describeUnknownDialog reflects what selectDialog would"
+      ],
+      "restoredSha": "36a47fbfbed48b4755787d2cfb50811a8a4ce832d1e24a1628ed383fe2d7a846"
+    },
+    {
+      "id": "D2 describeUnknownDialog: wardenDown holder branch removed",
+      "file": "packages/cli/src/dialog-cli.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  1 failed | 143 passed (144)",
+      "failedNames": [
+        "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D12 (FR2-04 escalation-2, GAP-254): describeUnknownDialog never claims a close will happen"
+      ],
+      "restoredSha": "36a47fbfbed48b4755787d2cfb50811a8a4ce832d1e24a1628ed383fe2d7a846"
+    },
+    {
+      "id": "D3 selectDialog may pick a confirmedSafe entry",
+      "file": "packages/cli/src/dialog-cli.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  2 failed | 142 passed (144)",
+      "failedNames": [
+        "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D6c (escalation-1 decision 1, GAP-249 A20): selectDialog skips an OLDER confirmedSafe entry",
+        "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D6d: when EVERY entry is blockedBy/confirmedSafe (no addressable holder at all), selectDial"
+      ],
+      "restoredSha": "36a47fbfbed48b4755787d2cfb50811a8a4ce832d1e24a1628ed383fe2d7a846"
+    },
+    {
+      "id": "D4 selectDialog may pick a collateral (blockedBy) entry",
+      "file": "packages/cli/src/dialog-cli.ts",
+      "killed": true,
+      "exitCode": 1,
+      "summary": "Tests  2 failed | 142 passed (144)",
+      "failedNames": [
+        "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D6b (GAP-236/GAP-249 A20): selectDialog skips an OLDER blockedBy entry and picks the real (",
+        "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D6d: when EVERY entry is blockedBy/confirmedSafe (no addressable holder at all), selectDial"
+      ],
+      "restoredSha": "36a47fbfbed48b4755787d2cfb50811a8a4ce832d1e24a1628ed383fe2d7a846"
+    }
+  ],
+  "allRestored": true
+}

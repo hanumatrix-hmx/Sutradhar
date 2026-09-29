@@ -1,0 +1,463 @@
+{
+  "at": "2026-09-27T06:28:21.331Z",
+  "results": [
+    {
+      "trial": 0,
+      "steps": [
+        {
+          "s": "B",
+          "args": "nav http://127.0.0.1:60874/?n=B0",
+          "code": 0,
+          "ms": 1041,
+          "out": "Navigated to http://127.0.0.1:60874/?n=B0\nTitle: opener B0",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "nav http://127.0.0.1:60874/?n=A0",
+          "code": 0,
+          "ms": 1056,
+          "out": "Navigated to http://127.0.0.1:60874/?n=A0\nTitle: opener A0",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "click #pop",
+          "code": 1,
+          "ms": 363,
+          "out": "Clicked #pop",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-"
+        },
+        {
+          "s": "B",
+          "args": "click #pop",
+          "code": 0,
+          "ms": 3357,
+          "out": "Clicked #pop",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "dialog",
+          "code": 0,
+          "ms": 690,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/?n=A0\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/alert-inline?n=A0-popup\"}",
+          "err": "Note: tab 15C5A0D5BABE82AFD5998B4E3632B780 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 905130A0F0DB40C8367C052693CC6B78.\n  Note: tab 905130A0F0DB40C8367C052693CC6B78 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "s": "B",
+          "args": "dialog",
+          "code": 0,
+          "ms": 685,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/?n=B0\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/alert-inline?n=B0-popup\"}",
+          "err": "Note: tab 9349BB9484F4D68A6B195FFE5357AFAC is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab D491AC39173237D19604540F3F8F01EB.\n  Note: tab D491AC39173237D19604540F3F8F01EB appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "s": "A",
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1109,
+          "out": "Tab 905130A0F0DB40C8367C052693CC6B78 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1106,
+          "out": "Tab D491AC39173237D19604540F3F8F01EB was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "tabs",
+          "code": 0,
+          "ms": 295,
+          "out": "* tab_sess_1790490451424_1_1  opener A0  http://127.0.0.1:60874/?n=A0",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "tabs",
+          "code": 0,
+          "ms": 290,
+          "out": "* tab_sess_1790490451432_1_1  opener B0  http://127.0.0.1:60874/?n=B0",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "click #al",
+          "code": 0,
+          "ms": 6362,
+          "out": "Clicked #al\ndialogPending: {\"type\":\"alert\",\"message\":\"tracked-A0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/?n=A0\"}",
+          "err": "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it mer"
+        },
+        {
+          "s": "B",
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 276,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "s": "A",
+          "args": "dialog",
+          "code": 0,
+          "ms": 279,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"tracked-A0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/?n=A0\"}",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 711,
+          "out": "Accepted alert \"tracked-A0\"",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "close",
+          "code": 0,
+          "ms": 528,
+          "out": "Session closed.",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "close",
+          "code": 0,
+          "ms": 532,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "summary": {
+        "distinctChrome": true,
+        "distinctWardens": true,
+        "wardenCountUnderRoot": 2,
+        "aListOnlyA": true,
+        "bListOnlyB": true,
+        "aClosedOwn": true,
+        "bClosedOwn": true,
+        "aTabsHasOpener": true,
+        "bTabsHasOpener": true,
+        "bAcceptWhileATrackedOpen": {
+          "code": 1,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        "aStillListsTracked": true,
+        "aAcceptedTracked": true
+      }
+    },
+    {
+      "trial": 1,
+      "steps": [
+        {
+          "s": "B",
+          "args": "nav http://127.0.0.1:60874/?n=B1",
+          "code": 0,
+          "ms": 1061,
+          "out": "Navigated to http://127.0.0.1:60874/?n=B1\nTitle: opener B1",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "nav http://127.0.0.1:60874/?n=A1",
+          "code": 0,
+          "ms": 1065,
+          "out": "Navigated to http://127.0.0.1:60874/?n=A1\nTitle: opener A1",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "click #pop",
+          "code": 0,
+          "ms": 3399,
+          "out": "Clicked #pop",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "click #pop",
+          "code": 0,
+          "ms": 3402,
+          "out": "Clicked #pop",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "dialog",
+          "code": 0,
+          "ms": 691,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/?n=A1\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/alert-inline?n=A1-popup\"}",
+          "err": "Note: tab 001207A1BCA45965B1748891E4A25645 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 3874057BCB554767AA4D153DDEABD32A.\n  Note: tab 3874057BCB554767AA4D153DDEABD32A appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "s": "B",
+          "args": "dialog",
+          "code": 0,
+          "ms": 688,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/?n=B1\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/alert-inline?n=B1-popup\"}",
+          "err": "Note: tab B37537BFA0F41FF0318FD9945A166E26 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 9F5FF8E381A0593067937CDF9A077F98.\n  Note: tab 9F5FF8E381A0593067937CDF9A077F98 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "s": "B",
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1114,
+          "out": "Tab 9F5FF8E381A0593067937CDF9A077F98 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1119,
+          "out": "Tab 3874057BCB554767AA4D153DDEABD32A was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "tabs",
+          "code": 0,
+          "ms": 308,
+          "out": "* tab_sess_1790490467609_1_1  opener B1  http://127.0.0.1:60874/?n=B1",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "tabs",
+          "code": 0,
+          "ms": 310,
+          "out": "* tab_sess_1790490467611_1_1  opener A1  http://127.0.0.1:60874/?n=A1",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "click #al",
+          "code": 0,
+          "ms": 6313,
+          "out": "Clicked #al\ndialogPending: {\"type\":\"alert\",\"message\":\"tracked-A1\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/?n=A1\"}",
+          "err": "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it mer"
+        },
+        {
+          "s": "B",
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 290,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "s": "A",
+          "args": "dialog",
+          "code": 0,
+          "ms": 266,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"tracked-A1\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/?n=A1\"}",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 712,
+          "out": "Accepted alert \"tracked-A1\"",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "close",
+          "code": 0,
+          "ms": 549,
+          "out": "Session closed.",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "close",
+          "code": 0,
+          "ms": 547,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "summary": {
+        "distinctChrome": true,
+        "distinctWardens": true,
+        "wardenCountUnderRoot": 2,
+        "aListOnlyA": true,
+        "bListOnlyB": true,
+        "aClosedOwn": true,
+        "bClosedOwn": true,
+        "aTabsHasOpener": true,
+        "bTabsHasOpener": true,
+        "bAcceptWhileATrackedOpen": {
+          "code": 1,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        "aStillListsTracked": true,
+        "aAcceptedTracked": true
+      }
+    },
+    {
+      "trial": 2,
+      "steps": [
+        {
+          "s": "B",
+          "args": "nav http://127.0.0.1:60874/?n=B2",
+          "code": 0,
+          "ms": 1020,
+          "out": "Navigated to http://127.0.0.1:60874/?n=B2\nTitle: opener B2",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "nav http://127.0.0.1:60874/?n=A2",
+          "code": 0,
+          "ms": 1070,
+          "out": "Navigated to http://127.0.0.1:60874/?n=A2\nTitle: opener A2",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "click #pop",
+          "code": 1,
+          "ms": 369,
+          "out": "Clicked #pop",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-"
+        },
+        {
+          "s": "B",
+          "args": "click #pop",
+          "code": 1,
+          "ms": 367,
+          "out": "Clicked #pop",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-"
+        },
+        {
+          "s": "A",
+          "args": "dialog",
+          "code": 0,
+          "ms": 729,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/?n=A2\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/alert-inline?n=A2-popup\"}",
+          "err": "Note: tab 4DB98E5AE405387166E9C3CA0F911BE8 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 6A2071717EFBED9DC3E9588230468CDF.\n  Note: tab 6A2071717EFBED9DC3E9588230468CDF appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "s": "B",
+          "args": "dialog",
+          "code": 0,
+          "ms": 725,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/?n=B2\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/alert-inline?n=B2-popup\"}",
+          "err": "Note: tab F56D8A6FB8B39CCD16B1E63245457447 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 5FA00B2D1DA002485129A14F51695B61.\n  Note: tab 5FA00B2D1DA002485129A14F51695B61 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "s": "A",
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1156,
+          "out": "Tab 6A2071717EFBED9DC3E9588230468CDF was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1153,
+          "out": "Tab 5FA00B2D1DA002485129A14F51695B61 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "tabs",
+          "code": 0,
+          "ms": 299,
+          "out": "* tab_sess_1790490483797_1_1  opener B2  http://127.0.0.1:60874/?n=B2",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "tabs",
+          "code": 0,
+          "ms": 302,
+          "out": "* tab_sess_1790490483808_1_1  opener A2  http://127.0.0.1:60874/?n=A2",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "click #al",
+          "code": 0,
+          "ms": 6362,
+          "out": "Clicked #al\ndialogPending: {\"type\":\"alert\",\"message\":\"tracked-A2\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/?n=A2\"}",
+          "err": "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it mer"
+        },
+        {
+          "s": "B",
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 257,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "s": "A",
+          "args": "dialog",
+          "code": 0,
+          "ms": 260,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"tracked-A2\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60874/?n=A2\"}",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 706,
+          "out": "Accepted alert \"tracked-A2\"",
+          "err": ""
+        },
+        {
+          "s": "B",
+          "args": "close",
+          "code": 0,
+          "ms": 561,
+          "out": "Session closed.",
+          "err": ""
+        },
+        {
+          "s": "A",
+          "args": "close",
+          "code": 0,
+          "ms": 563,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "summary": {
+        "distinctChrome": true,
+        "distinctWardens": true,
+        "wardenCountUnderRoot": 2,
+        "aListOnlyA": true,
+        "bListOnlyB": true,
+        "aClosedOwn": true,
+        "bClosedOwn": true,
+        "aTabsHasOpener": true,
+        "bTabsHasOpener": true,
+        "bAcceptWhileATrackedOpen": {
+          "code": 1,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        "aStillListsTracked": true,
+        "aAcceptedTracked": true
+      }
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

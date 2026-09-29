@@ -1,0 +1,256 @@
+{
+  "ok": true,
+  "cases": [
+    {
+      "case": "R1 3-hop, bad LAST hop (text=)",
+      "chain": "iframe#l1::iframe#l2::text=Deep",
+      "error": "Invalid frameSelector \"text=Deep\" (from the full chain \"iframe#l1::iframe#l2::text=Deep\") — \"text=\" is Playwright selector-engine syntax (Puppeteer's own text query is spelled \"text/\"). Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+      "sends": 0,
+      "methods": [],
+      "pass": true
+    },
+    {
+      "case": "R2 3-hop, bad MIDDLE hop (xpath=)",
+      "chain": "iframe#l1::xpath=//iframe::iframe#l3",
+      "error": "Invalid frameSelector \"xpath=//iframe\" (from the full chain \"iframe#l1::xpath=//iframe::iframe#l3\") — \"xpath=\" is not supported; use the slash form \"xpath/\". Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+      "sends": 0,
+      "methods": [],
+      "pass": true
+    },
+    {
+      "case": "R3 first hop valid CSS but NOT an iframe (semantically wrong), bad 2nd hop",
+      "chain": "div#notaframe::role=frame",
+      "error": "Invalid frameSelector \"role=frame\" (from the full chain \"div#notaframe::role=frame\") — \"role=\" is Playwright selector-engine syntax. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+      "sends": 0,
+      "methods": [],
+      "pass": true
+    },
+    {
+      "case": "R4 first hop valid CSS matching NOTHING, bad 3rd hop",
+      "chain": "iframe#nope::iframe#l2::>>iframe",
+      "error": "Invalid frameSelector \">>iframe\" (from the full chain \"iframe#nope::iframe#l2::>>iframe\") — \">>\" (Playwright selector chaining) is Playwright selector syntax. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+      "sends": 0,
+      "methods": [],
+      "pass": true
+    },
+    {
+      "case": "R5 4-hop, bad hop 4 with :has-text()",
+      "chain": "iframe#l1::iframe#l2::iframe#l3::button:has-text(\"Deep\")",
+      "error": "Invalid frameSelector \"button:has-text(\"Deep\")\" (from the full chain \"iframe#l1::iframe#l2::iframe#l3::button:has-text(\"Deep\")\") — \":has-text(\" is a Playwright-only pseudo-class, not CSS. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+      "sends": 0,
+      "methods": [],
+      "pass": true
+    },
+    {
+      "case": "R6 whitespace-padded bad hop",
+      "chain": "iframe#l1 ::   id=l2  ",
+      "error": "Invalid frameSelector \"id=l2\" (from the full chain \"iframe#l1 ::   id=l2  \") — \"id=\" is a Playwright attribute-engine prefix; use a CSS attribute selector such as [id=\"…\"]. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+      "sends": 0,
+      "methods": [],
+      "pass": true
+    },
+    {
+      "case": "R7 numeric-node-id hop then bad hop",
+      "chain": "5::internal:role=frame",
+      "error": "Invalid frameSelector \"internal:role=frame\" (from the full chain \"5::internal:role=frame\") — \"internal:role=\" is Playwright-internal selector syntax (as printed by Playwright locators/codegen), not CSS. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+      "sends": 0,
+      "methods": [],
+      "pass": true
+    },
+    {
+      "case": "R8 pierce/-prefixed valid first hop then pierce/ text= (GAP-213 shape) last hop",
+      "chain": "pierce/iframe#l1::pierce/ text=x",
+      "error": "Invalid frameSelector \"pierce/ text=x\" (from the full chain \"pierce/iframe#l1::pierce/ text=x\") — \"text=\" is Playwright selector-engine syntax (Puppeteer's own text query is spelled \"text/\"). Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+      "sends": 0,
+      "methods": [],
+      "pass": true
+    },
+    {
+      "case": "R9 bad hop is getByRole()",
+      "chain": "iframe#l1::getByRole(\"frame\")",
+      "error": "Invalid frameSelector \"getByRole(\"frame\")\" (from the full chain \"iframe#l1::getByRole(\"frame\")\") — \"getByRole(\" is a Playwright locator method, not a selector. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+      "sends": 0,
+      "methods": [],
+      "pass": true
+    },
+    {
+      "case": "R10 bare-xpath hop",
+      "chain": "iframe#l1:://iframe",
+      "error": "Invalid frameSelector \"//iframe\" (from the full chain \"iframe#l1:://iframe\") — this looks like an XPath expression; prefix it with \"xpath/\" (e.g. xpath///button[@id=\"go\"]). Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+      "sends": 0,
+      "methods": [],
+      "pass": true
+    },
+    {
+      "case": "R11 [#12] node-id-syntax hop",
+      "chain": "iframe#l1::[#12]",
+      "error": "Invalid frameSelector \"[#12]\" (from the full chain \"iframe#l1::[#12]\") — this looks like a snapshot node id; pass just the number, e.g. \"12\". Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+      "sends": 0,
+      "methods": [],
+      "pass": true
+    },
+    {
+      "case": "R12 aria= hop (GAP-205 text inside frame wrapper)",
+      "chain": "iframe#l1::aria=frame",
+      "error": "Invalid frameSelector \"aria=frame\" (from the full chain \"iframe#l1::aria=frame\") — \"aria=\" is not supported; use the slash form \"aria/\". Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+      "sends": 0,
+      "methods": [],
+      "pass": true
+    },
+    {
+      "case": "R13 extractData 3-hop bad LAST hop",
+      "chain": "iframe#l1::iframe#l2::role=frame",
+      "error": "Invalid frameSelector \"role=frame\" (from the full chain \"iframe#l1::iframe#l2::role=frame\") — \"role=\" is Playwright selector-engine syntax. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+      "sends": 0,
+      "methods": [],
+      "pass": true
+    },
+    {
+      "case": "G1 all-valid 3-hop CSS chain",
+      "chain": "iframe#l1::iframe#l2::iframe#l3",
+      "result": "l3",
+      "sends": 40,
+      "methods": [
+        "Runtime.callFunctionOn",
+        "DOM.describeNode",
+        "DOM.resolveNode",
+        "Runtime.addBinding",
+        "Runtime.evaluate",
+        "Runtime.releaseObject"
+      ],
+      "pass": true
+    },
+    {
+      "case": "G2 all-valid 2-hop",
+      "chain": "iframe#l1::iframe#l2",
+      "result": "l2",
+      "sends": 11,
+      "methods": [
+        "Runtime.callFunctionOn",
+        "DOM.describeNode",
+        "DOM.resolveNode",
+        "Runtime.releaseObject",
+        "Runtime.evaluate"
+      ],
+      "pass": true
+    },
+    {
+      "case": "G3 single hop",
+      "chain": "iframe#l1",
+      "result": "l1",
+      "sends": 6,
+      "methods": [
+        "Runtime.callFunctionOn",
+        "DOM.describeNode",
+        "DOM.resolveNode",
+        "Runtime.releaseObject",
+        "Runtime.evaluate"
+      ],
+      "pass": true
+    },
+    {
+      "case": "G4 whitespace + empty segments",
+      "chain": "  iframe#l1 :: :: iframe#l2 ::  ",
+      "result": "l2",
+      "sends": 11,
+      "methods": [
+        "Runtime.callFunctionOn",
+        "DOM.describeNode",
+        "DOM.resolveNode",
+        "Runtime.releaseObject",
+        "Runtime.evaluate"
+      ],
+      "pass": true
+    },
+    {
+      "case": "G5 pierce/ slash-prefixed hops",
+      "chain": "pierce/iframe#l1::pierce/iframe#l2::pierce/iframe#l3",
+      "result": "l3",
+      "sends": 16,
+      "methods": [
+        "Runtime.callFunctionOn",
+        "DOM.describeNode",
+        "DOM.resolveNode",
+        "Runtime.releaseObject",
+        "Runtime.evaluate"
+      ],
+      "pass": true
+    },
+    {
+      "case": "G6 xpath/ slash-prefixed hop",
+      "chain": "xpath///iframe[@id=\"l1\"]::iframe#l2",
+      "result": "l2",
+      "sends": 11,
+      "methods": [
+        "Runtime.callFunctionOn",
+        "DOM.describeNode",
+        "DOM.resolveNode",
+        "Runtime.releaseObject",
+        "Runtime.evaluate"
+      ],
+      "pass": true
+    },
+    {
+      "case": "G7 CSS attribute that LOOKS Playwright-ish but is valid CSS",
+      "chain": "iframe[src=\"a2-l1.html\"]::iframe[id=\"l2\"]",
+      "result": "l2",
+      "sends": 11,
+      "methods": [
+        "Runtime.callFunctionOn",
+        "DOM.describeNode",
+        "DOM.resolveNode",
+        "Runtime.releaseObject",
+        "Runtime.evaluate"
+      ],
+      "pass": true
+    },
+    {
+      "case": "G8 extractData all-valid 3-hop",
+      "result": "{\"v\":[\"deep-1\",\"deep-2\"]}",
+      "sends": 16,
+      "methods": [
+        "Runtime.callFunctionOn",
+        "DOM.describeNode",
+        "DOM.resolveNode",
+        "Runtime.releaseObject"
+      ],
+      "pass": true
+    },
+    {
+      "case": "S1 valid syntax, first hop not an iframe -> \"is not an <iframe>\"",
+      "error": "Element matching \"div#notaframe\" is not an <iframe> (or its content frame isn't available yet — the frame may still be loading).",
+      "sends": 5,
+      "methods": [
+        "Runtime.callFunctionOn",
+        "DOM.describeNode",
+        "DOM.resolveNode",
+        "Runtime.releaseObject"
+      ],
+      "pass": true
+    },
+    {
+      "case": "S2 valid syntax, 2nd hop matches nothing -> \"No element matched\" naming hop 2",
+      "error": "No element matched frameSelector \"iframe#nope\" (from the full chain \"iframe#l1::iframe#nope::iframe#l3\") — reached via the previous frame in the chain.",
+      "sends": 6,
+      "methods": [
+        "Runtime.callFunctionOn",
+        "DOM.describeNode",
+        "DOM.resolveNode",
+        "Runtime.releaseObject"
+      ],
+      "pass": true
+    },
+    {
+      "case": "I1 (informational) invalid-CSS last hop -> wrapped parser error when reached",
+      "error": "Invalid frameSelector \"div[\" (from the full chain \"iframe#l1::iframe#l2::div[\") — Failed to execute 'querySelector' on 'Document': 'div[' is not a valid selector. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+      "sends": 11,
+      "methods": [
+        "Runtime.callFunctionOn",
+        "DOM.describeNode",
+        "DOM.resolveNode",
+        "Runtime.releaseObject"
+      ],
+      "pass": true
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+prepareLaunchArgs({}) includes flag: true
+version: Chrome/153.0.8010.53
+WITH flag    navigator.webdriver = false
+WITHOUT flag navigator.webdriver = true
+differences across 35 navigator props + window keys/chrome/plugins/langs/UA: 1
+  DIFF navigator.webdriver: with=false without=true

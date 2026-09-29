@@ -1,0 +1,15 @@
+2007ms i0 goto hang timeout 2000 "timeout: Navigation timeout of 2000 ms exceeded"
+2554ms i0 audit ok {"url":"http://127.0.0.1:49464/ok?i=0","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+2006ms i1 goto hang timeout 2000 "timeout: Navigation timeout of 2000 ms exceeded"
+2559ms i1 audit ok {"url":"http://127.0.0.1:49464/ok?i=1","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+2008ms i2 goto hang timeout 2000 "timeout: Navigation timeout of 2000 ms exceeded"
+2574ms i2 audit ok {"url":"http://127.0.0.1:49464/ok?i=2","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+30009ms runtime.navigate hang (30s timeout) ERR Navigation timeout of 30000 ms exceeded
+2557ms audit ok after 30s nav timeout {"url":"http://127.0.0.1:49464/ok?rt=1","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+30014ms runtime.navigate hang (30s timeout) #2 ERR Navigation timeout of 30000 ms exceeded
+2567ms audit own404hash after 30s nav timeout {"url":"http://127.0.0.1:49464/own404hash?rt=2#top","broken":[{"url":"http://127.0.0.1:49464/own404hash?rt=2","status":404}],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 (Not Found)"],"covers":true}
+CDP: {"s":{"Page.enable":{"ms":1002,"ok":true},"Network.enable":{"ms":10,"ok":true},"Page.getFrameTree":{"ms":2,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":1011,"ok":true},"Network.enable":{"ms":6,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":1016,"ok":true},"Network.enable":{"ms":5,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1004,"ok":true},"Network.enable":{"ms":5,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1016,"ok":true},"Network.enable":{"ms":8,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":1}

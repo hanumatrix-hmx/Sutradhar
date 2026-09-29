@@ -1,0 +1,22 @@
+[revert-confirm] runtime.ts original sha256=1a60d61a8d8b809e44fb332fb27e19edb0a36a63e570da924509724f681ac46d bytes=115001
+{"timestamp":"2026-09-27T19:07:29.710Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-27T19:07:29.921Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790536049710_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-27T19:07:31.725Z","level":"info","message":"[BrowserSession] Closed session sess_1790536049710_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T19:07:31.725Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790536049710_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T19:07:31.725Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-27T19:07:31.897Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790536051725_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-27T19:07:33.706Z","level":"info","message":"[BrowserSession] Closed session sess_1790536051725_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T19:07:33.707Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790536051725_1","context":{"reason":"Close all sessions requested"}}
+[revert-confirm] runtime.ts restored, sha256 verified match (1a60d61a8d8b809e44fb332fb27e19edb0a36a63e570da924509724f681ac46d)
+[revert-confirm] GAP-273 CASE: live capture removed, fallback to page.url() string-match only -> {"hash-404":{"hit":false,"finalUrl":"http://127.0.0.1:51310/own-404-samedoc?n=revert-273-hash-404&via=hash#sec-revert-273-hash-404","brokenRequests":[]},"emptybody-404":{"hit":false,"finalUrl":"chrome-error://chromewebdata/","brokenRequests":[]}} -- regression reproduced=true
+{"timestamp":"2026-09-27T19:07:35.574Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-27T19:07:35.746Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790536055574_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-27T19:07:39.230Z","level":"info","message":"[BrowserSession] Closed session sess_1790536055574_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T19:07:39.230Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790536055574_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T19:07:39.231Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-27T19:07:39.423Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790536059231_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-27T19:07:44.127Z","level":"info","message":"[BrowserSession] Closed session sess_1790536059231_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T19:07:44.127Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790536059231_1","context":{"reason":"Close all sessions requested"}}
+[revert-confirm] runtime.ts restored, sha256 verified match (1a60d61a8d8b809e44fb332fb27e19edb0a36a63e570da924509724f681ac46d)
+[revert-confirm] GAP-274 CASE: bounded setup removed, Page.enable/Network.enable/getFrameTree awaited directly -> {"a":{"pendingWasSet":true,"elapsedAtLeastMs":2567,"hungPast8s":false},"b":{"elapsedAtLeastMs":2559,"hungPast8s":false}} -- regression reproduced: (a) dialog=false, (b) timed-out-nav=false
+[revert-confirm] final rebuild with restored sources OK

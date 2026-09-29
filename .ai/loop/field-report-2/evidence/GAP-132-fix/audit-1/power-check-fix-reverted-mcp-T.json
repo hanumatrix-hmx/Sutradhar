@@ -1,0 +1,101 @@
+[
+  {
+    "id": "T-tab-close-mid-hidden-wait",
+    "mode": "mid",
+    "truth": "#stay VISIBLE until the tab is closed; a hidden success is FALSE",
+    "trials": 60,
+    "falseSuccess": 3,
+    "hintStill": 0,
+    "anyHint": {},
+    "successes": [
+      {
+        "i": 2,
+        "tabId": "tab_sess_1790409373357_1_4",
+        "tabUrl": "http://127.0.0.1:58741/t?i=2",
+        "closeDelay": 94,
+        "visibleBeforeClose": true,
+        "result": {
+          "success": true,
+          "actionType": "wait_for_selector",
+          "executionTimeMs": 112,
+          "currentUrl": "http://127.0.0.1:58741/t?i=2",
+          "title": "",
+          "output": {
+            "foundSelector": "#stay",
+            "state": "hidden",
+            "matchedAtStart": true,
+            "otherVisibleMatchesUnknown": true
+          },
+          "retriesUsed": 0,
+          "verification": {
+            "verified": false,
+            "urlChanged": false,
+            "elementFound": false,
+            "confidence": 0.45,
+            "reason": "'wait_for_selector' completed without throwing, but has no built-in post-condition check and no verificationSpec was provided — nothing about its actual effect on the page was verified. This is not evidence the action failed, only an honest absence of verification."
+          }
+        }
+      },
+      {
+        "i": 5,
+        "tabId": "tab_sess_1790409373357_1_7",
+        "tabUrl": "http://127.0.0.1:58741/t?i=5",
+        "closeDelay": 205,
+        "visibleBeforeClose": true,
+        "result": {
+          "success": true,
+          "actionType": "wait_for_selector",
+          "executionTimeMs": 222,
+          "currentUrl": "http://127.0.0.1:58741/t?i=5",
+          "title": "",
+          "output": {
+            "foundSelector": "#stay",
+            "state": "hidden",
+            "matchedAtStart": true,
+            "otherVisibleMatchesUnknown": true
+          },
+          "retriesUsed": 0,
+          "verification": {
+            "verified": false,
+            "urlChanged": false,
+            "elementFound": false,
+            "confidence": 0.45,
+            "reason": "'wait_for_selector' completed without throwing, but has no built-in post-condition check and no verificationSpec was provided — nothing about its actual effect on the page was verified. This is not evidence the action failed, only an honest absence of verification."
+          }
+        }
+      },
+      {
+        "i": 19,
+        "tabId": "tab_sess_1790409373357_1_21",
+        "tabUrl": "http://127.0.0.1:58741/t?i=19",
+        "closeDelay": 323,
+        "visibleBeforeClose": true,
+        "result": {
+          "success": true,
+          "actionType": "wait_for_selector",
+          "executionTimeMs": 332,
+          "currentUrl": "http://127.0.0.1:58741/t?i=19",
+          "title": "",
+          "output": {
+            "foundSelector": "#stay",
+            "state": "hidden",
+            "matchedAtStart": true,
+            "otherVisibleMatchesUnknown": true
+          },
+          "retriesUsed": 0,
+          "verification": {
+            "verified": false,
+            "urlChanged": false,
+            "elementFound": false,
+            "confidence": 0.45,
+            "reason": "'wait_for_selector' completed without throwing, but has no built-in post-condition check and no verificationSpec was provided — nothing about its actual effect on the page was verified. This is not evidence the action failed, only an honest absence of verification."
+          }
+        }
+      }
+    ],
+    "msgs": {
+      "wait_for_selector failed waiting for state=hidden: Tab was closed while wait_for_selector was checking its state.": 57,
+      "": 3
+    }
+  }
+]

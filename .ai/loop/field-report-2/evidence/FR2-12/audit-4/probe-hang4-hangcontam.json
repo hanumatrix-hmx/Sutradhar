@@ -1,0 +1,117 @@
+{
+  "order": "hangcontam",
+  "trials": 1,
+  "startedAt": "2026-09-27T19:30:36.661Z",
+  "steps": [
+    {
+      "label": "nav noisy",
+      "ms": 108,
+      "ok": true,
+      "r": "http://127.0.0.1:52184/noisy?n=0"
+    },
+    {
+      "label": "nav hang (times out; noisy page keeps running)",
+      "ms": 30013,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "audit okslow (clean page)",
+      "ms": 2976,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52184/okslow?n=0",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "control: nav noisy",
+      "ms": 12,
+      "ok": true,
+      "r": "http://127.0.0.1:52184/noisy?n=1"
+    },
+    {
+      "label": "control: audit okslow",
+      "ms": 1953,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52184/okslow?n=1",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    }
+  ],
+  "cdp": [
+    {
+      "createdAt": "2026-09-27T19:31:07.005Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1006,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 420,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 1421,
+          "status": 200,
+          "url": "http://127.0.0.1:52184/okslow?n=0"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 1422,
+          "url": "http://127.0.0.1:52184/okslow?n=0"
+        }
+      ],
+      "detachAt": 2932,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:31:09.994Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 0,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 0,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 0,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 406,
+          "status": 200,
+          "url": "http://127.0.0.1:52184/okslow?n=1"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 407,
+          "url": "http://127.0.0.1:52184/okslow?n=1"
+        }
+      ],
+      "detachAt": 1923,
+      "detach": "ok"
+    }
+  ],
+  "finishedAt": "2026-09-27T19:31:12.241Z"
+}

@@ -1,0 +1,40 @@
+@sutradhar/mcp-server:build: 
+@sutradhar/workflow:build: 
+@sutradhar/workflow:build: > @sutradhar/workflow@0.1.0 build E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\workflow
+@sutradhar/workflow:build: > tsc
+@sutradhar/workflow:build: 
+sutradhar:build: [build-bundle] rebuilding 14 workspace dependencies from clean, in order:
+@sutradhar/server:build: cache bypass, force executing 1739f000db902fde
+@sutradhar/frontend:build: [36mvite v5.4.21 [32mbuilding for production...[36m[39m
+@sutradhar/frontend:build: transforming...
+@sutradhar/server:build: 
+@sutradhar/server:build: > @sutradhar/server@0.1.0 build E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\apps\server
+@sutradhar/server:build: > tsc
+@sutradhar/server:build: 
+sutradhar:build: [build-bundle]   ✓ contracts
+@sutradhar/server:build: src/application/agent-app-service.ts(6,30): error TS2307: Cannot find module '@sutradhar/contracts' or its corresponding type declarations.
+@sutradhar/server:build: src/application/memory-app-service.ts(11,8): error TS2307: Cannot find module '@sutradhar/contracts' or its corresponding type declarations.
+@sutradhar/server:build: src/application/run-manager.ts(23,77): error TS2307: Cannot find module '@sutradhar/contracts' or its corresponding type declarations.
+@sutradhar/server:build: src/application/run-repository.ts(11,30): error TS2307: Cannot find module '@sutradhar/contracts' or its corresponding type declarations.
+@sutradhar/server:build: src/application/session-app-service.ts(6,46): error TS2307: Cannot find module '@sutradhar/contracts' or its corresponding type declarations.
+@sutradhar/server:build: src/application/workflow-app-service.ts(6,34): error TS2307: Cannot find module '@sutradhar/contracts' or its corresponding type declarations.
+@sutradhar/server:build: src/eval/evaluation-runner.ts(16,32): error TS2307: Cannot find module '@sutradhar/contracts' or its corresponding type declarations.
+@sutradhar/server:build: src/routes/browser-routes.ts(11,64): error TS2307: Cannot find module '@sutradhar/contracts' or its corresponding type declarations.
+@sutradhar/server:build: src/routes/memory-routes.ts(6,55): error TS2307: Cannot find module '@sutradhar/contracts' or its corresponding type declarations.
+@sutradhar/server:build: src/routes/session-routes.ts(6,33): error TS2307: Cannot find module '@sutradhar/contracts' or its corresponding type declarations.
+@sutradhar/frontend:build: [32m✓[39m 71 modules transformed.
+@sutradhar/server:build:  ELIFECYCLE  Command failed with exit code 2.
+@sutradhar/frontend:build: rendering chunks...
+@sutradhar/frontend:build: computing gzip size...
+@sutradhar/frontend:build: [2mdist/[22m[32mindex.html                 [39m[1m[2m  0.66 kB[22m[1m[22m[2m │ gzip:  0.40 kB[22m
+@sutradhar/frontend:build: [2mdist/[22m[35massets/index-Duhj1exa.css  [39m[1m[2m 70.55 kB[22m[1m[22m[2m │ gzip: 11.39 kB[22m
+@sutradhar/frontend:build: [2mdist/[22m[36massets/index-DDDYMrH0.js   [39m[1m[2m271.35 kB[22m[1m[22m[2m │ gzip: 78.17 kB[22m
+@sutradhar/frontend:build: [32m✓ built in 1.55s[39m
+ ERROR  @sutradhar/server#build: command (E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\apps\server) C:\Users\Varad M\AppData\Roaming\npm\pnpm.cmd run build exited (2)
+
+ Tasks:    17 successful, 20 total
+Cached:    0 cached, 20 total
+  Time:    14.916s 
+Failed:    @sutradhar/server#build
+
+ ERROR  run failed: command  exited (2)

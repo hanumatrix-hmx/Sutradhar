@@ -1,0 +1,2260 @@
+{
+  "tools": [
+    {
+      "name": "browser.health",
+      "description": "Preflight check: is a real Chrome/Edge executable available? Cheap — does not launch a browser process. Use before browser.launch to check availability, or to diagnose why a session came back with hasRealBrowser:false.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "executablePath": {
+            "type": "string",
+            "description": "Check a specific path instead of auto-detecting."
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.launch",
+      "description": "Launch a real browser session. Returns a sessionId and whether a real Chrome/Edge page is backing the session. Optionally open an initial URL. Pass the sessionId to other browser tools. You may omit it while this is the ONLY live session: the call then uses that session and says so. With 0 or several live sessions, an omitted sessionId fails and lists the live ids. Nothing is ever guessed. The sessionId parameter HERE is different: it is the id to create (or return, if already live) and never selects an existing session automatically. Omitting it always launches a new session.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "Reuse an existing caller-owned session id."
+          },
+          "initialUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Open a tab and navigate here immediately."
+          },
+          "headless": {
+            "type": "boolean",
+            "description": "Run headless. Defaults to true in most environments."
+          },
+          "userAgent": {
+            "type": "string",
+            "description": "Override navigator.userAgent for this session. Unset by default — the real Chrome UA (including \"HeadlessChrome\" when headless) is left as-is; this is plain configurability, not a detection-evasion default."
+          },
+          "profileName": {
+            "type": "string",
+            "description": "Launch using a named, persistent profile (cookies/history/localStorage survive across separate launches) — create one first via the CLI (\"sutradhar profile create <name>\") or the SDK's profile manager. Throws if the name does not exist."
+          },
+          "viewport": {
+            "type": "object",
+            "properties": {
+              "width": {
+                "type": "integer",
+                "exclusiveMinimum": 0
+              },
+              "height": {
+                "type": "integer",
+                "exclusiveMinimum": 0
+              }
+            },
+            "required": [
+              "width",
+              "height"
+            ],
+            "additionalProperties": false,
+            "description": "Set the initial viewport size (CDP device-metrics override, plus a best-effort real OS window resize for a non-headless session). Use browser.set_viewport to change it mid-session instead, or to also emulate mobile/touch/pixel-ratio. Was previously accepted only by browser.set_viewport, not at launch time — found missing via an external field report (PROB-042)."
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.attach",
+      "description": "Attach to the user's REAL browser over the Chrome DevTools Protocol, instead of launching a new one. Lets the agent operate on sites behind the user's SSO/2FA (the use case headless Chrome cannot reach). The user exposes their browser by launching Chrome with --remote-debugging-port, or via the Sutradhar extension. endpoint is an http discovery URL (e.g. http://127.0.0.1:9222) or a ws:// URL.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "endpoint": {
+            "type": "string",
+            "description": "CDP endpoint: http://127.0.0.1:9222 or ws://host:port/devtools/browser/<id>"
+          },
+          "sessionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "endpoint"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.shutdown",
+      "description": "Shut down a browser session and release its browser process.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.shutdown_all",
+      "description": "Shut down every browser session and release all browser processes. Use when wrapping up entirely, not for closing a single session (use browser.shutdown for that).",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {}
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.navigate",
+      "description": "Navigate a session's tab to a URL. Creates a tab if none is active.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "tabId": {
+            "type": "string",
+            "description": "Target a specific tab; defaults to the active one."
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.go_back",
+      "description": "Navigate back in the tab's history.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.go_forward",
+      "description": "Navigate forward in the tab's history.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.reload",
+      "description": "Reload the current page.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.snapshot",
+      "description": "Capture an LLM-optimized snapshot of the active page. Returns `interactiveElements`: a compact listing of every interactive element stamped with a numeric [#id] (e.g. `[#7] button \"Search\"`), plus `pageText` (visible body text). Use the [#id] as the `target` argument to browser.click / browser.type to act on an element. Elements inside an iframe are listed as `[#31 in iframe \"pay\" (https://…)]` (the frame's URL is shown on its first listed element, then just `[#32 in iframe \"pay\"]`; an unnamed frame shows its number instead). Elements inside an open shadow root end with `(shadow: host-tag#id)`. Ids stay globally unique across frames, so pass just the number (`\"31\"`); when parsing, match `^\\[#(\\d+)`, not `^\\[#(\\d+)\\]`. A frame whose content could not be read is listed as `[iframe <origin> — not inspectable] (reason)` rather than silently omitted; take the snapshot again, or read it with eval/extract_data + `frameSelector` (e.g. `iframe[name=\"pay\"]`). With includeNodes, nodes carry `frame` and `shadowHosts` fields, and skipped frames are returned as JSON. Caution: the [#id] is a snapshot of the DOM at the moment this ran — if the page re-renders afterward (a React/Vue update, a list re-sorting) before you act on it, the id can point at nothing or the wrong element. For pages that update frequently, prefer browser.ax_snapshot + browser.click_by_role/click_by_text/type_by_label instead, which re-resolve the real element at the moment they run rather than trusting a stored id. maxElements (default 60) bounds the listing — raise it for a content-heavy page whose element of interest (e.g. a \"next page\" link) is further down; up to 300 elements per frame get a real, usable id regardless. includeNodes (default false) additionally returns the raw structured element data (boundingBox, confidence, isEnabled, ...) the listing was rendered from, as a JSON block after the text listing — use this when you need a field the compact listing does not show, instead of re-parsing the listing text. noText (default false) drops each line's name/label/placeholder/value text, keeping tag+role+id — for when you already know what you're targeting (e.g. from an earlier full snapshot) and just need fresh ids after a re-render. idsOnly (default false) drops everything but the id itself — the smallest possible listing, at the cost of it no longer being self-describing; implies noText. scanEventListeners (default false) additionally finds elements whose ONLY interactivity signal is a real addEventListener-attached handler with no onclick=/role=/tabindex/cursor:pointer at all — real libraries (e.g. SortableJS-based drag lists) attach raw pointerdown/mousedown/dragstart handlers with zero CSS/ARIA signal, invisible to the default pass. Uses real CDP event-listener introspection (not a guess), bounded to 150 candidates. Slower than a normal snapshot — reach for it only when the default listing is missing something you can see is interactive. Note: some libraries attach the listener to a CONTAINER (event delegation), not each item — if so, this finds the container, and a real child selector (e.g. ':nth-child(N)' on that container) still works for browser.drag_and_drop even though the child itself has no listener, since the delegated handler still receives the bubbled event.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          },
+          "maxElements": {
+            "type": "integer",
+            "exclusiveMinimum": 0
+          },
+          "includeNodes": {
+            "type": "boolean"
+          },
+          "noText": {
+            "type": "boolean"
+          },
+          "idsOnly": {
+            "type": "boolean"
+          },
+          "scanEventListeners": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.ax_snapshot",
+      "description": "Accessibility-tree-based alternative to browser.snapshot — reads the real browser-computed accessibility tree instead of stamped [#id] attributes, so it never goes stale if the page re-renders between reading this and acting on it. Nothing here has an id to look up; instead, act on what you read using browser.click_by_role (role + optional name), browser.click_by_text, or browser.type_by_label — all three resolve the real element fresh at the moment they run, not a snapshot of where it used to be. Prefer this over browser.snapshot when a page is known to re-render frequently (React/Vue apps, live-updating lists). Iframe content (including cross-origin frames) is included in place, grouped under an indented [iframe \"name\" (url)] line.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.click",
+      "description": "Click an element on the page. Optionally hold modifier keys (Ctrl+click, Shift+click, etc.), or click a specific point within the element via offset (needed for canvas-rendered UI, where the interactive thing is pixels drawn inside a <canvas> — e.g. offset:{x:80,y:20} to click 80px right and 20px down from the canvas element's top-left corner, instead of its center).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "target": {
+            "type": "string",
+            "description": "A CSS selector OR a numeric [#id] from browser.snapshot (e.g. \"7\" resolves to [data-sd-node-id=\"7\"])."
+          },
+          "modifiers": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Control",
+                "Shift",
+                "Alt",
+                "Meta"
+              ]
+            }
+          },
+          "offset": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number"
+              },
+              "y": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y"
+            ],
+            "additionalProperties": false,
+            "description": "Click this point relative to the target element's top-left corner, instead of its center."
+          },
+          "tabId": {
+            "type": "string"
+          },
+          "settle": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "mutationQuietMs": {
+                    "type": "number"
+                  },
+                  "networkIdleMs": {
+                    "type": "number"
+                  },
+                  "timeoutMs": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ],
+            "description": "Opt-in: after the action, wait for the page to stop actively changing (no DOM mutations, no in-flight network requests) before returning — helps when the action triggers a menu/modal/toast/autocomplete that takes a moment to finish rendering and the very next call needs to see the settled result. true uses the defaults (300ms DOM-quiet, 500ms network-idle, 5s overall bound); pass an object to override individual fields. Off by default — most actions don't need it and it adds real latency."
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.click_at_point",
+      "description": "Click at an absolute viewport coordinate — no element or selector at all. For UI with nothing DOM-addressable to target (canvas content at a position only knowable from a screenshot's pixel coordinates, a PDF/video overlay). Prefer browser.click when there's a real element to target — this bypasses element resolution and verification entirely.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "x": {
+            "type": "number",
+            "description": "Viewport x coordinate in pixels."
+          },
+          "y": {
+            "type": "number",
+            "description": "Viewport y coordinate in pixels."
+          },
+          "button": {
+            "type": "string",
+            "enum": [
+              "left",
+              "right",
+              "middle"
+            ]
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "x",
+          "y"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.drag_at_points",
+      "description": "Drag from one absolute viewport coordinate to another — no elements or selectors at all, the coordinate-only sibling of browser.click_at_point. For canvas-rendered drag targets (a slider or chart handle drawn on a <canvas>) where browser.drag_and_drop's element-to-element model doesn't apply. Performs a real mouse-down -> move -> mouse-up sequence.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "fromX": {
+            "type": "number"
+          },
+          "fromY": {
+            "type": "number"
+          },
+          "toX": {
+            "type": "number"
+          },
+          "toY": {
+            "type": "number"
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "fromX",
+          "fromY",
+          "toX",
+          "toY"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.type",
+      "description": "Type text into an input element (replaces existing focus; clears field first if needed).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "target": {
+            "type": "string",
+            "description": "A CSS selector OR a numeric [#id] from browser.snapshot (e.g. \"7\" resolves to [data-sd-node-id=\"7\"])."
+          },
+          "value": {
+            "type": "string",
+            "description": "Text to type into the element."
+          },
+          "tabId": {
+            "type": "string"
+          },
+          "settle": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "mutationQuietMs": {
+                    "type": "number"
+                  },
+                  "networkIdleMs": {
+                    "type": "number"
+                  },
+                  "timeoutMs": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ],
+            "description": "Opt-in: after the action, wait for the page to stop actively changing (no DOM mutations, no in-flight network requests) before returning — helps when the action triggers a menu/modal/toast/autocomplete that takes a moment to finish rendering and the very next call needs to see the settled result. true uses the defaults (300ms DOM-quiet, 500ms network-idle, 5s overall bound); pass an object to override individual fields. Off by default — most actions don't need it and it adds real latency."
+          }
+        },
+        "required": [
+          "target",
+          "value"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.press_key",
+      "description": "Press a keyboard key (e.g. \"Enter\", \"Escape\", \"Tab\"). Optionally hold modifier keys (e.g. modifiers:[\"Control\"], key:\"a\" for Ctrl+A).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "key": {
+            "type": "string"
+          },
+          "modifiers": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Control",
+                "Shift",
+                "Alt",
+                "Meta"
+              ]
+            }
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "key"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.focus",
+      "description": "Focus an element via the real DOM .focus() method — unlike browser.click, this does not simulate a mouse click at coordinates, so it does not move or collapse an existing text cursor/selection. Use this (not click) before a browser.press_key call that is part of a multi-step keyboard sequence (e.g. Home, then Ctrl+Shift+Right to select a word, then a toolbar click to format it) — clicking to focus on every step resets the cursor to the click point each time, silently discarding cursor state a prior press_key call already established.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "target": {
+            "type": "string",
+            "description": "A CSS selector OR a numeric [#id] from browser.snapshot (e.g. \"7\" resolves to [data-sd-node-id=\"7\"])."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.scroll",
+      "description": "Scroll the page, or a specific scrollable element within it. Without target, scrolls the window — does nothing to an element with its OWN independent scroll container (a virtualized data grid's rows, a chat pane, a modal's scrollable body, a code block). Pass target (a CSS selector or snap [#id]) to scroll that element's own scrollTop instead — confirmed live against a real virtualized data grid: window-scrolling left its rendered rows completely unchanged, target-scrolling correctly revealed new virtualized rows. Many virtualization libraries re-render on a short debounce after the real scroll, not synchronously — pair with settle:true to reliably see the new rows before your next call.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down",
+              "top",
+              "bottom"
+            ],
+            "description": "Defaults to \"down\"."
+          },
+          "amount": {
+            "type": "integer",
+            "description": "Pixels; defaults to 500."
+          },
+          "tabId": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string",
+            "description": "A CSS selector OR a numeric [#id] from browser.snapshot (e.g. \"7\" resolves to [data-sd-node-id=\"7\"]). Scrolls this element's own scroll container instead of the window."
+          },
+          "settle": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "mutationQuietMs": {
+                    "type": "number"
+                  },
+                  "networkIdleMs": {
+                    "type": "number"
+                  },
+                  "timeoutMs": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ],
+            "description": "Opt-in: after the action, wait for the page to stop actively changing (no DOM mutations, no in-flight network requests) before returning — helps when the action triggers a menu/modal/toast/autocomplete that takes a moment to finish rendering and the very next call needs to see the settled result. true uses the defaults (300ms DOM-quiet, 500ms network-idle, 5s overall bound); pass an object to override individual fields. Off by default — most actions don't need it and it adds real latency."
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.hover",
+      "description": "Hover the mouse over an element. Optionally hover a specific point within it via offset (relative to the top-left corner, instead of its center) — same use case as browser.click's offset.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "target": {
+            "type": "string",
+            "description": "A CSS selector OR a numeric [#id] from browser.snapshot (e.g. \"7\" resolves to [data-sd-node-id=\"7\"])."
+          },
+          "offset": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number"
+              },
+              "y": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y"
+            ],
+            "additionalProperties": false,
+            "description": "Hover this point relative to the target element's top-left corner, instead of its center."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.select_option",
+      "description": "Select an <option> by value on a <select> element.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "target": {
+            "type": "string",
+            "description": "A CSS selector OR a numeric [#id] from browser.snapshot (e.g. \"7\" resolves to [data-sd-node-id=\"7\"])."
+          },
+          "value": {
+            "type": "string",
+            "description": "The option value to select."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "target",
+          "value"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.select_options",
+      "description": "Select multiple <option>s by value on a <select multiple> element.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "target": {
+            "type": "string",
+            "description": "A CSS selector OR a numeric [#id] from browser.snapshot (e.g. \"7\" resolves to [data-sd-node-id=\"7\"])."
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "The option values to select."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "target",
+          "values"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.wait_for_selector",
+      "description": "Wait for an element to reach a state before returning: \"visible\" by default, or \"attached\" / \"hidden\". Use this instead of guessing a fixed delay for content that loads or appears asynchronously (AJAX, toasts, animations). Visibility is checked on the first element matching the selector. \"visible\" means a non-empty bounding box AND computed visibility not hidden/collapse — opacity:0 and off-screen elements still count as visible; zero width/height, display:none and visibility:hidden count as hidden. timeoutMs applies to each internal attempt; retries can extend the real total wait beyond it (open issue). timeoutMs <= 0 checks the current state once, immediately, with no waiting or retrying. Waiting states poll roughly every 100ms, so a state that's only true for less than ~100ms (a fast visibility flicker) may be missed. On success, state:\"hidden\" may also return output.otherVisibleMatches (best-effort) when a LATER match is still visible.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "target": {
+            "type": "string",
+            "description": "A CSS selector OR a numeric [#id] from browser.snapshot (e.g. \"7\" resolves to [data-sd-node-id=\"7\"])."
+          },
+          "timeoutMs": {
+            "type": "integer",
+            "description": "Defaults to 10000ms. Applies per attempt; retries can extend the real total."
+          },
+          "tabId": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "visible",
+              "attached",
+              "hidden"
+            ],
+            "description": "Defaults to \"visible\". \"visible\": the element exists AND is visible — a non-empty box (width>0, height>0) AND computed visibility not hidden/collapse, checked on the FIRST matching element in document order. opacity:0 and off-screen positioning still count as visible; zero size, display:none, and visibility:hidden count as hidden. \"attached\": it only has to exist in the DOM, visibility ignored. \"hidden\": the first match is removed or not visible; succeeds immediately if nothing matches at all, so double-check the selector."
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.click_by_text",
+      "description": "Click the first element whose visible text contains the given text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "text": {
+            "type": "string",
+            "description": "Visible text to match (substring match)."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.click_by_role",
+      "description": "Click an element by its ARIA role (e.g. \"button\", \"link\", \"checkbox\").",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "role": {
+            "type": "string",
+            "description": "ARIA role, e.g. \"button\"."
+          },
+          "name": {
+            "type": "string",
+            "description": "Accessible name to narrow the match, if ambiguous."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "role"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.type_by_label",
+      "description": "Type into the input whose aria-label or placeholder matches the given label.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "label": {
+            "type": "string",
+            "description": "The input's aria-label or placeholder text."
+          },
+          "value": {
+            "type": "string",
+            "description": "Text to type."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "value"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.fill_form",
+      "description": "Fill multiple form fields in one call instead of separate browser.type calls per field. Provide an object mapping each field's target (a CSS selector or numeric [#id] from browser.snapshot) to the value to type into it, e.g. {\"#email\": \"a@b.com\", \"3\": \"hunter2\"}. Fields are filled sequentially; a field that fails does not stop the rest — check each result.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "fields"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.upload_file",
+      "description": "Upload a local file into a <input type=\"file\"> element.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "target": {
+            "type": "string",
+            "description": "A CSS selector OR a numeric [#id] from browser.snapshot (e.g. \"7\" resolves to [data-sd-node-id=\"7\"])."
+          },
+          "filePath": {
+            "type": "string",
+            "description": "Absolute path to the local file to upload."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "target",
+          "filePath"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.right_click",
+      "description": "Right-click an element to open its context menu (or middle-click, via button).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "target": {
+            "type": "string",
+            "description": "A CSS selector OR a numeric [#id] from browser.snapshot (e.g. \"7\" resolves to [data-sd-node-id=\"7\"])."
+          },
+          "button": {
+            "type": "string",
+            "enum": [
+              "right",
+              "middle"
+            ],
+            "description": "Defaults to \"right\"."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.drag_and_drop",
+      "description": "Drag one element and drop it onto another.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "sourceTarget": {
+            "type": "string",
+            "description": "Element to drag. A CSS selector OR a numeric [#id] from browser.snapshot (e.g. \"7\" resolves to [data-sd-node-id=\"7\"])."
+          },
+          "destTarget": {
+            "type": "string",
+            "description": "Element to drop onto. A CSS selector OR a numeric [#id] from browser.snapshot (e.g. \"7\" resolves to [data-sd-node-id=\"7\"])."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "sourceTarget",
+          "destTarget"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.touch_tap",
+      "description": "Simulate a touchscreen tap on an element.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "target": {
+            "type": "string",
+            "description": "A CSS selector OR a numeric [#id] from browser.snapshot (e.g. \"7\" resolves to [data-sd-node-id=\"7\"])."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.download_file",
+      "description": "Click an element that triggers a file download and wait for the download to complete on disk.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "target": {
+            "type": "string",
+            "description": "The download-triggering element. A CSS selector OR a numeric [#id] from browser.snapshot (e.g. \"7\" resolves to [data-sd-node-id=\"7\"])."
+          },
+          "downloadDir": {
+            "type": "string",
+            "description": "Destination directory. Defaults to the OS temp directory."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.screenshot",
+      "description": "Capture a PNG screenshot. Full-page by default. Returns the image inline (base64).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          },
+          "fullPage": {
+            "type": "boolean",
+            "description": "Defaults to true. Set false to capture only the visible viewport."
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.eval",
+      "description": "Evaluate arbitrary JavaScript in the page context and return the serialized result. Use for extraction the dedicated tools cannot express. Runs in the top-level page by default; pass frameSelector (a CSS selector or snapshot [#id] for an <iframe> element on the top-level page) to evaluate inside that frame instead — including a genuinely cross-origin one, which the top-level page's own JS could never read into itself (same-origin policy). click/type already reach into cross-origin iframes on their own; eval needs frameSelector to do the same.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "code": {
+            "type": "string",
+            "description": "JavaScript expression or function body to evaluate."
+          },
+          "tabId": {
+            "type": "string"
+          },
+          "frameSelector": {
+            "type": "string",
+            "description": "CSS selector or snapshot [#id] for an <iframe> element on the top-level page — evaluate inside that frame instead of the top-level page."
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.export_pdf",
+      "description": "Export the current page as a PDF. Returns the PDF inline (base64).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.extract_data",
+      "description": "Extract structured data from the page. For each named field, provide a CSS selector (and optionally an attribute to read); returns every matching element's text or attribute value as an array, e.g. {\"titles\": {\"selector\": \".product h2\"}, \"links\": {\"selector\": \".product a\", \"attribute\": \"href\"}}. Runs against the top-level page by default; pass frameSelector (a CSS selector or snapshot [#id] for an <iframe> element on the top-level page) to extract from inside that frame instead — including a genuinely cross-origin one.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "selector": {
+                  "type": "string"
+                },
+                "attribute": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "selector"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "tabId": {
+            "type": "string"
+          },
+          "frameSelector": {
+            "type": "string",
+            "description": "CSS selector or snapshot [#id] for an <iframe> element on the top-level page — extract from inside that frame instead of the top-level page."
+          }
+        },
+        "required": [
+          "fields"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.get_cookies",
+      "description": "Read the browser's cookies for the active tab's URL.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.set_cookie",
+      "description": "Set (or overwrite) a cookie. Defaults to the active tab's current URL if none given.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "httpOnly": {
+            "type": "boolean"
+          },
+          "secure": {
+            "type": "boolean"
+          },
+          "sameSite": {
+            "type": "string",
+            "enum": [
+              "Strict",
+              "Lax",
+              "None"
+            ]
+          },
+          "expires": {
+            "type": "number",
+            "description": "Unix timestamp in seconds."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "value"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.delete_cookie",
+      "description": "Delete a cookie by name (optionally scoped to a URL; defaults to the active tab's).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.get_local_storage",
+      "description": "Dump all localStorage key/value pairs for the current page.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.set_local_storage_item",
+      "description": "Set a single localStorage item on the current page.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "value"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.clear_local_storage",
+      "description": "Clear all localStorage for the current page's origin.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.get_session_storage",
+      "description": "Dump all sessionStorage key/value pairs for the current page.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.set_session_storage_item",
+      "description": "Set a single sessionStorage item on the current page.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "value"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.clear_session_storage",
+      "description": "Clear all sessionStorage for the current page's origin.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.get_storage_state",
+      "description": "Export the tab's full auth/session state (cookies + localStorage + sessionStorage) as one portable blob — unlike the per-item cookie/storage tools, this is meant to be saved and later restored via browser.set_storage_state, even in a completely different session, to skip redoing a login flow.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.set_storage_state",
+      "description": "Restore a blob previously captured by browser.get_storage_state onto the current tab. Call this right after navigating to the target origin (storage is origin-scoped) and before anything else that depends on being logged in.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "state": {
+            "type": "object",
+            "properties": {
+              "origin": {
+                "type": "string"
+              },
+              "cookies": {
+                "type": "array",
+                "items": {}
+              },
+              "localStorage": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "sessionStorage": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "origin",
+              "cookies",
+              "localStorage",
+              "sessionStorage"
+            ],
+            "additionalProperties": false,
+            "description": "A blob previously returned by browser.get_storage_state."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.set_geolocation",
+      "description": "Override the page's geolocation. Auto-grants the 'geolocation' permission for the current origin first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "accuracy": {
+            "type": "number"
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.grant_permissions",
+      "description": "Grant a set of permissions (e.g. 'geolocation', 'notifications', 'camera', 'microphone') for an origin. All permissions not listed are automatically denied.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "origin": {
+            "type": "string",
+            "description": "e.g. https://example.com"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "accelerometer",
+                "ambient-light-sensor",
+                "background-sync",
+                "camera",
+                "clipboard-read",
+                "clipboard-sanitized-write",
+                "clipboard-write",
+                "geolocation",
+                "gyroscope",
+                "idle-detection",
+                "keyboard-lock",
+                "magnetometer",
+                "microphone",
+                "midi-sysex",
+                "midi",
+                "notifications",
+                "payment-handler",
+                "persistent-storage",
+                "pointer-lock"
+              ]
+            }
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "origin",
+          "permissions"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.set_viewport",
+      "description": "Resize the viewport at runtime (and optionally emulate a mobile device / pixel ratio). The viewport option at browser.launch only sets the initial size — use this to change it mid-session. hasTouch defaults to isMobile's value (every real mobile device has touch) — set it explicitly to decouple them, e.g. a touch-enabled desktop or a non-touch mobile emulation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "width": {
+            "type": "integer",
+            "exclusiveMinimum": 0
+          },
+          "height": {
+            "type": "integer",
+            "exclusiveMinimum": 0
+          },
+          "isMobile": {
+            "type": "boolean"
+          },
+          "deviceScaleFactor": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "hasTouch": {
+            "type": "boolean"
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "width",
+          "height"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.get_viewport",
+      "description": "Read the viewport/device metrics actually in effect right now — width, height, device scale factor, mobile/touch emulation. Returns null if none has ever been set (Chrome's own default applies). Useful for diagnosing a visual mismatch: confirms whether it is a wrong-viewport issue before assuming it is a real layout bug. Was previously unreachable via MCP at all — found missing via an external field report (PROB-042).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.emulate",
+      "description": "Emulate timezone, locale, color scheme, and/or reduced-motion preference for the page. Each field is optional and independent.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "timezone": {
+            "type": "string",
+            "description": "IANA timezone id, e.g. \"America/New_York\"."
+          },
+          "locale": {
+            "type": "string",
+            "description": "e.g. \"en-US\", \"fr-FR\"."
+          },
+          "colorScheme": {
+            "type": "string",
+            "enum": [
+              "light",
+              "dark",
+              "no-preference"
+            ]
+          },
+          "reducedMotion": {
+            "type": "string",
+            "enum": [
+              "reduce",
+              "no-preference"
+            ]
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.set_network_conditions",
+      "description": "Emulate offline mode and/or network throttling (throughput + latency). offline is independent of throttling — set either or both in one call. Use `preset` for a standard DevTools profile, or download/upload/latency together for a custom one. Set clearThrottling:true to remove throttling (offline is unaffected by this — set offline:false separately to go back online).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "preset": {
+            "type": "string",
+            "enum": [
+              "Slow 3G",
+              "Fast 3G",
+              "Slow 4G",
+              "Fast 4G"
+            ]
+          },
+          "download": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Bytes/sec. Use with upload + latency for a custom profile."
+          },
+          "upload": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Bytes/sec."
+          },
+          "latency": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Milliseconds of extra round-trip latency."
+          },
+          "clearThrottling": {
+            "type": "boolean",
+            "description": "Remove throttling, back to unrestricted throughput."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.get_clipboard",
+      "description": "Read the current clipboard text. Requires the 'clipboard-read' permission — grant it first via browser.grant_permissions if this fails with a permission error.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.set_clipboard",
+      "description": "Write text to the clipboard.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "text": {
+            "type": "string"
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.upload_file_via_trigger",
+      "description": "Upload a file by clicking an element that opens a native file picker via JavaScript (e.g. a styled \"Browse\" button that is not itself a plain <input type=file>). Use browser.upload_file instead when the target IS a plain file input.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "target": {
+            "type": "string",
+            "description": "The element that triggers the file picker when clicked. A CSS selector OR a numeric [#id] from browser.snapshot (e.g. \"7\" resolves to [data-sd-node-id=\"7\"])."
+          },
+          "filePath": {
+            "type": "string",
+            "description": "Absolute path to the local file to upload."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "target",
+          "filePath"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.get_pending_dialog",
+      "description": "Check whether the tab currently has a native dialog (alert/confirm/prompt) blocking it. Returns null if there is none. A pending dialog blocks most other page interactions until handled via browser.handle_dialog — it is auto-dismissed after 30s if never handled.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.handle_dialog",
+      "description": "Accept or dismiss the tab's currently-pending native dialog.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "accept",
+              "dismiss"
+            ]
+          },
+          "promptText": {
+            "type": "string",
+            "description": "Text to enter if the dialog is a prompt()."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.get_console_logs",
+      "description": "Recent console messages logged by the tab's page (bounded to the last 200).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.get_page_errors",
+      "description": "Recent uncaught JavaScript errors thrown by the page (bounded to the last 50).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.get_network_log",
+      "description": "Recent network request/response activity for the tab (bounded to the last 200 entries).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.get_action_history",
+      "description": "Recent actions run against this tab (bounded to the last 200 entries) — action type, target, success/error, duration, and timestamp. A lightweight session-replay record for debugging.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.route",
+      "description": "Block or mock network requests whose URL contains a pattern (substring match). Enables request interception for the tab on first use — subsequent unmatched requests still pass through normally. Use browser.clear_routes to remove all rules.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "pattern": {
+            "type": "string",
+            "description": "Substring to match against the request URL."
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "block",
+              "mock"
+            ]
+          },
+          "mockStatus": {
+            "type": "integer",
+            "description": "HTTP status for a mock response. Defaults to 200."
+          },
+          "mockContentType": {
+            "type": "string",
+            "description": "Content-Type for a mock response. Defaults to application/json."
+          },
+          "mockBody": {
+            "type": "string",
+            "description": "Response body for a mock response."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "pattern",
+          "action"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.clear_routes",
+      "description": "Remove all network route rules for the tab and disable interception.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.list_tabs",
+      "description": "List all tabs in a session.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.new_tab",
+      "description": "Open a new tab, optionally navigating to a URL.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.focus_tab",
+      "description": "Make a tab the active tab for a session.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "tabId"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.close_tab",
+      "description": "Close a tab.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "tabId"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.lock_tab",
+      "description": "Acquire an advisory lock on a tab so other callers sharing this session know you're driving it — useful when multiple agents/sessions might act on the same tab. Succeeds if unlocked, expired, or already held by the same owner (re-locking extends the TTL); fails if a different owner holds it. ADVISORY ONLY: other browser.* calls do not currently refuse to run against a locked tab — this is a coordination signal for well-behaved callers to check via browser.get_tab_lock, not an enforced mutex.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "owner": {
+            "type": "string",
+            "description": "An identifier for who is acquiring the lock (e.g. an agent/run id)."
+          },
+          "ttlMs": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "description": "Lock duration in ms. Defaults to 30000."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "owner"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.unlock_tab",
+      "description": "Release a tab's advisory lock. No-ops (returns released:false) if you don't currently hold it.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "owner": {
+            "type": "string",
+            "description": "Must match the owner that acquired the lock."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "owner"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browser.get_tab_lock",
+      "description": "Check a tab's current advisory lock (owner + expiry), or null if unlocked/expired.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "From browser.launch/attach. Optional only when exactly one session is live."
+          },
+          "tabId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "agent.runGoal",
+      "description": "Hand control to Sutradhar's OWN autonomous agent loop. It will reason over the page, navigate, click, type, and extract data to achieve the natural-language goal, then return a final answer/summary. Prefer this for multi-step objectives; use the browser.* tools when you want to drive the page yourself. Requires an LLM provider (Ollama or OpenRouter) to be configured.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "goal": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Natural-language objective. Include a starting URL if you have one (e.g. \"On https://example.com, find the contact email\")."
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Run against an existing browser session."
+          }
+        },
+        "required": [
+          "goal"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "point": "point3-gap253-254",
+  "fromRef": "652124a",
+  "files": [
+    "packages/cli/src/cli.ts",
+    "packages/cli/src/dialog-cli.ts",
+    "packages/cli/src/dialog-broker.ts"
+  ],
+  "at": "2026-09-27T04:42:55.325Z",
+  "originalShas": [
+    {
+      "file": "packages\\cli\\src\\cli.ts",
+      "sha256": "1c309203d6d6abc7963b5ce004b2df36f5ae9516d89f8872cb07b7cf4d8bcaea",
+      "sha256_normalized_eol": "024c1c968603b327669a9400b3d8ff07e61d8eccacab44fcae342026092f88e2",
+      "bytes": 81620
+    },
+    {
+      "file": "packages\\cli\\src\\dialog-cli.ts",
+      "sha256": "36a47fbfbed48b4755787d2cfb50811a8a4ce832d1e24a1628ed383fe2d7a846",
+      "sha256_normalized_eol": "36a47fbfbed48b4755787d2cfb50811a8a4ce832d1e24a1628ed383fe2d7a846",
+      "bytes": 24030
+    },
+    {
+      "file": "packages\\cli\\src\\dialog-broker.ts",
+      "sha256": "45bf9cbc3ee492de21d6d9f62bd2a6ecad18c7d2fecc300099555a214c38741f",
+      "sha256_normalized_eol": "45bf9cbc3ee492de21d6d9f62bd2a6ecad18c7d2fecc300099555a214c38741f",
+      "bytes": 33213
+    }
+  ],
+  "beforeRevert": {
+    "label": "fixed-code (baseline, should be all-pass)",
+    "exitCode": 0,
+    "summary": "Tests  67 passed (67)",
+    "failedCount": 0,
+    "failedNames": [],
+    "outTail": "\n RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli\n\n ✓ tests/unit/dialog-cli.spec.ts  (31 tests) 12ms\n ✓ tests/unit/direct-cdp-broker.spec.ts  (16 tests) 6ms\n ✓ tests/unit/dialog-broker.spec.ts  (20 tests) 4216ms\n\n Test Files  3 passed (3)\n      Tests  67 passed (67)\n   Start at  10:12:55\n   Duration  5.12s (transform 371ms, setup 0ms, collect 1.20s, tests 4.23s, environment 0ms, prepare 392ms)\n\nThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\n"
+  },
+  "afterRevert": {
+    "label": "reverted-to-652124a (should show NEW failures)",
+    "exitCode": 1,
+    "summary": "Tests  10 failed | 57 passed (67)",
+    "failedCount": 10,
+    "failedNames": [
+      "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D11 (FR2-04 escalation-2, GAP-253): describeUnknownDialog reflects what selectDialog would ACTUALLY act on > a real, tracked dialog",
+      "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D11 (FR2-04 escalation-2, GAP-253): describeUnknownDialog reflects what selectDialog would ACTUALLY act on > a lone \"unknown\" candi",
+      "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D11 (FR2-04 escalation-2, GAP-253): describeUnknownDialog reflects what selectDialog would ACTUALLY act on > a real tracked dialog",
+      "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D11 (FR2-04 escalation-2, GAP-253): describeUnknownDialog reflects what selectDialog would ACTUALLY act on > two never-confirmed \"u",
+      "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D11 (FR2-04 escalation-2, GAP-253): describeUnknownDialog reflects what selectDialog would ACTUALLY act on > confirmedSafe/blockedB",
+      "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D12 (FR2-04 escalation-2, GAP-254): describeUnknownDialog never claims a close will happen when the warden is down > a wardenDown c",
+      "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D12 (FR2-04 escalation-2, GAP-254): describeUnknownDialog never claims a close will happen when the warden is down > a wardenDown c",
+      "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D12 (FR2-04 escalation-2, GAP-254): describeUnknownDialog never claims a close will happen when the warden is down > without warden",
+      "tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > GAP-252: list() attributes two blocked siblings of an UNRESPONSIVE... responsive opener against",
+      "tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > GAP-254: every dialog list() reports (hinted or unknown) is marked wardenDown:true"
+    ],
+    "outTail": "escribeUnknownDialog(collateral, [collateral])[0]).toCon…\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯\n\n FAIL  tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D12 (FR2-04 escalation-2, GAP-254): describeUnknownDialog never claims a close will happen when the warden is down > a wardenDown candidate that would otherwise be \"the holder\" gets a refusal note, not a close promise\nTypeError: describeUnknownDialog is not a function\n ❯ tests/unit/dialog-cli.spec.ts:282:21\n    280|     it('a wardenDown candidate that would otherwise be \"the holder\" ge…\n    281|       const d: PendingDialogEntry = { dialogType: 'unknown', message: …\n    282|       const notes = describeUnknownDialog(d, [d]);\n       |                     ^\n    283|       expect(notes[0]).toContain('cannot safely confirm or close it --…\n    284|       expect(notes[0]).not.toContain('would act on this tab');\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯\n\n FAIL  tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D12 (FR2-04 escalation-2, GAP-254): describeUnknownDialog never claims a close will happen when the warden is down > a wardenDown collateral entry gets a refusal note naming both tabs, not a \"would act on tab X\" promise\nTypeError: describeUnknownDialog is not a function\n ❯ tests/unit/dialog-cli.spec.ts:289:21\n    287|     it('a wardenDown collateral entry gets a refusal note naming both …\n    288|       const d: PendingDialogEntry = { dialogType: 'unknown', message: …\n    289|       const notes = describeUnknownDialog(d, [d]);\n       |                     ^\n    290|       expect(notes[0]).toContain('the dialog warden is not running, so…\n    291|       expect(notes[0]).not.toContain('would act on tab holder-1');\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯\n\n FAIL  tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D12 (FR2-04 escalation-2, GAP-254): describeUnknownDialog never claims a close will happen when the warden is down > without wardenDown, the ORIGINAL unconditional messages are preserved (regression guard)\nTypeError: describeUnknownDialog is not a function\n ❯ tests/unit/dialog-cli.spec.ts:296:14\n    294|     it('without wardenDown, the ORIGINAL unconditional messages are pr…\n    295|       const holder: PendingDialogEntry = { dialogType: 'unknown', mess…\n    296|       expect(describeUnknownDialog(holder, [holder])[0]).toBe(\n       |              ^\n    297|         '  Note: tab p1 appears to be the actual dialog holder -- \"dia…\n    298|       );\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯\n\n FAIL  tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > GAP-252: list() attributes two blocked siblings of an UNRESPONSIVE... responsive opener against each other, not as two independent holders\nAssertionError: expected [ { targetId: 'p0', …(5) }, …(1) ] to have a length of 1 but got 2\n\n- Expected\n+ Received\n\n- 1\n+ 2\n\n ❯ tests/unit/direct-cdp-broker.spec.ts:268:21\n    266|     // must point at it via blockedBy — never both independently \"hold…\n    267|     const holders = [p0, p1].filter((d) => d && !d.blockedBy);\n    268|     expect(holders).toHaveLength(1);\n       |                     ^\n    269|     const collateral = [p0, p1].find((d) => d?.blockedBy);\n    270|     expect(collateral?.blockedBy).toBe(holders[0]!.targetId);\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯\n\n FAIL  tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > GAP-254: every dialog list() reports (hinted or unknown) is marked wardenDown:true\nAssertionError: expected false to be true // Object.is equality\n\n- Expected\n+ Received\n\n- true\n+ false\n\n ❯ tests/unit/direct-cdp-broker.spec.ts:299:55\n    297|     const result = await broker.list();\n    298|     if (result.status !== 'ok') throw new Error('unreachable');\n    299|     expect(result.dialogs.every((d) => d.wardenDown)).toBe(true);\n       |                                                       ^\n    300|   });\n    301| });\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/10]⎯\n\n"
+  },
+  "restore": [
+    {
+      "file": "packages\\cli\\src\\cli.ts",
+      "sha256": "1c309203d6d6abc7963b5ce004b2df36f5ae9516d89f8872cb07b7cf4d8bcaea",
+      "matches": true
+    },
+    {
+      "file": "packages\\cli\\src\\dialog-cli.ts",
+      "sha256": "36a47fbfbed48b4755787d2cfb50811a8a4ce832d1e24a1628ed383fe2d7a846",
+      "matches": true
+    },
+    {
+      "file": "packages\\cli\\src\\dialog-broker.ts",
+      "sha256": "45bf9cbc3ee492de21d6d9f62bd2a6ecad18c7d2fecc300099555a214c38741f",
+      "matches": true
+    }
+  ],
+  "restoreOk": true,
+  "afterRestore": {
+    "label": "restored (should be all-pass again, same as baseline)",
+    "exitCode": 0,
+    "summary": "Tests  67 passed (67)",
+    "failedCount": 0,
+    "failedNames": [],
+    "outTail": "\n RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli\n\n ✓ tests/unit/dialog-cli.spec.ts  (31 tests) 12ms\n ✓ tests/unit/direct-cdp-broker.spec.ts  (16 tests) 6ms\n ✓ tests/unit/dialog-broker.spec.ts  (20 tests) 4226ms\n\n Test Files  3 passed (3)\n      Tests  67 passed (67)\n   Start at  10:13:07\n   Duration  5.13s (transform 373ms, setup 1ms, collect 1.18s, tests 4.24s, environment 0ms, prepare 443ms)\n\nThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\n"
+  }
+}

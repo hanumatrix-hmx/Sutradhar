@@ -7,14 +7,56 @@
  * same browser's CDP wsEndpoint, persisted per-project-directory under
  * ~/.sutradhar-cli/<hash-of-cwd>/state.json between calls (see state.ts).
  */
-import { SutradharRuntime } from '@sutradhar/capability-runtime';
+import { SutradharRuntime, writeAuditArtifacts, prepareAuditOutDir, resolveFsRoots, type ResolvedFsRoots } from '@sutradhar/capability-runtime';
+import { cliDownloadGrant, assertDownloadDirUsable } from './download-roots.js';
 import { StructuredLogger } from '@sutradhar/observability';
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { readState, writeState, clearState } from './state.js';
+import { formatAuditText, auditNotes, auditExitCode } from './audit-output.js';
+import { dialogOutputSink, dialogBlockedJsonDoc, printDialogBlockedJsonOnce, writeJsonStdoutOnce } from './dialog-json-routing.js';
+import { readState, writeState, clearState, STATE_DIR, type CliState } from './state.js';
 import { spawnDetachedChrome, killChromeTree } from './spawn-chrome.js';
 import { createSessionId } from '@sutradhar/contracts';
-import { parseArgs } from './parse-args.js';
+import { parseArgs, dialogFlagError } from './parse-args.js';
+import { validateSelectorArgs, validateFrameChain } from './selector-args.js';
+import {
+  resolveDialogPolicy,
+  formatDialogPending,
+  formatDialogHandled,
+  DIALOG_HINT,
+  beforeunloadCancelMessage,
+  isBeforeunloadCancel,
+  classifyVerb,
+  selectDialog,
+  raceWithDialog,
+  deadlineFor,
+  DialogBlockedError,
+  PREEMPT_GRACE_MS,
+  TRIGGER_PREEMPT_GRACE_MS,
+  GATE_CONNECT_TIMEOUT_MS,
+  describeUnknownDialog,
+  type PendingDialogEntry,
+} from './dialog-cli.js';
+import {
+  DirectCdpBroker,
+  WardenBroker,
+  runDialogGate,
+  formatCrashNote,
+  type DialogBroker,
+  type BrokerDialog,
+  type CrashedTab,
+} from './dialog-broker.js';
+import { withSessionFlow } from './session-flow.js';
+import {
+  ensureWarden,
+  stopWarden,
+  readWardenFile,
+  writeWardenFile,
+  removeWardenFileIfOwned,
+  policyFromState,
+  isRivalWardenAlive,
+} from './warden-control.js';
+import { DialogWarden, connectAtBrowserLevel, listTabsAtBrowserLevel, closeTargetAtBrowserLevel } from '@sutradhar/browser';
 
 const logger = new StructuredLogger({ minLevel: 'error' }); // CLI output IS the log; keep engine logs quiet
 const {
@@ -27,6 +69,7 @@ const {
   userAgentFlag,
   allowlistDomainsFlag,
   baselineFlag,
+  baselineFlagGivenButInvalid,
   settle,
   noText,
   idsOnly,
@@ -35,8 +78,17 @@ const {
   frameFlag,
   viewportFlag,
   viewportFlagGivenButInvalid,
+  stateFlag,
+  stateFlagGivenButInvalid,
+  dialogFlag,
+  dialogFlagGivenButInvalid,
+  dialogTextFlag,
   unrecognizedFlags,
 } = parseArgs(process.argv.slice(2));
+
+// FR2-04: this command's own start time, used to filter `reportDialogs`' `dialogHandled:` lines
+// to ones that happened DURING this command (not stale history from a much earlier command).
+const COMMAND_START_ISO = new Date().toISOString();
 
 // Tracked so main()'s cleanup can disconnect the CDP client connection (NOT close the browser)
 // before exiting — severing it lets Node's event loop drain and exit naturally, which flushes
@@ -45,16 +97,118 @@ const {
 let activeRuntime: SutradharRuntime | undefined;
 let activeSessionId: string | undefined;
 
+/** FR2-04: the exit code a deliberate outcome (a dialog pre-empted/blocked a command, or
+ *  main().catch() decided one) has already chosen. Asserted one final time from a
+ *  `process.on('exit')` hook below — see the pre-emption branch in `withSession` for why a
+ *  simple `process.exitCode = N` assignment isn't reliable on its own here: an ABANDONED command
+ *  promise (raced against a dialog and lost) keeps running in the background and can otherwise
+ *  clobber `process.exitCode` with its own, now-irrelevant, later failure. */
+let finalExitCode: number | undefined;
+process.on('exit', () => {
+  if (finalExitCode !== undefined) process.exitCode = finalExitCode;
+});
+
 function printErrorAndExit(message: string): never {
   console.error(`Error: ${message}`);
   process.exit(1);
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// FR2-04 Branch W: the hidden `__dialog-warden` process
+// ─────────────────────────────────────────────────────────────────────────
+
+/** Reads a `state.json` at an ARBITRARY path — unlike `state.ts`'s `readState()`, which is
+ *  scoped to a STATE_DIR resolved once at module load from the *current* process's cwd/env, the
+ *  warden runs detached with `cwd: os.homedir()` and must read the STATE_FILE its spawner told
+ *  it about (payload.stateFile), which is almost always a different path. */
+async function readStateFileAt(file: string): Promise<CliState | undefined> {
+  try {
+    return JSON.parse(await readFile(file, 'utf-8')) as CliState;
+  } catch {
+    return undefined;
+  }
+}
+
+/** Runs THIS process as a `DialogWarden` (spec §2.5/W3). Never returns until the warden stops
+ *  (browser disconnect, state change, or SIGTERM) — the caller (main dispatch, below) must not
+ *  route this through the normal one-shot `.finally()` teardown, which would force-exit it after
+ *  3s exactly like any other command. */
+async function runWardenProcess(payloadB64: string): Promise<void> {
+  const { wsEndpoint, stateFile } = JSON.parse(Buffer.from(payloadB64, 'base64url').toString('utf-8')) as {
+    wsEndpoint: string;
+    stateFile: string;
+  };
+  const stateDir = path.dirname(stateFile);
+
+  // GAP-231 warden-side singleton check (fix-2): even if this process's spawner won the spawn
+  // lock's race in error (or an old, stale warden.json still names a rival that's actually
+  // alive), never let two wardens for the same wsEndpoint both start acting — exit immediately,
+  // before ever connecting to Chrome, if a live, healthy rival is already there. Deliberately
+  // checked BEFORE `new DialogWarden(...)`/`.start()`, so a loser never attaches to a single
+  // target, races the winner for a paused-target release, or double-handles a dialog.
+  if (await isRivalWardenAlive(stateDir, wsEndpoint, process.pid)) {
+    process.exit(0);
+  }
+
+  const warden = new DialogWarden({
+    wsEndpoint,
+    readPolicy: async () => policyFromState(await readStateFileAt(stateFile)),
+    isStillCurrent: async () => {
+      const current = await readStateFileAt(stateFile);
+      return !!current && current.wsEndpoint === wsEndpoint;
+    },
+    onReady: async ({ port, token }) => {
+      await writeWardenFile(stateDir, {
+        v: 1,
+        pid: process.pid,
+        port,
+        token,
+        wsEndpoint,
+        startedAt: new Date().toISOString(),
+      });
+      // GAP-231 (fix-2, hardening): the pre-start check above closes the common case, but two
+      // spawns that both start within the same few hundred milliseconds can each pass IT before
+      // either one has published `warden.json` at all — a real, narrow TOCTOU window fix-2's own
+      // lock-race-probe still measured live (down from 8/10 stale rounds with up to 4 wardens
+      // alive to a residual few/10 with at most 2, after the CLI-side lock fix alone). Re-read
+      // `warden.json` after a short settle window: if it no longer names THIS pid, a concurrent
+      // rival's write landed after ours and is the one every future command will actually talk
+      // to (readWardenFile is the CLI's only way to find a warden) — so continuing to run here
+      // would just be an unreachable, dialog-double-handling zombie. Stop rather than linger.
+      await new Promise((r) => setTimeout(r, 300));
+      const settled = await readWardenFile(stateDir);
+      if (settled && settled.pid !== process.pid) {
+        void warden.stop('duplicate-warden-lost-settle-race');
+      }
+    },
+    onExit: async (_reason) => {
+      await removeWardenFileIfOwned(stateDir, process.pid);
+      process.exit(0);
+    },
+  });
+
+  process.on('SIGTERM', () => {
+    void warden.stop('sigterm');
+  });
+
+  await warden.start();
+  // Deliberately never resolves on its own beyond this — the process lives until `stop()`
+  // (called from one of the three exit conditions above) calls `process.exit(0)`.
+  await new Promise(() => {});
+}
+
 /** Spawns a fresh detached Chrome (see spawn-chrome.ts for why not runtime.launch()), attaches
  *  to it, and persists the new session as CLI state. Shared by the "no prior session" and the
  *  "prior session is dead, self-heal" paths in withSession — a session-worthy new spawn is the
- *  same operation regardless of which one led to it. */
-async function spawnFreshSession(runtime: SutradharRuntime): Promise<string> {
+ *  same operation regardless of which one led to it.
+ *
+ *  `carry` (FR2-04): a dialogPolicy to carry over from the OLD state on self-heal — a fresh
+ *  Chrome has no dialog open, so `lastPendingDialog` is deliberately never carried, only the
+ *  policy itself. */
+async function spawnFreshSession(
+  runtime: SutradharRuntime,
+  carry?: Pick<CliState, 'dialogPolicy'>,
+): Promise<string> {
   let profileUserDataDir: string | undefined;
   if (profileFlag) {
     try {
@@ -76,72 +230,251 @@ async function spawnFreshSession(runtime: SutradharRuntime): Promise<string> {
   if (viewportFlag) {
     await runtime.setViewport(attached.sessionId, viewportFlag);
   }
+  const { policy: resolved, persist } = resolveDialogPolicy(dialogFlag, dialogTextFlag, carry);
+  // D10 (corrected): 'set' persists whatever mode was resolved, INCLUDING 'report' — it is not
+  // special-cased to "no key" any more. 'keep' carries over whatever the old state already had
+  // (self-heal) or nothing at all (a genuinely fresh spawn with no flag and no prior state).
+  const dialogPolicy =
+    persist === 'set'
+      ? { action: resolved.mode as 'accept' | 'dismiss' | 'report', promptText: resolved.promptText, setAt: new Date().toISOString() }
+      : carry?.dialogPolicy;
   await writeState({
     sessionId: attached.sessionId,
     wsEndpoint: spawned.wsEndpoint,
     chromePid: spawned.pid,
     profileName: profileFlag,
     viewport: viewportFlag,
+    dialogPolicy,
   });
+  if (dialogPolicy) {
+    runtime.setDialogPolicy(attached.sessionId, { mode: dialogPolicy.action, promptText: dialogPolicy.promptText });
+  } else {
+    // The CLI's own default is 'report' — every session it creates gets this, unlike the
+    // runtime's own MCP/SDK-facing default of 'auto' (D-2).
+    runtime.setDialogPolicy(attached.sessionId, { mode: 'report' });
+  }
   activeSessionId = attached.sessionId;
   return attached.sessionId;
 }
 
-async function withSession<T>(fn: (runtime: SutradharRuntime, sessionId: string) => Promise<T>): Promise<T> {
-  const runtime = new SutradharRuntime({ logger, allowedDomains: allowlistDomainsFlag });
-  activeRuntime = runtime;
-  const state = await readState();
-
-  if (state) {
+/** FR2-04 §2.8.2: builds the broker for this command's dialog gate. Branch W tries the warden
+ *  first (it alone can both see AND handle a truly orphaned dialog — Step 1 O8); an unhealthy/
+ *  absent warden falls back to a degraded `DirectCdpBroker` (detection-only via a state hint —
+ *  see that class's doc comment) rather than failing the command outright. */
+async function getBroker(state: CliState): Promise<DialogBroker> {
+  const wardenFile = await readWardenFile(STATE_DIR);
+  if (wardenFile) {
     try {
-      const { sessionId } = await runtime.attach({ endpoint: state.wsEndpoint, sessionId: state.sessionId });
-      activeSessionId = sessionId;
-      // Re-apply any permissions granted in a prior invocation — see CliState.grantedPermissions'
-      // doc comment for why this is necessary (the grant itself doesn't survive the reconnect).
+      const res = await fetch(`http://127.0.0.1:${wardenFile.port}/v1/health`, {
+        headers: { authorization: `Bearer ${wardenFile.token}` },
+        signal: AbortSignal.timeout(500),
+      });
+      if (res.ok) {
+        const body = (await res.json()) as { wsEndpoint: string };
+        if (body.wsEndpoint === state.wsEndpoint) {
+          return new WardenBroker(`http://127.0.0.1:${wardenFile.port}`, wardenFile.token);
+        }
+      }
+    } catch {
+      // fall through to the direct broker
+    }
+  }
+  return new DirectCdpBroker(state.wsEndpoint, state.lastPendingDialog);
+}
+
+/** FR2-04: prints every `dialogHandled:`/`dialogPending:` line for this command (§2.8.4) and
+ *  updates `state.lastPendingDialog`. Called at the end of every session verb, whether the verb
+ *  finished normally or was pre-empted by a dialog.
+ *
+ *  GAP-261 (FR2-12 audit-1, fix-1): in `--json` mode, `dialogHandled:`/`dialogPending:` lines must
+ *  NEVER reach stdout — a command like `audit --json` promises stdout is exactly one parseable
+ *  JSON document, and these plain-text lines (an accept policy handling a dialog mid-command, or
+ *  an alert opening and clearing again before the command finishes) would otherwise get appended
+ *  after that document, breaking any parser. They still carry real information, so they go to
+ *  stderr instead of being dropped — the same "notes never pollute --json stdout" precedent this
+ *  file's own `auditNotes` already established for D9's coverage caveats. */
+async function reportDialogs(runtime: SutradharRuntime, sessionId: string): Promise<void> {
+  const dialogLog = dialogOutputSink(jsonMode);
+  const history = runtime.getDialogHistory(sessionId);
+  for (const record of history) {
+    if (record.handledAt && record.handledAt >= COMMAND_START_ISO) {
+      dialogLog(
+        formatDialogHandled({
+          type: record.dialogType,
+          message: record.message,
+          action: record.action ?? 'dismiss',
+          promptText: record.promptText,
+          by: record.handledBy === 'auto-timeout' ? 'policy' : (record.handledBy ?? 'policy'),
+        }),
+      );
+    }
+  }
+  const pending = runtime.getPendingDialogs(sessionId);
+  for (const p of pending) {
+    dialogLog(formatDialogPending({ type: p.dialogType, message: p.message, defaultValue: p.defaultValue, url: p.url }));
+  }
+  if (pending.length > 0) {
+    console.error(DIALOG_HINT(pending[0]!.dialogType));
+  }
+  const state = await readState();
+  if (!state) return;
+  const oldest = pending[0];
+  const newValue = oldest
+    ? { type: oldest.dialogType, message: oldest.message, defaultValue: oldest.defaultValue, url: oldest.url, openedAt: oldest.openedAt }
+    : undefined;
+  const changed = JSON.stringify(state.lastPendingDialog) !== JSON.stringify(newValue);
+  if (changed) {
+    const fresh = await readState(); // R-F: re-read immediately before writing, spread onto it
+    if (fresh) await writeState({ ...fresh, lastPendingDialog: newValue }).catch(() => {});
+  }
+}
+
+async function withSession<T>(
+  fn: (runtime: SutradharRuntime, sessionId: string) => Promise<T>,
+  opts?: { extraDownloadRoots?: readonly string[] },
+): Promise<T> {
+  let fsRoots: ResolvedFsRoots;
+  try {
+    fsRoots = resolveFsRoots({ env: process.env });
+  } catch (e) {
+    printErrorAndExit((e as Error).message);
+  }
+  for (const w of fsRoots.warnings) console.error(`Warning: ${w}`);
+  const runtime = new SutradharRuntime({
+    logger,
+    allowedDomains: allowlistDomainsFlag,
+    allowedDownloadRoots: [...fsRoots.allowedDownloadRoots, ...(opts?.extraDownloadRoots ?? [])],
+    allowedUploadRoots: fsRoots.allowedUploadRoots,
+  });
+  activeRuntime = runtime;
+  const verbClass = classifyVerb(verb);
+
+  const sessionId = await withSessionFlow<string>({
+    readState: async () => readState(),
+    spawnFresh: async () => spawnFreshSession(runtime),
+    gate: async (rawState) => {
+      if (verbClass === 'exempt') return;
+      const state = rawState as CliState;
+      const { policy } = resolveDialogPolicy(dialogFlag, dialogTextFlag, state);
+      const broker = await getBroker(state);
+      const result = await runDialogGate(verb, broker, policy, 'command');
+      if (result.status === 'handled') {
+        // GAP-261: same stdout/stderr split as `reportDialogs` — an accept/dismiss policy
+        // resolving a dialog LEFT OVER from an earlier command must never print to stdout ahead
+        // of a `--json` command's own JSON document.
+        const dialogLog = dialogOutputSink(jsonMode);
+        for (const r of result.records) {
+          dialogLog(
+            formatDialogHandled({ type: r.dialog.dialogType, message: r.dialog.message, action: r.action, promptText: r.promptText, by: 'policy' }),
+          );
+        }
+      }
+    },
+    reattach: async (rawState) => {
+      const state = rawState as CliState;
+      const { sessionId: sid } = await runtime.attach({ endpoint: state.wsEndpoint, sessionId: state.sessionId });
       for (const { origin, permissions } of state.grantedPermissions ?? []) {
-        await runtime.grantPermissions(sessionId, origin, permissions).catch(() => {});
+        await runtime.grantPermissions(sid, origin, permissions).catch(() => {});
       }
-      // Restore a previously-focused tab — see CliState.activeTabId's doc comment for why this
-      // is necessary (setActiveTab's effect is in-memory only and doesn't survive the reconnect).
-      if (state.activeTabId && (await runtime.listTabs(sessionId)).some((t) => t.id === state.activeTabId)) {
-        await runtime.focusTab(sessionId, state.activeTabId).catch(() => {});
+      if (state.activeTabId && (await runtime.listTabs(sid)).some((t) => t.id === state.activeTabId)) {
+        await runtime.focusTab(sid, state.activeTabId).catch(() => {});
       }
-      // Apply this invocation's --viewport if given (and persist it), otherwise re-apply
-      // whatever viewport a prior invocation set — see CliState.viewport's doc comment for why
-      // this is necessary on every reattach, not just once.
       const effectiveViewport = viewportFlag ?? state.viewport;
       if (effectiveViewport) {
-        await runtime.setViewport(sessionId, effectiveViewport).catch(() => {});
+        await runtime.setViewport(sid, effectiveViewport).catch(() => {});
       }
-      if (viewportFlag) {
-        await writeState({ ...state, sessionId, viewport: viewportFlag }).catch(() => {});
-      }
-      return await fn(runtime, sessionId);
-    } catch (err) {
-      // Self-heal instead of hard-erroring: a dead previous session (Chrome crashed, was
-      // closed externally, or the wsEndpoint just went stale) is not something the caller can
-      // do anything about except exactly what we're about to do ourselves — clear the stale
-      // state and start a new session. Surfacing a manual "run sutradhar close first" error
-      // here just adds an extra round-trip for a long-running agent session to get unstuck
-      // (found live via INSIGHTS.md's field campaign: this blocked the next command until a
-      // human intervened). Best-effort cleanup of the old Chrome process first, in case it's a
-      // zombie rather than genuinely gone — killChromeTree is already safe to call on a PID
-      // that's already dead.
+      activeSessionId = sid;
+      return sid;
+    },
+    selfHeal: async (rawState, err) => {
+      const state = rawState as CliState;
       console.error(
         `Note: previous session was unreachable (${(err as Error).message}) — starting a fresh session.`,
       );
+      await stopWarden(STATE_DIR).catch(() => {});
       if (state.chromePid) killChromeTree(state.chromePid);
       await clearState();
-      const sessionId = await spawnFreshSession(runtime);
-      return await fn(runtime, sessionId);
-    }
+      return spawnFreshSession(runtime, { dialogPolicy: state.dialogPolicy });
+    },
+    afterAttach: async (sid, isFreshSpawn) => {
+      const state = await readState();
+      const { policy, persist } = resolveDialogPolicy(dialogFlag, dialogTextFlag, state);
+      if (!isFreshSpawn) {
+        runtime.setDialogPolicy(sid, policy);
+        if (persist === 'set' && state) {
+          // R-F: re-read state immediately before writing, spread onto the FRESH copy.
+          const fresh = await readState();
+          if (fresh) {
+            const dialogPolicy = { action: policy.mode as 'accept' | 'dismiss' | 'report', promptText: policy.promptText, setAt: new Date().toISOString() };
+            await writeState({ ...fresh, dialogPolicy }).catch(() => {});
+            console.error(`Note: dialog policy for this session is now "${policy.mode}".`);
+          }
+        }
+        if (viewportFlag && state) {
+          const fresh = await readState();
+          if (fresh) await writeState({ ...fresh, sessionId: sid, viewport: viewportFlag }).catch(() => {});
+        }
+      }
+      const nowState = await readState();
+      if (nowState) {
+        await ensureWarden({ stateDir: STATE_DIR, wsEndpoint: nowState.wsEndpoint }).catch(() => undefined);
+      }
+    },
+    fn: async (sid) => sid,
+  });
+
+  if (verbClass === 'exempt') {
+    return fn(runtime, sessionId);
   }
 
-  // Spawn Chrome directly (detached) rather than via runtime.launch() — Puppeteer's own
-  // launcher ties the browser's lifetime to THIS process and would close it the moment this
-  // CLI command exits, defeating persistence across separate invocations entirely.
-  const sessionId = await spawnFreshSession(runtime);
-  return fn(runtime, sessionId);
+  const graceMs = verbClass === 'trigger' ? TRIGGER_PREEMPT_GRACE_MS : PREEMPT_GRACE_MS;
+  const work = fn(runtime, sessionId);
+  const raced = await raceWithDialog(work, () => runtime.getPendingDialogs(sessionId) as PendingDialogEntry[], {
+    graceMs,
+    ignoreTypes: ['beforeunload'],
+  });
+
+  if (raced.kind === 'dialog') {
+    // The ABANDONED `work` promise (the original command body) is not cancelled — it keeps
+    // running to completion in the background (Puppeteer/CDP calls have no cancellation token to
+    // give it). Found live: its eventual settlement can print a stray duplicate line (e.g.
+    // "Clicked #x" a second time) and, worse, silently clobber the exit code we're about to set
+    // here (a command's own `catch` block setting `process.exitCode = 1` on the delivery-check's
+    // late "Target closed" rejection). Fixed two ways: (1) this function does ALL of its own
+    // console output before returning/throwing, and never relies on main().catch() to re-print
+    // anything for this path (avoids the double `dialogPending:` bug); (2) `finalExitCode` is
+    // asserted one more time in a `process.on('exit')` hook (see below `main()`), which runs
+    // after everything else, so a late clobber from the abandoned work can't win.
+    const dialogType = raced.pending[0]!.dialogType;
+    if (verbClass === 'trigger') {
+      // §2.8.5: a pre-empted trigger verb still exits 0 — the click itself likely succeeded and
+      // opened the dialog; only the delivery-verification race was interrupted.
+      console.log(`Click dispatched to ${cleanArgs[0] ?? ''}; a ${dialogType} dialog opened before delivery could be verified.`);
+      await reportDialogs(runtime, sessionId);
+      finalExitCode = 0;
+      return undefined as T;
+    }
+    if (verb === 'nav' && !jsonMode) {
+      console.log(`Navigation to ${cleanArgs[0] ?? ''} started, but the page opened a ${dialogType} dialog while loading.`);
+    }
+    await reportDialogs(runtime, sessionId);
+    const blockedMessage = `a ${dialogType} dialog opened while "${verb}" was running and is blocking the page; "${verb}" did not complete (it may have partially run).`;
+    // GAP-261 ("mid-audit alert" shape): a dialog that opens WHILE a guarded command (e.g.
+    // `audit --json`) is already running and stays open past the pre-emption grace period lands
+    // here. In `--json` mode stdout must still be exactly one parseable document — print the
+    // blocked-JSON shape instead of leaving stdout empty (empty stdout is not a valid document
+    // either) and keep the human-readable message on stderr as before.
+    if (jsonMode) {
+      printDialogBlockedJsonOnce(blockedMessage, raced.pending);
+    } else {
+      console.error(`Error: ${blockedMessage}`);
+    }
+    finalExitCode = 3;
+    return undefined as T;
+  }
+
+  await reportDialogs(runtime, sessionId);
+  return raced.value;
 }
 
 async function cmdProfile(sub: string | undefined, name: string | undefined, rest: string[]) {
@@ -238,8 +571,31 @@ async function cmdDoctor() {
 
 async function cmdNav(url: string | undefined) {
   if (!url) printErrorAndExit('usage: sutradhar nav <url> [--headed]');
+  const navStartedAt = Date.now();
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.navigate(sessionId, url!);
+    let result;
+    try {
+      result = await runtime.navigate(sessionId, url!);
+    } catch (err) {
+      // FR2-04 D-5: under --dialog dismiss, a beforeunload prompt is dismissed at once, which
+      // aborts the navigation Puppeteer-side (net::ERR_ABORTED) — report that as the specific,
+      // actionable cancellation it is, not a generic navigation failure. The dismiss itself is a
+      // separate async CDP round trip (BrowserTab.applyPolicyNow) racing this same rejection, so
+      // the history entry can genuinely not exist YET the instant navigate() rejects — found live
+      // (a real race, not a hypothetical): poll briefly rather than checking once.
+      let matched = false;
+      for (let i = 0; i < 10 && !matched; i++) {
+        const history = runtime.getDialogHistory(sessionId);
+        matched = isBeforeunloadCancel(err, history, navStartedAt);
+        if (!matched) await new Promise((r) => setTimeout(r, 50));
+      }
+      if (matched) {
+        console.log(beforeunloadCancelMessage(url!));
+        process.exitCode = 1;
+        return;
+      }
+      throw err;
+    }
     console.log(`Navigated to ${result.url}`);
     console.log(`Title: ${result.title}`);
 
@@ -271,7 +627,19 @@ async function cmdSnap(jsonMode: boolean) {
         includeNodes: true,
         scanEventListeners: scanListeners,
       });
-      console.log(JSON.stringify({ url: snap.url, title: snap.title, elementCount: snap.elementCount, nodes: snap.nodes }, null, 2));
+      console.log(
+        JSON.stringify(
+          {
+            url: snap.url,
+            title: snap.title,
+            elementCount: snap.elementCount,
+            nodes: snap.nodes,
+            skippedFrames: snap.skippedFrames ?? [],
+          },
+          null,
+          2,
+        ),
+      );
       return;
     }
     const snap = await runtime.snapshot(sessionId, undefined, undefined, { noText, idsOnly, scanEventListeners: scanListeners });
@@ -306,6 +674,8 @@ async function cmdText() {
 
 async function cmdClick(ref: string | undefined) {
   if (!ref) printErrorAndExit('usage: sutradhar click <ref> [--settle]  (ref = a selector, or a numeric id from "sutradhar snap")');
+  const selectorErr = validateSelectorArgs([ref]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.click(sessionId, ref!, undefined, undefined, undefined, settle);
     console.log(result.success ? `Clicked ${ref}` : `Click failed: ${result.error}`);
@@ -333,6 +703,8 @@ async function cmdClickRole(role: string | undefined, name: string | undefined) 
 
 async function cmdType(ref: string | undefined, text: string | undefined) {
   if (!ref || text === undefined) printErrorAndExit('usage: sutradhar type <ref> <text> [--settle]');
+  const selectorErr = validateSelectorArgs([ref]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.type(sessionId, ref!, text!, undefined, settle);
     console.log(result.success ? `Typed into ${ref}` : `Type failed: ${result.error}`);
@@ -347,6 +719,8 @@ async function cmdPress(ref: string | undefined, key: string | undefined) {
         '(e.g. sutradhar press 3 Enter, or sutradhar press 3 ArrowRight --modifiers Control,Shift)',
     );
   }
+  const selectorErr = validateSelectorArgs([ref]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     // Focus (not click) the target first, best-effort — a real click would reset any cursor/
     // selection position a prior `press` in the same sequence already established (e.g. Home,
@@ -367,56 +741,72 @@ async function cmdScreenshot(outPath: string | undefined) {
   });
 }
 
+/**
+ * FR2-12. `--json` prints exactly one pretty-printed `AuditReport` document (D2.1/D2.2) — no
+ * partial output on a fatal error (D2.6). D2.7: the outDir is created BEFORE any session work,
+ * so a bad outDir (T4) fails fast instead of wasting a whole audit run on Chrome.
+ *
+ * D2.4/GAP-261 (fix-1): dialog output must NEVER reach stdout in `--json` mode. `reportDialogs`
+ * and the session gate now route `dialogPending:`/`dialogHandled:` lines to stderr instead of
+ * stdout whenever `jsonMode` is set (see `reportDialogs`'s own doc comment) — covers a dialog
+ * left over from an earlier command (gate, `withSession`'s pre-emption branches) and one an
+ * accept policy resolves mid-command. The one shape neither of those covers is `runtime.audit()`
+ * itself throwing because the audited page already has (or opens) a dialog it can't get past
+ * (D11) — caught below so a `--json` run still prints exactly one JSON document on stdout
+ * instead of leaving it empty and falling through to `main().catch`'s generic `Fatal:` path.
+ */
 async function cmdAudit(url: string | undefined, outDir: string | undefined) {
+  let dir: string;
+  try {
+    dir = await prepareAuditOutDir(outDir ?? '.');
+  } catch (e) {
+    printErrorAndExit((e as Error).message);
+  }
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.audit(sessionId, { url });
-    const dir = path.resolve(outDir ?? '.');
-    const screenshotPath = path.join(dir, 'audit-screenshot.png');
-    await writeFile(screenshotPath, Buffer.from(result.screenshotBase64, 'base64'));
-
-    console.log(`URL: ${result.url}`);
-    console.log(`Title: ${result.title}`);
-    console.log(`Screenshot: ${screenshotPath}`);
-    console.log(`\nWeb Vitals:`);
-    console.log(`  LCP: ${result.webVitals.lcpMs ?? 'n/a'}ms`);
-    console.log(`  CLS: ${result.webVitals.cls ?? 'n/a'}`);
-    console.log(`  FCP: ${result.webVitals.fcpMs ?? 'n/a'}ms`);
-    console.log(`  TTFB: ${result.webVitals.ttfbMs ?? 'n/a'}ms`);
-    console.log(`\nConsole errors: ${result.consoleErrors.length}`);
-    for (const e of result.consoleErrors) console.log(`  - ${e.text}`);
-    console.log(`Page errors: ${result.pageErrors.length}`);
-    for (const e of result.pageErrors) console.log(`  - ${e.message}`);
-    console.log(`Broken requests (4xx/5xx): ${result.brokenRequests.length}`);
-    for (const r of result.brokenRequests) console.log(`  - [${r.status}] ${r.url}`);
-    console.log(`\nAccessibility issues: ${result.accessibilityIssues.length}`);
-    for (const issue of result.accessibilityIssues) {
-      console.log(`  - ${issue.description} (${issue.count})`);
+    let result;
+    try {
+      result = await runtime.audit(sessionId, {
+        ...(url ? { url } : {}),
+        ...(baselineFlag ? { baselineUrl: baselineFlag } : {}),
+      });
+    } catch (err) {
+      // GAP-261 ("mid-audit alert" shape, D11): a dialog blocked the audit itself, not the CLI's
+      // own gate — no `DialogBlockedError` involved, so `main().catch` would otherwise never see
+      // this as a dialog case at all. Reconstruct the same blocked-JSON shape directly here, but
+      // ONLY when a dialog is actually why it failed — any other failure (a blocked-domain
+      // allowlist rejection, a closed tab, etc.) must keep going through the normal `throw` below
+      // so `main().catch`'s existing "empty stdout, Fatal: on stderr, exit 1" contract for a
+      // genuinely fatal (non-dialog) error is unchanged.
+      const pending = jsonMode ? (runtime.getPendingDialogs(sessionId) as PendingDialogEntry[]) : [];
+      if (jsonMode && pending.length > 0) {
+        // GAP-268 fix-2: this catch can fire AFTER `withSession`'s own pre-emption branch has
+        // already written the blocked-JSON document for this same command (see
+        // `printDialogBlockedJsonOnce`'s doc comment) — only actually write, and only actually
+        // report the error line, when this call site is the one that wins the guard.
+        if (printDialogBlockedJsonOnce((err as Error).message, pending)) {
+          console.error(`Error: ${(err as Error).message}`);
+        }
+        finalExitCode = 3;
+        process.exitCode = 3;
+        return;
+      }
+      throw err;
     }
+    const report = await writeAuditArtifacts(result, dir);
 
-    let visualDiffPercentage = 0;
-    if (baselineFlag) {
-      // One-command regression gate: audit's own findings (Web Vitals/console/page/a11y) plus
-      // a visual pixel-diff against a known-good baseline URL, instead of running "audit" and
-      // "compare" as two separate commands and correlating their output by hand.
-      const compareResult = await runtime.compareUrls(sessionId, baselineFlag, result.url);
-      const diffPath = path.join(dir, 'audit-baseline-diff.png');
-      await writeFile(diffPath, Buffer.from(compareResult.diffImageBase64, 'base64'));
-      visualDiffPercentage = compareResult.diffPercentage;
-      console.log(`\nVisual diff vs baseline (${baselineFlag}):`);
-      console.log(
-        `  ${compareResult.diffPixelCount} / ${compareResult.totalPixels} pixels (${compareResult.diffPercentage.toFixed(2)}%)`,
-      );
-      console.log(`  Diff image: ${diffPath}`);
+    for (const note of auditNotes(report)) console.error(note);
+    if (jsonMode) {
+      // GAP-268 fix-2 (widened): this "the audit actually succeeded" path is itself one of the
+      // possible SECOND writers when this command's `work` was abandoned by `withSession`'s own
+      // pre-emption branch and then went on to succeed anyway (see `writeJsonStdoutOnce`'s doc
+      // comment) — go through the same shared guard as the blocked-JSON paths, not a bare
+      // `console.log`, so whichever write happens first for this invocation is the only one.
+      writeJsonStdoutOnce(JSON.stringify(report, null, 2));
+    } else {
+      for (const line of formatAuditText(report)) console.log(line);
     }
-
-    if (
-      failOnDiff &&
-      (result.consoleErrors.length > 0 ||
-        result.pageErrors.length > 0 ||
-        result.brokenRequests.length > 0 ||
-        visualDiffPercentage > 0)
-    ) {
-      process.exitCode = 1; // CI-friendly gate, opt-in only — same convention as "compare --fail-on-diff"
+    if (auditExitCode(report, failOnDiff) === 1) {
+      process.exitCode = 1; // CI-friendly gate — same convention as "compare --fail-on-diff"
     }
   });
 }
@@ -437,6 +827,8 @@ async function cmdCompare(urlA: string | undefined, urlB: string | undefined, ou
 
 async function cmdSelect(ref: string | undefined, value: string | undefined) {
   if (!ref || value === undefined) printErrorAndExit('usage: sutradhar select <ref> <value>  (ref = a selector, or a numeric id from "snap"; value = the <option>\'s value)');
+  const selectorErr = validateSelectorArgs([ref]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.selectOption(sessionId, ref!, value!);
     console.log(result.success ? `Selected "${value}" on ${ref}` : `Select failed: ${result.error}`);
@@ -445,11 +837,32 @@ async function cmdSelect(ref: string | undefined, value: string | undefined) {
 }
 
 async function cmdWait(ref: string | undefined, timeoutMsArg: string | undefined) {
-  if (!ref) printErrorAndExit('usage: sutradhar wait <ref> [timeoutMs]  (ref = a selector, or a numeric id from "snap")');
+  if (!ref)
+    printErrorAndExit(
+      'usage: sutradhar wait <ref> [timeoutMs] [--state visible|attached|hidden]  (ref = a selector, or a numeric id from "snap")',
+    );
+  // GAP-032: `Number('5s')` (a plausible typo for "5 seconds") is `NaN`, and `Number('')` on an
+  // empty-but-present arg is `0` (a real, meaningful "check once" value, so only reject when
+  // parsing genuinely fails) — validate here instead of letting a non-finite value reach the
+  // engine, which now rejects it too, but with a less actionable message than the CLI can give
+  // for its own most likely cause (a typo'd unit suffix).
   const timeoutMs = timeoutMsArg ? Number(timeoutMsArg) : undefined;
+  if (timeoutMs !== undefined && !Number.isFinite(timeoutMs)) {
+    printErrorAndExit(
+      `Invalid timeoutMs "${timeoutMsArg}" — expected a plain number of milliseconds (e.g. 5000 for 5s), ` +
+        'not a unit suffix like "5s".',
+    );
+  }
+  const state = stateFlag ?? 'visible';
+  const selectorErr = validateSelectorArgs([ref]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.waitForSelector(sessionId, ref!, timeoutMs);
-    console.log(result.success ? `${ref} appeared` : `Wait failed: ${result.error}`);
+    const result = await runtime.waitForSelector(sessionId, ref!, timeoutMs, undefined, stateFlag);
+    console.log(
+      result.success
+        ? `${ref} is ${state === 'hidden' ? 'hidden or absent' : state} (state=${state})`
+        : `Wait failed: ${result.error}`,
+    );
     if (!result.success) process.exitCode = 1;
   });
 }
@@ -463,6 +876,8 @@ async function cmdEval(code: string | undefined) {
         'chain with :: for an iframe nested inside another iframe, e.g. --frame "iframe.widget::iframe.payment")',
     );
   }
+  const frameErr = validateFrameChain(frameFlag);
+  if (frameErr) printErrorAndExit(frameErr);
   await withSession(async (runtime, sessionId) => {
     try {
       const result = await runtime.eval(sessionId, code!, undefined, frameFlag);
@@ -476,6 +891,8 @@ async function cmdEval(code: string | undefined) {
 
 async function cmdHover(ref: string | undefined) {
   if (!ref) printErrorAndExit('usage: sutradhar hover <ref>  (ref = a selector, or a numeric id from "snap")');
+  const selectorErr = validateSelectorArgs([ref]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.hover(sessionId, ref!);
     console.log(result.success ? `Hovered ${ref}` : `Hover failed: ${result.error}`);
@@ -489,6 +906,8 @@ async function cmdScroll(direction: string | undefined, amountArg: string | unde
     printErrorAndExit('usage: sutradhar scroll [up|down|top|bottom] [amountPx] [targetRef] [--settle]  (default: down 500px, window)');
   }
   const amount = amountArg ? Number(amountArg) : undefined;
+  const selectorErr = validateSelectorArgs([target]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.scroll(sessionId, dir, amount, undefined, target, settle);
     console.log(
@@ -502,6 +921,8 @@ async function cmdScroll(direction: string | undefined, amountArg: string | unde
 
 async function cmdUpload(ref: string | undefined, filePath: string | undefined) {
   if (!ref || !filePath) printErrorAndExit('usage: sutradhar upload <ref> <filePath>  (ref = a selector, or a numeric id from "snap", targeting an <input type="file">)');
+  const selectorErr = validateSelectorArgs([ref]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.uploadFile(sessionId, ref!, path.resolve(filePath!));
     console.log(result.success ? `Uploaded ${filePath} to ${ref}` : `Upload failed: ${result.error}`);
@@ -511,6 +932,8 @@ async function cmdUpload(ref: string | undefined, filePath: string | undefined) 
 
 async function cmdDrag(sourceRef: string | undefined, destRef: string | undefined) {
   if (!sourceRef || !destRef) printErrorAndExit('usage: sutradhar drag <sourceRef> <destRef>  (both = a selector, or a numeric id from "snap")');
+  const selectorErr = validateSelectorArgs([sourceRef, destRef]);
+  if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
     const result = await runtime.dragAndDrop(sessionId, sourceRef!, destRef!);
     console.log(result.success ? `Dragged ${sourceRef} onto ${destRef}` : `Drag failed: ${result.error}`);
@@ -606,7 +1029,120 @@ async function cmdGrant(origin: string | undefined, permissions: string[]) {
   });
 }
 
+/** GAP-256-fix (b): is the prior session's browser in a state where the NORMAL attach path
+ *  (`runtime.attach()` -> `browser.pages()`) can hang or fail -- a tab blocked by a dialog (real or
+ *  inferred), a check that could not finish, or a CRASHED tab? `undefined` when there is no such
+ *  problem, or the browser/warden is simply unreachable (the normal path then self-heals as before). */
+async function blockedOrCrashedState(
+  state: CliState,
+): Promise<{ dialogs: BrokerDialog[]; crashed: CrashedTab[]; timedOut: boolean } | undefined> {
+  const broker = await getBroker(state);
+  try {
+    const listed = await broker.list();
+    if (listed.status === 'unknown') return listed.reason === 'timeout' ? { dialogs: [], crashed: [], timedOut: true } : undefined;
+    const crashed = listed.crashed ?? [];
+    if (listed.dialogs.length === 0 && crashed.length === 0) return undefined;
+    return { dialogs: listed.dialogs, crashed, timedOut: false };
+  } catch {
+    return undefined;
+  } finally {
+    await broker.dispose();
+  }
+}
+
+/** A raw CDP target id (what `tabs` prints in browser-level mode): 32 hex chars. */
+const TARGET_ID_RE = /^[0-9A-F]{32}$/i;
+
+/** GAP-256-fix (b): `tabs` served from the browser process itself (`Target.getTargets`) -- never
+ *  attaches to any tab, so it works while a tab is blocked by a dialog or crashed. */
+async function cmdTabsAtBrowserLevel(
+  state: CliState,
+  why: { dialogs: BrokerDialog[]; crashed: CrashedTab[]; timedOut: boolean },
+): Promise<void> {
+  const browser = await connectAtBrowserLevel(state.wsEndpoint, GATE_CONNECT_TIMEOUT_MS);
+  if (!browser) {
+    console.error('Error: could not reach the browser to list its tabs.');
+    process.exitCode = 1;
+    return;
+  }
+  try {
+    const tabs = await listTabsAtBrowserLevel(browser);
+    console.error(
+      'Note: a tab is blocked or crashed, so the tabs below were listed at the browser level without attaching to any page. ' +
+        'The ids are browser target ids: "sutradhar closetab <id>" closes one without touching the blocked page.',
+    );
+    if (tabs.length === 0) {
+      console.log('No tabs.');
+      return;
+    }
+    for (const tab of tabs) {
+      const crashed = why.crashed.some((c) => c.targetId === tab.targetId);
+      const dialog = why.dialogs.find((d) => d.targetId === tab.targetId);
+      const flag = crashed
+        ? '  [crashed]'
+        : dialog
+          ? dialog.dialogType === 'unknown'
+            ? '  [blocked: unresponsive, possibly a dialog]'
+            : `  [blocked: ${dialog.dialogType} dialog]`
+          : '';
+      console.log(`  ${tab.targetId}  ${tab.title || '(no title)'}  ${tab.url}${flag}`);
+    }
+  } finally {
+    if (browser.connected) await browser.disconnect().catch(() => {});
+  }
+}
+
+/** GAP-256-fix (b): `closetab` at the browser level (`Target.closeTarget`), never attaching. */
+async function cmdCloseTabAtBrowserLevel(state: CliState, tabId: string): Promise<void> {
+  if (!TARGET_ID_RE.test(tabId)) {
+    console.log(
+      'Close tab failed: a tab is blocked or crashed right now, so tab ids from the normal listing cannot be resolved. ' +
+        'Run "sutradhar tabs" and pass one of the browser target ids it prints.',
+    );
+    process.exitCode = 1;
+    return;
+  }
+  const browser = await connectAtBrowserLevel(state.wsEndpoint, GATE_CONNECT_TIMEOUT_MS);
+  if (!browser) {
+    console.log('Close tab failed: could not reach the browser.');
+    process.exitCode = 1;
+    return;
+  }
+  try {
+    const before = await listTabsAtBrowserLevel(browser);
+    if (!before.some((t) => t.targetId.toUpperCase() === tabId.toUpperCase())) {
+      console.log(`Close tab failed: no tab with id ${tabId}`);
+      process.exitCode = 1;
+      return;
+    }
+    await closeTargetAtBrowserLevel(browser, tabId);
+    // Re-read from the browser until the target is really gone (monotonic clock, hard bound).
+    const t0 = performance.now();
+    for (;;) {
+      const now = await listTabsAtBrowserLevel(browser);
+      if (!now.some((t) => t.targetId.toUpperCase() === tabId.toUpperCase())) break;
+      if (performance.now() - t0 > 4000) {
+        console.log(`Close tab failed: tab ${tabId} is still open after 4s`);
+        process.exitCode = 1;
+        return;
+      }
+      await new Promise((r) => setTimeout(r, 100));
+    }
+    console.log(`Closed tab ${tabId}`);
+  } catch (err) {
+    console.log(`Close tab failed: ${(err as Error).message}`);
+    process.exitCode = 1;
+  } finally {
+    if (browser.connected) await browser.disconnect().catch(() => {});
+  }
+}
+
 async function cmdTabs() {
+  const prior = await readState();
+  if (prior) {
+    const why = await blockedOrCrashedState(prior);
+    if (why) return cmdTabsAtBrowserLevel(prior, why);
+  }
   await withSession(async (runtime, sessionId) => {
     const tabs = await runtime.listTabs(sessionId);
     if (tabs.length === 0) {
@@ -650,6 +1186,12 @@ async function cmdFocusTab(tabId: string | undefined) {
 
 async function cmdCloseTab(tabId: string | undefined) {
   if (!tabId) printErrorAndExit('usage: sutradhar closetab <tabId>  (see "tabs" for the list of open tab ids)');
+  const prior = await readState();
+  if (prior) {
+    // A raw browser target id (printed by browser-level `tabs`) is always closed at the browser
+    // level. Any other id needs the normal attach path -- unless something is blocked or crashed.
+    if (TARGET_ID_RE.test(tabId!) || (await blockedOrCrashedState(prior))) return cmdCloseTabAtBrowserLevel(prior, tabId!);
+  }
   await withSession(async (runtime, sessionId) => {
     try {
       await runtime.closeTab(sessionId, tabId!);
@@ -663,17 +1205,184 @@ async function cmdCloseTab(tabId: string | undefined) {
 
 async function cmdDownload(ref: string | undefined, downloadDir: string | undefined) {
   if (!ref) printErrorAndExit('usage: sutradhar download <ref> [downloadDir]  (ref = the element that triggers the download, a selector or a numeric id from "snap")');
-  await withSession(async (runtime, sessionId) => {
-    const result = await runtime.downloadFile(sessionId, ref!, downloadDir ? path.resolve(downloadDir) : undefined);
-    if (result.success) {
-      const output = result.output as { downloadedFilename?: string; downloadedPath?: string } | undefined;
-      console.log(`Downloaded "${output?.downloadedFilename}" to ${output?.downloadedPath}`);
-    } else {
-      console.log(`Download failed: ${result.error}`);
-      process.exitCode = 1;
+  const selectorErr = validateSelectorArgs([ref]);
+  if (selectorErr) printErrorAndExit(selectorErr);
+  const grant = cliDownloadGrant([], downloadDir, process.cwd());
+  const dir = grant.downloadDir;
+  if (dir) {
+    try {
+      await assertDownloadDirUsable(dir);
+    } catch (e) {
+      printErrorAndExit((e as Error).message);
     }
-  });
+  }
+  await withSession(
+    async (runtime, sessionId) => {
+      const result = await runtime.downloadFile(sessionId, ref!, dir);
+      if (result.success) {
+        const output = result.output as { downloadedFilename?: string; downloadedPath?: string } | undefined;
+        console.log(`Downloaded "${output?.downloadedFilename}" to ${path.resolve(output?.downloadedPath ?? '')}`);
+      } else {
+        console.log(`Download failed: ${result.error}`);
+        process.exitCode = 1;
+      }
+    },
+    { extraDownloadRoots: dir ? [dir] : [] },
+  );
 }
+
+/** FR2-04 §2.9: status/accept/dismiss the OLDEST open native dialog. Gate-exempt — this verb
+ *  NEVER calls `runtime.attach` (that's the whole point: it must work even while a dialog would
+ *  make a normal attach hang). */
+/** FR2-04: reports an error from `cmdDialog` WITHOUT calling `process.exit()` synchronously.
+ *  `cmdDialog`'s error paths are always reached after at least one `fetch()` call (the warden
+ *  HTTP broker) — found live: calling `printErrorAndExit`'s synchronous `process.exit(1)` right
+ *  after an in-flight `fetch(..., {signal: AbortSignal.timeout(...)})` crashed the Node process
+ *  outright on Windows (`Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), src\\win\\
+ *  async.c`) — a real libuv/Node interaction, not application logic. Using `process.exitCode` and
+ *  returning lets pending handles close naturally instead of racing a forced synchronous exit. */
+function dialogErrorAndReturn(message: string): void {
+  console.error(`Error: ${message}`);
+  finalExitCode = 1;
+  process.exitCode = 1;
+}
+
+async function listDialogs(state: CliState): Promise<PendingDialogEntry[]> {
+  const broker = await getBroker(state);
+  try {
+    const listed = await broker.list();
+    // GAP-256-fix (a): a crashed tab is not a dialog -- say what it is instead of staying silent.
+    if (listed.status === 'ok') for (const c of listed.crashed ?? []) console.error(formatCrashNote(c));
+    return listed.status === 'ok' ? listed.dialogs : [];
+  } finally {
+    await broker.dispose();
+  }
+}
+
+async function cmdDialog(sub: string | undefined, rest: string[]): Promise<void> {
+  const state = await readState();
+  if (!state) return dialogErrorAndReturn('No active session.');
+
+  if (sub !== undefined && sub !== 'accept' && sub !== 'dismiss') {
+    return dialogErrorAndReturn(
+      'usage: sutradhar dialog [accept [text] | dismiss]  (handles the oldest open native dialog: alert/confirm/prompt/beforeunload)',
+    );
+  }
+  // A syntax error (extra args to `dismiss`) is checked BEFORE looking at dialog state — it's
+  // wrong regardless of whether anything happens to be open right now (N2).
+  if (sub === 'dismiss' && rest.length > 0) {
+    return dialogErrorAndReturn('usage: sutradhar dialog dismiss  (takes no extra arguments)');
+  }
+
+  const dialogs = await listDialogs(state);
+
+  if (sub === undefined) {
+    if (dialogs.length === 0) {
+      console.log('No dialog is open.');
+      return;
+    }
+    for (const d of dialogs) {
+      console.log(formatDialogPending({ type: d.dialogType, message: d.message, defaultValue: d.defaultValue, url: d.url }));
+      describeUnknownDialog(d, dialogs).forEach((line) => console.error(line));
+    }
+    return;
+  }
+
+  // GAP-248(a): `rest` (the pre-handle snapshot's collateral/confirmed-safe entries) is
+  // deliberately unused here — see the fresh re-list after handling below, which replaces it
+  // entirely rather than trusting a snapshot that predates the actual accept/dismiss.
+  const { target } = selectDialog(dialogs);
+  if (!target) {
+    return dialogErrorAndReturn(`no dialog is open to ${sub}.`);
+  }
+  const accept = sub === 'accept';
+  const text = accept ? rest.join(' ') || undefined : undefined;
+  if (text !== undefined && target.dialogType !== 'prompt') {
+    console.error(`Note: text is only used by prompt() dialogs; ignored for ${target.dialogType}.`);
+  }
+  // D-9: accept with no text means "OK with the prefilled text" — pass the dialog's own default
+  // value explicitly rather than leaving promptText undefined (CDP does NOT reliably fill it in
+  // on its own — found live: an undefined promptText resolved the prompt with an EMPTY string,
+  // not the dialog's actual default).
+  const effectivePromptText = accept && target.dialogType === 'prompt' ? (text ?? target.defaultValue) : undefined;
+  let outcome: { closedTarget?: boolean; message?: string; redirectTo?: string; redirectUrl?: string; refused?: boolean } | void;
+  try {
+    const broker2 = await getBroker(state);
+    try {
+      outcome = await broker2.handle(target.targetId!, accept, effectivePromptText, target.dialogId);
+    } finally {
+      await broker2.dispose();
+    }
+  } catch (err) {
+    return dialogErrorAndReturn(`could not ${sub} the ${target.dialogType} dialog: ${(err as Error).message}`);
+  }
+
+  // GAP-230: an `unknown` dialog was recovered by closing its tab rather than actually resolved —
+  // say so plainly instead of claiming "Accepted"/"Dismissed" for a dialog we never touched.
+  if (outcome?.closedTarget) {
+    console.log(outcome.message ?? `Tab was closed because its dialog could not be addressed directly.`);
+    return;
+  }
+  // FR2-04 fix-3/GAP-236, decision point 3: the target `selectDialog` picked turned out (on a
+  // fresh re-probe, inside the broker) to be only collaterally blocked by the ACTUAL holder — this
+  // is a defensive fallback (normal `selectDialog` already filters out `blockedBy` entries), only
+  // reachable if attribution shifted between `list()` and this `handle()` call. Report the real
+  // holder plainly rather than claiming success for a target nothing was actually done to.
+  if (outcome?.redirectTo) {
+    console.log(outcome.message ?? `Tab ${target.targetId} is not the dialog holder; run "sutradhar dialog" again.`);
+    return;
+  }
+  // FR2-04 escalation-1, decision 1+3 (GAP-245/246/247), supersedes fix-3's `isolated` refusal:
+  // recovery declined to act — either this target's OWN history proves it cannot be hiding a
+  // dialog (the warden's `confirmedSafe`), or the broker has no history at all to ground a
+  // decision in (`DirectCdpBroker` with the warden down) — either way, closing something here would
+  // be a guess, and guessing has been measured to close the wrong, innocent tab. `sutradhar close`
+  // remains the escape hatch for a real stuck dialog with no provable evidence.
+  if (outcome?.refused) {
+    console.log(
+      outcome.message ??
+        `Tab ${target.targetId} is busy or unresponsive, but nothing identifies this as an actual dialog — no automatic recovery was attempted.`,
+    );
+    process.exitCode = 1;
+    return;
+  }
+
+  if (accept) {
+    if (target.dialogType === 'prompt' && text) {
+      console.log(`Accepted prompt "${target.message}" with text "${text}"`);
+    } else if (target.dialogType === 'prompt') {
+      console.log(`Accepted prompt "${target.message}" with its default value "${target.defaultValue ?? ''}"`);
+    } else {
+      console.log(`Accepted ${target.dialogType} "${target.message}"`);
+    }
+  } else {
+    console.log(`Dismissed ${target.dialogType} "${target.message}"`);
+  }
+
+  // FR2-04 escalation-1, GAP-248(a): `remaining` is a snapshot taken BEFORE `target` was actually
+  // handled — any entry in it that was only reported because it shared a blocked renderer with
+  // `target` (a `blockedBy`/`confirmedSafe`-attributed collateral entry, the common case at scale:
+  // audit-4 measured K=40 stale 'unknown' lines printed after a clean accept) may have become fully
+  // responsive the instant the real dialog was resolved above. Never trust that stale snapshot for
+  // what to print — always re-verify with a fresh list. This ALSO still needs to poll (not a single
+  // immediate re-list) because a "remaining" dialog can instead be one that hadn't opened YET at
+  // handle time — e.g. a chained alert->confirm, where the confirm() call only runs once the page's
+  // own JS resumes after the alert returns (found live: an immediate re-list after the FIRST accept
+  // of a chain missed the second dialog entirely).
+  let finalPending: PendingDialogEntry[] = [];
+  for (let i = 0; i < 5; i++) {
+    await new Promise((r) => setTimeout(r, 80));
+    finalPending = (await listDialogs(state)).filter((d) => d.targetId !== target.targetId || d.openedAt !== target.openedAt);
+    if (finalPending.length > 0) break;
+  }
+  for (const d of finalPending) {
+    console.log(formatDialogPending({ type: d.dialogType, message: d.message, defaultValue: d.defaultValue, url: d.url }));
+    describeUnknownDialog(d, finalPending).forEach((line) => console.error(line));
+  }
+}
+
+// describeUnknownDialog moved to dialog-cli.ts (FR2-04 escalation-2, GAP-253/254) — pure logic,
+// unit-tested there instead of only via live/process-spawn scenarios.
 
 async function cmdClose() {
   const state = await readState();
@@ -681,7 +1390,56 @@ async function cmdClose() {
     console.log('No active session.');
     return;
   }
-  if (state.profileName) {
+  // FR2-04: run the gate in 'close' mode BEFORE either attach below — a dialog left open would
+  // otherwise make the profile-save attach (or the no-chromePid attach+shutdown) hang for up to
+  // 180s (spec §2.10/N11). No policy resolution needed here — 'close' mode never applies accept/
+  // dismiss automatically unless the session's own persisted policy already says to.
+  const { policy } = resolveDialogPolicy(dialogFlag, dialogTextFlag, state);
+  let blockedDialogs: BrokerDialog[] = [];
+  if (policy.mode === 'accept' || policy.mode === 'dismiss') {
+    const broker = await getBroker(state);
+    const result = await runDialogGate(verb, broker, policy, 'close');
+    if (result.status === 'handled') {
+      for (const r of result.records) {
+        console.log(formatDialogHandled({ type: r.dialog.dialogType, message: r.dialog.message, action: r.action, promptText: r.promptText, by: 'policy' }));
+      }
+    }
+    if (result.status === 'blocked') {
+      blockedDialogs = result.dialogs;
+      // FR2-04 fix-3/GAP-242: even though this gate run ultimately blocked (e.g. a chain limit),
+      // print whatever it DID manage to resolve first — same reasoning as `main().catch`'s
+      // DialogBlockedError handling.
+      for (const r of result.records ?? []) {
+        console.log(formatDialogHandled({ type: r.dialog.dialogType, message: r.dialog.message, action: r.action, promptText: r.promptText, by: 'policy' }));
+      }
+    }
+  } else {
+    const broker = await getBroker(state);
+    try {
+      const listed = await broker.list();
+      if (listed.status === 'ok' && listed.dialogs.length > 0) blockedDialogs = listed.dialogs;
+    } finally {
+      await broker.dispose();
+    }
+  }
+  const closeBlocked = blockedDialogs.length > 0;
+  if (closeBlocked) {
+    // GAP-227: don't claim the profile's storage state wasn't saved when there was never a
+    // profile to save it to, and name the actual dialog type per spec §2.10.
+    const type = blockedDialogs[0]?.dialogType ?? 'unknown';
+    if (state.profileName) {
+      console.error(
+        `Warning: a ${type} dialog is open, so the profile's storage state was not saved. Handle it first ` +
+          '("sutradhar dialog accept|dismiss") if you need it saved.',
+      );
+    } else {
+      console.error(
+        `Warning: a ${type} dialog is open. Handle it first ("sutradhar dialog accept|dismiss") if you need it handled.`,
+      );
+    }
+  }
+  await stopWarden(STATE_DIR).catch(() => {});
+  if (state.profileName && !closeBlocked) {
     // Best-effort: persist the current storage state into the profile before killing Chrome,
     // so a login done under "--profile <name>" survives to the next launch. This can't rely on
     // SutradharRuntime.shutdown()'s own auto-save-on-shutdown-for-a-profiled-session logic —
@@ -702,9 +1460,12 @@ async function cmdClose() {
   if (state.chromePid) {
     // attach()-ed sessions only ever DETACH on shutdown (by design — see spawn-chrome.ts's
     // SpawnedChrome doc comment), so for a Chrome process THIS CLI spawned, runtime.shutdown()
-    // alone would leak it. Kill the actual process (and its child renderer/GPU processes).
+    // alone would leak it. Kill the actual process (and its child renderer/GPU processes). Never
+    // attaches, so it's unaffected by closeBlocked (no 180s hang risk here either way).
     killChromeTree(state.chromePid);
-  } else {
+  } else if (!closeBlocked) {
+    // FR2-04 N11: this attach WOULD hang for up to 180s against a dialog-blocked page — skipped
+    // whenever the gate reported 'blocked' above.
     const runtime = new SutradharRuntime({ logger });
     try {
       const { sessionId } = await runtime.attach({ endpoint: state.wsEndpoint, sessionId: state.sessionId });
@@ -733,7 +1494,19 @@ async function main() {
   if (viewportFlagGivenButInvalid) {
     printErrorAndExit('--viewport must be WIDTHxHEIGHT (e.g. --viewport 390x844)');
   }
+  if (stateFlagGivenButInvalid) {
+    printErrorAndExit('--state must be one of: visible, attached, hidden (e.g. wait "#toast" --state hidden)');
+  }
+  if (baselineFlagGivenButInvalid) {
+    printErrorAndExit('--baseline requires a URL (e.g. audit <url> --baseline https://prod.example.com)');
+  }
+  const dialogErr = dialogFlagError({ verb, dialogFlag, dialogFlagGivenButInvalid, dialogTextFlag });
+  if (dialogErr) {
+    printErrorAndExit(dialogErr);
+  }
   switch (verb) {
+    case 'dialog':
+      return cmdDialog(cleanArgs[0], cleanArgs.slice(1));
     case 'doctor':
       return cmdDoctor();
     case 'nav':
@@ -821,6 +1594,9 @@ Commands:
   clicktext <text>             Click the element containing this text (from "axsnap")
   clickrole <role> [name]      Click by accessibility role, optionally narrowed by name
                                 (from "axsnap", e.g. clickrole button Submit)
+  Selectors are CSS (shadow roots crossed), a numeric id from "snap", or pierce/ xpath/ aria/
+                                text/; Playwright syntax (text=, >>, role=) is rejected — use
+                                clicktext/clickrole.
   type <ref> <text>            Type text into an element
   press <ref> <key>            Focus an element then press a key (e.g. Enter)
   press <ref> <key> --modifiers Control,Shift
@@ -828,7 +1604,20 @@ Commands:
                                 to select a word — a real rich-text-editor toolbar formatting
                                 workflow)
   select <ref> <value>         Select an <option> by value on a <select>
-  wait <ref> [timeoutMs]       Wait for an element to appear and be visible
+  wait <ref> [timeoutMs] [--state S]
+                                Wait for an element to become visible (default), --state attached
+                                (just in the DOM), or --state hidden (removed or not visible).
+                                "visible" means non-empty size AND visibility not hidden/collapse
+                                — opacity:0 and off-screen elements still count as visible; zero
+                                size, display:none and visibility:hidden count as hidden.
+                                Visibility is checked on the FIRST matching element only. "hidden"
+                                succeeds immediately if nothing matches the selector at all.
+                                timeoutMs applies to each internal attempt; retries (GAP-001,
+                                still open) can extend the real total wait beyond it. timeoutMs
+                                <= 0 checks the current state once, immediately, with no waiting
+                                or retrying. Waiting states poll roughly every 100ms, so a state
+                                that's only true for less than ~100ms (a fast visibility flicker)
+                                may be missed.
   eval <js-expression>         Evaluate JS in the page's top-level context, print the result
   eval <js-expression> --frame <selector>
                                 Same, but inside a specific <iframe> (selector or a numeric id
@@ -857,18 +1646,33 @@ Commands:
   setclipboard <text>          Set the system clipboard (e.g. to then paste into a rich-text
                                 editor via press <ref> v --modifiers Control)
   getclipboard                 Print the current system clipboard contents
-  tabs                         List open tabs (id, title, url) — * marks the active one
+  tabs                         List open tabs (id, title, url) — * marks the active one. Still works when a
+                               tab is blocked by a dialog or has crashed (then it lists browser target ids)
   newtab [url]                 Open a new tab, optionally navigating it immediately
   focustab <tabId>             Switch the active tab (e.g. after a link opened target=_blank)
-  closetab <tabId>              Close a specific tab
-  download <ref> [dir]         Click an element that triggers a download, print the saved path
+  closetab <tabId>              Close a specific tab (also works on a blocked or crashed tab)
+  download <ref> [dir]         Click an element that triggers a download; print the saved file's absolute
+                                path. [dir] (relative to the current directory) is always allowed for this
+                                command; without it the file goes to the first allowed download root.
   screenshot [path]            Save a screenshot (default: ./screenshot.png)
-  audit [url] [outDir]         Screenshot + console/page/network errors + accessibility
-                                checks + Core Web Vitals for a page (current page if no url)
+  audit [url] [outDir] [--json]
+                                Screenshot + console/page/network errors + accessibility
+                                heuristics + Web Vitals for a page. With a url, loads it and
+                                waits for it to settle; without one, audits the current page
+                                (use "" as url to also pass an outDir). outDir is created if
+                                missing. --json prints one JSON report (schemaVersion 1, see
+                                packages/capability-runtime/schemas/audit-report.schema.json);
+                                images are written as files and referenced by absolute path.
+                                Auditing the current page only sees errors/requests since this
+                                command attached; pass the url for full coverage.
   audit [url] [outDir] --baseline <baselineUrl>
-                                Same, plus a visual pixel-diff against a known-good baseline
-                                URL — a one-command regression gate combining audit + compare
+                                Same, plus a pixel-diff of baselineUrl vs a fresh load of the
+                                audited url (viewport screenshots; the page is reloaded) — a
+                                one-command regression gate combining audit + compare
   compare <urlA> <urlB> [out]  Visual regression: pixel-diff two pages, save a diff image
+  dialog                       Show any open native dialog (alert/confirm/prompt/beforeunload)
+  dialog accept [text]         Accept the oldest open dialog (text = what to type into a prompt)
+  dialog dismiss               Dismiss the oldest open dialog
   close                        Close the active session
   doctor                       Environment diagnostics (Chrome detection, active session)
   profile create <name> [desc] Create a named, persistent profile (cookies/history/storage
@@ -893,7 +1697,8 @@ Flags:
   --viewport <WxH>      Set the CDP viewport (e.g. --viewport 390x844) and, when --headed, the
                         real OS window's size too. Applies at session creation and persists
                         across later commands until a new --viewport is given
-  --json                "snap" additionally prints structured per-element data as JSON
+  --json                "snap" additionally prints structured per-element data as JSON;
+                        "audit" prints the machine-readable JSON report (see "audit" above)
   --fail-on-diff        "compare" exits nonzero if any pixel difference is found (CI gating);
                         "audit" exits nonzero if any console/page/broken-request error was
                         found, or (with --baseline) any visual diff from the baseline
@@ -902,6 +1707,14 @@ Flags:
                         DOM mutations, no in-flight network requests) before returning — helps
                         when the action triggers a menu/modal/toast/virtualized-list-update that
                         renders a moment later
+  --state <S>           "wait" only: visible (default), attached (just in the DOM), or hidden
+                        (removed or not visible). Ignored on other commands. "visible" is a
+                        non-empty box AND visibility not hidden/collapse — opacity:0 and
+                        off-screen elements still count as visible; zero size, display:none and
+                        visibility:hidden count as hidden. Checked on the FIRST matching element
+                        only. "hidden" succeeds immediately if nothing matches at all. timeoutMs
+                        is per attempt; retries can extend the real total wait (still open, see
+                        GAP-001).
   --no-text             "snap" drops per-element text, keeping tag+role+id (see command list)
   --ids-only            "snap" keeps only the bracketed id, nothing else (see command list)
   --scan-listeners      "snap" also finds real addEventListener-only elements (see command list)
@@ -912,35 +1725,108 @@ Flags:
                         the guard to hold for the whole session. Does not intercept
                         page-initiated navigation from a clicked link (browser-internal, not
                         routed through this check) — see .ai/known-problems.md PROB-018.
+  --dialog <accept|dismiss|report>
+                        Default policy for native dialogs in this session; persisted until changed.
+                        report (the default) leaves alert/confirm/prompt open and prints
+                        "dialogPending: {...}"; while one is open, other commands exit with code 3
+                        until "sutradhar dialog accept|dismiss". beforeunload during a navigation
+                        is accepted after 3s under report
+  --dialog-text <text>  With --dialog accept: the text entered into prompt() dialogs (default:
+                        the prompt's own default value)
+
+Exit codes: 0 ok, 1 failure, 3 blocked by or interrupted by an open dialog.
+
+Boundary: Sutradhar does not attempt to evade bot-detection or solve CAPTCHAs, and Cloudflare
+challenges, CAPTCHA walls, and IP-level blocks stop it exactly as they would stop any other
+automation tool run the same way. The only launch argument here with detection-relevant
+behavior is --disable-blink-features=AutomationControlled, which hides navigator.webdriver
+from scripts that check for it -- measured directly: navigator.webdriver is true without the
+flag and false with it. It does not defeat Cloudflare, CAPTCHA, or any other real bot-detection
+service, and other simple signals -- the default headless user agent's HeadlessChrome
+substring and --enable-automation still being present in the launch command line -- remain
+unmasked.
 
 Session state persists across commands, scoped to this directory, in
 ~/.sutradhar-cli/<hash-of-cwd>/state.json — run "close" when done. Override with
-SUTRADHAR_CLI_STATE_DIR to share state across directories or use a custom path.`);
+SUTRADHAR_CLI_STATE_DIR to share state across directories or use a custom path.
+
+Environment:
+  SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS  Directories downloads may go to, separated by ";" on Windows or ":" elsewhere; absolute paths or ~.
+                                     Replaces the default <temp>/sutradhar-downloads; the first entry is the default destination.
+  SUTRADHAR_ALLOWED_UPLOAD_ROOTS    If set, "upload" may only read files under these directories (off by default).`);
       process.exitCode = verb ? 1 : 0;
   }
 }
 
-main()
-  .catch((err) => {
+if (verb === '__dialog-warden') {
+  // FR2-04 W3: a long-running process, not a one-shot command — must never go through the
+  // one-shot `.finally()` teardown below (which force-exits after 3s; that would kill the warden
+  // almost immediately) or the watchdog (also one-shot-command-only).
+  runWardenProcess(cleanArgs[0]!).catch((err) => {
     console.error(`Fatal: ${(err as Error).message}`);
-    process.exitCode = 1;
-  })
-  .finally(async () => {
-    // Every command here is one-shot — nothing legitimately needs to keep the process running
-    // after it prints its result. The open CDP WebSocket connection to Chrome (left
-    // intentionally alive so the browser survives for the NEXT CLI invocation to attach to)
-    // would otherwise keep Node's event loop alive forever. Disconnect the CDP *client*
-    // connection (NOT the browser — `disconnect()`, never `close()`/`shutdown()`) so the event
-    // loop drains and the process exits naturally, flushing stdout properly. A raw
-    // process.exit() immediately after console.log() can truncate/interleave output on Windows
-    // if the write hasn't finished flushing yet — this avoids needing that hammer at all.
-    const session = activeSessionId
-      ? activeRuntime?.getSessionManager().getSession(createSessionId(activeSessionId))
-      : undefined;
-    await session?.getPuppeteerBrowser()?.disconnect();
-
-    // Fallback safety net: if something else is still holding the event loop open a few
-    // seconds later, force-exit rather than hang forever. unref()'d so it never itself keeps
-    // the process alive if everything already drained cleanly.
-    setTimeout(() => process.exit(process.exitCode ?? 0), 3000).unref();
+    process.exit(1);
   });
+} else {
+  // FR2-04 §2.8.6: the process watchdog. Armed for every real command (not the warden, and not
+  // help/no-verb, which return synchronously fast anyway) — if a bug or an unforeseen hang keeps
+  // a command running past its deadline, this stops it with a clear, actionable message instead
+  // of hanging the caller (an agent, a script) forever. `unref()`'d so it never itself keeps the
+  // process alive once the command finishes normally.
+  const watchdog = setTimeout(() => {
+    console.error(
+      `Error: "sutradhar ${verb ?? ''}" did not finish within ${Math.round(deadlineFor(verb, cleanArgs, process.env) / 1000)}s and was stopped. ` +
+        'The browser session is still running. If the page is blocked by a dialog, run "sutradhar dialog".',
+    );
+    process.exit(1);
+  }, deadlineFor(verb, cleanArgs, process.env));
+  watchdog.unref();
+
+  main()
+    .catch((err) => {
+      if (err instanceof DialogBlockedError) {
+        // GAP-261 (default-policy shape): the gate refuses to even start the command while a
+        // dialog is open (or the report/default policy just leaves it reported). In `--json` mode
+        // this used to REPLACE the JSON document with raw `dialogPending:`/`dialogHandled:` text
+        // lines on stdout — exactly the "stdout isn't valid JSON any more" bug this fixes. stdout
+        // must still carry exactly one parseable document, so print the blocked-JSON shape there
+        // instead and move the human-readable lines to stderr.
+        if (jsonMode) {
+          console.log(dialogBlockedJsonDoc(err.message, err.dialogs, err.handledRecords));
+        } else {
+          // FR2-04 fix-3/GAP-242: print any dialogs THIS gate run already resolved before it hit
+          // the condition that made it block anyway (a chain limit, a probe timeout) — dropping
+          // these silently would make real, completed work invisible to the caller.
+          for (const line of err.handledStdoutLines()) console.log(line);
+          for (const line of err.stdoutLines()) console.log(line);
+        }
+        console.error(`Error: ${err.message}`);
+        console.error(DIALOG_HINT(err.dialogs[0]?.dialogType ?? 'unknown'));
+        finalExitCode = err.exitCode;
+        process.exitCode = err.exitCode;
+        return;
+      }
+      console.error(`Fatal: ${(err as Error).message}`);
+      finalExitCode = 1;
+      process.exitCode = 1;
+    })
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises -- Promise.finally awaits this teardown before the one-shot CLI exits.
+    .finally(async () => {
+      // Every command here is one-shot — nothing legitimately needs to keep the process running
+      // after it prints its result. The open CDP WebSocket connection to Chrome (left
+      // intentionally alive so the browser survives for the NEXT CLI invocation to attach to)
+      // would otherwise keep Node's event loop alive forever. Disconnect the CDP *client*
+      // connection (NOT the browser — `disconnect()`, never `close()`/`shutdown()`) so the event
+      // loop drains and the process exits naturally, flushing stdout properly. A raw
+      // process.exit() immediately after console.log() can truncate/interleave output on Windows
+      // if the write hasn't finished flushing yet — this avoids needing that hammer at all.
+      const session = activeSessionId
+        ? activeRuntime?.getSessionManager().getSession(createSessionId(activeSessionId))
+        : undefined;
+      await session?.getPuppeteerBrowser()?.disconnect();
+
+      // Fallback safety net: if something else is still holding the event loop open a few
+      // seconds later, force-exit rather than hang forever. unref()'d so it never itself keeps
+      // the process alive if everything already drained cleanly.
+      setTimeout(() => process.exit(process.exitCode ?? 0), 3000).unref();
+    });
+}

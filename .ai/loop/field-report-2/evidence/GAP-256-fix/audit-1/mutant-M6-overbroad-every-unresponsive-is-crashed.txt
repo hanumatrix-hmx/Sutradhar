@@ -1,0 +1,404 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser
+
+ ❯ tests/unit/dialog-warden.spec.ts  (38 tests | 18 failed) 1023ms
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD9 (GAP-220/228 defensive layer): a target whose Page.enable NEVER acked is reported as an "unknown" blocking dialog, not silently clear
+     → expected [ { …(7) } ] to have a length of 2 but got 1
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD11 (GAP-228 regression guard, N9/N10 shape): an ESTABLISHED target running a long BUSY SCRIPT is NOT reported as a blocking dialog — only a target that is genuinely BLOCKED (by a real dialog) is, even though fix-2 now probes both
+     → expected undefined to match object { targetId: 'stuck', type: 'unknown' }
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-fix3-A (GAP-236): a popup and its blocked opener — /v1/dialogs reports the popup as the holder (no blockedBy) and the opener as blockedBy the popup; recovery closes ONLY the popup
+     → expected undefined to be 'popup' // Object.is equality
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-B (GAP-246, supersedes fix-3's isolated refusal): a NEVER-CONFIRMED isolated target IS now recovered — the fix-3 "isolated = always refuse" rule regressed exactly the real-dialog shape this item exists to fix
+     → expected 404 to be 200 // Object.is equality
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-B2 (GAP-245, decision 1): a CONFIRMED-SAFE isolated target is still never closed — its history alone (not sibling topology) proves it cannot be a dialog
+     → expected 404 to be 409 // Object.is equality
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-A13 (GAP-249): the warden feeds its own real discoveredAt into attribution — the genuinely newer sibling wins
+     → expected undefined to be 'popup-new' // Object.is equality
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirmedSafe without any prior /v1/dialogs call > a genuinely idle target becomes confirmedSafe on its own, proactively, with zero /v1/dialogs calls made before it goes busy
+     → expected 404 to be 409 // Object.is equality
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirmedSafe without any prior /v1/dialogs call > the xhr-popup shape (GAP-245): opener AND its popup both become proactively confirmedSafe before a later shared-renderer block, so dialog accept refuses on BOTH — no /v1/dialogs call happens until AFTER the block, exactly like the live attack
+     → expected 404 to be 409 // Object.is equality
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirmedSafe without any prior /v1/dialogs call > a target busy from the instant Page.enable acks NEVER becomes confirmedSafe, even after the proactive delay elapses (the accepted decision-2 residual)
+     → expected 404 to be 200 // Object.is equality
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (GAP-251 pin): with NO explicit proactiveConfirmDelayMs (the new production default), a genuinely idle popup and its opener both become confirmedSafe fast enough to survive a same-renderer block that arrives moments later, at realistic small gaps
+     → expected 404 to be 409 // Object.is equality
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (kills E4 "bootstrap exception removed"): with a configured NON-ZERO delay, a bootstrap target waits the SAME delay as a non-bootstrap one — bootstrap no longer has its own silent 0ms fast path
+     → expected 404 to be 200 // Object.is equality
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (E4 contrast, confirms the delay DOES still apply uniformly): both a bootstrap and a non-bootstrap target eventually become confirmed-safe once the SAME configured delay elapses
+     → expected 404 to be 409 // Object.is equality
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (the real invariant behind E3's name): a target whose Page.enable ack is still pending NEVER becomes confirmed-safe via the PROACTIVE probe, even though its liveness probe alone would report "responsive"
+     → expected 404 to be 200 // Object.is equality
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > kills E6 (reactive confirmation removed): a target BUSY during its one proactive probe attempt only ever becomes confirmed-safe later, via a REACTIVE /v1/dialogs call once it turns responsive
+     → expected 404 to be 409 // Object.is equality
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > kills E7 (reactive confirmation without the Page.enable-ack precondition): a target whose enable ack is still pending is NEVER marked confirmed-safe by a reactive /v1/dialogs call either, even when its liveness probe reports "responsive"
+     → expected 404 to be 200 // Object.is equality
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC2 (NEGATIVE CONTROL): a target that is blocked by a real dialog / busy script (no crash event, fresh session ALSO times out) is STILL reported as an unknown blocking dialog, never as crashed
+     → expected [] to have a length of 1 but got +0
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC4 (race guard): a busy script that FINISHES between the two probes (the long-lived session answers the re-probe) is not classified crashed
+     → expected [ { targetId: 't1', …(1) } ] to deeply equal []
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC5: a crashed target that answers again (reloaded) is cleared, so a LATER real block on it is an unknown dialog again, not excluded
+     → expected [ { targetId: 't1', …(1) } ] to deeply equal []
+
+ Test Files  1 failed (1)
+      Tests  18 failed | 20 passed (38)
+   Start at  03:47:35
+   Duration  1.41s (transform 59ms, setup 0ms, collect 64ms, tests 1.02s, environment 0ms, prepare 136ms)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+⎯⎯⎯⎯⎯⎯ Failed Tests 18 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD9 (GAP-220/228 defensive layer): a target whose Page.enable NEVER acked is reported as an "unknown" blocking dialog, not silently clear
+AssertionError: expected [ { …(7) } ] to have a length of 2 but got 1
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ tests/unit/dialog-warden.spec.ts:323:28
+    321|       const res = await req(readyInfo!.port, '/v1/dialogs', readyInfo!…
+    322|       const body = await res.json();
+    323|       expect(body.dialogs).toHaveLength(2);
+       |                            ^
+    324|       const t1Entry = body.dialogs.find((d: any) => d.targetId === 't1…
+    325|       const t2Entry = body.dialogs.find((d: any) => d.targetId === 't2…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > WD11 (GAP-228 regression guard, N9/N10 shape): an ESTABLISHED target running a long BUSY SCRIPT is NOT reported as a blocking dialog — only a target that is genuinely BLOCKED (by a real dialog) is, even though fix-2 now probes both
+AssertionError: expected undefined to match object { targetId: 'stuck', type: 'unknown' }
+
+- Expected: 
+Object {
+  "targetId": "stuck",
+  "type": "unknown",
+}
+
++ Received: 
+undefined
+
+ ❯ tests/unit/dialog-warden.spec.ts:412:26
+    410|       expect(establishedEntry).toBeUndefined();
+    411|       // `stuck`'s Performance.getMetrics times out too (a real dialog…
+    412|       expect(stuckEntry).toMatchObject({ targetId: 'stuck', type: 'unk…
+       |                          ^
+    413|     } finally {
+    414|       await warden.stop('test-teardown');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-fix3-A (GAP-236): a popup and its blocked opener — /v1/dialogs reports the popup as the holder (no blockedBy) and the opener as blockedBy the popup; recovery closes ONLY the popup
+AssertionError: expected undefined to be 'popup' // Object.is equality
+
+- Expected: 
+"popup"
+
++ Received: 
+undefined
+
+ ❯ tests/unit/dialog-warden.spec.ts:702:38
+    700|       const popupEntry = body.dialogs.find((d) => d.targetId === 'popu…
+    701|       expect(popupEntry?.blockedBy).toBeUndefined();
+    702|       expect(openerEntry?.blockedBy).toBe('popup');
+       |                                      ^
+    703| 
+    704|       // Recovery: ask the warden to handle the OPENER (the wrong targ…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-B (GAP-246, supersedes fix-3's isolated refusal): a NEVER-CONFIRMED isolated target IS now recovered — the fix-3 "isolated = always refuse" rule regressed exactly the real-dialog shape this item exists to fix
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/unit/dialog-warden.spec.ts:753:26
+    751|         body: JSON.stringify({ targetId: 'solo', accept: true }),
+    752|       });
+    753|       expect(res.status).toBe(200);
+       |                          ^
+    754|       const body = await res.json();
+    755|       expect(body.closedTarget).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-B2 (GAP-245, decision 1): a CONFIRMED-SAFE isolated target is still never closed — its history alone (not sibling topology) proves it cannot be a dialog
+AssertionError: expected 404 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 404
+
+ ❯ tests/unit/dialog-warden.spec.ts:800:26
+    798|         body: JSON.stringify({ targetId: 'solo', accept: true }),
+    799|       });
+    800|       expect(res.status).toBe(409);
+       |                          ^
+    801|       const body = await res.json();
+    802|       expect(body.confirmedSafe).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-A13 (GAP-249): the warden feeds its own real discoveredAt into attribution — the genuinely newer sibling wins
+AssertionError: expected undefined to be 'popup-new' // Object.is equality
+
+- Expected: 
+"popup-new"
+
++ Received: 
+undefined
+
+ ❯ tests/unit/dialog-warden.spec.ts:849:44
+    847|       const byId = (id: string) => body.dialogs.find((d) => d.targetId…
+    848|       expect(byId('popup-new')?.blockedBy).toBeUndefined(); // the gen…
+    849|       expect(byId('popup-old')?.blockedBy).toBe('popup-new');
+       |                                            ^
+    850|       expect(byId('opener')?.blockedBy).toBe('popup-new');
+    851|     } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirmedSafe without any prior /v1/dialogs call > a genuinely idle target becomes confirmedSafe on its own, proactively, with zero /v1/dialogs calls made before it goes busy
+AssertionError: expected 404 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 404
+
+ ❯ tests/unit/dialog-warden.spec.ts:909:28
+    907|           body: JSON.stringify({ targetId: 'solo', accept: true }),
+    908|         });
+    909|         expect(res.status).toBe(409);
+       |                            ^
+    910|         const body = await res.json();
+    911|         expect(body.confirmedSafe).toBe(true); // proactively confirme…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirmedSafe without any prior /v1/dialogs call > the xhr-popup shape (GAP-245): opener AND its popup both become proactively confirmedSafe before a later shared-renderer block, so dialog accept refuses on BOTH — no /v1/dialogs call happens until AFTER the block, exactly like the live attack
+AssertionError: expected 404 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 404
+
+ ❯ tests/unit/dialog-warden.spec.ts:954:30
+    952|             body: JSON.stringify({ targetId, accept: true }),
+    953|           });
+    954|           expect(res.status).toBe(409);
+       |                              ^
+    955|           expect((await res.json()).confirmedSafe).toBe(true);
+    956|         }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirmedSafe without any prior /v1/dialogs call > a target busy from the instant Page.enable acks NEVER becomes confirmedSafe, even after the proactive delay elapses (the accepted decision-2 residual)
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/unit/dialog-warden.spec.ts:988:28
+    986|         });
+    987|         // Never confirmed -> still eligible for recovery (decision 2,…
+    988|         expect(res.status).toBe(200);
+       |                            ^
+    989|         expect((await res.json()).closedTarget).toBe(true);
+    990|       } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (GAP-251 pin): with NO explicit proactiveConfirmDelayMs (the new production default), a genuinely idle popup and its opener both become confirmedSafe fast enough to survive a same-renderer block that arrives moments later, at realistic small gaps
+AssertionError: expected 404 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 404
+
+ ❯ tests/unit/dialog-warden.spec.ts:1185:32
+    1183|               body: JSON.stringify({ targetId, accept: true }),
+    1184|             });
+    1185|             expect(res.status).toBe(409); // refused, never closed
+       |                                ^
+    1186|             expect((await res.json()).confirmedSafe).toBe(true);
+    1187|           }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (kills E4 "bootstrap exception removed"): with a configured NON-ZERO delay, a bootstrap target waits the SAME delay as a non-bootstrap one — bootstrap no longer has its own silent 0ms fast path
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/unit/dialog-warden.spec.ts:1232:30
+    1230|             body: JSON.stringify({ targetId, accept: true }),
+    1231|           });
+    1232|           expect(res.status).toBe(200); // still eligible/closable — n…
+       |                              ^
+    1233|           expect((await res.json()).closedTarget).toBe(true);
+    1234|         }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (E4 contrast, confirms the delay DOES still apply uniformly): both a bootstrap and a non-bootstrap target eventually become confirmed-safe once the SAME configured delay elapses
+AssertionError: expected 404 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 404
+
+ ❯ tests/unit/dialog-warden.spec.ts:1272:30
+    1270|             body: JSON.stringify({ targetId, accept: true }),
+    1271|           });
+    1272|           expect(res.status).toBe(409);
+       |                              ^
+    1273|           expect((await res.json()).confirmedSafe).toBe(true);
+    1274|         }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (the real invariant behind E3's name): a target whose Page.enable ack is still pending NEVER becomes confirmed-safe via the PROACTIVE probe, even though its liveness probe alone would report "responsive"
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/unit/dialog-warden.spec.ts:1307:28
+    1305|         // Never confirmed (Page.enable never acked, so the proactive …
+    1306|         // fires) -> still eligible for recovery (GAP-246 decision 2) …
+    1307|         expect(res.status).toBe(200);
+       |                            ^
+    1308|         expect((await res.json()).closedTarget).toBe(true);
+    1309|       } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > kills E6 (reactive confirmation removed): a target BUSY during its one proactive probe attempt only ever becomes confirmed-safe later, via a REACTIVE /v1/dialogs call once it turns responsive
+AssertionError: expected 404 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 404
+
+ ❯ tests/unit/dialog-warden.spec.ts:1345:28
+    1343|           body: JSON.stringify({ targetId: 't1', accept: true }),
+    1344|         });
+    1345|         expect(res.status).toBe(409); // refused: the reactive list() …
+       |                            ^
+    1346|         expect((await res.json()).confirmedSafe).toBe(true);
+    1347|       } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > kills E7 (reactive confirmation without the Page.enable-ack precondition): a target whose enable ack is still pending is NEVER marked confirmed-safe by a reactive /v1/dialogs call either, even when its liveness probe reports "responsive"
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/unit/dialog-warden.spec.ts:1383:28
+    1381|         // E7's mutation (drops the `pageEnableAckedAt.has(...)` check…
+    1382|         // above would have wrongly set confirmedSafe, and this would …
+    1383|         expect(res.status).toBe(200);
+       |                            ^
+    1384|         expect((await res.json()).closedTarget).toBe(true);
+    1385|       } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC2 (NEGATIVE CONTROL): a target that is blocked by a real dialog / busy script (no crash event, fresh session ALSO times out) is STILL reported as an unknown blocking dialog, never as crashed
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/unit/dialog-warden.spec.ts:1450:28
+    1448|     try {
+    1449|       const body = await list();
+    1450|       expect(body.dialogs).toHaveLength(1);
+       |                            ^
+    1451|       expect(body.dialogs[0]).toMatchObject({ targetId: 't1', type: 'u…
+    1452|       expect(body.busy).toEqual(['t1']);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC4 (race guard): a busy script that FINISHES between the two probes (the long-lived session answers the re-probe) is not classified crashed
+AssertionError: expected [ { targetId: 't1', …(1) } ] to deeply equal []
+
+- Expected
++ Received
+
+- Array []
++ Array [
++   Object {
++     "targetId": "t1",
++     "url": "https://victim/",
++   },
++ ]
+
+ ❯ tests/unit/dialog-warden.spec.ts:1483:28
+    1481|     try {
+    1482|       const body = await list();
+    1483|       expect(body.crashed).toEqual([]);
+       |                            ^
+    1484|     } finally {
+    1485|       await warden.stop('test-teardown');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/18]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC5: a crashed target that answers again (reloaded) is cleared, so a LATER real block on it is an unknown dialog again, not excluded
+AssertionError: expected [ { targetId: 't1', …(1) } ] to deeply equal []
+
+- Expected
++ Received
+
+- Array []
++ Array [
++   Object {
++     "targetId": "t1",
++     "url": "https://victim/",
++   },
++ ]
+
+ ❯ tests/unit/dialog-warden.spec.ts:1501:31
+    1499|       fresh.send.mockImplementation(() => TIMED_OUT());
+    1500|       const blocked = await list();
+    1501|       expect(blocked.crashed).toEqual([]);
+       |                               ^
+    1502|       expect(blocked.dialogs).toHaveLength(1);
+    1503|       expect(blocked.dialogs[0]).toMatchObject({ targetId: 't1', type:…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/18]⎯
+

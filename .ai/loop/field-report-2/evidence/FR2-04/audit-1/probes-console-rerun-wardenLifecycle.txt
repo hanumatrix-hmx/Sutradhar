@@ -1,0 +1,16 @@
+--- wardenLifecycle
+[PASS] wardenLifecycle.a-chrome-death-warden-exits
+[PASS] wardenLifecycle.a-warden-json-removed-by-warden
+[PASS] wardenLifecycle.b-state-removed-warden-exits<=5s
+[PASS] wardenLifecycle.b2-state-dir-removed-warden-exits
+[PASS] wardenLifecycle.c-state-repointed-warden-exits
+[PASS] wardenLifecycle.d-close-stops-warden-and-removes-file
+[PASS] wardenLifecycle.d2-close-with-dialog-fast-and-clean
+[FAIL] wardenLifecycle.e-one-warden-each [{"pid":41124,"stateFile":"E:\\AI-Cache\\tmp\\fr2-04-audit-AEfntm\\state-lc-eB\\state.json","wsEndpoint":"ws://127.0.0.1:59252/devtools/browser/5f0139a9-e401-4909-ab7e-e8c7938dc694"}]
+[PASS] wardenLifecycle.e-B-sees-no-dialog-from-A
+[FAIL] wardenLifecycle.unexpected-exception "TypeError: Cannot read properties of undefined (reading 'port')\n    at wardenLifecycle (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-04/audit-1/audit-probes.mjs:393:61)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-04/audit-1/audit-probes.mjs:532:11"
+[PASS] cleanup.no-leftover-wardens-before-forced-kill
+[PASS] cleanup.no-leftover-chrome-before-forced-kill
+[PASS] observer.no-guard-violations
+
+11/13 pass; failed: wardenLifecycle.e-one-warden-each, wardenLifecycle.unexpected-exception

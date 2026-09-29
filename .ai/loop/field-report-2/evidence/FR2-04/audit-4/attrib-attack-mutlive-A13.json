@@ -1,0 +1,214 @@
+{
+  "at": "2026-09-27T00:05:08.155Z",
+  "results": [
+    {
+      "scenario": "older-sibling-newer-alerts",
+      "trial": 0,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 862
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56485/?n=older-sibling-newer-alerts-0-75247",
+          "opener": null
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P0"
+        },
+        {
+          "label": "P0",
+          "type": "unknown"
+        },
+        {
+          "label": "P1",
+          "type": "unknown",
+          "blockedBy": "P0"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56485/?n=older-sibling-newer-alerts-0-75247\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1073,
+          "closed": "P0",
+          "stdout": "Tab E216F4CD5A84A3757B4E80A1BDFEC1B9 (about:blank) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "blocked",
+            "P0": "gone",
+            "P1": "blocked"
+          }
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1083,
+          "closed": "P1",
+          "stdout": "Tab 9318DD183FD00E2B28A6EC68CFD6B972 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "gone",
+            "P1": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P0",
+        "P1"
+      ],
+      "innocentClosed": [
+        "P0"
+      ],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 295,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56485/?n=older-sibling-newer-alerts-0-75247 | Title: opener older-sibling-newer-alerts-0-75247",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "gone",
+        "P1": "gone"
+      }
+    },
+    {
+      "scenario": "older-sibling-newer-alerts",
+      "trial": 1,
+      "holderLabel": "P1",
+      "nav": {
+        "code": 0,
+        "ms": 925
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "P1",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:56485/?n=older-sibling-newer-alerts-1-89916",
+          "opener": null
+        }
+      ],
+      "popupCount": 2,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked",
+        "P1": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P0"
+        },
+        {
+          "label": "P0",
+          "type": "unknown"
+        },
+        {
+          "label": "P1",
+          "type": "unknown",
+          "blockedBy": "P0"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:56485/?n=older-sibling-newer-alerts-1-89916\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1083,
+          "closed": "P0",
+          "stdout": "Tab 15CEC8D2FA6E2B7D4D8339F35F8677C8 (about:blank) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "blocked",
+            "P0": "gone",
+            "P1": "blocked"
+          }
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1100,
+          "closed": "P1",
+          "stdout": "Tab 85D15005441DBD4EF60DA509D53DC084 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "stderr": "",
+          "after": {
+            "O": "responsive",
+            "P0": "gone",
+            "P1": "gone"
+          }
+        }
+      ],
+      "closedSequence": [
+        "P0",
+        "P1"
+      ],
+      "innocentClosed": [
+        "P0"
+      ],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [],
+      "snapAfter": {
+        "code": 0,
+        "ms": 285,
+        "killedAtCap": false,
+        "head": "URL: http://127.0.0.1:56485/?n=older-sibling-newer-alerts-1-89916 | Title: opener older-sibling-newer-alerts-1-89916",
+        "err": ""
+      },
+      "end": {
+        "O": "responsive",
+        "P0": "gone",
+        "P1": "gone"
+      }
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

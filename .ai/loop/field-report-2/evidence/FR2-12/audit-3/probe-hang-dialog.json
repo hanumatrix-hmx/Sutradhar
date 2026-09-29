@@ -1,0 +1,69 @@
+{
+  "order": "dialog",
+  "steps": [
+    {
+      "label": "nav alertload#0",
+      "ms": 699,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a3-open"
+      }
+    },
+    {
+      "label": "audit ok while alert open",
+      "ms": 31060,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:54333/ok?d0",
+        "broken": 0,
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "nav alertload#1",
+      "ms": 626,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a3-open"
+      }
+    },
+    {
+      "label": "plain nav ok while alert open",
+      "ms": 11,
+      "ok": true,
+      "r": "http://127.0.0.1:54333/ok?d1"
+    },
+    {
+      "label": "audit ok baseline",
+      "ms": 1562,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:54333/ok?d2",
+        "broken": 0,
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    }
+  ],
+  "cdp": [
+    {
+      "createMs": 1,
+      "send Page.enable ms": 29504,
+      "detachStarted": "2026-09-27T18:35:49.399Z",
+      "detach": "ok",
+      "detachMs": 1
+    },
+    {
+      "createMs": 1,
+      "send Page.enable ms": 0,
+      "detachStarted": "2026-09-27T18:35:51.595Z",
+      "detach": "ok",
+      "detachMs": 0
+    }
+  ]
+}

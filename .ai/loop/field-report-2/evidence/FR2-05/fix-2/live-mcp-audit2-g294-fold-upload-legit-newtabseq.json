@@ -1,0 +1,190 @@
+{
+  "TAG": "a2mul4vtlg",
+  "results": [
+    {
+      "id": "GAP294-mcp-dot",
+      "pass": true,
+      "detail": "containmentRejected=15/15 other=[] escapes=0 outsideEntries=[]"
+    },
+    {
+      "id": "GAP294-mcp-space",
+      "pass": true,
+      "detail": "containmentRejected=5/5 other=[] escapes=0 outsideEntries=[]"
+    },
+    {
+      "id": "GAP294-mcp-anywhere",
+      "pass": true,
+      "detail": "containmentRejected=5/5 other=[] escapes=0 outsideEntries=[]"
+    },
+    {
+      "id": "GAP294-mcp-dotspace",
+      "pass": true,
+      "detail": "containmentRejected=3/3 other=[] escapes=0 outsideEntries=[]"
+    },
+    {
+      "id": "GAP294-mcp-threedots",
+      "pass": true,
+      "detail": "containmentRejected=3/3 other=[] escapes=0 outsideEntries=[]"
+    },
+    {
+      "id": "GAP294-mcp-leafdot",
+      "pass": true,
+      "detail": "containmentRejected=3/3 other=[] escapes=0 outsideEntries=[]"
+    },
+    {
+      "id": "GAP294-mcp-fwdslash",
+      "pass": true,
+      "detail": "containmentRejected=3/3 other=[] escapes=0 outsideEntries=[]"
+    },
+    {
+      "id": "GAP294-mcp-extended",
+      "pass": true,
+      "detail": "containmentRejected=3/3 other=[] escapes=0 outsideEntries=[]"
+    },
+    {
+      "id": "GAP294-mcp-plainJunction",
+      "pass": true,
+      "detail": "containmentRejected=3/3 other=[] escapes=0 outsideEntries=[]"
+    },
+    {
+      "id": "FOLD-kelvin",
+      "pass": true,
+      "detail": "rejected=10/10 lookalikeDirCreated=false"
+    },
+    {
+      "id": "FOLD-dotless-i",
+      "pass": true,
+      "detail": "rejected=3/3 lookalikeDirCreated=false"
+    },
+    {
+      "id": "FOLD-long-s",
+      "pass": true,
+      "detail": "rejected=3/3 lookalikeDirCreated=false"
+    },
+    {
+      "id": "FOLD-turkish-dotted-I",
+      "pass": true,
+      "detail": "rejected=3/3 lookalikeDirCreated=false"
+    },
+    {
+      "id": "UPLOAD-jn-trailing-dot",
+      "pass": true,
+      "detail": "upload_file=false via_trigger={\"success\":false,\"error\":\"upload_file_via_trigger failed: Upload file \\\"E:\\\\AI-Cache\\\\tmp\\\\fr205-aud err=Upload file \"E:\\AI-Cache\\tmp\\fr205-audit2-mcp-vOTRRO\\up\\jn.\\secret-up.txt\" does not exist or is not "
+    },
+    {
+      "id": "UPLOAD-jn-trailing-space",
+      "pass": true,
+      "detail": "upload_file=false via_trigger={\"success\":false,\"error\":\"upload_file_via_trigger failed: Upload file \\\"E:\\\\AI-Cache\\\\tmp\\\\fr205-aud err=Upload file \"E:\\AI-Cache\\tmp\\fr205-audit2-mcp-vOTRRO\\up\\jn \\secret-up.txt\" does not exist or is not "
+    },
+    {
+      "id": "UPLOAD-jn-plain",
+      "pass": true,
+      "detail": "upload_file=false via_trigger={\"success\":false,\"error\":\"upload_file_via_trigger failed: Upload file \\\"E:\\\\AI-Cache\\\\tmp\\\\fr205-aud err=Upload file \"E:\\AI-Cache\\tmp\\fr205-audit2-mcp-vOTRRO\\up\\jn\\secret-up.txt\" is outside the allowed upl"
+    },
+    {
+      "id": "UPLOAD-traversal",
+      "pass": true,
+      "detail": "upload_file=false via_trigger={\"success\":false,\"error\":\"upload_file_via_trigger failed: Upload file \\\"E:\\\\AI-Cache\\\\tmp\\\\fr205-aud err=Upload file \"E:\\AI-Cache\\tmp\\fr205-audit2-mcp-vOTRRO\\upOutside\\secret-up.txt\" is outside the allowed"
+    },
+    {
+      "id": "UPLOAD-direct-outside",
+      "pass": true,
+      "detail": "upload_file=false via_trigger={\"success\":false,\"error\":\"upload_file_via_trigger failed: Upload file \\\"E:\\\\AI-Cache\\\\tmp\\\\fr205-aud err=Upload file \"E:\\AI-Cache\\tmp\\fr205-audit2-mcp-vOTRRO\\upOutside\\secret-up.txt\" is outside the allowed"
+    },
+    {
+      "id": "UPLOAD-legit",
+      "pass": true,
+      "detail": "upload_file=true via_trigger={\"success\":true,\"filePath\":\"E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-mcp-vOTRRO\\\\up\\\\legit file.v1.txt\"} err="
+    },
+    {
+      "id": "UPLOAD-legit-dotted-dir",
+      "pass": true,
+      "detail": "upload_file=true via_trigger={\"success\":true,\"filePath\":\"E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-mcp-vOTRRO\\\\up\\\\my.dir\\\\b.txt\"} err="
+    },
+    {
+      "id": "UPLOAD-legit-forward-slashes",
+      "pass": true,
+      "detail": "upload_file=true via_trigger={\"success\":true,\"filePath\":\"E:/AI-Cache/tmp/fr205-audit2-mcp-vOTRRO/up/my.dir/b.txt\"} err="
+    },
+    {
+      "id": "UPLOAD-legit-with-dotdot",
+      "pass": true,
+      "detail": "upload_file=true via_trigger={\"success\":true,\"filePath\":\"E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-mcp-vOTRRO\\\\up\\\\legit file.v1.txt\"} err="
+    },
+    {
+      "id": "LEGIT-default-root (no downloadDir)",
+      "pass": true,
+      "detail": "success=true at=E:\\AI-Cache\\tmp\\fr205-audit2-mcp-vOTRRO\\allowA\\a2mul4vtlg-legit-63.bin ms=152 err="
+    },
+    {
+      "id": "LEGIT-root itself",
+      "pass": true,
+      "detail": "success=true at=E:\\AI-Cache\\tmp\\fr205-audit2-mcp-vOTRRO\\allowA\\a2mul4vtlg-legit-64.bin ms=109 err="
+    },
+    {
+      "id": "LEGIT-second root",
+      "pass": true,
+      "detail": "success=true at=E:\\AI-Cache\\tmp\\fr205-audit2-mcp-vOTRRO\\allowB\\a2mul4vtlg-legit-65.bin ms=109 err="
+    },
+    {
+      "id": "LEGIT-nested new dirs",
+      "pass": true,
+      "detail": "success=true at=E:\\AI-Cache\\tmp\\fr205-audit2-mcp-vOTRRO\\allowA\\a\\b\\c\\a2mul4vtlg-legit-66.bin ms=111 err="
+    },
+    {
+      "id": "LEGIT-dotted dir names",
+      "pass": true,
+      "detail": "success=true at=E:\\AI-Cache\\tmp\\fr205-audit2-mcp-vOTRRO\\allowA\\v1.2\\my.files\\a2mul4vtlg-legit-67.bin ms=109 err="
+    },
+    {
+      "id": "LEGIT-dir with spaces",
+      "pass": true,
+      "detail": "success=true at=E:\\AI-Cache\\tmp\\fr205-audit2-mcp-vOTRRO\\allowB\\my downloads\\x y\\a2mul4vtlg-legit-68.bin ms=112 err="
+    },
+    {
+      "id": "LEGIT-forward slashes",
+      "pass": true,
+      "detail": "success=true at=E:\\AI-Cache\\tmp\\fr205-audit2-mcp-vOTRRO\\allowB\\fs\\q\\a2mul4vtlg-legit-69.bin ms=111 err="
+    },
+    {
+      "id": "LEGIT-dotdot inside root",
+      "pass": true,
+      "detail": "success=true at=E:\\AI-Cache\\tmp\\fr205-audit2-mcp-vOTRRO\\allowA\\dd\\a2mul4vtlg-legit-70.bin ms=103 err="
+    },
+    {
+      "id": "LEGIT-uppercase root spelling",
+      "pass": true,
+      "detail": "success=true at=E:\\AI-Cache\\tmp\\fr205-audit2-mcp-vOTRRO\\allowA\\UP\\a2mul4vtlg-legit-71.bin ms=150 err="
+    },
+    {
+      "id": "NEWTAB-sequential-t0",
+      "pass": true,
+      "detail": "success=true ms=111 retries=0 hits=[\"E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-mcp-vOTRRO\\\\allowA\\\\seq-t0\\\\a2mul4vtlg-seq0-72.bin\"] userDl=[] err="
+    },
+    {
+      "id": "NEWTAB-sequential-t1",
+      "pass": true,
+      "detail": "success=true ms=111 retries=0 hits=[\"E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-mcp-vOTRRO\\\\allowA\\\\seq-t1\\\\a2mul4vtlg-seq1-73.bin\"] userDl=[] err="
+    },
+    {
+      "id": "NEWTAB-sequential-t2",
+      "pass": true,
+      "detail": "success=true ms=139 retries=0 hits=[\"E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-mcp-vOTRRO\\\\allowA\\\\seq-t2\\\\a2mul4vtlg-seq2-74.bin\"] userDl=[] err="
+    },
+    {
+      "id": "NEWTAB-sequential-t3",
+      "pass": true,
+      "detail": "success=true ms=144 retries=0 hits=[\"E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-mcp-vOTRRO\\\\allowA\\\\seq-t3\\\\a2mul4vtlg-seq3-75.bin\"] userDl=[] err="
+    },
+    {
+      "id": "cleanup-user-downloads",
+      "pass": true,
+      "detail": "tagged strays found+removed=[]"
+    },
+    {
+      "id": "cleanup-temp",
+      "pass": true,
+      "detail": "E:\\AI-Cache\\tmp\\fr205-audit2-mcp-vOTRRO"
+    }
+  ]
+}

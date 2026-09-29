@@ -1,0 +1,17 @@
+orig sha PC 047631555cf4c7b135f251260814411affe2a28949d52610959579b5d0223c1e EN b91beaadc7da8ecbd50fa4c7362781ce2d8f77df5f0da8efea399923f3ca4a5f
+P1 trailing-dot rejection removed entirely: KILLED | Tests  3 failed | 537 passed (540)
+P2 rejection only checks the LAST component: KILLED | Tests  3 failed | 537 passed (540)
+P3 rejection only checks trailing dot (not space): KILLED | Tests  2 failed | 538 passed (540)
+P4 rejection only checks trailing space (not dot): KILLED | Tests  3 failed | 537 passed (540)
+P5 rejection moved AFTER the existence walk (only when full path resolves): KILLED | Tests  3 failed | 537 passed (540)
+P6 roots NOT rejected (candidate-only): root canonicalization skipped: KILLED | Tests  1 failed | 539 passed (540)
+P7 back to full-Unicode toLowerCase fold: KILLED | Tests  2 failed | 538 passed (540)
+P8 no case fold at all (exact compare): KILLED | Tests  3 failed | 537 passed (540)
+P9 drop root-spelling (drive/UNC) comparison: KILLED | Tests  1 failed | 539 passed (540)
+P10 drop segment-count guard: SURVIVED | Tests  540 passed (540)
+P11 rejection applied on win32 AND posix (over-reject): SURVIVED | Tests  540 passed (540)
+P12 dangling link treated as plain dir: KILLED | Tests  1 failed | 539 passed (540)
+E1 GAP-296 lock removed (run directly): SURVIVED | Tests  540 passed (540)
+E2 reset back to default instead of deny: KILLED | Tests  1 failed | 539 passed (540)
+E3 reset removed entirely: KILLED | Tests  1 failed | 539 passed (540)
+restored PC match=true EN match=true

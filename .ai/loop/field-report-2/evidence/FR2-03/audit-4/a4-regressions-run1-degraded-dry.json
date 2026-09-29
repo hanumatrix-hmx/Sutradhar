@@ -1,0 +1,57 @@
+{
+  "dryRun": true,
+  "scope": {
+    "tempRoot": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\temp",
+    "stateRoot": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\sr",
+    "extraStateDirs": []
+  },
+  "graceMs": 120000,
+  "processEnumeration": {
+    "ok": false,
+    "reason": "spawn powershell.exe ENOENT"
+  },
+  "actions": [
+    {
+      "type": "clearState",
+      "stateFile": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\sr\\r177stale\\state.json",
+      "result": "planned"
+    },
+    {
+      "type": "deleteDir",
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\temp\\puppeteer_dev_chrome_profile-OwNd01",
+      "reason": "owner-dead",
+      "result": "planned"
+    }
+  ],
+  "kept": [
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\sr\\92d9c1717c5f3945\\state.json",
+      "reason": "live-session"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\temp\\puppeteer_dev_chrome_profile-UnMk01",
+      "reason": "not-sutradhar"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\temp\\sutradhar-cli-1790341174167-2wbOnv",
+      "reason": "grace"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\temp\\sutradhar-cli-1790341175731-7KeTaO",
+      "reason": "grace"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\temp\\sutradhar-cli-1790341177939-MMLpTm",
+      "reason": "in-use"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\temp\\sutradhar-cli-1790341179661-yOuNg4",
+      "reason": "grace"
+    }
+  ],
+  "remaining": {
+    "orphanProcesses": 0,
+    "orphanDirs": 1
+  },
+  "exitCode": 0
+}

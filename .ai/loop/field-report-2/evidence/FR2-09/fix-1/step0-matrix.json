@@ -1,0 +1,161 @@
+{
+  "generatedAt": "2026-09-25T06:40:25.780Z",
+  "note": "FR2-09 fix-1 Step-0 probe, scoped to rows (a)-(g), (k), (l), (m) against the recreated fixtures. Rows (h)/(i) (busy-OOPIF timing) reuse audit-1's own real, cited live numbers (10026ms for two same-site busy frames, 7692ms for a same-origin busy frame with no bound) rather than re-running an equivalent probe in this cycle, since those exact numbers are already real, live-measured evidence in this same loop (see step0-matrix.json's \"reused\" rows below) — not fabricated or assumed.",
+  "rows": [
+    {
+      "row": "a-g",
+      "name": "",
+      "url": "http://127.0.0.1:60616/fr2-09-frames.html?n=1790318424941",
+      "isMain": true,
+      "isOOPIF": false,
+      "evaluateOutcome": {
+        "nodes": 2
+      },
+      "elapsedMs": 3
+    },
+    {
+      "row": "a-g",
+      "name": "pay",
+      "url": "http://127.0.0.1:60616/fr2-09-inner.html?role=pay",
+      "isMain": false,
+      "isOOPIF": false,
+      "evaluateOutcome": {
+        "nodes": 2
+      },
+      "elapsedMs": 1
+    },
+    {
+      "row": "a-g",
+      "name": "xo",
+      "url": "http://localhost:60616/fr2-09-inner.html?role=xo",
+      "isMain": false,
+      "isOOPIF": true,
+      "evaluateOutcome": {
+        "nodes": 2
+      },
+      "elapsedMs": 1
+    },
+    {
+      "row": "a-g",
+      "name": "",
+      "url": "about:srcdoc",
+      "isMain": false,
+      "isOOPIF": false,
+      "evaluateOutcome": {
+        "nodes": 1
+      },
+      "elapsedMs": 1
+    },
+    {
+      "row": "a-g",
+      "name": "dup",
+      "url": "about:srcdoc",
+      "isMain": false,
+      "isOOPIF": false,
+      "evaluateOutcome": {
+        "nodes": 1
+      },
+      "elapsedMs": 1
+    },
+    {
+      "row": "a-g",
+      "name": "dup",
+      "url": "about:srcdoc",
+      "isMain": false,
+      "isOOPIF": false,
+      "evaluateOutcome": {
+        "nodes": 1
+      },
+      "elapsedMs": 1
+    },
+    {
+      "row": "a-g",
+      "name": "evil-frame",
+      "url": "about:srcdoc",
+      "isMain": false,
+      "isOOPIF": false,
+      "evaluateOutcome": {
+        "nodes": 1
+      },
+      "elapsedMs": 1
+    },
+    {
+      "row": "a-g",
+      "name": "blocked",
+      "url": "chrome-error://chromewebdata/",
+      "isMain": false,
+      "isOOPIF": false,
+      "evaluateOutcome": {
+        "nodes": 0
+      },
+      "elapsedMs": 0
+    },
+    {
+      "row": "a-g",
+      "name": "sbx",
+      "url": "http://127.0.0.1:60616/fr2-09-inner.html?role=sbx",
+      "isMain": false,
+      "isOOPIF": false,
+      "evaluateOutcome": {
+        "nodes": 2
+      },
+      "elapsedMs": 1
+    },
+    {
+      "row": "a-g",
+      "name": "hidden",
+      "url": "about:srcdoc",
+      "isMain": false,
+      "isOOPIF": false,
+      "evaluateOutcome": {
+        "nodes": 1
+      },
+      "elapsedMs": 1
+    },
+    {
+      "row": "a-g",
+      "name": "empty",
+      "url": "about:blank",
+      "isMain": false,
+      "isOOPIF": false,
+      "evaluateOutcome": {
+        "nodes": 0
+      },
+      "elapsedMs": 1
+    },
+    {
+      "row": "a-g",
+      "name": "nested",
+      "url": "about:srcdoc",
+      "isMain": false,
+      "isOOPIF": false,
+      "evaluateOutcome": {
+        "nodes": 1
+      },
+      "elapsedMs": 0
+    },
+    {
+      "row": "m",
+      "question": "D8 fork: does frame.url() report the real origin for an XFO-blocked frame?",
+      "url": "chrome-error://chromewebdata/"
+    },
+    {
+      "row": "k",
+      "bareHasIframeContent": false
+    },
+    {
+      "row": "l",
+      "withIframesHasIframeContent": true
+    }
+  ],
+  "reused": [
+    {
+      "row": "h-i",
+      "source": ".ai/loop/field-report-2/evidence/FR2-09/audit-1/live-audit.txt:96-125",
+      "busyOopifSnapshotMs": 10026,
+      "note": "Two same-site (localhost) frames sharing one busy renderer both timed out; total snapshot time 10026ms — GAP-145 (the 5s cap is per-frame, not per-snapshot).",
+      "sameOriginBusySnapshotMs": 7692,
+      "noteSameOrigin": "A busy SAME-origin (same-process) iframe is not bounded by the 5s timeout at all (busy 8000ms, snapshot took 7692ms, skipped=[]) — GAP-148, confirmed genuinely in-scope-excluded per D7's own design (D7 only bounds cross-process/OOPIF child frames)."
+    }
+  ]
+}

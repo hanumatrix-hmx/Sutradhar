@@ -1,0 +1,460 @@
+{
+  "order": "dialog-timing",
+  "trials": 6,
+  "startedAt": "2026-09-27T20:27:14.184Z",
+  "steps": [
+    {
+      "label": "t0 auto alertnow wait50",
+      "ms": 30004,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "t0 audit ok after wait50",
+      "ms": 1658,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:60896/ok?w50t0",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t0 auto alertnow wait250",
+      "ms": 30005,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "t0 audit ok after wait250",
+      "ms": 1574,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:60896/ok?w250t0",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t0 auto alertnow wait600",
+      "ms": 30015,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "t0 audit ok after wait600",
+      "ms": 1566,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:60896/ok?w600t0",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t0 auto alertnow wait3000",
+      "ms": 30012,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "t0 audit ok after wait3000",
+      "ms": 1552,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:60896/ok?w3000t0",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t1 report alertnow wait50",
+      "ms": 30004,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "t1 audit ok after wait50",
+      "ms": 2552,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:60896/ok?w50t1",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t1 report alertnow wait250",
+      "ms": 30001,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "t1 audit ok after wait250",
+      "ms": 2563,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:60896/ok?w250t1",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t1 report alertnow wait600",
+      "ms": 30011,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "t1 audit ok after wait600",
+      "ms": 2553,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:60896/ok?w600t1",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t1 report alertnow wait3000",
+      "ms": 30001,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "t1 audit ok after wait3000",
+      "ms": 2563,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:60896/ok?w3000t1",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t2 auto alertnow wait50",
+      "ms": 30003,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "t2 audit ok after wait50",
+      "ms": 1678,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:60896/ok?w50t2",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    }
+  ],
+  "cdp": [
+    {
+      "createdAt": "2026-09-27T20:27:44.453Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 102,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 1,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 0,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 109,
+          "status": 200,
+          "url": "http://127.0.0.1:60896/ok?w50t0"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 111,
+          "url": "http://127.0.0.1:60896/ok?w50t0"
+        }
+      ],
+      "detachAt": 1622,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T20:28:16.117Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 16,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 2,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 26,
+          "status": 200,
+          "url": "http://127.0.0.1:60896/ok?w250t0"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 27,
+          "url": "http://127.0.0.1:60896/ok?w250t0"
+        }
+      ],
+      "detachAt": 1547,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T20:28:47.707Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 2,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 0,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 8,
+          "status": 200,
+          "url": "http://127.0.0.1:60896/ok?w600t0"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 9,
+          "url": "http://127.0.0.1:60896/ok?w600t0"
+        }
+      ],
+      "detachAt": 1526,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T20:29:19.286Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 1,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 0,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 7,
+          "status": 200,
+          "url": "http://127.0.0.1:60896/ok?w3000t0"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 8,
+          "url": "http://127.0.0.1:60896/ok?w3000t0"
+        }
+      ],
+      "detachAt": 1524,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T20:29:51.153Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1008,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 9,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 1009,
+          "status": 200,
+          "url": "http://127.0.0.1:60896/ok?w50t1"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 1013,
+          "url": "http://127.0.0.1:60896/ok?w50t1"
+        }
+      ],
+      "detachAt": 2522,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T20:30:23.707Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1011,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 6,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 1013,
+          "status": 200,
+          "url": "http://127.0.0.1:60896/ok?w250t1"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 1015,
+          "url": "http://127.0.0.1:60896/ok?w250t1"
+        }
+      ],
+      "detachAt": 2532,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T20:30:56.282Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1009,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 8,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 1012,
+          "status": 200,
+          "url": "http://127.0.0.1:60896/ok?w600t1"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 1013,
+          "url": "http://127.0.0.1:60896/ok?w600t1"
+        }
+      ],
+      "detachAt": 2520,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T20:31:28.837Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1010,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 6,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 1011,
+          "status": 200,
+          "url": "http://127.0.0.1:60896/ok?w3000t1"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 1012,
+          "url": "http://127.0.0.1:60896/ok?w3000t1"
+        }
+      ],
+      "detachAt": 2531,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T20:32:01.738Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 111,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 1,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 118,
+          "status": 200,
+          "url": "http://127.0.0.1:60896/ok?w50t2"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 119,
+          "url": "http://127.0.0.1:60896/ok?w50t2"
+        }
+      ],
+      "detachAt": 1636,
+      "detach": "ok"
+    }
+  ],
+  "watchdog": true
+}

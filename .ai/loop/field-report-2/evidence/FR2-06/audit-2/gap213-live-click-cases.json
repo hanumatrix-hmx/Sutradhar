@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "cases": [
+    {
+      "case": "K1 engine click with \"pierce/ #notaframe\" (space after prefix, valid CSS) still clicks",
+      "result": "{\"success\":true,\"actionType\":\"click\",\"executionTimeMs\":64,\"currentUrl\":\"file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understandi",
+      "sends": 31,
+      "methods": [
+        "Runtime.callFunctionOn",
+        "Runtime.addBinding",
+        "Runtime.evaluate",
+        "DOM.describeNode",
+        "Runtime.releaseObject",
+        "DOM.resolveNode",
+        "DOM.scrollIntoViewIfNeeded",
+        "Input.dispatchMouseEvent"
+      ],
+      "pass": true
+    },
+    {
+      "case": "K2 engine click \"pierce/ text=plain div\" rejected with zero CDP (GAP-213)",
+      "error": "Invalid selector \"pierce/ text=plain div\" — \"text=\" is Playwright selector-engine syntax (Puppeteer's own text query is spelled \"text/\"). Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+      "sends": 0,
+      "methods": [],
+      "pass": true
+    },
+    {
+      "case": "K3 engine click data-test-id=go -> exact GAP-205 text, zero CDP",
+      "error": "Invalid selector \"data-test-id=go\" — \"data-test-id=\" is a Playwright attribute-engine prefix; use a CSS attribute selector such as [data-test-id=\"…\"]. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+      "sends": 0,
+      "methods": [],
+      "pass": true
+    }
+  ]
+}

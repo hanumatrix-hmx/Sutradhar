@@ -1,0 +1,122 @@
+{
+  "R": "E:\\AI-Cache\\tmp\\fr2-03-a5-legacy-Diysfi",
+  "udd": "E:\\AI-Cache\\tmp\\fr2-03-a5-legacy-Diysfi\\temp\\sutradhar-cli-1790371854488-A5leg1",
+  "chromePid": 149256,
+  "t0": "2026-09-25T21:30:54.496Z",
+  "port": "56229",
+  "wsEndpoint": "ws://127.0.0.1:56229/devtools/browser/cf4c9510-6d22-49c3-b33e-83af7fd6c221",
+  "L_lockfileExists": true,
+  "L_probeLockOnLiveChrome": "in-use",
+  "A_legacyProbes": {
+    "e:\\ai-cache\\tmp\\fr2-03-a5-legacy-diysfi\\temp\\sutradhar-cli-1790371854488-a5leg1": true
+  },
+  "A_fix4Plan": {
+    "actions": [],
+    "kept": [
+      {
+        "path": "E:\\AI-Cache\\tmp\\fr2-03-a5-legacy-Diysfi\\temp\\sutradhar-cli-1790371854488-A5leg1",
+        "pid": 149256,
+        "reason": "unknown-liveness"
+      }
+    ]
+  },
+  "A_withoutProbe_fix3Equivalent": {
+    "actions": [
+      {
+        "type": "kill",
+        "pid": 149256,
+        "role": "browser",
+        "userDataDir": "E:\\AI-Cache\\tmp\\fr2-03-a5-legacy-Diysfi\\temp\\sutradhar-cli-1790371854488-A5leg1",
+        "reason": "legacy-orphan",
+        "result": "planned"
+      }
+    ],
+    "kept": [
+      {
+        "path": "E:\\AI-Cache\\tmp\\fr2-03-a5-legacy-Diysfi\\temp\\sutradhar-cli-1790371854488-A5leg1",
+        "reason": "grace"
+      }
+    ]
+  },
+  "A_realCliDryRun": {
+    "actions": [],
+    "kept": [
+      {
+        "path": "E:\\AI-Cache\\tmp\\fr2-03-a5-legacy-Diysfi\\temp\\sutradhar-cli-1790371854488-A5leg1",
+        "pid": 149256,
+        "reason": "unknown-liveness"
+      }
+    ]
+  },
+  "B0_readable_responsive": {
+    "actions": [],
+    "kept": [
+      {
+        "path": "E:\\AI-Cache\\tmp\\fr2-03-a5-legacy-Diysfi\\sr\\a5legacy\\state.json",
+        "reason": "live-session"
+      },
+      {
+        "path": "E:\\AI-Cache\\tmp\\fr2-03-a5-legacy-Diysfi\\temp\\sutradhar-cli-1790371854488-A5leg1",
+        "reason": "in-use"
+      }
+    ]
+  },
+  "B1_garbled_responsive": {
+    "actions": [],
+    "kept": [
+      {
+        "path": "E:\\AI-Cache\\tmp\\fr2-03-a5-legacy-Diysfi\\sr\\a5legacy\\state.json",
+        "reason": "unreadable-state"
+      },
+      {
+        "path": "E:\\AI-Cache\\tmp\\fr2-03-a5-legacy-Diysfi\\temp\\sutradhar-cli-1790371854488-A5leg1",
+        "pid": 149256,
+        "reason": "unknown-liveness"
+      }
+    ]
+  },
+  "B2_collectMs": 1345,
+  "B2_legacyProbes": {
+    "e:\\ai-cache\\tmp\\fr2-03-a5-legacy-diysfi\\temp\\sutradhar-cli-1790371854488-a5leg1": false
+  },
+  "B2_garbled_hung": {
+    "actions": [
+      {
+        "type": "kill",
+        "pid": 149256,
+        "role": "browser",
+        "userDataDir": "E:\\AI-Cache\\tmp\\fr2-03-a5-legacy-Diysfi\\temp\\sutradhar-cli-1790371854488-A5leg1",
+        "reason": "legacy-orphan",
+        "result": "planned"
+      }
+    ],
+    "kept": [
+      {
+        "path": "E:\\AI-Cache\\tmp\\fr2-03-a5-legacy-Diysfi\\sr\\a5legacy\\state.json",
+        "reason": "unreadable-state"
+      },
+      {
+        "path": "E:\\AI-Cache\\tmp\\fr2-03-a5-legacy-Diysfi\\temp\\sutradhar-cli-1790371854488-A5leg1",
+        "reason": "grace"
+      }
+    ]
+  },
+  "B3_readable_hung": {
+    "actions": [],
+    "kept": [
+      {
+        "path": "E:\\AI-Cache\\tmp\\fr2-03-a5-legacy-Diysfi\\sr\\a5legacy\\state.json",
+        "reason": "unresponsive-session"
+      },
+      {
+        "path": "E:\\AI-Cache\\tmp\\fr2-03-a5-legacy-Diysfi\\temp\\sutradhar-cli-1790371854488-A5leg1",
+        "reason": "in-use"
+      }
+    ]
+  },
+  "B_chromeStillReachableAfterResume": true,
+  "cleanup": {
+    "chromeAlive": false,
+    "rootExists": false
+  }
+}

@@ -1,0 +1,752 @@
+{
+  "decision": {
+    "branch": "W",
+    "O1": false,
+    "O2": false,
+    "O3": "blocked",
+    "O5": true,
+    "O8": true
+  },
+  "results": [
+    {
+      "id": "E0.env",
+      "desc": "environment",
+      "observed": {
+        "node": "v25.0.0",
+        "platform": "win32",
+        "headed": false,
+        "cli": "E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\cli\\dist\\cli.js"
+      },
+      "at": "2026-09-26T09:43:32.674Z"
+    },
+    {
+      "id": "E0.browser",
+      "desc": "/json/version",
+      "observed": {
+        "status": "resolved",
+        "ms": 5,
+        "value": {
+          "status": 200,
+          "body": "{\r\n   \"Browser\": \"Chrome/153.0.8010.53\",\r\n   \"Protocol-Version\": \"1.3\",\r\n   \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36\",\r\n   \"V8-Version\": \"15.3.76.13\",\r\n   \"WebKit-Version\": \"537.36 (@792bf6722e73a45aa9e47c1"
+        }
+      },
+      "at": "2026-09-26T09:43:33.572Z"
+    },
+    {
+      "id": "E1.click",
+      "desc": "process A: CLI click #alert",
+      "expected": "code 0, \"Clicked #alert\", 4-8 s",
+      "observed": {
+        "args": [
+          "click",
+          "#alert"
+        ],
+        "code": 0,
+        "ms": 6335,
+        "killedAtCap": false,
+        "stdout": "Clicked #alert\n",
+        "stderr": ""
+      },
+      "at": "2026-09-26T09:43:39.907Z"
+    },
+    {
+      "id": "E1.jsonVersion",
+      "desc": "/json/version while the dialog is open",
+      "expected": "HTTP 200 quickly (browser process)",
+      "observed": {
+        "status": "resolved",
+        "ms": 1,
+        "value": {
+          "status": 200,
+          "body": "{\r\n   \"Browser\": \"Chrome/153.0.8010.53\",\r\n   \"Protocol-Version\": \"1.3\",\r\n   \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36\",\r\n   \"V8-Version\": \"15.3.76.13\",\r\n   \"WebKit-Version\": \"537.36 (@792bf6722e73a45aa9e47c1"
+        }
+      },
+      "at": "2026-09-26T09:43:39.909Z"
+    },
+    {
+      "id": "E1.jsonList",
+      "desc": "/json/list while the dialog is open",
+      "expected": "HTTP 200, lists the page",
+      "observed": {
+        "status": "resolved",
+        "ms": 1,
+        "value": {
+          "status": 200,
+          "body": "[ {\r\n   \"description\": \"\",\r\n   \"devtoolsFrontendUrl\": \"https://chrome-devtools-frontend.appspot.com/serve_rev/@792bf6722e73a45aa9e47c163b9901bdc17f3230/inspector.html?ws=127.0.0.1:61356/devtools/page/D1E37FF7959B7D767672BBF15D814F74\",\r\n   \"id\": \"D1E37FF7959B7D767672BBF15D814F74\",\r\n   \"title\": \"Chrom"
+        }
+      },
+      "at": "2026-09-26T09:43:39.910Z"
+    },
+    {
+      "id": "E1.live0",
+      "desc": "observer Runtime.evaluate(1)",
+      "expected": "blocked",
+      "observed": "blocked",
+      "at": "2026-09-26T09:43:41.914Z"
+    },
+    {
+      "id": "E1.window35s",
+      "desc": "liveness over 35 s after A exited",
+      "expected": "never responsive",
+      "observed": {
+        "anyResponsive": false,
+        "samples": 14
+      },
+      "at": "2026-09-26T09:44:17.088Z"
+    },
+    {
+      "id": "E2.pageEnable",
+      "desc": "fresh session Page.enable: dialogOpening re-emitted?",
+      "expected": "no event; enable times out",
+      "observed": {
+        "opening": [],
+        "enable": {
+          "status": "timeout",
+          "ms": 3009,
+          "error": "Page.enable timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed."
+        }
+      },
+      "at": "2026-09-26T09:44:20.103Z"
+    },
+    {
+      "id": "E2.getFrameTree",
+      "desc": "Page.getFrameTree",
+      "expected": "timeout",
+      "observed": {
+        "status": "timeout",
+        "ms": 3008,
+        "error": "Page.getFrameTree timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed."
+      },
+      "at": "2026-09-26T09:44:23.112Z"
+    },
+    {
+      "id": "E2.runtimeEnable",
+      "desc": "Runtime.enable",
+      "expected": "timeout",
+      "observed": {
+        "status": "timeout",
+        "ms": 3014,
+        "error": "Runtime.enable timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed."
+      },
+      "at": "2026-09-26T09:44:26.126Z"
+    },
+    {
+      "id": "E2.navHistory",
+      "desc": "Page.getNavigationHistory",
+      "expected": "resolved",
+      "observed": {
+        "status": "resolved",
+        "ms": 0,
+        "value": {
+          "currentIndex": 1,
+          "entries": [
+            {
+              "id": 6,
+              "url": "chrome://new-tab-page/",
+              "userTypedURL": "chrome://newtab/",
+              "title": "New tab",
+              "transitionType": "auto_toplevel"
+            },
+            {
+              "id": 13,
+              "url": "http://127.0.0.1:52558/fx.html?n=e1-1790415812908-x2lxho",
+              "userTypedURL": "http://127.0.0.1:52558/fx.html?n=e1-1790415812908-x2lxho",
+              "title": "fr2-04 step1",
+              "transitionType": "typed"
+            }
+          ]
+        }
+      },
+      "at": "2026-09-26T09:44:26.126Z"
+    },
+    {
+      "id": "E2.targetInfo",
+      "desc": "Target.getTargetInfo",
+      "expected": "resolved",
+      "observed": {
+        "status": "resolved",
+        "ms": 0,
+        "value": {
+          "targetInfo": {
+            "targetId": "0CB976083DE752A0B547BD4B512C80C5",
+            "type": "page",
+            "title": "fr2-04 step1",
+            "url": "http://127.0.0.1:52558/fx.html?n=e1-1790415812908-x2lxho",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "66EE935E0CFAF6D2C4D6654ECAE1B6F8"
+          }
+        }
+      },
+      "at": "2026-09-26T09:44:26.127Z"
+    },
+    {
+      "id": "E2.screenshot",
+      "desc": "Page.captureScreenshot",
+      "expected": "unknown: recorded",
+      "observed": {
+        "status": "timeout",
+        "ms": 8008,
+        "error": "Page.captureScreenshot timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed."
+      },
+      "at": "2026-09-26T09:44:34.135Z"
+    },
+    {
+      "id": "E2.pagesInit",
+      "desc": "browser.pages() while the dialog is open",
+      "expected": "timeout (FrameManager.initialize)",
+      "observed": {
+        "status": "timeout",
+        "ms": 15012,
+        "error": "__timeout_15000"
+      },
+      "at": "2026-09-26T09:44:49.152Z"
+    },
+    {
+      "id": "E2.handle",
+      "desc": "fresh session handleJavaScriptDialog(accept)",
+      "expected": "rejected \"No dialog is showing\"",
+      "observed": {
+        "status": "rejected",
+        "ms": 2,
+        "error": "Protocol error (Page.handleJavaScriptDialog): No dialog is showing"
+      },
+      "at": "2026-09-26T09:44:49.155Z"
+    },
+    {
+      "id": "E2.afterHandle",
+      "desc": "liveness after the fresh handle",
+      "expected": "blocked",
+      "observed": "blocked",
+      "at": "2026-09-26T09:44:51.159Z"
+    },
+    {
+      "id": "E2.handle2",
+      "desc": "second fresh session enable+handle",
+      "observed": {
+        "events": [
+          {
+            "ev": "closed",
+            "result": false,
+            "t": 1790415897005
+          }
+        ],
+        "h": {
+          "status": "rejected",
+          "ms": 0,
+          "error": "Protocol error (Page.handleJavaScriptDialog): No dialog is showing"
+        },
+        "live": "blocked"
+      },
+      "at": "2026-09-26T09:44:56.187Z"
+    },
+    {
+      "id": "E2.reloadRecovery",
+      "desc": "browser-initiated Page.reload as recovery",
+      "observed": {
+        "reload": {
+          "status": "resolved",
+          "ms": 3,
+          "value": {}
+        },
+        "live": "responsive",
+        "record": [
+          {
+            "kind": "alert",
+            "phase": "opening",
+            "seq": 1,
+            "t": 1790415813888
+          },
+          {
+            "kind": "alert",
+            "phase": "returned",
+            "result": "__undefined__",
+            "seq": 2,
+            "t": 1790415897005
+          }
+        ]
+      },
+      "at": "2026-09-26T09:44:57.024Z"
+    },
+    {
+      "id": "E3.snap",
+      "desc": "real CLI snap after an orphaned confirm",
+      "expected": "~180 s hang (protocolTimeout), then a new blank tab OR self-heal kill",
+      "observed": {
+        "snap": {
+          "args": [
+            "snap"
+          ],
+          "code": 0,
+          "ms": 180393,
+          "killedAtCap": false,
+          "stdout": "URL: about:blank\nTitle: \nInteractive elements (0):\n\n",
+          "stderr": ""
+        },
+        "before": {
+          "pid": 197960,
+          "pages": [
+            "http://127.0.0.1:52558/fx.html?n=e3-1790415897577-u7h9g3"
+          ],
+          "live": "blocked"
+        },
+        "pidAfter": 197960,
+        "selfHealed": false,
+        "pagesAfter": [
+          "http://127.0.0.1:52558/fx.html?n=e3-1790415897577-u7h9g3",
+          "about:blank"
+        ]
+      },
+      "at": "2026-09-26T09:48:06.961Z"
+    },
+    {
+      "id": "E3.recover",
+      "desc": "cleanup",
+      "observed": {
+        "reload": {
+          "status": "resolved",
+          "ms": 3,
+          "value": {}
+        },
+        "live": "responsive"
+      },
+      "at": "2026-09-26T09:48:07.799Z"
+    },
+    {
+      "id": "E4.enableBefore",
+      "desc": "holder Page.enable on a free page",
+      "expected": "resolved",
+      "observed": {
+        "status": "resolved",
+        "ms": 0,
+        "value": {}
+      },
+      "at": "2026-09-26T09:48:09.103Z"
+    },
+    {
+      "id": "E4.clickA",
+      "desc": "process A: click #confirm",
+      "observed": {
+        "args": [
+          "click",
+          "#confirm"
+        ],
+        "code": 0,
+        "ms": 6356,
+        "killedAtCap": false,
+        "stdout": "Clicked #confirm\n",
+        "stderr": ""
+      },
+      "at": "2026-09-26T09:48:15.459Z"
+    },
+    {
+      "id": "E4.event",
+      "desc": "holder saw dialogOpening",
+      "expected": "1 confirm",
+      "observed": [
+        {
+          "type": "confirm",
+          "message": "s1 confirm e4-1790416088431-v3ecmr",
+          "defaultPrompt": ""
+        }
+      ],
+      "at": "2026-09-26T09:48:15.459Z"
+    },
+    {
+      "id": "E4.blockedAfterA",
+      "desc": "observer liveness after A exited",
+      "expected": "blocked",
+      "observed": "blocked",
+      "at": "2026-09-26T09:48:17.465Z"
+    },
+    {
+      "id": "E4.handle",
+      "desc": "pre-enabled holder handles after A exited",
+      "expected": "resolved + responsive",
+      "observed": {
+        "h": {
+          "status": "resolved",
+          "ms": 2,
+          "value": {}
+        },
+        "live": "responsive"
+      },
+      "at": "2026-09-26T09:48:17.472Z"
+    },
+    {
+      "id": "E4.record",
+      "desc": "page record",
+      "expected": "confirm returned true",
+      "observed": [
+        {
+          "kind": "confirm",
+          "phase": "opening",
+          "seq": 1,
+          "t": 1790416089445
+        },
+        {
+          "kind": "confirm",
+          "phase": "returned",
+          "result": true,
+          "seq": 2,
+          "t": 1790416097467
+        }
+      ],
+      "at": "2026-09-26T09:48:17.472Z"
+    },
+    {
+      "id": "E4b.clickA",
+      "desc": "process A: click #prompt",
+      "observed": {
+        "args": [
+          "click",
+          "#prompt"
+        ],
+        "code": 0,
+        "ms": 6320,
+        "killedAtCap": false,
+        "stdout": "Clicked #prompt\n",
+        "stderr": ""
+      },
+      "at": "2026-09-26T09:48:23.793Z"
+    },
+    {
+      "id": "E4b.event",
+      "desc": "holder saw the prompt",
+      "observed": [
+        {
+          "type": "prompt",
+          "message": "s1 prompt e4-1790416088431-v3ecmr",
+          "defaultPrompt": "s1-default"
+        }
+      ],
+      "at": "2026-09-26T09:48:23.793Z"
+    },
+    {
+      "id": "E4b.handleAfterHoldersGone",
+      "desc": "fresh session after all holders detached",
+      "expected": "rejected, blocked",
+      "observed": {
+        "events": [
+          {
+            "ev": "closed",
+            "result": false,
+            "t": 1790416109629
+          }
+        ],
+        "h": {
+          "status": "rejected",
+          "ms": 0,
+          "error": "Protocol error (Page.handleJavaScriptDialog): No dialog is showing"
+        },
+        "live": "blocked"
+      },
+      "at": "2026-09-26T09:48:28.807Z"
+    },
+    {
+      "id": "E4b.recover",
+      "desc": "cleanup",
+      "observed": {
+        "reload": {
+          "status": "resolved",
+          "ms": 4,
+          "value": {}
+        },
+        "live": "responsive"
+      },
+      "at": "2026-09-26T09:48:29.640Z"
+    },
+    {
+      "id": "E5.evalConfirm",
+      "desc": "CLI eval confirm()",
+      "expected": "~30 s, prints false",
+      "observed": {
+        "args": [
+          "eval",
+          "confirm('s1 eval')"
+        ],
+        "code": 0,
+        "ms": 30269,
+        "killedAtCap": false,
+        "stdout": "false\n",
+        "stderr": ""
+      },
+      "at": "2026-09-26T09:49:01.234Z"
+    },
+    {
+      "id": "E6.arm",
+      "desc": "click #arm-bu",
+      "observed": {
+        "args": [
+          "click",
+          "#arm-bu"
+        ],
+        "code": 0,
+        "ms": 3341,
+        "killedAtCap": false,
+        "stdout": "Clicked #arm-bu\n",
+        "stderr": ""
+      },
+      "at": "2026-09-26T09:49:05.890Z"
+    },
+    {
+      "id": "E6.nav",
+      "desc": "nav away from a beforeunload page",
+      "expected": "code 0, ~3 s extra, landed=1",
+      "observed": {
+        "args": [
+          "nav",
+          "http://127.0.0.1:52558/fx.html?n=e6-1790416141895-7p24o8&landed=1"
+        ],
+        "code": 0,
+        "ms": 3284,
+        "killedAtCap": false,
+        "stdout": "Navigated to http://127.0.0.1:52558/fx.html?n=e6-1790416141895-7p24o8&landed=1\nTitle: fr2-04 step1\n",
+        "stderr": "",
+        "pages": [
+          "http://127.0.0.1:52558/fx.html?n=e6-1790416141895-7p24o8&landed=1"
+        ]
+      },
+      "at": "2026-09-26T09:49:09.174Z"
+    },
+    {
+      "id": "E6.record",
+      "desc": "page record",
+      "expected": "armed, fired, landed",
+      "observed": [
+        {
+          "kind": "beforeunload",
+          "phase": "armed",
+          "seq": 1,
+          "t": 1790416142863
+        },
+        {
+          "kind": "beforeunload",
+          "phase": "fired",
+          "seq": 2,
+          "t": 1790416146136
+        },
+        {
+          "kind": "landed",
+          "seq": 3,
+          "t": 1790416149156
+        }
+      ],
+      "at": "2026-09-26T09:49:09.177Z"
+    },
+    {
+      "id": "E6b.noActivation",
+      "desc": "nav after arming WITHOUT a user gesture",
+      "expected": "fast; no dialog",
+      "observed": {
+        "args": [
+          "nav",
+          "http://127.0.0.1:52558/fx.html?n=e6b-1790416149776-xrf534&landed=1"
+        ],
+        "code": 0,
+        "ms": 3296,
+        "killedAtCap": false,
+        "stdout": "Navigated to http://127.0.0.1:52558/fx.html?n=e6b-1790416149776-xrf534&landed=1\nTitle: fr2-04 step1\n",
+        "stderr": ""
+      },
+      "at": "2026-09-26T09:49:13.744Z"
+    },
+    {
+      "id": "E6b.record",
+      "desc": "page record",
+      "observed": [
+        {
+          "kind": "beforeunload",
+          "phase": "armed",
+          "seq": 1,
+          "t": 1790416150448
+        },
+        {
+          "kind": "beforeunload",
+          "phase": "fired",
+          "seq": 2,
+          "t": 1790416150709
+        },
+        {
+          "kind": "landed",
+          "seq": 3,
+          "t": 1790416153723
+        }
+      ],
+      "at": "2026-09-26T09:49:13.746Z"
+    },
+    {
+      "id": "E6c.blocked",
+      "desc": "renderer-initiated nav with beforeunload, no CLI attached",
+      "expected": "blocked",
+      "observed": "blocked",
+      "at": "2026-09-26T09:49:20.729Z"
+    },
+    {
+      "id": "E6c.fresh",
+      "desc": "fresh enable+handle(accept)",
+      "observed": {
+        "events": [],
+        "h": {
+          "status": "rejected",
+          "ms": 0,
+          "error": "Protocol error (Page.handleJavaScriptDialog): No dialog is showing"
+        },
+        "live": "blocked"
+      },
+      "at": "2026-09-26T09:49:26.770Z"
+    },
+    {
+      "id": "E6c.recover",
+      "desc": "cleanup",
+      "observed": {
+        "reload": {
+          "status": "resolved",
+          "ms": 3,
+          "value": {}
+        },
+        "live": "blocked"
+      },
+      "at": "2026-09-26T09:49:37.692Z"
+    },
+    {
+      "id": "E7.blocked",
+      "desc": "timer confirm opened with nobody attached",
+      "expected": "blocked",
+      "observed": "blocked",
+      "at": "2026-09-26T09:49:45.925Z"
+    },
+    {
+      "id": "E7.fresh",
+      "desc": "fresh enable+handle",
+      "expected": "same as E2",
+      "observed": {
+        "events": [
+          {
+            "ev": "closed",
+            "result": false,
+            "t": 1790416191772
+          }
+        ],
+        "h": {
+          "status": "rejected",
+          "ms": 5,
+          "error": "Protocol error (Page.handleJavaScriptDialog): No dialog is showing"
+        },
+        "live": "blocked"
+      },
+      "at": "2026-09-26T09:49:50.953Z"
+    },
+    {
+      "id": "E7.recover",
+      "desc": "cleanup",
+      "observed": {
+        "reload": {
+          "status": "resolved",
+          "ms": 3,
+          "value": {}
+        },
+        "live": "responsive"
+      },
+      "at": "2026-09-26T09:49:51.786Z"
+    },
+    {
+      "id": "E7b.holder",
+      "desc": "pre-enabled holder receives and handles a timer confirm",
+      "expected": "event, resolved, true",
+      "observed": {
+        "ev": {
+          "status": "resolved",
+          "ms": 5956,
+          "value": {
+            "url": "http://127.0.0.1:52558/fx.html?n=e7b-1790416192397-h8s7qu&timerKind=confirm&timerMs=6000",
+            "frameId": "9E383FFF920E503F3D9771C8676B05F9",
+            "message": "s1 timer e7b-1790416192397-h8s7qu",
+            "type": "confirm",
+            "hasBrowserHandler": true,
+            "defaultPrompt": ""
+          }
+        },
+        "h": {
+          "status": "resolved",
+          "ms": 4,
+          "value": {}
+        },
+        "live": "responsive",
+        "record": [
+          {
+            "kind": "confirm",
+            "phase": "opening",
+            "timer": true,
+            "seq": 1,
+            "t": 1790416199073
+          },
+          {
+            "kind": "confirm",
+            "phase": "returned",
+            "timer": true,
+            "result": true,
+            "seq": 2,
+            "t": 1790416199077
+          }
+        ]
+      },
+      "at": "2026-09-26T09:49:59.082Z"
+    },
+    {
+      "id": "E8.tab1",
+      "desc": "tab 1 after a synthetic confirm",
+      "expected": "blocked",
+      "observed": "blocked",
+      "at": "2026-09-26T09:50:01.645Z"
+    },
+    {
+      "id": "E8.tab2",
+      "desc": "tab 2 liveness",
+      "expected": "recorded",
+      "observed": "responsive",
+      "at": "2026-09-26T09:50:01.646Z"
+    },
+    {
+      "id": "E8.recover",
+      "desc": "cleanup",
+      "observed": {
+        "reload": {
+          "status": "resolved",
+          "ms": 2,
+          "value": {}
+        },
+        "live": "responsive"
+      },
+      "at": "2026-09-26T09:50:02.470Z"
+    },
+    {
+      "id": "E9.add",
+      "desc": "addScriptToEvaluateOnNewDocument",
+      "observed": {
+        "status": "resolved",
+        "ms": 0,
+        "value": {
+          "identifier": "1"
+        }
+      },
+      "at": "2026-09-26T09:50:03.852Z"
+    },
+    {
+      "id": "E9.afterDetach",
+      "desc": "injected global after its session detached + new document",
+      "expected": "\"undefined\"",
+      "observed": {
+        "status": "resolved",
+        "ms": 1,
+        "value": {
+          "result": {
+            "type": "string",
+            "value": "undefined"
+          }
+        }
+      },
+      "at": "2026-09-26T09:50:04.139Z"
+    }
+  ]
+}

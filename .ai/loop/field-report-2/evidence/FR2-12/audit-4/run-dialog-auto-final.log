@@ -1,0 +1,75 @@
+{"timestamp":"2026-09-27T20:26:14.866Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-27T20:26:15.082Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790540774865_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-27T20:26:26.460Z","level":"info","message":"[BrowserSession] Closed session sess_1790540774865_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T20:26:26.460Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790540774865_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T20:26:26.460Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-27T20:26:26.631Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790540786460_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-27T20:26:38.048Z","level":"info","message":"[BrowserSession] Closed session sess_1790540786460_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T20:26:38.048Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790540786460_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T20:26:38.048Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-27T20:26:38.247Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790540798048_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-27T20:26:49.641Z","level":"info","message":"[BrowserSession] Closed session sess_1790540798048_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T20:26:49.641Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790540798048_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T20:26:49.642Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-27T20:26:49.832Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790540809642_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-27T20:27:01.323Z","level":"info","message":"[BrowserSession] Closed session sess_1790540809642_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T20:27:01.323Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790540809642_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T20:27:01.323Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-27T20:27:01.510Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790540821323_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-27T20:27:12.897Z","level":"info","message":"[BrowserSession] Closed session sess_1790540821323_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T20:27:12.897Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790540821323_1","context":{"reason":"Close all sessions requested"}}
+688ms t0 open alertload {"dialogType":"alert","message":"a4-open"}
+2564ms t0 audit ok while alert open {"url":"http://127.0.0.1:63935/ok?d0","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+626ms t0 open alertload again {"dialogType":"alert","message":"a4-open"}
+2572ms t0 audit own404hash while alert open {"url":"http://127.0.0.1:63935/own404hash?d0#top","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 (Not Found)"],"covers":true}
+618ms t0 open alertload again {"dialogType":"alert","message":"a4-open"}
+2599ms t0 audit own404empty while alert open {"url":"chrome-error://chromewebdata/","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 ()"],"covers":true}
+1565ms t0 audit ok baseline {"url":"http://127.0.0.1:63935/ok?base0","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+735ms t1 open alertload {"dialogType":"alert","message":"a4-open"}
+2580ms t1 audit ok while alert open {"url":"http://127.0.0.1:63935/ok?d1","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+613ms t1 open alertload again {"dialogType":"alert","message":"a4-open"}
+2568ms t1 audit own404hash while alert open {"url":"http://127.0.0.1:63935/own404hash?d1#top","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 (Not Found)"],"covers":true}
+623ms t1 open alertload again {"dialogType":"alert","message":"a4-open"}
+2596ms t1 audit own404empty while alert open {"url":"chrome-error://chromewebdata/","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 ()"],"covers":true}
+1562ms t1 audit ok baseline {"url":"http://127.0.0.1:63935/ok?base1","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+720ms t2 open alertload {"dialogType":"alert","message":"a4-open"}
+2574ms t2 audit ok while alert open {"url":"http://127.0.0.1:63935/ok?d2","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+621ms t2 open alertload again {"dialogType":"alert","message":"a4-open"}
+2561ms t2 audit own404hash while alert open {"url":"http://127.0.0.1:63935/own404hash?d2#top","broken":[{"url":"http://127.0.0.1:63935/own404hash?d2","status":404}],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 (Not Found)"],"covers":true}
+625ms t2 open alertload again {"dialogType":"alert","message":"a4-open"}
+2607ms t2 audit own404empty while alert open {"url":"chrome-error://chromewebdata/","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 ()"],"covers":true}
+1548ms t2 audit ok baseline {"url":"http://127.0.0.1:63935/ok?base2","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+781ms t3 open alertload {"dialogType":"alert","message":"a4-open"}
+2574ms t3 audit ok while alert open {"url":"http://127.0.0.1:63935/ok?d3","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+628ms t3 open alertload again {"dialogType":"alert","message":"a4-open"}
+2572ms t3 audit own404hash while alert open {"url":"http://127.0.0.1:63935/own404hash?d3#top","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 (Not Found)"],"covers":true}
+628ms t3 open alertload again {"dialogType":"alert","message":"a4-open"}
+2588ms t3 audit own404empty while alert open {"url":"chrome-error://chromewebdata/","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 ()"],"covers":true}
+1565ms t3 audit ok baseline {"url":"http://127.0.0.1:63935/ok?base3","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+727ms t4 open alertload {"dialogType":"alert","message":"a4-open"}
+2559ms t4 audit ok while alert open {"url":"http://127.0.0.1:63935/ok?d4","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+611ms t4 open alertload again {"dialogType":"alert","message":"a4-open"}
+2554ms t4 audit own404hash while alert open {"url":"http://127.0.0.1:63935/own404hash?d4#top","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 (Not Found)"],"covers":true}
+612ms t4 open alertload again {"dialogType":"alert","message":"a4-open"}
+2605ms t4 audit own404empty while alert open {"url":"chrome-error://chromewebdata/","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 ()"],"covers":true}
+1565ms t4 audit ok baseline {"url":"http://127.0.0.1:63935/ok?base4","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+CDP: {"s":{"Page.enable":{"ms":1015,"ok":true},"Network.enable":{"ms":6,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":1020,"ok":true},"Network.enable":{"ms":7,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":1020,"ok":true},"Network.enable":{"ms":28,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1,"ok":true},"Network.enable":{"ms":0,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":1019,"ok":true},"Network.enable":{"ms":7,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1017,"ok":true},"Network.enable":{"ms":8,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":1016,"ok":true},"Network.enable":{"ms":29,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":0,"ok":true},"Network.enable":{"ms":1,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":1019,"ok":true},"Network.enable":{"ms":6,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1008,"ok":true},"Network.enable":{"ms":6,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1019,"ok":true},"Network.enable":{"ms":33,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":0,"ok":true},"Network.enable":{"ms":1,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":1019,"ok":true},"Network.enable":{"ms":5,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1016,"ok":true},"Network.enable":{"ms":8,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1014,"ok":true},"Network.enable":{"ms":29,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":0,"ok":true},"Network.enable":{"ms":0,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":1007,"ok":true},"Network.enable":{"ms":5,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1015,"ok":true},"Network.enable":{"ms":7,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1016,"ok":true},"Network.enable":{"ms":35,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":0,"ok":true},"Network.enable":{"ms":0,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":2}

@@ -1,0 +1,21 @@
+{
+  "item": "FR2-05 fix-1",
+  "gap": "GAP-294 (CRITICAL)",
+  "method": "path-containment.ts backed up (sha256 047631555cf4c7b135f251260814411affe2a28949d52610959579b5d0223c1e), rejectWindowsTrimmedComponents patched to an unconditional early `return;` (CRLF/LF preserved, only that one function body touched), packages/browser rebuilt (tsc), then restored byte-for-byte from the backup and rebuilt again -- sha256 matched exactly before and after restore.",
+  "unit_tests_with_fix_reverted": {
+    "PC8": "FAILED (expected reject, got resolved path) -- confirms the unit test actually exercises the fix",
+    "PC9": "FAILED (same)",
+    "PC10": "FAILED (same)",
+    "PC11": "still passed (legitimate-path regression guard, unaffected by the revert, as expected)",
+    "PC12": "still passed (POSIX-only, unaffected)",
+    "PC13/PC13b (GAP-295)": "still passed -- confirms the revert only disabled GAP-294's own check, not GAP-295's independent fix"
+  },
+  "live_escape_with_fix_reverted": {
+    "dot (exact audit-1 repro, single trailing-dot junction component)": "ESCAPED 3/3 -- file physically landed at <outside>/sub/<name>, matching audit-1's own confirmed finding exactly",
+    "space (trailing space variant)": "did not reproduce a physical escape in 3/3 trials -- Chrome's own download-behavior handling returned 'Download was canceled' each time (exit 1) for this specific variant on this Chrome build; documented as a residual/inconclusive case for the SPACE trick specifically under revert, not a claim that trailing space is safe -- the CRITICAL, audit-confirmed vector is the trailing DOT, which reproduced deterministically",
+    "anywhere (subdir. + jn. combined)": "did not escape into <outside> in 3/3 trials under revert -- the file landed inside a literally-named 'subdir.\\jn.\\sub' folder still INSIDE the allowed root (Chrome/Win32 apparently did not strip either trailing dot in this specific two-level nonexistent-prefix combination on this build). Not a demonstrated escape for this exact combination, but the fix rejects it anyway (proactively, not because a live escape was proven for it) -- see fix rationale below."
+  },
+  "unit_tests_after_restore": "PC1-PC14 all 15/15 pass again",
+  "live_after_restore": "10/10 trials per variant (dot/space/anywhere) all 'fixed-rejected', 0 escapes -- see gap294-live-results.json",
+  "conclusion": "The fix's own design (decisions.md: reject ANY trailing dot/space component outright, before any existence check) is intentionally broader than the minimal set of Windows normalization quirks that were live-confirmed to escape -- it does not depend on knowing exactly which multi-level combinations Windows/Chrome will or won't strip on a given build. The revert-and-confirm reproduces the exact CRITICAL, audit-1-confirmed escape (a single trailing-dot junction component) deterministically 3/3, and the fix eliminates it (and the other two variants) 100% (30/30 trials total post-fix, 3 variants x 10 trials) once restored."
+}

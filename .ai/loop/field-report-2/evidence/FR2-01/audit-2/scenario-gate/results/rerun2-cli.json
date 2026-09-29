@@ -1,0 +1,35 @@
+[
+  {
+    "id": "UC-04",
+    "title": "Canvas blindness (Google Maps)",
+    "surface": "cli",
+    "success": true,
+    "ms": 4614,
+    "detail": {
+      "searchBoxLine": "[#3] label \"Search Google Maps\"",
+      "zoomInLine": "[#37] button \"Zoom in\"",
+      "zoomOutLine": "[#42] button \"Zoom out\"",
+      "groundable": true,
+      "retriedDueToStaleNewTabPage": false,
+      "note": "Search box and zoom/pan controls are groundable via the normal DOM interactive listing — expected, they are real DOM elements. The map surface itself is a <canvas>: opaque to DOM-based grounding by construction, same as every DOM-reading tool (Playwright/Puppeteer included). No attempt was made to read canvas pixel content — out of scope, matches successCriteria."
+    },
+    "error": null
+  },
+  {
+    "id": "UC-08",
+    "title": "File download",
+    "surface": "cli",
+    "success": true,
+    "ms": 9233,
+    "detail": {
+      "fileName": "selenide-intro.txt",
+      "downloadDir": "E:\\AI-Cache\\tmp\\sutradhar-downloads\\cli-uc08-1790295843977",
+      "downloadResultStdout": "Downloaded \"selenide-intro.txt\" to E:\\AI-Cache\\tmp\\sutradhar-downloads\\cli-uc08-1790295843977\\selenide-intro.txt",
+      "downloadedFilename": "selenide-intro.txt",
+      "downloadedPath": "E:\\AI-Cache\\tmp\\sutradhar-downloads\\cli-uc08-1790295843977\\selenide-intro.txt",
+      "landedExpectedFile": true,
+      "signalUsed": "the `download` CLI command's own real completion signal (added Phase 4) — no longer polling the filesystem by diff."
+    },
+    "error": null
+  }
+]

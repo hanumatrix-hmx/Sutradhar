@@ -1,0 +1,80 @@
+{"timestamp":"2026-09-25T03:32:59.645Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-083: a state=visible timeout where the diagnostic itself times out on every frame says "could not be determined", never the confirmed-negative "No element found"[22m[39m
+<empty line>
+[90mstderr[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-083: a state=visible timeout where the diagnostic itself times out on every frame says "could not be determined", never the confirmed-negative "No element found"[22m[39m
+{"timestamp":"2026-09-25T03:32:59.959Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 50ms waiting for state=visible: visibility could not be determined for 1 of 1 frame(s) — they did not respond within the diagnostic's time bound. This does NOT confirm the element is absent; try a larger timeoutMs.","context":{}}
+{"timestamp":"2026-09-25T03:32:59.959Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-084/GAP-087: probing multiple busy frames within a single VISIBLE-state pass now runs in parallel too — mirrors GAP-059's hidden-path fix, which this exact scenario (state:visible) previously did NOT get[22m[39m
+{"timestamp":"2026-09-25T03:32:59.960Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#spinner"}}
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-084/GAP-087: probing multiple busy frames within a single VISIBLE-state pass now runs in parallel too — mirrors GAP-059's hidden-path fix, which this exact scenario (state:visible) previously did NOT get[22m[39m
+<empty line>
+[90mstderr[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-084/GAP-087: probing multiple busy frames within a single VISIBLE-state pass now runs in parallel too — mirrors GAP-059's hidden-path fix, which this exact scenario (state:visible) previously did NOT get[22m[39m
+{"timestamp":"2026-09-25T03:33:00.223Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 260ms waiting for state=visible: visibility could not be determined for 5 of 5 frame(s) — they did not respond within the diagnostic's time bound. This does NOT confirm the element is absent; try a larger timeoutMs.","context":{}}
+{"timestamp":"2026-09-25T03:33:00.223Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-085: the otherVisibleMatches diagnostic reports its own uncertainty instead of a silently-wrong confirmed zero when its per-frame check times out[22m[39m
+{"timestamp":"2026-09-25T03:33:00.223Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#banner"}}
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-086: isHandleVisible is bounded on its own — a handle whose evaluate() never resolves cannot stall a pass past FRAME_PROBE_TIMEOUT_MS[22m[39m
+{"timestamp":"2026-09-25T03:33:00.485Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#spinner"}}
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-086: isHandleVisible is bounded on its own — a handle whose evaluate() never resolves cannot stall a pass past FRAME_PROBE_TIMEOUT_MS[22m[39m
+<empty line>
+[90mstderr[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-086: isHandleVisible is bounded on its own — a handle whose evaluate() never resolves cannot stall a pass past FRAME_PROBE_TIMEOUT_MS[22m[39m
+{"timestamp":"2026-09-25T03:33:00.750Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 150ms waiting for state=hidden: could not verify: one or more frames were unresponsive.","context":{}}
+{"timestamp":"2026-09-25T03:33:00.751Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-112 (FR2-01 audit-5/fix-5): a genuine per-frame THROWN error in the visibility diagnosis must say "could not be determined", never the confirmed-negative "No element found" (element genuinely present)[22m[39m
+{"timestamp":"2026-09-25T03:33:00.751Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#present"}}
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-112 (FR2-01 audit-5/fix-5): a genuine per-frame THROWN error in the visibility diagnosis must say "could not be determined", never the confirmed-negative "No element found" (element genuinely present)[22m[39m
+<empty line>
+[90mstderr[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-112 (FR2-01 audit-5/fix-5): a genuine per-frame THROWN error in the visibility diagnosis must say "could not be determined", never the confirmed-negative "No element found" (element genuinely present)[22m[39m
+{"timestamp":"2026-09-25T03:33:00.907Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 150ms waiting for state=visible: visibility could not be determined for 1 of 1 frame(s) — they did not respond within the diagnostic's time bound. This does NOT confirm the element is absent; try a larger timeoutMs.","context":{}}
+{"timestamp":"2026-09-25T03:33:00.907Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-113 (FR2-01 audit-5/fix-5): the otherVisibleMatches diagnostic reports its own uncertainty, not a silently-wrong confirmed zero, when its per-frame check THROWS (not just times out)[22m[39m
+{"timestamp":"2026-09-25T03:33:00.907Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#banner"}}
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-115 (FR2-01 audit-5/fix-5): the ATTACHED-state check-once path (timeoutMs<=0) probes multiple busy frames in PARALLEL — firstAnyHandleAnyFrame's own parallelization, previously unguarded by any test (audit-5's mutation X1, reverting it to sequential probing, passed all 141 existing tests)[22m[39m
+{"timestamp":"2026-09-25T03:33:00.908Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#thing"}}
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-115 (FR2-01 audit-5/fix-5): the ATTACHED-state check-once path (timeoutMs<=0) probes multiple busy frames in PARALLEL — firstAnyHandleAnyFrame's own parallelization, previously unguarded by any test (audit-5's mutation X1, reverting it to sequential probing, passed all 141 existing tests)[22m[39m
+<empty line>
+[90mstderr[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-115 (FR2-01 audit-5/fix-5): the ATTACHED-state check-once path (timeoutMs<=0) probes multiple busy frames in PARALLEL — firstAnyHandleAnyFrame's own parallelization, previously unguarded by any test (audit-5's mutation X1, reverting it to sequential probing, passed all 141 existing tests)[22m[39m
+{"timestamp":"2026-09-25T03:33:01.172Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 0ms waiting for state=attached: visibility could not be determined for 5 of 5 frame(s) — they did not respond within the diagnostic's time bound. This does NOT confirm the element is absent; try a larger timeoutMs.","context":{}}
+{"timestamp":"2026-09-25T03:33:01.173Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+ [33m❯[39m tests/unit/browser-action-engine.spec.ts [2m ([22m[2m144 tests[22m [2m|[22m [31m1 failed[39m[2m)[22m[33m 13873[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/browser-action-engine.spec.ts[2m > [22m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1)[2m > [22mE8: visible with zero matches keeps the node-id staleness guidance and the "no element found" substring[39m
+[31m     → expected 'wait_for_selector timed out after 50m…' to contain 'No element found for selector: #nope'[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/browser-action-engine.spec.ts[2m > [22m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1)[2m > [22mE8: visible with zero matches keeps the node-id staleness guidance and the "no element found" substring
+[31m[1mAssertionError[22m: expected 'wait_for_selector timed out after 50m…' to contain 'No element found for selector: #nope'[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- No element found for selector: #nope[39m
+[31m+ wait_for_selector timed out after 50ms waiting for state=visible: visibility could not be determined for 1 of 1 frame(s) — they did not respond within the diagnostic's time bound. This does NOT confirm the element is absent; try a larger timeoutMs.[39m
+
+[36m [2m❯[22m tests/unit/browser-action-engine.spec.ts:[2m2356:26[22m[39m
+    [90m2354| [39m    expect(result.success).toBe(false);
+    [90m2355| [39m    expect(result.error).toContain('state=visible');
+    [90m2356| [39m    expect(result.error).toContain('No element found for selector: #no…
+    [90m   | [39m                         [31m^[39m
+    [90m2357| [39m
+    [90m2358| [39m    const nodeIdPage = {
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m7 passed[39m[22m[90m (8)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m226 passed[39m[22m[90m (227)[39m
+[2m   Start at [22m 09:02:46
+[2m   Duration [22m 15.07s[2m (transform 557ms, setup 0ms, collect 5.66s, tests 16.47s, environment 1ms, prepare 1.55s)[22m
+

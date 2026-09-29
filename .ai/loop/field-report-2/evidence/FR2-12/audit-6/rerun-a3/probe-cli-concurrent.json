@@ -1,0 +1,205 @@
+{
+  "group": "concurrent",
+  "origin": "http://127.0.0.1:57635",
+  "startedAt": "2026-09-28T02:07:57.945Z",
+  "rows": [
+    {
+      "tag": "sepState-pair0-A",
+      "code": 3,
+      "ms": 2781,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "blocked"
+      ]
+    },
+    {
+      "tag": "sepState-pair0-B",
+      "code": 1,
+      "ms": 10407,
+      "timedOut": false,
+      "docCount": 0,
+      "kinds": [],
+      "stderrHead": "Error: Timed out waiting for Chrome to start on port 57637.\n"
+    },
+    {
+      "tag": "sepState-pair1-A",
+      "code": 3,
+      "ms": 2973,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "blocked"
+      ]
+    },
+    {
+      "tag": "sepState-pair1-B",
+      "code": 3,
+      "ms": 2953,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "blocked"
+      ]
+    },
+    {
+      "tag": "sepState-pair2-A",
+      "code": 1,
+      "ms": 10428,
+      "timedOut": false,
+      "docCount": 0,
+      "kinds": [],
+      "stderrHead": "Error: Timed out waiting for Chrome to start on port 64370.\n"
+    },
+    {
+      "tag": "sepState-pair2-B",
+      "code": 3,
+      "ms": 2808,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "blocked"
+      ]
+    },
+    {
+      "tag": "sepState-pair3-A",
+      "code": 1,
+      "ms": 10390,
+      "timedOut": false,
+      "docCount": 0,
+      "kinds": [],
+      "stderrHead": "Error: Timed out waiting for Chrome to start on port 64320.\n"
+    },
+    {
+      "tag": "sepState-pair3-B",
+      "code": 3,
+      "ms": 2800,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "blocked"
+      ]
+    },
+    {
+      "tag": "sepState-pair4-A",
+      "code": 3,
+      "ms": 2953,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "blocked"
+      ]
+    },
+    {
+      "tag": "sepState-pair4-B",
+      "code": 3,
+      "ms": 2973,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "blocked"
+      ]
+    },
+    {
+      "tag": "sharedState-pair0-A",
+      "code": 1,
+      "ms": 322,
+      "timedOut": false,
+      "docCount": 0,
+      "kinds": [],
+      "fatal": true,
+      "stderrHead": "Fatal: net::ERR_ABORTED at http://127.0.0.1:57635/alertat?ms=1550&p=0a\n"
+    },
+    {
+      "tag": "sharedState-pair0-B",
+      "code": 0,
+      "ms": 1904,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "report"
+      ]
+    },
+    {
+      "tag": "sharedState-pair1-A",
+      "code": 1,
+      "ms": 290,
+      "timedOut": false,
+      "docCount": 0,
+      "kinds": [],
+      "fatal": true,
+      "stderrHead": "Fatal: net::ERR_ABORTED at http://127.0.0.1:57635/alertat?ms=1550&p=1a\n"
+    },
+    {
+      "tag": "sharedState-pair1-B",
+      "code": 0,
+      "ms": 1864,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "report"
+      ]
+    },
+    {
+      "tag": "sharedState-pair2-A",
+      "code": 0,
+      "ms": 1862,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "report"
+      ]
+    },
+    {
+      "tag": "sharedState-pair2-B",
+      "code": 0,
+      "ms": 1858,
+      "timedOut": false,
+      "docCount": 1,
+      "kinds": [
+        "report"
+      ]
+    }
+  ],
+  "summary": {
+    "total": 16,
+    "exactlyOneDoc": 11,
+    "zeroDocs": 5,
+    "multiDocs": 0,
+    "badRows": [
+      {
+        "tag": "sepState-pair0-B",
+        "docCount": 0,
+        "kinds": [],
+        "code": 1
+      },
+      {
+        "tag": "sepState-pair2-A",
+        "docCount": 0,
+        "kinds": [],
+        "code": 1
+      },
+      {
+        "tag": "sepState-pair3-A",
+        "docCount": 0,
+        "kinds": [],
+        "code": 1
+      },
+      {
+        "tag": "sharedState-pair0-A",
+        "docCount": 0,
+        "kinds": [],
+        "code": 1,
+        "fatal": true
+      },
+      {
+        "tag": "sharedState-pair1-A",
+        "docCount": 0,
+        "kinds": [],
+        "code": 1,
+        "fatal": true
+      }
+    ]
+  },
+  "tmpRemoved": true
+}

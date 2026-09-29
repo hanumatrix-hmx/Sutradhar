@@ -1,0 +1,33 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli
+
+ ❯ tests/unit/dialog-broker.spec.ts  (24 tests | 1 failed) 4211ms
+   ❯ tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate GAP-256-fix: crashed tabs > GC-CLI1: only a crashed tab (no dialog) -> gate is clear (does NOT throw DialogBlockedError) and says on stderr it is a crash, not a dialog, naming closetab
+     → expected '' to contain 'T-CRASHED'
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 23 passed (24)
+   Start at  03:47:53
+   Duration  5.03s (transform 286ms, setup 0ms, collect 534ms, tests 4.21s, environment 0ms, prepare 118ms)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate GAP-256-fix: crashed tabs > GC-CLI1: only a crashed tab (no dialog) -> gate is clear (does NOT throw DialogBlockedError) and says on stderr it is a crash, not a dialog, naming closetab
+AssertionError: expected '' to contain 'T-CRASHED'
+
+- Expected
++ Received
+
+- T-CRASHED
+
+ ❯ tests/unit/dialog-broker.spec.ts:342:20
+    340|       expect(result).toEqual({ status: 'clear' });
+    341|       const text = errSpy.mock.calls.map((c) => String(c[0])).join('\n…
+    342|       expect(text).toContain('T-CRASHED');
+       |                    ^
+    343|       expect(text).toContain('has crashed');
+    344|       expect(text).toContain('not a dialog');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

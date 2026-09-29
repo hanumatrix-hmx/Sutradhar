@@ -1,0 +1,210 @@
+{"timestamp":"2026-09-28T00:30:36.961Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-28T00:30:37.175Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790555436960_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-28T00:30:44.912Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_7","selector":"#nc"}}
+{"timestamp":"2026-09-28T00:30:45.784Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_8","selector":"#dl"}}
+{"timestamp":"2026-09-28T00:30:46.738Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_9","selector":"#dl404"}}
+{"timestamp":"2026-09-28T00:31:00.274Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_27","selector":"#pop"}}
+{"timestamp":"2026-09-28T00:31:09.209Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_34","selector":"#nc"}}
+{"timestamp":"2026-09-28T00:31:10.074Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_35","selector":"#dl"}}
+{"timestamp":"2026-09-28T00:31:11.022Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_36","selector":"#dl404"}}
+{"timestamp":"2026-09-28T00:31:24.557Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_54","selector":"#pop"}}
+{"timestamp":"2026-09-28T00:31:33.526Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_61","selector":"#nc"}}
+{"timestamp":"2026-09-28T00:31:34.388Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_62","selector":"#dl"}}
+{"timestamp":"2026-09-28T00:31:35.342Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_63","selector":"#dl404"}}
+{"timestamp":"2026-09-28T00:31:48.889Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_81","selector":"#pop"}}
+{"timestamp":"2026-09-28T00:31:57.841Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_88","selector":"#nc"}}
+{"timestamp":"2026-09-28T00:31:58.706Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_89","selector":"#dl"}}
+{"timestamp":"2026-09-28T00:31:59.670Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_90","selector":"#dl404"}}
+{"timestamp":"2026-09-28T00:32:12.999Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_108","selector":"#pop"}}
+{"timestamp":"2026-09-28T00:32:22.038Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_115","selector":"#nc"}}
+{"timestamp":"2026-09-28T00:32:22.886Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_116","selector":"#dl"}}
+{"timestamp":"2026-09-28T00:32:23.837Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_117","selector":"#dl404"}}
+{"timestamp":"2026-09-28T00:32:37.261Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790555436960_1_135","selector":"#pop"}}
+{"timestamp":"2026-09-28T00:32:38.722Z","level":"info","message":"[BrowserSession] Closed session sess_1790555436960_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-28T00:32:38.722Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790555436960_1","context":{"reason":"Runtime shutdown"}}
+{
+ "2a own404 -> 302-to-deadhost": {
+  "n": 5,
+  "stale": "0/5",
+  "covers": "5/5"
+ },
+ "2a own404 -> 302 -> 200(js) -> final404": {
+  "n": 5,
+  "stale": "0/5",
+  "finalReported": "5/5",
+  "covers": "5/5"
+ },
+ "2a own404 -> 302 -> 200(js) -> finalok": {
+  "n": 5,
+  "stale": "0/5",
+  "covers": "5/5"
+ },
+ "2a clean -> via204(js: 204 then final404)": {
+  "n": 5,
+  "finalReported": "5/5",
+  "covers": "5/5"
+ },
+ "2a own404-other -> mid404(js) -> 302-to-deadhost": {
+  "n": 5,
+  "staleOwn404": "0/5",
+  "mid404Reported": "0/5",
+  "covers": "5/5"
+ },
+ "2b own404 -> click 204 link (no commit) -> audit": {
+  "n": 5,
+  "own404BeforeClick": "5/5",
+  "own404Kept": "0/5",
+  "covers": "5/5"
+ },
+ "2b own404 -> click download(200) link (no commit) -> audit": {
+  "n": 5,
+  "own404Kept": "0/5",
+  "covers": "5/5"
+ },
+ "2b clean -> click download(404) link -> audit": {
+  "n": 5,
+  "dl404Reported": "5/5",
+  "covers": "5/5"
+ },
+ "2b SW: sw404 -> audit; -> about:blank -> audit; -> sw200 -> audit": {
+  "n": 5,
+  "swOwn404Reported": "5/5",
+  "a2Stale": "0/5",
+  "a3Stale": "0/5",
+  "a3covers": "5/5",
+  "urlModeSwOwn404": "5/5"
+ },
+ "2c sd404 hash @0ms (cur)": {
+  "n": 5,
+  "own404": "5/5",
+  "errBefore": "5/5",
+  "errAfter": "5/5",
+  "fetchAfter": "5/5",
+  "foreign": "0/5",
+  "covers": "5/5"
+ },
+ "2c sd404 hash @30ms (cur)": {
+  "n": 5,
+  "own404": "5/5",
+  "errBefore": "5/5",
+  "errAfter": "5/5",
+  "fetchAfter": "5/5",
+  "foreign": "0/5",
+  "covers": "5/5"
+ },
+ "2c sd404 hash @150ms (cur)": {
+  "n": 5,
+  "own404": "5/5",
+  "errBefore": "5/5",
+  "errAfter": "5/5",
+  "fetchAfter": "5/5",
+  "foreign": "0/5",
+  "covers": "5/5"
+ },
+ "2c sd404 hash @400ms (cur)": {
+  "n": 5,
+  "own404": "5/5",
+  "errBefore": "5/5",
+  "errAfter": "5/5",
+  "fetchAfter": "5/5",
+  "foreign": "0/5",
+  "covers": "5/5"
+ },
+ "2c sd404 push @0ms (cur)": {
+  "n": 5,
+  "own404": "5/5",
+  "errBefore": "5/5",
+  "errAfter": "5/5",
+  "fetchAfter": "5/5",
+  "foreign": "0/5",
+  "covers": "5/5"
+ },
+ "2c sd404 push @30ms (cur)": {
+  "n": 5,
+  "own404": "5/5",
+  "errBefore": "5/5",
+  "errAfter": "5/5",
+  "fetchAfter": "5/5",
+  "foreign": "0/5",
+  "covers": "5/5"
+ },
+ "2c sd404 push @150ms (cur)": {
+  "n": 5,
+  "own404": "5/5",
+  "errBefore": "5/5",
+  "errAfter": "5/5",
+  "fetchAfter": "5/5",
+  "foreign": "0/5",
+  "covers": "5/5"
+ },
+ "2c sd404 push @400ms (cur)": {
+  "n": 5,
+  "own404": "5/5",
+  "errBefore": "5/5",
+  "errAfter": "5/5",
+  "fetchAfter": "5/5",
+  "foreign": "0/5",
+  "covers": "5/5"
+ },
+ "2c sd404 replace @0ms (cur)": {
+  "n": 5,
+  "own404": "5/5",
+  "errBefore": "5/5",
+  "errAfter": "5/5",
+  "fetchAfter": "5/5",
+  "foreign": "0/5",
+  "covers": "5/5"
+ },
+ "2c sd404 replace @30ms (cur)": {
+  "n": 5,
+  "own404": "5/5",
+  "errBefore": "5/5",
+  "errAfter": "5/5",
+  "fetchAfter": "5/5",
+  "foreign": "0/5",
+  "covers": "5/5"
+ },
+ "2c sd404 replace @150ms (cur)": {
+  "n": 5,
+  "own404": "5/5",
+  "errBefore": "5/5",
+  "errAfter": "5/5",
+  "fetchAfter": "5/5",
+  "foreign": "0/5",
+  "covers": "5/5"
+ },
+ "2c sd404 replace @400ms (cur)": {
+  "n": 5,
+  "own404": "5/5",
+  "errBefore": "5/5",
+  "errAfter": "5/5",
+  "fetchAfter": "5/5",
+  "foreign": "0/5",
+  "covers": "5/5"
+ },
+ "2c harness own404->push->clean->push->audit": {
+  "n": 5,
+  "stale": "0/5",
+  "covers": "5/5"
+ },
+ "2c harness own404->hash/push/replace x3->audit (own kept)": {
+  "n": 5,
+  "own404Kept": "0/5",
+  "covers": "5/5"
+ },
+ "2c own404 -> push -> go_back(samedoc) -> audit (own kept)": {
+  "n": 5,
+  "own404Kept": "5/5",
+  "covers": "5/5"
+ },
+ "2d fresh about:blank tab audit()": {
+  "n": 5,
+  "covers": "0/5"
+ },
+ "2d popup own404 adopted": {
+  "n": 5,
+  "popupFound": "5/5",
+  "own404Reported": "0/5",
+  "covers": "0/5"
+ }
+}

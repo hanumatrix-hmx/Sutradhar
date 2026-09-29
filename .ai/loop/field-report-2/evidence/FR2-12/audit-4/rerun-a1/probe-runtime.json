@@ -1,0 +1,1024 @@
+{
+  "origin": "http://127.0.0.1:58413",
+  "probes": {
+    "vitals": [
+      {
+        "route": "/fast",
+        "t": 0,
+        "audit": {
+          "lcpMs": 240,
+          "cls": 0,
+          "fcpMs": 240,
+          "ttfbMs": 220
+        },
+        "ref": {
+          "lcp": 240,
+          "cls": 0,
+          "n": 0
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 0,
+        "hidden": false,
+        "ok": true
+      },
+      {
+        "route": "/fast",
+        "t": 1,
+        "audit": {
+          "lcpMs": 24,
+          "cls": 0,
+          "fcpMs": 24,
+          "ttfbMs": 2
+        },
+        "ref": {
+          "lcp": 24,
+          "cls": 0,
+          "n": 0
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 0,
+        "hidden": false,
+        "ok": true
+      },
+      {
+        "route": "/fast",
+        "t": 2,
+        "audit": {
+          "lcpMs": 24,
+          "cls": 0,
+          "fcpMs": 24,
+          "ttfbMs": 2
+        },
+        "ref": {
+          "lcp": 24,
+          "cls": 0,
+          "n": 0
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 0,
+        "hidden": false,
+        "ok": true
+      },
+      {
+        "route": "/slowlcp",
+        "t": 0,
+        "audit": {
+          "lcpMs": 916,
+          "cls": 0,
+          "fcpMs": 24,
+          "ttfbMs": 2
+        },
+        "ref": {
+          "lcp": 916,
+          "cls": 0,
+          "n": 0
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 0,
+        "hidden": false,
+        "ok": true
+      },
+      {
+        "route": "/slowlcp",
+        "t": 1,
+        "audit": {
+          "lcpMs": 924,
+          "cls": 0,
+          "fcpMs": 24,
+          "ttfbMs": 2
+        },
+        "ref": {
+          "lcp": 924,
+          "cls": 0,
+          "n": 0
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 0,
+        "hidden": false,
+        "ok": true
+      },
+      {
+        "route": "/slowlcp",
+        "t": 2,
+        "audit": {
+          "lcpMs": 924,
+          "cls": 0,
+          "fcpMs": 24,
+          "ttfbMs": 2
+        },
+        "ref": {
+          "lcp": 924,
+          "cls": 0,
+          "n": 0
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 0,
+        "hidden": false,
+        "ok": true
+      },
+      {
+        "route": "/latelcp",
+        "t": 0,
+        "audit": {
+          "lcpMs": 724,
+          "cls": 0,
+          "fcpMs": 24,
+          "ttfbMs": 1
+        },
+        "ref": {
+          "lcp": 724,
+          "cls": 0,
+          "n": 0
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 0,
+        "hidden": false,
+        "ok": true
+      },
+      {
+        "route": "/latelcp",
+        "t": 1,
+        "audit": {
+          "lcpMs": 720,
+          "cls": 0,
+          "fcpMs": 24,
+          "ttfbMs": 1
+        },
+        "ref": {
+          "lcp": 720,
+          "cls": 0,
+          "n": 0
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 0,
+        "hidden": false,
+        "ok": true
+      },
+      {
+        "route": "/latelcp",
+        "t": 2,
+        "audit": {
+          "lcpMs": 712,
+          "cls": 0,
+          "fcpMs": 20,
+          "ttfbMs": 2
+        },
+        "ref": {
+          "lcp": 712,
+          "cls": 0,
+          "n": 0
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 0,
+        "hidden": false,
+        "ok": true
+      },
+      {
+        "route": "/shift",
+        "t": 0,
+        "audit": {
+          "lcpMs": 24,
+          "cls": 0.07563515575904481,
+          "fcpMs": 24,
+          "ttfbMs": 2
+        },
+        "ref": {
+          "lcp": 24,
+          "cls": 0.07563515575904481,
+          "n": 1
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 1,
+        "hidden": false,
+        "ok": true
+      },
+      {
+        "route": "/shift",
+        "t": 1,
+        "audit": {
+          "lcpMs": 24,
+          "cls": 0.07563515575904481,
+          "fcpMs": 24,
+          "ttfbMs": 1
+        },
+        "ref": {
+          "lcp": 24,
+          "cls": 0.07563515575904481,
+          "n": 2
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 2,
+        "hidden": false,
+        "ok": true
+      },
+      {
+        "route": "/shift",
+        "t": 2,
+        "audit": {
+          "lcpMs": 24,
+          "cls": 0.07563515575904481,
+          "fcpMs": 24,
+          "ttfbMs": 1
+        },
+        "ref": {
+          "lcp": 24,
+          "cls": 0.07563515575904481,
+          "n": 2
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 2,
+        "hidden": false,
+        "ok": true
+      },
+      {
+        "route": "/multishift",
+        "t": 0,
+        "audit": {
+          "lcpMs": 20,
+          "cls": 0.2287009605889218,
+          "fcpMs": 20,
+          "ttfbMs": 2
+        },
+        "ref": {
+          "lcp": 20,
+          "cls": 0.2287009605889218,
+          "n": 10
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 10,
+        "hidden": false,
+        "ok": true
+      },
+      {
+        "route": "/multishift",
+        "t": 1,
+        "audit": {
+          "lcpMs": 12,
+          "cls": 0.2287009605889218,
+          "fcpMs": 12,
+          "ttfbMs": 1
+        },
+        "ref": {
+          "lcp": 12,
+          "cls": 0.2287009605889218,
+          "n": 11
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 11,
+        "hidden": false,
+        "ok": true
+      },
+      {
+        "route": "/multishift",
+        "t": 2,
+        "audit": {
+          "lcpMs": 24,
+          "cls": 0.2287009605889218,
+          "fcpMs": 24,
+          "ttfbMs": 2
+        },
+        "ref": {
+          "lcp": 24,
+          "cls": 0.2287009605889218,
+          "n": 11
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 11,
+        "hidden": false,
+        "ok": true
+      },
+      {
+        "route": "/manyshift",
+        "t": 0,
+        "audit": {
+          "lcpMs": 12,
+          "cls": 2.4303387170078135,
+          "fcpMs": 12,
+          "ttfbMs": 1
+        },
+        "ref": {
+          "lcp": 12,
+          "cls": 2.4303387170078135,
+          "n": 153
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 153,
+        "hidden": false,
+        "ok": true
+      },
+      {
+        "route": "/manyshift",
+        "t": 1,
+        "audit": {
+          "lcpMs": 40,
+          "cls": 2.4303387170078135,
+          "fcpMs": 40,
+          "ttfbMs": 1
+        },
+        "ref": {
+          "lcp": 40,
+          "cls": 2.446540975121199,
+          "n": 154
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0.016202258113385604,
+        "shiftEntriesSeenLive": 154,
+        "hidden": false,
+        "ok": false
+      },
+      {
+        "route": "/manyshift",
+        "t": 2,
+        "audit": {
+          "lcpMs": 40,
+          "cls": 2.4303387170078135,
+          "fcpMs": 40,
+          "ttfbMs": 1
+        },
+        "ref": {
+          "lcp": 40,
+          "cls": 2.4303387170078135,
+          "n": 153
+        },
+        "lcpDiff": 0,
+        "clsDiff": 0,
+        "shiftEntriesSeenLive": 153,
+        "hidden": false,
+        "ok": true
+      }
+    ],
+    "vitalsCurrentPage": [
+      {
+        "route": "/slowlcp",
+        "audit": {
+          "lcpMs": 924,
+          "cls": 0,
+          "fcpMs": 24,
+          "ttfbMs": 1
+        },
+        "ref": {
+          "lcp": 924,
+          "cls": 0,
+          "n": 0
+        },
+        "observation": {
+          "mode": "current-page",
+          "documentStartedAt": "2026-09-27T20:13:21.783Z",
+          "observingSince": "2026-09-27T20:12:35.412Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "ok": true
+      },
+      {
+        "route": "/shift",
+        "audit": {
+          "lcpMs": 12,
+          "cls": 0.07563515575904481,
+          "fcpMs": 12,
+          "ttfbMs": 2
+        },
+        "ref": {
+          "lcp": 12,
+          "cls": 0.07563515575904481,
+          "n": 2
+        },
+        "observation": {
+          "mode": "current-page",
+          "documentStartedAt": "2026-09-27T20:13:24.348Z",
+          "observingSince": "2026-09-27T20:12:35.412Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "ok": true
+      },
+      {
+        "route": "/latelcp",
+        "audit": {
+          "lcpMs": 716,
+          "cls": 0,
+          "fcpMs": 12,
+          "ttfbMs": 1
+        },
+        "ref": {
+          "lcp": 716,
+          "cls": 0,
+          "n": 0
+        },
+        "observation": {
+          "mode": "current-page",
+          "documentStartedAt": "2026-09-27T20:13:26.898Z",
+          "observingSince": "2026-09-27T20:12:35.412Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "ok": true
+      }
+    ],
+    "B2": {
+      "cls": [
+        0.07563515575904481,
+        0.07563515575904481,
+        0.07563515575904481
+      ],
+      "spread": 0,
+      "leaked": "undefined",
+      "ok": true
+    },
+    "B1residual": [
+      {
+        "t": 0,
+        "currentPage": {
+          "consoleErrors": 65,
+          "brokenRequests": 32,
+          "sample": [
+            "poll-err-r0",
+            "Failed to load resource: the server responded with a status of 404 (Not Found)"
+          ],
+          "cover": true
+        },
+        "urlMode": {
+          "consoleErrors": 0,
+          "brokenRequests": 0,
+          "sample": [],
+          "cover": true
+        }
+      },
+      {
+        "t": 1,
+        "currentPage": {
+          "consoleErrors": 64,
+          "brokenRequests": 32,
+          "sample": [
+            "poll-err-r1",
+            "Failed to load resource: the server responded with a status of 404 (Not Found)"
+          ],
+          "cover": true
+        },
+        "urlMode": {
+          "consoleErrors": 0,
+          "brokenRequests": 0,
+          "sample": [],
+          "cover": true
+        }
+      },
+      {
+        "t": 2,
+        "currentPage": {
+          "consoleErrors": 64,
+          "brokenRequests": 32,
+          "sample": [
+            "poll-err-r2",
+            "Failed to load resource: the server responded with a status of 404 (Not Found)"
+          ],
+          "cover": true
+        },
+        "urlMode": {
+          "consoleErrors": 0,
+          "brokenRequests": 0,
+          "sample": [],
+          "cover": true
+        }
+      },
+      {
+        "t": 3,
+        "currentPage": {
+          "consoleErrors": 65,
+          "brokenRequests": 32,
+          "sample": [
+            "poll-err-r3",
+            "Failed to load resource: the server responded with a status of 404 (Not Found)"
+          ],
+          "cover": true
+        },
+        "urlMode": {
+          "consoleErrors": 0,
+          "brokenRequests": 0,
+          "sample": [],
+          "cover": true
+        }
+      },
+      {
+        "t": 4,
+        "currentPage": {
+          "consoleErrors": 64,
+          "brokenRequests": 32,
+          "sample": [
+            "poll-err-r4",
+            "Failed to load resource: the server responded with a status of 404 (Not Found)"
+          ],
+          "cover": true
+        },
+        "urlMode": {
+          "consoleErrors": 0,
+          "brokenRequests": 0,
+          "sample": [],
+          "cover": true
+        }
+      }
+    ],
+    "edge": {
+      "redirect302": {
+        "ok": true,
+        "ms": 1550,
+        "valid": true,
+        "url": "http://127.0.0.1:58413/fast?n=r1",
+        "requestedUrl": "http://127.0.0.1:58413/redirect?n=r1",
+        "title": "fast",
+        "consoleErrors": [],
+        "pageErrorsN": 0,
+        "brokenRequests": [],
+        "webVitals": {
+          "lcpMs": 24,
+          "cls": 0,
+          "fcpMs": 24,
+          "ttfbMs": 4
+        },
+        "observation": {
+          "mode": "navigated",
+          "documentStartedAt": "2026-09-27T20:13:49.515Z",
+          "observingSince": "2026-09-27T20:12:35.412Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "baseline": null,
+        "screenshot": {
+          "path": null,
+          "width": 1264,
+          "height": 705,
+          "bytes": 7993,
+          "fullPage": true
+        }
+      },
+      "jsRedirect": {
+        "ok": true,
+        "ms": 1565,
+        "valid": true,
+        "url": "http://127.0.0.1:58413/fast?n=r2",
+        "requestedUrl": "http://127.0.0.1:58413/jsredirect?n=r2",
+        "title": "fast",
+        "consoleErrors": [],
+        "pageErrorsN": 0,
+        "brokenRequests": [],
+        "webVitals": {
+          "lcpMs": 16,
+          "cls": 0,
+          "fcpMs": 16,
+          "ttfbMs": 5
+        },
+        "observation": {
+          "mode": "navigated",
+          "documentStartedAt": "2026-09-27T20:13:51.071Z",
+          "observingSince": "2026-09-27T20:12:35.412Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "baseline": null,
+        "screenshot": {
+          "path": null,
+          "width": 1264,
+          "height": 705,
+          "bytes": 8582,
+          "fullPage": true
+        }
+      },
+      "aboutBlankUrl": {
+        "ok": true,
+        "ms": 1583,
+        "valid": true,
+        "url": "about:blank",
+        "requestedUrl": "about:blank",
+        "title": "",
+        "consoleErrors": [],
+        "pageErrorsN": 0,
+        "brokenRequests": [],
+        "webVitals": {
+          "lcpMs": null,
+          "cls": 0,
+          "fcpMs": null,
+          "ttfbMs": 0
+        },
+        "observation": {
+          "mode": "navigated",
+          "documentStartedAt": "2026-09-27T20:13:52.631Z",
+          "observingSince": "2026-09-27T20:12:35.412Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "baseline": null,
+        "screenshot": {
+          "path": null,
+          "width": 1264,
+          "height": 705,
+          "bytes": 4156,
+          "fullPage": true
+        }
+      },
+      "aboutBlankCurrent": {
+        "ok": true,
+        "ms": 40,
+        "valid": true,
+        "url": "about:blank",
+        "requestedUrl": null,
+        "title": "",
+        "consoleErrors": [],
+        "pageErrorsN": 0,
+        "brokenRequests": [],
+        "webVitals": {
+          "lcpMs": null,
+          "cls": 0,
+          "fcpMs": null,
+          "ttfbMs": 0
+        },
+        "observation": {
+          "mode": "current-page",
+          "documentStartedAt": "2026-09-27T20:13:54.213Z",
+          "observingSince": "2026-09-27T20:12:35.412Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "baseline": null,
+        "screenshot": {
+          "path": null,
+          "width": 1264,
+          "height": 705,
+          "bytes": 4156,
+          "fullPage": true
+        }
+      },
+      "throwDuringAudit": {
+        "ok": true,
+        "ms": 1551,
+        "valid": true,
+        "url": "http://127.0.0.1:58413/throwloop?n=t1",
+        "requestedUrl": "http://127.0.0.1:58413/throwloop?n=t1",
+        "title": "throwloop",
+        "consoleErrors": [],
+        "pageErrorsN": 50,
+        "brokenRequests": [],
+        "webVitals": {
+          "lcpMs": 12,
+          "cls": 0,
+          "fcpMs": 12,
+          "ttfbMs": 1
+        },
+        "observation": {
+          "mode": "navigated",
+          "documentStartedAt": "2026-09-27T20:13:54.262Z",
+          "observingSince": "2026-09-27T20:12:35.412Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "baseline": null,
+        "screenshot": {
+          "path": null,
+          "width": 1264,
+          "height": 705,
+          "bytes": 4457,
+          "fullPage": true
+        }
+      },
+      "status999": {
+        "ok": true,
+        "ms": 1549,
+        "valid": true,
+        "url": "http://127.0.0.1:58413/status999?n=w1",
+        "requestedUrl": "http://127.0.0.1:58413/status999?n=w1",
+        "title": "s999",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 999 (unknown)"
+        ],
+        "pageErrorsN": 0,
+        "brokenRequests": [
+          {
+            "url": "http://127.0.0.1:58413/weird-w1",
+            "status": 999
+          }
+        ],
+        "webVitals": {
+          "lcpMs": 24,
+          "cls": 0,
+          "fcpMs": 24,
+          "ttfbMs": 2
+        },
+        "observation": {
+          "mode": "navigated",
+          "documentStartedAt": "2026-09-27T20:13:55.816Z",
+          "observingSince": "2026-09-27T20:12:35.412Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "baseline": null,
+        "screenshot": {
+          "path": null,
+          "width": 1264,
+          "height": 705,
+          "bytes": 4962,
+          "fullPage": true
+        }
+      },
+      "baseline404": {
+        "ok": true,
+        "ms": 2708,
+        "valid": true,
+        "url": "http://127.0.0.1:58413/fast?n=b404",
+        "requestedUrl": "http://127.0.0.1:58413/fast?n=b404",
+        "title": "fast",
+        "consoleErrors": [],
+        "pageErrorsN": 0,
+        "brokenRequests": [],
+        "webVitals": {
+          "lcpMs": 24,
+          "cls": 0,
+          "fcpMs": 24,
+          "ttfbMs": 1
+        },
+        "observation": {
+          "mode": "navigated",
+          "documentStartedAt": "2026-09-27T20:13:57.365Z",
+          "observingSince": "2026-09-27T20:12:35.412Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "baseline": {
+          "url": "http://127.0.0.1:58413/notfound?n=b404",
+          "diffPath": null,
+          "width": 1264,
+          "height": 705,
+          "diffPixelCount": 3991,
+          "totalPixels": 891120,
+          "diffPercentage": 0.44786336295897294
+        },
+        "screenshot": {
+          "path": null,
+          "width": 1264,
+          "height": 705,
+          "bytes": 9537,
+          "fullPage": true
+        }
+      },
+      "audited404": {
+        "ok": true,
+        "ms": 1556,
+        "valid": true,
+        "url": "http://127.0.0.1:58413/notfound?n=a404",
+        "requestedUrl": "http://127.0.0.1:58413/notfound?n=a404",
+        "title": "nf",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrorsN": 0,
+        "brokenRequests": [
+          {
+            "url": "http://127.0.0.1:58413/notfound?n=a404",
+            "status": 404
+          }
+        ],
+        "webVitals": {
+          "lcpMs": 12,
+          "cls": 0,
+          "fcpMs": 12,
+          "ttfbMs": 2
+        },
+        "observation": {
+          "mode": "navigated",
+          "documentStartedAt": "2026-09-27T20:14:00.076Z",
+          "observingSince": "2026-09-27T20:12:35.412Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "baseline": null,
+        "screenshot": {
+          "path": null,
+          "width": 1264,
+          "height": 705,
+          "bytes": 6718,
+          "fullPage": true
+        }
+      },
+      "baselineUnreachable": {
+        "ok": true,
+        "ms": 1576,
+        "valid": true,
+        "url": "http://127.0.0.1:58413/fast?n=bu",
+        "requestedUrl": "http://127.0.0.1:58413/fast?n=bu",
+        "title": "fast",
+        "consoleErrors": [],
+        "pageErrorsN": 0,
+        "brokenRequests": [],
+        "webVitals": {
+          "lcpMs": 12,
+          "cls": 0,
+          "fcpMs": 12,
+          "ttfbMs": 1
+        },
+        "observation": {
+          "mode": "navigated",
+          "documentStartedAt": "2026-09-27T20:14:01.630Z",
+          "observingSince": "2026-09-27T20:12:35.412Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "baseline": {
+          "url": "http://127.0.0.1:9/",
+          "error": "net::ERR_UNSAFE_PORT at http://127.0.0.1:9/"
+        },
+        "screenshot": {
+          "path": null,
+          "width": 1264,
+          "height": 705,
+          "bytes": 8370,
+          "fullPage": true
+        }
+      },
+      "navUnreachable": {
+        "ok": false,
+        "ms": 35,
+        "error": "net::ERR_UNSAFE_PORT at http://127.0.0.1:9/"
+      },
+      "hashNav": {
+        "ok": true,
+        "ms": 688,
+        "valid": true,
+        "url": "http://127.0.0.1:58413/poller?n=h1#frag",
+        "requestedUrl": "http://127.0.0.1:58413/poller?n=h1#frag",
+        "title": "poller",
+        "consoleErrors": [
+          "poll-err-h1",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "poll-err-h1",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "poll-err-h1"
+        ],
+        "pageErrorsN": 0,
+        "brokenRequests": [
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043288",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043313",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043337",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043362",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043387",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043413",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043438",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043463",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043488",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043512",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043537",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043562",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043587",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043612",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043637",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043663",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043688",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043712",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043737",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043762",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043788",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043812",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043837",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043862",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043887",
+            "status": 404
+          },
+          {
+            "url": "http://127.0.0.1:58413/missing-poll-h1?t=1790540043912",
+            "status": 404
+          }
+        ],
+        "webVitals": {
+          "lcpMs": 32,
+          "cls": 0,
+          "fcpMs": 32,
+          "ttfbMs": 1
+        },
+        "observation": {
+          "mode": "navigated",
+          "documentStartedAt": "2026-09-27T20:14:03.239Z",
+          "observingSince": "2026-09-27T20:12:35.412Z",
+          "coversWholeDocument": true,
+          "pageWasHidden": false
+        },
+        "baseline": null,
+        "screenshot": {
+          "path": null,
+          "width": 1264,
+          "height": 705,
+          "bytes": 4723,
+          "fullPage": true
+        }
+      },
+      "concurrentTwoTabs": [
+        {
+          "i": 0,
+          "ok": true,
+          "url": "http://127.0.0.1:58413/poller?n=concA",
+          "consoleErrors": 200,
+          "broken": 100,
+          "cls": 0,
+          "hidden": true,
+          "lcp": null,
+          "valid": true
+        },
+        {
+          "i": 1,
+          "ok": true,
+          "url": "http://127.0.0.1:58413/shift?n=concB",
+          "consoleErrors": 0,
+          "broken": 0,
+          "cls": 0.07563515575904481,
+          "hidden": false,
+          "lcp": 16,
+          "valid": true
+        }
+      ]
+    }
+  }
+}

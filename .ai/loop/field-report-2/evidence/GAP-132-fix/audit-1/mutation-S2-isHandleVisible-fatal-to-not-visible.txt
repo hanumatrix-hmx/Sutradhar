@@ -1,0 +1,17 @@
+stdout | tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps) > GAP-132 (pierceFirstMatch, critical): a hidden wait must FAIL, never falsely SUCCEED, when the tab closes mid-probe — even though the underlying error text ("Execution context was destroyed") is IDENTICAL to the text an ordinary in-page navigation also produces
+stdout | tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps) > GAP-132 (isHandleVisible, critical): a hidden wait must FAIL, never falsely succeed, when the tab closes while checking a MATCHED handle's own visibility
+stderr | tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps) > GAP-132 (pierceFirstMatch, critical): a hidden wait must FAIL, never falsely SUCCEED, when the tab closes mid-probe — even though the underlying error text ("Execution context was destroyed") is IDENTICAL to the text an ordinary in-page navigation also produces
+stderr | tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps) > GAP-132 (isHandleVisible, critical): a hidden wait must FAIL, never falsely succeed, when the tab closes while checking a MATCHED handle's own visibility
+ FAIL  tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-081a (isHandleVisible): a fatal session-closed error while checking visibility must report "unknown", never a silently-confirmed "not visible" (which previously let a hidden wait falsely succeed)
+AssertionError: expected true to be false // Object.is equality
+- Expected
++ Received
+...
+ ❯ tests/unit/browser-action-engine.spec.ts:3152:28
+    3150|     });
+    3151| 
+    3152|     expect(result.success).toBe(false);
+       |                            ^
+    3153|     expect(result.error).toContain('could not verify: one or more fram…
+    3154|   });
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯

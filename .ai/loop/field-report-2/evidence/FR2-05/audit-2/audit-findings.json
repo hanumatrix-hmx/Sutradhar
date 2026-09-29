@@ -1,0 +1,179 @@
+{
+  "item": "FR2-05",
+  "audit": "audit-2",
+  "head": "c3b68c3",
+  "status": "COMPLETE -- VERDICT: FAIL",
+  "probes": [
+    {
+      "id": "build",
+      "result": "forced turbo build via the repo's own 2-phase script at DEFAULT concurrency: exit 0 both phases. FR2-05 changed no build scripts, so any bundler race is pre-existing and not introduced here",
+      "evidence": [
+        "build-default-concurrency.log",
+        "build-sutradhar-default-concurrency.log"
+      ]
+    },
+    {
+      "id": "vitest",
+      "result": "browser 540, capability-runtime 228, mcp-server 101, cli 175, sutradhar 25: all passed, all exit 0",
+      "evidence": [
+        "vitest-*.log",
+        "vitest-exits.txt"
+      ]
+    },
+    {
+      "id": "probe-fix-attack",
+      "result": "34 suffix spellings checked against a Win32-normalizing oracle: 0 escapes; '.'/'..' resolution intact; a root with a trailing dot fails closed; 14 Unicode fold pairs rejected. Case-sensitive parent ESCAPE (see A2-1)",
+      "evidence": [
+        "probe-fix-attack.mjs",
+        "probe-fix-attack.json",
+        "probe-fix-attack.log"
+      ]
+    },
+    {
+      "id": "gap294-cli",
+      "result": "real CLI + Chrome, audit-1's exact repro: dot 15/15, space 15/15, anywhere 15/15 rejected, 0 escapes",
+      "evidence": [
+        "live-gap294-cli.mjs",
+        "live-gap294-cli.log",
+        "gap294-cli-results.json"
+      ]
+    },
+    {
+      "id": "gap294-mcp",
+      "result": "real MCP + Chrome: dot 15/15, space 5/5, anywhere 5/5, dot-space 3/3, three-dots 3/3, leaf-dot 3/3, forward-slash 3/3, \\\\?\\ 3/3, plain junction 3/3. Every rejection was a containment rejection (the duplicate guard was ruled out); outside dir stayed empty",
+      "evidence": [
+        "live-mcp-part1-rerun.log",
+        "live-mcp-audit2-g294-cs-fold-upload-legit.json"
+      ]
+    },
+    {
+      "id": "fold-e2e",
+      "result": "Kelvin 10/10, dotless i 3/3, long s 3/3, dotted I 3/3 rejected end-to-end; the look-alike dir was never created",
+      "evidence": [
+        "live-mcp-part1-rerun.log"
+      ]
+    },
+    {
+      "id": "upload",
+      "result": "trailing dot/space/plain junction/traversal/direct-outside rejected on BOTH upload_file and upload_file_via_trigger; legit, dotted dir, forward slashes and inner '..' allowed",
+      "evidence": [
+        "live-mcp-part1-rerun.log"
+      ]
+    },
+    {
+      "id": "legit",
+      "result": "9/9 ordinary downloads landed inside the right root with the served SHA",
+      "evidence": [
+        "live-mcp-part1-rerun.log"
+      ]
+    },
+    {
+      "id": "wide-survey-rerun",
+      "result": "audit-1 probe-containment re-run: 0 ESCAPE (c21 Kelvin is now fixed); 2 UNEXPECTED rows are both fail-closed false rejects (c5 UNC admin-share was already so in audit-1; c9 trailing-dot root is the intended fix behavior)",
+      "evidence": [
+        "probe-containment-rerun.mjs",
+        "probe-containment-rerun.json"
+      ]
+    },
+    {
+      "id": "mutation",
+      "result": "13 of 16 killed. SURVIVED: P10 (equivalent mutant), P11 (posix over-reject; PC12 early-returns on win32), E1 (GAP-296 lock removed: NO unit test guards the lock)",
+      "evidence": [
+        "mutate.mjs",
+        "mutation.log"
+      ]
+    },
+    {
+      "id": "conc-same-process",
+      "result": "2 tabs x10: 0/20 download_file calls succeeded, 5 files landed in the USER'S REAL ~/Downloads, 9 cross-dir (a file written into a PREVIOUS trial's dir by an abandoned, timed-out dispatch that still held the lock). 3 tabs x5: 0/15 ok, 2 in ~/Downloads, 4 cross-dir. 4 tabs x3: 0/12 ok, 1 in ~/Downloads, 1 cross-dir. Every call runs ~97-100s (3 attempts x 30s outer timeout). Sequential control on new_tab tabs: 4/4 correct, so this is concurrency-specific.",
+      "evidence": [
+        "live-mcp-part2.log",
+        "live-mcp-audit2-conc-multiproc.json",
+        "conc-escape-snapshot-1.txt",
+        "live-mcp-newtabseq.log"
+      ]
+    },
+    {
+      "id": "conc-lock-held-by-nondownload",
+      "result": "download_file whose click triggers no download fails in ~19.5s (2 retries); a second tab started 300ms later succeeded in ~5.1s with no duplicate after a 100s drain (2/2). Here the lock itself did not starve the second caller.",
+      "evidence": [
+        "live-mcp-part2.log"
+      ]
+    },
+    {
+      "id": "multiproc",
+      "result": "two sutradhar-mcp processes attached to ONE Chrome (the in-process WeakMap lock cannot serialize this; the CLI works the same way, one process per verb). x10: A 0/10 ok, B 10/10 ok; A's file in ~/Downloads in 2/10; B's file ALSO written into A's root in 2/10 (outside B's configured roots).",
+      "evidence": [
+        "live-mcp-audit2-conc-multiproc.json"
+      ]
+    },
+    {
+      "id": "afterdeny",
+      "result": "after a SUCCESSFUL download_file, a plain browser.click on a download link lands in the user's real ~/Downloads 3/3. The finally-block reset to 'deny' does not persist, most likely because the immediately following client.detach() makes Chrome revert to default behavior. The code comment's claim that 'deny' fails CLOSED and refuses a straggler outright is false live, and unit tests E2/E3 only check the mocked CDP call.",
+      "evidence": [
+        "live-mcp-afterdeny.log"
+      ]
+    },
+    {
+      "id": "main-live-verify",
+      "result": "tools/scenario-suite/verify-fr2-05-download-roots.mjs: 25 pass / 0 fail / 0 skip, no leaked processes",
+      "evidence": [
+        "main-live-verify.log",
+        "main-live-verify/"
+      ]
+    },
+    {
+      "id": "fix1-additions-rerun",
+      "result": "16/16 PASS, but its GAP-296 case passes with BOTH concurrent downloads timed out (success=false). The pass criterion accepts a 0% success rate and checks ~/Downloads only 500ms after return, so it cannot see the escapes measured above. N1-N10 present; N11 is the CLI case (covered by main-verify L6/L8, not by the additions script).",
+      "evidence": [
+        "fix1-additions-rerun.log",
+        "fix1-additions-rerun/"
+      ]
+    },
+    {
+      "id": "gap299",
+      "result": "after main-verify + additions: 1 empty leftover dir each (fr2-05-*/temp, fr205-audit2-add-*/temp). They did not self-remove within the run; the auditor removed them. This matches the disclosed residual (improved, not eliminated)."
+    },
+    {
+      "id": "hygiene",
+      "result": "no process killed by image name; process-after shows 22 new PIDs, all other sessions' system-Chrome m04dev profiles plus the proclist node itself, none referencing an audit-2 temp path; ~/Downloads identical to baseline (the 13 tagged strays this audit caused were recorded and removed); all audit temp dirs removed; git: only audit-2/ untracked"
+    }
+  ],
+  "findings": [
+    {
+      "id": "A2-1",
+      "severity": "CRITICAL",
+      "title": "Containment escape through a case-sensitive NTFS directory: the ASCII-only fold is still a case-INSENSITIVE comparison",
+      "repro": "download to a NEW case-variant sibling 3/3 (file landed at cs\\DLROOT\\subN, outside root cs\\dlroot, SHA matched the served file); download INTO an EXISTING unrelated sibling cs\\Dlroot 1/1; upload READ of cs\\UPROOT\\secret-cs.txt from outside upload root cs\\uproot 1/1 (the page received 'secret-cs.txt:26'). The per-directory case-sensitive flag was set WITHOUT elevation (fsutil setCaseSensitiveInfo); WSL-created directories have it by default. Pre-existing since develop (toLowerCase was also case-insensitive), not introduced by fix-1, but it is a real physical containment escape in this item's boundary.",
+      "fix": "Both sides are already realpath-canonicalized. realpath returns the on-disk casing for every existing component, so when the root exists, compare segments EXACTLY (case-sensitively) for the canonicalized prefix. Case-folding is only needed, if at all, when the root itself does not exist."
+    },
+    {
+      "id": "A2-2",
+      "severity": "CRITICAL",
+      "title": "GAP-296 not closed: download_file under concurrency still writes files into the user's platform ~/Downloads (outside every configured root), and into other calls' directories",
+      "repro": "same process, 2-4 tabs: 8 files in ~/Downloads across 18 concurrent trials (5/10 2-tab trials), 14 cross-dir writes; multi-process attach: 2/10 to ~/Downloads, 2/10 into another server's root. Root cause (live): the 'deny' reset does not survive detach (AFTERDENY 3/3), and outer-timeout-abandoned dispatches keep running inside the lock later, clicking with a stale downloadDir.",
+      "fix": "(1) Keep one long-lived browser-level CDP session per browser for download behavior (never detach it) and set behavior per call, or use Browser.setDownloadBehavior with an explicit browserContextId, and verify it persists. (2) Make the lock wait cancellable and part of the timeout budget, so a dispatch abandoned by the outer race never runs its click later. (3) A lock cannot cover multiple processes attached to one Chrome, so after completion also verify the reported path and treat any download event without a matching guid as a failure. (4) Add a unit test guarding the lock (mutant E1 survives) and fix the GAP-296 live test to require success and re-check ~/Downloads after a drain period."
+    },
+    {
+      "id": "A2-3",
+      "severity": "major",
+      "title": "Concurrent download_file reliability: 0/47 same-process concurrent calls succeeded (2/3/4 tabs), each taking ~100s. This is far worse than the disclosed \"more often hits the retry loop\"; concurrent downloads are effectively broken."
+    },
+    {
+      "id": "A2-4",
+      "severity": "minor",
+      "title": "Test integrity: no unit test guards the GAP-296 lock (E1 mutant survives); the posix no-reject path is untested on win32 (P11 survives); fix-1's GAP-296 live check passes on total failure."
+    },
+    {
+      "id": "A2-5",
+      "severity": "minor",
+      "title": "Stale docs: resolveDownloadDir JSDoc still says a nonexistent dir falls back to the literal path and fails loudly downstream (the original B2 falsehood); action-types.ts:108 still says the default is the OS temp directory; the finally-block comment claims deny fails closed (false live)."
+    },
+    {
+      "id": "A2-6",
+      "severity": "info",
+      "title": "CLI note: cmdDownload appends the typed dir itself as an extra root (by design, D1), so CLI-surface containment runs only match themselves. The meaningful containment surface is MCP/SDK, which audit-2 tested directly."
+    }
+  ],
+  "verdict": "FAIL"
+}

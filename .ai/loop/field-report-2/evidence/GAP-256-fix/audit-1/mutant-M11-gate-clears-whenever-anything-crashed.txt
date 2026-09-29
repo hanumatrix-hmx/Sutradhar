@@ -1,0 +1,36 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli
+
+ ❯ tests/unit/dialog-broker.spec.ts  (24 tests | 1 failed) 4214ms
+   ❯ tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate GAP-256-fix: crashed tabs > GC-CLI2 (NEGATIVE CONTROL): a crashed tab alongside a REAL dialog still blocks (exit-3 error) -- the crash exclusion never lets a genuine dialog through
+     → promise resolved "{ status: 'clear' }" instead of rejecting
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 23 passed (24)
+   Start at  03:47:42
+   Duration  5.04s (transform 283ms, setup 0ms, collect 529ms, tests 4.21s, environment 0ms, prepare 110ms)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate GAP-256-fix: crashed tabs > GC-CLI2 (NEGATIVE CONTROL): a crashed tab alongside a REAL dialog still blocks (exit-3 error) -- the crash exclusion never lets a genuine dialog through
+AssertionError: promise resolved "{ status: 'clear' }" instead of rejecting
+
+- Expected
++ Received
+
+- [Error: rejected promise]
++ Object {
++   "status": "clear",
++ }
+
+ ❯ tests/unit/dialog-broker.spec.ts:357:80
+    355|       const dialog = { targetId: 't1', dialogType: 'alert', message: '…
+    356|       const broker = fakeBroker({ list: async () => ({ status: 'ok', d…
+    357|       await expect(runDialogGate('snap', broker, { mode: 'report' }, '…
+       |                                                                                ^
+    358|     } finally {
+    359|       errSpy.mockRestore();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

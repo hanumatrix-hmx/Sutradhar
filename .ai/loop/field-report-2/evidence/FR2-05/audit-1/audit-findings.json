@@ -1,0 +1,61 @@
+{
+  "item": "FR2-05",
+  "audit": "audit-1",
+  "status": "COMPLETE",
+  "head": "68f5026",
+  "verdict": "FAIL",
+  "findings": [
+    {
+      "id": "A1-F1",
+      "severity": "critical (containment-check level reproduced; final Chrome write step not live-confirmed)",
+      "title": "Trailing dot/space on a link component bypasses canonicalizePath (a new form of the B2 escape)",
+      "repro": "probe-containment.json c10/c11: 1/1 deterministic. findContainingRoot('<root>\\\\jn.\\\\newsub', [root]) and '<root>\\\\jn \\\\newsub' are ACCEPTED, where jn is a junction to <outside>. Node's realpath/lstat use the \\\\?\\ namespace, so 'jn.' is looked up literally, gets ENOENT and is treated as a not-yet-created tail. A plain Win32 CreateDirectoryW (Python os.makedirs) of '<root>\\\\jn.\\\\viaDot' created '<outside>\\\\viaDot': the Win32 layer strips the trailing dot and follows the junction outside the root.",
+      "impact": "Same precondition as B2, which the spec treated as in scope: a link inside an allowed root that points outside it. The engine sends the literal 'resolved' path to Browser.setDownloadBehavior (D3). If Chrome creates the directory through the normal Win32 path API, the download lands outside the root.",
+      "not_verified": "Chrome itself writing through 'jn.' was not live-tested in this audit; the live probe did not run.",
+      "fix": "Fail closed on any path component that ends in '.' or ' ' on win32, or normalize the way Win32 does before canonicalizing. Also consider sending the canonical path (not the literal) to CDP, or rejecting when canonical != resolved on win32. Add unit and live cases for 'jn.', 'jn ' and 'jn...'."
+    },
+    {
+      "id": "A1-F2",
+      "severity": "major",
+      "title": "Unicode case-folding: toLowerCase (and path.win32.relative's internal lowercasing) folds characters that NTFS treats as distinct",
+      "repro": "probe-containment.json c21/c22/c23: 1/1 deterministic. Root '<R>\\\\work' ACCEPTS '<R>\\\\wor\\u212A\\\\sub' (KELVIN SIGN). Both directories exist separately on disk with different inodes, so the second is outside the root. The Angstrom sign against 'å' behaves the same way. isPathWithinRoot('C:\\\\wor\\u212A\\\\a','C:\\\\work','win32') === true.",
+      "impact": "An MCP agent can direct downloads into a look-alike sibling directory outside any root whose path contains 'k' or 'å' (for example ...\\\\Desktop\\\\...). The escape is constrained to look-alike paths. This predates FR2-05 but lies inside the boundary FR2-05 claims to make correct.",
+      "fix": "On win32, compare the on-disk-cased canonical prefix exactly: realpath already returns on-disk case for the existing part. Case-fold only the nonexistent tail, with ASCII-only folding, or require the deepest existing ancestor to be the root or inside it."
+    },
+    {
+      "id": "A1-F3",
+      "severity": "minor",
+      "title": "Spec section 6 negative cases N1-N11 ('all live via MCP A') are not in the live-verify script, and the N7 pre-change baseline evidence (prefix-baseline-N7.json) is absent",
+      "repro": "grep of verify-fr2-05-download-roots.mjs finds no N-cases. run-1/ has no prefix-baseline-N7.json."
+    },
+    {
+      "id": "A1-F4",
+      "severity": "minor",
+      "title": "Mutation M7 (skip root canonicalization) survives: no test uses a root that is itself a link or 8.3 spelling (B3 unguarded)",
+      "repro": "mutation.log"
+    },
+    {
+      "id": "A1-F5",
+      "severity": "info",
+      "title": "Fail-safe false rejects: a UNC admin-share spelling of an inside path (c5) and a trailing-dot root spelling (c9). A \\\\?\\ device path genuinely inside is accepted (c6), which differs from spec N5's 'rejected' but is not an escape."
+    },
+    {
+      "id": "A1-F6",
+      "severity": "minor (hygiene)",
+      "title": "The live-verify script leaves an empty <R>\\\\temp dir behind (fr2-05-hRuItR from this audit's run; removed). Three older fr2-05-* dirs from run-1 (08:16-08:22) remain in E:\\\\AI-Cache\\\\tmp, contrary to the run-1 cleanup claim. They were left untouched because this audit did not create them."
+    }
+  ],
+  "gaps_assessment": {
+    "GAP-020": "A policy rejection happens in resolveDownloadDir before setDownloadBehavior, so a retried rejection writes nothing (wasted time only, as disclosed). Code reading shows a more severe interaction with B7: a re-click whose response arrives after the finally reset to behavior:'default' is handled by Chrome's default download behavior, not the sandbox dir. Not live-measured whether headless default writes to disk.",
+    "GAP-021": "Equal 30000 ms inner and outer timeouts; minor, as disclosed.",
+    "GAP-022": "No file moves to a different allowed root. A concurrent download that begins after another call's reset falls under Chrome's default behavior, which is outside the configured roots. So this is potentially a containment issue for agent-initiated downloads, not merely cosmetic. Severity depends on Chrome's headless default (to disk or denied), which this audit did not measure. Resetting to behavior:'deny' instead of 'default' would make it fail closed."
+  },
+  "verification": {
+    "build": "turbo build --force: 19/19 and 9/9 tasks OK",
+    "vitest": { "browser": "532/532", "capability-runtime": "228/228", "mcp-server": "101/101", "cli": "175/175", "sutradhar": "25/25" },
+    "live_verify": "25/25 pass, 0 fail, 0 skip; no-leaked-processes count=0 (live-verify/ and live-verify.log)",
+    "mutations": "7 tried: 5 killed (naive startsWith, dangling check off, literal fallback, isAbsolute check dropped, dotdot check dropped). 2 survived: M2 no-fold (equivalent, because path.win32.relative is already case-insensitive) and M7 root not canonicalized (test gap)."
+  },
+  "containment_probe_summary": "Held: existing and new-tail junctions, dir symlinks and file symlinks; 3-hop symlink and junction chains; relative-target symlink; dangling links and chains ending dangling (rejected as broken); symlink loop (ELOOP, fail closed); ../ traversal; prefix-evil; UNC/\\\\.\\ outside paths; ADS on a junction ($I30 trick); forward slashes; double separators; drive-relative paths. Escaped the check: trailing dot and trailing space on a junction component (F1); Unicode case-fold look-alikes (F2). 8.3 short names are disabled on this volume, so that case was not testable here. Symlink and junction creation both worked (no privilege issue).",
+  "process_hygiene": "process-baseline.txt and process-after.txt both 137 node/chrome lines; 0 command lines containing this audit's temp dirs. All fr205a1-* dirs and links removed."
+}

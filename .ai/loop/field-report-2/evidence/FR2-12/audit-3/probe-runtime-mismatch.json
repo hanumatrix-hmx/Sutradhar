@@ -1,0 +1,599 @@
+{
+  "group": "mismatch",
+  "trials": 10,
+  "origin": "http://127.0.0.1:56748",
+  "startedAt": "2026-09-27T17:59:14.095Z",
+  "cases": {
+    "own404_fragmentInRequest": [
+      {
+        "ms": 1716,
+        "url": "/own-404?n=f0#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "own404-f0"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /own-404?n=f0#top"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404?n=f0#top"
+        ]
+      },
+      {
+        "ms": 1548,
+        "url": "/own-404?n=f1#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "own404-f1"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /own-404?n=f1#top"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404?n=f1#top"
+        ]
+      },
+      {
+        "ms": 1549,
+        "url": "/own-404?n=f2#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "own404-f2"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /own-404?n=f2#top"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404?n=f2#top"
+        ]
+      },
+      {
+        "ms": 1550,
+        "url": "/own-404?n=f3#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "own404-f3"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /own-404?n=f3#top"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404?n=f3#top"
+        ]
+      },
+      {
+        "ms": 1551,
+        "url": "/own-404?n=f4#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "own404-f4"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /own-404?n=f4#top"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404?n=f4#top"
+        ]
+      },
+      {
+        "ms": 1564,
+        "url": "/own-404?n=f5#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "own404-f5"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /own-404?n=f5#top"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404?n=f5#top"
+        ]
+      },
+      {
+        "ms": 1550,
+        "url": "/own-404?n=f6#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "own404-f6"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /own-404?n=f6#top"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404?n=f6#top"
+        ]
+      },
+      {
+        "ms": 1566,
+        "url": "/own-404?n=f7#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "own404-f7"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /own-404?n=f7#top"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404?n=f7#top"
+        ]
+      },
+      {
+        "ms": 1568,
+        "url": "/own-404?n=f8#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "own404-f8"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /own-404?n=f8#top"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404?n=f8#top"
+        ]
+      },
+      {
+        "ms": 1550,
+        "url": "/own-404?n=f9#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "own404-f9"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /own-404?n=f9#top"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404?n=f9#top"
+        ]
+      }
+    ],
+    "own404_pageSetsHash": [
+      {
+        "ms": 1549,
+        "url": "/own-404-hash?n=h0#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-hash?n=h0",
+          "same-doc /own-404-hash?n=h0#top"
+        ]
+      },
+      {
+        "ms": 1566,
+        "url": "/own-404-hash?n=h1#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-hash?n=h1",
+          "same-doc /own-404-hash?n=h1#top"
+        ]
+      },
+      {
+        "ms": 1583,
+        "url": "/own-404-hash?n=h2#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-hash?n=h2",
+          "same-doc /own-404-hash?n=h2#top"
+        ]
+      },
+      {
+        "ms": 1565,
+        "url": "/own-404-hash?n=h3#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-hash?n=h3",
+          "same-doc /own-404-hash?n=h3#top"
+        ]
+      },
+      {
+        "ms": 1551,
+        "url": "/own-404-hash?n=h4#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-hash?n=h4",
+          "same-doc /own-404-hash?n=h4#top"
+        ]
+      },
+      {
+        "ms": 1565,
+        "url": "/own-404-hash?n=h5#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-hash?n=h5",
+          "same-doc /own-404-hash?n=h5#top"
+        ]
+      },
+      {
+        "ms": 1567,
+        "url": "/own-404-hash?n=h6#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-hash?n=h6",
+          "same-doc /own-404-hash?n=h6#top"
+        ]
+      },
+      {
+        "ms": 1550,
+        "url": "/own-404-hash?n=h7#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-hash?n=h7",
+          "same-doc /own-404-hash?n=h7#top"
+        ]
+      },
+      {
+        "ms": 1550,
+        "url": "/own-404-hash?n=h8#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-hash?n=h8",
+          "same-doc /own-404-hash?n=h8#top"
+        ]
+      },
+      {
+        "ms": 1566,
+        "url": "/own-404-hash?n=h9#top",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-hash?n=h9",
+          "same-doc /own-404-hash?n=h9#top"
+        ]
+      }
+    ],
+    "own404_pageReplaceState": [
+      {
+        "ms": 1566,
+        "url": "/pretty-not-found",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-replace?n=r0",
+          "same-doc /pretty-not-found"
+        ]
+      },
+      {
+        "ms": 1567,
+        "url": "/pretty-not-found",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-replace?n=r1",
+          "same-doc /pretty-not-found"
+        ]
+      },
+      {
+        "ms": 1549,
+        "url": "/pretty-not-found",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-replace?n=r2",
+          "same-doc /pretty-not-found"
+        ]
+      },
+      {
+        "ms": 1567,
+        "url": "/pretty-not-found",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-replace?n=r3",
+          "same-doc /pretty-not-found"
+        ]
+      },
+      {
+        "ms": 1564,
+        "url": "/pretty-not-found",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-replace?n=r4",
+          "same-doc /pretty-not-found"
+        ]
+      },
+      {
+        "ms": 1550,
+        "url": "/pretty-not-found",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-replace?n=r5",
+          "same-doc /pretty-not-found"
+        ]
+      },
+      {
+        "ms": 1566,
+        "url": "/pretty-not-found",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-replace?n=r6",
+          "same-doc /pretty-not-found"
+        ]
+      },
+      {
+        "ms": 1566,
+        "url": "/pretty-not-found",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-replace?n=r7",
+          "same-doc /pretty-not-found"
+        ]
+      },
+      {
+        "ms": 1550,
+        "url": "/pretty-not-found",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-replace?n=r8",
+          "same-doc /pretty-not-found"
+        ]
+      },
+      {
+        "ms": 1551,
+        "url": "/pretty-not-found",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /own-404-replace?n=r9",
+          "same-doc /pretty-not-found"
+        ]
+      }
+    ],
+    "own404_emptyBody": [
+      {
+        "ms": 1600,
+        "url": "chrome-error://chromewebdata/",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross chrome-error://chromewebdata/"
+        ]
+      },
+      {
+        "ms": 1570,
+        "url": "chrome-error://chromewebdata/",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross chrome-error://chromewebdata/"
+        ]
+      },
+      {
+        "ms": 1580,
+        "url": "chrome-error://chromewebdata/",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross chrome-error://chromewebdata/"
+        ]
+      },
+      {
+        "ms": 1564,
+        "url": "chrome-error://chromewebdata/",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross chrome-error://chromewebdata/"
+        ]
+      },
+      {
+        "ms": 1567,
+        "url": "chrome-error://chromewebdata/",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross chrome-error://chromewebdata/"
+        ]
+      },
+      {
+        "ms": 1567,
+        "url": "chrome-error://chromewebdata/",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross chrome-error://chromewebdata/"
+        ]
+      },
+      {
+        "ms": 1565,
+        "url": "chrome-error://chromewebdata/",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross chrome-error://chromewebdata/"
+        ]
+      },
+      {
+        "ms": 1566,
+        "url": "chrome-error://chromewebdata/",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross chrome-error://chromewebdata/"
+        ]
+      },
+      {
+        "ms": 1584,
+        "url": "chrome-error://chromewebdata/",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross chrome-error://chromewebdata/"
+        ]
+      },
+      {
+        "ms": 1566,
+        "url": "chrome-error://chromewebdata/",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross chrome-error://chromewebdata/"
+        ]
+      }
+    ]
+  },
+  "verdicts": {
+    "own404_fragmentInRequest": "10/10",
+    "own404_pageSetsHash": "0/10",
+    "own404_pageReplaceState": "0/10",
+    "own404_emptyBody": "0/10"
+  },
+  "chromePid": 52456,
+  "cdpStats": {
+    "created": 40,
+    "detachOk": 40,
+    "detachErr": 0
+  },
+  "finishedAt": "2026-09-27T18:00:17.035Z"
+}

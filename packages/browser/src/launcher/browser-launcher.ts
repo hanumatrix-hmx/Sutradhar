@@ -108,15 +108,22 @@ export class BrowserLauncher implements IBrowserLauncher {
   }
 
   /**
-   * Generates sanitized launch arguments with stealth evasion flags.
+   * Generates the launch arguments, merging the caller's args with DEFAULT_LAUNCH_ARGS, which
+   * is always included unconditionally. Most of DEFAULT_LAUNCH_ARGS is sandboxing/rendering
+   * configuration. The only launch argument here with detection-relevant behavior is
+   * `--disable-blink-features=AutomationControlled`, which hides `navigator.webdriver` from
+   * scripts that check for it -- measured directly: `navigator.webdriver` is `true` without
+   * the flag and `false` with it. It does not defeat Cloudflare, CAPTCHA, or any other real
+   * bot-detection service, and other simple signals -- the default headless user agent's
+   * `HeadlessChrome` substring and `--enable-automation` still being present in the launch
+   * command line -- remain unmasked (see browser-options.ts for the full disclosure).
+   * Sutradhar does not attempt to evade bot-detection or solve CAPTCHAs, and Cloudflare
+   * challenges, CAPTCHA walls, and IP-level blocks stop it exactly as they would stop any
+   * other automation tool run the same way.
    */
   public prepareLaunchArgs(options: BrowserLaunchOptions = {}): string[] {
     const userArgs = options.args ?? [];
     const mergedArgs = new Set([...DEFAULT_LAUNCH_ARGS, ...userArgs]);
-
-    if (options.enableStealth ?? true) {
-      mergedArgs.add('--disable-blink-features=AutomationControlled');
-    }
 
     if (options.proxy?.server) {
       mergedArgs.add(`--proxy-server=${options.proxy.server}`);

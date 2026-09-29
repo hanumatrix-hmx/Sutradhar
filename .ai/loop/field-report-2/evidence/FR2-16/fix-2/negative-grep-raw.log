@@ -1,0 +1,35 @@
+./.ai/autonomous-loop-prompt-field-report-2.md:95:1. **Stealth (#15):** no stealth opt-in. It is out of scope per `CLAUDE.md`. Deliver only the
+./.ai/autonomous-loop-prompt-field-report-2.md:97:   fix the contradictory `packages/browser/README.md:30`, and remove the dead `StealthEngine` and
+./.ai/autonomous-loop-prompt-field-report-2.md:98:   the no-op `enableStealth` option (or mark them clearly deprecated if removal breaks public
+./.ai/autonomous-loop-prompt-field-report-2.md:317:**FR2-16 Stealth boundary.** As in §4.1.
+./.claude/skills/webbench-sample/SKILL.md:47:via stealth/evasion, per CLAUDE.md's scope boundary**, just document honestly:
+./AGENT_SETUP.md:160:- **No stealth or bot-detection evasion, by design.** Real anti-bot walls (Cloudflare challenges,
+./CLAUDE.md:111:  explicitly reopens the decision — most notably **stealth / bot-detection / CAPTCHA evasion**.
+./docs/ARCHITECTURE.md:129:- Stealth/bot-detection evasion is deliberately out of scope — see `CLAUDE.md`'s scope
+./packages/browser/src/launcher/browser-options.ts:32:   * stay that way — see CLAUDE.md's scope boundary on stealth/bot-detection evasion.
+./packages/browser/src/launcher/browser-options.ts:45:// stealth/bot-detection evasion: Sutradhar does not attempt to defeat bot detection or solve
+./packages/browser/tests/unit/launcher.spec.ts:31:  it('should unconditionally include --disable-blink-features=AutomationControlled in launch arguments (FR2-16: proves no behavior change after removing the dead enableStealth conditional, which was a provable no-op)', () => {
+./packages/browser/tests/unit/launcher.spec.ts:39:  it('does not expose enableStealth on BrowserLaunchOptions at runtime (structural regression guard: the field carried no behavior even before removal, so this only proves it is not silently re-added)', () => {
+./packages/browser/tests/unit/launcher.spec.ts:41:    const args = launcher.prepareLaunchArgs({ enableStealth: false } as never);
+./packages/browser/tests/unit/launcher.spec.ts:43:    // Even if a caller (wrongly, post-removal, via `as never`) still passes enableStealth, the
+./packages/browser/tests/unit/launcher.spec.ts:48:  it('regression guard (FR2-16): StealthEngine/getEvasionScripts/IStealthEngine/StealthOptions must stay removed from the package exports — a future re-add without an accompanying doc/boundary update should fail this test', () => {
+./packages/browser/tests/unit/launcher.spec.ts:49:    expect((browserExports as Record<string, unknown>).StealthEngine).toBeUndefined();
+./packages/browser/tests/unit/launcher.spec.ts:51:    expect((browserExports as Record<string, unknown>).DEFAULT_STEALTH_OPTIONS).toBeUndefined();
+./packages/browser/tests/unit/launcher.spec.ts:119:  it('should NOT add a --user-agent arg by default, so Chrome\'s own real UA (including "Headless" when headless) is left alone — this must stay true; see CLAUDE.md\'s scope boundary on stealth/detection-evasion defaults', () => {
+./packages/sutradhar/AGENT_SETUP.md:160:- **No stealth or bot-detection evasion, by design.** Sutradhar launches a plain, undisguised
+./PROJECT_DEEP_DIVE.md:48:| Detection-evasion / stealth | ❌ **Not built (by design)** | No stealth engine exists; one retained launch flag hides `navigator.webdriver` only, everything else is a plain, undisguised browser — see AGENT_SETUP.md's boundary section |
+./PROJECT_DEEP_DIVE.md:867:### 11.1 Detection-Evasion Boundary (no stealth engine)
+./PROJECT_DEEP_DIVE.md:869:There is no stealth/anti-detection engine in this codebase — an earlier `@sutradhar/browser/stealth/`
+./PROJECT_DEEP_DIVE.md:870:module (a dead, never-invoked `StealthEngine` plus 4 unused script generators) was removed
+./PROJECT_DEEP_DIVE.md:871:outright as dead code, along with the no-op `enableStealth` option that never gated anything
+./SECURITY.md:41:- **No stealth / fingerprint evasion.** No plugin masks automation signals, spoofs a user agent,
+./tools/webbench/claude-direct-run-2026-08-13-sample11.md:74:per CLAUDE.md's standing scope exclusion on stealth/evasion.
+./tools/webbench/claude-direct-run-2026-08-13-sample2.md:10:MCP tools, no LLM provider, no stealth/evasion workarounds.
+./tools/webbench/claude-direct-run-2026-08-13.md:68:via stealth/evasion techniques — that stays deliberately out of scope.
+./tools/webbench/claude-direct-run-2026-08-15-sample6.md:5:no LLM provider, Claude is the brain, same methodology as samples 1-5. No stealth/evasion.
+./tools/webbench/claude-direct-run-2026-08-16-sample7.md:5:no LLM provider, Claude is the brain, same methodology as samples 1-6. No stealth/evasion. Run
+./tools/webbench/claude-direct-run-2026-08-17-sample10.md:7:honest scoring standard as samples 1-9. No stealth/evasion.
+./tools/webbench/claude-direct-run-2026-08-17-sample8.md:7:samples 1-7. No stealth/evasion. Run to re-check the completion-rate estimate after this
+./tools/webbench/claude-direct-run-2026-08-17-sample8.md:75:  crossing into stealth/evasion, which is out of scope per CLAUDE.md.
+./tools/webbench/claude-direct-run-2026-08-17-sample9.md:7:samples 1-8. No stealth/evasion. Run to continue building the post-fix completion-rate picture
+./USECASES.md:18:**Baseline:** vanilla Playwright/Puppeteer fail ~7 rows (navigator.webdriver, chrome.runtime, permissions...); stealth plugins needed.

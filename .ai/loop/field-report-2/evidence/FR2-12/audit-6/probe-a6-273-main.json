@@ -1,0 +1,1039 @@
+{
+  "trials": 5,
+  "label": "main",
+  "modes": {
+    "url": {
+      "hash-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "replaceState-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "emptybody-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "emptybody-500": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "control-own404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "control-ok": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "a-302-then-replaceState-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "a-302-then-hash-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "a-302-then-replaceState-200": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "a-js200-to-hash404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "a-js404-to-200": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "b-slow-body-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "b-5MB-body-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "b-slow-headers-500": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "c-302>500(js)>302>200": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "c-302>500(js)>302>404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "subframe-emptybody-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      }
+    },
+    "cur": {
+      "hash-404": {
+        "pass": 0,
+        "n": 5,
+        "fails": [
+          {
+            "t": 0,
+            "url": "http://127.0.0.1:60333/h404?t=0&m=cur#top",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 1,
+            "url": "http://127.0.0.1:60333/h404?t=1&m=cur#top",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 2,
+            "url": "http://127.0.0.1:60333/h404?t=2&m=cur#top",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 3,
+            "url": "http://127.0.0.1:60333/h404?t=3&m=cur#top",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 4,
+            "url": "http://127.0.0.1:60333/h404?t=4&m=cur#top",
+            "broken": [],
+            "covers": true
+          }
+        ]
+      },
+      "replaceState-404": {
+        "pass": 0,
+        "n": 5,
+        "fails": [
+          {
+            "t": 0,
+            "url": "http://127.0.0.1:60333/rewritten-0.32668002255083806",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 1,
+            "url": "http://127.0.0.1:60333/rewritten-0.921089366405733",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 2,
+            "url": "http://127.0.0.1:60333/rewritten-0.25463157716252416",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 3,
+            "url": "http://127.0.0.1:60333/rewritten-0.5944431949174951",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 4,
+            "url": "http://127.0.0.1:60333/rewritten-0.45715956598143315",
+            "broken": [],
+            "covers": true
+          }
+        ]
+      },
+      "emptybody-404": {
+        "pass": 0,
+        "n": 5,
+        "fails": [
+          {
+            "t": 0,
+            "url": "chrome-error://chromewebdata/",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 1,
+            "url": "chrome-error://chromewebdata/",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 2,
+            "url": "chrome-error://chromewebdata/",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 3,
+            "url": "chrome-error://chromewebdata/",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 4,
+            "url": "chrome-error://chromewebdata/",
+            "broken": [],
+            "covers": true
+          }
+        ]
+      },
+      "emptybody-500": {
+        "pass": 0,
+        "n": 5,
+        "fails": [
+          {
+            "t": 0,
+            "url": "chrome-error://chromewebdata/",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 1,
+            "url": "chrome-error://chromewebdata/",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 2,
+            "url": "chrome-error://chromewebdata/",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 3,
+            "url": "chrome-error://chromewebdata/",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 4,
+            "url": "chrome-error://chromewebdata/",
+            "broken": [],
+            "covers": true
+          }
+        ]
+      },
+      "control-own404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "control-ok": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "a-302-then-replaceState-404": {
+        "pass": 0,
+        "n": 5,
+        "fails": [
+          {
+            "t": 0,
+            "url": "http://127.0.0.1:60333/rewritten-0.36098097416189456",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 1,
+            "url": "http://127.0.0.1:60333/rewritten-0.4801539183286284",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 2,
+            "url": "http://127.0.0.1:60333/rewritten-0.19221058409495329",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 3,
+            "url": "http://127.0.0.1:60333/rewritten-0.19646929235063504",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 4,
+            "url": "http://127.0.0.1:60333/rewritten-0.1527058766344801",
+            "broken": [],
+            "covers": true
+          }
+        ]
+      },
+      "a-302-then-hash-404": {
+        "pass": 0,
+        "n": 5,
+        "fails": [
+          {
+            "t": 0,
+            "url": "http://127.0.0.1:60333/h404?from=r#top",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 1,
+            "url": "http://127.0.0.1:60333/h404?from=r#top",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 2,
+            "url": "http://127.0.0.1:60333/h404?from=r#top",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 3,
+            "url": "http://127.0.0.1:60333/h404?from=r#top",
+            "broken": [],
+            "covers": true
+          },
+          {
+            "t": 4,
+            "url": "http://127.0.0.1:60333/h404?from=r#top",
+            "broken": [],
+            "covers": true
+          }
+        ]
+      },
+      "a-302-then-replaceState-200": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "a-js200-to-hash404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "a-js404-to-200": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "b-slow-body-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "b-5MB-body-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "b-slow-headers-500": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "c-302>500(js)>302>200": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "c-302>500(js)>302>404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "subframe-emptybody-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      }
+    },
+    "cur-after-404": {
+      "hash-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "replaceState-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "emptybody-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "emptybody-500": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "control-own404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "control-ok": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "a-302-then-replaceState-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "a-302-then-hash-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "a-302-then-replaceState-200": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "a-js200-to-hash404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "a-js404-to-200": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "b-slow-body-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "b-5MB-body-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "b-slow-headers-500": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "c-302>500(js)>302>200": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "c-302>500(js)>302>404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      },
+      "subframe-emptybody-404": {
+        "pass": 5,
+        "n": 5,
+        "fails": []
+      }
+    }
+  },
+  "samples": {
+    "url:hash-404": {
+      "url": "http://127.0.0.1:60333/h404?t=0&m=url#top",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/h404?t=0&m=url",
+          "status": 404
+        }
+      ],
+      "covers": true
+    },
+    "cur:hash-404": {
+      "url": "http://127.0.0.1:60333/h404?t=0&m=cur#top",
+      "broken": [],
+      "covers": true
+    },
+    "cur-after-404:hash-404": {
+      "url": "http://127.0.0.1:60333/h404?t=0&m=cur-after-404#top",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/h404?t=0&m=cur-after-404",
+          "status": 404
+        }
+      ],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/h404?t=0&m=cur-after-404",
+        "status": 404,
+        "timestamp": "2026-09-28T00:34:23.769Z"
+      }
+    },
+    "url:replaceState-404": {
+      "url": "http://127.0.0.1:60333/rewritten-0.22112421029660667",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/rs404?t=0&m=url",
+          "status": 404
+        }
+      ],
+      "covers": true
+    },
+    "cur:replaceState-404": {
+      "url": "http://127.0.0.1:60333/rewritten-0.32668002255083806",
+      "broken": [],
+      "covers": true
+    },
+    "cur-after-404:replaceState-404": {
+      "url": "http://127.0.0.1:60333/rewritten-0.7088634956928691",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/rs404?t=0&m=cur-after-404",
+          "status": 404
+        }
+      ],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/rs404?t=0&m=cur-after-404",
+        "status": 404,
+        "timestamp": "2026-09-28T00:34:26.888Z"
+      }
+    },
+    "url:emptybody-404": {
+      "url": "chrome-error://chromewebdata/",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/e404?t=0&m=url",
+          "status": 404
+        }
+      ],
+      "covers": true
+    },
+    "cur:emptybody-404": {
+      "url": "chrome-error://chromewebdata/",
+      "broken": [],
+      "covers": true
+    },
+    "cur-after-404:emptybody-404": {
+      "url": "chrome-error://chromewebdata/",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/e404?t=0&m=cur-after-404",
+          "status": 404
+        }
+      ],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/e404?t=0&m=cur-after-404",
+        "status": 404,
+        "timestamp": "2026-09-28T00:34:30.093Z"
+      }
+    },
+    "url:emptybody-500": {
+      "url": "chrome-error://chromewebdata/",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/e500?t=0&m=url",
+          "status": 500
+        }
+      ],
+      "covers": true
+    },
+    "cur:emptybody-500": {
+      "url": "chrome-error://chromewebdata/",
+      "broken": [],
+      "covers": true
+    },
+    "cur-after-404:emptybody-500": {
+      "url": "chrome-error://chromewebdata/",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/e500?t=0&m=cur-after-404",
+          "status": 500
+        }
+      ],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/e500?t=0&m=cur-after-404",
+        "status": 500,
+        "timestamp": "2026-09-28T00:34:33.368Z"
+      }
+    },
+    "url:control-own404": {
+      "url": "http://127.0.0.1:60333/own404?t=0&m=url",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/own404?t=0&m=url",
+          "status": 404
+        }
+      ],
+      "covers": true
+    },
+    "cur:control-own404": {
+      "url": "http://127.0.0.1:60333/own404?t=0&m=cur",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/own404?t=0&m=cur",
+          "status": 404
+        }
+      ],
+      "covers": true
+    },
+    "cur-after-404:control-own404": {
+      "url": "http://127.0.0.1:60333/own404?t=0&m=cur-after-404",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/own404?t=0&m=cur-after-404",
+          "status": 404
+        }
+      ],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/own404?t=0&m=cur-after-404",
+        "status": 404,
+        "timestamp": "2026-09-28T00:34:36.556Z"
+      }
+    },
+    "url:control-ok": {
+      "url": "http://127.0.0.1:60333/ok?t=0&m=url",
+      "broken": [],
+      "covers": true
+    },
+    "cur:control-ok": {
+      "url": "http://127.0.0.1:60333/ok?t=0&m=cur",
+      "broken": [],
+      "covers": true
+    },
+    "cur-after-404:control-ok": {
+      "url": "http://127.0.0.1:60333/ok?t=0&m=cur-after-404",
+      "broken": [],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/ok?t=0&m=cur-after-404",
+        "status": 200,
+        "timestamp": "2026-09-28T00:34:39.712Z"
+      }
+    },
+    "url:a-302-then-replaceState-404": {
+      "url": "http://127.0.0.1:60333/rewritten-0.49885721188337373",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/rs404?from=r",
+          "status": 404
+        }
+      ],
+      "covers": true
+    },
+    "cur:a-302-then-replaceState-404": {
+      "url": "http://127.0.0.1:60333/rewritten-0.36098097416189456",
+      "broken": [],
+      "covers": true
+    },
+    "cur-after-404:a-302-then-replaceState-404": {
+      "url": "http://127.0.0.1:60333/rewritten-0.00012623652235932425",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/rs404?from=r",
+          "status": 404
+        }
+      ],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/rs404?from=r",
+        "status": 404,
+        "timestamp": "2026-09-28T00:34:42.806Z"
+      }
+    },
+    "url:a-302-then-hash-404": {
+      "url": "http://127.0.0.1:60333/h404?from=r#top",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/h404?from=r",
+          "status": 404
+        }
+      ],
+      "covers": true
+    },
+    "cur:a-302-then-hash-404": {
+      "url": "http://127.0.0.1:60333/h404?from=r#top",
+      "broken": [],
+      "covers": true
+    },
+    "cur-after-404:a-302-then-hash-404": {
+      "url": "http://127.0.0.1:60333/h404?from=r#top",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/h404?from=r",
+          "status": 404
+        }
+      ],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/h404?from=r",
+        "status": 404,
+        "timestamp": "2026-09-28T00:34:45.940Z"
+      }
+    },
+    "url:a-302-then-replaceState-200": {
+      "url": "http://127.0.0.1:60333/ok-rs-rewritten",
+      "broken": [],
+      "covers": true
+    },
+    "cur:a-302-then-replaceState-200": {
+      "url": "http://127.0.0.1:60333/ok-rs-rewritten",
+      "broken": [],
+      "covers": true
+    },
+    "cur-after-404:a-302-then-replaceState-200": {
+      "url": "http://127.0.0.1:60333/ok-rs-rewritten",
+      "broken": [],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/ok-rs",
+        "status": 200,
+        "timestamp": "2026-09-28T00:34:49.090Z"
+      }
+    },
+    "url:a-js200-to-hash404": {
+      "url": "http://127.0.0.1:60333/h404?from=js#top",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/h404?from=js",
+          "status": 404
+        }
+      ],
+      "covers": true
+    },
+    "cur:a-js200-to-hash404": {
+      "url": "http://127.0.0.1:60333/h404?from=js#top",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/h404?from=js",
+          "status": 404
+        }
+      ],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/h404?from=js",
+        "status": 404,
+        "timestamp": "2026-09-28T00:34:51.379Z"
+      }
+    },
+    "cur-after-404:a-js200-to-hash404": {
+      "url": "http://127.0.0.1:60333/h404?from=js#top",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/h404?from=js",
+          "status": 404
+        }
+      ],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/h404?from=js",
+        "status": 404,
+        "timestamp": "2026-09-28T00:34:53.163Z"
+      }
+    },
+    "url:a-js404-to-200": {
+      "url": "http://127.0.0.1:60333/ok?from=js404",
+      "broken": [],
+      "covers": true
+    },
+    "cur:a-js404-to-200": {
+      "url": "http://127.0.0.1:60333/ok?from=js404",
+      "broken": [],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/ok?from=js404",
+        "status": 200,
+        "timestamp": "2026-09-28T00:34:56.371Z"
+      }
+    },
+    "cur-after-404:a-js404-to-200": {
+      "url": "http://127.0.0.1:60333/ok?from=js404",
+      "broken": [],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/ok?from=js404",
+        "status": 200,
+        "timestamp": "2026-09-28T00:34:58.144Z"
+      }
+    },
+    "url:b-slow-body-404": {
+      "url": "http://127.0.0.1:60333/slow404?t=0&m=url",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/slow404?t=0&m=url",
+          "status": 404
+        }
+      ],
+      "covers": true
+    },
+    "cur:b-slow-body-404": {
+      "url": "http://127.0.0.1:60333/slow404?t=0&m=cur",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/slow404?t=0&m=cur",
+          "status": 404
+        }
+      ],
+      "covers": true
+    },
+    "cur-after-404:b-slow-body-404": {
+      "url": "http://127.0.0.1:60333/slow404?t=0&m=cur-after-404",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/slow404?t=0&m=cur-after-404",
+          "status": 404
+        }
+      ],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/slow404?t=0&m=cur-after-404",
+        "status": 404,
+        "timestamp": "2026-09-28T00:35:07.177Z"
+      }
+    },
+    "url:b-5MB-body-404": {
+      "url": "http://127.0.0.1:60333/big404?t=0&m=url",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/big404?t=0&m=url",
+          "status": 404
+        }
+      ],
+      "covers": true
+    },
+    "cur:b-5MB-body-404": {
+      "url": "http://127.0.0.1:60333/big404?t=0&m=cur",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/big404?t=0&m=cur",
+          "status": 404
+        }
+      ],
+      "covers": true
+    },
+    "cur-after-404:b-5MB-body-404": {
+      "url": "http://127.0.0.1:60333/big404?t=0&m=cur-after-404",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/big404?t=0&m=cur-after-404",
+          "status": 404
+        }
+      ],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/big404?t=0&m=cur-after-404",
+        "status": 404,
+        "timestamp": "2026-09-28T00:35:12.917Z"
+      }
+    },
+    "url:b-slow-headers-500": {
+      "url": "http://127.0.0.1:60333/slowhdr500?t=0&m=url",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/slowhdr500?t=0&m=url",
+          "status": 500
+        }
+      ],
+      "covers": true
+    },
+    "cur:b-slow-headers-500": {
+      "url": "http://127.0.0.1:60333/slowhdr500?t=0&m=cur",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/slowhdr500?t=0&m=cur",
+          "status": 500
+        }
+      ],
+      "covers": true
+    },
+    "cur-after-404:b-slow-headers-500": {
+      "url": "http://127.0.0.1:60333/slowhdr500?t=0&m=cur-after-404",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/slowhdr500?t=0&m=cur-after-404",
+          "status": 500
+        }
+      ],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/slowhdr500?t=0&m=cur-after-404",
+        "status": 500,
+        "timestamp": "2026-09-28T00:35:19.698Z"
+      }
+    },
+    "url:c-302>500(js)>302>200": {
+      "url": "http://127.0.0.1:60333/ok?from=chain",
+      "broken": [],
+      "covers": true
+    },
+    "cur:c-302>500(js)>302>200": {
+      "url": "http://127.0.0.1:60333/ok?from=chain",
+      "broken": [],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/ok?from=chain",
+        "status": 200,
+        "timestamp": "2026-09-28T00:35:21.979Z"
+      }
+    },
+    "cur-after-404:c-302>500(js)>302>200": {
+      "url": "http://127.0.0.1:60333/ok?from=chain",
+      "broken": [],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/ok?from=chain",
+        "status": 200,
+        "timestamp": "2026-09-28T00:35:23.739Z"
+      }
+    },
+    "url:c-302>500(js)>302>404": {
+      "url": "http://127.0.0.1:60333/own404?from=chain",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/own404?from=chain",
+          "status": 404
+        }
+      ],
+      "covers": true
+    },
+    "cur:c-302>500(js)>302>404": {
+      "url": "http://127.0.0.1:60333/own404?from=chain",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/own404?from=chain",
+          "status": 404
+        }
+      ],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/own404?from=chain",
+        "status": 404,
+        "timestamp": "2026-09-28T00:35:26.938Z"
+      }
+    },
+    "cur-after-404:c-302>500(js)>302>404": {
+      "url": "http://127.0.0.1:60333/own404?from=chain",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/own404?from=chain",
+          "status": 404
+        }
+      ],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/own404?from=chain",
+        "status": 404,
+        "timestamp": "2026-09-28T00:35:28.714Z"
+      }
+    },
+    "url:subframe-emptybody-404": {
+      "url": "http://127.0.0.1:60333/ok-iframe404?t=0&m=url",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/e404?frame=1",
+          "status": 404
+        }
+      ],
+      "covers": true
+    },
+    "cur:subframe-emptybody-404": {
+      "url": "http://127.0.0.1:60333/ok-iframe404?t=0&m=cur",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/e404?frame=1",
+          "status": 404
+        }
+      ],
+      "covers": true
+    },
+    "cur-after-404:subframe-emptybody-404": {
+      "url": "http://127.0.0.1:60333/ok-iframe404?t=0&m=cur-after-404",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:60333/e404?frame=1",
+          "status": 404
+        }
+      ],
+      "covers": true,
+      "cap": {
+        "url": "http://127.0.0.1:60333/ok-iframe404?t=0&m=cur-after-404",
+        "status": 200,
+        "timestamp": "2026-09-28T00:35:32.743Z"
+      }
+    }
+  },
+  "summary": {
+    "url": {
+      "hash-404": "5/5",
+      "replaceState-404": "5/5",
+      "emptybody-404": "5/5",
+      "emptybody-500": "5/5",
+      "control-own404": "5/5",
+      "control-ok": "5/5",
+      "a-302-then-replaceState-404": "5/5",
+      "a-302-then-hash-404": "5/5",
+      "a-302-then-replaceState-200": "5/5",
+      "a-js200-to-hash404": "5/5",
+      "a-js404-to-200": "5/5",
+      "b-slow-body-404": "5/5",
+      "b-5MB-body-404": "5/5",
+      "b-slow-headers-500": "5/5",
+      "c-302>500(js)>302>200": "5/5",
+      "c-302>500(js)>302>404": "5/5",
+      "subframe-emptybody-404": "5/5"
+    },
+    "cur": {
+      "hash-404": "0/5",
+      "replaceState-404": "0/5",
+      "emptybody-404": "0/5",
+      "emptybody-500": "0/5",
+      "control-own404": "5/5",
+      "control-ok": "5/5",
+      "a-302-then-replaceState-404": "0/5",
+      "a-302-then-hash-404": "0/5",
+      "a-302-then-replaceState-200": "5/5",
+      "a-js200-to-hash404": "5/5",
+      "a-js404-to-200": "5/5",
+      "b-slow-body-404": "5/5",
+      "b-5MB-body-404": "5/5",
+      "b-slow-headers-500": "5/5",
+      "c-302>500(js)>302>200": "5/5",
+      "c-302>500(js)>302>404": "5/5",
+      "subframe-emptybody-404": "5/5"
+    },
+    "cur-after-404": {
+      "hash-404": "5/5",
+      "replaceState-404": "5/5",
+      "emptybody-404": "5/5",
+      "emptybody-500": "5/5",
+      "control-own404": "5/5",
+      "control-ok": "5/5",
+      "a-302-then-replaceState-404": "5/5",
+      "a-302-then-hash-404": "5/5",
+      "a-302-then-replaceState-200": "5/5",
+      "a-js200-to-hash404": "5/5",
+      "a-js404-to-200": "5/5",
+      "b-slow-body-404": "5/5",
+      "b-5MB-body-404": "5/5",
+      "b-slow-headers-500": "5/5",
+      "c-302>500(js)>302>200": "5/5",
+      "c-302>500(js)>302>404": "5/5",
+      "subframe-emptybody-404": "5/5"
+    }
+  }
+}

@@ -1,0 +1,43 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser[39m
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1)[2m > [22m[2mE10: the state-naming error beats the generic outer-race timeout message (GAP-013: this test genuinely depends on the grace period)[22m[39m
+{"timestamp":"2026-09-25T00:12:41.060Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1)[2m > [22m[2mE10: the state-naming error beats the generic outer-race timeout message (GAP-013: this test genuinely depends on the grace period)[22m[39m
+<empty line>
+[90mstderr[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1)[2m > [22m[2mE10: the state-naming error beats the generic outer-race timeout message (GAP-013: this test genuinely depends on the grace period)[22m[39m
+{"timestamp":"2026-09-25T00:12:41.237Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): Action wait_for_selector timed out after 100ms","context":{}}
+{"timestamp":"2026-09-25T00:12:41.237Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+ [33m❯[39m tests/unit/browser-action-engine.spec.ts [2m ([22m[2m120 tests[22m [2m|[22m [31m1 failed[39m [2m|[22m [33m119 skipped[39m[2m)[22m[90m 184[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/browser-action-engine.spec.ts[2m > [22m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1)[2m > [22mE10: the state-naming error beats the generic outer-race timeout message (GAP-013: this test genuinely depends on the grace period)[39m
+[31m     → expected 'Action wait_for_selector timed out af…' not to match /^Action wait_for_selector timed out a…/[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/browser-action-engine.spec.ts[2m > [22m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1)[2m > [22mE10: the state-naming error beats the generic outer-race timeout message (GAP-013: this test genuinely depends on the grace period)
+[31m[1mAssertionError[22m: expected 'Action wait_for_selector timed out af…' not to match /^Action wait_for_selector timed out a…/[39m
+
+[32m- Expected:[39m 
+/^Action wait_for_selector timed out after/
+
+[31m+ Received:[39m 
+"Action wait_for_selector timed out after 100ms"
+
+[36m [2m❯[22m tests/unit/browser-action-engine.spec.ts:[2m2454:33[22m[39m
+    [90m2452| [39m    const withGrace = await engine.executeAction(mockTab(page), params…
+    [90m2453| [39m    expect(withGrace.success).toBe(false);
+    [90m2454| [39m    expect(withGrace.error).not.toMatch(/^Action wait_for_selector tim…
+    [90m   | [39m                                [31m^[39m
+    [90m2455| [39m    expect(withGrace.error).toMatch(/state=visible/);
+    [90m2456| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[33m119 skipped[39m[90m (120)[39m
+[2m   Start at [22m 05:42:40
+[2m   Duration [22m 1.07s[2m (transform 298ms, setup 0ms, collect 565ms, tests 184ms, environment 0ms, prepare 138ms)[22m
+

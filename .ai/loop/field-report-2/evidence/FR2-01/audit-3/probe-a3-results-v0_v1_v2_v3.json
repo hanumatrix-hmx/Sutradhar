@@ -1,0 +1,111 @@
+[
+  {
+    "id": "v0-baseline-nonbusy-0-healthy-iframes",
+    "latenciesMs": [
+      49,
+      50,
+      50,
+      32,
+      34,
+      32,
+      32,
+      34
+    ]
+  },
+  {
+    "id": "v0-baseline-nonbusy-1-healthy-iframes",
+    "latenciesMs": [
+      4,
+      34,
+      35,
+      49,
+      64,
+      47,
+      48,
+      32
+    ]
+  },
+  {
+    "id": "v0-baseline-nonbusy-4-healthy-iframes",
+    "latenciesMs": [
+      251,
+      267,
+      49,
+      79,
+      49,
+      48,
+      67,
+      80
+    ]
+  },
+  {
+    "id": "v1-visible-main-toast-1-busy-oopifs",
+    "oopifs": 1,
+    "busyMs": 6000,
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#toast",
+      "state": "visible"
+    },
+    "totalMs": 753,
+    "latencyAfterRevealMs": 239
+  },
+  {
+    "id": "v1-visible-main-toast-4-busy-oopifs",
+    "oopifs": 4,
+    "busyMs": 6000,
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#toast",
+      "state": "visible"
+    },
+    "totalMs": 1168,
+    "latencyAfterRevealMs": 658
+  },
+  {
+    "id": "v1-visible-main-toast-8-busy-oopifs",
+    "oopifs": 8,
+    "busyMs": 6000,
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#toast",
+      "state": "visible"
+    },
+    "totalMs": 2203,
+    "latencyAfterRevealMs": 1687
+  },
+  {
+    "id": "v2-never-10-busy-oopifs-timeout1000",
+    "oopifs": 10,
+    "success": false,
+    "retriesUsed": 2,
+    "error": "Action wait_for_selector timed out after 3000ms",
+    "totalMs": 12380,
+    "genericOuterMessage": true
+  },
+  {
+    "id": "v3-recovering-oopif-reveals-after-3s-busy (1 busy)",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#late",
+      "state": "visible"
+    },
+    "totalMs": 3008,
+    "latencyAfterRevealMs": 7
+  },
+  {
+    "id": "v3-recovering-oopif-reveals-after-3s-busy (3 busy)",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#late",
+      "state": "visible"
+    },
+    "totalMs": 3116,
+    "latencyAfterRevealMs": 117
+  }
+]

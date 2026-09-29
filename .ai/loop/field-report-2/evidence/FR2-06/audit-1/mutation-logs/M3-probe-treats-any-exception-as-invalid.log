@@ -1,0 +1,41 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser
+
+ ❯ tests/unit/selector-dialect.spec.ts  (99 tests | 2 failed) 13ms
+   ❯ tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D8: selectorSyntaxProbeInPage > returns null for a NamespaceError
+     → expected 'ns' to be null
+   ❯ tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D8: selectorSyntaxProbeInPage > returns null for a TypeError
+     → expected 'boom' to be null
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 97 passed (99)
+   Start at  04:09:04
+   Duration  327ms (transform 29ms, setup 0ms, collect 32ms, tests 13ms, environment 0ms, prepare 112ms)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D8: selectorSyntaxProbeInPage > returns null for a NamespaceError
+AssertionError: expected 'ns' to be null
+ ❯ tests/unit/selector-dialect.spec.ts:271:55
+    269|         }),
+    270|       });
+    271|       expect(selectorSyntaxProbeInPage('css', 'x|y')).toBeNull();
+       |                                                       ^
+    272|     });
+    273| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D8: selectorSyntaxProbeInPage > returns null for a TypeError
+AssertionError: expected 'boom' to be null
+ ❯ tests/unit/selector-dialect.spec.ts:282:53
+    280|         }),
+    281|       });
+    282|       expect(selectorSyntaxProbeInPage('css', 'x')).toBeNull();
+       |                                                     ^
+    283|     });
+    284| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

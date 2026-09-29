@@ -1,0 +1,37 @@
+[
+  {
+    "id": "s5-element-GENUINELY-hidden-at-500ms, round-robin 300ms busy over A,B,C (always one frame busy)",
+    "truth": "element hidden in every frame from ~500ms on",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#inframe",
+      "state": "hidden"
+    },
+    "totalMs": 915,
+    "visibilityAfter": [
+      false,
+      null,
+      null
+    ],
+    "claimsStillVisible": false
+  },
+  {
+    "id": "s5-element-GENUINELY-hidden-at-500ms, round-robin 120ms busy over A,B,C (always one frame busy)",
+    "truth": "element hidden in every frame from ~500ms on",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#inframe",
+      "state": "hidden",
+      "matchedAtStart": true
+    },
+    "totalMs": 762,
+    "visibilityAfter": [
+      false,
+      null,
+      null
+    ],
+    "claimsStillVisible": false
+  }
+]

@@ -1,0 +1,67 @@
+{"timestamp":"2026-09-27T18:30:01.534Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-27T18:30:01.742Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790533801534_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-27T18:30:35.819Z","level":"info","message":"[BrowserSession] Closed session sess_1790533801534_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-27T18:30:35.819Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790533801534_1","context":{"reason":"Close all sessions requested"}}
+{
+ "order": "dialog",
+ "steps": [
+  {
+   "label": "nav alertload#0",
+   "ms": 725,
+   "ok": true,
+   "r": {
+    "dialogType": "alert",
+    "message": "a3-open"
+   }
+  },
+  {
+   "label": "audit ok while alert open",
+   "ms": 31051,
+   "ok": true,
+   "r": {
+    "url": "http://127.0.0.1:58331/ok?d0",
+    "broken": []
+   }
+  },
+  {
+   "label": "nav alertload#1",
+   "ms": 617,
+   "ok": true,
+   "r": {
+    "dialogType": "alert",
+    "message": "a3-open"
+   }
+  },
+  {
+   "label": "plain nav ok while alert open",
+   "ms": 11,
+   "ok": true,
+   "r": "http://127.0.0.1:58331/ok?d1"
+  },
+  {
+   "label": "audit ok baseline",
+   "ms": 1553,
+   "ok": true,
+   "r": {
+    "url": "http://127.0.0.1:58331/ok?d2",
+    "broken": []
+   }
+  }
+ ],
+ "cdp": [
+  {
+   "createMs": 1,
+   "send Page.enable ms": 29493,
+   "detachStarted": "2026-09-27T18:30:33.506Z",
+   "detach": "ok",
+   "detachMs": 1
+  },
+  {
+   "createMs": 1,
+   "send Page.enable ms": 0,
+   "detachStarted": "2026-09-27T18:30:35.689Z",
+   "detach": "ok",
+   "detachMs": 1
+  }
+ ]
+}

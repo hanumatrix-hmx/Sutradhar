@@ -1,0 +1,151 @@
+
+=== MUT-A attr: bypass broken (attr reads live prop first) (target test I7 in packages/capability-runtime/tests/unit/extract-data.spec.ts) exit=1
+     → expected { ok: true, …(1) } to deeply equal { ok: true, data: { …(2) } }
+      Tests  1 failed | 24 skipped (25)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  packages/capability-runtime/tests/unit/extract-data.spec.ts > extractFieldsInPage > I7: "attr:" reads the raw attribute even when a live value differs; null -> ""
+AssertionError: expected { ok: true, …(1) } to deeply equal { ok: true, data: { …(2) } }
+- Expected
++ Received
+-       "markup",
++       "live",
+-       "",
++       "live",
+    194|     expect(result).toEqual({ ok: true, data: { a: ['markup'], b: [''] …
+--- restored re-run exit=0:       Tests  1 passed | 24 skipped (25)
+
+=== MUT-B option auto reads innerText not .text (target test I3 in packages/capability-runtime/tests/unit/extract-data.spec.ts) exit=1
+     → expected { ok: true, …(1) } to deeply equal { ok: true, data: { a: [ 'Alpha' ] } }
+      Tests  1 failed | 24 skipped (25)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  packages/capability-runtime/tests/unit/extract-data.spec.ts > extractFieldsInPage > I3: option auto reads .text, not innerText
+AssertionError: expected { ok: true, …(1) } to deeply equal { ok: true, data: { a: [ 'Alpha' ] } }
+- Expected
++ Received
+-       "Alpha",
++       "NOT THIS",
+    143|     expect(result).toEqual({ ok: true, data: { a: ['Alpha'] } });
+--- restored re-run exit=0:       Tests  1 passed | 24 skipped (25)
+
+=== MUT-C textarea dropped from form-control default (target test I2 in packages/capability-runtime/tests/unit/extract-data.spec.ts) exit=1
+     → expected { ok: true, …(1) } to deeply equal { ok: true, …(1) }
+      Tests  1 failed | 24 skipped (25)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  packages/capability-runtime/tests/unit/extract-data.spec.ts > extractFieldsInPage > I2: select/textarea auto reads .value
+AssertionError: expected { ok: true, …(1) } to deeply equal { ok: true, …(1) }
+- Expected
++ Received
+-       "notes text",
++       "",
+    136|     expect(result).toEqual({ ok: true, data: { a: ['opt2'], b: ['notes…
+--- restored re-run exit=0:       Tests  1 passed | 24 skipped (25)
+
+=== MUT-D validation stops at first invalid selector (target test I11 in packages/capability-runtime/tests/unit/extract-data.spec.ts) exit=1
+     → expected { ok: false, invalid: [ { …(3) } ] } to deeply equal { ok: false, …(1) }
+      Tests  1 failed | 24 skipped (25)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  packages/capability-runtime/tests/unit/extract-data.spec.ts > extractFieldsInPage > I11: an invalid selector is collected without touching element accessors on any field, and multiple invalid fields are all listed
+AssertionError: expected { ok: false, invalid: [ { …(3) } ] } to deeply equal { ok: false, …(1) }
+- Expected
++ Received
+-     Object {
+-       "message": "Failed to execute 'querySelectorAll' on 'Document': '.p[' is not a valid selector.",
+-       "name": "bad2",
+-       "selector": ".q[",
+-     },
+    278|     expect(twoInvalid).toEqual({
+--- restored re-run exit=0:       Tests  1 passed | 24 skipped (25)
+
+=== MUT-E validation interleaved with reads (read before validating later fields) (target test I11 in packages/capability-runtime/tests/unit/extract-data.spec.ts) exit=1
+     → expected { ok: false, …(1) } to deeply equal { ok: false, invalid: [ { …(3) } ] }
+      Tests  1 failed | 24 skipped (25)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  packages/capability-runtime/tests/unit/extract-data.spec.ts > extractFieldsInPage > I11: an invalid selector is collected without touching element accessors on any field, and multiple invalid fields are all listed
+AssertionError: expected { ok: false, …(1) } to deeply equal { ok: false, invalid: [ { …(3) } ] }
+- Expected
++ Received
++       "message": "should never be called — validation must happen before any read",
++       "name": "ok",
++       "selector": ".good",
++     },
++     Object {
+    269|     expect(result).toEqual({
+--- restored re-run exit=0:       Tests  1 passed | 24 skipped (25)
+
+=== MUT-F option visibility not delegated to owning select (target test I10 in packages/capability-runtime/tests/unit/extract-data.spec.ts) exit=1
+     → expected { ok: true, data: { a: [] } } to deeply equal { ok: true, data: { a: [ 'kept' ] } }
+      Tests  1 failed | 24 skipped (25)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  packages/capability-runtime/tests/unit/extract-data.spec.ts > extractFieldsInPage > I10: an <option> is judged by its owning <select>; no owning select -> dropped
+AssertionError: expected { ok: true, data: { a: [] } } to deeply equal { ok: true, data: { a: [ 'kept' ] } }
+- Expected
++ Received
+-     "a": Array [
+-       "kept",
+-     ],
++     "a": Array [],
+    253|     expect(result).toEqual({ ok: true, data: { a: ['kept'] } });
+--- restored re-run exit=0:       Tests  1 passed | 24 skipped (25)
+
+=== MUT-G live keyword case-sensitive (target test P2 in packages/capability-runtime/tests/unit/extract-data.spec.ts) exit=1
+     → expected { kind: 'attr', name: 'Value' } to deeply equal { kind: 'live', prop: 'value' }
+      Tests  1 failed | 24 skipped (25)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  packages/capability-runtime/tests/unit/extract-data.spec.ts > planExtractFields > P2: "value"/"checked"/"selected" (any case) become live reads, lowercased
+AssertionError: expected { kind: 'attr', name: 'Value' } to deeply equal { kind: 'live', prop: 'value' }
+- Expected
++ Received
+-   "kind": "live",
+-   "prop": "value",
++   "kind": "attr",
++   "name": "Value",
+     30|     expect(plan[1].read).toEqual({ kind: 'live', prop: 'checked' });
+     31|     expect(plan[2].read).toEqual({ kind: 'live', prop: 'selected' });
+     32|     expect(plan[3].read).toEqual({ kind: 'live', prop: 'value' });
+     33|     expect(plan[4].read).toEqual({ kind: 'live', prop: 'checked' });
+--- restored re-run exit=0:       Tests  1 passed | 24 skipped (25)
+
+=== MUT-H resolveFrame syntax error not wrapped (target test R5 in packages/capability-runtime/tests/unit/runtime.spec.ts) exit=1
+     → expected Error: Failed to execute 'querySelector' … to match object { message: StringMatching{…} }
+      Tests  1 failed | 83 skipped (84)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  packages/capability-runtime/tests/unit/runtime.spec.ts > extractData live values (FR2-02) > R5: resolveFrame wraps a selector-syntax rejection from page.$ into a Sutradhar-authored error
+AssertionError: expected Error: Failed to execute 'querySelector' … to match object { message: StringMatching{…} }
+- Expected
++ Received
+- Object {
+-   "message": StringMatching /^Invalid frameSelector "iframe\[" \(from the full chain "iframe\["\) — Failed to execute/,
+- }
++ [Error: Failed to execute 'querySelector' on 'Document': 'iframe[' is not a valid selector.]
+--- restored re-run exit=0:       Tests  1 passed | 83 skipped (84)
+
+=== MUT-I MCP handler drops visibleOnly (target test M2 in packages/mcp-server/tests/unit/tools.spec.ts) exit=1
+     → expected "extractData" to be called with arguments: [ 's1', …(4) ]
+Received: 
+-   Object {
+-     "visibleOnly": true,
+-   },
++   Object {},
+      Tests  1 failed | 4 passed | 38 skipped (43)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  packages/mcp-server/tests/unit/tools.spec.ts > @sutradhar/mcp-server browser.extract_data live values (FR2-02) > M2: the handler passes sessionId/fields/tabId/frameSelector and { visibleOnly } through to runtime.extractData
+AssertionError: expected "extractData" to be called with arguments: [ 's1', …(4) ]
+Received: 
+-   Object {
+-     "visibleOnly": true,
+-   },
++   Object {},
+    464|     expect(JSON.parse(result.content[0].text)).toEqual({ v: ['x'] });
+--- restored re-run exit=0:       Tests  5 passed | 38 skipped (43)
+
+=== MUT-J visibility rule drops collapse check (target test I9 in packages/capability-runtime/tests/unit/extract-data.spec.ts) exit=1
+     → expected { ok: true, data: { a: [ 'x', 'x' ] } } to deeply equal { ok: true, data: { a: [ 'x' ] } }
+      Tests  1 failed | 24 skipped (25)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  packages/capability-runtime/tests/unit/extract-data.spec.ts > extractFieldsInPage > I9: visibleOnly drops hidden/collapsed/zero-size elements; opacity is ignored
+AssertionError: expected { ok: true, data: { a: [ 'x', 'x' ] } } to deeply equal { ok: true, data: { a: [ 'x' ] } }
+- Expected
++ Received
++       "x",
+    226|     expect(withFilter).toEqual({ ok: true, data: { a: ['x'] } });
+--- restored re-run exit=0:       Tests  1 passed | 24 skipped (25)

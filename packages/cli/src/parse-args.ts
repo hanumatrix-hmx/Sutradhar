@@ -21,6 +21,12 @@ export interface ParsedArgs {
   /** Parsed from `--baseline <url>` — undefined when the flag isn't given. Used by `audit` to
    *  also run a visual compare against a known-good baseline URL in the same command. */
   baselineFlag: string | undefined;
+  /** FR2-12/T22: true when `--baseline` was given but its next argument is missing or itself
+   *  looks like a flag (e.g. `audit <url> --baseline` with nothing after it, or `audit <url>
+   *  --baseline --json`, which would otherwise silently consume `--json` as the baseline URL).
+   *  `baselineFlag` is `undefined` whenever this is true — the caller rejects it with a clear
+   *  usage message instead of silently skipping the comparison or misparsing another flag. */
+  baselineFlagGivenButInvalid: boolean;
   /** `--settle` — used by `click`/`type` to wait for the page to stop actively changing
    *  (DOM-quiet + network-idle) before returning. Off by default. */
   settle: boolean;
@@ -65,6 +71,24 @@ export interface ParsedArgs {
    *  `--viewport bogus`) — lets the caller reject it with a clear usage message instead of
    *  silently ignoring a typo'd value. */
   viewportFlagGivenButInvalid: boolean;
+  /** Parsed from `--state visible|attached|hidden` — undefined when the flag isn't given.
+   *  Only meaningful for the `wait` command; `undefined` leaves the engine's own default
+   *  ('visible') in force. */
+  stateFlag: 'visible' | 'attached' | 'hidden' | undefined;
+  /** True when `--state` was given but its value was missing or not one of the three valid
+   *  values — lets the caller reject it with a clear usage message instead of silently
+   *  falling back to the default. */
+  stateFlagGivenButInvalid: boolean;
+  /** FR2-04: parsed from `--dialog accept|dismiss|report` — undefined when the flag isn't given.
+   *  Sets/clears this session's default native-dialog policy (persisted in CLI state). */
+  dialogFlag: 'accept' | 'dismiss' | 'report' | undefined;
+  /** True when `--dialog` was given but its value wasn't one of accept/dismiss/report (including
+   *  the value being missing entirely). */
+  dialogFlagGivenButInvalid: boolean;
+  /** FR2-04: parsed from `--dialog-text <text>` — the exact next argument, even if it itself
+   *  looks like a flag (e.g. `--dialog-text --weird` is a literal prompt answer of "--weird",
+   *  not a second flag). Only meaningful with `--dialog accept`. */
+  dialogTextFlag: string | undefined;
   /** Any `--something`-shaped argument that isn't one of the flags this parser recognizes (and
    *  isn't a consumed value of one, e.g. the URL after `--baseline`). Found live (external field
    *  report, PROB-042): a typo'd or misplaced flag like `sutradhar screenshot --help` was
@@ -100,7 +124,9 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
         .filter((d) => d.length > 0)
     : undefined;
   const baselineFlagIndex = args.indexOf('--baseline');
-  const baselineFlag = baselineFlagIndex !== -1 ? args[baselineFlagIndex + 1] : undefined;
+  const baselineRaw = baselineFlagIndex !== -1 ? args[baselineFlagIndex + 1] : undefined;
+  const baselineFlagGivenButInvalid = baselineFlagIndex !== -1 && (baselineRaw === undefined || baselineRaw.startsWith('--'));
+  const baselineFlag = baselineFlagGivenButInvalid ? undefined : baselineRaw;
   const modifiersFlagIndex = args.indexOf('--modifiers');
   const modifiersRaw = modifiersFlagIndex !== -1 ? args[modifiersFlagIndex + 1] : undefined;
   const VALID_MODIFIERS = new Set(['Control', 'Shift', 'Alt', 'Meta']);
@@ -118,6 +144,20 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
   const viewportFlag = viewportMatch
     ? { width: parseInt(viewportMatch[1]!, 10), height: parseInt(viewportMatch[2]!, 10) }
     : undefined;
+  const stateFlagIndex = args.indexOf('--state');
+  const stateRaw = stateFlagIndex !== -1 ? args[stateFlagIndex + 1] : undefined;
+  const VALID_STATES = new Set(['visible', 'attached', 'hidden']);
+  const stateFlag =
+    stateRaw && VALID_STATES.has(stateRaw) ? (stateRaw as 'visible' | 'attached' | 'hidden') : undefined;
+  const stateFlagGivenButInvalid = stateFlagIndex !== -1 && !stateFlag;
+  const dialogFlagIndex = args.indexOf('--dialog');
+  const dialogRaw = dialogFlagIndex !== -1 ? args[dialogFlagIndex + 1] : undefined;
+  const VALID_DIALOG_MODES = new Set(['accept', 'dismiss', 'report']);
+  const dialogFlag =
+    dialogRaw && VALID_DIALOG_MODES.has(dialogRaw) ? (dialogRaw as 'accept' | 'dismiss' | 'report') : undefined;
+  const dialogFlagGivenButInvalid = dialogFlagIndex !== -1 && !dialogFlag;
+  const dialogTextFlagIndex = args.indexOf('--dialog-text');
+  const dialogTextFlag = dialogTextFlagIndex !== -1 ? args[dialogTextFlagIndex + 1] : undefined;
   const KNOWN_FLAGS = new Set([
     '--headed',
     '--fail-on-diff',
@@ -133,15 +173,21 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     '--baseline',
     '--modifiers',
     '--frame',
+    '--state',
+    '--dialog',
+    '--dialog-text',
   ]);
   const isConsumedValue = (i: number): boolean =>
     (profileFlagIndex !== -1 && i === profileFlagIndex + 1) ||
     (userAgentFlagIndex !== -1 && i === userAgentFlagIndex + 1) ||
     (allowlistDomainsFlagIndex !== -1 && i === allowlistDomainsFlagIndex + 1) ||
-    (baselineFlagIndex !== -1 && i === baselineFlagIndex + 1) ||
+    (baselineFlagIndex !== -1 && !baselineFlagGivenButInvalid && i === baselineFlagIndex + 1) ||
     (modifiersFlagIndex !== -1 && i === modifiersFlagIndex + 1) ||
     (frameFlagIndex !== -1 && i === frameFlagIndex + 1) ||
-    (viewportFlagIndex !== -1 && i === viewportFlagIndex + 1);
+    (viewportFlagIndex !== -1 && i === viewportFlagIndex + 1) ||
+    (stateFlagIndex !== -1 && i === stateFlagIndex + 1) ||
+    (dialogFlagIndex !== -1 && i === dialogFlagIndex + 1) ||
+    (dialogTextFlagIndex !== -1 && i === dialogTextFlagIndex + 1);
   const cleanArgs = args.filter((a, i) => !KNOWN_FLAGS.has(a) && !isConsumedValue(i));
   // Anything left that's still shaped like a flag (`--foo`) is almost certainly a typo'd or
   // misplaced flag, not literal positional data — see `unrecognizedFlags`'s doc comment.
@@ -157,6 +203,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     userAgentFlag,
     allowlistDomainsFlag,
     baselineFlag,
+    baselineFlagGivenButInvalid,
     settle,
     noText,
     idsOnly,
@@ -165,6 +212,30 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     frameFlag,
     viewportFlag,
     viewportFlagGivenButInvalid: viewportFlagIndex !== -1 && !viewportFlag,
+    stateFlag,
+    stateFlagGivenButInvalid,
+    dialogFlag,
+    dialogFlagGivenButInvalid,
+    dialogTextFlag,
     unrecognizedFlags,
   };
+}
+
+/**
+ * FR2-04: validates the `--dialog`/`--dialog-text` flags against the parsed args and the verb.
+ * Returns the exact user-facing message (spec §2.6) or `undefined` when the combination is
+ * valid. Kept here (rather than folded into `parseArgs` itself) because it needs the verb too,
+ * which `parseArgs` doesn't otherwise care about.
+ */
+export function dialogFlagError(p: Pick<ParsedArgs, 'verb' | 'dialogFlag' | 'dialogFlagGivenButInvalid' | 'dialogTextFlag'>): string | undefined {
+  if (p.dialogFlagGivenButInvalid) {
+    return '--dialog must be one of: accept, dismiss, report (e.g. --dialog accept)';
+  }
+  if (p.dialogTextFlag !== undefined && p.dialogFlag !== 'accept') {
+    return '--dialog-text only applies with --dialog accept (it is the text entered into prompt() dialogs)';
+  }
+  if (p.verb === 'dialog' && (p.dialogFlag !== undefined || p.dialogTextFlag !== undefined)) {
+    return '--dialog sets the session\'s default policy; to handle the open dialog now use: sutradhar dialog accept [text] | sutradhar dialog dismiss';
+  }
+  return undefined;
 }

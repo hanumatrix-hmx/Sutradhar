@@ -1,0 +1,39 @@
+--- crashpad (E:\AI-Cache\tmp\fr2-03-adv-crashpad-0x2DFi)
+PASS ADV-crashpad-evidence
+--- adv1-statedir (E:\AI-Cache\tmp\fr2-03-adv-adv1-statedir-B8LSE5)
+PASS ADV1a-live-STATE_DIR-session-not-targeted (GC without env)
+PASS ADV1b-live-STATE_DIR-session-not-targeted (GC with env)
+PASS ADV1c-live-session-survives-real-gc
+--- adv2-stale-refs-live-dir (E:\AI-Cache\tmp\fr2-03-adv-adv2-stale-refs-live-dir-M5Rs6J)
+PASS ADV2a-live-dir-not-planned-for-delete
+--- adv3-user-dir-junction (E:\AI-Cache\tmp\fr2-03-adv-adv3-user-dir-junction-ehztyG)
+PASS ADV3a-name-convention-dir-planned
+PASS ADV3b-junction-target-survives
+--- adv4-degraded (E:\AI-Cache\tmp\fr2-03-adv-adv4-degraded-zZMnI7)
+PASS ADV4-pre-degraded
+PASS ADV4a-foreign-puppeteer-dir-not-planned
+PASS ADV4b-young-dir-grace-respected
+PASS ADV4c-dry-run-did-not-mutate
+PASS ADV4d-degraded-exit-code
+--- adv5-concurrent (E:\AI-Cache\tmp\fr2-03-adv-adv5-concurrent-81qNAl)
+PASS ADV5a-no-crash-no-false-deleted
+PASS ADV5b-no-spurious-failure
+PASS ADV5c-all-fakes-gone
+PASS ADV5d-orphan-dir-gone
+--- adv6-selfheal (E:\AI-Cache\tmp\fr2-03-adv-adv6-selfheal-HBGtWY)
+PASS ADV6-self-heal-removes-old-dir
+PASS ADV6b-close-after-heal
+--- adv7-mcp-stdin (E:\AI-Cache\tmp\fr2-03-adv-adv7-mcp-stdin-obu2TF)
+PASS ADV7a-mcp-idle-no-shutdown
+PASS ADV7b-mcp-stdin-eof-shutdown
+--- adv8-n15 (E:\AI-Cache\tmp\fr2-03-adv-adv8-n15-5IhWlU)
+PASS ADV8-N15-close-does-not-kill-unverified-pid
+--- adv9-n17 (E:\AI-Cache\tmp\fr2-03-adv-adv9-n17-4QMA4M)
+PASS ADV9-N17-mid-spawn
+--- adv10-dryrun-diff (E:\AI-Cache\tmp\fr2-03-adv-adv10-dryrun-diff-MBLnn2)
+PASS ADV10-dryrun-temp-diff
+{
+  "total": 23,
+  "passed": 23,
+  "failed": []
+}

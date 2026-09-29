@@ -1,0 +1,82 @@
+{
+  "C1_junction": {
+    "actions": [
+      {
+        "type": "clearState",
+        "stateFile": "E:\\AI-Cache\\tmp\\fr2-03-a3-junc-vwYOeG\\junc\\state.json",
+        "result": "cleared"
+      },
+      {
+        "type": "kill",
+        "pid": 72800,
+        "role": "browser",
+        "userDataDir": "E:\\AI-Cache\\tmp\\fr2-03-a3-junc-vwYOeG\\temp\\sutradhar-cli-1790337362551-JuncAA",
+        "reason": "orphan-cli",
+        "result": "killed"
+      },
+      {
+        "type": "deleteDir",
+        "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-junc-vwYOeG\\temp\\sutradhar-cli-1790337362551-JuncAA",
+        "reason": "orphan-browser",
+        "result": "deleted",
+        "attempts": 1
+      }
+    ],
+    "realStateJsonExistsAfter": false,
+    "preciousExistsAfter": true,
+    "realDirExistsAfter": true,
+    "junctionExistsAfter": true
+  },
+  "C1b_junction_emptying": {
+    "actions": [
+      {
+        "type": "clearState",
+        "stateFile": "E:\\AI-Cache\\tmp\\fr2-03-a3-junc2-WNbVyC\\junc\\state.json",
+        "result": "cleared"
+      },
+      {
+        "type": "kill",
+        "pid": 69356,
+        "role": "browser",
+        "userDataDir": "E:\\AI-Cache\\tmp\\fr2-03-a3-junc2-WNbVyC\\temp\\sutradhar-cli-1790337364937-JuncBB",
+        "reason": "orphan-cli",
+        "result": "killed"
+      },
+      {
+        "type": "deleteDir",
+        "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-junc2-WNbVyC\\temp\\sutradhar-cli-1790337364937-JuncBB",
+        "reason": "orphan-browser",
+        "result": "deleted",
+        "attempts": 1
+      }
+    ],
+    "realDirExistsAfter": true,
+    "junctionExistsAfter": false
+  },
+  "C2_file_symlink": {
+    "actions": [
+      {
+        "type": "clearState",
+        "stateFile": "E:\\AI-Cache\\tmp\\fr2-03-a3-fsym-z6NzRm\\linkdir\\state.json",
+        "result": "cleared"
+      },
+      {
+        "type": "kill",
+        "pid": 75596,
+        "role": "browser",
+        "userDataDir": "E:\\AI-Cache\\tmp\\fr2-03-a3-fsym-z6NzRm\\temp\\sutradhar-cli-1790337367433-FsymCC",
+        "reason": "orphan-cli",
+        "result": "killed"
+      },
+      {
+        "type": "deleteDir",
+        "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-fsym-z6NzRm\\temp\\sutradhar-cli-1790337367433-FsymCC",
+        "reason": "orphan-browser",
+        "result": "deleted",
+        "attempts": 1
+      }
+    ],
+    "targetFileExistsAfter": true,
+    "linkExistsAfter": false
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "item": "FR2-03",
+  "round": "fix-4",
+  "date": "2026-09-26",
+  "escalation": "cycle 1 of 2 (Orchestrator-supervised, per the loop's retry-bound rule)",
+  "fixes": [
+    {
+      "gap": "GAP-193",
+      "change": "packages/cli/src/gc.ts planGc(): (1) Puppeteer-dir branch now requires dir.ownerFile unconditionally -- dirsWithKilledBrowser (populated from unauthenticated command-line marker text) can no longer stand in for D2's own .sutradhar-owner.json attribution, in the early not-sutradhar gate or the delete decision. (2) The legacy (non-Puppeteer) dir branch now checks withinGrace(ageMs) BEFORE consulting dirsWithKilledBrowser, uniformly, regardless of which pass/signal is proposing the delete.",
+      "live_repro": "f4-gap193-sibling-path.mjs (copy of audit-4's a4-gap189-sibling-path.mjs, output renamed): V1 young cli victim now kept 'grace' (was deleted); V1c control unchanged (kept 'grace'); V2 unowned puppeteer victim now kept 'not-sutradhar' (was deleted); V2c control unchanged (kept 'not-sutradhar'). See f4-gap193-sibling-path.json."
+    },
+    {
+      "gap": "GAP-194",
+      "change": "packages/cli/src/gc.ts: new probeLegacyChromeReachable(userDataDir) reads the profile dir's own DevToolsActivePort file and probes the named port directly -- no marker or state-file content needed. collectGcSnapshot() populates a new GcSnapshot.legacyProbes map for every unmarked, legacy-looking, in-scope CLI Chrome process found in that run's own enumeration. planGc()'s 'unmarked browser process' branch consults legacyProbes before falling back to the pure age-based kill: a confirmed-reachable Chrome is kept 'unknown-liveness' instead of killed as legacy-orphan.",
+      "live_repro": "f4-gap194-legacy-sibling.mjs (copy of audit-4's a4-gap188-legacy-sibling.mjs, output renamed): step2 (garbage state) now shows the browser kept 'unknown-liveness' (was planned kill+deleteDir); step3 (REAL run, locked state file, past 125s grace) shows zero actions -- chrome still alive, profile dir and state file both intact. See f4-gap194-legacy-sibling.json."
+    }
+  ],
+  "no_regression_to_prior_gaps": {
+    "175_176_177_178": "f4-regressions.mjs: 10/11 PASS. The one FAIL (R176: 'orphan Chrome killed AND its dir reclaimed in the SAME run') is the EXPECTED, disclosed consequence of GAP-193's grace fix -- the Chrome IS still killed correctly, but the dir reclaim is now correctly deferred until the 120s grace genuinely expires, because R176's original pass depended on the exact dirsWithKilledBrowser grace-bypass GAP-193 closes. f4-r176-eventual-reclaim-followup.mjs proves the SAME dir is reclaimed on a later run once grace expires (no permanent leak): existsBefore:true, existsAfter:false, deletedIt:true.",
+    "183_ppid": "covered by the full cli vitest suite (unaffected code path, not touched this round) -- 172/172 passing, including all PPID-chain tests.",
+    "donewhen": "f4-donewhen.mjs (copy of audit-4's a4-donewhen-rerun.mjs): 23/25 PASS. The 2 FAILs (G176 and DW11) are the SAME single expected consequence as above (DW11's leftover dir is exactly the grace-protected G176 dir, not a new leak -- the harness's own finally{} block rmSync's the whole scratch root regardless, confirmed removed after the run)."
+  },
+  "own_bypass_attempts": [
+    "f4-bypass1-runtime-marker-on-legacy-dir.mjs: a forged RUNTIME marker (not CLI) claiming a young, real, non-Puppeteer sutradhar-cli-* dir -- confirmed NOT deleted (kept grace); an old dir with the same forged marker IS deleted, but that is the same outcome an ordinary unreferenced orphan-dir would get regardless of the forged marker (not a new hole).",
+    "f4-bypass2-inuse-dir-vs-forged-marker.mjs: a forged marker claims a dir a SEPARATE, genuinely-alive real process also references on its own command line -- confirmed NOT deleted."
+  ],
+  "revert_and_confirm": "f4-revert-and-confirm.md: 3 mutations (M1 Puppeteer ownerFile gate, M2 grace-before-dirsWithKilledBrowser ordering, M3 legacyProbes consultation), each caught by a test added this round (1-2 failures each), each restored byte-identical afterward, full suite (172/172) green after every restore.",
+  "verification": {
+    "typecheck": "clean (tsc --build packages/cli/tsconfig.json, zero output)",
+    "vitest_cli": "172/172 (was 164; +8 new tests this round: GAP-193 young-grace, GAP-193 unowned-puppeteer, GAP-194 planGc, G5/G9/GAP-176/GAP-183-PPID mtime fixups, +5 in new legacy-probe.spec.ts)",
+    "vitest_browser": "302/302 (untouched package, unchanged from audit-4's own baseline)",
+    "vitest_mcp_server": "84/84 (untouched package, unchanged from audit-4's own baseline)",
+    "build": "turbo run build --filter=!sutradhar --force: 19/19 tasks successful"
+  },
+  "cleanup": {
+    "own_scratch_dirs_removed": [
+      "fr2-03-a4-V1-young-cli-victim-bfx63l",
+      "fr2-03-a4-V1c-control-no-carrier-ImAumy",
+      "fr2-03-a4-V2-unowned-puppeteer-victim-Fkikwl",
+      "fr2-03-a4-V2c-control-no-carrier-KkjyE0",
+      "fr2-03-a4-legacy-dtNs67",
+      "fr2-03-fix4-noregr-NiPeqc",
+      "fr2-03-a4-reg-FIBcNB (regression-script leftover, manually removed after the eventual-reclaim followup)"
+    ],
+    "self_cleaned_by_script": ["fr2-03-a3-dw-EBsW3P (f4-donewhen.mjs's own finally{} rmSync)"],
+    "final_process_check": "PowerShell Get-CimInstance Win32_Process filtered for fr2-03/fix4/noregr/a4-legacy/a4-donewhen/a3-dw command-line substrings: zero matches",
+    "final_dir_check": "no E:\\AI-Cache\\tmp\\fr2-03-* directory dated 2026-09-26 (today) remains; all remaining fr2-03-* directories are pre-existing (dated 2026-09-25, from audit-3/audit-4/fix-2/fix-3, not created by this round)"
+  }
+}

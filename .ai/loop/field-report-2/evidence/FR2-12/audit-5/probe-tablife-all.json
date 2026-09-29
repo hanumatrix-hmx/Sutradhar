@@ -1,0 +1,1471 @@
+{
+  "only": "all",
+  "a-longlived": {
+    "steps": [
+      {
+        "i": 0,
+        "kind": "noisy",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 1,
+        "kind": "clean",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=150&m=L1",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 2,
+        "kind": "own404",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 404,
+        "audit": {
+          "url": "/own404?m=L2",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": true
+      },
+      {
+        "i": 3,
+        "kind": "hash",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/hash?m=L3#x",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 4,
+        "kind": "push",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/pushed-L4",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 5,
+        "kind": "jsredir",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?m=L5",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 6,
+        "kind": "click",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=150&m=L6",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 7,
+        "kind": "reload",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 8,
+        "kind": "clean800",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=800&m=L8",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 9,
+        "kind": "back",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 10,
+        "kind": "noisy",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 11,
+        "kind": "clean",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=150&m=L11",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 12,
+        "kind": "own404",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 404,
+        "audit": {
+          "url": "/own404?m=L12",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": true
+      },
+      {
+        "i": 13,
+        "kind": "hash",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/hash?m=L13#x",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 14,
+        "kind": "push",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/pushed-L14",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 15,
+        "kind": "jsredir",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?m=L15",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 16,
+        "kind": "click",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=150&m=L16",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 17,
+        "kind": "reload",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 18,
+        "kind": "clean800",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=800&m=L18",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 19,
+        "kind": "back",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 20,
+        "kind": "noisy",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 21,
+        "kind": "clean",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=150&m=L21",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 22,
+        "kind": "own404",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 404,
+        "audit": {
+          "url": "/own404?m=L22",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": true
+      },
+      {
+        "i": 23,
+        "kind": "hash",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/hash?m=L23#x",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 24,
+        "kind": "push",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/pushed-L24",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 25,
+        "kind": "jsredir",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?m=L25",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 26,
+        "kind": "click",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=150&m=L26",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 27,
+        "kind": "reload",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 28,
+        "kind": "clean800",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=800&m=L28",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 29,
+        "kind": "back",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 30,
+        "kind": "noisy",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 31,
+        "kind": "clean",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=150&m=L31",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 32,
+        "kind": "own404",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 404,
+        "audit": {
+          "url": "/own404?m=L32",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": true
+      },
+      {
+        "i": 33,
+        "kind": "hash",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/hash?m=L33#x",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 34,
+        "kind": "push",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/pushed-L34",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 35,
+        "kind": "jsredir",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?m=L35",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 36,
+        "kind": "click",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=150&m=L36",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 37,
+        "kind": "reload",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 38,
+        "kind": "clean800",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=800&m=L38",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 39,
+        "kind": "back",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 40,
+        "kind": "noisy",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 41,
+        "kind": "clean",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=150&m=L41",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 42,
+        "kind": "own404",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 404,
+        "audit": {
+          "url": "/own404?m=L42",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": true
+      },
+      {
+        "i": 43,
+        "kind": "hash",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/hash?m=L43#x",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 44,
+        "kind": "push",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/pushed-L44",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 45,
+        "kind": "jsredir",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?m=L45",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 46,
+        "kind": "click",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=150&m=L46",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 47,
+        "kind": "reload",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 48,
+        "kind": "clean800",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=800&m=L48",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 49,
+        "kind": "back",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 50,
+        "kind": "noisy",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 51,
+        "kind": "clean",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=150&m=L51",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 52,
+        "kind": "own404",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 404,
+        "audit": {
+          "url": "/own404?m=L52",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": true
+      },
+      {
+        "i": 53,
+        "kind": "hash",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/hash?m=L53#x",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 54,
+        "kind": "push",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/pushed-L54",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 55,
+        "kind": "jsredir",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?m=L55",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 56,
+        "kind": "click",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=150&m=L56",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 57,
+        "kind": "reload",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      },
+      {
+        "i": 58,
+        "kind": "clean800",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200,
+        "audit": {
+          "url": "/clean?d=800&m=L58",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        "ownStatus404": false
+      },
+      {
+        "i": 59,
+        "kind": "back",
+        "commitMoved": true,
+        "commitAfterNavStart": true,
+        "commitAfterDocStart": true,
+        "sameDocMovedIt": false,
+        "docResp": 200
+      }
+    ],
+    "violations": {
+      "crossDocCommitNotMoved": [],
+      "commitBeforeDocStart": [],
+      "sameDocMovedCommit": [],
+      "foreignFindings": [],
+      "ownDropped": [],
+      "own404Missing": [],
+      "own404Stale": []
+    },
+    "listenerCounts": {
+      "frameNavigated": 1,
+      "responseReceived": 1
+    },
+    "fast200": {
+      "sessionsCreatedDuring": 0,
+      "commitAfterFastIsRecent": true,
+      "auditAfterFast": {
+        "url": "/clean?m=F199",
+        "foreign": [],
+        "foreignBroken": [],
+        "ownKept": true,
+        "covers": true
+      }
+    },
+    "heapMB": {
+      "start": 16.1,
+      "mid": 18.2,
+      "end": 20.4
+    },
+    "cdp": {
+      "created": 2,
+      "detached": 0,
+      "stillOpenObjects": 2,
+      "stillOpenConnected": 2
+    },
+    "cdpAfterClose": {
+      "created": 2,
+      "detached": 1,
+      "stillOpenObjects": 1,
+      "stillOpenConnected": 1
+    },
+    "elapsedMs": 36637
+  },
+  "b-close": {
+    "b1": [
+      {
+        "auditErr": "No tab \"tab_sess_1790544911856_1_3\" in session \"sess_1790544911856_1\".",
+        "auditUrlErr": "No tab \"tab_sess_1790544911856_1_3\" in session \"sess_1790544911856_1\".",
+        "sessionsCreated": 1,
+        "lateClientAssigned": false,
+        "lateClientDetached": null,
+        "getters": {
+          "commit": null,
+          "resp": null
+        }
+      },
+      {
+        "auditErr": "No tab \"tab_sess_1790544911856_1_4\" in session \"sess_1790544911856_1\".",
+        "auditUrlErr": "No tab \"tab_sess_1790544911856_1_4\" in session \"sess_1790544911856_1\".",
+        "sessionsCreated": 1,
+        "lateClientAssigned": false,
+        "lateClientDetached": null,
+        "getters": {
+          "commit": null,
+          "resp": null
+        }
+      },
+      {
+        "auditErr": "No tab \"tab_sess_1790544911856_1_5\" in session \"sess_1790544911856_1\".",
+        "auditUrlErr": "No tab \"tab_sess_1790544911856_1_5\" in session \"sess_1790544911856_1\".",
+        "sessionsCreated": 1,
+        "lateClientAssigned": false,
+        "lateClientDetached": null,
+        "getters": {
+          "commit": null,
+          "resp": null
+        }
+      },
+      {
+        "auditErr": "No tab \"tab_sess_1790544911856_1_6\" in session \"sess_1790544911856_1\".",
+        "auditUrlErr": "No tab \"tab_sess_1790544911856_1_6\" in session \"sess_1790544911856_1\".",
+        "sessionsCreated": 1,
+        "lateClientAssigned": false,
+        "lateClientDetached": null,
+        "getters": {
+          "commit": null,
+          "resp": null
+        }
+      },
+      {
+        "auditErr": "No tab \"tab_sess_1790544911856_1_7\" in session \"sess_1790544911856_1\".",
+        "auditUrlErr": "No tab \"tab_sess_1790544911856_1_7\" in session \"sess_1790544911856_1\".",
+        "sessionsCreated": 1,
+        "lateClientAssigned": false,
+        "lateClientDetached": null,
+        "getters": {
+          "commit": null,
+          "resp": null
+        }
+      }
+    ],
+    "b2": {
+      "popupStillListed": false,
+      "auditErr": null,
+      "tabsAfter": 2
+    },
+    "b3": {
+      "outcome": "rejected: Navigating frame was detached"
+    },
+    "b4": {
+      "outcome": "resolved"
+    },
+    "cdp": {
+      "created": 12,
+      "detached": 10,
+      "stillOpenObjects": 2,
+      "stillOpenConnected": 1
+    },
+    "elapsedMs": 8336
+  },
+  "c-multitab": {
+    "trials": 40,
+    "commitOutsideOwnWindow": 0,
+    "docRespNotOwn": 0,
+    "foreignConsole": 0,
+    "foreignBroken": 0,
+    "ownDropped": 0,
+    "own404Wrong": 0,
+    "examples": [],
+    "concurrentAudits": [
+      {
+        "foreign": 0,
+        "fb": 0,
+        "own": true
+      },
+      {
+        "foreign": 0,
+        "fb": 0,
+        "own": true
+      },
+      {
+        "foreign": 0,
+        "fb": 0,
+        "own": true
+      },
+      {
+        "foreign": 0,
+        "fb": 0,
+        "own": true
+      }
+    ],
+    "cdp": {
+      "created": 16,
+      "detached": 14,
+      "stillOpenObjects": 2,
+      "stillOpenConnected": 1
+    },
+    "elapsedMs": 77915
+  },
+  "d-adoption": {
+    "popup": {
+      "adopted": true,
+      "hasTracker": true,
+      "commitAtAfterAdopt": null,
+      "trials": [
+        {
+          "url": "/clean?d=150&m=d1c0",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        {
+          "url": "/clean?d=150&m=d1c1",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        {
+          "url": "/clean?d=150&m=d1c2",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        {
+          "url": "/clean?d=150&m=d1c3",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        {
+          "url": "/clean?d=150&m=d1c4",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        }
+      ],
+      "leaked": 0,
+      "ownDropped": 0
+    },
+    "attach": {
+      "chromePid": 67684,
+      "port": "58990",
+      "adoptedUrl": "about:blank",
+      "hasTracker0": false,
+      "hasTracker": true,
+      "commitAtBeforeAnyNav": null,
+      "preloadedAudit": {
+        "covers": false,
+        "consoleErrors": 0
+      },
+      "trials": [
+        {
+          "url": "/clean?d=150&m=d2c0",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        {
+          "url": "/clean?d=150&m=d2c1",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        {
+          "url": "/clean?d=150&m=d2c2",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        {
+          "url": "/clean?d=150&m=d2c3",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        {
+          "url": "/clean?d=150&m=d2c4",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        }
+      ],
+      "leaked": 0,
+      "ownDropped": 0,
+      "adoptWithDialogMs": 0,
+      "pendingSeenByAdoptedTab": false,
+      "dialogAdoptTrials": [
+        {
+          "url": "/clean?d=150&m=d3c0",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        {
+          "url": "/clean?d=150&m=d3c1",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        },
+        {
+          "url": "/clean?d=150&m=d3c2",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true
+        }
+      ],
+      "dialogAdoptCommitAt": "2026-09-27T21:40:28.026Z"
+    },
+    "elapsedMs": 194126
+  },
+  "e-interleave": {
+    "trials": 8,
+    "bad": 0,
+    "badExamples": [],
+    "trackerSawUrlModeNavs": 8,
+    "recs": [
+      {
+        "url404": {
+          "url": "/own404?m=e0a",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "own404": true
+        },
+        "cp404": {
+          "url": "/own404?m=e0a",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "own404": true
+        },
+        "trackerSawUrlModeNav": true,
+        "urlClean": {
+          "url": "/clean?d=150&m=e0b",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "any404": false
+        },
+        "cpClean": {
+          "url": "/clean?d=150&m=e0b",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "any404": false
+        }
+      },
+      {
+        "url404": {
+          "url": "/own404?m=e1a",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "own404": true
+        },
+        "cp404": {
+          "url": "/own404?m=e1a",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "own404": true
+        },
+        "trackerSawUrlModeNav": true,
+        "urlClean": {
+          "url": "/clean?d=150&m=e1b",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "any404": false
+        },
+        "cpClean": {
+          "url": "/clean?d=150&m=e1b",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "any404": false
+        }
+      },
+      {
+        "url404": {
+          "url": "/own404?m=e2a",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "own404": true
+        },
+        "cp404": {
+          "url": "/own404?m=e2a",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "own404": true
+        },
+        "trackerSawUrlModeNav": true,
+        "urlClean": {
+          "url": "/clean?d=150&m=e2b",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "any404": false
+        },
+        "cpClean": {
+          "url": "/clean?d=150&m=e2b",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "any404": false
+        }
+      },
+      {
+        "url404": {
+          "url": "/own404?m=e3a",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "own404": true
+        },
+        "cp404": {
+          "url": "/own404?m=e3a",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "own404": true
+        },
+        "trackerSawUrlModeNav": true,
+        "urlClean": {
+          "url": "/clean?d=150&m=e3b",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "any404": false
+        },
+        "cpClean": {
+          "url": "/clean?d=150&m=e3b",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "any404": false
+        }
+      },
+      {
+        "url404": {
+          "url": "/own404?m=e4a",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "own404": true
+        },
+        "cp404": {
+          "url": "/own404?m=e4a",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "own404": true
+        },
+        "trackerSawUrlModeNav": true,
+        "urlClean": {
+          "url": "/clean?d=150&m=e4b",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "any404": false
+        },
+        "cpClean": {
+          "url": "/clean?d=150&m=e4b",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "any404": false
+        }
+      },
+      {
+        "url404": {
+          "url": "/own404?m=e5a",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "own404": true
+        },
+        "cp404": {
+          "url": "/own404?m=e5a",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "own404": true
+        },
+        "trackerSawUrlModeNav": true,
+        "urlClean": {
+          "url": "/clean?d=150&m=e5b",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "any404": false
+        },
+        "cpClean": {
+          "url": "/clean?d=150&m=e5b",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "any404": false
+        }
+      },
+      {
+        "url404": {
+          "url": "/own404?m=e6a",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "own404": true
+        },
+        "cp404": {
+          "url": "/own404?m=e6a",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "own404": true
+        },
+        "trackerSawUrlModeNav": true,
+        "urlClean": {
+          "url": "/clean?d=150&m=e6b",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "any404": false
+        },
+        "cpClean": {
+          "url": "/clean?d=150&m=e6b",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "any404": false
+        }
+      },
+      {
+        "url404": {
+          "url": "/own404?m=e7a",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "own404": true
+        },
+        "cp404": {
+          "url": "/own404?m=e7a",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "own404": true
+        },
+        "trackerSawUrlModeNav": true,
+        "urlClean": {
+          "url": "/clean?d=150&m=e7b",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "any404": false
+        },
+        "cpClean": {
+          "url": "/clean?d=150&m=e7b",
+          "foreign": [],
+          "foreignBroken": [],
+          "ownKept": true,
+          "covers": true,
+          "any404": false
+        }
+      }
+    ],
+    "concurrent": {
+      "url": "fulfilled",
+      "cp": "fulfilled"
+    },
+    "cdp": {
+      "created": 39,
+      "detached": 36,
+      "stillOpenObjects": 3,
+      "stillOpenConnected": 1
+    },
+    "elapsedMs": 11327
+  },
+  "cdpFinal": {
+    "created": 39,
+    "detached": 36,
+    "stillOpenObjects": 3,
+    "stillOpenConnected": 1
+  },
+  "tmpProfileRemoved": true
+}

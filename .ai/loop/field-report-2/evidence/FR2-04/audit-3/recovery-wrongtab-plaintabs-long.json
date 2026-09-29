@@ -1,0 +1,142 @@
+{
+  "at": "2026-09-26T21:11:09.052Z",
+  "rows": [
+    {
+      "t": 0,
+      "case": "plain-orphan-alert/tabs",
+      "n": "r0x92912",
+      "steps": [
+        {
+          "step": "click #alert",
+          "code": 0,
+          "ms": 6366,
+          "out": "Clicked #alert\ndialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r0x92912\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64403/fx.html?n=r0x92912\"}"
+        },
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:64403/fx.html?n=r0x9291:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 302,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r0x92912\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64403/fx.html?n=r0x92912\"}"
+        },
+        {
+          "step": "next:tabs",
+          "code": 0,
+          "ms": 180402,
+          "killedAtCap": false,
+          "out": "* tab_sess_1790456493499_1_1  (no title)  about:blank",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:64403/fx.html?n=r0x9291:blocked",
+            "other:about:blank:responsive"
+          ]
+        }
+      ],
+      "urlsAfter": [
+        "http://127.0.0.1:64403/fx.html?n=r0x92912",
+        "about:blank"
+      ]
+    },
+    {
+      "t": 1,
+      "case": "plain-orphan-alert/tabs",
+      "n": "r1x83477",
+      "steps": [
+        {
+          "step": "click #alert",
+          "code": 0,
+          "ms": 6363,
+          "out": "Clicked #alert\ndialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r1x83477\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64403/fx.html?n=r1x83477\"}"
+        },
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:64403/fx.html?n=r1x8347:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 290,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r1x83477\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64403/fx.html?n=r1x83477\"}"
+        },
+        {
+          "step": "next:tabs",
+          "code": 0,
+          "ms": 180411,
+          "killedAtCap": false,
+          "out": "* tab_sess_1790456684032_1_1  (no title)  about:blank",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:64403/fx.html?n=r1x8347:blocked",
+            "other:about:blank:responsive"
+          ]
+        }
+      ],
+      "urlsAfter": [
+        "http://127.0.0.1:64403/fx.html?n=r1x83477",
+        "about:blank"
+      ]
+    },
+    {
+      "t": 2,
+      "case": "plain-orphan-alert/tabs",
+      "n": "r2x74062",
+      "steps": [
+        {
+          "step": "click #alert",
+          "code": 0,
+          "ms": 6390,
+          "out": "Clicked #alert\ndialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r2x74062\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64403/fx.html?n=r2x74062\"}"
+        },
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:64403/fx.html?n=r2x7406:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 373,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r2x74062\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64403/fx.html?n=r2x74062\"}"
+        },
+        {
+          "step": "next:tabs",
+          "code": 0,
+          "ms": 180563,
+          "killedAtCap": false,
+          "out": "* tab_sess_1790456874760_1_1  (no title)  about:blank",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:64403/fx.html?n=r2x7406:blocked",
+            "other:about:blank:responsive"
+          ]
+        }
+      ],
+      "urlsAfter": [
+        "http://127.0.0.1:64403/fx.html?n=r2x74062",
+        "about:blank"
+      ]
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "originalSha": "d16fd8f42018fe70c34d414f9ff72eaddd1583922c4eb5a96c31b54c8d7e7e41",
+  "origin": "http://127.0.0.1:52855",
+  "reverted": {
+    "repeats": 10,
+    "leaks": 10,
+    "sample": [
+      {
+        "i": 0,
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-revert262-0-5",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-revert262-0-6",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-revert262-0-7",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-revert262-0-8",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-revert262-0-9",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-revert262-0-10",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "broken": [
+          "http://127.0.0.1:52855/missing-noisy-interval-revert262-0-4",
+          "http://127.0.0.1:52855/missing-noisy-interval-revert262-0-5",
+          "http://127.0.0.1:52855/missing-noisy-interval-revert262-0-6",
+          "http://127.0.0.1:52855/missing-noisy-interval-revert262-0-7",
+          "http://127.0.0.1:52855/missing-noisy-interval-revert262-0-8",
+          "http://127.0.0.1:52855/missing-noisy-interval-revert262-0-9",
+          "http://127.0.0.1:52855/missing-noisy-interval-revert262-0-10"
+        ]
+      },
+      {
+        "i": 1,
+        "consoleErrors": [
+          "noisy-interval-revert262-1-4",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-revert262-1-5",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-revert262-1-6",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-revert262-1-7",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-revert262-1-8",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-revert262-1-9",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "broken": [
+          "http://127.0.0.1:52855/missing-noisy-interval-revert262-1-4",
+          "http://127.0.0.1:52855/missing-noisy-interval-revert262-1-5",
+          "http://127.0.0.1:52855/missing-noisy-interval-revert262-1-6",
+          "http://127.0.0.1:52855/missing-noisy-interval-revert262-1-7",
+          "http://127.0.0.1:52855/missing-noisy-interval-revert262-1-8",
+          "http://127.0.0.1:52855/missing-noisy-interval-revert262-1-9"
+        ]
+      }
+    ]
+  },
+  "restoredMatchesOriginal": true,
+  "fixed": {
+    "repeats": 10,
+    "leaks": 10,
+    "sample": [
+      {
+        "i": 0,
+        "consoleErrors": [
+          "noisy-interval-confirm262-0-4",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-confirm262-0-5",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-confirm262-0-6",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-confirm262-0-7",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-confirm262-0-8",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-confirm262-0-9",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-confirm262-0-10"
+        ],
+        "broken": [
+          "http://127.0.0.1:52855/missing-noisy-interval-confirm262-0-4",
+          "http://127.0.0.1:52855/missing-noisy-interval-confirm262-0-5",
+          "http://127.0.0.1:52855/missing-noisy-interval-confirm262-0-6",
+          "http://127.0.0.1:52855/missing-noisy-interval-confirm262-0-7",
+          "http://127.0.0.1:52855/missing-noisy-interval-confirm262-0-8",
+          "http://127.0.0.1:52855/missing-noisy-interval-confirm262-0-9"
+        ]
+      },
+      {
+        "i": 1,
+        "consoleErrors": [
+          "noisy-interval-confirm262-1-4",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-confirm262-1-5",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-confirm262-1-6",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-confirm262-1-7",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-confirm262-1-8",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "noisy-interval-confirm262-1-9",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "broken": [
+          "http://127.0.0.1:52855/missing-noisy-interval-confirm262-1-4",
+          "http://127.0.0.1:52855/missing-noisy-interval-confirm262-1-5",
+          "http://127.0.0.1:52855/missing-noisy-interval-confirm262-1-6",
+          "http://127.0.0.1:52855/missing-noisy-interval-confirm262-1-7",
+          "http://127.0.0.1:52855/missing-noisy-interval-confirm262-1-8",
+          "http://127.0.0.1:52855/missing-noisy-interval-confirm262-1-9"
+        ]
+      }
+    ]
+  },
+  "pass": false
+}

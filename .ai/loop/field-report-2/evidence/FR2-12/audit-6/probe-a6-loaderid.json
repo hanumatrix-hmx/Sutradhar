@@ -1,0 +1,1847 @@
+{
+  "trials": 5,
+  "shapes": {
+    "2a own404 -> 302-to-deadhost": [
+      {
+        "url": "chrome-error://chromewebdata/",
+        "stale": false,
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "stale": false,
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "stale": false,
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "stale": false,
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "stale": false,
+        "broken": [],
+        "covers": true
+      }
+    ],
+    "2a own404 -> 302 -> 200(js) -> final404": [
+      {
+        "url": "http://127.0.0.1:55692/final404?t=0",
+        "stale": false,
+        "finalReported": true,
+        "broken": [
+          {
+            "url": "http://127.0.0.1:55692/final404?t=0",
+            "status": 404
+          }
+        ],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/final404?t=1",
+        "stale": false,
+        "finalReported": true,
+        "broken": [
+          {
+            "url": "http://127.0.0.1:55692/final404?t=1",
+            "status": 404
+          }
+        ],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/final404?t=2",
+        "stale": false,
+        "finalReported": true,
+        "broken": [
+          {
+            "url": "http://127.0.0.1:55692/final404?t=2",
+            "status": 404
+          }
+        ],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/final404?t=3",
+        "stale": false,
+        "finalReported": true,
+        "broken": [
+          {
+            "url": "http://127.0.0.1:55692/final404?t=3",
+            "status": 404
+          }
+        ],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/final404?t=4",
+        "stale": false,
+        "finalReported": true,
+        "broken": [
+          {
+            "url": "http://127.0.0.1:55692/final404?t=4",
+            "status": 404
+          }
+        ],
+        "covers": true
+      }
+    ],
+    "2a own404 -> 302 -> 200(js) -> finalok": [
+      {
+        "url": "http://127.0.0.1:55692/finalok?t=0",
+        "stale": false,
+        "any4xx": 0,
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/finalok?t=1",
+        "stale": false,
+        "any4xx": 0,
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/finalok?t=2",
+        "stale": false,
+        "any4xx": 0,
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/finalok?t=3",
+        "stale": false,
+        "any4xx": 0,
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/finalok?t=4",
+        "stale": false,
+        "any4xx": 0,
+        "broken": [],
+        "covers": true
+      }
+    ],
+    "2a clean -> via204(js: 204 then final404)": [
+      {
+        "url": "http://127.0.0.1:55692/final404?via204=1",
+        "finalReported": true,
+        "broken": [
+          {
+            "url": "http://127.0.0.1:55692/final404?via204=1",
+            "status": 404
+          }
+        ],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/final404?via204=1",
+        "finalReported": true,
+        "broken": [
+          {
+            "url": "http://127.0.0.1:55692/final404?via204=1",
+            "status": 404
+          }
+        ],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/final404?via204=1",
+        "finalReported": true,
+        "broken": [
+          {
+            "url": "http://127.0.0.1:55692/final404?via204=1",
+            "status": 404
+          }
+        ],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/final404?via204=1",
+        "finalReported": true,
+        "broken": [
+          {
+            "url": "http://127.0.0.1:55692/final404?via204=1",
+            "status": 404
+          }
+        ],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/final404?via204=1",
+        "finalReported": true,
+        "broken": [
+          {
+            "url": "http://127.0.0.1:55692/final404?via204=1",
+            "status": 404
+          }
+        ],
+        "covers": true
+      }
+    ],
+    "2a own404-other -> mid404(js) -> 302-to-deadhost": [
+      {
+        "url": "chrome-error://chromewebdata/",
+        "staleOwn404": false,
+        "mid404Reported": false,
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "staleOwn404": false,
+        "mid404Reported": false,
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "staleOwn404": false,
+        "mid404Reported": false,
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "staleOwn404": false,
+        "mid404Reported": false,
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "staleOwn404": false,
+        "mid404Reported": false,
+        "broken": [],
+        "covers": true
+      }
+    ],
+    "2b own404 -> click 204 link (no commit) -> audit": [
+      {
+        "url": "http://127.0.0.1:55692/own404?t=0",
+        "own404BeforeClick": true,
+        "own404Kept": false,
+        "cap": {
+          "url": "http://127.0.0.1:55692/nocontent",
+          "status": 204,
+          "timestamp": "2026-09-28T00:30:44.980Z"
+        },
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/own404?t=1",
+        "own404BeforeClick": true,
+        "own404Kept": false,
+        "cap": {
+          "url": "http://127.0.0.1:55692/nocontent",
+          "status": 204,
+          "timestamp": "2026-09-28T00:31:09.260Z"
+        },
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/own404?t=2",
+        "own404BeforeClick": true,
+        "own404Kept": false,
+        "cap": {
+          "url": "http://127.0.0.1:55692/nocontent",
+          "status": 204,
+          "timestamp": "2026-09-28T00:31:33.597Z"
+        },
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/own404?t=3",
+        "own404BeforeClick": true,
+        "own404Kept": false,
+        "cap": {
+          "url": "http://127.0.0.1:55692/nocontent",
+          "status": 204,
+          "timestamp": "2026-09-28T00:31:57.911Z"
+        },
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/own404?t=4",
+        "own404BeforeClick": true,
+        "own404Kept": false,
+        "cap": {
+          "url": "http://127.0.0.1:55692/nocontent",
+          "status": 204,
+          "timestamp": "2026-09-28T00:32:22.091Z"
+        },
+        "broken": [],
+        "covers": true
+      }
+    ],
+    "2b own404 -> click download(200) link (no commit) -> audit": [
+      {
+        "url": "http://127.0.0.1:55692/own404?t=0",
+        "own404Kept": false,
+        "cap": {
+          "url": "http://127.0.0.1:55692/dl200",
+          "status": 200,
+          "timestamp": "2026-09-28T00:30:45.845Z"
+        },
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/own404?t=1",
+        "own404Kept": false,
+        "cap": {
+          "url": "http://127.0.0.1:55692/dl200",
+          "status": 200,
+          "timestamp": "2026-09-28T00:31:10.128Z"
+        },
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/own404?t=2",
+        "own404Kept": false,
+        "cap": {
+          "url": "http://127.0.0.1:55692/dl200",
+          "status": 200,
+          "timestamp": "2026-09-28T00:31:34.444Z"
+        },
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/own404?t=3",
+        "own404Kept": false,
+        "cap": {
+          "url": "http://127.0.0.1:55692/dl200",
+          "status": 200,
+          "timestamp": "2026-09-28T00:31:58.776Z"
+        },
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/own404?t=4",
+        "own404Kept": false,
+        "cap": {
+          "url": "http://127.0.0.1:55692/dl200",
+          "status": 200,
+          "timestamp": "2026-09-28T00:32:22.943Z"
+        },
+        "broken": [],
+        "covers": true
+      }
+    ],
+    "2b clean -> click download(404) link -> audit": [
+      {
+        "url": "chrome-error://chromewebdata/",
+        "dl404Reported": true,
+        "cap": {
+          "url": "http://127.0.0.1:55692/dl404",
+          "status": 404,
+          "timestamp": "2026-09-28T00:30:46.799Z"
+        },
+        "broken": [
+          {
+            "url": "http://127.0.0.1:55692/dl404",
+            "status": 404
+          }
+        ],
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "dl404Reported": true,
+        "cap": {
+          "url": "http://127.0.0.1:55692/dl404",
+          "status": 404,
+          "timestamp": "2026-09-28T00:31:11.078Z"
+        },
+        "broken": [
+          {
+            "url": "http://127.0.0.1:55692/dl404",
+            "status": 404
+          }
+        ],
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "dl404Reported": true,
+        "cap": {
+          "url": "http://127.0.0.1:55692/dl404",
+          "status": 404,
+          "timestamp": "2026-09-28T00:31:35.414Z"
+        },
+        "broken": [
+          {
+            "url": "http://127.0.0.1:55692/dl404",
+            "status": 404
+          }
+        ],
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "dl404Reported": true,
+        "cap": {
+          "url": "http://127.0.0.1:55692/dl404",
+          "status": 404,
+          "timestamp": "2026-09-28T00:31:59.728Z"
+        },
+        "broken": [
+          {
+            "url": "http://127.0.0.1:55692/dl404",
+            "status": 404
+          }
+        ],
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "dl404Reported": true,
+        "cap": {
+          "url": "http://127.0.0.1:55692/dl404",
+          "status": 404,
+          "timestamp": "2026-09-28T00:32:23.891Z"
+        },
+        "broken": [
+          {
+            "url": "http://127.0.0.1:55692/dl404",
+            "status": 404
+          }
+        ],
+        "covers": true
+      }
+    ],
+    "2b SW: sw404 -> audit; -> about:blank -> audit; -> sw200 -> audit": [
+      {
+        "a1url": "http://127.0.0.1:55692/sw/page404?t=0",
+        "swOwn404Reported": true,
+        "cap1": {
+          "url": "http://127.0.0.1:55692/sw/page404?t=0",
+          "status": 404,
+          "timestamp": "2026-09-28T00:30:47.647Z"
+        },
+        "a2Stale": false,
+        "a3Stale": false,
+        "a3covers": true,
+        "urlModeSwOwn404": true
+      },
+      {
+        "a1url": "http://127.0.0.1:55692/sw/page404?t=1",
+        "swOwn404Reported": true,
+        "cap1": {
+          "url": "http://127.0.0.1:55692/sw/page404?t=1",
+          "status": 404,
+          "timestamp": "2026-09-28T00:31:11.794Z"
+        },
+        "a2Stale": false,
+        "a3Stale": false,
+        "a3covers": true,
+        "urlModeSwOwn404": true
+      },
+      {
+        "a1url": "http://127.0.0.1:55692/sw/page404?t=2",
+        "swOwn404Reported": true,
+        "cap1": {
+          "url": "http://127.0.0.1:55692/sw/page404?t=2",
+          "status": 404,
+          "timestamp": "2026-09-28T00:31:36.172Z"
+        },
+        "a2Stale": false,
+        "a3Stale": false,
+        "a3covers": true,
+        "urlModeSwOwn404": true
+      },
+      {
+        "a1url": "http://127.0.0.1:55692/sw/page404?t=3",
+        "swOwn404Reported": true,
+        "cap1": {
+          "url": "http://127.0.0.1:55692/sw/page404?t=3",
+          "status": 404,
+          "timestamp": "2026-09-28T00:32:00.462Z"
+        },
+        "a2Stale": false,
+        "a3Stale": false,
+        "a3covers": true,
+        "urlModeSwOwn404": true
+      },
+      {
+        "a1url": "http://127.0.0.1:55692/sw/page404?t=4",
+        "swOwn404Reported": true,
+        "cap1": {
+          "url": "http://127.0.0.1:55692/sw/page404?t=4",
+          "status": 404,
+          "timestamp": "2026-09-28T00:32:24.615Z"
+        },
+        "a2Stale": false,
+        "a3Stale": false,
+        "a3covers": true,
+        "urlModeSwOwn404": true
+      }
+    ],
+    "2c sd404 hash @0ms (cur)": [
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=0&t=0#h0.345948807389417",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=0&t=1#h0.5113109357048607",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=0&t=2#h0.6352317741661488",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=0&t=3#h0.9007009244698316",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=0&t=4#h0.09280807846019523",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      }
+    ],
+    "2c sd404 hash @30ms (cur)": [
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=30&t=0#h0.1628365694694791",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=30&t=1#h0.13160521786256452",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=30&t=2#h0.8528742889656739",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=30&t=3#h0.33591022485205213",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=30&t=4#h0.325038707843336",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      }
+    ],
+    "2c sd404 hash @150ms (cur)": [
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=150&t=0#h0.4529350243589819",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=150&t=1#h0.7710581021100359",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=150&t=2#h0.951803693303579",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=150&t=3#h0.9602944811430724",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=150&t=4#h0.9826625721434942",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      }
+    ],
+    "2c sd404 hash @400ms (cur)": [
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=400&t=0#h0.24244679025556348",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=400&t=1#h0.8529522789447391",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=400&t=2#h0.11072733564612947",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=400&t=3#h0.31071875923401016",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=400&t=4#h0.1415431662714417",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      }
+    ],
+    "2c sd404 push @0ms (cur)": [
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.5918446753031446",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.05633264390394144",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.4482406716131655",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.5761442663247017",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.21711261311719632",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      }
+    ],
+    "2c sd404 push @30ms (cur)": [
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.24935170066708467",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.43420881261551636",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.11937305838512824",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.24305784870530522",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.5569993444160841",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      }
+    ],
+    "2c sd404 push @150ms (cur)": [
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.20169692101389136",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.6524977863941493",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.003806283091930207",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.5180192736925234",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.6353179275088982",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      }
+    ],
+    "2c sd404 push @400ms (cur)": [
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.4161114856005751",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.45614751642638096",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.9667776456303178",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.9997737434363154",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/pushed-0.05070371654332517",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      }
+    ],
+    "2c sd404 replace @0ms (cur)": [
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.814833540464754",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.3305398943222596",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.773394418801416",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.13089776872627312",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.7218235450587837",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      }
+    ],
+    "2c sd404 replace @30ms (cur)": [
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.011187529175242683",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.14829198238630692",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.8149677975971387",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.9782148361982844",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.3773423026550474",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      }
+    ],
+    "2c sd404 replace @150ms (cur)": [
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.32802514270467464",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.9778775118341789",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.5152074384358556",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.2513291130819708",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.5569276183567028",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      }
+    ],
+    "2c sd404 replace @400ms (cur)": [
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.6464884709050923",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.5580198993869104",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.7502925052668965",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.7525557353117728",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/replaced-0.38148143330286166",
+        "own404": true,
+        "errBefore": true,
+        "errAfter": true,
+        "fetchAfter": true,
+        "foreign": false,
+        "covers": true
+      }
+    ],
+    "2c harness own404->push->clean->push->audit": [
+      {
+        "url": "http://127.0.0.1:55692/clean-pushed#z",
+        "stale": false,
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/clean-pushed#z",
+        "stale": false,
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/clean-pushed#z",
+        "stale": false,
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/clean-pushed#z",
+        "stale": false,
+        "broken": [],
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/clean-pushed#z",
+        "stale": false,
+        "broken": [],
+        "covers": true
+      }
+    ],
+    "2c harness own404->hash/push/replace x3->audit (own kept)": [
+      {
+        "url": "http://127.0.0.1:55692/r2",
+        "own404Kept": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/r2",
+        "own404Kept": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/r2",
+        "own404Kept": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/r2",
+        "own404Kept": false,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/r2",
+        "own404Kept": false,
+        "covers": true
+      }
+    ],
+    "2c own404 -> push -> go_back(samedoc) -> audit (own kept)": [
+      {
+        "url": "http://127.0.0.1:55692/own404?t=0",
+        "own404Kept": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/own404?t=1",
+        "own404Kept": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/own404?t=2",
+        "own404Kept": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/own404?t=3",
+        "own404Kept": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:55692/own404?t=4",
+        "own404Kept": true,
+        "covers": true
+      }
+    ],
+    "2d fresh about:blank tab audit()": [
+      {
+        "url": "about:blank",
+        "commitAt": null,
+        "cap": null,
+        "broken": [],
+        "errs": 0,
+        "covers": false,
+        "docStart": "2026-09-28T00:31:00.004Z",
+        "obs": "2026-09-28T00:31:00.024Z"
+      },
+      {
+        "url": "about:blank",
+        "commitAt": null,
+        "cap": null,
+        "broken": [],
+        "errs": 0,
+        "covers": false,
+        "docStart": "2026-09-28T00:31:24.286Z",
+        "obs": "2026-09-28T00:31:24.303Z"
+      },
+      {
+        "url": "about:blank",
+        "commitAt": null,
+        "cap": null,
+        "broken": [],
+        "errs": 0,
+        "covers": false,
+        "docStart": "2026-09-28T00:31:48.637Z",
+        "obs": "2026-09-28T00:31:48.655Z"
+      },
+      {
+        "url": "about:blank",
+        "commitAt": null,
+        "cap": null,
+        "broken": [],
+        "errs": 0,
+        "covers": false,
+        "docStart": "2026-09-28T00:32:12.748Z",
+        "obs": "2026-09-28T00:32:12.760Z"
+      },
+      {
+        "url": "about:blank",
+        "commitAt": null,
+        "cap": null,
+        "broken": [],
+        "errs": 0,
+        "covers": false,
+        "docStart": "2026-09-28T00:32:36.987Z",
+        "obs": "2026-09-28T00:32:37.008Z"
+      }
+    ],
+    "2d popup own404 adopted": [
+      {
+        "popupFound": true,
+        "url": "http://127.0.0.1:55692/own404?popup=1",
+        "own404Reported": false,
+        "covers": false
+      },
+      {
+        "popupFound": true,
+        "url": "http://127.0.0.1:55692/own404?popup=1",
+        "own404Reported": false,
+        "covers": false
+      },
+      {
+        "popupFound": true,
+        "url": "http://127.0.0.1:55692/own404?popup=1",
+        "own404Reported": false,
+        "covers": false
+      },
+      {
+        "popupFound": true,
+        "url": "http://127.0.0.1:55692/own404?popup=1",
+        "own404Reported": false,
+        "covers": false
+      },
+      {
+        "popupFound": true,
+        "url": "http://127.0.0.1:55692/own404?popup=1",
+        "own404Reported": false,
+        "covers": false
+      }
+    ]
+  },
+  "cdpTraces": {
+    "2a own404 -> 302-to-deadhost": [
+      {
+        "t": 1790555437300,
+        "ev": "docResponse",
+        "loaderId": "CFF47383091A2A4F95D1B9D91B7B0242",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/own404?t=0",
+        "frameId": "3A8A0C4FF0B547AE5E5E50568F1379E2"
+      },
+      {
+        "t": 1790555437302,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "CFF47383091A2A4F95D1B9D91B7B0242",
+        "url": "http://127.0.0.1:55692/own404?t=0"
+      },
+      {
+        "t": 1790555437533,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "667B555B2D4ED6A9146EB0CE04F4D234",
+        "url": "chrome-error://chromewebdata/"
+      }
+    ],
+    "2a own404 -> 302 -> 200(js) -> final404": [
+      {
+        "t": 1790555437911,
+        "ev": "docResponse",
+        "loaderId": "2F013ED6C7AC5EEC3AEDDB288C572663",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/own404?t=0",
+        "frameId": "0BE2030C3D43ED05B841B030DF5027C6"
+      },
+      {
+        "t": 1790555437913,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "2F013ED6C7AC5EEC3AEDDB288C572663",
+        "url": "http://127.0.0.1:55692/own404?t=0"
+      },
+      {
+        "t": 1790555438128,
+        "ev": "docResponse",
+        "loaderId": "0F4336E0F4514484649A228BF8E0C57B",
+        "status": 200,
+        "url": "http://127.0.0.1:55692/r2?t=0",
+        "frameId": "0BE2030C3D43ED05B841B030DF5027C6"
+      },
+      {
+        "t": 1790555438130,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "0F4336E0F4514484649A228BF8E0C57B",
+        "url": "http://127.0.0.1:55692/r2?t=0"
+      },
+      {
+        "t": 1790555438139,
+        "ev": "docResponse",
+        "loaderId": "1FB9AD1AE3A0E70E9AEC9446C55AB695",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/final404?t=0",
+        "frameId": "0BE2030C3D43ED05B841B030DF5027C6"
+      },
+      {
+        "t": 1790555438140,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "1FB9AD1AE3A0E70E9AEC9446C55AB695",
+        "url": "http://127.0.0.1:55692/final404?t=0"
+      }
+    ],
+    "2a clean -> via204(js: 204 then final404)": [
+      {
+        "t": 1790555440981,
+        "ev": "docResponse",
+        "loaderId": "1DE7E187BD288387B41545A5433A5FF2",
+        "status": 200,
+        "url": "http://127.0.0.1:55692/clean?t=0",
+        "frameId": "60571638958A673A82EF19984C4080EE"
+      },
+      {
+        "t": 1790555440983,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "1DE7E187BD288387B41545A5433A5FF2",
+        "url": "http://127.0.0.1:55692/clean?t=0"
+      },
+      {
+        "t": 1790555441203,
+        "ev": "docResponse",
+        "loaderId": "09B40B1B2ABCAAEF669073A364E07034",
+        "status": 200,
+        "url": "http://127.0.0.1:55692/via204?t=0",
+        "frameId": "60571638958A673A82EF19984C4080EE"
+      },
+      {
+        "t": 1790555441204,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "09B40B1B2ABCAAEF669073A364E07034",
+        "url": "http://127.0.0.1:55692/via204?t=0"
+      },
+      {
+        "t": 1790555441216,
+        "ev": "docResponse",
+        "loaderId": "5A7DDC3D80B8DA636D0387709331C294",
+        "status": 204,
+        "url": "http://127.0.0.1:55692/nocontent",
+        "frameId": "60571638958A673A82EF19984C4080EE"
+      },
+      {
+        "t": 1790555441622,
+        "ev": "docResponse",
+        "loaderId": "585335974091B8DEF7090AF028F0FD00",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/final404?via204=1",
+        "frameId": "60571638958A673A82EF19984C4080EE"
+      },
+      {
+        "t": 1790555441624,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "585335974091B8DEF7090AF028F0FD00",
+        "url": "http://127.0.0.1:55692/final404?via204=1"
+      }
+    ],
+    "2a own404-other -> mid404(js) -> 302-to-deadhost": [
+      {
+        "t": 1790555442794,
+        "ev": "docResponse",
+        "loaderId": "D6495E66C461380A6FA3AB2720E88BD5",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/own404?t=0",
+        "frameId": "51EE055805746EE1904AB8CEA08E23E6"
+      },
+      {
+        "t": 1790555442796,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "D6495E66C461380A6FA3AB2720E88BD5",
+        "url": "http://127.0.0.1:55692/own404?t=0"
+      },
+      {
+        "t": 1790555443011,
+        "ev": "docResponse",
+        "loaderId": "E534E8D56EC01B2D9A6DD60A6FD8045D",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/mid404?t=0",
+        "frameId": "51EE055805746EE1904AB8CEA08E23E6"
+      },
+      {
+        "t": 1790555443013,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "E534E8D56EC01B2D9A6DD60A6FD8045D",
+        "url": "http://127.0.0.1:55692/mid404?t=0"
+      },
+      {
+        "t": 1790555443028,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "0BD4BCCDE0308108C66410A7B1487E49",
+        "url": "chrome-error://chromewebdata/"
+      }
+    ],
+    "2b own404 -> click 204 link (no commit) -> audit": [
+      {
+        "t": 1790555444633,
+        "ev": "docResponse",
+        "loaderId": "9644FC758EA8AB7881C9D52CD9454D9E",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/own404?t=0",
+        "frameId": "9F3D9CEE45A3A7910180D97CCB3566FE"
+      },
+      {
+        "t": 1790555444635,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "9644FC758EA8AB7881C9D52CD9454D9E",
+        "url": "http://127.0.0.1:55692/own404?t=0"
+      },
+      {
+        "t": 1790555444980,
+        "ev": "docResponse",
+        "loaderId": "BF3399C0638F5193DAEB63611E12ED0D",
+        "status": 204,
+        "url": "http://127.0.0.1:55692/nocontent",
+        "frameId": "9F3D9CEE45A3A7910180D97CCB3566FE"
+      }
+    ],
+    "2b own404 -> click download(200) link (no commit) -> audit": [
+      {
+        "t": 1790555445564,
+        "ev": "docResponse",
+        "loaderId": "3B8386F4EF9531B17C2CFAB34C5CB1BC",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/own404?t=0",
+        "frameId": "6E8F1E74935477725D703724D426CF63"
+      },
+      {
+        "t": 1790555445566,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "3B8386F4EF9531B17C2CFAB34C5CB1BC",
+        "url": "http://127.0.0.1:55692/own404?t=0"
+      },
+      {
+        "t": 1790555445845,
+        "ev": "docResponse",
+        "loaderId": "7A6BF6F41A6988EFDEFC741F49EDD621",
+        "status": 200,
+        "url": "http://127.0.0.1:55692/dl200",
+        "frameId": "6E8F1E74935477725D703724D426CF63"
+      }
+    ],
+    "2b clean -> click download(404) link -> audit": [
+      {
+        "t": 1790555446525,
+        "ev": "docResponse",
+        "loaderId": "EFA58898BA7439A03246442F740655D5",
+        "status": 200,
+        "url": "http://127.0.0.1:55692/clean?t=0",
+        "frameId": "C0FB0BBD46CC1E4FF09460D0AAB81766"
+      },
+      {
+        "t": 1790555446527,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "EFA58898BA7439A03246442F740655D5",
+        "url": "http://127.0.0.1:55692/clean?t=0"
+      },
+      {
+        "t": 1790555446799,
+        "ev": "docResponse",
+        "loaderId": "9AE24EB206CB7638E0AAC5D8B5BE710B",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/dl404",
+        "frameId": "C0FB0BBD46CC1E4FF09460D0AAB81766"
+      },
+      {
+        "t": 1790555446807,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "9AE24EB206CB7638E0AAC5D8B5BE710B",
+        "url": "chrome-error://chromewebdata/"
+      }
+    ],
+    "2b SW: sw404 -> audit; -> about:blank -> audit; -> sw200 -> audit": [
+      {
+        "t": 1790555447518,
+        "ev": "docResponse",
+        "loaderId": "299A9371037DB901F73D8C03D4824A5F",
+        "status": 200,
+        "url": "http://127.0.0.1:55692/sw/reg?t=0",
+        "frameId": "D754641DFBE7E4971AFF62D6D659D3F2"
+      },
+      {
+        "t": 1790555447520,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "299A9371037DB901F73D8C03D4824A5F",
+        "url": "http://127.0.0.1:55692/sw/reg?t=0"
+      },
+      {
+        "t": 1790555447647,
+        "ev": "docResponse",
+        "loaderId": "024229811A3201F343532243BF984792",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/sw/page404?t=0",
+        "frameId": "D754641DFBE7E4971AFF62D6D659D3F2"
+      },
+      {
+        "t": 1790555447648,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "024229811A3201F343532243BF984792",
+        "url": "http://127.0.0.1:55692/sw/page404?t=0"
+      },
+      {
+        "t": 1790555447998,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "02A3EA542CBD8CBFF5FDAF2D8F2A1FBC",
+        "url": "about:blank"
+      },
+      {
+        "t": 1790555448314,
+        "ev": "docResponse",
+        "loaderId": "BF9C8BFAF011DF0B05DB29171E92DFD2",
+        "status": 200,
+        "url": "http://127.0.0.1:55692/sw/page200?t=0",
+        "frameId": "D754641DFBE7E4971AFF62D6D659D3F2"
+      },
+      {
+        "t": 1790555448315,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "BF9C8BFAF011DF0B05DB29171E92DFD2",
+        "url": "http://127.0.0.1:55692/sw/page200?t=0"
+      },
+      {
+        "t": 1790555448666,
+        "ev": "docResponse",
+        "loaderId": "A57D8813367F26BB4A278C2986628B11",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/sw/page404?t=0u",
+        "frameId": "D754641DFBE7E4971AFF62D6D659D3F2"
+      },
+      {
+        "t": 1790555448668,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "A57D8813367F26BB4A278C2986628B11",
+        "url": "http://127.0.0.1:55692/sw/page404?t=0u"
+      }
+    ],
+    "2c sd404 hash @30ms (cur)": [
+      {
+        "t": 1790555449755,
+        "ev": "docResponse",
+        "loaderId": "B975DAC05EEBEB660002765CAF762417",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/other-before?t=0",
+        "frameId": "866CFCD817F1585D9FA352C6C00A4306"
+      },
+      {
+        "t": 1790555449757,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "B975DAC05EEBEB660002765CAF762417",
+        "url": "http://127.0.0.1:55692/other-before?t=0"
+      },
+      {
+        "t": 1790555449878,
+        "ev": "docResponse",
+        "loaderId": "48D1B83E5DBAAA45228E1F65B62410F0",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=30&t=0",
+        "frameId": "866CFCD817F1585D9FA352C6C00A4306"
+      },
+      {
+        "t": 1790555449880,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "48D1B83E5DBAAA45228E1F65B62410F0",
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=30&t=0"
+      },
+      {
+        "t": 1790555449916,
+        "ev": "withinDoc",
+        "url": "http://127.0.0.1:55692/sd404?k=hash&d=30&t=0#h0.1628365694694791"
+      }
+    ],
+    "2c sd404 push @30ms (cur)": [
+      {
+        "t": 1790555453140,
+        "ev": "docResponse",
+        "loaderId": "BEC1E39C2741711D2017C9095103A927",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/other-before?t=0",
+        "frameId": "2602D469A082A4CB5FC2CEFFD9AAECA6"
+      },
+      {
+        "t": 1790555453142,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "BEC1E39C2741711D2017C9095103A927",
+        "url": "http://127.0.0.1:55692/other-before?t=0"
+      },
+      {
+        "t": 1790555453260,
+        "ev": "docResponse",
+        "loaderId": "07A9A9F8E3CC65C78A4D696071CD9A84",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/sd404?k=push&d=30&t=0",
+        "frameId": "2602D469A082A4CB5FC2CEFFD9AAECA6"
+      },
+      {
+        "t": 1790555453261,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "07A9A9F8E3CC65C78A4D696071CD9A84",
+        "url": "http://127.0.0.1:55692/sd404?k=push&d=30&t=0"
+      },
+      {
+        "t": 1790555453298,
+        "ev": "withinDoc",
+        "url": "http://127.0.0.1:55692/pushed-0.24935170066708467"
+      }
+    ],
+    "2c sd404 replace @30ms (cur)": [
+      {
+        "t": 1790555456533,
+        "ev": "docResponse",
+        "loaderId": "3338B661D4442E5986BC545E6E8C4A28",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/other-before?t=0",
+        "frameId": "224B7C10E053B171529167BF05A28BF1"
+      },
+      {
+        "t": 1790555456541,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "3338B661D4442E5986BC545E6E8C4A28",
+        "url": "http://127.0.0.1:55692/other-before?t=0"
+      },
+      {
+        "t": 1790555456666,
+        "ev": "docResponse",
+        "loaderId": "9F362120A3DFB1FF7AC35948B59EC4B5",
+        "status": 404,
+        "url": "http://127.0.0.1:55692/sd404?k=replace&d=30&t=0",
+        "frameId": "224B7C10E053B171529167BF05A28BF1"
+      },
+      {
+        "t": 1790555456668,
+        "ev": "frameNavigated",
+        "type": "Navigation",
+        "loaderId": "9F362120A3DFB1FF7AC35948B59EC4B5",
+        "url": "http://127.0.0.1:55692/sd404?k=replace&d=30&t=0"
+      },
+      {
+        "t": 1790555456704,
+        "ev": "withinDoc",
+        "url": "http://127.0.0.1:55692/replaced-0.011187529175242683"
+      }
+    ]
+  },
+  "summary": {
+    "2a own404 -> 302-to-deadhost": {
+      "n": 5,
+      "stale": "0/5",
+      "covers": "5/5"
+    },
+    "2a own404 -> 302 -> 200(js) -> final404": {
+      "n": 5,
+      "stale": "0/5",
+      "finalReported": "5/5",
+      "covers": "5/5"
+    },
+    "2a own404 -> 302 -> 200(js) -> finalok": {
+      "n": 5,
+      "stale": "0/5",
+      "covers": "5/5"
+    },
+    "2a clean -> via204(js: 204 then final404)": {
+      "n": 5,
+      "finalReported": "5/5",
+      "covers": "5/5"
+    },
+    "2a own404-other -> mid404(js) -> 302-to-deadhost": {
+      "n": 5,
+      "staleOwn404": "0/5",
+      "mid404Reported": "0/5",
+      "covers": "5/5"
+    },
+    "2b own404 -> click 204 link (no commit) -> audit": {
+      "n": 5,
+      "own404BeforeClick": "5/5",
+      "own404Kept": "0/5",
+      "covers": "5/5"
+    },
+    "2b own404 -> click download(200) link (no commit) -> audit": {
+      "n": 5,
+      "own404Kept": "0/5",
+      "covers": "5/5"
+    },
+    "2b clean -> click download(404) link -> audit": {
+      "n": 5,
+      "dl404Reported": "5/5",
+      "covers": "5/5"
+    },
+    "2b SW: sw404 -> audit; -> about:blank -> audit; -> sw200 -> audit": {
+      "n": 5,
+      "swOwn404Reported": "5/5",
+      "a2Stale": "0/5",
+      "a3Stale": "0/5",
+      "a3covers": "5/5",
+      "urlModeSwOwn404": "5/5"
+    },
+    "2c sd404 hash @0ms (cur)": {
+      "n": 5,
+      "own404": "5/5",
+      "errBefore": "5/5",
+      "errAfter": "5/5",
+      "fetchAfter": "5/5",
+      "foreign": "0/5",
+      "covers": "5/5"
+    },
+    "2c sd404 hash @30ms (cur)": {
+      "n": 5,
+      "own404": "5/5",
+      "errBefore": "5/5",
+      "errAfter": "5/5",
+      "fetchAfter": "5/5",
+      "foreign": "0/5",
+      "covers": "5/5"
+    },
+    "2c sd404 hash @150ms (cur)": {
+      "n": 5,
+      "own404": "5/5",
+      "errBefore": "5/5",
+      "errAfter": "5/5",
+      "fetchAfter": "5/5",
+      "foreign": "0/5",
+      "covers": "5/5"
+    },
+    "2c sd404 hash @400ms (cur)": {
+      "n": 5,
+      "own404": "5/5",
+      "errBefore": "5/5",
+      "errAfter": "5/5",
+      "fetchAfter": "5/5",
+      "foreign": "0/5",
+      "covers": "5/5"
+    },
+    "2c sd404 push @0ms (cur)": {
+      "n": 5,
+      "own404": "5/5",
+      "errBefore": "5/5",
+      "errAfter": "5/5",
+      "fetchAfter": "5/5",
+      "foreign": "0/5",
+      "covers": "5/5"
+    },
+    "2c sd404 push @30ms (cur)": {
+      "n": 5,
+      "own404": "5/5",
+      "errBefore": "5/5",
+      "errAfter": "5/5",
+      "fetchAfter": "5/5",
+      "foreign": "0/5",
+      "covers": "5/5"
+    },
+    "2c sd404 push @150ms (cur)": {
+      "n": 5,
+      "own404": "5/5",
+      "errBefore": "5/5",
+      "errAfter": "5/5",
+      "fetchAfter": "5/5",
+      "foreign": "0/5",
+      "covers": "5/5"
+    },
+    "2c sd404 push @400ms (cur)": {
+      "n": 5,
+      "own404": "5/5",
+      "errBefore": "5/5",
+      "errAfter": "5/5",
+      "fetchAfter": "5/5",
+      "foreign": "0/5",
+      "covers": "5/5"
+    },
+    "2c sd404 replace @0ms (cur)": {
+      "n": 5,
+      "own404": "5/5",
+      "errBefore": "5/5",
+      "errAfter": "5/5",
+      "fetchAfter": "5/5",
+      "foreign": "0/5",
+      "covers": "5/5"
+    },
+    "2c sd404 replace @30ms (cur)": {
+      "n": 5,
+      "own404": "5/5",
+      "errBefore": "5/5",
+      "errAfter": "5/5",
+      "fetchAfter": "5/5",
+      "foreign": "0/5",
+      "covers": "5/5"
+    },
+    "2c sd404 replace @150ms (cur)": {
+      "n": 5,
+      "own404": "5/5",
+      "errBefore": "5/5",
+      "errAfter": "5/5",
+      "fetchAfter": "5/5",
+      "foreign": "0/5",
+      "covers": "5/5"
+    },
+    "2c sd404 replace @400ms (cur)": {
+      "n": 5,
+      "own404": "5/5",
+      "errBefore": "5/5",
+      "errAfter": "5/5",
+      "fetchAfter": "5/5",
+      "foreign": "0/5",
+      "covers": "5/5"
+    },
+    "2c harness own404->push->clean->push->audit": {
+      "n": 5,
+      "stale": "0/5",
+      "covers": "5/5"
+    },
+    "2c harness own404->hash/push/replace x3->audit (own kept)": {
+      "n": 5,
+      "own404Kept": "0/5",
+      "covers": "5/5"
+    },
+    "2c own404 -> push -> go_back(samedoc) -> audit (own kept)": {
+      "n": 5,
+      "own404Kept": "5/5",
+      "covers": "5/5"
+    },
+    "2d fresh about:blank tab audit()": {
+      "n": 5,
+      "covers": "0/5"
+    },
+    "2d popup own404 adopted": {
+      "n": 5,
+      "popupFound": "5/5",
+      "own404Reported": "0/5",
+      "covers": "0/5"
+    }
+  }
+}

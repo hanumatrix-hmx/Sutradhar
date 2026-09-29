@@ -701,7 +701,9 @@ async function main() {
 
   console.log(JSON.stringify(results, null, 2));
 
-  const outPath = path.join(here, 'results', 'baseline-mcp.json');
+  const outPath = process.env.SCENARIO_OUTPUT_PATH
+    ? path.resolve(process.env.SCENARIO_OUTPUT_PATH)
+    : path.join(here, 'results', 'baseline-mcp.json');
   await fs.mkdir(path.dirname(outPath), { recursive: true });
   await fs.writeFile(
     outPath,

@@ -1,0 +1,306 @@
+{
+  "trials": 8,
+  "shapes": {
+    "own404->about:blank": [
+      {
+        "url": "about:blank",
+        "stale404": false,
+        "covers": true
+      },
+      {
+        "url": "about:blank",
+        "stale404": false,
+        "covers": true
+      },
+      {
+        "url": "about:blank",
+        "stale404": false,
+        "covers": true
+      },
+      {
+        "url": "about:blank",
+        "stale404": false,
+        "covers": true
+      },
+      {
+        "url": "about:blank",
+        "stale404": false,
+        "covers": true
+      },
+      {
+        "url": "about:blank",
+        "stale404": false,
+        "covers": true
+      },
+      {
+        "url": "about:blank",
+        "stale404": false,
+        "covers": true
+      },
+      {
+        "url": "about:blank",
+        "stale404": false,
+        "covers": true
+      }
+    ],
+    "own404->deadhost": [
+      {
+        "url": "chrome-error://chromewebdata/",
+        "stale404": false,
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "stale404": false,
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "stale404": false,
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "stale404": false,
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "stale404": false,
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "stale404": false,
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "stale404": false,
+        "covers": true
+      },
+      {
+        "url": "chrome-error://chromewebdata/",
+        "stale404": false,
+        "covers": true
+      }
+    ],
+    "home->click404->go_back": [
+      {
+        "url": "http://127.0.0.1:49985/home?t=0",
+        "stale404": true,
+        "covers": false
+      },
+      {
+        "url": "http://127.0.0.1:49985/home?t=1",
+        "stale404": true,
+        "covers": false
+      },
+      {
+        "url": "http://127.0.0.1:49985/home?t=2",
+        "stale404": true,
+        "covers": false
+      },
+      {
+        "url": "http://127.0.0.1:49985/home?t=3",
+        "stale404": true,
+        "covers": false
+      },
+      {
+        "url": "http://127.0.0.1:49985/home?t=4",
+        "stale404": true,
+        "covers": false
+      },
+      {
+        "url": "http://127.0.0.1:49985/home?t=5",
+        "stale404": true,
+        "covers": false
+      },
+      {
+        "url": "http://127.0.0.1:49985/home?t=6",
+        "stale404": true,
+        "covers": false
+      },
+      {
+        "url": "http://127.0.0.1:49985/home?t=7",
+        "stale404": true,
+        "covers": false
+      }
+    ],
+    "homeerr->clean->go_back(own kept)": [
+      {
+        "url": "http://127.0.0.1:49985/homeerr?t=0",
+        "ownErrKept": true,
+        "own404Kept": false,
+        "covers": false
+      },
+      {
+        "url": "http://127.0.0.1:49985/homeerr?t=1",
+        "ownErrKept": true,
+        "own404Kept": false,
+        "covers": false
+      },
+      {
+        "url": "http://127.0.0.1:49985/homeerr?t=2",
+        "ownErrKept": true,
+        "own404Kept": false,
+        "covers": false
+      },
+      {
+        "url": "http://127.0.0.1:49985/homeerr?t=3",
+        "ownErrKept": true,
+        "own404Kept": false,
+        "covers": false
+      },
+      {
+        "url": "http://127.0.0.1:49985/homeerr?t=4",
+        "ownErrKept": true,
+        "own404Kept": false,
+        "covers": false
+      },
+      {
+        "url": "http://127.0.0.1:49985/homeerr?t=5",
+        "ownErrKept": true,
+        "own404Kept": false,
+        "covers": false
+      },
+      {
+        "url": "http://127.0.0.1:49985/homeerr?t=6",
+        "ownErrKept": true,
+        "own404Kept": false,
+        "covers": false
+      },
+      {
+        "url": "http://127.0.0.1:49985/homeerr?t=7",
+        "ownErrKept": false,
+        "own404Kept": false,
+        "covers": false
+      }
+    ],
+    "own404->redirect-chain(no stale, no wrong-clear)": [
+      {
+        "url": "http://127.0.0.1:49985/redir-final",
+        "stale404FromOwn404": false,
+        "landedOnFinal": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:49985/redir-final",
+        "stale404FromOwn404": false,
+        "landedOnFinal": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:49985/redir-final",
+        "stale404FromOwn404": false,
+        "landedOnFinal": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:49985/redir-final",
+        "stale404FromOwn404": false,
+        "landedOnFinal": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:49985/redir-final",
+        "stale404FromOwn404": false,
+        "landedOnFinal": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:49985/redir-final",
+        "stale404FromOwn404": false,
+        "landedOnFinal": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:49985/redir-final",
+        "stale404FromOwn404": false,
+        "landedOnFinal": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:49985/redir-final",
+        "stale404FromOwn404": false,
+        "landedOnFinal": true,
+        "covers": true
+      }
+    ],
+    "hash-change-preserves-own-error": [
+      {
+        "url": "http://127.0.0.1:49985/hash1#x",
+        "ownErrKept": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:49985/hash1#x",
+        "ownErrKept": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:49985/hash1#x",
+        "ownErrKept": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:49985/hash1#x",
+        "ownErrKept": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:49985/hash1#x",
+        "ownErrKept": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:49985/hash1#x",
+        "ownErrKept": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:49985/hash1#x",
+        "ownErrKept": true,
+        "covers": true
+      },
+      {
+        "url": "http://127.0.0.1:49985/hash1#x",
+        "ownErrKept": true,
+        "covers": true
+      }
+    ]
+  },
+  "summary": {
+    "own404->about:blank": {
+      "n": 8,
+      "stale404Reported": 0,
+      "coversTrue": 8
+    },
+    "own404->deadhost": {
+      "n": 8,
+      "stale404Reported": 0,
+      "coversTrue": 8
+    },
+    "home->click404->go_back": {
+      "n": 8,
+      "stale404Reported": 8,
+      "coversTrue": 0
+    },
+    "homeerr->clean->go_back(own kept)": {
+      "n": 8,
+      "ownErrKept": 7,
+      "own404Kept": 0,
+      "coversTrue": 0
+    },
+    "own404->redirect-chain(no stale, no wrong-clear)": {
+      "n": 8,
+      "stale404FromOwn404": 0,
+      "landedOnFinal": 8
+    },
+    "hash-change-preserves-own-error": {
+      "n": 8,
+      "ownErrKept": 8,
+      "coversTrue": 8
+    }
+  }
+}

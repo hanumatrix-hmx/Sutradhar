@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:sutradhar:audit-report:1",
+  "title": "Sutradhar audit report",
+  "description": "Machine-readable output of `sutradhar audit --json`, MCP browser.audit (content[0]) and SDK page.audit().report. Accessibility checks are heuristics, not a WCAG audit. Console/page errors and broken requests are scoped to the audited document; see observation.coversWholeDocument. Any shape change bumps schemaVersion.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "url", "requestedUrl", "title", "timestamp", "screenshot", "consoleErrors", "pageErrors", "brokenRequests", "accessibilityIssues", "webVitals", "observation", "baseline"],
+  "definitions": {
+    "iso": { "type": "string", "format": "date-time" },
+    "isoOrNull": { "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }] },
+    "msOrNull": { "type": ["number", "null"], "minimum": 0 }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "url": { "type": "string", "description": "Final URL of the audited page (after redirects)." },
+    "requestedUrl": { "type": ["string", "null"], "description": "The url that was requested; null when the current page was audited as-is." },
+    "title": { "type": "string" },
+    "timestamp": { "$ref": "#/definitions/iso" },
+    "screenshot": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "width", "height", "bytes", "fullPage"],
+      "properties": {
+        "path": { "type": ["string", "null"], "description": "Absolute path of the PNG file, or null when not written to disk (MCP: returned as the image content item after this JSON)." },
+        "width": { "type": "integer", "minimum": 0 },
+        "height": { "type": "integer", "minimum": 0 },
+        "bytes": { "type": "integer", "minimum": 1 },
+        "fullPage": { "const": true }
+      }
+    },
+    "consoleErrors": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["text", "timestamp"],
+      "properties": { "text": { "type": "string" }, "timestamp": { "$ref": "#/definitions/iso" } } } },
+    "pageErrors": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["message", "timestamp"],
+      "properties": { "message": { "type": "string" }, "timestamp": { "$ref": "#/definitions/iso" } } } },
+    "brokenRequests": { "type": "array", "description": "HTTP responses with status >= 400. Network-level failures (DNS, refused, blocked) are not included.",
+      "items": { "type": "object", "additionalProperties": false, "required": ["url", "status"],
+        "properties": { "url": { "type": "string" }, "status": { "type": "integer", "minimum": 400, "maximum": 999, "description": "GAP-263: HTTP status is not actually bounded to 599 by any spec Sutradhar controls -- some real sites (e.g. LinkedIn) respond with non-standard codes like 999 to deny requests. Bounded to 999 (three decimal digits) rather than left unbounded, since Chrome's own network stack never reports anything larger for an HTTP response." } } } },
+    "accessibilityIssues": { "type": "array", "description": "Heuristic rules; current ids: img-alt, input-label, missing-title, missing-lang, button-name. Only rules with count >= 1 are listed.",
+      "items": { "type": "object", "additionalProperties": false, "required": ["rule", "description", "count"],
+        "properties": { "rule": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }, "description": { "type": "string", "minLength": 1 }, "count": { "type": "integer", "minimum": 1 } } } },
+    "webVitals": {
+      "type": "object", "additionalProperties": false, "required": ["lcpMs", "cls", "fcpMs", "ttfbMs"],
+      "properties": {
+        "lcpMs": { "$ref": "#/definitions/msOrNull", "description": "Last LCP candidate startTime. null if none was recorded (e.g. the page was hidden while loading)." },
+        "cls": { "type": ["number", "null"], "minimum": 0, "description": "Sum of all layout-shift values without recent input (legacy total, not session-windowed). null if unsupported." },
+        "fcpMs": { "$ref": "#/definitions/msOrNull" },
+        "ttfbMs": { "$ref": "#/definitions/msOrNull" }
+      }
+    },
+    "observation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode", "documentStartedAt", "observingSince", "coversWholeDocument", "pageWasHidden"],
+      "properties": {
+        "mode": { "enum": ["navigated", "current-page"] },
+        "documentStartedAt": { "$ref": "#/definitions/isoOrNull" },
+        "observingSince": { "$ref": "#/definitions/isoOrNull" },
+        "coversWholeDocument": { "type": "boolean" },
+        "pageWasHidden": { "type": ["boolean", "null"] }
+      }
+    },
+    "baseline": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "object", "additionalProperties": false,
+          "required": ["url", "diffPath", "width", "height", "diffPixelCount", "totalPixels", "diffPercentage"],
+          "properties": {
+            "url": { "type": "string" }, "diffPath": { "type": ["string", "null"] },
+            "width": { "type": "integer", "minimum": 0 }, "height": { "type": "integer", "minimum": 0 },
+            "diffPixelCount": { "type": "integer", "minimum": 0 }, "totalPixels": { "type": "integer", "minimum": 0 },
+            "diffPercentage": { "type": "number", "minimum": 0, "maximum": 100 } } },
+        { "type": "object", "additionalProperties": false, "required": ["url", "error"],
+          "properties": { "url": { "type": "string" }, "error": { "type": "string", "minLength": 1 } } }
+      ]
+    },
+    "dialogPending": { "type": ["object", "null"], "description": "CLI only (FR2-04), when present." },
+    "dialogsHandled": { "type": "array", "items": { "type": "object" }, "description": "CLI only (FR2-04), when present." }
+  }
+}

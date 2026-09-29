@@ -49,6 +49,19 @@ export interface LaunchOptions {
    * via an external field report using the published npm package (PROB-042).
    */
   viewport?: { width: number; height: number };
+  /**
+   * Directories `page.download()` may write into. Replaces the default
+   * `<OS temp>/sutradhar-downloads` root — the first entry becomes the destination when
+   * `downloadDir` is omitted. The SDK does NOT read `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` (or any
+   * other `SUTRADHAR_ALLOWED_*` env var) — a library silently changing its sandbox based on the
+   * host app's ambient environment would be surprising; that's operator configuration for the
+   * `sutradhar-mcp` and `sutradhar` CLI processes, not this library.
+   */
+  allowedDownloadRoots?: readonly string[];
+  /**
+   * Directories `page.uploadFile()` may read from. Unset (the default) means unrestricted.
+   */
+  allowedUploadRoots?: readonly string[];
 }
 
 /**

@@ -1,0 +1,69 @@
+{
+  "order": "audit-first",
+  "steps": [
+    {
+      "label": "audit hang#0",
+      "ms": 30015,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "audit hang#1",
+      "ms": 200002,
+      "error": "CAP audit hang#1 200000ms"
+    },
+    {
+      "label": "audit ok",
+      "ms": 181551,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:62243/ok",
+        "broken": []
+      }
+    },
+    {
+      "label": "audit 404-partial#0",
+      "ms": 30016,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "audit ok 2",
+      "ms": 1563,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:62243/ok?2",
+        "broken": []
+      }
+    }
+  ],
+  "cdp": [
+    {
+      "createMs": 1,
+      "send Page.enable ms": 0,
+      "detachStarted": "2026-09-27T18:19:53.065Z",
+      "detach": "ok",
+      "detachMs": 1
+    },
+    {
+      "createMs": 1,
+      "send Page.enable ms": 180003
+    },
+    {
+      "createMs": 0,
+      "send Page.enable ms": 180004
+    },
+    {
+      "createMs": 0,
+      "send Page.enable ms": 1,
+      "detachStarted": "2026-09-27T18:26:44.638Z",
+      "detach": "ok",
+      "detachMs": 0
+    },
+    {
+      "createMs": 0,
+      "send Page.enable ms": 0,
+      "detachStarted": "2026-09-27T18:26:46.162Z",
+      "detach": "ok",
+      "detachMs": 1
+    }
+  ]
+}

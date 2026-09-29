@@ -1,0 +1,67 @@
+[
+  {
+    "id": "s1-element-in-all-3, round-robin 300ms busy",
+    "expected": "success:false",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "wait_for_selector timed out after 3000ms waiting for state=hidden: an element matching \"#inframe\" is still visible.",
+    "totalMs": 11447,
+    "visibilityAfter": [
+      true,
+      true,
+      true
+    ],
+    "FALSE_SUCCESS": false
+  },
+  {
+    "id": "s2-element-only-in-A, round-robin 300ms busy over A,B,C",
+    "expected": "success:false",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "wait_for_selector timed out after 3000ms waiting for state=hidden: an element matching \"#inframe\" is still visible.",
+    "totalMs": 11467,
+    "visibilityAfter": [
+      true,
+      null,
+      null
+    ],
+    "FALSE_SUCCESS": false
+  },
+  {
+    "id": "s3-element-only-in-A, round-robin 120ms busy over A,B,C",
+    "expected": "success:false",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "wait_for_selector timed out after 3000ms waiting for state=hidden: an element matching \"#inframe\" is still visible.",
+    "totalMs": 10874,
+    "visibilityAfter": [
+      true,
+      null,
+      null
+    ],
+    "FALSE_SUCCESS": false
+  },
+  {
+    "id": "s4-element-in-A-and-B, round-robin 270ms busy over A,B",
+    "expected": "success:false",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "wait_for_selector timed out after 3000ms waiting for state=hidden: an element matching \"#inframe\" is still visible.",
+    "totalMs": 11160,
+    "visibilityAfter": [
+      true,
+      true
+    ],
+    "FALSE_SUCCESS": false
+  },
+  {
+    "id": "l-handle-dispose-count, OOPIF 400ms busy chunks, hidden wait on visible #inframe",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "wait_for_selector timed out after 4000ms waiting for state=hidden: an element matching \"#inframe\" is still visible.",
+    "totalMs": 14101,
+    "handlesCreated": 93,
+    "handlesDisposed": 93,
+    "leaked": 0
+  }
+]

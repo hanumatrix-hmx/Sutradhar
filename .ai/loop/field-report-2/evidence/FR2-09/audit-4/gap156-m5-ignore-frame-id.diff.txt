@@ -1,0 +1,11 @@
+--- E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/dse.orig.ts	2026-09-25 13:19:55.462338700 +0530
++++ packages/browser/src/dom/dom-semantic-engine.ts	2026-09-25 13:22:55.229009400 +0530
+@@ -184,7 +184,7 @@
+  *  same-process blocked frame's session is the whole page's session, whose tree has the match
+  *  somewhere among the children — this walks either shape. */
+ function findFrameTreeNode(tree: CdpFrameTreeNode, frameId: string): CdpFrameTreeNode | undefined {
+-  if (tree.frame.id === frameId) return tree;
++  return tree;
+   for (const child of tree.childFrames ?? []) {
+     const found = findFrameTreeNode(child, frameId);
+     if (found) return found;

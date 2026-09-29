@@ -1,0 +1,19 @@
+KILLED  M1-chain-regex-drops-P-selector-exclusion :: Tests  2 failed | 97 passed (99) :: restored=true
+KILLED  M2-no-string-literal-stripping :: Tests  6 failed | 93 passed (99) :: restored=true
+KILLED  M3-probe-treats-any-exception-as-invalid :: Tests  2 failed | 97 passed (99) :: restored=true
+KILLED  M4-toPuppeteerQuery-always-pierce :: Tests  2 failed | 410 passed (412) :: restored=true
+SURVIVED M5-engine-reason-text-garbage (predict SURVIVES: reason text for xpath=/aria=/pierce= unpinned) :: Tests  99 passed (99) :: restored=true
+KILLED  M6-engine-D8-no-retry-break-removed :: Tests  1 failed | 154 passed (155) :: restored=true
+KILLED  M7-engine-probe-never-rejects :: Tests  3 failed | 152 passed (155) :: restored=true
+KILLED  M8-engine-probe-ignores-pending-dialog :: Tests  1 failed | 154 passed (155) :: restored=true
+KILLED  M9-normalizeTarget-no-detection :: Tests  9 failed | 148 passed (157) :: restored=true
+KILLED  M10-extract-throws-on-first-bad-field :: Tests  2 failed | 155 passed (157) :: restored=true
+SURVIVED M11-extract-swallows-non-InvalidSelectorError (predict SURVIVES: P10 tests a different throw) :: Tests  157 passed (157) :: restored=true
+KILLED  M12-uploadViaTrigger-normalize-after-fs-check :: Tests  1 failed | 94 passed (95) :: restored=true
+KILLED  M13-uploadViaTrigger-no-parser-wrap :: Tests  1 failed | 94 passed (95) :: restored=true
+KILLED  M14-resolveFrame-no-InvalidSelectorError-wrap :: Tests  2 failed | 93 passed (95) :: restored=true
+KILLED  M15-cli-validateFrameChain-noop :: Tests  1 failed | 4 passed (5) :: restored=true
+SURVIVED M16-cli-cmdClick-prevalidation-removed (predict SURVIVES: cli.ts wiring has no unit test) :: Tests  177 passed (177) :: restored=true
+KILLED  M17-mcp-targetDesc-reverted :: Tests  1 failed | 46 passed (47) :: restored=true
+(node:77160) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)

@@ -1,0 +1,66 @@
+[
+  {
+    "id": "v1-visible-main-toast-1-busy-oopifs",
+    "oopifs": 1,
+    "busyMs": 6000,
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#toast",
+      "state": "visible"
+    },
+    "totalMs": 746,
+    "latencyAfterRevealMs": 238
+  },
+  {
+    "id": "v1-visible-main-toast-4-busy-oopifs",
+    "oopifs": 4,
+    "busyMs": 6000,
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#toast",
+      "state": "visible"
+    },
+    "totalMs": 1152,
+    "latencyAfterRevealMs": 640
+  },
+  {
+    "id": "v1-visible-main-toast-8-busy-oopifs",
+    "oopifs": 8,
+    "busyMs": 6000,
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#toast",
+      "state": "visible"
+    },
+    "totalMs": 782,
+    "latencyAfterRevealMs": 269
+  },
+  {
+    "id": "v2-never-10-busy-oopifs-timeout1000",
+    "oopifs": 10,
+    "success": false,
+    "retriesUsed": 2,
+    "error": "Action wait_for_selector timed out after 3000ms",
+    "totalMs": 12279,
+    "genericOuterMessage": true
+  },
+  {
+    "id": "r1-timeout0-never-visible",
+    "expected": "fails immediately, no retry",
+    "success": false,
+    "retriesUsed": 0,
+    "error": "wait_for_selector timed out after 0ms waiting for state=visible: No element found for selector: #never",
+    "totalMs": 27
+  },
+  {
+    "id": "r1-timeout0-toast-revealed-at-700ms",
+    "expected": "documented: check once -> success:false",
+    "success": false,
+    "retriesUsed": 0,
+    "error": "wait_for_selector timed out after 0ms waiting for state=visible: 1 element(s) match \"#toast\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.",
+    "totalMs": 34
+  }
+]

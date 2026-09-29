@@ -1,0 +1,162 @@
+[
+  {
+    "id": "M1",
+    "desc": "computeObservation navigated: drop min(), always use navStartedAt",
+    "file": "packages\\capability-runtime\\src\\audit\\site-audit.ts",
+    "caught": true,
+    "runs": {
+      "capability-runtime": {
+        "exit": 1,
+        "summary": "Tests  1 failed | 191 passed (192)",
+        "failedNames": [
+          "tests/unit/audit-report.spec.ts > @sutradhar/capability-runtime audit-report (FR2-12) > AR11: computeObservation > (b) navigated same-document: since = documentStartedAt (the earlier one)"
+        ]
+      }
+    },
+    "restoredShaMatches": true
+  },
+  {
+    "id": "M2",
+    "desc": "computeObservation: coversWholeDocument always true",
+    "file": "packages\\capability-runtime\\src\\audit\\site-audit.ts",
+    "caught": true,
+    "runs": {
+      "capability-runtime": {
+        "exit": 1,
+        "summary": "Tests  4 failed | 188 passed (192)",
+        "failedNames": [
+          "tests/unit/audit-report.spec.ts > @sutradhar/capability-runtime audit-report (FR2-12) > AR11: computeObservation > (c) current-page: observingSince later than timeOrigin -> coversWholeDocument false, since = timeOrigin ISO",
+          "tests/unit/audit-report.spec.ts > @sutradhar/capability-runtime audit-report (FR2-12) > AR11: computeObservation > (d) observingSince null -> coversWholeDocument false",
+          "tests/unit/audit-report.spec.ts > @sutradhar/capability-runtime audit-report (FR2-12) > AR11: computeObservation > (e) timeOrigin null in current-page mode -> since null, coversWholeDocument false",
+          "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA3: current-page mode scopes console errors and broken requests to since observingSince/timeOrigin"
+        ]
+      }
+    },
+    "restoredShaMatches": true
+  },
+  {
+    "id": "M3",
+    "desc": "scopeToDocument: >= becomes > (boundary entry dropped)",
+    "file": "packages\\capability-runtime\\src\\audit\\site-audit.ts",
+    "caught": true,
+    "runs": {
+      "capability-runtime": {
+        "exit": 1,
+        "summary": "Tests  1 failed | 191 passed (192)",
+        "failedNames": [
+          "tests/unit/audit-report.spec.ts > @sutradhar/capability-runtime audit-report (FR2-12) > AR10: scopeToDocument > keeps entries at or after since, keeps all for null, and passes through empty"
+        ]
+      }
+    },
+    "restoredShaMatches": true
+  },
+  {
+    "id": "M4",
+    "desc": "computeObservation current-page: since = observingSince instead of documentStartedAt",
+    "file": "packages\\capability-runtime\\src\\audit\\site-audit.ts",
+    "caught": true,
+    "runs": {
+      "capability-runtime": {
+        "exit": 1,
+        "summary": "Tests  3 failed | 189 passed (192)",
+        "failedNames": [
+          "tests/unit/audit-report.spec.ts > @sutradhar/capability-runtime audit-report (FR2-12) > AR11: computeObservation > (c) current-page: observingSince later than timeOrigin -> coversWholeDocument false, since = timeOrigin ISO",
+          "tests/unit/audit-report.spec.ts > @sutradhar/capability-runtime audit-report (FR2-12) > AR11: computeObservation > (e) timeOrigin null in current-page mode -> since null, coversWholeDocument false",
+          "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA3: current-page mode scopes console errors and broken requests to since observingSince/timeOrigin"
+        ]
+      }
+    },
+    "restoredShaMatches": true
+  },
+  {
+    "id": "M5",
+    "desc": "buildAuditReport: bytes = base64 string length (wrong)",
+    "file": "packages\\capability-runtime\\src\\audit\\audit-report.ts",
+    "caught": true,
+    "runs": {
+      "capability-runtime": {
+        "exit": 1,
+        "summary": "Tests  1 failed | 191 passed (192)",
+        "failedNames": [
+          "tests/unit/audit-report.spec.ts > @sutradhar/capability-runtime audit-report (FR2-12) > AR1: buildAuditReport > copies every field by value, shapes the screenshot, and never leaks base64"
+        ]
+      }
+    },
+    "restoredShaMatches": true
+  },
+  {
+    "id": "M6",
+    "desc": "buildAuditReport: success baseline drops diffPath (always null)",
+    "file": "packages\\capability-runtime\\src\\audit\\audit-report.ts",
+    "caught": true,
+    "runs": {
+      "capability-runtime": {
+        "exit": 1,
+        "summary": "Tests  2 failed | 190 passed (192)",
+        "failedNames": [
+          "tests/unit/audit-report.spec.ts > @sutradhar/capability-runtime audit-report (FR2-12) > AR2: baseline mapping > maps a success baseline exactly (no diffImageBase64), an error baseline exactly, and null to null",
+          "tests/unit/audit-report.spec.ts > @sutradhar/capability-runtime audit-report (FR2-12) > AR6: writeAuditArtifacts > writes the diff file when the baseline succeeded"
+        ]
+      }
+    },
+    "restoredShaMatches": true
+  },
+  {
+    "id": "M7",
+    "desc": "buildAuditReport: width/height swapped",
+    "file": "packages\\capability-runtime\\src\\audit\\audit-report.ts",
+    "caught": true,
+    "runs": {
+      "capability-runtime": {
+        "exit": 1,
+        "summary": "Tests  1 failed | 191 passed (192)",
+        "failedNames": [
+          "tests/unit/audit-report.spec.ts > @sutradhar/capability-runtime audit-report (FR2-12) > AR1: buildAuditReport > copies every field by value, shapes the screenshot, and never leaks base64"
+        ]
+      }
+    },
+    "restoredShaMatches": true
+  },
+  {
+    "id": "M8",
+    "file": "E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\capability-runtime\\src\\runtime.ts",
+    "desc": "runtime.audit: navStartedAt not passed (null) to computeObservation",
+    "applied": false
+  },
+  {
+    "id": "M9",
+    "file": "E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\capability-runtime\\src\\runtime.ts",
+    "desc": "runtime.audit: dialog fast-fail removed",
+    "applied": false
+  },
+  {
+    "id": "M10",
+    "desc": "auditExitCode: baseline error no longer forces exit 1",
+    "file": "packages\\cli\\src\\audit-output.ts",
+    "caught": true,
+    "runs": {
+      "cli": {
+        "exit": 1,
+        "summary": "Tests  1 failed | 160 passed (161)",
+        "failedNames": [
+          "tests/unit/audit-output.spec.ts > @sutradhar/cli audit-output (FR2-12) > C3: auditExitCode > a baseline error gives 1 even without failOnDiff"
+        ]
+      }
+    },
+    "restoredShaMatches": true
+  },
+  {
+    "id": "M11",
+    "desc": "prepareAuditOutDir: skip the is-a-file check",
+    "file": "packages\\capability-runtime\\src\\audit\\audit-report.ts",
+    "caught": false,
+    "runs": {
+      "capability-runtime": {
+        "exit": 0,
+        "summary": "Tests  192 passed (192)",
+        "failedNames": []
+      }
+    },
+    "restoredShaMatches": true
+  }
+]

@@ -1,0 +1,65 @@
+{
+  "overallOk": true,
+  "results": [
+    {
+      "case": "GAP-266-replaceState",
+      "pass": true,
+      "detail": "10/10 kept BOTH before+after console errors AND the after-nav 404"
+    },
+    {
+      "case": "GAP-266-pushState",
+      "pass": true,
+      "detail": "10/10 kept BOTH before+after console errors AND the after-nav 404"
+    },
+    {
+      "case": "GAP-266-hash",
+      "pass": true,
+      "detail": "10/10 kept BOTH before+after console errors AND the after-nav 404"
+    },
+    {
+      "case": "GAP-266-multi-hop",
+      "pass": true,
+      "detail": "5/5 kept all 4 errors across 3 chained same-document navs (replaceState+pushState+hash)"
+    },
+    {
+      "case": "GAP-266-spa-like-sweep",
+      "pass": true,
+      "detail": "10/10 kept both hydration-window errors (synthetic stand-in for the 8/10-real-site pattern)"
+    },
+    {
+      "case": "GAP-267-own-404",
+      "pass": true,
+      "detail": "10/10 runtime-direct audits captured the audited page's own 404"
+    },
+    {
+      "case": "GAP-267-own-500",
+      "pass": true,
+      "detail": "10/10 runtime-direct audits captured the audited page's own 500"
+    },
+    {
+      "case": "GAP-267-302-chain-to-404",
+      "pass": true,
+      "detail": "10/10 a 302 chain ending in the audited page's own 404 is captured, keyed to the FINAL url"
+    },
+    {
+      "case": "redirect-chain-resolves-to-final-page",
+      "pass": true,
+      "detail": "5/5 a.url resolves to the chain's FINAL page, not an intermediate hop"
+    },
+    {
+      "case": "GAP-262-contamination-not-reopened",
+      "pass": true,
+      "detail": "0/10 leaked the OLD (noisy) page's activity into the new page's report (expect 0)"
+    },
+    {
+      "case": "GAP-268-alert-during-capture",
+      "pass": true,
+      "detail": "30/30 exactly one JSON doc (delayMs swept 1500-1595ms); 0 zero-doc, 0 multi-doc"
+    },
+    {
+      "case": "GAP-268-alert-AND-confirm-during-capture",
+      "pass": true,
+      "detail": "10/10 exactly one JSON doc with TWO dialogs (alert+confirm) opening during capture; 0 zero-doc, 0 multi-doc"
+    }
+  ]
+}

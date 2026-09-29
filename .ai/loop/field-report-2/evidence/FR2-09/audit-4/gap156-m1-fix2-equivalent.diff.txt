@@ -1,0 +1,11 @@
+--- E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/dse.orig.ts	2026-09-25 13:19:55.462338700 +0530
++++ packages/browser/src/dom/dom-semantic-engine.ts	2026-09-25 13:20:47.391980100 +0530
+@@ -412,7 +412,7 @@
+             // CDP unreachableUrl signal (confirmed), falling back to the parent page's
+             // iframe-src read (likely, may be stale) only if that fails — before falling back
+             // further to the unhelpful chrome-error:// value. See recoverBlockedFrameUrl.
+-            const recovered = await recoverBlockedFrameUrl(frame);
++            const recovered = { url: await recoverBlockedFrameSrc(frame), confidence: 'confirmed' as const };
+             skipped.push(skippedOf(frame, 'error-page', undefined, recovered?.url, recovered?.confidence));
+             continue;
+           }

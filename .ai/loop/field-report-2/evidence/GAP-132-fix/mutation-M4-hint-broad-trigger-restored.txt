@@ -1,0 +1,57 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/mcp-server[39m
+
+ [33m❯[39m tests/unit/tools.spec.ts [2m ([22m[2m50 tests[22m [2m|[22m [31m2 failed[39m [2m|[22m [33m47 skipped[39m[2m)[22m[90m 10[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22m@sutradhar/mcp-server registerTools[2m > [22mGAP-134 (FR2-01 audit-6): a HARD failure (tab/session/target closed mid-check) wrapped in the engine's "wait_for_selector failed waiting for state=hidden: ..." prefix must NOT get the "still visible" hint, even though the old broad "waiting for state=hidden" trigger this replaces would have matched it[39m
+[31m     → expected 'wait_for_selector failed waiting for …' not to contain 'The element is still visible.'[39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22m@sutradhar/mcp-server registerTools[2m > [22mGAP-134 (FR2-01 audit-6): the GAP-132 tab-closed-mid-wait failure specifically must NOT get the "still visible" hint[39m
+[31m     → expected 'wait_for_selector failed waiting for …' not to contain 'The element is still visible.'[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 2 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22m@sutradhar/mcp-server registerTools[2m > [22mGAP-134 (FR2-01 audit-6): a HARD failure (tab/session/target closed mid-check) wrapped in the engine's "wait_for_selector failed waiting for state=hidden: ..." prefix must NOT get the "still visible" hint, even though the old broad "waiting for state=hidden" trigger this replaces would have matched it
+[31m[1mAssertionError[22m: expected 'wait_for_selector failed waiting for …' not to contain 'The element is still visible.'[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- The element is still visible.[39m
+[31m+ wait_for_selector failed waiting for state=hidden: Protocol error (Runtime.callFunctionOn): Target closed[39m
+[31m+ Hint: The element is still visible. Check the selector, or raise timeoutMs.[39m
+
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m302:30[22m[39m
+    [90m300| [39m
+    [90m301| [39m    [35mconst[39m parsed [33m=[39m [33mJSON[39m[33m.[39m[34mparse[39m(result[33m.[39mcontent[[34m0[39m][33m.[39mtext)[33m;[39m
+    [90m302| [39m    [34mexpect[39m(parsed[33m.[39merror)[33m.[39mnot[33m.[39m[34mtoContain[39m([32m'The element is still visible.'[39m…
+    [90m   | [39m                             [31m^[39m
+    [90m303| [39m  })[33m;[39m
+    [90m304| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22m@sutradhar/mcp-server registerTools[2m > [22mGAP-134 (FR2-01 audit-6): the GAP-132 tab-closed-mid-wait failure specifically must NOT get the "still visible" hint
+[31m[1mAssertionError[22m: expected 'wait_for_selector failed waiting for …' not to contain 'The element is still visible.'[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- The element is still visible.[39m
+[31m+ wait_for_selector failed waiting for state=hidden: Tab was closed while wait_for_selector was checking its state.[39m
+[31m+ Hint: The element is still visible. Check the selector, or raise timeoutMs.[39m
+
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m322:30[22m[39m
+    [90m320| [39m
+    [90m321| [39m    [35mconst[39m parsed [33m=[39m [33mJSON[39m[33m.[39m[34mparse[39m(result[33m.[39mcontent[[34m0[39m][33m.[39mtext)[33m;[39m
+    [90m322| [39m    [34mexpect[39m(parsed[33m.[39merror)[33m.[39mnot[33m.[39m[34mtoContain[39m([32m'The element is still visible.'[39m…
+    [90m   | [39m                             [31m^[39m
+    [90m323| [39m  })[33m;[39m
+    [90m324| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[2m | [22m[33m47 skipped[39m[90m (50)[39m
+[2m   Start at [22m 12:54:04
+[2m   Duration [22m 929ms[2m (transform 351ms, setup 0ms, collect 623ms, tests 10ms, environment 0ms, prepare 108ms)[22m
+

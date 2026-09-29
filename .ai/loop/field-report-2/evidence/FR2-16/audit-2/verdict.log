@@ -1,0 +1,15 @@
+FR2-16 audit-2 verdict: FAIL
+Core defect (GAP-101) only half-fixed: the "hides navigator.webdriver" half is now honest, but the
+"Chrome-recommended stability flag" justification survives in packages/browser/README.md invariant #2,
+packages/browser/src/launcher/browser-options.ts, and PROJECT_DEEP_DIVE.md s11.1 ("kept mainly as a
+Chrome-recommended stability flag ... measured side effect"). Evidence it is false:
+ - chromium-bad-flags-source.log: Chromium's bad_flags_prompt.cc lists --disable-blink-features in kBadFlags,
+   commented "not supported and is intended only for use by Chromium developers".
+ - webdriver-probe-audit2.log: via Sutradhar's real BrowserLauncher, the ONLY page-observable difference the
+   flag makes (35 navigator props + window keys/chrome/plugins/langs/UA) is navigator.webdriver.
+ - headed-infobar-probe.log + headed-chrome-window-cropped.png: with the flag present Chrome still shows
+   "Chrome is being controlled by automated test software" -> contradicts "quiets some automation-related warnings".
+ - puppeteer-core 25.5.0 defaults pass --enable-automation and do not include this flag.
+So the webdriver effect is the flag's sole function, not a "side effect" of a stability flag.
+Everything else re-verified green: typecheck 8/8, vitest 224/224 + 47/47, doc-static 22/22, live-verify 20/20,
+GAP-103 mutation A caught by both guards, dist clean, stealth exports unreachable.

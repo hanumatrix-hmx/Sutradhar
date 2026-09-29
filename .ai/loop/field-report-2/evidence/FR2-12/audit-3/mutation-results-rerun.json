@@ -1,0 +1,51 @@
+{
+  "preSha": {
+    "packages\\capability-runtime\\src\\runtime.ts": "d3bd14f6399017a79a9acf2148c090e6cfb085bf404bd2e50a6029aa8f92a915",
+    "packages\\cli\\src\\dialog-json-routing.ts": "b8fa05b77ed08261801c617f508e9ec27cff65e09685344d61d3d28d20fd434d",
+    "packages\\cli\\src\\cli.ts": "358a966da17fa1db1c9d92da7956e0d25bf80890186a170eac23f8ce6f4908a7",
+    "packages\\browser\\src\\session\\browser-tab.ts": "aaa736f6ec018715ba6d34466665003883aaddd752a4c86a4888511a987f145e"
+  },
+  "postSha": {
+    "packages\\capability-runtime\\src\\runtime.ts": "d3bd14f6399017a79a9acf2148c090e6cfb085bf404bd2e50a6029aa8f92a915",
+    "packages\\cli\\src\\dialog-json-routing.ts": "b8fa05b77ed08261801c617f508e9ec27cff65e09685344d61d3d28d20fd434d",
+    "packages\\cli\\src\\cli.ts": "358a966da17fa1db1c9d92da7956e0d25bf80890186a170eac23f8ce6f4908a7",
+    "packages\\browser\\src\\session\\browser-tab.ts": "aaa736f6ec018715ba6d34466665003883aaddd752a4c86a4888511a987f145e"
+  },
+  "restoredIdentical": true,
+  "results": [
+    {
+      "id": "A3_first_commit_wins",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "killed": true,
+      "status": 1,
+      "summary": "1 failed | 197 passed (198)",
+      "failed": [
+        "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA4e (GAP-269 M4 kill): keeps the LAST main-frame commit, not the first -- kills a mutation that keeps the first framenavigated/commit event (breaks multi-hop JS redirect chains)"
+      ]
+    },
+    {
+      "id": "A6_lookup_first_not_last",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "killed": false,
+      "status": 0,
+      "summary": "198 passed (198)",
+      "failed": []
+    },
+    {
+      "id": "A10_since_ignores_commit",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "killed": false,
+      "status": 0,
+      "summary": "198 passed (198)",
+      "failed": []
+    },
+    {
+      "id": "C1_response_resourceType_dropped",
+      "file": "packages\\browser\\src\\session\\browser-tab.ts",
+      "killed": false,
+      "status": 0,
+      "summary": "498 passed (498)",
+      "failed": []
+    }
+  ]
+}

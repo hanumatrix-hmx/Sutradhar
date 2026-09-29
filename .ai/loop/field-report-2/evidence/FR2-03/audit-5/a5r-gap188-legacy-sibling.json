@@ -1,0 +1,71 @@
+{
+  "R": "E:\\AI-Cache\\tmp\\fr2-03-a5r-legacy-ue9W4k",
+  "udd": "E:\\AI-Cache\\tmp\\fr2-03-a5r-legacy-ue9W4k\\temp\\sutradhar-cli-1790372356393",
+  "stateFile": "E:\\AI-Cache\\tmp\\fr2-03-a5r-legacy-ue9W4k\\sr\\a1b2c3d4e5f60718\\state.json",
+  "chromePid": 115544,
+  "wsEndpoint": "ws://127.0.0.1:64818/devtools/browser/2e930948-ae68-48d6-b9b5-2638b6b27e5e",
+  "step1_readable": {
+    "sessions": [
+      {
+        "status": "live",
+        "chromePid": 115544
+      }
+    ],
+    "dry": {
+      "actions": [],
+      "kept": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a5r-legacy-ue9W4k\\sr\\a1b2c3d4e5f60718\\state.json",
+          "reason": "live-session"
+        },
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a5r-legacy-ue9W4k\\temp\\sutradhar-cli-1790372356393",
+          "reason": "in-use"
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "step2_garbage": {
+    "dry": {
+      "actions": [],
+      "kept": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a5r-legacy-ue9W4k\\sr\\a1b2c3d4e5f60718\\state.json",
+          "reason": "unreadable-state"
+        },
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a5r-legacy-ue9W4k\\temp\\sutradhar-cli-1790372356393",
+          "pid": 115544,
+          "reason": "unknown-liveness"
+        }
+      ],
+      "exitCode": 0
+    },
+    "chromeAliveAfterDry": true
+  },
+  "step3_locked_real": {
+    "reachableBefore": true,
+    "real": {
+      "actions": [],
+      "kept": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a5r-legacy-ue9W4k\\sr\\a1b2c3d4e5f60718\\state.json",
+          "reason": "unreadable-state"
+        },
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a5r-legacy-ue9W4k\\temp\\sutradhar-cli-1790372356393",
+          "pid": 115544,
+          "reason": "unknown-liveness"
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "after": {
+    "chromeAlive": true,
+    "endpointReachable": true,
+    "profileDirExists": true,
+    "stateFileExists": true
+  }
+}

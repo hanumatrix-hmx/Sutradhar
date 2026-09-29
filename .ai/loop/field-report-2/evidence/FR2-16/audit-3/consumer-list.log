@@ -1,0 +1,44 @@
+# direct dependents of @sutradhar/browser (package.json deps/devDeps/peerDeps)
+@sutradhar/agent   (packages/agent/package.json)
+@sutradhar/capability-runtime   (packages/capability-runtime/package.json)
+@sutradhar/cli   (packages/cli/package.json)
+@sutradhar/mcp-server   (packages/mcp-server/package.json)
+@sutradhar/workflow   (packages/workflow/package.json)
+@sutradhar/server   (apps/server/package.json)
+# transitive: dependents of the direct dependents
+sutradhar via @sutradhar/capability-runtime   (packages/sutradhar/package.json)
+# which have a typecheck script
+@sutradhar/agent
+@sutradhar/browser
+@sutradhar/capability-runtime
+@sutradhar/capability
+@sutradhar/cli
+@sutradhar/config
+@sutradhar/contracts
+@hanumatrix/dev-runtime
+@sutradhar/events
+@sutradhar/frontend
+@sutradhar/llm
+@sutradhar/mcp-server
+@sutradhar/memory
+@sutradhar/observability
+@sutradhar/sdk
+@sutradhar/storage
+sutradhar
+@sutradhar/utils
+@sutradhar/workflow
+@sutradhar/server
+# source-level imports of @sutradhar/browser or stealth symbols outside packages/browser
+# dependents of sutradhar/sdk
+packages/cli/package.json
+packages/frontend/package.json
+packages/sdk/package.json
+packages/sutradhar/package.json
+# grep -rl (src/tests, excluding packages/browser)
+      6 apps/server
+     13 packages/agent
+      3 packages/capability-runtime
+      1 packages/cli
+# frontend/sdk deps
+packages/frontend/package.json @sutradhar/contracts,@sutradhar/sdk
+packages/sdk/package.json @sutradhar/contracts,@sutradhar/observability

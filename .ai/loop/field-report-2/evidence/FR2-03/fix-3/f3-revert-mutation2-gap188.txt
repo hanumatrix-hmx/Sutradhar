@@ -1,0 +1,42 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli[39m
+
+ [32m✓[39m tests/unit/parse-args.spec.ts [2m ([22m[2m43 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32m✓[39m tests/unit/help-text.spec.ts [2m ([22m[2m6 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/state.spec.ts [2m ([22m[2m18 tests[22m[2m)[22m[90m 22[2mms[22m[39m
+ [32m✓[39m tests/unit/profile-cleanup.spec.ts [2m ([22m[2m21 tests[22m[2m)[22m[90m 34[2mms[22m[39m
+ [33m❯[39m tests/unit/sessions.spec.ts [2m ([22m[2m17 tests[22m [2m|[22m [31m1 failed[39m[2m)[22m[90m 86[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/sessions.spec.ts[2m > [22mscanStateFiles (S8)[2m > [22mGAP-188 (FR2-03 fix-3): a state.json that fails to READ (not just parse) is unified into the same protected `unreadable` outcome, instead of being silently dropped -- here simulated with a directory named state.json (stat succeeds, readFile throws EISDIR), the same OS-level shape as a locked/exclusive-open file failing readFile rather than stat[39m
+[31m     → expected [] to have a length of 1 but got +0[39m
+ [32m✓[39m tests/unit/process-list.spec.ts [2m ([22m[2m21 tests[22m[2m)[22m[90m 160[2mms[22m[39m
+ [32m✓[39m tests/unit/spawn-chrome.spec.ts [2m ([22m[2m2 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/collect-gc-snapshot.spec.ts [2m ([22m[2m1 test[22m[2m)[22m[90m 13[2mms[22m[39m
+ [32m✓[39m tests/unit/gc.spec.ts [2m ([22m[2m35 tests[22m[2m)[22m[90m 15[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/sessions.spec.ts[2m > [22mscanStateFiles (S8)[2m > [22mGAP-188 (FR2-03 fix-3): a state.json that fails to READ (not just parse) is unified into the same protected `unreadable` outcome, instead of being silently dropped -- here simulated with a directory named state.json (stat succeeds, readFile throws EISDIR), the same OS-level shape as a locked/exclusive-open file failing readFile rather than stat
+[31m[1mAssertionError[22m: expected [] to have a length of 1 but got +0[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m tests/unit/sessions.spec.ts:[2m112:21[22m[39m
+    [90m110| [39m    [35mawait[39m [34mmkdir[39m(path[33m.[39m[34mjoin[39m(root[33m,[39m [32m'locked'[39m[33m,[39m [32m'state.json'[39m))[33m;[39m [90m// state.jso[39m…
+    [90m111| [39m    [35mconst[39m scanned [33m=[39m [35mawait[39m [34mscanStateFiles[39m(root[33m,[39m [32m'/nope'[39m)[33m;[39m
+    [90m112| [39m    [34mexpect[39m(scanned)[33m.[39m[34mtoHaveLength[39m([34m1[39m)[33m;[39m
+    [90m   | [39m                    [31m^[39m
+    [90m113| [39m    [34mexpect[39m(scanned[[34m0[39m][33m![39m[33m.[39mparseOk)[33m.[39m[34mtoBe[39m([35mfalse[39m)[33m;[39m
+    [90m114| [39m    [34mexpect[39m(scanned[[34m0[39m][33m![39m[33m.[39mraw)[33m.[39m[34mtoBeUndefined[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m8 passed[39m[22m[90m (9)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m163 passed[39m[22m[90m (164)[39m
+[2m   Start at [22m 18:12:41
+[2m   Duration [22m 1.32s[2m (transform 718ms, setup 0ms, collect 2.80s, tests 341ms, environment 2ms, prepare 2.14s)[22m
+

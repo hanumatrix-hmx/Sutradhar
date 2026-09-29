@@ -1,0 +1,42 @@
+{
+  "events": [
+    {
+      "ev": "Preload.preloadEnabledStateUpdated",
+      "e": "{\"disabledByPreference\":false,\"disabledByDataSaver\":false,\"disabledByBatterySaver\":false,\"disabledByHoldbackPrefetchSpeculationRules\":false,\"disabledByHoldbackPrerenderSpeculationRules\":false}"
+    },
+    {
+      "ev": "Preload.ruleSetUpdated",
+      "e": "{\"ruleSet\":{\"id\":\"58000.0\",\"loaderId\":\"86CAD2D567B6F9C32D8BE4AE0B3EE928\",\"sourceText\":\"{\\\"prerender\\\":[{\\\"source\\\":\\\"list\\\",\\\"urls\\\":[\\\"/dst\\\"],\\\"eagerness\\\":\\\"immediate\\\"}]}\",\"backendNodeId\":2}}"
+    },
+    {
+      "ev": "Preload.prefetchStatusUpdated",
+      "e": "{\"key\":{\"loaderId\":\"86CAD2D567B6F9C32D8BE4AE0B3EE928\",\"action\":\"Prefetch\",\"url\":\"http://127.0.0.1:49558/dst\"},\"pipelineId\":\"5162CE25F0C925B68DE8176241614319\",\"initiatingFrameId\":\"C9A85D777C4EA9C9BABE5E7B1A7EFEFA\",\"prefetchUrl\":\"http://127.0.0.1:49558/dst\",\"status\":\"Running\",\"prefetchStatus\":\"PrefetchNotFinishedInTime\",\"requestId\":\"5198C44FBD5B7305CC17C27D993B30B6\"}"
+    },
+    {
+      "ev": "Preload.prerenderStatusUpdated",
+      "e": "{\"key\":{\"loaderId\":\"86CAD2D567B6F9C32D8BE4AE0B3EE928\",\"action\":\"Prerender\",\"url\":\"http://127.0.0.1:49558/dst\"},\"pipelineId\":\"5162CE25F0C925B68DE8176241614319\",\"status\":\"Failure\",\"prerenderStatus\":\"PrerenderingDisabledByDevTools\"}"
+    },
+    {
+      "ev": "Preload.preloadingAttemptSourcesUpdated",
+      "e": "{\"loaderId\":\"86CAD2D567B6F9C32D8BE4AE0B3EE928\",\"preloadingAttemptSources\":[{\"key\":{\"loaderId\":\"86CAD2D567B6F9C32D8BE4AE0B3EE928\",\"action\":\"Prerender\",\"url\":\"http://127.0.0.1:49558/dst\"},\"ruleSetIds\":[\"58000.0\"],\"nodeIds\":[]}]}"
+    },
+    {
+      "ev": "Preload.prefetchStatusUpdated",
+      "e": "{\"key\":{\"loaderId\":\"86CAD2D567B6F9C32D8BE4AE0B3EE928\",\"action\":\"Prefetch\",\"url\":\"http://127.0.0.1:49558/dst\"},\"pipelineId\":\"5162CE25F0C925B68DE8176241614319\",\"initiatingFrameId\":\"C9A85D777C4EA9C9BABE5E7B1A7EFEFA\",\"prefetchUrl\":\"http://127.0.0.1:49558/dst\",\"status\":\"Ready\",\"prefetchStatus\":\"PrefetchSuccessfulButNotUsed\",\"requestId\":\"5198C44FBD5B7305CC17C27D993B30B6\"}"
+    }
+  ],
+  "targets": [
+    {
+      "type": "browser",
+      "url": ""
+    },
+    {
+      "type": "page",
+      "url": "about:blank"
+    },
+    {
+      "type": "page",
+      "url": "http://127.0.0.1:49558/src"
+    }
+  ]
+}

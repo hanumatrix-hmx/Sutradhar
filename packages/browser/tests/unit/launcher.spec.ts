@@ -1,8 +1,9 @@
 /**
  * @file packages/browser/tests/unit/launcher.spec.ts
- * @description Unit tests for BrowserLauncher, stealth args preparation, and browser lifecycle.
+ * @description Unit tests for BrowserLauncher, launch args preparation, and browser lifecycle.
  */
 
+import * as browserExports from '../../src/index.js';
 import { BrowserLauncher, PuppeteerBrowserInstance, BROWSER_VERSION, DEFAULT_LAUNCH_ARGS } from '../../src/index.js';
 
 // `import * as fs from 'node:fs'` gives an ES module namespace object, which is spec-frozen —
@@ -27,12 +28,48 @@ describe('@sutradhar/browser BrowserLauncher', () => {
     expect(BROWSER_VERSION).toBe('0.1.0');
   });
 
-  it('should prepare default stealth flags in launch arguments', () => {
+  it('should unconditionally include --disable-blink-features=AutomationControlled in launch arguments (FR2-16: proves no behavior change after removing the dead enableStealth conditional, which was a provable no-op)', () => {
     const launcher = new BrowserLauncher();
     const args = launcher.prepareLaunchArgs();
 
     expect(args).toContain('--no-sandbox');
     expect(args).toContain('--disable-blink-features=AutomationControlled');
+  });
+
+  it('enableStealth (if a caller still passes it despite the type removal) has zero effect on prepareLaunchArgs output, in either direction (GAP-104 fix: this must be distinct from the previous test, not a duplicate of it — it compares BOTH enableStealth:true and enableStealth:false against the no-option baseline and asserts all three produce an identical arg set, which the previous "default flags present" test never checked)', () => {
+    const launcher = new BrowserLauncher();
+    const baseline = launcher.prepareLaunchArgs();
+    const withTrue = launcher.prepareLaunchArgs({ enableStealth: true } as never);
+    const withFalse = launcher.prepareLaunchArgs({ enableStealth: false } as never);
+
+    expect([...withTrue].sort()).toEqual([...baseline].sort());
+    expect([...withFalse].sort()).toEqual([...baseline].sort());
+  });
+
+  // GAP-104 fix: the previous version of this regression guard named IStealthEngine and
+  // StealthOptions in its description as if they were being checked here, but both are
+  // TypeScript interfaces with no runtime representation at all (even before removal, they
+  // never appeared as a property on the compiled module's exports) — asserting
+  // `browserExports.IStealthEngine === undefined` would be vacuously true regardless of whether
+  // the removal happened, so it is not asserted here. GAP-121: `tsc` succeeding across every
+  // consumer package (see fix-2 evidence) does NOT, by itself, prove these type-only interfaces
+  // were removed — `tsc` would still pass if `IStealthEngine` alone were re-added without
+  // re-exporting it from the package barrel. What this test DOES check directly, at runtime, is
+  // that the barrel no longer re-exports the concrete `StealthEngine` class and its helper
+  // functions below; re-adding `IStealthEngine`/`StealthOptions` without restoring those would
+  // slip past both this test and `tsc`, which is a real (currently accepted) coverage gap, not
+  // something either check actually closes. This test asserts only the REAL runtime exports that
+  // used to exist. `getEvasionScripts` is also deliberately omitted below (unlike
+  // fix-1's version): it was always an instance method on the (now-deleted) StealthEngine class,
+  // never a top-level package export, so checking it here would be vacuous — it was never going
+  // to be `!== undefined` even before this item started.
+  it('regression guard (FR2-16): StealthEngine/DEFAULT_STEALTH_OPTIONS/getWebdriverOverrideScript/getChromeRuntimeScript/getWebglMaskScript/getHardwareConcurrencyScript must stay removed from the package\'s real runtime exports', () => {
+    expect((browserExports as Record<string, unknown>).StealthEngine).toBeUndefined();
+    expect((browserExports as Record<string, unknown>).DEFAULT_STEALTH_OPTIONS).toBeUndefined();
+    expect((browserExports as Record<string, unknown>).getWebdriverOverrideScript).toBeUndefined();
+    expect((browserExports as Record<string, unknown>).getChromeRuntimeScript).toBeUndefined();
+    expect((browserExports as Record<string, unknown>).getWebglMaskScript).toBeUndefined();
+    expect((browserExports as Record<string, unknown>).getHardwareConcurrencyScript).toBeUndefined();
   });
 
   it('should merge user-provided custom arguments without duplicates', () => {

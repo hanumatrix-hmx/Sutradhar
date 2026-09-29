@@ -1,0 +1,85 @@
+{
+  "label": "cur",
+  "rec": [
+    {
+      "args": "nav <B>/?keep",
+      "code": 0,
+      "ms": 888,
+      "cap": false,
+      "out": "Navigated to http://127.0.0.1:57244/?keep\nTitle: page",
+      "err": ""
+    },
+    {
+      "args": "newtab <B>/?victim",
+      "code": 0,
+      "ms": 401,
+      "cap": false,
+      "out": "New tab tab_sess_1790626344023_1_2 opened at http://127.0.0.1:57244/?victim",
+      "err": ""
+    },
+    {
+      "args": "nav chrome://crash",
+      "code": 1,
+      "ms": 907,
+      "cap": false,
+      "out": "",
+      "err": "Fatal: net::ERR_ABORTED at chrome://crash"
+    },
+    {
+      "args": "nav <B>/?after",
+      "code": 1,
+      "ms": 45202,
+      "cap": true,
+      "out": "",
+      "err": "Note: tab D04C27EB3D65BF363235D757B861398B (http://127.0.0.1:57244/?keep) has crashed (its renderer is gone) -- this is not a dialog. Close it with \"sutradhar closetab D04C27EB3D65BF363235D757B861398B"
+    },
+    {
+      "args": "close",
+      "code": 0,
+      "ms": 875,
+      "cap": false,
+      "out": "Session closed.",
+      "err": ""
+    },
+    {
+      "args": "nav <B>/?keep",
+      "code": 0,
+      "ms": 895,
+      "cap": false,
+      "out": "Navigated to http://127.0.0.1:57244/?keep\nTitle: page",
+      "err": ""
+    },
+    {
+      "args": "newtab <B>/?victim",
+      "code": 0,
+      "ms": 414,
+      "cap": false,
+      "out": "New tab tab_sess_1790626395018_1_2 opened at http://127.0.0.1:57244/?victim",
+      "err": ""
+    },
+    {
+      "args": "nav chrome://crash",
+      "code": 1,
+      "ms": 884,
+      "cap": false,
+      "out": "",
+      "err": "Fatal: net::ERR_ABORTED at chrome://crash"
+    },
+    {
+      "args": "snap",
+      "code": 1,
+      "ms": 45211,
+      "cap": true,
+      "out": "",
+      "err": "Note: tab B798B761461C61891FB6C6DE6BC4E5A6 (http://127.0.0.1:57244/?victim) has crashed (its renderer is gone) -- this is not a dialog. Close it with \"sutradhar closetab B798B761461C61891FB6C6DE6BC4E5"
+    },
+    {
+      "args": "close",
+      "code": 0,
+      "ms": 878,
+      "cap": false,
+      "out": "Session closed.",
+      "err": ""
+    }
+  ]
+}

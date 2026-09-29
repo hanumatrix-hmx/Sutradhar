@@ -1,0 +1,168 @@
+[
+  {
+    "id": "M1-drop-crash-event-listener",
+    "file": "packages/browser/src/session/dialog-warden.ts",
+    "vitestExit": 1,
+    "tests": "3 failed | 35 passed (38)",
+    "killed": true,
+    "failedTests": [
+      "@sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC1: a target Chrome announced as crashed (Target.targetC",
+      "@sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC5: a crashed target that answers again (reloaded) is cl",
+      "@sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC6: `dialog accept/dismiss` on a crashed target never cl"
+    ],
+    "restoredShaOk": true,
+    "sha": "5fb2015cba6ec2dae1e65a1064c4e5084fa5e24511d8eb79d5607e0fa32ee8e3"
+  },
+  {
+    "id": "M2-no-reprobe-in-corroborate",
+    "file": "packages/browser/src/session/dialog-warden.ts",
+    "vitestExit": 1,
+    "tests": "1 failed | 37 passed (38)",
+    "killed": true,
+    "failedTests": [
+      "@sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC4 (race guard): a busy script that FINISHES between the"
+    ],
+    "restoredShaOk": true,
+    "sha": "5fb2015cba6ec2dae1e65a1064c4e5084fa5e24511d8eb79d5607e0fa32ee8e3"
+  },
+  {
+    "id": "M3-never-clear-on-recovery",
+    "file": "packages/browser/src/session/dialog-warden.ts",
+    "vitestExit": 1,
+    "tests": "1 failed | 37 passed (38)",
+    "killed": true,
+    "failedTests": [
+      "@sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC5: a crashed target that answers again (reloaded) is cl"
+    ],
+    "restoredShaOk": true,
+    "sha": "5fb2015cba6ec2dae1e65a1064c4e5084fa5e24511d8eb79d5607e0fa32ee8e3"
+  },
+  {
+    "id": "M4-corroboration-disabled",
+    "file": "packages/browser/src/session/dialog-warden.ts",
+    "vitestExit": 1,
+    "tests": "1 failed | 37 passed (38)",
+    "killed": true,
+    "failedTests": [
+      "@sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC3 (missed event): no crash event ever seen, but a FRESH"
+    ],
+    "restoredShaOk": true,
+    "sha": "5fb2015cba6ec2dae1e65a1064c4e5084fa5e24511d8eb79d5607e0fa32ee8e3"
+  },
+  {
+    "id": "M5-crashed-still-reported-as-unknown-dialog",
+    "file": "packages/browser/src/session/dialog-warden.ts",
+    "vitestExit": 1,
+    "tests": "3 failed | 35 passed (38)",
+    "killed": true,
+    "failedTests": [
+      "@sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC1: a target Chrome announced as crashed (Target.targetC",
+      "@sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC3 (missed event): no crash event ever seen, but a FRESH",
+      "@sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC6: `dialog accept/dismiss` on a crashed target never cl"
+    ],
+    "restoredShaOk": true,
+    "sha": "5fb2015cba6ec2dae1e65a1064c4e5084fa5e24511d8eb79d5607e0fa32ee8e3"
+  },
+  {
+    "id": "M6-overbroad-every-unresponsive-is-crashed",
+    "file": "packages/browser/src/session/dialog-warden.ts",
+    "vitestExit": 1,
+    "tests": "18 failed | 20 passed (38)",
+    "killed": true,
+    "failedTests": [
+      "@sutradhar/browser DialogWarden (FR2-04 Branch W) > WD9 (GAP-220/228 defensive layer): a target whose Page.enable NEVER acked is reported as",
+      "@sutradhar/browser DialogWarden (FR2-04 Branch W) > WD11 (GAP-228 regression guard, N9/N10 shape): an ESTABLISHED target running a long BUSY",
+      "@sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-fix3-A (GAP-236): a popup and its blocked opener — /v1/dialogs reports the popup ",
+      "@sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-B (GAP-246, supersedes fix-3's isolated refusal): a NEVER-CONFIRMED ",
+      "@sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-B2 (GAP-245, decision 1): a CONFIRMED-SAFE isolated target is still ",
+      "@sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-A13 (GAP-249): the warden feeds its own real discoveredAt into attri",
+      "@sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirmedSafe without ",
+      "@sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved",
+      "@sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC2 (NEGATIVE CONTROL): a target that is blocked by a rea",
+      "@sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC4 (race guard): a busy script that FINISHES between the",
+      "@sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC5: a crashed target that answers again (reloaded) is cl"
+    ],
+    "restoredShaOk": true,
+    "sha": "5fb2015cba6ec2dae1e65a1064c4e5084fa5e24511d8eb79d5607e0fa32ee8e3"
+  },
+  {
+    "id": "M7-crashed-not-excluded-from-attribution",
+    "file": "packages/browser/src/session/dialog-warden.ts",
+    "vitestExit": 0,
+    "tests": "38 passed (38)",
+    "killed": false,
+    "failedTests": [],
+    "restoredShaOk": true,
+    "sha": "5fb2015cba6ec2dae1e65a1064c4e5084fa5e24511d8eb79d5607e0fa32ee8e3"
+  },
+  {
+    "id": "M8-crash-not-cleared-on-destroy",
+    "file": "packages/browser/src/session/dialog-warden.ts",
+    "vitestExit": 0,
+    "tests": "38 passed (38)",
+    "killed": false,
+    "failedTests": [],
+    "restoredShaOk": true,
+    "sha": "5fb2015cba6ec2dae1e65a1064c4e5084fa5e24511d8eb79d5607e0fa32ee8e3"
+  },
+  {
+    "id": "M9-listTabs-no-page-filter",
+    "file": "packages/browser/src/session/dialog-cdp.ts",
+    "vitestExit": 1,
+    "tests": "1 failed | 33 passed (34)",
+    "killed": true,
+    "failedTests": [
+      "@sutradhar/browser dialog-cdp GAP-256-fix (b): browser-level tab listing/closing > BL1: listTabsAtBrowserLevel returns ONLY page targets, wi"
+    ],
+    "restoredShaOk": true,
+    "sha": "b35c0829881c58ac0cd66b6994d8ef094ed7af253bbbc0bf08a1674f603b2a0c"
+  },
+  {
+    "id": "M10-listTabs-silently-empty-without-connection",
+    "file": "packages/browser/src/session/dialog-cdp.ts",
+    "vitestExit": 1,
+    "tests": "1 failed | 33 passed (34)",
+    "killed": true,
+    "failedTests": [
+      "@sutradhar/browser dialog-cdp GAP-256-fix (b): browser-level tab listing/closing > BL2: listTabsAtBrowserLevel fails loudly (never returns a"
+    ],
+    "restoredShaOk": true,
+    "sha": "b35c0829881c58ac0cd66b6994d8ef094ed7af253bbbc0bf08a1674f603b2a0c"
+  },
+  {
+    "id": "M11-gate-clears-whenever-anything-crashed",
+    "file": "packages/cli/src/dialog-broker.ts",
+    "vitestExit": 1,
+    "tests": "1 failed | 23 passed (24)",
+    "killed": true,
+    "failedTests": [
+      "@sutradhar/cli runDialogGate GAP-256-fix: crashed tabs > GC-CLI2 (NEGATIVE CONTROL): a crashed tab alongside a REAL dialog still blocks (exi"
+    ],
+    "restoredShaOk": true,
+    "sha": "a948b5d2dde373c344e855e6bb4211da907f45b935f0b949353fa50c3462c12a"
+  },
+  {
+    "id": "M12-warden-broker-drops-crashed",
+    "file": "packages/cli/src/dialog-broker.ts",
+    "vitestExit": 1,
+    "tests": "1 failed | 23 passed (24)",
+    "killed": true,
+    "failedTests": [
+      "@sutradhar/cli runDialogGate GAP-256-fix: crashed tabs > GC-CLI4: WardenBroker.list() passes the warden's `crashed` array through (and defau"
+    ],
+    "restoredShaOk": true,
+    "sha": "a948b5d2dde373c344e855e6bb4211da907f45b935f0b949353fa50c3462c12a"
+  },
+  {
+    "id": "M13-no-crash-note",
+    "file": "packages/cli/src/dialog-broker.ts",
+    "vitestExit": 1,
+    "tests": "1 failed | 23 passed (24)",
+    "killed": true,
+    "failedTests": [
+      "@sutradhar/cli runDialogGate GAP-256-fix: crashed tabs > GC-CLI1: only a crashed tab (no dialog) -> gate is clear (does NOT throw DialogBloc"
+    ],
+    "restoredShaOk": true,
+    "sha": "a948b5d2dde373c344e855e6bb4211da907f45b935f0b949353fa50c3462c12a"
+  }
+]

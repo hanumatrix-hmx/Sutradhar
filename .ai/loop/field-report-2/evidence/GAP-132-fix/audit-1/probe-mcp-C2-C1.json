@@ -1,0 +1,153 @@
+[
+  {
+    "id": "C2a-busy-oopif-has-visible-x-wait",
+    "truth": {
+      "perFrame": [
+        {
+          "url": "/framex",
+          "visible": true
+        },
+        {
+          "url": "/c2a",
+          "visible": false
+        }
+      ],
+      "busy": "/framex",
+      "note": "a VISIBLE #x exists in the busy frame the whole time"
+    },
+    "success": false,
+    "error": "wait_for_selector timed out after 1000ms waiting for state=visible: 1 element(s) match \"#x\" and are attached to the DOM, but visibility could not be fully determined — 1 of 2 frame(s) did not respond within the diagnostic's time bound. This does NOT confirm none of them is visible; try a larger timeoutMs.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "falseNoneVisible": false,
+    "falseFirstNotVisible": false,
+    "falseHintExistsButHidden": false,
+    "honestUncertainty": true
+  },
+  {
+    "id": "C2a-busy-oopif-has-visible-x-checkonce",
+    "truth": {
+      "perFrame": [
+        {
+          "url": "/c2a",
+          "visible": false
+        },
+        {
+          "url": "/framex",
+          "visible": true
+        }
+      ],
+      "busy": "/framex",
+      "note": "a VISIBLE #x exists in the busy frame the whole time"
+    },
+    "success": false,
+    "error": "wait_for_selector timed out after 0ms waiting for state=visible: 1 element(s) match \"#x\" and are attached to the DOM, but visibility could not be fully determined — 1 of 2 frame(s) did not respond within the diagnostic's time bound. This does NOT confirm none of them is visible; try a larger timeoutMs.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "falseNoneVisible": false,
+    "falseFirstNotVisible": false,
+    "falseHintExistsButHidden": false,
+    "honestUncertainty": true
+  },
+  {
+    "id": "C2b-busy-main-has-visible-x-wait",
+    "truth": {
+      "perFrame": [
+        {
+          "url": "/c2b",
+          "visible": true
+        },
+        {
+          "url": "/framexhidden",
+          "visible": false
+        }
+      ],
+      "busy": "MAIN",
+      "note": "a VISIBLE #x exists in the busy frame the whole time"
+    },
+    "success": false,
+    "error": "wait_for_selector timed out after 1000ms waiting for state=visible: 1 element(s) match \"#x\" and are attached to the DOM, but visibility could not be fully determined — 1 of 2 frame(s) did not respond within the diagnostic's time bound. This does NOT confirm none of them is visible; try a larger timeoutMs.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "falseNoneVisible": false,
+    "falseFirstNotVisible": false,
+    "falseHintExistsButHidden": false,
+    "honestUncertainty": true
+  },
+  {
+    "id": "C2b-busy-main-has-visible-x-checkonce",
+    "truth": {
+      "perFrame": [
+        {
+          "url": "/c2b",
+          "visible": true
+        },
+        {
+          "url": "/framexhidden",
+          "visible": false
+        }
+      ],
+      "busy": "MAIN",
+      "note": "a VISIBLE #x exists in the busy frame the whole time"
+    },
+    "success": false,
+    "error": "wait_for_selector timed out after 0ms waiting for state=visible: 1 element(s) match \"#x\" and are attached to the DOM, but visibility could not be fully determined — 1 of 2 frame(s) did not respond within the diagnostic's time bound. This does NOT confirm none of them is visible; try a larger timeoutMs.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "falseNoneVisible": false,
+    "falseFirstNotVisible": false,
+    "falseHintExistsButHidden": false,
+    "honestUncertainty": true
+  },
+  {
+    "id": "C2c-busy-main-visible-x-oopif-hidden-then-visible-wait",
+    "truth": {
+      "perFrame": [
+        {
+          "url": "/c2c",
+          "visible": true
+        },
+        {
+          "url": "/framexmix",
+          "visible": false
+        }
+      ],
+      "busy": "MAIN",
+      "note": "a VISIBLE #x exists in the busy frame the whole time"
+    },
+    "success": false,
+    "error": "wait_for_selector timed out after 1000ms waiting for state=visible: the first match is not visible, but 1 later match(es) are. Visibility is checked on the first match in document order; use a more specific selector.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "falseNoneVisible": false,
+    "falseFirstNotVisible": true,
+    "falseHintExistsButHidden": false,
+    "honestUncertainty": false
+  },
+  {
+    "id": "C2c-busy-main-visible-x-oopif-hidden-then-visible-checkonce",
+    "truth": {
+      "perFrame": [
+        {
+          "url": "/c2c",
+          "visible": true
+        },
+        {
+          "url": "/framexmix",
+          "visible": false
+        }
+      ],
+      "busy": "MAIN",
+      "note": "a VISIBLE #x exists in the busy frame the whole time"
+    },
+    "success": false,
+    "error": "wait_for_selector timed out after 0ms waiting for state=visible: the first match is not visible, but 1 later match(es) are. Visibility is checked on the first match in document order; use a more specific selector.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "falseNoneVisible": false,
+    "falseFirstNotVisible": true,
+    "falseHintExistsButHidden": false,
+    "honestUncertainty": false
+  },
+  {
+    "id": "C1-hidden-target-iframe-churn",
+    "truth": "#banner display:none in main frame the WHOLE time; churn iframes never contain #banner",
+    "trials": 30,
+    "success": 30,
+    "hardFail": 0,
+    "engineSaysStillVisible": 0,
+    "falseStillVisibleHint": 0,
+    "examples": [],
+    "msgs": {
+      "": 30
+    }
+  }
+]

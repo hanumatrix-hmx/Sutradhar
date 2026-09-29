@@ -1,0 +1,34 @@
+[fixture] listening on http://127.0.0.1:50701
+[live] PASS L1 — exit=0 screenshot=E:\AI-Cache\tmp\fr212-l1-1790496704684-qsw2ebk0esh\a\b\c\audit-screenshot.png
+[live] PASS L2 — exit=0 schemaValid=true a11yOk=true vitalsOk=true slow404(expected-miss, GAP-038)=false
+[live] PASS L3 — exit=1 validStdout=true
+[live] PASS L4a — exit=0 diffPct=3.1610416666666667
+[live] PASS L4b (N14) — exit=0 diffPct=0
+[live] PASS L5 — exit=1 baselineError=net::ERR_UNSAFE_PORT at http://127.0.0.1:1/
+[live] PASS N4a (--baseline no value) — Error: --baseline requires a URL (e.g. audit <url> --baseline https://prod.example.com)
+[live] PASS N4b (--baseline then flag) — Error: --baseline requires a URL (e.g. audit <url> --baseline https://prod.example.com)
+[live] PASS L6 (N11) — lcpMs=32 cls=0.27996762208067943 note=true
+[live] PASS L7 — labels=["URL","Title","Screenshot","Web Vitals","LCP","CLS","FCP","TTFB","Console errors","Page errors","Broken requests (4xx/5xx)","Accessibility issues"]
+[live] PASS L8 (N2) — exit=1 stateFileExists=false
+[live] PASS N3 — exit=1 stdoutEmpty=true fatal=true
+[live] PASS L9 — schemaValid=true pngMatch=true
+[live] INFO L15 (GAP-038, expected-miss) — slow-404-19 present=false (FR2-08 not landed; documented as expected-miss)
+[live] PASS L10 — contentLength=1
+[live] PASS L11 — contentLength=3 diffPct=0.7190950713708592
+[live] FAIL L12 (B1 fixed, N9) — r12a=[] r12b=[]
+[live] PASS L13 (B2 fixed, N10) — clsSeries=[0.028657405848819463,0.028657405848819463,0.028657405848819463] spread=0 typeofVitals=undefined
+[live] PASS L14 (N8) — isError=true elapsed=1ms text=audit failed: a alert dialog is open ("fr212") and blocks the page, so it can't be audited. Handle i
+[live] PASS L20 (informational) — pageWasHidden=true fcpMs=null newTab=tab_sess_1790496734158_1_2
+[live] PASS N18 — audit failed: No browser session "no-such-session". Call launch() first.
+Hint: Call browser.launch first to create a session.
+{"timestamp":"2026-09-27T08:12:25.766Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-27T08:12:25.983Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790496745766_1","context":{"isIncognito":false}}
+[live] PASS L16a — schemaValid=true bytesMatch=true
+[live] PASS L16b — {"mode":"current-page","documentStartedAt":"2026-09-27T08:12:26.014Z","observingSince":"2026-09-27T08:12:26.007Z","coversWholeDocument":true,"pageWasHidden":false}
+[live] PASS L17 — diffExists=true diffBytesMatch=true
+{"timestamp":"2026-09-27T08:12:30.632Z","level":"info","message":"[BrowserSession] Closed session sess_1790496745766_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-27T08:12:30.632Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790496745766_1","context":{"reason":"Runtime shutdown"}}
+[live] PASS L18 (N13) — allMutationsRejected=true unmutatedValid=true
+[live] PASS L19 — exit=0 valid=true
+
+Live-verify: 24 pass, 1 fail, 1 info, out of 26

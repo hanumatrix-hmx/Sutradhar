@@ -20,13 +20,18 @@ import {
   DOMSemanticEngine,
   formatGraphForLlm,
   selectorForNodeId,
+  invalidSelectorSyntaxError,
+  findContainingRoot,
   type ActionHistoryEntry,
+  type DialogPolicy,
+  type DialogRecord,
   type IBrowserSession,
   type IBrowserTab,
   type SettleSpec,
+  type WaitForSelectorState,
 } from '@sutradhar/browser';
 import path from 'node:path';
-import { access, realpath } from 'node:fs/promises';
+import { access } from 'node:fs/promises';
 import { createSessionId, createTabId } from '@sutradhar/contracts';
 import { EventBus } from '@sutradhar/events';
 import { type StructuredLogger } from '@sutradhar/observability';
@@ -36,6 +41,8 @@ import type {
   AttachOptions,
   LaunchOptions,
   LaunchResult,
+  LiveSessionInfo,
+  LiveSessionsView,
   NavigateResult,
   PdfResult,
   SnapshotResult,
@@ -43,14 +50,30 @@ import type {
   StorageState,
   TabInfo,
 } from './types.js';
-import { BrowserNotAvailableError, normalizeTarget } from './types.js';
+import {
+  BrowserNotAvailableError,
+  normalizeTarget,
+  selectorSyntaxDetail,
+  SELECTOR_SYNTAX_HINT,
+  InvalidSelectorError,
+  type ExtractFieldSpec,
+  type ExtractDataOptions,
+} from './types.js';
+import {
+  planExtractFields,
+  extractFieldsInPage,
+  invalidExtractSelectorsError,
+  type ExtractInPageResult,
+} from './extract/extract-data.js';
 import { ProfileManager } from './profiles/profile-manager.js';
 import {
   AUDIT_PAGE_SCRIPT,
-  VITALS_OBSERVER_SCRIPT,
+  scopeToDocument,
+  computeObservation,
   type A11yIssue,
   type WebVitals,
   type AuditResult,
+  type AuditBaselineOutcome,
 } from './audit/site-audit.js';
 import { compareScreenshots, type VisualCompareResult } from './audit/visual-compare.js';
 import { buildAxSnapshot, type AxSnapshotResult } from './snapshot/ax-snapshot.js';
@@ -82,10 +105,11 @@ export interface SutradharRuntimeOptions {
   /** Reuse an existing event bus. A default one is created otherwise. */
   eventBus?: EventBus;
   /**
-   * Directories `browser.download_file` is allowed to write into. Defaults to just the OS
-   * temp directory — a caller-supplied `downloadDir` that resolves outside every allowed root
-   * is rejected. Add project-specific scratch directories here if you need downloads to land
-   * somewhere other than the OS temp dir.
+   * Directories `browser.download_file` is allowed to write into. Defaults to a dedicated
+   * `sutradhar-downloads` subdirectory of the OS temp directory (never the bare temp root
+   * itself) — a caller-supplied `downloadDir` that resolves outside every allowed root is
+   * rejected. Add project-specific scratch directories here if you need downloads to land
+   * somewhere other than that default.
    */
   allowedDownloadRoots?: readonly string[];
   /**
@@ -129,7 +153,56 @@ export interface SutradharRuntimeOptions {
    *  or to keep profile data somewhere other than the user's home directory. */
   profilesBaseDir?: string;
   logger?: StructuredLogger;
+  /** FR2-04: default native-dialog policy for every session this runtime creates. Unset (the
+   *  default) means `'auto'` — byte-for-byte today's pre-FR2-04 behavior, so MCP and the SDK
+   *  (neither of which passes this) are unaffected. The CLI is the only caller that sets this,
+   *  to `'report'`. */
+  dialogPolicy?: DialogPolicy;
 }
+
+/**
+ * FR2-12 fix-3 (GAP-274): the audit() CDP session's setup commands (`Page.enable`,
+ * `Network.enable`, `Page.getFrameTree`) can hang indefinitely — up to Puppeteer's own
+ * protocol timeout (audit-3 measured ~31s under an open dialog on the current page, and
+ * 180-200s+ after a previous navigation timed out with no response). `dialog-cdp.ts:425-427`
+ * already documents this exact hazard for a fresh `Page.enable` and deliberately doesn't
+ * await it past a bounded window. This helper applies the same pattern here: the work keeps
+ * running in the background (so a slow-but-eventually-successful setup still wires up its
+ * listeners), but the caller is never blocked past `boundMs`, and no rejection from the
+ * background work escapes as an unhandled rejection.
+ */
+function boundedFireAndForget(work: Promise<unknown>, boundMs: number): Promise<void> {
+  // Swallow immediately so a late rejection (e.g. the session detaches before Page.enable's
+  // response arrives) never surfaces as an unhandled rejection, independent of the race below.
+  const settled = work.then(
+    () => true,
+    () => false,
+  );
+  return new Promise((resolve) => {
+    let done = false;
+    const timer = setTimeout(() => {
+      if (!done) {
+        done = true;
+        resolve();
+      }
+    }, boundMs);
+    void settled.then(() => {
+      if (!done) {
+        done = true;
+        clearTimeout(timer);
+        resolve();
+      }
+    });
+  });
+}
+
+/** Bound for {@link boundedFireAndForget} when wiring up audit()'s commit-tracking CDP
+ *  session (GAP-274). Generous enough for a healthy target (this normally resolves in a few
+ *  ms) but short enough that a stuck dialog/navigation never turns audit() into a 30-200s+
+ *  stall — the worst case becomes "commit-tracking didn't finish wiring up in time", which
+ *  falls back to documentStartedAt-only scoping (the same fallback already used when
+ *  `createCDPSession` itself isn't available), not a hang. */
+const AUDIT_CDP_SETUP_BOUND_MS = 1000;
 
 /**
  * High-level browser automation runtime. One instance manages a pool of browser
@@ -154,6 +227,9 @@ export class SutradharRuntime {
   private readonly restrictNavigationToLocal: boolean;
   private readonly allowedDomains?: readonly string[];
   private readonly profileManager: ProfileManager;
+  /** FR2-04: default dialog policy for sessions this runtime creates. `undefined` means every
+   *  session's tabs stay at `'auto'` — see {@link SutradharRuntimeOptions.dialogPolicy}. */
+  private readonly dialogPolicy?: DialogPolicy;
   /** sessionId -> the profileName it was launched with, so `shutdown()` knows whose storage
    *  state to persist. Only sessions launched via `launch({profileName})` get an entry; a
    *  plain/unnamed launch never touches this. Entries are removed on shutdown regardless of
@@ -170,6 +246,14 @@ export class SutradharRuntime {
    *  making `grantPermissions`/`setGeolocation` behave additively, matching what a caller
    *  reasonably expects from a method named "grant". */
   private readonly grantedPermissionsByOrigin = new Map<string, Set<string>>();
+  /** Sessions created through this runtime's own launch()/attach() — i.e. ones a caller was
+   *  handed an id for. Deliberately NOT every session in the manager: agent.runGoal (no
+   *  sessionId) creates its own ephemeral session in the same manager (agent-loop.ts), which no
+   *  MCP caller holds an id for and must never be auto-selected (FR2-10 D3). Entries whose
+   *  session has left the manager (crash, idle reap) are pruned lazily in listSessions(). */
+  private readonly clientSessions = new Map<string, 'launched' | 'attached'>();
+  /** launch/attach/shutdown/shutdownAll calls currently executing (FR2-10 D4). */
+  private lifecycleOpsInFlight = 0;
 
   public constructor(options: SutradharRuntimeOptions = {}) {
     const eventBus = options.eventBus ?? new EventBus(options.logger);
@@ -179,6 +263,7 @@ export class SutradharRuntime {
     this.restrictNavigationToLocal = options.restrictNavigationToLocal ?? false;
     this.allowedDomains = options.allowedDomains?.length ? options.allowedDomains : undefined;
     this.profileManager = new ProfileManager(options.profilesBaseDir);
+    this.dialogPolicy = options.dialogPolicy;
     this.sessionManager = new BrowserSessionManager(
       this.launcher,
       eventBus,
@@ -222,52 +307,59 @@ export class SutradharRuntime {
    * created on demand.)
    */
   public async launch(options: LaunchOptions = {}): Promise<LaunchResult> {
-    if (options.initialUrl) this.assertNavigationAllowed(options.initialUrl);
-    let launchOptions = options.launch;
-    if (options.profileName) {
-      const userDataDir = await this.profileManager.resolveUserDataDir(options.profileName);
-      launchOptions = { ...launchOptions, userDataDir };
-    }
-    const session = await this.sessionManager.createSession({
-      sessionId: options.sessionId ? createSessionId(options.sessionId) : undefined,
-      isIncognito: options.isIncognito,
-      initialUrl: options.initialUrl,
-      launch: launchOptions,
-    });
-    let activeTab = session.activeTabId
-      ? session.getTab(session.activeTabId)
-      : session.getTabs()[0];
-    if (!activeTab) {
-      // No initialUrl was given so the manager created zero tabs — open a blank one
-      // so the session has a live page to act on.
-      activeTab = await session.createTab();
-      session.setActiveTab(activeTab.id);
-    }
+    this.lifecycleOpsInFlight++;
+    try {
+      if (options.initialUrl) this.assertNavigationAllowed(options.initialUrl);
+      let launchOptions = options.launch;
+      if (options.profileName) {
+        const userDataDir = await this.profileManager.resolveUserDataDir(options.profileName);
+        launchOptions = { ...launchOptions, userDataDir };
+      }
+      const session = await this.sessionManager.createSession({
+        sessionId: options.sessionId ? createSessionId(options.sessionId) : undefined,
+        isIncognito: options.isIncognito,
+        initialUrl: options.initialUrl,
+        launch: launchOptions,
+        dialogPolicy: options.dialogPolicy ?? this.dialogPolicy,
+      });
+      if (!this.clientSessions.has(session.id)) this.clientSessions.set(session.id, 'launched');
+      let activeTab = session.activeTabId
+        ? session.getTab(session.activeTabId)
+        : session.getTabs()[0];
+      if (!activeTab) {
+        // No initialUrl was given so the manager created zero tabs — open a blank one
+        // so the session has a live page to act on.
+        activeTab = await session.createTab();
+        session.setActiveTab(activeTab.id);
+      }
 
-    if (options.profileName) {
-      this.sessionProfiles.set(session.id, options.profileName);
-      // Restoring storage-state requires a real origin to restore it INTO — localStorage/
-      // sessionStorage are origin-scoped, so there's nothing to restore onto until the tab has
-      // navigated somewhere. Only possible here when the caller also gave `initialUrl` (which
-      // BrowserSessionManager already navigated to before this point — see its own doc
-      // comment). A profile launched with no `initialUrl` still gets userDataDir's own
-      // cookies/localStorage restore (that part needs no help from this); only the
-      // sessionStorage half of a bare, no-initialUrl launch stays lost until the caller
-      // navigates and restores it themselves via `setStorageState`.
-      if (options.initialUrl && this.hasRealPage(activeTab)) {
-        const saved = await this.profileManager.loadStorageState(options.profileName).catch(() => undefined);
-        if (saved && saved.origin === new URL(activeTab.url).origin) {
-          // Best-effort — a failed restore should not fail the whole launch.
-          await this.setStorageState(session.id, saved, activeTab.id).catch(() => {});
+      if (options.profileName) {
+        this.sessionProfiles.set(session.id, options.profileName);
+        // Restoring storage-state requires a real origin to restore it INTO — localStorage/
+        // sessionStorage are origin-scoped, so there's nothing to restore onto until the tab has
+        // navigated somewhere. Only possible here when the caller also gave `initialUrl` (which
+        // BrowserSessionManager already navigated to before this point — see its own doc
+        // comment). A profile launched with no `initialUrl` still gets userDataDir's own
+        // cookies/localStorage restore (that part needs no help from this); only the
+        // sessionStorage half of a bare, no-initialUrl launch stays lost until the caller
+        // navigates and restores it themselves via `setStorageState`.
+        if (options.initialUrl && this.hasRealPage(activeTab)) {
+          const saved = await this.profileManager.loadStorageState(options.profileName).catch(() => undefined);
+          if (saved && saved.origin === new URL(activeTab.url).origin) {
+            // Best-effort — a failed restore should not fail the whole launch.
+            await this.setStorageState(session.id, saved, activeTab.id).catch(() => {});
+          }
         }
       }
-    }
 
-    return {
-      sessionId: session.id,
-      activeTabId: activeTab.id,
-      hasRealBrowser: this.hasRealPage(activeTab),
-    };
+      return {
+        sessionId: session.id,
+        activeTabId: activeTab.id,
+        hasRealBrowser: this.hasRealPage(activeTab),
+      };
+    } finally {
+      this.lifecycleOpsInFlight--;
+    }
   }
 
   /**
@@ -280,41 +372,48 @@ export class SutradharRuntime {
    * but leaves the user's browser running.
    */
   public async attach(options: AttachOptions): Promise<LaunchResult> {
-    const session = await this.sessionManager.createSession({
-      sessionId: options.sessionId ? createSessionId(options.sessionId) : undefined,
-      wsEndpoint: options.endpoint,
-    });
-    // BrowserSession does not mirror the external browser's existing tabs into its tab map, so
-    // on attach the session appears tab-less even though the real browser may already have open
-    // pages (e.g. left navigated by a previous `attach()` against this same wsEndpoint — the CLI
-    // does exactly this to persist a "session" across separate short-lived process invocations).
-    // Adopt EVERY open real page, not just the most recent one — found live: after `newtab`
-    // opened a genuine second tab, the next CLI command's fresh `attach()` (a brand-new
-    // BrowserSession, empty tab map) only ever adopted the single most-recently-opened page,
-    // silently orphaning the first tab from `tabs`/`focustab`/`closetab` for the rest of the
-    // CLI session — a real, previously-latent gap the new tab-management commands finally made
-    // directly visible. The most-recently-opened page still becomes the active tab, preserving
-    // prior single-tab behavior exactly.
-    let activeTab = session.activeTabId
-      ? session.getTab(session.activeTabId)
-      : session.getTabs()[0];
-    if (!activeTab) {
-      const openPages = await this.findAllOpenPages(session);
-      if (openPages.length > 0) {
-        for (const page of openPages.slice(0, -1)) {
-          await session.adoptExistingPage(page, false);
+    this.lifecycleOpsInFlight++;
+    try {
+      const session = await this.sessionManager.createSession({
+        sessionId: options.sessionId ? createSessionId(options.sessionId) : undefined,
+        wsEndpoint: options.endpoint,
+        dialogPolicy: options.dialogPolicy ?? this.dialogPolicy,
+      });
+      if (!this.clientSessions.has(session.id)) this.clientSessions.set(session.id, 'attached');
+      // BrowserSession does not mirror the external browser's existing tabs into its tab map, so
+      // on attach the session appears tab-less even though the real browser may already have open
+      // pages (e.g. left navigated by a previous `attach()` against this same wsEndpoint — the CLI
+      // does exactly this to persist a "session" across separate short-lived process invocations).
+      // Adopt EVERY open real page, not just the most recent one — found live: after `newtab`
+      // opened a genuine second tab, the next CLI command's fresh `attach()` (a brand-new
+      // BrowserSession, empty tab map) only ever adopted the single most-recently-opened page,
+      // silently orphaning the first tab from `tabs`/`focustab`/`closetab` for the rest of the
+      // CLI session — a real, previously-latent gap the new tab-management commands finally made
+      // directly visible. The most-recently-opened page still becomes the active tab, preserving
+      // prior single-tab behavior exactly.
+      let activeTab = session.activeTabId
+        ? session.getTab(session.activeTabId)
+        : session.getTabs()[0];
+      if (!activeTab) {
+        const openPages = await this.findAllOpenPages(session);
+        if (openPages.length > 0) {
+          for (const page of openPages.slice(0, -1)) {
+            await session.adoptExistingPage(page, false);
+          }
+          activeTab = await session.adoptExistingPage(openPages[openPages.length - 1]!, false);
+        } else {
+          activeTab = await session.createTab();
         }
-        activeTab = await session.adoptExistingPage(openPages[openPages.length - 1]!, false);
-      } else {
-        activeTab = await session.createTab();
+        session.setActiveTab(activeTab.id);
       }
-      session.setActiveTab(activeTab.id);
+      return {
+        sessionId: session.id,
+        activeTabId: activeTab.id,
+        hasRealBrowser: this.hasRealPage(activeTab),
+      };
+    } finally {
+      this.lifecycleOpsInFlight--;
     }
-    return {
-      sessionId: session.id,
-      activeTabId: activeTab.id,
-      hasRealBrowser: this.hasRealPage(activeTab),
-    };
   }
 
   /** Best-effort: every non-blank page already open on `session`'s underlying browser, in
@@ -339,19 +438,25 @@ export class SutradharRuntime {
    *  persisted for that profile first, best-effort — see {@link ProfileManager.saveStorageState}
    *  for why this matters beyond what `userDataDir` alone already covers. */
   public async shutdown(sessionId: string, reason = 'Runtime shutdown'): Promise<void> {
-    const session = this.requireSession(sessionId);
-    const profileName = this.sessionProfiles.get(sessionId);
-    if (profileName) {
-      const activeTab = session.activeTabId ? session.getTab(session.activeTabId) : session.getTabs()[0];
-      if (activeTab && this.hasRealPage(activeTab)) {
-        const state = await this.getStorageState(sessionId, activeTab.id).catch(() => undefined);
-        if (state) {
-          await this.profileManager.saveStorageState(profileName, state).catch(() => {});
+    this.lifecycleOpsInFlight++;
+    try {
+      const session = this.requireSession(sessionId);
+      const profileName = this.sessionProfiles.get(sessionId);
+      if (profileName) {
+        const activeTab = session.activeTabId ? session.getTab(session.activeTabId) : session.getTabs()[0];
+        if (activeTab && this.hasRealPage(activeTab)) {
+          const state = await this.getStorageState(sessionId, activeTab.id).catch(() => undefined);
+          if (state) {
+            await this.profileManager.saveStorageState(profileName, state).catch(() => {});
+          }
         }
+        this.sessionProfiles.delete(sessionId);
       }
-      this.sessionProfiles.delete(sessionId);
+      await this.sessionManager.closeSession(session.id, reason);
+      this.clientSessions.delete(sessionId);
+    } finally {
+      this.lifecycleOpsInFlight--;
     }
-    await this.sessionManager.closeSession(session.id, reason);
   }
 
   /** Shut down every session. Safe to call on teardown. Persists storage-state for every
@@ -359,13 +464,19 @@ export class SutradharRuntime {
    *  logic here would silently lose any profile's session-storage-based login on every
    *  teardown that goes through this method instead of individual `shutdown()` calls. */
   public async shutdownAll(): Promise<void> {
-    await Promise.all(
-      Array.from(this.sessionProfiles.keys()).map((sessionId) =>
-        this.shutdown(sessionId, 'Runtime shutdown').catch(() => {}),
-      ),
-    );
-    await this.sessionManager.closeAllSessions();
-    this.sessionManager.dispose();
+    this.lifecycleOpsInFlight++;
+    try {
+      await Promise.all(
+        Array.from(this.sessionProfiles.keys()).map((sessionId) =>
+          this.shutdown(sessionId, 'Runtime shutdown').catch(() => {}),
+        ),
+      );
+      await this.sessionManager.closeAllSessions();
+      this.clientSessions.clear();
+      this.sessionManager.dispose();
+    } finally {
+      this.lifecycleOpsInFlight--;
+    }
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -419,6 +530,12 @@ export class SutradharRuntime {
    * to `MAX_STAMPED_ELEMENTS_PER_FRAME` (300) elements per frame get a real, clickable id
    * regardless of this value, so raising it (e.g. for a content-heavy page whose pagination
    * link is past the default 60) surfaces ids that already exist rather than stamping new ones.
+   *
+   * Elements inside an iframe or an open shadow root carry frame/shadow context in the text
+   * listing (`[#31 in iframe "pay" (url)]`, `(shadow: host-tag#id)`) and, structurally, on
+   * `SemanticNode.frame`/`shadowHosts` (present with `includeNodes`). Frames whose content
+   * couldn't be read are returned as `skippedFrames` (present with `includeNodes`) rather than
+   * silently omitted.
    */
   public async snapshot(
     sessionId: string,
@@ -442,7 +559,7 @@ export class SutradharRuntime {
       interactiveElements,
       elementCount: graph.nodes.length,
       pageText,
-      ...(options?.includeNodes ? { nodes: graph.nodes } : {}),
+      ...(options?.includeNodes ? { nodes: graph.nodes, skippedFrames: graph.skippedFrames } : {}),
     };
   }
 
@@ -705,16 +822,22 @@ export class SutradharRuntime {
     );
   }
 
-  /** Wait for a selector to appear (and be visible) before returning. */
+  /** Wait until the element matched by `target` reaches `state` (default 'visible'; 'attached' = present in
+   *  the DOM, visibility ignored; 'hidden' = absent or not visible, and succeeds immediately if nothing matches).
+   *  Visible means computed visibility not hidden/collapse AND a non-empty bounding box (opacity is ignored),
+   *  checked on the FIRST match. `timeoutMs <= 0` checks the current state once, immediately, with no
+   *  waiting or retrying. Waiting states poll roughly every 100ms, so a state that's only true for less
+   *  than ~100ms (a fast visibility flicker) may be missed. */
   public async waitForSelector(
     sessionId: string,
     target: string,
     timeoutMs?: number,
     tabId?: string,
+    state?: WaitForSelectorState,
   ): Promise<ActionResult> {
     return this.runAction(
       sessionId,
-      { actionType: 'wait_for_selector', selector: normalizeTarget(target), timeoutMs },
+      { actionType: 'wait_for_selector', selector: normalizeTarget(target), timeoutMs, state },
       tabId,
     );
   }
@@ -801,7 +924,8 @@ export class SutradharRuntime {
 
   /**
    * Trigger a file download by clicking `target` and wait for it to land on disk.
-   * `downloadDir` defaults to the OS temp directory.
+   * `downloadDir` defaults to the first allowed download root (a `sutradhar-downloads`
+   * subdirectory of the OS temp directory, unless configured otherwise).
    */
   public async downloadFile(
     sessionId: string,
@@ -865,16 +989,47 @@ export class SutradharRuntime {
    */
   private async resolveFrame(page: ReturnType<SutradharRuntime['requirePage']>, frameSelector: string) {
     const hops = frameSelector.split('::').map((s) => s.trim()).filter((s) => s.length > 0);
+    // FR2-06/GAP-206 (spec §2.4): validate every hop's selector-DIALECT syntax up front, before
+    // any browser round trip for ANY hop — the same pure, zero-CDP check the CLI's own
+    // `validateFrameChain` already does. This means a bad second (or later) hop is rejected
+    // before the first hop's `$()` call ever runs, and a bad FIRST hop gets full Playwright-
+    // syntax coaching instead of a generic "no element matched" (there was previously no coaching
+    // at all for a bad first hop, since the loop below checked hop N only once it was reached).
+    const normalizedHops: string[] = [];
+    for (const hop of hops) {
+      try {
+        normalizedHops.push(normalizeTarget(hop));
+      } catch (e) {
+        if (e instanceof InvalidSelectorError) {
+          throw new Error(
+            `Invalid frameSelector "${hop}" (from the full chain "${frameSelector}") — ` +
+              `${e.reason} ${SELECTOR_SYNTAX_HINT}`,
+          );
+        }
+        throw e;
+      }
+    }
     type Hoppable = {
       $(selector: string): Promise<{ contentFrame(): Promise<Hoppable | null> } | null>;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- structural type spanning
-      // both Puppeteer's Page and Frame, whose real `evaluate` overloads are too varied to
-      // usefully narrow here; callers already cast their own specific return type.
-      evaluate(fn: any, ...args: any[]): Promise<any>;
+      evaluate<T>(fn: (...args: never[]) => T | Promise<T>, ...args: never[]): Promise<T>;
+      evaluate<T = unknown>(fn: string): Promise<T>;
     };
     let current: Hoppable = page;
     for (const [i, hop] of hops.entries()) {
-      const handle = await current.$(normalizeTarget(hop));
+      const normalized = normalizedHops[i]!;
+      let handle: Awaited<ReturnType<Hoppable['$']>>;
+      try {
+        handle = await current.$(normalized);
+      } catch (e) {
+        const msg = (e as Error)?.message ?? String(e);
+        if (/is not a valid selector|SyntaxError/i.test(msg)) {
+          throw new Error(
+            `Invalid frameSelector "${hop}" (from the full chain "${frameSelector}") — ` +
+              `${selectorSyntaxDetail(msg)} ${SELECTOR_SYNTAX_HINT}`,
+          );
+        }
+        throw e; // navigation/context errors pass through untouched (same object)
+      }
       if (!handle) {
         throw new Error(
           `No element matched frameSelector "${hop}" (from the full chain "${frameSelector}") — reached via ${i === 0 ? 'the top-level page' : 'the previous frame in the chain'}.`,
@@ -892,34 +1047,51 @@ export class SutradharRuntime {
   }
 
   /**
-   * Extract structured data: for each entry in `fields`, run a `querySelectorAll` and collect
-   * either the element's text content or a named attribute from every match. A purpose-built
-   * alternative to hand-writing an `eval()` scraper for the common "give me a list of
-   * {title, price, link}" case.
+   * Extract structured data: for each entry in `fields`, run a `querySelectorAll` and collect a
+   * value from every match. A purpose-built alternative to hand-writing an `eval()` scraper for
+   * the common "give me a list of {title, price, link}" case.
+   *
+   * With no `attribute`, reads "what the user sees": a live `<input>`/`<select>`/`<textarea>`
+   * `.value` (including anything typed but not yet submitted), an `<option>`'s `.text`, or, for
+   * any other element, its rendered `innerText` trimmed (falling back to `textContent` trimmed
+   * for elements without `innerText`, e.g. SVG) — CSS-hidden descendants and `<script>`/`<style>`
+   * text are left out, matching what a sighted user would actually see. `attribute` of
+   * `"value"`/`"checked"`/`"selected"` (case-insensitive) reads the LIVE DOM property instead of
+   * markup (`"checked"`/`"selected"` stringify to `"true"`/`"false"`); an element with no such
+   * property of the right type falls back to the raw attribute. `"attr:<name>"` always reads the
+   * raw markup attribute (e.g. `"attr:value"` = the original default value). Any other name
+   * (e.g. `"href"`) returns the raw attribute exactly as before — not resolved to an absolute
+   * URL. Selectors don't pierce shadow DOM.
+   *
+   * All field selectors are validated before anything is read: an invalid selector fails the
+   * whole call and names every bad field (no partial result). Arrays have one entry per match in
+   * document order, unless `options.visibleOnly` (or a field's own `visibleOnly`) drops some —
+   * hidden matches use the same visibility rule as `waitForSelector`'s `state: 'visible'`
+   * (computed visibility hidden/collapse, or a zero-size bounding box; opacity and off-screen
+   * position are ignored); an `<option>` is judged by its owning `<select>`. With `visibleOnly`,
+   * index alignment across fields is not guaranteed.
    *
    * Runs against the top-level page by default. Pass `frameSelector` (a CSS selector or
    * snapshot node id identifying an `<iframe>` element on the top-level page) to extract from
-   * inside that frame instead — including a genuinely cross-origin one.
+   * inside that frame instead — including a genuinely cross-origin one. `visibleOnly` inside a
+   * frame is judged within that frame's own document only.
    */
   public async extractData(
     sessionId: string,
-    fields: Record<string, { selector: string; attribute?: string }>,
+    fields: Record<string, ExtractFieldSpec>,
     tabId?: string,
     frameSelector?: string,
+    options?: ExtractDataOptions,
   ): Promise<Record<string, string[]>> {
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
-    const target = frameSelector ? await this.resolveFrame(page, frameSelector) : page;
-    return target.evaluate((fieldSpec: Record<string, { selector: string; attribute?: string }>) => {
-      const out: Record<string, string[]> = {};
-      for (const [name, spec] of Object.entries(fieldSpec)) {
-        const elements = Array.from(document.querySelectorAll(spec.selector));
-        out[name] = elements.map((el) =>
-          spec.attribute ? (el.getAttribute(spec.attribute) ?? '') : (el.textContent ?? '').trim(),
-        );
-      }
-      return out;
-    }, fields);
+    const plan = planExtractFields(fields, options); // throws on 'attr:' with no name — before any CDP call
+    const target = (frameSelector ? await this.resolveFrame(page, frameSelector) : page) as Awaited<
+      ReturnType<SutradharRuntime['resolveFrame']>
+    >;
+    const result = (await target.evaluate(extractFieldsInPage as never, plan as never)) as ExtractInPageResult;
+    if (!result.ok) throw invalidExtractSelectorsError(result.invalid);
+    return result.data;
   }
 
   /**
@@ -939,7 +1111,9 @@ export class SutradharRuntime {
   ): Promise<T> {
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
-    const target = frameSelector ? await this.resolveFrame(page, frameSelector) : page;
+    const target = (frameSelector ? await this.resolveFrame(page, frameSelector) : page) as Awaited<
+      ReturnType<SutradharRuntime['resolveFrame']>
+    >;
     // evaluate<unknown, unknown> keeps the dynamic return type honest under strict TS.
     return (await target.evaluate(code as unknown as string)) as T;
   }
@@ -1149,7 +1323,10 @@ export class SutradharRuntime {
       if (p === 'clipboard-write') existing.add('clipboard-sanitized-write');
     }
     this.grantedPermissionsByOrigin.set(key, existing);
-    await page.browserContext().overridePermissions(origin, Array.from(existing) as any);
+    const permissions = Array.from(existing) as Parameters<
+      ReturnType<typeof page.browserContext>['overridePermissions']
+    >[1];
+    await page.browserContext().overridePermissions(origin, permissions);
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -1337,18 +1514,27 @@ export class SutradharRuntime {
     filePath: string,
     tabId?: string,
   ): Promise<void> {
-    const { tab } = this.resolveTab(sessionId, tabId);
+    const { tab } = this.resolveTab(sessionId, tabId); // unchanged order: unknown session still throws first
     const page = this.requirePage(tab);
+    // FR2-06: normalized (and so checked for Playwright syntax) BEFORE the fs allowlist check —
+    // a bad trigger selector now fails before any filesystem I/O.
+    const selector = normalizeTarget(triggerTarget);
     // This bypasses BrowserActionEngine entirely (no action-engine 'upload_file' case
     // involved), so it needs its own copy of the same existence/allowlist check that case
     // applies — otherwise this path would read an arbitrary host file with no validation at
     // all, unlike its sibling.
     await this.assertUploadPathAllowed(filePath);
-    const selector = normalizeTarget(triggerTarget);
-    const [fileChooser] = await Promise.all([
-      page.waitForFileChooser(),
-      page.click(selector),
-    ]);
+    let fileChooser: Awaited<ReturnType<typeof page.waitForFileChooser>>;
+    try {
+      [fileChooser] = await Promise.all([page.waitForFileChooser(), page.click(selector)]);
+    } catch (e) {
+      const msg = (e as Error)?.message ?? String(e);
+      if (/is not a valid selector|is not a valid XPath expression/i.test(msg)) {
+        // No `enginePath`: Puppeteer P-selectors (>>>, ::-p-*()) DO work on this unprefixed path.
+        throw new Error(invalidSelectorSyntaxError(selector, msg).message);
+      }
+      throw e; // same object — anything else (no chooser opened, navigation, ...) passes through
+    }
     await fileChooser.accept([filePath]);
   }
 
@@ -1364,15 +1550,17 @@ export class SutradharRuntime {
 
     if (!this.allowedUploadRoots || this.allowedUploadRoots.length === 0) return;
 
-    const canonical = await realpath(resolved).catch(() => resolved);
-    for (const root of this.allowedUploadRoots) {
-      const resolvedRoot = path.resolve(root);
-      const canonicalRoot = await realpath(resolvedRoot).catch(() => resolvedRoot);
-      if (canonical === canonicalRoot || canonical.startsWith(canonicalRoot + path.sep)) return;
+    let hit: string | undefined;
+    let why = '';
+    try {
+      hit = await findContainingRoot(resolved, this.allowedUploadRoots);
+    } catch (e) {
+      why = `: ${(e as Error).message}`;
     }
+    if (hit) return;
     throw new Error(
       `Upload file "${filePath}" is outside the allowed upload directories ` +
-        `(${this.allowedUploadRoots.join(', ')}).`,
+        `(${this.allowedUploadRoots.join(', ')})${why}.`,
     );
   }
 
@@ -1401,54 +1589,308 @@ export class SutradharRuntime {
   /**
    * A single-page audit bundling screenshot, console/page/network errors, basic accessibility
    * checks, and Core Web Vitals — mirrors what real Sutradhar's `sutradhar audit <url>` produces.
-   * If `url` is given, navigates there first and waits `settleMs` (default 1500ms) for the page
-   * to render and Web Vitals observers to collect data before capturing anything; omit it to
-   * audit whatever page the session is already on.
+   * If `url` is given, navigates there first and waits `settleMs` (default 1500ms) before
+   * capturing anything; omit it to audit whatever page the session is already on. `baselineUrl`
+   * additionally pixel-diffs a fresh load of it against the audited page (see `compareUrls`); a
+   * failed baseline comparison is reported in the return value's `baseline.error`, not thrown.
+   *
+   * FR2-12: console/page-error/network findings are scoped to the audited document (D9) — see
+   * `computeObservation`/`scopeToDocument` — fixing a real bug (B1) where a long-lived session's
+   * previous page's errors leaked into a later audit. Web Vitals are read via a buffered
+   * `PerformanceObserver` in `AUDIT_PAGE_SCRIPT` itself (Branch B, confirmed live by this item's
+   * Step 0 — see `site-audit.ts`'s doc comment), so there's no before-navigation script
+   * injection any more (that also fixes B2: CLS used to be multiplied by the number of URL
+   * audits run against the same tab, since each injection's listener was never removed). An open
+   * dialog fails the audit fast instead of hanging until its auto-dismiss (D11).
    */
-  public async audit(sessionId: string, options: { url?: string; tabId?: string; settleMs?: number } = {}): Promise<AuditResult> {
-    if (options.url) {
-      this.assertNavigationAllowed(options.url);
-      // Install the Web Vitals observers BEFORE navigating (not after) — LCP/CLS entries are
-      // only ever captured by an observer that was already listening when they occurred; a
-      // post-hoc performance.getEntriesByType() query, unlike for 'paint'/'navigation' entries,
-      // comes back empty for them otherwise. This only matters when we're doing the navigating
-      // ourselves; auditing a page the caller already loaded can't retroactively observe vitals
-      // that already happened, so lcpMs/cls legitimately come back null in that case.
-      const { tab: preNavTab } = this.resolveTab(sessionId, options.tabId);
-      const preNavPage = this.requirePage(preNavTab);
-      await preNavPage.evaluateOnNewDocument(VITALS_OBSERVER_SCRIPT);
-      await this.navigate(sessionId, options.url, options.tabId);
-      await new Promise((r) => setTimeout(r, options.settleMs ?? 1500));
-    }
+  public async audit(
+    sessionId: string,
+    options: { url?: string; tabId?: string; settleMs?: number; baselineUrl?: string } = {},
+  ): Promise<AuditResult> {
+    if (options.url) this.assertNavigationAllowed(options.url);
+    // D14: asserted before any browser contact, right next to the `url` check — a baseline
+    // blocked by the allowlist is a thrown error (nothing was audited yet), not a `baseline.error`.
+    if (options.baselineUrl) this.assertNavigationAllowed(options.baselineUrl);
 
+    // Resolved BEFORE navigating (GAP-262 fix-1): we need the tab's live Puppeteer `page` object
+    // in hand so a commit-time listener can be attached before `navigate()` is even called — it's
+    // the same `page` instance across a same-tab navigation, so resolving it early changes
+    // nothing else about what gets read later.
     const { tab } = this.resolveTab(sessionId, options.tabId);
     const page = this.requirePage(tab);
 
+    // GAP-262 fix-1 (audit-1) / GAP-266+GAP-267 fix-2 (audit-2): the scoping boundary for "this
+    // document's own activity" must be the NEW page's main-frame CROSS-DOCUMENT commit time, not
+    // merely the moment `navigate()` was called, and not just "whatever fires next".
+    //
+    // fix-1 tracked Puppeteer's own `page.on('framenavigated', ...)` event, keeping the LAST fire
+    // for the main frame. That closed the B1 contamination window (audit-1), but audit-2 found
+    // Puppeteer's `framenavigated` fires for BOTH a real (cross-document) navigation AND a
+    // same-document one (`history.pushState`/`replaceState`, or a hash change) — Puppeteer's
+    // `FrameManager` emits the same public event from `Page.frameNavigated` (CDP) and from
+    // `Page.navigatedWithinDocument` (CDP) alike (`puppeteer-core/lib/puppeteer/cdp/
+    // FrameManager.js`: `#onFrameNavigatedWithinDocument` re-emits `FrameManagerEvent
+    // .FrameNavigated`, which `Page.js` re-emits as the public `framenavigated`). A page that does
+    // a same-document nav during its own load — common: audit-2's live sweep found 8 of 10 real
+    // sites do this — pushed `since` later than the page's own early console errors/broken
+    // requests, silently dropping them (GAP-266) and, for the same reason, could drop the audited
+    // page's own 404/500 response too (GAP-267, when that response logs just before whichever
+    // event won).
+    //
+    // fix-2 listens at the raw CDP level instead of through Puppeteer's merged event, on a
+    // dedicated `CDPSession` (so this doesn't disturb whatever domains the tab's own session has
+    // enabled): only `Page.frameNavigated` with no `frame.parentId` (i.e. the main frame) counts
+    // as a commit. `Page.navigatedWithinDocument` — CDP's own signal for same-document
+    // navigations — is never subscribed to, so those navigations simply don't move `since`.
+    // Still keeping the LAST such commit (not the first) — audit-2 confirmed a multi-hop JS
+    // redirect chain fires several real `Page.frameNavigated` events and "keep the last" is what
+    // correctly resolves to the final page; a first-wins policy would misattribute later hops'
+    // findings to the first hop (GAP-269's M4 mutation).
+    let navCommittedAt: string | null = null;
+    // GAP-273 (fix-3): the main document's own response, captured LIVE off the CDP session
+    // during the navigation itself — keyed by the CDP frameId, never by comparing URLs after
+    // the fact. This is what makes it robust to the shapes that defeated fix-2's final-
+    // `page.url()` string match: a `history.replaceState`/hash change after the response
+    // arrives (the final URL no longer equals the response URL), and an empty-body error
+    // response where Chrome swaps in its own error page (`page.url()` becomes
+    // `chrome-error://chromewebdata/`, which never matches any real response URL at all).
+    let mainDocumentResponseCapture: { url: string; status: number; timestamp: string } | null = null;
+    let mainFrameId: string | null = null;
+    // `cdpClient` is ALWAYS detached in the `finally` below once `createCDPSession()` itself
+    // succeeds — independent of whether the setup commands below ever complete. fix-2's bug
+    // (GAP-274) was leaking this session: its `catch` block reset the tracking variable to
+    // `null` on ANY failure past creation (including a `Page.enable` that eventually
+    // rejected after its ~180-200s protocol timeout), discarding the only reference to a
+    // session that was never detached. Splitting "the session that must be detached" from
+    // "whether commit-tracking is usable" fixes that: this variable is set the instant
+    // `createCDPSession()` resolves and is never cleared before `finally` runs.
+    let cdpClient: {
+      send: (method: string) => Promise<unknown>;
+      on: (event: string, cb: (event: Record<string, unknown>) => void) => void;
+      detach: () => Promise<void>;
+    } | null = null;
+    const canListenForCommit =
+      options.url !== undefined && typeof (page as unknown as { createCDPSession?: unknown }).createCDPSession === 'function';
+    try {
+      if (canListenForCommit) {
+        try {
+          const client = await (
+            page as unknown as {
+              createCDPSession: () => Promise<{
+                send: (method: string) => Promise<unknown>;
+                on: (event: string, cb: (event: Record<string, unknown>) => void) => void;
+                detach: () => Promise<void>;
+              }>;
+            }
+          ).createCDPSession();
+          cdpClient = client; // always detached in `finally` from this point on, no matter what happens next
+          client.on('Page.frameNavigated', (event) => {
+            const frame = event?.frame as { id?: string; parentId?: string } | undefined;
+            if (frame?.parentId) return; // ignore subframes — only the main frame's own commit counts
+            navCommittedAt = new Date().toISOString();
+            if (frame?.id) mainFrameId = frame.id; // main frame's own id — updated on every real commit
+          });
+          // Deliberately no listener on `Page.navigatedWithinDocument` — that's CDP's own signal
+          // for a same-document navigation (hash change / pushState / replaceState), and it must
+          // never move `since` (GAP-266/267).
+          client.on('Network.responseReceived', (event) => {
+            const type = event?.type as string | undefined;
+            const frameId = event?.frameId as string | undefined;
+            const response = event?.response as { url?: string; status?: number } | undefined;
+            if (type !== 'Document' || !response || typeof response.status !== 'number') return;
+            // Before the frame tree/first commit resolves, `mainFrameId` may still be null —
+            // in that case we can't yet tell a main-frame Document response from a subframe
+            // one, so it's dropped rather than risk misattributing a subframe's own error
+            // page as the audited document's. Once known, only that frame's responses count,
+            // and (matching the "keep the LAST cross-document commit" policy above) a later
+            // Document response for the same frame — e.g. a redirect hop — always overwrites
+            // an earlier one, so a chain correctly resolves to its final response.
+            if (!mainFrameId || frameId !== mainFrameId) return;
+            mainDocumentResponseCapture = {
+              url: response.url ?? '',
+              status: response.status,
+              timestamp: new Date().toISOString(),
+            };
+          });
+          // GAP-274 (fix-3): `Page.enable`/`Network.enable`/`Page.getFrameTree` can all hang
+          // indefinitely under an open dialog or a previous navigation that timed out with no
+          // response — `dialog-cdp.ts:425-427` already documents and works around this exact
+          // hazard for a fresh `Page.enable`. Never await this setup unboundedly: it keeps
+          // running in the background (so a slow-but-healthy target still gets its listeners
+          // wired up), but audit() itself is never blocked past AUDIT_CDP_SETUP_BOUND_MS.
+          await boundedFireAndForget(
+            (async () => {
+              await client.send('Page.enable').catch(() => {});
+              await client.send('Network.enable').catch(() => {});
+              try {
+                const tree = (await client.send('Page.getFrameTree')) as {
+                  frameTree?: { frame?: { id?: string } };
+                } | null;
+                const treeFrameId = tree?.frameTree?.frame?.id;
+                if (treeFrameId) mainFrameId = treeFrameId;
+              } catch {
+                // Frame tree unavailable within the bound — mainFrameId stays whatever
+                // Page.frameNavigated has set (or null, in which case Document responses are
+                // dropped above until a real commit arrives).
+              }
+            })(),
+            AUDIT_CDP_SETUP_BOUND_MS,
+          );
+        } catch {
+          // `createCDPSession()` itself failed (synchronously or otherwise) before `cdpClient`
+          // was ever assigned — nothing to detach. Fall back to no commit-time tracking at all
+          // (documentStartedAt-only scoping, the same as current-page mode) rather than
+          // silently reintroducing either the GAP-262 leak or a same-document false negative.
+        }
+      }
+      if (options.url) {
+        await this.navigate(sessionId, options.url, options.tabId);
+        // GAP-038 (open): FR2-08's waitForPageSettle (DOM-quiet + network-idle, bounded) hasn't
+        // landed in this worktree yet, so this stays the pre-existing fixed dwell rather than a
+        // real settle condition — a request slower than this can still be missing from
+        // brokenRequests (see decisions.md's FR2-12 entry and the changelog fragment).
+        await new Promise((r) => setTimeout(r, options.settleMs ?? 1500));
+      }
+    } finally {
+      if (cdpClient) {
+        await cdpClient.detach().catch(() => {});
+      }
+    }
+
+    // D11: after navigation+settle, before any page-touching call — an open dialog blocks
+    // page.evaluate/page.screenshot/page.title, so without this the audit would hang until the
+    // tab's own auto-dismiss timeout instead of failing fast with a clear message.
+    const pending = tab.getPendingDialog?.();
+    if (pending) {
+      const truncated = pending.message.length > 120 ? `${pending.message.slice(0, 120)}…` : pending.message;
+      throw new Error(
+        `a ${pending.dialogType} dialog is open ("${truncated}") and blocks the page, so it can't be audited. ` +
+          'Handle it first (browser.handle_dialog, or "sutradhar dialog accept|dismiss"), then audit again.',
+      );
+    }
+
     const [screenshotBase64, pageResult] = await Promise.all([
       page.screenshot({ type: 'png', encoding: 'base64', fullPage: true }) as Promise<string>,
-      page.evaluate(AUDIT_PAGE_SCRIPT) as Promise<{ issues: A11yIssue[]; webVitals: WebVitals }>,
+      page.evaluate(AUDIT_PAGE_SCRIPT) as Promise<{
+        issues: A11yIssue[];
+        webVitals: WebVitals;
+        timeOrigin: number | null;
+        pageWasHidden: boolean | null;
+      }>,
     ]);
 
-    const consoleErrors = tab
-      .getConsoleLogs()
+    // GAP-278 (escalation-1): current-page mode has no per-call CDP session of its own (it never
+    // navigates inside this `audit()` call), so it reads the tab's own CONTINUOUSLY-tracked
+    // main-frame commit instant instead -- the same raw-CDP `Page.frameNavigated`-based
+    // mechanism URL-mode's `navCommittedAt` above already uses, just tracked at tab level from
+    // tab construction (`BrowserTab.setupCommitTracking`) rather than created and torn down per
+    // audit() call. `tab.getLastMainFrameCommitAt` is optional on `IBrowserTab` (existing mock
+    // literals stay compiling); when absent or still null (tracking not wired up in time, or no
+    // real commit observed yet), this falls back to `documentStartedAt` exactly as before this
+    // fix, same as URL-mode's own fallback when `createCDPSession` isn't available.
+    const effectiveNavCommittedAt = options.url
+      ? navCommittedAt
+      : (tab.getLastMainFrameCommitAt?.() ?? null);
+
+    // GAP-285 (escalation-2): only meaningful in current-page mode -- `options.url` mode always
+    // navigates via `this.navigate()`/`page.goto()` inside this very call, which can never be a
+    // bfcache restore.
+    const wasBfcacheRestore = options.url ? false : (tab.wasLastMainFrameCommitBfcacheRestore?.() ?? false);
+
+    const { observation, since } = computeObservation({
+      mode: options.url ? 'navigated' : 'current-page',
+      navCommittedAt: effectiveNavCommittedAt,
+      timeOrigin: typeof pageResult.timeOrigin === 'number' ? pageResult.timeOrigin : null,
+      observingSince: tab.observingSince ?? null,
+      pageWasHidden: pageResult.pageWasHidden ?? null,
+      wasBfcacheRestore,
+    });
+
+    const url = page.url();
+
+    const consoleErrors = scopeToDocument(tab.getConsoleLogs(), since)
       .filter((l) => l.logType === 'error')
       .map((l) => ({ text: l.text, timestamp: l.timestamp }));
-    const pageErrors = tab.getPageErrors().map((e) => ({ message: e.message, timestamp: e.timestamp }));
-    const brokenRequests = tab
-      .getNetworkLog()
+    const pageErrors = scopeToDocument(tab.getPageErrors(), since).map((e) => ({ message: e.message, timestamp: e.timestamp }));
+    const brokenRequests = scopeToDocument(tab.getNetworkLog(), since)
       .filter((n) => n.phase === 'response' && n.status !== undefined && n.status >= 400)
       .map((n) => ({ url: n.url, status: n.status! }));
 
+    // GAP-267/GAP-273 (fix-2/fix-3): the audited document's OWN HTTP response status is
+    // definitionally part of "this page's audit result" — never contamination from a previous
+    // page — so it must never be filterable by the `since` timing boundary at all, even if the
+    // commit-time listener above still ends up racing that response by a few ms.
+    //
+    // Primary source (GAP-273 fix): `mainDocumentResponseCapture`, captured LIVE by the CDP
+    // session's `Network.responseReceived` listener during THIS navigation, keyed by CDP
+    // frameId. This never depends on the final `page.url()`, so it survives every shape that
+    // defeated fix-2's string match: a `history.replaceState`/hash change after the response
+    // (the final URL differs from the response URL), and an empty-body error response where
+    // Chrome swaps in `chrome-error://chromewebdata/` as `page.url()` (which never matches any
+    // real response URL).
+    //
+    // Fallback (only when the live capture isn't available — e.g. `createCDPSession` doesn't
+    // exist on this Puppeteer build, or the bounded setup above never got Network.enable
+    // processed before this audit's own navigation completed): the ring buffer's LAST
+    // 'document'-typed response entry whose url matches the final `url`. This is fix-2's
+    // original heuristic, kept only as a best-effort fallback for that fallback path — it
+    // still fails on the same shapes GAP-273 named, but no worse than before this fix in the
+    // already-degraded case where live tracking wasn't available at all.
+    // GAP-278 (escalation-1): current-page mode has its own live-captured source too now, the
+    // tab-level counterpart of `mainDocumentResponseCapture` above (which is only ever populated
+    // in URL mode's per-call CDP session). Same fallback order as before this fix for whichever
+    // one applies to the current mode: live capture first, then the URL-match heuristic.
+    const currentPageLiveCapture = options.url ? null : (tab.getLastMainDocumentResponse?.() ?? null);
+    // GAP-279 (escalation-1): when the CDP-level live capture (`mainDocumentResponseCapture`)
+    // didn't get set up in time — the named repro is a dialog already open as `audit({url})`
+    // starts, which delays `Network.enable` past the main document's own response — fall back
+    // to the response `navigate()`'s own `page.goto()` call returned (`getLastGotoResponse`)
+    // BEFORE the URL-match ring-buffer search. This is immune to the exact shapes that defeated
+    // the URL-match fallback (GAP-273): a `history.replaceState`/hash change after the response
+    // arrives, and an empty-body error response where Chrome swaps in `chrome-error://
+    // chromewebdata/` as `page.url()` — `getLastGotoResponse` never depends on `page.url()` at
+    // all, only on what `goto()` itself resolved to.
+    const gotoResponseFallback = options.url ? (tab.getLastGotoResponse?.() ?? null) : null;
+    const mainDocumentResponse =
+      mainDocumentResponseCapture ??
+      currentPageLiveCapture ??
+      gotoResponseFallback ??
+      [...tab.getNetworkLog()].reverse().find((n) => n.phase === 'response' && n.resourceType === 'document' && n.url === url);
+    if (
+      mainDocumentResponse &&
+      mainDocumentResponse.status !== undefined &&
+      mainDocumentResponse.status >= 400 &&
+      !brokenRequests.some((b) => b.url === mainDocumentResponse.url && b.status === mainDocumentResponse.status)
+    ) {
+      brokenRequests.push({ url: mainDocumentResponse.url, status: mainDocumentResponse.status });
+    }
+
+    const title = await this.readTitle(tab);
+    const timestamp = new Date().toISOString();
+
+    let baseline: AuditBaselineOutcome | null = null;
+    if (options.baselineUrl) {
+      try {
+        const cmp = await this.compareUrls(sessionId, options.baselineUrl, url, { tabId: options.tabId });
+        baseline = { url: options.baselineUrl, ...cmp };
+      } catch (e) {
+        baseline = { url: options.baselineUrl, error: (e as Error).message || String(e) };
+      }
+    }
+
     return {
-      url: page.url(),
-      title: await this.readTitle(tab),
-      timestamp: new Date().toISOString(),
+      url,
+      title,
+      timestamp,
       screenshotBase64,
       consoleErrors,
       pageErrors,
       brokenRequests,
       accessibilityIssues: pageResult.issues,
       webVitals: pageResult.webVitals,
+      requestedUrl: options.url ?? null,
+      observation,
+      baseline,
     };
   }
 
@@ -1497,6 +1939,68 @@ export class SutradharRuntime {
   ): Promise<void> {
     const { tab } = this.resolveTab(sessionId, tabId);
     await tab.handleDialog(action, promptText);
+  }
+
+  /** FR2-04: sets `sessionId`'s dialog policy going forward (affects future dialogs only — see
+   *  `BrowserTab.setDialogPolicy`'s doc comment). Throws if the session doesn't exist. */
+  public setDialogPolicy(sessionId: string, policy: DialogPolicy): void {
+    const session = this.requireSession(sessionId);
+    session.setDialogPolicy?.(policy);
+  }
+
+  /** FR2-04: every tab in `sessionId` with a currently-pending dialog. Used by the CLI's gate/
+   *  reporting to enumerate ALL pending dialogs, not just the active tab's (§2.10: the gate is
+   *  conservative across tabs). */
+  public getPendingDialogs(
+    sessionId: string,
+  ): Array<{ tabId: string; url: string; dialogType: string; message: string; defaultValue?: string; openedAt: string; active: boolean }> {
+    const session = this.requireSession(sessionId);
+    const result: Array<{
+      tabId: string;
+      url: string;
+      dialogType: string;
+      message: string;
+      defaultValue?: string;
+      openedAt: string;
+      active: boolean;
+    }> = [];
+    for (const tab of session.getTabs()) {
+      const detail = tab.getPendingDialogDetail?.();
+      if (!detail) continue;
+      result.push({
+        tabId: tab.id,
+        url: detail.url,
+        dialogType: detail.dialogType,
+        message: detail.message,
+        defaultValue: detail.defaultValue,
+        openedAt: detail.openedAt,
+        active: true,
+      });
+    }
+    return result;
+  }
+
+  /** FR2-04: every tab's dialog history for `sessionId`, oldest-first across all tabs, each
+   *  tagged with the `tabId` it happened on. `tabId` narrows to one tab. */
+  public getDialogHistory(sessionId: string, tabId?: string): ReadonlyArray<DialogRecord & { tabId: string }> {
+    const session = this.requireSession(sessionId);
+    const tabs = tabId ? [session.getTab(createTabId(tabId))].filter((t): t is IBrowserTab => !!t) : session.getTabs();
+    const merged: Array<DialogRecord & { tabId: string }> = [];
+    for (const tab of tabs) {
+      for (const record of tab.getDialogHistory?.() ?? []) {
+        merged.push({ ...record, tabId: tab.id });
+      }
+    }
+    merged.sort((a, b) => (a.handledAt ?? '').localeCompare(b.handledAt ?? ''));
+    return merged;
+  }
+
+  /** FR2-04: the underlying CDP target id of `sessionId`'s active tab, when known — used to
+   *  correlate a raw-CDP-observed dialog (dialog-cdp.ts/dialog-warden.ts) with the runtime's own
+   *  tab bookkeeping. */
+  public getActiveTargetId(sessionId: string): string | undefined {
+    const { tab } = this.resolveTab(sessionId);
+    return tab.targetId;
   }
 
   /** The tab's current lock (owner + expiry), or `undefined` if unlocked/expired. See
@@ -1587,6 +2091,37 @@ export class SutradharRuntime {
   public async listTabs(sessionId: string): Promise<TabInfo[]> {
     const tabs = this.requireSession(sessionId).getTabs();
     return Promise.all(tabs.map((t) => this.toTabInfo(t)));
+  }
+
+  /**
+   * The caller-owned sessions (created via launch()/attach()) that are still live, plus how many
+   * lifecycle calls are in flight. "Live" = still registered in this process's session manager:
+   * removed on shutdown, idle reap, or Chrome disconnect (crash). No endpoint probe — this process
+   * holds the browser connection itself, unlike the CLI's detached-Chrome model (FR2-03), so the
+   * registry is already a maintained liveness signal. Synchronous and CDP-free.
+   */
+  public listSessions(): LiveSessionsView {
+    const sessions: LiveSessionInfo[] = [];
+    for (const [id, origin] of this.clientSessions) {
+      const session = this.sessionManager.getSession(createSessionId(id));
+      if (!session) {
+        this.clientSessions.delete(id); // crashed / reaped behind our back
+        continue;
+      }
+      const tabs = session.getTabs();
+      const active = session.activeTabId ? session.getTab(session.activeTabId) : tabs[0];
+      sessions.push({
+        sessionId: id,
+        origin,
+        createdAt: session.createdAt,
+        tabCount: tabs.length,
+        activeTabId: active?.id,
+        activeUrl: active?.url,
+        hasRealBrowser: this.hasRealPage(active),
+      });
+    }
+    sessions.sort((a, b) => a.createdAt.localeCompare(b.createdAt) || a.sessionId.localeCompare(b.sessionId));
+    return { sessions, lifecycleOpsInFlight: this.lifecycleOpsInFlight };
   }
 
   // ─────────────────────────────────────────────────────────────────────────

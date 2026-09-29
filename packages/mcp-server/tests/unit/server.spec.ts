@@ -15,11 +15,15 @@ const capabilityRuntimeMock = vi.hoisted(() => ({
   })),
 }));
 
-vi.mock('@sutradhar/capability-runtime', () => ({
+vi.mock('@sutradhar/capability-runtime', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
   SutradharRuntime: capabilityRuntimeMock.SutradharRuntimeMock,
 }));
 
 import { createSutradharServer } from '../../src/server.js';
+import os from 'node:os';
+import path from 'node:path';
+import { DOWNLOAD_ROOTS_ENV, UPLOAD_ROOTS_ENV, defaultDownloadRoot } from '@sutradhar/capability-runtime';
 
 describe('@sutradhar/mcp-server createSutradharServer idle-reaper default wiring', () => {
   beforeEach(() => {
@@ -127,5 +131,58 @@ describe('@sutradhar/mcp-server createSutradharServer allowedDomains wiring', ()
 
     const optionsArg = capabilityRuntimeMock.SutradharRuntimeMock.mock.calls[0][0];
     expect(optionsArg.allowedDomains).toEqual(['override.com']);
+  });
+});
+
+describe('@sutradhar/mcp-server createSutradharServer fs roots wiring (FR2-05)', () => {
+  beforeEach(() => {
+    capabilityRuntimeMock.SutradharRuntimeMock.mockClear();
+    delete process.env[DOWNLOAD_ROOTS_ENV];
+    delete process.env[UPLOAD_ROOTS_ENV];
+  });
+
+  it('MS1: no env -> the default download root, unrestricted uploads', async () => {
+    await createSutradharServer({ disableAgent: true });
+    const optionsArg = capabilityRuntimeMock.SutradharRuntimeMock.mock.calls[0][0];
+    expect(optionsArg.allowedDownloadRoots).toEqual([defaultDownloadRoot()]);
+    expect(optionsArg.allowedUploadRoots).toBeUndefined();
+  });
+
+  it('MS2: download env with two absolute dirs, in order', async () => {
+    const a = path.join(os.tmpdir(), 'ms2-a');
+    const b = path.join(os.tmpdir(), 'ms2-b');
+    process.env[DOWNLOAD_ROOTS_ENV] = [a, b].join(path.delimiter);
+    await createSutradharServer({ disableAgent: true });
+    const optionsArg = capabilityRuntimeMock.SutradharRuntimeMock.mock.calls[0][0];
+    expect(optionsArg.allowedDownloadRoots).toEqual([a, b]);
+  });
+
+  it('MS3: upload env turns on the allowlist', async () => {
+    const a = path.join(os.tmpdir(), 'ms3-a');
+    process.env[UPLOAD_ROOTS_ENV] = a;
+    await createSutradharServer({ disableAgent: true });
+    const optionsArg = capabilityRuntimeMock.SutradharRuntimeMock.mock.calls[0][0];
+    expect(optionsArg.allowedUploadRoots).toEqual([a]);
+  });
+
+  it('MS4: an explicit allowedDownloadRoots option beats env', async () => {
+    const envDir = path.join(os.tmpdir(), 'ms4-env');
+    const optDir = path.join(os.tmpdir(), 'ms4-opt');
+    process.env[DOWNLOAD_ROOTS_ENV] = envDir;
+    await createSutradharServer({ disableAgent: true, allowedDownloadRoots: [optDir] });
+    const optionsArg = capabilityRuntimeMock.SutradharRuntimeMock.mock.calls[0][0];
+    expect(optionsArg.allowedDownloadRoots).toEqual([optDir]);
+  });
+
+  it('MS5: a relative env entry rejects startup and never constructs the runtime', async () => {
+    process.env[DOWNLOAD_ROOTS_ENV] = 'relative-dir';
+    await expect(createSutradharServer({ disableAgent: true })).rejects.toThrow(/SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS.*absolute/);
+    expect(capabilityRuntimeMock.SutradharRuntimeMock).not.toHaveBeenCalled();
+  });
+
+  it('MS6: a relative env entry does not throw when an explicit runtime is supplied', async () => {
+    process.env[DOWNLOAD_ROOTS_ENV] = 'relative-dir';
+    const fakeRuntime = { getSessionManager: () => ({}), getEventBus: () => ({ subscribe: vi.fn(), publish: vi.fn() }) };
+    await expect(createSutradharServer({ disableAgent: true, runtime: fakeRuntime as any })).resolves.toBeDefined();
   });
 });

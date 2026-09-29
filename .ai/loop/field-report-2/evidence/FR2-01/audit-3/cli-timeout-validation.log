@@ -1,0 +1,45 @@
+== wait #x 5s --state visible
+Error: Invalid timeoutMs "5s" — expected a plain number of milliseconds (e.g. 5000 for 5s), not a unit suffix like "5s".
+exit=1
+== wait #x NaN --state visible
+Error: Invalid timeoutMs "NaN" — expected a plain number of milliseconds (e.g. 5000 for 5s), not a unit suffix like "5s".
+exit=1
+== wait #x Infinity --state visible
+Error: Invalid timeoutMs "Infinity" — expected a plain number of milliseconds (e.g. 5000 for 5s), not a unit suffix like "5s".
+exit=1
+== wait #x -Infinity --state visible
+Error: Invalid timeoutMs "-Infinity" — expected a plain number of milliseconds (e.g. 5000 for 5s), not a unit suffix like "5s".
+exit=1
+== wait #x abc --state visible
+Error: Invalid timeoutMs "abc" — expected a plain number of milliseconds (e.g. 5000 for 5s), not a unit suffix like "5s".
+exit=1
+== wait #x 5s --state attached
+Error: Invalid timeoutMs "5s" — expected a plain number of milliseconds (e.g. 5000 for 5s), not a unit suffix like "5s".
+exit=1
+== wait #x NaN --state attached
+Error: Invalid timeoutMs "NaN" — expected a plain number of milliseconds (e.g. 5000 for 5s), not a unit suffix like "5s".
+exit=1
+== wait #x Infinity --state attached
+Error: Invalid timeoutMs "Infinity" — expected a plain number of milliseconds (e.g. 5000 for 5s), not a unit suffix like "5s".
+exit=1
+== wait #x -Infinity --state attached
+Error: Invalid timeoutMs "-Infinity" — expected a plain number of milliseconds (e.g. 5000 for 5s), not a unit suffix like "5s".
+exit=1
+== wait #x abc --state attached
+Error: Invalid timeoutMs "abc" — expected a plain number of milliseconds (e.g. 5000 for 5s), not a unit suffix like "5s".
+exit=1
+== wait #x 5s --state hidden
+Error: Invalid timeoutMs "5s" — expected a plain number of milliseconds (e.g. 5000 for 5s), not a unit suffix like "5s".
+exit=1
+== wait #x NaN --state hidden
+Error: Invalid timeoutMs "NaN" — expected a plain number of milliseconds (e.g. 5000 for 5s), not a unit suffix like "5s".
+exit=1
+== wait #x Infinity --state hidden
+Error: Invalid timeoutMs "Infinity" — expected a plain number of milliseconds (e.g. 5000 for 5s), not a unit suffix like "5s".
+exit=1
+== wait #x -Infinity --state hidden
+Error: Invalid timeoutMs "-Infinity" — expected a plain number of milliseconds (e.g. 5000 for 5s), not a unit suffix like "5s".
+exit=1
+== wait #x abc --state hidden
+Error: Invalid timeoutMs "abc" — expected a plain number of milliseconds (e.g. 5000 for 5s), not a unit suffix like "5s".
+exit=1

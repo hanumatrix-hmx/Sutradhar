@@ -57,18 +57,18 @@ tool (Sutradhar's own autonomous loop takes a natural-language goal and drives i
 agent setups won't need this; `browser.*` is the normal path and needs no LLM provider config
 at all since you already are one).
 
-68 `browser.*` tools, grouped by what they do:
+71 `browser.*` tools, grouped by what they do:
 
 | Category | Tools | What they're for |
 |---|---|---|
-| **Lifecycle** | `health`, `launch`, `attach`, `shutdown`, `shutdown_all` | Start/stop a session. `attach` connects to an already-running Chrome over CDP instead of launching a new one. |
+| **Lifecycle** | `health`, `launch`, `attach`, `shutdown`, `shutdown_all` | Start/stop a session. `attach` connects to an already-running Chrome over CDP instead of launching a new one. Other tools take the sessionId from launch/attach. It may be omitted only while exactly one session is live. Otherwise the call fails and lists the live ids. |
 | **Navigation** | `navigate`, `go_back`, `go_forward`, `reload` | Standard page navigation. |
-| **Agent vision** | `snapshot`, `ax_snapshot` | **Read the page.** See the grounding section below — this is the most important pair of tools here. |
-| **Interaction** | `click`, `click_by_text`, `click_by_role`, `right_click`, `type`, `type_by_label`, `press_key`, `hover`, `scroll`, `select_option`/`select_options`, `drag_and_drop`, `touch_tap`, `upload_file`, `upload_file_via_trigger`, `download_file`, `wait_for_selector`, `fill_form`, `click_at_point`, `drag_at_points` | Act on the page. `fill_form` does a whole form in one call. `click_at_point`/`drag_at_points` are the escape hatch for canvas/custom-rendered UI with nothing addressable via DOM. |
-| **Capture & extraction** | `screenshot`, `export_pdf`, `eval`, `extract_data` | Get data out. `extract_data` takes a field-name → CSS-selector map and returns real matched values — prefer this over eyeballing a screenshot for anything you need to assert on. Both `eval` and `extract_data` accept an optional `frameSelector` (a CSS selector or snapshot `[#id]` for an `<iframe>` element) to read inside that frame instead of the top-level page — including a genuinely cross-origin one. |
+| **Agent vision** | `snapshot`, `ax_snapshot` | **Read the page.** See the grounding section below — this is the most important pair of tools here. Elements inside an iframe are labelled `[#31 in iframe "pay" (https://…)]` (the URL shown once per frame; an unnamed frame shows its number instead), and elements inside an open shadow root end with `(shadow: host-tag#id)`; a frame that couldn't be read is listed as `[iframe <origin> — not inspectable] (reason)` instead of being silently dropped. |
+| **Interaction** | `click`, `click_by_text`, `click_by_role`, `right_click`, `type`, `type_by_label`, `press_key`, `hover`, `scroll`, `select_option`/`select_options`, `drag_and_drop`, `touch_tap`, `upload_file`, `upload_file_via_trigger`, `download_file`, `wait_for_selector`, `fill_form`, `click_at_point`, `drag_at_points` | Act on the page. `fill_form` does a whole form in one call. `click_at_point`/`drag_at_points` are the escape hatch for canvas/custom-rendered UI with nothing addressable via DOM. Selectors are standard CSS or a snapshot node id; Puppeteer's `pierce/`, `xpath/`, `aria/` and `text/` prefixes also work. `wait_for_selector` takes `state`: `visible` (the default; non-empty box and not `visibility:hidden`, `opacity:0` still counts), `attached` (just in the DOM) or `hidden` (removed or not visible; succeeds at once if nothing matches). Playwright-style syntax (`text=`, `role=`, `>>`, `:has-text()`, `getBy*()`) is rejected immediately with a hint — use `click_by_text`/`click_by_role`/`type_by_label` to target by visible text or accessible role/name instead. |
+| **Capture & extraction** | `screenshot`, `audit`, `export_pdf`, `eval`, `extract_data` | Get data out. `audit` returns a JSON report (console/page errors, broken requests, a11y heuristics, Web Vitals) plus the screenshot; pass `url` for full coverage (auditing the current page as-is only sees activity since this session attached); findings never fail the call. `extract_data` takes a field-name → CSS-selector map and returns real matched values — prefer this over eyeballing a screenshot for anything you need to assert on. With no `attribute`, form controls (`input`/`select`/`textarea`) return their **live** current value (including typed-but-unsubmitted text) and other elements return rendered text; `"value"`/`"checked"`/`"selected"` read live DOM state, `"attr:<name>"` reads the raw HTML attribute, and `visibleOnly` (whole call or per field) drops non-visible matches. Both `eval` and `extract_data` accept an optional `frameSelector` (a CSS selector or snapshot `[#id]` for an `<iframe>` element) to read inside that frame instead of the top-level page — including a genuinely cross-origin one. |
 | **Storage** | `get_cookies`/`set_cookie`/`delete_cookie`, `get_local_storage`/`set_local_storage_item`/`clear_local_storage`, `get_session_storage`/`set_session_storage_item`/`clear_session_storage`, `get_storage_state`/`set_storage_state` | Cookie/storage read-write. The `storage_state` pair is a single-blob export/import of all three at once — the way to log in once and reuse that session later. |
-| **Emulation & permissions** | `set_geolocation`, `grant_permissions`, `set_viewport`, `emulate`, `get_clipboard`/`set_clipboard`, `set_network_conditions` | Geolocation, camera/clipboard/notification permissions, viewport/mobile emulation, timezone/locale/color-scheme, throttled or offline network. |
-| **Dialogs, observability & network** | `get_pending_dialog`/`handle_dialog`, `get_console_logs`, `get_page_errors`, `get_network_log`, `get_action_history`, `route`/`clear_routes` | Handle native `alert`/`confirm`/`prompt` dialogs, and — importantly — **check what actually happened**: console output, uncaught JS errors, real network requests/responses. Don't call a flow verified without checking these. |
+| **Emulation & permissions** | `set_geolocation`, `grant_permissions`, `set_viewport`/`get_viewport`, `emulate`, `get_clipboard`/`set_clipboard`, `set_network_conditions` | Geolocation, camera/clipboard/notification permissions, viewport/mobile emulation, timezone/locale/color-scheme, throttled or offline network. |
+| **Dialogs, observability & network** | `get_pending_dialog`/`handle_dialog`, `get_console_logs`, `get_page_errors`, `get_network_log`, `get_action_history`, `route`/`clear_routes` | Handle native `alert`/`confirm`/`prompt` dialogs (an unhandled one is auto-dismissed after 30 s over MCP), and — importantly — **check what actually happened**: console output, uncaught JS errors, real network requests/responses. Don't call a flow verified without checking these. |
 | **Tabs** | `list_tabs`, `new_tab`, `focus_tab`, `close_tab`, `lock_tab`/`unlock_tab`/`get_tab_lock` | Multi-tab handling. The lock tools are an advisory owner+TTL mechanism if multiple concurrent callers need to coordinate driving the same session. |
 | **Autonomous agent** | `agent.runGoal` | Optional. Hands a natural-language goal to Sutradhar's own loop. Only registered if an LLM provider (Ollama or an OpenRouter key) is separately configured for the server. |
 
@@ -115,8 +115,22 @@ canvas-rendered UI with nothing DOM-addressable), tab management (`tabs`/`newtab
 `scroll` (waits for the page to stop actively changing before returning), a `--modifiers` flag
 for `press` (hold modifier keys, e.g. Ctrl+Shift+ArrowRight to select a word),
 `--no-text`/`--ids-only`/`--scan-listeners` flags for `snap`, and an `--allowlist-domains`
-navigation guardrail. Run `sutradhar` with no arguments for the complete, current command and
-flag list straight from the binary — that's the authoritative reference, not this file.
+navigation guardrail. `download` defaults to `<OS temp>/sutradhar-downloads` (configurable via
+`SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`), and `upload` is unrestricted unless
+`SUTRADHAR_ALLOWED_UPLOAD_ROOTS` is set. Run `sutradhar` with no arguments for the complete,
+current command and flag list straight from the binary — that's the authoritative reference,
+not this file.
+
+Native dialogs (`alert`/`confirm`/`prompt`/`beforeunload`) are the one place the CLI's default
+behavior differs from the MCP server and SDK: by default a session leaves a dialog open and
+reports it (`dialogPending: {...}` on stdout) rather than silently accepting or dismissing it,
+and any command that finds one blocking the page exits with code **3** instead of hanging. Run
+`sutradhar dialog` to see what's open, `sutradhar dialog accept [text]|dismiss` to resolve it, or
+set `--dialog accept|dismiss` once to make future dialogs in that session resolve automatically
+(`--dialog report` restores the default, and — like `accept`/`dismiss` — persists explicitly,
+it does not just clear a previous setting). This is safe across separate CLI invocations because
+of a small per-session helper process (the "dialog warden") that stays attached even between
+commands; see `packages/cli/README.md`'s "Native dialogs" section for the full behavior.
 
 **Node SDK** (drive a browser from your own code):
 
@@ -157,10 +171,46 @@ it ships), the pattern that actually holds up is:
 
 ## Known limitations — stated honestly
 
-- **No stealth or bot-detection evasion, by design.** Sutradhar launches a plain, undisguised
-  browser. Real anti-bot walls (Cloudflare challenges, CAPTCHAs, hard IP-level denies) will
-  block it exactly the way they'd block any other automation tool run the same way — this was
-  directly measured and confirmed, not assumed, across real benchmark runs against real sites.
+- **No stealth or bot-detection evasion, by design.** Sutradhar does not attempt to evade
+  bot-detection or solve CAPTCHAs, and Cloudflare challenges, CAPTCHA walls, and IP-level
+  blocks stop it exactly as they would stop any other automation tool run the same way — this
+  was directly measured and confirmed, not assumed, across real benchmark runs against real
+  sites. The only launch argument here with detection-relevant behavior is
+  `--disable-blink-features=AutomationControlled`, which hides `navigator.webdriver` from
+  scripts that check for it -- measured directly: `navigator.webdriver` is `true` without the
+  flag and `false` with it. It does not defeat Cloudflare, CAPTCHA, or any other real
+  bot-detection service, and other simple signals -- the default headless user agent's
+  `HeadlessChrome` substring and `--enable-automation` still being present in the launch
+  command line -- remain unmasked.
+- **Downloads: one at a time per browser.** `download_file` (and CLI `download`) only writes inside
+  the allowed roots (`<OS temp>/sutradhar-downloads` by default; `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`
+  replaces it) and that path containment is verified, including symlink/junction and Windows path
+  tricks. Overlapping downloads are only protected on a best-effort basis: a second `download_file`
+  on the same browser is refused immediately, but the lock lives in the process temp directory and
+  is keyed by the exact browser endpoint string, so separate processes (two MCP servers, or several
+  CLI commands, since each CLI command is its own process) may not share it. Drive downloads for a
+  browser from one process at a time. A download the page starts by itself (not through
+  `download_file`) is not governed by the roots and can land in Chrome's default download location.
+- **CLI dialogs and crashed tabs have known gaps.** If the page that opened several popups closes
+  before you handle them, `sutradhar dialog accept|dismiss` can close the wrong popup first. A tab
+  that is busy from the moment it is created can be reported as blocked (exit 3) with no dialog
+  open. After a crash of any tab (`chrome://crash`), other gated commands (`nav`, `snap`, ...) hang
+  until the crashed tab is closed: run `sutradhar tabs`, then `sutradhar closetab <id>`, using the id
+  exactly as printed. The crash note's advice to reload with `nav` is wrong for `chrome://crash`.
+  MCP and the SDK are not affected by any of this (they keep the `auto` dialog policy).
+- **`audit` limits.** Auditing the current page (no `url`) of a brand-new tab right after its first
+  navigation can miss the page's own HTTP error status while still saying it covers the whole
+  document. The settle wait is a fixed 1500 ms, so a slower request can be missing. A page restored
+  from the back/forward cache reports `coversWholeDocument: false`. Only HTTP 400+ counts as a
+  broken request. The accessibility checks are heuristics, not a WCAG audit.
+- **`wait_for_selector` limits.** Treat a `state: "hidden"` success as best effort (that code path
+  produced false answers in several audit rounds; the known ones are fixed). Only the first matching
+  element is checked, `opacity: 0` counts as visible, polling is about every 100 ms, and a failed
+  visible-wait can take about 3 x `timeoutMs` because the engine retries twice (`timeoutMs <= 0`
+  does not retry).
+- **Not implemented yet:** a unified verification contract, condition waits everywhere, a full
+  action history, a `sutradhar run` scenario runner, a `.sutradhar.json` project config and
+  automatic session/profile garbage collection are not part of this version.
 - **`agent.runGoal` needs its own LLM provider** (Ollama running locally, or an OpenRouter API
   key) configured separately for the server — the `browser.*` tools need none of that, since the
   calling AI is already the brain.

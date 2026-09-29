@@ -1,0 +1,90 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser[39m
+
+ [33m❯[39m tests/unit/dialog-warden.spec.ts [2m ([22m[2m8 tests[22m [2m|[22m [31m3 failed[39m[2m)[22m[90m 220[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/dialog-warden.spec.ts[2m > [22m@sutradhar/browser DialogWarden (FR2-04 Branch W)[2m > [22mWD3: a missing or wrong token gets 401, and no CDP handle call is made[39m
+[31m     → expected 200 to be 401 // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/dialog-warden.spec.ts[2m > [22m@sutradhar/browser DialogWarden (FR2-04 Branch W)[2m > [22mWD5 (R-D): browser "disconnected" makes the warden exit and stop serving[39m
+[31m     → expected "spy" to be called with arguments: [ 'browser-disconnected' ][90m
+
+Received: 
+
+[31m[90m
+
+Number of calls: [1m0[22m
+[31m[39m
+[31m   [33m❯[31m tests/unit/dialog-warden.spec.ts[2m > [22m@sutradhar/browser DialogWarden (FR2-04 Branch W)[2m > [22mWD6 (R-D): isStillCurrent() returning false exits the warden within ~2 poll intervals[39m
+[31m     → expected "spy" to be called with arguments: [ 'state-changed' ][90m
+
+Received: 
+
+[31m[90m
+
+Number of calls: [1m0[22m
+[31m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 3 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/dialog-warden.spec.ts[2m > [22m@sutradhar/browser DialogWarden (FR2-04 Branch W)[2m > [22mWD3: a missing or wrong token gets 401, and no CDP handle call is made
+[31m[1mAssertionError[22m: expected 200 to be 401 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 401[39m
+[31m+ 200[39m
+
+[36m [2m❯[22m tests/unit/dialog-warden.spec.ts:[2m152:26[22m[39m
+    [90m150| [39m        body[33m:[39m [33mJSON[39m[33m.[39m[34mstringify[39m({ targetId[33m:[39m [32m't1'[39m[33m,[39m accept[33m:[39m [35mtrue[39m })[33m,[39m
+    [90m151| [39m      })[33m;[39m
+    [90m152| [39m      [34mexpect[39m(res[33m.[39mstatus)[33m.[39m[34mtoBe[39m([34m401[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m153| [39m      [34mexpect[39m(session[33m.[39msend)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalledWith[39m([32m'Page.handleJavaSc[39m…
+    [90m154| [39m    } [35mfinally[39m {
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/dialog-warden.spec.ts[2m > [22m@sutradhar/browser DialogWarden (FR2-04 Branch W)[2m > [22mWD5 (R-D): browser "disconnected" makes the warden exit and stop serving
+[31m[1mAssertionError[22m: expected "spy" to be called with arguments: [ 'browser-disconnected' ][90m
+
+Received: 
+
+[31m[90m
+
+Number of calls: [1m0[22m
+[31m[39m
+[36m [2m❯[22m tests/unit/dialog-warden.spec.ts:[2m217:20[22m[39m
+    [90m215| [39m    browser[33m.[39m[34m_emit[39m([32m'disconnected'[39m)[33m;[39m
+    [90m216| [39m    [35mawait[39m [35mnew[39m [33mPromise[39m((r) [33m=>[39m [34msetTimeout[39m(r[33m,[39m [34m20[39m))[33m;[39m
+    [90m217| [39m    [34mexpect[39m(onExit)[33m.[39m[34mtoHaveBeenCalledWith[39m([32m'browser-disconnected'[39m)[33m;[39m
+    [90m   | [39m                   [31m^[39m
+    [90m218| [39m    [35mawait[39m [34mexpect[39m([34mfetch[39m([32m`http://127.0.0.1:[39m[36m${[39mreadyInfo[33m![39m[33m.[39mport[36m}[39m[32m/v1/health`[39m…
+    [90m219| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/dialog-warden.spec.ts[2m > [22m@sutradhar/browser DialogWarden (FR2-04 Branch W)[2m > [22mWD6 (R-D): isStillCurrent() returning false exits the warden within ~2 poll intervals
+[31m[1mAssertionError[22m: expected "spy" to be called with arguments: [ 'state-changed' ][90m
+
+Received: 
+
+[31m[90m
+
+Number of calls: [1m0[22m
+[31m[39m
+[36m [2m❯[22m tests/unit/dialog-warden.spec.ts:[2m239:20[22m[39m
+    [90m237| [39m    current [33m=[39m [35mfalse[39m[33m;[39m
+    [90m238| [39m    [35mawait[39m [35mnew[39m [33mPromise[39m((r) [33m=>[39m [34msetTimeout[39m(r[33m,[39m [34m150[39m))[33m;[39m
+    [90m239| [39m    [34mexpect[39m(onExit)[33m.[39m[34mtoHaveBeenCalledWith[39m([32m'state-changed'[39m)[33m;[39m
+    [90m   | [39m                   [31m^[39m
+    [90m240| [39m  })[33m;[39m
+    [90m241| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (8)[39m
+[2m   Start at [22m 15:58:54
+[2m   Duration [22m 541ms[2m (transform 32ms, setup 0ms, collect 32ms, tests 220ms, environment 0ms, prepare 116ms)[22m
+

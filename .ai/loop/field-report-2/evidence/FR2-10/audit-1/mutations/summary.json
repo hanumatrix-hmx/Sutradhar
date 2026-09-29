@@ -1,0 +1,115 @@
+[
+  {
+    "id": "M1-sr-inflight-ignored",
+    "pkg": "mcp-server",
+    "exit": 1,
+    "tests": "3 failed | 69 passed (72)",
+    "restored": true,
+    "failedNames": [
+      "tests/unit/session-resolution.spec.ts > resolveSessionId > R4: in flight with 1 session never resolves to it",
+      "tests/unit/session-resolution.spec.ts > resolveSessionId > R5: in flight with 0 sessions",
+      "tests/unit/session-resolution.spec.ts > withSessionResolution > W7b: omitted while a lifecycle op is in flight -> inner never called, \"in progress\" in text"
+    ]
+  },
+  {
+    "id": "M2-tools-wrapper-bypassed",
+    "pkg": "mcp-server",
+    "exit": 1,
+    "tests": "7 failed | 65 passed (72)",
+    "restored": true,
+    "failedNames": [
+      "tests/unit/tools.spec.ts > FR2-10 optional sessionId > T1: every non-exempt tool has an optional sessionId; exempt tools are untouched",
+      "tests/unit/tools.spec.ts > FR2-10 optional sessionId > T2: omitted (1 live session) resolves to the same positional runtime call as an explicit id",
+      "tests/unit/tools.spec.ts > FR2-10 optional sessionId > T3: omitted with 0 live sessions -> isError, runtime.click never called",
+      "tests/unit/tools.spec.ts > FR2-10 optional sessionId > T4: omitted with 2+ live sessions -> isError listing both ids, runtime.click never called",
+      "tests/unit/tools.spec.ts > FR2-10 optional sessionId > T7: browser.shutdown resolves the omitted id and reports it",
+      "tests/unit/tools.spec.ts > FR2-10 optional sessionId > T8: browser.get_viewport (sync handler) resolves the omitted id; explicit id stays synchronous",
+      "tests/unit/tools.spec.ts > FR2-10 optional sessionId > T11: browser.screenshot keeps the image as content[0], note appended after it"
+    ]
+  },
+  {
+    "id": "M3-rt-listSessions-counter-zero",
+    "pkg": "capability-runtime",
+    "exit": 1,
+    "tests": "1 failed | 110 passed (111)",
+    "restored": true,
+    "failedNames": [
+      "tests/unit/runtime.spec.ts > listSessions (FR2-10) > S4: lifecycleOpsInFlight is 1 while launch() is pending, 0 after it resolves, and 0 after it rejects or throws synchronously"
+    ]
+  },
+  {
+    "id": "M4-rt-no-prune",
+    "pkg": "capability-runtime",
+    "exit": 0,
+    "tests": "111 passed (111)",
+    "restored": true,
+    "failedNames": []
+  },
+  {
+    "id": "M5-rt-no-sort",
+    "pkg": "capability-runtime",
+    "exit": 0,
+    "tests": "111 passed (111)",
+    "restored": true,
+    "failedNames": []
+  },
+  {
+    "id": "M6-rt-shutdown-no-counter",
+    "pkg": "capability-runtime",
+    "exit": 0,
+    "tests": "111 passed (111)",
+    "restored": true,
+    "failedNames": []
+  },
+  {
+    "id": "M7-rt-attach-no-counter",
+    "pkg": "capability-runtime",
+    "exit": 0,
+    "tests": "111 passed (111)",
+    "restored": true,
+    "failedNames": []
+  },
+  {
+    "id": "M8-rt-attach-counts-as-launched",
+    "pkg": "capability-runtime",
+    "exit": 1,
+    "tests": "2 failed | 109 passed (111)",
+    "restored": true,
+    "failedNames": [
+      "tests/unit/runtime.spec.ts > listSessions (FR2-10) > S3: attach() registers an \"attached\" entry",
+      "tests/unit/runtime.spec.ts > listSessions (FR2-10) > S8: a reused id keeps its original origin (launch/launch, and attach then launch under the same id)"
+    ]
+  },
+  {
+    "id": "M9-sr-explicit-copied-not-same-ref",
+    "pkg": "mcp-server",
+    "exit": 1,
+    "tests": "2 failed | 70 passed (72)",
+    "restored": true,
+    "failedNames": [
+      "tests/unit/session-resolution.spec.ts > withSessionResolution > W4: explicit id -> same args reference in, same return reference out, sync stays sync",
+      "tests/unit/tools.spec.ts > FR2-10 optional sessionId > T8: browser.get_viewport (sync handler) resolves the omitted id; explicit id stays synchronous"
+    ]
+  },
+  {
+    "id": "M10-sr-empty-string-treated-omitted",
+    "pkg": "mcp-server",
+    "exit": 0,
+    "tests": "72 passed (72)",
+    "restored": true,
+    "failedNames": []
+  },
+  {
+    "id": "M11-sr-no-note",
+    "pkg": "mcp-server",
+    "exit": 1,
+    "tests": "4 failed | 68 passed (72)",
+    "restored": true,
+    "failedNames": [
+      "tests/unit/session-resolution.spec.ts > withSessionResolution > W5: omitted with 1 live session -> resolves, appends the note as the last content item",
+      "tests/unit/session-resolution.spec.ts > withSessionResolution > W5b: an isError result keeps isError:true, note still appended last",
+      "tests/unit/tools.spec.ts > FR2-10 optional sessionId > T7: browser.shutdown resolves the omitted id and reports it",
+      "tests/unit/tools.spec.ts > FR2-10 optional sessionId > T11: browser.screenshot keeps the image as content[0], note appended after it"
+    ]
+  }
+]

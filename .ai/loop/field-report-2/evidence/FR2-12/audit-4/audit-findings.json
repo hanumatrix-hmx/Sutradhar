@@ -1,0 +1,101 @@
+{
+  "auditor": "FR2-12 audit-4 (independent, maker != checker), cycle 4 of 4 standard",
+  "head": "2d69701",
+  "status": "COMPLETE",
+  "verdict": "FAIL",
+  "verdictReason": "fix-3's two targets (GAP-273, GAP-274) hold up. The FAIL comes from A4-2: the current-page half of GAP-262 (B1 contamination, spec T11's own scenario) has never been fixed. audit-1 reproduced it, fix-1 fixed only navigated mode, and audits 2 and 3 re-checked only navigated mode. It still reproduces deterministically (runtime 15/15 at 150-800ms TTFB, MCP 10/10). fix-3 did not introduce it.",
+  "build": "turbo build --force: 19/19 + 9/9 tasks, 0 cached, exit 0 (build.log)",
+  "vitest": { "capability-runtime": 204, "browser": 498, "cli": 171, "mcp-server": 92, "sutradhar": 20, "allGreen": true, "logs": "vitest-*.log, vitest-exits.txt" },
+  "liveVerify": "tools/scenario-suite/verify-fr2-12-audit.mjs, full, no skip flag: 29 pass / 0 fail / 1 info (L15, GAP-038 expected-miss) / 0 skip of 30 (live-rerun/)",
+  "findings": [
+    {
+      "id": "A4-2",
+      "severity": "major (spec T11/D9 B1 claimed fixed; the current-page half of audit-1's GAP-262 repro was never fixed or re-audited)",
+      "title": "Current-page audit (no url) after an in-process navigation reports the PREVIOUS page's console errors and broken requests as the current page's findings, with coversWholeDocument:true",
+      "repro": {
+        "sequence": "runtime.navigate(noisy) -> wait 400ms -> runtime.navigate(clean, TTFB d) -> runtime.audit(sid, {}). This is spec T11's scenario verbatim, and the MCP/SDK usage pattern.",
+        "runtime current-page": "d=0: 3/5 and 1/5 (two runs); d=150: 5/5 (7-9 old errors + 8 old 404s); d=400: 5/5 (~20+20); d=800: 5/5 (~40+40)",
+        "runtime url-mode control (same sequence, audit({url}))": "0/20 leaked",
+        "MCP browser.navigate x2 + browser.audit (no url)": "d=150: 5/5, d=800: 5/5",
+        "audit-1's own B1residual probe rerun unchanged": "current-page 5/5 leak (64-65 console errors, 32 broken requests, cover:true); url-mode 0/5",
+        "executor's own L12 (fast clean page) via MCP": "9/10 (probe-l12-repeat); passed 1/1 in the full live-verify"
+      },
+      "cause": "computeObservation(): in current-page mode since = documentStartedAt (performance.timeOrigin, i.e. the new document's navigation START), so anything the old document logs or fetches between navigation start and the new document's commit passes the scope. fix-1/2/3 moved only navigated mode to a commit-time boundary.",
+      "history": "audit-1 GAP-262 repro was '5 current-page + 5 url-mode'. fix-1 fixed url-mode. audit-2's GAP-262 probes and audit-3's regress probes (gap262_noisyThenClean_*) exercise url-mode only, so this half went unchecked.",
+      "fixDirection": "Give current-page mode a commit-time boundary too. Option 1: in AUDIT_PAGE_SCRIPT, derive the commit instant in-page as timeOrigin + navigation-entry responseStart. The old document cannot run after the new one commits, and commit happens at or after response headers. The page's own document response is already captured unscoped. Option 2: have BrowserTab record the last main-frame cross-document commit time (CDP Page.frameNavigated without parentId), and use it when it is later than timeOrigin. Add a live case with a noisy page followed by a clean page at 150ms and 800ms TTFB, audit() with no url, via runtime and MCP.",
+      "evidence": ["probe-b1-currentpage.json", "probe-b1-currentpage.mjs", "rerun-a1/probe-runtime.json (B1residual)", "rerun-a1/probe-l12-repeat.json"]
+    },
+    {
+      "id": "A4-1",
+      "severity": "minor (degraded-path GAP-273 recurrence; needs two conditions at once)",
+      "title": "When the GAP-274 bound actually fires (a dialog is open when audit({url}) starts), Network.enable/getFrameTree only become live after the audit's own navigation has already received its main-document response. The live capture misses that response, so the old final-URL fallback runs, and hash/replaceState/empty-body own-404s are dropped again.",
+      "repro": "open alert (auto or report policy), then audit({url}) of a hash-setting 404 or an empty-body 404: 2/30 reported (dialog-auto 0/10 + final 1/10, dialog-report 1/10). The same shapes with no dialog: 10/10 (probe-273). A plain own-404 is still found by the fallback. With the bound removed (mutation M1) these ARE reported, at the cost of a 31s hang.",
+      "fixDirection": "Use the navigation's own response (the HTTPResponse returned by page.goto / tab.navigate) as the fallback instead of the final-URL string match. Or send Network.enable before, or concurrently with, Page.enable so it isn't queued behind the blocked call.",
+      "evidence": ["probe-hang4-dialog-auto-final.json", "probe-hang4-dialog-report.json", "run-dialog-auto.log"]
+    },
+    {
+      "id": "A4-3",
+      "severity": "minor (test integrity, GAP-276 recurrence)",
+      "title": "Mutations of fix-3's new code that pass all 204 capability-runtime unit tests",
+      "survivors": {
+        "M7 cdpClient=null in the inner catch (the exact leak pattern fix-3 describes)": "204/204 pass. RA15 doesn't reach that catch. Caught only by audit-4's probe-leak-paths ('client.on throws' leaks).",
+        "M9 boundedFireAndForget no longer swallows the late rejection": "204/204 pass. probe-leak-paths records 1 unhandled rejection, which would crash a Node process running with default --unhandled-rejections=throw.",
+        "M10 Network.enable never sent": "204/204 pass. Live GAP-273 shapes go to 0/2."
+      },
+      "killed": ["M1 unbounded (RA14 + live 31s)", "M2 bound 60s (RA14 + live 31s)", "M3 first response wins (RA13 + live js-redirect 0/2)", "M4 no frameId filter (RA11)", "M5 no Document type filter (RA12 + live)", "M6 capture ignored (RA10/RA13 + live)", "M8 no detach (RA4b/RA14/RA15 + live leak)", "M11 mainFrameId only from frame tree (RA10/RA13)"],
+      "evidence": ["mutation-results.json", "run-mutation.log", "mutation-test.mjs"]
+    },
+    {
+      "id": "A4-4",
+      "severity": "info (evidence integrity; explains the disclosed GAP-274 evidence gap)",
+      "title": "fix-3's GAP-274 revert-confirm never ran the reverted code: ESM module cache",
+      "detail": "revert-confirm.mjs's freshImport() adds ?bust= only to dist/index.js. index.js does `export * from './runtime.js'`, and Node caches ESM by resolved URL, so runtime.js stays cached from the first import. Case 2 (GAP-274 revert) therefore ran case 1's module, which had GAP-273 reverted but the bound intact. probe-esm-cache.json confirms that two ?bust imports return the same SutradharRuntime class. fix-3's measured 2559-2567ms matches the bounded timing exactly: 1000ms bound + 1500ms settle. In a FRESH process (mutation M1/M2), the unbounded code reproduces audit-3's hang: 31035/31042/31092ms.",
+      "evidence": ["probe-esm-cache.json", "mutation-results.json (M1, M2 live.dialog)"]
+    },
+    {
+      "id": "A4-5",
+      "severity": "info (GAP-276 item 3, disclosed as not done, confirmed still open and unchanged)",
+      "detail": "The B3/B4/B5 mutations of cli.ts's 3 guarded call sites (success path, withSession pre-emption, cmdAudit catch) each pass the cli suite 171/171. This is the same as audit-3. cli.ts was not touched by fix-3.",
+      "evidence": ["mutation-cli-results.json"]
+    },
+    {
+      "id": "A4-6",
+      "severity": "info (theoretical, not observed)",
+      "detail": "createCDPSession() and cdpClient.detach() are still awaited without a bound. Across more than 600 sessions in audit-4, createMs was 1ms or less and detach always completed. No hang was observed, so this is not a finding against the fix."
+    }
+  ],
+  "gap274": {
+    "conclusion": "The ORIGINAL hang condition reproduces live, and the bound caps it. Evidence: (a) with an open dialog, the audit CDP session's Page.enable stays blocked until the bound expires and the audit's own navigation cancels the dialog. Page.enable took 1006-1020ms in 52/52 dialog-held audits (auto and report policy, alert opened at 50-3000ms), against 0-1ms on a healthy page. audit() returned in 2528-2610ms every time (normal audit ~1550ms). (b) After a timed-out navigation (page.goto 2s timeout x3, runtime.navigate 30s timeout x2, audit-first sequence), Page.enable took 1002-1017ms and the healthy follow-up audit() took 2554-2574ms, against audit-3's 181551ms. (c) With the bound removed in a fresh process (M1, and M2 with a 60s bound), the dialog case hangs 31035-31106ms. That is audit-3's exact measurement, so the hang is real, deterministic, and not Chrome-version-dependent here. (d) Why Page.enable unblocks at about 1s: once the bound releases audit(), navigate() runs, and the navigation dismisses the dialog / supersedes the stuck pending navigation. The unbounded code waited on Page.enable BEFORE navigating, which was a deadlock that only the 30s dialog auto-dismiss or the 180s protocolTimeout broke. (e) Why fix-3 couldn't reproduce it: see A4-4, the ESM cache. It was not the environment or a race.",
+    "sessionLeak": "probe-leak-paths.json: 13 injected failure points (Page.enable hang/late-reject/immediate-reject, sync send throw, Network.enable hang, getFrameTree hang, client.on throw, navigate throw, navigate throw after a hung Page.enable, detach rejects, evaluate throws, createCDPSession sync throw/reject). 0 leaks and 0 unhandled rejections. Live: 475/475 sessions detached in the a3 rerun (audit-3 had 67/66), and every probe-hang4 session detached.",
+    "precedentMatch": "Same pattern as dialog-cdp.ts:425-427 (fire, don't block, swallow the rejection), extended correctly with a timer race. The work keeps running and its rejection is swallowed before the race (settled = work.then(()=>true,()=>false)), and the timer is cleared on early settle.",
+    "evidence": ["probe-hang4-*.json", "run-dialog-*.log", "run-audit-first.log", "run-nav-timeout-then-audit.log", "run-hangcontam.log", "probe-leak-paths.json"],
+    "hangcontam": "noisy -> timed-out nav -> audit(okslow): 0 contamination (Page.enable released 6ms after navigate started, so the commit was still tracked)"
+  },
+  "gap273": {
+    "src": "probe-273.json",
+    "runtime": "17 shapes x10 = 170/170: the 4 audit-3 shapes (hash-404, replaceState-404, empty-body-404, empty-body-500), controls, 302->replaceState-404, 302->hash-404 (reports the redirect TARGET url), 302->replaceState-200 (nothing reported), JS 200->hash404, JS 404->200 (nothing reported: final document is 200), slow-body 404 (2.5s body), 5MB-body 404, slow-headers 500 (1.2s), 302->500(js)->302->200 (the intermediate 500 is not reported as own-status), 302->500(js)->302->404 (reports only the final 404 at its URL), iframe empty-body 404 under a 200 main page (reported as a subresource, never as own-status)",
+    "cli": "5 shapes x10 = 50/50, exactly one JSON doc each",
+    "responseReceivedSignal": "Network.responseReceived fires at headers, and the status is final at headers. Slow and huge bodies are 10/10. loadingFinished / ExtraInfo aren't needed for the status.",
+    "gap275Side": "Because the capture no longer depends on the ring buffer, audit-3's GAP-275 shapes now pass: 150-subresource own-404 3/3 (was 0/3), real GitHub 404 3/3 (was 0/5)"
+  },
+  "reruns": {
+    "audit-3": "probe-runtime all x10: all 47 verdicts at 10/10 (afterHang 3/3, repeat 25/25, 8 real sites 10/10, gap262 url-mode 10/10, b2 PASS); cdpStats 475/475 detached. CLI sweep 93/93, fine 52/52, shapes 12/12 exactly one doc. Concurrent: 12 one-doc, 4 zero-doc (1 Chrome start timeout under load + 3 ERR_ABORTED from same-tab racing, all empty stdout + exit 1, same classes as audit-3), 0 multi-doc. CLI own404 4 shapes 6/6 each (audit-3: 0/6 for 3 of them). real-docstatus: 35 own-error statuses reported, 0 missed, 1 stackoverflow row errored (0-width screenshot, bot page). vitals/B2/concurrency unchanged (delta 0).",
+    "audit-2": "gap262 url-mode core 0/21 leaks, tight/pagehide noise 0/40, crossSite 0/10, own-status 404/500/redirect all kept, spaSelf 12 variants x3 own findings kept, realworld 0 dropped. MCP/SDK dialogs: same timings as audit-2 (alertAt1550 race flips between 1.5s and 31s, pre-existing D11-documented limit). gap263 ajv: 400-999 valid, 399/1000/float/string rejected.",
+    "audit-1": "vitals 17/18 ok (audit-1: 16/18), B2 spread 0, sdk-schema all 18 mutations rejected + unmutated valid, CLI dialog cases one JSON doc (the original GAP-261 failure is gone), L12 repeat runtime 20/20 + MCP 9/10 (see A4-2), B1residual current-page 5/5 LEAK (A4-2)"
+  },
+  "outOfScopeConfirmed": {
+    "GAP-277 snap --json": "still 2 docs 3/3 at alert@400 (unchanged, out of scope)",
+    "GAP-038": "L15 expected-miss; FR2-08 waitForPageSettle not in @sutradhar/browser; fixed 1500ms dwell remains",
+    "CLI profile dirs": "each CLI launch leaves an E:\\AI-Cache\\tmp\\sutradhar-cli-<ts> Chrome profile dir after close. Pre-existing, also present from other sessions. audit-4 removed the 264 it created."
+  },
+  "specCompliance": "fix-3 touched only runtime.ts audit(), its tests, and the fixture. D11 dialog check, D14 ordering, baseline, report/schema, MCP browser.audit, SDK Page.audit and CLI --json are unchanged and re-verified by live-verify 29/0/1 and the reruns. D9's current-page scoping is implemented as specified, but that specification does not achieve T11's stated goal (A4-2).",
+  "hygiene": {
+    "processBaseline": "process-baseline.txt",
+    "processAfter": "process-after.txt",
+    "newProcessesAfter": "3, all chrome renderers whose parent is PID 29088 (the user's own Chrome, present in the baseline); 0 audit-4 processes left",
+    "killedByImageName": false,
+    "tempDirsRemoved": "probe-273 temp root removed by the script; 264 sutradhar-cli-* dirs + fr212-audit1-cli-1790539751666 created by audit-4's rerun CLI probes and live-verify removed by exact timestamp window",
+    "sourcesRestored": "runtime.ts (mutation-test, sha256 match, dist/runtime.js byte-identical to the pre-mutation copy), cli.ts (mutation-cli, sha256 match); git status shows only audit-4/ untracked",
+    "evidenceOverwriteNote": "probe-hang4-dialog-auto.json was overwritten by the M2 mutation's live run (which used the same output name). The clean 5-trial evidence is run-dialog-auto.log plus the regenerated probe-hang4-dialog-auto-final.json. probe-hang4-dialog-timing hit its 290s watchdog after 18 steps (sync alerts make each navigate take 30s); its 8 audits are all bounded (1552-2563ms)."
+  }
+}

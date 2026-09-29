@@ -1,0 +1,18 @@
+{
+  "item": "FR2-06",
+  "round": "audit-2",
+  "verdict": "PASS (with minor caveats)",
+  "gap205": "113/113 live: every ENGINE_PREFIX_RE prefix (10) x 11 variants (case, whitespace, tab, pierce/-wrapped, empty payload, '==') matches spec 2.1 char-for-char in both .reason and the full InvalidSelectorError.message; advised slash forms accepted by the detector",
+  "gap206": "13/13 must-reject chains 0 runtime CDP sends (3-hop bad last, bad middle, non-iframe first hop, nonexistent first hop, 4-hop, whitespace, node-id hop, pierce/ space, getByRole, bare xpath, [#12], aria=, extractData); 8/8 all-valid chains resolve (incl. pierce/, xpath/, whitespace/empty segments, extractData 3-hop); 2/2 semantically-wrong valid-syntax chains still reach the browser with the right error",
+  "r7": "asserts not.toHaveBeenCalled on both mocks; faithful revert (same wrapper, lazy per-hop validation) KILLED only by the line-970 call-count assertion",
+  "mutations": "M1-M6 + M3b killed; M7 (rethrow wrapped in a NEW TypeError) survives P10",
+  "extra": "GAP-213/210 26/26; live click K1-K3 3/3",
+  "vitest": {"browser": "424/424", "capability-runtime": "158/158", "cli": "177/177", "mcp-server": "88/88"},
+  "typecheck_build": "tsc build + --noEmit exit 0 for all 4 packages",
+  "live_verify_fr2_06": "23/23 (20 mcp + 3 cli)",
+  "regress_fr2_01": "28/28, 12/12, 8/8 (redirected to audit-2/regress-fr2-01)",
+  "regress_fr2_02": "30/30, 27/27, 4/4 (redirected to audit-2/regress-fr2-02)",
+  "fr2_01_evidence_clean": true,
+  "leftover_test_chrome": 0,
+  "gaps": ["GAP-214", "GAP-215", "GAP-216"]
+}

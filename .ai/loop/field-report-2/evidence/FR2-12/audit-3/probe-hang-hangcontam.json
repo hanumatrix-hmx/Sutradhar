@@ -1,0 +1,59 @@
+{
+  "order": "hangcontam",
+  "steps": [
+    {
+      "label": "nav noisy",
+      "ms": 107,
+      "ok": true,
+      "r": "http://127.0.0.1:55263/noisy?n=0"
+    },
+    {
+      "label": "nav hang (times out; noisy page keeps running)",
+      "ms": 30006,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "audit okslow (clean page)",
+      "ms": 181968,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:55263/okslow?n=0",
+        "broken": 0,
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "control: nav noisy",
+      "ms": 10,
+      "ok": true,
+      "r": "http://127.0.0.1:55263/noisy?n=1"
+    },
+    {
+      "label": "control: audit okslow",
+      "ms": 1970,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:55263/okslow?n=1",
+        "broken": 0,
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    }
+  ],
+  "cdp": [
+    {
+      "createMs": 1,
+      "send Page.enable ms": 180012
+    },
+    {
+      "createMs": 1,
+      "send Page.enable ms": 0,
+      "detachStarted": "2026-09-27T18:34:27.742Z",
+      "detach": "ok",
+      "detachMs": 1
+    }
+  ]
+}

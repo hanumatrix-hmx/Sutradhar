@@ -1,0 +1,358 @@
+{
+  "ok": true,
+  "cleanup": [
+    "E:\\AI-Cache\\tmp\\fr2-06-audit1-trace-4Y6QwG",
+    "E:\\AI-Cache\\tmp\\fr2-06-audit1-mcp-kiI6TG",
+    "E:\\AI-Cache\\tmp\\fr2-06-audit1-cli-state-y9mwrP"
+  ],
+  "cliInfo": {
+    "stateDir": "E:\\AI-Cache\\tmp\\fr2-06-audit1-cli-state-y9mwrP",
+    "chromePid": 105804
+  },
+  "cases": [
+    {
+      "case": "M-zero-cdp browser.click {\"target\":\"text=Submit\"}",
+      "ms": 1,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "click failed: Invalid selector \"text=Submit\" — \"text=\" is Playwright selector-engine syntax (Puppeteer's own text query is spelled \"text/\"). Use standard CSS or a snapshot node id (e.g. \"12\"); Puppete",
+      "pass": true
+    },
+    {
+      "case": "M-zero-cdp browser.right_click {\"target\":\"button >> text=OK\"}",
+      "ms": 0,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "right_click failed: Invalid selector \"button >> text=OK\" — \">>\" (Playwright selector chaining) is Playwright selector syntax. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, x",
+      "pass": true
+    },
+    {
+      "case": "M-zero-cdp browser.type {\"target\":\"div:has-text(\\\"x\\\")\",\"value\":\"x\"}",
+      "ms": 0,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "type failed: Invalid selector \"div:has-text(\"x\")\" — \":has-text(\" is a Playwright-only pseudo-class, not CSS. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and ",
+      "pass": true
+    },
+    {
+      "case": "M-zero-cdp browser.hover {\"target\":\"getByRole('button')\"}",
+      "ms": 1,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "hover failed: Invalid selector \"getByRole('button')\" — \"getByRole(\" is a Playwright locator method, not a selector. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, ari",
+      "pass": true
+    },
+    {
+      "case": "M-zero-cdp browser.focus {\"target\":\"internal:role=button\"}",
+      "ms": 1,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "focus failed: Invalid selector \"internal:role=button\" — \"internal:role=\" is Playwright-internal selector syntax (as printed by Playwright locators/codegen), not CSS. Use standard CSS or a snapshot nod",
+      "pass": true
+    },
+    {
+      "case": "M-zero-cdp browser.select_option {\"target\":\"role=combobox\",\"value\":\"v\"}",
+      "ms": 0,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "select_option failed: Invalid selector \"role=combobox\" — \"role=\" is Playwright selector-engine syntax. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ ",
+      "pass": true
+    },
+    {
+      "case": "M-zero-cdp browser.select_options {\"target\":\"css=select\",\"values\":[\"v\"]}",
+      "ms": 1,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "select_options failed: Invalid selector \"css=select\" — \"css=\" is Playwright's explicit CSS-engine prefix; drop it and pass the CSS itself. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer",
+      "pass": true
+    },
+    {
+      "case": "M-zero-cdp browser.wait_for_selector {\"target\":\"xpath=//div\"}",
+      "ms": 0,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "wait_for_selector failed: Invalid selector \"xpath=//div\" — \"xpath==\" is not supported; use the slash form \"xpath=/\". Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, ar",
+      "pass": true
+    },
+    {
+      "case": "M-zero-cdp browser.upload_file {\"target\":\"#12\",\"filePath\":\"E:\\\\HMX_Projects\\\\Internal_Projects\\\\PinchTab\\\\.clau",
+      "ms": 1,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "upload_file failed: Invalid selector \"#12\" — this looks like a snapshot node id; pass just the number, e.g. \"12\". Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/",
+      "pass": true
+    },
+    {
+      "case": "M-zero-cdp browser.drag_and_drop {\"sourceTarget\":\"#plain-btn\",\"destTarget\":\"//div\"}",
+      "ms": 1,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "drag_and_drop failed: Invalid selector \"//div\" — this looks like an XPath expression; prefix it with \"xpath/\" (e.g. xpath///button[@id=\"go\"]). Use standard CSS or a snapshot node id (e.g. \"12\"); Puppe",
+      "pass": true
+    },
+    {
+      "case": "M-zero-cdp browser.drag_and_drop {\"sourceTarget\":\"aria=Go\",\"destTarget\":\"#plain-btn\"}",
+      "ms": 0,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "drag_and_drop failed: Invalid selector \"aria=Go\" — \"aria==\" is not supported; use the slash form \"aria=/\". Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and te",
+      "pass": true
+    },
+    {
+      "case": "M-zero-cdp browser.touch_tap {\"target\":\"button:visible\"}",
+      "ms": 0,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "touch_tap failed: Invalid selector \"button:visible\" — \":visible\" is a Playwright-only pseudo-class, not CSS. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and ",
+      "pass": true
+    },
+    {
+      "case": "M-zero-cdp browser.download_file {\"target\":\"\\\"Download\\\"\"}",
+      "ms": 1,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "download_file failed: Invalid selector \"\"Download\"\" — a quoted string is Playwright's legacy text selector, not CSS. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, ar",
+      "pass": true
+    },
+    {
+      "case": "M-zero-cdp browser.scroll {\"target\":\"data-testid=list\"}",
+      "ms": 1,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "scroll failed: Invalid selector \"data-testid=list\" — \"data-testid==\" is a Playwright attribute-engine prefix; use a CSS attribute selector such as [data-testid=\"…\"]. Use standard CSS or a snapshot nod",
+      "pass": true
+    },
+    {
+      "case": "M-zero-cdp browser.upload_file_via_trigger {\"target\":\"text=Browse\",\"filePath\":\"E:\\\\HMX_Projects\\\\Internal_Projects\\\\PinchTa",
+      "ms": 1,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "upload_file_via_trigger failed: Invalid selector \"text=Browse\" — \"text=\" is Playwright selector-engine syntax (Puppeteer's own text query is spelled \"text/\"). Use standard CSS or a snapshot node id (e",
+      "pass": true
+    },
+    {
+      "case": "M-zero-cdp browser.eval {\"code\":\"1\",\"frameSelector\":\"role=frame\"}",
+      "ms": 1,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "eval failed: Invalid frameSelector \"role=frame\" (from the full chain \"role=frame\") — \"role=\" is Playwright selector-engine syntax. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierc",
+      "pass": true
+    },
+    {
+      "case": "M-zero-cdp browser.extract_data {\"fields\":{\"a\":{\"selector\":\"text=Buy\"},\"b\":{\"selector\":\"li >> nth=0\"}}}",
+      "ms": 1,
+      "isError": true,
+      "cdpOrNet": [],
+      "text": "extract_data failed: Invalid selector for field \"a\": \"text=Buy\" — \"text=\" is Playwright selector-engine syntax (Puppeteer's own text query is spelled \"text/\").\nInvalid selector for field \"b\": \"li >> n",
+      "pass": true
+    },
+    {
+      "case": "M-fill_form per-field: Playwright field fails with hint, other field still dispatched",
+      "pw": {
+        "success": false,
+        "actionType": "type",
+        "executionTimeMs": 0,
+        "error": "Invalid selector \"text=Name\" — \"text=\" is Playwright selector-engine syntax (Puppeteer's own text query is spelled \"text/\"). Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id."
+      },
+      "other": false,
+      "cdpForOtherField": 100,
+      "pass": true
+    },
+    {
+      "case": "M-control-valid-click-is-traced",
+      "success": true,
+      "cdpSends": 26,
+      "last": "plain-btn",
+      "pass": true
+    },
+    {
+      "case": "M-invalid-css-single-probe",
+      "ms": 1,
+      "retriesUsed": 0,
+      "sends": [
+        "Runtime.callFunctionOn(function selectorSyntaxProbeIn)"
+      ],
+      "err": "Invalid selector \"button[\" — Failed to execute 'querySelector' on 'DocumentFragment': 'button[' is not a valid selector. Use standard CSS or a snapshot node id ",
+      "pass": true
+    },
+    {
+      "case": "C0-cli-no-session-playwright-click: exit 1, zero spawn/connect/cdp, state dir untouched",
+      "code": 1,
+      "ms": 226,
+      "trace": [],
+      "before": {
+        "exists": false,
+        "dirEntries": []
+      },
+      "after": {
+        "exists": false,
+        "dirEntries": []
+      },
+      "stderr": "Error: Invalid selector \"text=Submit\" — \"text=\" is Playwright selector-engine syntax (Puppeteer's own text query is spelled \"text/\"). Use standard CSS or a snap",
+      "pass": true
+    },
+    {
+      "case": "C0b-tracer-loaded-in-cli-child",
+      "starts": 1,
+      "pass": true
+    },
+    {
+      "case": "C1-cli-nav-creates-session (tracer control: sees spawns + CDP)",
+      "code": 0,
+      "navTraceSpawns": 1,
+      "navCdp": 37,
+      "pass": true
+    },
+    {
+      "case": "C2-cli-existing-session click text=Submit: exit 1, zero connect/cdp, state unchanged, chrome alive",
+      "code": 1,
+      "ms": 237,
+      "trace": [],
+      "stateUnchanged": true,
+      "chromeAlive": true,
+      "stderr": "Error: Invalid selector \"text=Submit\" — \"text=\" is Playwright selector-engine syntax (Puppeteer's own text query is spelled \"text/\"). Use st",
+      "pass": true
+    },
+    {
+      "case": "C2-cli-existing-session type role=textbox hi: exit 1, zero connect/cdp, state unchanged, chrome alive",
+      "code": 1,
+      "ms": 221,
+      "trace": [],
+      "stateUnchanged": true,
+      "chromeAlive": true,
+      "stderr": "Error: Invalid selector \"role=textbox\" — \"role=\" is Playwright selector-engine syntax. Use standard CSS or a snapshot node id (e.g. \"12\"); P",
+      "pass": true
+    },
+    {
+      "case": "C2-cli-existing-session press button >> text=OK Enter: exit 1, zero connect/cdp, state unchanged, chrome alive",
+      "code": 1,
+      "ms": 224,
+      "trace": [],
+      "stateUnchanged": true,
+      "chromeAlive": true,
+      "stderr": "Error: Invalid selector \"button >> text=OK\" — \">>\" (Playwright selector chaining) is Playwright selector syntax. Use standard CSS or a snaps",
+      "pass": true
+    },
+    {
+      "case": "C2-cli-existing-session select div:has-text(\"x\") v: exit 1, zero connect/cdp, state unchanged, chrome alive",
+      "code": 1,
+      "ms": 231,
+      "trace": [],
+      "stateUnchanged": true,
+      "chromeAlive": true,
+      "stderr": "Error: Invalid selector \"div:has-text(\"x\")\" — \":has-text(\" is a Playwright-only pseudo-class, not CSS. Use standard CSS or a snapshot node i",
+      "pass": true
+    },
+    {
+      "case": "C2-cli-existing-session wait getByRole('button'): exit 1, zero connect/cdp, state unchanged, chrome alive",
+      "code": 1,
+      "ms": 227,
+      "trace": [],
+      "stateUnchanged": true,
+      "chromeAlive": true,
+      "stderr": "Error: Invalid selector \"getByRole('button')\" — \"getByRole(\" is a Playwright locator method, not a selector. Use standard CSS or a snapshot ",
+      "pass": true
+    },
+    {
+      "case": "C2-cli-existing-session eval 1 --frame iframe#f::role=frame: exit 1, zero connect/cdp, state unchanged, chrome alive",
+      "code": 1,
+      "ms": 221,
+      "trace": [],
+      "stateUnchanged": true,
+      "chromeAlive": true,
+      "stderr": "Error: Invalid frameSelector \"role=frame\" (from the full chain \"iframe#f::role=frame\") — \"role=\" is Playwright selector-engine syntax. Use s",
+      "pass": true
+    },
+    {
+      "case": "C2-cli-existing-session eval 1 --frame internal:role=frame: exit 1, zero connect/cdp, state unchanged, chrome alive",
+      "code": 1,
+      "ms": 223,
+      "trace": [],
+      "stateUnchanged": true,
+      "chromeAlive": true,
+      "stderr": "Error: Invalid frameSelector \"internal:role=frame\" (from the full chain \"internal:role=frame\") — \"internal:role=\" is Playwright-internal sel",
+      "pass": true
+    },
+    {
+      "case": "C2-cli-existing-session hover internal:has-text=\"x\": exit 1, zero connect/cdp, state unchanged, chrome alive",
+      "code": 1,
+      "ms": 218,
+      "trace": [],
+      "stateUnchanged": true,
+      "chromeAlive": true,
+      "stderr": "Error: Invalid selector \"internal:has-text=\"x\"\" — \"internal:has-text=\" is Playwright-internal selector syntax (as printed by Playwright loca",
+      "pass": true
+    },
+    {
+      "case": "C2-cli-existing-session scroll down 100 xpath=//div: exit 1, zero connect/cdp, state unchanged, chrome alive",
+      "code": 1,
+      "ms": 227,
+      "trace": [],
+      "stateUnchanged": true,
+      "chromeAlive": true,
+      "stderr": "Error: Invalid selector \"xpath=//div\" — \"xpath==\" is not supported; use the slash form \"xpath=/\". Use standard CSS or a snapshot node id (e.",
+      "pass": true
+    },
+    {
+      "case": "C2-cli-existing-session upload #12 E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\.ai\\loop\\field-report-2\\evidence\\FR2-06\\audit-1\\fixture-audit.html: exit 1, zero connect/cdp, state unchanged, chrome alive",
+      "code": 1,
+      "ms": 274,
+      "trace": [],
+      "stateUnchanged": true,
+      "chromeAlive": true,
+      "stderr": "Error: Invalid selector \"#12\" — this looks like a snapshot node id; pass just the number, e.g. \"12\". Use standard CSS or a snapshot node id ",
+      "pass": true
+    },
+    {
+      "case": "C2-cli-existing-session drag aria=Go #plain-btn: exit 1, zero connect/cdp, state unchanged, chrome alive",
+      "code": 1,
+      "ms": 257,
+      "trace": [],
+      "stateUnchanged": true,
+      "chromeAlive": true,
+      "stderr": "Error: Invalid selector \"aria=Go\" — \"aria==\" is not supported; use the slash form \"aria=/\". Use standard CSS or a snapshot node id (e.g. \"12",
+      "pass": true
+    },
+    {
+      "case": "C2-cli-existing-session drag #plain-btn //div: exit 1, zero connect/cdp, state unchanged, chrome alive",
+      "code": 1,
+      "ms": 231,
+      "trace": [],
+      "stateUnchanged": true,
+      "chromeAlive": true,
+      "stderr": "Error: Invalid selector \"//div\" — this looks like an XPath expression; prefix it with \"xpath/\" (e.g. xpath///button[@id=\"go\"]). Use standard",
+      "pass": true
+    },
+    {
+      "case": "C2-cli-existing-session download css=a: exit 1, zero connect/cdp, state unchanged, chrome alive",
+      "code": 1,
+      "ms": 233,
+      "trace": [],
+      "stateUnchanged": true,
+      "chromeAlive": true,
+      "stderr": "Error: Invalid selector \"css=a\" — \"css=\" is Playwright's explicit CSS-engine prefix; drop it and pass the CSS itself. Use standard CSS or a ",
+      "pass": true
+    },
+    {
+      "case": "C3-cli-same-session-still-works-after-rejections",
+      "clickCode": 0,
+      "evalOut": "plain-btn",
+      "sameChromePid": true,
+      "sameSha": true,
+      "pass": true
+    },
+    {
+      "case": "C4-cli-invalid-css",
+      "code": 1,
+      "ms": 243,
+      "out": "Click failed: Invalid selector \"div[\" — Failed to execute 'querySelector' on 'DocumentFragment': 'div[' is not a valid selector. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/",
+      "pass": true
+    },
+    {
+      "case": "C5-cli-close",
+      "code": 0,
+      "chromeAliveAfterClose": false,
+      "pass": true
+    }
+  ]
+}

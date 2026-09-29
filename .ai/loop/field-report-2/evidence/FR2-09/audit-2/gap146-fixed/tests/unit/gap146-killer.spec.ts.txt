@@ -1,0 +1,19 @@
+// audit-2: the case that ACTUALLY distinguishes the GAP-146 fix from the unfixed code:
+// a single, UNIQUE frame name longer than 30 chars (or containing a sanitized char).
+// Unfixed (raw allNames): sanitized name never equals its raw form -> occurrences 0 -> numeric.
+// Fixed: quoted truncated name, matching snapshot().
+import { buildAxSnapshot } from 'E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/capability-runtime/src/snapshot/ax-snapshot.js';
+for (const raw of ['c'.repeat(45), 'pay[1]', 'my "card"']) {
+  it(`unique frame name ${JSON.stringify(raw)} renders quoted (sanitized), not numeric`, async () => {
+    const frame = { url: () => 'about:srcdoc', name: () => raw, isDetached: () => false };
+    const main = { url: () => 'https://x.test', name: () => '', isDetached: () => false };
+    const tree = { role: 'RootWebArea', name: '', children: [{ role: 'Iframe', name: '',
+      elementHandle: async () => ({ contentFrame: async () => frame, dispose: async () => {} }),
+      children: [{ role: 'RootWebArea', name: '', children: [{ role: 'button', name: 'One' }] }] }] };
+    const page = { accessibility: { snapshot: async () => tree }, url: () => 'https://x.test', title: async () => 'T',
+      frames: () => [main, frame], mainFrame: () => main };
+    const r = await buildAxSnapshot(page);
+    expect(r.listing).not.toContain('[iframe 1 ');
+    expect(r.listing).toMatch(/\[iframe "/);
+  });
+}

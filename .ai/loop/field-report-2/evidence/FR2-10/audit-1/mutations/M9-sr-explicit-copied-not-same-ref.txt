@@ -1,0 +1,85 @@
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/mcp-server[39m
+
+ [33m❯[39m tests/unit/session-resolution.spec.ts [2m ([22m[2m23 tests[22m [2m|[22m [31m1 failed[39m[2m)[22m[90m 12[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/session-resolution.spec.ts[2m > [22mwithSessionResolution[2m > [22mW4: explicit id -> same args reference in, same return reference out, sync stays sync[39m
+[31m     → expected Promise{…} to be { content: [] } // Object.is equality[39m
+ [33m❯[39m tests/unit/tools.spec.ts [2m ([22m[2m38 tests[22m [2m|[22m [31m1 failed[39m[2m)[22m[90m 72[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT8: browser.get_viewport (sync handler) resolves the omitted id; explicit id stays synchronous[39m
+[31m     → expected Promise{…} to not be an instance of Promise[39m
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mconstructs SutradharRuntime with the 30-minute default idleTimeoutMs when nothing overrides it[22m[39m
+{"timestamp":"2026-09-25T08:38:10.747Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mhonors SUTRADHAR_IDLE_TIMEOUT_MS when set[22m[39m
+{"timestamp":"2026-09-25T08:38:10.754Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mhonors an explicit idleTimeoutMs option over the env var and default[22m[39m
+{"timestamp":"2026-09-25T08:38:10.758Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2midleTimeoutMs:0 disables the reaper (passed through as undefined, matching SutradharRuntime's "unset = disabled" contract)[22m[39m
+{"timestamp":"2026-09-25T08:38:10.760Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mdoes not construct a new SutradharRuntime at all when the caller supplies one directly[22m[39m
+{"timestamp":"2026-09-25T08:38:10.761Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring[2m > [22m[2mdefaults to false (unrestricted) when nothing overrides it[22m[39m
+{"timestamp":"2026-09-25T08:38:10.762Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring[2m > [22m[2mhonors SUTRADHAR_RESTRICT_NAVIGATION_TO_LOCAL=1[22m[39m
+{"timestamp":"2026-09-25T08:38:10.764Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring[2m > [22m[2mhonors an explicit restrictNavigationToLocal option over the env var[22m[39m
+{"timestamp":"2026-09-25T08:38:10.765Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer allowedDomains wiring[2m > [22m[2mdefaults to undefined (unrestricted) when nothing overrides it[22m[39m
+{"timestamp":"2026-09-25T08:38:10.770Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer allowedDomains wiring[2m > [22m[2mhonors SUTRADHAR_ALLOWED_DOMAINS as a comma-separated list, trimmed[22m[39m
+{"timestamp":"2026-09-25T08:38:10.771Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer allowedDomains wiring[2m > [22m[2mhonors an explicit allowedDomains option over the env var[22m[39m
+{"timestamp":"2026-09-25T08:38:10.773Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+ [32m✓[39m tests/unit/server.spec.ts [2m ([22m[2m11 tests[22m[2m)[22m[90m 28[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m70 passed[39m[22m[90m (72)[39m
+[2m   Start at [22m 14:08:09
+[2m   Duration [22m 1.63s[2m (transform 890ms, setup 0ms, collect 2.21s, tests 112ms, environment 0ms, prepare 439ms)[22m
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 2 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/session-resolution.spec.ts[2m > [22mwithSessionResolution[2m > [22mW4: explicit id -> same args reference in, same return reference out, sync stays sync
+[31m[1mAssertionError[22m: expected Promise{…} to be { content: [] } // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- Object {[39m
+[32m-   "content": Array [],[39m
+[32m- }[39m
+[31m+ Promise {}[39m
+
+[36m [2m❯[22m tests/unit/session-resolution.spec.ts:[2m221:17[22m[39m
+    [90m219| [39m    [35mconst[39m ret [33m=[39m tools[33m.[39m[35mget[39m([32m't.req'[39m)[33m![39m[33m.[39m[34mhandler[39m(args[33m,[39m undefined)[33m;[39m
+    [90m220| [39m    [34mexpect[39m(inner)[33m.[39m[34mtoHaveBeenCalledWith[39m(args[33m,[39m undefined)[33m;[39m
+    [90m221| [39m    [34mexpect[39m(ret)[33m.[39m[34mtoBe[39m(innerReturn)[33m;[39m
+    [90m   | [39m                [31m^[39m
+    [90m222| [39m    [34mexpect[39m(ret)[33m.[39mnot[33m.[39m[34mtoBeInstanceOf[39m([33mPromise[39m)[33m;[39m
+    [90m223| [39m    [34mexpect[39m(listSessions)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT8: browser.get_viewport (sync handler) resolves the omitted id; explicit id stays synchronous
+[31m[1mAssertionError[22m: expected Promise{…} to not be an instance of Promise[39m
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m678:25[22m[39m
+    [90m676| [39m
+    [90m677| [39m    [35mconst[39m syncRet [33m=[39m tools[33m.[39m[35mget[39m([32m'browser.get_viewport'[39m)[33m![39m[33m.[39m[34mhandler[39m({ sessi…
+    [90m678| [39m    [34mexpect[39m(syncRet)[33m.[39mnot[33m.[39m[34mtoBeInstanceOf[39m([33mPromise[39m)[33m;[39m
+    [90m   | [39m                        [31m^[39m
+    [90m679| [39m  })[33m;[39m
+    [90m680| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+

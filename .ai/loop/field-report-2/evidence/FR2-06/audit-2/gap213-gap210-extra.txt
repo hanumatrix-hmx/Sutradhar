@@ -1,0 +1,27 @@
+PASS detect "pierce/\ttext=Submit" -> engine-prefix (want engine-prefix) reason="\"text=\" is Playwright selector-engine syntax (Puppeteer's own text query is spelled \"text/\")."
+PASS detect "pierce/\n role=button" -> engine-prefix (want engine-prefix) reason="\"role=\" is Playwright selector-engine syntax."
+PASS detect "pierce/   xpath=//a" -> engine-prefix (want engine-prefix) reason="\"xpath=\" is not supported; use the slash form \"xpath/\"."
+PASS detect "pierce/ //button" -> bare-xpath (want bare-xpath) reason="this looks like an XPath expression; prefix it with \"xpath/\" (e.g. xpath///button[@id=\"go\"])."
+PASS detect "pierce/ \"Submit\"" -> quoted-text (want quoted-text) reason="a quoted string is Playwright's legacy text selector, not CSS."
+PASS detect "pierce/ #12" -> node-id-syntax (want node-id-syntax) reason="this looks like a snapshot node id; pass just the number, e.g. \"12\"."
+PASS detect "pierce/ [#12]" -> node-id-syntax (want node-id-syntax) reason="this looks like a snapshot node id; pass just the number, e.g. \"12\"."
+PASS detect "pierce/ internal:role=button" -> internal (want internal) reason="\"internal:role=\" is Playwright-internal selector syntax (as printed by Playwright locators/codegen), not CSS."
+PASS detect "pierce/ button >> text=OK" -> chain (want chain) reason="\">>\" (Playwright selector chaining) is Playwright selector syntax."
+PASS detect "pierce/ button:has-text(\"x\")" -> pseudo (want pseudo) reason="\":has-text(\" is a Playwright-only pseudo-class, not CSS."
+PASS detect "  pierce/  css=button  " -> engine-prefix (want engine-prefix) reason="\"css=\" is Playwright's explicit CSS-engine prefix; drop it and pass the CSS itself."
+PASS no-false-positive "pierce/ #x" -> null
+PASS no-false-positive "pierce/  div > span" -> null
+PASS no-false-positive "pierce/\tbutton.primary" -> null
+PASS no-false-positive "pierce/ [data-testid=\"go\"]" -> null
+PASS no-false-positive "pierce/ a[href*=\"text=\"]" -> null
+PASS no-false-positive "pierce/ " -> null
+PASS D4-unscanned "xpath/ //a" -> null
+PASS D4-unscanned "aria/ text=x" -> null
+PASS D4-unscanned "text/ role=x" -> null
+PASS rethrow non-string selector (number) -> TypeError: target.trim is not a function
+PASS rethrow non-string selector (undefined) -> TypeError: Cannot read properties of undefined (reading 'trim')
+PASS rethrow non-string selector (object) -> TypeError: target.trim is not a function
+PASS rethrow non-string selector (boolean) -> TypeError: target.trim is not a function
+PASS Playwright field then non-string field -> TypeError: target.trim is not a function
+PASS extract collection uses fixed GAP-205 text: ["Invalid selector for field \"a\": \"xpath=//x\" — \"xpath=\" is not supported; use the slash form \"xpath/\".","Invalid selector for field \"b\": \"id=main\" — \"id=\" is a Playwright attribute-engine prefix; use a CSS attribute selector such as [id=\"…\"]."]
+TOTAL pass=26 fail=0

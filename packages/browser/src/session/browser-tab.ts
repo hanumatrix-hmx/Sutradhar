@@ -18,7 +18,7 @@ import {
   BrowserActionResultDto,
 } from '@sutradhar/contracts';
 import { EventBus } from '@sutradhar/events';
-import { Dialog, Page } from 'puppeteer-core';
+import { Dialog, KeyInput, Page } from 'puppeteer-core';
 
 /** How long a native dialog is left pending before it's auto-resolved so the page doesn't
  *  hang forever if nothing ever calls {@link BrowserTab.handleDialog}. Deliberately generous
@@ -28,6 +28,14 @@ import { Dialog, Page } from 'puppeteer-core';
  *  agent/tool round trip of even a couple of seconds per call could burn the whole window
  *  before the second call ever reached the dialog, silently auto-dismissing it instead. */
 const DEFAULT_DIALOG_TIMEOUT_MS = 30000;
+
+/** FR2-12 escalation-1 (GAP-278). Bound for {@link BrowserTab.setupCommitTracking}'s
+ *  `Page.enable`/`Network.enable`/`Page.getFrameTree` setup — same value and same reasoning as
+ *  runtime.ts's `AUDIT_CDP_SETUP_BOUND_MS` (GAP-274): generous for a healthy target, but short
+ *  enough that a stuck dialog/navigation on tab construction never leaves a long-hanging
+ *  in-flight promise around. The worst case if this bound is hit is just "commit-tracking isn't
+ *  wired up yet" (falls back to `documentStartedAt`-only scoping), never a hang. */
+const COMMIT_TRACKING_SETUP_BOUND_MS = 1000;
 
 /** How long a `beforeunload` dialog specifically is left pending before auto-dismissal — much
  *  shorter than {@link DEFAULT_DIALOG_TIMEOUT_MS}. A `beforeunload` dialog uniquely blocks an
@@ -89,6 +97,45 @@ export interface PendingDialogInfo {
   readonly defaultValue?: string;
 }
 
+/** FR2-04: how a tab's native dialogs (alert/confirm/prompt/beforeunload) are resolved.
+ *  `'auto'` (the default) is byte-for-byte today's pre-FR2-04 behavior — a 30s dismiss timer
+ *  for alert/confirm/prompt, a 3s accept timer for beforeunload — so MCP and the SDK, which
+ *  never pass this, are unaffected. `'report'` (the CLI's own default) never auto-resolves
+ *  alert/confirm/prompt at all (they stay pending until something calls handleDialog), but
+ *  still keeps the 3s beforeunload accept — a page-initiated navigation must not hang forever
+ *  just because nothing is watching for it. `'accept'`/`'dismiss'` resolve every dialog
+ *  immediately with that action. */
+export type DialogPolicyMode = 'auto' | 'report' | 'accept' | 'dismiss';
+
+export interface DialogPolicy {
+  readonly mode: DialogPolicyMode;
+  /** Only meaningful for `'accept'` on a `prompt()` dialog — the text entered. Omitted means
+   *  "whatever the prompt's own default value is" (see BrowserTab's accept-prompt-text rule). */
+  readonly promptText?: string;
+}
+
+export const DEFAULT_DIALOG_POLICY: DialogPolicy = { mode: 'auto' };
+
+/** Bound on {@link BrowserTab.getDialogHistory}'s ring buffer — plenty for a CLI session's
+ *  worth of dialogs without growing unbounded across a very long-lived one. */
+export const MAX_DIALOG_HISTORY = 50;
+
+/** One dialog this tab has seen, from the moment it opened to however it was (or wasn't yet)
+ *  resolved. Pushed once a dialog finishes being handled — by policy, by an explicit caller
+ *  {@link BrowserTab.handleDialog} call, or by the safety-net auto-timeout. */
+export interface DialogRecord {
+  readonly dialogType: string;
+  readonly message: string;
+  readonly defaultValue?: string;
+  readonly url: string;
+  readonly openedAt: string;
+  readonly handledAt?: string;
+  readonly action?: 'accept' | 'dismiss';
+  readonly promptText?: string;
+  readonly handledBy?: 'policy' | 'caller' | 'auto-timeout';
+  readonly error?: string;
+}
+
 /**
  * A tab-level lock so multiple concurrent callers (separate agents/sessions sharing one
  * Sutradhar session) can coordinate who's currently driving a tab — matches real PinchTab's
@@ -137,6 +184,13 @@ export interface IBrowserTab {
   getNetworkLog(): readonly NetworkLogEntry[];
   getPendingDialog(): PendingDialogInfo | undefined;
   handleDialog(action: 'accept' | 'dismiss', promptText?: string): Promise<void>;
+  /** FR2-04. Optional so existing `IBrowserTab` literal mocks (e.g. dom-semantic-engine.spec.ts)
+   *  keep compiling unchanged. */
+  readonly targetId?: string;
+  setDialogPolicy?(policy: DialogPolicy): void;
+  getDialogPolicy?(): DialogPolicy;
+  getPendingDialogDetail?(): (PendingDialogInfo & { url: string; openedAt: string }) | undefined;
+  getDialogHistory?(): readonly DialogRecord[];
   addRoute(rule: RouteRule): Promise<void>;
   clearRoutes(): Promise<void>;
   getActionHistory(): readonly ActionHistoryEntry[];
@@ -144,11 +198,86 @@ export interface IBrowserTab {
   getLock(): TabLockInfo | undefined;
   acquireLock(owner: string, ttlMs: number): boolean;
   releaseLock(owner: string): boolean;
+  /** FR2-12. ISO time this tab's console/page-error/network listeners were attached. Optional so
+   *  existing `IBrowserTab` literal mocks keep compiling unchanged. */
+  readonly observingSince?: string;
+  /** FR2-12 escalation-1 (GAP-278). Node ISO time of this tab's own main frame's last REAL
+   *  (cross-document) commit, tracked continuously from tab construction via a dedicated CDP
+   *  session — never updated by a same-document navigation (hash/pushState/replaceState). null
+   *  if never observed yet, or if commit-tracking couldn't be set up (e.g. `createCDPSession`
+   *  unavailable). Optional so existing `IBrowserTab` literal mocks keep compiling unchanged.
+   *  See `SutradharRuntime.audit`'s current-page-mode scoping for why this exists: it's the same
+   *  mechanism `audit({url})` already uses per-call (GAP-262/266/267 fix-1/fix-2), generalized to
+   *  run for the tab's whole lifetime so current-page mode (which doesn't navigate inside the
+   *  audit() call at all) can read a real commit instant too, instead of falling back to
+   *  `performance.timeOrigin` (navigation START, not commit — see GAP-278). */
+  getLastMainFrameCommitAt?(): string | null;
+  /** FR2-12 escalation-1 (GAP-278). The current main frame's own last live-captured Document
+   *  response (url/status/timestamp), tracked the same way as {@link getLastMainFrameCommitAt}.
+   *  null if never observed. Optional for the same mock-compatibility reason. */
+  getLastMainDocumentResponse?(): { readonly url: string; readonly status: number; readonly timestamp: string } | null;
+  /** FR2-12 escalation-1 (GAP-279). The `HTTPResponse` Puppeteer's `page.goto()` returned for
+   *  this tab's most recent `navigate()` call (url/status only), or null if `goto()` returned
+   *  null (e.g. a same-document navigation). Optional for the same mock-compatibility reason. */
+  getLastGotoResponse?(): { readonly url: string; readonly status: number } | null;
+  /** FR2-12 escalation-2 (GAP-285). True if the main frame's LAST commit was a bfcache restore
+   *  (CDP `Page.frameNavigated` with `type: 'BackForwardCacheRestore'`). A restored document's
+   *  own pre-restore console/page-error/network activity is not reliably scoped by `since`
+   *  (see {@link BrowserTab}'s `lastCommitWasBfcacheRestore` doc comment for why), so
+   *  `SutradharRuntime.audit` uses this to report `coversWholeDocument:false` honestly for such
+   *  an audit instead of implying complete coverage. Optional for the same mock-compatibility
+   *  reason as the other getters here. */
+  wasLastMainFrameCommitBfcacheRestore?(): boolean;
 }
 
 export class BrowserTab implements IBrowserTab {
   public readonly id: TabId;
   public readonly page?: Page;
+  /** FR2-12. ISO time this tab's console/page-error/network listeners were attached (set right
+   *  before {@link attachPageListeners} runs). Used by `SutradharRuntime.audit` to tell whether
+   *  the audit's console/page-error/network findings cover the whole document (this tab was
+   *  already observing before the document started) or only partial activity (e.g. a CLI process
+   *  that attached to an already-loaded page). */
+  public readonly observingSince: string;
+  /** FR2-12 escalation-1 (GAP-278). See {@link IBrowserTab.getLastMainFrameCommitAt}. */
+  private lastMainFrameCommitAt: string | null = null;
+  private lastMainFrameIdForCommitTracking: string | null = null;
+  private lastMainDocumentResponseCapture: { url: string; status: number; timestamp: string } | null = null;
+  /** FR2-12 escalation-2 (GAP-284). The `loaderId` {@link lastMainDocumentResponseCapture} was
+   *  captured for, or `null` if nothing has been captured yet (or the capture was just
+   *  invalidated). See {@link setupCommitTracking}'s `Page.frameNavigated` handler. */
+  private lastMainDocumentResponseLoaderId: string | null = null;
+  /** FR2-12 escalation-2 (GAP-285). True when the main frame's LAST commit was a
+   *  `Page.frameNavigated` whose CDP `type` was `'BackForwardCacheRestore'`. See
+   *  {@link IBrowserTab.wasLastMainFrameCommitBfcacheRestore}.
+   *
+   *  An earlier version of this fix rescoped `lastMainFrameCommitAt` BACKWARD to the restored
+   *  document's original commit instant on this event (looking it up from a small per-loaderId
+   *  history map), reasoning that the restored page's own load-time errors shouldn't fall outside
+   *  `since`. Live verification (escalation-2 probe `home->click404->go_back`, 12/12) found this
+   *  reopens exactly the contamination window GAP-284 (and every fix before it) closes: moving
+   *  `since` back to BEFORE the intervening page's own navigation also un-scopes THAT page's own
+   *  ring-buffer entries (console errors, page errors, broken requests — not just the single
+   *  `lastMainDocumentResponseCapture` value GAP-284 targets), so an intervening own-404's status
+   *  reappeared via the general `scopeToDocument` ring-buffer filter in `runtime.ts`, not via the
+   *  capture GAP-284 fixed. Correctly closing that would need a two-window scope (the document's
+   *  original [commit, navigated-away] span plus [restore, now]), which is a real, multi-day
+   *  rework of `scopeToDocument`'s single-boundary model — out of scope for this cycle. Instead,
+   *  `lastMainFrameCommitAt` is left exactly as before this fix (it moves to the restore instant,
+   *  same as any other commit), and this flag lets `SutradharRuntime.audit` report
+   *  `coversWholeDocument:false` honestly for a bfcache-restored current-page audit instead of
+   *  silently implying complete coverage while the restored document's own pre-restore activity
+   *  is not reliably scoped. See the escalation-2 evidence for the residual this leaves open. */
+  private lastCommitWasBfcacheRestore = false;
+  /** FR2-12 escalation-1 (GAP-279). The `HTTPResponse` Puppeteer's own `page.goto()` call
+   *  returned for this tab's most recent `navigate()`, captured directly from that call's own
+   *  return value rather than any listener. See {@link IBrowserTab.getLastGotoResponse}. */
+  private lastGotoResponse: { url: string; status: number } | null = null;
+  private commitTrackingCdpClient: {
+    send: (method: string) => Promise<unknown>;
+    on: (event: string, cb: (event: Record<string, unknown>) => void) => void;
+    detach: () => Promise<void>;
+  } | null = null;
   private currentUrl: string;
   private currentTitle: string;
   private activeState: boolean;
@@ -160,7 +289,10 @@ export class BrowserTab implements IBrowserTab {
   private readonly pageErrors: PageErrorEntry[] = [];
   private readonly networkLog: NetworkLogEntry[] = [];
   private pendingDialog?: Dialog;
+  private pendingDialogOpenedAt?: string;
   private dialogTimeout?: ReturnType<typeof setTimeout>;
+  private dialogPolicy: DialogPolicy;
+  private readonly dialogHistory: DialogRecord[] = [];
   private routeRules: RouteRule[] = [];
   private interceptionEnabled = false;
   private readonly actionHistory: ActionHistoryEntry[] = [];
@@ -174,6 +306,7 @@ export class BrowserTab implements IBrowserTab {
     page?: Page,
     sessionId?: SessionId,
     eventBus?: EventBus,
+    dialogPolicy: DialogPolicy = DEFAULT_DIALOG_POLICY,
   ) {
     this.id = id;
     this.currentUrl = initialUrl;
@@ -182,6 +315,8 @@ export class BrowserTab implements IBrowserTab {
     this.page = page;
     this.sessionId = sessionId;
     this.eventBus = eventBus;
+    this.dialogPolicy = dialogPolicy;
+    this.observingSince = new Date().toISOString();
 
     if (this.page) {
       this.attachPageListeners(this.page);
@@ -190,7 +325,166 @@ export class BrowserTab implements IBrowserTab {
       // will fire to trigger refreshTitleFromPage below). See that method's doc comment for
       // why `title` can't just read live the way `url` does.
       void this.refreshTitleFromPage();
+      // FR2-12 escalation-1 (GAP-278): fire-and-forget, best-effort. Never awaited by the
+      // constructor or any caller — a slow/stuck setup here must never block tab creation or
+      // any subsequent action, only delay when `getLastMainFrameCommitAt()` starts returning
+      // non-null (before that, callers fall back to `documentStartedAt`, same as today).
+      void this.setupCommitTracking(this.page);
     }
+  }
+
+  /**
+   * FR2-12 escalation-1 (GAP-278). Continuously tracks this tab's own main-frame REAL
+   * (cross-document) commit instant and its main document's own live response, for the tab's
+   * entire lifetime — the exact same raw-CDP technique `SutradharRuntime.audit`'s URL-mode
+   * already uses per-call (GAP-262 fix-1 / GAP-266+GAP-267 fix-2), just generalized to run from
+   * tab construction instead of being created and torn down inside a single `audit()` call.
+   * This is what lets current-page-mode `audit()` (which never calls `navigate()` itself) read a
+   * real commit instant instead of falling back to `performance.timeOrigin` (the navigation's
+   * START, not its commit — see runtime.ts's `audit` doc comment for why that gap matters: a
+   * previous document's own late-arriving events, timestamped by Node at CDP-message-arrival
+   * time, can land inside that too-early window and get misattributed to the new document).
+   *
+   * Deliberately listens ONLY to `Page.frameNavigated` (main frame, i.e. no `parentId`) — never
+   * `Page.navigatedWithinDocument` (CDP's own signal for a same-document nav: hash change /
+   * pushState / replaceState) — for the same reason fix-2 made that same choice: a same-document
+   * navigation must never move the commit instant later, or it would drop the new document's own
+   * early console errors / broken requests (GAP-266/267).
+   */
+  private async setupCommitTracking(page: Page): Promise<void> {
+    if (typeof (page as unknown as { createCDPSession?: unknown }).createCDPSession !== 'function') {
+      return;
+    }
+    try {
+      const client = await (
+        page as unknown as {
+          createCDPSession: () => Promise<{
+            send: (method: string) => Promise<unknown>;
+            on: (event: string, cb: (event: Record<string, unknown>) => void) => void;
+            detach: () => Promise<void>;
+          }>;
+        }
+      ).createCDPSession();
+      // Always detached in `close()` from this point on, no matter what happens next — mirrors
+      // GAP-274's fix: the reference is captured the instant creation resolves and is never
+      // cleared on a later failure, so a session is never leaked.
+      this.commitTrackingCdpClient = client;
+      client.on('Page.frameNavigated', (event) => {
+        const frame = event?.frame as { id?: string; parentId?: string; loaderId?: string } | undefined;
+        if (frame?.parentId) return; // ignore subframes
+        const navType = event?.type as string | undefined; // CDP: 'Navigation' | 'BackForwardCacheRestore' | 'Prerender'
+        const newLoaderId = frame?.loaderId ?? null;
+
+        // GAP-285 (escalation-2): record whether THIS commit was a bfcache restore so
+        // `SutradharRuntime.audit` can report `coversWholeDocument:false` for it (see
+        // {@link lastCommitWasBfcacheRestore}'s doc comment for why the commit instant itself is
+        // deliberately NOT rescoped backward here, unlike a first attempt at this fix).
+        this.lastCommitWasBfcacheRestore = navType === 'BackForwardCacheRestore';
+        this.lastMainFrameCommitAt = new Date().toISOString();
+        if (frame?.id) this.lastMainFrameIdForCommitTracking = frame.id;
+
+        // GAP-284 (escalation-2): `lastMainDocumentResponseCapture` below is only ever
+        // OVERWRITTEN by the next Document response — it was never CLEARED when a subsequent
+        // commit produced no response of its own at all (navigating to about:blank, a dead host
+        // that Chrome answers with its own synthetic error page and no real network response, or
+        // — per the branch above — a bfcache restore of a document OTHER than the one the
+        // capture belongs to). That let a previous page's own HTTP status get reported as the
+        // CURRENT page's status. Invalidate immediately on every main-frame commit whose
+        // loaderId doesn't match the loaderId the capture was recorded for — don't wait for a
+        // new response that may never arrive. A same-document navigation (hash/pushState/
+        // replaceState) never reaches this handler at all (CDP reports those via
+        // `Page.navigatedWithinDocument`, not `Page.frameNavigated`), so it can never trigger
+        // this clear — matching the GAP-266 rule this same file already relies on above.
+        if (this.lastMainDocumentResponseLoaderId !== newLoaderId) {
+          this.lastMainDocumentResponseCapture = null;
+          this.lastMainDocumentResponseLoaderId = null;
+        }
+      });
+      client.on('Network.responseReceived', (event) => {
+        const type = event?.type as string | undefined;
+        const frameId = event?.frameId as string | undefined;
+        const loaderId = (event?.loaderId as string | undefined) ?? null;
+        const response = event?.response as { url?: string; status?: number } | undefined;
+        if (type !== 'Document' || !response || typeof response.status !== 'number') return;
+        if (!this.lastMainFrameIdForCommitTracking || frameId !== this.lastMainFrameIdForCommitTracking) return;
+        // Deliberately NOT gated on the frame's currently-tracked loaderId here: CDP doesn't
+        // guarantee `Network.responseReceived` fires AFTER `Page.frameNavigated` for the SAME
+        // navigation — in practice the response for a new document typically arrives BEFORE its
+        // frame commits, while the tracked commit is still the PREVIOUS page's. The
+        // `Page.frameNavigated` handler above is what reconciles this — it clears the capture
+        // whenever the loaderId it just committed doesn't match `lastMainDocumentResponseLoaderId`,
+        // so a response captured for a since-superseded loaderId that a commit never confirms
+        // gets invalidated there instead of being gated out here.
+        this.lastMainDocumentResponseCapture = {
+          url: response.url ?? '',
+          status: response.status,
+          timestamp: new Date().toISOString(),
+        };
+        this.lastMainDocumentResponseLoaderId = loaderId;
+      });
+      // Bounded the same way as runtime.ts's per-call setup (GAP-274): these commands can hang
+      // indefinitely (e.g. an already-open dialog on the very page this tab was constructed
+      // around). Never block anything on this — the fire-and-forget caller above already isn't
+      // awaiting `setupCommitTracking` itself, but bounding the inner work too keeps a stuck
+      // `Page.enable` from leaving an unhandled rejection dangling indefinitely in the meantime.
+      const settled = (async () => {
+        await client.send('Page.enable').catch(() => {});
+        await client.send('Network.enable').catch(() => {});
+        try {
+          const tree = (await client.send('Page.getFrameTree')) as {
+            frameTree?: { frame?: { id?: string } };
+          } | null;
+          const treeFrameId = tree?.frameTree?.frame?.id;
+          if (treeFrameId) this.lastMainFrameIdForCommitTracking = treeFrameId;
+        } catch {
+          // Frame tree unavailable — lastMainFrameIdForCommitTracking stays whatever
+          // Page.frameNavigated has already set (or null).
+        }
+      })().then(
+        () => true,
+        () => false,
+      );
+      await new Promise<void>((resolve) => {
+        let done = false;
+        const timer = setTimeout(() => {
+          if (!done) {
+            done = true;
+            resolve();
+          }
+        }, COMMIT_TRACKING_SETUP_BOUND_MS);
+        void settled.then(() => {
+          if (!done) {
+            done = true;
+            clearTimeout(timer);
+            resolve();
+          }
+        });
+      });
+    } catch {
+      // `createCDPSession()` itself failed before `commitTrackingCdpClient` was ever assigned —
+      // nothing to detach. Callers fall back to `documentStartedAt`-only scoping, same as if
+      // commit tracking had never existed.
+    }
+  }
+
+  /** FR2-12 escalation-1 (GAP-278). See {@link IBrowserTab.getLastMainFrameCommitAt}. */
+  public getLastMainFrameCommitAt(): string | null {
+    return this.lastMainFrameCommitAt;
+  }
+
+  /** FR2-12 escalation-1 (GAP-278). See {@link IBrowserTab.getLastMainDocumentResponse}. */
+  public getLastMainDocumentResponse(): { readonly url: string; readonly status: number; readonly timestamp: string } | null {
+    return this.lastMainDocumentResponseCapture;
+  }
+
+  /** FR2-12 escalation-2 (GAP-285). See {@link IBrowserTab.wasLastMainFrameCommitBfcacheRestore}. */
+  public wasLastMainFrameCommitBfcacheRestore(): boolean {
+    return this.lastCommitWasBfcacheRestore;
+  }
+
+  /** FR2-12 escalation-1 (GAP-279). See {@link IBrowserTab.getLastGotoResponse}. */
+  public getLastGotoResponse(): { readonly url: string; readonly status: number } | null {
+    return this.lastGotoResponse;
   }
 
   public get url(): string {
@@ -239,7 +533,18 @@ export class BrowserTab implements IBrowserTab {
     this.currentUrl = url;
 
     if (this.page && !this.page.isClosed()) {
-      await this.page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      // FR2-12 escalation-1 (GAP-279): capture `goto()`'s own return value directly. When a
+      // dialog is already open as `audit({url})` starts, the CDP-level `Network.enable` (set up
+      // by `SutradharRuntime.audit`'s dedicated commit-tracking session) doesn't take effect
+      // until AFTER the main document's own response has already arrived, so that live capture
+      // misses it — `audit()` used to fall back to a URL-match search of the network ring
+      // buffer at that point, which GAP-273 already showed is fragile (hash/replaceState/
+      // empty-body-404 shapes). This is a second, independent source that needs no listener
+      // timing at all: Puppeteer's `page.goto()` always resolves with the response it actually
+      // navigated to (or `null` for a same-document/about:blank-style navigation), regardless of
+      // whether any CDP domain was enabled in time.
+      const response = await this.page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      this.lastGotoResponse = response ? { url: response.url(), status: response.status() } : null;
       this.currentUrl = this.page.url();
       try {
         this.currentTitle = await this.page.title();
@@ -310,7 +615,7 @@ export class BrowserTab implements IBrowserTab {
 
           case 'pressKey':
             if (!action.key) throw new Error("'pressKey' requires key");
-            await this.page!.keyboard.press(action.key as any);
+            await this.page!.keyboard.press(action.key as KeyInput);
             break;
 
           case 'evaluate': {
@@ -372,6 +677,14 @@ export class BrowserTab implements IBrowserTab {
     if (this.dialogTimeout) {
       clearTimeout(this.dialogTimeout);
     }
+    // FR2-12 escalation-1 (GAP-278): detach the commit-tracking CDP session before the page
+    // itself closes — mirrors runtime.ts's per-call `finally` detach so this tab-level,
+    // whole-lifetime session never leaks (same GAP-274 concern, just at tab-lifetime scope
+    // instead of single-audit-call scope).
+    if (this.commitTrackingCdpClient) {
+      await this.commitTrackingCdpClient.detach().catch(() => {});
+      this.commitTrackingCdpClient = null;
+    }
     if (this.page && !this.page.isClosed()) {
       await this.page.close().catch(() => {});
     }
@@ -427,6 +740,46 @@ export class BrowserTab implements IBrowserTab {
     };
   }
 
+  /** FR2-04. Same data as {@link getPendingDialog} plus `url`/`openedAt`, for the CLI's
+   *  reporting/gate logic. Kept as a separate method (rather than widening
+   *  `getPendingDialog`'s own shape) because an existing test asserts `getPendingDialog()`'s
+   *  exact 3-key shape via `toEqual`. */
+  public getPendingDialogDetail(): (PendingDialogInfo & { url: string; openedAt: string }) | undefined {
+    const base = this.getPendingDialog();
+    if (!base || !this.pendingDialogOpenedAt) return undefined;
+    return { ...base, url: this.url, openedAt: this.pendingDialogOpenedAt };
+  }
+
+  public getDialogHistory(): readonly DialogRecord[] {
+    return this.dialogHistory;
+  }
+
+  /** FR2-04. Sets this tab's dialog policy going forward. Affects only FUTURE dialogs — a
+   *  currently-pending one keeps whatever behavior was already armed for it (the CLI's gate
+   *  handles a pending dialog explicitly instead). */
+  public setDialogPolicy(policy: DialogPolicy): void {
+    this.dialogPolicy = policy;
+  }
+
+  public getDialogPolicy(): DialogPolicy {
+    return this.dialogPolicy;
+  }
+
+  /** FR2-04: the underlying CDP target id, when known — internal Puppeteer API (`_targetId`,
+   *  stable across the pinned puppeteer-core version; see dialog-policy.live.spec.ts LV5). Used
+   *  by the CLI's dialog gate/warden to correlate a raw-CDP-observed dialog with this tab.
+   *  `undefined` for a mock/no-page tab. */
+  public get targetId(): string | undefined {
+    if (!this.page) return undefined;
+    const target = this.page.target() as unknown as { _targetId?: string };
+    return target._targetId;
+  }
+
+  private pushDialogRecord(record: DialogRecord): void {
+    this.dialogHistory.push(record);
+    if (this.dialogHistory.length > MAX_DIALOG_HISTORY) this.dialogHistory.shift();
+  }
+
   public async handleDialog(action: 'accept' | 'dismiss', promptText?: string): Promise<void> {
     const dialog = this.pendingDialog;
     if (!dialog || dialog.handled) {
@@ -436,12 +789,46 @@ export class BrowserTab implements IBrowserTab {
       clearTimeout(this.dialogTimeout);
       this.dialogTimeout = undefined;
     }
-    if (action === 'accept') {
-      await dialog.accept(promptText);
-    } else {
-      await dialog.dismiss();
+    const openedAt = this.pendingDialogOpenedAt ?? new Date().toISOString();
+    const dialogType = dialog.type();
+    const message = dialog.message();
+    const defaultValue = dialog.defaultValue() || undefined;
+    const url = this.url;
+    try {
+      if (action === 'accept') {
+        await dialog.accept(promptText);
+      } else {
+        await dialog.dismiss();
+      }
+      this.pushDialogRecord({
+        dialogType,
+        message,
+        defaultValue,
+        url,
+        openedAt,
+        handledAt: new Date().toISOString(),
+        action,
+        promptText,
+        handledBy: 'caller',
+      });
+    } catch (err) {
+      this.pushDialogRecord({
+        dialogType,
+        message,
+        defaultValue,
+        url,
+        openedAt,
+        handledAt: new Date().toISOString(),
+        action,
+        promptText,
+        handledBy: 'caller',
+        error: (err as Error).message,
+      });
+      throw err;
+    } finally {
+      this.pendingDialog = undefined;
+      this.pendingDialogOpenedAt = undefined;
     }
-    this.pendingDialog = undefined;
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -535,6 +922,65 @@ export class BrowserTab implements IBrowserTab {
     }
   }
 
+  /** FR2-04: immediately resolves `dialog` per an `'accept'`/`'dismiss'` policy. Fire-and-forget
+   *  (called via `void` from the `'dialog'` listener, which cannot be async) — every path pushes
+   *  a {@link DialogRecord}, including a rejection (e.g. a warden/gate got there first with
+   *  "No dialog is showing"), so this can never produce an unhandled promise rejection. */
+  private async applyPolicyNow(
+    dialog: Dialog,
+    mode: 'accept' | 'dismiss',
+    policy: DialogPolicy,
+    isBeforeUnload: boolean,
+  ): Promise<void> {
+    const openedAt = this.pendingDialogOpenedAt ?? new Date().toISOString();
+    const dialogType = dialog.type();
+    const message = dialog.message();
+    const defaultValue = dialog.defaultValue() || undefined;
+    const url = this.url;
+    // Prompt accept-with-no-text rule (D-9): "OK with the prefilled text", explicit rather than
+    // relying on CDP's own behavior when promptText is omitted. Non-prompt dialogs never pass
+    // promptText through, even if the policy set one.
+    const promptText =
+      mode === 'accept' && dialogType === 'prompt' ? (policy.promptText ?? defaultValue) : undefined;
+    try {
+      if (mode === 'accept') {
+        await dialog.accept(promptText);
+      } else {
+        await dialog.dismiss();
+      }
+      this.pushDialogRecord({
+        dialogType,
+        message,
+        defaultValue,
+        url,
+        openedAt,
+        handledAt: new Date().toISOString(),
+        action: mode,
+        promptText,
+        handledBy: 'policy',
+      });
+    } catch (err) {
+      this.pushDialogRecord({
+        dialogType,
+        message,
+        defaultValue,
+        url,
+        openedAt,
+        handledAt: new Date().toISOString(),
+        action: mode,
+        promptText,
+        handledBy: 'policy',
+        error: (err as Error).message,
+      });
+    } finally {
+      if (this.pendingDialog === dialog) {
+        this.pendingDialog = undefined;
+        this.pendingDialogOpenedAt = undefined;
+      }
+      void isBeforeUnload; // reserved for parity with the timer branch; no special-case needed here
+    }
+  }
+
   private attachPageListeners(page: Page): void {
     // Keeps `title` from going stale after any real navigation this BrowserTab didn't itself
     // drive via `navigate()` — an adopted popup, a `targetcreated`-adopted tab, or the page's
@@ -546,6 +992,7 @@ export class BrowserTab implements IBrowserTab {
 
     page.on('dialog', (dialog) => {
       this.pendingDialog = dialog;
+      this.pendingDialogOpenedAt = new Date().toISOString();
 
       if (this.eventBus && this.sessionId) {
         void this.eventBus.publish(
@@ -561,27 +1008,68 @@ export class BrowserTab implements IBrowserTab {
         );
       }
 
-      // Safety net: if nothing calls handleDialog(), don't leave the page hung forever.
-      // Dismissing (rather than accepting) is the safer default — it never confirms a
-      // destructive action the caller never got a chance to review. `beforeunload` gets both a
-      // much shorter window AND the opposite polarity — see BEFOREUNLOAD_DIALOG_TIMEOUT_MS's
-      // doc comment for the timing half; the polarity half (PROB-038, part 2): `dismiss()` on a
-      // `beforeunload` dialog means "stay on this page, cancel the navigation" — the exact
-      // opposite of what an in-flight `navigate()` call unambiguously asked for. Auto-dismissing
-      // it (the "safe" choice for alert/confirm/prompt) was actively self-defeating here: found
-      // live that even after shortening the timeout, `navigate()` still failed outright with
-      // `net::ERR_ABORTED` and the page never actually left the original URL, because dismiss()
-      // was cancelling the very navigation the caller asked for. `accept()` (confirm leaving) is
-      // the correct default specifically for `beforeunload` — there is no legitimate scenario
-      // where a caller invokes `navigate()` and secretly wants to stay put if a page objects.
       const isBeforeUnload = dialog.type() === 'beforeunload';
+      const policy = this.dialogPolicy;
+
+      // FR2-04: `accept`/`dismiss` resolve every dialog (including beforeunload) at once, and
+      // never arm the safety-net timer at all. This is the ONLY new branch that changes
+      // observable timing for non-'auto' modes — see BrowserTab-observability T1-T8.
+      if (policy.mode === 'accept' || policy.mode === 'dismiss') {
+        void this.applyPolicyNow(dialog, policy.mode, policy, isBeforeUnload);
+        return;
+      }
+
+      // 'report' (the CLI's own default): alert/confirm/prompt stay pending indefinitely — no
+      // timer at all — until something (the gate, `sutradhar dialog`, or a caller) resolves it.
+      // beforeunload still gets the short accept-timeout: it uniquely blocks an in-flight
+      // navigate() call, and there is no legitimate "leave it open forever" outcome for that
+      // (see BEFOREUNLOAD_DIALOG_TIMEOUT_MS's doc comment — same reasoning as 'auto').
+      if (policy.mode === 'report' && !isBeforeUnload) {
+        return;
+      }
+
+      // 'auto' (default; also 'report'+beforeunload): unchanged pre-FR2-04 safety-net timer —
+      // see BEFOREUNLOAD_DIALOG_TIMEOUT_MS's doc comment for why beforeunload's timeout/polarity
+      // differ from alert/confirm/prompt's.
       const timeoutMs = isBeforeUnload ? BEFOREUNLOAD_DIALOG_TIMEOUT_MS : DEFAULT_DIALOG_TIMEOUT_MS;
       this.dialogTimeout = setTimeout(() => {
         if (!dialog.handled) {
+          const openedAt = this.pendingDialogOpenedAt ?? new Date().toISOString();
+          const dialogType = dialog.type();
+          const message = dialog.message();
+          const defaultValue = dialog.defaultValue() || undefined;
+          const url = this.url;
+          const action: 'accept' | 'dismiss' = isBeforeUnload ? 'accept' : 'dismiss';
           const resolve = isBeforeUnload ? dialog.accept() : dialog.dismiss();
-          resolve.catch(() => {});
+          resolve
+            .then(() => {
+              this.pushDialogRecord({
+                dialogType,
+                message,
+                defaultValue,
+                url,
+                openedAt,
+                handledAt: new Date().toISOString(),
+                action,
+                handledBy: 'auto-timeout',
+              });
+            })
+            .catch((err: Error) => {
+              this.pushDialogRecord({
+                dialogType,
+                message,
+                defaultValue,
+                url,
+                openedAt,
+                handledAt: new Date().toISOString(),
+                action,
+                handledBy: 'auto-timeout',
+                error: err.message,
+              });
+            });
         }
         this.pendingDialog = undefined;
+        this.pendingDialogOpenedAt = undefined;
       }, timeoutMs);
     });
 
@@ -673,10 +1161,22 @@ export class BrowserTab implements IBrowserTab {
     });
 
     page.on('response', (res) => {
+      // FR2-12 fix-2 (GAP-267): `resourceType` was previously only recorded on the 'request'
+      // phase entry, never on 'response' — `SutradharRuntime.audit`'s "always include the main
+      // document's own response status" path needs to tell a top-level document response apart
+      // from a same-URL sub-resource one without that. `res.request()` is the same Puppeteer
+      // `HTTPRequest` the 'request' listener above already read `resourceType()` from.
+      let resourceType: string | undefined;
+      try {
+        resourceType = res.request().resourceType();
+      } catch {
+        resourceType = undefined;
+      }
       const entry: NetworkLogEntry = {
         phase: 'response',
         url: res.url(),
         status: res.status(),
+        resourceType,
         timestamp: new Date().toISOString(),
       };
       this.networkLog.push(entry);

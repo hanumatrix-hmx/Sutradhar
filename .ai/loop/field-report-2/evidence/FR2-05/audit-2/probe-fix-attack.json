@@ -1,0 +1,983 @@
+[
+  {
+    "group": "suffix",
+    "label": "dot (audit-1 original)",
+    "suffixCodepoints": [
+      "U+002E"
+    ],
+    "product": "rejected(throw: path component \"jn.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\s1\\root\\jn.\\sub\" ends )",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": true,
+    "rootEntriesAfter": [
+      "\"jn\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "space",
+    "suffixCodepoints": [
+      "U+0020"
+    ],
+    "product": "rejected(throw: path component \"jn \" in \"E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\s2\\root\\jn \\sub\" ends )",
+    "win32MkdirOk": false,
+    "win32MkdirOut": "The system cannot find the path specified.",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "dot-dot",
+    "suffixCodepoints": [
+      "U+002E",
+      "U+002E"
+    ],
+    "product": "rejected(throw: path component \"jn..\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\s3\\root\\jn..\\sub\" end)",
+    "win32MkdirOk": false,
+    "win32MkdirOut": "The system cannot find the path specified.",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "dot-space-dot",
+    "suffixCodepoints": [
+      "U+002E",
+      "U+0020",
+      "U+002E"
+    ],
+    "product": "rejected(throw: path component \"jn. .\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\s4\\root\\jn. .\\sub\" e)",
+    "win32MkdirOk": false,
+    "win32MkdirOut": "The system cannot find the path specified.",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "three-dots",
+    "suffixCodepoints": [
+      "U+002E",
+      "U+002E",
+      "U+002E"
+    ],
+    "product": "rejected(throw: path component \"jn...\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\s5\\root\\jn...\\sub\" e)",
+    "win32MkdirOk": false,
+    "win32MkdirOut": "The system cannot find the path specified.",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "ZWSP only",
+    "suffixCodepoints": [
+      "U+200B"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn​\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "dot+ZWSP",
+    "suffixCodepoints": [
+      "U+002E",
+      "U+200B"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn.​\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "ZWSP+dot",
+    "suffixCodepoints": [
+      "U+200B",
+      "U+002E"
+    ],
+    "product": "rejected(throw: path component \"jn​.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\s8\\root\\jn​.\\sub\" end)",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn​\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": true
+  },
+  {
+    "group": "suffix",
+    "label": "dot+ZWNJ",
+    "suffixCodepoints": [
+      "U+002E",
+      "U+200C"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn.‌\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "dot+ZWJ",
+    "suffixCodepoints": [
+      "U+002E",
+      "U+200D"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn.‍\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "dot+BOM/ZWNBSP",
+    "suffixCodepoints": [
+      "U+002E",
+      "U+FEFF"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn.﻿\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "dot+word-joiner",
+    "suffixCodepoints": [
+      "U+002E",
+      "U+2060"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn.⁠\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "dot+combining-acute",
+    "suffixCodepoints": [
+      "U+002E",
+      "U+0301"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn.́\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "dot+combining-dot-above",
+    "suffixCodepoints": [
+      "U+002E",
+      "U+0307"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn.̇\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "NBSP",
+    "suffixCodepoints": [
+      "U+00A0"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn \""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "dot+NBSP",
+    "suffixCodepoints": [
+      "U+002E",
+      "U+00A0"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn. \""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "ideographic space",
+    "suffixCodepoints": [
+      "U+3000"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn　\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "en space",
+    "suffixCodepoints": [
+      "U+2002"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn \""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "mongolian vowel sep",
+    "suffixCodepoints": [
+      "U+180E"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn᠎\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "one-dot-leader",
+    "suffixCodepoints": [
+      "U+2024"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn․\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "fullwidth full stop",
+    "suffixCodepoints": [
+      "U+FF0E"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn．\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "ideographic full stop",
+    "suffixCodepoints": [
+      "U+3002"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn。\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "arabic decimal separator",
+    "suffixCodepoints": [
+      "U+066B"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn٫\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "arabic full stop",
+    "suffixCodepoints": [
+      "U+06D4"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn۔\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "syriac full stop",
+    "suffixCodepoints": [
+      "U+0701"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn܁\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "halfwidth ideographic full stop",
+    "suffixCodepoints": [
+      "U+FF61"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn｡\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "small full stop",
+    "suffixCodepoints": [
+      "U+FE52"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn﹒\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "dot+LRM",
+    "suffixCodepoints": [
+      "U+002E",
+      "U+200E"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn.‎\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "dot+RLO",
+    "suffixCodepoints": [
+      "U+002E",
+      "U+202E"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn.‮\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "ADS ::$INDEX_ALLOCATION",
+    "suffixCodepoints": [
+      "U+003A",
+      "U+003A",
+      "U+0024",
+      "U+0049",
+      "U+004E",
+      "U+0044",
+      "U+0045",
+      "U+0058",
+      "U+005F",
+      "U+0041",
+      "U+004C",
+      "U+004C",
+      "U+004F",
+      "U+0043",
+      "U+0041",
+      "U+0054",
+      "U+0049",
+      "U+004F",
+      "U+004E"
+    ],
+    "product": "rejected(outside)",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": true,
+    "rootEntriesAfter": [
+      "\"jn\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "ADS :$I30:$INDEX_ALLOCATION",
+    "suffixCodepoints": [
+      "U+003A",
+      "U+0024",
+      "U+0049",
+      "U+0033",
+      "U+0030",
+      "U+003A",
+      "U+0024",
+      "U+0049",
+      "U+004E",
+      "U+0044",
+      "U+0045",
+      "U+0058",
+      "U+005F",
+      "U+0041",
+      "U+004C",
+      "U+004C",
+      "U+004F",
+      "U+0043",
+      "U+0041",
+      "U+0054",
+      "U+0049",
+      "U+004F",
+      "U+004E"
+    ],
+    "product": "rejected(outside)",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": true,
+    "rootEntriesAfter": [
+      "\"jn\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "dot + ADS",
+    "suffixCodepoints": [
+      "U+002E",
+      "U+003A",
+      "U+003A",
+      "U+0024",
+      "U+0049",
+      "U+004E",
+      "U+0044",
+      "U+0045",
+      "U+0058",
+      "U+005F",
+      "U+0041",
+      "U+004C",
+      "U+004C",
+      "U+004F",
+      "U+0043",
+      "U+0041",
+      "U+0054",
+      "U+0049",
+      "U+004F",
+      "U+004E"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\"",
+      "\"jn.\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "dot+colon",
+    "suffixCodepoints": [
+      "U+002E",
+      "U+003A"
+    ],
+    "product": "ALLOWED",
+    "win32MkdirOk": false,
+    "win32MkdirOut": "The filename, directory name, or volume label syntax is incorrect.",
+    "win32RoutedThroughJunction": false,
+    "rootEntriesAfter": [
+      "\"jn\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "suffix",
+    "label": "trailing dot then slash-dot",
+    "suffixCodepoints": [
+      "U+002E",
+      "U+005C",
+      "U+002E"
+    ],
+    "product": "rejected(throw: path component \"jn.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\s34\\root\\jn.\\sub\" ends)",
+    "win32MkdirOk": true,
+    "win32MkdirOut": "",
+    "win32RoutedThroughJunction": true,
+    "rootEntriesAfter": [
+      "\"jn\""
+    ],
+    "ESCAPE": false,
+    "falseRejectOfHarmless": false
+  },
+  {
+    "group": "component",
+    "label": "legit: root\\a\\..\\b (.. before containment)",
+    "candidate": "E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\a\\..\\b",
+    "product": "ALLOWED",
+    "expected": "ALLOWED",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "legit: root\\.\\a\\.\\x (. segments)",
+    "candidate": "E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\.\\a\\.\\x",
+    "product": "ALLOWED",
+    "expected": "ALLOWED",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "legit: forward slashes root/a/x",
+    "candidate": "E:/AI-Cache/tmp/fr205-audit2-attack-GqZ4bb/comp/root/a/x",
+    "product": "ALLOWED",
+    "expected": "ALLOWED",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "legit: doubled separators",
+    "candidate": "E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\\\a\\\\\\x",
+    "product": "ALLOWED",
+    "expected": "ALLOWED",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "legit: dotted name my.folder\\v1.2",
+    "candidate": "E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\my.folder\\v1.2",
+    "product": "ALLOWED",
+    "expected": "ALLOWED",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "legit: .hidden dir",
+    "candidate": "E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\.hidden\\x",
+    "product": "ALLOWED",
+    "expected": "ALLOWED",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "legit: name with inner space",
+    "candidate": "E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\my folder\\x",
+    "product": "ALLOWED",
+    "expected": "ALLOWED",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "legit: root itself",
+    "candidate": "E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root",
+    "product": "ALLOWED",
+    "expected": "ALLOWED",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "legit: root with trailing sep",
+    "candidate": "E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\",
+    "product": "ALLOWED",
+    "expected": "ALLOWED",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "legit: uppercase root spelling",
+    "candidate": "E:\\AI-CACHE\\TMP\\FR205-AUDIT2-ATTACK-GQZ4BB\\COMP\\ROOT\\x",
+    "product": "ALLOWED",
+    "expected": "ALLOWED",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "attack: root\\..\\outside",
+    "candidate": "E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\..\\outside",
+    "product": "rejected(outside)",
+    "expected": "REJECT",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "attack: root\\a\\..\\..\\outside",
+    "candidate": "E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\a\\..\\..\\outside",
+    "product": "rejected(outside)",
+    "expected": "REJECT",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "attack: root\\jn\\..\\..\\outside (lexical)",
+    "candidate": "E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\jn\\..\\..\\outside",
+    "product": "rejected(outside)",
+    "expected": "REJECT",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "attack: root\\jn\\x (existing junction, new tail)",
+    "candidate": "E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\jn\\x",
+    "product": "rejected(outside)",
+    "expected": "REJECT",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "attack: root\\...\\x (all-dots comp)",
+    "candidate": "E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\...\\x",
+    "product": "rejected(throw: path component \"...\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\...\\x\" ends )",
+    "expected": "REJECT",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "attack: root\\ \\x (all-space comp)",
+    "candidate": "E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\ \\x",
+    "product": "rejected(throw: path component \" \" in \"E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\ \\x\" ends with)",
+    "expected": "REJECT",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "attack: root\\. .\\x",
+    "candidate": "E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\. .\\x",
+    "product": "rejected(throw: path component \". .\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\. .\\x\" ends )",
+    "expected": "REJECT",
+    "pass": true
+  },
+  {
+    "group": "component",
+    "label": "attack: root-evil prefix",
+    "candidate": "E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root-evil\\x",
+    "product": "rejected(outside)",
+    "expected": "REJECT",
+    "pass": true
+  },
+  {
+    "group": "relative",
+    "label": "legit relative ..\\root\\x from sibling cwd",
+    "candidate": "..\\root\\x",
+    "product": "ALLOWED",
+    "expected": "ALLOWED",
+    "pass": true
+  },
+  {
+    "group": "relative",
+    "label": "attack relative ..\\outside\\x",
+    "candidate": "..\\outside\\x",
+    "product": "rejected(outside)",
+    "expected": "REJECT",
+    "pass": true
+  },
+  {
+    "group": "relative",
+    "label": "attack relative ..\\root\\jn.\\x",
+    "candidate": "..\\root\\jn.\\x",
+    "product": "rejected(throw: path component \"jn.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\comp\\root\\jn.\\x\" ends )",
+    "expected": "REJECT",
+    "pass": true
+  },
+  {
+    "group": "root-trim",
+    "label": "root configured as root. (trailing dot)",
+    "outsideCandidate": "rejected(outside)",
+    "insideCandidate": "rejected(outside)",
+    "pass": true
+  },
+  {
+    "group": "root-trim",
+    "label": "root configured as root<space>",
+    "outsideCandidate": "rejected(outside)",
+    "insideCandidate": "rejected(outside)",
+    "pass": true
+  },
+  {
+    "group": "root-trim",
+    "label": "root configured as jn.",
+    "outsideCandidate": "rejected(outside)",
+    "insideCandidate": "rejected(outside)",
+    "pass": true
+  },
+  {
+    "group": "shortname",
+    "shortName": null,
+    "product": "n/a (8.3 names not generated on this volume)",
+    "pass": true
+  },
+  {
+    "group": "case-sensitive-dir",
+    "setCaseSensitive": {
+      "ok": true,
+      "out": "Case sensitive attribute on directory E:\\AI-Cache\\tmp\\fr205-audit2-attack-GqZ4bb\\cs is enabled."
+    },
+    "dirEntries": [
+      "ROOT",
+      "root"
+    ],
+    "siblingDecision": "ALLOWED",
+    "ESCAPE": true
+  },
+  {
+    "group": "unicode-fold",
+    "label": "Kelvin K U+212A",
+    "ntfsTreatsAsDistinctDir": true,
+    "productExistingDirs": "rejected(outside)",
+    "pureIsPathWithinRoot": false,
+    "productNonexistentRoot": "rejected(outside)",
+    "ESCAPE": false
+  },
+  {
+    "group": "unicode-fold",
+    "label": "Angstrom U+212B",
+    "ntfsTreatsAsDistinctDir": true,
+    "productExistingDirs": "rejected(outside)",
+    "pureIsPathWithinRoot": false,
+    "productNonexistentRoot": "rejected(outside)",
+    "ESCAPE": false
+  },
+  {
+    "group": "unicode-fold",
+    "label": "Turkish dotless i U+0131",
+    "ntfsTreatsAsDistinctDir": true,
+    "productExistingDirs": "rejected(outside)",
+    "pureIsPathWithinRoot": false,
+    "productNonexistentRoot": "rejected(outside)",
+    "ESCAPE": false
+  },
+  {
+    "group": "unicode-fold",
+    "label": "Turkish dotted I U+0130",
+    "ntfsTreatsAsDistinctDir": true,
+    "productExistingDirs": "rejected(outside)",
+    "pureIsPathWithinRoot": false,
+    "productNonexistentRoot": "rejected(outside)",
+    "ESCAPE": false
+  },
+  {
+    "group": "unicode-fold",
+    "label": "long s U+017F",
+    "ntfsTreatsAsDistinctDir": true,
+    "productExistingDirs": "rejected(outside)",
+    "pureIsPathWithinRoot": false,
+    "productNonexistentRoot": "rejected(outside)",
+    "ESCAPE": false
+  },
+  {
+    "group": "unicode-fold",
+    "label": "sharp s vs ss",
+    "ntfsTreatsAsDistinctDir": true,
+    "productExistingDirs": "rejected(outside)",
+    "pureIsPathWithinRoot": false,
+    "productNonexistentRoot": "rejected(outside)",
+    "ESCAPE": false
+  },
+  {
+    "group": "unicode-fold",
+    "label": "capital sharp s U+1E9E",
+    "ntfsTreatsAsDistinctDir": true,
+    "productExistingDirs": "rejected(outside)",
+    "pureIsPathWithinRoot": false,
+    "productNonexistentRoot": "rejected(outside)",
+    "ESCAPE": false
+  },
+  {
+    "group": "unicode-fold",
+    "label": "ohm sign U+2126",
+    "ntfsTreatsAsDistinctDir": true,
+    "productExistingDirs": "rejected(outside)",
+    "pureIsPathWithinRoot": false,
+    "productNonexistentRoot": "rejected(outside)",
+    "ESCAPE": false
+  },
+  {
+    "group": "unicode-fold",
+    "label": "fullwidth A",
+    "ntfsTreatsAsDistinctDir": true,
+    "productExistingDirs": "rejected(outside)",
+    "pureIsPathWithinRoot": false,
+    "productNonexistentRoot": "rejected(outside)",
+    "ESCAPE": false
+  },
+  {
+    "group": "unicode-fold",
+    "label": "greek final sigma",
+    "ntfsTreatsAsDistinctDir": true,
+    "productExistingDirs": "rejected(outside)",
+    "pureIsPathWithinRoot": false,
+    "productNonexistentRoot": "rejected(outside)",
+    "ESCAPE": false
+  },
+  {
+    "group": "unicode-fold",
+    "label": "ligature fi U+FB01",
+    "ntfsTreatsAsDistinctDir": true,
+    "productExistingDirs": "rejected(outside)",
+    "pureIsPathWithinRoot": false,
+    "productNonexistentRoot": "rejected(outside)",
+    "ESCAPE": false
+  },
+  {
+    "group": "unicode-fold",
+    "label": "e-acute NFC vs NFD",
+    "ntfsTreatsAsDistinctDir": true,
+    "productExistingDirs": "rejected(outside)",
+    "pureIsPathWithinRoot": false,
+    "productNonexistentRoot": "rejected(outside)",
+    "ESCAPE": false
+  },
+  {
+    "group": "unicode-fold",
+    "label": "Cyrillic a lookalike",
+    "ntfsTreatsAsDistinctDir": true,
+    "productExistingDirs": "rejected(outside)",
+    "pureIsPathWithinRoot": false,
+    "productNonexistentRoot": "rejected(outside)",
+    "ESCAPE": false
+  },
+  {
+    "group": "unicode-fold",
+    "label": "non-ASCII case: E-acute upper",
+    "ntfsTreatsAsDistinctDir": false,
+    "productExistingDirs": "ALLOWED",
+    "pureIsPathWithinRoot": false,
+    "productNonexistentRoot": "rejected(outside)",
+    "ESCAPE": false
+  }
+]

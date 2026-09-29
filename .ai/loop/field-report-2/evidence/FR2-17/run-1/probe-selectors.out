@@ -1,0 +1,13 @@
+"text=Sign in" => REJECTED InvalidSelectorError | Invalid selector "text=Sign in" — "text=" is Playwright selector-engine syntax (Puppeteer's own text query is spelled "text/"). Use standard CSS or a snapshot n
+"role=button" => REJECTED InvalidSelectorError | Invalid selector "role=button" — "role=" is Playwright selector-engine syntax. Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, xpath/, 
+"div >> span" => REJECTED InvalidSelectorError | Invalid selector "div >> span" — ">>" (Playwright selector chaining) is Playwright selector syntax. Use standard CSS or a snapshot node id (e.g. "12"); Puppetee
+"button:has-text(\"x\")" => REJECTED InvalidSelectorError | Invalid selector "button:has-text("x")" — ":has-text(" is a Playwright-only pseudo-class, not CSS. Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer
+"getByRole(\"button\")" => REJECTED InvalidSelectorError | Invalid selector "getByRole("button")" — "getByRole(" is a Playwright locator method, not a selector. Use standard CSS or a snapshot node id (e.g. "12"); Puppet
+"internal:text=\"x\"" => REJECTED InvalidSelectorError | Invalid selector "internal:text="x"" — "internal:text=" is Playwright-internal selector syntax (as printed by Playwright locators/codegen), not CSS. Use standar
+"xpath=//a" => REJECTED InvalidSelectorError | Invalid selector "xpath=//a" — "xpath=" is not supported; use the slash form "xpath/". Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, 
+"pierce/.x" => accepted
+"xpath//a" => accepted
+"aria/Submit" => accepted
+"text/Sign in" => accepted
+"#ok" => accepted
+"12" => accepted

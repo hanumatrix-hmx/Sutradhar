@@ -1,0 +1,33 @@
+FR2-16 audit-4 VERDICT: FAIL
+
+Mechanical: clean forced build 20/20 (concurrency 1), typecheck 8/8 (consumer list re-derived from
+package.json deps: browser + direct agent/capability-runtime/cli/mcp-server/workflow/server +
+transitive sutradhar), vitest browser 227/227, cli 47/47, doc-static ALL PASS (23 checks, not the
+claimed 22), live-verify OVERALL PASS (22), mutation suite ALL PASS (10 checks, not the claimed 12).
+
+Guard robustness (probe-audit4.log): the rebuilt guard catches the Executor's own mutations
+(reproduced 4) but MISSES 19/19 new synonym mutations including all 4 the audit brief named
+verbatim, and 4/5 negation-lookback exploits:
+  "The AutomationControlled flag is retained for stability."           MISSED
+  "...chosen for compatibility reasons."                                MISSED
+  "This argument improves reliability."                                 MISSED
+  "The flag is included by default. This helps launches remain stable." MISSED
+  "Do not remove this stability flag."                                  MISSED (negation lookback)
+  "Nothing in the launcher masks automation signals." (GAP-119 revert)  MISSED
+  "Sutradhar launches a plain undisguised Chrome."                      MISSED
+Revert test (probe-head-revert.log): every one of the 11 files' HEAD (pre-FR2-16) versions passes
+the guard, incl. SECURITY.md's GAP-119 "No plugin masks automation signals" -- GAP-124's
+"zero regression coverage for GAP-119" is still true.
+
+Live, currently-shipped false claim the guard does not catch, IN a guarded file:
+  .ai/competitive-benchmarks.md:24  "no stealth on any side: Sutradhar 29/47 -- Playwright 27/47 -- Puppeteer 25/47"
+  .ai/competitive-benchmarks.md:794-795 "Both launched plain (... no stealth) -- the same fairness standard already held for Sutradhar"
+  (also ~:842, and outside the 11-file list: tools/engine-comparison/head-to-head-comparison-2026-08-14.md:42,113)
+Live proof (live-webdriver-asymmetry.log): vanilla puppeteer.launch (exactly as pp-server.mjs /
+pw-server.mjs launched the competitors) -> navigator.webdriver=true; Sutradhar DEFAULT_LAUNCH_ARGS
+-> navigator.webdriver=false. The headline "better than Playwright/Puppeteer" benchmark had an
+undisclosed detection asymmetry in Sutradhar's favour -- same class as GAP-119, flattering direction.
+
+GAP-125 disclosure: accurate (live: --enable-automation is in Sutradhar's command line, the flag that
+triggers the banner; --disable-infobars is also a puppeteer default). GAP-126 passage: accurate
+against stealth-isolation-experiment.md:45-47,64-68.

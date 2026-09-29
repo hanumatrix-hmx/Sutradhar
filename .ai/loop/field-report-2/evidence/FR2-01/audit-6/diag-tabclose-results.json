@@ -1,0 +1,44 @@
+{
+  "trials": 80,
+  "falseSuccess": 1,
+  "honestFailures": 79,
+  "falseSuccesses": [
+    {
+      "i": 62,
+      "closeDelay": 314,
+      "msAfterClose": 8,
+      "output": {
+        "foundSelector": "#stay",
+        "state": "hidden",
+        "matchedAtStart": true,
+        "otherVisibleMatchesUnknown": true
+      },
+      "trace": [
+        {
+          "t": 334,
+          "fn": "raceFrameProbe",
+          "threw": "Execution context was destroyed"
+        },
+        {
+          "t": 334,
+          "fn": "pierceFirstMatch",
+          "ret": {
+            "kind": "no-match"
+          }
+        },
+        {
+          "t": 334,
+          "fn": "isHiddenInEveryFrame",
+          "ret": "hidden"
+        }
+      ],
+      "rawErrs": [
+        {
+          "i": 62,
+          "where": "frame.$",
+          "msg": "Execution context was destroyed"
+        }
+      ]
+    }
+  ]
+}

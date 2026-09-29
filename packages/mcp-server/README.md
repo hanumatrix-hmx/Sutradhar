@@ -14,15 +14,19 @@ Two brain modes, one server:
   objective and it navigates, clicks, types, and extracts a final answer. Best for
   multi-step tasks you'd rather not script call-by-call. Requires an LLM provider.
 
-## Tools (69)
+## Tools (72: 71 `browser.*` plus `agent.runGoal`)
 
-Grouped here by category, matching `tools.ts`'s own section layout.
+Grouped here by category, matching `tools.ts`'s own section layout. `agent.runGoal` is only registered when an LLM provider is configured, so without one the server exposes the 71 `browser.*` tools.
+
+**`sessionId` is optional** on every tool that takes one (70 tools; none requires it). Omit it while exactly one session is live and that session is used (the result ends with a `sessionId omitted: used "<id>" ...` note); with zero or several live sessions the call fails and lists the live ids. It never guesses. `browser.launch`, `browser.attach` and `agent.runGoal` are the exception in meaning: their optional `sessionId` is the id to create or reuse, and omitting it always creates a new session. If your session was idle-reaped or crashed and you launched another, an omitted id uses the new one (the note says so).
+
+**Selectors** are CSS, a snapshot `[#id]`, or Puppeteer's `pierce/`, `xpath/`, `aria/` and `text/` prefixes. Playwright syntax (`text=`, `role=`, `>>`, `:has-text()`, `getBy*()`) is rejected immediately with a hint; use `browser.click_by_text` / `click_by_role` / `type_by_label` instead.
 
 ### Lifecycle
 | Tool | Description |
 |---|---|
 | `browser.health` | Preflight check — is a real browser available, without committing to a session. |
-| `browser.launch` | Launch a browser session; returns a `sessionId`. |
+| `browser.launch` | Launch a browser session; returns a `sessionId`. Other tools accept it, and it may be omitted while exactly one session is live. |
 | `browser.attach` | Attach to an existing browser over CDP instead of launching a new one (e.g. your own Chrome with `--remote-debugging-port`). |
 | `browser.shutdown` | Shut down a session. |
 | `browser.shutdown_all` | Shut down every session. |
@@ -37,8 +41,8 @@ Grouped here by category, matching `tools.ts`'s own section layout.
 ### Agent vision
 | Tool | Description |
 |---|---|
-| `browser.snapshot` | **DOM-attribute grounding** — interactive-element listing (numeric `[#id]`, `data-sd-node-id`-backed) + page text. Fast; can go stale if the page re-renders between snapshot and action. |
-| `browser.ax_snapshot` | **Accessibility-tree grounding** — role + accessible-name listing, no ids to go stale. Prefer this for pages that re-render (SPAs, live search, infinite scroll). |
+| `browser.snapshot` | **DOM-attribute grounding** — interactive-element listing (numeric `[#id]`, `data-sd-node-id`-backed) + page text. Fast; can go stale if the page re-renders between snapshot and action. Elements inside an iframe read `[#31 in iframe "pay" (url)]`, elements inside an open shadow root end with `(shadow: host)`, and a frame that could not be read is listed as `[iframe <origin> — not inspectable] (reason)` instead of being dropped (match `^[#(d+)` when parsing). |
+| `browser.ax_snapshot` | **Accessibility-tree grounding** — role + accessible-name listing, no ids to go stale. Prefer this for pages that re-render (SPAs, live search, infinite scroll). Iframe content (including cross-origin) is included, grouped under `[iframe ...]` lines. |
 
 ### Interaction
 | Tool | Description |
@@ -58,8 +62,8 @@ Grouped here by category, matching `tools.ts`'s own section layout.
 | `browser.touch_tap` | Simulate a touch tap (mobile emulation). |
 | `browser.upload_file` | Set a file input's value. |
 | `browser.upload_file_via_trigger` | For JS-triggered file choosers not backed by a plain `<input type=file>` — races `waitForFileChooser()` against clicking the triggering selector. |
-| `browser.download_file` | Trigger and wait for a file download; saves under an allow-listed directory. |
-| `browser.wait_for_selector` | Wait for an element to appear/become visible. |
+| `browser.download_file` | Trigger and wait for a file download; saves under an allow-listed directory (`SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`) and returns the file's real absolute path. A second overlapping `download_file` on the same browser is refused immediately; run one download per browser at a time (see [Known limitations](#known-limitations)). |
+| `browser.wait_for_selector` | Wait for an element to reach a state: `visible` (default), `attached` (just in the DOM), or `hidden` (removed or not visible). "Visible" is a non-empty box AND visibility not hidden/collapse, checked on the FIRST match — `opacity:0`/off-screen still count as visible; zero-size/`display:none`/`visibility:hidden` count as hidden. `hidden` succeeds immediately if nothing matches. `timeoutMs` is per attempt; retries can extend the real total wait. `timeoutMs <= 0` checks the current state once, immediately, with no waiting or retrying. Waiting states poll roughly every 100ms, so a state that's only true for less than ~100ms (a fast visibility flicker) may be missed. |
 | `browser.fill_form` | Bulk multi-field form fill — an object of `{target: value}` pairs in one call instead of N `type` round-trips; a field that fails doesn't stop the rest. |
 | `browser.click_at_point` | Click a raw viewport `(x, y)` coordinate with no element/selector at all — the escape hatch for canvas-heavy or custom-rendered UI with nothing addressable via DOM. |
 | `browser.drag_at_points` | Coordinate-only mouse-down → move → mouse-up drag, the drag sibling of `click_at_point` (distinct from `drag_and_drop`'s element-to-element HTML5 `DataTransfer` API). |
@@ -68,9 +72,10 @@ Grouped here by category, matching `tools.ts`'s own section layout.
 | Tool | Description |
 |---|---|
 | `browser.screenshot` | Full-page PNG (returned inline). |
+| `browser.audit` | Page audit as a machine-readable JSON report (`schemaVersion` 1: console/page errors, HTTP 4xx/5xx requests, five heuristic a11y checks, LCP/CLS/FCP/TTFB) returned first, then the full-page screenshot and (with `baselineUrl`) a diff image inline; `includeImages: false` omits the images. Pass `url` for full coverage — auditing the current page as-is only sees activity since this server attached (`observation.coversWholeDocument`). Findings never set `isError`. See [Known limitations](#known-limitations). |
 | `browser.export_pdf` | Export the current page as PDF. |
 | `browser.eval` | Evaluate arbitrary JS in the page. Optional `frameSelector` runs it inside a specific `<iframe>` instead — including a genuinely cross-origin one. |
-| `browser.extract_data` | Structured extraction: field name → selector map, returns matched text/attributes. Optional `frameSelector` extracts from inside a specific `<iframe>` instead — including a genuinely cross-origin one. |
+| `browser.extract_data` | Structured extraction: field name → selector map. With no `attribute`, form controls return their **live** current value and other elements return rendered `innerText`; `attr:<name>` reads the raw HTML attribute; `visibleOnly` (whole call or per field) drops non-visible matches. Optional `frameSelector` extracts from inside a specific `<iframe>` instead — including a genuinely cross-origin one. |
 
 ### Storage
 | Tool | Description |
@@ -93,7 +98,7 @@ Grouped here by category, matching `tools.ts`'s own section layout.
 ### Dialogs, observability & network
 | Tool | Description |
 |---|---|
-| `browser.get_pending_dialog` / `handle_dialog` | Inspect and accept/dismiss an open `alert`/`confirm`/`prompt`. |
+| `browser.get_pending_dialog` / `handle_dialog` | Inspect and accept/dismiss an open `alert`/`confirm`/`prompt`. Left unhandled, a dialog is auto-dismissed after 30 s. |
 | `browser.get_console_logs` | Read captured `console.*` output for the page. |
 | `browser.get_page_errors` | Read captured uncaught page errors. |
 | `browser.get_network_log` | Read captured network requests/responses. |
@@ -158,8 +163,9 @@ Add Sutradhar as an MCP server in your client's config. For **Claude Desktop**
 }
 ```
 
-> Once published to npm, the config simplifies to
-> `"command": "npx", "args": ["-y", "@sutradhar/mcp-server"]`.
+> The published package is `sutradhar` (bin `sutradhar-mcp`), so outside this monorepo the config is
+> `"command": "npx", "args": ["-y", "--package=sutradhar", "sutradhar-mcp"]` — see
+> [AGENT_SETUP.md](../../AGENT_SETUP.md). `@sutradhar/mcp-server` itself is not published separately.
 
 To use **OpenRouter** instead of local Ollama, set `OPENROUTER_API_KEY` (and optionally
 `SUTRADHAR_MODEL`). When `OPENROUTER_API_KEY` is present it takes precedence over Ollama.
@@ -184,6 +190,47 @@ All config is via environment variables (matching the Sutradhar server):
 | `SUTRADHAR_MODEL` | `qwen3.5:9b` | Model id (Ollama tag or OpenRouter model). |
 | `SUTRADHAR_LLM_BASE` | `http://localhost:11434` | Ollama host (or any OpenAI-compatible base). |
 | `CHROME_PATH` | _(auto-detected)_ | Path to Chrome/Edge executable if not found. |
+| `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` | `<OS temp>/sutradhar-downloads` | Directories `browser.download_file` may write into, separated by `;` (Windows) or `:` (elsewhere); absolute paths, or `~` for the home directory (a relative entry fails startup with a message naming the variable). Replaces the default; the first entry is the destination when `downloadDir` is omitted. |
+| `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` | _(unset — unrestricted)_ | If set, `browser.upload_file`/`browser.upload_file_via_trigger` may only read files under these directories. Setting this turns the restriction on. |
+| `SUTRADHAR_ALLOWED_DOMAINS` | _(unset — any domain)_ | Comma-separated domains (and their subdomains) that `browser.navigate`/`launch`/`audit`/`new_tab` may visit. Does not intercept page-initiated navigation from a clicked link. |
+| `SUTRADHAR_RESTRICT_NAVIGATION_TO_LOCAL` | _(unset)_ | Set to `1` to reject navigation to anything that isn't localhost, a private/loopback IP, or a `file:`/`about:`/`data:` URL. |
+| `SUTRADHAR_IDLE_TIMEOUT_MS` | `1800000` (30 min) | Auto-close a session after this long with no observed activity. |
+
+## Known limitations
+
+These are open, reproduced problems on the current branch (not yet released as 0.5.0).
+
+- **`browser.download_file` (best-effort overlap protection).** Path containment
+  (`SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`/`SUTRADHAR_ALLOWED_UPLOAD_ROOTS`) is verified, including symlink,
+  junction and Windows path tricks. Protection against overlapping downloads is not: a second
+  `download_file` on the same browser is refused immediately, but the cross-process lock lives in the
+  process temp directory and is keyed by the exact browser endpoint string, so two MCP servers (or an
+  MCP server and a CLI) attached to one Chrome may not share it. Drive downloads for a given browser
+  from one process at a time. Downloads a page starts on its own (not through `download_file`) are
+  not covered by the roots and can land in Chrome's default download location.
+- **`browser.audit`.** Auditing the current page (no `url`) of a brand-new tab immediately after its
+  first navigation can miss the page's own HTTP error status while still reporting
+  `coversWholeDocument: true`. The settle wait is a fixed 1500 ms, so a slower request can be absent
+  from `brokenRequests`. A page restored from the back/forward cache reports
+  `coversWholeDocument: false`. Only HTTP 400+ responses count as broken requests (DNS and blocked
+  requests do not). The accessibility checks are heuristics, not a WCAG audit. Ring-buffer eviction
+  (200 console, 50 page-error, 200 network entries per tab) is not reported. `cls` is the legacy
+  layout-shift total, not session-windowed CLS. The JSON Schema file is in the repository and is not
+  included in the npm package. A dialog that opens during page load or capture can make the call slow
+  or fail with a misleading message.
+- **`browser.wait_for_selector`.** A `state: "hidden"` success is best effort: the code path that
+  decides "hidden" produced false answers in several audit rounds (the known ones, including a false
+  success when the tab closes mid-wait, are fixed), and the class of bug is not mechanically
+  prevented. A failed visible-wait can take about 3 x `timeoutMs` because the engine retries twice
+  (`timeoutMs <= 0` does not retry). Polling is about every 100 ms; only the first matching element
+  is checked; `opacity: 0` counts as visible. On a hidden-wait success MCP returns extra
+  `otherVisibleMatches`/`matchedAtStart` detail that the CLI and SDK drop.
+- **Dialogs.** The MCP server keeps the `auto` policy (a pending dialog is auto-dismissed after 30 s;
+  handle it sooner with `browser.get_pending_dialog` / `browser.handle_dialog`). The CLI's dialog
+  warden, `--dialog` flags and exit code 3 do not apply here.
+- **Stealth.** There is none: Cloudflare, CAPTCHA walls and IP blocks stop Sutradhar as they stop any
+  other automation tool. The only detection-relevant launch flag hides `navigator.webdriver` from
+  simple scripts, nothing more.
 
 ## Programmatic API
 

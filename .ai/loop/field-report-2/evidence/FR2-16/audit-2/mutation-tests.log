@@ -1,0 +1,20 @@
+original sha256=f56e43c3e7ce6670bd1b07950e8291e2639fdcc7e0fd7a22da8a57e2a318cff3
+=== MUTATION A: re-append '- `src/stealth/`: Anti-detection evasion scripts (navigator.webdriver override).' ===
+FAIL: README.md Sub-Module Layout section does not mention src/stealth/
+1 FAILURE(S)
+doc-static exit=1
+[FAIL] packages/browser/README.md: Sub-Module Layout section does not mention src/stealth/ (GAP-103)
+OVERALL: FAIL
+live-verify exit=1
+=== MUTATION B: revert launcher line to '`BrowserLauncher`, stealth launch flags, launcher interfaces.' only ===
+43:- `src/launcher/`: `BrowserLauncher`, stealth launch flags, launcher interfaces.
+FAIL: README.md does not mention "stealth launch flags" (old module-layout description)
+1 FAILURE(S)
+doc-static exit=1
+OVERALL: PASS
+live-verify exit=0
+=== MUTATION C: reintroduce the audit-1 false wording 'not a detection-evasion feature' (removing the webdriver sentence is not needed; just append the false claim) ===
+ALL PASS
+doc-static exit=0
+restored sha256=f56e43c3e7ce6670bd1b07950e8291e2639fdcc7e0fd7a22da8a57e2a318cff3
+RESTORED-EXACT

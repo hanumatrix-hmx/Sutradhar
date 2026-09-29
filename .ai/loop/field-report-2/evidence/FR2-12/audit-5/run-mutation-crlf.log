@@ -1,0 +1,5 @@
+N1-tab-no-subframe-filter KILLED {"browser":"1 failed | 506 passed (507)"} ["tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278) > CT2: records the main frame's commit instant via a dedicated CDP session created at construction, ignoring a sub-frame commit"]
+N11-tab-also-counts-same-doc-navs SURVIVED {"browser":"507 passed (507)"} 
+R4-goto-tier-before-live-capture KILLED {"capability-runtime":"1 failed | 213 passed (214)"} ["tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA13c (GAP-279): the live CDP capture still wins over getLastGotoResponse when both are available"]
+R7-url-mode-uses-tab-commit KILLED {"capability-runtime":"1 failed | 213 passed (214)"} ["tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA3e (GAP-278): current-page mode never reads getLastMainFrameCommitAt/getLastMainDocumentResponse in NAVIGATED mode -- those stay the tab-level source exclusively for current-page mo
+allRestored true

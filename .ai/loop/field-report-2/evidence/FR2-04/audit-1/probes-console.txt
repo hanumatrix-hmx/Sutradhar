@@ -1,0 +1,118 @@
+--- gap017_wardenUp
+[PASS] gap017_wardenUp.click-exit0-pending
+[PASS] gap017_wardenUp.observer-blocked
+[PASS] gap017_wardenUp.snap-exit3
+[PASS] gap017_wardenUp.snap-no-selfheal-same-chrome
+[PASS] gap017_wardenUp.snap-no-new-tab
+[PASS] gap017_wardenUp.tabs-exit3
+[PASS] gap017_wardenUp.tabs-no-selfheal-same-chrome
+[PASS] gap017_wardenUp.tabs-no-new-tab
+[PASS] gap017_wardenUp.eval-exit3
+[PASS] gap017_wardenUp.eval-no-selfheal-same-chrome
+[PASS] gap017_wardenUp.eval-no-new-tab
+[PASS] gap017_wardenUp.text-exit3
+[PASS] gap017_wardenUp.text-no-selfheal-same-chrome
+[PASS] gap017_wardenUp.text-no-new-tab
+[PASS] gap017_wardenUp.nav-exit3
+[PASS] gap017_wardenUp.nav-no-selfheal-same-chrome
+[PASS] gap017_wardenUp.nav-no-new-tab
+[PASS] gap017_wardenUp.click-exit3
+[PASS] gap017_wardenUp.click-no-selfheal-same-chrome
+[PASS] gap017_wardenUp.click-no-new-tab
+[PASS] gap017_wardenUp.dismiss
+[PASS] gap017_wardenUp.responsive-after
+[PASS] gap017_wardenUp.record-false-once
+[PASS] gap017_wardenUp.snap-right-tab
+--- wardenDown_hint
+[PASS] wardenDown_hint.lastPendingDialog-written
+[PASS] wardenDown_hint.warden-dead
+[PASS] wardenDown_hint.snap-exit3-fast
+[PASS] wardenDown_hint.snap-reports-confirm-via-hint
+[PASS] wardenDown_hint.no-selfheal-no-newtab
+[PASS] wardenDown_hint.dialog-accept-honest-failure-or-success
+[FAIL] wardenDown_hint.failure-message-mentions-recovery "Error: could not accept the confirm dialog: DirectCdpBroker.handle called before list()\n"
+[PASS] wardenDown_hint.close-fast
+--- wardenDown_laterDialog
+[PASS] wardenDown_laterDialog.observer-blocked
+[PASS] wardenDown_laterDialog.snap-exit3-fast
+[PASS] wardenDown_laterDialog.no-selfheal-no-newtab
+[PASS] wardenDown_laterDialog.close-fast
+--- wardenDown_slowScript
+[PASS] wardenDown_slowScript.busy-with-warden-down-reports-unknown-exit3 (disclosed trade-off)
+[PASS] wardenDown_slowScript.after-busy-ends-snap-ok-and-warden-respawned
+--- betweenCommands_newTargets
+[PASS] betweenCommands_newTargets.#popup-delay-dialog-opened-between-commands
+[FAIL] betweenCommands_newTargets.#popup-delay-snap-exit3-fast {"code":0,"ms":180408,"out":"URL: about:blank\nTitle: \nInteractive elements (0):\n\n","err":""}
+[FAIL] betweenCommands_newTargets.#popup-delay-snap-names-onload-alert "URL: about:blank\nTitle: \nInteractive elements (0):\n\n"
+[FAIL] betweenCommands_newTargets.#popup-delay-no-new-blank-tab-no-heal ["http://127.0.0.1:53143/audit.html?n=bc-1790423546249-hj0r","http://127.0.0.1:53143/fx.html?n=bc-1790423546249-hj0r-pop&onloadAlert=1","about:blank"]
+[FAIL] betweenCommands_newTargets.#popup-delay-dialog-accept {"args":"dialog accept","code":1,"ms":311,"killedAtCap":false,"stdout":"","stderr":"Error: no dialog is open to accept.\n"}
+[PASS] betweenCommands_newTargets.#xnav-delay-dialog-opened-between-commands
+[PASS] betweenCommands_newTargets.#xnav-delay-snap-exit3-fast
+[PASS] betweenCommands_newTargets.#xnav-delay-snap-names-onload-alert
+[PASS] betweenCommands_newTargets.#xnav-delay-no-new-blank-tab-no-heal
+[PASS] betweenCommands_newTargets.#xnav-delay-dialog-accept
+[FAIL] betweenCommands_newTargets.xframe-click-reports-oopif-dialog "Clicked #xframe\n"
+[PASS] betweenCommands_newTargets.xframe-next-snap-honest(exit3 or clean exit0), fast, no heal/blank
+--- d10_persist
+[PASS] d10_persist.fresh-no-flag-no-key
+[PASS] d10_persist.accept-set
+[PASS] d10_persist.report-set-explicitly
+[PASS] d10_persist.report-persists-1
+[PASS] d10_persist.report-persists-2
+[PASS] d10_persist.behaves-as-report
+[PASS] d10_persist.still-pending-after-1.5s(warden not applying stale accept)
+[PASS] d10_persist.fresh-spawn-flag-report-persisted?
+[PASS] d10_persist.fresh-spawn-with-report-flag-persists
+--- l15_selfheal
+[PASS] l15_selfheal.setup-accept-persisted
+[PASS] l15_selfheal.old-warden-exited-on-chrome-death
+[PASS] l15_selfheal.snap-exit0
+[PASS] l15_selfheal.stderr-note-line
+[PASS] l15_selfheal.new-chromePid
+[PASS] l15_selfheal.policy-carried-accept
+[PASS] l15_selfheal.new-warden-for-new-endpoint
+[PASS] l15_selfheal.exactly-one-warden-for-dir
+[PASS] l15_selfheal.carried-accept-applied-by-warden-between-commands
+--- wardenLifecycle
+[PASS] wardenLifecycle.a-chrome-death-warden-exits
+[PASS] wardenLifecycle.a-warden-json-removed-by-warden
+[PASS] wardenLifecycle.b-state-removed-warden-exits<=5s
+[PASS] wardenLifecycle.b2-state-dir-removed-warden-exits
+[PASS] wardenLifecycle.c-state-repointed-warden-exits
+[PASS] wardenLifecycle.d-close-stops-warden-and-removes-file
+[PASS] wardenLifecycle.d2-close-with-dialog-fast-and-clean
+[PASS] wardenLifecycle.e-one-warden-each
+[PASS] wardenLifecycle.e-B-sees-no-dialog-from-A
+[PASS] wardenLifecycle.e-B-token-rejected-by-A
+[PASS] wardenLifecycle.e-B-accept-does-not-touch-A
+[PASS] wardenLifecycle.e-A-still-blocked
+[PASS] wardenLifecycle.e-both-wardens-gone
+[FAIL] wardenLifecycle.f-concurrent-respawn-yields-one-warden (informational) {"wardensAfterRace":[243484,173892,303072],"file":303072}
+[PASS] wardenLifecycle.f-all-racing-wardens-gone-after-close(+poll)
+--- wardenSecurity
+[PASS] wardenSecurity.no-token-401
+[PASS] wardenSecurity.wrong-token-401
+[PASS] wardenSecurity.no-bearer-prefix-401
+[PASS] wardenSecurity.prefix-token-401
+[PASS] wardenSecurity.query-token-401
+[PASS] wardenSecurity.handle-no-token-401
+[PASS] wardenSecurity.preflight-no-cors-allow
+[PASS] wardenSecurity.good-token-200
+[PASS] wardenSecurity.lan-ip-not-reachable
+[PASS] wardenSecurity.listens-on-127.0.0.1-only
+[PASS] wardenSecurity.token-not-on-command-line
+[PASS] wardenSecurity.dialog-still-pending-after-unauth-attempts
+--- r10_doubleHandling
+[PASS] r10_doubleHandling.in-command-chains-exact(12)
+[PASS] r10_doubleHandling.between-commands-warden-chain-exact
+[PASS] r10_doubleHandling.concurrent-inprocess+warden-chain-exact
+--- gatePromptDefault
+[PASS] gatePromptDefault.gate-handled-exit0
+[FAIL] gatePromptDefault.gate-accept-no-text-uses-default(D-9) [{"kind":"prompt","phase":"opening","seq":1,"t":1790423911926},{"kind":"prompt","phase":"returned","result":"","isNull":false,"seq":2,"t":1790423918199}]
+[PASS] gatePromptDefault.dialogHandled-line-promptText
+[PASS] gatePromptDefault.control-dialog-accept-uses-default
+[PASS] cleanup.no-leftover-wardens-before-forced-kill
+[FAIL] cleanup.no-leftover-chrome-before-forced-kill {"wardens":[],"chrome":[122484]}
+[PASS] observer.no-guard-violations
+
+96/105 pass; failed: wardenDown_hint.failure-message-mentions-recovery, betweenCommands_newTargets.#popup-delay-snap-exit3-fast, betweenCommands_newTargets.#popup-delay-snap-names-onload-alert, betweenCommands_newTargets.#popup-delay-no-new-blank-tab-no-heal, betweenCommands_newTargets.#popup-delay-dialog-accept, betweenCommands_newTargets.xframe-click-reports-oopif-dialog, wardenLifecycle.f-concurrent-respawn-yields-one-warden (informational), gatePromptDefault.gate-accept-no-text-uses-default(D-9), cleanup.no-leftover-chrome-before-forced-kill

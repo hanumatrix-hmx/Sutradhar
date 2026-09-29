@@ -1,0 +1,380 @@
+[
+  {
+    "name": "S1a main light-DOM line has no label",
+    "ok": true,
+    "detail": "[#1] button \"Top button\""
+  },
+  {
+    "name": "S1b shadow depth1",
+    "ok": true,
+    "detail": "[#2] button \"Shadow one\" (shadow: outer-app#root)"
+  },
+  {
+    "name": "S1c shadow depth2 uses first class, sanitized",
+    "ok": true,
+    "detail": "[#3] input \"Shadow two\" (shadow: outer-app#root > mid-el.wrap)"
+  },
+  {
+    "name": "S1d shadow depth3 → outer > … > inner, host id sanitized to [\\w-]",
+    "ok": true,
+    "detail": "[#4] button \"Shadow three\" (shadow: outer-app#root > … > leaf-el#leafx)"
+  },
+  {
+    "name": "S1e same-origin named frame: first line has URL with query+fragment dropped",
+    "ok": true,
+    "detail": "[#5 in iframe \"checkout\" (http://127.0.0.1:60275/inner.html)] input \"Card num\""
+  },
+  {
+    "name": "S1f secret query value never printed in listing",
+    "ok": true
+  },
+  {
+    "name": "S1g checkout later lines omit URL",
+    "ok": true,
+    "detail": [
+      "[#5 in iframe \"checkout\" (http://127.0.0.1:60275/inner.html)] input \"Card num\"",
+      "[#6 in iframe \"checkout\"] button \"Submit order\"",
+      "[#7 in iframe \"checkout\"] input \"Security code\" (shadow: card-box#cb)"
+    ]
+  },
+  {
+    "name": "S1h iframe+shadow co-occur",
+    "ok": true,
+    "detail": "[#7 in iframe \"checkout\"] input \"Security code\" (shadow: card-box#cb)"
+  },
+  {
+    "name": "S1i OOPIF named remote listed with localhost URL",
+    "ok": true,
+    "detail": "[#12 in iframe \"remote\" (http://localhost:60275/remote.html)] button \"Remote go\""
+  },
+  {
+    "name": "S1j srcdoc unnamed → numeric designator + about:srcdoc",
+    "ok": true,
+    "detail": "[#8 in iframe 2 (about:srcdoc)] button \"Srcdoc thing\""
+  },
+  {
+    "name": "S1k 2-level nested OOPIF (lvl2 inside checkout) labelled",
+    "ok": true,
+    "detail": "[#14 in iframe \"lvl2\" (http://localhost:60275/lvl2.html)] button \"Level two\""
+  },
+  {
+    "name": "S1l 3-level nested srcdoc (lvl3) labelled",
+    "ok": true,
+    "detail": "[#15 in iframe \"lvl3\" (about:srcdoc)] button \"Level three\""
+  },
+  {
+    "name": "S1m long name sanitized to ≤30 chars in designator",
+    "ok": true,
+    "detail": "[#9 in iframe \"this-is-a-really-long-frame-na\" (about:srcdoc)] button \"Longname btn\""
+  },
+  {
+    "name": "S1n XFO-denied frame → error-page placeholder",
+    "ok": true,
+    "detail": "[iframe \"deny\" chrome-error:// — not inspectable] (browser error page: blocked or failed to load)"
+  },
+  {
+    "name": "S1o \"Should never render\" content not listed",
+    "ok": true
+  },
+  {
+    "name": "S1p header count == number of [#N lines",
+    "ok": true,
+    "detail": {
+      "hdr": 13
+    }
+  },
+  {
+    "name": "S1q structured frame.url keeps full URL incl query+fragment",
+    "ok": true,
+    "detail": {
+      "index": 1,
+      "url": "http://127.0.0.1:60275/inner.html?token=SECRET123#frag",
+      "name": "checkout"
+    }
+  },
+  {
+    "name": "S1r lvl2 parentIndex == checkout index",
+    "ok": true,
+    "detail": {
+      "ck": {
+        "index": 1,
+        "url": "http://127.0.0.1:60275/inner.html?token=SECRET123#frag",
+        "name": "checkout"
+      },
+      "l2": {
+        "index": 6,
+        "url": "http://localhost:60275/lvl2.html",
+        "name": "lvl2",
+        "parentIndex": 1
+      }
+    }
+  },
+  {
+    "name": "S1s lvl3 parentIndex == lvl2 index",
+    "ok": true,
+    "detail": {
+      "index": 7,
+      "url": "about:srcdoc",
+      "name": "lvl3",
+      "parentIndex": 6
+    }
+  },
+  {
+    "name": "S1t main nodes have no frame key; light-DOM nodes have no shadowHosts key",
+    "ok": true
+  },
+  {
+    "name": "S1u shadowHosts full chain (3) in structured form",
+    "ok": true,
+    "detail": [
+      "outer-app#root",
+      "mid-el.wrap",
+      "leaf-el#leafx"
+    ]
+  },
+  {
+    "name": "S1v skippedFrames has deny error-page",
+    "ok": true,
+    "detail": [
+      {
+        "index": 4,
+        "url": "chrome-error://chromewebdata/",
+        "origin": "chrome-error://",
+        "name": "deny",
+        "reason": "error-page"
+      }
+    ]
+  },
+  {
+    "name": "ADV-b1 structured ids unique",
+    "ok": true,
+    "detail": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      12,
+      13,
+      14,
+      15
+    ]
+  },
+  {
+    "name": "ADV-b2 no id stamped (current gen) in two different frames/elements",
+    "ok": true,
+    "detail": []
+  },
+  {
+    "name": "ADV-b3 observer ground truth: every label points at the right frame/shadow",
+    "ok": false,
+    "detail": [
+      {
+        "l": "[#14 in iframe \"lvl2\" (http://localhost:60275/lvl2.html)] button \"Level two\"",
+        "why": "no truth element"
+      }
+    ]
+  },
+  {
+    "name": "S1w noText: designator kept, no URL, no shadow",
+    "ok": true,
+    "detail": [
+      "[#1] button",
+      "[#2] button",
+      "[#3] input",
+      "[#4] button",
+      "[#5 in iframe \"checkout\"] input"
+    ]
+  },
+  {
+    "name": "S1x noText still has placeholder",
+    "ok": true
+  },
+  {
+    "name": "S1y idsOnly: node lines exactly [#N], placeholder kept",
+    "ok": true
+  },
+  {
+    "name": "S1z click by id into OOPIF succeeds",
+    "ok": true,
+    "detail": {
+      "success": true,
+      "actionType": "click",
+      "executionTimeMs": 1824,
+      "currentUrl": "http://127.0.0.1:60275/main.html?n=1790311486310",
+      "title": "audit main",
+      "output": {
+        "clickedSelector": "[data-sd-node-id=\"12\"]",
+        "button": "left"
+      },
+      "retriesUsed": 0,
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90"
+      }
+    }
+  },
+  {
+    "name": "S1za type by id into shadow-in-iframe",
+    "ok": true,
+    "detail": "424"
+  },
+  {
+    "name": "ADV-c1 ax: checkout header at depth 0",
+    "ok": true
+  },
+  {
+    "name": "ADV-c2 ax: lvl2 header at depth 1 under checkout",
+    "ok": true
+  },
+  {
+    "name": "ADV-c3 ax: lvl2 content at depth 2",
+    "ok": true
+  },
+  {
+    "name": "ADV-c4 ax: lvl3 header at depth 2 under lvl2",
+    "ok": true
+  },
+  {
+    "name": "ADV-c5 ax: lvl3 content at depth 3",
+    "ok": true
+  },
+  {
+    "name": "ADV-c6 ax: OOPIF remote grouped",
+    "ok": true
+  },
+  {
+    "name": "ADV-c7 ax: no fallback note on healthy page",
+    "ok": true
+  },
+  {
+    "name": "ADV-e ax designator for long (>30 char) name matches DOM snapshot designator (\"this-is-a-really-long-frame-na\")",
+    "ok": false,
+    "detail": "[iframe 3 (about:srcdoc)]"
+  },
+  {
+    "name": "S2 ax: shadow content present, no shadow labels (D12)",
+    "ok": true
+  },
+  {
+    "name": "S3a busy OOPIF placeholder with 5000ms",
+    "ok": true
+  },
+  {
+    "name": "S3b main still listed",
+    "ok": true
+  },
+  {
+    "name": "ADV-d snapshot bounded at ~5s even with TWO frames sharing the busy renderer (spec N10: ≤ ~6.5s)",
+    "ok": false,
+    "detail": {
+      "s3ms": 10009,
+      "sibTimedOut": true
+    }
+  },
+  {
+    "name": "S3c ids after the timed-out frame jump by the reserved 300",
+    "ok": true,
+    "detail": {
+      "mainMax": 1,
+      "after": 602
+    }
+  },
+  {
+    "name": "S3d ax bounded (<7000ms) with fallback note",
+    "ok": true,
+    "detail": {
+      "axms": 5006
+    }
+  },
+  {
+    "name": "S3e no duplicate ids in the latest generation after late stamps land",
+    "ok": true,
+    "detail": [
+      {
+        "id": 1,
+        "f": "main",
+        "gen": "1790311551622"
+      },
+      {
+        "id": 2,
+        "f": "busyx",
+        "gen": "1790311551622"
+      },
+      {
+        "id": 3,
+        "f": "busyx",
+        "gen": "1790311551622"
+      },
+      {
+        "id": 302,
+        "f": "sib",
+        "gen": "1790311551622"
+      },
+      {
+        "id": 303,
+        "f": "sib",
+        "gen": "1790311551622"
+      },
+      {
+        "id": 602,
+        "f": "after",
+        "gen": "1790311551622"
+      },
+      {
+        "id": 603,
+        "f": "lvl3",
+        "gen": "1790311551622"
+      }
+    ]
+  },
+  {
+    "name": "S3f re-snapshot after busy lists busyx normally",
+    "ok": true,
+    "detail": []
+  },
+  {
+    "name": "S4 limitation reproduced: same-process busy frame is NOT bounded by the 5s timeout",
+    "ok": true,
+    "detail": {
+      "s4ms": 7690
+    }
+  },
+  {
+    "name": "ADV-a1 snapshot never throws while a frame navigates continuously",
+    "ok": true,
+    "detail": 0
+  },
+  {
+    "name": "ADV-a2 no node labelled with the OTHER document's URL (stale/wrong frame label)",
+    "ok": true,
+    "detail": []
+  },
+  {
+    "name": "S6a MCP snapshot description has in iframe / (shadow: / not inspectable / ^\\[#(\\d+)",
+    "ok": true
+  },
+  {
+    "name": "S6b MCP snapshot text has OOPIF label",
+    "ok": true
+  },
+  {
+    "name": "S6c MCP Skipped frames (JSON) block after Structured nodes",
+    "ok": true
+  },
+  {
+    "name": "S6d MCP without includeNodes has no JSON blocks",
+    "ok": true
+  },
+  {
+    "name": "S6e MCP ax_snapshot shows nested iframe headers",
+    "ok": true
+  }
+]

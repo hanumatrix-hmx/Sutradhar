@@ -1,0 +1,237 @@
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/mcp-server[39m
+
+ [32m✓[39m tests/unit/session-resolution.spec.ts [2m ([22m[2m23 tests[22m[2m)[22m[90m 11[2mms[22m[39m
+ [33m❯[39m tests/unit/tools.spec.ts [2m ([22m[2m38 tests[22m [2m|[22m [31m7 failed[39m[2m)[22m[90m 85[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT1: every non-exempt tool has an optional sessionId; exempt tools are untouched[39m
+[31m     → expected false to be true // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT2: omitted (1 live session) resolves to the same positional runtime call as an explicit id[39m
+[31m     → expected [ undefined, '#x', undefined, …(3) ] to deeply equal [ 'A', '#x', undefined, …(3) ][39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT3: omitted with 0 live sessions -> isError, runtime.click never called[39m
+[31m     → expected 'click failed: No browser session "und…' to contain 'click failed: No sessionId given, and…'[39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT4: omitted with 2+ live sessions -> isError listing both ids, runtime.click never called[39m
+[31m     → expected 'click failed: No browser session "und…' to contain 'A'[39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT7: browser.shutdown resolves the omitted id and reports it[39m
+[31m     → expected "shutdown" to be called with arguments: [ 'A' ][90m
+
+Received: 
+
+[1m  1st shutdown call:
+
+[22m[2m  Array [[22m
+[32m-   "A",[90m
+[31m+   undefined,[90m
+[2m  ][22m
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT8: browser.get_viewport (sync handler) resolves the omitted id; explicit id stays synchronous[39m
+[31m     → expected "getViewport" to be called with arguments: [ 'A', undefined ][90m
+
+Received: 
+
+[1m  1st getViewport call:
+
+[22m[2m  Array [[22m
+[32m-   "A",[90m
+[31m+   undefined,[90m
+[2m    undefined,[22m
+[2m  ][22m
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT11: browser.screenshot keeps the image as content[0], note appended after it[39m
+[31m     → Cannot read properties of undefined (reading 'text')[39m
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mconstructs SutradharRuntime with the 30-minute default idleTimeoutMs when nothing overrides it[22m[39m
+{"timestamp":"2026-09-25T08:37:53.802Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mhonors SUTRADHAR_IDLE_TIMEOUT_MS when set[22m[39m
+{"timestamp":"2026-09-25T08:37:53.811Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mhonors an explicit idleTimeoutMs option over the env var and default[22m[39m
+{"timestamp":"2026-09-25T08:37:53.813Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2midleTimeoutMs:0 disables the reaper (passed through as undefined, matching SutradharRuntime's "unset = disabled" contract)[22m[39m
+{"timestamp":"2026-09-25T08:37:53.815Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mdoes not construct a new SutradharRuntime at all when the caller supplies one directly[22m[39m
+{"timestamp":"2026-09-25T08:37:53.819Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring[2m > [22m[2mdefaults to false (unrestricted) when nothing overrides it[22m[39m
+{"timestamp":"2026-09-25T08:37:53.822Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring[2m > [22m[2mhonors SUTRADHAR_RESTRICT_NAVIGATION_TO_LOCAL=1[22m[39m
+{"timestamp":"2026-09-25T08:37:53.824Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring[2m > [22m[2mhonors an explicit restrictNavigationToLocal option over the env var[22m[39m
+{"timestamp":"2026-09-25T08:37:53.826Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer allowedDomains wiring[2m > [22m[2mdefaults to undefined (unrestricted) when nothing overrides it[22m[39m
+{"timestamp":"2026-09-25T08:37:53.827Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer allowedDomains wiring[2m > [22m[2mhonors SUTRADHAR_ALLOWED_DOMAINS as a comma-separated list, trimmed[22m[39m
+{"timestamp":"2026-09-25T08:37:53.829Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer allowedDomains wiring[2m > [22m[2mhonors an explicit allowedDomains option over the env var[22m[39m
+{"timestamp":"2026-09-25T08:37:53.831Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+ [32m✓[39m tests/unit/server.spec.ts [2m ([22m[2m11 tests[22m[2m)[22m[90m 33[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[31m7 failed[39m[22m[2m | [22m[1m[32m65 passed[39m[22m[90m (72)[39m
+[2m   Start at [22m 14:07:51
+[2m   Duration [22m 2.07s[2m (transform 1.18s, setup 0ms, collect 2.83s, tests 129ms, environment 1ms, prepare 749ms)[22m
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 7 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT1: every non-exempt tool has an optional sessionId; exempt tools are untouched
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m553:61[22m[39m
+    [90m551| [39m      [35mconst[39m schema [33m=[39m tools[33m.[39m[35mget[39m(name)[33m![39m[33m.[39mconfig[33m.[39minputSchema[33m;[39m
+    [90m552| [39m      [34mexpect[39m(schema[33m.[39msessionId[33m,[39m [32m`[39m[36m${[39mname[36m}[39m[32m should have a sessionId key`[39m)[33m.[39m…
+    [90m553| [39m      [34mexpect[39m(schema[33m.[39msessionId[33m.[39m[34msafeParse[39m(undefined)[33m.[39msuccess)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m                                                            [31m^[39m
+    [90m554| [39m      [34mexpect[39m(schema[33m.[39msessionId[33m.[39m[34msafeParse[39m([32m's1'[39m)[33m.[39msuccess)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m555| [39m      [34mexpect[39m(schema[33m.[39msessionId[33m.[39m[34msafeParse[39m([34m5[39m)[33m.[39msuccess)[33m.[39m[34mtoBe[39m([35mfalse[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT2: omitted (1 live session) resolves to the same positional runtime call as an explicit id
+[31m[1mAssertionError[22m: expected [ undefined, '#x', undefined, …(3) ] to deeply equal [ 'A', '#x', undefined, …(3) ][39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  Array [[22m
+[32m-   "A",[39m
+[31m+   undefined,[39m
+[2m    "#x",[22m
+[2m    undefined,[22m
+[2m    undefined,[22m
+[2m    undefined,[22m
+[2m    undefined,[22m
+[2m  ][22m
+
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m584:31[22m[39m
+    [90m582| [39m    [35mconst[39m r2 [33m=[39m [35mawait[39m tools[33m.[39m[35mget[39m([32m'browser.click'[39m)[33m![39m[33m.[39m[34mhandler[39m({ sessionId[33m:[39m …
+    [90m583| [39m
+    [90m584| [39m    [34mexpect[39m(spy[33m.[39mmock[33m.[39mcalls[[34m0[39m])[33m.[39m[34mtoEqual[39m(spy[33m.[39mmock[33m.[39mcalls[[34m1[39m])[33m;[39m
+    [90m   | [39m                              [31m^[39m
+    [90m585| [39m    [34mexpect[39m(spy[33m.[39mmock[33m.[39mcalls[[34m0[39m][33m.[39mlength)[33m.[39m[34mtoBe[39m(spy[33m.[39mmock[33m.[39mcalls[[34m1[39m][33m.[39mlength)[33m;[39m
+    [90m586| [39m    [34mexpect[39m(r1[33m.[39mcontent[33m.[39mlength)[33m.[39m[34mtoBe[39m([34m2[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT3: omitted with 0 live sessions -> isError, runtime.click never called
+[31m[1mAssertionError[22m: expected 'click failed: No browser session "und…' to contain 'click failed: No sessionId given, and…'[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- click failed: No sessionId given, and there is no live browser session[39m
+[31m+ click failed: No browser session "undefined". Call launch() first.[39m
+[31m+ Hint: Call browser.launch first to create a session.[39m
+
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m600:36[22m[39m
+    [90m598| [39m
+    [90m599| [39m    [34mexpect[39m(result[33m.[39misError)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m600| [39m    [34mexpect[39m(result[33m.[39mcontent[[34m0[39m][33m.[39mtext)[33m.[39m[34mtoContain[39m([32m'click failed: No session[39m…
+    [90m   | [39m                                   [31m^[39m
+    [90m601| [39m    [34mexpect[39m(spy)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m602| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT4: omitted with 2+ live sessions -> isError listing both ids, runtime.click never called
+[31m[1mAssertionError[22m: expected 'click failed: No browser session "und…' to contain 'A'[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- A[39m
+[31m+ click failed: No browser session "undefined". Call launch() first.[39m
+[31m+ Hint: Call browser.launch first to create a session.[39m
+
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m614:36[22m[39m
+    [90m612| [39m
+    [90m613| [39m    [34mexpect[39m(result[33m.[39misError)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m614| [39m    [34mexpect[39m(result[33m.[39mcontent[[34m0[39m][33m.[39mtext)[33m.[39m[34mtoContain[39m([32m'A'[39m)[33m;[39m
+    [90m   | [39m                                   [31m^[39m
+    [90m615| [39m    [34mexpect[39m(result[33m.[39mcontent[[34m0[39m][33m.[39mtext)[33m.[39m[34mtoContain[39m([32m'B'[39m)[33m;[39m
+    [90m616| [39m    [34mexpect[39m(spy)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT7: browser.shutdown resolves the omitted id and reports it
+[31m[1mAssertionError[22m: expected "shutdown" to be called with arguments: [ 'A' ][90m
+
+Received: 
+
+[1m  1st shutdown call:
+
+[22m[2m  Array [[22m
+[32m-   "A",[90m
+[31m+   undefined,[90m
+[2m  ][22m
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m660:17[22m[39m
+    [90m658| [39m    [35mconst[39m result [33m=[39m [35mawait[39m tools[33m.[39m[35mget[39m([32m'browser.shutdown'[39m)[33m![39m[33m.[39m[34mhandler[39m({})[33m;[39m
+    [90m659| [39m
+    [90m660| [39m    [34mexpect[39m(spy)[33m.[39m[34mtoHaveBeenCalledWith[39m([32m'A'[39m)[33m;[39m
+    [90m   | [39m                [31m^[39m
+    [90m661| [39m    [35mconst[39m parsed [33m=[39m [33mJSON[39m[33m.[39m[34mparse[39m(result[33m.[39mcontent[[34m0[39m][33m.[39mtext)[33m;[39m
+    [90m662| [39m    [34mexpect[39m(parsed)[33m.[39m[34mtoEqual[39m({ success[33m:[39m [35mtrue[39m[33m,[39m sessionId[33m:[39m [32m'A'[39m })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT8: browser.get_viewport (sync handler) resolves the omitted id; explicit id stays synchronous
+[31m[1mAssertionError[22m: expected "getViewport" to be called with arguments: [ 'A', undefined ][90m
+
+Received: 
+
+[1m  1st getViewport call:
+
+[22m[2m  Array [[22m
+[32m-   "A",[90m
+[31m+   undefined,[90m
+[2m    undefined,[22m
+[2m  ][22m
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m675:17[22m[39m
+    [90m673| [39m    [34mregisterTools[39m(server[33m,[39m { runtime })[33m;[39m
+    [90m674| [39m    [35mawait[39m tools[33m.[39m[35mget[39m([32m'browser.get_viewport'[39m)[33m![39m[33m.[39m[34mhandler[39m({})[33m;[39m
+    [90m675| [39m    [34mexpect[39m(spy)[33m.[39m[34mtoHaveBeenCalledWith[39m([32m'A'[39m[33m,[39m undefined)[33m;[39m
+    [90m   | [39m                [31m^[39m
+    [90m676| [39m
+    [90m677| [39m    [35mconst[39m syncRet [33m=[39m tools[33m.[39m[35mget[39m([32m'browser.get_viewport'[39m)[33m![39m[33m.[39m[34mhandler[39m({ sessi…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22mFR2-10 optional sessionId[2m > [22mT11: browser.screenshot keeps the image as content[0], note appended after it
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'text')[39m
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m718:30[22m[39m
+    [90m716| [39m
+    [90m717| [39m    [34mexpect[39m(result[33m.[39mcontent[[34m0[39m][33m.[39mtype)[33m.[39m[34mtoBe[39m([32m'image'[39m)[33m;[39m
+    [90m718| [39m    [34mexpect[39m(result[33m.[39mcontent[[34m1[39m][33m.[39mtext)[33m.[39m[34mtoBe[39m([32m'sessionId omitted: used "A", [39m…
+    [90m   | [39m                             [31m^[39m
+    [90m719| [39m  })[33m;[39m
+    [90m720| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯[22m[39m
+

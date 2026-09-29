@@ -1,0 +1,51 @@
+{
+  "point": "point1-delay",
+  "fromRef": "652124a",
+  "files": [
+    "packages/browser/src/session/dialog-warden.ts"
+  ],
+  "at": "2026-09-27T04:42:26.436Z",
+  "originalShas": [
+    {
+      "file": "packages\\browser\\src\\session\\dialog-warden.ts",
+      "sha256": "a659a7259e0942c4de5ae932ca05b09620564528dee4dcfba22eb90e08d3205d",
+      "sha256_normalized_eol": "a659a7259e0942c4de5ae932ca05b09620564528dee4dcfba22eb90e08d3205d",
+      "bytes": 43395
+    }
+  ],
+  "beforeRevert": {
+    "label": "fixed-code (baseline, should be all-pass)",
+    "exitCode": 0,
+    "summary": "Tests  32 passed (32)",
+    "failedCount": 0,
+    "failedNames": [],
+    "outTail": "\n RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser\n\n ✓ tests/unit/dialog-warden.spec.ts  (32 tests) 1052ms\n\n Test Files  1 passed (1)\n      Tests  32 passed (32)\n   Start at  10:12:26\n   Duration  1.41s (transform 48ms, setup 0ms, collect 52ms, tests 1.05s, environment 0ms, prepare 116ms)\n\nThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\n"
+  },
+  "afterRevert": {
+    "label": "reverted-to-652124a (should show NEW failures)",
+    "exitCode": 1,
+    "summary": "Tests  2 failed | 30 passed (32)",
+    "failedCount": 2,
+    "failedNames": [
+      "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (GAP-251 pin):",
+      "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (kills E4 \"boo"
+    ],
+    "outTail": "\n RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser\n\n ❯ tests/unit/dialog-warden.spec.ts  (32 tests | 2 failed) 939ms\n   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (GAP-251 pin): with NO explicit proactiveConfirmDelayMs (the new production default), a genuinely idle popup and its opener both become confirmedSafe fast enough to survive a same-renderer block that arrives moments later, at realistic small gaps\n     → expected 200 to be 409 // Object.is equality\n   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (kills E4 \"bootstrap exception removed\"): with a configured NON-ZERO delay, a bootstrap target waits the SAME delay as a non-bootstrap one — bootstrap no longer has its own silent 0ms fast path\n     → expected 409 to be 200 // Object.is equality\n\n Test Files  1 failed (1)\n      Tests  2 failed | 30 passed (32)\n   Start at  10:12:28\n   Duration  1.29s (transform 46ms, setup 0ms, collect 52ms, tests 939ms, environment 0ms, prepare 115ms)\n\nThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (GAP-251 pin): with NO explicit proactiveConfirmDelayMs (the new production default), a genuinely idle popup and its opener both become confirmedSafe fast enough to survive a same-renderer block that arrives moments later, at realistic small gaps\nAssertionError: expected 200 to be 409 // Object.is equality\n\n- Expected\n+ Received\n\n- 409\n+ 200\n\n ❯ tests/unit/dialog-warden.spec.ts:1182:32\n    1180|               body: JSON.stringify({ targetId, accept: true }),\n    1181|             });\n    1182|             expect(res.status).toBe(409); // refused, never closed\n       |                                ^\n    1183|             expect((await res.json()).confirmedSafe).toBe(true);\n    1184|           }\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯\n\n FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-2 (GAP-251/255): delay removed, Page.enable-ack precondition preserved > point 1 (kills E4 \"bootstrap exception removed\"): with a configured NON-ZERO delay, a bootstrap target waits the SAME delay as a non-bootstrap one — bootstrap no longer has its own silent 0ms fast path\nAssertionError: expected 409 to be 200 // Object.is equality\n\n- Expected\n+ Received\n\n- 200\n+ 409\n\n ❯ tests/unit/dialog-warden.spec.ts:1229:30\n    1227|             body: JSON.stringify({ targetId, accept: true }),\n    1228|           });\n    1229|           expect(res.status).toBe(200); // still eligible/closable — n…\n       |                              ^\n    1230|           expect((await res.json()).closedTarget).toBe(true);\n    1231|         }\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯\n\n"
+  },
+  "restore": [
+    {
+      "file": "packages\\browser\\src\\session\\dialog-warden.ts",
+      "sha256": "a659a7259e0942c4de5ae932ca05b09620564528dee4dcfba22eb90e08d3205d",
+      "matches": true
+    }
+  ],
+  "restoreOk": true,
+  "afterRestore": {
+    "label": "restored (should be all-pass again, same as baseline)",
+    "exitCode": 0,
+    "summary": "Tests  32 passed (32)",
+    "failedCount": 0,
+    "failedNames": [],
+    "outTail": "\n RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser\n\n ✓ tests/unit/dialog-warden.spec.ts  (32 tests) 1078ms\n\n Test Files  1 passed (1)\n      Tests  32 passed (32)\n   Start at  10:12:30\n   Duration  1.43s (transform 49ms, setup 0ms, collect 55ms, tests 1.08s, environment 0ms, prepare 122ms)\n\nThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\n"
+  }
+}

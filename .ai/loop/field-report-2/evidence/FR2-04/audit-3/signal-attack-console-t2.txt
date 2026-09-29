@@ -1,0 +1,68 @@
+{"t":0,"state":"control/idle","gm":"r1,r1,r0","rt":"responsive","warden":{"ms":9,"dialogs":[]},"snap":"0/399ms","verdict":"OK"}
+{"t":0,"state":"control/alert(dialog)","gm":"b410,b405,b401","rt":"blocked","warden":{"ms":2,"dialogs":["TGT:alert"]},"snap":"3/260ms","verdict":"DIALOG-CAUGHT"}
+{"t":0,"state":"busy-js-6s","gm":"r0,r1,r0","rt":"blocked","warden":{"ms":3,"dialogs":[]},"snap":"0/5401ms","verdict":"OK"}
+{"t":0,"state":"sync-xhr-10s","gm":"b406,b405,b403","rt":"blocked","warden":{"ms":405,"dialogs":["TGT:unknown"]},"snap":"3/699ms","rec":"Tab C5CFE0ABFE5F0BCE75CCB1B6C1B47B01 was closed because its dialog could not be ","verdict":"FALSE-BLOCK"}
+{"t":0,"state":"huge-dom-parse+layout","gm":"b409,r311,r1","rt":"responsive","warden":{"ms":6,"dialogs":[]},"snap":"0/500ms","busy":823,"verdict":"OK"}
+{"t":0,"state":"repeated-forced-layout","gm":"r39,r140,r86","rt":"blocked","warden":{"ms":63,"dialogs":[]},"snap":"0/5024ms","busy":5017,"verdict":"OK"}
+{"t":0,"state":"alloc-heavy-gc","gm":"r1,r1,r1","rt":"blocked","warden":{"ms":5,"dialogs":[]},"snap":"0/4303ms","busy":5000,"verdict":"OK"}
+{"t":0,"state":"mid-navigation-slow-response","gm":"r1,r0,r0","rt":"blocked","warden":{"ms":3,"dialogs":[]},"snap":"0/5230ms","verdict":"OK"}
+{"t":0,"state":"debugger-paused","gm":"r1,r1,r0","rt":"responsive","warden":{"ms":2,"dialogs":[]},"snap":"1(CAP)/60210ms","verdict":"OK"}
+{"t":0,"state":"print-preview","gm":"r0,r1,r0","rt":"responsive","warden":{"ms":3,"dialogs":[]},"snap":"0/360ms","verdict":"OK"}
+{"t":0,"state":"background-tab-busy","gm":"r1,r0,r0","rt":"responsive","warden":{"ms":3,"dialogs":[]},"snap":"0/572ms","verdict":"OK"}
+{"t":0,"state":"renderer-crashed(aw-snap)","gm":"b405,b405,b405","rt":"blocked","warden":{"ms":403,"dialogs":["TGT:unknown"]},"snap":"3/669ms","rec":"Tab 485B96ED72FFFC2543F22EE482BDA84D was closed because its dialog could not be ","verdict":"FALSE-BLOCK+TAB-CLOSED"}
+{"t":0,"state":"renderer-hung(chrome://hang)","gm":"b407,b405,b407","rt":"blocked","warden":{"ms":407,"dialogs":["TGT:unknown"]},"snap":"3/681ms","rec":"Tab 40FC9FD54A21EEC8A6C38AE1BAE1CB89 was closed because its dialog could not be ","verdict":"FALSE-BLOCK"}
+{"t":1,"state":"control/idle","gm":"r1,r0,r0","rt":"responsive","warden":{"ms":2,"dialogs":[]},"snap":"0/379ms","verdict":"OK"}
+{"t":1,"state":"control/alert(dialog)","gm":"b405,b405,b407","rt":"blocked","warden":{"ms":1,"dialogs":["TGT:alert"]},"snap":"3/272ms","verdict":"DIALOG-CAUGHT"}
+{"t":1,"state":"busy-js-6s","gm":"r1,r0,r0","rt":"blocked","warden":{"ms":2,"dialogs":[]},"snap":"0/5399ms","verdict":"OK"}
+{"t":1,"state":"sync-xhr-10s","gm":"b405,b408,b404","rt":"blocked","warden":{"ms":405,"dialogs":["TGT:unknown"]},"snap":"3/674ms","rec":"Tab 6E33DCB5F289FCBCCF759835C912ADC7 was closed because its dialog could not be ","verdict":"FALSE-BLOCK"}
+{"t":1,"state":"huge-dom-parse+layout","gm":"b402,r349,r2","rt":"responsive","warden":{"ms":7,"dialogs":[]},"snap":"0/488ms","busy":855,"verdict":"OK"}
+{"t":1,"state":"repeated-forced-layout","gm":"r58,r137,r82","rt":"blocked","warden":{"ms":40,"dialogs":[]},"snap":"0/5286ms","busy":5072,"verdict":"OK"}
+{"t":1,"state":"alloc-heavy-gc","gm":"r0,r0,r1","rt":"blocked","warden":{"ms":4,"dialogs":[]},"snap":"0/4299ms","busy":5005,"verdict":"OK"}
+{"t":1,"state":"mid-navigation-slow-response","gm":"r0,r1,r0","rt":"blocked","warden":{"ms":3,"dialogs":[]},"snap":"0/5238ms","verdict":"OK"}
+{"t":1,"state":"debugger-paused","gm":"r1,r0,r0","rt":"responsive","warden":{"ms":2,"dialogs":[]},"snap":"1(CAP)/60205ms","verdict":"OK"}
+{"t":1,"state":"print-preview","gm":"r0,r1,r0","rt":"responsive","warden":{"ms":2,"dialogs":[]},"snap":"0/365ms","verdict":"OK"}
+{"t":1,"state":"background-tab-busy","gm":"r1,r1,r1","rt":"responsive","warden":{"ms":2,"dialogs":[]},"snap":"0/400ms","verdict":"OK"}
+{"t":1,"state":"renderer-crashed(aw-snap)","gm":"b406,b406,b405","rt":"blocked","warden":{"ms":409,"dialogs":["TGT:unknown"]},"snap":"3/667ms","rec":"Tab 24B07081577194454FF8EA31860C0874 was closed because its dialog could not be ","verdict":"FALSE-BLOCK+TAB-CLOSED"}
+{"t":1,"state":"renderer-hung(chrome://hang)","gm":"b401,b407,b402","rt":"blocked","warden":{"ms":417,"dialogs":["TGT:unknown"]},"snap":"3/680ms","rec":"Tab 55570AE58AB4F8A52FA3DB860757BC57 was closed because its dialog could not be ","verdict":"FALSE-BLOCK"}
+{
+ "control/idle": {
+  "OK": 2
+ },
+ "control/alert(dialog)": {
+  "DIALOG-CAUGHT": 2
+ },
+ "busy-js-6s": {
+  "OK": 2
+ },
+ "sync-xhr-10s": {
+  "FALSE-BLOCK": 2
+ },
+ "huge-dom-parse+layout": {
+  "OK": 2
+ },
+ "repeated-forced-layout": {
+  "OK": 2
+ },
+ "alloc-heavy-gc": {
+  "OK": 2
+ },
+ "mid-navigation-slow-response": {
+  "OK": 2
+ },
+ "debugger-paused": {
+  "OK": 2
+ },
+ "print-preview": {
+  "OK": 2
+ },
+ "background-tab-busy": {
+  "OK": 2
+ },
+ "renderer-crashed(aw-snap)": {
+  "FALSE-BLOCK+TAB-CLOSED": 2
+ },
+ "renderer-hung(chrome://hang)": {
+  "FALSE-BLOCK": 2
+ }
+}
+leftovers {"wardens":[],"chrome":[],"cliChildren":[]}

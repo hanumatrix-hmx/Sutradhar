@@ -1,0 +1,114 @@
+{
+  "steps": [
+    {
+      "label": "closeTab",
+      "ms": 0,
+      "ok": true,
+      "r": null
+    },
+    {
+      "label": "nav own404 before about:blan",
+      "ms": 16,
+      "ok": true,
+      "r": "{\"tabId\":\"tab_sess_1790544353822_1_1\",\"url\":\"http://127.0.0.1:58037/own404?x=11\",\"title\":\"nf\"}"
+    },
+    {
+      "label": "nav about:blan",
+      "ms": 7,
+      "ok": true,
+      "r": "{\"tabId\":\"tab_sess_1790544353822_1_1\",\"url\":\"about:blank\",\"title\":\"\"}"
+    },
+    {
+      "label": "state after about:blan",
+      "ms": 0,
+      "ok": true,
+      "r": "{\"commit\":\"2026-09-27T21:25:54.917Z\",\"resp\":{\"url\":\"http://127.0.0.1:58037/own404?x=11\",\"status\":404,\"timestamp\":\"2026-09-27T21:25:54.904Z\"},\"url\":\"about:blank\"}"
+    },
+    {
+      "label": "audit on about:blan",
+      "ms": 31,
+      "ok": true,
+      "r": "{\"url\":\"about:blank\",\"title\":\"\",\"timestamp\":\"2026-09-27T21:25:54.952Z\",\"screenshotBase64\":\"iVBORw0KGgoAAAANSUhEUgAABPAAAALBCAIAAABZV8hmAAAP8UlEQVR4nOzXAQkAMAzAsHGuYP7FTkchcZG/uwMAAAA1bwAAACBIaAEAAEgSWgAAAJKEFgAAgCShBQAAIEloAQAASBJaAAAAkoQWAACAJKEFAAAgSWgBAABIEloAAACShBYAAIAkoQUAACBJaAEAAEgSWgAAAJKEFgAAgCShBQAAIEloAQAASBJaAAAAkoQWAACAJKEFAAAgSWgBAABIEloAAACShBYAAIAkoQUAACBJaAEAAEgSWgAAAJKEFgAAgCShB"
+    },
+    {
+      "label": "result about:blan",
+      "url": "about:blank",
+      "brokenRequests": [
+        {
+          "url": "http://127.0.0.1:58037/own404?x=11",
+          "status": 404
+        }
+      ],
+      "covers": true
+    },
+    {
+      "label": "nav own404 before data:text/",
+      "ms": 9,
+      "ok": true,
+      "r": "{\"tabId\":\"tab_sess_1790544353822_1_1\",\"url\":\"http://127.0.0.1:58037/own404?x=44\",\"title\":\"nf\"}"
+    },
+    {
+      "label": "nav data:text/",
+      "ms": 14,
+      "ok": true,
+      "r": "{\"tabId\":\"tab_sess_1790544353822_1_1\",\"url\":\"data:text/html,<title>d</title><h1>data</h1>\",\"title\":\"d\"}"
+    },
+    {
+      "label": "state after data:text/",
+      "ms": 0,
+      "ok": true,
+      "r": "{\"commit\":\"2026-09-27T21:25:54.969Z\",\"resp\":{\"url\":\"data:text/html,<title>d</title><h1>data</h1>\",\"status\":200,\"timestamp\":\"2026-09-27T21:25:54.967Z\"},\"url\":\"data:text/html,<title>d</title><h1>data</h1>\"}"
+    },
+    {
+      "label": "audit on data:text/",
+      "ms": 41,
+      "ok": true,
+      "r": "{\"url\":\"data:text/html,<title>d</title><h1>data</h1>\",\"title\":\"d\",\"timestamp\":\"2026-09-27T21:25:55.019Z\",\"screenshotBase64\":\"iVBORw0KGgoAAAANSUhEUgAABPAAAALBCAIAAABZV8hmAAAQAElEQVR4nOzdL3QdZR6A4Zs9nNNUkVXNKlLVohpcUATVoBpU41pcVxEUqcMRFEGRVQS1rWpXkVUURVCkilT1riIogmqqsin9F3ZpGkq62zc8j8nMmfl+rX3P3JnvpZ2dnQEAAADU/GkAAAAAQYIWAACAJEELAABAkqAFAAAgSdACAACQJGgBAABIErQAAAAkCVoAAACSBC0AAABJghYAAIAkQQsAAECSoAU"
+    },
+    {
+      "label": "result data:text/",
+      "url": "data:text/html,<title>d</title><h1>data</h1>",
+      "brokenRequests": [],
+      "covers": true
+    },
+    {
+      "label": "nav own404 before neterror",
+      "ms": 15,
+      "ok": true,
+      "r": "{\"tabId\":\"tab_sess_1790544353822_1_1\",\"url\":\"http://127.0.0.1:58037/own404?n=1\",\"title\":\"nf\"}"
+    },
+    {
+      "label": "nav neterror",
+      "ms": 7,
+      "ok": false,
+      "err": "net::ERR_UNSAFE_PORT at http://127.0.0.1:1/"
+    },
+    {
+      "label": "pending dialog?",
+      "ms": 0,
+      "ok": true,
+      "r": null
+    },
+    {
+      "label": "audit on neterror",
+      "ms": 0,
+      "ok": false,
+      "err": "Protocol error (Page.captureScreenshot): Not attached to an active page"
+    }
+  ],
+  "trackerIsCounted": true,
+  "trackerClass": "CdpCDPSession",
+  "afterClose": {
+    "created": 2,
+    "detached": 0,
+    "stillOpenObjects": 2,
+    "stillOpenConnected": 2,
+    "trackerRef": "set"
+  },
+  "cdp": {
+    "created": 3,
+    "detached": 0,
+    "stillOpenObjects": 3,
+    "stillOpenConnected": 3
+  }
+}

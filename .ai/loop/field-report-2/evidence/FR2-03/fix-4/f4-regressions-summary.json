@@ -1,0 +1,183 @@
+{
+  "R": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-FIBcNB",
+  "total": 11,
+  "passed": 10,
+  "failed": [
+    "R176 orphan (state.json deleted, dir kept) Chrome killed AND its profile dir reclaimed in the same run"
+  ],
+  "cases": [
+    {
+      "name": "R178-0 degraded engaged",
+      "pass": true,
+      "obs": {
+        "ok": false,
+        "reason": "spawn powershell.exe ENOENT"
+      }
+    },
+    {
+      "name": "R178a degraded dry-run is a byte-level no-op on T and SR (names+sizes+mtimes)",
+      "pass": true,
+      "obs": {
+        "b": {
+          "T": {
+            "puppeteer_dev_chrome_profile-OwNd01": 1,
+            "puppeteer_dev_chrome_profile-UnMk01": 1,
+            "sutradhar-cli-1790370961627-d6IwfU": 1,
+            "sutradhar-cli-1790370962242-bCQXsE": 1,
+            "sutradhar-cli-1790370962852-LDtxSx": 1,
+            "sutradhar-cli-1790370963265-yOuNg4": 1,
+            "puppeteer_dev_chrome_profile-OwNd01/.sutradhar-owner.json": "f:117:1790370963264.3743",
+            "puppeteer_dev_chrome_profile-OwNd01/lockfile": "f:0:1790370963264.3743",
+            "puppeteer_dev_chrome_profile-OwNd01/.": 1790367363263,
+            "puppeteer_dev_chrome_profile-UnMk01/.": 1790367363263
+          },
+          "SR": {
+            "214c35de9a1575ee": "d:1790370963262.8022",
+            "f99398716fcb287c": "d:1790370963208.6748",
+            "f99398716fcb287c\\state.json": "f:385:1790370963209.6804",
+            "r177stale": "d:1790370963263.3315",
+            "r177stale\\state.json": "f:208:1790370963263.3315"
+          }
+        },
+        "a": {
+          "T": {
+            "puppeteer_dev_chrome_profile-OwNd01": 1,
+            "puppeteer_dev_chrome_profile-UnMk01": 1,
+            "sutradhar-cli-1790370961627-d6IwfU": 1,
+            "sutradhar-cli-1790370962242-bCQXsE": 1,
+            "sutradhar-cli-1790370962852-LDtxSx": 1,
+            "sutradhar-cli-1790370963265-yOuNg4": 1,
+            "puppeteer_dev_chrome_profile-OwNd01/.sutradhar-owner.json": "f:117:1790370963264.3743",
+            "puppeteer_dev_chrome_profile-OwNd01/lockfile": "f:0:1790370963264.3743",
+            "puppeteer_dev_chrome_profile-OwNd01/.": 1790367363263,
+            "puppeteer_dev_chrome_profile-UnMk01/.": 1790367363263
+          },
+          "SR": {
+            "214c35de9a1575ee": "d:1790370963262.8022",
+            "f99398716fcb287c": "d:1790370963208.6748",
+            "f99398716fcb287c\\state.json": "f:385:1790370963209.6804",
+            "r177stale": "d:1790370963263.3315",
+            "r177stale\\state.json": "f:208:1790370963263.3315"
+          }
+        }
+      }
+    },
+    {
+      "name": "R178b owned puppeteer dir lockfile survives the degraded lock probe",
+      "pass": true,
+      "obs": {}
+    },
+    {
+      "name": "R178c unmarked puppeteer dir not planned for deletion in degraded mode",
+      "pass": true,
+      "obs": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-FIBcNB\\temp\\puppeteer_dev_chrome_profile-UnMk01",
+          "reason": "not-sutradhar"
+        }
+      ]
+    },
+    {
+      "name": "R178d young dir kept grace in degraded mode",
+      "pass": true,
+      "obs": {}
+    },
+    {
+      "name": "R178e degraded plans no kill and no delete of any live session dir",
+      "pass": true,
+      "obs": [
+        {
+          "type": "clearState",
+          "stateFile": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-FIBcNB\\sr\\r177stale\\state.json",
+          "result": "planned"
+        },
+        {
+          "type": "deleteDir",
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-FIBcNB\\temp\\puppeteer_dev_chrome_profile-OwNd01",
+          "reason": "owner-dead",
+          "result": "planned"
+        }
+      ]
+    },
+    {
+      "name": "R175 custom-state-dir session survives a REAL GC run without the env var (alive, dir kept, eval works, not in kill list)",
+      "pass": true,
+      "obs": {
+        "ev1": {
+          "code": 0,
+          "out": "r175\n"
+        },
+        "killed": [
+          137432,
+          243788,
+          66172,
+          183612,
+          127224,
+          195084,
+          33772,
+          24056,
+          178516,
+          207192
+        ]
+      }
+    },
+    {
+      "name": "R176 orphan (state.json deleted, dir kept) Chrome killed AND its profile dir reclaimed in the same run",
+      "pass": false,
+      "obs": {
+        "alive": false,
+        "dir": true,
+        "acts": [
+          {
+            "type": "clearState",
+            "stateFile": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-FIBcNB\\sr\\r177stale\\state.json",
+            "result": "cleared"
+          },
+          {
+            "type": "kill",
+            "pid": 137432,
+            "role": "browser",
+            "userDataDir": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-FIBcNB\\temp\\sutradhar-cli-1790370962242-bCQXsE",
+            "reason": "orphan-cli",
+            "result": "killed"
+          },
+          {
+            "type": "deleteDir",
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-FIBcNB\\temp\\puppeteer_dev_chrome_profile-OwNd01",
+            "reason": "owner-dead",
+            "result": "deleted",
+            "attempts": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "R177 stale state naming the LIVE dir in a different path form: live dir kept, live session usable, stale state cleared",
+      "pass": true,
+      "obs": {
+        "ev3": {
+          "code": 0,
+          "out": "r177\n"
+        },
+        "dirExists": true,
+        "staleExists": false,
+        "kept": [
+          {
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-FIBcNB\\temp\\sutradhar-cli-1790370962852-LDtxSx",
+            "reason": "in-use"
+          }
+        ]
+      }
+    },
+    {
+      "name": "R178f (enumeration ok) owned dead-owner puppeteer dir reclaimed, unmarked one kept",
+      "pass": true,
+      "obs": {}
+    },
+    {
+      "name": "exit code 0 real run",
+      "pass": true,
+      "obs": 0
+    }
+  ]
+}

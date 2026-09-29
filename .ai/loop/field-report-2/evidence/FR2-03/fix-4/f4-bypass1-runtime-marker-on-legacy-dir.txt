@@ -1,0 +1,3 @@
+young (should be kept grace, NOT deleted): {"actions":[{"type":"kill","pid":9001,"role":"browser","userDataDir":"C:\\fake-temp\\sutradhar-cli-1700000099001","reason":"orphan-runtime","result":"planned"}],"kept":[{"path":"C:\\fake-temp\\sutradhar-cli-1700000099001","reason":"grace"}]}
+old (past grace -- may legitimately be deleted, same as an ordinary orphan-dir would be regardless of the forged marker): {"actions":[{"type":"kill","pid":9001,"role":"browser","userDataDir":"C:\\fake-temp\\sutradhar-cli-1700000099001","reason":"orphan-runtime","result":"planned"},{"type":"deleteDir","path":"C:\\fake-temp\\sutradhar-cli-1700000099001","reason":"orphan-browser","result":"planned"}],"kept":[]}
+YOUNG DIR WRONGLY DELETED: false

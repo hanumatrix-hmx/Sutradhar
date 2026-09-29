@@ -1,0 +1,811 @@
+{
+  "at": "2026-09-27T06:00:12.536Z",
+  "results": [
+    {
+      "variant": "xsite",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:57250/?t=0",
+          "code": 0,
+          "ms": 878,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:57250/?t=0\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #xsite",
+          "code": 0,
+          "ms": 3372,
+          "cap": false,
+          "out": "Clicked #xsite",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 670,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:57250/alert-inline?n=xsite\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actua"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 668,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:57250/alert-inline?n=xsite\"}",
+          "err": "Note: tab 5F190002EE9BE3099E7428EB4B3322A3 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1070,
+          "cap": false,
+          "out": "Tab 5F190002EE9BE3099E7428EB4B3322A3 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 272,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to dismiss."
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 0,
+          "ms": 273,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/?t=0\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"accept\"."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 271,
+          "cap": false,
+          "out": "* tab_sess_1790488726486_1_1  links  http://127.0.0.1:57250/?t=0",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 0,
+          "ms": 271,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/?t=0\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"report\"."
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 442,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "deadEnd": false,
+      "chromePid": 58244,
+      "closeCode": 0
+    },
+    {
+      "variant": "xsite",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:57250/?t=1",
+          "code": 0,
+          "ms": 855,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:57250/?t=1\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #xsite",
+          "code": 0,
+          "ms": 3376,
+          "cap": false,
+          "out": "Clicked #xsite",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 685,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:57250/alert-inline?n=xsite\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actua"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 663,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:57250/alert-inline?n=xsite\"}",
+          "err": "Note: tab 7508270D95245A0316B48BE600B66077 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1090,
+          "cap": false,
+          "out": "Tab 7508270D95245A0316B48BE600B66077 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 262,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to dismiss."
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 0,
+          "ms": 279,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/?t=1\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"accept\"."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 271,
+          "cap": false,
+          "out": "* tab_sess_1790488736174_1_1  links  http://127.0.0.1:57250/?t=1",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 0,
+          "ms": 274,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/?t=1\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"report\"."
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 432,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "deadEnd": false,
+      "chromePid": 56020,
+      "closeCode": 0
+    },
+    {
+      "variant": "xsite",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:57250/?t=2",
+          "code": 0,
+          "ms": 875,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:57250/?t=2\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #xsite",
+          "code": 0,
+          "ms": 3388,
+          "cap": false,
+          "out": "Clicked #xsite",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 675,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:57250/alert-inline?n=xsite\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actua"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 672,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:57250/alert-inline?n=xsite\"}",
+          "err": "Note: tab 074C3E349804635D52120177DFC04514 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1080,
+          "cap": false,
+          "out": "Tab 074C3E349804635D52120177DFC04514 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 269,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to dismiss."
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 0,
+          "ms": 276,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/?t=2\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"accept\"."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 275,
+          "cap": false,
+          "out": "* tab_sess_1790488745888_1_1  links  http://127.0.0.1:57250/?t=2",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 0,
+          "ms": 271,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/?t=2\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"report\"."
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 431,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "deadEnd": false,
+      "chromePid": 47384,
+      "closeCode": 0
+    },
+    {
+      "variant": "same",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:57250/?t=0",
+          "code": 0,
+          "ms": 876,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:57250/?t=0\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #same",
+          "code": 0,
+          "ms": 3364,
+          "cap": false,
+          "out": "Clicked #same",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 263,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"on-load same\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/alert-inline?n=same\"}",
+          "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually "
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 254,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"on-load same\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/alert-inline?n=same\"}",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 712,
+          "cap": false,
+          "out": "Accepted alert \"on-load same\"",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 261,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to dismiss."
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 0,
+          "ms": 266,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/alert-inline?n=same\nTitle: inline\nInteractive elements (0):",
+          "err": "Note: dialog policy for this session is now \"accept\"."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 257,
+          "cap": false,
+          "out": "tab_sess_1790488755604_1_1  links  http://127.0.0.1:57250/?t=0\n* tab_sess_1790488755604_1_2  inline  http://127.0.0.1:57250/alert-inline?n=same",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 0,
+          "ms": 260,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/alert-inline?n=same\nTitle: inline\nInteractive elements (0):",
+          "err": "Note: dialog policy for this session is now \"report\"."
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 421,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "deadEnd": false,
+      "chromePid": 41788,
+      "closeCode": 0
+    },
+    {
+      "variant": "same",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:57250/?t=1",
+          "code": 0,
+          "ms": 860,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:57250/?t=1\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #same",
+          "code": 0,
+          "ms": 3358,
+          "cap": false,
+          "out": "Clicked #same",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 259,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"on-load same\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/alert-inline?n=same\"}",
+          "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually "
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 266,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"on-load same\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/alert-inline?n=same\"}",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 717,
+          "cap": false,
+          "out": "Accepted alert \"on-load same\"",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 266,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to dismiss."
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 0,
+          "ms": 269,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/?t=1\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"accept\"."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 257,
+          "cap": false,
+          "out": "tab_sess_1790488764030_1_1  inline  http://127.0.0.1:57250/alert-inline?n=same\n* tab_sess_1790488764030_1_2  links  http://127.0.0.1:57250/?t=1",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 0,
+          "ms": 270,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/?t=1\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"report\"."
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 429,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "deadEnd": false,
+      "chromePid": 66328,
+      "closeCode": 0
+    },
+    {
+      "variant": "same",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:57250/?t=2",
+          "code": 0,
+          "ms": 864,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:57250/?t=2\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #same",
+          "code": 0,
+          "ms": 3340,
+          "cap": false,
+          "out": "Clicked #same",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 272,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"on-load same\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/alert-inline?n=same\"}",
+          "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually "
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 259,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"on-load same\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/alert-inline?n=same\"}",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 708,
+          "cap": false,
+          "out": "Accepted alert \"on-load same\"",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 259,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to dismiss."
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 0,
+          "ms": 261,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/alert-inline?n=same\nTitle: inline\nInteractive elements (0):",
+          "err": "Note: dialog policy for this session is now \"accept\"."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 265,
+          "cap": false,
+          "out": "tab_sess_1790488772504_1_1  links  http://127.0.0.1:57250/?t=2\n* tab_sess_1790488772504_1_2  inline  http://127.0.0.1:57250/alert-inline?n=same",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 0,
+          "ms": 269,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/alert-inline?n=same\nTitle: inline\nInteractive elements (0):",
+          "err": "Note: dialog policy for this session is now \"report\"."
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 422,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "deadEnd": false,
+      "chromePid": 64404,
+      "closeCode": 0
+    },
+    {
+      "variant": "sameopener",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:57250/?t=0",
+          "code": 0,
+          "ms": 889,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:57250/?t=0\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #sameopener",
+          "code": 1,
+          "ms": 361,
+          "cap": false,
+          "out": "Clicked #sameopener",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 676,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/?t=0\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/alert-inline?n=sameopener\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actua"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 685,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/?t=0\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/alert-inline?n=sameopener\"}",
+          "err": "Note: tab 68DECA6373F8466E4F81C1D0F9AD0F89 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 64474AEEF55FD4BD445F99812EA8BE0B.\n  Note: tab 64474AEEF55FD4BD445F99812EA8BE0B appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1083,
+          "cap": false,
+          "out": "Tab 64474AEEF55FD4BD445F99812EA8BE0B was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 261,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to dismiss."
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 0,
+          "ms": 318,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/?t=0\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"accept\"."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 316,
+          "cap": false,
+          "out": "* tab_sess_1790488780945_1_1  links  http://127.0.0.1:57250/?t=0",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 0,
+          "ms": 306,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/?t=0\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"report\"."
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 496,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "deadEnd": false,
+      "chromePid": 53260,
+      "closeCode": 0
+    },
+    {
+      "variant": "sameopener",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:57250/?t=1",
+          "code": 0,
+          "ms": 890,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:57250/?t=1\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #sameopener",
+          "code": 0,
+          "ms": 3370,
+          "cap": false,
+          "out": "Clicked #sameopener",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 706,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/?t=1\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/alert-inline?n=sameopener\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actua"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 670,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/?t=1\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/alert-inline?n=sameopener\"}",
+          "err": "Note: tab D9F1F6CEEE65CD5EB7FC777081D4E92D is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab CF765539C2AD3F61A786E6522E64166A.\n  Note: tab CF765539C2AD3F61A786E6522E64166A appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1082,
+          "cap": false,
+          "out": "Tab CF765539C2AD3F61A786E6522E64166A was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 258,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to dismiss."
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 0,
+          "ms": 266,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/?t=1\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"accept\"."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 261,
+          "cap": false,
+          "out": "* tab_sess_1790488787855_1_1  links  http://127.0.0.1:57250/?t=1",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 0,
+          "ms": 291,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/?t=1\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"report\"."
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 443,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "deadEnd": false,
+      "chromePid": 56984,
+      "closeCode": 0
+    },
+    {
+      "variant": "sameopener",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:57250/?t=2",
+          "code": 0,
+          "ms": 931,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:57250/?t=2\nTitle: links",
+          "err": ""
+        },
+        {
+          "args": "click #sameopener",
+          "code": 0,
+          "ms": 3343,
+          "cap": false,
+          "out": "Clicked #sameopener",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 732,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/?t=2\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/alert-inline?n=sameopener\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actua"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 671,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/?t=2\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:57250/alert-inline?n=sameopener\"}",
+          "err": "Note: tab 724F06D2D26A46BEC759BA7C55B514B1 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab FDC87D12E9DE08DF70EE8AD2589B05FA.\n  Note: tab FDC87D12E9DE08DF70EE8AD2589B05FA appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1085,
+          "cap": false,
+          "out": "Tab FDC87D12E9DE08DF70EE8AD2589B05FA was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog dismiss",
+          "code": 1,
+          "ms": 271,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to dismiss."
+        },
+        {
+          "args": "snap --dialog accept",
+          "code": 0,
+          "ms": 267,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/?t=2\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"accept\"."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 264,
+          "cap": false,
+          "out": "* tab_sess_1790488797629_1_1  links  http://127.0.0.1:57250/?t=2",
+          "err": ""
+        },
+        {
+          "args": "snap --dialog report",
+          "code": 0,
+          "ms": 277,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:57250/?t=2\nTitle: links\nInteractive elements (3):\n[#1] a \"cross-site new tab\"\n[#2] a \"same-origin new tab (implicit noopener)\"\n[#3] a \"same-origin new tab rel=opener\"",
+          "err": "Note: dialog policy for this session is now \"report\"."
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 457,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "deadEnd": false,
+      "chromePid": 63480,
+      "closeCode": 0
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

@@ -1,0 +1,57 @@
+{"timestamp":"2026-09-25T07:39:43.755Z","level":"info","message":"[BrowserLauncher] Connecting to remote browser endpoint","context":{"endpoint":"ws://127.0.0.1:63749/devtools/browser/58abc02d-1ec6-4718-8169-6577568eb95d"}}
+{"timestamp":"2026-09-25T07:39:43.760Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790321983755_1","context":{"isIncognito":false}}
+snapshot ms 17
+--- iframe src attributes (parent DOM, the OLD/wrong signal) ---
+[{"name":"direct","srcAttr":"http://localhost:63748/xfo-deny?via=direct"},{"name":"r302","srcAttr":"http://127.0.0.1:63748/redir"},{"name":"rjs","srcAttr":"http://127.0.0.1:63748/jsredir"},{"name":"t","srcAttr":"http://127.0.0.1:63748/ok"}]
+--- listing ---
+URL: http://127.0.0.1:63748/main?n=1790321980913
+Title: 
+Interactive elements (2):
+[#1] button "Main"
+[#2] a "go"
+[iframe "r302" http://localhost:63748 — not inspectable] (browser error page: blocked or failed to load)
+[iframe "direct" http://localhost:63748 — not inspectable] (browser error page: blocked or failed to load)
+[iframe "rjs" http://localhost:63748 — not inspectable] (browser error page: blocked or failed to load)
+[iframe "t" http://localhost:63748 — not inspectable] (browser error page: blocked or failed to load)
+--- skippedFrames (JSON) ---
+[
+  {
+    "index": 1,
+    "url": "http://localhost:63748/xfo-deny?via=302",
+    "origin": "http://localhost:63748",
+    "name": "r302",
+    "reason": "error-page",
+    "urlConfidence": "confirmed"
+  },
+  {
+    "index": 2,
+    "url": "http://localhost:63748/xfo-deny?via=direct",
+    "origin": "http://localhost:63748",
+    "name": "direct",
+    "reason": "error-page",
+    "urlConfidence": "confirmed"
+  },
+  {
+    "index": 3,
+    "url": "http://localhost:63748/xfo-deny?via=js",
+    "origin": "http://localhost:63748",
+    "name": "rjs",
+    "reason": "error-page",
+    "urlConfidence": "confirmed"
+  },
+  {
+    "index": 4,
+    "url": "http://localhost:63748/xfo-deny?via=link",
+    "origin": "http://localhost:63748",
+    "name": "t",
+    "reason": "error-page",
+    "urlConfidence": "confirmed"
+  }
+]
+PASS direct: url correctly recovered as CDP-confirmed (localhost ...via=direct) :: {"index":2,"url":"http://localhost:63748/xfo-deny?via=direct","origin":"http://localhost:63748","name":"direct","reason":"error-page","urlConfidence":"confirmed"}
+PASS r302: url correctly recovered as CDP-confirmed (localhost ...via=302) :: {"index":1,"url":"http://localhost:63748/xfo-deny?via=302","origin":"http://localhost:63748","name":"r302","reason":"error-page","urlConfidence":"confirmed"}
+PASS rjs: url correctly recovered as CDP-confirmed (localhost ...via=js) :: {"index":3,"url":"http://localhost:63748/xfo-deny?via=js","origin":"http://localhost:63748","name":"rjs","reason":"error-page","urlConfidence":"confirmed"}
+PASS t: url correctly recovered as CDP-confirmed (localhost ...via=link) :: {"index":4,"url":"http://localhost:63748/xfo-deny?via=link","origin":"http://localhost:63748","name":"t","reason":"error-page","urlConfidence":"confirmed"}
+OVERALL PASS 4/4
+{"timestamp":"2026-09-25T07:39:43.816Z","level":"warn","message":"[BrowserSession] Session sess_1790321983755_1 crashed — Chrome disconnected unexpectedly","context":{}}
+{"timestamp":"2026-09-25T07:39:43.817Z","level":"warn","message":"[BrowserSessionManager] Removed crashed session sess_1790321983755_1","context":{}}

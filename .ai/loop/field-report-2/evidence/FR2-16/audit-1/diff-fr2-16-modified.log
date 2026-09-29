@@ -1,0 +1,162 @@
+diff --git a/packages/browser/README.md b/packages/browser/README.md
+index b996677..2cd0218 100644
+--- a/packages/browser/README.md
++++ b/packages/browser/README.md
+@@ -10,7 +10,6 @@ Bounded Context: CTX-002 (Core Domain Context - Browser Subsystem)
+ Depends on ADRs:
+   - 0001-monorepo
+   - 0002-browser-control
+-  - 0005-stealth-evasion
+ Related Packages:
+   - '@sutradhar/contracts'
+   - '@sutradhar/capability'
+@@ -22,17 +21,21 @@ Related Packages:
+ 
+ # @sutradhar/browser
+ 
+-> Headless browser automation wrapper engine, stealth launcher, session pool manager, and semantic DOM snapshot generator for Sutradhar.
++> Headless browser automation wrapper engine, session pool manager, and semantic DOM snapshot generator for Sutradhar.
+ 
+ ## Package Architectural Invariants
+ 
+ 1. **Core Domain Isolation (`CTX-002`)**: Depends on foundational infrastructure packages (`CTX-001`). Must NEVER import from application or presentation packages (`apps/server`, `apps/web`).
+-2. **Stealth Launch Policy**: All browser instances launched MUST apply stealth configuration flags (`--disable-blink-features=AutomationControlled`) and User-Agent spoofing to bypass bot detection software (ADR-0005).
++2. **No Detection-Evasion Policy**: Sutradhar launches a plain, undisguised browser. It does not
++   attempt to evade bot-detection or solve CAPTCHAs — Cloudflare challenges, CAPTCHA walls, and
++   IP-level blocks stop it exactly as they'd stop any other automation tool run the same way. The
++   one launch flag that survives (--disable-blink-features=AutomationControlled, in
++   DEFAULT_LAUNCH_ARGS) is a Chrome-recommended stability flag for any automated launch, not a
++   detection-evasion feature, and is not conditional on any opt-in.
+ 3. **Session Resource Management**: Every launched browser session MUST be explicitly tracked and closed upon completion to eliminate orphaned Chromium processes.
+ 
+ ## Sub-Module Layout
+ 
+-- `src/launcher/`: `BrowserLauncher`, stealth launch flags, launcher interfaces.
++- `src/launcher/`: `BrowserLauncher`, launch argument preparation, launcher interfaces.
+ - `src/session/`: `BrowserSession`, multi-tab navigation, tab lifecycle.
+ - `src/snapshot/`: Accessibility tree generator, semantic DOM pruner.
+-- `src/stealth/`: Anti-detection evasion scripts (navigator.webdriver override).
+diff --git a/packages/browser/src/index.ts b/packages/browser/src/index.ts
+index 02061dd..f599b56 100644
+--- a/packages/browser/src/index.ts
++++ b/packages/browser/src/index.ts
+@@ -8,7 +8,6 @@ export const BROWSER_VERSION = '0.1.0';
+ export * from './launcher/index.js';
+ export * from './session/index.js';
+ export * from './snapshot/index.js';
+-export * from './stealth/index.js';
+ export * from './actions/index.js';
+ export * from './dom/index.js';
+ export * from './skills/index.js';
+diff --git a/packages/browser/src/launcher/browser-launcher.ts b/packages/browser/src/launcher/browser-launcher.ts
+index 283b213..0cd077d 100644
+--- a/packages/browser/src/launcher/browser-launcher.ts
++++ b/packages/browser/src/launcher/browser-launcher.ts
+@@ -108,16 +108,13 @@ export class BrowserLauncher implements IBrowserLauncher {
+   }
+ 
+   /**
+-   * Generates sanitized launch arguments with stealth evasion flags.
++   * Generates sanitized launch arguments (see DEFAULT_LAUNCH_ARGS for the stability flags that
++   * are always included, unconditionally).
+    */
+   public prepareLaunchArgs(options: BrowserLaunchOptions = {}): string[] {
+     const userArgs = options.args ?? [];
+     const mergedArgs = new Set([...DEFAULT_LAUNCH_ARGS, ...userArgs]);
+ 
+-    if (options.enableStealth ?? true) {
+-      mergedArgs.add('--disable-blink-features=AutomationControlled');
+-    }
+-
+     if (options.proxy?.server) {
+       mergedArgs.add(`--proxy-server=${options.proxy.server}`);
+     }
+diff --git a/packages/browser/src/launcher/browser-options.ts b/packages/browser/src/launcher/browser-options.ts
+index d17b21e..c8eb4b3 100644
+--- a/packages/browser/src/launcher/browser-options.ts
++++ b/packages/browser/src/launcher/browser-options.ts
+@@ -22,7 +22,6 @@ export interface BrowserLaunchOptions {
+   readonly viewport?: ViewportSize;
+   readonly userDataDir?: string;
+   readonly isIncognito?: boolean;
+-  readonly enableStealth?: boolean;
+   readonly proxy?: ProxyConfig;
+   /**
+    * Override `navigator.userAgent` via Chrome's own `--user-agent` launch flag. Unset by
+@@ -35,6 +34,11 @@ export interface BrowserLaunchOptions {
+   readonly userAgent?: string;
+ }
+ 
++// `--disable-blink-features=AutomationControlled` below is a Chrome-recommended stability flag
++// for any automated launch (it quiets some automation-related warnings/behavior differences in
++// Chrome itself), not a detection-evasion feature — it is kept unconditionally and is not, and
++// must not become, gated behind any opt-in. See CLAUDE.md's scope boundary on stealth/
++// bot-detection evasion: Sutradhar does not attempt to defeat bot detection or solve CAPTCHAs.
+ export const DEFAULT_LAUNCH_ARGS: readonly string[] = [
+   '--no-sandbox',
+   '--disable-setuid-sandbox',
+diff --git a/packages/browser/tests/unit/launcher.spec.ts b/packages/browser/tests/unit/launcher.spec.ts
+index 1e18eca..e38ea2c 100644
+--- a/packages/browser/tests/unit/launcher.spec.ts
++++ b/packages/browser/tests/unit/launcher.spec.ts
+@@ -1,8 +1,9 @@
+ /**
+  * @file packages/browser/tests/unit/launcher.spec.ts
+- * @description Unit tests for BrowserLauncher, stealth args preparation, and browser lifecycle.
++ * @description Unit tests for BrowserLauncher, launch args preparation, and browser lifecycle.
+  */
+ 
++import * as browserExports from '../../src/index.js';
+ import { BrowserLauncher, PuppeteerBrowserInstance, BROWSER_VERSION, DEFAULT_LAUNCH_ARGS } from '../../src/index.js';
+ 
+ // `import * as fs from 'node:fs'` gives an ES module namespace object, which is spec-frozen —
+@@ -27,7 +28,7 @@ describe('@sutradhar/browser BrowserLauncher', () => {
+     expect(BROWSER_VERSION).toBe('0.1.0');
+   });
+ 
+-  it('should prepare default stealth flags in launch arguments', () => {
++  it('should unconditionally include --disable-blink-features=AutomationControlled in launch arguments (FR2-16: proves no behavior change after removing the dead enableStealth conditional, which was a provable no-op)', () => {
+     const launcher = new BrowserLauncher();
+     const args = launcher.prepareLaunchArgs();
+ 
+@@ -35,6 +36,25 @@ describe('@sutradhar/browser BrowserLauncher', () => {
+     expect(args).toContain('--disable-blink-features=AutomationControlled');
+   });
+ 
++  it('does not expose enableStealth on BrowserLaunchOptions at runtime (structural regression guard: the field carried no behavior even before removal, so this only proves it is not silently re-added)', () => {
++    const launcher = new BrowserLauncher();
++    const args = launcher.prepareLaunchArgs({ enableStealth: false } as never);
++
++    // Even if a caller (wrongly, post-removal, via `as never`) still passes enableStealth, the
++    // flag is unconditional and unaffected.
++    expect(args).toContain('--disable-blink-features=AutomationControlled');
++  });
++
++  it('regression guard (FR2-16): StealthEngine/getEvasionScripts/IStealthEngine/StealthOptions must stay removed from the package exports — a future re-add without an accompanying doc/boundary update should fail this test', () => {
++    expect((browserExports as Record<string, unknown>).StealthEngine).toBeUndefined();
++    expect((browserExports as Record<string, unknown>).getEvasionScripts).toBeUndefined();
++    expect((browserExports as Record<string, unknown>).DEFAULT_STEALTH_OPTIONS).toBeUndefined();
++    expect((browserExports as Record<string, unknown>).getWebdriverOverrideScript).toBeUndefined();
++    expect((browserExports as Record<string, unknown>).getChromeRuntimeScript).toBeUndefined();
++    expect((browserExports as Record<string, unknown>).getWebglMaskScript).toBeUndefined();
++    expect((browserExports as Record<string, unknown>).getHardwareConcurrencyScript).toBeUndefined();
++  });
++
+   it('should merge user-provided custom arguments without duplicates', () => {
+     const launcher = new BrowserLauncher();
+     const args = launcher.prepareLaunchArgs({
+diff --git a/packages/cli/src/cli.ts b/packages/cli/src/cli.ts
+index 0c8ff28..f90dbfa 100644
+--- a/packages/cli/src/cli.ts
++++ b/packages/cli/src/cli.ts
+@@ -958,6 +958,10 @@ Flags:
+                         page-initiated navigation from a clicked link (browser-internal, not
+                         routed through this check) — see .ai/known-problems.md PROB-018.
+ 
++Boundary: Sutradhar launches a plain, undisguised browser — it does not attempt to evade
++bot-detection or solve CAPTCHAs. Cloudflare challenges, CAPTCHA walls, and IP-level blocks
++will stop it the same way they'd stop any other automation tool run the same way.
++
+ Session state persists across commands, scoped to this directory, in
+ ~/.sutradhar-cli/<hash-of-cwd>/state.json — run "close" when done. Override with
+ SUTRADHAR_CLI_STATE_DIR to share state across directories or use a custom path.`);

@@ -1,0 +1,89 @@
+diff --git a/PROJECT_DEEP_DIVE.md b/PROJECT_DEEP_DIVE.md
+index 883c0bf..22bfa4f 100644
+--- a/PROJECT_DEEP_DIVE.md
++++ b/PROJECT_DEEP_DIVE.md
+@@ -22,7 +22,7 @@
+ 8. [Data Flow Diagrams](#8-data-flow-diagrams)
+ 9. [User Lifecycle — End to End (Multiple Users)](#9-user-lifecycle--end-to-end-multiple-users)
+ 10. [Concurrency, Memory & Persistence Model](#10-concurrency-memory--persistence-model)
+-11. [Security, Stealth & Policy](#11-security-stealth--policy)
++11. [Security & Policy](#11-security--policy)
+ 12. [Evaluation & Validation Evidence](#12-evaluation--validation-evidence)
+ 13. [Known Gaps, Stubs & Technical Debt](#13-known-gaps-stubs--technical-debt)
+ 14. [Build, Test & Run Reference](#14-build-test--run-reference)
+@@ -45,7 +45,7 @@ A **cleanly architected scaffold** with substantial working subsystems but **sig
+ | Contracts / DTOs / branded types / errors | ✅ Complete | Canonical, frozen, well-typed |
+ | Browser engine (Puppeteer-core + real Chrome) | ✅ **Functional** | Real `puppeteer.launch()`, real screenshots, real navigation |
+ | Browser semantic DOM / page understanding | ✅ Functional | Real `page.evaluate()`, confidence-scored candidates |
+-| Stealth engine | ✅ Functional | 4 injected scripts + launch flags |
++| Detection-evasion / stealth | ❌ **Not built (by design)** | No stealth engine exists; launches without that machinery, but retains one flag that hides `navigator.webdriver` — see AGENT_SETUP.md's boundary section |
+ | Agent reasoning loop | ⚠️ **Heuristic, not LLM-driven** | Deterministic plan/act/verify/reflect/recover; `ILlmProvider` is wired but **never invoked** in the hot path |
+ | LLM adapters (OpenRouter / Ollama) | ⚠️ Stubbed | Return canned completions; no real `fetch` to providers |
+ | Memory (4-tier + episodic) | ⚠️ In-memory maps | `Map`-backed; cosine similarity works; no SQLite/Redis/Qdrant backing |
+@@ -78,7 +78,7 @@ Sutradhar/
+ │   ├── observability/          # 🟢 Logger, metrics, tracing, devtools inspector, studio
+ │   ├── events/                 # 🟢 Typed EventBus + InMemoryEventStore
+ │   ├── agent/                  # 🟡 AgentCore, kernel, planner, executor, evidence, recovery
+-│   ├── browser/                # 🟢 Puppeteer launcher, sessions, actions, DOM, stealth
++│   ├── browser/                # 🟢 Puppeteer launcher, sessions, actions, DOM
+ │   ├── llm/                    # 🟡 ILlmProvider + OpenRouter/Ollama adapters (stubbed)
+ │   ├── memory/                 # 🟡 5-tier memory + episodic engine (in-memory)
+ │   ├── workflow/               # 🟡 DAG graph + linear runner
+@@ -210,7 +210,6 @@ Five subsystems:
+ - **`dom/`**: `DOMSemanticEngine.buildGraph(tab)` runs real `page.evaluate()` scraping `a,button,input,select,textarea,[role],h1,h2,h3,p` (first 150 elements), computing confidence per node. `SemanticElementGraph` provides confidence-scored candidate matching (`findCandidatesByText`, `findCandidateByRole`, `findInputByLabel`).
+ - **`page/`**: `PageUnderstandingEngine.analyzePage(graph)` classifies page type (`Authentication|Search|Dashboard|Documentation|Repository|Article|News|Shopping|Checkout|Settings|Forms|Unknown`) via URL/title heuristics, identifies regions, primary action.
+ - **`snapshot/`**: `SnapshotGenerator` + `SemanticTreeBuilder` produce `BrowserSnapshotDto` with a text-rendered `semanticTree` for the LLM context window.
+-- **`stealth/`**: `StealthEngine.getEvasionScripts()` returns 4 scripts (webdriver override, chrome.runtime mock, WebGL vendor/renderer spoofing, hardware concurrency/platform/languages) for `evaluateOnNewDocument`.
+ - **`skills/`**: `BrowserSkillsLibrary` — composable high-level skills: `searchGoogle`, `login`, `fillForm`, `extractLinks`, `extractEmails`, `acceptCookies`, `dismissPopup`, `captureScreenshot`.
+ - **`verifier/`**: `ExecutionVerifier.verifyAction(tab, prevUrl, actionResult, spec)` — post-action validation (URL change, expected substring), returns `VerificationResultDto` with confidence.
+ 
+@@ -863,18 +862,28 @@ Clicking a session → /session/:id → SessionPage:
+ 
+ ---
+ 
+-## 11. Security, Stealth & Policy
+-
+-### 11.1 Stealth Engine (`@sutradhar/browser/stealth/`)
+-
+-Layered anti-detection (ADR-0005):
+-1. **Launch flags**: `--disable-blink-features=AutomationControlled`, `--no-sandbox`, `--disable-infobars`, window size, GPU flags.
+-2. **Injected scripts** (`evaluateOnNewDocument`):
+-   - `navigator.webdriver` → `undefined`.
+-   - `window.chrome` mock (runtime/loadTimes/csi/app).
+-   - WebGL vendor/renderer spoofed to NVIDIA RTX 3080.
+-   - `navigator.hardwareConcurrency` (8), `platform` (Win32), `languages` (en-US, en).
+-   - Default User-Agent: Chrome 122 on Windows 10.
++## 11. Security & Policy
++
++### 11.1 Detection-Evasion Boundary (no stealth engine)
++
++There is no stealth/anti-detection engine in this codebase — an earlier `@sutradhar/browser/stealth/`
++module (a dead, never-invoked `StealthEngine` plus 4 unused script generators) was removed
++outright as dead code, along with the no-op `enableStealth` option that never gated anything
++observable. Sutradhar launches without that detection-evasion machinery: it does not attempt to
++evade bot-detection or solve CAPTCHAs, and Cloudflare challenges, CAPTCHA walls, and IP-level
++blocks stop it exactly as they'd stop any other automation tool run the same way — with one
++narrow, honestly-stated exception, described next.
++
++`DEFAULT_LAUNCH_ARGS` unconditionally includes `--disable-blink-features=AutomationControlled`,
++kept for exactly one reason: it hides `navigator.webdriver` from simple client-side detection
++scripts (`navigator.webdriver` is `true` without it, `false` with it). It is not a stability
++flag — Chromium's own source (`bad_flags_prompt.cc`) lists `--disable-blink-features` among
++unsupported, developer-only flags, and a live headed launch with the flag present still shows
++Chrome's own "Chrome is being controlled by automated test software" banner. That webdriver hide
++is the full extent of it; it does not defeat any real bot-detection service, which relies on far
++more than that one signal, and the default headless user agent still contains the literal
++`HeadlessChrome` substring, which a simple check would also catch. See `AGENT_SETUP.md`'s "Known
++limitations" section for the same boundary stated for an operating agent.
+ 
+ ### 11.2 Sandboxing & Policy (Documented vs. Actual)
+ 
+@@ -1031,7 +1040,7 @@ pnpm clean            # turbo run clean
+ 
+ | Domain | Interface | Package |
+ |---|---|---|
+-| Browser provider | `IBrowserLauncher`, `IBrowserInstance`, `IBrowserSession`, `IBrowserTab`, `IBrowserSessionManager`, `IBrowserActionEngine`, `IDOMSemanticEngine`, `IPageUnderstandingEngine`, `ISnapshotGenerator`, `IStealthEngine` | browser |
++| Browser provider | `IBrowserLauncher`, `IBrowserInstance`, `IBrowserSession`, `IBrowserTab`, `IBrowserSessionManager`, `IBrowserActionEngine`, `IDOMSemanticEngine`, `IPageUnderstandingEngine`, `ISnapshotGenerator` | browser |
+ | LLM provider | `ILlmProvider` | llm |
+ | Memory | `IMemoryStore`, `IMultiTierMemoryManager`, `IEpisodicMemoryManager` | memory |
+ | Storage | `ISqliteClient`, `ISessionRepository`, `IEventRepository`, `IFileStorage` | storage |

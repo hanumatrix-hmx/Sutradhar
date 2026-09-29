@@ -23,8 +23,7 @@ packages/
 │                                  wider Hanumatrix ecosystem, not Sutradhar-specific)
 │
 ├── browser/                # The actual browser engine: Puppeteer-core launcher, DOM
-│                              semantic snapshot engine, action engine (click/type/scroll/…),
-│                              stealth launch flags
+│                              semantic snapshot engine, action engine (click/type/scroll/…)
 ├── capability-runtime/     # SutradharRuntime — the single high-level façade every
 │                              integration surface below calls (session/tab management,
 │                              wraps `browser`)
@@ -43,7 +42,8 @@ packages/
 │                               capability-runtime, for driving Sutradhar directly from code
 ├── sdk/                      # Plugin/extension SDK — author + host plugins (manifest,
 │                               loader, signature verification)
-├── cli/                       # Terminal CLI (nav/snap/click/type/screenshot/audit/compare/doctor)
+├── cli/                       # Terminal CLI (nav/snap/click/type/screenshot/audit/compare/dialog/tabs/doctor);
+│                              #   runs a small detached per-session "dialog warden" helper process
 └── frontend/                   # Vite + React web/desktop client, built on `sdk`
 
 apps/
@@ -125,7 +125,7 @@ Caller (MCP tool call / SDK method / CLI command)
 - Browser processes launch with sandbox flags (`--no-sandbox`/`--disable-setuid-sandbox` are
   used for headless CI/container compatibility, not to disable browser-level sandboxing of
   page content).
-- File downloads/uploads are constrained to allow-listed directories.
+- File downloads are constrained to allow-listed directories (default `<OS temp>/sutradhar-downloads`); uploads are unrestricted unless `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` / `allowedUploadRoots` is set. Overlapping downloads on one browser are only guarded best-effort — see `SECURITY.md`.
 - Plugin signatures are verified before loading (`sdk`).
 - Stealth/bot-detection evasion is deliberately out of scope — see `CLAUDE.md`'s scope
   boundary.

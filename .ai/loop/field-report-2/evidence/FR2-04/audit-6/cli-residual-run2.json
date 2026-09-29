@@ -1,0 +1,1978 @@
+{
+  "at": "2026-09-27T06:27:30.744Z",
+  "results": [
+    {
+      "variant": "own-xhr-3000",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=own-xhr-3000&t=0",
+          "code": 0,
+          "ms": 891,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=own-xhr-3000&t=0\nTitle: opener own-xhr-3000",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3341,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 0,
+          "ms": 269,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:54418/opener?v=own-xhr-3000&t=0\nTitle: opener own-xhr-3000\nInteractive elements (1):\n[#1] button \"open report\"",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 289,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 340,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 282,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 278,
+          "cap": false,
+          "out": "tab_sess_1790490106740_1_1  loaded popup  http://127.0.0.1:54418/xhr-inline?n=popup&ms=3000\n* tab_sess_1790490106740_1_2  opener own-xhr-3000  http://127.0.0.1:54418/opener?v=own-xhr-3000&t=0",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 428,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 5046,
+      "accept": {
+        "code": 1,
+        "closed": false,
+        "out": "",
+        "err": "Error: no dialog is open to accept."
+      },
+      "popupSurvived": true,
+      "popupLoaded": true,
+      "snapCode": 0,
+      "closeCode": 0,
+      "totalMs": 6926
+    },
+    {
+      "variant": "own-xhr-3000",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=own-xhr-3000&t=1",
+          "code": 0,
+          "ms": 890,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=own-xhr-3000&t=1\nTitle: opener own-xhr-3000",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 1,
+          "ms": 376,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15\r\n        throw new Error(message);\r\n              ^\r\n\r\nError: Requesting main frame too early!\r\n    at assert (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-core@25.5.0_yauzl@2.10.0/node_modules/puppeteer-core/lib/puppeteer/util/assert.js:15:15)\r\n    at FrameManager.mainFrame (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/puppeteer-co"
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 671,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-3000&t=1\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=3000\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 671,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-3000&t=1\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=3000\"}",
+          "err": "Note: tab 623DA70B277D0C6F168C8F59DDBF323B is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab D95D800DAE30944E6BC9D83DC73E0CB1.\n  Note: tab D95D800DAE30944E6BC9D83DC73E0CB1 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 855,
+          "cap": false,
+          "out": "",
+          "err": "Error: could not accept the unknown dialog: No dialog is open on that tab"
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 291,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 304,
+          "cap": false,
+          "out": "tab_sess_1790490113680_1_1  loaded popup  http://127.0.0.1:54418/xhr-inline?n=popup&ms=3000\n* tab_sess_1790490113680_1_2  opener own-xhr-3000  http://127.0.0.1:54418/opener?v=own-xhr-3000&t=1",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 485,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 3374,
+      "accept": {
+        "code": 1,
+        "closed": false,
+        "out": "",
+        "err": "Error: could not accept the unknown dialog: No dialog is open on that tab"
+      },
+      "popupSurvived": true,
+      "popupLoaded": true,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 6185
+    },
+    {
+      "variant": "own-xhr-3000",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=own-xhr-3000&t=2",
+          "code": 0,
+          "ms": 926,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=own-xhr-3000&t=2\nTitle: opener own-xhr-3000",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3353,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 0,
+          "ms": 269,
+          "cap": false,
+          "out": "URL: http://127.0.0.1:54418/xhr-inline?n=popup&ms=3000\nTitle: loaded popup\nInteractive elements (0):",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 261,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 1,
+          "ms": 306,
+          "cap": false,
+          "out": "",
+          "err": "Error: no dialog is open to accept."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 299,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 263,
+          "cap": false,
+          "out": "tab_sess_1790490119900_1_1  opener own-xhr-3000  http://127.0.0.1:54418/opener?v=own-xhr-3000&t=2\n* tab_sess_1790490119900_1_2  loaded popup  http://127.0.0.1:54418/xhr-inline?n=popup&ms=3000",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 443,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 4999,
+      "accept": {
+        "code": 1,
+        "closed": false,
+        "out": "",
+        "err": "Error: no dialog is open to accept."
+      },
+      "popupSurvived": true,
+      "popupLoaded": true,
+      "snapCode": 0,
+      "closeCode": 0,
+      "totalMs": 6935
+    },
+    {
+      "variant": "own-xhr-8000",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=own-xhr-8000&t=0",
+          "code": 0,
+          "ms": 884,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=own-xhr-8000&t=0\nTitle: opener own-xhr-8000",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3336,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 680,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-8000&t=0\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=8000\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 720,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-8000&t=0\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=8000\"}",
+          "err": "Note: tab 435F2BB0AAE0D6182C5CB2BB0563C4E3 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 64915C262D9A6BDF5D073C41813B39AF.\n  Note: tab 64915C262D9A6BDF5D073C41813B39AF appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1071,
+          "cap": false,
+          "out": "Tab 64915C262D9A6BDF5D073C41813B39AF (http://127.0.0.1:54418/xhr-inline?n=popup&ms=8000) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 678,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-8000&t=0\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=8000\"}",
+          "err": "Note: tab 435F2BB0AAE0D6182C5CB2BB0563C4E3 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 64915C262D9A6BDF5D073C41813B39AF.\n  Note: tab 64915C262D9A6BDF5D073C41813B39AF appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 260,
+          "cap": false,
+          "out": "* tab_sess_1790490126815_1_1  opener own-xhr-8000  http://127.0.0.1:54418/opener?v=own-xhr-8000&t=0",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 435,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6615,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab 64915C262D9A6BDF5D073C41813B39AF (http://127.0.0.1:54418/xhr-inline?n=popup&ms=8000) was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 11083
+    },
+    {
+      "variant": "own-xhr-8000",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=own-xhr-8000&t=1",
+          "code": 0,
+          "ms": 931,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=own-xhr-8000&t=1\nTitle: opener own-xhr-8000",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3375,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 674,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-8000&t=1\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=8000\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 713,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-8000&t=1\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=8000\"}",
+          "err": "Note: tab C0EDEB54D1EF6D2BDB6B0D881D85B5A7 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 3F1C30707869588FE2C026C93DB95DF5.\n  Note: tab 3F1C30707869588FE2C026C93DB95DF5 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1080,
+          "cap": false,
+          "out": "Tab 3F1C30707869588FE2C026C93DB95DF5 (http://127.0.0.1:54418/xhr-inline?n=popup&ms=8000) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 664,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-8000&t=1\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=8000\"}",
+          "err": "Note: tab C0EDEB54D1EF6D2BDB6B0D881D85B5A7 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 3F1C30707869588FE2C026C93DB95DF5.\n  Note: tab 3F1C30707869588FE2C026C93DB95DF5 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 265,
+          "cap": false,
+          "out": "* tab_sess_1790490137908_1_1  opener own-xhr-8000  http://127.0.0.1:54418/opener?v=own-xhr-8000&t=1",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 479,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6653,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab 3F1C30707869588FE2C026C93DB95DF5 (http://127.0.0.1:54418/xhr-inline?n=popup&ms=8000) was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 11185
+    },
+    {
+      "variant": "own-xhr-8000",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=own-xhr-8000&t=2",
+          "code": 0,
+          "ms": 887,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=own-xhr-8000&t=2\nTitle: opener own-xhr-8000",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3375,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 675,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-8000&t=2\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=8000\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 705,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-8000&t=2\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=8000\"}",
+          "err": "Note: tab 29B4079C64C70EA916D287F3B2499CB7 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 9B614939BF8119BB1C52957CBA2DB71C.\n  Note: tab 9B614939BF8119BB1C52957CBA2DB71C appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1073,
+          "cap": false,
+          "out": "Tab 9B614939BF8119BB1C52957CBA2DB71C (http://127.0.0.1:54418/xhr-inline?n=popup&ms=8000) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 664,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-8000&t=2\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=8000\"}",
+          "err": "Note: tab 29B4079C64C70EA916D287F3B2499CB7 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 9B614939BF8119BB1C52957CBA2DB71C.\n  Note: tab 9B614939BF8119BB1C52957CBA2DB71C appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 265,
+          "cap": false,
+          "out": "* tab_sess_1790490149067_1_1  opener own-xhr-8000  http://127.0.0.1:54418/opener?v=own-xhr-8000&t=2",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 450,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6633,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab 9B614939BF8119BB1C52957CBA2DB71C (http://127.0.0.1:54418/xhr-inline?n=popup&ms=8000) was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 11102
+    },
+    {
+      "variant": "own-xhr-20000",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=own-xhr-20000&t=0",
+          "code": 0,
+          "ms": 910,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=own-xhr-20000&t=0\nTitle: opener own-xhr-20000",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3338,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 675,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-20000&t=0\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 733,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-20000&t=0\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab E6BEAFA69663FB1A9249DCC1645B0A69 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab C312B768EF8314EA633EC1C2983349C3.\n  Note: tab C312B768EF8314EA633EC1C2983349C3 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1072,
+          "cap": false,
+          "out": "Tab C312B768EF8314EA633EC1C2983349C3 (http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 674,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-20000&t=0\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab E6BEAFA69663FB1A9249DCC1645B0A69 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab C312B768EF8314EA633EC1C2983349C3.\n  Note: tab C312B768EF8314EA633EC1C2983349C3 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 268,
+          "cap": false,
+          "out": "* tab_sess_1790490160195_1_1  opener own-xhr-20000  http://127.0.0.1:54418/opener?v=own-xhr-20000&t=0",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 433,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6626,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab C312B768EF8314EA633EC1C2983349C3 (http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 23119
+    },
+    {
+      "variant": "own-xhr-20000",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=own-xhr-20000&t=1",
+          "code": 0,
+          "ms": 896,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=own-xhr-20000&t=1\nTitle: opener own-xhr-20000",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3360,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 691,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-20000&t=1\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 739,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-20000&t=1\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab 4391827ED3A8B1070B9AD574C1E730B4 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 73C531615E52500B1A37C194CCDACBF8.\n  Note: tab 73C531615E52500B1A37C194CCDACBF8 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1070,
+          "cap": false,
+          "out": "Tab 73C531615E52500B1A37C194CCDACBF8 (http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 674,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-20000&t=1\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab 4391827ED3A8B1070B9AD574C1E730B4 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 73C531615E52500B1A37C194CCDACBF8.\n  Note: tab 73C531615E52500B1A37C194CCDACBF8 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 269,
+          "cap": false,
+          "out": "* tab_sess_1790490183302_1_1  opener own-xhr-20000  http://127.0.0.1:54418/opener?v=own-xhr-20000&t=1",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 416,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6662,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab 73C531615E52500B1A37C194CCDACBF8 (http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 23084
+    },
+    {
+      "variant": "own-xhr-20000",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=own-xhr-20000&t=2",
+          "code": 0,
+          "ms": 866,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=own-xhr-20000&t=2\nTitle: opener own-xhr-20000",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3339,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 689,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-20000&t=2\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 716,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-20000&t=2\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab C7903B1B3C43833A713C9FB3D85DB973 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 1825096A82707E9E9E1195DC3E06F21E.\n  Note: tab 1825096A82707E9E9E1195DC3E06F21E appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1078,
+          "cap": false,
+          "out": "Tab 1825096A82707E9E9E1195DC3E06F21E (http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 675,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=own-xhr-20000&t=2\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab C7903B1B3C43833A713C9FB3D85DB973 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 1825096A82707E9E9E1195DC3E06F21E.\n  Note: tab 1825096A82707E9E9E1195DC3E06F21E appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 295,
+          "cap": false,
+          "out": "* tab_sess_1790490206358_1_1  opener own-xhr-20000  http://127.0.0.1:54418/opener?v=own-xhr-20000&t=2",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 441,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6629,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab 1825096A82707E9E9E1195DC3E06F21E (http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 23109
+    },
+    {
+      "variant": "link-xhr-20000",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=link-xhr-20000&t=0",
+          "code": 0,
+          "ms": 888,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=link-xhr-20000&t=0\nTitle: opener link-xhr-20000",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3357,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 675,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 661,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab 33791DDC5ED36020BAB33A420EE41FBC appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1062,
+          "cap": false,
+          "out": "Tab 33791DDC5ED36020BAB33A420EE41FBC (http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 529,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab 33791DDC5ED36020BAB33A420EE41FBC appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 266,
+          "cap": false,
+          "out": "* tab_sess_1790490229491_1_1  opener link-xhr-20000  http://127.0.0.1:54418/opener?v=link-xhr-20000&t=0",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 429,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6560,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab 33791DDC5ED36020BAB33A420EE41FBC (http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 23086
+    },
+    {
+      "variant": "link-xhr-20000",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=link-xhr-20000&t=1",
+          "code": 0,
+          "ms": 860,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=link-xhr-20000&t=1\nTitle: opener link-xhr-20000",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3358,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 674,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 699,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab E9831A0F50B10C95E18CF3DD15080653 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1080,
+          "cap": false,
+          "out": "Tab E9831A0F50B10C95E18CF3DD15080653 (http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 536,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab E9831A0F50B10C95E18CF3DD15080653 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 262,
+          "cap": false,
+          "out": "* tab_sess_1790490252565_1_1  opener link-xhr-20000  http://127.0.0.1:54418/opener?v=link-xhr-20000&t=1",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 437,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6613,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab E9831A0F50B10C95E18CF3DD15080653 (http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 23061
+    },
+    {
+      "variant": "link-xhr-20000",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=link-xhr-20000&t=2",
+          "code": 0,
+          "ms": 849,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=link-xhr-20000&t=2\nTitle: opener link-xhr-20000",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3345,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 670,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 670,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab 173C418EB70D830BDB9314534D02763A appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1065,
+          "cap": false,
+          "out": "Tab 173C418EB70D830BDB9314534D02763A (http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 538,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab 173C418EB70D830BDB9314534D02763A appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 287,
+          "cap": false,
+          "out": "* tab_sess_1790490275618_1_1  opener link-xhr-20000  http://127.0.0.1:54418/opener?v=link-xhr-20000&t=2",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 472,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6560,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab 173C418EB70D830BDB9314534D02763A (http://127.0.0.1:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 23118
+    },
+    {
+      "variant": "xs-own-xhr-20000",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=xs-own-xhr-20000&t=0",
+          "code": 0,
+          "ms": 909,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=xs-own-xhr-20000&t=0\nTitle: opener xs-own-xhr-20000",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3334,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 687,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 673,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab 89130FB8291585E2457FC053C59787E7 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1044,
+          "cap": false,
+          "out": "Tab 89130FB8291585E2457FC053C59787E7 (http://localhost:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 530,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab 89130FB8291585E2457FC053C59787E7 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 267,
+          "cap": false,
+          "out": "* tab_sess_1790490298789_1_1  opener xs-own-xhr-20000  http://127.0.0.1:54418/opener?v=xs-own-xhr-20000&t=0",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 432,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6541,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab 89130FB8291585E2457FC053C59787E7 (http://localhost:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 23110
+    },
+    {
+      "variant": "xs-own-xhr-20000",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=xs-own-xhr-20000&t=1",
+          "code": 0,
+          "ms": 861,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=xs-own-xhr-20000&t=1\nTitle: opener xs-own-xhr-20000",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3339,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 668,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 671,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab FE5F3F52694A4F102941C2AEA96094B3 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1111,
+          "cap": false,
+          "out": "Tab FE5F3F52694A4F102941C2AEA96094B3 (http://localhost:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 527,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab FE5F3F52694A4F102941C2AEA96094B3 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 259,
+          "cap": false,
+          "out": "* tab_sess_1790490321847_1_1  opener xs-own-xhr-20000  http://127.0.0.1:54418/opener?v=xs-own-xhr-20000&t=1",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 442,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6593,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab FE5F3F52694A4F102941C2AEA96094B3 (http://localhost:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 23076
+    },
+    {
+      "variant": "xs-own-xhr-20000",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=xs-own-xhr-20000&t=2",
+          "code": 0,
+          "ms": 902,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=xs-own-xhr-20000&t=2\nTitle: opener xs-own-xhr-20000",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3335,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 677,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 661,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab 8BE32308E76AB0270C3FD12B26A96422 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1056,
+          "cap": false,
+          "out": "Tab 8BE32308E76AB0270C3FD12B26A96422 (http://localhost:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 542,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:54418/xhr-inline?n=popup&ms=20000\"}",
+          "err": "Note: tab 8BE32308E76AB0270C3FD12B26A96422 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 282,
+          "cap": false,
+          "out": "* tab_sess_1790490344918_1_1  opener xs-own-xhr-20000  http://127.0.0.1:54418/opener?v=xs-own-xhr-20000&t=2",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 431,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6532,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab 8BE32308E76AB0270C3FD12B26A96422 (http://localhost:54418/xhr-inline?n=popup&ms=20000) was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 23130
+    },
+    {
+      "variant": "ctl-own-alert",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=ctl-own-alert&t=0",
+          "code": 0,
+          "ms": 949,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=ctl-own-alert&t=0\nTitle: opener ctl-own-alert",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3370,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 678,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=ctl-own-alert&t=0\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/alert-inline?n=popup\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 717,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=ctl-own-alert&t=0\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/alert-inline?n=popup\"}",
+          "err": "Note: tab EC1A0EA9DBB451EC055BAD92779426FF is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 466A7628E58A112CB84F9402E3545C5C.\n  Note: tab 466A7628E58A112CB84F9402E3545C5C appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1078,
+          "cap": false,
+          "out": "Tab 466A7628E58A112CB84F9402E3545C5C was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 264,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 283,
+          "cap": false,
+          "out": "* tab_sess_1790490368104_1_1  opener ctl-own-alert  http://127.0.0.1:54418/opener?v=ctl-own-alert&t=0",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 446,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6651,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab 466A7628E58A112CB84F9402E3545C5C was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 8597
+    },
+    {
+      "variant": "ctl-own-alert",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=ctl-own-alert&t=1",
+          "code": 0,
+          "ms": 904,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=ctl-own-alert&t=1\nTitle: opener ctl-own-alert",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3343,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 694,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=ctl-own-alert&t=1\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/alert-inline?n=popup\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 716,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=ctl-own-alert&t=1\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/alert-inline?n=popup\"}",
+          "err": "Note: tab E6FB0479AB12A8C8C2128F49822B010F is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 7CC96D26B3263E0ED8A0F8E7219384AC.\n  Note: tab 7CC96D26B3263E0ED8A0F8E7219384AC appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1076,
+          "cap": false,
+          "out": "Tab 7CC96D26B3263E0ED8A0F8E7219384AC was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 262,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 265,
+          "cap": false,
+          "out": "* tab_sess_1790490376675_1_1  opener ctl-own-alert  http://127.0.0.1:54418/opener?v=ctl-own-alert&t=1",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 414,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6639,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab 7CC96D26B3263E0ED8A0F8E7219384AC was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 8487
+    },
+    {
+      "variant": "ctl-own-alert",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=ctl-own-alert&t=2",
+          "code": 0,
+          "ms": 860,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=ctl-own-alert&t=2\nTitle: opener ctl-own-alert",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3345,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 698,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=ctl-own-alert&t=2\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/alert-inline?n=popup\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 718,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/opener?v=ctl-own-alert&t=2\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/alert-inline?n=popup\"}",
+          "err": "Note: tab 4CA1737857E3E44760BE694F2AB8D4A1 is busy, but its own history proves it cannot be hiding a dialog -- the still-unresolved candidate is tab 12786FD03B049D9F6A3FF8E5D6ACD5D4.\n  Note: tab 12786FD03B049D9F6A3FF8E5D6ACD5D4 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1080,
+          "cap": false,
+          "out": "Tab 12786FD03B049D9F6A3FF8E5D6ACD5D4 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 274,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 259,
+          "cap": false,
+          "out": "* tab_sess_1790490385147_1_1  opener ctl-own-alert  http://127.0.0.1:54418/opener?v=ctl-own-alert&t=2",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 422,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6651,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab 12786FD03B049D9F6A3FF8E5D6ACD5D4 was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 8472
+    },
+    {
+      "variant": "ctl-link-alert",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=ctl-link-alert&t=0",
+          "code": 0,
+          "ms": 873,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=ctl-link-alert&t=0\nTitle: opener ctl-link-alert",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3354,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 677,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/alert-inline?n=popup\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 671,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/alert-inline?n=popup\"}",
+          "err": "Note: tab 99107DD1B4350C92583DF94776694047 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1092,
+          "cap": false,
+          "out": "Tab 99107DD1B4350C92583DF94776694047 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 264,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 265,
+          "cap": false,
+          "out": "* tab_sess_1790490393626_1_1  opener ctl-link-alert  http://127.0.0.1:54418/opener?v=ctl-link-alert&t=0",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 430,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6599,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab 99107DD1B4350C92583DF94776694047 was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 8433
+    },
+    {
+      "variant": "ctl-link-alert",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=ctl-link-alert&t=1",
+          "code": 0,
+          "ms": 853,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=ctl-link-alert&t=1\nTitle: opener ctl-link-alert",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3329,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 684,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/alert-inline?n=popup\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 676,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/alert-inline?n=popup\"}",
+          "err": "Note: tab 7D4296BF30917E7DC6AF1DBB49FD80E1 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1095,
+          "cap": false,
+          "out": "Tab 7D4296BF30917E7DC6AF1DBB49FD80E1 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 265,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 269,
+          "cap": false,
+          "out": "* tab_sess_1790490402041_1_1  opener ctl-link-alert  http://127.0.0.1:54418/opener?v=ctl-link-alert&t=1",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 495,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6588,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab 7D4296BF30917E7DC6AF1DBB49FD80E1 was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 8483
+    },
+    {
+      "variant": "ctl-link-alert",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=ctl-link-alert&t=2",
+          "code": 0,
+          "ms": 878,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=ctl-link-alert&t=2\nTitle: opener ctl-link-alert",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3358,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 685,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/alert-inline?n=popup\"}",
+          "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 670,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:54418/alert-inline?n=popup\"}",
+          "err": "Note: tab DE7A507C4DE717D0A82AE7C170F895D9 appears to be the actual dialog holder -- \"dialog accept/dismiss\" would act on this tab."
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1067,
+          "cap": false,
+          "out": "Tab DE7A507C4DE717D0A82AE7C170F895D9 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 271,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 306,
+          "cap": false,
+          "out": "* tab_sess_1790490410557_1_1  opener ctl-link-alert  http://127.0.0.1:54418/opener?v=ctl-link-alert&t=2",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 472,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 6591,
+      "accept": {
+        "code": 0,
+        "closed": true,
+        "out": "Tab DE7A507C4DE717D0A82AE7C170F895D9 was closed because its dialog could not be addressed directly (unknown dialog).",
+        "err": ""
+      },
+      "popupSurvived": false,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 8526
+    },
+    {
+      "variant": "ctl-xs-alert",
+      "trial": 0,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=ctl-xs-alert&t=0",
+          "code": 0,
+          "ms": 900,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=ctl-xs-alert&t=0\nTitle: opener ctl-xs-alert",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3366,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 281,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"inline-popup\",\"defaultValue\":null,\"url\":\"http://localhost:54418/alert-inline?n=popup\"}",
+          "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 276,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"inline-popup\",\"defaultValue\":null,\"url\":\"http://localhost:54418/alert-inline?n=popup\"}",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 719,
+          "cap": false,
+          "out": "Accepted alert \"inline-popup\"",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 266,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 282,
+          "cap": false,
+          "out": "tab_sess_1790490419104_1_1  alerting popup  http://localhost:54418/alert-inline?n=popup\n* tab_sess_1790490419104_1_2  opener ctl-xs-alert  http://127.0.0.1:54418/opener?v=ctl-xs-alert&t=0",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 444,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 5448,
+      "accept": {
+        "code": 0,
+        "closed": false,
+        "out": "Accepted alert \"inline-popup\"",
+        "err": ""
+      },
+      "popupSurvived": true,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 7343
+    },
+    {
+      "variant": "ctl-xs-alert",
+      "trial": 1,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=ctl-xs-alert&t=1",
+          "code": 0,
+          "ms": 871,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=ctl-xs-alert&t=1\nTitle: opener ctl-xs-alert",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3345,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 279,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"inline-popup\",\"defaultValue\":null,\"url\":\"http://localhost:54418/alert-inline?n=popup\"}",
+          "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 269,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"inline-popup\",\"defaultValue\":null,\"url\":\"http://localhost:54418/alert-inline?n=popup\"}",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 708,
+          "cap": false,
+          "out": "Accepted alert \"inline-popup\"",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 270,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 276,
+          "cap": false,
+          "out": "tab_sess_1790490426424_1_1  opener ctl-xs-alert  http://127.0.0.1:54418/opener?v=ctl-xs-alert&t=1\n* tab_sess_1790490426424_1_2  alerting popup  http://localhost:54418/alert-inline?n=popup",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 452,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 5405,
+      "accept": {
+        "code": 0,
+        "closed": false,
+        "out": "Accepted alert \"inline-popup\"",
+        "err": ""
+      },
+      "popupSurvived": true,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 7277
+    },
+    {
+      "variant": "ctl-xs-alert",
+      "trial": 2,
+      "steps": [
+        {
+          "args": "nav http://127.0.0.1:54418/opener?v=ctl-xs-alert&t=2",
+          "code": 0,
+          "ms": 862,
+          "cap": false,
+          "out": "Navigated to http://127.0.0.1:54418/opener?v=ctl-xs-alert&t=2\nTitle: opener ctl-xs-alert",
+          "err": ""
+        },
+        {
+          "args": "click #b",
+          "code": 0,
+          "ms": 3361,
+          "cap": false,
+          "out": "Clicked #b",
+          "err": ""
+        },
+        {
+          "args": "snap",
+          "code": 3,
+          "ms": 276,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"inline-popup\",\"defaultValue\":null,\"url\":\"http://localhost:54418/alert-inline?n=popup\"}",
+          "err": "Error: a alert dialog is open and blocking the page, so \"snap\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 287,
+          "cap": false,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"inline-popup\",\"defaultValue\":null,\"url\":\"http://localhost:54418/alert-inline?n=popup\"}",
+          "err": ""
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 709,
+          "cap": false,
+          "out": "Accepted alert \"inline-popup\"",
+          "err": ""
+        },
+        {
+          "args": "dialog",
+          "code": 0,
+          "ms": 258,
+          "cap": false,
+          "out": "No dialog is open.",
+          "err": ""
+        },
+        {
+          "args": "tabs",
+          "code": 0,
+          "ms": 313,
+          "cap": false,
+          "out": "tab_sess_1790490433694_1_1  opener ctl-xs-alert  http://127.0.0.1:54418/opener?v=ctl-xs-alert&t=2\n* tab_sess_1790490433694_1_2  alerting popup  http://localhost:54418/alert-inline?n=popup",
+          "err": ""
+        },
+        {
+          "args": "close",
+          "code": 0,
+          "ms": 432,
+          "cap": false,
+          "out": "Session closed.",
+          "err": ""
+        }
+      ],
+      "acceptAtMsAfterClick": 5448,
+      "accept": {
+        "code": 0,
+        "closed": false,
+        "out": "Accepted alert \"inline-popup\"",
+        "err": ""
+      },
+      "popupSurvived": true,
+      "popupLoaded": false,
+      "snapCode": 3,
+      "closeCode": 0,
+      "totalMs": 7327
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

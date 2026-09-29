@@ -13,8 +13,11 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { SutradharRuntime } from '@sutradhar/capability-runtime';
+import { buildAuditReport } from '@sutradhar/capability-runtime';
 import type { AgentCore } from '@sutradhar/agent';
 import { createGoalId } from '@sutradhar/contracts';
+import { WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT, WAIT_HIDDEN_HARD_FAILURE_PREFIX } from '@sutradhar/browser';
+import { withSessionResolution } from './session-resolution.js';
 
 /** Shape of the agent core passed to {@link registerTools}, if autonomous mode is enabled. */
 export interface AgentHandle {
@@ -39,7 +42,39 @@ export interface RegisterToolsOptions {
  * error text would ever say). Matched by substring against the lowercased message; first
  * match wins. Deliberately short and generic — this is a hint, not a diagnosis.
  */
-const ERROR_HINTS: ReadonlyArray<readonly [pattern: string, hint: string]> = [
+const ERROR_HINTS: ReadonlyArray<readonly [pattern: string, hint: string, unless?: readonly string[]]> = [
+  // These two must precede the generic 'timed out' entry below — a wait_for_selector timeout
+  // message always contains "timed out" too, and without a more specific match winning first
+  // the hint would be the misleading "The page may still be loading" (FR2-01).
+  [
+    'but none is visible',
+    'The element exists but is hidden. Pass state:"attached" to wait only for DOM presence, or trigger whatever reveals it.',
+  ],
+  [
+    // GAP-111/GAP-134/GAP-135 (FR2-01 audit-5 and audit-6): this hint asserts a CONFIDENT claim
+    // ("the element is still visible") that must fire ONLY on the engine's own genuinely
+    // confirmed-visible outcome — never on an honest "couldn't verify" timeout (a
+    // busy/unresponsive frame), and never on a HARD failure (tab/session/target closed, or any
+    // other error that stopped the check from running at all — `WAIT_HIDDEN_HARD_FAILURE_PREFIX`).
+    // GAP-111's original fix tried to enforce this with a hand-maintained `unless` list matched
+    // against a broad 'waiting for state=hidden' trigger — audit-6 found that list had already
+    // drifted (GAP-135: it excluded the phrase "could not determine", which the engine never
+    // actually emits — the real wording is "could not be determined") and didn't cover the hard-
+    // failure case at all (GAP-134: 57/60 tab-close failures and 3/30 genuinely-hidden-the-whole-
+    // time failures carried this false hint). Importing `WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT`
+    // directly from `@sutradhar/browser` — the exact literal the engine uses to build its ONE
+    // confirmed-visible message — makes this a mechanical guarantee instead of a hand-copied
+    // string that can silently drift out of sync with the engine's real wording again: this
+    // fragment appears in NO other `wait_for_selector`/`state:'hidden'` message the engine
+    // produces (see the coupling tests in `tests/unit/tools.spec.ts` tagged GAP-134/GAP-135,
+    // which assert against these same imported constants, not a duplicated guess). The
+    // `WAIT_HIDDEN_HARD_FAILURE_PREFIX` exclusion below is defense-in-depth only, for the
+    // pathological case where a wrapped THIRD-PARTY error message happens to itself contain the
+    // literal text "is still visible".
+    WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT,
+    'The element is still visible. Check the selector, or raise timeoutMs.',
+    [WAIT_HIDDEN_HARD_FAILURE_PREFIX],
+  ],
   ['stale snapshot', 'Call browser.snapshot again and use a fresh element id.'],
   ['no visible element found', 'Verify the selector/id via browser.snapshot — the page may have changed.'],
   ['no element found', 'Verify the selector/id via browser.snapshot — the page may have changed.'],
@@ -47,15 +82,27 @@ const ERROR_HINTS: ReadonlyArray<readonly [pattern: string, hint: string]> = [
   ['no live browser page', 'Call browser.launch (or browser.health to check availability) before acting on this session.'],
   ['no browser session', 'Call browser.launch first to create a session.'],
   ['occluded', 'Another element is covering the target — try scrolling it into view or re-snapshot the page.'],
-  ['outside the allowed download directories', 'Pass a downloadDir under an allowed root, or omit it to use the default.'],
+  [
+    'outside the allowed download directories',
+    'Pass a downloadDir under one of the listed roots, or omit it to use the first (default) root. Only the server operator can add roots (SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS).',
+  ],
+  [
+    'outside the allowed upload directories',
+    'Uploads are restricted by the server operator (SUTRADHAR_ALLOWED_UPLOAD_ROOTS); use a file under one of the listed directories.',
+  ],
 ];
 
 /** Appends a one-line remediation hint to `message` for well-known error patterns, when one
- *  matches — otherwise returns it unchanged. */
+ *  matches — otherwise returns it unchanged. A pattern's optional `unless` list (GAP-111) skips
+ *  that hint (falling through to try later, lower-priority entries — e.g. the generic 'timed
+ *  out' one) when the message also contains one of those substrings, so a hint asserting a
+ *  confident claim never fires on the engine's own honest "couldn't verify" outcome. */
 function withHint(message: string): string {
   const lower = message.toLowerCase();
-  const hint = ERROR_HINTS.find(([pattern]) => lower.includes(pattern))?.[1];
-  return hint ? `${message}\nHint: ${hint}` : message;
+  const match = ERROR_HINTS.find(
+    ([pattern, , unless]) => lower.includes(pattern) && !(unless ?? []).some((u) => lower.includes(u)),
+  );
+  return match ? `${message}\nHint: ${match[1]}` : message;
 }
 
 /** Wrap an error into an MCP tool-execution error (isError: true) the model can recover from,
@@ -93,8 +140,12 @@ function jsonResult(value: unknown) {
  * Register all Sutradhar browser tools (and, if an agent is provided, the
  * `agent.runGoal` tool) onto an {@link McpServer}.
  */
-export function registerTools(server: McpServer, options: RegisterToolsOptions): void {
+export function registerTools(mcpServer: McpServer, options: RegisterToolsOptions): void {
   const { runtime } = options;
+  // FR2-10: every tool whose schema requires sessionId gets it made optional, resolved to the
+  // one live session when omitted (error listing the live ids when there are 0 or several). One
+  // mechanism for all tools — see session-resolution.ts.
+  const server = withSessionResolution(mcpServer, runtime);
 
   // ── Lifecycle ────────────────────────────────────────────────────────────
   server.registerTool(
@@ -121,8 +172,12 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
     'browser.launch',
     {
       description:
-        'Launch a real browser session. Returns a sessionId (pass it to every other browser tool) ' +
-        'and whether a real Chrome/Edge page is backing the session. Optionally open an initial URL.',
+        'Launch a real browser session. Returns a sessionId and whether a real Chrome/Edge page is backing ' +
+        'the session. Optionally open an initial URL. Pass the sessionId to other browser tools. You may omit ' +
+        'it while this is the ONLY live session: the call then uses that session and says so. With 0 or several ' +
+        'live sessions, an omitted sessionId fails and lists the live ids. Nothing is ever guessed. The ' +
+        'sessionId parameter HERE is different: it is the id to create (or return, if already live) and never ' +
+        'selects an existing session automatically. Omitting it always launches a new session.',
       inputSchema: {
         sessionId: z.string().optional().describe('Reuse an existing caller-owned session id.'),
         initialUrl: z.string().url().optional().describe('Open a tab and navigate here immediately.'),
@@ -315,6 +370,13 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         'Capture an LLM-optimized snapshot of the active page. Returns `interactiveElements`: a compact listing ' +
         'of every interactive element stamped with a numeric [#id] (e.g. `[#7] button "Search"`), plus `pageText` ' +
         '(visible body text). Use the [#id] as the `target` argument to browser.click / browser.type to act on an element. ' +
+        'Elements inside an iframe are listed as `[#31 in iframe "pay" (https://…)]` (the frame\'s URL is shown on its ' +
+        'first listed element, then just `[#32 in iframe "pay"]`; an unnamed frame shows its number instead). Elements ' +
+        'inside an open shadow root end with `(shadow: host-tag#id)`. Ids stay globally unique across frames, so pass ' +
+        'just the number (`"31"`); when parsing, match `^\\[#(\\d+)`, not `^\\[#(\\d+)\\]`. A frame whose content could ' +
+        'not be read is listed as `[iframe <origin> — not inspectable] (reason)` rather than silently omitted; take the ' +
+        'snapshot again, or read it with eval/extract_data + `frameSelector` (e.g. `iframe[name="pay"]`). With ' +
+        'includeNodes, nodes carry `frame` and `shadowHosts` fields, and skipped frames are returned as JSON. ' +
         'Caution: the [#id] is a snapshot of the DOM at the moment this ran — if the page re-renders afterward (a React/' +
         'Vue update, a list re-sorting) before you act on it, the id can point at nothing or the wrong element. For pages ' +
         'that update frequently, prefer browser.ax_snapshot + browser.click_by_role/click_by_text/type_by_label instead, ' +
@@ -362,11 +424,15 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         // second header built from it would show a different, confusing number (see the same
         // caveat in packages/cli/src/cli.ts's cmdSnap).
         const nodesBlock = snap.nodes ? `\n\nStructured nodes (JSON):\n${JSON.stringify(snap.nodes)}` : '';
+        const skippedFramesBlock =
+          snap.nodes && snap.skippedFrames && snap.skippedFrames.length > 0
+            ? `\n\nSkipped frames (JSON):\n${JSON.stringify(snap.skippedFrames)}`
+            : '';
         return {
           content: [
             {
               type: 'text' as const,
-              text: `${snap.interactiveElements}\n\nPage text:\n${snap.pageText.slice(0, 2000)}${nodesBlock}`,
+              text: `${snap.interactiveElements}\n\nPage text:\n${snap.pageText.slice(0, 2000)}${nodesBlock}${skippedFramesBlock}`,
             },
           ],
         };
@@ -385,7 +451,9 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         'this and acting on it. Nothing here has an id to look up; instead, act on what you read using ' +
         'browser.click_by_role (role + optional name), browser.click_by_text, or browser.type_by_label — all three ' +
         'resolve the real element fresh at the moment they run, not a snapshot of where it used to be. Prefer this ' +
-        'over browser.snapshot when a page is known to re-render frequently (React/Vue apps, live-updating lists).',
+        'over browser.snapshot when a page is known to re-render frequently (React/Vue apps, live-updating lists). ' +
+        'Iframe content (including cross-origin frames) is included in place, grouped under an indented ' +
+        '[iframe "name" (url)] line.',
       inputSchema: {
         sessionId: z.string(),
         tabId: z.string().optional(),
@@ -410,7 +478,10 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
 
   // ── Interaction ──────────────────────────────────────────────────────────
   const targetDesc =
-    'A CSS selector OR a numeric [#id] from browser.snapshot (e.g. "7" resolves to [data-sd-node-id="7"]).';
+    'A CSS selector OR a numeric [#id] from browser.snapshot (e.g. "7" resolves to [data-sd-node-id="7"]). ' +
+    "Puppeteer's pierce/, xpath/, aria/ and text/ prefixes are also accepted. Playwright syntax (text=, " +
+    'role=, >>, :has-text(), getBy*()) is rejected immediately — use browser.click_by_text / ' +
+    'browser.click_by_role / browser.type_by_label to target by visible text or role.';
 
   const settleDesc =
     'Opt-in: after the action, wait for the page to stop actively changing (no DOM mutations, no ' +
@@ -677,18 +748,38 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
     'browser.wait_for_selector',
     {
       description:
-        'Wait for a CSS selector to appear and become visible before returning. Use this instead of ' +
-        'guessing a fixed delay for content that loads asynchronously (AJAX, animations, etc.).',
+        'Wait for an element to reach a state before returning: "visible" by default, or "attached" / ' +
+        '"hidden". Use this instead of guessing a fixed delay for content that loads or appears ' +
+        'asynchronously (AJAX, toasts, animations). Visibility is checked on the first element matching ' +
+        'the selector. "visible" means a non-empty bounding box AND computed visibility not ' +
+        'hidden/collapse — opacity:0 and off-screen elements still count as visible; zero width/height, ' +
+        'display:none and visibility:hidden count as hidden. timeoutMs applies to each internal attempt; ' +
+        'retries can extend the real total wait beyond it (open issue). timeoutMs <= 0 checks the current ' +
+        'state once, immediately, with no waiting or retrying. Waiting states poll roughly every 100ms, so ' +
+        "a state that's only true for less than ~100ms (a fast visibility flicker) may be missed. On " +
+        'success, state:"hidden" may also return output.otherVisibleMatches (best-effort) when a LATER ' +
+        'match is still visible.',
       inputSchema: {
         sessionId: z.string(),
         target: z.string().describe(targetDesc),
-        timeoutMs: z.number().int().optional().describe('Defaults to 10000ms.'),
+        timeoutMs: z.number().int().optional().describe('Defaults to 10000ms. Applies per attempt; retries can extend the real total.'),
         tabId: z.string().optional(),
+        state: z
+          .enum(['visible', 'attached', 'hidden'])
+          .optional()
+          .describe(
+            'Defaults to "visible". "visible": the element exists AND is visible — a non-empty box ' +
+              '(width>0, height>0) AND computed visibility not hidden/collapse, checked on the FIRST ' +
+              'matching element in document order. opacity:0 and off-screen positioning still count as ' +
+              'visible; zero size, display:none, and visibility:hidden count as hidden. "attached": it ' +
+              'only has to exist in the DOM, visibility ignored. "hidden": the first match is removed or ' +
+              'not visible; succeeds immediately if nothing matches at all, so double-check the selector.',
+          ),
       },
     },
-    async ({ sessionId, target, timeoutMs, tabId }) => {
+    async ({ sessionId, target, timeoutMs, tabId, state }) => {
       try {
-        return jsonResult(await runtime.waitForSelector(sessionId, target, timeoutMs, tabId));
+        return jsonResult(await runtime.waitForSelector(sessionId, target, timeoutMs, tabId, state));
       } catch (e) {
         return errorResult(`wait_for_selector failed: ${(e as Error).message}`);
       }
@@ -786,7 +877,10 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
       inputSchema: {
         sessionId: z.string(),
         target: z.string().describe(targetDesc),
-        filePath: z.string().describe('Absolute path to the local file to upload.'),
+        filePath: z.string().describe(
+          'Absolute path to the local file to upload. Unrestricted unless the operator set ' +
+            'SUTRADHAR_ALLOWED_UPLOAD_ROOTS, in which case it must be under one of those directories.',
+        ),
         tabId: z.string().optional(),
       },
     },
@@ -862,11 +956,17 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
     'browser.download_file',
     {
       description:
-        'Click an element that triggers a file download and wait for the download to complete on disk.',
+        'Click an element that triggers a file download and wait for it to finish on disk. Returns ' +
+        'output.downloadedPath (absolute path of the saved file). The destination must be inside an ' +
+        'allowed download root; anything else is rejected.',
       inputSchema: {
         sessionId: z.string(),
         target: z.string().describe(`The download-triggering element. ${targetDesc}`),
-        downloadDir: z.string().optional().describe('Destination directory. Defaults to the OS temp directory.'),
+        downloadDir: z.string().optional().describe(
+          'Destination directory. Must resolve (symlinks/junctions followed) inside an allowed root. ' +
+            'Defaults to the first allowed root: <OS temp>/sutradhar-downloads unless the operator set ' +
+            'SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS.',
+        ),
         tabId: z.string().optional(),
       },
     },
@@ -896,6 +996,54 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
         return { content: [{ type: 'image' as const, data: base64, mimeType: 'image/png' }] };
       } catch (e) {
         return errorResult(`screenshot failed: ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
+    'browser.audit',
+    {
+      description:
+        'Audit a page and return a machine-readable report (JSON Schema: packages/capability-runtime/schemas/' +
+        'audit-report.schema.json, schemaVersion 1): console errors, uncaught page errors, broken requests ' +
+        '(HTTP 4xx/5xx), heuristic accessibility checks (img-alt, input-label, missing-title, missing-lang, ' +
+        'button-name; not a WCAG audit) and Web Vitals (LCP, CLS, FCP, TTFB), plus a full-page screenshot. ' +
+        'With url, loads it and waits before capturing; without url, audits the current page as-is. ' +
+        'Errors/requests are scoped to the current document and are complete only if this server was already ' +
+        'attached when it loaded (observation.coversWholeDocument). LCP/FCP can be null if the page was ' +
+        'hidden while loading (observation.pageWasHidden). Returns the JSON report first, then the screenshot ' +
+        "PNG, then (with baselineUrl) a diff PNG; includeImages:false omits the images. baselineUrl navigates " +
+        "to it and then reloads the audited URL to pixel-diff their viewports, discarding the page's current " +
+        'state. Findings never make this call fail; only an unusable session, a blocked URL, a failed ' +
+        'navigation to url, or an open dialog does. Not an action: no verification field.',
+      inputSchema: {
+        sessionId: z.string(),
+        url: z.string().min(1).optional().describe('Load this URL first. Omit to audit the current page as-is.'),
+        baselineUrl: z.string().min(1).optional().describe('Also pixel-diff this URL against a fresh load of the audited page.'),
+        includeImages: z.boolean().optional().describe('Default true. false omits the screenshot/diff image items (sizes still reported).'),
+        tabId: z.string().optional(),
+      },
+    },
+    async ({ sessionId, url, baselineUrl, includeImages, tabId }) => {
+      try {
+        const result = await runtime.audit(sessionId, {
+          ...(url !== undefined ? { url } : {}),
+          ...(tabId !== undefined ? { tabId } : {}),
+          ...(baselineUrl !== undefined ? { baselineUrl } : {}),
+        });
+        const report = buildAuditReport(result, { screenshotPath: null, diffPath: null });
+        const content: Array<{ type: 'text'; text: string } | { type: 'image'; data: string; mimeType: string }> = [
+          { type: 'text', text: JSON.stringify(report, null, 2) },
+        ];
+        if (includeImages !== false) {
+          content.push({ type: 'image', data: result.screenshotBase64, mimeType: 'image/png' });
+          if (result.baseline && 'diffImageBase64' in result.baseline) {
+            content.push({ type: 'image', data: result.baseline.diffImageBase64, mimeType: 'image/png' });
+          }
+        }
+        return { content };
+      } catch (e) {
+        return errorResult(`audit failed: ${(e as Error).message}`);
       }
     },
   );
@@ -953,16 +1101,39 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
     'browser.extract_data',
     {
       description:
-        'Extract structured data from the page. For each named field, provide a CSS selector (and optionally ' +
-        'an attribute to read); returns every matching element\'s text or attribute value as an array, ' +
+        'Extract structured data from the page. For each named field give a CSS selector (or snapshot [#id]); ' +
+        'returns one string per matching element in document order, ' +
         'e.g. {"titles": {"selector": ".product h2"}, "links": {"selector": ".product a", "attribute": "href"}}. ' +
-        'Runs against the top-level page by default; pass frameSelector (a CSS selector or snapshot [#id] for ' +
-        'an <iframe> element on the top-level page) to extract from inside that frame instead — including a ' +
-        'genuinely cross-origin one.',
+        'With no attribute: form controls (input/select/textarea) return their LIVE current value, including ' +
+        'typed text not yet submitted; other elements return rendered text (innerText, trimmed), leaving out ' +
+        'CSS-hidden text and <script>/<style> content. "value"/"checked"/"selected" (case-insensitive) read ' +
+        'live DOM state instead of markup; "checked"/"selected" return "true"/"false". "attr:<name>" reads the ' +
+        'raw HTML attribute (e.g. "attr:value" = the original markup value). Any other name, e.g. "href", ' +
+        'returns the raw attribute, not resolved to an absolute URL. Hidden matches are still returned unless ' +
+        'visibleOnly is true (whole call or per field). For a checkbox/radio\'s state use "checked"; with no ' +
+        'attribute a checkbox returns its value (usually "on"). For <select multiple>, "value" is only the ' +
+        'first selected value — use selector "select option:checked" with attribute "value" for all selected. ' +
+        'Selectors don\'t pierce shadow DOM. Runs against the top-level page by default; pass frameSelector ' +
+        '(a CSS selector or snapshot [#id] for an <iframe> element on the top-level page) to extract from ' +
+        'inside that frame instead — including a genuinely cross-origin one.',
       inputSchema: {
         sessionId: z.string(),
         fields: z
-          .record(z.string(), z.object({ selector: z.string(), attribute: z.string().optional() }))
+          .record(
+            z.string(),
+            z.object({
+              selector: z.string().describe('CSS selector or snapshot [#id]. Does not pierce shadow DOM.'),
+              attribute: z
+                .string()
+                .optional()
+                .describe(
+                  'Omit for the current value/visible text. "value" | "checked" | "selected" read LIVE state ' +
+                    '("checked"/"selected" → "true"/"false"). "attr:<name>" reads the raw HTML attribute ' +
+                    '(e.g. "attr:value" = original markup value). Any other name (e.g. "href") returns the raw attribute.',
+                ),
+              visibleOnly: z.boolean().optional().describe('Per-field override of the top-level visibleOnly.'),
+            }),
+          )
           .refine((obj) => Object.keys(obj).length > 0, {
             message: 'fields must have at least one entry — an empty object is a no-op extraction',
           }),
@@ -971,11 +1142,18 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
           .string()
           .optional()
           .describe('CSS selector or snapshot [#id] for an <iframe> element on the top-level page — extract from inside that frame instead of the top-level page.'),
+        visibleOnly: z
+          .boolean()
+          .optional()
+          .describe(
+            'Drop matched elements that are not visible (visibility:hidden/collapse or a zero-size box; opacity ' +
+              'is ignored). Default false: hidden matches are still returned.',
+          ),
       },
     },
-    async ({ sessionId, fields, tabId, frameSelector }) => {
+    async ({ sessionId, fields, tabId, frameSelector, visibleOnly }) => {
       try {
-        return jsonResult(await runtime.extractData(sessionId, fields, tabId, frameSelector));
+        return jsonResult(await runtime.extractData(sessionId, fields, tabId, frameSelector, { visibleOnly }));
       } catch (e) {
         return errorResult(`extract_data failed: ${(e as Error).message}`);
       }
@@ -1413,7 +1591,10 @@ export function registerTools(server: McpServer, options: RegisterToolsOptions):
       inputSchema: {
         sessionId: z.string(),
         target: z.string().describe(`The element that triggers the file picker when clicked. ${targetDesc}`),
-        filePath: z.string().describe('Absolute path to the local file to upload.'),
+        filePath: z.string().describe(
+          'Absolute path to the local file to upload. Unrestricted unless the operator set ' +
+            'SUTRADHAR_ALLOWED_UPLOAD_ROOTS, in which case it must be under one of those directories.',
+        ),
         tabId: z.string().optional(),
       },
     },

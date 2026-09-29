@@ -1,0 +1,87 @@
+GAP-132-fix audit-1 (independent Opus auditor) -- verdict: FAIL
+GAP-132 is closed on the hidden-wait path. GAP-134 and GAP-135 are closed. GAP-133 is closed only for the
+literal branch the fix touched. Two sibling sites, both in describeWaitForSelectorTimeout's diagnosis path,
+still collapse an ambiguous/tab-closed outcome into a confident negative message. Both are live-reproduced.
+
+== Build / typecheck / tests (fresh, not cited) ==
+turbo run build --force: 19/19, then 9/9 (sutradhar), "Cached: 0 cached" both times (build-force.txt). This is a real uncached build.
+tsc --noEmit exit 0: browser, capability-runtime, cli, mcp-server, sutradhar (tsc.txt)
+vitest: browser 428, capability-runtime 158, cli 177, mcp-server 91, sutradhar 15. All pass (vitest-*.txt).
+New tests: 7, not the 8 claimed (4 in browser-action-engine.spec.ts, 3 in tools.spec.ts).
+
+== GAP-132 live (engine direct, real Chrome; script-audit-diag.mjs.txt) ==
+Fixed build: 1920 trials = 3 layouts (single / iframe / only-in-iframe) x 2 closers (same client page.close, and an
+  EXTERNAL CDP client Target.closeTarget) x 4 timings (early 0-15ms, mid 20-420ms, final around a 300ms deadline,
+  check-once) x 80 trials.
+  Result: 0 false successes. isTabClosed() was never false at a context-destroyed catch site during a close
+  (isTabClosedFalse = 0 in every cell). (diag-tabclose-audit-hidden.json/.txt)
+Power check, with the fix REVERTED in dist (both isTabClosed catch checks -> if(false), dist restored byte-exact after):
+  131/640 false successes (up to 40/80 in the early-close cell), and MCP T 3/60. The harness detects the bug, so the
+  0/1920 result is meaningful. (power-check-fix-reverted-*.json/.txt)
+MCP stack (probe-a6 T copy, closed by an observer client): 80 trials in each of mid, early, final and check-once modes
+  = 320 trials. 0 false successes. 0 false "still visible" hints on hard failures. (probe-mcp-T-*.json)
+  check-once: 66/80 returned "is still visible" + hint. These are TRUE: the single check completed before the 0-11ms
+  delayed close, while #stay was visible.
+Detached-iframe-on-live-tab: the only-in-iframe and iframe layouts never produced an isTabClosed=false/no-match
+  collapse during a tab close. The per-frame 'no-match' for a genuinely detached frame on a live tab is unchanged
+  (the GAP-132 regression-guard unit test pins it).
+
+== NEW FINDING 1 (major): visible-wait timeout says "No element found" when the tab closes during the diagnosis ==
+browser-action-engine.ts:2204-2206 (diagnoseSelectorVisibility): isContextDestroyedError -> null, with NO isTabClosed
+check. This is the exact GAP-132 classification this fix added at pierceFirstMatch/isHandleVisible, missed at this
+sibling. :2310 describeWaitForSelectorTimeout `catch {}` also swallows liveFramesOf's TAB_CLOSED throw. Both fall
+through to describeMissingElement -> "No element found for selector: X" (the MCP hint then says "Verify the selector").
+Live: state:'visible' on #stay (display:none, present the whole time), tab closed near the deadline or during check-once:
+  12/360 trials returned "wait_for_selector timed out after Nms waiting for state=visible: No element found for
+  selector: #stay". That is a confident claim that the element is absent, and it is false.
+  (diag-tabclose-audit-visible-hiddenel.json)
+  Another 37/360 said "visibility could not be determined ... did not respond within the diagnostic's time bound".
+  That is honest but mislabels a closed tab as an unresponsive frame.
+Same pattern, lower impact: countOtherVisibleMatches :2096 (context-destroyed -> 0 with no tab-closed check) can drop
+  otherVisibleMatchesUnknown on a close that races the post-success advisory.
+
+== NEW FINDING 2 (major): the GAP-133 partial-unanswered guard is placed AFTER a branch that also asserts an unconfirmed negative ==
+browser-action-engine.ts:2279-2286 (laterVisibleCount > 0) runs before the new :2294 guard. It asserts "the first
+match is not visible, but N later match(es) are ... use a more specific selector" even when unconfirmedFrames > 0.
+Live (MCP, --site-per-process, script-probe-a6-audit.mjs.txt case C2c): #x VISIBLE in the busy MAIN frame; the OOPIF
+has a hidden #x followed by a visible #x.
+  Wait: 2/2 got that message. Check-once: 2/2 got that message.
+  The engine's own any-frame rule would have accepted the main frame's visible #x.
+C2a/C2b (audit-6's exact GAP-133 repro): 4/4 now honest ("could not be fully determined -- 1 of 2 frame(s)"). The literal fix works.
+
+== GAP-134/135 ==
+C1 iframe-churn (30 calls): 30/30 success. There were no hard failures in this run, so no hint exposure.
+T runs: 0/320 carry "still visible" on a hard failure.
+Bundle (packages/sutradhar/dist, script-bundle-smoke.mjs.txt): the import resolves (the constant is inlined into all
+  3 bundles). mcp-cli.js lists 71 tools.
+  Positives: the confirmed-visible hidden wait gets the hint, both waiting and check-once.
+  Negatives: no hint on "none is visible" or on the tab-closed hard failure.
+Note: the hint trigger 'is still visible' is now unscoped (any tool's error). Today no other engine message contains
+  it; a selector string containing that text would trigger it (pathological).
+The GAP-135 "coupling" test only asserts each constant equals its own literal (tautological). Real coupling is by
+  construction (the engine builds its message from the same constant), so this is not a defect.
+
+== Mutations (script-mutate.cjs.txt; every one restored byte-exact, sha256 verified) ==
+A1 remove pierceFirstMatch isTabClosed: caught (GAP-132 pierce test)
+A2 disable GAP-133 guard: caught (GAP-133 test)
+A3 restore the broad 'waiting for state=hidden' trigger: caught, but only by the older GAP-111 test
+S2 own sibling mutation, isHandleVisible fatal -> 'not-visible': caught (GAP-081a)
+S3 remove isHandleVisible isTabClosed: caught (GAP-132 handle test)
+S1 own sibling mutation, remove liveFramesOf's TAB_CLOSED throw: NOT caught (428/428). Now largely backstopped live by
+  pierceFirstMatch's new check, because a detached main frame gives context-destroyed and then isTabClosed.
+
+== Process ==
+.gitignore `!.ai/loop/**/*.log`: git check-ignore confirms it re-includes .ai/loop/**.log only. Files that stay ignored:
+  .ai/other/*.log, .ai/loop.log, .ai/loopx/*.log, root *.log, packages/**/*.log, and .ai/loop/**/node_modules/*.log.
+Newly visible: 598 untracked .log files under .ai/loop, 3.37 MB total, largest 433 KB (baseline/vitest-rest.log).
+  Secret-pattern scan (sk-, ghp_, npm_, AKIA, xox, Bearer, JWT, api_key=, password=) found no secrets. The only hit
+  is test-name text ("password fields"). 6 logs contain ephemeral local ws://127.0.0.1 devtools endpoints (harmless).
+verify-fr2-01 / verify-fr2-02 run with no env var: both wrote to %TEMP%\sutradhar-fr2-0N-verify-* (warning printed).
+  The sha256 of all 555 files under evidence/FR2-01 + FR2-02 was identical before and after.
+  FR2-01: 48/48 PASS. overallOk:false only because of 56 lingering chrome.exe from pre-existing sutradhar-cli-*
+  profiles; all 56 PIDs were in this audit's pre-run baseline. FR2-02: overallOk:true.
+Cleanup: all gap132-a1-* profiles and both verify scratch dirs are removed; no Chrome with this audit's profiles remains.
+  New sutradhar-cli-17904{10329063,10936980,12179765} Chromes appeared during the audit. This audit ran no CLI, and
+  other worktrees/sessions are active, so they were left alone and not attributed here.
+One stray file (a baseline tmp listing) was briefly moved to .claude/AI-Cache by a bad relative path. It was moved to
+  the scratchpad, with no other effect.

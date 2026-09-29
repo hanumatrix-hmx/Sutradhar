@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PROB-043 keyboard delivery probe</title>
+  </head>
+  <body>
+    <h1>PROB-043 keyboard delivery probe</h1>
+    <p id="ready">building</p>
+    <main id="fields"></main>
+    <script>
+      const probe = {
+        bootId: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        events: Object.create(null),
+        applicationValues: Object.create(null),
+      };
+      window.__prob043Probe = probe;
+
+      const eventNames = ['focus', 'blur', 'keydown', 'beforeinput', 'input', 'change'];
+      const fields = document.getElementById('fields');
+
+      function installInput(kind, index) {
+        const id = `${kind}-${index}`;
+        const wrapper = document.createElement('label');
+        wrapper.textContent = `${id} `;
+        const input = document.createElement('input');
+        input.id = id;
+        input.autocomplete = 'off';
+        input.setAttribute('aria-label', id);
+        probe.events[id] = Object.fromEntries(eventNames.map((name) => [name, 0]));
+        probe.applicationValues[id] = '';
+
+        for (const name of eventNames) {
+          input.addEventListener(name, () => {
+            probe.events[id][name]++;
+          });
+        }
+
+        input.addEventListener('input', () => {
+          probe.applicationValues[id] = input.value;
+          if (kind === 'controlled') {
+            // Model a framework-controlled field: application state owns the value and writes
+            // it back in a microtask. The node remains stable, so a mismatch is a delivery or
+            // verification failure rather than an intentionally replaced-element race.
+            queueMicrotask(() => {
+              input.value = probe.applicationValues[id];
+            });
+          }
+        });
+
+        wrapper.appendChild(input);
+        fields.appendChild(wrapper);
+        fields.appendChild(document.createElement('br'));
+      }
+
+      for (let index = 0; index < 64; index++) {
+        installInput('plain', index);
+        installInput('controlled', index);
+        installInput('press', index);
+      }
+
+      document.getElementById('ready').textContent = 'ready';
+    </script>
+  </body>
+</html>

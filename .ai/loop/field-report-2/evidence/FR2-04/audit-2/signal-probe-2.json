@@ -1,0 +1,905 @@
+{
+  "at": "2026-09-26T13:36:32.857Z",
+  "probeMs": 600,
+  "rows": [
+    {
+      "trial": 0,
+      "state": "idle",
+      "holderSawDialog": [],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Performance.getMetrics": {
+          "res": "ANSWERED",
+          "ms": 0
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "ANSWERED",
+          "ms": 0
+        },
+        "Page.getFrameTree": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Runtime.getIsolateId": {
+          "res": "ANSWERED",
+          "ms": 0
+        }
+      }
+    },
+    {
+      "trial": 0,
+      "state": "busy",
+      "holderSawDialog": [],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 607
+        },
+        "Performance.getMetrics": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 606
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 602
+        }
+      }
+    },
+    {
+      "trial": 0,
+      "state": "busyAsyncChurn",
+      "holderSawDialog": [],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "ANSWERED",
+          "ms": 202
+        },
+        "Performance.getMetrics": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "ANSWERED",
+          "ms": 0
+        },
+        "Page.getFrameTree": {
+          "res": "ANSWERED",
+          "ms": 399
+        },
+        "Runtime.getIsolateId": {
+          "res": "ANSWERED",
+          "ms": 400
+        }
+      }
+    },
+    {
+      "trial": 0,
+      "state": "alert",
+      "holderSawDialog": [
+        "alert"
+      ],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 608
+        },
+        "Performance.getMetrics": {
+          "res": "TIMEOUT",
+          "ms": 608
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "TIMEOUT",
+          "ms": 603
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 605
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 605
+        }
+      }
+    },
+    {
+      "trial": 0,
+      "state": "confirm",
+      "holderSawDialog": [
+        "confirm"
+      ],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 602
+        },
+        "Performance.getMetrics": {
+          "res": "TIMEOUT",
+          "ms": 605
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "TIMEOUT",
+          "ms": 607
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 604
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 603
+        }
+      }
+    },
+    {
+      "trial": 0,
+      "state": "prompt",
+      "holderSawDialog": [
+        "prompt"
+      ],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 607
+        },
+        "Performance.getMetrics": {
+          "res": "TIMEOUT",
+          "ms": 612
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "TIMEOUT",
+          "ms": 605
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 607
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 604
+        }
+      }
+    },
+    {
+      "trial": 0,
+      "state": "beforeunload",
+      "holderSawDialog": [
+        "beforeunload"
+      ],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 604
+        },
+        "Performance.getMetrics": {
+          "res": "TIMEOUT",
+          "ms": 612
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "TIMEOUT",
+          "ms": 609
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 603
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 608
+        }
+      }
+    },
+    {
+      "trial": 1,
+      "state": "idle",
+      "holderSawDialog": [],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Performance.getMetrics": {
+          "res": "ANSWERED",
+          "ms": 0
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Page.getFrameTree": {
+          "res": "ANSWERED",
+          "ms": 0
+        },
+        "Runtime.getIsolateId": {
+          "res": "ANSWERED",
+          "ms": 1
+        }
+      }
+    },
+    {
+      "trial": 1,
+      "state": "busy",
+      "holderSawDialog": [],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 612
+        },
+        "Performance.getMetrics": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "ANSWERED",
+          "ms": 0
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 605
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 607
+        }
+      }
+    },
+    {
+      "trial": 1,
+      "state": "busyAsyncChurn",
+      "holderSawDialog": [],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "ANSWERED",
+          "ms": 202
+        },
+        "Performance.getMetrics": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "ANSWERED",
+          "ms": 0
+        },
+        "Page.getFrameTree": {
+          "res": "ANSWERED",
+          "ms": 399
+        },
+        "Runtime.getIsolateId": {
+          "res": "ANSWERED",
+          "ms": 400
+        }
+      }
+    },
+    {
+      "trial": 1,
+      "state": "alert",
+      "holderSawDialog": [
+        "alert"
+      ],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 614
+        },
+        "Performance.getMetrics": {
+          "res": "TIMEOUT",
+          "ms": 608
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "TIMEOUT",
+          "ms": 611
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 608
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 604
+        }
+      }
+    },
+    {
+      "trial": 1,
+      "state": "confirm",
+      "holderSawDialog": [
+        "confirm"
+      ],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 603
+        },
+        "Performance.getMetrics": {
+          "res": "TIMEOUT",
+          "ms": 608
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "TIMEOUT",
+          "ms": 613
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 601
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 609
+        }
+      }
+    },
+    {
+      "trial": 1,
+      "state": "prompt",
+      "holderSawDialog": [
+        "prompt"
+      ],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 607
+        },
+        "Performance.getMetrics": {
+          "res": "TIMEOUT",
+          "ms": 607
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "TIMEOUT",
+          "ms": 613
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 609
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 609
+        }
+      }
+    },
+    {
+      "trial": 1,
+      "state": "beforeunload",
+      "holderSawDialog": [
+        "beforeunload"
+      ],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 602
+        },
+        "Performance.getMetrics": {
+          "res": "TIMEOUT",
+          "ms": 610
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "TIMEOUT",
+          "ms": 614
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 609
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 607
+        }
+      }
+    },
+    {
+      "trial": 2,
+      "state": "idle",
+      "holderSawDialog": [],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Performance.getMetrics": {
+          "res": "ANSWERED",
+          "ms": 0
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Page.getFrameTree": {
+          "res": "ANSWERED",
+          "ms": 0
+        },
+        "Runtime.getIsolateId": {
+          "res": "ANSWERED",
+          "ms": 0
+        }
+      }
+    },
+    {
+      "trial": 2,
+      "state": "busy",
+      "holderSawDialog": [],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 609
+        },
+        "Performance.getMetrics": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 607
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 603
+        }
+      }
+    },
+    {
+      "trial": 2,
+      "state": "busyAsyncChurn",
+      "holderSawDialog": [],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "ANSWERED",
+          "ms": 197
+        },
+        "Performance.getMetrics": {
+          "res": "ANSWERED",
+          "ms": 0
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Page.getFrameTree": {
+          "res": "ANSWERED",
+          "ms": 399
+        },
+        "Runtime.getIsolateId": {
+          "res": "ANSWERED",
+          "ms": 400
+        }
+      }
+    },
+    {
+      "trial": 2,
+      "state": "alert",
+      "holderSawDialog": [
+        "alert"
+      ],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 611
+        },
+        "Performance.getMetrics": {
+          "res": "TIMEOUT",
+          "ms": 614
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "TIMEOUT",
+          "ms": 605
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 609
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 609
+        }
+      }
+    },
+    {
+      "trial": 2,
+      "state": "confirm",
+      "holderSawDialog": [
+        "confirm"
+      ],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 612
+        },
+        "Performance.getMetrics": {
+          "res": "TIMEOUT",
+          "ms": 604
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "TIMEOUT",
+          "ms": 604
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 603
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 607
+        }
+      }
+    },
+    {
+      "trial": 2,
+      "state": "prompt",
+      "holderSawDialog": [
+        "prompt"
+      ],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 610
+        },
+        "Performance.getMetrics": {
+          "res": "TIMEOUT",
+          "ms": 608
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "TIMEOUT",
+          "ms": 611
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 612
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 611
+        }
+      }
+    },
+    {
+      "trial": 2,
+      "state": "beforeunload",
+      "holderSawDialog": [
+        "beforeunload"
+      ],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 600
+        },
+        "Performance.getMetrics": {
+          "res": "TIMEOUT",
+          "ms": 609
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "TIMEOUT",
+          "ms": 616
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 608
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 602
+        }
+      }
+    },
+    {
+      "trial": 3,
+      "state": "idle",
+      "holderSawDialog": [],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Performance.getMetrics": {
+          "res": "ANSWERED",
+          "ms": 0
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Page.getFrameTree": {
+          "res": "ANSWERED",
+          "ms": 0
+        },
+        "Runtime.getIsolateId": {
+          "res": "ANSWERED",
+          "ms": 0
+        }
+      }
+    },
+    {
+      "trial": 3,
+      "state": "busy",
+      "holderSawDialog": [],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 608
+        },
+        "Performance.getMetrics": {
+          "res": "ANSWERED",
+          "ms": 1
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "ANSWERED",
+          "ms": 0
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 607
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 610
+        }
+      }
+    },
+    {
+      "trial": 3,
+      "state": "busyAsyncChurn",
+      "holderSawDialog": [],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "ANSWERED",
+          "ms": 201
+        },
+        "Performance.getMetrics": {
+          "res": "ANSWERED",
+          "ms": 0
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "ANSWERED",
+          "ms": 0
+        },
+        "Page.getFrameTree": {
+          "res": "ANSWERED",
+          "ms": 399
+        },
+        "Runtime.getIsolateId": {
+          "res": "ANSWERED",
+          "ms": 400
+        }
+      }
+    },
+    {
+      "trial": 3,
+      "state": "alert",
+      "holderSawDialog": [
+        "alert"
+      ],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 610
+        },
+        "Performance.getMetrics": {
+          "res": "TIMEOUT",
+          "ms": 608
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "TIMEOUT",
+          "ms": 605
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 611
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 610
+        }
+      }
+    },
+    {
+      "trial": 3,
+      "state": "confirm",
+      "holderSawDialog": [
+        "confirm"
+      ],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 613
+        },
+        "Performance.getMetrics": {
+          "res": "TIMEOUT",
+          "ms": 607
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "TIMEOUT",
+          "ms": 607
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 602
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 609
+        }
+      }
+    },
+    {
+      "trial": 3,
+      "state": "prompt",
+      "holderSawDialog": [
+        "prompt"
+      ],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 605
+        },
+        "Performance.getMetrics": {
+          "res": "TIMEOUT",
+          "ms": 611
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "TIMEOUT",
+          "ms": 611
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 612
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 609
+        }
+      }
+    },
+    {
+      "trial": 3,
+      "state": "beforeunload",
+      "holderSawDialog": [
+        "beforeunload"
+      ],
+      "methods": {
+        "Runtime.evaluate": {
+          "res": "TIMEOUT",
+          "ms": 607
+        },
+        "Performance.getMetrics": {
+          "res": "TIMEOUT",
+          "ms": 610
+        },
+        "Debugger.setBreakpointsActive": {
+          "res": "TIMEOUT",
+          "ms": 611
+        },
+        "Page.getFrameTree": {
+          "res": "TIMEOUT",
+          "ms": 604
+        },
+        "Runtime.getIsolateId": {
+          "res": "TIMEOUT",
+          "ms": 608
+        }
+      }
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": []
+  },
+  "summary": {
+    "idle|Runtime.evaluate": {
+      "ANSWERED": 4
+    },
+    "idle|Performance.getMetrics": {
+      "ANSWERED": 4
+    },
+    "idle|Debugger.setBreakpointsActive": {
+      "ANSWERED": 4
+    },
+    "idle|Page.getFrameTree": {
+      "ANSWERED": 4
+    },
+    "idle|Runtime.getIsolateId": {
+      "ANSWERED": 4
+    },
+    "busy|Runtime.evaluate": {
+      "TIMEOUT": 4
+    },
+    "busy|Performance.getMetrics": {
+      "ANSWERED": 4
+    },
+    "busy|Debugger.setBreakpointsActive": {
+      "ANSWERED": 4
+    },
+    "busy|Page.getFrameTree": {
+      "TIMEOUT": 4
+    },
+    "busy|Runtime.getIsolateId": {
+      "TIMEOUT": 4
+    },
+    "busyAsyncChurn|Runtime.evaluate": {
+      "ANSWERED": 4
+    },
+    "busyAsyncChurn|Performance.getMetrics": {
+      "ANSWERED": 4
+    },
+    "busyAsyncChurn|Debugger.setBreakpointsActive": {
+      "ANSWERED": 4
+    },
+    "busyAsyncChurn|Page.getFrameTree": {
+      "ANSWERED": 4
+    },
+    "busyAsyncChurn|Runtime.getIsolateId": {
+      "ANSWERED": 4
+    },
+    "alert|Runtime.evaluate": {
+      "TIMEOUT": 4
+    },
+    "alert|Performance.getMetrics": {
+      "TIMEOUT": 4
+    },
+    "alert|Debugger.setBreakpointsActive": {
+      "TIMEOUT": 4
+    },
+    "alert|Page.getFrameTree": {
+      "TIMEOUT": 4
+    },
+    "alert|Runtime.getIsolateId": {
+      "TIMEOUT": 4
+    },
+    "confirm|Runtime.evaluate": {
+      "TIMEOUT": 4
+    },
+    "confirm|Performance.getMetrics": {
+      "TIMEOUT": 4
+    },
+    "confirm|Debugger.setBreakpointsActive": {
+      "TIMEOUT": 4
+    },
+    "confirm|Page.getFrameTree": {
+      "TIMEOUT": 4
+    },
+    "confirm|Runtime.getIsolateId": {
+      "TIMEOUT": 4
+    },
+    "prompt|Runtime.evaluate": {
+      "TIMEOUT": 4
+    },
+    "prompt|Performance.getMetrics": {
+      "TIMEOUT": 4
+    },
+    "prompt|Debugger.setBreakpointsActive": {
+      "TIMEOUT": 4
+    },
+    "prompt|Page.getFrameTree": {
+      "TIMEOUT": 4
+    },
+    "prompt|Runtime.getIsolateId": {
+      "TIMEOUT": 4
+    },
+    "beforeunload|Runtime.evaluate": {
+      "TIMEOUT": 4
+    },
+    "beforeunload|Performance.getMetrics": {
+      "TIMEOUT": 4
+    },
+    "beforeunload|Debugger.setBreakpointsActive": {
+      "TIMEOUT": 4
+    },
+    "beforeunload|Page.getFrameTree": {
+      "TIMEOUT": 4
+    },
+    "beforeunload|Runtime.getIsolateId": {
+      "TIMEOUT": 4
+    }
+  }
+}

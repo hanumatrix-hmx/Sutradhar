@@ -1,0 +1,30 @@
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser[39m
+
+ [33m❯[39m tests/unit/selector-dialect.spec.ts [2m ([22m[2m111 tests[22m [2m|[22m [31m2 failed[39m[2m)[22m[90m 13[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mD1: every Playwright form is detected[2m > [22mpierce/ text=Submit -> engine-prefix[39m
+[31m     → expected null not to be null[39m
+[31m   [33m❯[31m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mD1: every Playwright form is detected[2m > [22mpierce/  role=button -> engine-prefix[39m
+[31m     → expected null not to be null[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m109 passed[39m[22m[90m (111)[39m
+[2m   Start at [22m 04:35:35
+[2m   Duration [22m 347ms[2m (transform 28ms, setup 0ms, collect 33ms, tests 13ms, environment 0ms, prepare 120ms)[22m
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 2 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mD1: every Playwright form is detected[2m > [22mpierce/ text=Submit -> engine-prefix
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/selector-dialect.spec.ts[2m > [22mFR2-06 selector-dialect[2m > [22mD1: every Playwright form is detected[2m > [22mpierce/  role=button -> engine-prefix
+[31m[1mAssertionError[22m: expected null not to be null[39m
+[36m [2m❯[22m tests/unit/selector-dialect.spec.ts:[2m89:25[22m[39m
+    [90m 87| [39m    it[33m.[39m[34meach[39m(cases)([32m'%s -> %s'[39m[33m,[39m (input[33m,[39m rule) [33m=>[39m {
+    [90m 88| [39m      [35mconst[39m match [33m=[39m [34mdetectForeignSelectorDialect[39m(input)[33m;[39m
+    [90m 89| [39m      [34mexpect[39m(match)[33m.[39mnot[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m   | [39m                        [31m^[39m
+    [90m 90| [39m      [34mexpect[39m(match[33m![39m[33m.[39mrule)[33m.[39m[34mtoBe[39m(rule)[33m;[39m
+    [90m 91| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+

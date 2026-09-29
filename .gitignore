@@ -24,6 +24,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# GAP-117: loop evidence *.log files are committed evidence, not throwaway logs — the broad
+# *.log rule above was silently excluding them from every round's evidence commit.
+!.ai/loop/**/*.log
+
 # System & IDE Files
 .DS_Store
 Thumbs.db
@@ -65,3 +69,6 @@ tools/engine-comparison/results/
 
 # Benchmark run artifacts — generated reports, not source
 tools/webbench/results/
+tools/reliability/results/
+
+apps/server/.sutradhar-eval/

@@ -1,0 +1,14 @@
+--- E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/dse.orig.ts	2026-09-25 13:19:55.462338700 +0530
++++ packages/browser/src/dom/dom-semantic-engine.ts	2026-09-25 13:20:52.903004600 +0530
+@@ -221,10 +221,7 @@
+     // throwing) is caught and falls back to {@link recoverBlockedFrameSrc}, never surfaced.
+     const { client, _id: frameId } = frame as unknown as { client?: CDPSession; _id?: string };
+     if (!client || !frameId) return undefined;
+-    const result = await raceFrameTimeout(
+-      client.send('Page.getFrameTree') as Promise<{ frameTree: CdpFrameTreeNode }>,
+-      BLOCKED_FRAME_URL_TIMEOUT_MS,
+-    );
++    const result = await (client.send('Page.getFrameTree') as Promise<{ frameTree: CdpFrameTreeNode }>);
+     const node = findFrameTreeNode(result.frameTree, frameId);
+     const url = node?.frame.unreachableUrl;
+     return typeof url === 'string' && url ? url : undefined;

@@ -3,13 +3,64 @@
  * @description SemanticElementGraph and element node models for rich DOM accessibility understanding.
  */
 
-import { ElementCandidate, CandidateMatchResult } from './element-candidate.js';
+import { ElementCandidate, CandidateMatchResult, MatchingStrategy } from './element-candidate.js';
 
 export interface BoundingBox {
   readonly x: number;
   readonly y: number;
   readonly width: number;
   readonly height: number;
+}
+
+/**
+ * Where a non-main-frame node lives. ABSENT on a {@link SemanticNode} ⇔ the node is in the
+ * main frame (whose URL is `SemanticElementGraph.url`) — omitted there so main-frame-only
+ * pages keep a byte-identical text listing and JSON payload (FR2-09 D1).
+ */
+export interface SemanticFrameRef {
+  /** 1-based position among the non-main frames this snapshot traversed (main frame first,
+   *  then `page.frames()` order). Stable within ONE snapshot only — use `url`/`name` as
+   *  durable identity across snapshots. Absent only when the frame could not be matched (the
+   *  event-listener pass, rare). */
+  readonly index?: number;
+  /** Full frame URL (the text listing shows a shortened form via `displayFrameUrl`). */
+  readonly url: string;
+  /** `frame.name()` — the iframe's `name` attribute / `window.name` at navigation. Omitted
+   *  when empty. */
+  readonly name?: string;
+  /** Index of the parent frame when the parent is itself an iframe; absent when the parent is
+   *  the main frame. */
+  readonly parentIndex?: number;
+}
+
+export type SkippedFrameReason = 'timeout' | 'navigated' | 'error' | 'error-page' | 'frame-limit';
+
+/** A child frame whose content is NOT in this snapshot — listed rather than silently
+ *  dropped (FR2-09 D6). */
+export interface SkippedFrame {
+  readonly index: number;
+  readonly url: string;
+  /** `frameOrigin(url)` — what the text placeholder shows. */
+  readonly origin: string;
+  readonly name?: string;
+  readonly reason: SkippedFrameReason;
+  /** `timeout`: the limit in ms as a string; `error`: first line of the message (≤80 chars). */
+  readonly detail?: string;
+  /**
+   * GAP-154 (FR2-09 fix-3): for `reason: 'error-page'` only, when a real blocked-frame URL was
+   * recovered (rather than just Chrome's unhelpful `chrome-error://chromewebdata/`), how much to
+   * trust it. `'confirmed'`: read directly from Chrome DevTools Protocol's own
+   * `Page.getFrameTree` `unreachableUrl` field via the frame's own CDP session — this is the
+   * actual signal Chrome records for "the URL I failed to load here," live-verified correct
+   * across a server redirect, an in-frame script redirect, a `target=` navigation, and a direct
+   * load. `'likely'`: a fallback used only when `unreachableUrl` wasn't available for this frame
+   * — inferred from the parent `<iframe>` element's `src` attribute, which reports the URL the
+   * frame was TOLD to load rather than the URL that actually got blocked, and can be wrong after
+   * a redirect or `target=` navigation (this was fix-2's GAP-150 remedy, on its own, before this
+   * confidence marker existed). Absent when no URL could be recovered at all (both signals
+   * failed) — callers then fall back to `frame.url()`'s raw `chrome-error://` value as before.
+   */
+  readonly urlConfidence?: 'confirmed' | 'likely';
 }
 
 export interface SemanticNode {
@@ -25,17 +76,32 @@ export interface SemanticNode {
   readonly boundingBox?: BoundingBox;
   readonly isVisible: boolean;
   readonly isEnabled: boolean;
+  /** Present only for nodes inside an iframe — see {@link SemanticFrameRef}. */
+  readonly frame?: SemanticFrameRef;
+  /** Open-shadow-root host descriptors, outermost → innermost (e.g.
+   *  `["app-shell", "card-field#cvc"]`). Display-only descriptors (tag + `#id` or
+   *  `.firstClass`), not guaranteed selectors. Absent in light DOM. */
+  readonly shadowHosts?: readonly string[];
 }
 
 export class SemanticElementGraph {
   public readonly nodes: readonly SemanticNode[];
   public readonly url: string;
   public readonly title: string;
+  /** Child frames whose content could not be read this snapshot (timed out, navigated,
+   *  errored, browser error page) or that exceeded the frame cap. Empty on a normal page. */
+  public readonly skippedFrames: readonly SkippedFrame[];
 
-  public constructor(nodes: readonly SemanticNode[] = [], url = '', title = '') {
+  public constructor(
+    nodes: readonly SemanticNode[] = [],
+    url = '',
+    title = '',
+    skippedFrames: readonly SkippedFrame[] = [],
+  ) {
     this.nodes = nodes;
     this.url = url;
     this.title = title;
+    this.skippedFrames = skippedFrames;
   }
 
   public findByRole(role: string, name?: string): SemanticNode | undefined {
@@ -65,7 +131,7 @@ export class SemanticElementGraph {
 
     for (const n of this.nodes) {
       let score = 0;
-      let strategy: any = 'partial_text';
+      let strategy: MatchingStrategy = 'partial_text';
       let evidence = '';
 
       if (n.accessibleName?.toLowerCase() === query) {
@@ -167,7 +233,7 @@ export class SemanticElementGraph {
       if (!isInput) continue;
 
       let score = 0;
-      let strategy: any = 'label_attribute';
+      let strategy: MatchingStrategy = 'label_attribute';
       let evidence = '';
 
       if (n.label?.toLowerCase().includes(query)) {

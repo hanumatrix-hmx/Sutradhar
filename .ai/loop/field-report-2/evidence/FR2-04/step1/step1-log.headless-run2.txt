@@ -1,0 +1,98 @@
+[E0.env] environment
+   -> {"node":"v25.0.0","platform":"win32","headed":false,"cli":"E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\cli\\dist\\cli.js"}
+[E0.browser] /json/version
+   -> {"status":"resolved","ms":5,"value":{"status":200,"body":"{\r\n   \"Browser\": \"Chrome/153.0.8010.53\",\r\n   \"Protocol-Version\": \"1.3\",\r\n   \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36\",\r\n   \"V8-Version\": \"15.3.76.13\",\r\n   \"WebKit-Version\": \"537.36 (@792bf6722e73a45aa9e47c1"}}
+[E1.click] process A: CLI click #alert
+   -> {"args":["click","#alert"],"code":0,"ms":6347,"killedAtCap":false,"stdout":"Clicked #alert\n","stderr":""}
+[E1.jsonVersion] /json/version while the dialog is open
+   -> {"status":"resolved","ms":1,"value":{"status":200,"body":"{\r\n   \"Browser\": \"Chrome/153.0.8010.53\",\r\n   \"Protocol-Version\": \"1.3\",\r\n   \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36\",\r\n   \"V8-Version\": \"15.3.76.13\",\r\n   \"WebKit-Version\": \"537.36 (@792bf6722e73a45aa9e47c1"}}
+[E1.jsonList] /json/list while the dialog is open
+   -> {"status":"resolved","ms":0,"value":{"status":200,"body":"[ {\r\n   \"description\": \"\",\r\n   \"devtoolsFrontendUrl\": \"https://chrome-devtools-frontend.appspot.com/serve_rev/@792bf6722e73a45aa9e47c163b9901bdc17f3230/inspector.html?ws=127.0.0.1:52765/devtools/page/71B557E82E588DF5D23D1C46B1C77695\",\r\n   \"id\": \"71B557E82E588DF5D23D1C46B1C77695\",\r\n   \"title\": \"Chrom"}}
+[E1.live0] observer Runtime.evaluate(1)
+   -> "blocked"
+[E1.window35s] liveness over 35 s after A exited
+   -> {"anyResponsive":false,"samples":14}
+[E2.pageEnable] fresh session Page.enable: dialogOpening re-emitted?
+   -> {"opening":[],"enable":{"status":"timeout","ms":3009,"error":"Page.enable timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed."}}
+[E2.getFrameTree] Page.getFrameTree
+   -> {"status":"timeout","ms":3013,"error":"Page.getFrameTree timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed."}
+[E2.runtimeEnable] Runtime.enable
+   -> {"status":"timeout","ms":3005,"error":"Runtime.enable timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed."}
+[E2.navHistory] Page.getNavigationHistory
+   -> {"status":"resolved","ms":0,"value":{"currentIndex":1,"entries":[{"id":6,"url":"chrome://new-tab-page/","userTypedURL":"chrome://newtab/","title":"New tab","transitionType":"auto_toplevel"},{"id":13,"url":"http://127.0.0.1:52763/fx.html?n=e1-1790416245681-96e0vl","userTypedURL":"http://127.0.0.1:52763/fx.html?n=e1-1790416245681-96e0vl","title":"fr2-04 step1","transitionType":"typed"}]}}
+[E2.targetInfo] Target.getTargetInfo
+   -> {"status":"resolved","ms":0,"value":{"targetInfo":{"targetId":"CD827E0F5BFE631D19C3F3018BAE61CD","type":"page","title":"fr2-04 step1","url":"http://127.0.0.1:52763/fx.html?n=e1-1790416245681-96e0vl","attached":true,"canAccessOpener":false,"browserContextId":"78B6F77ECE638C611269DD605341950E"}}}
+[E2.screenshot] Page.captureScreenshot
+   -> {"status":"timeout","ms":8005,"error":"Page.captureScreenshot timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed."}
+[E2.pagesInit] browser.pages() while the dialog is open
+   -> {"status":"timeout","ms":15006,"error":"__timeout_15000"}
+[E2.handle] fresh session handleJavaScriptDialog(accept)
+   -> {"status":"rejected","ms":1,"error":"Protocol error (Page.handleJavaScriptDialog): No dialog is showing"}
+[E2.afterHandle] liveness after the fresh handle
+   -> "blocked"
+[E2.handle2] second fresh session enable+handle
+   -> {"events":[],"h":{"status":"rejected","ms":1,"error":"Protocol error (Page.handleJavaScriptDialog): No dialog is showing"},"live":"blocked"}
+[E2.reloadRecovery] browser-initiated Page.reload as recovery
+   -> {"reload":{"status":"resolved","ms":4,"value":{}},"live":"responsive","record":[{"kind":"alert","phase":"opening","seq":1,"t":1790416246649},{"kind":"alert","phase":"returned","result":"__undefined__","seq":2,"t":1790416329823}]}
+[E3.snap] real CLI snap after an orphaned confirm
+   -> {"snap":{"args":["snap"],"code":0,"ms":180399,"killedAtCap":false,"stdout":"URL: about:blank\nTitle: \nInteractive elements (0):\n\n","stderr":""},"before":{"pid":86180,"pages":["http://127.0.0.1:52763/fx.html?n=e3-1790416330481-ydknzi"],"live":"blocked"},"pidAfter":86180,"selfHealed":false,"pagesAfter":["http://127.0.0.1:52763/fx.html?n=e3-1790416330481-ydknzi","about:blank"]}
+[E3.recover] cleanup
+   -> {"reload":{"status":"resolved","ms":7,"value":{}},"live":"responsive"}
+[E4.enableBefore] holder Page.enable on a free page
+   -> {"status":"resolved","ms":0,"value":{}}
+[E4.clickA] process A: click #confirm
+   -> {"args":["click","#confirm"],"code":0,"ms":6320,"killedAtCap":false,"stdout":"Clicked #confirm\n","stderr":""}
+[E4.event] holder saw dialogOpening
+   -> [{"type":"confirm","message":"s1 confirm e4-1790416521258-pwrm29","defaultPrompt":""}]
+[E4.blockedAfterA] observer liveness after A exited
+   -> "blocked"
+[E4.handle] pre-enabled holder handles after A exited
+   -> {"h":{"status":"resolved","ms":1,"value":{}},"live":"responsive"}
+[E4.record] page record
+   -> [{"kind":"confirm","phase":"opening","seq":1,"t":1790416522271},{"kind":"confirm","phase":"returned","result":true,"seq":2,"t":1790416530294}]
+[E4b.clickA] process A: click #prompt
+   -> {"args":["click","#prompt"],"code":0,"ms":6319,"killedAtCap":false,"stdout":"Clicked #prompt\n","stderr":""}
+[E4b.event] holder saw the prompt
+   -> [{"type":"prompt","message":"s1 prompt e4-1790416521258-pwrm29","defaultPrompt":"s1-default"}]
+[E4b.handleAfterHoldersGone] fresh session after all holders detached
+   -> {"events":[],"h":{"status":"rejected","ms":0,"error":"Protocol error (Page.handleJavaScriptDialog): No dialog is showing"},"live":"blocked"}
+[E4b.recover] cleanup
+   -> {"reload":{"status":"resolved","ms":4,"value":{}},"live":"responsive"}
+[E5.evalConfirm] CLI eval confirm()
+   -> {"args":["eval","confirm('s1 eval')"],"code":0,"ms":30271,"killedAtCap":false,"stdout":"false\n","stderr":""}
+[E6.arm] click #arm-bu
+   -> {"args":["click","#arm-bu"],"code":0,"ms":3341,"killedAtCap":false,"stdout":"Clicked #arm-bu\n","stderr":""}
+[E6.nav] nav away from a beforeunload page
+   -> {"args":["nav","http://127.0.0.1:52763/fx.html?n=e6-1790416574466-mkfjp7&landed=1"],"code":0,"ms":3326,"killedAtCap":false,"stdout":"Navigated to http://127.0.0.1:52763/fx.html?n=e6-1790416574466-mkfjp7&landed=1\nTitle: fr2-04 step1\n","stderr":"","pages":["http://127.0.0.1:52763/fx.html?n=e6-1790416574466-mkfjp7&landed=1"]}
+[E6.record] page record
+   -> [{"kind":"beforeunload","phase":"armed","seq":1,"t":1790416575439},{"kind":"beforeunload","phase":"fired","seq":2,"t":1790416578736},{"kind":"landed","seq":3,"t":1790416581770}]
+[E6b.noActivation] nav after arming WITHOUT a user gesture
+   -> {"args":["nav","http://127.0.0.1:52763/fx.html?n=e6b-1790416582345-dqx2ii&landed=1"],"code":0,"ms":3288,"killedAtCap":false,"stdout":"Navigated to http://127.0.0.1:52763/fx.html?n=e6b-1790416582345-dqx2ii&landed=1\nTitle: fr2-04 step1\n","stderr":""}
+[E6b.record] page record
+   -> [{"kind":"beforeunload","phase":"armed","seq":1,"t":1790416582953},{"kind":"beforeunload","phase":"fired","seq":2,"t":1790416583203},{"kind":"landed","seq":3,"t":1790416586216}]
+[E6c.blocked] renderer-initiated nav with beforeunload, no CLI attached
+   -> "blocked"
+[E6c.fresh] fresh enable+handle(accept)
+   -> {"events":[],"h":{"status":"rejected","ms":0,"error":"Protocol error (Page.handleJavaScriptDialog): No dialog is showing"},"live":"blocked"}
+[E6c.recover] cleanup
+   -> {"reload":{"status":"resolved","ms":4,"value":{}},"live":"blocked"}
+[E7.blocked] timer confirm opened with nobody attached
+   -> "blocked"
+[E7.fresh] fresh enable+handle
+   -> {"events":[],"h":{"status":"rejected","ms":0,"error":"Protocol error (Page.handleJavaScriptDialog): No dialog is showing"},"live":"blocked"}
+[E7.recover] cleanup
+   -> {"reload":{"status":"resolved","ms":3,"value":{}},"live":"responsive"}
+[E7b.holder] pre-enabled holder receives and handles a timer confirm
+   -> {"ev":{"status":"resolved","ms":5961,"value":{"url":"http://127.0.0.1:52763/fx.html?n=e7b-1790416624861-kxuft8&timerKind=confirm&timerMs=6000","frameId":"173B90BBED6191F30EEAE266E162A361","message":"s1 timer e7b-1790416624861-kxuft8","type":"confirm","hasBrowserHandler":true,"defaultPrompt":""}},"h":{"status":"resolved","ms":4,"value":{}},"live":"responsive","record":[{"kind":"confirm","phase":"opening","timer":true,"seq":1,"t":1790416631531},{"kind":"confirm","phase":"returned","timer":true,"result":true,"seq":2,"t":1790416631535}]}
+[E8.tab1] tab 1 after a synthetic confirm
+   -> "blocked"
+[E8.tab2] tab 2 liveness
+   -> "responsive"
+[E8.recover] cleanup
+   -> {"reload":{"status":"resolved","ms":2,"value":{}},"live":"responsive"}
+[E9.add] addScriptToEvaluateOnNewDocument
+   -> {"status":"resolved","ms":0,"value":{"identifier":"1"}}
+[E9.afterDetach] injected global after its session detached + new document
+   -> {"status":"resolved","ms":0,"value":{"result":{"type":"string","value":"undefined"}}}
+
+DECISION: branch W  (O1=false O2=false O3=blocked O5=true O8=true) -> E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\.ai\loop\field-report-2\evidence\FR2-04\step1\step1-results.json

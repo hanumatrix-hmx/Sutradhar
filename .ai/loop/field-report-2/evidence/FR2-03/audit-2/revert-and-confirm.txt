@@ -1,0 +1,38 @@
+== M1 live-session PID protection: live sessions stop reserving their chromePid (pass 1) (src/gc.ts)
+   vitest exit 1; Tests  1 failed | 141 passed (142)
+   FAIL  tests/unit/gc.spec.ts > planGc > GAP-175: a session using a custom state dir (SUTRADHAR_CLI_STATE_DIR) must never look orphaned just because its owner CLI process has already exited > planGc: once the discovered session is scanned as live, its cli-marked browser is never killed even though its owner pid (the already-exited CLI) is dead -- this is also the revert-and-confirm regression test for audit-1 mutation A1 ("remove live-session pid protection"), which no existing test caught
+   restored-sha-match: true
+== M2 orphan-dir grace: grace window collapsed to 1ms for no-evidence dirs (src/gc.ts)
+   vitest exit 1; Tests  2 failed | 140 passed (142)
+   FAIL  tests/unit/gc.spec.ts > planGc > GAP-178(b): degraded mode still honors the 120s grace period -- a fresh dir with a free lock is kept, not deleted
+   FAIL  tests/unit/gc.spec.ts > planGc > G13: an orphan sutradhar-cli dir with no process reference at all is kept grace within 120s, deleted past it -- also the revert-and-confirm regression test for audit-1 mutation A2 ("remove dir-level grace for orphan dirs"), which no existing test caught
+   restored-sha-match: true
+== M3 GAP-177: stale-session delete skips the referencedDirs check (src/gc.ts)
+   vitest exit 1; Tests  1 failed | 141 passed (142)
+   FAIL  tests/unit/gc.spec.ts > planGc > GAP-177: a stale session's state file pointing at a dir a LIVE session/process still owns is cleared, but its dir is never deleted (delete rules 3-4 apply to the stale-session delete path too)
+   restored-sha-match: true
+== M4 GAP-178(a): D2 ownership gate disabled in degraded mode only (src/gc.ts)
+   vitest exit 1; Tests  1 failed | 141 passed (142)
+   FAIL  tests/unit/gc.spec.ts > planGc > GAP-178(a): degraded mode never deletes an unmarked, un-owned Puppeteer dir even with a free lock (D2 ownership gate applies regardless of enumeration availability)
+   restored-sha-match: true
+== M5 GAP-175: marker state-file discovery ignores the marker (returns []) (src/gc.ts)
+   vitest exit 1; Tests  2 failed | 140 passed (142)
+   FAIL  tests/unit/gc.spec.ts > planGc > GAP-175: a session using a custom state dir (SUTRADHAR_CLI_STATE_DIR) must never look orphaned just because its owner CLI process has already exited > discoverMarkerStateFiles extracts a cli marker's own --sutradhar-state path from a real command line
+   FAIL  tests/unit/gc.spec.ts > planGc > GAP-175: a session using a custom state dir (SUTRADHAR_CLI_STATE_DIR) must never look orphaned just because its owner CLI process has already exited > discoverMarkerStateFiles returns [] when enumeration is unavailable, and dedupes/ignores runtime markers
+   restored-sha-match: true
+== M6 GAP-176: in-use exclusion uses only the killed browser pid, not its tree (src/gc.ts)
+   vitest exit 1; Tests  1 failed | 141 passed (142)
+   FAIL  tests/unit/gc.spec.ts > planGc > GAP-176: a killed browser's profile dir is reclaimed in the SAME run even though a child process (e.g. Windows crashpad-handler) still carries the same --user-data-dir at snapshot time
+   restored-sha-match: true
+== M7 GAP-178(c): probeLock reverted to a destructive unlinkSync probe (src/profile-cleanup.ts)
+   vitest exit 0; Tests  142 passed (142)
+   (no failing test)
+   restored-sha-match: true
+== M8 GAP-178(b): degraded mode skips grace for legacy dirs (src/gc.ts)
+   vitest exit 1; Tests  1 failed | 141 passed (142)
+   FAIL  tests/unit/gc.spec.ts > planGc > GAP-178(b): degraded mode still honors the 120s grace period -- a fresh dir with a free lock is kept, not deleted
+   restored-sha-match: true
+== M9 GAP-175 wiring: collectGcSnapshot no longer feeds discovered marker state files into the sessions scan (src/gc.ts)
+   vitest exit 0; Tests  142 passed (142)
+   (no failing test)
+   restored-sha-match: true

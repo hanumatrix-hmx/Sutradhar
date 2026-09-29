@@ -1,0 +1,101 @@
+{
+  "dryRun": false,
+  "scope": {
+    "tempRoot": "E:\\AI-Cache\\tmp\\fr2-03-audit-main-srPoU1\\temp",
+    "stateRoot": "E:\\AI-Cache\\tmp\\fr2-03-audit-main-srPoU1\\state-root",
+    "extraStateDirs": []
+  },
+  "graceMs": 120000,
+  "processEnumeration": {
+    "ok": true,
+    "count": 674
+  },
+  "actions": [
+    {
+      "type": "deleteDir",
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-audit-main-srPoU1\\temp\\sutradhar-cli-1600000000003",
+      "reason": "orphan-dir",
+      "result": "deleted",
+      "attempts": 1
+    }
+  ],
+  "kept": [
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-audit-main-srPoU1\\state-root\\1e3420ba013ce9ad\\state.json",
+      "reason": "live-session"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-audit-main-srPoU1\\state-root\\a85e30409d2cad80\\state.json",
+      "reason": "live-session"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-audit-main-srPoU1\\state-root\\deadbeefdeadbeef\\state.json",
+      "reason": "unreadable-state"
+    },
+    {
+      "path": "C:\\Users\\Varad M\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView",
+      "pid": 16168,
+      "reason": "not-sutradhar"
+    },
+    {
+      "path": "C:\\Users\\Varad M\\AppData\\Local\\Packages\\Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe\\LocalState\\EBWebView",
+      "pid": 24760,
+      "reason": "not-sutradhar"
+    },
+    {
+      "path": "/tmp/puppeteer_dev_chrome_profile-9pvYqK",
+      "pid": 35984,
+      "reason": "not-sutradhar"
+    },
+    {
+      "path": "C:\\WINDOWS\\TEMP\\sutradhar-cli-1790320692317",
+      "pid": 60836,
+      "reason": "not-sutradhar"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\sutradhar-cli-1790326364690",
+      "pid": 48748,
+      "reason": "not-sutradhar"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\sutradhar-cli-1790330818596",
+      "pid": 72316,
+      "reason": "not-sutradhar"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-audit-main-srPoU1\\temp\\decoy-profile-1",
+      "pid": 47432,
+      "reason": "not-sutradhar"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-audit-main-srPoU1\\temp\\sutradhar-cli-1790332635382-DECOY1",
+      "pid": 71724,
+      "reason": "grace"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-audit-main-srPoU1\\temp\\puppeteer_dev_chrome_profile-drOBY4",
+      "reason": "not-sutradhar"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-audit-main-srPoU1\\temp\\sutradhar-cli-1600000000002",
+      "reason": "symlink"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-audit-main-srPoU1\\temp\\sutradhar-cli-1790332611393-FelNpA",
+      "reason": "in-use"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-audit-main-srPoU1\\temp\\sutradhar-cli-1790332611410-g5ZYKJ",
+      "reason": "in-use"
+    },
+    {
+      "path": "E:\\AI-Cache\\tmp\\fr2-03-audit-main-srPoU1\\temp\\sutradhar-cli-1790332634820-YOUNG1",
+      "reason": "grace"
+    }
+  ],
+  "remaining": {
+    "orphanProcesses": 0,
+    "orphanDirs": 0
+  },
+  "exitCode": 0
+}

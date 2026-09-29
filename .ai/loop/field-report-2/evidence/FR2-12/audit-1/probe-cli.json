@@ -1,0 +1,117 @@
+{
+  "origin": "http://127.0.0.1:58308",
+  "cases": {
+    "dialogAcceptOnLoad": {
+      "code": 0,
+      "ms": 2474,
+      "stdoutHead": "{\n  \"schemaVersion\": 1,\n  \"url\": \"http://127.0.0.1:58308/alertload\",\n  \"requestedUrl\": \"http://127.0.0.1:58308/alertload\",\n  \"title\": \"alertload\",\n  \"timestamp\": \"2026-09-27T08:17:30.006Z\",\n  \"screenshot\": {\n    \"path\": \"E:\\\\AI-Cache\\\\tmp\\\\fr212-audit1-cli-1790497047529\\\\da\\\\audit-screenshot.png\",\n ",
+      "stdoutTail": ",\n    \"cls\": 0,\n    \"fcpMs\": 60,\n    \"ttfbMs\": 4\n  },\n  \"observation\": {\n    \"mode\": \"navigated\",\n    \"documentStartedAt\": \"2026-09-27T08:17:28.399Z\",\n    \"observingSince\": \"2026-09-27T08:17:28.061Z\",\n    \"coversWholeDocument\": true,\n    \"pageWasHidden\": false\n  },\n  \"baseline\": null\n}\ndialogHandled: {\"type\":\"alert\",\"message\":\"fr212-audit1-alert\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\n",
+      "stderr": "",
+      "stdoutIsSingleJson": false,
+      "parseErr": "Unexpected non-whitespace character after JSON at position 796 (line 33 column 1)",
+      "dialogLines": [
+        "dialogHandled: {\"type\":\"alert\",\"message\":\"fr212-audit1-alert\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}"
+      ]
+    },
+    "persistedAcceptPolicy": {
+      "code": 0,
+      "ms": 1853,
+      "stdoutHead": "{\n  \"schemaVersion\": 1,\n  \"url\": \"http://127.0.0.1:58308/alertload\",\n  \"requestedUrl\": \"http://127.0.0.1:58308/alertload\",\n  \"title\": \"alertload\",\n  \"timestamp\": \"2026-09-27T08:17:33.326Z\",\n  \"screenshot\": {\n    \"path\": \"E:\\\\AI-Cache\\\\tmp\\\\fr212-audit1-cli-1790497047529\\\\db\\\\audit-screenshot.png\",\n ",
+      "stdoutTail": ",\n    \"cls\": 0,\n    \"fcpMs\": 28,\n    \"ttfbMs\": 2\n  },\n  \"observation\": {\n    \"mode\": \"navigated\",\n    \"documentStartedAt\": \"2026-09-27T08:17:31.745Z\",\n    \"observingSince\": \"2026-09-27T08:17:31.736Z\",\n    \"coversWholeDocument\": true,\n    \"pageWasHidden\": false\n  },\n  \"baseline\": null\n}\ndialogHandled: {\"type\":\"alert\",\"message\":\"fr212-audit1-alert\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\n",
+      "stderr": "",
+      "stdoutIsSingleJson": false,
+      "parseErr": "Unexpected non-whitespace character after JSON at position 796 (line 33 column 1)",
+      "dialogLines": [
+        "dialogHandled: {\"type\":\"alert\",\"message\":\"fr212-audit1-alert\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}"
+      ]
+    },
+    "defaultPolicyAlertOnLoad": {
+      "code": 3,
+      "ms": 1337,
+      "stdoutHead": "dialogPending: {\"type\":\"alert\",\"message\":\"fr212-audit1-alert\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58308/alertload\"}\n",
+      "stdoutTail": "dialogPending: {\"type\":\"alert\",\"message\":\"fr212-audit1-alert\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58308/alertload\"}\n",
+      "stderr": "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one.\nE",
+      "stdoutIsSingleJson": false,
+      "stdoutEmpty": false,
+      "parseErr": "Unexpected token 'd', \"dialogPend\"... is not valid JSON"
+    },
+    "dialogAcceptLate": {
+      "code": 0,
+      "ms": 2493,
+      "stdoutHead": "{\n  \"schemaVersion\": 1,\n  \"url\": \"http://127.0.0.1:58308/alertlate\",\n  \"requestedUrl\": \"http://127.0.0.1:58308/alertlate\",\n  \"title\": \"alertlate\",\n  \"timestamp\": \"2026-09-27T08:17:39.075Z\",\n  \"screenshot\": {\n    \"path\": \"E:\\\\AI-Cache\\\\tmp\\\\fr212-audit1-cli-1790497047529\\\\dd\\\\audit-screenshot.png\",\n ",
+      "stdoutTail": "pMs\": 36,\n    \"cls\": 0,\n    \"fcpMs\": 36,\n    \"ttfbMs\": 2\n  },\n  \"observation\": {\n    \"mode\": \"navigated\",\n    \"documentStartedAt\": \"2026-09-27T08:17:37.487Z\",\n    \"observingSince\": \"2026-09-27T08:17:37.133Z\",\n    \"coversWholeDocument\": true,\n    \"pageWasHidden\": false\n  },\n  \"baseline\": null\n}\ndialogHandled: {\"type\":\"alert\",\"message\":\"fr212-late\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\n",
+      "stderr": "",
+      "stdoutIsSingleJson": false,
+      "parseErr": "Unexpected non-whitespace character after JSON at position 796 (line 33 column 1)",
+      "dialogLines": [
+        "dialogHandled: {\"type\":\"alert\",\"message\":\"fr212-late\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}"
+      ]
+    },
+    "cliB1residual": [
+      {
+        "i": 0,
+        "code": 0,
+        "consoleErrors": 65,
+        "broken": 33,
+        "cover": true,
+        "valid": true,
+        "sample": [
+          "poll-err",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ]
+      },
+      {
+        "i": 1,
+        "code": 0,
+        "consoleErrors": 64,
+        "broken": 32,
+        "cover": true,
+        "valid": true,
+        "sample": [
+          "poll-err",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ]
+      },
+      {
+        "i": 2,
+        "code": 0,
+        "consoleErrors": 66,
+        "broken": 33,
+        "cover": true,
+        "valid": true,
+        "sample": [
+          "poll-err",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ]
+      }
+    ],
+    "cliFailOnDiffFalseGate": {
+      "code": 1,
+      "consoleErrors": 25,
+      "broken": 13,
+      "cover": true,
+      "ttfbMs": 300
+    },
+    "cliFailOnDiffControl": {
+      "code": 0,
+      "consoleErrors": 0,
+      "broken": 0
+    },
+    "currentPageRelativeOutDir": {
+      "code": 0,
+      "valid": true,
+      "path": "E:\\AI-Cache\\tmp\\fr212-audit1-cli-1790497047529\\rel-out\\x\\audit-screenshot.png",
+      "isAbs": true,
+      "under": true,
+      "exists": true,
+      "mode": "current-page",
+      "cover": false,
+      "stderr": "Note: console/page errors and broken requests cover only activity since 2026-09-27T08:17:57.926Z; this command attached after the page loaded (2026-09-27T08:17:57.633Z). Pass the URL (\"sutradhar audit <url>\") to load and audit the page in one command.\n"
+    },
+    "outDirIsFileJson": {
+      "code": 1,
+      "stdoutEmpty": true,
+      "stderr": "Error: Cannot create audit output directory \"E:\\AI-Cache\\tmp\\fr212-audit1-cli-1790497047529\\iamafile\": path exists and is not a directory\n"
+    }
+  }
+}

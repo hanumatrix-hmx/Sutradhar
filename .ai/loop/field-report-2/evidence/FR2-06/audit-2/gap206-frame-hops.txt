@@ -1,0 +1,30 @@
+{"timestamp":"2026-09-25T23:04:23.781Z","level":"info","message":"[BrowserLauncher] Connecting to remote browser endpoint","context":{"endpoint":"ws://127.0.0.1:62617/devtools/browser/560551f8-4313-4865-85bb-6620f8527c57"}}
+{"timestamp":"2026-09-25T23:04:23.786Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790377463781_1","context":{"isIncognito":false}}
+frames loaded: 4
+PASS R1 3-hop, bad LAST hop (text=) sends=0 :: Invalid frameSelector "text=Deep" (from the full chain "iframe#l1::iframe#l2::text=Deep") — "text=" is Playwright selector-engine syntax (Puppeteer's own text query is spelled "text/"). Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, x
+PASS R2 3-hop, bad MIDDLE hop (xpath=) sends=0 :: Invalid frameSelector "xpath=//iframe" (from the full chain "iframe#l1::xpath=//iframe::iframe#l3") — "xpath=" is not supported; use the slash form "xpath/". Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, xpath/, aria/ and text/ prefi
+PASS R3 first hop valid CSS but NOT an iframe (semantically wrong), bad 2nd hop sends=0 :: Invalid frameSelector "role=frame" (from the full chain "div#notaframe::role=frame") — "role=" is Playwright selector-engine syntax. Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element
+PASS R4 first hop valid CSS matching NOTHING, bad 3rd hop sends=0 :: Invalid frameSelector ">>iframe" (from the full chain "iframe#nope::iframe#l2::>>iframe") — ">>" (Playwright selector chaining) is Playwright selector syntax. Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, xpath/, aria/ and text/ pref
+PASS R5 4-hop, bad hop 4 with :has-text() sends=0 :: Invalid frameSelector "button:has-text("Deep")" (from the full chain "iframe#l1::iframe#l2::iframe#l3::button:has-text("Deep")") — ":has-text(" is a Playwright-only pseudo-class, not CSS. Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/,
+PASS R6 whitespace-padded bad hop sends=0 :: Invalid frameSelector "id=l2" (from the full chain "iframe#l1 ::   id=l2  ") — "id=" is a Playwright attribute-engine prefix; use a CSS attribute selector such as [id="…"]. Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, xpath/, aria/ 
+PASS R7 numeric-node-id hop then bad hop sends=0 :: Invalid frameSelector "internal:role=frame" (from the full chain "5::internal:role=frame") — "internal:role=" is Playwright-internal selector syntax (as printed by Playwright locators/codegen), not CSS. Use standard CSS or a snapshot node id (e.g. "12"); Puppe
+PASS R8 pierce/-prefixed valid first hop then pierce/ text= (GAP-213 shape) last hop sends=0 :: Invalid frameSelector "pierce/ text=x" (from the full chain "pierce/iframe#l1::pierce/ text=x") — "text=" is Playwright selector-engine syntax (Puppeteer's own text query is spelled "text/"). Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pier
+PASS R9 bad hop is getByRole() sends=0 :: Invalid frameSelector "getByRole("frame")" (from the full chain "iframe#l1::getByRole("frame")") — "getByRole(" is a Playwright locator method, not a selector. Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, xpath/, aria/ and text/ pre
+PASS R10 bare-xpath hop sends=0 :: Invalid frameSelector "//iframe" (from the full chain "iframe#l1:://iframe") — this looks like an XPath expression; prefix it with "xpath/" (e.g. xpath///button[@id="go"]). Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, xpath/, aria/ 
+PASS R11 [#12] node-id-syntax hop sends=0 :: Invalid frameSelector "[#12]" (from the full chain "iframe#l1::[#12]") — this looks like a snapshot node id; pass just the number, e.g. "12". Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work fo
+PASS R12 aria= hop (GAP-205 text inside frame wrapper) sends=0 :: Invalid frameSelector "aria=frame" (from the full chain "iframe#l1::aria=frame") — "aria=" is not supported; use the slash form "aria/". Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for ele
+PASS R13 extractData 3-hop bad LAST hop sends=0 :: Invalid frameSelector "role=frame" (from the full chain "iframe#l1::iframe#l2::role=frame") — "role=" is Playwright selector-engine syntax. Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for 
+PASS G1 all-valid 3-hop CSS chain sends=40 :: l3
+PASS G2 all-valid 2-hop sends=11 :: l2
+PASS G3 single hop sends=6 :: l1
+PASS G4 whitespace + empty segments sends=11 :: l2
+PASS G5 pierce/ slash-prefixed hops sends=16 :: l3
+PASS G6 xpath/ slash-prefixed hop sends=11 :: l2
+PASS G7 CSS attribute that LOOKS Playwright-ish but is valid CSS sends=11 :: l2
+PASS G8 extractData all-valid 3-hop sends=16 :: {"v":["deep-1","deep-2"]}
+PASS S1 valid syntax, first hop not an iframe -> "is not an <iframe>" sends=5 :: Element matching "div#notaframe" is not an <iframe> (or its content frame isn't available yet — the frame may still be loading).
+PASS S2 valid syntax, 2nd hop matches nothing -> "No element matched" naming hop 2 sends=6 :: No element matched frameSelector "iframe#nope" (from the full chain "iframe#l1::iframe#nope::iframe#l3") — reached via the previous frame in the chain.
+PASS I1 (informational) invalid-CSS last hop -> wrapped parser error when reached sends=11 :: Invalid frameSelector "div[" (from the full chain "iframe#l1::iframe#l2::div[") — Failed to execute 'querySelector' on 'Document': 'div[' is not a valid selector. Use standard CSS or a snapshot node id (e.g. "12"); Puppeteer's pierce/, xpath/, aria/ and text/ 
+{"timestamp":"2026-09-25T23:04:24.245Z","level":"info","message":"[BrowserSession] Closed session sess_1790377463781_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T23:04:24.245Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790377463781_1","context":{"reason":"Runtime shutdown"}}
+overall true

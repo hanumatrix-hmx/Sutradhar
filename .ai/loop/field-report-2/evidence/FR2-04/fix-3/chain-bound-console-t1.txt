@@ -1,0 +1,27 @@
+{"t":0,"c":"c12/snap-accept","click":0,"code":3,"ms":1045,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a confirm dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"confirm\",\"message\":\"c12-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64756","verdict":"EXIT3-OK"}
+{"t":0,"c":"c12/eval-dismiss","click":0,"code":3,"ms":1040,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a confirm dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"confirm\",\"message\":\"c12-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64756","verdict":"EXIT3-OK"}
+{"t":0,"c":"inf/snap-accept","click":0,"code":3,"ms":1060,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a alert dialog is open and blocking the page, so \"snap\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"alert\",\"message\":\"inf-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64756/?","verdict":"EXIT3-OK"}
+{"t":0,"c":"inf/eval-dismiss","click":0,"code":3,"ms":1055,"cap":false,"handled":5,"blockedAfter":true,"err":"Error: a alert dialog is open and blocking the page, so \"eval\" did not run. too many dialogs opened in a row (chain limit reached).","first":"dialogPending: {\"type\":\"alert\",\"message\":\"inf-5\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:64756/?","verdict":"EXIT3-OK"}
+{"t":0,"c":"infslow/snap-accept","click":0,"code":0,"ms":437,"cap":false,"handled":1,"blockedAfter":false,"err":"Note: dialog policy for this session is now \"accept\".","first":"URL: http://127.0.0.1:64756/?n=cb0x94856","verdict":"RAN-CLEAN"}
+{"t":0,"c":"infslow/eval-dismiss","click":0,"code":0,"ms":438,"cap":false,"handled":1,"blockedAfter":false,"err":"Note: dialog policy for this session is now \"dismiss\".","first":"chain cb0x3435","verdict":"RAN-CLEAN"}
+{
+ "c12/snap-accept": {
+  "EXIT3-OK": 1
+ },
+ "c12/eval-dismiss": {
+  "EXIT3-OK": 1
+ },
+ "inf/snap-accept": {
+  "EXIT3-OK": 1
+ },
+ "inf/eval-dismiss": {
+  "EXIT3-OK": 1
+ },
+ "infslow/snap-accept": {
+  "RAN-CLEAN": 1
+ },
+ "infslow/eval-dismiss": {
+  "RAN-CLEAN": 1
+ }
+}
+leftovers {"wardens":[],"chrome":[],"cliChildren":[]}

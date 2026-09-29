@@ -1,0 +1,24 @@
+{"id":"g11-t0-visible-#stays","expectSuccess":true,"success":true,"ok":true,"retriesUsed":0,"output":{"foundSelector":"#stays","state":"visible"},"totalMs":7}
+{"id":"g11-t0-visible-#never","expectSuccess":false,"success":false,"ok":true,"retriesUsed":2,"error":"wait_for_selector timed out after 0ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). P","totalMs":1582}
+{"id":"g11-t0-attached-#stays","expectSuccess":true,"success":true,"ok":true,"retriesUsed":0,"output":{"foundSelector":"#stays","state":"attached"},"totalMs":6}
+{"id":"g11-t0-attached-#late","expectSuccess":false,"success":false,"ok":true,"retriesUsed":2,"error":"wait_for_selector timed out after 0ms waiting for state=attached: No element found for selector: #late","totalMs":1566}
+{"id":"g11-t0-hidden-#never","expectSuccess":true,"success":true,"ok":true,"retriesUsed":0,"output":{"foundSelector":"#never","state":"hidden","matchedAtStart":true},"totalMs":19}
+{"id":"g11-t0-hidden-#nonexistent","expectSuccess":true,"success":true,"ok":true,"retriesUsed":0,"output":{"foundSelector":"#nonexistent","state":"hidden","matchedAtStart":false},"totalMs":12}
+{"id":"g11-t0-hidden-#stays","expectSuccess":false,"success":false,"ok":true,"retriesUsed":2,"error":"wait_for_selector timed out after 0ms waiting for state=hidden: an element matching \"#stays\" is still visible.","totalMs":1549}
+{"id":"g11-t-5-visible-#stays","expectSuccess":true,"success":true,"ok":true,"retriesUsed":0,"output":{"foundSelector":"#stays","state":"visible"},"totalMs":6}
+{"id":"g11-t-5-visible-#never","expectSuccess":false,"success":false,"ok":true,"retriesUsed":2,"error":"wait_for_selector timed out after 0ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). P","totalMs":1566}
+{"id":"g11-t-5-attached-#stays","expectSuccess":true,"success":true,"ok":true,"retriesUsed":0,"output":{"foundSelector":"#stays","state":"attached"},"totalMs":7}
+{"id":"g11-t-5-attached-#late","expectSuccess":false,"success":false,"ok":true,"retriesUsed":2,"error":"wait_for_selector timed out after 0ms waiting for state=attached: No element found for selector: #late","totalMs":1562}
+{"id":"g11-t-5-hidden-#never","expectSuccess":true,"success":true,"ok":true,"retriesUsed":0,"output":{"foundSelector":"#never","state":"hidden","matchedAtStart":true},"totalMs":14}
+{"id":"g11-t-5-hidden-#nonexistent","expectSuccess":true,"success":true,"ok":true,"retriesUsed":0,"output":{"foundSelector":"#nonexistent","state":"hidden","matchedAtStart":false},"totalMs":13}
+{"id":"g11-t-5-hidden-#stays","expectSuccess":false,"success":false,"ok":true,"retriesUsed":2,"error":"wait_for_selector timed out after 0ms waiting for state=hidden: an element matching \"#stays\" is still visible.","totalMs":1552}
+{"id":"g15-invalid-hidden-bg","success":false,"retriesUsed":2,"error":"wait_for_selector failed waiting for state=hidden: SyntaxError: Failed to execute 'matches' on 'Element': 'div[' is not a valid selector.","totalMs":4535}
+{"id":"g15-invalid-visible-bg","success":false,"retriesUsed":2,"error":"SyntaxError: Failed to execute 'matches' on 'Element': 'div[' is not a valid selector.","totalMs":4539}
+{"id":"g15-invalid-attached-bg","success":false,"retriesUsed":2,"error":"wait_for_selector timed out after 5000ms waiting for state=attached: No element found for selector: div[","totalMs":19582}
+{"id":"g16-#banner, #stays","success":true,"output":{"foundSelector":"#banner, #stays","state":"hidden","matchedAtStart":true,"otherVisibleMatches":1},"expectOther":1,"ok":true}
+{"id":"g16-.dup","success":true,"output":{"foundSelector":".dup","state":"hidden","matchedAtStart":true,"otherVisibleMatches":1},"expectOther":1,"ok":true}
+{"id":"g16-#banner, #never","success":true,"output":{"foundSelector":"#banner, #never","state":"hidden","matchedAtStart":true},"ok":true}
+{"id":"g16-#banner, #stays, .dup","success":true,"output":{"foundSelector":"#banner, #stays, .dup","state":"hidden","matchedAtStart":true,"otherVisibleMatches":2},"expectOther":2,"ok":true}
+{"id":"g10-mock-hung-screenshot","success":false,"retriesUsed":2,"hasShot":false,"executionTimeMs":2472,"wallMs":5477,"wallMinusExecMs":3005}
+{"id":"g10-real-bg-failure","visibilityState":"hidden","success":false,"hasShot":false,"executionTimeMs":2472,"wallMs":5473,"wallMinusExecMs":3001}
+{"id":"final-resource-check","timeoutsNow":1,"timeoutsAfter2500ms":1,"unhandledRejections":[]}

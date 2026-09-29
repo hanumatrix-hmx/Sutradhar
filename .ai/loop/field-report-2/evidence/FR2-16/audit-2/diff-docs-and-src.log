@@ -1,0 +1,186 @@
+diff --git a/AGENT_SETUP.md b/AGENT_SETUP.md
+index 740b1cf..a80e16e 100644
+--- a/AGENT_SETUP.md
++++ b/AGENT_SETUP.md
+@@ -157,10 +157,14 @@ it ships), the pattern that actually holds up is:
+ 
+ ## Known limitations — stated honestly
+ 
+-- **No stealth or bot-detection evasion, by design.** Sutradhar launches a plain, undisguised
+-  browser. Real anti-bot walls (Cloudflare challenges, CAPTCHAs, hard IP-level denies) will
+-  block it exactly the way they'd block any other automation tool run the same way — this was
+-  directly measured and confirmed, not assumed, across real benchmark runs against real sites.
++- **No stealth or bot-detection evasion, by design.** Real anti-bot walls (Cloudflare challenges,
++  CAPTCHAs, hard IP-level denies) will block Sutradhar exactly the way they'd block any other
++  automation tool run the same way — this was directly measured and confirmed, not assumed,
++  across real benchmark runs against real sites. One narrow, honestly-stated exception: a
++  retained Chrome launch flag (`--disable-blink-features=AutomationControlled`) hides
++  `navigator.webdriver` from simple client-side detection scripts — measured directly — but that
++  alone does not defeat Cloudflare, CAPTCHA, or any real bot-detection service, which use far
++  more than that one signal.
+ - **`agent.runGoal` needs its own LLM provider** (Ollama running locally, or an OpenRouter API
+   key) configured separately for the server — the `browser.*` tools need none of that, since the
+   calling AI is already the brain.
+diff --git a/README.md b/README.md
+index b1757e2..63d4c08 100644
+--- a/README.md
++++ b/README.md
+@@ -63,7 +63,7 @@ packages/
+ ├── capability/                # Capability matrix declarations
+ ├── browser/                   # REAL browser automation: Puppeteer launcher, 19-action
+ │                              #   engine, DOM semantic engine (data-sd-node-id grounding),
+-│                              #   snapshot generator, stealth, verifier, skills
++│                              #   snapshot generator, verifier, skills
+ ├── capability-runtime/        # SutradharRuntime facade — the single high-level entry point
+ │                              #   composed by the MCP server, CLI, and SDK; session/profile
+ │                              #   management, axSnapshot, site-audit/visual-compare
+diff --git a/docs/ARCHITECTURE.md b/docs/ARCHITECTURE.md
+index d50b80a..211f9b7 100644
+--- a/docs/ARCHITECTURE.md
++++ b/docs/ARCHITECTURE.md
+@@ -23,8 +23,7 @@ packages/
+ │                                  wider Hanumatrix ecosystem, not Sutradhar-specific)
+ │
+ ├── browser/                # The actual browser engine: Puppeteer-core launcher, DOM
+-│                              semantic snapshot engine, action engine (click/type/scroll/…),
+-│                              stealth launch flags
++│                              semantic snapshot engine, action engine (click/type/scroll/…)
+ ├── capability-runtime/     # SutradharRuntime — the single high-level façade every
+ │                              integration surface below calls (session/tab management,
+ │                              wraps `browser`)
+diff --git a/packages/browser/README.md b/packages/browser/README.md
+index b996677..761b65c 100644
+--- a/packages/browser/README.md
++++ b/packages/browser/README.md
+@@ -10,7 +10,6 @@ Bounded Context: CTX-002 (Core Domain Context - Browser Subsystem)
+ Depends on ADRs:
+   - 0001-monorepo
+   - 0002-browser-control
+-  - 0005-stealth-evasion
+ Related Packages:
+   - '@sutradhar/contracts'
+   - '@sutradhar/capability'
+@@ -22,17 +21,25 @@ Related Packages:
+ 
+ # @sutradhar/browser
+ 
+-> Headless browser automation wrapper engine, stealth launcher, session pool manager, and semantic DOM snapshot generator for Sutradhar.
++> Headless browser automation wrapper engine, session pool manager, and semantic DOM snapshot generator for Sutradhar.
+ 
+ ## Package Architectural Invariants
+ 
+ 1. **Core Domain Isolation (`CTX-002`)**: Depends on foundational infrastructure packages (`CTX-001`). Must NEVER import from application or presentation packages (`apps/server`, `apps/web`).
+-2. **Stealth Launch Policy**: All browser instances launched MUST apply stealth configuration flags (`--disable-blink-features=AutomationControlled`) and User-Agent spoofing to bypass bot detection software (ADR-0005).
++2. **Detection-Evasion Boundary**: Sutradhar does not attempt to evade bot-detection or solve
++   CAPTCHAs — Cloudflare challenges, CAPTCHA walls, and IP-level blocks stop it exactly as they'd
++   stop any other automation tool run the same way. One narrow, honestly-stated exception: the
++   unconditional `--disable-blink-features=AutomationControlled` launch flag (in
++   `DEFAULT_LAUNCH_ARGS`, not gated behind any opt-in) does hide `navigator.webdriver` from
++   simple client-side detection scripts — measured directly: `navigator.webdriver` is `true`
++   without the flag and `false` with it. That is the full extent of it: the flag does not defeat
++   Cloudflare, CAPTCHA, or any real bot-detection service, which rely on far more than that one
++   signal. It is also a Chrome-recommended stability flag for any automated launch, kept for that
++   reason regardless of its detection side-effect.
+ 3. **Session Resource Management**: Every launched browser session MUST be explicitly tracked and closed upon completion to eliminate orphaned Chromium processes.
+ 
+ ## Sub-Module Layout
+ 
+-- `src/launcher/`: `BrowserLauncher`, stealth launch flags, launcher interfaces.
++- `src/launcher/`: `BrowserLauncher`, launch argument preparation, launcher interfaces.
+ - `src/session/`: `BrowserSession`, multi-tab navigation, tab lifecycle.
+ - `src/snapshot/`: Accessibility tree generator, semantic DOM pruner.
+-- `src/stealth/`: Anti-detection evasion scripts (navigator.webdriver override).
+diff --git a/packages/browser/package.json b/packages/browser/package.json
+index 7ccfb54..3dd2e67 100644
+--- a/packages/browser/package.json
++++ b/packages/browser/package.json
+@@ -3,7 +3,7 @@
+   "version": "0.1.0",
+   "type": "module",
+   "private": true,
+-  "description": "Headless browser automation engine, stealth launch wrapper, and DOM snapshot generator for Sutradhar",
++  "description": "Headless browser automation engine, launch/session manager, and DOM snapshot generator for Sutradhar",
+   "main": "./dist/index.js",
+   "module": "./dist/index.js",
+   "types": "./dist/index.d.ts",
+diff --git a/packages/browser/src/index.ts b/packages/browser/src/index.ts
+index 02061dd..f599b56 100644
+--- a/packages/browser/src/index.ts
++++ b/packages/browser/src/index.ts
+@@ -8,7 +8,6 @@ export const BROWSER_VERSION = '0.1.0';
+ export * from './launcher/index.js';
+ export * from './session/index.js';
+ export * from './snapshot/index.js';
+-export * from './stealth/index.js';
+ export * from './actions/index.js';
+ export * from './dom/index.js';
+ export * from './skills/index.js';
+diff --git a/packages/browser/src/launcher/browser-launcher.ts b/packages/browser/src/launcher/browser-launcher.ts
+index 283b213..0cd077d 100644
+--- a/packages/browser/src/launcher/browser-launcher.ts
++++ b/packages/browser/src/launcher/browser-launcher.ts
+@@ -108,16 +108,13 @@ export class BrowserLauncher implements IBrowserLauncher {
+   }
+ 
+   /**
+-   * Generates sanitized launch arguments with stealth evasion flags.
++   * Generates sanitized launch arguments (see DEFAULT_LAUNCH_ARGS for the stability flags that
++   * are always included, unconditionally).
+    */
+   public prepareLaunchArgs(options: BrowserLaunchOptions = {}): string[] {
+     const userArgs = options.args ?? [];
+     const mergedArgs = new Set([...DEFAULT_LAUNCH_ARGS, ...userArgs]);
+ 
+-    if (options.enableStealth ?? true) {
+-      mergedArgs.add('--disable-blink-features=AutomationControlled');
+-    }
+-
+     if (options.proxy?.server) {
+       mergedArgs.add(`--proxy-server=${options.proxy.server}`);
+     }
+diff --git a/packages/browser/src/launcher/browser-options.ts b/packages/browser/src/launcher/browser-options.ts
+index d17b21e..ea8def0 100644
+--- a/packages/browser/src/launcher/browser-options.ts
++++ b/packages/browser/src/launcher/browser-options.ts
+@@ -22,7 +22,6 @@ export interface BrowserLaunchOptions {
+   readonly viewport?: ViewportSize;
+   readonly userDataDir?: string;
+   readonly isIncognito?: boolean;
+-  readonly enableStealth?: boolean;
+   readonly proxy?: ProxyConfig;
+   /**
+    * Override `navigator.userAgent` via Chrome's own `--user-agent` launch flag. Unset by
+@@ -35,6 +34,16 @@ export interface BrowserLaunchOptions {
+   readonly userAgent?: string;
+ }
+ 
++// `--disable-blink-features=AutomationControlled` below is a Chrome-recommended stability flag
++// for any automated launch (it quiets some automation-related warnings/behavior differences in
++// Chrome itself). Stated honestly, not swept under "stability": it also hides
++// `navigator.webdriver` from simple client-side detection scripts — measured directly:
++// `navigator.webdriver` is `true` without this flag and `false` with it. That is the full extent
++// of its detection-relevant effect; it does NOT defeat Cloudflare, CAPTCHA walls, or any real
++// bot-detection service, which rely on far more than that one signal. It is kept unconditionally
++// and is not, and must not become, gated behind any opt-in. See CLAUDE.md's scope boundary on
++// stealth/bot-detection evasion: Sutradhar does not attempt to defeat bot detection or solve
++// CAPTCHAs.
+ export const DEFAULT_LAUNCH_ARGS: readonly string[] = [
+   '--no-sandbox',
+   '--disable-setuid-sandbox',
+diff --git a/packages/cli/src/cli.ts b/packages/cli/src/cli.ts
+index 0c8ff28..fc1e46f 100644
+--- a/packages/cli/src/cli.ts
++++ b/packages/cli/src/cli.ts
+@@ -958,6 +958,12 @@ Flags:
+                         page-initiated navigation from a clicked link (browser-internal, not
+                         routed through this check) — see .ai/known-problems.md PROB-018.
+ 
++Boundary: Sutradhar does not attempt to evade bot-detection or solve CAPTCHAs. Cloudflare
++challenges, CAPTCHA walls, and IP-level blocks will stop it the same way they'd stop any other
++automation tool run the same way. One narrow exception, stated honestly: a retained Chrome
++launch flag hides navigator.webdriver from simple detection scripts, but that alone does not
++defeat Cloudflare, CAPTCHA, or any real bot-detection service.
++
+ Session state persists across commands, scoped to this directory, in
+ ~/.sutradhar-cli/<hash-of-cwd>/state.json — run "close" when done. Override with
+ SUTRADHAR_CLI_STATE_DIR to share state across directories or use a custom path.`);

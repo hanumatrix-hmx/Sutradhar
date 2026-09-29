@@ -1,0 +1,13 @@
+{"timestamp":"2026-09-25T00:58:10.983Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T00:58:11.236Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790297890983_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T00:58:11.867Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790297890983_1_1","selector":"#banner"}}
+RESULT {"label":"hidden-main-banner-while-oopif-busy","frames":2,"iframeFound":true,"iframeUrl":"http://localhost:59753/frame","success":true,"retriesUsed":0,"totalMs":1337}
+{"timestamp":"2026-09-25T00:58:16.237Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790297890983_1_1","selector":"#toast"}}
+RESULT {"label":"visible-main-toast-while-oopif-busy","frames":2,"iframeFound":true,"iframeUrl":"http://localhost:59753/frame","success":true,"retriesUsed":0,"totalMs":746}
+{"timestamp":"2026-09-25T00:58:20.037Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790297890983_1_1","selector":"#nope"}}
+{"timestamp":"2026-09-25T00:58:23.058Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/3): wait_for_selector timed out after 3000ms waiting for state=visible: No element found for selector: #nope","context":{}}
+{"timestamp":"2026-09-25T00:58:26.588Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 2/3): wait_for_selector timed out after 3000ms waiting for state=visible: No element found for selector: #nope","context":{}}
+{"timestamp":"2026-09-25T00:58:30.613Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 3/3): wait_for_selector timed out after 3000ms waiting for state=visible: No element found for selector: #nope","context":{}}
+RESULT {"label":"visible-never-while-oopif-busy","frames":2,"iframeFound":true,"iframeUrl":"http://localhost:59753/frame","success":false,"retriesUsed":2,"error":"wait_for_selector timed out after 3000ms waiting for state=visible: No element found for selector: #nope","totalMs":10591}
+{"timestamp":"2026-09-25T00:58:34.396Z","level":"info","message":"[BrowserSession] Closed session sess_1790297890983_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T00:58:34.396Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790297890983_1","context":{"reason":"Runtime shutdown"}}

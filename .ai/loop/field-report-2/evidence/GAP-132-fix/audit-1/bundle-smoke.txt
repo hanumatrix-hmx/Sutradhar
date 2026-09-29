@@ -1,0 +1,27 @@
+[
+ {
+  "id": "positive: hidden wait on a genuinely visible element (confirmed-visible timeout)",
+  "ok": true,
+  "hint": true,
+  "err": "wait_for_selector timed out after 400ms waiting for state=hidden: an element matching \"#stay\" is still visible.\nHint: The element is still visible. Check the selector, or raise timeoutMs."
+ },
+ {
+  "id": "positive: hidden check-once on a visible element",
+  "ok": true,
+  "hint": true,
+  "err": "wait_for_selector timed out after 0ms waiting for state=hidden: an element matching \"#stay\" is still visible.\nHint: The element is still visible. Check the selector, or raise timeoutMs."
+ },
+ {
+  "id": "negative: visible wait on a hidden element (none is visible, NOT still-visible)",
+  "ok": true,
+  "hint": false,
+  "err": "wait_for_selector timed out after 400ms waiting for state=visible: 1 element(s) match \"#h\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pas"
+ },
+ {
+  "id": "negative: tab closed mid hidden wait (hard failure)",
+  "ok": true,
+  "hint": false,
+  "err": "wait_for_selector failed waiting for state=hidden: Tab was closed while wait_for_selector was checking its state."
+ }
+]
+toolCount 71 exports 6

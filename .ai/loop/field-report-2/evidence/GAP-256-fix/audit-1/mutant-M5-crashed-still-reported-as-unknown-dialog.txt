@@ -1,0 +1,94 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser
+
+ ❯ tests/unit/dialog-warden.spec.ts  (38 tests | 3 failed) 1175ms
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC1: a target Chrome announced as crashed (Target.targetCrashed) is reported in `crashed`, NOT as an unknown dialog, and NOT in busy
+     → expected [ { targetId: 't1', …(5) } ] to deeply equal []
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC3 (missed event): no crash event ever seen, but a FRESH session answers while the long-lived one still times out on the re-probe -> classified crashed
+     → expected [ { targetId: 't1', …(5) } ] to deeply equal []
+   ❯ tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC6: `dialog accept/dismiss` on a crashed target never closes it (nothing to guess at: it is not a dialog) -- 404, zero Target.closeTarget calls
+     → expected 200 to be 404 // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 35 passed (38)
+   Start at  03:47:33
+   Duration  1.52s (transform 50ms, setup 0ms, collect 54ms, tests 1.18s, environment 0ms, prepare 115ms)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC1: a target Chrome announced as crashed (Target.targetCrashed) is reported in `crashed`, NOT as an unknown dialog, and NOT in busy
+AssertionError: expected [ { targetId: 't1', …(5) } ] to deeply equal []
+
+- Expected
++ Received
+
+- Array []
++ Array [
++   Object {
++     "message": "",
++     "openedAt": "2026-09-28T22:17:34.461Z",
++     "source": "hint",
++     "targetId": "t1",
++     "type": "unknown",
++     "url": "https://victim/",
++   },
++ ]
+
+ ❯ tests/unit/dialog-warden.spec.ts:1438:28
+    1436|       browser._emitConnection('Target.targetCrashed', { targetId: 't1'…
+    1437|       const body = await list();
+    1438|       expect(body.dialogs).toEqual([]);
+       |                            ^
+    1439|       expect(body.busy).toEqual([]);
+    1440|       expect(body.crashed).toEqual([{ targetId: 't1', url: 'https://vi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC3 (missed event): no crash event ever seen, but a FRESH session answers while the long-lived one still times out on the re-probe -> classified crashed
+AssertionError: expected [ { targetId: 't1', …(5) } ] to deeply equal []
+
+- Expected
++ Received
+
+- Array []
++ Array [
++   Object {
++     "message": "",
++     "openedAt": "2026-09-28T22:17:34.508Z",
++     "source": "hint",
++     "targetId": "t1",
++     "type": "unknown",
++     "url": "https://victim/",
++   },
++ ]
+
+ ❯ tests/unit/dialog-warden.spec.ts:1463:28
+    1461|     try {
+    1462|       const body = await list();
+    1463|       expect(body.dialogs).toEqual([]);
+       |                            ^
+    1464|       expect(body.busy).toEqual([]);
+    1465|       expect(body.crashed).toEqual([{ targetId: 't1', url: 'https://vi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden GAP-256-fix (a): crashed targets are not dialogs > GC6: `dialog accept/dismiss` on a crashed target never closes it (nothing to guess at: it is not a dialog) -- 404, zero Target.closeTarget calls
+AssertionError: expected 200 to be 404 // Object.is equality
+
+- Expected
++ Received
+
+- 404
++ 200
+
+ ❯ tests/unit/dialog-warden.spec.ts:1518:26
+    1516|         body: JSON.stringify({ targetId: 't1', accept: true }),
+    1517|       });
+    1518|       expect(res.status).toBe(404);
+       |                          ^
+    1519|       expect(browser.closeTargetCalls).toEqual([]);
+    1520|     } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

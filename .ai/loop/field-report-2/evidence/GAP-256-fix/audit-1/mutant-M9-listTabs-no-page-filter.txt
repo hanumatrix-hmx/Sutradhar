@@ -1,0 +1,54 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser
+
+ ❯ tests/unit/dialog-cdp.spec.ts  (34 tests | 1 failed) 14ms
+   ❯ tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp GAP-256-fix (b): browser-level tab listing/closing > BL1: listTabsAtBrowserLevel returns ONLY page targets, with id/url/title, from a single Target.getTargets on the root connection (no per-target attach)
+     → expected [ { targetId: 'P1', …(2) }, …(3) ] to deeply equal [ { targetId: 'P1', …(2) }, …(1) ]
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 33 passed (34)
+   Start at  03:47:41
+   Duration  345ms (transform 31ms, setup 0ms, collect 33ms, tests 14ms, environment 0ms, prepare 115ms)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp GAP-256-fix (b): browser-level tab listing/closing > BL1: listTabsAtBrowserLevel returns ONLY page targets, with id/url/title, from a single Target.getTargets on the root connection (no per-target attach)
+AssertionError: expected [ { targetId: 'P1', …(2) }, …(3) ] to deeply equal [ { targetId: 'P1', …(2) }, …(1) ]
+
+- Expected
++ Received
+
+  Array [
+    Object {
+      "targetId": "P1",
+      "title": "A",
+      "url": "https://a/",
+    },
+    Object {
++     "targetId": "SW",
++     "title": "sw",
++     "url": "https://sw/",
++   },
++   Object {
+      "targetId": "P2",
+      "title": "",
+      "url": "chrome://crash/",
++   },
++   Object {
++     "targetId": "BG",
++     "title": "bg",
++     "url": "x",
+    },
+  ]
+
+ ❯ tests/unit/dialog-cdp.spec.ts:403:51
+    401|     }));
+    402|     const browser = { _connection: { send } } as any;
+    403|     expect(await listTabsAtBrowserLevel(browser)).toEqual([
+       |                                                   ^
+    404|       { targetId: 'P1', url: 'https://a/', title: 'A' },
+    405|       { targetId: 'P2', url: 'chrome://crash/', title: '' },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

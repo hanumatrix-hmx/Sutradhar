@@ -1,0 +1,13 @@
+packages/browser/README.md:37:   signal. It is also a Chrome-recommended stability flag for any automated launch, kept for that
+packages/browser/src/launcher/browser-options.ts:37:// `--disable-blink-features=AutomationControlled` below is a Chrome-recommended stability flag
+packages/browser/src/launcher/browser-options.ts:38:// for any automated launch (it quiets some automation-related warnings/behavior differences in
+PROJECT_DEEP_DIVE.md:48:| Detection-evasion / stealth | ❌ **Not built (by design)** | No stealth engine exists; one retained launch flag hides `navigator.webdriver` only, everything else is a plain, undisguised browser — see AGENT_SETUP.md's boundary section |
+PROJECT_DEEP_DIVE.md:872:observable. Sutradhar launches a plain, undisguised browser: it does not attempt to evade
+PROJECT_DEEP_DIVE.md:877:`--disable-blink-features=AutomationControlled`, which is kept mainly as a Chrome-recommended
+  confirmed both by live CLI rejection and by reading pinchtab's own source
+  (`internal/stealth/bundle.go`). That same investigation independently confirmed the asymmetry
+  is real (pinchtab's `light` floor already masks `navigator.webdriver` and disables the
+  `--enable-automation` CDP flag; Sutradhar's plain launch does neither and leaks a literal
+  `HeadlessChrome` UA substring) — so the confound can't be experimentally isolated, but it also
+- **No stealth / fingerprint evasion.** No plugin masks automation signals, spoofs a user agent,
+  or otherwise tries to defeat bot detection. If you need that, it needs a clear, legitimate use

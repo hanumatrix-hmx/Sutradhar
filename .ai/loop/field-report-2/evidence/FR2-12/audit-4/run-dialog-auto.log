@@ -1,0 +1,55 @@
+708ms t0 open alertload {"dialogType":"alert","message":"a4-open"}
+2585ms t0 audit ok while alert open {"url":"http://127.0.0.1:62009/ok?d0","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+613ms t0 open alertload again {"dialogType":"alert","message":"a4-open"}
+2570ms t0 audit own404hash while alert open {"url":"http://127.0.0.1:62009/own404hash?d0#top","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 (Not Found)"],"covers":true}
+625ms t0 open alertload again {"dialogType":"alert","message":"a4-open"}
+2592ms t0 audit own404empty while alert open {"url":"chrome-error://chromewebdata/","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 ()"],"covers":true}
+1565ms t0 audit ok baseline {"url":"http://127.0.0.1:62009/ok?base0","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+727ms t1 open alertload {"dialogType":"alert","message":"a4-open"}
+2579ms t1 audit ok while alert open {"url":"http://127.0.0.1:62009/ok?d1","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+619ms t1 open alertload again {"dialogType":"alert","message":"a4-open"}
+2564ms t1 audit own404hash while alert open {"url":"http://127.0.0.1:62009/own404hash?d1#top","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 (Not Found)"],"covers":true}
+627ms t1 open alertload again {"dialogType":"alert","message":"a4-open"}
+2589ms t1 audit own404empty while alert open {"url":"chrome-error://chromewebdata/","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 ()"],"covers":true}
+1566ms t1 audit ok baseline {"url":"http://127.0.0.1:62009/ok?base1","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+738ms t2 open alertload {"dialogType":"alert","message":"a4-open"}
+2581ms t2 audit ok while alert open {"url":"http://127.0.0.1:62009/ok?d2","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+624ms t2 open alertload again {"dialogType":"alert","message":"a4-open"}
+2559ms t2 audit own404hash while alert open {"url":"http://127.0.0.1:62009/own404hash?d2#top","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 (Not Found)"],"covers":true}
+617ms t2 open alertload again {"dialogType":"alert","message":"a4-open"}
+2600ms t2 audit own404empty while alert open {"url":"chrome-error://chromewebdata/","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 ()"],"covers":true}
+1548ms t2 audit ok baseline {"url":"http://127.0.0.1:62009/ok?base2","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+701ms t3 open alertload {"dialogType":"alert","message":"a4-open"}
+2541ms t3 audit ok while alert open {"url":"http://127.0.0.1:62009/ok?d3","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+613ms t3 open alertload again {"dialogType":"alert","message":"a4-open"}
+2571ms t3 audit own404hash while alert open {"url":"http://127.0.0.1:62009/own404hash?d3#top","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 (Not Found)"],"covers":true}
+619ms t3 open alertload again {"dialogType":"alert","message":"a4-open"}
+2582ms t3 audit own404empty while alert open {"url":"chrome-error://chromewebdata/","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 ()"],"covers":true}
+1548ms t3 audit ok baseline {"url":"http://127.0.0.1:62009/ok?base3","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+736ms t4 open alertload {"dialogType":"alert","message":"a4-open"}
+2569ms t4 audit ok while alert open {"url":"http://127.0.0.1:62009/ok?d4","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+618ms t4 open alertload again {"dialogType":"alert","message":"a4-open"}
+2528ms t4 audit own404hash while alert open {"url":"http://127.0.0.1:62009/own404hash?d4#top","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 (Not Found)"],"covers":true}
+618ms t4 open alertload again {"dialogType":"alert","message":"a4-open"}
+2599ms t4 audit own404empty while alert open {"url":"chrome-error://chromewebdata/","broken":[],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 ()"],"covers":true}
+1565ms t4 audit ok baseline {"url":"http://127.0.0.1:62009/ok?base4","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+CDP: {"s":{"Page.enable":{"ms":1019,"ok":true},"Network.enable":{"ms":5,"ok":true},"Page.getFrameTree":{"ms":2,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1020,"ok":true},"Network.enable":{"ms":6,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1014,"ok":true},"Network.enable":{"ms":27,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":0,"ok":true},"Network.enable":{"ms":1,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":1020,"ok":true},"Network.enable":{"ms":5,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1015,"ok":true},"Network.enable":{"ms":6,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1010,"ok":true},"Network.enable":{"ms":29,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":0,"ok":true},"Network.enable":{"ms":0,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":1016,"ok":true},"Network.enable":{"ms":6,"ok":true},"Page.getFrameTree":{"ms":2,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1012,"ok":true},"Network.enable":{"ms":7,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1015,"ok":true},"Network.enable":{"ms":27,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":0,"ok":true},"Network.enable":{"ms":0,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":1020,"ok":true},"Network.enable":{"ms":5,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1011,"ok":true},"Network.enable":{"ms":6,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":1010,"ok":true},"Network.enable":{"ms":28,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1,"ok":true},"Network.enable":{"ms":0,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":1018,"ok":true},"Network.enable":{"ms":5,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":1}
+{"s":{"Page.enable":{"ms":1006,"ok":true},"Network.enable":{"ms":7,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":1006,"ok":true},"Network.enable":{"ms":30,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":0,"ok":true},"Network.enable":{"ms":0,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":2}

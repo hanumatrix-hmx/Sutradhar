@@ -1,0 +1,165 @@
+{
+  "only": "bfcache-own-errors",
+  "trials": 5,
+  "preFixEmulation": false,
+  "results": {
+    "bfcache-own-errors": {
+      "trials": [
+        {
+          "persisted": true,
+          "navType": "navigate",
+          "state": {
+            "commitAt": "2026-09-27T21:26:51.500Z",
+            "docResp": {
+              "url": "http://127.0.0.1:62827/clean?t=0",
+              "status": 200,
+              "timestamp": "2026-09-27T21:26:51.187Z"
+            },
+            "goto": {
+              "url": "http://127.0.0.1:62827/clean?t=0",
+              "status": 200
+            }
+          },
+          "ownErrPresent": true,
+          "ownMissingPresent": false,
+          "audit": {
+            "url": "http://127.0.0.1:62827/bfA?t=0",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "A-OWN-ERR",
+              "Failed to load resource: the server responded with a status "
+            ],
+            "brokenRequests": [],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:26:50.560Z"
+          }
+        },
+        {
+          "persisted": true,
+          "navType": "navigate",
+          "state": {
+            "commitAt": "2026-09-27T21:26:53.155Z",
+            "docResp": {
+              "url": "http://127.0.0.1:62827/clean?t=1",
+              "status": 200,
+              "timestamp": "2026-09-27T21:26:52.838Z"
+            },
+            "goto": {
+              "url": "http://127.0.0.1:62827/clean?t=1",
+              "status": 200
+            }
+          },
+          "ownErrPresent": false,
+          "ownMissingPresent": false,
+          "audit": {
+            "url": "http://127.0.0.1:62827/bfA?t=1",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [],
+            "brokenRequests": [],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:26:52.200Z"
+          }
+        },
+        {
+          "persisted": true,
+          "navType": "navigate",
+          "state": {
+            "commitAt": "2026-09-27T21:26:54.793Z",
+            "docResp": {
+              "url": "http://127.0.0.1:62827/clean?t=2",
+              "status": 200,
+              "timestamp": "2026-09-27T21:26:54.474Z"
+            },
+            "goto": {
+              "url": "http://127.0.0.1:62827/clean?t=2",
+              "status": 200
+            }
+          },
+          "ownErrPresent": true,
+          "ownMissingPresent": false,
+          "audit": {
+            "url": "http://127.0.0.1:62827/bfA?t=2",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "A-OWN-ERR",
+              "Failed to load resource: the server responded with a status "
+            ],
+            "brokenRequests": [],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:26:53.841Z"
+          }
+        },
+        {
+          "persisted": true,
+          "navType": "navigate",
+          "state": {
+            "commitAt": "2026-09-27T21:26:56.403Z",
+            "docResp": {
+              "url": "http://127.0.0.1:62827/clean?t=3",
+              "status": 200,
+              "timestamp": "2026-09-27T21:26:56.091Z"
+            },
+            "goto": {
+              "url": "http://127.0.0.1:62827/clean?t=3",
+              "status": 200
+            }
+          },
+          "ownErrPresent": true,
+          "ownMissingPresent": false,
+          "audit": {
+            "url": "http://127.0.0.1:62827/bfA?t=3",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "A-OWN-ERR",
+              "Failed to load resource: the server responded with a status "
+            ],
+            "brokenRequests": [],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:26:55.465Z"
+          }
+        },
+        {
+          "persisted": true,
+          "navType": "navigate",
+          "state": {
+            "commitAt": "2026-09-27T21:26:58.041Z",
+            "docResp": {
+              "url": "http://127.0.0.1:62827/clean?t=4",
+              "status": 200,
+              "timestamp": "2026-09-27T21:26:57.725Z"
+            },
+            "goto": {
+              "url": "http://127.0.0.1:62827/clean?t=4",
+              "status": 200
+            }
+          },
+          "ownErrPresent": true,
+          "ownMissingPresent": false,
+          "audit": {
+            "url": "http://127.0.0.1:62827/bfA?t=4",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "A-OWN-ERR",
+              "Failed to load resource: the server responded with a status "
+            ],
+            "brokenRequests": [],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:26:57.089Z"
+          }
+        }
+      ]
+    }
+  },
+  "origin": "http://127.0.0.1:62827",
+  "cdp": {
+    "created": 6,
+    "detached": 5,
+    "stillOpenObjects": 1,
+    "stillOpenConnected": 1
+  }
+}

@@ -1,0 +1,198 @@
+diff --git a/.ai/competitive-benchmarks.md b/.ai/competitive-benchmarks.md
+index c3fa4a8..d6ccd56 100644
+--- a/.ai/competitive-benchmarks.md
++++ b/.ai/competitive-benchmarks.md
+@@ -65,9 +65,11 @@ until now. Read this section, then the detail below backs each claim with a real
+   `stealthLevel` is a hard-coded 3-value enum (`light`/`medium`/`full`) with no off-switch,
+   confirmed both by live CLI rejection and by reading pinchtab's own source
+   (`internal/stealth/bundle.go`). That same investigation independently confirmed the asymmetry
+-  is real (pinchtab's `light` floor already masks `navigator.webdriver` and disables the
+-  `--enable-automation` CDP flag; Sutradhar's plain launch does neither and leaks a literal
+-  `HeadlessChrome` UA substring) — so the confound can't be experimentally isolated, but it also
++  is real (pinchtab's `light` floor disables the `--enable-automation` CDP flag and leaves no
++  `HeadlessChrome` substring in its UA, while Sutradhar's plain launch does neither of those —
++  both sides mask `navigator.webdriver` itself, via Sutradhar's one retained launch flag, so
++  that specific signal is not part of the asymmetry) — so the confound can't be experimentally
++  isolated, but it also
+   isn't invented. There is no further lever on the pinchtab side; pulling one on Sutradhar's side
+   would mean adopting the fingerprint-evasion patches CLAUDE.md explicitly excludes. Given that,
+   the honest remaining move isn't to chase this specific number further — it's what this loop
+@@ -689,10 +691,12 @@ experimentally proven (no clean control exists), but the underlying premise —
+ default is a meaningfully-softened baseline relative to Sutradhar's plain launch — is now
+ confirmed at the fingerprint level, independently of task outcomes, and is if anything larger
+ than assumed. Closed as "isolation not possible with current tooling, asymmetry independently
+-confirmed" rather than left open. Per CLAUDE.md's scope boundary, matching this on Sutradhar's
+-side (UA rewriting, `navigator.webdriver` masking, etc.) is the excluded stealth/evasion
+-category and stays unbuilt — this is the same line already held in Milestone 16's dormant
+-`StealthEngine` finding. Full detail: `tools/engine-comparison/stealth-isolation-experiment.md`.
++confirmed" rather than left open. Per CLAUDE.md's scope boundary, matching the remaining gap on
++Sutradhar's side (stripping the `HeadlessChrome` UA substring, disabling `--enable-automation`,
++etc. — `navigator.webdriver` masking is not part of that remaining gap, since Sutradhar's one
++retained launch flag already does that unconditionally) is the excluded stealth/evasion category
++and stays unbuilt — this is the same line already held in Milestone 16's dormant `StealthEngine`
++finding. Full detail: `tools/engine-comparison/stealth-isolation-experiment.md`.
+ 
+ **This closes out the pinchtab-comparison investigation thread** (Milestones 24-26): real
+ pinchtab/pinchtab beats Sutradhar 31/47 vs 29/47 on the identical WebBench set, the entire gap
+diff --git a/AGENT_SETUP.md b/AGENT_SETUP.md
+index 740b1cf..a80e16e 100644
+--- a/AGENT_SETUP.md
++++ b/AGENT_SETUP.md
+@@ -157,10 +157,14 @@ it ships), the pattern that actually holds up is:
+ 
+ ## Known limitations — stated honestly
+ 
+-- **No stealth or bot-detection evasion, by design.** Sutradhar launches a plain, undisguised
+-  browser. Real anti-bot walls (Cloudflare challenges, CAPTCHAs, hard IP-level denies) will
+-  block it exactly the way they'd block any other automation tool run the same way — this was
+-  directly measured and confirmed, not assumed, across real benchmark runs against real sites.
++- **No stealth or bot-detection evasion, by design.** Real anti-bot walls (Cloudflare challenges,
++  CAPTCHAs, hard IP-level denies) will block Sutradhar exactly the way they'd block any other
++  automation tool run the same way — this was directly measured and confirmed, not assumed,
++  across real benchmark runs against real sites. One narrow, honestly-stated exception: a
++  retained Chrome launch flag (`--disable-blink-features=AutomationControlled`) hides
++  `navigator.webdriver` from simple client-side detection scripts — measured directly — but that
++  alone does not defeat Cloudflare, CAPTCHA, or any real bot-detection service, which use far
++  more than that one signal.
+ - **`agent.runGoal` needs its own LLM provider** (Ollama running locally, or an OpenRouter API
+   key) configured separately for the server — the `browser.*` tools need none of that, since the
+   calling AI is already the brain.
+diff --git a/README.md b/README.md
+index b1757e2..63d4c08 100644
+--- a/README.md
++++ b/README.md
+@@ -63,7 +63,7 @@ packages/
+ ├── capability/                # Capability matrix declarations
+ ├── browser/                   # REAL browser automation: Puppeteer launcher, 19-action
+ │                              #   engine, DOM semantic engine (data-sd-node-id grounding),
+-│                              #   snapshot generator, stealth, verifier, skills
++│                              #   snapshot generator, verifier, skills
+ ├── capability-runtime/        # SutradharRuntime facade — the single high-level entry point
+ │                              #   composed by the MCP server, CLI, and SDK; session/profile
+ │                              #   management, axSnapshot, site-audit/visual-compare
+diff --git a/SECURITY.md b/SECURITY.md
+index f321ceb..2f8575b 100644
+--- a/SECURITY.md
++++ b/SECURITY.md
+@@ -38,9 +38,13 @@ public internet. This document lists what's enforced by default today and what's
+ 
+ ## What's explicitly NOT built in
+ 
+-- **No stealth / fingerprint evasion.** No plugin masks automation signals, spoofs a user agent,
+-  or otherwise tries to defeat bot detection. If you need that, it needs a clear, legitimate use
+-  case behind it — this isn't something to add reflexively.
++- **No stealth / fingerprint evasion.** No plugin spoofs a user agent or otherwise tries to
++  defeat bot detection. One narrow exception, stated honestly rather than hidden: a retained
++  Chrome launch flag (`--disable-blink-features=AutomationControlled`) does mask
++  `navigator.webdriver` from simple detection scripts — that is the flag's only real effect, and
++  it does not defeat Cloudflare, CAPTCHA, or any real bot-detection service. Beyond that one
++  signal, nothing here masks automation signals. If you need more than that, it needs a clear,
++  legitimate use case behind it — this isn't something to add reflexively.
+ - **No authentication layer** on either server — see "Network exposure" above.
+ - **No multi-tenant isolation.** One `SutradharRuntime`/`BrowserSessionManager` instance is meant
+   for one trust domain. Don't share a single running instance across callers who shouldn't be
+diff --git a/docs/ARCHITECTURE.md b/docs/ARCHITECTURE.md
+index d50b80a..211f9b7 100644
+--- a/docs/ARCHITECTURE.md
++++ b/docs/ARCHITECTURE.md
+@@ -23,8 +23,7 @@ packages/
+ │                                  wider Hanumatrix ecosystem, not Sutradhar-specific)
+ │
+ ├── browser/                # The actual browser engine: Puppeteer-core launcher, DOM
+-│                              semantic snapshot engine, action engine (click/type/scroll/…),
+-│                              stealth launch flags
++│                              semantic snapshot engine, action engine (click/type/scroll/…)
+ ├── capability-runtime/     # SutradharRuntime — the single high-level façade every
+ │                              integration surface below calls (session/tab management,
+ │                              wraps `browser`)
+diff --git a/packages/browser/README.md b/packages/browser/README.md
+index b996677..6958e1a 100644
+--- a/packages/browser/README.md
++++ b/packages/browser/README.md
+@@ -10,7 +10,6 @@ Bounded Context: CTX-002 (Core Domain Context - Browser Subsystem)
+ Depends on ADRs:
+   - 0001-monorepo
+   - 0002-browser-control
+-  - 0005-stealth-evasion
+ Related Packages:
+   - '@sutradhar/contracts'
+   - '@sutradhar/capability'
+@@ -22,17 +21,30 @@ Related Packages:
+ 
+ # @sutradhar/browser
+ 
+-> Headless browser automation wrapper engine, stealth launcher, session pool manager, and semantic DOM snapshot generator for Sutradhar.
++> Headless browser automation wrapper engine, session pool manager, and semantic DOM snapshot generator for Sutradhar.
+ 
+ ## Package Architectural Invariants
+ 
+ 1. **Core Domain Isolation (`CTX-002`)**: Depends on foundational infrastructure packages (`CTX-001`). Must NEVER import from application or presentation packages (`apps/server`, `apps/web`).
+-2. **Stealth Launch Policy**: All browser instances launched MUST apply stealth configuration flags (`--disable-blink-features=AutomationControlled`) and User-Agent spoofing to bypass bot detection software (ADR-0005).
++2. **Detection-Evasion Boundary**: Sutradhar does not attempt to evade bot-detection or solve
++   CAPTCHAs — Cloudflare challenges, CAPTCHA walls, and IP-level blocks stop it exactly as they'd
++   stop any other automation tool run the same way. One narrow, honestly-stated exception: the
++   unconditional `--disable-blink-features=AutomationControlled` launch flag (in
++   `DEFAULT_LAUNCH_ARGS`, not gated behind any opt-in) does hide `navigator.webdriver` from
++   simple client-side detection scripts — measured directly: `navigator.webdriver` is `true`
++   without the flag and `false` with it. That is the full extent of it: the flag does not defeat
++   Cloudflare, CAPTCHA, or any real bot-detection service, which rely on far more than that one
++   signal. There is exactly one reason this flag is kept: hiding `navigator.webdriver` from
++   scripts that check for it. Chromium's own source (`bad_flags_prompt.cc`) classifies
++   `--disable-blink-features` as unsupported, developer-only — the opposite of a Chrome
++   recommendation — and a live headed launch with the flag present still shows Chrome's own
++   "Chrome is being controlled by automated test software" banner. The default headless user
++   agent also still contains the literal substring `HeadlessChrome`, which a simple check would
++   catch just as easily.
+ 3. **Session Resource Management**: Every launched browser session MUST be explicitly tracked and closed upon completion to eliminate orphaned Chromium processes.
+ 
+ ## Sub-Module Layout
+ 
+-- `src/launcher/`: `BrowserLauncher`, stealth launch flags, launcher interfaces.
++- `src/launcher/`: `BrowserLauncher`, launch argument preparation, launcher interfaces.
+ - `src/session/`: `BrowserSession`, multi-tab navigation, tab lifecycle.
+ - `src/snapshot/`: Accessibility tree generator, semantic DOM pruner.
+-- `src/stealth/`: Anti-detection evasion scripts (navigator.webdriver override).
+diff --git a/packages/browser/package.json b/packages/browser/package.json
+index 7ccfb54..3dd2e67 100644
+--- a/packages/browser/package.json
++++ b/packages/browser/package.json
+@@ -3,7 +3,7 @@
+   "version": "0.1.0",
+   "type": "module",
+   "private": true,
+-  "description": "Headless browser automation engine, stealth launch wrapper, and DOM snapshot generator for Sutradhar",
++  "description": "Headless browser automation engine, launch/session manager, and DOM snapshot generator for Sutradhar",
+   "main": "./dist/index.js",
+   "module": "./dist/index.js",
+   "types": "./dist/index.d.ts",
+diff --git a/packages/browser/src/launcher/browser-options.ts b/packages/browser/src/launcher/browser-options.ts
+index d17b21e..5f27dbc 100644
+--- a/packages/browser/src/launcher/browser-options.ts
++++ b/packages/browser/src/launcher/browser-options.ts
+@@ -22,7 +22,6 @@ export interface BrowserLaunchOptions {
+   readonly viewport?: ViewportSize;
+   readonly userDataDir?: string;
+   readonly isIncognito?: boolean;
+-  readonly enableStealth?: boolean;
+   readonly proxy?: ProxyConfig;
+   /**
+    * Override `navigator.userAgent` via Chrome's own `--user-agent` launch flag. Unset by
+@@ -35,6 +34,18 @@ export interface BrowserLaunchOptions {
+   readonly userAgent?: string;
+ }
+ 
++// `--disable-blink-features=AutomationControlled` below is kept for exactly one reason: it hides
++// `navigator.webdriver` from simple client-side detection scripts — measured directly:
++// `navigator.webdriver` is `true` without this flag and `false` with it. That is the full extent
++// of its detection-relevant effect; it does NOT defeat Cloudflare, CAPTCHA walls, or any real
++// bot-detection service, which rely on far more than that one signal, and the default headless
++// user agent still contains the literal `HeadlessChrome` substring, which a simple check would
++// also catch. Chromium's own source (`bad_flags_prompt.cc`) classifies `--disable-blink-features`
++// as unsupported, developer-only — the opposite of a Chrome recommendation — and a live headed
++// launch with this flag present still shows Chrome's own "Chrome is being controlled by
++// automated test software" banner; it quiets nothing. It is kept unconditionally and is not, and
++// must not become, gated behind any opt-in. See CLAUDE.md's scope boundary on stealth/bot-
++// detection evasion: Sutradhar does not attempt to defeat bot detection or solve CAPTCHAs.
+ export const DEFAULT_LAUNCH_ARGS: readonly string[] = [
+   '--no-sandbox',
+   '--disable-setuid-sandbox',

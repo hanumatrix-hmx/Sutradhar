@@ -1,0 +1,40 @@
+FR2-04 fix-2 GAP-232: manual mutation-kill confirmation for audit-2's mutations.mjs M9, M10,
+M10b, M16, M17 (the 5 that survived audit-2, per audit-findings.json A2-5).
+
+Method: for each mutation, applied the exact find/replace from
+.ai/loop/field-report-2/evidence/FR2-04/audit-2/mutations.mjs (copied read-only, never modified)
+to packages/browser/src/session/dialog-warden.ts, ran the new fix-2 unit test(s) targeting that
+mutation, confirmed FAIL, then restored the original file from
+.ai/loop/field-report-2/evidence/FR2-04/fix-2/dialog-warden.ts.orig and confirmed sha256 match
+with git HEAD's version. New tests live in packages/browser/tests/unit/dialog-warden.spec.ts.
+
+M9  (GAP-223 409 path, dialogId targeting):
+  mutation: `if (dialogId !== undefined && dialog.id !== dialogId) {` -> `if (false && ...) {`
+  test: "M9 (GAP-223 409 path): ..." -> FAILED under mutation (expected 409, got 200). KILLED.
+
+M10 (GAP-223 second identity check, stillPending !== expected):
+  mutation: removes `|| stillPending !== expected` from the post-readPolicy() re-check.
+  test: "M10 (GAP-223 second identity check): ..." -> FAILED under mutation (session.send WAS
+  called with {accept:true, promptText:undefined} for the confirm's stale decision, wrongly
+  resolving the prompt that replaced it with no default). KILLED.
+
+M10b (GAP-223 first identity check, dialog !== expected):
+  mutation: removes `|| dialog !== expected` from the pre-readPolicy() check.
+  test: "M10b (GAP-223 first identity check): ..." -> FAILED under mutation (readPolicy() called
+  2 times instead of 1 -- the stale confirm callback fell through and consulted the policy for a
+  dialog that had already been replaced). KILLED.
+
+M16 (warden never releases its own paused attach):
+  mutation: removes the `session.send('Runtime.runIfWaitingForDebugger')` call on the ownAttach
+  success path.
+  test: "M16 (self-release of a fresh paused attach): ..." -> FAILED under mutation (0 calls to
+  Runtime.runIfWaitingForDebugger instead of 1). KILLED.
+
+M17 (liveness probe time budget):
+  mutation: `LIVENESS_PROBE_MS = 400` -> `LIVENESS_PROBE_MS = 10000`.
+  test: "M17 (liveness probe time budget is actually bounded): ..." -> FAILED under mutation
+  (10000 > 1000). KILLED.
+
+Result: 5/5 previously-surviving mutations are now killed by real unit tests.
+Restore verification: sha256 of dialog-warden.ts after restoring == sha256 of the pre-mutation
+copy (.orig) == unchanged from this session's own edits (confirmed via `diff`, byte-identical).

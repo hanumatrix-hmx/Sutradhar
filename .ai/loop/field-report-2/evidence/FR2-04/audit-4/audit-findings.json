@@ -1,0 +1,235 @@
+{
+  "item": "FR2-04",
+  "audit": "audit-4 (cycle 4 of 4 standard)",
+  "head": "9c4fc8c",
+  "auditor": "independent (maker != checker)",
+  "startedAt": "2026-09-27",
+  "verdict": "FAIL",
+  "findings": [
+    {
+      "id": "A4-01",
+      "title": "Warden-down (DirectCdpBroker) attribution closes an innocent popup; the real dialog stays stuck",
+      "severity": "major (degraded mode only: the warden must be down while a dialog is open)",
+      "rate": "warden-down-opener-alerts 3/3 innocent popup closed then dead end; warden-down-chain-middle-alerts 3/3 innocent leaf closed first; warden-down-older-sibling-alerts 1/3 innocent newer sibling closed first; warden-down-newer-sibling-alerts 0/3 (correct)",
+      "evidence": "attrib-attack-set2.json, attrib-attack-set3.json",
+      "detail": "In Direct mode nothing is tracked, so every dialog -- including one on the original tab or a middle popup -- is 'unknown' and attributeDialogHolders applies 'the newest leaf holds it'. That premise is only valid when the warden tracked every older target (then an unobserved dialog can only be in the newest target of a blocked renderer). With the warden down it is wrong for any dialog not in the newest leaf: `dialog accept` closes the innocent leaf; for an opener-held dialog it then finds the opener 'isolated' and refuses (exit 1), snap exit 3, only `close` escapes. Direct mode also has no discoveredAt, so sibling order falls back to targets() order."
+    },
+    {
+      "id": "A4-02",
+      "title": "GAP-240 not fixed for the sibling shape: manual `dialog accept` closes a healthy popup during a sync-XHR false block",
+      "severity": "major",
+      "rate": "3/3 (xhr-popup-manual); automatic policy 0/6 closes (xhr-popup-policy: exit 3 both --dialog accept and dismiss); isolated shape 0/6 closes",
+      "evidence": "attrib-attack-set3.json",
+      "detail": "Opener O has a same-renderer popup P0 (no dialog anywhere). O runs a 15 s synchronous XHR. The gate reports two 'unknown' dialogs (O blockedBy P0). Following the hint, `sutradhar dialog accept` prints 'Tab <P0> (about:blank) was closed because its dialog could not be addressed directly' -- P0 had no dialog and was healthy; O stays blocked, the next accept refuses as isolated (exit 1) and snap exits 3 until the XHR finishes. The attribution treats 'opener + child both blocked' as evidence the child holds a dialog, but a busy opener produces exactly the same observation. The hint text ('never a different, healthy tab it merely shares a browser process with') is false here. The brief's check 3 ('neither automatic nor manual ever closes a target during a false block, isolated or with a sibling') fails on the manual+sibling cell. Heavy-layout variant (12 s forced-layout loop) did not reproduce (warden saw nothing blocked at probe time, 0/3)."
+    },
+    {
+      "id": "A4-03",
+      "title": "Real dialogs in a new tab that alerts during load are unrecoverable except `close` (fix-3's 'isolated' rule strands them)",
+      "severity": "major",
+      "rate": "pure CLI (no observer): target=_blank link -> page alerts while parsing: same-origin implicit-noopener 3/3 dead end, cross-site 2/3 dead end (1/3 the warden caught the event and it worked perfectly); rel=opener same-origin 0/3 (recovered via sibling rule). Observer probe: noopener same-origin 3/3, noopener cross-site 3/3, opener cross-site 3/3 dead end.",
+      "evidence": "link-deadend.json, attrib-attack-set4.json",
+      "detail": "The warden usually misses a dialog fired during a new target's first parse (GAP-220's shape), so liveness reports it as 'unknown'. When the new tab has its own renderer (every target=_blank link since Chrome 88 is implicitly noopener; any cross-site popup), it has no blocked sibling, so fix-3 classifies it 'isolated' and refuses recovery under every path: `dialog accept` exit 1 and `dialog dismiss` exit 1 (message: 'nothing identifies this as an actual dialog (it may just be running a slow script)'), `snap --dialog accept` exit 3, `tabs` exit 3, every command exit 3. Only `close` (ending the whole session) escapes. This is GAP-230's dead end returning for the most common real-dialog-unknown shape; fix-2 recovered it by closing that tab. It is the direct cost of the GAP-240 isolated rule, and the message misdescribes a real alert as a possible slow script."
+    },
+    {
+      "id": "A4-04",
+      "title": "Phantom and indistinguishable 'unknown' lines (GAP-244 residual)",
+      "severity": "minor",
+      "rate": "always when collateral targets exist",
+      "evidence": "many-blocked-a4.json, attrib-attack-set1.json",
+      "detail": "(a) `dialog accept` prints the PRE-handle list as 'still pending' dialogPending lines: K=40 prints 40 stale 'unknown' lines after 'Accepted alert', although nothing is pending (a following `dialog accept` says 'no dialog is open'). (b) `sutradhar dialog` and the exit-3 lines give no target id and no holder/collateral marker, so an agent sees N identical 'unknown' lines and cannot tell which tab `dialog accept` will close before it closes it. (c) The warden's 409 redirect text tells the user to 'target that tab instead', but no CLI syntax targets a specific tab for `dialog accept|dismiss`."
+    },
+    {
+      "id": "A4-05",
+      "title": "Test-integrity: 3 attribution mutations survive the product's own tests",
+      "severity": "minor, test-integrity",
+      "rate": "3/21 survive vitest (A9, A13, A20); A13 and A20 caught only by audit-4's own live probe, not by vitest or verify-fr2-04-dialogs.mjs",
+      "evidence": "mutations-all.json, mutation-live-*.json",
+      "detail": "No test checks that the warden actually feeds discoveredAt into attribution (A13) or that selectDialog skips a blockedBy entry (A20). The verify script's GAP230 case asserts only /closed because its dialog/, not WHICH tab was closed, so it would also have passed with audit-3's wrong-tab bug."
+    },
+    {
+      "id": "A4-06",
+      "title": "GAP-243 only partly fixed: 3 of audit-3's surviving mutations still survive; fix-3's '9/9 revert-confirm' tested its own 8 points, not audit-3's mutations",
+      "severity": "minor, test-integrity",
+      "rate": "audit-3 mutation set re-run with whole-package vitest: M18/M19/M20/M20b killed; M22 (lock read-back -> return true), M23 (rival/singleton check disabled), M26 (WardenBroker drops closedTarget) SURVIVE (cli 119/119 pass); M21/M21b/M24/M24b/M25 anchors no longer exist (code rewritten; audit-4's A15/A16/A18/A19 against the rewritten recovery paths are killed)",
+      "evidence": "mutations-a3set-M18+M19+M20+M21+M22+M23+M24+M25+M26.json",
+      "detail": "fix-3/revert-confirm-results.json lists point1..point8 reverts of fix-3's own changes; none of them is audit-3's M22/M23/M26. M26 would be caught live by verify's GAP230 case (asserts 'closed because its dialog'); M22/M23 have no deterministic test."
+    }
+  ],
+  "verified": [
+    {
+      "id": "V-attrib-control",
+      "what": "single-sync (w=open('');w.alert()) attributed to popup, dialog accept closes popup, opener alive, snap 0",
+      "rate": "2/2",
+      "evidence": "attrib-attack-pilot.json"
+    },
+    {
+      "id": "V-attrib-older-sibling-newer-alerts",
+      "what": "older tracked sibling + newest sync-alert popup: holder = newest, only it closed",
+      "rate": "2/2",
+      "evidence": "attrib-attack-pilot.json"
+    },
+    {
+      "id": "V-attrib-rapid",
+      "what": "two popups ~0/30/100 ms apart (separate activations; 0-gap non-awaited collapses to one popup by Chrome's popup blocker), newest alerts: correct holder",
+      "rate": "6/6",
+      "evidence": "attrib-attack-pilot2.json"
+    },
+    {
+      "id": "V-attrib-chain-leaf",
+      "what": "3-target chain O->A->B, B alerts sync: holder B, O and A blockedBy B, only B closed",
+      "rate": "3/3",
+      "evidence": "attrib-attack-set1.json"
+    },
+    {
+      "id": "V-attrib-tracked-with-phantoms",
+      "what": "older-sibling-alerts-tracked, chain-middle-alerts, opener-alerts-with-popup: the real (tracked) alert is selected and accepted, nothing closed, snap 0. Phantom 'unknown' entries are listed (including phantom HOLDERS with no blockedBy) and printed as trailing dialogPending lines after the accept (the GAP-244 phantom half)",
+      "rate": "9/9",
+      "evidence": "attrib-attack-set1.json"
+    },
+    {
+      "id": "V-attrib-warden-down-newer",
+      "what": "warden down, newest sibling alerts: correct popup closed",
+      "rate": "3/3",
+      "evidence": "attrib-attack-set2.json"
+    },
+    {
+      "id": "V-attrib-same-origin-url-popup",
+      "what": "same-origin URL popup (with opener) alerting at parse: unknown, sibling rule attributes to popup, dialog accept closes popup, opener alive, snap 0",
+      "rate": "3/3 probe + 3/3 pure CLI (rel=opener link)",
+      "evidence": "attrib-attack-set4.json, link-deadend.json"
+    },
+    {
+      "id": "V-attrib-two-tabs-same-site",
+      "what": "second CLI tab (newtab, same site) whose blank popup sync-alerts: the second tab is blockedBy the popup, the first tab is not blocked at all (separate renderer), only the popup closed",
+      "rate": "3/3",
+      "evidence": "attrib-attack-set4.json"
+    },
+    {
+      "id": "V-gap240-policy-no-close",
+      "what": "automatic --dialog accept|dismiss never closes during a sync-XHR false block (isolated and with sibling); false block still exits 3 (not let through as clear)",
+      "rate": "12/12 commands exit 3, 0 closes",
+      "evidence": "attrib-attack-set3.json"
+    },
+    {
+      "id": "V-gap240-isolated-manual-no-close",
+      "what": "isolated sync-XHR tab: manual dialog accept refuses (exit 1), nothing closed",
+      "rate": "3/3",
+      "evidence": "attrib-attack-set3.json"
+    },
+    {
+      "id": "V-GAP-236",
+      "what": "audit-3 recovery-wrongtab matrix (urlpopup + blankpopup x accept-then tabs/snap/eval/nav): dialog accept closes the POPUP every time, never the opener; the next command exits 0 on the opener",
+      "rate": "24/24",
+      "evidence": "recovery-wrongtab-a4.json, recovery-wrongtab-console-a4.txt"
+    },
+    {
+      "id": "V-GAP-237",
+      "what": "`tabs` with a plain tracked orphan alert: exit 3 in ~280 ms (was ~180 s hang then wrong tab); after `dialog accept`, `tabs` exit 0 listing the real tab. Spec \u00a72.10 (original) lists `tabs` as a guarded verb; no spec/amendment text requires tabs to work while blocked; no product/help/README text still claims it is ungated",
+      "rate": "3/3 blocked + 3/3 after-accept",
+      "evidence": "recovery-wrongtab-a4.json"
+    },
+    {
+      "id": "V-GAP-238",
+      "what": "blank popup after recovery is never left invisible: 12/12 blankpopup rows clean; blank-escape probe: caught 6/6 (same-site control + docwrite-timer), 6 'no test' rows where the variant never blocked",
+      "rate": "as stated",
+      "evidence": "recovery-wrongtab-a4.json, blank-escape-a4.json"
+    },
+    {
+      "id": "V-GAP-239",
+      "what": "policy-sibling: snap --dialog accept / snap --dialog dismiss / dialog accept on popup alert + same-renderer opener: exit 0, opener alive, no phantom unknown line under policy",
+      "rate": "15/15",
+      "evidence": "policy-sibling-a4.json"
+    },
+    {
+      "id": "V-GAP-240-isolated",
+      "what": "audit-3 signal-attack re-run: isolated false blocks (sync XHR, crashed renderer, chrome://hang) still exit 3 (not let through as clear) and following the hint never closes the tab (refuses)",
+      "rate": "6/6 false-blocks, 0 closes",
+      "evidence": "signal-attack-a4.json"
+    },
+    {
+      "id": "V-GAP-241",
+      "what": "many-blocked K=4/14/30/40: warden list ~405-419 ms flat, snap exit 3 every time (fails closed); dialog accept resolves the real alert and snap then exits 0",
+      "rate": "8/8",
+      "evidence": "many-blocked-a4.json"
+    },
+    {
+      "id": "V-GAP-242",
+      "what": "chain limit: the 5 already-handled dialogs are printed as dialogHandled lines before the exit-3 block",
+      "rate": "18/18 over-limit chains handled=5; 12/12 short chains clean",
+      "evidence": "chain-bound-a4.json"
+    },
+    {
+      "id": "V-vitest",
+      "what": "vitest run per package at HEAD 9c4fc8c after a forced build (turbo --force, 19/19 + 9/9)",
+      "rate": "browser 472/472, capability-runtime 164/164, cli 119/119, mcp-server 84/84, sutradhar 15/15 = 854, 0 failed",
+      "evidence": "vitest-*.txt, build-forced.txt"
+    },
+    {
+      "id": "V-mutations-attribution",
+      "what": "21 mutations of attributeDialogHolders + wiring, whole-package vitest, every restore sha256-verified, git status clean afterwards",
+      "rate": "18/21 killed by vitest; A13 (warden drops discoveredAt) and A20 (selectDialog picks a blockedBy entry) survive vitest but are killed LIVE by audit-4's attrib-attack probe (A13: innocent older popup closed 2/2; A20: nothing closed, still blocked 2/2); A9 (non-newest sibling points at the raw newest sibling instead of its ultimate holder) survives and only changes the blockedBy id in a 3-level sibling+chain shape (message-only effect)",
+      "evidence": "mutations-all.json, mutations-console.txt, mutation-live-A13-warden-drops-discoveredAt.json, mutation-live-A20-selectDialog-picks-collateral.json"
+    },
+    {
+      "id": "V-live-verify-full",
+      "what": "tools/scenario-suite/verify-fr2-04-dialogs.mjs, FULL (no --skip-slow), evidence dir audit-4/verify-run",
+      "rate": "111 passed, 0 failed, 2 skipped (L11 sessions --json: verb parked with FR2-03; N7: covered by the standing observer assertion), 113 total",
+      "evidence": "verify-console.txt, verify-run/"
+    },
+    {
+      "id": "V-overhead",
+      "what": "snap latency vs a CLI built from a temporary git worktree of master 7073142 (junction-linked node_modules, torn down after, manifest-verified no links left, worktree removed): 1 tab median +32 ms (275 vs 243) and +25 ms (284 vs 259) in two runs; 3 tabs +15 ms (267 vs 252). In-branch split: gate ~10 ms, ensureWarden health check ~14 ms. Consistent with fix-3's +17-29 ms (range observed +15..+32). Note 'master' also lacks other FR2 items on this branch, so this is an upper bound for FR2-04 alone.",
+      "evidence": "overhead-a4-t1.json, overhead-a4-t2.json"
+    }
+  ],
+  "notes": [
+    "orphan (popup sync-alerts, opener then closed at browser level): 3/3 the popup is 'isolated' -> dialog accept refuses (exit 1), snap exit 3; only `close` escapes. Fail-safe (no wrong close, no hang). Not reachable through CLI verbs alone (every verb that could close the opener is gated). Accepted-trade territory (decision 6).",
+    "Chrome allows one popup per user activation: two open('') in one task yields one popup; multi-popup shapes need separate activations. Consequence: with the warden alive, a synchronous (untracked) dialog can only be in the NEWEST target of its renderer -- nothing in a blocked renderer can create a newer target -- which is why the newest-leaf rule holds whenever the warden is up.",
+    "The click on a rel=opener link crashed once with the pre-existing GAP-235 'Requesting main frame too early!' (1/3), exit 1 after 'Clicked #sameopener'.",
+    "noopener: Target.opener()/openerId IS populated even for noopener popups (same-origin and cross-site), but those popups got their own renderer (opener stayed responsive), so the popup is the only blocked target and attribution classifies it 'isolated' -- no wrong close, but see A4-03.",
+    "debugger-paused (observer holds a Debugger.pause): snap hits the probe's 60 s cap -- identical in audit-3 and fix-3 runs, observer-induced, not FR2-04.",
+    "many-blocked: after accept, the CLI's active tab is a popup (kid?i=N) -- pre-existing popup-adoption behavior, not FR2-04.",
+    "Process hygiene: process-baseline.txt (chrome=122 node=4) vs process-after.txt (chrome=122 node=3, 0 wardens under audit roots); no fr2-04-audit4-* temp roots left; no sutradhar-cli-* profile dirs newer than this audit (the 51 present predate it); temp master worktree removed; git status shows only the untracked audit-4 evidence dir; all product-file mutations restored sha256-verified and dist rebuilt with --force."
+  ],
+  "updatedAt": "2026-09-27T00:17:18.055Z",
+  "attributionAnalysis": {
+    "whyItHoldsWithWardenUp": "Chrome grants one popup per user activation and a renderer blocked by a dialog cannot create a newer target, so an UNOBSERVED (synchronous-at-creation) dialog is always in the newest target of its renderer, and every older target was tracked (Page.enable) by the warden, so any dialog on it surfaces as a real typed event. Newest-leaf is therefore right for every real-dialog shape tried with the warden up: single blank popup, older+newer siblings, 3-target chain leaf, second same-site CLI tab, rapid popups 0-100 ms apart (6/6), same-origin URL popup. Tracked dialogs on an opener/middle/older sibling are selected correctly (real alert handled first) -- only phantom 'unknown' lines appear.",
+    "whereItBreaks": [
+      "A4-02: the premise 'both blocked + opener relation => the child holds a dialog' is also produced by a BUSY opener (sync XHR) with any same-renderer popup -> manual dialog accept closes the healthy popup (3/3).",
+      "A4-03: a real unobserved dialog in a target with its own renderer (target=_blank links are implicitly noopener; cross-site popups) has no sibling, is classified isolated and can never be recovered except by `close` (5/6 pure CLI, 9/9 probe).",
+      "A4-01: with the warden down nothing is tracked, so dialogs on openers/middle nodes are misattributed to the newest leaf (opener 3/3, chain-middle 3/3, older sibling 1/3)."
+    ],
+    "smallestFixDirection": [
+      "Replace 'has a blocked sibling' as the evidence rule with a per-target history the warden already nearly has: a target whose Page.enable ACKed AND that was later observed responsive (one cheap Performance.getMetrics right after the ack) cannot hold an unobserved dialog -- any dialog there would have arrived as an event. Such a target is never a holder and never closable (fixes A4-02, keeps GAP-240 isolated safe).",
+      "Conversely a target that has been unresponsive since the warden first saw it (never observed responsive while enabled) IS eligible for tab-close recovery even when isolated (fixes A4-03; a new tab that is busy from birth is the only false-positive left and it is a just-opened tab).",
+      "DirectCdpBroker has no history: make it refuse destructive recovery entirely and say the warden is down / use `close` (fixes A4-01 safely), or respawn the warden before the dialog verb.",
+      "Optional structural improvement for A4-03: have the warden set its own raw Target.setAutoAttach({waitForDebuggerOnStart:true,flatten:true}) so new targets stay paused until its Page.enable is sent, turning load-time dialogs in new tabs into real typed events.",
+      "Add tests: warden-level discoveredAt ordering (A13), selectDialog skipping blockedBy (A20), and make verify's GAP230 case assert WHICH target was closed."
+    ]
+  },
+  "summary": {
+    "verdict": "FAIL",
+    "blocking": [
+      "A4-02 major",
+      "A4-03 major",
+      "A4-01 major (degraded mode)"
+    ],
+    "nonBlocking": [
+      "A4-04 minor (GAP-244 residual)",
+      "A4-05 minor test-integrity",
+      "A4-06 minor test-integrity"
+    ],
+    "auditThreeAttacksHeld": [
+      "GAP-236 24/24",
+      "GAP-237 3/3+3/3",
+      "GAP-238",
+      "GAP-239 15/15",
+      "GAP-240 isolated 0 closes (but see A4-02)",
+      "GAP-241 K<=40 8/8",
+      "GAP-242 18/18"
+    ],
+    "vitest": "854/854 (browser 472, capability-runtime 164, cli 119, mcp-server 84, sutradhar 15)",
+    "liveVerifyFull": "111 pass / 0 fail / 2 skip (113)",
+    "overheadVsMaster": "+15..+32 ms median snap"
+  }
+}

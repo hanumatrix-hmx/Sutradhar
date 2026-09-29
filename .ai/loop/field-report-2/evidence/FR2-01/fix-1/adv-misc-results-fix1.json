@@ -1,0 +1,289 @@
+[
+  {
+    "id": "b1-never-default-timeout",
+    "sel": "#never",
+    "success": false,
+    "error": "wait_for_selector timed out after 10000ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DO",
+    "retriesUsed": 2,
+    "elapsed": 31581,
+    "truthAtReturn": "hidden"
+  },
+  {
+    "id": "b2-never-3000",
+    "sel": "#never",
+    "timeoutMs": 3000,
+    "state": "visible",
+    "success": false,
+    "error": "wait_for_selector timed out after 3000ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM",
+    "retriesUsed": 2,
+    "elapsed": 10579,
+    "truthAtReturn": "hidden"
+  },
+  {
+    "id": "b3-hidden-stays-3000",
+    "sel": "#stays",
+    "timeoutMs": 3000,
+    "state": "hidden",
+    "success": false,
+    "error": "wait_for_selector timed out after 3000ms waiting for state=hidden: an element matching \"#stays\" is still visible.",
+    "retriesUsed": 2,
+    "elapsed": 10586,
+    "truthAtReturn": "visible"
+  },
+  {
+    "id": "f1-timeout0-visible-already",
+    "sel": "#stays",
+    "timeoutMs": 0,
+    "state": "visible",
+    "success": true,
+    "output": {
+      "foundSelector": "#stays",
+      "state": "visible"
+    },
+    "retriesUsed": 0,
+    "elapsed": 7,
+    "truthAtReturn": "visible"
+  },
+  {
+    "id": "f2-timeout0-hidden-already",
+    "sel": "#never",
+    "timeoutMs": 0,
+    "state": "hidden",
+    "success": true,
+    "output": {
+      "foundSelector": "#never",
+      "state": "hidden",
+      "matchedAtStart": true
+    },
+    "retriesUsed": 0,
+    "elapsed": 16,
+    "truthAtReturn": "hidden"
+  },
+  {
+    "id": "f3-timeout0-attached-already",
+    "sel": "#stays",
+    "timeoutMs": 0,
+    "state": "attached",
+    "success": true,
+    "output": {
+      "foundSelector": "#stays",
+      "state": "attached"
+    },
+    "retriesUsed": 0,
+    "elapsed": 5,
+    "truthAtReturn": "visible"
+  },
+  {
+    "id": "c1-blink30-visible",
+    "sel": "#blink",
+    "timeoutMs": 3000,
+    "state": "visible",
+    "success": true,
+    "output": {
+      "foundSelector": "#blink",
+      "state": "visible"
+    },
+    "retriesUsed": 0,
+    "elapsed": 3016,
+    "truthAtReturn": "visible"
+  },
+  {
+    "id": "c2-blink10-visible",
+    "sel": "#blink",
+    "timeoutMs": 3000,
+    "state": "visible",
+    "success": true,
+    "output": {
+      "foundSelector": "#blink",
+      "state": "visible"
+    },
+    "retriesUsed": 0,
+    "elapsed": 3017,
+    "truthAtReturn": "visible"
+  },
+  {
+    "id": "c3-wink30-hidden",
+    "sel": "#wink",
+    "timeoutMs": 3000,
+    "state": "hidden",
+    "success": true,
+    "output": {
+      "foundSelector": "#wink",
+      "state": "hidden",
+      "matchedAtStart": true
+    },
+    "retriesUsed": 0,
+    "elapsed": 3014,
+    "truthAtReturn": "hidden"
+  },
+  {
+    "id": "c4-wink5-hidden",
+    "sel": "#wink",
+    "timeoutMs": 3000,
+    "state": "hidden",
+    "success": true,
+    "output": {
+      "foundSelector": "#wink",
+      "state": "hidden",
+      "matchedAtStart": true
+    },
+    "retriesUsed": 0,
+    "elapsed": 3017,
+    "truthAtReturn": "visible"
+  },
+  {
+    "id": "d1-comma-first-hidden-visible",
+    "sel": "#never, #stays",
+    "timeoutMs": 1500,
+    "state": "visible",
+    "success": false,
+    "error": "wait_for_selector timed out after 1500ms waiting for state=visible: the first match is not visible, but 1 later match(es) are. Visibility is checked on the first match in document order; use a more specific selector.",
+    "retriesUsed": 2,
+    "elapsed": 6100,
+    "truthAtReturn": "hidden"
+  },
+  {
+    "id": "d2-comma-visible-first",
+    "sel": "#stays, #never",
+    "timeoutMs": 1500,
+    "state": "visible",
+    "success": false,
+    "error": "wait_for_selector timed out after 1500ms waiting for state=visible: the first match is not visible, but 1 later match(es) are. Visibility is checked on the first match in document order; use a more specific selector.",
+    "retriesUsed": 2,
+    "elapsed": 6079,
+    "truthAtReturn": "visible"
+  },
+  {
+    "id": "d3-comma-hidden-banner-stays",
+    "sel": "#banner, #stays",
+    "timeoutMs": 1500,
+    "state": "hidden",
+    "success": true,
+    "output": {
+      "foundSelector": "#banner, #stays",
+      "state": "hidden",
+      "matchedAtStart": true,
+      "otherVisibleMatches": 1
+    },
+    "retriesUsed": 0,
+    "elapsed": 17,
+    "truthAtReturn": "hidden"
+  },
+  {
+    "id": "d4-child-combinator-visible",
+    "sel": "body > #stays",
+    "timeoutMs": 1500,
+    "state": "visible",
+    "success": true,
+    "output": {
+      "foundSelector": "body > #stays",
+      "state": "visible"
+    },
+    "retriesUsed": 0,
+    "elapsed": 5,
+    "truthAtReturn": "visible"
+  },
+  {
+    "id": "d5-descendant-across-shadow",
+    "sel": "#host #shadow-toast",
+    "timeoutMs": 1500,
+    "state": "visible",
+    "success": false,
+    "error": "wait_for_selector timed out after 1500ms waiting for state=visible: No element found for selector: #host #shadow-toast",
+    "retriesUsed": 2,
+    "elapsed": 6084,
+    "truthAtReturn": "absent"
+  },
+  {
+    "id": "d6-descendant-across-shadow-hidden",
+    "sel": "#host #shadow-toast",
+    "timeoutMs": 1500,
+    "state": "hidden",
+    "success": true,
+    "output": {
+      "foundSelector": "#host #shadow-toast",
+      "state": "hidden",
+      "matchedAtStart": false
+    },
+    "retriesUsed": 0,
+    "elapsed": 11,
+    "truthAtReturn": "absent"
+  },
+  {
+    "id": "d7-sibling-combinator-hidden",
+    "sel": ".dup-first ~ .dup",
+    "timeoutMs": 1500,
+    "state": "hidden",
+    "success": false,
+    "error": "wait_for_selector timed out after 1500ms waiting for state=hidden: an element matching \".dup-first ~ .dup\" is still visible.",
+    "retriesUsed": 2,
+    "elapsed": 6066,
+    "truthAtReturn": "visible"
+  },
+  {
+    "id": "h1-invalid-selector-hidden",
+    "sel": "div[",
+    "timeoutMs": 1500,
+    "state": "hidden",
+    "success": false,
+    "error": "wait_for_selector failed waiting for state=hidden: SyntaxError: Failed to execute 'matches' on 'Element': 'div[' is not a valid selector.",
+    "retriesUsed": 2,
+    "elapsed": 1549,
+    "truthAtReturn": "eval-error:SyntaxError: Failed to execute 'querySel"
+  },
+  {
+    "id": "h2-invalid-selector-visible",
+    "sel": "div[",
+    "timeoutMs": 1500,
+    "state": "visible",
+    "success": false,
+    "error": "SyntaxError: Failed to execute 'matches' on 'Element': 'div[' is not a valid selector.",
+    "retriesUsed": 2,
+    "elapsed": 1531,
+    "truthAtReturn": "eval-error:SyntaxError: Failed to execute 'querySel"
+  },
+  {
+    "id": "g1-busy-never-1000",
+    "sel": "#nope",
+    "timeoutMs": 1000,
+    "state": "visible",
+    "success": false,
+    "error": "wait_for_selector timed out after 1000ms waiting for state=visible: No element found for selector: #nope",
+    "retriesUsed": 2,
+    "elapsed": 7631,
+    "truthAtReturn": "absent"
+  },
+  {
+    "id": "g2-busy-stays-hidden-1000",
+    "sel": "#stays",
+    "timeoutMs": 1000,
+    "state": "hidden",
+    "success": false,
+    "error": "wait_for_selector timed out after 1000ms waiting for state=hidden: an element matching \"#stays\" is still visible.",
+    "retriesUsed": 2,
+    "elapsed": 7615,
+    "truthAtReturn": "visible"
+  },
+  {
+    "id": "i1-hidden-across-reload",
+    "sel": "#stays",
+    "timeoutMs": 4000,
+    "state": "hidden",
+    "success": false,
+    "error": "wait_for_selector timed out after 4000ms waiting for state=hidden: an element matching \"#stays\" is still visible.",
+    "retriesUsed": 2,
+    "elapsed": 13582,
+    "truthAtReturn": "visible"
+  },
+  {
+    "id": "i2-hidden-across-slow-nav",
+    "sel": "#stays",
+    "timeoutMs": 4000,
+    "state": "hidden",
+    "success": false,
+    "error": "wait_for_selector timed out after 4000ms waiting for state=hidden: an element matching \"#stays\" is still visible.",
+    "retriesUsed": 2,
+    "elapsed": 13594,
+    "truthAtReturn": "visible"
+  }
+]

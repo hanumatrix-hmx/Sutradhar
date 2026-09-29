@@ -1,0 +1,224 @@
+{
+  "R": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp",
+  "total": 11,
+  "passed": 9,
+  "failed": [
+    "R178a degraded dry-run is a byte-level no-op on T and SR (names+sizes+mtimes)",
+    "R176 orphan (state.json deleted, dir kept) Chrome killed AND its profile dir reclaimed in the same run"
+  ],
+  "cases": [
+    {
+      "name": "R178-0 degraded engaged",
+      "pass": true,
+      "obs": {
+        "ok": false,
+        "reason": "spawn powershell.exe ENOENT"
+      }
+    },
+    {
+      "name": "R178a degraded dry-run is a byte-level no-op on T and SR (names+sizes+mtimes)",
+      "pass": false,
+      "obs": {
+        "b": {
+          "T": {
+            "13512628-6229-4d42-9586-774ed9e28d99.tmp": "f:0:1790341175107.8154",
+            "15a382e1-5dba-40bd-9fe3-4f3992134550.tmp": "f:0:1790341175219.6787",
+            "1a5f4670-5428-430a-be88-92923ea8744a.tmp": "f:0:1790341179171.8977",
+            "3ff95da0-862f-4316-ada9-98b4c4319f7f.tmp": "f:0:1790341176533.4973",
+            "48f2e752-f080-4a9a-bd34-cbaac0228123.tmp": "f:161196:1790341175416.8486",
+            "5633ee09-f40a-4db6-aeff-ab691412000d.tmp": "f:0:1790341174902.9834",
+            "59f3e94a-24fa-4cbf-8bef-4679552c8463.tmp": "f:0:1790341179513.239",
+            "60f3ed5f-6147-4b78-9423-734179e8f1dc.tmp": "f:0:1790341179135.2998",
+            "6baa2731-51e5-42e1-94bc-55e96efa92d4.tmp": "f:0:1790341174871.2693",
+            "7191a0b0-b3b1-4750-a862-092164679129.tmp": "f:161196:1790341177216.3843",
+            "7b5615d8-5164-4fec-b29b-8b934d401c55.tmp": "f:0:1790341179455.0613",
+            "98a7f727-22ee-4fdb-bb81-f73890775406.tmp": "f:248531:1790341175579.1074",
+            "a2e7ee88-dda4-4f4d-a893-2748dc305e55.tmp": "f:0:1790341176505.504",
+            "b77f5f68-c41b-4ef3-b1bf-5b363fa2956c.tmp": "f:0:1790341174902.9834",
+            "b7faf08f-9bcd-481b-80be-2a7c877b4d94.tmp": "f:0:1790341177183.952",
+            "ca0016f8-5239-47bf-8d5c-1d3be46ec866.tmp": "f:0:1790341179191.4482",
+            "d09b9267-22d6-4791-98c9-bb230e62c95c.tmp": "f:0:1790341176533.4973",
+            "d558c22e-4f57-4ef6-be9e-5a6fb15d2862.tmp": "f:0:1790341177088.3313",
+            "dde37994-906d-4125-bcc3-522bf0c835e8.tmp": "f:0:1790341179191.4482",
+            "f59bbdee-5468-41f2-bfa9-21031fd5884f.tmp": "f:248531:1790341177372.4343",
+            "puppeteer_dev_chrome_profile-OwNd01": "d:1790337579635",
+            "puppeteer_dev_chrome_profile-OwNd01\\.sutradhar-owner.json": "f:117:1790341179652.5574",
+            "puppeteer_dev_chrome_profile-OwNd01\\lockfile": "f:0:1790341179643.578",
+            "puppeteer_dev_chrome_profile-UnMk01": "d:1790337579635",
+            "sutradhar-cli-1790341174167-2wbOnv": "d:1790341178591.934",
+            "sutradhar-cli-1790341175731-7KeTaO": "d:1790341177287.4805",
+            "sutradhar-cli-1790341177939-MMLpTm": "d:1790341179294.6838",
+            "sutradhar-cli-1790341179661-yOuNg4": "d:1790341179664.5862"
+          },
+          "SR": {
+            "92d9c1717c5f3945": "d:1790341179409.2046",
+            "92d9c1717c5f3945\\state.json": "f:385:1790341179415.3306",
+            "d12fd2b64ac468fd": "d:1790341179601.8335",
+            "r177stale": "d:1790341179631.5405",
+            "r177stale\\state.json": "f:208:1790341179633.5613"
+          }
+        },
+        "a": {
+          "T": {
+            "13512628-6229-4d42-9586-774ed9e28d99.tmp": "f:0:1790341175107.8154",
+            "15a382e1-5dba-40bd-9fe3-4f3992134550.tmp": "f:0:1790341175219.6787",
+            "3ff95da0-862f-4316-ada9-98b4c4319f7f.tmp": "f:0:1790341176533.4973",
+            "48f2e752-f080-4a9a-bd34-cbaac0228123.tmp": "f:161196:1790341175416.8486",
+            "5633ee09-f40a-4db6-aeff-ab691412000d.tmp": "f:0:1790341174902.9834",
+            "59f3e94a-24fa-4cbf-8bef-4679552c8463.tmp": "f:0:1790341179513.239",
+            "5a89f6c4-612f-4ee7-8bab-ccc3047bce69.tmp": "f:248531:1790341180276.7458",
+            "60f3ed5f-6147-4b78-9423-734179e8f1dc.tmp": "f:0:1790341179135.2998",
+            "6baa2731-51e5-42e1-94bc-55e96efa92d4.tmp": "f:0:1790341174871.2693",
+            "6f00c264-664a-4941-9577-70de3238ae52.tmp": "f:161196:1790341180115.0063",
+            "7191a0b0-b3b1-4750-a862-092164679129.tmp": "f:161196:1790341177216.3843",
+            "7b5615d8-5164-4fec-b29b-8b934d401c55.tmp": "f:0:1790341179455.0613",
+            "98a7f727-22ee-4fdb-bb81-f73890775406.tmp": "f:248531:1790341175579.1074",
+            "a2e7ee88-dda4-4f4d-a893-2748dc305e55.tmp": "f:0:1790341176505.504",
+            "b77f5f68-c41b-4ef3-b1bf-5b363fa2956c.tmp": "f:0:1790341174902.9834",
+            "b7faf08f-9bcd-481b-80be-2a7c877b4d94.tmp": "f:0:1790341177183.952",
+            "ca0016f8-5239-47bf-8d5c-1d3be46ec866.tmp": "f:0:1790341179191.4482",
+            "chrome_chrome_Unpacker_BeginUnzipping259704_1671355036": "d:1790341181066.3625",
+            "chrome_chrome_url_fetcher_259824_1290999858": "d:1790341181060.1433",
+            "chrome_chrome_url_fetcher_259824_1290999858\\decoded_xz": "f:0:1790341181060.1433",
+            "chrome_chrome_url_fetcher_259824_1290999858\\f1eb9ab285f01b87443903ab668980903f1c52693363e88e09719936ea80b098": "f:13980:1790341181056.1445",
+            "chrome_chrome_url_fetcher_263748_2094910729": "d:1790341179877.7388",
+            "d09b9267-22d6-4791-98c9-bb230e62c95c.tmp": "f:0:1790341176533.4973",
+            "d558c22e-4f57-4ef6-be9e-5a6fb15d2862.tmp": "f:0:1790341177088.3313",
+            "dde37994-906d-4125-bcc3-522bf0c835e8.tmp": "f:0:1790341179191.4482",
+            "f59bbdee-5468-41f2-bfa9-21031fd5884f.tmp": "f:248531:1790341177372.4343",
+            "puppeteer_dev_chrome_profile-OwNd01": "d:1790337579635",
+            "puppeteer_dev_chrome_profile-OwNd01\\.sutradhar-owner.json": "f:117:1790341179652.5574",
+            "puppeteer_dev_chrome_profile-OwNd01\\lockfile": "f:0:1790341179643.578",
+            "puppeteer_dev_chrome_profile-UnMk01": "d:1790337579635",
+            "scoped_dir259704_32597640": "d:1790341180012.1707",
+            "scoped_dir259704_32597640\\48f2e752-f080-4a9a-bd34-cbaac0228123.tmp": "f:161196:1790341175416.8486",
+            "scoped_dir259704_32597640\\CRX_INSTALL": "d:1790341181078.6147",
+            "scoped_dir259704_32597640\\CRX_INSTALL\\manifest.json": "f:1907:1788247016000",
+            "scoped_dir259704_32597640\\CRX_INSTALL\\page_embed_script.js": "f:339:1788247016000",
+            "scoped_dir259704_903653582": "d:1790341180259.3904",
+            "scoped_dir259704_903653582\\98a7f727-22ee-4fdb-bb81-f73890775406.tmp": "f:248531:1790341175579.1074",
+            "scoped_dir259704_903653582\\CRX_INSTALL": "d:1790341180341.9353",
+            "scoped_dir259704_903653582\\CRX_INSTALL\\manifest.json": "f:1098:1611849062000",
+            "scoped_dir259824_1570246245": "d:1790341180478.8005",
+            "scoped_dir259824_1570246245\\7191a0b0-b3b1-4750-a862-092164679129.tmp": "f:161196:1790341177216.3843",
+            "scoped_dir259824_1570246245\\CRX_INSTALL": "d:1790341180531.7717",
+            "scoped_dir259824_1570246245\\CRX_INSTALL\\manifest.json": "f:1907:1788247016000",
+            "scoped_dir259824_243554244": "d:1790341180494.2053",
+            "scoped_dir259824_243554244\\CRX_INSTALL": "d:1790341180583.9202",
+            "scoped_dir259824_243554244\\CRX_INSTALL\\manifest.json": "f:1098:1611849062000",
+            "scoped_dir259824_243554244\\f59bbdee-5468-41f2-bfa9-21031fd5884f.tmp": "f:248531:1790341177372.4343",
+            "sutradhar-cli-1790341174167-2wbOnv": "d:1790341181042.042",
+            "sutradhar-cli-1790341175731-7KeTaO": "d:1790341180981.2798",
+            "sutradhar-cli-1790341177939-MMLpTm": "d:1790341179294.6838",
+            "sutradhar-cli-1790341179661-yOuNg4": "d:1790341179664.5862"
+          },
+          "SR": {
+            "92d9c1717c5f3945": "d:1790341179409.2046",
+            "92d9c1717c5f3945\\state.json": "f:385:1790341179415.3306",
+            "d12fd2b64ac468fd": "d:1790341179601.8335",
+            "r177stale": "d:1790341179631.5405",
+            "r177stale\\state.json": "f:208:1790341179633.5613"
+          }
+        }
+      }
+    },
+    {
+      "name": "R178b owned puppeteer dir lockfile survives the degraded lock probe",
+      "pass": true,
+      "obs": {}
+    },
+    {
+      "name": "R178c unmarked puppeteer dir not planned for deletion in degraded mode",
+      "pass": true,
+      "obs": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\temp\\puppeteer_dev_chrome_profile-UnMk01",
+          "reason": "not-sutradhar"
+        }
+      ]
+    },
+    {
+      "name": "R178d young dir kept grace in degraded mode",
+      "pass": true,
+      "obs": {}
+    },
+    {
+      "name": "R178e degraded plans no kill and no delete of any live session dir",
+      "pass": true,
+      "obs": [
+        {
+          "type": "clearState",
+          "stateFile": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\sr\\r177stale\\state.json",
+          "result": "planned"
+        },
+        {
+          "type": "deleteDir",
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\temp\\puppeteer_dev_chrome_profile-OwNd01",
+          "reason": "owner-dead",
+          "result": "planned"
+        }
+      ]
+    },
+    {
+      "name": "R175 custom-state-dir session survives a REAL GC run without the env var (alive, dir kept, eval works, not in kill list)",
+      "pass": true,
+      "obs": {
+        "ev1": {
+          "code": 0,
+          "out": "r175\n"
+        },
+        "killed": []
+      }
+    },
+    {
+      "name": "R176 orphan (state.json deleted, dir kept) Chrome killed AND its profile dir reclaimed in the same run",
+      "pass": false,
+      "obs": {
+        "alive": true,
+        "dir": true,
+        "acts": [
+          {
+            "type": "clearState",
+            "stateFile": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\sr\\r177stale\\state.json",
+            "result": "cleared"
+          },
+          {
+            "type": "deleteDir",
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\temp\\puppeteer_dev_chrome_profile-OwNd01",
+            "reason": "owner-dead",
+            "result": "deleted",
+            "attempts": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "R177 stale state naming the LIVE dir in a different path form: live dir kept, live session usable, stale state cleared",
+      "pass": true,
+      "obs": {
+        "ev3": {
+          "code": 0,
+          "out": "r177\n"
+        },
+        "dirExists": true,
+        "staleExists": false,
+        "kept": [
+          {
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\temp\\sutradhar-cli-1790341177939-MMLpTm",
+            "reason": "in-use"
+          }
+        ]
+      }
+    },
+    {
+      "name": "R178f (enumeration ok) owned dead-owner puppeteer dir reclaimed, unmarked one kept",
+      "pass": true,
+      "obs": {}
+    },
+    {
+      "name": "exit code 0 real run",
+      "pass": true,
+      "obs": 0
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "item": "FR2-04",
+  "audit": "audit-5 (escalation cycle 1 audit)",
+  "head": "e70394a",
+  "auditor": "independent (maker != checker)",
+  "startedAt": "2026-09-27",
+  "verdict": "FAIL",
+  "findings": [
+    {
+      "id": "A5-01",
+      "severity": "minor (messaging, GAP-248 residual)",
+      "title": "`dialog` status names a fresh collateral popup as \"the actual dialog holder\" that accept would act on, while accept actually acts on a tracked real dialog elsewhere",
+      "rate": "always when a tracked real dialog coexists with a <500ms-old same-renderer popup (older-fresh-alerts 21/21, chain-middle-fresh 12/12, opener-alerts-fresh 9/9 print the misleading note)",
+      "evidence": "a5-A.json (dialogStatus.stderr)",
+      "detail": "When the real dialog is TRACKED (P0 alert), the tracked target is excluded from probing, so the never-confirmed collateral popup P1 becomes its own root and is reported with blockedBy undefined; describeUnknownDialog prints \"tab P1 appears to be the actual dialog holder -- dialog accept/dismiss would act on this tab\" and the confirmed opener note says \"the still-unresolved candidate is tab P1\". selectDialog then (correctly) picks the tracked alert by FIFO and accept resolves it, 0 closes -- so no wrong action happens, but GAP-248 decision 4 (tell the agent in advance WHICH tab accept will act on) is contradicted in this shape. Fix: when any source:event dialog is present, the note should say accept acts on that dialog first, or attribute same-renderer never-confirmed hints to the tracked holder."
+    },
+    {
+      "id": "A5-02",
+      "severity": "major (same evidence standard and harm class as audit-4 GAP-245; pure-CLI reach not demonstrated, see notes)",
+      "title": "GAP-245 still reproduces whenever the popup is younger than the 500ms proactive-confirm delay: `dialog accept` closes a healthy popup during its opener sync-XHR false block",
+      "rate": "xhr-popup-fresh: gap 0ms 3/3, 100ms 3/3, 300ms 3/3, 450ms 3/3 innocent popup closed (12/12); gap 700ms 0/3 (correct refusal). Raw-CDP observer, no puppeteer auto-attach.",
+      "evidence": "a5-DEFHI.json, a5-console-DEFHI.txt (xhr-popup-fresh-g*)",
+      "detail": "Exact GAP-245 shape (opener O runs a 15s synchronous XHR, same-renderer blank popup P0 exists, no dialog anywhere) except the XHR starts 0-450ms after the popup opened instead of audit-4 1200ms. O is confirmedSafe (bootstrap/older), P0 has never been probed because the proactive probe is deliberately delayed 500ms after Page.enable acks, and the reactive probe only runs when a CLI command happens to call /v1/dialogs. So P0 is the only never-confirmed candidate: `dialog` prints \"tab P0 appears to be the actual dialog holder\", and following the exit-3 hint `dialog accept` prints \"Tab P0 (about:blank) was closed because its dialog could not be addressed directly (unknown dialog)\" -- a healthy popup destroyed, O still blocked, next accept exit 1, snap exit 3 until the XHR ends. escalation-1 disclosed residual 1 as \"a brand-new tab busy from the LITERAL instant of creation (no chance to ever be probed responsive, even proactively)\"; P0 here was idle and responsive for up to 450ms and was never busy itself -- the window is the self-imposed 500ms delay (plus ack latency), and it covers collateral blocking by an OLDER confirmed tab, i.e. GAP-245 itself. The disclosed residual is materially narrower than the real one. Realism: requires sync XHR or other native renderer-blocking work within ~0.5s of a window.open (e.g. the legacy open-blank-popup-then-synchronously-fetch-its-URL pattern) AND the agent running a command during the block; less common than audit-4 GAP-245 (any popup age), but it is a wrong-tab close on the CLI own hint, the same harm class audit-4 rated major."
+    },
+    {
+      "id": "A5-03",
+      "severity": "major",
+      "title": "Same-renderer popups whose shared opener is NOT blocked (cross-site popups) are disconnected in attributeDialogHolders: each is its own \"holder\", and `dialog accept` closes the innocent older popup first",
+      "rate": "observer-driven: xsite-siblings-newer-alerts gap 100ms 3/3, gap 300ms 3/3 innocent P0 closed first (6/6); PURE CLI (no observer): `type #in ab` on a page that opens a same-site popup per keydown, 2nd one alerts on load: 3/3 innocent first popup closed first (cli-repro-run1/run2). Older-popup-alerts variant: 0/3 (its alert was tracked).",
+      "evidence": "a5-DEFHI.json (xsite-siblings-*), cli-repro-run1.json, cli-repro-run2.json",
+      "detail": "Opener O (127.0.0.1) opens P0 (localhost, idle) and 100-300ms later P1 (localhost, inline alert the warden misses). P0 and P1 share one renderer (same site, same BrowsingInstance); O is in another process and stays responsive, so it is NOT in the blocked set. attributeDialogHolders only builds edges to openers that are themselves blocked, so P0 and P1 are two separate roots; P0 is younger than the 500ms proactive delay and never confirmed, so both come back as presumed holders (`dialog` prints \"appears to be the actual dialog holder\" for BOTH). selectDialog breaks the tie by FIFO on identical synthetic openedAt, i.e. targets() order = older first, so accept closes the innocent P0 (\"Tab P0 (http://localhost/?n=a) was closed because its dialog could not be addressed directly\"), then P1 on the next accept. This is a regression introduced by escalation-1 decision 2 (under fix-3 both were isolated and refused). The escalation-1 rapid-gap100 fix (confirmed-safe opener as transparent pass-through) only covers the case where the shared opener is itself blocked. Pure-CLI note: in the type repro the closed innocent tab still appeared in the next `dialog` listing and full clearance took 3 accepts (Target.closeTarget on a tab whose renderer is dialog-blocked appears to complete only after the renderer frees). Smallest fix: treat an unblocked opener id shared by >=2 blocked targets as a virtual confirmed-safe root (connect siblings through it) so newest-leaf applies; or never auto-select when >1 non-confirmed candidate roots exist (refuse and name them)."
+    },
+    {
+      "id": "A5-04",
+      "severity": "minor (degraded mode messaging)",
+      "title": "Warden-down refusal is safe but its guidance is partly unactionable and contradicted by the other messages",
+      "rate": "warden-down-isolated-alert 3/3 (plus audit-4 warden-down shapes 12/12)",
+      "evidence": "a5-DEFHI.json (warden-down-isolated-*), attrib-attack-a3a4-all.json (warden-down-*)",
+      "detail": "With the warden down and a single isolated tab holding a real alert: `dialog` prints \"tab X appears to be the actual dialog holder -- dialog accept/dismiss would act on this tab\"; the exit-3 Hint says that command \"identifies ... and recovers by closing just that tab\"; then `dialog accept`/`dismiss` refuse (exit 1) and say \"Run sutradhar close ... or retry once a warden is available\". Nothing can make a warden available: ensureWarden only runs in afterAttach, which every gated verb (snap, tabs, ...) never reaches while the gate blocks, and `dialog` never spawns one. So the only exit is `close` (whole session). Safety is correct (0 closes; the isolated busy-XHR control recovered on its own, snap exit 0 after the XHR). Fix: drop \"retry once a warden is available\" (or make `dialog` call ensureWarden -- it would not add attribution info, but it restores the history for FUTURE dialogs), suppress the \"would act on this tab\" note and the \"recovers by closing\" hint when the broker is DirectCdpBroker."
+    },
+    {
+      "id": "A5-05",
+      "severity": "minor, test-integrity",
+      "title": "Three escalation-1 design points survive mutation: the bootstrap-tab exception, the reactive confirmation path, and its Page.enable-ack precondition",
+      "rate": "22 mutations: 16 KILLED, 6 SURVIVED (E3 immediate-probe-for-all, E4 no-bootstrap-exception, E6 no-reactive-confirmation, E7 reactive-confirm-without-ack, E11 proactive ignores tracked-dialog guard, E13 destroy keeps confirmed). E11 and E13 are near-equivalent (a tracked dialog blocks getMetrics anyway; target ids are never reused).",
+      "evidence": "mutations-a5-all.json",
+      "detail": "E4: escalation-1 says removing the bootstrap exception regressed xhr-isolated-manual LIVE (busy primary tab wrongly closable), yet no unit test pins it. E6/E7: listWithLiveness is still the ONLY confirmation path for a target whose proactive probe lost a race, and the ack precondition is what keeps a never-enabled target from being confirmed without a live listener -- neither is tested. E3 surviving is consistent with audit-5 own live finding (V8) that the 500ms delay has no measured benefit; if escalation-2 keeps a delay, it needs a test that justifies it, otherwise remove it."
+    }
+  ],
+  "verified": [
+    {
+      "id": "V1-audit3-4-attrib-sweep",
+      "what": "audit-4 attrib-attack-probe.mjs (all 30 audit-3/4 shapes + new rapid-gap10, rapid-gap50) x3 against e70394a",
+      "result": "84 trials, 0 innocent closes, 0 harness errors; every sync-at-creation real dialog closed exactly its holder (single-sync, older-sibling-newer, chain-leaf, rapid-gap0/10/30/50/100, orphan, noopener x2, opener-cross-site, opener-same-origin-url, two-tabs-same-site); tracked dialogs (older-sibling-alerts-tracked, chain-middle, opener-alerts-with-popup) accepted with 0 closes; GAP-245 xhr-popup-manual 0/3 closes (both confirmedSafe); xhr-isolated manual+policy 0/6 closes; warden-down x4 shapes 0/12 closes (all refused); leftovers none",
+      "evidence": "attrib-attack-a3a4-all.json, attrib-attack-console-a3a4.txt"
+    },
+    {
+      "id": "V2-premise-older-fresh-sibling",
+      "what": "NEW attack on the newest-leaf premise: an OLDER popup created 0-600ms before a newer sibling gets an alert (opener calls a.alert() in the same task that creates the newer sibling); also chain-middle-fresh (middle popup alerts right after opening its child) and opener-alerts-fresh (opener alerts 0-200ms after opening a popup). Raw-CDP observer (no puppeteer auto-attach, never pauses targets).",
+      "result": "42/42 trials: the older target alert was ALWAYS a tracked typed event (even with P0 and P1 created 14ms apart, g0), accept handled it, 0 closes, 0 innocent closes. Chrome grants one popup per activation, and a second activation is at least one CDP/input round trip later, which the warden Page.enable consistently wins for about:blank popups. The premise held.",
+      "evidence": "a5-A.json, a5-console-A.txt"
+    },
+    {
+      "id": "V3-proactive-probe-race",
+      "what": "Point 2: real dialogs fired around the 500ms proactive-confirm mark: blank popup alerted by opener timer at 300/450/500/550/600/700/1000ms; same-origin and cross-site URL popups with setTimeout alert at 400/500/550/600/700ms; same-origin popup that busy-loops 400/550/700/900ms synchronously then alerts",
+      "result": "63/63 trials: every dialog arrived as a TRACKED typed event (never unknown), no target ever reported unknown+confirmedSafe, accept resolved it, 0 closes. Once Page.enable has acked, a later dialog is always delivered to the listener, so a stale confirmedSafe never coexists with an untracked dialog in any tested timing.",
+      "evidence": "a5-BC.json, a5-console-BC.txt"
+    },
+    {
+      "id": "V4-reactive-immediate-confirm",
+      "what": "The reactive path (listWithLiveness confirms with NO 500ms delay): GET /v1/dialogs hammered at +0..220ms (12 concurrent polls) while a popup that alerts inline on load (same-origin, cross-site, noopener), after 80ms, or via opener timer at 40ms is created",
+      "result": "15/15: no popup was ever marked confirmedSafe before its dialog; missed (unknown) dialogs stayed never-confirmed and were recovered by closing exactly the holder (7/7), tracked ones accepted (8/8), 0 innocent closes. Polls before ~20ms simply do not see the new target yet.",
+      "evidence": "a5-BC.json (polls[])"
+    },
+    {
+      "id": "V5-warden-down-refuse-all",
+      "what": "GAP-247: DirectCdpBroker refuses all destructive recovery; audit-4 shapes (opener, newer sibling, older sibling, chain middle) + new trivially-isolated single-target alert and isolated busy XHR",
+      "result": "0 closes in 18/18; real dialog: dead end except close (by design, matches spec 2.9 degraded path which recommends close); busy XHR: refused, then self-recovered after the XHR, snap exit 0",
+      "evidence": "attrib-attack-a3a4-all.json, a5-DEFHI.json"
+    },
+    {
+      "id": "V6-bootstrap-and-oopif",
+      "what": "Point 3: fresh session whose FIRST command navigates to a page alerting at 0/150/400/800/1500/3000ms (the warden is spawned inside that command, bootstrap near-immediate probe); plus OOPIF (cross-site iframe) inline alert on a confirmed-safe page",
+      "result": "bootstrap 18/18 typed alert tracked, never unknown, never unknown+confirmedSafe, accept resolved it; OOPIF 3/3 tracked typed alert on the page target, accepted",
+      "evidence": "a5-DEFHI.json"
+    },
+    {
+      "id": "V7-residual1-literal",
+      "what": "Point 4a: disclosed residual 1 -- popup busy from its own first script (inline 15s sync XHR), same-renderer and noopener; heavy native layout popup",
+      "result": "popup-xhr-inline 3/3 and popup-xhr-inline-noopener 3/3: the busy popup (no dialog) is closed by dialog accept -- residual reproduces exactly as disclosed; popup-heavy (9s forced layout) 0/6: warden sees nothing blocked, no action. See A5-02 for the wider-than-disclosed window.",
+      "evidence": "a5-DEFHI.json"
+    },
+    {
+      "id": "V8-E3-live-immediate-probe-experiment",
+      "what": "Live experiment (temporary sha-verified mutation, reverted, dist rebuilt): proactive confirm probe fires IMMEDIATELY after Page.enable ack for ALL targets (DEFAULT 500ms delay removed). Re-ran the exact shapes escalation-1 cited as the reason for the delay (opener-same-origin-url, opener-cross-site) plus single-sync, rapid-gap30/100, noopener, reactive-url/xsite/noopener-inline, and A5-02/A5-03 shapes",
+      "result": "36/36: no real holder was ever marked confirmedSafe (0 unknown+SAFE on a holder), every missed dialog still recovered by closing exactly its holder, 0 innocent closes; AND A5-02 xhr-popup-fresh g100/g300 fixed 0/6 closes (popup confirmed before the XHR), A5-03 xsite-siblings g300 fixed 0/3 innocent (P0 confirmed first). The regression escalation-1 cites as the reason for the 500ms delay did not reproduce (0/9 on the cited shapes). Suggests the delay is unnecessary and is itself the cause of most of A5-02/A5-03 window.",
+      "evidence": "a5-E3live.json, a5-console-E3live.txt, attrib-attack-E3live.json, attrib-console-E3live.txt, E3live-orig-sha.txt"
+    },
+    {
+      "id": "V9-audit3-4-probe-sweep",
+      "what": "audit-3/4 probes re-run against e70394a (run-sweep-a5.sh)",
+      "result": "GAP-246 link-deadend (pure CLI target=_blank alert-on-load, xsite/same/rel=opener): 9/9 recovered, 0 dead ends (audit-4: 5/6 dead end); GAP-236 recovery-wrongtab: 16/16 closed the POPUP, never the opener, 4/4 tracked orphan alerts handled with no close; GAP-238 blank-escape: same-site control 3/3 CAUGHT, docwrite-timer 3/3 CAUGHT; GAP-239 policy-sibling 15/15 OK (opener alive, exit 0); GAP-241 many-blocked K=4/14/30/40 warden list flat 406-409ms, 8/8 exit 3, 0 stale pending lines after accept (GAP-248a fixed); GAP-240 signal-attack: sync-XHR, crashed and hung renderer still false-BLOCK (exit 3, accepted re-scope, no close), all other busy states OK; GAP-242 chain-bound all EXIT3-OK/RAN-CLEAN; multi-unknown 3/3 closed exactly P1,P2, unrelated tabs alive; leftovers none in every probe",
+      "evidence": "*-console.txt, link-deadend.json, recovery-wrongtab-a5.json, blank-escape-a5.json, policy-sibling-a5.json, many-blocked-a5.json, signal-attack-a5.json, chain-bound-a5.json, multi-unknown-a5.json"
+    },
+    {
+      "id": "V10-audit4-named-survivors-killed",
+      "what": "Point 8: audit-4 named survivors re-anchored to e70394a and run against whole-package vitest",
+      "result": "A13, A20 (+A20b ignores-blockedBy, A20c ignores-confirmedSafe), M22, M23, M26 all KILLED by specifically-named tests (dialog-warden A13, dialog-cli D6b/D6c/D6d, warden-control-lock-raceback, WC8, WardenBroker.handle M26). All restores sha256-verified.",
+      "evidence": "mutations-a5-all.json, mutations-console.txt"
+    },
+    {
+      "id": "V11-vitest",
+      "what": "node_modules/.bin/vitest run per package at e70394a (after all mutations restored)",
+      "result": "browser 484/484, capability-runtime 164/164, cli 133/133, mcp-server 84/84, sutradhar 15/15 = 880/880, 0 failures",
+      "evidence": "vitest-*.txt"
+    },
+    {
+      "id": "V12-live-verify-full",
+      "what": "tools/scenario-suite/verify-fr2-04-dialogs.mjs, FULL (no --skip-slow), SUTRADHAR_FR2_04_EVIDENCE_DIR=audit-5/verify-run",
+      "result": "111 pass / 0 fail / 2 skip (113); skips are the same 2 parked ones (L11 sessions --json not at HEAD, N7 covered by observer-no-violations). GAP230 case now asserts the closed id == popup id and opener alive: PASS",
+      "evidence": "verify-console.txt, verify-run/"
+    }
+  ],
+  "notes": [
+    "A5-02 reach: PURE-CLI attempts to reach the xhr-popup-fresh shape via `click` (url-open-xhr, xhr-after-open, xhr-after-open-timer, delayed-open-xhr; 12 trials) never produced a same-renderer blocked popup: cli-repro-diag shows open() from a CLI click creates no separate page target at all, and open(url) popups from a CLI click were never collaterally blocked (only O listed, confirmedSafe, correctly refused). A5-02 is reproduced only with script-driven activation (Runtime.evaluate userGesture) -- the same evidence standard audit-4 used for GAP-245 (xhr-popup-manual). The orchestrator should weigh A5-02 by that standard; A5-03 by contrast has a pure-CLI repro.",
+    "GAP-235 (pre-existing, out of scope) still reproduces: Requesting main frame too early! crash in the CLI on `type` that opens popups (6/6 cli-repro type-two-popups) and on a rel=opener link click (1/3 link-deadend). GAP-244 (identity) unchanged and acceptable: messages name the CDP target id + URL.",
+    "Process hygiene: process-baseline chrome=114 node=3 -> process-after chrome=114 node=3, 0 wardens/processes matching fr2-04-audit5; every probe reported leftovers {wardens:[],chrome:[],cliChildren:[]}; no fr2-04-audit5-* temp roots left in E:/AI-Cache/tmp; one temporary live mutation (E3) of dialog-warden.ts restored sha256-verified (7ff20a67...) and browser dist rebuilt; 22 vitest mutations restored sha-verified; git status shows only the untracked audit-5 evidence dir. Warden kills only by PID after verifying its base64 payload stateFile is under this audit temp root."
+  ],
+  "progress": [
+    "setup: audit-5 dir created, audit-3/4 probes copied (temp prefix fr2-04-audit5-)",
+    "build: forced turbo build of @sutradhar/cli... 9/9 tasks, 0 cached (build-forced.txt); dist contains confirmedResponsiveSince",
+    "point 1: audit-3/4 attrib-attack sweep (attrib-attack-probe.mjs all x3, + rapid-gap10/50, + confirmedSafe recorded) RUNNING -> attrib-attack-console-a3a4.txt",
+    "complete: all points 1-8 done; verdict FAIL"
+  ],
+  "summary": {
+    "verdict": "FAIL",
+    "blocking": [
+      "A5-02 major: GAP-245 reproduces 12/12 when the popup is <500ms old (observer-driven; pure-CLI reach 0/12)",
+      "A5-03 major: cross-site same-renderer siblings disconnected -> innocent older popup closed first, 6/6 observer + 3/3 PURE CLI"
+    ],
+    "nonBlocking": [
+      "A5-01 minor messaging (tracked dialog + fresh collateral popup named as holder)",
+      "A5-04 minor warden-down messaging (unactionable retry-once-a-warden-is-available; contradictory notes)",
+      "A5-05 minor test-integrity (E4, E6, E7 survive; E3 survives and is not justified by live data)"
+    ],
+    "heldUp": [
+      "history rule (confirmedSafe) was never observed stale: 0 unknown+confirmedSafe on a real holder across every proactive-race, reactive-poll, bootstrap, OOPIF and immediate-probe experiment",
+      "all audit-3/audit-4 attacks: 0 innocent closes in 84 attrib trials + 16/16 recovery-wrongtab + 9/9 link-deadend recovered + 15/15 policy-sibling + K<=40 flat 406-409ms",
+      "warden-down refuse-all: 0 closes 18/18",
+      "audit-4 named survivors A13/A20/M22/M23/M26 all killed"
+    ],
+    "rootCause": "both majors come from the same place: a target younger than the self-imposed 500ms proactive-confirm delay is an unconfirmed candidate, and attribution only links siblings through a BLOCKED opener. The E3 live experiment (delay 0 for all targets) fixed both tested shapes with no regression (36/36).",
+    "escalation2SmallestChanges": [
+      "1. Probe immediately after Page.enable ack for every target (delete DEFAULT_PROACTIVE_CONFIRM_DELAY_MS); add a warden test that pins it and tests for E4 (bootstrap), E6 (reactive confirm) and E7 (ack precondition).",
+      "2. attributeDialogHolders: treat an opener id shared by >=2 blocked targets as a virtual confirmed-safe root even when the opener itself is not blocked (so newest-leaf applies across cross-site siblings); and/or when more than one independent never-confirmed candidate root exists, refuse auto-close and list them. Unit-test the xsite-siblings shape.",
+      "3. (minor) messaging: A5-01 note when a source:event dialog exists; A5-04 remove retry-once-a-warden-is-available (or have `dialog` call ensureWarden) and suppress would-act/recovers-by-closing text under DirectCdpBroker."
+    ],
+    "vitest": "880/880 (browser 484, capability-runtime 164, cli 133, mcp-server 84, sutradhar 15)",
+    "liveVerifyFull": "111 pass / 0 fail / 2 skip (113)",
+    "mutations": "22 run: 16 killed, 6 survived (E3,E4,E6,E7,E11,E13; E11/E13 near-equivalent)"
+  }
+}

@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>FR2-02 extract_data live values</title>
+<style>
+  body { font-family: sans-serif; padding: 16px; }
+  #hidden-select { display: none; }
+  .msg { display: block; }
+  #m2 { display: none; }
+  #m3 { visibility: hidden; width: 100px; height: 20px; }
+  #m4 { width: 0; height: 0; overflow: hidden; }
+  #m5-wrap { display: none; }
+  #upper { text-transform: uppercase; }
+  #ghost { opacity: 0; width: 100px; height: 20px; }
+  #offscreen-msg { position: absolute; left: -9999px; width: 100px; height: 20px; }
+  #big { height: 120px; overflow: auto; }
+</style>
+</head>
+<body>
+<h1>FR2-02 extract_data live values</h1>
+
+<input id="name">
+<input id="prefilled" value="markup-default">
+<textarea id="notes">default notes</textarea>
+
+<input type="checkbox" id="cb-js">
+<input type="checkbox" id="cb-markup" checked="checked">
+<input type="checkbox" id="cb-load">
+<input type="checkbox" id="cb-click">
+
+<input type="radio" name="r" id="r1" checked>
+<input type="radio" name="r" id="r2">
+
+<select id="single">
+  <option value="a" selected>Alpha</option>
+  <option value="b">Beta</option>
+  <option>Gamma</option>
+</select>
+
+<select id="js-select">
+  <option value="x" selected="selected">X</option>
+  <option value="y">Y</option>
+</select>
+
+<select id="multi" multiple>
+  <option value="x">X</option>
+  <option value="y">Y</option>
+  <option value="z">Z</option>
+</select>
+
+<select id="hidden-select">
+  <option value="p">P</option>
+  <option value="q">Q</option>
+</select>
+
+<div id="editor" contenteditable="true"><b>Hello</b> world</div>
+
+<a id="rel-link" href="/docs/page?x=1">Docs</a>
+
+<p class="msg" id="m1">Visible message</p>
+<p class="msg" id="m2">SECRET-DISPLAY-NONE</p>
+<p class="msg" id="m3">SECRET-VIS-HIDDEN</p>
+<p class="msg" id="m4">SECRET-ZERO</p>
+<div id="m5-wrap"><p class="msg" id="m5">SECRET-ANCESTOR</p></div>
+
+<p id="mixed">Visible part<span style="display:none"> SECRET-NESTED</span></p>
+
+<div id="with-script">Shown<script>/*SCRIPT-SOURCE*/</script></div>
+
+<div id="upper">mixed Case</div>
+
+<div id="multiline"><div>Line A</div><div>Line B</div></div>
+
+<div id="ghost">ghost content</div>
+<div id="offscreen-msg">offscreen content</div>
+
+<input type="hidden" id="csrf" value="tok123">
+
+<div id="host"></div>
+
+<iframe id="f" srcdoc="<input id='fi' value='frame-markup'><p class='fmsg'>frame visible</p><p class='fmsg' style='display:none'>FRAME-SECRET</p>"></iframe>
+
+<ul id="big"></ul>
+
+<script>
+  const host = document.getElementById('host');
+  const shadow = host.attachShadow({ mode: 'open' });
+  shadow.innerHTML = '<span class="in-shadow">shadow text</span>';
+
+  document.getElementById('cb-load').checked = true;
+  document.getElementById('js-select').value = 'y';
+
+  const big = document.getElementById('big');
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < 5000; i++) {
+    const li = document.createElement('li');
+    li.className = 'row';
+    li.textContent = 'Row ' + i;
+    frag.appendChild(li);
+  }
+  big.appendChild(frag);
+
+  window.__fx2 = { ready: true };
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+PASS R178-0 degraded engaged
+PASS R178a degraded dry-run is a byte-level no-op on T and SR (names+sizes+mtimes)
+PASS R178b owned puppeteer dir lockfile survives the degraded lock probe
+PASS R178c unmarked puppeteer dir not planned for deletion in degraded mode
+PASS R178d young dir kept grace in degraded mode
+PASS R178e degraded plans no kill and no delete of any live session dir
+PASS R175 custom-state-dir session survives a REAL GC run without the env var (alive, dir kept, eval works, not in kill list)
+PASS R176 orphan (state.json deleted, dir kept) Chrome killed AND its profile dir reclaimed in the same run
+PASS R177 stale state naming the LIVE dir in a different path form: live dir kept, live session usable, stale state cleared
+PASS R178f (enumeration ok) owned dead-owner puppeteer dir reclaimed, unmarked one kept
+PASS exit code 0 real run
+{"R":"E:\\AI-Cache\\tmp\\fr2-03-a4-reg-4LXHcn","total":11,"passed":11,"failed":[]}

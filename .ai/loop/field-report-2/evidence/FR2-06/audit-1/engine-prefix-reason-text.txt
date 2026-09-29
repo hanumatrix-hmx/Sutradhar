@@ -1,0 +1,10 @@
+"xpath=//button" => "xpath==" is not supported; use the slash form "xpath=/".
+"aria=Submit" => "aria==" is not supported; use the slash form "aria=/".
+"pierce=#x" => "pierce==" is not supported; use the slash form "pierce=/".
+"id=main" => "id==" is a Playwright attribute-engine prefix; use a CSS attribute selector such as [id="…"].
+"data-testid=go" => "data-testid==" is a Playwright attribute-engine prefix; use a CSS attribute selector such as [data-testid="…"].
+"DATA-TESTID=go" => "DATA-TESTID==" is a Playwright attribute-engine prefix; use a CSS attribute selector such as [data-testid="…"].
+"Xpath = //a" => "xpath ==" is not supported; use the slash form "xpath =/".
+"css=button" => "css=" is Playwright's explicit CSS-engine prefix; drop it and pass the CSS itself.
+"text=Submit" => "text=" is Playwright selector-engine syntax (Puppeteer's own text query is spelled "text/").
+"role=button" => "role=" is Playwright selector-engine syntax.

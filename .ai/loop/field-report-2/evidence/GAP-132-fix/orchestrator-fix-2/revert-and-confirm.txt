@@ -1,0 +1,27 @@
+baseline sha aac28e952f527504cbf50c944de9473ff7993a85836d17d7c052c14684b2dfb4
+
+== M-A diagnoseSelectorVisibility: drop tab-closed throw
+Tests  163 passed (163)
+failing: (none)
+
+== M-B countOtherVisibleMatches: context-destroyed => confirmed 0 again
+Tests  1 failed | 162 passed (163)
+failing: GAP-217: a hidden-wait success must not report a confident zero for otherVisibleMatc
+
+== M-C partial-unanswered guard disabled
+Tests  2 failed | 161 passed (163)
+failing: GAP-133 (FR2-01 audit-6, major): a visible-wait timeout must not claim "none is visi | GAP-218: with a frame unanswered, the timeout message must not claim "the first matc
+
+== M-D liveFramesOf: drop tab-closed throw
+Tests  1 failed | 162 passed (163)
+failing: GAP-219: liveFramesOf must throw the tab-closed error, not fall back to the main fra
+
+== M-E final fallthrough: drop tab-closed check
+Tests  163 passed (163)
+failing: (none)
+
+== M-A + M-E combined
+Tests  1 failed | 162 passed (163)
+failing: GAP-217: a visible-wait timeout diagnosis must report a closed tab, never "No elemen
+
+restored sha aac28e952f527504cbf50c944de9473ff7993a85836d17d7c052c14684b2dfb4 match=true

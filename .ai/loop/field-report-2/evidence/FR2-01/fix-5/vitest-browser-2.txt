@@ -1,0 +1,20 @@
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-113 (FR2-01 audit-5/fix-5): the otherVisibleMatches diagnostic reports its own uncertainty, not a silently-wrong confirmed zero, when its per-frame check THROWS (not just times out)[22m[39m
+{"timestamp":"2026-09-25T03:34:29.167Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#banner"}}
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-115 (FR2-01 audit-5/fix-5): the ATTACHED-state check-once path (timeoutMs<=0) probes multiple busy frames in PARALLEL — firstAnyHandleAnyFrame's own parallelization, previously unguarded by any test (audit-5's mutation X1, reverting it to sequential probing, passed all 141 existing tests)[22m[39m
+{"timestamp":"2026-09-25T03:34:29.167Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#thing"}}
+
+[90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-115 (FR2-01 audit-5/fix-5): the ATTACHED-state check-once path (timeoutMs<=0) probes multiple busy frames in PARALLEL — firstAnyHandleAnyFrame's own parallelization, previously unguarded by any test (audit-5's mutation X1, reverting it to sequential probing, passed all 141 existing tests)[22m[39m
+<empty line>
+[90mstderr[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22m[2mGAP-115 (FR2-01 audit-5/fix-5): the ATTACHED-state check-once path (timeoutMs<=0) probes multiple busy frames in PARALLEL — firstAnyHandleAnyFrame's own parallelization, previously unguarded by any test (audit-5's mutation X1, reverting it to sequential probing, passed all 141 existing tests)[22m[39m
+{"timestamp":"2026-09-25T03:34:29.432Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 0ms waiting for state=attached: No element found for selector: #thing","context":{}}
+{"timestamp":"2026-09-25T03:34:29.432Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+ [32m✓[39m tests/unit/browser-action-engine.spec.ts [2m ([22m[2m144 tests[22m[2m)[22m[33m 14198[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m8 passed[39m[22m[90m (8)[39m
+[2m      Tests [22m [1m[32m227 passed[39m[22m[90m (227)[39m
+[2m   Start at [22m 09:04:14
+[2m   Duration [22m 15.31s[2m (transform 552ms, setup 0ms, collect 5.26s, tests 16.56s, environment 1ms, prepare 1.24s)[22m
+

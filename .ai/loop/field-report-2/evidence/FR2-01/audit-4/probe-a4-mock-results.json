@@ -1,0 +1,87 @@
+[
+  {
+    "id": "K1-hidden: visibility evaluate rejects \"Protocol error (Runtime.callFunctionOn): Target cl\"",
+    "truth": "element state UNKNOWN (check never ran) — must not be success",
+    "success": true,
+    "output": {
+      "foundSelector": "#spinner",
+      "state": "hidden",
+      "matchedAtStart": true
+    },
+    "ms": 2
+  },
+  {
+    "id": "K1-hidden: visibility evaluate rejects \"Protocol error (Runtime.callFunctionOn): Session c\"",
+    "truth": "element state UNKNOWN (check never ran) — must not be success",
+    "success": true,
+    "output": {
+      "foundSelector": "#spinner",
+      "state": "hidden",
+      "matchedAtStart": true
+    },
+    "ms": 0
+  },
+  {
+    "id": "K2-hidden: frame.$ rejects \"Execution context was destroyed, most likely becau\" on every pass",
+    "truth": "check never produced an answer on ANY pass",
+    "success": true,
+    "output": {
+      "foundSelector": "#spinner",
+      "state": "hidden"
+    },
+    "ms": 0
+  },
+  {
+    "id": "K2-hidden: frame.$ rejects \"Some unexpected internal error\" on every pass",
+    "truth": "check never produced an answer on ANY pass",
+    "success": true,
+    "output": {
+      "foundSelector": "#spinner",
+      "state": "hidden"
+    },
+    "ms": 0
+  },
+  {
+    "id": "K3-hidden: visibility evaluate hangs after a fast frame.$",
+    "note": "GAP-030 per-frame bound covers frame.$ only",
+    "success": false,
+    "error": "Action wait_for_selector timed out after 2500ms",
+    "ms": 4515
+  },
+  {
+    "id": "K3-visible: visibility evaluate hangs after a fast frame.$",
+    "note": "GAP-030 per-frame bound covers frame.$ only",
+    "success": false,
+    "error": "Action wait_for_selector timed out after 2500ms",
+    "ms": 4517
+  },
+  {
+    "id": "K4-visible-timeout: main has hidden match, 2nd frame $$eval hangs",
+    "truth": "1 element matches (display:none) in main frame",
+    "success": false,
+    "error": "wait_for_selector timed out after 300ms waiting for state=visible: No element found for selector: #ghost",
+    "ms": 1319
+  },
+  {
+    "id": "K5-hidden success: busy frame suppresses otherVisibleMatches",
+    "truth": "1 later match is visible in frame 2",
+    "success": true,
+    "output": {
+      "foundSelector": "#banner",
+      "state": "hidden",
+      "matchedAtStart": true
+    },
+    "ms": 514
+  },
+  {
+    "id": "K5-control: no busy frame",
+    "success": true,
+    "output": {
+      "foundSelector": "#banner",
+      "state": "hidden",
+      "matchedAtStart": true,
+      "otherVisibleMatches": 1
+    },
+    "ms": 0
+  }
+]

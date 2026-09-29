@@ -1,0 +1,445 @@
+{
+  "trialsPerVariant": 10,
+  "byVariant": {
+    "dot": {
+      "fixed": 10,
+      "escaped": 0,
+      "other": 0,
+      "total": 10
+    },
+    "space": {
+      "fixed": 10,
+      "escaped": 0,
+      "other": 0,
+      "total": 10
+    },
+    "anywhere": {
+      "fixed": 10,
+      "escaped": 0,
+      "other": 0,
+      "total": 10
+    }
+  },
+  "results": [
+    {
+      "variantId": "dot",
+      "trialNum": 1,
+      "log": [
+        "--- variant=dot trial 1 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t1-zyknf5 ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t1-zyknf5\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t1-zyknf5\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t1-zyknf5\\root\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t1-zyknf5\\root\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t1-zyknf5\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t1-zyknf5\\root\\jn.\\sub): path component \"jn.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t1-zyknf5\\root\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "dot",
+      "trialNum": 2,
+      "log": [
+        "--- variant=dot trial 2 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t2-sRz2hW ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t2-sRz2hW\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t2-sRz2hW\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t2-sRz2hW\\root\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t2-sRz2hW\\root\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t2-sRz2hW\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t2-sRz2hW\\root\\jn.\\sub): path component \"jn.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t2-sRz2hW\\root\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "dot",
+      "trialNum": 3,
+      "log": [
+        "--- variant=dot trial 3 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t3-1foYfW ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t3-1foYfW\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t3-1foYfW\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t3-1foYfW\\root\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t3-1foYfW\\root\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t3-1foYfW\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t3-1foYfW\\root\\jn.\\sub): path component \"jn.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t3-1foYfW\\root\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "dot",
+      "trialNum": 4,
+      "log": [
+        "--- variant=dot trial 4 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t4-pMN7Oz ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t4-pMN7Oz\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t4-pMN7Oz\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t4-pMN7Oz\\root\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t4-pMN7Oz\\root\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t4-pMN7Oz\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t4-pMN7Oz\\root\\jn.\\sub): path component \"jn.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t4-pMN7Oz\\root\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "dot",
+      "trialNum": 5,
+      "log": [
+        "--- variant=dot trial 5 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t5-ZbyltJ ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t5-ZbyltJ\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t5-ZbyltJ\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t5-ZbyltJ\\root\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t5-ZbyltJ\\root\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t5-ZbyltJ\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t5-ZbyltJ\\root\\jn.\\sub): path component \"jn.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t5-ZbyltJ\\root\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "dot",
+      "trialNum": 6,
+      "log": [
+        "--- variant=dot trial 6 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t6-MqFgkp ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t6-MqFgkp\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t6-MqFgkp\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t6-MqFgkp\\root\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t6-MqFgkp\\root\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t6-MqFgkp\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t6-MqFgkp\\root\\jn.\\sub): path component \"jn.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t6-MqFgkp\\root\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "dot",
+      "trialNum": 7,
+      "log": [
+        "--- variant=dot trial 7 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t7-2yZCbU ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t7-2yZCbU\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t7-2yZCbU\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t7-2yZCbU\\root\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t7-2yZCbU\\root\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t7-2yZCbU\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t7-2yZCbU\\root\\jn.\\sub): path component \"jn.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t7-2yZCbU\\root\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "dot",
+      "trialNum": 8,
+      "log": [
+        "--- variant=dot trial 8 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t8-hE7zBr ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t8-hE7zBr\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t8-hE7zBr\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t8-hE7zBr\\root\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t8-hE7zBr\\root\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t8-hE7zBr\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t8-hE7zBr\\root\\jn.\\sub): path component \"jn.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t8-hE7zBr\\root\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "dot",
+      "trialNum": 9,
+      "log": [
+        "--- variant=dot trial 9 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t9-5YqMik ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t9-5YqMik\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t9-5YqMik\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t9-5YqMik\\root\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t9-5YqMik\\root\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t9-5YqMik\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t9-5YqMik\\root\\jn.\\sub): path component \"jn.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t9-5YqMik\\root\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "dot",
+      "trialNum": 10,
+      "log": [
+        "--- variant=dot trial 10 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t10-xGvvHu ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t10-xGvvHu\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-dot-t10-xGvvHu\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t10-xGvvHu\\root\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t10-xGvvHu\\root\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t10-xGvvHu\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t10-xGvvHu\\root\\jn.\\sub): path component \"jn.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-dot-t10-xGvvHu\\root\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "space",
+      "trialNum": 1,
+      "log": [
+        "--- variant=space trial 1 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t1-MpdG7e ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t1-MpdG7e\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t1-MpdG7e\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t1-MpdG7e\\root\\jn \\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t1-MpdG7e\\root\\jn \\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t1-MpdG7e\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t1-MpdG7e\\root\\jn \\sub): path component \"jn \" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t1-MpdG7e\\root\\jn \\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "space",
+      "trialNum": 2,
+      "log": [
+        "--- variant=space trial 2 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t2-QdNBF8 ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t2-QdNBF8\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t2-QdNBF8\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t2-QdNBF8\\root\\jn \\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t2-QdNBF8\\root\\jn \\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t2-QdNBF8\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t2-QdNBF8\\root\\jn \\sub): path component \"jn \" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t2-QdNBF8\\root\\jn \\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "space",
+      "trialNum": 3,
+      "log": [
+        "--- variant=space trial 3 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t3-2trEPr ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t3-2trEPr\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t3-2trEPr\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t3-2trEPr\\root\\jn \\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t3-2trEPr\\root\\jn \\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t3-2trEPr\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t3-2trEPr\\root\\jn \\sub): path component \"jn \" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t3-2trEPr\\root\\jn \\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "space",
+      "trialNum": 4,
+      "log": [
+        "--- variant=space trial 4 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t4-w5E6Tk ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t4-w5E6Tk\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t4-w5E6Tk\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t4-w5E6Tk\\root\\jn \\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t4-w5E6Tk\\root\\jn \\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t4-w5E6Tk\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t4-w5E6Tk\\root\\jn \\sub): path component \"jn \" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t4-w5E6Tk\\root\\jn \\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "space",
+      "trialNum": 5,
+      "log": [
+        "--- variant=space trial 5 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t5-Kwc7lN ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t5-Kwc7lN\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t5-Kwc7lN\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t5-Kwc7lN\\root\\jn \\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t5-Kwc7lN\\root\\jn \\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t5-Kwc7lN\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t5-Kwc7lN\\root\\jn \\sub): path component \"jn \" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t5-Kwc7lN\\root\\jn \\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "space",
+      "trialNum": 6,
+      "log": [
+        "--- variant=space trial 6 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t6-DmWWnl ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t6-DmWWnl\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t6-DmWWnl\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t6-DmWWnl\\root\\jn \\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t6-DmWWnl\\root\\jn \\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t6-DmWWnl\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t6-DmWWnl\\root\\jn \\sub): path component \"jn \" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t6-DmWWnl\\root\\jn \\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "space",
+      "trialNum": 7,
+      "log": [
+        "--- variant=space trial 7 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t7-iL3Zgv ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t7-iL3Zgv\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t7-iL3Zgv\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t7-iL3Zgv\\root\\jn \\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t7-iL3Zgv\\root\\jn \\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t7-iL3Zgv\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t7-iL3Zgv\\root\\jn \\sub): path component \"jn \" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t7-iL3Zgv\\root\\jn \\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "space",
+      "trialNum": 8,
+      "log": [
+        "--- variant=space trial 8 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t8-PLqRw6 ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t8-PLqRw6\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t8-PLqRw6\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t8-PLqRw6\\root\\jn \\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t8-PLqRw6\\root\\jn \\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t8-PLqRw6\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t8-PLqRw6\\root\\jn \\sub): path component \"jn \" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t8-PLqRw6\\root\\jn \\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "space",
+      "trialNum": 9,
+      "log": [
+        "--- variant=space trial 9 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t9-z5sstc ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t9-z5sstc\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t9-z5sstc\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t9-z5sstc\\root\\jn \\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t9-z5sstc\\root\\jn \\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t9-z5sstc\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t9-z5sstc\\root\\jn \\sub): path component \"jn \" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t9-z5sstc\\root\\jn \\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "space",
+      "trialNum": 10,
+      "log": [
+        "--- variant=space trial 10 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t10-5JQJPZ ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t10-5JQJPZ\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-space-t10-5JQJPZ\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t10-5JQJPZ\\root\\jn \\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t10-5JQJPZ\\root\\jn \\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t10-5JQJPZ\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t10-5JQJPZ\\root\\jn \\sub): path component \"jn \" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-space-t10-5JQJPZ\\root\\jn \\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "anywhere",
+      "trialNum": 1,
+      "log": [
+        "--- variant=anywhere trial 1 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t1-GEzHJm ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t1-GEzHJm\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t1-GEzHJm\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t1-GEzHJm\\root\\subdir.\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t1-GEzHJm\\root\\subdir.\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t1-GEzHJm\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t1-GEzHJm\\root\\subdir.\\jn.\\sub): path component \"subdir.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t1-GEzHJm\\root\\subdir.\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "anywhere",
+      "trialNum": 2,
+      "log": [
+        "--- variant=anywhere trial 2 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t2-y57dqM ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t2-y57dqM\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t2-y57dqM\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t2-y57dqM\\root\\subdir.\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t2-y57dqM\\root\\subdir.\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t2-y57dqM\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t2-y57dqM\\root\\subdir.\\jn.\\sub): path component \"subdir.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t2-y57dqM\\root\\subdir.\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "anywhere",
+      "trialNum": 3,
+      "log": [
+        "--- variant=anywhere trial 3 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t3-bLjNZT ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t3-bLjNZT\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t3-bLjNZT\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t3-bLjNZT\\root\\subdir.\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t3-bLjNZT\\root\\subdir.\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t3-bLjNZT\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t3-bLjNZT\\root\\subdir.\\jn.\\sub): path component \"subdir.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t3-bLjNZT\\root\\subdir.\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "anywhere",
+      "trialNum": 4,
+      "log": [
+        "--- variant=anywhere trial 4 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t4-0X6m8j ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t4-0X6m8j\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t4-0X6m8j\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t4-0X6m8j\\root\\subdir.\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t4-0X6m8j\\root\\subdir.\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t4-0X6m8j\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t4-0X6m8j\\root\\subdir.\\jn.\\sub): path component \"subdir.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t4-0X6m8j\\root\\subdir.\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "anywhere",
+      "trialNum": 5,
+      "log": [
+        "--- variant=anywhere trial 5 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t5-e3u1Jv ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t5-e3u1Jv\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t5-e3u1Jv\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t5-e3u1Jv\\root\\subdir.\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t5-e3u1Jv\\root\\subdir.\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t5-e3u1Jv\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t5-e3u1Jv\\root\\subdir.\\jn.\\sub): path component \"subdir.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t5-e3u1Jv\\root\\subdir.\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "anywhere",
+      "trialNum": 6,
+      "log": [
+        "--- variant=anywhere trial 6 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t6-K8hQ4y ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t6-K8hQ4y\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t6-K8hQ4y\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t6-K8hQ4y\\root\\subdir.\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t6-K8hQ4y\\root\\subdir.\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t6-K8hQ4y\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t6-K8hQ4y\\root\\subdir.\\jn.\\sub): path component \"subdir.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t6-K8hQ4y\\root\\subdir.\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "anywhere",
+      "trialNum": 7,
+      "log": [
+        "--- variant=anywhere trial 7 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t7-LQ2rBA ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t7-LQ2rBA\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t7-LQ2rBA\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t7-LQ2rBA\\root\\subdir.\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t7-LQ2rBA\\root\\subdir.\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t7-LQ2rBA\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t7-LQ2rBA\\root\\subdir.\\jn.\\sub): path component \"subdir.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t7-LQ2rBA\\root\\subdir.\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "anywhere",
+      "trialNum": 8,
+      "log": [
+        "--- variant=anywhere trial 8 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t8-W2p1iU ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t8-W2p1iU\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t8-W2p1iU\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t8-W2p1iU\\root\\subdir.\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t8-W2p1iU\\root\\subdir.\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t8-W2p1iU\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t8-W2p1iU\\root\\subdir.\\jn.\\sub): path component \"subdir.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t8-W2p1iU\\root\\subdir.\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "anywhere",
+      "trialNum": 9,
+      "log": [
+        "--- variant=anywhere trial 9 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t9-lUBCXd ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t9-lUBCXd\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t9-lUBCXd\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t9-lUBCXd\\root\\subdir.\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t9-lUBCXd\\root\\subdir.\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t9-lUBCXd\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t9-lUBCXd\\root\\subdir.\\jn.\\sub): path component \"subdir.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t9-lUBCXd\\root\\subdir.\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    },
+    {
+      "variantId": "anywhere",
+      "trialNum": 10,
+      "log": [
+        "--- variant=anywhere trial 10 R=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t10-z6NIEu ---",
+        "mklink: {\"ok\":true,\"value\":\"Junction created for E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t10-z6NIEu\\\\root\\\\jn <<===>> E:\\\\AI-Cache\\\\tmp\\\\fr205-audit2-cli-anywhere-t10-z6NIEu\\\\outside\\r\\n\"}",
+        "escapeDir=E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t10-z6NIEu\\root\\subdir.\\jn.\\sub",
+        "nav exit=0",
+        "download exit=1 stdout=Download failed: downloadDir \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t10-z6NIEu\\root\\subdir.\\jn.\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t10-z6NIEu\\root, E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t10-z6NIEu\\root\\subdir.\\jn.\\sub): path component \"subdir.\" in \"E:\\AI-Cache\\tmp\\fr205-audit2-cli-anywhere-t10-z6NIEu\\root\\subdir.\\jn.\\sub\" ends with a trailing dot or space, which Windows silently strips on path creation — rejecting outright to prevent a containment bypass through a link named with that trick (FR2-05 GAP-294).. Pass a path under one of these, or configure more roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the sutradhar-mcp server and CLI). stderr=",
+        "outside top-level entries: [], outside/sub exists=false",
+        "OUTCOME: fixed-rejected"
+      ],
+      "outcome": "fixed-rejected"
+    }
+  ]
+}

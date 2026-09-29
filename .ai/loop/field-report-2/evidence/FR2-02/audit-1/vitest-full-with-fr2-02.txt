@@ -1,0 +1,1424 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041
+
+ ✓ packages/frontend/tests/unit/components.spec.ts  (5 tests) 5ms
+ ✓ packages/browser/tests/unit/frame-labels.spec.ts  (35 tests) 11ms
+stdout | check (E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\tools\scenario-suite\fr2-16\doc-static.spec.mjs:39:13)
+PASS: README.md does not contain "stealth launcher" (old tagline)
+PASS: README.md does not contain "Stealth Launch Policy" (old invariant #2 heading)
+PASS: README.md does not contain "bypass bot detection" (old invariant #2 body)
+PASS: README.md does not reference "0005-stealth-evasion" (dangling ADR reference — no such ADR file exists in docs/adr/)
+PASS: AGENT_SETUP.md still contains "No stealth or bot-detection evasion, by design."
+PASS: cli.ts help text contains "CAPTCHA"
+PASS: cli.ts help text contains "bot-detection"
+PASS: packages/browser/README.md mentions "Cloudflare"
+PASS: packages/browser/README.md mentions "CAPTCHA"
+PASS: packages/browser/README.md states the honest navigator.webdriver exception
+PASS: AGENT_SETUP.md mentions "Cloudflare"
+PASS: AGENT_SETUP.md mentions "CAPTCHA"
+PASS: AGENT_SETUP.md states the honest navigator.webdriver exception
+PASS: packages/cli/src/cli.ts mentions "Cloudflare"
+PASS: packages/cli/src/cli.ts mentions "CAPTCHA"
+PASS: packages/cli/src/cli.ts states the honest navigator.webdriver exception
+PASS: packages/browser/README.md does not overclaim with "never works on any Cloudflare"
+PASS: AGENT_SETUP.md does not overclaim with "never works on any Cloudflare"
+PASS: packages/cli/src/cli.ts does not overclaim with "never works on any Cloudflare"
+PASS: README.md contains the "Detection-Evasion Boundary" replacement invariant
+PASS: README.md Sub-Module Layout section does not mention src/stealth/
+PASS: README.md does not mention "stealth launch flags" (old module-layout description)
+PASS: no unapproved stealth/webdriver/detection claim in any of the 12 tracked surfaces (GAP-118/120/122-131)
+
+stdout | tools\scenario-suite\fr2-16\doc-static.spec.mjs:140:9
+
+ALL PASS
+
+ ❯ tools/scenario-suite/fr2-16/doc-static.spec.mjs  (0 test)
+ ✓ packages/capability-runtime/tests/unit/extract-data.spec.ts  (25 tests) 9ms
+ ✓ packages/mcp-server/tests/unit/session-resolution.spec.ts  (23 tests) 14ms
+ ✓ packages/cli/tests/unit/parse-args.spec.ts  (37 tests) 7ms
+ ✓ packages/browser/tests/unit/page-understanding.spec.ts  (6 tests) 4ms
+ ✓ packages/capability-runtime/tests/unit/profile-manager.spec.ts  (14 tests) 88ms
+ ✓ packages/frontend/tests/unit/adapter.spec.ts  (4 tests) 30ms
+ ✓ packages/frontend/tests/unit/browserRuntime.spec.ts  (5 tests) 35ms
+ ✓ packages/sdk/tests/unit/plugin-sdk.spec.ts  (6 tests) 6ms
+ ✓ packages/sdk/tests/unit/loader.spec.ts  (10 tests) 42ms
+(node:42804) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ packages/frontend/tests/unit/workflowEngine.spec.ts  (7 tests) 9ms
+ ✓ packages/frontend/tests/unit/actionEngine.spec.ts  (6 tests) 22ms
+ ✓ packages/cli/tests/unit/help-text.spec.ts  (6 tests) 3ms
+ ✓ packages/dev-runtime/tests/unit/dev-runtime.spec.ts  (4 tests) 31ms
+stdout | packages/agent/tests/unit/task-graph.spec.ts > Engineering Iteration 5 — Task Graph Engine Unit Tests > 2. should resolve dependencies when parent node transitions to COMPLETED
+{"timestamp":"2026-09-25T09:21:19.083Z","level":"info","message":"[TaskGraphEngine] Starting node execution n1 in graph graph_1","context":{}}
+{"timestamp":"2026-09-25T09:21:19.083Z","level":"info","message":"[TaskGraphEngine] Completed node execution n1 in graph graph_1","context":{}}
+
+stdout | packages/agent/tests/unit/task-graph.spec.ts > Engineering Iteration 5 — Task Graph Engine Unit Tests > 4. should handle partial completion and support state serialization/deserialization
+{"timestamp":"2026-09-25T09:21:19.085Z","level":"info","message":"[TaskGraphEngine] Starting node execution n1 in graph graph_1","context":{}}
+{"timestamp":"2026-09-25T09:21:19.085Z","level":"info","message":"[TaskGraphEngine] Completed node execution n1 in graph graph_1","context":{}}
+
+stderr | packages/agent/tests/unit/task-graph.spec.ts > Engineering Iteration 5 — Task Graph Engine Unit Tests > 5. should increment node retries and mark FAILED when maxRetries exceeded
+{"timestamp":"2026-09-25T09:21:19.085Z","level":"warn","message":"[TaskGraphEngine] Node n1 failed (attempt 1/2); setting READY for retry","context":{}}
+{"timestamp":"2026-09-25T09:21:19.085Z","level":"error","message":"[TaskGraphEngine] Node n1 failed permanently: Second timeout","context":{}}
+
+ ✓ packages/agent/tests/unit/task-graph.spec.ts  (5 tests) 6ms
+ ✓ packages/capability-runtime/tests/unit/visual-compare.spec.ts  (5 tests) 20ms
+ ✓ packages/agent/tests/unit/failure-classifier.spec.ts  (12 tests) 5ms
+ ✓ packages/utils/tests/unit/dev-runtime.spec.ts  (5 tests) 23ms
+ ✓ packages/storage/tests/unit/file-storage.spec.ts  (4 tests) 26ms
+stderr | packages/agent/tests/unit/cross-run-memory.spec.ts > @sutradhar/agent CrossRunMemory > never throws when recording fails (best-effort)
+{"timestamp":"2026-09-25T09:21:19.257Z","level":"warn","message":"[CrossRunMemory] failed to persist run summary: ENOTDIR: not a directory, mkdir 'E:\\AI-Cache\\tmp\\sutradhar-cross-run-memory-Se0Whi\\blocked'","context":{}}
+
+stdout | packages/llm/tests/unit/gateway.spec.ts > @sutradhar/llm Gateway & OpenAiCompatibleAdapter > should generate a REAL completion against local Ollama
+{"timestamp":"2026-09-25T09:21:19.283Z","level":"info","message":"[openai-compatible] Generating completion","context":{"model":"qwen3.5:9b","messages":2}}
+
+ ✓ packages/capability/tests/unit/checker.spec.ts  (4 tests) 3ms
+stdout | packages/llm/tests/unit/gateway.spec.ts > @sutradhar/llm Gateway & OpenAiCompatibleAdapter > should stream REAL chunks from local Ollama
+{"timestamp":"2026-09-25T09:21:19.311Z","level":"info","message":"[openai-compatible] Starting stream","context":{"model":"qwen3.5:9b"}}
+
+ ❯ packages/llm/tests/unit/gateway.spec.ts  (6 tests | 2 failed) 86ms
+   ❯ packages/llm/tests/unit/gateway.spec.ts > @sutradhar/llm Gateway & OpenAiCompatibleAdapter > should generate a REAL completion against local Ollama
+     → [openai-compatible] HTTP 404: {"error":{"message":"model 'qwen3.5:9b' not found","type":"not_found_error","param":null,"code":null}}
+
+   ❯ packages/llm/tests/unit/gateway.spec.ts > @sutradhar/llm Gateway & OpenAiCompatibleAdapter > should stream REAL chunks from local Ollama
+     → [openai-compatible] stream HTTP 404
+stdout | packages/llm/tests/unit/local.spec.ts > @sutradhar/llm Local Ollama Provider Engine > should generate a REAL completion against the local Ollama model
+{"timestamp":"2026-09-25T09:21:19.327Z","level":"info","message":"[ollama-local] Generating completion","context":{"model":"qwen3.5:9b","messages":2}}
+
+ ✓ packages/memory/tests/unit/episodic-memory.spec.ts  (3 tests) 5ms
+stdout | packages/memory/tests/unit/episodic-memory.spec.ts > Engineering Iteration 6 — Episodic Execution Memory Unit Tests > 1. should create and finalize successful execution episode with lessons learned
+{"timestamp":"2026-09-25T09:21:19.330Z","level":"info","message":"[EpisodicMemoryManager] Created episode ep_1790328079330_540 for goal \"Submit login form\" (PageType: Authentication)","context":{}}
+{"timestamp":"2026-09-25T09:21:19.332Z","level":"info","message":"[EpisodicMemoryManager] Finalized episode ep_1790328079330_540 with outcome success. Extracted 2 lessons.","context":{}}
+
+stdout | packages/memory/tests/unit/episodic-memory.spec.ts > Engineering Iteration 6 — Episodic Execution Memory Unit Tests > 2. should query episodes by page type and outcome
+{"timestamp":"2026-09-25T09:21:19.333Z","level":"info","message":"[EpisodicMemoryManager] Created episode ep_1790328079333_269 for goal \"Search products\" (PageType: Search)","context":{}}
+{"timestamp":"2026-09-25T09:21:19.334Z","level":"info","message":"[EpisodicMemoryManager] Finalized episode ep_1790328079333_269 with outcome success. Extracted 1 lessons.","context":{}}
+{"timestamp":"2026-09-25T09:21:19.334Z","level":"info","message":"[EpisodicMemoryManager] Created episode ep_1790328079334_589 for goal \"Login to account\" (PageType: Authentication)","context":{}}
+{"timestamp":"2026-09-25T09:21:19.334Z","level":"info","message":"[EpisodicMemoryManager] Finalized episode ep_1790328079334_589 with outcome failure. Extracted 1 lessons.","context":{}}
+
+stdout | packages/memory/tests/unit/episodic-memory.spec.ts > Engineering Iteration 6 — Episodic Execution Memory Unit Tests > 3. should extract negative lessons learned upon execution failure
+{"timestamp":"2026-09-25T09:21:19.334Z","level":"info","message":"[EpisodicMemoryManager] Created episode ep_1790328079334_9 for goal \"Fill checkout form\" (PageType: Checkout)","context":{}}
+{"timestamp":"2026-09-25T09:21:19.334Z","level":"info","message":"[EpisodicMemoryManager] Finalized episode ep_1790328079334_9 with outcome failure. Extracted 1 lessons.","context":{}}
+
+stdout | packages/llm/tests/unit/local.spec.ts > @sutradhar/llm Local Ollama Provider Engine > should stream REAL chunks from the local Ollama model
+{"timestamp":"2026-09-25T09:21:19.338Z","level":"info","message":"[ollama-local] Starting stream","context":{"model":"qwen3.5:9b"}}
+
+ ❯ packages/llm/tests/unit/local.spec.ts  (5 tests | 3 failed) 113ms
+   ❯ packages/llm/tests/unit/local.spec.ts > @sutradhar/llm Local Ollama Provider Engine > should discover the REAL models installed in the local daemon
+     → expected 0 to be greater than 0
+   ❯ packages/llm/tests/unit/local.spec.ts > @sutradhar/llm Local Ollama Provider Engine > should generate a REAL completion against the local Ollama model
+     → [ollama-local] HTTP 404: {"error":{"message":"model 'qwen3.5:9b' not found","type":"not_found_error","param":null,"code":null}}
+
+   ❯ packages/llm/tests/unit/local.spec.ts > @sutradhar/llm Local Ollama Provider Engine > should stream REAL chunks from the local Ollama model
+     → [ollama-local] stream HTTP 404
+ ✓ packages/observability/tests/unit/studio.spec.ts  (5 tests) 4ms
+ ✓ packages/agent/tests/unit/decision-evidence.spec.ts  (5 tests) 4ms
+ ✓ packages/agent/tests/unit/confidence-execution.spec.ts  (5 tests) 5ms
+stderr | packages/agent/tests/unit/confidence-execution.spec.ts > Engineering Iteration 2 — Confidence-Aware Execution Unit Tests > should trigger low confidence fallback when query score is < 0.70
+{"timestamp":"2026-09-25T09:21:19.601Z","level":"warn","message":"[RecoveryEngine] Attempting recovery for failure reason: low_confidence","context":{"url":"https://example.com","targetTextOrSelector":"Unrelated footer"}}
+
+stdout | packages/browser/tests/unit/launcher.spec.ts > @sutradhar/browser BrowserLauncher > should launch and close browser instance
+{"timestamp":"2026-09-25T09:21:19.601Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+
+ ✓ packages/capability-runtime/tests/unit/ax-snapshot.spec.ts  (15 tests) 12ms
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > reports success:false when the target element is occluded at its click point
+{"timestamp":"2026-09-25T09:21:19.603Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#start button"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > reports success:false when the target element is occluded at its click point
+{"timestamp":"2026-09-25T09:21:19.605Z","level":"warn","message":"[BrowserActionEngine] Action click failed (attempt 1/1): Element matching \"#start button\" is occluded by another element at its click point — a click would not reach the intended target","context":{}}
+{"timestamp":"2026-09-25T09:21:19.605Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > scrolls the element into view before checking occlusion, so a below-the-fold element is not wrongly reported as occluded
+{"timestamp":"2026-09-25T09:21:19.607Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"[data-test=\"checkout\"]"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > reports success:true and clicks when the target element is the topmost hit
+{"timestamp":"2026-09-25T09:21:19.608Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#start button"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > clicks at a specific offset within the element instead of its center, when one is given
+{"timestamp":"2026-09-25T09:21:19.609Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#canvas-app"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > waits for the bounding box to stop changing before checking occlusion, so a click during a CSS transition is not treated as immediately safe
+{"timestamp":"2026-09-25T09:21:19.611Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#confirm-btn"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > falls back to a JS-level click when the CDP click is not observed as delivered
+{"timestamp":"2026-09-25T09:21:19.612Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#start button"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > treats the delivered-check as satisfied (and returns promptly) when the renderer is blocked, e.g. by a native dialog
+{"timestamp":"2026-09-25T09:21:19.613Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#alert-button"}}
+
+ ✓ packages/browser/tests/unit/dom-semantic-engine.spec.ts  (36 tests) 22ms
+stdout | tools\scenario-suite\fr2-16\stealth-claim-check.mutation.spec.mjs:61:9
+=== Step 1: guard passes against real, current (fix-5) files -- zero false positives ===
+
+stdout | tools\scenario-suite\fr2-16\stealth-claim-check.mutation.spec.mjs:69:9
+
+=== Step 2: the 12th file (GAP-127) is actually covered by the file list ===
+
+stdout | tools\scenario-suite\fr2-16\stealth-claim-check.mutation.spec.mjs:75:9
+
+=== Step 3: all 19 of audit-4's SYN bypass mutations (probe-audit4.mjs) are now caught ===
+
+stdout | tools\scenario-suite\fr2-16\stealth-claim-check.mutation.spec.mjs:108:9
+
+=== Step 4: GAP-129's negation-lookback exploits are now caught (old guard: both missed) ===
+
+stdout | tools\scenario-suite\fr2-16\stealth-claim-check.mutation.spec.mjs:121:9
+
+=== Step 5: false-positive check -- genuinely honest sentences do NOT get flagged ===
+
+stdout | tools\scenario-suite\fr2-16\stealth-claim-check.mutation.spec.mjs:135:9
+
+=== Step 6 (GAP-130 regression): reverting any tracked file to a pre-fix false wording fails closed ===
+
+stdout | check (E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\tools\scenario-suite\fr2-16\stealth-claim-check.mutation.spec.mjs:27:13)
+PASS: clean HEAD (with fix-5 applied) produces zero violations across all 12 tracked files
+PASS: tools/engine-comparison/head-to-head-comparison-2026-08-14.md is in STEALTH_CLAIM_FILES
+PASS: exactly 19 SYN bypass cases are being tested (matches audit-4's count)
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "The --disable-blink-features=AutomationControlled flag is chosen for compatibility reasons."
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "The AutomationControlled flag helps avoid launch instability."
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "This argument improves reliability."
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "It is necessary for consistent behavior across Chrome versions."
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "The flag is included by default. This helps launches remain stable."
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "The AutomationControlled flag is retained for stability."
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "DEFAULT_LAUNCH_ARGS exists purely to keep Chrome stable under automation."
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "This flag improves launch stability."
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "The flag is kept for robustness, not detection evasion."
+PASS: SYN bypass caught: PROJECT_DEEP_DIVE.md :: "The retained flag is a Chrome-recommended default for automation."
+PASS: SYN bypass caught: SECURITY.md :: "Nothing in the launcher masks automation signals."
+PASS: SYN bypass caught: SECURITY.md :: "Sutradhar does not modify navigator.webdriver or any other automation signal."
+PASS: SYN bypass caught: README.md :: "Sutradhar launches a completely stock Chrome with no fingerprint changes at all."
+PASS: SYN bypass caught: README.md :: "The flag hides every automation signal."
+PASS: SYN bypass caught: README.md :: "This flag hides all the automation signals."
+PASS: SYN bypass caught: README.md :: "navigator.webdriver hiding is merely incidental to this flag."
+PASS: SYN bypass caught: README.md :: "Hiding navigator.webdriver is a byproduct of this flag."
+PASS: SYN bypass caught: docs/ARCHITECTURE.md :: "Sutradhar launches a plain undisguised Chrome."
+PASS: SYN bypass caught: docs/ARCHITECTURE.md :: "Sutradhar launches an undisguised, plain browser."
+PASS: NEG exploit caught: packages/browser/src/launcher/browser-options.ts :: "Do not remove this stability flag."
+PASS: NEG exploit caught: packages/browser/src/launcher/browser-options.ts :: "This is not optional: it is a stability flag."
+PASS: honest/unrelated edit produces no violation: packages/browser/src/launcher/browser-options.ts :: "This is an unrelated documentation addition about installation steps."
+PASS: 11 revert-wording regression cases are being tested (one per tracked file)
+PASS: revert-to-false-wording caught: packages/browser/src/launcher/browser-options.ts :: "--disable-blink-features=AutomationControlled is kept for stability, a chrome-recommended stability flag, not detection-evasion."
+PASS: revert-to-false-wording caught: packages/browser/src/launcher/browser-launcher.ts :: "Generates sanitized launch arguments (see DEFAULT_LAUNCH_ARGS for the stability flags that are always included, unconditionally)."
+PASS: revert-to-false-wording caught: SECURITY.md :: "It is a compatibility flag, nothing more."
+PASS: revert-to-false-wording caught: README.md :: "Hiding navigator.webdriver is just a side effect of this flag, not its purpose."
+PASS: revert-to-false-wording caught: PROJECT_DEEP_DIVE.md :: "This flag is not a stability flag in the sense some may assume, but it is still a compatibility flag kept for reliable automated launches."
+PASS: revert-to-false-wording caught: AGENT_SETUP.md :: "This flag is recommended for reliable automated launches."
+PASS: revert-to-false-wording caught: docs/ARCHITECTURE.md :: "Sutradhar launches a plain, undisguised browser and does nothing else."
+PASS: revert-to-false-wording caught: packages/browser/README.md :: "The AutomationControlled flag is a stability flag, kept for compatibility, not detection-evasion."
+PASS: revert-to-false-wording caught: AGENT_SETUP.md :: "The retained flag exists mainly for stability."
+
+stdout | tools\scenario-suite\fr2-16\stealth-claim-check.mutation.spec.mjs:174:13
+KNOWN GAP (GAP-139/140, not counted as a failure): revert-to-false-wording NOT caught: .ai/competitive-benchmarks.md :: "This single flag hides all automation signals from any detection script."
+KNOWN GAP (GAP-139/140, not counted as a failure): revert-to-false-wording NOT caught: tools/engine-comparison/head-to-head-comparison-2026-08-14.md :: "Both tools launched with no stealth on any side, and --disable-blink-features=AutomationControlled makes no difference to that symmetry."
+
+stdout | tools\scenario-suite\fr2-16\stealth-claim-check.mutation.spec.mjs:180:9
+
+=== Summary ===
+
+stdout | tools\scenario-suite\fr2-16\stealth-claim-check.mutation.spec.mjs:181:9
+SYN bypasses caught: 19/19
+
+stdout | tools\scenario-suite\fr2-16\stealth-claim-check.mutation.spec.mjs:182:9
+NEG exploits caught: 2/2
+
+stdout | tools\scenario-suite\fr2-16\stealth-claim-check.mutation.spec.mjs:183:9
+Known, disclosed gaps (GAP-139/140, not build-breaking): 2
+
+stdout | tools\scenario-suite\fr2-16\stealth-claim-check.mutation.spec.mjs:184:9
+Total checks: 35 (35 pass, 0 fail)
+
+stdout | tools\scenario-suite\fr2-16\stealth-claim-check.mutation.spec.mjs:185:9
+
+ALL PASS (plus known disclosed gaps above)
+
+ ❯ tools/scenario-suite/fr2-16/stealth-claim-check.mutation.spec.mjs  (0 test)
+stdout | packages/agent/tests/unit/agent-loop.spec.ts > @sutradhar/agent runAgentLoop bootstrap failure path > closes an owned session it just created if the resulting tab has no live Page
+{"timestamp":"2026-09-25T09:21:19.705Z","level":"info","message":"[AgentLoop] starting","context":{"agentId":"agent_1","goalId":"goal_1790328079704","objective":"test objective"}}
+
+stdout | packages/agent/tests/unit/agent-loop.spec.ts > @sutradhar/agent runAgentLoop bootstrap failure path > does NOT close a caller-owned session (sessionId supplied) even when bootstrap fails
+{"timestamp":"2026-09-25T09:21:19.715Z","level":"info","message":"[AgentLoop] starting","context":{"agentId":"agent_1","goalId":"goal_1790328079715","objective":"test objective"}}
+
+stdout | packages/browser/tests/unit/session.spec.ts > @sutradhar/browser Session Management & Tab Lifecycle > should manage multi-tab lifecycle within BrowserSession
+{"timestamp":"2026-09-25T09:21:19.716Z","level":"info","message":"[BrowserSession] Closed session sess_123","context":{"reason":"Test cleanup"}}
+
+stdout | packages/browser/tests/unit/session.spec.ts > @sutradhar/browser Session Management & Tab Lifecycle > should manage sessions via BrowserSessionManager
+{"timestamp":"2026-09-25T09:21:19.717Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+
+stdout | packages/browser/tests/unit/session-manager.spec.ts > @sutradhar/browser BrowserSessionManager session create/reuse race handling > coalesces concurrent createSession() calls for the same sessionId onto a single launch
+{"timestamp":"2026-09-25T09:21:19.715Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_race","context":{"isIncognito":false}}
+
+stdout | packages/browser/tests/unit/session-manager.spec.ts > @sutradhar/browser BrowserSessionManager session create/reuse race handling > a later createSession() call for the same sessionId, after the first resolved, reuses the live session without launching again
+{"timestamp":"2026-09-25T09:21:19.716Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_reuse","context":{"isIncognito":false}}
+
+stdout | packages/browser/tests/unit/session-manager.spec.ts > @sutradhar/browser BrowserSessionManager session create/reuse race handling > removes the pending in-flight entry once the launch settles, even on failure
+{"timestamp":"2026-09-25T09:21:19.718Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_fail_then_retry","context":{"isIncognito":false}}
+
+stdout | packages/browser/tests/unit/session-manager.spec.ts > @sutradhar/browser BrowserSessionManager session create/reuse race handling > different sessionIds never coalesce — each gets its own launch
+{"timestamp":"2026-09-25T09:21:19.718Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_a","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T09:21:19.719Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_b","context":{"isIncognito":false}}
+
+stdout | packages/browser/tests/unit/session-manager.spec.ts > @sutradhar/browser BrowserSessionManager session create/reuse race handling > an uncorrelated (no sessionId) createSession() never coalesces with anything
+{"timestamp":"2026-09-25T09:21:19.720Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328079719_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T09:21:19.720Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328079719_2","context":{"isIncognito":false}}
+
+stdout | packages/agent/tests/unit/agent-loop.spec.ts > @sutradhar/agent runAgentLoop bootstrap failure path > propagates a createSession failure and does not attempt to close anything (no session was ever created)
+{"timestamp":"2026-09-25T09:21:19.725Z","level":"info","message":"[AgentLoop] starting","context":{"agentId":"agent_1","goalId":"goal_1790328079725","objective":"test objective"}}
+
+ ✓ packages/agent/tests/unit/agent-loop.spec.ts  (3 tests) 31ms
+ ✓ packages/browser/tests/unit/browser-tab-observability.spec.ts  (21 tests) 20ms
+stdout | packages/browser/tests/unit/session-manager.spec.ts > @sutradhar/browser BrowserSessionManager.dispose() > unsubscribes from the shared EventBus so a disposed manager stops reacting to future events
+{"timestamp":"2026-09-25T09:21:19.720Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328079720_1","context":{"isIncognito":false}}
+
+stdout | packages/browser/tests/unit/session-manager.spec.ts > @sutradhar/browser BrowserSessionManager.dispose() > stops the idle reaper too (dispose() supersedes stopIdleReaper())
+{"timestamp":"2026-09-25T09:21:19.737Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328079737_1","context":{"isIncognito":false}}
+
+ ✓ packages/browser/tests/unit/session-manager.spec.ts  (8 tests) 30ms
+ ✓ packages/observability/tests/unit/devtools.spec.ts  (3 tests) 3ms
+stdout | packages/memory/tests/unit/tiers-manager.spec.ts > @sutradhar/memory Tiers & Vector Engine > should route multi-tier storage and search via MultiTierMemoryManager
+{"timestamp":"2026-09-25T09:21:19.771Z","level":"info","message":"[MultiTierMemoryManager] Cleared all memory tiers","context":{}}
+
+ ✓ packages/memory/tests/unit/tiers-manager.spec.ts  (3 tests) 4ms
+ ✓ packages/contracts/tests/unit/errors.spec.ts  (3 tests) 3ms
+stdout | packages/agent/tests/unit/runtime-kernel.spec.ts > Engineering Iteration 7 — Runtime Kernel Unit Tests > 1. should register services and retrieve by serviceId
+{"timestamp":"2026-09-25T09:21:19.797Z","level":"info","message":"[RuntimeKernel] Registered service PlannerService with dependencies: []","context":{}}
+
+stdout | packages/agent/tests/unit/runtime-kernel.spec.ts > Engineering Iteration 7 — Runtime Kernel Unit Tests > 2. should start services in topological dependency order and stop in reverse order
+{"timestamp":"2026-09-25T09:21:19.798Z","level":"info","message":"[RuntimeKernel] Registered service ServiceB with dependencies: [ServiceA]","context":{}}
+{"timestamp":"2026-09-25T09:21:19.799Z","level":"info","message":"[RuntimeKernel] Registered service ServiceA with dependencies: []","context":{}}
+{"timestamp":"2026-09-25T09:21:19.799Z","level":"info","message":"[RuntimeKernel] Starting runtime kernel across 2 registered services","context":{}}
+{"timestamp":"2026-09-25T09:21:19.799Z","level":"info","message":"[RuntimeKernel] Started service ServiceA","context":{}}
+{"timestamp":"2026-09-25T09:21:19.799Z","level":"info","message":"[RuntimeKernel] Started service ServiceB","context":{}}
+{"timestamp":"2026-09-25T09:21:19.800Z","level":"info","message":"[RuntimeKernel] Stopping runtime kernel gracefully...","context":{}}
+{"timestamp":"2026-09-25T09:21:19.800Z","level":"info","message":"[RuntimeKernel] Stopped service ServiceB","context":{}}
+{"timestamp":"2026-09-25T09:21:19.800Z","level":"info","message":"[RuntimeKernel] Stopped service ServiceA","context":{}}
+
+stdout | packages/agent/tests/unit/runtime-kernel.spec.ts > Engineering Iteration 7 — Runtime Kernel Unit Tests > 3. should aggregate service health and report kernel metrics
+{"timestamp":"2026-09-25T09:21:19.800Z","level":"info","message":"[RuntimeKernel] Registered service BrowserService with dependencies: []","context":{}}
+{"timestamp":"2026-09-25T09:21:19.800Z","level":"info","message":"[RuntimeKernel] Registered service MemoryService with dependencies: []","context":{}}
+{"timestamp":"2026-09-25T09:21:19.800Z","level":"info","message":"[RuntimeKernel] Starting runtime kernel across 2 registered services","context":{}}
+{"timestamp":"2026-09-25T09:21:19.800Z","level":"info","message":"[RuntimeKernel] Started service BrowserService","context":{}}
+{"timestamp":"2026-09-25T09:21:19.800Z","level":"info","message":"[RuntimeKernel] Started service MemoryService","context":{}}
+
+stdout | packages/agent/tests/unit/runtime-kernel.spec.ts > Engineering Iteration 7 — Runtime Kernel Unit Tests > 4. should publish lifecycle events to EventBus during service startup and shutdown
+{"timestamp":"2026-09-25T09:21:19.801Z","level":"info","message":"[RuntimeKernel] Registered service PlannerService with dependencies: []","context":{}}
+{"timestamp":"2026-09-25T09:21:19.801Z","level":"info","message":"[RuntimeKernel] Starting runtime kernel across 1 registered services","context":{}}
+{"timestamp":"2026-09-25T09:21:19.801Z","level":"info","message":"[RuntimeKernel] Started service PlannerService","context":{}}
+
+ ✓ packages/agent/tests/unit/runtime-kernel.spec.ts  (4 tests) 6ms
+ ✓ packages/observability/tests/unit/logger.spec.ts  (3 tests) 8ms
+ ✓ packages/sutradhar/tests/unit/api.spec.ts  (15 tests) 9ms
+stdout | packages/capability-runtime/tests/unit/runtime.spec.ts > listSessions (FR2-10) > S2: launch() twice registers two launched, mock (no real browser) entries, sorted by createdAt then id
+{"timestamp":"2026-09-25T09:21:19.850Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T09:21:19.851Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328079850_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T09:21:19.852Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T09:21:19.852Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328079852_2","context":{"isIncognito":false}}
+
+stdout | packages/capability-runtime/tests/unit/runtime.spec.ts > listSessions (FR2-10) > S3: attach() registers an "attached" entry
+{"timestamp":"2026-09-25T09:21:19.863Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328079863_1","context":{"isIncognito":false}}
+
+stdout | packages/capability-runtime/tests/unit/runtime.spec.ts > listSessions (FR2-10) > S4: lifecycleOpsInFlight is 1 while launch() is pending, 0 after it resolves, and 0 after it rejects or throws synchronously
+{"timestamp":"2026-09-25T09:21:19.864Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328079864_1","context":{"isIncognito":false}}
+
+stdout | packages/capability-runtime/tests/unit/runtime.spec.ts > listSessions (FR2-10) > S5: shutdown() and shutdownAll() remove entries; shutdown of an unknown id still throws and leaves the counter at 0
+{"timestamp":"2026-09-25T09:21:19.865Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T09:21:19.866Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328079865_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T09:21:19.866Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T09:21:19.866Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328079866_2","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T09:21:19.866Z","level":"info","message":"[BrowserSession] Closed session sess_1790328079865_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T09:21:19.866Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790328079865_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T09:21:19.866Z","level":"info","message":"[BrowserSession] Closed session sess_1790328079866_2","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-25T09:21:19.866Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790328079866_2","context":{"reason":"Close all sessions requested"}}
+
+stdout | packages/capability-runtime/tests/unit/runtime.spec.ts > listSessions (FR2-10) > S6: a session created directly via the session manager (agent.runGoal-style, no launch()/attach()) is not listed
+{"timestamp":"2026-09-25T09:21:19.867Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T09:21:19.867Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328079867_1","context":{"isIncognito":false}}
+
+stdout | packages/capability-runtime/tests/unit/runtime.spec.ts > listSessions (FR2-10) > S7: a session removed behind the runtime's back (idle reap / crash) is pruned from listSessions
+{"timestamp":"2026-09-25T09:21:19.867Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T09:21:19.867Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328079867_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T09:21:19.867Z","level":"info","message":"[BrowserSession] Closed session sess_1790328079867_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-25T09:21:19.867Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790328079867_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-25T09:21:19.867Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T09:21:19.867Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328079867_1","context":{"isIncognito":false}}
+
+stdout | packages/capability-runtime/tests/unit/runtime.spec.ts > listSessions (FR2-10) > S8: a reused id keeps its original origin (launch/launch, and attach then launch under the same id)
+{"timestamp":"2026-09-25T09:21:19.868Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T09:21:19.868Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T09:21:19.868Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed2","context":{"isIncognito":false}}
+
+ ✓ packages/capability-runtime/tests/unit/runtime.spec.ts  (84 tests) 110ms
+ ✓ packages/observability/tests/unit/metrics-tracing.spec.ts  (2 tests) 26ms
+ ✓ packages/browser/tests/unit/snapshot.spec.ts  (3 tests) 3ms
+ ✓ packages/events/tests/unit/event-store.spec.ts  (2 tests) 4ms
+ ✓ packages/mcp-server/tests/unit/tools.spec.ts  (43 tests) 228ms
+stdout | packages/agent/tests/unit/agent-core.spec.ts > @sutradhar/agent Execution Core & State Machine > should enforce allowed state transitions and throw error on invalid jumps
+{"timestamp":"2026-09-25T09:21:20.147Z","level":"info","message":"[AgentStateMachine] Transitioned Agent ag_1","context":{"previousState":"idle","newState":"planning"}}
+
+stdout | packages/agent/tests/unit/agent-core.spec.ts > @sutradhar/agent Execution Core & State Machine > should publish agent:state:changed events on valid transitions
+{"timestamp":"2026-09-25T09:21:20.154Z","level":"info","message":"[AgentStateMachine] Transitioned Agent ag_bus","context":{"previousState":"idle","newState":"planning"}}
+{"timestamp":"2026-09-25T09:21:20.154Z","level":"info","message":"[AgentStateMachine] Transitioned Agent ag_bus","context":{"previousState":"planning","newState":"executing"}}
+
+ ✓ packages/agent/tests/unit/agent-core.spec.ts  (5 tests) 11ms
+stderr | packages/events/tests/unit/event-bus.spec.ts > @sutradhar/events EventBus > should isolate subscriber errors without crashing EventBus or other subscribers
+{"timestamp":"2026-09-25T09:21:20.183Z","level":"error","message":"[EventBus] Error in event subscriber for agent:state:changed","context":{"eventId":"evt_1790328080179_sffpujl"},"error":{"name":"Error","message":"Failing subscriber","stack":"Error: Failing subscriber\n    at E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\events\\tests\\unit\\event-bus.spec.ts:39:13\n    at EventBus.invokeHandlerSafely (E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\events\\src\\bus\\event-bus.ts:75:13)\n    at EventBus.publishEvent (E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\events\\src\\bus\\event-bus.ts:59:28)\n    at EventBus.publish (E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\events\\src\\bus\\event-bus.ts:44:16)\n    at E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\events\\tests\\unit\\event-bus.spec.ts:47:11\n    at file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:135:14\n    at file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:60:26\n    at runTest (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:781:17)\n    at runSuite (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:909:15)\n    at runSuite (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:909:15)"}}
+
+ ✓ packages/events/tests/unit/event-bus.spec.ts  (4 tests) 9ms
+ ✓ packages/utils/tests/unit/formatters.spec.ts  (4 tests) 4ms
+stdout | packages/mcp-server/tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer idle-reaper default wiring > constructs SutradharRuntime with the 30-minute default idleTimeoutMs when nothing overrides it
+{"timestamp":"2026-09-25T09:21:20.195Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | packages/mcp-server/tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer idle-reaper default wiring > honors SUTRADHAR_IDLE_TIMEOUT_MS when set
+{"timestamp":"2026-09-25T09:21:20.211Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | packages/mcp-server/tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer idle-reaper default wiring > honors an explicit idleTimeoutMs option over the env var and default
+{"timestamp":"2026-09-25T09:21:20.215Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | packages/mcp-server/tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer idle-reaper default wiring > idleTimeoutMs:0 disables the reaper (passed through as undefined, matching SutradharRuntime's "unset = disabled" contract)
+{"timestamp":"2026-09-25T09:21:20.218Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | packages/mcp-server/tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer idle-reaper default wiring > does not construct a new SutradharRuntime at all when the caller supplies one directly
+{"timestamp":"2026-09-25T09:21:20.237Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | packages/mcp-server/tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring > defaults to false (unrestricted) when nothing overrides it
+{"timestamp":"2026-09-25T09:21:20.247Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | packages/mcp-server/tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring > honors SUTRADHAR_RESTRICT_NAVIGATION_TO_LOCAL=1
+{"timestamp":"2026-09-25T09:21:20.254Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | packages/mcp-server/tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring > honors an explicit restrictNavigationToLocal option over the env var
+{"timestamp":"2026-09-25T09:21:20.260Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | packages/mcp-server/tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer allowedDomains wiring > defaults to undefined (unrestricted) when nothing overrides it
+{"timestamp":"2026-09-25T09:21:20.275Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | packages/mcp-server/tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer allowedDomains wiring > honors SUTRADHAR_ALLOWED_DOMAINS as a comma-separated list, trimmed
+{"timestamp":"2026-09-25T09:21:20.282Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | packages/mcp-server/tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer allowedDomains wiring > honors an explicit allowedDomains option over the env var
+{"timestamp":"2026-09-25T09:21:20.289Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+ ✓ packages/mcp-server/tests/unit/server.spec.ts  (11 tests) 100ms
+ ✓ packages/contracts/tests/unit/shared.spec.ts  (1 test) 2ms
+ ✓ packages/utils/tests/unit/crypto.spec.ts  (5 tests) 6ms
+stdout | packages/agent/tests/unit/planner.spec.ts > @sutradhar/agent Goal Planner & Prompt Compiler > should create structured AgentPlanDto via GoalPlanner
+{"timestamp":"2026-09-25T09:21:20.372Z","level":"info","message":"[GoalPlanner] Creating plan for goal goal_123","context":{"goal":"Search Wikipedia for Alan Turing"}}
+
+ ✓ packages/agent/tests/unit/planner.spec.ts  (2 tests) 3ms
+ ✓ packages/config/tests/unit/provider.spec.ts  (3 tests) 4ms
+ ✓ packages/utils/tests/unit/async.spec.ts  (4 tests) 76ms
+stderr | packages/agent/tests/unit/reflection-recovery.spec.ts > Engineering Iteration 1 — ReflectionEngine & RecoveryEngine Integration > should detect stuck state loops when consecutive identical actions occur
+{"timestamp":"2026-09-25T09:21:20.396Z","level":"warn","message":"[ReflectionEngine] Detected stuck state loop for action navigate_and_inspect","context":{}}
+
+stderr | packages/agent/tests/unit/reflection-recovery.spec.ts > Engineering Iteration 1 — ReflectionEngine & RecoveryEngine Integration > should trigger RecoveryEngine strategy when stuck loop detected
+{"timestamp":"2026-09-25T09:21:20.398Z","level":"warn","message":"[RecoveryEngine] Attempting recovery for failure reason: stale_element","context":{"url":"https://example.com"}}
+
+ ✓ packages/agent/tests/unit/reflection-recovery.spec.ts  (2 tests) 4ms
+ ✓ packages/contracts/tests/unit/dto.spec.ts  (2 tests) 3ms
+ ✓ packages/contracts/tests/unit/events.spec.ts  (1 test) 2ms
+ ✓ packages/config/tests/unit/schema.spec.ts  (3 tests) 5ms
+ ✓ packages/agent/tests/unit/block-detector.spec.ts  (5 tests) 5ms
+ ✓ packages/cli/tests/unit/state.spec.ts  (4 tests) 5ms
+ ✓ packages/memory/tests/unit/memory-shell.spec.ts  (2 tests) 3ms
+stdout | packages/browser/tests/unit/session.spec.ts > @sutradhar/browser Session Management & Tab Lifecycle > should manage sessions via BrowserSessionManager
+{"timestamp":"2026-09-25T09:21:20.457Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328079717_1","context":{"isIncognito":true,"initialUrl":"https://initial.com"}}
+
+stdout | packages/storage/tests/unit/db-repository.spec.ts > @sutradhar/storage Database & Repository Layer > should initialize SqliteClient and execute queries
+{"timestamp":"2026-09-25T09:21:20.456Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+{"timestamp":"2026-09-25T09:21:20.458Z","level":"info","message":"[SqliteClient] Database connection closed","context":{}}
+
+ ✓ packages/storage/tests/unit/db-repository.spec.ts  (3 tests) 6ms
+ ✓ packages/workflow/tests/unit/runner.spec.ts  (2 tests) 5ms
+stdout | packages/workflow/tests/unit/runner.spec.ts > @sutradhar/workflow Multi-Agent Execution Engine > should traverse a valid DAG and emit lifecycle domain events
+{"timestamp":"2026-09-25T09:21:20.487Z","level":"info","message":"[WorkflowRunner] Starting workflow execution exec_wf_run_1_1790328080487 for wf_run_1","context":{}}
+
+stdout | packages/workflow/tests/unit/runner.spec.ts > @sutradhar/workflow Multi-Agent Execution Engine > should return failed result for invalid graph topology
+{"timestamp":"2026-09-25T09:21:20.490Z","level":"info","message":"[WorkflowRunner] Starting workflow execution exec_wf_invalid_1790328080490 for wf_invalid","context":{}}
+
+stderr | packages/workflow/tests/unit/runner.spec.ts > @sutradhar/workflow Multi-Agent Execution Engine > should return failed result for invalid graph topology
+{"timestamp":"2026-09-25T09:21:20.490Z","level":"error","message":"[WorkflowRunner] Invalid workflow graph topology: Workflow graph has no nodes","context":{}}
+
+ ✓ packages/capability/tests/unit/capability.spec.ts  (2 tests) 3ms
+ ✓ packages/agent/tests/unit/executor.spec.ts  (2 tests) 5ms
+stderr | packages/agent/tests/unit/executor.spec.ts > @sutradhar/agent Task Step Executor & Reflection Engine > should evaluate step success and detect stuck state loops in ReflectionEngine
+{"timestamp":"2026-09-25T09:21:20.587Z","level":"warn","message":"[ReflectionEngine] Detected stuck state loop for action click","context":{}}
+
+stdout | packages/agent/tests/unit/executor.spec.ts > @sutradhar/agent Task Step Executor & Reflection Engine > should execute step on active browser tab and publish domain events
+{"timestamp":"2026-09-25T09:21:20.589Z","level":"info","message":"[StepExecutor] Executing step 1 (navigate) for agent ag_1","context":{}}
+
+ ✓ packages/frontend/tests/unit/foundation.spec.ts  (2 tests) 3ms
+ ✓ packages/utils/tests/unit/port-resolver.spec.ts  (2 tests) 21ms
+stdout | packages/browser/tests/unit/launcher.spec.ts > @sutradhar/browser BrowserLauncher > should create an isolated browser context when isIncognito is set, and route newPage() through it
+{"timestamp":"2026-09-25T09:21:20.653Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+
+stdout | packages/browser/tests/unit/session.spec.ts > @sutradhar/browser Session Management & Tab Lifecycle > should manage sessions via BrowserSessionManager
+{"timestamp":"2026-09-25T09:21:20.673Z","level":"info","message":"[BrowserSession] Closed session sess_1790328079717_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-25T09:21:20.674Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790328079717_1","context":{"reason":"User requested close"}}
+
+stdout | packages/browser/tests/unit/session.spec.ts > @sutradhar/browser Session Management & Tab Lifecycle > should forward launch options (headless/viewport/etc.) to the launcher, not just isIncognito
+{"timestamp":"2026-09-25T09:21:20.674Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328080674_1","context":{"isIncognito":true}}
+
+stdout | ConsoleLogTransport.log (E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\observability\src\logger\console-transport.ts:21:15)
+{"timestamp":"2026-09-25T09:21:20.648Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+{"timestamp":"2026-09-25T09:21:20.653Z","level":"info","message":"[LlmConfigService] primary: Ollama local","context":{}}
+{"timestamp":"2026-09-25T09:21:20.653Z","level":"info","message":"[LlmConfigService] last resort: heuristic","context":{}}
+{"timestamp":"2026-09-25T09:21:20.654Z","level":"info","message":"[LlmConfigService] chain: ollama-local → heuristic","context":{}}
+{"timestamp":"2026-09-25T09:21:20.655Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-25T09:21:20.655Z","level":"info","message":"           SUTRADHAR RUNTIME STARTUP                 ","context":{}}
+{"timestamp":"2026-09-25T09:21:20.655Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-25T09:21:20.668Z","level":"info","message":"[ServerApp] Sutradhar REST API Gateway running at http://127.0.0.1:8081","context":{}}
+{"timestamp":"2026-09-25T09:21:20.668Z","level":"info","message":"[SutradharRuntime] Server initialized on http://127.0.0.1:8081","context":{}}
+{"timestamp":"2026-09-25T09:21:20.668Z","level":"info","message":"[SutradharRuntime] System ready for goal execution requests","context":{}}
+
+stdout | apps/server/tests/unit/routes.spec.ts > @sutradhar/server Route Controllers Integration > should register and dispatch all REST API route controllers via application services
+{"timestamp":"2026-09-25T09:21:20.729Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+{"timestamp":"2026-09-25T09:21:20.730Z","level":"info","message":"[SessionApplicationService] Creating browser session","context":{"initialUrl":"https://example.com"}}
+{"timestamp":"2026-09-25T09:21:20.730Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+
+ ✓ packages/workflow/tests/unit/graph.spec.ts  (3 tests) 3ms
+stderr | packages/browser/tests/unit/session.spec.ts > @sutradhar/browser Session Management & Tab Lifecycle > marks the session closed, clears its tabs, and publishes browser:session:crashed when Chrome disconnects unexpectedly
+{"timestamp":"2026-09-25T09:21:21.018Z","level":"warn","message":"[BrowserSession] Session sess_crash crashed — Chrome disconnected unexpectedly","context":{}}
+
+stdout | packages/browser/tests/unit/session.spec.ts > @sutradhar/browser Session Management & Tab Lifecycle > BrowserSessionManager drops a session once it reports crashed
+{"timestamp":"2026-09-25T09:21:21.020Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328081020_1","context":{"isIncognito":false}}
+
+stderr | packages/browser/tests/unit/session.spec.ts > @sutradhar/browser Session Management & Tab Lifecycle > BrowserSessionManager drops a session once it reports crashed
+{"timestamp":"2026-09-25T09:21:21.020Z","level":"warn","message":"[BrowserSession] Session sess_1790328081020_1 crashed — Chrome disconnected unexpectedly","context":{}}
+{"timestamp":"2026-09-25T09:21:21.020Z","level":"warn","message":"[BrowserSessionManager] Removed crashed session sess_1790328081020_1","context":{}}
+
+stdout | packages/browser/tests/unit/session.spec.ts > @sutradhar/browser Session Management & Tab Lifecycle > idle reaper is disabled by default — a session with no activity is never auto-closed
+{"timestamp":"2026-09-25T09:21:21.032Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328081032_1","context":{"isIncognito":false}}
+
+stdout | packages/browser/tests/unit/session.spec.ts > @sutradhar/browser Session Management & Tab Lifecycle > reaps a session once it has been idle past idleTimeoutMs
+{"timestamp":"2026-09-25T09:21:21.064Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328081064_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T09:21:22.064Z","level":"info","message":"[BrowserSession] Closed session sess_1790328081064_1","context":{"reason":"Idle timeout"}}
+{"timestamp":"2026-09-25T09:21:22.064Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790328081064_1","context":{"reason":"Idle timeout"}}
+
+stderr | packages/browser/tests/unit/session.spec.ts > @sutradhar/browser Session Management & Tab Lifecycle > reaps a session once it has been idle past idleTimeoutMs
+{"timestamp":"2026-09-25T09:21:22.064Z","level":"warn","message":"[BrowserSessionManager] Reaping idle session sess_1790328081064_1 (idle for 1000ms, limit 1000ms)","context":{}}
+
+ ✓ packages/browser/tests/unit/session.spec.ts  (16 tests) 1355ms
+stdout | ConsoleLogTransport.log (E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\observability\src\logger\console-transport.ts:21:15)
+{"timestamp":"2026-09-25T09:21:21.043Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+{"timestamp":"2026-09-25T09:21:21.048Z","level":"info","message":"[LlmConfigService] primary: Ollama local","context":{}}
+{"timestamp":"2026-09-25T09:21:21.048Z","level":"info","message":"[LlmConfigService] last resort: heuristic","context":{}}
+{"timestamp":"2026-09-25T09:21:21.049Z","level":"info","message":"[LlmConfigService] chain: ollama-local → heuristic","context":{}}
+{"timestamp":"2026-09-25T09:21:21.050Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-25T09:21:21.050Z","level":"info","message":"           SUTRADHAR RUNTIME STARTUP                 ","context":{}}
+{"timestamp":"2026-09-25T09:21:21.050Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-25T09:21:21.067Z","level":"info","message":"[ServerApp] Sutradhar REST API Gateway running on fallback port http://127.0.0.1:56717","context":{}}
+{"timestamp":"2026-09-25T09:21:21.067Z","level":"info","message":"[SutradharRuntime] Server initialized on http://127.0.0.1:56717","context":{}}
+{"timestamp":"2026-09-25T09:21:21.067Z","level":"info","message":"[SutradharRuntime] System ready for goal execution requests","context":{}}
+
+stdout | packages/agent/tests/unit/cross-run-memory.spec.ts > @sutradhar/agent CrossRunMemory > prunes the oldest runs once the stored count exceeds the cap by the margin
+{"timestamp":"2026-09-25T09:21:21.072Z","level":"info","message":"[CrossRunMemory] Pruned 21 old run summaries (cap: 200)","context":{}}
+
+ ✓ packages/agent/tests/unit/cross-run-memory.spec.ts  (6 tests) 1855ms
+stdout | apps/server/tests/unit/gateway.spec.ts > @sutradhar/server REST API Gateway & Server Shell > should start ServerApp and handle system health check endpoint
+{"timestamp":"2026-09-25T09:21:21.087Z","level":"info","message":"[ServerApp] Sutradhar REST API Gateway running at http://127.0.0.1:9090","context":{}}
+{"timestamp":"2026-09-25T09:21:21.089Z","level":"info","message":"[ServerApp] Sutradhar REST API Gateway stopped","context":{}}
+
+ ✓ apps/server/tests/unit/gateway.spec.ts  (3 tests) 7ms
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > does not trigger the fallback click when the CDP click already navigated the page away
+{"timestamp":"2026-09-25T09:21:21.125Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"button[type=\"submit\"]"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > click_by_role now goes through the occlusion-safe path and reports a real miss instead of swallowing it
+{"timestamp":"2026-09-25T09:21:21.125Z","level":"info","message":"[BrowserActionEngine] Executing action click_by_role","context":{"tabId":"tab_1"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > click_by_role now goes through the occlusion-safe path and reports a real miss instead of swallowing it
+{"timestamp":"2026-09-25T09:21:21.125Z","level":"warn","message":"[BrowserActionEngine] Action click_by_role failed (attempt 1/1): Element matching \"aria/[role=\"button\"]\" is occluded by another element at its click point — a click would not reach the intended target","context":{}}
+{"timestamp":"2026-09-25T09:21:21.126Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > click_by_text now goes through the occlusion-safe path and reports a real miss instead of swallowing it (PROB-012)
+{"timestamp":"2026-09-25T09:21:21.126Z","level":"info","message":"[BrowserActionEngine] Executing action click_by_text","context":{"tabId":"tab_1","text":"Submit"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > click_by_text now goes through the occlusion-safe path and reports a real miss instead of swallowing it (PROB-012)
+{"timestamp":"2026-09-25T09:21:21.126Z","level":"warn","message":"[BrowserActionEngine] Action click_by_text failed (attempt 1/1): Element matching \"xpath///*[contains(., \"Submit\") and not(.//*[contains(., \"Submit\")])]\" is occluded by another element at its click point — a click would not reach the intended target","context":{}}
+{"timestamp":"2026-09-25T09:21:21.126Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > click_by_text uses a concatenated-descendant-text XPath match, not text()-only — so it can find a phrase split across sibling elements (e.g. <mark>-highlighted search terms), preferring the deepest match
+{"timestamp":"2026-09-25T09:21:21.126Z","level":"info","message":"[BrowserActionEngine] Executing action click_by_text","context":{"tabId":"tab_1","text":"artificial intelligence in healthcare"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > click_by_role resolves via Puppeteer's aria/ selector engine, not a plain [role="x"] CSS selector — so it matches implicit roles too
+{"timestamp":"2026-09-25T09:21:21.127Z","level":"info","message":"[BrowserActionEngine] Executing action click_by_role","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > click_by_role reports a clear not-found error (role + name) rather than a generic selector-mismatch message
+{"timestamp":"2026-09-25T09:21:21.127Z","level":"info","message":"[BrowserActionEngine] Executing action click_by_role","context":{"tabId":"tab_1"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > click_by_role reports a clear not-found error (role + name) rather than a generic selector-mismatch message
+{"timestamp":"2026-09-25T09:21:21.127Z","level":"warn","message":"[BrowserActionEngine] Action click_by_role failed (attempt 1/1): No visible element found with role \"checkbox\" and accessible name \"Accept terms\"","context":{}}
+{"timestamp":"2026-09-25T09:21:21.128Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > upload_file throws instead of silently no-oping when the selector matches nothing
+{"timestamp":"2026-09-25T09:21:21.128Z","level":"info","message":"[BrowserActionEngine] Executing action upload_file","context":{"tabId":"tab_1","selector":"#does-not-exist"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > upload_file throws instead of silently no-oping when the selector matches nothing
+{"timestamp":"2026-09-25T09:21:21.128Z","level":"warn","message":"[BrowserActionEngine] Action upload_file failed (attempt 1/1): No file input found for selector: #does-not-exist","context":{}}
+{"timestamp":"2026-09-25T09:21:21.128Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > upload_file rejects a filePath that does not exist, before ever touching the page
+{"timestamp":"2026-09-25T09:21:21.128Z","level":"info","message":"[BrowserActionEngine] Executing action upload_file","context":{"tabId":"tab_1","selector":"#file-input"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > upload_file rejects a filePath that does not exist, before ever touching the page
+{"timestamp":"2026-09-25T09:21:21.129Z","level":"warn","message":"[BrowserActionEngine] Action upload_file failed (attempt 1/1): Upload file \"E:/definitely/does/not/exist/nope.txt\" does not exist or is not accessible.","context":{}}
+{"timestamp":"2026-09-25T09:21:21.129Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > upload_file rejects a filePath outside allowedUploadRoots when configured
+{"timestamp":"2026-09-25T09:21:21.129Z","level":"info","message":"[BrowserActionEngine] Executing action upload_file","context":{"tabId":"tab_1","selector":"#file-input"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > upload_file rejects a filePath outside allowedUploadRoots when configured
+{"timestamp":"2026-09-25T09:21:21.130Z","level":"warn","message":"[BrowserActionEngine] Action upload_file failed (attempt 1/1): Upload file \"E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\browser\\tests\\unit\\browser-action-engine.spec.ts\" is outside the allowed upload directories (E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\browser\\tests\\unit\\some-other-subdir-that-does-not-contain-this-file).","context":{}}
+{"timestamp":"2026-09-25T09:21:21.130Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > upload_file allows any existing file when allowedUploadRoots is not configured (default, unrestricted)
+{"timestamp":"2026-09-25T09:21:21.131Z","level":"info","message":"[BrowserActionEngine] Executing action upload_file","context":{"tabId":"tab_1","selector":"#file-input"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > type_by_label throws instead of silently typing into the wrong input on a label mismatch
+{"timestamp":"2026-09-25T09:21:21.131Z","level":"info","message":"[BrowserActionEngine] Executing action type_by_label","context":{"tabId":"tab_1"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine click occlusion detection > type_by_label throws instead of silently typing into the wrong input on a label mismatch
+{"timestamp":"2026-09-25T09:21:21.131Z","level":"warn","message":"[BrowserActionEngine] Action type_by_label failed (attempt 1/1): No input found matching label: Does Not Exist","context":{}}
+{"timestamp":"2026-09-25T09:21:21.132Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine ExecutionVerifier wiring > attaches an honest verification result to a successful action with no spec and no built-in post-condition check — verified false, not a fabricated true
+{"timestamp":"2026-09-25T09:21:21.132Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine ExecutionVerifier wiring > reports verification.verified:false (without failing the action) when a shouldUrlChange spec is not met
+{"timestamp":"2026-09-25T09:21:21.132Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine ExecutionVerifier wiring > downgrades to verified:false when candidateConfidence is below the low-confidence threshold
+{"timestamp":"2026-09-25T09:21:21.132Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine ExecutionVerifier wiring > does not fabricate verified:true from candidateConfidence alone — a spec-less action stays honestly unverified even at a high confidence
+{"timestamp":"2026-09-25T09:21:21.132Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine ExecutionVerifier wiring > reports verified:true (with the real confidence) for a self-verifying action type even with no spec
+{"timestamp":"2026-09-25T09:21:21.133Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#start button"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine ExecutionVerifier wiring > reports verified:true for click_by_text too, now that it goes through the same occlusion-safe path (closes PROB-012)
+{"timestamp":"2026-09-25T09:21:21.133Z","level":"info","message":"[BrowserActionEngine] Executing action click_by_text","context":{"tabId":"tab_1","text":"Submit"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine node-id staleness guard > rejects a click on a selector stamped with an older generation than the page currently has
+{"timestamp":"2026-09-25T09:21:21.133Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"[data-sd-node-id=\"7\"]"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine node-id staleness guard > rejects a click on a selector stamped with an older generation than the page currently has
+{"timestamp":"2026-09-25T09:21:21.133Z","level":"warn","message":"[BrowserActionEngine] Action click failed (attempt 1/1): Element matching \"[data-sd-node-id=\"7\"]\" is from a stale snapshot (the page has been re-snapshotted since) — call browser.snapshot again and use a fresh node id.","context":{}}
+{"timestamp":"2026-09-25T09:21:21.133Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine node-id staleness guard > warns but still proceeds when a selector's content differs from snapshot time (does NOT hard-block, since this is also the normal signature of ordinary live-updating content, not just virtualized-list recycling)
+{"timestamp":"2026-09-25T09:21:21.134Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"[data-sd-node-id=\"7\"]"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine node-id staleness guard > warns but still proceeds when a selector's content differs from snapshot time (does NOT hard-block, since this is also the normal signature of ordinary live-updating content, not just virtualized-list recycling)
+{"timestamp":"2026-09-25T09:21:21.134Z","level":"warn","message":"[BrowserActionEngine] Element matching \"[data-sd-node-id=\"7\"]\" shows different content than when it was snapshotted — proceeding, but if this element is inside a virtualized/windowed list this may be acting on a recycled node's new row rather than the originally-intended one. Re-snapshot to confirm if the target's identity matters here.","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine node-id staleness guard > does not block a plain CSS selector with no generation stamp
+{"timestamp":"2026-09-25T09:21:21.134Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#submit"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine duplicate-action guard > rejects an immediate repeat click on the same target, without re-dispatching
+{"timestamp":"2026-09-25T09:21:21.135Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#submit"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine duplicate-action guard > does NOT reject repeated press_key calls on the same key (fixes PROB-037 — Tab-Tab-Tab through a form, ArrowDown-ArrowDown through a dropdown, etc. are legitimate, not accidental double-dispatch)
+{"timestamp":"2026-09-25T09:21:21.135Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+{"timestamp":"2026-09-25T09:21:21.135Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+{"timestamp":"2026-09-25T09:21:21.135Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine duplicate-action guard > does not guard non-mutating actions like wait_for_selector
+{"timestamp":"2026-09-25T09:21:21.135Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#thing"}}
+{"timestamp":"2026-09-25T09:21:21.136Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#thing"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine duplicate-action guard > does not block the internal retry loop within a single executeAction call
+{"timestamp":"2026-09-25T09:21:21.136Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#retry-me"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine duplicate-action guard > does not block the internal retry loop within a single executeAction call
+{"timestamp":"2026-09-25T09:21:21.136Z","level":"warn","message":"[BrowserActionEngine] Action click failed (attempt 1/3): No visible element found for selector: #retry-me","context":{}}
+
+stdout | packages/browser/tests/unit/launcher.spec.ts > @sutradhar/browser BrowserLauncher > should apply a custom viewport to pages created after launch
+{"timestamp":"2026-09-25T09:21:21.308Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+
+stdout | apps/server/tests/unit/routes.spec.ts > @sutradhar/server Route Controllers Integration > should register and dispatch all REST API route controllers via application services
+{"timestamp":"2026-09-25T09:21:21.313Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790328080730_1","context":{"isIncognito":false,"initialUrl":"https://example.com"}}
+{"timestamp":"2026-09-25T09:21:21.314Z","level":"info","message":"[AgentApplicationService] Executing agent goal use case","context":{"goal":"Extract price data"}}
+{"timestamp":"2026-09-25T09:21:21.315Z","level":"info","message":"[StorageApplicationService] Storing file artifact reports/data.json","context":{}}
+
+stdout | apps/server/tests/unit/routes.spec.ts > @sutradhar/server Route Controllers Integration > should register and dispatch all REST API route controllers via application services
+{"timestamp":"2026-09-25T09:21:21.320Z","level":"info","message":"[SessionApplicationService] Closing session sess_1790328080730_1","context":{}}
+
+stdout | apps/server/tests/unit/routes.spec.ts > @sutradhar/server Route Controllers Integration > should register and dispatch all REST API route controllers via application services
+{"timestamp":"2026-09-25T09:21:21.490Z","level":"info","message":"[BrowserSession] Closed session sess_1790328080730_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-25T09:21:21.490Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790328080730_1","context":{"reason":"User requested close"}}
+
+ ✓ apps/server/tests/unit/routes.spec.ts  (1 test) 764ms
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine type clears existing content first > triple-clicks to select existing text, backspaces it, then types the new value, in that order
+{"timestamp":"2026-09-25T09:21:21.649Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_1","selector":"#field"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine type clears existing content first > throws (does not report success) when the typed value never lands, even after a native-setter repair attempt — fixes the field-report remediation's A1 finding
+{"timestamp":"2026-09-25T09:21:21.651Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_1","selector":"#field"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine type clears existing content first > throws (does not report success) when the typed value never lands, even after a native-setter repair attempt — fixes the field-report remediation's A1 finding
+{"timestamp":"2026-09-25T09:21:21.651Z","level":"warn","message":"[BrowserActionEngine] Action type failed (attempt 1/1): type did not land the expected value — expected \"Ada\", but the element's real content reads \"\" even after a native-setter repair attempt. The page may be intercepting/resetting input in a way neither path could overcome.","context":{}}
+{"timestamp":"2026-09-25T09:21:21.651Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine type clears existing content first > falls back to the native-setter fill when the normal type sequence leaves a mismatch, and succeeds if that lands the value
+{"timestamp":"2026-09-25T09:21:21.651Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_1","selector":"#field"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine type clears existing content first > treats a live-input-masked value as landed correctly once it survives a real blur — e.g. Stripe Elements formatting a card number with spaces
+{"timestamp":"2026-09-25T09:21:21.651Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_1","selector":"#card-number"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine type clears existing content first > treats a masked value with inserted separators (slash, dash) as landed correctly once it survives a real blur — e.g. an expiry-date field
+{"timestamp":"2026-09-25T09:21:21.651Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_1","selector":"#expiry"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine type clears existing content first > catches a masked value that drifts on blur — fixes the Stripe expiry-field digit-loss bug found live (only manifests once focus moves to the next field, e.g. CVC)
+{"timestamp":"2026-09-25T09:21:21.652Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_1","selector":"#expiry"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine type clears existing content first > catches a masked value that drifts on blur — fixes the Stripe expiry-field digit-loss bug found live (only manifests once focus moves to the next field, e.g. CVC)
+{"timestamp":"2026-09-25T09:21:21.652Z","level":"warn","message":"[BrowserActionEngine] Action type failed (attempt 1/1): type did not land the expected value — expected \"1230\", but the element's real content reads \"12 / 3\" even after a native-setter repair attempt. The page may be intercepting/resetting input in a way neither path could overcome.","context":{}}
+{"timestamp":"2026-09-25T09:21:21.652Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine type clears existing content first > still fails a genuinely truncated value even though it would pass a naive substring check
+{"timestamp":"2026-09-25T09:21:21.652Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_1","selector":"#card-number"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine type clears existing content first > still fails a genuinely truncated value even though it would pass a naive substring check
+{"timestamp":"2026-09-25T09:21:21.652Z","level":"warn","message":"[BrowserActionEngine] Action type failed (attempt 1/1): type did not land the expected value — expected \"4242424242424242\", but the element's real content reads \"4242 4242\" even after a native-setter repair attempt. The page may be intercepting/resetting input in a way neither path could overcome.","context":{}}
+{"timestamp":"2026-09-25T09:21:21.652Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine retry does not interleave with an in-flight dispatch (fixes A2) > does not start a second dispatch until a timed-out first attempt has settled
+{"timestamp":"2026-09-25T09:21:21.653Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_1","selector":"#field"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine retry does not interleave with an in-flight dispatch (fixes A2) > does not start a second dispatch until a timed-out first attempt has settled
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine retry does not interleave with an in-flight dispatch (fixes A2) > does not start a second dispatch until a timed-out first attempt has settled
+{"timestamp":"2026-09-25T09:21:21.755Z","level":"warn","message":"[BrowserActionEngine] Action type failed (attempt 1/2): Action type timed out after 50ms","context":{}}
+
+ ✓ packages/browser/tests/unit/launcher.spec.ts  (18 tests) 2353ms
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine retry does not interleave with an in-flight dispatch (fixes A2) > does not start a second dispatch until a timed-out first attempt has settled
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine retry does not interleave with an in-flight dispatch (fixes A2) > does not start a second dispatch until a timed-out first attempt has settled
+{"timestamp":"2026-09-25T09:21:22.257Z","level":"warn","message":"[BrowserActionEngine] Action type failed (attempt 2/2): s.replace is not a function","context":{}}
+{"timestamp":"2026-09-25T09:21:22.257Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine duplicate-action guard covers click_by_role/click_by_text targets (fixes the field-report remediation's new finding) > does NOT reject two different click_by_role calls (different role/name) within the duplicate window
+{"timestamp":"2026-09-25T09:21:22.258Z","level":"info","message":"[BrowserActionEngine] Executing action click_by_role","context":{"tabId":"tab_1"}}
+{"timestamp":"2026-09-25T09:21:22.258Z","level":"info","message":"[BrowserActionEngine] Executing action click_by_role","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine duplicate-action guard covers click_by_role/click_by_text targets (fixes the field-report remediation's new finding) > DOES still reject a true duplicate — same role/name, same tab, within the window
+{"timestamp":"2026-09-25T09:21:22.258Z","level":"info","message":"[BrowserActionEngine] Executing action click_by_role","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine context-destroyed diagnosis beyond click > rethrows a clear "page navigated away" diagnosis when type hits an execution-context-destroyed error
+{"timestamp":"2026-09-25T09:21:22.258Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_1","selector":"#field"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine context-destroyed diagnosis beyond click > rethrows a clear "page navigated away" diagnosis when type hits an execution-context-destroyed error
+{"timestamp":"2026-09-25T09:21:22.259Z","level":"warn","message":"[BrowserActionEngine] Action type failed (attempt 1/1): Page navigated away mid-action while executing 'type' — the action may have already taken effect before the navigation (original error: Execution context was destroyed, most likely because of a navigation.)","context":{}}
+{"timestamp":"2026-09-25T09:21:22.259Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine context-destroyed diagnosis beyond click > leaves an unrelated type error untouched
+{"timestamp":"2026-09-25T09:21:22.259Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_1","selector":"#field"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine context-destroyed diagnosis beyond click > leaves an unrelated type error untouched
+{"timestamp":"2026-09-25T09:21:22.259Z","level":"warn","message":"[BrowserActionEngine] Action type failed (attempt 1/1): some other failure","context":{}}
+{"timestamp":"2026-09-25T09:21:22.259Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine keyboard modifiers > presses and releases modifiers around press_key, in reverse order on release
+{"timestamp":"2026-09-25T09:21:22.260Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine keyboard modifiers > releases modifiers even when the underlying action throws
+{"timestamp":"2026-09-25T09:21:22.260Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine keyboard modifiers > releases modifiers even when the underlying action throws
+{"timestamp":"2026-09-25T09:21:22.260Z","level":"warn","message":"[BrowserActionEngine] Action press_key failed (attempt 1/1): boom","context":{}}
+{"timestamp":"2026-09-25T09:21:22.260Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine keyboard modifiers > does not touch the keyboard at all when no modifiers are given
+{"timestamp":"2026-09-25T09:21:22.260Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine multi-select > selects multiple values when `values` is given
+{"timestamp":"2026-09-25T09:21:22.261Z","level":"info","message":"[BrowserActionEngine] Executing action select_option","context":{"tabId":"tab_1","selector":"#colors"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine multi-select > still supports a single `value` for backward compatibility
+{"timestamp":"2026-09-25T09:21:22.261Z","level":"info","message":"[BrowserActionEngine] Executing action select_option","context":{"tabId":"tab_1","selector":"#colors"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine multi-select > throws when the read-back selected value does not match what was requested
+{"timestamp":"2026-09-25T09:21:22.261Z","level":"info","message":"[BrowserActionEngine] Executing action select_option","context":{"tabId":"tab_1","selector":"#colors"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine multi-select > throws when the read-back selected value does not match what was requested
+{"timestamp":"2026-09-25T09:21:22.261Z","level":"warn","message":"[BrowserActionEngine] Action select_option failed (attempt 1/1): select_option did not land the expected value(s) — expected [\"red\"], but the element's real selected value(s) read back as [\"green\"].","context":{}}
+{"timestamp":"2026-09-25T09:21:22.261Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine per-tab action concurrency guard > serializes two concurrent actions against the same tab instead of interleaving them
+{"timestamp":"2026-09-25T09:21:22.262Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine per-tab action concurrency guard > serializes two concurrent actions against the same tab instead of interleaving them
+{"timestamp":"2026-09-25T09:21:22.288Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine per-tab action concurrency guard > does not serialize actions against two different tabs
+{"timestamp":"2026-09-25T09:21:22.288Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_A"}}
+{"timestamp":"2026-09-25T09:21:22.288Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_B"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine cross-frame element resolution > resolves and clicks an element that only exists in a nested iframe, not the main frame
+{"timestamp":"2026-09-25T09:21:22.289Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#inside-iframe"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine cross-frame element resolution > reports a clear not-found error when no frame contains the selector
+{"timestamp":"2026-09-25T09:21:22.290Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#does-not-exist-anywhere"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine cross-frame element resolution > reports a clear not-found error when no frame contains the selector
+{"timestamp":"2026-09-25T09:21:26.290Z","level":"warn","message":"[BrowserActionEngine] Action click failed (attempt 1/1): No visible element found for selector: #does-not-exist-anywhere","context":{}}
+{"timestamp":"2026-09-25T09:21:26.290Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine cross-frame element resolution > skips a detached frame rather than searching it
+{"timestamp":"2026-09-25T09:21:26.291Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#thing"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine cross-frame element resolution > prefers a main-frame match over an identically-matching element in another frame (e.g. a third-party ad iframe)
+{"timestamp":"2026-09-25T09:21:26.291Z","level":"info","message":"[BrowserActionEngine] Executing action click_by_role","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine cross-frame element resolution > still finds a main-frame element that appears AFTER the main-frame head-start window, on a page that also has an iframe
+{"timestamp":"2026-09-25T09:21:26.292Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#delayed-main-frame-element"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine cross-frame element resolution > fully settles each cross-frame selector probe before starting the next, so no losing wait survives to reject after a frame detach
+{"timestamp":"2026-09-25T09:21:26.292Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#inside-dynamic-iframe"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine right-click (button-aware) > listens for contextmenu (not click) delivery and reports success on a clean right-click
+{"timestamp":"2026-09-25T09:21:26.300Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#ctx-target"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine right-click (button-aware) > falls back to a synthetic contextmenu dispatch (not a JS click) when a right-click is not delivered
+{"timestamp":"2026-09-25T09:21:26.302Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#ctx-target"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine middle-click (button-aware) — fixes a real duplicate-tab bug found live > listens for auxclick (not click) delivery and reports success on a clean middle-click, without ever falling back to a JS click
+{"timestamp":"2026-09-25T09:21:26.302Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#link-target"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine middle-click (button-aware) — fixes a real duplicate-tab bug found live > falls back to a synthetic auxclick dispatch (not a JS click, which would open a duplicate target=_blank tab) when a middle-click is not delivered
+{"timestamp":"2026-09-25T09:21:26.302Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#link-target"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine drag_and_drop > resolves both source and target handles and calls drag then drop
+{"timestamp":"2026-09-25T09:21:26.303Z","level":"info","message":"[BrowserActionEngine] Executing action drag_and_drop","context":{"tabId":"tab_1","selector":"#drag-source"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine drag_and_drop > fails when the target selector cannot be resolved
+{"timestamp":"2026-09-25T09:21:26.303Z","level":"info","message":"[BrowserActionEngine] Executing action drag_and_drop","context":{"tabId":"tab_1","selector":"#drag-source"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine drag_and_drop > fails when the target selector cannot be resolved
+{"timestamp":"2026-09-25T09:21:26.303Z","level":"warn","message":"[BrowserActionEngine] Action drag_and_drop failed (attempt 1/1): No element found for target selector: #missing-target","context":{}}
+{"timestamp":"2026-09-25T09:21:26.304Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine touch_tap > taps the resolved element
+{"timestamp":"2026-09-25T09:21:26.304Z","level":"info","message":"[BrowserActionEngine] Executing action touch_tap","context":{"tabId":"tab_1","selector":"#tap-target"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine action-history recording > records a successful action into the tab history
+{"timestamp":"2026-09-25T09:21:26.304Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine action-history recording > records a failed action into the tab history, with the error message
+{"timestamp":"2026-09-25T09:21:26.305Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#does-not-exist"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine action-history recording > records a failed action into the tab history, with the error message
+{"timestamp":"2026-09-25T09:21:26.305Z","level":"warn","message":"[BrowserActionEngine] Action click failed (attempt 1/1): No visible element found for selector: #does-not-exist","context":{}}
+{"timestamp":"2026-09-25T09:21:26.305Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine screenshot-on-failure > attaches a base64 screenshot to a failed action result when the page is still alive
+{"timestamp":"2026-09-25T09:21:26.306Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#does-not-exist"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine screenshot-on-failure > attaches a base64 screenshot to a failed action result when the page is still alive
+{"timestamp":"2026-09-25T09:21:26.306Z","level":"warn","message":"[BrowserActionEngine] Action click failed (attempt 1/1): No visible element found for selector: #does-not-exist","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine screenshot-on-failure > leaves failureScreenshot undefined (not throwing) when the screenshot capture itself fails
+{"timestamp":"2026-09-25T09:21:26.306Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#does-not-exist"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine screenshot-on-failure > leaves failureScreenshot undefined (not throwing) when the screenshot capture itself fails
+{"timestamp":"2026-09-25T09:21:26.306Z","level":"warn","message":"[BrowserActionEngine] Action click failed (attempt 1/1): No visible element found for selector: #does-not-exist","context":{}}
+{"timestamp":"2026-09-25T09:21:26.307Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: page closed","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine screenshot-on-failure > GAP-010: a never-resolving screenshot does not block the failed result past the 3000ms cap
+{"timestamp":"2026-09-25T09:21:26.307Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#does-not-exist"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine screenshot-on-failure > GAP-010: a never-resolving screenshot does not block the failed result past the 3000ms cap
+{"timestamp":"2026-09-25T09:21:26.307Z","level":"warn","message":"[BrowserActionEngine] Action click failed (attempt 1/1): No visible element found for selector: #does-not-exist","context":{}}
+{"timestamp":"2026-09-25T09:21:29.307Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: failure screenshot exceeded 3000ms","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine download_file > resolves with the downloaded filename and path once Page.downloadProgress reports completed
+{"timestamp":"2026-09-25T09:21:26.309Z","level":"info","message":"[BrowserActionEngine] Executing action download_file","context":{"tabId":"tab_1","selector":"#download-link"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine download_file > rejects a downloadDir outside the allowed roots instead of trusting it blindly
+{"timestamp":"2026-09-25T09:21:26.363Z","level":"info","message":"[BrowserActionEngine] Executing action download_file","context":{"tabId":"tab_1","selector":"#download-link"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine download_file > rejects a downloadDir outside the allowed roots instead of trusting it blindly
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine download_file > rejects a downloadDir outside the allowed roots instead of trusting it blindly
+{"timestamp":"2026-09-25T09:21:26.364Z","level":"warn","message":"[BrowserActionEngine] Action download_file failed (attempt 1/1): downloadDir \"/etc\" is outside the allowed download directories (E:\\safe\\dir). Pass a path under one of these, or configure additional allowed roots when constructing the runtime.","context":{}}
+{"timestamp":"2026-09-25T09:21:26.364Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine download_file > accepts a requested downloadDir that differs only in case from the allowed root, on Windows — fixes the field-report remediation's new finding
+{"timestamp":"2026-09-25T09:21:26.365Z","level":"info","message":"[BrowserActionEngine] Executing action download_file","context":{"tabId":"tab_1","selector":"#download-link"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine download_file > fails cleanly when the download is canceled
+{"timestamp":"2026-09-25T09:21:26.425Z","level":"info","message":"[BrowserActionEngine] Executing action download_file","context":{"tabId":"tab_1","selector":"#download-link"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine download_file > fails cleanly when the download is canceled
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine download_file > fails cleanly when the download is canceled
+{"timestamp":"2026-09-25T09:21:26.485Z","level":"warn","message":"[BrowserActionEngine] Action download_file failed (attempt 1/1): Download was canceled","context":{}}
+{"timestamp":"2026-09-25T09:21:26.486Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine download_file > detaches the CDP session and does not leave a dangling unhandled rejection when the trigger click fails
+{"timestamp":"2026-09-25T09:21:26.486Z","level":"info","message":"[BrowserActionEngine] Executing action download_file","context":{"tabId":"tab_1","selector":"#missing-link"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine download_file > detaches the CDP session and does not leave a dangling unhandled rejection when the trigger click fails
+{"timestamp":"2026-09-25T09:21:26.487Z","level":"warn","message":"[BrowserActionEngine] Action download_file failed (attempt 1/1): No visible element found for selector: #missing-link","context":{}}
+{"timestamp":"2026-09-25T09:21:26.487Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'click' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.547Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#x"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'click' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"warn","message":"[BrowserActionEngine] Action click failed (attempt 1/1): click failed","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'click_by_text' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"info","message":"[BrowserActionEngine] Executing action click_by_text","context":{"tabId":"tab_1","text":"Submit"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'click_by_text' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"warn","message":"[BrowserActionEngine] Action click_by_text failed (attempt 1/1): No live browser page for tab tab_1 — cannot execute click_by_text.","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'click_by_role' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"info","message":"[BrowserActionEngine] Executing action click_by_role","context":{"tabId":"tab_1"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'click_by_role' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"warn","message":"[BrowserActionEngine] Action click_by_role failed (attempt 1/1): No live browser page for tab tab_1 — cannot execute click_by_role.","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'type' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_1","selector":"#x"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'type' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"warn","message":"[BrowserActionEngine] Action type failed (attempt 1/1): No live browser page for tab tab_1 — cannot execute type.","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'type_by_label' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"info","message":"[BrowserActionEngine] Executing action type_by_label","context":{"tabId":"tab_1"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'type_by_label' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"warn","message":"[BrowserActionEngine] Action type_by_label failed (attempt 1/1): No live browser page for tab tab_1 — cannot execute type_by_label.","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'press_key' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'press_key' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"warn","message":"[BrowserActionEngine] Action press_key failed (attempt 1/1): No live browser page for tab tab_1 — cannot execute press_key.","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'scroll' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"info","message":"[BrowserActionEngine] Executing action scroll","context":{"tabId":"tab_1"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'scroll' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"warn","message":"[BrowserActionEngine] Action scroll failed (attempt 1/1): No live browser page for tab tab_1 — cannot execute scroll.","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'wait_for_selector' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#x"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'wait_for_selector' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): No live browser page for tab tab_1 — cannot execute wait_for_selector.","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'select_option' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"info","message":"[BrowserActionEngine] Executing action select_option","context":{"tabId":"tab_1","selector":"#x"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'select_option' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.548Z","level":"warn","message":"[BrowserActionEngine] Action select_option failed (attempt 1/1): No live browser page for tab tab_1 — cannot execute select_option.","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'hover' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.549Z","level":"info","message":"[BrowserActionEngine] Executing action hover","context":{"tabId":"tab_1","selector":"#x"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'hover' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.549Z","level":"warn","message":"[BrowserActionEngine] Action hover failed (attempt 1/1): No live browser page for tab tab_1 — cannot execute hover.","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'focus' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.549Z","level":"info","message":"[BrowserActionEngine] Executing action focus","context":{"tabId":"tab_1","selector":"#x"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'focus' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.549Z","level":"warn","message":"[BrowserActionEngine] Action focus failed (attempt 1/1): No live browser page for tab tab_1 — cannot execute focus.","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'take_screenshot' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.549Z","level":"info","message":"[BrowserActionEngine] Executing action take_screenshot","context":{"tabId":"tab_1"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'take_screenshot' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.549Z","level":"warn","message":"[BrowserActionEngine] Action take_screenshot failed (attempt 1/1): No live browser page for tab tab_1 — cannot execute take_screenshot.","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'drag_and_drop' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.549Z","level":"info","message":"[BrowserActionEngine] Executing action drag_and_drop","context":{"tabId":"tab_1","selector":"#a"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'drag_and_drop' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.549Z","level":"warn","message":"[BrowserActionEngine] Action drag_and_drop failed (attempt 1/1): No live browser page for tab tab_1 — cannot execute drag_and_drop.","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'touch_tap' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.549Z","level":"info","message":"[BrowserActionEngine] Executing action touch_tap","context":{"tabId":"tab_1","selector":"#x"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'touch_tap' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.549Z","level":"warn","message":"[BrowserActionEngine] Action touch_tap failed (attempt 1/1): No live browser page for tab tab_1 — cannot execute touch_tap.","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'upload_file' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.549Z","level":"info","message":"[BrowserActionEngine] Executing action upload_file","context":{"tabId":"tab_1","selector":"#x"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'upload_file' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.549Z","level":"warn","message":"[BrowserActionEngine] Action upload_file failed (attempt 1/1): No live browser page for tab tab_1 — cannot execute upload_file.","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'download_file' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.549Z","level":"info","message":"[BrowserActionEngine] Executing action download_file","context":{"tabId":"tab_1","selector":"#x"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine actions fail loudly with no live page (no fabricated success) > 'download_file' reports failure instead of fabricated success when the tab has no live page
+{"timestamp":"2026-09-25T09:21:26.549Z","level":"warn","message":"[BrowserActionEngine] Action download_file failed (attempt 1/1): No live browser page for tab tab_1 — cannot execute download_file.","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine tab-lifecycle actions are session-level, not engine-level > switch_tab fails loudly instead of pretending to succeed, for a caller that bypasses the type system
+{"timestamp":"2026-09-25T09:21:26.549Z","level":"info","message":"[BrowserActionEngine] Executing action switch_tab","context":{"tabId":"tab_1"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine tab-lifecycle actions are session-level, not engine-level > switch_tab fails loudly instead of pretending to succeed, for a caller that bypasses the type system
+{"timestamp":"2026-09-25T09:21:26.549Z","level":"warn","message":"[BrowserActionEngine] Action switch_tab failed (attempt 1/1): Unsupported action type switch_tab","context":{}}
+{"timestamp":"2026-09-25T09:21:26.550Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine tab-lifecycle actions are session-level, not engine-level > open_new_tab fails loudly instead of pretending to succeed, for a caller that bypasses the type system
+{"timestamp":"2026-09-25T09:21:26.550Z","level":"info","message":"[BrowserActionEngine] Executing action open_new_tab","context":{"tabId":"tab_1"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine tab-lifecycle actions are session-level, not engine-level > open_new_tab fails loudly instead of pretending to succeed, for a caller that bypasses the type system
+{"timestamp":"2026-09-25T09:21:26.550Z","level":"warn","message":"[BrowserActionEngine] Action open_new_tab failed (attempt 1/1): Unsupported action type open_new_tab","context":{}}
+{"timestamp":"2026-09-25T09:21:26.550Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine tab-lifecycle actions are session-level, not engine-level > close_tab fails loudly instead of pretending to succeed, for a caller that bypasses the type system
+{"timestamp":"2026-09-25T09:21:26.550Z","level":"info","message":"[BrowserActionEngine] Executing action close_tab","context":{"tabId":"tab_1"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine tab-lifecycle actions are session-level, not engine-level > close_tab fails loudly instead of pretending to succeed, for a caller that bypasses the type system
+{"timestamp":"2026-09-25T09:21:26.550Z","level":"warn","message":"[BrowserActionEngine] Action close_tab failed (attempt 1/1): Unsupported action type close_tab","context":{}}
+{"timestamp":"2026-09-25T09:21:26.550Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine post-action settle wait > does not wait for settle when the caller does not request it (default off)
+{"timestamp":"2026-09-25T09:21:26.550Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine post-action settle wait > waits for DOM-quiet and network-idle when settle:true is requested
+{"timestamp":"2026-09-25T09:21:26.550Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine post-action settle wait > honors a partial settle spec, filling in defaults for the rest
+{"timestamp":"2026-09-25T09:21:26.551Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine post-action settle wait > does not fail the action if the settle wait itself times out (best-effort, not a hard requirement)
+{"timestamp":"2026-09-25T09:21:26.552Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine scroll — element-targeted (nested scroll containers) > scrolls the target element itself (its own scrollTop), not the window, when a selector is given
+{"timestamp":"2026-09-25T09:21:26.552Z","level":"info","message":"[BrowserActionEngine] Executing action scroll","context":{"tabId":"tab_1","selector":".grid-scroller"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine scroll — element-targeted (nested scroll containers) > throws a clear, element-specific error when the target scroll container genuinely does not move (not at a boundary)
+{"timestamp":"2026-09-25T09:21:26.552Z","level":"info","message":"[BrowserActionEngine] Executing action scroll","context":{"tabId":"tab_1","selector":".grid-scroller"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine scroll — element-targeted (nested scroll containers) > throws a clear, element-specific error when the target scroll container genuinely does not move (not at a boundary)
+{"timestamp":"2026-09-25T09:21:26.553Z","level":"warn","message":"[BrowserActionEngine] Action scroll failed (attempt 1/1): scroll had no effect on \".grid-scroller\" — its scrollTop stayed at 50 after attempting to scroll down by 500px, and it doesn't appear to already be at that scroll boundary. The element may not actually be its own scroll container (no overflow:auto/scroll), or something is intercepting/resetting the scroll.","context":{}}
+{"timestamp":"2026-09-25T09:21:26.553Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine scroll — element-targeted (nested scroll containers) > does not false-fail when the target element is already at its scroll boundary
+{"timestamp":"2026-09-25T09:21:26.554Z","level":"info","message":"[BrowserActionEngine] Executing action scroll","context":{"tabId":"tab_1","selector":".grid-scroller"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine scroll — element-targeted (nested scroll containers) > falls back to window-scrolling when no selector is given (unchanged default behavior)
+{"timestamp":"2026-09-25T09:21:26.554Z","level":"info","message":"[BrowserActionEngine] Executing action scroll","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine scroll — element-targeted (nested scroll containers) > direction "bottom" actually jumps to the real scroll boundary, not a relative move (fixes a real bug: "bottom" previously scrolled UP by `amount` instead)
+{"timestamp":"2026-09-25T09:21:26.555Z","level":"info","message":"[BrowserActionEngine] Executing action scroll","context":{"tabId":"tab_1"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine scroll — element-targeted (nested scroll containers) > direction "top" jumps to scrollY 0 on an element-targeted scroll container
+{"timestamp":"2026-09-25T09:21:26.555Z","level":"info","message":"[BrowserActionEngine] Executing action scroll","context":{"tabId":"tab_1","selector":".grid-scroller"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E1: default state is now visible — the intentional 0.5.0 behavior change from the old attached-only default
+{"timestamp":"2026-09-25T09:21:26.555Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E2: state:"visible" only succeeds once the element is genuinely visible, never on attached-but-hidden
+{"timestamp":"2026-09-25T09:21:26.555Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E3: state:"attached" returns even though the element is hidden — the old default behavior, unchanged
+{"timestamp":"2026-09-25T09:21:26.779Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E4: state:"hidden" resolves on hide or removal, and reports matchedAtStart
+{"timestamp":"2026-09-25T09:21:26.780Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#toast"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E4: state:"hidden" resolves on hide or removal, and reports matchedAtStart
+{"timestamp":"2026-09-25T09:21:26.995Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#toast"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E5: hidden across multiple frames requires EVERY frame to agree, and frame probes within one pass now run in parallel (GAP-059, FR2-01 fix-3)
+{"timestamp":"2026-09-25T09:21:26.996Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#banner"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E5: hidden across multiple frames requires EVERY frame to agree, and frame probes within one pass now run in parallel (GAP-059, FR2-01 fix-3)
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E5: hidden across multiple frames requires EVERY frame to agree, and frame probes within one pass now run in parallel (GAP-059, FR2-01 fix-3)
+{"timestamp":"2026-09-25T09:21:27.338Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 300ms waiting for state=hidden: an element matching \"#banner\" is still visible.","context":{}}
+{"timestamp":"2026-09-25T09:21:27.338Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E6: a visible timeout names the state and diagnoses that matches exist but are hidden
+{"timestamp":"2026-09-25T09:21:27.339Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E6: a visible timeout names the state and diagnoses that matches exist but are hidden
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E6: a visible timeout names the state and diagnoses that matches exist but are hidden
+{"timestamp":"2026-09-25T09:21:27.399Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 50ms waiting for state=visible: 1 element(s) match \"#t\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.","context":{}}
+{"timestamp":"2026-09-25T09:21:27.399Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E7: first match hidden, a later match visible — diagnosed instead of silently timing out
+{"timestamp":"2026-09-25T09:21:27.400Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":".dup"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E7: first match hidden, a later match visible — diagnosed instead of silently timing out
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E7: first match hidden, a later match visible — diagnosed instead of silently timing out
+{"timestamp":"2026-09-25T09:21:27.462Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 50ms waiting for state=visible: the first match is not visible, but 1 later match(es) are. Visibility is checked on the first match in document order; use a more specific selector.","context":{}}
+{"timestamp":"2026-09-25T09:21:27.462Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E8: visible with zero matches keeps the node-id staleness guidance and the "no element found" substring
+{"timestamp":"2026-09-25T09:21:27.463Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#nope"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E8: visible with zero matches keeps the node-id staleness guidance and the "no element found" substring
+{"timestamp":"2026-09-25T09:21:27.525Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 50ms waiting for state=visible: No element found for selector: #nope","context":{}}
+{"timestamp":"2026-09-25T09:21:27.525Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E8: visible with zero matches keeps the node-id staleness guidance and the "no element found" substring
+{"timestamp":"2026-09-25T09:21:27.525Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"[data-sd-node-id=\"99\"]"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E8: visible with zero matches keeps the node-id staleness guidance and the "no element found" substring
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E8: visible with zero matches keeps the node-id staleness guidance and the "no element found" substring
+{"timestamp":"2026-09-25T09:21:27.587Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 50ms waiting for state=visible: No element found for selector: [data-sd-node-id=\"99\"] — the page navigated since the last snapshot (or none has been taken yet this document). Call browser.snapshot again and use a fresh node id.","context":{}}
+{"timestamp":"2026-09-25T09:21:27.588Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E9: an attached timeout names the state too (attached path unchanged — still frame.waitForSelector, no matches)
+{"timestamp":"2026-09-25T09:21:27.588Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E9: an attached timeout names the state too (attached path unchanged — still frame.waitForSelector, no matches)
+{"timestamp":"2026-09-25T09:21:27.589Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 50ms waiting for state=attached: No element found for selector: #t","context":{}}
+{"timestamp":"2026-09-25T09:21:27.589Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > GAP-009a: an attached timeout with a genuinely EXISTING match says so, never "No element found"
+{"timestamp":"2026-09-25T09:21:27.589Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > GAP-009a: an attached timeout with a genuinely EXISTING match says so, never "No element found"
+{"timestamp":"2026-09-25T09:21:27.590Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 50ms waiting for state=attached: 1 element(s) already match \"#t\". The wait still timed out — this is likely a race where the DOM-presence check did not observe them settle in time; try a larger timeoutMs.","context":{}}
+{"timestamp":"2026-09-25T09:21:27.590Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > GAP-009b: a visible timeout where the first match IS visible (a late race) says so, never "No element found"
+{"timestamp":"2026-09-25T09:21:27.590Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > GAP-009b: a visible timeout where the first match IS visible (a late race) says so, never "No element found"
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > GAP-009b: a visible timeout where the first match IS visible (a late race) says so, never "No element found"
+{"timestamp":"2026-09-25T09:21:27.650Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 50ms waiting for state=visible: 1 element(s) match \"#t\" and the first is visible now; it became visible after the wait gave up. This is likely a race at the very end of the timeout; try a larger timeoutMs.","context":{}}
+{"timestamp":"2026-09-25T09:21:27.650Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E10: the state-naming error beats the generic outer-race timeout message (GAP-013: this test genuinely depends on the grace period)
+{"timestamp":"2026-09-25T09:21:27.651Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E10: the state-naming error beats the generic outer-race timeout message (GAP-013: this test genuinely depends on the grace period)
+{"timestamp":"2026-09-25T09:21:27.820Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 100ms waiting for state=visible: No element found for selector: #t","context":{}}
+{"timestamp":"2026-09-25T09:21:27.820Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E10: the state-naming error beats the generic outer-race timeout message (GAP-013: this test genuinely depends on the grace period)
+{"timestamp":"2026-09-25T09:21:27.821Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E10: the state-naming error beats the generic outer-race timeout message (GAP-013: this test genuinely depends on the grace period)
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E10: the state-naming error beats the generic outer-race timeout message (GAP-013: this test genuinely depends on the grace period)
+{"timestamp":"2026-09-25T09:21:27.988Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): Action wait_for_selector timed out after 100ms","context":{}}
+{"timestamp":"2026-09-25T09:21:27.989Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E11: an invalid state bypassing the type system fails clearly instead of being silently coerced
+{"timestamp":"2026-09-25T09:21:27.990Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E11: an invalid state bypassing the type system fails clearly instead of being silently coerced
+{"timestamp":"2026-09-25T09:21:27.990Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): Invalid wait_for_selector state \"bogus\" — expected one of: visible, attached, hidden.","context":{}}
+{"timestamp":"2026-09-25T09:21:27.990Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E12: timeoutMs <= 0 means "check once, don't wait" (GAP-011 rewrite — the old 1ms-clamp behavior always failed even when already in the requested state)
+{"timestamp":"2026-09-25T09:21:27.990Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+{"timestamp":"2026-09-25T09:21:27.991Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+{"timestamp":"2026-09-25T09:21:27.991Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+{"timestamp":"2026-09-25T09:21:27.992Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+{"timestamp":"2026-09-25T09:21:27.992Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+{"timestamp":"2026-09-25T09:21:27.992Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+{"timestamp":"2026-09-25T09:21:27.992Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E12: timeoutMs <= 0 means "check once, don't wait" (GAP-011 rewrite — the old 1ms-clamp behavior always failed even when already in the requested state)
+{"timestamp":"2026-09-25T09:21:27.991Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 0ms waiting for state=visible: No element found for selector: #t","context":{}}
+{"timestamp":"2026-09-25T09:21:27.991Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+{"timestamp":"2026-09-25T09:21:27.992Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 0ms waiting for state=attached: No element found for selector: #t","context":{}}
+{"timestamp":"2026-09-25T09:21:27.992Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+{"timestamp":"2026-09-25T09:21:27.992Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 0ms waiting for state=hidden: an element matching \"#t\" is still visible.","context":{}}
+{"timestamp":"2026-09-25T09:21:27.992Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+{"timestamp":"2026-09-25T09:21:27.993Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 0ms waiting for state=attached: No element found for selector: #t","context":{}}
+{"timestamp":"2026-09-25T09:21:27.993Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E13: the visibility diagnosis is best-effort — a frame with no $$eval support still returns a state-naming error, not a TypeError
+{"timestamp":"2026-09-25T09:21:27.993Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E13: the visibility diagnosis is best-effort — a frame with no $$eval support still returns a state-naming error, not a TypeError
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > E13: the visibility diagnosis is best-effort — a frame with no $$eval support still returns a state-naming error, not a TypeError
+{"timestamp":"2026-09-25T09:21:28.050Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 50ms waiting for state=visible: No element found for selector: #t","context":{}}
+{"timestamp":"2026-09-25T09:21:28.050Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > GAP-015: an invalid selector under state hidden fails fast with the real parser error, not "still visible" after the full timeout
+{"timestamp":"2026-09-25T09:21:28.051Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#[[["}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > GAP-015: an invalid selector under state hidden fails fast with the real parser error, not "still visible" after the full timeout
+{"timestamp":"2026-09-25T09:21:28.051Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector failed waiting for state=hidden: Failed to execute 'querySelector' on 'Document': '#[[[' is not a valid selector.","context":{}}
+{"timestamp":"2026-09-25T09:21:28.052Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1) > GAP-016: hidden succeeding on the first match still reports otherVisibleMatches when a LATER match is visible
+{"timestamp":"2026-09-25T09:21:28.052Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#banner, #stays"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-2, audit-2 gaps) > GAP-030: a busy/unresponsive frame does not stall detecting an element already visible in a healthy frame
+{"timestamp":"2026-09-25T09:21:28.053Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-2, audit-2 gaps) > GAP-031: a hidden wait does not falsely report success when the tab/session itself closes mid-wait
+{"timestamp":"2026-09-25T09:21:28.312Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#stays"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-2, audit-2 gaps) > GAP-031: a hidden wait does not falsely report success when the tab/session itself closes mid-wait
+{"timestamp":"2026-09-25T09:21:28.312Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector failed waiting for state=hidden: Protocol error (DOM.querySelector): Session closed. Most likely the page has been closed.","context":{}}
+{"timestamp":"2026-09-25T09:21:28.313Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-2, audit-2 gaps) > GAP-031: a visible wait also surfaces a fatal check failure instead of a plain timeout
+{"timestamp":"2026-09-25T09:21:28.313Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#toast"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-2, audit-2 gaps) > GAP-031: a visible wait also surfaces a fatal check failure instead of a plain timeout
+{"timestamp":"2026-09-25T09:21:28.313Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): Protocol error (DOM.querySelector): Target closed.","context":{}}
+{"timestamp":"2026-09-25T09:21:28.314Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-2, audit-2 gaps) > GAP-032: a finite timeoutMs far beyond setTimeout's own ceiling is clamped, not rejected, and still resolves normally
+{"timestamp":"2026-09-25T09:21:28.315Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-2, audit-2 gaps) > GAP-033: an invalid selector under state attached fails fast with the real parser error, not the generic "No element found" after the full timeout
+{"timestamp":"2026-09-25T09:21:28.316Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#[[["}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-2, audit-2 gaps) > GAP-033: an invalid selector under state attached fails fast with the real parser error, not the generic "No element found" after the full timeout
+{"timestamp":"2026-09-25T09:21:28.316Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): Failed to execute 'querySelector' on 'Document': '#[[[' is not a valid selector.","context":{}}
+{"timestamp":"2026-09-25T09:21:28.316Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-2, audit-2 gaps) > GAP-033: a genuinely missing element under state attached still times out normally (pre-check does not false-positive)
+{"timestamp":"2026-09-25T09:21:28.317Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#nope"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-2, audit-2 gaps) > GAP-033: a genuinely missing element under state attached still times out normally (pre-check does not false-positive)
+{"timestamp":"2026-09-25T09:21:28.317Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 50ms waiting for state=attached: No element found for selector: #nope","context":{}}
+{"timestamp":"2026-09-25T09:21:28.317Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-3, audit-3 gaps) > GAP-057: a hidden wait must NOT report success while a busy frame's element is genuinely, persistently still visible (repro of audit-3 probe-a3.mjs h1/h2 pattern)
+{"timestamp":"2026-09-25T09:21:28.318Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#spinner"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-3, audit-3 gaps) > GAP-057: a hidden wait must NOT report success while a busy frame's element is genuinely, persistently still visible (repro of audit-3 probe-a3.mjs h1/h2 pattern)
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-3, audit-3 gaps) > GAP-057: a hidden wait must NOT report success while a busy frame's element is genuinely, persistently still visible (repro of audit-3 probe-a3.mjs h1/h2 pattern)
+{"timestamp":"2026-09-25T09:21:29.197Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 400ms waiting for state=hidden: could not verify: one or more frames were unresponsive.","context":{}}
+{"timestamp":"2026-09-25T09:21:29.197Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-3, audit-3 gaps) > GAP-057 regression guard: a hidden wait still succeeds once every frame genuinely agrees, even after an earlier pass saw one frame time out (recovering busy frame, not a permanent one)
+{"timestamp":"2026-09-25T09:21:29.198Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#banner"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-3, audit-3 gaps) > GAP-059: probing multiple busy frames within one hidden-wait pass runs in parallel, not sequentially (latency does not scale with frame count)
+{"timestamp":"2026-09-25T09:21:29.459Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#spinner"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-3, audit-3 gaps) > GAP-059: probing multiple busy frames within one hidden-wait pass runs in parallel, not sequentially (latency does not scale with frame count)
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-3, audit-3 gaps) > GAP-059: probing multiple busy frames within one hidden-wait pass runs in parallel, not sequentially (latency does not scale with frame count)
+{"timestamp":"2026-09-25T09:21:30.242Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 260ms waiting for state=hidden: could not verify: one or more frames were unresponsive.","context":{}}
+{"timestamp":"2026-09-25T09:21:30.242Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-3, audit-3 gaps) > GAP-059: an abandoned per-frame probe that resolves a real handle AFTER its 250ms bound is disposed, not leaked
+{"timestamp":"2026-09-25T09:21:30.243Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-3, audit-3 gaps) > GAP-059: an abandoned per-frame probe that resolves a real handle AFTER its 250ms bound is disposed, not leaked
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-3, audit-3 gaps) > GAP-059: an abandoned per-frame probe that resolves a real handle AFTER its 250ms bound is disposed, not leaked
+{"timestamp":"2026-09-25T09:21:30.507Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 0ms waiting for state=attached: No element found for selector: #t","context":{}}
+{"timestamp":"2026-09-25T09:21:30.507Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-3, audit-3 gaps) > GAP-057 (matchedAtStart): probeSelectorMatchExists reports `undefined` (unknown), never `false`, when a frame times out and no OTHER frame confirms a match
+{"timestamp":"2026-09-25T09:21:31.015Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-081a (isHandleVisible): a fatal session-closed error while checking visibility must report "unknown", never a silently-confirmed "not visible" (which previously let a hidden wait falsely succeed)
+{"timestamp":"2026-09-25T09:21:31.280Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#spinner"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-081a (isHandleVisible): a fatal session-closed error while checking visibility must report "unknown", never a silently-confirmed "not visible" (which previously let a hidden wait falsely succeed)
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-081a (isHandleVisible): a fatal session-closed error while checking visibility must report "unknown", never a silently-confirmed "not visible" (which previously let a hidden wait falsely succeed)
+{"timestamp":"2026-09-25T09:21:31.435Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 150ms waiting for state=hidden: could not verify: one or more frames were unresponsive.","context":{}}
+{"timestamp":"2026-09-25T09:21:31.436Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-081b (pierceFirstMatch): an error this code does not otherwise recognize defaults to "unknown", never "no-match" — a probe error is not evidence of absence
+{"timestamp":"2026-09-25T09:21:31.436Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#spinner"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-081b (pierceFirstMatch): an error this code does not otherwise recognize defaults to "unknown", never "no-match" — a probe error is not evidence of absence
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-081b (pierceFirstMatch): an error this code does not otherwise recognize defaults to "unknown", never "no-match" — a probe error is not evidence of absence
+{"timestamp":"2026-09-25T09:21:31.592Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 150ms waiting for state=hidden: could not verify: one or more frames were unresponsive.","context":{}}
+{"timestamp":"2026-09-25T09:21:31.592Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-082: a hidden timeout CONFIRMED visible by a healthy frame still says "is still visible", distinct from the "could not verify" unresponsive-frame message
+{"timestamp":"2026-09-25T09:21:31.593Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#banner"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-082: a hidden timeout CONFIRMED visible by a healthy frame still says "is still visible", distinct from the "could not verify" unresponsive-frame message
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-082: a hidden timeout CONFIRMED visible by a healthy frame still says "is still visible", distinct from the "could not verify" unresponsive-frame message
+{"timestamp":"2026-09-25T09:21:31.748Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 150ms waiting for state=hidden: an element matching \"#banner\" is still visible.","context":{}}
+{"timestamp":"2026-09-25T09:21:31.748Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-082 (9th site — checkWaitForSelectorOnce): the timeoutMs<=0 hidden check-once path also distinguishes "could not verify" (unresponsive frame) from "is still visible" (confirmed)
+{"timestamp":"2026-09-25T09:21:31.749Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#banner"}}
+
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-082 (9th site — checkWaitForSelectorOnce): the timeoutMs<=0 hidden check-once path also distinguishes "could not verify" (unresponsive frame) from "is still visible" (confirmed)
+{"timestamp":"2026-09-25T09:21:32.273Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 0ms waiting for state=hidden: could not verify: one or more frames were unresponsive.","context":{}}
+{"timestamp":"2026-09-25T09:21:32.273Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+{"timestamp":"2026-09-25T09:21:32.274Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 0ms waiting for state=hidden: an element matching \"#banner\" is still visible.","context":{}}
+{"timestamp":"2026-09-25T09:21:32.274Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-082 (9th site — checkWaitForSelectorOnce): the timeoutMs<=0 hidden check-once path also distinguishes "could not verify" (unresponsive frame) from "is still visible" (confirmed)
+{"timestamp":"2026-09-25T09:21:32.274Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#banner"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-083: a state=visible timeout where the diagnostic itself times out on every frame says "could not be determined", never the confirmed-negative "No element found"
+{"timestamp":"2026-09-25T09:21:32.275Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#t"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-083: a state=visible timeout where the diagnostic itself times out on every frame says "could not be determined", never the confirmed-negative "No element found"
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-083: a state=visible timeout where the diagnostic itself times out on every frame says "could not be determined", never the confirmed-negative "No element found"
+{"timestamp":"2026-09-25T09:21:32.585Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 50ms waiting for state=visible: visibility could not be determined for 1 of 1 frame(s) — they did not respond within the diagnostic's time bound. This does NOT confirm the element is absent; try a larger timeoutMs.","context":{}}
+{"timestamp":"2026-09-25T09:21:32.585Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-084/GAP-087: probing multiple busy frames within a single VISIBLE-state pass now runs in parallel too — mirrors GAP-059's hidden-path fix, which this exact scenario (state:visible) previously did NOT get
+{"timestamp":"2026-09-25T09:21:32.586Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#spinner"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-084/GAP-087: probing multiple busy frames within a single VISIBLE-state pass now runs in parallel too — mirrors GAP-059's hidden-path fix, which this exact scenario (state:visible) previously did NOT get
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-084/GAP-087: probing multiple busy frames within a single VISIBLE-state pass now runs in parallel too — mirrors GAP-059's hidden-path fix, which this exact scenario (state:visible) previously did NOT get
+{"timestamp":"2026-09-25T09:21:32.846Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 260ms waiting for state=visible: No element found for selector: #spinner","context":{}}
+{"timestamp":"2026-09-25T09:21:32.847Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-085: the otherVisibleMatches diagnostic reports its own uncertainty instead of a silently-wrong confirmed zero when its per-frame check times out
+{"timestamp":"2026-09-25T09:21:32.847Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#banner"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-086: isHandleVisible is bounded on its own — a handle whose evaluate() never resolves cannot stall a pass past FRAME_PROBE_TIMEOUT_MS
+{"timestamp":"2026-09-25T09:21:33.110Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#spinner"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-086: isHandleVisible is bounded on its own — a handle whose evaluate() never resolves cannot stall a pass past FRAME_PROBE_TIMEOUT_MS
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-086: isHandleVisible is bounded on its own — a handle whose evaluate() never resolves cannot stall a pass past FRAME_PROBE_TIMEOUT_MS
+{"timestamp":"2026-09-25T09:21:33.375Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 150ms waiting for state=hidden: could not verify: one or more frames were unresponsive.","context":{}}
+{"timestamp":"2026-09-25T09:21:33.375Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-112 (FR2-01 audit-5/fix-5): a genuine per-frame THROWN error in the visibility diagnosis must say "could not be determined", never the confirmed-negative "No element found" (element genuinely present)
+{"timestamp":"2026-09-25T09:21:33.376Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#present"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-112 (FR2-01 audit-5/fix-5): a genuine per-frame THROWN error in the visibility diagnosis must say "could not be determined", never the confirmed-negative "No element found" (element genuinely present)
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-112 (FR2-01 audit-5/fix-5): a genuine per-frame THROWN error in the visibility diagnosis must say "could not be determined", never the confirmed-negative "No element found" (element genuinely present)
+{"timestamp":"2026-09-25T09:21:33.530Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 150ms waiting for state=visible: visibility could not be determined for 1 of 1 frame(s) — they did not respond within the diagnostic's time bound. This does NOT confirm the element is absent; try a larger timeoutMs.","context":{}}
+{"timestamp":"2026-09-25T09:21:33.531Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-113 (FR2-01 audit-5/fix-5): the otherVisibleMatches diagnostic reports its own uncertainty, not a silently-wrong confirmed zero, when its per-frame check THROWS (not just times out)
+{"timestamp":"2026-09-25T09:21:33.531Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#banner"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-115 (FR2-01 audit-5/fix-5): the ATTACHED-state check-once path (timeoutMs<=0) probes multiple busy frames in PARALLEL — firstAnyHandleAnyFrame's own parallelization, previously unguarded by any test (audit-5's mutation X1, reverting it to sequential probing, passed all 141 existing tests)
+{"timestamp":"2026-09-25T09:21:33.532Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_1","selector":"#thing"}}
+
+stdout | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-115 (FR2-01 audit-5/fix-5): the ATTACHED-state check-once path (timeoutMs<=0) probes multiple busy frames in PARALLEL — firstAnyHandleAnyFrame's own parallelization, previously unguarded by any test (audit-5's mutation X1, reverting it to sequential probing, passed all 141 existing tests)
+<empty line>
+stderr | packages/browser/tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-115 (FR2-01 audit-5/fix-5): the ATTACHED-state check-once path (timeoutMs<=0) probes multiple busy frames in PARALLEL — firstAnyHandleAnyFrame's own parallelization, previously unguarded by any test (audit-5's mutation X1, reverting it to sequential probing, passed all 141 existing tests)
+{"timestamp":"2026-09-25T09:21:33.796Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/1): wait_for_selector timed out after 0ms waiting for state=attached: No element found for selector: #thing","context":{}}
+{"timestamp":"2026-09-25T09:21:33.796Z","level":"warn","message":"[BrowserActionEngine] Skipping failure screenshot: tab.page.screenshot is not a function","context":{}}
+
+ ✓ packages/browser/tests/unit/browser-action-engine.spec.ts  (144 tests) 14197ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/scenario-suite/fr2-16/doc-static.spec.mjs [ tools/scenario-suite/fr2-16/doc-static.spec.mjs ]
+Error: process.exit unexpectedly called with "0"
+ ❯ tools/scenario-suite/fr2-16/doc-static.spec.mjs:141:9
+    139| 
+    140| console.log(`\n${failures === 0 ? 'ALL PASS' : `${failures} FAILURE(S)…
+    141| process.exit(failures === 0 ? 0 : 1);
+       |         ^
+    142| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  tools/scenario-suite/fr2-16/stealth-claim-check.mutation.spec.mjs [ tools/scenario-suite/fr2-16/stealth-claim-check.mutation.spec.mjs ]
+Error: process.exit unexpectedly called with "0"
+ ❯ tools/scenario-suite/fr2-16/stealth-claim-check.mutation.spec.mjs:186:9
+    184| console.log(`Total checks: ${passes + failures} (${passes} pass, ${fai…
+    185| console.log(`\n${failures === 0 ? 'ALL PASS (plus known disclosed gaps…
+    186| process.exit(failures === 0 ? 0 : 1);
+       |         ^
+    187| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/llm/tests/unit/gateway.spec.ts > @sutradhar/llm Gateway & OpenAiCompatibleAdapter > should generate a REAL completion against local Ollama
+LlmHttpError: [openai-compatible] HTTP 404: {"error":{"message":"model 'qwen3.5:9b' not found","type":"not_found_error","param":null,"code":null}}
+
+ ❯ OpenAiCompatibleAdapter.post packages/llm/src/gateway/openai-compatible-adapter.ts:343:15
+    341|       if (!response.ok) {
+    342|         const text = await response.text().catch(() => '');
+    343|         throw new LlmHttpError(
+       |               ^
+    344|           `[${this.providerId}] HTTP ${response.status}: ${text.slice(…
+    345|           response.status,
+ ❯ retryWithBackoff.maxRetries packages/llm/src/gateway/openai-compatible-adapter.ts:179:22
+ ❯ Module.retryWithBackoff packages/utils/src/async/retry.ts:30:14
+ ❯ packages/llm/tests/unit/gateway.spec.ts:64:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { status: 404, bodyText: '{"error":{"message":"model \'qwen3.5:9b\' not found","type":"not_found_error","param":null,"code":null}}\n' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  packages/llm/tests/unit/gateway.spec.ts > @sutradhar/llm Gateway & OpenAiCompatibleAdapter > should stream REAL chunks from local Ollama
+LlmHttpError: [openai-compatible] stream HTTP 404
+ ❯ OpenAiCompatibleAdapter.generateStream packages/llm/src/gateway/openai-compatible-adapter.ts:233:13
+    231|       clear();
+    232|       const text = await response.text().catch(() => '');
+    233|       throw new LlmHttpError(
+       |             ^
+    234|         `[${this.providerId}] stream HTTP ${response.status}`,
+    235|         response.status,
+ ❯ packages/llm/tests/unit/gateway.spec.ts:94:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { status: 404, bodyText: '{"error":{"message":"model \'qwen3.5:9b\' not found","type":"not_found_error","param":null,"code":null}}\n' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  packages/llm/tests/unit/local.spec.ts > @sutradhar/llm Local Ollama Provider Engine > should discover the REAL models installed in the local daemon
+AssertionError: expected 0 to be greater than 0
+ ❯ packages/llm/tests/unit/local.spec.ts:43:29
+     41|       const adapter = new OllamaAdapter();
+     42|       const models = await adapter.listLocalModels();
+     43|       expect(models.length).toBeGreaterThan(0);
+       |                             ^
+     44|       // Each model name comes from the live /api/tags response.
+     45|       for (const m of models) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  packages/llm/tests/unit/local.spec.ts > @sutradhar/llm Local Ollama Provider Engine > should generate a REAL completion against the local Ollama model
+LlmHttpError: [ollama-local] HTTP 404: {"error":{"message":"model 'qwen3.5:9b' not found","type":"not_found_error","param":null,"code":null}}
+
+ ❯ OpenAiCompatibleAdapter.post packages/llm/src/gateway/openai-compatible-adapter.ts:343:15
+    341|       if (!response.ok) {
+    342|         const text = await response.text().catch(() => '');
+    343|         throw new LlmHttpError(
+       |               ^
+    344|           `[${this.providerId}] HTTP ${response.status}: ${text.slice(…
+    345|           response.status,
+ ❯ retryWithBackoff.maxRetries packages/llm/src/gateway/openai-compatible-adapter.ts:179:22
+ ❯ Module.retryWithBackoff packages/utils/src/async/retry.ts:30:14
+ ❯ packages/llm/tests/unit/local.spec.ts:58:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { status: 404, bodyText: '{"error":{"message":"model \'qwen3.5:9b\' not found","type":"not_found_error","param":null,"code":null}}\n' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  packages/llm/tests/unit/local.spec.ts > @sutradhar/llm Local Ollama Provider Engine > should stream REAL chunks from the local Ollama model
+LlmHttpError: [ollama-local] stream HTTP 404
+ ❯ OpenAiCompatibleAdapter.generateStream packages/llm/src/gateway/openai-compatible-adapter.ts:233:13
+    231|       clear();
+    232|       const text = await response.text().catch(() => '');
+    233|       throw new LlmHttpError(
+       |             ^
+    234|         `[${this.providerId}] stream HTTP ${response.status}`,
+    235|         response.status,
+ ❯ packages/llm/tests/unit/local.spec.ts:83:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { status: 404, bodyText: '{"error":{"message":"model \'qwen3.5:9b\' not found","type":"not_found_error","param":null,"code":null}}\n' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+ Test Files  4 failed | 70 passed (74)
+      Tests  5 failed | 762 passed (767)
+   Start at  14:51:17
+   Duration  16.51s (transform 9.36s, setup 5ms, collect 44.42s, tests 21.95s, environment 23ms, prepare 26.74s)
+
+EXIT=1

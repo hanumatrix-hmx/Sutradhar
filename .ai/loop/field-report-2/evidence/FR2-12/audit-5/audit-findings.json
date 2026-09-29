@@ -1,0 +1,199 @@
+{
+  "auditor": "FR2-12 audit-5 (independent, maker != checker), escalation cycle 1 of 2",
+  "head": "da843dc",
+  "status": "COMPLETE",
+  "verdict": "FAIL",
+  "build": "turbo build --force --concurrency=1: 20/20 tasks, 0 cached, exit 0 (build.log)",
+  "vitest": {
+    "capability-runtime": 214,
+    "browser": 507,
+    "cli": 171,
+    "mcp-server": 92,
+    "sutradhar": 20,
+    "total": 1004,
+    "allGreen": true,
+    "logs": "vitest-*.log, vitest-exits.txt"
+  },
+  "findings": [
+    {
+      "id": "A5-1",
+      "severity": "major (deterministic contamination: the previous page's own 404 is reported as the current page's broken request with coversWholeDocument:true; 2 of 3 shapes are regressions introduced by escalation-1's new tab-level capture; the third is the natural agent flow click-broken-link -> go_back -> audit)",
+      "title": "Current-page own-status capture (BrowserTab.lastMainDocumentResponseCapture) is never invalidated when a new document commits WITHOUT its own Document response, so the PREVIOUS page's own 404 is reported as the current page's broken request (coversWholeDocument:true)",
+      "repro": "runtime.navigate(own404 page) -> runtime.navigate(X) -> runtime.audit(sid, {}) where X commits with no Network.responseReceived(type=Document): about:blank, a failed navigation (connection refused -> chrome-error page), or Back to a bfcache-restored page",
+      "rates": {
+        "about:blank": "current 5/5 stale 404 reported; pre-fix emulation 0/5 (REGRESSION)",
+        "net-error page": "current 5/5; pre-fix 0/5 (REGRESSION)",
+        "bfcache Back": "current 5/5; pre-fix emulation ALSO 5/5 (pre-existing, but through a different path: pre-fix scoped since=timeOrigin of the original load, so the 404 row from the network ring buffer leaked; escalation-1 closes that path but the stale capture re-adds it)",
+        "data: URL control": "0/5 (data: navigations do get a Document response, which overwrites the capture)",
+        "mcp": "MCP stdio, 10 trials each: own404->about:blank 9/10, own404->dead-host 10/10, home->browser.click(broken link)->browser.go_back->browser.audit 10/10; coversWholeDocument:true in all 30 (probe-a51-mcp.json)"
+      },
+      "cause": "setupCommitTracking's Network.responseReceived handler overwrites lastMainDocumentResponseCapture only when a new Document response arrives for the main frame id (stable across navigations); Page.frameNavigated never clears or checks it (e.g. by loaderId). runtime.audit() current-page mode takes tab.getLastMainDocumentResponse() as the first-priority own-status source and pushes it into brokenRequests if status>=400.",
+      "evidence": [
+        "probe-hyp.mjs",
+        "probe-hyp-stale-404-no-response-commit.json",
+        "probe-hyp-stale-404-no-response-commit-prefix.json",
+        "probe-hyp-bfcache-stale-404.json",
+        "probe-hyp-bfcache-stale-404-prefix.json",
+        "probe-debug-h3.json",
+        "probe-hyp-summary.json",
+        "probe-a51-mcp.mjs",
+        "probe-a51-mcp.json",
+        "run-a51-mcp.log"
+      ],
+      "fixDirection": "Invalidate the tab-level capture on every main-frame Page.frameNavigated whose frame.loaderId differs from the loaderId of the captured Network.responseReceived (both events carry loaderId), instead of relying on a later Document response to overwrite it. A response-less commit (about:blank, chrome-error, bfcache restore) then yields no live capture and falls through to the URL-match fallback. Add unit tests for all three shapes and a live case per shape."
+    },
+    {
+      "id": "A5-2",
+      "severity": "minor (false-clean regression; narrow shape: Back/Forward to a bfcache-restored page; MCP/SDK only)",
+      "title": "A bfcache restore fires a main-frame Page.frameNavigated (type BackForwardCacheRestore), which moves lastMainFrameCommitAt to the RESTORE instant, so a restored document's own load-time findings are scoped out while coversWholeDocument stays true",
+      "repro": "navigate(A: own console.error + own fetch 404) -> navigate(clean) -> goBack (pageshow.persisted===true) -> audit(sid,{})",
+      "rates": {
+        "current": "A's own 404 dropped 5/5, A's own console error dropped 1/5, covers:true 5/5",
+        "pre-fix emulation": "own 404 kept 5/5, own error kept 5/5",
+        "mcp": "MCP: homeerr->clean->browser.go_back->browser.audit: restored page own 404 dropped 10/10, own console error kept 10/10, covers:true 10/10"
+      },
+      "evidence": [
+        "probe-hyp-bfcache-own-errors.json",
+        "probe-hyp-bfcache-own-errors-prefix.json",
+        "probe-a51-mcp.json"
+      ],
+      "fixDirection": "On Page.frameNavigated with type BackForwardCacheRestore, either report coversWholeDocument:false (the restored document's pre-freeze activity is outside the scope window), or scope by the document's original commit instant (keyed by loaderId) while excluding the interval it spent in bfcache."
+    },
+    {
+      "id": "A5-3",
+      "severity": "minor (test integrity)",
+      "title": "Mutations of escalation-1 code that pass every unit test",
+      "survivors": {
+        "N11 tab tracker also advances commit on Page.navigatedWithinDocument (GAP-266 false-clean class, reintroduced at tab level)": "browser 507/507 pass; no CT test feeds a same-document nav to the tab tracker. Live a-longlived sameDocMovedCommit check would catch it.",
+        "N4 tab tracker drops the Document type filter": "507/507 pass (CT3 uses a non-Document response with a different frameId, so the frameId filter masks it)",
+        "R5 current-page live capture never consulted": "214/214 pass. Note R5 would actually remove A5-1 (its regression shapes).",
+        "R6 tab-level capture also used in URL mode": "214/214 pass",
+        "N12 tab setup bound removed": "507/507 pass; fire-and-forget so no observable effect, benign"
+      },
+      "killed": "19/24: M7 (RA16), M9 (RA18), M10 (RA17), N1,N2,N3,N5,N6,N7,N8,N9,N10, R1,R2,R3,R4,R7, S1,S2. All sources sha-restored (allRestored true).",
+      "evidence": [
+        "mutation-test.mjs",
+        "mutation-results.json",
+        "mutation-results-N1-tab-no-subframe-filter_N11-tab-also-counts-same-doc-na.json",
+        "run-mutation.log",
+        "run-mutation-crlf.log"
+      ]
+    },
+    {
+      "id": "A5-4",
+      "severity": "minor, PRE-EXISTING (not caused by escalation-1), out of this cycle's scope, but a real unbounded audit() hang worth its own gap",
+      "title": "audit() on a non-foreground tab stalls in page.screenshot (fullPage, unbounded): ~28.5s while an alert is open on ANOTHER tab (released only by that dialog's 30s auto-dismiss), and indefinitely (every later audit >45s) after handleDialog(accept) was used on the audited tab",
+      "repro": "launch; createTab T; createTab O; alert on T -> audit({url},T) ok; alert on O -> audit({url},T) 30.0s (screenshot 28.5s); alert on T + handleDialog(accept) -> audit({url},T) and all later audits on T hang (>45s cap), even with no dialog anywhere",
+      "classification": "Identical timings under (a) current build, (b) getter pre-fix emulation, (c) pre-fix emulation with setupCommitTracking also no-op'd (no tab-lifetime CDP session at all). So the tab-lifetime session is not the cause. Stall is page.screenshot; page.goto/evaluate/title return in ms.",
+      "evidence": [
+        "probe-dialog-hang-debug.mjs",
+        "probe-dialog-hang-debug-seq.json",
+        "probe-dialog-hang-debug-seq-prefix.json",
+        "probe-dialog-hang-debug-seq-prefix-notrack.json"
+      ]
+    }
+  ],
+  "refutedHypotheses": {
+    "prerender target swap": "Puppeteer swaps a page's primary target on speculation-rules prerender activation and the tab-lifetime session is bound to the original target, but Chrome reports prerenderStatus 'PrerenderingDisabledByDevTools' on Sutradhar pages, and no prerender target is created via click/goto/runtime.navigate/location with immediate or eager rules (probe-prerender-diag.json, probe-prerender-why.json). Unreachable here.",
+    "cross-site unload/pagehide noise, current-page mode": "0/5 leaked cross-site and same-site (pre-fix emulation leaked 1-8 old errors in 5/5 same-site and 3/5 cross-site)",
+    "new page's very first inline console.error dropped by cross-session event ordering": "kept 5/5 (plus the volume probe's own-page checks)",
+    "GAP-279 goto fallback returning a JS-redirect's FIRST hop": "page.goto resolved to the final /own404 (404) in 5/5, correctly reported with a dialog open at audit start"
+  },
+  "probes": {
+    "gap278Core": {
+      "script": "probe-gap278.mjs",
+      "result": "current-page: runtime d0/d150/d800 0/15 leaked each, MCP d0/d150/d800 0/15 leaked each (0/90 total); own-page variant (clean page with its own console.error + own 404 img): own findings dropped 0/90, old leaked 0/90; URL-mode control 0/15; coversWholeDocument false 0/180",
+      "evidence": [
+        "probe-gap278.json",
+        "run-gap278.log"
+      ]
+    },
+    "gap280": {
+      "result": "M7/M9/M10 re-applied to runtime.ts exactly as audit-4 did: each killed by exactly one test, RA16/RA18/RA17 respectively; restored sha verified. GAP-280 confirmed closed."
+    },
+    "gap274FreshProcess": {
+      "result": "one fresh child process per measurement: dialog-open audit({url}) 2564/2574/2583/2577ms, prior-nav-timeout audit({url}) 2575/2570ms, all own-404 reported; positive control with AUDIT_CDP_SETUP_BOUND_MS raised in dist in a fresh process: 31563ms (the real hang); dist sha restored.",
+      "evidence": [
+        "probe-hang-fresh.mjs",
+        "probe-hang-child.mjs",
+        "probe-hang-fresh.json",
+        "run-hang-fresh.log"
+      ]
+    },
+    "tabLifetime": {
+      "script": "probe-tablife.mjs",
+      "evidence": [
+        "probe-tablife-all.json",
+        "run-tablife.log"
+      ],
+      "a": "60 varied navigations on one tab (noisy/clean/own404/hash/pushState/JS redirect/link click/reload/800ms/back): cross-doc commit always advanced, never before the doc timeOrigin, never moved by hash/pushState, 0 foreign findings, 0 own findings dropped, own404 reported 6/6, never stale in this sequence; listeners on the tracking session stay 1/1; 200 more fast navigations created 0 CDP sessions, commit current, audit clean; heap 16.1->18.2->20.4MB (no GC forced; no growth pattern tied to sessions).",
+      "b": "tab closed right after creation: audit and audit({url}) on its id fail fast with No tab ... in session (5/5), late-resolving session detached by close() or never assigned; page self-close removes the tab from the list; closeTab during audit({url}) rejects cleanly (Navigating frame was detached); during current-page audit resolves.",
+      "c": "4 tabs x 10 rounds concurrent navigate+audit (40 trials) + 4 concurrent audits: commit outside own window 0, doc response not own 0, foreign console 0, foreign broken 0, own dropped 0, own404 wrong 0.",
+      "d": "popup adopted via page.on(popup): tracker present, 0/5 leaked; attach() to an external Chrome (own temp profile, own PID, removed): tracker wired after ~300ms (fire-and-forget), pre-loaded page audit covers:false, 0/5 leaked, 0 own dropped; adoptExistingPage with a dialog already open returned in 0ms (constructor not blocked), later audits clean 3/3.",
+      "e": "8 rounds of audit({url:own404}) -> audit() -> audit({url:clean}) -> audit() on one tab: 0 bad (own404 in both modes, no stale 404 on the clean page, no foreign findings); tab tracker observed all 8 URL-mode navs; concurrent url+current-page audits both fulfilled.",
+      "cdpTotals": "created 39, detached 36, stillConnected 1 (launch tab tracker) at the end"
+    },
+    "gap273Shapes": {
+      "result": "17 shapes x10 via audit({url}) no dialog: 170/170; 171 sessions created, 170 detached (1 = tab tracker)",
+      "evidence": [
+        "probe-273x.mjs",
+        "probe-273x-nodialog.json",
+        "run-273x-nodialog.log"
+      ]
+    },
+    "manyshift": "Pre-existing and unrelated: identical audited CLS (2.4303) in audit-1 (2/3 miss, pre-fix-1 code), audit-4 (1/3), escalation-1 (1/3); the reference read afterwards sees one extra late shift (n 154 vs 153, diff 0.0162). A race in the probe reference, not scoping.",
+    "gap279Live": {
+      "script": "probe-273x.mjs dialog (fresh tab(s) per trial)",
+      "current": "alert confirmed pending at audit({url}) start on the SAME tab: 100/100 (10 shapes x10; hash-404, replaceState-404, emptybody-404/500, own404, ok, 302->hash-404, js200->hash404, 302->replaceState-200, 302>500(js)>302>404), each ~2.57s (bound engaged). Alert open on ANOTHER tab: 30/30 (~30s each = pre-existing A5-4 screenshot stall). Alert accepted right before: 30/30 (~1.56s). 351 CDP sessions created, 350 detached (1 = tab tracker).",
+      "preFixEmulation": "same-tab dialog open, 5 trials: 26/50; on the 6 GAP-273 shapes only 6/30 (hash-404 2/5, replaceState-404 1/5, emptybody-404 0/5, emptybody-500 0/5, 302->hash-404 0/5, js200->hash404 3/5), goto=null. So the goto fallback tier is what closes it: 60/60 vs 6/30.",
+      "verdict": "GAP-279 closed live (the repro escalation-1 disclosed it had not run).",
+      "evidence": [
+        "probe-273x-dialog.json",
+        "probe-273x-dialog-prefix.json",
+        "run-273x-dialog.log",
+        "run-273x-dialog-prefix.log",
+        "probe-hyp-dialog-jsredirect-404.json"
+      ]
+    },
+    "rerunsRuntime": {
+      "driver": "run-reruns.sh runtime (probes copied from audit-4/rerun-a*, guards retargeted)",
+      "summary": "rerun-summary-runtime.json",
+      "audit3": "probe-runtime all x10: 47/47 verdicts perfect, identical to audit-4 (SPA replace/push/hash at -1/0/30/200ms, sitePattern, burst, own404/500, 302->404, interleaved x1x2 clicks at 0/200/800, iframe cross/same/OOPIF, meta refresh, JS chain, mixed 302+replace+js+push, 3-hop->404, hop->slow500, afterHang 3/3, own404 fragment/hash/replaceState/emptyBody, repeat 25/25, 8 real sites 10/10 each, gap262 noisyThenClean 0/150/600, B2 PASS); cdp 475/475 detached. heavy: 20/90/150 subresources own404 3/3 each. real-docstatus: 42 rows, 0 missed. concurrent/vitals: identical to audit-4 (vitals deltas 0, B2 spread 0).",
+      "audit2": "gap262 all: 25 case groups (core 21, tight/pagehide noise 20+20, own 404/500/redirect, http/js chains, 12 spaSelf variants, sameTab hash/pushState current-page, crossSite 10, realworld 10): 0 leaked, 0 own dropped. gap263 ajv: identical (400-999 valid; 399/1000/404.5/-1 rejected; base valid). NOTE: gap263-ajv.mjs needs rerun-a2/sample-report.json as input; copied from audit-4/rerun-a2 (read-only source).",
+      "audit1": "vitals 16/18 (both misses /manyshift, clsDiff 0.0162 = pre-existing reference race; audit-1 itself 2/3 on pre-fix-1 code); B2 spread 0; B1residual current-page 0 console / 0 broken in every trial (audit-4: 64-65 / 32 each = GAP-278, now fixed), url-mode 0; sdk-schema all cases identical to audit-4."
+    },
+    "rerunsCli": {
+      "audit3": "CLI sweep 93/93, fine 52/52, shapes 12/12 exactly one JSON doc; own404 4 shapes 6/6 each; concurrent 12 one-doc / 4 zero-doc (2 Chrome start timeouts under load + 2 ERR_ABORTED same-tab races) / 0 multi-doc, same classes as audit-4; snap (GAP-277, out of scope) unchanged 3 double-docs at alert@400",
+      "audit2": "CLI all cases structurally identical to audit-4 except benign timing: S3_boundary alert@1575 race flips report vs dialog-blocked doc (both exactly one doc), and console order. MCP/SDK dialogs: same as audit-2 (GAP-270 pre-existing).",
+      "audit1": "CLI cases identical to audit-4 except vitals numbers. L12 repeat: runtime 20/20, MCP 10/10 (audit-4: MCP 9/10 = GAP-278 symptom, now fixed)."
+    }
+  },
+  "verdictReason": "Escalation-1's core claim holds: GAP-278 (T11 noisy->clean->audit()) is fixed, 0/90 leaked across runtime+MCP x 0/150/800ms plus 0/90 own-finding drops; GAP-279 closes live (60/60 vs 6/30 pre-fix); GAP-280 closes (M7/M9/M10 killed by RA16/RA18/RA17); GAP-274 bound holds in fresh processes (2.56-2.58s vs 31.6s unbounded). The tab-lifetime mechanism survives long-lived/close/multi-tab/adoption/interleave attacks. The FAIL is A5-1 (major): the new tab-level own-status capture is never invalidated on a response-less commit, so the previous page's own 404 is reported as the current page's broken request (coversWholeDocument:true). This is the spec's T11/B1 contamination class. It reproduces deterministically: about:blank and a dead-host navigation are REGRESSIONS (0/5 pre-fix), and click-broken-link -> go_back -> audit is 10/10 via MCP. A5-2 (minor) is a companion bfcache false-clean regression.",
+  "liveVerify": {
+    "script": "tools/scenario-suite/verify-fr2-12-audit.mjs, full, SUTRADHAR_FR2_12_EVIDENCE_DIR=audit-5/live-rerun (default would have written into protected run-1/)",
+    "result": "29 pass / 0 fail / 1 info (L15 GAP-038 expected-miss) / 0 skip of 30",
+    "evidence": [
+      "live-rerun/"
+    ]
+  },
+  "specCompliance": "Re-checked against spec.md fresh. T11/B1: fixed for navigate->navigate->audit (T11's literal scenario) in both modes, NOT for the response-less-commit shapes of A5-1 (the previous page's 404 is exactly the \"noisy page's 404s as the clean page's findings\" T11 describes). D9: the current-page scoping now uses commit time instead of the spec's literal documentStartedAt, a deliberate and correct deviation (audit-4 fix direction). D9's \"MCP/SDK after same-process navigate: coversWholeDocument true\" is violated in spirit by A5-2 (true while dropping the restored document's own findings). D10/B2, D11, D12, D13, D14, schema, MCP browser.audit, SDK Page.audit, CLI --json: verified by live-verify 29/0/1 and the reruns. GAP-038 remains open, documented.",
+  "hygiene": {
+    "processBaseline": "process-baseline.txt",
+    "processAfter": "process-after.txt",
+    "newProcessesAfter": "3, all renderers of the user's own Chrome (parent PID 29088, present in the baseline); 0 audit-5 processes left",
+    "killedByImageName": false,
+    "kills": "Only own PIDs: probe Chrome PIDs via lib killAll; the stalled probe-273x chain (timeout.exe/node/chrome, command line contained probe-273x.mjs) killed by PID tree.",
+    "tempDirs": "263 sutradhar-cli-<ts>/fr212-*-<ts> dirs whose embedded epoch fell inside audit-5's CLI window removed (no process was using any; no other session created such dirs in the hour before). 7 unused puppeteer_dev_chrome_profile-* created during this session removed. The attach probe's own temp profile removed by the script. 9 other-session Chrome CLI profiles still in use were left alone.",
+    "sourcesRestored": "mutation-test.mjs: allRestored true (sha256 match for runtime.ts, browser-tab.ts, site-audit.ts). probe-hang-fresh.mjs: dist/runtime.js sha restored (distRestored true).",
+    "protectedDirs": "No writes outside audit-5/. live-verify redirected via env var. rerun-a2/sample-report.json copied FROM audit-4 (read-only). git status: only audit-5/ untracked."
+  },
+  "shipLimitationsIfFixed": [
+    "GAP-038 fixed 1500ms dwell (FR2-08 not landed)",
+    "GAP-277 snap --json double doc (out of scope)",
+    "GAP-276 item 3 / GAP-282 cli.ts stdout-guard bypass untested",
+    "GAP-270 MCP/SDK dialog-on-load misleading 30s nav timeout",
+    "GAP-275 residual ring-buffer limits for non-own entries",
+    "A5-4 background-tab screenshot stall (pre-existing)",
+    "GAP-283 createCDPSession/detach unbounded (theoretical)"
+  ]
+}

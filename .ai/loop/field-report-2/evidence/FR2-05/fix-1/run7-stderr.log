@@ -1,0 +1,29 @@
+[PASS] N1 — downloadDir "E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\outside" is outside the allowed download directories (E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\allowA, E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\allowB).
+[PASS] N2 — downloadDir "E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\allowA-evil" is outside the allowed download directories (E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\allowA, E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\allo
+[PASS] N3 — {"success":true,"actionType":"download_file","executionTimeMs":134,"currentUrl":"http://127.0.0.1:61077/page?case=N3&name=n3-1790568308636.bin","title":"FR2-05 case N3","output":{"downloadedFilename":
+[PASS] N4 — downloadDir "some-relative-dir-n4" is outside the allowed download directories (E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\allowA, E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\allowB). Pass a path under one of 
+[PASS] N5 — success=false (no-crash requirement met; verdict=rejected)
+[PASS] N6 — downloadDir "E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\allowA\n6-jn" is outside the allowed download directories (E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\allowA, E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\all
+[PASS] N7 — success=false, outside2/newsub exists=false
+[PASS] N8 — downloadDir "E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\allowA\n8-dj\sub" is outside the allowed download directories (E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\allowA, E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\allowB): broken symlink/junction at "E:\AI-Cache\
+[PASS] N9 — landedInside=true noEvilOutside=true path=E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\allowB\n9out\_.._evil-N9.txt
+[PASS] N10 — {"success":false,"actionType":"upload_file","executionTimeMs":1519,"currentUrl":"http://127.0.0.1:61077/page?case=N9&name=n9-1790568308636.bin","title":"FR2-05 case N9","error":"Upload file \"E:\\AI-Cache\\tmp\\fr2-05-fix1-add-5ZVdvy\\up\\n10-jn\\sec
+[PASS] GAP298-root-is-symlink — E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\gap298-link\g298-1790568308636.bin
+[PASS] GAP295-kelvin-signs-lookalike — success=false error=downloadDir "E:\AI-Cache\tmp\fr2-05-fix1-add-5ZVdvy\worK-root295\sub" is outside the allowed download directories (E:\AI-Cache\tmp\fr2-05-fix1-add-5ZV lookalikeSubCreated=false
+[PASS] GAP296-concurrent-fast-result — success=false err=Action download_file timed out after 30000ms
+Hint: The page may still be loading — retry, or raise timeoutMs on this call. landedInOwnDir=false
+[PASS] GAP296-concurrent-slow-result — success=false err=Action download_file timed out after 30000ms
+Hint: The page may still be loading — retry, or raise timeoutMs on this call. landedInOwnDir=true
+[PASS] GAP296-no-cross-contamination-or-platform-default-escape — fast->platformDefault=false slow->platformDefault=false fast->slowDir=false slow->fastDir=false (this is the fail-closed guarantee GAP-296 is about: neither file ever appears in the OTHER download's dir or in Chrome's platform-default Downloads folder, regardless of which call's cleanup ran first)
+--- client4 stderr (diagnostic) ---
+{"timestamp":"2026-09-28T04:06:28.523Z","level":"warn","message":"[BrowserActionEngine] Action download_file failed (attempt 1/3): Action download_file timed out after 30000ms","context":{}}
+{"timestamp":"2026-09-28T04:06:28.523Z","level":"warn","message":"[BrowserActionEngine] Action download_file failed (attempt 1/3): Action download_file timed out after 30000ms","context":{}}
+{"timestamp":"2026-09-28T04:07:01.051Z","level":"warn","message":"[BrowserActionEngine] Action download_file failed (attempt 2/3): Action download_file timed out after 30000ms","context":{}}
+{"timestamp":"2026-09-28T04:07:01.051Z","level":"warn","message":"[BrowserActionEngine] Action download_file failed (attempt 2/3): Action download_file timed out after 30000ms","context":{}}
+{"timestamp":"2026-09-28T04:07:34.073Z","level":"warn","message":"[BrowserActionEngine] Action download_file failed (attempt 3/3): Action download_file timed out after 30000ms","context":{}}
+{"timestamp":"2026-09-28T04:07:34.074Z","level":"warn","message":"[BrowserActionEngine] Action download_file failed (attempt 3/3): Action download_file timed out after 30000ms","context":{}}
+
+--- end client4 stderr ---
+[PASS] no-leaked-processes-additions — count=0
+
+16/16 passed. Evidence: E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\.ai\loop\field-report-2\evidence\FR2-05\fix-1

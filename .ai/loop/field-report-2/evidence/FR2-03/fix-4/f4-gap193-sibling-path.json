@@ -1,0 +1,162 @@
+[
+  {
+    "case": "V1-young-cli-victim",
+    "kind": "cli",
+    "withCarrier": true,
+    "carrierPid": 104452,
+    "victim": "E:\\AI-Cache\\tmp\\fr2-03-a4-V1-young-cli-victim-bfx63l\\temp\\sutradhar-cli-1790370421647-vIcTm1",
+    "victimAgeMsAtGc": null,
+    "dry": {
+      "actions": [
+        {
+          "type": "kill",
+          "pid": 104452,
+          "role": "browser",
+          "userDataDir": "E:\\AI-Cache\\tmp\\fr2-03-a4-V1-young-cli-victim-bfx63l\\temp\\sutradhar-cli-1790370421647-vIcTm1",
+          "reason": "orphan-cli",
+          "result": "planned"
+        }
+      ],
+      "kept": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-V1-young-cli-victim-bfx63l\\temp\\sutradhar-cli-1790370421647-vIcTm1",
+          "reason": "grace"
+        }
+      ],
+      "exitCode": 0
+    },
+    "real": {
+      "actions": [
+        {
+          "type": "kill",
+          "pid": 104452,
+          "role": "browser",
+          "userDataDir": "E:\\AI-Cache\\tmp\\fr2-03-a4-V1-young-cli-victim-bfx63l\\temp\\sutradhar-cli-1790370421647-vIcTm1",
+          "reason": "orphan-cli",
+          "result": "killed"
+        }
+      ],
+      "kept": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-V1-young-cli-victim-bfx63l\\temp\\sutradhar-cli-1790370421647-vIcTm1",
+          "reason": "grace"
+        }
+      ],
+      "exitCode": 0
+    },
+    "victimExistsAfter": true,
+    "victimFileExistsAfter": true,
+    "gcAt": "2026-09-25T21:07:02.666Z"
+  },
+  {
+    "case": "V1c-control-no-carrier",
+    "kind": "cli",
+    "withCarrier": false,
+    "carrierPid": null,
+    "victim": "E:\\AI-Cache\\tmp\\fr2-03-a4-V1c-control-no-carrier-ImAumy\\temp\\sutradhar-cli-1790370421648-vIcTm2",
+    "victimAgeMsAtGc": null,
+    "dry": {
+      "actions": [],
+      "kept": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-V1c-control-no-carrier-ImAumy\\temp\\sutradhar-cli-1790370421648-vIcTm2",
+          "reason": "grace"
+        }
+      ],
+      "exitCode": 0
+    },
+    "real": {
+      "actions": [],
+      "kept": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-V1c-control-no-carrier-ImAumy\\temp\\sutradhar-cli-1790370421648-vIcTm2",
+          "reason": "grace"
+        }
+      ],
+      "exitCode": 0
+    },
+    "victimExistsAfter": true,
+    "victimFileExistsAfter": true,
+    "gcAt": "2026-09-25T21:07:05.091Z"
+  },
+  {
+    "case": "V2-unowned-puppeteer-victim",
+    "kind": "runtime",
+    "withCarrier": true,
+    "carrierPid": 170964,
+    "victim": "E:\\AI-Cache\\tmp\\fr2-03-a4-V2-unowned-puppeteer-victim-Fkikwl\\temp\\puppeteer_dev_chrome_profile-oThEr1",
+    "victimAgeMsAtGc": 3600000,
+    "dry": {
+      "actions": [
+        {
+          "type": "kill",
+          "pid": 170964,
+          "role": "browser",
+          "userDataDir": "E:\\AI-Cache\\tmp\\fr2-03-a4-V2-unowned-puppeteer-victim-Fkikwl\\temp\\puppeteer_dev_chrome_profile-oThEr1",
+          "reason": "orphan-runtime",
+          "result": "planned"
+        }
+      ],
+      "kept": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-V2-unowned-puppeteer-victim-Fkikwl\\temp\\puppeteer_dev_chrome_profile-oThEr1",
+          "reason": "not-sutradhar"
+        }
+      ],
+      "exitCode": 0
+    },
+    "real": {
+      "actions": [
+        {
+          "type": "kill",
+          "pid": 170964,
+          "role": "browser",
+          "userDataDir": "E:\\AI-Cache\\tmp\\fr2-03-a4-V2-unowned-puppeteer-victim-Fkikwl\\temp\\puppeteer_dev_chrome_profile-oThEr1",
+          "reason": "orphan-runtime",
+          "result": "killed"
+        }
+      ],
+      "kept": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-V2-unowned-puppeteer-victim-Fkikwl\\temp\\puppeteer_dev_chrome_profile-oThEr1",
+          "reason": "not-sutradhar"
+        }
+      ],
+      "exitCode": 0
+    },
+    "victimExistsAfter": true,
+    "victimFileExistsAfter": true,
+    "gcAt": "2026-09-25T21:07:07.499Z"
+  },
+  {
+    "case": "V2c-control-no-carrier",
+    "kind": "runtime",
+    "withCarrier": false,
+    "carrierPid": null,
+    "victim": "E:\\AI-Cache\\tmp\\fr2-03-a4-V2c-control-no-carrier-KkjyE0\\temp\\puppeteer_dev_chrome_profile-oThEr2",
+    "victimAgeMsAtGc": 3600000,
+    "dry": {
+      "actions": [],
+      "kept": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-V2c-control-no-carrier-KkjyE0\\temp\\puppeteer_dev_chrome_profile-oThEr2",
+          "reason": "not-sutradhar"
+        }
+      ],
+      "exitCode": 0
+    },
+    "real": {
+      "actions": [],
+      "kept": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a4-V2c-control-no-carrier-KkjyE0\\temp\\puppeteer_dev_chrome_profile-oThEr2",
+          "reason": "not-sutradhar"
+        }
+      ],
+      "exitCode": 0
+    },
+    "victimExistsAfter": true,
+    "victimFileExistsAfter": true,
+    "gcAt": "2026-09-25T21:07:09.192Z"
+  }
+]

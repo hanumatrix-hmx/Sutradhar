@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-09-25T07:10:00.000Z",
+  "note": "FR2-09 fix-2, GAP-151. Per evidence-preservation rules for this loop, fix-1/step0-matrix.json (and every other fix-1/audit-1/audit-2 file) is left untouched. This file is the corrected replacement for that file's rows (i) and (j) ONLY; all other fix-1 rows (a)-(g),(h),(k),(l),(m) are unaffected by this correction and are not repeated here. Numbers and listings below are copied verbatim from audit-2's own live measurement (not re-derived), which ran the SAME busy-OOPIF scenario against both the true pre-change build (main checkout's own compiled dist, not a stripped reconstruction of the after-state) and the post-change worktree build.",
+  "correction": {
+    "gap": "GAP-151",
+    "problem": "fix-1's step0-matrix.json row (h-i) (reused block) filled row (i) — defined by spec.md line 609 as 'the pre-change runtime snapshot() duration while xo is busy for 8s (expected ~8s, confirming T2)' — with POST-change numbers (10026ms/7692ms, both already-cited audit-1 numbers for the POST-change behavior of a different scenario: two same-site busy frames, and a same-origin busy frame with no bound). Neither of those two numbers is a PRE-change measurement of anything. Row (j) — spec.md line 610, 'the pre-change snapshot() listing, showing which frame buttons appear' — was entirely absent, despite step0-probe.mjs's own header text claiming rows (h)-(j) were captured.",
+    "source": ".ai/loop/field-report-2/evidence/FR2-09/audit-2/adversarial-live.json, entries \"D busy OOPIF snapshot PRE (main checkout dist)\" and \"D busy OOPIF snapshot POST (worktree dist)\" (also present verbatim in adversarial-live.txt)."
+  },
+  "rows": [
+    {
+      "row": "i",
+      "definition": "spec.md:609 — the pre-change runtime snapshot() duration while a same-origin OOPIF child (\"xo\") is busy for 8s (expected ~8s, confirming T2: no per-child-frame bound existed pre-change).",
+      "build": "PRE-change (main checkout's own compiled dist — E:/HMX_Projects/Internal_Projects/PinchTab/packages/capability-runtime/dist)",
+      "scenario": "busyParent page: one OOPIF child (name=\"xo\") busy-looping for 8000ms starting shortly after load",
+      "elapsedMs": 7506,
+      "confirmsT2": "Close to the expected ~8s (busy duration), within the noise of load/scrape overhead — pre-change snapshot() had no bound on this child frame's cost, so it waited out (most of) the full busy period rather than returning early."
+    },
+    {
+      "row": "i-comparison-post-change",
+      "definition": "Same scenario, POST-change build, included here for direct contrast (not itself row (i) — row (i) is specifically the PRE-change number above).",
+      "build": "POST-change (this worktree's compiled dist)",
+      "scenario": "same busyParent page as row (i)",
+      "elapsedMs": 5023,
+      "note": "Bounded by FRAME_SCRAPE_TIMEOUT_MS (5000ms, D7) plus load/scrape overhead — confirms the post-change fix actually shortens the busy-child-frame cost versus the unbounded pre-change behavior (7506ms -> 5023ms), rather than merely reporting a different number for a different scenario as fix-1's mislabeled rows implied."
+    },
+    {
+      "row": "j",
+      "definition": "spec.md:610 — the pre-change snapshot() listing, showing which frame buttons appear.",
+      "build": "PRE-change (main checkout's own compiled dist)",
+      "listing": "URL: http://127.0.0.1:50774/busyParent?n=1790319247395\nTitle: \nInteractive elements (2):\n[#1] button \"Main\"\n[#2] button \"Child\"",
+      "observation": "Pre-change, both the main-frame button (\"Main\") AND the busy child frame's button (\"Child\") appear — the pre-change snapshot() had no timeout on the child frame, so it eventually finished scraping it (after ~7.5s) and included its content, unlike the post-change listing (see row i-comparison-post-change's build) which instead shows a bounded, honest 'not inspectable (timed out after 5000ms)' placeholder and omits the Child button entirely."
+    }
+  ],
+  "reused_from_fix1_unchanged": {
+    "note": "fix-1/step0-matrix.json's rows (a)-(g), (k), (l), (m) are correct and unaffected by this correction; see that file directly for those rows. Only its mislabeled 'reused'/(h-i) block is superseded by the (i) and (j) rows above.",
+    "path": ".ai/loop/field-report-2/evidence/FR2-09/fix-1/step0-matrix.json"
+  }
+}

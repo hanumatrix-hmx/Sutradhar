@@ -1,0 +1,90 @@
+{
+  "E0a": {
+    "code": 1,
+    "stderrTail": "Fatal: ENOENT: no such file or directory, open 'E:\\AI-Cache\\tmp\\fr212-e0a-1790491672917-ssa909nx8zo\\x\\y\\z\\audit-screenshot.png'\n"
+  },
+  "E0b": {
+    "code": 0,
+    "stdoutIsJson": false,
+    "stdoutHead": "URL: http://127.0.0.1:52428/audit?n=2\nTitle: FR2-12 audit 2\nScreenshot: E:\\AI-Cache\\tmp\\fr212-e0b-1790491675808-3ygku3t7tvd\\audit-screenshot.png\n\nWeb Vitals:\n  LCP: 28ms\n  CLS: 0.27996762208067943\n  F"
+  },
+  "E1a": {
+    "code": 0,
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "brokenRequests": 0,
+    "stdout": "URL: http://127.0.0.1:52428/audit?n=3\nTitle: FR2-12 audit 3\nScreenshot: E:\\AI-Cache\\tmp\\fr212-e1a-1790491678657-420rkwj0ph7\\audit-screenshot.png\n\nWeb Vitals:\n  LCP: n/ams\n  CLS: n/a\n  FCP: 56ms\n  TTFB: 2ms\n\nConsole errors: 0\nPage errors: 0\nBroken requests (4xx/5xx): 0\n\nAccessibility issues: 4\n  - Images missing an alt attribute (1)\n  - Form inputs with no accessible label (no <label>, aria-label, or aria-labelledby) (1)\n  - Root <html> has no lang attribute (1)\n  - Buttons/links with no accessible name (no text content, aria-label, or title) (1)\n"
+  },
+  "E1b": {
+    "afterCleanNav_consoleErrors": [
+      "noisy-4",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "afterCleanUrlAudit_consoleErrors": [
+      "noisy-4",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ]
+  },
+  "E1c": {
+    "clsSeries": [
+      0.028657405848819463,
+      0.057314811697638926,
+      0.0859722175464584
+    ]
+  },
+  "E1d": {
+    "cls1": "0.053202473958333336",
+    "cls2": "0.053202473958333336"
+  },
+  "E2": {
+    "probe": {
+      "visibility": "visible",
+      "syncLcpStartTimes": [
+        96
+      ],
+      "syncCls": 0.028657405848819463
+    },
+    "asyncProbe": 96,
+    "referenceRuns": [
+      {
+        "lcpMs": 32,
+        "cls": 0.028657405848819463,
+        "fcpMs": 32,
+        "ttfbMs": 2
+      },
+      {
+        "lcpMs": 36,
+        "cls": 0.028657405848819463,
+        "fcpMs": 36,
+        "ttfbMs": 1
+      },
+      {
+        "lcpMs": 32,
+        "cls": 0.028657405848819463,
+        "fcpMs": 32,
+        "ttfbMs": 1
+      }
+    ],
+    "decision": "B",
+    "visOk": true,
+    "syncNonEmpty": true,
+    "closeToRef": true
+  },
+  "E3": {
+    "hasSlow": false,
+    "brokenRequests": [
+      {
+        "url": "http://127.0.0.1:52428/missing-10.png",
+        "status": 404
+      },
+      {
+        "url": "http://127.0.0.1:52428/api/fail-10",
+        "status": 500
+      },
+      {
+        "url": "http://127.0.0.1:52428/favicon.ico",
+        "status": 404
+      }
+    ]
+  }
+}

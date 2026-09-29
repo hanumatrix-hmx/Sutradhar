@@ -1,0 +1,47 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser[39m
+
+ [32m✓[39m tests/unit/frame-labels.spec.ts [2m ([22m[2m35 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [33m❯[39m tests/unit/dom-semantic-engine.spec.ts [2m ([22m[2m36 tests[22m [2m|[22m [31m1 failed[39m[2m)[22m[90m 30[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/dom-semantic-engine.spec.ts[2m > [22m@sutradhar/browser DOMSemanticEngine.buildGraph — FR2-09 frame handling[2m > [22mGAP-154: a blocked frame recovers its real URL from CDP Page.getFrameTree unreachableUrl, marked "confirmed" — the frameElement()/src fallback is never even called[39m
+[31m     → expected [ { index: 1, …(5) } ] to deeply equal [ { index: 1, …(5) } ][39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/dom-semantic-engine.spec.ts[2m > [22m@sutradhar/browser DOMSemanticEngine.buildGraph — FR2-09 frame handling[2m > [22mGAP-154: a blocked frame recovers its real URL from CDP Page.getFrameTree unreachableUrl, marked "confirmed" — the frameElement()/src fallback is never even called
+[31m[1mAssertionError[22m: expected [ { index: 1, …(5) } ] to deeply equal [ { index: 1, …(5) } ][39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  Array [[22m
+[2m    Object {[22m
+[2m      "index": 1,[22m
+[2m      "name": "blocked",[22m
+[32m-     "origin": "https://real-target.example",[39m
+[31m+     "origin": "https://embedding-page.example",[39m
+[2m      "reason": "error-page",[22m
+[32m-     "url": "https://real-target.example/blocked?via=302",[39m
+[32m-     "urlConfidence": "confirmed",[39m
+[31m+     "url": "https://embedding-page.example/wrong-src",[39m
+[31m+     "urlConfidence": "likely",[39m
+[2m    },[22m
+[2m  ][22m
+
+[36m [2m❯[22m tests/unit/dom-semantic-engine.spec.ts:[2m630:33[22m[39m
+    [90m628| [39m    [35mconst[39m graph [33m=[39m [35mawait[39m engine[33m.[39m[34mbuildGraph[39m(tab)[33m;[39m
+    [90m629| [39m
+    [90m630| [39m    [34mexpect[39m(graph[33m.[39mskippedFrames)[33m.[39m[34mtoEqual[39m([
+    [90m   | [39m                                [31m^[39m
+    [90m631| [39m      {
+    [90m632| [39m        index[33m:[39m [34m1[39m[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m70 passed[39m[22m[90m (71)[39m
+[2m   Start at [22m 13:22:58
+[2m   Duration [22m 1.43s[2m (transform 541ms, setup 0ms, collect 1.02s, tests 36ms, environment 0ms, prepare 377ms)[22m
+
+exit=1

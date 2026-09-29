@@ -1,0 +1,126 @@
+{
+  "at": "2026-09-26T22:57:06.561Z",
+  "results": [
+    {
+      "id": "point1-attribution",
+      "desc": "GAP-236: if attributeDialogHolders is short-circuited (every busy target reported as its own holder, never collateral), the popup+opener test must fail",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "eol": "LF",
+      "verdict": "CONFIRMED (tests fail without the fix)",
+      "tests": "Tests  1 failed | 19 passed (20)",
+      "failed": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-fix3-A (GAP-236): a popup and its blocked opener — /v1/dialogs rep"
+      ],
+      "ms": 1160,
+      "restoredShaOk": true
+    },
+    {
+      "id": "point2-probe-blank-targets",
+      "desc": "GAP-238: if about:blank targets are excluded from listPageTargets again, the B5 test (and blank-popup detection) must fail",
+      "file": "packages/browser/src/session/dialog-cdp.ts",
+      "eol": "LF",
+      "verdict": "CONFIRMED (tests fail without the fix)",
+      "tests": "Tests  2 failed | 16 passed (18)",
+      "failed": [
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B5 (FR2-04 fix-3/GAP-238): listPageTargets KEEPS about:blank page targets (only drops n",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B6 (FR2-04 fix-3/GAP-236): listPageTargets populates openerTargetId from Target.opener("
+      ],
+      "ms": 841,
+      "restoredShaOk": true
+    },
+    {
+      "id": "point3-recovery-scoping",
+      "desc": "GAP-236/244: if the warden recovery path never checks blockedBy before closing, the popup+opener redirect test must fail (it would close the opener instead of redirecting)",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "eol": "LF",
+      "verdict": "CONFIRMED (tests fail without the fix)",
+      "tests": "Tests  1 failed | 19 passed (20)",
+      "failed": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-fix3-A (GAP-236): a popup and its blocked opener — /v1/dialogs rep"
+      ],
+      "ms": 1163,
+      "restoredShaOk": true
+    },
+    {
+      "id": "point4-tabs-gated",
+      "desc": "GAP-237: if 'tabs' is re-added to EXEMPT_VERBS, classifyVerb('tabs') must no longer be 'guarded'",
+      "file": "packages/cli/src/dialog-cli.ts",
+      "eol": "LF",
+      "verdict": "CONFIRMED (tests fail without the fix)",
+      "tests": "Tests  1 failed | 19 passed (20)",
+      "failed": [
+        "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D5b (FR2-04 fix-3/GAP-237): tabs is GUARDED, not exempt — it still calls runtime.attach() v"
+      ],
+      "ms": 928,
+      "restoredShaOk": true
+    },
+    {
+      "id": "point5-fail-closed-on-timeout",
+      "desc": "GAP-239/241: if a 'timeout' reason is treated the same as 'clear' again, the fail-closed-on-timeout test must fail",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "eol": "LF",
+      "verdict": "CONFIRMED (tests fail without the fix)",
+      "tests": "Tests  1 failed | 15 passed (16)",
+      "failed": [
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > decision point 5 (GAP-241): list() reporting r"
+      ],
+      "ms": 5655,
+      "restoredShaOk": true
+    },
+    {
+      "id": "point6a-no-auto-handle-hint",
+      "desc": "GAP-240: if the policy loop stops splitting real vs hint dialogs and auto-handles everything again, the \"never auto-handle unknown\" test must fail",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "eol": "LF",
+      "verdict": "CONFIRMED (tests fail without the fix)",
+      "tests": "Tests  2 failed | 14 passed (16)",
+      "failed": [
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > decision point 6 (GAP-240): a liveness-inferre",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > decision point 6: a real dialog is still auto-"
+      ],
+      "ms": 5603,
+      "restoredShaOk": true
+    },
+    {
+      "id": "point6b-isolated-refusal",
+      "desc": "GAP-240: if the isolated-target (no sibling) refusal check is removed, an isolated busy target would be closed again",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "eol": "LF",
+      "verdict": "CONFIRMED (tests fail without the fix)",
+      "tests": "Tests  1 failed | 19 passed (20)",
+      "failed": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-fix3-B (GAP-240): an ISOLATED busy target with no sibling relation"
+      ],
+      "ms": 1138,
+      "restoredShaOk": true
+    },
+    {
+      "id": "point7-preserve-handled-records",
+      "desc": "GAP-242: if blockWith stops threading records onto the blocked result/thrown error, the dropped-records test must fail",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "eol": "LF",
+      "verdict": "CONFIRMED (tests fail without the fix)",
+      "tests": "Tests  3 failed | 13 passed (16)",
+      "failed": [
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > blocked path (close mode returns {status:\"bloc",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > decision point 7 (GAP-242): dialogs already ha",
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate (FR2-04 B6, R-E: dispose exactly once per path) > decision point 7: \"close\" mode also preserves"
+      ],
+      "ms": 5584,
+      "restoredShaOk": true
+    },
+    {
+      "id": "point8-clear-timer",
+      "desc": "overhead: if cancellableDelay stops clearing its own timer on race settlement, the getTimerCount()===0 test must fail",
+      "file": "packages/cli/src/dialog-cli.ts",
+      "eol": "LF",
+      "verdict": "CONFIRMED (tests fail without the fix)",
+      "tests": "Tests  1 failed | 19 passed (20)",
+      "failed": [
+        "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D7: raceWithDialog > FR2-04 fix-3, decision point 8 (overhead): the poll timer is cleared t"
+      ],
+      "ms": 860,
+      "restoredShaOk": true
+    }
+  ]
+}

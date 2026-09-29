@@ -1,0 +1,48 @@
+=== GAPS_AND_SUGGESTIONS.md
+51:1. **Headless UA leaks `HeadlessChrome/151`** — the only detection row it fails on bot.sannysoft.com. A default UA rewrite (or `--ua` flag) would make the headless surface fully clean; everything else (WebDriver, chrome.runtime, plugins, WebGL) already pa
+=== INSIGHTS.md
+=== REPORT.md
+24:| 01 | Bot detection | ⚠️ PARTIAL | Headless leaks `HeadlessChrome/151` in UA; WebDriver, chrome.runtime, plugins, WebGL all **pass**. Headed mode = clean UA. Far better than vanilla Playwright/Puppeteer (which fail ~7 rows) |
+=== RESPONSE-TO-FIELD-REPORT.md
+=== USECASES.md
+14:> Using sutradhar, navigate to https://bot.sannysoft.com, take a snapshot and print the page text. Report every line where the value is NOT "green (passing)" — especially webdriver, chrome.runtime, permissions, and plugin/languages checks. Then do the sam
+18:**Baseline:** vanilla Playwright/Puppeteer fail ~7 rows (navigator.webdriver, chrome.runtime, permissions...); stealth plugins needed.
+=== .ai/browsing-capability-loop.md
+66:| CAPTCHA / bot-detection / stealth evasion | excluded | Deliberately out of scope per CLAUDE.md — not a gap to close. |
+81:| WebRTC / `getUserMedia`-based camera+microphone pages (video call UIs, QR/photo-booth widgets) | covered, no engine work needed | Milestone 76: tested both a plain headless launch (no fake device) and one with Chrome's standard `--use-fake-device-for-medi
+1073:contradicts this project's standing anti-stealth-default policy and was flagged to the user
+1140:rejected as contradicting this project's standing anti-stealth-default policy; the rest were
+1271:(plain `chromium.launch()`, no stealth) against 6 of the blocking URLs; identical outcome on
+=== .claude/skills/webbench-sample/SKILL.md
+47:via stealth/evasion, per CLAUDE.md's scope boundary**, just document honestly:
+=== tools/engine-comparison/gap-analysis-sutradhar-vs-pinchtab.md
+18:| T2 (sample1) | acehardware.com, LED bulb search | Suggestion link navigated to `/search?...` but landed on a Cloudflare "Performing security verification" interstitial that never cleared after 15+s wait | Completed cleanly — real product titles + sale p
+19:| T63 (sample2) | allrecipes.com | Hard access-denial page (`support@people.inc`), an outright IP/bot-management deny, not a JS challenge | Completed — real fall recipe, no obstacle mentioned | **stealth-plausible** — IP/bot-management-level denies are 
+20:| T175 (sample2) | britannica.com | Cloudflare "Performing security verification" interstitial on `/place/Mount-Everest`, 15s+ wait never cleared | Completed — real Everest-vs-K2 comparison extracted, no obstacle mentioned | **stealth-plausible** |
+21:| T263 (sample2) | collinsdictionary.com | Cloudflare interstitial on the bare homepage itself (most aggressive of the set) | Completed — real dictionary blog content, no obstacle mentioned | **stealth-plausible** |
+22:| T29 (sample3) | alamy.com | HTTP 403 on the search-results path | Completed — real data recovered | **stealth-plausible** — 403s on search endpoints are a common bot-fingerprint gate |
+23:| T33 (sample3) | alibaba.com | Real CAPTCHA interception page | Completed — real data recovered | **stealth-plausible** (strongest case in the set — CAPTCHA is a textbook anti-bot mechanism, and stealth softening is specifically designed to avoid trigg
+24:| T114 (sample3) | asos.com | "Access Denied" on search | Completed — real data recovered | **stealth-plausible** |
+25:| T195 (sample4) | cambridge.org, "ubiquitous" lookup | Cloudflare JS challenge, recorded as Blocked (consistent with this same tool's wait_for_selector pattern elsewhere in the run: 15s+ waits that never cleared on the same challenge type at britannica.com
+26:| T90 (sample5) | apa.org, CBT search | "Real hCaptcha wall on search" | Completed — pinchtab's writeup describes an entirely different problem (direct URL-query returned irrelevant "Newest"-sorted results, fixed by using the page's own search box) and ne
+34:pinchtab's 9 task wins survive a skeptical read as a genuine, non-stealth tool-capability gap.**
+40:| T46 (sample2) | aljazeera.com | Search page rendered nav/footer chrome only, zero results, even after direct search-box interaction — "protected by reCAPTCHA" near the search control | Completed cleanly via search box + Enter, 5 real dated results | **p
+53:`stealthLevel: "light"` by default, a real, disclosed, uncontrolled asymmetry with exactly the
+60:load — which is the bar this analysis held out as the actual signal of a fixable, non-stealth
+65:Sutradhar didn't, despite pinchtab's stealth default — real evidence that stealth-light is not a
+75:non-stealth fix worth making in `packages/browser` off the back of the pinchtab comparison. The
+=== tools/engine-comparison/head-to-head-comparison-2026-08-14.md
+7:content-safety scanner had to be turned off block-mode, and its `stealthLevel: "light"` default
+21:documents two disclosed, unresolved confounds (a default stealth setting not present on any
+42:Both tools launched plain (`headless: true`, real Chrome, no stealth/evasion — same standard
+113:identical 47-task set, under the identical fairness standard (no stealth, plain launch,
+=== tools/engine-comparison/extreme-scenarios-comparison-2026-08-16.md
+33:7 scenarios using that tool's own real, idiomatic API — no shared abstraction layer, no stealth/
+114:No stealth/evasion attempted by any tool, per this project's standing exclusion — detection
+=== tools/scenario-suite/BEFORE-AFTER.md
+=== tools/engine-comparison/results-refresh-2026-08-18.md
+16:persisted config — `idpi.strictMode: false`, `stealthLevel: "light"` default, no auto-solvers
+18:against its HTTP API. No stealth/evasion added to either tool beyond pinchtab's own shipped
+77:"Stealth disclosure" section already flagged as a real-but-unisolated asymmetry — real
+78:pinchtab's shipped default (`stealthLevel: "light"`) is very plausibly the actual explanation
+82:build stealth into Sutradhar — that stays out of scope per CLAUDE.md — but it is the honest

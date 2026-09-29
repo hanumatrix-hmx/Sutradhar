@@ -41,6 +41,24 @@ export interface CliState {
    *  this a session's viewport would silently revert to Chrome's default the moment a second
    *  CLI command runs (external field report, PROB-042). */
   viewport?: { width: number; height: number };
+  /** FR2-04. The session's default policy for native dialogs, set by `--dialog accept|dismiss`
+   *  (with `--dialog-text`), and equally explicitly set to `'report'` by `--dialog report`
+   *  (FR2-14's D10 fold-in — decisions.md 2026-09-26: `--dialog report` PERSISTS, it does not
+   *  clear this key). Absent (the key never having been set at all) also means report — the
+   *  CLI's own default. Re-applied on every reattach, like `viewport`, because in-process dialog
+   *  handling dies with each process. */
+  dialogPolicy?: { action: 'accept' | 'dismiss' | 'report'; promptText?: string; setAt: string };
+  /** FR2-04. The last pending dialog a command saw when it exited. Diagnostics, plus detection
+   *  fallback if the gate's own live probe can't reach the browser. The broker (gate/warden) is
+   *  the source of truth; this is best-effort. */
+  lastPendingDialog?: {
+    targetId?: string;
+    type: string;
+    message: string;
+    defaultValue?: string;
+    url: string;
+    openedAt: string;
+  };
 }
 
 /**
@@ -71,7 +89,7 @@ export function resolveStateDir(cwd: string, envOverride: string | undefined): s
   return path.join(os.homedir(), '.sutradhar-cli', cwdHash);
 }
 
-const STATE_DIR = resolveStateDir(process.cwd(), process.env.SUTRADHAR_CLI_STATE_DIR);
+export const STATE_DIR = resolveStateDir(process.cwd(), process.env.SUTRADHAR_CLI_STATE_DIR);
 const STATE_FILE = path.join(STATE_DIR, 'state.json');
 
 export async function readState(): Promise<CliState | undefined> {

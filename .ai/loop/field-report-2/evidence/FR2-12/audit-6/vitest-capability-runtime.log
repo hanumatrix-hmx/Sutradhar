@@ -1,0 +1,78 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/capability-runtime[39m
+
+ [32m✓[39m tests/unit/visual-compare.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m tests/unit/audit-report.spec.ts [2m ([22m[2m20 tests[22m[2m)[22m[90m 21[2mms[22m[39m
+ [32m✓[39m tests/unit/profile-manager.spec.ts [2m ([22m[2m14 tests[22m[2m)[22m[90m 43[2mms[22m[39m
+ [32m✓[39m tests/unit/ax-snapshot.spec.ts [2m ([22m[2m15 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m tests/unit/extract-data.spec.ts [2m ([22m[2m29 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS2: launch() twice registers two launched, mock (no real browser) entries, sorted by createdAt then id[22m[39m
+{"timestamp":"2026-09-28T00:23:06.957Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-28T00:23:06.957Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790554986957_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-28T00:23:06.958Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-28T00:23:06.958Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790554986958_2","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS3: attach() registers an "attached" entry[22m[39m
+{"timestamp":"2026-09-28T00:23:06.963Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790554986963_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS4: lifecycleOpsInFlight is 1 while launch() is pending, 0 after it resolves, and 0 after it rejects or throws synchronously[22m[39m
+{"timestamp":"2026-09-28T00:23:06.963Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790554986963_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS5: shutdown() and shutdownAll() remove entries; shutdown of an unknown id still throws and leaves the counter at 0[22m[39m
+{"timestamp":"2026-09-28T00:23:06.963Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-28T00:23:06.963Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790554986963_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790554986963_2","context":{"isIncognito":false}}
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserSession] Closed session sess_1790554986963_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790554986963_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserSession] Closed session sess_1790554986963_2","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790554986963_2","context":{"reason":"Close all sessions requested"}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS6: a session created directly via the session manager (agent.runGoal-style, no launch()/attach()) is not listed[22m[39m
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790554986964_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS7: a session removed behind the runtime's back (idle reap / crash) is pruned from listSessions[22m[39m
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790554986964_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserSession] Closed session sess_1790554986964_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790554986964_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790554986964_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS8: a reused id keeps its original origin (launch/launch, and attach then launch under the same id)[22m[39m
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed","context":{"isIncognito":false}}
+{"timestamp":"2026-09-28T00:23:06.964Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed2","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2m@sutradhar/capability-runtime dialog policy plumbing (FR2-04)[2m > [22m[2mR1: launch() forwards a runtime-default dialogPolicy to createSession[22m[39m
+{"timestamp":"2026-09-28T00:23:06.966Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-28T00:23:06.966Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790554986966_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2m@sutradhar/capability-runtime dialog policy plumbing (FR2-04)[2m > [22m[2mR2: a per-call dialogPolicy on attach() overrides the runtime default[22m[39m
+{"timestamp":"2026-09-28T00:23:06.967Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790554986967_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2m@sutradhar/capability-runtime dialog policy plumbing (FR2-04)[2m > [22m[2mR3: no dialogPolicy option anywhere -> createSession gets dialogPolicy undefined (tabs stay "auto") — the MCP/SDK guard[22m[39m
+{"timestamp":"2026-09-28T00:23:06.967Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-28T00:23:06.967Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790554986967_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2m@sutradhar/capability-runtime dialog policy plumbing (FR2-04)[2m > [22m[2mR4: setDialogPolicy calls session.setDialogPolicy once; an unknown sessionId throws[22m[39m
+{"timestamp":"2026-09-28T00:23:06.967Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-28T00:23:06.967Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790554986967_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2m@sutradhar/capability-runtime dialog policy plumbing (FR2-04)[2m > [22m[2mR5: getPendingDialogs reports only tabs with a pending dialog, with the correct "active" shape[22m[39m
+{"timestamp":"2026-09-28T00:23:06.968Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-28T00:23:06.968Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790554986968_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2m@sutradhar/capability-runtime dialog policy plumbing (FR2-04)[2m > [22m[2mR6: getDialogHistory merges every tab in handledAt order, tagging each entry with its tabId[22m[39m
+{"timestamp":"2026-09-28T00:23:06.968Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-28T00:23:06.968Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790554986968_1","context":{"isIncognito":false}}
+
+ [32m✓[39m tests/unit/runtime.spec.ts [2m ([22m[2m131 tests[22m[2m)[22m[33m 2889[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[32m214 passed[39m[22m[90m (214)[39m
+[2m   Start at [22m 05:53:03
+[2m   Duration [22m 3.87s[2m (transform 484ms, setup 1ms, collect 2.01s, tests 2.97s, environment 1ms, prepare 896ms)[22m
+

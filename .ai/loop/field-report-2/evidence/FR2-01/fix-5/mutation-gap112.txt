@@ -1,0 +1,30 @@
+ [33m❯[39m tests/unit/browser-action-engine.spec.ts [2m ([22m[2m144 tests[22m [2m|[22m [31m1 failed[39m [2m|[22m [33m143 skipped[39m[2m)[22m[90m 165[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/browser-action-engine.spec.ts[2m > [22m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22mGAP-112 (FR2-01 audit-5/fix-5): a genuine per-frame THROWN error in the visibility diagnosis must say "could not be determined", never the confirmed-negative "No element found" (element genuinely present)[39m
+[31m     → expected 'wait_for_selector timed out after 150…' not to contain 'No element found'[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/browser-action-engine.spec.ts[2m > [22m@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)[2m > [22mGAP-112 (FR2-01 audit-5/fix-5): a genuine per-frame THROWN error in the visibility diagnosis must say "could not be determined", never the confirmed-negative "No element found" (element genuinely present)
+[31m[1mAssertionError[22m: expected 'wait_for_selector timed out after 150…' not to contain 'No element found'[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- No element found[39m
+[31m+ wait_for_selector timed out after 150ms waiting for state=visible: No element found for selector: #present[39m
+
+[36m [2m❯[22m tests/unit/browser-action-engine.spec.ts:[2m3394:30[22m[39m
+    [90m3392| [39m    expect(result.success).toBe(false);
+    [90m3393| [39m    expect(result.error).toMatch(/state=visible/);
+    [90m3394| [39m    expect(result.error).not.toContain('No element found');
+    [90m   | [39m                             [31m^[39m
+    [90m3395| [39m    expect(result.error).toMatch(/visibility could not be determined f…
+    [90m3396| [39m  });
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[33m7 skipped[39m[90m (8)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[33m226 skipped[39m[90m (227)[39m
+[2m   Start at [22m 09:13:12
+[2m   Duration [22m 1.23s[2m (transform 597ms, setup 1ms, collect 4.90s, tests 165ms, environment 1ms, prepare 1.37s)[22m
+

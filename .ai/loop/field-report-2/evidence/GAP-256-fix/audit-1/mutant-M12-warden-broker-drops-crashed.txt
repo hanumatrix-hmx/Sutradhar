@@ -1,0 +1,44 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli
+
+ ❯ tests/unit/dialog-broker.spec.ts  (24 tests | 1 failed) 4224ms
+   ❯ tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate GAP-256-fix: crashed tabs > GC-CLI4: WardenBroker.list() passes the warden's `crashed` array through (and defaults to [] for an older warden that omits it)
+     → expected { status: 'ok', busy: [], …(2) } to deeply equal { status: 'ok', dialogs: [], …(2) }
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 23 passed (24)
+   Start at  03:47:48
+   Duration  5.05s (transform 289ms, setup 0ms, collect 543ms, tests 4.22s, environment 0ms, prepare 111ms)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/dialog-broker.spec.ts > @sutradhar/cli runDialogGate GAP-256-fix: crashed tabs > GC-CLI4: WardenBroker.list() passes the warden's `crashed` array through (and defaults to [] for an older warden that omits it)
+AssertionError: expected { status: 'ok', busy: [], …(2) } to deeply equal { status: 'ok', dialogs: [], …(2) }
+
+- Expected
++ Received
+
+  Object {
+    "busy": Array [],
+-   "crashed": Array [
+-     Object {
+-       "targetId": "T-CRASHED",
+-       "url": "chrome://crash/",
+-     },
+-   ],
++   "crashed": Array [],
+    "dialogs": Array [],
+    "status": "ok",
+  }
+
+ ❯ tests/unit/dialog-broker.spec.ts:372:38
+    370|     const withCrashed = new WardenBroker('http://127.0.0.1:1', 'tok', …
+    371|       new Response(JSON.stringify({ dialogs: [], busy: [], crashed }),…
+    372|     expect(await withCrashed.list()).toEqual({ status: 'ok', dialogs: …
+       |                                      ^
+    373|     const legacy = new WardenBroker('http://127.0.0.1:1', 'tok', (asyn…
+    374|       new Response(JSON.stringify({ dialogs: [], busy: [] }), { status…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

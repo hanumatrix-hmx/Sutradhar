@@ -1,0 +1,566 @@
+{
+  "M1_reintroduce_min": {
+    "file": "packages\\capability-runtime\\src\\audit\\site-audit.ts",
+    "matches": 1,
+    "origSha": "d16fd8f42018fe70c34d414f9ff72eaddd1583922c4eb5a96c31b54c8d7e7e41",
+    "build": 0,
+    "vitest": {
+      "status": 1,
+      "tests": "1 failed | 192 passed (193)",
+      "failedNames": [
+        "tests/unit/audit-report.spec.ts > @sutradhar/capability-runtime audit-report (FR2-12) > AR11: computeObservation > (b) GAP-262 fix-1: since = navCommittedAt even when documentStartedAt (timeOrigin) is EARLIER -- no longer min()d together"
+      ]
+    },
+    "caughtByVitest": true,
+    "liveExit": 0,
+    "live": {
+      "core": [
+        {
+          "leaks": 12
+        },
+        {
+          "leaks": 12
+        },
+        {
+          "leaks": 13
+        },
+        {
+          "leaks": 12
+        },
+        {
+          "leaks": 12
+        }
+      ],
+      "mainDoc404": [
+        {
+          "has404": true
+        },
+        {
+          "has404": true
+        }
+      ],
+      "spaReplace200": [
+        {
+          "ownKept": true
+        },
+        {
+          "ownKept": true
+        }
+      ],
+      "jsRedirect": [
+        {
+          "c": [
+            "jc-own"
+          ]
+        }
+      ]
+    },
+    "restoredShaMatches": true,
+    "rebuildAfterRestore": 0
+  },
+  "M2_early_commit_value": {
+    "file": "packages\\capability-runtime\\src\\runtime.ts",
+    "matches": 1,
+    "origSha": "328174dccc65945d898237a8798b6e6a8848c72683ead5e6aee543ca313ba08a",
+    "build": 0,
+    "vitest": {
+      "status": 1,
+      "tests": "1 failed | 192 passed (193)",
+      "failedNames": [
+        "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA4b (GAP-262/GAP-264): scopes to the new page's main-frame COMMIT time, not the earlier navigate()-call time -- catches a regression to call-time scoping"
+      ]
+    },
+    "caughtByVitest": true,
+    "liveExit": 0,
+    "live": {
+      "core": [
+        {
+          "leaks": 19
+        },
+        {
+          "leaks": 18
+        },
+        {
+          "leaks": 18
+        },
+        {
+          "leaks": 18
+        },
+        {
+          "leaks": 19
+        }
+      ],
+      "mainDoc404": [
+        {
+          "has404": true
+        },
+        {
+          "has404": true
+        }
+      ],
+      "spaReplace200": [
+        {
+          "ownKept": true
+        },
+        {
+          "ownKept": true
+        }
+      ],
+      "jsRedirect": [
+        {
+          "c": [
+            "ja-own",
+            "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "jb-own",
+            "jc-own"
+          ]
+        }
+      ]
+    },
+    "restoredShaMatches": true,
+    "rebuildAfterRestore": 0
+  },
+  "M3_no_subframe_filter": {
+    "file": "packages\\capability-runtime\\src\\runtime.ts",
+    "matches": 1,
+    "origSha": "328174dccc65945d898237a8798b6e6a8848c72683ead5e6aee543ca313ba08a",
+    "build": 0,
+    "vitest": {
+      "status": 0,
+      "tests": "193 passed (193)",
+      "failedNames": []
+    },
+    "caughtByVitest": false,
+    "restoredShaMatches": true,
+    "rebuildAfterRestore": 0
+  },
+  "M4_first_event_only": {
+    "file": "packages\\capability-runtime\\src\\runtime.ts",
+    "matches": 1,
+    "origSha": "328174dccc65945d898237a8798b6e6a8848c72683ead5e6aee543ca313ba08a",
+    "build": 0,
+    "vitest": {
+      "status": 0,
+      "tests": "193 passed (193)",
+      "failedNames": []
+    },
+    "caughtByVitest": false,
+    "liveExit": 0,
+    "live": {
+      "core": [
+        {
+          "leaks": 0
+        },
+        {
+          "leaks": 0
+        },
+        {
+          "leaks": 0
+        },
+        {
+          "leaks": 0
+        },
+        {
+          "leaks": 0
+        }
+      ],
+      "mainDoc404": [
+        {
+          "has404": false
+        },
+        {
+          "has404": false
+        }
+      ],
+      "spaReplace200": [
+        {
+          "ownKept": true
+        },
+        {
+          "ownKept": true
+        }
+      ],
+      "jsRedirect": [
+        {
+          "c": [
+            "ja-own",
+            "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "jb-own",
+            "jc-own"
+          ]
+        }
+      ]
+    },
+    "restoredShaMatches": true,
+    "rebuildAfterRestore": 0
+  },
+  "M5_listener_never_attached": {
+    "file": "packages\\capability-runtime\\src\\runtime.ts",
+    "matches": 1,
+    "origSha": "328174dccc65945d898237a8798b6e6a8848c72683ead5e6aee543ca313ba08a",
+    "build": 0,
+    "vitest": {
+      "status": 1,
+      "tests": "1 failed | 192 passed (193)",
+      "failedNames": [
+        "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA4b (GAP-262/GAP-264): scopes to the new page's main-frame COMMIT time, not the earlier navigate()-call time -- catches a regression to call-time scoping"
+      ]
+    },
+    "caughtByVitest": true,
+    "liveExit": 0,
+    "live": {
+      "core": [
+        {
+          "leaks": 12
+        },
+        {
+          "leaks": 12
+        },
+        {
+          "leaks": 12
+        },
+        {
+          "leaks": 13
+        },
+        {
+          "leaks": 13
+        }
+      ],
+      "mainDoc404": [
+        {
+          "has404": true
+        },
+        {
+          "has404": true
+        }
+      ],
+      "spaReplace200": [
+        {
+          "ownKept": true
+        },
+        {
+          "ownKept": true
+        }
+      ],
+      "jsRedirect": [
+        {
+          "c": [
+            "jc-own"
+          ]
+        }
+      ]
+    },
+    "restoredShaMatches": true,
+    "rebuildAfterRestore": 0
+  },
+  "M6_reportDialogs_stdout": {
+    "file": "packages\\cli\\src\\cli.ts",
+    "matches": 2,
+    "origSha": "fbfd50d3e5902aeb4ee764ae48e397e3f5d009d5ea828765b34eed943f370909",
+    "build": 0,
+    "vitest": {
+      "status": 0,
+      "tests": "161 passed (161)",
+      "failedNames": []
+    },
+    "caughtByVitest": false,
+    "liveExit": 0,
+    "live": {
+      "S1_leftover": {
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      },
+      "S2_accept600": {
+        "code": 0,
+        "single": false,
+        "kind": "NOT-JSON"
+      },
+      "S3_at0": {
+        "code": 3,
+        "single": false,
+        "kind": "NOT-JSON"
+      },
+      "S3_at600": {
+        "code": 3,
+        "single": false,
+        "kind": "NOT-JSON"
+      }
+    },
+    "restoredShaMatches": true,
+    "rebuildAfterRestore": 0
+  },
+  "M7_gate_catch_textlines": {
+    "file": "packages\\cli\\src\\cli.ts",
+    "matches": 1,
+    "origSha": "fbfd50d3e5902aeb4ee764ae48e397e3f5d009d5ea828765b34eed943f370909",
+    "build": 0,
+    "vitest": {
+      "status": 0,
+      "tests": "161 passed (161)",
+      "failedNames": []
+    },
+    "caughtByVitest": false,
+    "liveExit": 0,
+    "live": {
+      "S1_leftover": {
+        "code": 3,
+        "single": false,
+        "kind": "NOT-JSON"
+      },
+      "S2_accept600": {
+        "code": 0,
+        "single": true,
+        "kind": "report"
+      },
+      "S3_at0": {
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      },
+      "S3_at600": {
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      }
+    },
+    "restoredShaMatches": true,
+    "rebuildAfterRestore": 0
+  },
+  "M8_cmdAudit_catch_removed": {
+    "file": "packages\\cli\\src\\cli.ts",
+    "matches": 1,
+    "origSha": "fbfd50d3e5902aeb4ee764ae48e397e3f5d009d5ea828765b34eed943f370909",
+    "build": 0,
+    "vitest": {
+      "status": 0,
+      "tests": "161 passed (161)",
+      "failedNames": []
+    },
+    "caughtByVitest": false,
+    "liveExit": 0,
+    "live": {
+      "S1_leftover": {
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      },
+      "S2_accept600": {
+        "code": 0,
+        "single": true,
+        "kind": "report"
+      },
+      "S3_at0": {
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      },
+      "S3_at600": {
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      }
+    },
+    "restoredShaMatches": true,
+    "rebuildAfterRestore": 0
+  },
+  "M9_preempt_json_removed": {
+    "file": "packages\\cli\\src\\cli.ts",
+    "matches": 1,
+    "origSha": "fbfd50d3e5902aeb4ee764ae48e397e3f5d009d5ea828765b34eed943f370909",
+    "build": 0,
+    "vitest": {
+      "status": 0,
+      "tests": "161 passed (161)",
+      "failedNames": []
+    },
+    "caughtByVitest": false,
+    "liveExit": 0,
+    "live": {
+      "S1_leftover": {
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      },
+      "S2_accept600": {
+        "code": 0,
+        "single": true,
+        "kind": "report"
+      },
+      "S3_at0": {
+        "code": 3,
+        "single": false,
+        "kind": "NOT-JSON"
+      },
+      "S3_at600": {
+        "code": 3,
+        "single": false,
+        "kind": "NOT-JSON"
+      }
+    },
+    "restoredShaMatches": true,
+    "rebuildAfterRestore": 0
+  },
+  "M6b_gate_handled_stdout": {
+    "file": "packages\\cli\\src\\cli.ts",
+    "matches": 2,
+    "origSha": "fbfd50d3e5902aeb4ee764ae48e397e3f5d009d5ea828765b34eed943f370909",
+    "build": 0,
+    "vitest": {
+      "status": 0,
+      "tests": "161 passed (161)",
+      "failedNames": []
+    },
+    "caughtByVitest": false,
+    "liveExit": 0,
+    "live": {
+      "S1_leftover": {
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      },
+      "S2_accept600": {
+        "code": 0,
+        "single": true,
+        "kind": "report"
+      },
+      "S3_at0": {
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      },
+      "S3_at600": {
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      }
+    },
+    "restoredShaMatches": true,
+    "rebuildAfterRestore": 0
+  },
+  "M8b_cmdAudit_catch_removed_boundary": {
+    "file": "packages\\cli\\src\\cli.ts",
+    "matches": 1,
+    "origSha": "fbfd50d3e5902aeb4ee764ae48e397e3f5d009d5ea828765b34eed943f370909",
+    "build": 0,
+    "vitest": {
+      "status": 0,
+      "tests": "161 passed (161)",
+      "failedNames": []
+    },
+    "caughtByVitest": false,
+    "liveExit": 0,
+    "live": [
+      {
+        "ms": 1450,
+        "code": 1,
+        "single": false,
+        "kind": "NOT-JSON"
+      },
+      {
+        "ms": 1500,
+        "code": 1,
+        "single": false,
+        "kind": "NOT-JSON"
+      },
+      {
+        "ms": 1525,
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      },
+      {
+        "ms": 1550,
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      },
+      {
+        "ms": 1575,
+        "code": 0,
+        "single": true,
+        "kind": "report"
+      },
+      {
+        "ms": 1600,
+        "code": 0,
+        "single": true,
+        "kind": "report"
+      },
+      {
+        "ms": 1450,
+        "code": 1,
+        "single": false,
+        "kind": "NOT-JSON"
+      },
+      {
+        "ms": 1500,
+        "code": 1,
+        "single": false,
+        "kind": "NOT-JSON"
+      },
+      {
+        "ms": 1525,
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      },
+      {
+        "ms": 1550,
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      },
+      {
+        "ms": 1575,
+        "code": 3,
+        "single": false,
+        "kind": "NOT-JSON"
+      },
+      {
+        "ms": 1600,
+        "code": 0,
+        "single": true,
+        "kind": "report"
+      },
+      {
+        "ms": 1450,
+        "code": 1,
+        "single": false,
+        "kind": "NOT-JSON"
+      },
+      {
+        "ms": 1500,
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      },
+      {
+        "ms": 1525,
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      },
+      {
+        "ms": 1550,
+        "code": 3,
+        "single": true,
+        "kind": "dialog-blocked-doc"
+      },
+      {
+        "ms": 1575,
+        "code": 3,
+        "single": false,
+        "kind": "NOT-JSON"
+      },
+      {
+        "ms": 1600,
+        "code": 0,
+        "single": true,
+        "kind": "report"
+      }
+    ],
+    "restoredShaMatches": true,
+    "rebuildAfterRestore": 0
+  }
+}

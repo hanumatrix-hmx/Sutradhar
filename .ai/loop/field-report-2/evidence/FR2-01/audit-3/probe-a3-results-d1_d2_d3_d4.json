@@ -1,0 +1,139 @@
+[
+  {
+    "id": "d1-hidden-stays-one-iframe-detached-mid-wait",
+    "expected": "success:false, \"still visible\"",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "wait_for_selector timed out after 2000ms waiting for state=hidden: an element matching \"#stays\" is still visible.",
+    "totalMs": 7573,
+    "stillVisible": true
+  },
+  {
+    "id": "d2-visible-toast-one-iframe-detached-mid-wait",
+    "expected": "success:true retriesUsed 0",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#toast",
+      "state": "visible"
+    },
+    "totalMs": 1547
+  },
+  {
+    "id": "d3-visible-toast-with-self-reloading-iframe rep0",
+    "expected": "success:true retriesUsed 0",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#toast",
+      "state": "visible"
+    },
+    "totalMs": 1575
+  },
+  {
+    "id": "d3-hidden-banner-with-self-reloading-iframe rep0",
+    "expected": "success:true retriesUsed 0",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#banner",
+      "state": "hidden",
+      "matchedAtStart": true
+    },
+    "totalMs": 1567
+  },
+  {
+    "id": "d3-hidden-stays-with-self-reloading-iframe rep0",
+    "expected": "success:false still visible",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "wait_for_selector timed out after 2500ms waiting for state=hidden: an element matching \"#stays\" is still visible.",
+    "totalMs": 9074
+  },
+  {
+    "id": "d3-visible-toast-with-self-reloading-iframe rep1",
+    "expected": "success:true retriesUsed 0",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#toast",
+      "state": "visible"
+    },
+    "totalMs": 1602
+  },
+  {
+    "id": "d3-hidden-banner-with-self-reloading-iframe rep1",
+    "expected": "success:true retriesUsed 0",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#banner",
+      "state": "hidden",
+      "matchedAtStart": true
+    },
+    "totalMs": 1562
+  },
+  {
+    "id": "d3-hidden-stays-with-self-reloading-iframe rep1",
+    "expected": "success:false still visible",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "wait_for_selector timed out after 2500ms waiting for state=hidden: an element matching \"#stays\" is still visible.",
+    "totalMs": 9062
+  },
+  {
+    "id": "d3-visible-toast-with-self-reloading-iframe rep2",
+    "expected": "success:true retriesUsed 0",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#toast",
+      "state": "visible"
+    },
+    "totalMs": 1605
+  },
+  {
+    "id": "d3-hidden-banner-with-self-reloading-iframe rep2",
+    "expected": "success:true retriesUsed 0",
+    "success": true,
+    "retriesUsed": 0,
+    "output": {
+      "foundSelector": "#banner",
+      "state": "hidden",
+      "matchedAtStart": true
+    },
+    "totalMs": 1564
+  },
+  {
+    "id": "d3-hidden-stays-with-self-reloading-iframe rep2",
+    "expected": "success:false still visible",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "wait_for_selector timed out after 2500ms waiting for state=hidden: an element matching \"#stays\" is still visible.",
+    "totalMs": 9108
+  },
+  {
+    "id": "d4-visible-tab-closed-mid-wait (1 iframe)",
+    "expected": "success:false",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "Tab was closed while wait_for_selector was checking its state.",
+    "totalMs": 2380
+  },
+  {
+    "id": "d4-hidden-tab-closed-mid-wait (1 iframe)",
+    "expected": "success:false",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "wait_for_selector failed waiting for state=hidden: Tab was closed while wait_for_selector was checking its state.",
+    "totalMs": 2379
+  },
+  {
+    "id": "d4-attached-tab-closed-mid-wait (1 iframe)",
+    "expected": "success:false",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "Attempted to use detached Frame '439C436A78783C6A0694877D5317AE6A'.",
+    "totalMs": 2341
+  }
+]

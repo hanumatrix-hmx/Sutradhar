@@ -1,0 +1,124 @@
+[
+  {
+    "id": "L1-no-clear-at-all",
+    "error": "anchor count 0"
+  },
+  {
+    "id": "L2-clear-unconditionally",
+    "pkg": "browser",
+    "killed": true,
+    "tests": "1 failed | 514 passed (515)",
+    "failed": [
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286) > CT12 (GAP-284 residual check: redirect chain): a response for the SAME loaderId as the commit that follows it is never wrongly cleared -- an intermediate hop's response and the final commit share one loaderId"
+    ],
+    "restored": true
+  },
+  {
+    "id": "L3-response-never-records-loaderId",
+    "error": "anchor count 0"
+  },
+  {
+    "id": "L4-skip-clear-on-bfcache-restore",
+    "pkg": "browser",
+    "killed": true,
+    "tests": "1 failed | 514 passed (515)",
+    "failed": [
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286) > CT17 (GAP-284/285 interaction): restoring a DIFFERENT document than the one the own-status capture belongs to still clears the stale capture"
+    ],
+    "restored": true
+  },
+  {
+    "id": "L5-clear-only-when-newLoaderId-null",
+    "pkg": "browser",
+    "killed": true,
+    "tests": "3 failed | 512 passed (515)",
+    "failed": [
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286) > CT10 (GAP-284 kill): a commit to a DIFFERENT loaderId with no response of its own clears the stale capture immediately, without waiting for a response that never arrives",
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286) > CT11 (GAP-284): a commit that DOES get a matching Document response for its own loaderId keeps reporting it normally (no false clear survives)",
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286) > CT17 (GAP-284/285 interaction): restoring a DIFFERENT document than the one the own-status capture belongs to still clears the stale capture"
+    ],
+    "restored": true
+  },
+  {
+    "id": "L6-response-gated-on-current-commit-loaderId(drops pre-commit responses)",
+    "error": "anchor count 0"
+  },
+  {
+    "id": "B1-flag-never-set",
+    "pkg": "browser",
+    "killed": true,
+    "tests": "2 failed | 513 passed (515)",
+    "failed": [
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286) > CT15 (GAP-285): a BackForwardCacheRestore commit moves lastMainFrameCommitAt to the restore instant, same as any other commit -- and sets wasLastMainFrameCommitBfcacheRestore so the caller can report reduced coverage honestly instead of rescoping (see that method's doc comment for why: an earlier rescoping design reopened GAP-284's contamination window through the general ring-buffer scope, confirmed live in escalation-2 -- `home->click404->go_back`, 12/12 stale before this was corrected)",
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286) > CT16 (GAP-285): wasLastMainFrameCommitBfcacheRestore reverts to false once a REAL (non-restore) commit follows a restore"
+    ],
+    "restored": true
+  },
+  {
+    "id": "B2-flag-sticky",
+    "pkg": "browser",
+    "killed": true,
+    "tests": "1 failed | 514 passed (515)",
+    "failed": [
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286) > CT16 (GAP-285): wasLastMainFrameCommitBfcacheRestore reverts to false once a REAL (non-restore) commit follows a restore"
+    ],
+    "restored": true
+  },
+  {
+    "id": "B3-getter-returns-false",
+    "pkg": "browser",
+    "killed": true,
+    "tests": "2 failed | 513 passed (515)",
+    "failed": [
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286) > CT15 (GAP-285): a BackForwardCacheRestore commit moves lastMainFrameCommitAt to the restore instant, same as any other commit -- and sets wasLastMainFrameCommitBfcacheRestore so the caller can report reduced coverage honestly instead of rescoping (see that method's doc comment for why: an earlier rescoping design reopened GAP-284's contamination window through the general ring-buffer scope, confirmed live in escalation-2 -- `home->click404->go_back`, 12/12 stale before this was corrected)",
+      "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-2, GAP-284/285/286) > CT16 (GAP-285): wasLastMainFrameCommitBfcacheRestore reverts to false once a REAL (non-restore) commit follows a restore"
+    ],
+    "restored": true
+  },
+  {
+    "id": "B4-runtime-ignores-flag",
+    "pkg": "capability-runtime",
+    "killed": false,
+    "tests": "214 passed (214)",
+    "failed": [],
+    "restored": true
+  },
+  {
+    "id": "B5-runtime-applies-flag-in-url-mode",
+    "pkg": "capability-runtime",
+    "killed": false,
+    "tests": "214 passed (214)",
+    "failed": [],
+    "restored": true
+  },
+  {
+    "id": "B6-computeObservation-ignores-flag",
+    "pkg": "capability-runtime",
+    "killed": false,
+    "tests": "214 passed (214)",
+    "failed": [],
+    "restored": true
+  },
+  {
+    "id": "N4-no-Document-type-filter(tab)",
+    "error": "anchor count 0"
+  },
+  {
+    "id": "N11-samedoc-nav-moves-commit(tab)",
+    "error": "anchor count 0"
+  },
+  {
+    "id": "N11b-samedoc-nav-moves-commit-via-frameNavigated-shape(tab)",
+    "error": "anchor count 0"
+  },
+  {
+    "id": "final-unmutated-browser",
+    "status": 0,
+    "tests": "515 passed (515)"
+  },
+  {
+    "id": "final-unmutated-capability-runtime",
+    "status": 0,
+    "tests": "214 passed (214)"
+  }
+]

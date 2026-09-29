@@ -1,0 +1,6 @@
+{
+  "item": "FR2-03", "audit": "audit-1", "verdict": "FAIL",
+  "scopeReduction": "disqualifying: Done-when live-proof bullet (5 sessions, kill -9 Node + two Chromes, doctor --gc, counts reach 0) was not built by the Executor; the Auditor built it (harness-main.mjs) and it FAILS (2 orphan dirs remain; see main/observer-counts.json)",
+  "gaps": ["GAP-175 blocker", "GAP-176 major", "GAP-177 major", "GAP-178 major", "GAP-179 major", "GAP-180 minor", "GAP-181 minor", "GAP-182 minor"],
+  "evidence": ["typecheck.txt", "build.txt", "vitest-*.txt", "executor-script-rerun/", "main/", "adv/", "revert-and-confirm.txt", "enum-check.txt", "probe-runtime-scope.txt", "probe-dryrun.txt"]
+}

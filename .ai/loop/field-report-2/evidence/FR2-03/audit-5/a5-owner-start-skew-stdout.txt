@@ -1,0 +1,19 @@
+{
+  "logicalCores": 32,
+  "idle": {
+    "n": 30,
+    "min": 27,
+    "median": 29,
+    "max": 35,
+    "over5000": 0
+  },
+  "underCpuLoad": {
+    "n": 30,
+    "min": 549,
+    "median": 824,
+    "max": 1034,
+    "over5000": 0
+  },
+  "note": "delta = marker-style processStartMs - WMI CreationDate (ms). GC treats |delta| > 5000 on a LIVE owner as PID reuse."
+}
+exit=0

@@ -1,0 +1,180 @@
+=== Step 1: build @sutradhar/browser ===
+
+
+[PASS] @sutradhar/browser: tsc build succeeds after enableStealth/StealthEngine removal (exit code 0)
+
+=== Step 1b: build @sutradhar/cli ===
+
+
+[PASS] @sutradhar/cli: tsc build succeeds (exit code 0)
+
+=== Step 2: run built CLI with no args ===
+Sutradhar CLI
+
+Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>]
+
+Commands:
+  nav <url>                    Navigate to a URL (launches a session if none is active)
+  snap                         Print the interactive-element listing for the current page
+  snap --json                  Same, plus the raw structured element data as JSON
+  snap --no-text                Same elements, drops name/label/placeholder/value text
+                                (keeps tag+role+id) — smaller listing when you already know
+                                what you're targeting and just need fresh ids
+  snap --ids-only                Smallest listing: only the bracketed [#id], nothing else
+  snap --scan-listeners          Also finds elements with only a real addEventListener-attached
+                                handler (no onclick=/role=/tabindex/cursor:pointer) — e.g.
+                                SortableJS-style drag lists. Slower; real CDP introspection.
+  axsnap                       Accessibility-tree listing — no ids, never goes stale even if
+                                the page re-renders; pair with clicktext/clickrole below
+  text                         Print the current page's visible text
+  click <ref>                  Click an element (selector, or a numeric id from "snap")
+  clicktext <text>             Click the element containing this text (from "axsnap")
+  clickrole <role> [name]      Click by accessibility role, optionally narrowed by name
+                                (from "axsnap", e.g. clickrole button Submit)
+  type <ref> <text>            Type text into an element
+  press <ref> <key>            Focus an element then press a key (e.g. Enter)
+  press <ref> <key> --modifiers Control,Shift
+                                Hold modifier keys while pressing (e.g. Ctrl+Shift+ArrowRight
+                                to select a word — a real rich-text-editor toolbar formatting
+                                workflow)
+  select <ref> <value>         Select an <option> by value on a <select>
+  wait <ref> [timeoutMs] [--state S]
+                                Wait for an element to become visible (default), --state attached
+                                (just in the DOM), or --state hidden (removed or not visible).
+                                "visible" means non-empty size AND visibility not hidden/collapse
+                                — opacity:0 and off-screen elements still count as visible; zero
+                                size, display:none and visibility:hidden count as hidden.
+                                Visibility is checked on the FIRST matching element only. "hidden"
+                                succeeds immediately if nothing matches the selector at all.
+                                timeoutMs applies to each internal attempt; retries (GAP-001,
+                                still open) can extend the real total wait beyond it. timeoutMs
+                                <= 0 checks the current state once, immediately, with no waiting
+                                or retrying. Waiting states poll roughly every 100ms, so a state
+                                that's only true for less than ~100ms (a fast visibility flicker)
+                                may be missed.
+  eval <js-expression>         Evaluate JS in the page's top-level context, print the result
+  eval <js-expression> --frame <selector>
+                                Same, but inside a specific <iframe> (selector or a numeric id
+                                from "snap") — including a genuinely cross-origin one the
+                                top-level page's own JS could never reach into itself. Chain
+                                with :: for an iframe nested inside another iframe, e.g.
+                                --frame "iframe.widget::iframe.payment"
+  hover <ref>                  Hover an element
+  scroll [dir] [amountPx]      Scroll the page (dir: up/down/top/bottom, default down 500px)
+  scroll [dir] [amountPx] [targetRef]
+                                Scroll a specific element's own scroll container instead of
+                                the window (a data grid's rows, a chat pane, a modal body) —
+                                pair with --settle to reliably see newly-revealed content
+  upload <ref> <filePath>      Upload a local file into an <input type="file">
+  drag <sourceRef> <destRef>   Drag one element onto another
+  clickpoint <x> <y>           Click at an absolute viewport coordinate — no element/selector,
+                                for canvas-rendered UI with nothing DOM-addressable to target
+  dragpoints <fromX> <fromY> <toX> <toY>
+                                Real mouse-down->move->up drag between two absolute viewport
+                                coordinates — for canvas-rendered drag targets (a signature pad,
+                                a slider/chart handle drawn on a <canvas>)
+  grant <origin> <permission...>
+                                Grant browser permissions for an origin (e.g. clipboard-read,
+                                clipboard-write, geolocation, notifications) — needed before
+                                setclipboard/getclipboard work against most real sites
+  setclipboard <text>          Set the system clipboard (e.g. to then paste into a rich-text
+                                editor via press <ref> v --modifiers Control)
+  getclipboard                 Print the current system clipboard contents
+  tabs                         List open tabs (id, title, url) — * marks the active one
+  newtab [url]                 Open a new tab, optionally navigating it immediately
+  focustab <tabId>             Switch the active tab (e.g. after a link opened target=_blank)
+  closetab <tabId>              Close a specific tab
+  download <ref> [dir]         Click an element that triggers a download, print the saved path
+  screenshot [path]            Save a screenshot (default: ./screenshot.png)
+  audit [url] [outDir]         Screenshot + console/page/network errors + accessibility
+                                checks + Core Web Vitals for a page (current page if no url)
+  audit [url] [outDir] --baseline <baselineUrl>
+                                Same, plus a visual pixel-diff against a known-good baseline
+                                URL — a one-command regression gate combining audit + compare
+  compare <urlA> <urlB> [out]  Visual regression: pixel-diff two pages, save a diff image
+  close                        Close the active session
+  doctor                       Environment diagnostics (Chrome detection, active session)
+  profile create <name> [desc] Create a named, persistent profile (cookies/history/storage
+                                survive across separate launches)
+  profile list                 List profiles
+  profile delete <name>        Delete a profile (irreversibly removes its stored data)
+  profile export-state <name> <outFile>
+                                Export a profile's saved login state (cookies/localStorage/
+                                sessionStorage) to a portable JSON file
+  profile import-state <name> <inFile>
+                                Pre-bake a profile with login state from a JSON file (e.g. one
+                                produced by export-state, or browser.get_storage_state) —
+                                restored automatically on the next launch with that profile
+
+Flags:
+  --profile <name>     Launch as a named persistent profile (only applies to "nav" when
+                        starting a new session — create one first with "profile create")
+  --user-agent <ua>    Launch with a custom navigator.userAgent (only applies to "nav" when
+                        starting a new session)
+  --headed             Launch visibly instead of headless (only applies to "nav" when
+                        starting a new session)
+  --viewport <WxH>      Set the CDP viewport (e.g. --viewport 390x844) and, when --headed, the
+                        real OS window's size too. Applies at session creation and persists
+                        across later commands until a new --viewport is given
+  --json                "snap" additionally prints structured per-element data as JSON
+  --fail-on-diff        "compare" exits nonzero if any pixel difference is found (CI gating);
+                        "audit" exits nonzero if any console/page/broken-request error was
+                        found, or (with --baseline) any visual diff from the baseline
+  --baseline <url>      "audit" also visually diffs the audited page against this URL
+  --settle              "click"/"type"/"scroll" wait for the page to stop actively changing (no
+                        DOM mutations, no in-flight network requests) before returning — helps
+                        when the action triggers a menu/modal/toast/virtualized-list-update that
+                        renders a moment later
+  --state <S>           "wait" only: visible (default), attached (just in the DOM), or hidden
+                        (removed or not visible). Ignored on other commands. "visible" is a
+                        non-empty box AND visibility not hidden/collapse — opacity:0 and
+                        off-screen elements still count as visible; zero size, display:none and
+                        visibility:hidden count as hidden. Checked on the FIRST matching element
+                        only. "hidden" succeeds immediately if nothing matches at all. timeoutMs
+                        is per attempt; retries can extend the real total wait (still open, see
+                        GAP-001).
+  --no-text             "snap" drops per-element text, keeping tag+role+id (see command list)
+  --ids-only            "snap" keeps only the bracketed id, nothing else (see command list)
+  --scan-listeners      "snap" also finds real addEventListener-only elements (see command list)
+  --allowlist-domains <a.com,b.com>
+                        Block navigation to any domain not in this comma-separated list (and
+                        their subdomains). Per-command, not persisted in session state — pass
+                        it on every command that might navigate ("nav", "compare") if you want
+                        the guard to hold for the whole session. Does not intercept
+                        page-initiated navigation from a clicked link (browser-internal, not
+                        routed through this check) — see .ai/known-problems.md PROB-018.
+
+Boundary: Sutradhar launches a plain, undisguised browser — it does not attempt to evade
+bot-detection or solve CAPTCHAs. Cloudflare challenges, CAPTCHA walls, and IP-level blocks
+will stop it the same way they'd stop any other automation tool run the same way.
+
+Session state persists across commands, scoped to this directory, in
+~/.sutradhar-cli/<hash-of-cwd>/state.json — run "close" when done. Override with
+SUTRADHAR_CLI_STATE_DIR to share state across directories or use a custom path.
+
+[PASS] CLI --help (built, run with no args): contains "CAPTCHA"
+[PASS] CLI --help (built, run with no args): contains "bot-detection"
+[PASS] CLI --help (built, run with no args): contains "Cloudflare"
+[PASS] CLI --help (built, run with no args): contains "it does not attempt to evade" and "bot-detection or solve CAPTCHAs" (built stdout re-wraps to a single line, unlike the source)
+
+=== Step 3: read docs from disk ===
+[PASS] AGENT_SETUP.md: still contains "No stealth or bot-detection evasion, by design."
+[PASS] AGENT_SETUP.md: mentions "Cloudflare"
+[PASS] AGENT_SETUP.md: mentions "CAPTCHA"
+[PASS] packages/browser/README.md: does NOT contain "stealth launcher"
+[PASS] packages/browser/README.md: does NOT contain "Stealth Launch Policy"
+[PASS] packages/browser/README.md: does NOT contain "bypass bot detection"
+[PASS] packages/browser/README.md: does NOT reference "0005-stealth-evasion"
+[PASS] packages/browser/README.md: contains "No Detection-Evasion Policy" replacement invariant
+[PASS] packages/browser/README.md: mentions "Cloudflare"
+[PASS] packages/browser/README.md: mentions "CAPTCHA"
+
+=== Summary ===
+@sutradhar/browser: 1/1 passed
+@sutradhar/cli: 1/1 passed
+CLI --help (built, run with no args): 4/4 passed
+AGENT_SETUP.md: 3/3 passed
+packages/browser/README.md: 7/7 passed
+
+OVERALL: PASS
+EXIT:0

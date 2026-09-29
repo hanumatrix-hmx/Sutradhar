@@ -1,0 +1,82 @@
+[
+  {
+    "id": "N1",
+    "pass": true,
+    "detail": "downloadDir \"E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\outside\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\allowA, E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\allowB)."
+  },
+  {
+    "id": "N2",
+    "pass": true,
+    "detail": "downloadDir \"E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\allowA-evil\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\allowA, E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\allo"
+  },
+  {
+    "id": "N3",
+    "pass": true,
+    "detail": "{\"success\":true,\"actionType\":\"download_file\",\"executionTimeMs\":148,\"currentUrl\":\"http://127.0.0.1:64648/page?case=N3&name=n3-1790597294924.bin\",\"title\":\"FR2-05 case N3\",\"output\":{\"downloadedFilename\":"
+  },
+  {
+    "id": "N4",
+    "pass": true,
+    "detail": "downloadDir \"some-relative-dir-n4\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\allowA, E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\allowB). Pass a path under one of "
+  },
+  {
+    "id": "N5",
+    "pass": true,
+    "detail": "success=false (no-crash requirement met; verdict=rejected)"
+  },
+  {
+    "id": "N6",
+    "pass": true,
+    "detail": "downloadDir \"E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\allowA\\n6-jn\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\allowA, E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\all"
+  },
+  {
+    "id": "N7",
+    "pass": true,
+    "detail": "success=false, outside2/newsub exists=false"
+  },
+  {
+    "id": "N8",
+    "pass": true,
+    "detail": "downloadDir \"E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\allowA\\n8-dj\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\allowA, E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\allowB): broken symlink/junction at \"E:\\AI-Cache\\"
+  },
+  {
+    "id": "N9",
+    "pass": true,
+    "detail": "landedInside=true noEvilOutside=true path=E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\allowB\\n9out\\_.._evil-N9.txt"
+  },
+  {
+    "id": "N10",
+    "pass": true,
+    "detail": "{\"success\":false,\"actionType\":\"upload_file\",\"executionTimeMs\":1542,\"currentUrl\":\"http://127.0.0.1:64648/page?case=N9&name=n9-1790597294924.bin\",\"title\":\"FR2-05 case N9\",\"error\":\"Upload file \\\"E:\\\\AI-Cache\\\\tmp\\\\fr2-05-fix1-add-I6E3Ig\\\\up\\\\n10-jn\\\\sec"
+  },
+  {
+    "id": "GAP298-root-is-symlink",
+    "pass": true,
+    "detail": "E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\gap298-link\\g298-1790597294924.bin"
+  },
+  {
+    "id": "GAP295-kelvin-signs-lookalike",
+    "pass": true,
+    "detail": "success=false error=downloadDir \"E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E3Ig\\worK-root295\\sub\" is outside the allowed download directories (E:\\AI-Cache\\tmp\\fr2-05-fix1-add-I6E lookalikeSubCreated=false"
+  },
+  {
+    "id": "GAP296-concurrent-fast-result",
+    "pass": true,
+    "detail": "success=false err=Action download_file timed out after 30000ms\nHint: The page may still be loading — retry, or raise timeoutMs on this call. landedInOwnDir=false"
+  },
+  {
+    "id": "GAP296-concurrent-slow-result",
+    "pass": true,
+    "detail": "success=false err=download_file is already in progress on this browser instance. Concurrent download_file calls against the SAME browser are not supported (Browser.setDownloadBehavior is a browser-wide CDP setting, not per-tab) — retry after the in-flight download finishes, or use a separate browser instance for a second concurrent download. landedInOwnDir=false"
+  },
+  {
+    "id": "GAP296-no-cross-contamination-or-platform-default-escape",
+    "pass": true,
+    "detail": "fast->platformDefault=false slow->platformDefault=false fast->slowDir=false slow->fastDir=false (this is the fail-closed guarantee GAP-296 is about: neither file ever appears in the OTHER download's dir or in Chrome's platform-default Downloads folder, regardless of which call's cleanup ran first)"
+  },
+  {
+    "id": "no-leaked-processes-additions",
+    "pass": true,
+    "detail": "count=0"
+  }
+]

@@ -1,0 +1,626 @@
+{
+  "group": "leak",
+  "trials": 10,
+  "origin": "http://127.0.0.1:50486",
+  "startedAt": "2026-09-27T18:16:38.957Z",
+  "cases": {
+    "repeat": [
+      {
+        "ms": 1640,
+        "url": "/spa?kind=replace&at=30&n=rep0&r=1",
+        "consoleErrors": [
+          "before-rep0",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep0",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep0",
+          "404 /missing-after-rep0"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep0",
+          "same-doc /spa?kind=replace&at=30&n=rep0&r=1"
+        ]
+      },
+      {
+        "ms": 1565,
+        "url": "/spa?kind=replace&at=30&n=rep1&r=1",
+        "consoleErrors": [
+          "before-rep1",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep1",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep1",
+          "404 /missing-after-rep1"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep1",
+          "same-doc /spa?kind=replace&at=30&n=rep1&r=1"
+        ]
+      },
+      {
+        "ms": 1565,
+        "url": "/spa?kind=replace&at=30&n=rep2&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep2",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep2",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep2",
+          "404 /missing-after-rep2"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep2",
+          "same-doc /spa?kind=replace&at=30&n=rep2&r=1"
+        ]
+      },
+      {
+        "ms": 1549,
+        "url": "/spa?kind=replace&at=30&n=rep3&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep3",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep3",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep3",
+          "404 /missing-after-rep3"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep3",
+          "same-doc /spa?kind=replace&at=30&n=rep3&r=1"
+        ]
+      },
+      {
+        "ms": 1567,
+        "url": "/spa?kind=replace&at=30&n=rep4&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep4",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep4",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep4",
+          "404 /missing-after-rep4"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep4",
+          "same-doc /spa?kind=replace&at=30&n=rep4&r=1"
+        ]
+      },
+      {
+        "ms": 1565,
+        "url": "/spa?kind=replace&at=30&n=rep5&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep5",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep5",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep5",
+          "404 /missing-after-rep5"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep5",
+          "same-doc /spa?kind=replace&at=30&n=rep5&r=1"
+        ]
+      },
+      {
+        "ms": 1566,
+        "url": "/spa?kind=replace&at=30&n=rep6&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep6",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep6",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep6",
+          "404 /missing-after-rep6"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep6",
+          "same-doc /spa?kind=replace&at=30&n=rep6&r=1"
+        ]
+      },
+      {
+        "ms": 1567,
+        "url": "/spa?kind=replace&at=30&n=rep7&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep7",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep7",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep7",
+          "404 /missing-after-rep7"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep7",
+          "same-doc /spa?kind=replace&at=30&n=rep7&r=1"
+        ]
+      },
+      {
+        "ms": 1549,
+        "url": "/spa?kind=replace&at=30&n=rep8&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep8",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep8",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep8",
+          "404 /missing-after-rep8"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep8",
+          "same-doc /spa?kind=replace&at=30&n=rep8&r=1"
+        ]
+      },
+      {
+        "ms": 1567,
+        "url": "/spa?kind=replace&at=30&n=rep9&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep9",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep9",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep9",
+          "404 /missing-after-rep9"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep9",
+          "same-doc /spa?kind=replace&at=30&n=rep9&r=1"
+        ]
+      },
+      {
+        "ms": 1566,
+        "url": "/spa?kind=replace&at=30&n=rep10&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep10",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep10",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep10",
+          "404 /missing-after-rep10"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep10",
+          "same-doc /spa?kind=replace&at=30&n=rep10&r=1"
+        ]
+      },
+      {
+        "ms": 1567,
+        "url": "/spa?kind=replace&at=30&n=rep11&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep11",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep11",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep11",
+          "404 /missing-after-rep11"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep11",
+          "same-doc /spa?kind=replace&at=30&n=rep11&r=1"
+        ]
+      },
+      {
+        "ms": 1565,
+        "url": "/spa?kind=replace&at=30&n=rep12&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep12",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep12",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep12",
+          "404 /missing-after-rep12"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep12",
+          "same-doc /spa?kind=replace&at=30&n=rep12&r=1"
+        ]
+      },
+      {
+        "ms": 1550,
+        "url": "/spa?kind=replace&at=30&n=rep13&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep13",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep13",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep13",
+          "404 /missing-after-rep13"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep13",
+          "same-doc /spa?kind=replace&at=30&n=rep13&r=1"
+        ]
+      },
+      {
+        "ms": 1551,
+        "url": "/spa?kind=replace&at=30&n=rep14&r=1",
+        "consoleErrors": [
+          "before-rep14",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep14",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-before-rep14",
+          "404 /missing-spa-asset.png",
+          "404 /missing-after-rep14"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep14",
+          "same-doc /spa?kind=replace&at=30&n=rep14&r=1"
+        ]
+      },
+      {
+        "ms": 1564,
+        "url": "/spa?kind=replace&at=30&n=rep15&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep15",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep15",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep15",
+          "404 /missing-after-rep15"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep15",
+          "same-doc /spa?kind=replace&at=30&n=rep15&r=1"
+        ]
+      },
+      {
+        "ms": 1551,
+        "url": "/spa?kind=replace&at=30&n=rep16&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep16",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep16",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep16",
+          "404 /missing-after-rep16"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep16",
+          "same-doc /spa?kind=replace&at=30&n=rep16&r=1"
+        ]
+      },
+      {
+        "ms": 1551,
+        "url": "/spa?kind=replace&at=30&n=rep17&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep17",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep17",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep17",
+          "404 /missing-after-rep17"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep17",
+          "same-doc /spa?kind=replace&at=30&n=rep17&r=1"
+        ]
+      },
+      {
+        "ms": 1549,
+        "url": "/spa?kind=replace&at=30&n=rep18&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep18",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep18",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep18",
+          "404 /missing-after-rep18"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep18",
+          "same-doc /spa?kind=replace&at=30&n=rep18&r=1"
+        ]
+      },
+      {
+        "ms": 1549,
+        "url": "/spa?kind=replace&at=30&n=rep19&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep19",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep19",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep19",
+          "404 /missing-after-rep19"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep19",
+          "same-doc /spa?kind=replace&at=30&n=rep19&r=1"
+        ]
+      },
+      {
+        "ms": 1566,
+        "url": "/spa?kind=replace&at=30&n=rep20&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep20",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep20",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep20",
+          "404 /missing-after-rep20"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep20",
+          "same-doc /spa?kind=replace&at=30&n=rep20&r=1"
+        ]
+      },
+      {
+        "ms": 1550,
+        "url": "/spa?kind=replace&at=30&n=rep21&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep21",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep21",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep21",
+          "404 /missing-after-rep21"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep21",
+          "same-doc /spa?kind=replace&at=30&n=rep21&r=1"
+        ]
+      },
+      {
+        "ms": 1566,
+        "url": "/spa?kind=replace&at=30&n=rep22&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep22",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep22",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep22",
+          "404 /missing-after-rep22"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep22",
+          "same-doc /spa?kind=replace&at=30&n=rep22&r=1"
+        ]
+      },
+      {
+        "ms": 1566,
+        "url": "/spa?kind=replace&at=30&n=rep23&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep23",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep23",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep23",
+          "404 /missing-after-rep23"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep23",
+          "same-doc /spa?kind=replace&at=30&n=rep23&r=1"
+        ]
+      },
+      {
+        "ms": 1550,
+        "url": "/spa?kind=replace&at=30&n=rep24&r=1",
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "before-rep24",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "after-rep24",
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "pageErrors": [],
+        "brokenRequests": [
+          "404 /missing-spa-asset.png",
+          "404 /missing-before-rep24",
+          "404 /missing-after-rep24"
+        ],
+        "coversWholeDocument": true,
+        "events": [
+          "main-cross /spa?kind=replace&at=30&n=rep24",
+          "same-doc /spa?kind=replace&at=30&n=rep24&r=1"
+        ]
+      }
+    ],
+    "leakStats": {
+      "cdpBefore": {
+        "created": 0,
+        "detachOk": 0,
+        "detachErr": 0
+      },
+      "cdpAfter": {
+        "created": 25,
+        "detachOk": 25,
+        "detachErr": 0
+      },
+      "times": [
+        1641,
+        1566,
+        1566,
+        1550,
+        1567,
+        1566,
+        1566,
+        1568,
+        1549,
+        1567,
+        1566,
+        1568,
+        1566,
+        1550,
+        1551,
+        1564,
+        1551,
+        1551,
+        1549,
+        1550,
+        1566,
+        1551,
+        1566,
+        1567,
+        1550
+      ],
+      "first5avg": 1578,
+      "last5avg": 1560,
+      "pageMetrics": {
+        "Timestamp": 100865.092204,
+        "Documents": 17,
+        "Frames": 17,
+        "JSEventListeners": 0,
+        "Nodes": 236,
+        "LayoutCount": 3,
+        "RecalcStyleCount": 2,
+        "LayoutDuration": 0.000247,
+        "RecalcStyleDuration": 0.000147,
+        "ScriptDuration": 0.00063,
+        "TaskDuration": 0.007402,
+        "JSHeapUsedSize": 5628708,
+        "JSHeapTotalSize": 6291456
+      }
+    }
+  },
+  "verdicts": {
+    "repeat": "25/25"
+  },
+  "chromePid": 65152,
+  "cdpStats": {
+    "created": 25,
+    "detachOk": 25,
+    "detachErr": 0
+  },
+  "finishedAt": "2026-09-27T18:17:18.260Z"
+}

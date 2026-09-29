@@ -1,0 +1,92 @@
+{
+  "order": "loading",
+  "steps": [
+    {
+      "label": "audit hangimg#0",
+      "ms": 1688,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:57020/hangimg?n=0",
+        "broken": []
+      }
+    },
+    {
+      "label": "audit hangimg#1",
+      "ms": 1565,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:57020/hangimg?n=1",
+        "broken": []
+      }
+    },
+    {
+      "label": "audit ok after hangimg",
+      "ms": 1551,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:57020/ok?a",
+        "broken": []
+      }
+    },
+    {
+      "label": "nav stream",
+      "ms": 30015,
+      "error": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "label": "audit ok after stream",
+      "ms": 1548,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:57020/ok?b",
+        "broken": []
+      }
+    },
+    {
+      "label": "audit ok 3",
+      "ms": 1567,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:57020/ok?c",
+        "broken": []
+      }
+    }
+  ],
+  "cdp": [
+    {
+      "createMs": 0,
+      "send Page.enable ms": 1,
+      "detachStarted": "2026-09-27T18:28:52.406Z",
+      "detach": "ok",
+      "detachMs": 0
+    },
+    {
+      "createMs": 0,
+      "send Page.enable ms": 1,
+      "detachStarted": "2026-09-27T18:28:53.987Z",
+      "detach": "ok",
+      "detachMs": 0
+    },
+    {
+      "createMs": 0,
+      "send Page.enable ms": 1,
+      "detachStarted": "2026-09-27T18:28:55.546Z",
+      "detach": "ok",
+      "detachMs": 1
+    },
+    {
+      "createMs": 0,
+      "send Page.enable ms": 0,
+      "detachStarted": "2026-09-27T18:29:27.114Z",
+      "detach": "ok",
+      "detachMs": 1
+    },
+    {
+      "createMs": 0,
+      "send Page.enable ms": 1,
+      "detachStarted": "2026-09-27T18:29:28.674Z",
+      "detach": "ok",
+      "detachMs": 0
+    }
+  ]
+}

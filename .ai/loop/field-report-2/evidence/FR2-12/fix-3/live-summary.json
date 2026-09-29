@@ -1,0 +1,97 @@
+{
+  "startedAt": "2026-09-27T19:10:13.936Z",
+  "durationMs": 314673,
+  "overallOk": true,
+  "results": [
+    {
+      "case": "GAP-273 runtime.audit hash-404",
+      "pass": true,
+      "detail": "10/10 — sample={\"finalUrl\":\"http://127.0.0.1:56403/own-404-samedoc?n=hash-404-0&via=hash#sec-hash-404-0\",\"brokenRequests\":[{\"url\":\"http://127.0.0.1:56403/own-404-samedoc?n=hash-404-0&via=hash\",\"status\":404}]}"
+    },
+    {
+      "case": "GAP-273 runtime.audit replaceState-404",
+      "pass": true,
+      "detail": "10/10 — sample={\"finalUrl\":\"http://127.0.0.1:56403/own-404-samedoc?n=replaceState-404-0&replaced=1\",\"brokenRequests\":[{\"url\":\"http://127.0.0.1:56403/own-404-samedoc?n=replaceState-404-0&via=replaceState\",\"status\":404}]}"
+    },
+    {
+      "case": "GAP-273 runtime.audit emptybody-404",
+      "pass": true,
+      "detail": "10/10 — sample={\"finalUrl\":\"chrome-error://chromewebdata/\",\"brokenRequests\":[{\"url\":\"http://127.0.0.1:56403/own-404-emptybody?n=emptybody-404-0\",\"status\":404}]}"
+    },
+    {
+      "case": "GAP-273 runtime.audit emptybody-500",
+      "pass": true,
+      "detail": "10/10 — sample={\"finalUrl\":\"chrome-error://chromewebdata/\",\"brokenRequests\":[{\"url\":\"http://127.0.0.1:56403/own-500-emptybody?n=emptybody-500-0\",\"status\":500}]}"
+    },
+    {
+      "case": "GAP-273 runtime.audit control-plain-own-404",
+      "pass": true,
+      "detail": "10/10 — sample={\"finalUrl\":\"http://127.0.0.1:56403/own-404?n=control-plain-own-404-0\",\"brokenRequests\":[{\"url\":\"http://127.0.0.1:56403/own-404?n=control-plain-own-404-0\",\"status\":404}]}"
+    },
+    {
+      "case": "GAP-273 runtime.audit control-own-404-with-fragment",
+      "pass": true,
+      "detail": "10/10 — sample={\"finalUrl\":\"http://127.0.0.1:56403/own-404?n=control-own-404-with-fragment-0#already-there\",\"brokenRequests\":[{\"url\":\"http://127.0.0.1:56403/own-404?n=control-own-404-with-fragment-0\",\"status\":404}]}"
+    },
+    {
+      "case": "GAP-273 CLI --json hash-404",
+      "pass": true,
+      "detail": "6/6"
+    },
+    {
+      "case": "GAP-273 CLI --json replaceState-404",
+      "pass": true,
+      "detail": "6/6"
+    },
+    {
+      "case": "GAP-273 CLI --json emptybody-404",
+      "pass": true,
+      "detail": "6/6"
+    },
+    {
+      "case": "GAP-273 CLI --json emptybody-500",
+      "pass": true,
+      "detail": "6/6"
+    },
+    {
+      "case": "GAP-274a dialog-open-before-audit no longer stalls",
+      "pass": true,
+      "detail": "3/3, timings=[2570,2561,2565]ms (bound 15000ms)"
+    },
+    {
+      "case": "GAP-274b timed-out-prior-nav-before-audit no longer stalls, no leak",
+      "pass": true,
+      "detail": "3/3, timings=[2583,2569,2545]ms (bound 15000ms)"
+    },
+    {
+      "case": "GAP-274 dialog-races-CDP-setup adversarial follow-up",
+      "pass": true,
+      "detail": "5/5, timings=[\"threw\",\"threw\",\"threw\",\"threw\",\"threw\"]ms"
+    },
+    {
+      "case": "Regress GAP-266 same-doc (replaceState)",
+      "pass": true,
+      "detail": "5/5"
+    },
+    {
+      "case": "Regress GAP-266 same-doc (pushState)",
+      "pass": true,
+      "detail": "5/5"
+    },
+    {
+      "case": "Regress GAP-266 same-doc (hash)",
+      "pass": true,
+      "detail": "5/5"
+    },
+    {
+      "case": "Regress GAP-262 contamination (noisy then clean)",
+      "pass": true,
+      "detail": "10/10"
+    },
+    {
+      "case": "25x repeated audits, no CDP session leak",
+      "pass": true,
+      "detail": "created=25 leaked=0"
+    }
+  ]
+}

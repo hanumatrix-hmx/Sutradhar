@@ -1,0 +1,76 @@
+{
+  "origin": "http://127.0.0.1:62979",
+  "mcp": {
+    "alertAt0": {
+      "ms": 30018,
+      "isError": true,
+      "textIsSingleJson": false,
+      "schemaValid": null,
+      "err": "audit failed: Navigation timeout of 30000 ms exceeded"
+    },
+    "pendingAfter0": "{\n  \"dialog\": {\n    \"dialogType\": \"alert\",\n    \"message\": \"mcp-sdk-alert-0\"\n  }\n}",
+    "followUpClean0": {
+      "ms": 1557,
+      "isError": false,
+      "textIsSingleJson": true,
+      "schemaValid": true,
+      "consoleErrors": 0
+    },
+    "alertAt600": {
+      "ms": 1517,
+      "isError": true,
+      "textIsSingleJson": false,
+      "schemaValid": null,
+      "err": "audit failed: a alert dialog is open (\"mcp-sdk-alert-600\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again."
+    },
+    "pendingAfter600": "{\n  \"dialog\": {\n    \"dialogType\": \"alert\",\n    \"message\": \"mcp-sdk-alert-600\"\n  }\n}",
+    "followUpClean600": {
+      "ms": 1561,
+      "isError": false,
+      "textIsSingleJson": true,
+      "schemaValid": true,
+      "consoleErrors": 0
+    },
+    "alertAt1550": {
+      "ms": 31565,
+      "isError": false,
+      "textIsSingleJson": true,
+      "schemaValid": true,
+      "consoleErrors": 0
+    },
+    "pendingAfter1550": "{\n  \"dialog\": null\n}",
+    "followUpClean1550": {
+      "ms": 1549,
+      "isError": false,
+      "textIsSingleJson": true,
+      "schemaValid": true,
+      "consoleErrors": 0
+    },
+    "status999": {
+      "ms": 1549,
+      "isError": false,
+      "textIsSingleJson": true,
+      "schemaValid": true,
+      "consoleErrors": 1
+    },
+    "nonJsonStdoutLines": []
+  },
+  "sdk": {
+    "alertAt0": {
+      "ms": 30013,
+      "threw": "Navigation timeout of 30000 ms exceeded"
+    },
+    "evalAfter0": 2,
+    "alertAt600": {
+      "ms": 1524,
+      "threw": "a alert dialog is open (\"mcp-sdk-alert-600\") and blocks the page, so it can't be audited. Handle it first (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then audit again."
+    },
+    "evalAfter600": 2,
+    "alertAt1550": {
+      "ms": 31578,
+      "returned": true,
+      "schemaValid": true
+    },
+    "evalAfter1550": 2
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "item": "FR2-03", "round": "audit-3", "verdict": "FAIL",
+  "headline": "GAP-183 (PID reuse) is genuinely closed live; GAP-175/176/177/178 hold; but GAP-184's fix is bypassable with a trivially adjusted forgery, and GAP-185's fix is incomplete: a state.json whose READ throws (EBUSY) is silently dropped and GC kills a live, reachable, default-state-root session and deletes its profile (real run, exit 0).",
+  "newGaps": {
+    "GAP-188": "major -- GAP-185 incomplete: read-error (EBUSY/EACCES) on state.json drops the session instead of marking it unreadable; live session killed + profile deleted (gap185-locked-state*.json)",
+    "GAP-189": "major -- GAP-184 bypass: plain node carrier + --user-data-dir=<tempRoot>\sutradhar-cli-* + file renamed state.json reproduces all 3 audit-2 effects (gap184-bypass.json)",
+    "GAP-190": "minor, test-integrity -- GAP-183's actual ordering comparison has no test (N1 survives 156/156; the 'PID-reuse' unit test is vacuous: nobody's ppid is the killed browser); N2, N4 also survive",
+    "GAP-191": "minor -- persistently-corrupt state.json protects its orphan Chrome forever with no age-based reclaim and no recovery hint (recovers only via next CLI command in that cwd)",
+    "GAP-192": "observation -- CLI readState-mid-write -> spawnFreshSession leaks a Chrome per concurrent command (74 profiles / ~6.1 GB in one 200s run); plausible root cause of GAP-187; pre-dates FR2-03"
+  },
+  "evidence": {
+    "gap183": ["ppid-hunt-result-run1.json (6/6)", "ppid-hunt-result.json (4/4, with killed identities)", "reuse-window.json (min 4.0ms >> 1ms bucket)", "creationdate-resolution.txt", "planGc-edge.txt"],
+    "gap184": ["gap184-bypass.json", "gap184-junction-symlink.json"],
+    "gap185": ["gap185-locked-state.json", "gap185-locked-state-real.json", "gap185-other-direction.json", "midwrite-race-run1.json", "midwrite-race-run2.json"],
+    "gap186": ["revert-and-confirm-audit3.txt", "pre-mutation-sha.txt", "post-mutation-sha.txt"],
+    "doneWhen": ["donewhen-stdout.txt (25/25)", "donewhen-summary.json", "donewhen-run1-* (first attempt 21/24: 3 harness-expectation failures, explained in report)"],
+    "build": ["build.txt", "typecheck.txt", "vitest-cli.txt 156/156", "vitest-browser.txt 302/302", "vitest-mcp-server.txt 84/84"],
+    "incident": "disk-incident.txt"
+  }
+}

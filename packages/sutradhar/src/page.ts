@@ -5,7 +5,53 @@
  * MCP server and the REST API.
  */
 
-import type { SutradharRuntime, SnapshotResult, StorageState, SettleSpec } from '@sutradhar/capability-runtime';
+import path from 'node:path';
+import type {
+  SutradharRuntime,
+  SnapshotResult,
+  StorageState,
+  SettleSpec,
+  WaitForSelectorState,
+  AuditReport,
+  DownloadResult,
+} from '@sutradhar/capability-runtime';
+import { prepareAuditOutDir, writeAuditArtifacts, buildAuditReport } from '@sutradhar/capability-runtime';
+
+/** Options accepted by {@link Page.download}. */
+export interface PageDownloadOptions {
+  /** Destination directory. Must resolve inside an allowed download root (see `LaunchOptions`'s
+   *  `allowedDownloadRoots`). Defaults to the first allowed root when omitted. */
+  downloadDir?: string;
+}
+
+export type { WaitForSelectorState } from '@sutradhar/capability-runtime';
+
+/** Options for {@link Page.audit}. */
+export interface PageAuditOptions {
+  /** Load this URL first (then wait for it to settle). Omit to audit the page as it is now. */
+  url?: string;
+  /** Write audit-screenshot.png (and audit-baseline-diff.png) here, creating it if needed;
+   *  the report's paths are then absolute. Omit to get the images back as base64 instead. */
+  outDir?: string;
+  /** Also pixel-diff this URL against a fresh load of the audited page (reloads this tab). */
+  baselineUrl?: string;
+}
+
+/** Return value of {@link Page.audit}. `report` is exactly the audit-report JSON Schema object
+ *  (`packages/capability-runtime/schemas/audit-report.schema.json`, schemaVersion 1). */
+export interface PageAuditResult {
+  report: AuditReport;
+  screenshotBase64: string;
+  baselineDiffBase64?: string;
+}
+
+/** Options accepted by {@link Page.waitForSelector} (Playwright-style names). */
+export interface WaitForSelectorOptions {
+  /** 'visible' (default) | 'attached' | 'hidden'. */
+  state?: WaitForSelectorState;
+  /** Milliseconds; defaults to 10000. */
+  timeout?: number;
+}
 
 /** Options accepted by {@link Page.click} / {@link Page.type}. */
 export interface ElementOptions {
@@ -95,6 +141,61 @@ export class Page {
     await this.runtime.type(this.sessionId, selector, text, this.tabId, options?.settle);
   }
 
+  /**
+   * Wait for `selector` (CSS or a snapshot [#id]) to reach `options.state` ('visible' by
+   * default, or 'attached'/'hidden'). Throws on timeout, with a message naming the state it
+   * waited for — unlike {@link Page.click}/{@link Page.type}, which swallow a failed result, a
+   * wait that returned silently on timeout would be the same silent-wrongness bug class this
+   * method exists to fix, so it throws instead (matching Puppeteer/Playwright's own behavior).
+   *
+   * **'visible'** means the element has a non-empty bounding box (width>0, height>0) AND its
+   * computed `visibility` is not `hidden`/`collapse` — checked on the FIRST element the selector
+   * matches, in document order. `opacity:0` and off-screen positioning still count as visible;
+   * zero size, `display:none`, and `visibility:hidden` count as hidden. **'attached'** only
+   * requires DOM presence, visibility ignored. **'hidden'** succeeds immediately if nothing
+   * matches the selector at all — double-check the selector if that's not what you expect.
+   * `options.timeout` applies to each internal attempt; retries can extend the real total wait
+   * beyond it (open issue, tracked as GAP-001).
+   */
+  /**
+   * Wait for `selector` to reach `options.state` — `'visible'` (default), `'attached'` (just in
+   * the DOM, visibility ignored), or `'hidden'` (removed or not visible; succeeds immediately if
+   * nothing matches). "Visible" means computed visibility not `hidden`/`collapse` AND a
+   * non-empty bounding box (opacity is ignored), checked on the FIRST match.
+   * `options.timeout` is per internal attempt; retries can extend the real total wait beyond it
+   * (open issue) — EXCEPT for the case below. `options.timeout <= 0` checks the current state
+   * once, immediately, with no waiting AND no retrying (this is the one case where the "retries
+   * can extend the wait" caveat above does not apply — see GAP-058). Waiting states poll roughly
+   * every 100ms, so a state that's only true for less than ~100ms (a fast visibility flicker)
+   * may be missed. Throws on timeout, with a message naming the state it waited for.
+   */
+  public async waitForSelector(selector: string, options?: WaitForSelectorOptions): Promise<void> {
+    const r = await this.runtime.waitForSelector(this.sessionId, selector, options?.timeout, this.tabId, options?.state);
+    if (!r.success) throw new Error(r.error ?? `waitForSelector("${selector}") failed`);
+  }
+
+  /**
+   * Click `selector` (the element that triggers a download) and wait for the file to finish
+   * landing on disk. `options.downloadDir` must resolve inside an allowed download root — see
+   * `LaunchOptions.allowedDownloadRoots` — or this throws.
+   */
+  public async download(selector: string, options?: PageDownloadOptions): Promise<DownloadResult> {
+    const r = await this.runtime.downloadFile(this.sessionId, selector, options?.downloadDir, this.tabId);
+    if (!r.success) throw new Error(r.error ?? `download("${selector}") failed`);
+    const o = r.output as { downloadedFilename: unknown; downloadedPath: unknown; downloadDir: unknown };
+    return { filename: String(o.downloadedFilename), path: String(o.downloadedPath), downloadDir: String(o.downloadDir) };
+  }
+
+  /**
+   * Upload a local file into a `<input type="file">` targeted by `selector`. `filePath` is
+   * resolved to an absolute path. Unrestricted unless `LaunchOptions.allowedUploadRoots` was
+   * set, in which case it must be under one of those directories, or this throws.
+   */
+  public async uploadFile(selector: string, filePath: string): Promise<void> {
+    const r = await this.runtime.uploadFile(this.sessionId, selector, path.resolve(filePath), this.tabId);
+    if (!r.success) throw new Error(r.error ?? `uploadFile("${selector}", "${filePath}") failed`);
+  }
+
   /** Press a keyboard key (e.g. `"Enter"`, `"Escape"`). */
   public async press(key: string): Promise<void> {
     await this.runtime.pressKey(this.sessionId, key, this.tabId);
@@ -112,6 +213,32 @@ export class Page {
   public async screenshot(_options?: ScreenshotOptions): Promise<string> {
     const result = await this.runtime.screenshot(this.sessionId, this.tabId);
     return result.base64;
+  }
+
+  /**
+   * Audit this tab: console/page errors, broken requests, accessibility heuristics, Web Vitals
+   * and a full-page screenshot, as a machine-readable report (schemaVersion 1 — see
+   * `packages/capability-runtime/schemas/audit-report.schema.json`). Throws if the audit can't
+   * run at all (no live page, a blocked URL, an open dialog). A failed `baselineUrl` comparison
+   * is reported in `report.baseline.error`, not thrown — the audit itself still succeeded. Not
+   * an action: it doesn't update `lastResult`/FR2-07's verification contract.
+   */
+  public async audit(options: PageAuditOptions = {}): Promise<PageAuditResult> {
+    const dir = options.outDir !== undefined ? await prepareAuditOutDir(options.outDir) : undefined;
+    const result = await this.runtime.audit(this.sessionId, {
+      tabId: this.tabId,
+      ...(options.url !== undefined ? { url: options.url } : {}),
+      ...(options.baselineUrl !== undefined ? { baselineUrl: options.baselineUrl } : {}),
+    });
+    const report = dir
+      ? await writeAuditArtifacts(result, dir)
+      : buildAuditReport(result, { screenshotPath: null, diffPath: null });
+    const diff = result.baseline && 'diffImageBase64' in result.baseline ? result.baseline.diffImageBase64 : undefined;
+    return {
+      report,
+      screenshotBase64: result.screenshotBase64,
+      ...(diff !== undefined ? { baselineDiffBase64: diff } : {}),
+    };
   }
 
   /**

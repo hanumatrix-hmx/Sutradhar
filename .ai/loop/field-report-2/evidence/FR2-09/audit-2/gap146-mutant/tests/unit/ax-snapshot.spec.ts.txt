@@ -1,0 +1,329 @@
+/**
+ * @file packages/capability-runtime/tests/unit/ax-snapshot.spec.ts
+ * @description Unit tests for buildAxSnapshot's flattening/filtering logic against a mocked
+ * page.accessibility.snapshot() tree (the real end-to-end behavior against actual Chrome,
+ * including the mutation-survival property this exists for, was verified live — see the
+ * session's manual smoke test comparing it against the old snapshot()+click(nodeId) path).
+ */
+import { buildAxSnapshot, AX_IFRAMES_TIMEOUT_MS } from '../../src/snapshot/ax-snapshot.js';
+
+function mockPage(tree: unknown, url = 'https://example.com', title = 'Example') {
+  return {
+    accessibility: { snapshot: async () => tree },
+    url: () => url,
+    title: async () => title,
+  };
+}
+
+describe('@sutradhar/capability-runtime buildAxSnapshot', () => {
+  it('flattens interesting roles (button/link/textbox/...) from a nested tree', async () => {
+    const tree = {
+      role: 'RootWebArea',
+      name: 'Example',
+      children: [
+        { role: 'heading', name: 'Login Page', level: 2 },
+        {
+          role: 'form',
+          name: '',
+          children: [
+            { role: 'textbox', name: 'Username' },
+            { role: 'textbox', name: 'Password' },
+            { role: 'button', name: 'Login' },
+          ],
+        },
+      ],
+    };
+
+    const result = await buildAxSnapshot(mockPage(tree));
+
+    expect(result.nodeCount).toBe(4);
+    expect(result.listing).toContain('[textbox] "Username"');
+    expect(result.listing).toContain('[textbox] "Password"');
+    expect(result.listing).toContain('[button] "Login"');
+    expect(result.listing).toContain('Login Page'); // heading rendered as markdown-style heading
+  });
+
+  it('excludes uninteresting roles (StaticText, generic, RootWebArea) from the listing', async () => {
+    const tree = {
+      role: 'RootWebArea',
+      name: 'Example',
+      children: [
+        { role: 'StaticText', name: 'Some paragraph text' },
+        { role: 'generic', name: '' },
+        { role: 'button', name: 'OK' },
+      ],
+    };
+
+    const result = await buildAxSnapshot(mockPage(tree));
+
+    expect(result.nodeCount).toBe(1);
+    expect(result.listing).not.toContain('Some paragraph text');
+    expect(result.listing).toBe('[button] "OK"');
+  });
+
+  it('excludes interesting-role nodes with no accessible name (nothing to reference them by)', async () => {
+    const tree = {
+      role: 'RootWebArea',
+      name: '',
+      children: [
+        { role: 'button', name: '' },
+        { role: 'button', name: 'Named Button' },
+      ],
+    };
+
+    const result = await buildAxSnapshot(mockPage(tree));
+
+    expect(result.nodeCount).toBe(1);
+    expect(result.listing).toBe('[button] "Named Button"');
+  });
+
+  it('handles a null tree (e.g. a blank/about:blank page) without throwing', async () => {
+    const result = await buildAxSnapshot(mockPage(null));
+
+    expect(result.nodeCount).toBe(0);
+    expect(result.listing).toBe('');
+  });
+
+  it('includes the page url and title', async () => {
+    const result = await buildAxSnapshot(mockPage({ role: 'RootWebArea', name: '', children: [] }, 'https://a.test/page', 'A Page'));
+
+    expect(result.url).toBe('https://a.test/page');
+    expect(result.title).toBe('A Page');
+  });
+});
+
+describe('@sutradhar/capability-runtime buildAxSnapshot — FR2-09 iframes', () => {
+  it('A1: reads with includeIframes: true first', async () => {
+    const snapshot = vi.fn(async () => ({ role: 'RootWebArea', name: '', children: [] }));
+    const page = { accessibility: { snapshot }, url: () => 'https://x.test', title: async () => 'T' };
+
+    await buildAxSnapshot(page);
+
+    expect(snapshot.mock.calls[0]![0]).toEqual({ interestingOnly: true, includeIframes: true });
+  });
+
+  it('A2: groups iframe content under a header line at the iframe\'s position, disposing the handle', async () => {
+    const dispose = vi.fn(async () => {});
+    const fPay = { url: () => 'https://pay.test/f?x', name: () => 'pay', isDetached: () => false };
+    const main = { url: () => 'https://x.test', name: () => '', isDetached: () => false };
+
+    const tree = {
+      role: 'RootWebArea',
+      name: '',
+      children: [
+        { role: 'button', name: 'Checkout' },
+        {
+          role: 'Iframe',
+          name: '',
+          elementHandle: async () => ({ contentFrame: async () => fPay, dispose }),
+          children: [
+            {
+              role: 'RootWebArea',
+              name: '',
+              children: [
+                { role: 'heading', name: 'Card', level: 2 },
+                { role: 'textbox', name: 'Card number' },
+              ],
+            },
+          ],
+        },
+        { role: 'link', name: 'Help' },
+      ],
+    };
+    const snapshot = vi.fn(async () => tree);
+    const page = {
+      accessibility: { snapshot },
+      url: () => 'https://x.test',
+      title: async () => 'T',
+      frames: () => [main, fPay],
+      mainFrame: () => main,
+    };
+
+    const result = await buildAxSnapshot(page);
+
+    expect(result.listing).toBe(
+      '[button] "Checkout"\n[iframe "pay" (https://pay.test/f)]\n  ## Card\n  [textbox] "Card number"\n[link] "Help"',
+    );
+    expect(result.nodeCount).toBe(4);
+    expect(dispose).toHaveBeenCalled();
+  });
+
+  it('A3: a nested, unnamed iframe uses its numeric index and indents one level deeper', async () => {
+    const outer = { url: () => 'https://pay.test', name: () => 'pay', isDetached: () => false };
+    const inner = { url: () => 'about:srcdoc', name: () => '', isDetached: () => false };
+    const main = { url: () => 'https://x.test', name: () => '', isDetached: () => false };
+
+    const tree = {
+      role: 'RootWebArea',
+      name: '',
+      children: [
+        {
+          role: 'Iframe',
+          name: '',
+          elementHandle: async () => ({ contentFrame: async () => outer, dispose: async () => {} }),
+          children: [
+            {
+              role: 'RootWebArea',
+              name: '',
+              children: [
+                { role: 'button', name: 'Pay' },
+                {
+                  role: 'Iframe',
+                  name: '',
+                  elementHandle: async () => ({ contentFrame: async () => inner, dispose: async () => {} }),
+                  children: [{ role: 'RootWebArea', name: '', children: [{ role: 'button', name: 'Nested' }] }],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+    const page = {
+      accessibility: { snapshot: async () => tree },
+      url: () => 'https://x.test',
+      title: async () => 'T',
+      frames: () => [main, outer, inner],
+      mainFrame: () => main,
+    };
+
+    const result = await buildAxSnapshot(page);
+
+    expect(result.listing).toContain('  [iframe 2 (about:srcdoc)]');
+    expect(result.listing).toContain('    [button] "Nested"');
+  });
+
+  it('GAP-146 regression: two frame names that only collide AFTER sanitization (identical first 30 chars) both fall back to numeric designators, matching snapshot()', async () => {
+    // Mirrors the equivalent formatGraphForLlm regression in dom-semantic-engine.spec.ts.
+    // Distinct raw frame names, but sanitizeFrameName's 30-char cap collapses both to the
+    // same 30-character prefix. Before the fix, ax-snapshot.ts built its `allNames`
+    // uniqueness list from RAW names (spec section 2.2 requires sanitized, matching
+    // dom-semantic-engine.ts) — so this exact case would render a quoted (seemingly unique)
+    // name here while snapshot() already correctly fell back to numeric, an inconsistency
+    // between the two tools for the identical page.
+    const prefix = 'a'.repeat(30);
+    const frameOne = { url: () => 'about:srcdoc', name: () => prefix + 'ONE', isDetached: () => false };
+    const frameTwo = { url: () => 'about:srcdoc', name: () => prefix + 'TWO', isDetached: () => false };
+    const main = { url: () => 'https://x.test', name: () => '', isDetached: () => false };
+
+    const tree = {
+      role: 'RootWebArea',
+      name: '',
+      children: [
+        {
+          role: 'Iframe',
+          name: '',
+          elementHandle: async () => ({ contentFrame: async () => frameOne, dispose: async () => {} }),
+          children: [{ role: 'RootWebArea', name: '', children: [{ role: 'button', name: 'One' }] }],
+        },
+        {
+          role: 'Iframe',
+          name: '',
+          elementHandle: async () => ({ contentFrame: async () => frameTwo, dispose: async () => {} }),
+          children: [{ role: 'RootWebArea', name: '', children: [{ role: 'button', name: 'Two' }] }],
+        },
+      ],
+    };
+    const page = {
+      accessibility: { snapshot: async () => tree },
+      url: () => 'https://x.test',
+      title: async () => 'T',
+      frames: () => [main, frameOne, frameTwo],
+      mainFrame: () => main,
+    };
+
+    const result = await buildAxSnapshot(page);
+
+    expect(result.listing).toContain('[iframe 1 (about:srcdoc)]');
+    expect(result.listing).toContain('[iframe 2 (about:srcdoc)]');
+    expect(result.listing).not.toContain(`"${prefix}`);
+  });
+
+  it('A4: an iframe with no interesting content produces no header at all', async () => {
+    const tree = {
+      role: 'RootWebArea',
+      name: '',
+      children: [
+        { role: 'button', name: 'OK' },
+        {
+          role: 'Iframe',
+          name: '',
+          elementHandle: async () => null,
+          children: [{ role: 'RootWebArea', name: '', children: [{ role: 'generic', name: '' }] }],
+        },
+      ],
+    };
+    const page = { accessibility: { snapshot: async () => tree }, url: () => 'https://x.test', title: async () => 'T' };
+
+    const result = await buildAxSnapshot(page);
+
+    expect(result.listing).toBe('[button] "OK"');
+  });
+
+  it('A5: an unresolvable iframe (no elementHandle, no page.frames) still shows a "?" header and never throws', async () => {
+    const tree = {
+      role: 'RootWebArea',
+      name: '',
+      children: [
+        {
+          role: 'Iframe',
+          name: '',
+          children: [{ role: 'RootWebArea', name: '', children: [{ role: 'button', name: 'X' }] }],
+        },
+      ],
+    };
+    const page = { accessibility: { snapshot: async () => tree }, url: () => 'https://x.test', title: async () => 'T' };
+
+    const result = await buildAxSnapshot(page);
+
+    expect(result.listing).toContain('[iframe ?]');
+    expect(result.listing).not.toContain('(http');
+  });
+
+  it('A6: a busy includeIframes read times out after 5000ms and falls back, appending a note', async () => {
+    vi.useFakeTimers();
+    try {
+      const flatTree = { role: 'RootWebArea', name: '', children: [{ role: 'button', name: 'OK' }] };
+      const calls: unknown[] = [];
+      const snapshot = vi.fn((opts?: unknown) => {
+        calls.push(opts);
+        if (calls.length === 1) return new Promise(() => {}); // never resolves
+        return Promise.resolve(flatTree);
+      });
+      const page = { accessibility: { snapshot }, url: () => 'https://x.test', title: async () => 'T' };
+
+      const resultPromise = buildAxSnapshot(page);
+      await vi.advanceTimersByTimeAsync(AX_IFRAMES_TIMEOUT_MS);
+      const result = await resultPromise;
+
+      expect(result.listing).toBe(
+        `[button] "OK"\n[iframes not included — reading an iframe's accessibility tree timed out after ${AX_IFRAMES_TIMEOUT_MS}ms]`,
+      );
+      expect(calls[1]).toEqual({ interestingOnly: true });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('A7: a rejected includeIframes read falls back and appends a failure note; a double failure rejects', async () => {
+    const flatTree = { role: 'RootWebArea', name: '', children: [{ role: 'button', name: 'OK' }] };
+    let call = 0;
+    const snapshot = vi.fn(async () => {
+      call++;
+      if (call === 1) throw new Error('boom');
+      return flatTree;
+    });
+    const page = { accessibility: { snapshot }, url: () => 'https://x.test', title: async () => 'T' };
+
+    const result = await buildAxSnapshot(page);
+    expect(result.listing).toBe(
+      '[button] "OK"\n[iframes not included — reading an iframe\'s accessibility tree failed: boom]',
+    );
+
+    const bothFail = vi.fn(async () => {
+      throw new Error('always fails');
+    });
+    const failingPage = { accessibility: { snapshot: bothFail }, url: () => 'https://x.test', title: async () => 'T' };
+    await expect(buildAxSnapshot(failingPage)).rejects.toThrow('always fails');
+  });
+});

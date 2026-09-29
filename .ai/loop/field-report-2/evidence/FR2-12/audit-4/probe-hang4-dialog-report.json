@@ -1,0 +1,1016 @@
+{
+  "order": "dialog-report",
+  "trials": 5,
+  "startedAt": "2026-09-27T19:26:55.302Z",
+  "steps": [
+    {
+      "label": "t0 open alertload",
+      "ms": 702,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t0 audit ok while alert open",
+      "ms": 2582,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52037/ok?d0",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t0 open alertload again",
+      "ms": 620,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t0 audit own404hash while alert open",
+      "ms": 2562,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52037/own404hash?d0#top",
+        "broken": [],
+        "consoleErrors": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "covers": true
+      }
+    },
+    {
+      "label": "t0 open alertload again",
+      "ms": 616,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t0 audit own404empty while alert open",
+      "ms": 2602,
+      "ok": true,
+      "r": {
+        "url": "chrome-error://chromewebdata/",
+        "broken": [],
+        "consoleErrors": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "covers": true
+      }
+    },
+    {
+      "label": "t0 audit ok baseline",
+      "ms": 1565,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52037/ok?base0",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t1 open alertload",
+      "ms": 701,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t1 audit ok while alert open",
+      "ms": 2565,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52037/ok?d1",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t1 open alertload again",
+      "ms": 612,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t1 audit own404hash while alert open",
+      "ms": 2571,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52037/own404hash?d1#top",
+        "broken": [],
+        "consoleErrors": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "covers": true
+      }
+    },
+    {
+      "label": "t1 open alertload again",
+      "ms": 623,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t1 audit own404empty while alert open",
+      "ms": 2594,
+      "ok": true,
+      "r": {
+        "url": "chrome-error://chromewebdata/",
+        "broken": [],
+        "consoleErrors": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "covers": true
+      }
+    },
+    {
+      "label": "t1 audit ok baseline",
+      "ms": 1563,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52037/ok?base1",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t2 open alertload",
+      "ms": 714,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t2 audit ok while alert open",
+      "ms": 2556,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52037/ok?d2",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t2 open alertload again",
+      "ms": 624,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t2 audit own404hash while alert open",
+      "ms": 2576,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52037/own404hash?d2#top",
+        "broken": [
+          {
+            "url": "http://127.0.0.1:52037/own404hash?d2",
+            "status": 404
+          }
+        ],
+        "consoleErrors": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "covers": true
+      }
+    },
+    {
+      "label": "t2 open alertload again",
+      "ms": 625,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t2 audit own404empty while alert open",
+      "ms": 2590,
+      "ok": true,
+      "r": {
+        "url": "chrome-error://chromewebdata/",
+        "broken": [],
+        "consoleErrors": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "covers": true
+      }
+    },
+    {
+      "label": "t2 audit ok baseline",
+      "ms": 1564,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52037/ok?base2",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t3 open alertload",
+      "ms": 696,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t3 audit ok while alert open",
+      "ms": 2560,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52037/ok?d3",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t3 open alertload again",
+      "ms": 623,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t3 audit own404hash while alert open",
+      "ms": 2561,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52037/own404hash?d3#top",
+        "broken": [],
+        "consoleErrors": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "covers": true
+      }
+    },
+    {
+      "label": "t3 open alertload again",
+      "ms": 617,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t3 audit own404empty while alert open",
+      "ms": 2584,
+      "ok": true,
+      "r": {
+        "url": "chrome-error://chromewebdata/",
+        "broken": [],
+        "consoleErrors": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "covers": true
+      }
+    },
+    {
+      "label": "t3 audit ok baseline",
+      "ms": 1564,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52037/ok?base3",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t4 open alertload",
+      "ms": 735,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t4 audit ok while alert open",
+      "ms": 2567,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52037/ok?d4",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    },
+    {
+      "label": "t4 open alertload again",
+      "ms": 611,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t4 audit own404hash while alert open",
+      "ms": 2555,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52037/own404hash?d4#top",
+        "broken": [],
+        "consoleErrors": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "covers": true
+      }
+    },
+    {
+      "label": "t4 open alertload again",
+      "ms": 623,
+      "ok": true,
+      "r": {
+        "dialogType": "alert",
+        "message": "a4-open"
+      }
+    },
+    {
+      "label": "t4 audit own404empty while alert open",
+      "ms": 2610,
+      "ok": true,
+      "r": {
+        "url": "chrome-error://chromewebdata/",
+        "broken": [],
+        "consoleErrors": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "covers": true
+      }
+    },
+    {
+      "label": "t4 audit ok baseline",
+      "ms": 1547,
+      "ok": true,
+      "r": {
+        "url": "http://127.0.0.1:52037/ok?base4",
+        "broken": [],
+        "consoleErrors": 0,
+        "sample": [],
+        "covers": true
+      }
+    }
+  ],
+  "cdp": [
+    {
+      "createdAt": "2026-09-27T19:26:56.244Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1019,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 6,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 1021,
+          "status": 200,
+          "url": "http://127.0.0.1:52037/ok?d0"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 1022,
+          "url": "http://127.0.0.1:52037/ok?d0"
+        }
+      ],
+      "detachAt": 2542,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:26:59.446Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1019,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 7,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 0,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 1021,
+          "status": 404,
+          "url": "http://127.0.0.1:52037/own404hash?d0"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 1022,
+          "url": "http://127.0.0.1:52037/own404hash?d0"
+        }
+      ],
+      "detachAt": 2533,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:02.624Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1019,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 29,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "frameNavigated",
+          "at": 1027,
+          "url": "chrome-error://chromewebdata/"
+        }
+      ],
+      "detachAt": 2556,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:05.227Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 0,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 0,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 7,
+          "status": 200,
+          "url": "http://127.0.0.1:52037/ok?base0"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 9,
+          "url": "http://127.0.0.1:52037/ok?base0"
+        }
+      ],
+      "detachAt": 1522,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:07.809Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1015,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 6,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 0,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 1016,
+          "status": 200,
+          "url": "http://127.0.0.1:52037/ok?d1"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 1017,
+          "url": "http://127.0.0.1:52037/ok?d1"
+        }
+      ],
+      "detachAt": 2536,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:10.986Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1006,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 6,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "frameNavigated",
+          "at": 1008,
+          "url": "http://127.0.0.1:52037/own404hash?d1"
+        }
+      ],
+      "detachAt": 2527,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:14.182Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1010,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 27,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "frameNavigated",
+          "at": 1017,
+          "url": "chrome-error://chromewebdata/"
+        }
+      ],
+      "detachAt": 2544,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:16.776Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 0,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 0,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 0,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 7,
+          "status": 200,
+          "url": "http://127.0.0.1:52037/ok?base1"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 9,
+          "url": "http://127.0.0.1:52037/ok?base1"
+        }
+      ],
+      "detachAt": 1529,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:19.350Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1020,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 5,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "frameNavigated",
+          "at": 1021,
+          "url": "http://127.0.0.1:52037/ok?d2"
+        }
+      ],
+      "detachAt": 2525,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:22.532Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1010,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 6,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 2,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "frameNavigated",
+          "at": 1011,
+          "url": "http://127.0.0.1:52037/own404hash?d2"
+        }
+      ],
+      "detachAt": 2531,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:25.734Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1010,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 27,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "frameNavigated",
+          "at": 1017,
+          "url": "chrome-error://chromewebdata/"
+        }
+      ],
+      "detachAt": 2551,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:28.325Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 0,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 0,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 6,
+          "status": 200,
+          "url": "http://127.0.0.1:52037/ok?base2"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 8,
+          "url": "http://127.0.0.1:52037/ok?base2"
+        }
+      ],
+      "detachAt": 1531,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:30.896Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1018,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 6,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "frameNavigated",
+          "at": 1020,
+          "url": "http://127.0.0.1:52037/ok?d3"
+        }
+      ],
+      "detachAt": 2527,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:34.079Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1014,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 8,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 1016,
+          "status": 404,
+          "url": "http://127.0.0.1:52037/own404hash?d3"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 1018,
+          "url": "http://127.0.0.1:52037/own404hash?d3"
+        }
+      ],
+      "detachAt": 2530,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:37.258Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1016,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 27,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "frameNavigated",
+          "at": 1023,
+          "url": "chrome-error://chromewebdata/"
+        }
+      ],
+      "detachAt": 2545,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:39.842Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 0,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 0,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 6,
+          "status": 200,
+          "url": "http://127.0.0.1:52037/ok?base3"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 8,
+          "url": "http://127.0.0.1:52037/ok?base3"
+        }
+      ],
+      "detachAt": 1520,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:42.454Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1008,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 6,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 1009,
+          "status": 200,
+          "url": "http://127.0.0.1:52037/ok?d4"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 1010,
+          "url": "http://127.0.0.1:52037/ok?d4"
+        }
+      ],
+      "detachAt": 2525,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:45.633Z",
+      "createMs": 1,
+      "sends": {
+        "Page.enable": {
+          "ms": 1011,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 6,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 2,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 1013,
+          "status": 404,
+          "url": "http://127.0.0.1:52037/own404hash?d4"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 1014,
+          "url": "http://127.0.0.1:52037/own404hash?d4"
+        }
+      ],
+      "detachAt": 2521,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:48.813Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 1018,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 26,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 2,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "frameNavigated",
+          "at": 1024,
+          "url": "chrome-error://chromewebdata/"
+        }
+      ],
+      "detachAt": 2558,
+      "detach": "ok"
+    },
+    {
+      "createdAt": "2026-09-27T19:27:51.424Z",
+      "createMs": 0,
+      "sends": {
+        "Page.enable": {
+          "ms": 0,
+          "ok": true
+        },
+        "Network.enable": {
+          "ms": 0,
+          "ok": true
+        },
+        "Page.getFrameTree": {
+          "ms": 1,
+          "ok": true
+        }
+      },
+      "events": [
+        {
+          "ev": "docResponse",
+          "at": 6,
+          "status": 200,
+          "url": "http://127.0.0.1:52037/ok?base4"
+        },
+        {
+          "ev": "frameNavigated",
+          "at": 8,
+          "url": "http://127.0.0.1:52037/ok?base4"
+        }
+      ],
+      "detachAt": 1519,
+      "detach": "ok"
+    }
+  ],
+  "finishedAt": "2026-09-27T19:27:53.971Z"
+}

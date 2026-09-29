@@ -1,0 +1,35 @@
+FR2-16 audit-3 verdict: FAIL
+
+Mechanical parts all re-verified PASS (independently):
+- Consumer list re-derived (3rd derivation): 6 direct package.json dependents (agent, capability-runtime,
+  cli, mcp-server, workflow, apps/server) + browser itself + sutradhar (transitive via capability-runtime)
+  = 8, matches fix-3. frontend/sdk confirmed NOT dependents. (consumer-list.log)
+- Typecheck, 8/8 exit 0 with --force. First parallel --force pass had workflow/sutradhar fail with
+  TS2307 "Cannot find module @sutradhar/contracts|events" = dist race during concurrent forced
+  rebuilds (not code); re-run --force --concurrency=1: 0 cached, 0 errors, exit 0. (typecheck-*.log)
+- vitest: browser 227/227, cli 47/47. (vitest-*.log)
+- Clean build: rm -rf browser/cli dist + turbo build --force: 9/9, 0 cached, exit 0; no dist/stealth. (build-clean-force.log)
+- doc-static ALL PASS; live-verify OVERALL PASS. (doc-static.log, live-verify.log)
+- Live probe through Sutradhar's REAL BrowserLauncher (probe-audit3.mjs/.log): flag present ->
+  navigator.webdriver=false; identical DEFAULT_LAUNCH_ARGS minus only that flag -> true; holds headless
+  AND headed. Default headless UA contains "HeadlessChrome/153" (headed does not -- docs correctly
+  scope the claim to "headless"). --enable-automation still spawned. Flag survives any caller args
+  (Set merge), so "unconditional" is accurate for launch (not applicable to browser.attach).
+- bad_flags_prompt.cc independently fetched raw via curl (not WebFetch): kBadFlags lines 135-138 --
+  "These flags control Blink feature state, which is not supported and is intended only for use by
+  Chromium developers." switches::kDisableBlinkFeatures. Audit-2's citation is accurate.
+  (chromium-bad-flags-source-independent.log)
+- GAP-119 fix: SECURITY.md and competitive-benchmarks.md no longer claim webdriver is unmasked;
+  statements match the live probe and stealth-isolation-experiment.md:66.
+
+FAIL reason (GAP-122): the exact false framing survives in a 4th location that FR2-16 itself authored:
+packages/browser/src/launcher/browser-launcher.ts:110-111
+  "Generates sanitized launch arguments (see DEFAULT_LAUNCH_ARGS for the stability flags that
+   are always included, unconditionally)."
+DEFAULT_LAUNCH_ARGS contains --disable-blink-features=AutomationControlled (and --no-sandbox, also in
+Chromium's kBadFlags). git diff HEAD shows this comment is new in this item's working tree (it replaced
+"with stealth evasion flags"). fix-3's own regex would match it; it is simply outside the 3 scanned files.
+
+Other gaps: GAP-123 (regex line-break bypass, already exercised in shipped PROJECT_DEEP_DIVE.md:879-880),
+GAP-124 (guard scope + synonyms; GAP-119 fixes have no guard), GAP-125 (--disable-infobars undocumented),
+GAP-126 (competitive-benchmarks asymmetry list incomplete). See mutation-tests.log, regex-linebreak.log.

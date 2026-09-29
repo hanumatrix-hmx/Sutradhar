@@ -4,7 +4,7 @@
  * (which runs main() immediately at module load) specifically so it's independently testable.
  */
 
-import { parseArgs } from '../../src/parse-args.js';
+import { parseArgs, dialogFlagError } from '../../src/parse-args.js';
 
 describe('@sutradhar/cli parseArgs', () => {
   it('parses a bare verb with no flags or positional args', () => {
@@ -210,5 +210,141 @@ describe('@sutradhar/cli parseArgs', () => {
     const result = parseArgs(['eval', '--profile', 'x', 'document.title']);
     expect(result.profileFlag).toBe('x');
     expect(result.cleanArgs).toEqual(['document.title']);
+  });
+
+  // --state (FR2-01): wait_for_selector visibility states.
+  it('C1: parses --state hidden, stripping it (and its value) from cleanArgs', () => {
+    const result = parseArgs(['wait', '#t', '5000', '--state', 'hidden']);
+    expect(result.stateFlag).toBe('hidden');
+    expect(result.cleanArgs).toEqual(['#t', '5000']);
+    expect(result.unrecognizedFlags).toEqual([]);
+  });
+
+  it('C2: defaults stateFlag to undefined, not invalid, when --state is not given', () => {
+    const result = parseArgs(['wait', '#t']);
+    expect(result.stateFlag).toBeUndefined();
+    expect(result.stateFlagGivenButInvalid).toBe(false);
+  });
+
+  it('C3: --state bogus is invalid and stripped from cleanArgs', () => {
+    const result = parseArgs(['wait', '#t', '--state', 'bogus']);
+    expect(result.stateFlag).toBeUndefined();
+    expect(result.stateFlagGivenButInvalid).toBe(true);
+    expect(result.cleanArgs).toEqual(['#t']);
+  });
+
+  it('C4: --state with no value at all is invalid', () => {
+    const result = parseArgs(['wait', '#t', '--state']);
+    expect(result.stateFlag).toBeUndefined();
+    expect(result.stateFlagGivenButInvalid).toBe(true);
+  });
+
+  it('C5: each of the three valid state values parses', () => {
+    expect(parseArgs(['wait', '#t', '--state', 'visible']).stateFlag).toBe('visible');
+    expect(parseArgs(['wait', '#t', '--state', 'attached']).stateFlag).toBe('attached');
+    expect(parseArgs(['wait', '#t', '--state', 'hidden']).stateFlag).toBe('hidden');
+  });
+
+  // ───────────────────────────────────────────────────────────────────────
+  // FR2-04: --dialog / --dialog-text
+  // ───────────────────────────────────────────────────────────────────────
+
+  it('P-D1: --dialog accept parses and is stripped from cleanArgs', () => {
+    const result = parseArgs(['click', '#a', '--dialog', 'accept']);
+    expect(result.dialogFlag).toBe('accept');
+    expect(result.cleanArgs).toEqual(['#a']);
+    expect(result.unrecognizedFlags).toEqual([]);
+  });
+
+  it('P-D2: --dialog dismiss and --dialog report parse as those values', () => {
+    expect(parseArgs(['snap', '--dialog', 'dismiss']).dialogFlag).toBe('dismiss');
+    expect(parseArgs(['snap', '--dialog', 'report']).dialogFlag).toBe('report');
+  });
+
+  it('P-D3: an invalid or missing --dialog value is flagged', () => {
+    let result = parseArgs(['snap', '--dialog', 'bogus']);
+    expect(result.dialogFlag).toBeUndefined();
+    expect(result.dialogFlagGivenButInvalid).toBe(true);
+    result = parseArgs(['snap', '--dialog']);
+    expect(result.dialogFlagGivenButInvalid).toBe(true);
+  });
+
+  it('P-D4: --dialog-text takes the exact next argument, even multi-word', () => {
+    const result = parseArgs(['nav', 'u', '--dialog', 'accept', '--dialog-text', 'hello world']);
+    expect(result.dialogTextFlag).toBe('hello world');
+    expect(result.cleanArgs).toEqual(['u']);
+  });
+
+  it('P-D5: --dialog-text captures a literal "--weird" value without treating it as a flag', () => {
+    const result = parseArgs(['nav', 'u', '--dialog', 'accept', '--dialog-text', '--weird']);
+    expect(result.dialogTextFlag).toBe('--weird');
+    expect(result.unrecognizedFlags).toEqual([]);
+  });
+
+  it('P-D6: the "dialog" verb keeps its own sub-args as cleanArgs', () => {
+    const result = parseArgs(['dialog', 'accept', 'some', 'text']);
+    expect(result.verb).toBe('dialog');
+    expect(result.cleanArgs).toEqual(['accept', 'some', 'text']);
+  });
+
+  it('P-D7: dialogFlagError returns the exact three messages, and undefined for valid combos', () => {
+    expect(dialogFlagError(parseArgs(['snap', '--dialog', 'bogus']))).toBe(
+      '--dialog must be one of: accept, dismiss, report (e.g. --dialog accept)',
+    );
+    expect(dialogFlagError(parseArgs(['snap', '--dialog-text', 'x']))).toBe(
+      '--dialog-text only applies with --dialog accept (it is the text entered into prompt() dialogs)',
+    );
+    expect(dialogFlagError(parseArgs(['dialog', 'accept', '--dialog', 'dismiss']))).toBe(
+      '--dialog sets the session\'s default policy; to handle the open dialog now use: sutradhar dialog accept [text] | sutradhar dialog dismiss',
+    );
+    expect(dialogFlagError(parseArgs(['click', '#a', '--dialog', 'accept']))).toBeUndefined();
+    expect(dialogFlagError(parseArgs(['nav', 'u', '--dialog', 'accept', '--dialog-text', 'hello world']))).toBeUndefined();
+    expect(dialogFlagError(parseArgs(['snap']))).toBeUndefined();
+  });
+
+  it('P-D8: no --dialog/--dialog-text given at all leaves everything undefined/false', () => {
+    const result = parseArgs(['snap']);
+    expect(result.dialogFlag).toBeUndefined();
+    expect(result.dialogTextFlag).toBeUndefined();
+    expect(result.dialogFlagGivenButInvalid).toBe(false);
+  });
+
+  it('P-D9: --dialog/--dialog-text coexist with every pre-existing flag', () => {
+    const result = parseArgs(['wait', '#x', '--state', 'hidden', '--dialog', 'accept']);
+    expect(result.stateFlag).toBe('hidden');
+    expect(result.dialogFlag).toBe('accept');
+    expect(result.cleanArgs).toEqual(['#x']);
+  });
+
+  describe('P1/P2: baselineFlagGivenButInvalid (FR2-12, T22)', () => {
+    it('P1a: --baseline with nothing after it is invalid, baselineFlag stays undefined', () => {
+      const result = parseArgs(['audit', 'u', '--baseline']);
+      expect(result.baselineFlagGivenButInvalid).toBe(true);
+      expect(result.baselineFlag).toBeUndefined();
+    });
+
+    it('P1b: --baseline immediately followed by another flag is invalid, and that flag is not swallowed', () => {
+      const result = parseArgs(['audit', 'u', '--baseline', '--json']);
+      expect(result.baselineFlagGivenButInvalid).toBe(true);
+      expect(result.baselineFlag).toBeUndefined();
+      expect(result.jsonMode).toBe(true);
+    });
+
+    it('P1c: --baseline <url> is valid', () => {
+      const result = parseArgs(['audit', 'u', '--baseline', 'https://b']);
+      expect(result.baselineFlagGivenButInvalid).toBe(false);
+      expect(result.baselineFlag).toBe('https://b');
+    });
+
+    it('P1d: no --baseline flag at all is not invalid', () => {
+      const result = parseArgs(['audit', 'u']);
+      expect(result.baselineFlagGivenButInvalid).toBe(false);
+    });
+
+    it('P2: audit url outDir --json parses cleanArgs and jsonMode correctly', () => {
+      const result = parseArgs(['audit', 'u', 'out', '--json']);
+      expect(result.cleanArgs).toEqual(['u', 'out']);
+      expect(result.jsonMode).toBe(true);
+    });
   });
 });

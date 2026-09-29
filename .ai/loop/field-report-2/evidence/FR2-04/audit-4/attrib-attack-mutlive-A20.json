@@ -1,0 +1,230 @@
+{
+  "at": "2026-09-27T00:06:09.849Z",
+  "results": [
+    {
+      "scenario": "single-sync",
+      "trial": 0,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 876
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:52563/?n=single-sync-0-23971",
+          "opener": null
+        },
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P0"
+        },
+        {
+          "label": "P0",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:52563/?n=single-sync-0-23971\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1085,
+          "closed": null,
+          "stdout": "tab 68C14C6668A50DF2168315164A9B5803 is unresponsive because it shares a browser process with tab 66FDB67CC4C65958E4C6250CC7CEF4E1 (about:blank), which actually holds the dialog — re-run \"sutradhar dialog\" and target that tab instead.",
+          "stderr": "",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1071,
+          "closed": null,
+          "stdout": "tab 68C14C6668A50DF2168315164A9B5803 is unresponsive because it shares a browser process with tab 66FDB67CC4C65958E4C6250CC7CEF4E1 (about:blank), which actually holds the dialog — re-run \"sutradhar dialog\" and target that tab instead.",
+          "stderr": "",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1086,
+          "closed": null,
+          "stdout": "tab 68C14C6668A50DF2168315164A9B5803 is unresponsive because it shares a browser process with tab 66FDB67CC4C65958E4C6250CC7CEF4E1 (about:blank), which actually holds the dialog — re-run \"sutradhar dialog\" and target that tab instead.",
+          "stderr": "",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1080,
+          "closed": null,
+          "stdout": "tab 68C14C6668A50DF2168315164A9B5803 is unresponsive because it shares a browser process with tab 66FDB67CC4C65958E4C6250CC7CEF4E1 (about:blank), which actually holds the dialog — re-run \"sutradhar dialog\" and target that tab instead.",
+          "stderr": "",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [
+        "O",
+        "P0"
+      ],
+      "snapAfter": {
+        "code": 3,
+        "ms": 696,
+        "killedAtCap": false,
+        "head": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:52563/?n=single-sync-0-23971\"} | dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"abou",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identif"
+      },
+      "end": {
+        "O": "blocked",
+        "P0": "blocked"
+      }
+    },
+    {
+      "scenario": "single-sync",
+      "trial": 1,
+      "holderLabel": "P0",
+      "nav": {
+        "code": 0,
+        "ms": 876
+      },
+      "stepLog": [],
+      "targets": [
+        {
+          "label": "P0",
+          "url": "about:blank",
+          "opener": "O"
+        },
+        {
+          "label": "O",
+          "url": "http://127.0.0.1:52563/?n=single-sync-1-45145",
+          "opener": null
+        }
+      ],
+      "popupCount": 1,
+      "before": {
+        "O": "blocked",
+        "P0": "blocked"
+      },
+      "warden": [
+        {
+          "label": "O",
+          "type": "unknown",
+          "blockedBy": "P0"
+        },
+        {
+          "label": "P0",
+          "type": "unknown"
+        }
+      ],
+      "dialogStatus": {
+        "code": 0,
+        "stdout": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:52563/?n=single-sync-1-45145\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+      },
+      "accepts": [
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1091,
+          "closed": null,
+          "stdout": "tab 8F96999FABF6448916DB10D11A04AA6B is unresponsive because it shares a browser process with tab 52F309798DA42B6AADA009C405583ED0 (about:blank), which actually holds the dialog — re-run \"sutradhar dialog\" and target that tab instead.",
+          "stderr": "",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1075,
+          "closed": null,
+          "stdout": "tab 8F96999FABF6448916DB10D11A04AA6B is unresponsive because it shares a browser process with tab 52F309798DA42B6AADA009C405583ED0 (about:blank), which actually holds the dialog — re-run \"sutradhar dialog\" and target that tab instead.",
+          "stderr": "",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1073,
+          "closed": null,
+          "stdout": "tab 8F96999FABF6448916DB10D11A04AA6B is unresponsive because it shares a browser process with tab 52F309798DA42B6AADA009C405583ED0 (about:blank), which actually holds the dialog — re-run \"sutradhar dialog\" and target that tab instead.",
+          "stderr": "",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        },
+        {
+          "args": "dialog accept",
+          "code": 0,
+          "ms": 1089,
+          "closed": null,
+          "stdout": "tab 8F96999FABF6448916DB10D11A04AA6B is unresponsive because it shares a browser process with tab 52F309798DA42B6AADA009C405583ED0 (about:blank), which actually holds the dialog — re-run \"sutradhar dialog\" and target that tab instead.",
+          "stderr": "",
+          "after": {
+            "O": "blocked",
+            "P0": "blocked"
+          }
+        }
+      ],
+      "closedSequence": [],
+      "innocentClosed": [],
+      "openerClosed": false,
+      "stillBlockedAfterAccepts": [
+        "O",
+        "P0"
+      ],
+      "snapAfter": {
+        "code": 3,
+        "ms": 676,
+        "killedAtCap": false,
+        "head": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:52563/?n=single-sync-1-45145\"} | dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"abou",
+        "err": "Error: a unknown dialog is open and blocking the page, so \"snap\" did not run.\nHint: a unknown dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identif"
+      },
+      "end": {
+        "O": "blocked",
+        "P0": "blocked"
+      }
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

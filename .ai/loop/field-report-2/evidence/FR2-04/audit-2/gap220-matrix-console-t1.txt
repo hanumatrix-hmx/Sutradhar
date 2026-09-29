@@ -1,0 +1,79 @@
+{"t":0,"c":"open/inline/confirm","blocked":true,"warden":{"dialogs":["POP:unknown"],"busy":1},"status":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"def","snap":"3/687ms","first":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:","verdict":"CAUGHT-unknown"}
+{"t":0,"c":"open/t0/confirm","blocked":true,"warden":{"dialogs":["POP:unknown"],"busy":1},"status":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"def","snap":"3/674ms","first":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:","verdict":"CAUGHT-unknown"}
+{"t":0,"c":"open/inline/prompt","blocked":true,"warden":{"dialogs":["POP:unknown"],"busy":1},"status":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"def","snap":"3/711ms","first":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:","verdict":"CAUGHT-unknown"}
+{"t":0,"c":"open/t0/prompt","blocked":true,"warden":{"dialogs":["POP:unknown"],"busy":1},"status":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"def","snap":"3/685ms","first":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:","verdict":"CAUGHT-unknown"}
+{"t":0,"c":"open/inline/beforeunload","blocked":false,"warden":{"dialogs":[],"busy":0},"status":"No dialog is open.","snap":"0/389ms","first":"URL: http://127.0.0.1:54421/?n=openinlinebeforeunload0x95768 | Title: opener openinlinebef","verdict":"NOT-BLOCKED(no test)"}
+{"t":0,"c":"open/t0/beforeunload","blocked":false,"warden":{"dialogs":[],"busy":0},"status":"No dialog is open.","snap":"0/380ms","first":"URL: http://127.0.0.1:54421/?n=opent0beforeunload0x3716 | Title: opener opent0beforeunload","verdict":"NOT-BLOCKED(no test)"}
+{"t":0,"c":"open/t200/alert","blocked":true,"warden":{"dialogs":["POP:alert"],"busy":0},"status":"dialogPending: {\"type\":\"alert\",\"message\":\"M-opent2","snap":"3/263ms","first":"dialogPending: {\"type\":\"alert\",\"message\":\"M-opent200alert0x11660\",\"defaultValue\":null,\"url","verdict":"CAUGHT-typed"}
+{"t":0,"c":"noopener/t200/alert","blocked":true,"warden":{"dialogs":["POP:alert"],"busy":0},"status":"dialogPending: {\"type\":\"alert\",\"message\":\"M-noopen","snap":"3/272ms","first":"dialogPending: {\"type\":\"alert\",\"message\":\"M-noopenert200alert0x14729\",\"defaultValue\":null,","verdict":"CAUGHT-typed"}
+{"t":0,"c":"blank/sync-w.alert","blocked":true,"warden":{"dialogs":[],"busy":0},"status":"No dialog is open.","snap":"0/180426ms","first":"URL: about:blank | Title:  | Interactive elements (0):","verdict":"MISS"}
+{"t":0,"c":"blank/sync-w.confirm","blocked":true,"warden":{"dialogs":[],"busy":0},"status":"No dialog is open.","snap":"1(CAP)/30344ms","first":"","verdict":"MISS"}
+{"t":0,"c":"blank/document.write-inline","blocked":true,"warden":{"dialogs":[],"busy":0},"status":"No dialog is open.","snap":"1(CAP)/30271ms","first":"","verdict":"MISS"}
+{"t":0,"c":"blank/w.setTimeout200","blocked":true,"warden":{"dialogs":["POP:alert"],"busy":0},"status":"dialogPending: {\"type\":\"alert\",\"message\":\"M-blankw","snap":"3/273ms","first":"dialogPending: {\"type\":\"alert\",\"message\":\"M-blankwsetTimeout2000x79300\",\"defaultValue\":nul","verdict":"CAUGHT-typed"}
+{"t":0,"c":"blank/opener-timer-2s","blocked":true,"warden":{"dialogs":["POP:alert"],"busy":0},"status":"dialogPending: {\"type\":\"alert\",\"message\":\"M-blanko","snap":"3/259ms","first":"dialogPending: {\"type\":\"alert\",\"message\":\"M-blankopenertimer2s0x82408\",\"defaultValue\":null","verdict":"CAUGHT-typed"}
+{"t":0,"c":"cli-newtab/inline/alert","blocked":true,"warden":{"dialogs":["POP:alert"],"busy":0},"status":"dialogPending: {\"type\":\"alert\",\"message\":\"M-clinew","snap":"3/317ms","first":"dialogPending: {\"type\":\"alert\",\"message\":\"M-clinewtabinlinealert0x87590\",\"defaultValue\":nu","verdict":"CAUGHT-typed"}
+{"t":0,"c":"cli-newtab/t200/confirm","blocked":true,"warden":{"dialogs":["POP:confirm"],"busy":0},"status":"dialogPending: {\"type\":\"confirm\",\"message\":\"M-clin","snap":"3/273ms","first":"dialogPending: {\"type\":\"confirm\",\"message\":\"M-clinewtabt200confirm0x91246\",\"defaultValue\":","verdict":"CAUGHT-typed"}
+{"t":0,"c":"cli-click/link-blank-inline","blocked":true,"warden":{"dialogs":["POP:unknown"],"busy":1},"status":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"def","snap":"3/679ms","first":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:","verdict":"CAUGHT-unknown"}
+{"t":0,"c":"cli-click/window.open-inline","blocked":true,"warden":{"dialogs":["POP:unknown"],"busy":1},"status":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"def","snap":"3/686ms","first":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:","verdict":"CAUGHT-unknown"}
+{"t":0,"c":"cli-click/blank-document.write","blocked":true,"warden":{"dialogs":[],"busy":0},"status":"No dialog is open.","snap":"1(CAP)/30264ms","first":"","verdict":"MISS"}
+{"t":0,"c":"warden-restart/blank-main-tab-alert","blocked":true,"warden":"ERR fetch failed","status":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"def","snap":"3/4270ms","first":"dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"chrome://newtab/\"","verdict":"CAUGHT-unknown"}
+{
+ "open/inline/confirm": {
+  "CAUGHT-unknown": 1
+ },
+ "open/t0/confirm": {
+  "CAUGHT-unknown": 1
+ },
+ "open/inline/prompt": {
+  "CAUGHT-unknown": 1
+ },
+ "open/t0/prompt": {
+  "CAUGHT-unknown": 1
+ },
+ "open/inline/beforeunload": {
+  "NOT-BLOCKED(no test)": 1
+ },
+ "open/t0/beforeunload": {
+  "NOT-BLOCKED(no test)": 1
+ },
+ "open/t200/alert": {
+  "CAUGHT-typed": 1
+ },
+ "noopener/t200/alert": {
+  "CAUGHT-typed": 1
+ },
+ "blank/sync-w.alert": {
+  "MISS": 1
+ },
+ "blank/sync-w.confirm": {
+  "MISS": 1
+ },
+ "blank/document.write-inline": {
+  "MISS": 1
+ },
+ "blank/w.setTimeout200": {
+  "CAUGHT-typed": 1
+ },
+ "blank/opener-timer-2s": {
+  "CAUGHT-typed": 1
+ },
+ "cli-newtab/inline/alert": {
+  "CAUGHT-typed": 1
+ },
+ "cli-newtab/t200/confirm": {
+  "CAUGHT-typed": 1
+ },
+ "cli-click/link-blank-inline": {
+  "CAUGHT-unknown": 1
+ },
+ "cli-click/window.open-inline": {
+  "CAUGHT-unknown": 1
+ },
+ "cli-click/blank-document.write": {
+  "MISS": 1
+ },
+ "warden-restart/blank-main-tab-alert": {
+  "CAUGHT-unknown": 1
+ }
+}
+leftovers {"wardens":[],"chrome":[]}

@@ -1,0 +1,185 @@
+[
+  {
+    "id": "M1-chain-regex-drops-P-selector-exclusion",
+    "file": "packages/browser/src/actions/selector-dialect.ts",
+    "testsLine": "Tests  2 failed | 97 passed (99)",
+    "killed": true,
+    "restored": true,
+    "failingNames": [
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D2: false-positive guards — valid CSS returns null > div >>> span -> null",
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D2: false-positive guards — valid CSS returns null > div >>>> span -> null"
+    ]
+  },
+  {
+    "id": "M2-no-string-literal-stripping",
+    "file": "packages/browser/src/actions/selector-dialect.ts",
+    "testsLine": "Tests  6 failed | 93 passed (99)",
+    "killed": true,
+    "restored": true,
+    "failingNames": [
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D2: false-positive guards — valid CSS returns null > [data-x=\"a >> b\"] -> null",
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D2: false-positive guards — valid CSS returns null > [href*=\">>\"] -> null",
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D2: false-positive guards — valid CSS returns null > pierce/[data-x=\"a >> b\"] -> null",
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D2: false-positive guards — valid CSS returns null > [title=\"internal:role=button\"] -> null",
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D2: false-positive guards — valid CSS returns null > [data-q=\"getByRole('x')\"] -> null",
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D2: false-positive guards — valid CSS returns null > a[title=\":has-text(x)\"] -> null"
+    ]
+  },
+  {
+    "id": "M3-probe-treats-any-exception-as-invalid",
+    "file": "packages/browser/src/actions/selector-dialect.ts",
+    "testsLine": "Tests  2 failed | 97 passed (99)",
+    "killed": true,
+    "restored": true,
+    "failingNames": [
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D8: selectorSyntaxProbeInPage > returns null for a NamespaceError",
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D8: selectorSyntaxProbeInPage > returns null for a TypeError"
+    ]
+  },
+  {
+    "id": "M4-toPuppeteerQuery-always-pierce",
+    "file": "packages/browser/src/actions/selector-dialect.ts",
+    "testsLine": "Tests  2 failed | 410 passed (412)",
+    "killed": true,
+    "restored": true,
+    "failingNames": [
+      "tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine FR2-06 caller-selector syntax probe > E9: toPuppeteerQuery passthrough never double-prefixes an already-prefixed caller selector",
+      "tests/unit/selector-dialect.spec.ts > FR2-06 selector-dialect > D6: toPuppeteerQuery > adds pierce/ to plain CSS and leaves already-prefixed selectors unchanged"
+    ]
+  },
+  {
+    "id": "M5-engine-reason-text-garbage (predict SURVIVES: reason text for xpath=/aria=/pierce= unpinned)",
+    "file": "packages/browser/src/actions/selector-dialect.ts",
+    "testsLine": "Tests  99 passed (99)",
+    "killed": false,
+    "restored": true,
+    "failingNames": []
+  },
+  {
+    "id": "M6-engine-D8-no-retry-break-removed",
+    "file": "packages/browser/src/actions/browser-action-engine.ts",
+    "testsLine": "Tests  1 failed | 154 passed (155)",
+    "killed": true,
+    "restored": true,
+    "failingNames": [
+      "tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine FR2-06 caller-selector syntax probe > E10: a syntax-error dispatch failure (probe inconclusive, browser itself rejects) stops the retry loop immediately"
+    ]
+  },
+  {
+    "id": "M7-engine-probe-never-rejects",
+    "file": "packages/browser/src/actions/browser-action-engine.ts",
+    "testsLine": "Tests  3 failed | 152 passed (155)",
+    "killed": true,
+    "restored": true,
+    "failingNames": [
+      "tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine FR2-06 caller-selector syntax probe > E1: a probe-confirmed invalid selector fails before dispatch, with no retry and no screenshot",
+      "tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine FR2-06 caller-selector syntax probe > E8: drag_and_drop probes both selectors and names the invalid target",
+      "tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine FR2-06 caller-selector syntax probe > E11: the duplicate-action guard never masks a rejected-selector result on a repeat dispatch"
+    ]
+  },
+  {
+    "id": "M8-engine-probe-ignores-pending-dialog",
+    "file": "packages/browser/src/actions/browser-action-engine.ts",
+    "testsLine": "Tests  1 failed | 154 passed (155)",
+    "killed": true,
+    "restored": true,
+    "failingNames": [
+      "tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine FR2-06 caller-selector syntax probe > E6: the probe is skipped for node ids, aria/text prefixes, engine-built selectors, non-selector actions, and a pending dialog"
+    ]
+  },
+  {
+    "id": "M9-normalizeTarget-no-detection",
+    "file": "packages/capability-runtime/src/types.ts",
+    "testsLine": "Tests  9 failed | 148 passed (157)",
+    "killed": true,
+    "restored": true,
+    "failingNames": [
+      "tests/unit/extract-data.spec.ts > invalidExtractSelectorsError > P9 (FR2-06): planExtractFields with a pierce/text= selector gets FR2-02's prefix note plus the dialect reason",
+      "tests/unit/extract-data.spec.ts > invalidExtractSelectorsError > P11 (FR2-06): every Playwright-style field is collected and named, not just the first",
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > normalizeTarget > FR2-06 R1: throws InvalidSelectorError synchronously for Playwright-style syntax",
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R2: a Playwright selector rejects with InvalidSelectorError and touches neither resolveTab nor the action engine",
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R3: fillForm reports the Playwright field as success:false with a hint, and still types the other field",
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R5: uploadFileViaTrigger rejects Playwright syntax before any fs check or page interaction",
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R7: a Playwright-style frame hop names the hop and the full chain, and the SECOND hop never calls the inner frame's $",
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R7b: a Playwright-style FIRST hop rejects before any page.$ call at all"
+    ]
+  },
+  {
+    "id": "M10-extract-throws-on-first-bad-field",
+    "file": "packages/capability-runtime/src/extract/extract-data.ts",
+    "testsLine": "Tests  2 failed | 155 passed (157)",
+    "killed": true,
+    "restored": true,
+    "failingNames": [
+      "tests/unit/extract-data.spec.ts > invalidExtractSelectorsError > P11 (FR2-06): every Playwright-style field is collected and named, not just the first",
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R8: extractData names every Playwright-style field, with the hint exactly once, and never touches evaluate"
+    ]
+  },
+  {
+    "id": "M11-extract-swallows-non-InvalidSelectorError (predict SURVIVES: P10 tests a different throw)",
+    "file": "packages/capability-runtime/src/extract/extract-data.ts",
+    "testsLine": "Tests  157 passed (157)",
+    "killed": false,
+    "restored": true,
+    "failingNames": []
+  },
+  {
+    "id": "M12-uploadViaTrigger-normalize-after-fs-check",
+    "file": "packages/capability-runtime/src/runtime.ts",
+    "testsLine": "Tests  1 failed | 94 passed (95)",
+    "killed": true,
+    "restored": true,
+    "failingNames": [
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R5: uploadFileViaTrigger rejects Playwright syntax before any fs check or page interaction"
+    ]
+  },
+  {
+    "id": "M13-uploadViaTrigger-no-parser-wrap",
+    "file": "packages/capability-runtime/src/runtime.ts",
+    "testsLine": "Tests  1 failed | 94 passed (95)",
+    "killed": true,
+    "restored": true,
+    "failingNames": [
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R6: uploadFileViaTrigger wraps a browser parser error, and passes any other error through as the same object"
+    ]
+  },
+  {
+    "id": "M14-resolveFrame-no-InvalidSelectorError-wrap",
+    "file": "packages/capability-runtime/src/runtime.ts",
+    "testsLine": "Tests  2 failed | 93 passed (95)",
+    "killed": true,
+    "restored": true,
+    "failingNames": [
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R7: a Playwright-style frame hop names the hop and the full chain, and the SECOND hop never calls the inner frame's $",
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime FR2-06 selector dialect > R7b: a Playwright-style FIRST hop rejects before any page.$ call at all"
+    ]
+  },
+  {
+    "id": "M15-cli-validateFrameChain-noop",
+    "file": "packages/cli/src/selector-args.ts",
+    "testsLine": "Tests  1 failed | 4 passed (5)",
+    "killed": true,
+    "restored": true,
+    "failingNames": [
+      "tests/unit/selector-args.spec.ts > @sutradhar/cli FR2-06 selector-args > validateFrameChain > C2: names the hop and the full chain"
+    ]
+  },
+  {
+    "id": "M16-cli-cmdClick-prevalidation-removed (predict SURVIVES: cli.ts wiring has no unit test)",
+    "file": "packages/cli/src/cli.ts",
+    "testsLine": "Tests  177 passed (177)",
+    "killed": false,
+    "restored": true,
+    "failingNames": []
+  },
+  {
+    "id": "M17-mcp-targetDesc-reverted",
+    "file": "packages/mcp-server/src/tools.ts",
+    "testsLine": "Tests  1 failed | 46 passed (47)",
+    "killed": true,
+    "restored": true,
+    "failingNames": [
+      "tests/unit/tools.spec.ts > @sutradhar/mcp-server FR2-06 selector dialect > M1: browser.click's target description documents the dialect"
+    ]
+  }
+]

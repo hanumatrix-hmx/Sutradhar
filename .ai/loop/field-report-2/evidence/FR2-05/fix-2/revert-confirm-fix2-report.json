@@ -1,0 +1,54 @@
+{
+  "parts": [
+    {
+      "id": "GAP300-revert-build",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "GAP300-revert-tests-fail-as-expected",
+      "pass": true,
+      "detail": " case-sensitive parent\n\u001b[31m\u001b[1mAssertionError\u001b[22m: expected 'E:\\AI-Cache\\tmp\\fr2-05-cs-qSf8MT\\dlro…' to be undefined\u001b[39m\n\u001b[36m \u001b[2m❯\u001b[22m tests/unit/path-containment.spec.ts:\u001b[2m265:7\u001b[22m\u001b[39m\n    \u001b[90m263| \u001b[39m      \u001b[90m// repro (a NEW look-alike folder Chrome would create through `B\u001b[39m…\n    \u001b[90m264| \u001b[39m      \u001b[35mconst\u001b[39m attacker \u001b[33m=\u001b[39m path\u001b[33m.\u001b[39m\u001b[34mjoin\u001b[39m(csRoot\u001b[33m,\u001b[39m \u001b[32m'DLROOT'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'sub'\u001b[39m)\u001b[33m;\u001b[39m\n    \u001b[90m265| \u001b[39m      \u001b[35mawait\u001b[39m \u001b[34mexpect\u001b[39m(\u001b[34mfindContainingRoot\u001b[39m(attacker\u001b[33m,\u001b[39m [root]\u001b[33m,\u001b[39m \u001b[32m'win32'\u001b[39m))\u001b[33m.\u001b[39mreso…\n    \u001b[90m   | \u001b[39m      \u001b[31m^\u001b[39m\n    \u001b[90m266| \u001b[39m    })\u001b[33m;\u001b[39m\n    \u001b[90m267| \u001b[39m\n\n\u001b[31m\u001b[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯\u001b[22m\u001b[39m\n\n\u001b[31m\u001b[1m\u001b[7m FAIL \u001b[27m\u001b[22m\u001b[39m tests/unit/path-containment.spec.ts\u001b[2m > \u001b[22m@sutradhar/browser path-containment canonicalizePath/findContainingRoot (real fs)\u001b[2m > \u001b[22mGAP-300: case-sensitive directories\u001b[2m > \u001b[22mPC20 (GAP-300 exact repro shape 2 — EXISTING look-alike sibling): findContainingRoot rejects a case-different EXISTING directory inside a real case-sensitive parent\n\u001b[31m\u001b[1mAssertionError\u001b[22m: expected 'E:\\AI-Cache\\tmp\\fr2-05-cs-qSf8MT\\upro…' to be undefined\u001b[39m\n\u001b[36m \u001b[2m❯\u001b[22m tests/unit/path-containment.spec.ts:\u001b[2m277:7\u001b[22m\u001b[39m\n    \u001b[90m275| \u001b[39m      \u001b[34mmkdirSync\u001b[39m(root\u001b[33m,\u001b[39m { recursive\u001b[33m:\u001b[39m \u001b[35mtrue\u001b[39m })\u001b[33m;\u001b[39m\n    \u001b[90m276| \u001b[39m      \u001b[34mmkdirSync\u001b[39m(lookalike\u001b[33m,\u001b[39m { recursive\u001b[33m:\u001b[39m \u001b[35mtrue\u001b[39m })\u001b[33m;\u001b[39m \u001b[90m// genuinely a DIFFER\u001b[39m…\n    \u001b[90m277| \u001b[39m      \u001b[35mawait\u001b[39m \u001b[34mexpect\u001b[39m(\n    \u001b[90m   | \u001b[39m      \u001b[31m^\u001b[39m\n    \u001b[90m278| \u001b[39m        \u001b[34mfindContainingRoot\u001b[39m(path\u001b[33m.\u001b[39m\u001b[34mjoin\u001b[39m(lookalike\u001b[33m,\u001b[39m \u001b[32m'secret.txt'\u001b[39m)\u001b[33m,\u001b[39m [root]\u001b[33m,\u001b[39m…\n    \u001b[90m279| \u001b[39m      )\u001b[33m.\u001b[39mresolves\u001b[33m.\u001b[39m\u001b[34mtoBeUndefined\u001b[39m()\u001b[33m;\u001b[39m\n\n\u001b[31m\u001b[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯\u001b[22m\u001b[39m\n\n"
+    },
+    {
+      "id": "GAP300-restore-sha-match",
+      "pass": true,
+      "detail": "original=7a55013f8ccdc798e80c5de441ef119711660dd3de1e93f678c25a97b2ee6255 restored=7a55013f8ccdc798e80c5de441ef119711660dd3de1e93f678c25a97b2ee6255"
+    },
+    {
+      "id": "GAP300-restore-build",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "GAP300-restore-tests-pass",
+      "pass": true,
+      "detail": "\n\u001b[7m\u001b[1m\u001b[36m RUN \u001b[39m\u001b[22m\u001b[27m \u001b[36mv1.6.1\u001b[39m \u001b[90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/unit/path-containment.spec.ts \u001b[2m (\u001b[22m\u001b[2m23 tests\u001b[22m \u001b[2m|\u001b[22m \u001b[33m15 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[90m 104\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m8 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m15 skipped\u001b[39m\u001b[90m (23)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:26:12\n\u001b[2m   Duration \u001b[22m 440ms\u001b[2m (transform 33ms, setup 0ms, collect 32ms, tests 104ms, environment 0ms, prepare 125ms)\u001b[22m\n\n\u001b[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\u001b[39m\n"
+    },
+    {
+      "id": "GAP301-revert-build",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "GAP301-revert-tests-fail-as-expected",
+      "pass": true,
+      "detail": " spy call:\n\n\u001b[22m    Array []\n\u001b[31m\u001b[90m\n\nNumber of calls: \u001b[1m1\u001b[22m\n\u001b[31m\u001b[39m\n\u001b[36m \u001b[2m❯\u001b[22m tests/unit/browser-action-engine.spec.ts:\u001b[2m2050:35\u001b[22m\u001b[39m\n    \u001b[90m2048| \u001b[39m        );\n    \u001b[90m2049| \u001b[39m        expect(resetCall).toBeDefined();\n    \u001b[90m2050| \u001b[39m        expect(client.detach).not.toHaveBeenCalled();\n    \u001b[90m   | \u001b[39m                                  \u001b[31m^\u001b[39m\n    \u001b[90m2051| \u001b[39m      }\n    \u001b[90m2052| \u001b[39m\n\n\u001b[31m\u001b[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\u001b[22m\u001b[39m\n\n\n\nE11:\n\u001b[2m > \u001b[22m\u001b[2m@sutradhar/browser BrowserActionEngine FR2-06 caller-selector syntax probe\u001b[2m > \u001b[22m\u001b[2mE11: the duplicate-action guard never masks a rejected-selector result on a repeat dispatch\u001b[22m\u001b[39m\n{\"timestamp\":\"2026-09-28T11:56:22.215Z\",\"level\":\"warn\",\"message\":\"[BrowserActionEngine] Rejected invalid selector before dispatch: Invalid selector \\\"div[\\\" — 'div[' is not a valid selector. Use standard CSS or a snapshot node id (e.g. \\\"12\\\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.\",\"context\":{}}\n{\"timestamp\":\"2026-09-28T11:56:22.215Z\",\"level\":\"warn\",\"message\":\"[BrowserActionEngine] Rejected invalid selector before dispatch: Invalid selector \\\"div[\\\" — 'div[' is not a valid selector. Use standard CSS or a snapshot node id (e.g. \\\"12\\\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.\",\"context\":{}}\n\n\u001b[31m⎯⎯⎯⎯⎯⎯⎯\u001b[1m\u001b[7m Failed Tests 1 \u001b[27m\u001b[22m⎯⎯⎯⎯⎯⎯⎯\u001b[39m\n\n\u001b[31m\u001b[1m\u001b[7m FAIL \u001b[27m\u001b[22m\u001b[39m tests/unit/browser-action-engine.spec.ts\u001b[2m > \u001b[22m@sutradhar/browser BrowserActionEngine download_file\u001b[2m > \u001b[22mFR2-05: containment, reporting and cleanup\u001b[2m > \u001b[22mE11 (GAP-301/302): a second download_file on the SAME browser while one is in flight fails FAST with a clear error, not a queue/timeout\n\u001b[31m\u001b[1mAssertionError\u001b[22m: expected 5015 to be less than 2000\u001b[39m\n\u001b[36m \u001b[2m❯\u001b[22m tests/unit/browser-action-engine.spec.ts:\u001b[2m2174:34\u001b[22m\u001b[39m\n    \u001b[90m2172| \u001b[39m      // fast because the directory's case-sensitivity is already cach…\n    \u001b[90m2173| \u001b[39m      // an assertion that ties this test to a specific fsutil subproc…\n    \u001b[90m2174| \u001b[39m      expect(Date.now() - start).toBeLessThan(2000);\n    \u001b[90m   | \u001b[39m                                 \u001b[31m^\u001b[39m\n    \u001b[90m2175| \u001b[39m      expect(second.success).toBe(false);\n    \u001b[90m2176| \u001b[39m      expect(second.error).toContain('already in progress');\n\n\u001b[31m\u001b[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\u001b[22m\u001b[39m\n\n"
+    },
+    {
+      "id": "GAP301-restore-sha-match",
+      "pass": true,
+      "detail": "original=314865f1ca80bed944dda848dc2e5a0c63dd8d24b6d2d58e2b4b388ef5a08368 restored=314865f1ca80bed944dda848dc2e5a0c63dd8d24b6d2d58e2b4b388ef5a08368"
+    },
+    {
+      "id": "GAP301-restore-build",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "GAP301-restore-tests-pass",
+      "pass": true,
+      "detail": "E8 code=0 E11 code=0"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+173c173
+<     .map((f) => sanitizeFrameName(f.name()))
+---
+>     .map((f) => f.name())

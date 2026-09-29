@@ -1,0 +1,179 @@
+[
+  {
+    "name": "fix4-M2",
+    "anchorsReplaced": 1,
+    "summaries": [
+      {
+        "pkg": "browser",
+        "exit": 1,
+        "tests": "Tests  2 failed | 225 passed (227)",
+        "failed": [
+          "FAIL  tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-081a (isHandleVisible): a fatal session-closed error while checking visibility must report \"unknown\"",
+          "FAIL  tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-086: isHandleVisible is bounded on its own — a handle whose evaluate() never resolves cannot stall a"
+        ]
+      }
+    ],
+    "shaBefore": "3e4d24e077b2ac5ec1645ad81664f3d73645c13123a160df1d27cf81551492a5",
+    "shaAfter": "3e4d24e077b2ac5ec1645ad81664f3d73645c13123a160df1d27cf81551492a5",
+    "restored": true
+  },
+  {
+    "name": "fix4-M3",
+    "anchorsReplaced": 1,
+    "summaries": [
+      {
+        "pkg": "browser",
+        "exit": 1,
+        "tests": "Tests  1 failed | 226 passed (227)",
+        "failed": [
+          "FAIL  tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-081b (pierceFirstMatch): an error this code does not otherwise recognize defaults to \"unknown\", neve"
+        ]
+      }
+    ],
+    "shaBefore": "3e4d24e077b2ac5ec1645ad81664f3d73645c13123a160df1d27cf81551492a5",
+    "shaAfter": "3e4d24e077b2ac5ec1645ad81664f3d73645c13123a160df1d27cf81551492a5",
+    "restored": true
+  },
+  {
+    "name": "fix4-M4",
+    "anchorsReplaced": 1,
+    "summaries": [
+      {
+        "pkg": "browser",
+        "exit": 1,
+        "tests": "Tests  2 failed | 225 passed (227)",
+        "failed": [
+          "FAIL  tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-081a (isHandleVisible): a fatal session-closed error while checking visibility must report \"unknown\"",
+          "FAIL  tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-081b (pierceFirstMatch): an error this code does not otherwise recognize defaults to \"unknown\", neve"
+        ]
+      }
+    ],
+    "shaBefore": "3e4d24e077b2ac5ec1645ad81664f3d73645c13123a160df1d27cf81551492a5",
+    "shaAfter": "3e4d24e077b2ac5ec1645ad81664f3d73645c13123a160df1d27cf81551492a5",
+    "restored": true
+  },
+  {
+    "name": "fix5-G111",
+    "anchorsReplaced": 1,
+    "summaries": [
+      {
+        "pkg": "mcp-server",
+        "exit": 1,
+        "tests": "Tests  1 failed | 30 passed (31)",
+        "failed": [
+          "FAIL  tests/unit/tools.spec.ts > @sutradhar/mcp-server registerTools > GAP-111 (FR2-01 fix-5): an honest \"could not verify\" hidden-wait timeout must NOT get the misleading \"still visible\" hint"
+        ]
+      }
+    ],
+    "shaBefore": "b5fb7f8ecf3ea79e903b55486ae737ff6ebd331b9946b70348eba7ee237a855c",
+    "shaAfter": "b5fb7f8ecf3ea79e903b55486ae737ff6ebd331b9946b70348eba7ee237a855c",
+    "restored": true
+  },
+  {
+    "name": "fix5-G112",
+    "anchorsReplaced": 1,
+    "summaries": [
+      {
+        "pkg": "browser",
+        "exit": 1,
+        "tests": "Tests  1 failed | 226 passed (227)",
+        "failed": [
+          "FAIL  tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-112 (FR2-01 audit-5/fix-5): a genuine per-frame THROWN error in the visibility diagnosis must say \"c"
+        ]
+      }
+    ],
+    "shaBefore": "3e4d24e077b2ac5ec1645ad81664f3d73645c13123a160df1d27cf81551492a5",
+    "shaAfter": "3e4d24e077b2ac5ec1645ad81664f3d73645c13123a160df1d27cf81551492a5",
+    "restored": true
+  },
+  {
+    "name": "fix5-G113",
+    "anchorsReplaced": 1,
+    "summaries": [
+      {
+        "pkg": "browser",
+        "exit": 1,
+        "tests": "Tests  1 failed | 226 passed (227)",
+        "failed": [
+          "FAIL  tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-113 (FR2-01 audit-5/fix-5): the otherVisibleMatches diagnostic reports its own uncertainty, not a si"
+        ]
+      }
+    ],
+    "shaBefore": "3e4d24e077b2ac5ec1645ad81664f3d73645c13123a160df1d27cf81551492a5",
+    "shaAfter": "3e4d24e077b2ac5ec1645ad81664f3d73645c13123a160df1d27cf81551492a5",
+    "restored": true
+  },
+  {
+    "name": "a6-N1-reword",
+    "anchorsReplaced": 2,
+    "summaries": [
+      {
+        "pkg": "browser",
+        "exit": 1,
+        "tests": "Tests  3 failed | 224 passed (227)",
+        "failed": [
+          "FAIL  tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-081a (isHandleVisible): a fatal session-closed error while checking visibility must report \"unknown\"",
+          "FAIL  tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-081b (pierceFirstMatch): an error this code does not otherwise recognize defaults to \"unknown\", neve",
+          "FAIL  tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-082 (9th site — checkWaitForSelectorOnce): the timeoutMs<=0 hidden check-once path also distinguishe"
+        ]
+      },
+      {
+        "pkg": "mcp-server",
+        "exit": 0,
+        "tests": "Tests  31 passed (31)",
+        "failed": []
+      }
+    ],
+    "shaBefore": "3e4d24e077b2ac5ec1645ad81664f3d73645c13123a160df1d27cf81551492a5",
+    "shaAfter": "3e4d24e077b2ac5ec1645ad81664f3d73645c13123a160df1d27cf81551492a5",
+    "restored": true
+  },
+  {
+    "name": "a6-N2-dead-unless",
+    "anchorsReplaced": 1,
+    "summaries": [
+      {
+        "pkg": "mcp-server",
+        "exit": 0,
+        "tests": "Tests  31 passed (31)",
+        "failed": []
+      }
+    ],
+    "shaBefore": "b5fb7f8ecf3ea79e903b55486ae737ff6ebd331b9946b70348eba7ee237a855c",
+    "shaAfter": "b5fb7f8ecf3ea79e903b55486ae737ff6ebd331b9946b70348eba7ee237a855c",
+    "restored": true
+  },
+  {
+    "name": "a6-N3-ctxdestroyed-unknown",
+    "anchorsReplaced": 1,
+    "summaries": [
+      {
+        "pkg": "browser",
+        "exit": 0,
+        "tests": "Tests  227 passed (227)",
+        "failed": []
+      }
+    ],
+    "shaBefore": "3e4d24e077b2ac5ec1645ad81664f3d73645c13123a160df1d27cf81551492a5",
+    "shaAfter": "3e4d24e077b2ac5ec1645ad81664f3d73645c13123a160df1d27cf81551492a5",
+    "restored": true
+  },
+  {
+    "name": "a6-N4-no-083-guard",
+    "anchorsReplaced": 1,
+    "summaries": [
+      {
+        "pkg": "browser",
+        "exit": 1,
+        "tests": "Tests  2 failed | 225 passed (227)",
+        "failed": [
+          "FAIL  tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-083: a state=visible timeout where the diagnostic itself times out on every frame says \"could not be",
+          "FAIL  tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps) > GAP-112 (FR2-01 audit-5/fix-5): a genuine per-frame THROWN error in the visibility diagnosis must say \"c"
+        ]
+      }
+    ],
+    "shaBefore": "3e4d24e077b2ac5ec1645ad81664f3d73645c13123a160df1d27cf81551492a5",
+    "shaAfter": "3e4d24e077b2ac5ec1645ad81664f3d73645c13123a160df1d27cf81551492a5",
+    "restored": true
+  }
+]

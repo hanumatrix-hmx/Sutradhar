@@ -1,0 +1,85 @@
+{
+  "label": "master",
+  "rec": [
+    {
+      "args": "nav <B>/?keep",
+      "code": 0,
+      "ms": 711,
+      "cap": false,
+      "out": "Navigated to http://127.0.0.1:49397/?keep\nTitle: page",
+      "err": ""
+    },
+    {
+      "args": "newtab <B>/?victim",
+      "code": 0,
+      "ms": 415,
+      "cap": false,
+      "out": "New tab tab_sess_1790626452993_1_2 opened at http://127.0.0.1:49397/?victim",
+      "err": ""
+    },
+    {
+      "args": "nav chrome://crash",
+      "code": 1,
+      "ms": 578,
+      "cap": false,
+      "out": "",
+      "err": "Note: previous session was unreachable (net::ERR_ABORTED at chrome://crash) — starting a fresh session.\nFatal: net::ERR_ABORTED at chrome://crash"
+    },
+    {
+      "args": "nav <B>/?after",
+      "code": 1,
+      "ms": 45208,
+      "cap": true,
+      "out": "",
+      "err": ""
+    },
+    {
+      "args": "close",
+      "code": 0,
+      "ms": 412,
+      "cap": false,
+      "out": "Session closed.",
+      "err": ""
+    },
+    {
+      "args": "nav <B>/?keep",
+      "code": 0,
+      "ms": 636,
+      "cap": false,
+      "out": "Navigated to http://127.0.0.1:49397/?keep\nTitle: page",
+      "err": ""
+    },
+    {
+      "args": "newtab <B>/?victim",
+      "code": 0,
+      "ms": 401,
+      "cap": false,
+      "out": "New tab tab_sess_1790626503024_1_2 opened at http://127.0.0.1:49397/?victim",
+      "err": ""
+    },
+    {
+      "args": "nav chrome://crash",
+      "code": 1,
+      "ms": 649,
+      "cap": false,
+      "out": "",
+      "err": "Note: previous session was unreachable (net::ERR_ABORTED at chrome://crash) — starting a fresh session.\nFatal: net::ERR_ABORTED at chrome://crash"
+    },
+    {
+      "args": "snap",
+      "code": 1,
+      "ms": 45195,
+      "cap": true,
+      "out": "",
+      "err": ""
+    },
+    {
+      "args": "close",
+      "code": 0,
+      "ms": 423,
+      "cap": false,
+      "out": "Session closed.",
+      "err": ""
+    }
+  ]
+}

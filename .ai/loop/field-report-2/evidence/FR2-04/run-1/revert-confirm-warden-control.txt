@@ -1,0 +1,78 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli[39m
+
+ [33m❯[39m tests/unit/warden-control.spec.ts [2m ([22m[2m4 tests[22m [2m|[22m [31m2 failed[39m[2m)[22m[33m 5229[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/warden-control.spec.ts[2m > [22m@sutradhar/cli warden-control (FR2-04 Branch W)[2m > [22mWC1: a healthy existing warden for the same wsEndpoint is reused (spawn 0 calls)[39m
+[31m     → expected { port: 4321, token: 'tok', …(1) } to deeply equal { port: 4321, token: 'tok', …(1) }[39m
+[31m   [33m❯[31m tests/unit/warden-control.spec.ts[2m > [22m@sutradhar/cli warden-control (FR2-04 Branch W)[2m > [22mWC4: stopWarden removes the file even when the health pid mismatches (kill 0 calls)[39m
+[31m     → expected "kill" to not be called at all, but actually been called 1 times[90m
+
+Received: 
+
+[1m  1st kill call:
+
+[22m    Array [
+      111,
+      "SIGTERM",
+    ]
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 2 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/warden-control.spec.ts[2m > [22m@sutradhar/cli warden-control (FR2-04 Branch W)[2m > [22mWC1: a healthy existing warden for the same wsEndpoint is reused (spawn 0 calls)
+[31m[1mAssertionError[22m: expected { port: 4321, token: 'tok', …(1) } to deeply equal { port: 4321, token: 'tok', …(1) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  Object {[22m
+[2m    "port": 4321,[22m
+[32m-   "reused": true,[39m
+[31m+   "reused": false,[39m
+[2m    "token": "tok",[22m
+[2m  }[22m
+
+[36m [2m❯[22m tests/unit/warden-control.spec.ts:[2m23:22[22m[39m
+    [90m 21| [39m      [35mconst[39m fetchImpl [33m=[39m vi[33m.[39m[34mfn[39m()[33m.[39m[34mmockResolvedValue[39m({ ok[33m:[39m [35mtrue[39m[33m,[39m json[33m:[39m [35mas[39m…
+    [90m 22| [39m      [35mconst[39m result [33m=[39m [35mawait[39m [34mensureWarden[39m({ stateDir[33m:[39m dir[33m,[39m wsEndpoint[33m:[39m [32m'[39m…
+    [90m 23| [39m      [34mexpect[39m(result)[33m.[39m[34mtoEqual[39m({ port[33m:[39m [34m4321[39m[33m,[39m token[33m:[39m [32m'tok'[39m[33m,[39m reused[33m:[39m [35mtrue[39m …
+    [90m   | [39m                     [31m^[39m
+    [90m 24| [39m      [34mexpect[39m(spawnFn)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m 25| [39m    } [35mfinally[39m {
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/warden-control.spec.ts[2m > [22m@sutradhar/cli warden-control (FR2-04 Branch W)[2m > [22mWC4: stopWarden removes the file even when the health pid mismatches (kill 0 calls)
+[31m[1mAssertionError[22m: expected "kill" to not be called at all, but actually been called 1 times[90m
+
+Received: 
+
+[1m  1st kill call:
+
+[22m    Array [
+      111,
+      "SIGTERM",
+    ]
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[36m [2m❯[22m tests/unit/warden-control.spec.ts:[2m105:27[22m[39m
+    [90m103| [39m      [35mconst[39m killSpy [33m=[39m vi[33m.[39m[34mspyOn[39m(process[33m,[39m [32m'kill'[39m)[33m.[39m[34mmockImplementation[39m(() …
+    [90m104| [39m      [35mawait[39m [34mstopWarden[39m(dir[33m,[39m fetchImpl [35mas[39m any)[33m;[39m
+    [90m105| [39m      [34mexpect[39m(killSpy)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m   | [39m                          [31m^[39m
+    [90m106| [39m      [34mexpect[39m([35mawait[39m [34mreadWardenFile[39m(dir))[33m.[39m[34mtoBeUndefined[39m()[33m;[39m
+    [90m107| [39m      killSpy[33m.[39m[34mmockRestore[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 16:00:06
+[2m   Duration [22m 6.07s[2m (transform 280ms, setup 0ms, collect 534ms, tests 5.23s, environment 0ms, prepare 112ms)[22m
+

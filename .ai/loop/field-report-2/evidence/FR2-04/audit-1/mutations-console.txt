@@ -1,0 +1,14 @@
+M1-B6-dispose-once: CAUGHT (6 failed (6)) restored=true
+M1b-B6-dispose-twice: CAUGHT (6 failed (6)) restored=true
+M2-DC2-report-not-persisted: CAUGHT (1 failed | 17 passed (18)) restored=true
+M3-GAP006-fn-inside-selfheal-try: CAUGHT (1 failed | 4 passed (5)) restored=true
+M4-warden-no-exit-on-disconnect: CAUGHT (1 failed | 7 passed (8)) restored=true
+M4b-warden-no-exit-on-state-change: CAUGHT (1 failed | 7 passed (8)) restored=true
+M5-auto-mode-timer-changed(T1 MCP guard): CAUGHT (1 failed | 30 passed (31)) restored=true
+A1-token-check-accepts-missing-header: NOT CAUGHT (8 passed (8)) restored=true
+A2-token-check-prefix-only: CAUGHT (1 failed | 7 passed (8)) restored=true
+A3-DirectCdpBroker-unknown-no-longer-blocks: NOT CAUGHT (95 passed (95)) restored=true
+A4-warden-binds-all-interfaces: NOT CAUGHT (8 passed (8)) restored=true
+A5-gate-unknown-status-falls-to-clear-vs-block: NOT CAUGHT (95 passed (95)) restored=true
+A6-warden-closed-event-ignored: CAUGHT (1 failed | 7 passed (8)) restored=true
+A7-stopWarden-in-close-removed(no unit guard expected) PATTERN 0

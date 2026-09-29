@@ -1,0 +1,56 @@
+=== Step 1: guard passes against real, current (fix-5) files -- zero false positives ===
+PASS: clean HEAD (with fix-5 applied) produces zero violations across all 12 tracked files
+
+=== Step 2: the 12th file (GAP-127) is actually covered by the file list ===
+PASS: tools/engine-comparison/head-to-head-comparison-2026-08-14.md is in STEALTH_CLAIM_FILES
+
+=== Step 3: all 19 of audit-4's SYN bypass mutations (probe-audit4.mjs) are now caught ===
+PASS: exactly 19 SYN bypass cases are being tested (matches audit-4's count)
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "The --disable-blink-features=AutomationControlled flag is chosen for compatibility reasons."
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "The AutomationControlled flag helps avoid launch instability."
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "This argument improves reliability."
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "It is necessary for consistent behavior across Chrome versions."
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "The flag is included by default. This helps launches remain stable."
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "The AutomationControlled flag is retained for stability."
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "DEFAULT_LAUNCH_ARGS exists purely to keep Chrome stable under automation."
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "This flag improves launch stability."
+PASS: SYN bypass caught: packages/browser/src/launcher/browser-options.ts :: "The flag is kept for robustness, not detection evasion."
+PASS: SYN bypass caught: PROJECT_DEEP_DIVE.md :: "The retained flag is a Chrome-recommended default for automation."
+PASS: SYN bypass caught: SECURITY.md :: "Nothing in the launcher masks automation signals."
+PASS: SYN bypass caught: SECURITY.md :: "Sutradhar does not modify navigator.webdriver or any other automation signal."
+PASS: SYN bypass caught: README.md :: "Sutradhar launches a completely stock Chrome with no fingerprint changes at all."
+PASS: SYN bypass caught: README.md :: "The flag hides every automation signal."
+PASS: SYN bypass caught: README.md :: "This flag hides all the automation signals."
+PASS: SYN bypass caught: README.md :: "navigator.webdriver hiding is merely incidental to this flag."
+PASS: SYN bypass caught: README.md :: "Hiding navigator.webdriver is a byproduct of this flag."
+PASS: SYN bypass caught: docs/ARCHITECTURE.md :: "Sutradhar launches a plain undisguised Chrome."
+PASS: SYN bypass caught: docs/ARCHITECTURE.md :: "Sutradhar launches an undisguised, plain browser."
+
+=== Step 4: GAP-129's negation-lookback exploits are now caught (old guard: both missed) ===
+PASS: NEG exploit caught: packages/browser/src/launcher/browser-options.ts :: "Do not remove this stability flag."
+PASS: NEG exploit caught: packages/browser/src/launcher/browser-options.ts :: "This is not optional: it is a stability flag."
+
+=== Step 5: false-positive check -- genuinely honest sentences do NOT get flagged ===
+PASS: honest/unrelated edit produces no violation: packages/browser/src/launcher/browser-options.ts :: "This is an unrelated documentation addition about installation steps."
+
+=== Step 6 (GAP-130 regression): reverting any tracked file to a pre-fix false wording fails closed ===
+PASS: 11 revert-wording regression cases are being tested (one per tracked file)
+PASS: revert-to-false-wording caught: packages/browser/src/launcher/browser-options.ts :: "--disable-blink-features=AutomationControlled is kept for stability, a chrome-recommended stability flag, not detection-evasion."
+PASS: revert-to-false-wording caught: packages/browser/src/launcher/browser-launcher.ts :: "Generates sanitized launch arguments (see DEFAULT_LAUNCH_ARGS for the stability flags that are always included, unconditionally)."
+PASS: revert-to-false-wording caught: SECURITY.md :: "It is a compatibility flag, nothing more."
+PASS: revert-to-false-wording caught: README.md :: "Hiding navigator.webdriver is just a side effect of this flag, not its purpose."
+PASS: revert-to-false-wording caught: PROJECT_DEEP_DIVE.md :: "This flag is not a stability flag in the sense some may assume, but it is still a compatibility flag kept for reliable automated launches."
+PASS: revert-to-false-wording caught: AGENT_SETUP.md :: "This flag is recommended for reliable automated launches."
+PASS: revert-to-false-wording caught: docs/ARCHITECTURE.md :: "Sutradhar launches a plain, undisguised browser and does nothing else."
+KNOWN GAP (GAP-139/140, not counted as a failure): revert-to-false-wording NOT caught: .ai/competitive-benchmarks.md :: "This single flag hides all automation signals from any detection script."
+PASS: revert-to-false-wording caught: packages/browser/README.md :: "The AutomationControlled flag is a stability flag, kept for compatibility, not detection-evasion."
+PASS: revert-to-false-wording caught: AGENT_SETUP.md :: "The retained flag exists mainly for stability."
+KNOWN GAP (GAP-139/140, not counted as a failure): revert-to-false-wording NOT caught: tools/engine-comparison/head-to-head-comparison-2026-08-14.md :: "Both tools launched with no stealth on any side, and --disable-blink-features=AutomationControlled makes no difference to that symmetry."
+
+=== Summary ===
+SYN bypasses caught: 19/19
+NEG exploits caught: 2/2
+Known, disclosed gaps (GAP-139/140, not build-breaking): 2
+Total checks: 35 (35 pass, 0 fail)
+
+ALL PASS (plus known disclosed gaps above)

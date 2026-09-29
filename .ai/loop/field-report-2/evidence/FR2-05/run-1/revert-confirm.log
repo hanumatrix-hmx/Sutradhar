@@ -1,0 +1,19 @@
+[revert-confirm] original sha256(path-containment.ts) = 013e4bebba9176d2ac8c2862b39d51142b78310d5c66face6e562d00eeb8f226
+[revert-confirm] applied revert to canonicalizePath (now falls back to the literal path on any error)
+[revert-confirm] reverted build compiled OK
+[revert-confirm] PC4 (junction escape, not-yet-created tail) with the fix reverted: FAILED as expected
+[revert-confirm] E1 (download_file rejects a junction escape) with the fix reverted: FAILED as expected
+(node:52608) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[revert-confirm] live case: findContainingRoot(<root>/jn/newsub, [<root>]) with the fix reverted returned "E:\\AI-Cache\\tmp\\fr2-05-revert-live-FUQF9Y\\root" (escape REPRODUCED (bad, as expected of the reverted code))
+[revert-confirm] restored sha256(path-containment.ts) = 013e4bebba9176d2ac8c2862b39d51142b78310d5c66face6e562d00eeb8f226 (MATCHES original)
+[revert-confirm] after restore: PC4 PASSES, E1 PASSES
+
+[revert-confirm] original sha256(browser-action-engine.ts) = 2c76e5b9957784c7d57e34d82e1c15f7952c1eddcec8e487ad0b1321c64fa74e
+[revert-confirm] applied revert to the constructor default (an explicit [] now crashes again, per the pre-fix `?? default` semantics)
+[revert-confirm] E10 (explicit [] behaves like the default) with the fix reverted: FAILED as expected
+[revert-confirm] restored sha256(browser-action-engine.ts) = 2c76e5b9957784c7d57e34d82e1c15f7952c1eddcec8e487ad0b1321c64fa74e (MATCHES original)
+[revert-confirm] after restore: E10 PASSES
+
+[revert-confirm] RESULT: OK — both pieces are load-bearing and the restores are verified.
+exit=0

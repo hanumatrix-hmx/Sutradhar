@@ -1,0 +1,11 @@
+[revert-confirm] original sha256(site-audit.ts) = 61e2fcdeeeb319e90ee10bd867127db5b18ecc42eabcedce2866d07bb5afab5a
+[revert-confirm] applied revert to scopeToDocument (now a no-op passthrough)
+[revert-confirm] reverted build compiled OK (a no-op passthrough is still type-valid)
+[revert-confirm] RA3 test with scoping reverted: FAILED as expected
+[revert-confirm] AR10 (scopeToDocument unit test) with scoping reverted: FAILED as expected
+[revert-confirm] restored sha256 = 61e2fcdeeeb319e90ee10bd867127db5b18ecc42eabcedce2866d07bb5afab5a (MATCHES original)
+[revert-confirm] after restore: RA3 PASSES, AR10 PASSES
+
+[revert-confirm] RESULT: OK — the logic is load-bearing and the restore is verified.
+(node:38576) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)

@@ -469,3 +469,79 @@ describe('@sutradhar/browser Session Management & Tab Lifecycle', () => {
     }
   });
 });
+
+describe('@sutradhar/browser BrowserSession dialog policy propagation (FR2-04 fix-1, GAP-225 S-D1/S-D2)', () => {
+  function fakePage(url: string): Page {
+    return {
+      isClosed: () => false,
+      url: () => url,
+      on: vi.fn().mockReturnThis(),
+    } as unknown as Page;
+  }
+
+  it('S-D1: createTab, adoptExistingPage, and a popup event all pick up the session\'s configured dialog policy', async () => {
+    let popupHandler: ((page: Page) => void) | undefined;
+    const mainPage = {
+      isClosed: () => false,
+      url: () => 'https://example.com',
+      on: vi.fn((event: string, handler: any) => {
+        if (event === 'popup') popupHandler = handler;
+        return mainPage;
+      }),
+    } as unknown as Page;
+
+    const browserInstance = {
+      isConnected: true,
+      newPage: vi.fn().mockResolvedValue(mainPage),
+      close: vi.fn(),
+      onDisconnected: vi.fn(),
+    } as any;
+
+    const session = new BrowserSession(
+      createSessionId('sess_sd1'),
+      false,
+      undefined,
+      undefined,
+      browserInstance,
+      { mode: 'dismiss' },
+    );
+
+    const createdTab = await session.createTab('https://example.com');
+    expect(createdTab.getDialogPolicy?.()).toEqual({ mode: 'dismiss' });
+
+    const adoptedTab = await session.adoptExistingPage(fakePage('https://example.com/adopted'), false);
+    expect(adoptedTab.getDialogPolicy?.()).toEqual({ mode: 'dismiss' });
+
+    expect(popupHandler).toBeDefined();
+    popupHandler!(fakePage('https://example.com/popup'));
+    await new Promise((r) => setTimeout(r, 0));
+    const popupTab = session.getTabs().find((t) => t.id !== createdTab.id && t.id !== adoptedTab.id);
+    expect(popupTab?.getDialogPolicy?.()).toEqual({ mode: 'dismiss' });
+  });
+
+  it('S-D2: setDialogPolicy updates existing tabs immediately, and a tab created afterwards also gets the new policy', async () => {
+    const browserInstance = {
+      isConnected: true,
+      newPage: vi
+        .fn()
+        .mockResolvedValueOnce({ isClosed: () => false, url: () => 'https://a/', on: vi.fn().mockReturnThis() } as unknown as Page)
+        .mockResolvedValueOnce({ isClosed: () => false, url: () => 'https://b/', on: vi.fn().mockReturnThis() } as unknown as Page)
+        .mockResolvedValueOnce({ isClosed: () => false, url: () => 'https://c/', on: vi.fn().mockReturnThis() } as unknown as Page),
+      close: vi.fn(),
+      onDisconnected: vi.fn(),
+    } as any;
+
+    const session = new BrowserSession(createSessionId('sess_sd2'), false, undefined, undefined, browserInstance);
+    const tabA = await session.createTab('https://a/');
+    const tabB = await session.createTab('https://b/');
+    expect(tabA.getDialogPolicy?.()).toEqual({ mode: 'auto' });
+    expect(tabB.getDialogPolicy?.()).toEqual({ mode: 'auto' });
+
+    session.setDialogPolicy?.({ mode: 'accept' });
+    expect(tabA.getDialogPolicy?.()).toEqual({ mode: 'accept' });
+    expect(tabB.getDialogPolicy?.()).toEqual({ mode: 'accept' });
+
+    const tabC = await session.createTab('https://c/');
+    expect(tabC.getDialogPolicy?.()).toEqual({ mode: 'accept' });
+  });
+});

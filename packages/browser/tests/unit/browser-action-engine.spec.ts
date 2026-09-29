@@ -5,11 +5,16 @@
  * and the honest-error tab-lifecycle stubs.
  */
 
-import { BrowserActionEngine, IBrowserTab } from '../../src/index.js';
+import { BrowserActionEngine, IBrowserTab, defaultDownloadRoot } from '../../src/index.js';
+// Test-only hook (FR2-01 fix-1, GAP-013) — not part of the package's public surface, so it's
+// imported directly from the source module rather than re-exported via index.ts.
+import { __TEST_ONLY_setWaitForSelectorOuterGraceMs } from '../../src/actions/browser-action-engine.js';
 import { createTabId } from '@sutradhar/contracts';
 import type { Page, Frame, ElementHandle } from 'puppeteer-core';
 import path from 'node:path';
+import os from 'node:os';
 import { fileURLToPath } from 'node:url';
+import { existsSync, rmSync, mkdtempSync, mkdirSync, symlinkSync, writeFileSync, unlinkSync } from 'node:fs';
 
 /** A real, guaranteed-to-exist file path (this spec file itself) for tests that need
  *  `assertUploadPathAllowed`'s existence check to pass so they can exercise other logic. */
@@ -680,7 +685,9 @@ describe('@sutradhar/browser BrowserActionEngine duplicate-action guard', () => 
 
   it('does not guard non-mutating actions like wait_for_selector', async () => {
     const handle = mockHandle();
+    (handle as any).evaluate = vi.fn().mockResolvedValue(true); // visible, for the default state
     const page = singleFramePage(() => Promise.resolve(handle));
+    (page as any).frames()[0].$ = vi.fn().mockResolvedValue(handle);
 
     const engine = new BrowserActionEngine();
     const params = { actionType: 'wait_for_selector' as const, selector: '#thing', maxRetries: 0 };
@@ -1356,6 +1363,50 @@ describe('@sutradhar/browser BrowserActionEngine cross-frame element resolution'
     expect(handle.click).toHaveBeenCalledTimes(1);
     expect((mainFrame.waitForSelector as any)).toHaveBeenCalledTimes(2);
   });
+
+  it('fully settles each cross-frame selector probe before starting the next, so no losing wait survives to reject after a frame detach', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true);
+    const order: string[] = [];
+
+    const mainFrame = {
+      isDetached: () => false,
+      waitForSelector: vi
+        .fn()
+        .mockRejectedValueOnce(new Error('not found during main-frame head start'))
+        .mockImplementationOnce(() =>
+          new Promise((_resolve, reject) => {
+            order.push('main-probe-start');
+            setTimeout(() => {
+              order.push('main-probe-settled');
+              reject(new Error('not in main frame'));
+            }, 5);
+          }),
+        ),
+    } as unknown as Frame;
+    const iframe = {
+      isDetached: () => false,
+      waitForSelector: vi.fn().mockImplementation(async () => {
+        order.push('iframe-probe-start');
+        return handle;
+      }),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, iframe]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'click',
+      selector: '#inside-dynamic-iframe',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(order).toEqual(['main-probe-start', 'main-probe-settled', 'iframe-probe-start']);
+    expect(handle.click).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('@sutradhar/browser BrowserActionEngine right-click (button-aware)', () => {
@@ -1587,17 +1638,77 @@ describe('@sutradhar/browser BrowserActionEngine screenshot-on-failure', () => {
     expect(result.success).toBe(false);
     expect(result.failureScreenshot).toBeUndefined();
   });
+
+  it('GAP-010: a never-resolving screenshot does not block the failed result past the 3000ms cap', async () => {
+    vi.useFakeTimers();
+    try {
+      const page = singleFramePage(() => Promise.reject(new Error('boom')));
+      // Simulates the audit-1 finding: a screenshot against a backgrounded/unresponsive tab can
+      // hang far longer than any reasonable "best effort" (up to the ~180s CDP protocol
+      // timeout). This mock never resolves or rejects at all.
+      (page as any).screenshot = vi.fn().mockImplementation(() => new Promise(() => {}));
+
+      const engine = new BrowserActionEngine();
+      const resultPromise = engine.executeAction(mockTab(page), {
+        actionType: 'click',
+        selector: '#does-not-exist',
+        maxRetries: 0,
+      });
+
+      // Advance past the action's own timeout/retry bookkeeping plus the 3000ms screenshot cap.
+      await vi.advanceTimersByTimeAsync(20000);
+      const result = await resultPromise;
+
+      expect(result.success).toBe(false);
+      expect(result.failureScreenshot).toBeUndefined();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
 
 describe('@sutradhar/browser BrowserActionEngine download_file', () => {
+  // GAP-307: download_file takes a real on-disk lock file (os.tmpdir()) keyed by the browser's
+  // wsEndpoint. A constant endpoint made every test - and every concurrently running vitest
+  // process on the machine - contend for the SAME lock file, so give each mock browser its own.
+  let wsCounter = 0;
+  function uniqueWs(tag = 'mock-browser'): string {
+    return `ws://${tag}-${process.pid}-${Date.now()}-${wsCounter++}`;
+  }
+
   function mockCdpClient() {
     const handlers = new Map<string, (evt: any) => void>();
+    const waiters = new Map<string, Array<() => void>>();
     return {
       send: vi.fn().mockResolvedValue(undefined),
-      on: vi.fn((evt: string, cb: (evt: any) => void) => handlers.set(evt, cb)),
+      on: vi.fn((evt: string, cb: (evt: any) => void) => {
+        handlers.set(evt, cb);
+        for (const w of waiters.get(evt) ?? []) w();
+        waiters.delete(evt);
+      }),
       off: vi.fn((evt: string) => handlers.delete(evt)),
       detach: vi.fn().mockResolvedValue(undefined),
       emit: (evt: string, payload: any) => handlers.get(evt)?.(payload),
+      // GAP-307: resolves once the engine has registered a listener for `evt` (event-based, not
+      // a fixed sleep). The engine registers its listeners only after a real lock-file
+      // acquisition + CDP calls, whose latency varies with machine load; emitting before that
+      // silently dropped the event and the test then hung until the action timeout.
+      // Hard-bounded so a real regression fails fast instead of hanging.
+      whenListening: (evt: string): Promise<void> =>
+        handlers.has(evt)
+          ? Promise.resolve()
+          : new Promise<void>((resolve, reject) => {
+              const t = setTimeout(
+                () => reject(new Error(`engine never registered a listener for ${evt}`)),
+                10000,
+              );
+              const list = waiters.get(evt) ?? [];
+              list.push(() => {
+                clearTimeout(t);
+                resolve();
+              });
+              waiters.set(evt, list);
+            }),
     };
   }
 
@@ -1607,7 +1718,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
     const page = singleFramePage(() => Promise.resolve(handle));
     const client = mockCdpClient();
     (page as any).browser = vi.fn().mockReturnValue({
-      target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+      wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
     });
 
     const allowedDir = path.resolve('/tmp/downloads');
@@ -1621,7 +1732,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
 
     // Give verifiedClick's internal races (real setTimeout-based) time to settle, then fire
     // the CDP download events.
-    await new Promise((r) => setTimeout(r, 50));
+    await client.whenListening('Browser.downloadProgress');
     client.emit('Browser.downloadWillBegin', { suggestedFilename: 'report.pdf' });
     client.emit('Browser.downloadProgress', { state: 'completed' });
 
@@ -1662,7 +1773,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
     const page = singleFramePage(() => Promise.resolve(handle));
     const client = mockCdpClient();
     (page as any).browser = vi.fn().mockReturnValue({
-      target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+      wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
     });
 
     // Neither path exists on disk, so `realpath` throws for both and each falls back to its own
@@ -1679,7 +1790,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       maxRetries: 0,
     });
 
-    await new Promise((r) => setTimeout(r, 50));
+    await client.whenListening('Browser.downloadProgress');
     client.emit('Browser.downloadWillBegin', { suggestedFilename: 'report.pdf' });
     client.emit('Browser.downloadProgress', { state: 'completed' });
 
@@ -1695,7 +1806,7 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
     const page = singleFramePage(() => Promise.resolve(handle));
     const client = mockCdpClient();
     (page as any).browser = vi.fn().mockReturnValue({
-      target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+      wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
     });
 
     const engine = new BrowserActionEngine();
@@ -1705,8 +1816,9 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       maxRetries: 0,
     });
 
-    await new Promise((r) => setTimeout(r, 50));
-    client.emit('Browser.downloadProgress', { state: 'canceled' });
+    await client.whenListening('Browser.downloadProgress');
+    client.emit('Browser.downloadWillBegin', { guid: 'gc', suggestedFilename: 'c.pdf' });
+    client.emit('Browser.downloadProgress', { guid: 'gc', state: 'canceled' });
 
     const result = await promise;
 
@@ -1714,14 +1826,19 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
     expect(result.error).toContain('canceled');
   });
 
-  it('detaches the CDP session and does not leave a dangling unhandled rejection when the trigger click fails', async () => {
+  it('resets the download session to deny (without detaching it, FR2-05 fix-2/GAP-301) and does not leave a dangling unhandled rejection when the trigger click fails', async () => {
     // Regression test: if verifiedClick throws (e.g. trigger element not found) before the
     // download promise is awaited, its own timeout timer must not fire an unobserved
-    // rejection later, and the CDP session must be cleaned up rather than leaked.
+    // rejection later, and the CDP session's download behavior must be reset.
+    //
+    // FR2-05 fix-2 (GAP-301): the session is no longer detached at all — audit-2 confirmed
+    // live that detaching right after the 'deny' reset made Chrome silently revert the
+    // browser-wide download setting anyway, so this engine now keeps ONE never-detached
+    // session per browser for download-behavior management instead.
     const page = singleFramePage(() => Promise.reject(new Error('not found')));
     const client = mockCdpClient();
     (page as any).browser = vi.fn().mockReturnValue({
-      target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+      wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
     });
 
     const unhandled: unknown[] = [];
@@ -1738,7 +1855,8 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
       });
 
       expect(result.success).toBe(false);
-      expect(client.detach).toHaveBeenCalled();
+      expect(client.send).toHaveBeenCalledWith('Browser.setDownloadBehavior', { behavior: 'deny' });
+      expect(client.detach).not.toHaveBeenCalled();
 
       // Give any dangling timer/microtask a chance to surface before asserting none did.
       await new Promise((r) => setTimeout(r, 50));
@@ -1746,6 +1864,538 @@ describe('@sutradhar/browser BrowserActionEngine download_file', () => {
     } finally {
       process.off('unhandledRejection', onUnhandled);
     }
+  });
+
+  // FR2-05 additions: symlink/junction escape (B2), guid filtering and filePath reporting (B6),
+  // the setDownloadBehavior reset (B7), and the constructor's empty-array default (B12-adjacent).
+  describe('FR2-05: containment, reporting and cleanup', () => {
+    let tmpRoot: string;
+
+    beforeEach(() => {
+      tmpRoot = mkdtempSync(path.join(os.tmpdir(), 'fr2-05-engine-'));
+    });
+
+    afterEach(() => {
+      rmSync(tmpRoot, { recursive: true, force: true });
+    });
+
+    it('E1: rejects a downloadDir reached through a junction/symlink with a not-yet-created tail, without ever creating a CDP session', async () => {
+      const root = path.join(tmpRoot, 'root');
+      const outside = path.join(tmpRoot, 'outside');
+      mkdirSync(root, { recursive: true });
+      mkdirSync(outside, { recursive: true });
+      symlinkSync(outside, path.join(root, 'jn'), process.platform === 'win32' ? 'junction' : 'dir');
+
+      const handle = mockHandle();
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const createCDPSession = vi.fn();
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession }) });
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [root]);
+      const result = await engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: path.join(root, 'jn', 'newsub'),
+        maxRetries: 0,
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('outside the allowed download directories');
+      expect(createCDPSession).not.toHaveBeenCalled();
+      expect(existsSync(path.join(outside, 'newsub'))).toBe(false);
+    });
+
+    it('E2: rejects a downloadDir whose literal spelling is a prefix-lookalike of an allowed root', async () => {
+      const root = path.join(tmpRoot, 'root');
+      mkdirSync(root, { recursive: true });
+      const handle = mockHandle();
+      const page = singleFramePage(() => Promise.resolve(handle));
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [root]);
+      const result = await engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: root + '-evil',
+        maxRetries: 0,
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('outside the allowed download directories');
+    });
+
+    it('E3: rejects a downloadDir that traverses out of the allowed root via ..', async () => {
+      const root = path.join(tmpRoot, 'root');
+      mkdirSync(root, { recursive: true });
+      const handle = mockHandle();
+      const page = singleFramePage(() => Promise.resolve(handle));
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [root]);
+      const result = await engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: path.join(root, '..', 'x'),
+        maxRetries: 0,
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('outside the allowed download directories');
+    });
+
+    it("E4: prefers CDP's filePath over the suggested filename when it differs (e.g. Chrome uniquified the name)", async () => {
+      const dir = path.join(tmpRoot, 'dir');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true);
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+      const promise = engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+      });
+
+      await client.whenListening('Browser.downloadProgress');
+      client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'r.pdf' });
+      client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed', filePath: path.join(dir, 'r (1).pdf') });
+
+      const result = await promise;
+      expect(result.success).toBe(true);
+      expect(result.outputData).toMatchObject({
+        downloadedPath: path.join(dir, 'r (1).pdf'),
+        downloadedFilename: 'r (1).pdf',
+      });
+    });
+
+    it('E5: ignores progress events for a different guid (a concurrent download in the same browser)', async () => {
+      const dir = path.join(tmpRoot, 'dir');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true);
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+      const promise = engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+      });
+
+      await client.whenListening('Browser.downloadProgress');
+      client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'a.pdf' });
+      client.emit('Browser.downloadProgress', { guid: 'g2', state: 'completed' });
+
+      let settled = false;
+      void promise.then(() => (settled = true));
+      await new Promise((r) => setTimeout(r, 20));
+      expect(settled).toBe(false);
+
+      client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed' });
+      const result = await promise;
+      expect(result.success).toBe(true);
+      expect(result.outputData).toMatchObject({ downloadedFilename: 'a.pdf' });
+    });
+
+    // GAP-307: ordering race. A progress event for a DIFFERENT download (another tab/process in
+    // the same browser) that arrives BEFORE this call's own downloadWillBegin used to be accepted
+    // as this call's result (beganGuid was still unset). Fully deterministic: no timers - every
+    // event is emitted synchronously once the engine has registered its listeners.
+    it("GAP-307: a foreign guid's 'completed' progress delivered BEFORE this call's own downloadWillBegin is ignored, not accepted as this call's file", async () => {
+      const dir = path.join(tmpRoot, 'dir');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true);
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+      const promise = engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+      });
+
+      await client.whenListening('Browser.downloadProgress');
+      // Foreign download finishes first, with its own filePath inside the dir.
+      client.emit('Browser.downloadProgress', { guid: 'foreign', state: 'completed', filePath: path.join(dir, 'foreign.bin') });
+      // Then this call's own download begins and completes.
+      client.emit('Browser.downloadWillBegin', { guid: 'mine', suggestedFilename: 'mine.pdf' });
+      client.emit('Browser.downloadProgress', { guid: 'mine', state: 'completed' });
+
+      const result = await promise;
+      expect(result.success).toBe(true);
+      expect(result.outputData).toMatchObject({
+        downloadedFilename: 'mine.pdf',
+        downloadedPath: path.join(dir, 'mine.pdf'),
+      });
+    });
+
+    it("GAP-307: a foreign guid's 'canceled' progress delivered BEFORE this call's own downloadWillBegin does not fail this call", async () => {
+      const dir = path.join(tmpRoot, 'dir');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true);
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+      const promise = engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+      });
+
+      await client.whenListening('Browser.downloadProgress');
+      client.emit('Browser.downloadProgress', { guid: 'foreign', state: 'canceled' });
+      client.emit('Browser.downloadWillBegin', { guid: 'mine', suggestedFilename: 'mine.pdf' });
+      client.emit('Browser.downloadProgress', { guid: 'mine', state: 'completed' });
+
+      const result = await promise;
+      expect(result.success).toBe(true);
+      expect(result.outputData).toMatchObject({ downloadedFilename: 'mine.pdf' });
+    });
+
+    it('E6: sanitizes a hostile suggestedFilename with path.basename when there is no filePath', async () => {
+      const dir = path.join(tmpRoot, 'dir');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true);
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+      const promise = engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+      });
+
+      await client.whenListening('Browser.downloadProgress');
+      client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: '../../evil.txt' });
+      client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed' });
+
+      const result = await promise;
+      expect(result.success).toBe(true);
+      expect(result.outputData).toMatchObject({ downloadedPath: path.join(dir, 'evil.txt') });
+    });
+
+    it('E7: fails when CDP reports a filePath outside the download directory', async () => {
+      const dir = path.join(tmpRoot, 'dir');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true);
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+      const promise = engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+      });
+
+      await client.whenListening('Browser.downloadProgress');
+      client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'x.bin' });
+      client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed', filePath: path.join(tmpRoot, 'elsewhere', 'x.bin') });
+
+      const result = await promise;
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('outside the download directory');
+    });
+
+    it('E8: resets Browser.setDownloadBehavior to deny (fail closed) on both success and cancellation, WITHOUT detaching the session (fix-2/GAP-301: detaching was the reason the reset did not stick live)', async () => {
+      const dir = path.join(tmpRoot, 'dir');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true);
+
+      // Success path.
+      {
+        const page = singleFramePage(() => Promise.resolve(handle));
+        const client = mockCdpClient();
+        (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+        const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+        const promise = engine.executeAction(mockTab(page), {
+          actionType: 'download_file',
+          selector: '#download-link',
+          downloadDir: dir,
+          maxRetries: 0,
+        });
+        await client.whenListening('Browser.downloadProgress');
+        client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'a.pdf' });
+        client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed' });
+        await promise;
+
+        const resetCall = client.send.mock.calls.find(
+          (c: any[]) => c[0] === 'Browser.setDownloadBehavior' && c[1]?.behavior === 'deny',
+        );
+        expect(resetCall).toBeDefined();
+        expect(client.detach).not.toHaveBeenCalled();
+      }
+
+      // Cancellation path.
+      {
+        const page = singleFramePage(() => Promise.resolve(handle));
+        const client = mockCdpClient();
+        (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+        const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+        const promise = engine.executeAction(mockTab(page), {
+          actionType: 'download_file',
+          selector: '#download-link',
+          downloadDir: dir,
+          maxRetries: 0,
+        });
+        await client.whenListening('Browser.downloadProgress');
+        client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'a.pdf' });
+        client.emit('Browser.downloadProgress', { guid: 'g1', state: 'canceled' });
+        await promise;
+
+        const resetCall = client.send.mock.calls.find(
+          (c: any[]) => c[0] === 'Browser.setDownloadBehavior' && c[1]?.behavior === 'deny',
+        );
+        expect(resetCall).toBeDefined();
+        expect(client.detach).not.toHaveBeenCalled();
+      }
+    });
+
+    it('E9: upload_file rejects a filePath reached through a link that escapes the allowed upload roots', async () => {
+      const root = path.join(tmpRoot, 'root');
+      const outside = path.join(tmpRoot, 'outside');
+      mkdirSync(root, { recursive: true });
+      mkdirSync(outside, { recursive: true });
+      writeFileSync(path.join(outside, 'secret.txt'), 'shh');
+      symlinkSync(outside, path.join(root, 'jn'), process.platform === 'win32' ? 'junction' : 'dir');
+
+      const handle = mockHandle();
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, undefined, [root]);
+      const result = await engine.executeAction(mockTab(page), {
+        actionType: 'upload_file',
+        selector: '#f',
+        filePath: path.join(root, 'jn', 'secret.txt'),
+        maxRetries: 0,
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('outside the allowed upload directories');
+    });
+
+    it('E10: an explicit empty allowedDownloadRoots array behaves like the default, not a crash', async () => {
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true);
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      (page as any).browser = vi.fn().mockReturnValue({ wsEndpoint: vi.fn().mockReturnValue(uniqueWs()), target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }) });
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, []);
+      const promise = engine.executeAction(mockTab(page), {
+        actionType: 'download_file',
+        selector: '#download-link',
+        maxRetries: 0,
+      });
+
+      await client.whenListening('Browser.downloadProgress');
+      client.emit('Browser.downloadWillBegin', { guid: 'g1', suggestedFilename: 'a.pdf' });
+      client.emit('Browser.downloadProgress', { guid: 'g1', state: 'completed' });
+
+      const result = await promise;
+      expect(result.success).toBe(true);
+      expect(client.send).toHaveBeenCalledWith(
+        'Browser.setDownloadBehavior',
+        expect.objectContaining({ downloadPath: defaultDownloadRoot() }),
+      );
+    });
+
+    // ── FR2-05 fix-2 (GAP-301/GAP-302): fail-fast cross-process lock + session reuse ─────────
+    it('E11 (GAP-301/302): a second download_file on the SAME browser while one is in flight fails FAST with a clear error, not a queue/timeout', async () => {
+      const dir = path.join(tmpRoot, 'e11');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true); // not stale / not occluded / delivered — so the
+      // first call's click actually succeeds and it's genuinely awaiting the download (holding
+      // the lock), not failing fast on its own for an unrelated reason.
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      const browserMock = {
+        wsEndpoint: vi.fn().mockReturnValue(uniqueWs('e11')),
+        target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+      };
+      (page as any).browser = vi.fn().mockReturnValue(browserMock);
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+      // Two DIFFERENT tabs of the SAME browser — the duplicate-action guard is per-tab, so this
+      // must not be masked by that unrelated guard; the lock this test exercises is per-BROWSER
+      // (keyed by wsEndpoint), exactly matching the real GAP-301 concurrency shape (different
+      // tabs/processes, one shared browser-wide setDownloadBehavior).
+      const tab1 = mockTab(page);
+      const tab2 = mockTab(page);
+      (tab2 as any).id = createTabId('tab_2_e11');
+      // First call: never completes (no downloadWillBegin/downloadProgress emitted), so it's
+      // still holding the lock when the second call starts. Give it enough headroom to clear
+      // its own real on-disk case-sensitivity detection (GAP-300 — a real `fsutil` subprocess
+      // spawn, cached per-directory afterward) and actually reach the lock before we start
+      // timing the second call's fail-fast behavior.
+      const first = engine.executeAction(tab1, {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+        timeoutMs: 5000,
+      });
+      await client.whenListening('Browser.downloadProgress');
+
+      const start = Date.now();
+      const second = await engine.executeAction(tab2, {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+        timeoutMs: 5000,
+      });
+      // "Fails fast": well under the 5000ms timeoutMs each call was given, and specifically
+      // fast because the directory's case-sensitivity is already cached by the first call — not
+      // an assertion that ties this test to a specific fsutil subprocess latency.
+      expect(Date.now() - start).toBeLessThan(2000);
+      expect(second.success).toBe(false);
+      expect(second.error).toContain('already in progress');
+
+      // Clean up the first, still-pending call.
+      client.emit('Browser.downloadWillBegin', { guid: 'anything', suggestedFilename: 'x.pdf' });
+      client.emit('Browser.downloadProgress', { guid: 'anything', state: 'canceled' });
+      await first;
+    });
+
+    it('E12 (GAP-301 cause 1): reuses ONE CDP session across sequential download_file calls on the same browser and never detaches it', async () => {
+      const dir = path.join(tmpRoot, 'e12');
+      mkdirSync(dir, { recursive: true });
+      const handle = mockHandle();
+      handle.evaluate.mockResolvedValue(true); // not stale / not occluded / marker delivered, every call
+      const page = singleFramePage(() => Promise.resolve(handle));
+      const client = mockCdpClient();
+      const createCDPSession = vi.fn().mockResolvedValue(client);
+      const browserMock = {
+        wsEndpoint: vi.fn().mockReturnValue(uniqueWs('e12')),
+        target: vi.fn().mockReturnValue({ createCDPSession }),
+      };
+      (page as any).browser = vi.fn().mockReturnValue(browserMock);
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+
+      let driveCount = 0;
+      const drive = async () => {
+        driveCount++;
+        const guid = `g-${driveCount}`;
+        const tab = mockTab(page);
+        (tab as any).id = createTabId(`tab_e12_${driveCount}`);
+        const promise = engine.executeAction(tab, {
+          actionType: 'download_file',
+          selector: '#download-link',
+          downloadDir: dir,
+          maxRetries: 0,
+          timeoutMs: 2000,
+        });
+        await client.whenListening('Browser.downloadProgress');
+        client.emit('Browser.downloadWillBegin', { guid, suggestedFilename: 'a.pdf' });
+        client.emit('Browser.downloadProgress', { guid, state: 'completed' });
+        return promise;
+      };
+
+      const r1 = await drive();
+      const r2 = await drive();
+      expect(r1.success).toBe(true);
+      expect(r2.success).toBe(true);
+      // ONE session created for this browser across BOTH calls — the whole point of GAP-301's
+      // never-detached-session fix.
+      expect(createCDPSession).toHaveBeenCalledTimes(1);
+      expect(client.detach).not.toHaveBeenCalled();
+      // Both calls reset to 'deny' — twice, once per call.
+      const denyCalls = client.send.mock.calls.filter(
+        (c: any[]) => c[0] === 'Browser.setDownloadBehavior' && c[1]?.behavior === 'deny',
+      );
+      expect(denyCalls.length).toBe(2);
+    });
+
+    it('E13 (GAP-301 cause 3): an abandoned dispatch (aborted by the outer timeout) releases the lock promptly instead of holding it until its own inner timeout', async () => {
+      const dir = path.join(tmpRoot, 'e13');
+      mkdirSync(dir, { recursive: true });
+      // Every evaluate() call hangs forever — assertNotStale (the very first thing
+      // verifiedClick does) therefore never resolves on its own, since (unlike the later
+      // occlusion/delivery checks) it has no internal race/timeout of its own. This makes the
+      // real in-flight dispatch work TRULY unable to settle by itself, so the only thing that
+      // can ever end it is this engine's own outer-timeout abandonment/abort path — exactly
+      // what this test needs to isolate and verify.
+      const hungHandle = mockHandle();
+      hungHandle.evaluate = vi.fn().mockImplementation(() => new Promise(() => {}));
+      const normalHandle = mockHandle();
+      normalHandle.evaluate.mockResolvedValue(true);
+      let resolveCalls = 0;
+      const page = singleFramePage(() => {
+        resolveCalls++;
+        return Promise.resolve(resolveCalls === 1 ? hungHandle : normalHandle);
+      });
+      const client = mockCdpClient();
+      const browserMock = {
+        wsEndpoint: vi.fn().mockReturnValue(uniqueWs('e13')),
+        target: vi.fn().mockReturnValue({ createCDPSession: vi.fn().mockResolvedValue(client) }),
+      };
+      (page as any).browser = vi.fn().mockReturnValue(browserMock);
+
+      const engine = new BrowserActionEngine(undefined, undefined, undefined, [dir]);
+      const tab1 = mockTab(page);
+      const result = await engine.executeAction(tab1, {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+        timeoutMs: 100,
+      });
+      expect(result.success).toBe(false);
+
+      // The FIRST dispatch's real in-flight work can NEVER settle on its own (its evaluate()
+      // hangs forever, unconditionally) — so if the lock were only released when that work
+      // naturally finishes, it would never be released at all. Wait past the outer engine's own
+      // abandonment grace period (TIMEOUT_SETTLEMENT_GRACE_MS = 2000ms, from when the 100ms
+      // outer timeout fired) before trying the second call — proving the lock was released by
+      // the ABORT path, not by the abandoned work completing.
+      await new Promise((r) => setTimeout(r, 2300));
+
+      // A different tab (same browser) so the unrelated per-tab duplicate-action guard can't
+      // mask this.
+      const tab2 = mockTab(page);
+      (tab2 as any).id = createTabId('tab_2_e13');
+      const second = engine.executeAction(tab2, {
+        actionType: 'download_file',
+        selector: '#download-link',
+        downloadDir: dir,
+        maxRetries: 0,
+        timeoutMs: 2000,
+      });
+      // FR2-05 fix-2 (GAP-300): resolveDownloadDir now does REAL on-disk case-sensitivity
+      // detection (a real `fsutil` subprocess spawn, or a filesystem probe as fallback) before
+      // the lock is even acquired. That's cached per-directory (see
+      // `_clearCaseSensitivityCacheForTests`) so the second call on the SAME directory is fast,
+      // but give the first real detection call (paid once by the FIRST download_file above) a
+      // realistic amount of headroom rather than racing it.
+      await client.whenListening('Browser.downloadProgress');
+      client.emit('Browser.downloadWillBegin', { guid: 'g-e13-2', suggestedFilename: 'b.pdf' });
+      client.emit('Browser.downloadProgress', { guid: 'g-e13-2', state: 'completed' });
+      const secondResult = await second;
+      expect(secondResult.success).toBe(true);
+    }, 10000);
   });
 });
 
@@ -2022,5 +2672,1832 @@ describe('@sutradhar/browser BrowserActionEngine scroll — element-targeted (ne
       scrolledFrom: 800,
       scrolledTo: 0,
     });
+  });
+});
+
+describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-1)', () => {
+  // NOTE on this whole block (fix-1 for GAP-008/009/011/013/015/016): GAP-008 replaced the
+  // visible/hidden wait mechanism itself (Puppeteer's own rAF-throttled `waitForSelector({visible
+  // /hidden: true})`) with Node-side interval polling built on `frame.$` + `handle.evaluate`
+  // (see browser-action-engine.ts `pierceFirstMatch`/`isHandleVisible`). Every test below that
+  // exercises the visible or hidden path had its mock shape updated to match — `waitForSelector`
+  // mocks became `$`(+`evaluate`) mocks — but each test's INTENT (what real behavior it proves)
+  // is unchanged or strengthened, never weakened. `state:'attached'` still goes through
+  // `resolveElement`/`frame.waitForSelector` exactly as before, so E9's mock is untouched.
+
+  it('E1: default state is now visible — the intentional 0.5.0 behavior change from the old attached-only default', async () => {
+    const handle = mockHandle();
+    (handle as any).evaluate = vi.fn().mockResolvedValue(true); // visible: non-empty box, visibility not hidden
+    const dollarMock = vi.fn().mockResolvedValue(handle);
+    const mainFrame = { isDetached: () => false, $: dollarMock } as unknown as Frame;
+    const page = { frames: vi.fn().mockReturnValue([mainFrame]), mainFrame: vi.fn().mockReturnValue(mainFrame) } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData?.state).toBe('visible');
+    expect(dollarMock).toHaveBeenCalledWith('pierce/#t');
+  });
+
+  it('E2: state:"visible" only succeeds once the element is genuinely visible, never on attached-but-hidden', async () => {
+    let visibleNow = false;
+    const handle = mockHandle();
+    (handle as any).evaluate = vi.fn().mockImplementation(() => Promise.resolve(visibleNow));
+    const dollarMock = vi.fn().mockResolvedValue(handle);
+    const mainFrame = { isDetached: () => false, $: dollarMock } as unknown as Frame;
+    const page = { frames: vi.fn().mockReturnValue([mainFrame]), mainFrame: vi.fn().mockReturnValue(mainFrame) } as unknown as Page;
+
+    // Flip visible after the first poll — proves the wait genuinely re-checks rather than
+    // trusting attached-but-hidden as a success (the exact bug this item fixes).
+    setTimeout(() => {
+      visibleNow = true;
+    }, 120);
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'visible',
+      timeoutMs: 2000,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect((handle as any).evaluate.mock.calls.length).toBeGreaterThan(1);
+  });
+
+  it('E3: state:"attached" returns even though the element is hidden — the old default behavior, unchanged', async () => {
+    const handle = mockHandle();
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'attached',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData?.state).toBe('attached');
+    const mainFrame = (page.frames() as unknown as Frame[])[0]!;
+    const firstCallOptions = (mainFrame.waitForSelector as any).mock.calls[0][1];
+    expect(firstCallOptions.visible).not.toBe(true);
+  });
+
+  it('E4: state:"hidden" resolves on hide or removal, and reports matchedAtStart', async () => {
+    let present = true;
+    const handle = mockHandle();
+    (handle as any).evaluate = vi.fn().mockResolvedValue(true); // visible while present
+    const dollarMock = vi.fn().mockImplementation(() => Promise.resolve(present ? handle : null));
+    const mainFrame = { isDetached: () => false, $: dollarMock } as unknown as Frame;
+    const page = { frames: vi.fn().mockReturnValue([mainFrame]), mainFrame: vi.fn().mockReturnValue(mainFrame) } as unknown as Page;
+
+    setTimeout(() => {
+      present = false; // "hide or removal" — from the hidden wait's perspective these look the same
+    }, 120);
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#toast',
+      state: 'hidden',
+      timeoutMs: 2000,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData?.state).toBe('hidden');
+    expect(result.outputData?.matchedAtStart).toBe(true);
+
+    present = true; // reset for the second sub-case, a typo'd selector that never matches
+    dollarMock.mockResolvedValue(null);
+    const result2 = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#toast',
+      state: 'hidden',
+      maxRetries: 0,
+    });
+
+    expect(result2.success).toBe(true);
+    expect(result2.outputData?.matchedAtStart).toBe(false);
+  });
+
+  it('E5: hidden across multiple frames requires EVERY frame to agree, and frame probes within one pass now run in parallel (GAP-059, FR2-01 fix-3)', async () => {
+    const order: string[] = [];
+    const mainHandle = mockHandle();
+    (mainHandle as any).evaluate = vi.fn().mockResolvedValue(false); // main frame: already hidden
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockImplementation(() => {
+        order.push('main-probe-start');
+        return new Promise((resolve) =>
+          setTimeout(() => {
+            order.push('main-probe-settled');
+            resolve(mainHandle);
+          }, 5),
+        );
+      }),
+    } as unknown as Frame;
+    const iframeHandle = mockHandle();
+    (iframeHandle as any).evaluate = vi.fn().mockResolvedValue(true); // iframe: still visible, forever
+    const iframe = {
+      isDetached: () => false,
+      $: vi.fn().mockImplementation(() => {
+        order.push('iframe-probe-start');
+        return new Promise((resolve) =>
+          setTimeout(() => {
+            order.push('iframe-probe-settled');
+            resolve(iframeHandle);
+          }, 5),
+        );
+      }),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, iframe]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#banner',
+      state: 'hidden',
+      timeoutMs: 300,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/waiting for state=hidden/);
+    // BEFORE fix-3 (fix-1/fix-2): frames were probed SEQUENTIALLY within a pass, so this
+    // asserted "iframe-probe-start" only ever happens after "main-probe-settled" — a losing
+    // Promise.any race would have interleaved them the OTHER way, which is what that assertion
+    // was actually guarding against (an abandoned, unbounded cross-frame race, the PROB-015
+    // shape `resolveElement` avoids). That sequential ordering was also GAP-059's own bug: pass
+    // latency scaled linearly with the number of busy frames because each frame's up-to-250ms
+    // probe was paid one at a time instead of concurrently.
+    // AFTER fix-3: every live frame's probe for a pass is started together via `Promise.all`
+    // (see `isHiddenInEveryFrame`), which is safe here for a DIFFERENT reason than a plain
+    // Promise.any race would be — each individual probe (`raceFrameProbe`) is still its own
+    // fully-self-contained, independently-~250ms-bounded call with its own dispose-on-late-
+    // resolve handling, never abandoned to run indefinitely. So the correct invariant to assert
+    // now is the opposite of before: both frames' probes START back-to-back in the SAME pass,
+    // and at least one frame's probe is still in flight when the other's probe starts — proving
+    // genuine concurrency, not a regression back to sequential probing.
+    const iframeStartIdx = order.indexOf('iframe-probe-start');
+    expect(iframeStartIdx).toBeGreaterThan(0);
+    expect(order[iframeStartIdx - 1]).toBe('main-probe-start');
+    // The main frame's probe for this SAME pass must not have already settled by the time the
+    // iframe's probe for that pass starts — that's exactly the parallel-start guarantee GAP-059
+    // relies on. (Both probes share the same 5ms mock delay and are registered in the same
+    // microtask, so main's settle event cannot appear before iframe's start event.)
+    const mainSettledIdx = order.indexOf('main-probe-settled');
+    expect(mainSettledIdx).toBeGreaterThan(iframeStartIdx);
+  });
+
+  it('E6: a visible timeout names the state and diagnoses that matches exist but are hidden', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null),
+      $$eval: vi.fn().mockResolvedValue([false]),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/timed out after \d+ms waiting for state=visible/);
+    expect(result.error).toContain('attached to the DOM, but none is visible');
+  });
+
+  it('E7: first match hidden, a later match visible — diagnosed instead of silently timing out', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null),
+      $$eval: vi.fn().mockResolvedValue([false, true]),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '.dup',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('later match(es) are');
+  });
+
+  it('E8: visible with zero matches keeps the node-id staleness guidance and the "no element found" substring', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null),
+    } as unknown as Frame;
+    const plainPage = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(plainPage), {
+      actionType: 'wait_for_selector',
+      selector: '#nope',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('state=visible');
+    expect(result.error).toContain('No element found for selector: #nope');
+
+    const nodeIdPage = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+      evaluate: vi.fn().mockResolvedValue(null),
+    } as unknown as Page;
+
+    const nodeIdResult = await engine.executeAction(mockTab(nodeIdPage), {
+      actionType: 'wait_for_selector',
+      selector: '[data-sd-node-id="99"]',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(nodeIdResult.success).toBe(false);
+    expect(nodeIdResult.error).toContain('navigated since the last snapshot');
+  });
+
+  it('E9: an attached timeout names the state too (attached path unchanged — still frame.waitForSelector, no matches)', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      waitForSelector: vi.fn().mockRejectedValue(new Error('timeout')),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'attached',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/waiting for state=attached/);
+  });
+
+  it('GAP-009a: an attached timeout with a genuinely EXISTING match says so, never "No element found"', async () => {
+    const matchHandle = mockHandle();
+    const mainFrame = {
+      isDetached: () => false,
+      waitForSelector: vi.fn().mockRejectedValue(new Error('timeout')),
+      $$eval: vi.fn().mockResolvedValue([true]), // diagnosis: 1 match, visible (visibility irrelevant to 'attached')
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'attached',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/waiting for state=attached/);
+    expect(result.error).not.toContain('No element found');
+    expect(result.error).toContain('already match');
+  });
+
+  it('GAP-009b: a visible timeout where the first match IS visible (a late race) says so, never "No element found"', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null), // the wait itself never caught it in time
+      $$eval: vi.fn().mockResolvedValue([true]), // but by diagnosis time, it's visible
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/waiting for state=visible/);
+    expect(result.error).not.toContain('No element found');
+    expect(result.error).toContain('became visible after the wait gave up');
+  });
+
+  it('E10: the state-naming error beats the generic outer-race timeout message (GAP-013: this test genuinely depends on the grace period)', async () => {
+    // Each `$` probe takes 60ms and never resolves a handle. With a 100ms `timeoutMs`, the
+    // polling loop (check, sleep to the 100ms deadline, check again) settles at ~160ms — AFTER
+    // the plain outer-race deadline of 100ms but BEFORE the graced deadline of 100+2000=2100ms.
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve(null), 60))),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const params = { actionType: 'wait_for_selector' as const, selector: '#t', timeoutMs: 100, maxRetries: 0 };
+
+    const withGrace = await engine.executeAction(mockTab(page), params);
+    expect(withGrace.success).toBe(false);
+    expect(withGrace.error).not.toMatch(/^Action wait_for_selector timed out after/);
+    expect(withGrace.error).toMatch(/state=visible/);
+
+    // Now prove the test above actually EXERCISES the grace, rather than passing regardless of
+    // it: with the grace zeroed out, the outer race (100ms) and the inner state-aware wait
+    // (~160ms) go back to racing each other like before FR2-01, and the outer, state-less
+    // message wins instead.
+    const previous = __TEST_ONLY_setWaitForSelectorOuterGraceMs(0);
+    try {
+      const withoutGrace = await engine.executeAction(mockTab(page), params);
+      expect(withoutGrace.success).toBe(false);
+      expect(withoutGrace.error).toMatch(/^Action wait_for_selector timed out after/);
+    } finally {
+      __TEST_ONLY_setWaitForSelectorOuterGraceMs(previous);
+    }
+  });
+
+  it('E11: an invalid state bypassing the type system fails clearly instead of being silently coerced', async () => {
+    const handle = mockHandle();
+    const page = singleFramePage(() => Promise.resolve(handle));
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'bogus' as any,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Invalid wait_for_selector state "bogus"');
+  });
+
+  it('E12: timeoutMs <= 0 means "check once, don\'t wait" (GAP-011 rewrite — the old 1ms-clamp behavior always failed even when already in the requested state)', async () => {
+    // Sub-case 1: state visible, already visible → immediate success.
+    {
+      const handle = mockHandle();
+      (handle as any).evaluate = vi.fn().mockResolvedValue(true);
+      const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(handle) } as unknown as Frame;
+      const page = { frames: vi.fn().mockReturnValue([mainFrame]), mainFrame: vi.fn().mockReturnValue(mainFrame) } as unknown as Page;
+      const result = await new BrowserActionEngine().executeAction(mockTab(page), {
+        actionType: 'wait_for_selector',
+        selector: '#t',
+        timeoutMs: 0,
+        maxRetries: 0,
+      });
+      expect(result.success).toBe(true);
+      expect(result.outputData?.state).toBe('visible');
+    }
+
+    // Sub-case 2: state visible, attached but hidden, negative timeoutMs → immediate failure,
+    // naming the state, not a hang and not the old "clamped to 1ms" Puppeteer race.
+    {
+      const handle = mockHandle();
+      (handle as any).evaluate = vi.fn().mockResolvedValue(false);
+      const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(handle) } as unknown as Frame;
+      const page = { frames: vi.fn().mockReturnValue([mainFrame]), mainFrame: vi.fn().mockReturnValue(mainFrame) } as unknown as Page;
+      const result = await new BrowserActionEngine().executeAction(mockTab(page), {
+        actionType: 'wait_for_selector',
+        selector: '#t',
+        timeoutMs: -5,
+        maxRetries: 0,
+      });
+      expect(result.success).toBe(false);
+      expect(result.error).toMatch(/state=visible/);
+    }
+
+    // Sub-case 3: state attached, present → immediate success regardless of visibility.
+    {
+      const handle = mockHandle();
+      const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(handle) } as unknown as Frame;
+      const page = { frames: vi.fn().mockReturnValue([mainFrame]), mainFrame: vi.fn().mockReturnValue(mainFrame) } as unknown as Page;
+      const result = await new BrowserActionEngine().executeAction(mockTab(page), {
+        actionType: 'wait_for_selector',
+        selector: '#t',
+        state: 'attached',
+        timeoutMs: 0,
+        maxRetries: 0,
+      });
+      expect(result.success).toBe(true);
+    }
+
+    // Sub-case 4: state attached, nothing matches → immediate failure.
+    {
+      const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+      const page = { frames: vi.fn().mockReturnValue([mainFrame]), mainFrame: vi.fn().mockReturnValue(mainFrame) } as unknown as Page;
+      const result = await new BrowserActionEngine().executeAction(mockTab(page), {
+        actionType: 'wait_for_selector',
+        selector: '#t',
+        state: 'attached',
+        timeoutMs: 0,
+        maxRetries: 0,
+      });
+      expect(result.success).toBe(false);
+      expect(result.error).toMatch(/state=attached/);
+    }
+
+    // Sub-case 5: state hidden, nothing matches → immediate success (documented semantics).
+    {
+      const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+      const page = { frames: vi.fn().mockReturnValue([mainFrame]), mainFrame: vi.fn().mockReturnValue(mainFrame) } as unknown as Page;
+      const result = await new BrowserActionEngine().executeAction(mockTab(page), {
+        actionType: 'wait_for_selector',
+        selector: '#t',
+        state: 'hidden',
+        timeoutMs: 0,
+        maxRetries: 0,
+      });
+      expect(result.success).toBe(true);
+      expect(result.outputData?.matchedAtStart).toBe(false);
+    }
+
+    // Sub-case 6: state hidden, still visible → immediate failure, not a ~6s hang.
+    {
+      const handle = mockHandle();
+      (handle as any).evaluate = vi.fn().mockResolvedValue(true);
+      const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(handle) } as unknown as Frame;
+      const page = { frames: vi.fn().mockReturnValue([mainFrame]), mainFrame: vi.fn().mockReturnValue(mainFrame) } as unknown as Page;
+      const result = await new BrowserActionEngine().executeAction(mockTab(page), {
+        actionType: 'wait_for_selector',
+        selector: '#t',
+        state: 'hidden',
+        timeoutMs: 0,
+        maxRetries: 0,
+      });
+      expect(result.success).toBe(false);
+      expect(result.error).toMatch(/state=hidden/);
+      expect(result.error).toContain('still visible');
+    }
+
+    // Sub-case 7 (GAP-058, FR2-01 audit-3/fix-3): every sub-case above passes `maxRetries: 0`
+    // explicitly, which means none of them actually exercise the REAL default retry path — and
+    // that's exactly how this gap slipped through fix-1/fix-2: the engine's OUTER retry loop
+    // still applied its ordinary `maxRetries ?? 2` default for a `timeoutMs <= 0` "check once"
+    // call, so a failing check-once wait was silently retried up to 2 more times (confirmed
+    // live: retriesUsed:2, ~1.5s total for something documented as instantaneous), even though
+    // `checkWaitForSelectorOnce` itself has no concept of retrying. This sub-case omits
+    // `maxRetries` entirely — using whatever the engine actually defaults to — so a regression
+    // back to "check once" secretly retrying would show up here as `retriesUsed !== 0` and as a
+    // materially slower `executionTimeMs`, not just as a passing assertion that only ever
+    // exercised the overridden path.
+    {
+      const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+      const page = { frames: vi.fn().mockReturnValue([mainFrame]), mainFrame: vi.fn().mockReturnValue(mainFrame) } as unknown as Page;
+      const result = await new BrowserActionEngine().executeAction(mockTab(page), {
+        actionType: 'wait_for_selector',
+        selector: '#t',
+        state: 'attached',
+        timeoutMs: 0,
+        // No `maxRetries` override — this is the real default path GAP-058 was about.
+      });
+      expect(result.success).toBe(false);
+      expect(result.error).toMatch(/state=attached/);
+      expect(result.retriesUsed).toBe(0);
+      // GAP-058's live repro showed ~1.5s (3 attempts with 500ms/1000ms backoff) for exactly
+      // this shape of call before the fix; a real "check once" call should be near-instant.
+      expect(result.executionTimeMs).toBeLessThan(500);
+    }
+  });
+
+  it('E13: the visibility diagnosis is best-effort — a frame with no $$eval support still returns a state-naming error, not a TypeError', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null),
+      // Deliberately no `$$eval` — diagnoseSelectorVisibility must swallow that, not throw.
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/waiting for state=visible/);
+    expect(result.error).not.toMatch(/TypeError/);
+  });
+
+  it('GAP-015: an invalid selector under state hidden fails fast with the real parser error, not "still visible" after the full timeout', async () => {
+    const syntaxError = new Error("Failed to execute 'querySelector' on 'Document': '#[[[' is not a valid selector.");
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockRejectedValue(syntaxError),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const start = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#[[[',
+      state: 'hidden',
+      timeoutMs: 6000,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - start;
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('is not a valid selector');
+    expect(result.error).toContain('state=hidden');
+    expect(result.error).not.toContain('still visible');
+    // Not a ~6s hang — the parser error must surface almost immediately, well under timeoutMs.
+    expect(elapsedMs).toBeLessThan(2000);
+  });
+
+  it('GAP-016: hidden succeeding on the first match still reports otherVisibleMatches when a LATER match is visible', async () => {
+    const firstHandle = mockHandle();
+    (firstHandle as any).evaluate = vi.fn().mockResolvedValue(false); // first match: hidden
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(firstHandle),
+      $$eval: vi.fn().mockResolvedValue([false, true]), // full match set: first hidden, second visible
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#banner, #stays',
+      state: 'hidden',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData?.otherVisibleMatches).toBe(1);
+  });
+});
+
+describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-2, audit-2 gaps)', () => {
+  it('GAP-030: a busy/unresponsive frame does not stall detecting an element already visible in a healthy frame', async () => {
+    const visibleHandle = mockHandle();
+    (visibleHandle as any).evaluate = vi.fn().mockResolvedValue(true);
+    const healthyFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(visibleHandle),
+    } as unknown as Frame;
+    // Simulates a busy/unresponsive cross-origin (out-of-process) iframe: its `$` call never
+    // settles on its own within the test's lifetime, standing in for a CDP round-trip that
+    // never comes back because the frame's renderer is blocked.
+    const busyFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockImplementation(() => new Promise(() => {})),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([busyFrame, healthyFrame]),
+      mainFrame: vi.fn().mockReturnValue(busyFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const start = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'visible',
+      timeoutMs: 2000,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - start;
+
+    expect(result.success).toBe(true);
+    // Before GAP-030's fix, `pierceFirstMatch` had no per-frame bound, so a frame whose `$`
+    // never resolves would stall the ENTIRE poll pass — including the healthy frame's
+    // already-visible element — all the way out to `timeoutMs` (2000ms here). Resolving well
+    // under that, on roughly one FRAME_PROBE_TIMEOUT_MS window, proves the busy frame did not
+    // block detection in the healthy one.
+    expect(elapsedMs).toBeLessThan(1000);
+  });
+
+  it('GAP-031: a hidden wait does not falsely report success when the tab/session itself closes mid-wait', async () => {
+    const fatalError = new Error(
+      'Protocol error (DOM.querySelector): Session closed. Most likely the page has been closed.',
+    );
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockRejectedValue(fatalError),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#stays',
+      state: 'hidden',
+      timeoutMs: 2000,
+      maxRetries: 0,
+    });
+
+    // Before GAP-031's fix, `pierceFirstMatch` swallowed EVERY non-syntax-error rejection
+    // (including this one) into "no match", which made `isHiddenInEveryFrame` conclude every
+    // frame was hidden — a FALSE SUCCESS for an element that never actually hid, just because
+    // the check itself stopped being able to run (the exact scenario audit-2's
+    // `probe-audit2.mjs n4` reproduced live: tab closed mid-wait, false success).
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Session closed');
+  });
+
+  it('GAP-031: a visible wait also surfaces a fatal check failure instead of a plain timeout', async () => {
+    const fatalError = new Error('Protocol error (DOM.querySelector): Target closed.');
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockRejectedValue(fatalError),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#toast',
+      state: 'visible',
+      timeoutMs: 2000,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Target closed');
+  });
+
+  it('GAP-032: a NaN timeoutMs (e.g. the CLI parsing "5s") is rejected immediately, not silently reinterpreted', async () => {
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const start = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'visible',
+      timeoutMs: NaN,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - start;
+
+    // Before GAP-032's fix, a NaN timeoutMs made `Date.now() + waitMs` itself NaN, so the poll
+    // loop's own `remaining <= 0` deadline check was permanently false and `setTimeout(fn,
+    // NaN)` fired in ~0ms — a runaway, CPU-bound poll loop with no legitimate end. Rejecting
+    // synchronously, before dispatch, means the mocked `$` is never even called.
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Invalid timeoutMs');
+    expect(elapsedMs).toBeLessThan(500);
+    expect(mainFrame.$).not.toHaveBeenCalled();
+  });
+
+  it('GAP-032: an Infinity timeoutMs is rejected the same way as NaN', async () => {
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const start = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'hidden',
+      timeoutMs: Infinity,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - start;
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Invalid timeoutMs');
+    expect(elapsedMs).toBeLessThan(500);
+    expect(mainFrame.$).not.toHaveBeenCalled();
+  });
+
+  it('GAP-032: a finite timeoutMs far beyond setTimeout\'s own ceiling is clamped, not rejected, and still resolves normally', async () => {
+    const visibleHandle = mockHandle();
+    (visibleHandle as any).evaluate = vi.fn().mockResolvedValue(true);
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(visibleHandle),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'visible',
+      timeoutMs: 3e9, // well beyond Node's 2**31-1 ms setTimeout ceiling
+      maxRetries: 0,
+    });
+
+    // A well-formed, merely-oversized request is a normal wait, not an error — the element is
+    // already visible, so this must resolve immediately regardless of how the huge timeoutMs
+    // got clamped internally.
+    expect(result.success).toBe(true);
+  });
+
+  it('GAP-033: an invalid selector under state attached fails fast with the real parser error, not the generic "No element found" after the full timeout', async () => {
+    const syntaxError = new Error("Failed to execute 'querySelector' on 'Document': '#[[[' is not a valid selector.");
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockRejectedValue(syntaxError),
+      waitForSelector: vi.fn().mockRejectedValue(syntaxError),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const start = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#[[[',
+      state: 'attached',
+      timeoutMs: 5000,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - start;
+
+    // Before GAP-033's fix, `state:'attached'` went straight to `resolveElement`, whose blanket
+    // `.catch(() => null)` swallowed this exact syntax error into "no match" and kept
+    // re-probing for the FULL timeout before giving up with the generic "No element found"
+    // message — GAP-015's fast-fail fix never covered this path.
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('is not a valid selector');
+    expect(result.error).not.toContain('No element found');
+    expect(elapsedMs).toBeLessThan(2000);
+  });
+
+  it('GAP-033: a genuinely missing element under state attached still times out normally (pre-check does not false-positive)', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null),
+      waitForSelector: vi.fn().mockRejectedValue(new Error('timeout')),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#nope',
+      state: 'attached',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/waiting for state=attached/);
+  });
+});
+
+describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-3, audit-3 gaps)', () => {
+  it('GAP-057: a hidden wait must NOT report success while a busy frame\'s element is genuinely, persistently still visible (repro of audit-3 probe-a3.mjs h1/h2 pattern)', async () => {
+    // Main frame: no match at all (genuinely absent there). Iframe: a real, visible element,
+    // but `frame.$` never answers within FRAME_PROBE_TIMEOUT_MS (250ms) on ANY call — modeling
+    // a persistently busy/slow renderer, not a one-off hiccup. Before the fix, EVERY probe of
+    // this frame timing out got read as "no match in this frame", which for `hidden` (every
+    // frame must agree) meant the whole wait "agreed" — a false SUCCESS while the element was
+    // still genuinely visible. After the fix, a timed-out probe is 'unknown', which can never
+    // satisfy `hidden` on its own — the wait must keep polling and eventually fail.
+    const visibleHandle = mockHandle();
+    (visibleHandle as any).evaluate = vi.fn().mockResolvedValue(true);
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const busyIframe = {
+      isDetached: () => false,
+      $: vi.fn().mockImplementation(
+        () => new Promise((resolve) => setTimeout(() => resolve(visibleHandle), 2000)),
+      ),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, busyIframe]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#spinner',
+      state: 'hidden',
+      timeoutMs: 400,
+      maxRetries: 0,
+    });
+
+    // The one non-negotiable assertion: this must never be `true`. Before the GAP-057 fix, it
+    // was — reliably, on every run, because the busy iframe's probe timeout was read as "hidden
+    // in this frame" on the very first pass.
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/waiting for state=hidden/);
+  });
+
+  it('GAP-057 regression guard: a hidden wait still succeeds once every frame genuinely agrees, even after an earlier pass saw one frame time out (recovering busy frame, not a permanent one)', async () => {
+    // Iframe: its FIRST `$` call is slow enough to time out the 250ms probe bound (so pass 1
+    // sees 'unknown' for this frame), but it genuinely has no match at all, and every
+    // SUBSEQUENT call resolves quickly with `null` — a busy-then-recovers frame, not a busy-
+    // forever one. This proves the fix doesn't overcorrect into never succeeding: 'unknown'
+    // must fall through to "keep polling", and a later pass that gets a real, fully-agreed
+    // answer from every frame must still succeed.
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const recoveringIframe = {
+      isDetached: () => false,
+      $: vi
+        .fn()
+        .mockImplementationOnce(() => new Promise((resolve) => setTimeout(() => resolve(null), 400)))
+        .mockResolvedValue(null),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, recoveringIframe]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#banner',
+      state: 'hidden',
+      timeoutMs: 2000,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData?.state).toBe('hidden');
+  });
+
+  it('GAP-059: probing multiple busy frames within one hidden-wait pass runs in parallel, not sequentially (latency does not scale with frame count)', async () => {
+    // 4 frames that are ALL persistently busy (never answer within the 250ms probe bound). If
+    // probing were still sequential, paying that ~250ms bound once per frame per pass would
+    // cost at least 4 * 250ms = 1000ms for the FIRST pass alone. Probed in parallel, one pass
+    // costs ~250ms total regardless of frame count.
+    const visibleHandle = mockHandle();
+    (visibleHandle as any).evaluate = vi.fn().mockResolvedValue(true);
+    const makeBusyFrame = () =>
+      ({
+        isDetached: () => false,
+        $: vi.fn().mockImplementation(
+          () => new Promise((resolve) => setTimeout(() => resolve(visibleHandle), 5000)),
+        ),
+      }) as unknown as Frame;
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const busyFrames = [makeBusyFrame(), makeBusyFrame(), makeBusyFrame(), makeBusyFrame()];
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, ...busyFrames]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const t0 = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#spinner',
+      state: 'hidden',
+      timeoutMs: 260,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - t0;
+
+    expect(result.success).toBe(false);
+    // Sequential probing of 4 busy frames would need >= 1000ms just for the first pass, before
+    // the 260ms deadline is even checked. Parallel probing keeps the whole call well under
+    // that — generous margin kept here to avoid CI timing flakiness while still being tight
+    // enough to fail against a sequential regression.
+    expect(elapsedMs).toBeLessThan(900);
+  });
+
+  it('GAP-059: an abandoned per-frame probe that resolves a real handle AFTER its 250ms bound is disposed, not leaked', async () => {
+    const lateHandle = mockHandle();
+    const disposeSpy = vi.fn().mockResolvedValue(undefined);
+    (lateHandle as any).dispose = disposeSpy;
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const lateFrame = {
+      isDetached: () => false,
+      // Resolves a REAL handle, but only after the 250ms probe bound has already elapsed —
+      // exactly the "abandoned probe settles late" case GAP-059 flagged as a resource leak. Only
+      // called ONCE for this test's whole call: `state:'attached'`'s check-once path
+      // (`firstAnyHandleAnyFrame`) probes frames sequentially and there's only one other frame
+      // besides the (immediately-answering) main frame — an easy assertion that dispose fires
+      // exactly once, not a "did it fire at least once" one.
+      $: vi.fn().mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve(lateHandle), 400))),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, lateFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    // `timeoutMs <= 0` drives the single-pass `checkWaitForSelectorOnce` path directly.
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'attached',
+      timeoutMs: 0,
+      maxRetries: 0,
+    });
+    expect(result.success).toBe(false); // the probe timed out -> 'unknown' -> not confirmed attached
+    expect(disposeSpy).not.toHaveBeenCalled(); // not yet — the probe is still abandoned/in flight
+
+    // Give the abandoned real probe time to settle in the background (it resolves at ~400ms).
+    await new Promise((r) => setTimeout(r, 500));
+    expect(disposeSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('GAP-057 (matchedAtStart): probeSelectorMatchExists reports `undefined` (unknown), never `false`, when a frame times out and no OTHER frame confirms a match', async () => {
+    // Main frame answers quickly with no match, in every call. The other frame's FIRST `$` call
+    // (the one `probeSelectorMatchExists` makes) never answers within its 250ms probe bound —
+    // before the fix, this collapsed straight into `false`, reporting "the selector never
+    // matched anything" (a misleading typo diagnosis) instead of "we genuinely don't know".
+    // That frame's SECOND `$` call (made moments later by the actual hidden-check,
+    // `isHiddenInEveryFrame`) resolves quickly with no match, so the overall wait still succeeds
+    // — isolating the assertion to `matchedAtStart` specifically, rather than conflating it with
+    // whether the wait itself succeeds.
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const partiallyBusyIframe = {
+      isDetached: () => false,
+      $: vi
+        .fn()
+        .mockImplementationOnce(() => new Promise((resolve) => setTimeout(() => resolve(null), 2000)))
+        .mockResolvedValue(null),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, partiallyBusyIframe]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      state: 'hidden',
+      timeoutMs: 0,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData?.matchedAtStart).toBeUndefined();
+    expect('matchedAtStart' in (result.outputData as object)).toBe(true);
+  });
+});
+
+describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01, fix-4, audit-4 escalation gaps)', () => {
+  it('GAP-081a (isHandleVisible): a fatal session-closed error while checking visibility must report "unknown", never a silently-confirmed "not visible" (which previously let a hidden wait falsely succeed)', async () => {
+    // A real handle IS found (frame.$ resolves quickly), but checking ITS visibility fails with
+    // a fatal, tab/session-closed-style error. Before the fix, `isHandleVisible`'s
+    // `.catch(() => false)` read this identically to a genuine "not visible" computed-style
+    // result — for `hidden` (every frame must agree), that meant the whole pass "agreed" on the
+    // very first check, a false SUCCESS while visibility was never actually confirmed either way.
+    const staleHandle = mockHandle();
+    (staleHandle as any).evaluate = vi
+      .fn()
+      .mockRejectedValue(new Error('Protocol error (Runtime.callFunctionOn): Session closed. Most likely the page has been closed.'));
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(staleHandle) } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#spinner',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('could not verify: one or more frames were unresponsive');
+  });
+
+  it('GAP-081b (pierceFirstMatch): an error this code does not otherwise recognize defaults to "unknown", never "no-match" — a probe error is not evidence of absence', async () => {
+    // `frame.$` rejects with a genuinely unclassified error on every call (not a selector syntax
+    // error, not a fatal session/target-closed error, not an ordinary context-destroyed
+    // navigation hiccup). Before the fix, pierceFirstMatch's catch-all mapped this straight to
+    // 'no-match' — for `hidden`, indistinguishable from a real confirmed absence, so the wait
+    // would falsely "succeed" on the very first pass even though the probe never actually
+    // answered either way.
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockRejectedValue(new Error('some genuinely unclassified CDP hiccup')),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#spinner',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('could not verify: one or more frames were unresponsive');
+  });
+
+  it('GAP-082: a hidden timeout CONFIRMED visible by a healthy frame still says "is still visible", distinct from the "could not verify" unresponsive-frame message', async () => {
+    const visibleHandle = mockHandle();
+    (visibleHandle as any).evaluate = vi.fn().mockResolvedValue(true);
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(visibleHandle) } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#banner',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('is still visible');
+    expect(result.error).not.toContain('could not verify');
+  });
+
+  it('GAP-082 (9th site — checkWaitForSelectorOnce): the timeoutMs<=0 hidden check-once path also distinguishes "could not verify" (unresponsive frame) from "is still visible" (confirmed)', async () => {
+    // Sub-case 1: the only frame never answers within its probe bound at all -> 'unknown'.
+    {
+      const neverAnswers = { isDetached: () => false, $: vi.fn().mockImplementation(() => new Promise(() => {})) } as unknown as Frame;
+      const page = {
+        frames: vi.fn().mockReturnValue([neverAnswers]),
+        mainFrame: vi.fn().mockReturnValue(neverAnswers),
+      } as unknown as Page;
+      const result = await new BrowserActionEngine().executeAction(mockTab(page), {
+        actionType: 'wait_for_selector',
+        selector: '#banner',
+        state: 'hidden',
+        timeoutMs: 0,
+        maxRetries: 0,
+      });
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('could not verify: one or more frames were unresponsive');
+    }
+
+    // Sub-case 2: the frame answers immediately and confirms the element is genuinely visible.
+    {
+      const visibleHandle = mockHandle();
+      (visibleHandle as any).evaluate = vi.fn().mockResolvedValue(true);
+      const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(visibleHandle) } as unknown as Frame;
+      const page = {
+        frames: vi.fn().mockReturnValue([mainFrame]),
+        mainFrame: vi.fn().mockReturnValue(mainFrame),
+      } as unknown as Page;
+      const result = await new BrowserActionEngine().executeAction(mockTab(page), {
+        actionType: 'wait_for_selector',
+        selector: '#banner',
+        state: 'hidden',
+        timeoutMs: 0,
+        maxRetries: 0,
+      });
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('is still visible');
+      expect(result.error).not.toContain('could not verify');
+    }
+  });
+
+  it('GAP-083: a state=visible timeout where the diagnostic itself times out on every frame says "could not be determined", never the confirmed-negative "No element found"', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null), // the wait itself never caught a match in time
+      $$eval: vi.fn().mockImplementation(() => new Promise(() => {})), // the diagnosis never answers either
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#t',
+      timeoutMs: 50,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/state=visible/);
+    expect(result.error).not.toContain('No element found');
+    expect(result.error).toMatch(/visibility could not be determined for 1 of 1 frame/);
+  });
+
+  it('GAP-084/GAP-087: probing multiple busy frames within a single VISIBLE-state pass now runs in parallel too — mirrors GAP-059\'s hidden-path fix, which this exact scenario (state:visible) previously did NOT get', async () => {
+    // Identical shape to the existing GAP-059 hidden-state test, but for `state:'visible'`.
+    // Before this fix, `firstVisibleHandleAnyFrame` probed frames SEQUENTIALLY — reintroducing
+    // the GAP-059 latency-scales-with-busy-frame-count symptom for the more common visible-state
+    // path, which the GAP-059 fix never actually reached.
+    const makeBusyFrame = () =>
+      ({
+        isDetached: () => false,
+        $: vi.fn().mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve(null), 5000))),
+      }) as unknown as Frame;
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const busyFrames = [makeBusyFrame(), makeBusyFrame(), makeBusyFrame(), makeBusyFrame()];
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, ...busyFrames]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const t0 = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#spinner',
+      state: 'visible',
+      timeoutMs: 260,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - t0;
+
+    expect(result.success).toBe(false);
+    // Sequential probing of 4 busy frames would need >= 1000ms for the first pass alone.
+    // Parallel probing keeps the whole call well under that. This is the exact assertion shape
+    // GAP-087 flagged E5 as failing to provide for the visible-state path — a mutation that
+    // reintroduces sequential probing here fails this specific test (verified by mutation, see
+    // fix-4's live report).
+    expect(elapsedMs).toBeLessThan(900);
+  });
+
+  it('GAP-085: the otherVisibleMatches diagnostic reports its own uncertainty instead of a silently-wrong confirmed zero when its per-frame check times out', async () => {
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null), // already hidden -> the wait itself succeeds immediately
+      $$eval: vi.fn().mockImplementation(() => new Promise(() => {})), // the otherVisibleMatches check never answers
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#banner',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData?.otherVisibleMatches).toBeUndefined();
+    expect(result.outputData?.otherVisibleMatchesUnknown).toBe(true);
+  });
+
+  it('GAP-086: isHandleVisible is bounded on its own — a handle whose evaluate() never resolves cannot stall a pass past FRAME_PROBE_TIMEOUT_MS', async () => {
+    const stuckHandle = mockHandle();
+    (stuckHandle as any).evaluate = vi.fn().mockImplementation(() => new Promise(() => {})); // never resolves
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(stuckHandle) } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const t0 = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#spinner',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - t0;
+
+    expect(result.success).toBe(false);
+    // Bounded by FRAME_PROBE_TIMEOUT_MS (250ms) per pass, not stalled indefinitely — generous
+    // margin kept to avoid CI timing flakiness while still failing against an unbounded regression.
+    expect(elapsedMs).toBeLessThan(900);
+  });
+
+  it('GAP-112 (FR2-01 audit-5/fix-5): a genuine per-frame THROWN error in the visibility diagnosis must say "could not be determined", never the confirmed-negative "No element found" (element genuinely present)', async () => {
+    // Unlike GAP-083's test (the diagnosis HANGS on every frame), this is the sibling shape
+    // audit-5 found: the diagnosis's $$eval genuinely THROWS (e.g. getComputedStyle itself
+    // erroring) rather than timing out. Before this fix, a thrown error fell through a
+    // `.catch(() => null)` inside diagnoseSelectorVisibility and was treated as "nothing to
+    // report", contributing to neither `flags` nor `unconfirmedFrames` — so a diagnosis on a
+    // single frame that only ever errors returned `null` overall, and the caller fell through
+    // to the false "No element found for selector" for an element that IS attached (confirmed
+    // by `$` resolving a real handle below; live-reproduced by audit-5 as probe A2).
+    const presentHandle = mockHandle();
+    (presentHandle as any).evaluate = vi.fn().mockResolvedValue(false); // never confirms visible
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(presentHandle), // the element IS attached/present
+      $$eval: vi.fn().mockRejectedValue(new Error('getComputedStyle threw for this element')),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#present',
+      state: 'visible',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/state=visible/);
+    expect(result.error).not.toContain('No element found');
+    expect(result.error).toMatch(/visibility could not be determined for 1 of 1 frame/);
+  });
+
+  it('GAP-113 (FR2-01 audit-5/fix-5): the otherVisibleMatches diagnostic reports its own uncertainty, not a silently-wrong confirmed zero, when its per-frame check THROWS (not just times out)', async () => {
+    // Sibling of the existing GAP-085 test (which uses a HANGING $$eval). fix-4 only handled
+    // the timeout case for countOtherVisibleMatches; a genuine thrown error still fell through
+    // a `.catch(() => null)` and silently read as a confirmed zero (live-reproduced by audit-5
+    // as probe A3 — a second, genuinely visible match existed but the advisory vanished with
+    // no trace it was ever computed).
+    const mainFrame = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null), // already hidden -> the wait itself succeeds immediately
+      $$eval: vi.fn().mockRejectedValue(new Error('getComputedStyle threw for this element')),
+    } as unknown as Frame;
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#banner',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.outputData?.otherVisibleMatches).toBeUndefined();
+    expect(result.outputData?.otherVisibleMatchesUnknown).toBe(true);
+  });
+
+  it("GAP-115 (FR2-01 audit-5/fix-5): the ATTACHED-state check-once path (timeoutMs<=0) probes multiple busy frames in PARALLEL — firstAnyHandleAnyFrame's own parallelization, previously unguarded by any test (audit-5's mutation X1, reverting it to sequential probing, passed all 141 existing tests)", async () => {
+    // firstAnyHandleAnyFrame is reached ONLY via the timeoutMs<=0 check-once 'attached' path
+    // (checkWaitForSelectorOnce) — the timed 'attached' wait uses resolveElement instead. Each
+    // frame's own probe (pierceFirstMatch -> raceFrameProbe) is independently bounded to
+    // FRAME_PROBE_TIMEOUT_MS (250ms) regardless of how long the mock's own promise takes to
+    // settle, so sequential vs. parallel is what the total elapsed time distinguishes here.
+    const makeBusyFrame = () =>
+      ({
+        isDetached: () => false,
+        $: vi.fn().mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve(null), 5000))),
+      }) as unknown as Frame;
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const busyFrames = [makeBusyFrame(), makeBusyFrame(), makeBusyFrame(), makeBusyFrame()];
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame, ...busyFrames]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    } as unknown as Page;
+
+    const engine = new BrowserActionEngine();
+    const t0 = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: '#thing',
+      state: 'attached',
+      timeoutMs: 0,
+      maxRetries: 0,
+    });
+    const elapsedMs = Date.now() - t0;
+
+    expect(result.success).toBe(false);
+    // Sequential probing of 4 busy frames (each bounded to ~250ms) would need >= 1000ms.
+    // Parallel probing keeps the whole call well under that.
+    expect(elapsedMs).toBeLessThan(900);
+  });
+});
+
+describe('@sutradhar/browser BrowserActionEngine wait_for_selector states (FR2-01 GAP-132-fix, audit-6 gaps)', () => {
+  it('GAP-132 (pierceFirstMatch, critical): a hidden wait must FAIL, never falsely SUCCEED, when the tab closes mid-probe — even though the underlying error text ("Execution context was destroyed") is IDENTICAL to the text an ordinary in-page navigation also produces', async () => {
+    // Live-reproduced (audit-6 probe-a6.mjs/diag-tabclose.mjs): 1/30 then 3/60 trials via MCP,
+    // 1/80 via the engine directly. Before this fix, `pierceFirstMatch` classified this error
+    // by TEXT ALONE as a recoverable per-frame hiccup ('no-match'), which every live frame
+    // "agreeing" on reported a false SUCCESS for a `hidden` wait whose element was still
+    // genuinely visible right up to the close. The fix checks `frame.page().isClosed()`
+    // synchronously, at the moment of the catch, instead of inferring tab-closure from text.
+    let closed = false;
+    const page: any = { isClosed: () => closed };
+    const mainFrame: any = {
+      isDetached: () => false,
+      page: () => page,
+      $: vi.fn().mockImplementation(() => {
+        // The tab closes WHILE this exact probe is in flight — the same race audit-6 caught.
+        closed = true;
+        return Promise.reject(new Error('Execution context was destroyed, most likely because of a navigation.'));
+      }),
+    };
+    page.frames = vi.fn().mockReturnValue([mainFrame]);
+    page.mainFrame = vi.fn().mockReturnValue(mainFrame);
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page as Page), {
+      actionType: 'wait_for_selector',
+      selector: '#stay',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Tab was closed while wait_for_selector was checking its state.');
+  });
+
+  it('GAP-132 (isHandleVisible, critical): a hidden wait must FAIL, never falsely succeed, when the tab closes while checking a MATCHED handle\'s own visibility', async () => {
+    // Same underlying ambiguity one level down: `handle.evaluate()` throws the identical
+    // "Execution context was destroyed" text whether the handle's frame merely navigated or the
+    // whole tab closed out from under it. `isHandleVisible` must check `handle.frame.page()
+    // .isClosed()`, the same synchronous signal `pierceFirstMatch` now uses.
+    let closed = false;
+    const page: any = { isClosed: () => closed };
+    const frame: any = { isDetached: () => false, page: () => page };
+    const handle = mockHandle() as any;
+    handle.frame = frame;
+    handle.evaluate = vi.fn().mockImplementation(() => {
+      closed = true;
+      return Promise.reject(new Error('Execution context was destroyed, most likely because of a navigation.'));
+    });
+    frame.$ = vi.fn().mockResolvedValue(handle);
+    page.frames = vi.fn().mockReturnValue([frame]);
+    page.mainFrame = vi.fn().mockReturnValue(frame);
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page as Page), {
+      actionType: 'wait_for_selector',
+      selector: '#stay',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Tab was closed while wait_for_selector was checking its state.');
+  });
+
+  it('GAP-132 regression guard: an ordinary in-page navigation (context destroyed, but the TAB itself is NOT closed) must remain the pre-existing recoverable per-frame hiccup, not a new false failure', async () => {
+    // The fix must not overcorrect: `page.isClosed()` returning false throughout means this is
+    // the ordinary "a single frame's own context was destroyed by an in-page navigation" case
+    // (e.g. an iframe destroying/recreating itself mid-wait, like TinyMCE) that fix-3 already
+    // established must classify as 'no-match' this pass, not a failure. With no other frame ever
+    // confirming a match, that's a genuine, correct 'hidden' success — not a regression.
+    const page: any = { isClosed: () => false };
+    const mainFrame: any = {
+      isDetached: () => false,
+      page: () => page,
+      $: vi.fn().mockRejectedValue(new Error('Execution context was destroyed, most likely because of a navigation.')),
+    };
+    page.frames = vi.fn().mockReturnValue([mainFrame]);
+    page.mainFrame = vi.fn().mockReturnValue(mainFrame);
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page as Page), {
+      actionType: 'wait_for_selector',
+      selector: '#stay',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.error).toBeUndefined();
+  });
+
+  it('GAP-133 (FR2-01 audit-6, major): a visible-wait timeout must not claim "none is visible" when one frame confirms a match but ANOTHER frame never answered the diagnosis', async () => {
+    // fix-4's GAP-083 guard only covered the ALL-frames-unanswered case (total === 0). audit-6
+    // found the partial case — some frames answer, one doesn't — was never tested: live-verified
+    // 2/2 on a busy iframe and 2/2 on a busy main frame, each with a genuinely VISIBLE match
+    // sitting in the frame that never got to answer.
+    const frameA: any = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null),
+      $$eval: vi.fn().mockResolvedValue([false]),
+    };
+    const frameB: any = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null),
+      $$eval: vi.fn().mockImplementation(() => new Promise(() => {})), // never answers
+    };
+    const page: any = {
+      frames: vi.fn().mockReturnValue([frameA, frameB]),
+      mainFrame: vi.fn().mockReturnValue(frameA),
+    };
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page as Page), {
+      actionType: 'wait_for_selector',
+      selector: '#x',
+      state: 'visible',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).not.toContain('but none is');
+    expect(result.error).toMatch(/could not be fully determined/);
+    expect(result.error).toMatch(/1 of 2 frame/);
+  });
+
+  it('GAP-218: with a frame unanswered, the timeout message must not claim "the first match is not visible" from the answered frames alone', async () => {
+    // The answered frame's first match is hidden and its second is visible, but another frame
+    // never answered, so the answered frame's "first match" need not be the first in document order.
+    const frameA: any = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null),
+      $$eval: vi.fn().mockResolvedValue([false, true]),
+    };
+    const frameB: any = {
+      isDetached: () => false,
+      $: vi.fn().mockResolvedValue(null),
+      $$eval: vi.fn().mockImplementation(() => new Promise(() => {})),
+    };
+    const page: any = { frames: vi.fn().mockReturnValue([frameB, frameA]), mainFrame: vi.fn().mockReturnValue(frameB) };
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page as Page), {
+      actionType: 'wait_for_selector',
+      selector: '#x',
+      state: 'visible',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).not.toContain('the first match is not visible');
+    expect(result.error).toMatch(/could not be fully determined/);
+  });
+
+  it('GAP-217: a visible-wait timeout diagnosis must report a closed tab, never "No element found", when the tab closes during diagnosis', async () => {
+    let closed = false;
+    const page: any = { isClosed: () => closed };
+    const frame: any = {
+      isDetached: () => false,
+      page: () => page,
+      $: vi.fn().mockResolvedValue(null),
+      $$eval: vi.fn().mockImplementation(() => {
+        closed = true;
+        return Promise.reject(new Error('Execution context was destroyed, most likely because of a navigation.'));
+      }),
+    };
+    page.frames = vi.fn().mockImplementation(() => (closed ? [] : [frame]));
+    page.mainFrame = vi.fn().mockReturnValue(frame);
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page as Page), {
+      actionType: 'wait_for_selector',
+      selector: '#stay',
+      state: 'visible',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).not.toContain('No element found');
+    expect(result.error).toContain('Tab was closed while wait_for_selector was checking its state.');
+  });
+
+  it('GAP-217: a hidden-wait success must not report a confident zero for otherVisibleMatches when a frame errors because the tab closed', async () => {
+    let closed = false;
+    const page: any = { isClosed: () => closed };
+    const frame: any = {
+      isDetached: () => false,
+      page: () => page,
+      $: vi.fn().mockResolvedValue(null),
+      $$eval: vi.fn().mockImplementation(() => {
+        closed = true;
+        return Promise.reject(new Error('Execution context was destroyed, most likely because of a navigation.'));
+      }),
+    };
+    page.frames = vi.fn().mockReturnValue([frame]);
+    page.mainFrame = vi.fn().mockReturnValue(frame);
+
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page as Page), {
+      actionType: 'wait_for_selector',
+      selector: '#gone',
+      state: 'hidden',
+      timeoutMs: 150,
+      maxRetries: 0,
+    });
+
+    // The hidden verdict is reached before $$eval runs; the tab closes only during the advisory count.
+    expect(result.success).toBe(true);
+    expect(result.outputData?.otherVisibleMatchesUnknown).toBe(true);
+  });
+
+  it('GAP-219: liveFramesOf must throw the tab-closed error, not fall back to the main frame, when the tab is closed and has no live frames', async () => {
+    const mainFrame: any = { isDetached: () => true };
+    const page: any = {
+      isClosed: () => true,
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+    };
+    const engine = new BrowserActionEngine();
+    expect(() => (engine as any).liveFramesOf(page)).toThrow('Tab was closed while wait_for_selector was checking its state.');
+  });
+});
+
+describe('@sutradhar/browser BrowserActionEngine FR2-06 caller-selector syntax probe', () => {
+  /** A page whose main frame supports the syntax probe (`evaluate`) in addition to the
+   *  ordinary `waitForSelector`-based resolution path every other test in this file uses. */
+  function pageWithProbe(opts: {
+    evaluateImpl?: (...args: any[]) => any;
+    waitForSelectorImpl?: (...args: any[]) => any;
+    isDetached?: () => boolean;
+  }) {
+    const evaluate = vi.fn().mockImplementation(opts.evaluateImpl ?? (() => Promise.resolve(null)));
+    const waitForSelector = vi.fn().mockImplementation(
+      opts.waitForSelectorImpl ?? (() => Promise.reject(new Error('No element found for selector'))),
+    );
+    const mainFrame = {
+      isDetached: opts.isDetached ?? (() => false),
+      evaluate,
+      waitForSelector,
+    } as unknown as Frame;
+    const screenshot = vi.fn().mockResolvedValue('base64screenshot');
+    const page = {
+      frames: vi.fn().mockReturnValue([mainFrame]),
+      mainFrame: vi.fn().mockReturnValue(mainFrame),
+      screenshot,
+    } as unknown as Page;
+    return { page, mainFrame, evaluate, waitForSelector, screenshot };
+  }
+
+  function tabWithDialog(page: Page, getPendingDialog?: () => any): IBrowserTab {
+    const tab = mockTab(page);
+    if (getPendingDialog) {
+      (tab as any).getPendingDialog = getPendingDialog;
+    }
+    return tab;
+  }
+
+  it('E1: a probe-confirmed invalid selector fails before dispatch, with no retry and no screenshot', async () => {
+    const parserMessage = "Failed to execute 'querySelector' on 'DocumentFragment': 'div[' is not a valid selector.";
+    const { page, waitForSelector, screenshot, evaluate } = pageWithProbe({
+      evaluateImpl: () => Promise.resolve(parserMessage),
+    });
+    const engine = new BrowserActionEngine();
+    const tab = tabWithDialog(page);
+    const result = await engine.executeAction(tab, { actionType: 'click', selector: 'div[', maxRetries: 2 });
+
+    expect(result.success).toBe(false);
+    expect(result.retriesUsed).toBe(0);
+    expect(result.error).toContain('Invalid selector "div["');
+    expect(result.error).toContain(parserMessage);
+    expect(result.error).toContain('Playwright-style');
+    expect(result.failureScreenshot).toBeUndefined();
+    expect(waitForSelector).not.toHaveBeenCalled();
+    expect(screenshot).not.toHaveBeenCalled();
+    expect(result.verification?.verified).toBe(false);
+    expect(tab.getActionHistory()).toHaveLength(1);
+    expect(tab.getActionHistory()[0].success).toBe(false);
+    expect(evaluate).toHaveBeenCalledTimes(1);
+    const call = evaluate.mock.calls[0];
+    expect(call[1]).toBe('css');
+    expect(call[2]).toBe('div[');
+  });
+
+  it('E2: a probe-cleared but absent selector goes through the normal retry loop, probing only once', async () => {
+    const { page, evaluate, waitForSelector } = pageWithProbe({
+      evaluateImpl: () => Promise.resolve(null),
+      waitForSelectorImpl: () => Promise.reject(new Error('No element found for selector: #nope')),
+    });
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), { actionType: 'click', selector: '#nope' });
+
+    expect(result.error).toContain('No visible element found for selector: #nope');
+    expect(result.error).not.toContain('Invalid selector');
+    expect(evaluate).toHaveBeenCalledTimes(1);
+    expect(waitForSelector).toHaveBeenCalledTimes(3); // default maxRetries=2 -> 3 attempts
+  });
+
+  it('E3: a probe-cleared, present selector clicks successfully', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true);
+    const { page } = pageWithProbe({
+      evaluateImpl: () => Promise.resolve(null),
+      waitForSelectorImpl: () => Promise.resolve(handle),
+    });
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), { actionType: 'click', selector: '#ok', maxRetries: 0 });
+
+    expect(result.success).toBe(true);
+    expect(handle.click).toHaveBeenCalledTimes(1);
+  });
+
+  it('E4: an inconclusive probe (rejection) lets the action succeed normally', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true);
+    const { page } = pageWithProbe({
+      evaluateImpl: () => Promise.reject(new Error('Execution context was destroyed')),
+      waitForSelectorImpl: () => Promise.resolve(handle),
+    });
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), { actionType: 'click', selector: '#ok', maxRetries: 0 });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('E5: a probe that never resolves is bounded, and the action still succeeds', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true);
+    const { page } = pageWithProbe({
+      evaluateImpl: () => new Promise(() => {}), // never settles
+      waitForSelectorImpl: () => Promise.resolve(handle),
+    });
+    const engine = new BrowserActionEngine();
+    const t0 = Date.now();
+    const result = await engine.executeAction(mockTab(page), { actionType: 'click', selector: '#ok', maxRetries: 0 });
+    const elapsed = Date.now() - t0;
+
+    expect(result.success).toBe(true);
+    expect(elapsed).toBeGreaterThanOrEqual(450);
+    expect(elapsed).toBeLessThan(2000);
+  });
+
+  it('E6: the probe is skipped for node ids, aria/text prefixes, engine-built selectors, non-selector actions, and a pending dialog', async () => {
+    const cases: Array<Record<string, unknown>> = [
+      { actionType: 'click', selector: '[data-sd-node-id="12"]', maxRetries: 0 },
+      { actionType: 'click', selector: 'aria/Submit[role="button"]', maxRetries: 0 },
+      { actionType: 'click', selector: 'text/Hi', maxRetries: 0 },
+      { actionType: 'click_by_text', text: 'text=Submit', maxRetries: 0 },
+      { actionType: 'click_by_role', role: 'button', name: 'Go >> now', maxRetries: 0 },
+      { actionType: 'type_by_label', label: 'Notes >> x', value: 'v', maxRetries: 0 },
+      { actionType: 'press_key', key: 'Enter', maxRetries: 0 },
+      { actionType: 'scroll', maxRetries: 0 },
+    ];
+    for (const params of cases) {
+      const { page, evaluate } = pageWithProbe({});
+      const engine = new BrowserActionEngine();
+      await engine.executeAction(mockTab(page), params as any).catch(() => {});
+      expect(evaluate).not.toHaveBeenCalled();
+    }
+
+    // Pending dialog: skip even for an otherwise-probed selector.
+    const { page, evaluate } = pageWithProbe({});
+    const engine = new BrowserActionEngine();
+    const tab = tabWithDialog(page, () => ({ type: 'alert', message: 'hi' }));
+    await engine.executeAction(tab, { actionType: 'click', selector: 'div[', maxRetries: 0 }).catch(() => {});
+    expect(evaluate).not.toHaveBeenCalled();
+  });
+
+  it('E7: the probe passes xpath// as xpath and pierce/ payload as css', async () => {
+    {
+      const { page, evaluate } = pageWithProbe({ evaluateImpl: () => Promise.resolve(null) });
+      const engine = new BrowserActionEngine();
+      await engine.executeAction(mockTab(page), { actionType: 'click', selector: 'xpath//[', maxRetries: 0 }).catch(() => {});
+      expect(evaluate.mock.calls[0][1]).toBe('xpath');
+      expect(evaluate.mock.calls[0][2]).toBe('/[');
+    }
+    {
+      const { page, evaluate } = pageWithProbe({ evaluateImpl: () => Promise.resolve(null) });
+      const engine = new BrowserActionEngine();
+      await engine.executeAction(mockTab(page), { actionType: 'click', selector: 'pierce/#x', maxRetries: 0 }).catch(() => {});
+      expect(evaluate.mock.calls[0][1]).toBe('css');
+      expect(evaluate.mock.calls[0][2]).toBe('#x');
+    }
+  });
+
+  it('E8: drag_and_drop probes both selectors and names the invalid target', async () => {
+    const parserMessage = "'div[' is not a valid selector.";
+    const { page, evaluate } = pageWithProbe({
+      evaluateImpl: (_fn: unknown, _kind: string, expr: string) =>
+        Promise.resolve(expr === 'div[' ? parserMessage : null),
+    });
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'drag_and_drop',
+      selector: '#src',
+      targetSelector: 'div[',
+      maxRetries: 0,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Invalid selector "div["');
+    expect(evaluate).toHaveBeenCalledTimes(2);
+  });
+
+  it('E9: toPuppeteerQuery passthrough never double-prefixes an already-prefixed caller selector', async () => {
+    const cases: Array<[string, string]> = [
+      ['xpath///button', 'xpath///button'],
+      ['pierce/#x', 'pierce/#x'],
+      ['#x', 'pierce/#x'],
+    ];
+    for (const [input, expected] of cases) {
+      const { page, waitForSelector } = pageWithProbe({ evaluateImpl: () => Promise.resolve(null) });
+      const engine = new BrowserActionEngine();
+      await engine.executeAction(mockTab(page), { actionType: 'click', selector: input, maxRetries: 0 }).catch(() => {});
+      expect(waitForSelector.mock.calls[0][0]).toBe(expected);
+    }
+
+    const { page, waitForSelector } = pageWithProbe({ evaluateImpl: () => Promise.resolve(null) });
+    const engine = new BrowserActionEngine();
+    await engine
+      .executeAction(mockTab(page), { actionType: 'type', selector: 'aria/Name[role="textbox"]', value: 'hi', maxRetries: 0 })
+      .catch(() => {});
+    expect(waitForSelector.mock.calls[0][0]).toBe('aria/Name[role="textbox"]');
+  });
+
+  it('E10: a syntax-error dispatch failure (probe inconclusive, browser itself rejects) stops the retry loop immediately', async () => {
+    const { page } = pageWithProbe({});
+    // Remove `evaluate` entirely so the pre-loop probe is inconclusive (T11: some mocks have no
+    // evaluate) — the browser's OWN dispatch-time syntax-error fast-fail (GAP-033's
+    // pierceFirstMatch pre-check, via `frame.$`) is what must surface and stop the retry loop.
+    delete (page.mainFrame() as any).evaluate;
+    const dollarMock = vi.fn().mockRejectedValue(new Error("'div[' is not a valid selector."));
+    (page.mainFrame() as any).$ = dollarMock;
+    const engine = new BrowserActionEngine();
+    const t0 = Date.now();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'wait_for_selector',
+      selector: 'div[',
+      state: 'attached',
+      timeoutMs: 5000,
+    });
+    const elapsed = Date.now() - t0;
+
+    expect(result.retriesUsed).toBe(0);
+    expect(result.error).toContain('is not a valid selector');
+    expect(dollarMock).toHaveBeenCalledTimes(1);
+    expect(elapsed).toBeLessThan(400);
+  });
+
+  it('E11: the duplicate-action guard never masks a rejected-selector result on a repeat dispatch', async () => {
+    const parserMessage = "'div[' is not a valid selector.";
+    const { page } = pageWithProbe({ evaluateImpl: () => Promise.resolve(parserMessage) });
+    const engine = new BrowserActionEngine();
+    const tab = mockTab(page);
+    const r1 = await engine.executeAction(tab, { actionType: 'click', selector: 'div[', maxRetries: 0 });
+    const r2 = await engine.executeAction(tab, { actionType: 'click', selector: 'div[', maxRetries: 0 });
+
+    expect(r1.error).toContain('Invalid selector');
+    expect(r2.error).toContain('Invalid selector');
+    expect(r2.error).not.toContain('Duplicate');
   });
 });

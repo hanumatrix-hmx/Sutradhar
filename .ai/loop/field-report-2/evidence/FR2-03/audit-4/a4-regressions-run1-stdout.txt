@@ -1,0 +1,12 @@
+PASS R178-0 degraded engaged
+FAIL R178a degraded dry-run is a byte-level no-op on T and SR (names+sizes+mtimes) {"b":{"T":{"13512628-6229-4d42-9586-774ed9e28d99.tmp":"f:0:1790341175107.8154","15a382e1-5dba-40bd-9fe3-4f3992134550.tmp":"f:0:1790341175219.6787","1a5f4670-5428-430a-be88-92923ea8744a.tmp":"f:0:1790341179171.8977","3ff95da0-862f-4316-ada9-98b4c4319f7f.tmp":"f:0:1790341176533.4973","48f2e752-f080-4a9a-bd34-cbaac0228123.tmp":"f:161196:1790341175416.8486","5633ee09-f40a-4db6-aeff-ab691412000d.tmp":"f:0:1790341174902.9834","59f3e94a-24fa-4cbf-8bef-4679552c8463.tmp":"f:0:1790341179513.239","60f3ed5f-6147-4b78-9423-734179e8f1dc.tmp":"f:0:1790341179135.2998","6baa2731-51e5-42e1-94bc-55e96efa92d4.tmp
+PASS R178b owned puppeteer dir lockfile survives the degraded lock probe
+PASS R178c unmarked puppeteer dir not planned for deletion in degraded mode
+PASS R178d young dir kept grace in degraded mode
+PASS R178e degraded plans no kill and no delete of any live session dir
+PASS R175 custom-state-dir session survives a REAL GC run without the env var (alive, dir kept, eval works, not in kill list)
+FAIL R176 orphan (state.json deleted, dir kept) Chrome killed AND its profile dir reclaimed in the same run {"alive":true,"dir":true,"acts":[{"type":"clearState","stateFile":"E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\sr\\r177stale\\state.json","result":"cleared"},{"type":"deleteDir","path":"E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp\\temp\\puppeteer_dev_chrome_profile-OwNd01","reason":"owner-dead","result":"deleted","attempts":1}]}
+PASS R177 stale state naming the LIVE dir in a different path form: live dir kept, live session usable, stale state cleared
+PASS R178f (enumeration ok) owned dead-owner puppeteer dir reclaimed, unmarked one kept
+PASS exit code 0 real run
+{"R":"E:\\AI-Cache\\tmp\\fr2-03-a4-reg-rmbGGp","total":11,"passed":9,"failed":["R178a degraded dry-run is a byte-level no-op on T and SR (names+sizes+mtimes)","R176 orphan (state.json deleted, dir kept) Chrome killed AND its profile dir reclaimed in the same run"]}

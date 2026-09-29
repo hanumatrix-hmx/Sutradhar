@@ -1,0 +1,19 @@
+{"t":0,"state":"control/idle","gm":"r1,r1,r0","rt":"responsive","warden":{"ms":10,"dialogs":[]},"snap":"0/289ms","verdict":"OK"}
+{"t":0,"state":"control/alert(dialog)","gm":"b409,b405,b408","rt":"blocked","warden":{"ms":2,"dialogs":["TGT:alert"]},"snap":"3/288ms","verdict":"DIALOG-CAUGHT"}
+{"t":0,"state":"busy-js-6s","gm":"r1,r0,r0","rt":"blocked","warden":{"ms":3,"dialogs":[]},"snap":"0/5290ms","verdict":"OK"}
+{"t":0,"state":"sync-xhr-10s","gm":"b405,b404,b408","rt":"blocked","warden":{"ms":417,"dialogs":["TGT:unknown"]},"snap":"3/688ms","rec":"Tab 517886EF1A51801BB291D56530344E4C (http://127.0.0.1:54748/?n=g0x52984) was cl","verdict":"FALSE-BLOCK+TAB-CLOSED(510ms)"}
+{
+ "control/idle": {
+  "OK": 1
+ },
+ "control/alert(dialog)": {
+  "DIALOG-CAUGHT": 1
+ },
+ "busy-js-6s": {
+  "OK": 1
+ },
+ "sync-xhr-10s": {
+  "FALSE-BLOCK+TAB-CLOSED(510ms)": 1
+ }
+}
+leftovers {"wardens":[],"chrome":[],"cliChildren":[]}

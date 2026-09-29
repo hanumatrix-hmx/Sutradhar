@@ -5,10 +5,33 @@
  */
 
 import { launch, Browser, Page, SutradharRuntime, SUTRADHAR_VERSION } from '../../src/index.js';
+import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+
+// FR2-12: pngjs is a dependency of @sutradhar/capability-runtime, not of this package — reached
+// via createRequire against that package's own package.json (T18's technique), rather than
+// adding a new devDependency here just to build a tiny test PNG.
+const capabilityRuntimeDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'capability-runtime');
+const require_ = createRequire(path.join(capabilityRuntimeDir, 'package.json'));
+const { PNG } = require_('pngjs');
+
+function makePngBase64(w: number, h: number): string {
+  const png = new PNG({ width: w, height: h });
+  for (let i = 0; i < w * h; i++) {
+    png.data[i * 4] = 1;
+    png.data[i * 4 + 1] = 2;
+    png.data[i * 4 + 2] = 3;
+    png.data[i * 4 + 3] = 255;
+  }
+  return PNG.sync.write(png).toString('base64');
+}
 
 describe('sutradhar SDK public API', () => {
   it('exports its package version', () => {
-    expect(SUTRADHAR_VERSION).toBe('0.4.2');
+    expect(SUTRADHAR_VERSION).toBe('0.5.0');
   });
 
   it('exposes the launch entry point and the Browser/Page classes', () => {
@@ -102,6 +125,179 @@ describe('sutradhar SDK public API', () => {
 
       await page.type('7', 'hello', { settle: true });
       expect(stub.type).toHaveBeenLastCalledWith('sess-1', '7', 'hello', 'tab-1', true);
+    });
+  });
+
+  describe('Page.waitForSelector (FR2-01)', () => {
+    it('S1: forwards to runtime.waitForSelector with undefined timeout/state when no options are given', async () => {
+      const stub = { waitForSelector: vi.fn().mockResolvedValue({ success: true }) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      await page.waitForSelector('#t');
+
+      expect(stub.waitForSelector).toHaveBeenCalledWith('sess-1', '#t', undefined, 'tab-1', undefined);
+    });
+
+    it('S2: forwards options.state and options.timeout', async () => {
+      const stub = { waitForSelector: vi.fn().mockResolvedValue({ success: true }) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      await page.waitForSelector('#t', { state: 'hidden', timeout: 2000 });
+
+      expect(stub.waitForSelector).toHaveBeenCalledWith('sess-1', '#t', 2000, 'tab-1', 'hidden');
+    });
+
+    it('S3: rejects with the runtime\'s own error message on failure, instead of returning silently', async () => {
+      const stub = {
+        waitForSelector: vi.fn().mockResolvedValue({
+          success: false,
+          error: 'wait_for_selector timed out after 2000ms waiting for state=visible: no element found',
+        }),
+      };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      await expect(page.waitForSelector('#t', { timeout: 2000 })).rejects.toThrow(
+        'wait_for_selector timed out after 2000ms waiting for state=visible: no element found',
+      );
+    });
+
+    it('S4: resolves to undefined on success', async () => {
+      const stub = { waitForSelector: vi.fn().mockResolvedValue({ success: true }) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      await expect(page.waitForSelector('#t')).resolves.toBeUndefined();
+    });
+  });
+
+  describe('Page.download / Page.uploadFile (FR2-05)', () => {
+    it('SD1: download() forwards to runtime.downloadFile and returns the DownloadResult shape', async () => {
+      const stub = {
+        downloadFile: vi.fn().mockResolvedValue({
+          success: true,
+          actionType: 'download_file',
+          executionTimeMs: 1,
+          output: { downloadedFilename: 'a.txt', downloadedPath: '/x/a.txt', downloadDir: '/x' },
+        }),
+      };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      const result = await page.download('#dl', { downloadDir: '/x' });
+
+      expect(stub.downloadFile).toHaveBeenCalledWith('sess-1', '#dl', '/x', 'tab-1');
+      expect(result).toEqual({ filename: 'a.txt', path: '/x/a.txt', downloadDir: '/x' });
+    });
+
+    it('SD2: download() rejects with the runtime\'s error message on failure', async () => {
+      const stub = {
+        downloadFile: vi.fn().mockResolvedValue({ success: false, actionType: 'download_file', executionTimeMs: 1, error: 'E' }),
+      };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      await expect(page.download('#dl')).rejects.toThrow('E');
+    });
+
+    it('SD3: uploadFile() resolves filePath to an absolute path and forwards to runtime.uploadFile; rejects on failure', async () => {
+      const stub = { uploadFile: vi.fn().mockResolvedValue({ success: true, actionType: 'upload_file', executionTimeMs: 1 }) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      await page.uploadFile('#f', 'rel.txt');
+      expect(stub.uploadFile).toHaveBeenCalledWith('sess-1', '#f', path.resolve('rel.txt'), 'tab-1');
+
+      const failing = { uploadFile: vi.fn().mockResolvedValue({ success: false, actionType: 'upload_file', executionTimeMs: 1, error: 'E' }) };
+      const page2 = new Page(failing as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+      await expect(page2.uploadFile('#f', 'rel.txt')).rejects.toThrow('E');
+    });
+  });
+
+  describe('Page.audit (FR2-12)', () => {
+    function fakeResult(overrides: Partial<any> = {}): any {
+      return {
+        url: 'http://127.0.0.1:1/audit',
+        title: 'T',
+        timestamp: '2026-01-01T00:00:00.000Z',
+        screenshotBase64: makePngBase64(5, 4),
+        consoleErrors: [],
+        pageErrors: [],
+        brokenRequests: [],
+        accessibilityIssues: [],
+        webVitals: { lcpMs: 10, cls: 0, fcpMs: 5, ttfbMs: 1 },
+        requestedUrl: 'http://127.0.0.1:1/audit',
+        observation: {
+          mode: 'navigated',
+          documentStartedAt: '2026-01-01T00:00:00.000Z',
+          observingSince: '2026-01-01T00:00:00.000Z',
+          coversWholeDocument: true,
+          pageWasHidden: false,
+        },
+        baseline: null,
+        ...overrides,
+      };
+    }
+
+    it('P3: no options -> runtime.audit called with (sessionId, {tabId}); path null, base64 present, no baselineDiffBase64', async () => {
+      const result = fakeResult();
+      const stub = { audit: vi.fn().mockResolvedValue(result) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      const r = await page.audit();
+
+      expect(stub.audit).toHaveBeenCalledWith('sess-1', { tabId: 'tab-1' });
+      expect(r.report.screenshot.path).toBeNull();
+      expect(r.screenshotBase64).toBe(result.screenshotBase64);
+      expect('baselineDiffBase64' in r).toBe(false);
+    });
+
+    it('P4: url + baselineUrl are forwarded, and a successful baseline yields baselineDiffBase64', async () => {
+      const diffB64 = makePngBase64(5, 4);
+      const result = fakeResult({
+        baseline: { url: 'http://y/', width: 5, height: 4, diffPixelCount: 1, totalPixels: 20, diffPercentage: 5, diffImageBase64: diffB64 },
+      });
+      const stub = { audit: vi.fn().mockResolvedValue(result) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      const r = await page.audit({ url: 'http://x/', baselineUrl: 'http://y/' });
+
+      expect(stub.audit).toHaveBeenCalledWith('sess-1', { tabId: 'tab-1', url: 'http://x/', baselineUrl: 'http://y/' });
+      expect(r.baselineDiffBase64).toBe(diffB64);
+    });
+
+    it('P5: outDir writes both files and reports absolute paths matching the decoded bytes', async () => {
+      const result = fakeResult();
+      const stub = { audit: vi.fn().mockResolvedValue(result) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+      const tmp = path.join(os.tmpdir(), `fr212-sdk-p5-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+      const nested = path.join(tmp, 'a', 'b');
+
+      try {
+        const r = await page.audit({ outDir: nested });
+        expect(path.isAbsolute(r.report.screenshot.path!)).toBe(true);
+        expect(r.report.screenshot.path!.startsWith(path.resolve(nested))).toBe(true);
+        const bytes = await fs.readFile(r.report.screenshot.path!);
+        expect(bytes.equals(Buffer.from(result.screenshotBase64, 'base64'))).toBe(true);
+      } finally {
+        await fs.rm(tmp, { recursive: true, force: true });
+      }
+    });
+
+    it('P6: outDir pointing at an existing file rejects, and runtime.audit is never called', async () => {
+      const stub = { audit: vi.fn().mockResolvedValue(fakeResult()) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+      const tmp = path.join(os.tmpdir(), `fr212-sdk-p6-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+      await fs.writeFile(tmp, 'not a directory');
+
+      try {
+        await expect(page.audit({ outDir: tmp })).rejects.toThrow(/Cannot create audit output directory/);
+        expect(stub.audit).not.toHaveBeenCalled();
+      } finally {
+        await fs.rm(tmp, { force: true });
+      }
+    });
+
+    it('P7: a runtime.audit rejection propagates with the same message', async () => {
+      const stub = { audit: vi.fn().mockRejectedValue(new Error('no live browser page')) };
+      const page = new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+      await expect(page.audit()).rejects.toThrow('no live browser page');
     });
   });
 });

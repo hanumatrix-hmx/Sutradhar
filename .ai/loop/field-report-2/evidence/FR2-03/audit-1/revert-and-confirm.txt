@@ -1,0 +1,44 @@
+== R1 removeDirWithRetry: drop post-rm existence check (packages/cli/src/profile-cleanup.ts)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/unit/profile-cleanup.spec.ts > PC4-PC8: removeDirWithRetry > PC6: rm resolves but exists still true gives failed/STILL_EXISTS, never deleted
+      Tests  1 failed | 15 passed (16)
+vitest exit 1
+== R2 classifySession: PID-reuse row -> unresponsive (packages/cli/src/sessions.ts)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/unit/sessions.spec.ts > classifySession (FR2-03 §0.3) > S4: unreachable + alive + mismatch -> stale
+      Tests  1 failed | 11 passed (12)
+vitest exit 1
+== R3 gcFlagError always undefined (packages/cli/src/parse-args.ts)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/unit/parse-args.spec.ts > FR2-03: GC-related flags > P6: gcFlagError gives the exact §2.7 messages for misuse
+      Tests  1 failed | 42 passed (43)
+vitest exit 1
+== R4 shutdown hooks: drop single guard (packages/mcp-server/src/shutdown-hooks.ts)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/unit/shutdown-hooks.spec.ts > installShutdownHooks > H2: end, close, SIGINT, SIGTERM in sequence -- shutdownAll and exit each exactly once
+      Tests  1 failed | 6 passed (7)
+vitest exit 1
+== R5 isOwnedTempProfileDir: accept symlinks (packages/cli/src/profile-cleanup.ts)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/unit/profile-cleanup.spec.ts > PC2/PC3: isOwnedTempProfileDir + normalizePathForCompare > false for a symlink/junction, even with a matching name
+ FAIL  tests/unit/profile-cleanup.spec.ts > PC2/PC3: isOwnedTempProfileDir + normalizePathForCompare > false for a regular file with a matching name
+      Tests  2 failed | 14 passed (16)
+vitest exit 1
+== A1 gc: remove live-session pid protection (cli marker) (packages/cli/src/gc.ts)
+      Tests  15 passed (15)
+vitest exit 0
+== A2 gc: remove dir-level grace for orphan dirs (packages/cli/src/gc.ts)
+      Tests  15 passed (15)
+vitest exit 0
+== A3 launcher: write owner file even into caller-supplied dir: MUTATION DID NOT APPLY
+== A4 gc: degraded mode ignores lock probe (packages/cli/src/gc.ts)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/unit/gc.spec.ts > planGc > G15: enumeration unavailable gives zero kill actions and incomplete:true; dirs deleted only where lockProbe is free
+      Tests  1 failed | 14 passed (15)
+vitest exit 1
+== A3 launcher: write owner file even into caller-supplied dir (packages/browser/src/launcher/browser-launcher.ts)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/unit/launcher.spec.ts > @sutradhar/browser BrowserLauncher > FR2-03: launch markers > L2: a caller-supplied userDataDir still gets the marker args, but no owner file is written into it
+      Tests  1 failed | 20 passed (21)
+vitest exit 1
+      Tests  132 passed (132)

@@ -1,0 +1,93 @@
+{
+  "at": "2026-09-26T21:06:15.002Z",
+  "results": [
+    {
+      "id": "M21-recover-without-reprobe",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "eol": "LF",
+      "expect": "GAP-230 never close a healthy tab",
+      "verdict": "SURVIVED",
+      "tests": "Tests  461 passed (461)",
+      "failed": [],
+      "ms": 19052,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M21b-no-recovery-at-all",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "eol": "LF",
+      "expect": "GAP-230 recovery",
+      "verdict": "SURVIVED",
+      "tests": "Tests  461 passed (461)",
+      "failed": [],
+      "ms": 19212,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M22-lock-no-readback",
+      "file": "packages/cli/src/warden-control.ts",
+      "eol": "LF",
+      "expect": "GAP-231 read-back",
+      "verdict": "SURVIVED",
+      "tests": "Tests  108 passed (108)",
+      "failed": [],
+      "ms": 4952,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M23-rival-check-disabled",
+      "file": "packages/cli/src/warden-control.ts",
+      "eol": "LF",
+      "expect": "GAP-231 singleton",
+      "verdict": "SURVIVED",
+      "tests": "Tests  108 passed (108)",
+      "failed": [],
+      "ms": 4985,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M24-direct-no-recovery",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "eol": "LF",
+      "expect": "GAP-230 direct recovery",
+      "verdict": "SURVIVED",
+      "tests": "Tests  108 passed (108)",
+      "failed": [],
+      "ms": 4948,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M24b-direct-recovery-no-reprobe",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "eol": "LF",
+      "expect": "GAP-230 never close healthy (direct)",
+      "verdict": "SURVIVED",
+      "tests": "Tests  108 passed (108)",
+      "failed": [],
+      "ms": 5098,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M25-tabs-gated-again",
+      "file": "packages/cli/src/dialog-cli.ts",
+      "eol": "LF",
+      "expect": "GAP-230 tabs ungated",
+      "verdict": "SURVIVED",
+      "tests": "Tests  108 passed (108)",
+      "failed": [],
+      "ms": 5002,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M26-closedTarget-not-surfaced",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "eol": "LF",
+      "expect": "GAP-230 honest message",
+      "verdict": "SURVIVED",
+      "tests": "Tests  108 passed (108)",
+      "failed": [],
+      "ms": 4775,
+      "restoredShaOk": true
+    }
+  ]
+}

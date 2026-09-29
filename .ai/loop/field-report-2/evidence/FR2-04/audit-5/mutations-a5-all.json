@@ -1,0 +1,277 @@
+{
+  "at": "2026-09-27T04:04:23.089Z",
+  "results": [
+    {
+      "id": "A13-warden-drops-discoveredAt",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "occurrences": 1,
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 483 passed (484)",
+      "failed": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-A13 (GAP-249): the warden feeds its own real discover"
+      ],
+      "ms": 18935,
+      "restoredShaOk": true
+    },
+    {
+      "id": "A20-selectDialog-picks-first",
+      "file": "packages/cli/src/dialog-cli.ts",
+      "occurrences": 1,
+      "verdict": "KILLED",
+      "tests": "Tests  3 failed | 130 passed (133)",
+      "failed": [
+        "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D6b (GAP-236/GAP-249 A20): selectDialog skips an OLDER blockedBy entry and picks the real (",
+        "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D6c (escalation-1 decision 1, GAP-249 A20): selectDialog skips an OLDER confirmedSafe entry",
+        "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D6d: when EVERY entry is blockedBy/confirmedSafe (no addressable holder at all), selectDial"
+      ],
+      "ms": 5805,
+      "restoredShaOk": true
+    },
+    {
+      "id": "A20b-selectDialog-ignores-blockedBy",
+      "file": "packages/cli/src/dialog-cli.ts",
+      "occurrences": 1,
+      "verdict": "KILLED",
+      "tests": "Tests  2 failed | 131 passed (133)",
+      "failed": [
+        "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D6b (GAP-236/GAP-249 A20): selectDialog skips an OLDER blockedBy entry and picks the real (",
+        "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D6d: when EVERY entry is blockedBy/confirmedSafe (no addressable holder at all), selectDial"
+      ],
+      "ms": 5703,
+      "restoredShaOk": true
+    },
+    {
+      "id": "A20c-selectDialog-ignores-confirmedSafe",
+      "file": "packages/cli/src/dialog-cli.ts",
+      "occurrences": 1,
+      "verdict": "KILLED",
+      "tests": "Tests  2 failed | 131 passed (133)",
+      "failed": [
+        "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D6c (escalation-1 decision 1, GAP-249 A20): selectDialog skips an OLDER confirmedSafe entry",
+        "tests/unit/dialog-cli.spec.ts > @sutradhar/cli dialog-cli (FR2-04) > D6d: when EVERY entry is blockedBy/confirmedSafe (no addressable holder at all), selectDial"
+      ],
+      "ms": 5766,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M22-lock-no-readback",
+      "file": "packages/cli/src/warden-control.ts",
+      "occurrences": 1,
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 132 passed (133)",
+      "failed": [
+        "tests/unit/warden-control-lock-raceback.spec.ts > @sutradhar/cli tryAcquireSpawnLock read-back (FR2-04 escalation-1, GAP-250/M22) > a rename that \"succeeds\" but"
+      ],
+      "ms": 5751,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M23-rival-check-disabled",
+      "file": "packages/cli/src/warden-control.ts",
+      "occurrences": 1,
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 132 passed (133)",
+      "failed": [
+        "tests/unit/warden-control.spec.ts > @sutradhar/cli warden-control (FR2-04 Branch W) > WC8 (GAP-250/M23): isRivalWardenAlive reports true for a live, healthy war"
+      ],
+      "ms": 5726,
+      "restoredShaOk": true
+    },
+    {
+      "id": "M26-closedTarget-not-surfaced",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "occurrences": 1,
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 132 passed (133)",
+      "failed": [
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli WardenBroker.handle (FR2-04 GAP-230/GAP-250 M26) > surfaces closedTarget + message from a 200 response body (r"
+      ],
+      "ms": 5760,
+      "restoredShaOk": true
+    },
+    {
+      "id": "E1-confirmedSafe-opaque(skips-subtree)",
+      "file": "packages/browser/src/session/dialog-cdp.ts",
+      "occurrences": 1,
+      "verdict": "KILLED",
+      "tests": "Tests  3 failed | 481 passed (484)",
+      "failed": [
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-245 va",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-245 re",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-245 re"
+      ],
+      "ms": 18662,
+      "restoredShaOk": true
+    },
+    {
+      "id": "E1b-split-graph(no-edges-through-confirmedSafe)",
+      "file": "packages/browser/src/session/dialog-cdp.ts",
+      "occurrences": 1,
+      "verdict": "KILLED",
+      "tests": "Tests  3 failed | 481 passed (484)",
+      "failed": [
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-245 va",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-245 re",
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-245 re"
+      ],
+      "ms": 19138,
+      "restoredShaOk": true
+    },
+    {
+      "id": "E2-confirmedSafe-can-be-holder",
+      "file": "packages/browser/src/session/dialog-cdp.ts",
+      "occurrences": 1,
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 483 passed (484)",
+      "failed": [
+        "tests/unit/dialog-cdp.spec.ts > @sutradhar/browser dialog-cdp (FR2-04) > B7 (FR2-04 fix-3/GAP-236, escalation-1 decision 1): attributeDialogHolders > GAP-245: a"
+      ],
+      "ms": 18910,
+      "restoredShaOk": true
+    },
+    {
+      "id": "E3-proactive-probe-immediate-for-all",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "occurrences": 1,
+      "verdict": "SURVIVED",
+      "tests": "Tests  484 passed (484)",
+      "failed": [],
+      "ms": 18718,
+      "restoredShaOk": true
+    },
+    {
+      "id": "E4-no-bootstrap-exception",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "occurrences": 1,
+      "verdict": "SURVIVED",
+      "tests": "Tests  484 passed (484)",
+      "failed": [],
+      "ms": 18853,
+      "restoredShaOk": true
+    },
+    {
+      "id": "E5-no-proactive-probe",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "occurrences": 1,
+      "verdict": "KILLED",
+      "tests": "Tests  2 failed | 482 passed (484)",
+      "failed": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirm",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirm"
+      ],
+      "ms": 19067,
+      "restoredShaOk": true
+    },
+    {
+      "id": "E6-no-reactive-confirmation",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "occurrences": 1,
+      "verdict": "SURVIVED",
+      "tests": "Tests  484 passed (484)",
+      "failed": [],
+      "ms": 18686,
+      "restoredShaOk": true
+    },
+    {
+      "id": "E7-reactive-confirm-without-ack",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "occurrences": 1,
+      "verdict": "SURVIVED",
+      "tests": "Tests  484 passed (484)",
+      "failed": [],
+      "ms": 18918,
+      "restoredShaOk": true
+    },
+    {
+      "id": "E8-warden-recovery-ignores-confirmedSafe",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "occurrences": 1,
+      "verdict": "KILLED",
+      "tests": "Tests  3 failed | 481 passed (484)",
+      "failed": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-B2 (GAP-245, decision 1): a CONFIRMED-SAFE isolated t",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirm",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirm"
+      ],
+      "ms": 18835,
+      "restoredShaOk": true
+    },
+    {
+      "id": "E9-warden-never-passes-confirmedSafe",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "occurrences": 1,
+      "verdict": "KILLED",
+      "tests": "Tests  3 failed | 481 passed (484)",
+      "failed": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-B2 (GAP-245, decision 1): a CONFIRMED-SAFE isolated t",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirm",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirm"
+      ],
+      "ms": 19286,
+      "restoredShaOk": true
+    },
+    {
+      "id": "E11-proactive-ignores-tracked-dialog(guard)",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "occurrences": 1,
+      "verdict": "SURVIVED",
+      "tests": "Tests  484 passed (484)",
+      "failed": [],
+      "ms": 18681,
+      "restoredShaOk": true
+    },
+    {
+      "id": "E12-proactive-marks-safe-regardless-of-state",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "occurrences": 1,
+      "verdict": "KILLED",
+      "tests": "Tests  3 failed | 481 passed (484)",
+      "failed": [
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-fix3-A (GAP-236): a popup and its blocked opener — /v1/dialogs rep",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-B (GAP-246, supersedes fix-3's isolated refusal): a N",
+        "tests/unit/dialog-warden.spec.ts > @sutradhar/browser DialogWarden (FR2-04 Branch W) > FR2-04-escalation-1-proactive (GAP-245 live-found gap): proactive confirm"
+      ],
+      "ms": 19207,
+      "restoredShaOk": true
+    },
+    {
+      "id": "E13-destroy-keeps-confirmed",
+      "file": "packages/browser/src/session/dialog-warden.ts",
+      "occurrences": 1,
+      "verdict": "SURVIVED",
+      "tests": "Tests  484 passed (484)",
+      "failed": [],
+      "ms": 18948,
+      "restoredShaOk": true
+    },
+    {
+      "id": "E10-direct-refusal-becomes-throw",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "occurrences": 1,
+      "verdict": "KILLED",
+      "tests": "Tests  6 failed | 127 passed (133)",
+      "failed": [
+        "tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > FR2-04 fix-3/GAP-236, decision point 3: handle() on a co",
+        "tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > FR2-04 escalation-1/GAP-247: handle() on what topology a",
+        "tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > FR2-04 escalation-1/GAP-247: handle() on an ISOLATED blo",
+        "tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > GAP-247 attack 1: dialog on the OPENER of a chain — hand",
+        "tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > GAP-247 attack 2: dialog on the MIDDLE of a 3-target cha",
+        "tests/unit/direct-cdp-broker.spec.ts > @sutradhar/cli DirectCdpBroker (FR2-04 fix-1, GAP-225/GAP-222) > GAP-247 attack 3: dialog on the OLDER of two siblings —"
+      ],
+      "ms": 5757,
+      "restoredShaOk": true
+    },
+    {
+      "id": "E18-wardenbroker-drops-confirmedSafe-branch",
+      "file": "packages/cli/src/dialog-broker.ts",
+      "occurrences": 1,
+      "verdict": "KILLED",
+      "tests": "Tests  1 failed | 132 passed (133)",
+      "failed": [
+        "tests/unit/dialog-broker.spec.ts > @sutradhar/cli WardenBroker.handle (FR2-04 GAP-230/GAP-250 M26) > surfaces a confirmedSafe 409 refusal (escalation-1 decision"
+      ],
+      "ms": 5698,
+      "restoredShaOk": true
+    }
+  ]
+}

@@ -1,0 +1,1038 @@
+{
+  "at": "2026-09-27T03:43:19.337Z",
+  "rows": [
+    {
+      "t": 0,
+      "case": "urlpopup/accept-then-tabs",
+      "n": "r0x46154",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x46154:blocked",
+            "POPUP:http://127.0.0.1:58096/pop?n=r0x46154:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 688,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/?n=r0x46154\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/pop?n=r0x46154\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1095,
+          "out": "Tab 6126F5735EEC7CA60EEF38185C5C942E was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x46154:responsive"
+          ]
+        },
+        {
+          "step": "next:tabs",
+          "code": 0,
+          "ms": 335,
+          "killedAtCap": false,
+          "out": "* tab_sess_1790480446607_1_1  opener r0x46154  http://127.0.0.1:58096/?n=r0x46154",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x46154:responsive"
+          ]
+        }
+      ],
+      "popUrl": "http://127.0.0.1:58096/pop?n=r0x46154",
+      "closedWhich": "POPUP",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/?n=r0x46154"
+      ]
+    },
+    {
+      "t": 0,
+      "case": "urlpopup/accept-then-snap",
+      "n": "r0x51363",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x51363:blocked",
+            "POPUP:http://127.0.0.1:58096/pop?n=r0x51363:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 682,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/?n=r0x51363\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/pop?n=r0x51363\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1086,
+          "out": "Tab DE6B3B84316A76FC845FBD964DB43664 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x51363:responsive"
+          ]
+        },
+        {
+          "step": "next:snap",
+          "code": 0,
+          "ms": 275,
+          "killedAtCap": false,
+          "out": "URL: http://127.0.0.1:58096/?n=r0x51363\nTitle: opener r0x51363\nInteractive elements (1):\n[#1] input \"user-work\" value=\"user-work\"",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x51363:responsive"
+          ]
+        }
+      ],
+      "popUrl": "http://127.0.0.1:58096/pop?n=r0x51363",
+      "closedWhich": "POPUP",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/?n=r0x51363"
+      ]
+    },
+    {
+      "t": 0,
+      "case": "urlpopup/accept-then-eval",
+      "n": "r0x56519",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x56519:blocked",
+            "POPUP:http://127.0.0.1:58096/pop?n=r0x56519:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 670,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/?n=r0x56519\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/pop?n=r0x56519\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1102,
+          "out": "Tab DD5EE72315866D4A3C79808673FAF27F was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x56519:responsive"
+          ]
+        },
+        {
+          "step": "next:eval",
+          "code": 0,
+          "ms": 286,
+          "killedAtCap": false,
+          "out": "opener r0x56519",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x56519:responsive"
+          ]
+        }
+      ],
+      "popUrl": "http://127.0.0.1:58096/pop?n=r0x56519",
+      "closedWhich": "POPUP",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/?n=r0x56519"
+      ]
+    },
+    {
+      "t": 0,
+      "case": "urlpopup/accept-then-nav",
+      "n": "r0x61692",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x61692:blocked",
+            "POPUP:http://127.0.0.1:58096/pop?n=r0x61692:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 681,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/?n=r0x61692\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/pop?n=r0x61692\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1083,
+          "out": "Tab 247C95CBB190DC64AF8BD6983FFAE1F6 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x61692:responsive"
+          ]
+        },
+        {
+          "step": "next:nav",
+          "code": 0,
+          "ms": 282,
+          "killedAtCap": false,
+          "out": "Navigated to http://127.0.0.1:58096/?n=r0x61692-after\nTitle: opener r0x61692-after",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x61692-after:responsive"
+          ]
+        }
+      ],
+      "popUrl": "http://127.0.0.1:58096/pop?n=r0x61692",
+      "closedWhich": "POPUP",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/?n=r0x61692-after"
+      ]
+    },
+    {
+      "t": 0,
+      "case": "blankpopup/accept-then-tabs",
+      "n": "r0x66848",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x66848:blocked",
+            "POPUP:about:blank:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 680,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/?n=r0x66848\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1080,
+          "out": "Tab 2A92CD3FDDFF32D7A6BF5874ED28F2A9 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x66848:responsive"
+          ]
+        },
+        {
+          "step": "next:tabs",
+          "code": 0,
+          "ms": 277,
+          "killedAtCap": false,
+          "out": "* tab_sess_1790480467272_1_1  opener r0x66848  http://127.0.0.1:58096/?n=r0x66848",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x66848:responsive"
+          ]
+        }
+      ],
+      "popUrl": "about:blank",
+      "closedWhich": "POPUP",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/?n=r0x66848"
+      ]
+    },
+    {
+      "t": 0,
+      "case": "blankpopup/accept-then-snap",
+      "n": "r0x74791",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x74791:blocked",
+            "POPUP:about:blank:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 669,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/?n=r0x74791\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1075,
+          "out": "Tab 809D040B03B6B5848504C45290B89662 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x74791:responsive"
+          ]
+        },
+        {
+          "step": "next:snap",
+          "code": 0,
+          "ms": 318,
+          "killedAtCap": false,
+          "out": "URL: http://127.0.0.1:58096/?n=r0x74791\nTitle: opener r0x74791\nInteractive elements (1):\n[#1] input \"user-work\" value=\"user-work\"",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x74791:responsive"
+          ]
+        }
+      ],
+      "popUrl": "about:blank",
+      "closedWhich": "POPUP",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/?n=r0x74791"
+      ]
+    },
+    {
+      "t": 0,
+      "case": "blankpopup/accept-then-eval",
+      "n": "r0x82795",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x82795:blocked",
+            "POPUP:about:blank:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 685,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/?n=r0x82795\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1079,
+          "out": "Tab 591EF412ADF6FCAB3C1B565E05BA26D3 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x82795:responsive"
+          ]
+        },
+        {
+          "step": "next:eval",
+          "code": 0,
+          "ms": 285,
+          "killedAtCap": false,
+          "out": "opener r0x82795",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x82795:responsive"
+          ]
+        }
+      ],
+      "popUrl": "about:blank",
+      "closedWhich": "POPUP",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/?n=r0x82795"
+      ]
+    },
+    {
+      "t": 0,
+      "case": "blankpopup/accept-then-nav",
+      "n": "r0x90783",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x90783:blocked",
+            "POPUP:about:blank:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 668,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/?n=r0x90783\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1074,
+          "out": "Tab 8184607406F998730D3B6320578EE5EC was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x90783:responsive"
+          ]
+        },
+        {
+          "step": "next:nav",
+          "code": 0,
+          "ms": 291,
+          "killedAtCap": false,
+          "out": "Navigated to http://127.0.0.1:58096/?n=r0x90783-after\nTitle: opener r0x90783-after",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r0x90783-after:responsive"
+          ]
+        }
+      ],
+      "popUrl": "about:blank",
+      "closedWhich": "POPUP",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/?n=r0x90783-after"
+      ]
+    },
+    {
+      "t": 0,
+      "case": "plain-orphan-alert/tabs",
+      "n": "r0x98803",
+      "steps": [
+        {
+          "step": "click #alert",
+          "code": 0,
+          "ms": 6352,
+          "out": "Clicked #alert\ndialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r0x98803\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/fx.html?n=r0x98803\"}"
+        },
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/fx.html?n=r0x9880:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 266,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r0x98803\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/fx.html?n=r0x98803\"}"
+        },
+        {
+          "step": "next:tabs",
+          "code": 3,
+          "ms": 258,
+          "killedAtCap": false,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r0x98803\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/fx.html?n=r0x98803\"}",
+          "err": "Error: a alert dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (never "
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/fx.html?n=r0x9880:blocked"
+          ]
+        }
+      ],
+      "urlsAfter": [
+        "http://127.0.0.1:58096/fx.html?n=r0x98803"
+      ]
+    },
+    {
+      "t": 0,
+      "case": "plain-orphan-alert/dialog-accept-then-tabs",
+      "n": "r0x8591",
+      "steps": [
+        {
+          "step": "click #alert",
+          "code": 0,
+          "ms": 6331,
+          "out": "Clicked #alert\ndialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r0x8591\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/fx.html?n=r0x8591\"}"
+        },
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/fx.html?n=r0x8591:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 266,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r0x8591\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/fx.html?n=r0x8591\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 715,
+          "out": "Accepted alert \"fr2-04 alert r0x8591\"",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/fx.html?n=r0x8591:responsive"
+          ]
+        },
+        {
+          "step": "next:tabs",
+          "code": 0,
+          "ms": 264,
+          "killedAtCap": false,
+          "out": "* tab_sess_1790480509028_1_1  fr2-04 r0x8591  http://127.0.0.1:58096/fx.html?n=r0x8591",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/fx.html?n=r0x8591:responsive"
+          ]
+        }
+      ],
+      "closedWhich": "none",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/fx.html?n=r0x8591"
+      ]
+    },
+    {
+      "t": 1,
+      "case": "urlpopup/accept-then-tabs",
+      "n": "r1x18601",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x18601:blocked",
+            "POPUP:http://127.0.0.1:58096/pop?n=r1x18601:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 674,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/?n=r1x18601\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/pop?n=r1x18601\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1077,
+          "out": "Tab 79E0E89A5853F30739E19DE186F6AF09 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x18601:responsive"
+          ]
+        },
+        {
+          "step": "next:tabs",
+          "code": 0,
+          "ms": 262,
+          "killedAtCap": false,
+          "out": "* tab_sess_1790480519042_1_1  opener r1x18601  http://127.0.0.1:58096/?n=r1x18601",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x18601:responsive"
+          ]
+        }
+      ],
+      "popUrl": "http://127.0.0.1:58096/pop?n=r1x18601",
+      "closedWhich": "POPUP",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/?n=r1x18601"
+      ]
+    },
+    {
+      "t": 1,
+      "case": "urlpopup/accept-then-snap",
+      "n": "r1x23667",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x23667:blocked",
+            "POPUP:http://127.0.0.1:58096/pop?n=r1x23667:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 674,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/?n=r1x23667\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/pop?n=r1x23667\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1085,
+          "out": "Tab 5E01B1E230BF39A43947BE6801966376 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x23667:responsive"
+          ]
+        },
+        {
+          "step": "next:snap",
+          "code": 0,
+          "ms": 263,
+          "killedAtCap": false,
+          "out": "URL: http://127.0.0.1:58096/?n=r1x23667\nTitle: opener r1x23667\nInteractive elements (1):\n[#1] input \"user-work\" value=\"user-work\"",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x23667:responsive"
+          ]
+        }
+      ],
+      "popUrl": "http://127.0.0.1:58096/pop?n=r1x23667",
+      "closedWhich": "POPUP",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/?n=r1x23667"
+      ]
+    },
+    {
+      "t": 1,
+      "case": "urlpopup/accept-then-eval",
+      "n": "r1x28739",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x28739:blocked",
+            "POPUP:http://127.0.0.1:58096/pop?n=r1x28739:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 672,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/?n=r1x28739\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/pop?n=r1x28739\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1107,
+          "out": "Tab 65DFCD75959A95C51168A0A31B03AD9C was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x28739:responsive"
+          ]
+        },
+        {
+          "step": "next:eval",
+          "code": 0,
+          "ms": 270,
+          "killedAtCap": false,
+          "out": "opener r1x28739",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x28739:responsive"
+          ]
+        }
+      ],
+      "popUrl": "http://127.0.0.1:58096/pop?n=r1x28739",
+      "closedWhich": "POPUP",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/?n=r1x28739"
+      ]
+    },
+    {
+      "t": 1,
+      "case": "urlpopup/accept-then-nav",
+      "n": "r1x33810",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x33810:blocked",
+            "POPUP:http://127.0.0.1:58096/pop?n=r1x33810:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 673,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/?n=r1x33810\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/pop?n=r1x33810\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1073,
+          "out": "Tab E7BB6F91AFDBD9C44E45E9909DE24333 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x33810:responsive"
+          ]
+        },
+        {
+          "step": "next:nav",
+          "code": 0,
+          "ms": 273,
+          "killedAtCap": false,
+          "out": "Navigated to http://127.0.0.1:58096/?n=r1x33810-after\nTitle: opener r1x33810-after",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x33810-after:responsive"
+          ]
+        }
+      ],
+      "popUrl": "http://127.0.0.1:58096/pop?n=r1x33810",
+      "closedWhich": "POPUP",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/?n=r1x33810-after"
+      ]
+    },
+    {
+      "t": 1,
+      "case": "blankpopup/accept-then-tabs",
+      "n": "r1x38881",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x38881:blocked",
+            "POPUP:about:blank:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 670,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/?n=r1x38881\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1082,
+          "out": "Tab FC1F9C14591A04E9D6C83ACB20A43F38 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x38881:responsive"
+          ]
+        },
+        {
+          "step": "next:tabs",
+          "code": 0,
+          "ms": 268,
+          "killedAtCap": false,
+          "out": "* tab_sess_1790480539295_1_1  opener r1x38881  http://127.0.0.1:58096/?n=r1x38881",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x38881:responsive"
+          ]
+        }
+      ],
+      "popUrl": "about:blank",
+      "closedWhich": "POPUP",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/?n=r1x38881"
+      ]
+    },
+    {
+      "t": 1,
+      "case": "blankpopup/accept-then-snap",
+      "n": "r1x46817",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x46817:blocked",
+            "POPUP:about:blank:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 697,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/?n=r1x46817\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1073,
+          "out": "Tab 60A3094B339C1AAE7EC896DBF5775E7D was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x46817:responsive"
+          ]
+        },
+        {
+          "step": "next:snap",
+          "code": 0,
+          "ms": 281,
+          "killedAtCap": false,
+          "out": "URL: http://127.0.0.1:58096/?n=r1x46817\nTitle: opener r1x46817\nInteractive elements (1):\n[#1] input \"user-work\" value=\"user-work\"",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x46817:responsive"
+          ]
+        }
+      ],
+      "popUrl": "about:blank",
+      "closedWhich": "POPUP",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/?n=r1x46817"
+      ]
+    },
+    {
+      "t": 1,
+      "case": "blankpopup/accept-then-eval",
+      "n": "r1x54816",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x54816:blocked",
+            "POPUP:about:blank:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 671,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/?n=r1x54816\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1101,
+          "out": "Tab 5DC6F92054B4FEF90FE0CA294E5B4783 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x54816:responsive"
+          ]
+        },
+        {
+          "step": "next:eval",
+          "code": 0,
+          "ms": 317,
+          "killedAtCap": false,
+          "out": "opener r1x54816",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x54816:responsive"
+          ]
+        }
+      ],
+      "popUrl": "about:blank",
+      "closedWhich": "POPUP",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/?n=r1x54816"
+      ]
+    },
+    {
+      "t": 1,
+      "case": "blankpopup/accept-then-nav",
+      "n": "r1x62854",
+      "steps": [
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x62854:blocked",
+            "POPUP:about:blank:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 671,
+          "out": "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/?n=r1x62854\"}\ndialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"about:blank\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 1087,
+          "out": "Tab 007489812A92AA169486114ADEC089D5 was closed because its dialog could not be addressed directly (unknown dialog).",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x62854:responsive"
+          ]
+        },
+        {
+          "step": "next:nav",
+          "code": 0,
+          "ms": 309,
+          "killedAtCap": false,
+          "out": "Navigated to http://127.0.0.1:58096/?n=r1x62854-after\nTitle: opener r1x62854-after",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/?n=r1x62854-after:responsive"
+          ]
+        }
+      ],
+      "popUrl": "about:blank",
+      "closedWhich": "POPUP",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/?n=r1x62854-after"
+      ]
+    },
+    {
+      "t": 1,
+      "case": "plain-orphan-alert/tabs",
+      "n": "r1x70912",
+      "steps": [
+        {
+          "step": "click #alert",
+          "code": 0,
+          "ms": 6350,
+          "out": "Clicked #alert\ndialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r1x70912\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/fx.html?n=r1x70912\"}"
+        },
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/fx.html?n=r1x7091:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 271,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r1x70912\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/fx.html?n=r1x70912\"}"
+        },
+        {
+          "step": "next:tabs",
+          "code": 3,
+          "ms": 264,
+          "killedAtCap": false,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r1x70912\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/fx.html?n=r1x70912\"}",
+          "err": "Error: a alert dialog is open and blocking the page, so \"tabs\" did not run.\nHint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies and names the specific tab actually holding the dialog and recovers by closing just that tab (never "
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/fx.html?n=r1x7091:blocked"
+          ]
+        }
+      ],
+      "urlsAfter": [
+        "http://127.0.0.1:58096/fx.html?n=r1x70912"
+      ]
+    },
+    {
+      "t": 1,
+      "case": "plain-orphan-alert/dialog-accept-then-tabs",
+      "n": "r1x80804",
+      "steps": [
+        {
+          "step": "click #alert",
+          "code": 0,
+          "ms": 6343,
+          "out": "Clicked #alert\ndialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r1x80804\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/fx.html?n=r1x80804\"}"
+        },
+        {
+          "step": "targets@after-trigger",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/fx.html?n=r1x8080:blocked"
+          ]
+        },
+        {
+          "step": "dialog",
+          "code": 0,
+          "ms": 268,
+          "out": "dialogPending: {\"type\":\"alert\",\"message\":\"fr2-04 alert r1x80804\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:58096/fx.html?n=r1x80804\"}"
+        },
+        {
+          "step": "dialog accept",
+          "code": 0,
+          "ms": 722,
+          "out": "Accepted alert \"fr2-04 alert r1x80804\"",
+          "err": ""
+        },
+        {
+          "step": "targets@after-accept",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/fx.html?n=r1x8080:responsive"
+          ]
+        },
+        {
+          "step": "next:tabs",
+          "code": 0,
+          "ms": 285,
+          "killedAtCap": false,
+          "out": "* tab_sess_1790480581295_1_1  fr2-04 r1x80804  http://127.0.0.1:58096/fx.html?n=r1x80804",
+          "err": ""
+        },
+        {
+          "step": "targets@after-next",
+          "targets": [
+            "OPENER:http://127.0.0.1:58096/fx.html?n=r1x8080:responsive"
+          ]
+        }
+      ],
+      "closedWhich": "none",
+      "urlsAfter": [
+        "http://127.0.0.1:58096/fx.html?n=r1x80804"
+      ]
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

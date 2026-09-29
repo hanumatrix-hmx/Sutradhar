@@ -1,0 +1,6 @@
+[revert-confirm] runtime.ts original sha256=1a60d61a8d8b809e44fb332fb27e19edb0a36a63e570da924509724f681ac46d bytes=115001
+[revert-confirm] runtime.ts restored, sha256 verified match (1a60d61a8d8b809e44fb332fb27e19edb0a36a63e570da924509724f681ac46d)
+[revert-confirm] GAP-273 CASE: live capture removed, fallback to page.url() string-match only -> {"hash-404":{"hit":false,"finalUrl":"http://127.0.0.1:51310/own-404-samedoc?n=revert-273-hash-404&via=hash#sec-revert-273-hash-404","brokenRequests":[]},"emptybody-404":{"hit":false,"finalUrl":"chrome-error://chromewebdata/","brokenRequests":[]}} -- regression reproduced=true
+[revert-confirm] runtime.ts restored, sha256 verified match (1a60d61a8d8b809e44fb332fb27e19edb0a36a63e570da924509724f681ac46d)
+[revert-confirm] GAP-274 CASE: bounded setup removed, Page.enable/Network.enable/getFrameTree awaited directly -> {"a":{"pendingWasSet":true,"elapsedAtLeastMs":2567,"hungPast8s":false},"b":{"elapsedAtLeastMs":2559,"hungPast8s":false}} -- regression reproduced: (a) dialog=false, (b) timed-out-nav=false
+[revert-confirm] final rebuild with restored sources OK

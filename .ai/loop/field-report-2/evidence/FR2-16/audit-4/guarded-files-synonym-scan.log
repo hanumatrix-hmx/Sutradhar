@@ -1,0 +1,16 @@
+PROJECT_DEEP_DIVE.md: ...evaluate()`, confidence-scored candidates | | Detection-evasion / stealth | ❌ **Not built (by design)** | No stealth engine exists; launches without that machinery, but retains one flag that hides `navigator
+PROJECT_DEEP_DIVE.md: ...1 Detection-Evasion Boundary (no stealth engine) There is no stealth/anti-detection engine in this codebase — an earlier `@sutradhar/browser/stealth/` module (a dead, never-invoked `Stealt
+PROJECT_DEEP_DIVE.md: ...It is not a stability flag — Chromium's own source (`bad_flags_prompt
+PROJECT_DEEP_DIVE.md: ...3 Synthetic Reports `ValidationProgramRunner` + `LaunchManager` return **hardcoded** `ProductionReadinessMetrics` (`reliability 98
+SECURITY.md: ...## What's explicitly NOT built in - **No stealth / fingerprint evasion
+.ai/competitive-benchmarks.md: ...** (1) The identical 47-task WebBench set, same scoring standard, no stealth on any side: **Sutradhar 29/47 (62%) — Playwright 27/47 (57%) — Puppeteer 25/47 (53%)** (Milestone 23, 2026-08-14)
+.ai/competitive-benchmarks.md: ...` and disables the `--enable-automation` CDP flag, leaving no `HeadlessChrome` substring in its UA — versus Sutradhar's plain launch, which does none of that except mask `navigator
+.ai/competitive-benchmarks.md: ...CLI binary (rebuilt fresh), same methodology, same "Completed only if real verifiable data was actually extracted" bar, no stealth
+.ai/competitive-benchmarks.md: ...There is no stealth-off state — `light` (what the original 31/47 run already used) is the floor, not a midpoint
+.ai/competitive-benchmarks.md: ...ists), but the underlying premise — that pinchtab's default is a meaningfully-softened baseline relative to Sutradhar's plain launch — is now confirmed at the fingerprint level, independently of task outcomes, and is if anything larger than assumed
+.ai/competitive-benchmarks.md: ...hitting its own bot-challenges despite the stealth default (real evidence stealth-light is a probabilistic edge, not a reliable pass — this was not a clean natural experiment), 2 are agent-driving/task- interpretation variance, and one (CNET) is a
+.ai/competitive-benchmarks.md: ...Both launched plain (`headless: true`, real Chrome, no stealth) — the same fairness standard already held for Sutradhar
+.ai/competitive-benchmarks.md: ...launch()`, no stealth, same fairness standard held for Sutradhar) against 6 of the exact URLs that blocked Sutradhar across the WebBench samp
+.ai/competitive-benchmarks.md: ...the "better than Playwright" claim**: tool-surface (Milestones 9-11, real gaps closed, Sutradhar has more), real-world reliability under adversarial conditions (occlusion detection working correctly across every WebBench sample, zero misfires), and n
+docs/ARCHITECTURE.md: ...owser processes launch with sandbox flags (`--no-sandbox`/`--disable-setuid-sandbox` are used for headless CI/container compatibility, not to disable browser-level sandboxing of page content)
+AGENT_SETUP.md: ...## Known limitations — stated honestly - **No stealth or bot-detection evasion, by design

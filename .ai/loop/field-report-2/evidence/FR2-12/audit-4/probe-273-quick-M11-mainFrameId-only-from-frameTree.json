@@ -1,0 +1,92 @@
+{
+  "runtime": {
+    "hash-404": {
+      "pass": 2,
+      "n": 2,
+      "fails": []
+    },
+    "emptybody-404": {
+      "pass": 2,
+      "n": 2,
+      "fails": []
+    },
+    "control-ok": {
+      "pass": 2,
+      "n": 2,
+      "fails": []
+    },
+    "a-302-then-hash-404": {
+      "pass": 2,
+      "n": 2,
+      "fails": []
+    },
+    "a-js200-to-hash404": {
+      "pass": 2,
+      "n": 2,
+      "fails": []
+    }
+  },
+  "cli": {
+    "hash-404": {
+      "pass": 0,
+      "n": 0,
+      "oneDoc": 0,
+      "fails": []
+    },
+    "emptybody-404": {
+      "pass": 0,
+      "n": 0,
+      "oneDoc": 0,
+      "fails": []
+    },
+    "a-302-then-hash-404": {
+      "pass": 0,
+      "n": 0,
+      "oneDoc": 0,
+      "fails": []
+    }
+  },
+  "samples": {
+    "hash-404": {
+      "url": "http://127.0.0.1:53099/h404?t=0#top",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:53099/h404?t=0",
+          "status": 404
+        }
+      ]
+    },
+    "emptybody-404": {
+      "url": "chrome-error://chromewebdata/",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:53099/e404?t=0",
+          "status": 404
+        }
+      ]
+    },
+    "control-ok": {
+      "url": "http://127.0.0.1:53099/ok?t=0",
+      "broken": []
+    },
+    "a-302-then-hash-404": {
+      "url": "http://127.0.0.1:53099/h404?from=r#top",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:53099/h404?from=r",
+          "status": 404
+        }
+      ]
+    },
+    "a-js200-to-hash404": {
+      "url": "http://127.0.0.1:53099/h404?from=js#top",
+      "broken": [
+        {
+          "url": "http://127.0.0.1:53099/h404?from=js",
+          "status": 404
+        }
+      ]
+    }
+  },
+  "tmpRemoved": true
+}

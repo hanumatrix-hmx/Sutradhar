@@ -1,0 +1,60 @@
+main-session tree: [
+ {
+  "id": "1D32978EEE8E0CCC612190BFA25A1A46",
+  "url": "http://127.0.0.1:58777/main"
+ },
+ {
+  "id": "A5147FF68952C9788EFDAB15AABDD5F3",
+  "name": "so-xfo",
+  "url": "chrome-error://chromewebdata/",
+  "unreachableUrl": "http://127.0.0.1:58777/xfo-deny?c=so-xfo"
+ },
+ {
+  "id": "3992A0834AE24F65A9C3BF1462BAB037",
+  "name": "so-csp",
+  "url": "chrome-error://chromewebdata/",
+  "unreachableUrl": "http://127.0.0.1:58777/csp-none?c=so-csp"
+ },
+ {
+  "id": "36860799A3B19FF16906AAABA7BD4427",
+  "name": "so-fine",
+  "url": "http://127.0.0.1:58777/fine"
+ },
+ {
+  "id": "2777CB90DECE0529834B15702CE1B0EF",
+  "name": "refused",
+  "url": "chrome-error://chromewebdata/",
+  "unreachableUrl": "http://127.0.0.1:1/refused"
+ },
+ {
+  "id": "7894653C7711D2FF0CB0CBD199DDEF81",
+  "name": "sbx",
+  "url": "chrome-error://chromewebdata/",
+  "unreachableUrl": "http://127.0.0.1:58777/xfo-deny?c=sandboxed"
+ },
+ {
+  "id": "79D000CB54B1A4413E98AA538E62F9F1",
+  "name": "blank",
+  "url": "chrome-error://chromewebdata/",
+  "unreachableUrl": "http://127.0.0.1:58777/xfo-deny?c=blank-then-blocked"
+ }
+]
+{"name":"so-xfo","pptrUrl":"chrome-error://chromewebdata/","sharesMainSession":true,"rootIsSelf":false,"rootUnreachable":null}
+{"name":"so-csp","pptrUrl":"chrome-error://chromewebdata/","sharesMainSession":true,"rootIsSelf":false,"rootUnreachable":null}
+{"name":"so-fine","pptrUrl":"http://127.0.0.1:58777/fine","sharesMainSession":true,"rootIsSelf":false,"rootUnreachable":null}
+{"name":"refused","pptrUrl":"chrome-error://chromewebdata/","sharesMainSession":true,"rootIsSelf":false,"rootUnreachable":null}
+{"name":"sbx","pptrUrl":"chrome-error://chromewebdata/","sharesMainSession":true,"rootIsSelf":false,"rootUnreachable":null}
+{"name":"blank","pptrUrl":"chrome-error://chromewebdata/","sharesMainSession":true,"rootIsSelf":false,"rootUnreachable":null}
+--- Sutradhar listing (fresh attach) ---
+URL: http://127.0.0.1:58777/main
+Title: 
+Interactive elements (2):
+[#1] button "M"
+[#6 in iframe "so-fine" (http://127.0.0.1:58777/fine)] button "fine"
+[iframe "so-xfo" http://127.0.0.1:58777 — not inspectable] (browser error page: blocked or failed to load)
+[iframe "so-csp" http://127.0.0.1:58777 — not inspectable] (browser error page: blocked or failed to load)
+[iframe "refused" http://127.0.0.1:1 — not inspectable] (browser error page: blocked or failed to load)
+[iframe "sbx" http://127.0.0.1:58777 — not inspectable] (browser error page: blocked or failed to load)
+[iframe "blank" http://127.0.0.1:58777 — not inspectable] (browser error page: blocked or failed to load)
+--- skippedFrames ---
+[{"index":1,"url":"http://127.0.0.1:58777/xfo-deny?c=so-xfo","origin":"http://127.0.0.1:58777","name":"so-xfo","reason":"error-page","urlConfidence":"confirmed"},{"index":2,"url":"http://127.0.0.1:58777/csp-none?c=so-csp","origin":"http://127.0.0.1:58777","name":"so-csp","reason":"error-page","urlConfidence":"confirmed"},{"index":4,"url":"http://127.0.0.1:1/refused","origin":"http://127.0.0.1:1","name":"refused","reason":"error-page","urlConfidence":"confirmed"},{"index":5,"url":"http://127.0.0.1:58777/xfo-deny?c=sandboxed","origin":"http://127.0.0.1:58777","name":"sbx","reason":"error-page","urlConfidence":"confirmed"},{"index":6,"url":"http://127.0.0.1:58777/xfo-deny?c=blank-then-blocked","origin":"http://127.0.0.1:58777","name":"blank","reason":"error-page","urlConfidence":"confirmed"}]

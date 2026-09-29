@@ -1,0 +1,130 @@
+[
+  {
+    "id": "d4-visible-tab-closed-mid-wait (1 iframe)",
+    "expected": "success:false",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "Tab was closed while wait_for_selector was checking its state.",
+    "totalMs": 2416
+  },
+  {
+    "id": "d4-hidden-tab-closed-mid-wait (1 iframe)",
+    "expected": "success:false",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "wait_for_selector failed waiting for state=hidden: Tab was closed while wait_for_selector was checking its state.",
+    "totalMs": 2413
+  },
+  {
+    "id": "d4-attached-tab-closed-mid-wait (1 iframe)",
+    "expected": "success:false",
+    "success": false,
+    "retriesUsed": 2,
+    "error": "Attempted to use detached Frame 'AD4F3C4374ADDFEB78312A4184D53901'.",
+    "totalMs": 2333
+  },
+  {
+    "id": "c1-concurrent-tabs-A-6-busy-oopifs-B-clean",
+    "tabA": {
+      "success": true,
+      "retriesUsed": 0,
+      "output": {
+        "foundSelector": "#toast",
+        "state": "visible"
+      },
+      "latencyAfterRevealMs": 1154
+    },
+    "tabB": {
+      "success": true,
+      "retriesUsed": 0,
+      "output": {
+        "foundSelector": "#toast",
+        "state": "visible"
+      },
+      "latencyAfterRevealMs": 48
+    },
+    "tabBAloneLatencyMs": 50
+  },
+  {
+    "id": "b1-reveal-at-1990ms-of-2000ms (0 busy oopifs)",
+    "rows": [
+      {
+        "success": true,
+        "retriesUsed": 0,
+        "shownRelMs": 1997,
+        "totalMs": 2016
+      },
+      {
+        "success": true,
+        "retriesUsed": 0,
+        "shownRelMs": 1995,
+        "totalMs": 2014
+      },
+      {
+        "success": true,
+        "retriesUsed": 0,
+        "shownRelMs": 1994,
+        "totalMs": 2012
+      },
+      {
+        "success": true,
+        "retriesUsed": 0,
+        "shownRelMs": 1993,
+        "totalMs": 2010
+      },
+      {
+        "success": true,
+        "retriesUsed": 0,
+        "shownRelMs": 1999,
+        "totalMs": 2019
+      },
+      {
+        "success": true,
+        "retriesUsed": 0,
+        "shownRelMs": 1990,
+        "totalMs": 2009
+      }
+    ]
+  },
+  {
+    "id": "b1-reveal-at-1990ms-of-2000ms (2 busy oopifs)",
+    "rows": [
+      {
+        "success": true,
+        "retriesUsed": 1,
+        "shownRelMs": 2002,
+        "totalMs": 3951
+      },
+      {
+        "success": true,
+        "retriesUsed": 1,
+        "shownRelMs": 2005,
+        "totalMs": 3955
+      },
+      {
+        "success": true,
+        "retriesUsed": 1,
+        "shownRelMs": 2003,
+        "totalMs": 3918
+      },
+      {
+        "success": true,
+        "retriesUsed": 1,
+        "shownRelMs": 2005,
+        "totalMs": 3949
+      },
+      {
+        "success": true,
+        "retriesUsed": 1,
+        "shownRelMs": 1992,
+        "totalMs": 3953
+      },
+      {
+        "success": true,
+        "retriesUsed": 1,
+        "shownRelMs": 2003,
+        "totalMs": 3933
+      }
+    ]
+  }
+]

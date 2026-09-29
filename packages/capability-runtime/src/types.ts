@@ -7,7 +7,15 @@
  * (MCP server, npm SDK, plugins, extension) calls through {@link SutradharRuntime}.
  */
 
-import type { ActionHistoryEntry, BrowserLaunchOptions, SemanticNode, VerificationResultDto } from '@sutradhar/browser';
+import type {
+  ActionHistoryEntry,
+  BrowserLaunchOptions,
+  DialogPolicy,
+  SemanticNode,
+  SkippedFrame,
+  VerificationResultDto,
+} from '@sutradhar/browser';
+import { assertSupportedSelectorDialect, InvalidSelectorError, SELECTOR_SYNTAX_HINT, selectorSyntaxDetail } from '@sutradhar/browser';
 import type { SessionId, TabId } from '@sutradhar/contracts';
 
 /** Options for {@link SutradharRuntime.launch}. */
@@ -28,6 +36,8 @@ export interface LaunchOptions {
    * both are somehow set, since naming a profile is a more specific request than a raw path.
    */
   profileName?: string;
+  /** FR2-04: overrides the runtime's own `dialogPolicy` default for this one session. */
+  dialogPolicy?: DialogPolicy;
 }
 
 /** Result of {@link SutradharRuntime.launch}. */
@@ -49,6 +59,8 @@ export interface AttachOptions {
   endpoint: string;
   /** Reuse an existing caller-owned session id; omit to let Sutradhar mint one. */
   sessionId?: string;
+  /** FR2-04: overrides the runtime's own `dialogPolicy` default for this one session. */
+  dialogPolicy?: DialogPolicy;
 }
 
 /** Result of {@link SutradharRuntime.navigate}. */
@@ -82,6 +94,12 @@ export interface SnapshotResult {
    *  instead of re-parsing the LLM-formatted text listing. Omitted by default so existing
    *  callers see a byte-identical payload. */
   nodes?: readonly SemanticNode[];
+  /** Child frames whose content could not be read this snapshot (timed out, navigated,
+   *  errored, browser error page) or that exceeded the frame cap — present exactly when
+   *  `nodes` is (i.e. only when the caller opts in via `includeNodes`). Listed rather than
+   *  silently dropped; see `SemanticNode.frame`/`shadowHosts` for per-node frame/shadow
+   *  context on `nodes` itself. */
+  skippedFrames?: readonly SkippedFrame[];
 }
 
 /** Result of {@link SutradharRuntime.click} and {@link SutradharRuntime.type}. */
@@ -153,10 +171,75 @@ export class BrowserNotAvailableError extends Error {
 /** A verb argument that targets an element either by CSS selector or by snapshot node id. */
 export type ElementTarget = string;
 
-/** Internal helper: convert a snapshot node id (number) or selector string to a CSS selector. */
+/** One named field of {@link SutradharRuntime.extractData}. */
+export interface ExtractFieldSpec {
+  /** Standard CSS (run with querySelectorAll in the target document) or a snapshot node id ("12"). */
+  selector: string;
+  /**
+   * What to read from each matched element.
+   * - omitted or '' → "what the user sees": <input>/<select>/<textarea> → the live `.value`;
+   *   <option> → `.text`; any other element → rendered `innerText`, trimmed (falls back to
+   *   `textContent`, trimmed, for elements without innerText, e.g. SVG).
+   * - 'value' | 'checked' | 'selected' (case-insensitive) → the LIVE DOM property, stringified
+   *   ('checked'/'selected' give "true"/"false"). An element with no such property of the right
+   *   type (string for value, boolean for checked/selected) falls back to the raw attribute.
+   * - 'attr:<name>' → the raw markup attribute via getAttribute ('' when absent),
+   *   e.g. 'attr:value' = the original default value.
+   * - any other name (e.g. 'href') → the raw attribute, exactly as before (href is NOT resolved).
+   */
+  attribute?: string;
+  /** Per-field override of {@link ExtractDataOptions.visibleOnly}. */
+  visibleOnly?: boolean;
+}
+
+/** Call-level options for {@link SutradharRuntime.extractData}. */
+export interface ExtractDataOptions {
+  /** Drop matched elements that are not visible: computed visibility hidden/collapse, or a zero
+   *  width/height bounding box (same rule as wait_for_selector's state 'visible'; opacity and
+   *  off-screen position are ignored). An <option> is judged by its owning <select>. Default false. */
+  visibleOnly?: boolean;
+}
+
+export { SELECTOR_SYNTAX_HINT, selectorSyntaxDetail, InvalidSelectorError };
+export type { DialogPolicy, DialogPolicyMode, DialogRecord } from '@sutradhar/browser';
+
+/**
+ * Convert a snapshot node id ("12") or selector string to the selector the engine resolves.
+ * Throws {@link InvalidSelectorError} synchronously — before any session lookup, `await`, or CDP
+ * call — for Playwright-style syntax (text=, role=, >>, :has-text(), getBy*(), internal:, …).
+ * Everything else passes through unchanged; genuinely invalid CSS is judged later by the
+ * browser's own parser (FR2-06).
+ */
 export function normalizeTarget(target: ElementTarget): string {
-  // A pure-numeric target is interpreted as a sd-node-id stamped by the DOM semantic engine.
-  return /^\d+$/.test(target.trim()) ? `[data-sd-node-id="${target.trim()}"]` : target;
+  const trimmed = target.trim();
+  // A pure-numeric target is interpreted as a sd-node-id stamped by the DOM semantic engine —
+  // checked first (D6) so node ids never pay for the dialect scan below.
+  if (/^\d+$/.test(trimmed)) return `[data-sd-node-id="${trimmed}"]`;
+  assertSupportedSelectorDialect(target);
+  return target;
 }
 
 export { type SessionId, type TabId };
+
+/** One caller-owned browser session, as reported by {@link SutradharRuntime.listSessions}. */
+export interface LiveSessionInfo {
+  sessionId: string;
+  /** How the session came to exist: launch() (Sutradhar owns the browser) or attach() (external browser). */
+  origin: 'launched' | 'attached';
+  /** ISO timestamp the session was created (BrowserSession.createdAt). */
+  createdAt: string;
+  tabCount: number;
+  activeTabId?: string;
+  /** The active tab's current URL (full; callers that display it should shorten it). */
+  activeUrl?: string;
+  /** false when the session is backed by the no-Chrome mock instance (launch fell back). */
+  hasRealBrowser: boolean;
+}
+
+/** Snapshot of the runtime's caller-owned sessions at one instant. */
+export interface LiveSessionsView {
+  /** Sorted by createdAt ascending, then sessionId. */
+  sessions: LiveSessionInfo[];
+  /** launch/attach/shutdown/shutdownAll calls currently executing — while > 0 the set is changing. */
+  lifecycleOpsInFlight: number;
+}

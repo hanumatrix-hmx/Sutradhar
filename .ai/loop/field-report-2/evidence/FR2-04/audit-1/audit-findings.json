@@ -1,0 +1,21 @@
+{
+  "item": "FR2-04", "audit": "audit-1", "verdict": "FAIL",
+  "reruns": {
+    "build_forced": "19/19 + 9/9, 0 cached",
+    "typecheck": "34/34, 0 cached",
+    "vitest": {"browser": 450, "capability-runtime": 164, "cli": 95, "mcp-server": 84, "sutradhar": 15, "all_passing": true},
+    "executor_live_verify": "97 entries: 95 PASS + 2 SKIP (script prints 'ALL PASS (97/97)' counting skips as passes)",
+    "mcp_auto_probe": "6/6 (30010 ms auto-dismiss, get_pending_dialog shape, caller handle, tool count 71)"
+  },
+  "defects": [
+    {"id": "GAP-220", "severity": "critical", "summary": "GAP-017 reachable with the warden UP: a popup/new tab whose dialog fires during load is never seen by the warden (attach race); gate returns clear; next session verb hangs 180 s and reports about:blank; `sutradhar dialog` says 'No dialog is open.'", "repro": "probes/results-all.json + probes-console-rerun4-betweenCommands.txt + probes/results-popupDiag.json (4/4 misses; late dialog in same popup 2/2 seen)", "code": "packages/browser/src/session/dialog-warden.ts:82-84,114-163; packages/cli/src/dialog-broker.ts:150-175 (WardenBroker.list, no liveness cross-check)"},
+    {"id": "GAP-221", "severity": "major", "summary": "Gate policy-apply path ignores D-9: orphaned prompt + `snap --dialog accept` resolves prompt with '' not its default", "repro": "probes gatePromptDefault (2/2 runs)", "code": "packages/cli/src/dialog-broker.ts:225-226"},
+    {"id": "GAP-222", "severity": "major", "summary": "`dialog accept|dismiss` with warden down always fails with internal error 'DirectCdpBroker.handle called before list()'; hint loops user back to the same failing command; no 'close' recovery advice", "repro": "probes wardenDown_hint / wardenDown_laterDialog", "code": "packages/cli/src/cli.ts:1079-1081; packages/cli/src/dialog-broker.ts:116"},
+    {"id": "GAP-223", "severity": "major", "summary": "R10 double-handling is real: concurrent commands after a warden death each spawn a warden (no lock), all stay alive for the session; with --dialog accept 2/10 confirm->prompt chains resolved prompt with '' instead of 'dflt'", "repro": "r10-multi-warden-probe.json, probes wardenLifecycle.f", "code": "packages/cli/src/warden-control.ts:81-121; packages/browser/src/session/dialog-warden.ts:165-189"},
+    {"id": "GAP-224", "severity": "minor", "summary": "L15 never built (no L15 in verify script); Auditor built and ran it: 12/12 pass", "repro": "probes l15_selfheal"},
+    {"id": "GAP-225", "severity": "minor", "summary": "Tests that do not test their claim: WD7 never asserts the bind address (0.0.0.0 mutation passes); WD3 never sends a missing token (missing-header mutation passes); DirectCdpBroker unknown-blocks path has zero tests; S-D1/S-D2 missing", "repro": "mutations-results.json A1/A3/A4"},
+    {"id": "GAP-226", "severity": "minor", "summary": "Cross-origin OOPIF dialog opened during a command is not reported by that command (no dialogPending line); next command reports it correctly", "repro": "probes betweenCommands xframe"},
+    {"id": "GAP-227", "severity": "cosmetic", "summary": "close prints 'profile's storage state was not saved' for sessions with no profile; warning omits <type> per spec", "code": "packages/cli/src/cli.ts close warning"}
+  ],
+  "confirmed_ok": ["E3/GAP-017 orphan (warden up) across snap/tabs/eval/text/nav/click", "GAP-006 no self-heal kill", "warden-down + hint -> exit 3 confirm", "warden-down + later dialog -> exit 3 unknown", "D10 persistence", "L15 self-heal carry", "warden exits on chrome death (~105 ms), state removed/dir removed/repointed (~1.9 s), close", "two state dirs isolated; cross tokens 401", "HTTP: no/wrong/prefix/lowercase-less/query token 401; bound 127.0.0.1 only; LAN IP refused; token not on cmdline; no CORS allow", "single-warden R10: 20/20 chains exact", "MCP auto unchanged"]
+}

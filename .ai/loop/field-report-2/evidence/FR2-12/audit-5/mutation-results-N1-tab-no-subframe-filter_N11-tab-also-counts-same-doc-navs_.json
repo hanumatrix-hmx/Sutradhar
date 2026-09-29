@@ -1,0 +1,77 @@
+{
+  "origShas": {
+    "packages\\capability-runtime\\src\\runtime.ts": "4fb910ebbcb2b36c43b425c3b53cdbb0597d5a4676dad4eeae0743946039ff3e",
+    "packages\\browser\\src\\session\\browser-tab.ts": "e45ec9445d9f94018cd9a35edf88aa57fa4fa01763a9f9124eb3ac17376896c0",
+    "packages\\capability-runtime\\src\\audit\\site-audit.ts": "b8a419f8b771aa7d43487ddcd44eec195f964ba7735ffad51e349c1d4d44cbbd"
+  },
+  "results": [
+    {
+      "id": "N1-tab-no-subframe-filter",
+      "file": "packages\\browser\\src\\session\\browser-tab.ts",
+      "matches": 1,
+      "suites": {
+        "browser": {
+          "exit": 1,
+          "tests": "1 failed | 506 passed (507)",
+          "failing": [
+            "tests/unit/browser-tab-observability.spec.ts > @sutradhar/browser BrowserTab commit-time tracking (FR2-12 escalation-1, GAP-278) > CT2: records the main frame's commit instant via a dedicated CDP session created at construction, ignoring a sub-frame commit"
+          ]
+        }
+      },
+      "killed": true,
+      "restoredShaOk": true
+    },
+    {
+      "id": "N11-tab-also-counts-same-doc-navs",
+      "file": "packages\\browser\\src\\session\\browser-tab.ts",
+      "matches": 1,
+      "suites": {
+        "browser": {
+          "exit": 0,
+          "tests": "507 passed (507)",
+          "failing": []
+        }
+      },
+      "killed": false,
+      "restoredShaOk": true
+    },
+    {
+      "id": "R4-goto-tier-before-live-capture",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "matches": 1,
+      "suites": {
+        "capability-runtime": {
+          "exit": 1,
+          "tests": "1 failed | 213 passed (214)",
+          "failing": [
+            "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA13c (GAP-279): the live CDP capture still wins over getLastGotoResponse when both are available"
+          ]
+        }
+      },
+      "killed": true,
+      "restoredShaOk": true
+    },
+    {
+      "id": "R7-url-mode-uses-tab-commit",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "matches": 1,
+      "suites": {
+        "capability-runtime": {
+          "exit": 1,
+          "tests": "1 failed | 213 passed (214)",
+          "failing": [
+            "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA3e (GAP-278): current-page mode never reads getLastMainFrameCommitAt/getLastMainDocumentResponse in NAVIGATED mode -- those stay the tab-level source exclusively for current-page mode"
+          ]
+        }
+      },
+      "killed": true,
+      "restoredShaOk": true
+    }
+  ],
+  "finalShas": {
+    "packages\\capability-runtime\\src\\runtime.ts": "4fb910ebbcb2b36c43b425c3b53cdbb0597d5a4676dad4eeae0743946039ff3e",
+    "packages\\browser\\src\\session\\browser-tab.ts": "e45ec9445d9f94018cd9a35edf88aa57fa4fa01763a9f9124eb3ac17376896c0",
+    "packages\\capability-runtime\\src\\audit\\site-audit.ts": "b8a419f8b771aa7d43487ddcd44eec195f964ba7735ffad51e349c1d4d44cbbd"
+  },
+  "allRestored": true
+}

@@ -1,0 +1,67 @@
+$ grep -rn -E "sutradhar\.json|waitForPageSettle|case .run.:|garbageCollect|gcSessions|verification contract" packages/*/src apps/*/src   # FR2-03/07/08/11/13/14 features absent
+packages/capability-runtime/src/runtime.ts:1748:        // GAP-038 (open): FR2-08's waitForPageSettle (DOM-quiet + network-idle, bounded) hasn't
+(exit=0 ; no lines above = none found)
+
+$ grep -rn "stealth-claim-check\|fr2-16" .github package.json turbo.json scripts   # FR2-16 CI enforcement absent
+workflows/
+(no lines = not wired)
+
+$ git ls-files tools/scenario-suite/fr2-16
+tools/scenario-suite/fr2-16/doc-static.spec.mjs
+tools/scenario-suite/fr2-16/stealth-claim-check.mjs
+tools/scenario-suite/fr2-16/stealth-claim-check.mutation.spec.mjs
+tools/scenario-suite/fr2-16/verify-fr2-16-boundary.mjs
+
+$ grep -n "class DownloadInProgressError\|sutradhar-download-locks\|sha256\|STALE_LOCK_MS =" packages/browser/src/actions/download-lock.ts
+42:const STALE_LOCK_MS = 5 * 60 * 1000;
+45:  const dir = path.join(os.tmpdir(), 'sutradhar-download-locks');
+57:  const hash = crypto.createHash('sha256').update(wsEndpoint).digest('hex').slice(0, 32);
+65:export class DownloadInProgressError extends Error {
+
+$ grep -n "listen(0\|Bearer\|randomBytes" packages/browser/src/session/dialog-warden.ts
+118:  private readonly token = crypto.randomBytes(32).toString('hex');
+642:      this.server!.listen(0, '127.0.0.1', () => resolve());
+650:    if (auth !== `Bearer ${this.token}`) {
+
+$ ActionType count
+18
+
+$ master ActionType count
+18
+
+$ master registerTool count / branch
+71
+72
+
+$ grep SUTRADHAR_CLI_DEADLINE_MS / DEFAULT
+436:export const DEFAULT_CLI_DEADLINE_MS = 300_000;
+450:      return Math.max(base, 3 * t + 30_000);
+
+$ idle default
+24:const DEFAULT_IDLE_TIMEOUT_MS = 30 * 60 * 1000;
+
+$ audit settle default / limits
+1752:        await new Promise((r) => setTimeout(r, options.settleMs ?? 1500));
+57:const MAX_CONSOLE_LOGS = 200;
+58:const MAX_PAGE_ERRORS = 50;
+59:const MAX_NETWORK_LOG = 200;
+1816:      .filter((n) => n.phase === 'response' && n.status !== undefined && n.status >= 400)
+
+$ closetab id regexp / crash note
+1054:const TARGET_ID_RE = /^[0-9A-F]{32}$/i;
+76:    `Close it with "sutradhar closetab ${c.targetId}", or reload it with "sutradhar nav <url>" while it is the active tab; ` +
+
+$ get_pending_dialog auto-dismiss 30s in MCP description
+1618:        'handled via browser.handle_dialog — it is auto-dismissed after 30s if never handled.',
+
+$ bfcache flag
+  const since = input.navCommittedAt ?? documentStartedAt;
+
+  const coversWholeDocument =
+    !input.wasBfcacheRestore && input.observingSince !== null && since !== null && input.observingSince <= since;
+
+  return {
+    observation: {
+
+$ schema not in exports/files
+(no lines = not shipped)

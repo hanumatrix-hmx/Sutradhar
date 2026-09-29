@@ -1,0 +1,42 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli
+
+ ✓ tests/unit/parse-args.spec.ts  (43 tests) 9ms
+ ✓ tests/unit/help-text.spec.ts  (6 tests) 3ms
+ ✓ tests/unit/state.spec.ts  (18 tests) 29ms
+ ✓ tests/unit/profile-cleanup.spec.ts  (21 tests) 45ms
+ ❯ tests/unit/sessions.spec.ts  (17 tests | 1 failed) 116ms
+   ❯ tests/unit/sessions.spec.ts > scanStateFiles (S8) > GAP-189 (FR2-03 fix-3): viaMarker tagging > a path found ONLY via markerStateFiles (not under stateRoot, not in extraStateFiles) is tagged viaMarker:true
+     → expected false to be true // Object.is equality
+ ✓ tests/unit/process-list.spec.ts  (21 tests) 192ms
+ ✓ tests/unit/spawn-chrome.spec.ts  (2 tests) 6ms
+ ✓ tests/unit/collect-gc-snapshot.spec.ts  (1 test) 15ms
+ ✓ tests/unit/gc.spec.ts  (35 tests) 22ms
+
+ Test Files  1 failed | 8 passed (9)
+      Tests  1 failed | 163 passed (164)
+   Start at  18:26:05
+   Duration  1.77s (transform 1.05s, setup 0ms, collect 4.25s, tests 437ms, environment 2ms, prepare 2.33s)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/sessions.spec.ts > scanStateFiles (S8) > GAP-189 (FR2-03 fix-3): viaMarker tagging > a path found ONLY via markerStateFiles (not under stateRoot, not in extraStateFiles) is tagged viaMarker:true
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/sessions.spec.ts:130:37
+    128|       const scanned = await scanStateFiles(root, '/nope', [], [markerF…
+    129|       expect(scanned).toHaveLength(1);
+    130|       expect(scanned[0]!.viaMarker).toBe(true);
+       |                                     ^
+    131|       await rm(markerDir, { recursive: true, force: true });
+    132|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

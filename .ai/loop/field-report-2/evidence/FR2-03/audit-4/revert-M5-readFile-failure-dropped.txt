@@ -1,0 +1,42 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli
+
+ ✓ tests/unit/help-text.spec.ts  (6 tests) 3ms
+ ✓ tests/unit/parse-args.spec.ts  (43 tests) 16ms
+ ✓ tests/unit/state.spec.ts  (18 tests) 48ms
+ ✓ tests/unit/profile-cleanup.spec.ts  (21 tests) 52ms
+ ❯ tests/unit/sessions.spec.ts  (17 tests | 1 failed) 184ms
+   ❯ tests/unit/sessions.spec.ts > scanStateFiles (S8) > GAP-188 (FR2-03 fix-3): a state.json that fails to READ (not just parse) is unified into the same protected `unreadable` outcome, instead of being silently dropped -- here simulated with a directory named state.json (stat succeeds, readFile throws EISDIR), the same OS-level shape as a locked/exclusive-open file failing readFile rather than stat
+     → expected [] to have a length of 1 but got +0
+ ✓ tests/unit/process-list.spec.ts  (21 tests) 225ms
+ ✓ tests/unit/spawn-chrome.spec.ts  (2 tests) 7ms
+ ✓ tests/unit/collect-gc-snapshot.spec.ts  (1 test) 22ms
+ ✓ tests/unit/gc.spec.ts  (35 tests) 28ms
+
+ Test Files  1 failed | 8 passed (9)
+      Tests  1 failed | 163 passed (164)
+   Start at  18:26:17
+   Duration  2.26s (transform 1.42s, setup 2ms, collect 5.58s, tests 585ms, environment 2ms, prepare 2.67s)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/sessions.spec.ts > scanStateFiles (S8) > GAP-188 (FR2-03 fix-3): a state.json that fails to READ (not just parse) is unified into the same protected `unreadable` outcome, instead of being silently dropped -- here simulated with a directory named state.json (stat succeeds, readFile throws EISDIR), the same OS-level shape as a locked/exclusive-open file failing readFile rather than stat
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/unit/sessions.spec.ts:112:21
+    110|     await mkdir(path.join(root, 'locked', 'state.json')); // state.jso…
+    111|     const scanned = await scanStateFiles(root, '/nope');
+    112|     expect(scanned).toHaveLength(1);
+       |                     ^
+    113|     expect(scanned[0]!.parseOk).toBe(false);
+    114|     expect(scanned[0]!.raw).toBeUndefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

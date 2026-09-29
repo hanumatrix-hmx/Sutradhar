@@ -1,0 +1,10 @@
+Output of probe-trailing.mjs (run 2026-09-28, auditor-created junction root\jn -> outside):
+nodeRealpathTrailingDot: ERR ENOENT (realpath '<R>\root\jn.')
+nodeLstatTrailingDot:    ERR ENOENT (lstat '<R>\root\jn.')
+nodeRealpathTrailingSpace: ERR ENOENT
+win32MkdirViaDot (Python os.makedirs '<R>\root\jn.\viaDot', plain Win32 CreateDirectoryW): ok
+win32MkdirViaSpace: FileNotFoundError WinError 3 (intermediate 'jn ' not resolved by makedirs' own exists() walk; inconclusive)
+outsideAfter: ["viaDot"]   <-- directory created OUTSIDE the root through 'jn.'
+rootAfter: ["jn","longjunctionname"]
+shortName: unchanged (8.3 names disabled on this volume)
+cleaned: true

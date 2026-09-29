@@ -1,0 +1,144 @@
+{
+  "preSha": {
+    "packages\\capability-runtime\\src\\runtime.ts": "d3bd14f6399017a79a9acf2148c090e6cfb085bf404bd2e50a6029aa8f92a915",
+    "packages\\cli\\src\\dialog-json-routing.ts": "b8fa05b77ed08261801c617f508e9ec27cff65e09685344d61d3d28d20fd434d",
+    "packages\\cli\\src\\cli.ts": "358a966da17fa1db1c9d92da7956e0d25bf80890186a170eac23f8ce6f4908a7",
+    "packages\\browser\\src\\session\\browser-tab.ts": "aaa736f6ec018715ba6d34466665003883aaddd752a4c86a4888511a987f145e"
+  },
+  "postSha": {
+    "packages\\capability-runtime\\src\\runtime.ts": "d3bd14f6399017a79a9acf2148c090e6cfb085bf404bd2e50a6029aa8f92a915",
+    "packages\\cli\\src\\dialog-json-routing.ts": "b8fa05b77ed08261801c617f508e9ec27cff65e09685344d61d3d28d20fd434d",
+    "packages\\cli\\src\\cli.ts": "358a966da17fa1db1c9d92da7956e0d25bf80890186a170eac23f8ce6f4908a7",
+    "packages\\browser\\src\\session\\browser-tab.ts": "aaa736f6ec018715ba6d34466665003883aaddd752a4c86a4888511a987f145e"
+  },
+  "restoredIdentical": true,
+  "results": [
+    {
+      "id": "A1_no_mainframe_filter",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "killed": true,
+      "status": 1,
+      "summary": "1 failed | 197 passed (198)",
+      "failed": [
+        "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA4d (GAP-269 M3 kill): ignores a sub-frame Page.frameNavigated event even when it is the LAST one -- kills a mutation that removes the main-frame (`!frame.parentId`) filter"
+      ]
+    },
+    {
+      "id": "A2_listen_samedoc_too",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "killed": true,
+      "status": 1,
+      "summary": "1 failed | 197 passed (198)",
+      "failed": [
+        "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA4c (GAP-266): a same-document navigation (history.replaceState/pushState/hash change) during the page's own load does NOT move `since` -- kills a regression that listens to Page.navigatedWithinDocument or drops the main-frame filter"
+      ]
+    },
+    {
+      "id": "A3_first_commit_wins",
+      "error": "anchor matched 0 times"
+    },
+    {
+      "id": "A4_no_detach",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "killed": true,
+      "status": 1,
+      "summary": "1 failed | 197 passed (198)",
+      "failed": [
+        "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA4b (GAP-262/GAP-264): scopes to the new page's main-frame COMMIT time, not the earlier navigate()-call time -- catches a regression to call-time scoping"
+      ]
+    },
+    {
+      "id": "A5_remove_unscoped_lookup_push",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "killed": true,
+      "status": 1,
+      "summary": "2 failed | 196 passed (198)",
+      "failed": [
+        "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA5 (GAP-267): the audited page's own 404 response is always included in brokenRequests even when its timestamp falls just before `since`",
+        "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > audit (FR2-12) > RA6 (GAP-267): a 302 chain ending in a 500 on the audited page itself is captured by matching the FINAL url, not an intermediate redirect hop"
+      ]
+    },
+    {
+      "id": "A6_lookup_first_not_last",
+      "error": "anchor matched 0 times"
+    },
+    {
+      "id": "A7_lookup_ignore_resourceType",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "killed": false,
+      "status": 0,
+      "summary": "198 passed (198)",
+      "failed": []
+    },
+    {
+      "id": "A8_lookup_ignore_url",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "killed": false,
+      "status": 0,
+      "summary": "198 passed (198)",
+      "failed": []
+    },
+    {
+      "id": "A9_commit_listener_in_current_page_mode_too",
+      "file": "packages\\capability-runtime\\src\\runtime.ts",
+      "killed": false,
+      "status": 0,
+      "summary": "198 passed (198)",
+      "failed": []
+    },
+    {
+      "id": "A10_since_ignores_commit",
+      "error": "anchor matched 0 times"
+    },
+    {
+      "id": "B1_guard_never_sets",
+      "file": "packages\\cli\\src\\dialog-json-routing.ts",
+      "killed": true,
+      "status": 1,
+      "summary": "2 failed | 169 passed (171)",
+      "failed": [
+        "tests/unit/dialog-json-routing.spec.ts > printDialogBlockedJsonOnce (GAP-268 M8/M9 kill) > a SECOND call for the same command invocation is suppressed — returns false and never calls the sink again (kills the exact GAP-268 shape: two writers racing for the same command)",
+        "tests/unit/dialog-json-routing.spec.ts > writeJsonStdoutOnce (GAP-268 widened kill: the success-path write is ALSO a possible second writer) > the audit SUCCESS write and a prior dialog-blocked write share the SAME guard — the success write is suppressed if the blocked doc already won"
+      ]
+    },
+    {
+      "id": "B2_guard_reset_each_call",
+      "file": "packages\\cli\\src\\dialog-json-routing.ts",
+      "killed": true,
+      "status": 1,
+      "summary": "2 failed | 169 passed (171)",
+      "failed": [
+        "tests/unit/dialog-json-routing.spec.ts > printDialogBlockedJsonOnce (GAP-268 M8/M9 kill) > a SECOND call for the same command invocation is suppressed — returns false and never calls the sink again (kills the exact GAP-268 shape: two writers racing for the same command)",
+        "tests/unit/dialog-json-routing.spec.ts > writeJsonStdoutOnce (GAP-268 widened kill: the success-path write is ALSO a possible second writer) > the audit SUCCESS write and a prior dialog-blocked write share the SAME guard — the success write is suppressed if the blocked doc already won"
+      ]
+    },
+    {
+      "id": "B3_success_path_bypasses_guard",
+      "file": "packages\\cli\\src\\cli.ts",
+      "killed": false,
+      "status": 0,
+      "summary": "171 passed (171)",
+      "failed": []
+    },
+    {
+      "id": "B4_preempt_bypasses_guard",
+      "file": "packages\\cli\\src\\cli.ts",
+      "killed": false,
+      "status": 0,
+      "summary": "171 passed (171)",
+      "failed": []
+    },
+    {
+      "id": "B5_catch_bypasses_guard",
+      "file": "packages\\cli\\src\\cli.ts",
+      "killed": false,
+      "status": 0,
+      "summary": "171 passed (171)",
+      "failed": []
+    },
+    {
+      "id": "C1_response_resourceType_dropped",
+      "error": "anchor matched 0 times"
+    }
+  ]
+}

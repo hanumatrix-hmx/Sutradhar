@@ -1,0 +1,54 @@
+{
+  "before": {
+    "gc": "79579f80a38f597031843493552661d831e6696221e386b808b8b5e6160bbcdf",
+    "sessions": "a8b7af95e2c029750da518560f971dd82aa3ed6254a787d9e48d948d4145cf25"
+  },
+  "results": [
+    {
+      "id": "M1-tagging-always-false",
+      "target": "GAP-189",
+      "tests": "1 failed | 163 passed (164)",
+      "caught": true,
+      "failedNames": [
+        "tests/unit/sessions.spec.ts > scanStateFiles (S8) > GAP-189 (FR2-03 fix-3): viaMarker tagging > a path found ONLY via markerStateFiles (not under stateRoot, not in extraStateFiles) is tagged viaMarker:true"
+      ]
+    },
+    {
+      "id": "M2-wiring-marker-into-trusted-extraStateFiles",
+      "target": "GAP-189",
+      "tests": "164 passed (164)",
+      "caught": false,
+      "failedNames": []
+    },
+    {
+      "id": "M3-gate-moved-after-clearState",
+      "target": "GAP-189",
+      "tests": "1 failed | 163 passed (164)",
+      "caught": true,
+      "failedNames": [
+        "tests/unit/gc.spec.ts > planGc > GAP-189 (FR2-03 fix-3, structural): a `viaMarker` session must NEVER reach the clearState/deleteDir-producing branch, no matter what its (attacker-shapeable) content claims -- audit-3's gap184-bypass.mjs forged exactly this: a plain node process's command-line marker pointing at a foreign, parseable state.json with a fake sessionId/wsEndpoint (reads unreachable/stale) and an attacker-chosen profileDir aimed at an unrelated, grace-protected young dir > a viaMarker stale session with a full attacker-shaped payload (sessionId+endpoint set, profileDir pointing at a victim dir) produces ZERO actions -- no clearState for its own state file, no deleteDir for the dir it names"
+      ]
+    },
+    {
+      "id": "M4-stat-failure-dropped",
+      "target": "GAP-188",
+      "tests": "164 passed (164)",
+      "caught": false,
+      "failedNames": []
+    },
+    {
+      "id": "M5-readFile-failure-dropped",
+      "target": "GAP-188",
+      "tests": "1 failed | 163 passed (164)",
+      "caught": true,
+      "failedNames": [
+        "tests/unit/sessions.spec.ts > scanStateFiles (S8) > GAP-188 (FR2-03 fix-3): a state.json that fails to READ (not just parse) is unified into the same protected `unreadable` outcome, instead of being silently dropped -- here simulated with a directory named state.json (stat succeeds, readFile throws EISDIR), the same OS-level shape as a locked/exclusive-open file failing readFile rather than stat"
+      ]
+    }
+  ],
+  "after": {
+    "gc": "79579f80a38f597031843493552661d831e6696221e386b808b8b5e6160bbcdf",
+    "sessions": "a8b7af95e2c029750da518560f971dd82aa3ed6254a787d9e48d948d4145cf25"
+  },
+  "restoredByteIdentical": true
+}

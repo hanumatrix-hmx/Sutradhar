@@ -1,0 +1,18 @@
+== HEAD stealth/index.ts
+/**
+ * @file packages/browser/src/stealth/index.ts
+ * @description Stealth barrel export.
+ */
+
+export * from './stealth-options.js';
+export * from './stealth-scripts.js';
+export * from './stealth-engine.js';
+== HEAD top-level exports in stealth files
+6:export function getWebdriverOverrideScript(): string {
+14:export function getChromeRuntimeScript(): string {
+28:export function getWebglMaskScript(
+42:export function getHardwareConcurrencyScript(concurrency = 8, platform = 'Win32'): string {
+6:export interface StealthOptions {
+16:export const DEFAULT_STEALTH_OPTIONS: StealthOptions = {
+15:export interface IStealthEngine {
+19:export class StealthEngine implements IStealthEngine {

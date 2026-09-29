@@ -7,12 +7,13 @@
  */
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { SutradharRuntime } from '@sutradhar/capability-runtime';
+import { SutradharRuntime, resolveFsRoots } from '@sutradhar/capability-runtime';
 import { AgentCore } from '@sutradhar/agent';
 import { OllamaAdapter, OpenRouterAdapter } from '@sutradhar/llm';
 import type { ILlmProvider } from '@sutradhar/llm';
 import { StructuredLogger } from '@sutradhar/observability';
 import { registerTools, type AgentHandle } from './tools.js';
+import { MCP_SERVER_VERSION } from './version.js';
 
 /** Idle-session reaper default for the shipped MCP server: an MCP client (an LLM) can easily
  *  forget to call browser.shutdown after finishing with a session — without a default here, a
@@ -51,10 +52,24 @@ export interface CreateServerOptions {
    * configuration). Intended for handing an agent a logged-in internal session safely, and as
    * partial prompt-injection defense-in-depth for navigation specifically — see the equivalent
    * doc comment on `SutradharRuntimeOptions.allowedDomains` for what this does and does not
-   * cover (it gates `browser.navigate`/`launch`/`compare`/`new_tab`, not page-initiated
-   * navigation from a clicked link, which the browser performs client-side).
+   * cover (it gates `browser.navigate`/`launch`/`audit` (url/baselineUrl)/`new_tab`, not
+   * page-initiated navigation from a clicked link, which the browser performs client-side).
    */
   allowedDomains?: readonly string[];
+  /**
+   * Directories `browser.download_file` may write into. Also settable via
+   * `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` (path.delimiter-separated absolute paths; `~` expands to
+   * the home directory). This REPLACES the default `<OS temp>/sutradhar-downloads` root — the
+   * first entry becomes the destination when `downloadDir` is omitted. Ignored if `runtime` is
+   * supplied directly.
+   */
+  allowedDownloadRoots?: readonly string[];
+  /**
+   * Directories `browser.upload_file`/`browser.upload_file_via_trigger` may read from. Also
+   * settable via `SUTRADHAR_ALLOWED_UPLOAD_ROOTS`. Setting this TURNS ON the upload allowlist —
+   * unset (the default) means unrestricted. Ignored if `runtime` is supplied directly.
+   */
+  allowedUploadRoots?: readonly string[];
   logger?: StructuredLogger;
 }
 
@@ -85,14 +100,25 @@ export async function createSutradharServer(options: CreateServerOptions = {}): 
           .map((d) => d.trim())
           .filter((d) => d.length > 0)
       : undefined);
-  const runtime =
-    options.runtime ??
-    new SutradharRuntime({
+  let runtime: SutradharRuntime;
+  if (options.runtime) {
+    runtime = options.runtime;
+  } else {
+    const fsRoots = resolveFsRoots({
+      options: { allowedDownloadRoots: options.allowedDownloadRoots, allowedUploadRoots: options.allowedUploadRoots },
+      env: process.env,
+    });
+    // MCP stdout is JSON-RPC — any startup diagnostic MUST go to stderr, never stdout (B11).
+    for (const w of fsRoots.warnings) console.error(`[sutradhar-mcp] warning: ${w}`);
+    runtime = new SutradharRuntime({
       logger,
       idleTimeoutMs: idleTimeoutMs > 0 ? idleTimeoutMs : undefined,
       restrictNavigationToLocal,
       allowedDomains,
+      allowedDownloadRoots: fsRoots.allowedDownloadRoots,
+      allowedUploadRoots: fsRoots.allowedUploadRoots,
     });
+  }
 
   // Resolve an LLM provider for the autonomous agent (optional).
   const llmProvider = options.llmProvider ?? resolveLlmProvider(logger);
@@ -112,7 +138,7 @@ export async function createSutradharServer(options: CreateServerOptions = {}): 
 
   const server = new McpServer({
     name: 'sutradhar',
-    version: '0.2.2',
+    version: MCP_SERVER_VERSION,
   });
 
   registerTools(server, { runtime, agent });

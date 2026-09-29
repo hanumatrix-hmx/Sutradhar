@@ -1,0 +1,45 @@
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/mcp-server
+
+ ✓ tests/unit/tools.spec.ts  (20 tests) 25ms
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer idle-reaper default wiring > constructs SutradharRuntime with the 30-minute default idleTimeoutMs when nothing overrides it
+{"timestamp":"2026-09-25T04:02:30.462Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer idle-reaper default wiring > honors SUTRADHAR_IDLE_TIMEOUT_MS when set
+{"timestamp":"2026-09-25T04:02:30.468Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer idle-reaper default wiring > honors an explicit idleTimeoutMs option over the env var and default
+{"timestamp":"2026-09-25T04:02:30.469Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer idle-reaper default wiring > idleTimeoutMs:0 disables the reaper (passed through as undefined, matching SutradharRuntime's "unset = disabled" contract)
+{"timestamp":"2026-09-25T04:02:30.470Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer idle-reaper default wiring > does not construct a new SutradharRuntime at all when the caller supplies one directly
+{"timestamp":"2026-09-25T04:02:30.471Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring > defaults to false (unrestricted) when nothing overrides it
+{"timestamp":"2026-09-25T04:02:30.472Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring > honors SUTRADHAR_RESTRICT_NAVIGATION_TO_LOCAL=1
+{"timestamp":"2026-09-25T04:02:30.473Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring > honors an explicit restrictNavigationToLocal option over the env var
+{"timestamp":"2026-09-25T04:02:30.474Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer allowedDomains wiring > defaults to undefined (unrestricted) when nothing overrides it
+{"timestamp":"2026-09-25T04:02:30.475Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer allowedDomains wiring > honors SUTRADHAR_ALLOWED_DOMAINS as a comma-separated list, trimmed
+{"timestamp":"2026-09-25T04:02:30.476Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+stdout | tests/unit/server.spec.ts > @sutradhar/mcp-server createSutradharServer allowedDomains wiring > honors an explicit allowedDomains option over the env var
+{"timestamp":"2026-09-25T04:02:30.479Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+ ✓ tests/unit/server.spec.ts  (11 tests) 19ms
+
+ Test Files  2 passed (2)
+      Tests  31 passed (31)
+   Start at  09:32:29
+   Duration  1.11s (transform 527ms, setup 0ms, collect 1.37s, tests 44ms, environment 0ms, prepare 267ms)
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.

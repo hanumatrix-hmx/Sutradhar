@@ -1,0 +1,66 @@
+[
+  {
+    "id": "A1-hidden-wait",
+    "truth": "#banner is display:none in the main frame the whole time (genuinely hidden); unrelated OOPIF busy",
+    "oopifFound": true,
+    "success": false,
+    "totalMs": 7491,
+    "error": "wait_for_selector timed out after 1500ms waiting for state=hidden: could not verify: one or more frames were unresponsive.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "engineSaysCouldNotVerify": true,
+    "userFacingHintClaimsStillVisible": false
+  },
+  {
+    "id": "A1-hidden-checkonce",
+    "truth": "#banner is display:none in the main frame the whole time (genuinely hidden); unrelated OOPIF busy",
+    "oopifFound": true,
+    "success": false,
+    "totalMs": 547,
+    "error": "wait_for_selector timed out after 0ms waiting for state=hidden: could not verify: one or more frames were unresponsive.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "engineSaysCouldNotVerify": true,
+    "userFacingHintClaimsStillVisible": false
+  },
+  {
+    "id": "A2-visible-wait",
+    "truth": "#present EXISTS in the main frame (observer confirms), page overrides getComputedStyle to throw for it",
+    "observerSaysExists": true,
+    "attachedCheckOnceSuccess": true,
+    "success": false,
+    "error": "wait_for_selector timed out after 1000ms waiting for state=visible: visibility could not be determined for 1 of 1 frame(s) — they did not respond within the diagnostic's time bound. This does NOT confirm the element is absent; try a larger timeoutMs.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "claimsNoElementFound": false
+  },
+  {
+    "id": "A2-visible-checkonce",
+    "truth": "#present EXISTS in the main frame (observer confirms), page overrides getComputedStyle to throw for it",
+    "observerSaysExists": true,
+    "attachedCheckOnceSuccess": true,
+    "success": false,
+    "error": "wait_for_selector timed out after 0ms waiting for state=visible: visibility could not be determined for 1 of 1 frame(s) — they did not respond within the diagnostic's time bound. This does NOT confirm the element is absent; try a larger timeoutMs.\nHint: The page may still be loading — retry, or raise timeoutMs on this call.",
+    "claimsNoElementFound": false
+  },
+  {
+    "id": "A3-hostile",
+    "truth": "first .dup display:none, SECOND .dup genuinely visible",
+    "observerSecondVisible": true,
+    "success": true,
+    "output": {
+      "foundSelector": ".dup",
+      "state": "hidden",
+      "matchedAtStart": true,
+      "otherVisibleMatchesUnknown": true
+    },
+    "silentlyReportsNoOtherVisible": false
+  },
+  {
+    "id": "A3-control",
+    "truth": "first .dup display:none, SECOND .dup genuinely visible",
+    "observerSecondVisible": true,
+    "success": true,
+    "output": {
+      "foundSelector": ".dup",
+      "state": "hidden",
+      "matchedAtStart": true,
+      "otherVisibleMatches": 1
+    },
+    "silentlyReportsNoOtherVisible": false
+  }
+]

@@ -8,23 +8,37 @@
  * {@link selectorForNodeId}. This closes the "node id → element" loop that the
  * previous implementation lacked.
  *
- * Scrapes across every same-process-accessible frame (main frame + iframes, at any
- * nesting depth) and pierces open shadow roots within each frame's document, so
- * elements embedded in third-party widgets or shadow-DOM-based component libraries
- * are discoverable. Node ids stay globally unique across all frames combined —
- * callers never need to know which frame an id came from; {@link selectorForNodeId}'s
- * output is resolved back to the right frame (and through any shadow roots) at
- * action time by `BrowserActionEngine`.
+ * Scrapes across every frame Puppeteer attaches to (main frame + same-process iframes +
+ * out-of-process iframes/OOPIFs, at any nesting depth) and pierces open shadow roots within
+ * each frame's document, so elements embedded in third-party widgets, cross-origin embeds
+ * (e.g. Stripe Elements), or shadow-DOM-based component libraries are discoverable. Node ids
+ * stay globally unique across all frames combined; each node embedded in a non-main frame
+ * additionally carries a `frame` reference (see {@link SemanticFrameRef}) so a caller can tell
+ * which frame an id came from without needing to — {@link selectorForNodeId}'s output is
+ * resolved back to the right frame (and through any shadow roots) at action time by
+ * `BrowserActionEngine`.
  *
- * Known limitation: closed shadow roots are fundamentally inaccessible from outside
- * the page's own script (by design — that's what "closed" means), so elements inside
- * one are invisible to this scraper. Cross-origin iframes that Chrome's site-isolation
- * blocks script access to are skipped rather than failing the whole snapshot.
+ * Known limitation: closed shadow roots are fundamentally inaccessible from outside the page's
+ * own script (by design — that's what "closed" means), so elements inside one are invisible to
+ * this scraper. Cross-origin iframes are NOT skipped as a class — Puppeteer auto-attaches
+ * out-of-process iframes and this engine scrapes them like any other frame. What actually gets
+ * skipped (and reported as a `skippedFrame` placeholder rather than silently dropped — see
+ * {@link SkippedFrame}) is a frame whose scrape timed out, navigated away mid-scrape, threw, or
+ * resolved to a browser error page, plus any frame past the {@link MAX_FRAMES} cap.
  */
 
-import { Page, CDPSession } from 'puppeteer-core';
+import { Page, CDPSession, Frame } from 'puppeteer-core';
 import { IBrowserTab } from '../session/browser-tab.js';
-import { SemanticElementGraph } from './semantic-element-graph.js';
+import { SemanticElementGraph, SemanticFrameRef, SkippedFrame, SkippedFrameReason } from './semantic-element-graph.js';
+import {
+  orderSnapshotFrames,
+  frameOrigin,
+  frameDesignator,
+  displayFrameUrl,
+  formatShadowChain,
+  formatSkippedFrameLines,
+  sanitizeFrameName,
+} from './frame-labels.js';
 
 /** The data attribute stamped on elements to map node ids back to DOM nodes. */
 export const SD_NODE_ID_ATTR = 'data-sd-node-id';
@@ -106,6 +120,169 @@ const MAX_FRAMES = 20;
 const MAX_STAMPED_ELEMENTS_PER_FRAME = 300;
 
 /**
+ * Bound on how long a single CHILD frame's scrape may take (FR2-09 D7). The main frame is
+ * never timed out — if the main document hangs, no listing is useful anyway. A real child-frame
+ * scrape takes milliseconds (the repo's own measurement: `snapshot()` ~3ms), so 5s is 100x+
+ * headroom for even a heavy iframe app, while bounding what used to be an unbounded stall on a
+ * busy renderer (e.g. a busy out-of-process iframe).
+ */
+const FRAME_SCRAPE_TIMEOUT_MS = 5000;
+
+/** Sentinel rejection reason used by {@link raceFrameTimeout} to signal "the frame's scrape did
+ *  not finish in time", distinguishable from a real evaluate() rejection. */
+const FRAME_TIMEOUT = Symbol('frame-scrape-timeout');
+
+/**
+ * Races `promise` against a timeout, rejecting with the {@link FRAME_TIMEOUT} sentinel if the
+ * timeout wins. The original `promise` is left running — the caller attaches its own
+ * `.catch(() => {})` before racing so a late rejection never becomes an unhandled rejection.
+ */
+function raceFrameTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(FRAME_TIMEOUT), ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (err) => {
+        clearTimeout(timer);
+        reject(err);
+      },
+    );
+  });
+}
+
+/** GAP-154 (fix-3) bound on the CDP `Page.getFrameTree` round-trip used to read a blocked
+ *  frame's real target via `unreachableUrl`. Live measurement (audit-4, see
+ *  `.ai/loop/field-report-2/evidence/FR2-09/audit-4/live-busy-parent-timing.txt` and
+ *  `live-audit4-normal.txt`) found this resolves in ~15ms for 3 blocked children under a busy
+ *  parent and ~28ms for 7 blocked frames overall, for both the isolated-OOPIF-session case and
+ *  the same-process (whole-tree) case, but it still crosses a real CDP IPC boundary, so — same
+ *  reasoning as fix-2's original bound — it gets a short, generous timeout rather than none at
+ *  all. Kept at fix-2's original 1000ms value since measurement didn't show a need to change it.
+ */
+const BLOCKED_FRAME_URL_TIMEOUT_MS = 1000;
+
+/** GAP-150 bound on {@link recoverBlockedFrameSrc}'s `frameElement()`/`el.src` read — this runs
+ *  entirely in the PARENT frame's realm (never touches the blocked frame itself), and live
+ *  measurement found it resolves in 2-5ms, but it still awaits a CDP round-trip, so it gets a
+ *  short, generous timeout rather than none at all. Only used as GAP-154's fallback now, when
+ *  {@link recoverBlockedFrameUnreachableUrl} can't produce a confirmed answer. */
+const BLOCKED_FRAME_SRC_TIMEOUT_MS = 1000;
+
+/** Minimal structural shape of a CDP `Page.getFrameTree` response node — just the fields this
+ *  module reads, so it doesn't need to import `devtools-protocol` types directly. The real
+ *  response (whatever `CDPSession.send('Page.getFrameTree')` resolves to) satisfies this. */
+interface CdpFrameTreeNode {
+  readonly frame: { readonly id: string; readonly unreachableUrl?: string };
+  readonly childFrames?: readonly CdpFrameTreeNode[];
+}
+
+/** Depth-first search for the tree node whose CDP frame id matches `frameId`. A frame's own
+ *  isolated CDP session (the common case for a cross-origin/OOPIF blocked frame — see
+ *  `probe-unreachableUrl.mjs` evidence) returns a single-node tree that already IS the match; a
+ *  same-process blocked frame's session is the whole page's session, whose tree has the match
+ *  somewhere among the children — this walks either shape. */
+function findFrameTreeNode(tree: CdpFrameTreeNode, frameId: string): CdpFrameTreeNode | undefined {
+  if (tree.frame.id === frameId) return tree;
+  for (const child of tree.childFrames ?? []) {
+    const found = findFrameTreeNode(child, frameId);
+    if (found) return found;
+  }
+  return undefined;
+}
+
+/**
+ * GAP-154 (fix-3, the primary signal): recover a blocked child frame's real intended URL from
+ * Chrome's own CDP `unreachableUrl` field — "the URL I failed to load here," recorded by Chrome
+ * itself, not inferred from a DOM attribute. Reads `Page.getFrameTree` on the frame's OWN CDP
+ * session (`frame.client`), which for an isolated (OOPIF) blocked frame returns just that one
+ * frame as the tree's root, and for a same-process blocked frame returns the whole page's tree
+ * — {@link findFrameTreeNode} handles both by matching on the frame's CDP id (`frame._id`,
+ * Puppeteer's internal mirror of the same id CDP uses). Live-confirmed correct in all 4 tested
+ * cases (fix-3 verification): a direct load, a server 302 redirect, an in-frame script
+ * redirect, and a `target=` link navigation — see
+ * `.ai/loop/field-report-2/evidence/FR2-09/fix-3/live-fix3-cdp-cases.txt`. Returns `undefined`
+ * (never throws) if the field is absent, the read times out, or anything else goes wrong —
+ * callers fall back to {@link recoverBlockedFrameSrc}.
+ */
+async function recoverBlockedFrameUnreachableUrl(frame: Frame): Promise<string | undefined> {
+  try {
+    // `frame.client` (a per-frame CDPSession) and `frame._id` (the CDP frame id Puppeteer
+    // mirrors internally) are both real, stable getters/fields on Puppeteer's Frame class —
+    // confirmed live by audit-3's probe-unreachableUrl.mjs — but both are tagged `@internal` in
+    // Puppeteer's source and so are stripped from the ROLLED-UP public `.d.ts` this project's
+    // tsc resolves against (they're still present in Puppeteer's own per-file declarations).
+    // There is no supported public-API equivalent: `page.createCDPSession()` attaches to the
+    // main page's target only, not an out-of-process child frame's own target, which is exactly
+    // the case (a cross-origin/OOPIF blocked frame) this recovery most needs to handle. The
+    // cast below is a narrow, defensively-guarded reach for a real runtime API that just isn't
+    // in the public type surface — every failure mode (property missing, wrong shape, send()
+    // throwing) is caught and falls back to {@link recoverBlockedFrameSrc}, never surfaced.
+    const { client, _id: frameId } = frame as unknown as { client?: CDPSession; _id?: string };
+    if (!client || !frameId) return undefined;
+    const result = await raceFrameTimeout(
+      client.send('Page.getFrameTree') as Promise<{ frameTree: CdpFrameTreeNode }>,
+      BLOCKED_FRAME_URL_TIMEOUT_MS,
+    );
+    const node = findFrameTreeNode(result.frameTree, frameId);
+    const url = node?.frame.unreachableUrl;
+    return typeof url === 'string' && url ? url : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * GAP-150 (fix-2)'s original remedy, kept only as GAP-154 (fix-3)'s FALLBACK when
+ * {@link recoverBlockedFrameUnreachableUrl} can't produce a CDP-confirmed answer (older Chrome
+ * without the field, or the CDP read itself failing). Recovers a blocked child frame's URL from
+ * the PARENT page's `<iframe>` element's `src` attribute, without touching the blocked frame's
+ * own (inaccessible) realm. This is the URL the frame was TOLD to load, NOT necessarily the URL
+ * that actually got blocked — after a server redirect, an in-frame script redirect, or a
+ * `target=` link navigation, it can report a false origin (live-reproduced by audit-3, 3/3).
+ * Callers MUST mark a result from this path with lower confidence (`urlConfidence: 'likely'`)
+ * rather than presenting it with the same certainty as a CDP-confirmed URL. Returns `undefined`
+ * (never throws) if the frame has no element handle (already detached), the read times out, or
+ * anything else goes wrong — callers fall back to `frame.url()` as before.
+ */
+async function recoverBlockedFrameSrc(frame: Frame): Promise<string | undefined> {
+  try {
+    const handle = await raceFrameTimeout(frame.frameElement(), BLOCKED_FRAME_SRC_TIMEOUT_MS);
+    if (!handle) return undefined;
+    try {
+      const src = await raceFrameTimeout(handle.evaluate((el: { src?: string }) => el.src), BLOCKED_FRAME_SRC_TIMEOUT_MS);
+      return typeof src === 'string' && src ? src : undefined;
+    } finally {
+      await handle.dispose().catch(() => {});
+    }
+  } catch {
+    return undefined;
+  }
+}
+
+/** Result of {@link recoverBlockedFrameUrl}: a recovered URL plus how much to trust it. */
+interface RecoveredFrameUrl {
+  readonly url: string;
+  readonly confidence: 'confirmed' | 'likely';
+}
+
+/**
+ * GAP-154 (fix-3): the combined recovery used by {@link DOMSemanticEngine.buildGraph} for a
+ * blocked child frame. Tries the CDP `unreachableUrl` signal first (confirmed); only when that
+ * produces nothing falls back to the `frameElement()`/`src` read (likely, may be stale — see
+ * {@link recoverBlockedFrameSrc}). Returns `undefined` when neither signal produces a URL.
+ */
+async function recoverBlockedFrameUrl(frame: Frame): Promise<RecoveredFrameUrl | undefined> {
+  const confirmed = await recoverBlockedFrameUnreachableUrl(frame);
+  if (confirmed) return { url: confirmed, confidence: 'confirmed' };
+  const likely = await recoverBlockedFrameSrc(frame);
+  if (likely) return { url: likely, confidence: 'likely' };
+  return undefined;
+}
+
+/**
  * CSS selector for candidates considered by the opt-in event-listener-based fallback scan (see
  * {@link BuildGraphOptions.scanEventListeners}) — plausible containers for a JS-library-driven
  * widget (a sortable list item, a custom drag handle, a virtualized-grid row) that carries none
@@ -159,37 +336,117 @@ export class DOMSemanticEngine implements IDOMSemanticEngine {
 
     try {
       const generation = String(Date.now());
-      const frames = page
-        .frames()
-        .filter((f) => !f.isDetached())
-        .slice(0, MAX_FRAMES);
+      const main = page.mainFrame();
+      // D3: main frame always first, then page.frames() order, filtered of detached frames
+      // (the main frame is never filtered even if isDetached() would say otherwise).
+      const ordered = orderSnapshotFrames(page.frames(), main);
+      const indexOf = new Map<Frame, number>();
+      ordered.forEach((f, i) => {
+        if (i > 0) indexOf.set(f, i);
+      });
+      const refOf = (frame: Frame): SemanticFrameRef => {
+        const parent = frame.parentFrame();
+        const parentIndex = parent ? indexOf.get(parent) : undefined;
+        const name = frame.name() || undefined;
+        return {
+          index: indexOf.get(frame),
+          url: frame.url(),
+          ...(name ? { name } : {}),
+          ...(parentIndex !== undefined ? { parentIndex } : {}),
+        };
+      };
+      const skippedOf = (
+        frame: Frame,
+        reason: SkippedFrameReason,
+        detail?: string,
+        urlOverride?: string,
+        urlConfidence?: 'confirmed' | 'likely',
+      ): SkippedFrame => {
+        const name = frame.name() || undefined;
+        // GAP-150/GAP-154: when the caller recovered the frame's real intended URL (see
+        // recoverBlockedFrameUrl), use it for both `url` and the displayed `origin` instead of
+        // Chrome's own unhelpful chrome-error:// value — `urlConfidence` records whether that
+        // recovery is CDP-confirmed or just a likely guess from the parent's iframe src.
+        const url = urlOverride ?? frame.url();
+        return {
+          index: indexOf.get(frame) ?? 0,
+          url,
+          origin: frameOrigin(url),
+          ...(name ? { name } : {}),
+          reason,
+          ...(detail !== undefined ? { detail } : {}),
+          ...(urlConfidence ? { urlConfidence } : {}),
+        };
+      };
+      const firstLine = (e: unknown): string => {
+        const msg = e instanceof Error ? e.message : String(e);
+        return msg.split('\n')[0]!.slice(0, 80);
+      };
 
       const allNodes: ScrapedNode[] = [];
+      const skipped: SkippedFrame[] = [];
       let nextId = 1;
 
-      for (const frame of frames) {
+      for (const frame of ordered.slice(0, MAX_FRAMES)) {
+        const isMain = frame === main;
+        const scrape = frame.evaluate(scrapeFrame, {
+          attrName: SD_NODE_ID_ATTR,
+          genAttr: SD_GENERATION_ATTR,
+          currentGenAttr: SD_CURRENT_GENERATION_ATTR,
+          fpAttr: SD_FINGERPRINT_ATTR,
+          selector: INTERACTIVE_SELECTOR,
+          generation,
+          startId: nextId,
+          maxStamped: MAX_STAMPED_ELEMENTS_PER_FRAME,
+          syntheticClickableRole: SYNTHETIC_CLICKABLE_ROLE,
+        });
+        // An abandoned (timed-out) scrape must never surface as an unhandled rejection once it
+        // eventually settles (the PROB-015 pattern).
+        scrape.catch(() => {});
         try {
-          const frameNodes = await frame.evaluate(scrapeFrame, {
-            attrName: SD_NODE_ID_ATTR,
-            genAttr: SD_GENERATION_ATTR,
-            currentGenAttr: SD_CURRENT_GENERATION_ATTR,
-            fpAttr: SD_FINGERPRINT_ATTR,
-            selector: INTERACTIVE_SELECTOR,
-            generation,
-            startId: nextId,
-            maxStamped: MAX_STAMPED_ELEMENTS_PER_FRAME,
-            syntheticClickableRole: SYNTHETIC_CLICKABLE_ROLE,
-          });
-          allNodes.push(...frameNodes);
+          const frameNodes = isMain ? await scrape : await raceFrameTimeout(scrape, FRAME_SCRAPE_TIMEOUT_MS);
+          // D8: a child frame that resolved to a browser error page (X-Frame-Options, etc.) —
+          // discard its nodes but keep the ids reserved (nextId already needs to advance).
+          if (!isMain && frame.url().startsWith('chrome-error://')) {
+            nextId += frameNodes.length;
+            // GAP-154 (fix-3): try to recover the real intended URL — first via Chrome's own
+            // CDP unreachableUrl signal (confirmed), falling back to the parent page's
+            // iframe-src read (likely, may be stale) only if that fails — before falling back
+            // further to the unhelpful chrome-error:// value. See recoverBlockedFrameUrl.
+            const recovered = await recoverBlockedFrameUrl(frame);
+            skipped.push(skippedOf(frame, 'error-page', undefined, recovered?.url, recovered?.confidence));
+            continue;
+          }
+          const ref = isMain ? undefined : refOf(frame);
+          allNodes.push(...(ref ? frameNodes.map((n) => ({ ...n, frame: ref })) : frameNodes));
           nextId += frameNodes.length;
-        } catch {
-          // Cross-origin-restricted (site-isolated) or navigated-away-mid-scrape frame —
-          // skip it rather than failing the whole snapshot over one inaccessible frame.
+        } catch (e) {
+          if (e === FRAME_TIMEOUT) {
+            // D7: reserve this frame's whole id range so a late-completing scrape can't stamp
+            // ids that collide with anything else in this snapshot.
+            nextId += MAX_STAMPED_ELEMENTS_PER_FRAME;
+            skipped.push(skippedOf(frame, 'timeout', String(FRAME_SCRAPE_TIMEOUT_MS)));
+            continue;
+          }
+          // The main frame keeps today's behavior: a failure there skips silently rather than
+          // failing the whole snapshot. A frame that's detached by now is simply gone — listing
+          // it as "not inspectable" would be false, so it's dropped silently too (D6).
+          if (isMain || frame.isDetached()) continue;
+          const msg = firstLine(e);
+          const reason: SkippedFrameReason = /Execution context was destroyed|Cannot find context|navigat/i.test(
+            msg,
+          )
+            ? 'navigated'
+            : 'error';
+          skipped.push(skippedOf(frame, reason, msg));
         }
+      }
+      for (const frame of ordered.slice(MAX_FRAMES)) {
+        skipped.push(skippedOf(frame, 'frame-limit'));
       }
 
       if (options.scanEventListeners) {
-        const listenerNodes = await this.scanForEventListenerElements(page, nextId, generation);
+        const listenerNodes = await this.scanForEventListenerElements(page, nextId, generation, ordered, indexOf);
         allNodes.push(...listenerNodes);
       }
 
@@ -200,7 +457,7 @@ export class DOMSemanticEngine implements IDOMSemanticEngine {
       // changes with no real navigation, `snapshot()` still reported the page's very first,
       // long-outdated title. `tab.url` already reads live the same way; title now matches.
       const liveTitle = await page.title().catch(() => tab.title);
-      return new SemanticElementGraph(allNodes, tab.url, liveTitle);
+      return new SemanticElementGraph(allNodes, tab.url, liveTitle, skipped);
     } catch {
       return new SemanticElementGraph([], tab.url, tab.title);
     }
@@ -221,6 +478,8 @@ export class DOMSemanticEngine implements IDOMSemanticEngine {
     page: Page,
     startId: number,
     generation: string,
+    orderedFrames: readonly Frame[] = [],
+    indexOf: ReadonlyMap<Frame, number> = new Map(),
   ): Promise<ScrapedNode[]> {
     const results: ScrapedNode[] = [];
     let client: CDPSession | undefined;
@@ -256,9 +515,23 @@ export class DOMSemanticEngine implements IDOMSemanticEngine {
             ],
             returnByValue: true,
           });
-          const node = extracted.result.value as ScrapedNode | null;
-          if (node) {
-            results.push(node);
+          const raw = extracted.result.value as
+            | (ScrapedNode & { frameUrl: string; frameName: string; isTopFrame: boolean })
+            | null;
+          if (raw) {
+            const { frameUrl, frameName, isTopFrame, ...node } = raw;
+            const frame = isTopFrame
+              ? undefined
+              : (() => {
+                  const match = orderedFrames.find((f) => f.url() === frameUrl && (f.name() || '') === frameName);
+                  if (match) {
+                    const idx = indexOf.get(match);
+                    const name = match.name() || undefined;
+                    return { index: idx, url: frameUrl, ...(name ? { name } : {}) };
+                  }
+                  return frameUrl || frameName ? { url: frameUrl, ...(frameName ? { name: frameName } : {}) } : undefined;
+                })();
+            results.push(frame ? { ...node, frame } : node);
             nextId++;
           }
         } catch {
@@ -290,6 +563,11 @@ interface ScrapedNode {
   boundingBox: { x: number; y: number; width: number; height: number };
   isVisible: boolean;
   isEnabled: boolean;
+  /** Open-shadow-root host descriptors, outermost → innermost. Absent in light DOM. */
+  shadowHosts?: string[];
+  /** Attached by `buildGraph` after `scrapeFrame` returns (frame identity isn't knowable
+   *  in-page) — absent for main-frame nodes. See {@link SemanticFrameRef}. */
+  frame?: SemanticFrameRef;
 }
 
 /**
@@ -297,8 +575,12 @@ interface ScrapedNode {
  * those nested inside open shadow roots, stamps them, and extracts the fields the LLM-facing
  * listing needs. Kept as a standalone top-level function (rather than inline in buildGraph) so
  * its whole closure serializes cleanly across the CDP boundary with the params object below.
+ *
+ * @internal exported for unit tests; runs in-page, must stay self-contained (no closure over
+ * anything outside this function — see the FR2-06 D8 precedent for why: it's serialized via
+ * `.toString()` and re-run inside the page, so any outer reference would be `undefined` there).
  */
-function scrapeFrame(params: {
+export function scrapeFrame(params: {
   attrName: string;
   genAttr: string;
   currentGenAttr: string;
@@ -323,6 +605,33 @@ function scrapeFrame(params: {
   // `DOMDebugger.getEventListeners`, a materially larger change than this file's scope (logged as
   // PROB-013 in .ai/known-problems.md). `cursor:pointer` catches most real "this looks and acts
   // clickable" cases without it.
+  // FR2-09 D2: display-only descriptor for a shadow host — tag name, plus #id or .firstClass
+  // when present, sanitized to [A-Za-z0-9_-] and capped so a page-controlled id/class can't
+  // grow the label unboundedly or inject stray characters into the listing.
+  function describeHost(h: Element): string {
+    const tag = h.tagName.toLowerCase();
+    const id = (h.id || '').replace(/[^\w-]/g, '').slice(0, 30);
+    const cls =
+      typeof (h as HTMLElement).className === 'string'
+        ? ((h as HTMLElement).className.trim().split(/\s+/)[0] || '').replace(/[^\w-]/g, '').slice(0, 30)
+        : '';
+    return (tag + (id ? `#${id}` : cls ? `.${cls}` : '')).slice(0, 40);
+  }
+  // Walks outward from `el` through every open shadow root it's nested in, collecting a host
+  // descriptor at each level. Duck-typed on `.host` (a Document has none), so it stops at the
+  // real document root. A closed shadow root's boundary is invisible from here (no `.host` on
+  // its root) — that's a real, by-design limit, not a bug.
+  function shadowHostsOf(el: Element): string[] | undefined {
+    const chain: string[] = [];
+    let root: Node = el.getRootNode();
+    while (root && (root as ShadowRoot).host) {
+      const host = (root as ShadowRoot).host;
+      chain.unshift(describeHost(host));
+      root = host.getRootNode();
+    }
+    return chain.length ? chain : undefined;
+  }
+
   function collect(root: ParentNode, out: Element[]): void {
     const all = Array.from(root.querySelectorAll('*'));
     const matchedSet = new Set<Element>();
@@ -459,6 +768,8 @@ function scrapeFrame(params: {
     if (label) confidence += 0.15;
     if (hasSize) confidence += 0.05;
 
+    const hosts = shadowHostsOf(el);
+
     return {
       id,
       tagName: el.tagName,
@@ -477,6 +788,7 @@ function scrapeFrame(params: {
       },
       isVisible,
       isEnabled: !inputEl.disabled,
+      ...(hosts ? { shadowHosts: hosts } : {}),
     };
   });
 }
@@ -491,8 +803,11 @@ function scrapeFrame(params: {
  * {@link scrapeFrame} does for its own matches, at a lower base confidence since a genuine
  * event listener existing says nothing about the element's semantic role, unlike a native tag
  * or explicit ARIA attribute.
+ *
+ * @internal exported for unit tests; runs via CDP `Runtime.callFunctionOn` with `this` bound to
+ * the candidate element (see the call site) — must stay self-contained like {@link scrapeFrame}.
  */
-function extractAndStampEventListenerElement(
+export function extractAndStampEventListenerElement(
   this: Element,
   id: number,
   generation: string,
@@ -510,9 +825,38 @@ function extractAndStampEventListenerElement(
   boundingBox: { x: number; y: number; width: number; height: number };
   isVisible: boolean;
   isEnabled: boolean;
+  shadowHosts?: string[];
+  /** In-page frame identity — resolved back to a {@link SemanticFrameRef} by the caller, since
+   *  frame identity (index) isn't knowable from inside the page itself. */
+  frameUrl: string;
+  frameName: string;
+  isTopFrame: boolean;
 } | null {
   const el = this as HTMLElement;
   if (!el || !el.getBoundingClientRect) return null;
+
+  // Duplicated from scrapeFrame's inner helpers of the same name (each function must
+  // serialize on its own via .toString() — this is the same existing precedent as
+  // scrapeFrame's own duplicated isVisible logic).
+  function describeHost(h: Element): string {
+    const tag = h.tagName.toLowerCase();
+    const hid = (h.id || '').replace(/[^\w-]/g, '').slice(0, 30);
+    const cls =
+      typeof (h as HTMLElement).className === 'string'
+        ? ((h as HTMLElement).className.trim().split(/\s+/)[0] || '').replace(/[^\w-]/g, '').slice(0, 30)
+        : '';
+    return (tag + (hid ? `#${hid}` : cls ? `.${cls}` : '')).slice(0, 40);
+  }
+  function shadowHostsOf(node: Element): string[] | undefined {
+    const chain: string[] = [];
+    let root: Node = node.getRootNode();
+    while (root && (root as ShadowRoot).host) {
+      const host = (root as ShadowRoot).host;
+      chain.unshift(describeHost(host));
+      root = host.getRootNode();
+    }
+    return chain.length ? chain : undefined;
+  }
 
   const rect = el.getBoundingClientRect();
   const style = getComputedStyle(el);
@@ -535,6 +879,8 @@ function extractAndStampEventListenerElement(
   if (name) confidence += 0.3;
   if (hasSize) confidence += 0.05;
 
+  const hosts = shadowHostsOf(el);
+
   return {
     id,
     tagName: el.tagName,
@@ -545,6 +891,10 @@ function extractAndStampEventListenerElement(
     boundingBox: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
     isVisible,
     isEnabled: !inputEl.disabled,
+    ...(hosts ? { shadowHosts: hosts } : {}),
+    frameUrl: location.href,
+    frameName: window.name,
+    isTopFrame: window === window.top,
   };
 }
 
@@ -583,28 +933,61 @@ export function formatGraphForLlm(
   );
   const header = `URL: ${graph.url}\nTitle: ${graph.title}\nInteractive elements (${interactive.length}):`;
 
+  // FR2-09 D4: every SemanticFrameRef in the graph (listed nodes + skipped frames), for
+  // computing whether a frame's name is unique enough to show instead of its bare index.
+  const seenFrameKeys = new Set<string>();
+  const allFrameNames: string[] = [];
+  const addFrameName = (key: string, name: string | undefined) => {
+    if (!name || seenFrameKeys.has(key)) return;
+    seenFrameKeys.add(key);
+    allFrameNames.push(name);
+  };
+  for (const n of graph.nodes) {
+    if (n.frame) addFrameName(n.frame.index !== undefined ? `i${n.frame.index}` : `u${n.frame.url}`, n.frame.name);
+  }
+  for (const s of graph.skippedFrames ?? []) {
+    addFrameName(`i${s.index}`, s.name);
+  }
+  const sanitizedNames = allFrameNames.map((n) => sanitizeFrameName(n)).filter(Boolean);
+
+  // D4: the frame's URL is shown once — on the first LISTED node of that frame — keyed by
+  // frame index when known, else by URL.
+  const urlShown = new Set<string>();
+
   const lines: string[] = [];
   for (const n of interactive.slice(0, maxElements)) {
     if (options.idsOnly) {
       lines.push(`[#${n.id}]`);
       continue;
     }
+    let where = '';
+    if (n.frame) {
+      where = ` in iframe ${frameDesignator(n.frame, sanitizedNames)}`;
+      const key = n.frame.index !== undefined ? `i${n.frame.index}` : `u${n.frame.url}`;
+      if (!options.noText && !urlShown.has(key)) {
+        where += ` (${displayFrameUrl(n.frame.url)})`;
+        urlShown.add(key);
+      }
+    }
+    const idPart = `[#${n.id}${where}]`;
     const tag = n.tagName.toLowerCase();
     const role = n.role && n.role !== tag ? ` role=${n.role}` : '';
     if (options.noText) {
-      lines.push(`[#${n.id}] ${tag}${role}`);
+      lines.push(`${idPart} ${tag}${role}`);
       continue;
     }
     const namePart = n.accessibleName ? ` "${n.accessibleName}"` : '';
     const labelPart = n.label && n.label !== n.accessibleName ? ` label="${n.label}"` : '';
     const placeholderPart = n.placeholder ? ` placeholder="${n.placeholder}"` : '';
     const valuePart = n.value ? ` value="${n.value.slice(0, 40)}"` : '';
+    const shadowPart = n.shadowHosts?.length ? ` (shadow: ${formatShadowChain(n.shadowHosts)})` : '';
     lines.push(
-      `[#${n.id}] ${tag}${namePart}${role}${labelPart}${placeholderPart}${valuePart}`,
+      `${idPart} ${tag}${namePart}${role}${labelPart}${placeholderPart}${valuePart}${shadowPart}`,
     );
   }
   if (interactive.length > maxElements) {
     lines.push(`... (${interactive.length - maxElements} more elements not shown)`);
   }
+  lines.push(...formatSkippedFrameLines(graph.skippedFrames ?? [], MAX_FRAMES));
   return `${header}\n${lines.join('\n')}`;
 }

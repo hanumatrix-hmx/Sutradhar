@@ -1,0 +1,28 @@
+{"timestamp":"2026-09-25T07:05:27.472Z","level":"info","message":"[BrowserLauncher] Connecting to remote browser endpoint","context":{"endpoint":"ws://127.0.0.1:49490/devtools/browser/4ecc3ea9-d7c1-4ed4-9122-6dcfd74bad75"}}
+{"timestamp":"2026-09-25T07:05:27.477Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790319927472_1","context":{"isIncognito":false}}
+--- listing ---
+URL: http://127.0.0.1:57843/main.html?n=1790319926499
+Title: 
+Interactive elements (1):
+[#1] button "Top"
+[iframe "blocked" http://127.0.0.1:57843 — not inspectable] (browser error page: blocked or failed to load)
+--- skippedFrames ---
+[
+  {
+    "index": 1,
+    "url": "http://127.0.0.1:57843/deny?secret=xyz",
+    "origin": "http://127.0.0.1:57843",
+    "name": "blocked",
+    "reason": "error-page"
+  }
+]
+PASS a blocked frame was recorded as skipped (error-page) :: {"index":1,"url":"http://127.0.0.1:57843/deny?secret=xyz","origin":"http://127.0.0.1:57843","name":"blocked","reason":"error-page"}
+PASS skipped frame url is the RECOVERED real src, not chrome-error:// :: http://127.0.0.1:57843/deny?secret=xyz
+PASS skipped frame origin is the real http(s) origin, not "chrome-error://" :: http://127.0.0.1:57843
+PASS placeholder text line shows the real origin, not chrome-error:// :: [iframe "blocked" http://127.0.0.1:57843 — not inspectable] (browser error page: blocked or failed to load)
+PASS placeholder text line includes the recovered frame name :: [iframe "blocked" http://127.0.0.1:57843 — not inspectable] (browser error page: blocked or failed to load)
+PASS ground truth: Puppeteer's raw frame.url() for the blocked frame really is chrome-error:// :: ["http://127.0.0.1:57843/main.html?n=1790319926499","chrome-error://chromewebdata/"]
+{"timestamp":"2026-09-25T07:05:27.525Z","level":"warn","message":"[BrowserSession] Session sess_1790319927472_1 crashed — Chrome disconnected unexpectedly","context":{}}
+{"timestamp":"2026-09-25T07:05:27.525Z","level":"warn","message":"[BrowserSessionManager] Removed crashed session sess_1790319927472_1","context":{}}
+
+ALL PASS

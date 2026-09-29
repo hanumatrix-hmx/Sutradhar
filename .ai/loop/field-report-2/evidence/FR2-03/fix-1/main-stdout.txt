@@ -1,0 +1,39 @@
+scratch E:\AI-Cache\tmp\fr2-03-audit-main-srPoU1
+PASS B1-six-navs-ok
+PASS B2-state-fields
+PASS B3-cli-markers
+PASS B4-waits-in-flight
+PASS B5-chromes-survive-node-kill
+PASS B6-sessions-1-2-chrome-dead
+PASS A1-mcp-3-launches
+PASS A2-sdk-holder-2-launches
+PASS A3-five-runtime-dirs-with-owner-files
+PASS A4-runtime-markers
+FAIL A5-runtime-browsers-survive-node-kill (precondition, honest)  observed={"survivors":{"puppeteer_dev_chrome_profile-1NJXN1":false,"puppeteer_dev_chrome_profile-4xmye7":false,"puppeteer_dev_chrome_profile-7veWwB":false,"puppeteer_dev_chrome_profile-IpmjEV":false,"puppeteer_dev_chrome_profile-qT1PlS":false},"nSurv":0}
+PASS N-pre-deadpid
+PASS N-pre-decoys
+PASS C4-sessions
+FAIL C5a-dry-run-touches-nothing  observed={"code":0,"fsSame":false,"procSame":true}
+PASS C0-interlock-scope
+PASS C5b-plan-kills
+PASS C5c-plan-deletes
+PASS C5d-kept-reasons
+PASS C6-gc-run
+PASS N9b-lock-held-contents
+PASS N-after-C6
+PASS N6-N7-states-cleared
+PASS C7-counts-reach-zero (Done-when)
+PASS C8-no-harm-cwd5
+PASS C8-no-harm-cwd6
+PASS C9-close-after-gc
+{
+  "R": "E:\\AI-Cache\\tmp\\fr2-03-audit-main-srPoU1",
+  "total": 27,
+  "passed": 25,
+  "failed": [
+    "A5-runtime-browsers-survive-node-kill (precondition, honest)",
+    "C5a-dry-run-touches-nothing"
+  ],
+  "processesLeftUnderR": 0,
+  "RExists": false
+}

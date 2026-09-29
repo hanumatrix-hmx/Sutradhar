@@ -1,0 +1,188 @@
+{
+  "at": "2026-09-27T02:15:19.847Z",
+  "rows": [
+    {
+      "t": 0,
+      "n": "mu0x87706",
+      "steps": [
+        {
+          "step": "initial",
+          "targets": {
+            "B2": "blocked",
+            "A": "responsive",
+            "B1": "blocked",
+            "P1": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "dialog",
+          "out": [
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:52042/?n=mu0x87706-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52042/?n=mu0x87706-B2\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:52042/pop?n=mu0x87706-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52042/pop?n=mu0x87706-B2\"}"
+          ]
+        },
+        {
+          "step": "after-accept-0",
+          "targets": {
+            "B2": "blocked",
+            "A": "responsive",
+            "B1": "responsive",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "after-accept-1",
+          "targets": {
+            "B2": "responsive",
+            "A": "responsive",
+            "B1": "responsive"
+          }
+        }
+      ],
+      "closed": [
+        "P1",
+        "P2"
+      ],
+      "wrongCloses": [],
+      "finalSnap": {
+        "code": 0,
+        "ms": 274,
+        "killedAtCap": false,
+        "first": "URL: http://127.0.0.1:52042/?n=mu0x87706-B1"
+      },
+      "aliveAtEnd": [
+        "B2",
+        "A",
+        "B1"
+      ]
+    },
+    {
+      "t": 1,
+      "n": "mu1x97169",
+      "steps": [
+        {
+          "step": "initial",
+          "targets": {
+            "A": "responsive",
+            "B1": "blocked",
+            "B2": "blocked",
+            "P1": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "dialog",
+          "out": [
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:52042/?n=mu1x97169-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52042/?n=mu1x97169-B2\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:52042/pop?n=mu1x97169-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52042/pop?n=mu1x97169-B2\"}"
+          ]
+        },
+        {
+          "step": "after-accept-0",
+          "targets": {
+            "A": "responsive",
+            "B1": "responsive",
+            "B2": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "after-accept-1",
+          "targets": {
+            "A": "responsive",
+            "B1": "responsive",
+            "B2": "responsive"
+          }
+        }
+      ],
+      "closed": [
+        "P1",
+        "P2"
+      ],
+      "wrongCloses": [],
+      "finalSnap": {
+        "code": 0,
+        "ms": 304,
+        "killedAtCap": false,
+        "first": "URL: http://localhost:52042/?n=mu1x97169-B2"
+      },
+      "aliveAtEnd": [
+        "A",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "t": 2,
+      "n": "mu2x6604",
+      "steps": [
+        {
+          "step": "initial",
+          "targets": {
+            "B1": "blocked",
+            "?chrome://newtab/": "responsive",
+            "A": "responsive",
+            "B2": "blocked",
+            "P1": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "dialog",
+          "out": [
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:52042/?n=mu2x6604-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52042/?n=mu2x6604-B2\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:52042/pop?n=mu2x6604-B1\"}",
+            "dialogPending: {\"type\":\"unknown\",\"message\":\"\",\"defaultValue\":null,\"url\":\"http://localhost:52042/pop?n=mu2x6604-B2\"}"
+          ]
+        },
+        {
+          "step": "after-accept-0",
+          "targets": {
+            "B1": "responsive",
+            "?chrome://newtab/": "responsive",
+            "A": "responsive",
+            "B2": "blocked",
+            "P2": "blocked"
+          }
+        },
+        {
+          "step": "after-accept-1",
+          "targets": {
+            "B1": "responsive",
+            "?chrome://newtab/": "responsive",
+            "A": "responsive",
+            "B2": "responsive"
+          }
+        }
+      ],
+      "closed": [
+        "P1",
+        "P2"
+      ],
+      "wrongCloses": [],
+      "finalSnap": {
+        "code": 0,
+        "ms": 267,
+        "killedAtCap": false,
+        "first": "URL: http://localhost:52042/?n=mu2x6604-B2"
+      },
+      "aliveAtEnd": [
+        "B1",
+        "chrome://newtab/",
+        "A",
+        "B2"
+      ]
+    }
+  ],
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

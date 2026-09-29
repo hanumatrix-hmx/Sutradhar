@@ -1,0 +1,266 @@
+{
+  "verdict": "FAIL",
+  "auditor": "audit-3 (independent, cycle 3 of 4), HEAD dbf5e8c",
+  "startedAt": "2026-09-27",
+  "findings": [
+    {
+      "id": "A3-1",
+      "gap": "GAP-230 (fix-2 recovery)",
+      "severity": "critical",
+      "title": "GAP-230 recovery closes the WRONG tab: dialog accept/dismiss on an unknown dialog closes the popup's OPENER (the user's original, healthy tab), not the dialog-holding popup, which stays blocked",
+      "repro": "nav page; page does window.open(url-with-inline-alert) or window.open('')+w.alert() (opener and popup share one renderer, so Performance.getMetrics times out on BOTH); sutradhar dialog -> lists the OPENER url as type unknown; sutradhar dialog accept -> \"Tab <openerId> was closed ...\"; popup still blocked",
+      "evidence": [
+        "audit-3/recovery-wrongtab-t1cap40.json",
+        "audit-3/recovery-wrongtab-console-t1cap40.txt",
+        "audit-3/multi-unknown-console-t3.txt",
+        "audit-3/multi-unknown-t3.json",
+        "fix-2/unknown-recovery-probe-fix2-console.txt (fix-2's own run: first accept closes the tab whose url is the opener's ?n=..., popup stillBlocked:true)"
+      ],
+      "rate": "8/8 single-popup cases (urlpopup 4/4, blankpopup 4/4) + multi-tab 3/3 trials: with two openers each holding an unknown popup dialog plus one unrelated tab, repeated `dialog accept` closed B1, B2 (both healthy OPENERS) first, then P1, P2 -- 6 wrong-tab closes in 3 trials. The unrelated tab in its own renderer was never closed (0/3). Also every GAP-235 trial (15/15) listed the opener as an unknown dialog first. Root cause: opener and popup share a renderer main thread, so Performance.getMetrics times out on both; unknown entries get openedAt=listing time and keep targets() order, so the older opener is the FIFO 'oldest'; tryRecoverUnknownTarget re-probes (still blocked by the sibling) and calls Target.closeTarget on it."
+    },
+    {
+      "id": "A3-2",
+      "gap": "GAP-230/GAP-234 (fix-2 made `tabs` gate-exempt)",
+      "severity": "critical",
+      "title": "`tabs` is now gate-exempt but still runs runtime.attach(); with ANY dialog open (even an ordinary, fully tracked orphan alert) it hangs 180 s in browser.pages() and then exits 0 printing ONLY a newly created about:blank tab -- the GAP-017 silent-wrong result is back, for the very command the exit-3 hint tells the user to run ('run \"sutradhar tabs\" (never gated) afterwards to confirm')",
+      "repro": "nav fixture; click #alert (report mode: orphaned alert, tracked by the warden); sutradhar tabs",
+      "evidence": [
+        "audit-3/recovery-plaintabs-long-console.txt",
+        "audit-3/recovery-wrongtab-plaintabs-long.json",
+        "audit-3/recovery-wrongtab-console-t1cap40.txt"
+      ],
+      "rate": "4/4: at a 250 s cap, 3/3 exit 0 after 180402/180411/180563 ms printing only '* tab_... (no title) about:blank' (the real, dialog-blocked tab omitted, an extra blank tab created); plus 1/1 killed at a 40 s cap. Root cause: classifyVerb('tabs') is 'exempt', so withSession skips the gate but still calls runtime.attach() -> findAllOpenPages() -> browser.pages(), which waits on CdpPage init of the blocked renderer until protocolTimeout (180 s), swallows the error, returns [] and attach() opens a new blank tab. This is also the full explanation of fix-2's 'GAP-234 residual': it has nothing to do with recovery; any open dialog triggers it, and the exit-3 Hint actively recommends running `tabs`."
+    },
+    {
+      "id": "A3-3",
+      "gap": "GAP-230 x GAP-228 interaction",
+      "severity": "critical",
+      "title": "After recovery closes the opener of a blank (about:blank) popup that is blocked by a sync alert, the popup stays blocked but is invisible to the gate (listPageTargets drops about:blank targets), so the next snap/eval/nav hang (GAP-017 shape)",
+      "repro": "nav page; page runs window.open('') then w.alert(); sutradhar dialog accept (closes the OPENER); sutradhar snap | eval | nav",
+      "evidence": [
+        "audit-3/recovery-wrongtab-console-t1cap40.txt",
+        "audit-3/recovery-blank-long-console.txt",
+        "audit-3/recovery-wrongtab-blank-long.json"
+      ],
+      "rate": "8/8: at 40 s cap tabs/snap/eval/nav 4/4 killed; at a 250 s cap snap 2/2 exit 0 after ~180.46 s printing 'URL: about:blank', eval 2/2 exit 0 after ~180.45 s printing an empty title -- silent wrong-tab results (GAP-017 shape) while the popup is still blocked. Supporting evidence that blank popups are only caught by accident: in the audit-2 matrix (3 trials) every blank/* case (18/18) was caught only as 'other:unknown' (the opener), never as the popup itself, because listPageTargets() drops about:blank targets and the warden never probes them."
+    },
+    {
+      "id": "A3-4",
+      "gap": "GAP-235 (pre-existing, adoptPopupPage)",
+      "severity": "major",
+      "title": "A real CLI click that opens an immediately-alerting popup crashes the CLI process with an uncaught 'Requesting main frame too early!' stack trace AFTER printing 'Clicked #...' to stdout; exit 1. Not silent-wrong (exit != 0, next command exits 3 cleanly), but the output contradicts itself and never mentions a dialog",
+      "repro": "fixture #popup (popup with <head> inline alert) or window.open('')+w.alert() behind a button; sutradhar click <btn>",
+      "evidence": [
+        "audit-3/gap235-console-t5.txt",
+        "audit-3/gap235-t5.json"
+      ],
+      "rate": "10/10 for immediately-alerting popups (fixture#popup 5/5, blank-popup sync alert 5/5); 0/5 for a popup whose alert is in <body> (that shape exits 0 'Clicked #b' in ~3.4 s with NO dialogPending line). In all 15 trials the next snap exited 3 (no hang, no wrong tab). Every trial also listed the healthy OPENER as an 'unknown' dialog first (A3-1 applies)."
+    },
+    {
+      "id": "A3-5",
+      "gap": "GAP-229 (fix-2 chain loop)",
+      "severity": "minor",
+      "title": "When the re-gate loop hits its bound it throws DialogBlockedError and the records of the dialogs it already handled are dropped: 5 alerts/confirms were really accepted/dismissed, but the output has 0 dialogHandled lines (spec D-3: one dialogHandled line per handled dialog)",
+      "repro": "button that runs 6 alerts or 12 confirms in a row; click it (report); sutradhar snap --dialog accept | eval x --dialog dismiss",
+      "evidence": [
+        "audit-3/chain-bound-console-t3.txt",
+        "audit-3/chain-bound-t3.json"
+      ],
+      "rate": "18/18 bound-hit runs (c6, c12, inf x snap/eval x 3 trials) printed 0 dialogHandled lines although 5 dialogs had been handled in each"
+    },
+    {
+      "id": "A3-6",
+      "gap": "GAP-232 successor (fix-2 test integrity)",
+      "severity": "minor, test-integrity",
+      "title": "Most of fix-2's new safety logic is untested: 8 of 12 fix-2 mutations survive the full browser (461) / cli (108) suites",
+      "repro": "audit-3/mutations.mjs M21..M26 with WHOLE=1 (whole-package vitest run per mutation; each file restored and sha-verified)",
+      "evidence": [
+        "audit-3/mutations-console-part2.txt",
+        "audit-3/mutations-M21+M22+M23+M24+M25+M26.json",
+        "audit-3/mutations-console.txt"
+      ],
+      "rate": "SURVIVED: M21 recovery closes without re-probing (the 'never close a healthy tab' guard), M21b warden recovery removed entirely, M22 spawn-lock read-back removed, M23 warden singleton check disabled, M24 DirectCdpBroker recovery removed, M24b direct recovery without re-probe, M25 tabs gated again, M26 closedTarget not surfaced (CLI would print 'Accepted' for a tab it closed). KILLED: M18 signal back to Runtime.evaluate, M19 single re-gate round, M20 no final fail-closed, M20b loop returns after first handle. Pre-existing: 15/16 applicable audit-2 mutations killed; M13 (bootstrap skips blank tabs) survives; M4/M5/M11/M12 no longer apply (anchors rewritten by fix-2)."
+    },
+    {
+      "id": "A3-7",
+      "gap": "GAP-228 probe x GAP-229 policy gate",
+      "severity": "major",
+      "title": "Under --dialog accept|dismiss, any popup dialog from a same-renderer opener makes the command fail with a FALSE exit 3: the warden reports the real popup alert (typed) plus a phantom 'unknown' on the opener (collateral getMetrics timeout); the gate accepts the real alert, then 'handles' the phantom -> warden re-probes (now responsive) -> 404 -> DialogBlockedError. stdout still prints dialogPending for the alert that was just accepted, and stderr says 'applying the \"accept\" policy failed: No dialog is open on that tab'",
+      "repro": "nav opener; opener runs window.open(url whose script does setTimeout(alert,200)); sutradhar snap --dialog accept (or --dialog dismiss)",
+      "evidence": [
+        "audit-3/policy-sibling-console-t5.txt",
+        "audit-3/policy-sibling-t5.json"
+      ],
+      "rate": "10/10 false exit 3 (accept 5/5, dismiss 5/5); control `dialog accept` 5/5 correct. The opener was not closed in these runs (0/15) because the re-probe came after the real alert had been handled."
+    },
+    {
+      "id": "A3-8",
+      "gap": "GAP-228 signal (Performance.getMetrics) decidability",
+      "severity": "major",
+      "title": "Performance.getMetrics timing out does NOT mean 'dialog': any renderer main thread blocked outside JavaScript also times it out. A page doing a synchronous XHR is reported as an 'unknown dialog' (snap exits 3), and following the hint (`dialog accept`) CLOSES the healthy tab. Native main-thread work > 400 ms (a large innerHTML parse + layout) makes the warden report 'unknown' for its whole duration. Crashed ('Aw, Snap') and hung (chrome://hang) renderers are also reported as 'unknown dialog' and closed by 'dialog accept'.",
+      "repro": "page runs setTimeout(()=>{x=new XMLHttpRequest();x.open('GET','/slow?ms=10000',false);x.send()},0); sutradhar snap -> exit 3 unknown; sutradhar dialog accept -> 'Tab <id> was closed ...' and the tab is gone within 0.5-0.8 s",
+      "evidence": [
+        "audit-3/signal-attack-console-t2.txt",
+        "audit-3/signal-attack-t2.json",
+        "audit-3/signal-attack-console-t3-xhr.txt",
+        "audit-3/signal-attack-t3-xhr.json",
+        "audit-3/signal-attack-console-t3-bigdom.txt",
+        "audit-3/signal-attack-t3-bigdom.json"
+      ],
+      "rate": "sync XHR: false exit 3 5/5, healthy tab closed by recovery 3/3 (t3 run, closure confirmed by target disappearance 521-769 ms after); 1.96 s native parse+layout: getMetrics timed out 9/9 samples and warden listed the tab as unknown 3/3 while it ran (the snap in this probe landed just after it finished, so 0/3 end-to-end false blocks); ~0.85 s parse+layout: first 400 ms sample blocked 5/5; crashed renderer 2/2 and hung renderer 5/5 reported as 'unknown dialog' and closed by dialog accept. Held (no false block): busy JS 6 s 2/2, forced-layout loop 2/2, allocation/GC-heavy loop 2/2, mid-navigation to a slow response 2/2, background tab with busy timers 2/2, window.print() in headless 2/2, idle 2/2; real alert caught typed 2/2."
+    },
+    {
+      "id": "A3-9",
+      "gap": "gate overhead (decisions.md open question)",
+      "severity": "minor (performance)",
+      "title": "The ~+130-180 ms per-command cost is NOT the gate. Phase timing shows the gate itself costs 2.6 ms and ensureWarden 1.9 ms; ~100 ms is event-loop linger after the command has finished (raceWithDialog's dialogWatch loop sleeps in a ref'd `await delay(100)` that is never cleared when `stopped` is set, so every process waits out the last 100 ms poll before it can exit), and ~24 ms is extra module load",
+      "repro": "audit-3/phase-timing-probe.mjs (instrumented temporary copy of dist/cli.js, deleted afterwards, dist sha unchanged)",
+      "evidence": [
+        "audit-3/phase-timing.json",
+        "audit-3/overhead-t1.json",
+        "audit-3/overhead-console-t1.txt",
+        "audit-3/overhead-t2-pre.json",
+        "audit-3/overhead-console-t2-pre.txt",
+        "audit-3/startup-probe.json"
+      ],
+      "rate": "12/12 runs: median 'finally end -> process exit' = 99.9 ms; gate 2.6 ms; ensureWarden 1.9 ms; reattach 16.6 ms; module load to main() 223 ms. snap median: branch 390 ms vs master 251 ms (+139) vs pre-FR2-04 loop commit 369cfee 233 ms (a second run, under load: 416 / 260 / 233). Gate-disabled copies of the branch CLI: 378 ms (no gate) and 374 ms (no gate, no ensureWarden) -- i.e. removing the gate saves only ~12-16 ms. Tab scaling (idle tabs): branch 390/392/402/423 ms at 1/5/10/20 tabs vs no-gate 378/376/378/420 -- the warden's /v1/dialogs takes 1-7 ms even at 20 tabs."
+    },
+    {
+      "id": "A3-10",
+      "gap": "GAP-230 message clarity",
+      "severity": "minor",
+      "title": "The recovery message names the tab only by its raw CDP target id ('Tab 95F324D3D9B871FC0A3478711E232758 was closed ...'), not by the CLI tab id that `tabs` prints (tab_sess_...) or its URL, and it is printed with exit 0 by a command the user invoked as `dialog accept`; the preceding dialogPending line (the only place a URL appears) points at the opener, so an agent cannot tell which of its tabs was destroyed. Phantom 'unknown' pending lines for the collaterally blocked opener also trail successful handles (e.g. after `dialog accept` of a popup beforeunload, 3/3).",
+      "repro": "any A3-1 repro; gap233-bu-popup-probe.mjs for the trailing phantom line",
+      "evidence": [
+        "audit-3/recovery-wrongtab-console-t1cap40.txt",
+        "audit-3/unknown-recovery-console-t3.txt",
+        "audit-3/gap233-console-t3.txt"
+      ],
+      "rate": "every recovery (20+ observed); phantom trailing line 3/3"
+    },
+    {
+      "id": "A3-11",
+      "gap": "GAP-228 probe budget vs WardenBroker timeout",
+      "severity": "major",
+      "title": "The warden probes untracked targets sequentially at 400 ms each, and the CLI aborts /v1/dialogs after 5000 ms and maps that to status 'unknown' -> gate returns 'clear' -> attach. With 14 same-renderer popups collaterally blocked by ONE ordinary tracked alert, the list takes 5.7 s, the gate fails open, and snap hangs 185 s then exits 0 printing 'URL: about:blank' (silent wrong tab)",
+      "repro": "opener opens 14 popups (window.open, same site), then the opener raises alert() via a timer; sutradhar snap",
+      "evidence": [
+        "audit-3/many-blocked-console-t2.txt",
+        "audit-3/many-blocked-t2.json"
+      ],
+      "rate": "K=14: 2/2 silent wrong tab (warden list 5677/5704 ms > 5000 ms client timeout; snap exit 0 after 185465/185430 ms printing 'URL: about:blank'); K=4 control: 2/2 exit 3 in ~1.95 s with the typed alert (warden list 1.6 s -- each collateral tab adds 400 ms to EVERY gated command while a dialog is open)"
+    }
+  ],
+  "verified": [
+    {
+      "what": "Forced build: 19/19 + 9/9 tasks, 0 cached, exit 0",
+      "evidence": [
+        "audit-3/build-forced.txt"
+      ]
+    },
+    {
+      "what": "vitest (node_modules/.bin/vitest run): browser 461/461, capability-runtime 164/164, cli 108/108, mcp-server 84/84, sutradhar 15/15 -- all pass, counts match fix-2 self-report and orchestrator recount",
+      "evidence": [
+        "audit-3/vitest-browser.txt",
+        "audit-3/vitest-capability-runtime.txt",
+        "audit-3/vitest-cli.txt",
+        "audit-3/vitest-mcp-server.txt",
+        "audit-3/vitest-sutradhar.txt"
+      ]
+    },
+    {
+      "what": "GAP-229 bound holds: chains longer than 5 (6 alerts, 12 confirms, an infinite while(true){alert()}) exit 3 in ~1.0-1.3 s with 'chain limit reached', the command never runs, never hangs; 2-dialog chains and a slow infinite chain (one alert every 400 ms) run clean under --dialog accept|dismiss (exit 0, page unblocked, no about:blank)",
+      "evidence": [
+        "audit-3/chain-bound-console-t3.txt",
+        "audit-3/chain-bound-t3.json"
+      ]
+    },
+    {
+      "what": "GAP-226 / converse signal check: a dialog raised inside a real out-of-process iframe (127.0.0.1 page, localhost iframe, confirmed as a separate target) leaves the page target's Performance.getMetrics answering in 0-1 ms, BUT the warden still receives the typed Page.javascriptDialogOpening on the page session, so dialog/snap report it typed ('alert', exact message) and snap exits 3 in 338-450 ms. 3/3.",
+      "evidence": [
+        "audit-3/oopif-console-t3b.txt",
+        "audit-3/oopif-t3b.json"
+      ]
+    },
+    {
+      "what": "GAP-231 on audit-2's own unmodified lock-race-probe: stale-lock rounds 0/10 multi-warden (was 8/10), plain 0/10 (was 1/10), no lock left behind 0/10, crash-mid-spawn 4/4 recovered with exactly 1 warden and no warning (next snap 4.4-5.0 s)",
+      "evidence": [
+        "audit-3/lock-race-console-t1.txt",
+        "audit-3/lock-race-probe-x.json"
+      ]
+    },
+    {
+      "what": "GAP-229 on audit-2's unmodified gate-chain-probe (alert->confirm chain, orphaned): snap --dialog accept / snap --dialog dismiss / eval 1 --dialog accept exit 0 in 714-814 ms with dialogHandled lines for both dialogs, page unblocked afterwards, no about:blank, single tab -- 9/9 (was 4/4 x 180 s hang + about:blank). Control `dialog accept` 3/3 correct (chain-b reported pending).",
+      "evidence": [
+        "audit-3/gate-chain-console-t3.txt",
+        "audit-3/gate-chain-probe-t3.json"
+      ]
+    },
+    {
+      "what": "GAP-230 on audit-2's unmodified unknown-recovery-probe (3 trials): `dialog accept|dismiss` no longer dead-end (exit 0, 'Tab <id> was closed ...'), session survives, close works. BUT the first accept closes the OPENER (its url is the one in the dialogPending line) and only the second closes the popup, so both of the user's tabs are destroyed and `snap --dialog accept` then reports 'URL: about:blank' -- see A3-1.",
+      "evidence": [
+        "audit-3/unknown-recovery-console-t3.txt",
+        "audit-3/unknown-recovery-probe-t3.json"
+      ]
+    },
+    {
+      "what": "GAP-231 exclusive-lock pressure (a PowerShell child holds warden.json or warden.lock with FileShare.None for 14 s): commands still exit 0 but take ~5.3 s each and print the 'warden did not start' warning while locked; after release commands are back to ~0.4 s and exactly 1 warden is alive and named by warden.json. 6/6 rounds (3 x warden.json, 3 x warden.lock), never >1 warden.",
+      "evidence": [
+        "audit-3/lock-attack-console-t3.txt"
+      ]
+    },
+    {
+      "what": "GAP-231 double-handling on audit-2's r10 stale-lock-nojson probe (stale lock + no warden.json + 4 concurrent commands, then 10 confirm->prompt->confirm chains handled only by wardens under --dialog accept): 4/4 runs exactly 1 warden alive, 40/40 chains exact [true,'dflt',true], 0 wardens left after close (was 1/4 runs with 2 wardens, 3/10 wrong).",
+      "evidence": [
+        "audit-3/r10-stale-lock-nojson-console.txt",
+        "audit-3/r10-stale-lock-nojson-probe-run1.json",
+        "audit-3/r10-stale-lock-nojson-probe-run4.json"
+      ]
+    },
+    {
+      "what": "GAP-233: a popup that navigates itself away with an armed beforeunload (real sticky activation) between commands is detected typed ('beforeunload') 3/3; snap exits 3 in 0.70-0.76 s; `dialog accept` accepts it and the popup lands on /left 3/3; opener not closed.",
+      "evidence": [
+        "audit-3/gap233-console-t3.txt",
+        "audit-3/gap233-t3.json"
+      ]
+    },
+    {
+      "what": "Matrix re-run (audit-2 gap220-matrix, 3 trials x 21 cases): 57/57 blocked cases exit 3 (caught), 0 missed, 6 not-blocked (the beforeunload no-trigger fixture, as fix-2 reported). Caveat: every blank/* case was caught only via its opener ('other:unknown'), see A3-3/A3-1.",
+      "evidence": [
+        "audit-3/gap220-matrix-console-t3.txt",
+        "audit-3/gap220-matrix-t3.json"
+      ]
+    },
+    {
+      "what": "Full tools/scenario-suite/verify-fr2-04-dialogs.mjs run 1 (SUTRADHAR_FR2_04_EVIDENCE_DIR=audit-3/verify-run): 109 passed, 2 failed, 2 skipped of 113. Failures: GAP230.tabs-immediately-after-recovery (the disclosed residual = A3-2) and L5.no-cli-process-running, which was contaminated by this auditor's own concurrent probe (a hung `cli.js snap` from the same worktree path; the check matches any such process) -- re-run in isolation as run 2. Skips: L11.sessions-json (FR2-03 parked) and N7 (covered by observer-no-violations), same as fix-2. Audit-1's L15 (8 assertions) all pass, GAP-224 verified; N11b.GAP-227-no-profile-warning-correct passes, GAP-227 verified; N9/N10 busy-script and watchdog pass; L14 no leftover chrome/warden; observer-no-violations pass.",
+      "evidence": [
+        "audit-3/verify-console.txt",
+        "audit-3/verify-run/live-summary.json",
+        "audit-3/verify-run/live-cases.jsonl"
+      ]
+    },
+    {
+      "what": "Full verify-fr2-04-dialogs.mjs run 2, in isolation (nothing else of the auditor's running): 110 passed, 1 failed, 2 skipped of 113 -- identical to fix-2's self-report. The single failure is GAP230.tabs-immediately-after-recovery (killed at 20 s), i.e. A3-2. L5.no-cli-process-running passes in isolation (its run-1 failure was auditor contamination).",
+      "evidence": [
+        "audit-3/verify-console-2.txt",
+        "audit-3/verify-run-2/live-summary.json",
+        "audit-3/verify-run-2/live-cases.jsonl"
+      ]
+    },
+    {
+      "what": "Process hygiene: no process was killed by image name; only CLI child PIDs this audit spawned, PowerShell lock-holder PIDs it spawned, and Chrome/warden processes whose command line / payload contained an fr2-04-audit3-* temp root were ever killed. process-baseline.txt vs process-after.txt: 0 audit3/warden processes left (chrome 115 -> 116 and node 2 -> 3 belong to other sessions; none match this audit's roots). All fr2-04-audit3-* temp roots removed; the temporary pre-FR2-04 worktree (369cfee) was removed and pruned; temporary dist copies (cli.audit3-*.js) removed with dist/cli.js sha unchanged; mutated sources restored (git status clean for packages/ and tools/).",
+      "evidence": [
+        "audit-3/process-baseline.txt",
+        "audit-3/process-after.txt",
+        "audit-3/overhead-t1.json (distUntouched)",
+        "audit-3/phase-timing.json (distUntouched)"
+      ]
+    }
+  ],
+  "notReached": [
+    "headed print preview (window.print() only tested headless, where it is a no-op)",
+    "a real renderer crash by process kill (used CDP Page.crash) and a real 'busy in native code' renderer other than sync XHR / chrome://hang / large parse+layout",
+    "GAP-235 root cause (pre-existing, outside FR2-04 files): characterised only",
+    "a paused-in-debugger page makes snap hang (60 s cap, 2/2) with the gate saying clear -- pre-existing, not a dialog, recorded only as an observation in signal-attack-t2.json"
+  ]
+}

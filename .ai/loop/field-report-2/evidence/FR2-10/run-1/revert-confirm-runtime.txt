@@ -1,0 +1,170 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041[39m
+
+[90mstdout[2m | packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS2: launch() twice registers two launched, mock (no real browser) entries, sorted by createdAt then id[22m[39m
+{"timestamp":"2026-09-25T08:10:53.255Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T08:10:53.255Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790323853255_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T08:10:53.256Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T08:10:53.256Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790323853256_2","context":{"isIncognito":false}}
+
+[90mstdout[2m | packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS3: attach() registers an "attached" entry[22m[39m
+{"timestamp":"2026-09-25T08:10:53.263Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790323853263_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS5: shutdown() and shutdownAll() remove entries; shutdown of an unknown id still throws and leaves the counter at 0[22m[39m
+{"timestamp":"2026-09-25T08:10:53.266Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T08:10:53.266Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790323853266_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T08:10:53.266Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T08:10:53.266Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790323853266_2","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T08:10:53.266Z","level":"info","message":"[BrowserSession] Closed session sess_1790323853266_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T08:10:53.266Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790323853266_1","context":{"reason":"Runtime shutdown"}}
+
+[90mstdout[2m | packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS6: a session created directly via the session manager (agent.runGoal-style, no launch()/attach()) is not listed[22m[39m
+{"timestamp":"2026-09-25T08:10:53.268Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T08:10:53.268Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790323853268_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS7: a session removed behind the runtime's back (idle reap / crash) is pruned from listSessions[22m[39m
+{"timestamp":"2026-09-25T08:10:53.268Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T08:10:53.268Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790323853268_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS8: a reused id keeps its original origin (launch/launch, and attach then launch under the same id)[22m[39m
+{"timestamp":"2026-09-25T08:10:53.269Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T08:10:53.269Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed","context":{"isIncognito":false}}
+
+ [33m❯[39m packages/capability-runtime/tests/unit/runtime.spec.ts [2m ([22m[2m77 tests[22m [2m|[22m [31m6 failed[39m[2m)[22m[90m 47[2mms[22m[39m
+[31m   [33m❯[31m packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22mlistSessions (FR2-10)[2m > [22mS2: launch() twice registers two launched, mock (no real browser) entries, sorted by createdAt then id[39m
+[31m     → expected +0 to be 2 // Object.is equality[39m
+[31m   [33m❯[31m packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22mlistSessions (FR2-10)[2m > [22mS3: attach() registers an "attached" entry[39m
+[31m     → expected [] to have a length of 1 but got +0[39m
+[31m   [33m❯[31m packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22mlistSessions (FR2-10)[2m > [22mS4: lifecycleOpsInFlight is 1 while launch() is pending, 0 after it resolves, and 0 after it rejects or throws synchronously[39m
+[31m     → expected +0 to be 1 // Object.is equality[39m
+[31m   [33m❯[31m packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22mlistSessions (FR2-10)[2m > [22mS5: shutdown() and shutdownAll() remove entries; shutdown of an unknown id still throws and leaves the counter at 0[39m
+[31m     → expected [] to deeply equal [ 'sess_1790323853266_2' ][39m
+[31m   [33m❯[31m packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22mlistSessions (FR2-10)[2m > [22mS7: a session removed behind the runtime's back (idle reap / crash) is pruned from listSessions[39m
+[31m     → expected [] to have a length of 1 but got +0[39m
+[31m   [33m❯[31m packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22mlistSessions (FR2-10)[2m > [22mS8: a reused id keeps its original origin (launch/launch, and attach then launch under the same id)[39m
+[31m     → expected [] to have a length of 1 but got +0[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 6 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22mlistSessions (FR2-10)[2m > [22mS2: launch() twice registers two launched, mock (no real browser) entries, sorted by createdAt then id
+[31m[1mAssertionError[22m: expected +0 to be 2 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 2[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m packages/capability-runtime/tests/unit/runtime.spec.ts:[2m579:34[22m[39m
+    [90m577| [39m
+    [90m578| [39m    [35mconst[39m view [33m=[39m runtime[33m.[39m[34mlistSessions[39m()[33m;[39m
+    [90m579| [39m    [34mexpect[39m(view[33m.[39msessions[33m.[39mlength)[33m.[39m[34mtoBe[39m([34m2[39m)[33m;[39m
+    [90m   | [39m                                 [31m^[39m
+    [90m580| [39m    [35mfor[39m ([35mconst[39m s [35mof[39m view[33m.[39msessions) {
+    [90m581| [39m      [34mexpect[39m(s[33m.[39morigin)[33m.[39m[34mtoBe[39m([32m'launched'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22mlistSessions (FR2-10)[2m > [22mS3: attach() registers an "attached" entry
+[31m[1mAssertionError[22m: expected [] to have a length of 1 but got +0[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m packages/capability-runtime/tests/unit/runtime.spec.ts:[2m604:27[22m[39m
+    [90m602| [39m
+    [90m603| [39m    [35mconst[39m view [33m=[39m runtime[33m.[39m[34mlistSessions[39m()[33m;[39m
+    [90m604| [39m    [34mexpect[39m(view[33m.[39msessions)[33m.[39m[34mtoHaveLength[39m([34m1[39m)[33m;[39m
+    [90m   | [39m                          [31m^[39m
+    [90m605| [39m    [34mexpect[39m(view[33m.[39msessions[[34m0[39m][33m![39m[33m.[39msessionId)[33m.[39m[34mtoBe[39m(sessionId)[33m;[39m
+    [90m606| [39m    [34mexpect[39m(view[33m.[39msessions[[34m0[39m][33m![39m[33m.[39morigin)[33m.[39m[34mtoBe[39m([32m'attached'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22mlistSessions (FR2-10)[2m > [22mS4: lifecycleOpsInFlight is 1 while launch() is pending, 0 after it resolves, and 0 after it rejects or throws synchronously
+[31m[1mAssertionError[22m: expected +0 to be 1 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m packages/capability-runtime/tests/unit/runtime.spec.ts:[2m621:57[22m[39m
+    [90m619| [39m    [90m// Give the microtask queue a turn so the async launch() body actu[39m…
+    [90m620| [39m    [35mawait[39m [33mPromise[39m[33m.[39m[34mresolve[39m()[33m;[39m
+    [90m621| [39m    [34mexpect[39m(runtime[33m.[39m[34mlistSessions[39m()[33m.[39mlifecycleOpsInFlight)[33m.[39m[34mtoBe[39m([34m1[39m)[33m;[39m
+    [90m   | [39m                                                        [31m^[39m
+    [90m622| [39m    [34mexpect[39m(runtime[33m.[39m[34mlistSessions[39m()[33m.[39msessions)[33m.[39m[34mtoEqual[39m([])[33m;[39m
+    [90m623| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22mlistSessions (FR2-10)[2m > [22mS5: shutdown() and shutdownAll() remove entries; shutdown of an unknown id still throws and leaves the counter at 0
+[31m[1mAssertionError[22m: expected [] to deeply equal [ 'sess_1790323853266_2' ][39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- Array [[39m
+[32m-   "sess_1790323853266_2",[39m
+[32m- ][39m
+[31m+ Array [][39m
+
+[36m [2m❯[22m packages/capability-runtime/tests/unit/runtime.spec.ts:[2m645:69[22m[39m
+    [90m643| [39m
+    [90m644| [39m    [35mawait[39m runtime[33m.[39m[34mshutdown[39m(id1)[33m;[39m
+    [90m645| [39m    [34mexpect[39m(runtime[33m.[39m[34mlistSessions[39m()[33m.[39msessions[33m.[39m[34mmap[39m((s) [33m=>[39m s[33m.[39msessionId))[33m.[39m[34mto[39m…
+    [90m   | [39m                                                                    [31m^[39m
+    [90m646| [39m
+    [90m647| [39m    [35mawait[39m runtime[33m.[39m[34mshutdownAll[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22mlistSessions (FR2-10)[2m > [22mS7: a session removed behind the runtime's back (idle reap / crash) is pruned from listSessions
+[31m[1mAssertionError[22m: expected [] to have a length of 1 but got +0[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m packages/capability-runtime/tests/unit/runtime.spec.ts:[2m665:45[22m[39m
+    [90m663| [39m    [35mconst[39m runtime [33m=[39m [34mnoBrowserRuntime[39m()[33m;[39m
+    [90m664| [39m    [35mconst[39m { sessionId } [33m=[39m [35mawait[39m runtime[33m.[39m[34mlaunch[39m()[33m;[39m
+    [90m665| [39m    [34mexpect[39m(runtime[33m.[39m[34mlistSessions[39m()[33m.[39msessions)[33m.[39m[34mtoHaveLength[39m([34m1[39m)[33m;[39m
+    [90m   | [39m                                            [31m^[39m
+    [90m666| [39m
+    [90m667| [39m    [35mawait[39m runtime[33m.[39m[34mgetSessionManager[39m()[33m.[39m[34mcloseSession[39m([34mcreateSessionId[39m(ses…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m packages/capability-runtime/tests/unit/runtime.spec.ts[2m > [22mlistSessions (FR2-10)[2m > [22mS8: a reused id keeps its original origin (launch/launch, and attach then launch under the same id)
+[31m[1mAssertionError[22m: expected [] to have a length of 1 but got +0[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m packages/capability-runtime/tests/unit/runtime.spec.ts:[2m680:45[22m[39m
+    [90m678| [39m    [35mawait[39m runtime[33m.[39m[34mlaunch[39m({ sessionId[33m:[39m [32m'fixed'[39m })[33m;[39m
+    [90m679| [39m    [35mawait[39m runtime[33m.[39m[34mlaunch[39m({ sessionId[33m:[39m [32m'fixed'[39m })[33m;[39m
+    [90m680| [39m    [34mexpect[39m(runtime[33m.[39m[34mlistSessions[39m()[33m.[39msessions)[33m.[39m[34mtoHaveLength[39m([34m1[39m)[33m;[39m
+    [90m   | [39m                                            [31m^[39m
+    [90m681| [39m    [34mexpect[39m(runtime[33m.[39m[34mlistSessions[39m()[33m.[39msessions[[34m0[39m][33m![39m[33m.[39morigin)[33m.[39m[34mtoBe[39m([32m'launched'[39m…
+    [90m682| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m6 failed[39m[22m[2m | [22m[1m[32m71 passed[39m[22m[90m (77)[39m
+[2m   Start at [22m 13:40:52
+[2m   Duration [22m 1.25s[2m (transform 384ms, setup 0ms, collect 794ms, tests 47ms, environment 0ms, prepare 155ms)[22m
+

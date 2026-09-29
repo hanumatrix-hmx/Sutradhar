@@ -1,0 +1,104 @@
+[mcp] PASS a-default-visible-toast
+[mcp] PASS a2-explicit-visible-toast
+[mcp] PASS b-attached-toast-returns-before-reveal
+[mcp] PASS c1-hidden-banner
+[mcp] PASS c2-hidden-spinner-removed
+[mcp] PASS mechanism-visible-vis-hidden
+[mcp] PASS mechanism-visible-zero-size
+[mcp] PASS mechanism-visible-shadow-toast
+[mcp] PASS manual-causality-toast-visible
+[mcp] PASS manual-causality-banner-hidden
+[mcp] PASS N1-never-visible-timeout
+[mcp] PASS N2-nonexistent-selector
+[mcp] PASS N3-stays-hidden-timeout
+[mcp] PASS N4-typo-hidden-succeeds-fast
+[mcp] PASS N8-invalid-state-schema-rejection
+[mcp] PASS N9-timeoutMs-zero-no-hang
+[mcp] PASS N5a-opacity-zero-visible-immediately
+[mcp] PASS N5b-opacity-zero-hidden-times-out
+[mcp] PASS N6-offscreen-visible-immediately
+[mcp] PASS N7-dup-first-hidden-second-visible-diagnosed
+[mcp] PASS N10-stale-node-id-after-navigation
+[mcp] PASS mechanism-visible-ancestor-hidden-child
+[mcp] PASS mechanism-visible-frame-toast
+[mcp] PASS mechanism-attached-late-waits-for-insertion
+[mcp] PASS mechanism-visible-late-waits-for-insertion
+[mcp] PASS hidden-multiframe-visible-in-iframe-does-not-succeed
+[mcp] PASS GAP-008-background-tab-visible-resolves-fast
+[mcp] PASS N11-never-the-generic-outer-message
+[cli] PASS setup-nav-manual
+[cli] PASS wait-default-visible-toast-blocks-then-resolves
+[cli] PASS GAP-008-background-tab-visible-resolves-fast
+[cli] PASS wait-attached-toast-returns-promptly
+[cli] PASS wait-hidden-banner-blocks-then-resolves
+[cli] PASS wait-hidden-spinner-blocks-then-resolves-on-removal
+[cli] PASS N-never-visible-exit1
+[cli] PASS N8-cli-state-bogus-exit1
+[cli] PASS N8-cli-state-missing-value-exit1
+[cli] PASS N-stays-hidden-exit1
+[cli] PASS teardown-close-kills-chrome
+[cli] PASS cleanup-no-leaked-profile-dirs-left-by-us
+{"timestamp":"2026-09-25T00:53:29.607Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-25T00:53:29.837Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790297609606_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-25T00:53:29.906Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790297609606_1_1","selector":"#toast"}}
+[sdk] PASS a-default-visible-toast
+{"timestamp":"2026-09-25T00:53:31.487Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790297609606_1_1","selector":"#toast"}}
+[sdk] PASS b-attached-toast-returns-before-reveal
+{"timestamp":"2026-09-25T00:53:31.529Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790297609606_1_1","selector":"#banner"}}
+[sdk] PASS c1-hidden-banner
+{"timestamp":"2026-09-25T00:53:33.109Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790297609606_1_1","selector":"#spinner"}}
+[sdk] PASS c2-hidden-spinner-removed
+{"timestamp":"2026-09-25T00:53:34.908Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790297609606_1_1","selector":"#toast"}}
+[sdk] PASS GAP-008-background-tab-visible-resolves-fast
+{"timestamp":"2026-09-25T00:53:35.384Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790297609606_1_1","selector":"#never"}}
+{"timestamp":"2026-09-25T00:53:36.599Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/3): wait_for_selector timed out after 1200ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.","context":{}}
+{"timestamp":"2026-09-25T00:53:38.323Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 2/3): wait_for_selector timed out after 1200ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.","context":{}}
+{"timestamp":"2026-09-25T00:53:40.553Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 3/3): wait_for_selector timed out after 1200ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.","context":{}}
+[sdk] PASS N1-never-rejects-none-visible
+{"timestamp":"2026-09-25T00:53:40.601Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790297609606_1_1","selector":"#stays"}}
+{"timestamp":"2026-09-25T00:53:41.819Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/3): wait_for_selector timed out after 1200ms waiting for state=hidden: an element matching \"#stays\" is still visible.","context":{}}
+{"timestamp":"2026-09-25T00:53:43.547Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 2/3): wait_for_selector timed out after 1200ms waiting for state=hidden: an element matching \"#stays\" is still visible.","context":{}}
+{"timestamp":"2026-09-25T00:53:45.769Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 3/3): wait_for_selector timed out after 1200ms waiting for state=hidden: an element matching \"#stays\" is still visible.","context":{}}
+[sdk] PASS N3-stays-hidden-rejects
+{"timestamp":"2026-09-25T00:53:45.788Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790297609606_1_1","selector":"#toast"}}
+{"timestamp":"2026-09-25T00:53:45.788Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/3): Invalid wait_for_selector state \"bogus\" — expected one of: visible, attached, hidden.","context":{}}
+{"timestamp":"2026-09-25T00:53:46.297Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 2/3): Invalid wait_for_selector state \"bogus\" — expected one of: visible, attached, hidden.","context":{}}
+{"timestamp":"2026-09-25T00:53:47.309Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 3/3): Invalid wait_for_selector state \"bogus\" — expected one of: visible, attached, hidden.","context":{}}
+[sdk] PASS N8-sdk-invalid-state-rejects
+{"timestamp":"2026-09-25T00:53:47.456Z","level":"info","message":"[BrowserSession] Closed session sess_1790297609606_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-25T00:53:47.456Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790297609606_1","context":{"reason":"Runtime shutdown"}}
+{
+  "at": "2026-09-25T00:53:48.206Z",
+  "overallOk": false,
+  "counts": {
+    "mcp": {
+      "total": 28,
+      "passed": 28
+    },
+    "cli": {
+      "total": 12,
+      "passed": 12
+    },
+    "sdk": {
+      "total": 8,
+      "passed": 8
+    }
+  },
+  "cleanupDirsAttempted": [
+    "E:\\AI-Cache\\tmp\\fr2-01-mcp-observer-sfnn3z",
+    "E:\\AI-Cache\\tmp\\fr2-01-cli-state-SlF3yF"
+  ],
+  "lingeringChromeProcesses": {
+    "count": 8,
+    "matches": [
+      "52892\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --remote-debugging-port=53270 --user-data-dir=E:\\AI-Cache\\tmp\\sutradhar-cli-1790296919459 --no-first-run --no-default-browser-check --headless=new\r",
+      "68640\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=crashpad-handler --user-data-dir=E:\\AI-Cache\\tmp\\sutradhar-cli-1790296919459 /prefetch:4 --monitor-self-annotation=ptype=crashpad-handler --database=E:\\AI-Cache\\tmp\\sutradhar-cli-1790296919459\\Crashpad --metrics-dir=E:\\AI-Cache\\tmp\\sutradhar-cli-1790296919459 --url=https://clients2.google.com/cr/report --annotation=channel= --annotation=plat=Win64 --annotation=prod=Chrome --annotation=ver=153.0.8010.53 --initial-client-data=0x148,0x14c,0x150,0x118,0x154,0x7ffcb56bfe80,0x7ffcb56bfe90,0x7ffcb56bfea0\r",
+      "49748\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=gpu-process --headless=new --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790296919459\" --no-pre-read-main-dll --gpu-preferences=WAAAAAAAAADgAAAEAAAAAAAAAAAAAGAAQAAAAAAAAAADAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAAEAAAAAIAAAABAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= --field-trial-handle=1856,i,942909307530584341,16624364370673411164,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1860,i,9024836745548821900,15250963953488832486,4 --trace-process-track-uuid=3190708988185955192 --mojo-platform-channel-handle=1852 /prefetch:2\r",
+      "52820\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-GB --service-sandbox-type=none --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790296919459\" --no-pre-read-main-dll --field-trial-handle=1856,i,942909307530584341,16624364370673411164,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1860,i,9024836745548821900,15250963953488832486,4 --trace-process-track-uuid=3190708989122997041 --mojo-platform-channel-handle=2164 /prefetch:11\r",
+      "55396\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-GB --service-sandbox-type=service --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790296919459\" --no-pre-read-main-dll --field-trial-handle=1856,i,942909307530584341,16624364370673411164,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1860,i,9024836745548821900,15250963953488832486,4 --trace-process-track-uuid=3190708990060038890 --mojo-platform-channel-handle=2640 /prefetch:13\r",
+      "28440\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --top-chrome-webui --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790296919459\" --no-pre-read-main-dll --remote-debugging-port=53270 --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=5 --launch-time-ticks=65248515837 --field-trial-handle=1856,i,942909307530584341,16624364370673411164,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1860,i,9024836745548821900,15250963953488832486,4 --trace-process-track-uuid=3190708990997080739 --mojo-platform-channel-handle=3636 /prefetch:1\r",
+      "65172\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790296919459\" --no-pre-read-main-dll --remote-debugging-port=53270 --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=77 --launch-time-ticks=65553566810 --field-trial-handle=1856,i,942909307530584341,16624364370673411164,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1860,i,9024836745548821900,15250963953488832486,4 --trace-process-track-uuid=3190709058464093867 --mojo-platform-channel-handle=7764 /prefetch:1\r",
+      "63300\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790296919459\" --no-pre-read-main-dll --remote-debugging-port=53270 --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=84 --launch-time-ticks=65779508004 --field-trial-handle=1856,i,942909307530584341,16624364370673411164,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1860,i,9024836745548821900,15250963953488832486,4 --trace-process-track-uuid=3190709065023386810 --mojo-platform-channel-handle=6696 /prefetch:1\r"
+    ]
+  }
+}

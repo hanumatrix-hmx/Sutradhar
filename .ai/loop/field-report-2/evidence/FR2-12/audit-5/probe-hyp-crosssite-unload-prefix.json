@@ -1,0 +1,135 @@
+{
+  "only": "crosssite-unload",
+  "trials": 5,
+  "preFixEmulation": true,
+  "results": {
+    "crosssite-unload": {
+      "trials": [
+        {
+          "crossSite": {
+            "url": "http://localhost:54340/clean?d=0&t=0",
+            "oldConsole": 1,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "OLDPAGE-err"
+            ],
+            "brokenRequests": [],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:55.090Z"
+          },
+          "sameSite": {
+            "url": "http://127.0.0.1:54340/clean?d=0&u=0",
+            "oldConsole": 1,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "OLDPAGE-err"
+            ],
+            "brokenRequests": [],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:55.557Z"
+          }
+        },
+        {
+          "crossSite": {
+            "url": "http://localhost:54340/clean?d=150&t=1",
+            "oldConsole": 8,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "OLDPAGE-err"
+            ],
+            "brokenRequests": [],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:56.042Z"
+          },
+          "sameSite": {
+            "url": "http://127.0.0.1:54340/clean?d=150&u=1",
+            "oldConsole": 8,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "OLDPAGE-err"
+            ],
+            "brokenRequests": [],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:56.667Z"
+          }
+        },
+        {
+          "crossSite": {
+            "url": "http://localhost:54340/clean?d=0&t=2",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [],
+            "brokenRequests": [],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:57.291Z"
+          },
+          "sameSite": {
+            "url": "http://127.0.0.1:54340/clean?d=0&u=2",
+            "oldConsole": 1,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "OLDPAGE-err"
+            ],
+            "brokenRequests": [],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:57.757Z"
+          }
+        },
+        {
+          "crossSite": {
+            "url": "http://localhost:54340/clean?d=150&t=3",
+            "oldConsole": 8,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "OLDPAGE-err"
+            ],
+            "brokenRequests": [],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:58.221Z"
+          },
+          "sameSite": {
+            "url": "http://127.0.0.1:54340/clean?d=150&u=3",
+            "oldConsole": 8,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "OLDPAGE-err"
+            ],
+            "brokenRequests": [],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:58.841Z"
+          }
+        },
+        {
+          "crossSite": {
+            "url": "http://localhost:54340/clean?d=0&t=4",
+            "oldConsole": 0,
+            "oldBroken": 0,
+            "consoleErrors": [],
+            "brokenRequests": [],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:59.458Z"
+          },
+          "sameSite": {
+            "url": "http://127.0.0.1:54340/clean?d=0&u=4",
+            "oldConsole": 1,
+            "oldBroken": 0,
+            "consoleErrors": [
+              "OLDPAGE-err"
+            ],
+            "brokenRequests": [],
+            "covers": true,
+            "documentStartedAt": "2026-09-27T21:27:59.922Z"
+          }
+        }
+      ]
+    }
+  },
+  "preFixPatched": "E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\browser\\dist\\index.js",
+  "origin": "http://127.0.0.1:54340",
+  "cdp": {
+    "created": 1,
+    "detached": 0,
+    "stillOpenObjects": 1,
+    "stillOpenConnected": 1
+  }
+}

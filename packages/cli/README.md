@@ -64,28 +64,31 @@ Run `sutradhar` with no arguments for the full command list.
 | `press <ref> <key>` | Focus an element then press a key (e.g. `press 3 Enter`). |
 | `press <ref> <key> --modifiers Control,Shift` | Hold modifier keys while pressing (e.g. Ctrl+Shift+ArrowRight to select a word — a real rich-text-editor toolbar formatting workflow). |
 | `select <ref> <value>` | Select an `<option>` by value on a `<select>`. |
-| `wait <ref> [timeoutMs]` | Wait for an element to appear and be visible. |
+| `wait <ref> [timeoutMs] [--state visible\|attached\|hidden]` | Wait for an element to become visible (default), just attached to the DOM (`--state attached`, visibility ignored), or removed/not visible (`--state hidden`). "Visible" means a non-empty bounding box AND computed visibility not `hidden`/`collapse`, checked on the FIRST matching element — `opacity:0` and off-screen elements still count as visible; zero width/height, `display:none` and `visibility:hidden` count as hidden. `--state hidden` succeeds immediately if nothing matches the selector at all. `timeoutMs` applies per internal attempt; retries can extend the real total wait beyond it (open issue). `timeoutMs <= 0` checks the current state once, immediately, with no waiting or retrying. Waiting states poll roughly every 100ms, so a state that's only true for less than ~100ms (a fast visibility flicker) may be missed. |
 | `eval <js-expression>` | Evaluate JS in the page's top-level context, print the result. |
 | `eval <js-expression> --frame <selector>` | Same, but inside a specific `<iframe>` (selector or numeric id from `snap`) — including a genuinely cross-origin one. Chain with `::` for an iframe nested inside another iframe, e.g. `--frame "iframe.widget::iframe.payment"`. |
 | `hover <ref>` | Hover an element. |
 | `scroll [dir] [amountPx]` | Scroll the page (`dir`: up/down/top/bottom, default down 500px). |
 | `scroll [dir] [amountPx] [targetRef]` | Scroll a specific element's own scroll container instead of the window (a data grid's rows, a chat pane, a modal body) — pair with `--settle` to reliably see newly-revealed content. |
-| `upload <ref> <filePath>` | Upload a local file into an `<input type="file">`. |
+| `upload <ref> <filePath>` | Upload a local file into an `<input type="file">`. Unrestricted unless `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` is set. |
 | `drag <sourceRef> <destRef>` | Drag one element onto another. |
 | `clickpoint <x> <y>` | Click at an absolute viewport coordinate — no element/selector, for canvas-rendered UI with nothing DOM-addressable to target. |
 | `dragpoints <fromX> <fromY> <toX> <toY>` | Real mouse-down→move→up drag between two absolute viewport coordinates — for canvas-rendered drag targets (a signature pad, a slider/chart handle drawn on a `<canvas>`). |
 | `grant <origin> <permission...>` | Grant browser permissions for an origin (e.g. `clipboard-read`, `clipboard-write`, `geolocation`, `notifications`) — needed before `setclipboard`/`getclipboard` work against most real sites. |
 | `setclipboard <text>` | Set the system clipboard (e.g. to then paste into a rich-text editor via `press <ref> v --modifiers Control`). |
 | `getclipboard` | Print the current system clipboard contents. |
-| `tabs` | List open tabs (id, title, url) — `*` marks the active one. |
+| `tabs` | List open tabs (id, title, url) — `*` marks the active one. Still works when a tab is blocked by a dialog or has crashed: it then lists browser target ids at the browser level without attaching to any page, and marks crashed tabs `[crashed]`. |
 | `newtab [url]` | Open a new tab, optionally navigating it immediately. |
 | `focustab <tabId>` | Switch the active tab (e.g. after a link opened `target="_blank"`). |
-| `closetab <tabId>` | Close a specific tab. |
-| `download <ref> [dir]` | Click an element that triggers a download, print the saved path. |
+| `closetab <tabId>` | Close a specific tab. Also works on a blocked or crashed tab (pass the target id exactly as `tabs` printed it — see [Known limitations](#known-limitations)). |
+| `download <ref> [dir]` | Click an element that triggers a download, print the saved absolute path. Run one download per browser at a time (see [Known limitations](#known-limitations)). `[dir]` (relative to the current directory) is always allowed for this command; without it the file goes to the first allowed download root (`<OS temp>/sutradhar-downloads` by default, or `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`'s first entry). |
 | `screenshot [path]` | Save a screenshot (default: `./screenshot.png`). |
-| `audit [url] [outDir]` | Screenshot + console/page/network errors + accessibility checks + Core Web Vitals for a page (current page if no url). |
-| `audit [url] [outDir] --baseline <url>` | Same, plus a visual pixel-diff against a known-good baseline URL — a one-command regression gate combining `audit` + `compare`. |
+| `audit [url] [outDir] [--json]` | Screenshot + console/page/network errors + accessibility heuristics + Web Vitals for a page (current page if no url; use `""` as url to also pass an outDir). `outDir` is created if missing. `--json` prints one machine-readable report (schemaVersion 1, see `packages/capability-runtime/schemas/audit-report.schema.json`) instead of the human-readable text; images are always written as files and referenced by absolute path, never inlined. Auditing the current page only sees errors/requests since this command attached — pass the url for full coverage. |
+| `audit [url] [outDir] --baseline <url>` | Same, plus a pixel-diff of `<url>` vs a fresh load of the audited url (viewport screenshots; the page is reloaded) — a one-command regression gate combining `audit` + `compare`. |
 | `compare <urlA> <urlB> [out]` | Visual regression: pixel-diff two pages, save a diff image. |
+| `dialog` | Show any open native dialog (alert/confirm/prompt/beforeunload), or "No dialog is open." |
+| `dialog accept [text]` | Accept the oldest open dialog (`text` = what to type into a `prompt()`; ignored for other dialog types). |
+| `dialog dismiss` | Dismiss the oldest open dialog. |
 | `close` | Close the active session. |
 | `doctor` | Environment diagnostics (Chrome detection, active session). |
 | `profile create <name> [desc]` | Create a named, persistent profile (cookies/history/storage survive across separate launches). |
@@ -102,16 +105,111 @@ Run `sutradhar` with no arguments for the full command list.
 | `--profile <name>` | `nav` (new session only) | Launch as a named persistent profile (create one first via `profile create`). |
 | `--user-agent <ua>` | `nav` (new session only) | Launch with a custom `navigator.userAgent`. |
 | `--allowlist-domains <a.com,b.com>` | any command | Block navigation to any domain not in this comma-separated list (and their subdomains). Per-command, not persisted in session state — pass it on every command that might navigate. |
-| `--json` | `snap` | Additionally print structured per-element data as JSON. |
+| `--json` | `snap`, `audit` | `snap`: additionally print structured per-element data as JSON. `audit`: print the machine-readable JSON report instead of the human-readable text. |
 | `--no-text` | `snap` | Drop per-element text, keep tag+role+id. |
 | `--ids-only` | `snap` | Keep only the bracketed id, nothing else. |
 | `--baseline <url>` | `audit` | Also visually diff the audited page against this URL. |
 | `--fail-on-diff` | `compare`, `audit` | Exit nonzero if a pixel difference is found (`compare`), or if any console/page/broken-request error or (with `--baseline`) visual diff is found (`audit`) — CI-friendly gating. |
 | `--settle` | `click`, `type`, `scroll` | Wait for the page to stop actively changing (no DOM mutations, no in-flight network requests) before returning — helps when the action triggers a menu/modal/toast/virtualized-list-update that renders a moment later. |
 | `--scan-listeners` | `snap` | Also find real `addEventListener`-only elements (see command list above). |
+| `--state <visible|attached|hidden>` | `wait` | Which state to wait for (default `visible`). |
+| `--viewport <WxH>` | session creation | Set the CDP viewport (e.g. `--viewport 390x844`) and, with `--headed`, the real OS window size. Persists across later commands until a new `--viewport` is given. |
+| `--frame <selector>` | `eval` | Evaluate inside a specific `<iframe>` (see the `eval` rows above). |
 | `--modifiers <Control,Shift>` | `press` | Hold modifier keys while pressing the given key. |
+| `--dialog <accept\|dismiss\|report>` | any session command | Sets this session's default policy for native dialogs (alert/confirm/prompt/beforeunload), **persisted** across later commands until changed again — including `--dialog report`, which explicitly persists back to the default "leave it open and report it" behavior (it does not merely clear a previous `accept`/`dismiss`). `report` (the CLI's own default) never auto-resolves alert/confirm/prompt; while one is open, other commands exit with code **3** until you run `sutradhar dialog accept\|dismiss`. `beforeunload` during a navigation is still auto-accepted after 3s under `report`, so a page-initiated "leave this page?" prompt can't hang a `nav` forever. |
+| `--dialog-text <text>` | any session command, with `--dialog accept` | The text entered into `prompt()` dialogs when the session's policy auto-accepts one (default: the prompt's own default value). |
+
+**Selectors.** Selectors are CSS (shadow roots crossed for element actions), a numeric id from `snap`, or Puppeteer's `pierce/`, `xpath/`, `aria/` and `text/` prefixes. Playwright syntax (`text=`, `role=`, `>>`, `:has-text()`, `getBy*()`, `internal:`) and the old `xpath=`/`aria=`/`pierce=` forms are rejected immediately with a hint instead of failing slowly — use `clicktext`/`clickrole` to target by visible text or accessible role. Invalid CSS/XPath fails in one round trip with the browser's own parser message.
 
 Run `sutradhar` with no arguments for this same list straight from the binary.
+
+## Environment
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` | `<OS temp>/sutradhar-downloads` | Directories `download` may write into, separated by `;` (Windows) or `:` (elsewhere); absolute paths, or `~` for the home directory. Replaces the default; the first entry becomes the destination when `download`'s `[dir]` is omitted. The directory named on `download <ref> <dir>` itself is always allowed too, for that one invocation only — it is not written to session state and does not widen later commands. |
+| `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` | _(unset — unrestricted)_ | If set, `upload` may only read files under these directories (off by default). |
+| `SUTRADHAR_CLI_STATE_DIR` | per-project-directory hash | Where session state (`state.json`) is stored — see above. |
+| `SUTRADHAR_CLI_DEADLINE_MS` | `300000` | Process watchdog: a command still running after this many milliseconds is stopped with an error message. `wait <ref> <timeoutMs>` extends its own deadline to at least 3 x `timeoutMs` + 30 s. |
+
+## Native dialogs (alert / confirm / prompt / beforeunload)
+
+Because each `sutradhar` command is its own short-lived process, a dialog opened by one command
+(e.g. `sutradhar click "#delete"` triggering a `confirm()`) would otherwise be invisible to, and
+unhandleable by, the next one — the in-page `Dialog` object only ever exists inside the process
+that was attached when it opened. The CLI runs a small per-session **dialog warden** (a detached
+helper process, started automatically alongside the browser) that stays attached the whole time,
+so a dialog left open between commands can still be seen and handled later:
+
+```bash
+sutradhar nav https://example.com
+sutradhar click "#delete"        # opens a confirm() — the click "succeeds", but the
+                                  # confirm is left open (the default policy is "report")
+                                  # -> prints: dialogPending: {"type":"confirm","message":"...","defaultValue":null,"url":"..."}
+sutradhar dialog                 # shows what's open, without touching it
+sutradhar dialog accept          # accepts it — prints: Accepted confirm "..."
+```
+
+Every session command exits with code **3** while a dialog is open and blocking the page
+(instead of hanging or silently acting on the wrong tab) — run `sutradhar dialog` to see what's
+open, then `sutradhar dialog accept|dismiss` to clear it, or set `--dialog accept|dismiss` once
+so future dialogs in that session are resolved automatically without you having to intervene.
+
+**Exit codes:** `0` ok, `1` failure, `3` blocked by or interrupted by an open dialog.
+
+The warden and the exit-3 gate are new and have known gaps — read [Known limitations](#known-limitations) before relying on them in automation.
+
+## Known limitations
+
+These are open, reproduced problems on the current branch (not yet released as 0.5.0), not
+hypothetical ones.
+
+**Native dialogs and crashed tabs**
+
+- A tab that has crashed (for example via `chrome://crash`), whether it is the active tab or a
+  background tab, makes other gated commands (`nav`, `snap`, `click`, ...) hang until the crashed
+  tab is closed (the process watchdog, `SUTRADHAR_CLI_DEADLINE_MS`, default 300 s, bounds how
+  long a stuck command runs). Recover with `sutradhar tabs` (lists every tab without attaching to
+  the crashed one and marks it `[crashed]`), then `sutradhar closetab <id>`. `tabs` and
+  `closetab` are served from a browser-level connection, so they work even while a tab is blocked.
+- The note printed for a crashed tab also suggests reloading it with `sutradhar nav <url>`. That
+  advice is wrong for a `chrome://crash` crash (the `nav` hangs): use `tabs` then `closetab <id>`.
+- `closetab` needs the target id exactly as `tabs` printed it (upper-case hex); a lower-case id is
+  rejected by Chrome. `--dialog` policies are not applied on the `tabs`/`closetab` browser-level path.
+- If the page that opened several same-renderer popups closes before you handle them, the popups
+  are no longer linked to each other and `dialog accept|dismiss` can close the wrong (innocent)
+  popup first.
+- A tab that is busy from the moment it is created (long synchronous work) can be reported as
+  blocked by an "unknown" dialog (exit 3) although none is open; the tool cannot tell the two apart.
+  Treat exit 3 as "check with `sutradhar dialog` and `tabs`", not as proof of a dialog.
+
+**Downloads and uploads**
+
+- Path containment (`SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`/`SUTRADHAR_ALLOWED_UPLOAD_ROOTS`) is verified,
+  including symlink/junction and Windows path tricks.
+- Protection against two overlapping downloads on one browser is **best effort**. A second
+  `download` while another is in flight is refused immediately, but the cross-process lock lives in
+  the process temp directory and is keyed by the exact browser endpoint string, so separate
+  processes may not share it. Every CLI command is its own process: run one `download` per
+  browser at a time.
+- Downloads a page starts on its own (not through `sutradhar download`) are not covered by the
+  roots and can land in Chrome's default download location.
+
+**Audit**
+
+- `audit` (no URL) of a brand-new tab right after its first navigation can miss the page's own HTTP
+  error status while still reporting `coversWholeDocument: true`. The settle wait is a fixed 1500 ms,
+  so a request slower than that can be missing from the broken-request list. A page restored from
+  the back/forward cache reports `coversWholeDocument: false`. Only HTTP status 400+ counts as a
+  broken request (DNS failures and blocked requests do not).
+- `snap --json` can print more than one JSON document if a dialog is open at the time.
+
+**`wait`**
+
+- `--state hidden` success is best effort (the code path that decides "hidden" has produced false
+  answers in several audit rounds; the known ones are fixed). Polling is about every 100 ms, only the
+  first matching element is checked, and a failed visible-wait can take about 3 x `timeoutMs`
+  because the engine retries twice (`timeoutMs <= 0` does not retry).
 
 ## Why `axsnap`/`clicktext`/`clickrole` over `snap`/`click`
 

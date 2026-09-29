@@ -1,0 +1,55 @@
+{
+  "targets": [
+    {
+      "id": "FEEB1A511865CCA66A650C8FF7D4FA04",
+      "url": "http://127.0.0.1:63153/?b"
+    },
+    {
+      "id": "EFFB65ACB09E9339F4B55C946818EA6E",
+      "url": "http://127.0.0.1:63153/?a"
+    }
+  ],
+  "preLive": "responsive",
+  "sessionEvents": [
+    "Inspector.targetCrashed"
+  ],
+  "browserEvents": [
+    {
+      "ev": "Target.targetInfoChanged",
+      "e": "{\"targetInfo\":{\"targetId\":\"ED5FE4953E31A45BBEFD6A9B688C9EBB\",\"type\":\"service_worker\",\"title\":\"Service Worker chrome-extension://fignfifoniblkonapihmkfakmlgkbkcf/service_worker.js\",\"url\":\"chrome-extension://fignfifoniblkonapihmkfakmlgkbkcf/service_worker.js\",\"attached\":false,\"canAccessOpener\":false,\""
+    },
+    {
+      "ev": "Target.targetCrashed",
+      "e": "{\"targetId\":\"EFFB65ACB09E9339F4B55C946818EA6E\",\"status\":\"crashed\",\"errorCode\":-1073741819}"
+    },
+    {
+      "ev": "Target.targetInfoChanged",
+      "e": "{\"targetInfo\":{\"targetId\":\"56F54621A925443651D5BAB4B6415851\",\"type\":\"background_page\",\"title\":\"Chrome Web Store Payments\",\"url\":\"chrome-extension://nmmhkkegccagdldgiimedpiccmgmieda/_generated_background_page.html\",\"attached\":true,\"canAccessOpener\":false,\"browserContextId\":\"AB637C9FBAA4438BF6F31DA420"
+    },
+    {
+      "ev": "Target.targetInfoChanged",
+      "e": "{\"targetInfo\":{\"targetId\":\"3A4C29DD3E939C5EAC996EBDEDF9A8DA\",\"type\":\"service_worker\",\"title\":\"Service Worker chrome-extension://ghbmnnjooekpmoecnnnilnnbdlolhkhi/service_worker_bin_prod.js\",\"url\":\"chrome-extension://ghbmnnjooekpmoecnnnilnnbdlolhkhi/service_worker_bin_prod.js\",\"attached\":true,\"canAcce"
+    },
+    {
+      "ev": "Target.targetInfoChanged",
+      "e": "{\"targetInfo\":{\"targetId\":\"3A4C29DD3E939C5EAC996EBDEDF9A8DA\",\"type\":\"service_worker\",\"title\":\"Service Worker chrome-extension://ghbmnnjooekpmoecnnnilnnbdlolhkhi/service_worker_bin_prod.js\",\"url\":\"chrome-extension://ghbmnnjooekpmoecnnnilnnbdlolhkhi/service_worker_bin_prod.js\",\"attached\":false,\"canAcc"
+    }
+  ],
+  "postLive": "blocked",
+  "postPerf": "Performance.getMetrics timed out. Increase the 'protocolTimeout' setting in launch/connect calls for",
+  "getTargets": [
+    {
+      "id": "EFFB65ACB09E9339F4B55C946818EA6E",
+      "url": "chrome://crash/",
+      "title": "p",
+      "attached": true
+    },
+    {
+      "id": "FEEB1A511865CCA66A650C8FF7D4FA04",
+      "url": "http://127.0.0.1:63153/?b",
+      "title": "p",
+      "attached": true
+    }
+  ],
+  "ms": 5014.7363
+}

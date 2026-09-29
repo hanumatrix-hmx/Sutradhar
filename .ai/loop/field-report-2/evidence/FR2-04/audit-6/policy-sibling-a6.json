@@ -1,0 +1,336 @@
+{
+  "at": "2026-09-27T06:05:12.435Z",
+  "rows": [
+    {
+      "t": 0,
+      "cmd": "snap --dialog accept",
+      "n": "ps0x45827",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 839,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps0x45827\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:52671/?n=ps0x45827\nTitle: opener ps0x45827\nInteractive elements (0):",
+        "err": "Note: dialog policy for this session is now \"accept\"."
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:52671/?n=ps0x45827",
+        "http://127.0.0.1:52671/pop?n=ps0x45827"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 0,
+      "cmd": "snap --dialog dismiss",
+      "n": "ps0x49801",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 834,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps0x49801\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:52671/pop?n=ps0x49801\nTitle: pop\nInteractive elements (0):",
+        "err": "Note: dialog policy for this session is now \"dismiss\"."
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:52671/?n=ps0x49801",
+        "http://127.0.0.1:52671/pop?n=ps0x49801"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 0,
+      "cmd": "dialog accept",
+      "n": "ps0x53704",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 1117,
+        "out": "Accepted alert \"PS-ps0x53704\"",
+        "err": ""
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:52671/?n=ps0x53704",
+        "http://127.0.0.1:52671/pop?n=ps0x53704"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 1,
+      "cmd": "snap --dialog accept",
+      "n": "ps1x57898",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 837,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps1x57898\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:52671/pop?n=ps1x57898\nTitle: pop\nInteractive elements (0):",
+        "err": "Note: dialog policy for this session is now \"accept\"."
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:52671/?n=ps1x57898",
+        "http://127.0.0.1:52671/pop?n=ps1x57898"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 1,
+      "cmd": "snap --dialog dismiss",
+      "n": "ps1x61779",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 831,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps1x61779\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:52671/?n=ps1x61779\nTitle: opener ps1x61779\nInteractive elements (0):",
+        "err": "Note: dialog policy for this session is now \"dismiss\"."
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:52671/?n=ps1x61779",
+        "http://127.0.0.1:52671/pop?n=ps1x61779"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 1,
+      "cmd": "dialog accept",
+      "n": "ps1x65636",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 1113,
+        "out": "Accepted alert \"PS-ps1x65636\"",
+        "err": ""
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:52671/?n=ps1x65636",
+        "http://127.0.0.1:52671/pop?n=ps1x65636"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 2,
+      "cmd": "snap --dialog accept",
+      "n": "ps2x69798",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 828,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps2x69798\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:52671/pop?n=ps2x69798\nTitle: pop\nInteractive elements (0):",
+        "err": "Note: dialog policy for this session is now \"accept\"."
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:52671/?n=ps2x69798",
+        "http://127.0.0.1:52671/pop?n=ps2x69798"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 2,
+      "cmd": "snap --dialog dismiss",
+      "n": "ps2x73651",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 833,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps2x73651\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:52671/pop?n=ps2x73651\nTitle: pop\nInteractive elements (0):",
+        "err": "Note: dialog policy for this session is now \"dismiss\"."
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:52671/?n=ps2x73651",
+        "http://127.0.0.1:52671/pop?n=ps2x73651"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 2,
+      "cmd": "dialog accept",
+      "n": "ps2x77532",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 1124,
+        "out": "Accepted alert \"PS-ps2x77532\"",
+        "err": ""
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:52671/?n=ps2x77532",
+        "http://127.0.0.1:52671/pop?n=ps2x77532"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 3,
+      "cmd": "snap --dialog accept",
+      "n": "ps3x81697",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 828,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps3x81697\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:52671/pop?n=ps3x81697\nTitle: pop\nInteractive elements (0):",
+        "err": "Note: dialog policy for this session is now \"accept\"."
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:52671/?n=ps3x81697",
+        "http://127.0.0.1:52671/pop?n=ps3x81697"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 3,
+      "cmd": "snap --dialog dismiss",
+      "n": "ps3x85527",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 830,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps3x85527\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:52671/?n=ps3x85527\nTitle: opener ps3x85527\nInteractive elements (0):",
+        "err": "Note: dialog policy for this session is now \"dismiss\"."
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:52671/?n=ps3x85527",
+        "http://127.0.0.1:52671/pop?n=ps3x85527"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 3,
+      "cmd": "dialog accept",
+      "n": "ps3x89384",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 1127,
+        "out": "Accepted alert \"PS-ps3x89384\"",
+        "err": ""
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:52671/?n=ps3x89384",
+        "http://127.0.0.1:52671/pop?n=ps3x89384"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 4,
+      "cmd": "snap --dialog accept",
+      "n": "ps4x93597",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 853,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps4x93597\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:52671/?n=ps4x93597\nTitle: opener ps4x93597\nInteractive elements (0):",
+        "err": "Note: dialog policy for this session is now \"accept\"."
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:52671/?n=ps4x93597",
+        "http://127.0.0.1:52671/pop?n=ps4x93597"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 4,
+      "cmd": "snap --dialog dismiss",
+      "n": "ps4x97642",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 843,
+        "out": "dialogHandled: {\"type\":\"alert\",\"message\":\"PS-ps4x97642\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}\nURL: http://127.0.0.1:52671/?n=ps4x97642\nTitle: opener ps4x97642\nInteractive elements (0):",
+        "err": "Note: dialog policy for this session is now \"dismiss\"."
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:52671/?n=ps4x97642",
+        "http://127.0.0.1:52671/pop?n=ps4x97642"
+      ],
+      "verdict": "OK"
+    },
+    {
+      "t": 4,
+      "cmd": "dialog accept",
+      "n": "ps4x1523",
+      "warden": [
+        "POP:alert",
+        "OPENER:unknown"
+      ],
+      "res": {
+        "code": 0,
+        "ms": 1120,
+        "out": "Accepted alert \"PS-ps4x1523\"",
+        "err": ""
+      },
+      "openerAlive": true,
+      "urls": [
+        "http://127.0.0.1:52671/?n=ps4x1523",
+        "http://127.0.0.1:52671/pop?n=ps4x1523"
+      ],
+      "verdict": "OK"
+    }
+  ],
+  "summary": {
+    "snap --dialog accept": {
+      "OK": 5
+    },
+    "snap --dialog dismiss": {
+      "OK": 5
+    },
+    "dialog accept": {
+      "OK": 5
+    }
+  },
+  "leftovers": {
+    "wardens": [],
+    "chrome": [],
+    "cliChildren": []
+  }
+}

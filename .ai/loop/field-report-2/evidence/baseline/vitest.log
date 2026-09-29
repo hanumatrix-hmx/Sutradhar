@@ -1,0 +1,518 @@
+
+> sutradhar-monorepo@0.1.0 test E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041
+> turbo run test
+
+• turbo 2.10.0
+
+   • Packages in scope: @hanumatrix/dev-runtime, @sutradhar/agent, @sutradhar/browser, @sutradhar/capability, @sutradhar/capability-runtime, @sutradhar/cli, @sutradhar/config, @sutradhar/contracts, @sutradhar/events, @sutradhar/frontend, @sutradhar/llm, @sutradhar/mcp-server, @sutradhar/memory, @sutradhar/observability, @sutradhar/sdk, @sutradhar/server, @sutradhar/storage, @sutradhar/utils, @sutradhar/workflow, sutradhar
+   • Running test in 20 packages
+   • Remote caching disabled, using shared worktree cache
+
+@sutradhar/contracts:build: cache hit, replaying logs 7df0acd37a958381
+@sutradhar/contracts:build: 
+@sutradhar/contracts:build: > @sutradhar/contracts@0.1.0 build E:\HMX_Projects\Internal_Projects\PinchTab\packages\contracts
+@sutradhar/contracts:build: > tsc
+@sutradhar/contracts:build: 
+@sutradhar/utils:test: cache miss, executing 674eb991628487ad
+@sutradhar/capability:build: cache hit, replaying logs 70fd9c7cbdec5915
+@sutradhar/capability:build: 
+@sutradhar/capability:build: > @sutradhar/capability@0.1.0 build E:\HMX_Projects\Internal_Projects\PinchTab\packages\capability
+@sutradhar/capability:build: > tsc
+@sutradhar/capability:build: 
+@sutradhar/utils:build: cache hit, replaying logs eddea8bcebbfd297
+@sutradhar/utils:build: 
+@sutradhar/utils:build: > @sutradhar/utils@0.1.0 build E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\utils
+@sutradhar/utils:build: > tsc
+@sutradhar/utils:build: 
+@sutradhar/observability:test: cache miss, executing 560877de4d331848
+@sutradhar/config:test: cache miss, executing 3e8e44e2a77779be
+@sutradhar/config:build: cache hit, replaying logs 942883d5fe69ba09
+@sutradhar/config:build: 
+@sutradhar/config:build: > @sutradhar/config@0.1.0 build E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\config
+@sutradhar/config:build: > tsc
+@sutradhar/config:build: 
+@sutradhar/observability:build: cache hit, replaying logs 6bdc0192fbf69153
+@sutradhar/observability:build: 
+@sutradhar/observability:build: > @sutradhar/observability@0.1.0 build E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\observability
+@sutradhar/observability:build: > tsc
+@sutradhar/observability:build: 
+@sutradhar/events:test: cache miss, executing a3bad6cf5a8abd33
+@sutradhar/contracts:test: cache hit, replaying logs 2e2485861024a44b
+@sutradhar/sdk:test: cache miss, executing 9732c874cef1cd5b
+@sutradhar/contracts:test: 
+@sutradhar/contracts:test: > @sutradhar/contracts@0.1.0 test E:\HMX_Projects\Internal_Projects\PinchTab\packages\contracts
+@sutradhar/contracts:test: > vitest run --globals
+@sutradhar/contracts:test: 
+@sutradhar/contracts:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@sutradhar/contracts:test: 
+@sutradhar/contracts:test:  RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/packages/contracts
+@sutradhar/contracts:test: 
+@sutradhar/contracts:test:  ✓ tests/unit/dto.spec.ts  (2 tests) 3ms
+@sutradhar/contracts:test:  ✓ tests/unit/errors.spec.ts  (3 tests) 3ms
+@sutradhar/contracts:test:  ✓ tests/unit/shared.spec.ts  (1 test) 2ms
+@sutradhar/contracts:test:  ✓ tests/unit/events.spec.ts  (1 test) 1ms
+@sutradhar/contracts:test: 
+@sutradhar/contracts:test:  Test Files  4 passed (4)
+@sutradhar/contracts:test:       Tests  7 passed (7)
+@sutradhar/contracts:test:    Start at  22:23:17
+@sutradhar/contracts:test:    Duration  453ms (transform 175ms, setup 0ms, collect 252ms, tests 9ms, environment 1ms, prepare 726ms)
+@sutradhar/contracts:test: 
+@sutradhar/events:build: cache hit, replaying logs 5c01e884bf1ec892
+@sutradhar/events:build: 
+@sutradhar/events:build: > @sutradhar/events@0.1.0 build E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\events
+@sutradhar/events:build: > tsc
+@sutradhar/events:build: 
+@sutradhar/memory:test: cache miss, executing 5147102a7241c7c9
+@sutradhar/sdk:build: cache hit, replaying logs f44d8aabd02ccc80
+@sutradhar/sdk:build: 
+@sutradhar/sdk:build: > @sutradhar/sdk@0.2.0 build E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sdk
+@sutradhar/sdk:build: > tsc
+@sutradhar/sdk:build: 
+@sutradhar/capability:test: cache hit, replaying logs c8023be9f2999e33
+@sutradhar/storage:test: cache miss, executing 4ec0e325248892e3
+@sutradhar/capability:test: 
+@sutradhar/capability:test: > @sutradhar/capability@0.1.0 test E:\HMX_Projects\Internal_Projects\PinchTab\packages\capability
+@sutradhar/capability:test: > vitest run --globals
+@sutradhar/capability:test: 
+@sutradhar/capability:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@sutradhar/capability:test: 
+@sutradhar/capability:test:  RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/packages/capability
+@sutradhar/capability:test: 
+@sutradhar/capability:test:  ✓ tests/unit/capability.spec.ts  (2 tests) 2ms
+@sutradhar/capability:test:  ✓ tests/unit/checker.spec.ts  (4 tests) 2ms
+@sutradhar/capability:test: 
+@sutradhar/capability:test:  Test Files  2 passed (2)
+@sutradhar/capability:test:       Tests  6 passed (6)
+@sutradhar/capability:test:    Start at  22:23:17
+@sutradhar/capability:test:    Duration  679ms (transform 161ms, setup 0ms, collect 248ms, tests 4ms, environment 1ms, prepare 553ms)
+@sutradhar/capability:test: 
+@sutradhar/llm:test: cache miss, executing adfd2090aee37b40
+@sutradhar/llm:build: cache hit, replaying logs 93614f67b3762de1
+@sutradhar/llm:build: 
+@sutradhar/llm:build: > @sutradhar/llm@0.1.0 build E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\llm
+@sutradhar/llm:build: > tsc
+@sutradhar/llm:build: 
+@sutradhar/browser:test: cache miss, executing cc10f59991457d8a
+@sutradhar/browser:build: cache hit, replaying logs 14df47e48d046faa
+@sutradhar/browser:build: 
+@sutradhar/browser:build: > @sutradhar/browser@0.1.0 build E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\browser
+@sutradhar/browser:build: > tsc
+@sutradhar/browser:build: 
+@sutradhar/memory:build: cache hit, replaying logs da7c6df901a238b0
+@sutradhar/memory:build: 
+@sutradhar/memory:build: > @sutradhar/memory@0.1.0 build E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\memory
+@sutradhar/memory:build: > tsc
+@sutradhar/memory:build: 
+@sutradhar/storage:build: cache hit, replaying logs a3fea81481db25fc
+@sutradhar/storage:build: 
+@sutradhar/storage:build: > @sutradhar/storage@0.1.0 build E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\storage
+@sutradhar/storage:build: > tsc
+@sutradhar/storage:build: 
+@sutradhar/frontend:test: cache miss, executing 27d91ecc915f7f37
+@sutradhar/utils:test: 
+@sutradhar/utils:test: > @sutradhar/utils@0.1.0 test E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\utils
+@sutradhar/utils:test: > vitest run --globals
+@sutradhar/utils:test: 
+@sutradhar/observability:test: 
+@sutradhar/observability:test: > @sutradhar/observability@0.1.0 test E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\observability
+@sutradhar/observability:test: > vitest run --globals
+@sutradhar/observability:test: 
+@sutradhar/config:test: 
+@sutradhar/config:test: > @sutradhar/config@0.1.0 test E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\config
+@sutradhar/config:test: > vitest run --globals
+@sutradhar/config:test: 
+@sutradhar/events:test: 
+@sutradhar/events:test: > @sutradhar/events@0.1.0 test E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\events
+@sutradhar/events:test: > vitest run --globals
+@sutradhar/events:test: 
+@sutradhar/sdk:test: 
+@sutradhar/sdk:test: > @sutradhar/sdk@0.2.0 test E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sdk
+@sutradhar/sdk:test: > vitest run --globals
+@sutradhar/sdk:test: 
+@sutradhar/memory:test: 
+@sutradhar/memory:test: > @sutradhar/memory@0.1.0 test E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\memory
+@sutradhar/memory:test: > vitest run --globals
+@sutradhar/memory:test: 
+@sutradhar/storage:test: 
+@sutradhar/storage:test: > @sutradhar/storage@0.1.0 test E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\storage
+@sutradhar/storage:test: > vitest run --globals
+@sutradhar/storage:test: 
+@sutradhar/llm:test: 
+@sutradhar/llm:test: > @sutradhar/llm@0.1.0 test E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\llm
+@sutradhar/llm:test: > vitest run --globals
+@sutradhar/llm:test: 
+@sutradhar/browser:test: 
+@sutradhar/browser:test: > @sutradhar/browser@0.1.0 test E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\browser
+@sutradhar/browser:test: > vitest run --globals
+@sutradhar/browser:test: 
+@sutradhar/frontend:test: 
+@sutradhar/frontend:test: > @sutradhar/frontend@0.1.0 test E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\frontend
+@sutradhar/frontend:test: > vitest run --config vitest.config.ts
+@sutradhar/frontend:test: 
+@sutradhar/utils:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@sutradhar/storage:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@sutradhar/sdk:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@sutradhar/memory:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@sutradhar/config:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@sutradhar/observability:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@sutradhar/browser:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@sutradhar/events:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@sutradhar/llm:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@sutradhar/frontend:test: 
+@sutradhar/frontend:test: [7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/frontend[39m
+@sutradhar/frontend:test: 
+@sutradhar/storage:test: 
+@sutradhar/browser:test: 
+@sutradhar/storage:test: [7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/storage[39m
+@sutradhar/storage:test: 
+@sutradhar/browser:test: [7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser[39m
+@sutradhar/browser:test: 
+@sutradhar/config:test: 
+@sutradhar/config:test: [7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/config[39m
+@sutradhar/config:test: 
+@sutradhar/observability:test: 
+@sutradhar/observability:test: [7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/observability[39m
+@sutradhar/observability:test: 
+@sutradhar/sdk:test: 
+@sutradhar/sdk:test: [7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sdk[39m
+@sutradhar/sdk:test: 
+@sutradhar/llm:test: 
+@sutradhar/llm:test: [7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/llm[39m
+@sutradhar/llm:test: 
+@sutradhar/events:test: 
+@sutradhar/events:test: [7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/events[39m
+@sutradhar/events:test: 
+@sutradhar/utils:test: 
+@sutradhar/utils:test: [7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/utils[39m
+@sutradhar/utils:test: 
+@sutradhar/memory:test: 
+@sutradhar/memory:test: [7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/memory[39m
+@sutradhar/memory:test: 
+@sutradhar/config:test:  [32m✓[39m tests/unit/provider.spec.ts [2m ([22m[2m3 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+@sutradhar/browser:test:  [32m✓[39m tests/unit/page-understanding.spec.ts [2m ([22m[2m6 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+@sutradhar/utils:test:  [32m✓[39m tests/unit/port-resolver.spec.ts [2m ([22m[2m2 tests[22m[2m)[22m[90m 15[2mms[22m[39m
+@sutradhar/observability:test:  [32m✓[39m tests/unit/devtools.spec.ts [2m ([22m[2m3 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+@sutradhar/utils:test:  [32m✓[39m tests/unit/formatters.spec.ts [2m ([22m[2m4 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+@sutradhar/utils:test:  [32m✓[39m tests/unit/crypto.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+@sutradhar/utils:test:  [32m✓[39m tests/unit/dev-runtime.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[90m 23[2mms[22m[39m
+@sutradhar/sdk:test:  [32m✓[39m tests/unit/plugin-sdk.spec.ts [2m ([22m[2m6 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+@sutradhar/utils:test:  [32m✓[39m tests/unit/async.spec.ts [2m ([22m[2m4 tests[22m[2m)[22m[90m 74[2mms[22m[39m
+@sutradhar/utils:test: 
+@sutradhar/utils:test: [2m Test Files [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+@sutradhar/utils:test: [2m      Tests [22m [1m[32m20 passed[39m[22m[90m (20)[39m
+@sutradhar/utils:test: [2m   Start at [22m 02:54:05
+@sutradhar/utils:test: [2m   Duration [22m 3.51s[2m (transform 509ms, setup 0ms, collect 1.26s, tests 124ms, environment 1ms, prepare 5.99s)[22m
+@sutradhar/utils:test: 
+@sutradhar/sdk:test:  [32m✓[39m tests/unit/loader.spec.ts [2m ([22m[2m10 tests[22m[2m)[22m[90m 45[2mms[22m[39m
+@sutradhar/config:test:  [32m✓[39m tests/unit/schema.spec.ts [2m ([22m[2m3 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+@sutradhar/sdk:test: 
+@sutradhar/config:test: 
+@sutradhar/sdk:test: [2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+@sutradhar/sdk:test: [2m      Tests [22m [1m[32m16 passed[39m[22m[90m (16)[39m
+@sutradhar/sdk:test: [2m   Start at [22m 02:54:05
+@sutradhar/sdk:test: [2m   Duration [22m 3.58s[2m (transform 172ms, setup 0ms, collect 269ms, tests 50ms, environment 0ms, prepare 1.24s)[22m
+@sutradhar/sdk:test: 
+@sutradhar/config:test: [2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+@sutradhar/config:test: [2m      Tests [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+@sutradhar/config:test: [2m   Start at [22m 02:54:05
+@sutradhar/config:test: [2m   Duration [22m 3.58s[2m (transform 71ms, setup 0ms, collect 155ms, tests 13ms, environment 0ms, prepare 1.56s)[22m
+@sutradhar/config:test: 
+@sutradhar/observability:test:  [32m✓[39m tests/unit/studio.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+@sutradhar/observability:test:  [32m✓[39m tests/unit/logger.spec.ts [2m ([22m[2m3 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+@sutradhar/observability:test:  [32m✓[39m tests/unit/metrics-tracing.spec.ts [2m ([22m[2m2 tests[22m[2m)[22m[90m 13[2mms[22m[39m
+@sutradhar/memory:test: [90mstdout[2m | tests/unit/episodic-memory.spec.ts[2m > [22m[2mEngineering Iteration 6 — Episodic Execution Memory Unit Tests[2m > [22m[2m1. should create and finalize successful execution episode with lessons learned[22m[39m
+@sutradhar/memory:test: {"timestamp":"2026-09-24T21:24:09.278Z","level":"info","message":"[EpisodicMemoryManager] Created episode ep_1790285049277_443 for goal \"Submit login form\" (PageType: Authentication)","context":{}}
+@sutradhar/memory:test: {"timestamp":"2026-09-24T21:24:09.280Z","level":"info","message":"[EpisodicMemoryManager] Finalized episode ep_1790285049277_443 with outcome success. Extracted 2 lessons.","context":{}}
+@sutradhar/memory:test: 
+@sutradhar/memory:test: [90mstdout[2m | tests/unit/episodic-memory.spec.ts[2m > [22m[2mEngineering Iteration 6 — Episodic Execution Memory Unit Tests[2m > [22m[2m2. should query episodes by page type and outcome[22m[39m
+@sutradhar/memory:test: {"timestamp":"2026-09-24T21:24:09.281Z","level":"info","message":"[EpisodicMemoryManager] Created episode ep_1790285049281_240 for goal \"Search products\" (PageType: Search)","context":{}}
+@sutradhar/memory:test: {"timestamp":"2026-09-24T21:24:09.282Z","level":"info","message":"[EpisodicMemoryManager] Finalized episode ep_1790285049281_240 with outcome success. Extracted 1 lessons.","context":{}}
+@sutradhar/memory:test: {"timestamp":"2026-09-24T21:24:09.282Z","level":"info","message":"[EpisodicMemoryManager] Created episode ep_1790285049282_59 for goal \"Login to account\" (PageType: Authentication)","context":{}}
+@sutradhar/memory:test: {"timestamp":"2026-09-24T21:24:09.282Z","level":"info","message":"[EpisodicMemoryManager] Finalized episode ep_1790285049282_59 with outcome failure. Extracted 1 lessons.","context":{}}
+@sutradhar/memory:test: 
+@sutradhar/memory:test: [90mstdout[2m | tests/unit/episodic-memory.spec.ts[2m > [22m[2mEngineering Iteration 6 — Episodic Execution Memory Unit Tests[2m > [22m[2m3. should extract negative lessons learned upon execution failure[22m[39m
+@sutradhar/memory:test: {"timestamp":"2026-09-24T21:24:09.282Z","level":"info","message":"[EpisodicMemoryManager] Created episode ep_1790285049282_838 for goal \"Fill checkout form\" (PageType: Checkout)","context":{}}
+@sutradhar/memory:test: {"timestamp":"2026-09-24T21:24:09.282Z","level":"info","message":"[EpisodicMemoryManager] Finalized episode ep_1790285049282_838 with outcome failure. Extracted 1 lessons.","context":{}}
+@sutradhar/memory:test: 
+@sutradhar/memory:test:  [32m✓[39m tests/unit/episodic-memory.spec.ts [2m ([22m[2m3 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+@sutradhar/observability:test: 
+@sutradhar/observability:test: [2m Test Files [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+@sutradhar/observability:test: [2m      Tests [22m [1m[32m13 passed[39m[22m[90m (13)[39m
+@sutradhar/observability:test: [2m   Start at [22m 02:54:05
+@sutradhar/observability:test: [2m   Duration [22m 3.70s[2m (transform 633ms, setup 0ms, collect 1.71s, tests 31ms, environment 1ms, prepare 3.86s)[22m
+@sutradhar/observability:test: 
+@sutradhar/capability-runtime:build: cache hit, replaying logs 130def3491ece868
+@sutradhar/capability-runtime:build: 
+@sutradhar/capability-runtime:build: > @sutradhar/capability-runtime@0.1.0 build E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\capability-runtime
+@sutradhar/capability-runtime:build: > tsc
+@sutradhar/capability-runtime:build: 
+@sutradhar/capability-runtime:test: cache miss, executing 6811ff0e7385f644
+@sutradhar/storage:test:  [32m✓[39m tests/unit/file-storage.spec.ts [2m ([22m[2m4 tests[22m[2m)[22m[90m 24[2mms[22m[39m
+@sutradhar/agent:test: cache miss, executing 3b6e6abef2b15c43
+@sutradhar/agent:build: cache hit, replaying logs 8edc55cfa0a8cdb4
+@sutradhar/agent:build: 
+@sutradhar/agent:build: > @sutradhar/agent@0.1.0 build E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\agent
+@sutradhar/agent:build: > tsc
+@sutradhar/agent:build: 
+@sutradhar/cli:test: cache miss, executing 3e22d938dcf804e7
+sutradhar:test: cache miss, executing 1bf7afab1a306fba
+@sutradhar/memory:test:  [32m✓[39m tests/unit/memory-shell.spec.ts [2m ([22m[2m2 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+@sutradhar/memory:test:  [32m✓[39m tests/unit/tiers-manager.spec.ts [2m ([22m[2m3 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+@sutradhar/memory:test: [90mstdout[2m | tests/unit/tiers-manager.spec.ts[2m > [22m[2m@sutradhar/memory Tiers & Vector Engine[2m > [22m[2mshould route multi-tier storage and search via MultiTierMemoryManager[22m[39m
+@sutradhar/memory:test: {"timestamp":"2026-09-24T21:24:09.512Z","level":"info","message":"[MultiTierMemoryManager] Cleared all memory tiers","context":{}}
+@sutradhar/memory:test: 
+@sutradhar/events:test:  [32m✓[39m tests/unit/event-store.spec.ts [2m ([22m[2m2 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+@sutradhar/memory:test: 
+@sutradhar/memory:test: [2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+@sutradhar/memory:test: [2m      Tests [22m [1m[32m8 passed[39m[22m[90m (8)[39m
+@sutradhar/memory:test: [2m   Start at [22m 02:54:05
+@sutradhar/memory:test: [2m   Duration [22m 3.88s[2m (transform 598ms, setup 0ms, collect 2.03s, tests 13ms, environment 1ms, prepare 3.25s)[22m
+@sutradhar/memory:test: 
+@sutradhar/events:test: [90mstderr[2m | tests/unit/event-bus.spec.ts[2m > [22m[2m@sutradhar/events EventBus[2m > [22m[2mshould isolate subscriber errors without crashing EventBus or other subscribers[22m[39m
+@sutradhar/events:test: {"timestamp":"2026-09-24T21:24:09.524Z","level":"error","message":"[EventBus] Error in event subscriber for agent:state:changed","context":{"eventId":"evt_1790285049520_lh857f6"},"error":{"name":"Error","message":"Failing subscriber","stack":"Error: Failing subscriber\n    at E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\events\\tests\\unit\\event-bus.spec.ts:39:13\n    at EventBus.invokeHandlerSafely (E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\events\\src\\bus\\event-bus.ts:75:13)\n    at EventBus.publishEvent (E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\events\\src\\bus\\event-bus.ts:59:28)\n    at EventBus.publish (E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\events\\src\\bus\\event-bus.ts:44:16)\n    at E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\events\\tests\\unit\\event-bus.spec.ts:47:11\n    at file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:135:14\n    at file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:60:26\n    at runTest (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:781:17)\n    at runSuite (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:909:15)\n    at runSuite (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:909:15)"}}
+@sutradhar/events:test: 
+@sutradhar/events:test:  [32m✓[39m tests/unit/event-bus.spec.ts [2m ([22m[2m4 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+@sutradhar/storage:test: [90mstdout[2m | tests/unit/db-repository.spec.ts[2m > [22m[2m@sutradhar/storage Database & Repository Layer[2m > [22m[2mshould initialize SqliteClient and execute queries[22m[39m
+@sutradhar/storage:test: {"timestamp":"2026-09-24T21:24:09.537Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+@sutradhar/storage:test: {"timestamp":"2026-09-24T21:24:09.539Z","level":"info","message":"[SqliteClient] Database connection closed","context":{}}
+@sutradhar/storage:test: 
+@sutradhar/storage:test:  [32m✓[39m tests/unit/db-repository.spec.ts [2m ([22m[2m3 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+@sutradhar/events:test: 
+@sutradhar/events:test: [2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+@sutradhar/events:test: [2m      Tests [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+@sutradhar/events:test: [2m   Start at [22m 02:54:05
+@sutradhar/events:test: [2m   Duration [22m 3.94s[2m (transform 593ms, setup 0ms, collect 1.31s, tests 12ms, environment 1ms, prepare 2.18s)[22m
+@sutradhar/events:test: 
+@sutradhar/storage:test: 
+@sutradhar/storage:test: [2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+@sutradhar/storage:test: [2m      Tests [22m [1m[32m7 passed[39m[22m[90m (7)[39m
+@sutradhar/storage:test: [2m   Start at [22m 02:54:05
+@sutradhar/storage:test: [2m   Duration [22m 3.96s[2m (transform 617ms, setup 0ms, collect 1.25s, tests 29ms, environment 0ms, prepare 1.99s)[22m
+@sutradhar/storage:test: 
+@sutradhar/llm:test: [90mstdout[2m | tests/unit/gateway.spec.ts[2m > [22m[2m@sutradhar/llm Gateway & OpenAiCompatibleAdapter[2m > [22m[2mshould generate a REAL completion against local Ollama[22m[39m
+@sutradhar/llm:test: {"timestamp":"2026-09-24T21:24:09.561Z","level":"info","message":"[openai-compatible] Generating completion","context":{"model":"qwen3.5:9b","messages":2}}
+@sutradhar/llm:test: 
+@sutradhar/llm:test: [90mstdout[2m | tests/unit/local.spec.ts[2m > [22m[2m@sutradhar/llm Local Ollama Provider Engine[2m > [22m[2mshould generate a REAL completion against the local Ollama model[22m[39m
+@sutradhar/llm:test: {"timestamp":"2026-09-24T21:24:09.578Z","level":"info","message":"[ollama-local] Generating completion","context":{"model":"qwen3.5:9b","messages":2}}
+@sutradhar/llm:test: 
+@sutradhar/llm:test: [90mstdout[2m | tests/unit/local.spec.ts[2m > [22m[2m@sutradhar/llm Local Ollama Provider Engine[2m > [22m[2mshould stream REAL chunks from the local Ollama model[22m[39m
+@sutradhar/llm:test: {"timestamp":"2026-09-24T21:24:09.595Z","level":"info","message":"[ollama-local] Starting stream","context":{"model":"qwen3.5:9b"}}
+@sutradhar/llm:test: 
+@sutradhar/llm:test:  [33m❯[39m tests/unit/local.spec.ts [2m ([22m[2m5 tests[22m [2m|[22m [31m3 failed[39m[2m)[22m[90m 73[2mms[22m[39m
+@sutradhar/llm:test: [31m   [33m❯[31m tests/unit/local.spec.ts[2m > [22m@sutradhar/llm Local Ollama Provider Engine[2m > [22mshould discover the REAL models installed in the local daemon[39m
+@sutradhar/llm:test: [31m     → expected 0 to be greater than 0[39m
+@sutradhar/llm:test: [31m   [33m❯[31m tests/unit/local.spec.ts[2m > [22m@sutradhar/llm Local Ollama Provider Engine[2m > [22mshould generate a REAL completion against the local Ollama model[39m
+@sutradhar/llm:test: [31m     → [ollama-local] HTTP 404: {"error":{"message":"model 'qwen3.5:9b' not found","type":"not_found_error","param":null,"code":null}}
+@sutradhar/llm:test: [39m
+@sutradhar/llm:test: [31m   [33m❯[31m tests/unit/local.spec.ts[2m > [22m@sutradhar/llm Local Ollama Provider Engine[2m > [22mshould stream REAL chunks from the local Ollama model[39m
+@sutradhar/llm:test: [31m     → [ollama-local] stream HTTP 404[39m
+@sutradhar/llm:test: [90mstdout[2m | tests/unit/gateway.spec.ts[2m > [22m[2m@sutradhar/llm Gateway & OpenAiCompatibleAdapter[2m > [22m[2mshould stream REAL chunks from local Ollama[22m[39m
+@sutradhar/llm:test: {"timestamp":"2026-09-24T21:24:09.601Z","level":"info","message":"[openai-compatible] Starting stream","context":{"model":"qwen3.5:9b"}}
+@sutradhar/llm:test: 
+@sutradhar/llm:test:  [33m❯[39m tests/unit/gateway.spec.ts [2m ([22m[2m6 tests[22m [2m|[22m [31m2 failed[39m[2m)[22m[90m 82[2mms[22m[39m
+@sutradhar/llm:test: [31m   [33m❯[31m tests/unit/gateway.spec.ts[2m > [22m@sutradhar/llm Gateway & OpenAiCompatibleAdapter[2m > [22mshould generate a REAL completion against local Ollama[39m
+@sutradhar/llm:test: [31m     → [openai-compatible] HTTP 404: {"error":{"message":"model 'qwen3.5:9b' not found","type":"not_found_error","param":null,"code":null}}
+@sutradhar/llm:test: [39m
+@sutradhar/llm:test: [31m   [33m❯[31m tests/unit/gateway.spec.ts[2m > [22m@sutradhar/llm Gateway & OpenAiCompatibleAdapter[2m > [22mshould stream REAL chunks from local Ollama[39m
+@sutradhar/llm:test: [31m     → [openai-compatible] stream HTTP 404[39m
+@sutradhar/llm:test: 
+@sutradhar/llm:test: [31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 5 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+@sutradhar/llm:test: 
+@sutradhar/llm:test: [31m[1m[7m FAIL [27m[22m[39m tests/unit/gateway.spec.ts[2m > [22m@sutradhar/llm Gateway & OpenAiCompatibleAdapter[2m > [22mshould generate a REAL completion against local Ollama
+@sutradhar/llm:test: [31m[1mLlmHttpError[22m: [openai-compatible] HTTP 404: {"error":{"message":"model 'qwen3.5:9b' not found","type":"not_found_error","param":null,"code":null}}
+@sutradhar/llm:test: [39m
+@sutradhar/llm:test: [36m [2m❯[22m OpenAiCompatibleAdapter.post src/gateway/openai-compatible-adapter.ts:[2m343:15[22m[39m
+@sutradhar/llm:test:     [90m341| [39m      [35mif[39m ([33m![39mresponse[33m.[39mok) {
+@sutradhar/llm:test:     [90m342| [39m        [35mconst[39m text [33m=[39m [35mawait[39m response[33m.[39m[34mtext[39m()[33m.[39m[35mcatch[39m(() [33m=>[39m [32m''[39m)[33m;[39m
+@sutradhar/llm:test:     [90m343| [39m        [35mthrow[39m [35mnew[39m [33mLlmHttpError[39m(
+@sutradhar/llm:test:     [90m   | [39m              [31m^[39m
+@sutradhar/llm:test:     [90m344| [39m          [32m`[[39m[36m${[39m[35mthis[39m[33m.[39mproviderId[36m}[39m[32m] HTTP [39m[36m${[39mresponse[33m.[39mstatus[36m}[39m[32m: [39m[36m${[39mtext[33m.[39m[34mslice[39m(…
+@sutradhar/llm:test:     [90m345| [39m          response[33m.[39mstatus[33m,[39m
+@sutradhar/llm:test: [90m [2m❯[22m retryWithBackoff.maxRetries src/gateway/openai-compatible-adapter.ts:[2m179:22[22m[39m
+@sutradhar/llm:test: [90m [2m❯[22m Module.retryWithBackoff ../utils/src/async/retry.ts:[2m30:14[22m[39m
+@sutradhar/llm:test: [90m [2m❯[22m tests/unit/gateway.spec.ts:[2m64:24[22m[39m
+@sutradhar/llm:test: 
+@sutradhar/llm:test: [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+@sutradhar/llm:test: [31m[1mSerialized Error:[22m[39m [90m{ status: 404, bodyText: '{"error":{"message":"model \'qwen3.5:9b\' not found","type":"not_found_error","param":null,"code":null}}\n' }[39m
+@sutradhar/llm:test: [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯[22m[39m
+@sutradhar/llm:test: 
+@sutradhar/llm:test: [31m[1m[7m FAIL [27m[22m[39m tests/unit/gateway.spec.ts[2m > [22m@sutradhar/llm Gateway & OpenAiCompatibleAdapter[2m > [22mshould stream REAL chunks from local Ollama
+@sutradhar/llm:test: [31m[1mLlmHttpError[22m: [openai-compatible] stream HTTP 404[39m
+@sutradhar/llm:test: [36m [2m❯[22m OpenAiCompatibleAdapter.generateStream src/gateway/openai-compatible-adapter.ts:[2m233:13[22m[39m
+@sutradhar/llm:test:     [90m231| [39m      [34mclear[39m()[33m;[39m
+@sutradhar/llm:test:     [90m232| [39m      [35mconst[39m text [33m=[39m [35mawait[39m response[33m.[39m[34mtext[39m()[33m.[39m[35mcatch[39m(() [33m=>[39m [32m''[39m)[33m;[39m
+@sutradhar/llm:test:     [90m233| [39m      [35mthrow[39m [35mnew[39m [33mLlmHttpError[39m(
+@sutradhar/llm:test:     [90m   | [39m            [31m^[39m
+@sutradhar/llm:test:     [90m234| [39m        [32m`[[39m[36m${[39m[35mthis[39m[33m.[39mproviderId[36m}[39m[32m] stream HTTP [39m[36m${[39mresponse[33m.[39mstatus[36m}[39m[32m`[39m[33m,[39m
+@sutradhar/llm:test:     [90m235| [39m        response[33m.[39mstatus[33m,[39m
+@sutradhar/llm:test: [90m [2m❯[22m tests/unit/gateway.spec.ts:[2m94:24[22m[39m
+@sutradhar/llm:test: 
+@sutradhar/llm:test: [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+@sutradhar/llm:test: [31m[1mSerialized Error:[22m[39m [90m{ status: 404, bodyText: '{"error":{"message":"model \'qwen3.5:9b\' not found","type":"not_found_error","param":null,"code":null}}\n' }[39m
+@sutradhar/llm:test: [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯[22m[39m
+@sutradhar/llm:test: 
+@sutradhar/llm:test: [31m[1m[7m FAIL [27m[22m[39m tests/unit/local.spec.ts[2m > [22m@sutradhar/llm Local Ollama Provider Engine[2m > [22mshould discover the REAL models installed in the local daemon
+@sutradhar/llm:test: [31m[1mAssertionError[22m: expected 0 to be greater than 0[39m
+@sutradhar/llm:test: [36m [2m❯[22m tests/unit/local.spec.ts:[2m43:29[22m[39m
+@sutradhar/llm:test:     [90m 41| [39m      [35mconst[39m adapter [33m=[39m [35mnew[39m [33mOllamaAdapter[39m()[33m;[39m
+@sutradhar/llm:test:     [90m 42| [39m      [35mconst[39m models [33m=[39m [35mawait[39m adapter[33m.[39m[34mlistLocalModels[39m()[33m;[39m
+@sutradhar/llm:test:     [90m 43| [39m      [34mexpect[39m(models[33m.[39mlength)[33m.[39m[34mtoBeGreaterThan[39m([34m0[39m)[33m;[39m
+@sutradhar/llm:test:     [90m   | [39m                            [31m^[39m
+@sutradhar/llm:test:     [90m 44| [39m      [90m// Each model name comes from the live /api/tags response.[39m
+@sutradhar/llm:test:     [90m 45| [39m      [35mfor[39m ([35mconst[39m m [35mof[39m models) {
+@sutradhar/llm:test: 
+@sutradhar/llm:test: [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯[22m[39m
+@sutradhar/llm:test: 
+@sutradhar/llm:test: [31m[1m[7m FAIL [27m[22m[39m tests/unit/local.spec.ts[2m > [22m@sutradhar/llm Local Ollama Provider Engine[2m > [22mshould generate a REAL completion against the local Ollama model
+@sutradhar/llm:test: [31m[1mLlmHttpError[22m: [ollama-local] HTTP 404: {"error":{"message":"model 'qwen3.5:9b' not found","type":"not_found_error","param":null,"code":null}}
+@sutradhar/llm:test: [39m
+@sutradhar/llm:test: [36m [2m❯[22m OpenAiCompatibleAdapter.post src/gateway/openai-compatible-adapter.ts:[2m343:15[22m[39m
+@sutradhar/llm:test:     [90m341| [39m      [35mif[39m ([33m![39mresponse[33m.[39mok) {
+@sutradhar/llm:test:     [90m342| [39m        [35mconst[39m text [33m=[39m [35mawait[39m response[33m.[39m[34mtext[39m()[33m.[39m[35mcatch[39m(() [33m=>[39m [32m''[39m)[33m;[39m
+@sutradhar/llm:test:     [90m343| [39m        [35mthrow[39m [35mnew[39m [33mLlmHttpError[39m(
+@sutradhar/llm:test:     [90m   | [39m              [31m^[39m
+@sutradhar/llm:test:     [90m344| [39m          [32m`[[39m[36m${[39m[35mthis[39m[33m.[39mproviderId[36m}[39m[32m] HTTP [39m[36m${[39mresponse[33m.[39mstatus[36m}[39m[32m: [39m[36m${[39mtext[33m.[39m[34mslice[39m(…
+@sutradhar/llm:test:     [90m345| [39m          response[33m.[39mstatus[33m,[39m
+@sutradhar/llm:test: [90m [2m❯[22m retryWithBackoff.maxRetries src/gateway/openai-compatible-adapter.ts:[2m179:22[22m[39m
+@sutradhar/llm:test: [90m [2m❯[22m Module.retryWithBackoff ../utils/src/async/retry.ts:[2m30:14[22m[39m
+@sutradhar/llm:test: [90m [2m❯[22m tests/unit/local.spec.ts:[2m58:24[22m[39m
+@sutradhar/llm:test: 
+@sutradhar/llm:test: [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+@sutradhar/llm:test: [31m[1mSerialized Error:[22m[39m [90m{ status: 404, bodyText: '{"error":{"message":"model \'qwen3.5:9b\' not found","type":"not_found_error","param":null,"code":null}}\n' }[39m
+@sutradhar/llm:test: [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯[22m[39m
+@sutradhar/llm:test: 
+@sutradhar/llm:test: [31m[1m[7m FAIL [27m[22m[39m tests/unit/local.spec.ts[2m > [22m@sutradhar/llm Local Ollama Provider Engine[2m > [22mshould stream REAL chunks from the local Ollama model
+@sutradhar/llm:test: [31m[1mLlmHttpError[22m: [ollama-local] stream HTTP 404[39m
+@sutradhar/llm:test: [36m [2m❯[22m OpenAiCompatibleAdapter.generateStream src/gateway/openai-compatible-adapter.ts:[2m233:13[22m[39m
+@sutradhar/llm:test:     [90m231| [39m      [34mclear[39m()[33m;[39m
+@sutradhar/llm:test:     [90m232| [39m      [35mconst[39m text [33m=[39m [35mawait[39m response[33m.[39m[34mtext[39m()[33m.[39m[35mcatch[39m(() [33m=>[39m [32m''[39m)[33m;[39m
+@sutradhar/llm:test:     [90m233| [39m      [35mthrow[39m [35mnew[39m [33mLlmHttpError[39m(
+@sutradhar/llm:test:     [90m   | [39m            [31m^[39m
+@sutradhar/llm:test:     [90m234| [39m        [32m`[[39m[36m${[39m[35mthis[39m[33m.[39mproviderId[36m}[39m[32m] stream HTTP [39m[36m${[39mresponse[33m.[39mstatus[36m}[39m[32m`[39m[33m,[39m
+@sutradhar/llm:test:     [90m235| [39m        response[33m.[39mstatus[33m,[39m
+@sutradhar/llm:test: [90m [2m❯[22m tests/unit/local.spec.ts:[2m83:24[22m[39m
+@sutradhar/llm:test: 
+@sutradhar/llm:test: [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+@sutradhar/llm:test: [31m[1mSerialized Error:[22m[39m [90m{ status: 404, bodyText: '{"error":{"message":"model \'qwen3.5:9b\' not found","type":"not_found_error","param":null,"code":null}}\n' }[39m
+@sutradhar/llm:test: [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯[22m[39m
+@sutradhar/llm:test: 
+@sutradhar/llm:test: [2m Test Files [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+@sutradhar/llm:test: [2m      Tests [22m [1m[31m5 failed[39m[22m[2m | [22m[1m[32m6 passed[39m[22m[90m (11)[39m
+@sutradhar/llm:test: [2m   Start at [22m 02:54:05
+@sutradhar/llm:test: [2m   Duration [22m 4.03s[2m (transform 642ms, setup 0ms, collect 1.28s, tests 155ms, environment 1ms, prepare 2.13s)[22m
+@sutradhar/llm:test: 
+@sutradhar/workflow:test: cache miss, executing 07b7df47c56c9a0d
+@sutradhar/workflow:build: cache hit, replaying logs b59a52e42d7d9eee
+@sutradhar/workflow:build: 
+@sutradhar/workflow:build: > @sutradhar/workflow@0.1.0 build E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\workflow
+@sutradhar/workflow:build: > tsc
+@sutradhar/workflow:build: 
+@sutradhar/server:test: cache miss, executing 15ee0e0738e1025c
+@sutradhar/llm:test:  ELIFECYCLE  Test failed. See above for more details.
+@sutradhar/browser:test:  [32m✓[39m tests/unit/stealth.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+@sutradhar/browser:test:  [32m✓[39m tests/unit/snapshot.spec.ts [2m ([22m[2m3 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+@sutradhar/browser:test:  [32m✓[39m tests/unit/dom-semantic-engine.spec.ts [2m ([22m[2m11 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/launcher.spec.ts[2m > [22m[2m@sutradhar/browser BrowserLauncher[2m > [22m[2mshould launch and close browser instance[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.000Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine click occlusion detection[2m > [22m[2mreports success:false when the target element is occluded at its click point[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.001Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#start button"}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstderr[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine click occlusion detection[2m > [22m[2mreports success:false when the target element is occluded at its click point[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.003Z","level":"warn","message":"[BrowserActionEngine] Action click failed (attempt 1/1): Element matching \"#start button\" is occluded by another element at its click point — a click would not reach the intended target","context":{}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine click occlusion detection[2m > [22m[2mscrolls the element into view before checking occlusion, so a below-the-fold element is not wrongly reported as occluded[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.004Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"[data-test=\"checkout\"]"}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine click occlusion detection[2m > [22m[2mreports success:true and clicks when the target element is the topmost hit[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.005Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#start button"}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine click occlusion detection[2m > [22m[2mclicks at a specific offset within the element instead of its center, when one is given[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.005Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#canvas-app"}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine click occlusion detection[2m > [22m[2mwaits for the bounding box to stop changing before checking occlusion, so a click during a CSS transition is not treated as immediately safe[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.010Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#confirm-btn"}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine click occlusion detection[2m > [22m[2mfalls back to a JS-level click when the CDP click is not observed as delivered[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.010Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#start button"}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/browser-action-engine.spec.ts[2m > [22m[2m@sutradhar/browser BrowserActionEngine click occlusion detection[2m > [22m[2mtreats the delivered-check as satisfied (and returns promptly) when the renderer is blocked, e.g. by a native dialog[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.011Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_1","selector":"#alert-button"}}
+@sutradhar/browser:test: 
+@sutradhar/capability-runtime:test: 
+@sutradhar/capability-runtime:test: > @sutradhar/capability-runtime@0.1.0 test E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\capability-runtime
+@sutradhar/capability-runtime:test: > vitest run --globals
+@sutradhar/capability-runtime:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/session.spec.ts[2m > [22m[2m@sutradhar/browser Session Management & Tab Lifecycle[2m > [22m[2mshould manage multi-tab lifecycle within BrowserSession[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.038Z","level":"info","message":"[BrowserSession] Closed session sess_123","context":{"reason":"Test cleanup"}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/session.spec.ts[2m > [22m[2m@sutradhar/browser Session Management & Tab Lifecycle[2m > [22m[2mshould manage sessions via BrowserSessionManager[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.040Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/session-manager.spec.ts[2m > [22m[2m@sutradhar/browser BrowserSessionManager session create/reuse race handling[2m > [22m[2mcoalesces concurrent createSession() calls for the same sessionId onto a single launch[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.038Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_race","context":{"isIncognito":false}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/session-manager.spec.ts[2m > [22m[2m@sutradhar/browser BrowserSessionManager session create/reuse race handling[2m > [22m[2ma later createSession() call for the same sessionId, after the first resolved, reuses the live session without launching again[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.039Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_reuse","context":{"isIncognito":false}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/session-manager.spec.ts[2m > [22m[2m@sutradhar/browser BrowserSessionManager session create/reuse race handling[2m > [22m[2mremoves the pending in-flight entry once the launch settles, even on failure[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.040Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_fail_then_retry","context":{"isIncognito":false}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/session-manager.spec.ts[2m > [22m[2m@sutradhar/browser BrowserSessionManager session create/reuse race handling[2m > [22m[2mdifferent sessionIds never coalesce — each gets its own launch[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.040Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_a","context":{"isIncognito":false}}
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.041Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_b","context":{"isIncognito":false}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/session-manager.spec.ts[2m > [22m[2m@sutradhar/browser BrowserSessionManager session create/reuse race handling[2m > [22m[2man uncorrelated (no sessionId) createSession() never coalesces with anything[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.042Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790285050041_1","context":{"isIncognito":false}}
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.042Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790285050041_2","context":{"isIncognito":false}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/session-manager.spec.ts[2m > [22m[2m@sutradhar/browser BrowserSessionManager.dispose()[2m > [22m[2munsubscribes from the shared EventBus so a disposed manager stops reacting to future events[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.042Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790285050042_1","context":{"isIncognito":false}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/session-manager.spec.ts[2m > [22m[2m@sutradhar/browser BrowserSessionManager.dispose()[2m > [22m[2mstops the idle reaper too (dispose() supersedes stopIdleReaper())[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.052Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790285050052_1","context":{"isIncognito":false}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test:  [32m✓[39m tests/unit/session-manager.spec.ts [2m ([22m[2m8 tests[22m[2m)[22m[90m 19[2mms[22m[39m
+@sutradhar/browser:test:  [32m✓[39m tests/unit/browser-tab-observability.spec.ts [2m ([22m[2m21 tests[22m[2m)[22m[90m 19[2mms[22m[39m
+@sutradhar/agent:test: 
+@sutradhar/agent:test: > @sutradhar/agent@0.1.0 test E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\agent
+@sutradhar/agent:test: > vitest run --globals
+@sutradhar/agent:test: 
+@sutradhar/cli:test: 
+@sutradhar/cli:test: > @sutradhar/cli@0.1.0 test E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\cli
+@sutradhar/cli:test: > vitest run --globals
+@sutradhar/cli:test: 
+sutradhar:test: 
+sutradhar:test: > sutradhar@0.4.3 test E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sutradhar
+sutradhar:test: > vitest run --globals
+sutradhar:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/launcher.spec.ts[2m > [22m[2m@sutradhar/browser BrowserLauncher[2m > [22m[2mshould create an isolated browser context when isIncognito is set, and route newPage() through it[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.724Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+@sutradhar/browser:test: 
+@sutradhar/browser:test: [90mstdout[2m | tests/unit/session.spec.ts[2m > [22m[2m@sutradhar/browser Session Management & Tab Lifecycle[2m > [22m[2mshould manage sessions via BrowserSessionManager[22m[39m
+@sutradhar/browser:test: {"timestamp":"2026-09-24T21:24:10.740Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790285050039_1","context":{"isIncognito":true,"initialUrl":"https://initial.com"}}
+@sutradhar/browser:test: 
+@sutradhar/capability-runtime:test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+@sutradhar/workflow:test: 
+@sutradhar/workflow:test: > @sutradhar/workflow@0.1.0 test E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\workflow
+@sutradhar/workflow:test: > vitest run --globals
+@sutradhar/workflow:test: 
+@sutradhar/capability-runtime:test: 
+@sutradhar/capability-runtime:test: [7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/capability-runtime[39m
+@sutradhar/capability-runtime:test: 
+ ERROR  @sutradhar/llm#test: command (E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\llm) C:\Users\Varad M\AppData\Roaming\npm\pnpm.cmd run test exited (1)
+
+ Tasks:    23 successful, 32 total
+Cached:    16 cached, 32 total
+  Time:    8.638s 
+Failed:    @sutradhar/llm#test
+
+ WARNING  no output files found for task @sutradhar/config#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @sutradhar/events#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @sutradhar/memory#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @sutradhar/observability#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @sutradhar/sdk#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @sutradhar/storage#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @sutradhar/utils#test. Please check your `outputs` key in `turbo.json`
+ ERROR  run failed: command  exited (1)
+ ELIFECYCLE  Test failed. See above for more details.

@@ -1,0 +1,10 @@
+URL: http://127.0.0.1:56331/main.html
+Title: 
+Interactive elements (3):
+[#1] button "Top"
+[#2 in iframe "checkout" (http://127.0.0.1:56331/inner.html)] button "Submit"
+[#3 in iframe "lvl2" (http://localhost:56331/lvl2.html)] button "Level two"
+FRAME  http://127.0.0.1:56331/main.html ["1790311477716",[["1","1790311477716","Top"]]]
+FRAME checkout http://127.0.0.1:56331/inner.html ["1790311477716",[["2","1790311477716","Submit"]]]
+FRAME lvl2 http://localhost:56331/lvl2.html ["1790311477716",[["3","1790311477716","Level two"]]]
+observer frames: 3 runtime nodes: [ [ 1, undefined ], [ 2, 'checkout' ], [ 3, 'lvl2' ] ]

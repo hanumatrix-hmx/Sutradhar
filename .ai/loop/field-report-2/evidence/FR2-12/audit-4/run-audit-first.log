@@ -1,0 +1,10 @@
+30012ms audit hang#0 (expected nav timeout) ERR Navigation timeout of 30000 ms exceeded
+31014ms audit hang#1 ERR Navigation timeout of 30000 ms exceeded
+2558ms audit ok {"url":"http://127.0.0.1:64654/ok","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+1549ms audit own404 after hang {"url":"http://127.0.0.1:64654/own404?x=1","broken":[{"url":"http://127.0.0.1:64654/own404?x=1","status":404}],"consoleErrors":1,"sample":["Failed to load resource: the server responded with a status of 404 (Not Found)"],"covers":true}
+1566ms audit ok 2 {"url":"http://127.0.0.1:64654/ok?2","broken":[],"consoleErrors":0,"sample":[],"covers":true}
+CDP: {"s":{"Page.enable":{"ms":1,"ok":true},"Network.enable":{"ms":0,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":0}
+{"s":{"Page.enable":{"ms":1005,"ok":true},"Network.enable":{"ms":30007,"err":"Protocol error (Network.enable): Target closed"},"Page.getFrameTree":{"ms":1,"err":"Protocol error (Page.getFrameTree): Session closed. Most likely the page has been closed."}},"d":"ok","ev":0}
+{"s":{"Page.enable":{"ms":1017,"ok":true},"Network.enable":{"ms":9,"ok":true},"Page.getFrameTree":{"ms":1,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":1,"ok":true},"Network.enable":{"ms":0,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":2}
+{"s":{"Page.enable":{"ms":0,"ok":true},"Network.enable":{"ms":1,"ok":true},"Page.getFrameTree":{"ms":0,"ok":true}},"d":"ok","ev":2}

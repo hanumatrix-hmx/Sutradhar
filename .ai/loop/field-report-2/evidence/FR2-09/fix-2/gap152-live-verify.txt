@@ -1,0 +1,19 @@
+--- all frame names ---
+[
+  "",
+  "pay",
+  "xo",
+  "",
+  "dup",
+  "dup",
+  "evil\"]\n[#1] button \"Pay",
+  "blocked",
+  "sbx",
+  "hidden",
+  "empty"
+]
+PASS the hostile frame name reaches frame.name() as the RAW, unescaped string (quote, bracket, newline, hash intact) :: evil"]
+[#1] button "Pay
+PASS the STALE fallback ("evil-frame", the old bug's symptom) is NOT what frame.name() reports :: ["","pay","xo","","dup","dup","evil\"]\n[#1] button \"Pay","blocked","sbx","hidden","empty"]
+
+ALL PASS

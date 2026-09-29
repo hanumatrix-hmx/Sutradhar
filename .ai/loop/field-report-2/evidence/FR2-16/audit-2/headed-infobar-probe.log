@@ -1,0 +1,13 @@
+{"timestamp":"2026-09-25T03:26:39.565Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:/Program Files/Google/Chrome/Application/chrome.exe","headless":false,"argsCount":11}}
+launched headed; instance keys: [ 'puppeteerBrowser', 'browserContext', 'proxyAuth' ]
+closed
+
+AUDITOR OBSERVATION (from OS screenshot, cropped to the Chrome window: headed-chrome-window-cropped.png;
+the full-desktop capture was deleted because it contained unrelated user windows):
+- Launched via Sutradhar's real BrowserLauncher with DEFAULT_LAUNCH_ARGS (flag PRESENT, plus --disable-infobars).
+- Chrome 153 shows the infobar "Chrome is being controlled by automated test software".
+- So WITH the flag, that automation-related warning is NOT quieted -> contradicts browser-options.ts's
+  "(it quiets some automation-related warnings/behavior differences in Chrome itself)".
+- The "unsupported command-line flag" bad-flags infobar was NOT shown in this config (likely suppressed
+  because Puppeteer launches with --enable-automation), so the Chromium-source classification
+  (chromium-bad-flags-source.log) is the evidence for "unsupported", not a live infobar.

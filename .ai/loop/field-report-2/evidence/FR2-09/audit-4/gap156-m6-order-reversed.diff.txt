@@ -1,0 +1,15 @@
+--- E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/dse.orig.ts	2026-09-25 13:19:55.462338700 +0530
++++ packages/browser/src/dom/dom-semantic-engine.ts	2026-09-25 13:22:57.596683900 +0530
+@@ -274,10 +274,10 @@
+  * {@link recoverBlockedFrameSrc}). Returns `undefined` when neither signal produces a URL.
+  */
+ async function recoverBlockedFrameUrl(frame: Frame): Promise<RecoveredFrameUrl | undefined> {
+-  const confirmed = await recoverBlockedFrameUnreachableUrl(frame);
+-  if (confirmed) return { url: confirmed, confidence: 'confirmed' };
+   const likely = await recoverBlockedFrameSrc(frame);
+   if (likely) return { url: likely, confidence: 'likely' };
++  const confirmed = await recoverBlockedFrameUnreachableUrl(frame);
++  if (confirmed) return { url: confirmed, confidence: 'confirmed' };
+   return undefined;
+ }
+ 

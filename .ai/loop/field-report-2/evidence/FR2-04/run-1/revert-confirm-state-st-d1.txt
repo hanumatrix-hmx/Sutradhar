@@ -1,0 +1,38 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli[39m
+
+ [33m❯[39m tests/unit/state.spec.ts [2m ([22m[2m5 tests[22m [2m|[22m [31m1 failed[39m[2m)[22m[90m 10[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/state.spec.ts[2m > [22mST-D1 (FR2-04): CliState round-trips dialogPolicy/lastPendingDialog as a whole object[2m > [22mwriteState followed by readState deep-equals both new keys[39m
+[31m     → expected undefined to deeply equal { action: 'accept', …(2) }[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/state.spec.ts[2m > [22mST-D1 (FR2-04): CliState round-trips dialogPolicy/lastPendingDialog as a whole object[2m > [22mwriteState followed by readState deep-equals both new keys
+[31m[1mAssertionError[22m: expected undefined to deeply equal { action: 'accept', …(2) }[39m
+
+[32m- Expected:[39m 
+Object {
+  "action": "accept",
+  "promptText": "zz",
+  "setAt": "2026-01-01T00:00:00Z",
+}
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m tests/unit/state.spec.ts:[2m54:36[22m[39m
+    [90m 52| [39m      })[33m;[39m
+    [90m 53| [39m      [35mconst[39m result [33m=[39m [35mawait[39m [34mfreshReadState[39m()[33m;[39m
+    [90m 54| [39m      [34mexpect[39m(result[33m?.[39mdialogPolicy)[33m.[39m[34mtoEqual[39m({ action[33m:[39m [32m'accept'[39m[33m,[39m promptT…
+    [90m   | [39m                                   [31m^[39m
+    [90m 55| [39m      [34mexpect[39m(result[33m?.[39mlastPendingDialog)[33m.[39m[34mtoEqual[39m({ type[33m:[39m [32m'alert'[39m[33m,[39m messa…
+    [90m 56| [39m    } [35mfinally[39m {
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m4 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 16:01:21
+[2m   Duration [22m 345ms[2m (transform 20ms, setup 0ms, collect 19ms, tests 10ms, environment 0ms, prepare 104ms)[22m
+

@@ -1,0 +1,15 @@
+Source: https://chromium.googlesource.com/chromium/src/+/refs/heads/main/chrome/browser/ui/startup/bad_flags_prompt.cc
+Fetched 2026-09-25 by FR2-16 audit-2 (WebFetch). kBadFlags array contains:
+    // These flags control Blink feature state, which is not supported and is
+    // intended only for use by Chromium developers.
+    switches::kDisableBlinkFeatures,
+    switches::kEnableBlinkFeatures,
+Flags in kBadFlags trigger IDS_BAD_FLAGS_WARNING_MESSAGE infobar:
+  "You are using an unsupported command-line flag: %s. Stability and security will suffer."
+Corroborating public reports of that exact infobar text for --disable-blink-features=AutomationControlled:
+  https://discourse.openbullet.dev/t/how-to-fix-when-use-puppeteer-you-are-using-an-unsupported-command-line-flag-disable-blink-features-automationcontrolled-stability-and-security-will-suffer/8631
+  https://github.com/openclaw/openclaw/issues/26897
+Also: puppeteer-core 25.5.0 (this repo's dep) ChromeLauncher.js:179 passes '--enable-automation' by default
+and does NOT include --disable-blink-features=AutomationControlled in its defaults.
+=> Chrome's own source classifies this flag as UNSUPPORTED / developer-only, the opposite of
+   "a Chrome-recommended stability flag".

@@ -1,0 +1,23 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/browser[39m
+
+ [32m✓[39m tests/unit/frame-labels.spec.ts [2m ([22m[2m35 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [33m❯[39m tests/unit/dom-semantic-engine.spec.ts [2m ([22m[2m36 tests[22m [2m|[22m [31m1 failed[39m[2m)[22m[33m 120028[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/dom-semantic-engine.spec.ts[2m > [22m@sutradhar/browser DOMSemanticEngine.buildGraph — FR2-09 frame handling[2m > [22mGAP-154/GAP-156: a hanging CDP getFrameTree call is bounded rather than stalling the snapshot, and still falls back to the src-based recovery ("likely") once it gives up[39m
+[31m     → Test timed out in 120000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/dom-semantic-engine.spec.ts[2m > [22m@sutradhar/browser DOMSemanticEngine.buildGraph — FR2-09 frame handling[2m > [22mGAP-154/GAP-156: a hanging CDP getFrameTree call is bounded rather than stalling the snapshot, and still falls back to the src-based recovery ("likely") once it gives up
+[31m[1mError[22m: Test timed out in 120000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m70 passed[39m[22m[90m (71)[39m
+[2m   Start at [22m 13:20:53
+[2m   Duration [22m 121.19s[2m (transform 409ms, setup 0ms, collect 803ms, tests 120.03s, environment 0ms, prepare 373ms)[22m
+
+exit=1

@@ -1,0 +1,421 @@
+{
+  "R": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC",
+  "total": 25,
+  "passed": 25,
+  "failed": [],
+  "leftoverProcsUnderR": 0,
+  "cases": [
+    {
+      "name": "A1 two MCP runtime launches -> 2 puppeteer dirs, each with an owner file naming the MCP pid",
+      "pass": true,
+      "observed": {
+        "pupDirs": [
+          "puppeteer_dev_chrome_profile-ijKU0c",
+          "puppeteer_dev_chrome_profile-k1gWDw"
+        ],
+        "owners": [
+          169496,
+          169496
+        ],
+        "mcp": 169496,
+        "la": true,
+        "lb": true
+      }
+    },
+    {
+      "name": "A2 (informational, recorded honestly) runtime Chromes surviving kill -9 of the MCP node process: 0 (Windows job object usually takes them down; audit-2 recorded the same)",
+      "pass": true,
+      "observed": []
+    },
+    {
+      "name": "G178-0 degraded mode really engaged (processEnumeration.ok === false)",
+      "pass": true,
+      "observed": {
+        "dry": {
+          "ok": false,
+          "reason": "spawn powershell.exe ENOENT"
+        }
+      }
+    },
+    {
+      "name": "G178a degraded mode never deletes the unmarked foreign puppeteer dir (dry+real)",
+      "pass": true,
+      "observed": {
+        "dry": [
+          "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\puppeteer_dev_chrome_profile-ijKU0c",
+          "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\puppeteer_dev_chrome_profile-k1gWDw",
+          "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1600000000010",
+          "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1600000000011",
+          "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1600000000012",
+          "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1600000000013",
+          "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1600000000014",
+          "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1600000000015",
+          "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1600000000016",
+          "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1600000000017",
+          "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1600000000018",
+          "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1600000000019"
+        ]
+      }
+    },
+    {
+      "name": "G178b degraded mode keeps the young dir under grace (dry+real)",
+      "pass": true,
+      "observed": [
+        {
+          "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1790341064095-YOUNG1",
+          "reason": "grace"
+        }
+      ]
+    },
+    {
+      "name": "G178c degraded probe never removes a lockfile (foreign dir lockfile intact after dry+real)",
+      "pass": true,
+      "observed": {}
+    },
+    {
+      "name": "G178d degraded mode kills nothing",
+      "pass": true,
+      "observed": {}
+    },
+    {
+      "name": "G178e degraded dry-run plans no delete of a LIVE session dir",
+      "pass": true,
+      "observed": {}
+    },
+    {
+      "name": "DW1 real GC exit 0 and the dry-run planned the same browser kills/clears/deletes (child pids excluded: Chrome spawns children dynamically)",
+      "pass": true,
+      "observed": {
+        "exit": 0
+      }
+    },
+    {
+      "name": "DW2 runtime (MCP) leg: every surviving runtime Chrome killed, both orphaned puppeteer dirs deleted (owner-dead / orphan-browser)",
+      "pass": true,
+      "observed": {
+        "runtimeBrowsers": [],
+        "pup": [
+          {
+            "type": "deleteDir",
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\puppeteer_dev_chrome_profile-ijKU0c",
+            "reason": "owner-dead",
+            "result": "deleted",
+            "attempts": 1
+          },
+          {
+            "type": "deleteDir",
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\puppeteer_dev_chrome_profile-k1gWDw",
+            "reason": "owner-dead",
+            "result": "deleted",
+            "attempts": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "DW3 stale session 1: state cleared, dir deleted",
+      "pass": true,
+      "observed": {}
+    },
+    {
+      "name": "G176 orphan session 2 (state wiped): Chrome killed AND its dir reclaimed in the SAME run",
+      "pass": true,
+      "observed": {
+        "alive": false,
+        "dir": false
+      }
+    },
+    {
+      "name": "DW4 live sessions 3,4,5 untouched and still usable (eval returns their own title, same chromePid)",
+      "pass": true,
+      "observed": {}
+    },
+    {
+      "name": "G177 hand-made stale state pointing at LIVE session 4 dir: state cleared, dir NOT deleted",
+      "pass": true,
+      "observed": {
+        "dirExists": true
+      }
+    },
+    {
+      "name": "G175 live SUTRADHAR_CLI_STATE_DIR session (GC run WITHOUT that env) survives: not killed, dir kept, still usable",
+      "pass": true,
+      "observed": {
+        "custEval": {
+          "code": 0,
+          "out": "custom\n"
+        }
+      }
+    },
+    {
+      "name": "DW5 10 old legacy dirs deleted",
+      "pass": true,
+      "observed": {}
+    },
+    {
+      "name": "DW6 young dir kept (grace)",
+      "pass": true,
+      "observed": {}
+    },
+    {
+      "name": "DW7 junction kept as symlink, precious target intact",
+      "pass": true,
+      "observed": {}
+    },
+    {
+      "name": "DW8 corrupt state file kept (unreadable-state), not deleted",
+      "pass": true,
+      "observed": {}
+    },
+    {
+      "name": "DW9 named-profile stale: state cleared, named profile dir kept",
+      "pass": true,
+      "observed": {}
+    },
+    {
+      "name": "DW10 foreign unmarked puppeteer dir kept (enumeration ok path)",
+      "pass": true,
+      "observed": {}
+    },
+    {
+      "name": "DW11 orphan-process count and orphan-dir count both reach 0 (independent observer)",
+      "pass": true,
+      "observed": {
+        "orphanBrowsers": [],
+        "leftoverDirs": [],
+        "remaining": {
+          "orphanProcesses": 0,
+          "orphanDirs": 0
+        }
+      }
+    },
+    {
+      "name": "DW12 a second GC run is a no-op (idempotent)",
+      "pass": true,
+      "observed": []
+    },
+    {
+      "name": "G178f degraded REAL run (after main GC): kills nothing, live dirs + young + foreign pup + lockfile intact, live sessions still usable",
+      "pass": true,
+      "observed": []
+    },
+    {
+      "name": "DW13 close --all-stale alias works identically (dry-run, nothing to do)",
+      "pass": true,
+      "observed": {
+        "dryRun": true,
+        "scope": {
+          "tempRoot": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp",
+          "stateRoot": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\sr",
+          "extraStateDirs": []
+        },
+        "graceMs": 120000,
+        "processEnumeration": {
+          "ok": true,
+          "count": 1387
+        },
+        "actions": [],
+        "kept": [
+          {
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\sr\\185daf23e545538b\\state.json",
+            "reason": "live-session"
+          },
+          {
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\sr\\afde9c5fcd1b26dc\\state.json",
+            "reason": "live-session"
+          },
+          {
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\sr\\deadbeefdeadbeef\\state.json",
+            "reason": "unreadable-state"
+          },
+          {
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\sr\\df32fd13427db0a1\\state.json",
+            "reason": "live-session"
+          },
+          {
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\custom\\state.json",
+            "reason": "live-session"
+          },
+          {
+            "path": "C:\\Users\\Varad M\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView",
+            "pid": 16168,
+            "reason": "not-sutradhar"
+          },
+          {
+            "path": "C:\\Users\\Varad M\\AppData\\Local\\Packages\\Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe\\LocalState\\EBWebView",
+            "pid": 24760,
+            "reason": "not-sutradhar"
+          },
+          {
+            "path": "/tmp/puppeteer_dev_chrome_profile-9pvYqK",
+            "pid": 35984,
+            "reason": "not-sutradhar"
+          },
+          {
+            "path": "C:\\WINDOWS\\TEMP\\sutradhar-cli-1790320692317",
+            "pid": 60836,
+            "reason": "not-sutradhar"
+          },
+          {
+            "path": "E:\\AI-Cache\\tmp\\sutradhar-cli-1790326364690",
+            "pid": 48748,
+            "reason": "not-sutradhar"
+          },
+          {
+            "pid": 106656,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-ppid-OD2ntU\\temp\\sutradhar-cli-1790339644079-a3sqat",
+            "reason": "out-of-scope"
+          },
+          {
+            "path": "E:\\AI-Cache\\tmp\\sutradhar-cli-1790339780702",
+            "pid": 109920,
+            "reason": "not-sutradhar"
+          },
+          {
+            "pid": 70900,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-b2vcjA\\temp\\sutradhar-cli-1790339824234-iXU7GO",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 119792,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-b2vcjA\\temp\\sutradhar-cli-1790339825207-Cl6VYr",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 93248,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-b2vcjA\\temp\\sutradhar-cli-1790339827508-0Vd8ta",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 77040,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-b2vcjA\\temp\\sutradhar-cli-1790339829467-glvx70",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 70840,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-b2vcjA\\temp\\sutradhar-cli-1790339830552-YNuD1m",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 89420,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-b2vcjA\\temp\\sutradhar-cli-1790339833284-hS7uYZ",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 114344,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-b2vcjA\\temp\\sutradhar-cli-1790339834350-MTA9QD",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 94920,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-b2vcjA\\temp\\sutradhar-cli-1790339839932-YNAtS3",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 124396,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-b2vcjA\\temp\\sutradhar-cli-1790339844876-JyuGyK",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 129508,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-b2vcjA\\temp\\sutradhar-cli-1790339845924-QAPkTw",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 93656,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-b2vcjA\\temp\\sutradhar-cli-1790339847365-4J6qSD",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 127448,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-b2vcjA\\temp\\sutradhar-cli-1790339851354-yOLfxQ",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 109020,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-vq7KLF\\temp\\sutradhar-cli-1790339863861-BjyMYw",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 117540,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-vq7KLF\\temp\\sutradhar-cli-1790339867486-Z1q3RP",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 101804,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-vq7KLF\\temp\\sutradhar-cli-1790339869550-V4MIeu",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 132552,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-vq7KLF\\temp\\sutradhar-cli-1790339871110-gEO0Uj",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 86576,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-vq7KLF\\temp\\sutradhar-cli-1790339881190-6kGR4m",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 117488,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-vq7KLF\\temp\\sutradhar-cli-1790339884657-NHwHsP",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 76608,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-vq7KLF\\temp\\sutradhar-cli-1790339886869-kO57j0",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 76000,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-vq7KLF\\temp\\sutradhar-cli-1790339888106-racWx4",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 84492,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-vq7KLF\\temp\\sutradhar-cli-1790339889631-1cAm8W",
+            "reason": "out-of-scope"
+          },
+          {
+            "pid": 124056,
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-midw-vq7KLF\\temp\\sutradhar-cli-1790339891253-TyXtHX",
+            "reason": "out-of-scope"
+          },
+          {
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\puppeteer_dev_chrome_profile-FoRn01",
+            "reason": "not-sutradhar"
+          },
+          {
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1600000000002",
+            "reason": "symlink"
+          },
+          {
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1790341049954-zNoo8S",
+            "reason": "in-use"
+          },
+          {
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1790341052670-xG6fRA",
+            "reason": "in-use"
+          },
+          {
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1790341055449-eXTfeK",
+            "reason": "in-use"
+          },
+          {
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1790341057607-0XbNKX",
+            "reason": "in-use"
+          },
+          {
+            "path": "E:\\AI-Cache\\tmp\\fr2-03-a3-dw-GspAQC\\temp\\sutradhar-cli-1790341064095-YOUNG1",
+            "reason": "grace"
+          }
+        ],
+        "remaining": {
+          "orphanProcesses": 0,
+          "orphanDirs": 0
+        },
+        "exitCode": 0
+      }
+    }
+  ]
+}

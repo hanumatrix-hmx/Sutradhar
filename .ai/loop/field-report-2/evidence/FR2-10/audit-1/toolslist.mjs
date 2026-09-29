@@ -1,0 +1,17 @@
+import { spawn } from 'node:child_process';
+import fs from 'node:fs';
+const [serverPath, outFile] = process.argv.slice(2);
+const child = spawn(process.execPath, [serverPath], { stdio: ['pipe', 'pipe', 'ignore'] });
+let buf = ''; const waiters = new Map();
+child.stdout.on('data', (c) => { buf += c; let i; while ((i = buf.indexOf('\n')) >= 0) { const l = buf.slice(0, i); buf = buf.slice(i + 1); try { const m = JSON.parse(l); waiters.get(m.id)?.(m); } catch {} } });
+const call = (id, method, params) => new Promise((r) => { waiters.set(id, r); child.stdin.write(JSON.stringify({ jsonrpc: '2.0', id, method, params }) + '\n'); });
+await call(1, 'initialize', { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'a', version: '1' } });
+child.stdin.write(JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized' }) + '\n');
+const r = await call(2, 'tools/list', {});
+fs.writeFileSync(outFile, JSON.stringify(r.result, null, 2));
+const tools = r.result.tools;
+const req = tools.filter((t) => (t.inputSchema.required ?? []).includes('sessionId')).map((t) => t.name);
+const opt = tools.filter((t) => t.inputSchema.properties?.sessionId && !(t.inputSchema.required ?? []).includes('sessionId')).map((t) => t.name);
+const none = tools.filter((t) => !t.inputSchema.properties?.sessionId).map((t) => t.name);
+console.log(JSON.stringify({ server: serverPath, compactBytes: Buffer.byteLength(JSON.stringify(r.result)), rawLineBytes: null, toolCount: tools.length, requiredSessionId: req.length, optionalSessionId: opt, noSessionId: none }));
+child.stdin.end();
