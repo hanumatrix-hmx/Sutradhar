@@ -1,0 +1,167 @@
+{
+  "file": "E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\browser\\src\\verifier\\execution-verifier.ts",
+  "shaBefore": "b7b7630127a75b5e8191d78c65281408678879b021594d5f68dcb8f3aca96ba0",
+  "shaAfter": "b7b7630127a75b5e8191d78c65281408678879b021594d5f68dcb8f3aca96ba0",
+  "identical": true,
+  "results": [
+    {
+      "id": "N1",
+      "why": "frame element visibility ignored",
+      "exit": 1,
+      "caught": true,
+      "summary": "Tests  11 failed | 829 passed (840)",
+      "firstFailures": [
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > is fully self-contained: re-created from toString",
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > same-origin iframe x visibility:hidden ",
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > same-origin iframe x visibility:hidden "
+      ],
+      "restoredIdentical": true,
+      "ms": 25715
+    },
+    {
+      "id": "N2",
+      "why": "frame element zero-area accepted",
+      "exit": 1,
+      "caught": true,
+      "summary": "Tests  10 failed | 830 passed (840)",
+      "firstFailures": [
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > same-origin iframe x zero-area (font-si",
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > same-origin iframe x zero-area (font-si",
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > srcdoc iframe x zero-area (font-size:0 "
+      ],
+      "restoredIdentical": true,
+      "ms": 26188
+    },
+    {
+      "id": "N3",
+      "why": "content-visibility:hidden on the iframe itself ignored",
+      "exit": 1,
+      "caught": true,
+      "summary": "Tests  6 failed | 834 passed (840)",
+      "firstFailures": [
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > same-origin iframe x content-visibility",
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > srcdoc iframe x content-visibility:hidd",
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > sandboxed iframe x content-visibility:h"
+      ],
+      "restoredIdentical": true,
+      "ms": 25374
+    },
+    {
+      "id": "N4",
+      "why": "aggregation: hung/failed frames conclude not-found",
+      "exit": 1,
+      "caught": true,
+      "summary": "Tests  7 failed | 833 passed (840)",
+      "firstFailures": [
+        "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V12: a frame that never answers is bounded (monotonic clock), reported not-ru",
+        "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V12b: some frames throwing and none finding the text is unavailable, never no",
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > FAIL CLOSED: a frame whose frame elemen"
+      ],
+      "restoredIdentical": true,
+      "ms": 25770
+    },
+    {
+      "id": "N5",
+      "why": "per-frame error fails OPEN to found",
+      "exit": 1,
+      "caught": true,
+      "summary": "Tests  2 failed | 838 passed (840)",
+      "firstFailures": [
+        "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V12b: some frames throwing and none finding the text is unavailable, never no",
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > an in-frame judgement that throws (no c"
+      ],
+      "restoredIdentical": true,
+      "ms": 25547
+    },
+    {
+      "id": "N6",
+      "why": "expect not-run no longer blocks verified when built-in passed",
+      "exit": 1,
+      "caught": true,
+      "summary": "Tests  1 failed | 839 passed (840)",
+      "firstFailures": [
+        "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V11: a pending dialog makes expect.text not-run, tier unverifiable, and no fr"
+      ],
+      "restoredIdentical": true,
+      "ms": 25699
+    },
+    {
+      "id": "N7",
+      "why": "F4 reason: expectation-only verification reported like a built-in pass",
+      "exit": 1,
+      "caught": true,
+      "summary": "Tests  1 failed | 839 passed (840)",
+      "firstFailures": [
+        "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V6b (fix-1 F4): a not-run builtIn plus a passing (even trivially true) expect"
+      ],
+      "restoredIdentical": true,
+      "ms": 25303
+    },
+    {
+      "id": "N8",
+      "why": "split match: only the first segment must be rendered",
+      "exit": 1,
+      "caught": true,
+      "summary": "Tests  1 failed | 839 passed (840)",
+      "firstFailures": [
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > text split over inline siblings matches (\"a<b>c</"
+      ],
+      "restoredIdentical": true,
+      "ms": 25553
+    },
+    {
+      "id": "N9",
+      "why": "match may cross a block boundary",
+      "exit": 1,
+      "caught": true,
+      "summary": "Tests  1 failed | 839 passed (840)",
+      "firstFailures": [
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > text never matches ACROSS a block boundary or a <"
+      ],
+      "restoredIdentical": true,
+      "ms": 25940
+    },
+    {
+      "id": "N10",
+      "why": "display:contents container judged directly (no climb)",
+      "exit": 1,
+      "caught": true,
+      "summary": "Tests  6 failed | 834 passed (840)",
+      "firstFailures": [
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > slotted BARE text into a wrapper inside the shado",
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > slotted BARE text into a wrapper inside the shado",
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > slotted BARE text into a wrapper inside the shado"
+      ],
+      "restoredIdentical": true,
+      "ms": 25297
+    },
+    {
+      "id": "N11",
+      "why": "slots never followed to their assigned nodes",
+      "exit": 1,
+      "caught": true,
+      "summary": "Tests  10 failed | 830 passed (840)",
+      "firstFailures": [
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > slotted element into a visible host: unhidden tex",
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > slotted BARE text into a wrapper inside the shado",
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: in-frame RENDERED-text matrix (mechanism x placement) > slotted element into a visible host x opacity:0 ("
+      ],
+      "restoredIdentical": true,
+      "ms": 25945
+    },
+    {
+      "id": "N12",
+      "why": "hidden-link dominance lost for the parent chain (up hidden ignored)",
+      "exit": 1,
+      "caught": true,
+      "summary": "Tests  5 failed | 835 passed (840)",
+      "firstFailures": [
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > nested iframes x display:none: applied ",
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > nested iframes x visibility:hidden: app",
+        "tests/unit/expect-text-matrix.spec.ts > FR2-07 fix-2 expect.text: frames are judged from the PARENT side (mechanism x frame kind) > nested iframes x content-visibility:hid"
+      ],
+      "restoredIdentical": true,
+      "ms": 25525
+    }
+  ]
+}
