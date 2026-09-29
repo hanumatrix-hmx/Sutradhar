@@ -128,10 +128,54 @@ export type VisibleTextResult = { result: 'found' | 'not-found'; detail?: undefi
  * In-page (self-contained; serialised by Puppeteer): does the VISIBLE text of this document
  * contain `t`? `innerText` excludes `display:none`, `<script>` and `<style>` text. Open shadow
  * roots are searched recursively through their child elements' `innerText`.
+ *
+ * `innerText` of a node that is NOT RENDERED falls back to its `textContent` (the text of a
+ * `display:none` shadow host's shadow tree, or of a `display:none` iframe's body, would otherwise
+ * count as "visible"), so every candidate match is confirmed rendered: no ancestor along the FLAT
+ * tree (parent element, else shadow host, else the embedding `<iframe>` element when same-origin)
+ * has `display:none` or, above the node itself, `content-visibility:hidden`; and the document
+ * itself has a box (a frame that is display:none — including a cross-origin one whose embedding
+ * element we cannot reach — has no layout, so its `documentElement` has no client rects).
+ * Confirmation runs only on a text match, so the cost is bounded by the number of matches.
+ * (`checkVisibility()` is deliberately not used: it reports false for `display:contents` hosts
+ * whose children ARE rendered.)
  */
 export function visibleTextContainsInPage(t: string): boolean {
+  const styleOf = (e: Element): { display: string; contentVisibility?: string } | undefined => {
+    try {
+      const w: Window = (e.ownerDocument && e.ownerDocument.defaultView) || window;
+      return w.getComputedStyle(e) as unknown as { display: string; contentVisibility?: string };
+    } catch {
+      return undefined;
+    }
+  };
+  const rendered = (start: Element): boolean => {
+    const de = document.documentElement as HTMLElement | null;
+    if (de && typeof de.getClientRects === 'function' && de.getClientRects().length === 0) return false;
+    let e: Element | null = start;
+    for (let guard = 0; e && guard < 10000; guard++) {
+      const cs = styleOf(e);
+      if (cs && (cs.display === 'none' || (e !== start && cs.contentVisibility === 'hidden'))) return false;
+      let next: Element | null = e.parentElement;
+      if (!next) {
+        const root: (Node & { host?: Element }) | undefined =
+          typeof e.getRootNode === 'function' ? (e.getRootNode() as Node & { host?: Element }) : undefined;
+        if (root && root.host) next = root.host;
+        else {
+          try {
+            const w: Window = (e.ownerDocument && e.ownerDocument.defaultView) || window;
+            next = (w.frameElement as Element | null) ?? null;
+          } catch {
+            next = null;
+          }
+        }
+      }
+      e = next;
+    }
+    return true;
+  };
   const body = document.body as HTMLElement | null;
-  if (body && typeof body.innerText === 'string' && body.innerText.includes(t)) return true;
+  if (body && typeof body.innerText === 'string' && body.innerText.includes(t) && rendered(body)) return true;
   const walk = (root: ParentNode): boolean => {
     const all = Array.from(root.querySelectorAll('*'));
     for (const el of all) {
@@ -139,7 +183,7 @@ export function visibleTextContainsInPage(t: string): boolean {
       if (!sr) continue;
       for (const child of Array.from(sr.children)) {
         const it = (child as HTMLElement).innerText;
-        if (typeof it === 'string' && it.includes(t)) return true;
+        if (typeof it === 'string' && it.includes(t) && rendered(child)) return true;
       }
       if (walk(sr)) return true;
     }

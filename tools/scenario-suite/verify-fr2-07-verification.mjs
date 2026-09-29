@@ -201,7 +201,9 @@ async function runMcpCases(surface, serverPath, ctx) {
     const t0 = performance.now();
     for (;;) {
       const fr = page.frames().find((f) => f.url().startsWith(server.crossOrigin));
-      if (fr && (await fr.$('#xo-btn').catch(() => null))) break;
+      const tf = page.frames().filter((x) => x.url().includes('/textframe.html'));
+      const tfLive = tf.length === 2 ? await Promise.all(tf.map((x) => Promise.race([x.evaluate(() => document.body.innerText).then(() => true), delay(1000).then(() => false)]).catch(() => false))) : [];
+      if (fr && (await fr.$('#xo-btn').catch(() => null)) && tfLive.length === 2 && tfLive.every(Boolean)) break;
       if (performance.now() - t0 > 8000) break;
       await delay(100);
     }
@@ -741,6 +743,75 @@ async function runMcpCases(surface, serverPath, ctx) {
       await page.waitForFunction(() => window.__fx6 && window.__fx6.ready, { timeout: 8000 });
       const r = (await tool('browser.upload_file_via_trigger', { target: 'pierce/#browse-btn', filePath: upFile })).json;
       record(surface, id, r.success === true && tierOf(r) === 'verified', { expected: 'FR2-06 compat: pierce/#browse-btn -> verified', observed: { tier: tierOf(r), reason: reasonOf(r), error: r.error }, verification: r.verification });
+    });
+  }
+
+  // ── fix-1 F1/F4: expect.text must not count text that is NOT RENDERED; built-in-not-run reason ─────
+  // (runs on the bundle surface too: the audit reproduced F1 on the sutradhar bundle)
+  {
+    /** Independent ground truth from the observer's own connection (never the tool's helper). */
+    const shadowTruth = (page, hostSel) =>
+      page.evaluate((sel) => {
+        const p = document.querySelector(sel).shadowRoot.firstElementChild;
+        return { innerText: p.innerText, textContent: p.textContent, checkVisibility: p.checkVisibility() };
+      }, hostSel);
+    const negText = (id, text, what, truthFn) =>
+      C(id, async (cid) => {
+        const page = await fresh();
+        const r = (await tool('browser.click', { target: '#noop', expect: { text } })).json;
+        await delay(1200); // the engine rejects a duplicate click on the same target within 1000ms; keep the next case clear of it
+        const t = await truthFn(page);
+        record(surface, cid, r.success === true && r.verification?.verified === false && tierOf(r) === 'contradicted' && checkOf(r, 'expect.text')?.outcome === 'fail' && t.ok, {
+          expected: `NEG: text only in ${what} (in the DOM, NOT rendered) -> contradicted; the observer confirms it is unrendered`,
+          observed: { tier: tierOf(r), verified: r.verification?.verified, reason: reasonOf(r) }, observerTruth: t, verification: r.verification,
+        });
+      });
+    const posText = (id, text, what, truthFn) =>
+      C(id, async (cid) => {
+        const page = await fresh();
+        const r = (await tool('browser.click', { target: '#noop', expect: { text } })).json;
+        await delay(1200); // the engine rejects a duplicate click on the same target within 1000ms; keep the next case clear of it
+        const t = await truthFn(page);
+        record(surface, cid, r.success === true && r.verification?.verified === true && tierOf(r) === 'verified' && checkOf(r, 'expect.text')?.outcome === 'pass' && t.ok, {
+          expected: `POS: text in ${what} (rendered) -> verified; the observer confirms it is rendered`,
+          observed: { tier: tierOf(r), verified: r.verification?.verified, reason: reasonOf(r) }, observerTruth: t, verification: r.verification,
+        });
+      });
+    negText('X8', 'FR2-07 SHADOW-HIDDEN', 'an open shadow root whose host is display:none', async (page) => {
+      const t = await shadowTruth(page, '#hidden-shadow-host');
+      // the trap: textContent has it and innerText falls back to it, but nothing is rendered
+      return { ...t, ok: t.checkVisibility === false && /SHADOW-HIDDEN/.test(t.textContent) };
+    });
+    posText('X9', 'FR2-07 SHADOW-VISIBLE', 'a visible open shadow root', async (page) => {
+      const t = await shadowTruth(page, '#visible-shadow-host');
+      return { ...t, ok: t.checkVisibility === true && /SHADOW-VISIBLE/.test(t.innerText) };
+    });
+    negText('X10', 'FR2-07 IFRAME-HIDDEN-SAME', 'a display:none same-origin iframe', async (page) => {
+      const own = await page.evaluate(() => {
+        const fe = document.getElementById('hid-same');
+        return { frameRects: fe.getClientRects().length, innerTextInsideHasIt: fe.contentDocument.body.innerText.includes('IFRAME-HIDDEN-SAME'), mainInnerHasIt: document.body.innerText.includes('IFRAME-HIDDEN-SAME') };
+      });
+      return { ...own, ok: own.frameRects === 0 && own.innerTextInsideHasIt === true && own.mainInnerHasIt === false };
+    });
+    negText('X11', 'FR2-07 IFRAME-HIDDEN-XO', 'a display:none CROSS-ORIGIN (out-of-process) iframe', async (page) => {
+      const own = await page.evaluate(() => ({ frameRects: document.getElementById('hid-xo').getClientRects().length }));
+      const fr = page.frames().find((f) => f.url().includes('IFRAME-HIDDEN-XO'));
+      const inner = fr ? await fr.evaluate(() => document.body.innerText).catch((e) => 'ERR ' + e.message) : null;
+      return { ...own, frameListed: !!fr, innerTextInsideFrame: inner, ok: own.frameRects === 0 };
+    });
+    posText('X12', 'FR2-07 IFRAME-VISIBLE-SAME', 'a visible same-origin iframe', async (page) => {
+      const own = await page.evaluate(() => ({ frameRects: document.getElementById('vis-same').getClientRects().length, inner: document.getElementById('vis-same').contentDocument.body.innerText }));
+      return { ...own, ok: own.frameRects > 0 && /IFRAME-VISIBLE-SAME/.test(own.inner) };
+    });
+    posText('X13', 'FR2-07 IFRAME-VISIBLE-XO', 'a visible cross-origin (out-of-process) iframe', async (page) => {
+      const t0 = performance.now();
+      let fr;
+      while (!fr && performance.now() - t0 < 6000) {
+        fr = page.frames().find((f) => f.url().includes('IFRAME-VISIBLE-XO'));
+        if (!fr) await delay(100);
+      }
+      const inner = fr ? await fr.evaluate(() => document.body.innerText) : null;
+      return { frameFound: !!fr, inner, ok: !!fr && /IFRAME-VISIBLE-XO/.test(inner ?? '') };
     });
   }
 

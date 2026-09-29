@@ -49,6 +49,10 @@ export async function startFr207Server() {
       }
       case '/frame.html':
         return send(200, frameHtml);
+      case '/textframe.html': {
+        const t = (u.searchParams.get('text') ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+        return send(200, `<!doctype html><html><body><p>${t}</p></body></html>`);
+      }
       case '/prob043.html':
         return send(200, prob043Html);
       case '/nav/a':

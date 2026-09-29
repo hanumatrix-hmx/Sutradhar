@@ -69,6 +69,11 @@
     <button id="covered-btn" class="abs" style="left:200px;top:300px;width:120px;height:40px">covered</button>
     <div id="decoy-overlay" class="abs" style="left:200px;top:300px;width:120px;height:40px;z-index:10;background:transparent"></div>
     <button id="vanish" class="abs" style="left:360px;top:300px;width:120px;height:40px">vanish</button>
+    <!-- fix-1 F1: text present in the DOM but NOT rendered (display:none shadow host / iframe) vs rendered twins -->
+    <div id="hidden-shadow-host" style="display:none"></div>
+    <div id="visible-shadow-host" class="abs" style="left:700px;top:420px"></div>
+    <iframe id="hid-same" style="display:none" srcdoc="<p>FR2-07 IFRAME-HIDDEN-SAME</p>"></iframe>
+    <iframe id="vis-same" class="abs" style="left:700px;top:300px" srcdoc="<p>FR2-07 IFRAME-VISIBLE-SAME</p>"></iframe>
     <div id="ctx-target" class="abs" style="left:40px;top:360px;width:120px;height:40px;background:#eef">ctx</div>
     <button id="alert-btn" class="abs" style="left:200px;top:360px;width:120px;height:40px">alert</button>
     <div id="drag-pad" class="abs" style="left:40px;top:420px;width:300px;height:150px;background:#efe">drag pad</div>
@@ -94,6 +99,26 @@
       sIn.id = 'shadow-in';
       sIn.setAttribute('aria-label', 'shadow-in');
       sr.appendChild(sIn);
+
+      // fix-1 F1: open shadow roots whose text is built from parts (never a contiguous literal in source)
+      [['hidden-shadow-host', 'FR2-07 SHADOW-' + 'HIDDEN'], ['visible-shadow-host', 'FR2-07 SHADOW-' + 'VISIBLE']].forEach(function (p) {
+        var r = document.getElementById(p[0]).attachShadow({ mode: 'open' });
+        var el = document.createElement('p');
+        el.textContent = p[1];
+        r.appendChild(el);
+      });
+
+      // fix-1 F1: the two extra cross-origin frames are added AFTER load: a puppeteer observer does not
+      // reliably get an execution context for several cross-origin frames present at parse time.
+      window.addEventListener('load', function () {
+        [['hid-xo', 'display:none', 'FR2-07 IFRAME-HIDDEN-XO'], ['vis-xo', 'position:absolute;left:700px;top:360px', 'FR2-07 IFRAME-VISIBLE-XO']].forEach(function (p) {
+          var f = document.createElement('iframe');
+          f.id = p[0];
+          f.style.cssText = p[1];
+          f.src = '__XO_ORIGIN__/textframe.html?text=' + encodeURIComponent(p[2]);
+          document.body.appendChild(f);
+        });
+      });
 
       // The literal must NOT appear in any script: build it (the old textContent-based expect.text
       // would otherwise match <script> source). It appears in #hidden-template only.
