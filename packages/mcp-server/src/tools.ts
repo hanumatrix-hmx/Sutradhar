@@ -12,12 +12,21 @@
 
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { SutradharRuntime } from '@sutradhar/capability-runtime';
+import type { ActionExpectation, SutradharRuntime } from '@sutradhar/capability-runtime';
 import { buildAuditReport } from '@sutradhar/capability-runtime';
 import type { AgentCore } from '@sutradhar/agent';
 import { createGoalId } from '@sutradhar/contracts';
 import { WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT, WAIT_HIDDEN_HARD_FAILURE_PREFIX } from '@sutradhar/browser';
 import { withSessionResolution } from './session-resolution.js';
+
+/**
+ * FR2-07 arity rule: the trailing `expect` argument is passed to the runtime ONLY when the caller
+ * gave one, so a call without it keeps exactly the argument list it always had (handlers and
+ * tests compare positional arguments).
+ */
+function expectArgs(e: ActionExpectation | undefined): [ActionExpectation] | [] {
+  return e ? [e] : [];
+}
 
 /** Shape of the agent core passed to {@link registerTools}, if autonomous mode is enabled. */
 export interface AgentHandle {
@@ -146,6 +155,25 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
   // one live session when omitted (error listing the live ids when there are 0 or several). One
   // mechanism for all tools — see session-resolution.ts.
   const server = withSessionResolution(mcpServer, runtime);
+
+  // FR2-07: the one public post-action assertion, on every state-changing tool.
+  const expectDesc =
+    'Optional assertion checked once, right after the action (after settle, if requested). text: visible text ' +
+    'that must appear on the page (any frame, open shadow roots; case-sensitive substring; hidden/display:none ' +
+    'text does not count). url: substring the final URL must contain. urlChanged: true = URL must differ from ' +
+    'before, false = must be identical. A failed expectation does NOT fail the action: success stays true and ' +
+    'verification.verified is false with evidence.tier "contradicted" and a failing expect.* check. Every result ' +
+    'carries verification {verified, confidence, reason, evidence:{tier, checks}} — tier "unverifiable" means ' +
+    'nothing could be checked (the reason says why), not that the action failed.';
+  const expectSchema = z
+    .object({
+      text: z.string().min(1).optional(),
+      url: z.string().min(1).optional(),
+      urlChanged: z.boolean().optional(),
+    })
+    .strict()
+    .optional()
+    .describe(expectDesc);
 
   // ── Lifecycle ────────────────────────────────────────────────────────────
   server.registerTool(
@@ -306,11 +334,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         sessionId: z.string(),
         url: z.string().url(),
         tabId: z.string().optional().describe('Target a specific tab; defaults to the active one.'),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, url, tabId }) => {
+    async ({ sessionId, url, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.navigate(sessionId, url, tabId));
+        return jsonResult(await runtime.navigate(sessionId, url, tabId, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`navigate failed: ${(e as Error).message}`);
       }
@@ -321,11 +350,11 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
     'browser.go_back',
     {
       description: "Navigate back in the tab's history.",
-      inputSchema: { sessionId: z.string(), tabId: z.string().optional() },
+      inputSchema: { sessionId: z.string(), tabId: z.string().optional(), expect: expectSchema },
     },
-    async ({ sessionId, tabId }) => {
+    async ({ sessionId, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.goBack(sessionId, tabId));
+        return jsonResult(await runtime.goBack(sessionId, tabId, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`go_back failed: ${(e as Error).message}`);
       }
@@ -336,11 +365,11 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
     'browser.go_forward',
     {
       description: "Navigate forward in the tab's history.",
-      inputSchema: { sessionId: z.string(), tabId: z.string().optional() },
+      inputSchema: { sessionId: z.string(), tabId: z.string().optional(), expect: expectSchema },
     },
-    async ({ sessionId, tabId }) => {
+    async ({ sessionId, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.goForward(sessionId, tabId));
+        return jsonResult(await runtime.goForward(sessionId, tabId, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`go_forward failed: ${(e as Error).message}`);
       }
@@ -351,11 +380,11 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
     'browser.reload',
     {
       description: 'Reload the current page.',
-      inputSchema: { sessionId: z.string(), tabId: z.string().optional() },
+      inputSchema: { sessionId: z.string(), tabId: z.string().optional(), expect: expectSchema },
     },
-    async ({ sessionId, tabId }) => {
+    async ({ sessionId, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.reload(sessionId, tabId));
+        return jsonResult(await runtime.reload(sessionId, tabId, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`reload failed: ${(e as Error).message}`);
       }
@@ -520,11 +549,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
           .describe('Click this point relative to the target element\'s top-left corner, instead of its center.'),
         tabId: z.string().optional(),
         settle: settleSchema,
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, target, modifiers, offset, tabId, settle }) => {
+    async ({ sessionId, target, modifiers, offset, tabId, settle, expect }) => {
       try {
-        return jsonResult(await runtime.click(sessionId, target, tabId, modifiers, offset, settle));
+        return jsonResult(await runtime.click(sessionId, target, tabId, modifiers, offset, settle, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`click failed: ${(e as Error).message}`);
       }
@@ -537,19 +567,21 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
       description:
         'Click at an absolute viewport coordinate — no element or selector at all. For UI with nothing ' +
         "DOM-addressable to target (canvas content at a position only knowable from a screenshot's pixel " +
-        "coordinates, a PDF/video overlay). Prefer browser.click when there's a real element to target — " +
-        "this bypasses element resolution and verification entirely.",
+        "coordinates, a PDF/video overlay). Prefer browser.click when there's a real element to target. " +
+        "The result's verification names the element that was actually at the point and whether a trusted " +
+        "click reached it; it can't know which element you intended, so pair it with expect.",
       inputSchema: {
         sessionId: z.string(),
         x: z.number().describe('Viewport x coordinate in pixels.'),
         y: z.number().describe('Viewport y coordinate in pixels.'),
         button: z.enum(['left', 'right', 'middle']).optional(),
         tabId: z.string().optional(),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, x, y, button, tabId }) => {
+    async ({ sessionId, x, y, button, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.clickAtPoint(sessionId, x, y, tabId, button));
+        return jsonResult(await runtime.clickAtPoint(sessionId, x, y, tabId, button, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`click_at_point failed: ${(e as Error).message}`);
       }
@@ -571,11 +603,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         toX: z.number(),
         toY: z.number(),
         tabId: z.string().optional(),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, fromX, fromY, toX, toY, tabId }) => {
+    async ({ sessionId, fromX, fromY, toX, toY, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.dragAtPoints(sessionId, fromX, fromY, toX, toY, tabId));
+        return jsonResult(await runtime.dragAtPoints(sessionId, fromX, fromY, toX, toY, tabId, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`drag_at_points failed: ${(e as Error).message}`);
       }
@@ -592,11 +625,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         value: z.string().describe('Text to type into the element.'),
         tabId: z.string().optional(),
         settle: settleSchema,
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, target, value, tabId, settle }) => {
+    async ({ sessionId, target, value, tabId, settle, expect }) => {
       try {
-        return jsonResult(await runtime.type(sessionId, target, value, tabId, settle));
+        return jsonResult(await runtime.type(sessionId, target, value, tabId, settle, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`type failed: ${(e as Error).message}`);
       }
@@ -614,11 +648,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         key: z.string(),
         modifiers: z.array(z.enum(['Control', 'Shift', 'Alt', 'Meta'])).optional(),
         tabId: z.string().optional(),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, key, modifiers, tabId }) => {
+    async ({ sessionId, key, modifiers, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.pressKey(sessionId, key, tabId, modifiers));
+        return jsonResult(await runtime.pressKey(sessionId, key, tabId, modifiers, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`press_key failed: ${(e as Error).message}`);
       }
@@ -639,11 +674,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         sessionId: z.string(),
         target: z.string().describe(targetDesc),
         tabId: z.string().optional(),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, target, tabId }) => {
+    async ({ sessionId, target, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.focus(sessionId, target, tabId));
+        return jsonResult(await runtime.focus(sessionId, target, tabId, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`focus failed: ${(e as Error).message}`);
       }
@@ -668,11 +704,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         tabId: z.string().optional(),
         target: z.string().optional().describe(targetDesc + ' Scrolls this element\'s own scroll container instead of the window.'),
         settle: settleSchema,
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, direction, amount, tabId, target, settle }) => {
+    async ({ sessionId, direction, amount, tabId, target, settle, expect }) => {
       try {
-        return jsonResult(await runtime.scroll(sessionId, direction, amount, tabId, target, settle));
+        return jsonResult(await runtime.scroll(sessionId, direction, amount, tabId, target, settle, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`scroll failed: ${(e as Error).message}`);
       }
@@ -693,11 +730,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
           .optional()
           .describe('Hover this point relative to the target element\'s top-left corner, instead of its center.'),
         tabId: z.string().optional(),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, target, offset, tabId }) => {
+    async ({ sessionId, target, offset, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.hover(sessionId, target, tabId, offset));
+        return jsonResult(await runtime.hover(sessionId, target, tabId, offset, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`hover failed: ${(e as Error).message}`);
       }
@@ -713,11 +751,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         target: z.string().describe(targetDesc),
         value: z.string().describe('The option value to select.'),
         tabId: z.string().optional(),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, target, value, tabId }) => {
+    async ({ sessionId, target, value, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.selectOption(sessionId, target, value, tabId));
+        return jsonResult(await runtime.selectOption(sessionId, target, value, tabId, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`select_option failed: ${(e as Error).message}`);
       }
@@ -733,11 +772,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         target: z.string().describe(targetDesc),
         values: z.array(z.string()).min(1).describe('The option values to select.'),
         tabId: z.string().optional(),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, target, values, tabId }) => {
+    async ({ sessionId, target, values, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.selectOptions(sessionId, target, values, tabId));
+        return jsonResult(await runtime.selectOptions(sessionId, target, values, tabId, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`select_options failed: ${(e as Error).message}`);
       }
@@ -775,11 +815,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
               'only has to exist in the DOM, visibility ignored. "hidden": the first match is removed or ' +
               'not visible; succeeds immediately if nothing matches at all, so double-check the selector.',
           ),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, target, timeoutMs, tabId, state }) => {
+    async ({ sessionId, target, timeoutMs, tabId, state, expect }) => {
       try {
-        return jsonResult(await runtime.waitForSelector(sessionId, target, timeoutMs, tabId, state));
+        return jsonResult(await runtime.waitForSelector(sessionId, target, timeoutMs, tabId, state, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`wait_for_selector failed: ${(e as Error).message}`);
       }
@@ -794,11 +835,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         sessionId: z.string(),
         text: z.string().describe('Visible text to match (substring match).'),
         tabId: z.string().optional(),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, text, tabId }) => {
+    async ({ sessionId, text, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.clickByText(sessionId, text, tabId));
+        return jsonResult(await runtime.clickByText(sessionId, text, tabId, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`click_by_text failed: ${(e as Error).message}`);
       }
@@ -814,11 +856,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         role: z.string().describe('ARIA role, e.g. "button".'),
         name: z.string().optional().describe('Accessible name to narrow the match, if ambiguous.'),
         tabId: z.string().optional(),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, role, name, tabId }) => {
+    async ({ sessionId, role, name, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.clickByRole(sessionId, role, name, tabId));
+        return jsonResult(await runtime.clickByRole(sessionId, role, name, tabId, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`click_by_role failed: ${(e as Error).message}`);
       }
@@ -834,11 +877,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         label: z.string().describe('The input\'s aria-label or placeholder text.'),
         value: z.string().describe('Text to type.'),
         tabId: z.string().optional(),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, label, value, tabId }) => {
+    async ({ sessionId, label, value, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.typeByLabel(sessionId, label, value, tabId));
+        return jsonResult(await runtime.typeByLabel(sessionId, label, value, tabId, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`type_by_label failed: ${(e as Error).message}`);
       }
@@ -882,11 +926,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
             'SUTRADHAR_ALLOWED_UPLOAD_ROOTS, in which case it must be under one of those directories.',
         ),
         tabId: z.string().optional(),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, target, filePath, tabId }) => {
+    async ({ sessionId, target, filePath, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.uploadFile(sessionId, target, filePath, tabId));
+        return jsonResult(await runtime.uploadFile(sessionId, target, filePath, tabId, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`upload_file failed: ${(e as Error).message}`);
       }
@@ -902,11 +947,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         target: z.string().describe(targetDesc),
         button: z.enum(['right', 'middle']).optional().describe('Defaults to "right".'),
         tabId: z.string().optional(),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, target, button, tabId }) => {
+    async ({ sessionId, target, button, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.clickWithButton(sessionId, target, button ?? 'right', tabId));
+        return jsonResult(await runtime.clickWithButton(sessionId, target, button ?? 'right', tabId, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`right_click failed: ${(e as Error).message}`);
       }
@@ -922,11 +968,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         sourceTarget: z.string().describe(`Element to drag. ${targetDesc}`),
         destTarget: z.string().describe(`Element to drop onto. ${targetDesc}`),
         tabId: z.string().optional(),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, sourceTarget, destTarget, tabId }) => {
+    async ({ sessionId, sourceTarget, destTarget, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.dragAndDrop(sessionId, sourceTarget, destTarget, tabId));
+        return jsonResult(await runtime.dragAndDrop(sessionId, sourceTarget, destTarget, tabId, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`drag_and_drop failed: ${(e as Error).message}`);
       }
@@ -941,11 +988,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         sessionId: z.string(),
         target: z.string().describe(targetDesc),
         tabId: z.string().optional(),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, target, tabId }) => {
+    async ({ sessionId, target, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.touchTap(sessionId, target, tabId));
+        return jsonResult(await runtime.touchTap(sessionId, target, tabId, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`touch_tap failed: ${(e as Error).message}`);
       }
@@ -968,11 +1016,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
             'SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS.',
         ),
         tabId: z.string().optional(),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, target, downloadDir, tabId }) => {
+    async ({ sessionId, target, downloadDir, tabId, expect }) => {
       try {
-        return jsonResult(await runtime.downloadFile(sessionId, target, downloadDir, tabId));
+        return jsonResult(await runtime.downloadFile(sessionId, target, downloadDir, tabId, ...expectArgs(expect)));
       } catch (e) {
         return errorResult(`download_file failed: ${(e as Error).message}`);
       }
@@ -983,7 +1032,10 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
   server.registerTool(
     'browser.screenshot',
     {
-      description: 'Capture a PNG screenshot. Full-page by default. Returns the image inline (base64).',
+      description:
+        'Capture a PNG screenshot. Full-page by default. Returns the image inline (base64), followed by a ' +
+        'small JSON block with verification: a screenshot has no post-condition to check, so its tier is ' +
+        '"unverifiable" by design unless the capture itself is not a valid PNG.',
       inputSchema: {
         sessionId: z.string(),
         tabId: z.string().optional(),
@@ -992,8 +1044,18 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
     },
     async ({ sessionId, tabId, fullPage }) => {
       try {
-        const { base64 } = await runtime.screenshot(sessionId, tabId, fullPage);
-        return { content: [{ type: 'image' as const, data: base64, mimeType: 'image/png' }] };
+        const { base64, verification } = await runtime.screenshot(sessionId, tabId, fullPage);
+        const content: Array<{ type: 'image'; data: string; mimeType: string } | { type: 'text'; text: string }> = [
+          { type: 'image' as const, data: base64, mimeType: 'image/png' },
+        ];
+        // FR2-07: the image stays content[0]; the verification rides along as one JSON text block.
+        if (verification) {
+          content.push({
+            type: 'text' as const,
+            text: JSON.stringify({ actionType: 'screenshot', verification }, null, 2),
+          });
+        }
+        return { content };
       } catch (e) {
         return errorResult(`screenshot failed: ${(e as Error).message}`);
       }
@@ -1558,7 +1620,7 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
     },
     async ({ sessionId, tabId }) => {
       try {
-        return jsonResult({ text: await runtime.getClipboard(sessionId, tabId) });
+        return jsonResult(await runtime.readClipboard(sessionId, tabId));
       } catch (e) {
         return errorResult(`get_clipboard failed: ${(e as Error).message}`);
       }
@@ -1573,8 +1635,7 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
     },
     async ({ sessionId, text, tabId }) => {
       try {
-        await runtime.setClipboard(sessionId, text, tabId);
-        return jsonResult({ success: true });
+        return jsonResult(await runtime.setClipboard(sessionId, text, tabId));
       } catch (e) {
         return errorResult(`set_clipboard failed: ${(e as Error).message}`);
       }
@@ -1596,12 +1657,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
             'SUTRADHAR_ALLOWED_UPLOAD_ROOTS, in which case it must be under one of those directories.',
         ),
         tabId: z.string().optional(),
+        expect: expectSchema,
       },
     },
-    async ({ sessionId, target, filePath, tabId }) => {
+    async ({ sessionId, target, filePath, tabId, expect }) => {
       try {
-        await runtime.uploadFileViaTrigger(sessionId, target, filePath, tabId);
-        return jsonResult({ success: true, filePath });
+        const result = await runtime.uploadFileViaTrigger(sessionId, target, filePath, tabId, ...expectArgs(expect));
+        return jsonResult({ ...result, filePath });
       } catch (e) {
         return errorResult(`upload_file_via_trigger failed: ${(e as Error).message}`);
       }
