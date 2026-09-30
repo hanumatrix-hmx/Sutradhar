@@ -18,6 +18,7 @@ import crypto from 'node:crypto';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { spawn, spawnSync } from 'node:child_process';
+import { fullMatrix, rotatingMatrix, urlCases, findCanaries, selfTest } from './lib/fr2-11-privacy-matrix.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.join(here, '..', '..');
@@ -87,16 +88,19 @@ function resolveChrome() {
 // ── canary secrets and the probe that looks for them ─────────────────────────────────────────────
 // Every secret this script types, evaluates, navigates with or puts on the clipboard contains one of these.
 const CANARIES = ['SECRET', 'hunter2', '?n=', '&n=', 'token=', 'access_token', '#frag'];
-const leaksIn = (text) => CANARIES.filter((c) => String(text).includes(c));
+const leaksIn = (text) => [...CANARIES.filter((c) => String(text).includes(c)), ...findCanaries(text)];
 
 // ── fixture server (HTTP: the query-drop is the real-world redaction case) ───────────────────────
 async function startServer() {
   const html = await fs.readFile(path.join(here, 'fixtures', 'fr2-11-history.html'));
   const typefail = await fs.readFile(path.join(here, 'fixtures', 'fr2-11-typefail.html'));
+  const pathsPage = await fs.readFile(path.join(here, 'fixtures', 'fr2-11-paths.html'));
   const server = http.createServer((req, res) => {
     const p = (req.url ?? '').split('?')[0];
     if (p === '/fr2-11-history.html') return res.writeHead(200, { 'content-type': 'text/html' }).end(html);
     if (p === '/fr2-11-typefail.html') return res.writeHead(200, { 'content-type': 'text/html' }).end(typefail);
+    if (p === '/fr2-11-paths.html') return res.writeHead(200, { 'content-type': 'text/html' }).end(pathsPage);
+    if (p === '/fr2-11-dl.txt') return res.writeHead(200, { 'content-type': 'application/octet-stream', 'content-disposition': 'attachment; filename="dl.txt"' }).end('x'.repeat(64));
     res.writeHead(404, { 'content-type': 'text/plain' }).end('nf');
   });
   await new Promise((r) => server.listen(0, '127.0.0.1', r));
@@ -229,7 +233,9 @@ async function runMcpCases(surface, serverPath, ctx) {
     executablePath: chromePath, headless: true, userDataDir: scratchProfile, args: ['--no-sandbox'], defaultViewport: { width: 1000, height: 800 },
   });
   spawned.push(observer.process()?.pid);
-  const mcp = makeMcpClient(serverPath, process.env);
+  const dlRoot = await fs.mkdtemp(path.join(os.tmpdir(), `fr2-11-CNRYdlroot${surface} with space-`));
+  tempDirs.push(dlRoot);
+  const mcp = makeMcpClient(serverPath, { ...process.env, SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS: dlRoot });
   await mcp.call('initialize', { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'fr2-11-verify', version: '1.0' } });
   mcp.notify('notifications/initialized');
   const att = jsonOf(await mcp.callTool('browser.attach', { endpoint: observer.wsEndpoint() }));
@@ -449,6 +455,79 @@ async function runMcpCases(surface, serverPath, ctx) {
     const ms = performance.now() - t0;
     info(surface, id, { evals: 200, totalMs: Math.round(ms), meanPerCallMs: Math.round((ms / 200) * 100) / 100 });
     record(surface, id, [T('200 evals completed', true, ms)]);
+  });
+
+  // fix-1 (audit-1 REOPEN): the GENERATED privacy matrix, live. Every secret position x every surround is injected into a
+  // real stored field (a real failing eval's error message and code preview) and read back through the MCP tool; real
+  // navigations (success, refusal, userinfo, fragments, path parameters) and real upload / download paths follow.
+  C('PM', async (id) => {
+    const opts = { origin: server.origin, hostPort: server.origin.slice('http://'.length) };
+    const st = selfTest(opts);
+    const cells = fullMatrix(opts);
+    const leaks = [];
+    const lost = [];
+    const batches = [];
+    let lastSeq = ((await history({ scope: 'session' })).json?.entries ?? []).at(-1)?.seq ?? 0;
+    for (let i = 0; i < cells.length; i += 40) {
+      const batch = cells.slice(i, i + 40);
+      for (const c of batch) await tool('browser.eval', { code: `throw new Error(${JSON.stringify(c.text)})` });
+      const fresh = ((await history({ scope: 'session' })).json?.entries ?? []).filter((e) => e.seq > lastSeq);
+      if (fresh.length !== batch.length) batches.push({ at: i, fresh: fresh.length, expected: batch.length });
+      lastSeq = fresh.at(-1)?.seq ?? lastSeq;
+      batch.forEach((c, j) => {
+        const e = fresh[j];
+        if (!e) return;
+        const f = findCanaries(JSON.stringify(e));
+        if (f.length) leaks.push({ cell: c.id, leaked: f, entry: JSON.stringify(e).slice(0, 260) });
+        const miss = c.keep.filter((k) => !String(e.error ?? '').includes(k));
+        if (miss.length) lost.push({ cell: c.id, miss, error: e.error });
+      });
+    }
+    // real navigations
+    const navLeaks = [];
+    const navLost = [];
+    const navs = ((opts) => urlCases(opts).filter((c) => /^http:\/\//.test(c.text) && c.text.includes(opts.hostPort) && !/^(multi|query-nested)/.test(c.id)))(opts);
+    const refused = (() => {
+      const o = { origin: 'http://127.0.0.1:1', hostPort: '127.0.0.1:1' };
+      return urlCases(o).filter((c) => /^(query-plain|query-paren|query-bracket|query-brace|query-apostrophe|fragment-plain|fragment-brackets|userinfo-pass|path-param)$/.test(c.id)).map((c) => ({ ...c, refused: true, o }));
+    })();
+    let navFailedAsExpected = 0;
+    for (const c of [...navs, ...refused]) {
+      const r = await tool('browser.navigate', { url: c.text });
+      const h = await history({ scope: 'session' });
+      const e = (h.json?.entries ?? []).filter((x) => x.actionType === 'navigate').at(-1);
+      if (c.refused && (r.isError || e?.success === false)) navFailedAsExpected++;
+      const f = findCanaries(JSON.stringify(e ?? {}));
+      if (f.length) navLeaks.push({ cell: c.id, leaked: f, entry: JSON.stringify(e).slice(0, 260) });
+      if (!e || !String(e.target ?? '').includes(c.keep[0])) navLost.push({ cell: c.id, keep: c.keep[0], target: e?.target });
+    }
+    // real local paths with spaces and canaries in the DIRECTORY names: upload (ok and missing) and download
+    const pathRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'fr2-11-pm-'));
+    tempDirs.push(pathRoot);
+    const upDir = path.join(pathRoot, `CNRYupdir${surface} with space`, 'sub dir');
+    await fs.mkdir(upDir, { recursive: true });
+    const upFile = path.join(upDir, 'file.txt');
+    await fs.writeFile(upFile, 'x');
+    const missingFile = path.join(pathRoot, `CNRYmissingdir${surface}`, 'sub dir', 'nofile.txt');
+    const dlDir = path.join(dlRoot, `CNRYdldir${surface} sub`, 'out dir'); // the basename ('out dir') is stored by design; the canary sits in a parent
+    await tool('browser.navigate', { url: server.bare('/fr2-11-paths.html') });
+    const up1 = await tool('browser.upload_file', { target: '#file', filePath: upFile });
+    const up2 = await tool('browser.upload_file', { target: 'input[type=file]', filePath: missingFile }); // a different selector string: the duplicate guard must not mask the missing-path error
+    const dl = await tool('browser.download_file', { target: '#dl', downloadDir: dlDir }, 60000);
+    const ph = await history({ scope: 'session' });
+    const pathEntries = (ph.json?.entries ?? []).slice(-4);
+    const pathText = JSON.stringify(pathEntries);
+    record(surface, id, [
+      T('matrix self-test: >= 1000 cells, canary search sees every generated text, identity redactor caught on every cell, eraser caught', st.problems.length === 0 && st.cases >= 1000, st),
+      T(`all ${cells.length} cells accounted for: every batch of 40 evals produced exactly 40 new entries`, batches.length === 0, batches),
+      T(`no canary in any of ${cells.length} stored entries (error, target, selector, verification)`, leaks.length === 0, leaks.slice(0, 3)),
+      T('the display origin + path (or a basename) of every cell is still visible in the stored error (no over-redaction)', lost.length === 0, lost.slice(0, 3)),
+      T(`${navs.length} real navigations: no canary in any stored entry`, navLeaks.length === 0, navLeaks.slice(0, 3)),
+      T('each real navigation target still shows origin + path (keep)', navLost.length === 0, navLost.slice(0, 3)),
+      T(`${refused.length} navigations to a refused port fail and their stored error / reason carries no canary`, navFailedAsExpected === refused.length, navFailedAsExpected),
+      T('upload: a real upload worked, the missing-file upload failed, the download worked (the path verbs really ran)', up1.json?.success === true && up2.json?.success === false && /nofile|ENOENT|not found|no such|exist/i.test(String(up2.json?.error)) && dl.json?.success === true, { up1: up1.text.slice(0, 120), up2: up2.text.slice(0, 120), dl: dl.text.slice(0, 160) }),
+      T('upload / download history: no canary from the canary-named directories (F3); the basenames are still there', findCanaries(pathText).length === 0 && pathText.includes('file.txt') && pathText.includes('dl.txt'), { leaked: findCanaries(pathText), hasFile: pathText.includes('file.txt'), hasDl: pathText.includes('dl.txt') }),
+    ], { cells: cells.length, navigations: navs.length + refused.length });
   });
 
   try {
@@ -799,6 +878,83 @@ async function runCliCases(surface, cliJs, ctx) {
     ]);
   });
 
+  // fix-1 (audit-1 REOPEN): the privacy matrix through REAL CLI processes (one per command; every cell of the rotating
+  // subset once, the full 1360-cell cross product is covered at function level in packages/cli/tests/unit/privacy-matrix.spec.ts).
+  C('PM', async (id) => {
+    const opts = { origin: server.origin, hostPort: server.origin.slice('http://'.length) };
+    const port = opts.hostPort.split(':')[1];
+    const st = selfTest(opts);
+    const rot = rotatingMatrix(opts);
+    const before = (await readLines()).length;
+    const first = await cli(['nav', server.bare('/fr2-11-paths.html')]);
+    await noteOwnChrome(STATE);
+    const ran = [];
+    for (const c of rot) {
+      const r = await cli(['eval', `throw new Error(${JSON.stringify(c.text)})`]);
+      ran.push({ kind: 'eval', c, code: r.code });
+    }
+    const navs = ((opts) => urlCases(opts).filter((c) => /^http:\/\//.test(c.text) && c.text.includes(opts.hostPort) && !/^(multi|query-nested)/.test(c.id)))(opts);
+    for (const c of navs) ran.push({ kind: 'nav', c, code: (await cli(['nav', c.text])).code });
+    // F2: URLs WITHOUT a scheme are stored raw in args by the audited build
+    const schemeless = [
+      { text: `${opts.hostPort}/p?token=CNRYschemelessip${surface}`, keep: `${opts.hostPort}/p` },
+      { text: `localhost:${port}/p?q=(a)&token=CNRYschemelesslh${surface}`, keep: `localhost:${port}/p` },
+      { text: `${opts.hostPort}/p;jsessionid=CNRYschemelessps${surface}`, keep: `${opts.hostPort}/p` },
+    ];
+    for (const c of schemeless) ran.push({ kind: 'nav-schemeless', c, code: (await cli(['nav', c.text])).code });
+    // F3: real local paths with spaces and canary directories
+    const pathRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'fr2-11-pmc-'));
+    tempDirs.push(pathRoot);
+    const upDir = path.join(pathRoot, `CNRYupdir${surface} with space`, 'sub dir');
+    await fs.mkdir(upDir, { recursive: true });
+    const upFile = path.join(upDir, 'file.txt');
+    await fs.writeFile(upFile, 'x');
+    const missingFile = path.join(pathRoot, `CNRYmissingdir${surface}`, 'sub dir', 'nofile.txt');
+    const dlRoot = await fs.mkdtemp(path.join(os.tmpdir(), `fr2-11-CNRYdlroot${surface} with space-`));
+    tempDirs.push(dlRoot);
+    const dlDir = path.join(dlRoot, `CNRYdldir${surface} sub`, 'out dir'); // the basename ('out dir') is stored by design; the canary sits in a parent
+    await cli(['nav', server.bare('/fr2-11-paths.html')]);
+    const pathRuns = [
+      await cli(['upload', '#file', upFile]),
+      await cli(['upload', '#file', missingFile]),
+      await cli(['download', '#dl', dlDir], 90000, { ...env, SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS: dlRoot }),
+    ];
+    const lines = (await readLines()).slice(before);
+    const expected = 1 + rot.length + navs.length + schemeless.length + 1 + pathRuns.length;
+    const raw = lines.join('\n');
+    const parsed = lines.map((l) => { try { return JSON.parse(l); } catch { return null; } });
+    const leaked = findCanaries(raw);
+    const evalLines = parsed.slice(1, 1 + rot.length);
+    const lostEval = [];
+    evalLines.forEach((l, i) => {
+      // a failing eval exits 1 without throwing: its message lives in the recorded ACTION's error, not in the line's own `error`
+      const stored = String(l?.actions?.find((a) => a.actionType === 'eval')?.error ?? l?.error ?? '');
+      const miss = rot[i].keep.filter((k) => !stored.includes(k));
+      if (miss.length) lostEval.push({ cell: rot[i].id, miss, stored });
+    });
+    const navLines = parsed.slice(1 + rot.length, 1 + rot.length + navs.length);
+    const navLost = navs.filter((c, i) => !String((navLines[i]?.args ?? [''])[0]).includes(c.keep[0])).map((c) => c.id);
+    const slLines = parsed.slice(1 + rot.length + navs.length, 1 + rot.length + navs.length + schemeless.length);
+    const slLost = schemeless.filter((c, i) => !String((slLines[i]?.args ?? [''])[0]).includes(c.keep)).map((c) => c.text);
+    const human = await cli(['history']);
+    const asJson = await cli(['history', '--json']);
+    const pathLines = parsed.slice(-3);
+    const pathBlob = JSON.stringify(pathLines);
+    record(surface, id, [
+      T('matrix self-test', st.problems.length === 0 && st.cases >= 1000, st),
+      T(`exactly ${expected} new history lines (one per CLI command run by this case)`, lines.length === expected, { lines: lines.length, expected }),
+      T('every new line parses as JSON', parsed.every(Boolean), parsed.filter((x) => !x).length),
+      T(`no canary anywhere in the raw history.jsonl bytes of ${rot.length} matrix commands + ${navs.length} navigations + scheme-less + paths`, leaked.length === 0, leaked),
+      T('every cell still shows its display origin / path / basename in the stored error (no over-redaction)', lostEval.length === 0, lostEval.slice(0, 3)),
+      T('nav args keep origin + path', navLost.length === 0, navLost),
+      T('F2: scheme-less nav args are redacted and still show host:port/path', slLost.length === 0, slLost),
+      T('F3: upload / download lines carry no canary from the directories, and keep the basenames', findCanaries(pathBlob).length === 0 && pathBlob.includes('file.txt'), { leaked: findCanaries(pathBlob), args: pathLines.map((l) => l?.args) }),
+      T('the path verbs really ran (upload ok, missing upload failed, download ok)', pathRuns[0].code === 0 && pathRuns[1].code !== 0 && pathRuns[2].code === 0, pathRuns.map((r) => ({ code: r.code, out: (r.stdout + r.stderr).slice(0, 100) }))),
+      T('human `sutradhar history` output has no canary', findCanaries(human.stdout).length === 0 && human.code === 0, findCanaries(human.stdout)),
+      T('`sutradhar history --json` output has no canary', findCanaries(asJson.stdout).length === 0 && asJson.code === 0, findCanaries(asJson.stdout)),
+    ], { commands: expected });
+  });
+
   try {
     for (const c of cases) await c();
     if (wanted('PRIV-sweep')) {
@@ -857,6 +1013,51 @@ async function runSdkCases(ctx) {
       T('session entries carry tabId and a strictly increasing seq', e.every((x, i) => x.tabId === page.tabId && x.seq === i + 1), e.map((x) => x.seq)),
     ]);
     await saveEvidence('sdk-L1-report.json', JSON.stringify(rep, null, 2));
+    // fix-1 (audit-1 REOPEN): the generated privacy matrix through the SDK (page.evaluate / page.goto) and the report it returns
+    {
+      const opts = { origin: server.origin, hostPort: server.origin.slice('http://'.length) };
+      const st = selfTest(opts);
+      const cells = fullMatrix(opts);
+      const report = () => rt.getActionHistoryReport(browser.sessionId, { scope: 'session' }).entries;
+      let lastSeq = report().at(-1)?.seq ?? 0;
+      const leaks = [];
+      const lost = [];
+      const batches = [];
+      for (let i = 0; i < cells.length; i += 40) {
+        const batch = cells.slice(i, i + 40);
+        for (const c of batch) await page.evaluate(`throw new Error(${JSON.stringify(c.text)})`).catch(() => {});
+        const fresh = report().filter((e) => e.seq > lastSeq);
+        if (fresh.length !== batch.length) batches.push({ at: i, fresh: fresh.length, expected: batch.length });
+        lastSeq = fresh.at(-1)?.seq ?? lastSeq;
+        batch.forEach((c, j) => {
+          const e = fresh[j];
+          if (!e) return;
+          const f = findCanaries(JSON.stringify(e));
+          if (f.length) leaks.push({ cell: c.id, leaked: f, entry: JSON.stringify(e).slice(0, 260) });
+          const miss = c.keep.filter((k) => !String(e.error ?? '').includes(k));
+          if (miss.length) lost.push({ cell: c.id, miss, error: e.error });
+        });
+      }
+      const navLeaks = [];
+      const navLost = [];
+      const navs = ((opts) => urlCases(opts).filter((c) => /^http:\/\//.test(c.text) && c.text.includes(opts.hostPort) && !/^(multi|query-nested)/.test(c.id)))(opts);
+      for (const c of navs) {
+        await page.goto(c.text).catch(() => {});
+        const e = report().filter((x) => x.actionType === 'navigate').at(-1);
+        const f = findCanaries(JSON.stringify(e ?? {}));
+        if (f.length) navLeaks.push({ cell: c.id, leaked: f, entry: JSON.stringify(e).slice(0, 260) });
+        if (!e || !String(e.target ?? '').includes(c.keep[0])) navLost.push({ cell: c.id, keep: c.keep[0], target: e?.target });
+      }
+      const wholeReport = JSON.stringify(rt.getActionHistoryReport(browser.sessionId, { scope: 'session' }));
+      record(surface, 'SDK-PM', [
+        T('matrix self-test', st.problems.length === 0 && st.cases >= 1000, st),
+        T(`all ${cells.length} cells accounted for in batches of 40`, batches.length === 0, batches),
+        T(`no canary in any of ${cells.length} stored SDK entries`, leaks.length === 0, leaks.slice(0, 3)),
+        T('display origin + path / basename still visible (no over-redaction)', lost.length === 0, lost.slice(0, 3)),
+        T(`${navs.length} real page.goto calls: no canary, target keeps origin + path`, navLeaks.length === 0 && navLost.length === 0, { navLeaks: navLeaks.slice(0, 2), navLost: navLost.slice(0, 2) }),
+        T('the final whole-session report JSON has no canary', findCanaries(wholeReport).length === 0, findCanaries(wholeReport)),
+      ], { cells: cells.length, navigations: navs.length });
+    }
   } finally {
     await observer.disconnect().catch(() => {});
     await browser.close().catch(() => {});
