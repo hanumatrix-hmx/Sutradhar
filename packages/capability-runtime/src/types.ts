@@ -12,6 +12,7 @@ import type {
   BrowserLaunchOptions,
   DialogPolicy,
   SemanticNode,
+  SessionActionHistoryEntry,
   SkippedFrame,
   VerificationResultDto,
   VerificationSpec,
@@ -259,7 +260,25 @@ export interface DownloadResult {
   verification?: VerificationResultDto;
 }
 
-export { type ActionHistoryEntry };
+export { type ActionHistoryEntry, type SessionActionHistoryEntry };
+
+/** FR2-11: which history {@link SutradharRuntime.getActionHistoryReport} reads. */
+export type ActionHistoryScope = 'tab' | 'session';
+
+/** FR2-11: the result of {@link SutradharRuntime.getActionHistoryReport}. */
+export interface ActionHistoryReport {
+  scope: ActionHistoryScope;
+  /** tab scope: the tab actually read (the active one when tabId was omitted). Absent for session scope. */
+  tabId?: string;
+  /** tab scope: entries oldest-first. session scope: entries ordered by `seq` (each has `tabId`, including tabs
+   *  that have since closed). Always a COPY. */
+  entries: readonly ActionHistoryEntry[] | readonly SessionActionHistoryEntry[];
+  /** How many older entries this view has dropped since it began (tab lifetime / session lifetime).
+   *  0 until the cap is hit, then exact. */
+  evicted: number;
+  /** The cap (200). */
+  capacity: number;
+}
 
 /** A row in {@link SutradharRuntime.listTabs}. */
 export interface TabInfo {
