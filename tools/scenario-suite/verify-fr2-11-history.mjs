@@ -517,6 +517,8 @@ async function runMcpCases(surface, serverPath, ctx) {
     const ph = await history({ scope: 'session' });
     const pathEntries = (ph.json?.entries ?? []).slice(-4);
     const pathText = JSON.stringify(pathEntries);
+    const tabView = await history({}); // the default per-tab view (scope tab), not only the session merge
+    const tabLeaks = findCanaries(tabView.text);
     record(surface, id, [
       T('matrix self-test: >= 1000 cells, canary search sees every generated text, identity redactor caught on every cell, eraser caught', st.problems.length === 0 && st.cases >= 1000, st),
       T(`all ${cells.length} cells accounted for: every batch of 40 evals produced exactly 40 new entries`, batches.length === 0, batches),
@@ -526,6 +528,7 @@ async function runMcpCases(surface, serverPath, ctx) {
       T('each real navigation target still shows origin + path (keep)', navLost.length === 0, navLost.slice(0, 3)),
       T(`${refused.length} navigations to a refused port fail and their stored error / reason carries no canary`, navFailedAsExpected === refused.length, navFailedAsExpected),
       T('upload: a real upload worked, the missing-file upload failed, the download worked (the path verbs really ran)', up1.json?.success === true && up2.json?.success === false && /nofile|ENOENT|not found|no such|exist/i.test(String(up2.json?.error)) && dl.json?.success === true, { up1: up1.text.slice(0, 120), up2: up2.text.slice(0, 120), dl: dl.text.slice(0, 160) }),
+      T('the default per-tab view (scope tab) of the same session has no canary either', tabView.json?.scope === 'tab' && tabLeaks.length === 0, { scope: tabView.json?.scope, tabLeaks }),
       T('upload / download history: no canary from the canary-named directories (F3); the basenames are still there', findCanaries(pathText).length === 0 && pathText.includes('file.txt') && pathText.includes('dl.txt'), { leaked: findCanaries(pathText), hasFile: pathText.includes('file.txt'), hasDl: pathText.includes('dl.txt') }),
     ], { cells: cells.length, navigations: navs.length + refused.length });
   });

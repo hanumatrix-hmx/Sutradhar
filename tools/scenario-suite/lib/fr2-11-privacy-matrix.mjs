@@ -165,8 +165,16 @@ export function pathCases() {
   add('posix-spaces', (c) => `/home/${c} user/my dir/file.txt`);
   add('posix-tmp', (c) => `/tmp/${c}/file.txt`);
   add('posix-home-tilde', (c) => `~/${c}/dir/file.txt`);
-  add('posix-with-query', (c) => `/home/${c}/dir/file.txt?x=1`);
-  add('win-with-query', (c) => `C:\\Users\\${c}\\dir\\file.txt?x=1`);
+  // a query on a path: a canary in the directory AND a different one in the query (the query must not survive inside the basename)
+  for (const [id, build] of [
+    ['posix-with-query', (c, q) => `/home/${c}/dir/file.txt?token=${q}`],
+    ['win-with-query', (c, q) => `C:\\Users\\${c}\\dir\\file.txt?token=${q}`],
+    ['posix-with-fragment', (c, q) => `/home/${c}/dir/file.txt#${q}`],
+  ]) {
+    const c1 = canary(id.replace(/[^A-Za-z0-9]/g, ''));
+    const c2 = canary(id.replace(/[^A-Za-z0-9]/g, '') + 'q');
+    cases.push({ id, text: build(c1, c2), canaries: [c1, c2], keep: ['file.txt'] });
+  }
   add('file-url-win', (c) => `file:///C:/Users/${c}/dir/file.txt`);
   add('file-url-posix', (c) => `file:///home/${c}/dir/file.txt`);
   add('file-url-spaces', (c) => `file:///C:/Users/${c} John/my dir/file.txt`);
