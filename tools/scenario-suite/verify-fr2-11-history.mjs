@@ -540,6 +540,7 @@ async function runCliCases(surface, cliJs, ctx) {
       T('RAW history.jsonl bytes contain no canary (SECRET-L5, hunter2-L5, ?n=, token=)', leaksIn(bytes.toString('utf-8')).length === 0, leaksIn(bytes.toString('utf-8'))),
       T('NEGATIVE CONTROL: the CLI own stdout for nav DID print the tokened URL (the leak surface exists)', r[0].stdout.includes('SECRET-L5'), r[0].stdout.slice(0, 200)),
       T('history --json: exactly 7 lines, each v 1 / type command', lines.length === 7 && lines.every((l) => l.v === 1 && l.type === 'command'), lines.length),
+      T('history --json is BYTE-IDENTICAL to the file lines (verbatim raw JSONL, nothing else on stdout)', j.stdout === bytes.toString('utf-8').replace(/\r\n/g, '\n').trimEnd() && j.stdout.split('\n').length === 7, { stdoutLines: j.stdout.split('\n').length, fileBytes: bytes.length, stdoutBytes: Buffer.byteLength(j.stdout) }),
       T('verbs in order', JSON.stringify(lines.map((l) => l.verb)) === JSON.stringify(['nav', 'eval', 'click', 'type', 'snap', 'eval', 'press']), lines.map((l) => l.verb)),
       T('every sessionId equals state.json sessionId', lines.every((l) => l.sessionId === st.sessionId), lines.map((l) => l.sessionId)),
       T('nav line: actions[0] is navigate with the redacted target and args', nav.actions[0]?.actionType === 'navigate' && nav.actions[0]?.target === server.bare('/fr2-11-history.html') && nav.args[0] === server.bare('/fr2-11-history.html'), { a: nav.actions[0]?.target, args: nav.args }),
@@ -781,6 +782,7 @@ async function runCliCases(surface, cliJs, ctx) {
       T('blocked run: exactly one "Warning: could not append" line on stderr', warnings.length === 1, warnings),
       T('control run wrote its history line', (await fs.readFile(path.join(ctl, 'history.jsonl'), 'utf-8')).split('\n').filter(Boolean).length >= 1, 'ok'),
       T('the directory named history.jsonl is untouched', (await fs.stat(path.join(blk, 'history.jsonl'))).isDirectory(), 'dir'),
+      T('`history` over an unreadable (directory) file exits 1 with an Error line, and starts no session', (await spawnCli(cliJs, ['history'], { ...env, SUTRADHAR_CLI_STATE_DIR: blk }, 30000).then((x) => x.code === 1 && /^Error: could not read .*history\.jsonl \(/.test(x.stderr))), 'history on a directory'),
     ]);
   });
 
