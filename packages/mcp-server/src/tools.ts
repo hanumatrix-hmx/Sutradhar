@@ -1862,13 +1862,35 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
     'browser.get_action_history',
     {
       description:
-        'Recent actions run against this tab (bounded to the last 200 entries) — action type, target, ' +
-        'success/error, duration, and timestamp. A lightweight session-replay record for debugging.',
-      inputSchema: { sessionId: z.string(), tabId: z.string().optional() },
+        'Recent actions (bounded to the last 200 entries) — action type, selector/target, success/error, ' +
+        "duration, timestamp, the page URL afterward (query/fragment dropped), and the action's verification " +
+        'when it produced one. Includes navigate and eval (eval is recorded as a <=200-char code preview; its ' +
+        'result is never stored), go_back/go_forward/reload, click_at_point/drag_at_points, set_clipboard ' +
+        '(length only), upload_file_via_trigger and wait_for, as well as every element action; typed text and ' +
+        'clipboard text are never stored. scope "tab" (default): one tab — tabId, or the active tab. scope ' +
+        '"session": every tab in this session merged in the order the actions were recorded (each entry has ' +
+        'tabId and seq), including tabs that have since closed. `evicted` counts older entries dropped once the ' +
+        '200-entry cap was hit (0 = nothing lost). The history lives in this server process only.',
+      inputSchema: {
+        sessionId: z.string(),
+        tabId: z.string().optional().describe('scope "tab" only: the tab to read; defaults to the active tab.'),
+        scope: z
+          .enum(['tab', 'session'])
+          .optional()
+          .describe('"tab" (default): the history of one tab. "session": all tabs merged by recording order. Cannot be combined with tabId.'),
+      },
     },
-    async ({ sessionId, tabId }) => {
+    async ({ sessionId, tabId, scope }) => {
       try {
-        return jsonResult({ entries: runtime.getActionHistory(sessionId, tabId) });
+        const report = runtime.getActionHistoryReport(sessionId, { scope, tabId });
+        return jsonResult({
+          ...report,
+          ...(report.evicted > 0
+            ? {
+                note: `${report.evicted} older entr${report.evicted === 1 ? 'y was' : 'ies were'} evicted — only the most recent ${report.capacity} are kept.`,
+              }
+            : {}),
+        });
       } catch (e) {
         return errorResult(`get_action_history failed: ${(e as Error).message}`);
       }

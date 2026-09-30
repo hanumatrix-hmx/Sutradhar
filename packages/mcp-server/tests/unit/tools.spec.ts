@@ -1570,3 +1570,83 @@ describe('FR2-08 browser.wait_for and settle on every interacting/navigating too
     expect(dlg).toContain('Pass settle:true');
   });
 });
+
+describe('FR2-11 browser.get_action_history', () => {
+  const setup = () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    registerTools(server, { runtime });
+    return { runtime, tools, tool: tools.get('browser.get_action_history')! };
+  };
+
+  it('M1: the schema has sessionId, tabId and scope; scope accepts "tab"/"session" only', () => {
+    const { tool } = setup();
+    const schema = tool.config.inputSchema;
+    expect(Object.keys(schema).sort()).toEqual(['scope', 'sessionId', 'tabId']);
+    expect(schema.scope.safeParse('session').success).toBe(true);
+    expect(schema.scope.safeParse('tab').success).toBe(true);
+    expect(schema.scope.safeParse(undefined).success).toBe(true);
+    expect(schema.scope.safeParse('all').success).toBe(false);
+  });
+
+  it('M2: default call passes scope/tabId through unchanged and returns the report with NO note', async () => {
+    const { runtime, tool } = setup();
+    const report = { scope: 'tab', tabId: 't1', entries: [], evicted: 0, capacity: 200 };
+    const spy = vi.spyOn(runtime, 'getActionHistoryReport').mockReturnValue(report as any);
+    const r = await tool.handler({ sessionId: 's1' });
+    expect(spy).toHaveBeenCalledWith('s1', { scope: undefined, tabId: undefined });
+    expect(r.isError).toBeUndefined();
+    expect(JSON.parse(r.content[0].text)).toEqual(report);
+    expect('note' in JSON.parse(r.content[0].text)).toBe(false);
+  });
+
+  it('M3: evicted > 0 adds an exact note (plural and singular)', async () => {
+    const { runtime, tool } = setup();
+    const spy = vi.spyOn(runtime, 'getActionHistoryReport');
+    spy.mockReturnValue({ scope: 'session', entries: [], evicted: 7, capacity: 200 } as any);
+    let out = JSON.parse((await tool.handler({ sessionId: 's1', scope: 'session' })).content[0].text);
+    expect(out.note).toBe('7 older entries were evicted — only the most recent 200 are kept.');
+    expect(out.evicted).toBe(7);
+    spy.mockReturnValue({ scope: 'session', entries: [], evicted: 1, capacity: 200 } as any);
+    out = JSON.parse((await tool.handler({ sessionId: 's1', scope: 'session' })).content[0].text);
+    expect(out.note).toBe('1 older entry was evicted — only the most recent 200 are kept.');
+    expect(spy).toHaveBeenLastCalledWith('s1', { scope: 'session', tabId: undefined });
+  });
+
+  it('M4: a runtime TypeError surfaces as isError with the message', async () => {
+    const { runtime, tool } = setup();
+    vi.spyOn(runtime, 'getActionHistoryReport').mockImplementation(() => {
+      throw new TypeError('tabId cannot be combined with scope "session"');
+    });
+    const r = await tool.handler({ sessionId: 's1', scope: 'session', tabId: 't' });
+    expect(r.isError).toBe(true);
+    expect(r.content[0].text).toContain('get_action_history failed: tabId cannot be combined');
+  });
+
+  it('M5: the description states scope "session", evicted, eval, and the privacy limits', () => {
+    const { tool } = setup();
+    const d: string = tool.config.description;
+    expect(d).toContain('scope "session"');
+    expect(d).toContain('evicted');
+    expect(d).toContain('eval');
+    expect(d).toContain('never stored');
+    expect(d).toContain('query/fragment dropped');
+  });
+
+  it('M6: end to end against a real (pageless) runtime session, a navigate is visible with its redacted target and nothing leaks', async () => {
+    const { runtime, tool } = setup();
+    const { BrowserSession } = await import('@sutradhar/browser');
+    const { createSessionId } = await import('@sutradhar/contracts');
+    const session = new BrowserSession(createSessionId('s1'));
+    vi.spyOn(runtime.getSessionManager(), 'getSession').mockReturnValue(session);
+    await session.createTab();
+    await runtime.navigate('s1', 'https://a.test/p?token=SECRET-M6#f');
+    const out = (await tool.handler({ sessionId: 's1', scope: 'session' })).content[0].text as string;
+    expect(out).not.toContain('SECRET-M6');
+    const j = JSON.parse(out);
+    expect(j.scope).toBe('session');
+    expect(j.entries[0]).toMatchObject({ actionType: 'navigate', target: 'https://a.test/p', seq: 1 });
+    expect(j.evicted).toBe(0);
+    expect(j.capacity).toBe(200);
+  });
+});
