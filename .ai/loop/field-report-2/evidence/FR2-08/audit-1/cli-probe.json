@@ -1,0 +1,132 @@
+{
+  "results": [
+    {
+      "id": "cli:waitfor-text",
+      "pass": true,
+      "code": 0,
+      "out": "Condition met after 4683ms: text=\"Probe toast shown\"\nVerification: verified (confidence 0.90) — 'wait_for' verified: text=\"Probe toast shown\" held on one poll a",
+      "endMinusShown": 30
+    },
+    {
+      "id": "cli:waitfor-timeout",
+      "pass": true,
+      "code": 1,
+      "out": "Wait failed: wait_for timed out after 2000ms waiting for text=\"Never appears\": text \"Never appears\" was not found in the visible text of 1 frame(s).\n"
+    },
+    {
+      "id": "cli:waitfor-vacuous-note",
+      "pass": true,
+      "code": 0,
+      "err": "Note: \"Never was here\" was not present when the wait started, so textGone was satisfied immediately — check the text if you expected it.\n"
+    },
+    {
+      "id": "cli:waitfor-js-throw",
+      "pass": true,
+      "code": 1,
+      "ms": 299,
+      "out": "Wait failed: wait_for failed: js condition threw after 2ms: Cannot read properties of undefined (reading 'x')\n"
+    },
+    {
+      "id": "cli:waitfor-usage",
+      "pass": true,
+      "codes": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "msgs": [
+        "Error: usage: sutradhar waitfor [timeoutMs] --text <t> | --text-gone <t> | --url <s> | --j",
+        "Error: waitfor: timeoutMs must be a whole number of milliseconds (got \"abc\"; quote a multi",
+        "Error: wait_for: text and textGone are both \"X\" — that can never be satisfied\n",
+        "Error: waitfor: timeoutMs must be at most 280000\n"
+      ]
+    },
+    {
+      "id": "cli:D16-reject",
+      "pass": true,
+      "code": 1,
+      "msg": "Error: --text is only valid with \"waitfor\" (did you mean --expect-text?)\n",
+      "clicked": false
+    },
+    {
+      "id": "cli:waitfor-dialog-exit3",
+      "pass": false,
+      "code": 3,
+      "ms": 274,
+      "out": "dialogPending: {\"type\":\"alert\",\"message\":\"probe-alert\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51567/alert-now?d=300&t=Hello%20visible\"}"
+    },
+    {
+      "id": "cli:help-settle-verbs",
+      "pass": true,
+      "snippet": "--settle to reliably see newly-revealed content\n  upload <ref> <filePath>      Upload a local file into an <input type=\"file\">\n  drag <sourceRef> <destRef>   Drag one element onto another\n  clickpoint <x> <y>           Click at an absolute viewport coordinate — no element/selector,\n                 "
+    }
+  ],
+  "pids": [
+    {
+      "pid": 51144,
+      "what": "cli nav"
+    },
+    {
+      "pid": 48900,
+      "what": "cli waitfor"
+    },
+    {
+      "pid": 46312,
+      "what": "cli waitfor"
+    },
+    {
+      "pid": 44488,
+      "what": "cli waitfor"
+    },
+    {
+      "pid": 47100,
+      "what": "cli waitfor"
+    },
+    {
+      "pid": 50668,
+      "what": "cli waitfor"
+    },
+    {
+      "pid": 48768,
+      "what": "cli waitfor"
+    },
+    {
+      "pid": 48504,
+      "what": "cli waitfor"
+    },
+    {
+      "pid": 46804,
+      "what": "cli waitfor"
+    },
+    {
+      "pid": 46356,
+      "what": "cli nav"
+    },
+    {
+      "pid": 51852,
+      "what": "cli click"
+    },
+    {
+      "pid": 49044,
+      "what": "cli nav"
+    },
+    {
+      "pid": 48028,
+      "what": "cli waitfor"
+    },
+    {
+      "pid": 42960,
+      "what": "cli dialog"
+    },
+    {
+      "pid": 52180,
+      "what": "cli --help"
+    },
+    {
+      "pid": 51172,
+      "what": "cli close"
+    }
+  ],
+  "stateDir": "E:\\AI-Cache\\tmp\\audit-fr208-cli-mI3SCi"
+}

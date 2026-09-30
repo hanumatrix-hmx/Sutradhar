@@ -1,0 +1,25 @@
+[pid] 51144 cli nav
+[pid] 48900 cli waitfor
+PASS cli:waitfor-text {"code":0,"out":"Condition met after 4683ms: text=\"Probe toast shown\"\nVerification: verified (confidence 0.90) — 'wait_for' verified: text=\"Probe toast shown\" held on one poll a","endMinusShown":30}
+[pid] 46312 cli waitfor
+PASS cli:waitfor-timeout {"code":1,"out":"Wait failed: wait_for timed out after 2000ms waiting for text=\"Never appears\": text \"Never appears\" was not found in the visible text of 1 frame(s).\n"}
+[pid] 44488 cli waitfor
+PASS cli:waitfor-vacuous-note {"code":0,"err":"Note: \"Never was here\" was not present when the wait started, so textGone was satisfied immediately — check the text if you expected it.\n"}
+[pid] 47100 cli waitfor
+PASS cli:waitfor-js-throw {"code":1,"ms":299,"out":"Wait failed: wait_for failed: js condition threw after 2ms: Cannot read properties of undefined (reading 'x')\n"}
+[pid] 50668 cli waitfor
+[pid] 48768 cli waitfor
+[pid] 48504 cli waitfor
+[pid] 46804 cli waitfor
+PASS cli:waitfor-usage {"codes":[1,1,1,1],"msgs":["Error: usage: sutradhar waitfor [timeoutMs] --text <t> | --text-gone <t> | --url <s> | --j","Error: waitfor: timeoutMs must be a whole number of milliseconds (got \"abc\"; quote a multi","Error: wait_for: text and textGone are both \"X\" — that can never be satisfied\n","Error: waitfor: timeoutMs must be at most 280000\n"]}
+[pid] 46356 cli nav
+[pid] 51852 cli click
+PASS cli:D16-reject {"code":1,"msg":"Error: --text is only valid with \"waitfor\" (did you mean --expect-text?)\n","clicked":false}
+[pid] 49044 cli nav
+[pid] 48028 cli waitfor
+FAIL cli:waitfor-dialog-exit3 {"code":3,"ms":274,"out":"dialogPending: {\"type\":\"alert\",\"message\":\"probe-alert\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:51567/alert-now?d=300&t=Hello%20visible\"}"}
+[pid] 42960 cli dialog
+[pid] 52180 cli --help
+PASS cli:help-settle-verbs {"snippet":"--settle to reliably see newly-revealed content\n  upload <ref> <filePath>      Upload a local file into an <input type=\"file\">\n  drag <sourceRef> <destRef>   Drag one element onto another\n  clickpoint <x> <y>           Click at an absolute viewport coordinate — no element/selector,\n                 "}
+[pid] 51172 cli close
+SUMMARY cli: 7/8

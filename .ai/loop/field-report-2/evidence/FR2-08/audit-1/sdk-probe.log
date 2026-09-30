@@ -1,0 +1,11 @@
+{"timestamp":"2026-09-30T09:15:23.311Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T09:15:23.527Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790759723311_1","context":{"isIncognito":false}}
+PASS sdk:waitFor-text {"ms":2080}
+PASS sdk:waitFor-timeout-rejects {"name":"ActionFailedError","ms":1516,"msg":"wait_for timed out after 1500ms waiting for text=\"Never appears\": text \"Never appears\" was not found in the visible text"}
+PASS sdk:waitFor-validation {"c":"wait_for: give at least one of text, textGone, url, js","d":"wait_for: unknown key \"timeoutMs\" — allowed: text, textGone, url, js, timeout","e":"wait_for: unknown key \"selector\" — to wait for an element's state use wait_for_selector"}
+PASS sdk:waitFor-js-throw {"ms":4}
+PASS sdk:background {"vis":"hidden","ms":3053,"timeoutElapsed":2015}
+PASS sdk:dialog {"ms":1960}
+{"timestamp":"2026-09-30T09:15:34.505Z","level":"info","message":"[BrowserSession] Closed session sess_1790759723311_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-30T09:15:34.505Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790759723311_1","context":{"reason":"Runtime shutdown"}}
+SUMMARY sdk: 6/6

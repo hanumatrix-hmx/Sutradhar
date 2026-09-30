@@ -1,0 +1,61 @@
+{
+  "item": "FR2-08 Condition waits and settle everywhere",
+  "audit": "AUDIT-1",
+  "head": "90dbcdb",
+  "base": "75b29c6 (origin/master, FR2-07 merged PARTIAL)",
+  "verdict": "ACCEPT",
+  "ac_results": [
+    {"ac": "browser.wait_for {text,textGone,url,js,timeoutMs} + CLI waitfor + SDK page.waitFor", "verdict": "PASS",
+     "evidence_cmd": "node probes/waitfor-mcp.mjs <mcp-server dist>|<sutradhar bundle>; node probes/cli-probe.mjs; node probes/cli-dialog.mjs; node probes/sdk-probe.mjs",
+     "output_excerpt": "SUMMARY mcp: 19/19; SUMMARY bundle: 19/19; cli 7/8 (the 1 FAIL was a probe expectation: FR2-04's pre-command gate answers exit 3 first) + cli-dialog 2/2 (exit 3 from wait_for's own fatal); SUMMARY sdk: 6/6", "required_fix": ""},
+    {"ac": "settle on every state-changing tool", "verdict": "PASS",
+     "evidence_cmd": "node probes/settle-mcp.mjs <mcp-server dist>; node probes/toolslist.mjs",
+     "output_excerpt": "settle-mcp 18/18: 9 newly covered tools return AFTER the page burst:2 (+304..316 ms) with settle and BEFORE it (-390..-412 ms) without; tools/list: 25 tools carry settle (master 3)", "required_fix": ""},
+    {"ac": "fixture: toast after a pure 2 s setTimeout is caught by wait_for; settle alone returns before it", "verdict": "PASS",
+     "evidence_cmd": "waitfor-mcp.mjs cases A1, A2 (own fixture, not the builder's)",
+     "output_excerpt": "A1 lat 80 ms after the page's own 'shown' stamp, polls 20; A2 click settle:true returned 1501 ms BEFORE the toast, wait_for then caught it 33 ms after", "required_fix": ""},
+    {"ac": "AGENT_SETUP 'Waiting: wait on conditions, never sleep' section", "verdict": "PASS",
+     "evidence_cmd": "grep -n 'Waiting: wait on conditions' AGENT_SETUP.md; cmp AGENT_SETUP.md packages/sutradhar/AGENT_SETUP.md",
+     "output_excerpt": "section at AGENT_SETUP.md:133; bundled mirror identical (gitignored, generated at build)", "required_fix": "minor doc precision, see F3/F4/F5"},
+    {"ac": "T5: settle + alert no longer blocks to the 30 s auto-dismiss", "verdict": "PASS",
+     "evidence_cmd": "node probes/t5.mjs master (git-archive 75b29c6, forced build) ; node probes/t5.mjs branch",
+     "output_excerpt": "master: settle{2000} 30370 ms, settle:true 30375 ms, dialog auto-dismissed and NOT reported (get_pending_dialog null, handle_dialog 'no pending dialog'); branch: control 3064 ms, settle{2000} 5576 ms, settle:true 8544 ms, dialogPending reported, still pending, handle_dialog accept succeeds", "required_fix": ""},
+    {"ac": "never 'met' when a probe is unavailable; textGone never treats unavailable as gone", "verdict": "PASS",
+     "evidence_cmd": "waitfor-mcp.mjs A3, A3b, A4, A5, A9 (mcp + bundle); live mutant X7 (hung frame counted as absent)",
+     "output_excerpt": "dialog: text/textGone/js all fail 'blocked by an open alert' ~1.09 s, url-only met; hung OOPIF: textGone 'unavailable' false (t=2000 and t=0); hung main thread: textGone/text/js false, url true; nav mid-wait 0/5 false met; mutant X7 -> H3 FAIL + A4/A5 FAIL (textGone:true)", "required_fix": ""},
+    {"ac": "timeout honoured with a Node-side bound in a hidden tab", "verdict": "PASS",
+     "evidence_cmd": "waitfor-mcp.mjs A6; sdk-probe background",
+     "output_excerpt": "visibilityState hidden; toast caught 78-80 ms after the event; timeoutMs 3000 -> 3004/3016 ms; SDK timeout 2000 -> 2015 ms", "required_fix": ""},
+    {"ac": "GAP-329/331 limits documented and not made worse", "verdict": "PASS",
+     "evidence_cmd": "waitfor-mcp.mjs A13",
+     "output_excerpt": "wait_for vs expect.text identical: SvgDefsWord true/true, AreaWord false/false, HiddenWord false/false, ValueWord false/false; limits stated in the MCP description, AGENT_SETUP, CLI/SDK READMEs", "required_fix": ""},
+    {"ac": "build, typecheck, vitest; no weakened pre-existing test", "verdict": "PASS",
+     "evidence_cmd": "rm -rf packages/*/dist apps/*/dist; turbo run build --force (x2 filters); turbo run typecheck --force; vitest run per package; git diff 75b29c6..HEAD -- '*.spec.ts' | grep '^-'",
+     "output_excerpt": "build 0 cached 19+9; typecheck 34/34; browser 929, capability-runtime 254, mcp-server 118, cli 208, sutradhar 43, agent 56, server 28, all green; only removed spec line = an import widened", "required_fix": ""},
+    {"ac": "no regression vs master", "verdict": "PASS",
+     "evidence_cmd": "probes/run-regression.sh (HEAD then master, same machine, sequential)",
+     "output_excerpt": "FR2-07 488/488 both (GAP-325 tolerance fired 0 times); FR2-04 HEAD 111/0 fail, master 110/1 fail (L13.headed.click-exit0 click timed out on MASTER); CLI suite identical pass/fail set (UC-04,05,08,12 fail on both; UC-12 click 'timed out after 15000ms' on BOTH, 226 s vs 226 s)", "required_fix": ""}
+  ],
+  "findings": [
+    {"id": "F1", "severity": "minor", "kind": "test gap", "summary": "page-settle.spec P3 asserts only the LOWER bound; spec 4.2 P3 requires < timeoutMs+500+250. Unit mutants X6 (settle object timeoutMs override ignored) and X5 (network-idle half not awaited) survive all 309 browser tests.", "repro": "node probes/mutate-unit.mjs X5,X6 -> SURVIVED 309/309", "note": "live N18 / network-half cases in the builder harness would catch them; unit suite alone would not"},
+    {"id": "F2", "severity": "minor", "kind": "test gap", "summary": "Unit W16 covers the dialog gate only for text. Mutants X1 (js-only condition bypasses the dialog gate) and X2 (dialog grace never resets after a dialog is handled) survive.", "repro": "node probes/mutate-unit.mjs X1,X2 -> SURVIVED", "note": "real code is correct live: js under an open alert fails in 1093 ms (A3)"},
+    {"id": "F3", "severity": "minor", "kind": "doc precision", "summary": "'fails within about a second' when a dialog blocks: true when the dialog is already open (1.08 s), but a dialog that opens during a pass takes pass bound + grace: up to ~2.7 s after the alert (bundle A3b: 3915 ms total, alert at ~1200 ms).", "repro": "waitfor-mcp.mjs A3b on the bundle"},
+    {"id": "F4", "severity": "minor", "kind": "doc precision", "summary": "'the real total ... plus at most one 1.5 s probe pass' is understated on a hung main thread: the failure path also waits readTitleBounded (1.5 s). timeoutMs 0 returned at 3013 ms; 3000 -> 4622-4645 ms. Still bounded, never hangs.", "repro": "waitfor-mcp.mjs A5"},
+    {"id": "F5", "severity": "info", "kind": "doc gap", "summary": "Docs do not say a condition true for less than one poll (~100 ms) may be missed. A 30 ms flash was caught in the MCP run and missed in the bundle run.", "repro": "waitfor-mcp.mjs A7"},
+    {"id": "F6", "severity": "info", "kind": "harness flake", "summary": "H2 failed 1/20 in reruns because the OBSERVER could not reach cross-origin frame 5 (4 frames 'hung' to the oracle) while the product correctly reported text met; the label check then disagreed. A harness false-fail, not a product false-pass.", "repro": "h3-reruns/run-2 live-bundle.jsonl H2 observerTruth"},
+    {"id": "F7", "severity": "info", "kind": "cost", "summary": "tools/list grows 94,285 -> 115,497 UTF-8 bytes (+21,212, +22.5%), 72 -> 73 tools; most of it is the settle description repeated on 22 more tools. Matches the builder's figure.", "repro": "node probes/toolslist.mjs"}
+  ],
+  "harness_change_assessment": {
+    "0a3e467": "LEGITIMATE premise check. The failing fresh-live H3 rows show observerTruth.before.hung=0 and after.hung=0 (the 'matrix-hang' frame answered 'shown'), so the product's textGone=met on 9/9 answered frames was TRUE at that moment. The fixture hangs only 30 ms after the frame's own load, after the old wait returned. The new check waits for the independent observer to see a hung frame and otherwise THROWS (recorded as FAIL, never skipped). Evidence: H1-H3 x10 runs x2 surfaces: H3 20/20 PASS, H1 20/20; live mutant X7 (hung frame counted as absent) -> H3 FAIL with the premise established, and my own independent A4/A5 probes FAIL too.",
+    "6ba6dfd": "LEGITIMATE. It only adds a no-settle control click to --baseline mode and a narrower pageFor URL; no product assertion changed. My independent T5 run reproduces the control (3064-3070 ms on both builds) and the hang (30370 ms on master)."
+  },
+  "gap_338_attribution": "NOT FR2-08. Same machine, same load, run back to back: master 75b29c6 reproduced the stall: UC-12 'Click failed: Action click timed out after 15000ms', 225,937 ms (HEAD 226,581 ms); UC-05 285,707 ms on master (HEAD 342,843 ms); FR2-04 L13.headed.click-exit0 failed on MASTER (click timed out) and passed on HEAD. Code path: cmdClick, runtime.click and the engine click path are unchanged; the only engine change is the settle branch, not taken without --settle. The builder's '0 of 13 on master' was a sampling artefact. Pre-existing headed-click stall (GAP-316/GAP-321 family).",
+  "mutants": {"unit_new": "X1..X11: 7 caught, 4 survived (X1, X2, X5, X6: see F1, F2)", "live_new": "X7 (shared probe: hung -> absent) caught by harness H3 and by audit probes A4/A5", "restoration": "sha256 of all 6 touched sources identical before/after (sha-before-mutation.txt); browser dist rebuilt from restored source (grep: 'hung' : 'failed' 1, 'absent' : 'failed' 0); bundle never rebuilt from a mutant"},
+  "regressions": [],
+  "not_verified": [
+    "CLI --settle and SDK settle on goto/press/scroll/download/uploadFile were not independently re-run live (unit arity tests plus the builder's live sweep only); MCP settle was independently verified on 9 tools",
+    "touch_tap, drag_and_drop, upload_file(_via_trigger), download_file settle: not in my live sweep",
+    "CSP-page behaviour (builder B-CSP) not re-run",
+    "UC-01 / UC-06 GAP-002 conversions ran only inside the full CLI suite (both passed on HEAD)"
+  ]
+}

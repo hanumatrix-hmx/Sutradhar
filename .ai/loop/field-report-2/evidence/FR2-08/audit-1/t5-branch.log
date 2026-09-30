@@ -1,0 +1,43 @@
+[pid] 34996 observer chrome E:\AI-Cache\tmp\audit-fr208-prof-PQSBLb
+[pid] 15420 mcp server E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\mcp-server\dist\cli.js
+{
+  "which": "branch",
+  "root": "E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041",
+  "control": {
+    "ms": 3064,
+    "success": true,
+    "dialogPending": {
+      "type": "alert",
+      "message": "btn-alert",
+      "defaultValue": null,
+      "url": "http://127.0.0.1:63700/alert-btn"
+    },
+    "pendingAfter": "{\n  \"dialog\": {\n    \"dialogType\": \"alert\",\n    \"message\": \"btn-alert\"\n  }\n}"
+  },
+  "settle2000": {
+    "ms": 5576,
+    "success": true,
+    "dialogPending": {
+      "type": "alert",
+      "message": "btn-alert",
+      "defaultValue": null,
+      "url": "http://127.0.0.1:63700/alert-btn?x=settle2000"
+    },
+    "verification": "verified",
+    "pendingAfter": "{\n  \"dialog\": {\n    \"dialogType\": \"alert\",\n    \"message\": \"btn-alert\"\n  }\n}",
+    "handleAfter": "{\n  \"success\": true\n}"
+  },
+  "settleTrue": {
+    "ms": 8544,
+    "success": true,
+    "dialogPending": {
+      "type": "alert",
+      "message": "btn-alert",
+      "defaultValue": null,
+      "url": "http://127.0.0.1:63700/alert-btn?x=settleTrue"
+    },
+    "verification": "verified",
+    "pendingAfter": "{\n  \"dialog\": {\n    \"dialogType\": \"alert\",\n    \"message\": \"btn-alert\"\n  }\n}",
+    "handleAfter": "{\n  \"success\": true\n}"
+  }
+}

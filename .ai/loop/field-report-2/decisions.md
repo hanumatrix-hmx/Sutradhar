@@ -3997,3 +3997,14 @@ Branch `claude/fr2-08-condition-waits` (base master 75b29c6). Not self-audited; 
 - New gaps: GAP-333..338. Existing gaps updated: GAP-002 and GAP-039 FIXED, GAP-319 FIXED for delayed effects, GAP-037/038/040/041 stay OPEN.
 - Unmet / unverified: none of the spec ACs is recorded as unmet; not verified: the UC-12 slowdown attribution (above), `uploadFileViaTrigger` settle has no unit test (live
   S:upload_file_via_trigger passes), live attacks on download/lock path containment were not written (safety-classifier rule).
+
+## 2026-09-30 -- FR2-08 audit-1 ACCEPT
+
+Independent audit-1 accepted FR2-08 with no major findings. T5 reproduced on master (30.4 s, alert
+silently auto-dismissed) and fixed on the branch (bounded, dialog stays pending and handleable).
+Harness commit 0a3e467 judged a legitimate premise check (the failing run had no hung frame; a hung-frame
+mutant still fails H3). GAP-338 (UC-12 headed click stall) reproduced identically on master: pre-existing,
+not FR2-08. Minor findings to close before the PR: F1/F2 unit-test gaps (surviving mutants X1, X2, X5, X6),
+F3/F4/F5 doc accuracy (dialog-mid-check up to ~2.7 s, frozen-page title read up to 1.5 s, sub-poll flashes
+can be missed).
+
