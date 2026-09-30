@@ -1,0 +1,145 @@
+{
+  "startedAt": "2026-09-30T15:09:32.521Z",
+  "finishedAt": "2026-09-30T15:09:37.785Z",
+  "cases": 4,
+  "casesPassed": 0,
+  "checks": 40,
+  "checksFailed": 7,
+  "perSurface": {
+    "mcp": {
+      "cases": 4,
+      "casesPassed": 0,
+      "checks": 40,
+      "checksFailed": 7
+    },
+    "cli": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "mcp:L1",
+    "mcp:L1b",
+    "mcp:L1d",
+    "mcp:PRIV-sweep"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": [
+      75788,
+      75816
+    ]
+  },
+  "evidenceFiles": [
+    "mcp-L1-history.json",
+    "mcp-raw-history-responses.txt"
+  ],
+  "results": [
+    {
+      "surface": "mcp",
+      "case": "L1",
+      "pass": false,
+      "checks": 18,
+      "failed": [
+        {
+          "check": "navigate target is the redacted URL",
+          "observed": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1"
+        },
+        {
+          "check": "navigate url is the redacted page URL",
+          "observed": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1"
+        },
+        {
+          "check": "RAW history response has no canary (query, fragment, token)",
+          "observed": [
+            "SECRET",
+            "?n=",
+            "token="
+          ]
+        }
+      ]
+    },
+    {
+      "surface": "mcp",
+      "case": "L1b",
+      "pass": false,
+      "checks": 12,
+      "failed": [
+        {
+          "check": "RAW history response has no canary (typed text, clipboard text)",
+          "observed": [
+            "SECRET",
+            "?n=",
+            "token="
+          ]
+        },
+        {
+          "check": "RAW history after the failing type has no canary (the error and the verification reason quoted it)",
+          "observed": [
+            "SECRET",
+            "?n=",
+            "token="
+          ]
+        }
+      ]
+    },
+    {
+      "surface": "mcp",
+      "case": "L1d",
+      "pass": false,
+      "checks": 8,
+      "failed": [
+        {
+          "check": "every one of them has the redacted page URL and no canary in the RAW response",
+          "observed": [
+            "SECRET",
+            "?n=",
+            "token="
+          ]
+        }
+      ]
+    },
+    {
+      "surface": "mcp",
+      "case": "PRIV-sweep",
+      "pass": false,
+      "checks": 2,
+      "failed": [
+        {
+          "check": "no canary in any of 4 raw history responses",
+          "observed": [
+            "SECRET",
+            "?n=",
+            "token=",
+            "SECRET",
+            "?n=",
+            "token=",
+            "SECRET",
+            "?n=",
+            "token=",
+            "SECRET",
+            "?n=",
+            "token="
+          ]
+        }
+      ]
+    }
+  ]
+}

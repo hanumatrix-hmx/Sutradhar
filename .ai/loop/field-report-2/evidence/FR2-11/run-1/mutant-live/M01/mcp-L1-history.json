@@ -1,0 +1,56 @@
+{
+  "scope": "tab",
+  "tabId": "tab_sess_1790780896369_1_1",
+  "entries": [
+    {
+      "actionType": "eval",
+      "success": true,
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T15:08:16.448Z",
+      "target": "document.title",
+      "url": "http://127.0.0.1:64925/fr2-11-history.html"
+    },
+    {
+      "actionType": "click",
+      "selector": "#bump",
+      "success": true,
+      "executionTimeMs": 609,
+      "timestamp": "2026-09-30T15:08:17.063Z",
+      "url": "http://127.0.0.1:64925/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "Action execution verified successfully with confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            },
+            {
+              "check": "expect.text",
+              "outcome": "pass",
+              "expected": "1",
+              "observed": "found"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "eval",
+      "success": false,
+      "error": "boom-L1",
+      "executionTimeMs": 2,
+      "timestamp": "2026-09-30T15:08:17.065Z",
+      "target": "throw new Error('boom-L1')",
+      "url": "http://127.0.0.1:64925/fr2-11-history.html"
+    }
+  ],
+  "evicted": 0,
+  "capacity": 200
+}

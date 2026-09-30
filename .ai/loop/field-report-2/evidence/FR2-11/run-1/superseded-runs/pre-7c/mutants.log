@@ -1,0 +1,27 @@
+[M01] CAUGHT unit=true live=true restored=true  navigate is not recorded
+[M02] CAUGHT unit=true live=- restored=true  eval is not recorded
+[M03] CAUGHT unit=true live=true restored=true  verification dropped from engine entries
+[M03b] CAUGHT unit=true live=true restored=true  verification dropped from runtime-level entries (navigate/back/...)
+[M04a] CAUGHT unit=true live=true restored=true  per-tab eviction count never incremented (eviction silent again)
+[M04b] CAUGHT unit=true live=true restored=true  session eviction count off by one (+2 per eviction)
+[M05] CAUGHT unit=true live=true restored=true  URL query string leaked into history
+[M06] CAUGHT unit=true live=true restored=true  typed value not scrubbed from failure errors / verification (a password reaches the history)
+[M06b] CAUGHT unit=true live=- restored=true  engine records the typed value as the target of a type action
+[M07] CAUGHT unit=true live=true restored=true  CLI type args recorded raw (typed text on disk)
+[M08] CAUGHT unit=true live=true restored=true  concurrent appends can interleave (line written in 512-byte slices)
+[M09] CAUGHT unit=true live=true restored=true  a torn/partial history line crashes the reader
+[M10] CAUGHT unit=true live=true restored=true  history.jsonl deleted when session state is cleared
+[M11] CAUGHT unit=true live=true restored=true  torn-line repair removed (next append glued onto the fragment)
+[M12] CAUGHT unit=- live=true restored=true  CLI records exit code 0 for every command
+[M13] CAUGHT unit=true live=true restored=true  adopted-page tabs are not wired into the session ring
+[M14] CAUGHT unit=true live=true restored=true  MCP ignores the scope argument
+[M15] CAUGHT unit=true live=true restored=true  eviction of the CLI file never rotates
+[M16] CAUGHT unit=true live=- restored=true  verification.reason not URL-redacted
+[M17] CAUGHT unit=true live=- restored=true  duplicate-guard rejection not recorded
+[M18] CAUGHT unit=true live=- restored=true  session seq not increasing
+[M20] CAUGHT unit=- live=true restored=true  the watchdog hard-exit does not record the hung command
+[M19] CAUGHT unit=true live=true restored=true  history verb not offered a (current) marker: current session id ignored
+
+[mutants] 23/23 caught; all restored byte-identically: true
+(node:49248) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)

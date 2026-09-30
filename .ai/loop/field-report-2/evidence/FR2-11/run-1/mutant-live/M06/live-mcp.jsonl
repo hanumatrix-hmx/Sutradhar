@@ -1,0 +1,4 @@
+{"surface":"mcp","case":"L1","pass":true,"checks":18,"failed":[]}
+{"surface":"mcp","case":"L1b","pass":false,"checks":12,"failed":[{"check":"RAW history after the failing type has no canary (the error and the verification reason quoted it)","observed":["SECRET"]}]}
+{"surface":"mcp","case":"L1d","pass":false,"checks":8,"failed":[{"check":"every one of them has the redacted page URL and no canary in the RAW response","observed":["SECRET"]}]}
+{"surface":"mcp","case":"PRIV-sweep","pass":false,"checks":2,"failed":[{"check":"no canary in any of 4 raw history responses","observed":["SECRET","SECRET"]}]}

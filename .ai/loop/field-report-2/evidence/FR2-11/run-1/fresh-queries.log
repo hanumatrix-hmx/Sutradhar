@@ -1,0 +1,59 @@
+== 1. HEAD, branch, clean tracked tree
+E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041
+claude/fr2-11-action-history
+ef5eda0 FR2-11 step 7c: live script: history --json byte-identical to the file, history on an unreadable file exits 1
+0
+== 2. sources restored after every mutant (tracked tree has no modified src): diff vs HEAD
+(empty above = identical)
+== 3. the built bundle really contains the new code (grep counts in dist, built by turbo --force, 0 cached)
+.ai/loop/field-report-2/evidence/FR2-11/run-1/build-1-non-bundle.log:Cached:    0 cached, 19 total
+.ai/loop/field-report-2/evidence/FR2-11/run-1/build-2-bundle.log:Cached:    0 cached, 9 total
+getActionHistoryReport   cli-bin=2 mcp-cli=2 index=1
+scrubVerification        cli-bin=2 mcp-cli=2 index=2
+recordCliCommand         cli-bin=3 mcp-cli=0 index=0
+== 4. final live run: re-parse its summary from disk
+{"cases":42,"checks":271,"checksFailed":0,"failed":[],"perSurface":{"mcp":{"cases":8,"casesPassed":8,"checks":62,"checksFailed":0},"cli":{"cases":13,"casesPassed":13,"checks":70,"checksFailed":0},"sdk":{"cases":1,"casesPassed":1,"checks":10,"checksFailed":0},"bundle":{"cases":20,"casesPassed":20,"checks":129,"checksFailed":0}}}
+== 5. the CLI history.jsonl the final run left as evidence: re-read the bytes
+7 .ai/loop/field-report-2/evidence/FR2-11/run-1/live-final/cli-L5-history.jsonl
+canary matches in the raw bytes: SECRET=0 hunter2=0 token==0 ?n==0
+nav    exit 0 ["http://127.0.0.1:59416/fr2-11-history.html"] actions: navigate
+eval   exit 0 ["document.title"] actions: eval
+click  exit 0 ["#bump"] actions: click
+type   exit 0 ["#name","<10 chars>"] actions: type
+snap   exit 0 [] actions: 
+eval   exit 1 ["throw new Error('x-L5')"] actions: eval(FAILED)
+press  exit 0 ["#name","Enter"] actions: focus,press_key
+== 6. MCP: the raw get_action_history responses of the final run (every one) contain no canary
+responses=11  SECRET=0 hunter2=0 token==0 ?n==0
+== 7. MCP L3: exact eviction (re-read the artifact)
+{"case":"L3","pass":true,"checks":7,"failed":[]}
+== 8. mutation: re-read mutants.json
+23/23 caught; all restored byte-identically: true
+M01   CAUGHT unit=true live=true sha-identical=true
+M02   CAUGHT unit=true live=- sha-identical=true
+M03   CAUGHT unit=true live=true sha-identical=true
+M03b  CAUGHT unit=true live=true sha-identical=true
+M04a  CAUGHT unit=true live=true sha-identical=true
+M04b  CAUGHT unit=true live=true sha-identical=true
+M05   CAUGHT unit=true live=true sha-identical=true
+M06   CAUGHT unit=true live=true sha-identical=true
+M06b  CAUGHT unit=true live=- sha-identical=true
+M07   CAUGHT unit=true live=true sha-identical=true
+M08   CAUGHT unit=true live=true sha-identical=true
+M09   CAUGHT unit=true live=true sha-identical=true
+M10   CAUGHT unit=true live=true sha-identical=true
+M11   CAUGHT unit=true live=true sha-identical=true
+M12   CAUGHT unit=- live=true sha-identical=true
+M13   CAUGHT unit=true live=true sha-identical=true
+M14   CAUGHT unit=true live=true sha-identical=true
+M15   CAUGHT unit=true live=true sha-identical=true
+M16   CAUGHT unit=true live=- sha-identical=true
+M17   CAUGHT unit=true live=- sha-identical=true
+M18   CAUGHT unit=true live=- sha-identical=true
+M20   CAUGHT unit=- live=true sha-identical=true
+M19   CAUGHT unit=true live=true sha-identical=true
+== 9. unit tests fail on master fdae749 (before the change), pass here
+browser            master:  Tests 35 failed | 934 passed (969) | branch:  Tests 969 passed (969)
+capability-runtime master:  Tests 16 failed | 255 passed (271) | branch:  Tests 271 passed (271)
+mcp-server         master:  Tests 6 failed | 118 passed (124) | branch:  Tests 124 passed (124)
+cli                master:  Tests 1 failed | 208 passed (209) | branch:  Tests 229 passed (229)

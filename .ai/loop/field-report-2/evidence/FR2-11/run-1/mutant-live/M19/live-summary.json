@@ -1,0 +1,99 @@
+{
+  "startedAt": "2026-09-30T15:14:53.918Z",
+  "finishedAt": "2026-09-30T15:15:17.168Z",
+  "cases": 2,
+  "casesPassed": 1,
+  "checks": 29,
+  "checksFailed": 1,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 2,
+      "casesPassed": 1,
+      "checks": 29,
+      "checksFailed": 1
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "cli:L5"
+  ],
+  "informational": [
+    {
+      "surface": "cli",
+      "case": "L5-history-duration",
+      "historyProcessMs": 248
+    }
+  ],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [
+      19108
+    ],
+    "ownCliChromeProfileDirs": [
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790781294167"
+    ],
+    "childPidsStarted": [
+      65192,
+      74560,
+      46020,
+      56568,
+      70924,
+      63632,
+      76388,
+      71388,
+      75600,
+      67684,
+      72588,
+      59084,
+      61520,
+      66988,
+      63652,
+      42936
+    ]
+  },
+  "evidenceFiles": [
+    "cli-L5-history.jsonl",
+    "cli-L5-history-human.txt",
+    "cli-L5x-history.jsonl"
+  ],
+  "results": [
+    {
+      "surface": "cli",
+      "case": "L5",
+      "pass": false,
+      "checks": 21,
+      "failed": [
+        {
+          "check": "human: exactly one \"(current)\" session row",
+          "observed": [
+            "--- session sess_1790781294419_1 ---"
+          ]
+        }
+      ]
+    },
+    {
+      "surface": "cli",
+      "case": "L5x",
+      "pass": true,
+      "checks": 8,
+      "failed": []
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "startedAt": "2026-09-30T15:11:17.779Z",
+  "finishedAt": "2026-09-30T15:11:42.118Z",
+  "cases": 3,
+  "casesPassed": 1,
+  "checks": 34,
+  "checksFailed": 7,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 3,
+      "casesPassed": 1,
+      "checks": 34,
+      "checksFailed": 7
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "cli:N7",
+    "cli:L5x"
+  ],
+  "informational": [
+    {
+      "surface": "cli",
+      "case": "L5-history-duration",
+      "historyProcessMs": 257
+    }
+  ],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [
+      48752
+    ],
+    "ownCliChromeProfileDirs": [
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790781078024"
+    ],
+    "childPidsStarted": [
+      64024,
+      69060,
+      73796,
+      53880,
+      71208,
+      62172,
+      68724,
+      62460,
+      63716,
+      76512,
+      53816,
+      71712,
+      4888,
+      64864,
+      70312,
+      22280,
+      61416,
+      60460,
+      75364,
+      63732
+    ]
+  },
+  "evidenceFiles": [
+    "cli-L5-history.jsonl",
+    "cli-L5-history-human.txt",
+    "cli-L5x-history.jsonl"
+  ],
+  "results": [
+    {
+      "surface": "cli",
+      "case": "L5",
+      "pass": true,
+      "checks": 21,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "N7",
+      "pass": false,
+      "checks": 5,
+      "failed": [
+        {
+          "check": "history --json still gives exactly 7 lines, exit 0",
+          "observed": 1
+        },
+        {
+          "check": "stderr notes exactly one skipped line",
+          "observed": "Error: could not read E:\\AI-Cache\\tmp\\fr2-11-cli-state-U3TCM0\\history.jsonl (Unterminated string in JSON at position 10 (line 1 column 11))."
+        },
+        {
+          "check": "human header still counts 7 commands",
+          "observed": ""
+        },
+        {
+          "check": "the line appended after the torn fragment is intact: 8 valid lines, still 1 skipped",
+          "observed": {
+            "n": 0,
+            "err": "Error: could not read E:\\AI-Cache\\tmp\\fr2-11-cli-state-U3TCM0\\history.jsonl (Unterminated string in JSON at position 10 (line 1 column 11))."
+          }
+        }
+      ]
+    },
+    {
+      "surface": "cli",
+      "case": "L5x",
+      "pass": false,
+      "checks": 8,
+      "failed": [
+        {
+          "check": "setclipboard line args is a length tag"
+        },
+        {
+          "check": "setclipboard action target is a length tag"
+        },
+        {
+          "check": "the failing type is recorded (exit 1, action failed)"
+        }
+      ]
+    }
+  ]
+}

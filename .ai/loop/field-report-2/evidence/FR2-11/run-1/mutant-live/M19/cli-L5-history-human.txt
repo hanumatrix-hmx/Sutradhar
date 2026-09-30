@@ -1,0 +1,16 @@
+History: 7 command(s) in E:\AI-Cache\tmp\fr2-11-cli-state-hF0LsR\history.jsonl
+--- session sess_1790781294419_1 ---
+2026-09-30 15:14:54Z  exit 0     689ms  nav http://127.0.0.1:54264/fr2-11-history.html
+    - navigate ok verified tab_sess_1790781294419_1_1 http://127.0.0.1:54264/fr2-11-history.html
+2026-09-30 15:14:55Z  exit 0      45ms  eval document.title
+    - eval ok no-verification tab_sess_1790781294419_1_1 document.title
+2026-09-30 15:14:55Z  exit 0     103ms  click #bump
+    - click ok verified tab_sess_1790781294419_1_1 #bump
+2026-09-30 15:14:59Z  exit 0      68ms  type #name <10 chars>
+    - type ok verified tab_sess_1790781294419_1_1 #name
+2026-09-30 15:15:02Z  exit 0      41ms  snap
+2026-09-30 15:15:02Z  exit 1      42ms  eval throw new Error('x-L5')
+    - eval FAILED no-verification tab_sess_1790781294419_1_1 throw new Error('x-L5'): x-L5
+2026-09-30 15:15:03Z  exit 0      53ms  press #name Enter
+    - focus ok verified tab_sess_1790781294419_1_1 #name
+    - press_key ok verified tab_sess_1790781294419_1_1 Enter

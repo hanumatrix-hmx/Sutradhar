@@ -1,0 +1,131 @@
+{
+  "startedAt": "2026-09-30T15:11:45.895Z",
+  "finishedAt": "2026-09-30T15:12:11.751Z",
+  "cases": 3,
+  "casesPassed": 2,
+  "checks": 36,
+  "checksFailed": 2,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 3,
+      "casesPassed": 2,
+      "checks": 36,
+      "checksFailed": 2
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "cli:L6"
+  ],
+  "informational": [
+    {
+      "surface": "cli",
+      "case": "L5-history-duration",
+      "historyProcessMs": 253
+    }
+  ],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [
+      52276,
+      62912
+    ],
+    "ownCliChromeProfileDirs": [
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790781106143",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790781127740"
+    ],
+    "childPidsStarted": [
+      63664,
+      72624,
+      72252,
+      64800,
+      70900,
+      55444,
+      76704,
+      71676,
+      73844,
+      63280,
+      10768,
+      60632,
+      76608,
+      71272,
+      70940,
+      70892,
+      61112,
+      70340,
+      45112,
+      46268,
+      62500
+    ]
+  },
+  "evidenceFiles": [
+    "cli-L5-history.jsonl",
+    "cli-L5-history-human.txt",
+    "cli-L5x-history.jsonl"
+  ],
+  "results": [
+    {
+      "surface": "cli",
+      "case": "L5",
+      "pass": true,
+      "checks": 21,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L5x",
+      "pass": true,
+      "checks": 8,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L6",
+      "pass": false,
+      "checks": 7,
+      "failed": [
+        {
+          "check": "the last line is the close line with actions []",
+          "observed": {
+            "v": 1,
+            "type": "command",
+            "ts": "2026-09-30T15:12:06.695Z",
+            "sessionId": "sess_1790781106341_1",
+            "cwd": "E:\\AI-Cache\\tmp\\fr2-11-cli-work-6Mj8Pf",
+            "verb": "close",
+            "args": [],
+            "exitCode": 0,
+            "durationMs": 32,
+            "actions": [],
+            "actionsEvicted": 0
+          }
+        },
+        {
+          "check": "history after close: exit 0, the previous lines are all still there, no (current) marker",
+          "observed": {
+            "code": 0,
+            "n": 1,
+            "beforeValid": 10
+          }
+        }
+      ]
+    }
+  ]
+}

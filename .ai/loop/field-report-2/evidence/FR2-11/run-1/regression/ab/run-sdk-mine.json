@@ -1,0 +1,76 @@
+[
+  {
+    "id": "UC-01",
+    "title": "Bot detection surface",
+    "surface": "sdk",
+    "success": false,
+    "ms": 3912,
+    "detail": {
+      "success": false,
+      "totalRows": 57,
+      "failedRows": [
+        {
+          "label": "User Agent (Old)",
+          "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        },
+        {
+          "label": "WebGL Vendor",
+          "value": "Canvas has no webgl context"
+        },
+        {
+          "label": "WebGL Renderer",
+          "value": "Canvas has no webgl context"
+        },
+        {
+          "label": "HEADCHR_UA",
+          "value": "FAIL"
+        },
+        {
+          "label": "CHR_MEMORY",
+          "value": "FAIL"
+        }
+      ],
+      "expectedFails": [
+        "User Agent (Old)"
+      ],
+      "unexpectedFails": [
+        {
+          "label": "WebGL Vendor",
+          "value": "Canvas has no webgl context"
+        },
+        {
+          "label": "WebGL Renderer",
+          "value": "Canvas has no webgl context"
+        },
+        {
+          "label": "HEADCHR_UA",
+          "value": "FAIL"
+        },
+        {
+          "label": "CHR_MEMORY",
+          "value": "FAIL"
+        }
+      ],
+      "note": "4 row(s) failed beyond the expected HeadlessChrome UA leak — real finding, not a harness bug."
+    },
+    "error": null,
+    "telemetry": {
+      "before": {
+        "at": "2026-09-30T15:01:52.097Z",
+        "rssBytes": 84885504,
+        "heapUsedBytes": 16942488,
+        "externalBytes": 4190610,
+        "activeHandles": 0,
+        "runtimeSessionCount": 0
+      },
+      "after": {
+        "at": "2026-09-30T15:01:56.008Z",
+        "rssBytes": 85610496,
+        "heapUsedBytes": 22160072,
+        "externalBytes": 4360983,
+        "activeHandles": 0,
+        "runtimeSessionCount": 0
+      }
+    }
+  }
+]

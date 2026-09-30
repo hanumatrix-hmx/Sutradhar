@@ -4017,3 +4017,49 @@ restored byte-identically. F3/F4/F5: docs and the MCP tool description now say a
 in about 1 s and one opening mid-check takes up to about 2.7 s, a frozen page can add up to 1.5 s (total can exceed
 `timeoutMs` by up to about 3 s), and text visible for under one poll (about 100 ms) can be missed. No product
 behaviour changed. Evidence: `evidence/FR2-08/audit-1-followup/`.
+
+## 2026-09-30 -- FR2-11 Executor run-1 (DEV + VERIFY): full action history; awaiting independent audit
+
+Branch `claude/fr2-11-action-history` (base master fdae749, which already has FR2-07 PARTIAL and FR2-08 DONE). One commit per plan step
+(sanitizer + ring, engine, runtime, MCP, CLI file, CLI wiring, live script (+7b, 7c), docs) plus one evidence commit. Status VERIFY; NOT self-audited.
+Evidence: `evidence/FR2-11/run-1/` (false-pass-analysis.md, deviations.md, live-final/, live/, live-2/, live-3/, mutants.json, regression/, before-change/).
+
+What was built (spec re-derived against the current code; anchored by symbol): a pure sanitizer (`action-history.ts`), an exact eviction count on
+the tab and on a new 200-entry session ring fed by every tab (seq order, closed tabs kept), one engine `recordHistory` (all 4 recording sites plus the
+duplicate and invalid-timeoutMs rejections), `withHistory` around navigate / eval / back / forward / reload / click_at_point / drag_at_points /
+set_clipboard / upload_file_via_trigger, `getActionHistoryReport` (scope tab|session), the MCP `scope` + `evicted`/`capacity`/`note`, and on the CLI
+`history.jsonl` (one line per session-bound command, single-write append, 5 MiB rotation, torn-line repair) plus `sutradhar history [--json]`.
+
+Results (all after the last code change and a `turbo run build --force`, 0 cached, bundle grepped): tsc 34/34; vitest browser 969 (+40), capability-runtime
+271 (+17), mcp-server 124 (+6), cli 229 (+21), sutradhar 43, agent 56, server 28; lint clean on browser / capability-runtime / cli (mcp-server: the 6
+pre-existing errors in FR2-10's session-resolution.ts, GAP-314). Live (real Chrome, independent puppeteer observer, built artifacts): 42/42 cases,
+271/271 checks (mcp 8 cases/62 checks, cli 13/70, sdk 1/10, bundle 20/129) in each of FOUR final runs. Mutants: 23/23 caught (18 also caught live), sources
+restored byte-identically (sha256), dist rebuilt. Concurrency: 5 real parallel CLI processes and 8x50 + 6x5 appends from separate processes (up to ~58 KiB
+lines): 0 unparsable, 0 lost. Privacy: canary secrets (URL token + fragment, typed text, clipboard, eval literal) absent from every raw MCP response,
+history.jsonl, both history outputs and the SDK report; negative controls prove the tools' own output DID contain them; the probe self-tests.
+Regression: verify-fr2-08 478/478, verify-fr2-07 488/488 (0 tolerances), FR2-04 verify 110/113 (the one failure is the known headed-click stall, identical
+on master fdae749 in an A/B: {ok 2, fail 10} both), CLI scenario UC-05/08/12 and SDK UC-01 fail identically on master and here, run-mcp 14/14, PROB-043
+5-minute smoke 10866 calls / 0 mismatches. Overhead of recording: 0.002 ms per call. The new unit tests fail on master (35 / 16 / 6 / 1+import).
+
+Findings worth recording:
+1. **A real privacy leak the spec did not foresee**, found by the negative test E3b on the first implementation: the engine's `type did not land the
+   expected value` error quotes BOTH the typed value and the field's content, and the failed action's `verification.reason` is "Action failed: <error>".
+   History now scrubs both (engine `recordHistory`, params known there); the CLI also scrubs the raw secret strings of type/select/setclipboard/dialog from
+   everything it stores. The tool's own result still quotes them (pre-existing, GAP-350).
+2. **FR2-04's watchdog hard-exits** (`process.exit(1)`), which would have skipped every history line for exactly the commands most worth recording.
+   It now records the hung command (bounded 1.5 s) before exiting; live W1 + mutant M20.
+3. A torn last line would have been glued onto the NEXT command's line (losing it too): the appender prefixes a newline when the file does not end with
+   one (live N7, mutant M11).
+4. CLI recording moved from the spec's `withSession` wrapper to main()'s finally (exit code final; covers `dialog`, browser-level `tabs`/`closetab`, and
+   `close`). Deviations (19) are in `evidence/FR2-11/run-1/deviations.md`.
+5. Harness honesty: a first live run of the CLI case flaked once (13 -> 12 Chrome processes: helper processes come and go); the check now compares
+   browser processes only. The first full mutation run reported 4 live "not caught" that were mutant-definition bugs (3 did not compile, 1 aimed at the MCP
+   surface where the tab is created, not adopted); both are kept under `superseded-runs/` and the driver was fixed and re-run.
+6. Hygiene: the harness only ever kills or deletes Chrome/dirs it can attribute to itself (PIDs from the state.json it wrote); on this shared machine other sessions'
+   sutradhar-cli-* Chrome processes (10 counted before the CLI runs) were running throughout and were not touched. Temp master build `E:/AI-Cache/tmp/fr211-master` (git archive + pnpm install --offline +
+   build) is outside the repo; the main checkout was never written.
+
+Unmet / not verified (nothing recorded as met without evidence): no AC is recorded as unmet. Not verified: headed mode, POSIX file mode 0600, non-Chrome,
+the 20-minute soak (5-minute smoke run), a real `taskkill /F` mid-write torn line (injected instead), upload_file_via_trigger / go_forward live (unit only).
+New gaps GAP-339..GAP-352 (spec G-A..G-G, the eval-preview privacy limit, rotation/kill limits, stale AGENT_SETUP sentence, timeoutMs verification, the pre-existing
+typed-value-in-result, FR2-03 forward dependency, optional-interface silence). Status: VERIFY (an independent audit follows).

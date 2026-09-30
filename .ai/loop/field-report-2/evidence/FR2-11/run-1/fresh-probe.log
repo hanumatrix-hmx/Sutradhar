@@ -1,0 +1,57 @@
+fixture server pid=84838
+== commands
+Navigated to http://127.0.0.1:51620/fr2-11-history.html?n=PROBE&token=SECRET-PROBE#access_token=FRAG-SECRET-PROBE
+Title: FR2-11 history
+Verification: verified (confidence 0.90) — 'navigate' verified: a new document committed at http://127.0.0.1:51620/fr2-11-history.html?n=PROBE&token=SECRET-PROBE#access_token=FRAG-SECRET-PROBE
+exit=0
+Typed into #name
+Verification: verified (confidence 0.90) — 'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90
+exit=0
+Set clipboard to "CLIP-SECRET-PROBE"
+Verification: NOT verified — unverifiable (confidence 0.45) — 'set_clipboard' completed, but no built-in post-condition check could run: the clipboard couldn't be read back (the clipboard-read permission isn't granted for this origin; grant it with browser.grant_permissions to get a verified result). The write itself may have succeeded.
+exit=0
+FR2-11 history https://t.test/?k=SECRET-EV
+exit=0
+Click failed: No visible element found for selector: #nope-does-not-exist
+exit=1
+== files in the state dir
+history.jsonl
+state.json
+warden.json
+== RAW history.jsonl secret search (expect 0 matches for each)
+SECRET         0
+hunter2        0
+token=         0
+?n=            0
+access_token   0
+FRAG           0
+== history.jsonl line count / sizes
+5 E:/AI-Cache/tmp/tmp.twjBJ6IoDF/state/history.jsonl
+== history (human)
+History: 5 command(s) in E:\AI-Cache\tmp\tmp.twjBJ6IoDF\state\history.jsonl
+--- session sess_1790781557656_1 (current) ---
+2026-09-30 15:19:17Z  exit 0     625ms  nav http://127.0.0.1:51620/fr2-11-history.html
+    - navigate ok verified tab_sess_1790781557656_1_1 http://127.0.0.1:51620/fr2-11-history.html
+2026-09-30 15:19:18Z  exit 0      73ms  type #name <13 chars>
+    - type ok verified tab_sess_1790781557656_1_1 #name
+2026-09-30 15:19:21Z  exit 0      49ms  setclipboard <17 chars>
+    - set_clipboard ok unverifiable tab_sess_1790781557656_1_1 <17 chars>
+2026-09-30 15:19:21Z  exit 0      40ms  eval document.title + ' https://t.test/'
+    - eval ok no-verification tab_sess_1790781557656_1_1 document.title + ' https://t.test/'
+2026-09-30 15:19:22Z  exit 1   16649ms  click #nope-does-not-exist
+    - click FAILED action-failed tab_sess_1790781557656_1_1 #nope-does-not-exist: No visible element found for selector: #nope-does-not-exist
+== history --json | identical to the file?
+BYTE-IDENTICAL
+== torn last line appended, then history again
+Note: skipped 1 unreadable line(s) in E:\AI-Cache\tmp\tmp.twjBJ6IoDF\state\history.jsonl.
+5
+Note: skipped 1 unreadable line(s) in E:\AI-Cache\tmp\tmp.twjBJ6IoDF\state\history.jsonl.
+text exit=0
+== after one more command the file is still parseable line by line (1 torn line expected)
+valid 6 unparsable 1
+Session closed.
+close exit=0
+== after close: state.json gone, history.jsonl still there
+history.jsonl
+rm: cannot remove 'E:/AI-Cache/tmp/tmp.twjBJ6IoDF': Device or resource busy
+done

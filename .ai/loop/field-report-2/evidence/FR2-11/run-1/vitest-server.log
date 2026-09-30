@@ -1,0 +1,278 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/apps/server[39m
+
+ [32m✓[39m tests/benchmark/v1-launch.spec.ts [2m ([22m[2m2 tests[22m[2m)[22m[90m 1[2mms[22m[39m
+ [32m✓[39m tests/benchmark/production-readiness.spec.ts [2m ([22m[2m2 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+ [32m✓[39m tests/benchmark/stabilization.spec.ts [2m ([22m[2m2 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+[90mstdout[2m | tests/integration/liveBrowserIntegration.spec.ts[2m > [22m[2mapps/server REST API /api/v1/browser Gateway[2m > [22m[2m1. should handle /api/v1/browser/launch and return active session ID[22m[39m
+{"timestamp":"2026-09-30T15:21:00.371Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+{"timestamp":"2026-09-30T15:21:00.371Z","level":"info","message":"[LlmConfigService] primary: Ollama local","context":{}}
+{"timestamp":"2026-09-30T15:21:00.371Z","level":"info","message":"[LlmConfigService] last resort: heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:00.371Z","level":"info","message":"[LlmConfigService] chain: ollama-local → heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:00.372Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+
+[90mstdout[2m | ConsoleLogTransport.log (E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\observability\src\logger\console-transport.ts:21:15)[22m[39m
+{"timestamp":"2026-09-30T15:21:00.375Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+{"timestamp":"2026-09-30T15:21:00.377Z","level":"info","message":"[LlmConfigService] primary: Ollama local","context":{}}
+{"timestamp":"2026-09-30T15:21:00.377Z","level":"info","message":"[LlmConfigService] last resort: heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:00.378Z","level":"info","message":"[LlmConfigService] chain: ollama-local → heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:00.379Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-30T15:21:00.379Z","level":"info","message":"           SUTRADHAR RUNTIME STARTUP                 ","context":{}}
+{"timestamp":"2026-09-30T15:21:00.379Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-30T15:21:00.389Z","level":"info","message":"[ServerApp] Sutradhar REST API Gateway running on fallback port http://127.0.0.1:61607","context":{}}
+{"timestamp":"2026-09-30T15:21:00.389Z","level":"info","message":"[SutradharRuntime] Server initialized on http://127.0.0.1:61607","context":{}}
+{"timestamp":"2026-09-30T15:21:00.390Z","level":"info","message":"[SutradharRuntime] System ready for goal execution requests","context":{}}
+
+[90mstdout[2m | ConsoleLogTransport.log (E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\observability\src\logger\console-transport.ts:21:15)[22m[39m
+{"timestamp":"2026-09-30T15:21:00.373Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+{"timestamp":"2026-09-30T15:21:00.376Z","level":"info","message":"[LlmConfigService] primary: Ollama local","context":{}}
+{"timestamp":"2026-09-30T15:21:00.376Z","level":"info","message":"[LlmConfigService] last resort: heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:00.376Z","level":"info","message":"[LlmConfigService] chain: ollama-local → heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:00.377Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-30T15:21:00.377Z","level":"info","message":"           SUTRADHAR RUNTIME STARTUP                 ","context":{}}
+{"timestamp":"2026-09-30T15:21:00.377Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-30T15:21:00.387Z","level":"info","message":"[ServerApp] Sutradhar REST API Gateway running at http://127.0.0.1:8081","context":{}}
+{"timestamp":"2026-09-30T15:21:00.387Z","level":"info","message":"[SutradharRuntime] Server initialized on http://127.0.0.1:8081","context":{}}
+{"timestamp":"2026-09-30T15:21:00.387Z","level":"info","message":"[SutradharRuntime] System ready for goal execution requests","context":{}}
+
+[90mstdout[2m | ConsoleLogTransport.log (E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\observability\src\logger\console-transport.ts:21:15)[22m[39m
+{"timestamp":"2026-09-30T15:21:00.374Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+{"timestamp":"2026-09-30T15:21:00.376Z","level":"info","message":"[LlmConfigService] primary: Ollama local","context":{}}
+{"timestamp":"2026-09-30T15:21:00.377Z","level":"info","message":"[LlmConfigService] last resort: heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:00.377Z","level":"info","message":"[LlmConfigService] chain: ollama-local → heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:00.378Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-30T15:21:00.378Z","level":"info","message":"           SUTRADHAR RUNTIME STARTUP                 ","context":{}}
+{"timestamp":"2026-09-30T15:21:00.378Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-30T15:21:00.389Z","level":"info","message":"[ServerApp] Sutradhar REST API Gateway running on fallback port http://127.0.0.1:61606","context":{}}
+{"timestamp":"2026-09-30T15:21:00.389Z","level":"info","message":"[SutradharRuntime] Server initialized on http://127.0.0.1:61606","context":{}}
+{"timestamp":"2026-09-30T15:21:00.389Z","level":"info","message":"[SutradharRuntime] System ready for goal execution requests","context":{}}
+
+[90mstdout[2m | ConsoleLogTransport.log (E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\observability\src\logger\console-transport.ts:21:15)[22m[39m
+{"timestamp":"2026-09-30T15:21:00.374Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+{"timestamp":"2026-09-30T15:21:00.377Z","level":"info","message":"[LlmConfigService] primary: Ollama local","context":{}}
+{"timestamp":"2026-09-30T15:21:00.377Z","level":"info","message":"[LlmConfigService] last resort: heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:00.377Z","level":"info","message":"[LlmConfigService] chain: ollama-local → heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:00.378Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-30T15:21:00.378Z","level":"info","message":"           SUTRADHAR RUNTIME STARTUP                 ","context":{}}
+{"timestamp":"2026-09-30T15:21:00.379Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-30T15:21:00.389Z","level":"info","message":"[ServerApp] Sutradhar REST API Gateway running on fallback port http://127.0.0.1:61608","context":{}}
+{"timestamp":"2026-09-30T15:21:00.389Z","level":"info","message":"[SutradharRuntime] Server initialized on http://127.0.0.1:61608","context":{}}
+{"timestamp":"2026-09-30T15:21:00.390Z","level":"info","message":"[SutradharRuntime] System ready for goal execution requests","context":{}}
+
+[90mstdout[2m | ConsoleLogTransport.log (E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\observability\src\logger\console-transport.ts:21:15)[22m[39m
+{"timestamp":"2026-09-30T15:21:00.374Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+{"timestamp":"2026-09-30T15:21:00.376Z","level":"info","message":"[LlmConfigService] primary: Ollama local","context":{}}
+{"timestamp":"2026-09-30T15:21:00.377Z","level":"info","message":"[LlmConfigService] last resort: heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:00.377Z","level":"info","message":"[LlmConfigService] chain: ollama-local → heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:00.378Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-30T15:21:00.378Z","level":"info","message":"           SUTRADHAR RUNTIME STARTUP                 ","context":{}}
+{"timestamp":"2026-09-30T15:21:00.378Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-30T15:21:00.388Z","level":"info","message":"[ServerApp] Sutradhar REST API Gateway running on fallback port http://127.0.0.1:61605","context":{}}
+{"timestamp":"2026-09-30T15:21:00.388Z","level":"info","message":"[SutradharRuntime] Server initialized on http://127.0.0.1:61605","context":{}}
+{"timestamp":"2026-09-30T15:21:00.388Z","level":"info","message":"[SutradharRuntime] System ready for goal execution requests","context":{}}
+
+[90mstdout[2m | tests/integration/e2e.spec.ts[2m > [22m[2mSutradhar Phase 7 Runtime Integration & End-to-End Test Suite[22m[39m
+{"timestamp":"2026-09-30T15:21:00.393Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+{"timestamp":"2026-09-30T15:21:00.393Z","level":"info","message":"[LlmConfigService] primary: Ollama local","context":{}}
+{"timestamp":"2026-09-30T15:21:00.393Z","level":"info","message":"[LlmConfigService] last resort: heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:00.393Z","level":"info","message":"[LlmConfigService] chain: ollama-local → heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:00.393Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-30T15:21:00.393Z","level":"info","message":"           SUTRADHAR RUNTIME STARTUP                 ","context":{}}
+{"timestamp":"2026-09-30T15:21:00.393Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-30T15:21:00.394Z","level":"info","message":"[ServerApp] Sutradhar REST API Gateway running on fallback port http://127.0.0.1:61609","context":{}}
+{"timestamp":"2026-09-30T15:21:00.394Z","level":"info","message":"[SutradharRuntime] Server initialized on http://127.0.0.1:61609","context":{}}
+{"timestamp":"2026-09-30T15:21:00.394Z","level":"info","message":"[SutradharRuntime] System ready for goal execution requests","context":{}}
+
+[90mstdout[2m | tests/integration/e2e.spec.ts[2m > [22m[2mSutradhar Phase 7 Runtime Integration & End-to-End Test Suite[2m > [22m[2mTEST 1: Should open wikipedia.org, create session, load page, and capture DOM snapshot[22m[39m
+{"timestamp":"2026-09-30T15:21:00.394Z","level":"info","message":"[SessionApplicationService] Creating browser session","context":{"initialUrl":"https://wikipedia.org"}}
+{"timestamp":"2026-09-30T15:21:00.395Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+
+ [32m✓[39m tests/benchmark/regression.spec.ts [2m ([22m[2m1 test[22m[2m)[22m[90m 7[2mms[22m[39m
+[90mstdout[2m | tests/unit/routes.spec.ts[2m > [22m[2m@sutradhar/server Route Controllers Integration[2m > [22m[2mshould register and dispatch all REST API route controllers via application services[22m[39m
+{"timestamp":"2026-09-30T15:21:00.407Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+{"timestamp":"2026-09-30T15:21:00.407Z","level":"info","message":"[SessionApplicationService] Creating browser session","context":{"initialUrl":"https://example.com"}}
+{"timestamp":"2026-09-30T15:21:00.408Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+
+ [32m✓[39m tests/unit/gateway.spec.ts [2m ([22m[2m3 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+[90mstdout[2m | tests/unit/gateway.spec.ts[2m > [22m[2m@sutradhar/server REST API Gateway & Server Shell[2m > [22m[2mshould start ServerApp and handle system health check endpoint[22m[39m
+{"timestamp":"2026-09-30T15:21:00.409Z","level":"info","message":"[ServerApp] Sutradhar REST API Gateway running at http://127.0.0.1:9090","context":{}}
+{"timestamp":"2026-09-30T15:21:00.410Z","level":"info","message":"[ServerApp] Sutradhar REST API Gateway stopped","context":{}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[22m[39m
+{"timestamp":"2026-09-30T15:21:00.420Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+{"timestamp":"2026-09-30T15:21:00.420Z","level":"info","message":"[LlmConfigService] primary: Ollama local","context":{}}
+{"timestamp":"2026-09-30T15:21:00.420Z","level":"info","message":"[LlmConfigService] last resort: heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:00.420Z","level":"info","message":"[LlmConfigService] chain: ollama-local → heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:00.420Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-30T15:21:00.420Z","level":"info","message":"           SUTRADHAR RUNTIME STARTUP                 ","context":{}}
+{"timestamp":"2026-09-30T15:21:00.420Z","level":"info","message":"====================================================","context":{}}
+{"timestamp":"2026-09-30T15:21:00.421Z","level":"info","message":"[ServerApp] Sutradhar REST API Gateway running at http://127.0.0.1:8081","context":{}}
+{"timestamp":"2026-09-30T15:21:00.421Z","level":"info","message":"[SutradharRuntime] Server initialized on http://127.0.0.1:8081","context":{}}
+{"timestamp":"2026-09-30T15:21:00.421Z","level":"info","message":"[SutradharRuntime] System ready for goal execution requests","context":{}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mWP 8.1 & 8.2: Should execute Browser Action Engine and produce SemanticElementGraph[22m[39m
+{"timestamp":"2026-09-30T15:21:00.421Z","level":"info","message":"[SessionApplicationService] Creating browser session","context":{"initialUrl":"https://wikipedia.org"}}
+{"timestamp":"2026-09-30T15:21:00.422Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+
+[90mstdout[2m | tests/unit/routes.spec.ts[2m > [22m[2m@sutradhar/server Route Controllers Integration[2m > [22m[2mshould register and dispatch all REST API route controllers via application services[22m[39m
+{"timestamp":"2026-09-30T15:21:01.117Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790781660407_1","context":{"isIncognito":false,"initialUrl":"https://example.com"}}
+{"timestamp":"2026-09-30T15:21:01.117Z","level":"info","message":"[AgentApplicationService] Executing agent goal use case","context":{"goal":"Extract price data"}}
+{"timestamp":"2026-09-30T15:21:01.118Z","level":"info","message":"[StorageApplicationService] Storing file artifact reports/data.json","context":{}}
+
+[90mstdout[2m | tests/unit/routes.spec.ts[2m > [22m[2m@sutradhar/server Route Controllers Integration[2m > [22m[2mshould register and dispatch all REST API route controllers via application services[22m[39m
+{"timestamp":"2026-09-30T15:21:01.120Z","level":"info","message":"[SessionApplicationService] Closing session sess_1790781660407_1","context":{}}
+
+[90mstdout[2m | tests/unit/routes.spec.ts[2m > [22m[2m@sutradhar/server Route Controllers Integration[2m > [22m[2mshould register and dispatch all REST API route controllers via application services[22m[39m
+{"timestamp":"2026-09-30T15:21:01.245Z","level":"info","message":"[BrowserSession] Closed session sess_1790781660407_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-30T15:21:01.245Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790781660407_1","context":{"reason":"User requested close"}}
+
+ [32m✓[39m tests/unit/routes.spec.ts [2m ([22m[2m1 test[22m[2m)[22m[33m 841[2mms[22m[39m
+[90mstdout[2m | tests/integration/liveBrowserIntegration.spec.ts[2m > [22m[2mapps/server REST API /api/v1/browser Gateway[2m > [22m[2m1. should handle /api/v1/browser/launch and return active session ID[22m[39m
+{"timestamp":"2026-09-30T15:21:01.348Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_live_1","context":{"isIncognito":false,"initialUrl":"https://github.com"}}
+
+[90mstdout[2m | tests/integration/liveBrowserIntegration.spec.ts[2m > [22m[2mapps/server REST API /api/v1/browser Gateway[2m > [22m[2m1. should handle /api/v1/browser/launch and return active session ID[22m[39m
+{"timestamp":"2026-09-30T15:21:01.543Z","level":"info","message":"[BrowserSession] Closed session sess_live_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-30T15:21:01.543Z","level":"info","message":"[BrowserSessionManager] Closed session sess_live_1","context":{"reason":"Close all sessions requested"}}
+
+[90mstdout[2m | tests/integration/liveBrowserIntegration.spec.ts[2m > [22m[2mapps/server REST API /api/v1/browser Gateway[2m > [22m[2m2. should handle /api/v1/browser/navigate and navigate live session[22m[39m
+{"timestamp":"2026-09-30T15:21:01.543Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+{"timestamp":"2026-09-30T15:21:01.543Z","level":"info","message":"[LlmConfigService] primary: Ollama local","context":{}}
+{"timestamp":"2026-09-30T15:21:01.544Z","level":"info","message":"[LlmConfigService] last resort: heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:01.544Z","level":"info","message":"[LlmConfigService] chain: ollama-local → heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:01.544Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+
+[90mstdout[2m | tests/integration/e2e.spec.ts[2m > [22m[2mSutradhar Phase 7 Runtime Integration & End-to-End Test Suite[2m > [22m[2mTEST 1: Should open wikipedia.org, create session, load page, and capture DOM snapshot[22m[39m
+{"timestamp":"2026-09-30T15:21:01.581Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790781660395_1","context":{"isIncognito":false,"initialUrl":"https://wikipedia.org"}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mWP 8.1 & 8.2: Should execute Browser Action Engine and produce SemanticElementGraph[22m[39m
+{"timestamp":"2026-09-30T15:21:01.581Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790781660422_1","context":{"isIncognito":false,"initialUrl":"https://wikipedia.org"}}
+{"timestamp":"2026-09-30T15:21:01.581Z","level":"info","message":"[BrowserActionEngine] Executing action navigate","context":{"tabId":"tab_sess_1790781660422_1_1","url":"https://wikipedia.org"}}
+
+[90mstdout[2m | tests/integration/e2e.spec.ts[2m > [22m[2mSutradhar Phase 7 Runtime Integration & End-to-End Test Suite[2m > [22m[2mTEST 3: Should store preference memory and perform semantic retrieval[22m[39m
+{"timestamp":"2026-09-30T15:21:01.693Z","level":"info","message":"[MemoryApplicationService] Storing memory record mem_pref_1 in tier semantic","context":{}}
+{"timestamp":"2026-09-30T15:21:01.693Z","level":"info","message":"[MemoryApplicationService] Querying memory store for: \"favourite language\"","context":{}}
+
+[90mstdout[2m | tests/integration/e2e.spec.ts[2m > [22m[2mSutradhar Phase 7 Runtime Integration & End-to-End Test Suite[22m[39m
+{"timestamp":"2026-09-30T15:21:01.696Z","level":"info","message":"[SutradharRuntime] Shutting down Sutradhar runtime...","context":{}}
+{"timestamp":"2026-09-30T15:21:01.697Z","level":"info","message":"[ServerApp] Sutradhar REST API Gateway stopped","context":{}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mWP 8.1 & 8.2: Should execute Browser Action Engine and produce SemanticElementGraph[22m[39m
+{"timestamp":"2026-09-30T15:21:01.696Z","level":"info","message":"[SessionApplicationService] Closing session sess_1790781660422_1","context":{}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mWP 8.1 & 8.2: Should execute Browser Action Engine and produce SemanticElementGraph[22m[39m
+{"timestamp":"2026-09-30T15:21:01.988Z","level":"info","message":"[BrowserSession] Closed session sess_1790781660422_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-30T15:21:01.988Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790781660422_1","context":{"reason":"User requested close"}}
+
+ [32m✓[39m tests/integration/e2e.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[33m 1596[2mms[22m[39m
+[90mstdout[2m | tests/integration/e2e.spec.ts[2m > [22m[2mSutradhar Phase 7 Runtime Integration & End-to-End Test Suite[22m[39m
+{"timestamp":"2026-09-30T15:21:01.988Z","level":"info","message":"[BrowserSession] Closed session sess_1790781660395_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-30T15:21:01.988Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790781660395_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-30T15:21:01.989Z","level":"info","message":"[SqliteClient] Database connection closed","context":{}}
+{"timestamp":"2026-09-30T15:21:01.989Z","level":"info","message":"[SutradharRuntime] Shutdown complete","context":{}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mWP 8.3 & 8.4: Should execute Browser Skills and verify action execution outcomes[22m[39m
+{"timestamp":"2026-09-30T15:21:01.988Z","level":"info","message":"[SessionApplicationService] Creating browser session","context":{"initialUrl":"https://example.com"}}
+{"timestamp":"2026-09-30T15:21:01.988Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+
+[90mstdout[2m | tests/integration/liveBrowserIntegration.spec.ts[2m > [22m[2mapps/server REST API /api/v1/browser Gateway[2m > [22m[2m2. should handle /api/v1/browser/navigate and navigate live session[22m[39m
+{"timestamp":"2026-09-30T15:21:02.417Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790781661544_1","context":{"isIncognito":false,"initialUrl":"https://github.com"}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mWP 8.3 & 8.4: Should execute Browser Skills and verify action execution outcomes[22m[39m
+{"timestamp":"2026-09-30T15:21:02.429Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790781661988_2","context":{"isIncognito":false,"initialUrl":"https://example.com"}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mWP 8.3 & 8.4: Should execute Browser Skills and verify action execution outcomes[22m[39m
+{"timestamp":"2026-09-30T15:21:02.434Z","level":"info","message":"[SessionApplicationService] Closing session sess_1790781661988_2","context":{}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mWP 8.3 & 8.4: Should execute Browser Skills and verify action execution outcomes[22m[39m
+{"timestamp":"2026-09-30T15:21:02.558Z","level":"info","message":"[BrowserSession] Closed session sess_1790781661988_2","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-30T15:21:02.558Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790781661988_2","context":{"reason":"User requested close"}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mWP 8.5 & 8.7: Should trigger Recovery Engine and query dynamic CapabilityRegistry[22m[39m
+{"timestamp":"2026-09-30T15:21:02.558Z","level":"info","message":"[SessionApplicationService] Creating browser session","context":{"initialUrl":"https://example.com"}}
+{"timestamp":"2026-09-30T15:21:02.558Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+
+[90mstderr[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mWP 8.5 & 8.7: Should trigger Recovery Engine and query dynamic CapabilityRegistry[22m[39m
+{"timestamp":"2026-09-30T15:21:02.984Z","level":"warn","message":"[RecoveryEngine] Attempting recovery for failure reason: stale_element","context":{"url":"https://example.com/"}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mWP 8.5 & 8.7: Should trigger Recovery Engine and query dynamic CapabilityRegistry[22m[39m
+{"timestamp":"2026-09-30T15:21:02.983Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790781662558_3","context":{"isIncognito":false,"initialUrl":"https://example.com"}}
+
+[90mstderr[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mWP 8.5 & 8.7: Should trigger Recovery Engine and query dynamic CapabilityRegistry[22m[39m
+<empty line>
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mWP 8.5 & 8.7: Should trigger Recovery Engine and query dynamic CapabilityRegistry[22m[39m
+{"timestamp":"2026-09-30T15:21:02.988Z","level":"info","message":"[SessionApplicationService] Closing session sess_1790781662558_3","context":{}}
+
+[90mstdout[2m | tests/integration/liveBrowserIntegration.spec.ts[2m > [22m[2mapps/server REST API /api/v1/browser Gateway[2m > [22m[2m2. should handle /api/v1/browser/navigate and navigate live session[22m[39m
+{"timestamp":"2026-09-30T15:21:03.064Z","level":"info","message":"[BrowserSession] Closed session sess_1790781661544_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-30T15:21:03.064Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790781661544_1","context":{"reason":"Close all sessions requested"}}
+
+[90mstdout[2m | tests/integration/liveBrowserIntegration.spec.ts[2m > [22m[2mapps/server REST API /api/v1/browser Gateway[2m > [22m[2m3. should handle /api/v1/browser/screenshot and return screenshot payload[22m[39m
+{"timestamp":"2026-09-30T15:21:03.064Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+{"timestamp":"2026-09-30T15:21:03.065Z","level":"info","message":"[LlmConfigService] primary: Ollama local","context":{}}
+{"timestamp":"2026-09-30T15:21:03.065Z","level":"info","message":"[LlmConfigService] last resort: heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:03.065Z","level":"info","message":"[LlmConfigService] chain: ollama-local → heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:03.065Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+
+[90mstderr[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mWP 8.5 & 8.7: Should trigger Recovery Engine and query dynamic CapabilityRegistry[22m[39m
+<empty line>
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mWP 8.5 & 8.7: Should trigger Recovery Engine and query dynamic CapabilityRegistry[22m[39m
+{"timestamp":"2026-09-30T15:21:03.116Z","level":"info","message":"[BrowserSession] Closed session sess_1790781662558_3","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-30T15:21:03.116Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790781662558_3","context":{"reason":"User requested close"}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mSCENARIO 5: Open login page, identify username/password fields, fill credentials, stop before submitting[22m[39m
+{"timestamp":"2026-09-30T15:21:03.126Z","level":"info","message":"[SessionApplicationService] Creating browser session","context":{"initialUrl":"https://github.com/login"}}
+{"timestamp":"2026-09-30T15:21:03.127Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mSCENARIO 5: Open login page, identify username/password fields, fill credentials, stop before submitting[22m[39m
+{"timestamp":"2026-09-30T15:21:03.910Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790781663126_4","context":{"isIncognito":false,"initialUrl":"https://github.com/login"}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mSCENARIO 5: Open login page, identify username/password fields, fill credentials, stop before submitting[22m[39m
+{"timestamp":"2026-09-30T15:21:03.939Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_sess_1790781663126_4_1","selector":"input[name=\"login\"], input[name=\"username\"], input[type=\"text\"]"}}
+
+[90mstdout[2m | tests/integration/liveBrowserIntegration.spec.ts[2m > [22m[2mapps/server REST API /api/v1/browser Gateway[2m > [22m[2m3. should handle /api/v1/browser/screenshot and return screenshot payload[22m[39m
+{"timestamp":"2026-09-30T15:21:03.982Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790781663065_1","context":{"isIncognito":false,"initialUrl":"https://github.com"}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mSCENARIO 5: Open login page, identify username/password fields, fill credentials, stop before submitting[22m[39m
+{"timestamp":"2026-09-30T15:21:04.010Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_sess_1790781663126_4_1","selector":"input[type=\"password\"]"}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mSCENARIO 5: Open login page, identify username/password fields, fill credentials, stop before submitting[22m[39m
+{"timestamp":"2026-09-30T15:21:04.046Z","level":"info","message":"[SessionApplicationService] Closing session sess_1790781663126_4","context":{}}
+
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[2m > [22m[2mSCENARIO 5: Open login page, identify username/password fields, fill credentials, stop before submitting[22m[39m
+{"timestamp":"2026-09-30T15:21:04.209Z","level":"info","message":"[BrowserSession] Closed session sess_1790781663126_4","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-30T15:21:04.210Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790781663126_4","context":{"reason":"User requested close"}}
+
+ [32m✓[39m tests/integration/iba-acceptance.spec.ts [2m ([22m[2m8 tests[22m[2m)[22m[33m 3790[2mms[22m[39m
+[90mstdout[2m | tests/integration/iba-acceptance.spec.ts[2m > [22m[2mPhase 8 — Intelligent Browser Agent (IBA) System Acceptance Test Suite[22m[39m
+{"timestamp":"2026-09-30T15:21:04.210Z","level":"info","message":"[SutradharRuntime] Shutting down Sutradhar runtime...","context":{}}
+{"timestamp":"2026-09-30T15:21:04.210Z","level":"info","message":"[ServerApp] Sutradhar REST API Gateway stopped","context":{}}
+{"timestamp":"2026-09-30T15:21:04.210Z","level":"info","message":"[SqliteClient] Database connection closed","context":{}}
+{"timestamp":"2026-09-30T15:21:04.210Z","level":"info","message":"[SutradharRuntime] Shutdown complete","context":{}}
+
+[90mstdout[2m | tests/integration/liveBrowserIntegration.spec.ts[2m > [22m[2mapps/server REST API /api/v1/browser Gateway[2m > [22m[2m3. should handle /api/v1/browser/screenshot and return screenshot payload[22m[39m
+{"timestamp":"2026-09-30T15:21:04.222Z","level":"info","message":"[BrowserSession] Closed session sess_1790781663065_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-30T15:21:04.222Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790781663065_1","context":{"reason":"Close all sessions requested"}}
+
+[90mstdout[2m | tests/integration/liveBrowserIntegration.spec.ts[2m > [22m[2mapps/server REST API /api/v1/browser Gateway[2m > [22m[2m4. should handle /api/v1/browser/eval and execute JS evaluation[22m[39m
+{"timestamp":"2026-09-30T15:21:04.222Z","level":"info","message":"[SqliteClient] Initialized database client at :memory:","context":{}}
+{"timestamp":"2026-09-30T15:21:04.222Z","level":"info","message":"[LlmConfigService] primary: Ollama local","context":{}}
+{"timestamp":"2026-09-30T15:21:04.222Z","level":"info","message":"[LlmConfigService] last resort: heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:04.222Z","level":"info","message":"[LlmConfigService] chain: ollama-local → heuristic","context":{}}
+{"timestamp":"2026-09-30T15:21:04.222Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+
+[90mstdout[2m | tests/integration/liveBrowserIntegration.spec.ts[2m > [22m[2mapps/server REST API /api/v1/browser Gateway[2m > [22m[2m4. should handle /api/v1/browser/eval and execute JS evaluation[22m[39m
+{"timestamp":"2026-09-30T15:21:05.009Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790781664222_1","context":{"isIncognito":false,"initialUrl":"https://github.com"}}
+
+ [32m✓[39m tests/integration/liveBrowserIntegration.spec.ts [2m ([22m[2m4 tests[22m[2m)[22m[33m 4785[2mms[22m[39m
+[90mstdout[2m | tests/integration/liveBrowserIntegration.spec.ts[2m > [22m[2mapps/server REST API /api/v1/browser Gateway[2m > [22m[2m4. should handle /api/v1/browser/eval and execute JS evaluation[22m[39m
+{"timestamp":"2026-09-30T15:21:05.154Z","level":"info","message":"[BrowserSession] Closed session sess_1790781664222_1","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-30T15:21:05.154Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790781664222_1","context":{"reason":"Close all sessions requested"}}
+
+
+[2m Test Files [22m [1m[32m9 passed[39m[22m[90m (9)[39m
+[2m      Tests [22m [1m[32m28 passed[39m[22m[90m (28)[39m
+[2m   Start at [22m 20:50:59
+[2m   Duration [22m 6.15s[2m (transform 932ms, setup 1ms, collect 6.29s, tests 11.03s, environment 1ms, prepare 1.50s)[22m
+
+exit=0

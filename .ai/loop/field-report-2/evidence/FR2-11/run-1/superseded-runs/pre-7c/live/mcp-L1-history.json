@@ -1,0 +1,89 @@
+{
+  "scope": "tab",
+  "tabId": "tab_sess_1790774751982_1_1",
+  "entries": [
+    {
+      "actionType": "navigate",
+      "success": true,
+      "executionTimeMs": 21,
+      "timestamp": "2026-09-30T13:25:52.046Z",
+      "target": "http://127.0.0.1:52245/fr2-11-history.html",
+      "url": "http://127.0.0.1:52245/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'navigate' verified: a new document committed at http://127.0.0.1:52245/fr2-11-history.html",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "navigate.document",
+              "outcome": "pass",
+              "expected": "new-document or url change",
+              "observed": "new-document",
+              "detail": "a new document committed at http://127.0.0.1:52245/fr2-11-history.html"
+            },
+            {
+              "check": "navigate.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "eval",
+      "success": true,
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T13:25:52.054Z",
+      "target": "document.title",
+      "url": "http://127.0.0.1:52245/fr2-11-history.html"
+    },
+    {
+      "actionType": "click",
+      "selector": "#bump",
+      "success": true,
+      "executionTimeMs": 609,
+      "timestamp": "2026-09-30T13:25:52.667Z",
+      "url": "http://127.0.0.1:52245/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "Action execution verified successfully with confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            },
+            {
+              "check": "expect.text",
+              "outcome": "pass",
+              "expected": "1",
+              "observed": "found"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "eval",
+      "success": false,
+      "error": "boom-L1",
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T13:25:52.669Z",
+      "target": "throw new Error('boom-L1')",
+      "url": "http://127.0.0.1:52245/fr2-11-history.html"
+    }
+  ],
+  "evicted": 0,
+  "capacity": 200
+}

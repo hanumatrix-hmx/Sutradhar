@@ -1,0 +1,895 @@
+{
+  "scope": "tab",
+  "tabId": "tab_sess_1790780973094_1_1",
+  "entries": [
+    {
+      "actionType": "navigate",
+      "success": true,
+      "executionTimeMs": 26,
+      "timestamp": "2026-09-30T15:09:33.168Z",
+      "target": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'navigate' verified: a new document committed at http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "navigate.document",
+              "outcome": "pass",
+              "expected": "new-document or url change",
+              "observed": "new-document",
+              "detail": "a new document committed at http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1"
+            },
+            {
+              "check": "navigate.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "eval",
+      "success": true,
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T15:09:33.178Z",
+      "target": "document.title",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1"
+    },
+    {
+      "actionType": "click",
+      "selector": "#bump",
+      "success": true,
+      "executionTimeMs": 598,
+      "timestamp": "2026-09-30T15:09:33.781Z",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "Action execution verified successfully with confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            },
+            {
+              "check": "expect.text",
+              "outcome": "pass",
+              "expected": "1",
+              "observed": "found"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "eval",
+      "success": false,
+      "error": "boom-L1",
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T15:09:33.783Z",
+      "target": "throw new Error('boom-L1')",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1"
+    }
+  ],
+  "evicted": 0,
+  "capacity": 200
+}
+----
+{
+  "scope": "tab",
+  "tabId": "tab_sess_1790780973094_1_1",
+  "entries": [
+    {
+      "actionType": "navigate",
+      "success": true,
+      "executionTimeMs": 26,
+      "timestamp": "2026-09-30T15:09:33.168Z",
+      "target": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'navigate' verified: a new document committed at http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "navigate.document",
+              "outcome": "pass",
+              "expected": "new-document or url change",
+              "observed": "new-document",
+              "detail": "a new document committed at http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1"
+            },
+            {
+              "check": "navigate.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "eval",
+      "success": true,
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T15:09:33.178Z",
+      "target": "document.title",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1"
+    },
+    {
+      "actionType": "click",
+      "selector": "#bump",
+      "success": true,
+      "executionTimeMs": 598,
+      "timestamp": "2026-09-30T15:09:33.781Z",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "Action execution verified successfully with confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            },
+            {
+              "check": "expect.text",
+              "outcome": "pass",
+              "expected": "1",
+              "observed": "found"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "eval",
+      "success": false,
+      "error": "boom-L1",
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T15:09:33.783Z",
+      "target": "throw new Error('boom-L1')",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1"
+    },
+    {
+      "actionType": "wait_for",
+      "selector": "js(true)",
+      "success": true,
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T15:09:33.793Z",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'wait_for' verified: js(true) held on one poll after 1ms",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "wait_for.js",
+              "outcome": "pass",
+              "expected": "true",
+              "detail": "the expression was truthy"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "type",
+      "selector": "#name",
+      "success": true,
+      "executionTimeMs": 18,
+      "timestamp": "2026-09-30T15:09:33.812Z",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "type.built-in",
+              "outcome": "pass",
+              "detail": "the typed value was read back from the element inside the action"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "set_clipboard",
+      "success": true,
+      "executionTimeMs": 8,
+      "timestamp": "2026-09-30T15:09:33.823Z",
+      "target": "<14 chars>",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": false,
+        "urlChanged": false,
+        "elementFound": false,
+        "confidence": 0.45,
+        "reason": "'set_clipboard' completed, but no built-in post-condition check could run: the clipboard couldn't be read back (the clipboard-read permission isn't granted for this origin; grant it with browser.grant_permissions to get a verified result). The write itself may have succeeded.",
+        "evidence": {
+          "tier": "unverifiable",
+          "checks": [
+            {
+              "check": "set_clipboard.read-back",
+              "outcome": "not-run",
+              "expected": 14,
+              "observed": "blocked",
+              "detail": "clipboard-read permission not granted"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "evicted": 0,
+  "capacity": 200
+}
+----
+{
+  "scope": "tab",
+  "tabId": "tab_sess_1790780973094_1_1",
+  "entries": [
+    {
+      "actionType": "navigate",
+      "success": true,
+      "executionTimeMs": 26,
+      "timestamp": "2026-09-30T15:09:33.168Z",
+      "target": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'navigate' verified: a new document committed at http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "navigate.document",
+              "outcome": "pass",
+              "expected": "new-document or url change",
+              "observed": "new-document",
+              "detail": "a new document committed at http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1"
+            },
+            {
+              "check": "navigate.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "eval",
+      "success": true,
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T15:09:33.178Z",
+      "target": "document.title",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1"
+    },
+    {
+      "actionType": "click",
+      "selector": "#bump",
+      "success": true,
+      "executionTimeMs": 598,
+      "timestamp": "2026-09-30T15:09:33.781Z",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "Action execution verified successfully with confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            },
+            {
+              "check": "expect.text",
+              "outcome": "pass",
+              "expected": "1",
+              "observed": "found"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "eval",
+      "success": false,
+      "error": "boom-L1",
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T15:09:33.783Z",
+      "target": "throw new Error('boom-L1')",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1"
+    },
+    {
+      "actionType": "wait_for",
+      "selector": "js(true)",
+      "success": true,
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T15:09:33.793Z",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'wait_for' verified: js(true) held on one poll after 1ms",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "wait_for.js",
+              "outcome": "pass",
+              "expected": "true",
+              "detail": "the expression was truthy"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "type",
+      "selector": "#name",
+      "success": true,
+      "executionTimeMs": 18,
+      "timestamp": "2026-09-30T15:09:33.812Z",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "type.built-in",
+              "outcome": "pass",
+              "detail": "the typed value was read back from the element inside the action"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "set_clipboard",
+      "success": true,
+      "executionTimeMs": 8,
+      "timestamp": "2026-09-30T15:09:33.823Z",
+      "target": "<14 chars>",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": false,
+        "urlChanged": false,
+        "elementFound": false,
+        "confidence": 0.45,
+        "reason": "'set_clipboard' completed, but no built-in post-condition check could run: the clipboard couldn't be read back (the clipboard-read permission isn't granted for this origin; grant it with browser.grant_permissions to get a verified result). The write itself may have succeeded.",
+        "evidence": {
+          "tier": "unverifiable",
+          "checks": [
+            {
+              "check": "set_clipboard.read-back",
+              "outcome": "not-run",
+              "expected": 14,
+              "observed": "blocked",
+              "detail": "clipboard-read permission not granted"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "navigate",
+      "success": true,
+      "executionTimeMs": 19,
+      "timestamp": "2026-09-30T15:09:33.843Z",
+      "target": "http://127.0.0.1:55030/fr2-11-typefail.html?n=L1b&token=SECRET-L1b",
+      "url": "http://127.0.0.1:55030/fr2-11-typefail.html?n=L1b&token=SECRET-L1b",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'navigate' verified: a new document committed at http://127.0.0.1:55030/fr2-11-typefail.html?n=L1b&token=SECRET-L1b",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "navigate.document",
+              "outcome": "pass",
+              "expected": "new-document or url change",
+              "observed": "new-document",
+              "detail": "a new document committed at http://127.0.0.1:55030/fr2-11-typefail.html?n=L1b&token=SECRET-L1b"
+            },
+            {
+              "check": "navigate.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "type",
+      "selector": "#f",
+      "success": false,
+      "error": "type did not land the expected value (the typed text and the field content are not recorded)",
+      "executionTimeMs": 1590,
+      "timestamp": "2026-09-30T15:09:35.507Z",
+      "url": "http://127.0.0.1:55030/fr2-11-typefail.html?n=L1b&token=SECRET-L1b",
+      "verification": {
+        "verified": false,
+        "urlChanged": false,
+        "elementFound": false,
+        "confidence": 0,
+        "reason": "Action failed: type did not land the expected value (the typed text and the field content are not recorded)",
+        "evidence": {
+          "tier": "action-failed",
+          "checks": []
+        }
+      }
+    }
+  ],
+  "evicted": 0,
+  "capacity": 200
+}
+----
+{
+  "scope": "tab",
+  "tabId": "tab_sess_1790780973094_1_1",
+  "entries": [
+    {
+      "actionType": "navigate",
+      "success": true,
+      "executionTimeMs": 26,
+      "timestamp": "2026-09-30T15:09:33.168Z",
+      "target": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'navigate' verified: a new document committed at http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "navigate.document",
+              "outcome": "pass",
+              "expected": "new-document or url change",
+              "observed": "new-document",
+              "detail": "a new document committed at http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1"
+            },
+            {
+              "check": "navigate.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "eval",
+      "success": true,
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T15:09:33.178Z",
+      "target": "document.title",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1"
+    },
+    {
+      "actionType": "click",
+      "selector": "#bump",
+      "success": true,
+      "executionTimeMs": 598,
+      "timestamp": "2026-09-30T15:09:33.781Z",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "Action execution verified successfully with confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            },
+            {
+              "check": "expect.text",
+              "outcome": "pass",
+              "expected": "1",
+              "observed": "found"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "eval",
+      "success": false,
+      "error": "boom-L1",
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T15:09:33.783Z",
+      "target": "throw new Error('boom-L1')",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1"
+    },
+    {
+      "actionType": "wait_for",
+      "selector": "js(true)",
+      "success": true,
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T15:09:33.793Z",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'wait_for' verified: js(true) held on one poll after 1ms",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "wait_for.js",
+              "outcome": "pass",
+              "expected": "true",
+              "detail": "the expression was truthy"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "type",
+      "selector": "#name",
+      "success": true,
+      "executionTimeMs": 18,
+      "timestamp": "2026-09-30T15:09:33.812Z",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "type.built-in",
+              "outcome": "pass",
+              "detail": "the typed value was read back from the element inside the action"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "set_clipboard",
+      "success": true,
+      "executionTimeMs": 8,
+      "timestamp": "2026-09-30T15:09:33.823Z",
+      "target": "<14 chars>",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1",
+      "verification": {
+        "verified": false,
+        "urlChanged": false,
+        "elementFound": false,
+        "confidence": 0.45,
+        "reason": "'set_clipboard' completed, but no built-in post-condition check could run: the clipboard couldn't be read back (the clipboard-read permission isn't granted for this origin; grant it with browser.grant_permissions to get a verified result). The write itself may have succeeded.",
+        "evidence": {
+          "tier": "unverifiable",
+          "checks": [
+            {
+              "check": "set_clipboard.read-back",
+              "outcome": "not-run",
+              "expected": 14,
+              "observed": "blocked",
+              "detail": "clipboard-read permission not granted"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "navigate",
+      "success": true,
+      "executionTimeMs": 19,
+      "timestamp": "2026-09-30T15:09:33.843Z",
+      "target": "http://127.0.0.1:55030/fr2-11-typefail.html?n=L1b&token=SECRET-L1b",
+      "url": "http://127.0.0.1:55030/fr2-11-typefail.html?n=L1b&token=SECRET-L1b",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'navigate' verified: a new document committed at http://127.0.0.1:55030/fr2-11-typefail.html?n=L1b&token=SECRET-L1b",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "navigate.document",
+              "outcome": "pass",
+              "expected": "new-document or url change",
+              "observed": "new-document",
+              "detail": "a new document committed at http://127.0.0.1:55030/fr2-11-typefail.html?n=L1b&token=SECRET-L1b"
+            },
+            {
+              "check": "navigate.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "type",
+      "selector": "#f",
+      "success": false,
+      "error": "type did not land the expected value (the typed text and the field content are not recorded)",
+      "executionTimeMs": 1590,
+      "timestamp": "2026-09-30T15:09:35.507Z",
+      "url": "http://127.0.0.1:55030/fr2-11-typefail.html?n=L1b&token=SECRET-L1b",
+      "verification": {
+        "verified": false,
+        "urlChanged": false,
+        "elementFound": false,
+        "confidence": 0,
+        "reason": "Action failed: type did not land the expected value (the typed text and the field content are not recorded)",
+        "evidence": {
+          "tier": "action-failed",
+          "checks": []
+        }
+      }
+    },
+    {
+      "actionType": "navigate",
+      "success": true,
+      "executionTimeMs": 17,
+      "timestamp": "2026-09-30T15:09:35.525Z",
+      "target": "http://127.0.0.1:55030/fr2-11-history.html?n=L1c&token=SECRET-L1c",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1c&token=SECRET-L1c",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'navigate' verified: a new document committed at http://127.0.0.1:55030/fr2-11-history.html?n=L1c&token=SECRET-L1c",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "navigate.document",
+              "outcome": "pass",
+              "expected": "new-document or url change",
+              "observed": "new-document",
+              "detail": "a new document committed at http://127.0.0.1:55030/fr2-11-history.html?n=L1c&token=SECRET-L1c"
+            },
+            {
+              "check": "navigate.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "reload",
+      "success": true,
+      "executionTimeMs": 19,
+      "timestamp": "2026-09-30T15:09:35.555Z",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1c&token=SECRET-L1c",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'reload' verified: a new document committed (loader changed)",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "reload.document",
+              "outcome": "pass",
+              "expected": "new-document",
+              "observed": "new-document"
+            },
+            {
+              "check": "reload.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "click_at_point",
+      "success": true,
+      "executionTimeMs": 4,
+      "timestamp": "2026-09-30T15:09:35.565Z",
+      "target": "(33, 19) left",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1c&token=SECRET-L1c",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'click_at_point' verified: a trusted click landed on button#bump, the element at (33, 19)",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click_at_point.hit-element",
+              "outcome": "pass",
+              "observed": "button#bump"
+            },
+            {
+              "check": "click_at_point.click-delivered",
+              "outcome": "pass",
+              "expected": "trusted click",
+              "observed": "delivered"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "drag_at_points",
+      "success": true,
+      "executionTimeMs": 20,
+      "timestamp": "2026-09-30T15:09:35.588Z",
+      "target": "(33, 79) -> (73, 79)",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1c&token=SECRET-L1c",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'drag_at_points' verified: mousedown reached html at (33, 79) and mouseup was delivered at (73, 79); the drag's app-level effect was not checked — use expect",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "drag_at_points.down-delivered",
+              "outcome": "pass",
+              "expected": "trusted mousedown on html",
+              "observed": "html"
+            },
+            {
+              "check": "drag_at_points.up-delivered",
+              "outcome": "pass",
+              "expected": "trusted mouseup at (73, 79)",
+              "observed": "delivered"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "navigate",
+      "success": true,
+      "executionTimeMs": 18,
+      "timestamp": "2026-09-30T15:09:35.606Z",
+      "target": "http://127.0.0.1:55030/fr2-11-typefail.html?n=L1d&token=SECRET-L1d",
+      "url": "http://127.0.0.1:55030/fr2-11-typefail.html?n=L1d&token=SECRET-L1d",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'navigate' verified: a new document committed at http://127.0.0.1:55030/fr2-11-typefail.html?n=L1d&token=SECRET-L1d",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "navigate.document",
+              "outcome": "pass",
+              "expected": "new-document or url change",
+              "observed": "new-document",
+              "detail": "a new document committed at http://127.0.0.1:55030/fr2-11-typefail.html?n=L1d&token=SECRET-L1d"
+            },
+            {
+              "check": "navigate.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "go_back",
+      "success": true,
+      "executionTimeMs": 10,
+      "timestamp": "2026-09-30T15:09:35.616Z",
+      "url": "http://127.0.0.1:55030/fr2-11-history.html?n=L1c&token=SECRET-L1c",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'go_back' verified: history moved from entry 4 to 3 (http://127.0.0.1:55030/fr2-11-history.html?n=L1c&token=SECRET-L1c) (new document)",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "go_back.document",
+              "outcome": "pass",
+              "observed": "new-document"
+            },
+            {
+              "check": "go_back.history-index",
+              "outcome": "pass",
+              "expected": 3,
+              "observed": 3
+            },
+            {
+              "check": "go_back.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "evicted": 0,
+  "capacity": 200
+}

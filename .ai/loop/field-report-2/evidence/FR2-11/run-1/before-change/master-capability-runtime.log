@@ -1,0 +1,383 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/AI-Cache/tmp/fr211-master/packages/capability-runtime[39m
+
+ [32m✓[39m tests/unit/visual-compare.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m tests/unit/audit-report.spec.ts [2m ([22m[2m20 tests[22m[2m)[22m[90m 23[2mms[22m[39m
+ [32m✓[39m tests/unit/profile-manager.spec.ts [2m ([22m[2m14 tests[22m[2m)[22m[90m 48[2mms[22m[39m
+ [32m✓[39m tests/unit/ax-snapshot.spec.ts [2m ([22m[2m15 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32m✓[39m tests/unit/extract-data.spec.ts [2m ([22m[2m29 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m tests/unit/fs-roots.spec.ts [2m ([22m[2m11 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [33m❯[39m tests/unit/action-history.spec.ts [2m ([22m[2m17 tests[22m [2m|[22m [31m16 failed[39m[2m)[22m[90m 17[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR1: navigate is recorded with a redacted target (no query/fragment) and success[39m
+[31m     → expected [] to have a length of 1 but got +0[39m
+[31m   [33m❯[31m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR2 / N3: eval on a pageless tab throws the SAME error class as before and records a failure with the code preview[39m
+[31m     → expected undefined to match object { actionType: 'eval', …(2) }[39m
+[31m   [33m❯[31m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR2b: the thrown error object is unchanged (rethrown, not wrapped)[39m
+[31m     → expected undefined to match object { actionType: 'eval', …(2) }[39m
+[31m   [33m❯[31m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR3 / N14: eval success records success:true even when the PAGE value has success:false; the value is returned untouched and never stored; no verification key[39m
+[31m     → expected [] to have a length of 1 but got +0[39m
+[31m   [33m❯[31m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22meval records the frame selector and a whitespace-collapsed, URL-redacted, capped preview only[39m
+[31m     → Cannot read properties of undefined (reading 'target')[39m
+[31m   [33m❯[31m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR4: getActionHistoryReport(tab) mirrors getActionHistory but as a copy, with tabId, evicted 0 and capacity 200[39m
+[31m     → runtime.getActionHistoryReport is not a function[39m
+[31m   [33m❯[31m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR5: session scope merges tabs in recording order, each entry with tabId and seq, no report-level tabId[39m
+[31m     → runtime.getActionHistoryReport is not a function[39m
+[31m   [33m❯[31m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR5b: evicted is exact at both scopes (205 actions on one tab)[39m
+[31m     → runtime.getActionHistoryReport is not a function[39m
+[31m   [33m❯[31m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR6 / N1: session scope + tabId and an unknown scope are TypeErrors[39m
+[31m     → expected [Function] to throw error matching /cannot be combined/ but got 'runtime.getActionHistoryReport is not…'[39m
+[31m   [33m❯[31m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR7 / N2: an unknown session throws BrowserNotAvailableError in both scopes[39m
+[31m     → expected error to be instance of BrowserNotAvailableError[39m
+[31m   [33m❯[31m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mN5: navigate/eval with an unknown tabId throw first and record nothing anywhere[39m
+[31m     → session.getSessionActionHistory is not a function[39m
+[31m   [33m❯[31m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR9: setClipboard records only a length, never the text[39m
+[31m     → expected [] to have a length of 1 but got +0[39m
+[31m   [33m❯[31m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR10: clickAtPoint failing records success:false and the "(x, y) button" target; the returned result is unchanged[39m
+[31m     → expected undefined to match object { actionType: 'click_at_point', …(3) }[39m
+[31m   [33m❯[31m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mback / forward / reload / drag_at_points / upload_file_via_trigger are each wired: a failing body is recorded under its own actionType and the error propagates unchanged[39m
+[31m     → go_back: expected undefined not to be undefined[39m
+[31m   [33m❯[31m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR11 / verification: an action result verification is stored (the same contract), and its URLs are redacted[39m
+[31m     → runtime.withHistory is not a function[39m
+[31m   [33m❯[31m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22ma wait_for entry now carries url and the verification of the result (FR2-08 evidence)[39m
+[31m     → expected undefined to be 'https://a.test/' // Object.is equality[39m
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS2: launch() twice registers two launched, mock (no real browser) entries, sorted by createdAt then id[22m[39m
+{"timestamp":"2026-09-30T15:02:49.112Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T15:02:49.112Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790780569112_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-30T15:02:49.113Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T15:02:49.113Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790780569113_2","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS3: attach() registers an "attached" entry[22m[39m
+{"timestamp":"2026-09-30T15:02:49.118Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790780569118_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS4: lifecycleOpsInFlight is 1 while launch() is pending, 0 after it resolves, and 0 after it rejects or throws synchronously[22m[39m
+{"timestamp":"2026-09-30T15:02:49.118Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790780569118_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS5: shutdown() and shutdownAll() remove entries; shutdown of an unknown id still throws and leaves the counter at 0[22m[39m
+{"timestamp":"2026-09-30T15:02:49.118Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T15:02:49.119Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790780569118_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-30T15:02:49.119Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T15:02:49.119Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790780569119_2","context":{"isIncognito":false}}
+{"timestamp":"2026-09-30T15:02:49.119Z","level":"info","message":"[BrowserSession] Closed session sess_1790780569118_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-30T15:02:49.119Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790780569118_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-30T15:02:49.119Z","level":"info","message":"[BrowserSession] Closed session sess_1790780569119_2","context":{"reason":"Close all sessions requested"}}
+{"timestamp":"2026-09-30T15:02:49.119Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790780569119_2","context":{"reason":"Close all sessions requested"}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS6: a session created directly via the session manager (agent.runGoal-style, no launch()/attach()) is not listed[22m[39m
+{"timestamp":"2026-09-30T15:02:49.119Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T15:02:49.119Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790780569119_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS7: a session removed behind the runtime's back (idle reap / crash) is pruned from listSessions[22m[39m
+{"timestamp":"2026-09-30T15:02:49.119Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T15:02:49.119Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790780569119_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-30T15:02:49.119Z","level":"info","message":"[BrowserSession] Closed session sess_1790780569119_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-30T15:02:49.119Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790780569119_1","context":{"reason":"User requested close"}}
+{"timestamp":"2026-09-30T15:02:49.120Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T15:02:49.120Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790780569119_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2mlistSessions (FR2-10)[2m > [22m[2mS8: a reused id keeps its original origin (launch/launch, and attach then launch under the same id)[22m[39m
+{"timestamp":"2026-09-30T15:02:49.120Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T15:02:49.120Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed","context":{"isIncognito":false}}
+{"timestamp":"2026-09-30T15:02:49.120Z","level":"info","message":"[BrowserSessionManager] Created browser session fixed2","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2m@sutradhar/capability-runtime dialog policy plumbing (FR2-04)[2m > [22m[2mR1: launch() forwards a runtime-default dialogPolicy to createSession[22m[39m
+{"timestamp":"2026-09-30T15:02:49.124Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T15:02:49.124Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790780569124_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2m@sutradhar/capability-runtime dialog policy plumbing (FR2-04)[2m > [22m[2mR2: a per-call dialogPolicy on attach() overrides the runtime default[22m[39m
+{"timestamp":"2026-09-30T15:02:49.124Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790780569124_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2m@sutradhar/capability-runtime dialog policy plumbing (FR2-04)[2m > [22m[2mR3: no dialogPolicy option anywhere -> createSession gets dialogPolicy undefined (tabs stay "auto") — the MCP/SDK guard[22m[39m
+{"timestamp":"2026-09-30T15:02:49.125Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T15:02:49.125Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790780569125_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2m@sutradhar/capability-runtime dialog policy plumbing (FR2-04)[2m > [22m[2mR4: setDialogPolicy calls session.setDialogPolicy once; an unknown sessionId throws[22m[39m
+{"timestamp":"2026-09-30T15:02:49.125Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T15:02:49.125Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790780569125_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2m@sutradhar/capability-runtime dialog policy plumbing (FR2-04)[2m > [22m[2mR5: getPendingDialogs reports only tabs with a pending dialog, with the correct "active" shape[22m[39m
+{"timestamp":"2026-09-30T15:02:49.125Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T15:02:49.125Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790780569125_1","context":{"isIncognito":false}}
+
+[90mstdout[2m | tests/unit/runtime.spec.ts[2m > [22m[2m@sutradhar/capability-runtime dialog policy plumbing (FR2-04)[2m > [22m[2mR6: getDialogHistory merges every tab in handledAt order, tagging each entry with its tabId[22m[39m
+{"timestamp":"2026-09-30T15:02:49.125Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"mock","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T15:02:49.125Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790780569125_1","context":{"isIncognito":false}}
+
+ [32m✓[39m tests/unit/runtime.spec.ts [2m ([22m[2m160 tests[22m[2m)[22m[33m 4625[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 16 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR1: navigate is recorded with a redacted target (no query/fragment) and success
+[31m[1mAssertionError[22m: expected [] to have a length of 1 but got +0[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m tests/unit/action-history.spec.ts:[2m37:15[22m[39m
+    [90m 35| [39m    [35mawait[39m runtime[33m.[39m[34mnavigate[39m([32m's1'[39m[33m,[39m [32m'https://a.test/p?token=SECRET-R1#fra[39m…
+    [90m 36| [39m    [35mconst[39m h [33m=[39m runtime[33m.[39m[34mgetActionHistory[39m([32m's1'[39m)[33m;[39m
+    [90m 37| [39m    [34mexpect[39m(h)[33m.[39m[34mtoHaveLength[39m([34m1[39m)[33m;[39m
+    [90m   | [39m              [31m^[39m
+    [90m 38| [39m    [34mexpect[39m(h[[34m0[39m])[33m.[39m[34mtoMatchObject[39m({ actionType[33m:[39m [32m'navigate'[39m[33m,[39m success[33m:[39m [35mtrue[39m…
+    [90m 39| [39m    [34mexpect[39m([33mJSON[39m[33m.[39m[34mstringify[39m(h))[33m.[39mnot[33m.[39m[34mtoContain[39m([32m'SECRET-R1'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/16]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR2 / N3: eval on a pageless tab throws the SAME error class as before and records a failure with the code preview
+[31m[1mAssertionError[22m: expected undefined to match object { actionType: 'eval', …(2) }[39m
+
+[32m- Expected:[39m 
+Object {
+  "actionType": "eval",
+  "success": false,
+  "target": "1+1",
+}
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m tests/unit/action-history.spec.ts:[2m47:47[22m[39m
+    [90m 45| [39m    [35mawait[39m session[33m.[39m[34mcreateTab[39m()[33m;[39m
+    [90m 46| [39m    [35mawait[39m [34mexpect[39m(runtime[33m.[39m[34meval[39m([32m's1'[39m[33m,[39m [32m'1+1'[39m))[33m.[39mrejects[33m.[39m[34mtoThrow[39m([33mBrowserNot[39m…
+    [90m 47| [39m    [34mexpect[39m(runtime[33m.[39m[34mgetActionHistory[39m([32m's1'[39m)[[34m0[39m])[33m.[39m[34mtoMatchObject[39m({ actionTy…
+    [90m   | [39m                                              [31m^[39m
+    [90m 48| [39m    [34mexpect[39m([35mtypeof[39m (runtime[33m.[39m[34mgetActionHistory[39m([32m's1'[39m)[[34m0[39m] [35mas[39m any)[33m.[39merror)[33m.[39m[34mto[39m…
+    [90m 49| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/16]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR2b: the thrown error object is unchanged (rethrown, not wrapped)
+[31m[1mAssertionError[22m: expected undefined to match object { actionType: 'eval', …(2) }[39m
+
+[32m- Expected:[39m 
+Object {
+  "actionType": "eval",
+  "error": "page exploded",
+  "success": false,
+}
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m tests/unit/action-history.spec.ts:[2m62:47[22m[39m
+    [90m 60| [39m    )[33m;[39m
+    [90m 61| [39m    [35mawait[39m [34mexpect[39m(runtime[33m.[39m[34meval[39m([32m's1'[39m[33m,[39m [32m'x'[39m))[33m.[39mrejects[33m.[39m[34mtoBe[39m(boom)[33m;[39m
+    [90m 62| [39m    [34mexpect[39m(runtime[33m.[39m[34mgetActionHistory[39m([32m's1'[39m)[[34m0[39m])[33m.[39m[34mtoMatchObject[39m({ actionTy…
+    [90m   | [39m                                              [31m^[39m
+    [90m 63| [39m  })[33m;[39m
+    [90m 64| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/16]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR3 / N14: eval success records success:true even when the PAGE value has success:false; the value is returned untouched and never stored; no verification key
+[31m[1mAssertionError[22m: expected [] to have a length of 1 but got +0[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m tests/unit/action-history.spec.ts:[2m71:15[22m[39m
+    [90m 69| [39m    [34mexpect[39m(out)[33m.[39m[34mtoEqual[39m({ success[33m:[39m [35mfalse[39m[33m,[39m v[33m:[39m [34m1[39m[33m,[39m secretValue[33m:[39m [32m'PAGE-VAL[39m…
+    [90m 70| [39m    [35mconst[39m h [33m=[39m runtime[33m.[39m[34mgetActionHistory[39m([32m's1'[39m)[33m;[39m
+    [90m 71| [39m    [34mexpect[39m(h)[33m.[39m[34mtoHaveLength[39m([34m1[39m)[33m;[39m
+    [90m   | [39m              [31m^[39m
+    [90m 72| [39m    [34mexpect[39m(h[[34m0[39m][33m![39m[33m.[39msuccess)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m 73| [39m    [34mexpect[39m([32m'verification'[39m [35min[39m h[[34m0[39m][33m![39m)[33m.[39m[34mtoBe[39m([35mfalse[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/16]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22meval records the frame selector and a whitespace-collapsed, URL-redacted, capped preview only
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'target')[39m
+[36m [2m❯[22m tests/unit/action-history.spec.ts:[2m84:18[22m[39m
+    [90m 82| [39m    [35mawait[39m runtime[33m.[39m[34meval[39m([32m's1'[39m[33m,[39m long)[33m;[39m
+    [90m 83| [39m    [35mconst[39m h [33m=[39m runtime[33m.[39m[34mgetActionHistory[39m([32m's1'[39m)[33m;[39m
+    [90m 84| [39m    [34mexpect[39m(h[[34m0[39m][33m![39m[33m.[39mtarget)[33m.[39m[34mtoBe[39m([32m'fetch("https://t.test/x") .then(r => r.[39m…
+    [90m   | [39m                 [31m^[39m
+    [90m 85| [39m    [34mexpect[39m([33mJSON[39m[33m.[39m[34mstringify[39m(h))[33m.[39mnot[33m.[39m[34mtoContain[39m([32m'SECRET-EV'[39m)[33m;[39m
+    [90m 86| [39m    [34mexpect[39m(h[[34m1[39m][33m![39m[33m.[39mtarget)[33m.[39m[34mtoHaveLength[39m([34m200[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/16]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR4: getActionHistoryReport(tab) mirrors getActionHistory but as a copy, with tabId, evicted 0 and capacity 200
+[31m[1mTypeError[22m: runtime.getActionHistoryReport is not a function[39m
+[36m [2m❯[22m tests/unit/action-history.spec.ts:[2m94:25[22m[39m
+    [90m 92| [39m    [35mconst[39m t [33m=[39m [35mawait[39m session[33m.[39m[34mcreateTab[39m()[33m;[39m
+    [90m 93| [39m    [35mawait[39m runtime[33m.[39m[34mnavigate[39m([32m's1'[39m[33m,[39m [32m'https://a.test/'[39m)[33m;[39m
+    [90m 94| [39m    [35mconst[39m rep [33m=[39m runtime[33m.[39m[34mgetActionHistoryReport[39m([32m's1'[39m)[33m;[39m
+    [90m   | [39m                        [31m^[39m
+    [90m 95| [39m    [34mexpect[39m(rep)[33m.[39m[34mtoMatchObject[39m({ scope[33m:[39m [32m'tab'[39m[33m,[39m tabId[33m:[39m t[33m.[39mid[33m,[39m evicted[33m:[39m [34m0[39m[33m,[39m…
+    [90m 96| [39m    [34mexpect[39m(rep[33m.[39mentries)[33m.[39m[34mtoEqual[39m(runtime[33m.[39m[34mgetActionHistory[39m([32m's1'[39m))[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/16]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR5: session scope merges tabs in recording order, each entry with tabId and seq, no report-level tabId
+[31m[1mTypeError[22m: runtime.getActionHistoryReport is not a function[39m
+[36m [2m❯[22m tests/unit/action-history.spec.ts:[2m107:25[22m[39m
+    [90m105| [39m    [35mawait[39m runtime[33m.[39m[34mnavigate[39m([32m's1'[39m[33m,[39m [32m'https://b.test/2'[39m[33m,[39m [33mB[39m[33m.[39mid)[33m;[39m
+    [90m106| [39m    [35mawait[39m runtime[33m.[39m[34mnavigate[39m([32m's1'[39m[33m,[39m [32m'https://a.test/3'[39m[33m,[39m [33mA[39m[33m.[39mid)[33m;[39m
+    [90m107| [39m    [35mconst[39m rep [33m=[39m runtime[33m.[39m[34mgetActionHistoryReport[39m([32m's1'[39m[33m,[39m { scope[33m:[39m [32m'session[39m…
+    [90m   | [39m                        [31m^[39m
+    [90m108| [39m    [34mexpect[39m(rep[33m.[39mscope)[33m.[39m[34mtoBe[39m([32m'session'[39m)[33m;[39m
+    [90m109| [39m    [34mexpect[39m([32m'tabId'[39m [35min[39m rep)[33m.[39m[34mtoBe[39m([35mfalse[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/16]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR5b: evicted is exact at both scopes (205 actions on one tab)
+[31m[1mTypeError[22m: runtime.getActionHistoryReport is not a function[39m
+[36m [2m❯[22m tests/unit/action-history.spec.ts:[2m122:25[22m[39m
+    [90m120| [39m    [35mawait[39m session[33m.[39m[34madoptExistingPage[39m([34mmockPage[39m({ evaluate[33m:[39m [35masync[39m () [33m=>[39m [34m1[39m…
+    [90m121| [39m    [35mfor[39m ([35mlet[39m i [33m=[39m [34m0[39m[33m;[39m i [33m<[39m [34m205[39m[33m;[39m i[33m++[39m) [35mawait[39m runtime[33m.[39m[34meval[39m([32m's1'[39m[33m,[39m [32m`[39m[36m${[39mi[36m}[39m[32m+1`[39m)[33m;[39m
+    [90m122| [39m    [35mconst[39m tab [33m=[39m runtime[33m.[39m[34mgetActionHistoryReport[39m([32m's1'[39m)[33m;[39m
+    [90m   | [39m                        [31m^[39m
+    [90m123| [39m    [35mconst[39m ses [33m=[39m runtime[33m.[39m[34mgetActionHistoryReport[39m([32m's1'[39m[33m,[39m { scope[33m:[39m [32m'session[39m…
+    [90m124| [39m    [34mexpect[39m(tab[33m.[39mentries)[33m.[39m[34mtoHaveLength[39m([34m200[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/16]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR6 / N1: session scope + tabId and an unknown scope are TypeErrors
+[31m[1mAssertionError[22m: expected [Function] to throw error matching /cannot be combined/ but got 'runtime.getActionHistoryReport is not…'[39m
+
+[32m- Expected:[39m 
+/cannot be combined/
+
+[31m+ Received:[39m 
+"runtime.getActionHistoryReport is not a function"
+
+[36m [2m❯[22m tests/unit/action-history.spec.ts:[2m136:90[22m[39m
+    [90m134| [39m    [35mawait[39m session[33m.[39m[34mcreateTab[39m()[33m;[39m
+    [90m135| [39m    [34mexpect[39m(() [33m=>[39m runtime[33m.[39m[34mgetActionHistoryReport[39m([32m's1'[39m[33m,[39m { scope[33m:[39m [32m'sessio[39m…
+    [90m136| [39m    [34mexpect[39m(() [33m=>[39m runtime[33m.[39m[34mgetActionHistoryReport[39m([32m's1'[39m[33m,[39m { scope[33m:[39m [32m'sessio[39m…
+    [90m   | [39m                                                                                         [31m^[39m
+    [90m137| [39m    [34mexpect[39m(() [33m=>[39m runtime[33m.[39m[34mgetActionHistoryReport[39m([32m's1'[39m[33m,[39m { scope[33m:[39m [32m'bogus'[39m…
+    [90m138| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/16]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR7 / N2: an unknown session throws BrowserNotAvailableError in both scopes
+[31m[1mAssertionError[22m: expected error to be instance of BrowserNotAvailableError[39m
+
+[32m- Expected:[39m 
+[Function BrowserNotAvailableError]
+
+[31m+ Received:[39m 
+[TypeError: runtime.getActionHistoryReport is not a function]
+
+[36m [2m❯[22m tests/unit/action-history.spec.ts:[2m142:58[22m[39m
+    [90m140| [39m  [34mit[39m([32m'R7 / N2: an unknown session throws BrowserNotAvailableError in b[39m…
+    [90m141| [39m    [35mconst[39m { runtime } [33m=[39m [35mawait[39m [34msetup[39m()[33m;[39m
+    [90m142| [39m    [34mexpect[39m(() [33m=>[39m runtime[33m.[39m[34mgetActionHistoryReport[39m([32m'nope'[39m))[33m.[39m[34mtoThrow[39m([33mBrows[39m…
+    [90m   | [39m                                                         [31m^[39m
+    [90m143| [39m    [34mexpect[39m(() [33m=>[39m runtime[33m.[39m[34mgetActionHistoryReport[39m([32m'nope'[39m[33m,[39m { scope[33m:[39m [32m'sess[39m…
+    [90m144| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/16]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mN5: navigate/eval with an unknown tabId throw first and record nothing anywhere
+[31m[1mTypeError[22m: session.getSessionActionHistory is not a function[39m
+[36m [2m❯[22m tests/unit/action-history.spec.ts:[2m151:20[22m[39m
+    [90m149| [39m    [35mawait[39m [34mexpect[39m(runtime[33m.[39m[34meval[39m([32m's1'[39m[33m,[39m [32m'1'[39m[33m,[39m [32m'no-such-tab'[39m))[33m.[39mrejects[33m.[39m[34mtoThr[39m…
+    [90m150| [39m    [35mawait[39m [34mexpect[39m(runtime[33m.[39m[34mnavigate[39m([32m's1'[39m[33m,[39m [32m'https://a.test/'[39m[33m,[39m [32m'no-such-ta[39m…
+    [90m151| [39m    [34mexpect[39m(session[33m.[39m[34mgetSessionActionHistory[39m())[33m.[39m[34mtoHaveLength[39m([34m0[39m)[33m;[39m
+    [90m   | [39m                   [31m^[39m
+    [90m152| [39m  })[33m;[39m
+    [90m153| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/16]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR9: setClipboard records only a length, never the text
+[31m[1mAssertionError[22m: expected [] to have a length of 1 but got +0[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m tests/unit/action-history.spec.ts:[2m173:15[22m[39m
+    [90m171| [39m    [35mawait[39m runtime[33m.[39m[34msetClipboard[39m([32m's1'[39m[33m,[39m [32m'secret'[39m)[33m;[39m
+    [90m172| [39m    [35mconst[39m h [33m=[39m runtime[33m.[39m[34mgetActionHistory[39m([32m's1'[39m)[33m;[39m
+    [90m173| [39m    [34mexpect[39m(h)[33m.[39m[34mtoHaveLength[39m([34m1[39m)[33m;[39m
+    [90m   | [39m              [31m^[39m
+    [90m174| [39m    [34mexpect[39m(h[[34m0[39m])[33m.[39m[34mtoMatchObject[39m({ actionType[33m:[39m [32m'set_clipboard'[39m[33m,[39m target[33m:[39m …
+    [90m175| [39m    [34mexpect[39m([33mJSON[39m[33m.[39m[34mstringify[39m(h))[33m.[39mnot[33m.[39m[34mtoContain[39m([32m'secret'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/16]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR10: clickAtPoint failing records success:false and the "(x, y) button" target; the returned result is unchanged
+[31m[1mAssertionError[22m: expected undefined to match object { actionType: 'click_at_point', …(3) }[39m
+
+[32m- Expected:[39m 
+Object {
+  "actionType": "click_at_point",
+  "error": "mouse broke",
+  "success": false,
+  "target": "(10, 20) left",
+}
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m tests/unit/action-history.spec.ts:[2m190:47[22m[39m
+    [90m188| [39m    [34mexpect[39m(r[33m.[39msuccess)[33m.[39m[34mtoBe[39m([35mfalse[39m)[33m;[39m
+    [90m189| [39m    [34mexpect[39m(r[33m.[39merror)[33m.[39m[34mtoBe[39m([32m'mouse broke'[39m)[33m;[39m
+    [90m190| [39m    [34mexpect[39m(runtime[33m.[39m[34mgetActionHistory[39m([32m's1'[39m)[[34m0[39m])[33m.[39m[34mtoMatchObject[39m({
+    [90m   | [39m                                              [31m^[39m
+    [90m191| [39m      actionType[33m:[39m [32m'click_at_point'[39m[33m,[39m
+    [90m192| [39m      success[33m:[39m [35mfalse[39m[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/16]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mback / forward / reload / drag_at_points / upload_file_via_trigger are each wired: a failing body is recorded under its own actionType and the error propagates unchanged
+[31m[1mAssertionError[22m: go_back: expected undefined not to be undefined[39m
+[36m [2m❯[22m tests/unit/action-history.spec.ts:[2m220:124[22m[39m
+    [90m218| [39m    [35mconst[39m h [33m=[39m runtime[33m.[39m[34mgetActionHistory[39m([32m's1'[39m)[33m;[39m
+    [90m219| [39m    [35mconst[39m byType [33m=[39m [33mObject[39m[33m.[39m[34mfromEntries[39m(h[33m.[39m[34mmap[39m((e) [33m=>[39m [e[33m.[39mactionType[33m,[39m e]))[33m;[39m
+    [90m220| [39m    [35mfor[39m ([35mconst[39m t [35mof[39m [[32m'go_back'[39m[33m,[39m [32m'go_forward'[39m[33m,[39m [32m'reload'[39m[33m,[39m [32m'drag_at_point[39m…
+    [90m   | [39m                                                                                                                           [31m^[39m
+    [90m221| [39m    [34mexpect[39m(byType[[32m'drag_at_points'[39m][33m![39m[33m.[39mtarget)[33m.[39m[34mtoBe[39m([32m'(1, 2) -> (3, 4)'[39m)[33m;[39m
+    [90m222| [39m    [34mexpect[39m(byType[[32m'upload_file_via_trigger'[39m])[33m.[39m[34mtoMatchObject[39m({ success[33m:[39m…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/16]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22mR11 / verification: an action result verification is stored (the same contract), and its URLs are redacted
+[31m[1mTypeError[22m: runtime.withHistory is not a function[39m
+[36m [2m❯[22m tests/unit/action-history.spec.ts:[2m238:28[22m[39m
+    [90m236| [39m    }[33m;[39m
+    [90m237| [39m    [35mconst[39m tab [33m=[39m session[33m.[39m[34mgetTabs[39m()[[34m0[39m][33m![39m[33m;[39m
+    [90m238| [39m    [35mawait[39m (runtime [35mas[39m any)[33m.[39m[34mwithHistory[39m(tab[33m,[39m { actionType[33m:[39m [32m'navigate'[39m[33m,[39m …
+    [90m   | [39m                           [31m^[39m
+    [90m239| [39m      tabId[33m:[39m [32m't'[39m[33m,[39m
+    [90m240| [39m      url[33m:[39m [32m'u'[39m[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/16]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/action-history.spec.ts[2m > [22mFR2-11 runtime history recording[2m > [22ma wait_for entry now carries url and the verification of the result (FR2-08 evidence)
+[31m[1mAssertionError[22m: expected undefined to be 'https://a.test/' // Object.is equality[39m
+
+[32m- Expected:[39m 
+"https://a.test/"
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m tests/unit/action-history.spec.ts:[2m272:29[22m[39m
+    [90m270| [39m    [35mawait[39m runtime[33m.[39m[34mwaitFor[39m([32m's'[39m[33m,[39m { text[33m:[39m [32m'x'[39m[33m,[39m timeoutMs[33m:[39m [34m1000[39m })[33m;[39m
+    [90m271| [39m    [34mexpect[39m(recorded)[33m.[39m[34mtoHaveLength[39m([34m1[39m)[33m;[39m
+    [90m272| [39m    [34mexpect[39m(recorded[[34m0[39m][33m.[39murl)[33m.[39m[34mtoBe[39m([32m'https://a.test/'[39m)[33m;[39m
+    [90m   | [39m                            [31m^[39m
+    [90m273| [39m    [34mexpect[39m(recorded[[34m0[39m][33m.[39mverification[33m.[39mevidence[33m.[39mchecks[33m.[39m[34mmap[39m((c[33m:[39m any) [33m=>[39m c[33m.[39m…
+    [90m274| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/16]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m7 passed[39m[22m[90m (8)[39m
+[2m      Tests [22m [1m[31m16 failed[39m[22m[2m | [22m[1m[32m255 passed[39m[22m[90m (271)[39m
+[2m   Start at [22m 20:32:45
+[2m   Duration [22m 5.84s[2m (transform 856ms, setup 0ms, collect 4.35s, tests 4.74s, environment 1ms, prepare 1.27s)[22m
+
+exit=1

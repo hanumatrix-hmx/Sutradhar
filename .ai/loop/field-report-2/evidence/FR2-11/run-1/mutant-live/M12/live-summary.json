@@ -1,0 +1,154 @@
+{
+  "startedAt": "2026-09-30T15:12:42.093Z",
+  "finishedAt": "2026-09-30T15:13:05.354Z",
+  "cases": 2,
+  "casesPassed": 0,
+  "checks": 29,
+  "checksFailed": 2,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 2,
+      "casesPassed": 0,
+      "checks": 29,
+      "checksFailed": 2
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "cli:L5",
+    "cli:L5x"
+  ],
+  "informational": [
+    {
+      "surface": "cli",
+      "case": "L5-history-duration",
+      "historyProcessMs": 245
+    }
+  ],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [
+      63328
+    ],
+    "ownCliChromeProfileDirs": [
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790781162337"
+    ],
+    "childPidsStarted": [
+      70268,
+      72920,
+      4668,
+      33836,
+      5924,
+      69272,
+      44684,
+      49884,
+      76508,
+      48216,
+      41560,
+      8092,
+      59148,
+      61560,
+      52404,
+      37800
+    ]
+  },
+  "evidenceFiles": [
+    "cli-L5-history.jsonl",
+    "cli-L5-history-human.txt",
+    "cli-L5x-history.jsonl"
+  ],
+  "results": [
+    {
+      "surface": "cli",
+      "case": "L5",
+      "pass": false,
+      "checks": 21,
+      "failed": [
+        {
+          "check": "failing eval: exitCode 1 and actions[0].success false",
+          "observed": {
+            "exit": 0,
+            "a": {
+              "actionType": "eval",
+              "success": false,
+              "error": "x-L5",
+              "executionTimeMs": 1,
+              "timestamp": "2026-09-30T15:12:51.064Z",
+              "target": "throw new Error('x-L5')",
+              "url": "http://127.0.0.1:64332/fr2-11-history.html",
+              "tabId": "tab_sess_1790781162554_1_1",
+              "seq": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "surface": "cli",
+      "case": "L5x",
+      "pass": false,
+      "checks": 8,
+      "failed": [
+        {
+          "check": "the failing type is recorded (exit 1, action failed)",
+          "observed": {
+            "v": 1,
+            "type": "command",
+            "ts": "2026-09-30T15:12:57.535Z",
+            "sessionId": "sess_1790781162554_1",
+            "cwd": "E:\\AI-Cache\\tmp\\fr2-11-cli-work-OBXMH4",
+            "verb": "type",
+            "args": [
+              "#f",
+              "<18 chars>"
+            ],
+            "exitCode": 0,
+            "durationMs": 1715,
+            "actions": [
+              {
+                "actionType": "type",
+                "selector": "#f",
+                "success": false,
+                "error": "type did not land the expected value (the typed text and the field content are not recorded)",
+                "executionTimeMs": 1611,
+                "timestamp": "2026-09-30T15:12:59.248Z",
+                "url": "http://127.0.0.1:64332/fr2-11-typefail.html",
+                "verification": {
+                  "verified": false,
+                  "urlChanged": false,
+                  "elementFound": false,
+                  "confidence": 0,
+                  "reason": "Action failed: type did not land the expected value (the typed text and the field content are not recorded)",
+                  "evidence": {
+                    "tier": "action-failed",
+                    "checks": []
+                  }
+                },
+                "tabId": "tab_sess_1790781162554_1_1",
+                "seq": 1
+              }
+            ],
+            "actionsEvicted": 0
+          }
+        }
+      ]
+    }
+  ]
+}

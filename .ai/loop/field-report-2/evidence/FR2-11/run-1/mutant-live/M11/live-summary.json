@@ -1,0 +1,111 @@
+{
+  "startedAt": "2026-09-30T15:12:15.508Z",
+  "finishedAt": "2026-09-30T15:12:39.900Z",
+  "cases": 3,
+  "casesPassed": 2,
+  "checks": 34,
+  "checksFailed": 1,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 3,
+      "casesPassed": 2,
+      "checks": 34,
+      "checksFailed": 1
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "cli:N7"
+  ],
+  "informational": [
+    {
+      "surface": "cli",
+      "case": "L5-history-duration",
+      "historyProcessMs": 255
+    }
+  ],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [
+      74496
+    ],
+    "ownCliChromeProfileDirs": [
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790781135765"
+    ],
+    "childPidsStarted": [
+      54840,
+      60304,
+      48580,
+      61532,
+      33048,
+      66012,
+      74484,
+      74152,
+      70968,
+      75600,
+      65712,
+      67236,
+      64092,
+      64900,
+      70252,
+      73684,
+      76760,
+      61584,
+      48028,
+      59352
+    ]
+  },
+  "evidenceFiles": [
+    "cli-L5-history.jsonl",
+    "cli-L5-history-human.txt",
+    "cli-L5x-history.jsonl"
+  ],
+  "results": [
+    {
+      "surface": "cli",
+      "case": "L5",
+      "pass": true,
+      "checks": 21,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "N7",
+      "pass": false,
+      "checks": 5,
+      "failed": [
+        {
+          "check": "the line appended after the torn fragment is intact: 8 valid lines, still 1 skipped",
+          "observed": {
+            "n": 7,
+            "err": "Note: skipped 1 unreadable line(s) in E:\\AI-Cache\\tmp\\fr2-11-cli-state-oaknLZ\\history.jsonl."
+          }
+        }
+      ]
+    },
+    {
+      "surface": "cli",
+      "case": "L5x",
+      "pass": true,
+      "checks": 8,
+      "failed": []
+    }
+  ]
+}

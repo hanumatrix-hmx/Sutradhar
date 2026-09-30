@@ -1,0 +1,155 @@
+{
+  "startedAt": "2026-09-30T15:11:10.771Z",
+  "finishedAt": "2026-09-30T15:11:13.979Z",
+  "cases": 1,
+  "casesPassed": 0,
+  "checks": 3,
+  "checksFailed": 2,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 1,
+      "casesPassed": 0,
+      "checks": 3,
+      "checksFailed": 2
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "cli:L7b"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": [
+      46500,
+      74040,
+      57392,
+      46832,
+      49768,
+      71944,
+      5944,
+      76180,
+      46892,
+      60464,
+      2960,
+      69616,
+      66188,
+      58780,
+      72080
+    ]
+  },
+  "evidenceFiles": [],
+  "results": [
+    {
+      "surface": "cli",
+      "case": "L7b",
+      "pass": false,
+      "checks": 3,
+      "failed": [
+        {
+          "check": "stress A: 400 lines, 0 unparsable (no interleaving), 400 unique ids (no lost entries), file ends with newline",
+          "observed": {
+            "runs": [
+              {
+                "code": 0,
+                "out": "50"
+              },
+              {
+                "code": 0,
+                "out": "50"
+              },
+              {
+                "code": 0,
+                "out": "50"
+              },
+              {
+                "code": 0,
+                "out": "50"
+              },
+              {
+                "code": 0,
+                "out": "50"
+              },
+              {
+                "code": 0,
+                "out": "50"
+              },
+              {
+                "code": 0,
+                "out": "50"
+              },
+              {
+                "code": 0,
+                "out": "50"
+              }
+            ],
+            "rows": 696,
+            "unparsable": 434,
+            "uniqueIds": 262,
+            "wantIds": 400,
+            "endsWithNewline": true,
+            "maxLineBytes": 16470,
+            "bytes": 3311786
+          }
+        },
+        {
+          "check": "stress B (lines near 58 KiB): 30 lines, all parseable, all unique",
+          "observed": {
+            "runs": [
+              {
+                "code": 0,
+                "out": "5"
+              },
+              {
+                "code": 0,
+                "out": "5"
+              },
+              {
+                "code": 0,
+                "out": "5"
+              },
+              {
+                "code": 0,
+                "out": "5"
+              },
+              {
+                "code": 0,
+                "out": "5"
+              },
+              {
+                "code": 0,
+                "out": "5"
+              }
+            ],
+            "rows": 56,
+            "unparsable": 35,
+            "uniqueIds": 21,
+            "wantIds": 30,
+            "endsWithNewline": true,
+            "maxLineBytes": 108452,
+            "bytes": 1748336
+          }
+        }
+      ]
+    }
+  ]
+}

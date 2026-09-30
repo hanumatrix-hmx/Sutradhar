@@ -1,0 +1,267 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/AI-Cache/tmp/fr211-master/packages/cli[39m
+
+ [33m❯[39m tests/unit/history-file.spec.ts [2m ([22m[2m0 test[22m[2m)[22m
+ [32m✓[39m tests/unit/audit-output.spec.ts [2m ([22m[2m12 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [33m❯[39m tests/unit/help-text.spec.ts [2m ([22m[2m10 tests[22m [2m|[22m [31m1 failed[39m[2m)[22m[90m 6[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/help-text.spec.ts[2m > [22m@sutradhar/cli --help text (FR2-11 history)[2m > [22mdocuments the history verb, its --json form, the file, rotation and what is never stored[39m
+[31m     → expected '\r\n\r\nUsage: sutradhar <command> [a…' to contain 'history [--json]'[39m
+ [32m✓[39m tests/unit/dialog-cli.spec.ts [2m ([22m[2m32 tests[22m[2m)[22m[90m 14[2mms[22m[39m
+ [32m✓[39m tests/unit/session-flow.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/download-roots.spec.ts [2m ([22m[2m4 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32m✓[39m tests/unit/parse-args.spec.ts [2m ([22m[2m64 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m tests/unit/dialog-json-routing.spec.ts [2m ([22m[2m10 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/state.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[90m 11[2mms[22m[39m
+ [32m✓[39m tests/unit/warden-control-lock-raceback.spec.ts [2m ([22m[2m2 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m tests/unit/direct-cdp-broker.spec.ts [2m ([22m[2m16 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m tests/unit/selector-args.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/waitfor-output.spec.ts [2m ([22m[2m4 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/verification-output.spec.ts [2m ([22m[2m8 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/warden-control.spec.ts [2m ([22m[2m8 tests[22m[2m)[22m[33m 3187[2mms[22m[39m
+ [32m✓[39m tests/unit/dialog-broker.spec.ts [2m ([22m[2m24 tests[22m[2m)[22m[33m 4230[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[1m[7m Failed Suites 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/history-file.spec.ts [2m[ tests/unit/history-file.spec.ts ][22m
+[31m[1mError[22m: Failed to load url ../../src/history-file.js (resolved id: ../../src/history-file.js) in E:/AI-Cache/tmp/fr211-master/packages/cli/tests/unit/history-file.spec.ts. Does the file exist?[39m
+[90m [2m❯[22m loadAndTransform ../../node_modules/.pnpm/vite@5.4.21_@types+node@20.19.43/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:[2m51969:17[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/help-text.spec.ts[2m > [22m@sutradhar/cli --help text (FR2-11 history)[2m > [22mdocuments the history verb, its --json form, the file, rotation and what is never stored
+[31m[1mAssertionError[22m: expected '\r\n\r\nUsage: sutradhar <command> [a…' to contain 'history [--json]'[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- history [--json][39m
+[31m+ [39m
+[31m+ [39m
+[31m+ Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>][39m
+[31m+ [39m
+[31m+ Commands:[39m
+[31m+   nav <url>                    Navigate to a URL (launches a session if none is active)[39m
+[31m+   snap                         Print the interactive-element listing for the current page[39m
+[31m+   snap --json                  Same, plus the raw structured element data as JSON[39m
+[31m+   snap --no-text                Same elements, drops name/label/placeholder/value text[39m
+[31m+                                 (keeps tag+role+id) — smaller listing when you already know[39m
+[31m+                                 what you're targeting and just need fresh ids[39m
+[31m+   snap --ids-only                Smallest listing: only the bracketed [#id], nothing else[39m
+[31m+   snap --scan-listeners          Also finds elements with only a real addEventListener-attached[39m
+[31m+                                 handler (no onclick=/role=/tabindex/cursor:pointer) — e.g.[39m
+[31m+                                 SortableJS-style drag lists. Slower; real CDP introspection.[39m
+[31m+   axsnap                       Accessibility-tree listing — no ids, never goes stale even if[39m
+[31m+                                 the page re-renders; pair with clicktext/clickrole below[39m
+[31m+   text                         Print the current page's visible text[39m
+[31m+   click <ref>                  Click an element (selector, or a numeric id from "snap")[39m
+[31m+   clicktext <text>             Click the element containing this text (from "axsnap")[39m
+[31m+   clickrole <role> [name]      Click by accessibility role, optionally narrowed by name[39m
+[31m+                                 (from "axsnap", e.g. clickrole button Submit)[39m
+[31m+   Selectors are CSS (shadow roots crossed), a numeric id from "snap", or pierce/ xpath/ aria/[39m
+[31m+                                 text/; Playwright syntax (text=, >>, role=) is rejected — use[39m
+[31m+                                 clicktext/clickrole.[39m
+[31m+   type <ref> <text>            Type text into an element[39m
+[31m+   press <ref> <key>            Focus an element then press a key (e.g. Enter)[39m
+[31m+   press <ref> <key> --modifiers Control,Shift[39m
+[31m+                                 Hold modifier keys while pressing (e.g. Ctrl+Shift+ArrowRight[39m
+[31m+                                 to select a word — a real rich-text-editor toolbar formatting[39m
+[31m+                                 workflow)[39m
+[31m+   select <ref> <value>         Select an <option> by value on a <select>[39m
+[31m+   wait <ref> [timeoutMs] [--state S][39m
+[31m+                                 Wait for an element to become visible (default), --state attached[39m
+[31m+                                 (just in the DOM), or --state hidden (removed or not visible).[39m
+[31m+                                 "visible" means non-empty size AND visibility not hidden/collapse[39m
+[31m+                                 — opacity:0 and off-screen elements still count as visible; zero[39m
+[31m+                                 size, display:none and visibility:hidden count as hidden.[39m
+[31m+                                 Visibility is checked on the FIRST matching element only. "hidden"[39m
+[31m+                                 succeeds immediately if nothing matches the selector at all.[39m
+[31m+                                 timeoutMs applies to each internal attempt; retries (GAP-001,[39m
+[31m+                                 still open) can extend the real total wait beyond it. timeoutMs[39m
+[31m+                                 <= 0 checks the current state once, immediately, with no waiting[39m
+[31m+                                 or retrying. Waiting states poll roughly every 100ms, so a state[39m
+[31m+                                 that's only true for less than ~100ms (a fast visibility flicker)[39m
+[31m+                                 may be missed.[39m
+[31m+   waitfor [timeoutMs] --text <t> | --text-gone <t> | --url <s> | --js <expr>[39m
+[31m+                                 Wait until a page condition is true (default 10000ms, max 280000; 0 =[39m
+[31m+                                 check once). Use this instead of sleeping. --text: RENDERED text[39m
+[31m+                                 appears (any frame; hidden text and input values don't count; best[39m
+[31m+                                 effort, like --expect-text). --text-gone: it disappears (succeeds at[39m
+[31m+                                 once if it was never there, and says so). --url: URL contains <s>.[39m
+[31m+                                 --js: a JS expression is truthy (side-effect free; a throw fails the[39m
+[31m+                                 wait). Give several to require all at once. Exit 0 met, 1 timed out[39m
+[31m+                                 or failed, 3 blocked by an open dialog.[39m
+[31m+   eval <js-expression>         Evaluate JS in the page's top-level context, print the result[39m
+[31m+   eval <js-expression> --frame <selector>[39m
+[31m+                                 Same, but inside a specific <iframe> (selector or a numeric id[39m
+[31m+                                 from "snap") — including a genuinely cross-origin one the[39m
+[31m+                                 top-level page's own JS could never reach into itself. Chain[39m
+[31m+                                 with :: for an iframe nested inside another iframe, e.g.[39m
+[31m+                                 --frame "iframe.widget::iframe.payment"[39m
+[31m+   hover <ref>                  Hover an element[39m
+[31m+   scroll [dir] [amountPx]      Scroll the page (dir: up/down/top/bottom, default down 500px)[39m
+[31m+   scroll [dir] [amountPx] [targetRef][39m
+[31m+                                 Scroll a specific element's own scroll container instead of[39m
+[31m+                                 the window (a data grid's rows, a chat pane, a modal body) —[39m
+[31m+                                 pair with --settle to reliably see newly-revealed content[39m
+[31m+   upload <ref> <filePath>      Upload a local file into an <input type="file">[39m
+[31m+   drag <sourceRef> <destRef>   Drag one element onto another[39m
+[31m+   clickpoint <x> <y>           Click at an absolute viewport coordinate — no element/selector,[39m
+[31m+                                 for canvas-rendered UI with nothing DOM-addressable to target[39m
+[31m+   dragpoints <fromX> <fromY> <toX> <toY>[39m
+[31m+                                 Real mouse-down->move->up drag between two absolute viewport[39m
+[31m+                                 coordinates — for canvas-rendered drag targets (a signature pad,[39m
+[31m+                                 a slider/chart handle drawn on a <canvas>)[39m
+[31m+   grant <origin> <permission...>[39m
+[31m+                                 Grant browser permissions for an origin (e.g. clipboard-read,[39m
+[31m+                                 clipboard-write, geolocation, notifications) — needed before[39m
+[31m+                                 setclipboard/getclipboard work against most real sites[39m
+[31m+   setclipboard <text>          Set the system clipboard (e.g. to then paste into a rich-text[39m
+[31m+                                 editor via press <ref> v --modifiers Control)[39m
+[31m+   getclipboard                 Print the current system clipboard contents[39m
+[31m+   tabs                         List open tabs (id, title, url) — * marks the active one. Still works when a[39m
+[31m+                                tab is blocked by a dialog or has crashed (then it lists browser target ids)[39m
+[31m+   newtab [url]                 Open a new tab, optionally navigating it immediately[39m
+[31m+   focustab <tabId>             Switch the active tab (e.g. after a link opened target=_blank)[39m
+[31m+   closetab <tabId>              Close a specific tab (also works on a blocked or crashed tab)[39m
+[31m+   download <ref> [dir]         Click an element that triggers a download; print the saved file's absolute[39m
+[31m+                                 path. [dir] (relative to the current directory) is always allowed for this[39m
+[31m+                                 command; without it the file goes to the first allowed download root.[39m
+[31m+   screenshot [path]            Save a screenshot (default: ./screenshot.png)[39m
+[31m+   audit [url] [outDir] [--json][39m
+[31m+                                 Screenshot + console/page/network errors + accessibility[39m
+[31m+                                 heuristics + Web Vitals for a page. With a url, loads it and[39m
+[31m+                                 waits for it to settle; without one, audits the current page[39m
+[31m+                                 (use "" as url to also pass an outDir). outDir is created if[39m
+[31m+                                 missing. --json prints one JSON report (schemaVersion 1, see[39m
+[31m+                                 packages/capability-runtime/schemas/audit-report.schema.json);[39m
+[31m+                                 images are written as files and referenced by absolute path.[39m
+[31m+                                 Auditing the current page only sees errors/requests since this[39m
+[31m+                                 command attached; pass the url for full coverage.[39m
+[31m+   audit [url] [outDir] --baseline <baselineUrl>[39m
+[31m+                                 Same, plus a pixel-diff of baselineUrl vs a fresh load of the[39m
+[31m+                                 audited url (viewport screenshots; the page is reloaded) — a[39m
+[31m+                                 one-command regression gate combining audit + compare[39m
+[31m+   compare <urlA> <urlB> [out]  Visual regression: pixel-diff two pages, save a diff image[39m
+[31m+   dialog                       Show any open native dialog (alert/confirm/prompt/beforeunload)[39m
+[31m+   dialog accept [text]         Accept the oldest open dialog (text = what to type into a prompt)[39m
+[31m+   dialog dismiss               Dismiss the oldest open dialog[39m
+[31m+   close                        Close the active session[39m
+[31m+   doctor                       Environment diagnostics (Chrome detection, active session)[39m
+[31m+   profile create <name> [desc] Create a named, persistent profile (cookies/history/storage[39m
+[31m+                                 survive across separate launches)[39m
+[31m+   profile list                 List profiles[39m
+[31m+   profile delete <name>        Delete a profile (irreversibly removes its stored data)[39m
+[31m+   profile export-state <name> <outFile>[39m
+[31m+                                 Export a profile's saved login state (cookies/localStorage/[39m
+[31m+                                 sessionStorage) to a portable JSON file[39m
+[31m+   profile import-state <name> <inFile>[39m
+[31m+                                 Pre-bake a profile with login state from a JSON file (e.g. one[39m
+[31m+                                 produced by export-state, or browser.get_storage_state) —[39m
+[31m+                                 restored automatically on the next launch with that profile[39m
+[31m+ [39m
+[31m+ Flags:[39m
+[31m+   --profile <name>     Launch as a named persistent profile (only applies to "nav" when[39m
+[31m+                         starting a new session — create one first with "profile create")[39m
+[31m+   --user-agent <ua>    Launch with a custom navigator.userAgent (only applies to "nav" when[39m
+[31m+                         starting a new session)[39m
+[31m+   --headed             Launch visibly instead of headless (only applies to "nav" when[39m
+[31m+                         starting a new session)[39m
+[31m+   --viewport <WxH>      Set the CDP viewport (e.g. --viewport 390x844) and, when --headed, the[39m
+[31m+                         real OS window's size too. Applies at session creation and persists[39m
+[31m+                         across later commands until a new --viewport is given[39m
+[31m+   --json                "snap" additionally prints structured per-element data as JSON;[39m
+[31m+                         "audit" prints the machine-readable JSON report (see "audit" above);[39m
+[31m+                         action verbs (click, type, press, nav, ...) print the full result JSON,[39m
+[31m+                         including verification, instead of the one-line status[39m
+[31m+   --expect-text <t>     After the action, require this RENDERED text on the page (exit 4 if absent): laid[39m
+[31m+                         out, visibility:visible, not under display:none / content-visibility:hidden / a[39m
+[31m+                         closed <details>, every enclosing iframe visible; opacity:0, aria-hidden and[39m
+[31m+                         off-screen text still count[39m
+[31m+   --expect-url <s>      After the action, require the URL to contain <s> (exit 4 if not)[39m
+[31m+   --expect-url-changed / --expect-url-unchanged[39m
+[31m+                         Require the URL to have changed / stayed the same (exit 4 otherwise)[39m
+[31m+   --fail-on-diff        "compare" exits nonzero if any pixel difference is found (CI gating);[39m
+[31m+                         "audit" exits nonzero if any console/page/broken-request error was[39m
+[31m+                         found, or (with --baseline) any visual diff from the baseline[39m
+[31m+   --baseline <url>      "audit" also visually diffs the audited page against this URL[39m
+[31m+   --settle              "click"/"type"/"scroll"/"nav"/"clicktext"/"clickrole"/"press"/"select"/[39m
+[31m+                         "hover"/"upload"/"drag"/"clickpoint"/"dragpoints"/"download" wait for the[39m
+[31m+                         page to stop actively changing (no DOM mutations, no in-flight network[39m
+[31m+                         requests) before returning — helps when the action triggers a menu/modal/[39m
+[31m+                         toast/virtualized-list-update that renders a moment later. It cannot see a[39m
+[31m+                         timer the page scheduled for later — use "waitfor" to wait for a specific[39m
+[31m+                         result[39m
+[31m+   --text <t> / --text-gone <t> / --url <s> / --js <expr>[39m
+[31m+                         "waitfor" only (see above); an error on any other command[39m
+[31m+   --state <S>           "wait" only: visible (default), attached (just in the DOM), or hidden[39m
+[31m+                         (removed or not visible). Ignored on other commands. "visible" is a[39m
+[31m+                         non-empty box AND visibility not hidden/collapse — opacity:0 and[39m
+[31m+                         off-screen elements still count as visible; zero size, display:none and[39m
+[31m+                         visibility:hidden count as hidden. Checked on the FIRST matching element[39m
+[31m+                         only. "hidden" succeeds immediately if nothing matches at all. timeoutMs[39m
+[31m+                         is per attempt; retries can extend the real total wait (still open, see[39m
+[31m+                         GAP-001).[39m
+[31m+   --no-text             "snap" drops per-element text, keeping tag+role+id (see command list)[39m
+[31m+   --ids-only            "snap" keeps only the bracketed id, nothing else (see command list)[39m
+[31m+   --scan-listeners      "snap" also finds real addEventListener-only elements (see command list)[39m
+[31m+   --allowlist-domains <a.com,b.com>[39m
+[31m+                         Block navigation to any domain not in this comma-separated list (and[39m
+[31m+                         their subdomains). Per-command, not persisted in session state — pass[39m
+[31m+                         it on every command that might navigate ("nav", "compare") if you want[39m
+[31m+                         the guard to hold for the whole session. Does not intercept[39m
+[31m+                         page-initiated navigation from a clicked link (browser-internal, not[39m
+[31m+                         routed through this check) — see .ai/known-problems.md PROB-018.[39m
+[31m+   --dialog <accept|dismiss|report>[39m
+[31m+                         Default policy for native dialogs in this session; persisted until changed.[39m
+[31m+                         report (the default) leaves alert/confirm/prompt open and prints[39m
+[31m+                         "dialogPending: {...}"; while one is open, other commands exit with code 3[39m
+[31m+                         until "sutradhar dialog accept|dismiss". beforeunload during a navigation[39m
+[31m+                         is accepted after 3s under report[39m
+[31m+   --dialog-text <text>  With --dialog accept: the text entered into prompt() dialogs (default:[39m
+[31m+                         the prompt's own default value)[39m
+[31m+ [39m
+[31m+ Every action prints a "Verification:" line. "NOT verified — unverifiable" means nothing could be[39m
+[31m+ checked (the reason says why), not that the action failed; "contradicted" means a check ran and the[39m
+[31m+ effect did NOT happen.[39m
+[31m+ [39m
+[31m+ Exit codes: 0 ok, 1 action failed, 3 blocked by or interrupted by an open dialog, 4 an --expect-*[39m
+[31m+ check failed or couldn't be evaluated.[39m
+[31m+ [39m
+[31m+ Boundary: Sutradhar does not attempt to evade bot-detection or solve CAPTCHAs, and Cloudflare[39m
+[31m+ challenges, CAPTCHA walls, and IP-level blocks stop it exactly as they would stop any other[39m
+[31m+ automation tool run the same way. The only launch argument here with detection-relevant[39m
+[31m+ behavior is --disable-blink-features=AutomationControlled, which hides navigator.webdriver[39m
+[31m+ from scripts that check for it -- measured directly: navigator.webdriver is true without the[39m
+[31m+ flag and false with it. It does not defeat Cloudflare, CAPTCHA, or any other real bot-detection[39m
+[31m+ service, and other simple signals -- the default headless user agent's HeadlessChrome[39m
+[31m+ substring and --enable-automation still being present in the launch command line -- remain[39m
+[31m+ unmasked.[39m
+[31m+ [39m
+[31m+ Session state persists across commands, scoped to this directory, in[39m
+[31m+ ~/.sutradhar-cli/<hash-of-cwd>/state.json — run "close" when done. Override with[39m
+[31m+ SUTRADHAR_CLI_STATE_DIR to share state across directories or use a custom path.[39m
+[31m+ [39m
+[31m+ Environment:[39m
+[31m+   SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS  Directories downloads may go to, separated by ";" on Windows or ":" elsewhere; absolute paths or ~.[39m
+[31m+                                      Replaces the default <temp>/sutradhar-downloads; the first entry is the default destination.[39m
+[31m+   SUTRADHAR_ALLOWED_UPLOAD_ROOTS    If set, "upload" may only read files under these directories (off by default).[39m
+
+[36m [2m❯[22m tests/unit/help-text.spec.ts:[2m94:22[22m[39m
+    [90m 92| [39m[34mdescribe[39m([32m'@sutradhar/cli --help text (FR2-11 history)'[39m[33m,[39m () [33m=>[39m {
+    [90m 93| [39m  [34mit[39m([32m'documents the history verb, its --json form, the file, rotation [39m…
+    [90m 94| [39m    [34mexpect[39m(helpText)[33m.[39m[34mtoContain[39m([32m'history [--json]'[39m)[33m;[39m
+    [90m   | [39m                     [31m^[39m
+    [90m 95| [39m    [34mexpect[39m(helpText)[33m.[39m[34mtoContain[39m([32m'history.jsonl'[39m)[33m;[39m
+    [90m 96| [39m    [34mexpect[39m(helpText)[33m.[39m[34mtoContain[39m([32m'history.1.jsonl'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m14 passed[39m[22m[90m (16)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m208 passed[39m[22m[90m (209)[39m
+[2m   Start at [22m 20:32:54
+[2m   Duration [22m 5.45s[2m (transform 1.05s, setup 2ms, collect 6.58s, tests 7.49s, environment 2ms, prepare 3.41s)[22m
+
+exit=1

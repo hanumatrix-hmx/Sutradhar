@@ -1,0 +1,66 @@
+{
+  "scope": "tab",
+  "tabId": "tab_sess_1790780937593_1_1",
+  "entries": [
+    {
+      "actionType": "navigate",
+      "success": true,
+      "executionTimeMs": 22,
+      "timestamp": "2026-09-30T15:08:57.657Z",
+      "target": "http://127.0.0.1:58761/fr2-11-history.html",
+      "url": "http://127.0.0.1:58761/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'navigate' verified: a new document committed at http://127.0.0.1:58761/fr2-11-history.html",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "navigate.document",
+              "outcome": "pass",
+              "expected": "new-document or url change",
+              "observed": "new-document",
+              "detail": "a new document committed at http://127.0.0.1:58761/fr2-11-history.html"
+            },
+            {
+              "check": "navigate.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      }
+    },
+    {
+      "actionType": "eval",
+      "success": true,
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T15:08:57.665Z",
+      "target": "document.title",
+      "url": "http://127.0.0.1:58761/fr2-11-history.html"
+    },
+    {
+      "actionType": "click",
+      "selector": "#bump",
+      "success": true,
+      "executionTimeMs": 601,
+      "timestamp": "2026-09-30T15:08:58.271Z",
+      "url": "http://127.0.0.1:58761/fr2-11-history.html"
+    },
+    {
+      "actionType": "eval",
+      "success": false,
+      "error": "boom-L1",
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T15:08:58.273Z",
+      "target": "throw new Error('boom-L1')",
+      "url": "http://127.0.0.1:58761/fr2-11-history.html"
+    }
+  ],
+  "evicted": 0,
+  "capacity": 200
+}

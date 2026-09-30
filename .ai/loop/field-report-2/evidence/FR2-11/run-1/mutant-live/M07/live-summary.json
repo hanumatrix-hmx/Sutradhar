@@ -1,0 +1,153 @@
+{
+  "startedAt": "2026-09-30T15:10:43.544Z",
+  "finishedAt": "2026-09-30T15:11:07.164Z",
+  "cases": 2,
+  "casesPassed": 0,
+  "checks": 29,
+  "checksFailed": 5,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 2,
+      "casesPassed": 0,
+      "checks": 29,
+      "checksFailed": 5
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "cli:L5",
+    "cli:L5x"
+  ],
+  "informational": [
+    {
+      "surface": "cli",
+      "case": "L5-history-duration",
+      "historyProcessMs": 244
+    }
+  ],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [
+      55416
+    ],
+    "ownCliChromeProfileDirs": [
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790781043790"
+    ],
+    "childPidsStarted": [
+      14296,
+      65756,
+      73292,
+      73656,
+      29744,
+      6708,
+      69312,
+      58540,
+      57988,
+      70368,
+      69816,
+      67240,
+      65940,
+      33048,
+      66244,
+      52632
+    ]
+  },
+  "evidenceFiles": [
+    "cli-L5-history.jsonl",
+    "cli-L5-history-human.txt",
+    "cli-L5x-history.jsonl"
+  ],
+  "results": [
+    {
+      "surface": "cli",
+      "case": "L5",
+      "pass": false,
+      "checks": 21,
+      "failed": [
+        {
+          "check": "RAW history.jsonl bytes contain no canary (SECRET-L5, hunter2-L5, ?n=, token=)",
+          "observed": [
+            "hunter2"
+          ]
+        },
+        {
+          "check": "type line: args[1] is a length tag, and the click line has a verification with evidence",
+          "observed": {
+            "args": [
+              "#name",
+              "hunter2-L5"
+            ],
+            "click": {
+              "verified": true,
+              "urlChanged": false,
+              "elementFound": true,
+              "confidence": 0.9,
+              "reason": "'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+              "evidence": {
+                "tier": "verified",
+                "checks": [
+                  {
+                    "check": "click.built-in",
+                    "outcome": "pass",
+                    "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "check": "human output has no canary either",
+          "observed": [
+            "hunter2"
+          ]
+        }
+      ]
+    },
+    {
+      "surface": "cli",
+      "case": "L5x",
+      "pass": false,
+      "checks": 8,
+      "failed": [
+        {
+          "check": "RAW history.jsonl has no canary after clipboard + failed-type (CLIP-SECRET-L5, typefail-SECRET-L5)",
+          "observed": [
+            "SECRET",
+            "hunter2"
+          ]
+        },
+        {
+          "check": "history --json and human output have no canary",
+          "observed": [
+            [
+              "SECRET",
+              "hunter2"
+            ],
+            [
+              "SECRET",
+              "hunter2"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

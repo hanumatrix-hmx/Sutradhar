@@ -1,0 +1,611 @@
+{
+  "ranAt": "2026-09-30T15:15:18.077Z",
+  "total": 23,
+  "caught": 23,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "M01",
+      "what": "navigate is not recorded",
+      "file": "packages/capability-runtime/src/runtime.ts",
+      "shaBefore": "15c3cb1da9e59bdc3eaf6383b64876b9e6494282e24d65da25095b16737f61b0",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 runtime history recording > R1: navigate is recorded with a redacted target (no query/fragment) and success",
+          " tests/unit/action-history.spec.ts > FR2-11 runtime history recording > R5: session scope merges tabs in recording order, each entry with tabId and seq, no report-level tabId",
+          " tests/unit/action-history.spec.ts > FR2-11 runtime history recording > R11 / verification: an action result verification is stored (the same contract), and its URLs are redacted"
+        ],
+        "summary": "Tests  3 failed | 14 passed (17)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "L1",
+        "failedCases": [
+          "L1: [{\"check\":\"entries are [navigate, eval, click, eval] in call order\",\"observed\":[\"eval\",\"click\",\"eval\"]},{\"check\":\"navigate target is the redacted URL\",\"observed\":\"document.title\"},{\"check\":\"eval target is the code preview\"},{\"check\":\"successful eval has NO verification key (FR2-07 D13a)\",\"observed\":",
+          "L1d: [{\"check\":\"the five actions were recorded in call order\",\"observed\":[\"type\",\"reload\",\"click_at_point\",\"drag_at_points\",\"go_back\"]}]"
+        ],
+        "summaryLine": "[fr2-11] 2/4 cases (29/40 checks) {\"mcp\":{\"cases\":4,\"casesPassed\":2,\"checks\":40,\"checksFailed\":11},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"check"
+      },
+      "shaAfter": "15c3cb1da9e59bdc3eaf6383b64876b9e6494282e24d65da25095b16737f61b0",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M02",
+      "what": "eval is not recorded",
+      "file": "packages/capability-runtime/src/runtime.ts",
+      "shaBefore": "15c3cb1da9e59bdc3eaf6383b64876b9e6494282e24d65da25095b16737f61b0",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 runtime history recording > R2 / N3: eval on a pageless tab throws the SAME error class as before and records a failure with the code preview",
+          " tests/unit/action-history.spec.ts > FR2-11 runtime history recording > R2b: the thrown error object is unchanged (rethrown, not wrapped)",
+          " tests/unit/action-history.spec.ts > FR2-11 runtime history recording > R3 / N14: eval success records success:true even when the PAGE value has success:false; the value is returned untouched and neve",
+          " tests/unit/action-history.spec.ts > FR2-11 runtime history recording > eval records the frame selector and a whitespace-collapsed, URL-redacted, capped preview only"
+        ],
+        "summary": "Tests  5 failed | 12 passed (17)"
+      },
+      "shaAfter": "15c3cb1da9e59bdc3eaf6383b64876b9e6494282e24d65da25095b16737f61b0",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "M03",
+      "what": "verification dropped from engine entries",
+      "file": "packages/browser/src/actions/browser-action-engine.ts",
+      "shaBefore": "74ead75f325ebfdfed3dec91ed77134ba19a0be99b517d97ed2036f66de128a2",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine FR2-11 history entries > E1: a successful press_key records target, url and a verification object",
+          " tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine FR2-11 history entries > E2: a failed click records selector, error and verification",
+          " tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine FR2-11 history entries > E4: a duplicate-guard rejection is recorded as a failure with the returned error"
+        ],
+        "summary": "Tests  3 failed | 206 passed (209)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "L1",
+        "failedCases": [
+          "L1: [{\"check\":\"click has a verification with evidence (FR2-07 shape)\"},{\"check\":\"click history verification tier == the result tier (same contract, not a projection)\",\"observed\":[null,\"verified\"]},{\"check\":\"click history carries the expect.text check the result carried (FR2-07/FR2-08 evidence)\"}]"
+        ],
+        "summaryLine": "[fr2-11] 3/4 cases (37/40 checks) {\"mcp\":{\"cases\":4,\"casesPassed\":3,\"checks\":40,\"checksFailed\":3},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks"
+      },
+      "shaAfter": "74ead75f325ebfdfed3dec91ed77134ba19a0be99b517d97ed2036f66de128a2",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M03b",
+      "what": "verification dropped from runtime-level entries (navigate/back/...)",
+      "file": "packages/capability-runtime/src/runtime.ts",
+      "shaBefore": "15c3cb1da9e59bdc3eaf6383b64876b9e6494282e24d65da25095b16737f61b0",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 runtime history recording > R11 / verification: an action result verification is stored (the same contract), and its URLs are redacted"
+        ],
+        "summary": "Tests  1 failed | 16 passed (17)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "L1",
+        "failedCases": [
+          "L1: [{\"check\":\"navigate verification tier verified\"}]",
+          "L1d: [{\"check\":\"reload and go_back carry FR2-07 evidence with a tier\",\"observed\":[null,null]},{\"check\":\"history tiers equal the result tiers (same contract)\",\"observed\":[null,\"verified\",null,\"verified\"]},{\"check\":\"click_at_point target is \\\"(x, y) left\\\" and it has a verification\",\"observed\":\"(33, 19) le"
+        ],
+        "summaryLine": "[fr2-11] 2/4 cases (36/40 checks) {\"mcp\":{\"cases\":4,\"casesPassed\":2,\"checks\":40,\"checksFailed\":4},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks"
+      },
+      "shaAfter": "15c3cb1da9e59bdc3eaf6383b64876b9e6494282e24d65da25095b16737f61b0",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M04a",
+      "what": "per-tab eviction count never incremented (eviction silent again)",
+      "file": "packages/browser/src/session/browser-tab.ts",
+      "shaBefore": "ffbecec0e981b5657712e96e819accc5fccf340c4796a0628bc77d0cf06de4d2",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/session-action-history.spec.ts > FR2-11 per-tab history cap and eviction count > S2: 201 records keep 200, drop the oldest, count 1 eviction; 450 records count 250"
+        ],
+        "summary": "Tests  1 failed | 11 passed (12)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "L3",
+        "failedCases": [
+          "L3: [{\"check\":\"tab evicted == (actions sent to T1) - 200, exactly\",\"observed\":{\"evicted\":0,\"nT1\":205}},{\"check\":\"tab note matches \\\"N older entries were evicted\\\"\"}]"
+        ],
+        "summaryLine": "[fr2-11] 1/2 cases (7/9 checks) {\"mcp\":{\"cases\":2,\"casesPassed\":1,\"checks\":9,\"checksFailed\":2},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\":0"
+      },
+      "shaAfter": "ffbecec0e981b5657712e96e819accc5fccf340c4796a0628bc77d0cf06de4d2",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M04b",
+      "what": "session eviction count off by one (+2 per eviction)",
+      "file": "packages/browser/src/session/browser-session.ts",
+      "shaBefore": "485d971acb2fb7d4bde0837ff66293c620fe2500755dc14e077c6cd751e51ecd",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/session-action-history.spec.ts > FR2-11 session merged ring > S9: session eviction is exact (205 records into a 200 ring: 5 evicted, first seq 6); per-tab counts stay 0"
+        ],
+        "summary": "Tests  1 failed | 11 passed (12)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "L3",
+        "failedCases": [
+          "L3: [{\"check\":\"session view keeps 200, evicted == total-200, first seq == total-199\",\"observed\":{\"len\":200,\"evicted\":10,\"nSes\":205,\"first\":6}}]"
+        ],
+        "summaryLine": "[fr2-11] 1/2 cases (8/9 checks) {\"mcp\":{\"cases\":2,\"casesPassed\":1,\"checks\":9,\"checksFailed\":1},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\":0"
+      },
+      "shaAfter": "485d971acb2fb7d4bde0837ff66293c620fe2500755dc14e077c6cd751e51ecd",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M05",
+      "what": "URL query string leaked into history",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "87f9a52f1073ed53142a2f67b3e4d4b48886bdf9eb3c50bccc40f45dceeeed66",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactHistoryUrl (H1, H2) > H1: drops query and fragment",
+          " tests/unit/action-history.spec.ts > FR2-11 redactHistoryUrl (H1, H2) > H2: scheme table",
+          " tests/unit/action-history.spec.ts > FR2-11 redactHistoryUrl (H1, H2) > drops userinfo, javascript: bodies, and the query of an unparsable string",
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H3: redacts every URL token inside free text"
+        ],
+        "summary": "Tests  8 failed | 9 passed (17)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "L1",
+        "failedCases": [
+          "L1: [{\"check\":\"navigate target is the redacted URL\",\"observed\":\"http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1\"},{\"check\":\"navigate url is the redacted page URL\",\"observed\":\"http://127.0.0.1:55030/fr2-11-history.html?n=L1&token=SECRET-L1\"},{\"check\":\"RAW history response has no canary (q",
+          "L1b: [{\"check\":\"RAW history response has no canary (typed text, clipboard text)\",\"observed\":[\"SECRET\",\"?n=\",\"token=\"]},{\"check\":\"RAW history after the failing type has no canary (the error and the verification reason quoted it)\",\"observed\":[\"SECRET\",\"?n=\",\"token=\"]}]",
+          "L1d: [{\"check\":\"every one of them has the redacted page URL and no canary in the RAW response\",\"observed\":[\"SECRET\",\"?n=\",\"token=\"]}]",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 4 raw history responses\",\"observed\":[\"SECRET\",\"?n=\",\"token=\",\"SECRET\",\"?n=\",\"token=\",\"SECRET\",\"?n=\",\"token=\",\"SECRET\",\"?n=\",\"token=\"]}]"
+        ],
+        "summaryLine": "[fr2-11] 0/4 cases (33/40 checks) {\"mcp\":{\"cases\":4,\"casesPassed\":0,\"checks\":40,\"checksFailed\":7},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks"
+      },
+      "shaAfter": "87f9a52f1073ed53142a2f67b3e4d4b48886bdf9eb3c50bccc40f45dceeeed66",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M06",
+      "what": "typed value not scrubbed from failure errors / verification (a password reaches the history)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "87f9a52f1073ed53142a2f67b3e4d4b48886bdf9eb3c50bccc40f45dceeeed66",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 describeActionTarget (H7) and scrubActionError > scrubActionError removes a typed value and the field content from a \"type did not land\" failure",
+          " tests/unit/action-history.spec.ts > FR2-11 describeActionTarget (H7) and scrubActionError > scrubVerification cleans the \"Action failed: <error>\" reason of a failed action and evidence strings, witho",
+          " tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine FR2-11 history entries > E3b: typed text and the field content never reach the history on a \"did not land\" failure (t"
+        ],
+        "summary": "Tests  3 failed | 223 passed (226)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "L1,L1b",
+        "failedCases": [
+          "L1b: [{\"check\":\"RAW history after the failing type has no canary (the error and the verification reason quoted it)\",\"observed\":[\"SECRET\"]}]",
+          "L1d: [{\"check\":\"every one of them has the redacted page URL and no canary in the RAW response\",\"observed\":[\"SECRET\"]}]",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 4 raw history responses\",\"observed\":[\"SECRET\",\"SECRET\"]}]"
+        ],
+        "summaryLine": "[fr2-11] 1/4 cases (37/40 checks) {\"mcp\":{\"cases\":4,\"casesPassed\":1,\"checks\":40,\"checksFailed\":3},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks"
+      },
+      "shaAfter": "87f9a52f1073ed53142a2f67b3e4d4b48886bdf9eb3c50bccc40f45dceeeed66",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M06b",
+      "what": "engine records the typed value as the target of a type action",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "87f9a52f1073ed53142a2f67b3e4d4b48886bdf9eb3c50bccc40f45dceeeed66",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 describeActionTarget (H7) and scrubActionError > NEVER the typed value",
+          " tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine FR2-11 history entries > E3: typed text never reaches the history, on success",
+          " tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine FR2-11 history entries > E3b: typed text and the field content never reach the history on a \"did not land\" failure (t"
+        ],
+        "summary": "Tests  3 failed | 223 passed (226)"
+      },
+      "shaAfter": "87f9a52f1073ed53142a2f67b3e4d4b48886bdf9eb3c50bccc40f45dceeeed66",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "M07",
+      "what": "CLI type args recorded raw (typed text on disk)",
+      "file": "packages/cli/src/history-file.ts",
+      "shaBefore": "7accc6f3f4f0938ed3b19d99c2d2244873d5f8f76059f1f56a02f29709881241",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/history-file.spec.ts > FR2-11 redactCliArgs / secretsOfCliArgs (C1) > C1: typed text, clipboard text, eval, nav, dialog, select"
+        ],
+        "summary": "Tests  1 failed | 19 passed (20)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "cli",
+        "only": "L5",
+        "failedCases": [
+          "L5: [{\"check\":\"RAW history.jsonl bytes contain no canary (SECRET-L5, hunter2-L5, ?n=, token=)\",\"observed\":[\"hunter2\"]},{\"check\":\"type line: args[1] is a length tag, and the click line has a verification with evidence\",\"observed\":{\"args\":[\"#name\",\"hunter2-L5\"],\"click\":{\"verified\":true,\"urlChanged\":false,",
+          "L5x: [{\"check\":\"RAW history.jsonl has no canary after clipboard + failed-type (CLIP-SECRET-L5, typefail-SECRET-L5)\",\"observed\":[\"SECRET\",\"hunter2\"]},{\"check\":\"history --json and human output have no canary\",\"observed\":[[\"SECRET\",\"hunter2\"],[\"SECRET\",\"hunter2\"]]}]"
+        ],
+        "summaryLine": "[fr2-11] 0/2 cases (24/29 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":2,\"casesPassed\":0,\"checks\":29,\"checksFailed\":5},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks"
+      },
+      "shaAfter": "7accc6f3f4f0938ed3b19d99c2d2244873d5f8f76059f1f56a02f29709881241",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M08",
+      "what": "concurrent appends can interleave (line written in 512-byte slices)",
+      "file": "packages/cli/src/history-file.ts",
+      "shaBefore": "7accc6f3f4f0938ed3b19d99c2d2244873d5f8f76059f1f56a02f29709881241",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/history-file.spec.ts > FR2-11 appendHistoryLine (C4, C5, C6, C9, torn-line repair) > C9: 30 concurrent appends in one process give exactly 30 parseable lines"
+        ],
+        "summary": "Tests  1 failed | 19 passed (20)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "cli",
+        "only": "L7b",
+        "failedCases": [
+          "L7b: [{\"check\":\"stress A: 400 lines, 0 unparsable (no interleaving), 400 unique ids (no lost entries), file ends with newline\",\"observed\":{\"runs\":[{\"code\":0,\"out\":\"50\"},{\"code\":0,\"out\":\"50\"},{\"code\":0,\"out\":\"50\"},{\"code\":0,\"out\":\"50\"},{\"code\":0,\"out\":\"50\"},{\"code\":0,\"out\":\"50\"},{\"code\":0,\"out\":\"50\"},{\"co"
+        ],
+        "summaryLine": "[fr2-11] 0/1 cases (1/3 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":1,\"casesPassed\":0,\"checks\":3,\"checksFailed\":2},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\":0"
+      },
+      "shaAfter": "7accc6f3f4f0938ed3b19d99c2d2244873d5f8f76059f1f56a02f29709881241",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M09",
+      "what": "a torn/partial history line crashes the reader",
+      "file": "packages/cli/src/history-file.ts",
+      "shaBefore": "7accc6f3f4f0938ed3b19d99c2d2244873d5f8f76059f1f56a02f29709881241",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/history-file.spec.ts > FR2-11 appendHistoryLine (C4, C5, C6, C9, torn-line repair) > a torn last line (no trailing newline) is not glued onto the next append: the new line stays readable",
+          " tests/unit/history-file.spec.ts > FR2-11 readHistoryFile (C7) > C7: valid + blank + torn + non-object + wrong-v + valid gives 2 lines, skipped 3",
+          " tests/unit/history-file.spec.ts > FR2-11 readHistoryFile (C7) > a truncated final line does not break reading"
+        ],
+        "summary": "Tests  3 failed | 17 passed (20)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "cli",
+        "only": "L5,N7",
+        "failedCases": [
+          "N7: [{\"check\":\"history --json still gives exactly 7 lines, exit 0\",\"observed\":1},{\"check\":\"stderr notes exactly one skipped line\",\"observed\":\"Error: could not read E:\\\\AI-Cache\\\\tmp\\\\fr2-11-cli-state-U3TCM0\\\\history.jsonl (Unterminated string in JSON at position 10 (line 1 column 11)).\"},{\"check\":\"human",
+          "L5x: [{\"check\":\"setclipboard line args is a length tag\"},{\"check\":\"setclipboard action target is a length tag\"},{\"check\":\"the failing type is recorded (exit 1, action failed)\"}]"
+        ],
+        "summaryLine": "[fr2-11] 1/3 cases (27/34 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":3,\"casesPassed\":1,\"checks\":34,\"checksFailed\":7},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks"
+      },
+      "shaAfter": "7accc6f3f4f0938ed3b19d99c2d2244873d5f8f76059f1f56a02f29709881241",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M10",
+      "what": "history.jsonl deleted when session state is cleared",
+      "file": "packages/cli/src/state.ts",
+      "shaBefore": "1b1d23e3819a724555ac44d812a684c0bb12347095406966e03c852b147e02b1",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/history-file.spec.ts > FR2-11 state paths (C10) > C10: HISTORY_FILE_PATH is history.jsonl next to state.json (same dir), and clearState never deletes it"
+        ],
+        "summary": "Tests  1 failed | 19 passed (20)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "cli",
+        "only": "L5,L6",
+        "failedCases": [
+          "L6: [{\"check\":\"the last line is the close line with actions []\",\"observed\":{\"v\":1,\"type\":\"command\",\"ts\":\"2026-09-30T15:12:06.695Z\",\"sessionId\":\"sess_1790781106341_1\",\"cwd\":\"E:\\\\AI-Cache\\\\tmp\\\\fr2-11-cli-work-6Mj8Pf\",\"verb\":\"close\",\"args\":[],\"exitCode\":0,\"durationMs\":32,\"actions\":[],\"actionsEvicted\":0}},"
+        ],
+        "summaryLine": "[fr2-11] 2/3 cases (34/36 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":3,\"casesPassed\":2,\"checks\":36,\"checksFailed\":2},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks"
+      },
+      "shaAfter": "1b1d23e3819a724555ac44d812a684c0bb12347095406966e03c852b147e02b1",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M11",
+      "what": "torn-line repair removed (next append glued onto the fragment)",
+      "file": "packages/cli/src/history-file.ts",
+      "shaBefore": "7accc6f3f4f0938ed3b19d99c2d2244873d5f8f76059f1f56a02f29709881241",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/history-file.spec.ts > FR2-11 appendHistoryLine (C4, C5, C6, C9, torn-line repair) > a torn last line (no trailing newline) is not glued onto the next append: the new line stays readable"
+        ],
+        "summary": "Tests  1 failed | 19 passed (20)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "cli",
+        "only": "L5,N7",
+        "failedCases": [
+          "N7: [{\"check\":\"the line appended after the torn fragment is intact: 8 valid lines, still 1 skipped\",\"observed\":{\"n\":7,\"err\":\"Note: skipped 1 unreadable line(s) in E:\\\\AI-Cache\\\\tmp\\\\fr2-11-cli-state-oaknLZ\\\\history.jsonl.\"}}]"
+        ],
+        "summaryLine": "[fr2-11] 2/3 cases (33/34 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":3,\"casesPassed\":2,\"checks\":34,\"checksFailed\":1},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks"
+      },
+      "shaAfter": "7accc6f3f4f0938ed3b19d99c2d2244873d5f8f76059f1f56a02f29709881241",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M12",
+      "what": "CLI records exit code 0 for every command",
+      "file": "packages/cli/src/cli.ts",
+      "shaBefore": "6926d9d87e18207ba943516e6be282cf8036ea2487fd545f602a4ad296464f42",
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "cli",
+        "only": "L5",
+        "failedCases": [
+          "L5: [{\"check\":\"failing eval: exitCode 1 and actions[0].success false\",\"observed\":{\"exit\":0,\"a\":{\"actionType\":\"eval\",\"success\":false,\"error\":\"x-L5\",\"executionTimeMs\":1,\"timestamp\":\"2026-09-30T15:12:51.064Z\",\"target\":\"throw new Error('x-L5')\",\"url\":\"http://127.0.0.1:64332/fr2-11-history.html\",\"tabId\":\"tab",
+          "L5x: [{\"check\":\"the failing type is recorded (exit 1, action failed)\",\"observed\":{\"v\":1,\"type\":\"command\",\"ts\":\"2026-09-30T15:12:57.535Z\",\"sessionId\":\"sess_1790781162554_1\",\"cwd\":\"E:\\\\AI-Cache\\\\tmp\\\\fr2-11-cli-work-OBXMH4\",\"verb\":\"type\",\"args\":[\"#f\",\"<18 chars>\"],\"exitCode\":0,\"durationMs\":1715,\"actions\":["
+        ],
+        "summaryLine": "[fr2-11] 0/2 cases (27/29 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":2,\"casesPassed\":0,\"checks\":29,\"checksFailed\":2},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks"
+      },
+      "shaAfter": "6926d9d87e18207ba943516e6be282cf8036ea2487fd545f602a4ad296464f42",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M13",
+      "what": "adopted-page tabs are not wired into the session ring",
+      "file": "packages/browser/src/session/browser-session.ts",
+      "shaBefore": "485d971acb2fb7d4bde0837ff66293c620fe2500755dc14e077c6cd751e51ecd",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/session-action-history.spec.ts > FR2-11 session merged ring > S10: adopted-page tabs are wired too"
+        ],
+        "summary": "Tests  1 failed | 11 passed (12)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "cli",
+        "only": "L5",
+        "failedCases": [
+          "L5: [{\"check\":\"nav line: actions[0] is navigate with the redacted target and args\",\"observed\":{\"args\":[\"http://127.0.0.1:55082/fr2-11-history.html\"]}},{\"check\":\"type line: args[1] is a length tag, and the click line has a verification with evidence\",\"observed\":{\"args\":[\"#name\",\"<10 chars>\"]}},{\"check\":\"",
+          "L5x: [{\"check\":\"setclipboard action target is a length tag\",\"observed\":[]},{\"check\":\"the failing type is recorded (exit 1, action failed)\",\"observed\":{\"v\":1,\"type\":\"command\",\"ts\":\"2026-09-30T15:13:24.845Z\",\"sessionId\":\"sess_1790781189714_1\",\"cwd\":\"E:\\\\AI-Cache\\\\tmp\\\\fr2-11-cli-work-gy3AzC\",\"verb\":\"type\","
+        ],
+        "summaryLine": "[fr2-11] 0/2 cases (21/29 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":2,\"casesPassed\":0,\"checks\":29,\"checksFailed\":8},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks"
+      },
+      "shaAfter": "485d971acb2fb7d4bde0837ff66293c620fe2500755dc14e077c6cd751e51ecd",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M14",
+      "what": "MCP ignores the scope argument",
+      "file": "packages/mcp-server/src/tools.ts",
+      "shaBefore": "7b691c41fd74da0d1f9d9d4d27a29724b94ad2157ec48c35dd9b4434941a4735",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/tools.spec.ts > FR2-11 browser.get_action_history > M3: evicted > 0 adds an exact note (plural and singular)",
+          " tests/unit/tools.spec.ts > FR2-11 browser.get_action_history > M6: end to end against a real (pageless) runtime session, a navigate is visible with its redacted target and nothing leaks"
+        ],
+        "summary": "Tests  2 failed | 82 passed (84)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "L1,L2",
+        "failedCases": [
+          "L2: [{\"check\":\"session view: seq strictly increasing by 1 from 1\",\"observed\":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{\"check\":\"session view order == the script own call order (both tabs)\",\"observed\":{\"got\":[\"undefined|reload\",\"undefined|click_at_point\",\"undefin"
+        ],
+        "summaryLine": "[fr2-11] 4/5 cases (46/50 checks) {\"mcp\":{\"cases\":5,\"casesPassed\":4,\"checks\":50,\"checksFailed\":4},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks"
+      },
+      "shaAfter": "7b691c41fd74da0d1f9d9d4d27a29724b94ad2157ec48c35dd9b4434941a4735",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M15",
+      "what": "eviction of the CLI file never rotates",
+      "file": "packages/cli/src/history-file.ts",
+      "shaBefore": "7accc6f3f4f0938ed3b19d99c2d2244873d5f8f76059f1f56a02f29709881241",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/history-file.spec.ts > FR2-11 appendHistoryLine (C4, C5, C6, C9, torn-line repair) > C5: rotation renames the old file byte-for-byte to history.1.jsonl and starts a fresh one"
+        ],
+        "summary": "Tests  1 failed | 19 passed (20)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "cli",
+        "only": "L8",
+        "failedCases": [
+          "L8: [{\"check\":\"history.1.jsonl is BYTE-IDENTICAL to the seeded file (sha256)\",\"observed\":{\"rotatedSha\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"seedSha\":\"4eecb9287e7238850af4593bd61c5fffbbeba85ba95cfd58bd9e3b8390a21a37\"}},{\"check\":\"history.jsonl now has exactly 1 line (the nav"
+        ],
+        "summaryLine": "[fr2-11] 0/1 cases (1/4 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":1,\"casesPassed\":0,\"checks\":4,\"checksFailed\":3},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\":0"
+      },
+      "shaAfter": "7accc6f3f4f0938ed3b19d99c2d2244873d5f8f76059f1f56a02f29709881241",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M16",
+      "what": "verification.reason not URL-redacted",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "87f9a52f1073ed53142a2f67b3e4d4b48886bdf9eb3c50bccc40f45dceeeed66",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > pre-FR2-07 verification (no evidence) keeps exactly its keys, reason redacted"
+        ],
+        "summary": "Tests  1 failed | 16 passed (17)"
+      },
+      "shaAfter": "87f9a52f1073ed53142a2f67b3e4d4b48886bdf9eb3c50bccc40f45dceeeed66",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "M17",
+      "what": "duplicate-guard rejection not recorded",
+      "file": "packages/browser/src/actions/browser-action-engine.ts",
+      "shaBefore": "74ead75f325ebfdfed3dec91ed77134ba19a0be99b517d97ed2036f66de128a2",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine FR2-11 history entries > E4: a duplicate-guard rejection is recorded as a failure with the returned error"
+        ],
+        "summary": "Tests  1 failed | 208 passed (209)"
+      },
+      "shaAfter": "74ead75f325ebfdfed3dec91ed77134ba19a0be99b517d97ed2036f66de128a2",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "M18",
+      "what": "session seq not increasing",
+      "file": "packages/browser/src/session/browser-session.ts",
+      "shaBefore": "485d971acb2fb7d4bde0837ff66293c620fe2500755dc14e077c6cd751e51ecd",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/session-action-history.spec.ts > FR2-11 session merged ring > S6: merge order is recording order with tabId and seq; per-tab views are unaffected",
+          " tests/unit/session-action-history.spec.ts > FR2-11 session merged ring > S7: same-millisecond ordering comes from seq, not timestamp",
+          " tests/unit/session-action-history.spec.ts > FR2-11 session merged ring > S9: session eviction is exact (205 records into a 200 ring: 5 evicted, first seq 6); per-tab counts stay 0"
+        ],
+        "summary": "Tests  3 failed | 9 passed (12)"
+      },
+      "shaAfter": "485d971acb2fb7d4bde0837ff66293c620fe2500755dc14e077c6cd751e51ecd",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "M20",
+      "what": "the watchdog hard-exit does not record the hung command",
+      "file": "packages/cli/src/cli.ts",
+      "shaBefore": "6926d9d87e18207ba943516e6be282cf8036ea2487fd545f602a4ad296464f42",
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "cli",
+        "only": "L5,W1",
+        "failedCases": [
+          "W1: [{\"check\":\"exactly one new history line was written by the watchdog path\",\"observed\":{\"before\":10,\"after\":10}},{\"check\":\"that line is the eval with exitCode 1 and an error naming the watchdog\",\"observed\":{\"v\":1,\"type\":\"command\",\"ts\":\"2026-09-30T15:14:38.113Z\",\"sessionId\":\"sess_1790781263000_1\",\"cwd\""
+        ],
+        "summaryLine": "[fr2-11] 2/3 cases (31/33 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":3,\"casesPassed\":2,\"checks\":33,\"checksFailed\":2},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks"
+      },
+      "shaAfter": "6926d9d87e18207ba943516e6be282cf8036ea2487fd545f602a4ad296464f42",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "M19",
+      "what": "history verb not offered a (current) marker: current session id ignored",
+      "file": "packages/cli/src/history-file.ts",
+      "shaBefore": "7accc6f3f4f0938ed3b19d99c2d2244873d5f8f76059f1f56a02f29709881241",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/history-file.spec.ts > FR2-11 formatHistoryHuman (C8) > C8: the exact human format for two sessions, a failing action, three verification labels and a v2 line"
+        ],
+        "summary": "Tests  1 failed | 19 passed (20)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "cli",
+        "only": "L5",
+        "failedCases": [
+          "L5: [{\"check\":\"human: exactly one \\\"(current)\\\" session row\",\"observed\":[\"--- session sess_1790781294419_1 ---\"]}]"
+        ],
+        "summaryLine": "[fr2-11] 1/2 cases (28/29 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":2,\"casesPassed\":1,\"checks\":29,\"checksFailed\":1},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks"
+      },
+      "shaAfter": "7accc6f3f4f0938ed3b19d99c2d2244873d5f8f76059f1f56a02f29709881241",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    }
+  ]
+}

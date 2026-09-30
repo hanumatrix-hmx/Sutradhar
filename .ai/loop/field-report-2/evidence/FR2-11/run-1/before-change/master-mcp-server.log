@@ -1,0 +1,172 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/AI-Cache/tmp/fr211-master/packages/mcp-server[39m
+
+ [32m✓[39m tests/unit/session-resolution.spec.ts [2m ([22m[2m23 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [33m❯[39m tests/unit/tools.spec.ts [2m ([22m[2m84 tests[22m [2m|[22m [31m6 failed[39m[2m)[22m[90m 173[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22mFR2-11 browser.get_action_history[2m > [22mM1: the schema has sessionId, tabId and scope; scope accepts "tab"/"session" only[39m
+[31m     → expected [ 'sessionId', 'tabId' ] to deeply equal [ 'scope', 'sessionId', 'tabId' ][39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22mFR2-11 browser.get_action_history[2m > [22mM2: default call passes scope/tabId through unchanged and returns the report with NO note[39m
+[31m     → getActionHistoryReport does not exist[39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22mFR2-11 browser.get_action_history[2m > [22mM3: evicted > 0 adds an exact note (plural and singular)[39m
+[31m     → getActionHistoryReport does not exist[39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22mFR2-11 browser.get_action_history[2m > [22mM4: a runtime TypeError surfaces as isError with the message[39m
+[31m     → getActionHistoryReport does not exist[39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22mFR2-11 browser.get_action_history[2m > [22mM5: the description states scope "session", evicted, eval, and the privacy limits[39m
+[31m     → expected 'Recent actions run against this tab (…' to contain 'scope "session"'[39m
+[31m   [33m❯[31m tests/unit/tools.spec.ts[2m > [22mFR2-11 browser.get_action_history[2m > [22mM6: end to end against a real (pageless) runtime session, a navigate is visible with its redacted target and nothing leaks[39m
+[31m     → expected undefined to be 'session' // Object.is equality[39m
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mconstructs SutradharRuntime with the 30-minute default idleTimeoutMs when nothing overrides it[22m[39m
+{"timestamp":"2026-09-30T15:02:53.614Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mhonors SUTRADHAR_IDLE_TIMEOUT_MS when set[22m[39m
+{"timestamp":"2026-09-30T15:02:53.621Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mhonors an explicit idleTimeoutMs option over the env var and default[22m[39m
+{"timestamp":"2026-09-30T15:02:53.624Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2midleTimeoutMs:0 disables the reaper (passed through as undefined, matching SutradharRuntime's "unset = disabled" contract)[22m[39m
+{"timestamp":"2026-09-30T15:02:53.626Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer idle-reaper default wiring[2m > [22m[2mdoes not construct a new SutradharRuntime at all when the caller supplies one directly[22m[39m
+{"timestamp":"2026-09-30T15:02:53.628Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring[2m > [22m[2mdefaults to false (unrestricted) when nothing overrides it[22m[39m
+{"timestamp":"2026-09-30T15:02:53.629Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring[2m > [22m[2mhonors SUTRADHAR_RESTRICT_NAVIGATION_TO_LOCAL=1[22m[39m
+{"timestamp":"2026-09-30T15:02:53.630Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer restrictNavigationToLocal wiring[2m > [22m[2mhonors an explicit restrictNavigationToLocal option over the env var[22m[39m
+{"timestamp":"2026-09-30T15:02:53.632Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer allowedDomains wiring[2m > [22m[2mdefaults to undefined (unrestricted) when nothing overrides it[22m[39m
+{"timestamp":"2026-09-30T15:02:53.633Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer allowedDomains wiring[2m > [22m[2mhonors SUTRADHAR_ALLOWED_DOMAINS as a comma-separated list, trimmed[22m[39m
+{"timestamp":"2026-09-30T15:02:53.634Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer allowedDomains wiring[2m > [22m[2mhonors an explicit allowedDomains option over the env var[22m[39m
+{"timestamp":"2026-09-30T15:02:53.636Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer fs roots wiring (FR2-05)[2m > [22m[2mMS1: no env -> the default download root, unrestricted uploads[22m[39m
+{"timestamp":"2026-09-30T15:02:53.638Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer fs roots wiring (FR2-05)[2m > [22m[2mMS2: download env with two absolute dirs, in order[22m[39m
+{"timestamp":"2026-09-30T15:02:53.639Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer fs roots wiring (FR2-05)[2m > [22m[2mMS3: upload env turns on the allowlist[22m[39m
+{"timestamp":"2026-09-30T15:02:53.641Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer fs roots wiring (FR2-05)[2m > [22m[2mMS4: an explicit allowedDownloadRoots option beats env[22m[39m
+{"timestamp":"2026-09-30T15:02:53.645Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+[90mstdout[2m | tests/unit/server.spec.ts[2m > [22m[2m@sutradhar/mcp-server createSutradharServer fs roots wiring (FR2-05)[2m > [22m[2mMS6: a relative env entry does not throw when an explicit runtime is supplied[22m[39m
+{"timestamp":"2026-09-30T15:02:53.647Z","level":"info","message":"sutradhar-mcp: using local Ollama LLM provider (no OPENROUTER_API_KEY set)","context":{}}
+
+ [32m✓[39m tests/unit/server.spec.ts [2m ([22m[2m17 tests[22m[2m)[22m[90m 36[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 6 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22mFR2-11 browser.get_action_history[2m > [22mM1: the schema has sessionId, tabId and scope; scope accepts "tab"/"session" only
+[31m[1mAssertionError[22m: expected [ 'sessionId', 'tabId' ] to deeply equal [ 'scope', 'sessionId', 'tabId' ][39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  Array [[22m
+[32m-   "scope",[39m
+[2m    "sessionId",[22m
+[2m    "tabId",[22m
+[2m  ][22m
+
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m1585:40[22m[39m
+    [90m1583| [39m    [35mconst[39m { tool } [33m=[39m [34msetup[39m()[33m;[39m
+    [90m1584| [39m    [35mconst[39m schema [33m=[39m tool[33m.[39mconfig[33m.[39minputSchema[33m;[39m
+    [90m1585| [39m    [34mexpect[39m([33mObject[39m[33m.[39m[34mkeys[39m(schema)[33m.[39m[34msort[39m())[33m.[39m[34mtoEqual[39m([[32m'scope'[39m[33m,[39m [32m'sessionId'[39m[33m,[39m …
+    [90m   | [39m                                       [31m^[39m
+    [90m1586| [39m    [34mexpect[39m(schema[33m.[39mscope[33m.[39m[34msafeParse[39m([32m'session'[39m)[33m.[39msuccess)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m1587| [39m    [34mexpect[39m(schema[33m.[39mscope[33m.[39m[34msafeParse[39m([32m'tab'[39m)[33m.[39msuccess)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22mFR2-11 browser.get_action_history[2m > [22mM2: default call passes scope/tabId through unchanged and returns the report with NO note
+[31m[1mError[22m: getActionHistoryReport does not exist[39m
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m1595:20[22m[39m
+    [90m1593| [39m    [35mconst[39m { runtime[33m,[39m tool } [33m=[39m [34msetup[39m()[33m;[39m
+    [90m1594| [39m    [35mconst[39m report [33m=[39m { scope[33m:[39m [32m'tab'[39m[33m,[39m tabId[33m:[39m [32m't1'[39m[33m,[39m entries[33m:[39m [][33m,[39m evicted[33m:[39m …
+    [90m1595| [39m    [35mconst[39m spy [33m=[39m vi[33m.[39m[34mspyOn[39m(runtime[33m,[39m [32m'getActionHistoryReport'[39m)[33m.[39m[34mmockReturn[39m…
+    [90m   | [39m                   [31m^[39m
+    [90m1596| [39m    [35mconst[39m r [33m=[39m [35mawait[39m tool[33m.[39m[34mhandler[39m({ sessionId[33m:[39m [32m's1'[39m })[33m;[39m
+    [90m1597| [39m    [34mexpect[39m(spy)[33m.[39m[34mtoHaveBeenCalledWith[39m([32m's1'[39m[33m,[39m { scope[33m:[39m undefined[33m,[39m tabId[33m:[39m …
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22mFR2-11 browser.get_action_history[2m > [22mM3: evicted > 0 adds an exact note (plural and singular)
+[31m[1mError[22m: getActionHistoryReport does not exist[39m
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m1605:20[22m[39m
+    [90m1603| [39m  [34mit[39m([32m'M3: evicted > 0 adds an exact note (plural and singular)'[39m[33m,[39m [35masync[39m…
+    [90m1604| [39m    [35mconst[39m { runtime[33m,[39m tool } [33m=[39m [34msetup[39m()[33m;[39m
+    [90m1605| [39m    [35mconst[39m spy [33m=[39m vi[33m.[39m[34mspyOn[39m(runtime[33m,[39m [32m'getActionHistoryReport'[39m)[33m;[39m
+    [90m   | [39m                   [31m^[39m
+    [90m1606| [39m    spy[33m.[39m[34mmockReturnValue[39m({ scope[33m:[39m [32m'session'[39m[33m,[39m entries[33m:[39m [][33m,[39m evicted[33m:[39m [34m7[39m[33m,[39m c…
+    [90m1607| [39m    [35mlet[39m out [33m=[39m [33mJSON[39m[33m.[39m[34mparse[39m(([35mawait[39m tool[33m.[39m[34mhandler[39m({ sessionId[33m:[39m [32m's1'[39m[33m,[39m scope[33m:[39m…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22mFR2-11 browser.get_action_history[2m > [22mM4: a runtime TypeError surfaces as isError with the message
+[31m[1mError[22m: getActionHistoryReport does not exist[39m
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m1618:8[22m[39m
+    [90m1616| [39m  [34mit[39m([32m'M4: a runtime TypeError surfaces as isError with the message'[39m[33m,[39m [35ma[39m…
+    [90m1617| [39m    [35mconst[39m { runtime[33m,[39m tool } [33m=[39m [34msetup[39m()[33m;[39m
+    [90m1618| [39m    vi[33m.[39m[34mspyOn[39m(runtime[33m,[39m [32m'getActionHistoryReport'[39m)[33m.[39m[34mmockImplementation[39m(() …
+    [90m   | [39m       [31m^[39m
+    [90m1619| [39m      [35mthrow[39m [35mnew[39m [33mTypeError[39m([32m'tabId cannot be combined with scope "sessio[39m…
+    [90m1620| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22mFR2-11 browser.get_action_history[2m > [22mM5: the description states scope "session", evicted, eval, and the privacy limits
+[31m[1mAssertionError[22m: expected 'Recent actions run against this tab (…' to contain 'scope "session"'[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- scope "session"[39m
+[31m+ Recent actions run against this tab (bounded to the last 200 entries) — action type, target, success/error, duration, and timestamp. A lightweight session-replay record for debugging.[39m
+
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m1629:15[22m[39m
+    [90m1627| [39m    [35mconst[39m { tool } [33m=[39m [34msetup[39m()[33m;[39m
+    [90m1628| [39m    [35mconst[39m d[33m:[39m string [33m=[39m tool[33m.[39mconfig[33m.[39mdescription[33m;[39m
+    [90m1629| [39m    [34mexpect[39m(d)[33m.[39m[34mtoContain[39m([32m'scope "session"'[39m)[33m;[39m
+    [90m   | [39m              [31m^[39m
+    [90m1630| [39m    [34mexpect[39m(d)[33m.[39m[34mtoContain[39m([32m'evicted'[39m)[33m;[39m
+    [90m1631| [39m    [34mexpect[39m(d)[33m.[39m[34mtoContain[39m([32m'eval'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/tools.spec.ts[2m > [22mFR2-11 browser.get_action_history[2m > [22mM6: end to end against a real (pageless) runtime session, a navigate is visible with its redacted target and nothing leaks
+[31m[1mAssertionError[22m: expected undefined to be 'session' // Object.is equality[39m
+
+[32m- Expected:[39m 
+"session"
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m tests/unit/tools.spec.ts:[2m1647:21[22m[39m
+    [90m1645| [39m    [34mexpect[39m(out)[33m.[39mnot[33m.[39m[34mtoContain[39m([32m'SECRET-M6'[39m)[33m;[39m
+    [90m1646| [39m    [35mconst[39m j [33m=[39m [33mJSON[39m[33m.[39m[34mparse[39m(out)[33m;[39m
+    [90m1647| [39m    [34mexpect[39m(j[33m.[39mscope)[33m.[39m[34mtoBe[39m([32m'session'[39m)[33m;[39m
+    [90m   | [39m                    [31m^[39m
+    [90m1648| [39m    [34mexpect[39m(j[33m.[39mentries[[34m0[39m])[33m.[39m[34mtoMatchObject[39m({ actionType[33m:[39m [32m'navigate'[39m[33m,[39m targe…
+    [90m1649| [39m    [34mexpect[39m(j[33m.[39mevicted)[33m.[39m[34mtoBe[39m([34m0[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[31m6 failed[39m[22m[2m | [22m[1m[32m118 passed[39m[22m[90m (124)[39m
+[2m   Start at [22m 20:32:51
+[2m   Duration [22m 2.05s[2m (transform 792ms, setup 0ms, collect 3.16s, tests 215ms, environment 0ms, prepare 365ms)[22m
+
+exit=1

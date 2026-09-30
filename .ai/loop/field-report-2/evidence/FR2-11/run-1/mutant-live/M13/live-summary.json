@@ -1,0 +1,152 @@
+{
+  "startedAt": "2026-09-30T15:13:09.267Z",
+  "finishedAt": "2026-09-30T15:13:32.654Z",
+  "cases": 2,
+  "casesPassed": 0,
+  "checks": 29,
+  "checksFailed": 8,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 2,
+      "casesPassed": 0,
+      "checks": 29,
+      "checksFailed": 8
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "cli:L5",
+    "cli:L5x"
+  ],
+  "informational": [
+    {
+      "surface": "cli",
+      "case": "L5-history-duration",
+      "historyProcessMs": 276
+    }
+  ],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [
+      71016
+    ],
+    "ownCliChromeProfileDirs": [
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790781189511"
+    ],
+    "childPidsStarted": [
+      56776,
+      51436,
+      71768,
+      33084,
+      31084,
+      65188,
+      4012,
+      74776,
+      54572,
+      74636,
+      28596,
+      14244,
+      56528,
+      68684,
+      72084,
+      73464
+    ]
+  },
+  "evidenceFiles": [
+    "cli-L5-history.jsonl",
+    "cli-L5-history-human.txt",
+    "cli-L5x-history.jsonl"
+  ],
+  "results": [
+    {
+      "surface": "cli",
+      "case": "L5",
+      "pass": false,
+      "checks": 21,
+      "failed": [
+        {
+          "check": "nav line: actions[0] is navigate with the redacted target and args",
+          "observed": {
+            "args": [
+              "http://127.0.0.1:55082/fr2-11-history.html"
+            ]
+          }
+        },
+        {
+          "check": "type line: args[1] is a length tag, and the click line has a verification with evidence",
+          "observed": {
+            "args": [
+              "#name",
+              "<10 chars>"
+            ]
+          }
+        },
+        {
+          "check": "failing eval: exitCode 1 and actions[0].success false",
+          "observed": {
+            "exit": 1
+          }
+        },
+        {
+          "check": "press line: actions are [focus, press_key] and press_key target is Enter",
+          "observed": []
+        },
+        {
+          "check": "the navigation verification says verified (FR2-07 contract)"
+        },
+        {
+          "check": "human: one FAILED action row that contains x-L5",
+          "observed": []
+        }
+      ]
+    },
+    {
+      "surface": "cli",
+      "case": "L5x",
+      "pass": false,
+      "checks": 8,
+      "failed": [
+        {
+          "check": "setclipboard action target is a length tag",
+          "observed": []
+        },
+        {
+          "check": "the failing type is recorded (exit 1, action failed)",
+          "observed": {
+            "v": 1,
+            "type": "command",
+            "ts": "2026-09-30T15:13:24.845Z",
+            "sessionId": "sess_1790781189714_1",
+            "cwd": "E:\\AI-Cache\\tmp\\fr2-11-cli-work-gy3AzC",
+            "verb": "type",
+            "args": [
+              "#f",
+              "<18 chars>"
+            ],
+            "exitCode": 1,
+            "durationMs": 1716,
+            "actions": [],
+            "actionsEvicted": 0
+          }
+        }
+      ]
+    }
+  ]
+}

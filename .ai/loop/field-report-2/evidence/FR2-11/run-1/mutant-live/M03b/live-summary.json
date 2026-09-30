@@ -1,0 +1,107 @@
+{
+  "startedAt": "2026-09-30T15:09:07.374Z",
+  "finishedAt": "2026-09-30T15:09:12.588Z",
+  "cases": 4,
+  "casesPassed": 2,
+  "checks": 40,
+  "checksFailed": 4,
+  "perSurface": {
+    "mcp": {
+      "cases": 4,
+      "casesPassed": 2,
+      "checks": 40,
+      "checksFailed": 4
+    },
+    "cli": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "mcp:L1",
+    "mcp:L1d"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": [
+      41200,
+      66216
+    ]
+  },
+  "evidenceFiles": [
+    "mcp-L1-history.json",
+    "mcp-raw-history-responses.txt"
+  ],
+  "results": [
+    {
+      "surface": "mcp",
+      "case": "L1",
+      "pass": false,
+      "checks": 18,
+      "failed": [
+        {
+          "check": "navigate verification tier verified"
+        }
+      ]
+    },
+    {
+      "surface": "mcp",
+      "case": "L1b",
+      "pass": true,
+      "checks": 12,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L1d",
+      "pass": false,
+      "checks": 8,
+      "failed": [
+        {
+          "check": "reload and go_back carry FR2-07 evidence with a tier",
+          "observed": [
+            null,
+            null
+          ]
+        },
+        {
+          "check": "history tiers equal the result tiers (same contract)",
+          "observed": [
+            null,
+            "verified",
+            null,
+            "verified"
+          ]
+        },
+        {
+          "check": "click_at_point target is \"(x, y) left\" and it has a verification",
+          "observed": "(33, 19) left"
+        }
+      ]
+    },
+    {
+      "surface": "mcp",
+      "case": "PRIV-sweep",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    }
+  ]
+}

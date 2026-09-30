@@ -1,0 +1,79 @@
+[run-sdk] UC-01 Bot detection surface ...
+[run-sdk] UC-01 -> success=false ms=3772 
+[
+  {
+    "id": "UC-01",
+    "title": "Bot detection surface",
+    "surface": "sdk",
+    "success": false,
+    "ms": 3772,
+    "detail": {
+      "success": false,
+      "totalRows": 57,
+      "failedRows": [
+        {
+          "label": "User Agent (Old)",
+          "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        },
+        {
+          "label": "WebGL Vendor",
+          "value": "Canvas has no webgl context"
+        },
+        {
+          "label": "WebGL Renderer",
+          "value": "Canvas has no webgl context"
+        },
+        {
+          "label": "HEADCHR_UA",
+          "value": "FAIL"
+        },
+        {
+          "label": "CHR_MEMORY",
+          "value": "FAIL"
+        }
+      ],
+      "expectedFails": [
+        "User Agent (Old)"
+      ],
+      "unexpectedFails": [
+        {
+          "label": "WebGL Vendor",
+          "value": "Canvas has no webgl context"
+        },
+        {
+          "label": "WebGL Renderer",
+          "value": "Canvas has no webgl context"
+        },
+        {
+          "label": "HEADCHR_UA",
+          "value": "FAIL"
+        },
+        {
+          "label": "CHR_MEMORY",
+          "value": "FAIL"
+        }
+      ],
+      "note": "4 row(s) failed beyond the expected HeadlessChrome UA leak — real finding, not a harness bug."
+    },
+    "error": null,
+    "telemetry": {
+      "before": {
+        "at": "2026-09-30T14:51:37.609Z",
+        "rssBytes": 85438464,
+        "heapUsedBytes": 21373392,
+        "externalBytes": 4190549,
+        "activeHandles": 0,
+        "runtimeSessionCount": 0
+      },
+      "after": {
+        "at": "2026-09-30T14:51:41.381Z",
+        "rssBytes": 83156992,
+        "heapUsedBytes": 21971432,
+        "externalBytes": 4358153,
+        "activeHandles": 0,
+        "runtimeSessionCount": 0
+      }
+    }
+  }
+]
+exit 0

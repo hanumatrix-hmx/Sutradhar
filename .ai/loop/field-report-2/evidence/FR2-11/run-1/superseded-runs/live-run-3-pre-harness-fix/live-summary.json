@@ -1,0 +1,531 @@
+{
+  "startedAt": "2026-09-30T13:14:16.899Z",
+  "finishedAt": "2026-09-30T13:15:42.647Z",
+  "cases": 40,
+  "casesPassed": 39,
+  "checks": 249,
+  "checksFailed": 1,
+  "perSurface": {
+    "mcp": {
+      "cases": 7,
+      "casesPassed": 7,
+      "checks": 53,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 13,
+      "casesPassed": 12,
+      "checks": 68,
+      "checksFailed": 1
+    },
+    "sdk": {
+      "cases": 1,
+      "casesPassed": 1,
+      "checks": 10,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 19,
+      "casesPassed": 19,
+      "checks": 118,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "cli:L5"
+  ],
+  "informational": [
+    {
+      "surface": "mcp",
+      "case": "L3-timing",
+      "evals": 205,
+      "elapsedMs": 158,
+      "perCallMs": 1
+    },
+    {
+      "surface": "mcp",
+      "case": "L9-overhead",
+      "evals": 200,
+      "totalMs": 119,
+      "meanPerCallMs": 0.59
+    },
+    {
+      "surface": "cli",
+      "case": "L5-history-duration",
+      "historyProcessMs": 251
+    },
+    {
+      "surface": "cli",
+      "case": "N9-chrome-count",
+      "sutradharCliChromeProcsBefore": 10,
+      "after": 12,
+      "note": "informational: other sessions on this machine may start/stop their own"
+    },
+    {
+      "surface": "bundle",
+      "case": "L3-timing",
+      "evals": 205,
+      "elapsedMs": 109,
+      "perCallMs": 1
+    },
+    {
+      "surface": "bundle",
+      "case": "L9-overhead",
+      "evals": 200,
+      "totalMs": 108,
+      "meanPerCallMs": 0.54
+    },
+    {
+      "surface": "bundle",
+      "case": "L5-history-duration",
+      "historyProcessMs": 205
+    },
+    {
+      "surface": "bundle",
+      "case": "N9-chrome-count",
+      "sutradharCliChromeProcsBefore": 10,
+      "after": 10,
+      "note": "informational: other sessions on this machine may start/stop their own"
+    }
+  ],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [
+      16260,
+      7004,
+      45280,
+      61216,
+      48684,
+      58844,
+      60612,
+      59952,
+      5180,
+      31944
+    ],
+    "ownCliChromeProfileDirs": [
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790774060707",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790774089922",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790774092008",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790774095539",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790774097415",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790774103940",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790774130911",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790774132846",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790774136134",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790774137949"
+    ],
+    "childPidsStarted": [
+      54652,
+      54932,
+      59604,
+      59644,
+      6292,
+      50656,
+      61348,
+      61108,
+      32204,
+      31180,
+      51288,
+      56352,
+      59092,
+      59716,
+      33148,
+      60900,
+      51732,
+      45744,
+      60384,
+      49844,
+      52332,
+      61224,
+      59424,
+      25160,
+      45280,
+      19524,
+      21888,
+      4508,
+      12996,
+      19064,
+      56164,
+      60492,
+      33904,
+      34948,
+      60060,
+      11512,
+      60924,
+      9212,
+      59988,
+      33060,
+      60452,
+      16988,
+      41224,
+      41176,
+      42684,
+      57952,
+      5948,
+      61340,
+      54864,
+      53740,
+      29720,
+      47712,
+      54004,
+      57820,
+      28940,
+      51664,
+      51808,
+      59412,
+      54764,
+      46348,
+      52788,
+      46092,
+      61188,
+      60176,
+      41980,
+      58864,
+      53256,
+      38148,
+      28836,
+      51696,
+      55344,
+      57516,
+      53512,
+      46952,
+      7724,
+      55264,
+      33908,
+      59336,
+      49220,
+      6520,
+      21172,
+      43424,
+      57324,
+      58116,
+      58976,
+      41376,
+      8396,
+      6312,
+      60680,
+      8896,
+      59556,
+      56528,
+      57188,
+      46952,
+      61036,
+      49616,
+      48304,
+      55568,
+      48824,
+      48584,
+      46832,
+      51240,
+      49860,
+      31680
+    ]
+  },
+  "evidenceFiles": [
+    "mcp-L1-history.json",
+    "mcp-L2-session.json",
+    "mcp-raw-history-responses.txt",
+    "cli-L5-history.jsonl",
+    "cli-L5-history-human.txt",
+    "cli-L5x-history.jsonl",
+    "sdk-L1-report.json",
+    "bundle-L1-history.json",
+    "bundle-L2-session.json",
+    "bundle-raw-history-responses.txt",
+    "bundle-L5-history.jsonl",
+    "bundle-L5-history-human.txt",
+    "bundle-L5x-history.jsonl"
+  ],
+  "results": [
+    {
+      "surface": "mcp",
+      "case": "L1",
+      "pass": true,
+      "checks": 18,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L1b",
+      "pass": true,
+      "checks": 12,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L2",
+      "pass": true,
+      "checks": 10,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L3",
+      "pass": true,
+      "checks": 7,
+      "failed": [],
+      "elapsedMs": 158
+    },
+    {
+      "surface": "mcp",
+      "case": "L4",
+      "pass": true,
+      "checks": 3,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L9-overhead",
+      "pass": true,
+      "checks": 1,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "PRIV-sweep",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L5",
+      "pass": false,
+      "checks": 20,
+      "failed": [
+        {
+          "check": "history did not start Chrome (our Chrome process count unchanged and >= 1) and did not touch state.json",
+          "observed": {
+            "chromeBefore": 13,
+            "chromeAfter": 12
+          }
+        }
+      ]
+    },
+    {
+      "surface": "cli",
+      "case": "N7",
+      "pass": true,
+      "checks": 5,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L5x",
+      "pass": true,
+      "checks": 8,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L7",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L7b",
+      "pass": true,
+      "checks": 3,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "W1",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L6",
+      "pass": true,
+      "checks": 7,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L8",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "N9",
+      "pass": true,
+      "checks": 3,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "N10",
+      "pass": true,
+      "checks": 1,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "N8",
+      "pass": true,
+      "checks": 5,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "N15",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "PRIV-sweep",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    },
+    {
+      "surface": "sdk",
+      "case": "SDK-L1",
+      "pass": true,
+      "checks": 10,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L1",
+      "pass": true,
+      "checks": 18,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L1b",
+      "pass": true,
+      "checks": 12,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L2",
+      "pass": true,
+      "checks": 10,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L3",
+      "pass": true,
+      "checks": 7,
+      "failed": [],
+      "elapsedMs": 109
+    },
+    {
+      "surface": "bundle",
+      "case": "L4",
+      "pass": true,
+      "checks": 3,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L9-overhead",
+      "pass": true,
+      "checks": 1,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "PRIV-sweep",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L5",
+      "pass": true,
+      "checks": 20,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "N7",
+      "pass": true,
+      "checks": 5,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L5x",
+      "pass": true,
+      "checks": 8,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L7",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "W1",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L6",
+      "pass": true,
+      "checks": 7,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L8",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "N9",
+      "pass": true,
+      "checks": 3,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "N10",
+      "pass": true,
+      "checks": 1,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "N8",
+      "pass": true,
+      "checks": 5,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "N15",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "PRIV-sweep",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    }
+  ]
+}

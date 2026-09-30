@@ -1,0 +1,86 @@
+{
+  "startedAt": "2026-09-30T15:09:17.189Z",
+  "finishedAt": "2026-09-30T15:09:20.008Z",
+  "cases": 2,
+  "casesPassed": 1,
+  "checks": 9,
+  "checksFailed": 2,
+  "perSurface": {
+    "mcp": {
+      "cases": 2,
+      "casesPassed": 1,
+      "checks": 9,
+      "checksFailed": 2
+    },
+    "cli": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "mcp:L3"
+  ],
+  "informational": [
+    {
+      "surface": "mcp",
+      "case": "L3-timing",
+      "evals": 205,
+      "elapsedMs": 111,
+      "perCallMs": 1
+    }
+  ],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": [
+      50344,
+      48480
+    ]
+  },
+  "evidenceFiles": [
+    "mcp-raw-history-responses.txt"
+  ],
+  "results": [
+    {
+      "surface": "mcp",
+      "case": "L3",
+      "pass": false,
+      "checks": 7,
+      "failed": [
+        {
+          "check": "tab evicted == (actions sent to T1) - 200, exactly",
+          "observed": {
+            "evicted": 0,
+            "nT1": 205
+          }
+        },
+        {
+          "check": "tab note matches \"N older entries were evicted\""
+        }
+      ],
+      "elapsedMs": 111
+    },
+    {
+      "surface": "mcp",
+      "case": "PRIV-sweep",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    }
+  ]
+}

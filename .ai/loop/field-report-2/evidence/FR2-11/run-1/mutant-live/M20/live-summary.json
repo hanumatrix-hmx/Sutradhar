@@ -1,0 +1,150 @@
+{
+  "startedAt": "2026-09-30T15:14:22.550Z",
+  "finishedAt": "2026-09-30T15:14:50.247Z",
+  "cases": 3,
+  "casesPassed": 2,
+  "checks": 33,
+  "checksFailed": 2,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 3,
+      "casesPassed": 2,
+      "checks": 33,
+      "checksFailed": 2
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "cli:W1"
+  ],
+  "informational": [
+    {
+      "surface": "cli",
+      "case": "L5-history-duration",
+      "historyProcessMs": 251
+    }
+  ],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [
+      37984
+    ],
+    "ownCliChromeProfileDirs": [
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790781262797"
+    ],
+    "childPidsStarted": [
+      66820,
+      59980,
+      63848,
+      75308,
+      65232,
+      60860,
+      60304,
+      71092,
+      62296,
+      69012,
+      69228,
+      72184,
+      73080,
+      61060,
+      58716,
+      4168,
+      59228
+    ]
+  },
+  "evidenceFiles": [
+    "cli-L5-history.jsonl",
+    "cli-L5-history-human.txt",
+    "cli-L5x-history.jsonl"
+  ],
+  "results": [
+    {
+      "surface": "cli",
+      "case": "L5",
+      "pass": true,
+      "checks": 21,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L5x",
+      "pass": true,
+      "checks": 8,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "W1",
+      "pass": false,
+      "checks": 4,
+      "failed": [
+        {
+          "check": "exactly one new history line was written by the watchdog path",
+          "observed": {
+            "before": 10,
+            "after": 10
+          }
+        },
+        {
+          "check": "that line is the eval with exitCode 1 and an error naming the watchdog",
+          "observed": {
+            "v": 1,
+            "type": "command",
+            "ts": "2026-09-30T15:14:38.113Z",
+            "sessionId": "sess_1790781263000_1",
+            "cwd": "E:\\AI-Cache\\tmp\\fr2-11-cli-work-KvpnYp",
+            "verb": "type",
+            "args": [
+              "#f",
+              "<18 chars>"
+            ],
+            "exitCode": 1,
+            "durationMs": 1694,
+            "actions": [
+              {
+                "actionType": "type",
+                "selector": "#f",
+                "success": false,
+                "error": "type did not land the expected value (the typed text and the field content are not recorded)",
+                "executionTimeMs": 1598,
+                "timestamp": "2026-09-30T15:14:39.807Z",
+                "url": "http://127.0.0.1:55820/fr2-11-typefail.html",
+                "verification": {
+                  "verified": false,
+                  "urlChanged": false,
+                  "elementFound": false,
+                  "confidence": 0,
+                  "reason": "Action failed: type did not land the expected value (the typed text and the field content are not recorded)",
+                  "evidence": {
+                    "tier": "action-failed",
+                    "checks": []
+                  }
+                },
+                "tabId": "tab_sess_1790781263000_1_1",
+                "seq": 1
+              }
+            ],
+            "actionsEvicted": 0
+          }
+        }
+      ]
+    }
+  ]
+}

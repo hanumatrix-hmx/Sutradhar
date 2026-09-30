@@ -1,0 +1,146 @@
+{
+  "startedAt": "2026-09-30T15:13:37.334Z",
+  "finishedAt": "2026-09-30T15:13:42.746Z",
+  "cases": 5,
+  "casesPassed": 4,
+  "checks": 50,
+  "checksFailed": 4,
+  "perSurface": {
+    "mcp": {
+      "cases": 5,
+      "casesPassed": 4,
+      "checks": 50,
+      "checksFailed": 4
+    },
+    "cli": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "mcp:L2"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": [
+      66156,
+      51748
+    ]
+  },
+  "evidenceFiles": [
+    "mcp-L1-history.json",
+    "mcp-L2-session.json",
+    "mcp-raw-history-responses.txt"
+  ],
+  "results": [
+    {
+      "surface": "mcp",
+      "case": "L1",
+      "pass": true,
+      "checks": 18,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L1b",
+      "pass": true,
+      "checks": 12,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L1d",
+      "pass": true,
+      "checks": 8,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L2",
+      "pass": false,
+      "checks": 10,
+      "failed": [
+        {
+          "check": "session view: seq strictly increasing by 1 from 1",
+          "observed": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "check": "session view order == the script own call order (both tabs)",
+          "observed": {
+            "got": [
+              "undefined|reload",
+              "undefined|click_at_point",
+              "undefined|drag_at_points",
+              "undefined|navigate",
+              "undefined|go_back",
+              "undefined|eval"
+            ],
+            "exp": [
+              "tab_sess_1790781217917_1_1|click_at_point",
+              "tab_sess_1790781217917_1_1|drag_at_points",
+              "tab_sess_1790781217917_1_1|navigate",
+              "tab_sess_1790781217917_1_1|go_back",
+              "tab_sess_1790781217917_1_2|click",
+              "tab_sess_1790781217917_1_1|eval"
+            ]
+          }
+        },
+        {
+          "check": "closed tab T2 entries survive in the session view with tabId T2",
+          "observed": []
+        },
+        {
+          "check": "session report has scope session, no report-level tabId",
+          "observed": [
+            "scope",
+            "tabId",
+            "entries",
+            "evicted",
+            "capacity"
+          ]
+        }
+      ]
+    },
+    {
+      "surface": "mcp",
+      "case": "PRIV-sweep",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    }
+  ]
+}
