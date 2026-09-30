@@ -196,6 +196,15 @@ export const FIX1_MUTANTS = [
     live: { pkg: C, surface: 'cli', only: 'PM' },
   },
   {
+    id: 'MF25',
+    what: 'OVER-redaction: a cut URL loses its PATH too (origin only), so the display origin + path the docs and tests rely on is gone',
+    file: AH,
+    find: '  if (c >= 0) full = full.slice(0, c) + REDACTED_PLACEHOLDER;',
+    replace: "  if (c >= 0) full = full.slice(0, c).replace(/^(.*?:\\/\\/[^/]*).*$/, '$1') + REDACTED_PLACEHOLDER;",
+    unit: BU,
+    live: { pkg: B, surface: 'mcp', only: 'PM' },
+  },
+  {
     id: 'MF15',
     what: 'page URL fragment kept in stored http(s) URLs',
     file: AH,
