@@ -19,6 +19,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { spawn, spawnSync } from 'node:child_process';
 import { fullMatrix, rotatingMatrix, urlCases, findCanaries, selfTest } from './lib/fr2-11-privacy-matrix.mjs';
+import { fix2Shapes, NAVIGABLE_IDS } from './lib/fr2-11-fix2-shapes.mjs';
+import { DEFAULT_SEED, generate } from './lib/fr2-11-property.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.join(here, '..', '..');
@@ -533,6 +535,74 @@ async function runMcpCases(surface, serverPath, ctx) {
     ], { cells: cells.length, navigations: navs.length + refused.length });
   });
 
+  // fix-2 (audit-2 REOPEN): the CHARACTER RULE, live. The concrete shapes audit-2 found leaking (custom-scheme redirect, about:blank#S,
+  // a single-label host:port, a URL with a space, Windows / UNC / forward-slash paths) plus the bare tokens that only ONE rule protects,
+  // each with its own canary, through real tools: a failing eval (the text goes into a real error message), real navigations (real
+  // net:: errors and verification text) and real uploads of missing paths (the real "file not found" message carries the path).
+  C('FIX2', async (id) => {
+    const shapes = fix2Shapes(server.origin, surface);
+    const seq0 = ((await history({ scope: 'session' })).json?.entries ?? []).at(-1)?.seq ?? 0;
+    const liveSeen = []; // the live (un-redacted) tool result shows the canary: the probe can see it, and the redaction is on the STORED form only
+    for (const s of shapes) {
+      const r = await tool('browser.eval', { code: `throw new Error(${JSON.stringify(`Action failed at ${s.text} retrying`)})` });
+      if (r.text.includes(s.canary)) liveSeen.push(s.id);
+    }
+    const navShapes = shapes.filter((s) => NAVIGABLE_IDS.has(s.id));
+    const navRan = [];
+    for (const s of navShapes) {
+      const r = await tool('browser.navigate', { url: s.text }, 60000);
+      navRan.push({ id: s.id, isError: r.isError, success: r.json?.success });
+    }
+    await tool('browser.navigate', { url: server.bare('/fr2-11-paths.html') });
+    const selectors = ['#file', 'input[type=file]', 'input#file', '#file:not(.x)', 'input[id=file]', '[id="file"]', '#file:not(.y)', '#file:not(.z)'];
+    const pathShapes = shapes.filter((s) => s.kind === 'path');
+    const upRan = [];
+    for (const [i, s] of pathShapes.entries()) {
+      const r = await tool('browser.upload_file', { target: selectors[i % selectors.length], filePath: s.text });
+      upRan.push({ id: s.id, failed: r.json?.success === false || r.isError, live: r.text.includes(s.canary) });
+    }
+    const sess = await history({ scope: 'session' });
+    const tabView = await history({});
+    const entries = (sess.json?.entries ?? []).filter((e) => e.seq > seq0);
+    const expectedEntries = shapes.length + navShapes.length + 1 + pathShapes.length;
+    const whole = JSON.stringify(sess.json) + JSON.stringify(tabView.json);
+    const leakedShapes = shapes.filter((s) => whole.includes(s.canary)).map((s) => s.id);
+    const navEntries = entries.filter((e) => e.actionType === 'navigate');
+    const lostKeep = navShapes.filter((s, i) => s.keepTarget && !String(navEntries[i]?.target ?? '').includes(s.keepTarget)).map((s) => s.id);
+    record(surface, id, [
+      T(`exactly ${expectedEntries} new entries (${shapes.length} evals + ${navShapes.length} navigations + paths page + ${pathShapes.length} uploads), each recorded once`, entries.length === expectedEntries, { got: entries.length, expectedEntries }),
+      T('PROBE: the live tool result of every failing eval DID show its shape (so the redaction is on the stored form, and the canary search can see a leak)', liveSeen.length === shapes.length, { seen: liveSeen.length, of: shapes.length }),
+      T('the missing-path uploads really failed and their live error carried the path (real error text reached the recorder)', upRan.every((u) => u.failed && u.live), upRan),
+      T(`no canary of ${shapes.length} shapes in the session view or the default tab view (error, reason, evidence, target, selector, url)`, leakedShapes.length === 0, leakedShapes),
+      T('navigations: about:blank and the http shapes still show their target (origin + path / about:blank), not erased', lostKeep.length === 0, { lostKeep, targets: navEntries.map((e) => e.target) }),
+      T('the custom-scheme redirect and about:blank#S navigations ran for real (an error or a committed load), not skipped', navRan.length === navShapes.length, navRan),
+    ], { shapes: shapes.length });
+  });
+
+  // fix-2: a live sample of the SEEDED property generator (prefix + delimiter + SECRET, random scheme / host / encoding / wrapper):
+  // each string becomes a real failing eval's error text; the stored entries are read back (batches of 40: the ring holds 200).
+  C('PROP', async (id) => {
+    const N = 320;
+    const gen = generate(DEFAULT_SEED + 2, N);
+    let lastSeq = ((await history({ scope: 'session' })).json?.entries ?? []).at(-1)?.seq ?? 0;
+    const leaks = [];
+    const batches = [];
+    for (let i = 0; i < gen.length; i += 40) {
+      const batch = gen.slice(i, i + 40);
+      for (const c of batch) await tool('browser.eval', { code: `throw new Error(${JSON.stringify(c.text)})` });
+      const fresh = ((await history({ scope: 'session' })).json?.entries ?? []).filter((e) => e.seq > lastSeq);
+      if (fresh.length !== batch.length) batches.push({ at: i, fresh: fresh.length, expected: batch.length });
+      lastSeq = fresh.at(-1)?.seq ?? lastSeq;
+      batch.forEach((c, j) => {
+        if (fresh[j] && JSON.stringify(fresh[j]).includes(c.secret)) leaks.push({ id: c.id, text: c.text, entry: JSON.stringify(fresh[j]).slice(0, 240) });
+      });
+    }
+    record(surface, id, [
+      T(`seed ${DEFAULT_SEED + 2}: all ${N} generated strings accounted for (each batch of 40 evals = 40 new entries)`, batches.length === 0, batches),
+      T(`no SECRET of ${N} generated strings in any stored entry`, leaks.length === 0, leaks.slice(0, 3)),
+    ], { generated: N, seed: DEFAULT_SEED + 2 });
+  });
+
   try {
     for (const c of cases) await c();
     // Privacy sweep over EVERY raw get_action_history response of this session, plus the probe self-test.
@@ -903,9 +973,9 @@ async function runCliCases(surface, cliJs, ctx) {
     for (const c of navs) ran.push({ kind: 'nav', c, code: (await cli(['nav', c.text])).code });
     // F2: URLs WITHOUT a scheme are stored raw in args by the audited build
     const schemeless = [
-      { text: `${opts.hostPort}/p?token=CNRYschemelessip${surface}`, keep: `${opts.hostPort}/p` },
-      { text: `localhost:${port}/p?q=(a)&token=CNRYschemelesslh${surface}`, keep: `localhost:${port}/p` },
-      { text: `${opts.hostPort}/p;jsessionid=CNRYschemelessps${surface}`, keep: `${opts.hostPort}/p` },
+      { text: `${opts.hostPort}/p?token=CNRYschemelessip${surface}`, keep: "<dir>" },
+      { text: `localhost:${port}/p?q=(a)&token=CNRYschemelesslh${surface}`, keep: "<dir>" },
+      { text: `${opts.hostPort}/p;jsessionid=CNRYschemelessps${surface}`, keep: "<dir>" },
     ];
     for (const c of schemeless) ran.push({ kind: 'nav-schemeless', c, code: (await cli(['nav', c.text])).code });
     // F3: real local paths with spaces and canary directories
@@ -961,12 +1031,85 @@ async function runCliCases(surface, cliJs, ctx) {
       T('every cell still shows its display origin / path / basename in the stored error (no over-redaction)', lostEval.length === 0, lostEval.slice(0, 3)),
       T(`a plain positional arg (focustab <text>) of every cell is stored redacted and still shows its origin / path / basename`, lostFocus.length === 0, lostFocus.slice(0, 3)),
       T('nav args keep origin + path', navLost.length === 0, navLost),
-      T('F2: scheme-less nav args are redacted and still show host:port/path', slLost.length === 0, slLost),
+      T('F2 (fix-2 rule): scheme-less nav args are redacted: the character rule reduces a scheme-less URL to its last segment (<dir>), never the query or the host', slLost.length === 0, slLost),
       T('F3: upload / download lines carry no canary from the directories, and keep the basenames', findCanaries(pathBlob).length === 0 && pathBlob.includes('file.txt'), { leaked: findCanaries(pathBlob), args: pathLines.map((l) => l?.args) }),
       T('the path verbs really ran (upload ok, missing upload failed, download ok)', pathRuns[0].code === 0 && pathRuns[1].code !== 0 && pathRuns[2].code === 0, pathRuns.map((r) => ({ code: r.code, out: (r.stdout + r.stderr).slice(0, 100) }))),
       T('human `sutradhar history` output has no canary', findCanaries(human.stdout).length === 0 && human.code === 0, findCanaries(human.stdout)),
       T('`sutradhar history --json` output has no canary', findCanaries(asJson.stdout).length === 0 && asJson.code === 0, findCanaries(asJson.stdout)),
     ], { commands: expected });
+  });
+
+  // fix-2 (audit-2 REOPEN): the CHARACTER RULE through real CLI processes: every shape as an eval error, a clicktext arg, a nav arg, an
+  // upload arg (paths), with the cwd rule (home-relative / <dir>) and the home directory's name checked in the raw bytes.
+  C('FIX2', async (id) => {
+    const shapes = fix2Shapes(server.origin, surface);
+    const home = os.homedir();
+    const underHome = (p) => { const r = path.relative(home, p); return r === '' || (!r.startsWith('..') && !path.isAbsolute(r)); };
+    const before = (await readLines()).length;
+    const first = await cli(['nav', server.bare('/fr2-11-paths.html')]);
+    await noteOwnChrome(STATE);
+    const runs = [];
+    const liveSeen = [];
+    for (const s of shapes) {
+      const ev = await cli(['eval', `throw new Error(${JSON.stringify(`Action failed at ${s.text} retrying`)})`]);
+      if ((ev.stdout + ev.stderr).includes(s.canary)) liveSeen.push(s.id);
+      runs.push(ev);
+      runs.push(await cli(['clicktext', s.text]));
+      if (NAVIGABLE_IDS.has(s.id)) runs.push(await cli(['nav', s.text], 60000));
+      if (s.kind === 'path') runs.push(await cli(['upload', '#file', s.text]));
+    }
+    // the cwd rule: a directory under the home directory (when the OS temp dir is under it, that one; otherwise a scratch dir made in it) and one outside it
+    const inName = `fr2-11-cwd-inside-${surface}-${process.pid}`;
+    const inDir = path.join(home, inName);
+    const outDir = path.join(repoRoot, `.fr2-11-cwd-outside-CNRYcwdout${surface}-${process.pid}`);
+    await fs.mkdir(inDir, { recursive: true });
+    await fs.mkdir(outDir, { recursive: true });
+    tempDirs.push(inDir, outDir);
+    const cwdIn = await cli(['tabs'], 60000, { ...env, __CWD: inDir });
+    const cwdOut = await cli(['tabs'], 60000, { ...env, __CWD: outDir });
+    const lines = (await readLines()).slice(before);
+    const parsed = lines.map((l) => { try { return JSON.parse(l); } catch { return null; } });
+    const raw = lines.join('\n');
+    const leakedShapes = shapes.filter((s) => raw.includes(s.canary)).map((s) => s.id);
+    const human = await cli(['history']);
+    const asJson = await cli(['history', '--json']);
+    const cwds = parsed.slice(-2).map((l) => l?.cwd);
+    const homeBase = path.basename(home);
+    const homeLeak = [home, home.replace(/\\/g, '\\\\'), home.replace(/\\/g, '/')].filter((h) => raw.includes(h));
+    const navLines = parsed.filter((l) => l?.verb === 'nav').slice(1);
+    const lostKeep = shapes.filter((s) => NAVIGABLE_IDS.has(s.id) && s.keepTarget === 'about:blank').filter((s) => !navLines.some((l) => String((l.args ?? [''])[0]).startsWith('about:blank'))).map((s) => s.id);
+    record(surface, id, [
+      T(`exactly ${1 + runs.length + 2} new history lines (one per CLI command run by this case)`, lines.length === 1 + runs.length + 2, { lines: lines.length, expected: 1 + runs.length + 2 }),
+      T('every new line parses as JSON', parsed.every(Boolean), parsed.filter((x) => !x).length),
+      T('PROBE: the live output of every failing eval DID show its shape (the redaction is on the stored form; the canary search can see a leak)', liveSeen.length === shapes.length, { seen: liveSeen.length, of: shapes.length }),
+      T(`no canary of ${shapes.length} shapes anywhere in the raw history.jsonl bytes of the new lines (args, error, actions[])`, leakedShapes.length === 0, leakedShapes),
+      T('human `sutradhar history` and `history --json` output carry no canary of any shape', shapes.every((s) => !human.stdout.includes(s.canary) && !asJson.stdout.includes(s.canary)) && human.code === 0 && asJson.code === 0, shapes.filter((s) => human.stdout.includes(s.canary) || asJson.stdout.includes(s.canary)).map((s) => s.id)),
+      T('cwd under the home directory is stored home-relative (~/dir); a cwd outside it as <dir> (and its canary-named directory is not stored)', cwds[0] === `~/${inName}` && (underHome(outDir) ? String(cwds[1]).startsWith('~/') : cwds[1] === '<dir>') && !raw.includes('CNRYcwdout'), { cwds, outDirUnderHome: underHome(outDir) }),
+      T(`the home directory (${homeBase.length >= 4 ? 'its path and its name' : 'its path'}) appears nowhere in the new lines`, homeLeak.length === 0 && (homeBase.length < 4 || !raw.includes(homeBase)), { homeLeak, homeBase: homeBase.length < 4 ? '(short, not searched)' : homeBase }),
+      T('the nav of about:blank#S still shows about:blank in args (not erased)', lostKeep.length === 0, { lostKeep, args: navLines.map((l) => l.args) }),
+      T('the cwd runs really ran (tabs exits 0)', cwdIn.code === 0 && cwdOut.code === 0 && first.code === 0, { in: cwdIn.code, out: cwdOut.code, first: first.code }),
+    ], { commands: 1 + runs.length + 2 });
+  });
+
+  // fix-2: a live sample of the seeded generator through real CLI processes (a process per command, so a small sample: 36 strings x 2 verbs)
+  C('PROP', async (id) => {
+    const N = 36;
+    const gen = generate(DEFAULT_SEED + 4, N);
+    const before = (await readLines()).length;
+    const first = await cli(['nav', server.bare('/fr2-11-paths.html')]);
+    await noteOwnChrome(STATE);
+    for (const c of gen) {
+      await cli(['clicktext', c.text]);
+      await cli(['eval', `throw new Error(${JSON.stringify(c.text)})`]);
+    }
+    const lines = (await readLines()).slice(before);
+    const raw = lines.join('\n');
+    const human = (await cli(['history'])).stdout;
+    const leaks = gen.filter((c) => raw.includes(c.secret) || human.includes(c.secret)).map((c) => ({ id: c.id, text: c.text }));
+    record(surface, id, [
+      T(`seed ${DEFAULT_SEED + 4}: exactly ${1 + 2 * N} new lines`, lines.length === 1 + 2 * N && first.code === 0, { lines: lines.length }),
+      T(`no SECRET of ${N} generated strings in the raw history.jsonl bytes or the human history output`, leaks.length === 0, leaks.slice(0, 3)),
+    ], { generated: N, seed: DEFAULT_SEED + 4 });
   });
 
   try {
@@ -1071,6 +1214,45 @@ async function runSdkCases(ctx) {
         T(`${navs.length} real page.goto calls: no canary, target keeps origin + path`, navLeaks.length === 0 && navLost.length === 0, { navLeaks: navLeaks.slice(0, 2), navLost: navLost.slice(0, 2) }),
         T('the final whole-session report JSON has no canary', findCanaries(wholeReport).length === 0, findCanaries(wholeReport)),
       ], { cells: cells.length, navigations: navs.length });
+    }
+    // fix-2 (audit-2 REOPEN): the character rule through the SDK: the audit-2 shapes as real page.goto / page.evaluate calls + a seeded sample
+    {
+      const shapes = fix2Shapes(server.origin, 'sdk');
+      const report = () => rt.getActionHistoryReport(browser.sessionId, { scope: 'session' }).entries;
+      const seq0 = report().at(-1)?.seq ?? 0;
+      const liveSeen = [];
+      for (const s of shapes) {
+        try { await page.evaluate(`throw new Error(${JSON.stringify(`Action failed at ${s.text} retrying`)})`); } catch (e) { if (String(e.message).includes(s.canary)) liveSeen.push(s.id); }
+      }
+      const navShapes = shapes.filter((s) => NAVIGABLE_IDS.has(s.id));
+      const gotoErrs = [];
+      for (const s of navShapes) { try { await page.goto(s.text); } catch (e) { gotoErrs.push({ id: s.id, err: String(e.message).slice(0, 80) }); } }
+      const after = report().filter((e) => e.seq > seq0);
+      const expected = shapes.length + navShapes.length;
+      const leaked = shapes.filter((s) => JSON.stringify(after).includes(s.canary)).map((s) => s.id);
+      const navEntries = after.filter((e) => e.actionType === 'navigate');
+      const lostKeep = navShapes.filter((s, i) => s.keepTarget && !String(navEntries[i]?.target ?? '').includes(s.keepTarget)).map((s) => s.id);
+      // seeded property sample, in batches of 40 (the ring holds 200)
+      const N = 320;
+      const gen = generate(DEFAULT_SEED + 3, N);
+      let lastSeq = report().at(-1)?.seq ?? 0;
+      const propLeaks = [];
+      const propBatches = [];
+      for (let i = 0; i < gen.length; i += 40) {
+        const batch = gen.slice(i, i + 40);
+        for (const c of batch) await page.evaluate(`throw new Error(${JSON.stringify(c.text)})`).catch(() => {});
+        const fresh = report().filter((e) => e.seq > lastSeq);
+        if (fresh.length !== batch.length) propBatches.push({ at: i, fresh: fresh.length, expected: batch.length });
+        lastSeq = fresh.at(-1)?.seq ?? lastSeq;
+        batch.forEach((c, j) => { if (fresh[j] && JSON.stringify(fresh[j]).includes(c.secret)) propLeaks.push({ id: c.id, text: c.text }); });
+      }
+      record(surface, 'SDK-FIX2', [
+        T(`exactly ${expected} new entries (${shapes.length} evals + ${navShapes.length} navigations), each recorded once`, after.length === expected, { got: after.length, expected }),
+        T('PROBE: the thrown error of every failing evaluate DID carry its shape (the canary search can see a leak)', liveSeen.length === shapes.length, { seen: liveSeen.length, of: shapes.length }),
+        T(`no canary of ${shapes.length} shapes in any stored SDK entry`, leaked.length === 0, leaked),
+        T('about:blank / http navigations still show their target', lostKeep.length === 0, { lostKeep, targets: navEntries.map((e) => e.target) }),
+        T(`seed ${DEFAULT_SEED + 3}: ${N} generated strings accounted for and no SECRET stored`, propBatches.length === 0 && propLeaks.length === 0, { propBatches, propLeaks: propLeaks.slice(0, 3) }),
+      ], { shapes: shapes.length, generated: N, seed: DEFAULT_SEED + 3 });
     }
   } finally {
     await observer.disconnect().catch(() => {});

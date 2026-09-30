@@ -209,6 +209,15 @@ describe('FR2-11 fix-2 selectors keep their shape; everything else in free text 
   });
 });
 
+describe('FR2-11 fix-2 upload_file target: the basename, unless it has no extension (a user / home directory name)', () => {
+  const up = (t: string): string => sanitizeHistoryEntry({ actionType: 'upload_file', target: t, success: false, executionTimeMs: 1, timestamp: 't' } as unknown as ActionHistoryEntry).target as string;
+  it('report.pdf is kept; a name with no extension is <dir>; a query on a name is cut', () => {
+    expect(up('report.pdf')).toBe('report.pdf');
+    expect(up('CNRYup1X')).toBe('<dir>');
+    expect(up('f.txt?t=CNRYup2X')).not.toContain('CNRYup2X');
+  });
+});
+
 describe('FR2-11 fix-2 structured target: FR2-09 D5 (origin + pathname) then the rule', () => {
   it('http(s) targets keep origin + pathname and nothing else; an encoded delimiter in the path is cut too', () => {
     expect(redactHistoryUrl('http://127.0.0.1:5/p/q?x=(a)&t=1#f')).toBe('http://127.0.0.1:5/p/q');

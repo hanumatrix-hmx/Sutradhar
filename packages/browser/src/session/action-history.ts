@@ -279,6 +279,12 @@ export function evalCodePreview(code: string): string {
 /** The engine-generated target of wait_for_selector: a closed vocabulary, the one `=` the rule must not eat. */
 const WAIT_STATE_TARGET = /^state=(?:visible|hidden|attached|detached)$/;
 
+/**
+ * The engine-generated target of upload_file is the file's basename. Same rule as a path in free text: a name with no extension is
+ * a directory-like name (a user name, a home directory) and is not stored; anything else goes through the character rule.
+ */
+const uploadTarget = (name: string): string => (HAS_EXTENSION.test(name) ? redactedString(name, HISTORY_STRING_CAP) : DIR_PLACEHOLDER);
+
 const redactedString = (s: string, cap: number): string => capHistoryString(redactHistoryText(s), cap);
 
 /**
@@ -295,7 +301,11 @@ export function sanitizeHistoryEntry(e: ActionHistoryEntry): ActionHistoryEntry 
         ? capHistoryString(redactHistoryUrl(e.target), HISTORY_STRING_CAP)
         : e.actionType === 'eval'
           ? evalCodePreview(e.target)
-          : WAIT_STATE_TARGET.test(e.target) ? e.target : redactedString(e.target, HISTORY_STRING_CAP);
+          : e.actionType === 'upload_file'
+            ? uploadTarget(e.target)
+            : WAIT_STATE_TARGET.test(e.target)
+              ? e.target
+              : redactedString(e.target, HISTORY_STRING_CAP);
   }
   if (typeof e.url === 'string') out.url = capHistoryString(redactHistoryUrl(e.url), HISTORY_STRING_CAP);
   if (typeof e.error === 'string') out.error = redactedString(e.error, HISTORY_TEXT_CAP);
