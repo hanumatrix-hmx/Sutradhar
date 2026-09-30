@@ -24,6 +24,7 @@ import { formatAuditText, auditNotes, auditExitCode } from './audit-output.js';
 import { dialogOutputSink, dialogBlockedJsonDoc, printDialogBlockedJsonOnce, writeJsonStdoutOnce } from './dialog-json-routing.js';
 import { readState, writeState, clearState, STATE_DIR, type CliState } from './state.js';
 import { spawnDetachedChrome, killChromeTree } from './spawn-chrome.js';
+import { removeSessionTempProfile, sweepStaleTempProfiles } from './temp-profile.js';
 import { createSessionId } from '@sutradhar/contracts';
 import { parseArgs, dialogFlagError, expectFlagError, waitForConditionFromArgs } from './parse-args.js';
 import { waitForOutcome } from './waitfor-output.js';
@@ -232,6 +233,9 @@ async function spawnFreshSession(
       printErrorAndExit((err as Error).message);
     }
   }
+  // GAP-315: work off temp profile dirs left behind by crashed/killed sessions. Best-effort,
+  // time-boxed, and fail-closed (see temp-profile.ts for the safety rules).
+  await sweepStaleTempProfiles().catch(() => {});
   let spawned: Awaited<ReturnType<typeof spawnDetachedChrome>>;
   try {
     spawned = await spawnDetachedChrome(!headed, profileUserDataDir, userAgentFlag, viewportFlag);
@@ -257,6 +261,8 @@ async function spawnFreshSession(
     sessionId: attached.sessionId,
     wsEndpoint: spawned.wsEndpoint,
     chromePid: spawned.pid,
+    userDataDir: spawned.userDataDir,
+    tempProfile: spawned.tempProfile,
     profileName: profileFlag,
     viewport: viewportFlag,
     dialogPolicy,
@@ -407,7 +413,8 @@ async function withSession<T>(
         `Note: previous session was unreachable (${(err as Error).message}) — starting a fresh session.`,
       );
       await stopWarden(STATE_DIR).catch(() => {});
-      if (state.chromePid) killChromeTree(state.chromePid);
+      if (state.chromePid) await killChromeTree(state.chromePid);
+      await cleanupSessionTempProfile(state);
       await clearState();
       return spawnFreshSession(runtime, { dialogPolicy: state.dialogPolicy });
     },
@@ -1474,6 +1481,18 @@ async function cmdDialog(sub: string | undefined, rest: string[]): Promise<void>
 // describeUnknownDialog moved to dialog-cli.ts (FR2-04 escalation-2, GAP-253/254) — pure logic,
 // unit-tested there instead of only via live/process-spawn scenarios.
 
+/** GAP-315: removes the session's auto-created temp profile dir once its Chrome has exited
+ *  (waits with a hard timeout, retries through Windows' post-exit file locks, never touches a
+ *  dir a running process still references or a named profile). A failure only warns — `close`
+ *  still succeeds, and the next session start's stale sweep retries it. */
+async function cleanupSessionTempProfile(state: CliState, warn = false): Promise<void> {
+  if (!state.tempProfile || !state.userDataDir) return;
+  const res = await removeSessionTempProfile(state.userDataDir, state.chromePid);
+  if (!res.removed && warn) {
+    console.error(`Warning: could not remove temp profile ${state.userDataDir} (${res.reason}); it will be retried at the next session start.`);
+  }
+}
+
 async function cmdClose() {
   const state = await readState();
   if (!state) {
@@ -1552,7 +1571,8 @@ async function cmdClose() {
     // SpawnedChrome doc comment), so for a Chrome process THIS CLI spawned, runtime.shutdown()
     // alone would leak it. Kill the actual process (and its child renderer/GPU processes). Never
     // attaches, so it's unaffected by closeBlocked (no 180s hang risk here either way).
-    killChromeTree(state.chromePid);
+    await killChromeTree(state.chromePid);
+    await cleanupSessionTempProfile(state, true);
   } else if (!closeBlocked) {
     // FR2-04 N11: this attach WOULD hang for up to 180s against a dialog-blocked page — skipped
     // whenever the gate reported 'blocked' above.

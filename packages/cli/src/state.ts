@@ -17,6 +17,11 @@ export interface CliState {
   /** PID of the Chrome process this CLI spawned itself (undefined if the session came from
    *  attaching to a browser the CLI didn't start) — see spawn-chrome.ts's killChromeTree. */
   chromePid?: number;
+  /** GAP-315: the `--user-data-dir` the CLI spawned Chrome with, and whether it is an
+   *  auto-created temp dir (no `--profile`) that `close` must remove once Chrome has exited.
+   *  Named-profile dirs are recorded with `tempProfile: false` and are never removed. */
+  userDataDir?: string;
+  tempProfile?: boolean;
   lastUrl?: string;
   /** The --profile name this session was launched with, if any — lets `close` persist the
    *  current storage state into that profile before killing Chrome. See cli.ts's cmdClose for
