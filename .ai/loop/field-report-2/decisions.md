@@ -3956,3 +3956,13 @@ Note: a plain `pnpm run build` replayed a stale turbo cache for the `sutradhar` 
 source change; `--force` was needed. check-release-ready.mjs guards publishing, but the stale-bundle replay is
 worth a follow-up.
 
+## 2026-09-30 -- FR2-08 starts although FR2-07 is PARTIAL, not DONE
+
+FR2-08's spec lists "FR2-07 DONE" as a hard precondition for two reasons: shared files and shared
+code (its text/textGone probe reuses FR2-07's visible-text check). Both are satisfied: FR2-07 is merged
+to master (75b29c6) and pageContainsVisibleText / visibleTextContainsInPage exist. FR2-07 is PARTIAL
+only because expect.text is best-effort (GAP-329 SVG never-painted containers, GAP-331 split
+inline-block/textarea text), a limit the user accepted. Decision: proceed; wait_for text/textGone
+inherits exactly those documented limits and must document them the same way, and must never report a
+condition as met on a path FR2-07 already fails closed on.
+
