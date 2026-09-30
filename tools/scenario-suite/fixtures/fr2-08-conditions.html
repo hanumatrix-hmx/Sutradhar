@@ -1,0 +1,179 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>fr2-08 conditions</title>
+<script>
+// PASSIVE recorder (installed in <head>, before anything else): it never mutates the DOM, so the "pure
+// setTimeout" cases stay pure. events = what the PAGE did and when; mutations = every DOM mutation batch.
+window.__fx8 = { events: [], mutations: [], loadAt: 0, startedAt: Date.now() };
+window.__fx8.rec = function (what) { window.__fx8.events.push({ what: what, at: Date.now() }); };
+try {
+  new MutationObserver(function (recs) {
+    window.__fx8.mutations.push({ at: Date.now(), n: recs.length });
+  }).observe(document, { subtree: true, childList: true, attributes: true, characterData: true });
+} catch (e) { /* recorder unavailable */ }
+window.addEventListener('load', function () { window.__fx8.loadAt = Date.now(); });
+</script>
+<style>
+  body { font: 14px sans-serif; margin: 8px; }
+  #col { width: 320px; }
+  #col > * { display: block; margin: 6px 0; }
+  #s-pad { position: fixed; left: 450px; top: 20px; width: 300px; height: 150px; background: #cde; z-index: 50; }
+  #s-point { position: fixed; left: 450px; top: 250px; width: 120px; height: 40px; background: #edc; z-index: 50; }
+  #s-scrollbox { height: 100px; overflow: auto; border: 1px solid #888; }
+  #s-scrollbox div { height: 60px; }
+  #s-src, #s-dst { width: 120px; height: 30px; border: 1px solid #444; }
+  #s-src { background: #dfd; }
+  #s-dst { background: #fdd; }
+</style>
+</head>
+<body>
+<div id="col"></div>
+<script>
+(function () {
+  var P = new URLSearchParams(location.search);
+  var kase = P.get('case') || 'toast';
+  var delay = Number(P.get('delay') || 2000);
+  var manual = P.get('mode') === 'manual';
+  var fx = window.__fx8;
+  var col = document.getElementById('col');
+  // every expected text is built from pieces so the literal never sits in this <script> source
+  var TOAST = 'Saved ' + 'successfully';
+  function add(html) { var d = document.createElement('div'); d.innerHTML = html; while (d.firstChild) col.appendChild(d.firstChild); return col.lastChild; }
+  // schedules fn once: after `delay` ms, or (mode=manual) only when the observer calls __fx8.arm(ms)
+  function later(fn) {
+    if (manual) fx.arm = function (ms) { setTimeout(fn, ms === undefined ? delay : ms); };
+    else setTimeout(fn, delay);
+  }
+  function showToast() {
+    fx.rec('toastShown'); // recorded BEFORE the insertion: the observed latency is therefore an upper bound
+    var t = document.createElement('div'); t.id = 'toast'; t.textContent = TOAST; document.body.appendChild(t);
+  }
+  // burst(tag): two DOM mutations 150ms and 400ms after the trigger; every gap is < 300ms (the default
+  // mutationQuietMs), so a settle that STARTED at or after the trigger cannot return before `tag:2`.
+  function burst(tag) {
+    var log = document.getElementById('burst-log');
+    if (!log) { log = document.createElement('div'); log.id = 'burst-log'; document.body.appendChild(log); }
+    function mutate() { var d = document.createElement('div'); d.textContent = tag; log.appendChild(d); }
+    setTimeout(function () { mutate(); fx.rec(tag + ':1'); }, 150);
+    setTimeout(function () { mutate(); fx.rec(tag + ':2'); }, 400);
+  }
+  function on(id, ev, tag, extra) {
+    document.getElementById(id).addEventListener(ev, function (e) {
+      if (extra && extra(e) === false) return;
+      fx.rec(tag + '-trigger');
+      burst(tag);
+    });
+  }
+
+  if (kase === 'toast') {
+    later(showToast);
+  } else if (kase === 'toast-click') {
+    add('<button id="start-toast">Start toast</button>');
+    document.getElementById('start-toast').addEventListener('click', function () { fx.rec('toastStarted'); later(showToast); if (manual) { /* observer arms it */ } });
+  } else if (kase === 'hidden-toast') {
+    add('<div id="ht" style="display:none">Order ' + 'confirmed</div>');
+    later(function () { fx.rec('htShown'); document.getElementById('ht').style.display = 'block'; });
+  } else if (kase === 'vis-toast') {
+    add('<div id="vt" style="visibility:hidden">Visibility ' + 'toast</div>');
+    later(function () { fx.rec('vtShown'); document.getElementById('vt').style.visibility = 'visible'; });
+  } else if (kase === 'spinner') {
+    add('<div id="sp">Loading ' + 'data…</div>');
+    later(function () { fx.rec('spinnerGone'); document.getElementById('sp').remove(); });
+  } else if (kase === 'js') {
+    window.__appState = { ready: false };
+    later(function () { fx.rec('jsReady'); window.__appState.ready = true; });
+  } else if (kase === 'push') {
+    later(function () { fx.rec('pushed'); history.pushState({}, '', location.pathname + location.search + '&stage=done'); });
+  } else if (kase === 'nav') {
+    later(function () { fx.rec('navStarted'); try { sessionStorage.setItem('fx8nav', String(Date.now())); } catch (e) { /* ignore */ } location.href = '/arrived.html?n=' + (P.get('n') || '0') + '&stage=arrived'; });
+  } else if (kase === 'shadow') {
+    var host = add('<div id="host"></div>');
+    var root = host.attachShadow({ mode: 'open' });
+    later(function () { fx.rec('shadowShown'); var s = document.createElement('span'); s.textContent = 'Shadow ' + 'saved'; root.appendChild(s); });
+  } else if (kase === 'frame') {
+    var f = document.createElement('iframe'); f.id = 'f'; f.style.width = '300px'; f.style.height = '60px';
+    var CLOSE = '<' + '/script>';
+    f.srcdoc = '<body><p>frame body</p><script>setTimeout(function(){parent.__fx8.events.push({what:"frameShown",at:Date.now()});' +
+      'var s=document.createElement("span");s.textContent="Frame "+"saved";document.body.appendChild(s);},' + delay + ');' + CLOSE + '</body>';
+    col.appendChild(f);
+  } else if (kase === 'alert') {
+    later(function () { fx.rec('alertOpened'); alert('fr2-08'); });
+  } else if (kase === 'static') {
+    add('<input id="inp" value="Typed ' + 'value">');
+    add('<div style="display:none">Hidden ' + 'forever</div>');
+    add('<div style="width:0;height:0;overflow:hidden">Zero box ' + 'text</div>');
+    add('<div style="opacity:0">Ghost ' + 'text</div>');
+    add('<p id="lit">Price: ' + '$5</p>');
+  } else if (kase === 'big') {
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < 20000; i++) { var d = document.createElement('div'); d.textContent = 'row ' + i + ' lorem ipsum dolor sit amet'; frag.appendChild(d); }
+    document.body.appendChild(frag);
+    later(showToast);
+  } else if (kase === 'settle-load') {
+    window.addEventListener('load', function () { fx.rec('load-trigger'); burst('load'); });
+    window.addEventListener('pageshow', function () { fx.rec('pageshow-trigger'); burst('pageshow'); });
+  } else if (kase === 'settle') {
+    add('<button id="s-click">click</button>');
+    add('<button id="s-text">Settle by text</button>');
+    add('<button role="button" aria-label="Settle role" id="s-role">R</button>');
+    add('<button id="s-ctx">context</button>');
+    add('<input id="s-key" placeholder="key">');
+    add('<input id="s-focus" placeholder="focus">');
+    add('<button id="s-hover">hover</button>');
+    add('<select id="s-sel"><option value="v1">one</option><option value="v2">two</option></select>');
+    add('<select id="s-multi" multiple><option value="m1">m1</option><option value="m2">m2</option></select>');
+    add('<input aria-label="Settle label" id="s-label">');
+    add('<input type="file" id="s-file">');
+    add('<button id="s-trigger">Browse</button><input type="file" id="s-file2" style="display:none">');
+    add('<div id="s-src" draggable="true">drag me</div><div id="s-dst">drop here</div>');
+    add('<button id="s-tap">tap</button>');
+    add('<a id="s-dl" href="/download.bin" download>download</a>');
+    add('<button id="s-confirm">confirm</button>');
+    add('<input id="f1" placeholder="f1"><input id="f2" placeholder="f2">');
+    add('<button id="s-fetch">fetch</button>');
+    add('<div id="s-scrollbox"><div>a</div><div>b</div><div>c</div><div>d</div><div>e</div><div>f</div><div>g</div><div>h</div></div>');
+    add('<button id="s-alert">alert</button>');
+    var pad = document.createElement('div'); pad.id = 's-pad'; document.body.appendChild(pad);
+    var pt = document.createElement('div'); pt.id = 's-point'; document.body.appendChild(pt);
+    on('s-click', 'click', 'click');
+    on('s-text', 'click', 'click_by_text');
+    on('s-role', 'click', 'click_by_role');
+    on('s-ctx', 'contextmenu', 'right_click');
+    on('s-key', 'keydown', 'press_key');
+    on('s-focus', 'focus', 'focus');
+    on('s-hover', 'mouseenter', 'hover');
+    on('s-sel', 'change', 'select_option');
+    on('s-multi', 'change', 'select_options');
+    on('s-label', 'input', 'type_by_label', function () { return !fx.__labelDone && (fx.__labelDone = true); });
+    on('s-file', 'change', 'upload_file');
+    document.getElementById('s-trigger').addEventListener('click', function () { document.getElementById('s-file2').click(); });
+    on('s-file2', 'change', 'upload_file_via_trigger');
+    document.getElementById('s-dst').addEventListener('dragover', function (e) { e.preventDefault(); });
+    on('s-dst', 'drop', 'drag_and_drop');
+    var tapped = false;
+    ['touchend', 'pointerup'].forEach(function (ev) { document.getElementById('s-tap').addEventListener(ev, function () { if (tapped) return; tapped = true; fx.rec('touch_tap-trigger'); burst('touch_tap'); }); });
+    on('s-pad', 'mouseup', 'drag_at_points');
+    on('s-point', 'click', 'click_at_point');
+    on('s-dl', 'click', 'download_file');
+    document.getElementById('s-confirm').addEventListener('click', function () { fx.rec('confirmOpened'); if (confirm('fr2-08')) { fx.rec('dialog-trigger'); burst('dialog'); } });
+    on('f2', 'input', 'fill_form', function () { return !fx.__f2Done && (fx.__f2Done = true); });
+    document.getElementById('s-fetch').addEventListener('click', function () {
+      fx.rec('fetchStarted');
+      fetch('/slow?ms=800').then(function (r) { return r.text(); }).then(function () {
+        var d = document.createElement('div'); d.id = 'fetched'; d.textContent = 'fetched'; document.body.appendChild(d); fx.rec('fetchDone');
+      });
+    });
+    // a tall spacer so the WINDOW can scroll (SDK/MCP/CLI scroll move window.scrollY): its scroll event starts a burst
+    var spacer = document.createElement('div'); spacer.id = 's-spacer'; spacer.style.height = '3000px'; col.appendChild(spacer);
+    var winScrolled = false;
+    window.addEventListener('scroll', function () { if (winScrolled) return; winScrolled = true; fx.rec('scroll_window-trigger'); burst('scroll_window'); });
+    var scrolled = false;
+    document.getElementById('s-scrollbox').addEventListener('scroll', function () { if (scrolled) return; scrolled = true; fx.rec('scroll-trigger'); burst('scroll'); });
+    document.getElementById('s-alert').addEventListener('click', function () { fx.rec('alertOpened'); alert('settle'); });
+  }
+})();
+</script>
+</body>
+</html>

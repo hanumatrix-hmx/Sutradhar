@@ -66,7 +66,7 @@ import {
   policyFromState,
   isRivalWardenAlive,
 } from './warden-control.js';
-import { DialogWarden, connectAtBrowserLevel, listTabsAtBrowserLevel, closeTargetAtBrowserLevel } from '@sutradhar/browser';
+import { DialogWarden, connectAtBrowserLevel, listTabsAtBrowserLevel, closeTargetAtBrowserLevel, normalizePageCondition } from '@sutradhar/browser';
 
 const logger = new StructuredLogger({ minLevel: 'error' }); // CLI output IS the log; keep engine logs quiet
 const {
@@ -936,14 +936,15 @@ async function cmdWait(ref: string | undefined, timeoutMsArg: string | undefined
 async function cmdWaitFor(positional: string[]) {
   const parsed = waitForConditionFromArgs({ waitForFlags }, positional);
   if ('error' in parsed) printErrorAndExit(parsed.error);
+  // Validate BEFORE any session work: a rule the runtime would reject (--text and --text-gone the same string, ...)
+  // is a usage error, and exiting from INSIDE withSession (open CDP handles) crashes Node on Windows (libuv assertion).
+  try {
+    normalizePageCondition(parsed.condition, parsed.condition.timeoutMs);
+  } catch (err) {
+    printErrorAndExit((err as Error).message);
+  }
   await withSession(async (runtime, sessionId) => {
-    let result;
-    try {
-      result = await runtime.waitFor(sessionId, parsed.condition);
-    } catch (err) {
-      // a validation TypeError from the runtime (e.g. --text and --text-gone the same string)
-      printErrorAndExit((err as Error).message);
-    }
+    const result = await runtime.waitFor(sessionId, parsed.condition);
     if (jsonMode) console.log(JSON.stringify(toCliJson(result), null, 2));
     const out = waitForOutcome(result, parsed.condition);
     if (!jsonMode) for (const line of out.stdout) console.log(line);

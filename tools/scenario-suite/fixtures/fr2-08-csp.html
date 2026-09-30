@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>fr2-08 csp</title></head>
+<body>
+<h1>strict CSP page</h1>
+<!-- Served with `Content-Security-Policy: script-src 'nonce-fr208'` (no 'unsafe-eval'): `new Function`
+     and eval-style string compilation INSIDE the page are blocked; CDP Runtime.evaluate is not. -->
+<script nonce="fr208">
+window.__flag = false;
+window.__fx8 = { events: [] };
+setTimeout(function () {
+  window.__fx8.events.push({ what: 'cspReady', at: Date.now() });
+  window.__flag = true;
+  document.body.insertAdjacentHTML('beforeend', '<p>' + 'CSP ' + 'ready' + '</p>');
+}, 2000);
+</script>
+</body>
+</html>

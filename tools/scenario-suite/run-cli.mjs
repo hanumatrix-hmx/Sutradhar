@@ -149,8 +149,11 @@ function typeWithReadback(ref, text, placeholder, { maxAttempts = 3 } = {}) {
 async function uc01() {
   closeSession();
   const nav = runCli(['nav', scenarioById['UC-01'].url]);
-  await sleep(2500); // harness-level pacing — CLI has no `wait` command; this is the driver
-  // script pacing invocations, not a CLI capability being exercised.
+  // FR2-08 (GAP-002): wait on the page's OWN completion signal instead of sleeping. The three result cells this UC reads
+  // below (webdriver-result, advanced-webdriver-result, chrome-result) are filled in by the page's scripts; `waitfor --js`
+  // returns the moment all three hold text (or fails with which part was missing). Verified live against bot.sannysoft.com.
+  const waitRes = runCli(['waitfor', '15000', '--js',
+    "['webdriver-result','advanced-webdriver-result','chrome-result'].every(id => (document.getElementById(id)?.textContent ?? '').trim().length > 0)"]);
   const textRes = runCli(['text']);
   const t = textRes.stdout;
 
@@ -172,6 +175,8 @@ async function uc01() {
     chromeNew,
     pluginsIsArray,
     failMarkers,
+    waitforStdout: waitRes.stdout,
+    waitforCode: waitRes.code,
     note:
       'HeadlessChrome/151 leaking in the User-Agent row is EXPECTED and deliberate (scope decision in ' +
       'field-report-remediation-plan.md — no covert UA masking). failMarkers lists every fingerprint ' +
@@ -434,7 +439,9 @@ async function uc06() {
   const startId = startSnap.stdout.split('\n').find((l) => /Start/.test(l))?.match(/^\[#(\d+)\]/)?.[1];
   if (!startId) fail('could not find Start button on dynamic_loading page', { startSnap: startSnap.stdout });
   const startClick = runCli(['click', startId]);
-  await sleep(6000); // harness-level pacing for the page's own 5s delayed reveal — no `wait` CLI command exists
+  // FR2-08 (GAP-002): the page reveals "Hello World!" after its own ~5s delay. #finish holds that text in textContent while it is
+  // display:none from load, so only VISIBLE-text semantics wait correctly: `waitfor --text` returns when it is really shown.
+  const waitRes = runCli(['waitfor', '15000', '--text', 'Hello World!']);
   const dynText = runCli(['text']);
   closeSession();
 
@@ -445,6 +452,8 @@ async function uc06() {
     clickTextCloseResult: clickTextClose.stdout,
     fallbackThatWorked: closeInDefaultListing ? 'not needed — was in default listing' : 'clicktext',
     dynamicLoadingHelloWorldFound: helloWorldFound,
+    waitforStdout: waitRes.stdout,
+    waitforCode: waitRes.code,
     dynamicLoadingText: dynText.stdout,
   };
   if (!helloWorldFound) fail('dynamic content "Hello World!" not found after wait', detail);
