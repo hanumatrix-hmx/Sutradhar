@@ -1863,11 +1863,11 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
     {
       description:
         'Recent actions (bounded to the last 200 entries) — action type, selector/target, success/error, ' +
-        "duration, timestamp, the page URL afterward (query/fragment dropped), and the action's verification " +
+        "duration, timestamp, the page URL afterward (origin + path only), and the action's verification " +
         'when it produced one. Includes navigate and eval (eval is recorded as a <=200-char code preview; its ' +
         'result is never stored), go_back/go_forward/reload, click_at_point/drag_at_points, set_clipboard ' +
         '(length only), upload_file_via_trigger and wait_for, as well as every element action; typed text and ' +
-        'clipboard text are never stored. scope "tab" (default): one tab — tabId, or the active tab. scope ' +
+        'clipboard text are never stored; URL queries, fragments, path parameters and userinfo are cut to [redacted] and local file paths are reduced to a basename. scope "tab" (default): one tab — tabId, or the active tab. scope ' +
         '"session": every tab in this session merged in the order the actions were recorded (each entry has ' +
         'tabId and seq), including tabs that have since closed. `evicted` counts older entries dropped once the ' +
         '200-entry cap was hit (0 = nothing lost). The history lives in this server process only.',

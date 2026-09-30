@@ -66,11 +66,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   one line per session-bound command (reads and `close` included) to `history.jsonl` next to `state.json`, and
   `sutradhar history [--json]` reads it back (never starts a browser; survives `close`; rotated at 5 MiB to
   `history.1.jsonl`; a torn line is skipped, never fatal; parallel processes cannot interleave a line). `audit`
-  and `compare` now show their navigations in history. **Privacy:** URLs keep origin and path only (query and
-  fragment dropped); typed text, `select` values, clipboard text and dialog prompt text are lengths only; a typed
-  value quoted in a failure message is scrubbed. **Not covered:** the first 200 characters of `eval` code are
-  stored (a literal secret in it is stored too), and page text quoted in error messages and URL paths that carry
-  a token are kept (capped) — do not `eval` literal secrets if the state directory is shared. MCP history is not
+  and `compare` now show their navigations in history. **Privacy (one fail-closed rule for MCP, SDK and `history.jsonl`):** in any URL-looking token everything from the
+  first `?`, `#` or `;` is replaced by `[redacted]` (scheme-less hosts, IPv6 and userinfo included; the text after a
+  cut is dropped up to the next URL or path), absolute local paths and `file://` URLs are reduced to a basename, and
+  the CLI stores `upload`/`download`/`screenshot` path arguments as a basename; typed text, `select` values,
+  clipboard text and dialog prompt text are lengths only; a typed value quoted in a failure message is scrubbed.
+  **Stored, capped, not masked:** the first 200 characters of `eval` code, selectors, `expect.text` / `wait_for` text,
+  page text quoted in errors, URL *paths* and the CLI line's `cwd`. **Not recorded:** eval results, CLI flags,
+  `handle_dialog`. Do not `eval` literal secrets if the state directory is shared. MCP history is not
   persisted across server restarts; the SDK has no history API (read `runtime.getActionHistoryReport`). Details:
   `.ai/loop/field-report-2/evidence/FR2-11/changelog-fragment.md`.
 

@@ -174,14 +174,32 @@ and `actions`: the runtime actions that command performed (`navigate`, `eval`, `
 `sutradhar history --json | tail -n 20` (or `jq`) is the way to see only the last few. Tab ids are not stable across CLI
 processes (each command is a new process), which is why every action row also carries the page URL.
 
-**What is never stored.** URLs keep their origin and path only: the query string and the fragment are dropped (they
-carry tokens). Typed text (`type`), `select` values, clipboard text (`setclipboard`) and dialog prompt text are
-recorded as a length only (`<8 chars>`). `eval` code is stored as a whitespace-collapsed 200-character preview and its
-result is never stored. Flags are not recorded. **Not covered:** the first 200 characters of `eval` code are stored, so a
-literal secret written in it (`localStorage.setItem('jwt', '...')`) is stored too; `clicktext` text and page text quoted
-in error messages are stored (capped); URL *paths* that carry a token are kept. Do not `eval` literal secrets if the
-directory is shared. The file is created with mode 0600 (POSIX); it sits next to `state.json`, which already grants full
-control of the browser.
+**The redaction rule (one function, fail-closed).** Every stored string (args, error, verification reason and evidence,
+selector, target, eval preview) goes through the same function, which is also what MCP and the SDK use:
+
+1. The text is split on whitespace. In every token that carries a **URL marker** (`scheme://`, a leading `//`,
+   `host[:port]/` or `host?x` with or without a scheme, IPv4 / IPv6 / `localhost`, `user:pass@`, `data:`) everything from
+   the first `?`, `#` or `;` to the end of the token is replaced by `[redacted]` (so `?q=(a)&token=X`, `?ids[]=1`,
+   `?q=it's`, `#frag`, `;jsessionid=X` all go), and userinfo (`user:pass@`) is removed. After a cut, the following
+   tokens are dropped until the next URL or path (a URL typed with literal spaces cannot leak its tail). `data:` bodies
+   become `data:…`; `blob:` keeps its origin. The display origin and path stay visible (`http://127.0.0.1:5000/p`).
+2. A token that looks like an **absolute local path** (`C:\Users\…`, `C:/…`, `\\server\share\…`, `/home/x/…`, `~/x/…`)
+   or a `file://` URL is reduced to its **basename**, also when the path contains spaces. This includes site-relative
+   paths that look absolute in free text (`/api/users` becomes `users`): over-redaction is preferred to a leak. The
+   `upload`, `download`, `screenshot`, `audit` and `compare` path arguments are stored as a basename even when relative.
+3. `type` / `select` values, `setclipboard` text and `dialog` prompt text are recorded as a length only (`<8 chars>`);
+   eval code as a whitespace-collapsed 200-character preview (same rule); eval **results**, cookie / storage values and
+   CLI flags are not recorded (so a `--expect-text` or `--text` value is not in `args`).
+
+**What IS stored (not masked).** The first 200 characters of `eval` code (a literal secret written in it, e.g.
+`localStorage.setItem('jwt', '...')`, is stored; the rule only removes URL parts and paths), `clicktext` text, selectors,
+`expect.text` / `wait_for` text as they appear in the action `selector` and in `verification.evidence` (`expected` /
+`observed` / `detail`), page text quoted in error messages (all capped at 200 / 300 characters), URL *paths* (a token in a
+`/reset/<token>` path is kept) and `cwd` (the directory the command ran in, the one full local path in a line). Not
+recorded at all: `handle_dialog` (the MCP dialog tool; the CLI `dialog` verb is recorded, prompt text as a length), tab
+lifecycle and state setters. Lines written by an earlier build are not rewritten (`history` re-applies the rule when it
+**prints**, `history --json` stays byte-identical to the file). Do not `eval` literal secrets if the directory is shared.
+The file is created with mode 0600 (POSIX); it sits next to `state.json`, which already grants full control of the browser.
 
 **Size and robustness.** A line is written with a single append, so parallel CLI processes cannot interleave bytes inside
 a line. At 5 MiB the file is moved to `history.1.jsonl` (one generation, about 10 MiB per directory; `history` shows only

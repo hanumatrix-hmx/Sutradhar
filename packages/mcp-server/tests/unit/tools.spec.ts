@@ -1630,7 +1630,9 @@ describe('FR2-11 browser.get_action_history', () => {
     expect(d).toContain('evicted');
     expect(d).toContain('eval');
     expect(d).toContain('never stored');
-    expect(d).toContain('query/fragment dropped');
+    expect(d).toContain('origin + path only');
+    expect(d).toContain('[redacted]'); // fix-1: the rule is stated exactly, not as "query/fragment dropped"
+    expect(d).toContain('basename');
   });
 
   it('M6: end to end against a real (pageless) runtime session, a navigate is visible with its redacted target and nothing leaks', async () => {
