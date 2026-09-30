@@ -88,3 +88,15 @@ describe('@sutradhar/cli --help text (FR2-08 waiting)', () => {
     expect(flagText).toContain('waitfor');
   });
 });
+
+describe('@sutradhar/cli --help text (FR2-11 history)', () => {
+  it('documents the history verb, its --json form, the file, rotation and what is never stored', () => {
+    expect(helpText).toContain('history [--json]');
+    expect(helpText).toContain('history.jsonl');
+    expect(helpText).toContain('history.1.jsonl');
+    expect(helpText).toContain('lengths only');
+    expect(helpText).toContain('query/fragment');
+    expect(helpText).toContain('Never starts a browser');
+    expect(helpText).toContain('"history" prints the raw JSONL lines');
+  });
+});

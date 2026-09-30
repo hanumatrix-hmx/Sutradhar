@@ -18,11 +18,19 @@ import {
 } from '@sutradhar/capability-runtime';
 import { cliDownloadGrant, assertDownloadDirUsable } from './download-roots.js';
 import { StructuredLogger } from '@sutradhar/observability';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { formatAuditText, auditNotes, auditExitCode } from './audit-output.js';
 import { dialogOutputSink, dialogBlockedJsonDoc, printDialogBlockedJsonOnce, writeJsonStdoutOnce } from './dialog-json-routing.js';
-import { readState, writeState, clearState, STATE_DIR, type CliState } from './state.js';
+import { readState, writeState, clearState, STATE_DIR, HISTORY_FILE_PATH, type CliState } from './state.js';
+import {
+  redactCliArgs,
+  secretsOfCliArgs,
+  buildHistoryLine,
+  appendHistoryLine,
+  readHistoryFile,
+  formatHistoryHuman,
+} from './history-file.js';
 import { spawnDetachedChrome, killChromeTree } from './spawn-chrome.js';
 import { createSessionId } from '@sutradhar/contracts';
 import { parseArgs, dialogFlagError, expectFlagError, waitForConditionFromArgs } from './parse-args.js';
@@ -66,7 +74,14 @@ import {
   policyFromState,
   isRivalWardenAlive,
 } from './warden-control.js';
-import { DialogWarden, connectAtBrowserLevel, listTabsAtBrowserLevel, closeTargetAtBrowserLevel, normalizePageCondition } from '@sutradhar/browser';
+import {
+  DialogWarden,
+  connectAtBrowserLevel,
+  listTabsAtBrowserLevel,
+  closeTargetAtBrowserLevel,
+  normalizePageCondition,
+  type SessionActionHistoryEntry,
+} from '@sutradhar/browser';
 
 const logger = new StructuredLogger({ minLevel: 'error' }); // CLI output IS the log; keep engine logs quiet
 const {
@@ -104,6 +119,23 @@ const {
 // FR2-04: this command's own start time, used to filter `reportDialogs`' `dialogHandled:` lines
 // to ones that happened DURING this command (not stale history from a much earlier command).
 const COMMAND_START_ISO = new Date().toISOString();
+// FR2-11: monotonic start for the history line's durationMs (never mixed with the wall-clock ts above).
+const COMMAND_START_MONO = performance.now();
+
+/** FR2-11: the verbs that append a line to history.jsonl: every command that runs against (or manages) the
+ *  directory's browser session, reads included. NOT: doctor, profile, history itself, help and usage errors. */
+const HISTORY_VERBS = new Set([
+  'nav', 'snap', 'axsnap', 'text', 'click', 'clicktext', 'clickrole', 'type', 'press', 'screenshot', 'audit', 'compare',
+  'select', 'wait', 'waitfor', 'eval', 'hover', 'scroll', 'upload', 'drag', 'clickpoint', 'dragpoints', 'setclipboard',
+  'getclipboard', 'grant', 'tabs', 'newtab', 'focustab', 'closetab', 'download', 'dialog', 'close',
+]);
+/** Verbs that read state.json directly (no runtime session in this process) but still act on the session. */
+const HISTORY_STATE_BOUND_VERBS = new Set(['dialog', 'tabs', 'closetab']);
+let historyRecorded = false;
+/** Set by cmdClose (state.json is gone by the time the line is written). */
+let closedSessionId: string | undefined;
+/** The message main() failed with, if it did. */
+let commandErrorMessage: string | undefined;
 
 // Tracked so main()'s cleanup can disconnect the CDP client connection (NOT close the browser)
 // before exiting — severing it lets Node's event loop drain and exit naturally, which flushes
@@ -1480,6 +1512,7 @@ async function cmdClose() {
     console.log('No active session.');
     return;
   }
+  closedSessionId = state.sessionId; // FR2-11: state.json is gone by the time the history line is written
   // FR2-04: run the gate in 'close' mode BEFORE either attach below — a dialog left open would
   // otherwise make the profile-save attach (or the no-chromePid attach+shutdown) hang for up to
   // 180s (spec §2.10/N11). No policy resolution needed here — 'close' mode never applies accept/
@@ -1566,6 +1599,88 @@ async function cmdClose() {
   }
   await clearState();
   console.log('Session closed.');
+}
+
+/**
+ * FR2-11: appends this command's ONE line to history.jsonl (next to state.json). Called once per process, from
+ * main()'s finally (exit code final by then) and from the watchdog. Never throws; a write failure is one stderr
+ * warning and never changes the command's stdout or exit code. Commands that never had a session (a Chrome spawn
+ * failure exits through printErrorAndExit before this runs) append nothing: there is nothing to attribute.
+ */
+async function recordCliCommand(exitCode: number, error: string | undefined): Promise<void> {
+  if (historyRecorded) return;
+  historyRecorded = true;
+  try {
+    if (!HISTORY_VERBS.has(verb ?? '')) return;
+    let sessionId = activeSessionId ?? closedSessionId;
+    if (!sessionId && HISTORY_STATE_BOUND_VERBS.has(verb!)) sessionId = (await readState())?.sessionId;
+    if (!sessionId) return;
+    let actions: SessionActionHistoryEntry[] = [];
+    let actionsEvicted = 0;
+    let actionsUnavailable: string | undefined;
+    if (activeRuntime && activeSessionId) {
+      try {
+        const r = activeRuntime.getActionHistoryReport(activeSessionId, { scope: 'session' });
+        actions = [...(r.entries as readonly SessionActionHistoryEntry[])];
+        actionsEvicted = r.evicted;
+      } catch (e) {
+        actionsUnavailable = (e as Error).message;
+      }
+    }
+    const line = buildHistoryLine({
+      ts: COMMAND_START_ISO,
+      sessionId,
+      cwd: path.resolve(process.cwd()),
+      verb: verb!,
+      args: redactCliArgs(verb!, cleanArgs),
+      exitCode,
+      durationMs: Math.round(performance.now() - COMMAND_START_MONO),
+      error,
+      actions,
+      actionsEvicted,
+      actionsUnavailable,
+      secrets: secretsOfCliArgs(verb!, cleanArgs),
+    });
+    const res = await appendHistoryLine(HISTORY_FILE_PATH, line);
+    if (!res.ok) {
+      console.error(`Warning: could not append to ${HISTORY_FILE_PATH} (${res.code}); the command itself is unaffected.`);
+    }
+  } catch (e) {
+    console.error(`Warning: could not record this command in the history (${(e as Error).message}); the command itself is unaffected.`);
+  }
+}
+
+/**
+ * FR2-11 `sutradhar history [--json]`: every command run against this directory's sessions, read from
+ * history.jsonl. NEVER attaches to or spawns Chrome and never writes state.json (it only reads it, to mark the
+ * current session). `--json` prints the verbatim raw text of each valid line (JSONL) and nothing else.
+ */
+async function cmdHistory() {
+  let missing = false;
+  try {
+    await stat(HISTORY_FILE_PATH);
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code === 'ENOENT') missing = true;
+  }
+  if (missing) {
+    if (!jsonMode) console.log(`No CLI history yet for this directory (${HISTORY_FILE_PATH} does not exist).`);
+    return;
+  }
+  let result: Awaited<ReturnType<typeof readHistoryFile>>;
+  try {
+    result = await readHistoryFile(HISTORY_FILE_PATH);
+  } catch (e) {
+    console.error(`Error: could not read ${HISTORY_FILE_PATH} (${(e as NodeJS.ErrnoException).code ?? (e as Error).message}).`);
+    process.exitCode = 1;
+    return;
+  }
+  if (result.skipped > 0) console.error(`Note: skipped ${result.skipped} unreadable line(s) in ${HISTORY_FILE_PATH}.`);
+  if (jsonMode) {
+    for (const l of result.lines) console.log(l.raw);
+    return;
+  }
+  const current = (await readState())?.sessionId;
+  console.log(formatHistoryHuman(result, { file: HISTORY_FILE_PATH, currentSessionId: current }));
 }
 
 async function main() {
@@ -1681,6 +1796,8 @@ async function main() {
       return cmdDownload(cleanArgs[0], cleanArgs[1]);
     case 'close':
       return cmdClose();
+    case 'history':
+      return cmdHistory();
     case 'profile':
       return cmdProfile(cleanArgs[0], cleanArgs[1], cleanArgs.slice(2));
     default:
@@ -1795,6 +1912,11 @@ Commands:
   dialog accept [text]         Accept the oldest open dialog (text = what to type into a prompt)
   dialog dismiss               Dismiss the oldest open dialog
   close                        Close the active session
+  history [--json]             Every command run against this directory's sessions, read from
+                                history.jsonl next to the session state (it persists after "close").
+                                --json prints the raw JSONL lines. Typed text, select values and
+                                clipboard text are recorded as lengths only, eval code as a 200-char
+                                preview, and URLs drop their query/fragment. Never starts a browser.
   doctor                       Environment diagnostics (Chrome detection, active session)
   profile create <name> [desc] Create a named, persistent profile (cookies/history/storage
                                 survive across separate launches)
@@ -1821,7 +1943,8 @@ Flags:
   --json                "snap" additionally prints structured per-element data as JSON;
                         "audit" prints the machine-readable JSON report (see "audit" above);
                         action verbs (click, type, press, nav, ...) print the full result JSON,
-                        including verification, instead of the one-line status
+                        including verification, instead of the one-line status;
+                        "history" prints the raw JSONL lines
   --expect-text <t>     After the action, require this RENDERED text on the page (exit 4 if absent): laid
                         out, visibility:visible, not under display:none / content-visibility:hidden / a
                         closed <details>, every enclosing iframe visible; opacity:0, aria-hidden and
@@ -1887,7 +2010,8 @@ substring and --enable-automation still being present in the launch command line
 unmasked.
 
 Session state persists across commands, scoped to this directory, in
-~/.sutradhar-cli/<hash-of-cwd>/state.json — run "close" when done. Override with
+~/.sutradhar-cli/<hash-of-cwd>/state.json — run "close" when done. The command history is
+history.jsonl in the same directory (rotated at 5 MiB to history.1.jsonl). Override with
 SUTRADHAR_CLI_STATE_DIR to share state across directories or use a custom path.
 
 Environment:
@@ -1917,12 +2041,18 @@ if (verb === '__dialog-warden') {
       `Error: "sutradhar ${verb ?? ''}" did not finish within ${Math.round(deadlineFor(verb, cleanArgs, process.env) / 1000)}s and was stopped. ` +
         'The browser session is still running. If the page is blocked by a dialog, run "sutradhar dialog".',
     );
-    process.exit(1);
+    // FR2-11 R6: a command stopped by the watchdog is exactly the one a history is for. Record it (bounded), then exit.
+    const bound = new Promise<void>((resolve) => setTimeout(resolve, 1500));
+    void Promise.race([
+      recordCliCommand(1, `did not finish within ${Math.round(deadlineFor(verb, cleanArgs, process.env) / 1000)}s and was stopped by the watchdog`),
+      bound,
+    ]).finally(() => process.exit(1));
   }, deadlineFor(verb, cleanArgs, process.env));
   watchdog.unref();
 
   main()
     .catch((err) => {
+      commandErrorMessage = (err as Error)?.message ?? String(err);
       if (err instanceof DialogBlockedError) {
         // GAP-261 (default-policy shape): the gate refuses to even start the command while a
         // dialog is open (or the report/default policy just leaves it reported). In `--json` mode
@@ -1951,6 +2081,9 @@ if (verb === '__dialog-warden') {
     })
     // eslint-disable-next-line @typescript-eslint/no-misused-promises -- Promise.finally awaits this teardown before the one-shot CLI exits.
     .finally(async () => {
+      // FR2-11: append this command's line to history.jsonl BEFORE anything can exit the process. Awaited here,
+      // so it finishes before the force-exit timer below is armed. Never throws.
+      await recordCliCommand(finalExitCode ?? Number(process.exitCode ?? 0), commandErrorMessage);
       // Every command here is one-shot — nothing legitimately needs to keep the process running
       // after it prints its result. The open CDP WebSocket connection to Chrome (left
       // intentionally alive so the browser survives for the NEXT CLI invocation to attach to)
