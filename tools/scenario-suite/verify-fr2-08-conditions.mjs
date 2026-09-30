@@ -638,6 +638,17 @@ async function runMcpCases(surface, serverPath, ctx) {
         await tool('browser.navigate', { url });
         const p = await pageForUrl(url);
         await settleMx(p, framesExpected, allowHung);
+        if (allowHung) {
+          // PRECONDITION of the hung-frame cases: a frame really IS hung, by the OBSERVER's own evidence (its evaluate never answers).
+          // Found by the fresh re-run: as the FIRST such case in a process the out-of-process frame had not started looping yet, so
+          // observer and product both (correctly) got an answer from it and the case's premise did not hold. Event-based wait, bounded.
+          let hungNow = 0;
+          for (let n = 0; n < 8 && hungNow === 0; n++) {
+            hungNow = (await oracleTruth(p, tok, { frameBudgetMs: 1500 })).hung;
+            if (hungNow === 0) await delay(500);
+          }
+          if (hungNow === 0) throw new Error('precondition not established: no frame is hung after 8 observer checks');
+        }
         const t1 = await truthOf(p, tok, expectText, mode, allowHung);
         const rt = (await tool('browser.wait_for', { text: expectText, timeoutMs: 0 })).json;
         const rg = (await tool('browser.wait_for', { textGone: expectText, timeoutMs: 0 })).json;
