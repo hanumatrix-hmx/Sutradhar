@@ -29,7 +29,9 @@ const EVIDENCE_DIR =
 const args = process.argv.slice(2);
 const ONLY = (args.find((a) => a.startsWith('--only=')) ?? '').slice(7).split(',').filter(Boolean);
 const SURFACES = (args.find((a) => a.startsWith('--surface=')) ?? '--surface=mcp,cli,sdk,bundle').slice(10).split(',');
-const wanted = (id) => ONLY.length === 0 || ONLY.some((p) => id.startsWith(p));
+// fix-2: --skip=PM,PROP leaves those cases out; --surface also takes bundle-mcp / bundle-cli (the full run is over 20 minutes in ONE process, so the driver splits it)
+const SKIP = (args.find((a) => a.startsWith('--skip=')) ?? '').slice(7).split(',').filter(Boolean);
+const wanted = (id) => (ONLY.length === 0 || ONLY.some((p) => id.startsWith(p))) && !SKIP.some((p) => id === p);
 
 const require_ = createRequire(path.join(repoRoot, 'packages', 'browser', 'package.json'));
 const puppeteer = require_('puppeteer-core');
@@ -1272,10 +1274,8 @@ async function main() {
     if (SURFACES.includes('mcp')) await runMcpCases('mcp', path.join(repoRoot, 'packages', 'mcp-server', 'dist', 'cli.js'), ctx);
     if (SURFACES.includes('cli')) await runCliCases('cli', path.join(repoRoot, 'packages', 'cli', 'dist', 'cli.js'), ctx);
     if (SURFACES.includes('sdk')) await runSdkCases(ctx);
-    if (SURFACES.includes('bundle')) {
-      await runMcpCases('bundle', path.join(repoRoot, 'packages', 'sutradhar', 'dist', 'mcp-cli.js'), ctx);
-      await runCliCases('bundle', path.join(repoRoot, 'packages', 'sutradhar', 'dist', 'cli-bin.js'), ctx);
-    }
+    if (SURFACES.includes('bundle') || SURFACES.includes('bundle-mcp')) await runMcpCases('bundle', path.join(repoRoot, 'packages', 'sutradhar', 'dist', 'mcp-cli.js'), ctx);
+    if (SURFACES.includes('bundle') || SURFACES.includes('bundle-cli')) await runCliCases('bundle', path.join(repoRoot, 'packages', 'sutradhar', 'dist', 'cli-bin.js'), ctx);
   } finally {
     await server.close().catch(() => {});
     await delay(1500);

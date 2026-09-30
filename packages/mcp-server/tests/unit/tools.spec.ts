@@ -1632,7 +1632,12 @@ describe('FR2-11 browser.get_action_history', () => {
     expect(d).toContain('never stored');
     expect(d).toContain('origin + path only');
     expect(d).toContain('[redacted]'); // fix-1: the rule is stated exactly, not as "query/fragment dropped"
-    expect(d).toContain('basename');
+    // fix-2: the character rule is stated verbatim, and the old over-claims are gone
+    expect(d).toContain('redacted by CHARACTERS, not by recognising URLs');
+    expect(d).toContain('first ? # or ; is replaced by [redacted]');
+    expect(d).toContain('= or & is replaced whole');
+    expect(d).toContain('last segment');
+    expect(d).not.toMatch(/URL queries, fragments, path parameters and userinfo are cut/);
   });
 
   it('M6: end to end against a real (pageless) runtime session, a navigate is visible with its redacted target and nothing leaks', async () => {

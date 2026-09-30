@@ -164,7 +164,7 @@ History: 3 command(s) in C:\Users\me\.sutradhar-cli\1a2b3c4d5e6f7a8b\history.jso
     - navigate ok verified tab_sess_1758800000000_1_1 http://127.0.0.1:53211/fr2-11-history.html
 2026-09-25 14:02:15Z  exit 0     120ms  snap
 2026-09-25 14:02:17Z  exit 1   15840ms  click #missing
-    - click FAILED action-failed tab_sess_1758800000000_1_1 #missing: No element found for selector: #missing
+    - click FAILED action-failed tab_sess_1758800000000_1_1 #missing: No element found for selector: [redacted]
 ```
 
 Each line has `v`, `type`, `ts`, `sessionId`, `cwd`, `verb`, `args`, `exitCode`, `durationMs`, an optional `error`,
@@ -174,32 +174,42 @@ and `actions`: the runtime actions that command performed (`navigate`, `eval`, `
 `sutradhar history --json | tail -n 20` (or `jq`) is the way to see only the last few. Tab ids are not stable across CLI
 processes (each command is a new process), which is why every action row also carries the page URL.
 
-**The redaction rule (one function, fail-closed).** Every stored string (args, error, verification reason and evidence,
-selector, target, eval preview) goes through the same function, which is also what MCP and the SDK use:
+**The redaction rule (the character rule: one function, no URL recognition).** Every stored free-text string (args, error,
+verification reason and evidence detail, eval preview) and everything `sutradhar history` prints goes through the same
+function, which is also what MCP and the SDK use. It looks at **characters only**, never at what a token "is", so the
+scheme, the host shape, the case, unicode and percent-encoding do not matter:
 
-1. The text is split on whitespace. In every token that carries a **URL marker** (`scheme://`, a leading `//`,
-   `host[:port]/` or `host?x` with or without a scheme, IPv4 / IPv6 / `localhost`, `user:pass@`, `data:`, or simply a
-   `?key=` query with no URL around it such as `/p?token=X` or `intranet/app?t=X`) everything from
-   the first `?`, `#` or `;` to the end of the token is replaced by `[redacted]` (so `?q=(a)&token=X`, `?ids[]=1`,
-   `?q=it's`, `#frag`, `;jsessionid=X` all go), and userinfo (`user:pass@`) is removed. After a cut, the following
-   tokens are dropped until the next URL or path (a URL typed with literal spaces cannot leak its tail). `data:` bodies
-   become `data:…`; `blob:` keeps its origin; a fully percent-encoded `http%3A%2F%2F…` and a form-encoded body (two or more
-   `key=value` pairs joined by `&`, such as `a=1&token=X`) are replaced whole. The display origin and path stay visible
-   (`http://127.0.0.1:5000/p`).
-2. A token that looks like an **absolute local path** (`C:\Users\…`, `C:/…`, `\\server\share\…`, `/home/x/…`, `~/x/…`)
-   or a `file://` URL is reduced to its **basename**, also when the path contains spaces. This includes site-relative
-   paths that look absolute in free text (`/api/users` becomes `users`): over-redaction is preferred to a leak. The
-   `upload`, `screenshot` and `compare` file arguments are stored as a basename even when relative, and the `download` and
-   `audit` directory arguments as `<dir>` (not even a basename).
-3. `type` / `select` values, `setclipboard` text and `dialog` prompt text are recorded as a length only (`<8 chars>`);
-   eval code as a whitespace-collapsed 200-character preview (same rule); eval **results**, cookie / storage values and
-   CLI flags are not recorded (so a `--expect-text` or `--text` value is not in `args`).
+1. Encoded forms of the rule's characters are decoded first: `%3F`, `%23`, `%3B`, `%3D`, `%26`, `%40`, `%2F`, `%5C`, `%3A`
+   (also double-encoded, `%253F`), JSON `?` / `\x3f` escapes, and fullwidth forms (`？` `＃` `；`).
+2. The text is split on **any Unicode whitespace** (space, tab, newline, NBSP, zero-width, ideographic).
+3. In each token everything from the **first `?`, `#` or `;`** is replaced by `[redacted]`, and **the rest of the text after
+   that cut is dropped** (a URL with a space in its query cannot leak its tail). A bare `#id` with nothing in front of it does
+   not drop the text that follows it.
+4. A token that **still contains `=` or `&`** is replaced whole by `[redacted]` (a `&` also drops the rest of the text).
+5. **`userinfo@`** is stripped from any token that has an `@` before its first `/` (or no `/`).
+6. A token with a **`/` or `\` followed by more text** is reduced to its **last segment**, whatever the drive letter, UNC form
+   or slash direction; a last segment with no `.` (a directory or user name) is stored as `<dir>`. A `scheme://` URL is the
+   one exception and keeps its origin and path (`http://127.0.0.1:5000/p`); `file:` becomes `file://…/<basename>`, `blob:`
+   keeps its origin, `data:` / `javascript:` bodies become `data:…` / `javascript:…`.
+7. Input beyond 8,000 characters is dropped, and so is the partial token at the cut.
+
+**Over-redaction is deliberate.** Ordinary prose that happens to contain `?`, `#`, `;`, `=` or `&` is redacted too (an error
+such as `Did you mean x?` is stored as `Did you mean x[redacted]`), and a site-relative path such as `/api/users` becomes
+`<dir>`. This only affects what is stored and printed in the history, never the live result of a command. The selector
+arguments (`click`, `hover`, `type`, `select`, `press`, `drag`, `upload`, `download`) and the `selector` field of an entry use
+the **selector variant of the same function**: `#id`, `button#save` and `[name=q]` stay readable, while a `#` that follows
+something URL-shaped, a `?`, a `;` and an `&` are cut as above. The `upload`, `screenshot` and `compare` file arguments are
+stored as a basename and the `download` and `audit` directory arguments as `<dir>`. `type` / `select` values,
+`setclipboard` text and `dialog` prompt text are recorded as a length only (`<8 chars>`); eval code as a whitespace-collapsed
+200-character preview that goes through the rule (so `a = 1; b` is stored as `a [redacted] 1[redacted]`); eval **results**,
+cookie / storage values and CLI flags are not recorded. **`cwd`** is stored as `~` or `~/sub/dir` when it is under the home
+directory, otherwise as `<dir>`, so the home directory's own name never appears in a line.
 
 **What IS stored (not masked).** The first 200 characters of `eval` code (a literal secret written in it, e.g.
-`localStorage.setItem('jwt', '...')`, is stored; the rule only removes URL parts and paths), `clicktext` text, selectors,
+`localStorage.setItem('jwt', '...')`, is stored; the rule only cuts at the characters above), `clicktext` text, selectors,
 `expect.text` / `wait_for` text as they appear in the action `selector` and in `verification.evidence` (`expected` /
 `observed` / `detail`), page text quoted in error messages (all capped at 200 / 300 characters), URL *paths* (a token in a
-`/reset/<token>` path is kept) and `cwd` (the directory the command ran in, the one full local path in a line). Not
+`/reset/<token>` path of a `scheme://` URL is kept). Not
 recorded at all: `handle_dialog` (the MCP dialog tool; the CLI `dialog` verb is recorded, prompt text as a length), tab
 lifecycle and state setters. Lines written by an earlier build are not rewritten (`history` re-applies the rule when it
 **prints**, `history --json` stays byte-identical to the file). Do not `eval` literal secrets if the directory is shared.

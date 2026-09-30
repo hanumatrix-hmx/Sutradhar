@@ -11,6 +11,7 @@ import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { FIX1_MUTANTS } from './mutate-fr2-11-fix1-table.mjs';
+import { FIX2_MUTANTS } from './mutate-fr2-11-fix2-table.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.join(here, '..', '..');
@@ -55,6 +56,8 @@ const MUTANTS = [
 ];
 
 MUTANTS.push(...FIX1_MUTANTS); // fix-1 (audit-1 REOPEN): mutants of the new redaction, ids MF*
+// fix-2: --table=fix2 runs ONLY the mutants of the character rule (ids MX*); the older tables target code that no longer exists
+if (args.includes('--table=fix2')) MUTANTS.splice(0, MUTANTS.length, ...FIX2_MUTANTS);
 
 const sha = (b) => crypto.createHash('sha256').update(b).digest('hex');
 const run = (cmd, argv, opts = {}) => spawnSync(cmd, argv, { encoding: 'utf-8', maxBuffer: 64 * 1024 * 1024, shell: process.platform === 'win32' && cmd.endsWith('.CMD'), ...opts });
@@ -128,7 +131,7 @@ for (const m of MUTANTS) {
   console.log(`[${m.id}] ${entry.caught ? 'CAUGHT' : 'NOT CAUGHT'} unit=${entry.unit ? entry.unit.caught : '-'} live=${entry.live ? entry.live.caught : '-'} restored=${entry.restoredIdentical}  ${m.what}`);
 }
 fs.mkdirSync(EVIDENCE_DIR, { recursive: true });
-const out = ONLY.length ? `mutants-${ONLY.join('_')}.json` : 'mutants.json';
+const out = ONLY.length ? `mutants-${ONLY.join('_')}.json` : args.includes('--table=fix2') ? 'mutants-fix2.json' : 'mutants.json';
 fs.writeFileSync(path.join(EVIDENCE_DIR, out), JSON.stringify({ ranAt: new Date().toISOString(), total: results.length, caught: results.filter((r) => r.caught).length, allRestoredIdentical: results.every((r) => r.restoredIdentical), results }, null, 2));
 console.log(`\n[mutants] ${results.filter((r) => r.caught).length}/${results.length} caught; all restored byte-identically: ${results.every((r) => r.restoredIdentical)}`);
 process.exitCode = results.every((r) => r.caught && r.restoredIdentical) ? 0 : 1;

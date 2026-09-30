@@ -1916,9 +1916,13 @@ Commands:
                                 history.jsonl next to the session state (it persists after "close").
                                 --json prints the raw JSONL lines. Typed text, select values and
                                 clipboard text are recorded as lengths only, eval code as a 200-char
-                                preview; in any URL-looking token everything from the first ? # or ;
-                                is replaced by [redacted] (query/fragment, userinfo, scheme-less hosts
-                                included) and local file paths are stored as a basename. Never starts a browser.
+                                preview. Stored text is redacted by CHARACTERS, not by recognising URLs:
+                                split on any whitespace; in each token everything from the first ? # or ;
+                                is replaced by [redacted] and the rest of the text after it is dropped;
+                                a token still holding = or & is replaced whole; userinfo@ is stripped;
+                                a token with a / or \ and more text is reduced to its last segment;
+                                %3F %23 %3B and %253F are decoded first. cwd is stored as ~/dir or <dir>.
+                                Ordinary text with those characters is redacted too. Never starts a browser.
   doctor                       Environment diagnostics (Chrome detection, active session)
   profile create <name> [desc] Create a named, persistent profile (cookies/history/storage
                                 survive across separate launches)

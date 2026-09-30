@@ -1867,7 +1867,11 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         'when it produced one. Includes navigate and eval (eval is recorded as a <=200-char code preview; its ' +
         'result is never stored), go_back/go_forward/reload, click_at_point/drag_at_points, set_clipboard ' +
         '(length only), upload_file_via_trigger and wait_for, as well as every element action; typed text and ' +
-        'clipboard text are never stored; URL queries, fragments, path parameters and userinfo are cut to [redacted] and local file paths are reduced to a basename. scope "tab" (default): one tab — tabId, or the active tab. scope ' +
+        'clipboard text are never stored. Stored text is redacted by CHARACTERS, not by recognising URLs: it is split on any ' +
+        'whitespace; in each token everything from the first ? # or ; is replaced by [redacted] and the rest of the text after it ' +
+        'is dropped; a token that still contains = or & is replaced whole; userinfo@ is stripped; a token with a / or \\ followed ' +
+        'by more text is reduced to its last segment; %3F %23 %3B and %253F are decoded first. Ordinary text that contains ' +
+        'those characters is redacted too (selectors keep #id and [a=b]); expect.text / wait_for text is stored. scope "tab" (default): one tab — tabId, or the active tab. scope ' +
         '"session": every tab in this session merged in the order the actions were recorded (each entry has ' +
         'tabId and seq), including tabs that have since closed. `evicted` counts older entries dropped once the ' +
         '200-entry cap was hit (0 = nothing lost). The history lives in this server process only.',

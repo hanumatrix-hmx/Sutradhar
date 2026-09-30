@@ -95,7 +95,12 @@ describe('@sutradhar/cli --help text (FR2-11 history)', () => {
     expect(helpText).toContain('history.jsonl');
     expect(helpText).toContain('history.1.jsonl');
     expect(helpText).toContain('lengths only');
-    expect(helpText).toContain('query/fragment');
+    expect(helpText).toContain('redacted by CHARACTERS, not by recognising URLs');
+    expect(helpText).toContain('first ? # or ;');
+    expect(helpText).toContain('a token still holding = or & is replaced whole');
+    expect(helpText).toContain('reduced to its last segment');
+    expect(helpText).toContain('cwd is stored as ~/dir or <dir>');
+    expect(helpText).not.toContain('URL-looking token');
     expect(helpText).toContain('Never starts a browser');
     expect(helpText).toContain('"history" prints the raw JSONL lines');
   });
