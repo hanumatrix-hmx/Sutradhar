@@ -8,7 +8,8 @@ import { EventBus } from '@sutradhar/events';
 import { StructuredLogger } from '@sutradhar/observability';
 import { Browser as PuppeteerBrowser, Page, Target } from 'puppeteer-core';
 import { IBrowserInstance } from '../launcher/browser-launcher.js';
-import { BrowserTab, IBrowserTab, DEFAULT_DIALOG_POLICY, type DialogPolicy } from './browser-tab.js';
+import { BrowserTab, IBrowserTab, DEFAULT_DIALOG_POLICY, MAX_ACTION_HISTORY, type DialogPolicy } from './browser-tab.js';
+import type { SessionActionHistoryEntry } from './action-history.js';
 
 /** Grace period given to an explicit, in-flight `createTab()`/`adoptPopupPage()` call to finish
  *  registering its own new tab before {@link BrowserSession.adoptTargetIfNew} decides a
@@ -43,6 +44,11 @@ export interface IBrowserSession {
    *  the session's dialog-policy default AND applies it immediately to every current tab
    *  (future tabs pick it up via the constructor param this session was created with). */
   setDialogPolicy?(policy: DialogPolicy): void;
+  /** FR2-11. Optional so existing `IBrowserSession` literal mocks keep compiling. Every tab's actions merged in
+   *  recording order (`seq`), INCLUDING tabs that have since closed; a bounded ring of {@link MAX_ACTION_HISTORY}. */
+  getSessionActionHistory?(): readonly SessionActionHistoryEntry[];
+  /** FR2-11. Exact count of older entries the session ring has dropped (never reset while the session lives). */
+  getSessionActionHistoryEvictedCount?(): number;
 }
 
 export class BrowserSession implements IBrowserSession {
@@ -57,6 +63,9 @@ export class BrowserSession implements IBrowserSession {
   private readonly logger: StructuredLogger;
   private tabCounter = 0;
   private dialogPolicy: DialogPolicy;
+  private readonly sessionActionHistory: SessionActionHistoryEntry[] = [];
+  private sessionActionSeq = 0;
+  private sessionActionEvicted = 0;
 
   public constructor(
     id: SessionId,
@@ -160,6 +169,7 @@ export class BrowserSession implements IBrowserSession {
     }
 
     const tab = new BrowserTab(tabId, url, 'New Tab', isFirstTab, puppeteerPage, this.id, this.eventBus, this.dialogPolicy);
+    this.wireActionHistory(tab);
     this.tabsMap.set(tabId, tab);
     if (puppeteerPage) {
       this.watchForPopups(puppeteerPage);
@@ -238,6 +248,7 @@ export class BrowserSession implements IBrowserSession {
     this.tabCounter++;
     const tabId = createTabId(`tab_${this.id}_${this.tabCounter}`);
     const tab = new BrowserTab(tabId, page.url() || 'about:blank', 'New Tab', false, page, this.id, this.eventBus, this.dialogPolicy);
+    this.wireActionHistory(tab);
     this.tabsMap.set(tabId, tab);
     this.watchForPopups(page); // a popup can itself open further popups
     this.watchForClose(tabId, page);
@@ -284,6 +295,7 @@ export class BrowserSession implements IBrowserSession {
       this.eventBus,
       this.dialogPolicy,
     );
+    this.wireActionHistory(tab);
     this.tabsMap.set(tabId, tab);
     if (makeActive || isFirstTab) {
       this.currentActiveTabId = tabId;
@@ -300,6 +312,30 @@ export class BrowserSession implements IBrowserSession {
 
   public getTab(tabId: TabId): IBrowserTab | undefined {
     return this.tabsMap.get(tabId);
+  }
+
+  /**
+   * FR2-11 D1: the session keeps its own ring, fed by every tab it constructs, so a tab that closes
+   * itself (an OAuth popup) does not take its history with it. Order is `seq` (recording order), NOT
+   * timestamp: timestamps are completion-time with ms precision and can tie across tabs.
+   */
+  private wireActionHistory(tab: BrowserTab): void {
+    const tabId = tab.id;
+    tab.setActionRecordedListener((stored) => {
+      this.sessionActionHistory.push({ ...stored, tabId, seq: ++this.sessionActionSeq });
+      if (this.sessionActionHistory.length > MAX_ACTION_HISTORY) {
+        this.sessionActionHistory.shift();
+        this.sessionActionEvicted++;
+      }
+    });
+  }
+
+  public getSessionActionHistory(): readonly SessionActionHistoryEntry[] {
+    return this.sessionActionHistory;
+  }
+
+  public getSessionActionHistoryEvictedCount(): number {
+    return this.sessionActionEvicted;
   }
 
   public getTabs(): readonly IBrowserTab[] {

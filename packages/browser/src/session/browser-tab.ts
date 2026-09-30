@@ -19,6 +19,8 @@ import {
 } from '@sutradhar/contracts';
 import { EventBus } from '@sutradhar/events';
 import { Dialog, KeyInput, Page } from 'puppeteer-core';
+import type { VerificationResultDto } from '../actions/action-types.js';
+import { sanitizeHistoryEntry } from './action-history.js';
 
 /** How long a native dialog is left pending before it's auto-resolved so the page doesn't
  *  hang forever if nothing ever calls {@link BrowserTab.handleDialog}. Deliberately generous
@@ -57,7 +59,8 @@ const BEFOREUNLOAD_DIALOG_TIMEOUT_MS = 3000;
 const MAX_CONSOLE_LOGS = 200;
 const MAX_PAGE_ERRORS = 50;
 const MAX_NETWORK_LOG = 200;
-const MAX_ACTION_HISTORY = 200;
+/** Capacity of one tab's action history AND of a session's merged ring (FR2-11). */
+export const MAX_ACTION_HISTORY = 200;
 
 /** One entry in a tab's action history — the MCP-appropriate shape of "session replay data";
  *  a caller that wants a durable record can fetch this and persist it however it likes. */
@@ -68,6 +71,16 @@ export interface ActionHistoryEntry {
   readonly error?: string;
   readonly executionTimeMs: number;
   readonly timestamp: string;
+  /** FR2-11. What the action was aimed at when that isn't a selector: the redacted URL for navigate,
+   *  the eval code preview, "(x, y) left" for click_at_point, the key for press_key, ... Never a typed
+   *  value or clipboard content (see `describeActionTarget`). */
+  readonly target?: string;
+  /** FR2-11. The tab's URL right after the action, query and fragment dropped (FR2-09 D5). */
+  readonly url?: string;
+  /** FR2-11. The same VerificationResultDto the action's result carried (FR2-07's contract, including
+   *  `evidence`, and FR2-08's wait_for / settle results where present). URL-redacted and capped by
+   *  `sanitizeHistoryEntry`. Absent when the action produced none (eval, a rejected early return). */
+  readonly verification?: VerificationResultDto;
 }
 
 export interface ConsoleLogEntry {
@@ -195,6 +208,9 @@ export interface IBrowserTab {
   clearRoutes(): Promise<void>;
   getActionHistory(): readonly ActionHistoryEntry[];
   recordAction(entry: ActionHistoryEntry): void;
+  /** FR2-11. Optional so existing `IBrowserTab` literal mocks keep compiling. How many older entries this
+   *  tab's history has dropped once the {@link MAX_ACTION_HISTORY} cap was hit (exact, never reset). */
+  getActionHistoryEvictedCount?(): number;
   getLock(): TabLockInfo | undefined;
   acquireLock(owner: string, ttlMs: number): boolean;
   releaseLock(owner: string): boolean;
@@ -296,6 +312,8 @@ export class BrowserTab implements IBrowserTab {
   private routeRules: RouteRule[] = [];
   private interceptionEnabled = false;
   private readonly actionHistory: ActionHistoryEntry[] = [];
+  private actionHistoryEvicted = 0;
+  private actionRecordedListener?: (stored: ActionHistoryEntry) => void;
   private lock?: TabLockInfo;
 
   public constructor(
@@ -901,9 +919,29 @@ export class BrowserTab implements IBrowserTab {
     return this.actionHistory;
   }
 
+  /** FR2-11: the entry is sanitized (URLs lose query/fragment, strings capped) BEFORE it is stored or
+   *  handed to the session's listener, so nothing downstream ever sees the raw form. */
   public recordAction(entry: ActionHistoryEntry): void {
-    this.actionHistory.push(entry);
-    if (this.actionHistory.length > MAX_ACTION_HISTORY) this.actionHistory.shift();
+    const stored = sanitizeHistoryEntry(entry);
+    this.actionHistory.push(stored);
+    if (this.actionHistory.length > MAX_ACTION_HISTORY) {
+      this.actionHistory.shift();
+      this.actionHistoryEvicted++; // counted, never reset for this tab's lifetime
+    }
+    try {
+      this.actionRecordedListener?.(stored);
+    } catch {
+      /* a listener must never break an action */
+    }
+  }
+
+  public getActionHistoryEvictedCount(): number {
+    return this.actionHistoryEvicted;
+  }
+
+  /** Concrete-class only (not on IBrowserTab): {@link BrowserSession} wires its merged ring here. Last setter wins. */
+  public setActionRecordedListener(fn: ((stored: ActionHistoryEntry) => void) | undefined): void {
+    this.actionRecordedListener = fn;
   }
 
   // ─────────────────────────────────────────────────────────────────────────

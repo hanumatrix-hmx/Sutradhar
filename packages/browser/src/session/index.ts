@@ -4,6 +4,7 @@
  */
 
 export * from './browser-tab.js';
+export * from './action-history.js';
 export * from './browser-session.js';
 export * from './session-manager.js';
 export * from './dialog-cdp.js';
