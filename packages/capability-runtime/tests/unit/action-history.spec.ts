@@ -5,6 +5,7 @@
  * eviction, TypeError combinations). No browser: a BrowserSession with pageless or mock-page tabs.
  */
 import { SutradharRuntime, BrowserNotAvailableError } from '../../src/index.js';
+import { InvalidSelectorError } from '@sutradhar/browser';
 import { BrowserSession } from '@sutradhar/browser';
 import { createSessionId } from '@sutradhar/contracts';
 import type { Page } from 'puppeteer-core';
@@ -86,6 +87,20 @@ describe('FR2-11 runtime history recording', () => {
     expect(h[1]!.target).toHaveLength(200);
     expect(h[1]!.target!.endsWith('…')).toBe(true);
   });
+
+  it('F6 / N17 (fix-1 decision): a Playwright-syntax selector is rejected BEFORE any tab is resolved (FR2-06 R2) and so is NOT a history entry, exactly like the N4 policy rejections; an engine-level rejection of the same selector IS recorded', async () => {
+    const { runtime, session } = await setup();
+    await session.adoptExistingPage(mockPage());
+    const calls: (() => Promise<unknown>)[] = [
+      () => runtime.click('s1', 'text=Go'),
+      () => runtime.type('s1', 'text=Go', 'hunter2-F6'),
+      () => runtime.selectOption('s1', 'text=Go', 'v'),
+      () => runtime.downloadFile('s1', 'text=Go'),
+    ];
+    for (const call of calls) await expect(call()).rejects.toThrow(InvalidSelectorError);
+    expect(runtime.getActionHistory('s1')).toEqual([]);
+  });
+
 
   it('R4: getActionHistoryReport(tab) mirrors getActionHistory but as a copy, with tabId, evicted 0 and capacity 200', async () => {
     const { runtime, session } = await setup();

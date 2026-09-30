@@ -181,6 +181,31 @@ describe('FR2-11 describeActionTarget (H7) and scrubActionError', () => {
     );
     expect(scrubActionError({ actionType: 'click', selector: '#x' }, 'boom')).toBe('boom');
   });
+  it('F5 (audit-1 mutant A5): type_by_label gets the SAME did-not-land scrub as type: the typed value AND the field content are both gone', () => {
+    const p: ActionParams = { actionType: 'type_by_label', label: 'Password', value: 'hunter2-SECRET' };
+    // the field reversed what was typed, so its real content ("TERCES-2retnuh") does NOT contain the typed value
+    const e =
+      'Action failed: type did not land the expected value — expected "hunter2-SECRET", but the element\'s real content reads "TERCES-2retnuh" even after a native-setter fill';
+    const out = scrubActionError(p, e);
+    expect(out).not.toContain('hunter2');
+    expect(out).not.toContain('TERCES');
+    expect(out).not.toContain('2retnuh');
+    expect(out.startsWith('Action failed: type did not land the expected value')).toBe(true);
+    const v = {
+      verified: false,
+      urlChanged: false,
+      elementFound: false,
+      confidence: 0,
+      reason: e,
+      evidence: { tier: 'action-failed', checks: [{ check: 'c', outcome: 'fail', detail: e }] },
+    };
+    const sv = JSON.stringify(scrubVerification(p, v as never));
+    expect(sv).not.toContain('hunter2');
+    expect(sv).not.toContain('TERCES');
+    // the field content is also dropped from the stored entry when the engine records it (whole path, not just the helper)
+    const stored = JSON.stringify(sanitizeHistoryEntry({ ...base, actionType: 'type_by_label', success: false, error: scrubActionError(p, e) }));
+    expect(stored).not.toContain('TERCES');
+  });
   it('scrubVerification cleans the "Action failed: <error>" reason of a failed action and evidence strings, without mutating', () => {
     const p: ActionParams = { actionType: 'type', selector: '#pw', value: 'hunter2-SECRET' };
     const v = {
