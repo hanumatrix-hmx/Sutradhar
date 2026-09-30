@@ -69,7 +69,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   and `compare` now show their navigations in history. **Privacy (one fail-closed rule for MCP, SDK and `history.jsonl`):** in any URL-looking token everything from the
   first `?`, `#` or `;` is replaced by `[redacted]` (scheme-less hosts, IPv6 and userinfo included; the text after a
   cut is dropped up to the next URL or path), absolute local paths and `file://` URLs are reduced to a basename, and
-  the CLI stores `upload`/`download`/`screenshot` path arguments as a basename; typed text, `select` values,
+  the CLI stores `upload`/`screenshot`/`compare` file arguments as a basename and `download`/`audit` directory arguments as `<dir>`; typed text, `select` values,
   clipboard text and dialog prompt text are lengths only; a typed value quoted in a failure message is scrubbed.
   **Stored, capped, not masked:** the first 200 characters of `eval` code, selectors, `expect.text` / `wait_for` text,
   page text quoted in errors, URL *paths* and the CLI line's `cwd`. **Not recorded:** eval results, CLI flags,

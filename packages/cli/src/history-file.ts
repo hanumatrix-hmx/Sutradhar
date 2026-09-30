@@ -7,7 +7,7 @@
  * Privacy (the hard requirement): positional args are redacted per verb before they are stored (typed text,
  * clipboard text, select values and dialog prompt text become lengths; eval code becomes a 200-char preview;
  * URL arguments of nav/newtab/audit/compare are reduced to origin + path; file-path arguments of
- * upload/download/screenshot/audit/compare are reduced to their basename), and EVERY arg then goes through the
+ * upload/screenshot/compare are reduced to their basename and directory arguments of download/audit to `<dir>`), and EVERY arg then goes through the
  * same single fail-closed function the MCP / SDK history uses ({@link redactHistoryText}: query, fragment, path
  * parameters and userinfo cut from any token that carries a URL marker, scheme-less hosts included; absolute local
  * paths reduced to a basename). The actions a command produced were already sanitized by the browser package.
@@ -76,14 +76,15 @@ const lenTag = (s: string): string => `<${s.length} chars>`;
 
 /** Verbs whose positional args (by index) are URLs: reduced with {@link redactHistoryUrl} before the text rule. */
 const URL_ARG_INDEXES: Readonly<Record<string, readonly number[]>> = { nav: [0], newtab: [0], audit: [0], compare: [0, 1] };
-/** Verbs whose positional args (by index) are local file or directory paths: stored as a basename, relative or not. */
+/** Verbs whose positional args (by index) are local FILE paths: stored as a basename, relative or not. */
 const PATH_ARG_INDEXES: Readonly<Record<string, readonly number[]>> = {
   upload: [1],
-  download: [1],
   screenshot: [0],
-  audit: [1],
   compare: [2],
 };
+/** Verbs whose positional args (by index) are local DIRECTORIES (download dir, audit output dir): stored as the kind `<dir>`,
+ *  not even a basename (a directory's name says nothing the history needs, and it is often a per-user or per-project name). */
+const DIR_ARG_INDEXES: Readonly<Record<string, readonly number[]>> = { download: [1], audit: [1] };
 
 /**
  * Positional-arg redaction by verb, then the ONE shared text redaction and a 200-char cap on every arg:
@@ -92,15 +93,22 @@ const PATH_ARG_INDEXES: Readonly<Record<string, readonly number[]>> = {
  *  eval           -> [200-char code preview]
  *  dialog         -> [accept|dismiss, `<n chars>`?]   (prompt text)
  *  URL args (nav, newtab, audit, compare) -> origin + path
- *  path args (upload, download, screenshot, audit, compare) -> basename
+ *  file path args (upload, screenshot, compare) -> basename;  directory args (download, audit) -> `<dir>`
  *  everything else-> each arg redacted + capped
  */
 export function redactCliArgs(verb: string, args: readonly string[]): string[] {
   const fin = (a: string): string => capHistoryString(redactHistoryText(a), ARG_CAP);
   const urlIdx = URL_ARG_INDEXES[verb] ?? [];
   const pathIdx = PATH_ARG_INDEXES[verb] ?? [];
+  const dirIdx = DIR_ARG_INDEXES[verb] ?? [];
   const perArg = (a: string, i: number): string =>
-    pathIdx.includes(i) ? capHistoryString(basenameOfPath(redactHistoryText(a)) || '…', ARG_CAP) : urlIdx.includes(i) ? fin(redactHistoryUrl(a)) : fin(a);
+    dirIdx.includes(i)
+      ? '<dir>'
+      : pathIdx.includes(i)
+        ? capHistoryString(basenameOfPath(redactHistoryText(a)) || '…', ARG_CAP)
+        : urlIdx.includes(i)
+          ? fin(redactHistoryUrl(a))
+          : fin(a);
   switch (verb) {
     case 'type':
     case 'select':

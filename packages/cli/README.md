@@ -186,7 +186,8 @@ selector, target, eval preview) goes through the same function, which is also wh
 2. A token that looks like an **absolute local path** (`C:\Users\…`, `C:/…`, `\\server\share\…`, `/home/x/…`, `~/x/…`)
    or a `file://` URL is reduced to its **basename**, also when the path contains spaces. This includes site-relative
    paths that look absolute in free text (`/api/users` becomes `users`): over-redaction is preferred to a leak. The
-   `upload`, `download`, `screenshot`, `audit` and `compare` path arguments are stored as a basename even when relative.
+   `upload`, `screenshot` and `compare` file arguments are stored as a basename even when relative, and the `download` and
+   `audit` directory arguments as `<dir>` (not even a basename).
 3. `type` / `select` values, `setclipboard` text and `dialog` prompt text are recorded as a length only (`<8 chars>`);
    eval code as a whitespace-collapsed 200-character preview (same rule); eval **results**, cookie / storage values and
    CLI flags are not recorded (so a `--expect-text` or `--text` value is not in `args`).

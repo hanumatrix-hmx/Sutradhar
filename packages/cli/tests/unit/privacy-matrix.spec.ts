@@ -55,13 +55,14 @@ describe('FR2-11 fix-1: redactCliArgs', () => {
     expect(redactCliArgs('nav', ['http://127.0.0.1:5123/p?q=(a)&token=CNRYx'])).toEqual(['http://127.0.0.1:5123/p']);
     expect(redactCliArgs('click', ['a[href="http://h/p?q=1"]'])[0]).not.toContain('q=1');
   });
-  it('F3: upload / download / screenshot path arguments are stored as a basename, relative or absolute', () => {
+  it('F3: upload / screenshot / compare file arguments are stored as a basename; download / audit directory arguments as <dir>', () => {
     expect(redactCliArgs('upload', ['#file', 'C:\\Users\\CNRYu\\docs\\report.pdf'])).toEqual(['#file', 'report.pdf']);
     expect(redactCliArgs('upload', ['#file', '/home/CNRYu/docs/report.pdf'])).toEqual(['#file', 'report.pdf']);
     expect(redactCliArgs('upload', ['#file', 'CNRYrel/dir/report.pdf'])).toEqual(['#file', 'report.pdf']);
-    expect(redactCliArgs('download', ['#dl', 'C:\\Users\\CNRYd\\out dir'])).toEqual(['#dl', 'out dir']);
+    expect(redactCliArgs('download', ['#dl', 'C:\\Users\\CNRYd\\out dir'])).toEqual(['#dl', '<dir>']);
     expect(redactCliArgs('screenshot', ['E:\\work\\CNRYs\\shot.png'])).toEqual(['shot.png']);
-    expect(redactCliArgs('audit', ['http://h/p?t=CNRYa', 'C:\\x\\CNRYa\\out'])).toEqual(['http://h/p', 'out']);
+    expect(redactCliArgs('audit', ['http://h/p?t=CNRYa', 'C:\\x\\CNRYa\\out'])).toEqual(['http://h/p', '<dir>']);
+    expect(redactCliArgs('compare', ['http://a/p?x=1', 'http://b/q#f', 'D:\\CNRYc\\cmp.png'])).toEqual(['http://a/p', 'http://b/q', 'cmp.png']);
   });
 });
 
