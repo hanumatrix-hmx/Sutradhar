@@ -1,0 +1,110 @@
+[
+ {
+  "name": "tab1 199: len 199, evicted 0, no note",
+  "ok": true,
+  "obs": [
+   199,
+   0,
+   null
+  ]
+ },
+ {
+  "name": "session 199: evicted 0",
+  "ok": true,
+  "obs": [
+   199,
+   0
+  ]
+ },
+ {
+  "name": "session exactly 200: evicted 0, no note",
+  "ok": true,
+  "obs": [
+   200,
+   0,
+   null
+  ]
+ },
+ {
+  "name": "session 201: evicted 1, singular note, [0].seq 2",
+  "ok": true,
+  "obs": [
+   1,
+   "1 older entry was evicted — only the most recent 200 are kept.",
+   2
+  ]
+ },
+ {
+  "name": "tab1 unaffected 199/0; tab2 2/0",
+  "ok": true,
+  "obs": [
+   199,
+   0,
+   2,
+   0
+  ]
+ },
+ {
+  "name": "tab1 exactly 200: evicted 0, no note",
+  "ok": true,
+  "obs": [
+   200,
+   0
+  ]
+ },
+ {
+  "name": "session 202: evicted 2",
+  "ok": true,
+  "obs": [
+   2,
+   3
+  ]
+ },
+ {
+  "name": "tab1 201: evicted 1, singular note, oldest is eval #2",
+  "ok": false,
+  "obs": [
+   1,
+   "1 older entry was evicted — only the most recent 200 are kept.",
+   "2+0 *t1*"
+  ]
+ },
+ {
+  "name": "default (active tab = tab1?) 206: evicted 6, plural note, oldest #7",
+  "ok": false,
+  "obs": [
+   true,
+   6,
+   "6 older entries were evicted — only the most recent 200 are kept.",
+   "7+0 *t1*"
+  ]
+ },
+ {
+  "name": "session 208: evicted 8, [0].seq 9, seq contiguous",
+  "ok": true,
+  "obs": [
+   8,
+   9,
+   208
+  ]
+ },
+ {
+  "name": "after close_tab(tab2): session still 200/8 and holds tab2 entries",
+  "ok": true,
+  "obs": [
+   200,
+   8,
+   2
+  ]
+ },
+ {
+  "name": "tab view of closed tab is an error",
+  "ok": true,
+  "obs": "get_action_history failed: No tab \"tab_sess_1790798272232_1_2\" in session \"sess_1790798272232_1\"."
+ },
+ {
+  "name": "scope session + tabId rejected",
+  "ok": true,
+  "obs": "get_action_history failed: tabId cannot be combined with scope \"session\" — the session view already merges every tab (ea"
+ }
+]

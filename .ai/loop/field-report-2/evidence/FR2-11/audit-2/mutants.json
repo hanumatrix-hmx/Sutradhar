@@ -1,0 +1,103 @@
+{
+ "origSha": {
+  "E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\browser\\src\\session\\action-history.ts": "579c0f6f156029b93b42faa72c6972b4e216fc29c975cab819ac556790c86c6f",
+  "E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\cli\\src\\history-file.ts": "e85a4bcd4fae86f4d1d4ea64a2038c26cc3b09c6417adee8f3d9d6252864af3a"
+ },
+ "results": [
+  {
+   "id": "B8",
+   "file": "packages\\cli\\src\\history-file.ts",
+   "desc": "dialog prompt text stored redacted-but-raw instead of a length",
+   "build": 0,
+   "browser": {
+    "status": 0,
+    "tests": "989 passed (989)",
+    "failing": []
+   },
+   "capability-runtime": {
+    "status": 0,
+    "tests": "272 passed (272)",
+    "failing": []
+   },
+   "mcp-server": {
+    "status": 0,
+    "tests": "124 passed (124)",
+    "failing": []
+   },
+   "cli": {
+    "status": 1,
+    "tests": "2 failed | 257 passed (259)",
+    "failing": [
+     "tests/unit/history-file.spec.ts > FR2-11 redactCliArgs / secretsOfCliArgs (C1) > C1: typed text, clipboard text, eval, nav, dialog, select",
+     "tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > type / select / dialog / setclipboard / eval keep their value redaction"
+    ]
+   },
+   "killed": true,
+   "restoredShaOk": true,
+   "sec": 43
+  },
+  {
+   "id": "B9",
+   "file": "packages\\cli\\src\\history-file.ts",
+   "desc": "download dir arg no longer <dir> (text rule only)",
+   "build": 0,
+   "browser": {
+    "status": 0,
+    "tests": "989 passed (989)",
+    "failing": []
+   },
+   "capability-runtime": {
+    "status": 0,
+    "tests": "272 passed (272)",
+    "failing": []
+   },
+   "mcp-server": {
+    "status": 0,
+    "tests": "124 passed (124)",
+    "failing": []
+   },
+   "cli": {
+    "status": 1,
+    "tests": "1 failed | 258 passed (259)",
+    "failing": [
+     "tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > F3: upload / screenshot / compare file arguments are stored as a basename; download / audit directory arguments as <dir>"
+    ]
+   },
+   "killed": true,
+   "restoredShaOk": true,
+   "sec": 43
+  },
+  {
+   "id": "B10",
+   "file": "packages\\cli\\src\\history-file.ts",
+   "desc": "nav arg no longer through redactHistoryUrl (text rule only)",
+   "build": 0,
+   "browser": {
+    "status": 0,
+    "tests": "989 passed (989)",
+    "failing": []
+   },
+   "capability-runtime": {
+    "status": 0,
+    "tests": "272 passed (272)",
+    "failing": []
+   },
+   "mcp-server": {
+    "status": 0,
+    "tests": "124 passed (124)",
+    "failing": []
+   },
+   "cli": {
+    "status": 1,
+    "tests": "2 failed | 257 passed (259)",
+    "failing": [
+     "tests/unit/history-file.spec.ts > FR2-11 redactCliArgs / secretsOfCliArgs (C1) > C1: typed text, clipboard text, eval, nav, dialog, select",
+     "tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > F2: a scheme-less URL argument is redacted (the audit-1 repro) and the display origin/path still shows"
+    ]
+   },
+   "killed": true,
+   "restoredShaOk": true,
+   "sec": 44
+  }
+ ]
+}

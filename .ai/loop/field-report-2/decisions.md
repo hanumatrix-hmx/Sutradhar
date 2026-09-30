@@ -4111,3 +4111,40 @@ The master scratch tree was verified byte-equal (after CRLF normalisation) to `f
 Unmet / not verified: no AC is recorded as unmet. Not verified: headed mode for the privacy matrix, non-Chrome, POSIX file mode 0600 outside WSL, a POSIX host (POSIX path shapes are exercised as strings and as
 an injected error text on Windows, not with a real POSIX path tool call), the CLI live matrix is a rotating 80-cell subset (GAP-361), and no broad corpus of real browser error messages was used to size the
 over-redaction (GAP-353 / GAP-354). New gaps GAP-353..GAP-362. Status: VERIFY (fix-1). An independent re-audit follows; I did not self-declare done.
+
+## 2026-10-01 -- FR2-11: two failed audits; ROOT-CAUSE RE-DERIVATION and revised plan (before any more code)
+
+Evidence: audit-1 REOPEN (F1 bracket-stopping URL regex, F2 scheme-less CLI URLs, F3 full local paths);
+audit-2 REOPEN (A2-F1 major: `com.example.app:/cb#access_token=S` and `about:blank#S` leak on every
+surface incl. history.jsonl; A2-F2 docs over-claim; B2/B3/B4 mutants survive the 1,600-cell matrix).
+All six functional done-when items passed in BOTH audits; only privacy redaction fails.
+
+Root cause (same failure mode as FR2-07): redaction works by RECOGNISING URL SHAPES and cutting only
+tokens it recognises (fix-0: a char-class regex; fix-1: a list of markers such as scheme://, host:port/,
+localhost, IPv6). Any shape outside the list passes through untouched, so each audit finds the next
+unlisted shape (custom schemes without //, about:, single-label hosts, spaces inside URLs). An allow-list
+of what to redact can never be complete; the default for an unrecognised token is "keep", which is fail-OPEN.
+Tests shared the blind spot: every generated cell also carried `?k=`, which was cut anyway, so shapes that
+relied on other markers were never tested in isolation (B2/B3/B4).
+
+Revised plan (fix cycle 2), shape-INDEPENDENT and fail-closed by construction:
+1. Character rule, not URL recognition. In every stored free-text field (verification reason, evidence
+   detail, error, eval preview, CLI args, `sutradhar history` output), for every token split on ANY Unicode
+   whitespace: cut from the first `?`, `#` or `;`, and replace any token that contains `=` or `&` (after the
+   cut) by `[redacted]`; strip `userinfo@` from any token that has one before a `/`. This holds whatever the
+   scheme, host or encoding, so URL shape no longer matters. Over-redaction of ordinary prose containing those
+   characters is accepted and documented (it only affects history text, never the live tool result).
+2. Paths: any token with a `/` or `\` separator followed by further text reduces to its last segment,
+   independent of drive letter, UNC or forward/back slashes; `cwd` in CLI lines becomes home-relative (`~/...`)
+   or `<dir>` outside home (audit-2 ruling on GAP-359).
+3. Eval preview: stored as length plus the first identifier only (the preview was already being mangled by
+   the redactor; A2-F4) -- decide per spec, log deviation.
+4. One function for all surfaces (kept). Structured `target` fields keep FR2-09 D5 URL parsing.
+5. Tests become PROPERTY tests: for random strings built from a random prefix, one of the delimiter
+   characters, and a secret (random scheme/host/space/unicode/encoding), assert the secret never appears in
+   any stored field; plus audit-1 and audit-2 probes (attack-gen.mjs, 375 cells) rerun unmodified, plus
+   isolated cells per rule so B2/B3/B4-style mutants (drop one rule) are each caught by a cell that ONLY that
+   rule protects.
+6. Docs state the rule as the character rule above, verbatim, so it cannot over-claim.
+After this, audit-3 is the LAST standard audit for FR2-11; if it fails, FR2-11 is BLOCKED.
+

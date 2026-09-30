@@ -1,0 +1,21 @@
+B1 KILLED userinfo: LAST @ -> FIRST @ (password containing @ keeps its tail) {"b":"1 failed | 988 passed (989)","c":"259 passed (259)","fb":"tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > is idempotent on every cell"} restored true
+B2 SURVIVED QUERY_LIKE requires a non-empty key (bare ?=S no longer a marker) {"b":"989 passed (989)","c":"259 passed (259)"} restored true
+B3 SURVIVED SCHEMELESS_HOST loses the localhost alternative {"b":"989 passed (989)","c":"259 passed (259)"} restored true
+B4 SURVIVED SCHEMELESS_HOST loses the [IPv6] alternative {"b":"989 passed (989)","c":"259 passed (259)"} restored true
+B5 KILLED no swallowing of following tokens after a URL cut {"b":"11 failed | 978 passed (989)","c":"26 failed | 233 passed (259)","fb":"tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H3: redacts every URL token inside free text","fc":"tests/unit/history-file.spec.ts > FR2-11 buildHistoryLine (C2, C3) > error is URL-redacted and capped at 300"} restored true
+B6 KILLED a path run never extends across spaces {"b":"13 failed | 976 passed (989)","c":"25 failed | 234 passed (259)","fb":"tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename","fc":"tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > nav: the text as arg 0, arg 1 and arg 2 never leaks (1600 cells x 3 positions)"} restored true
+B7 KILLED WIN_DRIVE_PATH not recognised after a quote or (  {"b":"12 failed | 977 passed (989)","c":"25 failed | 234 passed (259)","fb":"tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename","fc":"tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > nav: the text as arg 0, arg 1 and arg 2 never leaks (1600 cells x 3 positions)"} restored true
+B13 KILLED ENCODED_SCHEME only upper-case %2F {"b":"13 failed | 976 passed (989)","c":"25 failed | 234 passed (259)","fb":"tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename","fc":"tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > nav: the text as arg 0, arg 1 and arg 2 never leaks (1600 cells x 3 positions)"} restored true
+final restore sha ok: true true
+file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-11/audit-2/mutants.mjs:18
+  if (idx.length !== 1) throw new Error(`find "${find}" matched ${idx.length} lines`);
+                              ^
+
+Error: find "case 'dialog':" matched 2 lines
+    at file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-11/audit-2/mutants.mjs:18:31
+    at file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-11/audit-2/mutants.mjs:55:21
+    at ModuleJob.run (node:internal/modules/esm/module_job:377:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:691:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v25.0.0

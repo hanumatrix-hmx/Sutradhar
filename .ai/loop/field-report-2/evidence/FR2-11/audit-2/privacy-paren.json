@@ -1,0 +1,93 @@
+{
+ "mcpNavResultUrl": "http://127.0.0.1:52261/p?q=(a)&token=CNRYparen",
+ "mcpLeaks": [],
+ "mcpEntry": {
+  "actionType": "navigate",
+  "success": true,
+  "executionTimeMs": 113,
+  "timestamp": "2026-09-30T19:05:41.926Z",
+  "target": "http://127.0.0.1:52261/p",
+  "url": "http://127.0.0.1:52261/p",
+  "verification": {
+   "verified": true,
+   "urlChanged": true,
+   "elementFound": true,
+   "confidence": 0.9,
+   "reason": "'navigate' verified: a new document committed at http://127.0.0.1:52261/p[redacted]",
+   "evidence": {
+    "tier": "verified",
+    "checks": [
+     {
+      "check": "navigate.document",
+      "outcome": "pass",
+      "expected": "new-document or url change",
+      "observed": "new-document",
+      "detail": "a new document committed at http://127.0.0.1:52261/p[redacted]"
+     },
+     {
+      "check": "navigate.http-status",
+      "outcome": "pass",
+      "expected": "<400",
+      "observed": 200
+     }
+    ]
+   }
+  },
+  "tabId": "tab_sess_1790795141575_1_1",
+  "seq": 1
+ },
+ "cliNavExit": 0,
+ "cliFileLeaks": [],
+ "cliLine": {
+  "v": 1,
+  "type": "command",
+  "ts": "2026-09-30T19:05:42.283Z",
+  "sessionId": "sess_1790795142510_1",
+  "cwd": "C:\\Users\\Varad M\\AppData\\Local\\Temp\\fr211-audit2\\fr211-audit-paren-MuoUTJ",
+  "verb": "nav",
+  "args": [
+   "http://127.0.0.1:52261/p"
+  ],
+  "exitCode": 0,
+  "durationMs": 646,
+  "actions": [
+   {
+    "actionType": "navigate",
+    "success": true,
+    "executionTimeMs": 31,
+    "timestamp": "2026-09-30T19:05:42.926Z",
+    "target": "http://127.0.0.1:52261/p",
+    "url": "http://127.0.0.1:52261/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": true,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'navigate' verified: a new document committed at http://127.0.0.1:52261/p[redacted]",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "navigate.document",
+        "outcome": "pass",
+        "expected": "new-document or url change",
+        "observed": "new-document",
+        "detail": "a new document committed at http://127.0.0.1:52261/p[redacted]"
+       },
+       {
+        "check": "navigate.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790795142510_1_1",
+    "seq": 1
+   }
+  ],
+  "actionsEvicted": 0
+ },
+ "cliCloseExit": 0
+}

@@ -1,0 +1,596 @@
+{
+ "label": "bundle",
+ "mcp": {
+  "entries": [
+   {
+    "t": "navigate",
+    "s": true,
+    "target": "http://127.0.0.1:53450/p",
+    "url": "http://127.0.0.1:53450/p",
+    "reason": "'navigate' verified: a new document committed at http://127.0.0.1:53450/p",
+    "checks": [
+     {
+      "check": "navigate.document",
+      "outcome": "pass",
+      "expected": "new-document or url change",
+      "observed": "new-document",
+      "detail": "a new document committed at http://127.0.0.1:53450/p"
+     },
+     {
+      "check": "navigate.http-status",
+      "outcome": "pass",
+      "expected": "<400",
+      "observed": 200
+     }
+    ]
+   },
+   {
+    "t": "navigate",
+    "s": true,
+    "target": "about:blank",
+    "url": "about:blank",
+    "reason": "'navigate' verified: a new document committed at about:blank#CNRYaboutfrag",
+    "checks": [
+     {
+      "check": "navigate.document",
+      "outcome": "pass",
+      "expected": "new-document or url change",
+      "observed": "new-document",
+      "detail": "a new document committed at about:blank#CNRYaboutfrag"
+     }
+    ]
+   },
+   {
+    "t": "navigate",
+    "s": false,
+    "target": "com.example.app:/cb",
+    "url": "about:blank",
+    "error": "net::ERR_ABORTED at com.example.app:/cb#access_token=CNRYcustomnav"
+   },
+   {
+    "t": "navigate",
+    "s": false,
+    "target": "http://127.0.0.1:53450/redir",
+    "url": "about:blank",
+    "error": "net::ERR_ABORTED at http://127.0.0.1:53450/redir"
+   },
+   {
+    "t": "navigate",
+    "s": true,
+    "target": "http://127.0.0.1:53450/p",
+    "url": "http://127.0.0.1:53450/p",
+    "reason": "'navigate' verified: a new document committed at http://127.0.0.1:53450/p",
+    "checks": [
+     {
+      "check": "navigate.document",
+      "outcome": "pass",
+      "expected": "new-document or url change",
+      "observed": "new-document",
+      "detail": "a new document committed at http://127.0.0.1:53450/p"
+     },
+     {
+      "check": "navigate.http-status",
+      "outcome": "pass",
+      "expected": "<400",
+      "observed": 200
+     }
+    ]
+   },
+   {
+    "t": "click",
+    "s": true,
+    "url": "http://127.0.0.1:53450/p",
+    "reason": "'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+    "checks": [
+     {
+      "check": "click.built-in",
+      "outcome": "pass",
+      "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+     }
+    ]
+   },
+   {
+    "t": "navigate",
+    "s": true,
+    "target": "http://127.0.0.1:53450/p",
+    "url": "http://127.0.0.1:53450/p",
+    "reason": "'navigate' verified: a new document committed at http://127.0.0.1:53450/p",
+    "checks": [
+     {
+      "check": "navigate.document",
+      "outcome": "pass",
+      "expected": "new-document or url change",
+      "observed": "new-document",
+      "detail": "a new document committed at http://127.0.0.1:53450/p"
+     },
+     {
+      "check": "navigate.http-status",
+      "outcome": "pass",
+      "expected": "<400",
+      "observed": 200
+     }
+    ]
+   },
+   {
+    "t": "eval",
+    "s": true,
+    "target": "['intranet:8080/p#CNRYevalintra', 'about:blank#CNRYevalabout', 'https://x.test/my dir#CNRYevalspace'].length",
+    "url": "http://127.0.0.1:53450/p"
+   },
+   {
+    "t": "eval",
+    "s": false,
+    "target": "throw new Error('see intranet:8080/p?CNRYerrintra')",
+    "url": "http://127.0.0.1:53450/p",
+    "error": "see intranet:8080/p?CNRYerrintra"
+   },
+   {
+    "t": "click",
+    "s": true,
+    "url": "http://127.0.0.1:53450/p",
+    "reason": "Expected text \"CNRYexpotp\" was not found in the page's visible text after the action",
+    "checks": [
+     {
+      "check": "click.built-in",
+      "outcome": "pass",
+      "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+     },
+     {
+      "check": "expect.text",
+      "outcome": "fail",
+      "expected": "CNRYexpotp",
+      "observed": "not-found"
+     }
+    ]
+   },
+   {
+    "t": "wait_for",
+    "s": false,
+    "url": "http://127.0.0.1:53450/p",
+    "error": "wait_for timed out after 0ms waiting for text=\"CNRYwaitotp\": text \"CNRYwaitotp\" was not found in the visible text of 1 frame(s).",
+    "reason": "Action failed: wait_for timed out after 0ms waiting for text=\"CNRYwaitotp\": text \"CNRYwaitotp\" was not found in the visible text of 1 frame(s).",
+    "checks": []
+   },
+   {
+    "t": "click",
+    "s": true,
+    "url": "http://127.0.0.1:53450/p",
+    "reason": "Current URL http://127.0.0.1:53450/p does not contain expected substring /p[redacted]",
+    "checks": [
+     {
+      "check": "click.built-in",
+      "outcome": "pass",
+      "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+     },
+     {
+      "check": "expect.url",
+      "outcome": "fail",
+      "expected": "/p[redacted]",
+      "observed": "http://127.0.0.1:53450/p"
+     }
+    ]
+   },
+   {
+    "t": "click",
+    "s": false,
+    "url": "http://127.0.0.1:53450/p",
+    "error": "No visible element found for selector: #missing",
+    "reason": "Action failed: No visible element found for selector: #missing",
+    "checks": []
+   },
+   {
+    "t": "type",
+    "s": true,
+    "url": "http://127.0.0.1:53450/p",
+    "reason": "Expected text <value> was not found in the page's visible text after the action",
+    "checks": [
+     {
+      "check": "type.built-in",
+      "outcome": "pass",
+      "detail": "the typed value was read back from the element inside the action"
+     },
+     {
+      "check": "expect.text",
+      "outcome": "fail",
+      "expected": "<value>",
+      "observed": "not-found"
+     }
+    ]
+   }
+  ],
+  "canariesSession": [
+   "CNRYaboutfrag",
+   "CNRYcustomnav",
+   "CNRYevalintra",
+   "CNRYevalabout",
+   "CNRYevalspace",
+   "CNRYerrintra",
+   "CNRYexpotp",
+   "CNRYwaitotp"
+  ],
+  "canariesTab": [
+   "CNRYaboutfrag",
+   "CNRYcustomnav",
+   "CNRYevalintra",
+   "CNRYevalabout",
+   "CNRYevalspace",
+   "CNRYerrintra",
+   "CNRYexpotp",
+   "CNRYwaitotp"
+  ],
+  "unexpected": [
+   "CNRYaboutfrag",
+   "CNRYcustomnav",
+   "CNRYevalintra",
+   "CNRYevalabout",
+   "CNRYevalspace",
+   "CNRYerrintra"
+  ]
+ },
+ "cli": {
+  "log": [
+   {
+    "args": [
+     "nav",
+     "http://127.0.0.1:53450/p"
+    ],
+    "code": 0,
+    "err": ""
+   },
+   {
+    "args": [
+     "nav",
+     "com.example.app:/cb#access_token=CNRYclicustom"
+    ],
+    "code": 1,
+    "err": "Fatal: net::ERR_ABORTED at com.example.app:/cb#access_token=CNRYclicustom\n"
+   },
+   {
+    "args": [
+     "nav",
+     "http://127.0.0.1:53450/redir"
+    ],
+    "code": 1,
+    "err": "Fatal: net::ERR_ABORTED at http://127.0.0.1:53450/redir\n"
+   },
+   {
+    "args": [
+     "nav",
+     "http://127.0.0.1:53450/p"
+    ],
+    "code": 0,
+    "err": ""
+   },
+   {
+    "args": [
+     "eval",
+     "'intranet:8080/p#CNRYclievalintra'"
+    ],
+    "code": 0,
+    "err": ""
+   },
+   {
+    "args": [
+     "clicktext",
+     "intranet:8080/p#CNRYclickt"
+    ],
+    "code": 1,
+    "err": ""
+   },
+   {
+    "args": [
+     "click",
+     "#btn",
+     "--expect-text",
+     "CNRYcliexpotp"
+    ],
+    "code": 4,
+    "err": "Error: expectation failed: text — Expected text \"CNRYcliexpotp\" was not found in the page's visible text after the action\n"
+   },
+   {
+    "args": [
+     "upload",
+     "#pw",
+     "rel\\CNRYreldir\\f.txt"
+    ],
+    "code": 1,
+    "err": ""
+   },
+   {
+    "args": [
+     "close"
+    ],
+    "code": 0,
+    "err": ""
+   },
+   {
+    "args": [
+     "history"
+    ],
+    "code": 0,
+    "err": ""
+   }
+  ],
+  "fileCanaries": [
+   "CNRYcwdsecret",
+   "CNRYclicustom",
+   "CNRYclievalintra",
+   "CNRYclickt",
+   "CNRYcliexpotp"
+  ],
+  "humanCanaries": [
+   "CNRYclicustom",
+   "CNRYclievalintra",
+   "CNRYclickt"
+  ],
+  "unexpected": [
+   "CNRYclicustom",
+   "CNRYclievalintra",
+   "CNRYclickt"
+  ],
+  "lines": [
+   {
+    "verb": "nav",
+    "args": [
+     "http://127.0.0.1:53450/p"
+    ],
+    "exit": 0,
+    "cwd": "C:\\Users\\Varad M\\AppData\\Local\\Temp\\fr211-audit2\\fr211-a2-4ohP6U\\CNRYcwdsecret\\client-acme",
+    "actions": [
+     {
+      "t": "navigate",
+      "target": "http://127.0.0.1:53450/p",
+      "reason": "'navigate' verified: a new document committed at http://127.0.0.1:53450/p",
+      "checks": [
+       {
+        "check": "navigate.document",
+        "outcome": "pass",
+        "expected": "new-document or url change",
+        "observed": "new-document",
+        "detail": "a new document committed at http://127.0.0.1:53450/p"
+       },
+       {
+        "check": "navigate.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "verb": "nav",
+    "args": [
+     "com.example.app:/cb"
+    ],
+    "exit": 1,
+    "error": "net::ERR_ABORTED at com.example.app:/cb#access_token=CNRYclicustom",
+    "cwd": "C:\\Users\\Varad M\\AppData\\Local\\Temp\\fr211-audit2\\fr211-a2-4ohP6U\\CNRYcwdsecret\\client-acme",
+    "actions": [
+     {
+      "t": "navigate",
+      "target": "com.example.app:/cb",
+      "error": "net::ERR_ABORTED at com.example.app:/cb#access_token=CNRYclicustom"
+     }
+    ]
+   },
+   {
+    "verb": "nav",
+    "args": [
+     "http://127.0.0.1:53450/redir"
+    ],
+    "exit": 1,
+    "error": "net::ERR_ABORTED at http://127.0.0.1:53450/redir",
+    "cwd": "C:\\Users\\Varad M\\AppData\\Local\\Temp\\fr211-audit2\\fr211-a2-4ohP6U\\CNRYcwdsecret\\client-acme",
+    "actions": [
+     {
+      "t": "navigate",
+      "target": "http://127.0.0.1:53450/redir",
+      "error": "net::ERR_ABORTED at http://127.0.0.1:53450/redir"
+     }
+    ]
+   },
+   {
+    "verb": "nav",
+    "args": [
+     "http://127.0.0.1:53450/p"
+    ],
+    "exit": 0,
+    "cwd": "C:\\Users\\Varad M\\AppData\\Local\\Temp\\fr211-audit2\\fr211-a2-4ohP6U\\CNRYcwdsecret\\client-acme",
+    "actions": [
+     {
+      "t": "navigate",
+      "target": "http://127.0.0.1:53450/p",
+      "reason": "'navigate' verified: a new document committed at http://127.0.0.1:53450/p",
+      "checks": [
+       {
+        "check": "navigate.document",
+        "outcome": "pass",
+        "expected": "new-document or url change",
+        "observed": "new-document",
+        "detail": "a new document committed at http://127.0.0.1:53450/p"
+       },
+       {
+        "check": "navigate.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "verb": "eval",
+    "args": [
+     "'intranet:8080/p#CNRYclievalintra'"
+    ],
+    "exit": 0,
+    "cwd": "C:\\Users\\Varad M\\AppData\\Local\\Temp\\fr211-audit2\\fr211-a2-4ohP6U\\CNRYcwdsecret\\client-acme",
+    "actions": [
+     {
+      "t": "eval",
+      "target": "'intranet:8080/p#CNRYclievalintra'"
+     }
+    ]
+   },
+   {
+    "verb": "clicktext",
+    "args": [
+     "intranet:8080/p#CNRYclickt"
+    ],
+    "exit": 1,
+    "cwd": "C:\\Users\\Varad M\\AppData\\Local\\Temp\\fr211-audit2\\fr211-a2-4ohP6U\\CNRYcwdsecret\\client-acme",
+    "actions": [
+     {
+      "t": "click_by_text",
+      "target": "intranet:8080/p#CNRYclickt",
+      "error": "No element found containing text: intranet:8080/p#CNRYclickt",
+      "reason": "Action failed: No element found containing text: intranet:8080/p#CNRYclickt",
+      "checks": []
+     }
+    ]
+   },
+   {
+    "verb": "click",
+    "args": [
+     "#btn"
+    ],
+    "exit": 4,
+    "cwd": "C:\\Users\\Varad M\\AppData\\Local\\Temp\\fr211-audit2\\fr211-a2-4ohP6U\\CNRYcwdsecret\\client-acme",
+    "actions": [
+     {
+      "t": "click",
+      "reason": "Expected text \"CNRYcliexpotp\" was not found in the page's visible text after the action",
+      "checks": [
+       {
+        "check": "click.built-in",
+        "outcome": "pass",
+        "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+       },
+       {
+        "check": "expect.text",
+        "outcome": "fail",
+        "expected": "CNRYcliexpotp",
+        "observed": "not-found"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "verb": "upload",
+    "args": [
+     "#pw",
+     "f.txt"
+    ],
+    "exit": 1,
+    "cwd": "C:\\Users\\Varad M\\AppData\\Local\\Temp\\fr211-audit2\\fr211-a2-4ohP6U\\CNRYcwdsecret\\client-acme",
+    "actions": [
+     {
+      "t": "upload_file",
+      "target": "f.txt",
+      "error": "Upload file \"f.txt\" does not exist or is not accessible.",
+      "reason": "Action failed: Upload file \"f.txt\" does not exist or is not accessible.",
+      "checks": []
+     }
+    ]
+   },
+   {
+    "verb": "close",
+    "args": [],
+    "exit": 0,
+    "cwd": "C:\\Users\\Varad M\\AppData\\Local\\Temp\\fr211-audit2\\fr211-a2-4ohP6U\\CNRYcwdsecret\\client-acme",
+    "actions": []
+   }
+  ],
+  "humanHead": "History: 9 command(s) in C:\\Users\\Varad M\\AppData\\Local\\Temp\\fr211-audit2\\fr211-a2-4ohP6U\\state\\history.jsonl\n--- session sess_1790795375355_1 ---\n2026-09-30 19:09:35Z  exit 0     677ms  nav http://127.0.0.1:53450/p\n    - navigate ok verified tab_sess_1790795375355_1_1 http://127.0.0.1:53450/p\n2026-09-30 19:09:35Z  exit 1     661ms  nav com.example.app:/cb\n    error: net::ERR_ABORTED at com.example.app:/cb#access_token=CNRYclicustom\n    - navigate FAILED no-verification tab_sess_1790795375355_1_1 com.example.app:/cb: net::ERR_ABORTED at com.example.app:/cb#access_token=CNRYclicustom\n2026-09-30 19:09:36Z  exit 1     673ms  nav http://127.0.0.1:53450/redir\n    error: net::ERR_ABORTED at http://127.0.0.1:53450/redir\n    - navigate FAILED no-verification tab_sess_1790795375355_1_1 http://127.0.0.1:53450/redir: net::ERR_ABORTED at http://127.0.0.1:53450/redir\n2026-09-30 19:09:37Z  exit 0      60ms  nav http://127.0.0.1:53450/p\n    - navigate ok verified tab_sess_1790795375355_1_1 http://127.0.0.1:53450/p\n2026-09-30 19:09:37Z  exit 0      41ms  eval 'intranet:8080/p#CNRYclievalintra'\n    - eval ok no-verification tab_sess_1790795375355_1_1 'intranet:8080/p#CNRYclievalintra'\n2026-09-30 19:09:38Z  exit 1   16628ms  clicktext intranet:8080/p#CNRYclickt\n    - click_by_text FAILED action-failed tab_sess_1790795375355_1_1 intranet:8080/p#CNRYclickt: No element found containing text: intranet:8080/p#CNRYclickt\n2026-09-30 19:09:58Z  exit 4      96ms  click #btn\n    - click ok contradicted "
+ },
+ "verif": [
+  {
+   "action": "browser.navigate",
+   "historyType": "navigate",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": true,
+   "reasonResult": "'navigate' verified: a new document committed at http://127.0.0.1:53450/p",
+   "reasonHistory": "'navigate' verified: a new document committed at http://127.0.0.1:53450/p"
+  },
+  {
+   "action": "browser.navigate",
+   "historyType": "navigate",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": true,
+   "reasonResult": "'navigate' verified: a new document committed at about:blank#CNRYaboutfrag",
+   "reasonHistory": "'navigate' verified: a new document committed at about:blank#CNRYaboutfrag"
+  },
+  {
+   "action": "browser.navigate",
+   "historyType": "navigate",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": true,
+   "reasonResult": "'navigate' verified: a new document committed at http://127.0.0.1:53450/p",
+   "reasonHistory": "'navigate' verified: a new document committed at http://127.0.0.1:53450/p"
+  },
+  {
+   "action": "browser.click",
+   "historyType": "click",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": true,
+   "reasonResult": "'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+   "reasonHistory": "'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90"
+  },
+  {
+   "action": "browser.navigate",
+   "historyType": "navigate",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": true,
+   "reasonResult": "'navigate' verified: a new document committed at http://127.0.0.1:53450/p",
+   "reasonHistory": "'navigate' verified: a new document committed at http://127.0.0.1:53450/p"
+  },
+  {
+   "action": "browser.click",
+   "historyType": "click",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": true,
+   "reasonResult": "Expected text \"CNRYexpotp\" was not found in the page's visible text after the action",
+   "reasonHistory": "Expected text \"CNRYexpotp\" was not found in the page's visible text after the action"
+  },
+  {
+   "action": "browser.wait_for",
+   "historyType": "wait_for",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": true,
+   "reasonResult": "Action failed: wait_for timed out after 0ms waiting for text=\"CNRYwaitotp\": text \"CNRYwaitotp\" was not found in the visible text of 1 frame(s).",
+   "reasonHistory": "Action failed: wait_for timed out after 0ms waiting for text=\"CNRYwaitotp\": text \"CNRYwaitotp\" was not found in the visible text of 1 frame(s)."
+  },
+  {
+   "action": "browser.click",
+   "historyType": "click",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": false,
+   "reasonResult": "Current URL http://127.0.0.1:53450/p does not contain expected substring /p?x=CNRYexpurlq",
+   "reasonHistory": "Current URL http://127.0.0.1:53450/p does not contain expected substring /p[redacted]"
+  },
+  {
+   "action": "browser.click",
+   "historyType": "click",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": true,
+   "reasonResult": "Action failed: No visible element found for selector: #missing",
+   "reasonHistory": "Action failed: No visible element found for selector: #missing"
+  },
+  {
+   "action": "browser.type",
+   "historyType": "type",
+   "deepEqualSanitized": false,
+   "deepEqualRaw": false,
+   "reasonResult": "Expected text \"CNRYtyped\" was not found in the page's visible text after the action",
+   "reasonHistory": "Expected text <value> was not found in the page's visible text after the action"
+  }
+ ],
+ "verifPairs": {
+  "history": 10,
+  "results": 10
+ }
+}

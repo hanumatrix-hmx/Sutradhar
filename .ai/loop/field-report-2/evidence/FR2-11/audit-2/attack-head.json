@@ -1,0 +1,2677 @@
+{
+ "root": "E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041",
+ "total": 375,
+ "leaking": 104,
+ "summary": [
+  {
+   "shape": "idn-scheme-q",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "idn-scheme-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "idn-noscheme-q=",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "idn-noscheme-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "cyr-noscheme-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "cyr-noscheme-q-noeq",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "cyr-scheme-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "puny-noscheme-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "upper-scheme-q",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "upper-scheme-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "mixed-scheme-q",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "javascript-q",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "mailto-q=",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "mailto-q-noeq",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "about-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "about-q",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "chrome-q",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "chrome-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "ws-q",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "wss-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "redirect=url",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "word-before-url",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "eq-before-url-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "nested-url-in-query",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "nested-encoded-in-query",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "encoded-standalone",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "double-encoded-standalone",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "encoded-in-path",
+   "cls": "url-path(by-rule)",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "backslash-url-q=",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "backslash-url-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "backslash-url-q-noeq",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "tab-sep-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "nl-sep-q",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "nbsp-in-query",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "space-in-path-then-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "space-in-path-then-q-noeq",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "space-in-query-then-url",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "space-in-query-then-host",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "json-escaped-quotes",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "json-escaped-slashes",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "json-escaped-slashes-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "json-double-escaped-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "single-label-port-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "single-label-port-q-noeq",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "custom-scheme-frag-token",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "custom-scheme-frag-2",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "ipv6-noscheme-frag",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "fullwidth-paren-wrap",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "zwsp-before-q",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "url-semicolon-param",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "userinfo-scheme",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "userinfo-noscheme",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 1,
+   "where": [
+    "text"
+   ]
+  },
+  {
+   "shape": "userinfo-double-at",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "form-body-space",
+   "cls": "url",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "win-fwd",
+   "cls": "path",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "win-back",
+   "cls": "path",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "win-lower",
+   "cls": "path",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "rel-dotdot",
+   "cls": "relpath",
+   "cells": 5,
+   "leakCells": 5,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line",
+    "cli.upload",
+    "cli.screenshot"
+   ]
+  },
+  {
+   "shape": "rel-dot",
+   "cls": "relpath",
+   "cells": 5,
+   "leakCells": 5,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line",
+    "cli.upload",
+    "cli.screenshot"
+   ]
+  },
+  {
+   "shape": "drive-relative",
+   "cls": "relpath",
+   "cells": 5,
+   "leakCells": 5,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "long-path",
+   "cls": "path",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "device-path",
+   "cls": "path",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "env-userprofile",
+   "cls": "relpath",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "env-home-posix",
+   "cls": "relpath",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "tilde-backslash",
+   "cls": "path",
+   "cells": 5,
+   "leakCells": 5,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line",
+    "cli.upload",
+    "cli.screenshot"
+   ]
+  },
+  {
+   "shape": "colon-before-posix",
+   "cls": "path",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "file-single-slash",
+   "cls": "path",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line",
+    "entry.url",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab"
+   ]
+  },
+  {
+   "shape": "file-drive-noslash",
+   "cls": "path",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "unc-forward",
+   "cls": "path",
+   "cells": 5,
+   "leakCells": 4,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "unc-json-escaped",
+   "cls": "path",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "win-in-quotes-spaces",
+   "cls": "path",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "posix-in-parens",
+   "cls": "path",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "home-dir-only",
+   "cls": "basename-dir",
+   "cells": 5,
+   "leakCells": 3,
+   "where": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ]
+  },
+  {
+   "shape": "posix-eq",
+   "cls": "path",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  },
+  {
+   "shape": "win-after-word-colon",
+   "cls": "path",
+   "cells": 5,
+   "leakCells": 0,
+   "where": []
+  }
+ ],
+ "samples": [
+  {
+   "shape": "idn-scheme-q",
+   "leaks": [],
+   "in": "https://bücher.example/p?t=Kq1Zx",
+   "text": "https://bücher.example/p[redacted]",
+   "url": "https://xn--bcher-kva.example/p",
+   "nav": "https://xn--bcher-kva.example/p",
+   "cliNav": [
+    "https://xn--bcher-kva.example/p"
+   ],
+   "cliDownload": [
+    "https://bücher.example/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "idn-scheme-frag",
+   "leaks": [],
+   "in": "https://bücher.example/p#Kq6Zx",
+   "text": "https://bücher.example/p[redacted]",
+   "url": "https://xn--bcher-kva.example/p",
+   "nav": "https://xn--bcher-kva.example/p",
+   "cliNav": [
+    "https://xn--bcher-kva.example/p"
+   ],
+   "cliDownload": [
+    "https://bücher.example/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "idn-noscheme-q=",
+   "leaks": [],
+   "in": "bücher.example/p?t=KqbZx",
+   "text": "bücher.example/p[redacted]",
+   "url": "bücher.example/p",
+   "nav": "bücher.example/p",
+   "cliNav": [
+    "bücher.example/p"
+   ],
+   "cliDownload": [
+    "bücher.example/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "idn-noscheme-frag",
+   "leaks": [],
+   "in": "bücher.example/p#KqgZx",
+   "text": "bücher.example/p[redacted]",
+   "url": "bücher.example/p",
+   "nav": "bücher.example/p",
+   "cliNav": [
+    "bücher.example/p"
+   ],
+   "cliDownload": [
+    "bücher.example/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "cyr-noscheme-frag",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ],
+   "in": "пример.рф/p#KqlZx",
+   "text": "пример.рф/p#KqlZx",
+   "url": "пример.рф/p",
+   "nav": "пример.рф/p",
+   "cliNav": [
+    "пример.рф/p"
+   ],
+   "cliDownload": [
+    "пример.рф/p#KqlZx",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p#KqlZx"
+   ]
+  },
+  {
+   "shape": "cyr-noscheme-q-noeq",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ],
+   "in": "пример.рф/p?KqqZx",
+   "text": "пример.рф/p?KqqZx",
+   "url": "пример.рф/p",
+   "nav": "пример.рф/p",
+   "cliNav": [
+    "пример.рф/p"
+   ],
+   "cliDownload": [
+    "пример.рф/p?KqqZx",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p?KqqZx"
+   ]
+  },
+  {
+   "shape": "cyr-scheme-frag",
+   "leaks": [],
+   "in": "http://пример.рф/p#KqvZx",
+   "text": "http://пример.рф/p[redacted]",
+   "url": "http://xn--e1afmkfd.xn--p1ai/p",
+   "nav": "http://xn--e1afmkfd.xn--p1ai/p",
+   "cliNav": [
+    "http://xn--e1afmkfd.xn--p1ai/p"
+   ],
+   "cliDownload": [
+    "http://пример.рф/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "puny-noscheme-frag",
+   "leaks": [],
+   "in": "xn--bcher-kva.example/p#Kq10Zx",
+   "text": "xn--bcher-kva.example/p[redacted]",
+   "url": "xn--bcher-kva.example/p",
+   "nav": "xn--bcher-kva.example/p",
+   "cliNav": [
+    "xn--bcher-kva.example/p"
+   ],
+   "cliDownload": [
+    "xn--bcher-kva.example/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "upper-scheme-q",
+   "leaks": [],
+   "in": "HTTPS://X.TEST/P?T=Kq15Zx",
+   "text": "HTTPS://X.TEST/P[redacted]",
+   "url": "https://x.test/P",
+   "nav": "https://x.test/P",
+   "cliNav": [
+    "https://x.test/P"
+   ],
+   "cliDownload": [
+    "HTTPS://X.TEST/P[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "P[redacted]"
+   ]
+  },
+  {
+   "shape": "upper-scheme-frag",
+   "leaks": [],
+   "in": "HTTP://x.test/p#Kq1aZx",
+   "text": "HTTP://x.test/p[redacted]",
+   "url": "http://x.test/p",
+   "nav": "http://x.test/p",
+   "cliNav": [
+    "http://x.test/p"
+   ],
+   "cliDownload": [
+    "HTTP://x.test/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "mixed-scheme-q",
+   "leaks": [],
+   "in": "hTtPs://x.test/p?t=Kq1fZx",
+   "text": "hTtPs://x.test/p[redacted]",
+   "url": "https://x.test/p",
+   "nav": "https://x.test/p",
+   "cliNav": [
+    "https://x.test/p"
+   ],
+   "cliDownload": [
+    "hTtPs://x.test/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "javascript-q",
+   "leaks": [],
+   "in": "javascript:location=1//?t=Kq1kZx",
+   "text": "javascript:location=1//[redacted]",
+   "url": "javascript:…",
+   "nav": "javascript:…",
+   "cliNav": [
+    "javascript:…"
+   ],
+   "cliDownload": [
+    "javascript:location=1//[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "[redacted]"
+   ]
+  },
+  {
+   "shape": "mailto-q=",
+   "leaks": [],
+   "in": "mailto:a@b.test?subject=Kq1pZx",
+   "text": "b.test[redacted]",
+   "url": "b.test",
+   "nav": "b.test",
+   "cliNav": [
+    "b.test"
+   ],
+   "cliDownload": [
+    "b.test[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "b.test[redacted]"
+   ]
+  },
+  {
+   "shape": "mailto-q-noeq",
+   "leaks": [],
+   "in": "mailto:a@b.test?Kq1uZx",
+   "text": "b.test[redacted]",
+   "url": "b.test",
+   "nav": "b.test",
+   "cliNav": [
+    "b.test"
+   ],
+   "cliDownload": [
+    "b.test[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "b.test[redacted]"
+   ]
+  },
+  {
+   "shape": "about-frag",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ],
+   "in": "about:blank#Kq1zZx",
+   "text": "about:blank#Kq1zZx",
+   "url": "about:blank",
+   "nav": "about:blank",
+   "cliNav": [
+    "about:blank"
+   ],
+   "cliDownload": [
+    "about:blank#Kq1zZx",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "about:blank#Kq1zZx"
+   ]
+  },
+  {
+   "shape": "about-q",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ],
+   "in": "about:blank?Kq24Zx",
+   "text": "about:blank?Kq24Zx",
+   "url": "about:blank",
+   "nav": "about:blank",
+   "cliNav": [
+    "about:blank"
+   ],
+   "cliDownload": [
+    "about:blank?Kq24Zx",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "about:blank?Kq24Zx"
+   ]
+  },
+  {
+   "shape": "chrome-q",
+   "leaks": [],
+   "in": "chrome://settings/?search=Kq29Zx",
+   "text": "chrome://settings/[redacted]",
+   "url": "chrome://settings/",
+   "nav": "chrome://settings/",
+   "cliNav": [
+    "chrome://settings/"
+   ],
+   "cliDownload": [
+    "chrome://settings/[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "[redacted]"
+   ]
+  },
+  {
+   "shape": "chrome-frag",
+   "leaks": [],
+   "in": "chrome://x/#Kq2eZx",
+   "text": "chrome://x/[redacted]",
+   "url": "chrome://x/",
+   "nav": "chrome://x/",
+   "cliNav": [
+    "chrome://x/"
+   ],
+   "cliDownload": [
+    "chrome://x/[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "[redacted]"
+   ]
+  },
+  {
+   "shape": "ws-q",
+   "leaks": [],
+   "in": "ws://h.test:9/p?t=Kq2jZx",
+   "text": "ws://h.test:9/p[redacted]",
+   "url": "ws://h.test:9/p",
+   "nav": "ws://h.test:9/p",
+   "cliNav": [
+    "ws://h.test:9/p"
+   ],
+   "cliDownload": [
+    "ws://h.test:9/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "wss-frag",
+   "leaks": [],
+   "in": "wss://h.test/p#Kq2oZx",
+   "text": "wss://h.test/p[redacted]",
+   "url": "wss://h.test/p",
+   "nav": "wss://h.test/p",
+   "cliNav": [
+    "wss://h.test/p"
+   ],
+   "cliDownload": [
+    "wss://h.test/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "redirect=url",
+   "leaks": [],
+   "in": "redirect=https://x.test/?token=Kq2tZx",
+   "text": "redirect=https://x.test/[redacted]",
+   "url": "redirect=https://x.test/",
+   "nav": "redirect=https://x.test/",
+   "cliNav": [
+    "redirect=https://x.test/"
+   ],
+   "cliDownload": [
+    "redirect=https://x.test/[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "[redacted]"
+   ]
+  },
+  {
+   "shape": "word-before-url",
+   "leaks": [],
+   "in": "xhttps://x.test/?t=Kq2yZx",
+   "text": "xhttps://x.test/[redacted]",
+   "url": "xhttps://x.test/",
+   "nav": "xhttps://x.test/",
+   "cliNav": [
+    "xhttps://x.test/"
+   ],
+   "cliDownload": [
+    "xhttps://x.test/[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "[redacted]"
+   ]
+  },
+  {
+   "shape": "eq-before-url-frag",
+   "leaks": [],
+   "in": "a=https://x.test/p#Kq33Zx",
+   "text": "a=https://x.test/p[redacted]",
+   "url": "a=https://x.test/p",
+   "nav": "a=https://x.test/p",
+   "cliNav": [
+    "a=https://x.test/p"
+   ],
+   "cliDownload": [
+    "a=https://x.test/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "nested-url-in-query",
+   "leaks": [],
+   "in": "https://a.test/cb?next=https://b.test/?t=Kq38Zx",
+   "text": "https://a.test/cb[redacted]",
+   "url": "https://a.test/cb",
+   "nav": "https://a.test/cb",
+   "cliNav": [
+    "https://a.test/cb"
+   ],
+   "cliDownload": [
+    "https://a.test/cb[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "cb[redacted]"
+   ]
+  },
+  {
+   "shape": "nested-encoded-in-query",
+   "leaks": [],
+   "in": "https://a.test/cb?next=https%3A%2F%2Fb.test%2F%3Ft%3DKq3dZx",
+   "text": "https://a.test/cb[redacted]",
+   "url": "https://a.test/cb",
+   "nav": "https://a.test/cb",
+   "cliNav": [
+    "https://a.test/cb"
+   ],
+   "cliDownload": [
+    "https://a.test/cb[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "cb[redacted]"
+   ]
+  },
+  {
+   "shape": "encoded-standalone",
+   "leaks": [],
+   "in": "https%3A%2F%2Fb.test%2F%3Ft%3DKq3iZx",
+   "text": "[redacted]",
+   "url": "[redacted]",
+   "nav": "[redacted]",
+   "cliNav": [
+    "[redacted]"
+   ],
+   "cliDownload": [
+    "[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "[redacted]"
+   ]
+  },
+  {
+   "shape": "double-encoded-standalone",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ],
+   "in": "https%253A%252F%252Fb.test%252F%253Ft%253DKq3nZx",
+   "text": "https%253A%252F%252Fb.test%252F%253Ft%253DKq3nZx",
+   "url": "https%253A%252F%252Fb.test%252F%253Ft%253DKq3nZx",
+   "nav": "https%253A%252F%252Fb.test%252F%253Ft%253DKq3nZx",
+   "cliNav": [
+    "https%253A%252F%252Fb.test%252F%253Ft%253DKq3nZx"
+   ],
+   "cliDownload": [
+    "https%253A%252F%252Fb.test%252F%253Ft%253DKq3nZx",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "https%253A%252F%252Fb.test%252F%253Ft%253DKq3nZx"
+   ]
+  },
+  {
+   "shape": "encoded-in-path",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ],
+   "in": "https://a.test/r/https%3A%2F%2Fb.test%2F%3Ft%3DKq3sZx",
+   "text": "https://a.test/r/https%3A%2F%2Fb.test%2F%3Ft%3DKq3sZx",
+   "url": "https://a.test/r/https%3A%2F%2Fb.test%2F%3Ft%3DKq3sZx",
+   "nav": "https://a.test/r/https%3A%2F%2Fb.test%2F%3Ft%3DKq3sZx",
+   "cliNav": [
+    "https://a.test/r/https%3A%2F%2Fb.test%2F%3Ft%3DKq3sZx"
+   ],
+   "cliDownload": [
+    "https://a.test/r/https%3A%2F%2Fb.test%2F%3Ft%3DKq3sZx",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "https%3A%2F%2Fb.test%2F%3Ft%3DKq3sZx"
+   ]
+  },
+  {
+   "shape": "backslash-url-q=",
+   "leaks": [],
+   "in": "http:\\\\host.test\\p?t=Kq3xZx",
+   "text": "http:\\\\host.test\\p[redacted]",
+   "url": "http://host.test/p",
+   "nav": "http://host.test/p",
+   "cliNav": [
+    "http://host.test/p"
+   ],
+   "cliDownload": [
+    "http:\\\\host.test\\p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "backslash-url-frag",
+   "leaks": [],
+   "in": "http:\\\\host.test\\p#Kq42Zx",
+   "text": "http:\\\\host.test\\p[redacted]",
+   "url": "http://host.test/p",
+   "nav": "http://host.test/p",
+   "cliNav": [
+    "http://host.test/p"
+   ],
+   "cliDownload": [
+    "http:\\\\host.test\\p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "backslash-url-q-noeq",
+   "leaks": [],
+   "in": "http:\\\\host.test\\p?Kq47Zx",
+   "text": "http:\\\\host.test\\p[redacted]",
+   "url": "http://host.test/p",
+   "nav": "http://host.test/p",
+   "cliNav": [
+    "http://host.test/p"
+   ],
+   "cliDownload": [
+    "http:\\\\host.test\\p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "tab-sep-frag",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ],
+   "in": "https://x.test/p\t#Kq4cZx",
+   "text": "https://x.test/p\t#Kq4cZx",
+   "url": "https://x.test/p",
+   "nav": "https://x.test/p",
+   "cliNav": [
+    "https://x.test/p"
+   ],
+   "cliDownload": [
+    "https://x.test/p #Kq4cZx",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p #Kq4cZx"
+   ]
+  },
+  {
+   "shape": "nl-sep-q",
+   "leaks": [],
+   "in": "https://x.test/p?a=1\nKq4hZx",
+   "text": "https://x.test/p[redacted]",
+   "url": "https://x.test/p",
+   "nav": "https://x.test/p",
+   "cliNav": [
+    "https://x.test/p"
+   ],
+   "cliDownload": [
+    "https://x.test/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "nbsp-in-query",
+   "leaks": [],
+   "in": "https://x.test/p?a=1 Kq4mZx",
+   "text": "https://x.test/p[redacted]",
+   "url": "https://x.test/p",
+   "nav": "https://x.test/p",
+   "cliNav": [
+    "https://x.test/p"
+   ],
+   "cliDownload": [
+    "https://x.test/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "space-in-path-then-frag",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ],
+   "in": "https://x.test/my dir#Kq4rZx",
+   "text": "https://x.test/my dir#Kq4rZx",
+   "url": "https://x.test/my%20dir",
+   "nav": "https://x.test/my%20dir",
+   "cliNav": [
+    "https://x.test/my%20dir"
+   ],
+   "cliDownload": [
+    "https://x.test/my dir#Kq4rZx",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "my dir#Kq4rZx"
+   ]
+  },
+  {
+   "shape": "space-in-path-then-q-noeq",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ],
+   "in": "https://x.test/my dir?Kq4wZx",
+   "text": "https://x.test/my dir?Kq4wZx",
+   "url": "https://x.test/my%20dir",
+   "nav": "https://x.test/my%20dir",
+   "cliNav": [
+    "https://x.test/my%20dir"
+   ],
+   "cliDownload": [
+    "https://x.test/my dir?Kq4wZx",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "my dir?Kq4wZx"
+   ]
+  },
+  {
+   "shape": "space-in-query-then-url",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line"
+   ],
+   "in": "https://x.test/cb?q=ab Kq51Zx&next=https://y.test/",
+   "text": "https://x.test/cb[redacted] Kq51Zx&next=https://y.test/",
+   "url": "https://x.test/cb",
+   "nav": "https://x.test/cb",
+   "cliNav": [
+    "https://x.test/cb"
+   ],
+   "cliDownload": [
+    "https://x.test/cb[redacted] Kq51Zx&next=https://y.test/",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "y.test"
+   ]
+  },
+  {
+   "shape": "space-in-query-then-host",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ],
+   "in": "https://x.test/cb?q=ab Kq56Zx.example.com/",
+   "text": "https://x.test/cb[redacted] Kq56Zx.example.com/",
+   "url": "https://x.test/cb",
+   "nav": "https://x.test/cb",
+   "cliNav": [
+    "https://x.test/cb"
+   ],
+   "cliDownload": [
+    "https://x.test/cb[redacted] Kq56Zx.example.com/",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "cb[redacted] Kq56Zx.example.com"
+   ]
+  },
+  {
+   "shape": "json-escaped-quotes",
+   "leaks": [],
+   "in": "{\\\"u\\\":\\\"https://x.test/p?t=Kq5bZx\\\"}",
+   "text": "{\\\"u\\\":\\\"https://x.test/p[redacted]",
+   "url": "{\\\"u\\\":\\\"https://x.test/p",
+   "nav": "{\\\"u\\\":\\\"https://x.test/p",
+   "cliNav": [
+    "{\\\"u\\\":\\\"https://x.test/p"
+   ],
+   "cliDownload": [
+    "{\\\"u\\\":\\\"https://x.test/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "json-escaped-slashes",
+   "leaks": [],
+   "in": "https:\\/\\/x.test\\/p?t=Kq5gZx",
+   "text": "https:\\/\\/x.test\\/p[redacted]",
+   "url": "https://x.test//p",
+   "nav": "https://x.test//p",
+   "cliNav": [
+    "https://x.test//p"
+   ],
+   "cliDownload": [
+    "https:\\/\\/x.test\\/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "json-escaped-slashes-frag",
+   "leaks": [],
+   "in": "https:\\/\\/x.test\\/p#Kq5lZx",
+   "text": "https:\\/\\/x.test\\/p[redacted]",
+   "url": "https://x.test//p",
+   "nav": "https://x.test//p",
+   "cliNav": [
+    "https://x.test//p"
+   ],
+   "cliDownload": [
+    "https:\\/\\/x.test\\/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "json-double-escaped-frag",
+   "leaks": [],
+   "in": "https:\\\\/\\\\/x.test\\\\/p#Kq5qZx",
+   "text": "https:\\\\/\\\\/x.test\\\\/p[redacted]",
+   "url": "https://x.test///p",
+   "nav": "https://x.test///p",
+   "cliNav": [
+    "https://x.test///p"
+   ],
+   "cliDownload": [
+    "https:\\\\/\\\\/x.test\\\\/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "single-label-port-frag",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ],
+   "in": "intranet:8080/p#Kq5vZx",
+   "text": "intranet:8080/p#Kq5vZx",
+   "url": "intranet:8080/p",
+   "nav": "intranet:8080/p",
+   "cliNav": [
+    "intranet:8080/p"
+   ],
+   "cliDownload": [
+    "intranet:8080/p#Kq5vZx",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p#Kq5vZx"
+   ]
+  },
+  {
+   "shape": "single-label-port-q-noeq",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ],
+   "in": "intranet:8080/p?Kq60Zx",
+   "text": "intranet:8080/p?Kq60Zx",
+   "url": "intranet:8080/p",
+   "nav": "intranet:8080/p",
+   "cliNav": [
+    "intranet:8080/p"
+   ],
+   "cliDownload": [
+    "intranet:8080/p?Kq60Zx",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p?Kq60Zx"
+   ]
+  },
+  {
+   "shape": "custom-scheme-frag-token",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ],
+   "in": "com.example.app:/cb#access_token=Kq65Zx",
+   "text": "com.example.app:/cb#access_token=Kq65Zx",
+   "url": "com.example.app:/cb",
+   "nav": "com.example.app:/cb",
+   "cliNav": [
+    "com.example.app:/cb"
+   ],
+   "cliDownload": [
+    "com.example.app:/cb#access_token=Kq65Zx",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "cb#access_token=Kq65Zx"
+   ]
+  },
+  {
+   "shape": "custom-scheme-frag-2",
+   "leaks": [],
+   "in": "myapp://cb#access_token=Kq6aZx&x=1",
+   "text": "myapp://cb[redacted]",
+   "url": "myapp://cb",
+   "nav": "myapp://cb",
+   "cliNav": [
+    "myapp://cb"
+   ],
+   "cliDownload": [
+    "myapp://cb[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "cb[redacted]"
+   ]
+  },
+  {
+   "shape": "ipv6-noscheme-frag",
+   "leaks": [],
+   "in": "[::1]:9/p#Kq6fZx",
+   "text": "[::1]:9/p[redacted]",
+   "url": "[::1]:9/p",
+   "nav": "[::1]:9/p",
+   "cliNav": [
+    "[::1]:9/p"
+   ],
+   "cliDownload": [
+    "[::1]:9/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "fullwidth-paren-wrap",
+   "leaks": [],
+   "in": "（https://x.test/p?t=Kq6kZx）",
+   "text": "（https://x.test/p[redacted]",
+   "url": "（https://x.test/p",
+   "nav": "（https://x.test/p",
+   "cliNav": [
+    "（https://x.test/p"
+   ],
+   "cliDownload": [
+    "（https://x.test/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "zwsp-before-q",
+   "leaks": [],
+   "in": "https://x.test/p​?t=Kq6pZx",
+   "text": "https://x.test/p​[redacted]",
+   "url": "https://x.test/p%E2%80%8B",
+   "nav": "https://x.test/p%E2%80%8B",
+   "cliNav": [
+    "https://x.test/p%E2%80%8B"
+   ],
+   "cliDownload": [
+    "https://x.test/p​[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p​[redacted]"
+   ]
+  },
+  {
+   "shape": "url-semicolon-param",
+   "leaks": [],
+   "in": "https://x.test/p;jsessionid=Kq6uZx",
+   "text": "https://x.test/p[redacted]",
+   "url": "https://x.test/p",
+   "nav": "https://x.test/p",
+   "cliNav": [
+    "https://x.test/p"
+   ],
+   "cliDownload": [
+    "https://x.test/p[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p[redacted]"
+   ]
+  },
+  {
+   "shape": "userinfo-scheme",
+   "leaks": [],
+   "in": "https://u:Kq6zZx@x.test/",
+   "text": "https://x.test/",
+   "url": "https://x.test/",
+   "nav": "https://x.test/",
+   "cliNav": [
+    "https://x.test/"
+   ],
+   "cliDownload": [
+    "https://x.test/",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "x.test"
+   ]
+  },
+  {
+   "shape": "userinfo-noscheme",
+   "leaks": [],
+   "in": "u:Kq74Zx@x.test/p",
+   "text": "x.test/p",
+   "url": "x.test/p",
+   "nav": "x.test/p",
+   "cliNav": [
+    "x.test/p"
+   ],
+   "cliDownload": [
+    "x.test/p",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "p"
+   ]
+  },
+  {
+   "shape": "userinfo-double-at",
+   "leaks": [],
+   "in": "https://u:Kq79Zx@@x.test/",
+   "text": "https://x.test/",
+   "url": "https://x.test/",
+   "nav": "https://x.test/",
+   "cliNav": [
+    "https://x.test/"
+   ],
+   "cliDownload": [
+    "https://x.test/",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "x.test"
+   ]
+  },
+  {
+   "shape": "form-body-space",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ],
+   "in": "a=1&token=my Kq7eZx",
+   "text": "[redacted] Kq7eZx",
+   "url": "[redacted] Kq7eZx",
+   "nav": "[redacted] Kq7eZx",
+   "cliNav": [
+    "[redacted] Kq7eZx"
+   ],
+   "cliDownload": [
+    "[redacted] Kq7eZx",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "[redacted] Kq7eZx"
+   ]
+  },
+  {
+   "shape": "win-fwd",
+   "leaks": [],
+   "in": "C:/Users/Kq7jZx/docs/f.txt",
+   "text": "f.txt",
+   "url": "f.txt",
+   "nav": "f.txt",
+   "cliNav": [
+    "f.txt"
+   ],
+   "cliDownload": [
+    "f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "f.txt"
+   ]
+  },
+  {
+   "shape": "win-back",
+   "leaks": [],
+   "in": "C:\\Users\\Kq7oZx\\docs\\f.txt",
+   "text": "f.txt",
+   "url": "f.txt",
+   "nav": "f.txt",
+   "cliNav": [
+    "f.txt"
+   ],
+   "cliDownload": [
+    "f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "f.txt"
+   ]
+  },
+  {
+   "shape": "win-lower",
+   "leaks": [],
+   "in": "c:\\users\\Kq7tZx\\f.txt",
+   "text": "f.txt",
+   "url": "f.txt",
+   "nav": "f.txt",
+   "cliNav": [
+    "f.txt"
+   ],
+   "cliDownload": [
+    "f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "f.txt"
+   ]
+  },
+  {
+   "shape": "rel-dotdot",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line"
+   ],
+   "in": "..\\Kq7yZx\\f.txt",
+   "text": "..\\Kq7yZx\\f.txt",
+   "url": "..\\Kq7yZx\\f.txt",
+   "nav": "..\\Kq7yZx\\f.txt",
+   "cliNav": [
+    "..\\Kq7yZx\\f.txt"
+   ],
+   "cliDownload": [
+    "..\\Kq7yZx\\f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "f.txt"
+   ]
+  },
+  {
+   "shape": "rel-dot",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line"
+   ],
+   "in": "./Kq83Zx/f.txt",
+   "text": "./Kq83Zx/f.txt",
+   "url": "./Kq83Zx/f.txt",
+   "nav": "./Kq83Zx/f.txt",
+   "cliNav": [
+    "./Kq83Zx/f.txt"
+   ],
+   "cliDownload": [
+    "./Kq83Zx/f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "f.txt"
+   ]
+  },
+  {
+   "shape": "drive-relative",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line"
+   ],
+   "in": "C:Kq88Zx\\f.txt",
+   "text": "C:Kq88Zx\\f.txt",
+   "url": "C:Kq88Zx\\f.txt",
+   "nav": "C:Kq88Zx\\f.txt",
+   "cliNav": [
+    "C:Kq88Zx\\f.txt"
+   ],
+   "cliDownload": [
+    "C:Kq88Zx\\f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "f.txt"
+   ]
+  },
+  {
+   "shape": "long-path",
+   "leaks": [],
+   "in": "\\\\?\\C:\\Users\\Kq8dZx\\f.txt",
+   "text": "…[redacted]",
+   "url": "\\\\",
+   "nav": "\\\\",
+   "cliNav": [
+    "\\\\"
+   ],
+   "cliDownload": [
+    "…[redacted]",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "…[redacted]"
+   ]
+  },
+  {
+   "shape": "device-path",
+   "leaks": [],
+   "in": "\\\\.\\C:\\Users\\Kq8iZx\\f.txt",
+   "text": "f.txt",
+   "url": "f.txt",
+   "nav": "f.txt",
+   "cliNav": [
+    "f.txt"
+   ],
+   "cliDownload": [
+    "f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "f.txt"
+   ]
+  },
+  {
+   "shape": "env-userprofile",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line"
+   ],
+   "in": "%USERPROFILE%\\Kq8nZx\\f.txt",
+   "text": "%USERPROFILE%\\Kq8nZx\\f.txt",
+   "url": "%USERPROFILE%\\Kq8nZx\\f.txt",
+   "nav": "%USERPROFILE%\\Kq8nZx\\f.txt",
+   "cliNav": [
+    "%USERPROFILE%\\Kq8nZx\\f.txt"
+   ],
+   "cliDownload": [
+    "%USERPROFILE%\\Kq8nZx\\f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "f.txt"
+   ]
+  },
+  {
+   "shape": "env-home-posix",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line"
+   ],
+   "in": "$HOME/Kq8sZx/f.txt",
+   "text": "$HOME/Kq8sZx/f.txt",
+   "url": "$HOME/Kq8sZx/f.txt",
+   "nav": "$HOME/Kq8sZx/f.txt",
+   "cliNav": [
+    "$HOME/Kq8sZx/f.txt"
+   ],
+   "cliDownload": [
+    "$HOME/Kq8sZx/f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "f.txt"
+   ]
+  },
+  {
+   "shape": "tilde-backslash",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line"
+   ],
+   "in": "~\\Kq8xZx\\f.txt",
+   "text": "~\\Kq8xZx\\f.txt",
+   "url": "~\\Kq8xZx\\f.txt",
+   "nav": "~\\Kq8xZx\\f.txt",
+   "cliNav": [
+    "~\\Kq8xZx\\f.txt"
+   ],
+   "cliDownload": [
+    "~\\Kq8xZx\\f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "f.txt"
+   ]
+  },
+  {
+   "shape": "colon-before-posix",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line"
+   ],
+   "in": "path:/home/Kq92Zx/f.txt",
+   "text": "path:/home/Kq92Zx/f.txt",
+   "url": "path:/home/Kq92Zx/f.txt",
+   "nav": "path:/home/Kq92Zx/f.txt",
+   "cliNav": [
+    "path:/home/Kq92Zx/f.txt"
+   ],
+   "cliDownload": [
+    "path:/home/Kq92Zx/f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "f.txt"
+   ]
+  },
+  {
+   "shape": "file-single-slash",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.error",
+    "entry.verification",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line"
+   ],
+   "in": "file:/home/Kq97Zx/f.txt",
+   "text": "file:/home/Kq97Zx/f.txt",
+   "url": "file://…/f.txt",
+   "nav": "file://…/f.txt",
+   "cliNav": [
+    "file://…/f.txt"
+   ],
+   "cliDownload": [
+    "file:/home/Kq97Zx/f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "f.txt"
+   ]
+  },
+  {
+   "shape": "file-drive-noslash",
+   "leaks": [],
+   "in": "file:C:/Users/Kq9cZx/f.txt",
+   "text": "file:f.txt",
+   "url": "file://…/f.txt",
+   "nav": "file://…/f.txt",
+   "cliNav": [
+    "file://…/f.txt"
+   ],
+   "cliDownload": [
+    "file:f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "file:f.txt"
+   ]
+  },
+  {
+   "shape": "unc-forward",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.line"
+   ],
+   "in": "//fileserver/share/Kq9hZx/f.txt",
+   "text": "//fileserver/share/Kq9hZx/f.txt",
+   "url": "//fileserver/share/Kq9hZx/f.txt",
+   "nav": "//fileserver/share/Kq9hZx/f.txt",
+   "cliNav": [
+    "//fileserver/share/Kq9hZx/f.txt"
+   ],
+   "cliDownload": [
+    "//fileserver/share/Kq9hZx/f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "f.txt"
+   ]
+  },
+  {
+   "shape": "unc-json-escaped",
+   "leaks": [],
+   "in": "\\\\\\\\srv\\\\share\\\\Kq9mZx\\\\f.txt",
+   "text": "\\\\f.txt",
+   "url": "\\\\f.txt",
+   "nav": "\\\\f.txt",
+   "cliNav": [
+    "f.txt"
+   ],
+   "cliDownload": [
+    "\\\\f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "f.txt"
+   ]
+  },
+  {
+   "shape": "win-in-quotes-spaces",
+   "leaks": [],
+   "in": "\"C:\\Users\\Ada Kq9rZx\\Desktop\\f.txt\"",
+   "text": "\"f.txt\"",
+   "url": "\"f.txt\"",
+   "nav": "\"f.txt\"",
+   "cliNav": [
+    "\"f.txt\""
+   ],
+   "cliDownload": [
+    "\"f.txt\"",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "\"f.txt\""
+   ]
+  },
+  {
+   "shape": "posix-in-parens",
+   "leaks": [],
+   "in": "(/home/Kq9wZx/f.txt)",
+   "text": "(f.txt)",
+   "url": "(f.txt)",
+   "nav": "(f.txt)",
+   "cliNav": [
+    "(f.txt)"
+   ],
+   "cliDownload": [
+    "(f.txt)",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "(f.txt)"
+   ]
+  },
+  {
+   "shape": "home-dir-only",
+   "leaks": [
+    "text",
+    "entry.selector",
+    "entry.target",
+    "entry.url",
+    "entry.error",
+    "entry.verification",
+    "navigate.target",
+    "cli.nav",
+    "cli.newtab",
+    "cli.download",
+    "cli.clicktext",
+    "cli.waitfor",
+    "cli.click",
+    "cli.upload",
+    "cli.screenshot",
+    "cli.line"
+   ],
+   "in": "C:\\Users\\Kqa1Zx",
+   "text": "Kqa1Zx",
+   "url": "Kqa1Zx",
+   "nav": "Kqa1Zx",
+   "cliNav": [
+    "Kqa1Zx"
+   ],
+   "cliDownload": [
+    "Kqa1Zx",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "Kqa1Zx"
+   ]
+  },
+  {
+   "shape": "posix-eq",
+   "leaks": [],
+   "in": "file=/home/Kqa6Zx/f.txt",
+   "text": "file=f.txt",
+   "url": "file=f.txt",
+   "nav": "file=f.txt",
+   "cliNav": [
+    "file=f.txt"
+   ],
+   "cliDownload": [
+    "file=f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "file=f.txt"
+   ]
+  },
+  {
+   "shape": "win-after-word-colon",
+   "leaks": [],
+   "in": "ENOENT:C:\\Users\\KqabZx\\f.txt",
+   "text": "ENOENT:f.txt",
+   "url": "ENOENT:f.txt",
+   "nav": "ENOENT:f.txt",
+   "cliNav": [
+    "ENOENT:f.txt"
+   ],
+   "cliDownload": [
+    "ENOENT:f.txt",
+    "<dir>"
+   ],
+   "cliUpload": [
+    "3",
+    "ENOENT:f.txt"
+   ]
+  }
+ ]
+}

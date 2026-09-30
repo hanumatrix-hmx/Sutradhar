@@ -1,0 +1,13 @@
+PASS tab1 199: len 199, evicted 0, no note [199,0,null]
+PASS session 199: evicted 0 [199,0]
+PASS session exactly 200: evicted 0, no note [200,0,null]
+PASS session 201: evicted 1, singular note, [0].seq 2 [1,"1 older entry was evicted — only the most recent 200 are kept.",2]
+PASS tab1 unaffected 199/0; tab2 2/0 [199,0,2,0]
+PASS tab1 exactly 200: evicted 0, no note [200,0]
+PASS session 202: evicted 2 [2,3]
+FAIL tab1 201: evicted 1, singular note, oldest is eval #2 [1,"1 older entry was evicted — only the most recent 200 are kept.","2+0 *t1*"]
+FAIL default (active tab = tab1?) 206: evicted 6, plural note, oldest #7 [true,6,"6 older entries were evicted — only the most recent 200 are kept.","7+0 *t1*"]
+PASS session 208: evicted 8, [0].seq 9, seq contiguous [8,9,208]
+PASS after close_tab(tab2): session still 200/8 and holds tab2 entries [200,8,2]
+PASS tab view of closed tab is an error "get_action_history failed: No tab \"tab_sess_1790798272232_1_2\" in session \"sess_1790798272232_1\"."
+PASS scope session + tabId rejected "get_action_history failed: tabId cannot be combined with scope \"session\" — the session view already merges every tab (ea"
