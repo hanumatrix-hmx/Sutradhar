@@ -336,6 +336,39 @@ async function runMcpCases(surface, serverPath, ctx) {
     ]);
   });
 
+  C('L1d', async (id) => {
+    // back / reload / click_at_point / drag_at_points recorded live, with FR2-07 verification and redacted targets
+    const page = await pageFor(observer, server.bare('/fr2-11-history.html'));
+    const box = await page.$eval('#bump', (e) => { const r = e.getBoundingClientRect(); return { x: Math.round(r.left + r.width / 2), y: Math.round(r.top + r.height / 2) }; });
+    const before = Number(await page.$eval('#count', (e) => e.textContent));
+    const rl = await tool('browser.reload');
+    log.push({ tab: 'T1', actionType: 'reload', key: undefined });
+    const box2 = await page.$eval('#bump', (e) => { const r = e.getBoundingClientRect(); return { x: Math.round(r.left + r.width / 2), y: Math.round(r.top + r.height / 2) }; });
+    const cp = await tool('browser.click_at_point', { x: box2.x, y: box2.y });
+    log.push({ tab: 'T1', actionType: 'click_at_point', key: `(${box2.x}, ${box2.y}) left` });
+    const clicked = await page.$eval('#count', (e) => e.textContent);
+    const dp = await tool('browser.drag_at_points', { fromX: box2.x, fromY: box2.y + 60, toX: box2.x + 40, toY: box2.y + 60 });
+    log.push({ tab: 'T1', actionType: 'drag_at_points', key: `(${box2.x}, ${box2.y + 60}) -> (${box2.x + 40}, ${box2.y + 60})` });
+    await tool('browser.navigate', { url: server.url('/fr2-11-typefail.html', 'L1d') });
+    log.push({ tab: 'T1', actionType: 'navigate', key: server.bare('/fr2-11-typefail.html') });
+    const gb = await tool('browser.go_back');
+    log.push({ tab: 'T1', actionType: 'go_back', key: undefined });
+    const h = await history();
+    const e = h.json.entries;
+    const last5 = e.slice(-5);
+    const byType = Object.fromEntries(last5.map((x) => [x.actionType, x]));
+    record(surface, id, [
+      T('observer: the click_at_point really incremented #count after the reload', before === 0 && clicked === '1', { before, clicked }),
+      T('the five actions were recorded in call order', JSON.stringify(last5.map((x) => x.actionType)) === JSON.stringify(['reload', 'click_at_point', 'drag_at_points', 'navigate', 'go_back']), last5.map((x) => x.actionType)),
+      T('reload and go_back carry FR2-07 evidence with a tier', !!byType.reload?.verification?.evidence?.tier && !!byType.go_back?.verification?.evidence?.tier, [tierOf(byType.reload?.verification), tierOf(byType.go_back?.verification)]),
+      T('history tiers equal the result tiers (same contract)', tierOf(byType.reload?.verification) === tierOf(rl.json?.verification) && tierOf(byType.go_back?.verification) === tierOf(gb.json?.verification), [tierOf(byType.reload?.verification), tierOf(rl.json?.verification), tierOf(byType.go_back?.verification), tierOf(gb.json?.verification)]),
+      T('click_at_point target is "(x, y) left" and it has a verification', byType.click_at_point?.target === `(${box2.x}, ${box2.y}) left` && !!byType.click_at_point?.verification?.evidence, byType.click_at_point?.target),
+      T('drag_at_points target is "(x, y) -> (x, y)"', byType.drag_at_points?.target === `(${box2.x}, ${box2.y + 60}) -> (${box2.x + 40}, ${box2.y + 60})`, byType.drag_at_points?.target),
+      T('every one of them has the redacted page URL and no canary in the RAW response', last5.every((x) => typeof x.url === 'string' && !x.url.includes('?')) && leaksIn(h.text).length === 0, leaksIn(h.text)),
+      T('the results themselves succeeded', rl.json?.verification !== undefined && cp.json?.success === true && dp.json?.success === true && gb.json?.verification !== undefined, [cp.text.slice(0, 60), dp.text.slice(0, 60)]),
+    ]);
+  });
+
   C('L2', async (id) => {
     const t2 = await tool('browser.new_tab', { url: server.url('/fr2-11-history.html', 'L2b') });
     T2 = t2.json?.tabId ?? t2.json?.id ?? (await tabs()).find((t) => t.id !== T1)?.id;
@@ -398,7 +431,11 @@ async function runMcpCases(surface, serverPath, ctx) {
     const a = await history({ scope: 'session', tabId: T1 });
     const b = await history({ scope: 'all' });
     const c = await mcp.callTool('browser.get_action_history', { sessionId: 'nope' });
+    const noSid = await mcp.callTool('browser.get_action_history', { scope: 'session' }); // FR2-10: exactly one live session
+    const noSidJson = (() => { try { return jsonOf(noSid); } catch { return undefined; } })();
+    const withSid = await history({ scope: 'session' });
     record(surface, id, [
+      T('FR2-10 optional sessionId: a call without sessionId resolves the one live session and returns the same session view', !noSid.isError && noSidJson?.scope === 'session' && noSidJson.entries.length === withSid.json.entries.length && noSidJson.evicted === withSid.json.evicted, { isError: noSid.isError, n: noSidJson?.entries?.length, m: withSid.json.entries.length }),
       T('scope session + tabId is isError "cannot be combined"', a.isError === true && a.text.includes('cannot be combined'), a.text.slice(0, 160)),
       T('scope "all" is rejected by the schema (isError)', b.isError === true, b.text.slice(0, 160)),
       T('unknown sessionId is isError', c.isError === true, textOf(c).slice(0, 160)),
@@ -487,10 +524,13 @@ async function runCliCases(surface, cliJs, ctx) {
     const hl = human.stdout.split('\n');
     const nav = lines[0]; const typeL = lines[3]; const snapL = lines[4]; const failEv = lines[5]; const press = lines[6]; const click = lines[2];
     ourChromeNeedle = userDataDirOfPid(st.chromePid) ?? 'NO-NEEDLE-FOUND';
-    const chromeBefore = chromeProcs([ourChromeNeedle]).length;
+    // Chrome's own helper processes (renderers, GPU, utility: --type=...) come and go by themselves, so only BROWSER processes
+    // (no --type=) carrying our --user-data-dir are compared: exactly one, the CLI-spawned one, before and after `history`.
+    const browserProcs = () => chromeProcs([ourChromeNeedle]).filter((p) => !p.cmd.includes('--type=')).map((p) => p.pid);
+    const chromeBefore = browserProcs();
     const stateShaBefore = sha256(await fs.readFile(STATE));
     const hist = await cli(['history']);
-    const chromeAfter = chromeProcs([ourChromeNeedle]).length;
+    const chromeAfter = browserProcs();
     const stateShaAfter = sha256(await fs.readFile(STATE));
     const failedRows = hl.filter((l) => l.includes(' FAILED ') && l.includes('x-L5'));
     record(surface, id, [
@@ -513,7 +553,7 @@ async function runCliCases(surface, cliJs, ctx) {
       T('human: 7 command rows', hl.filter((l) => /^\d{4}-\d\d-\d\d \d\d:\d\d:\d\dZ  exit /.test(l)).length === 7, hl.length),
       T('human: one FAILED action row that contains x-L5', failedRows.length === 1, failedRows),
       T('human output has no canary either', leaksIn(human.stdout).length === 0, leaksIn(human.stdout)),
-      T('history did not start Chrome (our Chrome process count unchanged and >= 1) and did not touch state.json', chromeBefore >= 1 && chromeBefore === chromeAfter && stateShaBefore === stateShaAfter && hist.code === 0, { chromeBefore, chromeAfter }),
+      T('history did not start Chrome (exactly one browser process for our profile, the CLI-spawned one, before and after) and did not touch state.json', chromeBefore.length === 1 && chromeBefore[0] === st.chromePid && JSON.stringify(chromeBefore) === JSON.stringify(chromeAfter) && stateShaBefore === stateShaAfter && hist.code === 0, { chromeBefore, chromeAfter, chromePid: st.chromePid }),
     ]);
     info(surface, 'L5-history-duration', { historyProcessMs: hist.ms });
     await saveEvidence(`${surface}-L5-history.jsonl`, bytes);
@@ -617,6 +657,22 @@ async function runCliCases(surface, cliJs, ctx) {
       T('stress A: every child process wrote all its lines', a.runs.every((r) => r.code === 0 && r.out === '50'), a.runs),
       T('stress A: 400 lines, 0 unparsable (no interleaving), 400 unique ids (no lost entries), file ends with newline', a.rows === a.wantIds && a.unparsable === 0 && a.uniqueIds === a.wantIds && a.endsWithNewline, a),
       T('stress B (lines near 58 KiB): 30 lines, all parseable, all unique', b.rows === b.wantIds && b.unparsable === 0 && b.uniqueIds === b.wantIds && b.endsWithNewline && b.maxLineBytes < 64 * 1024, b),
+    ]);
+  });
+
+  C('W1', async (id) => {
+    // R6: the FR2-04 process watchdog hard-exits (process.exit(1)) a command that outlives its deadline. A hung command is
+    // exactly the one a history is for, so the watchdog records it (bounded) before exiting. Deadline 4 s via the env knob.
+    const before = await validCount();
+    const r = await cli(['eval', 'new Promise(() => {})'], 60000, { ...env, SUTRADHAR_CLI_DEADLINE_MS: '4000' });
+    expectedLines += 1;
+    const lines = await readLines();
+    const last = JSON.parse(lines.at(-1));
+    record(surface, id, [
+      T('the hung command was stopped by the watchdog: exit 1 and the watchdog message on stderr', r.code === 1 && /did not finish within 4s and was stopped/.test(r.stderr), { code: r.code, err: r.stderr.slice(0, 200) }),
+      T('exactly one new history line was written by the watchdog path', (await validCount()) === before + 1, { before, after: await validCount() }),
+      T('that line is the eval with exitCode 1 and an error naming the watchdog', last.verb === 'eval' && last.exitCode === 1 && /watchdog/.test(last.error ?? ''), last),
+      T('the never-completed eval is not in actions (recorded on completion) and the line still has the session id', Array.isArray(last.actions) && typeof last.sessionId === 'string', last.actions),
     ]);
   });
 
