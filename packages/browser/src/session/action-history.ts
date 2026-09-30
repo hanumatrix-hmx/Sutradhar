@@ -172,6 +172,29 @@ export function describeActionTarget(params: ActionParams): string | undefined {
   }
 }
 
+/** {@link scrubActionError} applied to every free-text string of a verification (reason, evidence
+ *  expected/observed/detail): a failed action's `reason` is "Action failed: <the error>", so it quotes the same secrets. Pure. */
+export function scrubVerification(params: ActionParams, v: VerificationResultDto): VerificationResultDto {
+  const s = (x: unknown): unknown => (typeof x === 'string' ? scrubActionError(params, x) : x);
+  const out: Record<string, unknown> = { ...v };
+  if (typeof v.reason === 'string') out.reason = scrubActionError(params, v.reason);
+  const ev = (v as unknown as { evidence?: { checks?: readonly Record<string, unknown>[] } }).evidence;
+  if (ev && typeof ev === 'object') {
+    const evOut: Record<string, unknown> = { ...ev };
+    if (Array.isArray(ev.checks)) {
+      evOut.checks = ev.checks.map((c) => {
+        const cOut: Record<string, unknown> = { ...c };
+        if ('expected' in c) cOut.expected = s(c.expected);
+        if ('observed' in c) cOut.observed = s(c.observed);
+        if ('detail' in c) cOut.detail = s(c.detail);
+        return cOut;
+      });
+    }
+    out.evidence = evOut;
+  }
+  return out as unknown as VerificationResultDto;
+}
+
 /**
  * Removes a typed value (and, for a `type did not land` failure, the field's real content) from an
  * engine error message before it is recorded. `type` and `type_by_label` failures quote BOTH the
@@ -179,8 +202,10 @@ export function describeActionTarget(params: ActionParams): string | undefined {
  * content reads ..."), which would otherwise persist a secret.
  */
 export function scrubActionError(params: ActionParams, error: string): string {
-  if ((params.actionType === 'type' || params.actionType === 'type_by_label') && /^type did not land the expected value/.test(error)) {
-    return 'type did not land the expected value (the typed text and the field content are not recorded)';
+  const landed = error.indexOf('type did not land the expected value');
+  if ((params.actionType === 'type' || params.actionType === 'type_by_label') && landed >= 0) {
+    // keeps any prefix ("Action failed: ") and drops everything after, which is where both quotes live
+    return error.slice(0, landed) + 'type did not land the expected value (the typed text and the field content are not recorded)';
   }
   let out = error;
   for (const value of [params.value, ...(params.values ?? [])]) {

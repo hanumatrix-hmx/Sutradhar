@@ -13,6 +13,7 @@ import { StructuredLogger } from '@sutradhar/observability';
 import { SessionId } from '@sutradhar/contracts';
 import { Browser, CDPSession, ElementHandle, Frame, KeyInput, Page } from 'puppeteer-core';
 import { IBrowserTab } from '../session/browser-tab.js';
+import { describeActionTarget, scrubActionError, scrubVerification } from '../session/action-history.js';
 import { ExecutionVerifier, failedVerification, specKeys } from '../verifier/execution-verifier.js';
 import {
   NavigationProbe,
@@ -35,6 +36,7 @@ import { waitForPageSettle } from './page-settle.js';
 import {
   ActionParams,
   ActionResultDto,
+  VerificationResultDto,
   WaitForSelectorState,
   TAB_CLOSED_MID_WAIT_MESSAGE,
   WAIT_HIDDEN_HARD_FAILURE_PREFIX,
@@ -349,6 +351,8 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     }
     const duplicateError = this.checkDuplicateAction(tab.id, params);
     if (duplicateError) {
+      // FR2-11: a rejected attempt is still an attempt an auditor wants to see.
+      this.recordHistory(tab, params, duplicateError);
       return duplicateError;
     }
     // GAP-032: validate `timeoutMs` at the boundary, before it can reach ANY poll loop or
@@ -356,6 +360,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     // per-state inner waits `wait_for_selector` dispatches to) — see {@link checkInvalidTimeoutMs}.
     const timeoutMsError = this.checkInvalidTimeoutMs(params);
     if (timeoutMsError) {
+      this.recordHistory(tab, params, timeoutMsError); // FR2-11
       return timeoutMsError;
     }
 
@@ -446,13 +451,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         );
         const finalResult: ActionResultDto = { ...result, verification };
 
-        tab.recordAction({
-          actionType: params.actionType,
-          selector: params.selector,
-          success: true,
-          executionTimeMs,
-          timestamp: new Date().toISOString(),
-        });
+        this.recordHistory(tab, params, { success: true, executionTimeMs, verification });
 
         if (this.eventBus && params.sessionId) {
           await this.eventBus.publish(
@@ -558,16 +557,35 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       params.verificationSpec,
     );
 
+    this.recordHistory(tab, params, { success: false, executionTimeMs, error: failResult.error, verification });
+
+    return { ...failResult, verification };
+  }
+
+  /**
+   * FR2-11: the ONE place the engine writes to the tab's action history. Records what the action was
+   * aimed at (`target`, never a typed value), the page URL right after it, and the same
+   * `verification` object the result carries (FR2-07; includes FR2-08's wait_for / settle evidence
+   * where the action produced it). The tab sanitizes the entry (URL query/fragment dropped, caps).
+   * A typed value quoted in a failure message is scrubbed here, where the params are known.
+   */
+  private recordHistory(
+    tab: IBrowserTab,
+    params: ActionParams,
+    r: { success: boolean; executionTimeMs: number; error?: string; verification?: VerificationResultDto },
+  ): void {
+    const target = describeActionTarget(params);
     tab.recordAction({
       actionType: params.actionType,
       selector: params.selector,
-      success: false,
-      error: failResult.error,
-      executionTimeMs,
+      success: r.success,
+      ...(r.error !== undefined ? { error: scrubActionError(params, r.error) } : {}),
+      executionTimeMs: r.executionTimeMs,
       timestamp: new Date().toISOString(),
+      ...(target !== undefined ? { target } : {}),
+      url: tab.url,
+      ...(r.verification ? { verification: scrubVerification(params, r.verification) } : {}),
     });
-
-    return { ...failResult, verification };
   }
 
   /** Caller-supplied selectors only — never the selectors the engine builds itself for
@@ -628,14 +646,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         retriesUsed: 0, // no failureScreenshot: nothing on the page is relevant to a parse error
       };
       const verification = await this.verifier.verifyAction(tab, tab.url, failResult, params.verificationSpec);
-      tab.recordAction({
-        actionType: params.actionType,
-        selector: params.selector,
-        success: false,
-        error,
-        executionTimeMs,
-        timestamp: new Date().toISOString(),
-      });
+      this.recordHistory(tab, params, { success: false, executionTimeMs, error, verification });
       this.logger.warn(`[BrowserActionEngine] Rejected invalid selector before dispatch: ${error}`);
       return { ...failResult, verification };
     }

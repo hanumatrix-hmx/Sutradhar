@@ -4912,3 +4912,107 @@ describe('@sutradhar/browser BrowserActionEngine FR2-07 built-in post-conditions
     expect(failed.verification?.evidence.tier).toBe('action-failed');
   });
 });
+
+describe('@sutradhar/browser BrowserActionEngine FR2-11 history entries', () => {
+  it('E1: a successful press_key records target, url and a verification object', async () => {
+    const page = {
+      frames: vi.fn().mockReturnValue([]),
+      keyboard: { press: vi.fn().mockResolvedValue(undefined) },
+    } as unknown as Page;
+    const engine = new BrowserActionEngine();
+    const tab = mockTab(page);
+    const result = await engine.executeAction(tab, { actionType: 'press_key', key: 'Enter', maxRetries: 0 });
+    const h = tab.getActionHistory()[0] as any;
+    expect(h).toMatchObject({ actionType: 'press_key', success: true, target: 'Enter', url: 'https://example.com' });
+    expect(typeof h.verification.verified).toBe('boolean');
+    // the entry carries exactly the verification the RESULT carries (same contract, not a projection)
+    expect(h.verification).toEqual(result.verification);
+  });
+
+  it('E2: a failed click records selector, error and verification', async () => {
+    const page = singleFramePage(() => Promise.reject(new Error('boom')));
+    const engine = new BrowserActionEngine();
+    const tab = mockTab(page);
+    const result = await engine.executeAction(tab, { actionType: 'click', selector: '#does-not-exist', maxRetries: 0 });
+    const h = tab.getActionHistory()[0] as any;
+    expect(h).toMatchObject({ actionType: 'click', selector: '#does-not-exist', success: false });
+    expect(typeof h.error).toBe('string');
+    expect(h.error).toBe(result.error);
+    expect(h.verification).toEqual(result.verification);
+    expect(h.verification.evidence.tier).toBe('action-failed');
+  });
+
+  it('E3: typed text never reaches the history, on success', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValueOnce('hunter2'); // stale check, read-back
+    const page = singleFramePage(() => Promise.resolve(handle));
+    const engine = new BrowserActionEngine();
+    const tab = mockTab(page);
+    const result = await engine.executeAction(tab, { actionType: 'type', selector: '#pw', value: 'hunter2', maxRetries: 0 });
+    expect(result.success).toBe(true);
+    expect(tab.getActionHistory()).toHaveLength(1);
+    expect(JSON.stringify(tab.getActionHistory())).not.toContain('hunter2');
+  });
+
+  it('E3b: typed text and the field content never reach the history on a "did not land" failure (the engine error quotes both)', async () => {
+    const handle = mockHandle();
+    handle.evaluate
+      .mockResolvedValueOnce(false)
+      .mockResolvedValueOnce('other-content-XYZ')
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce('other-content-XYZ');
+    const page = singleFramePage(() => Promise.resolve(handle));
+    const engine = new BrowserActionEngine();
+    const tab = mockTab(page);
+    const result = await engine.executeAction(tab, { actionType: 'type', selector: '#pw', value: 'hunter2-SECRET', maxRetries: 0 });
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('hunter2-SECRET'); // the RESULT still quotes it (unchanged behaviour) ...
+    const dump = JSON.stringify(tab.getActionHistory());
+    expect(tab.getActionHistory()).toHaveLength(1);
+    expect(dump).not.toContain('hunter2-SECRET'); // ... the history must not
+    expect(dump).not.toContain('other-content-XYZ');
+    expect(tab.getActionHistory()[0]).toMatchObject({ actionType: 'type', success: false });
+  });
+
+  it('E4: a duplicate-guard rejection is recorded as a failure with the returned error', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValueOnce(false).mockResolvedValue(true);
+    const page = singleFramePage(() => Promise.resolve(handle));
+    const engine = new BrowserActionEngine();
+    const tab = mockTab(page);
+    const params = { actionType: 'click' as const, selector: '#submit', maxRetries: 0 };
+    const first = await engine.executeAction(tab, params);
+    const second = await engine.executeAction(tab, params);
+    expect(first.success).toBe(true);
+    expect(second.success).toBe(false);
+    const h = tab.getActionHistory() as any[];
+    expect(h).toHaveLength(2);
+    expect(h[1].success).toBe(false);
+    expect(h[1].error).toBe(second.error);
+    expect(h[1].verification).toEqual(second.verification);
+  });
+
+  it('E5: an invalid timeoutMs early return is recorded as a failure', async () => {
+    const mainFrame = { isDetached: () => false, $: vi.fn().mockResolvedValue(null) } as unknown as Frame;
+    const page = { frames: vi.fn().mockReturnValue([mainFrame]), mainFrame: vi.fn().mockReturnValue(mainFrame) } as unknown as Page;
+    const engine = new BrowserActionEngine();
+    const tab = mockTab(page);
+    const result = await engine.executeAction(tab, { actionType: 'wait_for_selector', selector: '#t', timeoutMs: NaN, maxRetries: 0 });
+    expect(result.success).toBe(false);
+    const h = tab.getActionHistory() as any[];
+    expect(h).toHaveLength(1);
+    expect(h[0]).toMatchObject({ actionType: 'wait_for_selector', success: false, selector: '#t', target: 'state=visible' });
+    expect(h[0].error).toBe(result.error);
+  });
+
+  it('E7: the URL stored on an engine entry is the tab url as given, and the entry is a plain (unsanitized-by-engine) record the TAB sanitizes', async () => {
+    const page = { frames: vi.fn().mockReturnValue([]), keyboard: { press: vi.fn().mockResolvedValue(undefined) } } as unknown as Page;
+    const engine = new BrowserActionEngine();
+    const tab = mockTab(page);
+    (tab as any).url = 'https://example.com/p?token=SECRET#f';
+    await engine.executeAction(tab, { actionType: 'press_key', key: 'a', maxRetries: 0 });
+    // mockTab stores what it is given; the engine passes the raw url and BrowserTab.recordAction (tested in
+    // session-action-history.spec.ts) is what drops the query. Pin that the engine relies on it.
+    expect((tab.getActionHistory()[0] as any).url).toBe('https://example.com/p?token=SECRET#f');
+  });
+});

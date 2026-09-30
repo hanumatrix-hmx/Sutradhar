@@ -12,6 +12,7 @@ import {
   sanitizeHistoryEntry,
   describeActionTarget,
   scrubActionError,
+  scrubVerification,
   HISTORY_STRING_CAP,
   HISTORY_TEXT_CAP,
   type ActionHistoryEntry,
@@ -177,5 +178,22 @@ describe('FR2-11 describeActionTarget (H7) and scrubActionError', () => {
       'No option <value> found',
     );
     expect(scrubActionError({ actionType: 'click', selector: '#x' }, 'boom')).toBe('boom');
+  });
+  it('scrubVerification cleans the "Action failed: <error>" reason of a failed action and evidence strings, without mutating', () => {
+    const p: ActionParams = { actionType: 'type', selector: '#pw', value: 'hunter2-SECRET' };
+    const v = {
+      verified: false,
+      urlChanged: false,
+      elementFound: false,
+      confidence: 0,
+      reason: 'Action failed: type did not land the expected value — expected "hunter2-SECRET", but the field real content reads "zzz-2"',
+      evidence: { tier: 'action-failed', checks: [{ check: 'c', outcome: 'fail', observed: 'typed hunter2-SECRET', detail: 'saw "hunter2-SECRET"' }] },
+    };
+    const before = structuredClone(v);
+    const out = scrubVerification(p, v as never);
+    expect(v).toEqual(before);
+    expect(JSON.stringify(out)).not.toContain('SECRET');
+    expect(JSON.stringify(out)).not.toContain('zzz-2');
+    expect((out as any).reason.startsWith('Action failed: type did not land')).toBe(true);
   });
 });
