@@ -98,7 +98,8 @@ describe('@sutradhar/cli --help text (FR2-11 history)', () => {
     expect(helpText).toContain('redacted by CHARACTERS, not by recognising URLs');
     expect(helpText).toContain('first ? # or ;');
     expect(helpText).toContain('a token still holding = or & is replaced whole');
-    expect(helpText).toContain('reduced to its last segment');
+    // the test reads the SOURCE text of the help template, where the printed backslash is written as two
+    expect(helpText).toContain('a token with a / or \\\\ and more text is reduced to its last segment');
     expect(helpText).toContain('cwd is stored as ~/dir or <dir>');
     expect(helpText).not.toContain('URL-looking token');
     expect(helpText).toContain('Never starts a browser');

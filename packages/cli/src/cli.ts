@@ -1920,7 +1920,7 @@ Commands:
                                 split on any whitespace; in each token everything from the first ? # or ;
                                 is replaced by [redacted] and the rest of the text after it is dropped;
                                 a token still holding = or & is replaced whole; userinfo@ is stripped;
-                                a token with a / or \ and more text is reduced to its last segment;
+                                a token with a / or \\ and more text is reduced to its last segment;
                                 %3F %23 %3B and %253F are decoded first. cwd is stored as ~/dir or <dir>.
                                 Ordinary text with those characters is redacted too. Never starts a browser.
   doctor                       Environment diagnostics (Chrome detection, active session)
