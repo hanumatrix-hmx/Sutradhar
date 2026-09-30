@@ -286,6 +286,34 @@ describe('FR2-08 waitForPageCondition', () => {
     expect(r2.fatal).toBeUndefined();
   });
 
+  it('W16d (audit-1 F2, X1): a js-only condition is gated by a pending dialog too (the js probe is never run into it)', async () => {
+    const main = mkFrame([false], [true]);
+    const p = mkPage(main);
+    const r = await wait(p, { js: 'window.x === 1' }, { timeoutMs: 15000, getPendingDialog: () => ({ dialogType: 'alert', message: 'm' }) });
+    expect(r.fatal?.kind).toBe('dialog');
+    expect(r.last.js).toBe('unavailable');
+    expect(main.evaluate).not.toHaveBeenCalled();
+    const r0 = await wait(mkPage(main), { js: 'true' }, { timeoutMs: 0, getPendingDialog: () => ({ dialogType: 'confirm', message: 'm' }) });
+    expect(r0.satisfied).toBe(false);
+    expect(main.evaluate).not.toHaveBeenCalled();
+  });
+
+  it('W16e (audit-1 F2, X2): the dialog grace restarts after a dialog is handled: a second dialog is not instantly fatal', async () => {
+    // dialog A for 0-600 ms, none for 600-1200 ms, dialog B from 1200 ms on. The wait ends at 1700 ms,
+    // so B is open for ~500 ms (< the 1000 ms grace) but ~1700 ms after A first appeared.
+    const main = mkFrame([false]);
+    const t0 = performance.now();
+    const dialog = () => {
+      const t = performance.now() - t0;
+      return t < 600 || t >= 1200 ? { dialogType: 'alert', message: 'm' } : undefined;
+    };
+    const r = await wait(mkPage(main), { text: 'Never' }, { timeoutMs: 1700, getPendingDialog: dialog });
+    expect(r.fatal).toBeUndefined();
+    expect(r.satisfied).toBe(false);
+    expect(r.last.text).toBe('unavailable'); // ended while B was open
+    expect(main.evaluate).toHaveBeenCalled(); // the clear window really ran probes
+  }, 15000);
+
   it('W16c: a dialog open at the deadline is reported as the reason (a 0-timeout wait during a dialog is unavailable, not unmet)', async () => {
     const c = { text: 'x' };
     const r = await wait(mkPage(mkFrame([true])), c, { timeoutMs: 0, getPendingDialog: () => ({ dialogType: 'alert', message: 'm' }) });

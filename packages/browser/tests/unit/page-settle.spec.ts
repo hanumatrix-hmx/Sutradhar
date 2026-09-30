@@ -86,4 +86,46 @@ describe('FR2-08 page-settle', () => {
       vi.useRealTimers();
     }
   });
+
+  it('P7 (audit-1 F1, X6): a settle object timeoutMs is passed to both halves AND bounds the whole wait (fake clock, upper bound)', async () => {
+    vi.useFakeTimers();
+    try {
+      const evaluate = vi.fn(() => new Promise(() => {}));
+      const waitForNetworkIdle = vi.fn(() => new Promise(() => {}));
+      let done = false;
+      const p = waitForPageSettle(asPage({ evaluate, waitForNetworkIdle }), { timeoutMs: 100 }).then(() => {
+        done = true;
+      });
+      expect(evaluate).toHaveBeenCalledWith(expect.any(Function), 300, 100);
+      expect(waitForNetworkIdle).toHaveBeenCalledWith({ idleTime: 500, timeout: 100 });
+      await vi.advanceTimersByTimeAsync(100 + SETTLE_HARD_BOUND_GRACE_MS - 1);
+      expect(done).toBe(false); // not before the bound
+      await vi.advanceTimersByTimeAsync(2);
+      expect(done).toBe(true); // by timeoutMs + grace on the fake clock: a 5000 ms default would still be pending
+      await p;
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('P8 (audit-1 F1, X5): the network-idle half is awaited: DOM quiet alone does not end the settle', async () => {
+    vi.useFakeTimers();
+    try {
+      let idle: () => void = () => undefined;
+      const evaluate = vi.fn().mockResolvedValue(undefined); // DOM quiet at once
+      const waitForNetworkIdle = vi.fn(() => new Promise<void>((r) => (idle = r)));
+      let done = false;
+      const p = waitForPageSettle(asPage({ evaluate, waitForNetworkIdle }), true).then(() => {
+        done = true;
+      });
+      await vi.advanceTimersByTimeAsync(1000); // well inside the 5000 ms bound
+      expect(done).toBe(false);
+      idle();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(done).toBe(true);
+      await p;
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
