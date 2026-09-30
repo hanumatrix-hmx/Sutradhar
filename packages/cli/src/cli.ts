@@ -25,7 +25,8 @@ import { dialogOutputSink, dialogBlockedJsonDoc, printDialogBlockedJsonOnce, wri
 import { readState, writeState, clearState, STATE_DIR, type CliState } from './state.js';
 import { spawnDetachedChrome, killChromeTree } from './spawn-chrome.js';
 import { createSessionId } from '@sutradhar/contracts';
-import { parseArgs, dialogFlagError, expectFlagError } from './parse-args.js';
+import { parseArgs, dialogFlagError, expectFlagError, waitForConditionFromArgs } from './parse-args.js';
+import { waitForOutcome } from './waitfor-output.js';
 import { formatVerificationLine, exitCodeForResult, toCliJson, EXIT_EXPECTATION_FAILED } from './verification-output.js';
 import { validateSelectorArgs, validateFrameChain } from './selector-args.js';
 import {
@@ -95,6 +96,8 @@ const {
   expectFlag,
   expectValueMissing,
   expectUrlChangedConflict,
+  waitForFlags,
+  waitForFlagError,
   unrecognizedFlags,
 } = parseArgs(process.argv.slice(2));
 
@@ -616,7 +619,7 @@ async function cmdNav(url: string | undefined) {
   await withSession(async (runtime, sessionId) => {
     let result;
     try {
-      result = await runtime.navigate(sessionId, url!, undefined, expectFlag);
+      result = await runtime.navigate(sessionId, url!, undefined, expectFlag, settle);
     } catch (err) {
       // FR2-04 D-5: under --dialog dismiss, a beforeunload prompt is dismissed at once, which
       // aborts the navigation Puppeteer-side (net::ERR_ABORTED) — report that as the specific,
@@ -727,9 +730,9 @@ async function cmdClick(ref: string | undefined) {
 }
 
 async function cmdClickText(text: string | undefined) {
-  if (!text) printErrorAndExit('usage: sutradhar clicktext <text>  (matches an element containing this text, from "sutradhar axsnap")');
+  if (!text) printErrorAndExit('usage: sutradhar clicktext <text> [--settle]  (matches an element containing this text, from "sutradhar axsnap")');
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.clickByText(sessionId, text!, undefined, expectFlag);
+    const result = await runtime.clickByText(sessionId, text!, undefined, expectFlag, settle);
     reportActionResult(result, `Clicked element containing "${text}"`, `Click failed: ${result.error}`);
   });
 }
@@ -737,7 +740,7 @@ async function cmdClickText(text: string | undefined) {
 async function cmdClickRole(role: string | undefined, name: string | undefined) {
   if (!role) printErrorAndExit('usage: sutradhar clickrole <role> [name]  (role from "sutradhar axsnap", e.g. button)');
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.clickByRole(sessionId, role!, name, undefined, expectFlag);
+    const result = await runtime.clickByRole(sessionId, role!, name, undefined, expectFlag, settle);
     reportActionResult(result, `Clicked role "${role}"${name ? ` "${name}"` : ''}`, `Click failed: ${result.error}`);
   });
 }
@@ -787,7 +790,7 @@ async function cmdPress(ref: string | undefined, key: string | undefined) {
       process.exitCode = 1;
       return;
     }
-    const result = await runtime.pressKey(sessionId, key!, undefined, modifiersFlag, expectFlag);
+    const result = await runtime.pressKey(sessionId, key!, undefined, modifiersFlag, expectFlag, settle);
     reportActionResult(result, `Pressed ${key}`, `Press failed: ${result.error}`);
   });
 }
@@ -895,7 +898,7 @@ async function cmdSelect(ref: string | undefined, value: string | undefined) {
   const selectorErr = validateSelectorArgs([ref]);
   if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.selectOption(sessionId, ref!, value!, undefined, expectFlag);
+    const result = await runtime.selectOption(sessionId, ref!, value!, undefined, expectFlag, settle);
     reportActionResult(result, `Selected "${value}" on ${ref}`, `Select failed: ${result.error}`);
   });
 }
@@ -930,6 +933,25 @@ async function cmdWait(ref: string | undefined, timeoutMsArg: string | undefined
   });
 }
 
+async function cmdWaitFor(positional: string[]) {
+  const parsed = waitForConditionFromArgs({ waitForFlags }, positional);
+  if ('error' in parsed) printErrorAndExit(parsed.error);
+  await withSession(async (runtime, sessionId) => {
+    let result;
+    try {
+      result = await runtime.waitFor(sessionId, parsed.condition);
+    } catch (err) {
+      // a validation TypeError from the runtime (e.g. --text and --text-gone the same string)
+      printErrorAndExit((err as Error).message);
+    }
+    if (jsonMode) console.log(JSON.stringify(toCliJson(result), null, 2));
+    const out = waitForOutcome(result, parsed.condition);
+    if (!jsonMode) for (const line of out.stdout) console.log(line);
+    for (const line of out.stderr) console.error(line);
+    if (out.exitCode !== 0) process.exitCode = out.exitCode;
+  });
+}
+
 async function cmdEval(code: string | undefined) {
   if (!code) {
     printErrorAndExit(
@@ -957,7 +979,7 @@ async function cmdHover(ref: string | undefined) {
   const selectorErr = validateSelectorArgs([ref]);
   if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.hover(sessionId, ref!, undefined, undefined, expectFlag);
+    const result = await runtime.hover(sessionId, ref!, undefined, undefined, expectFlag, settle);
     reportActionResult(result, `Hovered ${ref}`, `Hover failed: ${result.error}`);
   });
 }
@@ -985,7 +1007,7 @@ async function cmdUpload(ref: string | undefined, filePath: string | undefined) 
   const selectorErr = validateSelectorArgs([ref]);
   if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.uploadFile(sessionId, ref!, path.resolve(filePath!), undefined, expectFlag);
+    const result = await runtime.uploadFile(sessionId, ref!, path.resolve(filePath!), undefined, expectFlag, settle);
     reportActionResult(result, `Uploaded ${filePath} to ${ref}`, `Upload failed: ${result.error}`);
   });
 }
@@ -995,7 +1017,7 @@ async function cmdDrag(sourceRef: string | undefined, destRef: string | undefine
   const selectorErr = validateSelectorArgs([sourceRef, destRef]);
   if (selectorErr) printErrorAndExit(selectorErr);
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.dragAndDrop(sessionId, sourceRef!, destRef!, undefined, expectFlag);
+    const result = await runtime.dragAndDrop(sessionId, sourceRef!, destRef!, undefined, expectFlag, settle);
     reportActionResult(result, `Dragged ${sourceRef} onto ${destRef}`, `Drag failed: ${result.error}`);
   });
 }
@@ -1007,7 +1029,7 @@ async function cmdClickPoint(x: string | undefined, y: string | undefined) {
     printErrorAndExit('usage: sutradhar clickpoint <x> <y>  (absolute viewport coordinates — for canvas-rendered UI with no addressable element)');
   }
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.clickAtPoint(sessionId, xNum, yNum, undefined, 'left', expectFlag);
+    const result = await runtime.clickAtPoint(sessionId, xNum, yNum, undefined, 'left', expectFlag, settle);
     reportActionResult(result, `Clicked at (${xNum}, ${yNum})`, `Click failed: ${result.error}`);
   });
 }
@@ -1028,7 +1050,7 @@ async function cmdDragPoints(
   }
   const [fx, fy, tx, ty] = nums;
   await withSession(async (runtime, sessionId) => {
-    const result = await runtime.dragAtPoints(sessionId, fx!, fy!, tx!, ty!, undefined, expectFlag);
+    const result = await runtime.dragAtPoints(sessionId, fx!, fy!, tx!, ty!, undefined, expectFlag, settle);
     reportActionResult(result, `Dragged (${fx}, ${fy}) -> (${tx}, ${ty})`, `Drag failed: ${result.error}`);
   });
 }
@@ -1286,7 +1308,7 @@ async function cmdDownload(ref: string | undefined, downloadDir: string | undefi
   }
   await withSession(
     async (runtime, sessionId) => {
-      const result = await runtime.downloadFile(sessionId, ref!, dir, undefined, expectFlag);
+      const result = await runtime.downloadFile(sessionId, ref!, dir, undefined, expectFlag, settle);
       const output = result.output as { downloadedFilename?: string; downloadedPath?: string } | undefined;
       reportActionResult(
         result,
@@ -1575,6 +1597,22 @@ async function main() {
   if (expectErr) {
     printErrorAndExit(expectErr);
   }
+  // FR2-08: a condition flag on any other verb is REJECTED, not ignored (unlike --settle/--state): a user who
+  // writes `click 7 --text Saved` believes they asserted something, and silently ignoring it would be
+  // exactly the silent-wrongness class this CLI exists to remove.
+  if (waitForFlagError) {
+    printErrorAndExit(waitForFlagError);
+  }
+  if (verb !== 'waitfor' && Object.keys(waitForFlags).length > 0) {
+    const first = Object.keys(waitForFlags)[0]!;
+    const flag = first === 'textGone' ? '--text-gone' : `--${first}`;
+    printErrorAndExit(
+      `${flag} is only valid with "waitfor" (did you mean ${first === 'url' ? '--expect-url' : first === 'text' ? '--expect-text' : 'waitfor'}?)`,
+    );
+  }
+  if (verb === 'waitfor' && expectFlag) {
+    printErrorAndExit('--expect-* is not valid with "waitfor": its conditions ARE the assertion (--text, --text-gone, --url, --js)');
+  }
   switch (verb) {
     case 'dialog':
       return cmdDialog(cleanArgs[0], cleanArgs.slice(1));
@@ -1608,6 +1646,8 @@ async function main() {
       return cmdSelect(cleanArgs[0], cleanArgs[1]);
     case 'wait':
       return cmdWait(cleanArgs[0], cleanArgs[1]);
+    case 'waitfor':
+      return cmdWaitFor(cleanArgs);
     case 'eval':
       return cmdEval(cleanArgs.join(' '));
     case 'hover':
@@ -1689,6 +1729,15 @@ Commands:
                                 or retrying. Waiting states poll roughly every 100ms, so a state
                                 that's only true for less than ~100ms (a fast visibility flicker)
                                 may be missed.
+  waitfor [timeoutMs] --text <t> | --text-gone <t> | --url <s> | --js <expr>
+                                Wait until a page condition is true (default 10000ms, max 280000; 0 =
+                                check once). Use this instead of sleeping. --text: RENDERED text
+                                appears (any frame; hidden text and input values don't count; best
+                                effort, like --expect-text). --text-gone: it disappears (succeeds at
+                                once if it was never there, and says so). --url: URL contains <s>.
+                                --js: a JS expression is truthy (side-effect free; a throw fails the
+                                wait). Give several to require all at once. Exit 0 met, 1 timed out
+                                or failed, 3 blocked by an open dialog.
   eval <js-expression>         Evaluate JS in the page's top-level context, print the result
   eval <js-expression> --frame <selector>
                                 Same, but inside a specific <iframe> (selector or a numeric id
@@ -1783,10 +1832,15 @@ Flags:
                         "audit" exits nonzero if any console/page/broken-request error was
                         found, or (with --baseline) any visual diff from the baseline
   --baseline <url>      "audit" also visually diffs the audited page against this URL
-  --settle              "click"/"type"/"scroll" wait for the page to stop actively changing (no
-                        DOM mutations, no in-flight network requests) before returning — helps
-                        when the action triggers a menu/modal/toast/virtualized-list-update that
-                        renders a moment later
+  --settle              "click"/"type"/"scroll"/"nav"/"clicktext"/"clickrole"/"press"/"select"/
+                        "hover"/"upload"/"drag"/"clickpoint"/"dragpoints"/"download" wait for the
+                        page to stop actively changing (no DOM mutations, no in-flight network
+                        requests) before returning — helps when the action triggers a menu/modal/
+                        toast/virtualized-list-update that renders a moment later. It cannot see a
+                        timer the page scheduled for later — use "waitfor" to wait for a specific
+                        result
+  --text <t> / --text-gone <t> / --url <s> / --js <expr>
+                        "waitfor" only (see above); an error on any other command
   --state <S>           "wait" only: visible (default), attached (just in the DOM), or hidden
                         (removed or not visible). Ignored on other commands. "visible" is a
                         non-empty box AND visibility not hidden/collapse — opacity:0 and
