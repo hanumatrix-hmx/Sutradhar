@@ -1205,3 +1205,144 @@ describe('@sutradhar/mcp-server FR2-05 download/upload root hints and descriptio
     expect(combined).toContain('sutradhar-downloads');
   });
 });
+
+describe('FR2-07: the expect option and the verification contract on MCP results', () => {
+  const EXPECT_TOOLS = [
+    'browser.navigate', 'browser.go_back', 'browser.go_forward', 'browser.reload', 'browser.click',
+    'browser.click_at_point', 'browser.drag_at_points', 'browser.type', 'browser.press_key', 'browser.focus',
+    'browser.scroll', 'browser.hover', 'browser.select_option', 'browser.select_options',
+    'browser.wait_for_selector', 'browser.click_by_text', 'browser.click_by_role', 'browser.type_by_label',
+    'browser.upload_file', 'browser.right_click', 'browser.drag_and_drop', 'browser.touch_tap',
+    'browser.download_file', 'browser.upload_file_via_trigger',
+  ];
+  const VERIFIED = {
+    verified: true, urlChanged: false, elementFound: true, confidence: 0.9, reason: 'ok',
+    evidence: { tier: 'verified', checks: [{ check: 'x.built-in', outcome: 'pass' }] },
+  } as any;
+  const UNVERIFIABLE = { ...VERIFIED, verified: false, confidence: 0.45, evidence: { tier: 'unverifiable', checks: [] } } as any;
+
+  it('M1: exactly the 24 documented tools take a strict optional expect; clipboard/screenshot/fill_form do not', () => {
+    const { server, tools } = createMockServer();
+    registerTools(server, { runtime: new SutradharRuntime() });
+    expect(EXPECT_TOOLS).toHaveLength(24);
+    for (const name of EXPECT_TOOLS) {
+      const schema = tools.get(name)!.config.inputSchema.expect;
+      expect(schema, name).toBeDefined();
+      for (const ok of [undefined, {}, { text: 'x' }, { urlChanged: false }, { url: '/a', text: 'b', urlChanged: true }]) {
+        expect(schema.safeParse(ok).success, `${name} accepts ${JSON.stringify(ok)}`).toBe(true);
+      }
+      for (const bad of [{ text: '' }, { bogus: 1 }, { urlChanged: 'yes' }, { url: '' }, 'text', 5]) {
+        expect(schema.safeParse(bad).success, `${name} rejects ${JSON.stringify(bad)}`).toBe(false);
+      }
+    }
+    for (const name of ['browser.set_clipboard', 'browser.get_clipboard', 'browser.screenshot', 'browser.fill_form']) {
+      expect(tools.get(name)!.config.inputSchema.expect, name).toBeUndefined();
+    }
+    // no OTHER tool gained one by accident
+    const withExpect = [...tools.entries()].filter(([, t]) => t.config.inputSchema && 'expect' in t.config.inputSchema).map(([n]) => n);
+    expect(withExpect.sort()).toEqual([...EXPECT_TOOLS].sort());
+  });
+
+  it('M2: the arity rule: expect is appended only when given (click 6->7, wait_for_selector 5->6, navigate 3->4, click_at_point 5->6)', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const click = vi.spyOn(runtime, 'click').mockResolvedValue({ success: true, actionType: 'click', executionTimeMs: 1 });
+    const wait = vi.spyOn(runtime, 'waitForSelector').mockResolvedValue({ success: true, actionType: 'wait_for_selector', executionTimeMs: 1 });
+    const nav = vi.spyOn(runtime, 'navigate').mockResolvedValue({ tabId: 't', url: 'https://a.test/', title: '' });
+    const point = vi.spyOn(runtime, 'clickAtPoint').mockResolvedValue({ success: true, actionType: 'click_at_point', executionTimeMs: 1 });
+    registerTools(server, { runtime });
+    const exp = { text: 'x' };
+
+    await tools.get('browser.click')!.handler({ sessionId: 's1', target: '#a' });
+    expect(click.mock.calls[0]).toHaveLength(6);
+    await tools.get('browser.click')!.handler({ sessionId: 's1', target: '#a', expect: exp });
+    expect(click.mock.calls[1]).toHaveLength(7);
+    expect(click.mock.calls[1]![6]).toEqual(exp);
+
+    await tools.get('browser.wait_for_selector')!.handler({ sessionId: 's1', target: '#t', timeoutMs: 500, state: 'attached' });
+    expect(wait.mock.calls[0]).toHaveLength(5);
+    await tools.get('browser.wait_for_selector')!.handler({ sessionId: 's1', target: '#t', timeoutMs: 500, state: 'attached', expect: exp });
+    expect(wait.mock.calls[1]).toHaveLength(6);
+    expect(wait.mock.calls[1]![5]).toEqual(exp);
+
+    await tools.get('browser.navigate')!.handler({ sessionId: 's1', url: 'https://a.test/' });
+    expect(nav.mock.calls[0]).toHaveLength(3);
+    await tools.get('browser.navigate')!.handler({ sessionId: 's1', url: 'https://a.test/', expect: exp });
+    expect(nav.mock.calls[1]).toHaveLength(4);
+
+    await tools.get('browser.click_at_point')!.handler({ sessionId: 's1', x: 1, y: 2 });
+    expect(point.mock.calls[0]).toHaveLength(5);
+    await tools.get('browser.click_at_point')!.handler({ sessionId: 's1', x: 1, y: 2, expect: exp });
+    expect(point.mock.calls[1]).toHaveLength(6);
+  });
+
+  it('M3: set_clipboard / get_clipboard / upload_file_via_trigger results carry verification (and keep their old keys)', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'setClipboard').mockResolvedValue({ success: true, actionType: 'set_clipboard', executionTimeMs: 1, verification: UNVERIFIABLE });
+    vi.spyOn(runtime, 'readClipboard').mockResolvedValue({ text: 'hi', verification: VERIFIED });
+    vi.spyOn(runtime, 'uploadFileViaTrigger').mockResolvedValue({ success: true, actionType: 'upload_file_via_trigger', executionTimeMs: 1, verification: UNVERIFIABLE });
+    registerTools(server, { runtime });
+
+    const set = JSON.parse((await tools.get('browser.set_clipboard')!.handler({ sessionId: 's1', text: 'x' })).content[0].text);
+    expect(set.success).toBe(true);
+    expect(set.verification.evidence.tier).toBe('unverifiable');
+    const get = JSON.parse((await tools.get('browser.get_clipboard')!.handler({ sessionId: 's1' })).content[0].text);
+    expect(get.text).toBe('hi');
+    expect(get.verification.verified).toBe(true);
+    const up = JSON.parse((await tools.get('browser.upload_file_via_trigger')!.handler({ sessionId: 's1', target: '#b', filePath: '/tmp/a.txt' })).content[0].text);
+    expect(up).toMatchObject({ success: true, filePath: '/tmp/a.txt' });
+    expect(up.verification).toBeDefined();
+  });
+
+  it('M4: screenshot keeps the image at content[0] and adds the verification as a JSON text block at content[1]', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'screenshot').mockResolvedValue({ base64: 'ZmFrZQ==', verification: UNVERIFIABLE });
+    registerTools(server, { runtime });
+    const res = await tools.get('browser.screenshot')!.handler({ sessionId: 's1' });
+    expect(res.content[0]).toEqual({ type: 'image', data: 'ZmFrZQ==', mimeType: 'image/png' });
+    expect(res.content[1].type).toBe('text');
+    const parsed = JSON.parse(res.content[1].text);
+    expect(parsed.verification.evidence.tier).toBe('unverifiable');
+    expect(parsed.actionType).toBe('screenshot');
+    expect(res.content[1].text).not.toContain('ZmFrZQ=='); // the image is never duplicated into the text
+  });
+
+  it('M5: the click_at_point description no longer claims verification is bypassed, and points at expect', () => {
+    const { server, tools } = createMockServer();
+    registerTools(server, { runtime: new SutradharRuntime() });
+    const d: string = tools.get('browser.click_at_point')!.config.description;
+    expect(d).not.toContain('verification entirely');
+    expect(d).toContain('expect');
+    expect(d).toContain('actually at the point');
+  });
+
+  it('M6: a navigate result carries verification, and the expect description states the honest semantics', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'navigate').mockResolvedValue({ tabId: 't', url: 'https://a.test/', title: 'A', verification: VERIFIED });
+    registerTools(server, { runtime });
+    const parsed = JSON.parse((await tools.get('browser.navigate')!.handler({ sessionId: 's1', url: 'https://a.test/' })).content[0].text);
+    expect(parsed.verification.evidence.tier).toBe('verified');
+    const d: string = tools.get('browser.click')!.config.inputSchema.expect.description;
+    expect(d).toContain('does NOT fail the action');
+    expect(d).toContain('unverifiable');
+    // fix-2: the description states the precise rendered-text contract, including what still counts
+    expect(d).toContain('RENDERED text');
+    expect(d).toContain('display:none / content-visibility:hidden / a closed <details>');
+    expect(d).toContain('every enclosing iframe itself visible');
+    expect(d).toContain('opacity:0, aria-hidden and off-screen text still count');
+    expect(d).toContain('never-painted SVG containers');
+  });
+
+  it('M7: a runtime TypeError from a bad expect is reported as an isError result, not a crash', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'click').mockRejectedValue(new TypeError('expect.urlChanged must be a boolean'));
+    registerTools(server, { runtime });
+    const res = await tools.get('browser.click')!.handler({ sessionId: 's1', target: '#a', expect: { urlChanged: 'yes' } });
+    expect(res.isError).toBe(true);
+    expect(res.content[0].text).toContain('expect.urlChanged must be a boolean');
+  });
+});

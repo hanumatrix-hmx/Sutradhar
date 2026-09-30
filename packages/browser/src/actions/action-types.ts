@@ -56,9 +56,45 @@ export type WaitForSelectorState = 'visible' | 'attached' | 'hidden';
 /** Optional expectations an action's caller can assert; checked post-hoc by {@link ExecutionVerifier}. */
 export interface VerificationSpec {
   readonly expectedUrlSubstring?: string;
+  /** Must appear in the page's RENDERED text (any live frame, open shadow roots): laid out, `visibility:visible`,
+   *  not under `display:none` / `content-visibility:hidden` / a closed `<details>`, and every enclosing `<iframe>`
+   *  rendered and visible. `opacity:0`, `aria-hidden`, off-screen and clipped text still count. FR2-07: this used
+   *  to be `textContent`, which counted `display:none` and `<script>` text. */
   readonly expectedElementText?: string;
+  /** true: the URL must differ from the pre-action URL. false (FR2-07): the URL must be
+   *  identical (it used to be silently ignored). undefined: not checked. */
   readonly shouldUrlChange?: boolean;
   readonly candidateConfidence?: number;
+}
+
+/** How a verification was concluded (FR2-07). Callers branch on this, not on the confidence number. */
+export type VerificationTier =
+  | 'verified' // at least one real post-condition check passed and none failed
+  | 'contradicted' // a check ran and found the effect did NOT happen (built-in or expect.*)
+  | 'unverifiable' // no real check could run (the reason says exactly why)
+  | 'low-confidence' // the caller's candidateConfidence is below 0.5 (pre-existing gate)
+  | 'action-failed'; // success:false — nothing to verify; expect.* checks are 'not-run'
+
+export type EvidenceOutcome = 'pass' | 'fail' | 'not-run';
+export type EvidenceScalar = string | number | boolean | null;
+
+export interface EvidenceCheck {
+  /** Stable id: `<actionType>.<name>` for built-in checks, `expect.text|expect.url|expect.urlChanged`
+   *  for caller expectations. Ids are part of the public contract. */
+  readonly check: string;
+  readonly outcome: EvidenceOutcome;
+  /** Strings are capped at 200 chars ('…' suffix). */
+  readonly expected?: EvidenceScalar;
+  /** NEVER a field value or clipboard content (FR2-07 D11). */
+  readonly observed?: EvidenceScalar;
+  /** One sentence, capped at 300 chars. */
+  readonly detail?: string;
+}
+
+export interface VerificationEvidence {
+  readonly tier: VerificationTier;
+  /** At most 8, built-in checks first (record order), then expect.* (text, url, urlChanged). */
+  readonly checks: readonly EvidenceCheck[];
 }
 
 /** Result of an {@link ExecutionVerifier} check, attached to {@link ActionResultDto.verification}. */
@@ -68,6 +104,29 @@ export interface VerificationResultDto {
   readonly elementFound: boolean;
   readonly confidence: number;
   readonly reason: string;
+  /** FR2-07: what was actually checked and what was observed. */
+  readonly evidence: VerificationEvidence;
+}
+
+/** The engine's {@link ActionType} plus the runtime-level actions that bypass the engine. */
+export type VerifiableActionType =
+  | ActionType
+  | 'go_back'
+  | 'go_forward'
+  | 'reload'
+  | 'click_at_point'
+  | 'drag_at_points'
+  | 'set_clipboard'
+  | 'get_clipboard'
+  | 'upload_file_via_trigger'
+  | 'screenshot';
+
+/** A built-in post-condition's conclusion, produced by the dispatch path and consumed by the verifier. */
+export interface BuiltInVerdict {
+  readonly outcome: EvidenceOutcome; // pass | fail | not-run
+  /** The <why>/<what> sentence, WITHOUT the `'<type>' ...` prefix. */
+  readonly reason: string;
+  readonly checks: readonly EvidenceCheck[];
 }
 
 export interface ActionParams {

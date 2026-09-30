@@ -1,0 +1,67 @@
+{
+  "file": "prob043-mcp-soak-2026-09-29T12-19-54-242Z.jsonl",
+  "bytes": 41840963,
+  "sha256": "506ae5f486ad507df2cdd0337dc0935edc499ebc938521fdec02b82d1416c215",
+  "kinds": {
+    "run-start": 1,
+    "mcp-ready": 1,
+    "tool": 43503,
+    "type-check": 13995,
+    "press-check": 4665,
+    "checkpoint": 467,
+    "run-end": 1
+  },
+  "note": "raw JSONL (40 MB) kept OUTSIDE the repo at E:/AI-Cache/tmp/fr207-soak-raw.jsonl; every action was cross-checked by an independent browser.eval oracle",
+  "mismatchEntries": 0,
+  "firstCheckpoint": {
+    "timestamp": "2026-09-29T12:19:55.044Z",
+    "kind": "checkpoint",
+    "callCount": 12,
+    "cycle": 0,
+    "elapsedMs": 800,
+    "rssBytes": 48955392,
+    "heapUsedBytes": 5594376,
+    "mismatches": 0
+  },
+  "lastCheckpoint": {
+    "timestamp": "2026-09-29T12:39:53.865Z",
+    "kind": "checkpoint",
+    "callCount": 43465,
+    "cycle": 4660,
+    "elapsedMs": 1199621,
+    "rssBytes": 58224640,
+    "heapUsedBytes": 12631040,
+    "mismatches": 0
+  },
+  "bookends": [
+    {
+      "timestamp": "2026-09-29T12:19:54.244Z",
+      "kind": "run-start",
+      "callCount": 0,
+      "runId": "2026-09-29T12-19-54-242Z",
+      "targetCalls": 1000,
+      "minimumMinutes": 20,
+      "headless": true,
+      "node": "v25.0.0",
+      "serverPath": "E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\mcp-server\\dist\\cli.js",
+      "fixtureUrl": "file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/fixtures/prob043-keyboard.html"
+    },
+    {
+      "timestamp": "2026-09-29T12:19:54.635Z",
+      "kind": "mcp-ready",
+      "callCount": 0,
+      "toolCount": 72,
+      "serverPid": 66312
+    },
+    {
+      "timestamp": "2026-09-29T12:39:59.997Z",
+      "kind": "run-end",
+      "callCount": 43503,
+      "outcome": "passed",
+      "elapsedMs": 1205753,
+      "mismatchCount": 0,
+      "serverExitCode": null,
+      "stderrTail": []
+    }
+  ]
+}

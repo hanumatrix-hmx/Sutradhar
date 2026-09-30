@@ -1,0 +1,130 @@
+[
+  {
+    "id": "M1-http-status-500-only",
+    "file": "packages/browser/src/verifier/post-conditions.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  2 failed | 642 passed (644)",
+    "failedNames": [
+      "tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine FR2-07 built-in post-conditions > E13: navigate identity via CDP (loaderId + history) > a changed loader is verified; an unchanged loader at an unchanged URL is contradicted; a 404 is contradicted",
+      "tests/unit/post-conditions.spec.ts > FR2-07 decideNavigationVerdict > P6: HTTP status"
+    ],
+    "shaBefore": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "shaAfter": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "restored": true
+  },
+  {
+    "id": "M2-zero-byte-download-accepted",
+    "file": "packages/browser/src/verifier/post-conditions.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  1 failed | 643 passed (644)",
+    "failedNames": [
+      "tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine FR2-07 built-in post-conditions > E10: download_file evidence (real files in a temp dir) > a 0-byte file is contradicted, success stays true"
+    ],
+    "shaBefore": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "shaAfter": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "restored": true
+  },
+  {
+    "id": "M3-clipboard-length-only",
+    "file": "packages/browser/src/verifier/post-conditions.ts",
+    "exit": 0,
+    "caught": false,
+    "tests": "Tests  644 passed (644)",
+    "failedNames": [],
+    "shaBefore": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "shaAfter": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "restored": true
+  },
+  {
+    "id": "M4-expect-notrun-counts-as-verified",
+    "file": "packages/browser/src/verifier/execution-verifier.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  1 failed | 643 passed (644)",
+    "failedNames": [
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V11: a pending dialog makes expect.text not-run, tier unverifiable, and no frame is touched"
+    ],
+    "shaBefore": "92becb99db409c620f4d9322fa2fb89a719431430287159153da53a96993459a",
+    "shaAfter": "92becb99db409c620f4d9322fa2fb89a719431430287159153da53a96993459a",
+    "restored": true
+  },
+  {
+    "id": "M5-focus-any-active-element",
+    "file": "packages/browser/src/verifier/post-conditions.ts",
+    "exit": 0,
+    "caught": false,
+    "tests": "Tests  644 passed (644)",
+    "failedNames": [],
+    "shaBefore": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "shaAfter": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "restored": true
+  },
+  {
+    "id": "M6-untrusted-keydown-counts",
+    "file": "packages/browser/src/verifier/post-conditions.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  1 failed | 643 passed (644)",
+    "failedNames": [
+      "tests/unit/post-conditions.spec.ts > FR2-07 in-page key observers (behaviour on a fake DOM) > an untrusted (page-dispatched) keydown does not count as delivery"
+    ],
+    "shaBefore": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "shaAfter": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "restored": true
+  },
+  {
+    "id": "M7-text-uses-textContent",
+    "file": "packages/browser/src/verifier/execution-verifier.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  1 failed | 643 passed (644)",
+    "failedNames": [
+      "tests/unit/execution-verifier.spec.ts > FR2-07 ExecutionVerifier: the verification contract > V13: visibleTextContainsInPage > finds text in body.innerText"
+    ],
+    "shaBefore": "92becb99db409c620f4d9322fa2fb89a719431430287159153da53a96993459a",
+    "shaAfter": "92becb99db409c620f4d9322fa2fb89a719431430287159153da53a96993459a",
+    "restored": true
+  },
+  {
+    "id": "M8-key-delivery-enough-for-value-rule",
+    "file": "packages/browser/src/verifier/post-conditions.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  2 failed | 642 passed (644)",
+    "failedNames": [
+      "tests/unit/browser-action-engine.spec.ts > @sutradhar/browser BrowserActionEngine FR2-07 built-in post-conditions > E3: a key that was delivered but changed nothing is contradicted at 0.09, success stays true, and the key is pressed ONCE (no retry)",
+      "tests/unit/post-conditions.spec.ts > FR2-07 decideKeyVerdict > P3: one case per row of the verdict table"
+    ],
+    "shaBefore": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "shaAfter": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "restored": true
+  },
+  {
+    "id": "M9-goback-swallows-all-errors",
+    "file": "packages/capability-runtime/src/runtime.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  1 failed | 243 passed (244)",
+    "failedNames": [
+      "tests/unit/runtime.spec.ts > @sutradhar/capability-runtime FR2-07 verification contract > R6b: Puppeteer 25 THROWS \"History entry to navigate to not found.\" at the history edge: same contradicted result, other errors still propagate"
+    ],
+    "shaBefore": "b72b26b75ee1101110327eb0b176473e89a583e7f534b38aa53495d7455a3333",
+    "shaAfter": "b72b26b75ee1101110327eb0b176473e89a583e7f534b38aa53495d7455a3333",
+    "restored": true
+  },
+  {
+    "id": "M10-sdk-no-throw-on-failure",
+    "file": "packages/sutradhar/src/page.ts",
+    "exit": 1,
+    "caught": true,
+    "tests": "Tests  1 failed | 33 passed (34)",
+    "failedNames": [
+      "tests/unit/api.spec.ts > Page verification contract (FR2-07, constructed against a stub runtime) > S2: a success:false result throws ActionFailedError carrying the result (GAP-024: no more silent swallowing)"
+    ],
+    "shaBefore": "4013404b598f1cc664eff4f193ff8d21a202483b169466f90de0481be2f911ba",
+    "shaAfter": "4013404b598f1cc664eff4f193ff8d21a202483b169466f90de0481be2f911ba",
+    "restored": true
+  }
+]

@@ -4,7 +4,15 @@
  * no real browser. The real-Chrome flow lives in scripts/smoke.mjs.
  */
 
-import { launch, Browser, Page, SutradharRuntime, SUTRADHAR_VERSION } from '../../src/index.js';
+import {
+  launch,
+  Browser,
+  Page,
+  SutradharRuntime,
+  SUTRADHAR_VERSION,
+  ActionFailedError,
+  ExpectationFailedError,
+} from '../../src/index.js';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -299,5 +307,134 @@ describe('sutradhar SDK public API', () => {
 
       await expect(page.audit()).rejects.toThrow('no live browser page');
     });
+  });
+});
+
+describe('Page verification contract (FR2-07, constructed against a stub runtime)', () => {
+  const verified = {
+    verified: true, urlChanged: false, elementFound: true, confidence: 0.9, reason: 'ok',
+    evidence: { tier: 'verified', checks: [] },
+  };
+  const expectFail = {
+    verified: false, urlChanged: false, elementFound: false, confidence: 0.09, reason: 'Expected text "x" was not found',
+    evidence: { tier: 'contradicted', checks: [{ check: 'expect.text', outcome: 'fail' }] },
+  };
+  const builtInBad = {
+    verified: false, urlChanged: false, elementFound: false, confidence: 0.09, reason: 'value did not change',
+    evidence: { tier: 'contradicted', checks: [{ check: 'press_key.effect', outcome: 'fail' }] },
+  };
+  const make = (stub: Record<string, unknown>) => new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+  it('S1: click() returns the runtime result and calls the runtime with exactly 6 args', async () => {
+    const result = { success: true, actionType: 'click', executionTimeMs: 1, verification: verified };
+    const stub = { click: vi.fn().mockResolvedValue(result) };
+    const page = make(stub);
+    expect(await page.click('7')).toBe(result);
+    expect(stub.click.mock.calls[0]).toHaveLength(6);
+    expect(page.lastResult).toBe(result);
+  });
+
+  it('S2: a success:false result throws ActionFailedError carrying the result (GAP-024: no more silent swallowing)', async () => {
+    const stub = { click: vi.fn().mockResolvedValue({ success: false, actionType: 'click', executionTimeMs: 1, error: 'nope' }) };
+    const page = make(stub);
+    const err = await page.click('7').catch((e) => e);
+    expect(err).toBeInstanceOf(ActionFailedError);
+    expect(err.name).toBe('ActionFailedError');
+    expect(err.message).toBe('nope');
+    expect(err.result.error).toBe('nope');
+    expect(page.lastResult).toBe(err.result);
+    // and the other verbs that used to swallow it
+    for (const [verb, call] of [
+      ['type', () => make({ type: vi.fn().mockResolvedValue({ success: false, error: 'e' }) }).type('7', 'x')],
+      ['press', () => make({ pressKey: vi.fn().mockResolvedValue({ success: false, error: 'e' }) }).press('Enter')],
+      ['scroll', () => make({ scroll: vi.fn().mockResolvedValue({ success: false, error: 'e' }) }).scroll()],
+    ] as const) {
+      await expect(call(), verb).rejects.toBeInstanceOf(ActionFailedError);
+    }
+  });
+
+  it('S3: a failed expectation throws ExpectationFailedError (success stays true on the result), called with 7 args', async () => {
+    const result = { success: true, actionType: 'click', executionTimeMs: 1, verification: expectFail };
+    const stub = { click: vi.fn().mockResolvedValue(result) };
+    const page = make(stub);
+    const err = await page.click('7', { expect: { text: 'x' } }).catch((e) => e);
+    expect(err).toBeInstanceOf(ExpectationFailedError);
+    expect(err.name).toBe('ExpectationFailedError');
+    expect(err.failed).toEqual(['text']);
+    expect(err.result.success).toBe(true);
+    expect(err.message).toBe('Expectation failed (text): Expected text "x" was not found');
+    expect(stub.click.mock.calls[0]).toHaveLength(7);
+    expect(stub.click.mock.calls[0]![6]).toEqual({ text: 'x' });
+    // a PASSING expectation resolves
+    const ok = make({ click: vi.fn().mockResolvedValue({ success: true, verification: { ...verified, evidence: { tier: 'verified', checks: [{ check: 'expect.text', outcome: 'pass' }] } } }) });
+    await expect(ok.click('7', { expect: { text: 'x' } })).resolves.toMatchObject({ success: true });
+  });
+
+  it('S4: a built-in contradiction with NO expect resolves (the caller reads result.verification)', async () => {
+    const result = { success: true, actionType: 'press_key', executionTimeMs: 1, verification: builtInBad };
+    const stub = { pressKey: vi.fn().mockResolvedValue(result) };
+    const page = make(stub);
+    const r = await page.press('a');
+    expect(r.verification?.evidence.tier).toBe('contradicted');
+    expect(stub.pressKey.mock.calls[0]).toEqual(['sess-1', 'a', 'tab-1']); // arity unchanged without expect
+  });
+
+  it('S5: goto() still returns the Page; expect failure throws; lastResult holds the navigate result', async () => {
+    const nav = { tabId: 'tab-1', url: 'https://a.test/login', title: 'L', verification: expectFail };
+    const stub = { navigate: vi.fn().mockResolvedValue(nav) };
+    const page = make(stub);
+    expect(await page.goto('https://a.test/x')).toBe(page);
+    expect(page.lastResult).toBe(nav);
+    expect(stub.navigate.mock.calls[0]).toEqual(['sess-1', 'https://a.test/x', 'tab-1']);
+    const err = await page.goto('https://a.test/x', { expect: { url: '/b' } }).catch((e) => e);
+    expect(err).toBeInstanceOf(ExpectationFailedError);
+    expect(err.result.url).toBe('https://a.test/login');
+    expect(stub.navigate.mock.calls[1]).toHaveLength(4);
+  });
+
+  it('S6: press/scroll forward expect at the right position; screenshot records lastResult and still returns base64', async () => {
+    const ok = { success: true, actionType: 'x', executionTimeMs: 1, verification: verified };
+    const stub = { pressKey: vi.fn().mockResolvedValue(ok), scroll: vi.fn().mockResolvedValue(ok), screenshot: vi.fn().mockResolvedValue({ base64: 'QQ==', verification: verified }) };
+    const page = make(stub);
+    await page.press('Enter', { expect: { urlChanged: true } });
+    expect(stub.pressKey).toHaveBeenLastCalledWith('sess-1', 'Enter', 'tab-1', undefined, { urlChanged: true });
+    await page.scroll('down', 200, { expect: { text: 'x' } });
+    expect(stub.scroll).toHaveBeenLastCalledWith('sess-1', 'down', 200, 'tab-1', undefined, undefined, { text: 'x' });
+    await page.scroll('up');
+    expect(stub.scroll.mock.calls[1]).toEqual(['sess-1', 'up', 500, 'tab-1']);
+    expect(await page.screenshot()).toBe('QQ==');
+    expect((page.lastResult as any).verification.verified).toBe(true);
+  });
+
+  it('S7: waitForSelector keeps its FR2-01 contract (throws the runtime message, resolves undefined) and exposes the result via lastResult', async () => {
+    const good = { success: true, actionType: 'wait_for_selector', executionTimeMs: 1, verification: verified };
+    const page = make({ waitForSelector: vi.fn().mockResolvedValue(good) });
+    await expect(page.waitForSelector('#t')).resolves.toBeUndefined();
+    expect(page.lastResult).toBe(good);
+    const bad = make({ waitForSelector: vi.fn().mockResolvedValue({ success: false, error: 'timed out' }) });
+    await expect(bad.waitForSelector('#t')).rejects.toThrow('timed out');
+    const exp = make({ waitForSelector: vi.fn().mockResolvedValue({ ...good, verification: expectFail }) });
+    await expect(exp.waitForSelector('#t', { expect: { text: 'x' } })).rejects.toBeInstanceOf(ExpectationFailedError);
+  });
+
+  it('download()/uploadFile() keep their FR2-05 shapes, add verification/expect, and pass expect as the last arg only when given', async () => {
+    const dl = { success: true, actionType: 'download_file', executionTimeMs: 1, output: { downloadedFilename: 'a', downloadedPath: '/x/a', downloadDir: '/x' }, verification: verified };
+    const stub = { downloadFile: vi.fn().mockResolvedValue(dl), uploadFile: vi.fn().mockResolvedValue({ success: true, actionType: 'upload_file', executionTimeMs: 1, verification: verified }) };
+    const page = make(stub);
+    expect(await page.download('#d')).toEqual({ filename: 'a', path: '/x/a', downloadDir: '/x', verification: verified });
+    expect(stub.downloadFile.mock.calls[0]).toHaveLength(4);
+    await page.download('#d', { expect: { urlChanged: false } });
+    expect(stub.downloadFile.mock.calls[1]).toHaveLength(5);
+    await page.uploadFile('#f', 'a.txt');
+    expect(stub.uploadFile.mock.calls[0]).toHaveLength(4);
+    await page.uploadFile('#f', 'a.txt', { expect: { text: 'x' } }).catch(() => {});
+    expect(stub.uploadFile.mock.calls[1]).toHaveLength(5);
+  });
+
+  it('the error classes and types are exported from the package entry', async () => {
+    const mod = await import('../../src/index.js');
+    expect(mod.ActionFailedError).toBe(ActionFailedError);
+    expect(mod.ExpectationFailedError).toBe(ExpectationFailedError);
+    expect(new ActionFailedError({ success: false, actionType: 'click', executionTimeMs: 0 }).message).toBe('click failed');
   });
 });

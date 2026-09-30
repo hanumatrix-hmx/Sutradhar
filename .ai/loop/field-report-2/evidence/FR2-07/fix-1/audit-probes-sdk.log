@@ -1,0 +1,29 @@
+{"timestamp":"2026-09-29T14:25:07.821Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-29T14:25:08.037Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790691907820_1","context":{"isIncognito":false}}
+PASS SDK.exports :: ActionFailedError and ExpectationFailedError exported :: {}
+{"timestamp":"2026-09-29T14:25:08.974Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790691907820_1_2","selector":"#definitely-missing"}}
+{"timestamp":"2026-09-29T14:25:13.990Z","level":"warn","message":"[BrowserActionEngine] Action click failed (attempt 1/3): No visible element found for selector: #definitely-missing","context":{}}
+{"timestamp":"2026-09-29T14:25:19.528Z","level":"warn","message":"[BrowserActionEngine] Action click failed (attempt 2/3): No visible element found for selector: #definitely-missing","context":{}}
+{"timestamp":"2026-09-29T14:25:25.556Z","level":"warn","message":"[BrowserActionEngine] Action click failed (attempt 3/3): No visible element found for selector: #definitely-missing","context":{}}
+PASS SDK.click-missing :: rejects ActionFailedError, tier action-failed :: {"name":"ActionFailedError","tier":"action-failed"}
+{"timestamp":"2026-09-29T14:25:26.702Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790691907820_1_2","selector":"#noop"}}
+PASS SDK.click-expect-hidden-NEG :: rejects ExpectationFailedError failed=[text] :: {"name":"ExpectationFailedError","failed":["text"]}
+{"timestamp":"2026-09-29T14:25:27.869Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790691907820_1_2","selector":"#real"}}
+PASS SDK.click-ok :: returns result, verified :: {"tier":"verified"}
+{"timestamp":"2026-09-29T14:25:27.926Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_sess_1790691907820_1_2"}}
+FAIL SDK.press-body-NEG :: press with no text focus -> not verified, no throw :: {"tier":"verified","reason":"'press_key' verified: keydown 'q' was delivered to the focused button#real; no deterministic effect is defined for this key, so only delivery was verified"}
+{"timestamp":"2026-09-29T14:25:27.930Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_sess_1790691907820_1_2","selector":"#txt"}}
+{"timestamp":"2026-09-29T14:25:27.945Z","level":"info","message":"[BrowserActionEngine] Executing action press_key","context":{"tabId":"tab_sess_1790691907820_1_2"}}
+PASS SDK.press-typed :: press after type -> verified (focus on #txt) :: {"tier":"verified","reason":"'press_key' verified: keydown 'c' reached the focused input#txt and its value changed (length 2→3)"}
+{"timestamp":"2026-09-29T14:25:27.948Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790691907820_1_2","selector":"#txt"}}
+PASS SDK.waitForSelector :: resolves (void) and lastResult verified :: {"tier":"verified"}
+PASS SDK.screenshot :: string, lastResult unverifiable :: {"tier":"unverifiable"}
+PASS SDK.goto404-NEG :: returns Page, lastResult contradicted :: {"tier":"contradicted","reason":"'navigate' completed, but its post-condition check failed: the navigation committed, but the server answered HTTP 404."}
+PASS SDK.goto-expect-NEG :: rejects ExpectationFailedError, result.url ends /a?from=redirect :: {"name":"ExpectationFailedError","url":"http://127.0.0.1:59421/a?from=redirect"}
+{"timestamp":"2026-09-29T14:25:28.029Z","level":"info","message":"[BrowserActionEngine] Executing action download_file","context":{"tabId":"tab_sess_1790691907820_1_2","selector":"#dl0"}}
+PASS SDK.download0-NEG :: returns with verification contradicted (no expect -> no throw); fs size 0 :: {"tier":"contradicted","size":0}
+{"timestamp":"2026-09-29T14:25:29.412Z","level":"info","message":"[BrowserActionEngine] Executing action download_file","context":{"tabId":"tab_sess_1790691907820_1_2","selector":"#dl"}}
+PASS SDK.download :: verified, fs size 4321 :: {"tier":"verified","size":4321}
+SUMMARY 11 / 12
+{"timestamp":"2026-09-29T14:25:30.002Z","level":"info","message":"[BrowserSession] Closed session sess_1790691907820_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-29T14:25:30.002Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790691907820_1","context":{"reason":"Runtime shutdown"}}

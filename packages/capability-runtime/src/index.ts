@@ -29,5 +29,12 @@ export {
 } from './audit/audit-report.js';
 export { type AxNode, type AxSnapshotResult } from './snapshot/ax-snapshot.js';
 export type { SettleSpec, WaitForSelectorState } from '@sutradhar/browser';
+export type {
+  VerificationResultDto,
+  VerificationEvidence,
+  EvidenceCheck,
+  VerificationTier,
+  EvidenceOutcome,
+} from '@sutradhar/browser';
 export { defaultDownloadRoot } from '@sutradhar/browser';
 export * from './fs-roots.js';

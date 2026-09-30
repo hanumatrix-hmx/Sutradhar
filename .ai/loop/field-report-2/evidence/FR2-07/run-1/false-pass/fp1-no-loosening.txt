@@ -1,0 +1,6 @@
+== FP-1 no assertion loosened: every removed line in any *.spec.ts vs the base commit
+-import { existsSync, rmSync, mkdtempSync, mkdirSync, symlinkSync, writeFileSync, unlinkSync } from 'node:fs';
+-import { parseArgs, dialogFlagError } from '../../src/parse-args.js';
+-import { launch, Browser, Page, SutradharRuntime, SUTRADHAR_VERSION } from '../../src/index.js';
+(removed-line count: 3)
+== added-line count: 1816

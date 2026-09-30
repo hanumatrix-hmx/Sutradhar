@@ -3776,3 +3776,183 @@ harness changes, with a deterministic failing-then-passing test, revert-confirm,
 Orchestrator's own fresh repeated runs -- judged sufficient for a scoped test-stability fix.
 Residual logged as GAP-313 (a foreign download that BEGINS first still wins attribution;
 mitigated by the one-download-per-browser lock).
+
+## 2026-09-29 -- FR2-07 Executor run-1 (DEV + VERIFY): single verification contract implemented; awaiting independent audit
+
+Branch `claude/fr2-07-verification-contract` (from master c83c220), 8 commits, one per plan step:
+6b8f48a types/verifier/post-conditions, d85b139 engine wiring, 999ee2c runtime, 751d2e0 MCP, dfd4157 CLI,
+fca76f3 SDK, f24ec4e live-verify harness + fixtures + docs + fixes the live run found, f291ee4 N11 case
+(+ one evidence commit). Full detail: evidence/FR2-07/run-1/ (deviations.md, false-pass-analysis.md).
+
+Results (all re-run after the last code change): live verify 96/96 across MCP (69), CLI (13), SDK (8) and the
+esbuild bundle (6) with an independent puppeteer observer as ground truth; vitest browser 644, capability-runtime
+244, mcp-server 108, cli 193, sutradhar 34, agent 56, apps/server 28; tsc clean on 7 packages; lint clean on the
+4 packages this item edits; 12/12 unit mutants and 4/4 live (built-dist) mutants caught and restored to identical
+bytes; 20-minute PROB-043 soak 43503 calls, 0 mismatches; overhead medians +2/+1/0/+2.5 ms (press/focus/point/nav).
+Baseline (pre-change build, run from `git archive c83c220`) reproduced the false positives the item targets:
+B-X2 `verified:true 0.9` for text present only in a display:none element; B-C2/B-P3/B-P4/B-U3 no verification.
+
+Autonomous decisions (each recorded in deviations.md with reasons):
+1. Puppeteer 25 THROWS at the history edge instead of resolving null (spec section 0.2 assumed null; the pre-change
+   build returned an error, not a silent success). `historyStep` maps exactly that message to the same
+   `contradicted` "no history entry" result; every other error still propagates.
+2. SDK `waitForSelector` keeps resolving `undefined` (existing FR2-01 test S4 pins it; spec rule 4.0 forbids editing
+   an existing assertion), so its verification is read from the new `page.lastResult`.
+3. Observers require a real frame (`evaluate` + `childFrames`): FR2-06's E6 pins that press_key never calls
+   `mainFrame().evaluate` on a partial mock.
+4. Cross-frame identity for points uses the frame's bounding box (Puppeteer's frameElement() handle lives in the
+   isolated world where a main-world expando is invisible; found live: first P5 run was unverifiable).
+5. D15 gate resolved by evidence: real Chrome delivers trusted touchstart/touchend/pointer/click events to a tapped,
+   unoccluded element without touch emulation, so `touch_tap` ships as verifiable (live T1/T2).
+6. Wording/robustness fixes found live: K5 reason now says "no trusted keydown"; click_at_point names where a click
+   landed when the element removes itself on mousedown; click_at_point/drag no longer block on page.title() behind a
+   dialog; the "Pass expect" coaching sentence is omitted for actions that accept no expect.
+
+Not done / not verifiable here (also in false-pass-analysis.md): live remote-browser download and live download
+containment attacks (safety-classifier rule; function-level tests only), headed/non-Windows/non-Chrome, sample-only
+mutation coverage. Pre-existing, reproduced on the pre-change build and NOT caused by FR2-07: FR2-04 verify case
+L13.headed.click-exit0 (GAP-316), CLI scenario suite 11/14 with UC-08 batch hang (GAP-321), mcp-server lint errors
+in FR2-10's session-resolution.ts (GAP-314), `close` leaves a sutradhar-cli-* profile dir (GAP-315).
+New gaps GAP-314..GAP-321; GAP-018/019/024/025 marked FIXED pending audit. GAP-027/028/029 (state setters outside
+the contract, no CLI/SDK back/forward/reload, drag delivery in frames) remain open by design.
+
+Housekeeping incident, disclosed: `verify-fr2-10-optional-session.mjs` overwrites its committed evidence files when
+run (no evidence-dir env var); I ran it as a regression gate, noticed 4 modified tracked files under
+evidence/FR2-10/run-1/, and restored exactly those with `git restore -- <that dir>` (no other paths touched). The
+scenario-suite drivers likewise rewrite one tracked PNG (results/uc06-modal-after-clicktext.png), restored the same way.
+Two Chrome roots I had leaked from aborted CLI attempts (16:42) were killed by PID; another session's leaked Chrome
+(PID 73480) was left alone.
+
+Sequencing note for FR2-08: `pageContainsVisibleText(tab, text)` and `visibleTextContainsInPage` are exported from
+@sutradhar/browser for reuse; the contract requires that `expect` keep being checked AFTER settle.
+
+## 2026-09-29 -- FR2-07 fix-cycle 1 (audit-1 REOPEN): F1-F5 fixed, F6-F8 accepted
+
+Findings F1..F8 from `evidence/FR2-07/audit-1/verdict.md`.
+
+- **F1 (major) fixed.** `expect.text` counted text in an open shadow root whose host is `display:none` and in a
+  `display:none` iframe because `innerText` of an unrendered node falls back to `textContent`. `visibleTextContainsInPage`
+  now confirms every match is rendered: no `display:none` / (above the node) `content-visibility:hidden` ancestor along the
+  flat tree (parent element, else shadow host, else the same-origin embedding `<iframe>`), and `documentElement` has client
+  rects (covers a cross-origin hidden frame, whose embedding element is unreachable). `Element.checkVisibility()` was NOT used:
+  it returns false for `display:contents` hosts whose children are rendered (a common custom-element pattern), which would
+  be a false negative. The confirmation runs only on a text match, so the cost is bounded by the number of matches.
+- **F2/F3 fixed (test gaps).** Unit tests now kill the clipboard length-only and the focus `a === el` -> `a !== null` mutants;
+  live C2 uses same-length strings.
+- **F4 fixed.** With an engine-supplied built-in verdict of `not-run` and a passing `expect`, the reason is now
+  "'<type>' verified by expectation only: its built-in post-condition check could not run: <why>. Expectations met: <keys>."
+  Spec rule 9's legacy sentence is kept only when NO built-in verdict was supplied (iba-acceptance compatibility).
+- **F5 fixed.** Upper wall-time bounds removed from the new unit tests (V12, R11, E1, E6); the assertions are "the call
+  returned although the dependency never answers" (event-based) plus a monotonic LOWER bound.
+- **F6 (mixed commit f24ec4e) accepted, history is not rewritten.** The commit stays as is; the fix-cycle commits are one step each.
+- **F7 (tools/list +34%) accepted.** `tools/list` grew from 64,950 to 87,093 bytes because `expectDesc` is repeated on 24
+  tools; the tool count is unchanged (72) and the names are identical. Noted in the changelog fragment.
+- **F8 (SDK `waitForSelector` resolves `undefined`) is a documented limitation.** Verification is on `page.lastResult`; already
+  stated in the changelog fragment.
+- **Test-harness note.** The live F1 fixtures live on their own page (`fr2-07-hidden-text.html`): adding two more
+  out-of-process frames to `page.html` broke the pre-existing K11 (see GAP-322).
+
+## 2026-09-29 -- FR2-07: two failed audits; ROOT-CAUSE RE-DERIVATION and revised plan (before any more code)
+
+Audits: audit-1 REOPEN (F1 major), audit-2 REOPEN (A2-1, A2-2 major). Everything except the
+`expect.text` "visible text" semantic PASSED in both audits (the verification contract, all real
+post-condition checks, negatives, master comparison, mutants). So the item is not failing broadly;
+one secondary acceptance criterion keeps failing in a new place each cycle.
+
+Root cause (spec, tests and implementation are each partly at fault):
+1. IMPLEMENTATION: "is this text visible?" is decided by enumerating CSS hiding mechanisms
+   (display:none, content-visibility:hidden) in a hand-written ancestor walk, run from INSIDE each
+   frame. Two structural defects follow: (a) a frame cannot see from inside whether its own
+   <iframe> element is visibility:hidden / clipped (cross-origin: not reachable at all) so
+   hidden-frame text is judged visible (A2-1); (b) a bounded walk (10000 levels) that fails OPEN
+   returns "visible" when it runs out (A2-3). Each fix cycle patched one mechanism; the next
+   audit found the next. That is whack-a-mole, not convergence.
+2. IMPLEMENTATION: cross-frame aggregation is all-or-nothing under one timeout race, so one hung
+   out-of-process frame makes the whole page "unverifiable" even when the main frame has the text
+   (A2-2). Also text placed as a bare text node in a shadow root is missed (A2-4) because only
+   child ELEMENTS' innerText is read.
+3. SPEC: "visible text; hidden text does not count" is unbounded. It never says whether opacity:0,
+   aria-hidden, off-screen or zero-size text counts, so no implementation can be finished.
+4. TESTS: negatives were written one per mechanism the previous audit named (example-driven),
+   so they proved those examples, not the property.
+
+Revised plan (fix cycle 2; scope limited to expect.text visibility + aggregation + doc/harness fixes):
+- Define the contract precisely as RENDERED text: text that is laid out (non-empty Range client
+  rects) with computed visibility:visible on its parent (visibility is inherited, so no ancestor
+  walk), AND every embedding frame has a reachable frame element (Puppeteer frame.frameElement())
+  that is itself rendered and visibility:visible, judged from the PARENT side, recursively.
+  opacity:0, aria-hidden, off-screen text are documented as counted (rendered, not "perceivable").
+- FAIL CLOSED: anything that cannot be judged (frame element unreachable, guard exhausted, frame
+  hung) yields 'unavailable'/not-found with a reason, never 'visible'.
+- Walk TEXT NODES (TreeWalker) through open shadow roots, not child elements' innerText.
+- Aggregation: 'found' short-circuits as soon as any frame confirms; per-frame time bound; the
+  conclusion 'not-found' only if every frame answered; otherwise 'unavailable' naming how many
+  frames answered/hung.
+- Replace example-driven negatives with a generated matrix test in real Chrome: hiding mechanisms
+  x placements (main, open shadow incl. bare text node, slotted, same-origin iframe, srcdoc,
+  sandboxed, cross-origin, nested, very deep), each verdict compared with a ground truth taken
+  from an independent observer; audit-2's probes (audit-2/probes/vis-matrix-*.mjs, multi-oopif-*,
+  vis-cli-sdk) become permanent regression cases.
+- Step 0 spike first (own commit, with evidence): confirm frame.frameElement() reaches
+  same-origin, srcdoc, sandboxed and cross-origin (OOPIF) frames and that Range rects are empty
+  for display:none and content-visibility:hidden. If frameElement() cannot reach OOPIF frames,
+  fall back to fail-closed 'unavailable' for those, and record it as a documented limit.
+- Fix K11 harness (GAP-322): select the target frame by a unique token in its URL, not the first
+  frame with the right origin. Correct GAP-323 (closed <details> IS excluded), repair the gaps.md
+  table rows, and report tools/list growth in UTF-8 bytes (65,088 -> 87,277 tools array).
+- After this, audit-3 is the LAST standard-cycle audit for this item; if it fails, FR2-07 is
+  marked BLOCKED with this diagnosis and only the passing parts ship.
+
+## 2026-09-29 -- FR2-07 fix-2 step 0: SPIKE result (Chrome 153, puppeteer-core 25.5.0; evidence/FR2-07/fix-2/spike*.{mjs,log})
+
+- (a) CONFIRMED: `frame.frameElement()` returns a live handle for same-origin, srcdoc, sandboxed (`sandbox=""`)
+  AND cross-origin out-of-process frames (localhost vs 127.0.0.1), and for frames hidden by
+  display:none / visibility:hidden / an ancestor with visibility:hidden. No documented-limit fallback is needed for OOPIFs.
+- (d) CONFIRMED: from the PARENT side the frame element reports computed `visibility:hidden` (own or inherited via an
+  ancestor) and `display:none` (0 client rects) for all four kinds of frame, so hidden-frame text can be rejected without
+  entering the frame. Side finding: `frame.evaluate` on a display:none OOPIF and on an OOPIF under a visibility:hidden
+  ancestor HUNG (3 s) in this run, so the parent-side verdict is taken BEFORE any evaluate (a hidden frame is answered
+  "not visible" without an evaluate that could hang).
+- (c) CONFIRMED: computed `visibility` is inherited (child of visibility:hidden reports hidden; `visibility:visible` on a
+  child overrides), so the text's parent element suffices; no ancestor walk.
+- (b) PARTLY REFUTED (plan premise corrected): Range.getClientRects() is empty for display:none / [hidden] (0 rects) but
+  NON-EMPTY (1 rect) for content-visibility:hidden text and for closed-<details> content. So the Range check alone does not
+  exclude those. The platform primitive that does is `Element.checkVisibility()` (false for a descendant of a
+  content-visibility:hidden ancestor and for closed-details content), applied to the nearest non-`display:contents` flat-tree
+  ancestor (checkVisibility is false for display:contents itself), plus `content-visibility !== 'hidden'` on that element
+  (checkVisibility is true for the skipping element itself, whose own text is skipped). Bare text in a shadow root has no
+  parentElement: its container is the shadow host. These stay platform primitives (no hand-written hiding-mechanism list).
+
+## 2026-09-30 -- FR2-07 fix-2 complete (VERIFY, awaiting audit-3; not self-audited)
+
+- Implemented the plan: rendered-text contract (text nodes, Range rects, computed visibility, checkVisibility, parent-side frame chain, fail closed), per-frame-bound short-circuit aggregation, 262-case generated live matrix vs an independent oracle, unit matrix (fake DOM), hung-frame regression cases, harness fixes. Commits: 46e2d0c, 15d2341, cddbf2a, ff1689e, 32b4078, 1a884da, efb833b (+ the step 4b commit and the evidence commit).
+- Plan deviations: (1) the spike refuted "Range rects are empty for content-visibility:hidden" (they are non-empty), so checkVisibility() on the nearest non-display:contents ancestor plus the own content-visibility check is used; direct text in a closed <details> needed its own rule (found live). (2) The X10 flake was root-caused to GAP-325 (the client never attaches a cross-origin frame target); the harness tolerates ONLY the fail-closed unavailable outcome, capped at 3 per surface; it fired 0 times in the 3 final runs. (3) The first X10-failure log was overwritten before it was archived; the failure text is quoted in the report and reproduced by flake-x10/diag-x10-mcp-200.log. (4) An earlier 3x run was interrupted by a session end and discarded (INTERRUPTED-run.txt).
+- Final evidence: forced rebuild 0 cached, typecheck 34/34, vitest browser 840, capability-runtime 244, mcp-server 108, cli 193, sutradhar 34, agent 56, server 28; live 488/488 x3, 0 tolerances fired; mutants 14/14 unit, 5/6 live (M8 unreachable live); audit-2 probes clean on the worktree build and the bundle.
+- Not fixed / documented: GAP-324, GAP-325, GAP-326, GAP-327. probe-reruns/k11-repro.jsonl (mode parse-before, rep 0) shows browser.focus itself can fail when several cross-origin frames exist at parse time: same GAP-325 family, in the focus path, outside expect.text.
+
+## 2026-09-30 -- FR2-07 BLOCKED after 3 failed audits (per the escalation rule; not forced through)
+
+Evidence per attempt:
+- audit-1 (run-1): F1 major -- hidden shadow-host and display:none iframe text counted as visible.
+- audit-2 (fix-1): A2-1 major -- visibility:hidden iframe text counted; A2-2 major -- one hung OOPIF made the page unverifiable.
+- audit-3 (fix-2, root-cause redesign): A3-1 major -- SVG <text> inside never-painted containers (<defs>, unused <symbol>, <mask>, <clipPath>, <pattern>, <marker>) returns verified:true on MCP/bundle/CLI/SDK; Chrome itself reports text rects, visibility:visible and checkVisibility()==true for it (evidence audit-3/svg-primitives.log). Also present in the pre-fix build. Minor: H2 harness tolerance uncapped (A3-2); unit suite misses "every visible OOPIF silent" mutant, only live catches it (A3-3); visible text split across inline-block items and <textarea> text reported contradicted (A3-4); GAP-325 silent-frame rate higher than claimed in parse-before mode (A3-5).
+
+Everything else PASSED in all three audits: the {verified,confidence,reason,evidence} contract on MCP/CLI/SDK/bundle; the real post-condition checks for press_key, download, wait_for_selector, focus, navigate/back/forward/reload, set_clipboard, click_at_point, drag, upload_via_trigger; mandatory negatives; fail-closed reasons; mutants (N1-N12 plus earlier sets); no regression vs master c83c220 (FR2-04 verify, CLI scenario suite); the focus/parse-before failure is pre-existing on master (4/10).
+
+Root-cause hypothesis: "is this text on screen?" cannot be decided by DOM/CSS predicates in the browser -- each cycle the audit found a new class of text that Chrome's own APIs describe as rendered but that is never painted (CSS hiding, frame-element hiding, now SVG non-rendered containers). The predicate set converges only if it follows the paint model, which the web platform does not expose. The expect.text criterion as specified ("visible text") is therefore the defect, not a patchable bug.
+
+Decision needed from the user (see chat): ship the verification contract with expect.text re-scoped/documented, or hold FR2-07 entirely.
+
+## 2026-09-30 -- FR2-07: user decision "ship, limit documented"
+
+The user chose to ship FR2-07 with the expect.text limits documented rather than hold it. Ledger -> PARTIAL (ships).
+Documented in: the MCP `expect` description (all 24 tools; asserted in tools.spec.ts), packages/cli/README.md
+(--expect-text), AGENT_SETUP.md (mirrored into the npm package at build), docs/22-changelog.md [Unreleased]
+Known limitations. New gaps GAP-329 (SVG never-painted containers), GAP-330 (harness/unit coverage),
+GAP-331 (split inline-block text, <textarea>), GAP-332 (silent OOPIF rate; focus-into-OOPIF pre-existing).
+Verified after the edit: mcp-server vitest 108/108, sutradhar vitest 34/34, cli tsc clean; the built bundle's
+tools/list serves the new text on 24 of 72 tools (94,285 UTF-8 bytes for the tools array).
+Note: a plain `pnpm run build` replayed a stale turbo cache for the `sutradhar` bundle after an mcp-server
+source change; `--force` was needed. check-release-ready.mjs guards publishing, but the stale-bundle replay is
+worth a follow-up.
+

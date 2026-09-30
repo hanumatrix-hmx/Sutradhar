@@ -1,0 +1,58 @@
+[
+  {
+    "id": "UC-05",
+    "title": "Long 10+ step flow",
+    "surface": "cli",
+    "success": false,
+    "ms": 23509,
+    "detail": {
+      "cartIconSnap": "URL: https://www.saucedemo.com/inventory-item.html?id=4\nTitle: Swag Labs\nInteractive elements (7):\n[#1] button \"Open Menu\"\n[#8] a \"Cart, 1 items\" role=button\n[#9] button \"Back to products\"\n[#10] button \"Remove\"\n[#11] a \"X\"\n[#12] a \"Facebook\"\n[#13] a \"LinkedIn\"",
+      "sortBlocked": {
+        "step": "sort products by price",
+        "blockedBecause": null,
+        "workaroundAttempted": true,
+        "sortResult": {
+          "stdout": "Selected \"lohi\" on 9",
+          "stderr": "",
+          "code": 0,
+          "ms": 3321,
+          "timedOut": false,
+          "spawnError": null
+        }
+      }
+    },
+    "error": "could not find cart icon link in snap after add-to-cart"
+  },
+  {
+    "id": "UC-08",
+    "title": "File download",
+    "surface": "cli",
+    "success": true,
+    "ms": 10085,
+    "detail": {
+      "fileName": "test-upload.txt",
+      "downloadDir": "E:\\AI-Cache\\tmp\\sutradhar-downloads\\cli-uc08-1790689305805",
+      "downloadResultStdout": "Downloaded \"test-upload.txt\" to E:\\AI-Cache\\tmp\\sutradhar-downloads\\cli-uc08-1790689305805\\test-upload.txt",
+      "downloadedFilename": "test-upload.txt",
+      "downloadedPath": "E:\\AI-Cache\\tmp\\sutradhar-downloads\\cli-uc08-1790689305805\\test-upload.txt",
+      "landedExpectedFile": true,
+      "signalUsed": "the `download` CLI command's own real completion signal (added Phase 4) — no longer polling the filesystem by diff."
+    },
+    "error": null
+  },
+  {
+    "id": "UC-12",
+    "title": "Outcome verification after a state-changing action",
+    "surface": "cli",
+    "success": false,
+    "ms": 16798,
+    "detail": {
+      "clickReportedSuccess": "Clicked 12",
+      "freshSnapAfterClick": "URL: https://www.saucedemo.com/inventory.html\nTitle: Swag Labs\nInteractive elements (25):\n[#1] button \"Open Menu\"\n[#8] a \"Cart, 1 items\" role=button\n[#9] select \"Sort products\" value=\"az\"\n[#10] a \"View details for Sauce Labs Backpack\" role=button\n[#11] a \"View details for Sauce Labs Backpack\" role=button\n[#12] button \"Remove\"\n[#13] a \"View details for Sauce Labs Bike Light\" role=button\n[#14] a \"View details for Sauce Labs Bike Light\" role=button\n[#15] button \"Add to cart\"\n[#16] a \"View details for Sauce Labs Bolt T-Shirt\" role=button\n[#17] a \"View details for Sauce Labs Bolt T-Shirt\" role=button\n[#18] button \"Add to cart\"\n[#19] a \"View details for Sauce Labs Fleece Jacket\" role=button\n[#20] a \"View details for Sauce Labs Fleece Jacket\" role=button\n[#21] button \"Add to cart\"\n[#22] a \"View details for Sauce Labs Onesie\" role=button\n[#23] a \"View details for Sauce Labs Onesie\" role=button\n[#24] button \"Add to cart\"\n[#25] a \"View details for Test.allTheThings() T-Shirt (Red)\" role=button\n[#26] a \"View details for Test.allTheThings() T-Shirt (Red)\" role=button\n[#27] button \"Add to cart\"\n[#28] a \"X\"\n[#29] a \"Facebook\"\n[#30] a \"LinkedIn\"\n[#31] span \"Name (A to Z)\nName (Z to A)\nPrice (low to high)\nPrice (high to low)\" role=clickable",
+      "badgeCount": null,
+      "buttonFlippedToRemove": true,
+      "independentlyVerified": false
+    },
+    "error": "independent re-read did not confirm cart badge=1 and button label flip to Remove"
+  }
+]

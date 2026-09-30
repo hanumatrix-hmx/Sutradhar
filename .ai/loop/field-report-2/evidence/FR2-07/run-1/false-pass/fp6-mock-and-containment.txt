@@ -1,0 +1,17 @@
+== FP-6 mocked path: the live script contains no test doubles and drives the built worktree artifacts
+vi.fn/mock occurrences in verify script: 0
+75:    `import(${JSON.stringify(pathToFileURL(path.join(repoRoot, 'packages', 'browser', 'dist', 'index.js')).href)}).then(m=>console.log(new m.BrowserLauncher().findExecutablePath()))`,
+137:const CLI = path.join(repoRoot, 'packages', 'cli', 'dist', 'cli.js');
+424:        expected: 'same filename twice: both verified, neither flagged "predates" (paths recorded; distinct paths are a FR2-05 concern)', observed: { a: tierOf(a), b: tierOf(b), pa: a.output?.downloadedPath, pb: b.output?.downloadedPath },
+1039:  const sdk = await import(pathToFileURL(path.join(repoRoot, 'packages', 'sutradhar', 'dist', 'index.js')).href);
+1134:  const serverPath = path.join(ROOT, 'packages', 'mcp-server', 'dist', 'cli.js');
+1187:    const rtMod = await import(pathToFileURL(path.join(ROOT, 'packages', 'capability-runtime', 'dist', 'index.js')).href);
+1234:      if (SURFACES.includes('mcp')) await runMcpCases('mcp', path.join(repoRoot, 'packages', 'mcp-server', 'dist', 'cli.js'), ctx);
+1237:      if (SURFACES.includes('bundle')) await runMcpCases('bundle', path.join(repoRoot, 'packages', 'sutradhar', 'dist', 'mcp-cli.js'), ctx);
+-- the download containment assertion still precedes the fs.stat (FR2-05 path): order in the engine source:
+27:  recordDownloadEvidence,
+1473:          `Download reported a file outside the download directory "${downloadDir}": ${reportedPath}`,
+1480:        downloadedSizeBytes = await recordDownloadEvidence(reportedPath, startedAtMs, page, rec);
+-- fresh unit run of the FR2-05 containment test:
+ Test Files  1 passed (1)
+      Tests  3 passed | 196 skipped (199)

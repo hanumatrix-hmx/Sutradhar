@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>FR2-07 fix-1 F1: text present in the DOM but NOT rendered, next to rendered twins</title>
+    <style>
+      body { margin: 0; font: 12px sans-serif; }
+      .abs { position: absolute; }
+      iframe { width: 260px; height: 44px; border: 1px solid #999; }
+    </style>
+  </head>
+  <body>
+    <button id="noop" class="abs" style="left:10px;top:10px;width:100px;height:30px">noop</button>
+    <!-- not rendered: display:none shadow host, display:none iframes (same-origin here, cross-origin added on load) -->
+    <div id="hidden-shadow-host" style="display:none"></div>
+    <iframe id="hid-same" style="display:none" srcdoc="<p>FR2-07 IFRAME-HIDDEN-SAME</p>"></iframe>
+    <!-- rendered twins -->
+    <div id="visible-shadow-host" class="abs" style="left:10px;top:60px"></div>
+    <iframe id="vis-same" class="abs" style="left:10px;top:100px" srcdoc="<p>FR2-07 IFRAME-VISIBLE-SAME</p>"></iframe>
+    <script>
+      window.__ht = { ready: false };
+      // Text is built from parts: the contiguous literal never appears in any script source.
+      [['hidden-shadow-host', 'FR2-07 SHADOW-' + 'HIDDEN'], ['visible-shadow-host', 'FR2-07 SHADOW-' + 'VISIBLE']].forEach(function (p) {
+        var r = document.getElementById(p[0]).attachShadow({ mode: 'open' });
+        var el = document.createElement('p');
+        el.textContent = p[1];
+        r.appendChild(el);
+      });
+      // The cross-origin (out-of-process) frames are added AFTER load: a puppeteer observer does not
+      // reliably get an execution context for several cross-origin frames present at parse time.
+      window.addEventListener('load', function () {
+        [['hid-xo', 'display:none', 'FR2-07 IFRAME-HIDDEN-XO'], ['vis-xo', 'position:absolute;left:10px;top:160px', 'FR2-07 IFRAME-VISIBLE-XO']].forEach(function (p) {
+          var f = document.createElement('iframe');
+          f.id = p[0];
+          f.style.cssText = p[1];
+          f.src = '__XO_ORIGIN__/textframe.html?text=' + encodeURIComponent(p[2]);
+          document.body.appendChild(f);
+        });
+        window.__ht.ready = true;
+      });
+    </script>
+  </body>
+</html>

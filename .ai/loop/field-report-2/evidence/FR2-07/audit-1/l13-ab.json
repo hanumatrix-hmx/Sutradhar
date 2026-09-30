@@ -1,0 +1,66 @@
+[
+  {
+    "label": "base",
+    "rep": 0,
+    "click": {
+      "args": [
+        "click",
+        "#alert"
+      ],
+      "code": 0,
+      "ms": 6361,
+      "stdout": "Clicked #alert\ndialogPending: {\"type\":\"alert\",\"message\":\"audit l13 ?n=base-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:55390/fx.html?n=base-0\"}",
+      "stderr": "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prov"
+    },
+    "snapCode": 3,
+    "closeCode": 0
+  },
+  {
+    "label": "head",
+    "rep": 0,
+    "click": {
+      "args": [
+        "click",
+        "#alert"
+      ],
+      "code": 0,
+      "ms": 6360,
+      "stdout": "Clicked #alert\nVerification: verified (confidence 0.90) — 'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\ndialogPending: {\"type\":\"alert\",\"message\":\"audit l13 ?n=head-0\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:55390/fx.html?n=head-0\"}",
+      "stderr": "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prov"
+    },
+    "snapCode": 3,
+    "closeCode": 0
+  },
+  {
+    "label": "base",
+    "rep": 1,
+    "click": {
+      "args": [
+        "click",
+        "#alert"
+      ],
+      "code": 0,
+      "ms": 6358,
+      "stdout": "Clicked #alert\ndialogPending: {\"type\":\"alert\",\"message\":\"audit l13 ?n=base-1\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:55390/fx.html?n=base-1\"}",
+      "stderr": "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prov"
+    },
+    "snapCode": 3,
+    "closeCode": 0
+  },
+  {
+    "label": "head",
+    "rep": 1,
+    "click": {
+      "args": [
+        "click",
+        "#alert"
+      ],
+      "code": 0,
+      "ms": 6355,
+      "stdout": "Clicked #alert\nVerification: verified (confidence 0.90) — 'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\ndialogPending: {\"type\":\"alert\",\"message\":\"audit l13 ?n=head-1\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:55390/fx.html?n=head-1\"}",
+      "stderr": "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prov"
+    },
+    "snapCode": 3,
+    "closeCode": 0
+  }
+]

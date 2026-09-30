@@ -13,12 +13,50 @@ import type {
   SettleSpec,
   WaitForSelectorState,
   AuditReport,
+  ActionExpectation,
+  ActionResult,
   DownloadResult,
+  NavigateResult,
+  ScreenshotResult,
+  VerificationResultDto,
 } from '@sutradhar/capability-runtime';
-import { prepareAuditOutDir, writeAuditArtifacts, buildAuditReport } from '@sutradhar/capability-runtime';
+import {
+  prepareAuditOutDir,
+  writeAuditArtifacts,
+  buildAuditReport,
+  failedExpectations,
+} from '@sutradhar/capability-runtime';
+import { ActionFailedError, ExpectationFailedError } from './errors.js';
+
+/**
+ * FR2-07 arity rule: a trailing `expect` is appended to the runtime call ONLY when the caller gave
+ * one so a call without it keeps
+ * exactly the argument list it always had.
+ */
+function expectArg(expect: ActionExpectation | undefined): [ActionExpectation] | [] {
+  return expect ? [expect] : [];
+}
+
+/** The result of the most recent action call on a page. */
+export type LastResult = ActionResult | NavigateResult | ScreenshotResult;
+
+/** Options every action accepts. */
+export interface ActionOptions {
+  /**
+   * Assert the effect: `{text?, url?, urlChanged?}`, checked once right after the action (after
+   * settle, if requested). A failed expectation throws {@link ExpectationFailedError}; the action
+   * itself is NOT undone. `text` is RENDERED text: laid out, `visibility:visible`, not under `display:none` /
+   * `content-visibility:hidden` / a closed `<details>`, and every enclosing `<iframe>` itself visible
+   * (`opacity:0`, `aria-hidden`, off-screen and clipped text still count).
+   */
+  expect?: ActionExpectation;
+}
+
+/** Options accepted by {@link Page.goto}. */
+export interface GotoOptions extends ActionOptions {}
 
 /** Options accepted by {@link Page.download}. */
-export interface PageDownloadOptions {
+export interface PageDownloadOptions extends ActionOptions {
   /** Destination directory. Must resolve inside an allowed download root (see `LaunchOptions`'s
    *  `allowedDownloadRoots`). Defaults to the first allowed root when omitted. */
   downloadDir?: string;
@@ -46,7 +84,7 @@ export interface PageAuditResult {
 }
 
 /** Options accepted by {@link Page.waitForSelector} (Playwright-style names). */
-export interface WaitForSelectorOptions {
+export interface WaitForSelectorOptions extends ActionOptions {
   /** 'visible' (default) | 'attached' | 'hidden'. */
   state?: WaitForSelectorState;
   /** Milliseconds; defaults to 10000. */
@@ -54,7 +92,7 @@ export interface WaitForSelectorOptions {
 }
 
 /** Options accepted by {@link Page.click} / {@link Page.type}. */
-export interface ElementOptions {
+export interface ElementOptions extends ActionOptions {
   /** Click delay in ms (ignored by type/click today; reserved for parity). */
   delay?: number;
   /**
@@ -106,6 +144,8 @@ export interface ScreenshotOptions {
  * const png = await page.screenshot();
  */
 export class Page {
+  private last: LastResult | undefined;
+
   /** @internal */ public constructor(
     private readonly runtime: SutradharRuntime,
     private readonly sessionId: string,
@@ -113,9 +153,44 @@ export class Page {
     public readonly tabId: string,
   ) {}
 
-  /** Navigate this tab to a URL. */
-  public async goto(url: string): Promise<Page> {
-    await this.runtime.navigate(this.sessionId, url, this.tabId);
+  /**
+   * FR2-07: the full result of this page's most recent action call (`click`, `type`, `press`,
+   * `scroll`, `waitForSelector`, `download`, `uploadFile`, `goto`, `screenshot`). It is the uniform
+   * way to read `verification` from the calls that return something else (`goto` returns the Page,
+   * `screenshot` the base64 string, `waitForSelector` nothing). `undefined` before any action.
+   */
+  public get lastResult(): LastResult | undefined {
+    return this.last;
+  }
+
+  /**
+   * Records `result` as this page's last result, then applies the contract: `success:false` throws
+   * {@link ActionFailedError} (FR2-07 closes GAP-024: click/type/press/scroll used to swallow it),
+   * and a given `expect` that did not hold throws {@link ExpectationFailedError}. A built-in
+   * contradiction with NO `expect` is NOT thrown: it is on `result.verification`.
+   */
+  private conclude<R extends ActionResult>(result: R, expect: ActionExpectation | undefined): R {
+    this.last = result;
+    if (!result.success) throw new ActionFailedError(result);
+    if (expect) {
+      const failed = failedExpectations(result.verification);
+      if (failed.length > 0) throw new ExpectationFailedError(result, failed);
+    }
+    return result;
+  }
+
+  /**
+   * Navigate this tab to a URL. Still returns the Page (chaining); the navigation's verification
+   * (did a document really commit? HTTP status?) is on {@link Page.lastResult}. With
+   * `options.expect`, throws {@link ExpectationFailedError} when the assertion does not hold.
+   */
+  public async goto(url: string, options?: GotoOptions): Promise<Page> {
+    const result = await this.runtime.navigate(this.sessionId, url, this.tabId, ...expectArg(options?.expect));
+    this.last = result;
+    if (options?.expect) {
+      const failed = failedExpectations(result.verification as VerificationResultDto | undefined);
+      if (failed.length > 0) throw new ExpectationFailedError(result, failed);
+    }
     return this;
   }
 
@@ -132,13 +207,27 @@ export class Page {
    * Click an element. `selector` may be a CSS selector OR a numeric [#id] from
    * {@link Page.snapshot} (e.g. `"7"` resolves to `[data-sd-node-id="7"]`).
    */
-  public async click(selector: string, options?: ElementOptions): Promise<void> {
-    await this.runtime.click(this.sessionId, selector, this.tabId, undefined, undefined, options?.settle);
+  public async click(selector: string, options?: ElementOptions): Promise<ActionResult> {
+    return this.conclude(
+      await this.runtime.click(
+        this.sessionId,
+        selector,
+        this.tabId,
+        undefined,
+        undefined,
+        options?.settle,
+        ...expectArg(options?.expect),
+      ),
+      options?.expect,
+    );
   }
 
   /** Type text into an input targeted by selector or [#id]. */
-  public async type(selector: string, text: string, options?: ElementOptions): Promise<void> {
-    await this.runtime.type(this.sessionId, selector, text, this.tabId, options?.settle);
+  public async type(selector: string, text: string, options?: ElementOptions): Promise<ActionResult> {
+    return this.conclude(
+      await this.runtime.type(this.sessionId, selector, text, this.tabId, options?.settle, ...expectArg(options?.expect)),
+      options?.expect,
+    );
   }
 
   /**
@@ -170,8 +259,22 @@ export class Page {
    * may be missed. Throws on timeout, with a message naming the state it waited for.
    */
   public async waitForSelector(selector: string, options?: WaitForSelectorOptions): Promise<void> {
-    const r = await this.runtime.waitForSelector(this.sessionId, selector, options?.timeout, this.tabId, options?.state);
+    const r = await this.runtime.waitForSelector(
+      this.sessionId,
+      selector,
+      options?.timeout,
+      this.tabId,
+      options?.state,
+      ...expectArg(options?.expect),
+    );
+    this.last = r;
+    // Still throws a plain Error naming the state waited for (FR2-01), not ActionFailedError: that
+    // message is this method's documented contract. The verification is on `lastResult`.
     if (!r.success) throw new Error(r.error ?? `waitForSelector("${selector}") failed`);
+    if (options?.expect) {
+      const failed = failedExpectations(r.verification);
+      if (failed.length > 0) throw new ExpectationFailedError(r, failed);
+    }
   }
 
   /**
@@ -180,10 +283,27 @@ export class Page {
    * `LaunchOptions.allowedDownloadRoots` — or this throws.
    */
   public async download(selector: string, options?: PageDownloadOptions): Promise<DownloadResult> {
-    const r = await this.runtime.downloadFile(this.sessionId, selector, options?.downloadDir, this.tabId);
+    const r = await this.runtime.downloadFile(
+      this.sessionId,
+      selector,
+      options?.downloadDir,
+      this.tabId,
+      ...expectArg(options?.expect),
+    );
+    this.last = r;
     if (!r.success) throw new Error(r.error ?? `download("${selector}") failed`);
+    if (options?.expect) {
+      const failed = failedExpectations(r.verification);
+      if (failed.length > 0) throw new ExpectationFailedError(r, failed);
+    }
     const o = r.output as { downloadedFilename: unknown; downloadedPath: unknown; downloadDir: unknown };
-    return { filename: String(o.downloadedFilename), path: String(o.downloadedPath), downloadDir: String(o.downloadDir) };
+    return {
+      filename: String(o.downloadedFilename),
+      path: String(o.downloadedPath),
+      downloadDir: String(o.downloadDir),
+      // FR2-07: an fs.stat-backed check that the file really is there and non-empty.
+      ...(r.verification ? { verification: r.verification } : {}),
+    };
   }
 
   /**
@@ -191,27 +311,57 @@ export class Page {
    * resolved to an absolute path. Unrestricted unless `LaunchOptions.allowedUploadRoots` was
    * set, in which case it must be under one of those directories, or this throws.
    */
-  public async uploadFile(selector: string, filePath: string): Promise<void> {
-    const r = await this.runtime.uploadFile(this.sessionId, selector, path.resolve(filePath), this.tabId);
+  public async uploadFile(selector: string, filePath: string, options?: ActionOptions): Promise<ActionResult> {
+    const r = await this.runtime.uploadFile(
+      this.sessionId,
+      selector,
+      path.resolve(filePath),
+      this.tabId,
+      ...expectArg(options?.expect),
+    );
+    this.last = r;
     if (!r.success) throw new Error(r.error ?? `uploadFile("${selector}", "${filePath}") failed`);
+    if (options?.expect) {
+      const failed = failedExpectations(r.verification);
+      if (failed.length > 0) throw new ExpectationFailedError(r, failed);
+    }
+    return r;
   }
 
   /** Press a keyboard key (e.g. `"Enter"`, `"Escape"`). */
-  public async press(key: string): Promise<void> {
-    await this.runtime.pressKey(this.sessionId, key, this.tabId);
+  public async press(key: string, options?: ActionOptions): Promise<ActionResult> {
+    const expect = options?.expect;
+    return this.conclude(
+      expect
+        ? await this.runtime.pressKey(this.sessionId, key, this.tabId, undefined, expect)
+        : await this.runtime.pressKey(this.sessionId, key, this.tabId),
+      expect,
+    );
   }
 
   /** Scroll the page. */
   public async scroll(
     direction: 'up' | 'down' | 'top' | 'bottom' = 'down',
     amount = 500,
-  ): Promise<void> {
-    await this.runtime.scroll(this.sessionId, direction, amount, this.tabId);
+    options?: ActionOptions,
+  ): Promise<ActionResult> {
+    const expect = options?.expect;
+    return this.conclude(
+      expect
+        ? await this.runtime.scroll(this.sessionId, direction, amount, this.tabId, undefined, undefined, expect)
+        : await this.runtime.scroll(this.sessionId, direction, amount, this.tabId),
+      expect,
+    );
   }
 
-  /** Capture a screenshot. Returns raw base64 (no data-URI prefix). */
+  /**
+   * Capture a screenshot. Returns raw base64 (no data-URI prefix). A screenshot has no
+   * post-condition, so its verification (on {@link Page.lastResult}) is `unverifiable` by design
+   * unless the capture is not a valid PNG.
+   */
   public async screenshot(_options?: ScreenshotOptions): Promise<string> {
     const result = await this.runtime.screenshot(this.sessionId, this.tabId);
+    this.last = result;
     return result.base64;
   }
 

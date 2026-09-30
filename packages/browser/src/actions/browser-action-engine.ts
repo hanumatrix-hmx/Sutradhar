@@ -13,7 +13,21 @@ import { StructuredLogger } from '@sutradhar/observability';
 import { SessionId } from '@sutradhar/contracts';
 import { Browser, CDPSession, ElementHandle, Frame, KeyInput, Page } from 'puppeteer-core';
 import { IBrowserTab } from '../session/browser-tab.js';
-import { ExecutionVerifier } from '../verifier/execution-verifier.js';
+import { ExecutionVerifier, failedVerification, specKeys } from '../verifier/execution-verifier.js';
+import {
+  NavigationProbe,
+  PostConditionRecorder,
+  applyVerdict,
+  armTouchObservation,
+  checkFocus,
+  disposeKeyObservation,
+  finishKeyObservation,
+  finishTouchObservation,
+  observeFocusForKey,
+  recordDownloadEvidence,
+  recordScreenshotEvidence,
+  recordWaitForSelectorEvidence,
+} from '../verifier/post-conditions.js';
 import { SD_GENERATION_ATTR, SD_CURRENT_GENERATION_ATTR, SD_FINGERPRINT_ATTR } from '../dom/dom-semantic-engine.js';
 import { defaultDownloadRoot, findContainingRoot, isPathWithinRoot } from './path-containment.js';
 import { acquireDownloadLock } from './download-lock.js';
@@ -400,7 +414,10 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       const abortController = new AbortController();
       let dispatchSettled = false;
       try {
-        const dispatchPromise = this.dispatchAction(tab, params, abortController.signal);
+        // FR2-07: a fresh recorder per attempt — a timed-out attempt's orphaned dispatch can only
+        // write into its own, discarded recorder, never a later retry's.
+        const recorder = new PostConditionRecorder(params.actionType);
+        const dispatchPromise = this.dispatchAction(tab, params, abortController.signal, recorder);
         dispatchPromise.then(
           () => {
             dispatchSettled = true;
@@ -426,11 +443,16 @@ export class BrowserActionEngine implements IBrowserActionEngine {
           outputData: resultData,
           retriesUsed: attempt,
         };
+        // FR2-07 D14: wait_for_selector's check is real (it throws unless the state was observed),
+        // but it was never reported. Derive the evidence from its own output keys, AFTER dispatch,
+        // without touching its case body.
+        if (params.actionType === 'wait_for_selector') recordWaitForSelectorEvidence(recorder, resultData);
         const verification = await this.verifier.verifyAction(
           tab,
           previousUrl,
           result,
           params.verificationSpec,
+          recorder.toBuiltIn(),
         );
         const finalResult: ActionResultDto = { ...result, verification };
 
@@ -687,15 +709,18 @@ export class BrowserActionEngine implements IBrowserActionEngine {
 
     const lastAt = this.recentActions.get(key);
     if (lastAt !== undefined && now - lastAt < DUPLICATE_ACTION_WINDOW_MS) {
+      const error =
+        `Duplicate '${params.actionType}' on the same target within ${DUPLICATE_ACTION_WINDOW_MS}ms — ` +
+        'likely an accidental double-dispatch (e.g. a submit button clicked twice). If this is ' +
+        'intentional, wait a moment and retry.';
       return {
         success: false,
         actionType: params.actionType,
         executionTimeMs: 0,
-        error:
-          `Duplicate '${params.actionType}' on the same target within ${DUPLICATE_ACTION_WINDOW_MS}ms — ` +
-          'likely an accidental double-dispatch (e.g. a submit button clicked twice). If this is ' +
-          'intentional, wait a moment and retry.',
+        error,
         retriesUsed: 0,
+        // FR2-07: every result carries a verification, including this early rejection.
+        verification: failedVerification(error, specKeys(params.verificationSpec)),
       };
     }
 
@@ -782,13 +807,19 @@ export class BrowserActionEngine implements IBrowserActionEngine {
      *  state (the click, and any further wait) instead of running to completion in the
      *  background and clobbering a LATER call's download-behavior configuration. */
     signal?: AbortSignal,
+    /** FR2-07: collects this attempt's post-condition observations. Observations NEVER throw and
+     *  never change `success` (a throw would go through the retry loop and re-press the key,
+     *  re-click the download link, re-navigate...) — see `post-conditions.ts`. */
+    rec: PostConditionRecorder = new PostConditionRecorder(params.actionType),
   ): Promise<Record<string, unknown>> {
     const page = tab.page;
 
     switch (params.actionType) {
       case 'navigate': {
         if (!params.url) throw new Error('Navigate action requires url parameter');
+        const probe = await NavigationProbe.begin(page, tab);
         await tab.navigate(params.url);
+        await probe.finish('navigate', params.url, rec);
         return { url: tab.url, title: tab.title };
       }
 
@@ -886,7 +917,24 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       case 'press_key': {
         if (!params.key) throw new Error('PressKey requires key parameter');
         if (!page) throw new Error(`No live browser page for tab ${tab.id} — cannot execute press_key.`);
-        await this.withModifiers(page, params.modifiers, () => page.keyboard.press(params.key as KeyInput));
+        // FR2-07: observe the DEEP focused element and arm a trusted-keydown listener BEFORE the
+        // press (an independent oracle: read over Runtime.evaluate, not Input.dispatchKeyEvent).
+        const urlBeforePress = tab.url;
+        const pressPre = await observeFocusForKey(tab);
+        try {
+          await this.withModifiers(page, params.modifiers, () => page.keyboard.press(params.key as KeyInput));
+        } catch (err) {
+          await disposeKeyObservation(pressPre);
+          throw err;
+        }
+        try {
+          applyVerdict(
+            rec,
+            await finishKeyObservation(tab, pressPre, { key: params.key, modifiers: params.modifiers }, urlBeforePress),
+          );
+        } catch (err) {
+          rec.verdict('not-run', `the post-condition check itself failed: ${(err as Error)?.message ?? String(err)}`);
+        }
         return { key: params.key, modifiers: params.modifiers };
       }
 
@@ -1134,12 +1182,22 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         if (!handle) throw new Error(await this.describeMissingElement(page, params.selector));
         await this.assertNotStale(handle, params.selector);
         await this.runHandleOp('focus', () => handle.focus());
+        try {
+          await checkFocus(handle, tab, rec);
+        } catch (err) {
+          rec.verdict('not-run', `the post-condition check itself failed: ${(err as Error)?.message ?? String(err)}`);
+        }
         return { focusedSelector: params.selector };
       }
 
       case 'take_screenshot': {
         if (!page) throw new Error(`No live browser page for tab ${tab.id} — cannot execute take_screenshot.`);
         const buf = await page.screenshot({ encoding: 'base64', fullPage: params.fullPage ?? true });
+        try {
+          recordScreenshotEvidence(String(buf), rec);
+        } catch (err) {
+          rec.verdict('not-run', `the post-condition check itself failed: ${(err as Error)?.message ?? String(err)}`);
+        }
         return { screenshotBase64Length: String(buf).length };
       }
 
@@ -1197,7 +1255,18 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         });
         if (!handle) throw new Error(`No visible element found for selector: ${params.selector}`);
         await this.assertNotStale(handle, params.selector);
+        let tapArmed: Awaited<ReturnType<typeof armTouchObservation>> = {};
+        try {
+          tapArmed = await armTouchObservation(handle, tab);
+        } catch (err) {
+          tapArmed = { error: (err as Error)?.message ?? String(err) };
+        }
         await this.runHandleOp('touch_tap', () => handle.tap());
+        try {
+          await finishTouchObservation(handle, tab, tapArmed, rec);
+        } catch (err) {
+          rec.verdict('not-run', `the post-condition check itself failed: ${(err as Error)?.message ?? String(err)}`);
+        }
         return { tappedSelector: params.selector };
       }
 
@@ -1209,6 +1278,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
           throw new Error(`No live browser page for tab ${tab.id} — cannot execute download_file.`);
         }
 
+        const downloadStartedAtMs = Date.now();
         const downloadDir = await this.resolveDownloadDir(params.downloadDir);
 
         // FR2-05 fix-2 (GAP-301/GAP-302): fail FAST if another `download_file` call is already
@@ -1220,7 +1290,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         const browser = page.browser();
         const lock = await acquireDownloadLock(browser.wsEndpoint());
         try {
-          return await this.runDownloadFileLocked(page, params, downloadDir, signal);
+          return await this.runDownloadFileLocked(page, params, downloadDir, signal, rec, downloadStartedAtMs);
         } finally {
           await lock.release();
         }
@@ -1294,6 +1364,8 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     params: ActionParams,
     downloadDir: string,
     signal?: AbortSignal,
+    rec: PostConditionRecorder = new PostConditionRecorder('download_file'),
+    startedAtMs: number = Date.now(),
   ): Promise<Record<string, unknown>> {
     if (signal?.aborted) {
       throw new Error('download_file abandoned before it started (outer retry/timeout already gave up on it)');
@@ -1401,7 +1473,20 @@ export class BrowserActionEngine implements IBrowserActionEngine {
           `Download reported a file outside the download directory "${downloadDir}": ${reportedPath}`,
         );
       }
-      return { downloadedFilename: downloaded.filename, downloadedPath: reportedPath, downloadDir };
+      // FR2-07: Chrome's `completed` event is not proof of a file — stat it (after the containment
+      // assertion above, so this only ever reads a path inside the sandbox).
+      let downloadedSizeBytes: number | undefined;
+      try {
+        downloadedSizeBytes = await recordDownloadEvidence(reportedPath, startedAtMs, page, rec);
+      } catch (err) {
+        rec.verdict('not-run', `the post-condition check itself failed: ${(err as Error)?.message ?? String(err)}`);
+      }
+      return {
+        downloadedFilename: downloaded.filename,
+        downloadedPath: reportedPath,
+        downloadDir,
+        ...(downloadedSizeBytes !== undefined ? { downloadedSizeBytes } : {}),
+      };
     } catch (err) {
       cleanup();
       throw err;

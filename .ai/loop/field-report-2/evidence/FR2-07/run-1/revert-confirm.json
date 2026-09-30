@@ -1,0 +1,278 @@
+[
+  {
+    "id": "M1-contradicted-confidence",
+    "file": "packages/browser/src/verifier/execution-verifier.ts",
+    "sha_before": "92becb99db409c620f4d9322fa2fb89a719431430287159153da53a96993459a",
+    "sha_after_restore": "92becb99db409c620f4d9322fa2fb89a719431430287159153da53a96993459a",
+    "restored_exact": true,
+    "clean_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 24
+    },
+    "mutated_run": {
+      "exit": 1,
+      "failed": 2,
+      "passed": 22
+    },
+    "restored_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 24
+    },
+    "caught": true
+  },
+  {
+    "id": "M2-value-unchanged-passes",
+    "file": "packages/browser/src/verifier/post-conditions.ts",
+    "sha_before": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "sha_after_restore": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "restored_exact": true,
+    "clean_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 230
+    },
+    "mutated_run": {
+      "exit": 1,
+      "failed": 2,
+      "passed": 228
+    },
+    "restored_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 230
+    },
+    "caught": true
+  },
+  {
+    "id": "M3-download-zero-bytes-passes",
+    "file": "packages/browser/src/verifier/post-conditions.ts",
+    "sha_before": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "sha_after_restore": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "restored_exact": true,
+    "clean_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 230
+    },
+    "mutated_run": {
+      "exit": 1,
+      "failed": 1,
+      "passed": 229
+    },
+    "restored_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 230
+    },
+    "caught": true
+  },
+  {
+    "id": "M4-press-verdict-not-recorded",
+    "file": "packages/browser/src/actions/browser-action-engine.ts",
+    "sha_before": "c07a0c03d7fbd92a244359f8b4ea9b8e2799cd2a01849c1e48f681d427ca7d6b",
+    "sha_after_restore": "c07a0c03d7fbd92a244359f8b4ea9b8e2799cd2a01849c1e48f681d427ca7d6b",
+    "restored_exact": true,
+    "clean_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 199
+    },
+    "mutated_run": {
+      "exit": 1,
+      "failed": 6,
+      "passed": 193
+    },
+    "restored_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 199
+    },
+    "caught": true
+  },
+  {
+    "id": "M5-visible-text-uses-textContent",
+    "file": "packages/browser/src/verifier/execution-verifier.ts",
+    "sha_before": "92becb99db409c620f4d9322fa2fb89a719431430287159153da53a96993459a",
+    "sha_after_restore": "92becb99db409c620f4d9322fa2fb89a719431430287159153da53a96993459a",
+    "restored_exact": true,
+    "clean_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 24
+    },
+    "mutated_run": {
+      "exit": 1,
+      "failed": 1,
+      "passed": 23
+    },
+    "restored_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 24
+    },
+    "caught": true
+  },
+  {
+    "id": "M6-navigation-404-not-flagged",
+    "file": "packages/browser/src/verifier/post-conditions.ts",
+    "sha_before": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "sha_after_restore": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "restored_exact": true,
+    "clean_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 230
+    },
+    "mutated_run": {
+      "exit": 1,
+      "failed": 2,
+      "passed": 228
+    },
+    "restored_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 230
+    },
+    "caught": true
+  },
+  {
+    "id": "M7-dialog-race-removed",
+    "file": "packages/capability-runtime/src/runtime.ts",
+    "sha_before": "b72b26b75ee1101110327eb0b176473e89a583e7f534b38aa53495d7455a3333",
+    "sha_after_restore": "b72b26b75ee1101110327eb0b176473e89a583e7f534b38aa53495d7455a3333",
+    "restored_exact": true,
+    "clean_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 150
+    },
+    "mutated_run": {
+      "exit": 1,
+      "failed": 1,
+      "passed": 149
+    },
+    "restored_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 150
+    },
+    "caught": true
+  },
+  {
+    "id": "M8-mcp-always-passes-expect-arg",
+    "file": "packages/mcp-server/src/tools.ts",
+    "sha_before": "3ee3c125cf5a62da81f99b04c0445211b2a0b51fac114f2e97faf3dd1db184ff",
+    "sha_after_restore": "3ee3c125cf5a62da81f99b04c0445211b2a0b51fac114f2e97faf3dd1db184ff",
+    "restored_exact": true,
+    "clean_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 68
+    },
+    "mutated_run": {
+      "exit": 1,
+      "failed": 2,
+      "passed": 66
+    },
+    "restored_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 68
+    },
+    "caught": true
+  },
+  {
+    "id": "M9-cli-exit-code-ignores-expect",
+    "file": "packages/cli/src/verification-output.ts",
+    "sha_before": "d8e76364ef907f30cb4c4785724b6947a6b31b204e33524748ffa027b8a8b6ce",
+    "sha_after_restore": "d8e76364ef907f30cb4c4785724b6947a6b31b204e33524748ffa027b8a8b6ce",
+    "restored_exact": true,
+    "clean_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 8
+    },
+    "mutated_run": {
+      "exit": 1,
+      "failed": 1,
+      "passed": 7
+    },
+    "restored_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 8
+    },
+    "caught": true
+  },
+  {
+    "id": "M10-sdk-swallows-action-failure",
+    "file": "packages/sutradhar/src/page.ts",
+    "sha_before": "4013404b598f1cc664eff4f193ff8d21a202483b169466f90de0481be2f911ba",
+    "sha_after_restore": "4013404b598f1cc664eff4f193ff8d21a202483b169466f90de0481be2f911ba",
+    "restored_exact": true,
+    "clean_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 32
+    },
+    "mutated_run": {
+      "exit": 1,
+      "failed": 1,
+      "passed": 31
+    },
+    "restored_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 32
+    },
+    "caught": true
+  },
+  {
+    "id": "M11-clipboard-mismatch-passes",
+    "file": "packages/browser/src/verifier/post-conditions.ts",
+    "sha_before": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "sha_after_restore": "3e51cb34b02ad55a1b5b88e0ff7bb9a048f8169918f322777d9f1150d3ef694c",
+    "restored_exact": true,
+    "clean_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 31
+    },
+    "mutated_run": {
+      "exit": 1,
+      "failed": 1,
+      "passed": 30
+    },
+    "restored_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 31
+    },
+    "caught": true
+  },
+  {
+    "id": "M12-duplicate-guard-no-verification",
+    "file": "packages/browser/src/actions/browser-action-engine.ts",
+    "sha_before": "c07a0c03d7fbd92a244359f8b4ea9b8e2799cd2a01849c1e48f681d427ca7d6b",
+    "sha_after_restore": "c07a0c03d7fbd92a244359f8b4ea9b8e2799cd2a01849c1e48f681d427ca7d6b",
+    "restored_exact": true,
+    "clean_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 199
+    },
+    "mutated_run": {
+      "exit": 1,
+      "failed": 1,
+      "passed": 198
+    },
+    "restored_run": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 199
+    },
+    "caught": true
+  }
+]

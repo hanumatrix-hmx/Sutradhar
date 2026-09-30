@@ -1,0 +1,17 @@
+== FP-5 clock mixing: timing assertions in the new tests use performance.now (monotonic); Date.now appears only as fake-timer seed / file mtime
+1:packages/browser/tests/unit/execution-verifier.spec.ts:203:      const t0 = performance.now();
+2:packages/browser/tests/unit/execution-verifier.spec.ts:210:      const elapsed = performance.now() - t0;
+3:packages/browser/tests/unit/post-conditions.spec.ts:517:      const t0 = performance.now();
+4:packages/browser/tests/unit/post-conditions.spec.ts:520:      expect(performance.now() - t0).toBeGreaterThanOrEqual(50);
+5:packages/capability-runtime/tests/unit/runtime.spec.ts:898:      const start = Date.now();
+6:packages/capability-runtime/tests/unit/runtime.spec.ts:900:      const elapsedMs = Date.now() - start;
+7:packages/capability-runtime/tests/unit/runtime.spec.ts:1044:      const start = Date.now();
+8:packages/capability-runtime/tests/unit/runtime.spec.ts:1046:      expect(Date.now() - start).toBeGreaterThanOrEqual(55);
+9:packages/capability-runtime/tests/unit/runtime.spec.ts:2242:    const t0 = performance.now();
+10:packages/capability-runtime/tests/unit/runtime.spec.ts:2244:    const elapsed = performance.now() - t0;
+-- live script: timing uses performance.now for the measured bounds:
+8
+520:  const NONCE = Date.now();
+749:    const waitUrl = (hash = '#auto') => `${pathToFileURL(path.join(here, 'fixtures', 'fr2-01-wait-states.html')).href}?t=${Date.now()}-${Math.random().toString(36).slice(2)}${hash}`;
+1106:      const fixture = pathToFileURL(path.join(here, 'fixtures', 'fr2-04-dialogs.html')).href + `?n=n11-${Date.now()}`;
+1169:  { await tool('browser.navigate', { url: pathToFileURL(path.join(here, 'fixtures', 'fr2-01-wait-states.html')).href + `?t=${Date.now()}#auto` }); const r = await tool('browser.wait_for_selector', { target: '#toast', timeoutMs: 5000 }); row('B-W1', 'wait_for_selector visible success', r, {}); }

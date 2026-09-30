@@ -1,0 +1,120 @@
+[mcp] PASS a-default-visible-toast
+[mcp] PASS a2-explicit-visible-toast
+[mcp] PASS b-attached-toast-returns-before-reveal
+[mcp] PASS c1-hidden-banner
+[mcp] PASS c2-hidden-spinner-removed
+[mcp] PASS mechanism-visible-vis-hidden
+[mcp] PASS mechanism-visible-zero-size
+[mcp] PASS mechanism-visible-shadow-toast
+[mcp] PASS manual-causality-toast-visible
+[mcp] PASS manual-causality-banner-hidden
+[mcp] PASS N1-never-visible-timeout
+[mcp] PASS N2-nonexistent-selector
+[mcp] PASS N3-stays-hidden-timeout
+[mcp] PASS N4-typo-hidden-succeeds-fast
+[mcp] PASS N8-invalid-state-schema-rejection
+[mcp] PASS N9-timeoutMs-zero-no-hang
+[mcp] PASS N5a-opacity-zero-visible-immediately
+[mcp] PASS N5b-opacity-zero-hidden-times-out
+[mcp] PASS N6-offscreen-visible-immediately
+[mcp] PASS N7-dup-first-hidden-second-visible-diagnosed
+[mcp] PASS N10-stale-node-id-after-navigation
+[mcp] PASS mechanism-visible-ancestor-hidden-child
+[mcp] PASS mechanism-visible-frame-toast
+[mcp] PASS mechanism-attached-late-waits-for-insertion
+[mcp] PASS mechanism-visible-late-waits-for-insertion
+[mcp] PASS hidden-multiframe-visible-in-iframe-does-not-succeed
+[mcp] PASS GAP-008-background-tab-visible-resolves-fast
+[mcp] PASS N11-never-the-generic-outer-message
+[cli] PASS setup-nav-manual
+[cli] PASS wait-default-visible-toast-blocks-then-resolves
+[cli] PASS GAP-008-background-tab-visible-resolves-fast
+[cli] PASS wait-attached-toast-returns-promptly
+[cli] PASS wait-hidden-banner-blocks-then-resolves
+[cli] PASS wait-hidden-spinner-blocks-then-resolves-on-removal
+[cli] PASS N-never-visible-exit1
+[cli] PASS N8-cli-state-bogus-exit1
+[cli] PASS N8-cli-state-missing-value-exit1
+[cli] PASS N-stays-hidden-exit1
+[cli] PASS teardown-close-kills-chrome
+[cli] PASS cleanup-no-leaked-profile-dirs-left-by-us
+{"timestamp":"2026-09-29T11:24:45.796Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-29T11:24:45.997Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790681085796_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-29T11:24:46.059Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790681085796_1_1","selector":"#toast"}}
+[sdk] PASS a-default-visible-toast
+{"timestamp":"2026-09-29T11:24:47.605Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790681085796_1_1","selector":"#toast"}}
+[sdk] PASS b-attached-toast-returns-before-reveal
+{"timestamp":"2026-09-29T11:24:47.629Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790681085796_1_1","selector":"#banner"}}
+[sdk] PASS c1-hidden-banner
+{"timestamp":"2026-09-29T11:24:49.192Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790681085796_1_1","selector":"#spinner"}}
+[sdk] PASS c2-hidden-spinner-removed
+{"timestamp":"2026-09-29T11:24:50.974Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790681085796_1_1","selector":"#toast"}}
+[sdk] PASS GAP-008-background-tab-visible-resolves-fast
+{"timestamp":"2026-09-29T11:24:51.449Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790681085796_1_1","selector":"#never"}}
+{"timestamp":"2026-09-29T11:24:52.659Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/3): wait_for_selector timed out after 1200ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.","context":{}}
+{"timestamp":"2026-09-29T11:24:54.384Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 2/3): wait_for_selector timed out after 1200ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.","context":{}}
+{"timestamp":"2026-09-29T11:24:56.596Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 3/3): wait_for_selector timed out after 1200ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.","context":{}}
+[sdk] PASS N1-never-rejects-none-visible
+{"timestamp":"2026-09-29T11:24:56.634Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790681085796_1_1","selector":"#stays"}}
+{"timestamp":"2026-09-29T11:24:57.841Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/3): wait_for_selector timed out after 1200ms waiting for state=hidden: an element matching \"#stays\" is still visible.","context":{}}
+{"timestamp":"2026-09-29T11:24:59.562Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 2/3): wait_for_selector timed out after 1200ms waiting for state=hidden: an element matching \"#stays\" is still visible.","context":{}}
+{"timestamp":"2026-09-29T11:25:01.768Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 3/3): wait_for_selector timed out after 1200ms waiting for state=hidden: an element matching \"#stays\" is still visible.","context":{}}
+[sdk] PASS N3-stays-hidden-rejects
+{"timestamp":"2026-09-29T11:25:01.778Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1790681085796_1_1","selector":"#toast"}}
+{"timestamp":"2026-09-29T11:25:01.779Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/3): Invalid wait_for_selector state \"bogus\" — expected one of: visible, attached, hidden.","context":{}}
+{"timestamp":"2026-09-29T11:25:02.291Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 2/3): Invalid wait_for_selector state \"bogus\" — expected one of: visible, attached, hidden.","context":{}}
+{"timestamp":"2026-09-29T11:25:03.294Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 3/3): Invalid wait_for_selector state \"bogus\" — expected one of: visible, attached, hidden.","context":{}}
+[sdk] PASS N8-sdk-invalid-state-rejects
+{"timestamp":"2026-09-29T11:25:03.431Z","level":"info","message":"[BrowserSession] Closed session sess_1790681085796_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-29T11:25:03.431Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790681085796_1","context":{"reason":"Runtime shutdown"}}
+{
+  "at": "2026-09-29T11:25:04.082Z",
+  "overallOk": false,
+  "counts": {
+    "mcp": {
+      "total": 28,
+      "passed": 28
+    },
+    "cli": {
+      "total": 12,
+      "passed": 12
+    },
+    "sdk": {
+      "total": 8,
+      "passed": 8
+    }
+  },
+  "cleanupDirsAttempted": [
+    "E:\\AI-Cache\\tmp\\fr2-01-mcp-observer-yq3VgX",
+    "E:\\AI-Cache\\tmp\\fr2-01-cli-state-cNLSal"
+  ],
+  "lingeringChromeProcesses": {
+    "count": 24,
+    "matches": [
+      "73480\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --remote-debugging-port=58106 --user-data-dir=E:\\AI-Cache\\tmp\\sutradhar-cli-1790670756908 --no-first-run --no-default-browser-check --headless=new\r",
+      "22448\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=crashpad-handler --user-data-dir=E:\\AI-Cache\\tmp\\sutradhar-cli-1790670756908 /prefetch:4 --monitor-self-annotation=ptype=crashpad-handler --database=E:\\AI-Cache\\tmp\\sutradhar-cli-1790670756908\\Crashpad --metrics-dir=E:\\AI-Cache\\tmp\\sutradhar-cli-1790670756908 --url=https://clients2.google.com/cr/report --annotation=channel= --annotation=plat=Win64 --annotation=prod=Chrome --annotation=ver=153.0.8010.54 --initial-client-data=0x144,0x148,0x14c,0x114,0x150,0x7ffa6242fe80,0x7ffa6242fe90,0x7ffa6242fea0\r",
+      "24304\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=gpu-process --headless=new --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790670756908\" --no-pre-read-main-dll --gpu-preferences=WAAAAAAAAADgAAAEAAAAAAAAAAAAAGAAQAAAAAAAAAADAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAAEAAAAAIAAAABAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= --field-trial-handle=1820,i,107321404488996708,2096332483010541067,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1824,i,997459204250972438,15016805364955831659,4 --trace-process-track-uuid=3190708988185955192 --mojo-platform-channel-handle=1816 /prefetch:2\r",
+      "61244\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-GB --service-sandbox-type=none --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790670756908\" --no-pre-read-main-dll --field-trial-handle=1820,i,107321404488996708,2096332483010541067,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1824,i,997459204250972438,15016805364955831659,4 --trace-process-track-uuid=3190708989122997041 --mojo-platform-channel-handle=2016 /prefetch:11\r",
+      "62364\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-GB --service-sandbox-type=service --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790670756908\" --no-pre-read-main-dll --field-trial-handle=1820,i,107321404488996708,2096332483010541067,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1824,i,997459204250972438,15016805364955831659,4 --trace-process-track-uuid=3190708990060038890 --mojo-platform-channel-handle=2552 /prefetch:13\r",
+      "8528\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --top-chrome-webui --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790670756908\" --no-pre-read-main-dll --remote-debugging-port=58106 --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=5 --launch-time-ticks=238587951493 --field-trial-handle=1820,i,107321404488996708,2096332483010541067,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1824,i,997459204250972438,15016805364955831659,4 --trace-process-track-uuid=3190708990997080739 --mojo-platform-channel-handle=3460 /prefetch:1\r",
+      "52300\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790670756908\" --no-pre-read-main-dll --remote-debugging-port=58106 --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=8 --launch-time-ticks=238588005251 --field-trial-handle=1820,i,107321404488996708,2096332483010541067,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1824,i,997459204250972438,15016805364955831659,4 --trace-process-track-uuid=3190708993808206286 --mojo-platform-channel-handle=4200 /prefetch:1\r",
+      "72732\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790670756908\" --no-pre-read-main-dll --remote-debugging-port=58106 --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=31 --launch-time-ticks=238590707195 --field-trial-handle=1820,i,107321404488996708,2096332483010541067,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1824,i,997459204250972438,15016805364955831659,4 --trace-process-track-uuid=3190709015360168813 --mojo-platform-channel-handle=5704 /prefetch:1\r",
+      "71328\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --remote-debugging-port=56407 --user-data-dir=E:\\AI-Cache\\tmp\\sutradhar-cli-1790680337254 --no-first-run --no-default-browser-check --headless=new\r",
+      "32480\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=crashpad-handler --user-data-dir=E:\\AI-Cache\\tmp\\sutradhar-cli-1790680337254 /prefetch:4 --monitor-self-annotation=ptype=crashpad-handler --database=E:\\AI-Cache\\tmp\\sutradhar-cli-1790680337254\\Crashpad --metrics-dir=E:\\AI-Cache\\tmp\\sutradhar-cli-1790680337254 --url=https://clients2.google.com/cr/report --annotation=channel= --annotation=plat=Win64 --annotation=prod=Chrome --annotation=ver=153.0.8010.54 --initial-client-data=0x11c,0x124,0x128,0xf8,0x12c,0x7ffa6242fe80,0x7ffa6242fe90,0x7ffa6242fea0\r",
+      "48484\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=gpu-process --headless=new --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790680337254\" --no-pre-read-main-dll --gpu-preferences=WAAAAAAAAADgAAAEAAAAAAAAAAAAAGAAQAAAAAAAAAADAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAAEAAAAAIAAAABAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= --field-trial-handle=1840,i,1591865325439844945,12963137304674046917,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1852,i,3706273195901052944,3696556419011688457,4 --trace-process-track-uuid=3190708988185955192 --mojo-platform-channel-handle=1828 /prefetch:2\r",
+      "61816\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-GB --service-sandbox-type=none --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790680337254\" --no-pre-read-main-dll --field-trial-handle=1840,i,1591865325439844945,12963137304674046917,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1852,i,3706273195901052944,3696556419011688457,4 --trace-process-track-uuid=3190708989122997041 --mojo-platform-channel-handle=1944 /prefetch:11\r",
+      "73300\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-GB --service-sandbox-type=service --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790680337254\" --no-pre-read-main-dll --field-trial-handle=1840,i,1591865325439844945,12963137304674046917,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1852,i,3706273195901052944,3696556419011688457,4 --trace-process-track-uuid=3190708990060038890 --mojo-platform-channel-handle=2576 /prefetch:13\r",
+      "15892\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --top-chrome-webui --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790680337254\" --no-pre-read-main-dll --remote-debugging-port=56407 --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=5 --launch-time-ticks=248168265865 --field-trial-handle=1840,i,1591865325439844945,12963137304674046917,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1852,i,3706273195901052944,3696556419011688457,4 --trace-process-track-uuid=3190708990997080739 --mojo-platform-channel-handle=3112 /prefetch:1\r",
+      "48672\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790680337254\" --no-pre-read-main-dll --remote-debugging-port=56407 --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=11 --launch-time-ticks=248168455854 --field-trial-handle=1840,i,1591865325439844945,12963137304674046917,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1852,i,3706273195901052944,3696556419011688457,4 --trace-process-track-uuid=3190708996619331833 --mojo-platform-channel-handle=5580 /prefetch:1\r",
+      "34404\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790680337254\" --no-pre-read-main-dll --remote-debugging-port=56407 --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=31 --launch-time-ticks=248170804419 --field-trial-handle=1840,i,1591865325439844945,12963137304674046917,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1852,i,3706273195901052944,3696556419011688457,4 --trace-process-track-uuid=3190709015360168813 --mojo-platform-channel-handle=8116 /prefetch:1\r",
+      "45572\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --remote-debugging-port=59700 --user-data-dir=E:\\AI-Cache\\tmp\\sutradhar-cli-1790680368760 --no-first-run --no-default-browser-check --headless=new\r",
+      "43652\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=crashpad-handler --user-data-dir=E:\\AI-Cache\\tmp\\sutradhar-cli-1790680368760 /prefetch:4 --monitor-self-annotation=ptype=crashpad-handler --database=E:\\AI-Cache\\tmp\\sutradhar-cli-1790680368760\\Crashpad --metrics-dir=E:\\AI-Cache\\tmp\\sutradhar-cli-1790680368760 --url=https://clients2.google.com/cr/report --annotation=channel= --annotation=plat=Win64 --annotation=prod=Chrome --annotation=ver=153.0.8010.54 --initial-client-data=0x11c,0x124,0x128,0xa0,0x12c,0x7ffa6242fe80,0x7ffa6242fe90,0x7ffa6242fea0\r",
+      "67872\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=gpu-process --headless=new --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790680368760\" --no-pre-read-main-dll --subproc-heap-profiling --gpu-preferences=WAAAAAAAAADgAAAEAAAAAAAAAAAAAGAAQAAAAAAAAAADAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAAEAAAAAIAAAABAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= --field-trial-handle=1844,i,8444907823829483585,17357192852944031798,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1848,i,2280657734092792833,16241125997099313413,4 --trace-process-track-uuid=3190708988185955192 --mojo-platform-channel-handle=1828 /prefetch:2\r",
+      "43740\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-GB --service-sandbox-type=none --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790680368760\" --no-pre-read-main-dll --subproc-heap-profiling --field-trial-handle=1844,i,8444907823829483585,17357192852944031798,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1848,i,2280657734092792833,16241125997099313413,4 --trace-process-track-uuid=3190708989122997041 --mojo-platform-channel-handle=1404 /prefetch:11\r",
+      "52748\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-GB --service-sandbox-type=service --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790680368760\" --no-pre-read-main-dll --subproc-heap-profiling --field-trial-handle=1844,i,8444907823829483585,17357192852944031798,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1848,i,2280657734092792833,16241125997099313413,4 --trace-process-track-uuid=3190708990060038890 --mojo-platform-channel-handle=2536 /prefetch:13\r",
+      "38160\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --top-chrome-webui --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790680368760\" --no-pre-read-main-dll --subproc-heap-profiling --remote-debugging-port=59700 --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=5 --launch-time-ticks=248199778284 --field-trial-handle=1844,i,8444907823829483585,17357192852944031798,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1848,i,2280657734092792833,16241125997099313413,4 --trace-process-track-uuid=3190708990997080739 --mojo-platform-channel-handle=3500 /prefetch:1\r",
+      "64800\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790680368760\" --no-pre-read-main-dll --subproc-heap-profiling --remote-debugging-port=59700 --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=54 --launch-time-ticks=248230900353 --field-trial-handle=1844,i,8444907823829483585,17357192852944031798,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1848,i,2280657734092792833,16241125997099313413,4 --trace-process-track-uuid=3190709036912131340 --mojo-platform-channel-handle=3960 /prefetch:1\r",
+      "68756\t\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --noerrdialogs --user-data-dir=\"E:\\AI-Cache\\tmp\\sutradhar-cli-1790680368760\" --no-pre-read-main-dll --subproc-heap-profiling --remote-debugging-port=59700 --video-capture-use-gpu-memory-buffer --lang=en-GB --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=86 --launch-time-ticks=248838564792 --field-trial-handle=1844,i,8444907823829483585,17357192852944031798,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1848,i,2280657734092792833,16241125997099313413,4 --trace-process-track-uuid=3190709066897470508 --mojo-platform-channel-handle=6708 /prefetch:1\r"
+    ]
+  }
+}
