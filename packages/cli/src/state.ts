@@ -91,6 +91,9 @@ export function resolveStateDir(cwd: string, envOverride: string | undefined): s
 
 export const STATE_DIR = resolveStateDir(process.cwd(), process.env.SUTRADHAR_CLI_STATE_DIR);
 const STATE_FILE = path.join(STATE_DIR, 'state.json');
+/** FR2-11: the append-only command history, a sibling of `state.json` (and `warden.json`). It is never read-
+ *  modified-written and {@link clearState} never touches it: the record outlives `close` and self-heal. */
+export const HISTORY_FILE_PATH = path.join(STATE_DIR, 'history.jsonl');
 
 export async function readState(): Promise<CliState | undefined> {
   try {

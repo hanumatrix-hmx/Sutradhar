@@ -4,3 +4,4 @@
  * exports the state helpers in case another package wants to inspect/drive CLI session state.
  */
 export { readState, writeState, clearState, type CliState } from './state.js';
+export type { CliHistoryLineV1 } from './history-file.js';
