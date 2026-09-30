@@ -1,0 +1,12 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>FR2-11 type-fail</title>
+</head>
+<body>
+<!-- A field that throws away everything typed into it (a page resetting its own input), so the engine's
+     read-back check fails with an error that quotes the typed value: the case FR2-11 must not persist. -->
+<input id="f" aria-label="Secret field" oninput="this.value=''">
+</body>
+</html>
