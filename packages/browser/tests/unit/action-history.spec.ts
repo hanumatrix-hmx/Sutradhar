@@ -50,8 +50,8 @@ describe('FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, 
     expect(out).not.toContain('S2');
     expect(out).not.toMatch(/t=S/);
     expect(out).toContain('http://x.test/a');
-    expect(out).toContain('https://b.test/');
-    // fix-1: fail-closed, everything after a cut/data: body up to the next URL or path token is dropped
+    // fix-2: the rule is per character, and everything after a cut (here `y;`) is dropped, so the second URL is gone with its secret
+    expect(out).toBe('Current URL http://x.test/a[redacted]');
     expect(redactUrlsInText('see data:text/plain;base64,QUJD now')).toBe('see data:…');
   });
   it('H4: cap with an ellipsis, control chars become spaces, a 199-char string is untouched', () => {
@@ -65,10 +65,10 @@ describe('FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, 
   });
   it('H5 / N12: eval preview collapses whitespace, drops URL secrets, caps at 200', () => {
     const p = evalCodePreview('  const x =\n  1;\n\n fetch("https://t.test/?k=S") ');
-    expect(p).toBe('const x = 1; fetch("https://t.test/[redacted]');
+    expect(p).toBe('const x [redacted] 1[redacted]'); // fix-2: `=` and `;` are the rule's characters (deviation D-fix2-3)
     expect(p).not.toContain('S"');
     expect(p).not.toMatch(/\n/);
-    const long = evalCodePreview('x'.repeat(10000));
+    const long = evalCodePreview('x '.repeat(5000));
     expect(long).toHaveLength(200);
     expect(long.endsWith('…')).toBe(true);
   });
@@ -79,7 +79,7 @@ describe('FR2-11 sanitizeHistoryEntry (H6)', () => {
     const nav = sanitizeHistoryEntry({ ...base, actionType: 'navigate', target: 'https://a.test/p?token=SECRET#f' });
     expect(nav.target).toBe('https://a.test/p');
     const ev = sanitizeHistoryEntry({ ...base, actionType: 'eval', target: 'a =\n 1;\nfetch("https://t.test/?k=SECRET")' });
-    expect(ev.target).toBe('a = 1; fetch("https://t.test/[redacted]');
+    expect(ev.target).toBe('a [redacted] 1[redacted]');
     const other = sanitizeHistoryEntry({ ...base, actionType: 'click_by_text', target: 'go to https://t.test/x?k=SECRET now' });
     expect(other.target).not.toContain('SECRET');
   });

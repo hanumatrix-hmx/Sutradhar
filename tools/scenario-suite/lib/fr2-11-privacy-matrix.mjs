@@ -48,7 +48,10 @@ export function urlCases({ origin = 'http://127.0.0.1:5000', hostPort = '127.0.0
   const add = (id, build, { keep } = {}) => {
     const c = canary(id.replace(/[^A-Za-z0-9]/g, ''));
     const { text, keepIn } = build(c);
-    cases.push({ id, text, canaries: [c], keep: keep ?? keepIn ?? [] });
+    // fix-2 (character rule): only a `scheme://` URL keeps its origin + path; a scheme-less or relative one is reduced to its last
+    // segment (and a `/p` or `host/p` to `<dir>`), so nothing is demanded of those beyond a file name
+    const kept = keep ?? keepIn ?? [];
+    cases.push({ id, text, canaries: [c], keep: /:\/\//.test(text) ? kept : id === 'query-relative-php' ? ['index.php'] : [] });
   };
   const P = `${origin}/p`;
   // query value, every awkward character the audit found (and the ones next to them)
@@ -130,7 +133,7 @@ export function urlCases({ origin = 'http://127.0.0.1:5000', hostPort = '127.0.0
         id: 'multi-url-3',
         text: `${P}?t=${a} redirected to ${origin}/q?x=(1)&t=${b} and then https://example.com/r?t=${d}`,
         canaries: [a, b, d],
-        keep: [P, `${origin}/q`, 'https://example.com/r'],
+        keep: [P], // fix-2: the text after a cut is dropped, so only the first URL is kept
       };
     })(),
   );

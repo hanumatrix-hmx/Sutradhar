@@ -5,31 +5,37 @@
  * own process with an empty in-memory action history, so a file is the only way a record can outlive a command.
  *
  * Privacy (the hard requirement): positional args are redacted per verb before they are stored (typed text,
- * clipboard text, select values and dialog prompt text become lengths; eval code becomes a 200-char preview;
- * URL arguments of nav/newtab/audit/compare are reduced to origin + path; file-path arguments of
- * upload/screenshot/compare are reduced to their basename and directory arguments of download/audit to `<dir>`), and EVERY arg then goes through the
- * same single fail-closed function the MCP / SDK history uses ({@link redactHistoryText}: query, fragment, path
- * parameters and userinfo cut from any token that carries a URL marker, scheme-less hosts included; absolute local
- * paths reduced to a basename). The actions a command produced were already sanitized by the browser package.
- * As defense in depth, {@link buildHistoryLine} also scrubs the raw secret strings from every string that is
- * stored. Flags are not recorded in v1. `cwd` is recorded as the path the command ran in (the spec's field; the
- * one full local path in a line).
+ * clipboard text, select values and dialog prompt text become lengths; eval code becomes a 200-char redacted preview; URL
+ * arguments of nav/newtab/audit/compare are reduced to origin + path; file-path arguments of upload/screenshot/compare to
+ * their basename and directory arguments of download/audit to `<dir>`), and EVERY arg then goes through the same single
+ * character-rule function the MCP / SDK history uses ({@link redactHistoryText}: tokens split on any Unicode whitespace; cut
+ * from the first `?` `#` `;`; a token that still holds `=` or `&` replaced whole; `userinfo@` stripped; a path reduced to
+ * its last segment; encoded forms of those characters decoded first). The args that ARE selectors (click, hover, type, select,
+ * press, drag, upload) use the selector variant of the same function so `#id` and `[a=b]` stay readable.
+ * The actions a command produced were already sanitized by the browser package. As defense in depth,
+ * {@link buildHistoryLine} also scrubs the raw secret strings from every string that is stored. Flags are not recorded in v1.
+ * `cwd` is stored home-relative (`~/sub/dir`) when it is under the home directory, else as `<dir>` ({@link redactCwd}), so
+ * the user's home directory name never appears in a line.
  *
- * Concurrency: a line is written with ONE `write` call on a handle opened for append (O_APPEND on POSIX,
+  * Concurrency: a line is written with ONE `write` call on a handle opened for append (O_APPEND on POSIX,
  * FILE_APPEND_DATA on Windows), and a line is kept under {@link HISTORY_MAX_LINE_BYTES}, so two processes
  * appending at once cannot interleave bytes inside a line. A torn last line (a process killed mid-write) is
  * repaired by the NEXT append (it starts with a newline when the file does not end with one) and skipped by the
  * reader.
  */
 import { open, readFile, rename, stat, mkdir } from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import {
   basenameOfPath,
   capHistoryString,
   displayFrameUrl,
   evalCodePreview,
+  redactHistorySelector,
   redactHistoryText,
   redactHistoryUrl,
+  sanitizeHistoryEntry,
+  type ActionHistoryEntry,
   type SessionActionHistoryEntry,
 } from '@sutradhar/browser';
 
@@ -72,6 +78,36 @@ export interface CliHistoryLineV1 {
   actionsOmitted?: number;
 }
 
+/** Verbs whose positional args (by index) are element references / CSS selectors: the selector variant of the rule. */
+const SELECTOR_ARG_INDEXES: Readonly<Record<string, readonly number[]>> = {
+  click: [0],
+  hover: [0],
+  type: [0],
+  select: [0],
+  press: [0],
+  drag: [0, 1],
+  upload: [0],
+  download: [0],
+};
+
+/**
+ * The working directory as stored: `~` or `~/sub/dir` (forward slashes) when it is the home directory or under it, otherwise
+ * `<dir>`. The home directory's own name never appears. Idempotent for an already reduced value.
+ */
+export function redactCwd(cwd: string, home: string = os.homedir()): string {
+  if (cwd === '<dir>' || cwd === '~' || cwd.startsWith('~/')) return cwd;
+  const norm = (p: string): string => p.replace(/[\\/]+/g, '/').replace(/\/$/, '');
+  const c = norm(cwd);
+  const h = norm(home);
+  if (h === '' || h === '/') return '<dir>';
+  // Windows paths are case-insensitive
+  const ci = /^[A-Za-z]:/.test(h) || h.startsWith('//');
+  const cmp = (x: string): string => (ci ? x.toLowerCase() : x);
+  if (cmp(c) === cmp(h)) return '~';
+  if (cmp(c).startsWith(cmp(h) + '/')) return '~' + c.slice(h.length);
+  return '<dir>';
+}
+
 const lenTag = (s: string): string => `<${s.length} chars>`;
 
 /** Verbs whose positional args (by index) are URLs: reduced with {@link redactHistoryUrl} before the text rule. */
@@ -98,6 +134,8 @@ const DIR_ARG_INDEXES: Readonly<Record<string, readonly number[]>> = { download:
  */
 export function redactCliArgs(verb: string, args: readonly string[]): string[] {
   const fin = (a: string): string => capHistoryString(redactHistoryText(a), ARG_CAP);
+  const finSel = (a: string): string => capHistoryString(redactHistorySelector(a), ARG_CAP);
+  const selIdx = SELECTOR_ARG_INDEXES[verb] ?? [];
   const urlIdx = URL_ARG_INDEXES[verb] ?? [];
   const pathIdx = PATH_ARG_INDEXES[verb] ?? [];
   const dirIdx = DIR_ARG_INDEXES[verb] ?? [];
@@ -105,14 +143,16 @@ export function redactCliArgs(verb: string, args: readonly string[]): string[] {
     dirIdx.includes(i)
       ? '<dir>'
       : pathIdx.includes(i)
-        ? capHistoryString(basenameOfPath(redactHistoryText(a)) || '…', ARG_CAP)
+        ? fin(basenameOfPath(redactHistoryText(a)) || '…')
         : urlIdx.includes(i)
           ? fin(redactHistoryUrl(a))
-          : fin(a);
+          : selIdx.includes(i)
+            ? finSel(a)
+            : fin(a);
   switch (verb) {
     case 'type':
     case 'select':
-      return args.length === 0 ? [] : [fin(args[0]!), ...(args.length > 1 ? [lenTag(args.slice(1).join(' '))] : [])];
+      return args.length === 0 ? [] : [finSel(args[0]!), ...(args.length > 1 ? [lenTag(args.slice(1).join(' '))] : [])];
     case 'setclipboard':
       return [lenTag(args.join(' '))];
     case 'eval':
@@ -163,7 +203,10 @@ function scrubDeep<T>(value: T, secrets: readonly string[]): T {
 export interface BuildHistoryLineInput {
   ts: string;
   sessionId: string | null;
+  /** The raw working directory; {@link buildHistoryLine} stores it through {@link redactCwd}. */
   cwd: string;
+  /** Home directory used by {@link redactCwd} (default: the OS home directory; tests inject one). */
+  home?: string;
   verb: string;
   /** Already redacted with {@link redactCliArgs}. */
   args: readonly string[];
@@ -187,7 +230,7 @@ export function buildHistoryLine(input: BuildHistoryLineInput): CliHistoryLineV1
     type: 'command',
     ts: input.ts,
     sessionId: input.sessionId,
-    cwd: input.cwd,
+    cwd: redactCwd(input.cwd, input.home),
     verb: input.verb,
     args: [...input.args],
     exitCode: input.exitCode,
@@ -328,8 +371,11 @@ function middleTruncate(s: string, max: number): string {
  * URL tokens inside a command's text use FR2-09's display rule (origin + path, middle-truncated at 80). The text goes
  * through {@link redactHistoryText} first, so a line written by an older build is never SHOWN with its query.
  */
-function displayCommandText(text: string): string {
-  return capHistoryString(redactHistoryText(text).replace(/\b(?:https?|wss?|blob):\/\/\S+/gi, (m) => displayFrameUrl(m)), 200);
+function displayCommandText(verb: string, args: readonly string[]): string {
+  const sel = SELECTOR_ARG_INDEXES[verb] ?? [];
+  // one arg at a time: the text after a cut in one arg is dropped, and must not eat the next arg
+  const shown = [redactHistoryText(verb), ...args.map((a, i) => (sel.includes(i) ? redactHistorySelector(a) : redactHistoryText(a)))].join(' ');
+  return capHistoryString(shown.replace(/\b(?:https?|wss?|blob):\/\/\S+/gi, (m) => displayFrameUrl(m)), 200);
 }
 
 const ts19 = (ts: string): string => `${ts.slice(0, 19).replace('T', ' ')}Z`;
@@ -360,12 +406,15 @@ export function formatHistoryHuman(r: ReadHistoryResult, opts: { file: string; c
       continue;
     }
     const args = Array.isArray(parsed.args) ? (parsed.args as unknown[]).map(String) : [];
-    const cmd = displayCommandText([String(parsed.verb ?? '?'), ...args].join(' '));
+    const cmd = displayCommandText(String(parsed.verb ?? '?'), args);
     const exit = String(parsed.exitCode ?? '?').padEnd(3);
     const dur = `${String(parsed.durationMs ?? '?').padStart(5)}ms`;
     out.push(`${when}  exit ${exit} ${dur}  ${cmd}`);
-    if (typeof parsed.error === 'string') out.push(`    error: ${firstLine(parsed.error, ERROR_CAP)}`);
-    const actions = Array.isArray(parsed.actions) ? (parsed.actions as Record<string, unknown>[]) : [];
+    // every text shown goes through the SAME functions as the stored form, so a line written by an older build is never shown with its query
+    if (typeof parsed.error === 'string') out.push(`    error: ${firstLine(redactHistoryText(parsed.error), ERROR_CAP)}`);
+    const actions = Array.isArray(parsed.actions)
+      ? (parsed.actions as Record<string, unknown>[]).map((x) => sanitizeHistoryEntry(x as unknown as ActionHistoryEntry) as unknown as Record<string, unknown>)
+      : [];
     for (const a of actions) {
       const what = middleTruncate(String(a.target ?? a.selector ?? ''), 80);
       const err = typeof a.error === 'string' ? `: ${firstLine(a.error, 200)}` : '';
@@ -374,7 +423,7 @@ export function formatHistoryHuman(r: ReadHistoryResult, opts: { file: string; c
     }
     const evicted = typeof parsed.actionsEvicted === 'number' ? parsed.actionsEvicted : 0;
     if (evicted > 0) out.push(`    (${evicted} earlier action(s) of this command were evicted from the 200-entry in-memory history)`);
-    if (typeof parsed.actionsUnavailable === 'string') out.push(`    (actions unavailable: ${firstLine(parsed.actionsUnavailable, 200)})`);
+    if (typeof parsed.actionsUnavailable === 'string') out.push(`    (actions unavailable: ${firstLine(redactHistoryText(parsed.actionsUnavailable), 200)})`);
     if (parsed.truncated === true) out.push(`    (line truncated: ${String(parsed.actionsOmitted ?? '?')} action(s) omitted)`);
   }
   if (r.rotatedExists) out.push(`Older commands were rotated to ${path.join(path.dirname(opts.file), HISTORY_ROTATED_FILE_NAME)} (not shown).`);

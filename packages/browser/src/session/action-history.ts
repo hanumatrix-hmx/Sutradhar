@@ -5,16 +5,14 @@
  * {@link sanitizeHistoryEntry}, so a token in a URL, a typed value, clipboard text, or a long eval
  * body can never be stored in full. No I/O and no state in this file.
  *
- * Privacy contract (FR2-11 spec section 0.7 / 7 R1, tightened by fix-1 after audit-1 found leaks):
- *  - URLs are stored as origin + pathname; the query, the fragment, path parameters (`;...`) and userinfo are
- *    ALWAYS dropped (FR2-09 D5). This is FAIL-CLOSED: {@link redactHistoryText} does not try to recognise URL
- *    grammar, it cuts from the first `?` `#` or `;` to the end of any whitespace-delimited token that carries a
- *    URL marker (`scheme://`, a leading `//`, `host[:port]/`, `user:pass@`), and drops the following tokens
- *    until the next marker, because a URL typed with literal spaces would otherwise leak its tail.
- *  - Local file paths are stored as their basename only (an absolute Windows / UNC / POSIX / `~/` path, or a
- *    `file://` URL). A path that contains spaces is reduced across the spaces.
+ * Privacy contract (FR2-11 spec section 0.7 / 7 R1; fix-2: the CHARACTER RULE, see {@link redactHistoryText}):
+ *  - Free text is redacted by characters, never by recognising URL shapes: tokens are split on any Unicode whitespace; each
+ *    token is cut from its first `?`, `#` or `;` (and the rest of the text after a cut is dropped); a token that still holds
+ *    `=` or `&` is replaced whole; `userinfo@` is stripped; a path token is reduced to its last segment. Percent-, double-
+ *    percent-, JSON- and fullwidth encodings of those characters are decoded first.
+ *  - Structured URL fields (`target` of navigate, `url`) keep FR2-09 D5's origin + pathname, then go through the same rule.
  *  - Typed text and clipboard text are never stored (only a length, built by the caller).
- *  - eval code is stored only as a whitespace-collapsed, redacted preview of at most 200 chars.
+ *  - eval code is stored only as a whitespace-collapsed, redacted preview of at most 200 chars (spec H5 / R2).
  *  - Strings are capped at 200 characters, error / reason / detail at 300 (FR2-07 D1 / D11).
  * One function ({@link redactHistoryText}) serves the MCP / SDK entries AND the CLI's history.jsonl.
  */
@@ -57,18 +55,21 @@ export function basenameOfPath(p: string): string {
 const FILE_URL_PREFIX = 'file://…/';
 
 /**
- * FR2-09 D5's rules WITHOUT the 80-char display truncation: http/https/ws/wss and every other
- * host-bearing scheme -> origin + pathname; file: -> 'file://…/' + the file's basename (fix-1: never the full local
- * path); blob: -> 'blob:' + inner origin; data: -> 'data:…'; javascript: -> 'javascript:…'; about: / chrome-error:
- * as is (minus any query/fragment); '' -> '(no url)'; anything else (unparsable, scheme-less, opaque) -> the
- * fail-closed {@link redactHistoryText} of it, cut at its first '?' '#' or ';'.
- * The query, the fragment, path parameters (';...') and any userinfo are ALWAYS dropped.
+ * FR2-09 D5's rules WITHOUT the 80-char display truncation: http/https/ws/wss and every other host-bearing scheme ->
+ * origin + pathname; file: -> 'file://…/' + the file's basename; blob: -> 'blob:' + inner origin; data: -> 'data:…';
+ * javascript: -> 'javascript:…'; about: / chrome-error: as is (minus any query/fragment); '' -> '(no url)'; anything else
+ * (unparsable, scheme-less, opaque) -> {@link redactHistoryText} of it. The RESULT of every branch then goes through
+ * {@link redactHistoryText} too (an encoded `%3F` or a `=` in the path is cut like anywhere else), so a structured field
+ * can never hold something the free-text rule would have cut.
  */
 export function redactHistoryUrl(url: string): string {
   if (url === '') return '(no url)';
+  return redactHistoryText(redactHistoryUrlD5(decodeDelimiters(url)));
+}
+
+function redactHistoryUrlD5(url: string): string {
   const cutAtDelimiter = (s: string): string => s.replace(/[?#;].*$/s, '');
-  // the whole string is a URL here: cut it at its first delimiter first (nothing after it is kept), then the text rule strips userinfo and paths
-  const fallback = (): string => redactHistoryText(cutAtDelimiter(url));
+  const fallback = (): string => cutAtDelimiter(url);
   let u: URL;
   try {
     u = new URL(url);
@@ -98,186 +99,174 @@ export function redactHistoryUrl(url: string): string {
     case 'about:':
       return 'about:' + cutAtDelimiter(u.pathname);
     default:
-      // chrome-error://chromewebdata/, chrome://settings/ ... : host-bearing non-special schemes keep scheme, host and path.
-      // An opaque path (mailto:, tel:, `example.com:80/p`, `user:pass@host/p` parsed as a scheme) goes through the text rule.
+      // chrome-error://chromewebdata/, chrome://settings/ ...: host-bearing non-special schemes keep scheme, host and path.
+      // An opaque path (mailto:, tel:, `example.com:80/p`, a custom-scheme redirect, `user:pass@host/p`) goes through the text rule.
       return u.host && !u.username && !u.password ? `${u.protocol}//${u.host}${cutAtDelimiter(u.pathname)}` : fallback();
   }
 }
 
-// ── free-text redaction ──────────────────────────────────────────────────────────────────────────────────────────────
-// Token-based and fail-closed. Text is split on whitespace; a token that carries a URL marker is cut at its first
-// `?` `#` or `;`; a token that starts an absolute local path is reduced to the path's basename.
+// ── free-text redaction: THE CHARACTER RULE ──────────────────────────────────────────────────────────────────────────
+// Shape-independent and fail-closed (fix-2). fix-0 (a character-class URL regex) and fix-1 (a list of URL markers) both
+// decided WHICH tokens were URLs and kept everything else, so every audit found the next unlisted shape. This rule never
+// asks what a token is; it looks at characters only:
+//   0. decode `%3F %23 %3B %3D %26 %40 %2F %5C %3A` (also double-encoded `%253F`), JSON unicode / hex escapes of them (backslash-u003f, backslash-x3f), and fold
+//      fullwidth forms (NFKC: `？` -> `?`) so an encoded delimiter is a delimiter;
+//   1. split on ANY Unicode whitespace (tab, NBSP, zero-width, ideographic ...);
+//   2. per token, (a) cut from the first `?`, `#` or `;` and put the placeholder there; the rest of the text after a cut
+//      is dropped too (a URL typed with a space in its query cannot leak its tail);
+//   3. (b) a token that still contains `=` or `&` is replaced whole (a `&` also drops the rest of the text);
+//   4. (c) `userinfo@` is stripped from the authority of a token;
+//   5. a token with a `/` or `\` separator followed by more text is reduced to its last segment (a segment without a `.`
+//      is a directory name and becomes `<dir>`), unless it is a `scheme://` URL (kept as origin + path) or a `file:` URL
+//      (`file://…/<basename>`); `blob:` keeps its origin; `data:` / `javascript:` bodies become `data:…` / `javascript:…`.
+// Selectors (`mode: 'selector'`) are the ONE variant of the same function: CSS uses `#id`, `[a=b]`, so there `#` cuts only
+// when it follows something URL-shaped (a separator, `@`, `%` or `:` earlier in the token, or a URL-shaped token earlier in the
+// string) and `=` inside `[...]` is allowed; `&` is never allowed.
+// Over-redaction of ordinary prose that contains those characters is accepted and documented; a leak is not.
 
-/** `scheme://` (scheme of 2+ chars, so a one-letter Windows drive is never a scheme), also JSON-escaped `:\/\/`. */
-const SCHEME_SEP = /[A-Za-z][A-Za-z0-9+.-]+:(?:\\?\/){2}/;
-/** A fully percent-encoded `scheme://` (`http%3A%2F%2F...`): nothing inside it can be trusted, the whole rest of the token goes. */
-const ENCODED_SCHEME = /[A-Za-z][A-Za-z0-9+.-]+%3[Aa](?:%2[Ff]){2}/;
-/** A query string with no URL around it (`/p?token=X`, `intranet/app?t=X`, a bare `?t=X`): a `?` followed by a `key=`. */
-const QUERY_LIKE = /\?[^\s?&=#]*=/;
-/** A form-encoded body or bare query (`a=1&token=X`): two `key=value` pairs joined by `&`. */
-const FORM_PAIRS = /[^\s&=?#]+=[^\s&]*&[^\s&=?#]+=/;
-const DATA_URL = /(?<![A-Za-z0-9])data:(?=\S)/i;
-const LEADING_DOUBLE_SLASH = /^[^\w/\\]*(\/\/)(?=[^/\s])/;
-const SCHEMELESS_USERINFO = /(?<![\w.-])[^\s/\\@:]+:[^\s/\\@]*@(?=[^\s/\\@])/;
-const SCHEMELESS_HOST =
-  /(?<![\w.-])(?:localhost|(?:\d{1,3}\.){3}\d{1,3}|(?:[A-Za-z0-9-]+\.)+[A-Za-z][A-Za-z0-9-]*|\[[0-9A-Fa-f:.]+\])(?::\d{1,5})?(?=[/\\]|[?#]\S)/;
-const WIN_DRIVE_PATH = /(?<![A-Za-z0-9])[A-Za-z]:[\\/]/;
-// a doubled backslash right after a word character is JSON-escaped text inside a path (`Smith\\my`), not a UNC root
-const UNC_PATH = /(?<![\w.:-])\\\\(?=[^\\/\s])/;
-const POSIX_PATH = /(?<![\w.:/\\%~-])(?:~\/|\/)(?=[^/\s])/;
-const HAS_SEP = /[\\/]/;
-const TRAILING_PUNCT = /^(.*?)([)\]}'"`>.,;:!?\u201d\u2019\uff09\u3002]*)$/s;
+/** Tokens are split on these: every JS `\s` plus controls, NBSP, zero-width, bidi and invisible separators. */
+// eslint-disable-next-line no-control-regex -- deliberately matches control characters
+const WS_SPLIT = /([\s\u0000-\u001f\u007f\u0085\u00a0\u1680\u180e\u2000-\u200f\u2028-\u202f\u205f-\u2064\u3000\ufeff]+)/;
+/** `scheme://` inside a token (also the JSON-escaped `:\/\/`): the URL test of the path rule and the userinfo strip. */
+const SCHEME_SEP = /:(?:\\?\/){2,}/;
+const SCHEME_NAME_END = /[A-Za-z][A-Za-z0-9+.-]*$/;
 
-interface UrlHit {
-  start: number;
-  kind: 'scheme' | 'blob' | 'file' | 'data' | 'encoded' | 'form' | 'other';
+/** Index just after the `scheme://` of a token whose text before the scheme holds no path separator (`fetch("https://h/p`, `(http://h`); -1 otherwise. */
+function schemeEnd(t: string): number {
+  const m = SCHEME_SEP.exec(t);
+  if (!m) return -1;
+  const pre = t.slice(0, m.index);
+  if (!SCHEME_NAME_END.test(pre) || /[/\\]/.test(pre.replace(/\\["']/g, ''))) return -1;
+  return m.index + m[0].length;
 }
+const OPAQUE_BODY = /(?<![A-Za-z0-9])(?:data|javascript|vbscript):/i;
+// `file:` and `blob:` anywhere in a token, not glued to a longer word (`fetch("file:///C:/Users/x/f.txt")`)
+const FILE_TOKEN = /(?<![A-Za-z0-9])file:/i;
+const BLOB_TOKEN = /(?<![A-Za-z0-9])blob:((?:[A-Za-z][A-Za-z0-9+.-]*:(?:\\?\/){2})?[^\s/\\?#;]*)/i;
+const SEP_THEN_TEXT = /[\\/][^\\/]/;
+const HAS_EXTENSION = /\w\.\w|^\.\w/;
+/** Selector mode only: something URL-shaped (a separator, `:` + digit or `/`, a known scheme) that a CSS selector does not contain. */
+const URLISH = /[/\\@%]|:[0-9/]|:$|^[^A-Za-z0-9]*(?:about|chrome|chrome-error|edge|view-source|blob|file|data|javascript|mailto|tel|urn|ws|wss|ftp|http|https):/i;
+/** Selector mode: a `#` after any of these inside ITS OWN token is a fragment (`about:blank#S`, `host/p#S`), not `tag#id`. */
+const TOKEN_URLISH = /[/\\@%:]/;
+const DIR_PLACEHOLDER = '<dir>';
+const PERCENT_DELIM = /%(3[AFBDafbd]|23|26|2[Ff]|40|5[Cc])/g;
+const JSON_ESC_DELIM = /\\(?:u00|x)(3[AFBDafbd]|23|26|2[Ff]|40|5[Cc])/g;
 
-/** Earliest URL marker in a token (scheme://, data:, leading //, user:pass@, host[:port]/). */
-function findUrlMarker(t: string): UrlHit | undefined {
-  const hits: UrlHit[] = [];
-  const scheme = SCHEME_SEP.exec(t);
-  if (scheme) {
-    if (/^file:/i.test(scheme[0])) hits.push({ start: scheme.index, kind: 'file' });
-    else if (/blob:$/i.test(t.slice(0, scheme.index))) hits.push({ start: scheme.index - 5, kind: 'blob' });
-    else hits.push({ start: scheme.index, kind: 'scheme' });
+/** Fold encodings of the rule's characters to the characters themselves (once, before tokenising). */
+function decodeDelimiters(s: string): string {
+  let out = s.normalize('NFKC');
+  out = out.replace(JSON_ESC_DELIM, (_m, h: string) => String.fromCharCode(parseInt(h, 16)));
+  for (let i = 0; i < 8; i++) {
+    const n = out.replace(/%25(?=[0-9a-fA-F]{2})/g, '%'); // double (and deeper) encoding: one level per pass
+    if (n === out) break;
+    out = n;
   }
-  const enc = ENCODED_SCHEME.exec(t);
-  if (enc) hits.push({ start: enc.index, kind: 'encoded' });
-  const data = DATA_URL.exec(t);
-  if (data) hits.push({ start: data.index, kind: 'data' });
-  const query = QUERY_LIKE.exec(t);
-  if (query) hits.push({ start: query.index, kind: 'other' });
-  const form = FORM_PAIRS.exec(t);
-  if (form) hits.push({ start: form.index, kind: 'form' });
-  const dbl = LEADING_DOUBLE_SLASH.exec(t);
-  if (dbl) hits.push({ start: dbl.index + dbl[0].length - 2, kind: 'other' });
-  const ui = SCHEMELESS_USERINFO.exec(t);
-  if (ui) hits.push({ start: ui.index, kind: 'other' });
-  const host = SCHEMELESS_HOST.exec(t);
-  // a host right after '@' has its userinfo in front of it: when another marker already covers the token, that one wins;
-  // otherwise the URL is taken to start at the token's beginning so the userinfo is stripped too
-  if (host && !(t[host.index - 1] === '@' && hits.length > 0)) hits.push({ start: host.index > 0 && t[host.index - 1] === '@' ? 0 : host.index, kind: 'other' });
-  if (hits.length === 0) return undefined;
-  return hits.reduce((a, b) => (b.start < a.start ? b : a));
+  return out.replace(PERCENT_DELIM, (_m, h: string) => String.fromCharCode(parseInt(h, 16)));
 }
 
-/**
- * Earliest absolute local path start in a token: `C:\`, `C:/`, `\\server`, `/a/b`, `~/a`. -1 when none. A lone
- * `/segment` counts only when the NEXT token contains a separator (`/my dir/file`: a first segment with a space).
- */
-function findPathStart(t: string, nextToken?: string): number {
-  const starts = [WIN_DRIVE_PATH.exec(t)?.index, UNC_PATH.exec(t)?.index].filter((x): x is number => x !== undefined);
-  const posix = POSIX_PATH.exec(t);
-  if (posix && (HAS_SEP.test(t.slice(posix.index + posix[0].length)) || (nextToken !== undefined && HAS_SEP.test(nextToken)))) starts.push(posix.index);
-  return starts.length === 0 ? -1 : Math.min(...starts);
-}
-
-/** Cut a token's URL part: strip userinfo, then cut from the first `?` `#` `;` and append the placeholder. */
-function redactUrlToken(t: string, hit: UrlHit): { out: string; cut: boolean } {
-  if (hit.kind === 'data') return { out: t.slice(0, hit.start) + 'data:…', cut: true };
-  if (hit.kind === 'encoded') return { out: t.slice(0, hit.start) + REDACTED_PLACEHOLDER, cut: true };
-  if (hit.kind === 'form') return { out: t.slice(0, hit.start) + REDACTED_PLACEHOLDER, cut: false };
-  const prefix = t.slice(0, hit.start);
-  let rest = t.slice(hit.start);
-  const isBlob = hit.kind === 'blob';
-  if (isBlob) rest = rest.slice(5);
-  const head = /^(?:[A-Za-z][A-Za-z0-9+.-]+:(?:\\?\/){2,}|\/\/)?/.exec(rest)![0];
-  let body = rest.slice(head.length);
-  // userinfo: everything up to the LAST '@' of the authority (the text before the first path separator)
-  const authority = body.split(/[\\/]/, 1)[0]!;
+/** `userinfo@` (everything up to the last `@` of the authority, the text before the first path separator). */
+function stripUserinfo(t: string): string {
+  const end = schemeEnd(t);
+  const lead = end >= 0 ? end : /^(?:\/\/|\\\\)/.test(t) ? 2 : 0;
+  const prefix = t.slice(0, lead);
+  const rest = t.slice(lead);
+  const authority = rest.split(/[\\/]/, 1)[0]!;
   const at = authority.lastIndexOf('@');
-  if (at >= 0) body = body.slice(at + 1);
-  const hadDelimiter = /[?#;]/.test(prefix + head + body);
-  if (isBlob) {
-    // blob:<origin>/<uuid>: the inner origin only
-    const origin = body.split(/[\\/?#;]/, 1)[0]!;
-    return { out: prefix + 'blob:' + head + origin + (hadDelimiter ? REDACTED_PLACEHOLDER : ''), cut: hadDelimiter };
-  }
-  let full = prefix + head + body;
-  const c = full.search(/[?#;]/);
-  if (c >= 0) full = full.slice(0, c) + REDACTED_PLACEHOLDER;
-  return { out: full, cut: c >= 0 };
+  return at < 0 ? t : prefix + rest.slice(at + 1);
 }
 
-/**
- * Reduce the run of tokens `parts[i..]` that starts an absolute path at character `p` of `parts[i]` to its basename.
- * The run extends over following tokens up to the LAST one that contains a path separator (a path may contain
- * spaces), and stops at a token that starts a URL or another path. Returns the replacement text and the index of the
- * last part consumed.
- */
-function reducePathRun(parts: readonly string[], i: number, p: number, fileUrl: boolean): { out: string; last: number; cut: boolean } {
-  let last = i;
-  for (let j = i + 2; j < parts.length; j += 2) {
-    const tk = parts[j]!;
-    if (tk === '' || findUrlMarker(tk) || findPathStart(tk) >= 0) break;
-    if (HAS_SEP.test(tk)) last = j;
+/** Reduce a path-like token; returns the token unchanged when it has no separator followed by text. */
+function reducePathToken(t: string): string {
+  const file = FILE_TOKEN.exec(t);
+  if (file) {
+    const base = basenameOfPath(t.slice(file.index + file[0].length));
+    // a last segment without an extension is a directory name (a user name, a home directory): not stored
+    return t.slice(0, file.index) + FILE_URL_PREFIX + (base === '' ? '…' : HAS_EXTENSION.test(base) ? base : DIR_PLACEHOLDER);
   }
-  const first = parts[i]!;
-  let prefix = first.slice(0, p);
-  let body = first.slice(p);
-  for (let j = i + 1; j <= last; j++) body += parts[j]!;
-  let cut = false;
-  if (fileUrl) {
-    body = body.slice(/^file:(?:\\?\/)*/i.exec(body)?.[0].length ?? 0);
-    prefix += FILE_URL_PREFIX;
+  const blob = BLOB_TOKEN.exec(t);
+  if (blob) return t.slice(0, blob.index) + 'blob:' + blob[1];
+  if (schemeEnd(t) >= 0) return t;
+  if (!SEP_THEN_TEXT.test(t)) return t;
+  const name = basenameOfPath(t);
+  return HAS_EXTENSION.test(name) ? name : DIR_PLACEHOLDER;
+}
+
+export interface RedactOptions {
+  /** `selector`: the CSS-aware variant (see the header). Default: free text. */
+  mode?: 'text' | 'selector';
+}
+
+interface TokenResult {
+  out: string;
+  /** Everything after this token (up to the end of the text) is dropped. */
+  swallow: boolean;
+}
+
+function redactToken(tok: string, selector: boolean, afterUrlish: boolean): TokenResult {
+  const opaque = OPAQUE_BODY.exec(tok);
+  if (opaque) return { out: tok.slice(0, opaque.index) + opaque[0].toLowerCase() + '…', swallow: true };
+  // (a) cut at the first `?` `#` `;`
+  let cutAt = -1;
+  for (let i = 0; i < tok.length; i++) {
+    const c = tok[i]!;
+    if (c === '?' || c === ';') {
+      cutAt = i;
+      break;
+    }
+    if (c === '#' && (!selector || afterUrlish || TOKEN_URLISH.test(tok.slice(0, i)))) {
+      cutAt = i;
+      break;
+    }
   }
-  // a query / fragment on a path is cut too, and the text after it dropped (a path can carry `?token=` as well)
-  const q = body.search(/[?#]/);
-  if (q >= 0) {
-    body = body.slice(0, q);
-    cut = true;
+  let head = cutAt < 0 ? tok : tok.slice(0, cutAt);
+  // a bare `#x` (nothing in front of it) does not drop the following text: it is most often a mention of an element id
+  const swallow = cutAt >= 0 && !(tok[cutAt] === '#' && cutAt === 0);
+  head = stripUserinfo(head);
+  // (b) `=` / `&` left after the cut: replace the whole token. In selector mode `=` inside `[...]` is CSS attribute syntax.
+  const probe = selector ? head.replace(/\[[^\]]*\]?/g, '') : head;
+  if (/=/.test(probe) || head.includes('&')) {
+    return { out: REDACTED_PLACEHOLDER, swallow: swallow || head.includes('&') };
   }
-  const m = TRAILING_PUNCT.exec(body)!;
-  const name = basenameOfPath(m[1]!) || '…';
-  return { out: prefix + name + (cut ? REDACTED_PLACEHOLDER : m[2]!), last, cut };
+  // the placeholder is part of the token BEFORE the path reduction, so a second pass over the stored text changes nothing
+  const whole = cutAt >= 0 ? head + REDACTED_PLACEHOLDER : head;
+  // selector mode: `a[href="/x"]` (an attribute selector) holds a `/` that is CSS, not a path
+  // the userinfo strip runs again on the reduced token: a leading `\"` or `'` can hide the authority from the first pass
+  return { out: selector && /\[[^\]]*=/.test(head) ? whole : stripUserinfo(reducePathToken(whole)), swallow };
 }
 
 /**
  * THE redaction function for every free-text string that reaches history (verification reasons, error messages,
- * evidence strings, selectors, eval previews, CLI args), used by the MCP / SDK entries and by history.jsonl alike.
- * Fail-closed and token-based, see the file header for the rule:
- *  1. Split on whitespace. A token with a URL marker is cut at its first `?` `#` or `;` (replaced by
- *     {@link REDACTED_PLACEHOLDER}); userinfo (`user:pass@`) is removed; `data:` bodies become `data:…`; blob: keeps the origin.
- *  2. After a cut, following tokens are dropped until the next token that carries a URL marker or starts a path.
- *  3. A token that starts an absolute path (`C:\`, `C:/`, `\\unc`, `/a/b`, `~/a`) or a `file://` URL is reduced to the
- *     path's basename; the run extends across spaces to the last token that contains a separator.
- * Idempotent. Over-redaction is acceptable, a leak is not.
+ * evidence strings, selectors, eval previews, CLI args), used by the MCP / SDK entries AND by history.jsonl. See the
+ * section header for the rule. Idempotent. Input beyond {@link MAX_REDACT_INPUT} characters is dropped.
  */
-export function redactHistoryText(text: string): string {
-  const input = text.length > MAX_REDACT_INPUT ? text.slice(0, MAX_REDACT_INPUT) : text;
-  const parts = input.split(/(\s+)/); // [tok, ws, tok, ws, ..., tok]
+export function redactHistoryText(text: string, opts: RedactOptions = {}): string {
+  const selector = opts.mode === 'selector';
+  const raw = text.length > MAX_REDACT_INPUT ? text.slice(0, MAX_REDACT_INPUT) : text;
+  const input = decodeDelimiters(raw);
+  const parts = input.split(WS_SPLIT); // [tok, ws, tok, ws, ..., tok]
+  // input cut at the cap: its last token may be only the FIRST part of a token whose separator / delimiter was cut off, so it is not kept
+  if (raw.length < text.length && parts[parts.length - 1] !== '') parts[parts.length - 1] = REDACTED_PLACEHOLDER;
   const out: string[] = [];
-  let swallowing = false;
+  // selector mode: text that carried an ENCODED delimiter (percent, JSON escape or fullwidth form) is not CSS, so its `#` cuts
+  let afterUrlish = selector && input !== raw;
   for (let i = 0; i < parts.length; i += 2) {
     const tok = parts[i]!;
     const ws = i > 0 ? parts[i - 1]! : '';
     if (tok === '') {
-      if (!swallowing) out.push(ws);
+      out.push(ws);
       continue;
     }
-    const url = findUrlMarker(tok);
-    const pathAt = findPathStart(tok, parts[i + 2]);
-    if (url?.kind === 'file' && (pathAt < 0 || url.start <= pathAt)) {
-      const r = reducePathRun(parts, i, url.start, true);
-      out.push(ws, r.out);
-      swallowing = r.cut;
-      i = r.last;
-    } else if (pathAt >= 0 && (!url || pathAt < url.start)) {
-      const r = reducePathRun(parts, i, pathAt, false);
-      out.push(ws, r.out);
-      swallowing = r.cut;
-      i = r.last;
-    } else if (url) {
-      const r = redactUrlToken(tok, url);
-      out.push(ws, r.out);
-      swallowing = r.cut;
-    } else if (!swallowing) {
-      out.push(ws, tok);
-    }
+    const r = redactToken(tok, selector, afterUrlish);
+    out.push(ws, r.out);
+    if (r.swallow) break;
+    afterUrlish = afterUrlish || URLISH.test(tok);
   }
   return out.join('');
 }
+
+/** The selector variant of {@link redactHistoryText} (same function, `mode: 'selector'`). */
+export const redactHistorySelector = (text: string): string => redactHistoryText(text, { mode: 'selector' });
 
 /** Deprecated name kept for compatibility: the same single function as {@link redactHistoryText}. */
 export const redactUrlsInText = redactHistoryText;
@@ -286,6 +275,9 @@ export const redactUrlsInText = redactHistoryText;
 export function evalCodePreview(code: string): string {
   return capHistoryString(redactHistoryText(code.replace(/\s+/g, ' ').trim()), HISTORY_STRING_CAP);
 }
+
+/** The engine-generated target of wait_for_selector: a closed vocabulary, the one `=` the rule must not eat. */
+const WAIT_STATE_TARGET = /^state=(?:visible|hidden|attached|detached)$/;
 
 const redactedString = (s: string, cap: number): string => capHistoryString(redactHistoryText(s), cap);
 
@@ -296,14 +288,14 @@ const redactedString = (s: string, cap: number): string => capHistoryString(reda
  */
 export function sanitizeHistoryEntry(e: ActionHistoryEntry): ActionHistoryEntry {
   const out: Record<string, unknown> = { ...e };
-  if (typeof e.selector === 'string') out.selector = redactedString(e.selector, HISTORY_STRING_CAP);
+  if (typeof e.selector === 'string') out.selector = capHistoryString(redactHistorySelector(e.selector), HISTORY_STRING_CAP);
   if (typeof e.target === 'string') {
     out.target =
       e.actionType === 'navigate'
         ? capHistoryString(redactHistoryUrl(e.target), HISTORY_STRING_CAP)
         : e.actionType === 'eval'
           ? evalCodePreview(e.target)
-          : redactedString(e.target, HISTORY_STRING_CAP);
+          : WAIT_STATE_TARGET.test(e.target) ? e.target : redactedString(e.target, HISTORY_STRING_CAP);
   }
   if (typeof e.url === 'string') out.url = capHistoryString(redactHistoryUrl(e.url), HISTORY_STRING_CAP);
   if (typeof e.error === 'string') out.error = redactedString(e.error, HISTORY_TEXT_CAP);

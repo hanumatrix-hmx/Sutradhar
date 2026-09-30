@@ -101,7 +101,8 @@ describe('FR2-11 fix-1: adversarial input size', () => {
 
 describe('FR2-11 fix-1: what is deliberately NOT removed', () => {
   it('ordinary text, selectors and page paths without a URL marker are untouched', () => {
-    for (const s of ['No element found for selector: #btn', 'input[type=file]', 'a new document committed', 'Did it work?', 'expected "Welcome" to be visible']) {
+    // fix-2: free text that holds one of the rule's characters (`?` `#` `;` `=` `&`) is NOT untouched any more (see char-rule.spec.ts)
+    for (const s of ['No element found for selector', 'a new document committed', 'expected "Welcome" to be visible', 'Timeout 30000ms exceeded.']) {
       expect(redactUrlsInText(s)).toBe(s);
     }
     expect(findCanaries(redactUrlsInText('x'))).toEqual([]);

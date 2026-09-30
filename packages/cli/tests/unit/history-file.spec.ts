@@ -253,7 +253,7 @@ describe('FR2-11 formatHistoryHuman (C8)', () => {
       '    - navigate ok verified tab_1 http://127.0.0.1:5/p.html',
       '2026-09-25 14:02:17Z  exit 1   15840ms  click #missing',
       '    error: boom',
-      '    - click FAILED action-failed tab_1 #missing: No element found for selector: #missing',
+      '    - click FAILED action-failed tab_1 #missing: No element found for selector: [redacted] more', // fix-2: a bare `#x` in free text is cut (the selector itself is shown in its own column)
       '--- session sess_B (current) ---',
       '2026-09-25 14:03:00Z  exit 0     310ms  eval document.title',
       '    - eval ok no-verification tab_2 document.title',
