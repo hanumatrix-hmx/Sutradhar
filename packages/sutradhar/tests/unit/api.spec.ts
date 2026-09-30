@@ -438,3 +438,115 @@ describe('Page verification contract (FR2-07, constructed against a stub runtime
     expect(new ActionFailedError({ success: false, actionType: 'click', executionTimeMs: 0 }).message).toBe('click failed');
   });
 });
+
+describe('FR2-08 Page.waitFor and settle on goto/press/scroll/download/uploadFile', () => {
+  const ok = { success: true, actionType: 'wait_for', executionTimeMs: 3 };
+  const mk = (stub: Record<string, unknown>) => new Page(stub as unknown as SutradharRuntime, 'sess-1', 'tab-1');
+
+  it('S1: waitFor forwards the conditions, mapping timeout -> timeoutMs, with this page\'s session and tab', async () => {
+    const stub = { waitFor: vi.fn().mockResolvedValue(ok) };
+    const page = mk(stub);
+    await page.waitFor({ text: 'x' });
+    expect(stub.waitFor).toHaveBeenLastCalledWith('sess-1', { text: 'x' }, 'tab-1');
+    await page.waitFor({ text: 'x', timeout: 500 });
+    expect(stub.waitFor).toHaveBeenLastCalledWith('sess-1', { text: 'x', timeoutMs: 500 }, 'tab-1');
+    await page.waitFor({ textGone: 'g', url: '/u', js: 'window.q', timeout: 0 });
+    expect(stub.waitFor).toHaveBeenLastCalledWith('sess-1', { textGone: 'g', url: '/u', js: 'window.q', timeoutMs: 0 }, 'tab-1');
+  });
+
+  it('S2: a not-satisfied result rejects with ActionFailedError carrying the exact message and the result', async () => {
+    const failed = { success: false, actionType: 'wait_for', executionTimeMs: 500, error: 'wait_for timed out after 500ms waiting for text="x": ...' };
+    const page = mk({ waitFor: vi.fn().mockResolvedValue(failed) });
+    const err = await page.waitFor({ text: 'x', timeout: 500 }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(ActionFailedError);
+    expect((err as ActionFailedError).message).toBe(failed.error);
+    expect((err as ActionFailedError).result).toBe(failed);
+    expect(page.lastResult).toBe(failed);
+  });
+
+  it('S3: a satisfied result resolves to that same object and is the page\'s lastResult', async () => {
+    const page = mk({ waitFor: vi.fn().mockResolvedValue(ok) });
+    expect(await page.waitFor({ url: '/x' })).toBe(ok);
+    expect(page.lastResult).toBe(ok);
+  });
+
+  it('S3b: validation errors from the runtime propagate as TypeError (no browser contact); a fatal js throw rejects', async () => {
+    const runtime = new SutradharRuntime();
+    const page = new Page(runtime, 'nope', 'tab-1');
+    await expect(page.waitFor({})).rejects.toThrow(TypeError);
+    await expect(page.waitFor({})).rejects.toThrow(/at least one/);
+    await expect(page.waitFor({ text: '' })).rejects.toThrow(/non-empty string/);
+    await expect(page.waitFor({ text: 'X', textGone: 'X' })).rejects.toThrow(/can never be satisfied/);
+    await expect(page.waitFor({ text: 'x', timeout: 300001 })).rejects.toThrow(/exceeds the maximum/);
+    await expect(page.waitFor({ text: 'x', timeout: 'abc' as any })).rejects.toThrow(/timeoutMs must be a number/);
+    await expect(page.waitFor({ selector: '#t' } as any)).rejects.toThrow(/wait_for_selector/);
+    await expect(page.waitFor(undefined as any)).rejects.toThrow(/at least one/);
+  });
+
+  it('S6: the SDK spells it `timeout`: `timeoutMs` is rejected naming the allowed keys', async () => {
+    const stub = { waitFor: vi.fn() };
+    const page = mk(stub);
+    await expect(page.waitFor({ text: 'x', timeoutMs: 5 } as any)).rejects.toThrow(/unknown key "timeoutMs" — allowed: text, textGone, url, js, timeout/);
+    await expect(page.waitFor({ timeoutMs: 5 } as any)).rejects.toThrow(TypeError);
+    expect(stub.waitFor).not.toHaveBeenCalled();
+  });
+
+  it('S4: goto forwards settle LAST; without options it keeps its pre-FR2-08 arity', async () => {
+    const stub = { navigate: vi.fn().mockResolvedValue({ tabId: 't', url: 'u', title: 't' }) };
+    const page = mk(stub);
+    await page.goto('https://a.test/');
+    expect(stub.navigate.mock.calls[0]).toEqual(['sess-1', 'https://a.test/', 'tab-1']);
+    await page.goto('https://a.test/', { settle: true });
+    expect(stub.navigate.mock.calls[1]).toEqual(['sess-1', 'https://a.test/', 'tab-1', undefined, true]);
+    await page.goto('https://a.test/', { settle: { timeoutMs: 9 }, expect: { url: '/a' } }).catch(() => undefined);
+    expect(stub.navigate.mock.calls[2]).toEqual(['sess-1', 'https://a.test/', 'tab-1', { url: '/a' }, { timeoutMs: 9 }]);
+    await page.goto('https://a.test/', { expect: { url: '/a' } }).catch(() => undefined);
+    expect(stub.navigate.mock.calls[3]).toHaveLength(4);
+  });
+
+  it('S5: press and scroll forward settle at the right position; without options the arity is unchanged', async () => {
+    const stub = {
+      pressKey: vi.fn().mockResolvedValue({ success: true, actionType: 'press_key', executionTimeMs: 1 }),
+      scroll: vi.fn().mockResolvedValue({ success: true, actionType: 'scroll', executionTimeMs: 1 }),
+    };
+    const page = mk(stub);
+    await page.press('Enter');
+    expect(stub.pressKey.mock.calls[0]).toEqual(['sess-1', 'Enter', 'tab-1']);
+    await page.press('Enter', { settle: true });
+    expect(stub.pressKey.mock.calls[1]).toEqual(['sess-1', 'Enter', 'tab-1', undefined, undefined, true]);
+    await page.press('Enter', { settle: true, expect: { text: 'x' } }).catch(() => undefined);
+    expect(stub.pressKey.mock.calls[2]).toEqual(['sess-1', 'Enter', 'tab-1', undefined, { text: 'x' }, true]);
+
+    await page.scroll('down', 300);
+    expect(stub.scroll.mock.calls[0]).toEqual(['sess-1', 'down', 300, 'tab-1']);
+    await page.scroll('down', 300, { settle: true });
+    expect(stub.scroll.mock.calls[1]).toEqual(['sess-1', 'down', 300, 'tab-1', undefined, true]);
+    await page.scroll('down', 300, { settle: true, expect: { text: 'x' } }).catch(() => undefined);
+    expect(stub.scroll.mock.calls[2]).toEqual(['sess-1', 'down', 300, 'tab-1', undefined, true, { text: 'x' }]);
+    await page.scroll('down', 300, { expect: { text: 'x' } }).catch(() => undefined);
+    expect(stub.scroll.mock.calls[3]).toEqual(['sess-1', 'down', 300, 'tab-1', undefined, undefined, { text: 'x' }]);
+  });
+
+  it('S5b: download and uploadFile forward settle; without it their arity is unchanged', async () => {
+    const dl = { success: true, actionType: 'download_file', executionTimeMs: 1, output: { downloadedFilename: 'f', downloadedPath: '/p', downloadDir: '/d' } };
+    const stub = {
+      downloadFile: vi.fn().mockResolvedValue(dl),
+      uploadFile: vi.fn().mockResolvedValue({ success: true, actionType: 'upload_file', executionTimeMs: 1 }),
+    };
+    const page = mk(stub);
+    await page.download('#a');
+    expect(stub.downloadFile.mock.calls[0]).toEqual(['sess-1', '#a', undefined, 'tab-1']);
+    await page.download('#a', { downloadDir: '/d', settle: true });
+    expect(stub.downloadFile.mock.calls[1]).toEqual(['sess-1', '#a', '/d', 'tab-1', undefined, true]);
+    await page.uploadFile('#f', '/tmp/x');
+    expect(stub.uploadFile.mock.calls[0]).toHaveLength(4);
+    await page.uploadFile('#f', '/tmp/x', { settle: true });
+    expect(stub.uploadFile.mock.calls[1]![4]).toBeUndefined();
+    expect(stub.uploadFile.mock.calls[1]![5]).toBe(true);
+  });
+
+  it('exports the new option types and the settle spec from the package entry', async () => {
+    const mod = await import('../../src/index.js');
+    expect(typeof mod.Page.prototype.waitFor).toBe('function');
+  });
+});
