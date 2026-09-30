@@ -882,7 +882,7 @@ async function runCliCases(surface, cliJs, ctx) {
   });
 
   // fix-1 (audit-1 REOPEN): the privacy matrix through REAL CLI processes (one per command; every cell of the rotating
-  // subset once, the full 1360-cell cross product is covered at function level in packages/cli/tests/unit/privacy-matrix.spec.ts).
+  // subset once, the full 1600-cell cross product is covered at function level in packages/cli/tests/unit/privacy-matrix.spec.ts).
   C('PM', async (id) => {
     const opts = { origin: server.origin, hostPort: server.origin.slice('http://'.length) };
     const port = opts.hostPort.split(':')[1];
