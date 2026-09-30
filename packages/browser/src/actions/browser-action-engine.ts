@@ -31,10 +31,10 @@ import {
 import { SD_GENERATION_ATTR, SD_CURRENT_GENERATION_ATTR, SD_FINGERPRINT_ATTR } from '../dom/dom-semantic-engine.js';
 import { defaultDownloadRoot, findContainingRoot, isPathWithinRoot } from './path-containment.js';
 import { acquireDownloadLock } from './download-lock.js';
+import { waitForPageSettle } from './page-settle.js';
 import {
   ActionParams,
   ActionResultDto,
-  SettleSpec,
   WaitForSelectorState,
   TAB_CLOSED_MID_WAIT_MESSAGE,
   WAIT_HIDDEN_HARD_FAILURE_PREFIX,
@@ -185,13 +185,6 @@ type HandleVisibilityVerdict = 'visible' | 'not-visible' | 'unknown';
  *  the gap describes. Any finite `timeoutMs` above this is clamped down to it rather than
  *  trusted as-is. */
 const MAX_TIMEOUT_MS = 2 ** 31 - 1;
-
-/** Defaults for {@link ActionParams.settle} when passed as `true` instead of a full spec. */
-const DEFAULT_SETTLE_SPEC: Required<SettleSpec> = {
-  mutationQuietMs: 300,
-  networkIdleMs: 500,
-  timeoutMs: 5000,
-};
 
 export class BrowserActionEngine implements IBrowserActionEngine {
   private readonly eventBus?: EventBus;
@@ -428,10 +421,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         );
         inFlightDispatch = dispatchPromise;
         const resultData = await this.raceWithTimeout(dispatchPromise, params.actionType, timeoutMs);
-        if (params.settle && tab.page) {
-          const spec = params.settle === true ? DEFAULT_SETTLE_SPEC : { ...DEFAULT_SETTLE_SPEC, ...params.settle };
-          await this.waitForSettle(tab.page, spec);
-        }
+        if (params.settle && tab.page) await waitForPageSettle(tab.page, params.settle);
         const executionTimeMs = Date.now() - startTime;
 
         const result: ActionResultDto = {
@@ -2611,55 +2601,6 @@ export class BrowserActionEngine implements IBrowserActionEngine {
         requestAnimationFrame(tick);
       });
     }, timeoutMs);
-  }
-
-  /**
-   * Opt-in post-action settle wait (see {@link ActionParams.settle}) — waits for the page to
-   * stop actively changing after an action, on the theory (INSIGHTS.md Insight 2) that most
-   * real-world flakiness is a race at the STATE TRANSITION after an action fires, not the
-   * action itself: a click that fires before a menu finishes rendering its items, a form
-   * submit whose success toast hasn't appeared yet when the next action reads the page.
-   *
-   * Runs two independent checks in parallel, both bounded by `spec.timeoutMs` overall:
-   *  - DOM-mutation-quiet: a `MutationObserver` on `document.body` (subtree, all mutation
-   *    types) resolves once `spec.mutationQuietMs` passes with zero observed mutations.
-   *  - Network-idle: Puppeteer's own `page.waitForNetworkIdle`, which tracks real in-flight
-   *    requests via CDP — not reimplemented here since Puppeteer already does this correctly.
-   *
-   * Neither check throws on timeout — a page with continuous background chatter (an ad
-   * refreshing, a polling widget, a live ticker) will never go fully quiet on its own, and that
-   * is not a bug in the page or in this wait; it just means the bound was reached. Best-effort,
-   * same philosophy as {@link waitForStableBoundingBox}.
-   */
-  private async waitForSettle(page: Page, spec: Required<SettleSpec>): Promise<void> {
-    const domQuiet = page
-      .evaluate((quietMs, boundMs) => {
-        return new Promise<void>((resolve) => {
-          let timer: ReturnType<typeof setTimeout>;
-          const done = () => {
-            observer.disconnect();
-            clearTimeout(timer);
-            resolve();
-          };
-          const observer = new MutationObserver(() => {
-            clearTimeout(timer);
-            timer = setTimeout(done, quietMs);
-          });
-          observer.observe(document.body, { childList: true, subtree: true, attributes: true, characterData: true });
-          // Start the quiet timer immediately too — a page that never mutates at all should
-          // resolve after `quietMs`, not wait for a mutation that's never coming.
-          timer = setTimeout(done, quietMs);
-          // Absolute upper bound regardless of ongoing mutations.
-          setTimeout(done, boundMs);
-        });
-      }, spec.mutationQuietMs, spec.timeoutMs)
-      .catch(() => {}); // a page mid-navigation when this evaluates is not a settle failure
-
-    const networkIdle = page
-      .waitForNetworkIdle({ idleTime: spec.networkIdleMs, timeout: spec.timeoutMs })
-      .catch(() => {}); // timeout here just means "still busy after the bound" — not an error
-
-    await Promise.all([domQuiet, networkIdle]);
   }
 
   /**
