@@ -1,0 +1,51 @@
+{
+  "startedAt": "2026-09-30T06:03:37.132Z",
+  "finishedAt": "2026-09-30T06:03:41.485Z",
+  "total": 1,
+  "passed": 0,
+  "perSurface": {
+    "mcp": {
+      "total": 1,
+      "passed": 0
+    },
+    "cli": {
+      "total": 0,
+      "passed": 0
+    },
+    "sdk": {
+      "total": 0,
+      "passed": 0
+    },
+    "bundle": {
+      "total": 0,
+      "passed": 0
+    }
+  },
+  "failed": [
+    "mcp:L9"
+  ],
+  "gap325Tolerated": [],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeWithScratchProfile": 0,
+    "lingeringMatches": [],
+    "newSutradharCliTempDirsCreated": [],
+    "newSutradharCliTempDirsLeftAfterCleanup": [],
+    "childPidsStarted": [
+      32076,
+      57016
+    ]
+  },
+  "cases": [
+    {
+      "surface": "mcp",
+      "case": "L9",
+      "expected": "AND: the text is visible but the url never matches -> failure listing the met and the unmet part",
+      "observed": {
+        "success": true,
+        "error": ""
+      },
+      "pass": false
+    }
+  ]
+}

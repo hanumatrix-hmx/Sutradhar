@@ -1,0 +1,52 @@
+{
+  "startedAt": "2026-09-30T06:03:53.477Z",
+  "finishedAt": "2026-09-30T06:04:04.275Z",
+  "total": 1,
+  "passed": 0,
+  "perSurface": {
+    "mcp": {
+      "total": 1,
+      "passed": 0
+    },
+    "cli": {
+      "total": 0,
+      "passed": 0
+    },
+    "sdk": {
+      "total": 0,
+      "passed": 0
+    },
+    "bundle": {
+      "total": 0,
+      "passed": 0
+    }
+  },
+  "failed": [
+    "mcp:N2"
+  ],
+  "gap325Tolerated": [],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeWithScratchProfile": 0,
+    "lingeringMatches": [],
+    "newSutradharCliTempDirsCreated": [],
+    "newSutradharCliTempDirsLeftAfterCleanup": [],
+    "childPidsStarted": [
+      35072,
+      41304
+    ]
+  },
+  "cases": [
+    {
+      "surface": "mcp",
+      "case": "N2",
+      "expected": "NEG: a js throw fails at once (not after 8s), polls 1, page message + a \"?.\" hint",
+      "observed": {
+        "elapsedMs": 8005,
+        "polls": 75,
+        "error": "wait_for timed out after 8000ms waiting for js(window.__nope.ready): js window.__nope.ready did not settle within 1500ms.\nHint: The condition never became true. Inspect the page (browser.snapshot / browser.eval), fix the condition, or raise timeoutMs."
+      },
+      "pass": false
+    }
+  ]
+}

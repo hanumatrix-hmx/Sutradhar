@@ -1,0 +1,261 @@
+[
+  {
+    "id": "UC-01",
+    "title": "Bot detection surface",
+    "surface": "cli",
+    "success": true,
+    "ms": 2459,
+    "detail": {
+      "navigated": "Navigated to https://bot.sannysoft.com/\nTitle: Antibot\nVerification: verified (confidence 0.90) — 'navigate' verified: a new document committed at https://bot.sannysoft.com/",
+      "userAgentDetected": "HeadlessChrome/154.0.0.0",
+      "headlessLeakedInUA": true,
+      "webdriverNew": "missing (passed)",
+      "webdriverAdvanced": "passed",
+      "chromeNew": "present (passed)",
+      "pluginsIsArray": "passed",
+      "failMarkers": [
+        "HEADCHR_UA",
+        "CHR_MEMORY"
+      ],
+      "waitforStdout": "Condition met after 1ms: js(['webdriver-result','advanced-webdriver-result','chrome-result'].every(id => (do…)\nVerification: verified (confidence 0.90) — 'wait_for' verified: js(['webdriver-result','advanced-webdriver-result','chrome-result'].every(id => (do…) held on one poll after 1ms",
+      "waitforCode": 0,
+      "note": "HeadlessChrome/151 leaking in the User-Agent row is EXPECTED and deliberate (scope decision in field-report-remediation-plan.md — no covert UA masking). failMarkers lists every fingerprint sub-test whose own page script reported FAIL; HEADCHR_UA failing is a direct consequence of the same deliberate UA choice, not a Sutradhar defect. Any other names appearing there are a real, reportable finding, whatever they are (recorded, not filtered).",
+      "rawTextLength": 4000
+    },
+    "error": null
+  },
+  {
+    "id": "UC-02",
+    "title": "CAPTCHA grounding (not solving)",
+    "surface": "cli",
+    "success": true,
+    "ms": 4111,
+    "detail": {
+      "checkboxGroundable": true,
+      "checkboxSnapLine": "[#15 in iframe \"a-qeskn2m4009f\" (https://www.google.com/recaptcha/api2/anchor)] span role=checkbox",
+      "fullSnap": "URL: https://www.google.com/recaptcha/api2/demo\nTitle: ReCAPTCHA demo\nInteractive elements (8):\n[#1] label \"First Name\"\n[#3] label \"Last Name\"\n[#5] label \"Email\"\n[#8] label \"Red\"\n[#10] label \"Green\"\n[#13] input \"Submit\" value=\"Submit\"\n[#15 in iframe \"a-qeskn2m4009f\" (https://www.google.com/recaptcha/api2/anchor)] span role=checkbox\n[#16 in iframe \"a-qeskn2m4009f\"] label \"I'm not a robot\" role=presentation",
+      "note": "Grounding only — no click/solve attempted, per scope (out-of-bounds by design)."
+    },
+    "error": null
+  },
+  {
+    "id": "UC-03",
+    "title": "Auth + session persistence",
+    "surface": "cli",
+    "success": true,
+    "ms": 14529,
+    "detail": {
+      "profileCreate": "Fatal: Profile \"scenario-suite-uc03\" already exists. Use a different name, or delete() it first.",
+      "loggedInInitially": true,
+      "loginTypeAttempts": {
+        "username": 1,
+        "password": 1
+      },
+      "afterRelaunchText": "Swag Labs\nAccepted usernames are:\nstandard_user\nlocked_out_user\nproblem_user\nperformance_glitch_user\nerror_user\nvisual_user\n\nPassword for all users:\nsecret_sauce",
+      "survivedSession": false,
+      "note": "Session did NOT survive (landed back on login page) — matches the expected gap: saucedemo's login flag is sessionStorage-based, and named profiles (Chrome --user-data-dir) do not persist sessionStorage by design. This is exactly the C2 gap Phase 5 addresses."
+    },
+    "error": null
+  },
+  {
+    "id": "UC-04",
+    "title": "Canvas blindness (Google Maps)",
+    "surface": "cli",
+    "success": false,
+    "ms": 6826,
+    "detail": {
+      "snap": "URL: https://www.google.com/maps\nTitle: Google Maps\nInteractive elements (5):\n[#2] button \"Menu\"\n[#3] label \"Search Google Maps\"\n[#4] input role=combobox label=\"Search Google Maps\"\n[#5] button \"Search\"\n[#6] button \"Directions\"",
+      "retried": false
+    },
+    "error": "search box and/or zoom controls not groundable via snap"
+  },
+  {
+    "id": "UC-05",
+    "title": "Long 10+ step flow",
+    "surface": "cli",
+    "success": false,
+    "ms": 285911,
+    "detail": {
+      "cartIconSnap": "URL: https://www.saucedemo.com/inventory-item.html?id=4\nTitle: Swag Labs\nInteractive elements (7):\n[#1] button \"Open Menu\"\n[#8] a \"Cart, 1 items\" role=button\n[#9] button \"Back to products\"\n[#10] button \"Remove\"\n[#11] a \"X\"\n[#12] a \"Facebook\"\n[#13] a \"LinkedIn\"",
+      "sortBlocked": {
+        "step": "sort products by price",
+        "blockedBecause": null,
+        "workaroundAttempted": true,
+        "sortResult": {
+          "stdout": "Selected \"lohi\" on 9\nVerification: verified (confidence 0.90) — 'select_option' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+          "stderr": "",
+          "code": 0,
+          "ms": 3289,
+          "timedOut": false,
+          "spawnError": null
+        }
+      }
+    },
+    "error": "could not find cart icon link in snap after add-to-cart"
+  },
+  {
+    "id": "UC-06",
+    "title": "Modals + dynamic content",
+    "surface": "cli",
+    "success": true,
+    "ms": 19779,
+    "detail": {
+      "closeButtonInDefaultSnapListing": false,
+      "snapBeforeClose": "URL: https://the-internet.herokuapp.com/entry_ad\nTitle: The Internet\nInteractive elements (2):\n[#6] a \"click here\"\n[#10] a \"Elemental Selenium\"",
+      "clickTextCloseResult": "Clicked element containing \"Close\"\nVerification: verified (confidence 0.90) — 'click_by_text' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+      "fallbackThatWorked": "clicktext",
+      "dynamicLoadingHelloWorldFound": true,
+      "waitforStdout": "Condition met after 1745ms: text=\"Hello World!\"\nVerification: verified (confidence 0.90) — 'wait_for' verified: text=\"Hello World!\" held on one poll after 1745ms",
+      "waitforCode": 0,
+      "dynamicLoadingText": "Dynamically Loaded Page Elements\nExample 1: Element on page that is hidden\n\n\nHello World!\nPowered by Elemental Selenium"
+    },
+    "error": null
+  },
+  {
+    "id": "UC-07",
+    "title": "Cross-origin iframe (TinyMCE)",
+    "surface": "cli",
+    "success": true,
+    "ms": 9187,
+    "detail": {
+      "toolbarButtonsInDefaultSnapListing": false,
+      "fullSnapElementCount": "38",
+      "fullSnap": "URL: https://www.tiny.cloud/docs/tinymce/latest/basic-example/\nTitle: Basic example | TinyMCE Documentation\nInteractive elements (38):\n[#2] button \"Search (Ctrl+K)\"\n[#3] button\n[#301 in iframe \"basic-example_ifr\" (about:srcdoc)] body \"Rich Text Area. Press ALT-0 for help.\" role=textbox\n[#302 in iframe \"basic-example_ifr\"] h1 \"Welcome to the TinyMCE editor demo!\" role=textbox\n[#303 in iframe \"basic-example_ifr\"] p \"Meet TinyMCE, the Internet's most battle-tested rich text editor with over 60 features including: Ad\" role=textbox\n[#304 in iframe \"basic-example_ifr\"] p \"TinyMCE is easy to implement and configure. Try it out yourself today.\" role=textbox\n[#305 in iframe \"basic-example_ifr\"] a \"Try it out yourself today\" role=textbox\n[#306 in iframe \"basic-example_ifr\"] h2 \"⭐️ Popular features (including paid subscription plugins)\" role=textbox\n[#307 in iframe \"basic-example_ifr\"] a \"@Mentions\" role=textbox\n[#308 in iframe \"basic-example_ifr\"] a \"discuss using Comments\" role=textbox\n[#309 in iframe \"basic-example_ifr\"] a \"Suggested Edits\" role=textbox\n[#310 in iframe \"basic-example_ifr\"] a \"Revision history\" role=textbox\n[#311 in iframe \"basic-example_ifr\"] a \"Paste from MS Word\" role=textbox\n[#312 in iframe \"basic-example_ifr\"] a \"import Word documents\" role=textbox\n[#313 in iframe \"basic-example_ifr\"] a \"Merge tags\" role=textbox\n[#314 in iframe \"basic-example_ifr\"] a \"Inline CSS output\" role=textbox\n[#315 in iframe \"basic-example_ifr\"] a \"Spell Checker\" role=textbox\n[#316 in iframe \"basic-example_ifr\"] a \"Accessibility Checker\" role=textbox\n[#317 in iframe \"basic-example_ifr\"] a \"Advanced Typography\" role=textbox\n[#318 in iframe \"basic-example_ifr\"] a \"Link Checker\" role=textbox\n[#319 in iframe \"basic-example_ifr\"] p role=textbox\n[#320 in iframe \"basic-example_ifr\"] h2 \"🖖 Get TinyMCE\" role=textbox\n[#321 in iframe \"basic-example_ifr\"] a \"Sign-up for free\" role=textbox\n[#322 in iframe \"basic-example_ifr\"] a \"Let's talk\" role=textbox\n[#323 in iframe \"basic-example_ifr\"] a \"Download today\" role=textbox\n[#324 in iframe \"basic-example_ifr\"] h2 \"Why TinyMCE 👀\" role=textbox\n[#325 in iframe \"basic-example_ifr\"] p \"❤️ Go build something today\" role=textbox\n[#326 in iframe \"basic-example_ifr\"] a \"Go build something today\" role=textbox\n[#327 in iframe 5 (https://www.youtube.com/embed/YpcfDYYWmK0)] div \"YouTube Video Player\" role=clickable\n[#329 in iframe 5] button \"Play video\"\n[#330 in iframe 5] button \"Hide player controls\"\n[#331 in iframe 5] a \"TinyMCE Overview: The Rich Text Editor That Just Works\"\n[#332 in iframe 5] a \"TinyMCE\"\n[#333 in iframe 5] button\n[#336 in iframe 5] button \"Share\"\n[#337 in iframe 5] a \"Watch on YouTube\"\n[#340 in iframe 5] video-cover role=clickable\n[#341 in iframe 5] cued-overlay role=clickable",
+      "typeIntoEditorAttempt": {
+        "stdout": "Typed into .tox-edit-area__iframe\nVerification: verified (confidence 0.90) — 'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+        "stderr": ""
+      },
+      "note": "Toolbar buttons were NOT found in the default snap listing — the CLI's `snap`/`type` commands take only a CSS-selector-or-node-id ref with no frame-targeting parameter (unlike eval()/extractData()'s internal frameSelector support proven in tools/engine-comparison), so this surface cannot reach into the TinyMCE iframe at all today. Reported honestly as a real CLI-surface gap distinct from whether the underlying runtime can do it."
+    },
+    "error": null
+  },
+  {
+    "id": "UC-08",
+    "title": "File download",
+    "surface": "cli",
+    "success": false,
+    "ms": 96017,
+    "detail": {
+      "fileName": "r2_test_upload_bmwz_71o.txt",
+      "downloadDir": "E:\\AI-Cache\\tmp\\sutradhar-downloads\\cli-uc08-1790750414522",
+      "downloadResultStdout": "",
+      "landedExpectedFile": false,
+      "signalUsed": "the `download` CLI command's own real completion signal (added Phase 4) — no longer polling the filesystem by diff."
+    },
+    "error": "the `download` CLI command did not report a successful download"
+  },
+  {
+    "id": "UC-09",
+    "title": "Multi-tab / popup",
+    "surface": "cli",
+    "success": true,
+    "ms": 10868,
+    "detail": {
+      "click": {
+        "stdout": "Clicked 3\nVerification: verified (confidence 0.90) — 'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+        "stderr": "",
+        "code": 0,
+        "ms": 3362,
+        "timedOut": false,
+        "spawnError": null
+      },
+      "tabsAfter": "tab_sess_1790750505630_1_1  The Internet  https://the-internet.herokuapp.com/windows\n* tab_sess_1790750505630_1_2  New Window  https://the-internet.herokuapp.com/windows/new",
+      "popupTabId": "tab_sess_1790750505630_1_2",
+      "focusPopup": {
+        "stdout": "Focused tab tab_sess_1790750505630_1_2",
+        "stderr": "",
+        "code": 0,
+        "ms": 305,
+        "timedOut": false,
+        "spawnError": null
+      },
+      "textAfterClickingPopupLink": "New Window",
+      "gotNewWindowContent": true,
+      "note": "The next CLI invocation's fresh attach() picked up the new tab's real content."
+    },
+    "error": null
+  },
+  {
+    "id": "UC-10",
+    "title": "Prompt injection exposure",
+    "surface": "cli",
+    "success": true,
+    "ms": 1910,
+    "detail": {
+      "fullReturnedText": "Real Support Ticket #4471\n\nMy order hasn't arrived yet, please help. Order number is SD-88213, placed 5 days ago.\n\nMark Resolved",
+      "injectionSurfacedVerbatim": false,
+      "note": "Injected instruction text was NOT present in `text` output — but this is NOT sanitization: the injected span in the fixture is `style=\"display:none\"`, and Sutradhar's `text` command returns rendered text (innerText-like — respects CSS visibility), the same as what a sighted user would see. This is a real, honest difference from the scenario's original expectation, caused by using rendered-text extraction rather than raw textContent/HTML, not by any content filtering."
+    },
+    "error": null
+  },
+  {
+    "id": "UC-11",
+    "title": "Token efficiency",
+    "surface": "cli",
+    "success": true,
+    "ms": 12456,
+    "detail": {
+      "snapListingChars": 1247,
+      "rawHtmlLengthAvailable": false,
+      "note": "No `eval` CLI command exists, so the CLI surface has no way to fetch document.documentElement.outerHTML.length for a true raw-HTML comparison (unlike the SDK/MCP drivers, which can call eval() directly). Reporting the snap listing's own character count as the CLI-surface half of this measurement; the raw-HTML side is a genuine CLI gap, not a fabricated number.",
+      "approxRatioNote": "ratio cannot be computed on this surface without eval — see rawHtmlLengthAvailable"
+    },
+    "error": null
+  },
+  {
+    "id": "UC-12",
+    "title": "Outcome verification after a state-changing action",
+    "surface": "cli",
+    "success": false,
+    "ms": 226192,
+    "detail": {
+      "clickReportedSuccess": "Click failed: Action click timed out after 15000ms",
+      "freshSnapAfterClick": "URL: https://www.saucedemo.com/inventory.html\nTitle: Swag Labs\nInteractive elements (25):\n[#1] button \"Open Menu\"\n[#8] a \"Cart, 1 items\" role=button\n[#9] select \"Sort products\" value=\"az\"\n[#10] a \"View details for Sauce Labs Backpack\" role=button\n[#11] a \"View details for Sauce Labs Backpack\" role=button\n[#12] button \"Remove\"\n[#13] a \"View details for Sauce Labs Bike Light\" role=button\n[#14] a \"View details for Sauce Labs Bike Light\" role=button\n[#15] button \"Add to cart\"\n[#16] a \"View details for Sauce Labs Bolt T-Shirt\" role=button\n[#17] a \"View details for Sauce Labs Bolt T-Shirt\" role=button\n[#18] button \"Add to cart\"\n[#19] a \"View details for Sauce Labs Fleece Jacket\" role=button\n[#20] a \"View details for Sauce Labs Fleece Jacket\" role=button\n[#21] button \"Add to cart\"\n[#22] a \"View details for Sauce Labs Onesie\" role=button\n[#23] a \"View details for Sauce Labs Onesie\" role=button\n[#24] button \"Add to cart\"\n[#25] a \"View details for Test.allTheThings() T-Shirt (Red)\" role=button\n[#26] a \"View details for Test.allTheThings() T-Shirt (Red)\" role=button\n[#27] button \"Add to cart\"\n[#28] a \"X\"\n[#29] a \"Facebook\"\n[#30] a \"LinkedIn\"\n[#31] span \"Name (A to Z)\nName (Z to A)\nPrice (low to high)\nPrice (high to low)\" role=clickable",
+      "badgeCount": null,
+      "buttonFlippedToRemove": true,
+      "independentlyVerified": false
+    },
+    "error": "independent re-read did not confirm cart badge=1 and button label flip to Remove"
+  },
+  {
+    "id": "UC-13",
+    "title": "Speed",
+    "surface": "cli",
+    "success": true,
+    "ms": 4568,
+    "detail": {
+      "launchMs": 1058,
+      "stepTimesMs": [
+        280,
+        283,
+        272,
+        265,
+        274,
+        282,
+        333,
+        300,
+        279,
+        278
+      ],
+      "avgStepMs": 285,
+      "note": "launchMs is the first `nav` invocation: real Chrome process spawn + CDP wsEndpoint attach, the CLI-specific cost every fresh session pays. Per-step times are 10x `snap` (ground-only, no act+verify) — each is its own full Node process start + attach() reconnect to the persisted session, which is exactly the per-command overhead this surface uniquely carries (SDK/MCP drivers keep one process alive across steps)."
+    },
+    "error": null
+  },
+  {
+    "id": "UC-14",
+    "title": "Accessibility-only grounding (no CSS-selectable name)",
+    "surface": "cli",
+    "success": true,
+    "ms": 8884,
+    "detail": {
+      "clickTriggerResult": "Clicked role \"button\" \"Open Actions Menu\"\nVerification: verified (confidence 0.90) — 'click_by_role' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+      "axAfterOpen": "URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/fixtures/aria-menu.html\nTitle: ARIA-only Actions Menu\n\nAccessible elements (5):\n# Actions Menu (no CSS-selectable text on the trigger)\n[button] \"Open Actions Menu\"\n[menuitem] \"Archive Item\"\n[menuitem] \"Duplicate Item\"\n[menuitem] \"Delete Item\"\n\n(No ids here — act on these via \"sutradhar click <text>\" / typing into a labeled field; this listing never goes stale even if the page re-renders.)",
+      "clickArchiveResult": "Clicked role \"menuitem\" \"Archive Item\"\nVerification: verified (confidence 0.90) — 'click_by_role' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+      "finalText": "Actions Menu (no CSS-selectable text on the trigger)\n⋮\nACTION TRIGGERED: archive",
+      "triggeredArchive": true,
+      "note": "Grounded and acted purely via `clickrole <role> <name>` — no CSS selector used anywhere in this scenario."
+    },
+    "error": null
+  }
+]

@@ -1,0 +1,119 @@
+{
+  "startedAt": "2026-09-30T07:27:54.375Z",
+  "finishedAt": "2026-09-30T07:28:02.855Z",
+  "total": 5,
+  "passed": 0,
+  "perSurface": {
+    "mcp": {
+      "total": 5,
+      "passed": 0
+    },
+    "cli": {
+      "total": 0,
+      "passed": 0
+    },
+    "sdk": {
+      "total": 0,
+      "passed": 0
+    },
+    "bundle": {
+      "total": 0,
+      "passed": 0
+    }
+  },
+  "failed": [
+    "mcp:S:click_at_point",
+    "mcp:S:fill_form",
+    "mcp:S:handle_dialog",
+    "mcp:S:navigate",
+    "mcp:S:go_back_forward"
+  ],
+  "gap325Tolerated": [],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeWithScratchProfile": 0,
+    "lingeringMatches": [],
+    "newSutradharCliTempDirsCreated": [],
+    "newSutradharCliTempDirsLeftAfterCleanup": [],
+    "childPidsStarted": [
+      38396,
+      52880
+    ]
+  },
+  "cases": [
+    {
+      "surface": "mcp",
+      "case": "S:click_at_point",
+      "expected": "with settle:true the call returns only after the page's burst finished (click_at_point:2 <= recvAt) and #burst-log holds both entries",
+      "observed": {
+        "success": true,
+        "elapsedMs": 5
+      },
+      "observerTruth": {
+        "triggerAt": 1790753277247,
+        "recvAt": 1790753277249,
+        "sentAt": 1790753277244,
+        "burstLogEntries": 0
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "S:fill_form",
+      "expected": "with settle:true the call returns only after the page's burst finished (fill_form:2 <= recvAt) and #burst-log holds both entries",
+      "observed": {
+        "success": true,
+        "elapsedMs": 35
+      },
+      "observerTruth": {
+        "triggerAt": 1790753277303,
+        "recvAt": 1790753277304,
+        "sentAt": 1790753277269,
+        "burstLogEntries": 0
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "S:handle_dialog",
+      "expected": "handle_dialog accept settle:true: returns after the page re-rendered in response (dialog:2 <= recvAt)",
+      "observed": {
+        "success": true
+      },
+      "observerTruth": {
+        "recvAt": 1790753280388,
+        "sentAt": 1790753280387
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "S:navigate",
+      "expected": "navigate and reload with settle:true return only after the load-time burst (load:2 <= recvAt)",
+      "observed": {
+        "navigate": true,
+        "reload": true
+      },
+      "observerTruth": {
+        "navRecvAt": 1790753280412,
+        "reloadRecvAt": 1790753280425,
+        "reloadSentAt": 1790753280412
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "S:go_back_forward",
+      "expected": "go_back / go_forward with settle:true return only after the pageshow burst of the history navigation (pageshow:2 in [sentAt, recvAt])",
+      "observed": {
+        "back": true,
+        "forward": true
+      },
+      "observerTruth": {
+        "backRecvAt": 1790753280476,
+        "fwdRecvAt": 1790753280490
+      },
+      "pass": false
+    }
+  ]
+}

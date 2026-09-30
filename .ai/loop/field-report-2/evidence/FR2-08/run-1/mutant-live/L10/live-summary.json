@@ -1,0 +1,57 @@
+{
+  "startedAt": "2026-09-30T07:28:05.811Z",
+  "finishedAt": "2026-09-30T07:28:08.649Z",
+  "total": 1,
+  "passed": 0,
+  "perSurface": {
+    "mcp": {
+      "total": 1,
+      "passed": 0
+    },
+    "cli": {
+      "total": 0,
+      "passed": 0
+    },
+    "sdk": {
+      "total": 0,
+      "passed": 0
+    },
+    "bundle": {
+      "total": 0,
+      "passed": 0
+    }
+  },
+  "failed": [
+    "mcp:S:hover"
+  ],
+  "gap325Tolerated": [],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeWithScratchProfile": 0,
+    "lingeringMatches": [],
+    "newSutradharCliTempDirsCreated": [],
+    "newSutradharCliTempDirsLeftAfterCleanup": [],
+    "childPidsStarted": [
+      32476,
+      37632
+    ]
+  },
+  "cases": [
+    {
+      "surface": "mcp",
+      "case": "S:hover",
+      "expected": "with settle:true the call returns only after the page's burst finished (hover:2 <= recvAt) and #burst-log holds both entries",
+      "observed": {
+        "success": true,
+        "elapsedMs": 114
+      },
+      "observerTruth": {
+        "triggerAt": 1790753286549,
+        "recvAt": 1790753286549,
+        "sentAt": 1790753286435,
+        "burstLogEntries": 0
+      },
+      "pass": false
+    }
+  ]
+}

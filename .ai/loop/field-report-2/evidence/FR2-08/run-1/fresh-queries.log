@@ -1,0 +1,43 @@
+$ grep -rn "visibleTextContainsInPage\|probeVisibleText" packages/*/src --include=*.ts | grep -v "^packages/browser/src/verifier/execution-verifier.ts.*\*"
+packages/browser/src/actions/condition-wait.ts:23:import { probeVisibleText, type VisibleTextPage } from '../verifier/execution-verifier.js';
+packages/browser/src/actions/condition-wait.ts:349:        const r = await probeVisibleText(page, needle, Math.min(EXPECT_TEXT_TIMEOUT_MS, passRemaining()));
+packages/browser/src/verifier/execution-verifier.ts:162:export function visibleTextContainsInPage(t: string): boolean {
+packages/browser/src/verifier/execution-verifier.ts:393:export async function probeVisibleText(
+packages/browser/src/verifier/execution-verifier.ts:414:          return (await f.evaluate(visibleTextContainsInPage, text)) ? 'found' : 'absent';
+packages/browser/src/verifier/execution-verifier.ts:480:  return probeVisibleText(page, text, EXPECT_TEXT_TIMEOUT_MS);
+
+$ git log --oneline 75b29c6..HEAD
+0a3e467 FR2-08 step 7c: hung-frame live cases establish their premise (observer-confirmed hung frame) before measuring
+6ba6dfd FR2-08 step 7b: baseline mode records the no-settle control click alongside the pre-change settle+dialog hang
+792bd9c FR2-08 step 8: docs: AGENT_SETUP 'Waiting: wait on conditions, never sleep', READMEs (MCP/CLI/SDK), changelog [Unreleased]
+10d4e20 FR2-08 step 7: live-verify harness (MCP/CLI/SDK/bundle, generated matrix vs independent observer, settle sweep, negatives, T5 baseline), fixtures, GAP-002 run-cli waitfor conversion, CLI validates waitfor conditions before opening a session
+813fd3c FR2-08 step 6: SDK Page.waitFor and settle on goto/press/scroll/download/uploadFile
+dcb1900 FR2-08 step 5: CLI waitfor verb (--text/--text-gone/--url/--js), condition flags rejected on other verbs, --settle on 11 more verbs, help text
+6ed0d04 FR2-08 step 4: MCP browser.wait_for + settle on the 22 remaining interacting/navigating tools, wait_for error hints (ahead of the FR2-01 'is still visible' hint), classification guard test
+236b774 FR2-08 step 3: runtime waitFor (Node-side condition wait, FR2-07 verification contract) and trailing settle on the 21 remaining interaction/navigation methods
+2339db5 FR2-08 step 2: probeVisibleText extracted from FR2-07 (one visible-text definition) + condition-wait.ts (Node-side polling wait_for core) with unit and generated-matrix tests
+cfdd7c6 FR2-08 step 1: extract settle into page-settle.ts with a Node-side hard bound (fixes T5: settle + open dialog no longer blocks to the 30 s auto-dismiss)
+f995db4 FR2-08: record decision to start on FR2-07 PARTIAL
+
+$ python: live-3 summary (re-read from disk now)
+total 478 passed 478 failed []
+perSurface {'mcp': {'total': 327, 'passed': 327}, 'cli': {'total': 23, 'passed': 23}, 'sdk': {'total': 10, 'passed': 10}, 'bundle': {'total': 118, 'passed': 118}}
+gap325Tolerated []
+hygiene {'lingeringChromeWithScratchProfile': 0, 'lingeringMatches': [], 'newSutradharCliTempDirsCreated': ['sutradhar-cli-1790752955915'], 'newSutradharCliTempDirsLeftAfterCleanup': []} childPids 52
+('mcp', 'L1') True {"success": true, "polls": 20, "latencyMs": 81, "satisfiedAfterMs": 2074, "tier": "verified", "sentBeforeToast": true}
+('mcp', 'L1b') True {"clickReturnedBeforeToast": true, "waitOk": true, "latencyMs": 33}
+('mcp', 'N1') True {"success": false, "error": "wait_for timed out after 1500ms waiting for text=\"Never appears\": text \"Never appears\" was not found in the visible text of 1 frame(s).\nHint: The condition never became true. Inspect the page (bro
+('mcp', 'N10') True {"error": "wait_for blocked by an open alert dialog (\"fr2-08\") after 1637ms — handle it (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then wait again.\nHint: Handle the dialog with browser.handle_dialog, then 
+('mcp', 'N12') True {"polls": 1, "presentAtStart": false, "tier": "unverifiable"}
+('mcp', 'N18') True {"elapsedMs": 5555, "noSettleControlMs": 3065, "settleOverheadMs": 2490, "success": true, "dialogPending": "alert"}
+('cli', 'C-L1') True {"early": "pending", "code": 0, "stdout": "Condition met after 4265ms: text=\"Saved successfully\"\nVerification: verified (confidence 0.90) — 'wait_for' verified: text=\"Saved successfully\" held on one poll after 4265ms", "stder
+('cli', 'N-C3') True {"code": 1, "stderr": "Error: --text is only valid with \"waitfor\" (did you mean --expect-text?)"}
+('sdk', 'SDK-L1-background') True {"success": true, "latencyMs": 64, "visibilityState": "hidden"}
+('bundle', 'L1') True {"success": true, "polls": 20, "latencyMs": 66, "satisfiedAfterMs": 2064, "tier": "verified", "sentBeforeToast": true}
+info: [('B-RAF', 'rejected: Waiting failed: 10000ms exceeded', None), ('B-INT', 'resolved', 32), ('B-CSP', 'resolved', None)]
+
+$ mutation results re-read from disk
+mutation-unit.json caught 23 of 23 sources identical after: True
+mutation-unit-U4b.json caught 1 of 1 sources identical after: True
+mutation-live.json caught 8 of 8 sources identical after: True
+mutation-live-2.json caught 2 of 2 sources identical after: True
