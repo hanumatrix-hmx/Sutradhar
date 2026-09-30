@@ -1114,9 +1114,20 @@ async function runBaseline(ctx) {
   await mcp.call('initialize', { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'fr2-08-baseline', version: '1.0' } });
   mcp.notify('notifications/initialized');
   const sessionId = jsonOf(await mcp.callTool('browser.attach', { endpoint: observer.wsEndpoint() })).sessionId;
+  // control: the same click with NO settle on this build, to learn how long the click itself takes when it opens a dialog
+  const urlC = server.url('/conditions.html', { case: 'settle' });
+  await mcp.callTool('browser.navigate', { sessionId, url: urlC });
+  const pageC = await pageFor(observer, urlC);
+  await loaded(pageC);
+  const c0 = Date.now();
+  await mcp.callTool('browser.click', { sessionId, target: '#s-alert' }, 60000).catch(() => {});
+  const controlMs = Date.now() - c0;
+  await mcp.callTool('browser.handle_dialog', { sessionId, action: 'accept' }).catch(() => {});
+  baselineRows.push({ case: 'N18-baseline-control-no-settle', root: ROOT, elapsedMs: controlMs });
+  console.log(`[baseline] control (no settle): ${controlMs}ms`);
   const url = server.url('/conditions.html', { case: 'settle' });
   await mcp.callTool('browser.navigate', { sessionId, url });
-  const page = await pageFor(observer, `${server.origin}/conditions.html`);
+  const page = await pageFor(observer, url);
   await loaded(page);
   const sentAt = Date.now();
   let outcome;
