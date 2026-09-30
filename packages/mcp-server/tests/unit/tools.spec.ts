@@ -109,6 +109,7 @@ const EXPECTED_BROWSER_TOOLS = [
   'browser.lock_tab',
   'browser.unlock_tab',
   'browser.get_tab_lock',
+  'browser.wait_for',
 ];
 
 describe('@sutradhar/mcp-server registerTools', () => {
@@ -1344,5 +1345,227 @@ describe('FR2-07: the expect option and the verification contract on MCP results
     const res = await tools.get('browser.click')!.handler({ sessionId: 's1', target: '#a', expect: { urlChanged: 'yes' } });
     expect(res.isError).toBe(true);
     expect(res.content[0].text).toContain('expect.urlChanged must be a boolean');
+  });
+});
+
+describe('FR2-08 browser.wait_for and settle on every interacting/navigating tool', () => {
+  // The 25 tools that take `settle`: click/type/scroll (already had it) + the 22 newly wired.
+  const SETTLE_TOOLS = [
+    'browser.click', 'browser.type', 'browser.scroll',
+    'browser.navigate', 'browser.go_back', 'browser.go_forward', 'browser.reload',
+    'browser.click_at_point', 'browser.drag_at_points',
+    'browser.press_key', 'browser.focus', 'browser.hover', 'browser.select_option', 'browser.select_options',
+    'browser.click_by_text', 'browser.click_by_role', 'browser.type_by_label', 'browser.fill_form',
+    'browser.upload_file', 'browser.right_click', 'browser.drag_and_drop', 'browser.touch_tap', 'browser.download_file',
+    'browser.upload_file_via_trigger', 'browser.handle_dialog',
+  ];
+  // Every other registered tool, each with the reason it is excluded (spec section 2.6). A NEW tool must be
+  // classified in one of the two lists, or the completeness assertion below fails.
+  const NO_SETTLE_TOOLS = [
+    // waits: settling after a wait is meaningless
+    'browser.wait_for_selector', 'browser.wait_for',
+    // reads
+    'browser.snapshot', 'browser.ax_snapshot', 'browser.screenshot', 'browser.export_pdf', 'browser.extract_data',
+    'browser.audit', 'browser.eval', 'browser.get_cookies', 'browser.get_local_storage', 'browser.get_session_storage',
+    'browser.get_storage_state', 'browser.get_viewport', 'browser.get_clipboard', 'browser.get_pending_dialog',
+    'browser.get_console_logs', 'browser.get_page_errors', 'browser.get_network_log', 'browser.get_action_history',
+    'browser.get_tab_lock', 'browser.list_tabs',
+    // environment / configuration
+    'browser.set_cookie', 'browser.delete_cookie', 'browser.set_local_storage_item', 'browser.clear_local_storage',
+    'browser.set_session_storage_item', 'browser.clear_session_storage', 'browser.set_storage_state',
+    'browser.set_geolocation', 'browser.grant_permissions', 'browser.set_viewport', 'browser.emulate',
+    'browser.set_network_conditions', 'browser.set_clipboard', 'browser.route', 'browser.clear_routes',
+    // lifecycle / tabs
+    'browser.health', 'browser.launch', 'browser.attach', 'browser.shutdown', 'browser.shutdown_all',
+    'browser.new_tab', 'browser.focus_tab', 'browser.close_tab', 'browser.lock_tab', 'browser.unlock_tab',
+  ];
+
+  it('M1: browser.wait_for is registered', () => {
+    const { server, tools } = createMockServer();
+    registerTools(server, { runtime: new SutradharRuntime() });
+    expect(tools.has('browser.wait_for')).toBe(true);
+    expect(EXPECTED_BROWSER_TOOLS).toContain('browser.wait_for');
+  });
+
+  it('M2: wait_for schema: non-empty strings, timeoutMs an integer 0..300000, every key optional', () => {
+    const { server, tools } = createMockServer();
+    registerTools(server, { runtime: new SutradharRuntime() });
+    const sch = tools.get('browser.wait_for')!.config.inputSchema;
+    for (const k of ['text', 'textGone', 'url', 'js']) {
+      expect(sch[k].safeParse('').success, `${k} rejects ''`).toBe(false);
+      expect(sch[k].safeParse('x').success, `${k} accepts 'x'`).toBe(true);
+      expect(sch[k].safeParse(undefined).success, `${k} optional`).toBe(true);
+    }
+    expect(sch.timeoutMs.safeParse(-1).success).toBe(false);
+    expect(sch.timeoutMs.safeParse(300001).success).toBe(false);
+    expect(sch.timeoutMs.safeParse(1.5).success).toBe(false);
+    expect(sch.timeoutMs.safeParse(0).success).toBe(true);
+    expect(sch.timeoutMs.safeParse(300000).success).toBe(true);
+    expect(sch.tabId.safeParse(undefined).success).toBe(true);
+    expect('expect' in sch).toBe(false); // its conditions ARE the assertion
+    expect('settle' in sch).toBe(false);
+  });
+
+  it('M3: the handler forwards only the given keys (no undefined keys) and tabId only when given', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const spy = vi.spyOn(runtime, 'waitFor').mockResolvedValue({ success: true, actionType: 'wait_for', executionTimeMs: 1 });
+    registerTools(server, { runtime });
+    await tools.get('browser.wait_for')!.handler({ sessionId: 's1', text: 'Saved', timeoutMs: 5000 });
+    expect(spy.mock.calls[0]).toHaveLength(2);
+    expect(spy.mock.calls[0]![1]).toStrictEqual({ text: 'Saved', timeoutMs: 5000 });
+    await tools.get('browser.wait_for')!.handler({ sessionId: 's1', url: '/x', tabId: 't9', text: undefined, js: undefined });
+    expect(spy.mock.calls[1]).toHaveLength(3);
+    expect(spy.mock.calls[1]![1]).toStrictEqual({ url: '/x' });
+    expect(spy.mock.calls[1]![2]).toBe('t9');
+  });
+
+  it('M4: no condition keys -> the runtime TypeError -> isError:true "give at least one" (browser never touched)', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const resolve = vi.spyOn(runtime as any, 'resolveTab');
+    registerTools(server, { runtime });
+    const r = await tools.get('browser.wait_for')!.handler({ sessionId: 's1' });
+    expect(r.isError).toBe(true);
+    expect(r.content[0].text).toContain('give at least one');
+    expect(resolve).not.toHaveBeenCalled();
+    const both = await tools.get('browser.wait_for')!.handler({ sessionId: 's1', text: 'X', textGone: 'X' });
+    expect(both.isError).toBe(true);
+    expect(both.content[0].text).toContain('can never be satisfied');
+  });
+
+  it('M5: wait_for failures get their OWN hints, not the generic "page may still be loading" and not the FR2-01 "element is still visible" one', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const spy = vi.spyOn(runtime, 'waitFor');
+    registerTools(server, { runtime });
+    const call = async (error: string) => {
+      spy.mockResolvedValueOnce({ success: false, actionType: 'wait_for', executionTimeMs: 1, error });
+      return JSON.parse((await tools.get('browser.wait_for')!.handler({ sessionId: 's1', text: 'x' })).content[0].text).error as string;
+    };
+    const timedOut = await call('wait_for timed out after 1500ms waiting for text="x": text "x" was not found in the visible text of 1 frame(s).');
+    expect(timedOut).toContain('Hint: The condition never became true');
+    expect(timedOut).toContain('browser.snapshot');
+    expect(timedOut).not.toContain('page may still be loading');
+    // the textGone timeout message contains FR2-01's 'is still visible' fragment: it must NOT get that hint
+    const goneStill = await call('wait_for timed out after 1500ms waiting for textGone="Loading": textGone "Loading" is still visible.');
+    expect(goneStill).toContain('Hint: The condition never became true');
+    expect(goneStill).not.toContain('The element is still visible');
+    const threw = await call('wait_for failed: js condition threw after 3ms: Evaluation failed: TypeError: Cannot read properties of undefined');
+    expect(threw).toContain('Hint: Guard the expression');
+    expect(threw).toContain('?.');
+    const dialog = await call('wait_for blocked by an open alert dialog ("hi") after 1003ms — handle it (browser.handle_dialog).');
+    expect(dialog).toContain('Hint: Handle the dialog with browser.handle_dialog, then call browser.wait_for again.');
+    // wait_for_selector's own hints are untouched
+    spy.mockRestore();
+    const ws = vi.spyOn(runtime, 'waitForSelector').mockResolvedValue({ success: false, actionType: 'wait_for_selector', executionTimeMs: 1, error: 'wait_for_selector timed out after 500ms' });
+    const sel = JSON.parse((await tools.get('browser.wait_for_selector')!.handler({ sessionId: 's1', target: '#t' })).content[0].text).error as string;
+    expect(sel).toContain('page may still be loading');
+    expect(ws).toHaveBeenCalled();
+  });
+
+  it('M6: classification guard: every registered tool is in exactly one list, and `settle` is in the schema iff it is a settle tool', () => {
+    const { server, tools } = createMockServer();
+    registerTools(server, { runtime: new SutradharRuntime() });
+    expect(SETTLE_TOOLS).toHaveLength(25);
+    expect(new Set(SETTLE_TOOLS).size).toBe(SETTLE_TOOLS.length);
+    expect(new Set(NO_SETTLE_TOOLS).size).toBe(NO_SETTLE_TOOLS.length);
+    for (const n of SETTLE_TOOLS) expect(NO_SETTLE_TOOLS, n).not.toContain(n);
+    const classified = [...SETTLE_TOOLS, ...NO_SETTLE_TOOLS].sort();
+    expect(classified).toEqual([...tools.keys()].sort());
+    for (const [name, t] of tools) {
+      const has = !!t.config.inputSchema && 'settle' in t.config.inputSchema;
+      expect(has, `${name}: settle in schema`).toBe(SETTLE_TOOLS.includes(name));
+    }
+  });
+
+  // [tool, runtime method, minimal handler args, positional args the runtime got BEFORE FR2-08 (no expect, no settle)]
+  const WIRED: Array<[string, string, Record<string, unknown>, number]> = [
+    ['browser.navigate', 'navigate', { url: 'https://a.test/' }, 3],
+    ['browser.go_back', 'goBack', {}, 2],
+    ['browser.go_forward', 'goForward', {}, 2],
+    ['browser.reload', 'reload', {}, 2],
+    ['browser.click_at_point', 'clickAtPoint', { x: 1, y: 2 }, 5],
+    ['browser.drag_at_points', 'dragAtPoints', { fromX: 1, fromY: 2, toX: 3, toY: 4 }, 6],
+    ['browser.press_key', 'pressKey', { key: 'a' }, 4],
+    ['browser.focus', 'focus', { target: '#a' }, 3],
+    ['browser.hover', 'hover', { target: '#a' }, 4],
+    ['browser.select_option', 'selectOption', { target: '#a', value: 'v' }, 4],
+    ['browser.select_options', 'selectOptions', { target: '#a', values: ['v'] }, 4],
+    ['browser.click_by_text', 'clickByText', { text: 'Go' }, 3],
+    ['browser.click_by_role', 'clickByRole', { role: 'button' }, 4],
+    ['browser.type_by_label', 'typeByLabel', { label: 'L', value: 'v' }, 4],
+    ['browser.fill_form', 'fillForm', { fields: { a: '1' } }, 3],
+    ['browser.upload_file', 'uploadFile', { target: '#a', filePath: '/x' }, 4],
+    ['browser.right_click', 'clickWithButton', { target: '#a' }, 4],
+    ['browser.drag_and_drop', 'dragAndDrop', { sourceTarget: '#a', destTarget: '#b' }, 4],
+    ['browser.touch_tap', 'touchTap', { target: '#a' }, 3],
+    ['browser.download_file', 'downloadFile', { target: '#a' }, 4],
+    ['browser.upload_file_via_trigger', 'uploadFileViaTrigger', { target: '#a', filePath: '/x' }, 4],
+    ['browser.handle_dialog', 'handleDialog', { action: 'accept' }, 4],
+  ];
+
+  it('M7: arity: each newly wired handler passes EXACTLY its pre-FR2-08 argument count without settle, and settle LAST when given', async () => {
+    expect(WIRED).toHaveLength(22);
+    for (const [tool, method, args, pre] of WIRED) {
+      const { server, tools } = createMockServer();
+      const runtime = new SutradharRuntime();
+      const spy = vi.spyOn(runtime as any, method).mockResolvedValue({ success: true, actionType: 'x', executionTimeMs: 1, tabId: 't', url: 'u', title: 't' });
+      registerTools(server, { runtime });
+      const h = tools.get(tool)!.handler;
+      const hasExpect = !!tools.get(tool)!.config.inputSchema.expect;
+      await h({ sessionId: 's1', ...args });
+      expect(spy.mock.calls[0], `${tool} without settle`).toHaveLength(pre);
+      await h({ sessionId: 's1', ...args, settle: true });
+      const withSettle = spy.mock.calls[1]!;
+      expect(withSettle[withSettle.length - 1], `${tool}: settle is the last argument`).toBe(true);
+      expect(withSettle, `${tool}: length with settle`).toHaveLength(pre + (hasExpect ? 2 : 1));
+      // a settle SPEC object is forwarded as-is
+      await h({ sessionId: 's1', ...args, settle: { timeoutMs: 1234 } });
+      expect(spy.mock.calls[2]![spy.mock.calls[2]!.length - 1]).toEqual({ timeoutMs: 1234 });
+      if (hasExpect) {
+        await h({ sessionId: 's1', ...args, expect: { text: 'x' }, settle: true });
+        const both = spy.mock.calls[3]!;
+        expect(both[both.length - 2]).toEqual({ text: 'x' });
+        expect(both[both.length - 1]).toBe(true);
+        await h({ sessionId: 's1', ...args, expect: { text: 'x' } });
+        expect(spy.mock.calls[4], `${tool}: expect only`).toHaveLength(pre + 1);
+      }
+    }
+  });
+
+  it('M7b: the three tools that already had settle keep their exact arities', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const click = vi.spyOn(runtime, 'click').mockResolvedValue({ success: true, actionType: 'click', executionTimeMs: 1 });
+    const type = vi.spyOn(runtime, 'type').mockResolvedValue({ success: true, actionType: 'type', executionTimeMs: 1 });
+    registerTools(server, { runtime });
+    await tools.get('browser.click')!.handler({ sessionId: 's1', target: '#a' });
+    expect(click.mock.calls[0]).toHaveLength(6);
+    await tools.get('browser.type')!.handler({ sessionId: 's1', target: '#a', value: 'v' });
+    expect(type.mock.calls[0]).toHaveLength(5);
+  });
+
+  it('M8: the wait_for description states the semantics, the limits, and how it differs from settle/expect/wait_for_selector', () => {
+    const { server, tools } = createMockServer();
+    registerTools(server, { runtime: new SutradharRuntime() });
+    const d: string = tools.get('browser.wait_for')!.config.description;
+    for (const needle of [
+      'visible', 'ALL', 'EXPRESSION', 'side-effect free', 'background tabs', 'wait_for_selector', 'settle', 'expect',
+      'RENDERED', 'never-painted SVG', 'inline-block', '<textarea>', 'never read as "gone"', 'presentAtStart', 'no hidden retries',
+    ]) {
+      expect(d, needle).toContain(needle);
+    }
+  });
+
+  it('M9: settleDesc ends with the browser.wait_for pointer, on every settle tool', () => {
+    const { server, tools } = createMockServer();
+    registerTools(server, { runtime: new SutradharRuntime() });
+    for (const name of SETTLE_TOOLS) {
+      const d: string = tools.get(name)!.config.inputSchema.settle.description;
+      expect(d.endsWith('to wait for a specific result, use browser.wait_for.'), name).toBe(true);
+    }
+    const dlg: string = tools.get('browser.handle_dialog')!.config.description;
+    expect(dlg).toContain('Pass settle:true');
   });
 });
