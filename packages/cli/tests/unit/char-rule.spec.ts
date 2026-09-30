@@ -78,6 +78,11 @@ describe('FR2-11 fix-2 CLI ISOLATED cells (one rule each)', () => {
     expect(any('clicktext', `user:${S}@host/`)).not.toContain(S);
     expect(redactCliArgs('clicktext', [`user:${S}@host/`])).toEqual(['host/']);
   });
+  it('rule (c): a password that itself contains `@` (strip up to the LAST `@`)', () => {
+    expect(any('clicktext', `user:x@${S}@host/`)).not.toContain(S);
+    expect(any('nav', `https://u:x@${S}@host.test/p`)).not.toContain(S);
+    expect(any('clicktext', `https://u@a@${S}@host.test/p`)).not.toContain(S);
+  });
   it('decoding: `%23S` as an argument', () => {
     expect(any('clicktext', `%23${S}`)).not.toContain(S);
     expect(any('clicktext', `x%253F${S}`)).not.toContain(S);

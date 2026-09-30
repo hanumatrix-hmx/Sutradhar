@@ -148,6 +148,14 @@ describe('FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the na
     expect(redactHistoryText(`https://user:${S}@host.test/p`)).toBe('https://host.test/p');
     gone(`${S}@host/`);
   });
+  it('rule (c) strips up to the LAST `@` of the authority: a password that itself contains `@` (audit-2 mutant B1 survived without this cell)', () => {
+    gone(`https://u:x@${S}@host.test/p`);
+    gone(`https://u@a@${S}@host.test/p`); // three @: the strip runs twice, so only the LAST-@ rule removes the secret here
+    expect(redactHistoryText(`https://u:x@${S}@host.test/p`)).toBe('https://host.test/p');
+    gone(`user:x@${S}@host/`);
+    expect(redactHistoryText(`user:x@${S}@host/`)).toBe('host/');
+    gone(`//u:x@${S}@host/p`);
+  });
   it('decoding: `%23S`, `%3FS`, `%3BS` and the double-encoded forms', () => {
     gone(`http://h.test/p%23${S}`);
     gone(`http://h.test/p%3F${S}`);
@@ -157,6 +165,22 @@ describe('FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the na
     gone(`http://h.test/p\\u0023${S}`);
     gone(`http://h.test/p\uff03${S}`);
     gone(`%23${S}`, 'entry');
+  });
+  it('a path in front of a scheme:// keeps no directory: only the no-separator-before-the-scheme test protects it', () => {
+    gone(`/home/${S}/https://x.test/p`);
+    gone(`C:/Users/${S}/http://x.test/p`);
+    expect(redactHistoryText(`/home/${S}/https://x.test/p`)).toBe('<dir>');
+  });
+  it('a lone `#` (no identifier after it) drops the text after it: `# S` may be a fragment typed with a space', () => {
+    gone(`# ${S}`);
+    gone(`x #\t${S}`);
+    gone(`#a;b ${S}`); // a `#` token that also holds a `;` (or `?`, `=`, `)`) is not a bare element id
+    gone(`#x) ${S}`);
+    expect(redactHistoryText(`# ${S}`)).toBe(P);
+  });
+  it('a bare #id does not drop the text after it (over-redaction bound), while a ? does', () => {
+    expect(redactHistoryText('No element #btn found after 5s')).toBe('No element [redacted] found after 5s');
+    expect(redactHistoryText('x? y z')).toBe('x[redacted]');
   });
   it('the path rule: a path segment is the ONLY thing that protects a canary in a directory', () => {
     for (const t of [`/home/${S}/f.txt`, `C:\\Users\\${S}\\f.txt`, `c:/Users/${S}/f.txt`, `\\\\srv\\share\\${S}\\f.txt`, `//srv/share/${S}/f.txt`, `~/${S}/f.txt`, `..\\${S}\\f.txt`]) {
@@ -202,6 +226,12 @@ describe('FR2-11 fix-2 selectors keep their shape; everything else in free text 
     for (const s of [`https://x.test/p?t=${S}`, `about:blank#${S}`, `com.example.app:/cb#access_token=${S}`, `https://x.test/p\t#${S}`, `intranet:8080/p#${S}`, `a=1&token=my ${S}`]) {
       expect(sel(s)).not.toContain(S);
     }
+  });
+  it('a `#` with no identifier after it is a fragment even with no URL-shaped text around it (found by a 720,000-string fuzz run)', () => {
+    const S = 'CNRYsel3X';
+    for (const s of [`bücher.example#\t${S}`, `localhost# ${S} tail`, `(пример.рф#\t${S})`]) expect(sel(s)).not.toContain(S);
+    expect(sel('#bump')).toBe('#bump');
+    expect(sel('ul li #k')).toBe('ul li #k');
   });
   it('free text (error, reason) does NOT get the selector leniency: `#S` is redacted there', () => {
     const S = 'CNRYsel2X';

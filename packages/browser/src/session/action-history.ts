@@ -150,6 +150,10 @@ const URLISH = /[/\\@%]|:[0-9/]|:$|^[^A-Za-z0-9]*(?:about|chrome|chrome-error|ed
 /** Selector mode: a `#` after any of these inside ITS OWN token is a fragment (`about:blank#S`, `host/p#S`), not `tag#id`. */
 const TOKEN_URLISH = /[/\\@%:]/;
 const DIR_PLACEHOLDER = '<dir>';
+/** A character that can follow the `#` of an element id (letters, digits, `_`, `-`, an escape, any non-ASCII letter). */
+const IDENT_CHAR = /[\w\-\\]|[\u0080-\uffff]/;
+/** A token that is exactly `#` plus identifier characters: a mention of an element id. */
+const BARE_ID = /^#(?:[\w\-\\]|[\u0080-\uffff])+$/;
 const PERCENT_DELIM = /%(3[AFBDafbd]|23|26|2[Ff]|40|5[Cc])/g;
 const JSON_ESC_DELIM = /\\(?:u00|x)(3[AFBDafbd]|23|26|2[Ff]|40|5[Cc])/g;
 
@@ -214,14 +218,16 @@ function redactToken(tok: string, selector: boolean, afterUrlish: boolean): Toke
       cutAt = i;
       break;
     }
-    if (c === '#' && (!selector || afterUrlish || TOKEN_URLISH.test(tok.slice(0, i)))) {
+    // selector mode: a `#` with no identifier character after it (`host#` then a space, `a#)`) is never CSS, so it is a fragment
+    if (c === '#' && (!selector || afterUrlish || TOKEN_URLISH.test(tok.slice(0, i)) || !IDENT_CHAR.test(tok[i + 1] ?? ''))) {
       cutAt = i;
       break;
     }
   }
   let head = cutAt < 0 ? tok : tok.slice(0, cutAt);
-  // a bare `#x` (nothing in front of it) does not drop the following text: it is most often a mention of an element id
-  const swallow = cutAt >= 0 && !(tok[cutAt] === '#' && cutAt === 0);
+  // a bare `#x` (the WHOLE token is `#` plus identifier characters) does not drop the following text: it is most often a mention of an
+  // element id. Anything else that starts with `#` (a lone `#`, `#a;b`, `#a=b`, `#x)`) does: `# S` could be a fragment typed with a space.
+  const swallow = cutAt >= 0 && !(cutAt === 0 && BARE_ID.test(tok));
   head = stripUserinfo(head);
   // (b) `=` / `&` left after the cut: replace the whole token. In selector mode `=` inside `[...]` is CSS attribute syntax.
   const probe = selector ? head.replace(/\[[^\]]*\]?/g, '') : head;

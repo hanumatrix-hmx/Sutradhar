@@ -97,6 +97,7 @@ function pathCase(r, secret) {
     () => `C:%5CUsers%5C${secret}%5C${name}`,
     () => `C:\\Users\\${secret}`,
     () => `/home/${secret}`,
+    () => `/home/${secret}/https://a.test/p`,
   ];
   return r.pick(forms)();
 }
@@ -116,6 +117,9 @@ function otherCase(r, secret) {
     () => `user:${secret}@host`,
     () => `//u:${secret}@host/p`,
     () => `${secret}@host/p`,
+    () => `https://u:x@${secret}@host.test/p`,
+    () => `user:x@${secret}@host/`,
+    () => `https://u@a@${secret}@host.test/p`,
     () => `u:${secret}@[::1]:9/p`,
     () => `%23${secret}`,
     () => `%3F${secret}`,
