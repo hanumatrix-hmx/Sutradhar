@@ -49,9 +49,9 @@ describe('FR2-11 fix-1: redactCliArgs', () => {
     expect(redactCliArgs('dialog', ['accept', 'Ada'])).toEqual(['accept', '<3 chars>']);
   });
   it('F2: a scheme-less URL argument is redacted (the audit-1 repro) and the display origin/path still shows', () => {
-    expect(redactCliArgs('nav', ['127.0.0.1:5123/p?token=CNRYx'])).toEqual(['127.0.0.1:5123/p[redacted]']);
-    expect(redactCliArgs('nav', ['example.com/?token=CNRYx'])).toEqual(['example.com/[redacted]']);
-    expect(redactCliArgs('nav', ['example.com?token=CNRYx'])).toEqual(['example.com[redacted]']);
+    expect(redactCliArgs('nav', ['127.0.0.1:5123/p?token=CNRYx'])).toEqual(['127.0.0.1:5123/p']);
+    expect(redactCliArgs('nav', ['example.com/?token=CNRYx'])).toEqual(['example.com/']);
+    expect(redactCliArgs('nav', ['example.com?token=CNRYx'])).toEqual(['example.com']);
     expect(redactCliArgs('nav', ['http://127.0.0.1:5123/p?q=(a)&token=CNRYx'])).toEqual(['http://127.0.0.1:5123/p']);
     expect(redactCliArgs('click', ['a[href="http://h/p?q=1"]'])[0]).not.toContain('q=1');
   });

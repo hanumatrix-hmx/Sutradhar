@@ -893,6 +893,9 @@ async function runCliCases(surface, cliJs, ctx) {
       const r = await cli(['eval', `throw new Error(${JSON.stringify(c.text)})`]);
       ran.push({ kind: 'eval', c, code: r.code });
     }
+    // the same cells as a plain positional arg of a verb that only stores its args (`focustab <text>` fails: there is no such tab,
+    // but the attempt is recorded): this is the path that goes through redactCliArgs' generic rule and nothing else
+    for (const c of rot) ran.push({ kind: "focustab", c, code: (await cli(["focustab", c.text])).code });
     const navs = ((opts) => urlCases(opts).filter((c) => /^http:\/\//.test(c.text) && c.text.includes(opts.hostPort) && !/^(multi|query-nested)/.test(c.id)))(opts);
     for (const c of navs) ran.push({ kind: 'nav', c, code: (await cli(['nav', c.text])).code });
     // F2: URLs WITHOUT a scheme are stored raw in args by the audited build
@@ -920,7 +923,7 @@ async function runCliCases(surface, cliJs, ctx) {
       await cli(['download', '#dl', dlDir], 90000, { ...env, SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS: dlRoot }),
     ];
     const lines = (await readLines()).slice(before);
-    const expected = 1 + rot.length + navs.length + schemeless.length + 1 + pathRuns.length;
+    const expected = 1 + 2 * rot.length + navs.length + schemeless.length + 1 + pathRuns.length;
     const raw = lines.join('\n');
     const parsed = lines.map((l) => { try { return JSON.parse(l); } catch { return null; } });
     const leaked = findCanaries(raw);
@@ -932,9 +935,16 @@ async function runCliCases(surface, cliJs, ctx) {
       const miss = rot[i].keep.filter((k) => !stored.includes(k));
       if (miss.length) lostEval.push({ cell: rot[i].id, miss, stored });
     });
-    const navLines = parsed.slice(1 + rot.length, 1 + rot.length + navs.length);
+    const focusLines = parsed.slice(1 + rot.length, 1 + 2 * rot.length);
+    const lostFocus = [];
+    focusLines.forEach((l, i) => {
+      const arg = String((l?.args ?? [''])[0]);
+      const miss = rot[i].keep.filter((k) => !arg.includes(k));
+      if (miss.length) lostFocus.push({ cell: rot[i].id, miss, arg });
+    });
+    const navLines = parsed.slice(1 + 2 * rot.length, 1 + 2 * rot.length + navs.length);
     const navLost = navs.filter((c, i) => !String((navLines[i]?.args ?? [''])[0]).includes(c.keep[0])).map((c) => c.id);
-    const slLines = parsed.slice(1 + rot.length + navs.length, 1 + rot.length + navs.length + schemeless.length);
+    const slLines = parsed.slice(1 + 2 * rot.length + navs.length, 1 + 2 * rot.length + navs.length + schemeless.length);
     const slLost = schemeless.filter((c, i) => !String((slLines[i]?.args ?? [''])[0]).includes(c.keep)).map((c) => c.text);
     const human = await cli(['history']);
     const asJson = await cli(['history', '--json']);
@@ -946,6 +956,7 @@ async function runCliCases(surface, cliJs, ctx) {
       T('every new line parses as JSON', parsed.every(Boolean), parsed.filter((x) => !x).length),
       T(`no canary anywhere in the raw history.jsonl bytes of ${rot.length} matrix commands + ${navs.length} navigations + scheme-less + paths`, leaked.length === 0, leaked),
       T('every cell still shows its display origin / path / basename in the stored error (no over-redaction)', lostEval.length === 0, lostEval.slice(0, 3)),
+      T(`a plain positional arg (focustab <text>) of every cell is stored redacted and still shows its origin / path / basename`, lostFocus.length === 0, lostFocus.slice(0, 3)),
       T('nav args keep origin + path', navLost.length === 0, navLost),
       T('F2: scheme-less nav args are redacted and still show host:port/path', slLost.length === 0, slLost),
       T('F3: upload / download lines carry no canary from the directories, and keep the basenames', findCanaries(pathBlob).length === 0 && pathBlob.includes('file.txt'), { leaked: findCanaries(pathBlob), args: pathLines.map((l) => l?.args) }),

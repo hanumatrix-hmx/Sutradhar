@@ -67,6 +67,17 @@ export function urlCases({ origin = 'http://127.0.0.1:5000', hostPort = '127.0.0
   add('query-space', (c) => ({ text: `${P}?q=a b&token=${c}`, keepIn: [P] }));
   add('query-nested-url', (c) => ({ text: `${P}?next=http://other.test/x?t=${c}`, keepIn: [P] }));
   add('query-unicode', (c) => ({ text: `${P}?q=\u4e2d\u6587&token=${c}`, keepIn: [P] }));
+  // query strings WITHOUT a scheme or a dotted host: a relative URL, a single-label intranet host, a bare query, a form body,
+  // and a fully percent-encoded URL (none of them carries a `scheme://`, so a marker-only rule would miss them)
+  add('query-bare', (c) => ({ text: `?token=${c}`, keepIn: [] }));
+  add('query-relative-root', (c) => ({ text: `/p?token=${c}`, keepIn: ['/p'] }));
+  add('query-relative-intranet', (c) => ({ text: `intranet/app?token=${c}`, keepIn: ['intranet/app'] }));
+  add('query-relative-php', (c) => ({ text: `app/index.php?id=1&token=${c}`, keepIn: ['app/index.php'] }));
+  add('query-relative-brackets', (c) => ({ text: `app/x?ids[]=1&q=(a)&token=${c}`, keepIn: ['app/x'] }));
+  add('form-encoded', (c) => ({ text: `a=1&token=${c}`, keepIn: [] }));
+  add('form-encoded-first', (c) => ({ text: `token=${c}&a=1&b=(x)`, keepIn: [] }));
+  add('encoded-url', (c) => ({ text: `http%3A%2F%2F127.0.0.1%3A5000%2Fp%3Ftoken%3D${c}`, keepIn: [] }));
+  add('encoded-url-lower', (c) => ({ text: `https%3a%2f%2fexample.com%2fp%3fx%3d${c}`, keepIn: [] }));
   // fragment
   add('fragment-plain', (c) => ({ text: `${P}#${c}`, keepIn: [P] }));
   add('fragment-route', (c) => ({ text: `${P}#/route?token=${c}`, keepIn: [P] }));
@@ -154,6 +165,8 @@ export function pathCases() {
   add('posix-spaces', (c) => `/home/${c} user/my dir/file.txt`);
   add('posix-tmp', (c) => `/tmp/${c}/file.txt`);
   add('posix-home-tilde', (c) => `~/${c}/dir/file.txt`);
+  add('posix-with-query', (c) => `/home/${c}/dir/file.txt?x=1`);
+  add('win-with-query', (c) => `C:\\Users\\${c}\\dir\\file.txt?x=1`);
   add('file-url-win', (c) => `file:///C:/Users/${c}/dir/file.txt`);
   add('file-url-posix', (c) => `file:///home/${c}/dir/file.txt`);
   add('file-url-spaces', (c) => `file:///C:/Users/${c} John/my dir/file.txt`);

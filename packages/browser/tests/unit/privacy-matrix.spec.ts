@@ -85,6 +85,20 @@ describe('FR2-11 fix-1: redactHistoryUrl on every bare URL and path cell', () =>
   });
 });
 
+describe('FR2-11 fix-1: adversarial input size', () => {
+  it('pathological long tokens finish in a generous bound (monotonic clock) and a secret beyond the input cap can never be stored', () => {
+    const inputs = ['a.b.c.d.'.repeat(10000), '/a'.repeat(20000), '?a='.repeat(20000), 'a:b'.repeat(20000), 'C:\\a\\b '.repeat(5000), 'http://h/p?x=1 '.repeat(5000)];
+    for (const t of inputs) {
+      const t0 = performance.now();
+      const out = redactUrlsInText(t);
+      expect(performance.now() - t0).toBeLessThan(5000);
+      expect(out.length).toBeLessThan(20000); // placeholders can lengthen the text a little; every stored field is capped afterwards
+    }
+    const tail = 'x '.repeat(5000) + 'http://h/p?token=CNRYbeyondcap';
+    expect(findCanaries(redactUrlsInText(tail))).toEqual([]);
+  });
+});
+
 describe('FR2-11 fix-1: what is deliberately NOT removed', () => {
   it('ordinary text, selectors and page paths without a URL marker are untouched', () => {
     for (const s of ['No element found for selector: #btn', 'input[type=file]', 'a new document committed', 'Did it work?', 'expected "Welcome" to be visible']) {

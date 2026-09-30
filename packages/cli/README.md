@@ -178,11 +178,14 @@ processes (each command is a new process), which is why every action row also ca
 selector, target, eval preview) goes through the same function, which is also what MCP and the SDK use:
 
 1. The text is split on whitespace. In every token that carries a **URL marker** (`scheme://`, a leading `//`,
-   `host[:port]/` or `host?x` with or without a scheme, IPv4 / IPv6 / `localhost`, `user:pass@`, `data:`) everything from
+   `host[:port]/` or `host?x` with or without a scheme, IPv4 / IPv6 / `localhost`, `user:pass@`, `data:`, or simply a
+   `?key=` query with no URL around it such as `/p?token=X` or `intranet/app?t=X`) everything from
    the first `?`, `#` or `;` to the end of the token is replaced by `[redacted]` (so `?q=(a)&token=X`, `?ids[]=1`,
    `?q=it's`, `#frag`, `;jsessionid=X` all go), and userinfo (`user:pass@`) is removed. After a cut, the following
    tokens are dropped until the next URL or path (a URL typed with literal spaces cannot leak its tail). `data:` bodies
-   become `data:…`; `blob:` keeps its origin. The display origin and path stay visible (`http://127.0.0.1:5000/p`).
+   become `data:…`; `blob:` keeps its origin; a fully percent-encoded `http%3A%2F%2F…` and a form-encoded body (two or more
+   `key=value` pairs joined by `&`, such as `a=1&token=X`) are replaced whole. The display origin and path stay visible
+   (`http://127.0.0.1:5000/p`).
 2. A token that looks like an **absolute local path** (`C:\Users\…`, `C:/…`, `\\server\share\…`, `/home/x/…`, `~/x/…`)
    or a `file://` URL is reduced to its **basename**, also when the path contains spaces. This includes site-relative
    paths that look absolute in free text (`/api/users` becomes `users`): over-redaction is preferred to a leak. The

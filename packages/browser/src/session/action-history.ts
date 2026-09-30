@@ -46,7 +46,7 @@ export function capHistoryString(s: string, cap: number = HISTORY_STRING_CAP): s
 /** What replaces a cut query / fragment / path parameter in free text. Documented in AGENT_SETUP.md and the CLI README. */
 export const REDACTED_PLACEHOLDER = '[redacted]';
 /** Redaction looks at no more than this many characters of one string (every stored field is capped far below it). */
-const MAX_REDACT_INPUT = 50_000;
+const MAX_REDACT_INPUT = 8_000;
 
 /** The last non-empty path segment of a Windows / UNC / POSIX path (either separator). '' when there is none. */
 export function basenameOfPath(p: string): string {
@@ -67,7 +67,8 @@ const FILE_URL_PREFIX = 'file://…/';
 export function redactHistoryUrl(url: string): string {
   if (url === '') return '(no url)';
   const cutAtDelimiter = (s: string): string => s.replace(/[?#;].*$/s, '');
-  const fallback = (): string => cutAtDelimiter(redactHistoryText(url));
+  // the whole string is a URL here: cut it at its first delimiter first (nothing after it is kept), then the text rule strips userinfo and paths
+  const fallback = (): string => redactHistoryText(cutAtDelimiter(url));
   let u: URL;
   try {
     u = new URL(url);
@@ -109,6 +110,12 @@ export function redactHistoryUrl(url: string): string {
 
 /** `scheme://` (scheme of 2+ chars, so a one-letter Windows drive is never a scheme), also JSON-escaped `:\/\/`. */
 const SCHEME_SEP = /[A-Za-z][A-Za-z0-9+.-]+:(?:\\?\/){2}/;
+/** A fully percent-encoded `scheme://` (`http%3A%2F%2F...`): nothing inside it can be trusted, the whole rest of the token goes. */
+const ENCODED_SCHEME = /[A-Za-z][A-Za-z0-9+.-]+%3[Aa](?:%2[Ff]){2}/;
+/** A query string with no URL around it (`/p?token=X`, `intranet/app?t=X`, a bare `?t=X`): a `?` followed by a `key=`. */
+const QUERY_LIKE = /\?[^\s?&=#]*=/;
+/** A form-encoded body or bare query (`a=1&token=X`): two `key=value` pairs joined by `&`. */
+const FORM_PAIRS = /[^\s&=?#]+=[^\s&]*&[^\s&=?#]+=/;
 const DATA_URL = /(?<![A-Za-z0-9])data:(?=\S)/i;
 const LEADING_DOUBLE_SLASH = /^[^\w/\\]*(\/\/)(?=[^/\s])/;
 const SCHEMELESS_USERINFO = /(?<![\w.-])[^\s/\\@:]+:[^\s/\\@]*@(?=[^\s/\\@])/;
@@ -123,7 +130,7 @@ const TRAILING_PUNCT = /^(.*?)([)\]}'"`>.,;:!?\u201d\u2019\uff09\u3002]*)$/s;
 
 interface UrlHit {
   start: number;
-  kind: 'scheme' | 'blob' | 'file' | 'data' | 'other';
+  kind: 'scheme' | 'blob' | 'file' | 'data' | 'encoded' | 'form' | 'other';
 }
 
 /** Earliest URL marker in a token (scheme://, data:, leading //, user:pass@, host[:port]/). */
@@ -135,8 +142,14 @@ function findUrlMarker(t: string): UrlHit | undefined {
     else if (/blob:$/i.test(t.slice(0, scheme.index))) hits.push({ start: scheme.index - 5, kind: 'blob' });
     else hits.push({ start: scheme.index, kind: 'scheme' });
   }
+  const enc = ENCODED_SCHEME.exec(t);
+  if (enc) hits.push({ start: enc.index, kind: 'encoded' });
   const data = DATA_URL.exec(t);
   if (data) hits.push({ start: data.index, kind: 'data' });
+  const query = QUERY_LIKE.exec(t);
+  if (query) hits.push({ start: query.index, kind: 'other' });
+  const form = FORM_PAIRS.exec(t);
+  if (form) hits.push({ start: form.index, kind: 'form' });
   const dbl = LEADING_DOUBLE_SLASH.exec(t);
   if (dbl) hits.push({ start: dbl.index + dbl[0].length - 2, kind: 'other' });
   const ui = SCHEMELESS_USERINFO.exec(t);
@@ -163,6 +176,8 @@ function findPathStart(t: string, nextToken?: string): number {
 /** Cut a token's URL part: strip userinfo, then cut from the first `?` `#` `;` and append the placeholder. */
 function redactUrlToken(t: string, hit: UrlHit): { out: string; cut: boolean } {
   if (hit.kind === 'data') return { out: t.slice(0, hit.start) + 'data:…', cut: true };
+  if (hit.kind === 'encoded') return { out: t.slice(0, hit.start) + REDACTED_PLACEHOLDER, cut: true };
+  if (hit.kind === 'form') return { out: t.slice(0, hit.start) + REDACTED_PLACEHOLDER, cut: false };
   const prefix = t.slice(0, hit.start);
   let rest = t.slice(hit.start);
   const isBlob = hit.kind === 'blob';
@@ -205,12 +220,13 @@ function reducePathRun(parts: readonly string[], i: number, p: number, fileUrl: 
   let cut = false;
   if (fileUrl) {
     body = body.slice(/^file:(?:\\?\/)*/i.exec(body)?.[0].length ?? 0);
-    const c = body.search(/[?#]/);
-    if (c >= 0) {
-      body = body.slice(0, c);
-      cut = true;
-    }
     prefix += FILE_URL_PREFIX;
+  }
+  // a query / fragment on a path is cut too, and the text after it dropped (a path can carry `?token=` as well)
+  const q = body.search(/[?#]/);
+  if (q >= 0) {
+    body = body.slice(0, q);
+    cut = true;
   }
   const m = TRAILING_PUNCT.exec(body)!;
   const name = basenameOfPath(m[1]!) || '…';
@@ -250,7 +266,7 @@ export function redactHistoryText(text: string): string {
     } else if (pathAt >= 0 && (!url || pathAt < url.start)) {
       const r = reducePathRun(parts, i, pathAt, false);
       out.push(ws, r.out);
-      swallowing = false;
+      swallowing = r.cut;
       i = r.last;
     } else if (url) {
       const r = redactUrlToken(tok, url);
