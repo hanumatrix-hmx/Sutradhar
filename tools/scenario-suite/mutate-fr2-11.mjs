@@ -10,6 +10,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { FIX1_MUTANTS } from './mutate-fr2-11-fix1-table.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.join(here, '..', '..');
@@ -34,7 +35,7 @@ const MUTANTS = [
   { id: 'M03b', what: 'verification dropped from runtime-level entries (navigate/back/...)', file: `${R}/src/runtime.ts`, find: '          ...(extra.verification ? { verification: extra.verification } : {}),\n', replace: '', unit: [R, ['tests/unit/action-history.spec.ts']], live: { pkg: R, surface: 'mcp', only: 'L1' } },
   { id: 'M04a', what: 'per-tab eviction count never incremented (eviction silent again)', file: `${B}/src/session/browser-tab.ts`, find: "this.actionHistoryEvicted++; // counted, never reset for this tab's lifetime", replace: '/* mutant: not counted */', unit: [B, ['tests/unit/session-action-history.spec.ts']], live: { pkg: B, surface: 'mcp', only: 'L3' } },
   { id: 'M04b', what: 'session eviction count off by one (+2 per eviction)', file: `${B}/src/session/browser-session.ts`, find: 'this.sessionActionEvicted++;', replace: 'this.sessionActionEvicted += 2;', unit: [B, ['tests/unit/session-action-history.spec.ts']], live: { pkg: B, surface: 'mcp', only: 'L3' } },
-  { id: 'M05', what: 'URL query string leaked into history', file: `${B}/src/session/action-history.ts`, find: '      return u.origin + u.pathname;', replace: '      return u.origin + u.pathname + u.search;', unit: [B, ['tests/unit/action-history.spec.ts']], live: { pkg: B, surface: 'mcp', only: 'L1' } },
+  { id: 'M05', what: 'URL query string leaked into history', file: `${B}/src/session/action-history.ts`, find: '      return u.origin + cutAtDelimiter(u.pathname);', replace: '      return u.origin + cutAtDelimiter(u.pathname) + u.search;', unit: [B, ['tests/unit/action-history.spec.ts']], live: { pkg: B, surface: 'mcp', only: 'L1' } },
   { id: 'M06', what: 'typed value not scrubbed from failure errors / verification (a password reaches the history)', file: `${B}/src/session/action-history.ts`, find: 'export function scrubActionError(params: ActionParams, error: string): string {', replace: 'export function scrubActionError(params: ActionParams, error: string): string {\n  if (error.length >= 0) return error;', unit: [B, ['tests/unit/action-history.spec.ts', 'tests/unit/browser-action-engine.spec.ts']], live: { pkg: B, surface: 'mcp', only: 'L1,L1b' } },
   { id: 'M06b', what: 'engine records the typed value as the target of a type action', file: `${B}/src/session/action-history.ts`, find: "    case 'click_by_text':\n      return params.text;", replace: "    case 'type':\n      return params.value;\n    case 'click_by_text':\n      return params.text;", unit: [B, ['tests/unit/action-history.spec.ts', 'tests/unit/browser-action-engine.spec.ts']] },
   { id: 'M07', what: 'CLI type args recorded raw (typed text on disk)', file: `${C}/src/history-file.ts`, find: "      return args.length === 0 ? [] : [fin(args[0]!), ...(args.length > 1 ? [lenTag(args.slice(1).join(' '))] : [])];\n    case 'setclipboard':", replace: "      return args.map(fin);\n    case 'setclipboard':", unit: [C, ['tests/unit/history-file.spec.ts']], live: { pkg: C, surface: 'cli', only: 'L5' } },
@@ -52,6 +53,8 @@ const MUTANTS = [
   { id: 'M20', what: 'the watchdog hard-exit does not record the hung command', file: `${C}/src/cli.ts`, find: '      recordCliCommand(1, `did not finish within ${Math.round(deadlineFor(verb, cleanArgs, process.env) / 1000)}s and was stopped by the watchdog`),\n', replace: '      Promise.resolve(),\n', unit: null, live: { pkg: C, surface: 'cli', only: 'L5,W1' } },
   { id: 'M19', what: 'history verb not offered a (current) marker: current session id ignored', file: `${C}/src/history-file.ts`, find: "sessionId !== null && sessionId === opts.currentSessionId ? ' (current)' : ''", replace: "''", unit: [C, ['tests/unit/history-file.spec.ts']], live: { pkg: C, surface: 'cli', only: 'L5' } },
 ];
+
+MUTANTS.push(...FIX1_MUTANTS); // fix-1 (audit-1 REOPEN): mutants of the new redaction, ids MF*
 
 const sha = (b) => crypto.createHash('sha256').update(b).digest('hex');
 const run = (cmd, argv, opts = {}) => spawnSync(cmd, argv, { encoding: 'utf-8', maxBuffer: 64 * 1024 * 1024, shell: process.platform === 'win32' && cmd.endsWith('.CMD'), ...opts });
