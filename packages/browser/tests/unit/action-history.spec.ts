@@ -26,7 +26,8 @@ describe('FR2-11 redactHistoryUrl (H1, H2)', () => {
     expect(redactHistoryUrl('https://a.test/p/x?token=S#frag')).toBe('https://a.test/p/x');
   });
   it('H2: scheme table', () => {
-    expect(redactHistoryUrl('file:///E:/r/f.html?t=1')).toBe('file:///E:/r/f.html');
+    // fix-1 F3: a file: URL never stores its full local path, only the basename
+    expect(redactHistoryUrl('file:///E:/r/f.html?t=1')).toBe('file://…/f.html');
     expect(redactHistoryUrl('data:text/html,<b>x')).toBe('data:…');
     expect(redactHistoryUrl('about:blank')).toBe('about:blank');
     expect(redactHistoryUrl('')).toBe('(no url)');
@@ -50,7 +51,8 @@ describe('FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, 
     expect(out).not.toMatch(/t=S/);
     expect(out).toContain('http://x.test/a');
     expect(out).toContain('https://b.test/');
-    expect(redactUrlsInText('see data:text/plain;base64,QUJD now')).toBe('see data:… now');
+    // fix-1: fail-closed, everything after a cut/data: body up to the next URL or path token is dropped
+    expect(redactUrlsInText('see data:text/plain;base64,QUJD now')).toBe('see data:…');
   });
   it('H4: cap with an ellipsis, control chars become spaces, a 199-char string is untouched', () => {
     const c = capHistoryString('a'.repeat(250));
@@ -63,7 +65,7 @@ describe('FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, 
   });
   it('H5 / N12: eval preview collapses whitespace, drops URL secrets, caps at 200', () => {
     const p = evalCodePreview('  const x =\n  1;\n\n fetch("https://t.test/?k=S") ');
-    expect(p).toBe('const x = 1; fetch("https://t.test/")');
+    expect(p).toBe('const x = 1; fetch("https://t.test/[redacted]');
     expect(p).not.toContain('S"');
     expect(p).not.toMatch(/\n/);
     const long = evalCodePreview('x'.repeat(10000));
@@ -77,7 +79,7 @@ describe('FR2-11 sanitizeHistoryEntry (H6)', () => {
     const nav = sanitizeHistoryEntry({ ...base, actionType: 'navigate', target: 'https://a.test/p?token=SECRET#f' });
     expect(nav.target).toBe('https://a.test/p');
     const ev = sanitizeHistoryEntry({ ...base, actionType: 'eval', target: 'a =\n 1;\nfetch("https://t.test/?k=SECRET")' });
-    expect(ev.target).toBe('a = 1; fetch("https://t.test/")');
+    expect(ev.target).toBe('a = 1; fetch("https://t.test/[redacted]');
     const other = sanitizeHistoryEntry({ ...base, actionType: 'click_by_text', target: 'go to https://t.test/x?k=SECRET now' });
     expect(other.target).not.toContain('SECRET');
   });
@@ -112,8 +114,8 @@ describe('FR2-11 sanitizeHistoryEntry (H6)', () => {
     };
     const out = sanitizeHistoryEntry({ ...base, verification: v as never });
     const checks = (out.verification as any).evidence.checks;
-    expect(checks[0].observed).toBe('http://x/');
-    expect(checks[0].expected).toBe('http://y/');
+    expect(checks[0].observed).toBe('http://x/[redacted]');
+    expect(checks[0].expected).toBe('http://y/[redacted]');
     expect(checks[0].detail).toHaveLength(300);
     expect(checks[1]).toEqual({ check: 'x.n', outcome: 'pass', observed: 7, expected: true });
     expect('observed' in checks[2]).toBe(false);

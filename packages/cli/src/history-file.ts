@@ -6,9 +6,14 @@
  *
  * Privacy (the hard requirement): positional args are redacted per verb before they are stored (typed text,
  * clipboard text, select values and dialog prompt text become lengths; eval code becomes a 200-char preview;
- * URLs lose their query and fragment), and the actions a command produced were already sanitized by the browser
- * package. As defense in depth, {@link buildHistoryLine} also scrubs the raw secret strings from every string
- * that is stored. Flags are not recorded in v1.
+ * URL arguments of nav/newtab/audit/compare are reduced to origin + path; file-path arguments of
+ * upload/download/screenshot/audit/compare are reduced to their basename), and EVERY arg then goes through the
+ * same single fail-closed function the MCP / SDK history uses ({@link redactHistoryText}: query, fragment, path
+ * parameters and userinfo cut from any token that carries a URL marker, scheme-less hosts included; absolute local
+ * paths reduced to a basename). The actions a command produced were already sanitized by the browser package.
+ * As defense in depth, {@link buildHistoryLine} also scrubs the raw secret strings from every string that is
+ * stored. Flags are not recorded in v1. `cwd` is recorded as the path the command ran in (the spec's field; the
+ * one full local path in a line).
  *
  * Concurrency: a line is written with ONE `write` call on a handle opened for append (O_APPEND on POSIX,
  * FILE_APPEND_DATA on Windows), and a line is kept under {@link HISTORY_MAX_LINE_BYTES}, so two processes
@@ -19,10 +24,12 @@
 import { open, readFile, rename, stat, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import {
+  basenameOfPath,
   capHistoryString,
   displayFrameUrl,
   evalCodePreview,
-  redactUrlsInText,
+  redactHistoryText,
+  redactHistoryUrl,
   type SessionActionHistoryEntry,
 } from '@sutradhar/browser';
 
@@ -67,16 +74,33 @@ export interface CliHistoryLineV1 {
 
 const lenTag = (s: string): string => `<${s.length} chars>`;
 
+/** Verbs whose positional args (by index) are URLs: reduced with {@link redactHistoryUrl} before the text rule. */
+const URL_ARG_INDEXES: Readonly<Record<string, readonly number[]>> = { nav: [0], newtab: [0], audit: [0], compare: [0, 1] };
+/** Verbs whose positional args (by index) are local file or directory paths: stored as a basename, relative or not. */
+const PATH_ARG_INDEXES: Readonly<Record<string, readonly number[]>> = {
+  upload: [1],
+  download: [1],
+  screenshot: [0],
+  audit: [1],
+  compare: [2],
+};
+
 /**
- * Positional-arg redaction by verb, then URL redaction and a 200-char cap on every arg:
+ * Positional-arg redaction by verb, then the ONE shared text redaction and a 200-char cap on every arg:
  *  type / select  -> [ref, `<n chars>`]        (typed text, e.g. passwords; a select value is a field value)
  *  setclipboard   -> [`<n chars>`]
  *  eval           -> [200-char code preview]
  *  dialog         -> [accept|dismiss, `<n chars>`?]   (prompt text)
+ *  URL args (nav, newtab, audit, compare) -> origin + path
+ *  path args (upload, download, screenshot, audit, compare) -> basename
  *  everything else-> each arg redacted + capped
  */
 export function redactCliArgs(verb: string, args: readonly string[]): string[] {
-  const fin = (a: string): string => capHistoryString(redactUrlsInText(a), ARG_CAP);
+  const fin = (a: string): string => capHistoryString(redactHistoryText(a), ARG_CAP);
+  const urlIdx = URL_ARG_INDEXES[verb] ?? [];
+  const pathIdx = PATH_ARG_INDEXES[verb] ?? [];
+  const perArg = (a: string, i: number): string =>
+    pathIdx.includes(i) ? capHistoryString(basenameOfPath(redactHistoryText(a)) || '…', ARG_CAP) : urlIdx.includes(i) ? fin(redactHistoryUrl(a)) : fin(a);
   switch (verb) {
     case 'type':
     case 'select':
@@ -88,7 +112,7 @@ export function redactCliArgs(verb: string, args: readonly string[]): string[] {
     case 'dialog':
       return args.length === 0 ? [] : [fin(args[0]!), ...(args.length > 1 ? [lenTag(args.slice(1).join(' '))] : [])];
     default:
-      return args.map(fin);
+      return args.map(perArg);
   }
 }
 
@@ -149,7 +173,7 @@ export interface BuildHistoryLineInput {
 export function buildHistoryLine(input: BuildHistoryLineInput): CliHistoryLineV1 {
   const secrets = input.secrets ?? [];
   const actions = scrubDeep([...(input.actions ?? [])], secrets);
-  const error = input.error !== undefined ? capHistoryString(redactUrlsInText(scrubDeep(input.error, secrets)), ERROR_CAP) : undefined;
+  const error = input.error !== undefined ? capHistoryString(redactHistoryText(scrubDeep(input.error, secrets)), ERROR_CAP) : undefined;
   const line: CliHistoryLineV1 = {
     v: HISTORY_SCHEMA_VERSION,
     type: 'command',
@@ -163,7 +187,7 @@ export function buildHistoryLine(input: BuildHistoryLineInput): CliHistoryLineV1
     ...(error !== undefined ? { error } : {}),
     actions,
     actionsEvicted: input.actionsEvicted ?? 0,
-    ...(input.actionsUnavailable !== undefined ? { actionsUnavailable: capHistoryString(input.actionsUnavailable, ERROR_CAP) } : {}),
+    ...(input.actionsUnavailable !== undefined ? { actionsUnavailable: capHistoryString(redactHistoryText(input.actionsUnavailable), ERROR_CAP) } : {}),
   };
   if (Buffer.byteLength(JSON.stringify(line), 'utf-8') >= HISTORY_MAX_LINE_BYTES) {
     const omitted = line.actions.length;
@@ -292,9 +316,12 @@ function middleTruncate(s: string, max: number): string {
   return `${s.slice(0, head)}…${s.slice(s.length - tail)}`;
 }
 
-/** URL tokens inside a command's text use FR2-09's display rule (origin + path, middle-truncated at 80). */
+/**
+ * URL tokens inside a command's text use FR2-09's display rule (origin + path, middle-truncated at 80). The text goes
+ * through {@link redactHistoryText} first, so a line written by an older build is never SHOWN with its query.
+ */
 function displayCommandText(text: string): string {
-  return capHistoryString(text.replace(/\b(?:https?|wss?|file|blob):\/\/\S+/gi, (m) => displayFrameUrl(m)), 200);
+  return capHistoryString(redactHistoryText(text).replace(/\b(?:https?|wss?|blob):\/\/\S+/gi, (m) => displayFrameUrl(m)), 200);
 }
 
 const ts19 = (ts: string): string => `${ts.slice(0, 19).replace('T', ' ')}Z`;

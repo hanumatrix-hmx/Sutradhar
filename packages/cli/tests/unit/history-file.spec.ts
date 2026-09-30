@@ -75,9 +75,11 @@ describe('FR2-11 buildHistoryLine (C2, C3)', () => {
     expect(l.actionsEvicted).toBe(0);
   });
   it('error is URL-redacted and capped at 300', () => {
-    const l = buildHistoryLine({ ...baseInput, error: 'bad http://x/?t=SECRET-ERR ' + 'z'.repeat(500) });
+    const l = buildHistoryLine({ ...baseInput, error: 'z'.repeat(500) + ' bad http://x/?t=SECRET-ERR' });
     expect(l.error).toHaveLength(300);
-    expect(l.error).not.toContain('SECRET-ERR');
+    const u = buildHistoryLine({ ...baseInput, error: 'bad http://x/?t=SECRET-ERR ' + 'z'.repeat(500) });
+    expect(u.error).toBe('bad http://x/[redacted]'); // fail-closed: the tail after a cut is dropped up to the next URL or path
+    expect(u.error).not.toContain('SECRET-ERR');
   });
   it('C3: the 64 KiB guard drops the actions and says how many', () => {
     const actions = Array.from({ length: 50 }, (_, i) => ({

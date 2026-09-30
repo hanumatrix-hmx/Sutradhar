@@ -81,7 +81,7 @@ describe('FR2-11 runtime history recording', () => {
     const long = 'a'.repeat(5000);
     await runtime.eval('s1', long);
     const h = runtime.getActionHistory('s1');
-    expect(h[0]!.target).toBe('fetch("https://t.test/x") .then(r => r.text())');
+    expect(h[0]!.target).toBe('fetch("https://t.test/x[redacted]');
     expect(JSON.stringify(h)).not.toContain('SECRET-EV');
     expect(h[1]!.target).toHaveLength(200);
     expect(h[1]!.target!.endsWith('…')).toBe(true);
