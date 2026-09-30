@@ -335,6 +335,11 @@ export class Page {
    * before any browser contact when the options are invalid (no condition, an empty string, `text` equal to
    * `textGone`, `timeout` not a number or above 300000, an unknown key such as `timeoutMs`).
    *
+   * Limits: a dialog already open fails the wait in about 1 s; one that opens partway through a check can take
+   * up to about 2.7 s after it opens. On a frozen page a failed wait can spend up to 1.5 s more reading the page
+   * title, so the total is bounded but can exceed `timeout` by up to about 3 s. Text visible for less than one
+   * poll interval (about 100 ms) can be missed; use it for states that persist.
+   *
    * Differs from the neighbours: `settle` on an action only waits for DOM/network quiet and cannot see a timer
    * scheduled for later; `expect` on an action checks once and never waits; {@link Page.waitForSelector} waits on
    * one element's state.

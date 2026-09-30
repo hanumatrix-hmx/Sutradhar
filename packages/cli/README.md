@@ -221,7 +221,7 @@ hypothetical ones.
 
 **`waitfor`**
 
-- `--text`/`--text-gone` share `--expect-text`'s rendered-text check and its limits (never-painted SVG containers count; text split across inline-block items or in a `<textarea>` can be missed). `--js` runs in the top frame only and must be an expression. The `waitfor` timeout is capped at 280000 ms so its own error always beats the 300 s process watchdog. With `--dialog report` (the default) a page blocked by a dialog fails the command with exit 3, so a `--url`-only wait cannot start while a dialog is already open.
+- `--text`/`--text-gone` share `--expect-text`'s rendered-text check and its limits (never-painted SVG containers count; text split across inline-block items or in a `<textarea>` can be missed). `--js` runs in the top frame only and must be an expression. The `waitfor` timeout is capped at 280000 ms so its own error always beats the 300 s process watchdog. With `--dialog report` (the default) a page blocked by a dialog fails the command with exit 3, so a `--url`-only wait cannot start while a dialog is already open. A dialog already open fails the wait in about 1 s; one that opens partway through a check can take up to about 2.7 s after it opens (also exit 3). On a frozen page a failed wait can spend up to 1.5 s more reading the page title, so the total is bounded but can exceed `timeoutMs` by up to about 3 s. The conditions are checked about every 100 ms: text visible for less than one poll interval (about 100 ms) can be missed; use it for states that persist.
 
 **`wait`**
 

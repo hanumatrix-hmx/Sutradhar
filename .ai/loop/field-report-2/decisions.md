@@ -4008,3 +4008,12 @@ not FR2-08. Minor findings to close before the PR: F1/F2 unit-test gaps (survivi
 F3/F4/F5 doc accuracy (dialog-mid-check up to ~2.7 s, frozen-page title read up to 1.5 s, sub-poll flashes
 can be missed).
 
+
+## 2026-09-30 -- FR2-08 audit-1 minors closed
+
+F1/F2: four unit tests added in `packages/browser/tests/unit` (page-settle P7, P8; condition-wait W16d, W16e);
+the auditor's `mutate-unit.mjs` X1, X2, X5, X6 now all FAIL the suite (each fails exactly its own new test), sources
+restored byte-identically. F3/F4/F5: docs and the MCP tool description now say a dialog already open fails the wait
+in about 1 s and one opening mid-check takes up to about 2.7 s, a frozen page can add up to 1.5 s (total can exceed
+`timeoutMs` by up to about 3 s), and text visible for under one poll (about 100 ms) can be missed. No product
+behaviour changed. Evidence: `evidence/FR2-08/audit-1-followup/`.

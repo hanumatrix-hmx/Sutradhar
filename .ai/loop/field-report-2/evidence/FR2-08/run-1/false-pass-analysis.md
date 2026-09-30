@@ -103,3 +103,16 @@ no Node-side settle bound (U11), settle timer not cleared (U12), settle skipped 
 timeoutMs (U19), hover drops settle (U20), SDK swallows a failed wait (U21), CLI cap raised (U22), CLI `--text-gone` value leaks (U23). All caught.
 Live (10): L1 (unavailable=met), L2 (textGone unavailable=gone), L3 (once), L4 (dialog ignored), L5 (no settle bound), L6 (OR), L7 (D16 removed),
 L8 (js throw transient), L9 (settlePage no-op), L10 (hover drops settle). All caught. Sources restored byte-identically (sha256) and rebuilt afterwards.
+
+## audit-1 minors closed (follow-up, 2026-09-30)
+
+Evidence: `../audit-1-followup/`. No product source changed except two doc strings (MCP tool description, a JSDoc).
+
+| Item | How it could pass while broken | Ruled out by |
+|---|---|---|
+| F1 P7 (X6, settle `timeoutMs` ignored) | The upper bound is asserted on a fake clock only, so it could pass because the fake timers never fire the real bound; or pass because both halves are mocked | P7 also asserts `evaluate(fn,300,100)` and `waitForNetworkIdle({timeout:100})` (the mocks see the override) and that the wait is NOT done at 100+500-1 ms and IS done at +2 ms. `mutate-unit.mjs X6` -> CAUGHT, failing test is P7 (`mutation-unit-X1_X2_X5_X6.json`) |
+| F1 P8 (X5, network half not awaited) | A mock where `waitForNetworkIdle` resolves at once would pass under either implementation | The mock's idle promise stays pending; the test checks `done===false` after 1000 fake ms, then true right after resolving it. X5 -> CAUGHT, failing test is P8 |
+| F2 W16d (X1, js-only skips dialog gate) | The mock `evaluate` returns `true` for js, so an ungated probe would also "work" | Asserts `fatal.kind==='dialog'`, `last.js==='unavailable'` and `main.evaluate` never called (also with `timeoutMs:0`). X1 -> CAUGHT, failing test is W16d |
+| F2 W16e (X2, grace never resets) | Real-clock timeline: under heavy load the windows could slide so that the second dialog is open >1 s and the correct code fails | Second dialog is open ~500 ms at most (wait ends at 1700 ms, dialog B from 1200 ms), 500 ms margin; the wait runs on the same monotonic clock. Correct code passed 5 of 5 repeated runs of the two spec files (`repeat-new-tests.log`) plus two full-suite runs; X2 -> CAUGHT, failing test is W16e |
+| Mutants restored | A restore could leave a trailing edit | sha256 of `condition-wait.ts` and `page-settle.ts` before and after are identical and equal the auditor's `sha-before-mutation.txt` (`sha-before.txt`, `sha-after.txt`) |
+| Docs (F3/F4/F5) reach the shipped bundle | A stale dist (turbo cache) would still contain the old text | `turbo run build --force` (19+9 tasks, 0 cached), then `grep -o` in `packages/sutradhar/dist/mcp-cli.js`: new phrases 1 each, old "within about a second" 0 (`bundle-grep.log`); M8 was run against the OLD description and FAILED (`mcp-test-fails-on-old-description.log`) |

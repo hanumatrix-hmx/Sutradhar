@@ -887,8 +887,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         'included). js: a JavaScript EXPRESSION evaluated in the main frame, truthy = done; it re-runs every ' +
         '~100ms so keep it side-effect free, and if it throws the wait fails immediately — guard it (e.g. ' +
         'document.querySelector("#x")?.textContent === "done"). timeoutMs defaults to 10000 (max 300000; 0 = ' +
-        'check once) and is the real total: no hidden retries. A native dialog blocking the page fails the wait ' +
-        'within about a second (handle it with browser.handle_dialog). For an element\'s visible/attached/hidden ' +
+        'check once) and is the real total: no hidden retries; on a frozen page a failed wait can spend up to 1.5 s ' +
+        'more reading the page title, so the total is bounded but can exceed timeoutMs by up to about 3 s. ' +
+        'Text visible for less than one poll interval (about 100 ms) can be missed; use it for states that ' +
+        'persist. A native dialog blocking the page fails the wait (handle it with browser.handle_dialog): a ' +
+        'dialog already open fails it in about 1 s; one that opens partway through a check can take up to ' +
+        'about 2.7 s after it opens. For an element\'s visible/attached/hidden ' +
         'state use browser.wait_for_selector. settle:true on an action only waits for DOM/network quiet and ' +
         'cannot see a pending timer; expect on an action checks once and does not wait.',
       inputSchema: {

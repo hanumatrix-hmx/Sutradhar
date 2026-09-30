@@ -194,12 +194,16 @@ await page.waitFor({ js: 'window.__app?.ready === true' });
   error, so guard it with `?.`. It runs in the top frame only.
 - Several conditions together mean **all of them, at the same moment**.
 - `timeoutMs` defaults to 10000 (max 300000; the CLI caps at 280000); `0` means "check once, don't wait". It's
-  the real total, with no hidden retries (plus at most one 1.5 s probe pass). On timeout the error lists which
-  conditions were met and which weren't.
+  the real total, with no hidden retries, but not a hard ceiling on a frozen page: a failed wait can spend up to
+  1.5 s more reading the page title, so the total is bounded but can exceed `timeoutMs` by up to about 3 s. On
+  timeout the error lists which conditions were met and which weren't.
 - It polls from outside the page, so it keeps working in a background tab (where the browser stops
   `requestAnimationFrame`, measured here: a `page.waitForFunction` in a hidden tab never fired) and on a
-  strict-CSP page. If a native dialog (alert/confirm) blocks the page, it fails
-  within about a second and tells you to handle the dialog (CLI: exit 3). It doesn't hang.
+  strict-CSP page. If a native dialog (alert/confirm) blocks the page, it fails and tells you to handle the
+  dialog (CLI: exit 3). A dialog that is already open fails the wait in about 1 s; one that opens partway
+  through a check can take up to about 2.7 s after it opens. It doesn't hang.
+- A condition is checked once per poll (about every 100 ms). Text visible for less than one poll interval
+  (about 100 ms) can be missed; use it for states that persist.
 
 **`settle` vs `wait_for` vs `expect`: three different tools.**
 - `settle: true` on an action (every tool that interacts with or navigates the page accepts it: `navigate`,

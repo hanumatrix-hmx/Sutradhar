@@ -39,8 +39,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   fully-awaited per-frame probes (never `page.waitForFunction`, whose default `requestAnimationFrame` polling
   does not fire in a background tab: measured here, a hidden-tab `waitForFunction` timed out at 10 s while
   `wait_for` succeeded within 700 ms of the page's own event), has no hidden retries (`timeoutMs` is the real
-  total, `0` = check once), and fails within about a second, naming the dialog, when a native dialog blocks the
-  page (CLI exit 3). `text`/`textGone` reuse the `expect.text` rendered-text check (one definition), so they
+  total, `0` = check once; on a frozen page a failed wait can spend up to 1.5 s more reading the page title, so
+  the total is bounded but can exceed `timeoutMs` by up to about 3 s), and fails, naming the dialog, when a
+  native dialog blocks the page (CLI exit 3): in about 1 s if the dialog is already open, up to about 2.7 s after
+  it opens if it opens partway through a check. Text visible for less than one poll interval (about 100 ms) can
+  be missed; use it for states that persist. `text`/`textGone` reuse the `expect.text` rendered-text check (one definition), so they
   inherit its documented limits below; a frame that cannot be inspected is "unavailable", never "met" and never
   "gone". `settle` (wait for DOM-quiet and network-idle) is now accepted by every tool that interacts with or
   navigates the page: `navigate`, `go_back`, `go_forward`, `reload`, `click_at_point`, `drag_at_points`,

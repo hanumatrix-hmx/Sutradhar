@@ -1553,6 +1553,7 @@ describe('FR2-08 browser.wait_for and settle on every interacting/navigating too
     for (const needle of [
       'visible', 'ALL', 'EXPRESSION', 'side-effect free', 'background tabs', 'wait_for_selector', 'settle', 'expect',
       'RENDERED', 'never-painted SVG', 'inline-block', '<textarea>', 'never read as "gone"', 'presentAtStart', 'no hidden retries',
+      'about 1 s', 'about 2.7 s after it opens', 'exceed timeoutMs by up to about 3 s', 'less than one poll interval',
     ]) {
       expect(d, needle).toContain(needle);
     }
