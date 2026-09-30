@@ -1,0 +1,69 @@
+[
+ {
+  "label": "navigate settle:true",
+  "added": 1,
+  "expectN": 1,
+  "ok": true,
+  "types": [
+   "navigate:true:"
+  ],
+  "verifEq": true,
+  "isError": false
+ },
+ {
+  "label": "click settle:true",
+  "added": 1,
+  "expectN": 1,
+  "ok": true,
+  "types": [
+   "click:true:"
+  ],
+  "verifEq": true,
+  "isError": false
+ },
+ {
+  "label": "drag_and_drop",
+  "added": 1,
+  "expectN": 1,
+  "ok": true,
+  "types": [
+   "drag_and_drop:false:drag_and_drop dispatched the drag/drop sequence, but no 'drop' event w"
+  ],
+  "verifEq": false,
+  "isError": false
+ },
+ {
+  "label": "engine invalid css",
+  "added": 1,
+  "expectN": 1,
+  "ok": true,
+  "types": [
+   "click:false:Invalid selector \"#a[\" — Failed to execute 'querySelector' on 'Documen"
+  ],
+  "verifEq": false,
+  "isError": false
+ },
+ {
+  "label": "duplicate pair",
+  "added": 2,
+  "expectN": 2,
+  "ok": true,
+  "types": [
+   "click:true:",
+   "click:false:Duplicate 'click' on the same target within 1000ms — likely an acciden"
+  ],
+  "results": [
+   "true:",
+   "false:Duplicate 'click' on the same target within 1000ms"
+  ]
+ },
+ {
+  "label": "NaN timeoutMs (runtime)",
+  "resultSuccess": false,
+  "entries": [
+   "navigate:true:",
+   "wait_for_selector:false:Invalid timeoutMs (NaN) for action \"wait_for_selec"
+  ],
+  "ok": true
+ }
+]

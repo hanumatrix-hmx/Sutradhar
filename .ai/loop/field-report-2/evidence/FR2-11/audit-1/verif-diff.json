@@ -1,0 +1,56 @@
+[
+ {
+  "name": "browser.click",
+  "args": {
+   "target": "#a["
+  },
+  "diffs": [
+   {
+    "path": "verification.reason",
+    "result": "Action failed: Invalid selector \"#a[\" — Failed to execute 'querySelector' on 'DocumentFragment': '#a[' is not a valid selector. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessi",
+    "resultLen": 531,
+    "history": "Action failed: Invalid selector \"#a[\" — Failed to execute 'querySelector' on 'DocumentFragment': '#a[' is not a valid selector. Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=,…",
+    "historyLen": 300
+   }
+  ]
+ },
+ {
+  "name": "browser.drag_and_drop",
+  "args": {
+   "sourceTarget": "#a",
+   "destTarget": "#b"
+  },
+  "diffs": [
+   {
+    "path": "verification.reason",
+    "result": "Action failed: drag_and_drop dispatched the drag/drop sequence, but no 'drop' event was observed on the target — it may not have been delivered. The most common cause: the target has no 'dragover' handler calling preventDefault(), which the HTML5 drag-and-drop spec requires before a 'drop' event will fire at all.",
+    "resultLen": 314,
+    "history": "Action failed: drag_and_drop dispatched the drag/drop sequence, but no 'drop' event was observed on the target — it may not have been delivered. The most common cause: the target has no 'dragover' handler calling preventDefault(), which the HTML5 drag-and-drop spec requires before a 'drop' event wi…",
+    "historyLen": 300
+   }
+  ]
+ },
+ {
+  "name": "browser.click",
+  "args": {
+   "target": "#missing"
+  },
+  "diffs": []
+ },
+ {
+  "name": "browser.type",
+  "args": {
+   "target": "#mangle",
+   "value": "abcdef"
+  },
+  "diffs": [
+   {
+    "path": "verification.reason",
+    "result": "Action failed: type did not land the expected value — expected \"abcdef\", but the element's real content reads \"M-fedcba\" even after a native-setter repair attempt. The page may be intercepting/resetting input in a way neither path could overcome.",
+    "resultLen": 246,
+    "history": "Action failed: type did not land the expected value (the typed text and the field content are not recorded)",
+    "historyLen": 107
+   }
+  ]
+ }
+]

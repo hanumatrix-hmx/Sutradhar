@@ -1,0 +1,97 @@
+{
+ "mcpNavResultUrl": "http://127.0.0.1:49615/p?q=(a)&token=CNRYparen",
+ "mcpLeaks": [
+  "CNRYparen"
+ ],
+ "mcpEntry": {
+  "actionType": "navigate",
+  "success": true,
+  "executionTimeMs": 141,
+  "timestamp": "2026-09-30T15:37:48.947Z",
+  "target": "http://127.0.0.1:49615/p",
+  "url": "http://127.0.0.1:49615/p",
+  "verification": {
+   "verified": true,
+   "urlChanged": true,
+   "elementFound": true,
+   "confidence": 0.9,
+   "reason": "'navigate' verified: a new document committed at http://127.0.0.1:49615/p(a)&token=CNRYparen",
+   "evidence": {
+    "tier": "verified",
+    "checks": [
+     {
+      "check": "navigate.document",
+      "outcome": "pass",
+      "expected": "new-document or url change",
+      "observed": "new-document",
+      "detail": "a new document committed at http://127.0.0.1:49615/p(a)&token=CNRYparen"
+     },
+     {
+      "check": "navigate.http-status",
+      "outcome": "pass",
+      "expected": "<400",
+      "observed": 200
+     }
+    ]
+   }
+  },
+  "tabId": "tab_sess_1790782668591_1_1",
+  "seq": 1
+ },
+ "cliNavExit": 0,
+ "cliFileLeaks": [
+  "CNRYparen"
+ ],
+ "cliLine": {
+  "v": 1,
+  "type": "command",
+  "ts": "2026-09-30T15:37:49.275Z",
+  "sessionId": "sess_1790782669487_1",
+  "cwd": "E:\\AI-Cache\\tmp\\fr211-audit-paren-oVyU6f",
+  "verb": "nav",
+  "args": [
+   "http://127.0.0.1:49615/p(a)&token=CNRYparen"
+  ],
+  "exitCode": 0,
+  "durationMs": 628,
+  "actions": [
+   {
+    "actionType": "navigate",
+    "success": true,
+    "executionTimeMs": 27,
+    "timestamp": "2026-09-30T15:37:49.901Z",
+    "target": "http://127.0.0.1:49615/p",
+    "url": "http://127.0.0.1:49615/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": true,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'navigate' verified: a new document committed at http://127.0.0.1:49615/p(a)&token=CNRYparen",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "navigate.document",
+        "outcome": "pass",
+        "expected": "new-document or url change",
+        "observed": "new-document",
+        "detail": "a new document committed at http://127.0.0.1:49615/p(a)&token=CNRYparen"
+       },
+       {
+        "check": "navigate.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790782669487_1_1",
+    "seq": 1
+   }
+  ],
+  "actionsEvicted": 0
+ },
+ "cliCloseExit": 0
+}

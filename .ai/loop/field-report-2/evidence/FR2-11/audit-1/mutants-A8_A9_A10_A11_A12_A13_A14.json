@@ -1,0 +1,91 @@
+[
+ {
+  "id": "A8",
+  "file": "packages/capability-runtime/src/runtime.ts",
+  "why": "runtime-level success:false literal recorded as success",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/action-history.spec.ts > FR2-11 runtime history recording > R10: clickAtPoint failing records success:false and the \"(x, y) button\" target; the retur"
+  ],
+  "restored": true,
+  "sha256": "15c3cb1da9e59bdc3eaf6383b64876b9e6494282e24d65da25095b16737f61b0"
+ },
+ {
+  "id": "A9",
+  "file": "packages/capability-runtime/src/runtime.ts",
+  "why": "session report returns the live ring, not a copy",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/action-history.spec.ts > FR2-11 runtime history recording > R5: session scope merges tabs in recording order, each entry with tabId and seq, no repor"
+  ],
+  "restored": true,
+  "sha256": "15c3cb1da9e59bdc3eaf6383b64876b9e6494282e24d65da25095b16737f61b0"
+ },
+ {
+  "id": "A10",
+  "file": "packages/mcp-server/src/tools.ts",
+  "why": "note singular/plural inverted",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/tools.spec.ts > FR2-11 browser.get_action_history > M3: evicted > 0 adds an exact note (plural and singular)"
+  ],
+  "restored": true,
+  "sha256": "7b691c41fd74da0d1f9d9d4d27a29724b94ad2157ec48c35dd9b4434941a4735"
+ },
+ {
+  "id": "A11",
+  "pkg": "packages/cli",
+  "file": "packages/cli/src/history-file.ts",
+  "find": "        if (bytesRead === 1 && last[0] !== 0x0a) prefix = '\n';",
+  "repl": "",
+  "why": "torn-line repair removed (next line glued to fragment)",
+  "status": "NOT-APPLIED",
+  "count": 0
+ },
+ {
+  "id": "A12",
+  "file": "packages/cli/src/history-file.ts",
+  "why": "select value stored raw in args",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/history-file.spec.ts > FR2-11 redactCliArgs / secretsOfCliArgs (C1) > C1: typed text, clipboard text, eval, nav, dialog, select"
+  ],
+  "restored": true,
+  "sha256": "7accc6f3f4f0938ed3b19d99c2d2244873d5f8f76059f1f56a02f29709881241"
+ },
+ {
+  "id": "A13",
+  "file": "packages/cli/src/history-file.ts",
+  "why": "blank lines counted as unreadable",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 2 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/history-file.spec.ts > FR2-11 appendHistoryLine (C4, C5, C6, C9, torn-line repair) > a torn last line (no trailing newline) is not glued onto the nex",
+   "FAIL  tests/unit/history-file.spec.ts > FR2-11 readHistoryFile (C7) > C7: valid + blank + torn + non-object + wrong-v + valid gives 2 lines, skipped 3"
+  ],
+  "restored": true,
+  "sha256": "7accc6f3f4f0938ed3b19d99c2d2244873d5f8f76059f1f56a02f29709881241"
+ },
+ {
+  "id": "A14",
+  "file": "packages/cli/src/history-file.ts",
+  "why": "defense-in-depth secret scrub disabled",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/history-file.spec.ts > FR2-11 buildHistoryLine (C2, C3) > defense in depth: the raw secret strings are scrubbed from error and from every action stri"
+  ],
+  "restored": true,
+  "sha256": "7accc6f3f4f0938ed3b19d99c2d2244873d5f8f76059f1f56a02f29709881241"
+ }
+]

@@ -1,0 +1,95 @@
+[
+ {
+  "id": "A1",
+  "file": "packages/browser/src/session/browser-tab.ts",
+  "why": "tab cap off-by-one (keeps 199)",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 2 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/session-action-history.spec.ts > FR2-11 per-tab history cap and eviction count > S2: 201 records keep 200, drop the oldest, count 1 eviction; 450 rec",
+   "FAIL  tests/unit/session-action-history.spec.ts > FR2-11 per-tab history cap and eviction count > exactly 200 records evict nothing (the boundary is not off by one)"
+  ],
+  "restored": true,
+  "sha256": "ffbecec0e981b5657712e96e819accc5fccf340c4796a0628bc77d0cf06de4d2"
+ },
+ {
+  "id": "A2",
+  "file": "packages/browser/src/session/browser-session.ts",
+  "why": "session seq starts at 0",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 3 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/session-action-history.spec.ts > FR2-11 session merged ring > S6: merge order is recording order with tabId and seq; per-tab views are unaffected",
+   "FAIL  tests/unit/session-action-history.spec.ts > FR2-11 session merged ring > S7: same-millisecond ordering comes from seq, not timestamp",
+   "FAIL  tests/unit/session-action-history.spec.ts > FR2-11 session merged ring > S9: session eviction is exact (205 records into a 200 ring: 5 evicted, first seq 6); pe"
+  ],
+  "restored": true,
+  "sha256": "485d971acb2fb7d4bde0837ff66293c620fe2500755dc14e077c6cd751e51ecd"
+ },
+ {
+  "id": "A3",
+  "file": "packages/browser/src/session/browser-session.ts",
+  "why": "session eviction never counted",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/session-action-history.spec.ts > FR2-11 session merged ring > S9: session eviction is exact (205 records into a 200 ring: 5 evicted, first seq 6); pe"
+  ],
+  "restored": true,
+  "sha256": "485d971acb2fb7d4bde0837ff66293c620fe2500755dc14e077c6cd751e51ecd"
+ },
+ {
+  "id": "A4",
+  "file": "packages/browser/src/session/action-history.ts",
+  "why": "fragment kept in stored URLs (#access_token=)",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 2 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/action-history.spec.ts > FR2-11 redactHistoryUrl (H1, H2) > H1: drops query and fragment",
+   "FAIL  tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > URL rule for navigate targets, preview rule for eval targets, generic redaction otherwise"
+  ],
+  "restored": true,
+  "sha256": "87f9a52f1073ed53142a2f67b3e4d4b48886bdf9eb3c50bccc40f45dceeeed66"
+ },
+ {
+  "id": "A5",
+  "file": "packages/browser/src/session/action-history.ts",
+  "why": "type_by_label did-not-land message keeps field content",
+  "exit": 0,
+  "killed": false,
+  "summary": "Tests  969 passed (969)",
+  "failing": [],
+  "restored": true,
+  "sha256": "87f9a52f1073ed53142a2f67b3e4d4b48886bdf9eb3c50bccc40f45dceeeed66"
+ },
+ {
+  "id": "A6",
+  "file": "packages/browser/src/session/action-history.ts",
+  "why": "typed value scrub skipped for values < 12 chars",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/action-history.spec.ts > FR2-11 describeActionTarget (H7) and scrubActionError > scrubActionError removes a typed value and the field content from a"
+  ],
+  "restored": true,
+  "sha256": "87f9a52f1073ed53142a2f67b3e4d4b48886bdf9eb3c50bccc40f45dceeeed66"
+ },
+ {
+  "id": "A7",
+  "file": "packages/browser/src/session/action-history.ts",
+  "why": "evidence observed not URL-redacted",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > post-FR2-07 verification: evidence observed/expected redacted, detail capped at 300, scal"
+  ],
+  "restored": true,
+  "sha256": "87f9a52f1073ed53142a2f67b3e4d4b48886bdf9eb3c50bccc40f45dceeeed66"
+ }
+]
