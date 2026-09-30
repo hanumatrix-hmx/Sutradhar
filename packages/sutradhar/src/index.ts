@@ -78,6 +78,8 @@ export {
   type GotoOptions,
   type LastResult,
   type ElementOptions,
+  type SettleActionOptions,
+  type WaitForOptions,
   type ScreenshotOptions,
   type SetViewportOptions,
   type ViewportInfo,
@@ -97,6 +99,8 @@ export {
   type DownloadResult,
   type ActionExpectation,
   type ActionResult,
+  type WaitForCondition,
+  type SettleSpec,
   type VerificationResultDto,
   type VerificationEvidence,
 } from '@sutradhar/capability-runtime';

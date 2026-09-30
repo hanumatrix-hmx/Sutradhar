@@ -22,6 +22,14 @@ import {
   NavigationProbe,
   PostConditionRecorder,
   applyVerdict,
+  describePageCondition,
+  displayPageCondition,
+  formatConditionFailure,
+  normalizePageCondition,
+  waitForPageCondition,
+  waitForPageSettle,
+  type BuiltInVerdict,
+  type EvidenceCheck,
   decideClipboardVerdict,
   decideDragVerdict,
   decidePointVerdict,
@@ -69,6 +77,7 @@ import type {
   ScreenshotResult,
   StorageState,
   TabInfo,
+  WaitForCondition,
 } from './types.js';
 import {
   BrowserNotAvailableError,
@@ -224,6 +233,51 @@ function boundedFireAndForget(work: Promise<unknown>, boundMs: number): Promise<
  *  falls back to documentStartedAt-only scoping (the same fallback already used when
  *  `createCDPSession` itself isn't available), not a hang. */
 const AUDIT_CDP_SETUP_BOUND_MS = 1000;
+
+/**
+ * FR2-08 D11: the built-in verdict of a SATISFIED `wait_for`: one `pass` check per given key, so
+ * `verification.verified` is true. A vacuous `textGone` (the text was never there) is a `not-run` check and
+ * makes the tier `unverifiable` (the FR2-07 D14 parity: satisfying a wait on something that never existed
+ * proves nothing). Evidence holds the caller's own needle, never page text or a JS result.
+ */
+function waitForVerdict(
+  c: { text?: string; textGone?: string; url?: string; js?: string },
+  elapsedMs: number,
+  presentAtStart: boolean | undefined,
+  currentUrl: string | undefined,
+): BuiltInVerdict {
+  const checks: EvidenceCheck[] = [];
+  if (c.text !== undefined) {
+    checks.push({ check: 'wait_for.text', outcome: 'pass', expected: c.text, detail: 'the text was visible on the page when the wait ended' });
+  }
+  let vacuous = false;
+  if (c.textGone !== undefined) {
+    if (presentAtStart === false) {
+      vacuous = true;
+      checks.push({
+        check: 'wait_for.textGone',
+        outcome: 'not-run',
+        expected: c.textGone,
+        detail: `"${c.textGone}" was not present when the wait started, so textGone was satisfied vacuously`,
+      });
+    } else {
+      checks.push({ check: 'wait_for.textGone', outcome: 'pass', expected: c.textGone, detail: 'the text was visible at first and was gone when the wait ended' });
+    }
+  }
+  if (c.url !== undefined) {
+    checks.push({ check: 'wait_for.url', outcome: 'pass', expected: c.url, ...(currentUrl !== undefined ? { observed: currentUrl } : {}), detail: 'the tab URL contained the substring' });
+  }
+  if (c.js !== undefined) {
+    checks.push({ check: 'wait_for.js', outcome: 'pass', expected: c.js, detail: 'the expression was truthy' });
+  }
+  return vacuous
+    ? {
+        outcome: 'not-run',
+        reason: `textGone "${c.textGone}" was not present when the wait started, so it was satisfied vacuously (check the text if you expected it to be there)`,
+        checks,
+      }
+    : { outcome: 'pass', reason: `${describePageCondition(c)} held on one poll after ${elapsedMs}ms`, checks };
+}
 
 /**
  * High-level browser automation runtime. One instance manages a pool of browser
@@ -519,6 +573,10 @@ export class SutradharRuntime {
     url: string,
     tabId?: string,
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<NavigateResult> {
     const spec = toVerificationSpec(expect);
     this.assertNavigationAllowed(url);
@@ -529,6 +587,7 @@ export class SutradharRuntime {
     const probe = await NavigationProbe.begin(tab.page, tab);
     const dto = await tab.navigate(url);
     await probe.finish('navigate', url, rec);
+    await this.settlePage(tab, settle);
     const verification = await this.verifier.verifyAction(
       tab,
       previousUrl,
@@ -543,7 +602,13 @@ export class SutradharRuntime {
    * FR2-07: `page.goBack()` resolves `null` when there is no history entry — which used to be
    * reported as a silent success. The verification now says `contradicted` in that case.
    */
-  public async goBack(sessionId: string, tabId?: string, expect?: ActionExpectation): Promise<NavigateResult> {
+  public async goBack(
+    sessionId: string,
+    tabId?: string,
+    expect?: ActionExpectation,
+    /** FR2-08: opt-in settle wait after the navigation (see {@link SutradharRuntime.navigate}). */
+    settle?: boolean | SettleSpec,
+  ): Promise<NavigateResult> {
     const spec = toVerificationSpec(expect);
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
@@ -552,6 +617,7 @@ export class SutradharRuntime {
     const probe = await NavigationProbe.begin(page, tab);
     await this.historyStep(() => page.goBack());
     await probe.finish('go_back', undefined, rec);
+    await this.settlePage(tab, settle);
     const verification = await this.verifier.verifyAction(
       tab,
       previousUrl,
@@ -562,7 +628,13 @@ export class SutradharRuntime {
     return { tabId: tab.id, url: page.url(), title: await this.readTitle(tab), verification, ...this.dialogPendingOf(tab) };
   }
 
-  public async goForward(sessionId: string, tabId?: string, expect?: ActionExpectation): Promise<NavigateResult> {
+  public async goForward(
+    sessionId: string,
+    tabId?: string,
+    expect?: ActionExpectation,
+    /** FR2-08: opt-in settle wait after the navigation (see {@link SutradharRuntime.navigate}). */
+    settle?: boolean | SettleSpec,
+  ): Promise<NavigateResult> {
     const spec = toVerificationSpec(expect);
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
@@ -571,6 +643,7 @@ export class SutradharRuntime {
     const probe = await NavigationProbe.begin(page, tab);
     await this.historyStep(() => page.goForward());
     await probe.finish('go_forward', undefined, rec);
+    await this.settlePage(tab, settle);
     const verification = await this.verifier.verifyAction(
       tab,
       previousUrl,
@@ -581,7 +654,13 @@ export class SutradharRuntime {
     return { tabId: tab.id, url: page.url(), title: await this.readTitle(tab), verification, ...this.dialogPendingOf(tab) };
   }
 
-  public async reload(sessionId: string, tabId?: string, expect?: ActionExpectation): Promise<NavigateResult> {
+  public async reload(
+    sessionId: string,
+    tabId?: string,
+    expect?: ActionExpectation,
+    /** FR2-08: opt-in settle wait after the navigation (see {@link SutradharRuntime.navigate}). */
+    settle?: boolean | SettleSpec,
+  ): Promise<NavigateResult> {
     const spec = toVerificationSpec(expect);
     const { tab } = this.resolveTab(sessionId, tabId);
     const page = this.requirePage(tab);
@@ -590,6 +669,7 @@ export class SutradharRuntime {
     const probe = await NavigationProbe.begin(page, tab);
     await page.reload({ waitUntil: 'domcontentloaded' });
     await probe.finish('reload', undefined, rec);
+    await this.settlePage(tab, settle);
     const verification = await this.verifier.verifyAction(
       tab,
       previousUrl,
@@ -707,11 +787,15 @@ export class SutradharRuntime {
     target: string,
     tabId?: string,
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'focus', selector: normalizeTarget(target), ...this.specParam(spec) },
+      { actionType: 'focus', selector: normalizeTarget(target), ...this.settleParam(settle), ...this.specParam(spec) },
       tabId,
     );
   }
@@ -730,6 +814,10 @@ export class SutradharRuntime {
     tabId?: string,
     button: 'left' | 'right' | 'middle' = 'left',
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     const spec = toVerificationSpec(expect);
     const start = Date.now();
@@ -748,6 +836,7 @@ export class SutradharRuntime {
       await this.raceStep(page.mouse.click(x, y, { button }));
       const obs = await finishPointObservation(tab, arm, { x, y, event: eventName }, previousUrl);
       applyVerdict(rec, decidePointVerdict(obs));
+      await this.settlePage(tab, settle);
       const verification = await this.verifier.verifyAction(
         tab,
         previousUrl,
@@ -821,6 +910,10 @@ export class SutradharRuntime {
     toY: number,
     tabId?: string,
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     const spec = toVerificationSpec(expect);
     const start = Date.now();
@@ -836,6 +929,7 @@ export class SutradharRuntime {
       await this.raceStep(page.mouse.up());
       const obs = await finishPointObservation(tab, arm, { x: fromX, y: fromY, toX, toY, event: 'mousedown' }, previousUrl);
       applyVerdict(rec, decideDragVerdict(obs));
+      await this.settlePage(tab, settle);
       const verification = await this.verifier.verifyAction(
         tab,
         previousUrl,
@@ -897,6 +991,9 @@ export class SutradharRuntime {
     sessionId: string,
     fields: Record<string, string>,
     tabId?: string,
+    /** FR2-08: ONE settle wait after the last field (not one per field), only if at least one field
+     *  was filled. */
+    settle?: boolean | SettleSpec,
   ): Promise<Record<string, ActionResult>> {
     const results: Record<string, ActionResult> = {};
     for (const [target, value] of Object.entries(fields)) {
@@ -912,6 +1009,10 @@ export class SutradharRuntime {
         };
       });
     }
+    if (settle && Object.values(results).some((r) => r.success)) {
+      const { tab } = this.resolveTab(sessionId, tabId);
+      await this.settlePage(tab, settle);
+    }
     return results;
   }
 
@@ -922,9 +1023,13 @@ export class SutradharRuntime {
     tabId?: string,
     modifiers?: readonly ('Control' | 'Shift' | 'Alt' | 'Meta')[],
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     const spec = toVerificationSpec(expect);
-    return this.runAction(sessionId, { actionType: 'press_key', key, modifiers, ...this.specParam(spec) }, tabId);
+    return this.runAction(sessionId, { actionType: 'press_key', key, modifiers, ...this.settleParam(settle), ...this.specParam(spec) }, tabId);
   }
 
   /** Scroll the page. direction defaults to "down"; amount defaults to 500px. */
@@ -973,11 +1078,15 @@ export class SutradharRuntime {
     tabId?: string,
     offset?: { x: number; y: number },
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'hover', selector: normalizeTarget(target), offset, ...this.specParam(spec) },
+      { actionType: 'hover', selector: normalizeTarget(target), offset, ...this.settleParam(settle), ...this.specParam(spec) },
       tabId,
     );
   }
@@ -989,11 +1098,15 @@ export class SutradharRuntime {
     value: string,
     tabId?: string,
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'select_option', selector: normalizeTarget(target), value, ...this.specParam(spec) },
+      { actionType: 'select_option', selector: normalizeTarget(target), value, ...this.settleParam(settle), ...this.specParam(spec) },
       tabId,
     );
   }
@@ -1005,11 +1118,15 @@ export class SutradharRuntime {
     values: readonly string[],
     tabId?: string,
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'select_option', selector: normalizeTarget(target), values, ...this.specParam(spec) },
+      { actionType: 'select_option', selector: normalizeTarget(target), values, ...this.settleParam(settle), ...this.specParam(spec) },
       tabId,
     );
   }
@@ -1036,15 +1153,81 @@ export class SutradharRuntime {
     );
   }
 
+  /**
+   * FR2-08: wait until EVERY given condition holds at once (`text`, `textGone`, `url`, `js`), or
+   * `timeoutMs` (default 10000, max 300000, `<= 0` = check once) elapses. Use this instead of
+   * sleeping. Polls from NODE every ~100 ms with fully-awaited per-frame CDP probes, so it works in a
+   * background tab and on a strict-CSP page (see `condition-wait.ts`). It is NOT an engine action: no
+   * retries (`timeoutMs` is the real total, plus at most one 1.5 s pass), no duplicate guard, no failure
+   * screenshot, and it does not queue behind other actions on the tab (the action that makes the
+   * condition true may be issued concurrently).
+   *
+   * `text`/`textGone` share FR2-07's `expect.text` visible-text check (one definition), so they inherit
+   * its documented limits: text in never-painted SVG containers counts (GAP-329) and text split across
+   * inline-block items / `<textarea>` text can be missed (GAP-331). A frame that cannot be inspected
+   * (hung, gone, a dialog open) is "unavailable": never "met", and never read as "gone" for `textGone`.
+   *
+   * Validation errors (`TypeError`) are thrown before any browser contact. A timeout or a fatal
+   * condition (the JS threw, a dialog blocks the page, the tab closed) resolves `{success:false, error}`.
+   */
+  public async waitFor(sessionId: string, condition: WaitForCondition, tabId?: string): Promise<ActionResult> {
+    const { condition: c, timeoutMs } = normalizePageCondition(condition, condition?.timeoutMs);
+    const { tab } = this.resolveTab(sessionId, tabId);
+    const page = this.requirePage(tab);
+    const previousUrl = tab.url;
+    const r = await waitForPageCondition(page, c, {
+      timeoutMs,
+      getPendingDialog: () => tab.getPendingDialog?.(),
+    });
+    const closed = page.isClosed();
+    const error = r.satisfied ? undefined : formatConditionFailure(c, r, timeoutMs);
+    const result: ActionResult = {
+      success: r.satisfied,
+      actionType: 'wait_for',
+      executionTimeMs: r.elapsedMs,
+      currentUrl: closed ? undefined : page.url(),
+      title: closed || r.fatal?.kind === 'dialog' ? undefined : await this.readTitleBounded(tab),
+      output: {
+        conditions: displayPageCondition(c),
+        ...(r.satisfied ? { satisfiedAfterMs: r.elapsedMs } : {}),
+        polls: r.polls,
+        ...(c.textGone !== undefined ? { presentAtStart: r.presentAtStart } : {}),
+        ...(r.satisfied ? {} : { last: r.last }),
+      },
+      ...(error !== undefined ? { error } : {}),
+    };
+    // FR2-07 contract: success => verified (unless a vacuous textGone), failure => action-failed.
+    const verification = await this.verifier.verifyAction(
+      tab,
+      previousUrl,
+      { success: result.success, actionType: 'wait_for', outputData: result.output, error },
+      undefined,
+      result.success ? waitForVerdict(c, r.elapsedMs, r.presentAtStart, result.currentUrl) : undefined,
+    );
+    tab.recordAction({
+      actionType: 'wait_for',
+      selector: describePageCondition(c),
+      success: result.success,
+      ...(error !== undefined ? { error } : {}),
+      executionTimeMs: result.executionTimeMs,
+      timestamp: new Date().toISOString(),
+    });
+    return { ...result, verification, ...this.dialogPendingOf(tab) };
+  }
+
   /** Click the first element whose visible text contains `text`. */
   public async clickByText(
     sessionId: string,
     text: string,
     tabId?: string,
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     const spec = toVerificationSpec(expect);
-    return this.runAction(sessionId, { actionType: 'click_by_text', text, ...this.specParam(spec) }, tabId);
+    return this.runAction(sessionId, { actionType: 'click_by_text', text, ...this.settleParam(settle), ...this.specParam(spec) }, tabId);
   }
 
   /** Click an element by its ARIA `role` attribute (optionally narrowed by accessible `name`). */
@@ -1054,9 +1237,13 @@ export class SutradharRuntime {
     name?: string,
     tabId?: string,
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     const spec = toVerificationSpec(expect);
-    return this.runAction(sessionId, { actionType: 'click_by_role', role, name, ...this.specParam(spec) }, tabId);
+    return this.runAction(sessionId, { actionType: 'click_by_role', role, name, ...this.settleParam(settle), ...this.specParam(spec) }, tabId);
   }
 
   /** Type into the input whose `aria-label` or `placeholder` matches `label`. */
@@ -1066,9 +1253,13 @@ export class SutradharRuntime {
     value: string,
     tabId?: string,
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     const spec = toVerificationSpec(expect);
-    return this.runAction(sessionId, { actionType: 'type_by_label', label, value, ...this.specParam(spec) }, tabId);
+    return this.runAction(sessionId, { actionType: 'type_by_label', label, value, ...this.settleParam(settle), ...this.specParam(spec) }, tabId);
   }
 
   /** Upload a local file into a `<input type="file">` targeted by selector or sd-node-id. */
@@ -1078,11 +1269,15 @@ export class SutradharRuntime {
     filePath: string,
     tabId?: string,
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'upload_file', selector: normalizeTarget(target), filePath, ...this.specParam(spec) },
+      { actionType: 'upload_file', selector: normalizeTarget(target), filePath, ...this.settleParam(settle), ...this.specParam(spec) },
       tabId,
     );
   }
@@ -1094,11 +1289,15 @@ export class SutradharRuntime {
     button: 'left' | 'right' | 'middle',
     tabId?: string,
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'click', selector: normalizeTarget(target), button, ...this.specParam(spec) },
+      { actionType: 'click', selector: normalizeTarget(target), button, ...this.settleParam(settle), ...this.specParam(spec) },
       tabId,
     );
   }
@@ -1110,6 +1309,10 @@ export class SutradharRuntime {
     destTarget: string,
     tabId?: string,
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     const spec = toVerificationSpec(expect);
     return this.runAction(
@@ -1118,7 +1321,7 @@ export class SutradharRuntime {
         actionType: 'drag_and_drop',
         selector: normalizeTarget(sourceTarget),
         targetSelector: normalizeTarget(destTarget),
-        ...this.specParam(spec),
+        ...this.settleParam(settle), ...this.specParam(spec),
       },
       tabId,
     );
@@ -1130,11 +1333,15 @@ export class SutradharRuntime {
     target: string,
     tabId?: string,
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     const spec = toVerificationSpec(expect);
     return this.runAction(
       sessionId,
-      { actionType: 'touch_tap', selector: normalizeTarget(target), ...this.specParam(spec) },
+      { actionType: 'touch_tap', selector: normalizeTarget(target), ...this.settleParam(settle), ...this.specParam(spec) },
       tabId,
     );
   }
@@ -1150,6 +1357,10 @@ export class SutradharRuntime {
     downloadDir?: string,
     tabId?: string,
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     const spec = toVerificationSpec(expect);
     return this.runAction(
@@ -1159,7 +1370,7 @@ export class SutradharRuntime {
         selector: normalizeTarget(target),
         downloadDir,
         timeoutMs: 30000,
-        ...this.specParam(spec),
+        ...this.settleParam(settle), ...this.specParam(spec),
       },
       tabId,
     );
@@ -1826,6 +2037,10 @@ export class SutradharRuntime {
     filePath: string,
     tabId?: string,
     expect?: ActionExpectation,
+    /** FR2-08: opt-in post-action settle wait (DOM-quiet + network-idle; see `ActionParams.settle`), after
+     *  the action and before `expect` is checked. It cannot see a timer the page scheduled for later:
+     *  use {@link SutradharRuntime.waitFor} to wait for a specific result. */
+    settle?: boolean | SettleSpec,
   ): Promise<ActionResult> {
     const spec = toVerificationSpec(expect);
     const start = Date.now();
@@ -1871,6 +2086,7 @@ export class SutradharRuntime {
     } else {
       applyVerdict(rec, await finishUploadObservation(arm, fileName, fileSize));
     }
+    await this.settlePage(tab, settle);
     const verification = await this.verifier.verifyAction(
       tab,
       previousUrl,
@@ -2287,9 +2503,13 @@ export class SutradharRuntime {
     action: 'accept' | 'dismiss',
     promptText?: string,
     tabId?: string,
+    /** FR2-08: wait for the page to finish reacting to the dialog's resolution (accepting a `confirm()`
+     *  resumes page script, which commonly re-renders). See {@link SutradharRuntime.click}'s `settle`. */
+    settle?: boolean | SettleSpec,
   ): Promise<void> {
     const { tab } = this.resolveTab(sessionId, tabId);
     await tab.handleDialog(action, promptText);
+    await this.settlePage(tab, settle);
   }
 
   /** FR2-04: sets `sessionId`'s dialog policy going forward (affects future dialogs only — see
@@ -2538,6 +2758,17 @@ export class SutradharRuntime {
     };
   }
 
+  /** `{settle}` only when the caller asked for one: the params object must NOT gain a `settle` key otherwise. */
+  private settleParam(settle: boolean | SettleSpec | undefined): { settle?: boolean | SettleSpec } {
+    return settle ? { settle } : {};
+  }
+
+  /** FR2-08: the post-action settle wait for runtime-level methods that bypass the action engine.
+   *  Hard-bounded on the Node side (a dialog opened by the action cannot make it hang), never throws. */
+  private async settlePage(tab: IBrowserTab, settle?: boolean | SettleSpec): Promise<void> {
+    if (settle && this.hasRealPage(tab)) await waitForPageSettle(tab.page!, settle);
+  }
+
   /** `{verificationSpec}` only when an expectation was given — the params object must NOT gain a
    *  `verificationSpec` key otherwise (callers/tests compare it structurally). */
   private specParam(spec: VerificationSpec | undefined): { verificationSpec?: VerificationSpec } {
@@ -2681,6 +2912,24 @@ export class SutradharRuntime {
   private async readTitleUnlessDialog(tab: IBrowserTab): Promise<string> {
     if (this.dialogPendingOf(tab).dialogPending) return tab.title ?? '';
     return this.readTitle(tab);
+  }
+
+  /** `page.title()` is a main-thread evaluate that can block behind a native dialog or a hung page: bound
+   *  it (1.5 s) and fall back to the tab's cached title, so a wait that failed BECAUSE the page is stuck
+   *  can still return. */
+  private async readTitleBounded(tab: IBrowserTab): Promise<string> {
+    if (this.dialogPendingOf(tab).dialogPending) return tab.title ?? '';
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      return await Promise.race([
+        this.readTitle(tab),
+        new Promise<string>((resolve) => {
+          timer = setTimeout(() => resolve(tab.title ?? ''), 1500);
+        }),
+      ]);
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
   }
 
   private async readTitle(tab: IBrowserTab): Promise<string> {

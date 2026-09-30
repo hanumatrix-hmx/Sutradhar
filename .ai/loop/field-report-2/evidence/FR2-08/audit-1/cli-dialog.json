@@ -1,0 +1,48 @@
+{
+  "results": [
+    {
+      "id": "cli:dialog-mid-wait-text",
+      "pass": true,
+      "code": 3,
+      "ms": 3588,
+      "out": "dialogPending: {\"type\":\"alert\",\"message\":\"probe-alert\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:49415/alert-now?d=2500&t=Hello%20visible&i=text\"}\nWait failed"
+    },
+    {
+      "id": "cli:dialog-mid-wait-textGone-present",
+      "pass": true,
+      "code": 3,
+      "ms": 3676,
+      "out": "dialogPending: {\"type\":\"alert\",\"message\":\"probe-alert\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:49415/alert-now?d=2500&t=Hello%20visible&i=textGone-present\"}"
+    }
+  ],
+  "pids": [
+    {
+      "pid": 48452,
+      "what": "cli nav"
+    },
+    {
+      "pid": 5988,
+      "what": "cli waitfor"
+    },
+    {
+      "pid": 38760,
+      "what": "cli dialog"
+    },
+    {
+      "pid": 51348,
+      "what": "cli nav"
+    },
+    {
+      "pid": 51344,
+      "what": "cli waitfor"
+    },
+    {
+      "pid": 51668,
+      "what": "cli dialog"
+    },
+    {
+      "pid": 12320,
+      "what": "cli close"
+    }
+  ]
+}

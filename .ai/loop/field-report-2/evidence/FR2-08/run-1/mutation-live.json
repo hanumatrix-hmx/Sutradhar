@@ -1,0 +1,157 @@
+{
+  "allIdentical": true,
+  "shas": {
+    "packages\\browser\\src\\actions\\condition-wait.ts": {
+      "before": "f5e4fbb0e7f82c51721c6c0828f18d26eb19554fc72cd06d6724b023d9e76607",
+      "after": "f5e4fbb0e7f82c51721c6c0828f18d26eb19554fc72cd06d6724b023d9e76607"
+    },
+    "packages\\browser\\src\\actions\\page-settle.ts": {
+      "before": "aaaa42d75832e3a125196af360b8a8f24558ba86cf8fa06349be300053943518",
+      "after": "aaaa42d75832e3a125196af360b8a8f24558ba86cf8fa06349be300053943518"
+    },
+    "packages\\cli\\src\\cli.ts": {
+      "before": "7ebe2339e34a3490e5aea8805f1748206ce999d6c0d0dd9ced02813627e3ca56",
+      "after": "7ebe2339e34a3490e5aea8805f1748206ce999d6c0d0dd9ced02813627e3ca56"
+    }
+  },
+  "res": [
+    {
+      "id": "L1",
+      "why": "wait_for treats \"unavailable\" as met",
+      "only": "H3,M:iframe-cross-origin|visibility-hidden|inner",
+      "surface": "mcp",
+      "tscMutantExit": 0,
+      "tscRestoreExit": 0,
+      "caughtLive": true,
+      "exit": 1,
+      "summary": "[fr2-08] 1/2 passed {\"mcp\":{\"total\":2,\"passed\":1},\"cli\":{\"total\":0,\"passed\":0},\"sdk\":{\"total\":0,\"passed\":0},\"bundle\":{\"total\":0,\"passed\":0}}; FAILED: mcp:H3",
+      "failCount": 1,
+      "firstFails": [
+        "[mcp] FAIL H3 — {\"text\":{\"success\":true},\"textGone\":{\"success\":true}}"
+      ],
+      "restoredIdentical": true,
+      "ms": 12248
+    },
+    {
+      "id": "L2",
+      "why": "textGone reads \"unavailable\" as gone",
+      "only": "H3",
+      "surface": "mcp",
+      "tscMutantExit": 0,
+      "tscRestoreExit": 0,
+      "caughtLive": true,
+      "exit": 1,
+      "summary": "[fr2-08] 0/1 passed {\"mcp\":{\"total\":1,\"passed\":0},\"cli\":{\"total\":0,\"passed\":0},\"sdk\":{\"total\":0,\"passed\":0},\"bundle\":{\"total\":0,\"passed\":0}}; FAILED: mcp:H3",
+      "failCount": 1,
+      "firstFails": [
+        "[mcp] FAIL H3 — {\"text\":{\"success\":false,\"last\":\"unavailable\",\"error\":\"wait_for timed out after 0ms waiting for text=\\\"WQ001KPFO2\\\": text \\\"WQ001KPFO2\\\" could not be checked (only 7 of 9 frames answer"
+      ],
+      "restoredIdentical": true,
+      "ms": 12164
+    },
+    {
+      "id": "L3",
+      "why": "the condition is checked ONCE only",
+      "only": "L1",
+      "surface": "mcp",
+      "tscMutantExit": 0,
+      "tscRestoreExit": 0,
+      "caughtLive": true,
+      "exit": 1,
+      "summary": "[fr2-08] 1/6 passed {\"mcp\":{\"total\":6,\"passed\":1},\"cli\":{\"total\":0,\"passed\":0},\"sdk\":{\"total\":0,\"passed\":0},\"bundle\":{\"total\":0,\"passed\":0}}; FAILED: mcp:L1, mcp:L1b, mcp:L1c, mcp:L11, mcp:L12",
+      "failCount": 5,
+      "firstFails": [
+        "[mcp] FAIL L1 — {\"success\":false,\"polls\":1,\"latencyMs\":null,\"tier\":\"action-failed\",\"sentBeforeToast\":false}",
+        "[mcp] FAIL L1b — {\"clickReturnedBeforeToast\":true,\"waitOk\":false,\"latencyMs\":null}",
+        "[mcp] FAIL L1c — {\"expectTier\":\"action-failed\",\"expectCheck\":\"not-run\",\"waitOk\":false}"
+      ],
+      "restoredIdentical": true,
+      "ms": 5554
+    },
+    {
+      "id": "L4",
+      "why": "a pending native dialog is ignored",
+      "only": "N10",
+      "surface": "mcp",
+      "tscMutantExit": 0,
+      "tscRestoreExit": 0,
+      "caughtLive": true,
+      "exit": 1,
+      "summary": "[fr2-08] 0/1 passed {\"mcp\":{\"total\":1,\"passed\":0},\"cli\":{\"total\":0,\"passed\":0},\"sdk\":{\"total\":0,\"passed\":0},\"bundle\":{\"total\":0,\"passed\":0}}; FAILED: mcp:N10",
+      "failCount": 1,
+      "firstFails": [
+        "[mcp] FAIL N10 — {\"error\":\"wait_for timed out after 15000ms waiting for text=\\\"Never appears\\\": text \\\"Never appears\\\" could not be checked (only 0 of 1 frames answered (1 did not answer within 1500ms"
+      ],
+      "restoredIdentical": true,
+      "ms": 35586
+    },
+    {
+      "id": "L5",
+      "why": "NO Node-side settle hard bound (the T5 defect restored)",
+      "only": "N18",
+      "surface": "mcp",
+      "tscMutantExit": 2,
+      "tscRestoreExit": 0,
+      "caughtLive": true,
+      "exit": 1,
+      "summary": "[fr2-08] 0/1 passed {\"mcp\":{\"total\":1,\"passed\":0},\"cli\":{\"total\":0,\"passed\":0},\"sdk\":{\"total\":0,\"passed\":0},\"bundle\":{\"total\":0,\"passed\":0}}; FAILED: mcp:N18",
+      "failCount": 1,
+      "firstFails": [
+        "[mcp] FAIL N18 — {\"elapsedMs\":30384,\"noSettleControlMs\":3096,\"settleOverheadMs\":27288,\"success\":true}"
+      ],
+      "restoredIdentical": true,
+      "ms": 39698
+    },
+    {
+      "id": "L6",
+      "why": "multiple conditions are ORed instead of ANDed",
+      "only": "L9",
+      "surface": "mcp",
+      "tscMutantExit": 0,
+      "tscRestoreExit": 0,
+      "caughtLive": true,
+      "exit": 1,
+      "summary": "[fr2-08] 0/1 passed {\"mcp\":{\"total\":1,\"passed\":0},\"cli\":{\"total\":0,\"passed\":0},\"sdk\":{\"total\":0,\"passed\":0},\"bundle\":{\"total\":0,\"passed\":0}}; FAILED: mcp:L9",
+      "failCount": 1,
+      "firstFails": [
+        "[mcp] FAIL L9 — {\"success\":true,\"error\":\"\"}"
+      ],
+      "restoredIdentical": true,
+      "ms": 6392
+    },
+    {
+      "id": "L7",
+      "why": "the CLI accepts a condition flag on another verb (D16 rejection removed)",
+      "only": "N-C3",
+      "surface": "cli",
+      "tscMutantExit": 0,
+      "tscRestoreExit": 0,
+      "caughtLive": true,
+      "exit": 1,
+      "summary": "[fr2-08] 0/1 passed {\"mcp\":{\"total\":0,\"passed\":0},\"cli\":{\"total\":1,\"passed\":0},\"sdk\":{\"total\":0,\"passed\":0},\"bundle\":{\"total\":0,\"passed\":0}}; FAILED: cli:N-C3",
+      "failCount": 1,
+      "firstFails": [
+        "[cli] FAIL N-C3 — {\"code\":0,\"stderr\":\"\"}"
+      ],
+      "restoredIdentical": true,
+      "ms": 7988
+    },
+    {
+      "id": "L8",
+      "why": "a js throw is treated as transient (the wait runs to its timeout instead of failing at once)",
+      "only": "N2",
+      "surface": "mcp",
+      "tscMutantExit": 0,
+      "tscRestoreExit": 0,
+      "caughtLive": true,
+      "exit": 1,
+      "summary": "[fr2-08] 0/1 passed {\"mcp\":{\"total\":1,\"passed\":0},\"cli\":{\"total\":0,\"passed\":0},\"sdk\":{\"total\":0,\"passed\":0},\"bundle\":{\"total\":0,\"passed\":0}}; FAILED: mcp:N2",
+      "failCount": 1,
+      "firstFails": [
+        "[mcp] FAIL N2 — {\"elapsedMs\":8005,\"polls\":75,\"error\":\"wait_for timed out after 8000ms waiting for js(window.__nope.ready): js window.__nope.ready did not settle within 1500ms.\\nHint: The condition nev"
+      ],
+      "restoredIdentical": true,
+      "ms": 12855
+    }
+  ]
+}

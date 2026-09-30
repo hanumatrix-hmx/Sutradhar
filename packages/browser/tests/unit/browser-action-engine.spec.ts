@@ -2543,6 +2543,63 @@ describe('@sutradhar/browser BrowserActionEngine post-action settle wait', () =>
   });
 });
 
+describe('FR2-08 settle via page-settle', () => {
+  it('E1: settle:true on a newly-wired action type (focus) runs the settle AFTER the action, via the generic engine path', async () => {
+    const handle = mockHandle();
+    handle.evaluate.mockResolvedValue(false); // assertNotStale: not stale; the focus post-check is best-effort
+    const evaluateSpy = vi.fn().mockResolvedValue(undefined);
+    const waitForNetworkIdleSpy = vi.fn().mockResolvedValue(undefined);
+    const page = {
+      ...(singleFramePage(() => Promise.resolve(handle)) as any),
+      evaluate: evaluateSpy,
+      waitForNetworkIdle: waitForNetworkIdleSpy,
+    } as unknown as Page;
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), { actionType: 'focus', selector: '#f', maxRetries: 0, settle: true });
+    expect(result.success).toBe(true);
+    expect(handle.focus).toHaveBeenCalledTimes(1);
+    expect(evaluateSpy).toHaveBeenCalledTimes(1);
+    expect(evaluateSpy).toHaveBeenCalledWith(expect.any(Function), 300, 5000);
+    expect(waitForNetworkIdleSpy).toHaveBeenCalledWith({ idleTime: 500, timeout: 5000 });
+    expect(handle.focus.mock.invocationCallOrder[0]!).toBeLessThan(evaluateSpy.mock.invocationCallOrder[0]!);
+    // and without settle the very same action makes no settle calls
+    evaluateSpy.mockClear();
+    waitForNetworkIdleSpy.mockClear();
+    const plain = await engine.executeAction(mockTab(page), { actionType: 'focus', selector: '#f', maxRetries: 0 });
+    expect(plain.success).toBe(true);
+    expect(evaluateSpy).not.toHaveBeenCalled();
+    expect(waitForNetworkIdleSpy).not.toHaveBeenCalled();
+  });
+
+  it('E2: a failed action never runs settle (pins that settle is success-path only)', async () => {
+    const evaluateSpy = vi.fn().mockResolvedValue(undefined);
+    const waitForNetworkIdleSpy = vi.fn().mockResolvedValue(undefined);
+    const page = { evaluate: evaluateSpy, waitForNetworkIdle: waitForNetworkIdleSpy } as unknown as Page; // no keyboard -> press_key fails
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), { actionType: 'press_key', key: 'Enter', maxRetries: 0, settle: true });
+    expect(result.success).toBe(false);
+    expect(waitForNetworkIdleSpy).not.toHaveBeenCalled();
+    expect(evaluateSpy).not.toHaveBeenCalled();
+  });
+
+  it('E3: a settle whose evaluate never resolves still returns success (D14 hard bound through the engine)', async () => {
+    const page = {
+      frames: vi.fn().mockReturnValue([]),
+      keyboard: { press: vi.fn().mockResolvedValue(undefined) },
+      evaluate: vi.fn(() => new Promise(() => {})),
+      waitForNetworkIdle: vi.fn(() => new Promise(() => {})),
+    } as unknown as Page;
+    const engine = new BrowserActionEngine();
+    const result = await engine.executeAction(mockTab(page), {
+      actionType: 'press_key',
+      key: 'Enter',
+      maxRetries: 0,
+      settle: { timeoutMs: 50 },
+    });
+    expect(result.success).toBe(true); // it RETURNED (bounded) although neither settle half ever resolved
+  }, 15000);
+});
+
 describe('@sutradhar/browser BrowserActionEngine scroll — element-targeted (nested scroll containers)', () => {
   it('scrolls the target element itself (its own scrollTop), not the window, when a selector is given', async () => {
     const handle = mockHandle();

@@ -1,0 +1,58 @@
+[fr2-08] evidence dir: E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-08/run-1/fresh-live; fixture server http://127.0.0.1:56059; matrix server http://127.0.0.1:56060; mode verify
+[mcp] PASS L1
+[mcp] PASS L1b
+[mcp] PASS L1c
+[mcp] PASS L3
+[mcp] PASS L9
+[mcp] PASS L10
+[mcp] PASS L11
+[mcp] PASS L12
+[mcp] PASS N1
+[mcp] PASS N4
+[mcp] PASS N10
+[mcp] PASS N11
+[mcp] PASS N12
+[mcp] PASS N13
+[mcp] PASS N14
+[mcp] PASS N15
+[mcp] PASS N17
+[mcp] PASS N19
+[mcp] PASS N18
+[mcp] FAIL H3 — {"text":{"success":false,"last":"unmet","error":"wait_for timed out after 0ms waiting for text=\"WQ001KP2WK\": text \"WQ001KP2WK\" was not found in the visible text of 9 frame(s).\nHint: The condition never became true. Inspect the page (browser.snapshot"},"textGone":{"success":true,"presentAtStart":false}}
+[mcp] PASS S:click_by_text
+[cli] PASS C-L1
+[cli] PASS C-L3
+[cli] PASS C-L4
+[cli] PASS C-L4b-json
+[cli] PASS N-C3
+{"timestamp":"2026-09-30T07:15:51.879Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T07:15:52.062Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790752551879_1","context":{"isIncognito":false}}
+[sdk] PASS SDK-L1
+[sdk] PASS SDK-L1-background
+[sdk] PASS SDK-N1
+[sdk] PASS SDK-N10
+[sdk] PASS SDK-N12
+{"timestamp":"2026-09-30T07:16:30.568Z","level":"info","message":"[BrowserSession] Closed session sess_1790752551879_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-30T07:16:30.568Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790752551879_1","context":{"reason":"Runtime shutdown"}}
+[bundle] PASS L1
+[bundle] PASS L1b
+[bundle] PASS L1c
+[bundle] PASS L3
+[bundle] PASS L10
+[bundle] PASS L11
+[bundle] PASS L12
+[bundle] PASS N1
+[bundle] PASS N4
+[bundle] PASS N10
+[bundle] PASS N11
+[bundle] PASS N12
+[bundle] PASS N13
+[bundle] PASS N14
+[bundle] PASS N15
+[bundle] PASS N17
+[bundle] PASS N19
+[bundle] PASS N18
+[bundle] FAIL H3 — {"text":{"success":false,"last":"unmet","error":"wait_for timed out after 0ms waiting for text=\"WQ001KMZPZ\": text \"WQ001KMZPZ\" was not found in the visible text of 9 frame(s).\nHint: The condition never became true. Inspect the page (browser.snapshot"},"textGone":{"success":true,"presentAtStart":false}}
+[bundle] PASS S:click_by_text
+
+[fr2-08] 49/51 passed {"mcp":{"total":21,"passed":20},"cli":{"total":5,"passed":5},"sdk":{"total":5,"passed":5},"bundle":{"total":20,"passed":19}}; FAILED: mcp:H3, bundle:H3

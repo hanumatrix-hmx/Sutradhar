@@ -1,0 +1,27 @@
+{
+  "allIdentical": true,
+  "shas": {
+    "packages\\browser\\src\\actions\\condition-wait.ts": {
+      "before": "f5e4fbb0e7f82c51721c6c0828f18d26eb19554fc72cd06d6724b023d9e76607",
+      "after": "f5e4fbb0e7f82c51721c6c0828f18d26eb19554fc72cd06d6724b023d9e76607"
+    }
+  },
+  "results": [
+    {
+      "id": "U4b",
+      "why": "timeout not honoured, bounded variant (the deadline is 1.5 s later than asked: \"0 = check once\" becomes several polls)",
+      "file": "packages/browser/src/actions/condition-wait.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  2 failed | 78 passed (80)",
+      "firstFailures": [
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W15: timeoutMs 0 means exactly one pass, both outcomes",
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W16c: a dialog open at the deadline is reported as the reason (a 0-timeout wait during a dialog is unavailable, not unmet)"
+      ],
+      "failedCount": 2,
+      "restoredIdentical": true,
+      "ms": 121874
+    }
+  ]
+}

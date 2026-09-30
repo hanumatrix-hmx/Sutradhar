@@ -1,0 +1,51 @@
+{
+  "allIdentical": true,
+  "shas": {
+    "packages\\capability-runtime\\src\\runtime.ts": {
+      "before": "c798ab3729cacea9b9c550935aa2244c777a3ac627ca7dd1e38ba5cc3688555c",
+      "after": "c798ab3729cacea9b9c550935aa2244c777a3ac627ca7dd1e38ba5cc3688555c"
+    },
+    "packages\\mcp-server\\src\\tools.ts": {
+      "before": "18d4dbfafd3daa25f74a58fed1e5d5e6a5a15f95e946942666a064f7063816c7",
+      "after": "18d4dbfafd3daa25f74a58fed1e5d5e6a5a15f95e946942666a064f7063816c7"
+    }
+  },
+  "res": [
+    {
+      "id": "L9",
+      "why": "settle skipped for the runtime-level tools (settlePage is a no-op): navigate/click_at_point/handle_dialog/fill_form return before the page finished",
+      "only": "S:navigate,S:click_at_point,S:handle_dialog,S:fill_form,S:go_back",
+      "surface": "mcp",
+      "tscMutantExit": 2,
+      "tscRestoreExit": 0,
+      "caughtLive": true,
+      "exit": 1,
+      "summary": "[fr2-08] 0/5 passed {\"mcp\":{\"total\":5,\"passed\":0},\"cli\":{\"total\":0,\"passed\":0},\"sdk\":{\"total\":0,\"passed\":0},\"bundle\":{\"total\":0,\"passed\":0}}; FAILED: mcp:S:click_at_point, mcp:S:fill_form, mcp:S:handle_dialog, mcp:S:navigate, mcp:S:go_back_forward",
+      "failCount": 5,
+      "firstFails": [
+        "[mcp] FAIL S:click_at_point — {\"success\":true,\"elapsedMs\":5}",
+        "[mcp] FAIL S:fill_form — {\"success\":true,\"elapsedMs\":35}",
+        "[mcp] FAIL S:handle_dialog — {\"success\":true}"
+      ],
+      "restoredIdentical": true,
+      "ms": 12392
+    },
+    {
+      "id": "L10",
+      "why": "the newly wired browser.hover tool drops settle before calling the runtime",
+      "only": "S:hover",
+      "surface": "mcp",
+      "tscMutantExit": 2,
+      "tscRestoreExit": 0,
+      "caughtLive": true,
+      "exit": 1,
+      "summary": "[fr2-08] 0/1 passed {\"mcp\":{\"total\":1,\"passed\":0},\"cli\":{\"total\":0,\"passed\":0},\"sdk\":{\"total\":0,\"passed\":0},\"bundle\":{\"total\":0,\"passed\":0}}; FAILED: mcp:S:hover",
+      "failCount": 1,
+      "firstFails": [
+        "[mcp] FAIL S:hover — {\"success\":true,\"elapsedMs\":114}"
+      ],
+      "restoredIdentical": true,
+      "ms": 4819
+    }
+  ]
+}

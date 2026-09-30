@@ -8,3 +8,5 @@ export * from './browser-action-engine.js';
 export * from './path-containment.js';
 export * from './download-lock.js';
 export * from './selector-dialect.js';
+export * from './page-settle.js';
+export * from './condition-wait.js';

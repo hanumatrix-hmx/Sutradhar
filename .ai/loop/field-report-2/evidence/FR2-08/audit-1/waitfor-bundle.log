@@ -1,0 +1,22 @@
+[pid] 5988 observer chrome E:\AI-Cache\tmp\audit-fr208-prof-dCCyWR
+[pid] 46568 mcp server E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/mcp-cli.js
+PASS bundle:A1-toast {"ms":2084,"lat":96,"polls":20,"tier":"verified"}
+PASS bundle:A2-settle-vs-timer {"clickMs":559,"clickRecvBeforeShownBy":1500,"waitLat":34}
+PASS bundle:A2b-concurrent-click {"clickMs":49,"waitMs":2288}
+PASS bundle:A3-dialog-text-present {"open":true,"text":[false,1083,"wait_for blocked by an open alert dialog (\"probe-alert\") after 1082ms — handle it (browser.handle_dialog, or \"sutradhar ","alert"],"textGone":[false,1092,null],"js":[false,1088],"url":[true,1],"stillPending":true}
+PASS bundle:A3b-dialog-opens-mid-wait-textGone {"ms":3915,"err":"wait_for blocked by an open alert dialog (\"probe-alert\") after 3914ms — handle it (browser.handle_dialog, or \"sutradhar dialog accept|dismis","vacuousUnderDialog":[false,"wait_for blocked by an open alert dialog (\"probe-alert\") after 1087ms — handle it (browser.handle_di"]}
+PASS bundle:A4-hung-xo-frame {"premiseHung":true,"checks":1,"textNowhere":[false,"unavailable"],"textGoneNowhere":[false,"unavailable",3137,"wait_for timed out after 2000ms waiting for textGone=\"Nowhere token\": textGone \"Nowhere token\" could not be checked (only 1 of 3 frames answered (2 did not answ"],"textMain":[true,3],"textGoneFrame":[false,"unavailable"],"textGoneT0":[false,1520]}
+PASS bundle:A5-hung-main {"premiseHung":true,"textGone":[false,4645,"unavailable"],"text":[false,4634],"js":[false,4638,"wait_for timed out after 3000ms waiting for js(true): js true did not settle within 1500ms.\nHint: Th"],"url":[true,1506],"textGoneT0":[false,3011]}
+PASS bundle:A6-background {"vis":"hidden","lat":80,"timeoutMs3000Elapsed":3016,"jsTimeoutElapsed":3015}
+PASS bundle:A7-flicker {"on30":{"success":false,"polls":38,"ms":4012},"on60":{"success":true,"polls":15,"ms":1534},"on400":{"success":true,"polls":15,"ms":1523},"note":"informational: a condition true for less than one poll interval may be missed"}
+PASS bundle:A8-detach {"ms":1532,"presentAtStart":true,"afterRemoveBy":50}
+PASS bundle:A9-nav-mid-wait-textGone {"falseMet":0,"res":[{"success":false,"ms":6016,"polls":43,"url":"/nav-b?n=0.07133393250747344","presentAtStart":true},{"success":false,"ms":6008,"polls":43,"url":"/nav-b?n=0.8510654823398426","presentAtStart":true},{"success":false,"ms":6016,"polls":43,"url":"/nav-b?n=0.8157822938414495","presentAtStart":true},{"success":false,"ms":6011,"polls":43,"url":"/nav-b?n=0.4326669526577328","presentAtStart":true},{"success":false,"ms":6005,"polls":43,"url":"/nav-b?n=0.5573101769253349","presentAtStart":true}],"note":"OldMarker is in page A and in page B HTML; any met = a transient navigation state read as gone"}
+PASS bundle:A9b-nav-and {"ms":2155,"polls":7}
+PASS bundle:A10-shadow {"open":[true,1092],"closed":[false,1516]}
+PASS bundle:A11-iframes {"same":[true,1092],"cross":[true,443,null]}
+PASS bundle:A12-js-url {"jsLat":80,"urlLat":95}
+PASS bundle:A13-gap329-331-parity {"waitFor":{"SvgDefsWord":true,"AreaWord":false,"HiddenWord":false,"ValueWord":false},"expectText":{"SvgDefsWord":true,"AreaWord":false,"HiddenWord":false,"ValueWord":false},"parity":true}
+PASS bundle:A14-js-errors {"throw":[2,"wait_for failed: js condition threw after 1ms: Cannot read properties of undefined (reading 'ready')\nHint: Guard the exp"],"never":[3117,"wait_for timed out after 2500ms waiting for js(new Promise(() => {})): js new Promise(() => {}) did not settle within 1500ms.\nHint: The condition never became t"],"syntax":[1,"wait_for failed: js condition threw after 1ms: Unexpected token ')'\nHint: Guard the expression so it"]}
+PASS bundle:A15-tab-closed {"tabId":"tab_sess_1790759309558_1_3","afterClose":47,"err":"wait_for failed: the tab was closed while waiting (after 655ms).","listTabsOk":true}
+PASS bundle:A16-validation {"a":"wait_for failed: wait_for: give at least one of text, textGone, url, js","b":"MCP error -32602: Input validation error: Invalid arguments for tool browser.wait_for: Str","c":"wait_for failed: wait_for: text and textGone are both \"X\" — that can never be satisfied","d":"MCP error -32602: Input validation error: Invalid arguments ","e":"MCP error -32602: Input validation error: Invalid arguments "}
+SUMMARY bundle: 19/19

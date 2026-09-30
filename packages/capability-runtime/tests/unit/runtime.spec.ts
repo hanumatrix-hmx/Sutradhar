@@ -2281,3 +2281,302 @@ describe('@sutradhar/capability-runtime FR2-07 verification contract', () => {
     expect(failedExpectations(v)).toEqual(['text', 'urlChanged']);
   });
 });
+
+describe('FR2-08 settle wiring and waitFor (runtime)', () => {
+  function stub(runtime: SutradharRuntime, tab: Record<string, unknown>) {
+    return vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({
+      session: {} as any,
+      tab: { id: 'tab_1', url: 'https://a.test/', title: 'A', ...tab } as any,
+    });
+  }
+  const okResult = { success: true, actionType: 'x', executionTimeMs: 1 };
+
+  it('R1: the 13 engine-routed methods pass settle through to the engine params; omitted leaves no settle key', async () => {
+    const calls: Array<[string, (rt: SutradharRuntime, settle: boolean | undefined) => Promise<unknown>]> = [
+      ['focus', (rt, s) => rt.focus('s', '#a', undefined, undefined, s)],
+      ['pressKey', (rt, s) => rt.pressKey('s', 'Enter', undefined, undefined, undefined, s)],
+      ['hover', (rt, s) => rt.hover('s', '#a', undefined, undefined, undefined, s)],
+      ['selectOption', (rt, s) => rt.selectOption('s', '#a', 'v', undefined, undefined, s)],
+      ['selectOptions', (rt, s) => rt.selectOptions('s', '#a', ['v'], undefined, undefined, s)],
+      ['clickByText', (rt, s) => rt.clickByText('s', 'Go', undefined, undefined, s)],
+      ['clickByRole', (rt, s) => rt.clickByRole('s', 'button', 'Go', undefined, undefined, s)],
+      ['typeByLabel', (rt, s) => rt.typeByLabel('s', 'Name', 'v', undefined, undefined, s)],
+      ['uploadFile', (rt, s) => rt.uploadFile('s', '#f', '/x', undefined, undefined, s)],
+      ['clickWithButton', (rt, s) => rt.clickWithButton('s', '#a', 'right', undefined, undefined, s)],
+      ['dragAndDrop', (rt, s) => rt.dragAndDrop('s', '#a', '#b', undefined, undefined, s)],
+      ['touchTap', (rt, s) => rt.touchTap('s', '#a', undefined, undefined, s)],
+      ['downloadFile', (rt, s) => rt.downloadFile('s', '#a', undefined, undefined, undefined, s)],
+    ];
+    expect(calls).toHaveLength(13);
+    for (const [name, call] of calls) {
+      const runtime = new SutradharRuntime();
+      const spy = vi.spyOn(runtime as any, 'runAction').mockResolvedValue(okResult);
+      await call(runtime, true);
+      expect(spy.mock.calls[0]![1], `${name} with settle`).toMatchObject({ settle: true });
+      await call(runtime, undefined);
+      expect('settle' in (spy.mock.calls[1]![1] as object), `${name} without settle`).toBe(false);
+      await call(runtime, false as any);
+      expect((spy.mock.calls[2]![1] as any).settle, `${name} settle:false`).toBeFalsy();
+    }
+  });
+
+  it('R2: runtime-level methods settle AFTER the primitive, once, and not without settle or when the primitive throws', async () => {
+    const mkPage = (extra: Record<string, unknown> = {}) => ({
+      isClosed: () => false,
+      url: () => 'https://a.test/',
+      title: async () => 'A',
+      ...extra,
+    });
+    type Case = {
+      name: string;
+      make: () => { tab: Record<string, unknown>; prim: ReturnType<typeof vi.fn> };
+      run: (rt: SutradharRuntime, settle?: boolean) => Promise<unknown>;
+    };
+    const cases: Case[] = [
+      {
+        name: 'navigate',
+        make: () => {
+          const prim = vi.fn().mockResolvedValue({ id: 'tab_1', url: 'https://b.test/', title: 'B' });
+          return { tab: { page: mkPage(), navigate: prim }, prim };
+        },
+        run: (rt, s) => rt.navigate('s', 'https://b.test/', undefined, undefined, s),
+      },
+      {
+        name: 'goBack',
+        make: () => {
+          const prim = vi.fn().mockResolvedValue(null);
+          return { tab: { page: mkPage({ goBack: prim }) }, prim };
+        },
+        run: (rt, s) => rt.goBack('s', undefined, undefined, s),
+      },
+      {
+        name: 'goForward',
+        make: () => {
+          const prim = vi.fn().mockResolvedValue(null);
+          return { tab: { page: mkPage({ goForward: prim }) }, prim };
+        },
+        run: (rt, s) => rt.goForward('s', undefined, undefined, s),
+      },
+      {
+        name: 'reload',
+        make: () => {
+          const prim = vi.fn().mockResolvedValue(null);
+          return { tab: { page: mkPage({ reload: prim }) }, prim };
+        },
+        run: (rt, s) => rt.reload('s', undefined, undefined, s),
+      },
+      {
+        name: 'clickAtPoint',
+        make: () => {
+          const prim = vi.fn().mockResolvedValue(undefined);
+          return { tab: { page: mkPage({ mouse: { click: prim } }) }, prim };
+        },
+        run: (rt, s) => rt.clickAtPoint('s', 5, 6, undefined, 'left', undefined, s),
+      },
+      {
+        name: 'dragAtPoints',
+        make: () => {
+          const prim = vi.fn().mockResolvedValue(undefined);
+          const ok = vi.fn().mockResolvedValue(undefined);
+          return { tab: { page: mkPage({ mouse: { move: ok, down: ok, up: prim } }) }, prim };
+        },
+        run: (rt, s) => rt.dragAtPoints('s', 1, 2, 3, 4, undefined, undefined, s),
+      },
+      {
+        name: 'handleDialog',
+        make: () => {
+          const prim = vi.fn().mockResolvedValue(undefined);
+          return { tab: { page: mkPage(), handleDialog: prim }, prim };
+        },
+        run: (rt, s) => rt.handleDialog('s', 'accept', undefined, undefined, s),
+      },
+    ];
+    for (const c of cases) {
+      {
+        const runtime = new SutradharRuntime();
+        const { tab, prim } = c.make();
+        stub(runtime, tab);
+        const settle = vi.spyOn(runtime as any, 'settlePage').mockResolvedValue(undefined);
+        await c.run(runtime, true);
+        expect(settle, `${c.name}: settlePage calls`).toHaveBeenCalledTimes(1);
+        expect(settle.mock.calls[0]![1], `${c.name}: settle arg`).toBe(true);
+        expect(prim.mock.invocationCallOrder[0]!, `${c.name}: order`).toBeLessThan(settle.mock.invocationCallOrder[0]!);
+      }
+      {
+        const runtime = new SutradharRuntime();
+        const { tab } = c.make();
+        stub(runtime, tab);
+        const settle = vi.spyOn(runtime as any, 'settlePage').mockResolvedValue(undefined);
+        await c.run(runtime, undefined);
+        // the code path may call settlePage, but never with a settle request the caller did not make
+        for (const call of settle.mock.calls) expect(call[1], `${c.name}: no settle requested`).toBeUndefined();
+      }
+    }
+    const runtime = new SutradharRuntime();
+    const boom = vi.fn().mockRejectedValue(new Error('nav failed'));
+    stub(runtime, { page: mkPage(), navigate: boom });
+    const settle = vi.spyOn(runtime as any, 'settlePage').mockResolvedValue(undefined);
+    await expect(runtime.navigate('s', 'https://b.test/', undefined, undefined, true)).rejects.toThrow('nav failed');
+    expect(settle).not.toHaveBeenCalled();
+  });
+
+  it('R2b: settlePage really calls the page settle for a real page and is a no-op without settle or a page', async () => {
+    const runtime = new SutradharRuntime();
+    const page = { isClosed: () => false, evaluate: vi.fn().mockResolvedValue(undefined), waitForNetworkIdle: vi.fn().mockResolvedValue(undefined) };
+    await (runtime as any).settlePage({ page }, true);
+    expect(page.evaluate).toHaveBeenCalledWith(expect.any(Function), 300, 5000);
+    expect(page.waitForNetworkIdle).toHaveBeenCalledWith({ idleTime: 500, timeout: 5000 });
+    page.evaluate.mockClear();
+    await (runtime as any).settlePage({ page }, undefined);
+    await (runtime as any).settlePage({ page }, false);
+    await (runtime as any).settlePage({ page: undefined }, true);
+    await (runtime as any).settlePage({ page: { ...page, isClosed: () => true } }, true);
+    expect(page.evaluate).not.toHaveBeenCalled();
+  });
+
+  it('R3: fillForm settles ONCE after the loop and only if a field succeeded; per-field type calls get no settle', async () => {
+    const runtime = new SutradharRuntime();
+    stub(runtime, { page: { isClosed: () => false } });
+    const type = vi.spyOn(runtime, 'type').mockResolvedValue({ success: true, actionType: 'type', executionTimeMs: 1 });
+    const settle = vi.spyOn(runtime as any, 'settlePage').mockResolvedValue(undefined);
+    await runtime.fillForm('s', { a: '1', b: '2' }, undefined, true);
+    expect(type).toHaveBeenCalledTimes(2);
+    for (const c of type.mock.calls) expect(c.length).toBeLessThanOrEqual(4); // (sid, target, value, tabId): never a settle argument
+    expect(settle).toHaveBeenCalledTimes(1);
+    expect(settle.mock.invocationCallOrder[0]!).toBeGreaterThan(type.mock.invocationCallOrder[1]!);
+    settle.mockClear();
+    await runtime.fillForm('s', { a: '1' });
+    expect(settle).not.toHaveBeenCalled();
+    type.mockResolvedValue({ success: false, actionType: 'type', executionTimeMs: 1, error: 'nope' });
+    await runtime.fillForm('s', { a: '1', b: '2' }, undefined, true);
+    expect(settle).not.toHaveBeenCalled();
+    type.mockRejectedValue(new Error('threw'));
+    await runtime.fillForm('s', { a: '1' }, undefined, true);
+    expect(settle).not.toHaveBeenCalled();
+  });
+
+  it('R4: waitFor validates BEFORE resolving the session (TypeError, not BrowserNotAvailableError)', async () => {
+    const runtime = new SutradharRuntime();
+    const resolve = vi.spyOn(runtime as any, 'resolveTab');
+    await expect(runtime.waitFor('nope', {})).rejects.toThrow(/give at least one/);
+    await expect(runtime.waitFor('nope', { text: 'x', textGone: 'x' })).rejects.toThrow(TypeError);
+    await expect(runtime.waitFor('nope', { text: 'x', timeoutMs: 300001 })).rejects.toThrow(/exceeds the maximum/);
+    expect(resolve).not.toHaveBeenCalled();
+    resolve.mockRestore();
+    await expect(runtime.waitFor('nope', { text: 'x' })).rejects.toThrow(BrowserNotAvailableError);
+  });
+
+  function waitTab(over: { text?: boolean | 'throw'; url?: string; js?: unknown; dialog?: boolean; closed?: boolean } = {}) {
+    const recorded: any[] = [];
+    const frame: any = {
+      isDetached: () => false,
+      parentFrame: () => null,
+      frameElement: async () => null,
+      url: () => over.url ?? 'https://a.test/',
+      evaluate: vi.fn(async (fn: unknown) => {
+        if (typeof fn === 'string') return over.js ?? true;
+        if (over.text === 'throw') throw new Error('frame gone');
+        return over.text ?? true;
+      }),
+    };
+    const page = {
+      isClosed: () => over.closed ?? false,
+      url: () => over.url ?? 'https://a.test/',
+      title: vi.fn(async () => 'A title'),
+      mainFrame: () => frame,
+      frames: () => [frame],
+    };
+    const tab = {
+      id: 'tab_1',
+      url: over.url ?? 'https://a.test/',
+      title: 'cached',
+      page,
+      getPendingDialog: () => (over.dialog ? { dialogType: 'alert', message: 'm' } : undefined),
+      recordAction: (e: unknown) => recorded.push(e),
+    };
+    return { tab, page, frame, recorded };
+  }
+
+  it('R5: a satisfied waitFor maps to an ActionResult (wait_for), records history, is verified, has no error/failureScreenshot', async () => {
+    const runtime = new SutradharRuntime();
+    const { tab, recorded } = waitTab({ text: true });
+    stub(runtime, tab);
+    const r = await runtime.waitFor('s', { text: 'x', timeoutMs: 1000 });
+    expect(r.success).toBe(true);
+    expect(r.actionType).toBe('wait_for');
+    expect(r.output).toMatchObject({ conditions: { text: 'x' }, polls: 1 });
+    expect(Object.keys((r.output as any).conditions)).toEqual(['text']);
+    expect((r.output as any).satisfiedAfterMs).toEqual(expect.any(Number));
+    expect('error' in r).toBe(false);
+    expect('failureScreenshot' in r).toBe(false);
+    expect(r.title).toBe('A title');
+    expect(r.verification?.verified).toBe(true);
+    expect(r.verification?.evidence.tier).toBe('verified');
+    expect(r.verification?.evidence.checks.map((c) => c.check)).toEqual(['wait_for.text']);
+    expect(recorded).toHaveLength(1);
+    expect(recorded[0]).toMatchObject({ actionType: 'wait_for', selector: 'text="x"', success: true });
+  });
+
+  it('R6: a timeout is success:false with the exact error, output.last, action-failed verification, and no retries', async () => {
+    const runtime = new SutradharRuntime();
+    const { tab, frame, recorded } = waitTab({ text: false });
+    stub(runtime, tab);
+    const r = await runtime.waitFor('s', { text: 'Never', timeoutMs: 0 });
+    expect(r.success).toBe(false);
+    expect(r.error).toMatch(/^wait_for timed out after 0ms waiting for text="Never"/);
+    expect((r.output as any).last).toEqual({ text: 'unmet' });
+    expect('retriesUsed' in r).toBe(false);
+    expect(r.verification?.evidence.tier).toBe('action-failed');
+    expect(r.verification?.verified).toBe(false);
+    expect(frame.evaluate).toHaveBeenCalledTimes(1); // one pass, exactly: nothing retried it
+    expect(recorded[0]).toMatchObject({ actionType: 'wait_for', success: false });
+  });
+
+  it('R7: a dialog-blocked wait never reads the page title (it would block) and reports dialogPending', async () => {
+    const runtime = new SutradharRuntime();
+    const { tab, page } = waitTab({ text: true, dialog: true });
+    stub(runtime, tab);
+    const r = await runtime.waitFor('s', { text: 'x', timeoutMs: 0 });
+    expect(r.success).toBe(false);
+    expect(page.title).not.toHaveBeenCalled();
+    expect(r.title).toBe('cached');
+    expect(r.dialogPending).toMatchObject({ type: 'alert', message: 'm' });
+    expect(r.error).toContain('an alert dialog is open');
+  });
+
+  it('R8: verification: a vacuous textGone is unverifiable (never verified:true); textGone that really went away is verified', async () => {
+    const runtime = new SutradharRuntime();
+    const { tab } = waitTab({ text: false });
+    stub(runtime, tab);
+    const vac = await runtime.waitFor('s', { textGone: 'Never was here' });
+    expect(vac.success).toBe(true);
+    expect((vac.output as any).presentAtStart).toBe(false);
+    expect(vac.verification?.verified).toBe(false);
+    expect(vac.verification?.evidence.tier).toBe('unverifiable');
+    expect(vac.verification?.evidence.checks.find((c) => c.check === 'wait_for.textGone')).toMatchObject({ outcome: 'not-run' });
+    expect(vac.verification?.reason).toContain('vacuously');
+
+    const runtime2 = new SutradharRuntime();
+    let n = 0;
+    const w = waitTab();
+    w.frame.evaluate.mockImplementation(async (fn: unknown) => (typeof fn === 'string' ? true : ++n <= 1)); // visible once, then gone
+    stub(runtime2, w.tab);
+    const gone = await runtime2.waitFor('s', { textGone: 'Loading', js: 'true', url: 'a.test' });
+    expect(gone.success).toBe(true);
+    expect((gone.output as any).presentAtStart).toBe(true);
+    expect(gone.verification?.verified).toBe(true);
+    expect(gone.verification?.evidence.checks.map((c) => c.check)).toEqual(['wait_for.textGone', 'wait_for.url', 'wait_for.js']);
+  });
+
+  it('R9: evidence carries the needle only; a huge js is capped (never the js result or page text)', async () => {
+    const runtime = new SutradharRuntime();
+    const w = waitTab({ js: 'PAGE-SECRET-VALUE' });
+    stub(runtime, w.tab);
+    const longJs = `window.a === "${'y'.repeat(400)}"`;
+    const r = await runtime.waitFor('s', { js: longJs });
+    expect(r.success).toBe(true);
+    const json = JSON.stringify(r);
+    expect(json).not.toContain('PAGE-SECRET-VALUE');
+    expect(((r.output as any).conditions.js as string).length).toBe(201);
+  });
+});

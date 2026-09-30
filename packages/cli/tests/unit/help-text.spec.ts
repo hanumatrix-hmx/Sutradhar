@@ -62,3 +62,29 @@ describe('@sutradhar/cli --help text (FR2-16 boundary)', () => {
     expect(helpText.toLowerCase()).not.toContain('never works on any cloudflare');
   });
 });
+
+describe('@sutradhar/cli --help text (FR2-08 waiting)', () => {
+  it('documents the waitfor verb with every condition flag and the exit codes', () => {
+    expect(helpText).toContain('waitfor [timeoutMs] --text <t> | --text-gone <t> | --url <s> | --js <expr>');
+    expect(helpText).toContain('Use this instead of sleeping');
+    expect(helpText).toContain('succeeds at');
+    expect(helpText).toContain('3 blocked by an open dialog');
+  });
+
+  it('states the visible-text limits (best effort, hidden text and input values do not count)', () => {
+    expect(helpText).toContain('RENDERED text');
+    expect(helpText).toContain('hidden text and input values');
+    expect(helpText).toContain('best');
+  });
+
+  it('lists every settle-capable verb on the --settle flag and points at waitfor', () => {
+    const idx = helpText.indexOf('  --settle ');
+    expect(idx).toBeGreaterThan(-1);
+    const flagText = helpText.slice(idx, helpText.indexOf('--text <t> / --text-gone', idx));
+    for (const verb of ['click', 'type', 'scroll', 'nav', 'clicktext', 'clickrole', 'press', 'select', 'hover', 'upload', 'drag', 'clickpoint', 'dragpoints', 'download']) {
+      expect(flagText, verb).toContain(`"${verb}"`);
+    }
+    expect(flagText).toContain('cannot see a');
+    expect(flagText).toContain('waitfor');
+  });
+});

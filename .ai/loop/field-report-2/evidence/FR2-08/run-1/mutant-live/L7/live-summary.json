@@ -1,0 +1,57 @@
+{
+  "startedAt": "2026-09-30T06:03:44.353Z",
+  "finishedAt": "2026-09-30T06:03:51.117Z",
+  "total": 1,
+  "passed": 0,
+  "perSurface": {
+    "mcp": {
+      "total": 0,
+      "passed": 0
+    },
+    "cli": {
+      "total": 1,
+      "passed": 0
+    },
+    "sdk": {
+      "total": 0,
+      "passed": 0
+    },
+    "bundle": {
+      "total": 0,
+      "passed": 0
+    }
+  },
+  "failed": [
+    "cli:N-C3"
+  ],
+  "gap325Tolerated": [],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeWithScratchProfile": 0,
+    "lingeringMatches": [],
+    "newSutradharCliTempDirsCreated": [
+      "sutradhar-cli-1790748224592"
+    ],
+    "newSutradharCliTempDirsLeftAfterCleanup": [],
+    "childPidsStarted": [
+      36376,
+      13084,
+      56568
+    ]
+  },
+  "cases": [
+    {
+      "surface": "cli",
+      "case": "N-C3",
+      "expected": "NEG (D16): a condition flag on another verb exits 1 AND the click never happened (observer-confirmed)",
+      "observed": {
+        "code": 0,
+        "stderr": ""
+      },
+      "observerTruth": {
+        "clicked": true
+      },
+      "pass": false
+    }
+  ]
+}

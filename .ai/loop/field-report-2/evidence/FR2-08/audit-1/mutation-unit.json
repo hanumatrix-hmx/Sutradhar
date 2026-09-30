@@ -1,0 +1,149 @@
+[
+  {
+    "id": "X1",
+    "why": "dialog gate ignores js-only conditions (js probe runs into an open dialog)",
+    "file": "packages/browser/src/actions/condition-wait.ts",
+    "caught": false,
+    "exit": 0,
+    "tests": "Tests  309 passed (309)",
+    "firstFailures": [],
+    "shaBefore": "f5e4fbb0e7f82c51721c6c0828f18d26eb19554fc72cd06d6724b023d9e76607",
+    "shaAfter": "f5e4fbb0e7f82c51721c6c0828f18d26eb19554fc72cd06d6724b023d9e76607",
+    "restored": true
+  },
+  {
+    "id": "X2",
+    "why": "dialog grace timer never resets once a dialog is handled (a later dialog fails instantly)",
+    "file": "packages/browser/src/actions/condition-wait.ts",
+    "caught": false,
+    "exit": 0,
+    "tests": "Tests  309 passed (309)",
+    "firstFailures": [],
+    "shaBefore": "f5e4fbb0e7f82c51721c6c0828f18d26eb19554fc72cd06d6724b023d9e76607",
+    "shaAfter": "f5e4fbb0e7f82c51721c6c0828f18d26eb19554fc72cd06d6724b023d9e76607",
+    "restored": true
+  },
+  {
+    "id": "X3",
+    "why": "an unavailable textGone pass sets presentAtStart=false (vacuous verdict from a pass that saw nothing)",
+    "file": "packages/browser/src/actions/condition-wait.ts",
+    "caught": true,
+    "exit": 1,
+    "tests": "Tests  1 failed | 308 passed (309)",
+    "firstFailures": [
+      "\u001b[27m\u001b[22m\u001b[39m tests/unit/condition-wait.spec.ts\u001b[2m > \u001b[22mFR2-08 waitForPageCondition\u001b[2m > \u001b[22mW6b: textGone with a frame that stays unavailable never succ"
+    ],
+    "shaBefore": "f5e4fbb0e7f82c51721c6c0828f18d26eb19554fc72cd06d6724b023d9e76607",
+    "shaAfter": "f5e4fbb0e7f82c51721c6c0828f18d26eb19554fc72cd06d6724b023d9e76607",
+    "restored": true
+  },
+  {
+    "id": "X4",
+    "why": "Target closed / Session closed treated as a fatal js throw instead of transient",
+    "file": "packages/browser/src/actions/condition-wait.ts",
+    "caught": true,
+    "exit": 1,
+    "tests": "Tests  1 failed | 308 passed (309)",
+    "firstFailures": [
+      "\u001b[27m\u001b[22m\u001b[39m tests/unit/condition-wait.spec.ts\u001b[2m > \u001b[22mFR2-08 waitForPageCondition\u001b[2m > \u001b[22misTransientContextError matches navigation/teardown noise on"
+    ],
+    "shaBefore": "f5e4fbb0e7f82c51721c6c0828f18d26eb19554fc72cd06d6724b023d9e76607",
+    "shaAfter": "f5e4fbb0e7f82c51721c6c0828f18d26eb19554fc72cd06d6724b023d9e76607",
+    "restored": true
+  },
+  {
+    "id": "X5",
+    "why": "settle ignores the network-idle half (only DOM quiet awaited)",
+    "file": "packages/browser/src/actions/page-settle.ts",
+    "caught": false,
+    "exit": 0,
+    "tests": "Tests  309 passed (309)",
+    "firstFailures": [],
+    "shaBefore": "aaaa42d75832e3a125196af360b8a8f24558ba86cf8fa06349be300053943518",
+    "shaAfter": "aaaa42d75832e3a125196af360b8a8f24558ba86cf8fa06349be300053943518",
+    "restored": true
+  },
+  {
+    "id": "X6",
+    "why": "a settle object override of timeoutMs is ignored",
+    "file": "packages/browser/src/actions/page-settle.ts",
+    "caught": false,
+    "exit": 0,
+    "tests": "Tests  309 passed (309)",
+    "firstFailures": [],
+    "shaBefore": "aaaa42d75832e3a125196af360b8a8f24558ba86cf8fa06349be300053943518",
+    "shaAfter": "aaaa42d75832e3a125196af360b8a8f24558ba86cf8fa06349be300053943518",
+    "restored": true
+  },
+  {
+    "id": "X7",
+    "why": "shared probe: a HUNG frame counts as absent (fail-open: textGone met while a frame never answered)",
+    "file": "packages/browser/src/verifier/execution-verifier.ts",
+    "caught": true,
+    "exit": 1,
+    "tests": "Tests  2 failed | 307 passed (309)",
+    "firstFailures": [
+      "\u001b[27m\u001b[22m\u001b[39m tests/unit/condition-wait.spec.ts\u001b[2m > \u001b[22mFR2-08 waitForPageCondition\u001b[2m > \u001b[22mW17: a probe that never answers is bounded: it returns, with",
+      "\u001b[27m\u001b[22m\u001b[39m tests/unit/execution-verifier.spec.ts\u001b[2m > \u001b[22mFR2-07 ExecutionVerifier: the verification contract\u001b[2m > \u001b[22mV12: a frame that never answers "
+    ],
+    "shaBefore": "78853169d08c520b80825eb1ae2c47e0498e996749bd7aba0763f2b704059afe",
+    "shaAfter": "78853169d08c520b80825eb1ae2c47e0498e996749bd7aba0763f2b704059afe",
+    "restored": true
+  },
+  {
+    "id": "X8",
+    "why": "CLI: dialog-blocked wait exits 1 instead of 3",
+    "file": "packages/cli/src/waitfor-output.ts",
+    "caught": true,
+    "exit": 1,
+    "tests": "Tests  1 failed | 3 passed (4)",
+    "firstFailures": [
+      "\u001b[27m\u001b[22m\u001b[39m tests/unit/waitfor-output.spec.ts\u001b[2m > \u001b[22mFR2-08 waitForOutcome\u001b[2m > \u001b[22ma dialog-blocked wait exits 3 (FR2-04 parity); a js throw exits 1"
+    ],
+    "shaBefore": "46ffd5bc6c01e117a10e46d488fce798178dfd97a567ddd42043030cc0755335",
+    "shaAfter": "46ffd5bc6c01e117a10e46d488fce798178dfd97a567ddd42043030cc0755335",
+    "restored": true
+  },
+  {
+    "id": "X9",
+    "why": "CLI: --url value not consumed (leaks into positional args)",
+    "file": "packages/cli/src/parse-args.ts",
+    "caught": true,
+    "exit": 1,
+    "tests": "Tests  1 failed | 63 passed (64)",
+    "firstFailures": [
+      "\u001b[27m\u001b[22m\u001b[39m tests/unit/parse-args.spec.ts\u001b[2m > \u001b[22mFR2-08 waitfor flags\u001b[2m > \u001b[22mC2: all four flags together"
+    ],
+    "shaBefore": "b716a2415282d5f5948aeb9cdb32d87f159d87d39130372f2b4ba5983437197b",
+    "shaAfter": "b716a2415282d5f5948aeb9cdb32d87f159d87d39130372f2b4ba5983437197b",
+    "restored": true
+  },
+  {
+    "id": "X10",
+    "why": "runtime waitFor: validation after resolveTab (browser contacted before a bad condition is rejected)",
+    "file": "packages/capability-runtime/src/runtime.ts",
+    "caught": true,
+    "exit": 1,
+    "tests": "Tests  1 failed | 159 passed (160)",
+    "firstFailures": [
+      "\u001b[27m\u001b[22m\u001b[39m tests/unit/runtime.spec.ts\u001b[2m > \u001b[22mFR2-08 settle wiring and waitFor (runtime)\u001b[2m > \u001b[22mR4: waitFor validates BEFORE resolving the session ("
+    ],
+    "shaBefore": "c798ab3729cacea9b9c550935aa2244c777a3ac627ca7dd1e38ba5cc3688555c",
+    "shaAfter": "c798ab3729cacea9b9c550935aa2244c777a3ac627ca7dd1e38ba5cc3688555c",
+    "restored": true
+  },
+  {
+    "id": "X11",
+    "why": "runtime waitFor: history always records success:true",
+    "file": "packages/capability-runtime/src/runtime.ts",
+    "caught": true,
+    "exit": 1,
+    "tests": "Tests  1 failed | 159 passed (160)",
+    "firstFailures": [
+      "\u001b[27m\u001b[22m\u001b[39m tests/unit/runtime.spec.ts\u001b[2m > \u001b[22mFR2-08 settle wiring and waitFor (runtime)\u001b[2m > \u001b[22mR6: a timeout is success:false with the exact error,"
+    ],
+    "shaBefore": "c798ab3729cacea9b9c550935aa2244c777a3ac627ca7dd1e38ba5cc3688555c",
+    "shaAfter": "c798ab3729cacea9b9c550935aa2244c777a3ac627ca7dd1e38ba5cc3688555c",
+    "restored": true
+  }
+]

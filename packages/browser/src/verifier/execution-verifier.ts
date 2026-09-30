@@ -374,24 +374,27 @@ async function frameShown(f: Frame, main: Frame | undefined, memo: Map<Frame, Pr
   return p;
 }
 
+/** The slice of a Puppeteer `Page` the visible-text probe needs (so `wait_for` and unit tests can pass it directly). */
+export interface VisibleTextPage {
+  frames(): Frame[];
+  mainFrame(): Frame;
+}
+
 /**
- * Best-effort, BOUNDED check that `text` appears in the page's RENDERED text ({@link EXPECT_TEXT_CONTRACT})
- * — any live frame (main first), including open shadow roots. Never uses `page.evaluate` (a pending dialog
- * freezes the main thread: it would hang until the 30 s auto-dismiss), so every evaluation goes through a
- * frame. Each frame is bounded by {@link EXPECT_TEXT_TIMEOUT_MS} on its own; `found` returns as soon as ANY
- * frame confirms (an unrelated out-of-process frame that never answers cannot mask text the main frame has);
- * `not-found` needs every frame to have answered, otherwise `unavailable` says how many did.
+ * The ONE definition of "does this page show this text" ({@link EXPECT_TEXT_CONTRACT}), shared by
+ * `expect.text` ({@link pageContainsVisibleText}) and `wait_for`'s `text`/`textGone` conditions
+ * (FR2-08), so the two can never drift apart. Any live frame (main first), including open shadow
+ * roots. Never uses `page.evaluate` (a pending dialog freezes the main thread: it would hang until
+ * the 30 s auto-dismiss), so every evaluation goes through a frame. Each frame is bounded by
+ * `timeoutMs` on its own; `found` returns as soon as ANY frame confirms (an unrelated out-of-process
+ * frame that never answers cannot mask text the main frame has); `not-found` needs every frame to
+ * have answered, otherwise `unavailable` says how many did. Never throws.
  */
-export async function pageContainsVisibleText(tab: IBrowserTab, text: string): Promise<VisibleTextResult> {
-  const dialog = pendingDialogType(tab);
-  if (dialog) {
-    return {
-      result: 'unavailable',
-      detail: `${aDialog(dialog)} is open (see dialogPending); the page can't be inspected until it's handled`,
-    };
-  }
-  const page = tab.page;
-  if (!page) return { result: 'unavailable', detail: 'there is no live browser page to inspect' };
+export async function probeVisibleText(
+  page: VisibleTextPage,
+  text: string,
+  timeoutMs: number = EXPECT_TEXT_TIMEOUT_MS,
+): Promise<VisibleTextResult> {
   const run = async (): Promise<VisibleTextResult> => {
     const all = typeof page.frames === 'function' ? page.frames() : [];
     let frames = all.filter((f) => !f.isDetached());
@@ -410,7 +413,7 @@ export async function pageContainsVisibleText(tab: IBrowserTab, text: string): P
           if (s === 'unjudgeable') return 'unjudged';
           return (await f.evaluate(visibleTextContainsInPage, text)) ? 'found' : 'absent';
         })(),
-        EXPECT_TEXT_TIMEOUT_MS,
+        timeoutMs,
       );
       if (r.ok) return r.value;
       return r.timedOut ? 'hung' : 'failed';
@@ -436,7 +439,7 @@ export async function pageContainsVisibleText(tab: IBrowserTab, text: string): P
           if (--pending > 0) return;
           if (tally.absent === frames.length) return resolve({ result: 'not-found' });
           const why = [
-            tally.hung > 0 ? `${tally.hung} did not answer within ${EXPECT_TEXT_TIMEOUT_MS}ms` : '',
+            tally.hung > 0 ? `${tally.hung} did not answer within ${timeoutMs}ms` : '',
             tally.failed > 0 ? `${tally.failed} failed` : '',
             tally.unjudged > 0 ? `${tally.unjudged} could not be judged as shown` : '',
           ].filter(Boolean);
@@ -449,14 +452,32 @@ export async function pageContainsVisibleText(tab: IBrowserTab, text: string): P
     });
   };
   // backstop only: every frame is already bounded on its own
-  const r = await bounded(run(), EXPECT_TEXT_TIMEOUT_MS + 500);
+  const r = await bounded(run(), timeoutMs + 500);
   if (r.ok) return r.value;
   return {
     result: 'unavailable',
     detail: r.timedOut
-      ? `the page did not answer the text check within ${EXPECT_TEXT_TIMEOUT_MS}ms`
+      ? `the page did not answer the text check within ${timeoutMs}ms`
       : `the text check failed (${r.error ?? 'unknown error'})`,
   };
+}
+
+/**
+ * Best-effort, BOUNDED check that `text` appears in the tab's page's RENDERED text — see
+ * {@link probeVisibleText} for the mechanics. A pending native dialog makes it `unavailable`
+ * without touching the page.
+ */
+export async function pageContainsVisibleText(tab: IBrowserTab, text: string): Promise<VisibleTextResult> {
+  const dialog = pendingDialogType(tab);
+  if (dialog) {
+    return {
+      result: 'unavailable',
+      detail: `${aDialog(dialog)} is open (see dialogPending); the page can't be inspected until it's handled`,
+    };
+  }
+  const page = tab.page;
+  if (!page) return { result: 'unavailable', detail: 'there is no live browser page to inspect' };
+  return probeVisibleText(page, text, EXPECT_TEXT_TIMEOUT_MS);
 }
 
 export class ExecutionVerifier {

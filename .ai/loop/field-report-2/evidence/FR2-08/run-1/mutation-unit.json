@@ -1,0 +1,390 @@
+{
+  "allIdentical": true,
+  "shas": {
+    "packages\\browser\\src\\actions\\condition-wait.ts": {
+      "before": "f5e4fbb0e7f82c51721c6c0828f18d26eb19554fc72cd06d6724b023d9e76607",
+      "after": "f5e4fbb0e7f82c51721c6c0828f18d26eb19554fc72cd06d6724b023d9e76607"
+    },
+    "packages\\browser\\src\\actions\\page-settle.ts": {
+      "before": "aaaa42d75832e3a125196af360b8a8f24558ba86cf8fa06349be300053943518",
+      "after": "aaaa42d75832e3a125196af360b8a8f24558ba86cf8fa06349be300053943518"
+    },
+    "packages\\capability-runtime\\src\\runtime.ts": {
+      "before": "c798ab3729cacea9b9c550935aa2244c777a3ac627ca7dd1e38ba5cc3688555c",
+      "after": "c798ab3729cacea9b9c550935aa2244c777a3ac627ca7dd1e38ba5cc3688555c"
+    },
+    "packages\\mcp-server\\src\\tools.ts": {
+      "before": "18d4dbfafd3daa25f74a58fed1e5d5e6a5a15f95e946942666a064f7063816c7",
+      "after": "18d4dbfafd3daa25f74a58fed1e5d5e6a5a15f95e946942666a064f7063816c7"
+    },
+    "packages\\sutradhar\\src\\page.ts": {
+      "before": "da019fe579699920a166f4499ccf0e478f7e19be62e94499c4f036b3578d4f42",
+      "after": "da019fe579699920a166f4499ccf0e478f7e19be62e94499c4f036b3578d4f42"
+    },
+    "packages\\cli\\src\\parse-args.ts": {
+      "before": "b716a2415282d5f5948aeb9cdb32d87f159d87d39130372f2b4ba5983437197b",
+      "after": "b716a2415282d5f5948aeb9cdb32d87f159d87d39130372f2b4ba5983437197b"
+    }
+  },
+  "results": [
+    {
+      "id": "U1",
+      "why": "wait_for treats \"unavailable\" as met (only \"unmet\" blocks success)",
+      "file": "packages/browser/src/actions/condition-wait.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  19 failed | 61 passed (80)",
+      "firstFailures": [
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W6: textGone: an unavailable pass is NOT \"gone\"; presentAtStart comes from the first DEFINITIVE pass",
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W6b: textGone with a frame that stays unavailable never succeeds (unavailable is not gone)",
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W7: a transient context error on pass 1 is survived",
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W12: a transient js error (context destroyed) is not fatal and polling continues"
+      ],
+      "failedCount": 19,
+      "restoredIdentical": true,
+      "ms": 4924
+    },
+    {
+      "id": "U2",
+      "why": "textGone reads \"unavailable\" as gone",
+      "file": "packages/browser/src/actions/condition-wait.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  13 failed | 67 passed (80)",
+      "firstFailures": [
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W6: textGone: an unavailable pass is NOT \"gone\"; presentAtStart comes from the first DEFINITIVE pass",
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W6b: textGone with a frame that stays unavailable never succeeds (unavailable is not gone)",
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 generated matrix: per-frame outcomes -> text / textGone verdicts (independent oracle) > frames [throw]",
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 generated matrix: per-frame outcomes -> text / textGone verdicts (independent oracle) > frames [absent, throw]"
+      ],
+      "failedCount": 13,
+      "restoredIdentical": true,
+      "ms": 6150
+    },
+    {
+      "id": "U3",
+      "why": "the condition is checked ONCE only (poll never re-evaluates)",
+      "file": "packages/browser/src/actions/condition-wait.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  13 failed | 67 passed (80)",
+      "firstFailures": [
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W1: text found on the 3rd pass",
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W4: textGone: found, found, not-found -> satisfied, presentAtStart true",
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W6: textGone: an unavailable pass is NOT \"gone\"; presentAtStart comes from the first DEFINITIVE pass",
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W7: a transient context error on pass 1 is survived"
+      ],
+      "failedCount": 13,
+      "restoredIdentical": true,
+      "ms": 4368
+    },
+    {
+      "id": "U4",
+      "why": "timeout not honoured (the deadline is 60 s later than asked)",
+      "file": "packages/browser/src/actions/condition-wait.ts",
+      "unitCaught": true,
+      "exit": null,
+      "timedOut": true,
+      "summary": "",
+      "firstFailures": [],
+      "failedCount": 0,
+      "restoredIdentical": true,
+      "ms": 240055
+    },
+    {
+      "id": "U5",
+      "why": "a pending native dialog is ignored (page probes run into it)",
+      "file": "packages/browser/src/actions/condition-wait.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  2 failed | 78 passed (80)",
+      "firstFailures": [
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W16: a dialog pending past the grace fails fast (never hangs to the 30 s auto-dismiss); no frame is touched",
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W16c: a dialog open at the deadline is reported as the reason (a 0-timeout wait during a dialog is unavailable, not unmet)"
+      ],
+      "failedCount": 2,
+      "restoredIdentical": true,
+      "ms": 5223
+    },
+    {
+      "id": "U6",
+      "why": "multiple conditions are ORed instead of ANDed",
+      "file": "packages/browser/src/actions/condition-wait.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  2 failed | 78 passed (80)",
+      "firstFailures": [
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W13: AND: every key must hold on the same pass; failure lists met and unmet parts",
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W13b: text met on an EARLIER pass than the url does not count: the same pass must satisfy all keys"
+      ],
+      "failedCount": 2,
+      "restoredIdentical": true,
+      "ms": 5931
+    },
+    {
+      "id": "U7",
+      "why": "a js throw is treated as transient (never fatal)",
+      "file": "packages/browser/src/actions/condition-wait.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  2 failed | 78 passed (80)",
+      "firstFailures": [
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W10: a js throw fails the wait at once, with the page message",
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W11: a js SyntaxError is fatal on pass 1"
+      ],
+      "failedCount": 2,
+      "restoredIdentical": true,
+      "ms": 16177
+    },
+    {
+      "id": "U8",
+      "why": "presentAtStart comes from the LAST definitive pass, not the first",
+      "file": "packages/browser/src/actions/condition-wait.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  1 failed | 79 passed (80)",
+      "firstFailures": [
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W4: textGone: found, found, not-found -> satisfied, presentAtStart true"
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 6203
+    },
+    {
+      "id": "U9",
+      "why": "a closed tab is not detected",
+      "file": "packages/browser/src/actions/condition-wait.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  1 failed | 79 passed (80)",
+      "firstFailures": [
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W18: the tab closing mid-wait is fatal page-closed"
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 11164
+    },
+    {
+      "id": "U10",
+      "why": "wait_for text probe bypasses the shared frame-aware probe: no per-frame unavailable (any throw = not found)",
+      "file": "packages/browser/src/actions/condition-wait.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  14 failed | 66 passed (80)",
+      "firstFailures": [
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W6: textGone: an unavailable pass is NOT \"gone\"; presentAtStart comes from the first DEFINITIVE pass",
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W6b: textGone with a frame that stays unavailable never succeeds (unavailable is not gone)",
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 waitForPageCondition > W17: a probe that never answers is bounded: it returns, with the reason, and leaves no unhandled rejection",
+        "FAIL  tests/unit/condition-wait.spec.ts > FR2-08 generated matrix: per-frame outcomes -> text / textGone verdicts (independent oracle) > frames [throw]"
+      ],
+      "failedCount": 14,
+      "restoredIdentical": true,
+      "ms": 5969
+    },
+    {
+      "id": "U11",
+      "why": "NO Node-side settle hard bound (the T5 defect restored)",
+      "file": "packages/browser/src/actions/page-settle.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  2 failed | 206 passed (208)",
+      "firstFailures": [
+        "FAIL  tests/unit/browser-action-engine.spec.ts > FR2-08 settle via page-settle > E3: a settle whose evaluate never resolves still returns success (D14 hard bound through the engine)",
+        "FAIL  tests/unit/page-settle.spec.ts > FR2-08 page-settle > P3: hard bound: evaluate and waitForNetworkIdle never resolve -> returns by timeoutMs + grace, no unhandled rejection"
+      ],
+      "failedCount": 2,
+      "restoredIdentical": true,
+      "ms": 40638
+    },
+    {
+      "id": "U12",
+      "why": "the settle hard-bound timer is never cleared",
+      "file": "packages/browser/src/actions/page-settle.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  1 failed | 207 passed (208)",
+      "firstFailures": [
+        "FAIL  tests/unit/page-settle.spec.ts > FR2-08 page-settle > P6: the hard-bound timer is cleared on normal completion"
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 25509
+    },
+    {
+      "id": "U13",
+      "why": "settle skipped for the newly covered engine-routed tools (settleParam always empty)",
+      "file": "packages/capability-runtime/src/runtime.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  1 failed | 159 passed (160)",
+      "firstFailures": [
+        "FAIL  tests/unit/runtime.spec.ts > FR2-08 settle wiring and waitFor (runtime) > R1: the 13 engine-routed methods pass settle through to the engine params; omitted leaves no settle key"
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 6118
+    },
+    {
+      "id": "U14",
+      "why": "settlePage is a no-op (runtime-level methods never settle)",
+      "file": "packages/capability-runtime/src/runtime.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  1 failed | 159 passed (160)",
+      "firstFailures": [
+        "FAIL  tests/unit/runtime.spec.ts > FR2-08 settle wiring and waitFor (runtime) > R2b: settlePage really calls the page settle for a real page and is a no-op without settle or a page"
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 6206
+    },
+    {
+      "id": "U15",
+      "why": "a vacuous textGone is reported verified (the typo trap hidden)",
+      "file": "packages/capability-runtime/src/runtime.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  1 failed | 159 passed (160)",
+      "firstFailures": [
+        "FAIL  tests/unit/runtime.spec.ts > FR2-08 settle wiring and waitFor (runtime) > R8: verification: a vacuous textGone is unverifiable (never verified:true); textGone that really went away is verified"
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 6864
+    },
+    {
+      "id": "U16",
+      "why": "fillForm settles per field instead of once (the per-field type gets settle)",
+      "file": "packages/capability-runtime/src/runtime.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  1 failed | 159 passed (160)",
+      "firstFailures": [
+        "FAIL  tests/unit/runtime.spec.ts > FR2-08 settle wiring and waitFor (runtime) > R3: fillForm settles ONCE after the loop and only if a field succeeded; per-field type calls get no settle"
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 7023
+    },
+    {
+      "id": "U17",
+      "why": "the wait_for error hint no longer matches (falls through to the generic \"page may still be loading\")",
+      "file": "packages/mcp-server/src/tools.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  1 failed | 77 passed (78)",
+      "firstFailures": [
+        "FAIL  tests/unit/tools.spec.ts > FR2-08 browser.wait_for and settle on every interacting/navigating tool > M5: wait_for failures get their OWN hints, not the generic \"page may still be loading\" and not the FR2-01 \"element is still visible\" "
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 1664
+    },
+    {
+      "id": "U18",
+      "why": "handle_dialog drops settle",
+      "file": "packages/mcp-server/src/tools.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  1 failed | 77 passed (78)",
+      "firstFailures": [
+        "FAIL  tests/unit/tools.spec.ts > FR2-08 browser.wait_for and settle on every interacting/navigating tool > M7: arity: each newly wired handler passes EXACTLY its pre-FR2-08 argument count without settle, and settle LAST when given"
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 1669
+    },
+    {
+      "id": "U19",
+      "why": "wait_for tool drops timeoutMs",
+      "file": "packages/mcp-server/src/tools.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  1 failed | 77 passed (78)",
+      "firstFailures": [
+        "FAIL  tests/unit/tools.spec.ts > FR2-08 browser.wait_for and settle on every interacting/navigating tool > M3: the handler forwards only the given keys (no undefined keys) and tabId only when given"
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 1685
+    },
+    {
+      "id": "U20",
+      "why": "a newly wired tool (hover) drops settle from the runtime call",
+      "file": "packages/mcp-server/src/tools.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  1 failed | 77 passed (78)",
+      "firstFailures": [
+        "FAIL  tests/unit/tools.spec.ts > FR2-08 browser.wait_for and settle on every interacting/navigating tool > M7: arity: each newly wired handler passes EXACTLY its pre-FR2-08 argument count without settle, and settle LAST when given"
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 1646
+    },
+    {
+      "id": "U21",
+      "why": "SDK waitFor swallows a failed wait (no throw)",
+      "file": "packages/sutradhar/src/page.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  1 failed | 40 passed (41)",
+      "firstFailures": [
+        "FAIL  tests/unit/api.spec.ts > FR2-08 Page.waitFor and settle on goto/press/scroll/download/uploadFile > S2: a not-satisfied result rejects with ActionFailedError carrying the exact message and the result"
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 1558
+    },
+    {
+      "id": "U22",
+      "why": "CLI waitfor timeout cap raised past the watchdog",
+      "file": "packages/cli/src/parse-args.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  1 failed | 63 passed (64)",
+      "firstFailures": [
+        "FAIL  tests/unit/parse-args.spec.ts > FR2-08 waitfor flags > C4: waitForConditionFromArgs: usage, timeout validation, cap"
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 806
+    },
+    {
+      "id": "U23",
+      "why": "CLI --text-gone value is not consumed as a value (leaks into cleanArgs)",
+      "file": "packages/cli/src/parse-args.ts",
+      "unitCaught": true,
+      "exit": 1,
+      "timedOut": false,
+      "summary": "Tests  1 failed | 63 passed (64)",
+      "firstFailures": [
+        "FAIL  tests/unit/parse-args.spec.ts > FR2-08 waitfor flags > C2: all four flags together"
+      ],
+      "failedCount": 1,
+      "restoredIdentical": true,
+      "ms": 798
+    }
+  ]
+}

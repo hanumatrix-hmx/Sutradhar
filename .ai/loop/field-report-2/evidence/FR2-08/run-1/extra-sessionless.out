@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "out": [
+    {
+      "label": "mcp-server",
+      "sessionless": {
+        "navigateIsError": false,
+        "waitSuccess": true,
+        "waitMs": 1811,
+        "tier": "verified",
+        "hoverSuccess": true
+      },
+      "ambiguous": {
+        "isError": true,
+        "namesBothIds": true,
+        "text": "wait_for failed: No sessionId given, and 2 browser sessions are live, so which one to use is ambiguous (Sutradhar never picks one for you). Pass sessionId explicitly, e.g. {\"sessionId\": \"<id>\", ...} u"
+      }
+    },
+    {
+      "label": "bundle",
+      "sessionless": {
+        "navigateIsError": false,
+        "waitSuccess": true,
+        "waitMs": 1827,
+        "tier": "verified",
+        "hoverSuccess": true
+      },
+      "ambiguous": {
+        "isError": true,
+        "namesBothIds": true,
+        "text": "wait_for failed: No sessionId given, and 2 browser sessions are live, so which one to use is ambiguous (Sutradhar never picks one for you). Pass sessionId explicitly, e.g. {\"sessionId\": \"<id>\", ...} u"
+      }
+    }
+  ]
+}

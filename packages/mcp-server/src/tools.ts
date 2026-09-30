@@ -12,7 +12,7 @@
 
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ActionExpectation, SutradharRuntime } from '@sutradhar/capability-runtime';
+import type { ActionExpectation, SettleSpec, SutradharRuntime } from '@sutradhar/capability-runtime';
 import { buildAuditReport } from '@sutradhar/capability-runtime';
 import type { AgentCore } from '@sutradhar/agent';
 import { createGoalId } from '@sutradhar/contracts';
@@ -25,6 +25,27 @@ import { withSessionResolution } from './session-resolution.js';
  * tests compare positional arguments).
  */
 function expectArgs(e: ActionExpectation | undefined): [ActionExpectation] | [] {
+  return e ? [e] : [];
+}
+
+/**
+ * FR2-08 arity rule (generalises {@link expectArgs}): trailing arguments are passed to the runtime ONLY up
+ * to the last DEFINED one, so a call that gives none of the optional trailing arguments keeps exactly the
+ * argument list it had before FR2-08 (handlers and tests compare positional arguments).
+ */
+function trimTrailingUndefined<T>(args: readonly T[]): T[] {
+  let n = args.length;
+  while (n > 0 && args[n - 1] === undefined) n--;
+  return args.slice(0, n);
+}
+
+/** The trailing `(expect?, settle?)` arguments of the newly settle-capable tools: `settle` (when given)
+ *  follows `expect` positionally, and nothing is passed when neither was given (FR2-08 arity rule). */
+function expectSettleArgs(
+  e: ActionExpectation | undefined,
+  settle: boolean | SettleSpec | undefined,
+): [ActionExpectation?, (boolean | SettleSpec)?] {
+  if (settle !== undefined) return [e, settle];
   return e ? [e] : [];
 }
 
@@ -52,6 +73,18 @@ export interface RegisterToolsOptions {
  * match wins. Deliberately short and generic — this is a hint, not a diagnosis.
  */
 const ERROR_HINTS: ReadonlyArray<readonly [pattern: string, hint: string, unless?: readonly string[]]> = [
+  // FR2-08: wait_for's own messages. These MUST come first: a wait_for timeout for `textGone` says
+  // 'textGone "X" is still visible', which contains FR2-01's WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT, and
+  // every wait_for timeout contains 'timed out' -- either would win and give a misleading hint.
+  [
+    'wait_for timed out',
+    'The condition never became true. Inspect the page (browser.snapshot / browser.eval), fix the condition, or raise timeoutMs.',
+  ],
+  [
+    'js condition threw',
+    'Guard the expression so it returns false instead of throwing while the page is still loading, e.g. document.querySelector("#x")?.textContent === "done".',
+  ],
+  ['wait_for blocked by an open', 'Handle the dialog with browser.handle_dialog, then call browser.wait_for again.'],
   // These two must precede the generic 'timed out' entry below — a wait_for_selector timeout
   // message always contains "timed out" too, and without a more specific match winning first
   // the hint would be the misleading "The page may still be loading" (FR2-01).
@@ -175,6 +208,27 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
     .strict()
     .optional()
     .describe(expectDesc);
+
+  // FR2-08: opt-in post-action settle, on every tool that interacts with or navigates the page.
+  const settleDesc =
+    'Opt-in: after the action, wait for the page to stop actively changing (no DOM mutations, no ' +
+    'in-flight network requests) before returning — helps when the action triggers a menu/modal/' +
+    'toast/autocomplete that takes a moment to finish rendering and the very next call needs to see ' +
+    'the settled result. true uses the defaults (300ms DOM-quiet, 500ms network-idle, 5s overall ' +
+    'bound); pass an object to override individual fields. Off by default — most actions don\'t need ' +
+    'it and it adds real latency. It cannot see a timer the page has scheduled for later — to wait for a ' +
+    'specific result, use browser.wait_for.';
+  const settleSchema = z
+    .union([
+      z.boolean(),
+      z.object({
+        mutationQuietMs: z.number().optional(),
+        networkIdleMs: z.number().optional(),
+        timeoutMs: z.number().optional(),
+      }),
+    ])
+    .optional()
+    .describe(settleDesc);
 
   // ── Lifecycle ────────────────────────────────────────────────────────────
   server.registerTool(
@@ -335,12 +389,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         sessionId: z.string(),
         url: z.string().url(),
         tabId: z.string().optional().describe('Target a specific tab; defaults to the active one.'),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, url, tabId, expect }) => {
+    async ({ sessionId, url, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.navigate(sessionId, url, tabId, ...expectArgs(expect)));
+        return jsonResult(await runtime.navigate(sessionId, url, tabId, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`navigate failed: ${(e as Error).message}`);
       }
@@ -351,11 +406,11 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
     'browser.go_back',
     {
       description: "Navigate back in the tab's history.",
-      inputSchema: { sessionId: z.string(), tabId: z.string().optional(), expect: expectSchema },
+      inputSchema: { sessionId: z.string(), tabId: z.string().optional(), settle: settleSchema, expect: expectSchema },
     },
-    async ({ sessionId, tabId, expect }) => {
+    async ({ sessionId, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.goBack(sessionId, tabId, ...expectArgs(expect)));
+        return jsonResult(await runtime.goBack(sessionId, tabId, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`go_back failed: ${(e as Error).message}`);
       }
@@ -366,11 +421,11 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
     'browser.go_forward',
     {
       description: "Navigate forward in the tab's history.",
-      inputSchema: { sessionId: z.string(), tabId: z.string().optional(), expect: expectSchema },
+      inputSchema: { sessionId: z.string(), tabId: z.string().optional(), settle: settleSchema, expect: expectSchema },
     },
-    async ({ sessionId, tabId, expect }) => {
+    async ({ sessionId, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.goForward(sessionId, tabId, ...expectArgs(expect)));
+        return jsonResult(await runtime.goForward(sessionId, tabId, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`go_forward failed: ${(e as Error).message}`);
       }
@@ -381,11 +436,11 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
     'browser.reload',
     {
       description: 'Reload the current page.',
-      inputSchema: { sessionId: z.string(), tabId: z.string().optional(), expect: expectSchema },
+      inputSchema: { sessionId: z.string(), tabId: z.string().optional(), settle: settleSchema, expect: expectSchema },
     },
-    async ({ sessionId, tabId, expect }) => {
+    async ({ sessionId, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.reload(sessionId, tabId, ...expectArgs(expect)));
+        return jsonResult(await runtime.reload(sessionId, tabId, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`reload failed: ${(e as Error).message}`);
       }
@@ -513,25 +568,6 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
     'role=, >>, :has-text(), getBy*()) is rejected immediately — use browser.click_by_text / ' +
     'browser.click_by_role / browser.type_by_label to target by visible text or role.';
 
-  const settleDesc =
-    'Opt-in: after the action, wait for the page to stop actively changing (no DOM mutations, no ' +
-    'in-flight network requests) before returning — helps when the action triggers a menu/modal/' +
-    'toast/autocomplete that takes a moment to finish rendering and the very next call needs to see ' +
-    'the settled result. true uses the defaults (300ms DOM-quiet, 500ms network-idle, 5s overall ' +
-    'bound); pass an object to override individual fields. Off by default — most actions don\'t need ' +
-    'it and it adds real latency.';
-  const settleSchema = z
-    .union([
-      z.boolean(),
-      z.object({
-        mutationQuietMs: z.number().optional(),
-        networkIdleMs: z.number().optional(),
-        timeoutMs: z.number().optional(),
-      }),
-    ])
-    .optional()
-    .describe(settleDesc);
-
   server.registerTool(
     'browser.click',
     {
@@ -577,12 +613,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         y: z.number().describe('Viewport y coordinate in pixels.'),
         button: z.enum(['left', 'right', 'middle']).optional(),
         tabId: z.string().optional(),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, x, y, button, tabId, expect }) => {
+    async ({ sessionId, x, y, button, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.clickAtPoint(sessionId, x, y, tabId, button, ...expectArgs(expect)));
+        return jsonResult(await runtime.clickAtPoint(sessionId, x, y, tabId, button, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`click_at_point failed: ${(e as Error).message}`);
       }
@@ -604,12 +641,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         toX: z.number(),
         toY: z.number(),
         tabId: z.string().optional(),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, fromX, fromY, toX, toY, tabId, expect }) => {
+    async ({ sessionId, fromX, fromY, toX, toY, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.dragAtPoints(sessionId, fromX, fromY, toX, toY, tabId, ...expectArgs(expect)));
+        return jsonResult(await runtime.dragAtPoints(sessionId, fromX, fromY, toX, toY, tabId, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`drag_at_points failed: ${(e as Error).message}`);
       }
@@ -649,12 +687,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         key: z.string(),
         modifiers: z.array(z.enum(['Control', 'Shift', 'Alt', 'Meta'])).optional(),
         tabId: z.string().optional(),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, key, modifiers, tabId, expect }) => {
+    async ({ sessionId, key, modifiers, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.pressKey(sessionId, key, tabId, modifiers, ...expectArgs(expect)));
+        return jsonResult(await runtime.pressKey(sessionId, key, tabId, modifiers, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`press_key failed: ${(e as Error).message}`);
       }
@@ -675,12 +714,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         sessionId: z.string(),
         target: z.string().describe(targetDesc),
         tabId: z.string().optional(),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, target, tabId, expect }) => {
+    async ({ sessionId, target, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.focus(sessionId, target, tabId, ...expectArgs(expect)));
+        return jsonResult(await runtime.focus(sessionId, target, tabId, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`focus failed: ${(e as Error).message}`);
       }
@@ -731,12 +771,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
           .optional()
           .describe('Hover this point relative to the target element\'s top-left corner, instead of its center.'),
         tabId: z.string().optional(),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, target, offset, tabId, expect }) => {
+    async ({ sessionId, target, offset, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.hover(sessionId, target, tabId, offset, ...expectArgs(expect)));
+        return jsonResult(await runtime.hover(sessionId, target, tabId, offset, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`hover failed: ${(e as Error).message}`);
       }
@@ -752,12 +793,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         target: z.string().describe(targetDesc),
         value: z.string().describe('The option value to select.'),
         tabId: z.string().optional(),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, target, value, tabId, expect }) => {
+    async ({ sessionId, target, value, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.selectOption(sessionId, target, value, tabId, ...expectArgs(expect)));
+        return jsonResult(await runtime.selectOption(sessionId, target, value, tabId, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`select_option failed: ${(e as Error).message}`);
       }
@@ -773,12 +815,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         target: z.string().describe(targetDesc),
         values: z.array(z.string()).min(1).describe('The option values to select.'),
         tabId: z.string().optional(),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, target, values, tabId, expect }) => {
+    async ({ sessionId, target, values, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.selectOptions(sessionId, target, values, tabId, ...expectArgs(expect)));
+        return jsonResult(await runtime.selectOptions(sessionId, target, values, tabId, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`select_options failed: ${(e as Error).message}`);
       }
@@ -829,6 +872,52 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
   );
 
   server.registerTool(
+    'browser.wait_for',
+    {
+      description:
+        'Wait until a page condition becomes true — use this instead of sleeping. Polls from outside the page every ' +
+        '~100ms, so it works in background tabs and on strict-CSP pages. Give one or more conditions; ALL must hold ' +
+        'at the same moment. text: RENDERED text appears anywhere (every frame and open shadow root; case-sensitive ' +
+        'substring; the same rule as expect.text: display:none / visibility:hidden / content-visibility:hidden / ' +
+        'closed <details> text and form-field values do NOT count; opacity:0 and off-screen text still count; ' +
+        'best effort, like expect.text: text in never-painted SVG containers also counts, and text split across ' +
+        'inline-block items or inside a <textarea> can be missed). textGone: that text is absent from every frame ' +
+        '— succeeds immediately if it was never there, so check output.presentAtStart; a frame that could not be ' +
+        'inspected is never read as "gone". url: the tab URL contains this substring (pushState/hash changes ' +
+        'included). js: a JavaScript EXPRESSION evaluated in the main frame, truthy = done; it re-runs every ' +
+        '~100ms so keep it side-effect free, and if it throws the wait fails immediately — guard it (e.g. ' +
+        'document.querySelector("#x")?.textContent === "done"). timeoutMs defaults to 10000 (max 300000; 0 = ' +
+        'check once) and is the real total: no hidden retries; on a frozen page a failed wait can spend up to 1.5 s ' +
+        'more reading the page title, so the total is bounded but can exceed timeoutMs by up to about 3 s. ' +
+        'Text visible for less than one poll interval (about 100 ms) can be missed; use it for states that ' +
+        'persist. A native dialog blocking the page fails the wait (handle it with browser.handle_dialog): a ' +
+        'dialog already open fails it in about 1 s; one that opens partway through a check can take up to ' +
+        'about 2.7 s after it opens. For an element\'s visible/attached/hidden ' +
+        'state use browser.wait_for_selector. settle:true on an action only waits for DOM/network quiet and ' +
+        'cannot see a pending timer; expect on an action checks once and does not wait.',
+      inputSchema: {
+        sessionId: z.string(),
+        text: z.string().min(1).optional().describe('Rendered text that must appear (case-sensitive substring).'),
+        textGone: z.string().min(1).optional().describe('Rendered text that must disappear (e.g. "Loading…").'),
+        url: z.string().min(1).optional().describe('Substring the tab URL must contain.'),
+        js: z.string().min(1).optional().describe('JS expression; truthy = done. Side-effect free; a throw fails the wait.'),
+        timeoutMs: z.number().int().min(0).max(300000).optional().describe('Defaults to 10000. 0 = check once.'),
+        tabId: z.string().optional(),
+      },
+    },
+    async ({ sessionId, text, textGone, url, js, timeoutMs, tabId }) => {
+      try {
+        const condition = Object.fromEntries(
+          Object.entries({ text, textGone, url, js, timeoutMs }).filter(([, v]) => v !== undefined),
+        );
+        return jsonResult(await runtime.waitFor(sessionId, condition, ...trimTrailingUndefined([tabId])));
+      } catch (e) {
+        return errorResult(`wait_for failed: ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
     'browser.click_by_text',
     {
       description: 'Click the first element whose visible text contains the given text.',
@@ -836,12 +925,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         sessionId: z.string(),
         text: z.string().describe('Visible text to match (substring match).'),
         tabId: z.string().optional(),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, text, tabId, expect }) => {
+    async ({ sessionId, text, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.clickByText(sessionId, text, tabId, ...expectArgs(expect)));
+        return jsonResult(await runtime.clickByText(sessionId, text, tabId, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`click_by_text failed: ${(e as Error).message}`);
       }
@@ -857,12 +947,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         role: z.string().describe('ARIA role, e.g. "button".'),
         name: z.string().optional().describe('Accessible name to narrow the match, if ambiguous.'),
         tabId: z.string().optional(),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, role, name, tabId, expect }) => {
+    async ({ sessionId, role, name, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.clickByRole(sessionId, role, name, tabId, ...expectArgs(expect)));
+        return jsonResult(await runtime.clickByRole(sessionId, role, name, tabId, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`click_by_role failed: ${(e as Error).message}`);
       }
@@ -878,12 +969,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         label: z.string().describe('The input\'s aria-label or placeholder text.'),
         value: z.string().describe('Text to type.'),
         tabId: z.string().optional(),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, label, value, tabId, expect }) => {
+    async ({ sessionId, label, value, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.typeByLabel(sessionId, label, value, tabId, ...expectArgs(expect)));
+        return jsonResult(await runtime.typeByLabel(sessionId, label, value, tabId, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`type_by_label failed: ${(e as Error).message}`);
       }
@@ -904,11 +996,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
           message: 'fields must have at least one entry',
         }),
         tabId: z.string().optional(),
+        settle: settleSchema,
       },
     },
-    async ({ sessionId, fields, tabId }) => {
+    async ({ sessionId, fields, tabId, settle }) => {
       try {
-        return jsonResult(await runtime.fillForm(sessionId, fields, tabId));
+        return jsonResult(await runtime.fillForm(sessionId, fields, tabId, ...trimTrailingUndefined([settle])));
       } catch (e) {
         return errorResult(`fill_form failed: ${(e as Error).message}`);
       }
@@ -927,12 +1020,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
             'SUTRADHAR_ALLOWED_UPLOAD_ROOTS, in which case it must be under one of those directories.',
         ),
         tabId: z.string().optional(),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, target, filePath, tabId, expect }) => {
+    async ({ sessionId, target, filePath, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.uploadFile(sessionId, target, filePath, tabId, ...expectArgs(expect)));
+        return jsonResult(await runtime.uploadFile(sessionId, target, filePath, tabId, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`upload_file failed: ${(e as Error).message}`);
       }
@@ -948,12 +1042,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         target: z.string().describe(targetDesc),
         button: z.enum(['right', 'middle']).optional().describe('Defaults to "right".'),
         tabId: z.string().optional(),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, target, button, tabId, expect }) => {
+    async ({ sessionId, target, button, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.clickWithButton(sessionId, target, button ?? 'right', tabId, ...expectArgs(expect)));
+        return jsonResult(await runtime.clickWithButton(sessionId, target, button ?? 'right', tabId, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`right_click failed: ${(e as Error).message}`);
       }
@@ -969,12 +1064,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         sourceTarget: z.string().describe(`Element to drag. ${targetDesc}`),
         destTarget: z.string().describe(`Element to drop onto. ${targetDesc}`),
         tabId: z.string().optional(),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, sourceTarget, destTarget, tabId, expect }) => {
+    async ({ sessionId, sourceTarget, destTarget, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.dragAndDrop(sessionId, sourceTarget, destTarget, tabId, ...expectArgs(expect)));
+        return jsonResult(await runtime.dragAndDrop(sessionId, sourceTarget, destTarget, tabId, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`drag_and_drop failed: ${(e as Error).message}`);
       }
@@ -989,12 +1085,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         sessionId: z.string(),
         target: z.string().describe(targetDesc),
         tabId: z.string().optional(),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, target, tabId, expect }) => {
+    async ({ sessionId, target, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.touchTap(sessionId, target, tabId, ...expectArgs(expect)));
+        return jsonResult(await runtime.touchTap(sessionId, target, tabId, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`touch_tap failed: ${(e as Error).message}`);
       }
@@ -1017,12 +1114,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
             'SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS.',
         ),
         tabId: z.string().optional(),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, target, downloadDir, tabId, expect }) => {
+    async ({ sessionId, target, downloadDir, tabId, expect, settle }) => {
       try {
-        return jsonResult(await runtime.downloadFile(sessionId, target, downloadDir, tabId, ...expectArgs(expect)));
+        return jsonResult(await runtime.downloadFile(sessionId, target, downloadDir, tabId, ...expectSettleArgs(expect, settle)));
       } catch (e) {
         return errorResult(`download_file failed: ${(e as Error).message}`);
       }
@@ -1658,12 +1756,13 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
             'SUTRADHAR_ALLOWED_UPLOAD_ROOTS, in which case it must be under one of those directories.',
         ),
         tabId: z.string().optional(),
+        settle: settleSchema,
         expect: expectSchema,
       },
     },
-    async ({ sessionId, target, filePath, tabId, expect }) => {
+    async ({ sessionId, target, filePath, tabId, expect, settle }) => {
       try {
-        const result = await runtime.uploadFileViaTrigger(sessionId, target, filePath, tabId, ...expectArgs(expect));
+        const result = await runtime.uploadFileViaTrigger(sessionId, target, filePath, tabId, ...expectSettleArgs(expect, settle));
         return jsonResult({ ...result, filePath });
       } catch (e) {
         return errorResult(`upload_file_via_trigger failed: ${(e as Error).message}`);
@@ -1693,17 +1792,20 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
   server.registerTool(
     'browser.handle_dialog',
     {
-      description: 'Accept or dismiss the tab\'s currently-pending native dialog.',
+      description:
+        'Accept or dismiss the tab\'s currently-pending native dialog. Pass settle:true to wait for the page to ' +
+        'finish reacting (e.g. a list re-rendering after an accepted confirm()).',
       inputSchema: {
         sessionId: z.string(),
         action: z.enum(['accept', 'dismiss']),
         promptText: z.string().optional().describe('Text to enter if the dialog is a prompt().'),
         tabId: z.string().optional(),
+        settle: settleSchema,
       },
     },
-    async ({ sessionId, action, promptText, tabId }) => {
+    async ({ sessionId, action, promptText, tabId, settle }) => {
       try {
-        await runtime.handleDialog(sessionId, action, promptText, tabId);
+        await runtime.handleDialog(sessionId, action, promptText, tabId, ...trimTrailingUndefined([settle]));
         return jsonResult({ success: true });
       } catch (e) {
         return errorResult(`handle_dialog failed: ${(e as Error).message}`);

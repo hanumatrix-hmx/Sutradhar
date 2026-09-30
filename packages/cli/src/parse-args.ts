@@ -5,7 +5,7 @@
  * CLI entrypoint), which would spawn/attach to a real Chrome the moment a test imported it.
  */
 
-import type { ActionExpectation } from '@sutradhar/capability-runtime';
+import type { ActionExpectation, WaitForCondition } from '@sutradhar/capability-runtime';
 
 export interface ParsedArgs {
   /** The subcommand, e.g. "snap", "click", "nav". `undefined` when no argument was given. */
@@ -99,6 +99,13 @@ export interface ParsedArgs {
   expectValueMissing: string | undefined;
   /** FR2-07: true when both `--expect-url-changed` and `--expect-url-unchanged` were given. */
   expectUrlChangedConflict: boolean;
+  /** FR2-08: `--text <t>` / `--text-gone <t>` / `--url <s>` / `--js <expr>`, the conditions of the
+   *  `waitfor` verb. `{}` when none was given. A value that begins with `--` is still consumed as the
+   *  value, unless it is itself one of THIS CLI's flags (documented). */
+  waitForFlags: { text?: string; textGone?: string; url?: string; js?: string };
+  /** FR2-08: set when one of those flags was given with no value (it was last, or followed directly by
+   *  another known flag). */
+  waitForFlagError: string | undefined;
   /** Any `--something`-shaped argument that isn't one of the flags this parser recognizes (and
    *  isn't a consumed value of one, e.g. the URL after `--baseline`). Found live (external field
    *  report, PROB-042): a typo'd or misplaced flag like `sutradhar screenshot --help` was
@@ -176,6 +183,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     '--headed', '--fail-on-diff', '--json', '--viewport', '--settle', '--no-text', '--ids-only', '--scan-listeners',
     '--profile', '--user-agent', '--allowlist-domains', '--baseline', '--modifiers', '--frame', '--state', '--dialog',
     '--dialog-text', '--expect-text', '--expect-url', '--expect-url-changed', '--expect-url-unchanged',
+    '--text', '--text-gone', '--url', '--js',
   ]);
   // A value that is missing, or is itself one of OUR flags, means the flag was given without one
   // (`--expect-text --json`); any other `--...`-looking text is a literal value, like `--dialog-text`.
@@ -184,6 +192,30 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     const v = args[i + 1];
     return v === undefined || EXPECT_KNOWN.has(v) ? undefined : v;
   };
+  const waitTextIndex = args.indexOf('--text');
+  const waitTextGoneIndex = args.indexOf('--text-gone');
+  const waitUrlIndex = args.indexOf('--url');
+  const waitJsIndex = args.indexOf('--js');
+  const waitTextValue = expectValueOf(waitTextIndex);
+  const waitTextGoneValue = expectValueOf(waitTextGoneIndex);
+  const waitUrlValue = expectValueOf(waitUrlIndex);
+  const waitJsValue = expectValueOf(waitJsIndex);
+  const waitForFlags: ParsedArgs['waitForFlags'] = {
+    ...(waitTextValue !== undefined ? { text: waitTextValue } : {}),
+    ...(waitTextGoneValue !== undefined ? { textGone: waitTextGoneValue } : {}),
+    ...(waitUrlValue !== undefined ? { url: waitUrlValue } : {}),
+    ...(waitJsValue !== undefined ? { js: waitJsValue } : {}),
+  };
+  const waitForFlagError =
+    waitTextIndex !== -1 && waitTextValue === undefined
+      ? '--text needs a value (e.g. waitfor --text "Saved")'
+      : waitTextGoneIndex !== -1 && waitTextGoneValue === undefined
+        ? '--text-gone needs a value (e.g. waitfor --text-gone "Loading")'
+        : waitUrlIndex !== -1 && waitUrlValue === undefined
+          ? '--url needs a value (e.g. waitfor --url /dashboard)'
+          : waitJsIndex !== -1 && waitJsValue === undefined
+            ? '--js needs a value (e.g. waitfor --js "window.ready === true")'
+            : undefined;
   const expectTextValue = expectValueOf(expectTextIndex);
   const expectUrlValue = expectValueOf(expectUrlIndex);
   const expectValueMissing =
@@ -224,6 +256,10 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     '--state',
     '--dialog',
     '--dialog-text',
+    '--text',
+    '--text-gone',
+    '--url',
+    '--js',
   ]);
   const isConsumedValue = (i: number): boolean =>
     (profileFlagIndex !== -1 && i === profileFlagIndex + 1) ||
@@ -236,6 +272,10 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     (stateFlagIndex !== -1 && i === stateFlagIndex + 1) ||
     (dialogFlagIndex !== -1 && i === dialogFlagIndex + 1) ||
     (dialogTextFlagIndex !== -1 && i === dialogTextFlagIndex + 1) ||
+    (waitTextIndex !== -1 && waitTextValue !== undefined && i === waitTextIndex + 1) ||
+    (waitTextGoneIndex !== -1 && waitTextGoneValue !== undefined && i === waitTextGoneIndex + 1) ||
+    (waitUrlIndex !== -1 && waitUrlValue !== undefined && i === waitUrlIndex + 1) ||
+    (waitJsIndex !== -1 && waitJsValue !== undefined && i === waitJsIndex + 1) ||
     (expectTextIndex !== -1 && expectTextValue !== undefined && i === expectTextIndex + 1) ||
     (expectUrlIndex !== -1 && expectUrlValue !== undefined && i === expectUrlIndex + 1);
   const cleanArgs = args.filter((a, i) => !KNOWN_FLAGS.has(a) && !isConsumedValue(i));
@@ -270,8 +310,55 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     expectFlag,
     expectValueMissing,
     expectUrlChangedConflict,
+    waitForFlags,
+    waitForFlagError,
     unrecognizedFlags,
   };
+}
+
+/** The largest `waitfor` timeout the CLI accepts. Below FR2-04's 300 s process watchdog, so the wait's own
+ *  clean timeout error always wins over the watchdog's generic one. */
+export const WAITFOR_CLI_MAX_TIMEOUT_MS = 280000;
+
+const WAITFOR_USAGE =
+  'usage: sutradhar waitfor [timeoutMs] --text <t> | --text-gone <t> | --url <s> | --js <expr>  (combine to require all)';
+
+/**
+ * FR2-08: builds the runtime's {@link WaitForCondition} from the parsed flags and the verb's positional
+ * arguments (`cleanArgs` after the verb: at most one, the timeout). Returns `{error}` with the exact
+ * user-facing message instead of throwing. Never touches the browser.
+ */
+export function waitForConditionFromArgs(
+  p: Pick<ParsedArgs, 'waitForFlags'>,
+  positional: readonly string[],
+): { condition: WaitForCondition } | { error: string } {
+  const f = p.waitForFlags;
+  if (f.text === undefined && f.textGone === undefined && f.url === undefined && f.js === undefined) {
+    return { error: WAITFOR_USAGE };
+  }
+  if (positional.length > 1) {
+    return {
+      error:
+        `waitfor: unexpected argument "${positional[1]}" — only one positional argument (timeoutMs) is allowed; ` +
+        'quote a multi-word value, e.g. --text "Saved successfully"',
+    };
+  }
+  const timeoutArg = positional[0];
+  let timeoutMs: number | undefined;
+  if (timeoutArg !== undefined) {
+    if (!/^\d+$/.test(timeoutArg)) {
+      return {
+        error:
+          `waitfor: timeoutMs must be a whole number of milliseconds (got "${timeoutArg}"; ` +
+          'quote a multi-word value, e.g. --text "Saved successfully")',
+      };
+    }
+    timeoutMs = Number(timeoutArg);
+    if (timeoutMs > WAITFOR_CLI_MAX_TIMEOUT_MS) {
+      return { error: `waitfor: timeoutMs must be at most ${WAITFOR_CLI_MAX_TIMEOUT_MS}` };
+    }
+  }
+  return { condition: { ...f, ...(timeoutMs !== undefined ? { timeoutMs } : {}) } };
 }
 
 /**

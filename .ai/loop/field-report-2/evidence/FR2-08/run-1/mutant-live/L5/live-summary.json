@@ -1,0 +1,56 @@
+{
+  "startedAt": "2026-09-30T06:02:56.895Z",
+  "finishedAt": "2026-09-30T06:03:34.011Z",
+  "total": 1,
+  "passed": 0,
+  "perSurface": {
+    "mcp": {
+      "total": 1,
+      "passed": 0
+    },
+    "cli": {
+      "total": 0,
+      "passed": 0
+    },
+    "sdk": {
+      "total": 0,
+      "passed": 0
+    },
+    "bundle": {
+      "total": 0,
+      "passed": 0
+    }
+  },
+  "failed": [
+    "mcp:N18"
+  ],
+  "gap325Tolerated": [],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeWithScratchProfile": 0,
+    "lingeringMatches": [],
+    "newSutradharCliTempDirsCreated": [],
+    "newSutradharCliTempDirsLeftAfterCleanup": [],
+    "childPidsStarted": [
+      6200,
+      19236
+    ]
+  },
+  "cases": [
+    {
+      "surface": "mcp",
+      "case": "N18",
+      "expected": "T5/D14: click #s-alert settle:{timeoutMs:2000} returns within (the no-settle click time) + 2000 + 500 + 1500 ms, and far below the 30s auto-dismiss",
+      "observed": {
+        "elapsedMs": 30384,
+        "noSettleControlMs": 3096,
+        "settleOverheadMs": 27288,
+        "success": true
+      },
+      "observerTruth": {
+        "alertOpenedAt": 1790748181564
+      },
+      "pass": false
+    }
+  ]
+}

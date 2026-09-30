@@ -1,0 +1,1096 @@
+{
+  "startedAt": "2026-09-30T07:14:07.953Z",
+  "finishedAt": "2026-09-30T07:18:01.286Z",
+  "total": 51,
+  "passed": 49,
+  "perSurface": {
+    "mcp": {
+      "total": 21,
+      "passed": 20
+    },
+    "cli": {
+      "total": 5,
+      "passed": 5
+    },
+    "sdk": {
+      "total": 5,
+      "passed": 5
+    },
+    "bundle": {
+      "total": 20,
+      "passed": 19
+    }
+  },
+  "failed": [
+    "mcp:H3",
+    "bundle:H3"
+  ],
+  "gap325Tolerated": [],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeWithScratchProfile": 0,
+    "lingeringMatches": [],
+    "newSutradharCliTempDirsCreated": [
+      "sutradhar-cli-1790752540911"
+    ],
+    "newSutradharCliTempDirsLeftAfterCleanup": [],
+    "childPidsStarted": [
+      5824,
+      27940,
+      50640,
+      33364,
+      45936,
+      32448,
+      24968,
+      14644,
+      53416,
+      54000,
+      49892,
+      55976,
+      20772,
+      3096,
+      34792
+    ]
+  },
+  "cases": [
+    {
+      "surface": "mcp",
+      "case": "L1",
+      "expected": "success; sentAt <= toastShown <= recvAt; recvAt-toast <= 700ms; the observer sees #toast; polls >= 10; the page did NOTHING (0 mutations, 0 requests) between load and the toast; verified",
+      "observed": {
+        "success": true,
+        "polls": 20,
+        "latencyMs": 80,
+        "satisfiedAfterMs": 2073,
+        "tier": "verified",
+        "sentBeforeToast": true
+      },
+      "observerTruth": {
+        "toastAt": 1790752450570,
+        "sentAt": 1790752448575,
+        "recvAt": 1790752450650,
+        "dom": "Saved successfully",
+        "preToastMutations": [],
+        "preToastRequests": [],
+        "loadAt": 1790752448561
+      },
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'wait_for' verified: text=\"Saved successfully\" held on one poll after 2073ms",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "wait_for.text",
+              "outcome": "pass",
+              "expected": "Saved successfully",
+              "detail": "the text was visible on the page when the wait ended"
+            }
+          ]
+        }
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "L1b",
+      "expected": "settle:true on the click returned BEFORE the pending-timer toast (T6: settle cannot see a timer); wait_for then catches it",
+      "observed": {
+        "clickReturnedBeforeToast": true,
+        "waitOk": true,
+        "latencyMs": 32
+      },
+      "observerTruth": {
+        "clickRecvAt": 1790752451240,
+        "toastAt": 1790752452732
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "L1c",
+      "expected": "expect checks ONCE and does not wait (success:true, verified:false, failing expect.text); wait_for then succeeds (the D10 boundary made executable)",
+      "observed": {
+        "expectTier": "contradicted",
+        "expectCheck": "fail",
+        "waitOk": true
+      },
+      "observerTruth": {
+        "dom": "Saved successfully"
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "L3",
+      "expected": "textGone: sentAt <= spinnerGone <= recvAt, presentAtStart true, verified",
+      "observed": {
+        "success": true,
+        "presentAtStart": true,
+        "tier": "verified"
+      },
+      "observerTruth": {
+        "spinnerGoneAt": 1790752456399,
+        "sentAt": 1790752454394,
+        "recvAt": 1790752456477,
+        "spinnerStillVisible": false
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "L9",
+      "expected": "AND: the text is visible but the url never matches -> failure listing the met and the unmet part",
+      "observed": {
+        "success": false,
+        "error": "wait_for timed out after 4000ms waiting for text=\"Saved successfully\" AND url~\"stage=never\": text \"Saved successfully\" is visible; url does not contain \"stage=never\" (current URL: http://127.0.0.1:56059/conditions.html?case=toast&delay=1500&n=munrryn24).\nHint: The condition never became true. Inspect the page (browser.snapshot / browser.eval), fix the condition, or raise timeoutMs."
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "L10",
+      "expected": "timeoutMs 0 = check once: met -> success polls 1; unmet -> \"timed out after 0ms\" polls 1",
+      "observed": {
+        "hit": true,
+        "hitPolls": 1,
+        "miss": "wait_for timed out after 0ms waiting for text=\"Nope\": text \"Nope\" was not found in the visible text of 1 frame(s).\nHint: The condition never became true. Inspect the page (browser.snapshot / browser.eval), fix the condition, or raise timeoutMs."
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "L11",
+      "expected": "FR2-07 contract: a met text is verified with a wait_for.text pass; a vacuous textGone is unverifiable with a not-run check",
+      "observed": {
+        "textTier": "verified",
+        "vacuousTier": "unverifiable"
+      },
+      "verification": {
+        "met": {
+          "verified": true,
+          "urlChanged": false,
+          "elementFound": true,
+          "confidence": 0.9,
+          "reason": "'wait_for' verified: text=\"Saved successfully\" held on one poll after 1524ms",
+          "evidence": {
+            "tier": "verified",
+            "checks": [
+              {
+                "check": "wait_for.text",
+                "outcome": "pass",
+                "expected": "Saved successfully",
+                "detail": "the text was visible on the page when the wait ended"
+              }
+            ]
+          }
+        },
+        "vacuous": {
+          "verified": false,
+          "urlChanged": false,
+          "elementFound": false,
+          "confidence": 0.45,
+          "reason": "'wait_for' completed, but no built-in post-condition check could run: textGone \"Never was here\" was not present when the wait started, so it was satisfied vacuously (check the text if you expected it to be there). Pass expect:{text|url|urlChanged} to assert the effect you intended.",
+          "evidence": {
+            "tier": "unverifiable",
+            "checks": [
+              {
+                "check": "wait_for.textGone",
+                "outcome": "not-run",
+                "expected": "Never was here",
+                "detail": "\"Never was here\" was not present when the wait started, so textGone was satisfied vacuously"
+              }
+            ]
+          }
+        }
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "L12",
+      "expected": "get_action_history has a wait_for entry with selector text=\"Saved successfully\"",
+      "observed": {
+        "actionType": "wait_for",
+        "selector": "text=\"Saved successfully\"",
+        "success": true,
+        "executionTimeMs": 2073,
+        "timestamp": "2026-09-30T07:14:10.650Z"
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "N1",
+      "expected": "NEG: never true -> success:false, the exact message, elapsed within [1500, +1.5s pass bound + slack] (no retries), no failureScreenshot, hint names browser.snapshot, action-failed",
+      "observed": {
+        "success": false,
+        "error": "wait_for timed out after 1500ms waiting for text=\"Never appears\": text \"Never appears\" was not found in the visible text of 1 frame(s).\nHint: The condition never became true. Inspect the page (browser.snapshot / browser.eval), fix the condition, or raise timeoutMs.",
+        "elapsedMs": 1516,
+        "hasShot": false
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "N4",
+      "expected": "NEG: no condition keys -> isError with \"give at least one\"",
+      "observed": {
+        "isError": true,
+        "text": "wait_for failed: wait_for: give at least one of text, textGone, url, js"
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "N10",
+      "expected": "NEG: an open alert fails the wait within ~2.5s of alertOpened (NOT 15s, NOT the 30s auto-dismiss); a url-only wait on the same page succeeds while it is open",
+      "observed": {
+        "error": "wait_for blocked by an open alert dialog (\"fr2-08\") after 1636ms — handle it (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then wait again.\nHint: Handle the dialog with browser.handle_dialog, then call browser.wait_for again.",
+        "msAfterAlert": 1129,
+        "dialogPending": {
+          "type": "alert",
+          "message": "fr2-08",
+          "defaultValue": null,
+          "url": "http://127.0.0.1:56059/conditions.html?case=alert&delay=500&n=munrs5019"
+        },
+        "urlOnlyWhileOpen": true
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "N11",
+      "expected": "NEG: the tab closing mid-wait fails within ~1.5s of the close with \"the tab was closed while waiting\"; the server stays healthy",
+      "observed": {
+        "error": "wait_for failed: the tab was closed while waiting (after 549ms).",
+        "msAfterClose": 48,
+        "listTabsOk": true
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "N12",
+      "expected": "vacuous textGone: success at once, polls 1, presentAtStart false, verification unverifiable",
+      "observed": {
+        "polls": 1,
+        "presentAtStart": false,
+        "tier": "unverifiable"
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "N13",
+      "expected": "NEG: display:none text never counts although textContent has it (observer-confirmed)",
+      "observed": {
+        "success": false,
+        "error": "wait_for timed out after 1000ms waiting for text=\"Hidden forever\": text \"Hidden forever\" was not found in the visible text of 1 frame(s).\nHint: The condition never became true. Inspect the page (browser.snapshot / browser.eval), fix the condition, or raise timeoutMs."
+      },
+      "observerTruth": {
+        "inTextContentNotInnerText": true
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "N14",
+      "expected": "input values are not text (times out); a js condition reads the value",
+      "observed": {
+        "text": false,
+        "js": true
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "N15",
+      "expected": "selector-looking text is literal: a plain timeout, no InvalidSelectorError / FR2-06 hint",
+      "observed": {
+        "error": "wait_for timed out after 1000ms waiting for text=\"text=Submit >> nth=0\": text \"text=Submit >> nth=0\" was not found in the visible text of 1 frame(s).\nHint: The condition never became true. Inspect the page (browser.snapshot / browser.eval), fix the condition, or raise timeoutMs."
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "N17",
+      "expected": "documented divergence: the text in a 0x0 overflow:hidden box is rendered text (wait_for succeeds) while wait_for_selector says the element is not visible",
+      "observed": {
+        "waitFor": true,
+        "waitForSelector": false,
+        "selectorError": "wait_for_selector timed out after 500ms waiting for state=visible: 1 element(s) match \"#zerobox\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.\nHint: The element exists but is hidden. Pass state:\"attached\" to wait only for DOM presence, or trigger whatever reveals it."
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "N19",
+      "expected": "opacity:0 text counts (rendered) - the same rule as expect.text",
+      "observed": {
+        "success": true
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "N18",
+      "expected": "T5/D14: click #s-alert settle:{timeoutMs:2000} returns within (the no-settle click time) + 2000 + 500 + 1500 ms, and far below the 30s auto-dismiss",
+      "observed": {
+        "elapsedMs": 5562,
+        "noSettleControlMs": 3054,
+        "settleOverheadMs": 2508,
+        "success": true,
+        "dialogPending": "alert"
+      },
+      "observerTruth": {
+        "alertOpenedAt": 1790752505249
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "H3",
+      "expected": "text: UNAVAILABLE and textGone: UNAVAILABLE (a frame hung; both fail closed); the label excluded; the observer agrees",
+      "observed": {
+        "text": {
+          "success": false,
+          "last": "unmet",
+          "error": "wait_for timed out after 0ms waiting for text=\"WQ001KP2WK\": text \"WQ001KP2WK\" was not found in the visible text of 9 frame(s).\nHint: The condition never became true. Inspect the page (browser.snapshot"
+        },
+        "textGone": {
+          "success": true,
+          "presentAtStart": false
+        }
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56060/matrix-hung?tok=WQ001KP2WK&n=8&hung=3&tokIn=none",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-0",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-1",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-2",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://[::1]:56060/matrix-hang",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-4",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-5",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-6",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-7",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56060/matrix-hung?tok=WQ001KP2WK&n=8&hung=3&tokIn=none",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-0",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-1",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-2",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://[::1]:56060/matrix-hang",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-4",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-5",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-6",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-7",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "tolerated": false,
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "S:click_by_text",
+      "expected": "with settle:true the call returns only after the page's burst finished (click_by_text:2 <= recvAt) and #burst-log holds both entries",
+      "observed": {
+        "success": true,
+        "elapsedMs": 5065
+      },
+      "observerTruth": {
+        "triggerAt": 1790752535533,
+        "burst2At": 1790752535945,
+        "recvAt": 1790752540538,
+        "sentAt": 1790752535473,
+        "burstLogEntries": 2
+      },
+      "pass": true
+    },
+    {
+      "surface": "cli",
+      "case": "C-L1",
+      "expected": "the child is STILL waiting 2.5s in (blocking proof); after the page arms a pure 2s timer it exits 0 with exitAt >= the page event; the status line matches; the page did nothing else",
+      "observed": {
+        "early": "pending",
+        "code": 0,
+        "stdout": "Condition met after 4343ms: text=\"Saved successfully\"\nVerification: verified (confidence 0.90) — 'wait_for' verified: text=\"Saved successfully\" held on one poll after 4343ms",
+        "stderr": "",
+        "msAfterEvent": 93
+      },
+      "observerTruth": {
+        "eventAt": 1790752546090,
+        "exitAt": 1790752546183,
+        "idleMutations": [],
+        "idleRequests": []
+      },
+      "pass": true
+    },
+    {
+      "surface": "cli",
+      "case": "C-L3",
+      "expected": "exit 1; \"Wait failed: wait_for timed out after 3000ms\"",
+      "observed": {
+        "code": 1,
+        "stdout": "Wait failed: wait_for timed out after 3000ms waiting for text=\"Never appears\": text \"Never appears\" was not found in the visible text of 1 frame(s)."
+      },
+      "pass": true
+    },
+    {
+      "surface": "cli",
+      "case": "C-L4",
+      "expected": "exit 0 with a stderr Note (vacuous) and an unverifiable Verification line",
+      "observed": {
+        "code": 0,
+        "stdout": "Condition met after 2ms: textGone=\"Never was here\"\nVerification: NOT verified — unverifiable (confidence 0.45) — 'wait_for' completed, but no built-in post-condition check could run: textGone \"Never was here\" was not present when the wait started, so it was satisfied vacuously (check the text if you expected it to be there). Pass expect:{text|url|urlChanged} to assert the effect you intended.",
+        "stderr": "Note: \"Never was here\" was not present when the wait started, so textGone was satisfied immediately — check the text if you expected it."
+      },
+      "pass": true
+    },
+    {
+      "surface": "cli",
+      "case": "C-L4b-json",
+      "expected": "--json prints the full result JSON (actionType wait_for, verification verified)",
+      "observed": {
+        "code": 0,
+        "stdout": "{\n  \"success\": true,\n  \"actionType\": \"wait_for\",\n  \"executionTimeMs\": 2,\n  \"currentUrl\": \"http://127.0.0.1:56059/conditions.html?case=static&n=munrtz20n\",\n  \"title\": \"fr2-08 conditions\",\n  \"output\": {"
+      },
+      "pass": true
+    },
+    {
+      "surface": "cli",
+      "case": "N-C3",
+      "expected": "NEG (D16): a condition flag on another verb exits 1 AND the click never happened (observer-confirmed)",
+      "observed": {
+        "code": 1,
+        "stderr": "Error: --text is only valid with \"waitfor\" (did you mean --expect-text?)"
+      },
+      "observerTruth": {
+        "clicked": false
+      },
+      "pass": true
+    },
+    {
+      "surface": "sdk",
+      "case": "SDK-L1",
+      "expected": "SDK waitFor resolves the result within 700ms of the toast and the page did nothing else",
+      "observed": {
+        "success": true,
+        "latencyMs": 65,
+        "visibilityState": "visible"
+      },
+      "observerTruth": {
+        "toastAt": 1790752554242,
+        "sentAt": 1790752552244,
+        "recvAt": 1790752554307,
+        "dom": "Saved successfully",
+        "idle": []
+      },
+      "pass": true
+    },
+    {
+      "surface": "sdk",
+      "case": "SDK-L1-background",
+      "expected": "SDK waitFor resolves the result within 700ms of the toast with the tab really hidden",
+      "observed": {
+        "success": true,
+        "latencyMs": 47,
+        "visibilityState": "hidden"
+      },
+      "observerTruth": {
+        "toastAt": 1790752558334,
+        "sentAt": 1790752554352,
+        "recvAt": 1790752558381,
+        "dom": "Saved successfully",
+        "idle": []
+      },
+      "pass": true
+    },
+    {
+      "surface": "sdk",
+      "case": "SDK-N1",
+      "expected": "NEG: the SDK REJECTS: a timeout (ActionFailedError), no keys (TypeError), a js throw fast (ActionFailedError), {selector} (TypeError naming wait_for_selector), timeout \"abc\" (TypeError)",
+      "observed": {
+        "e1": "wait_for timed out after 1500ms waiting for text=\"Never appears\": text \"Never appears\" was not found in the visible text of 1 frame(s).",
+        "e2": "wait_for: give at least one of text, textGone, url, js",
+        "e3": "wait_for failed: js condition threw after 2ms: Cannot read properties of undefined (reading 'ready')",
+        "ms3": 3,
+        "e4": "wait_for: unknown key \"selector\" — to wait for an element's state use wait_for_selector",
+        "e5": "wait_for: timeoutMs must be a number of milliseconds (0-300000)"
+      },
+      "pass": true
+    },
+    {
+      "surface": "sdk",
+      "case": "SDK-N10",
+      "expected": "NEG: an open alert rejects the SDK wait within seconds (not 15s / 30s)",
+      "observed": {
+        "msg": "wait_for blocked by an open alert dialog (\"fr2-08\") after 1633ms — handle it (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then wait again.",
+        "ms": 1633
+      },
+      "pass": true
+    },
+    {
+      "surface": "sdk",
+      "case": "SDK-N12",
+      "expected": "vacuous textGone resolves, presentAtStart false, lastResult tier unverifiable",
+      "observed": {
+        "presentAtStart": false,
+        "tier": "unverifiable"
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "L1",
+      "expected": "success; sentAt <= toastShown <= recvAt; recvAt-toast <= 700ms; the observer sees #toast; polls >= 10; the page did NOTHING (0 mutations, 0 requests) between load and the toast; verified",
+      "observed": {
+        "success": true,
+        "polls": 20,
+        "latencyMs": 80,
+        "satisfiedAfterMs": 2079,
+        "tier": "verified",
+        "sentBeforeToast": true
+      },
+      "observerTruth": {
+        "toastAt": 1790752593020,
+        "sentAt": 1790752591018,
+        "recvAt": 1790752593100,
+        "dom": "Saved successfully",
+        "preToastMutations": [],
+        "preToastRequests": [],
+        "loadAt": 1790752591009
+      },
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'wait_for' verified: text=\"Saved successfully\" held on one poll after 2079ms",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "wait_for.text",
+              "outcome": "pass",
+              "expected": "Saved successfully",
+              "detail": "the text was visible on the page when the wait ended"
+            }
+          ]
+        }
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "L1b",
+      "expected": "settle:true on the click returned BEFORE the pending-timer toast (T6: settle cannot see a timer); wait_for then catches it",
+      "observed": {
+        "clickReturnedBeforeToast": true,
+        "waitOk": true,
+        "latencyMs": 33
+      },
+      "observerTruth": {
+        "clickRecvAt": 1790752593733,
+        "toastAt": 1790752595231
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "L1c",
+      "expected": "expect checks ONCE and does not wait (success:true, verified:false, failing expect.text); wait_for then succeeds (the D10 boundary made executable)",
+      "observed": {
+        "expectTier": "contradicted",
+        "expectCheck": "fail",
+        "waitOk": true
+      },
+      "observerTruth": {
+        "dom": "Saved successfully"
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "L3",
+      "expected": "textGone: sentAt <= spinnerGone <= recvAt, presentAtStart true, verified",
+      "observed": {
+        "success": true,
+        "presentAtStart": true,
+        "tier": "verified"
+      },
+      "observerTruth": {
+        "spinnerGoneAt": 1790752598896,
+        "sentAt": 1790752596903,
+        "recvAt": 1790752598976,
+        "spinnerStillVisible": false
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "L10",
+      "expected": "timeoutMs 0 = check once: met -> success polls 1; unmet -> \"timed out after 0ms\" polls 1",
+      "observed": {
+        "hit": true,
+        "hitPolls": 1,
+        "miss": "wait_for timed out after 0ms waiting for text=\"Nope\": text \"Nope\" was not found in the visible text of 1 frame(s).\nHint: The condition never became true. Inspect the page (browser.snapshot / browser.eval), fix the condition, or raise timeoutMs."
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "L11",
+      "expected": "FR2-07 contract: a met text is verified with a wait_for.text pass; a vacuous textGone is unverifiable with a not-run check",
+      "observed": {
+        "textTier": "verified",
+        "vacuousTier": "unverifiable"
+      },
+      "verification": {
+        "met": {
+          "verified": true,
+          "urlChanged": false,
+          "elementFound": true,
+          "confidence": 0.9,
+          "reason": "'wait_for' verified: text=\"Saved successfully\" held on one poll after 1536ms",
+          "evidence": {
+            "tier": "verified",
+            "checks": [
+              {
+                "check": "wait_for.text",
+                "outcome": "pass",
+                "expected": "Saved successfully",
+                "detail": "the text was visible on the page when the wait ended"
+              }
+            ]
+          }
+        },
+        "vacuous": {
+          "verified": false,
+          "urlChanged": false,
+          "elementFound": false,
+          "confidence": 0.45,
+          "reason": "'wait_for' completed, but no built-in post-condition check could run: textGone \"Never was here\" was not present when the wait started, so it was satisfied vacuously (check the text if you expected it to be there). Pass expect:{text|url|urlChanged} to assert the effect you intended.",
+          "evidence": {
+            "tier": "unverifiable",
+            "checks": [
+              {
+                "check": "wait_for.textGone",
+                "outcome": "not-run",
+                "expected": "Never was here",
+                "detail": "\"Never was here\" was not present when the wait started, so textGone was satisfied vacuously"
+              }
+            ]
+          }
+        }
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "L12",
+      "expected": "get_action_history has a wait_for entry with selector text=\"Saved successfully\"",
+      "observed": {
+        "actionType": "wait_for",
+        "selector": "text=\"Saved successfully\"",
+        "success": true,
+        "executionTimeMs": 2079,
+        "timestamp": "2026-09-30T07:16:33.100Z"
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "N1",
+      "expected": "NEG: never true -> success:false, the exact message, elapsed within [1500, +1.5s pass bound + slack] (no retries), no failureScreenshot, hint names browser.snapshot, action-failed",
+      "observed": {
+        "success": false,
+        "error": "wait_for timed out after 1500ms waiting for text=\"Never appears\": text \"Never appears\" was not found in the visible text of 1 frame(s).\nHint: The condition never became true. Inspect the page (browser.snapshot / browser.eval), fix the condition, or raise timeoutMs.",
+        "elapsedMs": 1517,
+        "hasShot": false
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "N4",
+      "expected": "NEG: no condition keys -> isError with \"give at least one\"",
+      "observed": {
+        "isError": true,
+        "text": "wait_for failed: wait_for: give at least one of text, textGone, url, js"
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "N10",
+      "expected": "NEG: an open alert fails the wait within ~2.5s of alertOpened (NOT 15s, NOT the 30s auto-dismiss); a url-only wait on the same page succeeds while it is open",
+      "observed": {
+        "error": "wait_for blocked by an open alert dialog (\"fr2-08\") after 1629ms — handle it (browser.handle_dialog, or \"sutradhar dialog accept|dismiss\"), then wait again.\nHint: Handle the dialog with browser.handle_dialog, then call browser.wait_for again.",
+        "msAfterAlert": 1122,
+        "dialogPending": {
+          "type": "alert",
+          "message": "fr2-08",
+          "defaultValue": null,
+          "url": "http://127.0.0.1:56059/conditions.html?case=alert&delay=500&n=munrv3un12"
+        },
+        "urlOnlyWhileOpen": true
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "N11",
+      "expected": "NEG: the tab closing mid-wait fails within ~1.5s of the close with \"the tab was closed while waiting\"; the server stays healthy",
+      "observed": {
+        "error": "wait_for failed: the tab was closed while waiting (after 542ms).",
+        "msAfterClose": 32,
+        "listTabsOk": true
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "N12",
+      "expected": "vacuous textGone: success at once, polls 1, presentAtStart false, verification unverifiable",
+      "observed": {
+        "polls": 1,
+        "presentAtStart": false,
+        "tier": "unverifiable"
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "N13",
+      "expected": "NEG: display:none text never counts although textContent has it (observer-confirmed)",
+      "observed": {
+        "success": false,
+        "error": "wait_for timed out after 1000ms waiting for text=\"Hidden forever\": text \"Hidden forever\" was not found in the visible text of 1 frame(s).\nHint: The condition never became true. Inspect the page (browser.snapshot / browser.eval), fix the condition, or raise timeoutMs."
+      },
+      "observerTruth": {
+        "inTextContentNotInnerText": true
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "N14",
+      "expected": "input values are not text (times out); a js condition reads the value",
+      "observed": {
+        "text": false,
+        "js": true
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "N15",
+      "expected": "selector-looking text is literal: a plain timeout, no InvalidSelectorError / FR2-06 hint",
+      "observed": {
+        "error": "wait_for timed out after 1000ms waiting for text=\"text=Submit >> nth=0\": text \"text=Submit >> nth=0\" was not found in the visible text of 1 frame(s).\nHint: The condition never became true. Inspect the page (browser.snapshot / browser.eval), fix the condition, or raise timeoutMs."
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "N17",
+      "expected": "documented divergence: the text in a 0x0 overflow:hidden box is rendered text (wait_for succeeds) while wait_for_selector says the element is not visible",
+      "observed": {
+        "waitFor": true,
+        "waitForSelector": false,
+        "selectorError": "wait_for_selector timed out after 500ms waiting for state=visible: 1 element(s) match \"#zerobox\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.\nHint: The element exists but is hidden. Pass state:\"attached\" to wait only for DOM presence, or trigger whatever reveals it."
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "N19",
+      "expected": "opacity:0 text counts (rendered) - the same rule as expect.text",
+      "observed": {
+        "success": true
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "N18",
+      "expected": "T5/D14: click #s-alert settle:{timeoutMs:2000} returns within (the no-settle click time) + 2000 + 500 + 1500 ms, and far below the 30s auto-dismiss",
+      "observed": {
+        "elapsedMs": 5576,
+        "noSettleControlMs": 3060,
+        "settleOverheadMs": 2516,
+        "success": true,
+        "dialogPending": "alert"
+      },
+      "observerTruth": {
+        "alertOpenedAt": 1790752643735
+      },
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "H3",
+      "expected": "text: UNAVAILABLE and textGone: UNAVAILABLE (a frame hung; both fail closed); the label excluded; the observer agrees",
+      "observed": {
+        "text": {
+          "success": false,
+          "last": "unmet",
+          "error": "wait_for timed out after 0ms waiting for text=\"WQ001KMZPZ\": text \"WQ001KMZPZ\" was not found in the visible text of 9 frame(s).\nHint: The condition never became true. Inspect the page (browser.snapshot"
+        },
+        "textGone": {
+          "success": true,
+          "presentAtStart": false
+        }
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56060/matrix-hung?tok=WQ001KMZPZ&n=8&hung=3&tokIn=none",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-0",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-1",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-2",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://[::1]:56060/matrix-hang",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-4",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-5",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-6",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-7",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:56060/matrix-hung?tok=WQ001KMZPZ&n=8&hung=3&tokIn=none",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-0",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-1",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-2",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://[::1]:56060/matrix-hang",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-4",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-5",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-6",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:56060/matrix-frame?tok=other-frame-7",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 0
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "tolerated": false,
+      "pass": false
+    },
+    {
+      "surface": "bundle",
+      "case": "S:click_by_text",
+      "expected": "with settle:true the call returns only after the page's burst finished (click_by_text:2 <= recvAt) and #burst-log holds both entries",
+      "observed": {
+        "success": true,
+        "elapsedMs": 5056
+      },
+      "observerTruth": {
+        "triggerAt": 1790752673986,
+        "burst2At": 1790752674394,
+        "recvAt": 1790752678993,
+        "sentAt": 1790752673937,
+        "burstLogEntries": 2
+      },
+      "pass": true
+    }
+  ]
+}

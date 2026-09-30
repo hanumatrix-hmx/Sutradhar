@@ -4,7 +4,7 @@
  * (which runs main() immediately at module load) specifically so it's independently testable.
  */
 
-import { parseArgs, dialogFlagError, expectFlagError } from '../../src/parse-args.js';
+import { parseArgs, dialogFlagError, expectFlagError, waitForConditionFromArgs } from '../../src/parse-args.js';
 
 describe('@sutradhar/cli parseArgs', () => {
   it('parses a bare verb with no flags or positional args', () => {
@@ -387,5 +387,85 @@ describe('@sutradhar/cli parseArgs: FR2-07 --expect-* flags', () => {
   it('C3: unrecognised-flag detection is unchanged and does not flag the expect flags', () => {
     expect(parseArgs(['click', '#a', '--expect-text', 'x', '--expect-url-changed']).unrecognizedFlags).toEqual([]);
     expect(parseArgs(['click', '#a', '--bogus']).unrecognizedFlags).toEqual(['--bogus']);
+  });
+});
+
+describe('FR2-08 waitfor flags', () => {
+  it('C1: --text takes a value; positional timeout stays in cleanArgs', () => {
+    const r = parseArgs(['waitfor', '5000', '--text', 'Saved']);
+    expect(r.waitForFlags).toEqual({ text: 'Saved' });
+    expect(r.cleanArgs).toEqual(['5000']);
+    expect(r.unrecognizedFlags).toEqual([]);
+    expect(r.waitForFlagError).toBeUndefined();
+  });
+
+  it('C2: all four flags together', () => {
+    const r = parseArgs(['waitfor', '--text', 'a b', '--text-gone', 'c', '--url', '/x', '--js', 'window.ok']);
+    expect(r.waitForFlags).toEqual({ text: 'a b', textGone: 'c', url: '/x', js: 'window.ok' });
+    expect(r.cleanArgs).toEqual([]);
+  });
+
+  it('C3: a condition flag with no value is an error naming the flag', () => {
+    expect(parseArgs(['waitfor', '--text']).waitForFlagError).toMatch(/--text needs a value/);
+    expect(parseArgs(['waitfor', '--text-gone']).waitForFlagError).toMatch(/--text-gone needs a value/);
+    expect(parseArgs(['waitfor', '--url']).waitForFlagError).toMatch(/--url needs a value/);
+    expect(parseArgs(['waitfor', '--js']).waitForFlagError).toMatch(/--js needs a value/);
+    // followed directly by another of OUR flags: the value is missing, that flag is not swallowed
+    const r = parseArgs(['waitfor', '--text', '--json']);
+    expect(r.waitForFlagError).toMatch(/--text needs a value/);
+    expect(r.jsonMode).toBe(true);
+  });
+
+  it('C4: waitForConditionFromArgs: usage, timeout validation, cap', () => {
+    const one = { waitForFlags: { text: 'x' } };
+    expect(waitForConditionFromArgs({ waitForFlags: {} }, [])).toEqual({
+      error: 'usage: sutradhar waitfor [timeoutMs] --text <t> | --text-gone <t> | --url <s> | --js <expr>  (combine to require all)',
+    });
+    expect((waitForConditionFromArgs(one, ['abc']) as any).error).toMatch(/timeoutMs must be a whole number of milliseconds/);
+    expect((waitForConditionFromArgs(one, ['-5']) as any).error).toMatch(/whole number/);
+    expect((waitForConditionFromArgs(one, ['1.5']) as any).error).toMatch(/whole number/);
+    expect((waitForConditionFromArgs(one, ['']) as any).error).toMatch(/whole number/);
+    expect(waitForConditionFromArgs(one, ['280001'])).toEqual({ error: 'waitfor: timeoutMs must be at most 280000' });
+    expect(waitForConditionFromArgs(one, ['280000'])).toEqual({ condition: { text: 'x', timeoutMs: 280000 } });
+    expect(waitForConditionFromArgs(one, ['0'])).toEqual({ condition: { text: 'x', timeoutMs: 0 } });
+    expect(waitForConditionFromArgs(one, [])).toEqual({ condition: { text: 'x' } });
+    // an UNQUOTED multi-word value is a second positional: rejected with a quoting hint, never silently mis-parsed
+    const bad = waitForConditionFromArgs(one, ['5000', 'successfully']) as { error: string };
+    expect(bad.error).toMatch(/unexpected argument "successfully"/);
+    expect(bad.error).toMatch(/quote/);
+    const bad2 = waitForConditionFromArgs(one, ['successfully']) as { error: string };
+    expect(bad2.error).toMatch(/got "successfully"/);
+  });
+
+  it('C5: the flags parse on any verb (the CLI itself rejects them off "waitfor": proved live, N-C3)', () => {
+    const r = parseArgs(['click', '7', '--text', 'Saved']);
+    expect(r.waitForFlags).toEqual({ text: 'Saved' });
+    expect(r.cleanArgs).toEqual(['7']);
+    expect(r.verb).toBe('click');
+  });
+
+  it('C6: a js value is kept verbatim (spaces, quotes, =); a value starting with -- is consumed as the value', () => {
+    expect(parseArgs(['waitfor', '--js', 'document.title === "a b"']).waitForFlags.js).toBe('document.title === "a b"');
+    const r = parseArgs(['waitfor', '--text', '--x']);
+    expect(r.waitForFlags.text).toBe('--x');
+    expect(r.cleanArgs).toEqual([]);
+    expect(r.unrecognizedFlags).toEqual([]);
+  });
+
+  it('C6b: --url does not disturb --expect-url, and --text does not disturb --no-text', () => {
+    const r = parseArgs(['snap', '--no-text']);
+    expect(r.noText).toBe(true);
+    expect(r.waitForFlags).toEqual({});
+    const e = parseArgs(['click', '7', '--expect-url', '/a']);
+    expect(e.waitForFlags).toEqual({});
+    expect(e.expectFlag).toEqual({ url: '/a' });
+  });
+
+  it('C7: --settle is still a boolean, on the newly settle-capable verbs too', () => {
+    const r = parseArgs(['press', '3', 'Enter', '--settle']);
+    expect(r.settle).toBe(true);
+    expect(r.cleanArgs).toEqual(['3', 'Enter']);
+    expect(parseArgs(['press', '3', 'Enter']).settle).toBe(false);
+    expect(parseArgs(['nav', 'https://x.test/', '--settle']).cleanArgs).toEqual(['https://x.test/']);
   });
 });

@@ -1,0 +1,290 @@
+{
+  "results": [
+    {
+      "id": "mcp:A1-toast",
+      "pass": true,
+      "ms": 2069,
+      "lat": 80,
+      "polls": 20,
+      "tier": "verified"
+    },
+    {
+      "id": "mcp:A2-settle-vs-timer",
+      "pass": true,
+      "clickMs": 559,
+      "clickRecvBeforeShownBy": 1501,
+      "waitLat": 33
+    },
+    {
+      "id": "mcp:A2b-concurrent-click",
+      "pass": true,
+      "clickMs": 62,
+      "waitMs": 2297
+    },
+    {
+      "id": "mcp:A3-dialog-text-present",
+      "pass": true,
+      "open": true,
+      "text": [
+        false,
+        1093,
+        "wait_for blocked by an open alert dialog (\"probe-alert\") after 1092ms — handle it (browser.handle_dialog, or \"sutradhar ",
+        "alert"
+      ],
+      "textGone": [
+        false,
+        1091,
+        null
+      ],
+      "js": [
+        false,
+        1093
+      ],
+      "url": [
+        true,
+        1
+      ],
+      "stillPending": true
+    },
+    {
+      "id": "mcp:A3b-dialog-opens-mid-wait-textGone",
+      "pass": true,
+      "ms": 2390,
+      "err": "wait_for blocked by an open alert dialog (\"probe-alert\") after 2390ms — handle it (browser.handle_dialog, or \"sutradhar dialog accept|dismis",
+      "vacuousUnderDialog": [
+        false,
+        "wait_for blocked by an open alert dialog (\"probe-alert\") after 1090ms — handle it (browser.handle_di"
+      ]
+    },
+    {
+      "id": "mcp:A4-hung-xo-frame",
+      "pass": true,
+      "premiseHung": true,
+      "checks": 1,
+      "textNowhere": [
+        false,
+        "unavailable"
+      ],
+      "textGoneNowhere": [
+        false,
+        "unavailable",
+        3125,
+        "wait_for timed out after 2000ms waiting for textGone=\"Nowhere token\": textGone \"Nowhere token\" could not be checked (only 1 of 3 frames answered (2 did not answ"
+      ],
+      "textMain": [
+        true,
+        2
+      ],
+      "textGoneFrame": [
+        false,
+        "unavailable"
+      ],
+      "textGoneT0": [
+        false,
+        1508
+      ]
+    },
+    {
+      "id": "mcp:A5-hung-main",
+      "pass": true,
+      "premiseHung": true,
+      "textGone": [
+        false,
+        4622,
+        "unavailable"
+      ],
+      "text": [
+        false,
+        4617
+      ],
+      "js": [
+        false,
+        4636,
+        "wait_for timed out after 3000ms waiting for js(true): js true did not settle within 1500ms.\nHint: Th"
+      ],
+      "url": [
+        true,
+        1514
+      ],
+      "textGoneT0": [
+        false,
+        3013
+      ]
+    },
+    {
+      "id": "mcp:A6-background",
+      "pass": true,
+      "vis": "hidden",
+      "lat": 78,
+      "timeoutMs3000Elapsed": 3004,
+      "jsTimeoutElapsed": 3012
+    },
+    {
+      "id": "mcp:A7-flicker",
+      "pass": true,
+      "on30": {
+        "success": true,
+        "polls": 15,
+        "ms": 1522
+      },
+      "on60": {
+        "success": true,
+        "polls": 15,
+        "ms": 1527
+      },
+      "on400": {
+        "success": true,
+        "polls": 15,
+        "ms": 1525
+      },
+      "note": "informational: a condition true for less than one poll interval may be missed"
+    },
+    {
+      "id": "mcp:A8-detach",
+      "pass": true,
+      "ms": 1515,
+      "presentAtStart": true,
+      "afterRemoveBy": 16
+    },
+    {
+      "id": "mcp:A9-nav-mid-wait-textGone",
+      "pass": true,
+      "falseMet": 0,
+      "res": [
+        {
+          "success": false,
+          "ms": 6016,
+          "polls": 43,
+          "url": "/nav-b?n=0.9625948216562557",
+          "presentAtStart": true
+        },
+        {
+          "success": false,
+          "ms": 6015,
+          "polls": 43,
+          "url": "/nav-b?n=0.4808176962869879",
+          "presentAtStart": true
+        },
+        {
+          "success": false,
+          "ms": 6003,
+          "polls": 43,
+          "url": "/nav-b?n=0.77709079605763",
+          "presentAtStart": true
+        },
+        {
+          "success": false,
+          "ms": 6017,
+          "polls": 43,
+          "url": "/nav-b?n=0.0455806192065743",
+          "presentAtStart": true
+        },
+        {
+          "success": false,
+          "ms": 6014,
+          "polls": 43,
+          "url": "/nav-b?n=0.7175602256628856",
+          "presentAtStart": true
+        }
+      ],
+      "note": "OldMarker is in page A and in page B HTML; any met = a transient navigation state read as gone"
+    },
+    {
+      "id": "mcp:A9b-nav-and",
+      "pass": true,
+      "ms": 2122,
+      "polls": 7
+    },
+    {
+      "id": "mcp:A10-shadow",
+      "pass": true,
+      "open": [
+        true,
+        1090
+      ],
+      "closed": [
+        false,
+        1502
+      ]
+    },
+    {
+      "id": "mcp:A11-iframes",
+      "pass": true,
+      "same": [
+        true,
+        1097
+      ],
+      "cross": [
+        true,
+        437,
+        null
+      ]
+    },
+    {
+      "id": "mcp:A12-js-url",
+      "pass": true,
+      "jsLat": 94,
+      "urlLat": 75
+    },
+    {
+      "id": "mcp:A13-gap329-331-parity",
+      "pass": true,
+      "waitFor": {
+        "SvgDefsWord": true,
+        "AreaWord": false,
+        "HiddenWord": false,
+        "ValueWord": false
+      },
+      "expectText": {
+        "SvgDefsWord": true,
+        "AreaWord": false,
+        "HiddenWord": false,
+        "ValueWord": false
+      },
+      "parity": true
+    },
+    {
+      "id": "mcp:A14-js-errors",
+      "pass": true,
+      "throw": [
+        2,
+        "wait_for failed: js condition threw after 1ms: Cannot read properties of undefined (reading 'ready')\nHint: Guard the exp"
+      ],
+      "never": [
+        3130,
+        "wait_for timed out after 2500ms waiting for js(new Promise(() => {})): js new Promise(() => {}) did not settle within 1500ms.\nHint: The condition never became t"
+      ],
+      "syntax": [
+        1,
+        "wait_for failed: js condition threw after 1ms: Unexpected token ')'\nHint: Guard the expression so it"
+      ]
+    },
+    {
+      "id": "mcp:A15-tab-closed",
+      "pass": true,
+      "tabId": "tab_sess_1790754504059_1_3",
+      "afterClose": 46,
+      "err": "wait_for failed: the tab was closed while waiting (after 655ms).",
+      "listTabsOk": true
+    },
+    {
+      "id": "mcp:A16-validation",
+      "pass": true,
+      "a": "wait_for failed: wait_for: give at least one of text, textGone, url, js",
+      "b": "MCP error -32602: Input validation error: Invalid arguments for tool browser.wait_for: Str",
+      "c": "wait_for failed: wait_for: text and textGone are both \"X\" — that can never be satisfied",
+      "d": "MCP error -32602: Input validation error: Invalid arguments ",
+      "e": "MCP error -32602: Input validation error: Invalid arguments "
+    }
+  ],
+  "pids": [
+    {
+      "pid": 53708,
+      "what": "observer chrome E:\\AI-Cache\\tmp\\audit-fr208-prof-aXqyqS"
+    },
+    {
+      "pid": 25292,
+      "what": "mcp server E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/mcp-server/dist/cli.js"
+    }
+  ]
+}

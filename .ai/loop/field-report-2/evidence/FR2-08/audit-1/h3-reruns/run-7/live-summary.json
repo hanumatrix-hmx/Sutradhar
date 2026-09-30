@@ -1,0 +1,875 @@
+{
+  "startedAt": "2026-09-30T09:22:49.169Z",
+  "finishedAt": "2026-09-30T09:23:57.640Z",
+  "total": 6,
+  "passed": 6,
+  "perSurface": {
+    "mcp": {
+      "total": 3,
+      "passed": 3
+    },
+    "cli": {
+      "total": 0,
+      "passed": 0
+    },
+    "sdk": {
+      "total": 0,
+      "passed": 0
+    },
+    "bundle": {
+      "total": 3,
+      "passed": 3
+    }
+  },
+  "failed": [],
+  "gap325Tolerated": [],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeWithScratchProfile": 0,
+    "lingeringMatches": [],
+    "newSutradharCliTempDirsCreated": [],
+    "newSutradharCliTempDirsLeftAfterCleanup": [],
+    "childPidsStarted": [
+      5144,
+      44504,
+      49508,
+      15760
+    ]
+  },
+  "cases": [
+    {
+      "surface": "mcp",
+      "case": "H1",
+      "expected": "text met, textGone unmet (rendered); the label counted; the observer agrees",
+      "observed": {
+        "text": {
+          "success": true
+        },
+        "textGone": {
+          "success": false,
+          "last": "unmet",
+          "presentAtStart": true
+        }
+      },
+      "observerTruth": {
+        "before": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-0",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://[::1]:55360/matrix-hang",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-1",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-2",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://127.0.0.1:55360/matrix-hung?tok=WQ001KPHS2&n=8&hung=3&tokIn=main",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-4",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-5",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-6",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-7",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 1
+        },
+        "after": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-0",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://[::1]:55360/matrix-hang",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-1",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-2",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://127.0.0.1:55360/matrix-hung?tok=WQ001KPHS2&n=8&hung=3&tokIn=main",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-4",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-5",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-6",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-7",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 1
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "tolerated": false,
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "H2",
+      "expected": "text met, textGone unmet (rendered); the label counted; the observer agrees",
+      "observed": {
+        "text": {
+          "success": true
+        },
+        "textGone": {
+          "success": false,
+          "last": "unmet",
+          "presentAtStart": true
+        }
+      },
+      "observerTruth": {
+        "before": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:55360/matrix-hung?tok=WQ002K8RVY&n=8&hung=3&tokIn=5",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-0",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-1",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-2",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://[::1]:55360/matrix-hang",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-4",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=WQ002K8RVY",
+              "main": false,
+              "shown": "shown",
+              "text": true
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-6",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-7",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 1
+        },
+        "after": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:55360/matrix-hung?tok=WQ002K8RVY&n=8&hung=3&tokIn=5",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-0",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-1",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-2",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://[::1]:55360/matrix-hang",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-4",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=WQ002K8RVY",
+              "main": false,
+              "shown": "shown",
+              "text": true
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-6",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-7",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 1
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "tolerated": false,
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "H3",
+      "expected": "text: UNAVAILABLE and textGone: UNAVAILABLE (a frame hung; both fail closed); the label excluded; the observer agrees",
+      "observed": {
+        "text": {
+          "success": false,
+          "last": "unavailable",
+          "error": "wait_for timed out after 0ms waiting for text=\"WQ003K9IX3\": text \"WQ003K9IX3\" could not be checked (only 7 of 9 frames answered (2 did not answer within 1500ms; hung:http://[::1]:55360/matrix-hang | h"
+        },
+        "textGone": {
+          "success": false,
+          "last": "unavailable"
+        }
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:55360/matrix-hung?tok=WQ003K9IX3&n=8&hung=3&tokIn=none",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-0",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-1",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-2",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://[::1]:55360/matrix-hang",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-4",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-5",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-6",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-7",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 1
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:55360/matrix-hung?tok=WQ003K9IX3&n=8&hung=3&tokIn=none",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-0",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-1",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-2",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://[::1]:55360/matrix-hang",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-4",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-5",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-6",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-7",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 1
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "tolerated": false,
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "H1",
+      "expected": "text met, textGone unmet (rendered); the label counted; the observer agrees",
+      "observed": {
+        "text": {
+          "success": true
+        },
+        "textGone": {
+          "success": false,
+          "last": "unmet",
+          "presentAtStart": true
+        }
+      },
+      "observerTruth": {
+        "before": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-0",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-1",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-2",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://[::1]:55360/matrix-hang",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-4",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-5",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-6",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-7",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://127.0.0.1:55360/matrix-hung?tok=WQ001KA8AK&n=8&hung=3&tokIn=main",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 1
+        },
+        "after": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-0",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-1",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-2",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://[::1]:55360/matrix-hang",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-4",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-5",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-6",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-7",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://127.0.0.1:55360/matrix-hung?tok=WQ001KA8AK&n=8&hung=3&tokIn=main",
+              "main": true,
+              "shown": "shown",
+              "text": true
+            }
+          ],
+          "hung": 1
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "tolerated": false,
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "H2",
+      "expected": "text met, textGone unmet (rendered); the label counted; the observer agrees",
+      "observed": {
+        "text": {
+          "success": true
+        },
+        "textGone": {
+          "success": false,
+          "last": "unmet",
+          "presentAtStart": true
+        }
+      },
+      "observerTruth": {
+        "before": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:55360/matrix-hung?tok=WQ002KQLOF&n=8&hung=3&tokIn=5",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-0",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-1",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-2",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://[::1]:55360/matrix-hang",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-4",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=WQ002KQLOF",
+              "main": false,
+              "shown": "shown",
+              "text": true
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-6",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-7",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 2
+        },
+        "after": {
+          "found": true,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:55360/matrix-hung?tok=WQ002KQLOF&n=8&hung=3&tokIn=5",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-0",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-1",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-2",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://[::1]:55360/matrix-hang",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-4",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=WQ002KQLOF",
+              "main": false,
+              "shown": "shown",
+              "text": true
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-6",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-7",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 2
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "tolerated": false,
+      "pass": true
+    },
+    {
+      "surface": "bundle",
+      "case": "H3",
+      "expected": "text: UNAVAILABLE and textGone: UNAVAILABLE (a frame hung; both fail closed); the label excluded; the observer agrees",
+      "observed": {
+        "text": {
+          "success": false,
+          "last": "unavailable",
+          "error": "wait_for timed out after 0ms waiting for text=\"WQ003KXR9C\": text \"WQ003KXR9C\" could not be checked (only 8 of 9 frames answered (1 did not answer within 1500ms; hung:http://[::1]:55360/matrix-hang)).\n"
+        },
+        "textGone": {
+          "success": false,
+          "last": "unavailable"
+        }
+      },
+      "observerTruth": {
+        "before": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:55360/matrix-hung?tok=WQ003KXR9C&n=8&hung=3&tokIn=none",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-0",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-1",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-2",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://[::1]:55360/matrix-hang",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-4",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-5",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-6",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-7",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 4
+        },
+        "after": {
+          "found": false,
+          "frames": [
+            {
+              "url": "http://127.0.0.1:55360/matrix-hung?tok=WQ003KXR9C&n=8&hung=3&tokIn=none",
+              "main": true,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-0",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-1",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-2",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://[::1]:55360/matrix-hang",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-4",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-5",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-6",
+              "main": false,
+              "shown": "hung"
+            },
+            {
+              "url": "http://localhost:55360/matrix-frame?tok=other-frame-7",
+              "main": false,
+              "shown": "shown",
+              "text": false
+            }
+          ],
+          "hung": 4
+        },
+        "stable": true,
+        "labelMatchesObserver": true,
+        "inconclusive": false
+      },
+      "tolerated": false,
+      "pass": true
+    }
+  ]
+}

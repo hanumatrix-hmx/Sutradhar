@@ -32,6 +32,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   Status: **PARTIAL** (ships with documented limitations; the `expect.text` check failed three audits,
   every other part passed all three).
 
+- **Condition waits and settle everywhere (FR2-08).** New `browser.wait_for` (MCP), `sutradhar waitfor`
+  (CLI: `--text`, `--text-gone`, `--url`, `--js`) and `page.waitFor()` (SDK) block until a page condition is
+  true instead of sleeping: visible text appears, visible text is gone, the URL contains a substring, or a JS
+  expression is truthy. Several conditions must all hold at once. It polls from Node every ~100 ms with
+  fully-awaited per-frame probes (never `page.waitForFunction`, whose default `requestAnimationFrame` polling
+  does not fire in a background tab: measured here, a hidden-tab `waitForFunction` timed out at 10 s while
+  `wait_for` succeeded within 700 ms of the page's own event), has no hidden retries (`timeoutMs` is the real
+  total, `0` = check once; on a frozen page a failed wait can spend up to 1.5 s more reading the page title, so
+  the total is bounded but can exceed `timeoutMs` by up to about 3 s), and fails, naming the dialog, when a
+  native dialog blocks the page (CLI exit 3): in about 1 s if the dialog is already open, up to about 2.7 s after
+  it opens if it opens partway through a check. Text visible for less than one poll interval (about 100 ms) can
+  be missed; use it for states that persist. `text`/`textGone` reuse the `expect.text` rendered-text check (one definition), so they
+  inherit its documented limits below; a frame that cannot be inspected is "unavailable", never "met" and never
+  "gone". `settle` (wait for DOM-quiet and network-idle) is now accepted by every tool that interacts with or
+  navigates the page: `navigate`, `go_back`, `go_forward`, `reload`, `click_at_point`, `drag_at_points`,
+  `press_key`, `focus`, `hover`, `select_option(s)`, `click_by_text`, `click_by_role`, `type_by_label`,
+  `fill_form` (once, after the last field), `upload_file`, `upload_file_via_trigger`, `right_click`,
+  `drag_and_drop`, `touch_tap`, `download_file`, `handle_dialog` (the SDK `goto`/`press`/`scroll`/`download`/
+  `uploadFile`, and the CLI `nav`/`clicktext`/`clickrole`/`press`/`select`/`hover`/`upload`/`drag`/`clickpoint`/
+  `dragpoints`/`download`). `AGENT_SETUP.md` gains "Waiting: wait on conditions, never sleep". Tool count: 72
+  `browser.*` tools plus `agent.runGoal` (was 71). Details: `.ai/loop/field-report-2/evidence/FR2-08/changelog-fragment.md`.
+
+### Changed
+- **`settle` now has a hard upper bound (FR2-08).** It previously had none on the Node side: a `click` with
+  `settle:true` that opened an `alert` blocked until the tab's 30 s auto-dismiss (measured: see the evidence).
+  It now always returns by `timeoutMs + 500 ms`, and still never fails the action.
+- **CLI:** `--text`, `--text-gone`, `--url` and `--js` on any verb other than `waitfor` are an error (exit 1)
+  instead of being silently ignored, because `click 7 --text Saved` reads like an assertion that never ran.
+
 ### Known limitations
 - **`expect.text` is best-effort "rendered text", not a paint check (FR2-07).** Text inside SVG
   containers that are never painted (`<defs>`, an unused `<symbol>`, `<mask>`, `<clipPath>`,
@@ -39,6 +68,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   (GAP-329). Visible text split across `inline-block`/flex items, or inside a `<textarea>`, can be
   reported as missing (GAP-331). A cross-origin frame that the browser never attaches makes the check
   `unverifiable` (named in the reason), never verified (GAP-325).
+- **`wait_for` text conditions share those limits, and a few of their own (FR2-08).** `text`/`textGone` use
+  the same check as `expect.text`, so never-painted SVG containers count and split inline-block/`<textarea>`
+  text can be missed (GAP-329, GAP-331). `js` runs in the main frame only (no `frameSelector`), re-runs every
+  ~100 ms and must be side-effect free. `textGone` on text that was never there succeeds at once
+  (`output.presentAtStart:false`, verification `unverifiable`). The CLI cannot start a wait while a dialog is
+  already open (the CLI's dialog gate exits 3 first), and caps the timeout at 280000 ms. `settle` cannot see a
+  timer the page scheduled for later; use `wait_for`.
 
 ## [0.5.0] - 2026-09-29
 

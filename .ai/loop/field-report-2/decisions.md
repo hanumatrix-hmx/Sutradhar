@@ -3956,3 +3956,64 @@ Note: a plain `pnpm run build` replayed a stale turbo cache for the `sutradhar` 
 source change; `--force` was needed. check-release-ready.mjs guards publishing, but the stale-bundle replay is
 worth a follow-up.
 
+## 2026-09-30 -- FR2-08 starts although FR2-07 is PARTIAL, not DONE
+
+FR2-08's spec lists "FR2-07 DONE" as a hard precondition for two reasons: shared files and shared
+code (its text/textGone probe reuses FR2-07's visible-text check). Both are satisfied: FR2-07 is merged
+to master (75b29c6) and pageContainsVisibleText / visibleTextContainsInPage exist. FR2-07 is PARTIAL
+only because expect.text is best-effort (GAP-329 SVG never-painted containers, GAP-331 split
+inline-block/textarea text), a limit the user accepted. Decision: proceed; wait_for text/textGone
+inherits exactly those documented limits and must document them the same way, and must never report a
+condition as met on a path FR2-07 already fails closed on.
+
+## 2026-09-30 -- FR2-08 Executor run-1 (DEV + VERIFY): condition waits and settle everywhere; awaiting independent audit
+
+Branch `claude/fr2-08-condition-waits` (base master 75b29c6). Not self-audited; status VERIFY. Evidence: `evidence/FR2-08/run-1/`.
+- Implemented per spec with the FR2-07 lesson applied: `wait_for`'s `text`/`textGone` call ONE shared function (`probeVisibleText`, extracted from
+  FR2-07's `pageContainsVisibleText`, behaviour-preserving: FR2-07's `execution-verifier.spec.ts` and `expect-text-matrix.spec.ts` pass unchanged);
+  "unavailable" (hung/gone frame, open dialog, exceeded budget) is never "met" and, for `textGone`, never "gone" (unit matrix of every per-frame
+  outcome combination vs an independent oracle; live matrix of 262 hiding-mechanism x placement cases vs the FR2-07 independent observer; hung-frame
+  cases H1-H3). The limits (GAP-329, GAP-331) are stated in the MCP description, CLI help/README, SDK JSDoc, AGENT_SETUP, READMEs and the changelog.
+- New: `browser.wait_for`, `sutradhar waitfor`, `page.waitFor()`; `settle` on 22 more MCP tools (+ SDK goto/press/scroll/download/uploadFile, CLI 11 verbs);
+  Node-side hard bound on settle (T5); `AGENT_SETUP.md` "Waiting" section; GAP-002 converted in `run-cli.mjs`. Tool count 72 (was 71).
+- Live (real Chrome, independent puppeteer-core observer, built artifacts): 478/478 in THREE full runs (mcp 327, cli 23, sdk 10, bundle 118; the third after the last
+  harness change), GAP-325 tolerance fired 0 times. A fresh subset re-run after the runs FAILED H3 once (the out-of-process frame had not started hanging yet, observer
+  also saw `hung: 0`): the harness now requires an observer-confirmed hung frame before measuring (step 7c); the product answered correctly for what the frame did.
+  Sessionless MCP calls work and the two-session case fails naming both ids.
+- T5 before/after (same fixture): pre-change master 75b29c6 = 30400 ms (no-settle control 3095 ms); this branch = 5573 ms (control 3037 ms), MCP and bundle.
+- Verify: forced full build 0 cached (19 + 9 tasks), tsc 34/34, vitest browser 929, capability-runtime 254, mcp-server 118, cli 208, sutradhar 43, agent 56, server 28.
+- Mutants of my own code: 24 unit (all caught; U4 only by a hang/timeout, U4b deterministic) and 10 live (all caught), sources restored byte-identically (sha256).
+- Regression: `verify-fr2-07-verification.mjs` 488/488 with no GAP-325 tolerance and no H2 relaxedFound fallback firing; `verify-fr2-04-dialogs.mjs` 110/113 (1 fail =
+  `L13.headed.click-exit0`, the known GAP-316 flake, 6/6 OK on both builds in isolation; 2 skipped); CLI scenario suite: UC-04/05/12 fail identically on master
+  75b29c6 (external-site harness mismatches), UC-08 flaked once (GAP-321) and passed on rerun, everything else passes, UC-06/UC-01 now use `waitfor`.
+- Honest findings: (1) the spec's T16/T17 expectations were REFUTED live (in-page interval polling not throttled here; CSP does not block `waitForFunction(string)`),
+  the rationale for Node-side polling is rAF stalling in a hidden tab, measured (GAP-333); (2) an existing FR2-01 error hint ("is still visible") would have
+  hijacked every `textGone` timeout: the wait_for hints are placed first (unit-tested, mutant U17); (3) `printErrorAndExit` inside `withSession` crashes Node on
+  Windows (libuv assertion): the CLI now validates before opening a session; (4) UC-12/UC-05 in the full CLI suite were 5-12x slower on this branch than on master
+  and UC-12's click timed out 3 times in 14 runs vs 0 in 13 on master: could NOT be attributed or excluded (GAP-338), the click code path is unchanged and isolated A/B
+  rounds are equal; (5) `tools/list` grew 94,285 -> 115,497 bytes (GAP-337).
+- Deviations (21, each with a reason) are in `evidence/FR2-08/run-1/deviations.md`; the notable ones: text semantics are FR2-07's final rendered-text contract, not the
+  spec's `innerText`; the shared probe runs the frames of a pass concurrently (FR2-07's audited design); 22 (not 20) settle tools; CLI `dialog` has no `--settle`.
+- New gaps: GAP-333..338. Existing gaps updated: GAP-002 and GAP-039 FIXED, GAP-319 FIXED for delayed effects, GAP-037/038/040/041 stay OPEN.
+- Unmet / unverified: none of the spec ACs is recorded as unmet; not verified: the UC-12 slowdown attribution (above), `uploadFileViaTrigger` settle has no unit test (live
+  S:upload_file_via_trigger passes), live attacks on download/lock path containment were not written (safety-classifier rule).
+
+## 2026-09-30 -- FR2-08 audit-1 ACCEPT
+
+Independent audit-1 accepted FR2-08 with no major findings. T5 reproduced on master (30.4 s, alert
+silently auto-dismissed) and fixed on the branch (bounded, dialog stays pending and handleable).
+Harness commit 0a3e467 judged a legitimate premise check (the failing run had no hung frame; a hung-frame
+mutant still fails H3). GAP-338 (UC-12 headed click stall) reproduced identically on master: pre-existing,
+not FR2-08. Minor findings to close before the PR: F1/F2 unit-test gaps (surviving mutants X1, X2, X5, X6),
+F3/F4/F5 doc accuracy (dialog-mid-check up to ~2.7 s, frozen-page title read up to 1.5 s, sub-poll flashes
+can be missed).
+
+
+## 2026-09-30 -- FR2-08 audit-1 minors closed
+
+F1/F2: four unit tests added in `packages/browser/tests/unit` (page-settle P7, P8; condition-wait W16d, W16e);
+the auditor's `mutate-unit.mjs` X1, X2, X5, X6 now all FAIL the suite (each fails exactly its own new test), sources
+restored byte-identically. F3/F4/F5: docs and the MCP tool description now say a dialog already open fails the wait
+in about 1 s and one opening mid-check takes up to about 2.7 s, a frozen page can add up to 1.5 s (total can exceed
+`timeoutMs` by up to about 3 s), and text visible for under one poll (about 100 ms) can be missed. No product
+behaviour changed. Evidence: `evidence/FR2-08/audit-1-followup/`.

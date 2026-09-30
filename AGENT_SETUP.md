@@ -57,14 +57,14 @@ tool (Sutradhar's own autonomous loop takes a natural-language goal and drives i
 agent setups won't need this; `browser.*` is the normal path and needs no LLM provider config
 at all since you already are one).
 
-71 `browser.*` tools, grouped by what they do:
+72 `browser.*` tools, grouped by what they do:
 
 | Category | Tools | What they're for |
 |---|---|---|
 | **Lifecycle** | `health`, `launch`, `attach`, `shutdown`, `shutdown_all` | Start/stop a session. `attach` connects to an already-running Chrome over CDP instead of launching a new one. Other tools take the sessionId from launch/attach. It may be omitted only while exactly one session is live. Otherwise the call fails and lists the live ids. |
 | **Navigation** | `navigate`, `go_back`, `go_forward`, `reload` | Standard page navigation. |
 | **Agent vision** | `snapshot`, `ax_snapshot` | **Read the page.** See the grounding section below — this is the most important pair of tools here. Elements inside an iframe are labelled `[#31 in iframe "pay" (https://…)]` (the URL shown once per frame; an unnamed frame shows its number instead), and elements inside an open shadow root end with `(shadow: host-tag#id)`; a frame that couldn't be read is listed as `[iframe <origin> — not inspectable] (reason)` instead of being silently dropped. |
-| **Interaction** | `click`, `click_by_text`, `click_by_role`, `right_click`, `type`, `type_by_label`, `press_key`, `hover`, `scroll`, `select_option`/`select_options`, `drag_and_drop`, `touch_tap`, `upload_file`, `upload_file_via_trigger`, `download_file`, `wait_for_selector`, `fill_form`, `click_at_point`, `drag_at_points` | Act on the page. `fill_form` does a whole form in one call. `click_at_point`/`drag_at_points` are the escape hatch for canvas/custom-rendered UI with nothing addressable via DOM. Selectors are standard CSS or a snapshot node id; Puppeteer's `pierce/`, `xpath/`, `aria/` and `text/` prefixes also work. `wait_for_selector` takes `state`: `visible` (the default; non-empty box and not `visibility:hidden`, `opacity:0` still counts), `attached` (just in the DOM) or `hidden` (removed or not visible; succeeds at once if nothing matches). Playwright-style syntax (`text=`, `role=`, `>>`, `:has-text()`, `getBy*()`) is rejected immediately with a hint — use `click_by_text`/`click_by_role`/`type_by_label` to target by visible text or accessible role/name instead. |
+| **Interaction** | `click`, `click_by_text`, `click_by_role`, `right_click`, `type`, `type_by_label`, `press_key`, `hover`, `scroll`, `select_option`/`select_options`, `drag_and_drop`, `touch_tap`, `upload_file`, `upload_file_via_trigger`, `download_file`, `wait_for_selector`, `wait_for`, `fill_form`, `click_at_point`, `drag_at_points` | Act on the page. `fill_form` does a whole form in one call. `click_at_point`/`drag_at_points` are the escape hatch for canvas/custom-rendered UI with nothing addressable via DOM. Selectors are standard CSS or a snapshot node id; Puppeteer's `pierce/`, `xpath/`, `aria/` and `text/` prefixes also work. `wait_for_selector` takes `state`: `visible` (the default; non-empty box and not `visibility:hidden`, `opacity:0` still counts), `attached` (just in the DOM) or `hidden` (removed or not visible; succeeds at once if nothing matches). `wait_for` waits on a *page condition* (text, text gone, URL, a JS expression) instead of an element: see "Waiting" below. Every tool in this row except the two waits takes `settle` (see "Waiting" for what it does and does not see). Playwright-style syntax (`text=`, `role=`, `>>`, `:has-text()`, `getBy*()`) is rejected immediately with a hint — use `click_by_text`/`click_by_role`/`type_by_label` to target by visible text or accessible role/name instead. |
 | **Capture & extraction** | `screenshot`, `audit`, `export_pdf`, `eval`, `extract_data` | Get data out. `audit` returns a JSON report (console/page errors, broken requests, a11y heuristics, Web Vitals) plus the screenshot; pass `url` for full coverage (auditing the current page as-is only sees activity since this session attached); findings never fail the call. `extract_data` takes a field-name → CSS-selector map and returns real matched values — prefer this over eyeballing a screenshot for anything you need to assert on. With no `attribute`, form controls (`input`/`select`/`textarea`) return their **live** current value (including typed-but-unsubmitted text) and other elements return rendered text; `"value"`/`"checked"`/`"selected"` read live DOM state, `"attr:<name>"` reads the raw HTML attribute, and `visibleOnly` (whole call or per field) drops non-visible matches. Both `eval` and `extract_data` accept an optional `frameSelector` (a CSS selector or snapshot `[#id]` for an `<iframe>` element) to read inside that frame instead of the top-level page — including a genuinely cross-origin one. |
 | **Storage** | `get_cookies`/`set_cookie`/`delete_cookie`, `get_local_storage`/`set_local_storage_item`/`clear_local_storage`, `get_session_storage`/`set_session_storage_item`/`clear_session_storage`, `get_storage_state`/`set_storage_state` | Cookie/storage read-write. The `storage_state` pair is a single-blob export/import of all three at once — the way to log in once and reuse that session later. |
 | **Emulation & permissions** | `set_geolocation`, `grant_permissions`, `set_viewport`/`get_viewport`, `emulate`, `get_clipboard`/`set_clipboard`, `set_network_conditions` | Geolocation, camera/clipboard/notification permissions, viewport/mobile emulation, timezone/locale/color-scheme, throttled or offline network. |
@@ -107,7 +107,7 @@ For anything where the *result* matters, assert it with `expect`.
 substring; script text never counts); `url` is a substring of the final URL; `urlChanged:false`
 means the URL must be identical. A failed `expect` does **not** fail the action: `success` stays true and
 `verification.verified` is false with `tier:"contradicted"` and a failing `expect.*` check. Note it is checked
-*once*: text that appears 800 ms later (a `setTimeout` toast) is missed. Use `wait_for_selector` for that.
+*once*: text that appears 800 ms later (a `setTimeout` toast) is missed. Use `wait_for` (or `wait_for_selector`) for that.
 It is best effort, not a paint check: text inside SVG containers that are never painted (`<defs>`, an unused
 `<symbol>`, `<mask>`, `<clipPath>`, `<pattern>`, `<marker>`) still counts, because Chrome reports it as laid
 out and visible; visible text split across `inline-block`/flex items, or inside a `<textarea>`, can be missed.
@@ -130,6 +130,100 @@ report `unverifiable` with the dialog named instead of hanging.
 Rule of thumb: static content page → `snapshot` + `click`/`type` is fine and cheaper.
 Anything dynamic → `ax_snapshot` + `click_by_role`/`click_by_text`/`type_by_label`.
 
+## Waiting: wait on conditions, never sleep
+
+Fixed delays are the #1 cause of flaky browser automation. A `sleep(2000)` is either too short (the
+toast shows up at 2.3s on a slow run, and you read the page too early) or too long (every run pays
+the full delay), and the result never tells you which one happened. Sutradhar gives you waits that
+end the moment the thing you care about is true, and fail with a message saying what was still
+missing when it isn't.
+
+**Decide what you're actually waiting for, then wait for exactly that:**
+
+| You're waiting for… | Use |
+|---|---|
+| an element to appear, become visible, or go away | `browser.wait_for_selector` (`state`: `visible` default, `attached`, `hidden`) |
+| some text to show up anywhere on the page | `browser.wait_for` `{text}` |
+| a spinner / "Loading…" / "Saving…" message to go away | `browser.wait_for` `{textGone}` |
+| a navigation or client-side route change | `browser.wait_for` `{url}` |
+| app state that isn't visible in the DOM (a JS flag, a store value, a counter) | `browser.wait_for` `{js}` |
+| "let the page finish reacting" after an action, with no specific signal | `settle: true` on that action |
+
+**`wait_for` examples** (MCP, then CLI, then SDK):
+
+```jsonc
+{ "sessionId": "s1", "text": "Saved successfully" }                          // appears
+{ "sessionId": "s1", "textGone": "Loading…", "timeoutMs": 20000 }             // disappears
+{ "sessionId": "s1", "url": "/dashboard" }                                    // route changed
+{ "sessionId": "s1", "js": "window.__app?.ready === true" }                   // JS state
+{ "sessionId": "s1", "url": "/orders/", "text": "Order confirmed" }           // BOTH must hold
+```
+
+```bash
+sutradhar waitfor --text "Saved successfully"
+sutradhar waitfor 20000 --text-gone "Loading…"
+sutradhar waitfor --url /dashboard
+sutradhar waitfor --js "window.__app?.ready === true"
+sutradhar waitfor --url /orders/ --text "Order confirmed"
+```
+
+```ts
+await page.waitFor({ text: 'Saved successfully' });
+await page.waitFor({ textGone: 'Loading…', timeout: 20000 });
+await page.waitFor({ url: '/dashboard' });
+await page.waitFor({ js: 'window.__app?.ready === true' });
+```
+
+**What each condition means, exactly:**
+- `text` is *rendered* text, the same rule (and the same code) as `expect.text`: laid out,
+  `visibility:visible`, not under `display:none` / `content-visibility:hidden` / a closed `<details>`, and every
+  enclosing `<iframe>` itself visible, across every frame and open shadow root, case-sensitive. A form field's
+  *value* is not text: use `js` for values, e.g. `document.querySelector('#email')?.value === 'a@b.com'`.
+  `opacity:0`, `aria-hidden`, off-screen and clipped text still count. It is best effort, not a paint check,
+  and inherits `expect.text`'s two documented limits: text inside SVG containers that are never painted
+  (`<defs>`, an unused `<symbol>`, `<mask>`, `<clipPath>`, `<pattern>`, `<marker>`) still counts, and visible
+  text split across `inline-block`/flex items, or inside a `<textarea>`, can be missed (use `js` for those).
+- `textGone` succeeds **immediately** if the text was never on the page. The result's
+  `output.presentAtStart` is `false` in that case, and `verification` is `unverifiable`. Check it if you
+  expected the text to be there (a typo looks exactly like "already gone"). A frame that could not be
+  inspected (it hung, it went away, a dialog is open) is never read as "gone": the wait keeps polling and,
+  on timeout, says it could not check.
+- `url` is a plain substring of the current URL, including `pushState` and `#hash` changes.
+- `js` is an **expression** (not statements; wrap those in an IIFE). It re-runs about every
+  100 ms, so it must not change anything. If it throws, the wait fails right away with the page's
+  error, so guard it with `?.`. It runs in the top frame only.
+- Several conditions together mean **all of them, at the same moment**.
+- `timeoutMs` defaults to 10000 (max 300000; the CLI caps at 280000); `0` means "check once, don't wait". It's
+  the real total, with no hidden retries, but not a hard ceiling on a frozen page: a failed wait can spend up to
+  1.5 s more reading the page title, so the total is bounded but can exceed `timeoutMs` by up to about 3 s. On
+  timeout the error lists which conditions were met and which weren't.
+- It polls from outside the page, so it keeps working in a background tab (where the browser stops
+  `requestAnimationFrame`, measured here: a `page.waitForFunction` in a hidden tab never fired) and on a
+  strict-CSP page. If a native dialog (alert/confirm) blocks the page, it fails and tells you to handle the
+  dialog (CLI: exit 3). A dialog that is already open fails the wait in about 1 s; one that opens partway
+  through a check can take up to about 2.7 s after it opens. It doesn't hang.
+- A condition is checked once per poll (about every 100 ms). Text visible for less than one poll interval
+  (about 100 ms) can be missed; use it for states that persist.
+
+**`settle` vs `wait_for` vs `expect`: three different tools.**
+- `settle: true` on an action (every tool that interacts with or navigates the page accepts it: `navigate`,
+  `go_back`/`go_forward`/`reload`, `click*`, `type*`, `press_key`, `focus`, `hover`, `scroll`, `select_option(s)`,
+  `fill_form`, `upload_file*`, `download_file`, `drag_*`, `touch_tap`, `right_click`, `handle_dialog`) waits
+  until the DOM has stopped changing and the network is idle, up to 5 s. It's a heuristic for "let the menu
+  finish rendering". **It can't see a timer the page scheduled for later.** A page that calls
+  `setTimeout(showToast, 2000)` looks perfectly quiet for those two seconds, so settle returns
+  before the toast exists. It never fails an action, and it is bounded even when the action opened a native
+  dialog. Tools that only read or configure (snapshot, eval, cookies, storage, viewport, tabs, ...) don't take it.
+- `wait_for` waits for the specific thing you name, however long it takes, up to the timeout.
+- `expect` on an action (`{text, url, urlChanged}`) is a **one-shot check right after the
+  action**. It never waits. If the effect you expect is delayed, do the action, then
+  `wait_for` the effect.
+
+**Don't build your own polling loop** out of repeated `snapshot`/`eval` calls with sleeps in
+between. Each iteration is a full round trip through your context window, and you'll still guess
+the interval. One `wait_for` call does the same thing in-process every 100 ms, and returns one
+result.
+
 ## Other ways in
 
 **CLI** (no scripting, one-shot terminal commands):
@@ -151,12 +245,15 @@ projects run in parallel don't share a browser — run `sutradhar close` when do
 profile export-state`/`import-state` turns that into a portable file you can pre-bake into a
 different profile without ever logging in there directly.
 
-The example commands above aren't the full CLI — it also has `select`/`wait`/`eval`/`hover`/
+The example commands above aren't the full CLI — it also has `select`/`wait`/`waitfor`/`eval`/`hover`/
 `scroll`/`upload`/`drag`/`download`, coordinate-only `clickpoint`/`dragpoints` (for
 canvas-rendered UI with nothing DOM-addressable), tab management (`tabs`/`newtab`/`focustab`/
 `closetab`), clipboard + permissions (`grant`/`setclipboard`/`getclipboard`), an
-`audit --baseline <url>` one-command regression gate, a `--settle` flag for `click`/`type`/
-`scroll` (waits for the page to stop actively changing before returning), a `--modifiers` flag
+`audit --baseline <url>` one-command regression gate, a `--settle` flag for every interaction verb
+(`click`/`type`/`scroll`/`nav`/`clicktext`/`clickrole`/`press`/`select`/`hover`/`upload`/`drag`/`clickpoint`/
+`dragpoints`/`download`: waits for the page to stop actively changing before returning; it can't see a timer the
+page scheduled for later, so use `waitfor` for a specific result), a `waitfor` verb (`--text`/`--text-gone`/
+`--url`/`--js`, see "Waiting" above; these flags are an error on any other verb), a `--modifiers` flag
 for `press` (hold modifier keys, e.g. Ctrl+Shift+ArrowRight to select a word),
 `--no-text`/`--ids-only`/`--scan-listeners` flags for `snap`, and an `--allowlist-domains`
 navigation guardrail. `download` defaults to `<OS temp>/sutradhar-downloads` (configurable via

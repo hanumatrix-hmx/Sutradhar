@@ -1,0 +1,171 @@
+{
+  "startedAt": "2026-09-30T06:02:12.196Z",
+  "finishedAt": "2026-09-30T06:02:15.739Z",
+  "total": 6,
+  "passed": 1,
+  "perSurface": {
+    "mcp": {
+      "total": 6,
+      "passed": 1
+    },
+    "cli": {
+      "total": 0,
+      "passed": 0
+    },
+    "sdk": {
+      "total": 0,
+      "passed": 0
+    },
+    "bundle": {
+      "total": 0,
+      "passed": 0
+    }
+  },
+  "failed": [
+    "mcp:L1",
+    "mcp:L1b",
+    "mcp:L1c",
+    "mcp:L11",
+    "mcp:L12"
+  ],
+  "gap325Tolerated": [],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeWithScratchProfile": 0,
+    "lingeringMatches": [],
+    "newSutradharCliTempDirsCreated": [],
+    "newSutradharCliTempDirsLeftAfterCleanup": [],
+    "childPidsStarted": [
+      50772,
+      51468
+    ]
+  },
+  "cases": [
+    {
+      "surface": "mcp",
+      "case": "L1",
+      "expected": "success; sentAt <= toastShown <= recvAt; recvAt-toast <= 700ms; the observer sees #toast; polls >= 10; the page did NOTHING (0 mutations, 0 requests) between load and the toast; verified",
+      "observed": {
+        "success": false,
+        "polls": 1,
+        "latencyMs": null,
+        "tier": "action-failed",
+        "sentBeforeToast": false
+      },
+      "observerTruth": {
+        "sentAt": 1790748132856,
+        "recvAt": 1790748132859,
+        "dom": null,
+        "preToastMutations": [],
+        "preToastRequests": [],
+        "loadAt": 1790748132840
+      },
+      "verification": {
+        "verified": false,
+        "urlChanged": false,
+        "elementFound": false,
+        "confidence": 0,
+        "reason": "Action failed: wait_for timed out after 8000ms waiting for text=\"Saved successfully\": text \"Saved successfully\" was not found in the visible text of 1 frame(s).",
+        "evidence": {
+          "tier": "action-failed",
+          "checks": []
+        }
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "L1b",
+      "expected": "settle:true on the click returned BEFORE the pending-timer toast (T6: settle cannot see a timer); wait_for then catches it",
+      "observed": {
+        "clickReturnedBeforeToast": true,
+        "waitOk": false,
+        "latencyMs": null
+      },
+      "observerTruth": {
+        "clickRecvAt": 1790748133459
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "L1c",
+      "expected": "expect checks ONCE and does not wait (success:true, verified:false, failing expect.text); wait_for then succeeds (the D10 boundary made executable)",
+      "observed": {
+        "expectTier": "action-failed",
+        "expectCheck": "not-run",
+        "waitOk": false
+      },
+      "observerTruth": {
+        "dom": null
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "L10",
+      "expected": "timeoutMs 0 = check once: met -> success polls 1; unmet -> \"timed out after 0ms\" polls 1",
+      "observed": {
+        "hit": true,
+        "hitPolls": 1,
+        "miss": "wait_for timed out after 0ms waiting for text=\"Nope\": text \"Nope\" was not found in the visible text of 1 frame(s).\nHint: The condition never became true. Inspect the page (browser.snapshot / browser.eval), fix the condition, or raise timeoutMs."
+      },
+      "pass": true
+    },
+    {
+      "surface": "mcp",
+      "case": "L11",
+      "expected": "FR2-07 contract: a met text is verified with a wait_for.text pass; a vacuous textGone is unverifiable with a not-run check",
+      "observed": {
+        "textTier": "action-failed",
+        "vacuousTier": "unverifiable"
+      },
+      "verification": {
+        "met": {
+          "verified": false,
+          "urlChanged": false,
+          "elementFound": false,
+          "confidence": 0,
+          "reason": "Action failed: wait_for timed out after 8000ms waiting for text=\"Saved successfully\": text \"Saved successfully\" was not found in the visible text of 1 frame(s).",
+          "evidence": {
+            "tier": "action-failed",
+            "checks": []
+          }
+        },
+        "vacuous": {
+          "verified": false,
+          "urlChanged": false,
+          "elementFound": false,
+          "confidence": 0.45,
+          "reason": "'wait_for' completed, but no built-in post-condition check could run: textGone \"Never was here\" was not present when the wait started, so it was satisfied vacuously (check the text if you expected it to be there). Pass expect:{text|url|urlChanged} to assert the effect you intended.",
+          "evidence": {
+            "tier": "unverifiable",
+            "checks": [
+              {
+                "check": "wait_for.textGone",
+                "outcome": "not-run",
+                "expected": "Never was here",
+                "detail": "\"Never was here\" was not present when the wait started, so textGone was satisfied vacuously"
+              }
+            ]
+          }
+        }
+      },
+      "pass": false
+    },
+    {
+      "surface": "mcp",
+      "case": "L12",
+      "expected": "get_action_history has a wait_for entry with selector text=\"Saved successfully\"",
+      "observed": {
+        "actionType": "wait_for",
+        "selector": "text=\"Saved successfully\"",
+        "success": false,
+        "error": "wait_for timed out after 8000ms waiting for text=\"Saved successfully\": text \"Saved successfully\" was not found in the visible text of 1 frame(s).",
+        "executionTimeMs": 2,
+        "timestamp": "2026-09-30T06:02:12.859Z"
+      },
+      "pass": false
+    }
+  ]
+}

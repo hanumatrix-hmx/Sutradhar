@@ -37,6 +37,18 @@ function expectArg(expect: ActionExpectation | undefined): [ActionExpectation] |
   return expect ? [expect] : [];
 }
 
+/**
+ * FR2-08 arity rule: `(expect?, settle?)` are appended to a runtime call ONLY up to the last defined one, so a
+ * call that gives neither keeps exactly the argument list it always had.
+ */
+function expectSettleArgs(
+  expect: ActionExpectation | undefined,
+  settle: boolean | SettleSpec | undefined,
+): [ActionExpectation?, (boolean | SettleSpec)?] {
+  if (settle !== undefined) return [expect, settle];
+  return expect ? [expect] : [];
+}
+
 /** The result of the most recent action call on a page. */
 export type LastResult = ActionResult | NavigateResult | ScreenshotResult;
 
@@ -52,11 +64,22 @@ export interface ActionOptions {
   expect?: ActionExpectation;
 }
 
+/** FR2-08: options of every action that can wait for the page to finish reacting. */
+export interface SettleActionOptions extends ActionOptions {
+  /**
+   * Opt-in: after the action, wait for the page to stop actively changing (no DOM mutations, no in-flight
+   * network requests) before returning; `true` uses the defaults (300 ms DOM-quiet, 500 ms network-idle, 5 s
+   * bound), an object overrides individual fields. It cannot see a timer the page scheduled for later:
+   * use {@link Page.waitFor} to wait for a specific result. Off by default.
+   */
+  settle?: boolean | SettleSpec;
+}
+
 /** Options accepted by {@link Page.goto}. */
-export interface GotoOptions extends ActionOptions {}
+export interface GotoOptions extends SettleActionOptions {}
 
 /** Options accepted by {@link Page.download}. */
-export interface PageDownloadOptions extends ActionOptions {
+export interface PageDownloadOptions extends SettleActionOptions {
   /** Destination directory. Must resolve inside an allowed download root (see `LaunchOptions`'s
    *  `allowedDownloadRoots`). Defaults to the first allowed root when omitted. */
   downloadDir?: string;
@@ -103,6 +126,27 @@ export interface ElementOptions extends ActionOptions {
    * fields. Off by default — most actions don't need it and it adds real latency.
    */
   settle?: boolean | SettleSpec;
+}
+
+/**
+ * Options for {@link Page.waitFor}: the conditions plus a Playwright-style `timeout` (NOT `timeoutMs`).
+ * Every given condition must hold at the same moment.
+ */
+export interface WaitForOptions {
+  /** RENDERED text that must appear (any frame, open shadow roots; case-sensitive substring). The same rule and
+   *  the same limits as `expect.text` (best effort: text in never-painted SVG containers counts, text split
+   *  across inline-block items or in a `<textarea>` can be missed). */
+  text?: string;
+  /** Rendered text that must be absent from every frame. Met at once if it was never there (see
+   *  `lastResult.output.presentAtStart`); a frame that could not be inspected is never read as "gone". */
+  textGone?: string;
+  /** Substring of the tab URL (pushState/hash changes included). */
+  url?: string;
+  /** A JS EXPRESSION evaluated in the main frame; truthy = met. Side-effect free (it re-runs ~every 100 ms);
+   *  a throw fails the wait at once, so guard it (`window.app?.ready === true`). */
+  js?: string;
+  /** Milliseconds; default 10000, max 300000, `<= 0` = check once. The real total: no hidden retries. */
+  timeout?: number;
 }
 
 /** Options accepted by {@link Page.setViewport}. */
@@ -185,7 +229,12 @@ export class Page {
    * `options.expect`, throws {@link ExpectationFailedError} when the assertion does not hold.
    */
   public async goto(url: string, options?: GotoOptions): Promise<Page> {
-    const result = await this.runtime.navigate(this.sessionId, url, this.tabId, ...expectArg(options?.expect));
+    const result = await this.runtime.navigate(
+      this.sessionId,
+      url,
+      this.tabId,
+      ...expectSettleArgs(options?.expect, options?.settle),
+    );
     this.last = result;
     if (options?.expect) {
       const failed = failedExpectations(result.verification as VerificationResultDto | undefined);
@@ -278,6 +327,39 @@ export class Page {
   }
 
   /**
+   * FR2-08: wait until EVERY given condition holds at the same moment (`text`, `textGone`, `url`, `js`), or
+   * `timeout` (default 10000 ms) elapses. Use this instead of sleeping. It polls from Node every ~100 ms, so it
+   * works in a background tab and on a strict-CSP page. Returns the result (also on {@link Page.lastResult});
+   * THROWS {@link ActionFailedError} on a timeout or a fatal condition (the JS threw, a dialog blocks the page,
+   * the tab closed), with the error naming which conditions were met and which were not. A `TypeError` is thrown
+   * before any browser contact when the options are invalid (no condition, an empty string, `text` equal to
+   * `textGone`, `timeout` not a number or above 300000, an unknown key such as `timeoutMs`).
+   *
+   * Limits: a dialog already open fails the wait in about 1 s; one that opens partway through a check can take
+   * up to about 2.7 s after it opens. On a frozen page a failed wait can spend up to 1.5 s more reading the page
+   * title, so the total is bounded but can exceed `timeout` by up to about 3 s. Text visible for less than one
+   * poll interval (about 100 ms) can be missed; use it for states that persist.
+   *
+   * Differs from the neighbours: `settle` on an action only waits for DOM/network quiet and cannot see a timer
+   * scheduled for later; `expect` on an action checks once and never waits; {@link Page.waitForSelector} waits on
+   * one element's state.
+   */
+  public async waitFor(options: WaitForOptions): Promise<ActionResult> {
+    const { timeout, ...condition } = (options ?? {}) as WaitForOptions;
+    if ('timeoutMs' in condition) {
+      throw new TypeError('wait_for: unknown key "timeoutMs" — allowed: text, textGone, url, js, timeout');
+    }
+    const r = await this.runtime.waitFor(
+      this.sessionId,
+      { ...condition, ...(timeout !== undefined ? { timeoutMs: timeout } : {}) },
+      this.tabId,
+    );
+    this.last = r;
+    if (!r.success) throw new ActionFailedError(r);
+    return r;
+  }
+
+  /**
    * Click `selector` (the element that triggers a download) and wait for the file to finish
    * landing on disk. `options.downloadDir` must resolve inside an allowed download root — see
    * `LaunchOptions.allowedDownloadRoots` — or this throws.
@@ -288,7 +370,7 @@ export class Page {
       selector,
       options?.downloadDir,
       this.tabId,
-      ...expectArg(options?.expect),
+      ...expectSettleArgs(options?.expect, options?.settle),
     );
     this.last = r;
     if (!r.success) throw new Error(r.error ?? `download("${selector}") failed`);
@@ -311,13 +393,13 @@ export class Page {
    * resolved to an absolute path. Unrestricted unless `LaunchOptions.allowedUploadRoots` was
    * set, in which case it must be under one of those directories, or this throws.
    */
-  public async uploadFile(selector: string, filePath: string, options?: ActionOptions): Promise<ActionResult> {
+  public async uploadFile(selector: string, filePath: string, options?: SettleActionOptions): Promise<ActionResult> {
     const r = await this.runtime.uploadFile(
       this.sessionId,
       selector,
       path.resolve(filePath),
       this.tabId,
-      ...expectArg(options?.expect),
+      ...expectSettleArgs(options?.expect, options?.settle),
     );
     this.last = r;
     if (!r.success) throw new Error(r.error ?? `uploadFile("${selector}", "${filePath}") failed`);
@@ -329,11 +411,12 @@ export class Page {
   }
 
   /** Press a keyboard key (e.g. `"Enter"`, `"Escape"`). */
-  public async press(key: string, options?: ActionOptions): Promise<ActionResult> {
+  public async press(key: string, options?: SettleActionOptions): Promise<ActionResult> {
     const expect = options?.expect;
+    const tail = expectSettleArgs(expect, options?.settle);
     return this.conclude(
-      expect
-        ? await this.runtime.pressKey(this.sessionId, key, this.tabId, undefined, expect)
+      tail.length > 0
+        ? await this.runtime.pressKey(this.sessionId, key, this.tabId, undefined, ...tail)
         : await this.runtime.pressKey(this.sessionId, key, this.tabId),
       expect,
     );
@@ -343,12 +426,14 @@ export class Page {
   public async scroll(
     direction: 'up' | 'down' | 'top' | 'bottom' = 'down',
     amount = 500,
-    options?: ActionOptions,
+    options?: SettleActionOptions,
   ): Promise<ActionResult> {
     const expect = options?.expect;
+    const settle = options?.settle;
+    // runtime.scroll(sid, direction, amount, tabId, target, settle, expect): `settle` sits BEFORE `expect`
     return this.conclude(
-      expect
-        ? await this.runtime.scroll(this.sessionId, direction, amount, this.tabId, undefined, undefined, expect)
+      settle !== undefined || expect
+        ? await this.runtime.scroll(this.sessionId, direction, amount, this.tabId, undefined, settle, ...(expect ? [expect] : []))
         : await this.runtime.scroll(this.sessionId, direction, amount, this.tabId),
       expect,
     );

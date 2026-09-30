@@ -1,0 +1,41 @@
+{
+  "results": [
+    {
+      "id": "sdk:waitFor-text",
+      "pass": true,
+      "ms": 2080
+    },
+    {
+      "id": "sdk:waitFor-timeout-rejects",
+      "pass": true,
+      "name": "ActionFailedError",
+      "ms": 1516,
+      "msg": "wait_for timed out after 1500ms waiting for text=\"Never appears\": text \"Never appears\" was not found in the visible text"
+    },
+    {
+      "id": "sdk:waitFor-validation",
+      "pass": true,
+      "c": "wait_for: give at least one of text, textGone, url, js",
+      "d": "wait_for: unknown key \"timeoutMs\" — allowed: text, textGone, url, js, timeout",
+      "e": "wait_for: unknown key \"selector\" — to wait for an element's state use wait_for_selector"
+    },
+    {
+      "id": "sdk:waitFor-js-throw",
+      "pass": true,
+      "ms": 4
+    },
+    {
+      "id": "sdk:background",
+      "pass": true,
+      "vis": "hidden",
+      "ms": 3053,
+      "timeoutElapsed": 2015
+    },
+    {
+      "id": "sdk:dialog",
+      "pass": true,
+      "ms": 1960
+    }
+  ],
+  "pids": []
+}

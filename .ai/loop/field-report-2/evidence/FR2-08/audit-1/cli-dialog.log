@@ -1,0 +1,9 @@
+[pid] 48452 cli nav
+[pid] 5988 cli waitfor
+PASS cli:dialog-mid-wait-text {"code":3,"ms":3588,"out":"dialogPending: {\"type\":\"alert\",\"message\":\"probe-alert\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:49415/alert-now?d=2500&t=Hello%20visible&i=text\"}\nWait failed"}
+[pid] 38760 cli dialog
+[pid] 51348 cli nav
+[pid] 51344 cli waitfor
+PASS cli:dialog-mid-wait-textGone-present {"code":3,"ms":3676,"out":"dialogPending: {\"type\":\"alert\",\"message\":\"probe-alert\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:49415/alert-now?d=2500&t=Hello%20visible&i=textGone-present\"}"}
+[pid] 51668 cli dialog
+[pid] 12320 cli close

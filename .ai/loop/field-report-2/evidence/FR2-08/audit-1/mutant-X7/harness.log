@@ -1,0 +1,6 @@
+[fr2-08] evidence dir: E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-08/audit-1/mutant-X7/harness; fixture server http://127.0.0.1:54639; matrix server http://127.0.0.1:54641; mode verify
+[mcp] PASS H1
+[mcp] PASS H2
+[mcp] FAIL H3 — {"text":{"success":false,"last":"unmet","error":"wait_for timed out after 0ms waiting for text=\"WQ003K7EID\": text \"WQ003K7EID\" was not found in the visible text of 9 frame(s).\nHint: The condition never became true. Inspect the page (browser.snapshot"},"textGone":{"success":true,"presentAtStart":false}}
+
+[fr2-08] 2/3 passed {"mcp":{"total":3,"passed":2},"cli":{"total":0,"passed":0},"sdk":{"total":0,"passed":0},"bundle":{"total":0,"passed":0}}; FAILED: mcp:H3
