@@ -43,7 +43,7 @@ export const FIX2_MUTANTS = [
     what: 'rule (b) removed: a token holding `=` or `&` is kept',
     file: AH,
     find: "  if (/=/.test(probe) || head.includes('&')) {",
-    replace: '  if (false) {',
+    replace: '  if (probe.length < 0) {', // must still compile (noUnusedLocals): `probe` stays used
     unit: BU,
     live: LIVE_MCP,
   },
@@ -52,7 +52,7 @@ export const FIX2_MUTANTS = [
     what: 'rule (c) removed: userinfo is kept',
     file: AH,
     find: '  return at < 0 ? t : prefix + rest.slice(at + 1);',
-    replace: '  return t;',
+    replace: '  return at < 0 || t.length >= 0 ? t : prefix + rest.slice(at + 1);', // keeps `at` and `prefix` used (noUnusedLocals)
     unit: BU,
     live: LIVE_MCP,
   },
@@ -86,7 +86,7 @@ export const FIX2_MUTANTS = [
     what: 'the path rule dropped (a directory in a path is kept)',
     file: AH,
     find: '  return { out: selector && /\\[[^\\]]*=/.test(head) ? whole : stripUserinfo(reducePathToken(whole)), swallow };',
-    replace: '  return { out: stripUserinfo(whole), swallow };',
+    replace: '  return { out: stripUserinfo(whole.length >= 0 ? whole : reducePathToken(whole)), swallow };', // keeps reducePathToken used (noUnusedLocals)
     unit: BU,
     live: LIVE_MCP,
   },
@@ -139,7 +139,7 @@ export const FIX2_MUTANTS = [
     what: 'the upload_file target keeps a name with no extension (a user / home directory name)',
     file: AH,
     find: '            ? uploadTarget(e.target)',
-    replace: '            ? e.target',
+    replace: '            ? (e.target.length >= 0 ? e.target : uploadTarget(e.target))', // keeps uploadTarget used (noUnusedLocals)
     unit: BU,
     live: LIVE_MCP,
   },
