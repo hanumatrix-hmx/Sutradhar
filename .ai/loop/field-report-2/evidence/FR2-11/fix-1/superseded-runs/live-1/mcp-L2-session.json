@@ -1,0 +1,482 @@
+{
+  "scope": "session",
+  "entries": [
+    {
+      "actionType": "navigate",
+      "success": true,
+      "executionTimeMs": 24,
+      "timestamp": "2026-09-30T17:04:01.092Z",
+      "target": "http://127.0.0.1:56705/fr2-11-history.html",
+      "url": "http://127.0.0.1:56705/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'navigate' verified: a new document committed at http://127.0.0.1:56705/fr2-11-history.html[redacted]",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "navigate.document",
+              "outcome": "pass",
+              "expected": "new-document or url change",
+              "observed": "new-document",
+              "detail": "a new document committed at http://127.0.0.1:56705/fr2-11-history.html[redacted]"
+            },
+            {
+              "check": "navigate.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      },
+      "tabId": "tab_sess_1790787841030_1_1",
+      "seq": 1
+    },
+    {
+      "actionType": "eval",
+      "success": true,
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T17:04:01.102Z",
+      "target": "document.title",
+      "url": "http://127.0.0.1:56705/fr2-11-history.html",
+      "tabId": "tab_sess_1790787841030_1_1",
+      "seq": 2
+    },
+    {
+      "actionType": "click",
+      "selector": "#bump",
+      "success": true,
+      "executionTimeMs": 595,
+      "timestamp": "2026-09-30T17:04:01.702Z",
+      "url": "http://127.0.0.1:56705/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "Action execution verified successfully with confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            },
+            {
+              "check": "expect.text",
+              "outcome": "pass",
+              "expected": "1",
+              "observed": "found"
+            }
+          ]
+        }
+      },
+      "tabId": "tab_sess_1790787841030_1_1",
+      "seq": 3
+    },
+    {
+      "actionType": "eval",
+      "success": false,
+      "error": "boom-L1",
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T17:04:01.704Z",
+      "target": "throw new Error('boom-L1')",
+      "url": "http://127.0.0.1:56705/fr2-11-history.html",
+      "tabId": "tab_sess_1790787841030_1_1",
+      "seq": 4
+    },
+    {
+      "actionType": "wait_for",
+      "selector": "js(true)",
+      "success": true,
+      "executionTimeMs": 1,
+      "timestamp": "2026-09-30T17:04:01.715Z",
+      "url": "http://127.0.0.1:56705/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'wait_for' verified: js(true) held on one poll after 1ms",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "wait_for.js",
+              "outcome": "pass",
+              "expected": "true",
+              "detail": "the expression was truthy"
+            }
+          ]
+        }
+      },
+      "tabId": "tab_sess_1790787841030_1_1",
+      "seq": 5
+    },
+    {
+      "actionType": "type",
+      "selector": "#name",
+      "success": true,
+      "executionTimeMs": 17,
+      "timestamp": "2026-09-30T17:04:01.733Z",
+      "url": "http://127.0.0.1:56705/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "type.built-in",
+              "outcome": "pass",
+              "detail": "the typed value was read back from the element inside the action"
+            }
+          ]
+        }
+      },
+      "tabId": "tab_sess_1790787841030_1_1",
+      "seq": 6
+    },
+    {
+      "actionType": "set_clipboard",
+      "success": true,
+      "executionTimeMs": 6,
+      "timestamp": "2026-09-30T17:04:01.742Z",
+      "target": "<14 chars>",
+      "url": "http://127.0.0.1:56705/fr2-11-history.html",
+      "verification": {
+        "verified": false,
+        "urlChanged": false,
+        "elementFound": false,
+        "confidence": 0.45,
+        "reason": "'set_clipboard' completed, but no built-in post-condition check could run: the clipboard couldn't be read back (the clipboard-read permission isn't granted for this origin; grant it with browser.grant_permissions to get a verified result). The write itself may have succeeded.",
+        "evidence": {
+          "tier": "unverifiable",
+          "checks": [
+            {
+              "check": "set_clipboard.read-back",
+              "outcome": "not-run",
+              "expected": 14,
+              "observed": "blocked",
+              "detail": "clipboard-read permission not granted"
+            }
+          ]
+        }
+      },
+      "tabId": "tab_sess_1790787841030_1_1",
+      "seq": 7
+    },
+    {
+      "actionType": "navigate",
+      "success": true,
+      "executionTimeMs": 15,
+      "timestamp": "2026-09-30T17:04:01.759Z",
+      "target": "http://127.0.0.1:56705/fr2-11-typefail.html",
+      "url": "http://127.0.0.1:56705/fr2-11-typefail.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'navigate' verified: a new document committed at http://127.0.0.1:56705/fr2-11-typefail.html[redacted]",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "navigate.document",
+              "outcome": "pass",
+              "expected": "new-document or url change",
+              "observed": "new-document",
+              "detail": "a new document committed at http://127.0.0.1:56705/fr2-11-typefail.html[redacted]"
+            },
+            {
+              "check": "navigate.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      },
+      "tabId": "tab_sess_1790787841030_1_1",
+      "seq": 8
+    },
+    {
+      "actionType": "type",
+      "selector": "#f",
+      "success": false,
+      "error": "type did not land the expected value (the typed text and the field content are not recorded)",
+      "executionTimeMs": 1585,
+      "timestamp": "2026-09-30T17:04:03.419Z",
+      "url": "http://127.0.0.1:56705/fr2-11-typefail.html",
+      "verification": {
+        "verified": false,
+        "urlChanged": false,
+        "elementFound": false,
+        "confidence": 0,
+        "reason": "Action failed: type did not land the expected value (the typed text and the field content are not recorded)",
+        "evidence": {
+          "tier": "action-failed",
+          "checks": []
+        }
+      },
+      "tabId": "tab_sess_1790787841030_1_1",
+      "seq": 9
+    },
+    {
+      "actionType": "navigate",
+      "success": true,
+      "executionTimeMs": 21,
+      "timestamp": "2026-09-30T17:04:03.442Z",
+      "target": "http://127.0.0.1:56705/fr2-11-history.html",
+      "url": "http://127.0.0.1:56705/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'navigate' verified: a new document committed at http://127.0.0.1:56705/fr2-11-history.html[redacted]",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "navigate.document",
+              "outcome": "pass",
+              "expected": "new-document or url change",
+              "observed": "new-document",
+              "detail": "a new document committed at http://127.0.0.1:56705/fr2-11-history.html[redacted]"
+            },
+            {
+              "check": "navigate.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      },
+      "tabId": "tab_sess_1790787841030_1_1",
+      "seq": 10
+    },
+    {
+      "actionType": "reload",
+      "success": true,
+      "executionTimeMs": 19,
+      "timestamp": "2026-09-30T17:04:03.471Z",
+      "url": "http://127.0.0.1:56705/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'reload' verified: a new document committed (loader changed)",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "reload.document",
+              "outcome": "pass",
+              "expected": "new-document",
+              "observed": "new-document"
+            },
+            {
+              "check": "reload.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      },
+      "tabId": "tab_sess_1790787841030_1_1",
+      "seq": 11
+    },
+    {
+      "actionType": "click_at_point",
+      "success": true,
+      "executionTimeMs": 3,
+      "timestamp": "2026-09-30T17:04:03.481Z",
+      "target": "(33, 19) left",
+      "url": "http://127.0.0.1:56705/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'click_at_point' verified: a trusted click landed on button#bump, the element at (33, 19)",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click_at_point.hit-element",
+              "outcome": "pass",
+              "observed": "button#bump"
+            },
+            {
+              "check": "click_at_point.click-delivered",
+              "outcome": "pass",
+              "expected": "trusted click",
+              "observed": "delivered"
+            }
+          ]
+        }
+      },
+      "tabId": "tab_sess_1790787841030_1_1",
+      "seq": 12
+    },
+    {
+      "actionType": "drag_at_points",
+      "success": true,
+      "executionTimeMs": 34,
+      "timestamp": "2026-09-30T17:04:03.518Z",
+      "target": "(33, 79) -> (73, 79)",
+      "url": "http://127.0.0.1:56705/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'drag_at_points' verified: mousedown reached html at (33, 79) and mouseup was delivered at (73, 79); the drag's app-level effect was not checked — use expect",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "drag_at_points.down-delivered",
+              "outcome": "pass",
+              "expected": "trusted mousedown on html",
+              "observed": "html"
+            },
+            {
+              "check": "drag_at_points.up-delivered",
+              "outcome": "pass",
+              "expected": "trusted mouseup at (73, 79)",
+              "observed": "delivered"
+            }
+          ]
+        }
+      },
+      "tabId": "tab_sess_1790787841030_1_1",
+      "seq": 13
+    },
+    {
+      "actionType": "navigate",
+      "success": true,
+      "executionTimeMs": 21,
+      "timestamp": "2026-09-30T17:04:03.540Z",
+      "target": "http://127.0.0.1:56705/fr2-11-typefail.html",
+      "url": "http://127.0.0.1:56705/fr2-11-typefail.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'navigate' verified: a new document committed at http://127.0.0.1:56705/fr2-11-typefail.html[redacted]",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "navigate.document",
+              "outcome": "pass",
+              "expected": "new-document or url change",
+              "observed": "new-document",
+              "detail": "a new document committed at http://127.0.0.1:56705/fr2-11-typefail.html[redacted]"
+            },
+            {
+              "check": "navigate.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      },
+      "tabId": "tab_sess_1790787841030_1_1",
+      "seq": 14
+    },
+    {
+      "actionType": "go_back",
+      "success": true,
+      "executionTimeMs": 13,
+      "timestamp": "2026-09-30T17:04:03.553Z",
+      "url": "http://127.0.0.1:56705/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'go_back' verified: history moved from entry 4 to 3 (http://127.0.0.1:56705/fr2-11-history.html[redacted]",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "go_back.document",
+              "outcome": "pass",
+              "observed": "new-document"
+            },
+            {
+              "check": "go_back.history-index",
+              "outcome": "pass",
+              "expected": 3,
+              "observed": 3
+            },
+            {
+              "check": "go_back.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      },
+      "tabId": "tab_sess_1790787841030_1_1",
+      "seq": 15
+    },
+    {
+      "actionType": "click",
+      "selector": "#bump",
+      "success": true,
+      "executionTimeMs": 66,
+      "timestamp": "2026-09-30T17:04:03.670Z",
+      "url": "http://127.0.0.1:56705/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            }
+          ]
+        }
+      },
+      "tabId": "tab_sess_1790787841030_1_2",
+      "seq": 16
+    },
+    {
+      "actionType": "eval",
+      "success": true,
+      "executionTimeMs": 0,
+      "timestamp": "2026-09-30T17:04:03.671Z",
+      "target": "1+1",
+      "url": "http://127.0.0.1:56705/fr2-11-history.html",
+      "tabId": "tab_sess_1790787841030_1_1",
+      "seq": 17
+    }
+  ],
+  "evicted": 0,
+  "capacity": 200
+}

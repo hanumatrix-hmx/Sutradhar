@@ -4063,3 +4063,51 @@ Unmet / not verified (nothing recorded as met without evidence): no AC is record
 the 20-minute soak (5-minute smoke run), a real `taskkill /F` mid-write torn line (injected instead), upload_file_via_trigger / go_forward live (unit only).
 New gaps GAP-339..GAP-352 (spec G-A..G-G, the eval-preview privacy limit, rotation/kill limits, stale AGENT_SETUP sentence, timeoutMs verification, the pre-existing
 typed-value-in-result, FR2-03 forward dependency, optional-interface silence). Status: VERIFY (an independent audit follows).
+
+## 2026-10-01 -- FR2-11 fix-1 (audit-1 REOPEN: privacy F1-F3 major, F4-F6 minor): one fail-closed redaction function; awaiting independent re-audit
+
+Branch `claude/fr2-11-action-history`, base `785dc53`. Commits: `b609c36` (one redaction function + generated matrix: F1/F2/F3), `6085412` (F5 unit test + F6
+decision pinned), `23f7c1a` (live matrix on MCP / CLI / SDK / bundle), `a8eb00e` (docs, help, tool description, changelog: F4), `7fc1d4e` (`<dir>` for download/audit
+directory args), `9321001` (query-shaped tokens, form bodies, encoded URLs, query on a path, input bound), `4089ca0` (mutants MF1..MF24 + MF4b + MF14b), `d1617f4` (matrix cell for MF23 +
+per-tab view sweep), `8f39703` (comment), `e7749cc` (over-redaction mutant MF25), then the evidence commit. Evidence: `evidence/FR2-11/fix-1/` (README.md indexes it), deviations in `fix-1/deviations.md`, the
+false-pass section at the end of `run-1/false-pass-analysis.md`.
+
+Root cause (spec, tests and implementation each partly at fault; same family as the FR2-07 root-cause entry above):
+1. IMPLEMENTATION: `URL_IN_TEXT` recognised URL GRAMMAR with a character class (`[^\s"'`<>()[\]{}]+`), so any URL whose query contained `( ) [ ] { }` or `'` was cut in the
+   middle and the tail (with the token) was stored; `redactCliArgs` only looked for `scheme://` so a scheme-less URL argument was stored whole; nothing reduced local paths.
+   Same whack-a-mole shape as FR2-07's visibility walk: every character or shape fixed would have left the next one.
+2. TESTS: the run-1 canaries were one shape (`?n=..&token=SECRET`) - "one example per bug" - and the audit's three findings were exactly the shapes that were not there.
+3. SPEC: section 0.7 says "query and fragment dropped" but never says what a URL IS inside free text, nor anything about local paths, so neither could be finished.
+
+Decisions (the design principle from the brief: FAIL CLOSED, over-redaction acceptable, a leak not):
+- **One function, token-based, no grammar.** `redactHistoryText` (packages/browser/src/session/action-history.ts) splits on whitespace; a token with a URL marker (`scheme://`, leading
+  `//`, `host[:port]/` or `host?x`, IPv4 / IPv6 / localhost, `user:pass@`, `data:`, `?key=`, `%3A%2F%2F`) is cut at its FIRST `?` `#` `;` and replaced by `[redacted]`; userinfo is
+  removed; the tokens after a cut are dropped up to the next URL or path (a URL typed with literal spaces cannot leak its tail); a form body (`a=1&t=X`) is replaced whole.
+  Absolute local paths (Windows, UNC, POSIX, `~/`) and `file://` URLs become their basename, across spaces. MCP / SDK entries (`sanitizeHistoryEntry`) and the CLI
+  (`redactCliArgs`, `buildHistoryLine`, the human `history` output) all call it; the CLI additionally stores URL args through `redactHistoryUrl`, file args as a basename and
+  download / audit directory args as `<dir>`. The display origin + path of a URL stays visible (`keep` checks in the matrix, unit and live).
+- **Tests are generated:** 61 URL-shaped + 19 path-shaped secret positions x 20 surrounds = 1,600 cells, each with its own canary and `keep` substrings; unit (every stored field of an
+  entry, free text, eval preview, bare URL function, 22 CLI verbs x 3 arg positions, the serialized line, the human output) and live (MCP / bundle / SDK: every cell injected
+  through a real failing eval + 26 real navigations + 9 refused ports + real upload / download; CLI / bundle: 80 rotating cells x 2 verbs + navigations + scheme-less + paths;
+  history, `history --json`, tab view). Self-test with positive control, identity-redactor negative control (fails every cell) and an eraser (fails every `keep`).
+- **F6 decided against recording** (GAP-356): FR2-06 R2 + FR2-11 N4 pin "rejected before any tab is resolved is not an action"; I implemented recording first, R2 failed
+  (`resolveTab` x14), reverted. Reversible by the owner (brief: "unless the spec says otherwise").
+- **F7 `handle_dialog`** stays unrecorded by spec (GAP-357). **`expect.text` / `waitfor` text** stay stored (AC5: history verification == the action's verification) and are DOCUMENTED
+  as stored, not as never stored; flags are not in `args` (deviation 3: the brief's wording is ambiguous, say so if length-only is wanted).
+- **`file:` URLs** are stored as `file://…/<basename>` in history (departure from FR2-09 D5's frame-label form, history only). **`cwd`** remains a full path (GAP-359).
+
+Results (fresh, after the last source commit; dist tree hash identical before / after a second `turbo run build --force`, `fix-1/final/dist-hash.txt`): tsc 34/34; vitest browser 989 (was
+969), capability-runtime 272 (271), mcp-server 124, cli 259 (229), sutradhar 43, agent 56, server 28 - all pass; lint clean (browser, capability-runtime, cli). Live `verify-fr2-11-history.mjs` x3:
+47/47 cases, 321/321 checks each (mcp 9/72, cli 14/82, sdk 2/16, bundle 22/151), 0 lingering Chrome. The new matrix unit specs FAILED before the change (browser 14 failed / 4 passed, CLI 5 / 25,
+the step-6 shapes 14 / 4) and pass after. Auditor probes (byte-identical copies, `audit-probes-rerun-fix-1/`): every previously leaking canary is gone (MCP `unexpectedLeaks`
+[upmissdir, dldir] -> [] on head and bundle; CLI [cliupdir, clidldir, noscheme] -> []; paren MCP + CLI file [] ; SDK [sdkbracket] -> []; type_by_label clean); what remains is exactly the
+auditor's own DOCUMENTED list (eval code literal, `expect.text`, `wait_for` text, file basenames, a page value quoted in an eval error). Mutants: 27 new (MF1..MF25, MF4b, MF14b; MF25 is an OVER-redaction mutant): 27/27 caught
+by the unit matrix, 17/17 with a live surface also caught live (MF23 was NOT caught live the first time: its cell had no canary in the query; strengthened, re-run, caught); all restored
+byte-identically (sha256) and rebuilt. Audit mutants re-run with the auditor's own driver: 13 killed, A5 (survivor) now KILLED, A4 not applicable (its source line no longer exists; same intent as MF6 / MF15).
+Regression: verify-fr2-08 478/478, verify-fr2-07 488/488 (GAP-325 tolerance fired 0 times on every surface), FR2-04 verify 111 passed / 0 failed / 2 skipped, CLI scenario suite 11/14 (UC-05, UC-08, UC-12 fail)
+vs master fdae749 12/14 (UC-05, UC-12): UC-08 is an intermittent headed-download hang (95 s, empty stdout) that also failed 1 of 3 isolated master runs and 1 of 3 isolated runs here (2 of 3 pass on both), not a regression.
+The master scratch tree was verified byte-equal (after CRLF normalisation) to `fdae749` for 5094 of 5098 files; the 4 different are 3 test specs overlaid earlier (audit F9) and one png rewritten by a scenario run.
+
+Unmet / not verified: no AC is recorded as unmet. Not verified: headed mode for the privacy matrix, non-Chrome, POSIX file mode 0600 outside WSL, a POSIX host (POSIX path shapes are exercised as strings and as
+an injected error text on Windows, not with a real POSIX path tool call), the CLI live matrix is a rotating 80-cell subset (GAP-361), and no broad corpus of real browser error messages was used to size the
+over-redaction (GAP-353 / GAP-354). New gaps GAP-353..GAP-362. Status: VERIFY (fix-1). An independent re-audit follows; I did not self-declare done.

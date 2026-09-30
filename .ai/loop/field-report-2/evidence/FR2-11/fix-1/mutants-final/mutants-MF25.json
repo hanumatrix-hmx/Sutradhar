@@ -1,0 +1,39 @@
+{
+  "ranAt": "2026-09-30T18:44:06.549Z",
+  "total": 1,
+  "caught": 1,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MF25",
+      "what": "OVER-redaction: a cut URL loses its PATH too (origin only), so the display origin + path the docs and tests rely on is gone",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "579c0f6f156029b93b42faa72c6972b4e216fc29c975cab819ac556790c86c6f",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H3: redacts every URL token inside free text",
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H5 / N12: eval preview collapses whitespace, drops URL secrets, caps at 200",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > URL rule for navigate targets, preview rule for eval targets, generic redaction otherwise",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > post-FR2-07 verification: evidence observed/expected redacted, detail capped at 300, scalars pass through"
+        ],
+        "summary": "Tests  5 failed | 32 passed (37)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "PM",
+        "failedCases": [
+          "PM: [{\"check\":\"the display origin + path (or a basename) of every cell is still visible in the stored error (no over-redaction)\",\"observed\":[{\"cell\":\"query-plain|\\\"\\\"\\\"\\\"\",\"miss\":[\"http://127.0.0.1:65026/p\"],\"error\":\"http://127.0.0.1:65026[redacted]\"},{\"cell\":\"query-plain|\\\"(\\\"\\\")\\\"\",\"miss\":[\"http://127"
+        ],
+        "summaryLine": "[fr2-11] 1/2 cases (11/12 checks) {\"mcp\":{\"cases\":2,\"casesPassed\":1,\"checks\":12,\"checksFailed\":1},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks"
+      },
+      "shaAfter": "579c0f6f156029b93b42faa72c6972b4e216fc29c975cab819ac556790c86c6f",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    }
+  ]
+}

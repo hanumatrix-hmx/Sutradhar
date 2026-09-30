@@ -1,0 +1,22 @@
+{"surface":"bundle","case":"L1","pass":true,"checks":18,"failed":[]}
+{"surface":"bundle","case":"L1b","pass":true,"checks":12,"failed":[]}
+{"surface":"bundle","case":"L1d","pass":true,"checks":8,"failed":[]}
+{"surface":"bundle","case":"L2","pass":true,"checks":10,"failed":[]}
+{"surface":"bundle","case":"L3","pass":true,"checks":7,"failed":[],"elapsedMs":127}
+{"surface":"bundle","case":"L4","pass":true,"checks":4,"failed":[]}
+{"surface":"bundle","case":"L9-overhead","pass":true,"checks":1,"failed":[]}
+{"surface":"bundle","case":"PM","pass":true,"checks":9,"failed":[],"cells":1360,"navigations":35}
+{"surface":"bundle","case":"PRIV-sweep","pass":true,"checks":2,"failed":[]}
+{"surface":"bundle","case":"L5","pass":false,"checks":21,"failed":[{"check":"all 7 commands ran as expected (exit codes 0,0,0,0,0,1,0)","observed":[[0,""],[0,""],[1,""],[1,""],[0,""],[1,""],[1,""]]},{"check":"observer: #count really is 1 and #name really holds the typed text","observed":{"count":"0","nameVal":""}},{"check":"press line: actions are [focus, press_key] and press_key target is Enter","observed":[["focus",null]]}]}
+{"surface":"bundle","case":"N7","pass":true,"checks":5,"failed":[]}
+{"surface":"bundle","case":"L5x","pass":true,"checks":8,"failed":[]}
+{"surface":"bundle","case":"L7","pass":true,"checks":4,"failed":[]}
+{"surface":"bundle","case":"W1","pass":true,"checks":4,"failed":[]}
+{"surface":"bundle","case":"L6","pass":true,"checks":7,"failed":[]}
+{"surface":"bundle","case":"L8","pass":true,"checks":4,"failed":[]}
+{"surface":"bundle","case":"N9","pass":true,"checks":3,"failed":[]}
+{"surface":"bundle","case":"N10","pass":true,"checks":1,"failed":[]}
+{"surface":"bundle","case":"N8","pass":true,"checks":6,"failed":[]}
+{"surface":"bundle","case":"N15","pass":true,"checks":2,"failed":[]}
+{"surface":"bundle","case":"PM","pass":false,"checks":11,"failed":[{"check":"no canary anywhere in the raw history.jsonl bytes of 68 matrix commands + 26 navigations + scheme-less + paths","observed":["CNRYdldirbundle"]},{"check":"every cell still shows its display origin / path / basename in the stored error (no over-redaction)","observed":[{"cell":"query-plain|\"\"\"\"","miss":["http://127.0.0.1:56705/p"]},{"cell":"query-paren|\"(\"\")\"","miss":["http://127.0.0.1:56705/p"]},{"cell":"query-bracket|\"[\"\"]\"","miss":["http://127.0.0.1:56705/p"]}]},{"check":"F3: upload / download lines carry no canary from the directories, and keep the basenames","observed":{"leaked":["CNRYdldirbundle"],"args":[["#file","file.txt"],["#file","nofile.txt"],["#dl","CNRYdldirbundle sub"]]}},{"check":"human `sutradhar history` output has no canary","observed":["CNRYdldirbundle"]},{"check":"`sutradhar history --json` output has no canary","observed":["CNRYdldirbundle"]}],"commands":102}
+{"surface":"bundle","case":"PRIV-sweep","pass":false,"checks":2,"failed":[{"check":"final history.jsonl has no canary","observed":["CNRYdldirbundle"]}]}

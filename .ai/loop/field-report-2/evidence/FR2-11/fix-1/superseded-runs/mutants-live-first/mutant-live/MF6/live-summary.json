@@ -1,0 +1,199 @@
+{
+  "startedAt": "2026-09-30T17:21:01.216Z",
+  "finishedAt": "2026-09-30T17:21:07.946Z",
+  "cases": 2,
+  "casesPassed": 0,
+  "checks": 11,
+  "checksFailed": 3,
+  "perSurface": {
+    "mcp": {
+      "cases": 2,
+      "casesPassed": 0,
+      "checks": 11,
+      "checksFailed": 3
+    },
+    "cli": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "mcp:PM",
+    "mcp:PRIV-sweep"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": [
+      72504,
+      42696
+    ]
+  },
+  "evidenceFiles": [
+    "mcp-raw-history-responses.txt"
+  ],
+  "results": [
+    {
+      "surface": "mcp",
+      "case": "PM",
+      "pass": false,
+      "checks": 9,
+      "failed": [
+        {
+          "check": "no canary in any of 1360 stored entries (error, target, selector, verification)",
+          "observed": [
+            {
+              "cell": "fragment-plain|\"\"\"\"",
+              "leaked": [
+                "CNRYfragmentplain87X"
+              ],
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"http://127.0.0.1:51532/p#CNRYfragmentplain87X\",\"executionTimeMs\":0,\"timestamp\":\"2026-09-30T17:21:02.077Z\",\"target\":\"throw new Error(\\\"http://127.0.0.1:51532/p#CNRYfragmentplain87X\\\")\",\"url\":\"about:blank\",\"tabId\":\"t"
+            },
+            {
+              "cell": "fragment-plain|\"(\"\")\"",
+              "leaked": [
+                "CNRYfragmentplain87X"
+              ],
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"(http://127.0.0.1:51532/p#CNRYfragmentplain87X)\",\"executionTimeMs\":0,\"timestamp\":\"2026-09-30T17:21:02.077Z\",\"target\":\"throw new Error(\\\"(http://127.0.0.1:51532/p#CNRYfragmentplain87X)\\\")\",\"url\":\"about:blank\",\"tabId"
+            },
+            {
+              "cell": "fragment-plain|\"[\"\"]\"",
+              "leaked": [
+                "CNRYfragmentplain87X"
+              ],
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"[http://127.0.0.1:51532/p#CNRYfragmentplain87X]\",\"executionTimeMs\":0,\"timestamp\":\"2026-09-30T17:21:02.078Z\",\"target\":\"throw new Error(\\\"[http://127.0.0.1:51532/p#CNRYfragmentplain87X]\\\")\",\"url\":\"about:blank\",\"tabId"
+            }
+          ]
+        },
+        {
+          "check": "26 real navigations: no canary in any stored entry",
+          "observed": [
+            {
+              "cell": "fragment-plain",
+              "leaked": [
+                "CNRYfragmentplain158X"
+              ],
+              "entry": "{\"actionType\":\"navigate\",\"success\":true,\"executionTimeMs\":15,\"timestamp\":\"2026-09-30T17:21:02.957Z\",\"target\":\"http://127.0.0.1:51532/p\",\"url\":\"http://127.0.0.1:51532/p\",\"verification\":{\"verified\":false,\"urlChanged\":true,\"elementFound\":false,\"confidence\":0.0900"
+            },
+            {
+              "cell": "fragment-brackets",
+              "leaked": [
+                "CNRYfragmentbrackets160X"
+              ],
+              "entry": "{\"actionType\":\"navigate\",\"success\":true,\"executionTimeMs\":5,\"timestamp\":\"2026-09-30T17:21:02.969Z\",\"target\":\"http://127.0.0.1:51532/p\",\"url\":\"http://127.0.0.1:51532/p\",\"verification\":{\"verified\":true,\"urlChanged\":true,\"elementFound\":true,\"confidence\":0.9,\"reas"
+            },
+            {
+              "cell": "fragment-plain",
+              "leaked": [
+                "CNRYfragmentplain213X"
+              ],
+              "entry": "{\"actionType\":\"navigate\",\"success\":false,\"error\":\"net::ERR_UNSAFE_PORT at http://127.0.0.1:1/p#CNRYfragmentplain213X\",\"executionTimeMs\":14,\"timestamp\":\"2026-09-30T17:21:03.936Z\",\"target\":\"http://127.0.0.1:1/p\",\"url\":\"chrome-error://chromewebdata/\",\"tabId\":\"tab"
+            }
+          ]
+        }
+      ],
+      "cells": 1360,
+      "navigations": 35
+    },
+    {
+      "surface": "mcp",
+      "case": "PRIV-sweep",
+      "pass": false,
+      "checks": 2,
+      "failed": [
+        {
+          "check": "no canary in any of 71 raw history responses",
+          "observed": [
+            "CNRYfragmentplain87X",
+            "CNRYfragmentplain87X",
+            "CNRYfragmentbrackets89X",
+            "CNRYfragmentplain87X",
+            "CNRYfragmentbrackets89X",
+            "CNRYfragmentplain87X",
+            "CNRYfragmentbrackets89X",
+            "CNRYfragmentplain87X",
+            "CNRYfragmentbrackets89X",
+            "CNRYfragmentbrackets89X",
+            "CNRYschemelessipfragment102X",
+            "CNRYschemelessipfragment102X",
+            "CNRYschemelessipfragment102X",
+            "CNRYschemelessipfragment102X",
+            "CNRYschemelessipfragment102X",
+            "CNRYipv6fragmentparen114X",
+            "CNRYipv6fragmentparen114X",
+            "CNRYipv6fragmentparen114X",
+            "CNRYipv6fragmentparen114X",
+            "CNRYipv6fragmentparen114X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain213X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain213X",
+            "CNRYfragmentbrackets215X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain213X",
+            "CNRYfragmentbrackets215X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain213X",
+            "CNRYfragmentbrackets215X",
+            "CNRYfragmentplain158X",
+            "CNRYfragmentbrackets160X",
+            "CNRYfragmentplain213X",
+            "CNRYfragmentbrackets215X"
+          ]
+        }
+      ]
+    }
+  ]
+}

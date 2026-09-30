@@ -1,0 +1,15 @@
+History: 7 command(s) in E:\AI-Cache\tmp\fr2-11-cli-state-kvKRIh\history.jsonl
+--- session sess_1790787948706_1 (current) ---
+2026-09-30 17:05:48Z  exit 0    1829ms  nav http://127.0.0.1:56705/fr2-11-history.html
+    - navigate ok verified tab_sess_1790787948706_1_1 http://127.0.0.1:56705/fr2-11-history.html
+2026-09-30 17:05:50Z  exit 0      48ms  eval document.title
+    - eval ok no-verification tab_sess_1790787948706_1_2 document.title
+2026-09-30 17:05:51Z  exit 1   16665ms  click #bump
+    - click FAILED action-failed tab_sess_1790787948706_1_2 #bump: No visible element found for selector: #bump
+2026-09-30 17:06:10Z  exit 1   16683ms  type #name <10 chars>
+    - type FAILED action-failed tab_sess_1790787948706_1_2 #name: No element found for selector: #name
+2026-09-30 17:06:30Z  exit 0      55ms  snap
+2026-09-30 17:06:31Z  exit 1      44ms  eval throw new Error('x-L5')
+    - eval FAILED no-verification tab_sess_1790787948706_1_2 throw new Error('x-L5'): x-L5
+2026-09-30 17:06:31Z  exit 1   16706ms  press #name Enter
+    - focus FAILED action-failed tab_sess_1790787948706_1_2 #name: No element found for selector: #name

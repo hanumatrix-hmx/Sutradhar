@@ -1,0 +1,40 @@
+{
+  "ranAt": "2026-09-30T17:41:14.119Z",
+  "total": 1,
+  "caught": 1,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MF23",
+      "what": "a query / fragment on a local path (/home/x/file.txt?t=X) is kept in the basename",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "579c0f6f156029b93b42faa72c6972b4e216fc29c975cab819ac556790c86c6f",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > is idempotent on every cell",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > error: no canary survives, for 1600 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > selector: no canary survives, for 1600 cells"
+        ],
+        "summary": "Tests  11 failed | 26 passed (37)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "PM",
+        "failedCases": [
+          "PM: [{\"check\":\"no canary in any of 1600 stored entries (error, target, selector, verification)\",\"observed\":[{\"cell\":\"posix-with-query|\\\"\\\"\\\"\\\"\",\"leaked\":[\"CNRYposixwithqueryq163X\"],\"entry\":\"{\\\"actionType\\\":\\\"eval\\\",\\\"success\\\":false,\\\"error\\\":\\\"file.txt?token=CNRYposixwithqueryq163X\\\",\\\"executionTimeMs\\",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 78 raw history responses\",\"observed\":[\"token=\",\"CNRYposixwithqueryq163X\",\"CNRYwinwithqueryq165X\",\"token=\",\"CNRYposixwithqueryq163X\",\"CNRYwinwithqueryq165X\",\"CNRYposixwithfragmentq167X\",\"token=\",\"CNRYposixwithqueryq163X\",\"CNRYwinwithqueryq165X\",\"CNRYposixwithfragmentq16"
+        ],
+        "summaryLine": "[fr2-11] 0/2 cases (9/12 checks) {\"mcp\":{\"cases\":2,\"casesPassed\":0,\"checks\":12,\"checksFailed\":3},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "579c0f6f156029b93b42faa72c6972b4e216fc29c975cab819ac556790c86c6f",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    }
+  ]
+}

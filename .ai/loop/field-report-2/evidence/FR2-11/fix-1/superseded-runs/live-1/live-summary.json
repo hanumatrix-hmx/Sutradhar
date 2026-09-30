@@ -1,0 +1,986 @@
+{
+  "startedAt": "2026-09-30T17:04:00.367Z",
+  "finishedAt": "2026-09-30T17:08:00.700Z",
+  "cases": 47,
+  "casesPassed": 42,
+  "checks": 317,
+  "checksFailed": 15,
+  "perSurface": {
+    "mcp": {
+      "cases": 9,
+      "casesPassed": 9,
+      "checks": 71,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 14,
+      "casesPassed": 12,
+      "checks": 81,
+      "checksFailed": 6
+    },
+    "sdk": {
+      "cases": 2,
+      "casesPassed": 2,
+      "checks": 16,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 22,
+      "casesPassed": 19,
+      "checks": 149,
+      "checksFailed": 9
+    }
+  },
+  "failed": [
+    "cli:PM",
+    "cli:PRIV-sweep",
+    "bundle:L5",
+    "bundle:PM",
+    "bundle:PRIV-sweep"
+  ],
+  "informational": [
+    {
+      "surface": "mcp",
+      "case": "L3-timing",
+      "evals": 205,
+      "elapsedMs": 139,
+      "perCallMs": 1
+    },
+    {
+      "surface": "mcp",
+      "case": "L9-overhead",
+      "evals": 200,
+      "totalMs": 110,
+      "meanPerCallMs": 0.55
+    },
+    {
+      "surface": "cli",
+      "case": "L5-history-duration",
+      "historyProcessMs": 260
+    },
+    {
+      "surface": "cli",
+      "case": "N9-chrome-count",
+      "sutradharCliChromeProcsBefore": 19,
+      "after": 19,
+      "note": "informational: other sessions on this machine may start/stop their own"
+    },
+    {
+      "surface": "bundle",
+      "case": "L3-timing",
+      "evals": 205,
+      "elapsedMs": 127,
+      "perCallMs": 1
+    },
+    {
+      "surface": "bundle",
+      "case": "L9-overhead",
+      "evals": 200,
+      "totalMs": 112,
+      "meanPerCallMs": 0.56
+    },
+    {
+      "surface": "bundle",
+      "case": "L5-history-duration",
+      "historyProcessMs": 208
+    },
+    {
+      "surface": "bundle",
+      "case": "N9-chrome-count",
+      "sutradharCliChromeProcsBefore": 19,
+      "after": 19,
+      "note": "informational: other sessions on this machine may start/stop their own"
+    }
+  ],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [
+      70060,
+      75548,
+      56152,
+      53524,
+      60408,
+      65396,
+      68476,
+      61360,
+      43236,
+      72104
+    ],
+    "ownCliChromeProfileDirs": [
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790787848801",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790787878123",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790787881031",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790787885676",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790787888338",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790787948306",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790788026440",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790788028530",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790788032167",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790788034606"
+    ],
+    "childPidsStarted": [
+      31096,
+      45948,
+      24972,
+      70156,
+      47364,
+      70612,
+      34524,
+      30828,
+      67044,
+      56216,
+      43608,
+      42104,
+      52716,
+      61256,
+      20320,
+      34368,
+      73036,
+      59324,
+      67796,
+      67804,
+      33208,
+      48852,
+      64524,
+      68276,
+      29892,
+      75608,
+      68796,
+      10188,
+      62152,
+      63284,
+      26144,
+      62652,
+      72268,
+      43028,
+      59728,
+      59676,
+      45180,
+      25180,
+      23152,
+      67636,
+      57536,
+      71756,
+      19196,
+      57208,
+      52552,
+      65088,
+      45468,
+      34564,
+      47724,
+      31104,
+      50076,
+      65928,
+      63196,
+      43244,
+      63316,
+      63776,
+      41160,
+      1856,
+      62304,
+      76400,
+      72692,
+      72368,
+      30088,
+      73072,
+      70212,
+      63708,
+      57652,
+      67660,
+      58336,
+      71152,
+      25108,
+      9144,
+      76192,
+      56172,
+      24072,
+      54720,
+      65224,
+      63660,
+      70836,
+      54808,
+      73096,
+      61012,
+      66264,
+      65776,
+      45468,
+      56700,
+      25232,
+      58704,
+      60076,
+      18208,
+      37056,
+      59192,
+      68676,
+      66144,
+      43752,
+      53716,
+      65928,
+      66092,
+      58836,
+      43944,
+      60896,
+      60972,
+      71896,
+      35928,
+      66008,
+      65964,
+      70164,
+      19288,
+      71424,
+      3292,
+      76432,
+      55232,
+      49232,
+      20000,
+      73112,
+      43424,
+      50356,
+      41288,
+      73344,
+      32680,
+      11628,
+      13224,
+      60668,
+      59036,
+      72060,
+      42104,
+      62716,
+      60780,
+      72900,
+      76532,
+      47916,
+      76688,
+      62904,
+      45448,
+      16332,
+      71420,
+      43984,
+      54396,
+      69164,
+      52388,
+      6676,
+      58100,
+      71480,
+      62428,
+      30832,
+      55316,
+      54312,
+      41188,
+      15340,
+      11816,
+      15728,
+      25180,
+      65500,
+      60504,
+      70648,
+      32212,
+      59248,
+      57152,
+      45360,
+      34628,
+      66012,
+      64584,
+      28848,
+      56496,
+      52876,
+      21264,
+      71552,
+      66588,
+      19268,
+      55316,
+      75160,
+      9212,
+      69440,
+      52840,
+      72440,
+      2808,
+      75080,
+      70000,
+      58244,
+      71072,
+      36420,
+      64556,
+      75420,
+      73160,
+      66392,
+      25092,
+      76052,
+      22752,
+      41700,
+      71372,
+      2364,
+      59452,
+      27500,
+      69416,
+      70364,
+      50268,
+      57484,
+      63204,
+      31676,
+      76780,
+      51336,
+      34864,
+      33456,
+      17512,
+      62888,
+      65948,
+      53596,
+      61212,
+      43400,
+      46792,
+      3940,
+      18240,
+      12436,
+      69168,
+      34840,
+      2064,
+      75088,
+      64352,
+      66164,
+      49232,
+      46224,
+      67748,
+      65416,
+      7932,
+      67552,
+      70880,
+      4948,
+      21952,
+      76140,
+      57324,
+      15976,
+      61916,
+      6420,
+      41232,
+      58336,
+      49280,
+      56248,
+      27580,
+      14296,
+      67668,
+      45140,
+      73244,
+      23276,
+      63224,
+      75816,
+      59216,
+      30956,
+      52876,
+      43084,
+      66384,
+      59972,
+      46208,
+      13052,
+      62788,
+      7768,
+      51348,
+      71424,
+      2804,
+      72108,
+      42400,
+      13224,
+      66728,
+      61308,
+      50832,
+      62660,
+      68952,
+      41156,
+      65096,
+      70768,
+      63452,
+      74992,
+      69748,
+      74744,
+      52440,
+      59388,
+      63284,
+      76128,
+      57652,
+      49868,
+      38212,
+      55924,
+      44176,
+      58740,
+      20920,
+      25680,
+      67036,
+      8652,
+      61580,
+      12508,
+      33476,
+      69996,
+      75708,
+      9144,
+      65948,
+      61652,
+      62860,
+      73268,
+      45360,
+      70448,
+      71484,
+      71152,
+      67312,
+      43028,
+      70188,
+      39948,
+      12728,
+      60736,
+      43684,
+      71024,
+      36936,
+      18240,
+      43360,
+      53340,
+      28848
+    ]
+  },
+  "evidenceFiles": [
+    "mcp-L1-history.json",
+    "mcp-L2-session.json",
+    "mcp-raw-history-responses.txt",
+    "cli-L5-history.jsonl",
+    "cli-L5-history-human.txt",
+    "cli-L5x-history.jsonl",
+    "sdk-L1-report.json",
+    "bundle-L1-history.json",
+    "bundle-L2-session.json",
+    "bundle-raw-history-responses.txt",
+    "bundle-L5-history.jsonl",
+    "bundle-L5-history-human.txt",
+    "bundle-L5x-history.jsonl"
+  ],
+  "results": [
+    {
+      "surface": "mcp",
+      "case": "L1",
+      "pass": true,
+      "checks": 18,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L1b",
+      "pass": true,
+      "checks": 12,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L1d",
+      "pass": true,
+      "checks": 8,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L2",
+      "pass": true,
+      "checks": 10,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L3",
+      "pass": true,
+      "checks": 7,
+      "failed": [],
+      "elapsedMs": 139
+    },
+    {
+      "surface": "mcp",
+      "case": "L4",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L9-overhead",
+      "pass": true,
+      "checks": 1,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "PM",
+      "pass": true,
+      "checks": 9,
+      "failed": [],
+      "cells": 1360,
+      "navigations": 35
+    },
+    {
+      "surface": "mcp",
+      "case": "PRIV-sweep",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L5",
+      "pass": true,
+      "checks": 21,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "N7",
+      "pass": true,
+      "checks": 5,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L5x",
+      "pass": true,
+      "checks": 8,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L7",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L7b",
+      "pass": true,
+      "checks": 3,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "W1",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L6",
+      "pass": true,
+      "checks": 7,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L8",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "N9",
+      "pass": true,
+      "checks": 3,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "N10",
+      "pass": true,
+      "checks": 1,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "N8",
+      "pass": true,
+      "checks": 6,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "N15",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "PM",
+      "pass": false,
+      "checks": 11,
+      "failed": [
+        {
+          "check": "no canary anywhere in the raw history.jsonl bytes of 68 matrix commands + 26 navigations + scheme-less + paths",
+          "observed": [
+            "CNRYdldircli"
+          ]
+        },
+        {
+          "check": "every cell still shows its display origin / path / basename in the stored error (no over-redaction)",
+          "observed": [
+            {
+              "cell": "query-plain|\"\"\"\"",
+              "miss": [
+                "http://127.0.0.1:56705/p"
+              ]
+            },
+            {
+              "cell": "query-paren|\"(\"\")\"",
+              "miss": [
+                "http://127.0.0.1:56705/p"
+              ]
+            },
+            {
+              "cell": "query-bracket|\"[\"\"]\"",
+              "miss": [
+                "http://127.0.0.1:56705/p"
+              ]
+            }
+          ]
+        },
+        {
+          "check": "F3: upload / download lines carry no canary from the directories, and keep the basenames",
+          "observed": {
+            "leaked": [
+              "CNRYdldircli"
+            ],
+            "args": [
+              [
+                "#file",
+                "file.txt"
+              ],
+              [
+                "#file",
+                "nofile.txt"
+              ],
+              [
+                "#dl",
+                "CNRYdldircli sub"
+              ]
+            ]
+          }
+        },
+        {
+          "check": "human `sutradhar history` output has no canary",
+          "observed": [
+            "CNRYdldircli"
+          ]
+        },
+        {
+          "check": "`sutradhar history --json` output has no canary",
+          "observed": [
+            "CNRYdldircli"
+          ]
+        }
+      ],
+      "commands": 102
+    },
+    {
+      "surface": "cli",
+      "case": "PRIV-sweep",
+      "pass": false,
+      "checks": 2,
+      "failed": [
+        {
+          "check": "final history.jsonl has no canary",
+          "observed": [
+            "CNRYdldircli"
+          ]
+        }
+      ]
+    },
+    {
+      "surface": "sdk",
+      "case": "SDK-L1",
+      "pass": true,
+      "checks": 10,
+      "failed": []
+    },
+    {
+      "surface": "sdk",
+      "case": "SDK-PM",
+      "pass": true,
+      "checks": 6,
+      "failed": [],
+      "cells": 1360,
+      "navigations": 26
+    },
+    {
+      "surface": "bundle",
+      "case": "L1",
+      "pass": true,
+      "checks": 18,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L1b",
+      "pass": true,
+      "checks": 12,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L1d",
+      "pass": true,
+      "checks": 8,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L2",
+      "pass": true,
+      "checks": 10,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L3",
+      "pass": true,
+      "checks": 7,
+      "failed": [],
+      "elapsedMs": 127
+    },
+    {
+      "surface": "bundle",
+      "case": "L4",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L9-overhead",
+      "pass": true,
+      "checks": 1,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "PM",
+      "pass": true,
+      "checks": 9,
+      "failed": [],
+      "cells": 1360,
+      "navigations": 35
+    },
+    {
+      "surface": "bundle",
+      "case": "PRIV-sweep",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L5",
+      "pass": false,
+      "checks": 21,
+      "failed": [
+        {
+          "check": "all 7 commands ran as expected (exit codes 0,0,0,0,0,1,0)",
+          "observed": [
+            [
+              0,
+              ""
+            ],
+            [
+              0,
+              ""
+            ],
+            [
+              1,
+              ""
+            ],
+            [
+              1,
+              ""
+            ],
+            [
+              0,
+              ""
+            ],
+            [
+              1,
+              ""
+            ],
+            [
+              1,
+              ""
+            ]
+          ]
+        },
+        {
+          "check": "observer: #count really is 1 and #name really holds the typed text",
+          "observed": {
+            "count": "0",
+            "nameVal": ""
+          }
+        },
+        {
+          "check": "press line: actions are [focus, press_key] and press_key target is Enter",
+          "observed": [
+            [
+              "focus",
+              null
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "surface": "bundle",
+      "case": "N7",
+      "pass": true,
+      "checks": 5,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L5x",
+      "pass": true,
+      "checks": 8,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L7",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "W1",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L6",
+      "pass": true,
+      "checks": 7,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L8",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "N9",
+      "pass": true,
+      "checks": 3,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "N10",
+      "pass": true,
+      "checks": 1,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "N8",
+      "pass": true,
+      "checks": 6,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "N15",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "PM",
+      "pass": false,
+      "checks": 11,
+      "failed": [
+        {
+          "check": "no canary anywhere in the raw history.jsonl bytes of 68 matrix commands + 26 navigations + scheme-less + paths",
+          "observed": [
+            "CNRYdldirbundle"
+          ]
+        },
+        {
+          "check": "every cell still shows its display origin / path / basename in the stored error (no over-redaction)",
+          "observed": [
+            {
+              "cell": "query-plain|\"\"\"\"",
+              "miss": [
+                "http://127.0.0.1:56705/p"
+              ]
+            },
+            {
+              "cell": "query-paren|\"(\"\")\"",
+              "miss": [
+                "http://127.0.0.1:56705/p"
+              ]
+            },
+            {
+              "cell": "query-bracket|\"[\"\"]\"",
+              "miss": [
+                "http://127.0.0.1:56705/p"
+              ]
+            }
+          ]
+        },
+        {
+          "check": "F3: upload / download lines carry no canary from the directories, and keep the basenames",
+          "observed": {
+            "leaked": [
+              "CNRYdldirbundle"
+            ],
+            "args": [
+              [
+                "#file",
+                "file.txt"
+              ],
+              [
+                "#file",
+                "nofile.txt"
+              ],
+              [
+                "#dl",
+                "CNRYdldirbundle sub"
+              ]
+            ]
+          }
+        },
+        {
+          "check": "human `sutradhar history` output has no canary",
+          "observed": [
+            "CNRYdldirbundle"
+          ]
+        },
+        {
+          "check": "`sutradhar history --json` output has no canary",
+          "observed": [
+            "CNRYdldirbundle"
+          ]
+        }
+      ],
+      "commands": 102
+    },
+    {
+      "surface": "bundle",
+      "case": "PRIV-sweep",
+      "pass": false,
+      "checks": 2,
+      "failed": [
+        {
+          "check": "final history.jsonl has no canary",
+          "observed": [
+            "CNRYdldirbundle"
+          ]
+        }
+      ]
+    }
+  ]
+}

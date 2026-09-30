@@ -1,0 +1,59 @@
+== 1. tree and HEAD (tracked sources must equal HEAD: the mutation drivers restored them byte-identically)
+E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041
+claude/fr2-11-action-history
+8f39703
+tracked changes under packages/ and tools/ vs HEAD: []
+packages/browser/src/session/action-history.ts worktree-blob=8b97fbfa5f185cd884d7452c7770a93054d3b476 HEAD-blob=8b97fbfa5f185cd884d7452c7770a93054d3b476 IDENTICAL
+packages/cli/src/history-file.ts worktree-blob=616ba2dd6a6f88748f602e6b1d8b577e296d6d01 HEAD-blob=616ba2dd6a6f88748f602e6b1d8b577e296d6d01 IDENTICAL
+packages/cli/src/cli.ts worktree-blob=bb0cf4ee626266bbb087ef7f90975e3df30cc231 HEAD-blob=bb0cf4ee626266bbb087ef7f90975e3df30cc231 IDENTICAL
+packages/mcp-server/src/tools.ts worktree-blob=51d233070ddfcd5527c811c2c8f89b553ae9ca98 HEAD-blob=51d233070ddfcd5527c811c2c8f89b553ae9ca98 IDENTICAL
+
+== 2. no stale build: newest src file vs oldest dist file, per touched package (dist must be newer than every src file)
+browser newest src 2026-09-30T18:02:56.868Z oldest dist js 2026-09-30T17:42:15.200Z POSSIBLY-STALE
+capability-runtime newest src 2026-09-30T18:03:09.811Z oldest dist js 2026-09-30T17:42:16.851Z POSSIBLY-STALE
+cli newest src 2026-09-30T18:03:36.658Z oldest dist js 2026-09-30T17:41:56.421Z POSSIBLY-STALE
+mcp-server newest src 2026-09-30T18:03:12.148Z oldest dist js 2026-09-30T17:41:57.853Z POSSIBLY-STALE
+sutradhar newest src 2026-09-30T10:28:40.802Z oldest dist js 2026-09-30T17:41:58.013Z DIST-NEWER
+
+== 3. the bundle carries the new rule and not the old character-class regex
+cli-bin: old=0 ENCODED_SCHEME=2 FORM_PAIRS=2 redactHistoryText=9
+index: old=0 ENCODED_SCHEME=2 FORM_PAIRS=2 redactHistoryText=4
+mcp-cli: old=0 ENCODED_SCHEME=2 FORM_PAIRS=2 redactHistoryText=4
+
+== 4. unit matrices, fresh run now
+ Test Files  2 passed (2)
+      Tests  37 passed (37)
+ Test Files  2 passed (2)
+      Tests  50 passed (50)
+matrix cells 1600 rotating 80 selfTest problems []
+
+== 5. live runs: re-read each summary JSON from disk
+run 1 47/47 checks 321/321 {"mcp":"9/9","cli":"14/14","sdk":"2/2","bundle":"22/22"} failed []
+  PM cases mcp:PM:PASS:10 cli:PM:PASS:12 sdk:SDK-PM:PASS:6 bundle:PM:PASS:10 bundle:PM:PASS:12
+run 2 47/47 checks 321/321 {"mcp":"9/9","cli":"14/14","sdk":"2/2","bundle":"22/22"} failed []
+  PM cases mcp:PM:PASS:10 cli:PM:PASS:12 sdk:SDK-PM:PASS:6 bundle:PM:PASS:10 bundle:PM:PASS:12
+run 3 47/47 checks 321/321 {"mcp":"9/9","cli":"14/14","sdk":"2/2","bundle":"22/22"} failed []
+  PM cases mcp:PM:PASS:10 cli:PM:PASS:12 sdk:SDK-PM:PASS:6 bundle:PM:PASS:10 bundle:PM:PASS:12
+
+== 6. mutants: re-read the JSON
+mutants 26 caught 26 unit-caught 26 live-caught 16 of 16 with a live surface all restored identical true
+MF23 first pass (live not caught, cell had no canary in the query): false  after strengthening: true
+auditor mutants KILLED: 13
+A4 NOT APPLIED count=0
+A5 KILLED Tests 1 ⎯⎯⎯⎯⎯⎯⎯ restored=true
+
+== 7. the auditor's probes are byte-identical copies
+probe copies byte-identical
+lib.mjs: OK
+privacy-paren.mjs: OK
+privacy-cli.mjs: OK
+privacy-sdk.mjs: OK
+privacy-mcp.mjs: OK
+typebylabel.mjs: OK
+mutants.mjs: OK
+
+== 8. regression logs, re-read
+fr2-08: [bundle] PASS S:navigate [fr2-08] 478/478 passed {"mcp":{"total":327,"passed":327},"cli":{"total":23,"passed":23},"sdk":{"total":10,"passed":10},"bundle":{"total":118,"passed":118}} 
+fr2-07: [mcp] PASS C5-C2-BBBB-1790792 [fr2-07] 488/488 passed 
+fr2-04: [live] PASS observer-no-violations ALL PASS (111 passed, 0 failed, 2 skipped, 113 total), evidence: .ai/loop/field-report-2/evidence/FR2-11/fix-1/final/regression/fr2-04 
+run-cli: ]  Saved full results to E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\.ai\loop\field-report-2\evidence\FR2-11\fix-1\final\regression\run-cli.json exit 0 

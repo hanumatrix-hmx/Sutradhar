@@ -1,0 +1,31 @@
+[MF1] CAUGHT unit=true live=true restored=true  the OLD character-class URL regex restored (stops at ( ) [ ] { } and the apostrophe)
+[MF2] CAUGHT unit=true live=true restored=true  scheme-less hosts (127.0.0.1:P/p?x, example.com/p?x) no longer recognised as URLs
+[MF3] CAUGHT unit=true live=true restored=true  userinfo (user:pass@) kept
+[MF4] CAUGHT unit=true live=true restored=true  absolute local paths kept (the path-to-basename branch disabled)
+[MF4b] CAUGHT unit=true live=- restored=true  file:// URLs keep their full local path
+[MF5] CAUGHT unit=true live=true restored=true  the CLI uses its OWN naive redactor instead of the shared function
+[MF6] CAUGHT unit=true live=true restored=true  the fragment is kept (only ? and ; cut)
+[MF7] CAUGHT unit=true live=true restored=true  only the FIRST URL of a text is redacted
+[MF8] CAUGHT unit=true live=true restored=true  a bracket or apostrophe stops the scan (the rest of the token is copied raw)
+[MF9] CAUGHT unit=true live=- restored=true  the text after a cut is NOT dropped (a URL typed with literal spaces leaks its tail)
+[MF10] CAUGHT unit=true live=- restored=true  path parameters (;jsessionid=...) kept in stored page URLs
+[MF11] CAUGHT unit=true live=true restored=true  eval code preview not redacted
+[MF12] CAUGHT unit=true live=true restored=true  entry.error stored without the redaction
+[MF13] CAUGHT unit=true live=- restored=true  the CLI line error stored without the redaction
+[MF14] CAUGHT unit=true live=true restored=true  CLI upload / screenshot / compare file args stored in full (basename rule removed)
+[MF14b] CAUGHT unit=true live=true restored=true  CLI download / audit directory args stored in full (the <dir> rule removed)
+[MF20] CAUGHT unit=true live=true restored=true  a query string with no URL around it (/p?token=X, intranet/app?t=X, a bare ?t=X) is no longer recognised
+[MF21] CAUGHT unit=true live=true restored=true  a form-encoded body (a=1&token=X) is no longer recognised
+[MF22] CAUGHT unit=true live=- restored=true  a fully percent-encoded URL (http%3A%2F%2F...) is no longer recognised
+[MF23] NOT CAUGHT unit=true live=false restored=true  a query / fragment on a local path (/home/x/file.txt?t=X) is kept in the basename
+[MF24] CAUGHT unit=true live=true restored=true  the CLI generic args rule does not apply the shared function to a plain positional arg (focustab <text>)
+[MF15] CAUGHT unit=true live=- restored=true  page URL fragment kept in stored http(s) URLs
+[MF16] CAUGHT unit=true live=- restored=true  the human `sutradhar history` output stops re-applying the rule (an older leaky line is shown as written)
+[MF17] CAUGHT unit=true live=- restored=true  a doubled backslash inside a path (JSON-escaped text) is taken for a UNC root, which cuts a path with spaces short
+[MF18] CAUGHT unit=true live=- restored=true  a path with spaces is reduced only within its first token
+[MF19] CAUGHT unit=true live=- restored=true  data: URLs no longer recognised
+
+[mutants] 25/26 caught; all restored byte-identically: true
+(node:5304) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+exit 1

@@ -1,0 +1,140 @@
+{
+ "label": "bundle",
+ "checks": [
+  {
+   "name": "negative control: the OLD regex leaves a canary in all 4 audit shapes (so this probe can see the bug)",
+   "ok": true,
+   "observed": [
+    [
+     "CNRYctl1"
+    ],
+    [
+     "CNRYctl2"
+    ],
+    [
+     "CNRYctl3"
+    ],
+    [
+     "CNRYctl4"
+    ]
+   ]
+  },
+  {
+   "name": "MCP: 6 navigations recorded and every target is origin + path only",
+   "ok": true,
+   "observed": [
+    "http://127.0.0.1:60003/p",
+    "http://127.0.0.1:60003/p",
+    "http://127.0.0.1:60003/p",
+    "http://127.0.0.1:60003/p",
+    "http://127.0.0.1:60003/p",
+    "http://127.0.0.1:60003/f"
+   ]
+  },
+  {
+   "name": "MCP session view: no canary at all (queries with ( [ { ', userinfo, ;param, fragment, eval error with URL + Windows + POSIX paths, upload, download)",
+   "ok": true,
+   "observed": []
+  },
+  {
+   "name": "MCP default tab view: no canary at all",
+   "ok": true,
+   "observed": []
+  },
+  {
+   "name": "MCP: the tool RESULTS did contain the secrets (the history is what is redacted): eval error text quotes the canary",
+   "ok": true,
+   "observed": [
+    "CNRYfpE1",
+    "CNRYfpE2",
+    "CNRYfpE3"
+   ]
+  },
+  {
+   "name": "MCP: upload ok, missing upload failed, download ok (the path tools really ran)",
+   "ok": true,
+   "observed": [
+    true,
+    false,
+    true
+   ]
+  },
+  {
+   "name": "MCP: the eval error entry keeps \"see\" text and the basenames only",
+   "ok": true,
+   "observed": "see (http://127.0.0.1:1/p[redacted] 'file.txt' and file.txt"
+  },
+  {
+   "name": "CLI: one history line per command (9 commands incl. the env-rooted download)",
+   "ok": true,
+   "observed": {
+    "lines": 8,
+    "runs": 8
+   }
+  },
+  {
+   "name": "CLI history.jsonl raw bytes: no canary (scheme-less URL args, paren/bracket queries, upload/download args and reasons, eval error with URL + Windows path)",
+   "ok": true,
+   "observed": []
+  },
+  {
+   "name": "CLI `sutradhar history` human output: no canary",
+   "ok": true,
+   "observed": []
+  },
+  {
+   "name": "CLI `sutradhar history --json` is byte-identical to the file and has no canary",
+   "ok": true,
+   "observed": []
+  },
+  {
+   "name": "CLI scheme-less nav arg is stored as host:port/path (display part kept)",
+   "ok": true,
+   "observed": [
+    "127.0.0.1:60003/p"
+   ]
+  },
+  {
+   "name": "CLI upload arg = basename, download dir arg = <dir>",
+   "ok": true,
+   "observed": [
+    [
+     "#file",
+     "file.txt"
+    ],
+    [
+     "#dl",
+     "<dir>"
+    ]
+   ]
+  },
+  {
+   "name": "the CLI path verbs really ran (upload 0, missing upload non-zero, env-rooted download 0)",
+   "ok": true,
+   "observed": [
+    1,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "name": "CLI close exited 0 and history.jsonl survives it",
+   "ok": true,
+   "observed": 0
+  },
+  {
+   "name": "SDK report (session + tab): no canary; targets are origin + path",
+   "ok": true,
+   "observed": {
+    "leaks": [],
+    "t0": "http://127.0.0.1:60003/p"
+   }
+  }
+ ],
+ "pass": true
+}

@@ -1,0 +1,203 @@
+{
+  "startedAt": "2026-09-30T17:22:02.837Z",
+  "finishedAt": "2026-09-30T17:22:49.563Z",
+  "cases": 1,
+  "casesPassed": 0,
+  "checks": 11,
+  "checksFailed": 3,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 1,
+      "casesPassed": 0,
+      "checks": 11,
+      "checksFailed": 3
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "cli:PM"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [
+      67672
+    ],
+    "ownCliChromeProfileDirs": [
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790788923099"
+    ],
+    "childPidsStarted": [
+      58604,
+      23208,
+      31168,
+      66944,
+      69968,
+      59588,
+      70604,
+      64164,
+      67320,
+      71736,
+      75340,
+      34776,
+      49460,
+      62920,
+      70532,
+      28856,
+      65428,
+      66924,
+      65172,
+      60204,
+      31460,
+      67480,
+      23112,
+      47140,
+      73480,
+      41248,
+      46196,
+      20392,
+      59524,
+      67092,
+      37836,
+      67472,
+      60712,
+      71248,
+      61960,
+      33608,
+      43060,
+      47112,
+      31128,
+      11816,
+      66304,
+      53184,
+      73168,
+      71024,
+      51464,
+      30352,
+      69088,
+      70852,
+      20516,
+      31752,
+      56404,
+      47372,
+      40480,
+      65104,
+      69736,
+      75584,
+      49744,
+      72484,
+      63636,
+      3828,
+      70548,
+      46960,
+      72340,
+      52168,
+      70176,
+      22008,
+      46972,
+      74804,
+      62196,
+      69572,
+      74516,
+      74148,
+      42360,
+      74700,
+      70808,
+      60632,
+      66572,
+      48084,
+      58400,
+      71868,
+      55740,
+      13092,
+      47452,
+      8356,
+      71828,
+      37868,
+      64204,
+      10180,
+      32828,
+      61320,
+      52716,
+      31096,
+      36692,
+      71104,
+      42816,
+      29904,
+      22944,
+      66964,
+      58604,
+      47348,
+      58320,
+      63168,
+      8132,
+      25104,
+      68740
+    ]
+  },
+  "evidenceFiles": [],
+  "results": [
+    {
+      "surface": "cli",
+      "case": "PM",
+      "pass": false,
+      "checks": 11,
+      "failed": [
+        {
+          "check": "no canary anywhere in the raw history.jsonl bytes of 68 matrix commands + 26 navigations + scheme-less + paths",
+          "observed": [
+            "CNRYdlrootcli",
+            "CNRYdldircli"
+          ]
+        },
+        {
+          "check": "F3: upload / download lines carry no canary from the directories, and keep the basenames",
+          "observed": {
+            "leaked": [
+              "CNRYdlrootcli",
+              "CNRYdldircli"
+            ],
+            "args": [
+              [
+                "#file",
+                "file.txt"
+              ],
+              [
+                "#file",
+                "nofile.txt"
+              ],
+              [
+                "#dl",
+                "E:\\AI-Cache\\tmp\\fr2-11-CNRYdlrootcli with space-C1jCiY\\CNRYdldircli sub\\out dir"
+              ]
+            ]
+          }
+        },
+        {
+          "check": "`sutradhar history --json` output has no canary",
+          "observed": [
+            "CNRYdlrootcli",
+            "CNRYdldircli"
+          ]
+        }
+      ],
+      "commands": 102
+    }
+  ]
+}

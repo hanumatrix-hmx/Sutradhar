@@ -1,0 +1,17 @@
+[MF1] CAUGHT unit=true live=true restored=true  the OLD character-class URL regex restored (stops at ( ) [ ] { } and the apostrophe)
+[MF2] CAUGHT unit=true live=true restored=true  scheme-less hosts (127.0.0.1:P/p?x, example.com/p?x) no longer recognised as URLs
+[MF3] CAUGHT unit=true live=true restored=true  userinfo (user:pass@) kept
+[MF4] NOT CAUGHT unit=true live=false restored=true  absolute local paths kept (the path-to-basename branch disabled)
+[MF5] NOT CAUGHT unit=true live=false restored=true  the CLI uses its OWN naive redactor instead of the shared function
+[MF6] CAUGHT unit=true live=true restored=true  the fragment is kept (only ? and ; cut)
+[MF7] CAUGHT unit=true live=true restored=true  only the FIRST URL of a text is redacted
+[MF8] CAUGHT unit=true live=true restored=true  a bracket or apostrophe stops the scan (the rest of the token is copied raw)
+[MF11] CAUGHT unit=true live=true restored=true  eval code preview not redacted
+[MF12] CAUGHT unit=true live=true restored=true  entry.error stored without the redaction
+[MF14] NOT CAUGHT unit=true live=false restored=true  CLI upload / screenshot / compare file args stored in full (basename rule removed)
+[MF14b] CAUGHT unit=true live=true restored=true  CLI download / audit directory args stored in full (the <dir> rule removed)
+
+[mutants] 9/12 caught; all restored byte-identically: true
+(node:66476) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+exit 1

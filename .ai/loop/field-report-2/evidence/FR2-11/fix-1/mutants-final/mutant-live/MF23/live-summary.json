@@ -1,0 +1,276 @@
+{
+  "startedAt": "2026-09-30T17:41:05.446Z",
+  "finishedAt": "2026-09-30T17:41:12.439Z",
+  "cases": 2,
+  "casesPassed": 0,
+  "checks": 12,
+  "checksFailed": 3,
+  "perSurface": {
+    "mcp": {
+      "cases": 2,
+      "casesPassed": 0,
+      "checks": 12,
+      "checksFailed": 3
+    },
+    "cli": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "mcp:PM",
+    "mcp:PRIV-sweep"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": [
+      33052,
+      75076
+    ]
+  },
+  "evidenceFiles": [
+    "mcp-raw-history-responses.txt"
+  ],
+  "results": [
+    {
+      "surface": "mcp",
+      "case": "PM",
+      "pass": false,
+      "checks": 10,
+      "failed": [
+        {
+          "check": "no canary in any of 1600 stored entries (error, target, selector, verification)",
+          "observed": [
+            {
+              "cell": "posix-with-query|\"\"\"\"",
+              "leaked": [
+                "CNRYposixwithqueryq163X"
+              ],
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"file.txt?token=CNRYposixwithqueryq163X\",\"executionTimeMs\":0,\"timestamp\":\"2026-09-30T17:41:07.061Z\",\"target\":\"throw new Error(\\\"file.txt[redacted]\",\"url\":\"about:blank\",\"tabId\":\"tab_sess_1790790066040_1_1\",\"seq\":1441"
+            },
+            {
+              "cell": "posix-with-query|\"(\"\")\"",
+              "leaked": [
+                "CNRYposixwithqueryq163X"
+              ],
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"(file.txt?token=CNRYposixwithqueryq163X)\",\"executionTimeMs\":0,\"timestamp\":\"2026-09-30T17:41:07.062Z\",\"target\":\"throw new Error(\\\"(file.txt[redacted]\",\"url\":\"about:blank\",\"tabId\":\"tab_sess_1790790066040_1_1\",\"seq\":1"
+            },
+            {
+              "cell": "posix-with-query|\"[\"\"]\"",
+              "leaked": [
+                "CNRYposixwithqueryq163X"
+              ],
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"[file.txt?token=CNRYposixwithqueryq163X]\",\"executionTimeMs\":0,\"timestamp\":\"2026-09-30T17:41:07.063Z\",\"target\":\"throw new Error(\\\"[file.txt[redacted]\",\"url\":\"about:blank\",\"tabId\":\"tab_sess_1790790066040_1_1\",\"seq\":1"
+            }
+          ]
+        },
+        {
+          "check": "the default per-tab view (scope tab) of the same session has no canary either",
+          "observed": {
+            "scope": "tab",
+            "tabLeaks": [
+              "CNRYposixwithqueryq163X",
+              "CNRYwinwithqueryq165X",
+              "CNRYposixwithfragmentq167X"
+            ]
+          }
+        }
+      ],
+      "cells": 1600,
+      "navigations": 35
+    },
+    {
+      "surface": "mcp",
+      "case": "PRIV-sweep",
+      "pass": false,
+      "checks": 2,
+      "failed": [
+        {
+          "check": "no canary in any of 78 raw history responses",
+          "observed": [
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X",
+            "token=",
+            "CNRYposixwithqueryq163X",
+            "CNRYwinwithqueryq165X",
+            "CNRYposixwithfragmentq167X"
+          ]
+        }
+      ]
+    }
+  ]
+}

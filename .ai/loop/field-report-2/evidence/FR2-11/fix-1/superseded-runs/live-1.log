@@ -1,0 +1,65 @@
+[fr2-11] evidence dir: E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-11/fix-1/live-1; fixture server http://127.0.0.1:56705
+[mcp] PASS L1 (18 checks)
+[mcp] PASS L1b (12 checks)
+[mcp] PASS L1d (8 checks)
+[mcp] PASS L2 (10 checks)
+[mcp] PASS L3 (7 checks)
+[mcp] INFO L3-timing {"evals":205,"elapsedMs":139,"perCallMs":1}
+[mcp] PASS L4 (4 checks)
+[mcp] INFO L9-overhead {"evals":200,"totalMs":110,"meanPerCallMs":0.55}
+[mcp] PASS L9-overhead (1 checks)
+[mcp] PASS PM (9 checks)
+[mcp] PASS PRIV-sweep (2 checks)
+[cli] PASS L5 (21 checks)
+[cli] INFO L5-history-duration {"historyProcessMs":260}
+[cli] PASS N7 (5 checks)
+[cli] PASS L5x (8 checks)
+[cli] PASS L7 (4 checks)
+[cli] PASS L7b (3 checks)
+[cli] PASS W1 (4 checks)
+[cli] PASS L6 (7 checks)
+[cli] PASS L8 (4 checks)
+[cli] PASS N9 (3 checks)
+[cli] INFO N9-chrome-count {"sutradharCliChromeProcsBefore":19,"after":19,"note":"informational: other sessions on this machine may start/stop their own"}
+[cli] PASS N10 (1 checks)
+[cli] PASS N8 (6 checks)
+[cli] PASS N15 (2 checks)
+[cli] FAIL PM (11 checks) -- [{"check":"no canary anywhere in the raw history.jsonl bytes of 68 matrix commands + 26 navigations + scheme-less + paths","observed":["CNRYdldircli"]},{"check":"every cell still shows its display origin / path / basename in the stored error (no over-redaction)","observed":[{"cell":"query-plain|\"\"\"\"","miss":["http://127.0.0.1:56705/p"]},{"cell":"query-paren|\"(\"\")\"","miss":["http://127.0.0.1:56705/p"]},{"cell":"query-bracket|\"[\"\"]\"","miss":["http://127.0.0.1:56705/p"]}]},{"check":"F3: upload / download lines carry no canary from the directories, and keep the basenames","observed":{"leaked":["CNRYdldircli"],"args":[["#file","file.txt"],["#file","nofile.txt"],["#dl","CNRYdldircli su
+[cli] FAIL PRIV-sweep (2 checks) -- [{"check":"final history.jsonl has no canary","observed":["CNRYdldircli"]}]
+{"timestamp":"2026-09-30T17:05:36.164Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T17:05:36.615Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790787936163_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-30T17:05:37.383Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790787936163_1_1","selector":"#bump"}}
+{"timestamp":"2026-09-30T17:05:37.444Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_sess_1790787936163_1_1","selector":"#name"}}
+[sdk] PASS SDK-L1 (10 checks)
+[sdk] PASS SDK-PM (6 checks)
+{"timestamp":"2026-09-30T17:05:39.160Z","level":"info","message":"[BrowserSession] Closed session sess_1790787936163_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-30T17:05:39.160Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790787936163_1","context":{"reason":"Runtime shutdown"}}
+[bundle] PASS L1 (18 checks)
+[bundle] PASS L1b (12 checks)
+[bundle] PASS L1d (8 checks)
+[bundle] PASS L2 (10 checks)
+[bundle] PASS L3 (7 checks)
+[bundle] INFO L3-timing {"evals":205,"elapsedMs":127,"perCallMs":1}
+[bundle] PASS L4 (4 checks)
+[bundle] INFO L9-overhead {"evals":200,"totalMs":112,"meanPerCallMs":0.56}
+[bundle] PASS L9-overhead (1 checks)
+[bundle] PASS PM (9 checks)
+[bundle] PASS PRIV-sweep (2 checks)
+[bundle] FAIL L5 (21 checks) -- [{"check":"all 7 commands ran as expected (exit codes 0,0,0,0,0,1,0)","observed":[[0,""],[0,""],[1,""],[1,""],[0,""],[1,""],[1,""]]},{"check":"observer: #count really is 1 and #name really holds the typed text","observed":{"count":"0","nameVal":""}},{"check":"press line: actions are [focus, press_key] and press_key target is Enter","observed":[["focus",null]]}]
+[bundle] INFO L5-history-duration {"historyProcessMs":208}
+[bundle] PASS N7 (5 checks)
+[bundle] PASS L5x (8 checks)
+[bundle] PASS L7 (4 checks)
+[bundle] PASS W1 (4 checks)
+[bundle] PASS L6 (7 checks)
+[bundle] PASS L8 (4 checks)
+[bundle] PASS N9 (3 checks)
+[bundle] INFO N9-chrome-count {"sutradharCliChromeProcsBefore":19,"after":19,"note":"informational: other sessions on this machine may start/stop their own"}
+[bundle] PASS N10 (1 checks)
+[bundle] PASS N8 (6 checks)
+[bundle] PASS N15 (2 checks)
+[bundle] FAIL PM (11 checks) -- [{"check":"no canary anywhere in the raw history.jsonl bytes of 68 matrix commands + 26 navigations + scheme-less + paths","observed":["CNRYdldirbundle"]},{"check":"every cell still shows its display origin / path / basename in the stored error (no over-redaction)","observed":[{"cell":"query-plain|\"\"\"\"","miss":["http://127.0.0.1:56705/p"]},{"cell":"query-paren|\"(\"\")\"","miss":["http://127.0.0.1:56705/p"]},{"cell":"query-bracket|\"[\"\"]\"","miss":["http://127.0.0.1:56705/p"]}]},{"check":"F3: upload / download lines carry no canary from the directories, and keep the basenames","observed":{"leaked":["CNRYdldirbundle"],"args":[["#file","file.txt"],["#file","nofile.txt"],["#dl","CNRYdldir
+[bundle] FAIL PRIV-sweep (2 checks) -- [{"check":"final history.jsonl has no canary","observed":["CNRYdldirbundle"]}]
+
+[fr2-11] 42/47 cases (302/317 checks) {"mcp":{"cases":9,"casesPassed":9,"checks":71,"checksFailed":0},"cli":{"cases":14,"casesPassed":12,"checks":81,"checksFailed":6},"sdk":{"cases":2,"casesPassed":2,"checks":16,"checksFailed":0},"bundle":{"cases":22,"casesPassed":19,"checks":149,"checksFailed":9}}; FAILED: cli:PM, cli:PRIV-sweep, bundle:L5, bundle:PM, bundle:PRIV-sweep
+exit 1

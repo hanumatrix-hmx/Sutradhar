@@ -1,0 +1,65 @@
+[fr2-11] evidence dir: E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-11/fix-1/final/live-3x/run-1; fixture server http://127.0.0.1:58740
+[mcp] PASS L1 (18 checks)
+[mcp] PASS L1b (12 checks)
+[mcp] PASS L1d (8 checks)
+[mcp] PASS L2 (10 checks)
+[mcp] PASS L3 (7 checks)
+[mcp] INFO L3-timing {"evals":205,"elapsedMs":112,"perCallMs":1}
+[mcp] PASS L4 (4 checks)
+[mcp] INFO L9-overhead {"evals":200,"totalMs":95,"meanPerCallMs":0.48}
+[mcp] PASS L9-overhead (1 checks)
+[mcp] PASS PM (10 checks)
+[mcp] PASS PRIV-sweep (2 checks)
+[cli] PASS L5 (21 checks)
+[cli] INFO L5-history-duration {"historyProcessMs":251}
+[cli] PASS N7 (5 checks)
+[cli] PASS L5x (8 checks)
+[cli] PASS L7 (4 checks)
+[cli] PASS L7b (3 checks)
+[cli] PASS W1 (4 checks)
+[cli] PASS L6 (7 checks)
+[cli] PASS L8 (4 checks)
+[cli] PASS N9 (3 checks)
+[cli] INFO N9-chrome-count {"sutradharCliChromeProcsBefore":19,"after":21,"note":"informational: other sessions on this machine may start/stop their own"}
+[cli] PASS N10 (1 checks)
+[cli] PASS N8 (6 checks)
+[cli] PASS N15 (2 checks)
+[cli] PASS PM (12 checks)
+[cli] PASS PRIV-sweep (2 checks)
+{"timestamp":"2026-09-30T17:45:27.340Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T17:45:27.536Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790790327340_1","context":{"isIncognito":false}}
+{"timestamp":"2026-09-30T17:45:27.677Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790790327340_1_1","selector":"#bump"}}
+{"timestamp":"2026-09-30T17:45:27.736Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_sess_1790790327340_1_1","selector":"#name"}}
+[sdk] PASS SDK-L1 (10 checks)
+[sdk] PASS SDK-PM (6 checks)
+{"timestamp":"2026-09-30T17:45:29.647Z","level":"info","message":"[BrowserSession] Closed session sess_1790790327340_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-30T17:45:29.647Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790790327340_1","context":{"reason":"Runtime shutdown"}}
+[bundle] PASS L1 (18 checks)
+[bundle] PASS L1b (12 checks)
+[bundle] PASS L1d (8 checks)
+[bundle] PASS L2 (10 checks)
+[bundle] PASS L3 (7 checks)
+[bundle] INFO L3-timing {"evals":205,"elapsedMs":139,"perCallMs":1}
+[bundle] PASS L4 (4 checks)
+[bundle] INFO L9-overhead {"evals":200,"totalMs":116,"meanPerCallMs":0.58}
+[bundle] PASS L9-overhead (1 checks)
+[bundle] PASS PM (10 checks)
+[bundle] PASS PRIV-sweep (2 checks)
+[bundle] PASS L5 (21 checks)
+[bundle] INFO L5-history-duration {"historyProcessMs":228}
+[bundle] PASS N7 (5 checks)
+[bundle] PASS L5x (8 checks)
+[bundle] PASS L7 (4 checks)
+[bundle] PASS W1 (4 checks)
+[bundle] PASS L6 (7 checks)
+[bundle] PASS L8 (4 checks)
+[bundle] PASS N9 (3 checks)
+[bundle] INFO N9-chrome-count {"sutradharCliChromeProcsBefore":19,"after":19,"note":"informational: other sessions on this machine may start/stop their own"}
+[bundle] PASS N10 (1 checks)
+[bundle] PASS N8 (6 checks)
+[bundle] PASS N15 (2 checks)
+[bundle] PASS PM (12 checks)
+[bundle] PASS PRIV-sweep (2 checks)
+
+[fr2-11] 47/47 cases (321/321 checks) {"mcp":{"cases":9,"casesPassed":9,"checks":72,"checksFailed":0},"cli":{"cases":14,"casesPassed":14,"checks":82,"checksFailed":0},"sdk":{"cases":2,"casesPassed":2,"checks":16,"checksFailed":0},"bundle":{"cases":22,"casesPassed":22,"checks":151,"checksFailed":0}}
+exit 0

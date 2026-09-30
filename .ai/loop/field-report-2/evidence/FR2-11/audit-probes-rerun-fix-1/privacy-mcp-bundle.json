@@ -1,0 +1,1887 @@
+{
+ "summary": {
+  "label": "mcp-bundle",
+  "sessionEntries": 29,
+  "tabEntries": 28,
+  "actionTypes": [
+   "navigate",
+   "type",
+   "type",
+   "type",
+   "type",
+   "select_option",
+   "select_option",
+   "set_clipboard",
+   "eval",
+   "eval",
+   "eval",
+   "click",
+   "wait_for",
+   "upload_file",
+   "upload_file",
+   "type",
+   "type_by_label",
+   "select_option",
+   "upload_file_via_trigger",
+   "download_file",
+   "click",
+   "click",
+   "navigate",
+   "go_back",
+   "go_forward",
+   "reload",
+   "navigate",
+   "navigate",
+   "type"
+  ],
+  "found": {
+   "tab": [
+    "CNRYlsthrown",
+    "CNRYevalcode",
+    "CNRYexptext",
+    "CNRYwaittext",
+    "CNRYupname",
+    "CNRYdlname"
+   ],
+   "session": [
+    "CNRYlsthrown",
+    "CNRYevalcode",
+    "CNRYexptext",
+    "CNRYwaittext",
+    "CNRYupname",
+    "CNRYdlname"
+   ]
+  },
+  "unexpectedLeaks": [],
+  "matrix": {
+   "CNRYuserpass": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYquery": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYfrag": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYcookie": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYlsval": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYssval": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYtype": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYmangle": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYMANGLE": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYfillA": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYfillB": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYselval": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYsellabel": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYselmissing": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYclip": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYevalurl": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYupdir": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYupmissdir": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYdldir": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYroutepat": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYmockbody": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYprompt": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYlinkq": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYq2": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYfrag2": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYnavfail": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYdataurl": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYnewtab": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYtab2type": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYtypemiss": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYbylabel": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYselmulti": {
+    "cls": "MUST-NOT",
+    "tab": false,
+    "session": false
+   },
+   "CNRYevalcode": {
+    "cls": "DOCUMENTED",
+    "tab": true,
+    "session": true
+   },
+   "CNRYexptext": {
+    "cls": "DOCUMENTED",
+    "tab": true,
+    "session": true
+   },
+   "CNRYwaittext": {
+    "cls": "DOCUMENTED",
+    "tab": true,
+    "session": true
+   },
+   "CNRYupname": {
+    "cls": "DOCUMENTED",
+    "tab": true,
+    "session": true
+   },
+   "CNRYlsthrown": {
+    "cls": "DOCUMENTED",
+    "tab": true,
+    "session": true
+   },
+   "CNRYdlname": {
+    "cls": "DOCUMENTED",
+    "tab": true,
+    "session": true
+   }
+  }
+ },
+ "steps": [
+  {
+   "name": "browser.launch",
+   "isError": false,
+   "text": "{\n  \"sessionId\": \"sess_1790791046302_1\",\n  \"activeTabId\": \"tab_sess_1790791046302_1_1\",\n  \"hasRealBrowser\": true\n}"
+  },
+  {
+   "name": "browser.navigate",
+   "isError": false,
+   "text": "{\n  \"tabId\": \"tab_sess_1790791046302_1_1\",\n  \"url\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag\",\n  \"title\": \"AUDIT /p\",\n  \"verification\": {\n    \"verified\": true,\n    \"urlChanged\": true,\n    \"elementFound\": true,\n    \"confidence\": 0.9,\n    \"reason\": \"'navigate' verified: a new document committed at http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag E"
+  },
+  {
+   "name": "browser.set_cookie",
+   "isError": false,
+   "text": "{\n  \"success\": true\n}"
+  },
+  {
+   "name": "browser.set_local_storage_item",
+   "isError": false,
+   "text": "{\n  \"success\": true\n}"
+  },
+  {
+   "name": "browser.set_local_storage_item",
+   "isError": false,
+   "text": "{\n  \"success\": true\n}"
+  },
+  {
+   "name": "browser.set_session_storage_item",
+   "isError": false,
+   "text": "{\n  \"success\": true\n}"
+  },
+  {
+   "name": "browser.type",
+   "isError": false,
+   "text": "{\n  \"success\": true,\n  \"actionType\": \"type\",\n  \"executionTimeMs\": 23,\n  \"currentUrl\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag\",\n  \"title\": \"AUDIT /p\",\n  \"output\": {\n    \"typedValue\": \"CNRYtype\"\n  },\n  \"retriesUsed\": 0,\n  \"verification\": {\n    \"verified\": true,\n    \"urlChanged\": false,\n    \"elementFound\": true,\n    \"confidence\": 0.9,\n    \"reason\": \"'type' has a built"
+  },
+  {
+   "name": "browser.type",
+   "isError": false,
+   "text": "{\n  \"success\": false,\n  \"actionType\": \"type\",\n  \"executionTimeMs\": 1574,\n  \"currentUrl\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag\",\n  \"title\": \"AUDIT /p\",\n  \"error\": \"type did not land the expected value — expected \\\"CNRYmangle\\\", but the element's real content reads \\\"M-elgnamYRNC\\\" even after a native-setter repair attempt. The page may be intercepting/resetting in"
+  },
+  {
+   "name": "browser.fill_form",
+   "isError": false,
+   "text": "{\n  \"#a\": {\n    \"success\": true,\n    \"actionType\": \"type\",\n    \"executionTimeMs\": 15,\n    \"currentUrl\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag\",\n    \"title\": \"AUDIT /p\",\n    \"output\": {\n      \"typedValue\": \"CNRYfillA\"\n    },\n    \"retriesUsed\": 0,\n    \"verification\": {\n      \"verified\": true,\n      \"urlChanged\": false,\n      \"elementFound\": true,\n      \"confidence\":"
+  },
+  {
+   "name": "browser.select_option",
+   "isError": false,
+   "text": "{\n  \"success\": true,\n  \"actionType\": \"select_option\",\n  \"executionTimeMs\": 4,\n  \"currentUrl\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag\",\n  \"title\": \"AUDIT /p\",\n  \"output\": {\n    \"selectedValues\": [\n      \"CNRYselval\"\n    ]\n  },\n  \"retriesUsed\": 0,\n  \"verification\": {\n    \"verified\": true,\n    \"urlChanged\": false,\n    \"elementFound\": true,\n    \"confidence\": 0.9,\n    \""
+  },
+  {
+   "name": "browser.select_option",
+   "isError": false,
+   "text": "{\n  \"success\": false,\n  \"actionType\": \"select_option\",\n  \"executionTimeMs\": 0,\n  \"error\": \"Duplicate 'select_option' on the same target within 1000ms — likely an accidental double-dispatch (e.g. a submit button clicked twice). If this is intentional, wait a moment and retry.\",\n  \"retriesUsed\": 0,\n  \"verification\": {\n    \"verified\": false,\n    \"urlChanged\": false,\n    \"elementFound\": false,\n    \"co"
+  },
+  {
+   "name": "browser.set_clipboard",
+   "isError": false,
+   "text": "{\n  \"success\": true,\n  \"actionType\": \"set_clipboard\",\n  \"executionTimeMs\": 6,\n  \"currentUrl\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag\",\n  \"output\": {\n    \"length\": 8\n  },\n  \"verification\": {\n    \"verified\": false,\n    \"urlChanged\": false,\n    \"elementFound\": false,\n    \"confidence\": 0.45,\n    \"reason\": \"'set_clipboard' completed, but no built-in post-condition check"
+  },
+  {
+   "name": "browser.get_clipboard",
+   "isError": false,
+   "text": "{\n  \"text\": \"\",\n  \"verification\": {\n    \"verified\": false,\n    \"urlChanged\": false,\n    \"elementFound\": false,\n    \"confidence\": 0.45,\n    \"reason\": \"'get_clipboard' completed, but no built-in post-condition check could run: the clipboard could not be read (permission not granted); the returned empty text is NOT the clipboard's content.\",\n    \"evidence\": {\n      \"tier\": \"unverifiable\",\n      \"chec"
+  },
+  {
+   "name": "browser.eval",
+   "isError": false,
+   "text": "{\n  \"result\": \"CNRYlsval|CNRYssval|c=CNRYcookie|CNRYtype\"\n}"
+  },
+  {
+   "name": "browser.eval",
+   "isError": true,
+   "text": "eval failed: E-CNRYlsthrown"
+  },
+  {
+   "name": "browser.eval",
+   "isError": false,
+   "text": "{\n  \"result\": 1\n}"
+  },
+  {
+   "name": "browser.click",
+   "isError": false,
+   "text": "{\n  \"success\": true,\n  \"actionType\": \"click\",\n  \"executionTimeMs\": 56,\n  \"currentUrl\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag\",\n  \"title\": \"AUDIT /p\",\n  \"output\": {\n    \"clickedSelector\": \"#btn\",\n    \"button\": \"left\"\n  },\n  \"retriesUsed\": 0,\n  \"verification\": {\n    \"verified\": false,\n    \"urlChanged\": false,\n    \"elementFound\": false,\n    \"confidence\": 0.0900000000"
+  },
+  {
+   "name": "browser.wait_for",
+   "isError": false,
+   "text": "{\n  \"success\": false,\n  \"actionType\": \"wait_for\",\n  \"executionTimeMs\": 1,\n  \"currentUrl\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag\",\n  \"title\": \"AUDIT /p\",\n  \"output\": {\n    \"conditions\": {\n      \"text\": \"CNRYwaittext\"\n    },\n    \"polls\": 1,\n    \"last\": {\n      \"text\": \"unmet\"\n    }\n  },\n  \"error\": \"wait_for timed out after 0ms waiting for text=\\\"CNRYwaittext\\\": text"
+  },
+  {
+   "name": "browser.upload_file",
+   "isError": false,
+   "text": "{\n  \"success\": true,\n  \"actionType\": \"upload_file\",\n  \"executionTimeMs\": 4,\n  \"currentUrl\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag\",\n  \"title\": \"AUDIT /p\",\n  \"output\": {\n    \"uploadedFilePath\": \"E:\\\\AI-Cache\\\\tmp\\\\fr211-audit-lUTB5r\\\\CNRYupdir\\\\CNRYupname.txt\",\n    \"uploadedFileName\": \"CNRYupname.txt\"\n  },\n  \"retriesUsed\": 0,\n  \"verification\": {\n    \"verified\": tru"
+  },
+  {
+   "name": "browser.upload_file",
+   "isError": false,
+   "text": "{\n  \"success\": false,\n  \"actionType\": \"upload_file\",\n  \"executionTimeMs\": 1516,\n  \"currentUrl\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag\",\n  \"title\": \"AUDIT /p\",\n  \"error\": \"Upload file \\\"E:\\\\AI-Cache\\\\tmp\\\\fr211-audit-lUTB5r\\\\CNRYupmissdir\\\\x.txt\\\" does not exist or is not accessible.\",\n  \"retriesUsed\": 2,\n  \"verification\": {\n    \"verified\": false,\n    \"urlChanged\":"
+  },
+  {
+   "name": "browser.type",
+   "isError": false,
+   "text": "{\n  \"success\": false,\n  \"actionType\": \"type\",\n  \"executionTimeMs\": 16537,\n  \"currentUrl\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag\",\n  \"title\": \"AUDIT /p\",\n  \"error\": \"No element found for selector: #nosuch\\nHint: Verify the selector/id via browser.snapshot — the page may have changed.\",\n  \"retriesUsed\": 2,\n  \"verification\": {\n    \"verified\": false,\n    \"urlChanged\":"
+  },
+  {
+   "name": "browser.type_by_label",
+   "isError": false,
+   "text": "{\n  \"success\": true,\n  \"actionType\": \"type_by_label\",\n  \"executionTimeMs\": 17,\n  \"currentUrl\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag\",\n  \"title\": \"AUDIT /p\",\n  \"output\": {\n    \"label\": \"A\",\n    \"value\": \"CNRYbylabel\"\n  },\n  \"retriesUsed\": 0,\n  \"verification\": {\n    \"verified\": true,\n    \"urlChanged\": false,\n    \"elementFound\": true,\n    \"confidence\": 0.9,\n    \"rea"
+  },
+  {
+   "name": "browser.select_options",
+   "isError": false,
+   "text": "{\n  \"success\": false,\n  \"actionType\": \"select_option\",\n  \"executionTimeMs\": 1534,\n  \"currentUrl\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag\",\n  \"title\": \"AUDIT /p\",\n  \"error\": \"select_option did not land the expected value(s) — expected [\\\"CNRYselmulti\\\"], but the element's real selected value(s) read back as [\\\"ok\\\"].\",\n  \"retriesUsed\": 2,\n  \"verification\": {\n    \"ve"
+  },
+  {
+   "name": "browser.upload_file_via_trigger",
+   "isError": false,
+   "text": "{\n  \"success\": true,\n  \"actionType\": \"upload_file_via_trigger\",\n  \"executionTimeMs\": 670,\n  \"currentUrl\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag\",\n  \"output\": {\n    \"filePath\": \"E:\\\\AI-Cache\\\\tmp\\\\fr211-audit-lUTB5r\\\\CNRYupdir\\\\CNRYupname.txt\",\n    \"fileName\": \"CNRYupname.txt\",\n    \"fileSizeBytes\": 5\n  },\n  \"verification\": {\n    \"verified\": false,\n    \"urlChanged\":"
+  },
+  {
+   "name": "browser.download_file",
+   "isError": false,
+   "text": "{\n  \"success\": true,\n  \"actionType\": \"download_file\",\n  \"executionTimeMs\": 219,\n  \"currentUrl\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag\",\n  \"title\": \"AUDIT /p\",\n  \"output\": {\n    \"downloadedFilename\": \"CNRYdlname.txt\",\n    \"downloadedPath\": \"E:\\\\AI-Cache\\\\tmp\\\\fr211-audit-lUTB5r\\\\CNRYdldir\\\\CNRYdlname.txt\",\n    \"downloadDir\": \"E:\\\\AI-Cache\\\\tmp\\\\fr211-audit-lUTB5r\\\\"
+  },
+  {
+   "name": "browser.route",
+   "isError": false,
+   "text": "{\n  \"success\": true\n}"
+  },
+  {
+   "name": "browser.click",
+   "isError": false,
+   "text": "{\n  \"success\": true,\n  \"actionType\": \"click\",\n  \"executionTimeMs\": 3060,\n  \"currentUrl\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p?token=CNRYquery&x=1#CNRYfrag\",\n  \"title\": \"AUDIT /p\",\n  \"output\": {\n    \"clickedSelector\": \"#prompt\",\n    \"button\": \"left\"\n  },\n  \"retriesUsed\": 0,\n  \"verification\": {\n    \"verified\": true,\n    \"urlChanged\": false,\n    \"elementFound\": true,\n    \"confidence\": 0.9,\n    "
+  },
+  {
+   "name": "browser.handle_dialog",
+   "isError": false,
+   "text": "{\n  \"success\": true\n}"
+  },
+  {
+   "name": "browser.click",
+   "isError": false,
+   "text": "{\n  \"success\": true,\n  \"actionType\": \"click\",\n  \"executionTimeMs\": 77,\n  \"currentUrl\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p2?token=CNRYlinkq\",\n  \"title\": \"AUDIT /p\",\n  \"output\": {\n    \"clickedSelector\": \"#p2\",\n    \"button\": \"left\"\n  },\n  \"retriesUsed\": 0,\n  \"verification\": {\n    \"verified\": true,\n    \"urlChanged\": true,\n    \"elementFound\": true,\n    \"confidence\": 0.9,\n    \"reason\": \"'click' "
+  },
+  {
+   "name": "browser.navigate",
+   "isError": false,
+   "text": "{\n  \"tabId\": \"tab_sess_1790791046302_1_1\",\n  \"url\": \"http://127.0.0.1:50478/p?token=CNRYq2#CNRYfrag2\",\n  \"title\": \"AUDIT /p\",\n  \"verification\": {\n    \"verified\": true,\n    \"urlChanged\": true,\n    \"elementFound\": true,\n    \"confidence\": 0.9,\n    \"reason\": \"'navigate' verified: a new document committed at http://127.0.0.1:50478/p?token=CNRYq2#CNRYfrag2\",\n    \"evidence\": {\n      \"tier\": \"verified\",\n "
+  },
+  {
+   "name": "browser.go_back",
+   "isError": false,
+   "text": "{\n  \"tabId\": \"tab_sess_1790791046302_1_1\",\n  \"url\": \"http://aud:CNRYuserpass@127.0.0.1:50478/p2?token=CNRYlinkq\",\n  \"title\": \"AUDIT /p2\",\n  \"verification\": {\n    \"verified\": true,\n    \"urlChanged\": true,\n    \"elementFound\": true,\n    \"confidence\": 0.9,\n    \"reason\": \"'go_back' verified: history moved from entry 3 to 2 (http://aud:CNRYuserpass@127.0.0.1:50478/p2?token=CNRYlinkq) (new document)\",\n  "
+  },
+  {
+   "name": "browser.go_forward",
+   "isError": false,
+   "text": "{\n  \"tabId\": \"tab_sess_1790791046302_1_1\",\n  \"url\": \"http://127.0.0.1:50478/p?token=CNRYq2#CNRYfrag2\",\n  \"title\": \"AUDIT /p\",\n  \"verification\": {\n    \"verified\": true,\n    \"urlChanged\": true,\n    \"elementFound\": true,\n    \"confidence\": 0.9,\n    \"reason\": \"'go_forward' verified: history moved from entry 2 to 3 (http://127.0.0.1:50478/p?token=CNRYq2#CNRYfrag2) (new document)\",\n    \"evidence\": {\n    "
+  },
+  {
+   "name": "browser.reload",
+   "isError": false,
+   "text": "{\n  \"tabId\": \"tab_sess_1790791046302_1_1\",\n  \"url\": \"http://127.0.0.1:50478/p?token=CNRYq2#CNRYfrag2\",\n  \"title\": \"AUDIT /p\",\n  \"verification\": {\n    \"verified\": true,\n    \"urlChanged\": false,\n    \"elementFound\": true,\n    \"confidence\": 0.9,\n    \"reason\": \"'reload' verified: a new document committed (loader changed)\",\n    \"evidence\": {\n      \"tier\": \"verified\",\n      \"checks\": [\n        {\n        "
+  },
+  {
+   "name": "browser.navigate",
+   "isError": true,
+   "text": "navigate failed: net::ERR_UNSAFE_PORT at http://127.0.0.1:1/x?token=CNRYnavfail"
+  },
+  {
+   "name": "browser.navigate",
+   "isError": false,
+   "text": "{\n  \"tabId\": \"tab_sess_1790791046302_1_1\",\n  \"url\": \"data:text/html,<title>CNRYdataurl</title>\",\n  \"title\": \"CNRYdataurl\",\n  \"verification\": {\n    \"verified\": false,\n    \"urlChanged\": true,\n    \"elementFound\": false,\n    \"confidence\": 0.45,\n    \"reason\": \"'navigate' completed, but no built-in post-condition check could run: the navigation baseline couldn't be captured (Protocol error (Page.getNavi"
+  },
+  {
+   "name": "browser.new_tab",
+   "isError": false,
+   "text": "{\n  \"id\": \"tab_sess_1790791046302_1_2\",\n  \"url\": \"http://127.0.0.1:50478/p?token=CNRYnewtab\",\n  \"title\": \"AUDIT /p\",\n  \"isActive\": false\n}"
+  },
+  {
+   "name": "browser.type",
+   "isError": false,
+   "text": "{\n  \"success\": true,\n  \"actionType\": \"type\",\n  \"executionTimeMs\": 22,\n  \"currentUrl\": \"http://127.0.0.1:50478/p?token=CNRYnewtab\",\n  \"title\": \"AUDIT /p\",\n  \"output\": {\n    \"typedValue\": \"CNRYtab2type\"\n  },\n  \"retriesUsed\": 0,\n  \"verification\": {\n    \"verified\": true,\n    \"urlChanged\": false,\n    \"elementFound\": true,\n    \"confidence\": 0.9,\n    \"reason\": \"'type' has a built-in post-condition check "
+  },
+  {
+   "name": "browser.close_tab",
+   "isError": false,
+   "text": "{\n  \"success\": true,\n  \"tabId\": \"tab_sess_1790791046302_1_2\"\n}"
+  },
+  {
+   "name": "browser.get_action_history",
+   "isError": false,
+   "text": "{\n  \"scope\": \"tab\",\n  \"tabId\": \"tab_sess_1790791046302_1_1\",\n  \"entries\": [\n    {\n      \"actionType\": \"navigate\",\n      \"success\": true,\n      \"executionTimeMs\": 125,\n      \"timestamp\": \"2026-09-30T17:57:26.670Z\",\n      \"target\": \"http://127.0.0.1:50478/p\",\n      \"url\": \"http://127.0.0.1:50478/p\",\n      \"verification\": {\n        \"verified\": true,\n        \"urlChanged\": true,\n        \"elementFound\":"
+  },
+  {
+   "name": "browser.get_action_history",
+   "isError": false,
+   "text": "{\n  \"scope\": \"session\",\n  \"entries\": [\n    {\n      \"actionType\": \"navigate\",\n      \"success\": true,\n      \"executionTimeMs\": 125,\n      \"timestamp\": \"2026-09-30T17:57:26.670Z\",\n      \"target\": \"http://127.0.0.1:50478/p\",\n      \"url\": \"http://127.0.0.1:50478/p\",\n      \"verification\": {\n        \"verified\": true,\n        \"urlChanged\": true,\n        \"elementFound\": true,\n        \"confidence\": 0.9,\n   "
+  }
+ ],
+ "sessionHistory": {
+  "scope": "session",
+  "entries": [
+   {
+    "actionType": "navigate",
+    "success": true,
+    "executionTimeMs": 125,
+    "timestamp": "2026-09-30T17:57:26.670Z",
+    "target": "http://127.0.0.1:50478/p",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": true,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'navigate' verified: a new document committed at http://127.0.0.1:50478/p[redacted]",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "navigate.document",
+        "outcome": "pass",
+        "expected": "new-document or url change",
+        "observed": "new-document",
+        "detail": "a new document committed at http://127.0.0.1:50478/p[redacted]"
+       },
+       {
+        "check": "navigate.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       },
+       {
+        "check": "expect.url",
+        "outcome": "pass",
+        "expected": "/p",
+        "observed": "http://127.0.0.1:50478/p[redacted]"
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 1
+   },
+   {
+    "actionType": "type",
+    "selector": "#pw",
+    "success": true,
+    "executionTimeMs": 23,
+    "timestamp": "2026-09-30T17:57:26.702Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "type.built-in",
+        "outcome": "pass",
+        "detail": "the typed value was read back from the element inside the action"
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 2
+   },
+   {
+    "actionType": "type",
+    "selector": "#mangle",
+    "success": false,
+    "error": "type did not land the expected value (the typed text and the field content are not recorded)",
+    "executionTimeMs": 1574,
+    "timestamp": "2026-09-30T17:57:28.324Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0,
+     "reason": "Action failed: type did not land the expected value (the typed text and the field content are not recorded)",
+     "evidence": {
+      "tier": "action-failed",
+      "checks": []
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 3
+   },
+   {
+    "actionType": "type",
+    "selector": "#a",
+    "success": true,
+    "executionTimeMs": 15,
+    "timestamp": "2026-09-30T17:57:28.341Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "type.built-in",
+        "outcome": "pass",
+        "detail": "the typed value was read back from the element inside the action"
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 4
+   },
+   {
+    "actionType": "type",
+    "selector": "#b",
+    "success": true,
+    "executionTimeMs": 18,
+    "timestamp": "2026-09-30T17:57:28.360Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "type.built-in",
+        "outcome": "pass",
+        "detail": "the typed value was read back from the element inside the action"
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 5
+   },
+   {
+    "actionType": "select_option",
+    "selector": "#sel",
+    "success": true,
+    "executionTimeMs": 4,
+    "timestamp": "2026-09-30T17:57:28.365Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'select_option' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "select_option.built-in",
+        "outcome": "pass",
+        "detail": "the selected value(s) were read back inside the action"
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 6
+   },
+   {
+    "actionType": "select_option",
+    "selector": "#sel",
+    "success": false,
+    "error": "Duplicate 'select_option' on the same target within 1000ms — likely an accidental double-dispatch (e.g. a submit button clicked twice). If this is intentional, wait a moment and retry.",
+    "executionTimeMs": 0,
+    "timestamp": "2026-09-30T17:57:28.366Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0,
+     "reason": "Action failed: Duplicate 'select_option' on the same target within 1000ms — likely an accidental double-dispatch (e.g. a submit button clicked twice). If this is intentional, wait a moment and retry.",
+     "evidence": {
+      "tier": "action-failed",
+      "checks": []
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 7
+   },
+   {
+    "actionType": "set_clipboard",
+    "success": true,
+    "executionTimeMs": 6,
+    "timestamp": "2026-09-30T17:57:28.372Z",
+    "target": "<8 chars>",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0.45,
+     "reason": "'set_clipboard' completed, but no built-in post-condition check could run: the clipboard couldn't be read back (the clipboard-read permission isn't granted for this origin; grant it with browser.grant_permissions to get a verified result). The write itself may have succeeded.",
+     "evidence": {
+      "tier": "unverifiable",
+      "checks": [
+       {
+        "check": "set_clipboard.read-back",
+        "outcome": "not-run",
+        "expected": 8,
+        "observed": "blocked",
+        "detail": "clipboard-read permission not granted"
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 8
+   },
+   {
+    "actionType": "eval",
+    "success": true,
+    "executionTimeMs": 1,
+    "timestamp": "2026-09-30T17:57:28.376Z",
+    "target": "localStorage.getItem('k') + '|' + sessionStorage.getItem('s') + '|' + document.cookie + '|' + document.getElementById('pw').value",
+    "url": "http://127.0.0.1:50478/p",
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 9
+   },
+   {
+    "actionType": "eval",
+    "success": false,
+    "error": "E-CNRYlsthrown",
+    "executionTimeMs": 1,
+    "timestamp": "2026-09-30T17:57:28.377Z",
+    "target": "throw new Error('E-' + localStorage.getItem('k2'))",
+    "url": "http://127.0.0.1:50478/p",
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 10
+   },
+   {
+    "actionType": "eval",
+    "success": true,
+    "executionTimeMs": 1,
+    "timestamp": "2026-09-30T17:57:28.378Z",
+    "target": "/* CNRYevalcode */ fetch('http://127.0.0.1:1/x[redacted]",
+    "url": "http://127.0.0.1:50478/p",
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 11
+   },
+   {
+    "actionType": "click",
+    "selector": "#btn",
+    "success": true,
+    "executionTimeMs": 56,
+    "timestamp": "2026-09-30T17:57:28.437Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0.09000000000000001,
+     "reason": "Expected text \"CNRYexptext\" was not found in the page's visible text after the action",
+     "evidence": {
+      "tier": "contradicted",
+      "checks": [
+       {
+        "check": "click.built-in",
+        "outcome": "pass",
+        "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+       },
+       {
+        "check": "expect.text",
+        "outcome": "fail",
+        "expected": "CNRYexptext",
+        "observed": "not-found"
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 12
+   },
+   {
+    "actionType": "wait_for",
+    "selector": "text=\"CNRYwaittext\"",
+    "success": false,
+    "error": "wait_for timed out after 0ms waiting for text=\"CNRYwaittext\": text \"CNRYwaittext\" was not found in the visible text of 1 frame(s).",
+    "executionTimeMs": 1,
+    "timestamp": "2026-09-30T17:57:28.439Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0,
+     "reason": "Action failed: wait_for timed out after 0ms waiting for text=\"CNRYwaittext\": text \"CNRYwaittext\" was not found in the visible text of 1 frame(s).",
+     "evidence": {
+      "tier": "action-failed",
+      "checks": []
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 13
+   },
+   {
+    "actionType": "upload_file",
+    "selector": "#file",
+    "success": true,
+    "executionTimeMs": 4,
+    "timestamp": "2026-09-30T17:57:28.444Z",
+    "target": "CNRYupname.txt",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'upload_file' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "upload_file.built-in",
+        "outcome": "pass",
+        "detail": "the input's files list was read back inside the action"
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 14
+   },
+   {
+    "actionType": "upload_file",
+    "selector": "#file",
+    "success": false,
+    "error": "Upload file \"x.txt\" does not exist or is not accessible.",
+    "executionTimeMs": 1516,
+    "timestamp": "2026-09-30T17:57:31.174Z",
+    "target": "x.txt",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0,
+     "reason": "Action failed: Upload file \"x.txt\" does not exist or is not accessible.",
+     "evidence": {
+      "tier": "action-failed",
+      "checks": []
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 15
+   },
+   {
+    "actionType": "type",
+    "selector": "#nosuch",
+    "success": false,
+    "error": "No element found for selector: #nosuch",
+    "executionTimeMs": 16537,
+    "timestamp": "2026-09-30T17:57:47.740Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0,
+     "reason": "Action failed: No element found for selector: #nosuch",
+     "evidence": {
+      "tier": "action-failed",
+      "checks": []
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 16
+   },
+   {
+    "actionType": "type_by_label",
+    "success": true,
+    "executionTimeMs": 17,
+    "timestamp": "2026-09-30T17:57:47.758Z",
+    "target": "A",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'type_by_label' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "type_by_label.built-in",
+        "outcome": "pass",
+        "detail": "the typed value was read back from the element inside the action"
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 17
+   },
+   {
+    "actionType": "select_option",
+    "selector": "#sel",
+    "success": false,
+    "error": "select_option did not land the expected value(s) — expected [<value>], but the element's real selected value(s) read back as [\"ok\"].",
+    "executionTimeMs": 1534,
+    "timestamp": "2026-09-30T17:57:49.323Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0,
+     "reason": "Action failed: select_option did not land the expected value(s) — expected [<value>], but the element's real selected value(s) read back as [\"ok\"].",
+     "evidence": {
+      "tier": "action-failed",
+      "checks": []
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 18
+   },
+   {
+    "actionType": "upload_file_via_trigger",
+    "selector": "#trig",
+    "success": true,
+    "executionTimeMs": 670,
+    "timestamp": "2026-09-30T17:57:49.994Z",
+    "target": "CNRYupname.txt",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0.45,
+     "reason": "'upload_file_via_trigger' completed, but no built-in post-condition check could run: input#file already held a file named \"CNRYupname.txt\" before this upload and no change event fired, so the new upload can't be told apart. Pass expect:{text|url|urlChanged} to assert the effect you intended.",
+     "evidence": {
+      "tier": "unverifiable",
+      "checks": [
+       {
+        "check": "upload_file_via_trigger.files-read-back",
+        "outcome": "not-run",
+        "expected": "CNRYupname.txt (5 B)",
+        "observed": "already-held",
+        "detail": "input#file already held a file named \"CNRYupname.txt\" before this upload and no change event fired, so the new upload can't be told apart"
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 19
+   },
+   {
+    "actionType": "download_file",
+    "selector": "#dl",
+    "success": true,
+    "executionTimeMs": 219,
+    "timestamp": "2026-09-30T17:57:50.214Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'download_file' verified: 100 bytes written to CNRYdlname.txt during this action",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "download_file.file-on-disk",
+        "outcome": "pass",
+        "expected": ">0 bytes, written during this action",
+        "observed": "100 bytes",
+        "detail": "100 bytes written to CNRYdlname.txt during this action"
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 20
+   },
+   {
+    "actionType": "click",
+    "selector": "#prompt",
+    "success": true,
+    "executionTimeMs": 3060,
+    "timestamp": "2026-09-30T17:57:53.277Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "click.built-in",
+        "outcome": "pass",
+        "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 21
+   },
+   {
+    "actionType": "click",
+    "selector": "#p2",
+    "success": true,
+    "executionTimeMs": 77,
+    "timestamp": "2026-09-30T17:57:53.665Z",
+    "url": "http://127.0.0.1:50478/p2",
+    "verification": {
+     "verified": true,
+     "urlChanged": true,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "click.built-in",
+        "outcome": "pass",
+        "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 22
+   },
+   {
+    "actionType": "navigate",
+    "success": true,
+    "executionTimeMs": 16,
+    "timestamp": "2026-09-30T17:57:53.682Z",
+    "target": "http://127.0.0.1:50478/p",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": true,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'navigate' verified: a new document committed at http://127.0.0.1:50478/p[redacted]",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "navigate.document",
+        "outcome": "pass",
+        "expected": "new-document or url change",
+        "observed": "new-document",
+        "detail": "a new document committed at http://127.0.0.1:50478/p[redacted]"
+       },
+       {
+        "check": "navigate.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 23
+   },
+   {
+    "actionType": "go_back",
+    "success": true,
+    "executionTimeMs": 9,
+    "timestamp": "2026-09-30T17:57:53.691Z",
+    "url": "http://127.0.0.1:50478/p2",
+    "verification": {
+     "verified": true,
+     "urlChanged": true,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'go_back' verified: history moved from entry 3 to 2 (http://127.0.0.1:50478/p2[redacted]",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "go_back.document",
+        "outcome": "pass",
+        "observed": "new-document"
+       },
+       {
+        "check": "go_back.history-index",
+        "outcome": "pass",
+        "expected": 2,
+        "observed": 2
+       },
+       {
+        "check": "go_back.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 24
+   },
+   {
+    "actionType": "go_forward",
+    "success": true,
+    "executionTimeMs": 12,
+    "timestamp": "2026-09-30T17:57:53.704Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": true,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'go_forward' verified: history moved from entry 2 to 3 (http://127.0.0.1:50478/p[redacted]",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "go_forward.document",
+        "outcome": "pass",
+        "observed": "new-document"
+       },
+       {
+        "check": "go_forward.history-index",
+        "outcome": "pass",
+        "expected": 3,
+        "observed": 3
+       },
+       {
+        "check": "go_forward.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 25
+   },
+   {
+    "actionType": "reload",
+    "success": true,
+    "executionTimeMs": 18,
+    "timestamp": "2026-09-30T17:57:53.723Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'reload' verified: a new document committed (loader changed)",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "reload.document",
+        "outcome": "pass",
+        "expected": "new-document",
+        "observed": "new-document"
+       },
+       {
+        "check": "reload.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 26
+   },
+   {
+    "actionType": "navigate",
+    "success": false,
+    "error": "net::ERR_UNSAFE_PORT at http://127.0.0.1:1/x[redacted]",
+    "executionTimeMs": 10,
+    "timestamp": "2026-09-30T17:57:53.734Z",
+    "target": "http://127.0.0.1:1/x",
+    "url": "http://127.0.0.1:50478/p",
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 27
+   },
+   {
+    "actionType": "navigate",
+    "success": true,
+    "executionTimeMs": 37,
+    "timestamp": "2026-09-30T17:57:53.771Z",
+    "target": "data:…",
+    "url": "data:…",
+    "verification": {
+     "verified": false,
+     "urlChanged": true,
+     "elementFound": false,
+     "confidence": 0.45,
+     "reason": "'navigate' completed, but no built-in post-condition check could run: the navigation baseline couldn't be captured (Protocol error (Page.getNavigationHistory): Not attached to an active page). Pass expect:{text|url|urlChanged} to assert the effect you intended.",
+     "evidence": {
+      "tier": "unverifiable",
+      "checks": [
+       {
+        "check": "navigate.document",
+        "outcome": "not-run",
+        "detail": "the navigation baseline couldn't be captured (Protocol error (Page.getNavigationHistory): Not attached to an active page)"
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_1",
+    "seq": 28
+   },
+   {
+    "actionType": "type",
+    "selector": "#pw",
+    "success": true,
+    "executionTimeMs": 22,
+    "timestamp": "2026-09-30T17:57:53.834Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "type.built-in",
+        "outcome": "pass",
+        "detail": "the typed value was read back from the element inside the action"
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790791046302_1_2",
+    "seq": 29
+   }
+  ],
+  "evicted": 0,
+  "capacity": 200
+ },
+ "tabHistory": {
+  "scope": "tab",
+  "tabId": "tab_sess_1790791046302_1_1",
+  "entries": [
+   {
+    "actionType": "navigate",
+    "success": true,
+    "executionTimeMs": 125,
+    "timestamp": "2026-09-30T17:57:26.670Z",
+    "target": "http://127.0.0.1:50478/p",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": true,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'navigate' verified: a new document committed at http://127.0.0.1:50478/p[redacted]",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "navigate.document",
+        "outcome": "pass",
+        "expected": "new-document or url change",
+        "observed": "new-document",
+        "detail": "a new document committed at http://127.0.0.1:50478/p[redacted]"
+       },
+       {
+        "check": "navigate.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       },
+       {
+        "check": "expect.url",
+        "outcome": "pass",
+        "expected": "/p",
+        "observed": "http://127.0.0.1:50478/p[redacted]"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "type",
+    "selector": "#pw",
+    "success": true,
+    "executionTimeMs": 23,
+    "timestamp": "2026-09-30T17:57:26.702Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "type.built-in",
+        "outcome": "pass",
+        "detail": "the typed value was read back from the element inside the action"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "type",
+    "selector": "#mangle",
+    "success": false,
+    "error": "type did not land the expected value (the typed text and the field content are not recorded)",
+    "executionTimeMs": 1574,
+    "timestamp": "2026-09-30T17:57:28.324Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0,
+     "reason": "Action failed: type did not land the expected value (the typed text and the field content are not recorded)",
+     "evidence": {
+      "tier": "action-failed",
+      "checks": []
+     }
+    }
+   },
+   {
+    "actionType": "type",
+    "selector": "#a",
+    "success": true,
+    "executionTimeMs": 15,
+    "timestamp": "2026-09-30T17:57:28.341Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "type.built-in",
+        "outcome": "pass",
+        "detail": "the typed value was read back from the element inside the action"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "type",
+    "selector": "#b",
+    "success": true,
+    "executionTimeMs": 18,
+    "timestamp": "2026-09-30T17:57:28.360Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "type.built-in",
+        "outcome": "pass",
+        "detail": "the typed value was read back from the element inside the action"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "select_option",
+    "selector": "#sel",
+    "success": true,
+    "executionTimeMs": 4,
+    "timestamp": "2026-09-30T17:57:28.365Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'select_option' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "select_option.built-in",
+        "outcome": "pass",
+        "detail": "the selected value(s) were read back inside the action"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "select_option",
+    "selector": "#sel",
+    "success": false,
+    "error": "Duplicate 'select_option' on the same target within 1000ms — likely an accidental double-dispatch (e.g. a submit button clicked twice). If this is intentional, wait a moment and retry.",
+    "executionTimeMs": 0,
+    "timestamp": "2026-09-30T17:57:28.366Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0,
+     "reason": "Action failed: Duplicate 'select_option' on the same target within 1000ms — likely an accidental double-dispatch (e.g. a submit button clicked twice). If this is intentional, wait a moment and retry.",
+     "evidence": {
+      "tier": "action-failed",
+      "checks": []
+     }
+    }
+   },
+   {
+    "actionType": "set_clipboard",
+    "success": true,
+    "executionTimeMs": 6,
+    "timestamp": "2026-09-30T17:57:28.372Z",
+    "target": "<8 chars>",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0.45,
+     "reason": "'set_clipboard' completed, but no built-in post-condition check could run: the clipboard couldn't be read back (the clipboard-read permission isn't granted for this origin; grant it with browser.grant_permissions to get a verified result). The write itself may have succeeded.",
+     "evidence": {
+      "tier": "unverifiable",
+      "checks": [
+       {
+        "check": "set_clipboard.read-back",
+        "outcome": "not-run",
+        "expected": 8,
+        "observed": "blocked",
+        "detail": "clipboard-read permission not granted"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "eval",
+    "success": true,
+    "executionTimeMs": 1,
+    "timestamp": "2026-09-30T17:57:28.376Z",
+    "target": "localStorage.getItem('k') + '|' + sessionStorage.getItem('s') + '|' + document.cookie + '|' + document.getElementById('pw').value",
+    "url": "http://127.0.0.1:50478/p"
+   },
+   {
+    "actionType": "eval",
+    "success": false,
+    "error": "E-CNRYlsthrown",
+    "executionTimeMs": 1,
+    "timestamp": "2026-09-30T17:57:28.377Z",
+    "target": "throw new Error('E-' + localStorage.getItem('k2'))",
+    "url": "http://127.0.0.1:50478/p"
+   },
+   {
+    "actionType": "eval",
+    "success": true,
+    "executionTimeMs": 1,
+    "timestamp": "2026-09-30T17:57:28.378Z",
+    "target": "/* CNRYevalcode */ fetch('http://127.0.0.1:1/x[redacted]",
+    "url": "http://127.0.0.1:50478/p"
+   },
+   {
+    "actionType": "click",
+    "selector": "#btn",
+    "success": true,
+    "executionTimeMs": 56,
+    "timestamp": "2026-09-30T17:57:28.437Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0.09000000000000001,
+     "reason": "Expected text \"CNRYexptext\" was not found in the page's visible text after the action",
+     "evidence": {
+      "tier": "contradicted",
+      "checks": [
+       {
+        "check": "click.built-in",
+        "outcome": "pass",
+        "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+       },
+       {
+        "check": "expect.text",
+        "outcome": "fail",
+        "expected": "CNRYexptext",
+        "observed": "not-found"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "wait_for",
+    "selector": "text=\"CNRYwaittext\"",
+    "success": false,
+    "error": "wait_for timed out after 0ms waiting for text=\"CNRYwaittext\": text \"CNRYwaittext\" was not found in the visible text of 1 frame(s).",
+    "executionTimeMs": 1,
+    "timestamp": "2026-09-30T17:57:28.439Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0,
+     "reason": "Action failed: wait_for timed out after 0ms waiting for text=\"CNRYwaittext\": text \"CNRYwaittext\" was not found in the visible text of 1 frame(s).",
+     "evidence": {
+      "tier": "action-failed",
+      "checks": []
+     }
+    }
+   },
+   {
+    "actionType": "upload_file",
+    "selector": "#file",
+    "success": true,
+    "executionTimeMs": 4,
+    "timestamp": "2026-09-30T17:57:28.444Z",
+    "target": "CNRYupname.txt",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'upload_file' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "upload_file.built-in",
+        "outcome": "pass",
+        "detail": "the input's files list was read back inside the action"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "upload_file",
+    "selector": "#file",
+    "success": false,
+    "error": "Upload file \"x.txt\" does not exist or is not accessible.",
+    "executionTimeMs": 1516,
+    "timestamp": "2026-09-30T17:57:31.174Z",
+    "target": "x.txt",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0,
+     "reason": "Action failed: Upload file \"x.txt\" does not exist or is not accessible.",
+     "evidence": {
+      "tier": "action-failed",
+      "checks": []
+     }
+    }
+   },
+   {
+    "actionType": "type",
+    "selector": "#nosuch",
+    "success": false,
+    "error": "No element found for selector: #nosuch",
+    "executionTimeMs": 16537,
+    "timestamp": "2026-09-30T17:57:47.740Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0,
+     "reason": "Action failed: No element found for selector: #nosuch",
+     "evidence": {
+      "tier": "action-failed",
+      "checks": []
+     }
+    }
+   },
+   {
+    "actionType": "type_by_label",
+    "success": true,
+    "executionTimeMs": 17,
+    "timestamp": "2026-09-30T17:57:47.758Z",
+    "target": "A",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'type_by_label' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "type_by_label.built-in",
+        "outcome": "pass",
+        "detail": "the typed value was read back from the element inside the action"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "select_option",
+    "selector": "#sel",
+    "success": false,
+    "error": "select_option did not land the expected value(s) — expected [<value>], but the element's real selected value(s) read back as [\"ok\"].",
+    "executionTimeMs": 1534,
+    "timestamp": "2026-09-30T17:57:49.323Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0,
+     "reason": "Action failed: select_option did not land the expected value(s) — expected [<value>], but the element's real selected value(s) read back as [\"ok\"].",
+     "evidence": {
+      "tier": "action-failed",
+      "checks": []
+     }
+    }
+   },
+   {
+    "actionType": "upload_file_via_trigger",
+    "selector": "#trig",
+    "success": true,
+    "executionTimeMs": 670,
+    "timestamp": "2026-09-30T17:57:49.994Z",
+    "target": "CNRYupname.txt",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0.45,
+     "reason": "'upload_file_via_trigger' completed, but no built-in post-condition check could run: input#file already held a file named \"CNRYupname.txt\" before this upload and no change event fired, so the new upload can't be told apart. Pass expect:{text|url|urlChanged} to assert the effect you intended.",
+     "evidence": {
+      "tier": "unverifiable",
+      "checks": [
+       {
+        "check": "upload_file_via_trigger.files-read-back",
+        "outcome": "not-run",
+        "expected": "CNRYupname.txt (5 B)",
+        "observed": "already-held",
+        "detail": "input#file already held a file named \"CNRYupname.txt\" before this upload and no change event fired, so the new upload can't be told apart"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "download_file",
+    "selector": "#dl",
+    "success": true,
+    "executionTimeMs": 219,
+    "timestamp": "2026-09-30T17:57:50.214Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'download_file' verified: 100 bytes written to CNRYdlname.txt during this action",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "download_file.file-on-disk",
+        "outcome": "pass",
+        "expected": ">0 bytes, written during this action",
+        "observed": "100 bytes",
+        "detail": "100 bytes written to CNRYdlname.txt during this action"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "click",
+    "selector": "#prompt",
+    "success": true,
+    "executionTimeMs": 3060,
+    "timestamp": "2026-09-30T17:57:53.277Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "click.built-in",
+        "outcome": "pass",
+        "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "click",
+    "selector": "#p2",
+    "success": true,
+    "executionTimeMs": 77,
+    "timestamp": "2026-09-30T17:57:53.665Z",
+    "url": "http://127.0.0.1:50478/p2",
+    "verification": {
+     "verified": true,
+     "urlChanged": true,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "click.built-in",
+        "outcome": "pass",
+        "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "navigate",
+    "success": true,
+    "executionTimeMs": 16,
+    "timestamp": "2026-09-30T17:57:53.682Z",
+    "target": "http://127.0.0.1:50478/p",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": true,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'navigate' verified: a new document committed at http://127.0.0.1:50478/p[redacted]",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "navigate.document",
+        "outcome": "pass",
+        "expected": "new-document or url change",
+        "observed": "new-document",
+        "detail": "a new document committed at http://127.0.0.1:50478/p[redacted]"
+       },
+       {
+        "check": "navigate.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "go_back",
+    "success": true,
+    "executionTimeMs": 9,
+    "timestamp": "2026-09-30T17:57:53.691Z",
+    "url": "http://127.0.0.1:50478/p2",
+    "verification": {
+     "verified": true,
+     "urlChanged": true,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'go_back' verified: history moved from entry 3 to 2 (http://127.0.0.1:50478/p2[redacted]",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "go_back.document",
+        "outcome": "pass",
+        "observed": "new-document"
+       },
+       {
+        "check": "go_back.history-index",
+        "outcome": "pass",
+        "expected": 2,
+        "observed": 2
+       },
+       {
+        "check": "go_back.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "go_forward",
+    "success": true,
+    "executionTimeMs": 12,
+    "timestamp": "2026-09-30T17:57:53.704Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": true,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'go_forward' verified: history moved from entry 2 to 3 (http://127.0.0.1:50478/p[redacted]",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "go_forward.document",
+        "outcome": "pass",
+        "observed": "new-document"
+       },
+       {
+        "check": "go_forward.history-index",
+        "outcome": "pass",
+        "expected": 3,
+        "observed": 3
+       },
+       {
+        "check": "go_forward.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "reload",
+    "success": true,
+    "executionTimeMs": 18,
+    "timestamp": "2026-09-30T17:57:53.723Z",
+    "url": "http://127.0.0.1:50478/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'reload' verified: a new document committed (loader changed)",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "reload.document",
+        "outcome": "pass",
+        "expected": "new-document",
+        "observed": "new-document"
+       },
+       {
+        "check": "reload.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    }
+   },
+   {
+    "actionType": "navigate",
+    "success": false,
+    "error": "net::ERR_UNSAFE_PORT at http://127.0.0.1:1/x[redacted]",
+    "executionTimeMs": 10,
+    "timestamp": "2026-09-30T17:57:53.734Z",
+    "target": "http://127.0.0.1:1/x",
+    "url": "http://127.0.0.1:50478/p"
+   },
+   {
+    "actionType": "navigate",
+    "success": true,
+    "executionTimeMs": 37,
+    "timestamp": "2026-09-30T17:57:53.771Z",
+    "target": "data:…",
+    "url": "data:…",
+    "verification": {
+     "verified": false,
+     "urlChanged": true,
+     "elementFound": false,
+     "confidence": 0.45,
+     "reason": "'navigate' completed, but no built-in post-condition check could run: the navigation baseline couldn't be captured (Protocol error (Page.getNavigationHistory): Not attached to an active page). Pass expect:{text|url|urlChanged} to assert the effect you intended.",
+     "evidence": {
+      "tier": "unverifiable",
+      "checks": [
+       {
+        "check": "navigate.document",
+        "outcome": "not-run",
+        "detail": "the navigation baseline couldn't be captured (Protocol error (Page.getNavigationHistory): Not attached to an active page)"
+       }
+      ]
+     }
+    }
+   }
+  ],
+  "evicted": 0,
+  "capacity": 200
+ }
+}

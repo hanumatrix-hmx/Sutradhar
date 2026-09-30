@@ -1,0 +1,20 @@
+== gaps: highest number and the new rows
+GAP-362
+10
+== ledger row
+| FR2-11 | Full action history | 3 | **VERIFY (fix-1)** (audit-1 REOPEN 2026-09-30: privacy F1-F3 major, F4-F6 minor; fixed 2026-10-01 with ONE fail-closed redaction function for MCP / SDK / CLI, a generated 1,600-cell p
+== decisions.md title
+4067:## 2026-10-01 -- FR2-11 fix-1 (audit-1 REOPEN: privacy F1-F3 major, F4-F6 minor): one fail-closed redaction function; awaiting independent re-audit
+== docs: stale claims (none expected outside frozen spec/run-1 history)
+(end of grep)
+== docs: the rule sentence is present where users read it
+AGENT_SETUP.md:1
+packages/cli/README.md:1
+packages/mcp-server/README.md:1
+docs/22-changelog.md:1
+packages/cli/src/cli.ts:1
+packages/mcp-server/src/tools.ts:1
+== CLI --help text shipped in the BUILT artifact
+117:                                is replaced by [redacted] (query/fragment, userinfo, scheme-less hosts
+118:                                included) and local file paths are stored as a basename. Never starts a browser.
+1

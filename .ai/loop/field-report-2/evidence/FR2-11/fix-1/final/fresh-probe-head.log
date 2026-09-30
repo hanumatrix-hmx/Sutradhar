@@ -1,0 +1,23 @@
+PASS negative control: the OLD regex leaves a canary in all 4 audit shapes (so this probe can see the bug)
+PASS MCP: 6 navigations recorded and every target is origin + path only
+PASS MCP session view: no canary at all (queries with ( [ { ', userinfo, ;param, fragment, eval error with URL + Windows + POSIX paths, upload, download)
+PASS MCP default tab view: no canary at all
+PASS MCP: the tool RESULTS did contain the secrets (the history is what is redacted): eval error text quotes the canary
+PASS MCP: upload ok, missing upload failed, download ok (the path tools really ran)
+PASS MCP: the eval error entry keeps "see" text and the basenames only
+PASS CLI: one history line per command (9 commands incl. the env-rooted download)
+PASS CLI history.jsonl raw bytes: no canary (scheme-less URL args, paren/bracket queries, upload/download args and reasons, eval error with URL + Windows path)
+PASS CLI `sutradhar history` human output: no canary
+PASS CLI `sutradhar history --json` is byte-identical to the file and has no canary
+PASS CLI scheme-less nav arg is stored as host:port/path (display part kept)
+PASS CLI upload arg = basename, download dir arg = <dir>
+PASS the CLI path verbs really ran (upload 0, missing upload non-zero, env-rooted download 0)
+PASS CLI close exited 0 and history.jsonl survives it
+{"timestamp":"2026-09-30T18:43:01.886Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-09-30T18:43:02.085Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790793781886_1","context":{"isIncognito":false}}
+PASS SDK report (session + tab): no canary; targets are origin + path
+{"timestamp":"2026-09-30T18:43:02.362Z","level":"info","message":"[BrowserSession] Closed session sess_1790793781886_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-09-30T18:43:02.362Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790793781886_1","context":{"reason":"Runtime shutdown"}}
+
+[fresh-probe head] 16/16 checks passed
+exit 0

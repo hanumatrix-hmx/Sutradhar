@@ -1,0 +1,371 @@
+{
+  "ranAt": "2026-09-30T17:22:50.487Z",
+  "total": 12,
+  "caught": 9,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MF1",
+      "what": "the OLD character-class URL regex restored (stops at ( ) [ ] { } and the apostrophe)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H3: redacts every URL token inside free text",
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H5 / N12: eval preview collapses whitespace, drops URL secrets, caps at 200",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > URL rule for navigate targets, preview rule for eval targets, generic redaction otherwise",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > post-FR2-07 verification: evidence observed/expected redacted, detail capped at 300, scalars pass through"
+        ],
+        "summary": "Tests  18 failed | 18 passed (36)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "PM",
+        "failedCases": [
+          "PM: [{\"check\":\"all 1360 cells accounted for: every batch of 40 evals produced exactly 40 new entries\",\"observed\":[{\"at\":400,\"fresh\":33,\"expected\":40},{\"at\":1240,\"fresh\":20,\"expected\":40},{\"at\":1280,\"fresh\":0,\"expected\":40},{\"at\":1320,\"fresh\":0,\"expected\":40}]},{\"check\":\"no canary in any of 1360 stored e",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 71 raw history responses\",\"observed\":[\"token=\",\"CNRYqueryparen73X\",\"token=\",\"CNRYqueryparen73X\",\"CNRYquerybracket74X\",\"CNRYquerybrace75X\",\"token=\",\"CNRYqueryparen73X\",\"CNRYquerybracket74X\",\"CNRYquerybrace75X\",\"CNRYqueryapostrophe76X\",\"CNRYquerydquote77X\",\"token=\",\"CNRY"
+        ],
+        "summaryLine": "[fr2-11] 0/2 cases (6/11 checks) {\"mcp\":{\"cases\":2,\"casesPassed\":0,\"checks\":11,\"checksFailed\":5},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MF2",
+      "what": "scheme-less hosts (127.0.0.1:P/p?x, example.com/p?x) no longer recognised as URLs",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > error: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > selector: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > target (non-navigate): no canary survives, for 1360 cells"
+        ],
+        "summary": "Tests  10 failed | 26 passed (36)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "cli",
+        "only": "PM",
+        "failedCases": [
+          "PM: [{\"check\":\"no canary anywhere in the raw history.jsonl bytes of 68 matrix commands + 26 navigations + scheme-less + paths\",\"observed\":[\"CNRYschemelessipquery101X\",\"CNRYschemelessipfragment102X\",\"CNRYschemelessipparen103X\",\"CNRYschemelessippathparam104X\",\"CNRYschemelessdomainquery105X\",\"CNRYschemeles"
+        ],
+        "summaryLine": "[fr2-11] 0/1 cases (8/11 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":1,\"casesPassed\":0,\"checks\":11,\"checksFailed\":3},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MF3",
+      "what": "userinfo (user:pass@) kept",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > error: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > selector: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > target (non-navigate): no canary survives, for 1360 cells"
+        ],
+        "summary": "Tests  13 failed | 23 passed (36)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "PM",
+        "failedCases": [
+          "PM: [{\"check\":\"no canary in any of 1360 stored entries (error, target, selector, verification)\",\"observed\":[{\"cell\":\"userinfo-pass|\\\"\\\"\\\"\\\"\",\"leaked\":[\"CNRYuserinfopass91X\"],\"entry\":\"{\\\"actionType\\\":\\\"eval\\\",\\\"success\\\":false,\\\"error\\\":\\\"http://user:CNRYuserinfopass91X@127.0.0.1:61913/p\\\",\\\"executionTim",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 71 raw history responses\",\"observed\":[\"CNRYuserinfopass91X\",\"CNRYuserinfopass91X\",\"CNRYuserinfouseronly92X\",\"CNRYuserinfonopath93X\",\"CNRYuserinfopass91X\",\"CNRYuserinfouseronly92X\",\"CNRYuserinfonopath93X\",\"CNRYuserinfoandquery94X\",\"CNRYuserinfoschemeless95X\",\"CNRYuserin"
+        ],
+        "summaryLine": "[fr2-11] 0/2 cases (8/11 checks) {\"mcp\":{\"cases\":2,\"casesPassed\":0,\"checks\":11,\"checksFailed\":3},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MF4",
+      "what": "absolute local paths kept (the path-to-basename branch disabled)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > error: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > selector: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > target (non-navigate): no canary survives, for 1360 cells"
+        ],
+        "summary": "Tests  13 failed | 23 passed (36)"
+      },
+      "live": {
+        "caught": false,
+        "buildFailed": true,
+        "out": "src/session/action-history.ts(250,58): error TS18048: 'url' is possibly 'undefined'.\r\n"
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": false
+    },
+    {
+      "id": "MF5",
+      "what": "the CLI uses its OWN naive redactor instead of the shared function",
+      "file": "packages/cli/src/history-file.ts",
+      "shaBefore": "e85a4bcd4fae86f4d1d4ea64a2038c26cc3b09c6417adee8f3d9d6252864af3a",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > nav: the text as arg 0, arg 1 and arg 2 never leaks (1360 cells x 3 positions)",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > newtab: the text as arg 0, arg 1 and arg 2 never leaks (1360 cells x 3 positions)",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > audit: the text as arg 0, arg 1 and arg 2 never leaks (1360 cells x 3 positions)",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > click: the text as arg 0, arg 1 and arg 2 never leaks (1360 cells x 3 positions)"
+        ],
+        "summary": "Tests  23 failed | 27 passed (50)"
+      },
+      "live": {
+        "caught": false,
+        "exit": 0,
+        "surface": "cli",
+        "only": "PM",
+        "failedCases": [],
+        "summaryLine": "[fr2-11] 1/1 cases (11/11 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":1,\"casesPassed\":1,\"checks\":11,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks"
+      },
+      "shaAfter": "e85a4bcd4fae86f4d1d4ea64a2038c26cc3b09c6417adee8f3d9d6252864af3a",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": false
+    },
+    {
+      "id": "MF6",
+      "what": "the fragment is kept (only ? and ; cut)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > error: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > selector: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > target (non-navigate): no canary survives, for 1360 cells"
+        ],
+        "summary": "Tests  10 failed | 26 passed (36)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "PM",
+        "failedCases": [
+          "PM: [{\"check\":\"no canary in any of 1360 stored entries (error, target, selector, verification)\",\"observed\":[{\"cell\":\"fragment-plain|\\\"\\\"\\\"\\\"\",\"leaked\":[\"CNRYfragmentplain87X\"],\"entry\":\"{\\\"actionType\\\":\\\"eval\\\",\\\"success\\\":false,\\\"error\\\":\\\"http://127.0.0.1:51532/p#CNRYfragmentplain87X\\\",\\\"executionTimeM",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 71 raw history responses\",\"observed\":[\"CNRYfragmentplain87X\",\"CNRYfragmentplain87X\",\"CNRYfragmentbrackets89X\",\"CNRYfragmentplain87X\",\"CNRYfragmentbrackets89X\",\"CNRYfragmentplain87X\",\"CNRYfragmentbrackets89X\",\"CNRYfragmentplain87X\",\"CNRYfragmentbrackets89X\",\"CNRYfragmen"
+        ],
+        "summaryLine": "[fr2-11] 0/2 cases (8/11 checks) {\"mcp\":{\"cases\":2,\"casesPassed\":0,\"checks\":11,\"checksFailed\":3},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MF7",
+      "what": "only the FIRST URL of a text is redacted",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H3: redacts every URL token inside free text",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > error: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > selector: no canary survives, for 1360 cells"
+        ],
+        "summary": "Tests  11 failed | 25 passed (36)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "PM",
+        "failedCases": [
+          "PM: [{\"check\":\"no canary in any of 1360 stored entries (error, target, selector, verification)\",\"observed\":[{\"cell\":\"multi-url-3|\\\"\\\"\\\"\\\"\",\"leaked\":[\"CNRYmultiB123X\",\"CNRYmultiC124X\"],\"entry\":\"{\\\"actionType\\\":\\\"eval\\\",\\\"success\\\":false,\\\"error\\\":\\\"http://127.0.0.1:61435/p[redacted] http://127.0.0.1:6143",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 71 raw history responses\",\"observed\":[\"CNRYmultiB123X\",\"CNRYmultiC124X\",\"CNRYmultiB123X\",\"CNRYmultiC124X\",\"CNRYmultiB123X\",\"CNRYmultiC124X\",\"CNRYmultiB123X\",\"CNRYmultiC124X\",\"CNRYmultiB123X\",\"CNRYmultiC124X\"]}]"
+        ],
+        "summaryLine": "[fr2-11] 0/2 cases (9/11 checks) {\"mcp\":{\"cases\":2,\"casesPassed\":0,\"checks\":11,\"checksFailed\":2},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MF8",
+      "what": "a bracket or apostrophe stops the scan (the rest of the token is copied raw)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H5 / N12: eval preview collapses whitespace, drops URL secrets, caps at 200",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > URL rule for navigate targets, preview rule for eval targets, generic redaction otherwise",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > error: no canary survives, for 1360 cells"
+        ],
+        "summary": "Tests  15 failed | 21 passed (36)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "PM",
+        "failedCases": [
+          "PM: [{\"check\":\"no canary in any of 1360 stored entries (error, target, selector, verification)\",\"observed\":[{\"cell\":\"query-paren|\\\"\\\"\\\"\\\"\",\"leaked\":[\"CNRYqueryparen73X\"],\"entry\":\"{\\\"actionType\\\":\\\"eval\\\",\\\"success\\\":false,\\\"error\\\":\\\"http://127.0.0.1:63897/p[redacted](a)&token=CNRYqueryparen73X\\\",\\\"exec",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 71 raw history responses\",\"observed\":[\"token=\",\"CNRYqueryparen73X\",\"token=\",\"CNRYqueryparen73X\",\"CNRYquerybracket74X\",\"CNRYquerybrace75X\",\"token=\",\"CNRYqueryparen73X\",\"CNRYquerybracket74X\",\"CNRYquerybrace75X\",\"CNRYqueryapostrophe76X\",\"token=\",\"CNRYqueryparen73X\",\"CNRYq"
+        ],
+        "summaryLine": "[fr2-11] 0/2 cases (8/11 checks) {\"mcp\":{\"cases\":2,\"casesPassed\":0,\"checks\":11,\"checksFailed\":3},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MF11",
+      "what": "eval code preview not redacted",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H5 / N12: eval preview collapses whitespace, drops URL secrets, caps at 200",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > URL rule for navigate targets, preview rule for eval targets, generic redaction otherwise",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > target (eval preview): no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > evalCodePreview redacts the same cells"
+        ],
+        "summary": "Tests  4 failed | 32 passed (36)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "PM",
+        "failedCases": [
+          "PM: [{\"check\":\"no canary in any of 1360 stored entries (error, target, selector, verification)\",\"observed\":[{\"cell\":\"query-plain|\\\"\\\"\\\"\\\"\",\"leaked\":[\"CNRYqueryplain72X\"],\"entry\":\"{\\\"actionType\\\":\\\"eval\\\",\\\"success\\\":false,\\\"error\\\":\\\"http://127.0.0.1:53371/p[redacted]\\\",\\\"executionTimeMs\\\":1,\\\"timestamp",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 71 raw history responses\",\"observed\":[\"?n=\",\"token=\",\"CNRYqueryplain72X\",\"CNRYqueryparen73X\",\"?n=\",\"token=\",\"CNRYqueryplain72X\",\"CNRYqueryparen73X\",\"CNRYquerybracket74X\",\"CNRYquerybrace75X\",\"?n=\",\"token=\",\"CNRYqueryplain72X\",\"CNRYqueryparen73X\",\"CNRYquerybracket74X\",\"C"
+        ],
+        "summaryLine": "[fr2-11] 0/2 cases (9/11 checks) {\"mcp\":{\"cases\":2,\"casesPassed\":0,\"checks\":11,\"checksFailed\":2},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MF12",
+      "what": "entry.error stored without the redaction",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > error: no canary survives, for 1360 cells"
+        ],
+        "summary": "Tests  1 failed | 35 passed (36)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "PM",
+        "failedCases": [
+          "PM: [{\"check\":\"no canary in any of 1360 stored entries (error, target, selector, verification)\",\"observed\":[{\"cell\":\"query-plain|\\\"\\\"\\\"\\\"\",\"leaked\":[\"CNRYqueryplain72X\"],\"entry\":\"{\\\"actionType\\\":\\\"eval\\\",\\\"success\\\":false,\\\"error\\\":\\\"http://127.0.0.1:57836/p?n=1&token=CNRYqueryplain72X\\\",\\\"executionTime",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 71 raw history responses\",\"observed\":[\"?n=\",\"token=\",\"CNRYqueryplain72X\",\"CNRYqueryparen73X\",\"?n=\",\"token=\",\"CNRYqueryplain72X\",\"CNRYqueryparen73X\",\"CNRYquerybracket74X\",\"CNRYquerybrace75X\",\"?n=\",\"token=\",\"CNRYqueryplain72X\",\"CNRYqueryparen73X\",\"CNRYquerybracket74X\",\"C"
+        ],
+        "summaryLine": "[fr2-11] 0/2 cases (7/11 checks) {\"mcp\":{\"cases\":2,\"casesPassed\":0,\"checks\":11,\"checksFailed\":4},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MF14",
+      "what": "CLI upload / screenshot / compare file args stored in full (basename rule removed)",
+      "file": "packages/cli/src/history-file.ts",
+      "shaBefore": "e85a4bcd4fae86f4d1d4ea64a2038c26cc3b09c6417adee8f3d9d6252864af3a",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > compare: the text as arg 0, arg 1 and arg 2 never leaks (1360 cells x 3 positions)",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > upload: the text as arg 0, arg 1 and arg 2 never leaks (1360 cells x 3 positions)",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > screenshot: the text as arg 0, arg 1 and arg 2 never leaks (1360 cells x 3 positions)",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > F3: upload / screenshot / compare file arguments are stored as a basename; download / audit directory arguments as <dir>"
+        ],
+        "summary": "Tests  4 failed | 46 passed (50)"
+      },
+      "live": {
+        "caught": false,
+        "buildFailed": true,
+        "out": "src/history-file.ts(27,3): error TS6133: 'basenameOfPath' is declared but its value is never read.\r\n"
+      },
+      "shaAfter": "e85a4bcd4fae86f4d1d4ea64a2038c26cc3b09c6417adee8f3d9d6252864af3a",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": false
+    },
+    {
+      "id": "MF14b",
+      "what": "CLI download / audit directory args stored in full (the <dir> rule removed)",
+      "file": "packages/cli/src/history-file.ts",
+      "shaBefore": "e85a4bcd4fae86f4d1d4ea64a2038c26cc3b09c6417adee8f3d9d6252864af3a",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > audit: the text as arg 0, arg 1 and arg 2 never leaks (1360 cells x 3 positions)",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > download: the text as arg 0, arg 1 and arg 2 never leaks (1360 cells x 3 positions)",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > F3: upload / screenshot / compare file arguments are stored as a basename; download / audit directory arguments as <dir>"
+        ],
+        "summary": "Tests  3 failed | 47 passed (50)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "cli",
+        "only": "PM",
+        "failedCases": [
+          "PM: [{\"check\":\"no canary anywhere in the raw history.jsonl bytes of 68 matrix commands + 26 navigations + scheme-less + paths\",\"observed\":[\"CNRYdlrootcli\",\"CNRYdldircli\"]},{\"check\":\"F3: upload / download lines carry no canary from the directories, and keep the basenames\",\"observed\":{\"leaked\":[\"CNRYdlroo"
+        ],
+        "summaryLine": "[fr2-11] 0/1 cases (8/11 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":1,\"casesPassed\":0,\"checks\":11,\"checksFailed\":3},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "e85a4bcd4fae86f4d1d4ea64a2038c26cc3b09c6417adee8f3d9d6252864af3a",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    }
+  ]
+}

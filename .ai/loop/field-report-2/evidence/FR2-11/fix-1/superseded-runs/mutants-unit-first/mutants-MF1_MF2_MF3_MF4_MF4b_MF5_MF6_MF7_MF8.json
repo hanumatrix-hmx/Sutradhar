@@ -1,0 +1,188 @@
+{
+  "ranAt": "2026-09-30T17:18:07.336Z",
+  "total": 9,
+  "caught": 9,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MF1",
+      "what": "the OLD character-class URL regex restored (stops at ( ) [ ] { } and the apostrophe)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H3: redacts every URL token inside free text",
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H5 / N12: eval preview collapses whitespace, drops URL secrets, caps at 200",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > URL rule for navigate targets, preview rule for eval targets, generic redaction otherwise",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > post-FR2-07 verification: evidence observed/expected redacted, detail capped at 300, scalars pass through"
+        ],
+        "summary": "Tests  18 failed | 18 passed (36)"
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MF2",
+      "what": "scheme-less hosts (127.0.0.1:P/p?x, example.com/p?x) no longer recognised as URLs",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > error: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > selector: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > target (non-navigate): no canary survives, for 1360 cells"
+        ],
+        "summary": "Tests  10 failed | 26 passed (36)"
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MF3",
+      "what": "userinfo (user:pass@) kept",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > error: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > selector: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > target (non-navigate): no canary survives, for 1360 cells"
+        ],
+        "summary": "Tests  13 failed | 23 passed (36)"
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MF4",
+      "what": "absolute local paths kept (the path-to-basename branch disabled)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > error: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > selector: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > target (non-navigate): no canary survives, for 1360 cells"
+        ],
+        "summary": "Tests  13 failed | 23 passed (36)"
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MF4b",
+      "what": "file:// URLs keep their full local path",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactHistoryUrl (H1, H2) > H2: scheme table",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > target (navigate): no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > url: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactHistoryUrl on every bare URL and path cell > no canary survives a bare value (no surround)"
+        ],
+        "summary": "Tests  4 failed | 32 passed (36)"
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MF5",
+      "what": "the CLI uses its OWN naive redactor instead of the shared function",
+      "file": "packages/cli/src/history-file.ts",
+      "shaBefore": "e85a4bcd4fae86f4d1d4ea64a2038c26cc3b09c6417adee8f3d9d6252864af3a",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > nav: the text as arg 0, arg 1 and arg 2 never leaks (1360 cells x 3 positions)",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > newtab: the text as arg 0, arg 1 and arg 2 never leaks (1360 cells x 3 positions)",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > audit: the text as arg 0, arg 1 and arg 2 never leaks (1360 cells x 3 positions)",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > click: the text as arg 0, arg 1 and arg 2 never leaks (1360 cells x 3 positions)"
+        ],
+        "summary": "Tests  23 failed | 27 passed (50)"
+      },
+      "shaAfter": "e85a4bcd4fae86f4d1d4ea64a2038c26cc3b09c6417adee8f3d9d6252864af3a",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MF6",
+      "what": "the fragment is kept (only ? and ; cut)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > error: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > selector: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > target (non-navigate): no canary survives, for 1360 cells"
+        ],
+        "summary": "Tests  10 failed | 26 passed (36)"
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MF7",
+      "what": "only the FIRST URL of a text is redacted",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H3: redacts every URL token inside free text",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > error: no canary survives, for 1360 cells",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > selector: no canary survives, for 1360 cells"
+        ],
+        "summary": "Tests  11 failed | 25 passed (36)"
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MF8",
+      "what": "a bracket or apostrophe stops the scan (the rest of the token is copied raw)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H5 / N12: eval preview collapses whitespace, drops URL secrets, caps at 200",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > URL rule for navigate targets, preview rule for eval targets, generic redaction otherwise",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > error: no canary survives, for 1360 cells"
+        ],
+        "summary": "Tests  15 failed | 21 passed (36)"
+      },
+      "shaAfter": "00cb531ec2bd2f19f5b7b39ee1ef43a9e1dd5551e2b9527be266b8e2ccf1aa1e",
+      "restoredIdentical": true,
+      "caught": true
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+[
+ {
+  "id": "A1",
+  "file": "packages/browser/src/session/browser-tab.ts",
+  "why": "tab cap off-by-one (keeps 199)",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 2 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/session-action-history.spec.ts > FR2-11 per-tab history cap and eviction count > S2: 201 records keep 200, drop the oldest, count 1 eviction; 450 rec",
+   "FAIL  tests/unit/session-action-history.spec.ts > FR2-11 per-tab history cap and eviction count > exactly 200 records evict nothing (the boundary is not off by one)"
+  ],
+  "restored": true,
+  "sha256": "ffbecec0e981b5657712e96e819accc5fccf340c4796a0628bc77d0cf06de4d2"
+ },
+ {
+  "id": "A2",
+  "file": "packages/browser/src/session/browser-session.ts",
+  "why": "session seq starts at 0",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 3 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/session-action-history.spec.ts > FR2-11 session merged ring > S6: merge order is recording order with tabId and seq; per-tab views are unaffected",
+   "FAIL  tests/unit/session-action-history.spec.ts > FR2-11 session merged ring > S7: same-millisecond ordering comes from seq, not timestamp",
+   "FAIL  tests/unit/session-action-history.spec.ts > FR2-11 session merged ring > S9: session eviction is exact (205 records into a 200 ring: 5 evicted, first seq 6); pe"
+  ],
+  "restored": true,
+  "sha256": "485d971acb2fb7d4bde0837ff66293c620fe2500755dc14e077c6cd751e51ecd"
+ },
+ {
+  "id": "A3",
+  "file": "packages/browser/src/session/browser-session.ts",
+  "why": "session eviction never counted",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/session-action-history.spec.ts > FR2-11 session merged ring > S9: session eviction is exact (205 records into a 200 ring: 5 evicted, first seq 6); pe"
+  ],
+  "restored": true,
+  "sha256": "485d971acb2fb7d4bde0837ff66293c620fe2500755dc14e077c6cd751e51ecd"
+ },
+ {
+  "id": "A4",
+  "pkg": "packages/browser",
+  "file": "packages/browser/src/session/action-history.ts",
+  "find": "      return u.origin + u.pathname;",
+  "repl": "      return u.origin + u.pathname + u.hash;",
+  "why": "fragment kept in stored URLs (#access_token=)",
+  "status": "NOT-APPLIED",
+  "count": 0
+ },
+ {
+  "id": "A5",
+  "file": "packages/browser/src/session/action-history.ts",
+  "why": "type_by_label did-not-land message keeps field content",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/action-history.spec.ts > FR2-11 describeActionTarget (H7) and scrubActionError > F5 (audit-1 mutant A5): type_by_label gets the SAME did-not-land scr"
+  ],
+  "restored": true,
+  "sha256": "579c0f6f156029b93b42faa72c6972b4e216fc29c975cab819ac556790c86c6f"
+ },
+ {
+  "id": "A6",
+  "file": "packages/browser/src/session/action-history.ts",
+  "why": "typed value scrub skipped for values < 12 chars",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/action-history.spec.ts > FR2-11 describeActionTarget (H7) and scrubActionError > scrubActionError removes a typed value and the field content from a"
+  ],
+  "restored": true,
+  "sha256": "579c0f6f156029b93b42faa72c6972b4e216fc29c975cab819ac556790c86c6f"
+ },
+ {
+  "id": "A7",
+  "file": "packages/browser/src/session/action-history.ts",
+  "why": "evidence observed not URL-redacted",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 2 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > post-FR2-07 verification: evidence observed/expected redacted, detail capped at 300, scal",
+   "FAIL  tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > evidence observed: no canary survives, for 1600 cells"
+  ],
+  "restored": true,
+  "sha256": "579c0f6f156029b93b42faa72c6972b4e216fc29c975cab819ac556790c86c6f"
+ },
+ {
+  "id": "A8",
+  "file": "packages/capability-runtime/src/runtime.ts",
+  "why": "runtime-level success:false literal recorded as success",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/action-history.spec.ts > FR2-11 runtime history recording > R10: clickAtPoint failing records success:false and the \"(x, y) button\" target; the retur"
+  ],
+  "restored": true,
+  "sha256": "15c3cb1da9e59bdc3eaf6383b64876b9e6494282e24d65da25095b16737f61b0"
+ },
+ {
+  "id": "A9",
+  "file": "packages/capability-runtime/src/runtime.ts",
+  "why": "session report returns the live ring, not a copy",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/action-history.spec.ts > FR2-11 runtime history recording > R5: session scope merges tabs in recording order, each entry with tabId and seq, no repor"
+  ],
+  "restored": true,
+  "sha256": "15c3cb1da9e59bdc3eaf6383b64876b9e6494282e24d65da25095b16737f61b0"
+ },
+ {
+  "id": "A10",
+  "file": "packages/mcp-server/src/tools.ts",
+  "why": "note singular/plural inverted",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/tools.spec.ts > FR2-11 browser.get_action_history > M3: evicted > 0 adds an exact note (plural and singular)"
+  ],
+  "restored": true,
+  "sha256": "6ff74b3fc7c22ae991305394545476bb69423b316a1fa627000f7b7626a73e9e"
+ },
+ {
+  "id": "A11",
+  "file": "packages/cli/src/history-file.ts",
+  "why": "torn-line repair removed (next line glued to fragment)",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/history-file.spec.ts > FR2-11 appendHistoryLine (C4, C5, C6, C9, torn-line repair) > a torn last line (no trailing newline) is not glued onto the nex"
+  ],
+  "restored": true,
+  "sha256": "e85a4bcd4fae86f4d1d4ea64a2038c26cc3b09c6417adee8f3d9d6252864af3a"
+ },
+ {
+  "id": "A12",
+  "file": "packages/cli/src/history-file.ts",
+  "why": "select value stored raw in args",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 2 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/history-file.spec.ts > FR2-11 redactCliArgs / secretsOfCliArgs (C1) > C1: typed text, clipboard text, eval, nav, dialog, select",
+   "FAIL  tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: redactCliArgs > type / select / dialog / setclipboard / eval keep their value redaction"
+  ],
+  "restored": true,
+  "sha256": "e85a4bcd4fae86f4d1d4ea64a2038c26cc3b09c6417adee8f3d9d6252864af3a"
+ },
+ {
+  "id": "A13",
+  "file": "packages/cli/src/history-file.ts",
+  "why": "blank lines counted as unreadable",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 2 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/history-file.spec.ts > FR2-11 appendHistoryLine (C4, C5, C6, C9, torn-line repair) > a torn last line (no trailing newline) is not glued onto the nex",
+   "FAIL  tests/unit/history-file.spec.ts > FR2-11 readHistoryFile (C7) > C7: valid + blank + torn + non-object + wrong-v + valid gives 2 lines, skipped 3"
+  ],
+  "restored": true,
+  "sha256": "e85a4bcd4fae86f4d1d4ea64a2038c26cc3b09c6417adee8f3d9d6252864af3a"
+ },
+ {
+  "id": "A14",
+  "file": "packages/cli/src/history-file.ts",
+  "why": "defense-in-depth secret scrub disabled",
+  "exit": 1,
+  "killed": true,
+  "summary": "Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+  "failing": [
+   "FAIL  tests/unit/history-file.spec.ts > FR2-11 buildHistoryLine (C2, C3) > defense in depth: the raw secret strings are scrubbed from error and from every action stri"
+  ],
+  "restored": true,
+  "sha256": "e85a4bcd4fae86f4d1d4ea64a2038c26cc3b09c6417adee8f3d9d6252864af3a"
+ }
+]

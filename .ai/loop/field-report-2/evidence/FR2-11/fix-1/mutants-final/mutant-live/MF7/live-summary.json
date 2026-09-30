@@ -1,0 +1,115 @@
+{
+  "startedAt": "2026-09-30T17:35:05.171Z",
+  "finishedAt": "2026-09-30T17:35:12.002Z",
+  "cases": 2,
+  "casesPassed": 0,
+  "checks": 11,
+  "checksFailed": 2,
+  "perSurface": {
+    "mcp": {
+      "cases": 2,
+      "casesPassed": 0,
+      "checks": 11,
+      "checksFailed": 2
+    },
+    "cli": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "mcp:PM",
+    "mcp:PRIV-sweep"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": [
+      74704,
+      65608
+    ]
+  },
+  "evidenceFiles": [
+    "mcp-raw-history-responses.txt"
+  ],
+  "results": [
+    {
+      "surface": "mcp",
+      "case": "PM",
+      "pass": false,
+      "checks": 9,
+      "failed": [
+        {
+          "check": "no canary in any of 1580 stored entries (error, target, selector, verification)",
+          "observed": [
+            {
+              "cell": "multi-url-3|\"\"\"\"",
+              "leaked": [
+                "CNRYmultiB143X",
+                "CNRYmultiC144X"
+              ],
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"http://127.0.0.1:51635/p[redacted] http://127.0.0.1:51635/q?x=(1)&t=CNRYmultiB143X and then https://example.com/r?t=CNRYmultiC144X\",\"executionTimeMs\":0,\"timestamp\":\"2026-09-30T17:35:06.504Z\",\"target\":\"throw new Err"
+            },
+            {
+              "cell": "multi-url-3|\"(\"\")\"",
+              "leaked": [
+                "CNRYmultiB143X",
+                "CNRYmultiC144X"
+              ],
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"(http://127.0.0.1:51635/p[redacted] http://127.0.0.1:51635/q?x=(1)&t=CNRYmultiB143X and then https://example.com/r?t=CNRYmultiC144X)\",\"executionTimeMs\":0,\"timestamp\":\"2026-09-30T17:35:06.505Z\",\"target\":\"throw new E"
+            },
+            {
+              "cell": "multi-url-3|\"[\"\"]\"",
+              "leaked": [
+                "CNRYmultiB143X",
+                "CNRYmultiC144X"
+              ],
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"[http://127.0.0.1:51635/p[redacted] http://127.0.0.1:51635/q?x=(1)&t=CNRYmultiB143X and then https://example.com/r?t=CNRYmultiC144X]\",\"executionTimeMs\":0,\"timestamp\":\"2026-09-30T17:35:06.506Z\",\"target\":\"throw new E"
+            }
+          ]
+        }
+      ],
+      "cells": 1580,
+      "navigations": 35
+    },
+    {
+      "surface": "mcp",
+      "case": "PRIV-sweep",
+      "pass": false,
+      "checks": 2,
+      "failed": [
+        {
+          "check": "no canary in any of 77 raw history responses",
+          "observed": [
+            "CNRYmultiB143X",
+            "CNRYmultiC144X",
+            "CNRYmultiB143X",
+            "CNRYmultiC144X",
+            "CNRYmultiB143X",
+            "CNRYmultiC144X",
+            "CNRYmultiB143X",
+            "CNRYmultiC144X",
+            "CNRYmultiB143X",
+            "CNRYmultiC144X"
+          ]
+        }
+      ]
+    }
+  ]
+}
