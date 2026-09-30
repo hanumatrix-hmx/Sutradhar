@@ -54,7 +54,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   `dragpoints`/`download`). `AGENT_SETUP.md` gains "Waiting: wait on conditions, never sleep". Tool count: 72
   `browser.*` tools plus `agent.runGoal` (was 71). Details: `.ai/loop/field-report-2/evidence/FR2-08/changelog-fragment.md`.
 
+- **Full action history (FR2-11).** `browser.get_action_history` now also records `navigate` and `eval`
+  (eval as a whitespace-collapsed 200-character preview; its result is never stored), `go_back`/`go_forward`/
+  `reload`, `click_at_point`/`drag_at_points`, `set_clipboard` (length only), `upload_file_via_trigger`,
+  `wait_for`, and the duplicate-guard and invalid-`timeoutMs` rejections. Every entry gains `target`, `url`
+  (the page URL afterwards) and the action's own `verification` object (FR2-07 evidence, FR2-08 wait_for/expect
+  checks included). New `scope:"session"` merges every tab in recording order (each entry has `tabId` and `seq`),
+  including tabs that have since closed; the default stays the active tab, and `scope:"session"` with `tabId` is
+  an error. The output gains `evicted` (exact count of older entries dropped once the 200-entry cap was hit),
+  `capacity`, and a `note` when `evicted > 0`. New `SutradharRuntime.getActionHistoryReport`. The CLI appends
+  one line per session-bound command (reads and `close` included) to `history.jsonl` next to `state.json`, and
+  `sutradhar history [--json]` reads it back (never starts a browser; survives `close`; rotated at 5 MiB to
+  `history.1.jsonl`; a torn line is skipped, never fatal; parallel processes cannot interleave a line). `audit`
+  and `compare` now show their navigations in history. **Privacy:** URLs keep origin and path only (query and
+  fragment dropped); typed text, `select` values, clipboard text and dialog prompt text are lengths only; a typed
+  value quoted in a failure message is scrubbed. **Not covered:** the first 200 characters of `eval` code are
+  stored (a literal secret in it is stored too), and page text quoted in error messages and URL paths that carry
+  a token are kept (capped) — do not `eval` literal secrets if the state directory is shared. MCP history is not
+  persisted across server restarts; the SDK has no history API (read `runtime.getActionHistoryReport`). Details:
+  `.ai/loop/field-report-2/evidence/FR2-11/changelog-fragment.md`.
+
 ### Changed
+- **Action-history entries are richer and more numerous (FR2-11, additive).** Tab-view entries keep their original
+  keys and values; they gain `target`, `url`, `verification`, and there are more of them (the actions listed
+  above). A consumer that counted entries will see more.
 - **`settle` now has a hard upper bound (FR2-08).** It previously had none on the Node side: a `click` with
   `settle:true` that opened an `alert` blocked until the tab's 30 s auto-dismiss (measured: see the evidence).
   It now always returns by `timeoutMs + 500 ms`, and still never fails the action.

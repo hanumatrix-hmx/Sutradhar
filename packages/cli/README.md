@@ -91,6 +91,7 @@ Run `sutradhar` with no arguments for the full command list.
 | `dialog accept [text]` | Accept the oldest open dialog (`text` = what to type into a `prompt()`; ignored for other dialog types). |
 | `dialog dismiss` | Dismiss the oldest open dialog. |
 | `close` | Close the active session. |
+| `history [--json]` | Every command run against this directory's sessions, read from `history.jsonl` (see [History](#history)). Never starts a browser. `--json` prints the raw JSONL lines. |
 | `doctor` | Environment diagnostics (Chrome detection, active session). |
 | `profile create <name> [desc]` | Create a named, persistent profile (cookies/history/storage survive across separate launches). |
 | `profile list` | List profiles. |
@@ -106,7 +107,7 @@ Run `sutradhar` with no arguments for the full command list.
 | `--profile <name>` | `nav` (new session only) | Launch as a named persistent profile (create one first via `profile create`). |
 | `--user-agent <ua>` | `nav` (new session only) | Launch with a custom `navigator.userAgent`. |
 | `--allowlist-domains <a.com,b.com>` | any command | Block navigation to any domain not in this comma-separated list (and their subdomains). Per-command, not persisted in session state — pass it on every command that might navigate. |
-| `--json` | `snap`, `audit`, action verbs | `snap`: additionally print structured per-element data as JSON. `audit`: print the machine-readable JSON report instead of the human-readable text. Action verbs (`click`, `type`, `press`, `nav`, `download`, …): print the full result JSON (including `verification`) instead of the one-line status. |
+| `--json` | `snap`, `audit`, action verbs | `snap`: additionally print structured per-element data as JSON. `audit`: print the machine-readable JSON report instead of the human-readable text. Action verbs (`click`, `type`, `press`, `nav`, `download`, …): print the full result JSON (including `verification`) instead of the one-line status. `history`: print the raw JSONL lines. |
 | `--expect-text <t>` | action verbs | After the action, require this **rendered** text on the page (any frame, open shadow roots; case-sensitive): laid out, `visibility:visible`, not under `display:none` / `content-visibility:hidden` / a closed `<details>`, and every enclosing `<iframe>` itself visible; `opacity:0`, `aria-hidden`, off-screen and clipped text still count. Known limit: text inside SVG containers that are never painted (<defs>, an unused <symbol>, <mask>, <clipPath>, <pattern>, <marker>) still counts, because Chrome reports it as laid out and visible. Exit **4** if absent. Checked once. |
 | `--expect-url <s>` | action verbs | Require the final URL to contain `<s>` (exit 4 if not). |
 | `--expect-url-changed` / `--expect-url-unchanged` | action verbs | Require the URL to have changed / stayed identical (exit 4 otherwise). Mutually exclusive. |
@@ -144,8 +145,51 @@ Run `sutradhar` with no arguments for this same list straight from the binary.
 |---|---|---|
 | `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` | `<OS temp>/sutradhar-downloads` | Directories `download` may write into, separated by `;` (Windows) or `:` (elsewhere); absolute paths, or `~` for the home directory. Replaces the default; the first entry becomes the destination when `download`'s `[dir]` is omitted. The directory named on `download <ref> <dir>` itself is always allowed too, for that one invocation only — it is not written to session state and does not widen later commands. |
 | `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` | _(unset — unrestricted)_ | If set, `upload` may only read files under these directories (off by default). |
-| `SUTRADHAR_CLI_STATE_DIR` | per-project-directory hash | Where session state (`state.json`) is stored — see above. |
+| `SUTRADHAR_CLI_STATE_DIR` | per-project-directory hash | Where session state (`state.json`) and the command history (`history.jsonl`) are stored — see above. |
 | `SUTRADHAR_CLI_DEADLINE_MS` | `300000` | Process watchdog: a command still running after this many milliseconds is stopped with an error message. `wait <ref> <timeoutMs>` extends its own deadline to at least 3 x `timeoutMs` + 30 s. |
+
+## History
+
+Every command that runs against (or manages) the directory's browser session appends **one JSON line** to
+`history.jsonl`, next to `state.json` (`~/.sutradhar-cli/<hash-of-cwd>/`, or `SUTRADHAR_CLI_STATE_DIR`). That
+includes reads (`snap`, `text`, `tabs`, `eval`, `screenshot`) and `close`. Not recorded: `doctor`, `profile`,
+`history` itself, `--help`, and usage errors (nothing ran). The file **survives `close`** and self-heal, so you can
+read what happened after the session is gone.
+
+```
+$ sutradhar history
+History: 3 command(s) in C:\Users\me\.sutradhar-cli\1a2b3c4d5e6f7a8b\history.jsonl
+--- session sess_1758800000000_1 (current) ---
+2026-09-25 14:02:11Z  exit 0    1204ms  nav http://127.0.0.1:53211/fr2-11-history.html
+    - navigate ok verified tab_sess_1758800000000_1_1 http://127.0.0.1:53211/fr2-11-history.html
+2026-09-25 14:02:15Z  exit 0     120ms  snap
+2026-09-25 14:02:17Z  exit 1   15840ms  click #missing
+    - click FAILED action-failed tab_sess_1758800000000_1_1 #missing: No element found for selector: #missing
+```
+
+Each line has `v`, `type`, `ts`, `sessionId`, `cwd`, `verb`, `args`, `exitCode`, `durationMs`, an optional `error`,
+and `actions`: the runtime actions that command performed (`navigate`, `eval`, `click`, `press_key`, ... with
+`target`/`selector`, `success`, `error`, the page `url` afterwards and the action's full `verification` object from the
+[verification contract](../../AGENT_SETUP.md)). `sutradhar history --json` prints those lines verbatim (JSONL), so
+`sutradhar history --json | tail -n 20` (or `jq`) is the way to see only the last few. Tab ids are not stable across CLI
+processes (each command is a new process), which is why every action row also carries the page URL.
+
+**What is never stored.** URLs keep their origin and path only: the query string and the fragment are dropped (they
+carry tokens). Typed text (`type`), `select` values, clipboard text (`setclipboard`) and dialog prompt text are
+recorded as a length only (`<8 chars>`). `eval` code is stored as a whitespace-collapsed 200-character preview and its
+result is never stored. Flags are not recorded. **Not covered:** the first 200 characters of `eval` code are stored, so a
+literal secret written in it (`localStorage.setItem('jwt', '...')`) is stored too; `clicktext` text and page text quoted
+in error messages are stored (capped); URL *paths* that carry a token are kept. Do not `eval` literal secrets if the
+directory is shared. The file is created with mode 0600 (POSIX); it sits next to `state.json`, which already grants full
+control of the browser.
+
+**Size and robustness.** A line is written with a single append, so parallel CLI processes cannot interleave bytes inside
+a line. At 5 MiB the file is moved to `history.1.jsonl` (one generation, about 10 MiB per directory; `history` shows only
+the current file and says when an older one exists). A torn or unreadable line (a process killed mid-write) is skipped
+with a `Note:` on stderr and never breaks `history`. If the file cannot be written the command still behaves exactly as
+before and prints one `Warning:` line. A command that dies before any session exists (a failed Chrome spawn) writes no
+line. Cross-process history for the MCP server is not persisted: it lives in the server process (see
+`browser.get_action_history`).
 
 ## Native dialogs (alert / confirm / prompt / beforeunload)
 
@@ -251,7 +295,7 @@ Session persistence across separate CLI invocations works by spawning Chrome **d
 (not tied to the CLI process's lifetime) and reconnecting via its CDP `wsEndpoint`, saved in
 `~/.sutradhar-cli/<hash-of-cwd>/state.json` — scoped by the calling directory by default, so
 concurrent CLI use from two different projects doesn't share a browser. `sutradhar close` kills
-that Chrome process tree and clears the saved state.
+that Chrome process tree and clears the saved state (the command history, `history.jsonl`, is kept).
 
 ## Requirements
 

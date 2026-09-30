@@ -126,7 +126,7 @@ Every tool that interacts with or navigates the page also accepts an opt-in `set
 | `browser.get_console_logs` | Read captured `console.*` output for the page. |
 | `browser.get_page_errors` | Read captured uncaught page errors. |
 | `browser.get_network_log` | Read captured network requests/responses. |
-| `browser.get_action_history` | Read the session's action-execution history. |
+| `browser.get_action_history` | Read the action history: navigate, eval, back/forward/reload, the point actions, clipboard (length only), trigger-upload, `wait_for` and every element action, each with target/selector, success/error, the page URL afterwards (query/fragment dropped) and its `verification`. `scope:"session"` merges every tab (each entry has `tabId` and `seq`, including closed tabs); the default `scope:"tab"` is one tab. Bounded to 200 entries: `evicted` says exactly how many older ones were dropped. eval code is a 200-character preview and its result is never stored. Lives in the server process only. |
 | `browser.route` / `clear_routes` | Intercept/mock network requests by pattern; clear interception rules. |
 
 ### Tabs
