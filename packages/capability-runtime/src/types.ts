@@ -122,6 +122,22 @@ export interface ActionExpectation {
   urlChanged?: boolean;
 }
 
+/**
+ * FR2-08: the argument of `SutradharRuntime.waitFor` — a page condition plus a timeout. Every given
+ * condition must hold at the same moment. `text`/`textGone` are the RENDERED-text check shared with
+ * `expect.text` (same limits: text in never-painted SVG containers counts, split inline-block text and
+ * `<textarea>` text can be missed); `url` is a substring of the tab URL; `js` is a side-effect-free JS
+ * EXPRESSION evaluated in the main frame (a throw fails the wait).
+ */
+export interface WaitForCondition {
+  text?: string;
+  textGone?: string;
+  url?: string;
+  js?: string;
+  /** Default 10000, max 300000; `<= 0` = check once. The REAL total: no retries. */
+  timeoutMs?: number;
+}
+
 const EXPECTATION_KEYS = ['text', 'url', 'urlChanged'];
 
 /**
