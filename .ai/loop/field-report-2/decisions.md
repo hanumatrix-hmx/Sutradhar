@@ -4232,3 +4232,18 @@ URLs or a URL glued to a path; delimiters are kept in the output. (2) the userin
 in a token, the run of non-`/` characters before it (back to the previous `/`, `//` or token start). (3) the
 `scheme://` origin+path exemption applies only to the sub-token it belongs to. No other behaviour changes.
 
+
+## 2026-10-01 -- FR2-11 fix-3: executor stopped on a design conflict; orchestrator approves a bounded refinement
+
+Executor findings while implementing the authorised extra-cycle design literally (evidence `evidence/FR2-11/fix-3/wip/`):
+1. IPv6 CONFLICT. Splitting on `[` `]` turns `http://[::1]:5000/p?token=S` into `http://[::1]<dir>` (the `:5000/p` after the `]` is reduced as a bare
+   path). No leak, but origin + path of a `scheme://` URL is a documented behaviour and `privacy-matrix` pins it (`ipv6-query` x 5 wrappers fail).
+2. Defect 1, idempotency: the `<` `>` of the `<dir>` placeholder are delimiters, so a second pass turned `file://...//<dir>` into `<dir><dir>`.
+3. Defect 2, password with delimiters: the design said the userinfo strip runs "back to the start of the sub-token"; that leaks `admin:p(` of
+   `postgres://admin:p(a)ss@db/app` (RFC 3986 allows `( ) , '` in userinfo; also `|` and Cf).
+4. Defect 3, backslash as a stopper: stopping the strip at `\` leaks the JSON-escaped form `u:S\"S2@h` (`JSON.stringify` output).
+Orchestrator decision (chat): go with option 1, a refined experiment: (a) a `[...]` group stays unsplit ONLY directly after `//` or `@` and only when
+its whole content matches `[0-9A-Fa-f:.%]+`; any other bracket splits; (b) the `<dir>` placeholder is protected from splitting; (c) the userinfo strip
+runs back to the previous `/` through delimiters, within a run of REAL whitespace (Cf is not whitespace for it), and only `/` stops it; (d) the
+`scheme://` exemption ends at the first backslash that is not a JSON-escaped slash and at any delimiter. Scope still A3-F1 + minors A3-F2/F3/F4;
+`privacy-matrix.spec.ts` and `char-rule.spec.ts` must pass in full on the final code. audit-4 follows and is final.
