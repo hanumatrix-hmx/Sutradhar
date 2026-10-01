@@ -239,12 +239,39 @@ describe('FR2-11 fix-2 selectors keep their shape; everything else in free text 
   });
 });
 
+describe('FR2-11 fix-2 wait_for selector: the engine\'s condition description keeps its `text="` key (FR2-08 L12 pins it), its payload goes through the rule', () => {
+  const wf = (s: string): string => sanitizeHistoryEntry({ actionType: 'wait_for', selector: s, success: true, executionTimeMs: 1, timestamp: 't' } as unknown as ActionHistoryEntry).selector as string;
+  it('the exact FR2-08 L12 selector survives, also textGone and an AND chain', () => {
+    expect(wf('text="Saved successfully"')).toBe('text="Saved successfully"');
+    expect(wf('textGone="Loading"')).toBe('textGone="Loading"');
+    expect(wf('text="Done" AND textGone="Loading"')).toBe('text="Done" AND textGone="Loading"');
+  });
+  it('a secret in the payload is cut like anywhere else (the key exemption is for the engine syntax only)', () => {
+    const S = 'CNRYwf1X';
+    for (const s of [`text="a?t=${S}"`, `text="a;${S}"`, `text="a=${S}"`, `text="x" AND text="a#${S}"`, `text="https://u:p@h/p?q=${S}"`, `text="x text=\\"${S}"`, `textGone="a&b=${S}"`]) {
+      expect(wf(s)).not.toContain(S);
+    }
+  });
+  it('only the exact key at the start or after AND is exempt; any other `=` is replaced as usual', () => {
+    expect(wf('foo="bar"')).toBe('[redacted]');
+    expect(wf('a text="b"')).not.toContain('text="');
+  });
+  it('is idempotent', () => {
+    for (const s of ['text="Saved successfully"', 'text="a?b" AND textGone="c"']) expect(wf(wf(s))).toBe(wf(s));
+  });
+});
+
 describe('FR2-11 fix-2 upload_file target: the basename, unless it has no extension (a user / home directory name)', () => {
   const up = (t: string): string => sanitizeHistoryEntry({ actionType: 'upload_file', target: t, success: false, executionTimeMs: 1, timestamp: 't' } as unknown as ActionHistoryEntry).target as string;
   it('report.pdf is kept; a name with no extension is <dir>; a query on a name is cut', () => {
     expect(up('report.pdf')).toBe('report.pdf');
     expect(up('CNRYup1X')).toBe('<dir>');
     expect(up('f.txt?t=CNRYup2X')).not.toContain('CNRYup2X');
+  });
+  it('upload_file_via_trigger (a runtime-level action) follows the same rule', () => {
+    const via = (t: string): string => sanitizeHistoryEntry({ actionType: 'upload_file_via_trigger', target: t, success: true, executionTimeMs: 1, timestamp: 't' } as unknown as ActionHistoryEntry).target as string;
+    expect(via('report.pdf')).toBe('report.pdf');
+    expect(via('CNRYup3X')).toBe('<dir>');
   });
 });
 

@@ -293,6 +293,23 @@ const uploadTarget = (name: string): string => (HAS_EXTENSION.test(name) ? redac
 
 const redactedString = (s: string, cap: number): string => capHistoryString(redactHistoryText(s), cap);
 
+/** Stands in for the `=` of an engine-generated `text="..."` key while the rule runs (a private-use character: not whitespace, not a rule character). */
+const KEY_EQ = String.fromCharCode(0xe000);
+const CONDITION_KEY = /(^| AND )(textGone|text)="/g;
+
+/**
+ * The `selector` of a wait_for entry is the engine's description of the caller's condition (FR2-08: `text="Saved successfully"`,
+ * `textGone="..."`, `url~"..."`, `js(...)`). The KEY syntax `text="` is engine vocabulary, not user data, so its `=` must not trip
+ * rule (b); the PAYLOAD after it is the caller's text and goes through the rule like any other selector text (a `?`, `;`, `&`, a second
+ * `=` or a path inside it is cut exactly as elsewhere).
+ */
+function conditionSelector(s: string): string {
+  // free-text mode, not the selector variant: a condition is page text / a URL / JS, not CSS (`a#S` must not survive here)
+  return redactHistoryText(s.replace(CONDITION_KEY, (_m, sep: string, k: string) => `${sep}${k}${KEY_EQ}"`))
+    .split(KEY_EQ)
+    .join('=');
+}
+
 /**
  * Pure: returns a NEW object and never mutates `e` or `e.verification`. Keys that were undefined stay
  * absent. `verification` is read structurally (`'evidence' in v`) so this works against both the
@@ -300,14 +317,16 @@ const redactedString = (s: string, cap: number): string => capHistoryString(reda
  */
 export function sanitizeHistoryEntry(e: ActionHistoryEntry): ActionHistoryEntry {
   const out: Record<string, unknown> = { ...e };
-  if (typeof e.selector === 'string') out.selector = capHistoryString(redactHistorySelector(e.selector), HISTORY_STRING_CAP);
+  if (typeof e.selector === 'string') {
+    out.selector = capHistoryString(e.actionType === 'wait_for' ? conditionSelector(e.selector) : redactHistorySelector(e.selector), HISTORY_STRING_CAP);
+  }
   if (typeof e.target === 'string') {
     out.target =
       e.actionType === 'navigate'
         ? capHistoryString(redactHistoryUrl(e.target), HISTORY_STRING_CAP)
         : e.actionType === 'eval'
           ? evalCodePreview(e.target)
-          : e.actionType === 'upload_file'
+          : e.actionType === 'upload_file' || e.actionType === 'upload_file_via_trigger'
             ? uploadTarget(e.target)
             : WAIT_STATE_TARGET.test(e.target)
               ? e.target

@@ -180,7 +180,7 @@ function, which is also what MCP and the SDK use. It looks at **characters only*
 scheme, the host shape, the case, unicode and percent-encoding do not matter:
 
 1. Encoded forms of the rule's characters are decoded first: `%3F`, `%23`, `%3B`, `%3D`, `%26`, `%40`, `%2F`, `%5C`, `%3A`
-   (also double-encoded, `%253F`), JSON `?` / `\x3f` escapes, and fullwidth forms (`？` `＃` `；`).
+   (also double-encoded, `%253F`), JSON unicode and hex escapes of those characters (backslash, then `u003f` or `x3f`), and fullwidth forms (`？` `＃` `；`).
 2. The text is split on **any Unicode whitespace** (space, tab, newline, NBSP, zero-width, ideographic).
 3. In each token everything from the **first `?`, `#` or `;`** is replaced by `[redacted]`, and **the rest of the text after
    that cut is dropped** (a URL with a space in its query cannot leak its tail). A bare `#id` with nothing in front of it does
