@@ -1,0 +1,110 @@
+{
+ "label": "head",
+ "basic": {
+  "types": [
+   "navigate",
+   "eval",
+   "click",
+   "click"
+  ],
+  "scope": "tab",
+  "tabId": "tab_sess_1790864027584_1_1",
+  "evicted": 0,
+  "capacity": 200,
+  "note": null,
+  "keys": [
+   "actionType",
+   "executionTimeMs",
+   "selector",
+   "success",
+   "target",
+   "timestamp",
+   "url",
+   "verification"
+  ],
+  "navTarget": "http://127.0.0.1:49619/p",
+  "evalTarget": "document.title",
+  "evalHasVerification": false,
+  "storedForbidden": []
+ },
+ "rawResults": {
+  "nav": "{\n  \"tabId\": \"tab_sess_1790864027584_1_1\",\n  \"url\": \"http://127.0.0.1:49619/p?q=1\",\n  \"title\": \"TitleA4Lttl\",\n  \"verification\": {\n    \"verified\": true,\n    \"urlChanged\": true,\n    \"elementFound\": true,\n    \"confidence\": 0.9,\n    \"reason\": \"'navigate' verified: a new document committed at http://127.",
+  "clk": "{\n  \"success\": true,\n  \"actionType\": \"click\",\n  \"executionTimeMs\": 78,\n  \"currentUrl\": \"http://127.0.0.1:49619/p?q=1\",\n  \"title\": \"TitleA4Lttl\",\n  \"output\": {\n    \"clickedSelector\": \"#b\",\n    \"button\": \"left\"\n  },\n  \"retriesUsed\": 0,\n  \"verification\": {\n    \"verified\": true,\n    \"urlChanged\": false,"
+ },
+ "verifEqual": {
+  "navigate": true,
+  "click": true,
+  "navRawDiffers": true
+ },
+ "session": {
+  "n": 6,
+  "contiguous": true,
+  "closedTabEntries": [
+   "click"
+  ],
+  "reportTabId": null,
+  "scope": "session"
+ },
+ "tabDefault": {
+  "onlyActiveTab": true,
+  "n": 5,
+  "hasSeq": false
+ },
+ "errors": {
+  "scopeAndTab": "get_action_history failed: tabId cannot be combined with scope \"session\" — the session view already merges every tab (ea",
+  "closedTab": "get_action_history failed: No tab \"tab_sess_1790864027584_1_2\" in session \"sess_1790864027584_1\".",
+  "badScope": true,
+  "unknownSession": "get_action_history failed: No browser session \"nope\". Call launch() first.\nHint: Call browser.launch first to create a s"
+ },
+ "eviction": [
+  {
+   "tabTotal": 199,
+   "tabLen": 199,
+   "tabEvicted": 0,
+   "tabNote": null,
+   "firstTarget": "http://127.0.0.1:49619/p",
+   "sesTotal": 200,
+   "sesLen": 200,
+   "sesEvicted": 0,
+   "sesFirstSeq": 1,
+   "sesNote": null
+  },
+  {
+   "tabTotal": 200,
+   "tabLen": 200,
+   "tabEvicted": 0,
+   "tabNote": null,
+   "firstTarget": "http://127.0.0.1:49619/p",
+   "sesTotal": 201,
+   "sesLen": 200,
+   "sesEvicted": 1,
+   "sesFirstSeq": 2,
+   "sesNote": "1 older entry was evicted — only the most recent 200 are kept."
+  },
+  {
+   "tabTotal": 201,
+   "tabLen": 200,
+   "tabEvicted": 1,
+   "tabNote": "1 older entry was evicted — only the most recent 200 are kept.",
+   "firstTarget": "document.title",
+   "sesTotal": 202,
+   "sesLen": 200,
+   "sesEvicted": 2,
+   "sesFirstSeq": 3,
+   "sesNote": "2 older entries were evicted — only the most recent 200 are kept."
+  },
+  {
+   "tabTotal": 205,
+   "tabLen": 200,
+   "tabEvicted": 5,
+   "tabNote": "5 older entries were evicted — only the most recent 200 are kept.",
+   "firstTarget": "5+0",
+   "sesTotal": 206,
+   "sesLen": 200,
+   "sesEvicted": 6,
+   "sesFirstSeq": 7,
+   "sesNote": "6 older entries were evicted — only the most recent 200 are kept."
+  }
+ ],
+ "ms": 4302
+}

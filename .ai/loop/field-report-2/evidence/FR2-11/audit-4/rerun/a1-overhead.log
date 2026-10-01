@@ -1,0 +1,59 @@
+block done head
+block done master
+block done master
+block done head
+block done head
+block done master
+{
+ "head": {
+  "eval": {
+   "n": 600,
+   "mean": 0.59,
+   "median": 0.57,
+   "p90": 0.7
+  },
+  "click": {
+   "n": 120,
+   "mean": 51.98,
+   "median": 52.22,
+   "p90": 58.36
+  },
+  "hist": {
+   "n": 60,
+   "mean": 1.09,
+   "median": 1.07,
+   "p90": 1.51
+  }
+ },
+ "master": {
+  "eval": {
+   "n": 600,
+   "mean": 0.52,
+   "median": 0.48,
+   "p90": 0.66
+  },
+  "click": {
+   "n": 120,
+   "mean": 51.46,
+   "median": 50.65,
+   "p90": 58.59
+  },
+  "hist": {
+   "n": 60,
+   "mean": 0.3,
+   "median": 0.27,
+   "p90": 0.43
+  }
+ },
+ "deltaMean": {
+  "eval": 0.07,
+  "click": 0.52,
+  "hist": 0.79
+ },
+ "deltaMedian": {
+  "eval": 0.09,
+  "click": 1.57,
+  "hist": 0.8
+ }
+}
+exit=0

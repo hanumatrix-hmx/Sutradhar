@@ -1,0 +1,70 @@
+{
+ "results": [
+  {
+   "id": "M7",
+   "what": "<dir>: placeholder no longer protected from the split",
+   "file": "packages/browser/src/session/action-history.ts",
+   "build": 0,
+   "buildCli": 0,
+   "unitBrowserFailed": 3,
+   "unitCliFailed": 0,
+   "gen4ClaimLeakingCells": 666,
+   "gen4Idem": 0,
+   "restored": true,
+   "caughtByUnit": true
+  },
+  {
+   "id": "M8",
+   "what": "order: no userinfo pre-pass before the cut (strip only inside redactToken)",
+   "file": "packages/browser/src/session/action-history.ts",
+   "build": 2,
+   "buildCli": 0,
+   "unitBrowserFailed": 4,
+   "unitCliFailed": 2,
+   "gen4ClaimLeakingCells": 366,
+   "gen4Idem": 0,
+   "restored": true,
+   "caughtByUnit": true
+  },
+  {
+   "id": "M9",
+   "what": "order: decode removed (split/strip see the encoded text)",
+   "file": "packages/browser/src/session/action-history.ts",
+   "build": 0,
+   "buildCli": 0,
+   "unitBrowserFailed": 16,
+   "unitCliFailed": 30,
+   "gen4ClaimLeakingCells": 1409,
+   "gen4Idem": 0,
+   "restored": true,
+   "caughtByUnit": true
+  },
+  {
+   "id": "M10",
+   "what": "caller/field: entry.error skips the rule",
+   "file": "packages/browser/src/session/action-history.ts",
+   "build": 0,
+   "buildCli": 0,
+   "unitBrowserFailed": 55,
+   "unitCliFailed": 6,
+   "gen4ClaimLeakingCells": 2668,
+   "gen4Idem": 0,
+   "restored": true,
+   "caughtByUnit": true
+  },
+  {
+   "id": "M11",
+   "what": "surface: the TAB view stores the raw entry (session ring still sanitized)",
+   "file": "packages/browser/src/session/browser-tab.ts",
+   "build": 0,
+   "buildCli": 0,
+   "unitBrowserFailed": 1,
+   "unitCliFailed": 0,
+   "gen4ClaimLeakingCells": 666,
+   "gen4Idem": 0,
+   "restored": true,
+   "caughtByUnit": true
+  }
+ ],
+ "shaEqual": true
+}

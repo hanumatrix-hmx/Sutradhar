@@ -1,0 +1,68 @@
+{
+ "label": "head",
+ "urlsAreValid": [
+  {
+   "user": "A4Uuser1x",
+   "pw": "A4Upwpre1x%3Frest1",
+   "host": "127.0.0.1:52333"
+  },
+  {
+   "user": "A4Uuser2x",
+   "pw": "A4Upwpre2x%23rest2",
+   "host": "127.0.0.1:52333"
+  }
+ ],
+ "navResult": {
+  "isError": false,
+  "url": "http://A4Uuser1x:A4Upwpre1x%3Frest1@127.0.0.1:52333/p",
+  "sentAuth": "{\n  \"result\": \"auth=no\"\n}"
+ },
+ "mcpStored": [
+  [
+   "navigate",
+   "http://A4Uuser1x:A4Upwpre1x",
+   "http://A4Uuser1x:A4Upwpre1x"
+  ],
+  [
+   "eval",
+   "document.body.innerText",
+   "http://A4Uuser1x:A4Upwpre1x"
+  ]
+ ],
+ "mcpCanaries": [
+  "a4uuser1x",
+  "a4upwpre1x"
+ ],
+ "cliFileCanaries": [
+  "a4uuser2x",
+  "a4upwpre2x"
+ ],
+ "cliLines": [
+  [
+   "nav",
+   [
+    "http://A4Uuser2x:A4Upwpre2x"
+   ],
+   [
+    [
+     "navigate",
+     "http://A4Uuser2x:A4Upwpre2x",
+     "http://A4Uuser2x:A4Upwpre2x"
+    ]
+   ]
+  ],
+  [
+   "eval",
+   [
+    "1"
+   ],
+   [
+    [
+     "eval",
+     "1",
+     "http://A4Uuser2x:A4Upwpre2x"
+    ]
+   ]
+  ]
+ ]
+}

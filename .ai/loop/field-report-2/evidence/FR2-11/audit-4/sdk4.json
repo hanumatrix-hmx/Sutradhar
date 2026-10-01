@@ -1,0 +1,39 @@
+{
+ "callerErr": [
+  "a4csdkerr2x"
+ ],
+ "historyCanaries": [
+  "a4csdknav1x",
+  "a4csdkerr2x"
+ ],
+ "entries": [
+  [
+   "navigate",
+   "http://127.0.0.1:51179/p",
+   "http://127.0.0.1:51179/p",
+   null,
+   "'navigate' verified: a new document committed at http://127.0.0.1:51179/ssA4Csdknav1x"
+  ],
+  [
+   "eval",
+   "throw new A4Csdkerr2x')",
+   "http://127.0.0.1:51179/p",
+   "A4Csdkerr2x",
+   null
+  ],
+  [
+   "navigate",
+   "http://admin:pa",
+   "http://admin:pa",
+   null,
+   "'navigate' verified: a new document committed at http://127.0.0.1:51179/p"
+  ],
+  [
+   "navigate",
+   "http://127.0.0.1:51179/p",
+   "http://127.0.0.1:51179/p",
+   null,
+   "'navigate' verified: a new document committed at http://127.0.0.1:51179/p[redacted]"
+  ]
+ ]
+}

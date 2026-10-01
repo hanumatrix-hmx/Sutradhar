@@ -1,0 +1,165 @@
+{
+ "item": "FR2-11 Full action history (AUDIT-4, final extra cycle; HEAD 552f9dd, fix-3 = 549a099..552f9dd)",
+ "verdict": "BLOCKED",
+ "ac_results": [
+  {
+   "ac": "navigate and eval recorded (MCP tab/session, SDK, CLI)",
+   "verdict": "PASS",
+   "evidence_cmd": "node func4.mjs packages/mcp-server/dist/cli.js head; node cli4.mjs packages/cli/dist/cli.js head",
+   "output_excerpt": "types [navigate,eval,click,click]; navTarget http://127.0.0.1:P/p; evalTarget document.title; eval has no verification; CLI acts navigate/eval/click/\"\"(snap)",
+   "required_fix": ""
+  },
+  {
+   "ac": "session view (scope session, seq, closed tab kept) with per-tab default view kept",
+   "verdict": "PASS",
+   "evidence_cmd": "node func4.mjs ... (func4-head.json session/tabDefault/errors)",
+   "output_excerpt": "session n=6 contiguous seq, closed tab entries [click], no report tabId; default tab view has no tabId/seq; scope+tabId -> \"cannot be combined\"; closed tabId -> No tab; scope all -> isError; unknown session -> No browser session",
+   "required_fix": ""
+  },
+  {
+   "ac": "CLI history.jsonl beside state.json; history and history --json",
+   "verdict": "PASS",
+   "evidence_cmd": "node cli4.mjs packages/cli/dist/cli.js head",
+   "output_excerpt": "beside {state:true,history:true}; history header \"History: 4 command(s)\", 1 (current), 4 rows; --json byte-identical; no-file case exit 0, no state.json; --bogus exit 1",
+   "required_fix": ""
+  },
+  {
+   "ac": "verification deep-equal to the SANITIZED result",
+   "verdict": "PASS",
+   "evidence_cmd": "func4-head.json verifEqual",
+   "output_excerpt": "{navigate:true, click:true, navRawDiffers:true}",
+   "required_fix": ""
+  },
+  {
+   "ac": "eviction counts 199/200/201 (both scopes)",
+   "verdict": "PASS",
+   "evidence_cmd": "func4-head.json eviction",
+   "output_excerpt": "tab 199->199/0, 200->200/0, 201->200/1 (note \"1 older entry was evicted\"), 205->200/5; session 200->0, 201->1, 202->2, 206->6, firstSeq = evicted+1",
+   "required_fix": ""
+  },
+  {
+   "ac": "real parallel CLI appenders incl. lines over 64 KiB; ~40 real taskkill /F /PID; torn line; missing session",
+   "verdict": "PASS",
+   "evidence_cmd": "cli4.mjs (2 kill runs: cli4-head-run1.json, cli4-head.json); miss4.mjs",
+   "output_excerpt": "14 parallel processes -> 14 lines, 6 over-guard lines truncated to 20 args (max 12285 B); 80 taskkill /F /PID on my CLI PIDs, 21 hit a live process, 59 found it already exited; bad lines stay 1 (the planted torn line), file ends with newline, next append clean; torn line skipped with Note; state.json deleted -> history ok, no (current); dead wsEndpoint -> self-heal, new session id on the line",
+   "required_fix": ""
+  },
+  {
+   "ac": "PRIVACY: no credential/secret of a kind the rule claims to cover is stored on any surface",
+   "verdict": "FAIL",
+   "evidence_cmd": "node gen4.mjs . ; node priv4-live.mjs <mcp> <cli> head|bundle ; node sdk4.mjs ; node f2live.mjs <mcp> <cli> head ; node explicit4.mjs ; node attrib.mjs",
+   "output_excerpt": "gen4 (seed 0x4D17A4F5): 666 of 2668 CLAIM cells leak (389 F1a, 166 F1b, 98 F2, 13 encoding artefacts). Live: navigate .../p?pw=P%40ssA4Cnavq2x -> verification.reason \"...committed at http://127.0.0.1:P/ssA4Cnavq2x\" (MCP tab+session, SDK, CLI file/history/--json, dist and bundle); navigate http://A4Uuser1x:A4Upwpre1x%3Frest1@127.0.0.1:P/p -> target AND url \"http://A4Uuser1x:A4Upwpre1x\" on every later action of the tab",
+   "required_fix": "see findings A4-F1, A4-F2"
+  },
+  {
+   "ac": "tests pin the privacy contract (no canary weakened; mutants caught)",
+   "verdict": "FALSE-PASS",
+   "evidence_cmd": "vitest (7 packages, all green) + mut4.mjs (16/16 caught) + builder fuzz 100k (0 leaks)",
+   "output_excerpt": "suites green and every mutant killed, yet F1/F2 leak: no cell or generator combines an @ with a cut/= character in a value, or an encoded ?/# in a password of a structured URL field",
+   "required_fix": "add interaction cells (A4-F4)"
+  }
+ ],
+ "findings": [
+  {
+   "id": "A4-F1",
+   "severity": "major",
+   "class": "privacy, REGRESSION introduced by fix-3 (rule a), undocumented",
+   "title": "The userinfo pre-pass runs before the cut and deletes the ? # ; = & that protect a value; the text after an @ in a query/fragment/param value is stored",
+   "repro": "redactHistoryText('https://h.test/p?pw=P%40ssS3CRET') -> 'https://h.test/ssS3CRET' (fix-2 78087d7: 'https://h.test/p[redacted]')",
+   "live": "MCP navigate O/p?pw=P%40ssA4Cnavq2x and a redirect to /p?email=bob@A4Credir1x: verification.reason stores the value tail; eval fetch, eval errors, click_by_text, wait_for error (current URL) likewise; CLI eval/clicktext/nav; SDK; bundle",
+   "where": "action-history.ts redactHistoryText: the TRUE_WS stripUserinfo pre-pass runs before redactToken cuts"
+  },
+  {
+   "id": "A4-F1b",
+   "severity": "major",
+   "class": "privacy, pre-existing (also on fix-2), undocumented, same mechanism",
+   "title": "k=v whose value holds an @: the strip removes the key, the = and the value prefix; the tail survives rule (b)",
+   "repro": "redactHistoryText('PGPASSWORD=hunter@S3CRET') -> 'S3CRET'",
+   "live": "MCP eval throw new Error('PGPASSWORD=hunter@A4Ceerr5x') -> error 'A4Ceerr5x'; CLI clicktext 'token=a@A4Ccct4x' -> args ['A4Ccct4x']; SDK"
+  },
+  {
+   "id": "A4-F2",
+   "severity": "major",
+   "class": "privacy, pre-existing (also on fix-2), undocumented",
+   "title": "Structured URL fields decode %3F/%23 BEFORE parsing; a VALID URL whose password holds an encoded ? or # becomes unparsable, the fallback cuts there before any userinfo strip, and scheme://user:passwordPrefix is stored",
+   "repro": "sanitizeHistoryEntry({actionType:'navigate',target:'https://admin:pa%3FS3CRET@h.test/p',...}).target -> 'https://admin:pa'",
+   "live": "MCP navigate http://A4Uuser1x:A4Upwpre1x%3Frest1@127.0.0.1:P/p -> target and url \"http://A4Uuser1x:A4Upwpre1x\", and the url of the next action too; CLI nav/newtab args and actions likewise (f2live-head.json); %3B is safe",
+   "where": "redactHistoryUrl: redactHistoryUrlD5(decodeDelimiters(url)) and its fallback cutAtDelimiter"
+  },
+  {
+   "id": "A4-F3",
+   "severity": "minor",
+   "class": "docs",
+   "title": "--help and the tool description present the order cut, = &, userinfo; the code strips userinfo first. They list only %3F %23 %3B %253F as decoded (README lists more). \"page URL afterward (origin + path only)\" is contradicted by A4-F2",
+   "repro": "cli.ts help \"history [--json]\"; tools.ts get_action_history description"
+  },
+  {
+   "id": "A4-F4",
+   "severity": "minor",
+   "class": "tests (false pass)",
+   "title": "No unit cell, property generator, builder fuzz or audit-1/2/3 generator composes an @ with a cut or = character inside one value, or an encoded ?/# in the password of a structured URL field; mutant M8 (pre-pass removed) lowers my generator from 666 to 366 leaking CLAIM cells yet is caught only because cells pin the pre-pass",
+   "repro": "node mut4.mjs M8 -> unitBrowserFailed 4, gen4ClaimLeakingCells 366"
+  },
+  {
+   "id": "A4-F5",
+   "severity": "info",
+   "class": "privacy, path only",
+   "title": "A literal <dir> in input text is not split and glues a URL to a local path like the GAP-372 connectors; path / user name only, never a credential",
+   "repro": "redactHistoryText('https://h/x<dir>C:/Users/NAME/y/f.txt') -> unchanged"
+  },
+  {
+   "id": "A4-F6",
+   "severity": "info",
+   "class": "audit tooling",
+   "title": "Master tree: sources equal fdae749 after CR normalisation; untracked extras are 4 FR2-11 spec files (not 3), the generated packages/sutradhar/AGENT_SETUP.md, logs; the uc06 png differs; dist predates FR2-11. Usable for A/B.",
+   "repro": "master-tree-diff.txt (622 CRLF-only), master-tree-realdiff.txt (0)"
+  },
+  {
+   "id": "A4-F7",
+   "severity": "info",
+   "class": "test method",
+   "title": "taskkill start-up latency exceeds a short CLI command; kill targets were made long-lived: 21 of 80 kills landed, 0 torn lines",
+   "repro": "cli4-head-run1.json, cli4-head.json"
+  }
+ ],
+ "gap_rulings": {
+  "GAP-372": "ACCEPTABLE documented limit: credentials are stripped through all 12 URL-legal connectors and queries are cut (explicit4.json); only a local path / user-directory name glued after a URL is stored. Path/origin only.",
+  "GAP-373": "Leaks the user name and the password PREFIX. Raw space / raw slash: acceptable as documented (not a valid userinfo). %2F / %252F (the correct encoding of a / in a password): leak created by decoding before stripping; documented in GAP-373, so not counted as undocumented, but minor understates it; fix with A4-F2."
+ },
+ "root_cause_hypothesis": "The rule is a pipeline of destructive passes whose order lets one pass erase the evidence the next relies on: decode-before-parse (A4-F2, GAP-373 %2F) and userinfo-strip-before-cut (A4-F1/F1b; fix-3 D2). Each cycle reordered or widened a pass to close the last shape; every generator places one construct per string, so pass interactions are never exercised. Spec right, implementation wrong, tests share the blind spot.",
+ "revised_plan": [
+  "Structured fields: parse the RAW string with WHATWG URL first, emit origin + pathname (never userinfo), then decode / apply the text rule to that output; on a parse failure with an @ after // before the next /, emit [redacted].",
+  "Free text: when the span the userinfo strip would remove contains a (decoded) ? # ; = or &, treat it as a cut at the span start instead of deleting those characters.",
+  "Pairwise-interaction property test (cut char x @ x = x encoded forms, both orders, every surface) plus a differential oracle: nothing that follows a cut character in the decoded input may appear in the output."
+ ],
+ "regressions": [],
+ "master_comparison": {
+  "fr2_08": "HEAD 478/478, master 478/478 (concurrent)",
+  "fr2_07": "HEAD 488/488, master 488/488; GAP-325 tolerance fired 0/0 (mcp, bundle) on both; H2 passed",
+  "fr2_04": "110 pass / 1 fail (L13.headed.click-exit0) / 2 skip on BOTH",
+  "cli_suite": "concurrent HEAD 11/14 (UC-03, UC-05, UC-12 fail) vs master 12/14 (UC-05, UC-12); UC-03 sequential A/B 2/2 pass on both (contention flake); UC-04 and UC-08 passed on both this run",
+  "overhead": "MCP eval +0.07 ms mean, click +0.52 ms, get_action_history +0.79 ms; CLI +1 ms median"
+ },
+ "build_and_tests": {
+  "build": "dist deleted, turbo --force --concurrency=1 19/19 + sutradhar 9/9, 0 cached, before and after mutants",
+  "bundle": "SUB_DELIM, IPV6_HOST, urlSpanEnd, TRUE_WS present in index.js, cli-bin.js, mcp-cli.js; fix-2 authority split absent",
+  "typecheck": "34/34",
+  "vitest": {
+   "browser": 1101,
+   "capability-runtime": 272,
+   "mcp-server": 124,
+   "cli": 276,
+   "sutradhar": 43,
+   "agent": 56,
+   "server": 28
+  },
+  "specs": "fix-3: 2 new glue-rule specs, help-text +5/-0, tools.spec +5/-0; vs fdae749 the 3 pre-existing specs are append-only"
+ },
+ "mutants": "mutants4-summary.json: 16/16 caught by unit suites, sources restored (sha-src-before = sha-src-after), forced rebuild after",
+ "disk": {
+  "before": "18G free",
+  "after": "18G free",
+  "cli_dirs_deleted": 56,
+  "cli_dir_kept": "sutradhar-cli-1790798002107 (pre-existing, referenced by chrome 71888)"
+ }
+}

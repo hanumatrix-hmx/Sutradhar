@@ -1,0 +1,468 @@
+{
+ "label": "head",
+ "mcp": [
+  {
+   "name": "browser.navigate",
+   "args": "{\"url\":\"http://127.0.0.1:56764/p?token=A4Xnavq1x#A4Xnavf1x\"}",
+   "isError": false,
+   "resultCanaries": [
+    "a4xnavq1x",
+    "a4xnavf1x"
+   ]
+  },
+  {
+   "name": "browser.navigate",
+   "args": "{\"url\":\"http://127.0.0.1:56764/p?pw=P%40ssA4Cnavq2x\"}",
+   "isError": false,
+   "resultCanaries": [
+    "a4cnavq2x"
+   ]
+  },
+  {
+   "name": "browser.navigate",
+   "args": "{\"url\":\"http://127.0.0.1:56764/r\"}",
+   "isError": false,
+   "resultCanaries": [
+    "a4credir1x"
+   ]
+  },
+  {
+   "name": "browser.eval",
+   "args": "{\"code\":\"fetch('http://127.0.0.1:56764/p?pw=P@ssA4Cevq3x').then(r => r.status)\"}",
+   "isError": false,
+   "resultCanaries": []
+  },
+  {
+   "name": "browser.eval",
+   "args": "{\"code\":\"throw new Error('callback http://127.0.0.1:56764/cb?code=a@A4Ceerr4x failed')\"}",
+   "isError": true,
+   "resultCanaries": [
+    "a4ceerr4x"
+   ]
+  },
+  {
+   "name": "browser.eval",
+   "args": "{\"code\":\"throw new Error('PGPASSWORD=hunter@A4Ceerr5x')\"}",
+   "isError": true,
+   "resultCanaries": [
+    "a4ceerr5x"
+   ]
+  },
+  {
+   "name": "browser.eval",
+   "args": "{\"code\":\"throw new Error('x http://127.0.0.1:56764/cb?code=A4Xeerr6x')\"}",
+   "isError": true,
+   "resultCanaries": [
+    "a4xeerr6x"
+   ]
+  },
+  {
+   "name": "browser.eval",
+   "args": "{\"code\":\"fetch('https://u:A4Xevu7x@h.test/x').catch(() => 1)\"}",
+   "isError": false,
+   "resultCanaries": []
+  },
+  {
+   "name": "browser.click_by_text",
+   "args": "{\"text\":\"login?pw=P@ssA4Cct8x\",\"timeoutMs\":1000}",
+   "isError": false,
+   "resultCanaries": [
+    "a4credir1x",
+    "a4cct8x"
+   ]
+  },
+  {
+   "name": "browser.wait_for",
+   "args": "{\"url\":\"/p?pw=P@ssA4Cwf9x\",\"timeoutMs\":0}",
+   "isError": false,
+   "resultCanaries": [
+    "a4credir1x",
+    "a4cwf9x"
+   ]
+  },
+  {
+   "name": "browser.navigate",
+   "args": "{\"url\":\"http://admin:pa%3FA4Unavu10x@127.0.0.1:56764/p\"}",
+   "isError": false,
+   "resultCanaries": [
+    "a4unavu10x"
+   ]
+  },
+  {
+   "name": "browser.navigate",
+   "args": "{\"url\":\"http://admin:pa%23A4Unavu11x@127.0.0.1:56764/p\"}",
+   "isError": false,
+   "resultCanaries": [
+    "a4unavu11x"
+   ]
+  },
+  {
+   "name": "browser.navigate",
+   "args": "{\"url\":\"http://admin:A4Xnavu12x@127.0.0.1:56764/p\"}",
+   "isError": false,
+   "resultCanaries": [
+    "a4xnavu12x"
+   ]
+  }
+ ],
+ "cli": {
+  "log": [
+   {
+    "a": "nav http://127.0.0.1:56764/p?pw=P%40ssA4Ccnav1x",
+    "code": 0,
+    "ms": 871,
+    "outCanaries": [
+     "a4ccnav1x"
+    ]
+   },
+   {
+    "a": "eval fetch('http://127.0.0.1:56764/p?pw=P@ssA4Ccev2x').then(r => r.status)",
+    "code": 0,
+    "ms": 343,
+    "outCanaries": []
+   },
+   {
+    "a": "eval throw new Error('cb http://127.0.0.1:56764/cb?code=a@A4Ccerr3x')",
+    "code": 1,
+    "ms": 282,
+    "outCanaries": [
+     "a4ccerr3x"
+    ]
+   },
+   {
+    "a": "clicktext token=a@A4Ccct4x",
+    "code": 1,
+    "ms": 19874,
+    "outCanaries": [
+     "a4ccct4x"
+    ]
+   },
+   {
+    "a": "waitfor 0 --url /p?pw=P@ssA4Ccwf5x",
+    "code": 1,
+    "ms": 287,
+    "outCanaries": [
+     "a4ccwf5x",
+     "a4ccnav1x"
+    ]
+   },
+   {
+    "a": "nav http://admin:pa%3BA4Ucnav6x@127.0.0.1:56764/p",
+    "code": 0,
+    "ms": 304,
+    "outCanaries": [
+     "a4ucnav6x"
+    ]
+   },
+   {
+    "a": "newtab http://admin:pa%3FA4Ucnt7x@127.0.0.1:56764/p",
+    "code": 0,
+    "ms": 399,
+    "outCanaries": [
+     "a4ucnt7x"
+    ]
+   },
+   {
+    "a": "eval throw new Error('x ?A4Xcerr8x')",
+    "code": 1,
+    "ms": 304,
+    "outCanaries": [
+     "a4xcerr8x"
+    ]
+   },
+   {
+    "a": "close",
+    "code": 0,
+    "ms": 662,
+    "outCanaries": []
+   }
+  ],
+  "fileCanaries": [
+   "a4ccnav1x",
+   "a4ccev2x",
+   "a4ccerr3x",
+   "a4ccct4x"
+  ],
+  "humanCanaries": [
+   "a4ccev2x",
+   "a4ccerr3x",
+   "a4ccct4x",
+   "a4ccnav1x"
+  ],
+  "jsonCanaries": [
+   "a4ccnav1x",
+   "a4ccev2x",
+   "a4ccerr3x",
+   "a4ccct4x"
+  ],
+  "jsonByteIdentical": true,
+  "lines": [
+   {
+    "verb": "nav",
+    "args": [
+     "http://127.0.0.1:56764/p"
+    ],
+    "acts": [
+     [
+      "navigate",
+      "http://127.0.0.1:56764/p",
+      null
+     ]
+    ]
+   },
+   {
+    "verb": "eval",
+    "args": [
+     "fetch('http://127.0.0.1:56764/ssA4Ccev2x').then(r [redacted] r.status)"
+    ],
+    "acts": [
+     [
+      "eval",
+      "fetch('http://127.0.0.1:56764/ssA4Ccev2x').then(r [redacted] r.status)",
+      null
+     ]
+    ]
+   },
+   {
+    "verb": "eval",
+    "args": [
+     "throw new Error('cb http://127.0.0.1:56764/A4Ccerr3x')"
+    ],
+    "acts": [
+     [
+      "eval",
+      "throw new Error('cb http://127.0.0.1:56764/A4Ccerr3x')",
+      "cb http://127.0.0.1:56764/A4Ccerr3x"
+     ]
+    ]
+   },
+   {
+    "verb": "clicktext",
+    "args": [
+     "A4Ccct4x"
+    ],
+    "acts": [
+     [
+      "click_by_text",
+      "A4Ccct4x",
+      "No element found containing text: A4Ccct4x"
+     ]
+    ]
+   },
+   {
+    "verb": "waitfor",
+    "args": [
+     "0"
+    ],
+    "acts": [
+     [
+      "wait_for",
+      "url~\"<dir>\"",
+      "wait_for timed out after 0ms waiting for url~\"<dir>\": url does not contain \"<dir>\" (current URL: htt"
+     ]
+    ]
+   },
+   {
+    "verb": "nav",
+    "args": [
+     "http://127.0.0.1:56764/p"
+    ],
+    "acts": [
+     [
+      "navigate",
+      "http://127.0.0.1:56764/p",
+      null
+     ]
+    ]
+   },
+   {
+    "verb": "newtab",
+    "args": [
+     "http://admin:pa"
+    ],
+    "acts": []
+   },
+   {
+    "verb": "eval",
+    "args": [
+     "throw new Error('x [redacted]"
+    ],
+    "acts": [
+     [
+      "eval",
+      "throw new Error('x [redacted]",
+      "x [redacted]"
+     ]
+    ]
+   },
+   {
+    "verb": "close",
+    "args": [],
+    "acts": []
+   }
+  ]
+ },
+ "mcpTabCanaries": [
+  "a4cnavq2x",
+  "a4credir1x",
+  "a4cevq3x",
+  "a4ceerr4x",
+  "a4ceerr5x",
+  "a4cct8x"
+ ],
+ "mcpSessionCanaries": [
+  "a4cnavq2x",
+  "a4credir1x",
+  "a4cevq3x",
+  "a4ceerr4x",
+  "a4ceerr5x",
+  "a4cct8x"
+ ],
+ "mcpEntries": [
+  {
+   "seq": 1,
+   "t": "navigate",
+   "ok": true,
+   "target": "http://127.0.0.1:56764/p",
+   "url": "http://127.0.0.1:56764/p",
+   "reason": "'navigate' verified: a new document committed at http://127.0.0.1:56764/p[redacted]",
+   "obs": [
+    "new-document"
+   ]
+  },
+  {
+   "seq": 2,
+   "t": "navigate",
+   "ok": true,
+   "target": "http://127.0.0.1:56764/p",
+   "url": "http://127.0.0.1:56764/p",
+   "reason": "'navigate' verified: a new document committed at http://127.0.0.1:56764/ssA4Cnavq2x",
+   "obs": [
+    "new-document"
+   ]
+  },
+  {
+   "seq": 3,
+   "t": "navigate",
+   "ok": true,
+   "target": "http://127.0.0.1:56764/r",
+   "url": "http://127.0.0.1:56764/p",
+   "reason": "'navigate' verified: a new document committed at http://127.0.0.1:56764/A4Credir1x (redirected from http://127.0.0.1:56764/r)",
+   "obs": [
+    "new-document"
+   ]
+  },
+  {
+   "seq": 4,
+   "t": "eval",
+   "ok": true,
+   "target": "fetch('http://127.0.0.1:56764/ssA4Cevq3x').then(r [redacted] r.status)",
+   "url": "http://127.0.0.1:56764/p",
+   "obs": []
+  },
+  {
+   "seq": 5,
+   "t": "eval",
+   "ok": false,
+   "target": "throw new Error('callback http://127.0.0.1:56764/A4Ceerr4x failed')",
+   "url": "http://127.0.0.1:56764/p",
+   "error": "callback http://127.0.0.1:56764/A4Ceerr4x failed",
+   "obs": []
+  },
+  {
+   "seq": 6,
+   "t": "eval",
+   "ok": false,
+   "target": "throw new A4Ceerr5x')",
+   "url": "http://127.0.0.1:56764/p",
+   "error": "A4Ceerr5x",
+   "obs": []
+  },
+  {
+   "seq": 7,
+   "t": "eval",
+   "ok": false,
+   "target": "throw new Error('x http://127.0.0.1:56764/cb[redacted]",
+   "url": "http://127.0.0.1:56764/p",
+   "error": "x http://127.0.0.1:56764/cb[redacted]",
+   "obs": []
+  },
+  {
+   "seq": 8,
+   "t": "eval",
+   "ok": true,
+   "target": "fetch('https://h.test/x').catch(() [redacted] 1)",
+   "url": "http://127.0.0.1:56764/p",
+   "obs": []
+  },
+  {
+   "seq": 9,
+   "t": "click_by_text",
+   "ok": false,
+   "target": "ssA4Cct8x",
+   "url": "http://127.0.0.1:56764/p",
+   "error": "No element found containing text: ssA4Cct8x",
+   "reason": "Action failed: No element found containing text: ssA4Cct8x",
+   "obs": []
+  },
+  {
+   "seq": 10,
+   "t": "wait_for",
+   "ok": false,
+   "selector": "url~\"<dir>\"",
+   "url": "http://127.0.0.1:56764/p",
+   "error": "wait_for timed out after 0ms waiting for url~\"<dir>\": url does not contain \"<dir>\" (current URL: http://127.0.0.1:56764/A4Credir1x).",
+   "reason": "Action failed: wait_for timed out after 0ms waiting for url~\"<dir>\": url does not contain \"<dir>\" (current URL: http://127.0.0.1:56764/A4Credir1x).",
+   "obs": []
+  },
+  {
+   "seq": 11,
+   "t": "navigate",
+   "ok": true,
+   "target": "http://admin:pa",
+   "url": "http://admin:pa",
+   "reason": "'navigate' verified: a new document committed at http://127.0.0.1:56764/p",
+   "obs": [
+    "new-document"
+   ]
+  },
+  {
+   "seq": 12,
+   "t": "navigate",
+   "ok": true,
+   "target": "http://admin:pa",
+   "url": "http://admin:pa",
+   "reason": "'navigate' verified: a new document committed at http://127.0.0.1:56764/p",
+   "obs": [
+    "new-document"
+   ]
+  },
+  {
+   "seq": 13,
+   "t": "navigate",
+   "ok": true,
+   "target": "http://127.0.0.1:56764/p",
+   "url": "http://127.0.0.1:56764/p",
+   "reason": "'navigate' verified: a new document committed at http://127.0.0.1:56764/p",
+   "obs": [
+    "new-document"
+   ]
+  }
+ ],
+ "summary": {
+  "a4c_leaked": [
+   "a4cnavq2x",
+   "a4credir1x",
+   "a4cevq3x",
+   "a4ceerr4x",
+   "a4ceerr5x",
+   "a4cct8x",
+   "a4ccnav1x",
+   "a4ccev2x",
+   "a4ccerr3x",
+   "a4ccct4x"
+  ],
+  "a4u_leaked": [],
+  "a4x_leaked_controls": []
+ }
+}

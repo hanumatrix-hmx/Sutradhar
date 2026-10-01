@@ -1,0 +1,9 @@
+F1a | fix2 text ok nav ok | head text LEAK nav ok | "https://h.test/login?user=bob&pw=P@ssS3cretF1"
+F1a | fix2 text ok nav ok | head text LEAK nav ok | "https://h.test/p?pw=P%40ssS3cretF2"
+F1a | fix2 text ok nav ok | head text LEAK nav ok | "https://h.test/cb#access_token=a@S3cretF3"
+F1a | fix2 text ok nav ok | head text LEAK nav ok | "'navigate' verified: a new document committed at http://127
+F1a | fix2 text ok nav ok | head text LEAK nav ok | "https://h.test/p;jsessionid=a@S3cretF7"
+F1b | fix2 text LEAK nav LEAK | head text LEAK nav LEAK | "PGPASSWORD=hunter@S3cretF5"
+F1b | fix2 text LEAK nav LEAK | head text LEAK nav LEAK | "--password=Tr0ub@dorS3cretF6"
+F2 | fix2 text LEAK nav LEAK | head text ok nav LEAK | "https://admin:pa%3FS3cretUq@h.test/p"
+F2 | fix2 text LEAK nav LEAK | head text ok nav LEAK | "https://admin:pa%23S3cretUh@h.test/p"

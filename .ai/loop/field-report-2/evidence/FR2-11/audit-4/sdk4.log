@@ -1,0 +1,43 @@
+{"timestamp":"2026-10-01T14:57:52.973Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-10-01T14:57:53.209Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790866672972_1","context":{"isIncognito":false}}
+{"timestamp":"2026-10-01T14:57:53.385Z","level":"info","message":"[BrowserSession] Closed session sess_1790866672972_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-10-01T14:57:53.386Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790866672972_1","context":{"reason":"Runtime shutdown"}}
+{
+ "callerErr": [
+  "a4csdkerr2x"
+ ],
+ "historyCanaries": [
+  "a4csdknav1x",
+  "a4csdkerr2x"
+ ],
+ "entries": [
+  [
+   "navigate",
+   "http://127.0.0.1:51179/p",
+   "http://127.0.0.1:51179/p",
+   null,
+   "'navigate' verified: a new document committed at http://127.0.0.1:51179/ssA4Csdknav1x"
+  ],
+  [
+   "eval",
+   "throw new A4Csdkerr2x')",
+   "http://127.0.0.1:51179/p",
+   "A4Csdkerr2x",
+   null
+  ],
+  [
+   "navigate",
+   "http://admin:pa",
+   "http://admin:pa",
+   null,
+   "'navigate' verified: a new document committed at http://127.0.0.1:51179/p"
+  ],
+  [
+   "navigate",
+   "http://127.0.0.1:51179/p",
+   "http://127.0.0.1:51179/p",
+   null,
+   "'navigate' verified: a new document committed at http://127.0.0.1:51179/p[redacted]"
+  ]
+ ]
+}

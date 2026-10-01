@@ -1,0 +1,181 @@
+[
+ {
+  "name": "text",
+  "stored": {
+   "success": true,
+   "executionTimeMs": 1,
+   "timestamp": "t",
+   "actionType": "click",
+   "error": "[redacted]"
+  },
+  "idempotent": true
+ },
+ {
+  "name": "ipv6 url",
+  "stored": {
+   "success": true,
+   "executionTimeMs": 1,
+   "timestamp": "t",
+   "actionType": "navigate",
+   "target": "http://[::1]:8080/api/v1",
+   "url": "http://[2001:db8::1]/p"
+  },
+  "idempotent": true
+ },
+ {
+  "name": "ipv6 text",
+  "stored": {
+   "success": true,
+   "executionTimeMs": 1,
+   "timestamp": "t",
+   "actionType": "click",
+   "error": "failed at http://[::1]:8080/api/v1 and https://[fe80::1%25eth0]<dir>"
+  },
+  "idempotent": true
+ },
+ {
+  "name": "selector id/attr",
+  "stored": {
+   "success": true,
+   "executionTimeMs": 1,
+   "timestamp": "t",
+   "actionType": "click",
+   "selector": "form#login button[type=submit]:nth-child(2) > a[href=\"/x\"]"
+  },
+  "idempotent": true
+ },
+ {
+  "name": "selector xpath",
+  "stored": {
+   "success": true,
+   "executionTimeMs": 1,
+   "timestamp": "t",
+   "actionType": "click",
+   "selector": "[redacted]"
+  },
+  "idempotent": true
+ },
+ {
+  "name": "selector text=",
+  "stored": {
+   "success": true,
+   "executionTimeMs": 1,
+   "timestamp": "t",
+   "actionType": "click",
+   "selector": "[redacted] in"
+  },
+  "idempotent": true
+ },
+ {
+  "name": "wait_for",
+  "stored": {
+   "success": true,
+   "executionTimeMs": 1,
+   "timestamp": "t",
+   "actionType": "wait_for",
+   "selector": "text=\"Saved successfully\" AND url~\"<dir>\" AND textGone=\"Loading...\""
+  },
+  "idempotent": true
+ },
+ {
+  "name": "wait_for js",
+  "stored": {
+   "success": true,
+   "executionTimeMs": 1,
+   "timestamp": "t",
+   "actionType": "wait_for",
+   "selector": "js(document.querySelector(\"[redacted]"
+  },
+  "idempotent": true
+ },
+ {
+  "name": "wait_for_selector",
+  "stored": {
+   "success": true,
+   "executionTimeMs": 1,
+   "timestamp": "t",
+   "actionType": "wait_for_selector",
+   "selector": "#results li",
+   "target": "state=visible"
+  },
+  "idempotent": true
+ },
+ {
+  "name": "upload",
+  "stored": {
+   "success": true,
+   "executionTimeMs": 1,
+   "timestamp": "t",
+   "actionType": "upload_file",
+   "target": "report-2026.pdf",
+   "selector": "input[type=file]"
+  },
+  "idempotent": true
+ },
+ {
+  "name": "upload no ext",
+  "stored": {
+   "success": true,
+   "executionTimeMs": 1,
+   "timestamp": "t",
+   "actionType": "upload_file",
+   "target": "<dir>"
+  },
+  "idempotent": true
+ },
+ {
+  "name": "eval BOM",
+  "stored": {
+   "success": true,
+   "executionTimeMs": 1,
+   "timestamp": "t",
+   "actionType": "eval",
+   "target": "a﻿https://h/x[redacted]"
+  },
+  "idempotent": true
+ },
+ {
+  "name": "eval multiline",
+  "stored": {
+   "success": true,
+   "executionTimeMs": 1,
+   "timestamp": "t",
+   "actionType": "eval",
+   "target": "const x [redacted] 1[redacted]"
+  },
+  "idempotent": true
+ },
+ {
+  "name": "spaced path",
+  "stored": {
+   "success": true,
+   "executionTimeMs": 1,
+   "timestamp": "t",
+   "actionType": "click",
+   "error": "open '<dir> Secret s.png'"
+  },
+  "idempotent": true
+ },
+ {
+  "name": "press_key",
+  "stored": {
+   "success": true,
+   "executionTimeMs": 1,
+   "timestamp": "t",
+   "actionType": "press_key",
+   "target": "Control+Shift+ArrowRight"
+  },
+  "idempotent": true
+ },
+ {
+  "name": "click_by_role",
+  "stored": {
+   "success": true,
+   "executionTimeMs": 1,
+   "timestamp": "t",
+   "actionType": "click_by_role",
+   "target": "button \"Save\""
+  },
+  "idempotent": true
+ }
+]

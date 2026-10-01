@@ -1,0 +1,10 @@
+"[\"https://h/a\",\"C:\\\\Users\\\\WvUser1\\\\doc.txt\"]" => "[\"https://h/a\",\"doc.txt\"]" | eval: "[\"https://h/a\",\"doc.txt\"]" clean
+"fetch(\"https://h/up\",{body:JSON.stringify({f:\"/home/WvUser2/secret/doc.txt\"})})" => "fetch(\"https://h/up\",{body:JSON.stringify({f:\"doc.txt\"})})" | eval: "fetch(\"https://h/up\",{body:JSON.stringify({f:\"doc.txt\"})})" clean
+"https://h/p,/home/WvUser3/f.txt" => "https://h/p,f.txt" | eval: "https://h/p,f.txt" clean
+"[\"https://h/a\",\"https://u:WvPass4@h2/p\"]" => "[\"https://h/a\",\"https://h2/p\"]" | eval: "[\"https://h/a\",\"https://h2/p\"]" clean
+"see:https://h/a|//srv/WvShare5/f.doc" => "see:https://h/a|f.doc" | eval: "see:https://h/a|f.doc" clean
+"https://h/p /home/WvUser6/f.txt" => "https://h/p f.txt" | eval: "https://h/p f.txt" clean
+"Failed:https://h/x(C:\\Users\\WvUser7\\a.txt)" => "Failed:https://h/x(a.txt)" | eval: "Failed:https://h/x(a.txt)" clean
+"x:https://h/a/b/WvPath8/c" => "x:https://h/a/b/WvPath8/c" | eval: "x:https://h/a/b/WvPath8/c" clean
+"https://h/p‪/home/WvUser9/f.txt" => "https://h/p‪f.txt" | eval: "https://h/p‪f.txt" clean
+exit=0

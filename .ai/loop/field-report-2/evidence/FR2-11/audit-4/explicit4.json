@@ -1,0 +1,1100 @@
+[
+ {
+  "group": "ipv6",
+  "in": "https://[dead:beef]@SECa1/x",
+  "text": "https://SECa1/x",
+  "sel": "https://SECa1/x",
+  "navTarget": "https://seca1/x",
+  "url": "https://seca1/x",
+  "cliNav": "https://seca1/x",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": "host after userinfo-looking bracket: hostname = D5 origin (limit)"
+ },
+ {
+  "group": "ipv6",
+  "in": "x@[abc]/s3cretA2",
+  "text": "[abc]<dir>",
+  "sel": "[abc]<dir>",
+  "navTarget": "[abc]<dir>",
+  "url": "[abc]<dir>",
+  "cliNav": "[abc]<dir>",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "path last segment without dot -> <dir> expected"
+ },
+ {
+  "group": "ipv6",
+  "in": "//[::1]:S3cretA3@h.test/p",
+  "text": "<dir>",
+  "sel": "<dir>",
+  "navTarget": "<dir>",
+  "url": "<dir>",
+  "cliNav": "<dir>",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "ipv6",
+  "in": "https://h/a//[a]b[c]/S3cretA4/x",
+  "text": "https://h/a//[a]b[c]<dir>",
+  "sel": "https://h/a//[a]b[c]<dir>",
+  "navTarget": "https://h/a//[a]b[c]<dir>",
+  "url": "https://h/a//[a]b[c]<dir>",
+  "cliNav": "https://h/a//[a]b[c]<dir>",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "URL path (D5 keeps path; limit)"
+ },
+ {
+  "group": "ipv6",
+  "in": "https://[::1%25en0]/p?t=S3cretA5",
+  "text": "https://[::1%25en0]<dir>",
+  "sel": "https://[::1%25en0]<dir>",
+  "navTarget": "https://[::1%25en0]<dir>",
+  "url": "https://[::1%25en0]<dir>",
+  "cliNav": "https://[::1%25en0]<dir>",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "ipv6",
+  "in": "https://u:S3cretA6@[2001:db8::1]:8443/p",
+  "text": "https://[2001:db8::1]:8443/p",
+  "sel": "https://[2001:db8::1]:8443/p",
+  "navTarget": "https://[2001:db8::1]:8443/p",
+  "url": "https://[2001:db8::1]:8443/p",
+  "cliNav": "https://[2001:db8::1]:8443/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "ipv6",
+  "in": "['https://[::1]/a','https://u:S3cretA7@[::2]/b']",
+  "text": "['https://[::1]/a','https://[::2]/b']",
+  "sel": "['https://[::1]/a','https://[::2]/b']",
+  "navTarget": "['https://[::1]/a','https://[::2]/b']",
+  "url": "['https://[::1]/a','https://[::2]/b']",
+  "cliNav": "['https://[::1]/a','https://[::2]/b']",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "ipv6",
+  "in": "@[dead]C:/Users/S3cretA8/proj/f.txt",
+  "text": "[dead]f.txt",
+  "sel": "[dead]f.txt",
+  "navTarget": "[dead]f.txt",
+  "url": "[dead]f.txt",
+  "cliNav": "[dead]f.txt",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "hex group then a local path"
+ },
+ {
+  "group": "ipv6",
+  "in": "//[beef]/home/S3cretA9/x/f.txt",
+  "text": "f.txt",
+  "sel": "f.txt",
+  "navTarget": "f.txt",
+  "url": "f.txt",
+  "cliNav": "f.txt",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "scheme-less // + hex group: is it a URL?"
+ },
+ {
+  "group": "ipv6",
+  "in": "https://h.test/p@[cafe]C:/Users/S3cretA10/f.txt",
+  "text": "https://h.test/[cafe]f.txt",
+  "sel": "https://h.test/[cafe]f.txt",
+  "navTarget": "https://h.test/[cafe]f.txt",
+  "url": "https://h.test/[cafe]f.txt",
+  "cliNav": "https://h.test/[cafe]f.txt",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "GAP-372 shape with an @ + hex group"
+ },
+ {
+  "group": "ipv6",
+  "in": "https://[::1]/ok',C:/Users/S3cretA11/f.txt",
+  "text": "https://[::1]/ok',f.txt",
+  "sel": "https://[::1]/ok',f.txt",
+  "navTarget": "https://[::1]/ok',f.txt",
+  "url": "https://[::1]/ok',f.txt",
+  "cliNav": "https://[::1]/ok',f.txt",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "ipv6",
+  "in": "//[nothex:S3cretA12]/p",
+  "text": "//[nothex:S3cretA12]<dir>",
+  "sel": "//[nothex:S3cretA12]<dir>",
+  "navTarget": "//[nothex:S3cretA12]<dir>",
+  "url": "//[nothex:S3cretA12]<dir>",
+  "cliNav": "//[nothex:S3cretA12]<dir>",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": "non-hex bracket after // splits"
+ },
+ {
+  "group": "dir",
+  "in": "a<dir>b",
+  "text": "a<dir>b",
+  "sel": "a<dir>b",
+  "navTarget": "a<dir>b",
+  "url": "a<dir>b",
+  "cliNav": "a<dir>b",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "readability"
+ },
+ {
+  "group": "dir",
+  "in": "<dir>https://u:S3cretB1@h/p",
+  "text": "<dir>https://h/p",
+  "sel": "<dir>https://h/p",
+  "navTarget": "<dir>https://h/p",
+  "url": "<dir>https://h/p",
+  "cliNav": "<dir>https://h/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "dir",
+  "in": "<dir>C:/Users/S3cretB2/x/f.txt",
+  "text": "f.txt",
+  "sel": "f.txt",
+  "navTarget": "f.txt",
+  "url": "f.txt",
+  "cliNav": "f.txt",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "dir",
+  "in": "https://h/x<dir>C:/Users/S3cretB3/y/f.txt",
+  "text": "https://h/x<dir>C:/Users/S3cretB3/y/f.txt",
+  "sel": "https://h/x<dir>C:/Users/S3cretB3/y/f.txt",
+  "navTarget": "https://h/x%3Cdir%3EC:/Users/S3cretB3/y/f.txt",
+  "url": "https://h/x%3Cdir%3EC:/Users/S3cretB3/y/f.txt",
+  "cliNav": "https://h/x%3Cdir%3EC:/Users/S3cretB3/y/f.txt",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": "joins URL and path through <dir> (GAP-372-like)"
+ },
+ {
+  "group": "dir",
+  "in": "<dir>?t=S3cretB4",
+  "text": "<dir>[redacted]",
+  "sel": "<dir>[redacted]",
+  "navTarget": "<dir>",
+  "url": "<dir>",
+  "cliNav": "<dir>",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "dir",
+  "in": "<dir>https://h/p<dir>'https://u:S3cretB5@h2/'<dir>",
+  "text": "<dir>https://h/p<dir>'https://h2/'<dir>",
+  "sel": "<dir>https://h/p<dir>'https://h2/'<dir>",
+  "navTarget": "<dir>https://h/p<dir>'https://h2/'<dir>",
+  "url": "<dir>https://h/p<dir>'https://h2/'<dir>",
+  "cliNav": "<dir>https://h/p<dir>'https://h2/'<dir>",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "dir",
+  "in": "&lt;dir&gt;https://u:S3cretB6@h/",
+  "text": "[redacted]",
+  "sel": "[redacted]",
+  "navTarget": "[redacted]",
+  "url": "[redacted]",
+  "cliNav": "[redacted]",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "dir",
+  "in": "'C:/Users/S3cretB7/a.txt'<dir>'C:/Users/S3cretB8/b.txt'",
+  "text": "'a.txt'<dir>'b.txt'",
+  "sel": "'a.txt'<dir>'b.txt'",
+  "navTarget": "'a.txt'<dir>'b.txt'",
+  "url": "'a.txt'<dir>'b.txt'",
+  "cliNav": "'a.txt'<dir>'b.txt'",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "372-cred",
+  "in": "https://h.test/a/https://u:S3cretC47@h2.test/p",
+  "text": "https://h.test/a/https://h2.test/p",
+  "sel": "https://h.test/a/https://h2.test/p",
+  "navTarget": "https://h.test/a/https://h2.test/p",
+  "url": "https://h.test/a/https://h2.test/p",
+  "cliNav": "https://h.test/a/https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "credential behind a connector"
+ },
+ {
+  "group": "372-query",
+  "in": "https://h.test/a/https://h2.test/p?token=S3cretQ47",
+  "text": "https://h.test/a/https://h2.test/p[redacted]",
+  "sel": "https://h.test/a/https://h2.test/p[redacted]",
+  "navTarget": "https://h.test/a/https://h2.test/p",
+  "url": "https://h.test/a/https://h2.test/p",
+  "cliNav": "https://h.test/a/https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "query behind a connector"
+ },
+ {
+  "group": "372-path",
+  "in": "https://h.test/a/C:/Users/S3cretP47/d/f.txt",
+  "text": "https://h.test/a/C:/Users/S3cretP47/d/f.txt",
+  "sel": "https://h.test/a/C:/Users/S3cretP47/d/f.txt",
+  "navTarget": "https://h.test/a/C:/Users/S3cretP47/d/f.txt",
+  "url": "https://h.test/a/C:/Users/S3cretP47/d/f.txt",
+  "cliNav": "https://h.test/a/C:/Users/S3cretP47/d/f.txt",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": "local path behind a connector (GAP-372 documented)"
+ },
+ {
+  "group": "372-cred",
+  "in": "https://h.test/a@https://u:S3cretC64@h2.test/p",
+  "text": "https://h.test/https://h2.test/p",
+  "sel": "https://h.test/https://h2.test/p",
+  "navTarget": "https://h.test/https://h2.test/p",
+  "url": "https://h.test/https://h2.test/p",
+  "cliNav": "https://h.test/https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "credential behind a connector"
+ },
+ {
+  "group": "372-query",
+  "in": "https://h.test/a@https://h2.test/p?token=S3cretQ64",
+  "text": "https://h.test/https://h2.test/p[redacted]",
+  "sel": "https://h.test/https://h2.test/p[redacted]",
+  "navTarget": "https://h.test/https://h2.test/p",
+  "url": "https://h.test/https://h2.test/p",
+  "cliNav": "https://h.test/https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "query behind a connector"
+ },
+ {
+  "group": "372-path",
+  "in": "https://h.test/a@C:/Users/S3cretP64/d/f.txt",
+  "text": "https://h.test/C:/Users/S3cretP64/d/f.txt",
+  "sel": "https://h.test/C:/Users/S3cretP64/d/f.txt",
+  "navTarget": "https://h.test/C:/Users/S3cretP64/d/f.txt",
+  "url": "https://h.test/C:/Users/S3cretP64/d/f.txt",
+  "cliNav": "https://h.test/C:/Users/S3cretP64/d/f.txt",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": "local path behind a connector (GAP-372 documented)"
+ },
+ {
+  "group": "372-cred",
+  "in": "https://h.test/a:https://u:S3cretC58@h2.test/p",
+  "text": "https://h.test/a:https://h2.test/p",
+  "sel": "https://h.test/a:https://h2.test/p",
+  "navTarget": "https://h.test/a:https://h2.test/p",
+  "url": "https://h.test/a:https://h2.test/p",
+  "cliNav": "https://h.test/a:https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "credential behind a connector"
+ },
+ {
+  "group": "372-query",
+  "in": "https://h.test/a:https://h2.test/p?token=S3cretQ58",
+  "text": "https://h.test/a:https://h2.test/p[redacted]",
+  "sel": "https://h.test/a:https://h2.test/p[redacted]",
+  "navTarget": "https://h.test/a:https://h2.test/p",
+  "url": "https://h.test/a:https://h2.test/p",
+  "cliNav": "https://h.test/a:https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "query behind a connector"
+ },
+ {
+  "group": "372-path",
+  "in": "https://h.test/a:C:/Users/S3cretP58/d/f.txt",
+  "text": "https://h.test/a:C:/Users/S3cretP58/d/f.txt",
+  "sel": "https://h.test/a:C:/Users/S3cretP58/d/f.txt",
+  "navTarget": "https://h.test/a:C:/Users/S3cretP58/d/f.txt",
+  "url": "https://h.test/a:C:/Users/S3cretP58/d/f.txt",
+  "cliNav": "https://h.test/a:C:/Users/S3cretP58/d/f.txt",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": "local path behind a connector (GAP-372 documented)"
+ },
+ {
+  "group": "372-cred",
+  "in": "https://h.test/a+https://u:S3cretC43@h2.test/p",
+  "text": "https://h.test/a+https://h2.test/p",
+  "sel": "https://h.test/a+https://h2.test/p",
+  "navTarget": "https://h.test/a+https://h2.test/p",
+  "url": "https://h.test/a+https://h2.test/p",
+  "cliNav": "https://h.test/a+https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "credential behind a connector"
+ },
+ {
+  "group": "372-query",
+  "in": "https://h.test/a+https://h2.test/p?token=S3cretQ43",
+  "text": "https://h.test/a+https://h2.test/p[redacted]",
+  "sel": "https://h.test/a+https://h2.test/p[redacted]",
+  "navTarget": "https://h.test/a+https://h2.test/p",
+  "url": "https://h.test/a+https://h2.test/p",
+  "cliNav": "https://h.test/a+https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "query behind a connector"
+ },
+ {
+  "group": "372-path",
+  "in": "https://h.test/a+C:/Users/S3cretP43/d/f.txt",
+  "text": "https://h.test/a+C:/Users/S3cretP43/d/f.txt",
+  "sel": "https://h.test/a+C:/Users/S3cretP43/d/f.txt",
+  "navTarget": "https://h.test/a+C:/Users/S3cretP43/d/f.txt",
+  "url": "https://h.test/a+C:/Users/S3cretP43/d/f.txt",
+  "cliNav": "https://h.test/a+C:/Users/S3cretP43/d/f.txt",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": "local path behind a connector (GAP-372 documented)"
+ },
+ {
+  "group": "372-cred",
+  "in": "https://h.test/a!https://u:S3cretC33@h2.test/p",
+  "text": "https://h.test/a!https://h2.test/p",
+  "sel": "https://h.test/a!https://h2.test/p",
+  "navTarget": "https://h.test/a!https://h2.test/p",
+  "url": "https://h.test/a!https://h2.test/p",
+  "cliNav": "https://h.test/a!https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "credential behind a connector"
+ },
+ {
+  "group": "372-query",
+  "in": "https://h.test/a!https://h2.test/p?token=S3cretQ33",
+  "text": "https://h.test/a!https://h2.test/p[redacted]",
+  "sel": "https://h.test/a!https://h2.test/p[redacted]",
+  "navTarget": "https://h.test/a!https://h2.test/p",
+  "url": "https://h.test/a!https://h2.test/p",
+  "cliNav": "https://h.test/a!https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "query behind a connector"
+ },
+ {
+  "group": "372-path",
+  "in": "https://h.test/a!C:/Users/S3cretP33/d/f.txt",
+  "text": "https://h.test/a!C:/Users/S3cretP33/d/f.txt",
+  "sel": "https://h.test/a!C:/Users/S3cretP33/d/f.txt",
+  "navTarget": "https://h.test/a!C:/Users/S3cretP33/d/f.txt",
+  "url": "https://h.test/a!C:/Users/S3cretP33/d/f.txt",
+  "cliNav": "https://h.test/a!C:/Users/S3cretP33/d/f.txt",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": "local path behind a connector (GAP-372 documented)"
+ },
+ {
+  "group": "372-cred",
+  "in": "https://h.test/a*https://u:S3cretC42@h2.test/p",
+  "text": "https://h.test/a*https://h2.test/p",
+  "sel": "https://h.test/a*https://h2.test/p",
+  "navTarget": "https://h.test/a*https://h2.test/p",
+  "url": "https://h.test/a*https://h2.test/p",
+  "cliNav": "https://h.test/a*https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "credential behind a connector"
+ },
+ {
+  "group": "372-query",
+  "in": "https://h.test/a*https://h2.test/p?token=S3cretQ42",
+  "text": "https://h.test/a*https://h2.test/p[redacted]",
+  "sel": "https://h.test/a*https://h2.test/p[redacted]",
+  "navTarget": "https://h.test/a*https://h2.test/p",
+  "url": "https://h.test/a*https://h2.test/p",
+  "cliNav": "https://h.test/a*https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "query behind a connector"
+ },
+ {
+  "group": "372-path",
+  "in": "https://h.test/a*C:/Users/S3cretP42/d/f.txt",
+  "text": "https://h.test/a*C:/Users/S3cretP42/d/f.txt",
+  "sel": "https://h.test/a*C:/Users/S3cretP42/d/f.txt",
+  "navTarget": "https://h.test/a*C:/Users/S3cretP42/d/f.txt",
+  "url": "https://h.test/a*C:/Users/S3cretP42/d/f.txt",
+  "cliNav": "https://h.test/a*C:/Users/S3cretP42/d/f.txt",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": "local path behind a connector (GAP-372 documented)"
+ },
+ {
+  "group": "372-cred",
+  "in": "https://h.test/a$https://u:S3cretC36@h2.test/p",
+  "text": "https://h.test/a$https://h2.test/p",
+  "sel": "https://h.test/a$https://h2.test/p",
+  "navTarget": "https://h.test/a$https://h2.test/p",
+  "url": "https://h.test/a$https://h2.test/p",
+  "cliNav": "https://h.test/a$https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "credential behind a connector"
+ },
+ {
+  "group": "372-query",
+  "in": "https://h.test/a$https://h2.test/p?token=S3cretQ36",
+  "text": "https://h.test/a$https://h2.test/p[redacted]",
+  "sel": "https://h.test/a$https://h2.test/p[redacted]",
+  "navTarget": "https://h.test/a$https://h2.test/p",
+  "url": "https://h.test/a$https://h2.test/p",
+  "cliNav": "https://h.test/a$https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "query behind a connector"
+ },
+ {
+  "group": "372-path",
+  "in": "https://h.test/a$C:/Users/S3cretP36/d/f.txt",
+  "text": "https://h.test/a$C:/Users/S3cretP36/d/f.txt",
+  "sel": "https://h.test/a$C:/Users/S3cretP36/d/f.txt",
+  "navTarget": "https://h.test/a$C:/Users/S3cretP36/d/f.txt",
+  "url": "https://h.test/a$C:/Users/S3cretP36/d/f.txt",
+  "cliNav": "https://h.test/a$C:/Users/S3cretP36/d/f.txt",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": "local path behind a connector (GAP-372 documented)"
+ },
+ {
+  "group": "372-cred",
+  "in": "https://h.test/a~https://u:S3cretC126@h2.test/p",
+  "text": "https://h.test/a~https://h2.test/p",
+  "sel": "https://h.test/a~https://h2.test/p",
+  "navTarget": "https://h.test/a~https://h2.test/p",
+  "url": "https://h.test/a~https://h2.test/p",
+  "cliNav": "https://h.test/a~https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "credential behind a connector"
+ },
+ {
+  "group": "372-query",
+  "in": "https://h.test/a~https://h2.test/p?token=S3cretQ126",
+  "text": "https://h.test/a~https://h2.test/p[redacted]",
+  "sel": "https://h.test/a~https://h2.test/p[redacted]",
+  "navTarget": "https://h.test/a~https://h2.test/p",
+  "url": "https://h.test/a~https://h2.test/p",
+  "cliNav": "https://h.test/a~https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "query behind a connector"
+ },
+ {
+  "group": "372-path",
+  "in": "https://h.test/a~C:/Users/S3cretP126/d/f.txt",
+  "text": "https://h.test/a~C:/Users/S3cretP126/d/f.txt",
+  "sel": "https://h.test/a~C:/Users/S3cretP126/d/f.txt",
+  "navTarget": "https://h.test/a~C:/Users/S3cretP126/d/f.txt",
+  "url": "https://h.test/a~C:/Users/S3cretP126/d/f.txt",
+  "cliNav": "https://h.test/a~C:/Users/S3cretP126/d/f.txt",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": "local path behind a connector (GAP-372 documented)"
+ },
+ {
+  "group": "372-cred",
+  "in": "https://h.test/a&https://u:S3cretC38@h2.test/p",
+  "text": "[redacted]",
+  "sel": "[redacted]",
+  "navTarget": "[redacted]",
+  "url": "[redacted]",
+  "cliNav": "[redacted]",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "credential behind a connector"
+ },
+ {
+  "group": "372-query",
+  "in": "https://h.test/a&https://h2.test/p?token=S3cretQ38",
+  "text": "[redacted]",
+  "sel": "[redacted]",
+  "navTarget": "[redacted]",
+  "url": "[redacted]",
+  "cliNav": "[redacted]",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "query behind a connector"
+ },
+ {
+  "group": "372-path",
+  "in": "https://h.test/a&C:/Users/S3cretP38/d/f.txt",
+  "text": "[redacted]",
+  "sel": "[redacted]",
+  "navTarget": "[redacted]",
+  "url": "[redacted]",
+  "cliNav": "[redacted]",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "local path behind a connector (GAP-372 documented)"
+ },
+ {
+  "group": "372-cred",
+  "in": "https://h.test/a=https://u:S3cretC61@h2.test/p",
+  "text": "[redacted]",
+  "sel": "[redacted]",
+  "navTarget": "[redacted]",
+  "url": "[redacted]",
+  "cliNav": "[redacted]",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "credential behind a connector"
+ },
+ {
+  "group": "372-query",
+  "in": "https://h.test/a=https://h2.test/p?token=S3cretQ61",
+  "text": "[redacted]",
+  "sel": "[redacted]",
+  "navTarget": "[redacted]",
+  "url": "[redacted]",
+  "cliNav": "[redacted]",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "query behind a connector"
+ },
+ {
+  "group": "372-path",
+  "in": "https://h.test/a=C:/Users/S3cretP61/d/f.txt",
+  "text": "[redacted]",
+  "sel": "[redacted]",
+  "navTarget": "[redacted]",
+  "url": "[redacted]",
+  "cliNav": "[redacted]",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "local path behind a connector (GAP-372 documented)"
+ },
+ {
+  "group": "372-cred",
+  "in": "https://h.test/a%https://u:S3cretC37@h2.test/p",
+  "text": "https://h.test/a%https://h2.test/p",
+  "sel": "https://h.test/a%https://h2.test/p",
+  "navTarget": "https://h.test/a%https://h2.test/p",
+  "url": "https://h.test/a%https://h2.test/p",
+  "cliNav": "https://h.test/a%https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "credential behind a connector"
+ },
+ {
+  "group": "372-query",
+  "in": "https://h.test/a%https://h2.test/p?token=S3cretQ37",
+  "text": "https://h.test/a%https://h2.test/p[redacted]",
+  "sel": "https://h.test/a%https://h2.test/p[redacted]",
+  "navTarget": "https://h.test/a%https://h2.test/p",
+  "url": "https://h.test/a%https://h2.test/p",
+  "cliNav": "https://h.test/a%https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "query behind a connector"
+ },
+ {
+  "group": "372-path",
+  "in": "https://h.test/a%C:/Users/S3cretP37/d/f.txt",
+  "text": "https://h.test/a%C:/Users/S3cretP37/d/f.txt",
+  "sel": "https://h.test/a%C:/Users/S3cretP37/d/f.txt",
+  "navTarget": "https://h.test/a%C:/Users/S3cretP37/d/f.txt",
+  "url": "https://h.test/a%C:/Users/S3cretP37/d/f.txt",
+  "cliNav": "https://h.test/a%C:/Users/S3cretP37/d/f.txt",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": "local path behind a connector (GAP-372 documented)"
+ },
+ {
+  "group": "372-cred",
+  "in": "https://h.test/a.https://u:S3cretC46@h2.test/p",
+  "text": "https://h.test/a.https://h2.test/p",
+  "sel": "https://h.test/a.https://h2.test/p",
+  "navTarget": "https://h.test/a.https://h2.test/p",
+  "url": "https://h.test/a.https://h2.test/p",
+  "cliNav": "https://h.test/a.https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "credential behind a connector"
+ },
+ {
+  "group": "372-query",
+  "in": "https://h.test/a.https://h2.test/p?token=S3cretQ46",
+  "text": "https://h.test/a.https://h2.test/p[redacted]",
+  "sel": "https://h.test/a.https://h2.test/p[redacted]",
+  "navTarget": "https://h.test/a.https://h2.test/p",
+  "url": "https://h.test/a.https://h2.test/p",
+  "cliNav": "https://h.test/a.https://h2.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": "query behind a connector"
+ },
+ {
+  "group": "372-path",
+  "in": "https://h.test/a.C:/Users/S3cretP46/d/f.txt",
+  "text": "https://h.test/a.C:/Users/S3cretP46/d/f.txt",
+  "sel": "https://h.test/a.C:/Users/S3cretP46/d/f.txt",
+  "navTarget": "https://h.test/a.C:/Users/S3cretP46/d/f.txt",
+  "url": "https://h.test/a.C:/Users/S3cretP46/d/f.txt",
+  "cliNav": "https://h.test/a.C:/Users/S3cretP46/d/f.txt",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": "local path behind a connector (GAP-372 documented)"
+ },
+ {
+  "group": "373",
+  "in": "postgres://admin:Pw1spaceX Pw2spaceY@db.internal:5432/app",
+  "text": "postgres://admin:Pw1spaceX <dir>",
+  "sel": "postgres://admin:Pw1spaceX <dir>",
+  "navTarget": "postgres://admin:Pw1spaceX <dir>",
+  "url": "postgres://admin:Pw1spaceX <dir>",
+  "cliNav": "postgres://admin:Pw1spaceX <dir>",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "373",
+  "in": "postgres://admin:Pw1slashX/Pw2slashY@db.internal:5432/app",
+  "text": "postgres://admin:Pw1slashX/db.internal:5432/app",
+  "sel": "postgres://admin:Pw1slashX/db.internal:5432/app",
+  "navTarget": "postgres://admin:Pw1slashX/db.internal:5432/app",
+  "url": "postgres://admin:Pw1slashX/db.internal:5432/app",
+  "cliNav": "postgres://admin:Pw1slashX/db.internal:5432/app",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "373",
+  "in": "postgres://admin:Pw1pct2FX%2FPw2pct2FY@db.internal:5432/app",
+  "text": "postgres://admin:Pw1pct2FX/db.internal:5432/app",
+  "sel": "postgres://admin:Pw1pct2FX/db.internal:5432/app",
+  "navTarget": "postgres://admin:Pw1pct2FX/db.internal:5432/app",
+  "url": "postgres://admin:Pw1pct2FX/db.internal:5432/app",
+  "cliNav": "postgres://admin:Pw1pct2FX/db.internal:5432/app",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "373",
+  "in": "postgres://admin:Pw1pct252FX%252FPw2pct252FY@db.internal:5432/app",
+  "text": "postgres://admin:Pw1pct252FX/db.internal:5432/app",
+  "sel": "postgres://admin:Pw1pct252FX/db.internal:5432/app",
+  "navTarget": "postgres://admin:Pw1pct252FX/db.internal:5432/app",
+  "url": "postgres://admin:Pw1pct252FX/db.internal:5432/app",
+  "cliNav": "postgres://admin:Pw1pct252FX/db.internal:5432/app",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "373",
+  "in": "postgres://admin:Pw1nbspX Pw2nbspY@db.internal:5432/app",
+  "text": "postgres://admin:Pw1nbspX <dir>",
+  "sel": "postgres://admin:Pw1nbspX <dir>",
+  "navTarget": "postgres://admin:Pw1nbspX <dir>",
+  "url": "postgres://admin:Pw1nbspX <dir>",
+  "cliNav": "postgres://admin:Pw1nbspX <dir>",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "373",
+  "in": "postgres://admin:Pw1ideoX　Pw2ideoY@db.internal:5432/app",
+  "text": "postgres://admin:Pw1ideoX <dir>",
+  "sel": "postgres://admin:Pw1ideoX <dir>",
+  "navTarget": "postgres://admin:Pw1ideoX <dir>",
+  "url": "postgres://admin:Pw1ideoX <dir>",
+  "cliNav": "postgres://admin:Pw1ideoX <dir>",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "373",
+  "in": "postgres://admin:Pw1tabX\tPw2tabY@db.internal:5432/app",
+  "text": "postgres://admin:Pw1tabX\t<dir>",
+  "sel": "postgres://admin:Pw1tabX\t<dir>",
+  "navTarget": "postgres://admin:Pw1tabX <dir>",
+  "url": "postgres://admin:Pw1tabX <dir>",
+  "cliNav": "postgres://admin:Pw1tabX <dir>",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "F1",
+  "in": "https://h.test/login?user=bob&pw=P@ssS3cretF1",
+  "text": "https://h.test/ssS3cretF1",
+  "sel": "https://h.test/ssS3cretF1",
+  "navTarget": "https://h.test/login",
+  "url": "https://h.test/login",
+  "cliNav": "https://h.test/login",
+  "leakedOn": [
+   "text",
+   "sel"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "F1",
+  "in": "https://h.test/p?pw=P%40ssS3cretF2",
+  "text": "https://h.test/ssS3cretF2",
+  "sel": "https://h.test/ssS3cretF2",
+  "navTarget": "https://h.test/p",
+  "url": "https://h.test/p",
+  "cliNav": "https://h.test/p",
+  "leakedOn": [
+   "text",
+   "sel"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "F1",
+  "in": "https://h.test/cb#access_token=a@S3cretF3",
+  "text": "https://h.test/S3cretF3",
+  "sel": "https://h.test/S3cretF3",
+  "navTarget": "https://h.test/cb",
+  "url": "https://h.test/cb",
+  "cliNav": "https://h.test/cb",
+  "leakedOn": [
+   "text",
+   "sel"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "F1",
+  "in": "Current URL http://127.0.0.1:5000/x?next=bob@S3cretF4 does not contain y",
+  "text": "Current URL http://127.0.0.1:5000/S3cretF4 does not contain y",
+  "sel": "Current URL http://127.0.0.1:5000/S3cretF4 does not contain y",
+  "navTarget": "Current URL http://127.0.0.1:5000/x",
+  "url": "Current URL http://127.0.0.1:5000/x",
+  "cliNav": "Current URL http://127.0.0.1:5000/x",
+  "leakedOn": [
+   "text",
+   "sel"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "F1",
+  "in": "PGPASSWORD=hunter@S3cretF5",
+  "text": "S3cretF5",
+  "sel": "S3cretF5",
+  "navTarget": "S3cretF5",
+  "url": "S3cretF5",
+  "cliNav": "S3cretF5",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "F1",
+  "in": "--password=Tr0ub@dorS3cretF6",
+  "text": "dorS3cretF6",
+  "sel": "dorS3cretF6",
+  "navTarget": "dorS3cretF6",
+  "url": "dorS3cretF6",
+  "cliNav": "dorS3cretF6",
+  "leakedOn": [
+   "text",
+   "sel",
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "F1",
+  "in": "https://h.test/p;jsessionid=a@S3cretF7",
+  "text": "https://h.test/S3cretF7",
+  "sel": "https://h.test/S3cretF7",
+  "navTarget": "https://h.test/p",
+  "url": "https://h.test/p",
+  "cliNav": "https://h.test/p",
+  "leakedOn": [
+   "text",
+   "sel"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "F1",
+  "in": "https://h.test/p?email=alice@corp.example",
+  "text": "https://h.test/corp.example",
+  "sel": "https://h.test/corp.example",
+  "navTarget": "https://h.test/p",
+  "url": "https://h.test/p",
+  "cliNav": "https://h.test/p",
+  "leakedOn": [
+   "text",
+   "sel"
+  ],
+  "idempotent": true,
+  "note": "email domain only"
+ },
+ {
+  "group": "F2",
+  "in": "https://admin:pa%3FS3cretUq@h.test/p",
+  "text": "https://h.test/p",
+  "sel": "https://h.test/p",
+  "navTarget": "https://admin:pa",
+  "url": "https://admin:pa",
+  "cliNav": "https://admin:pa",
+  "leakedOn": [
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "F2",
+  "in": "https://admin:pa%23S3cretUh@h.test/p",
+  "text": "https://h.test/p",
+  "sel": "https://h.test/p",
+  "navTarget": "https://admin:pa",
+  "url": "https://admin:pa",
+  "cliNav": "https://admin:pa",
+  "leakedOn": [
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "F2",
+  "in": "https://admin:pa%3BS3cretUs@h.test/p",
+  "text": "https://h.test/p",
+  "sel": "https://h.test/p",
+  "navTarget": "https://h.test/p",
+  "url": "https://h.test/p",
+  "cliNav": "https://h.test/p",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "F2",
+  "in": "https://admin:pa%253FS3cretUq2@h.test/p",
+  "text": "https://h.test/p",
+  "sel": "https://h.test/p",
+  "navTarget": "https://admin:pa",
+  "url": "https://admin:pa",
+  "cliNav": "https://admin:pa",
+  "leakedOn": [
+   "navTarget",
+   "url",
+   "cliNav"
+  ],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "readable",
+  "in": "https://h.test/app/settings?tab=1",
+  "text": "https://h.test/app/settings[redacted]",
+  "sel": "https://h.test/app/settings[redacted]",
+  "navTarget": "https://h.test/app/settings",
+  "url": "https://h.test/app/settings",
+  "cliNav": "https://h.test/app/settings",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "readable",
+  "in": "http://[::1]:8080/api/v1/items",
+  "text": "http://[::1]:8080/api/v1/items",
+  "sel": "http://[::1]:8080/api/v1/items",
+  "navTarget": "http://[::1]:8080/api/v1/items",
+  "url": "http://[::1]:8080/api/v1/items",
+  "cliNav": "http://[::1]:8080/api/v1/items",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": ""
+ },
+ {
+  "group": "readable",
+  "in": "wss://h.test/socket",
+  "text": "wss://h.test/socket",
+  "sel": "wss://h.test/socket",
+  "navTarget": "wss://h.test/socket",
+  "url": "wss://h.test/socket",
+  "cliNav": "wss://h.test/socket",
+  "leakedOn": [],
+  "idempotent": true,
+  "note": ""
+ }
+]

@@ -1,0 +1,68 @@
+{
+ "results": [
+  {
+   "id": "M12",
+   "what": "surface: CLI history.jsonl line error skips the rule",
+   "file": "packages/cli/src/history-file.ts",
+   "build": 0,
+   "unitBrowserFailed": 0,
+   "unitCliFailed": 6,
+   "gen4ClaimLeakingCells": 2668,
+   "gen4Idem": 0,
+   "restored": true,
+   "caughtByUnit": true
+  },
+  {
+   "id": "M13",
+   "what": "surface: human history prints raw args of an old line",
+   "file": "packages/cli/src/history-file.ts",
+   "build": 2,
+   "unitBrowserFailed": 0,
+   "unitCliFailed": 3,
+   "gen4ClaimLeakingCells": 2525,
+   "gen4Idem": 0,
+   "restored": true,
+   "caughtByUnit": true
+  },
+  {
+   "id": "M14",
+   "what": "caller: wait_for condition selector skips the rule",
+   "file": "packages/browser/src/session/action-history.ts",
+   "build": 0,
+   "buildCli": 0,
+   "unitBrowserFailed": 2,
+   "unitCliFailed": 0,
+   "gen4ClaimLeakingCells": 2665,
+   "gen4Idem": 0,
+   "restored": true,
+   "caughtByUnit": true
+  },
+  {
+   "id": "M15",
+   "what": "caller: structured URL fields skip the text rule after D5",
+   "file": "packages/browser/src/session/action-history.ts",
+   "build": 0,
+   "buildCli": 0,
+   "unitBrowserFailed": 5,
+   "unitCliFailed": 3,
+   "gen4ClaimLeakingCells": 2059,
+   "gen4Idem": 0,
+   "restored": true,
+   "caughtByUnit": true
+  },
+  {
+   "id": "M16",
+   "what": "path rule: a backslash is not a separator",
+   "file": "packages/browser/src/session/action-history.ts",
+   "build": 0,
+   "buildCli": 0,
+   "unitBrowserFailed": 23,
+   "unitCliFailed": 30,
+   "gen4ClaimLeakingCells": 685,
+   "gen4Idem": 50,
+   "restored": true,
+   "caughtByUnit": true
+  }
+ ],
+ "shaEqual": true
+}
