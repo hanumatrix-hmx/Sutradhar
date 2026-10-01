@@ -159,10 +159,12 @@ function schemeEnd(t: string): number {
   if (!SCHEME_NAME_END.test(pre) || /[/\\]/.test(pre.replace(/\\["']/g, ''))) return -1;
   return m.index + m[0].length;
 }
-const OPAQUE_BODY = /(?<![A-Za-z0-9])(?:data|javascript|vbscript):/i;
+/** A marker (`data:` `file:` `blob:`) is not glued to a longer word; a JSON-escaped whitespace letter before it (backslash-t, backslash-n) does not count as one. */
+const MARKER_START = String.raw`(?:(?<![A-Za-z0-9])|(?<=\\[tnrfbv]))`;
+const OPAQUE_BODY = new RegExp(`${MARKER_START}(?:data|javascript|vbscript):`, 'i');
 // `file:` and `blob:` anywhere in a token, not glued to a longer word (`fetch("file:///C:/Users/x/f.txt")`)
-const FILE_TOKEN = /(?<![A-Za-z0-9])file:/i;
-const BLOB_TOKEN = /(?<![A-Za-z0-9])blob:((?:[A-Za-z][A-Za-z0-9+.-]*:(?:\\?\/){2})?[^\s/\\?#;]*)/i;
+const FILE_TOKEN = new RegExp(`${MARKER_START}file:`, 'i');
+const BLOB_TOKEN = /(?:(?<![A-Za-z0-9])|(?<=\\[tnrfbv]))blob:((?:[A-Za-z][A-Za-z0-9+.-]*:(?:\\?\/){2})?[^\s/\\?#;]*)/i;
 const SEP_THEN_TEXT = /[\\/][^\\/]/;
 const HAS_EXTENSION = /\w\.\w|^\.\w/;
 /** Selector mode only: something URL-shaped (a separator, `:` + digit or `/`, a known scheme) that a CSS selector does not contain. */
@@ -217,6 +219,16 @@ function reduceLoosePath(t: string): string {
 }
 
 /**
+ * What is glued in FRONT of a `file:` / `blob:` marker, reduced like any piece. The separator that ended it is kept (`f.txt` + backslash + `file:`),
+ * so the marker is still not glued to a word and a second pass finds it again (idempotency).
+ */
+function reduceBeforeMarker(prefix: string): string {
+  const r = reducePathToken(prefix);
+  const tail = /[^A-Za-z0-9]+$/.exec(prefix);
+  return tail && /[A-Za-z0-9]$/.test(r) ? r + tail[0] : r;
+}
+
+/**
  * Reduce ONE sub-token. The `scheme://` allowance (origin + path kept) covers only the URL itself: it ends at the first backslash that is
  * not a JSON-escaped slash, and whatever follows is reduced like any other path.
  */
@@ -225,10 +237,11 @@ function reducePathToken(t: string): string {
   if (file) {
     const base = basenameOfPath(t.slice(file.index + file[0].length));
     // a last segment without an extension is a directory name (a user name, a home directory): not stored
-    return t.slice(0, file.index) + FILE_URL_PREFIX + (base === '' ? '…' : HAS_EXTENSION.test(base) ? base : DIR_PLACEHOLDER);
+    // what is glued in FRONT of the marker is reduced like any other piece (fuzz-found)
+    return reduceBeforeMarker(t.slice(0, file.index)) + FILE_URL_PREFIX + (base === '' || /^[.…]+$/.test(base) ? '…' : HAS_EXTENSION.test(base) ? base : DIR_PLACEHOLDER);
   }
   const blob = BLOB_TOKEN.exec(t);
-  if (blob) return t.slice(0, blob.index) + 'blob:' + blob[1];
+  if (blob) return reduceBeforeMarker(t.slice(0, blob.index)) + 'blob:' + blob[1];
   const end = schemeEnd(t);
   if (end >= 0) {
     const span = urlSpanEnd(t, end);
@@ -272,7 +285,12 @@ interface TokenResult {
 
 function redactToken(tok: string, selector: boolean, afterUrlish: boolean): TokenResult {
   const opaque = OPAQUE_BODY.exec(tok);
-  if (opaque) return { out: tok.slice(0, opaque.index) + opaque[0].toLowerCase() + '…', swallow: true };
+  if (opaque) {
+    // fix-3 (fuzz-found): whatever is glued IN FRONT of `data:` / `javascript:` goes through the whole rule too (a query, a fragment, a local path)
+    const pre = opaque.index > 0 ? redactToken(tok.slice(0, opaque.index), selector, afterUrlish) : null;
+    if (pre?.swallow) return pre;
+    return { out: (pre?.out ?? '') + opaque[0].toLowerCase() + '…', swallow: true };
+  }
   // (a) cut at the first `?` `#` `;`
   let cutAt = -1;
   for (let i = 0; i < tok.length; i++) {

@@ -246,6 +246,46 @@ describe('FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule)', () => {
     });
     it('u:S\\"S2@h (the audit shape)', () => cell('https://u:CGLUJ2x' + bs + '"CGLUJ2y@h2.test/p', 'CGLUJ2x', ['h2.test/p']));
   });
+  describe('a data: / javascript: body glued behind a prefix: the prefix goes through the whole rule (fuzz-found)', () => {
+    it('a query before it is cut', () => cell('https://h.test/p?token=CGLUO1x,data:text/plain,x', 'CGLUO1x', ['https://h.test/p']));
+    it('a local path before it is reduced', () => cell("['/home/CGLUO2x/f.txt',data:text/plain,x]", 'CGLUO2x', ['f.txt']));
+    it('an encoded fragment before it is cut', () => cell("https://h.test/p%23CGLUO3x>'data:text/plain,x", 'CGLUO3x', ['https://h.test/p']));
+    it('javascript: behind a Windows path', () => cell('C:/Users/CGLUO4x/doc.txt|javascript:alert(1)', 'CGLUO4x', ['doc.txt', 'javascript:']));
+    it('the body itself is still dropped and a lone data: URL keeps its marker', () => {
+      expect(redactHistoryText('see data:text/plain;base64,QUJD now')).toBe('see data:…');
+      expect(redactHistoryText('x,data:text/plain,CGLUO5x')).not.toContain('CGLUO5x');
+    });
+  });
+  describe('fuzz-found: placeholders stay stable and JSON-escaped whitespace ends a word', () => {
+    it('a file: URL with no basename is idempotent (NFKC turns the ellipsis into three dots)', () => {
+      for (const t of ['file:///', 'file://[fe80::1%25eth0]/p', "['file:///']"]) {
+        const once = redactHistoryText(t);
+        expect(redactHistoryText(once)).toBe(once);
+      }
+    });
+    it('a JSON-escaped tab before data: / file: does not glue the marker to a word', () => {
+      const t = JSON.stringify('C:/x/a.txt,\t' + 'data:text/plain,CGLUT1x');
+      expect(t).toContain(bs + 't');
+      expect(redactHistoryText(t)).not.toContain('CGLUT1x');
+      const f = JSON.stringify('x\tfile:///C:/Users/CGLUT2x/doc.txt');
+      expect(redactHistoryText(f)).not.toContain('CGLUT2x');
+    });
+  });
+  describe('a path glued in FRONT of file: / blob: (fuzz-found): reduced, and the marker stays findable (idempotent)', () => {
+    it('file:', () => {
+      const t = '/home/CGLUP1x/f.txt' + bs + 'file:///C:/Users/CGLUP2x/doc.txt';
+      cell(t, 'CGLUP1x', ['f.txt', 'file://…/doc.txt']);
+      expect(redactHistoryText(t)).not.toContain('CGLUP2x');
+      const once = redactHistoryText(t);
+      expect(redactHistoryText(once)).toBe(once);
+    });
+    it('blob:', () => {
+      const t = '/home/CGLUP3x/f.txt' + bs + 'blob:https://a.test/CGLUP4x';
+      cell(t, 'CGLUP3x', ['f.txt', 'blob:https://a.test']);
+      const once = redactHistoryText(t);
+      expect(redactHistoryText(once)).toBe(once);
+    });
+  });
   describe('what the splitting must NOT break (documented exceptions)', () => {
     it('the selector variant keeps #id and [a=b]', () => {
       expect(redactHistorySelector('#bump')).toBe('#bump');
