@@ -1,0 +1,126 @@
+{
+  "ranAt": "2026-10-01T13:43:14.458Z",
+  "total": 4,
+  "caught": 2,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MG1",
+      "what": "no split on quotes / backtick",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on quotes only > single quote: a URL glued to a path by '",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on quotes only > double quote, Windows path"
+        ],
+        "summary": "Tests  7 failed | 142 passed (149)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "GLUE",
+        "failedCases": [
+          "GLUE: [{\"check\":\"no canary of 19 glue shapes in the session or tab view (error, preview, reason, evidence)\",\"observed\":[\"quote-glue\"]}]"
+        ],
+        "summaryLine": "[fr2-11] 1/2 cases (7/8 checks) {\"mcp\":{\"cases\":2,\"casesPassed\":1,\"checks\":8,\"checksFailed\":1},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\":0"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MG8",
+      "what": "no split on Unicode format characters (Cf)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > EVERY Unicode format character (category Cf) between a URL and a local path, and insi",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on Unicode format characters (Cf) only > soft hyphen U+00AD (not whitespace, not in any space class"
+        ],
+        "summary": "Tests  7 failed | 142 passed (149)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "GLUE",
+        "failedCases": [
+          "GLUE: [{\"check\":\"no canary of 19 glue shapes in the session or tab view (error, preview, reason, evidence)\",\"observed\":[\"soft-hyphen-glue\"]}]"
+        ],
+        "summaryLine": "[fr2-11] 1/2 cases (7/8 checks) {\"mcp\":{\"cases\":2,\"casesPassed\":1,\"checks\":8,\"checksFailed\":1},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\":0"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MG10",
+      "what": "first-@-only userinfo strip restored (a second URL keeps user:PASS@)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > the rule is idempotent on glued text and keeps what is readable (not an eraser)"
+        ],
+        "summary": "Tests  2 failed | 147 passed (149)"
+      },
+      "live": {
+        "caught": false,
+        "exit": 0,
+        "surface": "mcp",
+        "only": "GLUE",
+        "failedCases": [],
+        "summaryLine": "[fr2-11] 2/2 cases (8/8 checks) {\"mcp\":{\"cases\":2,\"casesPassed\":2,\"checks\":8,\"checksFailed\":0},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\":0"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": false
+    },
+    {
+      "id": "MG12",
+      "what": "userinfo strip bounded at the sub-token start (the literal design: a password with delimiters leaks)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > EVERY Unicode format character (category Cf) between a URL and a local path, and insi",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > userinfo stripped for EVERY @ (not only the first authority) > a password that itself holds delimiter cha"
+        ],
+        "summary": "Tests  17 failed | 132 passed (149)"
+      },
+      "live": {
+        "caught": false,
+        "exit": 0,
+        "surface": "cli",
+        "only": "GLUE",
+        "failedCases": [],
+        "summaryLine": "[fr2-11] 1/1 cases (6/6 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":1,\"casesPassed\":1,\"checks\":6,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\":0"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": false
+    }
+  ]
+}

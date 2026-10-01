@@ -1,0 +1,67 @@
+{
+  "startedAt": "2026-10-01T13:43:51.665Z",
+  "finishedAt": "2026-10-01T13:43:54.924Z",
+  "cases": 2,
+  "casesPassed": 2,
+  "checks": 8,
+  "checksFailed": 0,
+  "perSurface": {
+    "mcp": {
+      "cases": 2,
+      "casesPassed": 2,
+      "checks": 8,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": [
+      20452,
+      44036
+    ]
+  },
+  "evidenceFiles": [
+    "mcp-raw-history-responses.txt"
+  ],
+  "results": [
+    {
+      "surface": "mcp",
+      "case": "GLUE",
+      "pass": true,
+      "checks": 6,
+      "failed": [],
+      "shapes": 19,
+      "generated": 160,
+      "seed": 20261104
+    },
+    {
+      "surface": "mcp",
+      "case": "PRIV-sweep",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    }
+  ]
+}

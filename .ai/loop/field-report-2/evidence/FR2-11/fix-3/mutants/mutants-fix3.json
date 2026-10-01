@@ -1,0 +1,499 @@
+{
+  "ranAt": "2026-10-01T10:49:27.343Z",
+  "total": 26,
+  "caught": 25,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MG1",
+      "what": "no split on quotes / backtick",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on quotes only > single quote: a URL glued to a path by '",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on quotes only > double quote, Windows path"
+        ],
+        "summary": "Tests  7 failed | 141 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG2",
+      "what": "no split on commas",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on commas only > comma",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on commas only > comma, Windows path"
+        ],
+        "summary": "Tests  4 failed | 144 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG3",
+      "what": "no split on parentheses",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on parentheses only > open parenthesis",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on parentheses only > close parenthesis"
+        ],
+        "summary": "Tests  4 failed | 144 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG4",
+      "what": "no split on brackets",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on brackets only > open bracket",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on brackets only > close bracket"
+        ],
+        "summary": "Tests  8 failed | 140 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG5",
+      "what": "no split on braces",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on braces only > open brace",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on braces only > close brace"
+        ],
+        "summary": "Tests  4 failed | 144 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG6",
+      "what": "no split on angle brackets",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on angle brackets only > less-than",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on angle brackets only > greater-than"
+        ],
+        "summary": "Tests  5 failed | 143 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG7",
+      "what": "no split on pipe and caret",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on pipe and caret only > pipe",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on pipe and caret only > caret"
+        ],
+        "summary": "Tests  4 failed | 144 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG8",
+      "what": "no split on Unicode format characters (Cf)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > EVERY Unicode format character (category Cf) between a URL and a local path, and insi",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on Unicode format characters (Cf) only > soft hyphen U+00AD (not whitespace, not in any space class"
+        ],
+        "summary": "Tests  7 failed | 141 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG9",
+      "what": "audit-3 N13 alone: U+2028..U+202F removed from the whitespace class (EQUIVALENT under the Cf class: expected NOT caught)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": false,
+        "exit": 0,
+        "failingTests": [],
+        "summary": "Tests  148 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": false,
+      "expectEquivalent": true
+    },
+    {
+      "id": "MG9b",
+      "what": "audit-3 N13 + the Cf class removed (A3-F4: U+202A..U+202E re-join a URL and a path)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > EVERY Unicode format character (category Cf) between a URL and a local path, and insi",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on Unicode format characters (Cf) only > soft hyphen U+00AD (not whitespace, not in any space class"
+        ],
+        "summary": "Tests  8 failed | 140 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG10",
+      "what": "first-@-only userinfo strip restored (a second URL keeps user:PASS@)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > the rule is idempotent on glued text and keeps what is readable (not an eraser)"
+        ],
+        "summary": "Tests  2 failed | 146 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG11",
+      "what": "whole-token scheme:// exemption restored (anything glued after the first URL keeps the exemption)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > redaction is idempotent on every generated string",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > EVERY Unicode format character (category Cf) between a URL and a local path, and insi"
+        ],
+        "summary": "Tests  30 failed | 118 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG12",
+      "what": "userinfo strip bounded at the sub-token start (the literal design: a password with delimiters leaks)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > EVERY Unicode format character (category Cf) between a URL and a local path, and insi",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > userinfo stripped for EVERY @ (not only the first authority) > a password that itself holds delimiter cha"
+        ],
+        "summary": "Tests  17 failed | 131 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG13",
+      "what": "a backslash stops the userinfo strip (a JSON-escaped quote in a password leaks)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > a JSON-escaped quote in the userinfo (defect 3): only a slash stops the strip, not a backslash > JSON.str",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > a JSON-escaped quote in the userinfo (defect 3): only a slash stops the strip, not a backslash > u:S\\\"S2@"
+        ],
+        "summary": "Tests  4 failed | 144 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG14",
+      "what": "IPv6 host group rule dropped (brackets always split: http://[::1]:5000/p is over-redacted)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > IPv6 literal host: the ONE bracket group that does not split (orchestrator-approved refinement) > (a) htt",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename"
+        ],
+        "summary": "Tests  2 failed | 146 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG15",
+      "what": "IPv6 group charset widened to any bracket content",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > IPv6 literal host: the ONE bracket group that does not split (orchestrator-approved refinement) > (b1) a "
+        ],
+        "summary": "Tests  1 failed | 147 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG16",
+      "what": "IPv6 group no longer required to follow // or @",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > IPv6 literal host: the ONE bracket group that does not split (orchestrator-approved refinement) > (b2) a "
+        ],
+        "summary": "Tests  1 failed | 147 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG17",
+      "what": "<dir> placeholder no longer protected from splitting (second pass changes the text)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > redaction is idempotent on every generated string",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > idempotency of the <dir> placeholder (its angle brackets are not delimiters) > a second pass over `file:/",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > is idempotent on every cell"
+        ],
+        "summary": "Tests  3 failed | 145 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG18",
+      "what": "the scheme:// exemption never ends at a backslash",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > the scheme:// exemption ends with its own URL > a backslash local path glued to a URL with no delimiter a",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > the scheme:// exemption ends with its own URL > a UNC path glued to a URL"
+        ],
+        "summary": "Tests  2 failed | 146 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG19",
+      "what": "what is glued in front of data: / javascript: skips the rule",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > a data: / javascript: body glued behind a prefix: the prefix goes through the whole rule (fuzz-found) > a",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > a data: / javascript: body glued behind a prefix: the prefix goes through the whole rule (fuzz-found) > a",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > a data: / javascript: body glued behind a prefix: the prefix goes through the whole rule (fuzz-found) > a",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > a data: / javascript: body glued behind a prefix: the prefix goes through the whole rule (fuzz-found) > j"
+        ],
+        "summary": "Tests  4 failed | 144 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG20",
+      "what": "what is glued in front of file: / blob: skips the rule",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > a path glued in FRONT of file: / blob: (fuzz-found): reduced, and the marker stays findable (idempotent) "
+        ],
+        "summary": "Tests  1 failed | 147 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG21",
+      "what": "eval preview collapses the BOM as whitespace (a password with U+FEFF is split before the rule)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > EVERY Unicode format character (category Cf) between a URL and a local path, and insi"
+        ],
+        "summary": "Tests  1 failed | 147 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG22",
+      "what": "userinfo pre-pass splits on Cf / zero-width like whitespace (a password with one leaks)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > EVERY Unicode format character (category Cf) between a URL and a local path, and insi",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > userinfo stripped for EVERY @ (not only the first authority) > a password that itself holds delimiter cha"
+        ],
+        "summary": "Tests  4 failed | 144 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG23",
+      "what": "a file: URL with an empty basename is no longer idempotent",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > fuzz-found: placeholders stay stable and JSON-escaped whitespace ends a word > a file: URL with no basena"
+        ],
+        "summary": "Tests  1 failed | 147 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG24",
+      "what": "a JSON-escaped whitespace letter before a marker counts as a word (data: after a literal tab)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > fuzz-found: placeholders stay stable and JSON-escaped whitespace ends a word > a JSON-escaped tab before "
+        ],
+        "summary": "Tests  1 failed | 147 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MG25",
+      "what": "the userinfo pre-pass over runs of real whitespace is removed (only the per-token strip is left)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > EVERY Unicode format character (category Cf) between a URL and a local path, and insi",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > userinfo stripped for EVERY @ (not only the first authority) > a password that itself holds delimiter cha"
+        ],
+        "summary": "Tests  4 failed | 144 passed (148)"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "caught": true
+    }
+  ]
+}

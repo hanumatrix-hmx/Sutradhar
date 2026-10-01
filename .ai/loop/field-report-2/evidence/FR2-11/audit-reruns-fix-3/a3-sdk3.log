@@ -1,0 +1,96 @@
+{"timestamp":"2026-10-01T11:10:08.172Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-10-01T11:10:08.392Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790853008172_1","context":{"isIncognito":false}}
+{"timestamp":"2026-10-01T11:10:08.526Z","level":"info","message":"[BrowserActionEngine] Executing action click","context":{"tabId":"tab_sess_1790853008172_1_1","selector":"a[href=\"/p?c=A3Csdksel\"]"}}
+{"timestamp":"2026-10-01T11:10:13.538Z","level":"warn","message":"[BrowserActionEngine] Action click failed (attempt 1/3): No visible element found for selector: a[href=\"/p?c=A3Csdksel\"]","context":{}}
+{"timestamp":"2026-10-01T11:10:19.053Z","level":"warn","message":"[BrowserActionEngine] Action click failed (attempt 2/3): No visible element found for selector: a[href=\"/p?c=A3Csdksel\"]","context":{}}
+{"timestamp":"2026-10-01T11:10:25.070Z","level":"warn","message":"[BrowserActionEngine] Action click failed (attempt 3/3): No visible element found for selector: a[href=\"/p?c=A3Csdksel\"]","context":{}}
+{"timestamp":"2026-10-01T11:10:25.113Z","level":"info","message":"[BrowserActionEngine] Executing action type","context":{"tabId":"tab_sess_1790853008172_1_1","selector":"#pw"}}
+{
+ "csErr": [
+  "a3csdkcs"
+ ],
+ "evalReturned": [
+  "a3csdkres1"
+ ],
+ "evalErrCaller": [
+  "a3lsdkbear",
+  "a3csdkerr"
+ ],
+ "clickErrCaller": [
+  "a3csdksel"
+ ],
+ "historyClaim": [
+  "a3csdk"
+ ],
+ "historyLimit": [
+  "a3lsdkbear"
+ ],
+ "entries": [
+  [
+   "navigate",
+   true,
+   "http://127.0.0.1:63698/p",
+   null,
+   "'navigate' verified: a new document committed at http://127.0.0.1:63698/p[redacted]"
+  ],
+  [
+   "navigate",
+   true,
+   "http://127.0.0.1:63698/p",
+   null,
+   "'navigate' completed, but its post-condition check failed: the navigation committed, but t"
+  ],
+  [
+   "navigate",
+   false,
+   "<dir>",
+   "net::ERR_ABORTED at <dir>",
+   null
+  ],
+  [
+   "navigate",
+   true,
+   "about:blank",
+   null,
+   "'navigate' verified: a new document committed at about:blank[redacted]"
+  ],
+  [
+   "navigate",
+   true,
+   "http://127.0.0.1:63698/p",
+   null,
+   "'navigate' verified: a new document committed at http://127.0.0.1:63698/p"
+  ],
+  [
+   "eval",
+   true,
+   "'A3Csdk' + 'res1'",
+   null,
+   null
+  ],
+  [
+   "eval",
+   false,
+   "throw new Error('Bearer A3Lsdkbear x[redacted]",
+   "Bearer A3Lsdkbear x[redacted]",
+   null
+  ],
+  [
+   "click",
+   false,
+   "a[href=\"/p[redacted]",
+   "No visible element found for selector: [redacted]",
+   "Action failed: No visible element found for selector: [redacted]"
+  ],
+  [
+   "type",
+   true,
+   "#pw",
+   null,
+   "'type' has a built-in post-condition check (verified inside the action itself before it co"
+  ]
+ ]
+}
+{"timestamp":"2026-10-01T11:10:25.234Z","level":"info","message":"[BrowserSession] Closed session sess_1790853008172_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-10-01T11:10:25.234Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790853008172_1","context":{"reason":"Runtime shutdown"}}
+exit=0

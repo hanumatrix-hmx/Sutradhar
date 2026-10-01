@@ -1,0 +1,93 @@
+{
+ "mcpNavResultUrl": "http://127.0.0.1:54639/p?q=(a)&token=CNRYparen",
+ "mcpLeaks": [],
+ "mcpEntry": {
+  "actionType": "navigate",
+  "success": true,
+  "executionTimeMs": 26,
+  "timestamp": "2026-10-01T10:59:13.251Z",
+  "target": "http://127.0.0.1:54639/p",
+  "url": "http://127.0.0.1:54639/p",
+  "verification": {
+   "verified": true,
+   "urlChanged": true,
+   "elementFound": true,
+   "confidence": 0.9,
+   "reason": "'navigate' verified: a new document committed at http://127.0.0.1:54639/p[redacted]",
+   "evidence": {
+    "tier": "verified",
+    "checks": [
+     {
+      "check": "navigate.document",
+      "outcome": "pass",
+      "expected": "new-document or url change",
+      "observed": "new-document",
+      "detail": "a new document committed at http://127.0.0.1:54639/p[redacted]"
+     },
+     {
+      "check": "navigate.http-status",
+      "outcome": "pass",
+      "expected": "<400",
+      "observed": 200
+     }
+    ]
+   }
+  },
+  "tabId": "tab_sess_1790852352994_1_1",
+  "seq": 1
+ },
+ "cliNavExit": 0,
+ "cliFileLeaks": [],
+ "cliLine": {
+  "v": 1,
+  "type": "command",
+  "ts": "2026-10-01T10:59:13.556Z",
+  "sessionId": "sess_1790852353783_1",
+  "cwd": "<dir>",
+  "verb": "nav",
+  "args": [
+   "http://127.0.0.1:54639/p"
+  ],
+  "exitCode": 0,
+  "durationMs": 655,
+  "actions": [
+   {
+    "actionType": "navigate",
+    "success": true,
+    "executionTimeMs": 30,
+    "timestamp": "2026-10-01T10:59:14.209Z",
+    "target": "http://127.0.0.1:54639/p",
+    "url": "http://127.0.0.1:54639/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": true,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'navigate' verified: a new document committed at http://127.0.0.1:54639/p[redacted]",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "navigate.document",
+        "outcome": "pass",
+        "expected": "new-document or url change",
+        "observed": "new-document",
+        "detail": "a new document committed at http://127.0.0.1:54639/p[redacted]"
+       },
+       {
+        "check": "navigate.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790852353783_1_1",
+    "seq": 1
+   }
+  ],
+  "actionsEvicted": 0
+ },
+ "cliCloseExit": 0
+}

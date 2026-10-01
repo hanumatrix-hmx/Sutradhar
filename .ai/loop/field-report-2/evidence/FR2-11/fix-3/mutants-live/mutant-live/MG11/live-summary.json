@@ -1,0 +1,99 @@
+{
+  "startedAt": "2026-10-01T13:40:30.586Z",
+  "finishedAt": "2026-10-01T13:40:34.021Z",
+  "cases": 2,
+  "casesPassed": 1,
+  "checks": 8,
+  "checksFailed": 2,
+  "perSurface": {
+    "mcp": {
+      "cases": 2,
+      "casesPassed": 1,
+      "checks": 8,
+      "checksFailed": 2
+    },
+    "cli": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "mcp:GLUE"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": [
+      88996,
+      93160
+    ]
+  },
+  "evidenceFiles": [
+    "mcp-raw-history-responses.txt"
+  ],
+  "results": [
+    {
+      "surface": "mcp",
+      "case": "GLUE",
+      "pass": false,
+      "checks": 6,
+      "failed": [
+        {
+          "check": "no canary of 15 glue shapes in the session or tab view (error, preview, reason, evidence)",
+          "observed": [
+            "url-then-windows-path",
+            "url-then-posix-path",
+            "comma-list",
+            "pipe-unc"
+          ]
+        },
+        {
+          "check": "no SECRET of 160 generated glue strings in any stored entry",
+          "observed": [
+            {
+              "id": "g10",
+              "text": "`JSON.stringify({a:'https://a.test/cb',b:'C:/Users/CGLU10x1a/docs/s.png'})}",
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"`JSON.stringify({a:'https://a.test/cb',b:'C:/Users/CGLU10x1a/docs/s.png'})}\",\"executionTimeMs\":1,\"timestamp\":\"2026-10-01T13:40:31.390Z\",\"target\":\"throw new Error(\\\"`JSON.stringify({a:'https://a."
+            },
+            {
+              "id": "g97",
+              "text": "see: ws://127.0.0.1:5123/x.html)(/home/CGLU97x1a)(C:\\docs\\note.txt",
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"see: ws://127.0.0.1:5123/x.html)(/home/CGLU97x1a)(C:note.txt\",\"executionTimeMs\":1,\"timestamp\":\"2026-10-01T13:40:31.475Z\",\"target\":\"throw new Error(\\\"see: ws://127.0.0.1:5123/x.html)(/home/CGLU97"
+            },
+            {
+              "id": "g121",
+              "text": "{\"k0\":\"https://localhost/app\",\"k1\":\"~/CGLU121x1a/doc.txt\",\"k2\":\"https://a.test/deep/er/path\"}",
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"{\\\"k0\\\":\\\"https://localhost/app\\\",\\\"k1\\\":\\\"~/CGLU121x1a/doc.txt\\\",\\\"k2\\\":\\\"https://a.test/deep/er/path\\\"}\",\"executionTimeMs\":1,\"timestamp\":\"2026-10-01T13:40:31.499Z\",\"target\":\"throw new Error(\\\""
+            }
+          ]
+        }
+      ],
+      "shapes": 15,
+      "generated": 160,
+      "seed": 20261104
+    },
+    {
+      "surface": "mcp",
+      "case": "PRIV-sweep",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    }
+  ]
+}

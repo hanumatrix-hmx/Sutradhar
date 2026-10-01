@@ -1,0 +1,29 @@
+== packages/browser
+ Test Files  25 passed (25)
+      Tests  1100 passed (1100)
+== packages/capability-runtime
+ Test Files  8 passed (8)
+      Tests  272 passed (272)
+== packages/mcp-server
+ Test Files  3 passed (3)
+      Tests  124 passed (124)
+== packages/cli
+ Test Files  19 passed (19)
+      Tests  276 passed (276)
+== packages/sutradhar
+ Test Files  2 passed (2)
+      Tests  43 passed (43)
+== packages/agent
+stdout | tests/unit/task-graph.spec.ts > Engineering Iteration 5 — Task Graph Engine Unit Tests > 2. should resolve dependencies when parent node transitions to COMPLETED
+stdout | tests/unit/task-graph.spec.ts > Engineering Iteration 5 — Task Graph Engine Unit Tests > 4. should handle partial completion and support state serialization/deserialization
+stderr | tests/unit/task-graph.spec.ts > Engineering Iteration 5 — Task Graph Engine Unit Tests > 5. should increment node retries and mark FAILED when maxRetries exceeded
+stderr | tests/unit/confidence-execution.spec.ts > Engineering Iteration 2 — Confidence-Aware Execution Unit Tests > should trigger low confidence fallback when query score is < 0.70
+stdout | tests/unit/runtime-kernel.spec.ts > Engineering Iteration 7 — Runtime Kernel Unit Tests > 1. should register services and retrieve by serviceId
+stdout | tests/unit/runtime-kernel.spec.ts > Engineering Iteration 7 — Runtime Kernel Unit Tests > 2. should start services in topological dependency order and stop in reverse order
+stdout | tests/unit/runtime-kernel.spec.ts > Engineering Iteration 7 — Runtime Kernel Unit Tests > 3. should aggregate service health and report kernel metrics
+stdout | tests/unit/runtime-kernel.spec.ts > Engineering Iteration 7 — Runtime Kernel Unit Tests > 4. should publish lifecycle events to EventBus during service startup and shutdown
+ Test Files  12 passed (12)
+      Tests  56 passed (56)
+== apps/server
+ Test Files  9 passed (9)
+      Tests  28 passed (28)

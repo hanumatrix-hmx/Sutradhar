@@ -1,0 +1,142 @@
+{
+  "startedAt": "2026-10-01T13:44:29.866Z",
+  "finishedAt": "2026-10-01T13:44:50.607Z",
+  "cases": 1,
+  "casesPassed": 0,
+  "checks": 6,
+  "checksFailed": 3,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 1,
+      "casesPassed": 0,
+      "checks": 6,
+      "checksFailed": 3
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "cli:GLUE"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [
+      47940
+    ],
+    "ownCliChromeProfileDirs": [
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790862270116"
+    ],
+    "childPidsStarted": [
+      86196,
+      96164,
+      60320,
+      95128,
+      33684,
+      81808,
+      75364,
+      62524,
+      94532,
+      10768,
+      72376,
+      87916,
+      97912,
+      68784,
+      13104,
+      5152,
+      36424,
+      93572,
+      99420,
+      89348,
+      99416,
+      80612,
+      43352,
+      90752,
+      26612,
+      52480,
+      54408,
+      90704,
+      97852,
+      12328,
+      52468,
+      97376,
+      18228,
+      96004,
+      15432,
+      92808,
+      94424,
+      98632,
+      79696,
+      28156,
+      34088,
+      80472,
+      30656,
+      89896,
+      52788,
+      98760,
+      96028,
+      96748,
+      82692,
+      3212,
+      80444,
+      97524,
+      86616,
+      77276
+    ]
+  },
+  "evidenceFiles": [],
+  "results": [
+    {
+      "surface": "cli",
+      "case": "GLUE",
+      "pass": false,
+      "checks": 6,
+      "failed": [
+        {
+          "check": "no canary of 19 glue shapes in the raw history.jsonl bytes, history or history --json",
+          "observed": [
+            "password-with-zero-width",
+            "password-with-parens",
+            "json-escaped-quote-in-userinfo"
+          ]
+        },
+        {
+          "check": "seed 20261106: no SECRET of 12 generated glue strings in the raw bytes or the history output",
+          "observed": [
+            {
+              "id": "g6",
+              "text": "}{['C:\\Users\\CGLU6x0a\\docs\\f.pdf','HTTPS://u:CGLU6x1a)CGLU6x1b@пример.рф/']\\\\\""
+            }
+          ]
+        },
+        {
+          "check": "the readable part of every shape survives in the stored error",
+          "observed": [
+            "password-with-zero-width",
+            "password-with-parens",
+            "json-escaped-quote-in-userinfo"
+          ]
+        }
+      ],
+      "commands": 51,
+      "generated": 12,
+      "seed": 20261106
+    }
+  ]
+}

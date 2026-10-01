@@ -1,0 +1,129 @@
+{
+  "startedAt": "2026-10-01T11:35:18.889Z",
+  "finishedAt": "2026-10-01T11:35:36.369Z",
+  "cases": 1,
+  "casesPassed": 0,
+  "checks": 6,
+  "checksFailed": 1,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 1,
+      "casesPassed": 0,
+      "checks": 6,
+      "checksFailed": 1
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "cli:GLUE"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [
+      88940
+    ],
+    "ownCliChromeProfileDirs": [
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790854519138"
+    ],
+    "childPidsStarted": [
+      98904,
+      23436,
+      30796,
+      75920,
+      1180,
+      100108,
+      85652,
+      6860,
+      90780,
+      7088,
+      99976,
+      81268,
+      97204,
+      79764,
+      44912,
+      90676,
+      48324,
+      91348,
+      65540,
+      86436,
+      92932,
+      99932,
+      61660,
+      97812,
+      77556,
+      27348,
+      64048,
+      95952,
+      44628,
+      95276,
+      77032,
+      91036,
+      75084,
+      93600,
+      42204,
+      84756,
+      79536,
+      36360,
+      70984,
+      81884,
+      88672,
+      92964,
+      57092,
+      76076,
+      57108,
+      91780
+    ]
+  },
+  "evidenceFiles": [],
+  "results": [
+    {
+      "surface": "cli",
+      "case": "GLUE",
+      "pass": false,
+      "checks": 6,
+      "failed": [
+        {
+          "check": "the readable part of every shape survives in the stored error",
+          "observed": [
+            "js-array-userinfo",
+            "json-config-db",
+            "url-then-windows-path",
+            "url-then-posix-path",
+            "comma-list",
+            "pipe-unc",
+            "bidi-202a",
+            "bidi-202e-windows",
+            "three-urls",
+            "password-with-parens",
+            "json-escaped-quote-in-userinfo",
+            "backslash-glue",
+            "data-after-query",
+            "file-after-path",
+            "ipv6-origin-kept"
+          ]
+        }
+      ],
+      "commands": 43,
+      "generated": 12,
+      "seed": 20261106
+    }
+  ]
+}

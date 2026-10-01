@@ -1,0 +1,40 @@
+== 1 git
+E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041
+claude/fr2-11-action-history
+b216146
+ M .ai/loop/field-report-2/gaps.md
+(tracked changes above, none expected)
+== 2 sources vs HEAD blobs (normalised line endings)
+same  packages/browser/src/session/action-history.ts 17e0c46176179c6c
+same  packages/cli/src/history-file.ts 10914f879a99929a
+same  packages/cli/src/cli.ts fef9e0fcf48823e0
+same  packages/mcp-server/src/tools.ts 7067edf4d7e0e5cc
+== 3 dist hash now vs after the final forced build
+dist unchanged 65fa714ee1db3202a5c17591ce979e522e485af4a3741a4328971cc9fbe5c069
+== 4 bundle markers (new rule present, fix-1 identifiers absent)
+packages/sutradhar/dist/index.js SUB_DELIM=2 IPV6_HOST=2 TRUE_WS=2 QUERY_LIKE=0
+packages/sutradhar/dist/cli-bin.js SUB_DELIM=2 IPV6_HOST=2 TRUE_WS=2 QUERY_LIKE=0
+packages/sutradhar/dist/mcp-cli.js SUB_DELIM=2 IPV6_HOST=2 TRUE_WS=2 QUERY_LIKE=0
+== 5 built help text and tool description
+(a bare #id token does not drop what follows it);
+EVERY @ are removed back to the previous / (userinfo@, through quotes,
+format characters; only a scheme:// URL keeps origin + path, and only up
+to its own end (an IPv6 host [::1] stays whole);
+      1 a bare #id token with nothing before it
+      1 an IPv6 host [::1] stays whole
+      1 except a scheme:// URL, which keeps origin + path up to its own end
+      1 the characters before EVERY @ are removed back to the previous /
+== 6 built functions on the audit-3 shapes
+OK   "['https://h.test/a','https://u:PASS@h2.test/p'].length" => "['https://h.test/a','https://h2.test/p'].length"
+OK   "{api:'https://h.test/x',db:'postgres://admin:PASS@db:5432/app'}" => "{api:'https://h.test/x',db:'postgres://db:5432/app'}"
+OK   "['https://h.test/a','C:/Users/NAME/doc.txt']" => "['https://h.test/a','doc.txt']"
+OK   "open 'E:/x/Acme Secret Project/s.png'" => "open '<dir> Secret s.png'"
+OK   "https://h.test/p‪/home/NAME/f.txt" => "https://h.test/p‪f.txt"
+OK   "http://[::1]:5000/p?token=PASS" => "http://[::1]:5000/p[redacted]"
+OK   "postgres://admin:p(a)ss@db/app" => "postgres://db/app"
+OK   "https://u:S\\\"S2@h2.test/p" => "https://h2.test/p"
+== 7 negative control: the fix-2 source (549a099) against the same independent fuzz
+"count": 20000, "leaks": 6547, "idempotencyFailures": 0
+== 8 processes / temp dirs
+sutradhar-cli-* dirs: 1 (the one pre-existing dir belongs to another actor)
+E:              210G  193G   17G  92% /e

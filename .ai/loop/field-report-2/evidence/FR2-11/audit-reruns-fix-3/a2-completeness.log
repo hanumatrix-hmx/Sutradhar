@@ -1,0 +1,56 @@
+OK  navigate                     added=1/1 navigate verifEq=true tier=verified
+BAD navigate+settle              added=0/1  verifEq=true tier=- isError
+OK  eval                         added=1/1 eval verifEq=true tier=-
+OK  eval throws                  added=1/1 eval(FAIL) verifEq=true tier=- isError
+OK  click                        added=1/1 click verifEq=true tier=verified
+BAD click+settle                 added=0/1  verifEq=true tier=- isError
+OK  click fails (retries)        added=1/1 click(FAIL) verifEq=false tier=action-failed
+BAD click rejected pre-dispatch  added=0/1  verifEq=true tier=- isError
+OK  type                         added=1/1 type verifEq=true tier=verified
+OK  press_key                    added=1/1 press_key verifEq=false tier=verified
+OK  focus                        added=1/1 focus verifEq=false tier=verified
+OK  scroll                       added=1/1 scroll verifEq=true tier=verified
+OK  hover                        added=1/1 hover verifEq=true tier=verified
+OK  select_option                added=1/1 select_option verifEq=true tier=verified
+OK  select_options               added=1/1 select_option verifEq=true tier=verified
+OK  wait_for_selector            added=1/1 wait_for_selector verifEq=true tier=verified
+OK  wait_for met                 added=1/1 wait_for verifEq=false tier=verified
+OK  wait_for timeout             added=1/1 wait_for(FAIL) verifEq=false tier=action-failed
+OK  click_by_text                added=1/1 click_by_text verifEq=true tier=verified
+OK  click_by_role                added=1/1 click_by_role verifEq=true tier=verified
+OK  type_by_label                added=1/1 type_by_label verifEq=true tier=verified
+OK  fill_form 2 fields           added=2/2 type,type verifEq=false tier=verified
+OK  upload_file                  added=1/1 upload_file verifEq=true tier=verified
+OK  upload_file_via_trigger      added=1/1 upload_file_via_trigger verifEq=false tier=unverifiable
+OK  right_click                  added=1/1 click verifEq=true tier=verified
+BAD drag_and_drop                added=0/1  verifEq=true tier=- isError
+OK  touch_tap                    added=1/1 touch_tap verifEq=false tier=verified
+OK  click_at_point               added=1/1 click_at_point verifEq=true tier=verified
+OK  drag_at_points               added=1/1 drag_at_points verifEq=false tier=verified
+OK  set_clipboard                added=1/1 set_clipboard verifEq=false tier=unverifiable
+OK  download_file                added=1/1 download_file verifEq=false tier=verified
+OK  click -> nav link            added=1/1 click verifEq=true tier=verified
+OK  go_back                      added=1/1 go_back verifEq=true tier=verified
+OK  go_forward                   added=1/1 go_forward verifEq=true tier=verified
+OK  reload                       added=1/1 reload verifEq=true tier=verified
+OK  click opens alert            added=1/1 click verifEq=true tier=verified
+OK  handle_dialog (not by spec)  added=0/0  verifEq=true tier=-
+OK  screenshot (read)            added=0/0  verifEq=false tier=-
+OK  snapshot (read)              added=0/0  verifEq=true tier=-
+OK  new_tab (G-C)                added=0/0  verifEq=true tier=-
+OK  set_cookie (G-C)             added=0/0  verifEq=true tier=-
+OK  audit (navigates)            added=1/1 navigate verifEq=false tier=verified
+OK  navigate bad url             added=1/1 navigate(FAIL) verifEq=true tier=- isError
+duplicate pair 2 ["false:No visible element found for selector: [redacted]","false:No visible element found for selector: [redacted]"]
+seq contiguous true
+file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-11/audit-reruns-fix-3-a2/lib.mjs:47
+  const rpc = (method, params, timeoutMs = 120000) => new Promise((res, rej) => { const k = id++; const t = setTimeout(() => rej(new Error('timeout ' + method)), timeoutMs); pending.set(k, (m) => { clearTimeout(t); res(m); }); child.stdin.write(JSON.stringify({ jsonrpc: '2.0', id: k, method, params }) + '\n'); });
+                                                                                                                                 ^
+
+Error: timeout tools/call
+    at Timeout._onTimeout (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-11/audit-reruns-fix-3-a2/lib.mjs:47:130)
+    at listOnTimeout (node:internal/timers:605:17)
+    at process.processTimers (node:internal/timers:541:7)
+
+Node.js v25.0.0
+exit=1

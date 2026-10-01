@@ -1,0 +1,69 @@
+{
+  "ranAt": "2026-10-01T13:44:51.868Z",
+  "total": 2,
+  "caught": 2,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MG10",
+      "what": "first-@-only userinfo strip restored (a second URL keeps user:PASS@)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > the rule is idempotent on glued text and keeps what is readable (not an eraser)",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > userinfo stripped for EVERY @ (not only the first authority) > four @ in four URLs of one token (the stri"
+        ],
+        "summary": "Tests  3 failed | 146 passed (149)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "GLUE",
+        "failedCases": [
+          "GLUE: [{\"check\":\"no canary of 19 glue shapes in the session or tab view (error, preview, reason, evidence)\",\"observed\":[\"five-urls-four-at\"]}]"
+        ],
+        "summaryLine": "[fr2-11] 1/2 cases (7/8 checks) {\"mcp\":{\"cases\":2,\"casesPassed\":1,\"checks\":8,\"checksFailed\":1},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\":0"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MG12",
+      "what": "userinfo strip bounded at the sub-token start (the literal design: a password with delimiters leaks)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both order",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > EVERY Unicode format character (category Cf) between a URL and a local path, and insi",
+          " tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > userinfo stripped for EVERY @ (not only the first authority) > a password that itself holds delimiter cha"
+        ],
+        "summary": "Tests  17 failed | 132 passed (149)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "cli",
+        "only": "GLUE",
+        "failedCases": [
+          "GLUE: [{\"check\":\"no canary of 19 glue shapes in the raw history.jsonl bytes, history or history --json\",\"observed\":[\"password-with-zero-width\",\"password-with-parens\",\"json-escaped-quote-in-userinfo\"]},{\"check\":\"seed 20261106: no SECRET of 12 generated glue strings in the raw bytes or the history output\",\""
+        ],
+        "summaryLine": "[fr2-11] 0/1 cases (3/6 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":1,\"casesPassed\":0,\"checks\":6,\"checksFailed\":3},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\":0"
+      },
+      "shaAfter": "17e0c46176179c6ccf8406decebfccb9b506d8030078fbe5633ea01cfe387305",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    }
+  ]
+}

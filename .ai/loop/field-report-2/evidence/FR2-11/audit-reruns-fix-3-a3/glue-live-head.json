@@ -1,0 +1,48 @@
+{
+ "label": "head",
+ "mcp": {
+  "tab": [],
+  "session": [],
+  "stored": [
+   [
+    "['https://h.test/a','https://h2.test/p'].length",
+    null
+   ],
+   [
+    "['https://h.test/a','doc.txt'].length",
+    null
+   ],
+   [
+    "JSON.stringify({u:'https://h.test/a',f:'x.txt'}).length",
+    null
+   ],
+   [
+    "throw new Error('https://h.test/a,https://h2.test/p')",
+    "https://h.test/a,https://h2.test/p"
+   ]
+  ]
+ },
+ "cli": {
+  "file": [],
+  "human": [],
+  "json": [],
+  "args": [
+   [
+    "['https://h.test/a','https://h2.test/p'].length",
+    null
+   ],
+   [
+    "['https://h.test/a','doc.txt'].length",
+    null
+   ],
+   [
+    "JSON.stringify({u:'https://h.test/a',f:'x.txt'}).length",
+    null
+   ],
+   [
+    "throw new Error('https://h.test/a,https://h2.test/p')",
+    null
+   ]
+  ]
+ }
+}
