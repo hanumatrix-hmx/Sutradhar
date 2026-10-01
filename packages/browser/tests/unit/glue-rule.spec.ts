@@ -184,6 +184,7 @@ describe('FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule)', () => {
   describe('userinfo stripped for EVERY @ (not only the first authority)', () => {
     it('second URL in a glued token, no delimiter between', () => cell('https://h.test/a+https://u:CGLUU1x@h2.test/p', 'CGLUU1x', ['https://h.test/a', 'h2.test/p']));
     it('third URL', () => cell('https://h.test/a+https://x@h2.test/b+https://u:CGLUU2x@h3.test/c', 'CGLUU2x', ['https://h.test/a', 'h3.test/c']));
+    it('three @ in three URLs of one token (the first-@-only strip is an equivalent mutant for two)', () => cell('https://h.test/a+https://x@h2.test/b+https://y@h3.test/c+https://u:CGLUU7x@h4.test/d', 'CGLUU7x', ['https://h.test/a', 'h4.test/d']));
     it('audit-3 shape: a JS array', () => cell("['https://h.test/a','https://u:CGLUU3x@h2.test/p'].length", 'CGLUU3x', ['https://h.test/a', 'h2.test/p']));
     it('audit-3 shape: a JSON.stringify of a config with a database URL', () =>
       cell("throw new Error(JSON.stringify({api:'https://h.test/x',db:'postgres://admin:CGLUU4x@db:5432/app'}))", 'CGLUU4x', ['https://h.test/x', 'db:5432/app']));
