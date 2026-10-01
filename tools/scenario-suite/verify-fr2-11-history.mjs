@@ -21,6 +21,8 @@ import { spawn, spawnSync } from 'node:child_process';
 import { fullMatrix, rotatingMatrix, urlCases, findCanaries, selfTest } from './lib/fr2-11-privacy-matrix.mjs';
 import { fix2Shapes, NAVIGABLE_IDS } from './lib/fr2-11-fix2-shapes.mjs';
 import { DEFAULT_SEED, generate } from './lib/fr2-11-property.mjs';
+import { glueShapes } from './lib/fr2-11-glue-shapes.mjs';
+import { GLUE_SEED, generate as glueGenerate } from './lib/fr2-11-glue.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.join(here, '..', '..');
@@ -581,6 +583,51 @@ async function runMcpCases(surface, serverPath, ctx) {
     ], { shapes: shapes.length });
   });
 
+  // fix-3 (audit-3 A3-F1): GLUED tokens, live. Each shape (2-3 URLs / a URL and a local path in one token, a password holding delimiters,
+  // a JSON-escaped quote, bidi controls ...) is used twice through real tools: as the message of a failing eval (stored `error`) and as a
+  // JSON string literal inside the eval CODE (stored preview). Then a seeded sample of the glue generator. The stored tab view AND session
+  // view are searched for every canary; the readable part of each shape must survive.
+  C('GLUE', async (id) => {
+    const shapes = glueShapes(surface);
+    const seq0 = ((await history({ scope: 'session' })).json?.entries ?? []).at(-1)?.seq ?? 0;
+    const liveSeen = [];
+    for (const s of shapes) {
+      const r = await tool('browser.eval', { code: `throw new Error(${JSON.stringify(s.text)})` });
+      if (r.text.includes(s.canaries[0])) liveSeen.push(s.id);
+      await tool('browser.eval', { code: `(${JSON.stringify(s.text)}).length` });
+    }
+    const sess = await history({ scope: 'session' });
+    const tabView = await history({});
+    const entries = (sess.json?.entries ?? []).filter((e) => e.seq > seq0);
+    const whole = JSON.stringify(sess.json) + JSON.stringify(tabView.json);
+    const leaked = shapes.filter((s) => s.canaries.some((c) => whole.includes(c))).map((s) => s.id);
+    const errEntries = entries.filter((e) => typeof e.error === 'string');
+    const lostKeep = shapes.filter((s, i) => s.keep.some((k) => !String(errEntries[i]?.error ?? '').includes(k))).map((s) => s.id);
+    const N = 160;
+    const gen = glueGenerate(GLUE_SEED + 3, N);
+    let lastSeq = entries.at(-1)?.seq ?? seq0;
+    const leaks = [];
+    const batches = [];
+    for (let i = 0; i < gen.length; i += 40) {
+      const batch = gen.slice(i, i + 40);
+      for (const c of batch) await tool('browser.eval', { code: `throw new Error(${JSON.stringify(c.text)})` });
+      const fresh = ((await history({ scope: 'session' })).json?.entries ?? []).filter((e) => e.seq > lastSeq);
+      if (fresh.length !== batch.length) batches.push({ at: i, fresh: fresh.length, expected: batch.length });
+      lastSeq = fresh.at(-1)?.seq ?? lastSeq;
+      batch.forEach((c, j) => {
+        if (fresh[j] && c.secrets.some((s) => JSON.stringify(fresh[j]).includes(s))) leaks.push({ id: c.id, text: c.text, entry: JSON.stringify(fresh[j]).slice(0, 240) });
+      });
+    }
+    record(surface, id, [
+      T(`exactly ${2 * shapes.length} new entries for the ${shapes.length} shapes (an error eval + a literal-in-code eval each), recorded once`, entries.length === 2 * shapes.length, { got: entries.length }),
+      T('PROBE: the live tool result of every failing eval DID show its canary (the redaction is on the stored form; the search can see a leak)', liveSeen.length === shapes.length, { seen: liveSeen.length, of: shapes.length }),
+      T(`no canary of ${shapes.length} glue shapes in the session or tab view (error, preview, reason, evidence)`, leaked.length === 0, leaked),
+      T('the readable part of every shape survives (origin + path / basename / [::1]:5000/p): no over-redaction', lostKeep.length === 0, lostKeep.map((x) => ({ x, error: errEntries[shapes.findIndex((s) => s.id === x)]?.error }))),
+      T(`seed ${GLUE_SEED + 3}: all ${N} generated glue strings accounted for (batches of 40)`, batches.length === 0, batches),
+      T(`no SECRET of ${N} generated glue strings in any stored entry`, leaks.length === 0, leaks.slice(0, 3)),
+    ], { shapes: shapes.length, generated: N, seed: GLUE_SEED + 3 });
+  });
+
   // fix-2: a live sample of the SEEDED property generator (prefix + delimiter + SECRET, random scheme / host / encoding / wrapper):
   // each string becomes a real failing eval's error text; the stored entries are read back (batches of 40: the ring holds 200).
   C('PROP', async (id) => {
@@ -1093,6 +1140,43 @@ async function runCliCases(surface, cliJs, ctx) {
     ], { commands: 1 + runs.length + 2 });
   });
 
+  // fix-3 (audit-3 A3-F1): GLUED tokens through real CLI processes: every shape twice (an error eval and a literal-in-code eval) plus a
+  // small seeded sample; the raw history.jsonl bytes, `sutradhar history` and `history --json` are searched for every canary.
+  C('GLUE', async (id) => {
+    const shapes = glueShapes(surface);
+    const N = 12;
+    const gen = glueGenerate(GLUE_SEED + 5, N);
+    const before = (await readLines()).length;
+    const first = await cli(['nav', server.bare('/fr2-11-paths.html')]);
+    await noteOwnChrome(STATE);
+    const liveSeen = [];
+    for (const s of shapes) {
+      const ev = await cli(['eval', `throw new Error(${JSON.stringify(s.text)})`]);
+      if ((ev.stdout + ev.stderr).includes(s.canaries[0])) liveSeen.push(s.id);
+      await cli(['eval', `(${JSON.stringify(s.text)}).length`]);
+    }
+    for (const c of gen) await cli(['eval', `throw new Error(${JSON.stringify(c.text)})`]);
+    const lines = (await readLines()).slice(before);
+    const parsed = lines.map((l) => { try { return JSON.parse(l); } catch { return null; } });
+    const raw = lines.join('\n');
+    const human = await cli(['history']);
+    const asJson = await cli(['history', '--json']);
+    const all = raw + human.stdout + asJson.stdout;
+    const leaked = shapes.filter((s) => s.canaries.some((c) => all.includes(c))).map((s) => s.id);
+    const leakedGen = gen.filter((c) => c.secrets.some((x) => all.includes(x))).map((c) => ({ id: c.id, text: c.text }));
+    const expected = 1 + 2 * shapes.length + N;
+    const errs = parsed.filter((l) => l?.verb === 'eval' && typeof l.error === 'string');
+    const lostKeep = shapes.filter((s, i) => s.keep.some((k) => !String(errs[i]?.error ?? '').includes(k))).map((s) => s.id);
+    record(surface, id, [
+      T(`exactly ${expected} new history lines (one per CLI command run by this case)`, lines.length === expected && first.code === 0, { lines: lines.length, expected }),
+      T('every new line parses as JSON', parsed.every(Boolean), parsed.filter((x) => !x).length),
+      T('PROBE: the live output of every failing eval DID show its canary', liveSeen.length === shapes.length, { seen: liveSeen.length, of: shapes.length }),
+      T(`no canary of ${shapes.length} glue shapes in the raw history.jsonl bytes, history or history --json`, leaked.length === 0 && human.code === 0 && asJson.code === 0, leaked),
+      T(`seed ${GLUE_SEED + 5}: no SECRET of ${N} generated glue strings in the raw bytes or the history output`, leakedGen.length === 0, leakedGen.slice(0, 3)),
+      T('the readable part of every shape survives in the stored error', lostKeep.length === 0, lostKeep),
+    ], { commands: expected, generated: N, seed: GLUE_SEED + 5 });
+  });
+
   // fix-2: a live sample of the seeded generator through real CLI processes (a process per command, so a small sample: 36 strings x 2 verbs)
   C('PROP', async (id) => {
     const N = 36;
@@ -1255,6 +1339,41 @@ async function runSdkCases(ctx) {
         T('about:blank / http navigations still show their target', lostKeep.length === 0, { lostKeep, targets: navEntries.map((e) => e.target) }),
         T(`seed ${DEFAULT_SEED + 3}: ${N} generated strings accounted for and no SECRET stored`, propBatches.length === 0 && propLeaks.length === 0, { propBatches, propLeaks: propLeaks.slice(0, 3) }),
       ], { shapes: shapes.length, generated: N, seed: DEFAULT_SEED + 3 });
+    }
+    // fix-3 (audit-3 A3-F1): glued tokens through the SDK: every shape as a failing evaluate (error) and a literal inside the evaluated code, plus a seeded sample
+    {
+      const shapes = glueShapes('sdk');
+      const report = () => rt.getActionHistoryReport(browser.sessionId, { scope: 'session' }).entries;
+      const seq0 = report().at(-1)?.seq ?? 0;
+      const liveSeen = [];
+      for (const s of shapes) {
+        try { await page.evaluate(`throw new Error(${JSON.stringify(s.text)})`); } catch (e) { if (String(e.message).includes(s.canaries[0])) liveSeen.push(s.id); }
+        await page.evaluate(`(${JSON.stringify(s.text)}).length`).catch(() => {});
+      }
+      const after = report().filter((e) => e.seq > seq0);
+      const leaked = shapes.filter((s) => s.canaries.some((c) => JSON.stringify(after).includes(c))).map((s) => s.id);
+      const errEntries = after.filter((e) => typeof e.error === 'string');
+      const lostKeep = shapes.filter((s, i) => s.keep.some((k) => !String(errEntries[i]?.error ?? '').includes(k))).map((s) => s.id);
+      const N = 320;
+      const gen = glueGenerate(GLUE_SEED + 4, N);
+      let lastSeq = report().at(-1)?.seq ?? 0;
+      const gLeaks = [];
+      const gBatches = [];
+      for (let i = 0; i < gen.length; i += 40) {
+        const batch = gen.slice(i, i + 40);
+        for (const c of batch) await page.evaluate(`throw new Error(${JSON.stringify(c.text)})`).catch(() => {});
+        const fresh = report().filter((e) => e.seq > lastSeq);
+        if (fresh.length !== batch.length) gBatches.push({ at: i, fresh: fresh.length, expected: batch.length });
+        lastSeq = fresh.at(-1)?.seq ?? lastSeq;
+        batch.forEach((c, j) => { if (fresh[j] && c.secrets.some((x) => JSON.stringify(fresh[j]).includes(x))) gLeaks.push({ id: c.id, text: c.text }); });
+      }
+      record(surface, 'SDK-GLUE', [
+        T(`exactly ${2 * shapes.length} new entries for the ${shapes.length} shapes, each recorded once`, after.length === 2 * shapes.length, { got: after.length }),
+        T('PROBE: the thrown error of every failing evaluate DID carry its canary', liveSeen.length === shapes.length, { seen: liveSeen.length, of: shapes.length }),
+        T(`no canary of ${shapes.length} glue shapes in any stored SDK entry`, leaked.length === 0, leaked),
+        T('the readable part of every shape survives', lostKeep.length === 0, lostKeep),
+        T(`seed ${GLUE_SEED + 4}: ${N} generated glue strings accounted for and no SECRET stored`, gBatches.length === 0 && gLeaks.length === 0, { gBatches, gLeaks: gLeaks.slice(0, 3) }),
+      ], { shapes: shapes.length, generated: N, seed: GLUE_SEED + 4 });
     }
   } finally {
     await observer.disconnect().catch(() => {});

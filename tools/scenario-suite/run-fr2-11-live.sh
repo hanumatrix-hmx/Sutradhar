@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# FR2-11 live driver: one FULL pass of verify-fr2-11-history.mjs, split into 11 processes so each stays far below the 20-minute
+# FR2-11 live driver: one FULL pass of verify-fr2-11-history.mjs, split into 13 processes so each stays far below the 20-minute
 # limit (the CLI cases alone take ~30 minutes in one process: the main cases ~7, the privacy matrix ~10, FIX2 ~6, PROP ~3). Usage: tools/scenario-suite/run-fr2-11-live.sh <evidence-root> [per-process-timeout-seconds]
 # Every part writes to <evidence-root>/<part>/ (live-summary.json, live-<surface>.jsonl, console.log). Exit code: 0 only when every part passed.
 # Before each part it checks free space on the evidence drive (stops under 5 GB) and afterwards lists the sutradhar-cli-* profile dirs
@@ -27,14 +27,16 @@ run_part() {
 }
 run_part mcp --surface=mcp
 run_part sdk --surface=sdk
-run_part cli-main --surface=cli --skip=PM,FIX2,PROP
+run_part cli-main --surface=cli --skip=PM,FIX2,PROP,GLUE
 run_part cli-pm --surface=cli --only=PM
 run_part cli-fix2 --surface=cli --only=FIX2
 run_part cli-prop --surface=cli --only=PROP
+run_part cli-glue --surface=cli --only=GLUE
 run_part bundle-mcp --surface=bundle-mcp
-run_part bundle-cli-main --surface=bundle-cli --skip=PM,FIX2,PROP
+run_part bundle-cli-main --surface=bundle-cli --skip=PM,FIX2,PROP,GLUE
 run_part bundle-cli-pm --surface=bundle-cli --only=PM
 run_part bundle-cli-fix2 --surface=bundle-cli --only=FIX2
 run_part bundle-cli-prop --surface=bundle-cli --only=PROP
+run_part bundle-cli-glue --surface=bundle-cli --only=GLUE
 echo "pass finished rc=$rc"
 exit $rc
