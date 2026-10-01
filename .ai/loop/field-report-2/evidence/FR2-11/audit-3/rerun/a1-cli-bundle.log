@@ -1,0 +1,63 @@
+[0] 1234ms nav http://aud:CNRYcliuserpass@127.0.0.1:60056/p?token=CNRYcliquery#CNRYclifrag
+[0] 3366ms type #pw CNRYclitype
+[1] 4942ms type #mangle CNRYclimangle
+[0] 3282ms select #sel CNRYselval
+[0] 295ms setclipboard CNRYcliclip
+[0] 287ms getclipboard
+[0] 254ms eval document.getElementById('pw').value + '|' + document.getElementById('sel').value
+[1] 258ms eval throw new Error('boom')
+[0] 3340ms upload #file E:\AI-Cache\tmp\fr211-audit-cli-0G94LW\CNRYcliupdir\CNRYcliupname.txt
+[0] 3517ms download #dl E:\AI-Cache\tmp\fr211-audit-cli-0G94LW\CNRYclidldir
+[0] 6308ms click #prompt
+[0] 730ms dialog accept CNRYcliprompt
+[1] 274ms waitfor 0 --text CNRYcliwait
+[4] 3312ms click #btn --expect-text CNRYcliexp
+[1] 969ms nav 127.0.0.1:60056/p?token=CNRYnoscheme
+[0] 3343ms type #pw ab
+[0] 3324ms press #pw Enter
+[0] 408ms newtab http://127.0.0.1:60056/p?token=CNRYclinewtab
+[0] 289ms tabs
+[0] 230ms history
+[0] 229ms history --json
+{"unexpected":[],"found":{"file":["CNRYcliupname","CNRYdlname","CNRYcliwait","CNRYcliexp"],"human":["CNRYcliupname","CNRYcliwait"],"json":["CNRYcliupname","CNRYdlname","CNRYcliwait","CNRYcliexp"]},"jsonIdentical":true,"lines":19}
+nav:0:http://127.0.0.1:60056/p:[navigate]
+type:0:#pw <11 chars>:[type]
+type:1:#mangle <13 chars>:[type]
+select:0:#sel <10 chars>:[select_option]
+setclipboard:0:<11 chars>:[set_clipboard]
+getclipboard:0::[]
+eval:0:document.getElementById('pw').value + '|' + document.getElem:[eval]
+eval:1:throw new Error('boom'):[eval]
+upload:0:#file CNRYcliupname.txt:[upload_file]
+download:0:#dl <dir>:[download_file]
+click:0:#prompt:[click]
+dialog:0:accept <13 chars>:[]
+waitfor:1:0:[wait_for]
+click:4:#btn:[click]
+nav:1:<dir>:[navigate]
+type:0:#pw <2 chars>:[type]
+press:0:#pw Enter:[focus,press_key]
+newtab:0:http://127.0.0.1:60056/p:[]
+tabs:0::[]
+total 18
+drwxr-xr-x 1 Varad M 197609     0 Oct  1 13:34 .
+drwxr-xr-x 1 Varad M 197609     0 Oct  1 13:34 ..
+-rw-r--r-- 1 Varad M 197609 13032 Oct  1 13:35 history.jsonl
+-rw-r--r-- 1 Varad M 197609   204 Oct  1 13:35 state.json
+-rw-r--r-- 1 Varad M 197609   261 Oct  1 13:34 warden.json
+ E:\AI-Cache\tmp\fr211-audit-cli-0G94LW\state\history.jsonl S-1-5-21-2435114348-680781744-2272691248-2842413353:(I)(M,DC)
+                                                           DESKTOP-0P7I7LN\Varad M:(I)(M,DC)
+                                                           DESKTOP-0P7I7LN\CodexSandboxUsers:(I)(M)
+                                                           S-1-5-21-1953991020-1908219969-1637915715-3761621586:(I)(M)
+                                                           BUILTIN\Administrators:(I)(F)
+                                                           NT AUTHORITY\SYSTEM:(I)(F)
+                                                           NT AUTHORITY\Authenticated Users:(I)(M)
+                                                           BUILTIN\Users:(I)(RX)
+
+Successfully processed 1 files; Failed processing 0 files
+
+[0] 688ms close
+[0] 216ms history
+after close history head: History: 20 command(s) in E:\AI-Cache\tmp\fr211-audit-cli-0G94LW\state\history.jsonl | --- session sess_1790841878950_1 --- state.json exists: false
+chrome pid 96624 alive after close: false
+exit=0

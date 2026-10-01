@@ -1,0 +1,583 @@
+[
+ {
+  "label": "navigate",
+  "tool": "browser.navigate",
+  "isError": false,
+  "added": 0,
+  "types": [],
+  "expectN": 1,
+  "countOk": false,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "navigate+settle",
+  "tool": "browser.navigate",
+  "isError": true,
+  "added": 0,
+  "types": [],
+  "expectN": 1,
+  "countOk": false,
+  "verifInResult": false,
+  "verifInEntry": false,
+  "verifEqual": true,
+  "errText": "MCP error -32602: Input validation error: Invalid arguments for tool browser.navigate: Invalid input at settle"
+ },
+ {
+  "label": "eval",
+  "tool": "browser.eval",
+  "isError": false,
+  "added": 0,
+  "types": [],
+  "expectN": 1,
+  "countOk": false,
+  "verifInResult": false,
+  "verifInEntry": false,
+  "verifEqual": true
+ },
+ {
+  "label": "eval throws",
+  "tool": "browser.eval",
+  "isError": true,
+  "added": 0,
+  "types": [],
+  "expectN": 1,
+  "countOk": false,
+  "verifInResult": false,
+  "verifInEntry": false,
+  "verifEqual": true,
+  "errText": "eval failed: x"
+ },
+ {
+  "label": "click",
+  "tool": "browser.click",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "click"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "click+settle",
+  "tool": "browser.click",
+  "isError": true,
+  "added": 0,
+  "types": [],
+  "expectN": 1,
+  "countOk": false,
+  "verifInResult": false,
+  "verifInEntry": false,
+  "verifEqual": true,
+  "errText": "MCP error -32602: Input validation error: Invalid arguments for tool browser.click: Invalid input at settle"
+ },
+ {
+  "label": "click fails (retries)",
+  "tool": "browser.click",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "click(FAIL)"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "click rejected pre-dispatch",
+  "tool": "browser.click",
+  "isError": true,
+  "added": 0,
+  "types": [],
+  "expectN": 1,
+  "countOk": false,
+  "verifInResult": false,
+  "verifInEntry": false,
+  "verifEqual": true,
+  "errText": "click failed: Invalid selector \"text=Go\" — \"text=\" is Playwright selector-engine syntax (Puppeteer's own text query is s"
+ },
+ {
+  "label": "type",
+  "tool": "browser.type",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "type"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "press_key",
+  "tool": "browser.press_key",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "press_key"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "focus",
+  "tool": "browser.focus",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "focus"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "scroll",
+  "tool": "browser.scroll",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "scroll"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "hover",
+  "tool": "browser.hover",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "hover"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "select_option",
+  "tool": "browser.select_option",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "select_option"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "select_options",
+  "tool": "browser.select_options",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "select_option"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "wait_for_selector",
+  "tool": "browser.wait_for_selector",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "wait_for_selector"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "wait_for met",
+  "tool": "browser.wait_for",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "wait_for"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "wait_for timeout",
+  "tool": "browser.wait_for",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "wait_for(FAIL)"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "click_by_text",
+  "tool": "browser.click_by_text",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "click_by_text"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "click_by_role",
+  "tool": "browser.click_by_role",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "click_by_role"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "type_by_label",
+  "tool": "browser.type_by_label",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "type_by_label"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "fill_form 2 fields",
+  "tool": "browser.fill_form",
+  "isError": false,
+  "added": 2,
+  "types": [
+   "type",
+   "type"
+  ],
+  "expectN": 2,
+  "countOk": true,
+  "verifInResult": false,
+  "verifInEntry": false,
+  "verifEqual": true
+ },
+ {
+  "label": "upload_file",
+  "tool": "browser.upload_file",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "upload_file"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "upload_file_via_trigger",
+  "tool": "browser.upload_file_via_trigger",
+  "isError": false,
+  "added": 0,
+  "types": [],
+  "expectN": 1,
+  "countOk": false,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "right_click",
+  "tool": "browser.right_click",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "click"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "drag_and_drop",
+  "tool": "browser.drag_and_drop",
+  "isError": true,
+  "added": 0,
+  "types": [],
+  "expectN": 1,
+  "countOk": false,
+  "verifInResult": false,
+  "verifInEntry": false,
+  "verifEqual": true,
+  "errText": "MCP error -32602: Input validation error: Invalid arguments for tool browser.drag_and_drop: Required at sourceTarget\nReq"
+ },
+ {
+  "label": "touch_tap",
+  "tool": "browser.touch_tap",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "touch_tap"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "click_at_point",
+  "tool": "browser.click_at_point",
+  "isError": false,
+  "added": 0,
+  "types": [],
+  "expectN": 1,
+  "countOk": false,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "drag_at_points",
+  "tool": "browser.drag_at_points",
+  "isError": false,
+  "added": 0,
+  "types": [],
+  "expectN": 1,
+  "countOk": false,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "set_clipboard",
+  "tool": "browser.set_clipboard",
+  "isError": false,
+  "added": 0,
+  "types": [],
+  "expectN": 1,
+  "countOk": false,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "download_file",
+  "tool": "browser.download_file",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "download_file"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "click -> nav link",
+  "tool": "browser.click",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "click"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "go_back",
+  "tool": "browser.go_back",
+  "isError": false,
+  "added": 0,
+  "types": [],
+  "expectN": 1,
+  "countOk": false,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "go_forward",
+  "tool": "browser.go_forward",
+  "isError": false,
+  "added": 0,
+  "types": [],
+  "expectN": 1,
+  "countOk": false,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "reload",
+  "tool": "browser.reload",
+  "isError": false,
+  "added": 0,
+  "types": [],
+  "expectN": 1,
+  "countOk": false,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "click opens alert",
+  "tool": "browser.click",
+  "isError": false,
+  "added": 1,
+  "types": [
+   "click"
+  ],
+  "expectN": 1,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "handle_dialog (not by spec)",
+  "tool": "browser.handle_dialog",
+  "isError": false,
+  "added": 0,
+  "types": [],
+  "expectN": 0,
+  "countOk": true,
+  "verifInResult": false,
+  "verifInEntry": false,
+  "verifEqual": true
+ },
+ {
+  "label": "screenshot (read)",
+  "tool": "browser.screenshot",
+  "isError": false,
+  "added": 0,
+  "types": [],
+  "expectN": 0,
+  "countOk": true,
+  "verifInResult": true,
+  "verifInEntry": false,
+  "verifEqual": false
+ },
+ {
+  "label": "snapshot (read)",
+  "tool": "browser.snapshot",
+  "isError": false,
+  "added": 0,
+  "types": [],
+  "expectN": 0,
+  "countOk": true,
+  "verifInResult": false,
+  "verifInEntry": false,
+  "verifEqual": true
+ },
+ {
+  "label": "new_tab (G-C)",
+  "tool": "browser.new_tab",
+  "isError": false,
+  "added": 0,
+  "types": [],
+  "expectN": 0,
+  "countOk": true,
+  "verifInResult": false,
+  "verifInEntry": false,
+  "verifEqual": true
+ },
+ {
+  "label": "set_cookie (G-C)",
+  "tool": "browser.set_cookie",
+  "isError": false,
+  "added": 0,
+  "types": [],
+  "expectN": 0,
+  "countOk": true,
+  "verifInResult": false,
+  "verifInEntry": false,
+  "verifEqual": true
+ },
+ {
+  "label": "audit (navigates)",
+  "tool": "browser.audit",
+  "isError": false,
+  "added": 0,
+  "types": [],
+  "expectN": 1,
+  "countOk": false,
+  "verifInResult": false,
+  "verifInEntry": false,
+  "verifEqual": true
+ },
+ {
+  "label": "navigate bad url",
+  "tool": "browser.navigate",
+  "isError": true,
+  "added": 0,
+  "types": [],
+  "expectN": 1,
+  "countOk": false,
+  "verifInResult": false,
+  "verifInEntry": false,
+  "verifEqual": true,
+  "errText": "navigate failed: net::ERR_UNSAFE_PORT at http://127.0.0.1:1/"
+ },
+ {
+  "label": "duplicate pair",
+  "added": 2,
+  "types": [
+   "click(FAIL)",
+   "click(FAIL)"
+  ],
+  "expectN": 2,
+  "countOk": true,
+  "dupErr": [
+   "No visible element found for selector: #b",
+   "No visible element found for selector: #b"
+  ]
+ }
+]

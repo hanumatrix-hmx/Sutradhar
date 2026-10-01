@@ -1,0 +1,1937 @@
+{
+ "label": "bundle",
+ "mcp": {
+  "steps": [
+   {
+    "name": "browser.navigate",
+    "args": "{\"url\":\"http://127.0.0.1:62696/p?token=A3Cq1&x=1#A3Cf1\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3cq1",
+     "a3cf1",
+     "a3ltitle1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": false,
+    "entries": [
+     {
+      "t": "navigate",
+      "ok": true,
+      "target": "http://127.0.0.1:62696/p",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'navigate' verified: a new document committed at http://127.0.0.1:62696/p[redacted]",
+      "checks": [
+       [
+        "navigate.document",
+        "new-document or url change",
+        "new-document",
+        "a new document committed at http://127.0.0.1:62696/p[redacted]"
+       ],
+       [
+        "navigate.http-status",
+        "<400",
+        200,
+        null
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "browser.navigate",
+    "args": "{\"url\":\"http://127.0.0.1:62696/p%3Ftoken%3DA3Cenc1\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3cenc1",
+     "a3ltitle1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": false,
+    "entries": [
+     {
+      "t": "navigate",
+      "ok": true,
+      "target": "http://127.0.0.1:62696/p",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'navigate' verified: a new document committed at http://127.0.0.1:62696/p[redacted]",
+      "checks": [
+       [
+        "navigate.document",
+        "new-document or url change",
+        "new-document",
+        "a new document committed at http://127.0.0.1:62696/p[redacted]"
+       ],
+       [
+        "navigate.http-status",
+        "<400",
+        200,
+        null
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "browser.navigate",
+    "args": "{\"url\":\"http://127.0.0.1:62696/reset/A3Lpath1/confirm\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3lpath1",
+     "a3ltitle1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [
+     "a3lpath1"
+    ],
+    "keys": [
+     "actionType",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": true,
+    "entries": [
+     {
+      "t": "navigate",
+      "ok": true,
+      "target": "http://127.0.0.1:62696/reset/A3Lpath1/confirm",
+      "url": "http://127.0.0.1:62696/reset/A3Lpath1/confirm",
+      "reason": "'navigate' verified: a new document committed at http://127.0.0.1:62696/reset/A3Lpath1/confirm",
+      "checks": [
+       [
+        "navigate.document",
+        "new-document or url change",
+        "new-document",
+        "a new document committed at http://127.0.0.1:62696/reset/A3Lpath1/confirm"
+       ],
+       [
+        "navigate.http-status",
+        "<400",
+        200,
+        null
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "browser.navigate",
+    "args": "{\"url\":\"http://a3lhost1.localhost:62696/p\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3lhost1",
+     "a3ltitle1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [
+     "a3lhost1"
+    ],
+    "keys": [
+     "actionType",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": true,
+    "entries": [
+     {
+      "t": "navigate",
+      "ok": true,
+      "target": "http://a3lhost1.localhost:62696/p",
+      "url": "http://a3lhost1.localhost:62696/p",
+      "reason": "'navigate' verified: a new document committed at http://a3lhost1.localhost:62696/p",
+      "checks": [
+       [
+        "navigate.document",
+        "new-document or url change",
+        "new-document",
+        "a new document committed at http://a3lhost1.localhost:62696/p"
+       ],
+       [
+        "navigate.http-status",
+        "<400",
+        200,
+        null
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "browser.navigate",
+    "args": "{\"url\":\"http://user:A3Cui1@127.0.0.1:62696/p\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3cui1",
+     "a3ltitle1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": false,
+    "entries": [
+     {
+      "t": "navigate",
+      "ok": true,
+      "target": "http://127.0.0.1:62696/p",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'navigate' verified: a new document committed at http://127.0.0.1:62696/p",
+      "checks": [
+       [
+        "navigate.document",
+        "new-document or url change",
+        "new-document",
+        "a new document committed at http://127.0.0.1:62696/p"
+       ],
+       [
+        "navigate.http-status",
+        "<400",
+        200,
+        null
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "browser.navigate",
+    "args": "{\"url\":\"http://127.0.0.1:62696/redir\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3credir1",
+     "a3credir2",
+     "a3ltitle1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": false,
+    "entries": [
+     {
+      "t": "navigate",
+      "ok": true,
+      "target": "http://127.0.0.1:62696/redir",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'navigate' verified: a new document committed at http://127.0.0.1:62696/p[redacted]",
+      "checks": [
+       [
+        "navigate.document",
+        "new-document or url change",
+        "new-document",
+        "a new document committed at http://127.0.0.1:62696/p[redacted]"
+       ],
+       [
+        "navigate.http-status",
+        "<400",
+        200,
+        null
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "browser.navigate",
+    "args": "{\"url\":\"com.example.app:/cb#A3Ccs1\"}",
+    "isError": true,
+    "resultCanaries": [
+     "a3ccs1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "success",
+     "error",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "tabId",
+     "seq"
+    ],
+    "entries": [
+     {
+      "t": "navigate",
+      "ok": false,
+      "target": "<dir>",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "net::ERR_ABORTED at <dir>"
+     }
+    ]
+   },
+   {
+    "name": "browser.navigate",
+    "args": "{\"url\":\"http://127.0.0.1:62696/p\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ltitle1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": true,
+    "entries": [
+     {
+      "t": "navigate",
+      "ok": true,
+      "target": "http://127.0.0.1:62696/p",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'navigate' verified: a new document committed at http://127.0.0.1:62696/p",
+      "checks": [
+       [
+        "navigate.document",
+        "new-document or url change",
+        "new-document",
+        "a new document committed at http://127.0.0.1:62696/p"
+       ],
+       [
+        "navigate.http-status",
+        "<400",
+        200,
+        null
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "browser.eval",
+    "args": "{\"code\":\"'Authorization: Bearer A3Lbear1'.length\"}",
+    "isError": false,
+    "resultCanaries": [],
+    "newEntries": 1,
+    "histCanaries": [
+     "a3lbear1"
+    ],
+    "keys": [
+     "actionType",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "tabId",
+     "seq"
+    ],
+    "entries": [
+     {
+      "t": "eval",
+      "ok": true,
+      "target": "'Authorization: Bearer A3Lbear1'.length",
+      "url": "http://127.0.0.1:62696/p"
+     }
+    ]
+   },
+   {
+    "name": "browser.eval",
+    "args": "{\"code\":\"JSON.stringify({password:'A3Leval2'})\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3leval2"
+    ],
+    "newEntries": 1,
+    "histCanaries": [
+     "a3leval2"
+    ],
+    "keys": [
+     "actionType",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "tabId",
+     "seq"
+    ],
+    "entries": [
+     {
+      "t": "eval",
+      "ok": true,
+      "target": "JSON.stringify({password:'A3Leval2'})",
+      "url": "http://127.0.0.1:62696/p"
+     }
+    ]
+   },
+   {
+    "name": "browser.eval",
+    "args": "{\"code\":\"String('/x?t=A3Ceval3')\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ceval3"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "tabId",
+     "seq"
+    ],
+    "entries": [
+     {
+      "t": "eval",
+      "ok": true,
+      "target": "<dir>",
+      "url": "http://127.0.0.1:62696/p"
+     }
+    ]
+   },
+   {
+    "name": "browser.eval",
+    "args": "{\"code\":\"throw new Error('Bearer A3Lerr1 and https://h/p?A3Cerr2')\"}",
+    "isError": true,
+    "resultCanaries": [
+     "a3lerr1",
+     "a3cerr2"
+    ],
+    "newEntries": 1,
+    "histCanaries": [
+     "a3lerr1"
+    ],
+    "keys": [
+     "actionType",
+     "success",
+     "error",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "tabId",
+     "seq"
+    ],
+    "entries": [
+     {
+      "t": "eval",
+      "ok": false,
+      "target": "throw new Error('Bearer A3Lerr1 and https://h/p[redacted]",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "Bearer A3Lerr1 and https://h/p[redacted]"
+     }
+    ]
+   },
+   {
+    "name": "browser.eval",
+    "args": "{\"code\":\"'A3Cres' + 'ult1'\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3cresult1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [
+     "a3cres"
+    ],
+    "keys": [
+     "actionType",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "tabId",
+     "seq"
+    ],
+    "entries": [
+     {
+      "t": "eval",
+      "ok": true,
+      "target": "'A3Cres' + 'ult1'",
+      "url": "http://127.0.0.1:62696/p"
+     }
+    ]
+   },
+   {
+    "name": "browser.eval",
+    "args": "{\"code\":\"document.title + ' ' + location.href\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ltitle1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "tabId",
+     "seq"
+    ],
+    "entries": [
+     {
+      "t": "eval",
+      "ok": true,
+      "target": "document.title + ' ' + location.href",
+      "url": "http://127.0.0.1:62696/p"
+     }
+    ]
+   },
+   {
+    "name": "browser.click",
+    "args": "{\"target\":\"#btn\",\"expect\":{\"url\":\"/p?x=A3Cexpu1\"}}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ltitle1",
+     "a3cexpu1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "selector",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": false,
+    "entries": [
+     {
+      "t": "click",
+      "ok": true,
+      "sel": "#btn",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "Current URL http://127.0.0.1:62696/p does not contain expected substring <dir>",
+      "checks": [
+       [
+        "click.built-in",
+        null,
+        null,
+        "occlusion and click-delivery were checked inside the action before it reported success"
+       ],
+       [
+        "expect.url",
+        "<dir>",
+        "http://127.0.0.1:62696/p",
+        null
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "browser.click",
+    "args": "{\"target\":\"#btn\",\"expect\":{\"text\":\"A3Dexptext1\"}}",
+    "isError": false,
+    "resultCanaries": [],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "selector",
+     "success",
+     "error",
+     "executionTimeMs",
+     "timestamp",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": false,
+    "entries": [
+     {
+      "t": "click",
+      "ok": false,
+      "sel": "#btn",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "Duplicate 'click' on the same target within 1000ms — likely an accidental double-dispatch (e.g. a submit button clicked twice). If this is intentional, wait a m",
+      "reason": "Action failed: Duplicate 'click' on the same target within 1000ms — likely an accidental double-dispatch (e.g. a submit button clicked twice). If this is intent",
+      "checks": [
+       [
+        "expect.text",
+        null,
+        null,
+        "the action failed[redacted]"
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "browser.click",
+    "args": "{\"target\":\"[data-k=A3Lsel1]\",\"timeoutMs\":1500,\"maxRetries\":0}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ltitle1",
+     "a3lsel1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [
+     "a3lsel1"
+    ],
+    "keys": [
+     "actionType",
+     "selector",
+     "success",
+     "error",
+     "executionTimeMs",
+     "timestamp",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": false,
+    "entries": [
+     {
+      "t": "click",
+      "ok": false,
+      "sel": "[data-k=A3Lsel1]",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "No visible element found for selector: [redacted]",
+      "reason": "Action failed: No visible element found for selector: [redacted]",
+      "checks": []
+     }
+    ]
+   },
+   {
+    "name": "browser.click",
+    "args": "{\"target\":\"a[href=\\\"/p?code=A3Csel2\\\"]\",\"timeoutMs\":1500,\"maxRetries\":0}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ltitle1",
+     "a3csel2"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "selector",
+     "success",
+     "error",
+     "executionTimeMs",
+     "timestamp",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": false,
+    "entries": [
+     {
+      "t": "click",
+      "ok": false,
+      "sel": "a[href=\"/p[redacted]",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "No visible element found for selector: [redacted]",
+      "reason": "Action failed: No visible element found for selector: [redacted]",
+      "checks": []
+     }
+    ]
+   },
+   {
+    "name": "browser.type",
+    "args": "{\"target\":\"#pw\",\"value\":\"A3Ctyped1\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ltitle1",
+     "a3ctyped1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "selector",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": true,
+    "entries": [
+     {
+      "t": "type",
+      "ok": true,
+      "sel": "#pw",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+      "checks": [
+       [
+        "type.built-in",
+        null,
+        null,
+        "the typed value was read back from the element inside the action"
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "browser.type_by_label",
+    "args": "{\"label\":\"Password\",\"value\":\"A3Ctyped2\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ltitle1",
+     "a3ctyped2"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": true,
+    "entries": [
+     {
+      "t": "type_by_label",
+      "ok": true,
+      "target": "Password",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'type_by_label' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+      "checks": [
+       [
+        "type_by_label.built-in",
+        null,
+        null,
+        "the typed value was read back from the element inside the action"
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "browser.select_option",
+    "args": "{\"target\":\"#sel\",\"value\":\"A3Cselval1\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ltitle1",
+     "a3cselval1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "selector",
+     "success",
+     "error",
+     "executionTimeMs",
+     "timestamp",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": false,
+    "verifRawEqual": false,
+    "entries": [
+     {
+      "t": "select_option",
+      "ok": false,
+      "sel": "#sel",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "select_option did not land the expected value(s) — expected [<value>], but the element's real selected value(s) read back as [\"ok\"].",
+      "reason": "Action failed: select_option did not land the expected value(s) — expected [<value>], but the element's real selected value(s) read back as [\"ok\"].",
+      "checks": []
+     }
+    ]
+   },
+   {
+    "name": "browser.set_clipboard",
+    "args": "{\"text\":\"A3Cclip1\"}",
+    "isError": false,
+    "resultCanaries": [],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": false,
+    "entries": [
+     {
+      "t": "set_clipboard",
+      "ok": true,
+      "target": "<8 chars>",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'set_clipboard' completed, but no built-in post-condition check could run: the clipboard couldn't be read back (the clipboard-read permission isn't granted for ",
+      "checks": [
+       [
+        "set_clipboard.read-back",
+        8,
+        "blocked",
+        "clipboard-read permission not granted"
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "browser.wait_for",
+    "args": "{\"text\":\"tok=A3Cwait1\",\"timeoutMs\":0}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ltitle1",
+     "a3cwait1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "selector",
+     "success",
+     "error",
+     "executionTimeMs",
+     "timestamp",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": false,
+    "entries": [
+     {
+      "t": "wait_for",
+      "ok": false,
+      "sel": "[redacted]",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "wait_for timed out after 0ms waiting for [redacted] text [redacted] was not found in the visible text of 2 frame(s).",
+      "reason": "Action failed: wait_for timed out after 0ms waiting for [redacted] text [redacted] was not found in the visible text of 2 frame(s).",
+      "checks": []
+     }
+    ]
+   },
+   {
+    "name": "browser.wait_for",
+    "args": "{\"text\":\"A3Dwait2\",\"timeoutMs\":0}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ltitle1",
+     "a3dwait2"
+    ],
+    "newEntries": 1,
+    "histCanaries": [
+     "a3dwait2"
+    ],
+    "keys": [
+     "actionType",
+     "selector",
+     "success",
+     "error",
+     "executionTimeMs",
+     "timestamp",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": false,
+    "entries": [
+     {
+      "t": "wait_for",
+      "ok": false,
+      "sel": "text=\"A3Dwait2\"",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "wait_for timed out after 0ms waiting for [redacted] text \"A3Dwait2\" was not found in the visible text of 2 frame(s).",
+      "reason": "Action failed: wait_for timed out after 0ms waiting for [redacted] text \"A3Dwait2\" was not found in the visible text of 2 frame(s).",
+      "checks": []
+     }
+    ]
+   },
+   {
+    "name": "browser.wait_for",
+    "args": "{\"url\":\"p?A3Cwaitu1\",\"timeoutMs\":0}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ltitle1",
+     "a3cwaitu1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "selector",
+     "success",
+     "error",
+     "executionTimeMs",
+     "timestamp",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": false,
+    "entries": [
+     {
+      "t": "wait_for",
+      "ok": false,
+      "sel": "url~\"p[redacted]",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "wait_for timed out after 0ms waiting for url~\"p[redacted]",
+      "reason": "Action failed: wait_for timed out after 0ms waiting for url~\"p[redacted]",
+      "checks": []
+     }
+    ]
+   },
+   {
+    "name": "browser.wait_for",
+    "args": "{\"js\":\"document.title.includes('Bearer A3Lwaitjs1')\",\"timeoutMs\":0}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ltitle1",
+     "a3lwaitjs1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [
+     "a3lwaitjs1"
+    ],
+    "keys": [
+     "actionType",
+     "selector",
+     "success",
+     "error",
+     "executionTimeMs",
+     "timestamp",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": true,
+    "entries": [
+     {
+      "t": "wait_for",
+      "ok": false,
+      "sel": "js(document.title.includes('Bearer A3Lwaitjs1'))",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "wait_for timed out after 0ms waiting for js(document.title.includes('Bearer A3Lwaitjs1')): js document.title.includes('Bearer A3Lwaitjs1') is still falsy.",
+      "reason": "Action failed: wait_for timed out after 0ms waiting for js(document.title.includes('Bearer A3Lwaitjs1')): js document.title.includes('Bearer A3Lwaitjs1') is sti",
+      "checks": []
+     }
+    ]
+   },
+   {
+    "name": "browser.upload_file",
+    "args": "{\"target\":\"#file\",\"filePath\":\"E:\\\\AI-Cache\\\\tmp\\\\fr211-a3-N8lqDT\\\\A3Cupdir1\\\\inner\\\\f.txt\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ltitle1",
+     "a3cupdir1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "selector",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": true,
+    "entries": [
+     {
+      "t": "upload_file",
+      "ok": true,
+      "sel": "#file",
+      "target": "f.txt",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'upload_file' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+      "checks": [
+       [
+        "upload_file.built-in",
+        null,
+        null,
+        "the input's files list was read back inside the action"
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "browser.upload_file",
+    "args": "{\"target\":\"#file\",\"filePath\":\"E:\\\\AI-Cache\\\\tmp\\\\fr211-a3-N8lqDT\\\\A3Cupdir2\\\\missing.txt\"}",
+    "isError": false,
+    "resultCanaries": [],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "selector",
+     "success",
+     "error",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": true,
+    "entries": [
+     {
+      "t": "upload_file",
+      "ok": false,
+      "sel": "#file",
+      "target": "missing.txt",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "Duplicate 'upload_file' on the same target within 1000ms — likely an accidental double-dispatch (e.g. a submit button clicked twice). If this is intentional, wa",
+      "reason": "Action failed: Duplicate 'upload_file' on the same target within 1000ms — likely an accidental double-dispatch (e.g. a submit button clicked twice). If this is ",
+      "checks": []
+     }
+    ]
+   },
+   {
+    "name": "browser.click_by_text",
+    "args": "{\"text\":\"A3Lcbt1\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ltitle1",
+     "a3lcbt1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [
+     "a3lcbt1"
+    ],
+    "keys": [
+     "actionType",
+     "success",
+     "error",
+     "executionTimeMs",
+     "timestamp",
+     "target",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": true,
+    "entries": [
+     {
+      "t": "click_by_text",
+      "ok": false,
+      "target": "A3Lcbt1",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "No element found containing text: A3Lcbt1",
+      "reason": "Action failed: No element found containing text: A3Lcbt1",
+      "checks": []
+     }
+    ]
+   },
+   {
+    "name": "browser.click",
+    "args": "{\"target\":\"#lg\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ltitle1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "selector",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": true,
+    "entries": [
+     {
+      "t": "click",
+      "ok": true,
+      "sel": "#lg",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+      "checks": [
+       [
+        "click.built-in",
+        null,
+        null,
+        "occlusion and click-delivery were checked inside the action before it reported success"
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "browser.click",
+    "args": "{\"target\":\"#al\"}",
+    "isError": false,
+    "resultCanaries": [
+     "a3ltitle1",
+     "a3lalert1",
+     "a3calert2"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "selector",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": true,
+    "entries": [
+     {
+      "t": "click",
+      "ok": true,
+      "sel": "#al",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+      "checks": [
+       [
+        "click.built-in",
+        null,
+        null,
+        "occlusion and click-delivery were checked inside the action before it reported success"
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "browser.handle_dialog",
+    "args": "{\"action\":\"accept\"}",
+    "isError": false,
+    "resultCanaries": [],
+    "newEntries": 0,
+    "histCanaries": [],
+    "keys": [],
+    "entries": []
+   },
+   {
+    "name": "browser.go_back",
+    "args": "{}",
+    "isError": false,
+    "resultCanaries": [
+     "a3credir1",
+     "a3credir2",
+     "a3ltitle1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": false,
+    "entries": [
+     {
+      "t": "go_back",
+      "ok": true,
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'go_back' verified: history moved from entry 7 to 6 (http://127.0.0.1:62696/p[redacted]",
+      "checks": [
+       [
+        "go_back.document",
+        null,
+        "new-document",
+        null
+       ],
+       [
+        "go_back.history-index",
+        6,
+        6,
+        null
+       ],
+       [
+        "go_back.http-status",
+        "<400",
+        200,
+        null
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "name": "browser.reload",
+    "args": "{}",
+    "isError": false,
+    "resultCanaries": [
+     "a3credir1",
+     "a3credir2",
+     "a3ltitle1"
+    ],
+    "newEntries": 1,
+    "histCanaries": [],
+    "keys": [
+     "actionType",
+     "success",
+     "executionTimeMs",
+     "timestamp",
+     "url",
+     "verification",
+     "tabId",
+     "seq"
+    ],
+    "verifSanitizedEqual": true,
+    "verifRawEqual": true,
+    "entries": [
+     {
+      "t": "reload",
+      "ok": true,
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'reload' verified: a new document committed (loader changed)",
+      "checks": [
+       [
+        "reload.document",
+        "new-document",
+        "new-document",
+        null
+       ],
+       [
+        "reload.http-status",
+        "<400",
+        200,
+        null
+       ]
+      ]
+     }
+    ]
+   }
+  ],
+  "tab": {
+   "claim": [
+    "a3cres"
+   ],
+   "limit": [
+    "a3lpath1",
+    "a3lhost1",
+    "a3lbear1",
+    "a3leval2",
+    "a3lerr1",
+    "a3lsel1",
+    "a3lwaitjs1",
+    "a3lcbt1"
+   ],
+   "doc": [
+    "a3dwait2"
+   ]
+  },
+  "session": {
+   "claim": [
+    "a3cres"
+   ],
+   "limit": [
+    "a3lpath1",
+    "a3lhost1",
+    "a3lbear1",
+    "a3leval2",
+    "a3lerr1",
+    "a3lsel1",
+    "a3lwaitjs1",
+    "a3lcbt1"
+   ],
+   "doc": [
+    "a3dwait2"
+   ]
+  },
+  "sessionCount": 33,
+  "allKeys": [
+   "actionType",
+   "success",
+   "executionTimeMs",
+   "timestamp",
+   "target",
+   "url",
+   "verification",
+   "tabId",
+   "seq",
+   "error",
+   "selector"
+  ],
+  "verifKeys": [
+   "verified",
+   "urlChanged",
+   "elementFound",
+   "confidence",
+   "reason",
+   "evidence"
+  ],
+  "callerResults": {
+   "nav0": [
+    "a3cq1",
+    "a3cf1",
+    "a3ltitle1"
+   ],
+   "evalResult": [
+    "a3cresult1"
+   ]
+  }
+ },
+ "cli": {
+  "log": [
+   {
+    "args": "nav http://127.0.0.1:62696/p?token=A3Ccq1#A3Ccf1",
+    "code": 0,
+    "ms": 759,
+    "outCanaries": [
+     "a3ccq1",
+     "a3ccf1",
+     "a3ltitle1"
+    ],
+    "err": ""
+   },
+   {
+    "args": "nav 127.0.0.1:62696/p?token=A3Ccq2",
+    "code": 1,
+    "ms": 882,
+    "outCanaries": [],
+    "err": "Fatal: Protocol error (Page.navigate): Cannot navigate to invalid URL\n"
+   },
+   {
+    "args": "nav http://127.0.0.1:62696/reset/A3Lcpath1/confirm",
+    "code": 0,
+    "ms": 271,
+    "outCanaries": [
+     "a3lcpath1",
+     "a3ltitle1"
+    ],
+    "err": ""
+   },
+   {
+    "args": "nav http://127.0.0.1:62696/redir",
+    "code": 0,
+    "ms": 267,
+    "outCanaries": [
+     "a3credir1",
+     "a3credir2",
+     "a3ltitle1"
+    ],
+    "err": ""
+   },
+   {
+    "args": "nav http://127.0.0.1:62696/p%3Ftok%3DA3Ccenc1",
+    "code": 0,
+    "ms": 265,
+    "outCanaries": [
+     "a3ccenc1",
+     "a3ltitle1"
+    ],
+    "err": ""
+   },
+   {
+    "args": "eval 'Authorization: Bearer A3Lcbear1'.length",
+    "code": 0,
+    "ms": 269,
+    "outCanaries": [],
+    "err": ""
+   },
+   {
+    "args": "eval String('/x?t=A3Cceval1')",
+    "code": 0,
+    "ms": 332,
+    "outCanaries": [
+     "a3cceval1"
+    ],
+    "err": ""
+   },
+   {
+    "args": "eval throw new Error('x;A3Ccerr1')",
+    "code": 1,
+    "ms": 259,
+    "outCanaries": [
+     "a3ccerr1"
+    ],
+    "err": ""
+   },
+   {
+    "args": "eval 'A3Ccres' + 'ult1'",
+    "code": 0,
+    "ms": 248,
+    "outCanaries": [
+     "a3ccresult1"
+    ],
+    "err": ""
+   },
+   {
+    "args": "type #pw A3Cctyped1",
+    "code": 0,
+    "ms": 3335,
+    "outCanaries": [],
+    "err": ""
+   },
+   {
+    "args": "setclipboard A3Ccclip1",
+    "code": 0,
+    "ms": 256,
+    "outCanaries": [
+     "a3ccclip1"
+    ],
+    "err": ""
+   },
+   {
+    "args": "select #sel A3Ccsel1",
+    "code": 1,
+    "ms": 4841,
+    "outCanaries": [
+     "a3ccsel1"
+    ],
+    "err": ""
+   },
+   {
+    "args": "click #btn --expect-text A3Dcexp1",
+    "code": 0,
+    "ms": 3322,
+    "outCanaries": [],
+    "err": ""
+   },
+   {
+    "args": "click #btn --expect-url /p?x=A3Ccexpu1",
+    "code": 4,
+    "ms": 3329,
+    "outCanaries": [
+     "a3ccenc1",
+     "a3ccexpu1"
+    ],
+    "err": "Error: expectation failed: url — Current URL http://127.0.0.1:62696/p%3Ftok%3DA3Ccenc1 does not contain expected substring /p?x=A3Ccexpu1\n"
+   },
+   {
+    "args": "clicktext A3Lcct1",
+    "code": 1,
+    "ms": 19871,
+    "outCanaries": [
+     "a3lcct1"
+    ],
+    "err": ""
+   },
+   {
+    "args": "waitfor 0 --text k=A3Ccwait1",
+    "code": 1,
+    "ms": 262,
+    "outCanaries": [
+     "a3ccwait1"
+    ],
+    "err": ""
+   },
+   {
+    "args": "upload #file E:\\AI-Cache\\tmp\\fr211-a3-N8lqDT\\A3Cupdir1\\inner\\f.txt",
+    "code": 0,
+    "ms": 3311,
+    "outCanaries": [
+     "a3cupdir1"
+    ],
+    "err": ""
+   },
+   {
+    "args": "screenshot E:\\AI-Cache\\tmp\\fr211-a3-N8lqDT\\A3Ccshot1\\s.png",
+    "code": 1,
+    "ms": 337,
+    "outCanaries": [],
+    "err": "Fatal: ENOENT: no such file or directory, open 'E:\\AI-Cache\\tmp\\fr211-a3-N8lqDT\\A3Ccshot1\\s.png'\n"
+   },
+   {
+    "args": "dialog accept A3Ccprompt1",
+    "code": 1,
+    "ms": 299,
+    "outCanaries": [],
+    "err": "Error: no dialog is open to accept.\n"
+   },
+   {
+    "args": "close",
+    "code": 0,
+    "ms": 583,
+    "outCanaries": [],
+    "err": ""
+   },
+   {
+    "args": "history",
+    "code": 0,
+    "ms": 243,
+    "outCanaries": [
+     "a3lcpath1",
+     "a3lcbear1",
+     "a3ccres",
+     "a3lcct1"
+    ],
+    "err": ""
+   },
+   {
+    "args": "history --json",
+    "code": 0,
+    "ms": 238,
+    "outCanaries": [
+     "a3lcwd1",
+     "a3lcpath1",
+     "a3lcbear1",
+     "a3ccres",
+     "a3dcexp1",
+     "a3lcct1"
+    ],
+    "err": ""
+   }
+  ],
+  "file": {
+   "claim": [
+    "a3ccres"
+   ],
+   "limit": [
+    "a3lcwd1",
+    "a3lcpath1",
+    "a3lcbear1",
+    "a3lcct1"
+   ],
+   "doc": [
+    "a3dcexp1"
+   ]
+  },
+  "human": {
+   "claim": [
+    "a3ccres"
+   ],
+   "limit": [
+    "a3lcpath1",
+    "a3lcbear1",
+    "a3lcct1"
+   ],
+   "doc": []
+  },
+  "json": {
+   "claim": [
+    "a3ccres"
+   ],
+   "limit": [
+    "a3lcwd1",
+    "a3lcpath1",
+    "a3lcbear1",
+    "a3lcct1"
+   ],
+   "doc": [
+    "a3dcexp1"
+   ]
+  },
+  "jsonEqualsFile": true,
+  "lines": [
+   {
+    "verb": "nav",
+    "args": [
+     "http://127.0.0.1:62696/p"
+    ],
+    "exit": 0,
+    "cwd": "~/AppData/Local/Temp/fr211a3-A3Lcwd1-bundle/sub",
+    "actions": [
+     {
+      "t": "navigate",
+      "target": "http://127.0.0.1:62696/p",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'navigate' verified: a new document committed at http://127.0.0.1:62696/p[redacted]"
+     }
+    ]
+   },
+   {
+    "verb": "nav",
+    "args": [
+     "<dir>"
+    ],
+    "exit": 1,
+    "cwd": "<dir>",
+    "error": "Protocol error (Page.navigate): Cannot navigate to invalid URL",
+    "actions": [
+     {
+      "t": "navigate",
+      "target": "<dir>",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "Protocol error (Page.navigate): Cannot navigate to invalid URL"
+     }
+    ]
+   },
+   {
+    "verb": "nav",
+    "args": [
+     "http://127.0.0.1:62696/reset/A3Lcpath1/confirm"
+    ],
+    "exit": 0,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "navigate",
+      "target": "http://127.0.0.1:62696/reset/A3Lcpath1/confirm",
+      "url": "http://127.0.0.1:62696/reset/A3Lcpath1/confirm",
+      "reason": "'navigate' verified: a new document committed at http://127.0.0.1:62696/reset/A3Lcpath1/confirm"
+     }
+    ]
+   },
+   {
+    "verb": "nav",
+    "args": [
+     "http://127.0.0.1:62696/redir"
+    ],
+    "exit": 0,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "navigate",
+      "target": "http://127.0.0.1:62696/redir",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'navigate' verified: a new document committed at http://127.0.0.1:62696/p[redacted]"
+     }
+    ]
+   },
+   {
+    "verb": "nav",
+    "args": [
+     "http://127.0.0.1:62696/p"
+    ],
+    "exit": 0,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "navigate",
+      "target": "http://127.0.0.1:62696/p",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'navigate' verified: a new document committed at http://127.0.0.1:62696/p[redacted]"
+     }
+    ]
+   },
+   {
+    "verb": "eval",
+    "args": [
+     "'Authorization: Bearer A3Lcbear1'.length"
+    ],
+    "exit": 0,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "eval",
+      "target": "'Authorization: Bearer A3Lcbear1'.length",
+      "url": "http://127.0.0.1:62696/p"
+     }
+    ]
+   },
+   {
+    "verb": "eval",
+    "args": [
+     "<dir>"
+    ],
+    "exit": 0,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "eval",
+      "target": "<dir>",
+      "url": "http://127.0.0.1:62696/p"
+     }
+    ]
+   },
+   {
+    "verb": "eval",
+    "args": [
+     "throw new Error('x[redacted]"
+    ],
+    "exit": 1,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "eval",
+      "target": "throw new Error('x[redacted]",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "x[redacted]"
+     }
+    ]
+   },
+   {
+    "verb": "eval",
+    "args": [
+     "'A3Ccres' + 'ult1'"
+    ],
+    "exit": 0,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "eval",
+      "target": "'A3Ccres' + 'ult1'",
+      "url": "http://127.0.0.1:62696/p"
+     }
+    ]
+   },
+   {
+    "verb": "type",
+    "args": [
+     "#pw",
+     "<10 chars>"
+    ],
+    "exit": 0,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "type",
+      "sel": "#pw",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confiden"
+     }
+    ]
+   },
+   {
+    "verb": "setclipboard",
+    "args": [
+     "<9 chars>"
+    ],
+    "exit": 0,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "set_clipboard",
+      "target": "<9 chars>",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'set_clipboard' completed, but no built-in post-condition check could run: the clipboard couldn't be read back (the clip"
+     }
+    ]
+   },
+   {
+    "verb": "select",
+    "args": [
+     "#sel",
+     "<8 chars>"
+    ],
+    "exit": 1,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "select_option",
+      "sel": "#sel",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "select_option did not land the expected value(s) — expected [<value>], but the element's real selected value(s) read bac",
+      "reason": "Action failed: select_option did not land the expected value(s) — expected [<value>], but the element's real selected va"
+     }
+    ]
+   },
+   {
+    "verb": "click",
+    "args": [
+     "#btn"
+    ],
+    "exit": 0,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "click",
+      "sel": "#btn",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "Action execution verified successfully with confidence 0.90"
+     }
+    ]
+   },
+   {
+    "verb": "click",
+    "args": [
+     "#btn"
+    ],
+    "exit": 4,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "click",
+      "sel": "#btn",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "Current URL http://127.0.0.1:62696/p[redacted]"
+     }
+    ]
+   },
+   {
+    "verb": "clicktext",
+    "args": [
+     "A3Lcct1"
+    ],
+    "exit": 1,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "click_by_text",
+      "target": "A3Lcct1",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "No element found containing text: A3Lcct1",
+      "reason": "Action failed: No element found containing text: A3Lcct1"
+     }
+    ]
+   },
+   {
+    "verb": "waitfor",
+    "args": [
+     "0"
+    ],
+    "exit": 1,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "wait_for",
+      "sel": "[redacted]",
+      "url": "http://127.0.0.1:62696/p",
+      "err": "wait_for timed out after 0ms waiting for [redacted] text [redacted] was not found in the visible text of 2 frame(s).",
+      "reason": "Action failed: wait_for timed out after 0ms waiting for [redacted] text [redacted] was not found in the visible text of "
+     }
+    ]
+   },
+   {
+    "verb": "upload",
+    "args": [
+     "#file",
+     "f.txt"
+    ],
+    "exit": 0,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "upload_file",
+      "sel": "#file",
+      "target": "f.txt",
+      "url": "http://127.0.0.1:62696/p",
+      "reason": "'upload_file' has a built-in post-condition check (verified inside the action itself before it could report success) — c"
+     }
+    ]
+   },
+   {
+    "verb": "screenshot",
+    "args": [
+     "s.png"
+    ],
+    "exit": 1,
+    "cwd": "<dir>",
+    "error": "ENOENT: no such file or directory, open s.png'",
+    "actions": []
+   },
+   {
+    "verb": "dialog",
+    "args": [
+     "accept",
+     "<11 chars>"
+    ],
+    "exit": 1,
+    "cwd": "<dir>",
+    "actions": []
+   },
+   {
+    "verb": "close",
+    "args": [],
+    "exit": 0,
+    "cwd": "<dir>",
+    "actions": []
+   }
+  ],
+  "humanText": "History: 20 command(s) in E:\\AI-Cache\\tmp\\fr211-a3-N8lqDT\\state\\history.jsonl\n--- session sess_1790841708815_1 ---\n2026-10-01 08:01:48Z  exit 0     551ms  nav http://127.0.0.1:62696/p\n    - navigate ok verified tab_sess_1790841708815_1_1 http://127.0.0.1:62696/p\n2026-10-01 08:01:49Z  exit 1     669ms  nav <dir>\n    error: Protocol error (Page.navigate): Cannot navigate to invalid URL\n    - navigate FAILED no-verification tab_sess_1790841708815_1_1 <dir>: Protocol error (Page.navigate): Cannot navigate to invalid URL\n2026-10-01 08:01:50Z  exit 0      65ms  nav http://127.0.0.1:62696/reset/A3Lcpath1/confirm\n    - navigate ok verified tab_sess_1790841708815_1_1 http://127.0.0.1:62696/reset/A3Lcpath1/confirm\n2026-10-01 08:01:50Z  exit 0      63ms  nav http://127.0.0.1:62696/redir\n    - navigate ok verified tab_sess_1790841708815_1_1 http://127.0.0.1:62696/redir\n2026-10-01 08:01:50Z  exit 0      64ms  nav http://127.0.0.1:62696/p\n    - navigate ok verified tab_sess_1790841708815_1_1 http://127.0.0.1:62696/p\n2026-10-01 08:01:51Z  exit 0      54ms  eval 'Authorization: Bearer A3Lcbear1'.length\n    - eval ok no-verification tab_sess_1790841708815_1_1 'Authorization: Bearer A3Lcbear1'.length\n2026-10-01 08:01:51Z  exit 0      52ms  eval <dir>\n    - eval ok no-verification tab_sess_1790841708815_1_1 <dir>\n2026-10-01 08:01:51Z  exit 1      45ms  eval throw new Error('x[redacted]\n    - eval FAILED no-verification tab_sess_1790841708815_1_1 throw new Error('x[redacted]: x[redacted]\n2026-10-01 08:01:51Z  exit 0      44ms  eval 'A3Ccres' + 'ult1'\n    - eval ok no-verification tab_sess_1790841708815_1_1 'A3Ccres' + 'ult1'\n2026-10-01 08:01:52Z  exit 0      91ms  type #pw <10 chars>\n    - type ok verified tab_sess_1790841708815_1_1 #pw\n2026-10-01 08:01:55Z  exit 0      53ms  setclipboard <9 chars>\n    - set_clipboard ok unverifiable tab_sess_1790841708815_1_1 <9 chars>\n2026-10-01 08:01:55Z  exit 1    1636ms  select #sel <8 chars>\n    - select_option FAILED action-failed tab_sess_1790841708815_1_1 #sel: select_option did not land the expected value(s) — expected [<value>], but the element's real selected value(s) read back as [\"ok\"].\n2026-10-01 08:02:00Z  exit 0     111ms  click #btn\n    - click ok verified tab_sess_1790841708815_1_1 #btn\n2026-10-01 08:02:03Z  exit 4     125ms  click #btn\n    - click ok contradicted tab_sess_1790841708815_1_1 #btn\n2026-10-01 08:02:07Z  exit 1   16664ms  clicktext A3Lcct1\n    - click_by_text FAILED action-failed tab_sess_1790841708815_1_1 A3Lcct1: No element found containing text: A3Lcct1\n2026-10-01 08:02:27Z  exit 1      49ms  waitfor 0\n    - wait_for FAILED action-failed tab_sess_1790841708815_1_1 [redacted]: wait_for timed out after 0ms waiting for [redacted] text [redacted] was not found in the visible text of 2 frame(s).\n2026-10-01 08:02:27Z  exit 0      61ms  upload #file f.txt\n    - upload_file ok verified tab_sess_1790841708815_1_1 f.txt\n2026-10-01 08:02:30Z  exit 1     108ms  screenshot s.png\n    error: ENOENT: no such file or directory, open s.png'\n2026-10-01 08:02:31Z  exit 1      24ms  dialog accept <11 chars>\n2026-10-01 08:02:31Z  exit 0      32ms  close\n"
+ }
+}

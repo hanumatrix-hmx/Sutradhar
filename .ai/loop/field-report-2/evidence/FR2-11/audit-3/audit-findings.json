@@ -1,0 +1,236 @@
+{
+ "item": "FR2-11 Full action history (audit-3, LAST standard-cycle audit)",
+ "head": "78087d7",
+ "branch": "claude/fr2-11-action-history",
+ "fix2Range": "719b4fe..78087d7",
+ "verdict": "BLOCKED",
+ "rootCause": {
+  "hypothesis": "fix-2 made the cut rules (a) ?#; and (b) =& shape-independent, but the userinfo strip (c) and the path rule still recognise a URL shape: stripUserinfo strips only the authority of the FIRST scheme:// in a token, and reducePathToken returns the WHOLE token unchanged when schemeEnd(t) >= 0. Anything glued after the first URL in a whitespace-free token (JSON, fetch args, comma lists, JSON.stringify output in errors) keeps a second URL user:password@ and full local paths.",
+  "wrong": "implementation (and the tests share the blind spot: no generated cell has two URLs, or a URL plus a path, in one whitespace-free token); the spec (R1: D5 on every URL-bearing string) and the documented rule are right",
+  "fixDirection": "apply (c) to every authority in a token; end the scheme:// exemption at the first character that cannot belong to the URL (quote, comma, bracket, pipe, paren, second scheme) and reduce the rest by the path rule; add multi-URL-per-token and U+202A..U+202E cells",
+  "attempts": [
+   "audit-1 REOPEN: F1 bracket-stopping URL regex, F2 scheme-less CLI URLs, F3 full local paths",
+   "audit-2 REOPEN: custom-scheme / about: fragments leak (marker list fail-open)",
+   "audit-3 BLOCKED: userinfo + path rules still URL-shape-based (A3-F1)"
+  ]
+ },
+ "ac_results": [
+  {
+   "ac": "Navigate and eval are recorded",
+   "verdict": "PASS",
+   "evidence_cmd": "node func3.mjs <mcp-dist> head; node live3.mjs <mcp> <cli> head|bundle; node sdk3.mjs",
+   "output_excerpt": "tab1 types [navigate, eval]; CLI lines nav->[navigate], eval->[eval]; SDK entries navigate x5, eval x2",
+   "required_fix": ""
+  },
+  {
+   "ac": "Session-wide merged view (per-tab view kept)",
+   "verdict": "PASS",
+   "evidence_cmd": "node func3.mjs <mcp-dist> head",
+   "output_excerpt": "session [[1,navigate,tab1],[2,eval,tab1],[3,eval,tab2],[4,navigate,tab2]] after close_tab(tab2); seq contiguous; default view = tab1; scope+tabId -> error; unknown session -> error",
+   "required_fix": ""
+  },
+  {
+   "ac": "CLI appends every command to history.jsonl next to state.json",
+   "verdict": "PASS",
+   "evidence_cmd": "node cli3.mjs <cli-dist> head; node kill3.mjs / kill3b.mjs; audit-2 concurrency.mjs (unmodified)",
+   "output_excerpt": "beside state.json; 16/16 parallel CLI lines valid (6 truncated from about 96KB to 20 args); 80 taskkill /F (53 landed): 0 torn lines, ends with newline; torn line skipped with Note; self-heal new session id",
+   "required_fix": ""
+  },
+  {
+   "ac": "sutradhar history [--json] exists",
+   "verdict": "PASS",
+   "evidence_cmd": "node cli3.mjs; node live3.mjs",
+   "output_excerpt": "no file -> No CLI history yet, exit 0, no state.json; --bogus exit 1; --json byte-identical to the file",
+   "required_fix": ""
+  },
+  {
+   "ac": "Entries include the verification from FR2-07",
+   "verdict": "PASS",
+   "evidence_cmd": "node live3.mjs <mcp> <cli> head|bundle (per-action deep-equal)",
+   "output_excerpt": "25/26 deep-equal sanitizeHistoryEntry(result).verification; select_option differs only by the documented <value> scrub",
+   "required_fix": ""
+  },
+  {
+   "ac": "An eviction count is reported when the cap is hit",
+   "verdict": "PASS",
+   "evidence_cmd": "node func3.mjs <mcp-dist> head",
+   "output_excerpt": "199->199/0, 200->200/0, 201->200/1 with note 1 older entry was evicted, 202->2, 205->5 (both scopes)",
+   "required_fix": ""
+  },
+  {
+   "ac": "Privacy (spec 0.7 / R1 / N6; the documented character rule) on every stored surface",
+   "verdict": "FAIL",
+   "evidence_cmd": "node glue-live.mjs <mcp> <cli> head|bundle; node glue-sdk.mjs; node glue-unit.mjs",
+   "output_excerpt": "eval [\"https://h.test/a\",\"https://u:A3Cgluepw@h2.test/p\"].length is stored verbatim on MCP tab+session, SDK, history.jsonl, history, history --json (dist and bundle); SDK error {\"api\":\"https://h.test/x\",\"db\":\"postgres://admin:A3Csdkgluepw@db:5432/app\"} stored; [\"https://h.test/a\",\"C:/Users/NAME/doc.txt\"] stored",
+   "required_fix": "strip userinfo from every authority in a token and bound the scheme:// path exemption to the URL itself; add multi-URL-per-token generated cells"
+  }
+ ],
+ "findings": [
+  {
+   "id": "A3-F1",
+   "severity": "major",
+   "area": "privacy",
+   "documented": false,
+   "repro": "eval [\"https://h.test/a\",\"https://u:PASS@h2.test/p\"].length then get_action_history or sutradhar history: u:PASS@ is stored (also JSON.stringify error text with a second URL, and URL + local path glued in one token)"
+  },
+  {
+   "id": "A3-F2",
+   "severity": "minor",
+   "area": "docs",
+   "documented": false,
+   "repro": "sutradhar --help and the get_action_history description say userinfo@ is stripped and paths are reduced unconditionally; they omit the scheme:// and bare-#id exceptions that the README states; A3-F1 contradicts them"
+  },
+  {
+   "id": "A3-F3",
+   "severity": "minor",
+   "area": "privacy (rule-consistent)",
+   "documented": false,
+   "repro": "redactHistoryText of: open \"E:/x/Acme Secret Project/s.png\" -> open <dir> Secret s.png\" (words between the spaces of a path survive)"
+  },
+  {
+   "id": "A3-F4",
+   "severity": "minor",
+   "area": "tests",
+   "documented": false,
+   "repro": "mutant N13 (drop U+2028..U+202F from WS_SPLIT) passes all 7 suites; with U+202A..U+202E it joins URL + path into one token and leaks via A3-F1 (glueLeaks 6 -> 7)"
+  },
+  {
+   "id": "A3-F5",
+   "severity": "info",
+   "area": "audit tooling / environment",
+   "documented": true,
+   "repro": "audit-2 completeness.mjs: MCP call timeouts after new_tab on HEAD 3/4 and master 2/3 runs (GAP-369); not an FR2-11 regression"
+  }
+ ],
+ "privacyMatrix": {
+  "generator": "attack3.mjs seed 0xa3a3f11, 720 cells (642 CLAIM, 78 LIMIT) x 44 stored-string paths",
+  "claimLeaks": "7/642, all documented residuals (1 bare #id + following word; 6 selector-variant [k=S], GAP-364)",
+  "limitRulings": {
+   "bare token / Bearer / Basic / JWT without padding / JSON password / token:S": "ACCEPTABLE documented limit (GAP-366, README What IS stored)",
+   "URL path secret /reset/S/confirm": "ACCEPTABLE: FR2-09 D5 origin+pathname, accepted by spec R1; not a Done-when violation",
+   "hostname secret": "ACCEPTABLE: part of the D5 origin",
+   "path last segment with extension": "ACCEPTABLE: documented basename rule",
+   "selector [data-k=S] / #S": "ACCEPTABLE: GAP-364",
+   "cwd under home ~/sub/dir": "ACCEPTABLE: documented",
+   "URL + second URL userinfo / URL + local path in one token": "LEAK (A3-F1): rule (c) and the path rule claim to remove them"
+  },
+  "live": "live3 head+bundle, sdk3: 0 CLAIM leaks for one-URL-per-token shapes on MCP tab, MCP session, SDK, history.jsonl, history, history --json; caller results NOT redacted",
+  "priorProbesUnmodified": "audit-2 attack-gen 375 cells 0 leaking; audit-1/2 MCP, CLI (dist+bundle), SDK, paren, type_by_label, live-attack (dist+bundle), live-sdk: 0 unexpected"
+ },
+ "mutants": {
+  "written": 16,
+  "caught": [
+   "N1",
+   "N2",
+   "N3",
+   "N4",
+   "N5",
+   "N6",
+   "N7",
+   "N8",
+   "N9",
+   "N10",
+   "N11",
+   "N12",
+   "N14",
+   "N15"
+  ],
+  "equivalent": [
+   "N16 (first userinfo strip removed; a second strip runs after the path step)"
+  ],
+  "survived": [
+   "N13 (U+2028..U+202F not split; non-equivalent for U+202A..U+202E)"
+  ],
+  "restored": "sha-src-before.txt == sha-src-after.txt; forced full rebuild after"
+ },
+ "build": {
+  "forcedRebuild": "0 cached (19 + 9 tasks)",
+  "typecheck": "34/34",
+  "vitest": {
+   "browser": 1026,
+   "capability-runtime": 272,
+   "mcp-server": 124,
+   "cli": 273,
+   "sutradhar": 43,
+   "agent": 56,
+   "apps/server": 28
+  },
+  "bundleCarriesRule": true,
+  "oldShapeCodeAbsent": true,
+  "specFiles": "append-only vs fdae749; vs 785dc53 only placeholder expectation changes, no canary assertion removed"
+ },
+ "regressions": [],
+ "masterComparison": {
+  "masterTree": "E:/AI-Cache/tmp/fr211-master verified against fdae749 blobs: 4 diffs (3 overlaid specs, uc06 png); dist rebuilt with turbo --force",
+  "fr208": "HEAD 478/478, master 478/478 (L12 PASS mcp+bundle)",
+  "fr207": "run1 HEAD 487/488 (bundle:H2 GAP-330) vs master 488/488; run2 HEAD 488/488 vs master 487/488 (bundle:X12); GAP-325 tolerance fired 0/0 then 1 (mcp:X11, cap 3)/0",
+  "fr204": "HEAD 110/1/2, master 110/1/2 (L13 headed click on both)",
+  "cliSuite": "HEAD 9/14 vs master 10/14 concurrently; HEAD-only UC-03 passes 2/2 on both sequentially; UC-04/05/12 fail on both; UC-08 failed on both",
+  "overhead": "MCP eval +0.02 ms mean, click +0.36 ms, get_action_history +0.83 ms; CLI +5 ms median per command"
+ },
+ "notVerified": [
+  "headed mode",
+  "non-Chrome browsers",
+  "POSIX 0600 outside WSL",
+  "real OAuth custom-scheme redirect (simulated)",
+  "builder run-fr2-11-live.sh not re-run"
+ ],
+ "disk": {
+  "before": "22G free (E:)",
+  "beforeCleanup": "E:              210G  192G   18G  92% /e",
+  "after": "21G free (E:)"
+ },
+ "cliProfileDirsDeleted": [
+  "sutradhar-cli-1790841577541",
+  "sutradhar-cli-1790841708602",
+  "sutradhar-cli-1790841833608",
+  "sutradhar-cli-1790841878604",
+  "sutradhar-cli-1790841940593",
+  "sutradhar-cli-1790841973771",
+  "sutradhar-cli-1790842035541",
+  "sutradhar-cli-1790842073628",
+  "sutradhar-cli-1790842139752",
+  "sutradhar-cli-1790842464990",
+  "sutradhar-cli-1790842493477",
+  "sutradhar-cli-1790842559801",
+  "sutradhar-cli-1790842645735",
+  "sutradhar-cli-1790842703377",
+  "sutradhar-cli-1790845133236",
+  "sutradhar-cli-1790845165562",
+  "sutradhar-cli-1790846020042",
+  "sutradhar-cli-1790846020405",
+  "sutradhar-cli-1790846612619",
+  "sutradhar-cli-1790846612620",
+  "sutradhar-cli-1790846616221",
+  "sutradhar-cli-1790846616297",
+  "sutradhar-cli-1790846631989",
+  "sutradhar-cli-1790846636234",
+  "sutradhar-cli-1790846637896",
+  "sutradhar-cli-1790846641728",
+  "sutradhar-cli-1790846924710",
+  "sutradhar-cli-1790846928479",
+  "sutradhar-cli-1790846934053",
+  "sutradhar-cli-1790846938019",
+  "sutradhar-cli-1790846945194",
+  "sutradhar-cli-1790846949592",
+  "sutradhar-cli-1790846955486",
+  "sutradhar-cli-1790846958700",
+  "sutradhar-cli-1790847050725",
+  "sutradhar-cli-1790847053860",
+  "sutradhar-cli-1790847062409",
+  "sutradhar-cli-1790847064623",
+  "sutradhar-cli-1790847065261",
+  "sutradhar-cli-1790847067676",
+  "sutradhar-cli-1790847078149",
+  "sutradhar-cli-1790847080699",
+  "sutradhar-cli-1790847305159",
+  "sutradhar-cli-1790847307719",
+  "sutradhar-cli-1790847311088",
+  "sutradhar-cli-1790847313332",
+  "sutradhar-cli-1790847508773",
+  "sutradhar-cli-1790847510298",
+  "sutradhar-cli-1790848423729",
+  "sutradhar-cli-1790848424616"
+ ],
+ "cliProfileDirKept": "sutradhar-cli-1790798002107 (pre-existing, referenced by a running chrome.exe)"
+}

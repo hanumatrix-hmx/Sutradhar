@@ -1,0 +1,10 @@
+{"label":"navigate settle:true","added":1,"expectN":1,"ok":true,"types":["navigate:true:"],"verifEq":true,"isError":false}
+{"label":"click settle:true","added":1,"expectN":1,"ok":true,"types":["click:true:"],"verifEq":true,"isError":false}
+{"label":"drag_and_drop","added":1,"expectN":1,"ok":true,"types":["drag_and_drop:false:drag_and_drop dispatched the <dir> sequence, but no 'drop' event was o"],"verifEq":false,"isError":false}
+{"label":"engine invalid css","added":1,"expectN":1,"ok":true,"types":["click:false:Invalid selector \"[redacted]"],"verifEq":false,"isError":false}
+{"label":"duplicate pair","added":2,"expectN":2,"ok":true,"types":["click:true:","click:false:Duplicate 'click' on the same target within 1000ms — likely an acciden"],"results":["true:","false:Duplicate 'click' on the same target within 1000ms"]}
+{"timestamp":"2026-10-01T08:23:56.213Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-10-01T08:23:56.427Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790843036213_1","context":{"isIncognito":false}}
+{"label":"NaN timeoutMs (runtime)","resultSuccess":false,"entries":["navigate:true:","wait_for_selector:false:Invalid timeoutMs (NaN) for action \"wait_for_selec"],"ok":true}
+{"timestamp":"2026-10-01T08:23:56.575Z","level":"info","message":"[BrowserSession] Closed session sess_1790843036213_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-10-01T08:23:56.575Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790843036213_1","context":{"reason":"Runtime shutdown"}}

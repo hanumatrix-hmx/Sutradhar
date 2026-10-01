@@ -1,0 +1,86 @@
+{
+ "csErr": [
+  "a3csdkcs"
+ ],
+ "evalReturned": [
+  "a3csdkres1"
+ ],
+ "evalErrCaller": [
+  "a3lsdkbear",
+  "a3csdkerr"
+ ],
+ "clickErrCaller": [
+  "a3csdksel"
+ ],
+ "historyClaim": [
+  "a3csdk"
+ ],
+ "historyLimit": [
+  "a3lsdkbear"
+ ],
+ "entries": [
+  [
+   "navigate",
+   true,
+   "http://127.0.0.1:62100/p",
+   null,
+   "'navigate' verified: a new document committed at http://127.0.0.1:62100/p[redacted]"
+  ],
+  [
+   "navigate",
+   true,
+   "http://127.0.0.1:62100/p",
+   null,
+   "'navigate' completed, but its post-condition check failed: the navigation committed, but t"
+  ],
+  [
+   "navigate",
+   false,
+   "<dir>",
+   "net::ERR_ABORTED at <dir>",
+   null
+  ],
+  [
+   "navigate",
+   true,
+   "about:blank",
+   null,
+   "'navigate' verified: a new document committed at about:blank[redacted]"
+  ],
+  [
+   "navigate",
+   true,
+   "http://127.0.0.1:62100/p",
+   null,
+   "'navigate' verified: a new document committed at http://127.0.0.1:62100/p"
+  ],
+  [
+   "eval",
+   true,
+   "'A3Csdk' + 'res1'",
+   null,
+   null
+  ],
+  [
+   "eval",
+   false,
+   "throw new Error('Bearer A3Lsdkbear x[redacted]",
+   "Bearer A3Lsdkbear x[redacted]",
+   null
+  ],
+  [
+   "click",
+   false,
+   "a[href=\"/p[redacted]",
+   "No visible element found for selector: [redacted]",
+   "Action failed: No visible element found for selector: [redacted]"
+  ],
+  [
+   "type",
+   true,
+   "#pw",
+   null,
+   "'type' has a built-in post-condition check (verified inside the action itself before it co"
+  ]
+ ]
+}

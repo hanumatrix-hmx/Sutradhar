@@ -1,0 +1,34 @@
+[
+ {
+  "id": "N12",
+  "desc": "cwd outside home stored verbatim",
+  "file": "packages/cli/src/history-file.ts",
+  "applied": true,
+  "build": "ok",
+  "vitest_browser": "1026 passed (1026) exit=0",
+  "vitest_cli": "2 failed | 271 passed (273) exit=1",
+  "fail_cli": [
+   "tests/unit/char-rule.spec.ts > FR2-11 fix-2 cwd: home-relative or <dir>, never the home directory name > under the home directory: ~/sub/dir",
+   "tests/unit/char-rule.spec.ts > FR2-11 fix-2 cwd: home-relative or <dir>, never the home directory name > buildHistoryLine stores cwd through"
+  ],
+  "vitest_capability-runtime": "272 passed (272) exit=0",
+  "attack3": "cells=720 CLAIM=642 claimLeaks=7 LIMIT=78 limitLeaks=66",
+  "glueLeaks": 6,
+  "restored": true,
+  "caught": true
+ },
+ {
+  "id": "N13",
+  "desc": "split: U+2028..U+202F not whitespace",
+  "file": "packages/browser/src/session/action-history.ts",
+  "applied": true,
+  "build": "ok",
+  "vitest_browser": "1026 passed (1026) exit=0",
+  "vitest_cli": "273 passed (273) exit=0",
+  "vitest_capability-runtime": "272 passed (272) exit=0",
+  "attack3": "cells=720 CLAIM=642 claimLeaks=7 LIMIT=78 limitLeaks=66",
+  "glueLeaks": 6,
+  "restored": true,
+  "caught": false
+ }
+]

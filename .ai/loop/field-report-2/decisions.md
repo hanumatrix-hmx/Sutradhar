@@ -4195,3 +4195,27 @@ Results (fresh, after the last source commit `388ad52`; the dist tree hash taken
 
 Not verified: headed mode of the privacy cases, non-Chrome browsers, POSIX file mode 0600 outside WSL, a POSIX host with a real POSIX path tool call, a real OAuth redirect to a custom scheme, the line endings of the new `.sh` after a
 Windows checkout with autocrlf. New gaps GAP-363..371. Status: VERIFY (fix-2). I did not self-declare done; audit-3 follows and is the last standard audit for FR2-11.
+
+## 2026-10-01 -- FR2-11 BLOCKED after 3 failed audits (escalation rule; not forced through)
+
+Attempts and evidence: audit-1 (privacy F1 bracket-stopping URL regex, F2 scheme-less CLI URLs, F3 full local
+paths); audit-2 (A2-F1 `com.example.app:/cb#access_token=S`, `about:blank#S` leak, shape-list redaction); audit-3
+after the root-cause redesign to a character rule (A3-F1 major: in a whitespace-free token the userinfo strip
+and the path rule apply only to the FIRST url's authority, and a leading `scheme://` exempts the whole token from
+the path rule, so `['https://h.test/a','https://u:PASS@h2.test/p'].length` stores PASS verbatim on MCP, SDK,
+history.jsonl, `history`, `--json`, dist and bundle; same for a JSON.stringify'd config with a db URL). Minor:
+A3-F2 docs omit exceptions, A3-F3 spaces in paths leave middle words, A3-F4 mutant N13 (U+202A..U+202E re-joins
+tokens) survives, A3-F5 completeness.mjs new_tab timeout is GAP-369 and not a regression.
+
+Passed in all three audits: navigate+eval recorded; session view with per-tab view; CLI history.jsonl with 80 real
+kills and 0 torn lines; `history [--json]`; FR2-07 verification deep-equal; exact eviction counts; no regression
+vs master. Auditor rulings that stand: secrets with no rule character (bearer tokens, JSON passwords, URL-path
+secrets, selectors) are documented limits (GAP-366, GAP-364), not done-when violations; `cwd` stored as `~/...` is
+acceptable.
+
+Root-cause hypothesis: the character rule made the DEFAULT safe but still contains two shape-dependent exceptions
+(a leading `scheme://` keeps origin+path; the userinfo strip looks for one authority), and each exception is a
+fail-open seam. The defect is bounded and understood (apply userinfo stripping to every `//...@` in a token, and
+limit the scheme:// exemption to the URL's own span) but the loop's cap is reached, so it is NOT fixed here.
+Decision on whether to ship, hold, or authorise one extra bounded cycle is the user's (asked in chat).
+

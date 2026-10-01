@@ -1,0 +1,239 @@
+[
+ {
+  "args": [
+   "nav",
+   "http://aud:CNRYcliuserpass@127.0.0.1:52519/p?token=CNRYcliquery#CNRYclifrag"
+  ],
+  "code": 0,
+  "ms": 1031,
+  "out": "Navigated to http://aud:CNRYcliuserpass@127.0.0.1:52519/p?token=CNRYcliquery#CNRYclifrag\nTitle: AUDIT /p\nVerification: verified (confidence 0.90) — 'navigate' verified: a new document committed at http://aud:CNRYcliuserpass@127.0.0.1:52519/p?token=CNRYcliquery#CNRYclifrag\n",
+  "err": ""
+ },
+ {
+  "args": [
+   "type",
+   "#pw",
+   "CNRYclitype"
+  ],
+  "code": 0,
+  "ms": 3361,
+  "out": "Typed into #pw\nVerification: verified (confidence 0.90) — 'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\n",
+  "err": ""
+ },
+ {
+  "args": [
+   "type",
+   "#mangle",
+   "CNRYclimangle"
+  ],
+  "code": 1,
+  "ms": 5031,
+  "out": "Type failed: type did not land the expected value — expected \"CNRYclimangle\", but the element's real content reads \"M-elgnamilcYRNC\" even after a native-setter repair attempt. The page may be intercepting/resetting input in a way neither path could overcome.\n",
+  "err": ""
+ },
+ {
+  "args": [
+   "select",
+   "#sel",
+   "CNRYselval"
+  ],
+  "code": 0,
+  "ms": 3309,
+  "out": "Selected \"CNRYselval\" on #sel\nVerification: verified (confidence 0.90) — 'select_option' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\n",
+  "err": ""
+ },
+ {
+  "args": [
+   "setclipboard",
+   "CNRYcliclip"
+  ],
+  "code": 0,
+  "ms": 314,
+  "out": "Set clipboard to \"CNRYcliclip\"\nVerification: NOT verified — unverifiable (confidence 0.45) — 'set_clipboard' completed, but no built-in post-condition check could run: the clipboard couldn't be read back (the clipboard-read permission isn't granted for this origin; grant it with browser.grant_permissions to get a verified result). The write itself may have succeeded.\n",
+  "err": ""
+ },
+ {
+  "args": [
+   "getclipboard"
+  ],
+  "code": 0,
+  "ms": 296,
+  "out": "\n",
+  "err": "Verification: NOT verified — unverifiable (confidence 0.45) — 'get_clipboard' completed, but no built-in post-condition check could run: the clipboard could not be read (permission not granted); the returned empty text is NOT the clipboard's content.\n"
+ },
+ {
+  "args": [
+   "eval",
+   "document.getElementById('pw').value + '|' + document.getElementById('sel').value"
+  ],
+  "code": 0,
+  "ms": 326,
+  "out": "CNRYclitype|CNRYselval\n",
+  "err": ""
+ },
+ {
+  "args": [
+   "eval",
+   "throw new Error('boom')"
+  ],
+  "code": 1,
+  "ms": 315,
+  "out": "Eval failed: boom\n",
+  "err": ""
+ },
+ {
+  "args": [
+   "upload",
+   "#file",
+   "E:\\AI-Cache\\tmp\\fr211-audit-cli-QH2hFi\\CNRYcliupdir\\CNRYcliupname.txt"
+  ],
+  "code": 0,
+  "ms": 3393,
+  "out": "Uploaded E:\\AI-Cache\\tmp\\fr211-audit-cli-QH2hFi\\CNRYcliupdir\\CNRYcliupname.txt to #file\nVerification: verified (confidence 0.90) — 'upload_file' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\n",
+  "err": ""
+ },
+ {
+  "args": [
+   "download",
+   "#dl",
+   "E:\\AI-Cache\\tmp\\fr211-audit-cli-QH2hFi\\CNRYclidldir"
+  ],
+  "code": 0,
+  "ms": 3534,
+  "out": "Downloaded \"CNRYdlname.txt\" to E:\\AI-Cache\\tmp\\fr211-audit-cli-QH2hFi\\CNRYclidldir\\CNRYdlname.txt\nVerification: verified (confidence 0.90) — 'download_file' verified: 100 bytes written to E:\\AI-Cache\\tmp\\fr211-audit-cli-QH2hFi\\CNRYclidldir\\CNRYdlname.txt during this action\n",
+  "err": ""
+ },
+ {
+  "args": [
+   "click",
+   "#prompt"
+  ],
+  "code": 0,
+  "ms": 6368,
+  "out": "Clicked #prompt\nVerification: verified (confidence 0.90) — 'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\ndialogPending: {\"type\":\"prompt\",\"message\":\"q\",\"defaultValue\":null,\"url\":\"http://aud:CNRYcliuserpass@127.0.0.1:52519/p?token=CNRYcliquery#CNRYclifrag\"}\n",
+  "err": "Hint: a prompt dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. \"sutradhar tabs\" and \"sutradhar closetab <id>\" keep working while a page is blocked or has cra"
+ },
+ {
+  "args": [
+   "dialog",
+   "accept",
+   "CNRYcliprompt"
+  ],
+  "code": 0,
+  "ms": 763,
+  "out": "Accepted prompt \"q\" with text \"CNRYcliprompt\"\n",
+  "err": ""
+ },
+ {
+  "args": [
+   "waitfor",
+   "0",
+   "--text",
+   "CNRYcliwait"
+  ],
+  "code": 1,
+  "ms": 309,
+  "out": "Wait failed: wait_for timed out after 0ms waiting for text=\"CNRYcliwait\": text \"CNRYcliwait\" was not found in the visible text of 1 frame(s).\n",
+  "err": ""
+ },
+ {
+  "args": [
+   "click",
+   "#btn",
+   "--expect-text",
+   "CNRYcliexp"
+  ],
+  "code": 4,
+  "ms": 3367,
+  "out": "Clicked #btn\nVerification: NOT verified — contradicted (confidence 0.09) — Expected text \"CNRYcliexp\" was not found in the page's visible text after the action\n",
+  "err": "Error: expectation failed: text — Expected text \"CNRYcliexp\" was not found in the page's visible text after the action\n"
+ },
+ {
+  "args": [
+   "nav",
+   "127.0.0.1:52519/p?token=CNRYnoscheme"
+  ],
+  "code": 1,
+  "ms": 959,
+  "out": "",
+  "err": "Fatal: Protocol error (Page.navigate): Cannot navigate to invalid URL\n"
+ },
+ {
+  "args": [
+   "type",
+   "#pw",
+   "ab"
+  ],
+  "code": 0,
+  "ms": 3356,
+  "out": "Typed into #pw\nVerification: verified (confidence 0.90) — 'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\n",
+  "err": ""
+ },
+ {
+  "args": [
+   "press",
+   "#pw",
+   "Enter"
+  ],
+  "code": 0,
+  "ms": 3343,
+  "out": "Pressed Enter\nVerification: verified (confidence 0.90) — 'press_key' verified: keydown 'Enter' was delivered to the focused input#pw; no deterministic effect is defined for this key, so only delivery was verified\n",
+  "err": ""
+ },
+ {
+  "args": [
+   "newtab",
+   "http://127.0.0.1:52519/p?token=CNRYclinewtab"
+  ],
+  "code": 0,
+  "ms": 3065,
+  "out": "New tab tab_sess_1790841833841_1_2 opened at http://127.0.0.1:52519/p?token=CNRYclinewtab\n",
+  "err": ""
+ },
+ {
+  "args": [
+   "tabs"
+  ],
+  "code": 0,
+  "ms": 323,
+  "out": "  tab_sess_1790841833841_1_1  AUDIT /p  http://aud:CNRYcliuserpass@127.0.0.1:52519/p?token=CNRYcliquery#CNRYclifrag\n* tab_sess_1790841833841_1_2  AUDIT /p  http://127.0.0.1:52519/p?token=CNRYclinewtab\n",
+  "err": ""
+ },
+ {
+  "args": [
+   "history"
+  ],
+  "code": 0,
+  "ms": 281,
+  "out": "History: 19 command(s) in E:\\AI-Cache\\tmp\\fr211-audit-cli-QH2hFi\\state\\history.jsonl\n--- session sess_1790841833841_1 (current) ---\n2026-10-01 08:03:53Z  exit 0     769ms  nav http://127.0.0.1:52519/p\n    - navigate ok verified tab_sess_1790841833841_1_1 http://127.0.0.1:52519/p\n2026-10-01 08:03:54Z  exit 0      75ms  type #pw <11 chars>\n    - type ok verified tab_sess_1790841833841_1_1 #pw\n2026-10-01 08:03:58Z  exit 1    1728ms  type #mangle <13 chars>\n    - type FAILED action-failed tab_sess_1790841833841_1_1 #mangle: type did not land the expected value (the typed text and the field content",
+  "err": ""
+ },
+ {
+  "args": [
+   "history",
+   "--json"
+  ],
+  "code": 0,
+  "ms": 304,
+  "out": "{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T08:03:53.595Z\",\"sessionId\":\"sess_1790841833841_1\",\"cwd\":\"<dir>\",\"verb\":\"nav\",\"args\":[\"http://127.0.0.1:52519/p\"],\"exitCode\":0,\"durationMs\":769,\"actions\":[{\"actionType\":\"navigate\",\"success\":true,\"executionTimeMs\":40,\"timestamp\":\"2026-10-01T08:03:54.361Z\",\"target\":\"http://127.0.0.1:52519/p\",\"url\":\"http://127.0.0.1:52519/p\",\"verification\":{\"verified\":true,\"urlChanged\":true,\"elementFound\":true,\"confidence\":0.9,\"reason\":\"'navigate' verified: a new document committed at http://127.0.0.1:52519/p[redacted]\",\"evidence\":{\"tier\":\"verified\",\"checks\":[{\"check\":\"navi",
+  "err": ""
+ },
+ {
+  "args": [
+   "close"
+  ],
+  "code": 0,
+  "ms": 661,
+  "out": "Session closed.\n",
+  "err": ""
+ },
+ {
+  "args": [
+   "history"
+  ],
+  "code": 0,
+  "ms": 315,
+  "out": "History: 20 command(s) in E:\\AI-Cache\\tmp\\fr211-audit-cli-QH2hFi\\state\\history.jsonl\n--- session sess_1790841833841_1 ---\n2026-10-01 08:03:53Z  exit 0     769ms  nav http://127.0.0.1:52519/p\n    - navigate ok verified tab_sess_1790841833841_1_1 http://127.0.0.1:52519/p\n2026-10-01 08:03:54Z  exit 0      75ms  type #pw <11 chars>\n    - type ok verified tab_sess_1790841833841_1_1 #pw\n2026-10-01 08:03:58Z  exit 1    1728ms  type #mangle <13 chars>\n    - type FAILED action-failed tab_sess_1790841833841_1_1 #mangle: type did not land the expected value (the typed text and the field content are not r",
+  "err": ""
+ }
+]

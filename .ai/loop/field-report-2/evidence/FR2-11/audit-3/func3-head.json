@@ -1,0 +1,143 @@
+{
+ "label": "head",
+ "afterLaunch": 0,
+ "tab1": {
+  "tabId": "tab_sess_1790842419641_1_1",
+  "types": [
+   "navigate",
+   "eval"
+  ],
+  "scope": "tab",
+  "keysFirst": [
+   "actionType",
+   "success",
+   "executionTimeMs",
+   "timestamp",
+   "target",
+   "url",
+   "verification"
+  ]
+ },
+ "newTabKeys": [
+  "id",
+  "url",
+  "title",
+  "isActive"
+ ],
+ "tab2View": [
+  "eval",
+  "navigate"
+ ],
+ "sessionAfterClose": [
+  [
+   1,
+   "navigate",
+   "tab1"
+  ],
+  [
+   2,
+   "eval",
+   "tab1"
+  ],
+  [
+   3,
+   "eval",
+   "tab2"
+  ],
+  [
+   4,
+   "navigate",
+   "tab2"
+  ]
+ ],
+ "seqContiguous": true,
+ "tab1AfterClose": [
+  "navigate",
+  "eval"
+ ],
+ "defaultViewAfterClose": "tab_sess_1790842419641_1_1",
+ "errScopeTab": "get_action_history failed: tabId cannot be combined with scope \"session\" — the session view already merges every tab (each entry carries its tabId). Omit tabId,",
+ "errUnknown": "get_action_history failed: No browser session \"nope\". Call launch() first.\nHint: Call browser.launch first to create a session.",
+ "eviction": [
+  {
+   "total": 199,
+   "session": {
+    "len": 199,
+    "evicted": 0,
+    "cap": 200,
+    "note": null,
+    "firstSeq": 1,
+    "lastSeq": 199
+   },
+   "tab": {
+    "len": 197,
+    "evicted": 0,
+    "note": null
+   }
+  },
+  {
+   "total": 200,
+   "session": {
+    "len": 200,
+    "evicted": 0,
+    "cap": 200,
+    "note": null,
+    "firstSeq": 1,
+    "lastSeq": 200
+   },
+   "tab": {
+    "len": 198,
+    "evicted": 0,
+    "note": null
+   }
+  },
+  {
+   "total": 201,
+   "session": {
+    "len": 200,
+    "evicted": 1,
+    "cap": 200,
+    "note": "1 older entry was evicted — only the most recent 200 are kept.",
+    "firstSeq": 2,
+    "lastSeq": 201
+   },
+   "tab": {
+    "len": 199,
+    "evicted": 0,
+    "note": null
+   }
+  },
+  {
+   "total": 202,
+   "session": {
+    "len": 200,
+    "evicted": 2,
+    "cap": 200,
+    "note": "2 older entries were evicted — only the most recent 200 are kept.",
+    "firstSeq": 3,
+    "lastSeq": 202
+   },
+   "tab": {
+    "len": 200,
+    "evicted": 0,
+    "note": null
+   }
+  },
+  {
+   "total": 205,
+   "session": {
+    "len": 200,
+    "evicted": 5,
+    "cap": 200,
+    "note": "5 older entries were evicted — only the most recent 200 are kept.",
+    "firstSeq": 6,
+    "lastSeq": 205
+   },
+   "tab": {
+    "len": 200,
+    "evicted": 3,
+    "note": "3 older entries were evicted — only the most recent 200 are kept."
+   }
+  }
+ ]
+}
