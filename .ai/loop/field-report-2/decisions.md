@@ -4219,3 +4219,16 @@ fail-open seam. The defect is bounded and understood (apply userinfo stripping t
 limit the scheme:// exemption to the URL's own span) but the loop's cap is reached, so it is NOT fixed here.
 Decision on whether to ship, hold, or authorise one extra bounded cycle is the user's (asked in chat).
 
+## 2026-10-01 -- FR2-11: user authorises ONE extra narrow fix cycle (exception to the 3-audit cap)
+
+User decision (chat): one extra bounded fix cycle plus one audit (audit-4) for the single remaining defect A3-F1.
+Terms: scope limited to A3-F1 (+ minors A3-F2/F3/F4); if audit-4 fails, FR2-11 is HELD on its branch, unmerged,
+and nothing from it ships. Not a precedent for other items.
+
+Design (shape-free, closes both seams found in audit-3): (1) a "token" is split not only on Unicode whitespace
+but also on quotes, backticks, commas, parentheses, brackets, braces, angle brackets and any Unicode format
+character (category Cf, incl. U+202A..U+202E bidi and zero-width), so one stored token can never hold two glued
+URLs or a URL glued to a path; delimiters are kept in the output. (2) the userinfo strip removes, for EVERY `@`
+in a token, the run of non-`/` characters before it (back to the previous `/`, `//` or token start). (3) the
+`scheme://` origin+path exemption applies only to the sub-token it belongs to. No other behaviour changes.
+
