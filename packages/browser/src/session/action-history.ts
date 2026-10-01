@@ -207,7 +207,7 @@ function stripUserinfo(t: string): string {
 
 /** End of the URL that starts at a token's `scheme://`: the first backslash that is not a JSON-escaped slash (`\/`); a URL has none. */
 function urlSpanEnd(t: string, from: number): number {
-  for (let i = from; i < t.length; i++) if (t[i] === '\\' &&t[i + 1] !== '/') return i;
+  for (let i = from; i < t.length; i++) if (t[i] === '\\' && t[i + 1] !== '/') return i;
   return t.length;
 }
 

@@ -12,6 +12,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { FIX1_MUTANTS } from './mutate-fr2-11-fix1-table.mjs';
 import { FIX2_MUTANTS } from './mutate-fr2-11-fix2-table.mjs';
+import { FIX3_MUTANTS } from './mutate-fr2-11-fix3-table.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.join(here, '..', '..');
@@ -58,6 +59,8 @@ const MUTANTS = [
 MUTANTS.push(...FIX1_MUTANTS); // fix-1 (audit-1 REOPEN): mutants of the new redaction, ids MF*
 // fix-2: --table=fix2 runs ONLY the mutants of the character rule (ids MX*); the older tables target code that no longer exists
 if (args.includes('--table=fix2')) MUTANTS.splice(0, MUTANTS.length, ...FIX2_MUTANTS);
+// fix-3: --table=fix3 runs ONLY the mutants of the glue rule (ids MG*)
+if (args.includes('--table=fix3')) MUTANTS.splice(0, MUTANTS.length, ...FIX3_MUTANTS);
 
 const sha = (b) => crypto.createHash('sha256').update(b).digest('hex');
 const run = (cmd, argv, opts = {}) => spawnSync(cmd, argv, { encoding: 'utf-8', maxBuffer: 64 * 1024 * 1024, shell: process.platform === 'win32' && cmd.endsWith('.CMD'), ...opts });
@@ -86,7 +89,14 @@ for (const m of MUTANTS) {
     continue;
   }
   try {
-    fs.writeFileSync(file, Buffer.from(text.slice(0, first) + conv(m.replace) + text.slice(first + find.length), 'utf-8'));
+    let mutated = text.slice(0, first) + conv(m.replace) + text.slice(first + find.length);
+    for (const x of m.extra ?? []) {
+      const f2 = conv(x.find);
+      const i2 = mutated.indexOf(f2);
+      if (i2 < 0 || mutated.indexOf(f2, i2 + 1) >= 0) throw new Error(`extra find string ${i2 < 0 ? 'not found' : 'ambiguous'}`);
+      mutated = mutated.slice(0, i2) + conv(x.replace) + mutated.slice(i2 + f2.length);
+    }
+    fs.writeFileSync(file, Buffer.from(mutated, 'utf-8'));
     // ── unit ──
     if (m.unit) {
       const [pkg, files] = m.unit;
@@ -127,11 +137,12 @@ for (const m of MUTANTS) {
     if (m.live && !UNIT_ONLY) entry.rebuiltAfterRestore = build(m.live.pkg).ok;
   }
   entry.caught = (entry.unit?.caught ?? true) && (entry.live ? entry.live.caught : true) && !!(entry.unit || entry.live);
+  if (m.expectEquivalent) entry.expectEquivalent = true;
   results.push(entry);
-  console.log(`[${m.id}] ${entry.caught ? 'CAUGHT' : 'NOT CAUGHT'} unit=${entry.unit ? entry.unit.caught : '-'} live=${entry.live ? entry.live.caught : '-'} restored=${entry.restoredIdentical}  ${m.what}`);
+  console.log(`[${m.id}] ${entry.caught ? 'CAUGHT' : m.expectEquivalent ? 'NOT CAUGHT (expected: equivalent mutant)' : 'NOT CAUGHT'} unit=${entry.unit ? entry.unit.caught : '-'} live=${entry.live ? entry.live.caught : '-'} restored=${entry.restoredIdentical}  ${m.what}`);
 }
 fs.mkdirSync(EVIDENCE_DIR, { recursive: true });
-const out = ONLY.length ? `mutants-${ONLY.join('_')}.json` : args.includes('--table=fix2') ? 'mutants-fix2.json' : 'mutants.json';
+const out = ONLY.length ? `mutants-${ONLY.join('_')}.json` : args.includes('--table=fix2') ? 'mutants-fix2.json' : args.includes('--table=fix3') ? 'mutants-fix3.json' : 'mutants.json';
 fs.writeFileSync(path.join(EVIDENCE_DIR, out), JSON.stringify({ ranAt: new Date().toISOString(), total: results.length, caught: results.filter((r) => r.caught).length, allRestoredIdentical: results.every((r) => r.restoredIdentical), results }, null, 2));
 console.log(`\n[mutants] ${results.filter((r) => r.caught).length}/${results.length} caught; all restored byte-identically: ${results.every((r) => r.restoredIdentical)}`);
-process.exitCode = results.every((r) => r.caught && r.restoredIdentical) ? 0 : 1;
+process.exitCode = results.every((r) => (r.caught || r.expectEquivalent) && r.restoredIdentical) ? 0 : 1;
