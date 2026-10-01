@@ -7,11 +7,11 @@
 // U+202A..U+202E anyway and JS `\s` still covers U+2028 / U+2029 / U+202F. MG9b removes BOTH layers and must be caught (A3-F4).
 const BS = String.fromCharCode(92);
 const B = 'packages/browser';
-const C = 'packages/cli';
 const AH = `${B}/src/session/action-history.ts`;
 const BU = [B, ['tests/unit/glue-rule.spec.ts', 'tests/unit/char-rule.spec.ts', 'tests/unit/privacy-matrix.spec.ts', 'tests/unit/action-history.spec.ts']];
 const LIVE_MCP = { pkg: B, surface: 'mcp', only: 'GLUE' };
-const LIVE_CLI = { pkg: C, surface: 'cli', only: 'GLUE' };
+// the mutated source is in the BROWSER package; the CLI process imports its dist, so that is what must be rebuilt
+const LIVE_CLI = { pkg: B, surface: 'cli', only: 'GLUE' };
 const DELIM_LINE = `const SUB_DELIM = /(${BS}${BS}*['"${'`'}]|[,()[${BS}]{}|^]|<(?!dir>)|(?<!<dir)>|${BS}p{Cf}+)/gu;`;
 const withDelim = (body) => `const SUB_DELIM = /(${body})/gu;`;
 const Q = `${BS}${BS}*['"${'`'}]`;

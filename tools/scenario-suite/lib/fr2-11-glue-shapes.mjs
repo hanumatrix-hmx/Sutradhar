@@ -22,7 +22,8 @@ export function glueShapes(tag) {
   add('bidi-202a', (a) => `https://h.test/p${String.fromCharCode(0x202a)}/home/${a}/f.txt`, ['https://h.test/p', 'f.txt']);
   add('bidi-202e-windows', (a) => `https://h.test/p${String.fromCharCode(0x202e)}C:${BS}Users${BS}${a}${BS}f.txt`, ['f.txt']);
   add('three-urls', (a, b) => `['https://h.test/a','https://x@h2.test/b','https://u:${a}@h3.test/c?k=${b}']`, ['https://h.test/a', 'h2.test/b']);
-  add('four-urls-three-at', (a, b) => `['https://h.test/a','https://x@h2.test/b','https://y@h3.test/c','https://u:${a}@h4.test/d?k=${b}']`, ['https://h.test/a', 'h4.test/d']);
+  // four @ in four URLs: the strip runs three times over a token (pre-pass, cut head, reduced token), so a first-@-only strip is an equivalent mutant up to three
+  add('five-urls-four-at', (a, b) => `['https://h.test/a','https://x@h2.test/b','https://y@h3.test/c','https://z@h4.test/d','https://u:${a}@h5.test/e?k=${b}']`, ['https://h.test/a', 'h5.test/e']);
   // the isolated rule cells (live twins of the unit cells, so each rule has a live shape that only it protects)
   add('quote-glue', (a) => `https://h.test/a'/home/${a}/doc.txt'`, ['https://h.test/a', 'doc.txt']);
   add('soft-hyphen-glue', (a) => `https://h.test/a${String.fromCharCode(0xad)}/home/${a}/f.txt`, ['https://h.test/a', 'f.txt']);
