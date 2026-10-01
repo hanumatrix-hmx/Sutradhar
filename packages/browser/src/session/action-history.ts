@@ -6,7 +6,7 @@
  * body can never be stored in full. No I/O and no state in this file.
  *
  * Privacy contract (FR2-11 spec section 0.7 / 7 R1; fix-2: the CHARACTER RULE, see {@link redactHistoryText}):
- *  - Free text is redacted by characters, never by recognising URL shapes: tokens are split on any Unicode whitespace; each
+ *  - Free text is redacted by characters, never by recognising URL shapes: tokens are split on any Unicode whitespace (and path-rule sub-tokens on quotes, commas, brackets, Cf ... since fix-3); each
  *    token is cut from its first `?`, `#` or `;` (and the rest of the text after a cut is dropped); a token that still holds
  *    `=` or `&` is replaced whole; `userinfo@` is stripped; a path token is reduced to its last segment. Percent-, double-
  *    percent-, JSON- and fullwidth encodings of those characters are decoded first.
@@ -115,9 +115,14 @@ function redactHistoryUrlD5(url: string): string {
 //   2. per token, (a) cut from the first `?`, `#` or `;` and put the placeholder there; the rest of the text after a cut
 //      is dropped too (a URL typed with a space in its query cannot leak its tail);
 //   3. (b) a token that still contains `=` or `&` is replaced whole (a `&` also drops the rest of the text);
-//   4. (c) `userinfo@` is stripped from the authority of a token;
-//   5. a token with a `/` or `\` separator followed by more text is reduced to its last segment (a segment without a `.`
-//      is a directory name and becomes `<dir>`), unless it is a `scheme://` URL (kept as origin + path) or a `file:` URL
+//   4. (c) `userinfo@` is stripped for EVERY `@`: the characters before it back to the previous `/` (through quotes, commas, parentheses,
+//      pipes, format characters; a backslash does not stop it), so a second URL glued behind a first is stripped too (fix-3, A3-F1);
+//   5. a token is further split into sub-tokens on quotes, backtick, comma, parentheses, brackets, braces, angle brackets (not `<dir>`),
+//      pipe, caret and any Unicode format character (Cf), delimiters kept; the one bracket group that does not split is an IPv6 literal
+//      host (`//[::1]`, `@[...]`, hex digits `:` `.` `%` only). Per sub-token, a token with a `/` or backslash separator followed by more text
+//      is reduced to its last segment (a segment without a `.` is a directory name and becomes `<dir>`), unless it is a `scheme://` URL
+//      (kept as origin + path, but only up to its own end: the first delimiter or the first backslash that is not a JSON-escaped slash;
+//      whatever is glued after it is reduced like any path) or a `file:` URL
 //      (`file://…/<basename>`); `blob:` keeps its origin; `data:` / `javascript:` bodies become `data:…` / `javascript:…`.
 // Selectors (`mode: 'selector'`) are the ONE variant of the same function: CSS uses `#id`, `[a=b]`, so there `#` cuts only
 // when it follows something URL-shaped (a separator, `@`, `%` or `:` earlier in the token, or a URL-shaped token earlier in the
@@ -127,6 +132,21 @@ function redactHistoryUrlD5(url: string): string {
 /** Tokens are split on these: every JS `\s` plus controls, NBSP, zero-width, bidi and invisible separators. */
 // eslint-disable-next-line no-control-regex -- deliberately matches control characters
 const WS_SPLIT = /([\s\u0000-\u001f\u007f\u0085\u00a0\u1680\u180e\u2000-\u200f\u2028-\u202f\u205f-\u2064\u3000\ufeff]+)/;
+/**
+ * REAL whitespace only (WS_SPLIT minus the Unicode format characters: zero-width, bidi, BOM, tags). The userinfo pre-pass runs over runs of
+ * text between these, so a format character or a delimiter inside a password does not end the run that {@link stripUserinfo} removes.
+ */
+// eslint-disable-next-line no-control-regex -- deliberately matches control characters
+const TRUE_WS = /([\t-\r \u0000-\u001f\u007f\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+)/;
+/**
+ * fix-3 (audit-3 A3-F1): the delimiters that END a path-rule sub-token (and so the `scheme://` exemption): quotes (with the backslashes
+ * that escape them), backtick, comma, parentheses, brackets, braces, angle brackets (not our own `<dir>` placeholder), pipe, caret and any
+ * Unicode format character. They are kept in the output. One stored token can therefore never hold two glued URLs, or a URL glued to a
+ * local path, behind one exemption.
+ */
+const SUB_DELIM = /(\\*['"`]|[,()[\]{}|^]|<(?!dir>)|(?<!<dir)>|\p{Cf}+)/gu;
+/** The one bracket group that does NOT split: an IPv6 literal host (`//[::1]`, `@[2001:db8::1]`): bounded charset, host position only. */
+const IPV6_HOST = /(?<=\/\/|@)\[[0-9A-Fa-f:.%]+\]/g;
 /** `scheme://` inside a token (also the JSON-escaped `:\/\/`): the URL test of the path rule and the userinfo strip. */
 const SCHEME_SEP = /:(?:\\?\/){2,}/;
 const SCHEME_NAME_END = /[A-Za-z][A-Za-z0-9+.-]*$/;
@@ -169,18 +189,37 @@ function decodeDelimiters(s: string): string {
   return out.replace(PERCENT_DELIM, (_m, h: string) => String.fromCharCode(parseInt(h, 16)));
 }
 
-/** `userinfo@` (everything up to the last `@` of the authority, the text before the first path separator). */
+/**
+ * `userinfo@` for EVERY `@` of a run (fix-3): the run of characters before each `@` is removed back to the previous `/` (so back to the `//`
+ * of its own authority) or to the start of the run. Delimiters do NOT stop it (a password may hold `(` `)` `,` `'` `|` or a format
+ * character) and neither does a backslash (a JSON-escaped quote `\"` is part of the password text); only a `/` does. The second, third ...
+ * URL of a glued token is stripped like the first. Runs left to right over its own output, so it is idempotent.
+ */
 function stripUserinfo(t: string): string {
-  const end = schemeEnd(t);
-  const lead = end >= 0 ? end : /^(?:\/\/|\\\\)/.test(t) ? 2 : 0;
-  const prefix = t.slice(0, lead);
-  const rest = t.slice(lead);
-  const authority = rest.split(/[\\/]/, 1)[0]!;
-  const at = authority.lastIndexOf('@');
-  return at < 0 ? t : prefix + rest.slice(at + 1);
+  if (!t.includes('@')) return t;
+  const parts = t.split('@');
+  let acc = parts[0]!;
+  for (let k = 1; k < parts.length; k++) acc = acc.slice(0, acc.lastIndexOf('/') + 1) + parts[k]!;
+  return acc;
 }
 
-/** Reduce a path-like token; returns the token unchanged when it has no separator followed by text. */
+/** End of the URL that starts at a token's `scheme://`: the first backslash that is not a JSON-escaped slash (`\/`); a URL has none. */
+function urlSpanEnd(t: string, from: number): number {
+  for (let i = from; i < t.length; i++) if (t[i] === '\\' &&t[i + 1] !== '/') return i;
+  return t.length;
+}
+
+/** A path-like piece: its last segment (`<dir>` when it has no extension), unchanged when it has no separator followed by text. */
+function reduceLoosePath(t: string): string {
+  if (!SEP_THEN_TEXT.test(t)) return t;
+  const name = basenameOfPath(t);
+  return HAS_EXTENSION.test(name) ? name : DIR_PLACEHOLDER;
+}
+
+/**
+ * Reduce ONE sub-token. The `scheme://` allowance (origin + path kept) covers only the URL itself: it ends at the first backslash that is
+ * not a JSON-escaped slash, and whatever follows is reduced like any other path.
+ */
 function reducePathToken(t: string): string {
   const file = FILE_TOKEN.exec(t);
   if (file) {
@@ -190,10 +229,34 @@ function reducePathToken(t: string): string {
   }
   const blob = BLOB_TOKEN.exec(t);
   if (blob) return t.slice(0, blob.index) + 'blob:' + blob[1];
-  if (schemeEnd(t) >= 0) return t;
-  if (!SEP_THEN_TEXT.test(t)) return t;
-  const name = basenameOfPath(t);
-  return HAS_EXTENSION.test(name) ? name : DIR_PLACEHOLDER;
+  const end = schemeEnd(t);
+  if (end >= 0) {
+    const span = urlSpanEnd(t, end);
+    return span >= t.length ? t : t.slice(0, span) + reduceLoosePath(t.slice(span));
+  }
+  return reduceLoosePath(t);
+}
+
+/** Split `head` on {@link SUB_DELIM} (delimiters kept: [text, delim, text, ...]), except the brackets of an IPv6 literal host. */
+function splitSubTokens(head: string): string[] {
+  const hosts = [...head.matchAll(IPV6_HOST)].map((m) => [m.index!, m.index! + m[0].length] as const);
+  const out: string[] = [];
+  let last = 0;
+  for (const m of head.matchAll(SUB_DELIM)) {
+    const at = m.index!;
+    if (hosts.some(([from, to]) => at >= from && at < to)) continue;
+    out.push(head.slice(last, at), m[0]);
+    last = at + m[0].length;
+  }
+  out.push(head.slice(last));
+  return out;
+}
+
+/** {@link reducePathToken} on every sub-token of `head`; `suffix` (the cut placeholder) belongs to the LAST sub-token. Delimiters stay. */
+function reducePathTokens(head: string, suffix: string): string {
+  const parts = splitSubTokens(head);
+  parts[parts.length - 1] += suffix;
+  return parts.map((p, i) => (i % 2 === 1 || p === '' ? p : reducePathToken(p))).join('');
 }
 
 export interface RedactOptions {
@@ -235,10 +298,10 @@ function redactToken(tok: string, selector: boolean, afterUrlish: boolean): Toke
     return { out: REDACTED_PLACEHOLDER, swallow: swallow || head.includes('&') };
   }
   // the placeholder is part of the token BEFORE the path reduction, so a second pass over the stored text changes nothing
-  const whole = cutAt >= 0 ? head + REDACTED_PLACEHOLDER : head;
+  const suffix = cutAt >= 0 ? REDACTED_PLACEHOLDER : '';
   // selector mode: `a[href="/x"]` (an attribute selector) holds a `/` that is CSS, not a path
-  // the userinfo strip runs again on the reduced token: a leading `\"` or `'` can hide the authority from the first pass
-  return { out: selector && /\[[^\]]*=/.test(head) ? whole : stripUserinfo(reducePathToken(whole)), swallow };
+  // the userinfo strip runs again on the reduced token (idempotency: a reduced piece never brings an `@` back)
+  return { out: selector && /\[[^\]]*=/.test(head) ? head + suffix : stripUserinfo(reducePathTokens(head, suffix)), swallow };
 }
 
 /**
@@ -249,13 +312,15 @@ function redactToken(tok: string, selector: boolean, afterUrlish: boolean): Toke
 export function redactHistoryText(text: string, opts: RedactOptions = {}): string {
   const selector = opts.mode === 'selector';
   const raw = text.length > MAX_REDACT_INPUT ? text.slice(0, MAX_REDACT_INPUT) : text;
-  const input = decodeDelimiters(raw);
+  const decoded = decodeDelimiters(raw);
+  // userinfo of EVERY `@` first, over each run between real whitespace (delimiters and format characters do not end a password)
+  const input = decoded.split(TRUE_WS).map((p, i) => (i % 2 === 1 ? p : stripUserinfo(p))).join('');
   const parts = input.split(WS_SPLIT); // [tok, ws, tok, ws, ..., tok]
   // input cut at the cap: its last token may be only the FIRST part of a token whose separator / delimiter was cut off, so it is not kept
   if (raw.length < text.length && parts[parts.length - 1] !== '') parts[parts.length - 1] = REDACTED_PLACEHOLDER;
   const out: string[] = [];
   // selector mode: text that carried an ENCODED delimiter (percent, JSON escape or fullwidth form) is not CSS, so its `#` cuts
-  let afterUrlish = selector && input !== raw;
+  let afterUrlish = selector && decoded !== raw;
   for (let i = 0; i < parts.length; i += 2) {
     const tok = parts[i]!;
     const ws = i > 0 ? parts[i - 1]! : '';
@@ -277,9 +342,12 @@ export const redactHistorySelector = (text: string): string => redactHistoryText
 /** Deprecated name kept for compatibility: the same single function as {@link redactHistoryText}. */
 export const redactUrlsInText = redactHistoryText;
 
-/** Collapse whitespace, trim, redact URLs, then cap at 200. The stored form of eval code. */
+/** Whitespace of eval code except the BOM (a Unicode format character is a delimiter for the rule, never a space). */
+const EVAL_WS = new RegExp(`[^\\S${String.fromCharCode(0xfeff)}]+`, 'g');
+
+/** Collapse whitespace (not the BOM: a Unicode format character is a delimiter for the rule, never a space), trim, redact, cap at 200. The stored form of eval code. */
 export function evalCodePreview(code: string): string {
-  return capHistoryString(redactHistoryText(code.replace(/\s+/g, ' ').trim()), HISTORY_STRING_CAP);
+  return capHistoryString(redactHistoryText(code.replace(EVAL_WS, ' ').trim()), HISTORY_STRING_CAP);
 }
 
 /** The engine-generated target of wait_for_selector: a closed vocabulary, the one `=` the rule must not eat. */

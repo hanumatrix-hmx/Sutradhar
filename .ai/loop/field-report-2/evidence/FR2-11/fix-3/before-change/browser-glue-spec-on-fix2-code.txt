@@ -1,0 +1,48 @@
+   ❯ tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > EVERY Unicode format character (category Cf) between a URL and a local path, and inside a password,
+⎯⎯⎯⎯⎯⎯ Failed Tests 37 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > the generator is deterministic for a seed, varies with it, and every secret is present in its own t
+     77|       expect(c.secrets.length).toBeGreaterThan(0);
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > random glue: no secret in ANY stored field
+     88|     const leaks = leaksOf(random);
+     89|     expect(leaks.slice(0, 6)).toEqual([]);
+     90|     expect(leaks.length).toBe(0);
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > exhaustive grid (every delimiter x every URL slot x URL / path neighbour x both orders, every path 
+     93|     const leaks = leaksOf(grid);
+     94|     expect(leaks.slice(0, 6)).toEqual([]);
+     95|     expect(leaks.length).toBe(0);
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 glue property test (seed 20261101, 6000 random + 4606 grid strings) > EVERY Unicode format character (category Cf) between a URL and a local path, and inside a password,
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on quotes only > single quote: a URL glued to a path by '
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on quotes only > double quote, Windows path
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on quotes only > double quote, URL then path (no other delimiter)
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on quotes only > backtick
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on commas only > comma
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on commas only > comma, Windows path
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on parentheses only > open parenthesis
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on parentheses only > close parenthesis
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on brackets only > open bracket
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on brackets only > close bracket
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on braces only > open brace
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on braces only > close brace
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on angle brackets only > less-than
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on angle brackets only > greater-than
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on pipe and caret only > pipe
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on pipe and caret only > caret
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on Unicode format characters (Cf) only > soft hyphen U+00AD (not whitespace, not in any space class)
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on Unicode format characters (Cf) only > Arabic letter mark U+061C
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on Unicode format characters (Cf) only > isolate U+2066
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on Unicode format characters (Cf) only > tag character U+E0041 (astral)
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on Unicode format characters (Cf) only > zero-width space U+200B and BOM U+FEFF
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > split on Unicode format characters (Cf) only > A3-F4: each of U+202A..U+202E between a URL and a path
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > userinfo stripped for EVERY @ (not only the first authority) > second URL in a glued token, no delimiter between
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > userinfo stripped for EVERY @ (not only the first authority) > third URL
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > userinfo stripped for EVERY @ (not only the first authority) > audit-3 shape: a JS array
++ ['https://h.test/a','https://u:CGLUU3x@h2.test/p'].length
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > userinfo stripped for EVERY @ (not only the first authority) > audit-3 shape: a JSON.stringify of a config with a datab
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > userinfo stripped for EVERY @ (not only the first authority) > bare PASS@ (no user) in the second URL
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > userinfo stripped for EVERY @ (not only the first authority) > a password that itself holds delimiter characters: the s
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > userinfo stripped for EVERY @ (not only the first authority) > percent-encoded @ (decoded text)
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > the scheme:// exemption ends with its own URL > a backslash local path glued to a URL with no delimiter at all
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > the scheme:// exemption ends with its own URL > a UNC path glued to a URL
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > what the splitting must NOT break (documented exceptions) > the selector variant strips every userinfo and path in a gl
+ FAIL  tests/unit/glue-rule.spec.ts > FR2-11 fix-3 ISOLATED cells (each protected by ONE new rule) > what the splitting must NOT break (documented exceptions) > A3-F3 (known limit, documented): in a path with spaces the 
+      Tests  37 failed | 7 passed (44)

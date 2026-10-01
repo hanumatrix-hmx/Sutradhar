@@ -1,0 +1,128 @@
+diff --git a/packages/browser/src/session/action-history.ts b/packages/browser/src/session/action-history.ts
+index a25548d..ff32891 100644
+--- a/packages/browser/src/session/action-history.ts
++++ b/packages/browser/src/session/action-history.ts
+@@ -127,6 +127,18 @@ function redactHistoryUrlD5(url: string): string {
+ /** Tokens are split on these: every JS `\s` plus controls, NBSP, zero-width, bidi and invisible separators. */
+ // eslint-disable-next-line no-control-regex -- deliberately matches control characters
+ const WS_SPLIT = /([\s\u0000-\u001f\u007f\u0085\u00a0\u1680\u180e\u2000-\u200f\u2028-\u202f\u205f-\u2064\u3000\ufeff]+)/;
++/**
++ * The userinfo pre-pass splits on REAL whitespace only (the set above minus the Unicode format characters: zero-width, bidi, BOM, tags):
++ * a format character inside a password must not end the run that {@link stripUserinfo} removes.
++ */
++// eslint-disable-next-line no-control-regex -- deliberately matches control characters
++const TRUE_WS = /([\t-\r \u0000-\u001f\u007f\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+)/;
++/**
++ * fix-3 (audit-3 A3-F1): the delimiters that END a path-rule sub-token (and so the `scheme://` exemption): quotes (with the backslashes
++ * that escape them), backtick, comma, parentheses, brackets, braces, angle brackets, pipe, caret and any Unicode format character. They are
++ * kept in the output. One stored token can therefore never hold two glued URLs, or a URL glued to a local path, behind one exemption.
++ */
++const SUB_DELIM = /(\\*['"`]|[,()[\]{}<>|^]|\p{Cf}+)/u;
+ /** `scheme://` inside a token (also the JSON-escaped `:\/\/`): the URL test of the path rule and the userinfo strip. */
+ const SCHEME_SEP = /:(?:\\?\/){2,}/;
+ const SCHEME_NAME_END = /[A-Za-z][A-Za-z0-9+.-]*$/;
+@@ -169,18 +181,39 @@ function decodeDelimiters(s: string): string {
+   return out.replace(PERCENT_DELIM, (_m, h: string) => String.fromCharCode(parseInt(h, 16)));
+ }
+ 
+-/** `userinfo@` (everything up to the last `@` of the authority, the text before the first path separator). */
++/**
++ * `userinfo@` for EVERY `@` of a token (fix-3): the run of characters before each `@` is removed back to the previous `/` or `\` (so back to
++ * the `//` of its own authority) or to the start of the token. Delimiters do NOT stop the run (a password may hold `(` `)` `,` `'`), and
++ * the second, third ... URL of a glued token is stripped like the first. Runs left to right over its own output, so it is idempotent.
++ */
+ function stripUserinfo(t: string): string {
+-  const end = schemeEnd(t);
+-  const lead = end >= 0 ? end : /^(?:\/\/|\\\\)/.test(t) ? 2 : 0;
+-  const prefix = t.slice(0, lead);
+-  const rest = t.slice(lead);
+-  const authority = rest.split(/[\\/]/, 1)[0]!;
+-  const at = authority.lastIndexOf('@');
+-  return at < 0 ? t : prefix + rest.slice(at + 1);
++  if (!t.includes('@')) return t;
++  const parts = t.split('@');
++  let acc = parts[0]!;
++  for (let k = 1; k < parts.length; k++) {
++    const cut = Math.max(acc.lastIndexOf('/'), acc.lastIndexOf('\\')) + 1;
++    acc = acc.slice(0, cut) + parts[k]!;
++  }
++  return acc;
++}
++
++/** End of the URL that starts at a token's `scheme://`: the first backslash that is not a JSON-escaped slash (`\/`); a URL has none. */
++function urlSpanEnd(t: string, from: number): number {
++  for (let i = from; i < t.length; i++) if (t[i] === '\\' &&t[i + 1] !== '/') return i;
++  return t.length;
+ }
+ 
+-/** Reduce a path-like token; returns the token unchanged when it has no separator followed by text. */
++/** A path-like piece: its last segment (`<dir>` when it has no extension), unchanged when it has no separator followed by text. */
++function reduceLoosePath(t: string): string {
++  if (!SEP_THEN_TEXT.test(t)) return t;
++  const name = basenameOfPath(t);
++  return HAS_EXTENSION.test(name) ? name : DIR_PLACEHOLDER;
++}
++
++/**
++ * Reduce ONE sub-token ({@link SUB_DELIM} already split off). The `scheme://` allowance (origin + path kept) covers only the URL itself:
++ * it ends at the first backslash that is not a JSON-escaped slash, and whatever follows is reduced like any other path.
++ */
+ function reducePathToken(t: string): string {
+   const file = FILE_TOKEN.exec(t);
+   if (file) {
+@@ -190,10 +223,19 @@ function reducePathToken(t: string): string {
+   }
+   const blob = BLOB_TOKEN.exec(t);
+   if (blob) return t.slice(0, blob.index) + 'blob:' + blob[1];
+-  if (schemeEnd(t) >= 0) return t;
+-  if (!SEP_THEN_TEXT.test(t)) return t;
+-  const name = basenameOfPath(t);
+-  return HAS_EXTENSION.test(name) ? name : DIR_PLACEHOLDER;
++  const end = schemeEnd(t);
++  if (end >= 0) {
++    const span = urlSpanEnd(t, end);
++    return span >= t.length ? t : t.slice(0, span) + reduceLoosePath(t.slice(span));
++  }
++  return reduceLoosePath(t);
++}
++
++/** {@link reducePathToken} on every sub-token of `head`; `suffix` (the cut placeholder) belongs to the LAST sub-token. Delimiters stay. */
++function reducePathTokens(head: string, suffix: string): string {
++  const parts = head.split(SUB_DELIM);
++  parts[parts.length - 1] += suffix;
++  return parts.map((p, i) => (i % 2 === 1 || p === '' ? p : reducePathToken(p))).join('');
+ }
+ 
+ export interface RedactOptions {
+@@ -235,10 +277,10 @@ function redactToken(tok: string, selector: boolean, afterUrlish: boolean): Toke
+     return { out: REDACTED_PLACEHOLDER, swallow: swallow || head.includes('&') };
+   }
+   // the placeholder is part of the token BEFORE the path reduction, so a second pass over the stored text changes nothing
+-  const whole = cutAt >= 0 ? head + REDACTED_PLACEHOLDER : head;
++  const suffix = cutAt >= 0 ? REDACTED_PLACEHOLDER : '';
+   // selector mode: `a[href="/x"]` (an attribute selector) holds a `/` that is CSS, not a path
+-  // the userinfo strip runs again on the reduced token: a leading `\"` or `'` can hide the authority from the first pass
+-  return { out: selector && /\[[^\]]*=/.test(head) ? whole : stripUserinfo(reducePathToken(whole)), swallow };
++  // the userinfo strip runs again on the reduced token (idempotency: a reduced piece never brings an `@` back)
++  return { out: selector && /\[[^\]]*=/.test(head) ? head + suffix : stripUserinfo(reducePathTokens(head, suffix)), swallow };
+ }
+ 
+ /**
+@@ -249,13 +291,15 @@ function redactToken(tok: string, selector: boolean, afterUrlish: boolean): Toke
+ export function redactHistoryText(text: string, opts: RedactOptions = {}): string {
+   const selector = opts.mode === 'selector';
+   const raw = text.length > MAX_REDACT_INPUT ? text.slice(0, MAX_REDACT_INPUT) : text;
+-  const input = decodeDelimiters(raw);
++  const decoded = decodeDelimiters(raw);
++  // userinfo of EVERY `@` first, over runs of real whitespace-free text (delimiters and format characters do not end a password)
++  const input = decoded.split(TRUE_WS).map((p, i) => (i % 2 === 1 ? p : stripUserinfo(p))).join('');
+   const parts = input.split(WS_SPLIT); // [tok, ws, tok, ws, ..., tok]
+   // input cut at the cap: its last token may be only the FIRST part of a token whose separator / delimiter was cut off, so it is not kept
+   if (raw.length < text.length && parts[parts.length - 1] !== '') parts[parts.length - 1] = REDACTED_PLACEHOLDER;
+   const out: string[] = [];
+   // selector mode: text that carried an ENCODED delimiter (percent, JSON escape or fullwidth form) is not CSS, so its `#` cuts
+-  let afterUrlish = selector && input !== raw;
++  let afterUrlish = selector && decoded !== raw;
+   for (let i = 0; i < parts.length; i += 2) {
+     const tok = parts[i]!;
+     const ws = i > 0 ? parts[i - 1]! : '';
