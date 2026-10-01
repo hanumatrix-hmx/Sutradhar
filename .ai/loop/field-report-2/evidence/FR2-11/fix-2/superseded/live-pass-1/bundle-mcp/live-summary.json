@@ -1,0 +1,150 @@
+{
+  "startedAt": "2026-09-30T21:27:19.823Z",
+  "finishedAt": "2026-09-30T21:27:45.578Z",
+  "cases": 11,
+  "casesPassed": 11,
+  "checks": 80,
+  "checksFailed": 0,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 11,
+      "casesPassed": 11,
+      "checks": 80,
+      "checksFailed": 0
+    }
+  },
+  "failed": [],
+  "informational": [
+    {
+      "surface": "bundle",
+      "case": "L3-timing",
+      "evals": 205,
+      "elapsedMs": 122,
+      "perCallMs": 1
+    },
+    {
+      "surface": "bundle",
+      "case": "L9-overhead",
+      "evals": 200,
+      "totalMs": 104,
+      "meanPerCallMs": 0.52
+    }
+  ],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": [
+      55576,
+      47452
+    ]
+  },
+  "evidenceFiles": [
+    "bundle-L1-history.json",
+    "bundle-L2-session.json",
+    "bundle-raw-history-responses.txt"
+  ],
+  "results": [
+    {
+      "surface": "bundle",
+      "case": "L1",
+      "pass": true,
+      "checks": 18,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L1b",
+      "pass": true,
+      "checks": 12,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L1d",
+      "pass": true,
+      "checks": 8,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L2",
+      "pass": true,
+      "checks": 10,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L3",
+      "pass": true,
+      "checks": 7,
+      "failed": [],
+      "elapsedMs": 122
+    },
+    {
+      "surface": "bundle",
+      "case": "L4",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "L9-overhead",
+      "pass": true,
+      "checks": 1,
+      "failed": []
+    },
+    {
+      "surface": "bundle",
+      "case": "PM",
+      "pass": true,
+      "checks": 10,
+      "failed": [],
+      "cells": 1600,
+      "navigations": 35
+    },
+    {
+      "surface": "bundle",
+      "case": "FIX2",
+      "pass": true,
+      "checks": 6,
+      "failed": [],
+      "shapes": 23
+    },
+    {
+      "surface": "bundle",
+      "case": "PROP",
+      "pass": true,
+      "checks": 2,
+      "failed": [],
+      "generated": 320,
+      "seed": 20261003
+    },
+    {
+      "surface": "bundle",
+      "case": "PRIV-sweep",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    }
+  ]
+}

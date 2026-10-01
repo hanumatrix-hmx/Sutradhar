@@ -1,0 +1,229 @@
+{
+  "ranAt": "2026-10-01T07:34:52.634Z",
+  "total": 7,
+  "caught": 6,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MX1",
+      "what": "rule (a) without the `#` cut (a fragment is kept)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (a) cut at `#`: a bare fragment with no URL (only rule a protects it)",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (a) custom scheme redirect (audit-2 A2-F1) and about:blank#S",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (a) swallows what follows the cut: a space inside the query or the URL"
+        ],
+        "summary": "Tests  22 failed | 52 passed (74)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "FIX2,PROP",
+        "failedCases": [
+          "FIX2: [{\"check\":\"no canary of 23 shapes in the session view or the default tab view (error, reason, evidence, target, selector, url)\",\"observed\":[\"about-blank-frag\",\"single-label-host\",\"url-space-path-frag\",\"bare-fragment\",\"pct-hash\"]}]",
+          "PROP: [{\"check\":\"no SECRET of 320 generated strings in any stored entry\",\"observed\":[{\"id\":\"p2\",\"text\":\"Current URL \\\"//127.0.0.1:5123\\n#CNRYp2X\\\" does not contain \\\"/done\\\"\",\"entry\":\"{\\\"actionType\\\":\\\"eval\\\",\\\"success\\\":false,\\\"error\\\":\\\"Current URL 127.0.0.1:5123 #CNRYp2X\\\\\\\" does not contain <dir>\\\",\\\"",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 12 raw history responses\",\"observed\":[\"CNRYfx2aboutblankfragmcp\",\"CNRYfx2singlelabelhostmcp\",\"CNRYfx2urlspacepathfragmcp\",\"CNRYfx2barefragmentmcp\",\"CNRYfx2pcthashmcp\",\"CNRYfx2aboutblankfragmcp\",\"CNRYfx2singlelabelhostmcp\",\"CNRYfx2urlspacepathfragmcp\",\"CNRYfx2barefragme"
+        ],
+        "summaryLine": "[fr2-11] 0/3 cases (7/10 checks) {\"mcp\":{\"cases\":3,\"casesPassed\":0,\"checks\":10,\"checksFailed\":3},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MX4",
+      "what": "rule (b) removed: a token holding `=` or `&` is kept",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H5 / N12: eval preview collapses whitespace, drops URL secrets, caps at 200",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > URL rule for navigate targets, preview rule for eval targets, generic redaction otherwise",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (b): a form token `a=S` (no cut character, no URL, no path)"
+        ],
+        "summary": "Tests  23 failed | 51 passed (74)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "FIX2,PROP",
+        "failedCases": [
+          "FIX2: [{\"check\":\"no canary of 23 shapes in the session view or the default tab view (error, reason, evidence, target, selector, url)\",\"observed\":[\"form-token\"]}]",
+          "PROP: [{\"check\":\"no SECRET of 320 generated strings in any stored entry\",\"observed\":[{\"id\":\"p152\",\"text\":\"Navigation to <a href=\\\"a=1&token=my CNRYp152X\\\"> timed out after 30000ms\",\"entry\":\"{\\\"actionType\\\":\\\"eval\\\",\\\"success\\\":false,\\\"error\\\":\\\"Navigation to <a href=\\\\\\\"a=1&token=my CNRYp152X\\\\\\\"> timed o",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 12 raw history responses\",\"observed\":[\"CNRYfx2formtokenmcp\",\"CNRYfx2formtokenmcp\",\"CNRYfx2formtokenmcp\",\"CNRYfx2formtokenmcp\",\"CNRYfx2formtokenmcp\",\"CNRYfx2formtokenmcp\",\"token=\",\"CNRYfx2formtokenmcp\",\"CNRYp152X\",\"token=\",\"CNRYp152X\",\"token=\",\"CNRYp152X\",\"CNRYp238X\",\"t"
+        ],
+        "summaryLine": "[fr2-11] 0/3 cases (7/10 checks) {\"mcp\":{\"cases\":3,\"casesPassed\":0,\"checks\":10,\"checksFailed\":3},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MX5",
+      "what": "rule (c) removed: userinfo is kept",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (c): userinfo is stripped (no cut character, no `=`, and a trailing `/` so ",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (c) strips up to the LAST `@` of the authority: a password that itself cont",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 structured target: FR2-09 D5 (origin + pathname) then the rule > the rule and D5 agree: for every generated case the bare URL function and the text functio"
+        ],
+        "summary": "Tests  17 failed | 57 passed (74)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "FIX2,PROP",
+        "failedCases": [
+          "FIX2: [{\"check\":\"no canary of 23 shapes in the session view or the default tab view (error, reason, evidence, target, selector, url)\",\"observed\":[\"userinfo-noscheme\"]}]",
+          "PROP: [{\"check\":\"no SECRET of 320 generated strings in any stored entry\",\"observed\":[{\"id\":\"p169\",\"text\":\"Navigation to user:CNRYp169X@host timed out after 30000ms\",\"entry\":\"{\\\"actionType\\\":\\\"eval\\\",\\\"success\\\":false,\\\"error\\\":\\\"Navigation to user:CNRYp169X@host timed out after 30000ms\\\",\\\"executionTimeMs",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 12 raw history responses\",\"observed\":[\"CNRYfx2userinfonoschememcp\",\"CNRYfx2userinfonoschememcp\",\"CNRYfx2userinfonoschememcp\",\"CNRYfx2userinfonoschememcp\",\"CNRYfx2userinfonoschememcp\",\"CNRYfx2userinfonoschememcp\",\"CNRYfx2userinfonoschememcp\",\"CNRYp169X\",\"CNRYp169X\",\"CNR"
+        ],
+        "summaryLine": "[fr2-11] 0/3 cases (7/10 checks) {\"mcp\":{\"cases\":3,\"casesPassed\":0,\"checks\":10,\"checksFailed\":3},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MX8",
+      "what": "the path rule dropped (a directory in a path is kept)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactHistoryUrl (H1, H2) > H2: scheme table",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > a path in front of a scheme:// keeps no directory: only the no-separator-before-",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > the path rule: a path segment is the ONLY thing that protects a canary in a dire"
+        ],
+        "summary": "Tests  20 failed | 54 passed (74)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "FIX2,PROP",
+        "failedCases": [
+          "FIX2: [{\"check\":\"no canary of 23 shapes in the session view or the default tab view (error, reason, evidence, target, selector, url)\",\"observed\":[\"win-backslash\",\"win-forward\",\"win-other-drive\",\"unc\",\"unc-forward\",\"posix\",\"home-dir-only\"]}]",
+          "PROP: [{\"check\":\"no SECRET of 320 generated strings in any stored entry\",\"observed\":[{\"id\":\"p1\",\"text\":\"Current URL “file:/home/CNRYp1X/f.txt” does not contain \\\"/done\\\"\",\"entry\":\"{\\\"actionType\\\":\\\"eval\\\",\\\"success\\\":false,\\\"error\\\":\\\"Current URL “file:/home/CNRYp1X/f.txt” does not contain \\\\\\\"/done\\\\\\\"\\\"",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 12 raw history responses\",\"observed\":[\"CNRYfx2winbackslashmcp\",\"CNRYfx2winforwardmcp\",\"CNRYfx2winotherdrivemcp\",\"CNRYfx2uncmcp\",\"CNRYfx2uncforwardmcp\",\"CNRYfx2posixmcp\",\"CNRYfx2homedironlymcp\",\"CNRYfx2winbackslashmcp\",\"CNRYfx2winforwardmcp\",\"CNRYfx2winotherdrivemcp\",\"C"
+        ],
+        "summaryLine": "[fr2-11] 0/3 cases (7/10 checks) {\"mcp\":{\"cases\":3,\"casesPassed\":0,\"checks\":10,\"checksFailed\":3},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MX12",
+      "what": "the text after a cut is NOT dropped (a URL with a space in its query leaks its tail)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H3: redacts every URL token inside free text",
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H5 / N12: eval preview collapses whitespace, drops URL secrets, caps at 200",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > URL rule for navigate targets, preview rule for eval targets, generic redaction otherwise",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string"
+        ],
+        "summary": "Tests  10 failed | 64 passed (74)"
+      },
+      "live": {
+        "caught": false,
+        "buildFailed": true,
+        "out": "src/session/action-history.ts(156,7): error TS6133: 'BARE_ID' is declared but its value is never read.\r\n"
+      },
+      "shaAfter": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": false
+    },
+    {
+      "id": "MX14",
+      "what": "the upload_file target keeps a name with no extension (a user / home directory name)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 upload_file target: the basename, unless it has no extension (a user / home directory name) > report.pdf is kept; a name with no extension is <dir>; a quer",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 upload_file target: the basename, unless it has no extension (a user / home directory name) > upload_file_via_trigger (a runtime-level action) follows the "
+        ],
+        "summary": "Tests  2 failed | 72 passed (74)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "FIX2,PROP",
+        "failedCases": [
+          "FIX2: [{\"check\":\"no canary of 23 shapes in the session view or the default tab view (error, reason, evidence, target, selector, url)\",\"observed\":[\"home-dir-only\"]}]",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 12 raw history responses\",\"observed\":[\"CNRYfx2homedironlymcp\",\"CNRYfx2homedironlymcp\",\"CNRYfx2homedironlymcp\",\"CNRYfx2homedironlymcp\",\"CNRYfx2homedironlymcp\",\"CNRYfx2homedironlymcp\",\"CNRYfx2homedironlymcp\"]}]"
+        ],
+        "summaryLine": "[fr2-11] 1/3 cases (8/10 checks) {\"mcp\":{\"cases\":3,\"casesPassed\":1,\"checks\":10,\"checksFailed\":2},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MX20",
+      "what": "entry.error stored without the rule",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (a) custom scheme redirect (audit-2 A2-F1) and about:blank#S",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > decoding: `%23S`, `%3FS`, `%3BS` and the double-encoded forms",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 selectors keep their shape; everything else in free text follows the rule > free text (error, reason) does NOT get the selector leniency: `#S` is redacted "
+        ],
+        "summary": "Tests  6 failed | 68 passed (74)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "FIX2,PROP",
+        "failedCases": [
+          "FIX2: [{\"check\":\"no canary of 23 shapes in the session view or the default tab view (error, reason, evidence, target, selector, url)\",\"observed\":[\"custom-scheme-redirect\",\"custom-scheme-redirect-query\",\"about-blank-frag\",\"about-blank-query\",\"intranet-port-frag\",\"single-label-host\",\"url-space-frag\",\"url-sp",
+          "PROP: [{\"check\":\"no SECRET of 320 generated strings in any stored entry\",\"observed\":[{\"id\":\"p0\",\"text\":\"{\\\"url\\\":\\\"`%253FCNRYp0X`\\\",\\\"n\\\":1}\",\"entry\":\"{\\\"actionType\\\":\\\"eval\\\",\\\"success\\\":false,\\\"error\\\":\\\"{\\\\\\\"url\\\\\\\":\\\\\\\"`%253FCNRYp0X`\\\\\\\",\\\\\\\"n\\\\\\\":1}\\\",\\\"executionTimeMs\\\":1,\\\"timestamp\\\":\\\"2026-10-01T",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 12 raw history responses\",\"observed\":[\"token=\",\"access_token\",\"CNRYfx2customschemeredirectmcp\",\"CNRYfx2customschemeredirectquerymcp\",\"CNRYfx2aboutblankfragmcp\",\"CNRYfx2aboutblankquerymcp\",\"CNRYfx2intranetportfragmcp\",\"CNRYfx2singlelabelhostmcp\",\"CNRYfx2urlspacefragmcp\""
+        ],
+        "summaryLine": "[fr2-11] 0/3 cases (7/10 checks) {\"mcp\":{\"cases\":3,\"casesPassed\":0,\"checks\":10,\"checksFailed\":3},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    }
+  ]
+}

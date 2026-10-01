@@ -1,0 +1,148 @@
+{
+  "startedAt": "2026-09-30T21:54:01.460Z",
+  "finishedAt": "2026-09-30T22:02:38.262Z",
+  "cases": 1,
+  "casesPassed": 0,
+  "checks": 9,
+  "checksFailed": 2,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 1,
+      "casesPassed": 0,
+      "checks": 9,
+      "checksFailed": 2
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "cli:FIX2"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [
+      71872
+    ],
+    "ownCliChromeProfileDirs": [
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790805241717"
+    ],
+    "childPidsStarted": [
+      66728,
+      65452,
+      67556,
+      76436,
+      19224,
+      54632,
+      44524,
+      58876,
+      48428,
+      47512,
+      57424,
+      62824,
+      31488,
+      35144,
+      49920,
+      30352,
+      56916,
+      70168,
+      62668,
+      67128,
+      51348,
+      21836,
+      27884,
+      33820,
+      52220,
+      51436,
+      30376,
+      50048,
+      45516,
+      57468,
+      54600,
+      7468,
+      75520,
+      56432,
+      68032,
+      59484,
+      76544,
+      37340,
+      58932,
+      8328,
+      35684,
+      58296,
+      44912,
+      73976,
+      46888,
+      45132,
+      23196,
+      52800,
+      41412,
+      20460,
+      57192,
+      54976,
+      34792,
+      75432,
+      45660,
+      65600,
+      46752,
+      45320,
+      67996,
+      50196,
+      65452,
+      54212,
+      42064,
+      55748,
+      39008,
+      46568,
+      58500,
+      67372
+    ]
+  },
+  "evidenceFiles": [],
+  "results": [
+    {
+      "surface": "cli",
+      "case": "FIX2",
+      "pass": false,
+      "checks": 9,
+      "failed": [
+        {
+          "check": "cwd under the home directory is stored home-relative (~/dir); a cwd outside it as <dir> (and its canary-named directory is not stored)",
+          "observed": {
+            "cwds": [
+              "C:\\Users\\Varad M\\fr2-11-cwd-inside-cli-73112",
+              "E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\.fr2-11-cwd-outside-CNRYcwdoutcli-73112"
+            ],
+            "outDirUnderHome": false
+          }
+        },
+        {
+          "check": "the home directory (its path and its name) appears nowhere in the new lines",
+          "observed": {
+            "homeLeak": [
+              "C:\\\\Users\\\\Varad M"
+            ],
+            "homeBase": "Varad M"
+          }
+        }
+      ],
+      "commands": 65
+    }
+  ]
+}

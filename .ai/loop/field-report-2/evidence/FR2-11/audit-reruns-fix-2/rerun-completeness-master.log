@@ -1,0 +1,55 @@
+BAD navigate                     added=0/1  verifEq=false tier=-
+BAD navigate+settle              added=0/1  verifEq=true tier=- isError
+BAD eval                         added=0/1  verifEq=true tier=-
+BAD eval throws                  added=0/1  verifEq=true tier=- isError
+OK  click                        added=1/1 click verifEq=false tier=-
+BAD click+settle                 added=0/1  verifEq=true tier=- isError
+OK  click fails (retries)        added=1/1 click(FAIL) verifEq=false tier=-
+BAD click rejected pre-dispatch  added=0/1  verifEq=true tier=- isError
+OK  type                         added=1/1 type verifEq=false tier=-
+OK  press_key                    added=1/1 press_key verifEq=false tier=-
+OK  focus                        added=1/1 focus verifEq=false tier=-
+OK  scroll                       added=1/1 scroll verifEq=false tier=-
+OK  hover                        added=1/1 hover verifEq=false tier=-
+OK  select_option                added=1/1 select_option verifEq=false tier=-
+OK  select_options               added=1/1 select_option verifEq=false tier=-
+OK  wait_for_selector            added=1/1 wait_for_selector verifEq=false tier=-
+OK  wait_for met                 added=1/1 wait_for verifEq=false tier=-
+OK  wait_for timeout             added=1/1 wait_for(FAIL) verifEq=false tier=-
+OK  click_by_text                added=1/1 click_by_text verifEq=false tier=-
+OK  click_by_role                added=1/1 click_by_role verifEq=false tier=-
+OK  type_by_label                added=1/1 type_by_label verifEq=false tier=-
+OK  fill_form 2 fields           added=2/2 type,type verifEq=true tier=-
+OK  upload_file                  added=1/1 upload_file verifEq=false tier=-
+BAD upload_file_via_trigger      added=0/1  verifEq=false tier=-
+OK  right_click                  added=1/1 click verifEq=false tier=-
+BAD drag_and_drop                added=0/1  verifEq=true tier=- isError
+OK  touch_tap                    added=1/1 touch_tap verifEq=false tier=-
+BAD click_at_point               added=0/1  verifEq=false tier=-
+BAD drag_at_points               added=0/1  verifEq=false tier=-
+BAD set_clipboard                added=0/1  verifEq=false tier=-
+OK  download_file                added=1/1 download_file verifEq=false tier=-
+OK  click -> nav link            added=1/1 click verifEq=false tier=-
+BAD go_back                      added=0/1  verifEq=false tier=-
+BAD go_forward                   added=0/1  verifEq=false tier=-
+BAD reload                       added=0/1  verifEq=false tier=-
+OK  click opens alert            added=1/1 click verifEq=false tier=-
+OK  handle_dialog (not by spec)  added=0/0  verifEq=true tier=-
+OK  screenshot (read)            added=0/0  verifEq=false tier=-
+OK  snapshot (read)              added=0/0  verifEq=true tier=-
+OK  new_tab (G-C)                added=0/0  verifEq=true tier=-
+OK  set_cookie (G-C)             added=0/0  verifEq=true tier=-
+BAD audit (navigates)            added=0/1  verifEq=true tier=-
+BAD navigate bad url             added=0/1  verifEq=true tier=- isError
+duplicate pair 2 ["false:No visible element found for selector: #b","false:No visible element found for selector: #b"]
+seq contiguous false
+file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-11/audit-reruns-fix-2/lib.mjs:47
+  const rpc = (method, params, timeoutMs = 120000) => new Promise((res, rej) => { const k = id++; const t = setTimeout(() => rej(new Error('timeout ' + method)), timeoutMs); pending.set(k, (m) => { clearTimeout(t); res(m); }); child.stdin.write(JSON.stringify({ jsonrpc: '2.0', id: k, method, params }) + '\n'); });
+                                                                                                                                 ^
+
+Error: timeout tools/call
+    at Timeout._onTimeout (file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-11/audit-reruns-fix-2/lib.mjs:47:130)
+    at listOnTimeout (node:internal/timers:605:17)
+    at process.processTimers (node:internal/timers:541:7)
+
+Node.js v25.0.0

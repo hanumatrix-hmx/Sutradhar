@@ -1,0 +1,25 @@
+{
+  "ranAt": "2026-10-01T03:08:22.850Z",
+  "total": 1,
+  "caught": 1,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MX36",
+      "what": "upload_file_via_trigger (a runtime-level action) stores a basename with no extension",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 upload_file target: the basename, unless it has no extension (a user / home directory name) > upload_file_via_trigger (a runtime-level action) follows the "
+        ],
+        "summary": "Tests  1 failed | 73 passed (74)"
+      },
+      "shaAfter": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "restoredIdentical": true,
+      "caught": true
+    }
+  ]
+}

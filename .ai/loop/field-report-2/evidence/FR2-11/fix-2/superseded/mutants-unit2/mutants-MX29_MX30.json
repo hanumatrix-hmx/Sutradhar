@@ -1,0 +1,44 @@
+{
+  "ranAt": "2026-09-30T22:36:44.956Z",
+  "total": 2,
+  "caught": 2,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MX29",
+      "what": "the scheme:// exemption looks anywhere in the token, so a path before it is kept (`C:\\Users\\S\\http://x` style)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > a path in front of a scheme:// keeps no directory: only the no-separator-before-",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 structured target: FR2-09 D5 (origin + pathname) then the rule > the rule and D5 agree: for every generated case the bare URL function and the text functio"
+        ],
+        "summary": "Tests  3 failed | 64 passed (67)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX30",
+      "what": "OVER-redaction: a bare `#id` drops the text after it (the exemption is removed)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > a bare #id does not drop the text after it (over-redaction bound), while a ? doe"
+        ],
+        "summary": "Tests  1 failed | 66 passed (67)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    }
+  ]
+}

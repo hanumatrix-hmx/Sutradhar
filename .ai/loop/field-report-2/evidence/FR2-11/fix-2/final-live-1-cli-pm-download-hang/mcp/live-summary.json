@@ -1,0 +1,150 @@
+{
+  "startedAt": "2026-10-01T04:08:17.134Z",
+  "finishedAt": "2026-10-01T04:08:45.078Z",
+  "cases": 11,
+  "casesPassed": 11,
+  "checks": 80,
+  "checksFailed": 0,
+  "perSurface": {
+    "mcp": {
+      "cases": 11,
+      "casesPassed": 11,
+      "checks": 80,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [],
+  "informational": [
+    {
+      "surface": "mcp",
+      "case": "L3-timing",
+      "evals": 205,
+      "elapsedMs": 104,
+      "perCallMs": 1
+    },
+    {
+      "surface": "mcp",
+      "case": "L9-overhead",
+      "evals": 200,
+      "totalMs": 96,
+      "meanPerCallMs": 0.48
+    }
+  ],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": [
+      86980,
+      40420
+    ]
+  },
+  "evidenceFiles": [
+    "mcp-L1-history.json",
+    "mcp-L2-session.json",
+    "mcp-raw-history-responses.txt"
+  ],
+  "results": [
+    {
+      "surface": "mcp",
+      "case": "L1",
+      "pass": true,
+      "checks": 18,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L1b",
+      "pass": true,
+      "checks": 12,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L1d",
+      "pass": true,
+      "checks": 8,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L2",
+      "pass": true,
+      "checks": 10,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L3",
+      "pass": true,
+      "checks": 7,
+      "failed": [],
+      "elapsedMs": 104
+    },
+    {
+      "surface": "mcp",
+      "case": "L4",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "L9-overhead",
+      "pass": true,
+      "checks": 1,
+      "failed": []
+    },
+    {
+      "surface": "mcp",
+      "case": "PM",
+      "pass": true,
+      "checks": 10,
+      "failed": [],
+      "cells": 1600,
+      "navigations": 35
+    },
+    {
+      "surface": "mcp",
+      "case": "FIX2",
+      "pass": true,
+      "checks": 6,
+      "failed": [],
+      "shapes": 23
+    },
+    {
+      "surface": "mcp",
+      "case": "PROP",
+      "pass": true,
+      "checks": 2,
+      "failed": [],
+      "generated": 320,
+      "seed": 20261003
+    },
+    {
+      "surface": "mcp",
+      "case": "PRIV-sweep",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    }
+  ]
+}

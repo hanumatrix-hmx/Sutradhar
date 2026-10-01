@@ -1,0 +1,25 @@
+{
+  "ranAt": "2026-10-01T00:21:29.552Z",
+  "total": 1,
+  "caught": 1,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MX33",
+      "what": "buildHistoryLine stores the actions it is handed as they are (a raw entry reaches the file)",
+      "file": "packages/cli/src/history-file.ts",
+      "shaBefore": "10914f879a99929a6d5726dc552b0293fc858cb3ef57b6b3bdd6ab55aa83f93a",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 buildHistoryLine runs the SAME function over every action it is handed (defense in depth) > a RAW (never sanitized) action with a secret in every text fiel"
+        ],
+        "summary": "Tests  1 failed | 63 passed (64)"
+      },
+      "shaAfter": "10914f879a99929a6d5726dc552b0293fc858cb3ef57b6b3bdd6ab55aa83f93a",
+      "restoredIdentical": true,
+      "caught": true
+    }
+  ]
+}

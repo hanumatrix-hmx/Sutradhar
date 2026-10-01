@@ -1,0 +1,42 @@
+{
+  "ranAt": "2026-09-30T22:43:22.563Z",
+  "total": 2,
+  "caught": 2,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MX31",
+      "what": "selector mode no longer cuts a `#` that has no identifier after it (`host.example#` then a space and the secret)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "41b178fee2a66e7595990ce92d06b4929965b20d51e20c9b9837c8e5e36dbc34",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 selectors keep their shape; everything else in free text follows the rule > a `#` with no identifier after it is a fragment even with no URL-shaped text ar"
+        ],
+        "summary": "Tests  1 failed | 68 passed (69)"
+      },
+      "shaAfter": "41b178fee2a66e7595990ce92d06b4929965b20d51e20c9b9837c8e5e36dbc34",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX32",
+      "what": "a lone `#` no longer drops the text after it (`# S` keeps S)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "41b178fee2a66e7595990ce92d06b4929965b20d51e20c9b9837c8e5e36dbc34",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > a lone `#` (no identifier after it) drops the text after it: `# S` may be a frag"
+        ],
+        "summary": "Tests  1 failed | 68 passed (69)"
+      },
+      "shaAfter": "41b178fee2a66e7595990ce92d06b4929965b20d51e20c9b9837c8e5e36dbc34",
+      "restoredIdentical": true,
+      "caught": true
+    }
+  ]
+}

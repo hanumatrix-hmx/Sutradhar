@@ -1,0 +1,20 @@
+{"timestamp":"2026-10-01T03:38:22.798Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-10-01T03:38:23.027Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790825902798_1","context":{"isIncognito":false}}
+{
+ "gotoErr": "net::ERR_ABORTED at com.example.app:/cb#access_token=CNRYsdkcustom",
+ "leaks": [],
+ "entries": [
+  {
+   "t": "navigate",
+   "target": "about:blank",
+   "reason": "'navigate' verified: a same-document navigation moved the tab to about:blank[redacted]"
+  },
+  {
+   "t": "navigate",
+   "target": "<dir>",
+   "error": "net::ERR_ABORTED at <dir>"
+  }
+ ]
+}
+{"timestamp":"2026-10-01T03:38:23.282Z","level":"info","message":"[BrowserSession] Closed session sess_1790825902798_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-10-01T03:38:23.282Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790825902798_1","context":{"reason":"Runtime shutdown"}}

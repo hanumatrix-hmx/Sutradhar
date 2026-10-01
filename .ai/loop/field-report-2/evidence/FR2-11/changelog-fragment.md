@@ -1,6 +1,6 @@
 # FR2-11 changelog fragment (Full action history)
 
-Status: **VERIFY (fix-1)** (audit-1 REOPENed privacy, findings F1-F6 fixed and self-verified; not self-audited, an independent re-audit follows).
+Status: **VERIFY (fix-2)** (audit-1 and audit-2 REOPENed privacy; the redaction is now the character rule; not self-audited, audit-3 follows and is the last standard audit).
 
 ## Added
 - `browser.get_action_history` records more, and says how much it lost:
@@ -38,30 +38,41 @@ Status: **VERIFY (fix-1)** (audit-1 REOPENed privacy, findings F1-F6 fixed and s
 - **fix-1 (privacy):** in free text a cut URL now ends in `[redacted]` (was: silently shortened); the stored page URL (`url`, a navigate `target`)
   is still origin + path with nothing appended. A `file:` URL is stored as `file://…/<basename>` (FR2-09 D5 shows the full local path in frame
   labels; history deliberately does not). CLI `upload` / `download` / `screenshot` / `audit` / `compare` path arguments are a basename or `<dir>`.
+- **fix-2 (privacy):** the redaction no longer recognises URL shapes: it is the character rule below (cut at the first `?` `#` `;` and drop the rest of the text, `=` / `&` tokens replaced, userinfo stripped, a path token reduced to its last segment, encodings decoded first). Free text that merely contains those characters is redacted too (over-redaction, documented). A custom-scheme redirect, `about:blank#S`, `intranet:8080/p#S`, a URL with a space and any scheme-less URL no longer keep their tail; `cwd` is `~/dir` or `<dir>`; a navigate `target` such as `com.example.app:/cb` is stored as `<dir>`.
 
-## Privacy note (rewritten by fix-1 after audit-1 REOPEN: the first version claimed "query strings and fragments are never stored", which was false for `?q=(a)&token=X`, scheme-less CLI URLs and local paths)
+## Privacy note (rewritten by fix-2 after audit-2 REOPEN: fix-1 recognised URL shapes and claimed more than it did; `com.example.app:/cb#access_token=S`, `about:blank#S` and `intranet:8080/p#S` kept their fragment)
 `history.jsonl` and the MCP / SDK history record commands and actions, so they are written to be safe to keep. ONE function
-(`redactHistoryText`, packages/browser/src/session/action-history.ts) redacts every stored string for every surface; it is fail-closed
-and token-based (it does not try to recognise URL grammar):
-- **URL markers.** The text is split on whitespace. A token that carries a marker (`scheme://`, a leading `//`, `host[:port]/` or `host?x`
-  with or without a scheme, IPv4, IPv6 `[::1]:P`, `localhost`, `user:pass@`, `data:`, a `?key=` query with no URL around it, a
-  percent-encoded `http%3A%2F%2F`) is cut from its FIRST `?`, `#` or `;` to the end of the token and replaced by `[redacted]`, so
-  `?q=(a)&token=X`, `?ids[]=1&t=X`, `?q={x}`, `?q=it's`, `#frag`, `;jsessionid=X` all go; userinfo (`user:pass@`) is removed; `data:` bodies
-  become `data:…`; `blob:` keeps its origin. After a cut the following tokens are dropped up to the next URL or path (a URL typed with
-  literal spaces cannot leak its tail). A form-encoded body (`a=1&token=X`) is replaced whole. The display origin and path stay visible.
-- **Local paths.** An absolute Windows (`C:\...`, `C:/...`), UNC, POSIX or `~/` path and a `file://` URL are reduced to their **basename**,
-  also when the path contains spaces (`file://…/file.txt` for a file URL; a query on a path is cut). In the CLI, `upload` / `screenshot` /
-  `compare` file arguments are stored as a basename even when relative and `download` / `audit` directory arguments as `<dir>`.
+(`redactHistoryText`, packages/browser/src/session/action-history.ts) redacts every stored free-text string for every surface. It is the
+CHARACTER RULE: it never asks what a token is (a URL, a path, a word), it looks at characters only, so scheme, host shape, case, unicode and
+percent-encoding do not matter.
+- **The rule.** Encoded forms of the rule's characters are decoded first (`%3F %23 %3B %3D %26 %40 %2F %5C %3A`, also double-encoded
+  `%253F`, JSON unicode / hex escapes, fullwidth forms). The text is split on ANY Unicode whitespace (space, tab, newline, NBSP, zero-width,
+  ideographic). In each token everything from the first `?`, `#` or `;` is replaced by `[redacted]` and the rest of the text after that cut
+  is dropped (a bare `#id` token does not drop the text after it). A token that still contains `=` or `&` is replaced whole (a `&` also drops
+  the rest). `userinfo@` is stripped (up to the last `@` of the authority). A token with a `/` or `\` followed by more text is reduced to its
+  last segment, whatever the drive letter, UNC form or slash direction; a last segment with no `.` is a directory-like name and becomes
+  `<dir>`. A `scheme://` URL keeps origin + path, `file:` becomes `file://…/<name>`, `blob:` keeps its origin, `data:` / `javascript:` bodies
+  become `data:…` / `javascript:…`. Input beyond 8,000 characters is cut and the partial last token dropped.
+- **Over-redaction is deliberate and bounded.** Ordinary text that contains those characters is redacted too (`Did you mean x?` is stored as
+  `Did you mean x[redacted]`; a site-relative `/api/users` becomes `<dir>`; eval code `a = 1; b` becomes `a [redacted] 1[redacted]`). This only
+  affects what is stored and printed by `sutradhar history`, never a live result.
+- **Selectors keep their shape.** The `selector` field and the CLI selector arguments (click, hover, type, select, press, drag, upload,
+  download) use the selector variant of the same function: `#id`, `button#save`, `[name=q]` stay readable; a `?`, `;` or `&`, a `#` with no
+  identifier after it and a `#` after something URL-shaped are cut. A bare `#S` or `[a=S]` IS a valid selector and is stored (GAP-364).
+- **Local paths and `cwd`.** The CLI stores `upload` / `screenshot` / `compare` file arguments as a basename (`<dir>` when it has no
+  extension) and `download` / `audit` directory arguments as `<dir>`. `cwd` is `~` / `~/sub/dir` under the home directory, otherwise `<dir>`:
+  the home directory's own name never appears in a line.
 - **Lengths only:** typed text (`type`, `fill_form`, `type_by_label`), `select` values, clipboard text, dialog prompt text (`<8 chars>`).
   A typed value quoted in a failure message (and the field content quoted by "type did not land") is scrubbed.
 - **Not recorded:** eval results, CLI flags (so a `--expect-text` / `--text` value is not in `args`), cookie / storage values, `handle_dialog`
   (MCP), tab lifecycle and state setters.
-- **Stored as written (capped at 200 / 300 characters, redacted by the rule above, not masked):** the first 200 characters of `eval` code
-  (a literal secret in it is stored), `click_by_text` text, selectors, `expect.text` / `wait_for` text as they appear in the action
-  `selector` and in `verification.evidence`, page text quoted in error messages, URL *paths* of full URLs (a `/reset/<token>` path is kept)
-  and the CLI line's `cwd`. Do not `eval` literal secrets if the state directory is shared. The file is created 0600 on POSIX and sits next
-  to `state.json`, which already grants full control of the browser.
-- Lines written by a build before fix-1 are not rewritten (`history` re-applies the rule when it prints; `history --json` is verbatim).
+- **Stored (capped at 200 / 300 characters, through the rule above, not masked):** the first 200 characters of `eval` code (a literal secret
+  with no rule character is stored), `click_by_text` text, `expect.text` / `wait_for` text, page text quoted in error messages, URL *paths* of
+  `scheme://` URLs. Do not `eval` literal secrets if the state directory is shared. The file is created 0600 on POSIX and sits next to
+  `state.json`, which already grants full control of the browser.
+- Lines written by a build before fix-2 are not rewritten (`history` re-applies the rule when it prints; `history --json` is verbatim).
+- Tests: seeded property tests (seed 20261001, 6,000 generated strings; CLI seed 20261012, 4,000 strings x 28 verbs x 3 positions), isolated
+  per-rule cells, the auditors' attack generator (375 cells, 0 leaking), 35 mutants of the rule all caught.
 
 ## Not covered (logged as gaps)
 The SDK has no public history API (read `runtime.getActionHistoryReport`); MCP history is not persisted across server restarts; tab

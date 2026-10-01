@@ -194,3 +194,98 @@ Nothing is reused from an earlier round. Two things this section found about its
 | # | How it could pass while broken | Ruled out by |
 |---|---|---|
 | B-a | Ledger / gaps / decisions say done but are not | `final/fresh-bookkeeping.log`: highest gap `GAP-362`, 10 new rows GAP-353..362 (the previous maximum was GAP-352, new numbers start at max + 1); the ledger row reads `**VERIFY (fix-1)**`; the decisions entry `2026-10-01 -- FR2-11 fix-1 ...` exists. Status is VERIFY, not DONE: a re-audit follows. |
+
+---
+
+# FR2-11 fix-2: False-pass analysis (cycle 2, the character rule)
+
+Fresh queries after the last source commit are in `fix-2/final/fresh-queries.log` (re-run at the end, nothing reused). Evidence index: `fix-2/README.md`.
+A cell is "ruled out" only by a command that re-reads LIVE state (the built `dist`, the real history file, a real tool call) after the action.
+
+## P1. One function, the character rule, on every surface
+
+| # | How it could pass while broken | Ruled out by |
+|---|---|---|
+| P1-a | The unit tests exercise `redactHistoryText` while another surface keeps its own redactor (the CLI args, the CLI error, `actions[]`, the human output, the structured `url` / `target`) | Mutants that split ONE surface off: MX10 (CLI `fin` replaced by a naive redactor), MX18 (human output stops re-applying the rule), MX19 (structured URL skips the rule), MX20 (`entry.error` unredacted), MX33 (`buildHistoryLine` stores raw actions): every one is CAUGHT in `fix-2/mutants-unit-final/console.log`, and MX10 / MX20 / MX9 also FAIL the live script (`fix-2/mutants-live-before-step6/`). |
+| P1-b | The property check is vacuous (the secret is not in the text, or the check cannot see a leak) | `char-rule.spec.ts`: "every secret is present in its own text" (6,000 distinct), "the property check catches an identity redactor on every case" (6,000 of 6,000); live: the check `PROBE: the live tool result of every failing eval DID show its shape` (23 of 23 on MCP, bundle MCP, CLI, bundle CLI); `audit-reruns-fix-2/attack-gen-negative-control.log`: attack-gen against an identity shim reports `cells=375 leaking=375`. |
+| P1-c | Unit tests run against `src` (vitest aliases the workspace to source) while the shipped `dist` / bundle is stale | The live passes run the built `dist` and the bundle after `turbo run build --force`; `fresh-queries.log` section 4 shows the dist tree hash taken right after the build equals the hash now; section 5 greps the three bundle files for the new code (`decodeDelimiters`, `BARE_ID`) and for ZERO of the old (`findUrlMarker`, `SCHEMELESS_HOST`, `QUERY_LIKE`, `URL-looking token`). |
+| P1-d | The rule passes because it erases everything | `keep` checks: the matrix keeps `scheme://` origin + path and file names (`privacy-matrix.spec.ts`, eraser self-test fails every `keep`), the live checks `navigations: about:blank and the http shapes still show their target`; mutant MX17 (OVER-redaction: a URL reduced to its last segment) is CAUGHT, unit and live. |
+| P1-e | Real input has rule characters in engine-generated strings, which the synthetic tests do not contain | FOUND by the regression run, not by my tests: FR2-08 L12 pins the wait_for selector `text="Saved successfully"` and failed 476/478 under the rule (`superseded/regression-before-step9/fr2-08.log`). Fixed (`conditionSelector`: the engine's key syntax is exempt, its payload is not) and pinned by `char-rule.spec.ts` "wait_for selector" + mutants MX34 / MX35; FR2-08 is 478/478 again (`final-chain/regression/fr2-08.log`). `upload_file_via_trigger`'s basename had the same gap (MX36). |
+
+## P2. Paths and `cwd`
+
+| # | How it could pass while broken | Ruled out by |
+|---|---|---|
+| P2-a | The canary sits in the file name (stored by design) so "no leak" proves nothing | Canaries are in DIRECTORY segments (`C:\Users\<canary>\docs\f.txt`, UNC, forward slashes, another drive, POSIX) and in the LAST segment of an extension-less path (`C:\Users\<canary>` -> `<dir>`); the file name `f.txt` is a `keep`. Live: MCP / CLI / SDK / bundle `FIX2` (7 path shapes, uploads of missing paths really failed and their live error carried the path: `the missing-path uploads really failed and their live error carried the path`). |
+| P2-b | `cwd` passes because the OS temp dir is not under the home directory | The live CLI `FIX2` makes a directory UNDER the real home (`~/fr2-11-cwd-inside-...`) and one outside it, and checks `cwd === "~/<name>"` / `"<dir>"`, with the expectation computed by `path.relative(os.homedir(), ...)` independently of the code; it also searches the raw bytes for the home path (three spellings) and for the home directory's own NAME. Mutant MX9 (cwd stored raw) FAILS that live check. |
+| P2-c | The home directory name is absent only because the home is short / generic | The check searches `path.basename(os.homedir())` only when it is at least 4 characters (here `Varad M`, 7), and says so in the check text when it is not searched. |
+
+## P3. Eval preview (decision D-fix2-3)
+
+| # | How it could pass while broken | Ruled out by |
+|---|---|---|
+| P3-a | The pinned expectation was computed with the function under test | The expectations are hand-written literals: `2+0 /*t1*/` -> `2+0 <dir>`, `const x = 1; fetch("https://t.test/?k=S")` -> `const x [redacted] 1[redacted]`, `1+1`, `document.title` unchanged, 200-character cap with an ellipsis (`char-rule.spec.ts`, `action-history.spec.ts` H5 / H6, `capability-runtime` eval test). |
+| P3-b | The preview still leaks through another field (the eval `error`, the frame selector) | The property test stores the SAME text in `target` (eval), `error`, `selector`, `url`, verification reason and evidence, and in `evalCodePreview(fetch(JSON.stringify(text)))`. |
+
+## P4. Structured `target` (FR2-09 D5) is consistent with the rule
+
+| # | How it could pass while broken | Ruled out by |
+|---|---|---|
+| P4-a | D5 and the rule disagree and each test only exercises one | `char-rule.spec.ts` "the rule and D5 agree": for every generated case `redactHistoryUrl` AND `redactHistoryText` drop the secret; `%3F` in a path (D5 keeps pathnames) is cut because the rule runs on the D5 result (mutant MX19). |
+
+## P5. Docs, `--help`, tool descriptions
+
+| # | How it could pass while broken | Ruled out by |
+|---|---|---|
+| P5-a | The source text was edited but the BUILT help / description / bundle still carry the old claim | `fresh-queries.log` section 6: the BUILT `node packages/cli/dist/cli.js --help` contains the new sentence once; the BUILT `packages/mcp-server/dist/tools.js` contains it; section 5: the bundles contain it and contain `URL-looking token` zero times. Tests pin both texts (`help-text.spec.ts`, `tools.spec.ts` M5) including a negative assertion on the old wording. |
+| P5-b | The documented rule is not what the code does | The rule sentence in the CLI README, AGENT_SETUP, the changelog, `--help` and the tool description was written from the code header; every clause has an isolated cell or a property (decode, whitespace, cut, `=` / `&`, userinfo, last segment, `<dir>`, `scheme://`, selector variant, cwd, input cap). The old claims audit-2 disproved ("fragments are cut", "any URL-looking token", "host[:port]/", "a URL typed with literal spaces cannot leak its tail", "UNC -> basename") are gone: `git grep -n "URL-looking token\|host\[:port\]" -- . ':!.ai' ':!packages/*/tests'` returns only the negative assertion in `help-text.spec.ts` that the old wording is gone. |
+
+## P6. Property tests
+
+| # | How it could pass while broken | Ruled out by |
+|---|---|---|
+| P6-a | The generator is written around the redactor and cannot reach what it misses | The generator (`tools/scenario-suite/lib/fr2-11-property.mjs`) never calls the redactor; seeds: browser 20261001 (6,000), CLI 20261012 (4,000 x 28 verbs x 3 positions), live 20261003 / 20261004 / 20261005. A SECOND, independent check: `fix-2/final/fuzz2.mjs`, an ORACLE fuzz over a hostile alphabet that does not use the generator's forms: 400,000 strings, 0 violations (`final/fuzz-oracle-final.txt`), and `fuzz.mjs` over 120 seeds x 6,000 = 720,000 generator strings, 0 leaks (`final/fuzz-generator-final.txt`). The fuzz is not decoration: it FOUND two real bugs after my cells were green (selector `host#` + space + secret; a `#a;b` token that did not drop what follows), fixed and pinned (MX31, MX32). |
+| P6-b | A fixed seed hides a leak that other seeds expose | 120 + 10 other seeds above; the unit seed is recorded and deterministic (`generate(seed)` equality test), so a failing string is reproducible by id. |
+
+## P7. Isolated cells (one rule each)
+
+| # | How it could pass while broken | Ruled out by |
+|---|---|---|
+| P7-a | A cell is also protected by a second rule, so deleting its own rule does not fail it (the audit-2 B2 / B3 / B4 problem) | Each rule has a mutant and the failing test names are in `fix-2/mutants-unit-final/mutants-fix2.json`: MX1 (`#`), MX2 (`?`), MX3 (`;`), MX4 (`=` / `&`), MX5 (userinfo), MX6 / MX6b (decoding / double-decoding), MX7 (whitespace; failing test: only the whitespace cell), MX8 (path rule), MX9 (cwd; failing tests: only the cwd cells), MX13 (input cap; only the cap cell), MX14 / MX36 (upload targets), MX16 (`<dir>`). |
+| P7-b | A mutant is "caught" but only by an unrelated test, or is an equivalent mutant | Found and fixed: the auditor's B1 (userinfo FIRST `@`) SURVIVED my first cells because the strip runs twice; a THREE-`@` cell now kills it (MX5b). MX29 and MX30 survived once (a path before `scheme://`; the bare-`#id` over-redaction bound) and got cells. |
+
+## P8. The auditors' probes and attack generator, unmodified
+
+| # | How it could pass while broken | Ruled out by |
+|---|---|---|
+| P8-a | The rerun used a modified copy | `audit-reruns-fix-2/sha-originals.txt` was produced from `audit-2/` and `sha256sum -c` prints no mismatch (`fresh-queries.log` section 7: 0); the audit-1 files (`lib`, `privacy-*`, `typebylabel`) are byte-equal to `audit-1/` (checked by hand: SAME x6). |
+| P8-b | attack-gen ran against a stale or different build | It prints the root it loaded; head: the worktree `packages/*/dist` after the force build; bundle: `mkshim-bundle-attack-gen.cjs` cuts the BUNDLED `action-history` and `history-file` sections out of `packages/sutradhar/dist/cli-bin.js` and `mcp-cli.js` into a shim root, so the unmodified generator loads the shipped code: `cells=375 leaking=0` on all three (`attack-head.log`, `attack-bundle-cli-bin.log`, `attack-bundle-mcp-cli.log`; fix-1 had 104 leaking cells, audit-2). |
+| P8-c | The live probes pass because the page values they look for are also stored by design | The probes' own DOCUMENTED residual list (eval code literal, `expect.text`, `wait_for` text, file basenames, a page value quoted in an eval error: `CNRYlsthrown, CNRYevalcode, CNRYexptext, CNRYwaittext, CNRYupname, CNRYdlname`) is the second element of the same output line and is unchanged from audit-2; `unexpectedLeaks` is `[]` on head and bundle for MCP, CLI, SDK, paren and type_by_label. |
+| P8-d | Verification deep-equality passes because both sides are the same object | `live-attack-*.json` `verif`: `deepEqualSanitized` is true for 9 of 10 and false only for the typed-value scrub (the documented exception, as in audit-2); `deepEqualRaw` is now false in 4 more places because the rule redacts the stored text (an `about:blank#S` fragment in a reason, a `text="..."` in a wait_for reason, an expected-URL query, the selector `#missing` quoted in an error), besides the typed-value scrub: the expected consequence of the rule, stated here; AC5 as the orchestrator defined it (history == the SANITIZED result) holds 9 of 10 with the one documented exception. |
+
+## P9. Live script
+
+| # | How it could pass while broken | Ruled out by |
+|---|---|---|
+| P9-a | The new cases did not run, or ran against the wrong surface | `final-live-{2,3,4}/<part>/live-summary.json` per surface: mcp 11 cases / 80 checks, cli 16 / 93, sdk 3 / 21, bundle 26 / 170 (56 / 364 per pass); the `FIX2` and `PROP` cases appear in each surface's jsonl; the bundle surface runs `packages/sutradhar/dist/mcp-cli.js`, `cli-bin.js` and `index.js`. |
+| P9-b | A one-process timeout hid a failure | The first exploratory pass timed out in the CLI privacy part (exit 124, kept under `superseded/`); the driver now splits each pass into 11 processes, each reports its own exit and its `cli-dirs-new.txt`; every final part exited 0. |
+| P9-c | One lucky pass, or a failure explained away | Passes 2, 3 and 4 on the final build: each 11 / 11 parts, 56 / 56 cases, 364 / 364 checks (`final-live-{2,3,4}/totals.json`). Pass 1 was 55 / 56 (`final-live-1-cli-pm-download-hang/`): the CLI privacy part failed 2 of 12 checks because the `download` command hung (exit null after 90 s) while I was running a UC-04 A/B on the same machine; it is kept, not deleted, and pass 4 replaced it. The hang is the known intermittent headed download (UC-08 on master); UC-08 isolated: 3 / 3 on this branch and 3 / 3 on master (`final-chain/ab/`). |
+| P9-d | Exactly-once, verification equality, eviction and concurrency are no longer exercised | They are cases of the same script (L1-L8, W1, N-series) and passed in every pass; the audit-1 / audit-2 probes for completeness, eviction and concurrency were also rerun (`rerun-completeness.log`: 39 OK + `seq contiguous true`; `rerun-eviction.log` 11 PASS and 2 FAIL lines that are audit-1's exact-target check of the over-redacted eval preview `2+0 <dir>`, as in audit-2 A2-F4; `rerun-concurrency.log`: 0 skipped, 40 of 40 kills clean). |
+
+## P10. Mutation
+
+| # | How it could pass while broken | Ruled out by |
+|---|---|---|
+| P10-a | A mutant is "caught" because it does not compile | The first live run of MX4 / MX5 / MX8 / MX14 was a `buildFailed` (TS6133 under noUnusedLocals) and was reported NOT CAUGHT, not hidden; the mutants were rewritten to compile and re-run (`mutants-live2-before-step6`: 4 of 4 caught live). All 13 live-capable mutants were caught live before step 6, and the MCP / CLI subset was run live AGAIN on the final build (`final-chain/mutants-live-final/`, result below). The unit driver runs vitest, not tsc, so every unit "caught" lists failing tests (`mutants-fix2.json`). |
+| P10-b | A source is left mutated or the dist is stale after a mutant | The driver compares sha256 before / after each mutant (`restored=true`, 38 of 38 in the final unit run), `fresh-queries.log` section 3 compares the four sources to their HEAD blobs, section 4 compares the dist hash to the one taken after the final build. |
+
+## P11. Final verification and regression
+
+| # | How it could pass while broken | Ruled out by |
+|---|---|---|
+| P11-a | A tolerance absorbs a regression | FR2-07 488 / 488 and the GAP-325 tolerance fired 0 times (`tolerated: []` in `live-mcp.jsonl` and `live-bundle.jsonl` of `final-chain/regression/fr2-07/`). FR2-08: see P1-e (the regression was REAL, was fixed, and is 478 / 478 on the final build: `final-chain/regression/fr2-08.log`). FR2-04: 110 passed / 1 failed / 2 skipped, the failure is `L13.headed.click-exit0`; on master the same suite gives 110 / 1 / 2 with `L13.headed.snap-exit3` (`final-chain/ab/fr2-04-master.log`, `fr2-04-head.log`): the headed L13 case is unstable on both. CLI scenario suite: UC-04, UC-05, UC-08, UC-12 failed in the full run (10 / 14; fix-1 11 / 14; master 12 / 14 at fix-1 time). UC-04 is Google Maps (external): 9 / 9 fail here and 8 / 9 fail on master today (`final-chain/regression/ab-uc04/`); UC-05 / UC-12 fail on master too (fix-1 A/B); UC-08 is the intermittent download hang (isolated 3 / 3 pass on both). None touches history. |
+| P11-b | The master I compare against is not master | `E:\AI-Cache\tmp\fr211-master` was verified byte-equal (CRLF-normalised) to commit `fdae749` for 5,094 of 5,098 files in fix-1 (the 4 differences are three test specs and a png); unchanged. |
+
+## Bookkeeping
+
+Highest gap before this cycle GAP-362 -> new rows GAP-363..GAP-371 (max + 1, computed by the script `append-gaps.cjs` that refuses to run unless the maximum is 362); the ledger row reads `**VERIFY (fix-2)**`; changelog-fragment and `docs/22-changelog.md` carry the rule; `decisions.md` has the entry "FR2-11 fix cycle 2 (Executor)". Not self-declared done: audit-3 follows.

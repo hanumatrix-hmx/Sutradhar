@@ -1,0 +1,50 @@
+## 1. worktree, branch, HEAD
+E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041
+claude/fr2-11-action-history
+d62da3e
+commits since 719b4fe: 10
+
+## 2. tracked changes under packages/ and tools/ vs HEAD (must be empty)
+(none)
+
+## 3. the four redaction sources are byte-equal (CRLF-normalised) to their HEAD blobs
+IDENTICAL packages/browser/src/session/action-history.ts
+IDENTICAL packages/cli/src/history-file.ts
+IDENTICAL packages/mcp-server/src/tools.ts
+IDENTICAL packages/cli/src/cli.ts
+
+## 4. dist tree hash NOW vs the hash taken right after the final build (no rebuild between the live passes and now)
+now    efc6c259f7f5041e7360d7c4353a91f8460f45af51b89192e7d1dd4d73017cc3
+before efc6c259f7f5041e7360d7c4353a91f8460f45af51b89192e7d1dd4d73017cc3
+SAME
+
+## 5. the shipped bundles carry the new rule and the new text, and none of the old shape machinery
+packages/sutradhar/dist/index.js: decodeDelimiters=3 BARE_ID=2 old(findUrlMarker|SCHEMELESS_HOST|QUERY_LIKE)=0 newText=0 oldClaim=0
+packages/sutradhar/dist/cli-bin.js: decodeDelimiters=3 BARE_ID=2 old(findUrlMarker|SCHEMELESS_HOST|QUERY_LIKE)=0 newText=1 oldClaim=0
+packages/sutradhar/dist/mcp-cli.js: decodeDelimiters=3 BARE_ID=2 old(findUrlMarker|SCHEMELESS_HOST|QUERY_LIKE)=0 newText=1 oldClaim=0
+
+## 6. the built CLI help and the built tool description (not the source) state the rule
+1
+tools.js loads
+1
+
+## 7. the audit copies are still byte-identical to the originals
+0
+
+## 8. the built functions on the audit-2 shapes (live call, built dist)
+"committed at about:blank#S1"                                          => "committed at about:blank[redacted]"
+"net::ERR_ABORTED at com.example.app:/cb#access_token=S2"              => "net::ERR_ABORTED at <dir>"
+"intranet:8080/p#S3"                                                   => "<dir>"
+"https://x.test/my dir#S4"                                             => "https://x.test/my dir[redacted]"
+"https://x.test/cb?q=ab S5"                                            => "https://x.test/cb[redacted]"
+"C:\\Users\\S6\\f.txt"                                                 => "f.txt"
+"\\\\srv\\share\\S7\\f.txt"                                            => "f.txt"
+"C:/Users/S8/f.txt"                                                    => "f.txt"
+"#S9"                                                                  => "[redacted]"
+"a=S10"                                                                => "[redacted]"
+"user:S11@host/"                                                       => "host/"
+"http://h.test/p%23S12"                                                => "http://h.test/p[redacted]"
+
+## 9. chrome processes referencing this run's scratch dirs, and sutradhar-cli-* dirs now
+0
+E:/AI-Cache/tmp/sutradhar-cli-1790798002107

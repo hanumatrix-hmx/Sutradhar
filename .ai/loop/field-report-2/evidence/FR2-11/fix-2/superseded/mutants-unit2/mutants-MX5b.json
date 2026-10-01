@@ -1,0 +1,28 @@
+{
+  "ranAt": "2026-09-30T22:35:10.560Z",
+  "total": 1,
+  "caught": 1,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MX5b",
+      "what": "rule (c) strips up to the FIRST `@` only (a password containing `@` keeps its tail): the auditor's mutant B1, which survived the first fix-2 cells",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > redaction is idempotent on every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (c) strips up to the LAST `@` of the authority: a password that itself cont",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 structured target: FR2-09 D5 (origin + pathname) then the rule > the rule and D5 agree: for every generated case the bare URL function and the text functio"
+        ],
+        "summary": "Tests  4 failed | 61 passed (65)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    }
+  ]
+}

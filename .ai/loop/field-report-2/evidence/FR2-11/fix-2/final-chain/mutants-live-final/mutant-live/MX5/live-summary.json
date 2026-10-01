@@ -1,0 +1,129 @@
+{
+  "startedAt": "2026-10-01T07:33:21.855Z",
+  "finishedAt": "2026-10-01T07:33:40.085Z",
+  "cases": 3,
+  "casesPassed": 0,
+  "checks": 10,
+  "checksFailed": 3,
+  "perSurface": {
+    "mcp": {
+      "cases": 3,
+      "casesPassed": 0,
+      "checks": 10,
+      "checksFailed": 3
+    },
+    "cli": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "mcp:FIX2",
+    "mcp:PROP",
+    "mcp:PRIV-sweep"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": [
+      52080,
+      85332
+    ]
+  },
+  "evidenceFiles": [
+    "mcp-raw-history-responses.txt"
+  ],
+  "results": [
+    {
+      "surface": "mcp",
+      "case": "FIX2",
+      "pass": false,
+      "checks": 6,
+      "failed": [
+        {
+          "check": "no canary of 23 shapes in the session view or the default tab view (error, reason, evidence, target, selector, url)",
+          "observed": [
+            "userinfo-noscheme"
+          ]
+        }
+      ],
+      "shapes": 23
+    },
+    {
+      "surface": "mcp",
+      "case": "PROP",
+      "pass": false,
+      "checks": 2,
+      "failed": [
+        {
+          "check": "no SECRET of 320 generated strings in any stored entry",
+          "observed": [
+            {
+              "id": "p169",
+              "text": "Navigation to user:CNRYp169X@host timed out after 30000ms",
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"Navigation to user:CNRYp169X@host timed out after 30000ms\",\"executionTimeMs\":0,\"timestamp\":\"2026-10-01T07:33:37.738Z\",\"target\":\"throw new Error(\\\"Navigation to user:CNRYp169X@host timed out afte"
+            },
+            {
+              "id": "p205",
+              "text": "Navigation to “user:CNRYp205X@host” timed out after 30000ms",
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"Navigation to “user:CNRYp205X@host” timed out after 30000ms\",\"executionTimeMs\":0,\"timestamp\":\"2026-10-01T07:33:37.767Z\",\"target\":\"throw new Error(\\\"Navigation to “user:CNRYp205X@host” timed out "
+            },
+            {
+              "id": "p243",
+              "text": "{https://u@a@CNRYp243X@host.test/p} x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x",
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"{https://u@a@CNRYp243X@host.test/p} x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x\",\"executionTimeMs\":0,\"timestamp\":\"2026-10-01T07:33:37.797Z\",\"target\":\"throw ne"
+            }
+          ]
+        }
+      ],
+      "generated": 320,
+      "seed": 20261003
+    },
+    {
+      "surface": "mcp",
+      "case": "PRIV-sweep",
+      "pass": false,
+      "checks": 2,
+      "failed": [
+        {
+          "check": "no canary in any of 12 raw history responses",
+          "observed": [
+            "CNRYfx2userinfonoschememcp",
+            "CNRYfx2userinfonoschememcp",
+            "CNRYfx2userinfonoschememcp",
+            "CNRYfx2userinfonoschememcp",
+            "CNRYfx2userinfonoschememcp",
+            "CNRYfx2userinfonoschememcp",
+            "CNRYfx2userinfonoschememcp",
+            "CNRYp169X",
+            "CNRYp169X",
+            "CNRYp205X",
+            "CNRYp169X",
+            "CNRYp205X",
+            "CNRYp243X",
+            "CNRYp169X",
+            "CNRYp205X",
+            "CNRYp243X",
+            "CNRYp282X"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "startedAt": "2026-10-01T02:10:00.793Z",
+  "finishedAt": "2026-10-01T02:10:06.503Z",
+  "cases": 3,
+  "casesPassed": 3,
+  "checks": 21,
+  "checksFailed": 0,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 3,
+      "casesPassed": 3,
+      "checks": 21,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": []
+  },
+  "evidenceFiles": [
+    "sdk-L1-report.json"
+  ],
+  "results": [
+    {
+      "surface": "sdk",
+      "case": "SDK-L1",
+      "pass": true,
+      "checks": 10,
+      "failed": []
+    },
+    {
+      "surface": "sdk",
+      "case": "SDK-PM",
+      "pass": true,
+      "checks": 6,
+      "failed": [],
+      "cells": 1600,
+      "navigations": 26
+    },
+    {
+      "surface": "sdk",
+      "case": "SDK-FIX2",
+      "pass": true,
+      "checks": 5,
+      "failed": [],
+      "shapes": 23,
+      "generated": 320,
+      "seed": 20261004
+    }
+  ]
+}

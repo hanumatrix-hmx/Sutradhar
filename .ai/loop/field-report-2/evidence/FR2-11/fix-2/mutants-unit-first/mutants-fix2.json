@@ -1,0 +1,414 @@
+{
+  "ranAt": "2026-09-30T21:50:17.114Z",
+  "total": 21,
+  "caught": 21,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MX1",
+      "what": "rule (a) without the `#` cut (a fragment is kept)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (a) cut at `#`: a bare fragment with no URL (only rule a protects it)",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (a) custom scheme redirect (audit-2 A2-F1) and about:blank#S",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (a) swallows what follows the cut: a space inside the query or the URL"
+        ],
+        "summary": "Tests  18 failed | 46 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX2",
+      "what": "rule (a) without the `?` cut (a query is kept)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H3: redacts every URL token inside free text",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > post-FR2-07 verification: evidence observed/expected redacted, detail capped at 300, scalars pass through",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (a) cut at `?`: a bare `?=S` (no `=` left after the cut, no URL, no path)"
+        ],
+        "summary": "Tests  17 failed | 47 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX3",
+      "what": "rule (a) without the `;` cut (a path parameter is kept)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H5 / N12: eval preview collapses whitespace, drops URL secrets, caps at 200",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > URL rule for navigate targets, preview rule for eval targets, generic redaction otherwise",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (a) cut at `;`: a path parameter"
+        ],
+        "summary": "Tests  17 failed | 47 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX4",
+      "what": "rule (b) removed: a token holding `=` or `&` is kept",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H5 / N12: eval preview collapses whitespace, drops URL secrets, caps at 200",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > URL rule for navigate targets, preview rule for eval targets, generic redaction otherwise",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (b): a form token `a=S` (no cut character, no URL, no path)"
+        ],
+        "summary": "Tests  21 failed | 43 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX5",
+      "what": "rule (c) removed: userinfo is kept",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (c): userinfo is stripped (no cut character, no `=`, and a trailing `/` so ",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 structured target: FR2-09 D5 (origin + pathname) then the rule > the rule and D5 agree: for every generated case the bare URL function and the text functio",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename"
+        ],
+        "summary": "Tests  16 failed | 48 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX6",
+      "what": "decoding removed (%23 %3F %3B, double-encoded, JSON escapes, fullwidth)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > decoding: `%23S`, `%3FS`, `%3BS` and the double-encoded forms",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 structured target: FR2-09 D5 (origin + pathname) then the rule > http(s) targets keep origin + pathname and nothing else; an encoded delimiter in the path ",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 structured target: FR2-09 D5 (origin + pathname) then the rule > the rule and D5 agree: for every generated case the bare URL function and the text functio"
+        ],
+        "summary": "Tests  17 failed | 47 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX6b",
+      "what": "only the DOUBLE-encoding pass removed (%253F stays %253F)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > decoding: `%23S`, `%3FS`, `%3BS` and the double-encoded forms",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 structured target: FR2-09 D5 (origin + pathname) then the rule > the rule and D5 agree: for every generated case the bare URL function and the text functio"
+        ],
+        "summary": "Tests  3 failed | 61 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX7",
+      "what": "whitespace split reduced to plain spaces (tab, NBSP, zero-width no longer separate tokens)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > whitespace: every Unicode whitespace splits tokens, so a neighbour of a redacted"
+        ],
+        "summary": "Tests  1 failed | 63 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX8",
+      "what": "the path rule dropped (a directory in a path is kept)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactHistoryUrl (H1, H2) > H2: scheme table",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > the path rule: a path segment is the ONLY thing that protects a canary in a dire",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > plain text, plain URLs and plain words are NOT erased (over-redaction is bounded"
+        ],
+        "summary": "Tests  19 failed | 45 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX9",
+      "what": "the cwd rule dropped (the full working directory is stored)",
+      "file": "packages/cli/src/history-file.ts",
+      "shaBefore": "75d4489d8768a264d0ae8b0d61d07d38ca2dff5f1c0c4aac4aaa002ce1b3303a",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 cwd: home-relative or <dir>, never the home directory name > idempotent, and the real OS home directory name is absent from a line built from a cwd under i",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 cwd: home-relative or <dir>, never the home directory name > buildHistoryLine stores cwd through the rule, with an injected home (cwd rule is the ONLY thin"
+        ],
+        "summary": "Tests  2 failed | 60 passed (62)"
+      },
+      "shaAfter": "75d4489d8768a264d0ae8b0d61d07d38ca2dff5f1c0c4aac4aaa002ce1b3303a",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX10",
+      "what": "the CLI uses its OWN naive redactor instead of the shared function (cuts the query of an http URL only)",
+      "file": "packages/cli/src/history-file.ts",
+      "shaBefore": "75d4489d8768a264d0ae8b0d61d07d38ca2dff5f1c0c4aac4aaa002ce1b3303a",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 CLI property test (seed 20261012, 4000 generated strings x 28 verbs x 3 positions) > SECRET is absent from every verb, every arg position, the thrown error",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 CLI ISOLATED cells (one rule each) > rule (a): bare `#S` as a clicktext / waitfor argument (free text, not a selector)",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 CLI ISOLATED cells (one rule each) > rule (a): bare `?=S` and a custom-scheme redirect and about:blank#S in args and in the thrown error",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 CLI ISOLATED cells (one rule each) > rule (b): a form token `a=S` as an argument"
+        ],
+        "summary": "Tests  28 failed | 34 passed (62)"
+      },
+      "shaAfter": "75d4489d8768a264d0ae8b0d61d07d38ca2dff5f1c0c4aac4aaa002ce1b3303a",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX11",
+      "what": "the old findUrlMarker behaviour restored: only tokens that look like a scheme:// URL are redacted (a shape gate in front of the rule)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactHistoryUrl (H1, H2) > H2: scheme table",
+          " tests/unit/action-history.spec.ts > FR2-11 redactHistoryUrl (H1, H2) > drops userinfo, javascript: bodies, and the query of an unparsable string",
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H3: redacts every URL token inside free text",
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H5 / N12: eval preview collapses whitespace, drops URL secrets, caps at 200"
+        ],
+        "summary": "Tests  35 failed | 29 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX12",
+      "what": "the text after a cut is NOT dropped (a URL with a space in its query leaks its tail)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H3: redacts every URL token inside free text",
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H5 / N12: eval preview collapses whitespace, drops URL secrets, caps at 200",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > URL rule for navigate targets, preview rule for eval targets, generic redaction otherwise",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string"
+        ],
+        "summary": "Tests  7 failed | 57 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX13",
+      "what": "the partial token at the 8,000-character input cap is kept",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > input cap: a token cut off by the 8,000-character input cap is not kept (its sep"
+        ],
+        "summary": "Tests  1 failed | 63 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX14",
+      "what": "the upload_file target keeps a name with no extension (a user / home directory name)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 upload_file target: the basename, unless it has no extension (a user / home directory name) > report.pdf is kept; a name with no extension is <dir>; a quer"
+        ],
+        "summary": "Tests  1 failed | 63 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX15",
+      "what": "selector mode never cuts `#` (about:blank#S / host/p#S as a selector keep the fragment)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > decoding: `%23S`, `%3FS`, `%3BS` and the double-encoded forms",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 selectors keep their shape; everything else in free text follows the rule > a URL in a selector is cut like anywhere else",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: every string field of a stored history entry > selector: no canary survives, for 1600 cells"
+        ],
+        "summary": "Tests  4 failed | 60 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX16",
+      "what": "a path whose last segment has no extension keeps it (C:\\Users\\<name> stores <name>)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > the path rule: a path segment is the ONLY thing that protects a canary in a dire",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 structured target: FR2-09 D5 (origin + pathname) then the rule > the rule and D5 agree: for every generated case the bare URL function and the text functio",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 eval preview (decision: keep a redacted preview, per spec H5 / R2; log deviation D-fix2-3) > ordinary short code is kept; code with `;` `=` `?` `/` degrade"
+        ],
+        "summary": "Tests  17 failed | 47 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX17",
+      "what": "OVER-redaction: a scheme:// URL is no longer kept (reduced to its last path segment like a path)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactHistoryUrl (H1, H2) > H1: drops query and fragment",
+          " tests/unit/action-history.spec.ts > FR2-11 redactHistoryUrl (H1, H2) > H2: scheme table",
+          " tests/unit/action-history.spec.ts > FR2-11 redactHistoryUrl (H1, H2) > drops userinfo, javascript: bodies, and the query of an unparsable string",
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H3: redacts every URL token inside free text"
+        ],
+        "summary": "Tests  12 failed | 52 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX18",
+      "what": "the human `sutradhar history` output stops re-applying the rule to what it prints",
+      "file": "packages/cli/src/history-file.ts",
+      "shaBefore": "75d4489d8768a264d0ae8b0d61d07d38ca2dff5f1c0c4aac4aaa002ce1b3303a",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 CLI property test (seed 20261012, 4000 generated strings x 28 verbs x 3 positions) > the human `history` output applies the same rule to a line an older bu",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: the serialized history.jsonl line and the human rows > a line written by an OLDER (leaky) build is not shown with its query in the human output"
+        ],
+        "summary": "Tests  2 failed | 60 passed (62)"
+      },
+      "shaAfter": "75d4489d8768a264d0ae8b0d61d07d38ca2dff5f1c0c4aac4aaa002ce1b3303a",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX19",
+      "what": "the structured URL field skips the rule after FR2-09 D5 (an encoded delimiter in the path is kept)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > decoding: `%23S`, `%3FS`, `%3BS` and the double-encoded forms",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 structured target: FR2-09 D5 (origin + pathname) then the rule > http(s) targets keep origin + pathname and nothing else; an encoded delimiter in the path ",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 structured target: FR2-09 D5 (origin + pathname) then the rule > the rule and D5 agree: for every generated case the bare URL function and the text functio"
+        ],
+        "summary": "Tests  7 failed | 57 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX20",
+      "what": "entry.error stored without the rule",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (a) custom scheme redirect (audit-2 A2-F1) and about:blank#S",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > decoding: `%23S`, `%3FS`, `%3BS` and the double-encoded forms",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 selectors keep their shape; everything else in free text follows the rule > free text (error, reason) does NOT get the selector leniency: `#S` is redacted "
+        ],
+        "summary": "Tests  6 failed | 58 passed (64)"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "caught": true
+    }
+  ]
+}

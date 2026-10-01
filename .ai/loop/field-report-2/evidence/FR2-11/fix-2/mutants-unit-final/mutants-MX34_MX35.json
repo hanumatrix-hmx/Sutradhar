@@ -1,0 +1,42 @@
+{
+  "ranAt": "2026-10-01T03:07:33.224Z",
+  "total": 2,
+  "caught": 2,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MX34",
+      "what": "a wait_for selector goes through the plain selector variant (the engine's `text=\"` key is replaced by rule (b): FR2-08 L12 breaks)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "99751a91d6433a21a04f70139a6ae9906f8221f37ce4fab4c1d7d386314ca77e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 wait_for selector: the engine's condition description keeps its `text=\"` key (FR2-08 L12 pins it), its payload goes through the rule > the exact FR2-08 L12"
+        ],
+        "summary": "Tests  1 failed | 72 passed (73)"
+      },
+      "shaAfter": "99751a91d6433a21a04f70139a6ae9906f8221f37ce4fab4c1d7d386314ca77e",
+      "restoredIdentical": true,
+      "caught": true
+    },
+    {
+      "id": "MX35",
+      "what": "the wait_for condition payload goes through the SELECTOR variant (`text=\"a#S\"` keeps S)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "99751a91d6433a21a04f70139a6ae9906f8221f37ce4fab4c1d7d386314ca77e",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 wait_for selector: the engine's condition description keeps its `text=\"` key (FR2-08 L12 pins it), its payload goes through the rule > a secret in the payl"
+        ],
+        "summary": "Tests  1 failed | 72 passed (73)"
+      },
+      "shaAfter": "99751a91d6433a21a04f70139a6ae9906f8221f37ce4fab4c1d7d386314ca77e",
+      "restoredIdentical": true,
+      "caught": true
+    }
+  ]
+}

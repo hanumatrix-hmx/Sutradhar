@@ -1,0 +1,117 @@
+{
+  "scope": "session",
+  "entries": [
+    {
+      "actionType": "navigate",
+      "success": true,
+      "executionTimeMs": 106,
+      "timestamp": "2026-10-01T00:35:31.542Z",
+      "target": "http://127.0.0.1:64570/fr2-11-history.html",
+      "url": "http://127.0.0.1:64570/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": true,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'navigate' verified: a new document committed at http://127.0.0.1:64570/fr2-11-history.html[redacted]",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "navigate.document",
+              "outcome": "pass",
+              "expected": "new-document or url change",
+              "observed": "new-document",
+              "detail": "a new document committed at http://127.0.0.1:64570/fr2-11-history.html[redacted]"
+            },
+            {
+              "check": "navigate.http-status",
+              "outcome": "pass",
+              "expected": "<400",
+              "observed": 200
+            }
+          ]
+        }
+      },
+      "tabId": "tab_sess_1790814931188_1_1",
+      "seq": 1
+    },
+    {
+      "actionType": "eval",
+      "success": true,
+      "executionTimeMs": 2,
+      "timestamp": "2026-10-01T00:35:31.545Z",
+      "target": "document.title",
+      "url": "http://127.0.0.1:64570/fr2-11-history.html",
+      "tabId": "tab_sess_1790814931188_1_1",
+      "seq": 2
+    },
+    {
+      "actionType": "click",
+      "selector": "#bump",
+      "success": true,
+      "executionTimeMs": 50,
+      "timestamp": "2026-10-01T00:35:31.597Z",
+      "url": "http://127.0.0.1:64570/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "click.built-in",
+              "outcome": "pass",
+              "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+            }
+          ]
+        }
+      },
+      "tabId": "tab_sess_1790814931188_1_1",
+      "seq": 3
+    },
+    {
+      "actionType": "type",
+      "selector": "#name",
+      "success": true,
+      "executionTimeMs": 24,
+      "timestamp": "2026-10-01T00:35:31.622Z",
+      "url": "http://127.0.0.1:64570/fr2-11-history.html",
+      "verification": {
+        "verified": true,
+        "urlChanged": false,
+        "elementFound": true,
+        "confidence": 0.9,
+        "reason": "'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+        "evidence": {
+          "tier": "verified",
+          "checks": [
+            {
+              "check": "type.built-in",
+              "outcome": "pass",
+              "detail": "the typed value was read back from the element inside the action"
+            }
+          ]
+        }
+      },
+      "tabId": "tab_sess_1790814931188_1_1",
+      "seq": 4
+    },
+    {
+      "actionType": "eval",
+      "success": false,
+      "error": "boom-SDK",
+      "executionTimeMs": 1,
+      "timestamp": "2026-10-01T00:35:31.623Z",
+      "target": "throw new Error('boom-SDK')",
+      "url": "http://127.0.0.1:64570/fr2-11-history.html",
+      "tabId": "tab_sess_1790814931188_1_1",
+      "seq": 5
+    }
+  ],
+  "evicted": 0,
+  "capacity": 200
+}

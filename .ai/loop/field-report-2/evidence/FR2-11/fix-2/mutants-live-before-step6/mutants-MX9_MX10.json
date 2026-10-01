@@ -1,0 +1,68 @@
+{
+  "ranAt": "2026-09-30T22:11:19.516Z",
+  "total": 2,
+  "caught": 2,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MX9",
+      "what": "the cwd rule dropped (the full working directory is stored)",
+      "file": "packages/cli/src/history-file.ts",
+      "shaBefore": "75d4489d8768a264d0ae8b0d61d07d38ca2dff5f1c0c4aac4aaa002ce1b3303a",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 cwd: home-relative or <dir>, never the home directory name > idempotent, and the real OS home directory name is absent from a line built from a cwd under i",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 cwd: home-relative or <dir>, never the home directory name > buildHistoryLine stores cwd through the rule, with an injected home (cwd rule is the ONLY thin"
+        ],
+        "summary": "Tests  2 failed | 60 passed (62)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "cli",
+        "only": "FIX2",
+        "failedCases": [
+          "FIX2: [{\"check\":\"cwd under the home directory is stored home-relative (~/dir); a cwd outside it as <dir> (and its canary-named directory is not stored)\",\"observed\":{\"cwds\":[\"C:\\\\Users\\\\Varad M\\\\fr2-11-cwd-inside-cli-73112\",\"E:\\\\HMX_Projects\\\\Internal_Projects\\\\PinchTab\\\\.claude\\\\worktrees\\\\project-underst"
+        ],
+        "summaryLine": "[fr2-11] 0/1 cases (7/9 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":1,\"casesPassed\":0,\"checks\":9,\"checksFailed\":2},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\":0"
+      },
+      "shaAfter": "75d4489d8768a264d0ae8b0d61d07d38ca2dff5f1c0c4aac4aaa002ce1b3303a",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MX10",
+      "what": "the CLI uses its OWN naive redactor instead of the shared function (cuts the query of an http URL only)",
+      "file": "packages/cli/src/history-file.ts",
+      "shaBefore": "75d4489d8768a264d0ae8b0d61d07d38ca2dff5f1c0c4aac4aaa002ce1b3303a",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 CLI property test (seed 20261012, 4000 generated strings x 28 verbs x 3 positions) > SECRET is absent from every verb, every arg position, the thrown error",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 CLI ISOLATED cells (one rule each) > rule (a): bare `#S` as a clicktext / waitfor argument (free text, not a selector)",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 CLI ISOLATED cells (one rule each) > rule (a): bare `?=S` and a custom-scheme redirect and about:blank#S in args and in the thrown error",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 CLI ISOLATED cells (one rule each) > rule (b): a form token `a=S` as an argument"
+        ],
+        "summary": "Tests  28 failed | 34 passed (62)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "cli",
+        "only": "FIX2",
+        "failedCases": [
+          "FIX2: [{\"check\":\"no canary of 23 shapes anywhere in the raw history.jsonl bytes of the new lines (args, error, actions[])\",\"observed\":[\"custom-scheme-redirect\",\"custom-scheme-redirect-query\",\"about-blank-frag\",\"about-blank-query\",\"intranet-port-frag\",\"url-space-frag\",\"url-space-path-frag\",\"url-space-query"
+        ],
+        "summaryLine": "[fr2-11] 0/1 cases (7/9 checks) {\"mcp\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"cli\":{\"cases\":1,\"casesPassed\":0,\"checks\":9,\"checksFailed\":2},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\":0"
+      },
+      "shaAfter": "75d4489d8768a264d0ae8b0d61d07d38ca2dff5f1c0c4aac4aaa002ce1b3303a",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    }
+  ]
+}

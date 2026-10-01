@@ -1,0 +1,151 @@
+{
+ "out": {
+  "evalResult": "CNRYsdktype",
+  "mangleErr": "type did not land the expected value — expected \"CNRYsdkmangle\", but the element's real content reads \"M-elgnamkdsYRNC\" ",
+  "leaks": [],
+  "types": [
+   "navigate:true",
+   "type:true",
+   "eval:true",
+   "type:false",
+   "navigate:true"
+  ],
+  "bracketReason": "'navigate' verified: a new document committed at http://127.0.0.1:64763/p[redacted]"
+ },
+ "rep": {
+  "scope": "session",
+  "entries": [
+   {
+    "actionType": "navigate",
+    "success": true,
+    "executionTimeMs": 124,
+    "timestamp": "2026-10-01T03:35:49.524Z",
+    "target": "http://127.0.0.1:64763/p",
+    "url": "http://127.0.0.1:64763/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": true,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'navigate' verified: a new document committed at http://127.0.0.1:64763/p[redacted]",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "navigate.document",
+        "outcome": "pass",
+        "expected": "new-document or url change",
+        "observed": "new-document",
+        "detail": "a new document committed at http://127.0.0.1:64763/p[redacted]"
+       },
+       {
+        "check": "navigate.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790825749148_1_1",
+    "seq": 1
+   },
+   {
+    "actionType": "type",
+    "selector": "#pw",
+    "success": true,
+    "executionTimeMs": 31,
+    "timestamp": "2026-10-01T03:35:49.557Z",
+    "url": "http://127.0.0.1:64763/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": false,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "type.built-in",
+        "outcome": "pass",
+        "detail": "the typed value was read back from the element inside the action"
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790825749148_1_1",
+    "seq": 2
+   },
+   {
+    "actionType": "eval",
+    "success": true,
+    "executionTimeMs": 1,
+    "timestamp": "2026-10-01T03:35:49.558Z",
+    "target": "document.getElementById('pw').value",
+    "url": "http://127.0.0.1:64763/p",
+    "tabId": "tab_sess_1790825749148_1_1",
+    "seq": 3
+   },
+   {
+    "actionType": "type",
+    "selector": "#mangle",
+    "success": false,
+    "error": "type did not land the expected value (the typed text and the field content are not recorded)",
+    "executionTimeMs": 1583,
+    "timestamp": "2026-10-01T03:35:51.186Z",
+    "url": "http://127.0.0.1:64763/p",
+    "verification": {
+     "verified": false,
+     "urlChanged": false,
+     "elementFound": false,
+     "confidence": 0,
+     "reason": "Action failed: type did not land the expected value (the typed text and the field content are not recorded)",
+     "evidence": {
+      "tier": "action-failed",
+      "checks": []
+     }
+    },
+    "tabId": "tab_sess_1790825749148_1_1",
+    "seq": 4
+   },
+   {
+    "actionType": "navigate",
+    "success": true,
+    "executionTimeMs": 14,
+    "timestamp": "2026-10-01T03:35:51.201Z",
+    "target": "http://127.0.0.1:64763/p",
+    "url": "http://127.0.0.1:64763/p",
+    "verification": {
+     "verified": true,
+     "urlChanged": true,
+     "elementFound": true,
+     "confidence": 0.9,
+     "reason": "'navigate' verified: a new document committed at http://127.0.0.1:64763/p[redacted]",
+     "evidence": {
+      "tier": "verified",
+      "checks": [
+       {
+        "check": "navigate.document",
+        "outcome": "pass",
+        "expected": "new-document or url change",
+        "observed": "new-document",
+        "detail": "a new document committed at http://127.0.0.1:64763/p[redacted]"
+       },
+       {
+        "check": "navigate.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    },
+    "tabId": "tab_sess_1790825749148_1_1",
+    "seq": 5
+   }
+  ],
+  "evicted": 0,
+  "capacity": 200
+ }
+}

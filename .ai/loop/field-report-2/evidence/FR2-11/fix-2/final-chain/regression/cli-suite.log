@@ -1,0 +1,130 @@
+[run-cli] UC-01 Bot detection surface ...
+[run-cli] UC-01 -> success=true ms=2655
+[run-cli] UC-02 CAPTCHA grounding (not solving) ...
+[run-cli] UC-02 -> success=true ms=4431
+[run-cli] UC-03 Auth + session persistence ...
+[run-cli] UC-03 -> success=true ms=15331
+[run-cli] UC-04 Canvas blindness (Google Maps) ...
+[run-cli] UC-04 -> success=false ms=4941 error=search box and/or zoom controls not groundable via snap
+[run-cli] UC-05 Long 10+ step flow ...
+[run-cli] UC-05 -> success=false ms=24406 error=could not find cart icon link in snap after add-to-cart
+[run-cli] UC-06 Modals + dynamic content ...
+[run-cli] UC-06 -> success=true ms=20746
+[run-cli] UC-07 Cross-origin iframe (TinyMCE) ...
+[run-cli] UC-07 -> success=true ms=9191
+[run-cli] UC-08 File download ...
+[run-cli] UC-08 -> success=false ms=4999 error=could not find a downloadable file link in snap
+[run-cli] UC-09 Multi-tab / popup ...
+[run-cli] UC-09 -> success=true ms=11857
+[run-cli] UC-10 Prompt injection exposure ...
+[run-cli] UC-10 -> success=true ms=2772
+[run-cli] UC-11 Token efficiency ...
+[run-cli] UC-11 -> success=true ms=12976
+[run-cli] UC-12 Outcome verification after a state-changing action ...
+[run-cli] UC-12 -> success=false ms=226575 error=independent re-read did not confirm cart badge=1 and button label flip to Remove
+[run-cli] UC-13 Speed ...
+[run-cli] UC-13 -> success=true ms=5786
+[run-cli] UC-14 Accessibility-only grounding (no CSS-selectable name) ...
+[run-cli] UC-14 -> success=true ms=9230
+[
+  {
+    "id": "UC-01",
+    "title": "Bot detection surface",
+    "success": true,
+    "ms": 2655,
+    "error": null
+  },
+  {
+    "id": "UC-02",
+    "title": "CAPTCHA grounding (not solving)",
+    "success": true,
+    "ms": 4431,
+    "error": null
+  },
+  {
+    "id": "UC-03",
+    "title": "Auth + session persistence",
+    "success": true,
+    "ms": 15331,
+    "error": null
+  },
+  {
+    "id": "UC-04",
+    "title": "Canvas blindness (Google Maps)",
+    "success": false,
+    "ms": 4941,
+    "error": "search box and/or zoom controls not groundable via snap"
+  },
+  {
+    "id": "UC-05",
+    "title": "Long 10+ step flow",
+    "success": false,
+    "ms": 24406,
+    "error": "could not find cart icon link in snap after add-to-cart"
+  },
+  {
+    "id": "UC-06",
+    "title": "Modals + dynamic content",
+    "success": true,
+    "ms": 20746,
+    "error": null
+  },
+  {
+    "id": "UC-07",
+    "title": "Cross-origin iframe (TinyMCE)",
+    "success": true,
+    "ms": 9191,
+    "error": null
+  },
+  {
+    "id": "UC-08",
+    "title": "File download",
+    "success": false,
+    "ms": 4999,
+    "error": "could not find a downloadable file link in snap"
+  },
+  {
+    "id": "UC-09",
+    "title": "Multi-tab / popup",
+    "success": true,
+    "ms": 11857,
+    "error": null
+  },
+  {
+    "id": "UC-10",
+    "title": "Prompt injection exposure",
+    "success": true,
+    "ms": 2772,
+    "error": null
+  },
+  {
+    "id": "UC-11",
+    "title": "Token efficiency",
+    "success": true,
+    "ms": 12976,
+    "error": null
+  },
+  {
+    "id": "UC-12",
+    "title": "Outcome verification after a state-changing action",
+    "success": false,
+    "ms": 226575,
+    "error": "independent re-read did not confirm cart badge=1 and button label flip to Remove"
+  },
+  {
+    "id": "UC-13",
+    "title": "Speed",
+    "success": true,
+    "ms": 5786,
+    "error": null
+  },
+  {
+    "id": "UC-14",
+    "title": "Accessibility-only grounding (no CSS-selectable name)",
+    "success": true,
+    "ms": 9230,
+    "error": null
+  }
+]
+
+Saved full results to E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\.ai\loop\field-report-2\evidence\FR2-11\fix-2\final-chain\regression\cli-suite\results.json

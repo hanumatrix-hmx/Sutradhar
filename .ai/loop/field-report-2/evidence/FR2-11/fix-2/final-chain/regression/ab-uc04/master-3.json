@@ -1,0 +1,18 @@
+[
+  {
+    "id": "UC-04",
+    "title": "Canvas blindness (Google Maps)",
+    "surface": "cli",
+    "success": true,
+    "ms": 9301,
+    "detail": {
+      "searchBoxLine": "[#3] label \"Search Google Maps\"",
+      "zoomInLine": "[#19] button \"Zoom in\"",
+      "zoomOutLine": "[#24] button \"Zoom out\"",
+      "groundable": true,
+      "retriedDueToStaleNewTabPage": false,
+      "note": "Search box and zoom/pan controls are groundable via the normal DOM interactive listing — expected, they are real DOM elements. The map surface itself is a <canvas>: opaque to DOM-based grounding by construction, same as every DOM-reading tool (Playwright/Puppeteer included). No attempt was made to read canvas pixel content — out of scope, matches successCriteria."
+    },
+    "error": null
+  }
+]

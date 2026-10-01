@@ -1,0 +1,41 @@
+{
+  "ranAt": "2026-10-01T07:44:24.528Z",
+  "total": 1,
+  "caught": 1,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MX12",
+      "what": "the text after a cut is NOT dropped (a URL with a space in its query leaks its tail)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H3: redacts every URL token inside free text",
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H5 / N12: eval preview collapses whitespace, drops URL secrets, caps at 200",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > URL rule for navigate targets, preview rule for eval targets, generic redaction otherwise",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string"
+        ],
+        "summary": "Tests  10 failed | 64 passed (74)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "FIX2,PROP",
+        "failedCases": [
+          "FIX2: [{\"check\":\"no canary of 23 shapes in the session view or the default tab view (error, reason, evidence, target, selector, url)\",\"observed\":[\"url-space-query-tail\",\"nbsp-tail\"]}]",
+          "PROP: [{\"check\":\"no SECRET of 320 generated strings in any stored entry\",\"observed\":[{\"id\":\"p10\",\"text\":\"x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x \\\\\\\\127.0.0.1:5123/%20sp#\\tCNRYp10X\",\"entry\":\"{\\\"actionType\\\":\\\"eval\\\",\\\"success\\\":false,\\\"error\\\":\\\"x x x x x x x x x x ",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 12 raw history responses\",\"observed\":[\"CNRYfx2urlspacequerytailmcp\",\"CNRYfx2nbsptailmcp\",\"CNRYfx2urlspacequerytailmcp\",\"CNRYfx2nbsptailmcp\",\"CNRYfx2urlspacequerytailmcp\",\"CNRYfx2nbsptailmcp\",\"CNRYfx2urlspacequerytailmcp\",\"CNRYfx2nbsptailmcp\",\"CNRYp10X\",\"CNRYp16X\",\"CNRY"
+        ],
+        "summaryLine": "[fr2-11] 0/3 cases (7/10 checks) {\"mcp\":{\"cases\":3,\"casesPassed\":0,\"checks\":10,\"checksFailed\":3},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "bb4ab39b259b98b3c4d93f07691983431a51bb525560de4b9aa0dc9b8ac6963d",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    }
+  ]
+}

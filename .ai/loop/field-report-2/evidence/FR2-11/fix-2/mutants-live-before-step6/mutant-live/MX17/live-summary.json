@@ -1,0 +1,99 @@
+{
+  "startedAt": "2026-09-30T21:53:14.185Z",
+  "finishedAt": "2026-09-30T21:53:32.610Z",
+  "cases": 3,
+  "casesPassed": 2,
+  "checks": 10,
+  "checksFailed": 1,
+  "perSurface": {
+    "mcp": {
+      "cases": 3,
+      "casesPassed": 2,
+      "checks": 10,
+      "checksFailed": 1
+    },
+    "cli": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "mcp:FIX2"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": [
+      58288,
+      69468
+    ]
+  },
+  "evidenceFiles": [
+    "mcp-raw-history-responses.txt"
+  ],
+  "results": [
+    {
+      "surface": "mcp",
+      "case": "FIX2",
+      "pass": false,
+      "checks": 6,
+      "failed": [
+        {
+          "check": "navigations: about:blank and the http shapes still show their target (origin + path / about:blank), not erased",
+          "observed": {
+            "lostKeep": [
+              "url-space-frag",
+              "url-space-path-frag",
+              "url-space-query-tail"
+            ],
+            "targets": [
+              "<dir>",
+              "<dir>",
+              "about:blank",
+              "about:blank",
+              "<dir>",
+              "<dir>",
+              "fr2-11-history.html",
+              "<dir>",
+              "fr2-11-history.html",
+              "fr2-11-paths.html"
+            ]
+          }
+        }
+      ],
+      "shapes": 23
+    },
+    {
+      "surface": "mcp",
+      "case": "PROP",
+      "pass": true,
+      "checks": 2,
+      "failed": [],
+      "generated": 320,
+      "seed": 20261003
+    },
+    {
+      "surface": "mcp",
+      "case": "PRIV-sweep",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    }
+  ]
+}

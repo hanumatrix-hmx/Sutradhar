@@ -1,0 +1,224 @@
+{
+  "startedAt": "2026-10-01T04:08:55.036Z",
+  "finishedAt": "2026-10-01T04:09:51.686Z",
+  "cases": 13,
+  "casesPassed": 13,
+  "checks": 70,
+  "checksFailed": 0,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 13,
+      "casesPassed": 13,
+      "checks": 70,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [],
+  "informational": [
+    {
+      "surface": "cli",
+      "case": "L5-history-duration",
+      "historyProcessMs": 261
+    },
+    {
+      "surface": "cli",
+      "case": "N9-chrome-count",
+      "sutradharCliChromeProcsBefore": 30,
+      "after": 24,
+      "note": "informational: other sessions on this machine may start/stop their own"
+    }
+  ],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [
+      51172,
+      74704,
+      96172,
+      74120,
+      75808
+    ],
+    "ownCliChromeProfileDirs": [
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790827735274",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790827765979",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790827770366",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790827776101",
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790827781633"
+    ],
+    "childPidsStarted": [
+      87944,
+      55304,
+      35144,
+      73048,
+      48276,
+      79452,
+      88628,
+      85768,
+      11312,
+      48728,
+      90392,
+      42296,
+      84876,
+      78420,
+      53652,
+      93404,
+      89900,
+      99904,
+      94524,
+      88900,
+      97980,
+      86248,
+      43080,
+      78872,
+      98552,
+      97436,
+      78748,
+      72076,
+      94900,
+      85024,
+      93720,
+      86204,
+      98804,
+      87900,
+      82372,
+      91036,
+      90696,
+      63696,
+      92672,
+      8348,
+      64476,
+      5924,
+      93916,
+      61376,
+      60600,
+      77868,
+      86196,
+      55096,
+      89400,
+      91284,
+      95592,
+      76236,
+      96948,
+      89980,
+      64784,
+      98512,
+      81736,
+      82056
+    ]
+  },
+  "evidenceFiles": [
+    "cli-L5-history.jsonl",
+    "cli-L5-history-human.txt",
+    "cli-L5x-history.jsonl"
+  ],
+  "results": [
+    {
+      "surface": "cli",
+      "case": "L5",
+      "pass": true,
+      "checks": 21,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "N7",
+      "pass": true,
+      "checks": 5,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L5x",
+      "pass": true,
+      "checks": 8,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L7",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L7b",
+      "pass": true,
+      "checks": 3,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "W1",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L6",
+      "pass": true,
+      "checks": 7,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "L8",
+      "pass": true,
+      "checks": 4,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "N9",
+      "pass": true,
+      "checks": 3,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "N10",
+      "pass": true,
+      "checks": 1,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "N8",
+      "pass": true,
+      "checks": 6,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "N15",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    },
+    {
+      "surface": "cli",
+      "case": "PRIV-sweep",
+      "pass": true,
+      "checks": 2,
+      "failed": []
+    }
+  ]
+}

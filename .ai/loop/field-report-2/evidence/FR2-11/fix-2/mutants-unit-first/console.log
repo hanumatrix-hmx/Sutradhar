@@ -1,0 +1,26 @@
+[MX1] CAUGHT unit=true live=- restored=true  rule (a) without the `#` cut (a fragment is kept)
+[MX2] CAUGHT unit=true live=- restored=true  rule (a) without the `?` cut (a query is kept)
+[MX3] CAUGHT unit=true live=- restored=true  rule (a) without the `;` cut (a path parameter is kept)
+[MX4] CAUGHT unit=true live=- restored=true  rule (b) removed: a token holding `=` or `&` is kept
+[MX5] CAUGHT unit=true live=- restored=true  rule (c) removed: userinfo is kept
+[MX6] CAUGHT unit=true live=- restored=true  decoding removed (%23 %3F %3B, double-encoded, JSON escapes, fullwidth)
+[MX6b] CAUGHT unit=true live=- restored=true  only the DOUBLE-encoding pass removed (%253F stays %253F)
+[MX7] CAUGHT unit=true live=- restored=true  whitespace split reduced to plain spaces (tab, NBSP, zero-width no longer separate tokens)
+[MX8] CAUGHT unit=true live=- restored=true  the path rule dropped (a directory in a path is kept)
+[MX9] CAUGHT unit=true live=- restored=true  the cwd rule dropped (the full working directory is stored)
+[MX10] CAUGHT unit=true live=- restored=true  the CLI uses its OWN naive redactor instead of the shared function (cuts the query of an http URL only)
+[MX11] CAUGHT unit=true live=- restored=true  the old findUrlMarker behaviour restored: only tokens that look like a scheme:// URL are redacted (a shape gate in front of the rule)
+[MX12] CAUGHT unit=true live=- restored=true  the text after a cut is NOT dropped (a URL with a space in its query leaks its tail)
+[MX13] CAUGHT unit=true live=- restored=true  the partial token at the 8,000-character input cap is kept
+[MX14] CAUGHT unit=true live=- restored=true  the upload_file target keeps a name with no extension (a user / home directory name)
+[MX15] CAUGHT unit=true live=- restored=true  selector mode never cuts `#` (about:blank#S / host/p#S as a selector keep the fragment)
+[MX16] CAUGHT unit=true live=- restored=true  a path whose last segment has no extension keeps it (C:\Users\<name> stores <name>)
+[MX17] CAUGHT unit=true live=- restored=true  OVER-redaction: a scheme:// URL is no longer kept (reduced to its last path segment like a path)
+[MX18] CAUGHT unit=true live=- restored=true  the human `sutradhar history` output stops re-applying the rule to what it prints
+[MX19] CAUGHT unit=true live=- restored=true  the structured URL field skips the rule after FR2-09 D5 (an encoded delimiter in the path is kept)
+[MX20] CAUGHT unit=true live=- restored=true  entry.error stored without the rule
+
+[mutants] 21/21 caught; all restored byte-identically: true
+(node:68628) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+done

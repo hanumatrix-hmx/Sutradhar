@@ -1,0 +1,272 @@
+{
+ "summary": {
+  "label": "bundle",
+  "lines": 19,
+  "verbs": [
+   "nav:0:http://127.0.0.1:55704/p:[navigate]",
+   "type:0:#pw <11 chars>:[type]",
+   "type:1:#mangle <13 chars>:[type]",
+   "select:0:#sel <10 chars>:[select_option]",
+   "setclipboard:0:<11 chars>:[set_clipboard]",
+   "getclipboard:0::[]",
+   "eval:0:document.getElementById('pw').value + '|' + document.getElem:[eval]",
+   "eval:1:throw new Error('boom'):[eval]",
+   "upload:0:#file CNRYcliupname.txt:[upload_file]",
+   "download:0:#dl <dir>:[download_file]",
+   "click:0:#prompt:[click]",
+   "dialog:0:accept <13 chars>:[]",
+   "waitfor:1:0:[wait_for]",
+   "click:4:#btn:[click]",
+   "nav:1:<dir>:[navigate]",
+   "type:0:#pw <2 chars>:[type]",
+   "press:0:#pw Enter:[focus,press_key]",
+   "newtab:0:http://127.0.0.1:55704/p:[]",
+   "tabs:0::[]"
+  ],
+  "found": {
+   "file": [
+    "CNRYcliupname",
+    "CNRYdlname",
+    "CNRYcliwait",
+    "CNRYcliexp"
+   ],
+   "human": [
+    "CNRYcliupname",
+    "CNRYcliwait"
+   ],
+   "json": [
+    "CNRYcliupname",
+    "CNRYdlname",
+    "CNRYcliwait",
+    "CNRYcliexp"
+   ]
+  },
+  "unexpectedLeaks": [],
+  "jsonIdentical": true,
+  "ls": "total 18\ndrwxr-xr-x 1 Varad M 197609     0 Oct  1 09:05 .\ndrwxr-xr-x 1 Varad M 197609     0 Oct  1 09:05 ..\n-rw-r--r-- 1 Varad M 197609 13029 Oct  1 09:05 history.jsonl\n-rw-r--r-- 1 Varad M 197609   204 Oct  1 09:05 state.json\n-rw-r--r-- 1 Varad M 197609   261 Oct  1 09:05 warden.json\n",
+  "icacls": "E:\\AI-Cache\\tmp\\fr211-audit-cli-ESb5cW\\state\\history.jsonl S-1-5-21-2435114348-680781744-2272691248-2842413353:(I)(M,DC)\n                                                           DESKTOP-0P7I7LN\\Varad M:(I)(M,DC)\n                                                           DESKTOP-0P7I7LN\\CodexSandboxUsers:(I)(M)\n                                                           S-1-5-21-1953991020-1908219969-1637915715-3761621586:(I)(M)\n                                                           BUILTIN\\Administrators:(I)(F)\n                                                           NT AUTHORITY\\SYSTEM:(I)(F)\n                                                           NT AUTHORITY\\Authenticated Users:(I)(M)\n                                                           BUILTIN\\Users:(I)(RX)\n\nSuccessfully processed 1 files; Failed processing 0 files\r\n"
+ },
+ "log": [
+  {
+   "args": [
+    "nav",
+    "http://aud:CNRYcliuserpass@127.0.0.1:55704/p?token=CNRYcliquery#CNRYclifrag"
+   ],
+   "code": 0,
+   "ms": 1034,
+   "out": "Navigated to http://aud:CNRYcliuserpass@127.0.0.1:55704/p?token=CNRYcliquery#CNRYclifrag\nTitle: AUDIT /p\nVerification: verified (confidence 0.90) — 'navigate' verified: a new document committed at http://aud:CNRYcliuserpass@127.0.0.1:55704/p?token=CNRYcliquery#CNRYclifrag\n",
+   "err": ""
+  },
+  {
+   "args": [
+    "type",
+    "#pw",
+    "CNRYclitype"
+   ],
+   "code": 0,
+   "ms": 3305,
+   "out": "Typed into #pw\nVerification: verified (confidence 0.90) — 'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\n",
+   "err": ""
+  },
+  {
+   "args": [
+    "type",
+    "#mangle",
+    "CNRYclimangle"
+   ],
+   "code": 1,
+   "ms": 4913,
+   "out": "Type failed: type did not land the expected value — expected \"CNRYclimangle\", but the element's real content reads \"M-elgnamilcYRNC\" even after a native-setter repair attempt. The page may be intercepting/resetting input in a way neither path could overcome.\n",
+   "err": ""
+  },
+  {
+   "args": [
+    "select",
+    "#sel",
+    "CNRYselval"
+   ],
+   "code": 0,
+   "ms": 3260,
+   "out": "Selected \"CNRYselval\" on #sel\nVerification: verified (confidence 0.90) — 'select_option' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\n",
+   "err": ""
+  },
+  {
+   "args": [
+    "setclipboard",
+    "CNRYcliclip"
+   ],
+   "code": 0,
+   "ms": 247,
+   "out": "Set clipboard to \"CNRYcliclip\"\nVerification: NOT verified — unverifiable (confidence 0.45) — 'set_clipboard' completed, but no built-in post-condition check could run: the clipboard couldn't be read back (the clipboard-read permission isn't granted for this origin; grant it with browser.grant_permissions to get a verified result). The write itself may have succeeded.\n",
+   "err": ""
+  },
+  {
+   "args": [
+    "getclipboard"
+   ],
+   "code": 0,
+   "ms": 242,
+   "out": "\n",
+   "err": "Verification: NOT verified — unverifiable (confidence 0.45) — 'get_clipboard' completed, but no built-in post-condition check could run: the clipboard could not be read (permission not granted); the returned empty text is NOT the clipboard's content.\n"
+  },
+  {
+   "args": [
+    "eval",
+    "document.getElementById('pw').value + '|' + document.getElementById('sel').value"
+   ],
+   "code": 0,
+   "ms": 242,
+   "out": "CNRYclitype|CNRYselval\n",
+   "err": ""
+  },
+  {
+   "args": [
+    "eval",
+    "throw new Error('boom')"
+   ],
+   "code": 1,
+   "ms": 237,
+   "out": "Eval failed: boom\n",
+   "err": ""
+  },
+  {
+   "args": [
+    "upload",
+    "#file",
+    "E:\\AI-Cache\\tmp\\fr211-audit-cli-ESb5cW\\CNRYcliupdir\\CNRYcliupname.txt"
+   ],
+   "code": 0,
+   "ms": 3267,
+   "out": "Uploaded E:\\AI-Cache\\tmp\\fr211-audit-cli-ESb5cW\\CNRYcliupdir\\CNRYcliupname.txt to #file\nVerification: verified (confidence 0.90) — 'upload_file' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\n",
+   "err": ""
+  },
+  {
+   "args": [
+    "download",
+    "#dl",
+    "E:\\AI-Cache\\tmp\\fr211-audit-cli-ESb5cW\\CNRYclidldir"
+   ],
+   "code": 0,
+   "ms": 3444,
+   "out": "Downloaded \"CNRYdlname.txt\" to E:\\AI-Cache\\tmp\\fr211-audit-cli-ESb5cW\\CNRYclidldir\\CNRYdlname.txt\nVerification: verified (confidence 0.90) — 'download_file' verified: 100 bytes written to E:\\AI-Cache\\tmp\\fr211-audit-cli-ESb5cW\\CNRYclidldir\\CNRYdlname.txt during this action\n",
+   "err": ""
+  },
+  {
+   "args": [
+    "click",
+    "#prompt"
+   ],
+   "code": 0,
+   "ms": 6311,
+   "out": "Clicked #prompt\nVerification: verified (confidence 0.90) — 'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\ndialogPending: {\"type\":\"prompt\",\"message\":\"q\",\"defaultValue\":null,\"url\":\"http://aud:CNRYcliuserpass@127.0.0.1:55704/p?token=CNRYcliquery#CNRYclifrag\"}\n",
+   "err": "Hint: a prompt dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. \"sutradhar tabs\" and \"sutradhar closetab <id>\" keep working while a page is blocked or has cra"
+  },
+  {
+   "args": [
+    "dialog",
+    "accept",
+    "CNRYcliprompt"
+   ],
+   "code": 0,
+   "ms": 678,
+   "out": "Accepted prompt \"q\" with text \"CNRYcliprompt\"\n",
+   "err": ""
+  },
+  {
+   "args": [
+    "waitfor",
+    "0",
+    "--text",
+    "CNRYcliwait"
+   ],
+   "code": 1,
+   "ms": 240,
+   "out": "Wait failed: wait_for timed out after 0ms waiting for text=\"CNRYcliwait\": text \"CNRYcliwait\" was not found in the visible text of 1 frame(s).\n",
+   "err": ""
+  },
+  {
+   "args": [
+    "click",
+    "#btn",
+    "--expect-text",
+    "CNRYcliexp"
+   ],
+   "code": 4,
+   "ms": 3298,
+   "out": "Clicked #btn\nVerification: NOT verified — contradicted (confidence 0.09) — Expected text \"CNRYcliexp\" was not found in the page's visible text after the action\n",
+   "err": "Error: expectation failed: text — Expected text \"CNRYcliexp\" was not found in the page's visible text after the action\n"
+  },
+  {
+   "args": [
+    "nav",
+    "127.0.0.1:55704/p?token=CNRYnoscheme"
+   ],
+   "code": 1,
+   "ms": 871,
+   "out": "",
+   "err": "Fatal: Protocol error (Page.navigate): Cannot navigate to invalid URL\n"
+  },
+  {
+   "args": [
+    "type",
+    "#pw",
+    "ab"
+   ],
+   "code": 0,
+   "ms": 3265,
+   "out": "Typed into #pw\nVerification: verified (confidence 0.90) — 'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\n",
+   "err": ""
+  },
+  {
+   "args": [
+    "press",
+    "#pw",
+    "Enter"
+   ],
+   "code": 0,
+   "ms": 3259,
+   "out": "Pressed Enter\nVerification: verified (confidence 0.90) — 'press_key' verified: keydown 'Enter' was delivered to the focused input#pw; no deterministic effect is defined for this key, so only delivery was verified\n",
+   "err": ""
+  },
+  {
+   "args": [
+    "newtab",
+    "http://127.0.0.1:55704/p?token=CNRYclinewtab"
+   ],
+   "code": 0,
+   "ms": 361,
+   "out": "New tab tab_sess_1790825709093_1_2 opened at http://127.0.0.1:55704/p?token=CNRYclinewtab\n",
+   "err": ""
+  },
+  {
+   "args": [
+    "tabs"
+   ],
+   "code": 0,
+   "ms": 236,
+   "out": "  tab_sess_1790825709093_1_1  AUDIT /p  http://127.0.0.1:55704/p?token=CNRYclinewtab\n* tab_sess_1790825709093_1_2  AUDIT /p  http://aud:CNRYcliuserpass@127.0.0.1:55704/p?token=CNRYcliquery#CNRYclifrag\n",
+   "err": ""
+  },
+  {
+   "args": [
+    "history"
+   ],
+   "code": 0,
+   "ms": 203,
+   "out": "History: 19 command(s) in E:\\AI-Cache\\tmp\\fr211-audit-cli-ESb5cW\\state\\history.jsonl\n--- session sess_1790825709093_1 (current) ---\n2026-10-01 03:35:08Z  exit 0     826ms  nav http://127.0.0.1:55704/p\n    - navigate ok verified tab_sess_1790825709093_1_1 http://127.0.0.1:55704/p\n2026-10-01 03:35:09Z  exit 0      74ms  type #pw <11 chars>\n    - type ok verified tab_sess_1790825709093_1_1 #pw\n2026-10-01 03:35:13Z  exit 1    1702ms  type #mangle <13 chars>\n    - type FAILED action-failed tab_sess_1790825709093_1_1 #mangle: type did not land the expected value (the typed text and the field content",
+   "err": ""
+  },
+  {
+   "args": [
+    "history",
+    "--json"
+   ],
+   "code": 0,
+   "ms": 201,
+   "out": "{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:08.840Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"nav\",\"args\":[\"http://127.0.0.1:55704/p\"],\"exitCode\":0,\"durationMs\":826,\"actions\":[{\"actionType\":\"navigate\",\"success\":true,\"executionTimeMs\":31,\"timestamp\":\"2026-10-01T03:35:09.664Z\",\"target\":\"http://127.0.0.1:55704/p\",\"url\":\"http://127.0.0.1:55704/p\",\"verification\":{\"verified\":true,\"urlChanged\":true,\"elementFound\":true,\"confidence\":0.9,\"reason\":\"'navigate' verified: a new document committed at http://127.0.0.1:55704/p[redacted]\",\"evidence\":{\"tier\":\"verified\",\"checks\":[{\"check\":\"navi",
+   "err": ""
+  }
+ ],
+ "historyJsonl": "{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:08.840Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"nav\",\"args\":[\"http://127.0.0.1:55704/p\"],\"exitCode\":0,\"durationMs\":826,\"actions\":[{\"actionType\":\"navigate\",\"success\":true,\"executionTimeMs\":31,\"timestamp\":\"2026-10-01T03:35:09.664Z\",\"target\":\"http://127.0.0.1:55704/p\",\"url\":\"http://127.0.0.1:55704/p\",\"verification\":{\"verified\":true,\"urlChanged\":true,\"elementFound\":true,\"confidence\":0.9,\"reason\":\"'navigate' verified: a new document committed at http://127.0.0.1:55704/p[redacted]\",\"evidence\":{\"tier\":\"verified\",\"checks\":[{\"check\":\"navigate.document\",\"outcome\":\"pass\",\"expected\":\"new-document or url change\",\"observed\":\"new-document\",\"detail\":\"a new document committed at http://127.0.0.1:55704/p[redacted]\"},{\"check\":\"navigate.http-status\",\"outcome\":\"pass\",\"expected\":\"<400\",\"observed\":200}]}},\"tabId\":\"tab_sess_1790825709093_1_1\",\"seq\":1}],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:09.896Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"type\",\"args\":[\"#pw\",\"<11 chars>\"],\"exitCode\":0,\"durationMs\":74,\"actions\":[{\"actionType\":\"type\",\"selector\":\"#pw\",\"success\":true,\"executionTimeMs\":26,\"timestamp\":\"2026-10-01T03:35:09.967Z\",\"url\":\"http://127.0.0.1:55704/p\",\"verification\":{\"verified\":true,\"urlChanged\":false,\"elementFound\":true,\"confidence\":0.9,\"reason\":\"'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\",\"evidence\":{\"tier\":\"verified\",\"checks\":[{\"check\":\"type.built-in\",\"outcome\":\"pass\",\"detail\":\"the typed value was read back from the element inside the action\"}]}},\"tabId\":\"tab_sess_1790825709093_1_1\",\"seq\":1}],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:13.171Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"type\",\"args\":[\"#mangle\",\"<13 chars>\"],\"exitCode\":1,\"durationMs\":1702,\"actions\":[{\"actionType\":\"type\",\"selector\":\"#mangle\",\"success\":false,\"error\":\"type did not land the expected value (the typed text and the field content are not recorded)\",\"executionTimeMs\":1597,\"timestamp\":\"2026-10-01T03:35:14.871Z\",\"url\":\"http://127.0.0.1:55704/p\",\"verification\":{\"verified\":false,\"urlChanged\":false,\"elementFound\":false,\"confidence\":0,\"reason\":\"Action failed: type did not land the expected value (the typed text and the field content are not recorded)\",\"evidence\":{\"tier\":\"action-failed\",\"checks\":[]}},\"tabId\":\"tab_sess_1790825709093_1_1\",\"seq\":1}],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:18.089Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"select\",\"args\":[\"#sel\",\"<10 chars>\"],\"exitCode\":0,\"durationMs\":54,\"actions\":[{\"actionType\":\"select_option\",\"selector\":\"#sel\",\"success\":true,\"executionTimeMs\":11,\"timestamp\":\"2026-10-01T03:35:18.141Z\",\"url\":\"http://127.0.0.1:55704/p\",\"verification\":{\"verified\":true,\"urlChanged\":false,\"elementFound\":true,\"confidence\":0.9,\"reason\":\"'select_option' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\",\"evidence\":{\"tier\":\"verified\",\"checks\":[{\"check\":\"select_option.built-in\",\"outcome\":\"pass\",\"detail\":\"the selected value(s) were read back inside the action\"}]}},\"tabId\":\"tab_sess_1790825709093_1_1\",\"seq\":1}],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:21.341Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"setclipboard\",\"args\":[\"<11 chars>\"],\"exitCode\":0,\"durationMs\":53,\"actions\":[{\"actionType\":\"set_clipboard\",\"success\":true,\"executionTimeMs\":10,\"timestamp\":\"2026-10-01T03:35:21.393Z\",\"target\":\"<11 chars>\",\"url\":\"http://127.0.0.1:55704/p\",\"verification\":{\"verified\":false,\"urlChanged\":false,\"elementFound\":false,\"confidence\":0.45,\"reason\":\"'set_clipboard' completed, but no built-in post-condition check could run: the clipboard couldn't be read back (the clipboard-read permission isn't granted for this origin[redacted]\",\"evidence\":{\"tier\":\"unverifiable\",\"checks\":[{\"check\":\"set_clipboard.read-back\",\"outcome\":\"not-run\",\"expected\":11,\"observed\":\"blocked\",\"detail\":\"clipboard-read permission not granted\"}]}},\"tabId\":\"tab_sess_1790825709093_1_1\",\"seq\":1}],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:21.595Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"getclipboard\",\"args\":[],\"exitCode\":0,\"durationMs\":42,\"actions\":[],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:21.838Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"eval\",\"args\":[\"document.getElementById('pw').value + '|' + document.getElementById('sel').value\"],\"exitCode\":0,\"durationMs\":42,\"actions\":[{\"actionType\":\"eval\",\"success\":true,\"executionTimeMs\":2,\"timestamp\":\"2026-10-01T03:35:21.879Z\",\"target\":\"document.getElementById('pw').value + '|' + document.getElementById('sel').value\",\"url\":\"http://127.0.0.1:55704/p\",\"tabId\":\"tab_sess_1790825709093_1_1\",\"seq\":1}],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:22.074Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"eval\",\"args\":[\"throw new Error('boom')\"],\"exitCode\":1,\"durationMs\":44,\"actions\":[{\"actionType\":\"eval\",\"success\":false,\"error\":\"boom\",\"executionTimeMs\":3,\"timestamp\":\"2026-10-01T03:35:22.116Z\",\"target\":\"throw new Error('boom')\",\"url\":\"http://127.0.0.1:55704/p\",\"tabId\":\"tab_sess_1790825709093_1_1\",\"seq\":1}],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:22.319Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"upload\",\"args\":[\"#file\",\"CNRYcliupname.txt\"],\"exitCode\":0,\"durationMs\":56,\"actions\":[{\"actionType\":\"upload_file\",\"selector\":\"#file\",\"success\":true,\"executionTimeMs\":11,\"timestamp\":\"2026-10-01T03:35:22.372Z\",\"target\":\"CNRYcliupname.txt\",\"url\":\"http://127.0.0.1:55704/p\",\"verification\":{\"verified\":true,\"urlChanged\":false,\"elementFound\":true,\"confidence\":0.9,\"reason\":\"'upload_file' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\",\"evidence\":{\"tier\":\"verified\",\"checks\":[{\"check\":\"upload_file.built-in\",\"outcome\":\"pass\",\"detail\":\"the input's files list was read back inside the action\"}]}},\"tabId\":\"tab_sess_1790825709093_1_1\",\"seq\":1}],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:25.578Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"download\",\"args\":[\"#dl\",\"<dir>\"],\"exitCode\":0,\"durationMs\":244,\"actions\":[{\"actionType\":\"download_file\",\"selector\":\"#dl\",\"success\":true,\"executionTimeMs\":202,\"timestamp\":\"2026-10-01T03:35:25.821Z\",\"url\":\"http://127.0.0.1:55704/p\",\"verification\":{\"verified\":true,\"urlChanged\":false,\"elementFound\":true,\"confidence\":0.9,\"reason\":\"'download_file' verified: 100 bytes written to CNRYdlname.txt during this action\",\"evidence\":{\"tier\":\"verified\",\"checks\":[{\"check\":\"download_file.file-on-disk\",\"outcome\":\"pass\",\"expected\":\">0 bytes, written during this action\",\"observed\":\"100 bytes\",\"detail\":\"100 bytes written to CNRYdlname.txt during this action\"}]}},\"tabId\":\"tab_sess_1790825709093_1_1\",\"seq\":1}],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:29.030Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"click\",\"args\":[\"#prompt\"],\"exitCode\":0,\"durationMs\":3100,\"actions\":[{\"actionType\":\"click\",\"selector\":\"#prompt\",\"success\":true,\"executionTimeMs\":3056,\"timestamp\":\"2026-10-01T03:35:32.127Z\",\"url\":\"http://127.0.0.1:55704/p\",\"verification\":{\"verified\":true,\"urlChanged\":false,\"elementFound\":true,\"confidence\":0.9,\"reason\":\"'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\",\"evidence\":{\"tier\":\"verified\",\"checks\":[{\"check\":\"click.built-in\",\"outcome\":\"pass\",\"detail\":\"occlusion and click-delivery were checked inside the action before it reported success\"}]}},\"tabId\":\"tab_sess_1790825709093_1_1\",\"seq\":1}],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:35.336Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"dialog\",\"args\":[\"accept\",\"<13 chars>\"],\"exitCode\":0,\"durationMs\":483,\"actions\":[],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:36.015Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"waitfor\",\"args\":[\"0\"],\"exitCode\":1,\"durationMs\":43,\"actions\":[{\"actionType\":\"wait_for\",\"selector\":\"text=\\\"CNRYcliwait\\\"\",\"success\":false,\"error\":\"wait_for timed out after 0ms waiting for [redacted] text \\\"CNRYcliwait\\\" was not found in the visible text of 1 frame(s).\",\"executionTimeMs\":2,\"timestamp\":\"2026-10-01T03:35:36.055Z\",\"url\":\"http://127.0.0.1:55704/p\",\"verification\":{\"verified\":false,\"urlChanged\":false,\"elementFound\":false,\"confidence\":0,\"reason\":\"Action failed: wait_for timed out after 0ms waiting for [redacted] text \\\"CNRYcliwait\\\" was not found in the visible text of 1 frame(s).\",\"evidence\":{\"tier\":\"action-failed\",\"checks\":[]}},\"tabId\":\"tab_sess_1790825709093_1_1\",\"seq\":1}],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:36.249Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"click\",\"args\":[\"#btn\"],\"exitCode\":4,\"durationMs\":98,\"actions\":[{\"actionType\":\"click\",\"selector\":\"#btn\",\"success\":true,\"executionTimeMs\":53,\"timestamp\":\"2026-10-01T03:35:36.345Z\",\"url\":\"http://127.0.0.1:55704/p\",\"verification\":{\"verified\":false,\"urlChanged\":false,\"elementFound\":false,\"confidence\":0.09000000000000001,\"reason\":\"Expected text \\\"CNRYcliexp\\\" was not found in the page's visible text after the action\",\"evidence\":{\"tier\":\"contradicted\",\"checks\":[{\"check\":\"click.built-in\",\"outcome\":\"pass\",\"detail\":\"occlusion and click-delivery were checked inside the action before it reported success\"},{\"check\":\"expect.text\",\"outcome\":\"fail\",\"expected\":\"CNRYcliexp\",\"observed\":\"not-found\"}]}},\"tabId\":\"tab_sess_1790825709093_1_1\",\"seq\":1}],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:39.573Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"nav\",\"args\":[\"<dir>\"],\"exitCode\":1,\"durationMs\":654,\"error\":\"Protocol error (Page.navigate): Cannot navigate to invalid URL\",\"actions\":[{\"actionType\":\"navigate\",\"success\":false,\"error\":\"Protocol error (Page.navigate): Cannot navigate to invalid URL\",\"executionTimeMs\":3,\"timestamp\":\"2026-10-01T03:35:39.613Z\",\"target\":\"<dir>\",\"url\":\"http://127.0.0.1:55704/p\",\"tabId\":\"tab_sess_1790825709093_1_1\",\"seq\":1}],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:40.422Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"type\",\"args\":[\"#pw\",\"<2 chars>\"],\"exitCode\":0,\"durationMs\":60,\"actions\":[{\"actionType\":\"type\",\"selector\":\"#pw\",\"success\":true,\"executionTimeMs\":17,\"timestamp\":\"2026-10-01T03:35:40.479Z\",\"url\":\"http://127.0.0.1:55704/p\",\"verification\":{\"verified\":true,\"urlChanged\":false,\"elementFound\":true,\"confidence\":0.9,\"reason\":\"'type' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90\",\"evidence\":{\"tier\":\"verified\",\"checks\":[{\"check\":\"type.built-in\",\"outcome\":\"pass\",\"detail\":\"the typed value was read back from the element inside the action\"}]}},\"tabId\":\"tab_sess_1790825709093_1_1\",\"seq\":1}],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:43.687Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"press\",\"args\":[\"#pw\",\"Enter\"],\"exitCode\":0,\"durationMs\":52,\"actions\":[{\"actionType\":\"focus\",\"selector\":\"#pw\",\"success\":true,\"executionTimeMs\":10,\"timestamp\":\"2026-10-01T03:35:43.734Z\",\"url\":\"http://127.0.0.1:55704/p\",\"verification\":{\"verified\":true,\"urlChanged\":false,\"elementFound\":true,\"confidence\":0.9,\"reason\":\"'focus' verified: document.activeElement in the element's own document is input[redacted]\",\"evidence\":{\"tier\":\"verified\",\"checks\":[{\"check\":\"focus.active-element\",\"outcome\":\"pass\",\"expected\":\"input[redacted]\",\"observed\":\"input[redacted]\",\"detail\":\"checked in the element's own frame document\"}]}},\"tabId\":\"tab_sess_1790825709093_1_1\",\"seq\":1},{\"actionType\":\"press_key\",\"success\":true,\"executionTimeMs\":3,\"timestamp\":\"2026-10-01T03:35:43.738Z\",\"target\":\"Enter\",\"url\":\"http://127.0.0.1:55704/p\",\"verification\":{\"verified\":true,\"urlChanged\":false,\"elementFound\":true,\"confidence\":0.9,\"reason\":\"'press_key' verified: keydown 'Enter' was delivered to the focused input[redacted]\",\"evidence\":{\"tier\":\"verified\",\"checks\":[{\"check\":\"press_key.focused-target\",\"outcome\":\"pass\",\"observed\":\"input[redacted]\"},{\"check\":\"press_key.key-delivered\",\"outcome\":\"pass\",\"expected\":\"trusted keydown 'Enter'\",\"observed\":\"delivered\"},{\"check\":\"press_key.effect\",\"outcome\":\"not-run\",\"expected\":\"none\",\"detail\":\"no deterministic effect for this key\"}]}},\"tabId\":\"tab_sess_1790825709093_1_1\",\"seq\":2}],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:46.951Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"newtab\",\"args\":[\"http://127.0.0.1:55704/p\"],\"exitCode\":0,\"durationMs\":75,\"actions\":[],\"actionsEvicted\":0}\n{\"v\":1,\"type\":\"command\",\"ts\":\"2026-10-01T03:35:47.307Z\",\"sessionId\":\"sess_1790825709093_1\",\"cwd\":\"<dir>\",\"verb\":\"tabs\",\"args\":[],\"exitCode\":0,\"durationMs\":42,\"actions\":[],\"actionsEvicted\":0}\n",
+ "human": "History: 19 command(s) in E:\\AI-Cache\\tmp\\fr211-audit-cli-ESb5cW\\state\\history.jsonl\n--- session sess_1790825709093_1 (current) ---\n2026-10-01 03:35:08Z  exit 0     826ms  nav http://127.0.0.1:55704/p\n    - navigate ok verified tab_sess_1790825709093_1_1 http://127.0.0.1:55704/p\n2026-10-01 03:35:09Z  exit 0      74ms  type #pw <11 chars>\n    - type ok verified tab_sess_1790825709093_1_1 #pw\n2026-10-01 03:35:13Z  exit 1    1702ms  type #mangle <13 chars>\n    - type FAILED action-failed tab_sess_1790825709093_1_1 #mangle: type did not land the expected value (the typed text and the field content are not recorded)\n2026-10-01 03:35:18Z  exit 0      54ms  select #sel <10 chars>\n    - select_option ok verified tab_sess_1790825709093_1_1 #sel\n2026-10-01 03:35:21Z  exit 0      53ms  setclipboard <11 chars>\n    - set_clipboard ok unverifiable tab_sess_1790825709093_1_1 <11 chars>\n2026-10-01 03:35:21Z  exit 0      42ms  getclipboard\n2026-10-01 03:35:21Z  exit 0      42ms  eval document.getElementById('pw').value + '|' + document.getElementById('sel').value\n    - eval ok no-verification tab_sess_1790825709093_1_1 document.getElementById('pw').value + '|' + document.getElementById('sel').value\n2026-10-01 03:35:22Z  exit 1      44ms  eval throw new Error('boom')\n    - eval FAILED no-verification tab_sess_1790825709093_1_1 throw new Error('boom'): boom\n2026-10-01 03:35:22Z  exit 0      56ms  upload #file CNRYcliupname.txt\n    - upload_file ok verified tab_sess_1790825709093_1_1 CNRYcliupname.txt\n2026-10-01 03:35:25Z  exit 0     244ms  download #dl <dir>\n    - download_file ok verified tab_sess_1790825709093_1_1 #dl\n2026-10-01 03:35:29Z  exit 0    3100ms  click #prompt\n    - click ok verified tab_sess_1790825709093_1_1 #prompt\n2026-10-01 03:35:35Z  exit 0     483ms  dialog accept <13 chars>\n2026-10-01 03:35:36Z  exit 1      43ms  waitfor 0\n    - wait_for FAILED action-failed tab_sess_1790825709093_1_1 text=\"CNRYcliwait\": wait_for timed out after 0ms waiting for [redacted] text \"CNRYcliwait\" was not found in the visible text of 1 frame(s).\n2026-10-01 03:35:36Z  exit 4      98ms  click #btn\n    - click ok contradicted tab_sess_1790825709093_1_1 #btn\n2026-10-01 03:35:39Z  exit 1     654ms  nav <dir>\n    error: Protocol error (Page.navigate): Cannot navigate to invalid URL\n    - navigate FAILED no-verification tab_sess_1790825709093_1_1 <dir>: Protocol error (Page.navigate): Cannot navigate to invalid URL\n2026-10-01 03:35:40Z  exit 0      60ms  type #pw <2 chars>\n    - type ok verified tab_sess_1790825709093_1_1 #pw\n2026-10-01 03:35:43Z  exit 0      52ms  press #pw Enter\n    - focus ok verified tab_sess_1790825709093_1_1 #pw\n    - press_key ok verified tab_sess_1790825709093_1_1 Enter\n2026-10-01 03:35:46Z  exit 0      75ms  newtab http://127.0.0.1:55704/p\n2026-10-01 03:35:47Z  exit 0      42ms  tabs\n"
+}

@@ -1,0 +1,25 @@
+{
+  "ranAt": "2026-09-30T22:45:17.730Z",
+  "total": 1,
+  "caught": 1,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MX32",
+      "what": "a lone `#` no longer drops the text after it (`# S` keeps S)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "493ad8519a8389d4ffcbb294aa0669d7a85a624d1fea87ec5d06e75229af78da",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > a lone `#` (no identifier after it) drops the text after it: `# S` may be a frag"
+        ],
+        "summary": "Tests  1 failed | 68 passed (69)"
+      },
+      "shaAfter": "493ad8519a8389d4ffcbb294aa0669d7a85a624d1fea87ec5d06e75229af78da",
+      "restoredIdentical": true,
+      "caught": true
+    }
+  ]
+}

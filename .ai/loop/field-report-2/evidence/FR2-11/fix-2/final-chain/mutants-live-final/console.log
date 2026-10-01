@@ -1,0 +1,19 @@
+[MX1] CAUGHT unit=true live=true restored=true  rule (a) without the `#` cut (a fragment is kept)
+[MX4] CAUGHT unit=true live=true restored=true  rule (b) removed: a token holding `=` or `&` is kept
+[MX5] CAUGHT unit=true live=true restored=true  rule (c) removed: userinfo is kept
+[MX8] CAUGHT unit=true live=true restored=true  the path rule dropped (a directory in a path is kept)
+[MX12] NOT CAUGHT unit=true live=false restored=true  the text after a cut is NOT dropped (a URL with a space in its query leaks its tail)
+[MX14] CAUGHT unit=true live=true restored=true  the upload_file target keeps a name with no extension (a user / home directory name)
+[MX20] CAUGHT unit=true live=true restored=true  entry.error stored without the rule
+
+[mutants] 6/7 caught; all restored byte-identically: true
+(node:83908) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+batch MX1,MX4,MX5,MX8,MX12,MX14,MX20 exit 1
+[MX9] CAUGHT unit=true live=true restored=true  the cwd rule dropped (the full working directory is stored)
+
+[mutants] 1/1 caught; all restored byte-identically: true
+(node:81404) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+batch MX9 exit 0
+ALLDONE

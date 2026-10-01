@@ -1,0 +1,159 @@
+{
+  "ranAt": "2026-09-30T21:52:05.138Z",
+  "total": 5,
+  "caught": 3,
+  "allRestoredIdentical": true,
+  "results": [
+    {
+      "id": "MX1",
+      "what": "rule (a) without the `#` cut (a fragment is kept)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (a) cut at `#`: a bare fragment with no URL (only rule a protects it)",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (a) custom scheme redirect (audit-2 A2-F1) and about:blank#S",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (a) swallows what follows the cut: a space inside the query or the URL"
+        ],
+        "summary": "Tests  18 failed | 46 passed (64)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "FIX2,PROP",
+        "failedCases": [
+          "FIX2: [{\"check\":\"no canary of 23 shapes in the session view or the default tab view (error, reason, evidence, target, selector, url)\",\"observed\":[\"about-blank-frag\",\"single-label-host\",\"url-space-path-frag\",\"bare-fragment\",\"pct-hash\"]}]",
+          "PROP: [{\"check\":\"no SECRET of 320 generated strings in any stored entry\",\"observed\":[{\"id\":\"p2\",\"text\":\"Current URL \\\"//127.0.0.1:5123\\n#CNRYp2X\\\" does not contain \\\"/done\\\"\",\"entry\":\"{\\\"actionType\\\":\\\"eval\\\",\\\"success\\\":false,\\\"error\\\":\\\"Current URL 127.0.0.1:5123 #CNRYp2X\\\\\\\" does not contain <dir>\\\",\\\"",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 12 raw history responses\",\"observed\":[\"CNRYfx2aboutblankfragmcp\",\"CNRYfx2singlelabelhostmcp\",\"CNRYfx2urlspacepathfragmcp\",\"CNRYfx2barefragmentmcp\",\"CNRYfx2pcthashmcp\",\"CNRYfx2aboutblankfragmcp\",\"CNRYfx2singlelabelhostmcp\",\"CNRYfx2urlspacepathfragmcp\",\"CNRYfx2barefragme"
+        ],
+        "summaryLine": "[fr2-11] 0/3 cases (7/10 checks) {\"mcp\":{\"cases\":3,\"casesPassed\":0,\"checks\":10,\"checksFailed\":3},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MX2",
+      "what": "rule (a) without the `?` cut (a query is kept)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H3: redacts every URL token inside free text",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > post-FR2-07 verification: evidence observed/expected redacted, detail capped at 300, scalars pass through",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (a) cut at `?`: a bare `?=S` (no `=` left after the cut, no URL, no path)"
+        ],
+        "summary": "Tests  17 failed | 47 passed (64)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "FIX2,PROP",
+        "failedCases": [
+          "FIX2: [{\"check\":\"no canary of 23 shapes in the session view or the default tab view (error, reason, evidence, target, selector, url)\",\"observed\":[\"about-blank-query\",\"url-space-query-tail\",\"pct-hash-double\",\"nbsp-tail\"]}]",
+          "PROP: [{\"check\":\"no SECRET of 320 generated strings in any stored entry\",\"observed\":[{\"id\":\"p8\",\"text\":\"?CNRYp8X x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x\",\"entry\":\"{\\\"actionType\\\":\\\"eval\\\",\\\"success\\\":false,\\\"error\\\":\\\"?CNRYp8X x x x x x x x x x x x x x x x x x x x x",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 12 raw history responses\",\"observed\":[\"CNRYfx2aboutblankquerymcp\",\"CNRYfx2urlspacequerytailmcp\",\"CNRYfx2pcthashdoublemcp\",\"CNRYfx2nbsptailmcp\",\"CNRYfx2aboutblankquerymcp\",\"CNRYfx2urlspacequerytailmcp\",\"CNRYfx2pcthashdoublemcp\",\"CNRYfx2nbsptailmcp\",\"CNRYfx2aboutblankque"
+        ],
+        "summaryLine": "[fr2-11] 0/3 cases (7/10 checks) {\"mcp\":{\"cases\":3,\"casesPassed\":0,\"checks\":10,\"checksFailed\":3},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    },
+    {
+      "id": "MX4",
+      "what": "rule (b) removed: a token holding `=` or `&` is kept",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/action-history.spec.ts > FR2-11 redactUrlsInText / capHistoryString / evalCodePreview (H3, H4, H5, N12) > H5 / N12: eval preview collapses whitespace, drops URL secrets, caps at 200",
+          " tests/unit/action-history.spec.ts > FR2-11 sanitizeHistoryEntry (H6) > URL rule for navigate targets, preview rule for eval targets, generic redaction otherwise",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (b): a form token `a=S` (no cut character, no URL, no path)"
+        ],
+        "summary": "Tests  21 failed | 43 passed (64)"
+      },
+      "live": {
+        "caught": false,
+        "buildFailed": true,
+        "out": "src/session/action-history.ts(227,9): error TS6133: 'probe' is declared but its value is never read.\r\n"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": false
+    },
+    {
+      "id": "MX5",
+      "what": "rule (c) removed: userinfo is kept",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > rule (c): userinfo is stripped (no cut character, no `=`, and a trailing `/` so ",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 structured target: FR2-09 D5 (origin + pathname) then the rule > the rule and D5 agree: for every generated case the bare URL function and the text functio",
+          " tests/unit/privacy-matrix.spec.ts > FR2-11 fix-1: free text (redactUrlsInText) > no cell leaks and none over-redacts the origin/path or a basename"
+        ],
+        "summary": "Tests  16 failed | 48 passed (64)"
+      },
+      "live": {
+        "caught": false,
+        "buildFailed": true,
+        "out": "src/session/action-history.ts(172,9): error TS6133: 'prefix' is declared but its value is never read.\r\nsrc/session/action-history.ts(175,9): error TS6133: 'at' is declared but its value is never read.\r\n"
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": false
+    },
+    {
+      "id": "MX6",
+      "what": "decoding removed (%23 %3F %3B, double-encoded, JSON escapes, fullwidth)",
+      "file": "packages/browser/src/session/action-history.ts",
+      "shaBefore": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "unit": {
+        "caught": true,
+        "exit": 1,
+        "failingTests": [
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 property test (seed 20261001, 6000 generated strings) > SECRET is absent from every stored field of every generated string",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 ISOLATED cells: one rule each (delete the rule and the named cell fails) > decoding: `%23S`, `%3FS`, `%3BS` and the double-encoded forms",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 structured target: FR2-09 D5 (origin + pathname) then the rule > http(s) targets keep origin + pathname and nothing else; an encoded delimiter in the path ",
+          " tests/unit/char-rule.spec.ts > FR2-11 fix-2 structured target: FR2-09 D5 (origin + pathname) then the rule > the rule and D5 agree: for every generated case the bare URL function and the text functio"
+        ],
+        "summary": "Tests  17 failed | 47 passed (64)"
+      },
+      "live": {
+        "caught": true,
+        "exit": 1,
+        "surface": "mcp",
+        "only": "FIX2,PROP",
+        "failedCases": [
+          "FIX2: [{\"check\":\"no canary of 23 shapes in the session view or the default tab view (error, reason, evidence, target, selector, url)\",\"observed\":[\"pct-hash\",\"pct-hash-double\"]}]",
+          "PROP: [{\"check\":\"no SECRET of 320 generated strings in any stored entry\",\"observed\":[{\"id\":\"p0\",\"text\":\"{\\\"url\\\":\\\"`x%3Fy%3DCNRYp0X`\\\",\\\"n\\\":1}\",\"entry\":\"{\\\"actionType\\\":\\\"eval\\\",\\\"success\\\":false,\\\"error\\\":\\\"{\\\\\\\"url\\\\\\\":\\\\\\\"`x%3Fy%3DCNRYp0X`\\\\\\\",\\\\\\\"n\\\\\\\":1}\\\",\\\"executionTimeMs\\\":1,\\\"timestamp\\\":\\\"2026-",
+          "PRIV-sweep: [{\"check\":\"no canary in any of 12 raw history responses\",\"observed\":[\"CNRYfx2pcthashmcp\",\"CNRYfx2pcthashdoublemcp\",\"CNRYfx2pcthashmcp\",\"CNRYfx2pcthashdoublemcp\",\"CNRYfx2pcthashmcp\",\"CNRYfx2pcthashdoublemcp\",\"CNRYfx2pcthashmcp\",\"CNRYfx2pcthashdoublemcp\",\"CNRYp0X\",\"CNRYp12X\",\"CNRYp24X\",\"CNRYp28X\",\"CNR"
+        ],
+        "summaryLine": "[fr2-11] 0/3 cases (7/10 checks) {\"mcp\":{\"cases\":3,\"casesPassed\":0,\"checks\":10,\"checksFailed\":3},\"cli\":{\"cases\":0,\"casesPassed\":0,\"checks\":0,\"checksFailed\":0},\"sdk\":{\"cases\":0,\"casesPassed\":0,\"checks\""
+      },
+      "shaAfter": "2d59288d46595b13699b711c28ef61db762c61d9751af415bf95dd38d801bca6",
+      "restoredIdentical": true,
+      "rebuiltAfterRestore": true,
+      "caught": true
+    }
+  ]
+}

@@ -1,0 +1,183 @@
+{
+  "startedAt": "2026-09-30T22:02:43.360Z",
+  "finishedAt": "2026-09-30T22:11:18.600Z",
+  "cases": 1,
+  "casesPassed": 0,
+  "checks": 9,
+  "checksFailed": 2,
+  "perSurface": {
+    "mcp": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "cli": {
+      "cases": 1,
+      "casesPassed": 0,
+      "checks": 9,
+      "checksFailed": 2
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "cli:FIX2"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [
+      50528
+    ],
+    "ownCliChromeProfileDirs": [
+      "E:\\AI-Cache\\tmp\\sutradhar-cli-1790805763694"
+    ],
+    "childPidsStarted": [
+      29308,
+      69088,
+      50380,
+      19968,
+      71328,
+      38044,
+      72288,
+      67052,
+      28140,
+      8328,
+      51396,
+      59300,
+      57016,
+      59668,
+      64648,
+      672,
+      57352,
+      63700,
+      69260,
+      24804,
+      43688,
+      66404,
+      60464,
+      55576,
+      38544,
+      48788,
+      42716,
+      74468,
+      41852,
+      72024,
+      50364,
+      53760,
+      19968,
+      61044,
+      71060,
+      63660,
+      61044,
+      71060,
+      69372,
+      70112,
+      65792,
+      61320,
+      32936,
+      71832,
+      31344,
+      37188,
+      47764,
+      50200,
+      48988,
+      56908,
+      30376,
+      61888,
+      67744,
+      72956,
+      70568,
+      55976,
+      52672,
+      72668,
+      44912,
+      76604,
+      46784,
+      42548,
+      11680,
+      74220,
+      29116,
+      49492,
+      42488,
+      54408
+    ]
+  },
+  "evidenceFiles": [],
+  "results": [
+    {
+      "surface": "cli",
+      "case": "FIX2",
+      "pass": false,
+      "checks": 9,
+      "failed": [
+        {
+          "check": "no canary of 23 shapes anywhere in the raw history.jsonl bytes of the new lines (args, error, actions[])",
+          "observed": [
+            "custom-scheme-redirect",
+            "custom-scheme-redirect-query",
+            "about-blank-frag",
+            "about-blank-query",
+            "intranet-port-frag",
+            "url-space-frag",
+            "url-space-path-frag",
+            "url-space-query-tail",
+            "bare-fragment",
+            "bare-query-eq",
+            "form-token",
+            "userinfo-noscheme",
+            "pct-hash",
+            "pct-hash-double",
+            "nbsp-tail",
+            "win-backslash",
+            "win-forward",
+            "win-other-drive",
+            "unc",
+            "unc-forward",
+            "posix",
+            "home-dir-only"
+          ]
+        },
+        {
+          "check": "human `sutradhar history` and `history --json` output carry no canary of any shape",
+          "observed": [
+            "custom-scheme-redirect",
+            "custom-scheme-redirect-query",
+            "about-blank-frag",
+            "about-blank-query",
+            "intranet-port-frag",
+            "url-space-frag",
+            "url-space-path-frag",
+            "url-space-query-tail",
+            "bare-fragment",
+            "bare-query-eq",
+            "form-token",
+            "userinfo-noscheme",
+            "pct-hash",
+            "pct-hash-double",
+            "nbsp-tail",
+            "win-backslash",
+            "win-forward",
+            "win-other-drive",
+            "unc",
+            "unc-forward",
+            "posix",
+            "home-dir-only"
+          ]
+        }
+      ],
+      "commands": 65
+    }
+  ]
+}

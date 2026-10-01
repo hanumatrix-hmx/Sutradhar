@@ -1,0 +1,60 @@
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- CNRYd1X[39m
+[31m+ http://a.test/p%3Ftoken%3DCNRYd1X[39m
+
+[36m [2m❯[22m tests/unit/char-rule.spec.ts:[2m197:71[22m[39m
+    [90m195| [39m    [34mexpect[39m([34mredactHistoryUrl[39m([32m'http://127.0.0.1:5/p/q?x=(a)&t=1#f'[39m))[33m.[39m[34mtoB[39m…
+    [90m196| [39m    [34mexpect[39m([34mredactHistoryUrl[39m([32m'https://a.test/p;jsessionid=Z/q'[39m))[33m.[39m[34mtoBe[39m([32m'[39m…
+    [90m197| [39m    [34mexpect[39m([34mredactHistoryUrl[39m([32m'http://a.test/p%3Ftoken%3DCNRYd1X'[39m))[33m.[39mnot[33m.[39m…
+    [90m   | [39m                                                                      [31m^[39m
+    [90m198| [39m    [34mexpect[39m([34mredactHistoryUrl[39m([32m'about:blank#CNRYd2X'[39m))[33m.[39m[34mtoBe[39m([32m'about:blank'[39m…
+    [90m199| [39m    [34mexpect[39m([34mredactHistoryUrl[39m([32m'com.example.app:/cb#access_token=CNRYd3X'[39m…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/17]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/char-rule.spec.ts[2m > [22mFR2-11 fix-2 structured target: FR2-09 D5 (origin + pathname) then the rule[2m > [22mthe rule and D5 agree: for every generated case the bare URL function and the text function both drop the secret
+[31m[1mAssertionError[22m: expected 3475 to be +0 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 0[39m
+[31m+ 3475[39m
+
+[36m [2m❯[22m tests/unit/char-rule.spec.ts:[2m203:24[22m[39m
+    [90m201| [39m  [34mit[39m([32m'the rule and D5 agree: for every generated case the bare URL fun[39m…
+    [90m202| [39m    [35mconst[39m bad [33m=[39m cases[33m.[39m[34mfilter[39m((c) [33m=>[39m [34mredactHistoryUrl[39m(c[33m.[39mtext)[33m.[39m[34mincludes[39m(…
+    [90m203| [39m    [34mexpect[39m(bad[33m.[39mlength)[33m.[39m[34mtoBe[39m([34m0[39m)[33m;[39m
+    [90m   | [39m                       [31m^[39m
+    [90m204| [39m  })[33m;[39m
+    [90m205| [39m})[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/17]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/char-rule.spec.ts[2m > [22mFR2-11 fix-2 eval preview (decision: keep a redacted preview, per spec H5 / R2; log deviation D-fix2-3)[2m > [22mordinary short code is kept; code with `;` `=` `?` `/` degrades predictably and never stores a URL tail
+[31m[1mAssertionError[22m: expected '2+0 *t1*' to be '2+0 <dir>' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 2+0 <dir>[39m
+[31m+ 2+0 *t1*[39m
+
+[36m [2m❯[22m tests/unit/char-rule.spec.ts:[2m211:43[22m[39m
+    [90m209| [39m    [34mexpect[39m([34mevalCodePreview[39m([32m'1+1'[39m))[33m.[39m[34mtoBe[39m([32m'1+1'[39m)[33m;[39m
+    [90m210| [39m    [34mexpect[39m([34mevalCodePreview[39m([32m'document.title'[39m))[33m.[39m[34mtoBe[39m([32m'document.title'[39m)[33m;[39m
+    [90m211| [39m    [34mexpect[39m([34mevalCodePreview[39m([32m'2+0 /*t1*/'[39m))[33m.[39m[34mtoBe[39m([32m'2+0 <dir>'[39m)[33m;[39m
+    [90m   | [39m                                          [31m^[39m
+    [90m212| [39m    [90m// a statement separator cuts the rest (fail-closed: what follows [39m…
+    [90m213| [39m    [34mexpect[39m([34mevalCodePreview[39m([32m'const x = 1; fetch("https://t.test/?k=CNRY[39m…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/17]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m17 failed[39m[22m[2m | [22m[1m[32m8 passed[39m[22m[90m (25)[39m
+[2m   Start at [22m 01:58:28
+[2m   Duration [22m 1.79s[2m (transform 356ms, setup 0ms, collect 666ms, tests 765ms, environment 0ms, prepare 165ms)[22m
+

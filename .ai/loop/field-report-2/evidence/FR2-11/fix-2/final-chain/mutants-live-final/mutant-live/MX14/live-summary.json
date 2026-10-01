@@ -1,0 +1,97 @@
+{
+  "startedAt": "2026-10-01T07:34:11.204Z",
+  "finishedAt": "2026-10-01T07:34:29.411Z",
+  "cases": 3,
+  "casesPassed": 1,
+  "checks": 10,
+  "checksFailed": 2,
+  "perSurface": {
+    "mcp": {
+      "cases": 3,
+      "casesPassed": 1,
+      "checks": 10,
+      "checksFailed": 2
+    },
+    "cli": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "mcp:FIX2",
+    "mcp:PRIV-sweep"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": [
+      51560,
+      90372
+    ]
+  },
+  "evidenceFiles": [
+    "mcp-raw-history-responses.txt"
+  ],
+  "results": [
+    {
+      "surface": "mcp",
+      "case": "FIX2",
+      "pass": false,
+      "checks": 6,
+      "failed": [
+        {
+          "check": "no canary of 23 shapes in the session view or the default tab view (error, reason, evidence, target, selector, url)",
+          "observed": [
+            "home-dir-only"
+          ]
+        }
+      ],
+      "shapes": 23
+    },
+    {
+      "surface": "mcp",
+      "case": "PROP",
+      "pass": true,
+      "checks": 2,
+      "failed": [],
+      "generated": 320,
+      "seed": 20261003
+    },
+    {
+      "surface": "mcp",
+      "case": "PRIV-sweep",
+      "pass": false,
+      "checks": 2,
+      "failed": [
+        {
+          "check": "no canary in any of 12 raw history responses",
+          "observed": [
+            "CNRYfx2homedironlymcp",
+            "CNRYfx2homedironlymcp",
+            "CNRYfx2homedironlymcp",
+            "CNRYfx2homedironlymcp",
+            "CNRYfx2homedironlymcp",
+            "CNRYfx2homedironlymcp",
+            "CNRYfx2homedironlymcp"
+          ]
+        }
+      ]
+    }
+  ]
+}

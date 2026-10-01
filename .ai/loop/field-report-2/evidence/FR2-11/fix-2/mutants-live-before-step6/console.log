@@ -1,0 +1,29 @@
+[MX1] CAUGHT unit=true live=true restored=true  rule (a) without the `#` cut (a fragment is kept)
+[MX2] CAUGHT unit=true live=true restored=true  rule (a) without the `?` cut (a query is kept)
+[MX4] NOT CAUGHT unit=true live=false restored=true  rule (b) removed: a token holding `=` or `&` is kept
+[MX5] NOT CAUGHT unit=true live=false restored=true  rule (c) removed: userinfo is kept
+[MX6] CAUGHT unit=true live=true restored=true  decoding removed (%23 %3F %3B, double-encoded, JSON escapes, fullwidth)
+
+[mutants] 3/5 caught; all restored byte-identically: true
+(node:41644) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+batch MX1,MX2,MX4,MX5,MX6 exit 1
+[MX8] NOT CAUGHT unit=true live=false restored=true  the path rule dropped (a directory in a path is kept)
+[MX11] CAUGHT unit=true live=true restored=true  the old findUrlMarker behaviour restored: only tokens that look like a scheme:// URL are redacted (a shape gate in front of the rule)
+[MX12] CAUGHT unit=true live=true restored=true  the text after a cut is NOT dropped (a URL with a space in its query leaks its tail)
+[MX14] NOT CAUGHT unit=true live=false restored=true  the upload_file target keeps a name with no extension (a user / home directory name)
+[MX17] CAUGHT unit=true live=true restored=true  OVER-redaction: a scheme:// URL is no longer kept (reduced to its last path segment like a path)
+[MX20] CAUGHT unit=true live=true restored=true  entry.error stored without the rule
+
+[mutants] 4/6 caught; all restored byte-identically: true
+(node:76544) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+batch MX8,MX11,MX12,MX14,MX17,MX20 exit 1
+[MX9] CAUGHT unit=true live=true restored=true  the cwd rule dropped (the full working directory is stored)
+[MX10] CAUGHT unit=true live=true restored=true  the CLI uses its OWN naive redactor instead of the shared function (cuts the query of an http URL only)
+
+[mutants] 2/2 caught; all restored byte-identically: true
+(node:69160) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+batch MX9,MX10 exit 0
+ALLDONE

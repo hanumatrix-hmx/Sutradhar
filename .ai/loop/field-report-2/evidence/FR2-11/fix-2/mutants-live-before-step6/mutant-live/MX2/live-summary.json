@@ -1,0 +1,247 @@
+{
+  "startedAt": "2026-09-30T21:51:08.681Z",
+  "finishedAt": "2026-09-30T21:51:24.630Z",
+  "cases": 3,
+  "casesPassed": 0,
+  "checks": 10,
+  "checksFailed": 3,
+  "perSurface": {
+    "mcp": {
+      "cases": 3,
+      "casesPassed": 0,
+      "checks": 10,
+      "checksFailed": 3
+    },
+    "cli": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "sdk": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    },
+    "bundle": {
+      "cases": 0,
+      "casesPassed": 0,
+      "checks": 0,
+      "checksFailed": 0
+    }
+  },
+  "failed": [
+    "mcp:FIX2",
+    "mcp:PROP",
+    "mcp:PRIV-sweep"
+  ],
+  "informational": [],
+  "hygiene": {
+    "lingeringChromeKilledByPid": [],
+    "ownCliChromePids": [],
+    "ownCliChromeProfileDirs": [],
+    "childPidsStarted": [
+      49192,
+      75472
+    ]
+  },
+  "evidenceFiles": [
+    "mcp-raw-history-responses.txt"
+  ],
+  "results": [
+    {
+      "surface": "mcp",
+      "case": "FIX2",
+      "pass": false,
+      "checks": 6,
+      "failed": [
+        {
+          "check": "no canary of 23 shapes in the session view or the default tab view (error, reason, evidence, target, selector, url)",
+          "observed": [
+            "about-blank-query",
+            "url-space-query-tail",
+            "pct-hash-double",
+            "nbsp-tail"
+          ]
+        }
+      ],
+      "shapes": 23
+    },
+    {
+      "surface": "mcp",
+      "case": "PROP",
+      "pass": false,
+      "checks": 2,
+      "failed": [
+        {
+          "check": "no SECRET of 320 generated strings in any stored entry",
+          "observed": [
+            {
+              "id": "p8",
+              "text": "?CNRYp8X x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x",
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"?CNRYp8X x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x\",\"executionTimeMs\":1,\"timestamp\":\"2026-09-30T21:51:21.934Z\",\"target\":\"throw new Error(\\\"?CNRYp8X x x x x "
+            },
+            {
+              "id": "p28",
+              "text": "{\"url\":\"{myapp:///x/？CNRYp28X}\",\"n\":1}",
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"{\\\"url\\\":\\\"{myapp:///x/?CNRYp28X}\\\",\\\"n\\\":1}\",\"executionTimeMs\":1,\"timestamp\":\"2026-09-30T21:51:21.952Z\",\"target\":\"throw new Error(\\\"{\\\\\\\"url\\\\\\\":\\\\\\\"{myapp:///x/?CNRYp28X}\\\\\\\",\\\\\\\"n\\\\\\\":1}\\\")\","
+            },
+            {
+              "id": "p33",
+              "text": "`about:\\/\\/localhost/my dir?q=ab CNRYp33X`",
+              "entry": "{\"actionType\":\"eval\",\"success\":false,\"error\":\"`about:\\\\/\\\\/localhost/my [redacted] CNRYp33X`\",\"executionTimeMs\":1,\"timestamp\":\"2026-09-30T21:51:21.958Z\",\"target\":\"throw new <dir> [redacted] CNRYp33X`\\\")\",\"url\":\"http://127.0.0.1:55467/fr2-11"
+            }
+          ]
+        }
+      ],
+      "generated": 320,
+      "seed": 20261003
+    },
+    {
+      "surface": "mcp",
+      "case": "PRIV-sweep",
+      "pass": false,
+      "checks": 2,
+      "failed": [
+        {
+          "check": "no canary in any of 12 raw history responses",
+          "observed": [
+            "CNRYfx2aboutblankquerymcp",
+            "CNRYfx2urlspacequerytailmcp",
+            "CNRYfx2pcthashdoublemcp",
+            "CNRYfx2nbsptailmcp",
+            "CNRYfx2aboutblankquerymcp",
+            "CNRYfx2urlspacequerytailmcp",
+            "CNRYfx2pcthashdoublemcp",
+            "CNRYfx2nbsptailmcp",
+            "CNRYfx2aboutblankquerymcp",
+            "CNRYfx2urlspacequerytailmcp",
+            "CNRYfx2pcthashdoublemcp",
+            "CNRYfx2nbsptailmcp",
+            "CNRYfx2aboutblankquerymcp",
+            "CNRYfx2urlspacequerytailmcp",
+            "CNRYfx2pcthashdoublemcp",
+            "CNRYfx2nbsptailmcp",
+            "CNRYp8X",
+            "CNRYp28X",
+            "CNRYp33X",
+            "CNRYfx2aboutblankquerymcp",
+            "CNRYfx2urlspacequerytailmcp",
+            "CNRYfx2pcthashdoublemcp",
+            "CNRYfx2nbsptailmcp",
+            "CNRYp8X",
+            "CNRYp28X",
+            "CNRYp33X",
+            "CNRYp41X",
+            "CNRYp43X",
+            "CNRYp64X",
+            "CNRYp68X",
+            "CNRYfx2aboutblankquerymcp",
+            "CNRYfx2urlspacequerytailmcp",
+            "CNRYfx2pcthashdoublemcp",
+            "CNRYfx2nbsptailmcp",
+            "CNRYp8X",
+            "CNRYp28X",
+            "CNRYp33X",
+            "CNRYp41X",
+            "CNRYp43X",
+            "CNRYp64X",
+            "CNRYp68X",
+            "CNRYp85X",
+            "CNRYp102X",
+            "CNRYp114X",
+            "CNRYfx2aboutblankquerymcp",
+            "CNRYfx2urlspacequerytailmcp",
+            "CNRYfx2pcthashdoublemcp",
+            "CNRYfx2nbsptailmcp",
+            "CNRYp8X",
+            "CNRYp28X",
+            "CNRYp33X",
+            "CNRYp41X",
+            "CNRYp43X",
+            "CNRYp64X",
+            "CNRYp68X",
+            "CNRYp85X",
+            "CNRYp102X",
+            "CNRYp114X",
+            "CNRYp120X",
+            "CNRYp121X",
+            "CNRYp125X",
+            "CNRYp126X",
+            "CNRYp8X",
+            "CNRYp28X",
+            "CNRYp33X",
+            "CNRYp41X",
+            "CNRYp43X",
+            "CNRYp64X",
+            "CNRYp68X",
+            "CNRYp85X",
+            "CNRYp102X",
+            "CNRYp114X",
+            "CNRYp120X",
+            "CNRYp121X",
+            "CNRYp125X",
+            "CNRYp126X",
+            "CNRYp165X",
+            "CNRYp178X",
+            "CNRYp193X",
+            "CNRYp196X",
+            "CNRYp41X",
+            "CNRYp43X",
+            "CNRYp64X",
+            "CNRYp68X",
+            "CNRYp85X",
+            "CNRYp102X",
+            "CNRYp114X",
+            "CNRYp120X",
+            "CNRYp121X",
+            "CNRYp125X",
+            "CNRYp126X",
+            "CNRYp165X",
+            "CNRYp178X",
+            "CNRYp193X",
+            "CNRYp196X",
+            "CNRYp226X",
+            "CNRYp85X",
+            "CNRYp102X",
+            "CNRYp114X",
+            "CNRYp120X",
+            "CNRYp121X",
+            "CNRYp125X",
+            "CNRYp126X",
+            "CNRYp165X",
+            "CNRYp178X",
+            "CNRYp193X",
+            "CNRYp196X",
+            "CNRYp226X",
+            "CNRYp249X",
+            "CNRYp250X",
+            "CNRYp254X",
+            "CNRYp268X",
+            "CNRYp270X",
+            "CNRYp120X",
+            "CNRYp121X",
+            "CNRYp125X",
+            "CNRYp126X",
+            "CNRYp165X",
+            "CNRYp178X",
+            "CNRYp193X",
+            "CNRYp196X",
+            "CNRYp226X",
+            "CNRYp249X",
+            "CNRYp250X",
+            "CNRYp254X",
+            "CNRYp268X",
+            "CNRYp270X",
+            "CNRYp299X",
+            "CNRYp307X",
+            "CNRYp309X",
+            "CNRYp316X",
+            "CNRYp318X"
+          ]
+        }
+      ]
+    }
+  ]
+}

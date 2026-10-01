@@ -4148,3 +4148,50 @@ Revised plan (fix cycle 2), shape-INDEPENDENT and fail-closed by construction:
 6. Docs state the rule as the character rule above, verbatim, so it cannot over-claim.
 After this, audit-3 is the LAST standard audit for FR2-11; if it fails, FR2-11 is BLOCKED.
 
+## 2026-10-01 -- FR2-11 fix cycle 2 (Executor): the CHARACTER RULE; VERIFY (fix-2); awaiting audit-3 (the LAST standard audit)
+
+The revised plan was implemented as written. Commits on `claude/fr2-11-action-history` (from 719b4fe): `4cfddea` (the rule, selector variant, path and cwd rules, property + isolated-cell tests), `eb55c1a` (live
+verify shapes, upload target), `2c7fd60` (docs / `--help` / tool description, mutation table, live driver), `b81865e`, `e29493f`, `0941400` (fuzz-found fixes, mutants MX5b MX21..MX32), `a515439`, `fa9800a` (buildHistoryLine
+runs the same function over every action), `388ad52` (FR2-08 L12 regression fix, MX34..MX36), `d62da3e`, then the evidence / bookkeeping commit. Evidence: `evidence/FR2-11/fix-2/` (README.md indexes it; deviations and open
+decisions in `fix-2/deviations.md`; false-pass section at the end of `run-1/false-pass-analysis.md`); the auditors' probes re-run UNMODIFIED in `evidence/FR2-11/audit-reruns-fix-2/` (sha256 of every copy verified).
+
+The rule (verbatim in the CLI README, AGENT_SETUP.md, the changelog, `sutradhar --help` and the `get_action_history` description; the built bundle carries the same text): stored free text is decoded (`%3F %23 %3B %3D %26 %40 %2F
+%5C %3A`, double-encoded `%253F`, JSON unicode / hex escapes, fullwidth forms by NFKC), split on ANY Unicode whitespace, and per token: (a) cut from the first `?`, `#` or `;` with `[redacted]` and the rest of the TEXT
+after the cut dropped (a bare `#id` token does not drop what follows); (b) a token still holding `=` or `&` is replaced whole (a `&` also drops the rest); (c) `userinfo@` is stripped (up to the LAST `@` of the authority);
+a token with `/` or `\` followed by more text is reduced to its last segment (`<dir>` when it has no `.`), except a `scheme://` URL (origin + path), `file:` (`file://…/<name>`), `blob:` (origin), `data:` / `javascript:`
+(`data:…`). The partial last token of input cut at 8,000 characters is dropped. ONE function (`redactHistoryText`) serves every free-text field of the MCP / SDK entries and the CLI args, error, `actions[]` and human
+output; the SELECTOR variant of the same function (`#id`, `[a=b]` stay readable) serves the `selector` field and the CLI selector args; the wait_for selector keeps the engine's own `text="` key. `cwd` is `~/dir` or `<dir>`.
+
+Decisions the plan left open (details and the test that pins each in `fix-2/deviations.md`): the rest of the TEXT is dropped after a cut (audit-2's own cells need it); `&` drops the rest, a lone `=` does not (GAP-365); the eval
+preview stays a REDACTED PREVIEW (spec H5 / R2) and degrades predictably (`2+0 /*t1*/` -> `2+0 <dir>`), the length-plus-identifier alternative was not built; a selector variant exists because `click #bump` must stay readable
+(GAP-364); a path's last segment with no extension is `<dir>` (audit-2 `home-dir-only`).
+
+Why a third shape patch should not be needed: the rule has no shape list; the tests are seeded properties plus an independent oracle fuzz plus ISOLATED per-rule cells, and the mutation set removes each rule in turn. My own
+fuzz found two real bugs AFTER the cells were green (a selector `host#` + space + secret; a `#a;b` token that did not drop what follows) and the FR2-08 regression run found a third class (engine-generated strings that
+contain rule characters: the wait_for selector `text="..."`, a basename with no extension): all fixed and pinned, which is exactly the failure mode of fix-0 and fix-1 caught before the audit.
+
+Results (fresh, after the last source commit `388ad52`; the dist tree hash taken right after the final `turbo run build --force` is unchanged after all runs, `fix-2/final/dist-hash-final-2.txt`):
+- Tests that FAILED before the change: the new browser spec on the fix-1 code, 17 failed / 8 passed (`fix-2/before-change`). tsc 34/34. vitest: browser 1026 (was 989), capability-runtime 272, mcp-server 124, cli 273 (259),
+  sutradhar 43, agent 56, server 28, all pass. Lint clean (browser, capability-runtime, cli); `packages/mcp-server/src/session-resolution.ts` has 6 `no-explicit-any` errors that are identical on master (GAP-371).
+- Property tests: seed 20261001, 6,000 generated strings through every stored field (browser); seed 20261012, 4,000 strings x 28 verbs x 3 positions plus error / line / human output (CLI); live seeds 20261003 (MCP, 320 per
+  surface), 20261004 (SDK, 320), 20261005 (CLI, 36 x 2 verbs). Independent fuzz: 720,000 generator strings (120 seeds) and 400,000 hostile-alphabet oracle strings (10 seeds), 0 leaks.
+- Isolated cells (each protected by ONE rule): bare `#S`, bare `?=S`, `x;S`, custom-scheme redirect / `about:blank#S` / `intranet:8080/p#S`, the text after a cut (space in a query, a URL typed with a space), `a=S`, `a=1&token=my S`,
+  `user:S@host/`, the LAST `@` (three `@`), `%23S` / `%3FS` / `%3BS` / double-encoded / JSON-escaped / fullwidth, a path in front of `scheme://`, a directory segment (Windows, UNC, forward slash, POSIX, `~`, `..`), an
+  extension-less last segment (`C:\Users\<name>`), whitespace (tab, NBSP, zero-width, ideographic), the 8,000-character cap, a lone `#`, a bare `#id` bound, selectors, wait_for, upload targets, cwd (home-relative / `<dir>`).
+- The auditors' probes and `attack-gen.mjs` UNMODIFIED (sha256 verified): attack-gen 375 cells, 0 leaking on head and on BOTH bundles (the bundled code is cut out into a shim root for the unmodified generator); identity
+  negative control 375/375 leaking; audit-1 / audit-2 probes on head and bundle: `unexpectedLeaks []` for MCP, CLI, SDK, paren, type_by_label, live-attack; verification deep-equality against the SANITIZED result 9/10 (the
+  documented typed-value scrub is the exception, as in audit-2); completeness 39 OK, eviction exact, concurrency 0 skipped / 40 of 40 kills clean. audit-2's own mutants B8-B10 killed; B2-B7 and B13 target removed code; B1
+  survived my first cells (an equivalent mutant for up to two `@`) and is now killed by a three-`@` cell (MX5b).
+- Live verify (`run-fr2-11-live.sh`, 11 processes per pass) on the final build: passes 2, 3 and 4 each 56/56 cases, 364/364 checks (mcp 11/80, cli 16/93, sdk 3/21, bundle 26/170), no lingering Chrome. Pass 1 was 55/56: the CLI
+  privacy part lost 2 checks to the intermittent headed-download hang (exit null, 90 s) while I ran a UC-04 A/B beside it; kept, not hidden, and pass 4 replaced it.
+- Mutants: 38 of the character rule (MX1..MX36, MX5b, MX6b), 38/38 caught in the final unit run, all restored byte-identically (sha256), 13 live-capable ones caught live before step 6 and 8 of them again live on the final
+  build (MX1, MX4, MX5, MX8, MX9, MX12, MX14, MX20). The first live run of four of them was a compile failure (noUnusedLocals), reported as NOT CAUGHT and fixed, not counted.
+- Regression on the final build: FR2-08 478/478 (it was 476/478 under the rule until the wait_for fix: L12 mcp + bundle), FR2-07 488/488 (GAP-325 tolerance fired 0 times), FR2-04 110/1/2 (L13 headed; master gives
+  110/1/2 with `L13.headed.snap-exit3`), CLI scenario suite 10/14 (UC-04, UC-05, UC-08, UC-12): UC-04 is Google Maps (9/9 fail here, 8/9 fail on master today), UC-05 / UC-12 fail on master (fix-1 A/B), UC-08 isolated
+  3/3 pass on both; none touches history.
+- Disk: 18 GB free at the start, never below 17 GB, 21 GB at the end (stop threshold 5 GB, checked before every build and live run).
+- `sutradhar-cli-*` Chrome profile dirs: 88 created by this work were removed, each after checking that no running chrome.exe referenced it (lists in the evidence); the one dir that has a running Chrome belongs to another
+  actor and was left; six pre-existing dirs of other actors vanished from the shared temp dir mid-run without any code of mine deleting them (GAP-369).
+
+Not verified: headed mode of the privacy cases, non-Chrome browsers, POSIX file mode 0600 outside WSL, a POSIX host with a real POSIX path tool call, a real OAuth redirect to a custom scheme, the line endings of the new `.sh` after a
+Windows checkout with autocrlf. New gaps GAP-363..371. Status: VERIFY (fix-2). I did not self-declare done; audit-3 follows and is the last standard audit for FR2-11.

@@ -1,0 +1,565 @@
+{
+ "label": "head",
+ "mcp": {
+  "entries": [
+   {
+    "t": "navigate",
+    "s": true,
+    "target": "http://127.0.0.1:53845/p",
+    "url": "http://127.0.0.1:53845/p",
+    "reason": "'navigate' verified: a new document committed at http://127.0.0.1:53845/p",
+    "checks": [
+     {
+      "check": "navigate.document",
+      "outcome": "pass",
+      "expected": "new-document or url change",
+      "observed": "new-document",
+      "detail": "a new document committed at http://127.0.0.1:53845/p"
+     },
+     {
+      "check": "navigate.http-status",
+      "outcome": "pass",
+      "expected": "<400",
+      "observed": 200
+     }
+    ]
+   },
+   {
+    "t": "navigate",
+    "s": true,
+    "target": "about:blank",
+    "url": "about:blank",
+    "reason": "'navigate' verified: a new document committed at about:blank[redacted]",
+    "checks": [
+     {
+      "check": "navigate.document",
+      "outcome": "pass",
+      "expected": "new-document or url change",
+      "observed": "new-document",
+      "detail": "a new document committed at about:blank[redacted]"
+     }
+    ]
+   },
+   {
+    "t": "navigate",
+    "s": false,
+    "target": "<dir>",
+    "url": "about:blank",
+    "error": "net::ERR_ABORTED at <dir>"
+   },
+   {
+    "t": "navigate",
+    "s": false,
+    "target": "http://127.0.0.1:53845/redir",
+    "url": "about:blank",
+    "error": "net::ERR_ABORTED at http://127.0.0.1:53845/redir"
+   },
+   {
+    "t": "navigate",
+    "s": true,
+    "target": "http://127.0.0.1:53845/p",
+    "url": "http://127.0.0.1:53845/p",
+    "reason": "'navigate' verified: a new document committed at http://127.0.0.1:53845/p",
+    "checks": [
+     {
+      "check": "navigate.document",
+      "outcome": "pass",
+      "expected": "new-document or url change",
+      "observed": "new-document",
+      "detail": "a new document committed at http://127.0.0.1:53845/p"
+     },
+     {
+      "check": "navigate.http-status",
+      "outcome": "pass",
+      "expected": "<400",
+      "observed": 200
+     }
+    ]
+   },
+   {
+    "t": "click",
+    "s": true,
+    "url": "http://127.0.0.1:53845/p",
+    "reason": "'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+    "checks": [
+     {
+      "check": "click.built-in",
+      "outcome": "pass",
+      "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+     }
+    ]
+   },
+   {
+    "t": "navigate",
+    "s": true,
+    "target": "http://127.0.0.1:53845/p",
+    "url": "http://127.0.0.1:53845/p",
+    "reason": "'navigate' verified: a new document committed at http://127.0.0.1:53845/p",
+    "checks": [
+     {
+      "check": "navigate.document",
+      "outcome": "pass",
+      "expected": "new-document or url change",
+      "observed": "new-document",
+      "detail": "a new document committed at http://127.0.0.1:53845/p"
+     },
+     {
+      "check": "navigate.http-status",
+      "outcome": "pass",
+      "expected": "<400",
+      "observed": 200
+     }
+    ]
+   },
+   {
+    "t": "eval",
+    "s": true,
+    "target": "<dir>",
+    "url": "http://127.0.0.1:53845/p"
+   },
+   {
+    "t": "eval",
+    "s": false,
+    "target": "throw new Error('see <dir>",
+    "url": "http://127.0.0.1:53845/p",
+    "error": "see <dir>"
+   },
+   {
+    "t": "click",
+    "s": true,
+    "url": "http://127.0.0.1:53845/p",
+    "reason": "Expected text \"CNRYexpotp\" was not found in the page's visible text after the action",
+    "checks": [
+     {
+      "check": "click.built-in",
+      "outcome": "pass",
+      "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+     },
+     {
+      "check": "expect.text",
+      "outcome": "fail",
+      "expected": "CNRYexpotp",
+      "observed": "not-found"
+     }
+    ]
+   },
+   {
+    "t": "wait_for",
+    "s": false,
+    "url": "http://127.0.0.1:53845/p",
+    "error": "wait_for timed out after 0ms waiting for [redacted] text \"CNRYwaitotp\" was not found in the visible text of 1 frame(s).",
+    "reason": "Action failed: wait_for timed out after 0ms waiting for [redacted] text \"CNRYwaitotp\" was not found in the visible text of 1 frame(s).",
+    "checks": []
+   },
+   {
+    "t": "click",
+    "s": true,
+    "url": "http://127.0.0.1:53845/p",
+    "reason": "Current URL http://127.0.0.1:53845/p does not contain expected substring <dir>",
+    "checks": [
+     {
+      "check": "click.built-in",
+      "outcome": "pass",
+      "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+     },
+     {
+      "check": "expect.url",
+      "outcome": "fail",
+      "expected": "<dir>",
+      "observed": "http://127.0.0.1:53845/p"
+     }
+    ]
+   },
+   {
+    "t": "click",
+    "s": false,
+    "url": "http://127.0.0.1:53845/p",
+    "error": "No visible element found for selector: [redacted]",
+    "reason": "Action failed: No visible element found for selector: [redacted]",
+    "checks": []
+   },
+   {
+    "t": "type",
+    "s": true,
+    "url": "http://127.0.0.1:53845/p",
+    "reason": "Expected text <value> was not found in the page's visible text after the action",
+    "checks": [
+     {
+      "check": "type.built-in",
+      "outcome": "pass",
+      "detail": "the typed value was read back from the element inside the action"
+     },
+     {
+      "check": "expect.text",
+      "outcome": "fail",
+      "expected": "<value>",
+      "observed": "not-found"
+     }
+    ]
+   }
+  ],
+  "canariesSession": [
+   "CNRYexpotp",
+   "CNRYwaitotp"
+  ],
+  "canariesTab": [
+   "CNRYexpotp",
+   "CNRYwaitotp"
+  ],
+  "unexpected": []
+ },
+ "cli": {
+  "log": [
+   {
+    "args": [
+     "nav",
+     "http://127.0.0.1:53845/p"
+    ],
+    "code": 0,
+    "err": ""
+   },
+   {
+    "args": [
+     "nav",
+     "com.example.app:/cb#access_token=CNRYclicustom"
+    ],
+    "code": 1,
+    "err": "Fatal: net::ERR_ABORTED at com.example.app:/cb#access_token=CNRYclicustom\n"
+   },
+   {
+    "args": [
+     "nav",
+     "http://127.0.0.1:53845/redir"
+    ],
+    "code": 1,
+    "err": "Fatal: net::ERR_ABORTED at http://127.0.0.1:53845/redir\n"
+   },
+   {
+    "args": [
+     "nav",
+     "http://127.0.0.1:53845/p"
+    ],
+    "code": 0,
+    "err": ""
+   },
+   {
+    "args": [
+     "eval",
+     "'intranet:8080/p#CNRYclievalintra'"
+    ],
+    "code": 0,
+    "err": ""
+   },
+   {
+    "args": [
+     "clicktext",
+     "intranet:8080/p#CNRYclickt"
+    ],
+    "code": 1,
+    "err": ""
+   },
+   {
+    "args": [
+     "click",
+     "#btn",
+     "--expect-text",
+     "CNRYcliexpotp"
+    ],
+    "code": 4,
+    "err": "Error: expectation failed: text — Expected text \"CNRYcliexpotp\" was not found in the page's visible text after the action\n"
+   },
+   {
+    "args": [
+     "upload",
+     "#pw",
+     "rel\\CNRYreldir\\f.txt"
+    ],
+    "code": 1,
+    "err": ""
+   },
+   {
+    "args": [
+     "close"
+    ],
+    "code": 0,
+    "err": ""
+   },
+   {
+    "args": [
+     "history"
+    ],
+    "code": 0,
+    "err": ""
+   }
+  ],
+  "fileCanaries": [
+   "CNRYcliexpotp"
+  ],
+  "humanCanaries": [],
+  "unexpected": [],
+  "lines": [
+   {
+    "verb": "nav",
+    "args": [
+     "http://127.0.0.1:53845/p"
+    ],
+    "exit": 0,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "navigate",
+      "target": "http://127.0.0.1:53845/p",
+      "reason": "'navigate' verified: a new document committed at http://127.0.0.1:53845/p",
+      "checks": [
+       {
+        "check": "navigate.document",
+        "outcome": "pass",
+        "expected": "new-document or url change",
+        "observed": "new-document",
+        "detail": "a new document committed at http://127.0.0.1:53845/p"
+       },
+       {
+        "check": "navigate.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "verb": "nav",
+    "args": [
+     "<dir>"
+    ],
+    "exit": 1,
+    "error": "net::ERR_ABORTED at <dir>",
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "navigate",
+      "target": "<dir>",
+      "error": "net::ERR_ABORTED at <dir>"
+     }
+    ]
+   },
+   {
+    "verb": "nav",
+    "args": [
+     "http://127.0.0.1:53845/redir"
+    ],
+    "exit": 1,
+    "error": "net::ERR_ABORTED at http://127.0.0.1:53845/redir",
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "navigate",
+      "target": "http://127.0.0.1:53845/redir",
+      "error": "net::ERR_ABORTED at http://127.0.0.1:53845/redir"
+     }
+    ]
+   },
+   {
+    "verb": "nav",
+    "args": [
+     "http://127.0.0.1:53845/p"
+    ],
+    "exit": 0,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "navigate",
+      "target": "http://127.0.0.1:53845/p",
+      "reason": "'navigate' verified: a new document committed at http://127.0.0.1:53845/p",
+      "checks": [
+       {
+        "check": "navigate.document",
+        "outcome": "pass",
+        "expected": "new-document or url change",
+        "observed": "new-document",
+        "detail": "a new document committed at http://127.0.0.1:53845/p"
+       },
+       {
+        "check": "navigate.http-status",
+        "outcome": "pass",
+        "expected": "<400",
+        "observed": 200
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "verb": "eval",
+    "args": [
+     "<dir>"
+    ],
+    "exit": 0,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "eval",
+      "target": "<dir>"
+     }
+    ]
+   },
+   {
+    "verb": "clicktext",
+    "args": [
+     "<dir>"
+    ],
+    "exit": 1,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "click_by_text",
+      "target": "<dir>",
+      "error": "No element found containing text: <dir>",
+      "reason": "Action failed: No element found containing text: <dir>",
+      "checks": []
+     }
+    ]
+   },
+   {
+    "verb": "click",
+    "args": [
+     "#btn"
+    ],
+    "exit": 4,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "click",
+      "reason": "Expected text \"CNRYcliexpotp\" was not found in the page's visible text after the action",
+      "checks": [
+       {
+        "check": "click.built-in",
+        "outcome": "pass",
+        "detail": "occlusion and click-delivery were checked inside the action before it reported success"
+       },
+       {
+        "check": "expect.text",
+        "outcome": "fail",
+        "expected": "CNRYcliexpotp",
+        "observed": "not-found"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "verb": "upload",
+    "args": [
+     "#pw",
+     "f.txt"
+    ],
+    "exit": 1,
+    "cwd": "<dir>",
+    "actions": [
+     {
+      "t": "upload_file",
+      "target": "f.txt",
+      "error": "Upload file f.txt\" does not exist or is not accessible.",
+      "reason": "Action failed: Upload file f.txt\" does not exist or is not accessible.",
+      "checks": []
+     }
+    ]
+   },
+   {
+    "verb": "close",
+    "args": [],
+    "exit": 0,
+    "cwd": "<dir>",
+    "actions": []
+   }
+  ],
+  "humanHead": "History: 9 command(s) in E:\\AI-Cache\\tmp\\fr211-a2-G84ioP\\state\\history.jsonl\n--- session sess_1790825805440_1 ---\n2026-10-01 03:36:45Z  exit 0     629ms  nav http://127.0.0.1:53845/p\n    - navigate ok verified tab_sess_1790825805440_1_1 http://127.0.0.1:53845/p\n2026-10-01 03:36:46Z  exit 1     667ms  nav <dir>\n    error: net::ERR_ABORTED at <dir>\n    - navigate FAILED no-verification tab_sess_1790825805440_1_1 <dir>: net::ERR_ABORTED at <dir>\n2026-10-01 03:36:47Z  exit 1     663ms  nav http://127.0.0.1:53845/redir\n    error: net::ERR_ABORTED at http://127.0.0.1:53845/redir\n    - navigate FAILED no-verification tab_sess_1790825805440_1_1 http://127.0.0.1:53845/redir: net::ERR_ABORTED at http://127.0.0.1:53845/redir\n2026-10-01 03:36:47Z  exit 0      57ms  nav http://127.0.0.1:53845/p\n    - navigate ok verified tab_sess_1790825805440_1_1 http://127.0.0.1:53845/p\n2026-10-01 03:36:48Z  exit 0      41ms  eval <dir>\n    - eval ok no-verification tab_sess_1790825805440_1_1 <dir>\n2026-10-01 03:36:48Z  exit 1   16629ms  clicktext <dir>\n    - click_by_text FAILED action-failed tab_sess_1790825805440_1_1 <dir>: No element found containing text: <dir>\n2026-10-01 03:37:08Z  exit 4     105ms  click #btn\n    - click ok contradicted tab_sess_1790825805440_1_1 #btn\n2026-10-01 03:37:11Z  exit 1    1611ms  upload #pw f.txt\n    - upload_file FAILED action-failed tab_sess_1790825805440_1_1 f.txt: Upload file f.txt\" does not exist or is not accessible.\n2026-10-01 03:37:16Z  exit 0      28ms  close\n"
+ },
+ "verif": [
+  {
+   "action": "browser.navigate",
+   "historyType": "navigate",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": true,
+   "reasonResult": "'navigate' verified: a new document committed at http://127.0.0.1:53845/p",
+   "reasonHistory": "'navigate' verified: a new document committed at http://127.0.0.1:53845/p"
+  },
+  {
+   "action": "browser.navigate",
+   "historyType": "navigate",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": false,
+   "reasonResult": "'navigate' verified: a new document committed at about:blank#CNRYaboutfrag",
+   "reasonHistory": "'navigate' verified: a new document committed at about:blank[redacted]"
+  },
+  {
+   "action": "browser.navigate",
+   "historyType": "navigate",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": true,
+   "reasonResult": "'navigate' verified: a new document committed at http://127.0.0.1:53845/p",
+   "reasonHistory": "'navigate' verified: a new document committed at http://127.0.0.1:53845/p"
+  },
+  {
+   "action": "browser.click",
+   "historyType": "click",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": true,
+   "reasonResult": "'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90",
+   "reasonHistory": "'click' has a built-in post-condition check (verified inside the action itself before it could report success) — confidence 0.90"
+  },
+  {
+   "action": "browser.navigate",
+   "historyType": "navigate",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": true,
+   "reasonResult": "'navigate' verified: a new document committed at http://127.0.0.1:53845/p",
+   "reasonHistory": "'navigate' verified: a new document committed at http://127.0.0.1:53845/p"
+  },
+  {
+   "action": "browser.click",
+   "historyType": "click",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": true,
+   "reasonResult": "Expected text \"CNRYexpotp\" was not found in the page's visible text after the action",
+   "reasonHistory": "Expected text \"CNRYexpotp\" was not found in the page's visible text after the action"
+  },
+  {
+   "action": "browser.wait_for",
+   "historyType": "wait_for",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": false,
+   "reasonResult": "Action failed: wait_for timed out after 0ms waiting for text=\"CNRYwaitotp\": text \"CNRYwaitotp\" was not found in the visible text of 1 frame(s).",
+   "reasonHistory": "Action failed: wait_for timed out after 0ms waiting for [redacted] text \"CNRYwaitotp\" was not found in the visible text of 1 frame(s)."
+  },
+  {
+   "action": "browser.click",
+   "historyType": "click",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": false,
+   "reasonResult": "Current URL http://127.0.0.1:53845/p does not contain expected substring /p?x=CNRYexpurlq",
+   "reasonHistory": "Current URL http://127.0.0.1:53845/p does not contain expected substring <dir>"
+  },
+  {
+   "action": "browser.click",
+   "historyType": "click",
+   "deepEqualSanitized": true,
+   "deepEqualRaw": false,
+   "reasonResult": "Action failed: No visible element found for selector: #missing",
+   "reasonHistory": "Action failed: No visible element found for selector: [redacted]"
+  },
+  {
+   "action": "browser.type",
+   "historyType": "type",
+   "deepEqualSanitized": false,
+   "deepEqualRaw": false,
+   "reasonResult": "Expected text \"CNRYtyped\" was not found in the page's visible text after the action",
+   "reasonHistory": "Expected text <value> was not found in the page's visible text after the action"
+  }
+ ],
+ "verifPairs": {
+  "history": 10,
+  "results": 10
+ }
+}

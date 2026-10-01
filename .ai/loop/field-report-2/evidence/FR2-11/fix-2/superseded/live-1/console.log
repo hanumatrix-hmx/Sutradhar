@@ -1,0 +1,30 @@
+[fr2-11] evidence dir: E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-11/fix-2/live-1; fixture server http://127.0.0.1:54595
+[mcp] PASS L1 (18 checks)
+[mcp] PASS L1b (12 checks)
+[mcp] PASS L1d (8 checks)
+[mcp] PASS L2 (10 checks)
+[mcp] PASS L3 (7 checks)
+[mcp] INFO L3-timing {"evals":205,"elapsedMs":141,"perCallMs":1}
+[mcp] PASS L4 (4 checks)
+[mcp] INFO L9-overhead {"evals":200,"totalMs":124,"meanPerCallMs":0.62}
+[mcp] PASS L9-overhead (1 checks)
+[mcp] PASS PM (10 checks)
+[mcp] FAIL FIX2 (6 checks) -- [{"check":"no canary of 23 shapes in the session view or the default tab view (error, reason, evidence, target, selector, url)","observed":["home-dir-only"]}]
+[mcp] PASS PROP (2 checks)
+[mcp] FAIL PRIV-sweep (2 checks) -- [{"check":"no canary in any of 102 raw history responses","observed":["CNRYfx2homedironlymcp","CNRYfx2homedironlymcp","CNRYfx2homedironlymcp","CNRYfx2homedironlymcp","CNRYfx2homedironlymcp","CNRYfx2homedironlymcp","CNRYfx2homedironlymcp"]}]
+[cli] PASS L5 (21 checks)
+[cli] INFO L5-history-duration {"historyProcessMs":270}
+[cli] PASS N7 (5 checks)
+[cli] PASS L5x (8 checks)
+[cli] PASS L7 (4 checks)
+[cli] PASS L7b (3 checks)
+[cli] PASS W1 (4 checks)
+[cli] PASS L6 (7 checks)
+[cli] PASS L8 (4 checks)
+[cli] PASS N9 (3 checks)
+[cli] INFO N9-chrome-count {"sutradharCliChromeProcsBefore":20,"after":21,"note":"informational: other sessions on this machine may start/stop their own"}
+[cli] PASS N10 (1 checks)
+[cli] PASS N8 (6 checks)
+[cli] PASS N15 (2 checks)
+[cli] FAIL PM (12 checks) -- [{"check":"F2: scheme-less nav args are redacted and still show host:port/path","observed":["127.0.0.1:54595/p?token=CNRYschemelessipcli","localhost:54595/p?q=(a)&token=CNRYschemelesslhcli","127.0.0.1:54595/p;jsessionid=CNRYschemelesspscli"]}]
+[cli] FAIL FIX2 (9 checks) -- [{"check":"no canary of 23 shapes anywhere in the raw history.jsonl bytes of the new lines (args, error, actions[])","observed":["home-dir-only"]},{"check":"human `sutradhar history` and `history --json` output carry no canary of any shape","observed":["home-dir-only"]}]

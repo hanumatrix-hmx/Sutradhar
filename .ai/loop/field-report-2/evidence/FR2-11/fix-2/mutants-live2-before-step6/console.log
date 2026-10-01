@@ -1,0 +1,9 @@
+[MX4] CAUGHT unit=true live=true restored=true  rule (b) removed: a token holding `=` or `&` is kept
+[MX5] CAUGHT unit=true live=true restored=true  rule (c) removed: userinfo is kept
+[MX8] CAUGHT unit=true live=true restored=true  the path rule dropped (a directory in a path is kept)
+[MX14] CAUGHT unit=true live=true restored=true  the upload_file target keeps a name with no extension (a user / home directory name)
+
+[mutants] 4/4 caught; all restored byte-identically: true
+(node:48096) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ALLDONE
