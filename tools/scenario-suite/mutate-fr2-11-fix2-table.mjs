@@ -258,7 +258,7 @@ export const FIX2_MUTANTS = [
     what: 'the text after a cut is NOT dropped (a URL with a space in its query leaks its tail)',
     file: AH,
     find: '  const swallow = cutAt >= 0 && !(cutAt === 0 && BARE_ID.test(tok));',
-    replace: '  const swallow = false;',
+    replace: '  const swallow = cutAt < 0 && BARE_ID.test(tok); // always false after a cut; keeps BARE_ID used so the live build compiles (noUnusedLocals)',
     unit: BU,
     live: LIVE_MCP,
   },
