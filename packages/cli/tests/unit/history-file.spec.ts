@@ -82,18 +82,18 @@ describe('FR2-11 buildHistoryLine (C2, C3)', () => {
     expect(u.error).not.toContain('SECRET-ERR');
   });
   it('C3: the 64 KiB guard drops the actions and says how many', () => {
-    const actions = Array.from({ length: 50 }, (_, i) => ({
+    const actions = Array.from({ length: 600 }, (_, i) => ({
       actionType: 'a',
       success: true,
       executionTimeMs: 1,
       timestamp: 't',
       tabId: 'tab',
       seq: i + 1,
-      target: 'x'.repeat(2000),
+      target: "x".repeat(2000), // capped to 200 by the sanitizer now, so it takes more of them to pass 64 KiB
     }));
     const l = buildHistoryLine({ ...baseInput, actions });
     expect(l.truncated).toBe(true);
-    expect(l.actionsOmitted).toBe(50);
+    expect(l.actionsOmitted).toBe(600);
     expect(l.actions).toEqual([]);
     expect(Buffer.byteLength(JSON.stringify(l))).toBeLessThan(HISTORY_MAX_LINE_BYTES);
   });

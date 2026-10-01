@@ -101,6 +101,21 @@ describe('FR2-11 fix-2 CLI ISOLATED cells (one rule each)', () => {
   });
 });
 
+describe('FR2-11 fix-2 buildHistoryLine runs the SAME function over every action it is handed (defense in depth)', () => {
+  it('a RAW (never sanitized) action with a secret in every text field leaves no secret in the line', () => {
+    const S = 'CNRYact1X';
+    const t = `https://x.test/p?t=${S}`;
+    const raw = {
+      actionType: 'click', success: false, executionTimeMs: 1, timestamp: 't', tabId: 'tab', seq: 1,
+      selector: `about:blank#${S}`, target: t, url: t, error: `net::ERR at ${t}`,
+      verification: { verified: false, urlChanged: false, elementFound: false, confidence: 0, reason: `Action failed: ${t}`, evidence: { tier: 'x', checks: [{ check: 'c', outcome: 'fail', expected: t, observed: t, detail: t }] } },
+    };
+    const line = buildHistoryLine({ ts: 't', sessionId: 's', cwd: '/w', verb: 'click', args: [], exitCode: 1, durationMs: 1, actions: [raw as never] });
+    expect(JSON.stringify(line)).not.toContain(S);
+    expect(line.actions[0]).toMatchObject({ tabId: 'tab', seq: 1, actionType: 'click' });
+  });
+});
+
 describe('FR2-11 fix-2 cwd: home-relative or <dir>, never the home directory name', () => {
   const S = 'CNRYcwd1X';
   it('under the home directory: ~/sub/dir; the home directory itself: ~; outside: <dir>', () => {

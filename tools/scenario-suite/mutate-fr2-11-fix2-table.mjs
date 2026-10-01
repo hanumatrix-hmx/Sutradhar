@@ -161,6 +161,14 @@ export const FIX2_MUTANTS = [
     unit: BU,
   },
   {
+    id: 'MX33',
+    what: 'buildHistoryLine stores the actions it is handed as they are (a raw entry reaches the file)',
+    file: HF,
+    find: '    (input.actions ?? []).map((a) => sanitizeHistoryEntry(a) as SessionActionHistoryEntry),',
+    replace: '    [...(input.actions ?? [])],',
+    unit: CU,
+  },
+  {
     id: 'MX6',
     what: 'decoding removed (%23 %3F %3B, double-encoded, JSON escapes, fullwidth)',
     file: AH,

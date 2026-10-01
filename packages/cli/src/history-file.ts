@@ -223,7 +223,12 @@ export interface BuildHistoryLineInput {
 /** Pure. Builds the line and applies the 64 KiB guard (actions dropped, `truncated` + `actionsOmitted` set). */
 export function buildHistoryLine(input: BuildHistoryLineInput): CliHistoryLineV1 {
   const secrets = input.secrets ?? [];
-  const actions = scrubDeep([...(input.actions ?? [])], secrets);
+  // the runtime already sanitized every action; running the SAME function again (it is idempotent) means a caller that hands in a raw
+  // entry can never put one on disk
+  const actions = scrubDeep(
+    (input.actions ?? []).map((a) => sanitizeHistoryEntry(a) as SessionActionHistoryEntry),
+    secrets,
+  );
   const error = input.error !== undefined ? capHistoryString(redactHistoryText(scrubDeep(input.error, secrets)), ERROR_CAP) : undefined;
   const line: CliHistoryLineV1 = {
     v: HISTORY_SCHEMA_VERSION,
