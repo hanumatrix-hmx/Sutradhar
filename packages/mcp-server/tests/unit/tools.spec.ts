@@ -1637,6 +1637,11 @@ describe('FR2-11 browser.get_action_history', () => {
     expect(d).toContain('first ? # or ; is replaced by [redacted]');
     expect(d).toContain('= or & is replaced whole');
     expect(d).toContain('last segment');
+    // fix-3 (A3-F2): the rule is stated WITH its exceptions, the same as the README
+    expect(d).toContain('a bare #id token with nothing before it does not drop the text after it');
+    expect(d).toContain('the characters before EVERY @ are removed back to the previous /');
+    expect(d).toContain('except a scheme:// URL, which keeps origin + path up to its own end');
+    expect(d).toContain('an IPv6 host [::1] stays whole');
     expect(d).not.toMatch(/URL queries, fragments, path parameters and userinfo are cut/);
   });
 

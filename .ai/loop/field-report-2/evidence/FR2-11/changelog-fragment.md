@@ -40,6 +40,8 @@ Status: **VERIFY (fix-2)** (audit-1 and audit-2 REOPENed privacy; the redaction 
   labels; history deliberately does not). CLI `upload` / `download` / `screenshot` / `audit` / `compare` path arguments are a basename or `<dir>`.
 - **fix-2 (privacy):** the redaction no longer recognises URL shapes: it is the character rule below (cut at the first `?` `#` `;` and drop the rest of the text, `=` / `&` tokens replaced, userinfo stripped, a path token reduced to its last segment, encodings decoded first). Free text that merely contains those characters is redacted too (over-redaction, documented). A custom-scheme redirect, `about:blank#S`, `intranet:8080/p#S`, a URL with a space and any scheme-less URL no longer keep their tail; `cwd` is `~/dir` or `<dir>`; a navigate `target` such as `com.example.app:/cb` is stored as `<dir>`.
 
+- **fix-3 (privacy, A3-F1):** the userinfo strip and the `scheme://` path allowance no longer look at ONE URL per token. `['https://h/a','https://u:PASS@h2/p']`, a `JSON.stringify`'d config with a database URL and a URL glued to a local path used to store `PASS` or the full path. Now every `@` is stripped, a token is split into sub-tokens on quotes, commas, parentheses, brackets, braces, angle brackets, `|`, `^` and Unicode format characters (the allowance ends with its own URL; an IPv6 host stays whole), and what is glued in front of `data:` / `file:` / `blob:` goes through the rule too. Known limits: a path with spaces keeps the words between the spaces; a URL-legal character (`/ @ : + ! * $ ~`) between a URL and a path makes the path part of the URL path.
+
 ## Privacy note (rewritten by fix-2 after audit-2 REOPEN: fix-1 recognised URL shapes and claimed more than it did; `com.example.app:/cb#access_token=S`, `about:blank#S` and `intranet:8080/p#S` kept their fragment)
 `history.jsonl` and the MCP / SDK history record commands and actions, so they are written to be safe to keep. ONE function
 (`redactHistoryText`, packages/browser/src/session/action-history.ts) redacts every stored free-text string for every surface. It is the
@@ -49,7 +51,9 @@ percent-encoding do not matter.
   `%253F`, JSON unicode / hex escapes, fullwidth forms). The text is split on ANY Unicode whitespace (space, tab, newline, NBSP, zero-width,
   ideographic). In each token everything from the first `?`, `#` or `;` is replaced by `[redacted]` and the rest of the text after that cut
   is dropped (a bare `#id` token does not drop the text after it). A token that still contains `=` or `&` is replaced whole (a `&` also drops
-  the rest). `userinfo@` is stripped (up to the last `@` of the authority). A token with a `/` or `\` followed by more text is reduced to its
+  the rest). `userinfo@` is stripped for EVERY `@` (fix-3: the characters before it back to the previous `/`, through quotes, commas, brackets and a second URL glued
+  in the same token; only a `/` stops it). A token is split into sub-tokens on quotes, backticks, commas, parentheses, brackets, braces, angle brackets, `|`, `^`
+  and any Unicode format character (an IPv6 literal host `//[::1]` stays whole; `<dir>` is not split), and a sub-token with a `/` or `\` followed by more text is reduced to its
   last segment, whatever the drive letter, UNC form or slash direction; a last segment with no `.` is a directory-like name and becomes
   `<dir>`. A `scheme://` URL keeps origin + path, `file:` becomes `file://…/<name>`, `blob:` keeps its origin, `data:` / `javascript:` bodies
   become `data:…` / `javascript:…`. Input beyond 8,000 characters is cut and the partial last token dropped.

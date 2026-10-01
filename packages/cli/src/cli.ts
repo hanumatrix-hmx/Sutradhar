@@ -1918,9 +1918,15 @@ Commands:
                                 clipboard text are recorded as lengths only, eval code as a 200-char
                                 preview. Stored text is redacted by CHARACTERS, not by recognising URLs:
                                 split on any whitespace; in each token everything from the first ? # or ;
-                                is replaced by [redacted] and the rest of the text after it is dropped;
-                                a token still holding = or & is replaced whole; userinfo@ is stripped;
-                                a token with a / or \\ and more text is reduced to its last segment;
+                                is replaced by [redacted] and the rest of the text after it is dropped
+                                (a bare #id token does not drop what follows it);
+                                a token still holding = or & is replaced whole; the characters before
+                                EVERY @ are removed back to the previous / (userinfo@, through quotes,
+                                commas, brackets, and a second URL glued in the same token);
+                                a token with a / or \\ and more text is reduced to its last segment,
+                                after splitting it on quotes, commas, ( ) [ ] { } < > | ^ and Unicode
+                                format characters; only a scheme:// URL keeps origin + path, and only up
+                                to its own end (an IPv6 host [::1] stays whole);
                                 %3F %23 %3B and %253F are decoded first. cwd is stored as ~/dir or <dir>.
                                 Ordinary text with those characters is redacted too. Never starts a browser.
   doctor                       Environment diagnostics (Chrome detection, active session)

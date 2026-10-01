@@ -100,6 +100,11 @@ describe('@sutradhar/cli --help text (FR2-11 history)', () => {
     expect(helpText).toContain('a token still holding = or & is replaced whole');
     // the test reads the SOURCE text of the help template, where the printed backslash is written as two
     expect(helpText).toContain('a token with a / or \\\\ and more text is reduced to its last segment');
+    // fix-3 (A3-F2): the rule is stated WITH its exceptions, the same as the README
+    expect(helpText).toContain('EVERY @ are removed back to the previous /');
+    expect(helpText).toContain('a bare #id token does not drop what follows it');
+    expect(helpText).toContain('only a scheme:// URL keeps origin + path, and only up');
+    expect(helpText).toContain('an IPv6 host [::1] stays whole');
     expect(helpText).toContain('cwd is stored as ~/dir or <dir>');
     expect(helpText).not.toContain('URL-looking token');
     expect(helpText).toContain('Never starts a browser');

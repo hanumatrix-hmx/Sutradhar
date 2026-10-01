@@ -70,8 +70,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   URL recognition):** every stored free-text string (verification reason, evidence detail, error, eval preview, CLI args) and everything
   `sutradhar history` prints is split on any Unicode whitespace; in each token everything from the first `?`, `#` or `;` is replaced by
   `[redacted]` and the rest of the text after that cut is dropped; a token that still contains `=` or `&` is replaced whole; `userinfo@` is
-  stripped; a token with a `/` or `\` followed by more text is reduced to its last segment (`<dir>` when it has no `.`; a `scheme://` URL keeps
-  origin + path); `%3F`, `%23`, `%3B`, `%253F` and JSON / fullwidth forms are decoded first. This holds whatever the scheme, host, case, unicode or
+  stripped for EVERY `@` (back to the previous `/`, through quotes, commas and brackets, so a second URL glued in the same token is stripped too);
+  a token is split into sub-tokens on quotes, commas, parentheses, brackets, braces, angle brackets, `|`, `^` and Unicode format characters (an IPv6
+  host `[::1]` stays whole), and a sub-token with a `/` or `\` followed by more text is reduced to its last segment (`<dir>` when it has no `.`; a
+  `scheme://` URL keeps origin + path, up to its own end only); `%3F`, `%23`, `%3B`, `%253F` and JSON / fullwidth forms are decoded first. This holds whatever the scheme, host, case, unicode or
   encoding. Ordinary text that contains those characters is redacted too (over-redaction is deliberate and only affects the stored history, never a
   live result). Selectors keep `#id` and `[a=b]`. The CLI stores `upload`/`screenshot`/`compare` file arguments as a basename, `download`/`audit`
   directory arguments as `<dir>` and `cwd` as `~/dir` (under the home directory) or `<dir>`; typed text, `select` values, clipboard text and dialog

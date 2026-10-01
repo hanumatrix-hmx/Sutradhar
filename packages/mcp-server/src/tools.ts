@@ -1869,8 +1869,11 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         '(length only), upload_file_via_trigger and wait_for, as well as every element action; typed text and ' +
         'clipboard text are never stored. Stored text is redacted by CHARACTERS, not by recognising URLs: it is split on any ' +
         'whitespace; in each token everything from the first ? # or ; is replaced by [redacted] and the rest of the text after it ' +
-        'is dropped; a token that still contains = or & is replaced whole; userinfo@ is stripped; a token with a / or \\ followed ' +
-        'by more text is reduced to its last segment; %3F %23 %3B and %253F are decoded first. Ordinary text that contains ' +
+        '(a bare #id token with nothing before it does not drop the text after it) is dropped; a token that still contains = or & is replaced whole; ' +
+        'the characters before EVERY @ are removed back to the previous / (userinfo@, also through quotes, commas, brackets and a second URL glued in the same token); ' +
+        'a token with a / or \\ followed by more text is reduced to its last segment (after splitting it on quotes, commas, parentheses, ' +
+        'brackets, braces, angle brackets, | ^ and any Unicode format character), except a scheme:// URL, which keeps origin + path up to its own end ' +
+        '(a delimiter or backslash ends it; an IPv6 host [::1] stays whole); %3F %23 %3B and %253F are decoded first. Ordinary text that contains ' +
         'those characters is redacted too (selectors keep #id and [a=b]); expect.text / wait_for text is stored. scope "tab" (default): one tab — tabId, or the active tab. scope ' +
         '"session": every tab in this session merged in the order the actions were recorded (each entry has ' +
         'tabId and seq), including tabs that have since closed. `evicted` counts older entries dropped once the ' +

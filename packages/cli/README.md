@@ -186,12 +186,26 @@ scheme, the host shape, the case, unicode and percent-encoding do not matter:
    that cut is dropped** (a URL with a space in its query cannot leak its tail). A bare `#id` with nothing in front of it does
    not drop the text that follows it.
 4. A token that **still contains `=` or `&`** is replaced whole by `[redacted]` (a `&` also drops the rest of the text).
-5. **`userinfo@`** is stripped from any token that has an `@` before its first `/` (or no `/`).
-6. A token with a **`/` or `\` followed by more text** is reduced to its **last segment**, whatever the drive letter, UNC form
-   or slash direction; a last segment with no `.` (a directory or user name) is stored as `<dir>`. A `scheme://` URL is the
-   one exception and keeps its origin and path (`http://127.0.0.1:5000/p`); `file:` becomes `file://…/<basename>`, `blob:`
-   keeps its origin, `data:` / `javascript:` bodies become `data:…` / `javascript:…`.
+5. **`userinfo@`** is stripped for **every** `@` in a run of text without whitespace: the characters before each `@` are removed back to
+   the previous `/` (the `//` of its own authority) or the start of the run, whatever stands between them (quotes, commas,
+   parentheses, `|`, zero-width and other format characters; a password may hold them), so the second and third URL in
+   `['https://h/a','https://u:PASS@h2/p']` are stripped like the first. Only a `/` stops the strip, not a backslash.
+6. For this step a token is first split into **sub-tokens** on quotes (with the backslashes that escape them), backticks, commas,
+   parentheses, brackets, braces, angle brackets, `|`, `^` and any Unicode format character (zero-width, bidi `U+202A`..`U+202E`,
+   BOM, soft hyphen); the delimiters stay in the text. The one bracket group that does not split is an IPv6 literal host
+   (`//[::1]` or `@[2001:db8::1]`: only hex digits, `:`, `.`, `%`). A sub-token with a **`/` or `\` followed by more text** is reduced to
+   its **last segment**, whatever the drive letter, UNC form or slash direction; a last segment with no `.` (a directory or
+   user name) is stored as `<dir>`. A `scheme://` URL is the one exception and keeps its origin and path
+   (`http://127.0.0.1:5000/p`), **but only up to its own end**: a delimiter or the first backslash that is not a JSON-escaped
+   slash ends it, and whatever is glued after it (a second URL, a local path) is reduced like any other piece. `file:` becomes
+   `file://…/<basename>`, `blob:` keeps its origin, `data:` / `javascript:` bodies become `data:…` / `javascript:…`; what is
+   glued in front of those markers goes through the whole rule.
 7. Input beyond 8,000 characters is dropped, and so is the partial token at the cut.
+
+**Known limits of the glue handling.** A path with spaces keeps the words between the spaces (the text is split on whitespace first):
+`open 'E:/x/Acme Secret Project/s.png'` is stored as `open '<dir> Secret s.png'`. A URL-legal character (`/ @ : + ! * $ ~`) glued
+between a URL and a local path makes that path part of the URL's path, which a `scheme://` URL keeps. A password with a raw
+space or a raw `/` in it (a `/` should be written `%2F`, which is decoded to a `/` first) ends the strip at that point.
 
 **Over-redaction is deliberate.** Ordinary prose that happens to contain `?`, `#`, `;`, `=` or `&` is redacted too (an error
 such as `Did you mean x?` is stored as `Did you mean x[redacted]`), and a site-relative path such as `/api/users` becomes
