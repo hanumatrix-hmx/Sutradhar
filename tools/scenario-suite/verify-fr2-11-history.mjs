@@ -1165,8 +1165,10 @@ async function runCliCases(surface, cliJs, ctx) {
     const leaked = shapes.filter((s) => s.canaries.some((c) => all.includes(c))).map((s) => s.id);
     const leakedGen = gen.filter((c) => c.secrets.some((x) => all.includes(x))).map((c) => ({ id: c.id, text: c.text }));
     const expected = 1 + 2 * shapes.length + N;
-    const errs = parsed.filter((l) => l?.verb === 'eval' && typeof l.error === 'string');
-    const lostKeep = shapes.filter((s, i) => s.keep.some((k) => !String(errs[i]?.error ?? '').includes(k))).map((s) => s.id);
+    // a failing eval's text is stored in the line's `error` and in `actions[]` (the CLI line of a script that throws): either carries the readable part
+    const errs = parsed.filter((l) => l?.verb === 'eval' && l.exitCode !== 0);
+    const storedText = (l) => String(l?.error ?? '') + JSON.stringify(l?.actions ?? []);
+    const lostKeep = shapes.filter((s, i) => s.keep.some((k) => !storedText(errs[i]).includes(k))).map((s) => s.id);
     record(surface, id, [
       T(`exactly ${expected} new history lines (one per CLI command run by this case)`, lines.length === expected && first.code === 0, { lines: lines.length, expected }),
       T('every new line parses as JSON', parsed.every(Boolean), parsed.filter((x) => !x).length),
