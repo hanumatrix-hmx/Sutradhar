@@ -40,3 +40,4 @@ export { defaultDownloadRoot } from '@sutradhar/browser';
 export * from './fs-roots.js';
 export * from './project-config.js';
 export * from './config-precedence.js';
+export type { DialogPolicy, DialogPolicyMode } from '@sutradhar/browser';
