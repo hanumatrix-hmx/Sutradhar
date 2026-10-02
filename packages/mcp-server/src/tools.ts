@@ -59,6 +59,8 @@ export interface RegisterToolsOptions {
   runtime: SutradharRuntime;
   /** Provide this to also register the `agent.runGoal` autonomous-agent tool. */
   agent?: AgentHandle;
+  /** FR2-14: the viewport `browser.launch` uses when the call gives none (from `.sutradhar.json`). */
+  defaultViewport?: { width: number; height: number };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -288,18 +290,20 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
             'Set the initial viewport size (CDP device-metrics override, plus a best-effort real OS window ' +
               'resize for a non-headless session). Use browser.set_viewport to change it mid-session instead, ' +
               'or to also emulate mobile/touch/pixel-ratio. Was previously accepted only by browser.set_viewport, ' +
-              'not at launch time — found missing via an external field report (PROB-042).',
+              'not at launch time — found missing via an external field report (PROB-042).' +
+              ' When omitted, the server default from .sutradhar.json "viewport" (if any) is used.',
           ),
       },
     },
     async ({ sessionId, initialUrl, headless, userAgent, profileName, viewport }) => {
       try {
+        const vp = viewport ?? options.defaultViewport;
         const result = await runtime.launch({
           sessionId,
           initialUrl,
           launch:
-            headless !== undefined || userAgent !== undefined || viewport !== undefined
-              ? { headless, userAgent, viewport }
+            headless !== undefined || userAgent !== undefined || vp !== undefined
+              ? { headless, userAgent, viewport: vp }
               : undefined,
           profileName,
         });

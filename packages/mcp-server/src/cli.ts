@@ -11,6 +11,7 @@
 
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { createSutradharServer } from './server.js';
+import { loadStartupConfig } from './startup-config.js';
 
 // Every tool handler already catches its own errors and returns an MCP `isError` result —
 // an exception reaching this far means something escaped that (e.g. a dangling timer/promise
@@ -25,7 +26,13 @@ process.on('unhandledRejection', (reason) => {
 });
 
 async function main(): Promise<void> {
-  const { server, runtime } = await createSutradharServer();
+  // FR2-14: find (or explicitly load) the project config BEFORE the server starts. A broken file
+  // is fatal here (exit 1), never a silent default. stderr only: stdout is JSON-RPC (B11).
+  const startup = await loadStartupConfig({ env: process.env, cwd: process.cwd() });
+  for (const line of startup.lines) console.error(line);
+  const { server, runtime } = await createSutradharServer({
+    projectConfig: startup.discovery.status === 'loaded' ? startup.discovery.config : undefined,
+  });
   const transport = new StdioServerTransport();
   await server.connect(transport);
   // Keep the process alive; the transport owns the lifecycle now.

@@ -7,7 +7,16 @@
  */
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { SutradharRuntime, resolveFsRoots } from '@sutradhar/capability-runtime';
+import {
+  SutradharRuntime,
+  resolveFsRoots,
+  resolveAllowedDomains,
+  resolveIdleTimeoutMs,
+  resolveRuntimeDialogPolicy,
+  resolveViewport,
+  type LoadedProjectConfig,
+} from '@sutradhar/capability-runtime';
+import type { DialogPolicy } from '@sutradhar/browser';
 import { AgentCore } from '@sutradhar/agent';
 import { OllamaAdapter, OpenRouterAdapter } from '@sutradhar/llm';
 import type { ILlmProvider } from '@sutradhar/llm';
@@ -70,6 +79,25 @@ export interface CreateServerOptions {
    * unset (the default) means unrestricted. Ignored if `runtime` is supplied directly.
    */
   allowedUploadRoots?: readonly string[];
+  /**
+   * A loaded `.sutradhar.json` (see `loadProjectConfig`): the LOWEST layer, below every option and
+   * env var (precedence: option > env > config file > default). Never discovered here:
+   * `createSutradharServer` stays independent of the cwd; only the `sutradhar-mcp` entry point
+   * searches for the file and passes it in. Ignored for runtime construction if `runtime` is
+   * supplied directly (but `defaultViewport` still applies at the tool level).
+   */
+  projectConfig?: LoadedProjectConfig;
+  /**
+   * Default native-dialog policy for sessions this server creates (`auto`, `report`, `accept`,
+   * `dismiss`). Unset = the config file's `dialog`, else the runtime default (`auto`). Ignored if
+   * `runtime` is supplied directly.
+   */
+  dialogPolicy?: DialogPolicy;
+  /**
+   * Viewport `browser.launch` uses when the call passes none (a call's own `viewport` always
+   * wins). Unset = the config file's `viewport`, else Chrome's default.
+   */
+  defaultViewport?: { width: number; height: number };
   logger?: StructuredLogger;
 }
 
@@ -87,36 +115,40 @@ export interface SutradharServerHandle {
  */
 export async function createSutradharServer(options: CreateServerOptions = {}): Promise<SutradharServerHandle> {
   const logger = options.logger ?? new StructuredLogger({ minLevel: 'info' });
-  const idleTimeoutMs =
-    options.idleTimeoutMs ??
-    (process.env['SUTRADHAR_IDLE_TIMEOUT_MS'] ? Number(process.env['SUTRADHAR_IDLE_TIMEOUT_MS']) : DEFAULT_IDLE_TIMEOUT_MS);
   const restrictNavigationToLocal =
     options.restrictNavigationToLocal ?? process.env['SUTRADHAR_RESTRICT_NAVIGATION_TO_LOCAL'] === '1';
-  const allowedDomains =
-    options.allowedDomains ??
-    (process.env['SUTRADHAR_ALLOWED_DOMAINS']
-      ? process.env['SUTRADHAR_ALLOWED_DOMAINS']
-          .split(',')
-          .map((d) => d.trim())
-          .filter((d) => d.length > 0)
-      : undefined);
+  const cfg = options.projectConfig;
+  // Precedence for every setting below is ONE rule (config-precedence.ts): option > env > config
+  // file > default. The file can never override anything set explicitly.
+  const viewport = resolveViewport({ option: options.defaultViewport, config: cfg });
   let runtime: SutradharRuntime;
   if (options.runtime) {
     runtime = options.runtime;
   } else {
+    // Throws on a malformed SUTRADHAR_IDLE_TIMEOUT_MS instead of silently disabling the reaper.
+    const idle = resolveIdleTimeoutMs({
+      option: options.idleTimeoutMs,
+      env: process.env,
+      config: cfg,
+      fallback: DEFAULT_IDLE_TIMEOUT_MS,
+    });
+    const domains = resolveAllowedDomains({ option: options.allowedDomains, env: process.env, config: cfg });
+    const dialog = resolveRuntimeDialogPolicy({ option: options.dialogPolicy, config: cfg, surface: 'mcp' });
     const fsRoots = resolveFsRoots({
       options: { allowedDownloadRoots: options.allowedDownloadRoots, allowedUploadRoots: options.allowedUploadRoots },
       env: process.env,
+      config: cfg && { ...cfg.resolved, baseDir: cfg.baseDir },
     });
     // MCP stdout is JSON-RPC — any startup diagnostic MUST go to stderr, never stdout (B11).
-    for (const w of fsRoots.warnings) console.error(`[sutradhar-mcp] warning: ${w}`);
+    for (const w of [...fsRoots.warnings, ...dialog.warnings]) console.error(`[sutradhar-mcp] warning: ${w}`);
     runtime = new SutradharRuntime({
       logger,
-      idleTimeoutMs: idleTimeoutMs > 0 ? idleTimeoutMs : undefined,
+      idleTimeoutMs: idle.value,
       restrictNavigationToLocal,
-      allowedDomains,
+      allowedDomains: domains.value,
       allowedDownloadRoots: fsRoots.allowedDownloadRoots,
       allowedUploadRoots: fsRoots.allowedUploadRoots,
+      dialogPolicy: dialog.value,
     });
   }
 
@@ -141,7 +173,7 @@ export async function createSutradharServer(options: CreateServerOptions = {}): 
     version: MCP_SERVER_VERSION,
   });
 
-  registerTools(server, { runtime, agent });
+  registerTools(server, { runtime, agent, defaultViewport: viewport.value });
   return { server, runtime };
 }
 

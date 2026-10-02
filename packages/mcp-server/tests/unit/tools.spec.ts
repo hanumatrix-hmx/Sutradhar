@@ -1570,3 +1570,38 @@ describe('FR2-08 browser.wait_for and settle on every interacting/navigating too
     expect(dlg).toContain('Pass settle:true');
   });
 });
+
+describe('browser.launch default viewport from .sutradhar.json (FR2-14, TL1-TL4)', () => {
+  const launchSpy = (runtime: SutradharRuntime) =>
+    vi.spyOn(runtime, 'launch').mockResolvedValue({ sessionId: 's', activeTabId: 't', hasRealBrowser: true });
+
+  it('TL1: with defaultViewport and no call viewport, the default is used', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const spy = launchSpy(runtime);
+    registerTools(server, { runtime, defaultViewport: { width: 700, height: 500 } });
+    await tools.get('browser.launch')!.handler({});
+    expect(spy.mock.calls[0]![0].launch).toEqual({ headless: undefined, userAgent: undefined, viewport: { width: 700, height: 500 } });
+  });
+  it('TL2: a call viewport beats the default (whole object, not merged)', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const spy = launchSpy(runtime);
+    registerTools(server, { runtime, defaultViewport: { width: 700, height: 500 } });
+    await tools.get('browser.launch')!.handler({ viewport: { width: 390, height: 844 } });
+    expect(spy.mock.calls[0]![0].launch!.viewport).toEqual({ width: 390, height: 844 });
+  });
+  it('TL3: no default and no argument keeps today\'s exact shape (launch undefined)', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const spy = launchSpy(runtime);
+    registerTools(server, { runtime });
+    await tools.get('browser.launch')!.handler({});
+    expect(spy.mock.calls[0]![0].launch).toBeUndefined();
+  });
+  it('TL4: the viewport description mentions .sutradhar.json', () => {
+    const { server, tools } = createMockServer();
+    registerTools(server, { runtime: new SutradharRuntime() });
+    expect(tools.get('browser.launch')!.config.inputSchema.viewport.description).toContain('.sutradhar.json');
+  });
+});
