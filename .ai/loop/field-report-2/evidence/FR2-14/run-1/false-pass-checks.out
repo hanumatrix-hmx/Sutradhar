@@ -1,0 +1,117 @@
+child dir listing (must contain NO .sutradhar.json): []; parent has it: true
+
+### A1 doctor from the CHILD dir (dist CLI)
+$ sutradhar doctor   (cwd=<R>/proj/a/b)
+(exit 0)
+Platform:        win32 (x64)
+Node version:    v25.0.0
+Chrome found:    yes
+Chrome path:     C:\Program Files\Google\Chrome\Application\chrome.exe
+Active session:  none
+Config:          <R>\proj\.sutradhar.json (discovered)
+Config warning:  <R>\proj\.sutradhar.json: unknown key "typoKey" ignored
+Config sources:  allowedDomains=config, downloadRoots=default, uploadRoots=unrestricted, dialog=default, viewport=config
+
+### A2 same through the BUNDLE binary
+$ sutradhar(bundle) doctor   (cwd=<R>/proj/a/b)
+(exit 0)
+Platform:        win32 (x64)
+Node version:    v25.0.0
+Chrome found:    yes
+Chrome path:     C:\Program Files\Google\Chrome\Application\chrome.exe
+Active session:  none
+Config:          <R>\proj\.sutradhar.json (discovered)
+Config warning:  <R>\proj\.sutradhar.json: unknown key "typoKey" ignored
+Config sources:  allowedDomains=config, downloadRoots=default, uploadRoots=unrestricted, dialog=default, viewport=config
+
+### A3 NEGATIVE: a sibling git root with no config reports none (no leakage from <R>/proj)
+$ sutradhar doctor   (cwd=<R>/noconf)
+(exit 0)
+Platform:        win32 (x64)
+Node version:    v25.0.0
+Chrome found:    yes
+Chrome path:     C:\Program Files\Google\Chrome\Application\chrome.exe
+Active session:  none
+Config:          none (searched 1 directories upward from <R>\noconf; stopped at git root <R>\noconf)
+Config sources:  allowedDomains=default, downloadRoots=default, uploadRoots=unrestricted, dialog=default, viewport=default
+
+### B1 unknown key: warning on stderr, exit 0 (doctor does not need Chrome)
+$ sutradhar doctor   (cwd=<R>/proj)
+(exit 0)
+Platform:        win32 (x64)
+Node version:    v25.0.0
+Chrome found:    yes
+Chrome path:     C:\Program Files\Google\Chrome\Application\chrome.exe
+Active session:  none
+Config:          <R>\proj\.sutradhar.json (discovered)
+Config warning:  <R>\proj\.sutradhar.json: unknown key "typoKey" ignored
+Config sources:  allowedDomains=config, downloadRoots=default, uploadRoots=unrestricted, dialog=default, viewport=config
+
+### C empty array: stops before Chrome
+$ sutradhar nav http://localhost:1/   (cwd=<R>/bad-emptyarray)
+(exit 1)
+Error: Invalid project config <R>\bad-emptyarray\.sutradhar.json: allowedDomains must list at least one domain; remove the key for no restriction
+state.json exists after: false (before: false)
+
+### C wrong type: stops before Chrome
+$ sutradhar nav http://localhost:1/   (cwd=<R>/bad-wrongtype)
+(exit 1)
+Error: Invalid project config <R>\bad-wrongtype\.sutradhar.json: allowedDomains must be an array of strings
+state.json exists after: false (before: false)
+
+### C malformed JSON: stops before Chrome
+$ sutradhar nav http://localhost:1/   (cwd=<R>/bad-malformedJSON)
+(exit 1)
+Error: Invalid project config <R>\bad-malformedJSON\.sutradhar.json: is not valid JSON (Expected double-quoted property name in JSON at position 25 (line 1 column 26))
+state.json exists after: false (before: false)
+
+### C duplicate key: stops before Chrome
+$ sutradhar nav http://localhost:1/   (cwd=<R>/bad-duplicatekey)
+(exit 1)
+Error: Invalid project config <R>\bad-duplicatekey\.sutradhar.json: is not valid: duplicate key "allowedDomains" (a JSON object may not repeat a key; the last one would silently win)
+state.json exists after: false (before: false)
+
+### C comments: stops before Chrome
+$ sutradhar nav http://localhost:1/   (cwd=<R>/bad-comments)
+(exit 1)
+Error: Invalid project config <R>\bad-comments\.sutradhar.json: is not valid JSON (Unexpected token; comments are not allowed)
+state.json exists after: false (before: false)
+
+### D1 hostile parent config (downloadDir escapes its own tree)
+$ sutradhar nav http://localhost:1/   (cwd=<R>/hp/child; config in <R>/hp)
+(exit 1)
+Error: Invalid project config <R>\hp\.sutradhar.json: downloadDir "../outside-hp" resolves to "<R>\outside-hp", outside this config's directory "<R>\hp". A project config found by searching upward may only allow downloads inside its own directory tree. To allow it anyway, set SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS, or load this file explicitly with SUTRADHAR_CONFIG=<file>.
+forbidden dir <R>/outside-hp exists: false
+
+### D2 same file loaded EXPLICITLY (trusted like an env var): accepted
+$ SUTRADHAR_CONFIG=<R>/hp/.sutradhar.json sutradhar doctor
+(exit 0)
+Platform:        win32 (x64)
+Node version:    v25.0.0
+Chrome found:    yes
+Chrome path:     C:\Program Files\Google\Chrome\Application\chrome.exe
+Active session:  none
+Config:          <R>\hp\.sutradhar.json (SUTRADHAR_CONFIG)
+Config sources:  allowedDomains=default, downloadRoots=config, uploadRoots=unrestricted, dialog=default, viewport=default
+
+### E config only
+$ sutradhar nav http://localhost:1/    (env: {})
+(exit 1)
+Fatal: Navigation to "http://localhost:1/" was blocked: allowedDomains is configured and "localhost" is not in the allowlist (config.example). This is a safety guardrail — add the domain to allowedDomains if this navigation is expected.
+
+### E env + config
+$ sutradhar nav http://localhost:1/    (env: {"SUTRADHAR_ALLOWED_DOMAINS":"env.example"})
+(exit 1)
+Fatal: Navigation to "http://localhost:1/" was blocked: allowedDomains is configured and "localhost" is not in the allowlist (env.example). This is a safety guardrail — add the domain to allowedDomains if this navigation is expected.
+
+### E flag + env + config
+$ sutradhar nav http://localhost:1/ --allowlist-domains flag.example   (env: {"SUTRADHAR_ALLOWED_DOMAINS":"env.example"})
+(exit 1)
+Fatal: Navigation to "http://localhost:1/" was blocked: allowedDomains is configured and "localhost" is not in the allowlist (flag.example). This is a safety guardrail — add the domain to allowedDomains if this navigation is expected.
+
+### cleanup: close the session the E block opened
+$ sutradhar close
+(exit 0)
+Session closed.
+
+(temp root removed)

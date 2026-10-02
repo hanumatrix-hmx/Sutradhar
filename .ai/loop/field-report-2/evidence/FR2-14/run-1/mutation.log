@@ -1,0 +1,104 @@
+CAUGHT  U1 precedence reversed: config layer outranks env
+    unit: CAUGHT (2 test(s) failed) e.g. tests/unit/config-precedence.spec.ts > PD allowedDomains: matrix over every surface > CLI: flag > env > config
+    live: CAUGHT (live failed: cli/L4, cli/L5m)
+    restored byte-identical: true
+CAUGHT  U2 env var ignored for allowedDomains
+    unit: CAUGHT (3 test(s) failed) e.g. tests/unit/config-precedence.spec.ts > PD allowedDomains: matrix over every surface > CLI: flag > env > config
+    live: n/a
+    restored byte-identical: true
+CAUGHT  U3 CLI flag ignored
+    unit: CAUGHT (2 test(s) failed) e.g. tests/unit/project-config-cli.spec.ts > resolveCliSettings: generated precedence matrices (CLI: flag > persist
+    live: n/a
+    restored byte-identical: true
+CAUGHT  U4 unknown key becomes an error
+    unit: CAUGHT (6 test(s) failed) e.g. tests/unit/project-config.spec.ts > validation (V1-V12) > V8: unknown keys warn (with a did-you-mean hint) and
+    live: n/a
+    restored byte-identical: true
+CAUGHT  U5 search does not walk upward (stops after the cwd)
+    unit: CAUGHT (4 test(s) failed) e.g. tests/unit/project-config.spec.ts > discovery: generated matrix vs an independent oracle (D1-D12) > finds the 
+    live: CAUGHT (live failed: cli/L1, cli/L2)
+    restored byte-identical: true
+CAUGHT  U6 nearest file does not win (the farthest does)
+    unit: CAUGHT (1 test(s) failed) e.g. tests/unit/project-config.spec.ts > discovery: generated matrix vs an independent oracle (D1-D12) > finds the 
+    live: CAUGHT (live failed: cli/L21)
+    restored byte-identical: true
+CAUGHT  U7 MCP drops the config layer for allowedDomains
+    unit: CAUGHT (1 test(s) failed) e.g. tests/unit/server-config.spec.ts > createSutradharServer + projectConfig > matrix: allowedDomains — every subs
+    live: CAUGHT (live failed: mcp/M-L22)
+    restored byte-identical: true
+CAUGHT  U8 fail-open allowedDomains: an empty array is accepted
+    unit: CAUGHT (3 test(s) failed) e.g. tests/unit/project-config.spec.ts > validation (V1-V12) > V3 (D8): [] for each array key is an error that says
+    live: CAUGHT (live failed: cli/N1)
+    restored byte-identical: true
+CAUGHT  U9 download root not canonicalised (lexical containment only)
+    unit: CAUGHT (1 test(s) failed) e.g. tests/unit/project-config.spec.ts > hostile discovered config: containment (CT1-CT7, D12b) > CT5: a symlink/ju
+    live: n/a
+    restored byte-identical: true
+CAUGHT  U10 a discovered (parent-directory) file may widen download roots: containment skipped
+    unit: CAUGHT (9 test(s) failed) e.g. tests/unit/project-config.spec.ts > hostile discovered config: containment (CT1-CT7, D12b) > CT1/CT6: an escap
+    live: CAUGHT (live failed: cli/N4, cli/N6, cli/H1, cli/H3, cli/H4)
+    restored byte-identical: true
+CAUGHT  U11 .git boundary ignored
+    unit: CAUGHT (2 test(s) failed) e.g. tests/unit/project-config.spec.ts > discovery: generated matrix vs an independent oracle (D1-D12) > finds the 
+    live: CAUGHT (live failed: cli/L16)
+    restored byte-identical: true
+CAUGHT  U12 home boundary ignored
+    unit: CAUGHT (1 test(s) failed) e.g. tests/unit/project-config.spec.ts > discovery: generated matrix vs an independent oracle (D1-D12) > finds the 
+    live: CAUGHT (live failed: cli/L18)
+    restored byte-identical: true
+CAUGHT  U13 duplicate keys allowed (last silently wins)
+    unit: CAUGHT (2 test(s) failed) e.g. tests/unit/project-config.spec.ts > parse (PR1-PR8) > PR6: duplicate keys are an error at every depth (the las
+    live: CAUGHT (live failed: cli/H8)
+    restored byte-identical: true
+CAUGHT  U14 JSON parse error echoes the file text (secret leak)
+    unit: SURVIVED
+    live: CAUGHT (live failed: cli/H14)
+    restored byte-identical: true
+CAUGHT  U15 POSIX ownership/mode check disabled
+    unit: CAUGHT (2 test(s) failed) e.g. tests/unit/project-config.spec.ts > ownership (O1-O5, D12d) with injected stat > O1: another user owns it
+    live: n/a
+    restored byte-identical: true
+CAUGHT  U16 invalid SUTRADHAR_IDLE_TIMEOUT_MS silently ignored (reaper disabled/default)
+    unit: CAUGHT (1 test(s) failed) e.g. tests/unit/config-precedence.spec.ts > PI idleTimeoutMs: matrix > an invalid env value throws instead of silen
+    live: n/a
+    restored byte-identical: true
+CAUGHT  U17 trust notice for a discovered file removed
+    unit: CAUGHT (2 test(s) failed) e.g. tests/unit/project-config-cli.spec.ts > CC2: cliTrustNotice (D12c) > discovered + download from config -> the 
+    live: CAUGHT (live failed: cli/L9, cli/H2)
+    restored byte-identical: true
+CAUGHT  U18 SDK drops the config viewport
+    unit: CAUGHT (2 test(s) failed) e.g. tests/unit/launch-config.spec.ts > sutradhar SDK launch() + .sutradhar.json (FR2-14) > SC2: discoverConfig fin
+    live: n/a
+    restored byte-identical: true
+CAUGHT  U19 SDK reads SUTRADHAR_ALLOWED_DOMAINS from the environment
+    unit: CAUGHT (1 test(s) failed) e.g. tests/unit/launch-config.spec.ts > sutradhar SDK launch() + .sutradhar.json (FR2-14) > SC6: the SDK ignores SU
+    live: n/a
+    restored byte-identical: true
+CAUGHT  U20 SUTRADHAR_CONFIG=none ignored by the MCP startup
+    unit: CAUGHT (1 test(s) failed) e.g. tests/unit/config-banner.spec.ts > loadStartupConfig (SUTRADHAR_CONFIG glue) > SC-b: none -> the loader is nev
+    live: n/a
+    restored byte-identical: true
+CAUGHT  U21 empty --allowlist-domains means unrestricted again (no error)
+    unit: CAUGHT (1 test(s) failed) e.g. tests/unit/project-config-cli.spec.ts > --allowlist-domains given but empty must not silently mean "unrestrict
+    live: CAUGHT (live failed: cli/H15)
+    restored byte-identical: true
+CAUGHT  U22 a config relative path resolves against the cwd, not the config file
+    unit: CAUGHT (12 test(s) failed) e.g. tests/unit/config-precedence.spec.ts > fs roots through resolveFsRoots: matrix (download and upload) and confi
+    live: CAUGHT (live failed: cli/L9)
+    restored byte-identical: true
+CAUGHT  L-persist CLI persists the CONFIG viewport into state.json
+    unit: n/a
+    live: CAUGHT (live failed: cli/L8)
+    restored byte-identical: true
+CAUGHT  L-none CLI ignores SUTRADHAR_CONFIG=none
+    unit: n/a
+    live: CAUGHT (live failed: cli/L19)
+    restored byte-identical: true
+CAUGHT  L-state-first CLI viewport: config outranks the sticky state viewport
+    unit: n/a
+    live: CAUGHT (live failed: cli/L7)
+    restored byte-identical: true
+
+25/25 mutants caught and restored byte-identically
+(node:96084) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)

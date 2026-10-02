@@ -337,7 +337,9 @@ describe('parse (PR1-PR8)', () => {
     expect(parseProjectConfigText('{"a":"x","b":"a","c":["a","a"]}', 'f')).toBeTruthy();
   });
   it('PR7: error messages never echo file contents (a secret-looking value)', () => {
-    const SECRET = 'sk-live-SUPERSECRET123';
+    // The secret STARTS with the marker: Node's own message quotes ~10 characters of the text around the
+    // error, so the marker must sit inside that snippet for an un-redacted message to be caught (mutant U14).
+    const SECRET = 'SECRET-sk-live-123';
     const bad = [
       `{"token":"${SECRET}" x}`,
       `{"a": ${SECRET}}`,
@@ -346,7 +348,7 @@ describe('parse (PR1-PR8)', () => {
       `${SECRET}`,
       `{"token":"${SECRET}","token":"${SECRET}"}`,
     ];
-    for (const t of bad) expect(errOf(() => parseProjectConfigText(t, 'f')).message).not.toContain(SECRET);
+    for (const t of bad) expect(errOf(() => parseProjectConfigText(t, 'f')).message).not.toContain('SECRET');
   });
   it('PR8: a UTF-16 or NUL-containing file gets an encoding hint', () => {
     expect(errOf(() => parseProjectConfigText('{\u0000}', 'f')).message).toMatch(/UTF-8|NUL/);
