@@ -1,0 +1,16 @@
+$ cat ../.sutradhar.json
+{"downloadDir":"../outside"}
+$ SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS=<abs envroot> node packages/cli/dist/cli.js nav about:blank   (cwd repo/sub)
+Error: Invalid project config E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-projec
+exit=1
+$ SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS=<abs envroot> node packages/sutradhar/dist/cli-bin.js nav about:blank   (cwd repo/sub)
+Error: Invalid project config E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-projec
+exit=1
+$ SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS=<abs envroot> node packages/mcp-server/dist/cli.js
+[sutradhar-mcp] fatal: ProjectConfigError: Invalid project config E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projec
+exit=1
+$ SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS=<abs envroot> node packages/sutradhar/dist/mcp-cli.js
+[sutradhar-mcp] fatal: ProjectConfigError: Invalid project config E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projec
+exit=1
+message tail:
+A project config found by searching upward may only allow downloads inside its own directory tree. To allow it anyway, set SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS, or load this file explicitly with SUTRADHAR_CONFIG=<file>.

@@ -1,0 +1,230 @@
+{
+  "item": "FR2-14 .sutradhar.json project config (AUDIT-1)",
+  "head": "a1ff2ca",
+  "branch": "claude/fr2-14-project-config",
+  "verdict": "REOPEN",
+  "ac_results": [
+    {
+      "ac": "Build forced incl. bundle; new strings in bundle",
+      "verdict": "PASS",
+      "evidence_cmd": "rm -rf */dist; turbo run build --force --concurrency=1 (--filter=!sutradhar, then sutradhar); grep -c \"outside this config's directory\" packages/sutradhar/dist/{index,cli-bin,mcp-cli}.js",
+      "output_excerpt": "Tasks: 19 successful / 9 successful; Cached: 0; outside=1 in all three bundles",
+      "required_fix": ""
+    },
+    {
+      "ac": "tsc + vitest for capability-runtime, mcp-server, cli, sutradhar, browser, agent, apps/server",
+      "verdict": "PASS",
+      "evidence_cmd": "tsc --noEmit -p . ; node_modules/.bin/vitest run (per package)",
+      "output_excerpt": "tsc exit 0 x7; vitest 356/147/228/55/933/56/28 all passed",
+      "required_fix": ""
+    },
+    {
+      "ac": "No pre-existing spec weakened",
+      "verdict": "PASS",
+      "evidence_cmd": "git diff --numstat master..HEAD -- \"*.spec.ts\"",
+      "output_excerpt": "fs-roots 18 0, help-text 17 0, tools 35 0 (0 deletions)",
+      "required_fix": ""
+    },
+    {
+      "ac": "Precedence flag > env > config > default (unit-tested; every key x surface x layer subset)",
+      "verdict": "FAIL",
+      "evidence_cmd": "node audit-1/probes/precedence-fn.mjs <scr>; F1-escape-hatch-evidence.txt; ab-null-allowedDomains.txt",
+      "output_excerpt": "own oracle 95/95 ordinary rows; FAIL: env SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS does not beat a discovered out-of-tree downloadDir (exit 1, all 4 binaries); option null -> unrestricted (master applied env)",
+      "required_fix": "F1 + F2"
+    },
+    {
+      "ac": "Live every key x layer subset x surface via independent observers",
+      "verdict": "PASS",
+      "evidence_cmd": "node audit-1/probes/live-cli.mjs pkg|bundle; live-mcp.mjs pkg|bundle; live-sdk.mjs",
+      "output_excerpt": "CLI pkg 96/96 (90 + notice rerun 48/48), CLI bundle 96/96, MCP pkg 32/32, MCP bundle 32/32, SDK 33/33",
+      "required_fix": ""
+    },
+    {
+      "ac": "Done-when: live CLI run picks up config from a PARENT directory",
+      "verdict": "PASS",
+      "evidence_cmd": "live-cli.mjs: cwd <S>/proj/a/b, file only in <S>/proj",
+      "output_excerpt": "download found in proj/cdl with sha256 match, not cwd/cdl; page beacon 405x305; hosts outside 127.0.0.4 never reach the server",
+      "required_fix": ""
+    },
+    {
+      "ac": "Upward search: nearest wins, no merge, boundaries, odd start dirs",
+      "verdict": "FAIL",
+      "evidence_cmd": "node audit-1/probes/loader-probes.mjs <scr>; F3-home-junction-evidence.txt",
+      "output_excerpt": "nearest wins no merge; .git file boundary; E: and UNC share root never searched; dir/broken-link candidate = error; BUT cwd = junction inside HOME -> \"Config: <S>\top.sutradhar.json (discovered)\" (above home)",
+      "required_fix": "F3"
+    },
+    {
+      "ac": "Trust: hostile discovered config cannot widen roots / bypass .git rule",
+      "verdict": "PASS",
+      "evidence_cmd": "loader-probes DL.* / ADR.* (80 spellings) + live-failclosed escapeDl/gitHooks/gitHooksBs/absDl x5 surfaces",
+      "output_excerpt": ".., abs, ~, UNC, device-path prefixes (\\\\?\\ and \\\\.\\), .git, .GIT, .git., .git::$INDEX_ALLOCATION, GIT~1 (8.3 on C:), junction out, junction->.git all refused; explicit load trusted",
+      "required_fix": ""
+    },
+    {
+      "ac": "Fail-closed before Chrome for malformed shapes, clear message, no secret echo for invalid JSON",
+      "verdict": "PASS",
+      "evidence_cmd": "node audit-1/probes/live-failclosed.mjs <scr>",
+      "output_excerpt": "125/125 shape x surface refused, noChrome (no chrome.exe for case TEMP, no sutradhar-cli-*, no state.json), echoedSecret=false",
+      "required_fix": ""
+    },
+    {
+      "ac": "GAP-342 / cleanup verbs never blocked",
+      "verdict": "PASS",
+      "evidence_cmd": "live-failclosed verbs.* , GAP-342.*",
+      "output_excerpt": "doctor exit 0 \"Config: INVALID: ...\"; close 0; profile list 0; nav --allowlist-domains with invalid file exit 1 (by design)",
+      "required_fix": ""
+    },
+    {
+      "ac": "Surfaces: MCP banner, doctor, CLI trust notice, SDK opt-in",
+      "verdict": "PASS",
+      "evidence_cmd": "live-mcp *.banner; live-cli *.trustNotice; live-sdk optin-off/env-ignored/both/report-option",
+      "output_excerpt": "banner 8/8; notice 32/32; SDK opt-in and env-ignore confirmed",
+      "required_fix": ""
+    },
+    {
+      "ac": "Docs/README/--help/changelog match the code",
+      "verdict": "FAIL",
+      "evidence_cmd": "grep docs/project-config.md, SECURITY.md, packages/cli/README.md vs loader-probes KEY.secret*, KEY.unknownLong, F1 evidence, TOCTOU check",
+      "output_excerpt": "\"Error messages never repeat values\" false; \"SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS beat the file's roots\" false for out-of-tree; \"runtime re-checks every download\" does not cover root swap; empty --allowlist-domains error absent from --help/README and contradicted by project-config.md",
+      "required_fix": "F1, F4, F5, F6"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "major",
+      "title": "SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS (advertised as the override) does not beat a discovered out-of-tree downloadDir; CLI exits 1 / MCP dies",
+      "repro": "r/.git; r/.sutradhar.json={\"downloadDir\":\"../out\"}; cd r/sub; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS=<abs> sutradhar nav about:blank -> exit 1 \"...To allow it anyway, set SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS...\"",
+      "evidence": "F1-escape-hatch-evidence.txt; live-failclosed.jsonl escapeHatch.*",
+      "required_fix": "Apply the containment refusal only when the file supplies the effective download layer (no env/option roots); keep D7 for malformed values; or drop the env advice from message/README/SECURITY/spec 7.1. Add a live CLI+MCP test."
+    },
+    {
+      "id": "F2",
+      "severity": "minor",
+      "title": "firstDefined treats null as a value: createSutradharServer({allowedDomains:null}) ignores env + config and runs unrestricted (regression vs master, which applied the env var); same for SDK option null and dialogPolicy null",
+      "repro": "SUTRADHAR_ALLOWED_DOMAINS=e.test; createSutradharServer({allowedDomains:null}).runtime.allowedDomains -> undefined (master: [\"e.test\"])",
+      "evidence": "ab-null-allowedDomains.txt; precedence-fn.json MCP.odd.optionNULL*",
+      "required_fix": "Treat null as absent (value == null) in firstDefined; add null rows to the precedence tests."
+    },
+    {
+      "id": "F3",
+      "severity": "minor",
+      "title": "Home boundary bypass: cwd that is a junction/symlink inside HOME pointing outside makes the walk read .sutradhar.json ABOVE home",
+      "repro": "HOME=<S>/top/home; <S>/top/.sutradhar.json; cwd <S>/top/home/link (junction) -> doctor: Config: <S>\top.sutradhar.json (discovered)",
+      "evidence": "F3-home-junction-evidence.txt; loader-probes.json SRCH.home.cwdIsJunctionInHomeToOutside",
+      "required_fix": "inHome = literal OR canonical containment; stop at home on literal or canonical equality; unit test."
+    },
+    {
+      "id": "F4",
+      "severity": "minor",
+      "title": "Docs claim error messages never repeat file values; allowedDomains/idleTimeoutMs values (<=64 chars), download entries (unbounded) and unknown key names (unbounded, 20k-char key -> 20,220-char warning every command) are echoed",
+      "repro": "{\"allowedDomains\":[\"sk_live_SUPERSECRET_0123456789abcdef\"]} -> message contains the value",
+      "evidence": "loader-probes.json KEY.secretVal, KEY.secretIdle, KEY.secretDl, KEY.unknownLong",
+      "required_fix": "Redact/cap echoes (incl. key names) or correct docs/project-config.md and the changelog fragment."
+    },
+    {
+      "id": "F5",
+      "severity": "minor",
+      "title": "SECURITY.md / GAP-341 cite \"the runtime re-checks every download itself\" as TOCTOU mitigation; findContainingRoot canonicalises the root too, so a root swapped for a junction passes",
+      "repro": "findContainingRoot(root/f,[root]) after replacing root with a junction to outside -> contained (true)",
+      "evidence": "inline TOCTOU check (verdict.md F5)",
+      "required_fix": "Correct SECURITY.md/GAP-341, or re-check root-vs-config-dir containment at download time."
+    },
+    {
+      "id": "F6",
+      "severity": "minor",
+      "title": "Empty --allowlist-domains is now an error (behaviour change) but --help and CLI README are silent and docs/project-config.md says empty counts as not set at the flag layer",
+      "repro": "sutradhar nav x --allowlist-domains \"\" -> Error: --allowlist-domains needs at least one domain",
+      "evidence": "docs/project-config.md:37-38; node packages/cli/dist/cli.js --help",
+      "required_fix": "Align --help, CLI README, project-config.md."
+    },
+    {
+      "id": "F7",
+      "severity": "minor",
+      "title": "Test gap: home-boundary equality mutants (A8, A8b) survive all unit suites; only the auditor probe catches them",
+      "repro": "node audit-1/probes/mutants.mjs <scr> A8b -> unit all pass; loader diff SRCH.home.caseVariantHome",
+      "evidence": "mutants-run3.log, mutants-run5.log, mutants-loader-diffs.json",
+      "required_fix": "Add discovery unit tests with a case-variant/trailing-separator homedir and a junction cwd."
+    },
+    {
+      "id": "F8",
+      "severity": "minor",
+      "title": "Config viewport has no upper bound: {\"viewport\":{\"width\":1e9,...}} validates, then every CLI command spawns a Chrome, fails setDeviceMetricsOverride (>10,000,000) and LEAKS that Chrome (not in state, close cannot reach it). Same leak exists for the flag on master; the file makes it persistent and repo-controlled",
+      "repro": "{\"viewport\":{\"width\":1000000000,\"height\":1000000000}}; sutradhar nav about:blank -> Fatal: Protocol error ... not greater than 10000000; chrome.exe left running",
+      "evidence": "F9-viewport-huge.txt; pids-killed.txt",
+      "required_fix": "Validate viewport width/height <= 10,000,000 (schema maximum + hand validator); ideally kill the spawned Chrome when post-spawn setup fails."
+    },
+    {
+      "id": "F9",
+      "severity": "info",
+      "title": "allowedDomains accepts single numeric/TLD labels (\"1\",\"com\"); with suffix matching \"1\" allows any host ending \".1\" (narrowing only, pre-existing matcher). SDK does not announce a discovered dialog accept (opt-in surface).",
+      "repro": "{\"allowedDomains\":[\"1\"]} loads",
+      "evidence": "loader-probes.json KEY.domNum, KEY.domTld",
+      "required_fix": "Optional."
+    }
+  ],
+  "regressions": [
+    {
+      "script": "verify-fr2-08-conditions (full)",
+      "head": "478/478",
+      "master": "n/a (C-L5 A/B below)",
+      "note": "C-L5 CLI-only interleaved: HEAD 11/11 x3 (43.06-43.32 s), master 11/11 x3 (43.00-43.44 s) -> GAP-345 not reproduced and not attributable"
+    },
+    {
+      "script": "verify-fr2-07-verification",
+      "head": "488/488",
+      "master": "not re-run (no failure to A/B)",
+      "note": "bundle:H2 flake did not occur"
+    },
+    {
+      "script": "verify-fr2-04-dialogs",
+      "head": "111 passed, 0 failed, 2 skipped",
+      "master": "not re-run (no failure)",
+      "note": "L13 headed click passed this time"
+    },
+    {
+      "script": "CLI scenario suite run-cli.mjs",
+      "head": "UC-05,06,08,09,12 fail",
+      "master": "UC-05,06,09,12 fail",
+      "note": "UC-08/09 interleaved A/B x3: HEAD UC-08 0/3, master 1/3; UC-09 HEAD 0/3, master 1/3; direct nav to the UC-08 page x4: HEAD 1/4, master 0/4, HEAD+SUTRADHAR_CONFIG=none 0/4 -> external site (the-internet.herokuapp.com) flakiness, not FR2-14"
+    }
+  ],
+  "mutants": {
+    "count": 14,
+    "caught": 14,
+    "caught_by_unit_alone": 12,
+    "survived_unit": [
+      "A8",
+      "A8b"
+    ],
+    "restored_byte_identical": true,
+    "log": "mutants-run1..5.log, mutants-loader-diffs.json"
+  },
+  "gap_rulings": {
+    "GAP-339": "acceptable as documented (spec D12c; announced every CLI command + MCP startup; flag/env override verified live)",
+    "GAP-340": "acceptable (narrower)",
+    "GAP-341": "acceptable as a gap; stated mitigation is wrong (F5)",
+    "GAP-342": "acceptable for malformed values; NOT for the containment refusal whose message promises an env override that does not work (F1)"
+  },
+  "gap_345": {
+    "attribution": "not attributable to FR2-14",
+    "per_command_config_overhead_ms": {
+      "noConfigDeep_median": 6.2,
+      "noConfigRepo_median": 3.35,
+      "configNoDownloadKeys_median": 5.63,
+      "configWithDownloadRoots_median": 58.17
+    },
+    "cl5_ab": "HEAD 43.06-43.32 s vs master 43.00-43.44 s, 33/33 + 478/478 pass on HEAD"
+  },
+  "unverified": [
+    "POSIX ownership/mode refusal (Windows host)",
+    "POSIX symlink semantics, macOS case-insensitive .git and HFS+ ignorable-codepoint .git variants",
+    "per-mutant live runs (mutants evaluated with unit tests + auditor function-level probes against rebuilt dist)",
+    "real Chrome download into a hostile path (forbidden by the safety rule; function-level only)",
+    "Windows ACL of intermediate dirs"
+  ],
+  "disk": {
+    "before": "9.8G free (start)",
+    "after": "20G free (end; another session freed space)"
+  }
+}

@@ -1,0 +1,422 @@
+{
+ "summary": {
+  "pass": 95,
+  "fail": 3,
+  "total": 98,
+  "failures": [
+   {
+    "id": "MCP.odd.optionNULL->env (master: null ?? env)",
+    "want": [
+     "e.test"
+    ]
+   },
+   {
+    "id": "MCP.odd.optionNULL->config",
+    "want": [
+     "c.test"
+    ]
+   },
+   {
+    "id": "MCP.odd.dialogNULL->config",
+    "got": null,
+    "want": {
+     "mode": "dismiss"
+    }
+   }
+  ]
+ },
+ "rows": [
+  {
+   "id": "CLI.allowedDomains[none]",
+   "ok": true
+  },
+  {
+   "id": "CLI.allowedDomains[flag]",
+   "ok": true
+  },
+  {
+   "id": "CLI.allowedDomains[env]",
+   "ok": true
+  },
+  {
+   "id": "CLI.allowedDomains[flag+env]",
+   "ok": true
+  },
+  {
+   "id": "CLI.allowedDomains[config]",
+   "ok": true
+  },
+  {
+   "id": "CLI.allowedDomains[flag+config]",
+   "ok": true
+  },
+  {
+   "id": "CLI.allowedDomains[env+config]",
+   "ok": true
+  },
+  {
+   "id": "CLI.allowedDomains[flag+env+config]",
+   "ok": true
+  },
+  {
+   "id": "CLI.download[none]",
+   "ok": true
+  },
+  {
+   "id": "CLI.download[env]",
+   "ok": true
+  },
+  {
+   "id": "CLI.download[config]",
+   "ok": true
+  },
+  {
+   "id": "CLI.download[env+config]",
+   "ok": true
+  },
+  {
+   "id": "CLI.upload[none]",
+   "ok": true
+  },
+  {
+   "id": "CLI.upload[env]",
+   "ok": true
+  },
+  {
+   "id": "CLI.upload[config]",
+   "ok": true
+  },
+  {
+   "id": "CLI.upload[env+config]",
+   "ok": true
+  },
+  {
+   "id": "CLI.dialog[none]",
+   "ok": true
+  },
+  {
+   "id": "CLI.dialog[flag]",
+   "ok": true
+  },
+  {
+   "id": "CLI.dialog[state]",
+   "ok": true
+  },
+  {
+   "id": "CLI.dialog[flag+state]",
+   "ok": true
+  },
+  {
+   "id": "CLI.dialog[config]",
+   "ok": true
+  },
+  {
+   "id": "CLI.dialog[flag+config]",
+   "ok": true
+  },
+  {
+   "id": "CLI.dialog[state+config]",
+   "ok": true
+  },
+  {
+   "id": "CLI.dialog[flag+state+config]",
+   "ok": true
+  },
+  {
+   "id": "CLI.viewport[none]",
+   "ok": true
+  },
+  {
+   "id": "CLI.viewport[flag]",
+   "ok": true
+  },
+  {
+   "id": "CLI.viewport[state]",
+   "ok": true
+  },
+  {
+   "id": "CLI.viewport[flag+state]",
+   "ok": true
+  },
+  {
+   "id": "CLI.viewport[config]",
+   "ok": true
+  },
+  {
+   "id": "CLI.viewport[flag+config]",
+   "ok": true
+  },
+  {
+   "id": "CLI.viewport[state+config]",
+   "ok": true
+  },
+  {
+   "id": "CLI.viewport[flag+state+config]",
+   "ok": true
+  },
+  {
+   "id": "CLI.odd.envDomainsEmpty->config",
+   "ok": true
+  },
+  {
+   "id": "CLI.odd.envDomainsBlankCommas->config",
+   "ok": true
+  },
+  {
+   "id": "CLI.odd.envNameLowercase-ignored(fn-level; win32 env is case-insensitive at process level)",
+   "ok": true
+  },
+  {
+   "id": "CLI.odd.flagAcceptNoInheritPromptText",
+   "ok": true
+  },
+  {
+   "id": "CLI.odd.flagReportBeatsConfigAccept",
+   "ok": true
+  },
+  {
+   "id": "CLI.odd.stateReportBeatsConfigAccept",
+   "ok": true
+  },
+  {
+   "id": "CLI.odd.malformedStateViewport->config",
+   "ok": true
+  },
+  {
+   "id": "CLI.odd.idleNotExposed",
+   "ok": true
+  },
+  {
+   "id": "CLI.odd.envDownloadRelative-throws",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[none]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[option]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[env]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[option+env]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[option+config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[env+config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[option+env+config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.download[none]",
+   "ok": true
+  },
+  {
+   "id": "MCP.download[option]",
+   "ok": true
+  },
+  {
+   "id": "MCP.download[env]",
+   "ok": true
+  },
+  {
+   "id": "MCP.download[option+env]",
+   "ok": true
+  },
+  {
+   "id": "MCP.download[config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.download[option+config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.download[env+config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.download[option+env+config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[none]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[option]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[env]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[option+env]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[option+config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[env+config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[option+env+config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.dialog[none]",
+   "ok": true
+  },
+  {
+   "id": "MCP.dialog[option]",
+   "ok": true
+  },
+  {
+   "id": "MCP.dialog[config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.dialog[option+config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[none]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[env]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option+env]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option+config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[env+config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option+env+config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.viewport[none]",
+   "ok": true
+  },
+  {
+   "id": "MCP.viewport[call]",
+   "ok": true
+  },
+  {
+   "id": "MCP.viewport[option]",
+   "ok": true
+  },
+  {
+   "id": "MCP.viewport[call+option]",
+   "ok": true
+  },
+  {
+   "id": "MCP.viewport[config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.viewport[call+config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.viewport[option+config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.viewport[call+option+config]",
+   "ok": true
+  },
+  {
+   "id": "MCP.odd.option0-wins(disabled)",
+   "ok": true
+  },
+  {
+   "id": "MCP.odd.env0-wins(disabled)",
+   "ok": true
+  },
+  {
+   "id": "MCP.odd.envEmpty->config",
+   "ok": true
+  },
+  {
+   "id": "MCP.odd.envAbc-fails",
+   "ok": true
+  },
+  {
+   "id": "MCP.odd.envLeadingSpace-fails",
+   "ok": true
+  },
+  {
+   "id": "MCP.odd.optionEmptyArr->env",
+   "ok": true
+  },
+  {
+   "id": "MCP.odd.optionEmptyArr->config",
+   "ok": true
+  },
+  {
+   "id": "MCP.odd.optionNULL->env (master: null ?? env)",
+   "ok": false
+  },
+  {
+   "id": "MCP.odd.optionNULL->config",
+   "ok": false
+  },
+  {
+   "id": "MCP.odd.dialogNULL->config",
+   "ok": false
+  },
+  {
+   "id": "MCP.odd.envBlank->config",
+   "ok": true
+  },
+  {
+   "id": "MCP.odd.optionNegative->disabled(lenient, documented)",
+   "ok": true
+  },
+  {
+   "id": "MCP.odd.optionDlNULL->default",
+   "ok": true
+  }
+ ]
+}
