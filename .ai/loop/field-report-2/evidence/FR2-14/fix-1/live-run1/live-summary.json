@@ -1,0 +1,39 @@
+{
+  "total": 146,
+  "passed": 145,
+  "bySurface": {
+    "cli": {
+      "pass": 64,
+      "fail": 0
+    },
+    "mcp": {
+      "pass": 13,
+      "fail": 0
+    },
+    "sdk": {
+      "pass": 14,
+      "fail": 0
+    },
+    "bundle": {
+      "pass": 45,
+      "fail": 1
+    },
+    "bundle-mcp": {
+      "pass": 6,
+      "fail": 0
+    },
+    "harness": {
+      "pass": 3,
+      "fail": 0
+    }
+  },
+  "failed": [
+    {
+      "surface": "bundle",
+      "id": "F8-file",
+      "pass": false,
+      "observed": "exit=1 noChrome=false Error: Invalid project config E:\\AI-Cache\\tmp\\fr2-14-ODjasr\\vphuge\\.sutradhar.json: viewport.width must be a positive in"
+    }
+  ],
+  "processBaselineCount": 36
+}

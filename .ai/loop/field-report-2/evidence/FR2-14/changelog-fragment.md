@@ -13,7 +13,7 @@
   - **Unknown keys warn** (with a "did you mean" hint). **Everything else stops the command before Chrome is touched:** malformed
     JSON (comments are not allowed), duplicate keys, wrong types or ranges, an empty array (`remove the key for no restriction`),
     a domain written as a URL/wildcard/port, a file over 64 KiB, a directory or broken/looping symlink in place of the file,
-    UTF-16 or invalid UTF-8. A UTF-8 BOM is accepted. Messages never repeat values from the file.
+    UTF-16 or invalid UTF-8. A UTF-8 BOM is accepted. Invalid-JSON errors are redacted; other messages echo only short single-line pieces of the file (an unknown key name, an `allowedDomains` entry, a download entry, an `idleTimeoutMs` string), each capped at 64 characters (a resolved path at 200); `dialog.promptText` and unknown-key values are never echoed.
   - **`SUTRADHAR_CONFIG=<absolute path>`** loads exactly that file (no search); **`SUTRADHAR_CONFIG=none`** ignores project config.
   - **`sutradhar doctor`** prints the file in use, its warnings, and the source (flag/state/env/config/default) of every key.
     The MCP server prints one stderr line at startup naming the file it loaded (or where the search stopped).
@@ -37,9 +37,22 @@
   exported it for MCP is now restricted in the CLI too (narrower, never wider).
 - **An empty `allowedDomains` option in `createSutradharServer` no longer suppresses `SUTRADHAR_ALLOWED_DOMAINS`.** An empty list
   counts as "not set", like the roots options.
-- **CLI: `--allowlist-domains` with no usable domain is an error** (it used to mean "unrestricted").
+- **BREAKING (CLI): `--allowlist-domains` with no usable domain is an error** (`--allowlist-domains ""`, only blanks, only commas). It used to mean "unrestricted", so a script that passes an empty variable now fails instead of silently running with no allowlist. Omit the flag for no restriction. Documented in `--help`, the CLI README and `docs/project-config.md`.
 - `createSutradharServer` accepts `projectConfig`, `dialogPolicy` and `defaultViewport`; `browser.launch`'s `viewport` falls
   back to the server default (the file's `viewport`). The tool count is unchanged.
+
+## Fixed in the audit-1 fix cycle (fix-1)
+
+- **A higher layer now wins over a refused discovered file.** A discovered `downloadDir`/`allowedDownloadRoots` outside the file's own tree (or inside `.git`) used to be
+  refused at load time, so `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` (the escape hatch the error message named) did not help: the CLI exited 1 and MCP died at startup. The
+  loader now records the refusal and the resolver raises it only when the file would actually supply the roots; the env var, the `allowedDownloadRoots` option and the CLI
+  `download <ref> <dir>` grant all replace the file's roots. A discovered file that is the effective layer is still refused (fail closed); a malformed file still stops the command.
+- **`null` is "not set"** in every layer of every setting (it used to count as a value, so `createSutradharServer({ allowedDomains: null })` ignored
+  `SUTRADHAR_ALLOWED_DOMAINS` and ran unrestricted). `0`, `false` and `""` are still values.
+- **The home boundary is canonical** (junctions and symlinks cannot walk the search past home).
+- **`viewport` is bounded to 1..10000000** (Chrome's limit) in the file and the `--viewport` flag, validated before any Chrome starts; a CLI command whose setup fails after Chrome
+  was spawned now kills that Chrome (it used to leak it, because it was not in `state.json` yet).
+- The SDK announces (`console.warn`) a discovered `dialog.mode "accept"`, as the CLI and MCP do. Single-label `allowedDomains` such as `"1"` or `"com"` are documented as suffix matches.
 
 ## Notes carried from FR2-04 / FR2-05
 

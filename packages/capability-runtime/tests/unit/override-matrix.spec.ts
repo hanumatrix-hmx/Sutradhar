@@ -207,8 +207,8 @@ describe('FR2-14 fix-1: a layer above the file always wins (generated override m
     }
   }
 
-  it('the matrix is not vacuous (it ran more than 40 cells)', () => {
-    expect(total).toBeGreaterThan(40);
+  it('the matrix is not vacuous: exactly 108 cells ran (5 keys x 3 file states x (4 layer subsets + 2 null-option rows) + 2 keys x 3 x (2 + 1))', () => {
+    expect(total).toBe(108);
   });
 
   it('F1 repro: an out-of-tree downloadDir + SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS resolves to the env roots, not an error', async () => {

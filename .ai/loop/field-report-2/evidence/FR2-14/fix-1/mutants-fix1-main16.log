@@ -1,0 +1,69 @@
+CAUGHT  X1 F1: the download refusal is raised whatever layer wins (env/option no longer override a refused file)
+    unit: CAUGHT (5 test(s) failed) e.g. tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matr
+    live: CAUGHT (live failed: cli/H4b, cli/F1-env-f1-out, cli/F1-env-f1-git)
+    restored byte-identical: true
+CAUGHT  X2 F1 fail-open: a refused discovered download root is never refused
+    unit: CAUGHT (5 test(s) failed) e.g. tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matr
+    live: CAUGHT (live failed: cli/N4, cli/H1, cli/F1-none-f1-out)
+    restored byte-identical: true
+CAUGHT  X3 F1: fsRootsConfigLayer forgets the refusal (every surface fails open)
+    unit: CAUGHT (5 test(s) failed) e.g. tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matr
+    live: CAUGHT (live failed: cli/N4, cli/F1-none-f1-out)
+    restored byte-identical: true
+CAUGHT  X4 F1: the CLI ignores the explicit `download <ref> <dir>` grant over a refused file (resolver level)
+    unit: CAUGHT (4 test(s) failed) e.g. tests/unit/project-config-cli.spec.ts > fix-1 F1/F2/F8: on the CLI a layer above the file always wins (generat
+    live: CAUGHT (live failed: cli/F1-arg)
+    restored byte-identical: true
+CAUGHT  X5 F1: withSession no longer passes the explicit download dir to the resolver (wiring; live-only)
+    unit: n/a
+    live: CAUGHT (live failed: cli/F1-arg)
+    restored byte-identical: true
+CAUGHT  X6 F2: null counts as a set value again (fails open)
+    unit: CAUGHT (12 test(s) failed) e.g. tests/unit/config-precedence.spec.ts > fix-1 F2: null and undefined are both "not set"; 0, false and "" are va
+    live: n/a
+    restored byte-identical: true
+CAUGHT  X7 F2: SDK configFile null is treated as a path
+    unit: CAUGHT (1 test(s) failed) e.g. tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > F2: null o
+    live: n/a
+    restored byte-identical: true
+CAUGHT  X8 F3 (A8b-style): the home boundary needs a LITERAL match of the walked dir to the home string
+    unit: CAUGHT (2 test(s) failed) e.g. tests/unit/project-config.spec.ts > fix-1 F3/F7: the home boundary holds under links and case (canonical compa
+    live: n/a
+    restored byte-identical: true
+NOT-CAUGHT X9 F3 (A8-style): canonical home equality replaced by a literal compare (a home reached through a link is not the boundary)
+    unit: INVALID MUTANT (does not compile): packages/capability-runtime/src/project-config.ts(451,9): error TS6133: 'sameFold' is declared but its value is never read. packages/capability-runtime/src/project-config.ts(484,11): error TS6133: 'here' is declared but its value is never read.
+    live: n/a
+    restored byte-identical: true
+CAUGHT  X11 F3: the literal cwd no longer counts as "inside home" (a junction cwd inside home walks past it)
+    unit: CAUGHT (1 test(s) failed) e.g. tests/unit/project-config.spec.ts > fix-1 F3/F7: the home boundary holds under links and case (canonical compa
+    live: CAUGHT (live failed: cli/F3-home-junction)
+    restored byte-identical: true
+CAUGHT  X12 F4: the echo cap is removed (a 20 KB key prints 20 KB)
+    unit: CAUGHT (3 test(s) failed) e.g. tests/unit/project-config.spec.ts > fix-1 F4: what error messages echo from the file is capped and single-line
+    live: CAUGHT (live failed: cli/F4-longkey)
+    restored byte-identical: true
+CAUGHT  X13 F8: the file viewport upper bound is removed
+    unit: CAUGHT (2 test(s) failed) e.g. tests/unit/project-config.spec.ts > fix-1 F8: viewport bounds are validated at load > rejects a width or heigh
+    live: CAUGHT (live failed: cli/F8-file)
+    restored byte-identical: true
+CAUGHT  X14 F8: the --viewport flag upper bound is removed
+    unit: CAUGHT (1 test(s) failed) e.g. tests/unit/project-config-cli.spec.ts > fix-1 F1/F2/F8: on the CLI a layer above the file always wins (generat
+    live: CAUGHT (live failed: cli/F8-flag)
+    restored byte-identical: true
+CAUGHT  X15 F9: the SDK no longer announces a discovered dialog accept
+    unit: CAUGHT (1 test(s) failed) e.g. tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > F9: a DISC
+    live: n/a
+    restored byte-identical: true
+CAUGHT  X16 F1 on MCP: the server hands the resolver no config refusal
+    unit: CAUGHT (4 test(s) failed) e.g. tests/unit/server-config.spec.ts > fix-1 F1/F2: on MCP a layer above the file always wins (generated: key x hi
+    live: CAUGHT (live failed: mcp/M-F1-none-mf1-out)
+    restored byte-identical: true
+CAUGHT  X17 F1 on the SDK: the SDK hands the resolver no config refusal
+    unit: CAUGHT (5 test(s) failed) e.g. tests/unit/launch-config.spec.ts > sutradhar SDK launch() + .sutradhar.json (FR2-14) > SC11: a hostile discove
+    live: n/a
+    restored byte-identical: true
+
+15/16 mutants caught and restored byte-identically
+(node:58248) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+EXIT=1

@@ -4046,3 +4046,38 @@ Branch `claude/fr2-14-project-config` (base master fdae749). Not self-audited; s
   chrome.exe (PID 71888 and 13 children) still referenced, because an exclusion pattern did not match (trailing slash in the listing). Windows refused to delete the locked files
   (`CrashpadMetrics-active.pma`) and the directory still has 36 entries, but unlocked files inside it were removed and that Chrome's profile may be damaged. The chrome processes were
   still running afterwards. The owner of that session should treat its profile as suspect; it was not touched again.
+
+## 2026-10-03 -- FR2-14 Executor fix-1 (audit-1 REOPEN): a higher layer must win over a discovered file's own refusal; awaiting independent re-audit
+
+Branch `claude/fr2-14-project-config`, evidence `evidence/FR2-14/fix-1/`. Status VERIFY (fix-1); not self-audited. Audit-1 found one major (F1) and eight minors; everything else (precedence matrices, live
+checks, 80/80 hostile-root refusals, 125/125 fail-closed, 14/14 mutants) passed and was left alone.
+
+- **F1 (root cause).** The out-of-tree/`.git` containment refusal was raised inside `loadProjectConfig`, i.e. BEFORE any layer is known, so it blocked a command even when the env var / option
+  that REPLACES the file's download roots was set; the error message named exactly that env var as the way out. Decision: the loader RECORDS the refusal (`LoadedProjectConfig.downloadRefusal`) and
+  `resolveFsRoots` raises it iff the config layer is the one that would supply the download roots (one place, shared by CLI, MCP, SDK; the three call sites build the layer through one helper,
+  `fsRootsConfigLayer`, so none can forget it). Rejected alternative: pass "env/option is set" into the loader (duplicates the precedence rule). The `download <ref> <dir>` argument is the CLI's only
+  flag-level download layer (GAP-348: there is no download-roots flag and none was invented), so a refused file's roots are dropped for that command. Malformed files still fail closed (D7,
+  GAP-342); `SUTRADHAR_CONFIG=<file>` / `configFile` remain trusted. Every override the message names was verified live (env: CLI and MCP, package and bundle; option: SDK live, MCP unit; explicit
+  load; the `<dir>` grant). Checked the other keys for the same shape: only the download roots have a content-dependent refusal; the others only fail when malformed.
+- **F2.** `firstDefined` treats `null` like `undefined` for every key and surface (CLI flags/state, MCP and SDK options, resolvers); `0`/`false`/`""` still win. SDK `configFile: null` likewise.
+- **F3 / F7.** The search stops at home by CANONICAL equality and the walk is "in home" if either the literal or the canonical cwd is under home. I deleted a literal stop check I had added first: the
+  canonical check always fires on the same directory, so it was an unkillable (equivalent) mutant. Audit mutants A8/A8b are now caught by unit tests (a junction cwd inside home; a home given through a
+  link; trailing-separator and, on win32, case variants).
+- **F4.** Echo is capped (64 chars, 200 for a resolved path) and single-line (control characters become `?`), and the docs state exactly what is and is not echoed; the "never repeat values" claim was
+  false and is gone. Redaction of known-key values was NOT chosen: the values are the user's own domain/path strings and are what makes the message actionable.
+- **F5 (decision: correct the docs, do not re-validate at use time).** Re-canonicalising each root against the config's directory at every download means plumbing the config baseDir into the
+  runtime's download check (FR2-05 code); not small or safe for a fix cycle. SECURITY.md and GAP-341 now say the runtime re-check does NOT cover a root swapped for a link (GAP-347).
+- **F6.** The empty `--allowlist-domains` error is now in `--help`, the CLI README, `docs/project-config.md` and the changelog, marked BREAKING.
+- **F8.** `viewport` is bounded to 1..10000000 (Chrome's limit) in the file, the JSON schema and the `--viewport` flag, before any Chrome starts. Independently, a CLI command whose setup fails after Chrome
+  was spawned now kills that Chrome by PID (and `spawnDetachedChrome`'s start-up timeout does too); the profile dir stays (GAP-349). Leak tested with own PIDs via a mutant that removes the bound.
+- **F9.** The SDK announces a discovered `dialog.mode "accept"` (`console.warn`) like the CLI and MCP; the single-label `allowedDomains` suffix-match rule is documented. Not rejected: it only narrows.
+- Tests (the FR2-07/FR2-11 lesson): GENERATED override matrices, not one example per bug: capability-runtime (key x file in-tree/out-of-tree/hostile x {none, env, option, both} x null option, real files,
+  real loader), CLI (`resolveCliSettings` incl. the `<dir>` grant), MCP (`createSutradharServer`) and SDK (`launch`), plus live rows on CLI, MCP, SDK and both bundles. The run-1 live case H4b asserted the
+  bug (it required the refusal WITH the env var set) and was inverted. New gaps GAP-347 .. GAP-351 (computed max+1).
+- Residual / unverified: POSIX ownership and symlink behaviour (GAP-343), live junction-swap attacks (safety rule), Windows ACLs.
+- Results (fix-1, fresh, forced `turbo run build --force --concurrency=1` 20/20 0 cached, bundles grepped): tsc clean x7; vitest capability-runtime 393, cli 238, mcp-server 154, sutradhar 63, apps/server 28, agent 56,
+  browser 933, all pass; generated override matrix 108 cells (capability-runtime) + CLI/MCP/SDK matrices; live `verify-fr2-14-config.mjs` 146/146 twice (cli 64, mcp 13, sdk 14, bundle 46, bundle-mcp 6, harness 3);
+  audit-1 probes re-run UNMODIFIED from sha-verified copies: precedence-fn 98/98 (was 95/98: the 3 null rows), loader-probes (80 hostile-root rows now surface as `downloadRefusal`, adapter run = same classification as
+  baseline except the two intended changes F3/F8), live-cli pkg 96/96 and bundle 96/96, live-mcp pkg 32/32 and bundle 32/32, live-sdk 33/33, live-failclosed 138/139 (the one failure, `verbs.help` = `--help` exits 1,
+  fails identically in audit-1 and on master); 17 new mutants X1-X9, X11-X18 caught (unit and/or live), audit mutants A1-A12/A5b/A8b 13/13 applicable caught (A6's text no longer exists; re-spelled as X18); regressions:
+  fr2-08 478/478 on the second full run (the first scored 477/478, `bundle:H2` timing flake, not reproduced), fr2-07 488/488, fr2-04 111/0/2, CLI scenario suite UC-05/06/08/12 fail identically on master (A/B run today).

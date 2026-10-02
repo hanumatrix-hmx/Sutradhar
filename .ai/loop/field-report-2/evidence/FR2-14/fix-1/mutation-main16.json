@@ -1,0 +1,178 @@
+[
+  {
+    "id": "X1",
+    "desc": "F1: the download refusal is raised whatever layer wins (env/option no longer override a refused file)",
+    "file": "packages/capability-runtime/src/fs-roots.ts",
+    "unit": "CAUGHT (5 test(s) failed) e.g. tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matr",
+    "live": "CAUGHT (live failed: cli/H4b, cli/F1-env-f1-out, cli/F1-env-f1-git)",
+    "caught": true,
+    "valid": true,
+    "restoredByteIdentical": true,
+    "sha256": "3797a6b57ca7077b"
+  },
+  {
+    "id": "X2",
+    "desc": "F1 fail-open: a refused discovered download root is never refused",
+    "file": "packages/capability-runtime/src/fs-roots.ts",
+    "unit": "CAUGHT (5 test(s) failed) e.g. tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matr",
+    "live": "CAUGHT (live failed: cli/N4, cli/H1, cli/F1-none-f1-out)",
+    "caught": true,
+    "valid": true,
+    "restoredByteIdentical": true,
+    "sha256": "3797a6b57ca7077b"
+  },
+  {
+    "id": "X3",
+    "desc": "F1: fsRootsConfigLayer forgets the refusal (every surface fails open)",
+    "file": "packages/capability-runtime/src/config-precedence.ts",
+    "unit": "CAUGHT (5 test(s) failed) e.g. tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matr",
+    "live": "CAUGHT (live failed: cli/N4, cli/F1-none-f1-out)",
+    "caught": true,
+    "valid": true,
+    "restoredByteIdentical": true,
+    "sha256": "acb835f73cf5fd7c"
+  },
+  {
+    "id": "X4",
+    "desc": "F1: the CLI ignores the explicit `download <ref> <dir>` grant over a refused file (resolver level)",
+    "file": "packages/cli/src/project-config-cli.ts",
+    "unit": "CAUGHT (4 test(s) failed) e.g. tests/unit/project-config-cli.spec.ts > fix-1 F1/F2/F8: on the CLI a layer above the file always wins (generat",
+    "live": "CAUGHT (live failed: cli/F1-arg)",
+    "caught": true,
+    "valid": true,
+    "restoredByteIdentical": true,
+    "sha256": "19be249a3e1c2b1c"
+  },
+  {
+    "id": "X5",
+    "desc": "F1: withSession no longer passes the explicit download dir to the resolver (wiring; live-only)",
+    "file": "packages/cli/src/cli.ts",
+    "unit": "n/a",
+    "live": "CAUGHT (live failed: cli/F1-arg)",
+    "caught": true,
+    "valid": true,
+    "restoredByteIdentical": true,
+    "sha256": "800010041a25f171"
+  },
+  {
+    "id": "X6",
+    "desc": "F2: null counts as a set value again (fails open)",
+    "file": "packages/capability-runtime/src/config-precedence.ts",
+    "unit": "CAUGHT (12 test(s) failed) e.g. tests/unit/config-precedence.spec.ts > fix-1 F2: null and undefined are both \"not set\"; 0, false and \"\" are va",
+    "live": "n/a",
+    "caught": true,
+    "valid": true,
+    "restoredByteIdentical": true,
+    "sha256": "acb835f73cf5fd7c"
+  },
+  {
+    "id": "X7",
+    "desc": "F2: SDK configFile null is treated as a path",
+    "file": "packages/sutradhar/src/index.ts",
+    "unit": "CAUGHT (1 test(s) failed) e.g. tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > F2: null o",
+    "live": "n/a",
+    "caught": true,
+    "valid": true,
+    "restoredByteIdentical": true,
+    "sha256": "bf60905b00da3d04"
+  },
+  {
+    "id": "X8",
+    "desc": "F3 (A8b-style): the home boundary needs a LITERAL match of the walked dir to the home string",
+    "file": "packages/capability-runtime/src/project-config.ts",
+    "unit": "CAUGHT (2 test(s) failed) e.g. tests/unit/project-config.spec.ts > fix-1 F3/F7: the home boundary holds under links and case (canonical compa",
+    "live": "n/a",
+    "caught": true,
+    "valid": true,
+    "restoredByteIdentical": true,
+    "sha256": "680c5e65276db856"
+  },
+  {
+    "id": "X9",
+    "desc": "F3 (A8-style): canonical home equality replaced by a literal compare (a home reached through a link is not the boundary)",
+    "file": "packages/capability-runtime/src/project-config.ts",
+    "unit": "INVALID MUTANT (does not compile): packages/capability-runtime/src/project-config.ts(451,9): error TS6133: 'sameFold' is declared but its value is never read.\r packages/capability-runtime/src/project-config.ts(484,11): error TS6133: 'here' is declared but its value is never read.\r",
+    "live": "n/a",
+    "caught": false,
+    "valid": false,
+    "restoredByteIdentical": true,
+    "sha256": "680c5e65276db856"
+  },
+  {
+    "id": "X11",
+    "desc": "F3: the literal cwd no longer counts as \"inside home\" (a junction cwd inside home walks past it)",
+    "file": "packages/capability-runtime/src/project-config.ts",
+    "unit": "CAUGHT (1 test(s) failed) e.g. tests/unit/project-config.spec.ts > fix-1 F3/F7: the home boundary holds under links and case (canonical compa",
+    "live": "CAUGHT (live failed: cli/F3-home-junction)",
+    "caught": true,
+    "valid": true,
+    "restoredByteIdentical": true,
+    "sha256": "680c5e65276db856"
+  },
+  {
+    "id": "X12",
+    "desc": "F4: the echo cap is removed (a 20 KB key prints 20 KB)",
+    "file": "packages/capability-runtime/src/project-config.ts",
+    "unit": "CAUGHT (3 test(s) failed) e.g. tests/unit/project-config.spec.ts > fix-1 F4: what error messages echo from the file is capped and single-line",
+    "live": "CAUGHT (live failed: cli/F4-longkey)",
+    "caught": true,
+    "valid": true,
+    "restoredByteIdentical": true,
+    "sha256": "680c5e65276db856"
+  },
+  {
+    "id": "X13",
+    "desc": "F8: the file viewport upper bound is removed",
+    "file": "packages/capability-runtime/src/project-config.ts",
+    "unit": "CAUGHT (2 test(s) failed) e.g. tests/unit/project-config.spec.ts > fix-1 F8: viewport bounds are validated at load > rejects a width or heigh",
+    "live": "CAUGHT (live failed: cli/F8-file)",
+    "caught": true,
+    "valid": true,
+    "restoredByteIdentical": true,
+    "sha256": "680c5e65276db856"
+  },
+  {
+    "id": "X14",
+    "desc": "F8: the --viewport flag upper bound is removed",
+    "file": "packages/cli/src/parse-args.ts",
+    "unit": "CAUGHT (1 test(s) failed) e.g. tests/unit/project-config-cli.spec.ts > fix-1 F1/F2/F8: on the CLI a layer above the file always wins (generat",
+    "live": "CAUGHT (live failed: cli/F8-flag)",
+    "caught": true,
+    "valid": true,
+    "restoredByteIdentical": true,
+    "sha256": "f2dc11c82c08a20f"
+  },
+  {
+    "id": "X15",
+    "desc": "F9: the SDK no longer announces a discovered dialog accept",
+    "file": "packages/sutradhar/src/index.ts",
+    "unit": "CAUGHT (1 test(s) failed) e.g. tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > F9: a DISC",
+    "live": "n/a",
+    "caught": true,
+    "valid": true,
+    "restoredByteIdentical": true,
+    "sha256": "bf60905b00da3d04"
+  },
+  {
+    "id": "X16",
+    "desc": "F1 on MCP: the server hands the resolver no config refusal",
+    "file": "packages/mcp-server/src/server.ts",
+    "unit": "CAUGHT (4 test(s) failed) e.g. tests/unit/server-config.spec.ts > fix-1 F1/F2: on MCP a layer above the file always wins (generated: key x hi",
+    "live": "CAUGHT (live failed: mcp/M-F1-none-mf1-out)",
+    "caught": true,
+    "valid": true,
+    "restoredByteIdentical": true,
+    "sha256": "041e3a54b60fc7f0"
+  },
+  {
+    "id": "X17",
+    "desc": "F1 on the SDK: the SDK hands the resolver no config refusal",
+    "file": "packages/sutradhar/src/index.ts",
+    "unit": "CAUGHT (5 test(s) failed) e.g. tests/unit/launch-config.spec.ts > sutradhar SDK launch() + .sutradhar.json (FR2-14) > SC11: a hostile discove",
+    "live": "n/a",
+    "caught": true,
+    "valid": true,
+    "restoredByteIdentical": true,
+    "sha256": "bf60905b00da3d04"
+  }
+]

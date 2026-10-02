@@ -1,0 +1,73 @@
+CAUGHT  X1 F1: the download refusal is raised whatever layer wins (env/option no longer override a refused file)
+    unit: CAUGHT (5 test(s) failed) e.g. tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matr
+    live: CAUGHT (live failed: cli/H4b, cli/F1-env-f1-out, cli/F1-env-f1-git)
+    restored byte-identical: true
+NOT-CAUGHT X2 F1 fail-open: a refused discovered download root is never refused
+    unit: INVALID MUTANT (does not compile): packages/capability-runtime/src/fs-roots.ts(160,31): error TS18048: 'input.config' is possibly 'undefined'. 
+    live: n/a
+    restored byte-identical: true
+CAUGHT  X3 F1: fsRootsConfigLayer forgets the refusal (every surface fails open)
+    unit: CAUGHT (5 test(s) failed) e.g. tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matr
+    live: CAUGHT (live failed: cli/N4, cli/F1-none-f1-out)
+    restored byte-identical: true
+NOT-CAUGHT X4 F1: the CLI ignores the explicit `download <ref> <dir>` grant over a refused file
+    unit: INVALID MUTANT (does not compile): packages/cli/src/project-config-cli.ts(80,9): error TS2345: Argument of type 'LoadedProjectConfig | { resolved: { allowedDownloadRoots: undefined; allowedUploadRoots?: string[] | undefined; }; downloadRefusal: undefined; path?: string | undefined; baseDir?: string | undefined; origin?: ConfigOrigin | undefined; values?: ProjectConfigFile | undefined; warnings?: string[] | undefined; } | undef...' is not assignable to parameter of type 'LoadedProjectConfig | null | undefined'.   Type '{ resolved: { allowedDownloadRoots: undefined; allowedUploadRoots?: string[] | undefined; }; downloadRefusal: undefined; path?: string | undefined; baseDir?: string | undefined; origin?: ConfigOrigin | undefined; values?: ProjectConfigFile | undefined; warnings?: string[] | undefined; }' is not assignable to type 'LoadedProjectConfig'.
+    live: n/a
+    restored byte-identical: true
+NOT-CAUGHT X5 F1: withSession no longer passes the explicit download dir to the resolver
+    unit: n/a
+    live: SURVIVED (1 selected live case(s) passed)
+    restored byte-identical: true
+CAUGHT  X6 F2: null counts as a set value again (fails open)
+    unit: CAUGHT (12 test(s) failed) e.g. tests/unit/config-precedence.spec.ts > fix-1 F2: null and undefined are both "not set"; 0, false and "" are va
+    live: n/a
+    restored byte-identical: true
+CAUGHT  X7 F2: SDK configFile null is treated as a path
+    unit: CAUGHT (1 test(s) failed) e.g. tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > F2: null o
+    live: n/a
+    restored byte-identical: true
+NOT-CAUGHT X8 F3: canonical home equality compared literally (case/format-sensitive, A8b-style)
+    unit: SURVIVED
+    live: n/a
+    restored byte-identical: true
+CAUGHT  X9 F3: canonical home equality removed (A8-style: a home reached through a link is not the boundary)
+    unit: CAUGHT (1 test(s) failed) e.g. tests/unit/project-config.spec.ts > fix-1 F3/F7: the home boundary holds under links and case (canonical compa
+    live: n/a
+    restored byte-identical: true
+NOT-CAUGHT X10 F3: literal home stop removed (a junction cwd inside home walks past it)
+    unit: SURVIVED
+    live: SURVIVED (1 selected live case(s) passed)
+    restored byte-identical: true
+CAUGHT  X11 F3: the literal cwd no longer counts as "inside home"
+    unit: CAUGHT (1 test(s) failed) e.g. tests/unit/project-config.spec.ts > fix-1 F3/F7: the home boundary holds under links and case (canonical compa
+    live: CAUGHT (live failed: cli/F3-home-junction)
+    restored byte-identical: true
+NOT-CAUGHT X12 F4: the echo cap is removed (a 20 KB key prints 20 KB)
+    unit: INVALID MUTANT (does not compile): packages/capability-runtime/src/project-config.ts(145,26): error TS6133: 'max' is declared but its value is never read. 
+    live: n/a
+    restored byte-identical: true
+CAUGHT  X13 F8: the file viewport upper bound is removed
+    unit: CAUGHT (2 test(s) failed) e.g. tests/unit/project-config.spec.ts > fix-1 F8: viewport bounds are validated at load > rejects a width or heigh
+    live: CAUGHT (live failed: cli/F8-file)
+    restored byte-identical: true
+NOT-CAUGHT X14 F8: the --viewport flag upper bound is removed
+    unit: INVALID MUTANT (does not compile): packages/cli/src/parse-args.ts(8,10): error TS6133: 'VIEWPORT_MAX' is declared but its value is never read. 
+    live: n/a
+    restored byte-identical: true
+NOT-CAUGHT X15 F9: the SDK no longer announces a discovered dialog accept
+    unit: INVALID MUTANT (does not compile): packages/sutradhar/src/index.ts(85,22): error TS18048: 'cfg' is possibly 'undefined'. 
+    live: n/a
+    restored byte-identical: true
+NOT-CAUGHT X16 F1 on MCP: the server passes no config refusal layer (reads cfg.resolved directly)
+    unit: INVALID MUTANT (does not compile): packages/mcp-server/src/server.ts(13,3): error TS6133: 'fsRootsConfigLayer' is declared but its value is never read. 
+    live: n/a
+    restored byte-identical: true
+NOT-CAUGHT X17 F1 on the SDK: the SDK passes no config refusal layer
+    unit: INVALID MUTANT (does not compile): packages/sutradhar/src/index.ts(29,3): error TS6133: 'fsRootsConfigLayer' is declared but its value is never read. 
+    live: n/a
+    restored byte-identical: true
+
+7/17 mutants caught and restored byte-identically
+(node:118000) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+EXIT=1
