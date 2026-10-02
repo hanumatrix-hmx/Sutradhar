@@ -4017,3 +4017,32 @@ restored byte-identically. F3/F4/F5: docs and the MCP tool description now say a
 in about 1 s and one opening mid-check takes up to about 2.7 s, a frozen page can add up to 1.5 s (total can exceed
 `timeoutMs` by up to about 3 s), and text visible for under one poll (about 100 ms) can be missed. No product
 behaviour changed. Evidence: `evidence/FR2-08/audit-1-followup/`.
+
+## 2026-10-02 -- FR2-14 Executor run-1 (DEV + VERIFY): .sutradhar.json project config; awaiting independent audit
+
+Branch `claude/fr2-14-project-config` (base master fdae749). Not self-audited; status VERIFY. Evidence: `evidence/FR2-14/run-1/`; spec `evidence/FR2-14/spec.md`.
+- Preflight greps (resolveFsRoots, RootSource, canonicalizePath, DialogPolicyMode, dialogPolicy option, resolveDialogPolicy) all hit: no HARD precondition was missing. FR2-04 (BLOCKED)
+  and FR2-05 (PARTIAL) code used as accepted 2026-09-27; no interaction with the dialog gate's blocking/attribution logic was observed. FR2-04's D10 (`--dialog report` persists)
+  was already on master, so no amendment was needed.
+- Design, per the FR2-07/FR2-11 lesson (small shape-free fail-closed rules, tested by generated matrices): ONE precedence function (`firstDefined`: flag > env > config > default,
+  whole value, empty array = absent); one loader (`project-config.ts`) with a nearest-wins walk (stops at `.git` file-or-dir and home, never the filesystem root); every invalid
+  value, empty array, duplicate key, bad symlink/encoding is an ERROR before Chrome starts, only unknown keys warn; error text never echoes file contents.
+- Hostile-config resolution (the question the task asked): the spec's D12 decides it and it was implemented as written, with FR2-05's `canonicalizePath`/`findContainingRoot`.
+  A DISCOVERED file's download roots must stay inside the file's own canonical directory and outside `.git` (else an error naming SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS and
+  SUTRADHAR_CONFIG); `allowedDomains`/`allowedUploadRoots` can only narrow; `dialog accept` is honored but announced; POSIX owner/mode refusal; an explicit file is trusted.
+  Gaps found in the spec's own answer: GAP-339 (discovered file may set accept and idleTimeoutMs 0), GAP-340, GAP-341 (TOCTOU), GAP-342 (invalid file blocks even when overridden),
+  GAP-343 (POSIX unverified); plus GAP-077..080 from planning (Windows ACL, user layer, extra keys, schema not shipped) confirmed still open.
+- Results: unit capability-runtime 356, mcp-server 147, cli 228, sutradhar 55 (all pass; tsc clean per package and `turbo typecheck --force` 34/34); forced build 20+9 tasks 0 cached, new strings
+  grepped in every bundle; live harness `verify-fr2-14-config.mjs` 103/103 (cli 51, mcp 8, sdk 7, bundle 33 + bundle-mcp 1, harness 3) including a live CLI run from a CHILD directory
+  that picks the config up from a PARENT; 25 mutants of my own code, 25 caught (16 also live), all restored byte-identically (sha256). One real false pass was found by the mutants
+  (U14 survived the unit suite; PR7 strengthened).
+- Regression: fr2-08 478/478 on the second full run (the first scored 473/478, five CLI C-L5 timeouts not reproduced in four later runs: GAP-345), fr2-07 487/488 (bundle:H2, the known
+  flake, no tolerance fired), fr2-04 110/113 (the known headed click), CLI suite UC-06 fails identically on master (A/B done), UC-09 passes in isolation.
+- Deviations (15, each with a reason) in `evidence/FR2-14/run-1/deviations.md`. Notable: containment via `findContainingRoot`; ownership checked before reading; duplicate-key,
+  dangling-symlink, encoding and secret-redaction rules added; empty `--allowlist-domains` is now an error; live viewport observer is the page itself.
+- Unmet / unverified: no AC is recorded as unmet. Not verified: POSIX ownership/symlinks on a POSIX host (GAP-343), N13 live, Windows ACLs, live junction-escape attacks (safety rule;
+  function-level tests only).
+- INCIDENT (own error): while cleaning up, the Executor ran `rm -rf` over `E:\AI-Cache\tmp\sutradhar-cli-1790798002107`, a pre-existing profile dir that another session's running
+  chrome.exe (PID 71888 and 13 children) still referenced, because an exclusion pattern did not match (trailing slash in the listing). Windows refused to delete the locked files
+  (`CrashpadMetrics-active.pma`) and the directory still has 36 entries, but unlocked files inside it were removed and that Chrome's profile may be damaged. The chrome processes were
+  still running afterwards. The owner of that session should treat its profile as suspect; it was not touched again.
