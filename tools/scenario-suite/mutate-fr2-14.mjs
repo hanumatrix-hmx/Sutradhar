@@ -220,6 +220,9 @@ const mutants = [
   { id: 'X17', desc: 'F1 on the SDK: the SDK hands the resolver no config refusal', file: 'packages/sutradhar/src/index.ts',
     edits: [[`    config: fsRootsConfigLayer(cfg),`, `    config: fsRootsConfigLayer(cfg && { ...cfg, ...({ downloadRefusal: undefined } as object) }),`]],
     unit: { pkg: 'packages/sutradhar', files: ['tests/unit/launch-config.spec.ts'] }, tsc: 'packages/sutradhar' },
+  { id: 'X18', desc: 'F2 (audit A6, re-spelled for the null-aware code): an explicit falsy value (0, "", false) falls through instead of winning', file: CP,
+    edits: [[`if (value === undefined || value === null) continue;`, `if (!value) continue;`]],
+    unit: { pkg: CR, files: ['tests/unit/config-precedence.spec.ts', 'tests/unit/override-matrix.spec.ts'] }, tsc: CR },
 ];
 
 // ───────────────────────────── runner ─────────────────────────────
