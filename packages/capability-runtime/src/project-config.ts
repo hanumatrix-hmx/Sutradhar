@@ -427,13 +427,19 @@ export async function findProjectConfigPath(
   const literalHome = homedir ? p.resolve(homedir) : undefined;
   // "Inside home" holds when EITHER the literal or the canonical cwd is under home: a cwd that is a
   // junction/symlink inside home pointing elsewhere must still stop at home (F3), and a home
-  // reached through a link must still be recognised.
+  // reached through a link must still be recognised. When ONLY the canonical cwd is inside home (a
+  // link ABOVE home pointing in, N2), the walk follows the canonical path, which stays inside home
+  // up to the boundary instead of climbing the link's logical parents.
   let inHome = false;
   const sameFold = (a: string, b: string): boolean => isPathWithinRoot(a, b, platform) && isPathWithinRoot(b, a, platform);
   if (homedir && literalHome !== undefined) {
     try {
       home = await canonicalizePath(homedir);
-      inHome = isPathWithinRoot(await canonicalizePath(dir), home, platform) || isPathWithinRoot(dir, literalHome, platform);
+      const canonCwd = await canonicalizePath(dir);
+      const canonIn = isPathWithinRoot(canonCwd, home, platform);
+      const logicalIn = isPathWithinRoot(dir, literalHome, platform);
+      inHome = canonIn || logicalIn;
+      if (canonIn && !logicalIn) dir = canonCwd;
     } catch (e) {
       throw new ProjectConfigError(undefined, `cannot resolve the working directory or home directory while searching for ${PROJECT_CONFIG_FILE_NAME} (${(e as Error).message}). ${NO_ESCAPE_HINT}`);
     }
@@ -442,6 +448,20 @@ export async function findProjectConfigPath(
   const searched: string[] = [];
   for (;;) {
     if (p.dirname(dir) === dir) return { searched, stoppedAt: 'filesystem-root' };
+    // Inside home, a directory whose REAL location is strictly above home is never looked at (N2:
+    // a link in the cwd chain can lead there). Whether it IS home is decided after the file check.
+    let here: string | undefined;
+    if (inHome && home !== undefined) {
+      try {
+        here = await canonicalizePath(dir);
+      } catch (e) {
+        throw new ProjectConfigError(undefined, `cannot resolve "${dir}" while searching for ${PROJECT_CONFIG_FILE_NAME} (${(e as Error).message}). ${NO_ESCAPE_HINT}`);
+      }
+      if (isPathWithinRoot(home, here, platform) && !sameFold(here, home)) {
+        dir = p.dirname(dir);
+        continue;
+      }
+    }
     const cand = p.join(dir, PROJECT_CONFIG_FILE_NAME);
     searched.push(cand);
     let st: Awaited<ReturnType<ConfigFs['stat']>> | undefined;
@@ -460,16 +480,8 @@ export async function findProjectConfigPath(
       throw new ProjectConfigError(cand, `${cand} exists but is not a regular file. ${NO_ESCAPE_HINT}`);
     }
     if (await exists(fs, p.join(dir, '.git'))) return { searched, stoppedAt: 'git-root', stopDir: dir };
-    if (inHome && home !== undefined && literalHome !== undefined) {
-      // Canonical equality, so a home reached through a junction/symlink (either side) is still the boundary.
-      let here: string;
-      try {
-        here = await canonicalizePath(dir);
-      } catch (e) {
-        throw new ProjectConfigError(undefined, `cannot resolve "${dir}" while searching for ${PROJECT_CONFIG_FILE_NAME} (${(e as Error).message}). ${NO_ESCAPE_HINT}`);
-      }
-      if (sameFold(here, home)) return { searched, stoppedAt: 'home', stopDir: dir };
-    }
+    // Canonical equality, so a home reached through a junction/symlink (either side) is still the boundary.
+    if (inHome && home !== undefined && here !== undefined && sameFold(here, home)) return { searched, stoppedAt: 'home', stopDir: dir };
     dir = p.dirname(dir);
   }
 }
