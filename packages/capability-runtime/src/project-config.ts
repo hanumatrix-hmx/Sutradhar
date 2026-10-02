@@ -24,6 +24,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { canonicalizePath, findContainingRoot, isPathWithinRoot, type DialogPolicy } from '@sutradhar/browser';
 import { expandHome, resolveConfigPath } from './fs-roots.js';
+import { VIEWPORT_MAX } from './config-precedence.js';
 
 export const PROJECT_CONFIG_FILE_NAME = '.sutradhar.json';
 export const PROJECT_CONFIG_ENV = 'SUTRADHAR_CONFIG';
@@ -88,6 +89,13 @@ export interface LoadedProjectConfig {
   /** Absolute paths (D6); `downloadDir` first, de-duplicated (D14). */
   resolved: { allowedDownloadRoots?: string[]; allowedUploadRoots?: string[] };
   warnings: string[];
+  /**
+   * Set (never thrown) when this is a DISCOVERED file whose download roots escape its own tree or
+   * point into `.git`. The refusal is applied by `resolveFsRoots` only when the file layer would
+   * actually supply the download roots, so an env var or option (both outrank the file) overrides
+   * it instead of being blocked by it (FR2-14 fix-1, F1).
+   */
+  downloadRefusal?: string;
 }
 
 export type ConfigDiscovery =
@@ -128,7 +136,19 @@ function bad(file: string, problem: string): ProjectConfigError {
   return new ProjectConfigError(file, `Invalid project config ${file}: ${problem}`);
 }
 
-/** Short, single-line echo of a non-secret scalar for an error message. */
+/** Longest piece of file content any message echoes (key names, string values, entries). */
+export const ECHO_MAX = 64;
+/** A resolved path derived from a file entry may be longer, since its tail is what matters. */
+const ECHO_PATH_MAX = 200;
+
+/** Single-line, length-capped echo of text that came from the file: control characters become `?`. */
+function clip(s: string, max: number = ECHO_MAX): string {
+  // eslint-disable-next-line no-control-regex -- stripping control characters is the point
+  const t = s.replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g, '?');
+  return t.length > max ? `${t.slice(0, max)}...` : t;
+}
+
+/** Short, single-line echo of a scalar from the file for an error message (capped at {@link ECHO_MAX}). */
 function show(v: unknown): string {
   let s: string;
   try {
@@ -136,7 +156,7 @@ function show(v: unknown): string {
   } catch {
     s = '<unprintable>';
   }
-  return s.length > 64 ? `${s.slice(0, 64)}...` : s;
+  return clip(s);
 }
 
 // ───────────────────────── suggestions ─────────────────────────
@@ -279,7 +299,7 @@ export function validateProjectConfig(data: unknown, file: string): { values: Pr
   const warnings: string[] = [];
   const warnUnknown = (prefix: string, key: string, known: readonly string[]): void => {
     const s = suggestKey(key, known);
-    warnings.push(`${file}: unknown key "${prefix}${key}" ignored${s ? ` (did you mean "${prefix}${s}"?)` : ''}`);
+    warnings.push(`${file}: unknown key "${prefix}${clip(key)}" ignored${s ? ` (did you mean "${prefix}${s}"?)` : ''}`);
   };
   for (const k of Object.keys(data)) {
     if (!PROJECT_CONFIG_KNOWN_KEYS.includes(k)) warnUnknown('', k, PROJECT_CONFIG_KNOWN_KEYS);
@@ -346,7 +366,9 @@ export function validateProjectConfig(data: unknown, file: string): { values: Pr
     for (const k of Object.keys(v)) if (!(VIEWPORT_KEYS as readonly string[]).includes(k)) warnUnknown('viewport.', k, VIEWPORT_KEYS);
     for (const k of VIEWPORT_KEYS) {
       const n = v[k];
-      if (typeof n !== 'number' || !Number.isInteger(n) || n < 1) throw bad(file, `viewport.${k} must be a positive integer`);
+      if (typeof n !== 'number' || !Number.isInteger(n) || n < 1 || n > VIEWPORT_MAX) {
+        throw bad(file, `viewport.${k} must be a positive integer (at most ${VIEWPORT_MAX})`);
+      }
     }
     values.viewport = { width: v['width'] as number, height: v['height'] as number };
   }
@@ -421,11 +443,16 @@ export async function findProjectConfigPath(
 
   let dir = p.resolve(startDir);
   let home: string | undefined;
+  const literalHome = homedir ? p.resolve(homedir) : undefined;
+  // "Inside home" holds when EITHER the literal or the canonical cwd is under home: a cwd that is a
+  // junction/symlink inside home pointing elsewhere must still stop at home (F3), and a home
+  // reached through a link must still be recognised.
   let inHome = false;
-  if (homedir) {
+  const sameFold = (a: string, b: string): boolean => isPathWithinRoot(a, b, platform) && isPathWithinRoot(b, a, platform);
+  if (homedir && literalHome !== undefined) {
     try {
       home = await canonicalizePath(homedir);
-      inHome = isPathWithinRoot(await canonicalizePath(dir), home, platform);
+      inHome = isPathWithinRoot(await canonicalizePath(dir), home, platform) || isPathWithinRoot(dir, literalHome, platform);
     } catch (e) {
       throw new ProjectConfigError(undefined, `cannot resolve the working directory or home directory while searching for ${PROJECT_CONFIG_FILE_NAME} (${(e as Error).message}). ${NO_ESCAPE_HINT}`);
     }
@@ -452,14 +479,15 @@ export async function findProjectConfigPath(
       throw new ProjectConfigError(cand, `${cand} exists but is not a regular file. ${NO_ESCAPE_HINT}`);
     }
     if (await exists(fs, p.join(dir, '.git'))) return { searched, stoppedAt: 'git-root', stopDir: dir };
-    if (inHome && home !== undefined) {
+    if (inHome && home !== undefined && literalHome !== undefined) {
+      // The boundary holds by literal OR canonical equality, so junctions and symlinks cannot walk past it.
+      if (sameFold(dir, literalHome)) return { searched, stoppedAt: 'home', stopDir: dir };
       let here: string;
       try {
         here = await canonicalizePath(dir);
       } catch (e) {
         throw new ProjectConfigError(undefined, `cannot resolve "${dir}" while searching for ${PROJECT_CONFIG_FILE_NAME} (${(e as Error).message}). ${NO_ESCAPE_HINT}`);
       }
-      const sameFold = (a: string, b: string): boolean => isPathWithinRoot(a, b, platform) && isPathWithinRoot(b, a, platform);
       if (sameFold(here, home)) return { searched, stoppedAt: 'home', stopDir: dir };
     }
     dir = p.dirname(dir);
@@ -589,6 +617,7 @@ export async function loadProjectConfig(i: {
   });
   const ul = values.allowedUploadRoots?.map((e, idx) => toAbs(e, `allowedUploadRoots[${idx}]`));
 
+  let downloadRefusal: string | undefined;
   if (origin === 'discovered') {
     let base: string;
     try {
@@ -596,22 +625,30 @@ export async function loadProjectConfig(i: {
     } catch (e) {
       throw bad(file, `cannot resolve this config's own directory (${(e as Error).message})`);
     }
+    // The first refusal is RECORDED, not thrown: whether it matters depends on whether this file's
+    // download layer is the one in effect (an env var / option outranks the file), which only the
+    // resolver knows. `resolveFsRoots` throws it iff the file layer would supply the roots.
+    const ESCAPE = `To allow it anyway, set SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS (CLI/MCP) or pass allowedDownloadRoots (MCP/SDK option); either replaces this file's download roots. Or load this file explicitly (${PROJECT_CONFIG_ENV}=<file>; SDK: configFile).`;
     for (const d of dl) {
+      if (downloadRefusal !== undefined) break;
       let c: string;
       try {
         c = await canonicalizePath(d.abs);
       } catch (e) {
-        throw bad(file, `${d.label} "${d.entry}" cannot be checked (${(e as Error).message}); refusing it. Fix or remove it, or load the file explicitly with ${PROJECT_CONFIG_ENV}=<file>.`);
+        downloadRefusal = bad(file, `${d.label} "${clip(d.entry)}" cannot be checked (${clip((e as Error).message)}); refusing it. Fix or remove it. ${ESCAPE}`).message;
+        break;
       }
       if ((await findContainingRoot(d.abs, [baseDir])) === undefined) {
-        throw bad(
+        downloadRefusal = bad(
           file,
-          `${d.label} "${d.entry}" resolves to "${c}", outside this config's directory "${base}". A project config found by searching upward may only allow downloads inside its own directory tree. To allow it anyway, set SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS, or load this file explicitly with ${PROJECT_CONFIG_ENV}=<file>.`,
-        );
+          `${d.label} "${clip(d.entry)}" resolves to "${clip(c, ECHO_PATH_MAX)}", outside this config's directory "${base}". A project config found by searching upward may only allow downloads inside its own directory tree. ${ESCAPE}`,
+        ).message;
+        break;
       }
       const rel = c.slice(base.length).split(/[\\/]+/).filter((s) => s.length > 0);
       if (rel.some((s) => foldAscii(s) === '.git')) {
-        throw bad(file, `${d.label} "${d.entry}" resolves to "${c}", which is inside a .git directory; downloads there could plant git hooks. Choose another directory.`);
+        downloadRefusal = bad(file, `${d.label} "${clip(d.entry)}" resolves to "${clip(c, ECHO_PATH_MAX)}", which is inside a .git directory; downloads there could plant git hooks. Choose another directory. ${ESCAPE}`).message;
+        break;
       }
     }
   }
@@ -626,6 +663,7 @@ export async function loadProjectConfig(i: {
       values,
       resolved: { allowedDownloadRoots: dl.length > 0 ? dl.map((d) => d.abs) : undefined, allowedUploadRoots: ul },
       warnings,
+      ...(downloadRefusal !== undefined ? { downloadRefusal } : {}),
     },
   };
 }

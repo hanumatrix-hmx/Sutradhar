@@ -14,6 +14,7 @@
 import {
   resolveAllowedDomains,
   resolveFsRoots,
+  fsRootsConfigLayer,
   resolveViewport,
   type LoadedProjectConfig,
   type ConfigDiscovery,
@@ -52,6 +53,9 @@ export interface CliSettingsInput {
   env: Record<string, string | undefined>;
   state?: Pick<CliState, 'viewport' | 'dialogPolicy'>;
   config?: LoadedProjectConfig;
+  /** `sutradhar download <ref> <dir>`: a directory the user granted explicitly on THIS command line.
+   *  It is a flag-level layer, so it replaces a discovered file's refused download roots too (F1). */
+  extraDownloadRoots?: readonly string[];
   platform?: NodeJS.Platform;
   homedir?: string;
 }
@@ -72,7 +76,11 @@ export function resolveCliSettings(i: CliSettingsInput): CliSettings {
     allowedDomains: resolveAllowedDomains({ flag: i.flags.allowlistDomains, env: i.env, config: i.config }),
     fsRoots: resolveFsRoots({
       env: i.env,
-      config: i.config && { ...i.config.resolved, baseDir: i.config.baseDir },
+      config: fsRootsConfigLayer(
+        i.config && i.extraDownloadRoots?.length && i.config.downloadRefusal !== undefined
+          ? { ...i.config, resolved: { ...i.config.resolved, allowedDownloadRoots: undefined }, downloadRefusal: undefined }
+          : i.config,
+      ),
       platform: i.platform,
       homedir: i.homedir,
     }),

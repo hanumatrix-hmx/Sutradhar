@@ -246,3 +246,99 @@ describe('createSutradharServer + projectConfig', () => {
     expect(ctorOptions()).toMatchObject({ allowedDomains: ['option.test'], idleTimeoutMs: 5000, allowedDownloadRoots: [ENV_DL], allowedUploadRoots: [ENV_DL], dialogPolicy: { mode: 'accept' } });
   });
 });
+
+// ───────────────────────── FR2-14 fix-1 ─────────────────────────
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, realpathSync } from 'node:fs';
+import { loadProjectConfig, ALLOWED_DOMAINS_ENV } from '@sutradhar/capability-runtime';
+
+describe('fix-1 F1/F2: on MCP a layer above the file always wins (generated: key x higher layers x file state, REAL files)', () => {
+  const root = realpathSync(mkdtempSync(path.join(os.tmpdir(), 'fr2-14-mcp-om-')));
+  afterAll(() => rmSync(root, { recursive: true, force: true }));
+  let n = 0;
+  async function realConfig(content: object): Promise<LoadedProjectConfig> {
+    const X = path.join(root, `r${n++}`, 'repo');
+    mkdirSync(path.join(X, '.git'), { recursive: true });
+    writeFileSync(path.join(X, '.sutradhar.json'), JSON.stringify(content));
+    const r = await loadProjectConfig({ cwd: X, discover: true, homedir: path.join(X, 'nohome') });
+    if (r.status !== 'loaded') throw new Error('not loaded');
+    return r.config;
+  }
+  const saved: Record<string, string | undefined> = {};
+  beforeEach(() => {
+    for (const k of ENV_KEYS) {
+      saved[k] = process.env[k];
+      delete process.env[k];
+    }
+    capabilityRuntimeMock.SutradharRuntimeMock.mockClear();
+  });
+  afterEach(() => {
+    for (const k of ENV_KEYS) {
+      if (saved[k] === undefined) delete process.env[k];
+      else process.env[k] = saved[k];
+    }
+  });
+  const ENV_DL = path.resolve(os.tmpdir(), 'mcp-om-env-dl');
+  const OPT_DL = path.resolve(os.tmpdir(), 'mcp-om-opt-dl');
+  type State = 'ok' | 'outOfTree' | 'hostile';
+  const run = (c: LoadedProjectConfig, opts: Record<string, unknown>) => {
+    capabilityRuntimeMock.SutradharRuntimeMock.mockClear();
+    return createSutradharServer({ projectConfig: c, disableAgent: true, ...opts });
+  };
+
+  for (const key of ['downloadDir', 'allowedDownloadRoots'] as const) {
+    const files: Record<State, object> =
+      key === 'downloadDir'
+        ? { ok: { downloadDir: './dl' }, outOfTree: { downloadDir: '../out' }, hostile: { downloadDir: '.git/hooks' } }
+        : { ok: { allowedDownloadRoots: ['./dl'] }, outOfTree: { allowedDownloadRoots: ['../out'] }, hostile: { allowedDownloadRoots: ['.git'] } };
+    for (const state of ['ok', 'outOfTree', 'hostile'] as State[]) {
+      it(`${key} x file=${state}: none / env / option / both`, async () => {
+        const c = await realConfig(files[state]);
+        // env
+        process.env[DOWNLOAD_ROOTS_ENV] = ENV_DL;
+        await run(c, {});
+        expect(ctorOptions()['allowedDownloadRoots']).toEqual([ENV_DL]);
+        // option (and both)
+        await run(c, { allowedDownloadRoots: [OPT_DL] });
+        expect(ctorOptions()['allowedDownloadRoots']).toEqual([OPT_DL]);
+        // a null option is "not set": env applies
+        await run(c, { allowedDownloadRoots: null });
+        expect(ctorOptions()['allowedDownloadRoots']).toEqual([ENV_DL]);
+        delete process.env[DOWNLOAD_ROOTS_ENV];
+        await run(c, { allowedDownloadRoots: [OPT_DL] });
+        expect(ctorOptions()['allowedDownloadRoots']).toEqual([OPT_DL]);
+        // none: only a refused file blocks, and the error names the escape hatch that really works
+        if (state === 'ok') {
+          await run(c, {});
+          expect(ctorOptions()['allowedDownloadRoots']).toEqual([path.join(c.baseDir, 'dl')]);
+        } else {
+          await expect(run(c, {})).rejects.toThrow(/outside this config's directory|inside a \.git directory/);
+          await expect(run(c, { allowedDownloadRoots: null })).rejects.toThrow(/SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS/);
+        }
+      });
+    }
+  }
+
+  it('F2: a null option never drops the lower layers (allowedDomains, dialogPolicy, idleTimeoutMs, allowedUploadRoots, defaultViewport)', async () => {
+    const c = await realConfig({
+      allowedDomains: ['file.test'],
+      dialog: { mode: 'dismiss' },
+      idleTimeoutMs: 4000,
+      allowedUploadRoots: ['./up'],
+      viewport: { width: 5, height: 6 },
+    });
+    const nulls = { allowedDomains: null, dialogPolicy: null, idleTimeoutMs: null, allowedUploadRoots: null, defaultViewport: null };
+    process.env[ALLOWED_DOMAINS_ENV] = 'env.test';
+    await run(c, nulls);
+    expect(ctorOptions()['allowedDomains']).toEqual(['env.test']); // the audit-1 repro: was undefined (unrestricted)
+    expect(ctorOptions()['dialogPolicy']).toEqual({ mode: 'dismiss' });
+    expect(ctorOptions()['idleTimeoutMs']).toBe(4000);
+    expect(ctorOptions()['allowedUploadRoots']).toEqual([path.join(c.baseDir, 'up')]);
+    delete process.env[ALLOWED_DOMAINS_ENV];
+    await run(c, nulls);
+    expect(ctorOptions()['allowedDomains']).toEqual(['file.test']);
+    // and with NO config and no env, null is the plain default, not a crash
+    capabilityRuntimeMock.SutradharRuntimeMock.mockClear();
+    await createSutradharServer({ disableAgent: true, ...nulls });
+    expect(ctorOptions()['allowedDomains']).toBeUndefined();
+  });
+});

@@ -286,12 +286,20 @@ async function spawnFreshSession(
   } catch (err) {
     printErrorAndExit((err as Error).message);
   }
-  const attached = await runtime.attach({ endpoint: spawned.wsEndpoint });
-  if (!attached.hasRealBrowser) {
-    printErrorAndExit('Spawned Chrome but could not attach to it. Run "sutradhar doctor" to diagnose.');
-  }
-  if (spawnViewport) {
-    await runtime.setViewport(attached.sessionId, spawnViewport);
+  // F8: this Chrome is not in state.json yet, so if anything below fails nothing could ever `close`
+  // it. Kill it (only the PID we just spawned) before the error propagates.
+  let attached: Awaited<ReturnType<typeof runtime.attach>>;
+  try {
+    attached = await runtime.attach({ endpoint: spawned.wsEndpoint });
+    if (!attached.hasRealBrowser) {
+      throw new Error('Spawned Chrome but could not attach to it. Run "sutradhar doctor" to diagnose.');
+    }
+    if (spawnViewport) {
+      await runtime.setViewport(attached.sessionId, spawnViewport);
+    }
+  } catch (err) {
+    killChromeTree(spawned.pid);
+    throw err; // main().catch prints it and exits 1; the process stays up long enough for the kill to start
   }
   const { policy: resolved, persist } = resolveDialogPolicy(dialogFlag, dialogTextFlag, carry, activeConfigDialog);
   // D10 (corrected): 'set' persists whatever mode was resolved, INCLUDING 'report' — it is not
@@ -407,6 +415,7 @@ async function withSession<T>(
       env: process.env,
       state: await readState(),
       config: cfg,
+      extraDownloadRoots: opts?.extraDownloadRoots,
     });
   } catch (e) {
     printErrorAndExit((e as Error).message);

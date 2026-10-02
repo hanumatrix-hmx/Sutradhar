@@ -204,3 +204,84 @@ describe('sutradhar SDK launch() + .sutradhar.json (FR2-14)', () => {
     expect(runs).toBe(24);
   });
 });
+
+// ───────────────────────── FR2-14 fix-1 ─────────────────────────
+describe('fix-1 F1/F2/F9: SDK override matrix over REAL discovered files', () => {
+  let cwdSpy: ReturnType<typeof vi.spyOn> | undefined;
+  const cd = (d: string): void => {
+    cwdSpy?.mockRestore();
+    cwdSpy = vi.spyOn(process, 'cwd').mockReturnValue(d);
+  };
+  let warn: ReturnType<typeof vi.spyOn>;
+  beforeEach(() => {
+    capabilityRuntimeMock.SutradharRuntimeMock.mockClear();
+    warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+  afterEach(() => {
+    cwdSpy?.mockRestore();
+    cwdSpy = undefined;
+    warn.mockRestore();
+  });
+  const OPT = path.resolve(os.tmpdir(), 'sdk-om-opt');
+
+  for (const key of ['downloadDir', 'allowedDownloadRoots'] as const) {
+    const files: Record<'ok' | 'outOfTree' | 'hostile', object> =
+      key === 'downloadDir'
+        ? { ok: { downloadDir: './dl' }, outOfTree: { downloadDir: '../out' }, hostile: { downloadDir: '.git/hooks' } }
+        : { ok: { allowedDownloadRoots: ['./dl'] }, outOfTree: { allowedDownloadRoots: ['../out'] }, hostile: { allowedDownloadRoots: ['.git'] } };
+    for (const state of ['ok', 'outOfTree', 'hostile'] as const) {
+      it(`${key} x file=${state}: the allowedDownloadRoots option beats it; null does not; none refuses a bad file`, async () => {
+        const d = project(files[state]);
+        cd(d);
+        let b = await launch({ discoverConfig: true, allowedDownloadRoots: [OPT] });
+        expect(ctor()['allowedDownloadRoots']).toEqual([OPT]);
+        await b.close();
+        if (state === 'ok') {
+          b = await launch({ discoverConfig: true, allowedDownloadRoots: null as unknown as undefined });
+          expect(ctor()['allowedDownloadRoots']).toEqual([path.join(d, 'dl')]);
+          await b.close();
+        } else {
+          await expect(launch({ discoverConfig: true, allowedDownloadRoots: null as unknown as undefined })).rejects.toThrow(/allowedDownloadRoots/);
+          await expect(launch({ discoverConfig: true })).rejects.toThrow(/outside this config's directory|inside a \.git directory/);
+          // an explicit file is trusted like an option
+          b = await launch({ configFile: path.join(d, '.sutradhar.json') });
+          await b.close();
+        }
+      });
+    }
+  }
+
+  it('F2: null options never drop the config layer (allowedDomains, dialogPolicy, idleTimeoutMs, viewport, configFile)', async () => {
+    const d = project({ allowedDomains: ['c.test'], dialog: { mode: 'dismiss' }, idleTimeoutMs: 4000, viewport: { width: 5, height: 6 } });
+    cd(d);
+    const nul = null as unknown as undefined;
+    const b = await launch({ discoverConfig: true, configFile: nul, allowedDomains: nul, dialogPolicy: nul, idleTimeoutMs: nul, viewport: nul });
+    expect(ctor()['allowedDomains']).toEqual(['c.test']);
+    expect(ctor()['dialogPolicy']).toEqual({ mode: 'dismiss' });
+    expect(ctor()['idleTimeoutMs']).toBe(4000);
+    expect((launchedWith()['launch'] as { viewport: unknown }).viewport).toEqual({ width: 5, height: 6 });
+    await b.close();
+  });
+
+  it('F9: a DISCOVERED config that auto-accepts dialogs is announced; an explicit file, an option and a non-accept mode are not', async () => {
+    const d = project({ dialog: { mode: 'accept' } });
+    cd(d);
+    const accepts = () => warn.mock.calls.map((c) => String(c[0])).filter((m) => m.includes('dialog.mode "accept"'));
+    let b = await launch({ discoverConfig: true });
+    expect(accepts()).toHaveLength(1);
+    expect(accepts()[0]).toContain(path.join(d, '.sutradhar.json'));
+    await b.close();
+    warn.mockClear();
+    b = await launch({ configFile: path.join(d, '.sutradhar.json') });
+    expect(accepts()).toHaveLength(0);
+    await b.close();
+    b = await launch({ discoverConfig: true, dialogPolicy: { mode: 'dismiss' } });
+    expect(accepts()).toHaveLength(0);
+    await b.close();
+    const d2 = project({ dialog: { mode: 'dismiss' } });
+    cd(d2);
+    b = await launch({ discoverConfig: true });
+    expect(accepts()).toHaveLength(0);
+    await b.close();
+  });
+});

@@ -26,6 +26,7 @@ import path from 'node:path';
 import {
   SutradharRuntime,
   resolveFsRoots,
+  fsRootsConfigLayer,
   resolveAllowedDomains,
   resolveIdleTimeoutMs,
   resolveRuntimeDialogPolicy,
@@ -45,7 +46,9 @@ export const SUTRADHAR_VERSION = '0.5.0';
  * const browser = await launch({ url: 'https://example.com' });
  */
 export async function launch(options: LaunchOptions = {}): Promise<Browser> {
-  if (options.configFile !== undefined && options.discoverConfig) {
+  // `null` means "not set" for JS / JSON-fed callers, exactly like `undefined` (F2).
+  const configFile = options.configFile ?? undefined;
+  if (configFile !== undefined && options.discoverConfig) {
     throw new TypeError('launch(): pass either configFile or discoverConfig, not both');
   }
   // Fails fast (before any config I/O or runtime) on a policy the SDK cannot honor.
@@ -61,9 +64,9 @@ export async function launch(options: LaunchOptions = {}): Promise<Browser> {
   // FR2-14: the project config is OPT-IN for the SDK (a library must not change its sandbox from
   // ambient files or env vars). Precedence for every setting: option > config file > default.
   let explicitPath: string | undefined;
-  if (options.configFile !== undefined) {
-    const expanded = expandHome(options.configFile, os.homedir());
-    if (expanded === undefined) throw new TypeError(`launch(): configFile "${options.configFile}": ~user is not supported`);
+  if (configFile !== undefined) {
+    const expanded = expandHome(configFile, os.homedir());
+    if (expanded === undefined) throw new TypeError(`launch(): configFile "${configFile}": ~user is not supported`);
     explicitPath = path.resolve(process.cwd(), expanded);
   }
   const discovery = await loadProjectConfig({
@@ -76,9 +79,15 @@ export async function launch(options: LaunchOptions = {}): Promise<Browser> {
   for (const w of cfg?.warnings ?? []) console.warn(`[sutradhar] ${w}`);
   const dialog = resolveRuntimeDialogPolicy({ option: options.dialogPolicy, config: cfg, surface: 'sdk' });
   for (const w of dialog.warnings) console.warn(`[sutradhar] ${w}`);
+  // D12c (F9): a DISCOVERED file that makes native dialogs auto-accept is announced, as on the CLI and MCP.
+  if (cfg?.origin === 'discovered' && dialog.source === 'config' && dialog.value?.mode === 'accept') {
+    console.warn(
+      `[sutradhar] ${cfg.path} sets dialog.mode "accept": native alert/confirm/prompt dialogs will be accepted automatically.`,
+    );
+  }
   const fsRoots = resolveFsRoots({
     options: { allowedDownloadRoots: options.allowedDownloadRoots, allowedUploadRoots: options.allowedUploadRoots },
-    config: cfg && { ...cfg.resolved, baseDir: cfg.baseDir },
+    config: fsRootsConfigLayer(cfg),
   });
   const viewport = resolveViewport({ option: options.viewport, config: cfg }).value;
   const runtime = new SutradharRuntime({

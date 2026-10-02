@@ -10,6 +10,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import {
   SutradharRuntime,
   resolveFsRoots,
+  fsRootsConfigLayer,
   resolveAllowedDomains,
   resolveIdleTimeoutMs,
   resolveRuntimeDialogPolicy,
@@ -137,7 +138,7 @@ export async function createSutradharServer(options: CreateServerOptions = {}): 
     const fsRoots = resolveFsRoots({
       options: { allowedDownloadRoots: options.allowedDownloadRoots, allowedUploadRoots: options.allowedUploadRoots },
       env: process.env,
-      config: cfg && { ...cfg.resolved, baseDir: cfg.baseDir },
+      config: fsRootsConfigLayer(cfg),
     });
     // MCP stdout is JSON-RPC — any startup diagnostic MUST go to stderr, never stdout (B11).
     for (const w of [...fsRoots.warnings, ...dialog.warnings]) console.error(`[sutradhar-mcp] warning: ${w}`);

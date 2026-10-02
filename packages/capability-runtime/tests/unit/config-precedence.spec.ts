@@ -280,3 +280,27 @@ describe('fs roots through resolveFsRoots: matrix (download and upload) and conf
     expect(resolveFsRoots({ config: { allowedDownloadRoots: [], allowedUploadRoots: [], baseDir: BASE } }).sources).toEqual({ download: 'default', upload: 'unrestricted' });
   });
 });
+
+describe('fix-1 F2: null and undefined are both "not set"; 0, false and "" are values', () => {
+  it('firstDefined skips null and undefined at every position', () => {
+    for (const unset of [null, undefined] as const) {
+      expect(firstDefined<string>([['flag', unset as unknown as undefined], ['env', 'e']], { value: 'd', source: 'default' })).toEqual({ value: 'e', source: 'env' });
+      expect(firstDefined<string>([['flag', unset as unknown as undefined], ['env', unset as unknown as undefined]], { value: 'd', source: 'default' })).toEqual({ value: 'd', source: 'default' });
+    }
+  });
+  it('a typed falsy value still wins', () => {
+    expect(firstDefined<number>([['option', 0], ['env', 5]], { value: 9, source: 'default' })).toEqual({ value: 0, source: 'option' });
+    expect(firstDefined<boolean>([['option', false], ['env', true]], { value: true, source: 'default' })).toEqual({ value: false, source: 'option' });
+    expect(firstDefined<string>([['option', ''], ['env', 'x']], { value: 'd', source: 'default' })).toEqual({ value: '', source: 'option' });
+  });
+  it('every public resolver treats a null option like an absent one (generated over resolvers)', () => {
+    const c = cfg({ allowedDomains: ['c.test'], idleTimeoutMs: 4000, viewport: { width: 5, height: 6 }, dialog: { mode: 'dismiss' } });
+    const nul = null as unknown as undefined;
+    expect(resolveAllowedDomains({ flag: nul, option: nul, env: { [ALLOWED_DOMAINS_ENV]: 'e.test' }, config: c })).toEqual({ value: ['e.test'], source: 'env' });
+    expect(resolveAllowedDomains({ flag: nul, option: nul, config: c }).value).toEqual(['c.test']);
+    expect(resolveIdleTimeoutMs({ option: nul, config: c, fallback: 1 }).value).toBe(4000);
+    expect(resolveViewport({ flag: nul, state: nul, option: nul, config: c }).value).toEqual({ width: 5, height: 6 });
+    expect(resolveRuntimeDialogPolicy({ option: nul, config: c, surface: 'mcp' }).value).toEqual({ mode: 'dismiss' });
+    expect(resolveRuntimeDialogPolicy({ option: nul, config: c, surface: 'sdk' }).value).toEqual({ mode: 'dismiss' });
+  });
+});

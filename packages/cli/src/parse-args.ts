@@ -5,7 +5,7 @@
  * CLI entrypoint), which would spawn/attach to a real Chrome the moment a test imported it.
  */
 
-import type { ActionExpectation, WaitForCondition } from '@sutradhar/capability-runtime';
+import { VIEWPORT_MAX, type ActionExpectation, type WaitForCondition } from '@sutradhar/capability-runtime';
 
 export interface ParsedArgs {
   /** The subcommand, e.g. "snap", "click", "nav". `undefined` when no argument was given. */
@@ -164,9 +164,18 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
   const viewportFlagIndex = args.indexOf('--viewport');
   const viewportRaw = viewportFlagIndex !== -1 ? args[viewportFlagIndex + 1] : undefined;
   const viewportMatch = viewportRaw?.match(/^(\d+)x(\d+)$/);
-  const viewportFlag = viewportMatch
+  const viewportParsed = viewportMatch
     ? { width: parseInt(viewportMatch[1]!, 10), height: parseInt(viewportMatch[2]!, 10) }
     : undefined;
+  // F8: bounds are checked HERE, before any Chrome starts (Chrome's own limit is VIEWPORT_MAX).
+  const viewportFlag =
+    viewportParsed &&
+    viewportParsed.width >= 1 &&
+    viewportParsed.height >= 1 &&
+    viewportParsed.width <= VIEWPORT_MAX &&
+    viewportParsed.height <= VIEWPORT_MAX
+      ? viewportParsed
+      : undefined;
   const stateFlagIndex = args.indexOf('--state');
   const stateRaw = stateFlagIndex !== -1 ? args[stateFlagIndex + 1] : undefined;
   const VALID_STATES = new Set(['visible', 'attached', 'hidden']);

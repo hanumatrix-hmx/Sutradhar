@@ -244,3 +244,91 @@ describe('--allowlist-domains given but empty must not silently mean "unrestrict
     expect(parseArgs(['nav', 'http://x', '--allowlist-domains']).allowlistDomainsGivenButEmpty).toBe(true);
   });
 });
+
+// ───────────────────────── FR2-14 fix-1 ─────────────────────────
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, realpathSync } from 'node:fs';
+import { loadProjectConfig } from '@sutradhar/capability-runtime';
+
+describe('fix-1 F1/F2/F8: on the CLI a layer above the file always wins (generated over key x layers x file state)', () => {
+  const root = realpathSync(mkdtempSync(path.join(os.tmpdir(), 'fr2-14-cli-om-')));
+  afterAll(() => rmSync(root, { recursive: true, force: true }));
+  let n = 0;
+  async function realConfig(content: object): Promise<LoadedProjectConfig> {
+    const X = path.join(root, `r${n++}`, 'repo');
+    mkdirSync(path.join(X, '.git'), { recursive: true });
+    writeFileSync(path.join(X, '.sutradhar.json'), JSON.stringify(content));
+    const r = await loadProjectConfig({ cwd: X, discover: true, homedir: path.join(X, 'nohome') });
+    if (r.status !== 'loaded') throw new Error('not loaded');
+    return r.config;
+  }
+  const ENV_DL = path.resolve(os.tmpdir(), 'cli-env-dl');
+  const EXTRA_DL = path.resolve(os.tmpdir(), 'cli-extra-dl');
+  const ENV_UL = path.resolve(os.tmpdir(), 'cli-env-ul');
+  type State = 'ok' | 'outOfTree' | 'hostile';
+  const dlFiles = (k: string): Record<State, object> =>
+    k === 'downloadDir'
+      ? { ok: { downloadDir: './dl' }, outOfTree: { downloadDir: '../out' }, hostile: { downloadDir: '.git/hooks' } }
+      : { ok: { allowedDownloadRoots: ['./dl'] }, outOfTree: { allowedDownloadRoots: ['./dl', '../out'] }, hostile: { allowedDownloadRoots: ['.git'] } };
+
+  for (const key of ['downloadDir', 'allowedDownloadRoots']) {
+    for (const state of ['ok', 'outOfTree', 'hostile'] as State[]) {
+      it(`${key} x file=${state}: env / explicit download dir arg / both beat the file; alone the refusal applies only to a bad file`, async () => {
+        const c = await realConfig(dlFiles(key)[state]);
+        const bad = state !== 'ok';
+        // env alone
+        const e = resolveCliSettings({ flags: {}, env: { [DOWNLOAD_ROOTS_ENV]: ENV_DL }, config: c });
+        expect(e.fsRoots.allowedDownloadRoots).toEqual([ENV_DL]);
+        expect(e.fsRoots.sources.download).toBe('env');
+        // the `download <ref> <dir>` argument (a flag-level grant) alone: file's download layer dropped when it is refused
+        const x = () => resolveCliSettings({ flags: {}, env: {}, config: c, extraDownloadRoots: [EXTRA_DL] });
+        if (bad) {
+          const s = x();
+          expect(s.fsRoots.sources.download).toBe('default');
+          expect(s.fsRoots.allowedDownloadRoots).toEqual([defaultDownloadRoot()]);
+        } else {
+          expect(x().fsRoots.sources.download).toBe('config');
+        }
+        // both
+        const both = resolveCliSettings({ flags: {}, env: { [DOWNLOAD_ROOTS_ENV]: ENV_DL }, config: c, extraDownloadRoots: [EXTRA_DL] });
+        expect(both.fsRoots.allowedDownloadRoots).toEqual([ENV_DL]);
+        // neither: a bad file is refused (fail closed), a good one is used
+        const none = () => resolveCliSettings({ flags: {}, env: {}, config: c });
+        if (bad) expect(none).toThrow(/outside this config's directory|inside a \.git directory/);
+        else expect(none().fsRoots.sources.download).toBe('config');
+      });
+    }
+  }
+
+  it('every non-download key: flag / env / both beat a file in each state; null flags are unset (F2)', async () => {
+    const files: Array<[string, object, (s: ReturnType<typeof resolveCliSettings>) => unknown, unknown, Partial<CliSettingsInput>, unknown]> = [
+      ['allowedDomains', { allowedDomains: ['1'] }, (s) => s.allowedDomains.value, ['f.test'], { flags: { allowlistDomains: ['f.test'] }, env: { [ALLOWED_DOMAINS_ENV]: 'e.test' } }, ['f.test']],
+      ['allowedUploadRoots', { allowedUploadRoots: ['/'] }, (s) => s.fsRoots.allowedUploadRoots, [ENV_UL], { env: { [UPLOAD_ROOTS_ENV]: ENV_UL } }, [ENV_UL]],
+      ['viewport', { viewport: { width: 10_000_000, height: 10_000_000 } }, (s) => s.viewport.value, { width: 401, height: 301 }, { flags: { viewport: { width: 401, height: 301 } } }, { width: 401, height: 301 }],
+      ['dialog', { dialog: { mode: 'accept', promptText: 'yes' } }, (s) => s.dialog.policy.mode, 'dismiss', { flags: { dialog: 'dismiss' as const } }, 'dismiss'],
+    ];
+    for (const [key, content, read, , higher, want] of files) {
+      const c = await realConfig(content);
+      const s = resolveCliSettings({ flags: {}, env: {}, config: c, ...higher } as CliSettingsInput);
+      expect({ key, got: read(s) }).toEqual({ key, got: want });
+      // the same with the higher layer's own value set to null: lower layers (the file) apply
+      const nulled: CliSettingsInput = {
+        flags: { allowlistDomains: null as unknown as undefined, viewport: null as unknown as undefined, dialog: null as unknown as undefined },
+        env: {},
+        state: { viewport: null as unknown as undefined, dialogPolicy: null as unknown as undefined },
+        config: c,
+      };
+      const ns = resolveCliSettings(nulled);
+      expect({ key, source: key === 'dialog' ? ns.dialog.source : key === 'allowedDomains' ? ns.allowedDomains.source : key === 'viewport' ? ns.viewport.source : 'config' }).toEqual({ key, source: 'config' });
+    }
+  });
+
+  it('F8: --viewport outside 1..10000000 is rejected at parse time (before any Chrome), the limit itself is accepted', () => {
+    for (const v of ['1000000000x1000000000', '10000001x5', '5x10000001', '0x0', '0x5']) {
+      const p = parseArgs(['nav', 'about:blank', '--viewport', v]);
+      expect({ v, flag: p.viewportFlag, invalid: p.viewportFlagGivenButInvalid }).toEqual({ v, flag: undefined, invalid: true });
+    }
+    const ok = parseArgs(['nav', 'about:blank', '--viewport', '10000000x1']);
+    expect(ok.viewportFlag).toEqual({ width: 10_000_000, height: 1 });
+    expect(ok.viewportFlagGivenButInvalid).toBe(false);
+  });
+});

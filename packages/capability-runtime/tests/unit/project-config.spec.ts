@@ -678,10 +678,18 @@ describe('path resolution (RP1-RP5, D6/D14)', () => {
 });
 
 describe('hostile discovered config: containment (CT1-CT7, D12b)', () => {
-  const load = async (X: string, origin: 'discovered' | 'env') =>
+  const loadRaw = async (X: string, origin: 'discovered' | 'env') =>
     origin === 'discovered'
       ? loadProjectConfig({ cwd: X, discover: true, homedir: path.join(X, 'nohome') })
       : loadProjectConfig({ cwd: X, discover: false, explicitPath: path.join(X, CFG), explicitOrigin: 'env', homedir: path.join(X, 'nohome') });
+  // Since fix-1 (F1) the loader RECORDS the containment refusal (`downloadRefusal`) instead of throwing,
+  // because an env var / option outranks the file; `resolveFsRoots` throws it iff the file layer wins.
+  // These loader-level cases assert the refusal itself, so surface it as the error it stands for.
+  const load = async (X: string, origin: 'discovered' | 'env') => {
+    const r = await loadRaw(X, origin);
+    if (r.status === 'loaded' && r.config.downloadRefusal !== undefined) throw new ProjectConfigError(r.config.path, r.config.downloadRefusal);
+    return r;
+  };
   const mkRepo = (cfg: object): string => {
     const X = path.join(fresh(), 'repo');
     mkdirSync(path.join(X, '.git'), { recursive: true });
@@ -837,5 +845,118 @@ describe('loaded config shape', () => {
     mkdirSync(path.join(X, '.git'), { recursive: true });
     const r = await loadProjectConfig({ cwd: X, discover: true, homedir: path.join(X, 'nohome') });
     expect(r).toMatchObject({ status: 'none', reason: 'not-found', stoppedAt: 'git-root', stopDir: X });
+  });
+});
+
+// ───────────────────────── FR2-14 fix-1 ─────────────────────────
+
+describe('fix-1 F3/F7: the home boundary holds under links and case (canonical comparison)', () => {
+  const linkType = process.platform === 'win32' ? 'junction' : 'dir';
+  const tryLink = (target: string, at: string): boolean => {
+    try {
+      symlinkSync(target, at, linkType);
+      return true;
+    } catch {
+      return false; // no link privilege on this host: recorded as unverified in the evidence
+    }
+  };
+
+  it('F3: a cwd that is a link INSIDE home pointing elsewhere still stops at home (nothing above home is read)', async () => {
+    const top = fresh();
+    mkdirSync(path.join(top, '.git'), { recursive: true }); // hermetic outer boundary
+    write(path.join(top, CFG), { allowedDomains: ['above-home.test'] });
+    const home = path.join(top, 'home');
+    mkdirSync(home);
+    const elsewhere = path.join(fresh(), 'elsewhere');
+    mkdirSync(elsewhere, { recursive: true });
+    if (!tryLink(elsewhere, path.join(home, 'link'))) return;
+    const r = await findProjectConfigPath(path.join(home, 'link'), { homedir: home });
+    expect(r.path).toBeUndefined();
+    expect(r.stoppedAt).toBe('home');
+    expect(r.stopDir).toBe(home);
+    // negative control: a cwd that is NOT in home does walk up to the file
+    const r2 = await findProjectConfigPath(path.join(top, 'home'), { homedir: path.join(top, 'other-home') });
+    expect(r2.path).toBe(path.join(top, CFG));
+  });
+
+  it('A8 killer: a home that is passed THROUGH A LINK is still the boundary (literal equality would walk past it)', async () => {
+    const top = fresh();
+    mkdirSync(path.join(top, '.git'), { recursive: true });
+    write(path.join(top, CFG), { allowedDomains: ['above-home.test'] });
+    const realHome = path.join(top, 'real-home');
+    mkdirSync(path.join(realHome, 'proj', 'sub'), { recursive: true });
+    const homeLink = path.join(top, 'home-link');
+    if (!tryLink(realHome, homeLink)) return;
+    // homedir given as the LINK, cwd given by its real path (and the reverse): the canonical forms are equal
+    for (const [cwd, hd] of [
+      [path.join(realHome, 'proj', 'sub'), homeLink],
+      [path.join(homeLink, 'proj', 'sub'), realHome],
+    ] as const) {
+      const r = await findProjectConfigPath(cwd, { homedir: hd });
+      expect({ cwd, home: hd, path: r.path, stop: r.stoppedAt }).toEqual({ cwd, home: hd, path: undefined, stop: 'home' });
+    }
+  });
+
+  it('A8b killer (win32/case-insensitive fs): a home spelled in a different case, or with a trailing separator, is still the boundary', async () => {
+    const top = fresh();
+    mkdirSync(path.join(top, '.git'), { recursive: true });
+    write(path.join(top, CFG), { allowedDomains: ['above-home.test'] });
+    const home = path.join(top, 'Home');
+    mkdirSync(path.join(home, 'proj'), { recursive: true });
+    const variants = [home + path.sep, home + path.sep + '.' + path.sep];
+    if (process.platform === 'win32') variants.push(home.toUpperCase(), home.toLowerCase());
+    for (const hd of variants) {
+      const r = await findProjectConfigPath(path.join(home, 'proj'), { homedir: hd });
+      expect({ hd, path: r.path, stop: r.stoppedAt }).toEqual({ hd, path: undefined, stop: 'home' });
+    }
+  });
+});
+
+describe('fix-1 F4: what error messages echo from the file is capped and single-line', () => {
+  it('a 20 KB unknown key name is echoed as at most 64 chars plus an ellipsis', () => {
+    const w = validateProjectConfig(JSON.parse(`{"${'k'.repeat(20_000)}": 1}`), 'f').warnings.join('\n');
+    expect(w.length).toBeLessThan(200);
+    expect(w).toContain('...');
+  });
+  it('control characters in a key name or an echoed value cannot add lines', () => {
+    const w = validateProjectConfig({ ['a\nb\u001b[31mc']: 1 }, 'f').warnings.join('');
+    expect(w).not.toMatch(/[\u0000-\u001f]/);
+    const m = errOf(() => validateProjectConfig({ allowedDomains: ['x\ny'.repeat(40)] }, 'f')).message;
+    expect(m).not.toMatch(/[\n\r\u001b]/);
+  });
+  it('a long allowedDomains entry and idleTimeoutMs string are capped at 64 chars in the message', () => {
+    const long = 'sk_live_' + 'S'.repeat(500);
+    const m1 = errOf(() => validateProjectConfig({ allowedDomains: [long + '!'] }, 'f')).message;
+    expect(m1.includes('S'.repeat(80))).toBe(false);
+    expect(m1).toContain('sk_live_');
+    const m2 = errOf(() => validateProjectConfig({ idleTimeoutMs: long }, 'f')).message;
+    expect(m2.includes('S'.repeat(80))).toBe(false);
+  });
+  it('a long download entry in the containment refusal is capped (entry 64, resolved path 200)', async () => {
+    const X = path.join(fresh(), 'repo');
+    mkdirSync(path.join(X, '.git'), { recursive: true });
+    write(path.join(X, CFG), { downloadDir: '../' + 'd'.repeat(600) });
+    const r = await loadProjectConfig({ cwd: X, discover: true, homedir: path.join(X, 'nohome') });
+    const msg = r.status === 'loaded' ? (r.config.downloadRefusal ?? '') : '';
+    expect(msg).toContain('outside this config');
+    expect(msg.includes('d'.repeat(250))).toBe(false);
+  });
+});
+
+describe('fix-1 F8: viewport bounds are validated at load', () => {
+  it('rejects a width or height above 10,000,000 (and keeps accepting the limit itself)', () => {
+    for (const v of [{ width: 1e9, height: 1e9 }, { width: 10_000_001, height: 5 }, { width: 5, height: 10_000_001 }]) {
+      expect(errOf(() => validateProjectConfig({ viewport: v }, 'f')).message).toContain('positive integer (at most 10000000)');
+    }
+    expect(handAccepts({ viewport: { width: 10_000_000, height: 10_000_000 } })).toBe(true);
+  });
+  it('agrees with the committed JSON schema on the bound (differential)', () => {
+    for (const v of [{ width: 1e9, height: 1 }, { width: 10_000_000, height: 1 }, { width: 10_000_001, height: 1 }]) {
+      expect({ v, hand: handAccepts({ viewport: v }), schema: ajvValidate({ viewport: v }).valid }).toEqual({
+        v,
+        hand: ajvValidate({ viewport: v }).valid,
+        schema: handAccepts({ viewport: v }),
+      });
+    }
   });
 });

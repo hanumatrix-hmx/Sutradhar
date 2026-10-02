@@ -37,7 +37,16 @@ export interface ResolveFsRootsInput {
    * entry (what the project-config loader already produces) is unchanged. Whole value, never
    * merged with another layer (D9).
    */
-  config?: FsRootsOptions & { baseDir: string };
+  config?: FsRootsOptions & {
+    baseDir: string;
+    /**
+     * FR2-14 fix-1 (F1): why this (discovered, untrusted) file's download roots may NOT be used, e.g.
+     * an out-of-tree `downloadDir`. Raised ONLY when the config layer is the one that would supply
+     * the download roots, so an option or an env var (which outrank the file) always wins instead
+     * of being blocked by a layer they replace.
+     */
+    downloadRefusal?: string;
+  };
   /** Injectable for tests. */
   platform?: NodeJS.Platform;
   homedir?: string;
@@ -147,6 +156,11 @@ export function resolveFsRoots(input: ResolveFsRootsInput): ResolvedFsRoots {
       allowedDownloadRoots = envResult.roots;
       downloadSource = 'env';
     } else if (input.config?.allowedDownloadRoots?.length) {
+      if (input.config.downloadRefusal !== undefined) {
+        const err = new Error(input.config.downloadRefusal);
+        err.name = 'ProjectConfigError';
+        throw err;
+      }
       allowedDownloadRoots = input.config.allowedDownloadRoots.map((r) =>
         resolveConfigPath(r, input.config!.baseDir, homedir, platform),
       );

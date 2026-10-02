@@ -4,7 +4,8 @@
  * CLI flag > env var > config file > built-in default (§4.6). It is a single shape-free function
  * ({@link firstDefined}); every per-key resolver below is only a list of layers handed to it, so
  * there is no per-key precedence logic to get wrong. First defined layer wins, whole value, never
- * merged (D9). An empty array counts as absent (FR2-05 R9); `0`, `''` and `false` are values.
+ * merged (D9). An empty array, `null` and `undefined` count as absent (FR2-05 R9; FR2-14 fix-1 F2);
+ * `0`, `''` and `false` are values.
  *
  * A config file is always the LOWEST layer above the default, so it can never override anything a
  * caller set explicitly with a flag, an option or an env var.
@@ -22,7 +23,7 @@ export const ALLOWED_DOMAINS_ENV = 'SUTRADHAR_ALLOWED_DOMAINS';
 export const IDLE_TIMEOUT_ENV = 'SUTRADHAR_IDLE_TIMEOUT_MS';
 
 /**
- * Returns the first layer whose value is defined (and, for arrays, non-empty), otherwise
+ * Returns the first layer whose value is set (not `undefined`/`null`; for arrays, non-empty), otherwise
  * `fallback`. The value is returned as-is (same reference): never merged with another layer.
  */
 export function firstDefined<T>(
@@ -30,7 +31,9 @@ export function firstDefined<T>(
   fallback: Resolved<T>,
 ): Resolved<T> {
   for (const [source, value] of layers) {
-    if (value === undefined) continue;
+    // `null` and `undefined` both mean "this layer did not say" (JS / JSON-fed callers pass null);
+    // a typed `0`, `''` or `false` is still a value that wins.
+    if (value === undefined || value === null) continue;
     if (Array.isArray(value) && value.length === 0) continue;
     return { value, source };
   }
@@ -92,7 +95,7 @@ export function resolveIdleTimeoutMs(i: {
   config?: LoadedProjectConfig;
   fallback: number | undefined;
 }): Resolved<number | undefined> {
-  if (i.option !== undefined && !Number.isFinite(i.option)) {
+  if (i.option !== undefined && i.option !== null && !Number.isFinite(i.option)) {
     throw new TypeError(`idleTimeoutMs must be a finite number of milliseconds (0 disables); got ${String(i.option)}`);
   }
   const envValue = i.env ? parseIdleTimeoutMs(IDLE_TIMEOUT_ENV, i.env[IDLE_TIMEOUT_ENV]) : undefined;
@@ -108,13 +111,18 @@ export function resolveIdleTimeoutMs(i: {
   return { value: v !== undefined && v <= 0 ? undefined : v, source: r.source };
 }
 
+/** The largest width/height Chrome's `Emulation.setDeviceMetricsOverride` accepts. */
+export const VIEWPORT_MAX = 10_000_000;
+
 const isViewport = (v: unknown): v is { width: number; height: number } =>
   typeof v === 'object' &&
   v !== null &&
   Number.isInteger((v as { width?: unknown }).width) &&
   Number.isInteger((v as { height?: unknown }).height) &&
   (v as { width: number }).width >= 1 &&
-  (v as { height: number }).height >= 1;
+  (v as { height: number }).height >= 1 &&
+  (v as { width: number }).width <= VIEWPORT_MAX &&
+  (v as { height: number }).height <= VIEWPORT_MAX;
 
 /**
  * flag > state > option > config > default, whole object from ONE layer (never a width from one
@@ -170,4 +178,16 @@ export function resolveRuntimeDialogPolicy(i: {
     return { value: { mode: 'auto' }, source: 'config', warnings };
   }
   return { value: r.value, source: r.source, warnings };
+}
+
+/**
+ * The config layer handed to `resolveFsRoots`, built in ONE place so no surface can forget the
+ * discovered-file refusal (`downloadRefusal`, raised by the resolver only when this layer would
+ * actually supply the download roots).
+ */
+export function fsRootsConfigLayer(
+  cfg: LoadedProjectConfig | null | undefined,
+): { allowedDownloadRoots?: string[]; allowedUploadRoots?: string[]; baseDir: string; downloadRefusal?: string } | undefined {
+  if (!cfg) return undefined;
+  return { ...cfg.resolved, baseDir: cfg.baseDir, ...(cfg.downloadRefusal !== undefined ? { downloadRefusal: cfg.downloadRefusal } : {}) };
 }
