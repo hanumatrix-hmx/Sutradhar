@@ -91,6 +91,15 @@ export async function buildTree(R) {
   await cfg('near', { allowedDomains: ['localhost'] });
   await cfg(path.join('near', 'x'), { allowedDomains: ['127.0.0.1'] });
 
+  // fix-1: a huge viewport (F8), a 20 KB unknown key (F4), and a config ABOVE a home that will hold a junction cwd (F3).
+  await mk('vphuge', '.git');
+  await cfg('vphuge', { viewport: { width: 1000000000, height: 1000000000 } });
+  await mk('longkey', '.git');
+  await cfg('longkey', '{"' + 'k'.repeat(20000) + '": 1}');
+  await mk('f3top', 'home');
+  await mk('f3top', '.git');
+  await cfg('f3top', { allowedDomains: ['above-home.test'] });
+
   // Misc.
   await mk('n15', '.git');
   await mk('temp');

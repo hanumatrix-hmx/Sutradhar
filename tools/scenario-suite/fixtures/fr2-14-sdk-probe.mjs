@@ -14,6 +14,8 @@ try {
     mode === 'plain' ? {}
     : mode === 'discover' ? { discoverConfig: true }
     : mode === 'discover-override' ? { discoverConfig: true, viewport: { width: 390, height: 844 }, allowedDomains: ['127.0.0.1'] }
+    : mode === 'discover-roots' ? { discoverConfig: true, allowedDownloadRoots: [arg] }
+    : mode === 'discover-null' ? { discoverConfig: true, allowedDomains: null, viewport: null, dialogPolicy: null, idleTimeoutMs: null, allowedDownloadRoots: null, configFile: null }
     : mode === 'explicit' ? { configFile: arg }
     : mode === 'both' ? { configFile: 'x.json', discoverConfig: true }
     : (() => { throw new Error(`unknown mode ${mode}`); })();
@@ -28,7 +30,7 @@ try {
     }
   }
   out.innerWidth = Number(await page.evaluate('innerWidth'));
-  if (mode === 'discover' && out.navResults.localhost === 'ok') {
+  if ((mode === 'discover' || mode === 'discover-roots') && out.navResults.localhost === 'ok') {
     const r = await page.download('#dl');
     out.downloadPath = r.path ?? r.downloadedPath ?? null;
   }

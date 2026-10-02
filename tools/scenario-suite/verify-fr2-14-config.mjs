@@ -559,11 +559,21 @@ async function negativeSuite(surface) {
       record(surface, id, ok, `exit=${r.code} forbiddenPathCreated=${created} noSession=${!stateExists(key)} ${r.stderr.split('\n')[0].slice(0, 140)}`);
     });
   }
-  // H4b: the hostile hp3 file is refused EVEN WHEN an env var / flag is set (it is validated, never silently skipped).
+  // H4b (fix-1 F1, INVERTED from run-1, which asserted the bug): the hostile hp3 file is refused only when it is the layer that
+  // would supply the download roots; with SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS set, the env var wins and the command works.
   await run('H4b', async () => {
     const dir = path.join(R, 'hp3', 'child');
-    const r = await cli(k('neg-hp3b'), dir, ['nav', U('localhost', `H4b-${surface}`), '--allowlist-domains', 'localhost'], { SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS: path.join(R, 'envdl-h4b') }, surface === 'bundle' ? BUNDLE_CLI : CLI, surface);
-    record(surface, 'H4b', r.code === 1 && r.stderr.includes("outside this config's directory") && !pageHit(`H4b-${surface}`), `exit=${r.code}`);
+    const bin = surface === 'bundle' ? BUNDLE_CLI : CLI;
+    const envdl = path.join(R, 'envdl-h4b');
+    const key = k('neg-hp3b');
+    const env = { SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS: envdl };
+    const a = await cli(key, dir, ['nav', U('localhost', `H4b-${surface}`), '--allowlist-domains', 'localhost'], env, bin, surface);
+    const d = await cli(key, dir, ['download', '#dl', '--allowlist-domains', 'localhost'], env, bin, surface);
+    const p = downloadedPath(d);
+    const bad = p ? await dlCheck(p, `H4b-${surface}`, envdl) : 'no path';
+    record(surface, 'H4b', a.code === 0 && !!pageHit(`H4b-${surface}`) && d.code === 0 && !bad && !existsSync(path.join(R, 'outside-hp3')) && !d.stderr.includes('Note: using downloadDir'),
+      `nav=${a.code} download=${d.code} check=${bad || 'ok'} outsideCreated=${existsSync(path.join(R, 'outside-hp3'))}`);
+    await closeKey(key);
   });
   // N5: the SAME hostile file, loaded EXPLICITLY, is trusted (like an env var) and works.
   await run('N5', async (id) => {
@@ -840,6 +850,199 @@ async function sdkSuite() {
   });
 }
 
+// ───────────────────────────── fix-1 suites (audit-1 findings F1/F3/F4/F8) ─────────────────────────────
+async function fixSuite(surface) {
+  const run = (id, fn) => (wanted(id) ? fn(id).catch((e) => record(surface, id, false, `threw: ${e.stack ?? e.message}`)) : undefined);
+  const k = (s) => `${surface}-${s}`;
+  const bin = surface === 'bundle' ? BUNDLE_CLI : CLI;
+  const chromeProcs = () => listProcs(path.join(R, 'temp')).length;
+  const cliDirs = async () => (await fs.readdir(path.join(R, 'temp')).catch(() => [])).filter((n) => n.startsWith('sutradhar-cli-'));
+  // An earlier case's Chrome may still be shutting down (close is asynchronous): measure "no new Chrome" from a STABLE count (event-based, 10 s cap).
+  const settled = async () => {
+    let prev = -1;
+    const t0 = now();
+    for (;;) {
+      const c = chromeProcs();
+      if (c === prev || now() - t0 > 10000) return c;
+      prev = c;
+      await delay(700);
+    }
+  };
+
+  // F1: for each discovered-file shape the refusal rule blocks, a higher layer (env roots, or the explicit `download <ref> <dir>`
+  // grant) wins: the command works, the download lands in the HIGHER layer's directory (sha256 + realpath), and nothing is created
+  // where the hostile file pointed. The same file with NO higher layer is still refused (negative control, recorded separately).
+  const shapes = [
+    ['f1-out', path.join(R, 'hp', 'child'), path.join(R, 'outside-hp'), 'downloadDir ../outside-hp'],
+    ['f1-abs', path.join(R, 'hp3', 'child'), path.join(R, 'outside-hp3'), 'allowedDownloadRoots absolute outside'],
+    ['f1-git', path.join(R, 'hooks'), path.join(R, 'hooks', '.git', 'hooks'), 'downloadDir .git/hooks'],
+    ['f1-git2', path.join(R, 'hp4', 'child'), path.join(R, 'hp4', '.git', 'x'), 'allowedDownloadRoots [./dl, .git/x]'],
+  ];
+  for (const [id, cwd, forbidden, label] of shapes) {
+    await run(`F1-env-${id}`, async (rid) => {
+      const key = k(rid);
+      const envdl = path.join(R, `envdl-${id}`);
+      const env = { SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS: envdl };
+      const n = `${rid}-${surface}`;
+      const a = await cli(key, cwd, ['nav', U('localhost', n)], env, bin, surface);
+      const d = await cli(key, cwd, ['download', '#dl'], env, bin, surface);
+      const p = downloadedPath(d);
+      const bad = p ? await dlCheck(p, n, envdl) : 'no path';
+      const created = existsSync(forbidden);
+      record(surface, rid, a.code === 0 && d.code === 0 && !bad && !created && !!pageHit(n), `${label}: nav=${a.code} download=${d.code} check=${bad || 'ok'} hostileTargetCreated=${created}`);
+      await closeKey(key);
+    });
+    await run(`F1-none-${id}`, async (rid) => {
+      const key = k(rid);
+      const before = await settled();
+      const r = await cli(key, cwd, ['nav', U('localhost', `${rid}-${surface}`)], {}, bin, surface);
+      record(surface, rid, r.code === 1 && /outside this config's directory|inside a \.git directory/.test(r.stderr) && r.stderr.includes('SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS') && !stateExists(key) && chromeProcs() === before && !existsSync(forbidden), `${label}: exit=${r.code} noSession=${!stateExists(key)}`);
+    });
+  }
+  // The explicit per-command grant `download <ref> <dir>` is a flag-level layer: with a session already open, a hostile file in the cwd
+  // must not block it, and the file lands in the granted directory.
+  await run('F1-arg', async (id) => {
+    const key = k(id);
+    const n = `${id}-${surface}`;
+    const argdl = path.join(R, 'argdl-f1');
+    const a = await cli(key, T.proj0, ['nav', U('localhost', n)], {}, bin, surface);
+    const d = await cli(key, path.join(R, 'hp', 'child'), ['download', '#dl', argdl], {}, bin, surface);
+    const p = downloadedPath(d);
+    const bad = p ? await dlCheck(p, n, argdl) : 'no path';
+    record(surface, id, a.code === 0 && d.code === 0 && !bad && !existsSync(path.join(R, 'outside-hp')), `nav=${a.code} download=${d.code} check=${bad || 'ok'} (hostile file in cwd, explicit dir wins)`);
+    await closeKey(key);
+  });
+
+  // F8: a huge viewport from the FILE or the FLAG is rejected before any Chrome starts: no state, no profile dir, no process.
+  for (const [id, cwd, args, needle] of [
+    ['F8-file', path.join(R, 'vphuge'), [], 'positive integer (at most 10000000)'],
+    ['F8-flag', T.proj0, ['--viewport', '1000000000x1000000000'], '--viewport'],
+  ]) {
+    await run(id, async (rid) => {
+      const key = k(rid);
+      const before = await settled(), beforeDirs = (await cliDirs()).length;
+      const r = await cli(key, cwd, ['nav', U('localhost', `${rid}-${surface}`), ...args], {}, bin, surface);
+      const noChrome = !stateExists(key) && chromeProcs() === before && (await cliDirs()).length === beforeDirs;
+      record(surface, rid, r.code === 1 && r.stderr.includes(needle) && noChrome && !pageHit(`${rid}-${surface}`), `exit=${r.code} noChrome=${noChrome} ${r.stderr.split('\n')[0].slice(0, 120)}`);
+    });
+  }
+  // F4: a 20 KB unknown key prints a short, single-line warning on every command (not 20 KB).
+  await run('F4-longkey', async (id) => {
+    const key = k(id);
+    const n = `${id}-${surface}`;
+    const r = await cli(key, path.join(R, 'longkey'), ['nav', U('localhost', n)], {}, bin, surface);
+    const warn = r.stderr.split('\n').find((l) => l.startsWith('Warning:')) ?? '';
+    record(surface, id, r.code === 0 && warn.length > 0 && warn.length < 400 && warn.includes('...'), `exit=${r.code} warningLength=${warn.length}`);
+    await closeKey(key);
+  });
+  // F3: a cwd that is a junction INSIDE home pointing elsewhere does not read a config above home.
+  await run('F3-home-junction', async (id) => {
+    const home = path.join(R, 'f3top', 'home');
+    const link = path.join(home, `link-${surface}`);
+    try {
+      await fs.mkdir(path.join(R, `f3elsewhere-${surface}`), { recursive: true });
+      await fs.symlink(path.join(R, `f3elsewhere-${surface}`), link, process.platform === 'win32' ? 'junction' : 'dir');
+    } catch (e) {
+      record(surface, id, true, `SKIPPED (cannot create a link here: ${e.code})`);
+      return;
+    }
+    const d = await cli(k(id), link, ['doctor'], { USERPROFILE: home, HOME: home }, bin, surface);
+    const line = d.stdout.split('\n').find((l) => l.startsWith('Config:')) ?? '';
+    const aboveFile = path.join(R, 'f3top', '.sutradhar.json');
+    record(surface, id, d.code === 0 && line.includes('none (searched') && line.includes('stopped at home') && !d.stdout.includes(aboveFile), line.slice(0, 200));
+  });
+}
+
+async function mcpFixSuite(bin, surface) {
+  const run = (id, fn) => (wanted(id) ? fn(id).catch((e) => record(surface, id, false, `threw: ${e.stack ?? e.message}`)) : undefined);
+  // F1 on MCP: the same hostile discovered files, with SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS set: the server STARTS, and a real download
+  // lands in the env root; without the env var the server still dies at startup naming it.
+  for (const [id, cwd, forbidden] of [
+    ['mf1-out', path.join(R, 'hp', 'child'), path.join(R, 'outside-hp')],
+    ['mf1-git', path.join(R, 'hooks'), path.join(R, 'hooks', '.git', 'hooks')],
+  ]) {
+    await run(`M-F1-env-${id}`, async (rid) => {
+      const envdl = path.join(R, `envdl-${rid}-${surface}`);
+      const c = mcpClient(bin, cwd, { SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS: envdl });
+      try {
+        await c.init();
+        const launch = await c.tool('browser.launch', {});
+        const sid = launch.json?.sessionId;
+        const n = `${rid}-${surface}`;
+        await c.tool('browser.navigate', { sessionId: sid, url: U('localhost', n) });
+        const dl = await c.tool('browser.download_file', { sessionId: sid, target: '#dl' });
+        const p = dl.json?.output?.downloadedPath;
+        const bad = p ? await dlCheck(p, n, envdl) : 'no path';
+        await c.tool('browser.shutdown_all', {});
+        record(surface, rid, !c.exited && !bad && !existsSync(forbidden), `serverAlive=${!c.exited} download=${bad || 'ok'} hostileTargetCreated=${existsSync(forbidden)}`);
+      } finally { await c.stop(); }
+    });
+    await run(`M-F1-none-${id}`, async (rid) => {
+      const c = mcpClient(bin, cwd, {});
+      try {
+        const exited = await c.waitExit(10000);
+        record(surface, rid, exited && c.exitCode === 1 && c.stderrText().includes('SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS') && !existsSync(forbidden), `exited=${exited} code=${c.exitCode}`);
+      } finally { await c.stop(); }
+    });
+  }
+  // F8 on MCP: a huge file viewport fails at startup, before the server accepts any call.
+  await run('M-F8', async (id) => {
+    const c = mcpClient(bin, path.join(R, 'vphuge'), {});
+    try {
+      const exited = await c.waitExit(10000);
+      record(surface, id, exited && c.exitCode === 1 && c.stderrText().includes('at most 10000000'), `exited=${exited} code=${c.exitCode}`);
+    } finally { await c.stop(); }
+  });
+}
+
+async function sdkFixSuite() {
+  const surface = 'sdk';
+  const run = (id, fn) => (wanted(id) ? fn(id).catch((e) => record(surface, id, false, `threw: ${e.stack ?? e.message}`)) : undefined);
+  const probe = async (mode, cwd, arg) => {
+    const env = { ...baseEnv, FR214_SDK_INDEX: SDK_INDEX, FR214_PORT: String(server.port) };
+    const out = await new Promise((resolve) => {
+      const cp = track(spawn(process.execPath, [PROBE, mode, ...(arg ? [arg] : [])], { env, cwd }));
+      let stdout = '', stderr = '';
+      cp.stdout.on('data', (d) => (stdout += d.toString('utf8')));
+      cp.stderr.on('data', (d) => (stderr += d.toString('utf8')));
+      cp.on('close', () => resolve({ stdout, stderr }));
+    });
+    let json; try { json = JSON.parse(out.stdout.trim().split('\n').at(-1)); } catch { json = { error: `unparseable: ${out.stdout.slice(0, 200)} ${out.stderr.slice(0, 200)}` }; }
+    await logCase({ surface, argv: [mode, arg].filter(Boolean).map((a) => a.replace(R, '<R>')), cwd: cwd.replace(R, '<R>'), stdout: out.stdout.slice(0, 600).replace(R, '<R>'), stderr: out.stderr.slice(0, 400).replace(R, '<R>') });
+    return { json, stderr: out.stderr };
+  };
+  // F1 on the SDK: the allowedDownloadRoots OPTION beats a refused discovered file, and the download lands there.
+  for (const [id, cwd, forbidden] of [
+    ['sf1-out', path.join(R, 'hp', 'child'), path.join(R, 'outside-hp')],
+    ['sf1-git', path.join(R, 'hooks'), path.join(R, 'hooks', '.git', 'hooks')],
+  ]) {
+    await run(`S-F1-opt-${id}`, async (rid) => {
+      const root = path.join(R, `optdl-${rid}`);
+      const { json: j } = await probe('discover-roots', cwd, root);
+      const bad = j.downloadPath ? await dlCheck(j.downloadPath, 'sdk-discover-roots-localhost', root) : 'no path';
+      record(surface, rid, j.error === null && !bad && !existsSync(forbidden), `error=${j.error} download=${bad || 'ok'} hostileTargetCreated=${existsSync(forbidden)}`);
+    });
+    await run(`S-F1-none-${id}`, async (rid) => {
+      const { json: j } = await probe('discover', cwd);
+      record(surface, rid, /outside this config's directory|inside a \.git directory/.test(j.error ?? '') && !existsSync(forbidden), `error=${String(j.error).slice(0, 120)}`);
+    });
+  }
+  // F2 on the SDK: null options are "not set": the discovered config still applies (width 700, 127.0.0.1 blocked).
+  await run('S-F2-null', async (id) => {
+    const { json: j } = await probe('discover-null', T.cwdC);
+    record(surface, id, j.error === null && j.innerWidth === 700 && /allowedDomains/.test(j.navResults['127.0.0.1']) && j.navResults.localhost === 'ok', `width=${j.innerWidth} nav=${JSON.stringify(j.navResults).slice(0, 160)}`);
+  });
+  await run('S-F8', async (id) => {
+    const { json: j } = await probe('discover', path.join(R, 'vphuge'));
+    record(surface, id, /at most 10000000/.test(j.error ?? ''), `error=${String(j.error).slice(0, 140)}`);
+  });
+  // F9: a discovered dialog accept is announced by the SDK.
+  await run('S-F9-announce', async (id) => {
+    const { stderr } = await probe('discover', path.join(R, 'hp2', 'child'));
+    record(surface, id, stderr.includes('[sutradhar] ') && stderr.includes('dialog.mode "accept"') && stderr.includes(path.join(R, 'hp2', '.sutradhar.json')), stderr.split('\n').find((l) => l.includes('accept'))?.slice(0, 160));
+  });
+}
+
 // ───────────────────────────── main ─────────────────────────────
 async function main() {
   const st = await fs.statfs(os.tmpdir());
@@ -856,13 +1059,15 @@ async function main() {
   for (const k of ENV_STRIP) delete baseEnv[k];
   console.log(`root=${R} port=${server.port} surfaces=${SURFACES.join(',')}`);
   try {
-    if (SURFACES.includes('cli')) { await cliSuite(CLI, 'cli', true); await negativeSuite('cli'); }
-    if (SURFACES.includes('mcp')) await mcpSuite(MCP, 'mcp', true);
-    if (SURFACES.includes('sdk')) await sdkSuite();
+    if (SURFACES.includes('cli')) { await cliSuite(CLI, 'cli', true); await negativeSuite('cli'); await fixSuite('cli'); }
+    if (SURFACES.includes('mcp')) { await mcpSuite(MCP, 'mcp', true); await mcpFixSuite(MCP, 'mcp'); }
+    if (SURFACES.includes('sdk')) { await sdkSuite(); await sdkFixSuite(); }
     if (SURFACES.includes('bundle')) {
       await cliSuite(BUNDLE_CLI, 'bundle', false);
       await negativeSuite('bundle');
+      await fixSuite('bundle');
       await mcpSuite(BUNDLE_MCP, 'bundle-mcp', false);
+      await mcpFixSuite(BUNDLE_MCP, 'bundle-mcp');
     }
     // Cleanup: close every CLI session this run opened (PID-scoped via each state file; never by image name).
     for (const key of stateDirs.keys()) if (stateExists(key)) await closeKey(key);
