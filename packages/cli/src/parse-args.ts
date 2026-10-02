@@ -20,6 +20,9 @@ export interface ParsedArgs {
   userAgentFlag: string | undefined;
   /** Parsed from `--allowlist-domains a.com,b.com` — undefined when the flag isn't given. */
   allowlistDomainsFlag: string[] | undefined;
+  /** FR2-14: `--allowlist-domains` was passed but yielded no domain (empty/blank/comma-only or
+   *  no value). That must be an error, never a silent "unrestricted". */
+  allowlistDomainsGivenButEmpty: boolean;
   /** Parsed from `--baseline <url>` — undefined when the flag isn't given. Used by `audit` to
    *  also run a visual compare against a known-good baseline URL in the same command. */
   baselineFlag: string | undefined;
@@ -134,12 +137,15 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
   const allowlistDomainsFlagIndex = args.indexOf('--allowlist-domains');
   const allowlistDomainsRaw =
     allowlistDomainsFlagIndex !== -1 ? args[allowlistDomainsFlagIndex + 1] : undefined;
-  const allowlistDomainsFlag = allowlistDomainsRaw
+  const allowlistDomainsList = allowlistDomainsRaw
     ? allowlistDomainsRaw
         .split(',')
         .map((d) => d.trim())
         .filter((d) => d.length > 0)
     : undefined;
+  // An empty list is "no value", never an (empty) allowlist: it must not read as "unrestricted".
+  const allowlistDomainsFlag = allowlistDomainsList?.length ? allowlistDomainsList : undefined;
+  const allowlistDomainsGivenButEmpty = allowlistDomainsFlagIndex !== -1 && !allowlistDomainsFlag?.length;
   const baselineFlagIndex = args.indexOf('--baseline');
   const baselineRaw = baselineFlagIndex !== -1 ? args[baselineFlagIndex + 1] : undefined;
   const baselineFlagGivenButInvalid = baselineFlagIndex !== -1 && (baselineRaw === undefined || baselineRaw.startsWith('--'));
@@ -292,6 +298,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     profileFlag,
     userAgentFlag,
     allowlistDomainsFlag,
+    allowlistDomainsGivenButEmpty,
     baselineFlag,
     baselineFlagGivenButInvalid,
     settle,

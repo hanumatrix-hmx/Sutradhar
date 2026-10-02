@@ -88,3 +88,20 @@ describe('@sutradhar/cli --help text (FR2-08 waiting)', () => {
     expect(flagText).toContain('waitfor');
   });
 });
+
+describe('@sutradhar/cli --help text (FR2-14 project config)', () => {
+  it('documents the file, its precedence, SUTRADHAR_CONFIG and the env/flag cross-reference', () => {
+    for (const needle of [
+      'Project config:',
+      '.sutradhar.json in this directory or the nearest parent',
+      'Flags > env vars > the file > built-in defaults',
+      'SUTRADHAR_CONFIG=<absolute path>',
+      'SUTRADHAR_CONFIG=none',
+      '"sutradhar doctor" shows which file is in use',
+      'SUTRADHAR_ALLOWED_DOMAINS',
+      'set allowedDomains in',
+    ]) {
+      expect(helpText, needle).toContain(needle);
+    }
+  });
+});
