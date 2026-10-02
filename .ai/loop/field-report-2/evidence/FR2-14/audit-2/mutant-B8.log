@@ -1,0 +1,99 @@
+{
+ "id": "B8",
+ "desc": "central: fsRootsConfigLayer drops downloadRefusal on every surface",
+ "file": "packages/capability-runtime/src/config-precedence.ts",
+ "shaBefore": "acb835f73cf5fd7c613fedec37cc645085ddd22f2f55585fdd2b7c18bb6eddb8",
+ "occurrences": 1,
+ "build": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    8 successful, 8 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "unit": {
+  "capability-runtime": {
+   "code": 1,
+   "tests": "6 failed | 387 passed (393)",
+   "failed": [
+    "tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matrix) > downloadDir x file=outOf",
+    "tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matrix) > downloadDir x file=hosti",
+    "tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matrix) > allowedDownloadRoots x f",
+    "tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matrix) > allowedDownloadRoots x f",
+    "tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matrix) > the matrix is not vacuou",
+    "tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matrix) > F1 repro: an out-of-tree"
+   ]
+  },
+  "cli": {
+   "code": 1,
+   "tests": "4 failed | 234 passed (238)",
+   "failed": [
+    "tests/unit/project-config-cli.spec.ts > fix-1 F1/F2/F8: on the CLI a layer above the file always wins (generated over key x layers x file st",
+    "tests/unit/project-config-cli.spec.ts > fix-1 F1/F2/F8: on the CLI a layer above the file always wins (generated over key x layers x file st",
+    "tests/unit/project-config-cli.spec.ts > fix-1 F1/F2/F8: on the CLI a layer above the file always wins (generated over key x layers x file st",
+    "tests/unit/project-config-cli.spec.ts > fix-1 F1/F2/F8: on the CLI a layer above the file always wins (generated over key x layers x file st"
+   ]
+  },
+  "mcp-server": {
+   "code": 1,
+   "tests": "4 failed | 150 passed (154)",
+   "failed": [
+    "tests/unit/server-config.spec.ts > fix-1 F1/F2: on MCP a layer above the file always wins (generated: key x higher layers x file state, REAL",
+    "tests/unit/server-config.spec.ts > fix-1 F1/F2: on MCP a layer above the file always wins (generated: key x higher layers x file state, REAL",
+    "tests/unit/server-config.spec.ts > fix-1 F1/F2: on MCP a layer above the file always wins (generated: key x higher layers x file state, REAL",
+    "tests/unit/server-config.spec.ts > fix-1 F1/F2: on MCP a layer above the file always wins (generated: key x higher layers x file state, REAL"
+   ]
+  },
+  "sutradhar": {
+   "code": 1,
+   "tests": "5 failed | 58 passed (63)",
+   "failed": [
+    "tests/unit/launch-config.spec.ts > sutradhar SDK launch() + .sutradhar.json (FR2-14) > SC11: a hostile discovered config cannot widen the do",
+    "tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > downloadDir x file=outOfTree: the allowe",
+    "tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > downloadDir x file=hostile: the allowedD",
+    "tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > allowedDownloadRoots x file=outOfTree: t",
+    "tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > allowedDownloadRoots x file=hostile: the"
+   ]
+  }
+ },
+ "f1attack": {
+  "pass": 175,
+  "fail": 115,
+  "firstFails": [
+   "CLI.escDl.env=unset FILE ROOT LEAKED e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b8\\outside",
+   "MCP.escDl.env=unset FILE ROOT LEAKED e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b8\\outside",
+   "CLI.escDl.env=empty FILE ROOT LEAKED e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b8\\outside",
+   "MCP.escDl.env=empty FILE ROOT LEAKED e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b8\\outside"
+  ]
+ },
+ "liveCliF1": {
+  "pass": 7,
+  "fail": 7,
+  "fails": [
+   "pkg.F1.noOverride.refused",
+   "pkg.F1.env=empty.refused",
+   "pkg.F1.env=blank.refused",
+   "pkg.F1.env=delims.refused",
+   "pkg.F1.uploadEnvOnly.refused",
+   "pkg.F1.otherVerbStillRefused",
+   "pkg.F1.doctor"
+  ]
+ },
+ "shaAfter": "acb835f73cf5fd7c613fedec37cc645085ddd22f2f55585fdd2b7c18bb6eddb8",
+ "restored": true,
+ "rebuild": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    8 successful, 8 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "caught": {
+  "unit": true,
+  "f1attack": true,
+  "liveCli": true,
+  "any": true
+ }
+}

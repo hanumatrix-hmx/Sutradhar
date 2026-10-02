@@ -1,0 +1,68 @@
+{
+ "id": "B4",
+ "desc": "MCP only: refusal not passed to the resolver (pre-fix composition)",
+ "file": "packages/mcp-server/src/server.ts",
+ "shaBefore": "041e3a54b60fc7f0eedd16271f6cc840adc7508b73afaec8bc78d8d66b6bc2d9",
+ "occurrences": 1,
+ "build": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    13 successful, 13 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "unit": {
+  "capability-runtime": {
+   "code": 0,
+   "tests": "393 passed (393)",
+   "failed": []
+  },
+  "cli": {
+   "code": 0,
+   "tests": "238 passed (238)",
+   "failed": []
+  },
+  "mcp-server": {
+   "code": 1,
+   "tests": "4 failed | 150 passed (154)",
+   "failed": [
+    "tests/unit/server-config.spec.ts > fix-1 F1/F2: on MCP a layer above the file always wins (generated: key x higher layers x file state, REAL",
+    "tests/unit/server-config.spec.ts > fix-1 F1/F2: on MCP a layer above the file always wins (generated: key x higher layers x file state, REAL",
+    "tests/unit/server-config.spec.ts > fix-1 F1/F2: on MCP a layer above the file always wins (generated: key x higher layers x file state, REAL",
+    "tests/unit/server-config.spec.ts > fix-1 F1/F2: on MCP a layer above the file always wins (generated: key x higher layers x file state, REAL"
+   ]
+  },
+  "sutradhar": {
+   "code": 0,
+   "tests": "63 passed (63)",
+   "failed": []
+  }
+ },
+ "f1attack": {
+  "pass": 224,
+  "fail": 66,
+  "firstFails": [
+   "MCP.escDl.env=unset FILE ROOT LEAKED e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b4\\outside",
+   "MCP.escDl.env=empty FILE ROOT LEAKED e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b4\\outside",
+   "MCP.escDl.env=spaces FILE ROOT LEAKED e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b4\\outside",
+   "MCP.escDl.env=delims FILE ROOT LEAKED e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b4\\outside"
+  ]
+ },
+ "shaAfter": "041e3a54b60fc7f0eedd16271f6cc840adc7508b73afaec8bc78d8d66b6bc2d9",
+ "restored": true,
+ "rebuild": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    13 successful, 13 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "caught": {
+  "unit": true,
+  "f1attack": true,
+  "liveCli": false,
+  "any": true
+ }
+}

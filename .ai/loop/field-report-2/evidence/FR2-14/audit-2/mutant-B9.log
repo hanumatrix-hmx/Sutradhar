@@ -1,0 +1,66 @@
+{
+ "id": "B9",
+ "desc": "over-refusal: an EXPLICIT (SUTRADHAR_CONFIG) file is also refused",
+ "file": "packages/capability-runtime/src/project-config.ts",
+ "shaBefore": "680c5e65276db856b0a696000e6f5cf46d09749f233d5dc19367d26602739cab",
+ "occurrences": 1,
+ "build": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    8 successful, 8 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "unit": {
+  "capability-runtime": {
+   "code": 1,
+   "tests": "2 failed | 391 passed (393)",
+   "failed": [
+    "tests/unit/project-config.spec.ts > hostile discovered config: containment (CT1-CT7, D12b) > CT1/CT6: an escaping downloadDir fails when dis",
+    "tests/unit/project-config.spec.ts > hostile discovered config: containment (CT1-CT7, D12b) > CT5: a symlink/junction inside the tree that po"
+   ]
+  },
+  "cli": {
+   "code": 0,
+   "tests": "238 passed (238)",
+   "failed": []
+  },
+  "mcp-server": {
+   "code": 0,
+   "tests": "154 passed (154)",
+   "failed": []
+  },
+  "sutradhar": {
+   "code": 0,
+   "tests": "63 passed (63)",
+   "failed": []
+  }
+ },
+ "f1attack": {
+  "raw": "Tab/.claude/worktrees/project-understanding-696041/packages/cli/dist/project-config-cli.js:35:18)\r\n    at file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/field-report-2/evidence/FR2-14/audit-2/probes/f1-attack.mjs:119:18\r\n\r\nNode.js v25.0.0\r\n"
+ },
+ "liveCliF1": {
+  "pass": 13,
+  "fail": 1,
+  "fails": [
+   "pkg.F1.explicitConfig.works"
+  ]
+ },
+ "shaAfter": "680c5e65276db856b0a696000e6f5cf46d09749f233d5dc19367d26602739cab",
+ "restored": true,
+ "rebuild": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    8 successful, 8 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "caught": {
+  "unit": true,
+  "f1attack": false,
+  "liveCli": true,
+  "any": true
+ }
+}

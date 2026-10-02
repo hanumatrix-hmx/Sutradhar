@@ -1,0 +1,5 @@
+2026-10-03T03:14:07+05:30 killed my harness node PIDs 80568 (live-cli pkg) 84060 (live-cli bundle) with /T: restarting split into halves (too slow for the 20-min cap)
+2026-10-03T03:14:18+05:30 killed Chrome trees 64560, 116788 (user-data-dir under my scratch fr214a2/live/cli-{pkg,bundle}/temp; orphaned by killing the harness)
+2026-10-03T03:21:00+05:30 killed Chrome tree 6356 (leaked by MASTER A/B f8 probe; user-data-dir in my scratch fr214a2/f8master)
+2026-10-03T04:53:22+05:30 killed Chrome tree 110460 (a normal live CLI session left by the B15 f8-kill check: B15 alone did not reach Chrome because resolveViewport also bounds; user-data-dir in my scratch fr214a2/mut/fk-B15)
+2026-10-03T04:54:42+05:30 kill-path.mjs positive control (phase B, kill removed) leaked Chrome PIDs 69888 52396 91980 119232 48600 75180 78824 107796 112524 85500 (marker fr214a2/kp/kpB); killed each by PID with /T

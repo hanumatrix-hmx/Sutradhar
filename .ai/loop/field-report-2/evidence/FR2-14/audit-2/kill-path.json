@@ -1,0 +1,55 @@
+{
+ "before": {
+  "pa": "f2dc11c82c08a20f815dcff3e8be3fe2d1bacb4e3a252b052620af41623cc206",
+  "cp": "acb835f73cf5fd7c613fedec37cc645085ddd22f2f55585fdd2b7c18bb6eddb8",
+  "cli": "800010041a25f17142a920b4d399ec17a2215185a87a33d62f5fdba26daeba8e"
+ },
+ "buildA": 0,
+ "phaseA_killKept": {
+  "pass": true,
+  "fail": 0,
+  "code": 1,
+  "err": "Fatal: Protocol error (Emulation.setDeviceMetricsOverride): Width and height values must be positive, not greater than 10000000\n",
+  "left": [],
+  "stateFile": false
+ },
+ "buildB": 0,
+ "phaseB_killRemoved_positiveControl": {
+  "pass": false,
+  "fail": 1,
+  "code": 1,
+  "err": "Fatal: Protocol error (Emulation.setDeviceMetricsOverride): Width and height values must be positive, not greater than 10000000\n",
+  "left": [
+   69888,
+   52396,
+   91980,
+   119232,
+   48600,
+   75180,
+   78824,
+   107796,
+   112524,
+   85500
+  ],
+  "stateFile": false
+ },
+ "killedLeakedPids": [
+  69888,
+  52396,
+  91980,
+  119232,
+  48600,
+  75180,
+  78824,
+  107796,
+  112524,
+  85500
+ ],
+ "after": {
+  "pa": "f2dc11c82c08a20f815dcff3e8be3fe2d1bacb4e3a252b052620af41623cc206",
+  "cp": "acb835f73cf5fd7c613fedec37cc645085ddd22f2f55585fdd2b7c18bb6eddb8",
+  "cli": "800010041a25f17142a920b4d399ec17a2215185a87a33d62f5fdba26daeba8e"
+ },
+ "restored": true,
+ "rebuild": 0
+}

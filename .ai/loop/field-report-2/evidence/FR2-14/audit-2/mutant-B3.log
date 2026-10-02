@@ -1,0 +1,84 @@
+{
+ "id": "B3",
+ "desc": "an allowedDownloadRoots option that is present but empty/null skips the refusal (file roots used)",
+ "file": "packages/capability-runtime/src/fs-roots.ts",
+ "shaBefore": "3797a6b57ca7077b303e5d61f85df658326098fa8fe50ce453c06a89a19e1c6b",
+ "occurrences": 1,
+ "build": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    8 successful, 8 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "unit": {
+  "capability-runtime": {
+   "code": 1,
+   "tests": "5 failed | 388 passed (393)",
+   "failed": [
+    "tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matrix) > downloadDir x file=outOf",
+    "tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matrix) > downloadDir x file=hosti",
+    "tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matrix) > allowedDownloadRoots x f",
+    "tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matrix) > allowedDownloadRoots x f",
+    "tests/unit/override-matrix.spec.ts > FR2-14 fix-1: a layer above the file always wins (generated override matrix) > the matrix is not vacuou"
+   ]
+  },
+  "cli": {
+   "code": 0,
+   "tests": "238 passed (238)",
+   "failed": []
+  },
+  "mcp-server": {
+   "code": 1,
+   "tests": "4 failed | 150 passed (154)",
+   "failed": [
+    "tests/unit/server-config.spec.ts > fix-1 F1/F2: on MCP a layer above the file always wins (generated: key x higher layers x file state, REAL",
+    "tests/unit/server-config.spec.ts > fix-1 F1/F2: on MCP a layer above the file always wins (generated: key x higher layers x file state, REAL",
+    "tests/unit/server-config.spec.ts > fix-1 F1/F2: on MCP a layer above the file always wins (generated: key x higher layers x file state, REAL",
+    "tests/unit/server-config.spec.ts > fix-1 F1/F2: on MCP a layer above the file always wins (generated: key x higher layers x file state, REAL"
+   ]
+  },
+  "sutradhar": {
+   "code": 1,
+   "tests": "4 failed | 59 passed (63)",
+   "failed": [
+    "tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > downloadDir x file=outOfTree: the allowe",
+    "tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > downloadDir x file=hostile: the allowedD",
+    "tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > allowedDownloadRoots x file=outOfTree: t",
+    "tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > allowedDownloadRoots x file=hostile: the"
+   ]
+  }
+ },
+ "f1attack": {
+  "pass": 272,
+  "fail": 18,
+  "firstFails": [
+   "MCP.escDl.opt=[] FILE ROOT LEAKED e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b3\\outside",
+   "MCP.escDl.opt=null FILE ROOT LEAKED e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b3\\outside",
+   "MCP.escDl.opt=[]+envEmpty FILE ROOT LEAKED e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b3\\outside",
+   "MCP.escRoots.opt=[] FILE ROOT LEAKED e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b3\\escroots\\ok,e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b3\\outside"
+  ]
+ },
+ "liveCliF1": {
+  "pass": 14,
+  "fail": 0,
+  "fails": []
+ },
+ "shaAfter": "3797a6b57ca7077b303e5d61f85df658326098fa8fe50ce453c06a89a19e1c6b",
+ "restored": true,
+ "rebuild": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    8 successful, 8 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "caught": {
+  "unit": true,
+  "f1attack": true,
+  "liveCli": false,
+  "any": true
+ }
+}

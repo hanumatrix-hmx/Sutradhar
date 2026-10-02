@@ -1,0 +1,65 @@
+{
+ "id": "B11",
+ "desc": "CLI entry (cli.ts): withSession does not hand <dir> to the resolver (download <dir> not a higher layer, real CLI only)",
+ "file": "packages/cli/src/cli.ts",
+ "shaBefore": "800010041a25f17142a920b4d399ec17a2215185a87a33d62f5fdba26daeba8e",
+ "occurrences": 1,
+ "build": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    9 successful, 9 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "unit": {
+  "capability-runtime": {
+   "code": 0,
+   "tests": "393 passed (393)",
+   "failed": []
+  },
+  "cli": {
+   "code": 0,
+   "tests": "238 passed (238)",
+   "failed": []
+  },
+  "mcp-server": {
+   "code": 0,
+   "tests": "154 passed (154)",
+   "failed": []
+  },
+  "sutradhar": {
+   "code": 0,
+   "tests": "63 passed (63)",
+   "failed": []
+  }
+ },
+ "f1attack": {
+  "pass": 290,
+  "fail": 0,
+  "firstFails": []
+ },
+ "liveCliF1": {
+  "pass": 13,
+  "fail": 1,
+  "fails": [
+   "pkg.F1.downloadDirArg.works"
+  ]
+ },
+ "shaAfter": "800010041a25f17142a920b4d399ec17a2215185a87a33d62f5fdba26daeba8e",
+ "restored": true,
+ "rebuild": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    9 successful, 9 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "caught": {
+  "unit": false,
+  "f1attack": false,
+  "liveCli": true,
+  "any": true
+ }
+}

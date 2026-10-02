@@ -1,0 +1,78 @@
+{
+ "id": "B15",
+ "desc": "HARNESS mutant (not a catch test): widen the --viewport bound so a 1e9 viewport reaches Chrome, to exercise the post-spawn kill path",
+ "file": "packages/cli/src/parse-args.ts",
+ "shaBefore": "f2dc11c82c08a20f815dcff3e8be3fe2d1bacb4e3a252b052620af41623cc206",
+ "occurrences": 1,
+ "build": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    9 successful, 9 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "unit": {
+  "capability-runtime": {
+   "code": 0,
+   "tests": "393 passed (393)",
+   "failed": []
+  },
+  "cli": {
+   "code": 1,
+   "tests": "1 failed | 237 passed (238)",
+   "failed": [
+    "tests/unit/project-config-cli.spec.ts > fix-1 F1/F2/F8: on the CLI a layer above the file always wins (generated over key x layers x file st"
+   ]
+  },
+  "mcp-server": {
+   "code": 0,
+   "tests": "154 passed (154)",
+   "failed": []
+  },
+  "sutradhar": {
+   "code": 0,
+   "tests": "63 passed (63)",
+   "failed": []
+  }
+ },
+ "f1attack": {
+  "pass": 290,
+  "fail": 0,
+  "firstFails": []
+ },
+ "f8kill": {
+  "pass": false,
+  "fail": 1,
+  "code": 0,
+  "err": "",
+  "left": [
+   110460,
+   25644,
+   73832,
+   81452,
+   66976,
+   86212,
+   85112,
+   6260,
+   67076
+  ],
+  "stateFile": true
+ },
+ "shaAfter": "f2dc11c82c08a20f815dcff3e8be3fe2d1bacb4e3a252b052620af41623cc206",
+ "restored": true,
+ "rebuild": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    9 successful, 9 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "caught": {
+  "unit": true,
+  "f1attack": false,
+  "liveCli": false,
+  "any": true
+ }
+}

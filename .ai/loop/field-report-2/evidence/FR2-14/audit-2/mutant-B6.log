@@ -1,0 +1,75 @@
+{
+ "id": "B6",
+ "desc": "CLI resolver: download <dir> is NOT treated as a higher layer (refusal still raised)",
+ "file": "packages/cli/src/project-config-cli.ts",
+ "shaBefore": "19be249a3e1c2b1c49ad1cfb4562d02fb1b0e947c459ee0b3db3dec1c778bb5d",
+ "occurrences": 1,
+ "build": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    9 successful, 9 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "unit": {
+  "capability-runtime": {
+   "code": 0,
+   "tests": "393 passed (393)",
+   "failed": []
+  },
+  "cli": {
+   "code": 1,
+   "tests": "4 failed | 234 passed (238)",
+   "failed": [
+    "tests/unit/project-config-cli.spec.ts > fix-1 F1/F2/F8: on the CLI a layer above the file always wins (generated over key x layers x file st",
+    "tests/unit/project-config-cli.spec.ts > fix-1 F1/F2/F8: on the CLI a layer above the file always wins (generated over key x layers x file st",
+    "tests/unit/project-config-cli.spec.ts > fix-1 F1/F2/F8: on the CLI a layer above the file always wins (generated over key x layers x file st",
+    "tests/unit/project-config-cli.spec.ts > fix-1 F1/F2/F8: on the CLI a layer above the file always wins (generated over key x layers x file st"
+   ]
+  },
+  "mcp-server": {
+   "code": 0,
+   "tests": "154 passed (154)",
+   "failed": []
+  },
+  "sutradhar": {
+   "code": 0,
+   "tests": "63 passed (63)",
+   "failed": []
+  }
+ },
+ "f1attack": {
+  "pass": 272,
+  "fail": 18,
+  "firstFails": [
+   "CLI.escDl.downloadDir=hostileDir ",
+   "CLI.escDl.downloadDir=abs ",
+   "CLI.escDl.downloadDir+envBlank ",
+   "CLI.escRoots.downloadDir=hostileDir "
+  ]
+ },
+ "liveCliF1": {
+  "pass": 13,
+  "fail": 1,
+  "fails": [
+   "pkg.F1.downloadDirArg.works"
+  ]
+ },
+ "shaAfter": "19be249a3e1c2b1c49ad1cfb4562d02fb1b0e947c459ee0b3db3dec1c778bb5d",
+ "restored": true,
+ "rebuild": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    9 successful, 9 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "caught": {
+  "unit": true,
+  "f1attack": true,
+  "liveCli": true,
+  "any": true
+ }
+}

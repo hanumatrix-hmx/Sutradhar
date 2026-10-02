@@ -4081,3 +4081,42 @@ checks, 80/80 hostile-root refusals, 125/125 fail-closed, 14/14 mutants) passed 
   baseline except the two intended changes F3/F8), live-cli pkg 96/96 and bundle 96/96, live-mcp pkg 32/32 and bundle 32/32, live-sdk 33/33, live-failclosed 138/139 (the one failure, `verbs.help` = `--help` exits 1,
   fails identically in audit-1 and on master); 17 new mutants X1-X9, X11-X18 caught (unit and/or live), audit mutants A1-A12/A5b/A8b 13/13 applicable caught (A6's text no longer exists; re-spelled as X18); regressions:
   fr2-08 478/478 on the second full run (the first scored 477/478, `bundle:H2` timing flake, not reproduced), fr2-07 488/488, fr2-04 111/0/2, CLI scenario suite UC-05/06/08/12 fail identically on master (A/B run today).
+
+## 2026-10-03 -- FR2-14: two failed audits (all-minor second time); ROOT-CAUSE RE-DERIVATION and revised plan
+
+Evidence: audit-1 REOPEN (F1 major env var did not override a refused discovered downloadDir; F2-F9 minor). Fix-1 closed F1
+(auditor's own attack: 290/290 function-level, 14/14 live CLI x3, MCP 7/7, SDK 6/6, 67 hostile spellings identical; 6 hostile
+shapes x every set-but-unusable higher layer all refused; refused roots never merged or used as fallback). audit-2 REOPEN, minor
+only: N1 `~user` entry in downloadDir/allowedDownloadRoots/allowedUploadRoots echoed in full with newlines (20,335 chars, 3 raw
+lines) -- F4 incomplete; N2 a link ABOVE home pointing INTO home still loads the file above home (junction and symlink; doctor
+shows it) -- F3 incomplete; N3 unit tests do not guard the F1 conditional (mutants B1 blank/;; env counts as set, B10 upload-only
+env skips the download refusal survive all 848 unit tests); N4 GAP-350 text wrong about the MCP launch viewport argument;
+N5-N9 info.
+
+Root cause: each fix closed the case that was found and tested THAT case, not the property. (1) Echo capping was applied at the
+code sites that were seen (clip() on some messages), not at ONE choke point through which every file-sourced string must pass,
+so the next message path (`~user` in the toAbs catch) was missed. (2) The home boundary was fixed for one link direction
+(cwd junction inside HOME pointing out); the symmetric topology (link above HOME pointing in) was never generated, because the
+test cells were single hand-written topologies, not the cross product {logical cwd in/out of home} x {canonical cwd in/out of
+home} x {file location}. (3) The F1 conditional ("is a higher layer set?") has several definitions of "set" (empty, blank, ';;',
+other-surface env) and the unit matrix only varied the file, not the definition of unusable. Spec and design are sound; the
+tests lacked the generated cross products. Same lesson as FR2-07/FR2-11, but the residuals are small and local.
+
+Revised plan (fix cycle 2, narrow, then audit-3 which is the LAST standard audit):
+1. ONE choke point for file-sourced text: a single function (cap 64 chars / 200 for paths, single line, control characters
+   replaced) that every message built from file contents must call; add a generated test that runs the loader over a hostile
+   corpus (multi-line, 20 KB, `~user`, control chars, NUL, bidi) for EVERY key and asserts every produced error/warning/note is
+   capped and single-line (so a new message path cannot escape unnoticed), plus a source-level test that fails if a file-derived
+   value is interpolated into a message without the choke point.
+2. Home boundary as a property: walk the canonical cwd and refuse any config whose canonical location is outside the allowed
+   search span; generate the topology cross product {cwd logical in/out of home} x {cwd canonical in/out of home} x {file
+   at logical ancestor / canonical ancestor / above home / inside home} for both junctions and symlinks, with the oracle written
+   independently; fix N2 so a file above home is never loaded.
+3. F1 conditional: define "set" ONCE in one helper used by every layer and surface; extend the override matrix over {empty, blank,
+   ';;', '0', 'false', '[]', other-surface-only env} x {refused file} x {download, upload} so B1/B10/B11-type mutants fail unit
+   tests.
+4. Docs: correct GAP-350 (MCP browser.launch viewport 1e9 reaches Chrome; bound the zod schema if small, else state it plainly);
+   N7 doctor does load the file; N5 note the max-viewport behaviour; N8 announce when env overrides a refused root.
+No other behaviour changes. If audit-3 fails, FR2-14 is marked BLOCKED with the minor residuals documented and only the audited
+parts ship (decision with the user).
+

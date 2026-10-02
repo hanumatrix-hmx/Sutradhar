@@ -1,0 +1,60 @@
+{
+ "id": "B14",
+ "desc": "F3 re-check: inHome from the canonical cwd only (pre-fix)",
+ "file": "packages/capability-runtime/src/project-config.ts",
+ "shaBefore": "680c5e65276db856b0a696000e6f5cf46d09749f233d5dc19367d26602739cab",
+ "occurrences": 1,
+ "build": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    8 successful, 8 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "unit": {
+  "capability-runtime": {
+   "code": 1,
+   "tests": "1 failed | 392 passed (393)",
+   "failed": [
+    "tests/unit/project-config.spec.ts > fix-1 F3/F7: the home boundary holds under links and case (canonical comparison) > F3: a cwd that is a l"
+   ]
+  },
+  "cli": {
+   "code": 0,
+   "tests": "238 passed (238)",
+   "failed": []
+  },
+  "mcp-server": {
+   "code": 0,
+   "tests": "154 passed (154)",
+   "failed": []
+  },
+  "sutradhar": {
+   "code": 0,
+   "tests": "63 passed (63)",
+   "failed": []
+  }
+ },
+ "f1attack": {
+  "pass": 290,
+  "fail": 0,
+  "firstFails": []
+ },
+ "shaAfter": "680c5e65276db856b0a696000e6f5cf46d09749f233d5dc19367d26602739cab",
+ "restored": true,
+ "rebuild": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    8 successful, 8 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "caught": {
+  "unit": true,
+  "f1attack": false,
+  "liveCli": false,
+  "any": true
+ }
+}

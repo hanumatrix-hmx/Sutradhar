@@ -1,0 +1,58 @@
+{
+ "id": "B13",
+ "desc": "F7 re-check: home boundary by exact string equality of canonical paths (A8 re-spelled, type-valid)",
+ "file": "packages/capability-runtime/src/project-config.ts",
+ "shaBefore": "680c5e65276db856b0a696000e6f5cf46d09749f233d5dc19367d26602739cab",
+ "occurrences": 1,
+ "build": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    8 successful, 8 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "unit": {
+  "capability-runtime": {
+   "code": 0,
+   "tests": "393 passed (393)",
+   "failed": []
+  },
+  "cli": {
+   "code": 0,
+   "tests": "238 passed (238)",
+   "failed": []
+  },
+  "mcp-server": {
+   "code": 0,
+   "tests": "154 passed (154)",
+   "failed": []
+  },
+  "sutradhar": {
+   "code": 0,
+   "tests": "63 passed (63)",
+   "failed": []
+  }
+ },
+ "f1attack": {
+  "pass": 290,
+  "fail": 0,
+  "firstFails": []
+ },
+ "shaAfter": "680c5e65276db856b0a696000e6f5cf46d09749f233d5dc19367d26602739cab",
+ "restored": true,
+ "rebuild": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    8 successful, 8 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "caught": {
+  "unit": false,
+  "f1attack": false,
+  "liveCli": false,
+  "any": false
+ }
+}
