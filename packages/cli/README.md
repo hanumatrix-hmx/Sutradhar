@@ -144,8 +144,42 @@ Run `sutradhar` with no arguments for this same list straight from the binary.
 |---|---|---|
 | `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` | `<OS temp>/sutradhar-downloads` | Directories `download` may write into, separated by `;` (Windows) or `:` (elsewhere); absolute paths, or `~` for the home directory. Replaces the default; the first entry becomes the destination when `download`'s `[dir]` is omitted. The directory named on `download <ref> <dir>` itself is always allowed too, for that one invocation only — it is not written to session state and does not widen later commands. |
 | `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` | _(unset — unrestricted)_ | If set, `upload` may only read files under these directories (off by default). |
+| `SUTRADHAR_ALLOWED_DOMAINS` | _(unset — any domain)_ | Comma-separated domains navigation is limited to (and their subdomains); the same as `--allowlist-domains` on every command. Overridden by the flag; overrides `.sutradhar.json`. |
+| `SUTRADHAR_CONFIG` | _(unset — search for `.sutradhar.json`)_ | An absolute path loads exactly that project config file; `none` ignores project config. See "Project config" below. |
 | `SUTRADHAR_CLI_STATE_DIR` | per-project-directory hash | Where session state (`state.json`) is stored — see above. |
 | `SUTRADHAR_CLI_DEADLINE_MS` | `300000` | Process watchdog: a command still running after this many milliseconds is stopped with an error message. `wait <ref> <timeoutMs>` extends its own deadline to at least 3 x `timeoutMs` + 30 s. |
+
+## Project config (`.sutradhar.json`)
+
+Put a `.sutradhar.json` in a project directory and every command run from that directory or a subdirectory picks it
+up (the nearest file wins; the search stops at a `.git` boundary or your home directory and never reads the
+filesystem root). Example:
+
+```json
+{
+  "$schema": "urn:sutradhar:config:1",
+  "allowedDomains": ["example.com", "localhost"],
+  "downloadDir": "./downloads",
+  "allowedUploadRoots": ["./fixtures"],
+  "dialog": { "mode": "dismiss" },
+  "viewport": { "width": 1280, "height": 800 },
+  "idleTimeoutMs": 1800000
+}
+```
+
+Precedence for every key is **flag > env var > config file > built-in default**: `--allowlist-domains` beats
+`SUTRADHAR_ALLOWED_DOMAINS` beats `allowedDomains`; `--viewport` (and the viewport it made sticky) beats `viewport`;
+`--dialog` (and the policy it made sticky, including `--dialog report`) beats `dialog`;
+`SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`/`SUTRADHAR_ALLOWED_UPLOAD_ROOTS` beat the file's roots. Paths in the file are
+relative to the file, not to your shell's directory (the `[dir]` of `download <ref> [dir]` is still relative to your
+shell). `idleTimeoutMs` is ignored by the CLI. The file is re-read on every command and nothing from it is written
+to session state.
+
+`sutradhar doctor` prints the file in use and the source of every key. Unknown keys print `Warning:`; an invalid
+file prints `Error:` and exits 1 before Chrome is touched (`doctor`, `close`, `profile` and `dialog` never load it,
+so a broken file cannot block cleanup). `SUTRADHAR_CONFIG=none` ignores it. A file found by searching upward is
+untrusted: its download directory must stay inside its own folder (and outside `.git`), and a `dialog.mode "accept"`
+or file-supplied download directory is announced with a `Note:` on every command. Details: `docs/project-config.md`.
 
 ## Native dialogs (alert / confirm / prompt / beforeunload)
 

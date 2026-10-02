@@ -110,6 +110,16 @@ Use that `[#id]` as the selector for `page.click('4')` or `page.type('4', '...')
 | `allowedDownloadRoots` | `readonly string[]` | `[<OS temp>/sutradhar-downloads]` | Directories `page.download()` may write into. Replaces the default; the first entry becomes the destination when `downloadDir` is omitted. The SDK does **not** read `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` or any other `SUTRADHAR_ALLOWED_*` env var — pass this option explicitly. |
 | `allowedUploadRoots` | `readonly string[]` | — (unrestricted) | If set, `page.uploadFile()` may only read files under these directories. |
 | `viewport` | `{width, height}` | — | Initial CDP viewport for the first tab. |
+| `configFile` | `string` | — | Load this `.sutradhar.json` (path relative to `process.cwd()`). Trusted like an option. Mutually exclusive with `discoverConfig`. |
+| `discoverConfig` | `boolean` | `false` | Search upward from `process.cwd()` for a `.sutradhar.json` (nearest wins; stops at a `.git` boundary or your home directory). The SDK reads no config unless you ask. |
+| `idleTimeoutMs` | `number` | — (never) | Close the session after this many ms idle (`0` = never). |
+| `dialogPolicy` | `{mode, promptText?}` | `auto` | `auto`, `accept` or `dismiss`. `report` throws a `TypeError` (the SDK has no way to handle a pending dialog yet). |
+
+**Project config.** With `configFile`/`discoverConfig`, `.sutradhar.json` supplies defaults for `allowedDomains`,
+`downloadDir`/`allowedDownloadRoots`, `allowedUploadRoots`, `dialog`, `idleTimeoutMs` and `viewport`. Precedence is
+**option you pass > config file > default**; the SDK never reads `SUTRADHAR_*` environment variables. Paths in the
+file are relative to the file. A `dialog.mode "report"` in the file is mapped to `auto` with a `console.warn`. A
+discovered file's download roots must stay inside its own directory. Example and full rules: `docs/project-config.md`.
 
 Throws if no real browser is available. Set `CHROME_PATH` to point at a Chrome/Edge executable
 if auto-detection fails.

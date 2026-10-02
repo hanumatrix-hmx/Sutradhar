@@ -218,7 +218,18 @@ All config is via environment variables (matching the Sutradhar server):
 | `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` | _(unset — unrestricted)_ | If set, `browser.upload_file`/`browser.upload_file_via_trigger` may only read files under these directories. Setting this turns the restriction on. |
 | `SUTRADHAR_ALLOWED_DOMAINS` | _(unset — any domain)_ | Comma-separated domains (and their subdomains) that `browser.navigate`/`launch`/`audit`/`new_tab` may visit. Does not intercept page-initiated navigation from a clicked link. |
 | `SUTRADHAR_RESTRICT_NAVIGATION_TO_LOCAL` | _(unset)_ | Set to `1` to reject navigation to anything that isn't localhost, a private/loopback IP, or a `file:`/`about:`/`data:` URL. |
-| `SUTRADHAR_IDLE_TIMEOUT_MS` | `1800000` (30 min) | Auto-close a session after this long with no observed activity. |
+| `SUTRADHAR_IDLE_TIMEOUT_MS` | `1800000` (30 min) | Auto-close a session after this long with no observed activity. `0` disables; otherwise an integer from 1000 to 2147483647. An invalid value now fails startup instead of silently disabling the reaper. |
+| `SUTRADHAR_CONFIG` | _(unset — search for `.sutradhar.json`)_ | An absolute path loads exactly that project config file; `none` ignores project config. |
+
+### Project config (`.sutradhar.json`)
+
+At startup the server searches from its working directory upward (nearest file wins; stops at a `.git` boundary or
+the home directory; never the filesystem root) and prints one stderr line naming the file it loaded, or where the
+search stopped. Precedence: **option > env var > config file > default**. A running server keeps the values it read at
+startup. `browser.launch`'s own `viewport` argument beats the file's `viewport`. An invalid file exits 1 with
+`[sutradhar-mcp] fatal:`. A discovered file's download roots must stay inside its own directory. Keys, example and
+trust rules: `docs/project-config.md`. `createSutradharServer({ projectConfig })` takes an already-loaded config;
+it never searches the disk itself.
 
 ## Known limitations
 

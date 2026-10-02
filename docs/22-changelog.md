@@ -23,6 +23,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Added
+- **`.sutradhar.json` project config (FR2-14).** Per-project defaults for the CLI, the MCP server and (opt-in) the
+  SDK: `allowedDomains`, `downloadDir`, `allowedDownloadRoots`, `allowedUploadRoots`, `dialog`, `idleTimeoutMs`,
+  `viewport`. Searched from the current directory upward (nearest file wins; stops at a `.git` boundary or your home
+  directory; the filesystem root is never read). **Precedence: CLI flag > env var > config file > default.** Unknown keys
+  warn; anything invalid (including an empty array, a duplicate key, a URL where a domain belongs) stops the command
+  before Chrome is touched. A file found by searching upward is treated as untrusted: its download directory must stay
+  inside its own folder and outside `.git`, a `dialog.mode "accept"` is announced, and on POSIX a file owned by another
+  user is refused. `SUTRADHAR_CONFIG=<absolute path>` loads one file explicitly, `SUTRADHAR_CONFIG=none` ignores it;
+  `sutradhar doctor` shows the file and every key's source; the MCP server prints which file it loaded. The SDK reads
+  a config only with `launch({discoverConfig:true})` or `launch({configFile})`, and gains `idleTimeoutMs` and
+  `dialogPolicy` options. Reference and example: `docs/project-config.md`. Details:
+  `.ai/loop/field-report-2/evidence/FR2-14/changelog-fragment.md`.
+
 - **One verification contract (FR2-07).** Every MCP, CLI and SDK action result carries
   `verification: {verified, confidence, reason, evidence}`, with real post-condition checks for
   `press_key`, `focus`, `touch_tap`, `download_file` (file size on disk), `wait_for_selector`,
@@ -55,6 +68,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   `browser.*` tools plus `agent.runGoal` (was 71). Details: `.ai/loop/field-report-2/evidence/FR2-08/changelog-fragment.md`.
 
 ### Changed
+- **`SUTRADHAR_IDLE_TIMEOUT_MS` is validated (FR2-14).** `abc`, `-1` and other bad values used to become `NaN` and
+  silently disable the idle reaper (leaking Chrome). They now fail MCP startup naming the variable; valid values are
+  `0` (never) or an integer from 1000 to 2147483647.
+- **The CLI now honors `SUTRADHAR_ALLOWED_DOMAINS` (FR2-14)**, as the MCP server always did. A user who exported it for
+  MCP will now also be restricted in the CLI (narrower, never wider).
+- **An empty `allowedDomains` option no longer suppresses `SUTRADHAR_ALLOWED_DOMAINS` (FR2-14)** in
+  `createSutradharServer`; an empty list counts as "not set" like the roots options.
+- **CLI: `--allowlist-domains` with no usable domain is an error (FR2-14)** (it used to mean "unrestricted").
 - **`settle` now has a hard upper bound (FR2-08).** It previously had none on the Node side: a `click` with
   `settle:true` that opened an `alert` blocked until the tab's 30 s auto-dismiss (measured: see the evidence).
   It now always returns by `timeoutMs + 500 ms`, and still never fails the action.
