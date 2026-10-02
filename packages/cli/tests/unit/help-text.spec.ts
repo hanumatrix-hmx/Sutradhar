@@ -105,3 +105,12 @@ describe('@sutradhar/cli --help text (FR2-14 project config)', () => {
     }
   });
 });
+
+describe('@sutradhar/cli --help text (FR2-14 fix-1)', () => {
+  it('F6: documents that an empty --allowlist-domains is an error, not "unrestricted"', () => {
+    expect(helpText).toContain('An empty value ("--allowlist-domains \'\'") is an error, not "unrestricted"');
+  });
+  it('F8: documents the --viewport bounds', () => {
+    expect(helpText).toContain('each side 1..10000000');
+  });
+});

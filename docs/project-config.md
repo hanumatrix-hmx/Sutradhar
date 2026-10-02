@@ -23,19 +23,25 @@ repository copy).
 
 | Key | Type | Meaning |
 |---|---|---|
-| `allowedDomains` | non-empty array of bare domains | Block navigation to hosts outside these domains (subdomains included). No scheme, port, path or wildcard. |
+| `allowedDomains` | non-empty array of bare domains | Block navigation to hosts outside these domains (subdomains included). No scheme, port, path or wildcard. Matching is a whole-label suffix match, so a single label such as `"com"` or `"1"` allows every host ending in `.com` / `.1`; it only ever narrows. |
 | `downloadDir` | string | Default download destination (always allowed). Replaces the built-in `<OS temp>/sutradhar-downloads`. |
 | `allowedDownloadRoots` | non-empty array of paths | Directories downloads may be written to (replaces the default root). `downloadDir` is added first. |
 | `allowedUploadRoots` | non-empty array of paths | If set, uploads may only read files under these directories. Unset means unrestricted. |
 | `dialog` | `{mode, promptText?}` | Default native-dialog policy. `mode`: `auto`, `report`, `accept`, `dismiss`. `promptText` only with `accept`. The CLI treats `auto` as `report`; the SDK treats `report` as `auto`. |
 | `idleTimeoutMs` | integer | MCP server and SDK: close a session after this many ms idle. `0` = never, otherwise 1000..2147483647. Ignored by the CLI (each command is its own process). |
-| `viewport` | `{width, height}` | Default viewport for new sessions (positive integers). |
+| `viewport` | `{width, height}` | Default viewport for new sessions (integers 1..10000000, Chrome's own limit; the `--viewport` flag has the same bounds and is rejected before any Chrome starts). |
 
 ## Precedence
 
 **CLI flag > env var > config file > built-in default.** One rule, for every key. The first layer that has a value
-wins as a whole (nothing is merged: a `--viewport` flag never takes only its width). An empty array counts as "not
-set" at the flag/option/env layers; in the file it is an error (see below).
+wins as a whole (nothing is merged: a `--viewport` flag never takes only its width). "Not set" means `undefined`,
+`null` (JS and JSON-fed callers), an empty list, or an unset/blank env var: the next layer down applies. An explicit
+`0` (for example `idleTimeoutMs: 0`) or `false` IS a value and wins. In the file an empty array is an error (see below).
+A higher layer also wins over a discovered file that would otherwise be refused (see "Trust"): the refusal only applies
+when the file is the layer that would be used.
+
+**Breaking change:** on the CLI an empty `--allowlist-domains ""` (or only blanks and commas) is now an **error**
+(`--allowlist-domains needs at least one domain`); it used to mean "unrestricted". Omit the flag for no restriction.
 
 | Key | CLI | MCP | SDK |
 |---|---|---|---|
@@ -71,8 +77,13 @@ come from the file are re-read on every command, so editing the file takes effec
 - **Everything else stops the command before Chrome is touched:** malformed JSON (comments are not allowed), a
   duplicate key, a wrong type or range, an **empty array** (`remove the key for no restriction`), a domain written as a
   URL or with a wildcard/port, a file over 64 KiB, a directory or broken/looping symlink where the file should be, a
-  UTF-16 or invalid-UTF-8 file. A UTF-8 byte-order mark is accepted. Error messages never repeat values from your
-  file (only key names).
+  UTF-16 or invalid-UTF-8 file. A UTF-8 byte-order mark is accepted.
+- **What messages echo from your file, exactly.** Invalid-JSON errors are redacted (never any file text). Everything
+  else may echo, single-line (control characters become `?`) and capped: an unknown key **name**, an
+  `allowedDomains[i]` entry, a `downloadDir`/root entry, a duplicate key name and an `idleTimeoutMs` string, each at
+  most 64 characters then `...`, and the resolved path of a refused download entry (at most 200 characters). The
+  free text `dialog.promptText` and any value under an unknown key are **never** echoed. Do not put secrets in a key
+  name or in these values.
 - `doctor`, `close`, `profile` and `dialog` never load the file, so a broken file cannot stop you cleaning up.
 
 ## Trust: a discovered file is treated as untrusted project content
@@ -82,10 +93,14 @@ may only **narrow** access or change cosmetic settings, except where noted:
 
 - `allowedDomains`, `allowedUploadRoots`, `viewport`, `idleTimeoutMs` are honored as written.
 - `downloadDir` / `allowedDownloadRoots` must resolve (symlinks and junctions followed) **inside the config file's own
-  directory** and outside any `.git` directory. Otherwise it is an error naming both ways out:
-  `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`, or loading the file explicitly with `SUTRADHAR_CONFIG`.
+  directory** and outside any `.git` directory. Otherwise, **if the file would supply the download roots**, the
+  command fails, naming the ways out. All of them work: `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` (CLI and MCP) or the
+  `allowedDownloadRoots` option (MCP and SDK) replace the file's download roots, so the refusal does not apply; on the
+  CLI `download <ref> <dir>` is an explicit grant that does the same for that command; or load the file explicitly
+  (`SUTRADHAR_CONFIG=<file>`, SDK `configFile`). The check is point-in-time (see SECURITY.md).
 - `dialog.mode: "accept"` is honored, never silently: the CLI prints a `Note:` on every command where it is in
-  effect and MCP warns at startup. A `--dialog` flag overrides it.
+  effect, MCP warns at startup and the SDK `console.warn`s at `launch()` (only for a discovered file). A `--dialog`
+  flag (or an option) overrides it.
 - On POSIX a discovered file owned by another user, or writable by group/others, is refused. Windows cannot check
   ownership from Node; see SECURITY.md.
 - A file loaded **explicitly** (`SUTRADHAR_CONFIG`, SDK `configFile`) is trusted like an environment variable.

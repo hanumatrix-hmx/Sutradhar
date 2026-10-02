@@ -1692,7 +1692,7 @@ async function main() {
     );
   }
   if (viewportFlagGivenButInvalid) {
-    printErrorAndExit('--viewport must be WIDTHxHEIGHT (e.g. --viewport 390x844)');
+    printErrorAndExit('--viewport must be WIDTHxHEIGHT with each side 1..10000000 (e.g. --viewport 390x844)');
   }
   if (allowlistDomainsGivenButEmpty) {
     printErrorAndExit(
@@ -1930,7 +1930,7 @@ Flags:
                         starting a new session)
   --headed             Launch visibly instead of headless (only applies to "nav" when
                         starting a new session)
-  --viewport <WxH>      Set the CDP viewport (e.g. --viewport 390x844) and, when --headed, the
+  --viewport <WxH>      Set the CDP viewport (e.g. --viewport 390x844; each side 1..10000000) and, when --headed, the
                         real OS window's size too. Applies at session creation and persists
                         across later commands until a new --viewport is given
   --json                "snap" additionally prints structured per-element data as JSON;
@@ -1976,6 +1976,8 @@ Flags:
                         .sutradhar.json / SUTRADHAR_ALLOWED_DOMAINS to apply it to every command). Does not intercept
                         page-initiated navigation from a clicked link (browser-internal, not
                         routed through this check) — see .ai/known-problems.md PROB-018.
+                        An empty value ("--allowlist-domains ''") is an error, not "unrestricted"
+                        (omit the flag for no restriction).
   --dialog <accept|dismiss|report>
                         Default policy for native dialogs in this session; persisted until changed.
                         report (the default) leaves alert/confirm/prompt open and prints

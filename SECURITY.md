@@ -68,7 +68,9 @@ A `.sutradhar.json` found by searching upward from the working directory is **pr
   An empty array is an **error** (it would otherwise read as "no restriction"), as is any malformed value.
 - `downloadDir`/`allowedDownloadRoots` from a discovered file must resolve, through symlinks and junctions (the
   FR2-05 canonicalisation), inside the file's own directory and outside any `.git` directory; otherwise the command
-  fails, naming `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` and `SUTRADHAR_CONFIG` as the explicit ways to allow it.
+  fails (when that file is the layer that would supply the roots; an env var or option that sets the roots replaces
+  the file's and so wins), naming `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`, the `allowedDownloadRoots` option and
+  `SUTRADHAR_CONFIG` as the explicit ways to allow it.
 - `dialog.mode "accept"` from a discovered file is honored but announced (a CLI `Note:` on every command, an MCP
   startup warning); a `--dialog` flag overrides it. `idleTimeoutMs: 0` can disable the idle reaper (a resource
   issue, not a sandbox escape; the env var outranks it).
@@ -77,8 +79,11 @@ A `.sutradhar.json` found by searching upward from the working directory is **pr
 - **Residual risks, stated plainly.** Windows: Node cannot read file owners, so on a directory outside your home and
   outside any repository (for example `E:\work\scratch`) an intermediate directory such as `E:\work` is searched and
   a file there is not ownership-checked (a Windows ACL check is a logged follow-up). The containment check is
-  point-in-time: a link swapped in after the file was loaded is not re-examined by the config loader (the runtime
-  re-checks every download itself). The between-command dialog helper applies only a flag-set policy, so a
+  point-in-time: a link, or a whole root directory replaced by a junction/symlink, after the file was loaded is not re-examined: the
+  runtime re-checks each download against the resolved root list, but it canonicalises the root too, so a root that
+  was swapped for a link to somewhere else still passes (decision fix-1/F5: documented, not re-validated at use time;
+  an MCP server holds this window for its lifetime, a CLI command for one command, and exploiting it needs write
+  access to the tree while it runs). The between-command dialog helper applies only a flag-set policy, so a
   config-supplied `accept`/`dismiss` takes effect at the next command, not while the CLI is idle. A typo in a
   restrictive key (`allowedDomian`) only produces a warning, by decision, so read the warnings.
 - `SUTRADHAR_CONFIG=none` is an unconditional opt-out. `sutradhar doctor` and the MCP startup line show which file is

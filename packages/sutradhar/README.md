@@ -119,7 +119,7 @@ Use that `[#id]` as the selector for `page.click('4')` or `page.type('4', '...')
 `downloadDir`/`allowedDownloadRoots`, `allowedUploadRoots`, `dialog`, `idleTimeoutMs` and `viewport`. Precedence is
 **option you pass > config file > default**; the SDK never reads `SUTRADHAR_*` environment variables. Paths in the
 file are relative to the file. A `dialog.mode "report"` in the file is mapped to `auto` with a `console.warn`. A
-discovered file's download roots must stay inside its own directory. Example and full rules: `docs/project-config.md`.
+discovered file's download roots must stay inside its own directory unless you pass `allowedDownloadRoots` (which replaces them), and a discovered `dialog.mode "accept"` is announced with a `console.warn`. Example and full rules: `docs/project-config.md`.
 
 Throws if no real browser is available. Set `CHROME_PATH` to point at a Chrome/Edge executable
 if auto-detection fails.

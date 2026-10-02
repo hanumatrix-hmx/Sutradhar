@@ -227,7 +227,7 @@ At startup the server searches from its working directory upward (nearest file w
 the home directory; never the filesystem root) and prints one stderr line naming the file it loaded, or where the
 search stopped. Precedence: **option > env var > config file > default**. A running server keeps the values it read at
 startup. `browser.launch`'s own `viewport` argument beats the file's `viewport`. An invalid file exits 1 with
-`[sutradhar-mcp] fatal:`. A discovered file's download roots must stay inside its own directory. Keys, example and
+`[sutradhar-mcp] fatal:`. A discovered file's download roots must stay inside its own directory unless `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` or the `allowedDownloadRoots` option replaces them. Keys, example and
 trust rules: `docs/project-config.md`. `createSutradharServer({ projectConfig })` takes an already-loaded config;
 it never searches the disk itself.
 
