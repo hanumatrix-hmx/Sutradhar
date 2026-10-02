@@ -188,7 +188,7 @@ const mutants = [
     edits: [[`if (sameFold(here, home)) return { searched, stoppedAt: 'home', stopDir: dir };`, `if (sameFold(here, home) && dir === homedir) return { searched, stoppedAt: 'home', stopDir: dir };`]],
     unit: { pkg: CR, files: ['tests/unit/project-config.spec.ts'] }, tsc: CR },
   { id: 'X9', desc: 'F3 (A8-style): canonical home equality replaced by a literal compare (a home reached through a link is not the boundary)', file: PC,
-    edits: [[`if (sameFold(here, home)) return { searched, stoppedAt: 'home', stopDir: dir };`, `if (dir === homedir) return { searched, stoppedAt: 'home', stopDir: dir };`]],
+    edits: [[`if (sameFold(here, home)) return { searched, stoppedAt: 'home', stopDir: dir };`, `if (sameFold(dir, homedir) || here === 'never') return { searched, stoppedAt: 'home', stopDir: dir };`]],
     unit: { pkg: CR, files: ['tests/unit/project-config.spec.ts'] }, tsc: CR },
   { id: 'X11', desc: 'F3: the literal cwd no longer counts as "inside home" (a junction cwd inside home walks past it)', file: PC,
     edits: [[` || isPathWithinRoot(dir, literalHome, platform);`, `;`]],
