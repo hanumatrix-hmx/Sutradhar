@@ -10,6 +10,7 @@
 import os from 'node:os';
 import path from 'node:path';
 import { defaultDownloadRoot } from '@sutradhar/browser';
+import { echo } from './echo.js';
 
 /** Env var naming the directories `browser.download_file` may write into (path.delimiter-separated). */
 export const DOWNLOAD_ROOTS_ENV = 'SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS';
@@ -89,7 +90,7 @@ export function resolveConfigPath(
   platform: NodeJS.Platform = process.platform,
 ): string {
   const e = expandHome(entry, homedir, platform);
-  if (e === undefined) throw new Error(`"${entry}": ~user is not supported (use ~ or an explicit path)`);
+  if (e === undefined) throw new Error(`"${echo(entry)}": ~user is not supported (use ~ or an explicit path)`);
   return path.resolve(baseDir, e);
 }
 

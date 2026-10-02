@@ -25,6 +25,9 @@ import path from 'node:path';
 import { canonicalizePath, findContainingRoot, isPathWithinRoot, type DialogPolicy } from '@sutradhar/browser';
 import { expandHome, resolveConfigPath } from './fs-roots.js';
 import { VIEWPORT_MAX } from './config-precedence.js';
+import { echo, echoPath, echoValue, ECHO_MAX } from './echo.js';
+
+export { ECHO_MAX };
 
 export const PROJECT_CONFIG_FILE_NAME = '.sutradhar.json';
 export const PROJECT_CONFIG_ENV = 'SUTRADHAR_CONFIG';
@@ -136,29 +139,6 @@ function bad(file: string, problem: string): ProjectConfigError {
   return new ProjectConfigError(file, `Invalid project config ${file}: ${problem}`);
 }
 
-/** Longest piece of file content any message echoes (key names, string values, entries). */
-export const ECHO_MAX = 64;
-/** A resolved path derived from a file entry may be longer, since its tail is what matters. */
-const ECHO_PATH_MAX = 200;
-
-/** Single-line, length-capped echo of text that came from the file: control characters become `?`. */
-function clip(s: string, max: number = ECHO_MAX): string {
-  // eslint-disable-next-line no-control-regex -- stripping control characters is the point
-  const t = s.replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g, '?');
-  return t.length > max ? `${t.slice(0, max)}...` : t;
-}
-
-/** Short, single-line echo of a scalar from the file for an error message (capped at {@link ECHO_MAX}). */
-function show(v: unknown): string {
-  let s: string;
-  try {
-    s = typeof v === 'string' ? JSON.stringify(v) : String(JSON.stringify(v));
-  } catch {
-    s = '<unprintable>';
-  }
-  return clip(s);
-}
-
 // ───────────────────────── suggestions ─────────────────────────
 
 /** Optimal-string-alignment distance: Levenshtein where one adjacent transposition costs 1, so the
@@ -252,11 +232,11 @@ export function parseProjectConfigText(text: string, file: string): unknown {
     let extra = '';
     if (/^\s*\/\/|\/\*/m.test(t)) extra = '; comments are not allowed';
     else if (t.includes('\u0000')) extra = '; the file contains NUL characters (is it UTF-16? save it as UTF-8)';
-    throw bad(file, `is not valid JSON (${sanitizeJsonError((e as Error).message)}${extra})`);
+    throw bad(file, `is not valid JSON (${echoPath(sanitizeJsonError((e as Error).message))}${extra})`);
   }
   const dup = findDuplicateKey(t);
   if (dup !== undefined) {
-    throw bad(file, `is not valid: duplicate key ${show(dup)} (a JSON object may not repeat a key; the last one would silently win)`);
+    throw bad(file, `is not valid: duplicate key ${echoValue(dup)} (a JSON object may not repeat a key; the last one would silently win)`);
   }
   return data;
 }
@@ -299,7 +279,7 @@ export function validateProjectConfig(data: unknown, file: string): { values: Pr
   const warnings: string[] = [];
   const warnUnknown = (prefix: string, key: string, known: readonly string[]): void => {
     const s = suggestKey(key, known);
-    warnings.push(`${file}: unknown key "${prefix}${clip(key)}" ignored${s ? ` (did you mean "${prefix}${s}"?)` : ''}`);
+    warnings.push(`${file}: unknown key "${prefix}${echo(key)}" ignored${s ? ` (did you mean "${prefix}${s}"?)` : ''}`);
   };
   for (const k of Object.keys(data)) {
     if (!PROJECT_CONFIG_KNOWN_KEYS.includes(k)) warnUnknown('', k, PROJECT_CONFIG_KNOWN_KEYS);
@@ -324,9 +304,10 @@ export function validateProjectConfig(data: unknown, file: string): { values: Pr
     list.forEach((d, i) => {
       if (!DOMAIN_RE.test(d)) {
         const sug = domainSuggestion(d);
+        const hint = sug !== undefined && sug.length <= ECHO_MAX ? `write "${echo(sug)}"; ` : '';
         throw bad(
           file,
-          `allowedDomains[${i}] ${show(d)} is not a bare domain (${sug ? `write "${sug}"; ` : ''}subdomains are included automatically; no scheme, port, path or wildcard)`,
+          `allowedDomains[${i}] ${echoValue(d)} is not a bare domain (${hint}subdomains are included automatically; no scheme, port, path or wildcard)`,
         );
       }
     });
@@ -355,7 +336,7 @@ export function validateProjectConfig(data: unknown, file: string): { values: Pr
     if (typeof v !== 'number' || !Number.isInteger(v) || !(v === 0 || (v >= 1000 && v <= 2147483647))) {
       throw bad(
         file,
-        `idleTimeoutMs must be 0 (never close idle sessions) or an integer number of milliseconds between 1000 and 2147483647; got ${show(v)}`,
+        `idleTimeoutMs must be 0 (never close idle sessions) or an integer number of milliseconds between 1000 and 2147483647; got ${echoValue(v)}`,
       );
     }
     values.idleTimeoutMs = v;
@@ -597,8 +578,9 @@ export async function loadProjectConfig(i: {
     if (entry.includes('\u0000')) throw bad(file, `${label} contains a NUL character`);
     try {
       return resolveConfigPath(entry, baseDir, homedir, platform);
-    } catch (e) {
-      throw bad(file, `${label} ${(e as Error).message}`);
+    } catch {
+      // Never forward the underlying message: it echoes the entry. `~user` is the only way this throws.
+      throw bad(file, `${label} "${echo(entry)}": ~user is not supported (use ~ or an explicit path)`);
     }
   };
   const dlEntries: Array<{ label: string; entry: string; abs: string }> = [];
@@ -634,19 +616,19 @@ export async function loadProjectConfig(i: {
       try {
         c = await canonicalizePath(d.abs);
       } catch (e) {
-        downloadRefusal = bad(file, `${d.label} "${clip(d.entry)}" cannot be checked (${clip((e as Error).message)}); refusing it. Fix or remove it. ${ESCAPE}`).message;
+        downloadRefusal = bad(file, `${d.label} "${echo(d.entry)}" cannot be checked (${echo((e as Error).message)}); refusing it. Fix or remove it. ${ESCAPE}`).message;
         break;
       }
       if ((await findContainingRoot(d.abs, [baseDir])) === undefined) {
         downloadRefusal = bad(
           file,
-          `${d.label} "${clip(d.entry)}" resolves to "${clip(c, ECHO_PATH_MAX)}", outside this config's directory "${base}". A project config found by searching upward may only allow downloads inside its own directory tree. ${ESCAPE}`,
+          `${d.label} "${echo(d.entry)}" resolves to "${echoPath(c)}", outside this config's directory "${base}". A project config found by searching upward may only allow downloads inside its own directory tree. ${ESCAPE}`,
         ).message;
         break;
       }
       const rel = c.slice(base.length).split(/[\\/]+/).filter((s) => s.length > 0);
       if (rel.some((s) => foldAscii(s) === '.git')) {
-        downloadRefusal = bad(file, `${d.label} "${clip(d.entry)}" resolves to "${clip(c, ECHO_PATH_MAX)}", which is inside a .git directory; downloads there could plant git hooks. Choose another directory. ${ESCAPE}`).message;
+        downloadRefusal = bad(file, `${d.label} "${echo(d.entry)}" resolves to "${echoPath(c)}", which is inside a .git directory; downloads there could plant git hooks. Choose another directory. ${ESCAPE}`).message;
         break;
       }
     }
