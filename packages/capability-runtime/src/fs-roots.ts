@@ -11,6 +11,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { defaultDownloadRoot } from '@sutradhar/browser';
 import { echo } from './echo.js';
+import { isLayerSet } from './layer-set.js';
 
 /** Env var naming the directories `browser.download_file` may write into (path.delimiter-separated). */
 export const DOWNLOAD_ROOTS_ENV = 'SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS';
@@ -136,7 +137,7 @@ export function parseRootsEnv(
   return { roots: entries, warnings };
 }
 
-/** An empty `options` array counts as unset, matching `?? default` semantics elsewhere. */
+/** What counts as "set" for every layer is defined ONCE in `layer-set.ts` (`isLayerSet`). */
 export function resolveFsRoots(input: ResolveFsRootsInput): ResolvedFsRoots {
   const platform = input.platform ?? process.platform;
   const homedir = input.homedir ?? os.homedir();
@@ -145,7 +146,7 @@ export function resolveFsRoots(input: ResolveFsRootsInput): ResolvedFsRoots {
   // Downloads.
   let allowedDownloadRoots: string[];
   let downloadSource: RootSource;
-  if (input.options?.allowedDownloadRoots?.length) {
+  if (isLayerSet(input.options?.allowedDownloadRoots)) {
     allowedDownloadRoots = input.options.allowedDownloadRoots.map((r) => path.resolve(r));
     downloadSource = 'option';
   } else {
@@ -153,10 +154,10 @@ export function resolveFsRoots(input: ResolveFsRootsInput): ResolvedFsRoots {
       ? parseRootsEnv(DOWNLOAD_ROOTS_ENV, input.env[DOWNLOAD_ROOTS_ENV], platform, homedir)
       : { roots: undefined, warnings: [] };
     warnings.push(...envResult.warnings);
-    if (envResult.roots) {
+    if (isLayerSet(envResult.roots)) {
       allowedDownloadRoots = envResult.roots;
       downloadSource = 'env';
-    } else if (input.config?.allowedDownloadRoots?.length) {
+    } else if (isLayerSet(input.config?.allowedDownloadRoots)) {
       if (input.config.downloadRefusal !== undefined) {
         const err = new Error(input.config.downloadRefusal);
         err.name = 'ProjectConfigError';
@@ -175,7 +176,7 @@ export function resolveFsRoots(input: ResolveFsRootsInput): ResolvedFsRoots {
   // Uploads.
   let allowedUploadRoots: string[] | undefined;
   let uploadSource: RootSource | 'unrestricted';
-  if (input.options?.allowedUploadRoots?.length) {
+  if (isLayerSet(input.options?.allowedUploadRoots)) {
     allowedUploadRoots = input.options.allowedUploadRoots.map((r) => path.resolve(r));
     uploadSource = 'option';
   } else {
@@ -183,10 +184,10 @@ export function resolveFsRoots(input: ResolveFsRootsInput): ResolvedFsRoots {
       ? parseRootsEnv(UPLOAD_ROOTS_ENV, input.env[UPLOAD_ROOTS_ENV], platform, homedir)
       : { roots: undefined, warnings: [] };
     warnings.push(...envResult.warnings);
-    if (envResult.roots) {
+    if (isLayerSet(envResult.roots)) {
       allowedUploadRoots = envResult.roots;
       uploadSource = 'env';
-    } else if (input.config?.allowedUploadRoots?.length) {
+    } else if (isLayerSet(input.config?.allowedUploadRoots)) {
       allowedUploadRoots = input.config.allowedUploadRoots.map((r) =>
         resolveConfigPath(r, input.config!.baseDir, homedir, platform),
       );

@@ -236,3 +236,97 @@ describe('FR2-14 fix-1: a layer above the file always wins (generated override m
     expect(resolveIdleTimeoutMs({ option: null as unknown as undefined, config: cfg, fallback: 1 }).source).toBe('config');
   });
 });
+
+// ───────────────────────── FR2-14 fix-2 (N3): what counts as "set" ─────────────────────────
+//
+// Audit-2 mutants B1 (a blank or `;;` env counts as set), B10 (an other-surface env counts) and B12
+// (a blank env becomes the default roots) survived all unit tests, because the matrix above varied
+// the FILE but never what makes a HIGHER layer count as set. "Set" is now defined once
+// (`layer-set.ts`) and this matrix varies the env value itself:
+//   {empty, blank, ';;', '; ;', '0', 'false', '[]', other-surface-only} x {refused file, ok file} x {download, upload}
+// Oracle: a table written from the definition (unset-like env -> the file layer applies, so a refused
+// file's refusal is raised; a value the env parser rejects -> ALWAYS an error, never a silent
+// fall-through to a weaker layer; a valid env of the OTHER surface changes nothing).
+describe('FR2-14 fix-2 N3: one definition of "set" - generated over env values x file x surface', () => {
+  const D = path.delimiter;
+  type EnvKind = { name: string; v: string | undefined; kind: 'unset-like' | 'rejected' };
+  const envKinds: EnvKind[] = [
+    { name: 'empty', v: '', kind: 'unset-like' },
+    { name: 'blank', v: '   ', kind: 'unset-like' },
+    { name: 'delimiters-only', v: `${D}${D}`, kind: 'unset-like' },
+    { name: 'blank-delimited', v: ` ${D} `, kind: 'unset-like' },
+    { name: '0', v: '0', kind: 'rejected' },
+    { name: 'false', v: 'false', kind: 'rejected' },
+    { name: '[]', v: '[]', kind: 'rejected' },
+    { name: 'other-surface-only', v: undefined, kind: 'unset-like' },
+  ];
+  const fileKinds = {
+    refused: { downloadDir: '../out', allowedUploadRoots: ['./up'] },
+    ok: { downloadDir: './dl', allowedUploadRoots: ['./up'] },
+  } as const;
+  let cells = 0;
+
+  for (const surface of ['download', 'upload'] as const) {
+    for (const fileKind of ['refused', 'ok'] as const) {
+      it(`surface=${surface} file=${fileKind}: every env spelling resolves exactly as the definition says`, async () => {
+        const cfg = await loadFile(fileKinds[fileKind]);
+        const X = cfg.baseDir;
+        for (const e of envKinds) {
+          const label = `${surface}/${fileKind}/${e.name}`;
+          const env: Record<string, string | undefined> = {};
+          if (surface === 'download') {
+            if (e.v !== undefined) env[DOWNLOAD_ROOTS_ENV] = e.v;
+            else env[UPLOAD_ROOTS_ENV] = ENV_ENV; // the OTHER surface's env, valid
+          } else {
+            env[DOWNLOAD_ROOTS_ENV] = ENV_ENV; // keeps the file's download refusal out of the way
+            if (e.v !== undefined) env[UPLOAD_ROOTS_ENV] = e.v;
+          }
+          const call = (): ReturnType<typeof resolveFsRoots> => resolveFsRoots({ env, config: fsRootsConfigLayer(cfg) });
+          if (e.kind === 'rejected') {
+            expect(call, label).toThrow(/must be an absolute path/); // never a fall-through, whatever the file
+          } else if (surface === 'download') {
+            if (fileKind === 'refused') {
+              expect(call, label).toThrow(/outside this config's directory/); // the file layer is in effect
+            } else {
+              const r = call();
+              expect({ label, roots: r.allowedDownloadRoots, source: r.sources.download }).toEqual({ label, roots: [path.join(X, 'dl')], source: 'config' });
+              // the other surface's env, when present, applies to ITS surface only
+              expect({ label, up: r.sources.upload }).toEqual({ label, up: e.v === undefined ? 'env' : 'config' });
+            }
+          } else {
+            const r = call();
+            expect({ label, roots: r.allowedUploadRoots, source: r.sources.upload }).toEqual({ label, roots: [path.join(X, 'up')], source: 'config' });
+            expect({ label, dl: r.allowedDownloadRoots, source: r.sources.download }).toEqual({ label, dl: [ENV_ENV], source: 'env' });
+          }
+          cells++;
+        }
+      });
+    }
+  }
+
+  it('a VALID env of the surface under test wins over the file and is used exactly (positive control: the cells are not all "throws")', async () => {
+    const cfg = await loadFile(fileKinds.refused);
+    const r = resolveFsRoots({ env: { [DOWNLOAD_ROOTS_ENV]: ENV_ENV, [UPLOAD_ROOTS_ENV]: OPT_OPT }, config: fsRootsConfigLayer(cfg) });
+    expect(r.allowedDownloadRoots).toEqual([ENV_ENV]);
+    expect(r.allowedUploadRoots).toEqual([OPT_OPT]);
+    expect(r.sources).toEqual({ download: 'env', upload: 'env' });
+  });
+
+  it('the option layer uses the same definition: [] / null / undefined are not set (refusal applies), [x] is set (wins)', async () => {
+    const cfg = await loadFile(fileKinds.refused);
+    for (const unset of [[], null, undefined] as const) {
+      expect(() => resolveFsRoots({ options: { allowedDownloadRoots: unset as unknown as string[] }, env: {}, config: fsRootsConfigLayer(cfg) })).toThrow(/outside this config's directory/);
+    }
+    expect(resolveFsRoots({ options: { allowedDownloadRoots: [OPT_OPT] }, env: {}, config: fsRootsConfigLayer(cfg) }).allowedDownloadRoots).toEqual([OPT_OPT]);
+  });
+
+  it('isLayerSet is the single definition: undefined/null/[] are unset; 0, "", false, [x] are set', async () => {
+    const { isLayerSet } = await import('../../src/layer-set.js');
+    expect([undefined, null, []].map((v) => isLayerSet(v))).toEqual([false, false, false]);
+    expect([0, '', false, ['x'], {}].map((v) => isLayerSet(v))).toEqual([true, true, true, true, true]);
+  });
+
+  it('the matrix is not vacuous: exactly 32 cells (8 env kinds x 2 files x 2 surfaces)', () => {
+    expect(cells).toBe(32);
+  });
+});

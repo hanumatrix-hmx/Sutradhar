@@ -332,3 +332,79 @@ describe('fix-1 F1/F2/F8: on the CLI a layer above the file always wins (generat
     expect(ok.viewportFlagGivenButInvalid).toBe(false);
   });
 });
+
+// ───────────────────────── FR2-14 fix-2 (N3) ─────────────────────────
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+describe('fix-2 N3: the CLI composition uses the one definition of "set" (generated: env value x download-dir argument x file)', () => {
+  const root = realpathSync(mkdtempSync(path.join(os.tmpdir(), 'fr2-14-cli-n3-')));
+  afterAll(() => rmSync(root, { recursive: true, force: true }));
+  let n = 0;
+  async function realConfig(content: object): Promise<LoadedProjectConfig> {
+    const X = path.join(root, `r${n++}`, 'repo');
+    mkdirSync(path.join(X, '.git'), { recursive: true });
+    writeFileSync(path.join(X, '.sutradhar.json'), JSON.stringify(content));
+    const r = await loadProjectConfig({ cwd: X, discover: true, homedir: path.join(X, 'nohome') });
+    if (r.status !== 'loaded') throw new Error('not loaded');
+    return r.config;
+  }
+  const D = path.delimiter;
+  const EXTRA = path.resolve(os.tmpdir(), 'cli-n3-extra');
+  const OTHER_UL = path.resolve(os.tmpdir(), 'cli-n3-ul');
+  const envKinds: Array<{ name: string; env: Record<string, string>; kind: 'unset-like' | 'rejected' }> = [
+    { name: 'empty', env: { [DOWNLOAD_ROOTS_ENV]: '' }, kind: 'unset-like' },
+    { name: 'blank', env: { [DOWNLOAD_ROOTS_ENV]: '   ' }, kind: 'unset-like' },
+    { name: 'delimiters-only', env: { [DOWNLOAD_ROOTS_ENV]: `${D}${D}` }, kind: 'unset-like' },
+    { name: 'blank-delimited', env: { [DOWNLOAD_ROOTS_ENV]: ` ${D} ` }, kind: 'unset-like' },
+    { name: '0', env: { [DOWNLOAD_ROOTS_ENV]: '0' }, kind: 'rejected' },
+    { name: 'false', env: { [DOWNLOAD_ROOTS_ENV]: 'false' }, kind: 'rejected' },
+    { name: '[]', env: { [DOWNLOAD_ROOTS_ENV]: '[]' }, kind: 'rejected' },
+    { name: 'other-surface-only', env: { [UPLOAD_ROOTS_ENV]: OTHER_UL }, kind: 'unset-like' },
+  ];
+  const extras: Array<{ name: string; v: readonly string[] | undefined }> = [
+    { name: 'undefined', v: undefined },
+    { name: '[]', v: [] },
+    { name: '[dir]', v: [EXTRA] },
+  ];
+  let cells = 0;
+
+  for (const fileKind of ['refused', 'ok'] as const) {
+    it(`file=${fileKind}: every env spelling x download-dir argument resolves as the definition says`, async () => {
+      const c = await realConfig(fileKind === 'refused' ? { downloadDir: '../out' } : { downloadDir: './dl' });
+      for (const e of envKinds) {
+        for (const x of extras) {
+          const label = `${fileKind}/${e.name}/extra=${x.name}`;
+          const call = (): ReturnType<typeof resolveCliSettings> => resolveCliSettings({ flags: {}, env: e.env, config: c, extraDownloadRoots: x.v });
+          if (e.kind === 'rejected') {
+            expect(call, label).toThrow(/must be an absolute path/);
+          } else if (x.v !== undefined && x.v.length > 0) {
+            const s = call();
+            expect({ label, source: s.fsRoots.sources.download }).toEqual({ label, source: fileKind === 'refused' ? 'default' : 'config' });
+            if (fileKind === 'refused') expect(s.fsRoots.allowedDownloadRoots).toEqual([defaultDownloadRoot()]);
+          } else if (fileKind === 'refused') {
+            expect(call, label).toThrow(/outside this config's directory/);
+          } else {
+            expect({ label, source: call().fsRoots.sources.download }).toEqual({ label, source: 'config' });
+          }
+          cells++;
+        }
+      }
+    });
+  }
+
+  it('the matrix is not vacuous: exactly 48 cells (8 env kinds x 3 argument kinds x 2 files)', () => {
+    expect(cells).toBe(48);
+  });
+
+  it('B11 wiring guard: cli.ts hands the `download <ref> <dir>` argument to the resolver AND the runtime, and the download verb passes it', () => {
+    const src = readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'src', 'cli.ts'), 'utf8').replace(/\r\n/g, '\n');
+    const at = src.indexOf('settings = resolveCliSettings({');
+    expect(at, 'cli.ts calls resolveCliSettings').toBeGreaterThan(0);
+    expect(src.slice(at, at + 600).includes('extraDownloadRoots: opts?.extraDownloadRoots,'), 'withSession passes extraDownloadRoots to the resolver').toBe(true);
+    expect(src.includes('allowedDownloadRoots: [...settings.fsRoots.allowedDownloadRoots, ...(opts?.extraDownloadRoots ?? [])]'), 'the runtime gets the argument too').toBe(true);
+    expect(src.includes('{ extraDownloadRoots: dir ? [dir] : [] }'), 'the download verb passes its <dir>').toBe(true);
+    // exactly two call sites: withSession (guarded above) and `doctor` (reports; never blocked). A third, unguarded one would bypass the above.
+    expect(src.match(/resolveCliSettings\(/g)?.length).toBe(2);
+  });
+});

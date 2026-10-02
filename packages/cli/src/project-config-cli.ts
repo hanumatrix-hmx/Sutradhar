@@ -16,6 +16,7 @@ import {
   resolveFsRoots,
   fsRootsConfigLayer,
   resolveViewport,
+  isLayerSet,
   type LoadedProjectConfig,
   type ConfigDiscovery,
   type ProjectConfigError,
@@ -77,7 +78,7 @@ export function resolveCliSettings(i: CliSettingsInput): CliSettings {
     fsRoots: resolveFsRoots({
       env: i.env,
       config: fsRootsConfigLayer(
-        i.config && i.extraDownloadRoots?.length && i.config.downloadRefusal !== undefined
+        i.config && isLayerSet(i.extraDownloadRoots) && i.config.downloadRefusal !== undefined
           ? { ...i.config, resolved: { ...i.config.resolved, allowedDownloadRoots: undefined }, downloadRefusal: undefined }
           : i.config,
       ),

@@ -12,6 +12,7 @@
  */
 import type { DialogPolicy } from '@sutradhar/browser';
 import type { LoadedProjectConfig } from './project-config.js';
+import { isLayerSet } from './layer-set.js';
 
 export type ValueSource = 'flag' | 'state' | 'option' | 'env' | 'config' | 'default';
 export interface Resolved<T> {
@@ -31,10 +32,9 @@ export function firstDefined<T>(
   fallback: Resolved<T>,
 ): Resolved<T> {
   for (const [source, value] of layers) {
-    // `null` and `undefined` both mean "this layer did not say" (JS / JSON-fed callers pass null);
+    // What "set" means is defined ONCE (layer-set.ts): not undefined/null, and a list is non-empty;
     // a typed `0`, `''` or `false` is still a value that wins.
-    if (value === undefined || value === null) continue;
-    if (Array.isArray(value) && value.length === 0) continue;
+    if (!isLayerSet(value)) continue;
     return { value, source };
   }
   return fallback;
