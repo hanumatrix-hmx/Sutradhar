@@ -285,3 +285,32 @@ describe('fix-1 F1/F2/F9: SDK override matrix over REAL discovered files', () =>
     await b.close();
   });
 });
+
+// ───────────────────────── FR2-14 fix-2 (N8) ─────────────────────────
+describe('fix-2 N8: the SDK announces an option that overrides a refused discovered download root', () => {
+  let cwdSpy: ReturnType<typeof vi.spyOn> | undefined;
+  let warn: ReturnType<typeof vi.spyOn>;
+  beforeEach(() => {
+    capabilityRuntimeMock.SutradharRuntimeMock.mockClear();
+    warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+  afterEach(() => {
+    cwdSpy?.mockRestore();
+    cwdSpy = undefined;
+    warn.mockRestore();
+  });
+  it('a refused root + the option: one [sutradhar] note; a good file + the option: none; the refused file alone: still an error', async () => {
+    const OPT = path.resolve(os.tmpdir(), 'sdk-n8-opt');
+    for (const [file, wantNote] of [[{ downloadDir: '../out' }, true], [{ downloadDir: './dl' }, false]] as const) {
+      const d = project(file);
+      cwdSpy?.mockRestore();
+      cwdSpy = vi.spyOn(process, 'cwd').mockReturnValue(d);
+      warn.mockClear();
+      const b = await launch({ discoverConfig: true, allowedDownloadRoots: [OPT] });
+      const notes = warn.mock.calls.map((c) => String(c[0])).filter((m) => m.includes('were refused'));
+      expect({ wantNote, notes: notes.length }).toEqual({ wantNote, notes: wantNote ? 1 : 0 });
+      if (wantNote) expect(notes[0]).toMatch(/^\[sutradhar\] .*allowedDownloadRoots option/);
+      await b.close();
+    }
+  });
+});

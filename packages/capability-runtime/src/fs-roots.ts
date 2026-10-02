@@ -10,7 +10,7 @@
 import os from 'node:os';
 import path from 'node:path';
 import { defaultDownloadRoot } from '@sutradhar/browser';
-import { echo } from './echo.js';
+import { echo, echoPath } from './echo.js';
 import { isLayerSet } from './layer-set.js';
 
 /** Env var naming the directories `browser.download_file` may write into (path.delimiter-separated). */
@@ -171,6 +171,16 @@ export function resolveFsRoots(input: ResolveFsRootsInput): ResolvedFsRoots {
       allowedDownloadRoots = [defaultDownloadRoot()];
       downloadSource = 'default';
     }
+  }
+
+  // N8: a discovered file's download roots were refused (outside its tree / inside .git) and a higher
+  // layer replaced them: say so, so that "config: loaded" is not the whole story.
+  if (input.config?.downloadRefusal !== undefined && (downloadSource === 'option' || downloadSource === 'env')) {
+    warnings.push(
+      `the download roots in the project config in ${echoPath(input.config.baseDir)} were refused (outside its directory or inside .git) and are overridden by ${
+        downloadSource === 'env' ? DOWNLOAD_ROOTS_ENV : 'the allowedDownloadRoots option'
+      }`,
+    );
   }
 
   // Uploads.

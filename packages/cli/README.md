@@ -176,8 +176,8 @@ shell). `idleTimeoutMs` is ignored by the CLI. The file is re-read on every comm
 to session state.
 
 `sutradhar doctor` prints the file in use and the source of every key. Unknown keys print `Warning:`; an invalid
-file prints `Error:` and exits 1 before Chrome is touched (`doctor`, `close`, `profile` and `dialog` never load it,
-so a broken file cannot block cleanup). `SUTRADHAR_CONFIG=none` ignores it. A file found by searching upward is
+file prints `Error:` and exits 1 before Chrome is touched (`close`, `profile` and `dialog` never load it, so a broken
+file cannot block cleanup; `doctor` does load it but only reports a broken one and still exits 0). `SUTRADHAR_CONFIG=none` ignores it. A file found by searching upward is
 untrusted: its download directory must stay inside its own folder (and outside `.git`), and a `dialog.mode "accept"`
 or file-supplied download directory is announced with a `Note:` on every command. Details: `docs/project-config.md`.
 

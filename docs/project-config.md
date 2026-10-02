@@ -29,13 +29,17 @@ repository copy).
 | `allowedUploadRoots` | non-empty array of paths | If set, uploads may only read files under these directories. Unset means unrestricted. |
 | `dialog` | `{mode, promptText?}` | Default native-dialog policy. `mode`: `auto`, `report`, `accept`, `dismiss`. `promptText` only with `accept`. The CLI treats `auto` as `report`; the SDK treats `report` as `auto`. |
 | `idleTimeoutMs` | integer | MCP server and SDK: close a session after this many ms idle. `0` = never, otherwise 1000..2147483647. Ignored by the CLI (each command is its own process). |
-| `viewport` | `{width, height}` | Default viewport for new sessions (integers 1..10000000, Chrome's own limit; the `--viewport` flag has the same bounds and is rejected before any Chrome starts). |
+| `viewport` | `{width, height}` | Default viewport for new sessions (integers 1..10000000, Chrome's own limit; the `--viewport` flag and the MCP `browser.launch` `viewport` argument have the same bounds and are rejected before any Chrome starts). The bound is a validation limit, not a promise that Chrome can render it: a viewport at the limit, such as `--viewport 10000000x10000000`, passes validation but Chrome cannot create it, so the session fails to start (the CLI exits 1 with "No browser session" and the Chrome it spawned is stopped, not leaked). Use realistic sizes. |
 
 ## Precedence
 
 **CLI flag > env var > config file > built-in default.** One rule, for every key. The first layer that has a value
 wins as a whole (nothing is merged: a `--viewport` flag never takes only its width). "Not set" means `undefined`,
-`null` (JS and JSON-fed callers), an empty list, or an unset/blank env var: the next layer down applies. An explicit
+`null` (JS and JSON-fed callers), an empty list, or an env var that yields no entry (unset, empty, blank, or only
+delimiters such as `;;`): the next layer down applies. An env var that holds something its parser rejects (`0`, `false`
+or `[]` for a roots variable: not an absolute path) is an **error**, never a silent fall-through. A valid env var for the
+*other* surface (say `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` while the download roots come from a refused file) changes nothing
+for this one. This definition lives in one function (`isLayerSet`) that every layer and surface uses. An explicit
 `0` (for example `idleTimeoutMs: 0`) or `false` IS a value and wins. In the file an empty array is an error (see below).
 A higher layer also wins over a discovered file that would otherwise be refused (see "Trust"): the refusal only applies
 when the file is the layer that would be used.
@@ -60,7 +64,12 @@ come from the file are re-read on every command, so editing the file takes effec
 - **CLI and MCP:** from the current directory upward. The **nearest** file wins. A directory containing `.git` (a
   directory, or the file a git worktree uses) is a boundary: its own `.sutradhar.json` is read and the search stops.
   If you are inside your home directory the search also stops at home (so `~/.sutradhar.json` works as a personal
-  config for directories that are not repositories). The filesystem root is never read.
+  config for directories that are not repositories). The filesystem root is never read. "Inside home" is true when your
+  working directory is under home as written **or** as it really resolves, and links cannot get around it: a
+  `.sutradhar.json` whose real directory is above home is never read when you are inside home, whether the link sits
+  inside home pointing out or above home pointing in (when only the real path is inside home, the search follows the
+  real path). If your working directory is not inside home either way, home is not involved and the plain upward
+  search applies.
 - **SDK:** nothing is read unless you pass `launch({ discoverConfig: true })` (same search from `process.cwd()`) or
   `launch({ configFile: "path" })` (relative to `process.cwd()`). The two are mutually exclusive.
 - `SUTRADHAR_CONFIG=<absolute path>` (CLI and MCP) loads exactly that file and does no search.
@@ -83,8 +92,13 @@ come from the file are re-read on every command, so editing the file takes effec
   `allowedDomains[i]` entry, a `downloadDir`/root entry, a duplicate key name and an `idleTimeoutMs` string, each at
   most 64 characters then `...`, and the resolved path of a refused download entry (at most 200 characters). The
   free text `dialog.promptText` and any value under an unknown key are **never** echoed. Do not put secrets in a key
-  name or in these values.
-- `doctor`, `close`, `profile` and `dialog` never load the file, so a broken file cannot stop you cleaning up.
+  name or in these values. Every message built from file text, including the `~user` entries of `downloadDir`,
+  `allowedDownloadRoots` and `allowedUploadRoots`, goes through one function (`echo.ts`) that also replaces NUL and
+  bidi/line-separator characters, so a new message cannot echo more; a generated test runs a hostile corpus through
+  every key to keep it that way.
+- `close`, `profile` and `dialog` never load the file, so a broken file cannot stop you cleaning up. `doctor` **does** load
+  the file (it prints the file in use, its warnings and each key's source, or the error) but is never blocked by it: a
+  broken or refused file is reported and `doctor` still exits 0.
 
 ## Trust: a discovered file is treated as untrusted project content
 
@@ -97,7 +111,9 @@ may only **narrow** access or change cosmetic settings, except where noted:
   command fails, naming the ways out. All of them work: `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` (CLI and MCP) or the
   `allowedDownloadRoots` option (MCP and SDK) replace the file's download roots, so the refusal does not apply; on the
   CLI `download <ref> <dir>` is an explicit grant that does the same for that command; or load the file explicitly
-  (`SUTRADHAR_CONFIG=<file>`, SDK `configFile`). The check is point-in-time (see SECURITY.md).
+  (`SUTRADHAR_CONFIG=<file>`, SDK `configFile`). The check is point-in-time (see SECURITY.md). When one of these
+  replaces a refused root, a note says so (CLI `Warning:` on every command, MCP startup warning, SDK `console.warn`),
+  so "config: loaded" is not the whole story.
 - `dialog.mode: "accept"` is honored, never silently: the CLI prints a `Note:` on every command where it is in
   effect, MCP warns at startup and the SDK `console.warn`s at `launch()` (only for a discovered file). A `--dialog`
   flag (or an option) overrides it.

@@ -89,6 +89,7 @@ export async function launch(options: LaunchOptions = {}): Promise<Browser> {
     options: { allowedDownloadRoots: options.allowedDownloadRoots, allowedUploadRoots: options.allowedUploadRoots },
     config: fsRootsConfigLayer(cfg),
   });
+  for (const w of fsRoots.warnings) console.warn(`[sutradhar] ${w}`);
   const viewport = resolveViewport({ option: options.viewport, config: cfg }).value;
   const runtime = new SutradharRuntime({
     allowedDomains: resolveAllowedDomains({ option: options.allowedDomains, config: cfg }).value,

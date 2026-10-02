@@ -13,7 +13,7 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ActionExpectation, SettleSpec, SutradharRuntime } from '@sutradhar/capability-runtime';
-import { buildAuditReport } from '@sutradhar/capability-runtime';
+import { buildAuditReport, VIEWPORT_MAX } from '@sutradhar/capability-runtime';
 import type { AgentCore } from '@sutradhar/agent';
 import { createGoalId } from '@sutradhar/contracts';
 import { WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT, WAIT_HIDDEN_HARD_FAILURE_PREFIX } from '@sutradhar/browser';
@@ -284,12 +284,12 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
               'profile manager. Throws if the name does not exist.',
           ),
         viewport: z
-          .object({ width: z.number().int().positive(), height: z.number().int().positive() })
+          .object({ width: z.number().int().positive().max(VIEWPORT_MAX), height: z.number().int().positive().max(VIEWPORT_MAX) })
           .optional()
           .describe(
             'Set the initial viewport size (CDP device-metrics override, plus a best-effort real OS window ' +
               'resize for a non-headless session). Use browser.set_viewport to change it mid-session instead, ' +
-              'or to also emulate mobile/touch/pixel-ratio. Was previously accepted only by browser.set_viewport, ' +
+              'or to also emulate mobile/touch/pixel-ratio. Each side is 1..10000000 (larger is rejected before any browser starts). Was previously accepted only by browser.set_viewport, ' +
               'not at launch time — found missing via an external field report (PROB-042).' +
               ' When omitted, the server default from .sutradhar.json "viewport" (if any) is used.',
           ),

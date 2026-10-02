@@ -1605,3 +1605,19 @@ describe('browser.launch default viewport from .sutradhar.json (FR2-14, TL1-TL4)
     expect(tools.get('browser.launch')!.config.inputSchema.viewport.description).toContain('.sutradhar.json');
   });
 });
+
+describe('browser.launch viewport bound (FR2-14 fix-2 N4)', () => {
+  it('TL5: the launch schema rejects a width/height above 10,000,000 (Chrome\'s own limit) BEFORE any launch, and accepts the limit', () => {
+    const { server, tools } = createMockServer();
+    registerTools(server, { runtime: new SutradharRuntime() });
+    const schema = tools.get('browser.launch')!.config.inputSchema.viewport;
+    const ok = (w: number, h: number): boolean => schema.safeParse({ width: w, height: h }).success;
+    expect([ok(1, 1), ok(1280, 800), ok(10_000_000, 10_000_000)]).toEqual([true, true, true]);
+    expect([ok(10_000_001, 1), ok(1, 10_000_001), ok(1_000_000_000, 1_000_000_000), ok(0, 5), ok(5, -1), ok(1.5, 5)]).toEqual([false, false, false, false, false, false]);
+    expect(schema.safeParse(undefined).success).toBe(true); // still optional
+  });
+  it('TL5b: the bound is the shared VIEWPORT_MAX (one constant for flag, file and tool)', async () => {
+    const { VIEWPORT_MAX } = await import('@sutradhar/capability-runtime');
+    expect(VIEWPORT_MAX).toBe(10_000_000);
+  });
+});

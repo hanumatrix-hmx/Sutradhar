@@ -330,3 +330,47 @@ describe('FR2-14 fix-2 N3: one definition of "set" - generated over env values x
     expect(cells).toBe(32);
   });
 });
+
+// ───────────────────────── FR2-14 fix-2 (N8): an override of a refused root is announced ─────────────────────────
+describe('FR2-14 fix-2 N8: when a higher layer overrides a REFUSED discovered download root, it is announced (once, single-line)', () => {
+  it('generated: {env, option, neither} x {refused file, ok file, explicit refused-shaped file}: a note iff a refused discovered root was overridden', async () => {
+    const refused = await loadFile({ downloadDir: '../out' });
+    const ok = await loadFile({ downloadDir: './dl' });
+    // an EXPLICIT file with the same out-of-tree dir is trusted like an env var: nothing was refused, nothing to announce
+    const X = path.join(tmpRoot, `r${n++}`, 'repo');
+    mkdirSync(path.join(X, '.git'), { recursive: true });
+    writeFileSync(path.join(X, '.sutradhar.json'), JSON.stringify({ downloadDir: '../out' }));
+    const explicitR = await loadProjectConfig({ cwd: X, discover: false, explicitPath: path.join(X, '.sutradhar.json'), explicitOrigin: 'env' });
+    if (explicitR.status !== 'loaded') throw new Error('expected loaded');
+    const explicit = explicitR.config;
+    expect(explicit.downloadRefusal).toBeUndefined();
+
+    let cells = 0;
+    for (const [fname, cfg, wasRefused] of [['refused', refused, true], ['ok', ok, false], ['explicit', explicit, false]] as const) {
+      for (const via of ['env', 'option', 'neither'] as const) {
+        const label = `${fname}/${via}`;
+        const call = (): ReturnType<typeof resolveFsRoots> =>
+          resolveFsRoots({
+            env: via === 'env' ? { [DOWNLOAD_ROOTS_ENV]: ENV_ENV } : {},
+            options: via === 'option' ? { allowedDownloadRoots: [OPT_OPT] } : undefined,
+            config: fsRootsConfigLayer(cfg),
+          });
+        if (wasRefused && via === 'neither') {
+          expect(call, label).toThrow(/outside this config's directory/);
+        } else {
+          const w = call().warnings.filter((x) => /refused/.test(x));
+          if (wasRefused) {
+            expect({ label, count: w.length }).toEqual({ label, count: 1 });
+            expect(w[0], label).toContain(via === 'env' ? DOWNLOAD_ROOTS_ENV : 'allowedDownloadRoots option');
+            expect(w[0], label).not.toMatch(/[\r\n]/);
+            expect(w[0]!.length, label).toBeLessThan(500);
+          } else {
+            expect({ label, notes: w }).toEqual({ label, notes: [] });
+          }
+        }
+        cells++;
+      }
+    }
+    expect(cells).toBe(9);
+  });
+});
