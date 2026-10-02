@@ -480,8 +480,7 @@ export async function findProjectConfigPath(
     }
     if (await exists(fs, p.join(dir, '.git'))) return { searched, stoppedAt: 'git-root', stopDir: dir };
     if (inHome && home !== undefined && literalHome !== undefined) {
-      // The boundary holds by literal OR canonical equality, so junctions and symlinks cannot walk past it.
-      if (sameFold(dir, literalHome)) return { searched, stoppedAt: 'home', stopDir: dir };
+      // Canonical equality, so a home reached through a junction/symlink (either side) is still the boundary.
       let here: string;
       try {
         here = await canonicalizePath(dir);

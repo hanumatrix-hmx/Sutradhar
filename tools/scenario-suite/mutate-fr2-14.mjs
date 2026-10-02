@@ -150,6 +150,9 @@ const mutants = [
     edits: [[`const effectiveViewport = resolveViewport({ flag: viewportFlag, state: state.viewport, config: activeConfig }).value;`, `const effectiveViewport = resolveViewport({ flag: viewportFlag, state: activeConfig?.values.viewport ? undefined : state.viewport, config: activeConfig }).value;`]],
     tsc: 'packages/cli', live: { build: ['packages/cli'], only: 'L7' } },
   // ── fix-1 mutants (audit-1 findings F1/F2/F3/F4/F8/F9); ids are distinct from U1-U22 / L-* above ──
+  // (X8 in the first cut, `here === home`, is an EQUIVALENT mutant: both sides come from native realpath, which normalises case, so
+  //  it was replaced by the A8b-style literal-string mutant; the literal-stop mutant X10 was equivalent too because the canonical
+  //  check always fires on the same directory, so the redundant literal check was deleted from the code instead.)
   { id: 'X1', desc: 'F1: the download refusal is raised whatever layer wins (env/option no longer override a refused file)', file: `${CR}/src/fs-roots.ts`,
     edits: [[`  // Downloads.
 `, `  // Downloads.
@@ -158,44 +161,41 @@ const mutants = [
     unit: { pkg: CR, files: ['tests/unit/override-matrix.spec.ts'] }, tsc: CR,
     live: { build: [CR, 'packages/cli'], only: 'F1-env-f1-out,F1-env-f1-git,H4b' } },
   { id: 'X2', desc: 'F1 fail-open: a refused discovered download root is never refused', file: `${CR}/src/fs-roots.ts`,
-    edits: [[`      if (input.config.downloadRefusal !== undefined) {`, `      if (input.config.downloadRefusal !== undefined && false) {`]],
+    edits: [[`        err.name = 'ProjectConfigError';
+        throw err;`, `        err.name = 'ProjectConfigError';
+        void err;`]],
     unit: { pkg: CR, files: ['tests/unit/override-matrix.spec.ts'] }, tsc: CR,
     live: { build: [CR, 'packages/cli'], only: 'F1-none-f1-out,H1,N4' } },
   { id: 'X3', desc: 'F1: fsRootsConfigLayer forgets the refusal (every surface fails open)', file: CP,
     edits: [[`, ...(cfg.downloadRefusal !== undefined ? { downloadRefusal: cfg.downloadRefusal } : {}) };`, ` };`]],
     unit: { pkg: CR, files: ['tests/unit/override-matrix.spec.ts'] }, tsc: CR,
     live: { build: [CR, 'packages/cli'], only: 'F1-none-f1-out,N4' } },
-  { id: 'X4', desc: 'F1: the CLI ignores the explicit `download <ref> <dir>` grant over a refused file', file: CLI_SETTINGS,
-    edits: [[`i.config && i.extraDownloadRoots?.length && i.config.downloadRefusal !== undefined`, `i.config && false && i.config.downloadRefusal !== undefined`]],
+  { id: 'X4', desc: 'F1: the CLI ignores the explicit `download <ref> <dir>` grant over a refused file (resolver level)', file: CLI_SETTINGS,
+    edits: [[`i.config && i.extraDownloadRoots?.length && i.config.downloadRefusal !== undefined`, `i.config && (i.extraDownloadRoots?.length ?? 0) < 0 && i.config.downloadRefusal !== undefined`]],
     unit: { pkg: 'packages/cli', files: ['tests/unit/project-config-cli.spec.ts'] }, tsc: 'packages/cli',
     live: { build: [CR, 'packages/cli'], only: 'F1-arg' } },
-  { id: 'X5', desc: 'F1: withSession no longer passes the explicit download dir to the resolver', file: CLI_MAIN,
+  { id: 'X5', desc: 'F1: withSession no longer passes the explicit download dir to the resolver (wiring; live-only)', file: CLI_MAIN,
     edits: [[`      extraDownloadRoots: opts?.extraDownloadRoots,
 `, ``]],
-    tsc: 'packages/cli', live: { build: ['packages/cli'], only: 'F1-arg' } },
+    tsc: 'packages/cli', live: { build: [CR, 'packages/cli'], only: 'F1-arg' } },
   { id: 'X6', desc: 'F2: null counts as a set value again (fails open)', file: CP,
     edits: [[`if (value === undefined || value === null) continue;`, `if (value === undefined) continue;`]],
     unit: { pkg: CR, files: ['tests/unit/config-precedence.spec.ts', 'tests/unit/override-matrix.spec.ts'] }, tsc: CR },
   { id: 'X7', desc: 'F2: SDK configFile null is treated as a path', file: 'packages/sutradhar/src/index.ts',
     edits: [[`const configFile = options.configFile ?? undefined;`, `const configFile = options.configFile;`]],
     unit: { pkg: 'packages/sutradhar', files: ['tests/unit/launch-config.spec.ts'] }, tsc: 'packages/sutradhar' },
-  { id: 'X8', desc: 'F3: canonical home equality compared literally (case/format-sensitive, A8b-style)', file: PC,
-    edits: [[`if (sameFold(here, home)) return { searched, stoppedAt: 'home', stopDir: dir };`, `if (here === home) return { searched, stoppedAt: 'home', stopDir: dir };`]],
+  { id: 'X8', desc: 'F3 (A8b-style): the home boundary needs a LITERAL match of the walked dir to the home string', file: PC,
+    edits: [[`if (sameFold(here, home)) return { searched, stoppedAt: 'home', stopDir: dir };`, `if (sameFold(here, home) && dir === homedir) return { searched, stoppedAt: 'home', stopDir: dir };`]],
     unit: { pkg: CR, files: ['tests/unit/project-config.spec.ts'] }, tsc: CR },
-  { id: 'X9', desc: 'F3: canonical home equality removed (A8-style: a home reached through a link is not the boundary)', file: PC,
-    edits: [[`      if (sameFold(here, home)) return { searched, stoppedAt: 'home', stopDir: dir };`, `      if (here === 'never-equal' && sameFold(here, home)) return { searched, stoppedAt: 'home', stopDir: dir };`]],
+  { id: 'X9', desc: 'F3 (A8-style): canonical home equality replaced by a literal compare (a home reached through a link is not the boundary)', file: PC,
+    edits: [[`if (sameFold(here, home)) return { searched, stoppedAt: 'home', stopDir: dir };`, `if (dir === homedir) return { searched, stoppedAt: 'home', stopDir: dir };`]],
     unit: { pkg: CR, files: ['tests/unit/project-config.spec.ts'] }, tsc: CR },
-  { id: 'X10', desc: 'F3: literal home stop removed (a junction cwd inside home walks past it)', file: PC,
-    edits: [[`      if (sameFold(dir, literalHome)) return { searched, stoppedAt: 'home', stopDir: dir };
-`, ``]],
-    unit: { pkg: CR, files: ['tests/unit/project-config.spec.ts'] }, tsc: CR,
-    live: { build: [CR, 'packages/cli'], only: 'F3-home-junction' } },
-  { id: 'X11', desc: 'F3: the literal cwd no longer counts as "inside home"', file: PC,
+  { id: 'X11', desc: 'F3: the literal cwd no longer counts as "inside home" (a junction cwd inside home walks past it)', file: PC,
     edits: [[` || isPathWithinRoot(dir, literalHome, platform);`, `;`]],
     unit: { pkg: CR, files: ['tests/unit/project-config.spec.ts'] }, tsc: CR,
     live: { build: [CR, 'packages/cli'], only: 'F3-home-junction' } },
   { id: 'X12', desc: 'F4: the echo cap is removed (a 20 KB key prints 20 KB)', file: PC,
-    edits: [[`  return t.length > max ? \`\${t.slice(0, max)}...\` : t;`, `  return t;`]],
+    edits: [[`  return t.length > max ? \`\${t.slice(0, max)}...\` : t;`, `  return t.length > 1e12 ? \`\${t.slice(0, max)}...\` : t;`]],
     unit: { pkg: CR, files: ['tests/unit/project-config.spec.ts'] }, tsc: CR,
     live: { build: [CR, 'packages/cli'], only: 'F4-longkey' } },
   { id: 'X13', desc: 'F8: the file viewport upper bound is removed', file: PC,
@@ -205,18 +205,20 @@ const mutants = [
   { id: 'X14', desc: 'F8: the --viewport flag upper bound is removed', file: 'packages/cli/src/parse-args.ts',
     edits: [[`    viewportParsed.width <= VIEWPORT_MAX &&
     viewportParsed.height <= VIEWPORT_MAX
-`, `    true
+`, `    viewportParsed.width <= VIEWPORT_MAX * 1e9 &&
+    viewportParsed.height <= VIEWPORT_MAX * 1e9
 `]],
-    unit: { pkg: 'packages/cli', files: ['tests/unit/project-config-cli.spec.ts'] }, tsc: 'packages/cli' },
+    unit: { pkg: 'packages/cli', files: ['tests/unit/project-config-cli.spec.ts'] }, tsc: 'packages/cli',
+    live: { build: [CR, 'packages/cli'], only: 'F8-flag' } },
   { id: 'X15', desc: 'F9: the SDK no longer announces a discovered dialog accept', file: 'packages/sutradhar/src/index.ts',
-    edits: [[`if (cfg?.origin === 'discovered' && dialog.source === 'config' && dialog.value?.mode === 'accept') {`, `if (false as boolean) {`]],
+    edits: [[`dialog.source === 'config' && dialog.value?.mode === 'accept') {`, `dialog.source === 'config' && dialog.value?.mode === 'dismiss') {`]],
     unit: { pkg: 'packages/sutradhar', files: ['tests/unit/launch-config.spec.ts'] }, tsc: 'packages/sutradhar' },
-  { id: 'X16', desc: 'F1 on MCP: the server passes no config refusal layer (reads cfg.resolved directly)', file: 'packages/mcp-server/src/server.ts',
-    edits: [[`      config: fsRootsConfigLayer(cfg),`, `      config: cfg && { ...cfg.resolved, baseDir: cfg.baseDir },`]],
+  { id: 'X16', desc: 'F1 on MCP: the server hands the resolver no config refusal', file: 'packages/mcp-server/src/server.ts',
+    edits: [[`      config: fsRootsConfigLayer(cfg),`, `      config: fsRootsConfigLayer(cfg && { ...cfg, ...({ downloadRefusal: undefined } as object) }),`]],
     unit: { pkg: 'packages/mcp-server', files: ['tests/unit/server-config.spec.ts'] }, tsc: 'packages/mcp-server',
     live: { build: [CR, 'packages/mcp-server'], only: 'M-F1-none-mf1-out', surface: 'mcp' } },
-  { id: 'X17', desc: 'F1 on the SDK: the SDK passes no config refusal layer', file: 'packages/sutradhar/src/index.ts',
-    edits: [[`    config: fsRootsConfigLayer(cfg),`, `    config: cfg && { ...cfg.resolved, baseDir: cfg.baseDir },`]],
+  { id: 'X17', desc: 'F1 on the SDK: the SDK hands the resolver no config refusal', file: 'packages/sutradhar/src/index.ts',
+    edits: [[`    config: fsRootsConfigLayer(cfg),`, `    config: fsRootsConfigLayer(cfg && { ...cfg, ...({ downloadRefusal: undefined } as object) }),`]],
     unit: { pkg: 'packages/sutradhar', files: ['tests/unit/launch-config.spec.ts'] }, tsc: 'packages/sutradhar' },
 ];
 
@@ -288,6 +290,7 @@ async function main() {
       fs.writeFileSync(abs, origBuf);
       const after = sha(fs.readFileSync(abs));
       row.restoredByteIdentical = after === shaBefore;
+      if (m.live && !NO_LIVE) for (const pkg of m.live.build) sh(bin('tsc'), ['-p', path.join(repoRoot, pkg)]);
       row.sha256 = shaBefore.slice(0, 16);
     }
     row.caught = row.valid && (/^CAUGHT/.test(row.unit) || /^CAUGHT/.test(row.live));
