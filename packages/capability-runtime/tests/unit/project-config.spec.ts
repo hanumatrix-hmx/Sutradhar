@@ -935,11 +935,14 @@ describe('fix-1 F4: what error messages echo from the file is capped and single-
   it('a long download entry in the containment refusal is capped (entry 64, resolved path 200)', async () => {
     const X = path.join(fresh(), 'repo');
     mkdirSync(path.join(X, '.git'), { recursive: true });
-    write(path.join(X, CFG), { downloadDir: '../' + 'd'.repeat(600) });
+    // Many short components, not one 600-char name: a single component over NAME_MAX (255) makes Linux
+    // answer ENAMETOOLONG ("cannot be checked"), a different refusal than the containment one under test.
+    write(path.join(X, CFG), { downloadDir: '../' + `${'d'.repeat(50)}/`.repeat(12) });
     const r = await loadProjectConfig({ cwd: X, discover: true, homedir: path.join(X, 'nohome') });
     const msg = r.status === 'loaded' ? (r.config.downloadRefusal ?? '') : '';
     expect(msg).toContain('outside this config');
-    expect(msg.includes('d'.repeat(250))).toBe(false);
+    // The echoed entry (64) and resolved path (200) are capped: 5 consecutive components (255 chars) must not survive.
+    expect(msg.includes(`${'d'.repeat(50)}/`.repeat(5))).toBe(false);
   });
 });
 
