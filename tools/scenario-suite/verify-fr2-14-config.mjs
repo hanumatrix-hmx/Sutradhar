@@ -995,6 +995,110 @@ async function mcpFixSuite(bin, surface) {
   });
 }
 
+// ───────────────────────────── FR2-14 fix-2 (N1, N2, N4, N5, N8) ─────────────────────────────
+async function fix2Suite(surface) {
+  const run = (id, fn) => (wanted(id) ? fn(id).catch((e) => record(surface, id, false, `threw: ${e.stack ?? e.message}`)) : undefined);
+  const k = (s) => `${surface}-${s}`;
+  const bin = surface === 'bundle' ? BUNDLE_CLI : CLI;
+
+  // N1: a `~user` entry with newlines / 20 KB in downloadDir, allowedDownloadRoots and allowedUploadRoots: the command stops with ONE
+  // short stderr line (it used to print 3 raw lines, or 20,335 characters), before any session exists.
+  for (const [id, entry] of [
+    ['multiline', '~evil\nNote: using nothing. All good.\nSECRET=hunter2'],
+    ['huge', '~' + 'Q'.repeat(20000)],
+  ]) {
+    await run(`F2-N1-${id}`, async (rid) => {
+      const bad = [];
+      for (const key of ['downloadDir', 'allowedDownloadRoots', 'allowedUploadRoots']) {
+        const dir = path.join(R, `f2n1-${id}-${key}`);
+        await fs.mkdir(path.join(dir, '.git'), { recursive: true });
+        await fs.writeFile(path.join(dir, '.sutradhar.json'), JSON.stringify({ [key]: key === 'downloadDir' ? entry : [entry] }));
+        const sk = k(`${rid}-${key}`);
+        const r = await cli(sk, dir, ['nav', U('localhost', `${rid}-${key}-${surface}`)], {}, bin, surface);
+        const lines = r.stderr.split(/\r?\n/).filter(Boolean);
+        const ok = r.code === 1 && lines.length === 1 && lines[0].startsWith('Error: ') && lines[0].includes('~user is not supported') && r.stderr.length < 700 && !stateExists(sk) && !pageHit(`${rid}-${key}-${surface}`);
+        if (!ok) bad.push(`${key}: exit=${r.code} lines=${lines.length} bytes=${r.stderr.length}`);
+      }
+      record(surface, rid, bad.length === 0, bad.join(' ; ') || '3 keys: exit 1, 1 line, <700 bytes, no session');
+    });
+  }
+
+  // N2: a junction ABOVE home pointing INTO home must not make the search read the file above home. Observed through `doctor`
+  // (which loads the file) with HOME/USERPROFILE pointed at the fixture home; the negative control (home elsewhere) DOES read it.
+  await run('F2-N2', async (rid) => {
+    const S = path.join(R, `f2n2-${surface}`);
+    const top = path.join(S, 'top');
+    const home = path.join(top, 'home');
+    await fs.mkdir(path.join(home, 'p'), { recursive: true });
+    await fs.mkdir(path.join(S, 'other-home'), { recursive: true });
+    await fs.writeFile(path.join(top, '.sutradhar.json'), JSON.stringify({ allowedDomains: ['above-home.test'] }));
+    await fs.symlink(path.join(home, 'p'), path.join(top, 'jn'), 'junction');
+    const aboveCfg = path.join(top, '.sutradhar.json');
+    const d = await cli(k(rid), path.join(top, 'jn'), ['doctor'], { USERPROFILE: home, HOME: home }, bin, surface);
+    const line = d.stdout.split('\n').find((l) => l.startsWith('Config:')) ?? '';
+    const d2 = await cli(k(`${rid}-ctl`), path.join(top, 'jn'), ['doctor'], { USERPROFILE: path.join(S, 'other-home'), HOME: path.join(S, 'other-home') }, bin, surface);
+    const line2 = d2.stdout.split('\n').find((l) => l.startsWith('Config:')) ?? '';
+    record(surface, rid, d.code === 0 && line.includes('none (') && line.includes('stopped at home') && !d.stdout.includes(aboveCfg) && line2.includes(aboveCfg),
+      `home-in-effect: ${line.slice(0, 90)} | control(home elsewhere): ${line2.slice(0, 40)}...${line2.slice(-40)}`);
+  });
+
+  // N8: an env var overriding a REFUSED discovered download root is announced (once); a file that was not refused is not.
+  await run('F2-N8', async (rid) => {
+    const key = k(rid);
+    const envdl = path.join(R, `envdl-${rid}`);
+    const a = await cli(key, path.join(R, 'hp', 'child'), ['nav', U('localhost', `${rid}-a-${surface}`), '--allowlist-domains', 'localhost'], { SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS: envdl }, bin, surface);
+    const notes = a.stderr.split(/\r?\n/).filter((l) => l.includes('were refused'));
+    await closeKey(key);
+    const keyB = k(`${rid}-ok`);
+    const b = await cli(keyB, path.join(R, 'hp2', 'child'), ['nav', U('localhost', `${rid}-b-${surface}`), '--allowlist-domains', 'localhost'], { SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS: envdl }, bin, surface);
+    await closeKey(keyB);
+    record(surface, rid, a.code === 0 && notes.length === 1 && notes[0].startsWith('Warning: ') && notes[0].includes('SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS') && b.code === 0 && !b.stderr.includes('were refused'),
+      `refused+env: exit=${a.code} notes=${notes.length} | not-refused+env: exit=${b.code} notes=${b.stderr.includes('were refused') ? 1 : 0}`);
+  });
+
+  // N5: the advertised maximum viewport passes validation but Chrome cannot create it: exit 1, and the Chrome it spawned is stopped.
+  await run('F2-N5', async (rid) => {
+    const key = k(rid);
+    const before = listProcs(path.join(R, 'temp')).length;
+    const r = await cli(key, path.join(R, 'hp2', 'child'), ['nav', U('localhost', `${rid}-${surface}`), '--viewport', '10000000x10000000'], {}, bin, surface);
+    await delay(2500);
+    const after = listProcs(path.join(R, 'temp')).length;
+    await closeKey(key);
+    record(surface, rid, r.code === 1 && /No browser session/.test(r.stderr) && after <= before, `exit=${r.code} chromeBefore=${before} chromeAfter=${after} ${(r.stderr.split('\n').find((l) => l.startsWith('Fatal')) ?? r.stderr.split('\n')[0]).slice(0, 100)}`);
+  });
+}
+
+async function mcpFix2Suite(bin, surface) {
+  const run = (id, fn) => (wanted(id) ? fn(id).catch((e) => record(surface, id, false, `threw: ${e.stack ?? e.message}`)) : undefined);
+  const chromeProcs = () => listProcs(path.join(R, 'temp')).length;
+  // N4: an out-of-range MCP browser.launch viewport is rejected by the tool schema BEFORE any Chrome is started (it used to reach
+  // Chrome, fail there, and leave Chrome running until shutdown_all).
+  await run('M-F2-N4', async (rid) => {
+    const c = mcpClient(bin, path.join(R, 'hp2', 'child'), {});
+    try {
+      await c.init();
+      const before = chromeProcs();
+      const r = await c.tool('browser.launch', { viewport: { width: 1000000000, height: 1000000000 } });
+      await delay(1500);
+      const during = chromeProcs();
+      const ok1 = await c.tool('browser.launch', { viewport: { width: 800, height: 600 } }); // the same call within bounds still works
+      await c.tool('browser.shutdown_all', {});
+      record(surface, rid, r.isError && /10000000|too_big|less than or equal/i.test(r.text) && during === before && !ok1.isError && !!ok1.json?.sessionId,
+        `isError=${r.isError} chromeBefore=${before} chromeAfterBadCall=${during} inBoundsLaunch=${ok1.isError ? 'ERR' : 'ok'} text=${r.text.slice(0, 90)}`);
+    } finally { await c.stop(); }
+  });
+  // N8 on MCP: env overriding a refused discovered root: the server starts and says so on stderr.
+  await run('M-F2-N8', async (rid) => {
+    const envdl = path.join(R, `envdl-${rid}-${surface}`);
+    const c = mcpClient(bin, path.join(R, 'hp', 'child'), { SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS: envdl });
+    try {
+      await c.init();
+      const warn = c.stderrText().split(/\r?\n/).filter((l) => l.includes('were refused'));
+      record(surface, rid, !c.exited && warn.length === 1 && warn[0].startsWith('[sutradhar-mcp] warning:') && warn[0].includes('SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS'), `alive=${!c.exited} notes=${warn.length}`);
+    } finally { await c.stop(); }
+  });
+}
+
 async function sdkFixSuite() {
   const surface = 'sdk';
   const run = (id, fn) => (wanted(id) ? fn(id).catch((e) => record(surface, id, false, `threw: ${e.stack ?? e.message}`)) : undefined);
@@ -1059,15 +1163,17 @@ async function main() {
   for (const k of ENV_STRIP) delete baseEnv[k];
   console.log(`root=${R} port=${server.port} surfaces=${SURFACES.join(',')}`);
   try {
-    if (SURFACES.includes('cli')) { await cliSuite(CLI, 'cli', true); await negativeSuite('cli'); await fixSuite('cli'); }
-    if (SURFACES.includes('mcp')) { await mcpSuite(MCP, 'mcp', true); await mcpFixSuite(MCP, 'mcp'); }
+    if (SURFACES.includes('cli')) { await cliSuite(CLI, 'cli', true); await negativeSuite('cli'); await fixSuite('cli'); await fix2Suite('cli'); }
+    if (SURFACES.includes('mcp')) { await mcpSuite(MCP, 'mcp', true); await mcpFixSuite(MCP, 'mcp'); await mcpFix2Suite(MCP, 'mcp'); }
     if (SURFACES.includes('sdk')) { await sdkSuite(); await sdkFixSuite(); }
     if (SURFACES.includes('bundle')) {
       await cliSuite(BUNDLE_CLI, 'bundle', false);
       await negativeSuite('bundle');
       await fixSuite('bundle');
+      await fix2Suite('bundle');
       await mcpSuite(BUNDLE_MCP, 'bundle-mcp', false);
       await mcpFixSuite(BUNDLE_MCP, 'bundle-mcp');
+      await mcpFix2Suite(BUNDLE_MCP, 'bundle-mcp');
     }
     // Cleanup: close every CLI session this run opened (PID-scoped via each state file; never by image name).
     for (const key of stateDirs.keys()) if (stateExists(key)) await closeKey(key);

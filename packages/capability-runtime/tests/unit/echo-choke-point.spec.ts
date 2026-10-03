@@ -14,7 +14,7 @@
  *     resolveConfigPath) must be on a reviewed list of safe expressions; a new interpolation of
  *     file-derived text fails the suite until it is routed through the choke point AND reviewed.
  */
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync, realpathSync, readFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, realpathSync, readFileSync, symlinkSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -75,14 +75,35 @@ const payloads: Record<string, string> = {
 };
 // `~user` variants and path-ish variants of every payload (entries that reach the path resolver).
 const variants: string[] = [];
-for (const p of Object.values(payloads)) variants.push(p, `~${p}`, `../${p}`, `./${p}`, `~/${p}`);
+for (const p of Object.values(payloads)) variants.push(p, `~${p}`, `../${p}`, `./${p}`, `~/${p}`, `./${p}.`, `./${p} `);
 
 const STRING_KEYS = ['$schema', 'downloadDir'];
 const LIST_KEYS = ['allowedDownloadRoots', 'allowedUploadRoots', 'allowedDomains'];
 
 /** Every (name, JSON-ish document) the corpus runs: each known key x several shapes, nested keys, raw text. */
-function* documents(): Generator<{ id: string; text: string }> {
+/** Names of link fixtures created next to the file in every corpus repo (when the OS allows links). */
+const DANGLE = `dl-${MARK_B.repeat(240)}`;
+const LOOP_A = `loopA-${MARK_B.repeat(80)}`;
+const LOOP_B = `loopB-${MARK_B.repeat(80)}`;
+function makeLinkFixtures(repo: string): boolean {
+  try {
+    symlinkSync('nonexistent-target', path.join(repo, DANGLE), 'dir');
+    symlinkSync(LOOP_B, path.join(repo, LOOP_A), 'dir');
+    symlinkSync(LOOP_A, path.join(repo, LOOP_B), 'dir');
+    return true;
+  } catch {
+    return false; // no link privilege on this host: the link documents are skipped and the matrix reports it
+  }
+}
+
+function* documents(links = false): Generator<{ id: string; text: string }> {
   const j = (o: unknown): string => JSON.stringify(o);
+  if (links) {
+    for (const entry of [`./${DANGLE}`, `./${DANGLE}/${MARK_A.repeat(300)}`, `./${LOOP_A}/x`, `./${LOOP_A}/${MARK_A.repeat(300)}`, `${LOOP_A}`]) {
+      yield { id: `link downloadDir ${entry.slice(0, 20)}#${entry.length}`, text: j({ downloadDir: entry }) };
+      yield { id: `link allowedDownloadRoots ${entry.slice(0, 20)}#${entry.length}`, text: j({ allowedDownloadRoots: ['./ok', entry] }) };
+    }
+  }
   for (const p of variants) {
     const pid = JSON.stringify(p.slice(0, 12)) + `#${p.length}`;
     // an unknown top-level key named with the payload
@@ -124,14 +145,16 @@ function* documents(): Generator<{ id: string; text: string }> {
 }
 
 describe('N1: every message built from file contents is capped and single-line (generated hostile corpus x every key)', () => {
-  const stats = { docs: 0, errors: 0, warnings: 0, refusals: 0, loaded: 0 };
+  const stats = { docs: 0, errors: 0, warnings: 0, refusals: 0, loaded: 0, cannotBeChecked: 0, linksAvailable: false };
 
   for (const origin of ['discovered', 'explicit'] as const) {
     it(`${origin}: errors, warnings and refusals for the whole corpus`, async () => {
       const repo = path.join(tmpRoot, `corpus-${origin}`);
       mkdirSync(path.join(repo, '.git'), { recursive: true });
       const file = path.join(repo, '.sutradhar.json');
-      for (const doc of documents()) {
+      const links = makeLinkFixtures(repo);
+      stats.linksAvailable = links;
+      for (const doc of documents(links)) {
         writeFileSync(file, doc.text);
         stats.docs++;
         const ctx = `${origin} ${doc.id}`;
@@ -155,6 +178,7 @@ describe('N1: every message built from file contents is capped and single-line (
         if (r.config.downloadRefusal !== undefined) {
           stats.refusals++;
           check(r.config.downloadRefusal, `${ctx} [refusal]`, file);
+          if (r.config.downloadRefusal.includes('cannot be checked')) stats.cannotBeChecked++;
           // the resolver re-throws the same text: it must not add anything uncapped of its own
           try {
             resolveFsRoots({ env: {}, config: fsRootsConfigLayer(r.config) });
@@ -173,8 +197,12 @@ describe('N1: every message built from file contents is capped and single-line (
     expect(stats.refusals).toBeGreaterThan(20);
     expect(stats.loaded).toBeGreaterThan(50);
     // 2 origins x documents(): pins the generator so a shrunk corpus is noticed
-    expect(stats.docs).toBe(2 * [...documents()].length);
-    expect([...documents()].length).toBeGreaterThanOrEqual(1500);
+    expect(stats.docs).toBe(2 * [...documents(stats.linksAvailable)].length);
+    expect([...documents(stats.linksAvailable)].length).toBeGreaterThanOrEqual(1800);
+    // the "cannot be checked" refusal (the only message that forwards an OS error text) was really exercised when links exist
+    if (stats.linksAvailable) expect(stats.cannotBeChecked).toBeGreaterThanOrEqual(4);
+    // eslint-disable-next-line no-console
+    console.log(`N1 corpus: ${stats.docs} documents (2 origins), ${stats.errors} errors, ${stats.warnings} warnings, ${stats.refusals} refusals (${stats.cannotBeChecked} cannot-be-checked), ${stats.loaded} loads, links=${stats.linksAvailable}`);
   });
 
   it('the exact audit-2 repros: `~user` + newlines and `~` + 20 KB, for downloadDir / allowedDownloadRoots / allowedUploadRoots', async () => {
@@ -346,10 +374,72 @@ const REVIEWED_PROJECT_CONFIG: Record<string, string> = {
   'validateProjectConfig :: s ? ` (did you mean "${prefix}${s}"?)` : \'\'': 'constants only',
 };
 
-function unreviewed(source: string, reviewed: Record<string, string>): string[] {
-  return interpolations(source)
-    .map((x) => `${x.fn} :: ${x.expr}`)
-    .filter((k) => !(k in reviewed));
+
+/** How many times each reviewed interpolation appears (exact: a swapped-in expression that is reviewed elsewhere still changes a count). */
+const REVIEWED_COUNTS: Record<string, number> = {
+  'bad :: file': 1,
+  'bad :: problem': 1,
+  'checkStringList :: i': 2,
+  'checkStringList :: key': 4,
+  "checkStringList :: key === 'allowedDomains' ? 'domain' : 'directory'": 1,
+  'exists :: NO_ESCAPE_HINT': 1,
+  "exists :: errCode(e) ?? 'error'": 1,
+  'exists :: p': 1,
+  'findProjectConfigPath :: (e as Error).message': 2,
+  'findProjectConfigPath :: NO_ESCAPE_HINT': 5,
+  'findProjectConfigPath :: PROJECT_CONFIG_FILE_NAME': 2,
+  'findProjectConfigPath :: cand': 3,
+  'findProjectConfigPath :: dir': 1,
+  "findProjectConfigPath :: errCode(e) ?? 'error'": 1,
+  'loadProjectConfig :: (e as Error).message': 1,
+  'loadProjectConfig :: (st.mode & 0o777).toString(8)': 1,
+  'loadProjectConfig :: ESCAPE': 3,
+  'loadProjectConfig :: PROJECT_CONFIG_ENV': 4,
+  'loadProjectConfig :: base': 1,
+  'loadProjectConfig :: d.label': 3,
+  'loadProjectConfig :: echo((e as Error).message)': 1,
+  'loadProjectConfig :: echo(d.entry)': 3,
+  'loadProjectConfig :: echo(entry)': 1,
+  'loadProjectConfig :: echoPath(c)': 2,
+  "loadProjectConfig :: errCode(e) ?? 'error'": 2,
+  'loadProjectConfig :: file': 7,
+  'loadProjectConfig :: idx': 2,
+  'loadProjectConfig :: label': 2,
+  'loadProjectConfig :: me': 1,
+  'loadProjectConfig :: st.uid': 1,
+  'parseProjectConfigText :: echoPath(sanitizeJsonError((e as Error).message))': 1,
+  'parseProjectConfigText :: echoValue(dup)': 1,
+  'parseProjectConfigText :: extra': 1,
+  'readConfigEnv :: PROJECT_CONFIG_ENV': 2,
+  'readConfigEnv :: v': 1,
+  "readConfigEnv :: v.length > 80 ? v.slice(0, 80) + '...' : v": 1,
+  'validateProjectConfig :: VIEWPORT_MAX': 1,
+  'validateProjectConfig :: echo(key)': 1,
+  'validateProjectConfig :: echo(sug)': 1,
+  'validateProjectConfig :: echoValue(d)': 1,
+  'validateProjectConfig :: echoValue(v)': 1,
+  'validateProjectConfig :: file': 1,
+  'validateProjectConfig :: hint': 1,
+  'validateProjectConfig :: i': 1,
+  'validateProjectConfig :: k': 1,
+  'validateProjectConfig :: prefix': 2,
+  'validateProjectConfig :: s': 1,
+  'validateProjectConfig :: s ? ` (did you mean "${prefix}${s}"?)` : \'\'': 1,
+};
+
+function unreviewed(source: string, reviewed: Record<string, string>, expected: Record<string, number> = REVIEWED_COUNTS): string[] {
+  const actual: Record<string, number> = {};
+  for (const x of interpolations(source)) {
+    const k = `${x.fn} :: ${x.expr}`;
+    actual[k] = (actual[k] ?? 0) + 1;
+  }
+  const out: string[] = [];
+  for (const [k, n] of Object.entries(actual)) {
+    if (!(k in reviewed)) out.push(k);
+    else if (expected[k] !== n) out.push(`${k} (x${n}, reviewed x${expected[k] ?? 0})`);
+  }
+  for (const [k, n] of Object.entries(expected)) if (!(k in actual) && n > 0) out.push(`${k} (x0, reviewed x${n})`);
+  return out;
 }
 
 describe('N1: source-level guard - no file-derived value is interpolated into a message outside the choke point', () => {
@@ -378,7 +468,14 @@ describe('N1: source-level guard - no file-derived value is interpolated into a 
     // and a removed choke-point call (`echo(entry)` -> `entry`) is reported too
     const bypass = read('project-config.ts').replace('${echo(entry)}', '${entry}');
     expect(bypass).not.toBe(read('project-config.ts'));
-    expect(unreviewed(bypass, REVIEWED_PROJECT_CONFIG)).toEqual(['loadProjectConfig :: entry']);
+    expect(unreviewed(bypass, REVIEWED_PROJECT_CONFIG)).toEqual(['loadProjectConfig :: entry', 'loadProjectConfig :: echo(entry) (x0, reviewed x1)']);
+    // ...and so is a removed choke-point call whose bare replacement is ALSO reviewed elsewhere (the audit-style swap)
+    const swap = read('project-config.ts').replace('cannot be checked (${echo((e as Error).message)})', 'cannot be checked (${(e as Error).message})');
+    expect(swap).not.toBe(read('project-config.ts'));
+    expect(unreviewed(swap, REVIEWED_PROJECT_CONFIG).sort()).toEqual([
+      'loadProjectConfig :: (e as Error).message (x2, reviewed x1)',
+      'loadProjectConfig :: echo((e as Error).message) (x0, reviewed x1)',
+    ]);
   });
 
   it('every file that interpolates a project-config value into a message imports the choke point', () => {
