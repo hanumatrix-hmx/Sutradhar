@@ -1,0 +1,10 @@
+## mutant A (guard without path normalisation), isolated TEMP => expected pos-exit != 0
+ISOLATION GUARD (mutant): E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S1-tmp
+mutantA-pos-exit=97
+## mutant B (checker ignores quoted paths) on neg.log => expected exit 0 (WRONG; real checker gives 1)
+cleanup-lines=1 outside-iso=0
+mutantB-neg-exit=0
+## control: real checker on neg.log
+OUTSIDE-ISO e:/ai-cache/tmp/sutradhar-cli-1790000000000 <= [cleanup] decision path="E:/AI-Cache/tmp/sutradhar-cli-1790000000000" reason=too-young
+cleanup-lines=1 outside-iso=1
+real-neg-exit=1
