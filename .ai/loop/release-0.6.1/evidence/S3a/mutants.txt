@@ -1,0 +1,16 @@
+--- mutant: install skipped (stale dist markers from S1 baseline) ---
+{
+ "S3a-1": "PASS",
+ "S3a-2": "PASS @hono/node-server,fast-uri,hono,ip-address,qs",
+ "S3a-3": "PASS advisories=0 totalDependencies=160",
+ "S3a-4": "FAIL: versions=3.1.5 inv0=false"
+}
+mutant-install-skipped exit=1
+--- mutant: --latest style (SDK + extra packages move, manifest touched) ---
+{
+ "S3a-1": "FAIL: unexpected paths:  M packages/mcp-server/package.json",
+ "S3a-2": "FAIL: moved: @modelcontextprotocol/sdk,fast-uri,zod",
+ "S3a-3": "PASS advisories=0 totalDependencies=160",
+ "S3a-4": "PASS fast-uri=3.1.8 inventory0"
+}
+mutant-latest exit=1
